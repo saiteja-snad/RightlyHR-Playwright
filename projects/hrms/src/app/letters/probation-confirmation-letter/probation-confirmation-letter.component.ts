@@ -114,7 +114,7 @@ export class ProbationConfirmationLetterComponent implements OnInit,OnDestroy {
   }
 
   naviagte() {
-    this.router.navigate(['/letters/lettes-tabs']);
+    this.router.navigate(['/employee-management/probation-employees']);
   }
 
   initializeForm() {

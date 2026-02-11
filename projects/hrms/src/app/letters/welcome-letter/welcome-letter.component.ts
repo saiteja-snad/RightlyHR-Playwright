@@ -202,7 +202,7 @@ export class WelcomeLetterComponent implements OnInit,OnDestroy {
       },
       complete: () => {
         setTimeout(() => {
-          this.router.navigate(['/letters/lettes-tabs']);
+          this.router.navigate(['/admin/dashboard']);
         }, 2000)
         this.spinnerLoader = false;
         this.employeeForm.reset();

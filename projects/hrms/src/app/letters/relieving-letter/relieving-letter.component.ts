@@ -75,7 +75,7 @@ export class RelievingLetterComponent implements OnInit, OnDestroy {
   }
 
   navigateDashboard() {
-    this.router.navigate(['/letters/lettes-tabs'])
+    this.router.navigate(['/employee-management/active/employees'])
   }
 
   DateValidation() {

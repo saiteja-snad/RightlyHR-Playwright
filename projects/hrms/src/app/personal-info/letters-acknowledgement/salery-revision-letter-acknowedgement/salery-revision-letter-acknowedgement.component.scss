@@ -73,9 +73,9 @@ input:focus {
         }
 
         .letter-footer {
-           display: none;
+            display: none;
             width: 270mm;
-            background-color: #546e7a;
+            background-color: var(--primary-color);
             color: #fff;
             position: absolute;
             bottom: 0px;
@@ -95,12 +95,12 @@ input:focus {
     }
 }
 
- .letter-page-content:has(.soft-copy-letter ) {
-  background-image: url('/images/claim-genius-watermark.png');
+.letter-page-content:has(.soft-copy-letter) {
+    background-image: url('/images/water-mark.png') !important;
 
-  .letter-footer{
-    display: block !important;
-  }
+    .letter-footer {
+        display: block !important;
+    }
 }
 
 

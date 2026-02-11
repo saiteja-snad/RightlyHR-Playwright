@@ -36,30 +36,30 @@
 /* You can add global styles to this file, and also import other style files */
 :root {
     // body colors
-    --body-bg-color: #ECF1F3;
+    --body-bg-color: #ECF1F5;
     // body colors ends
 
     // header colors
     --header-background-color: #FFFFFF;
-    --btn-header-color: #395967;
-    --header-profile-dropdown-bg-color: #C0D0D7;
+    --btn-header-color: #0B3A83;
+    --header-profile-dropdown-bg-color: rgba(11, 58, 131, 0.2);
     --header-info-border-color: #dae4f4;
-    --profile-info-separator-line: #C0D0D7;
+    --profile-info-separator-line: #A1BEEB;
     --header-dropdown-border-color: #DBE2ED;
     // header colors ends
 
     //sidebar colors
-    --side-nav-background-color: #395967;
+    --side-nav-background-color: #0B3A83;
     --side-nav-item-color: #EAEAEA;
-    --side-nav-item-active-color: #395967;
+    --side-nav-item-active-color: #0B3A83;
     --side-nav-active-bg-color: #FFFFFF4D;
     //sidebar colors
 
     // button colors
-    --btn-primary-color: #395967;
+    --btn-primary-color: #0B3A83;
     --btn-secondary-color: #FFFFFF;
     --btn-color-tp: #FFFFFF;
-    --btn-color-ts: #395967;
+    --btn-color-ts: #0B3A83;
     --btn-success: #38930D;
     --btn-failure: #D82D24;
     --btn-publish: #26BD3D;
@@ -68,7 +68,7 @@
 
     // colors
     --white-color: #FFFFFF;
-    --primary-color: #395967;
+    --primary-color: #0B3A83;
     --ash-color: #707070;
     --black-color-100: #444444;
     --ash-color-100: #efefef;
@@ -86,7 +86,7 @@
 
     // table colors
     --table-main-content-border-color: #FFFFFF;
-    --table-header-bg-color: #E0E9ED;
+    --table-header-bg-color: #DCE5F5;
     --table-header-color: #3B3B3B;
     --table-data-bg-color: #FFFFFF;
     --table-data-bg-even-color: #F0F4F8;
@@ -95,8 +95,8 @@
     // table colors ends
 
     // nav tabs
-    --navtab-item-color: #395967;
-    --custom-component-tabs-bg-color: #DCE7EB;
+    --navtab-item-color: #0B3A83;
+    --custom-component-tabs-bg-color: #D8E2F2;
     --card-tabs-active-bg-color: #CFDBEE;
     // nav tabs
 
@@ -119,17 +119,17 @@
     --font-family: 'Roboto-flex';
 
     // card
-    --card-bg-color: #EDF2F4;
+    --card-bg-color: #e2e4ea4f;
 
     //scroller colors
-    --Scroller-bar-color: #DCE7EB;
+    --Scroller-bar-color: #DCE5F5;
     --scroller-bg-color: #FFF;
 
     //events bg color
     --events-bg-color: #D7E7FA;
 
     //border color
-    --border-color: #C0D0D7;
+    --border-color: #CCDAEC;
 
     //error msg
     --error-msg-color: #ea362c;
@@ -145,16 +145,16 @@
     --dispaly-card-bg-gradient-three: #FAECE8;
     --dispaly-card-bg-gradient-four: #DAE9EF;
     --dispaly-card-bg-gradient-five: #F4DAF2;
-    --display-grid-cards-bg-color: #DCE7EB;
+    --display-grid-cards-bg-color: #ECF0F4;
 
-    --module-accordian-bg-color: #DCE7EB;
-    --accordian-table-border-color: #DCE7EB;
+    --module-accordian-bg-color: #ECF0F4;
+    --accordian-table-border-color: #D1D8E3;
 
-    --content-border-color: #C0D0D7;
+    --content-border-color: #CCDAEC;
 
-    --popup-accordian-th-color: #eef2f4;
+    --popup-accordian-th-color: #EEF3FB;
 
-    --grid-border-color: #C0D0D7;
+    --grid-border-color: #BCD4F0;
 }
 
 * {
@@ -172,9 +172,10 @@ body {
     background-color: var(--header-background-color);
 
     .company-logo-image {
-        height: 1.25rem;
+        height: 2.5rem;
     }
 }
+
 //header stylings Ends
 
 //Side Bar Stylings
@@ -465,6 +466,7 @@ body {
         color: #3F434A;
         padding: 0.625rem 0.5rem;
         border-radius: 0.5rem;
+        border-bottom: 1px solid linear-gradient(90deg, #F4F4F4 8.64%, #A5B8D7 57.28%, #F4F4F4 92.5%);
         margin: 0.25rem 0rem;
         cursor: pointer;
     }
@@ -1253,7 +1255,7 @@ select:focus {
             height: 380mm;
             width: 270mm;
             position: relative;
-            // background-image: url('/images/claim-genius-watermark.png');
+            background-image: url('/images/water-mark.png');
             background-repeat: no-repeat;
             background-position: center;
             box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
@@ -1266,9 +1268,8 @@ select:focus {
             }
 
             .letter-footer {
-                display: none;
                 width: 270mm;
-                background-color: #546e7a;
+                background-color: #0B3A83;
                 color: #fff;
                 position: absolute;
                 bottom: 0px;
@@ -1318,17 +1319,13 @@ select:focus {
 
 // salary details table
 .salary-details-table {
-
-    table,
-    th,
-    td {
+    table, th, td {
         border: 1px solid #474747;
         border-collapse: collapse;
         color: #000;
     }
 
-    th,
-    td {
+    th, td {
         padding: 0.25rem 0.625rem;
         text-align: center;
         font-size: var(--fontsize14) !important;
@@ -1338,8 +1335,7 @@ select:focus {
         font-weight: bold;
     }
 
-    tr:nth-child(4),
-    tr:nth-child(9) {
+    tr:nth-child(4), tr:nth-child(9) {
         background: rgba(255, 255, 204, 255);
     }
 
@@ -1354,14 +1350,6 @@ select:focus {
 
 .soft-copy-letter {
     margin-bottom: 2rem;
-}
-
-.letter-page-content:has(.soft-copy-letter ) {
-  background-image: url('/images/claim-genius-watermark.png');
-
-  .letter-footer{
-    display: block !important;
-  }
 }
 
 .list-style-none {
@@ -1398,7 +1386,6 @@ select:focus {
     font-size: var(--fontsize32) !important;
     font-family: "autographsignatureFont" !important;
 }
-
 // letter stylings
 
 // letter stylings
@@ -1421,7 +1408,6 @@ select:focus {
         font-weight: 700;
     }
 }
-
 // note text stylings
 
 //My Info Stylings
@@ -1711,7 +1697,7 @@ input[type="file"] {
     .popup-header-border {
         border-bottom: 1.5px solid transparent;
         border-image-source: linear-gradient(90deg, var(--white-color) -6.98%,
-                var(--grid-border-color) 50.67%, var(--white-color) 108.91%);
+        var(--grid-border-color) 50.67%, var(--white-color) 108.91%);
         border-image-slice: 1;
         vertical-align: middle;
     }
@@ -2784,34 +2770,34 @@ input[type=number]::-webkit-outer-spin-button {
 }
 
 .employee-label-info {
-    .popover {
-        --bs-popover-max-width: 25rem !important;
-        --bs-popover-border-color: var(--module-info-bg) !important;
-        background: var(--module-info-bg) !important;
+  .popover {
+    --bs-popover-max-width: 25rem !important;
+    --bs-popover-border-color: var(--module-info-bg) !important;
+    background: var(--module-info-bg) !important;
 
-        .popover-body {
-            padding: 0.5rem !important;
-            border-radius: 0.5rem;
-            border: 2px solid #FFF !important;
-            box-shadow: 0px 0px 10px 0px rgba(11, 58, 131, 0.5019607843) !important;
-        }
-
-        .module-info-text {
-            font-weight: 400;
-            font-size: var(--fontsize12);
-            letter-spacing: 0%;
-            color: #424242;
-        }
-
-        .bs-popover-bottom>.popover-arrow::after {
-            border-bottom-color: #FFFFFF !important;
-        }
+    .popover-body {
+      padding: 0.5rem !important;
+      border-radius: 0.5rem;
+      border: 2px solid #FFF !important;
+      box-shadow: 0px 0px 10px 0px rgba(11, 58, 131, 0.5019607843) !important;
     }
+
+    .module-info-text {
+      font-weight: 400;
+      font-size: var(--fontsize12);
+      letter-spacing: 0%;
+      color: #424242;
+    }
+
+    .bs-popover-bottom>.popover-arrow::after {
+      border-bottom-color: #FFFFFF !important;
+    }
+  }
 
 }
 
 
-.popup-view-image-content {
+  .popup-view-image-content {
 
     width: 100%;
     height: 100%;

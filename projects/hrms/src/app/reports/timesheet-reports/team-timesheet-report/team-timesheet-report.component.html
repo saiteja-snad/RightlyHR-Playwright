@@ -156,7 +156,7 @@
           <td>{{ record.hoursWorked ?? '-' }}</td>
           <td>{{ record.billableStatus ?? '-' }}</td>
           <td>{{ record.approvalStatus === 'Processed' ? 'Approved' : (record.approvalStatus ?? '-') }}</td>
-          <td>{{ record.submittedDate ? (record.submittedDate | date) : '-' }}</td>
+          <td>{{ record.timeSheetSubmittedDate ? (record.timeSheetSubmittedDate | date) : '-' }}</td>
           <td>{{ record.approvedBy ?? '-' }}</td>
         </tr>
         }

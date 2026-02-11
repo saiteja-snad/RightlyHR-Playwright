@@ -6,44 +6,46 @@
     <form autocomplete="off" [formGroup]="UtilizationReportForm" (ngSubmit)="generateUtilizationReport(page, pageSize,true,true)" *ngIf="UtilizationReportForm">
       <div class="d-flex align-items-center gap-3">
         @if(rbac.allowedToAccess('Utilization Report - Generate.view')){
-        <button type="button" class="clear-all-btn" [disabled]="
-          UtilizationReportForm.get('clientId')?.value == null &&
+       <button type="button" class="clear-all-btn" [disabled]="
+           UtilizationReportForm.get('clientId')?.value == null &&
           UtilizationReportForm.get('projectId')?.value == null &&
+           UtilizationReportForm.get('employeid')?.value == null &&
           UtilizationReportForm.get('dateRange')?.value == null &&
-          UtilizationReportForm.get('status')?.value == null &&
-          UtilizationReportForm.get('billable')?.value == null
-        " (click)="clearAllFilters()">
+          UtilizationReportForm.get('billable')?.value == null 
+        
+          " [disabled]="!isFilterApplied()"
+          (click)="clearAllFilters()">
           @if(isFilterApplied()) {
           Clear All
           }
         </button>
           <!-- Client-->
-        <div class="d-flex align-items-center gap-2">
-          <div class="custom-p-select-content">
-            <p-select [options]="clientDropdownList" optionLabel="label" optionValue="value" [filter]="true"
-              formControlName="clientId" placeholder="Please select client" class="form-select custom-select"
-              (onChange)="onClientChange($event)">
-            </p-select>
-          </div>
+          <!-- Client-->
+        <div class="custom-p-multiSelect-content">
+          <p-multiSelect [options]="clientDropdownList" optionLabel="label" optionValue="value" [filter]="true"
+            formControlName="clientId" placeholder="Please select client" class="form-select custom-select"
+            [maxSelectedLabels]="1" (onChange)="onClientChange($event)">
+          </p-multiSelect>
         </div>
-
         <!-- Project-->
-        <div class="d-flex align-items-center gap-2">
-          <div class="custom-p-select-content">
-            <p-select [options]="projectsList" optionLabel="label" optionValue="value" [filter]="true"
-              placeholder="Please select project" formControlName="projectId" class="form-select custom-select"
-              (onChange)="onProjectChange($event)">
-            </p-select>
-          </div>
+        <div class="custom-p-multiSelect-content">
+          <p-multiSelect [options]="projectsList" optionLabel="label" optionValue="value" [filter]="true"
+            placeholder="Please select project" formControlName="projectId" class="form-select custom-select"
+            [maxSelectedLabels]="1" (onChange)="onProjectChange($event)">
+          </p-multiSelect>
         </div>
+        <!-- Phases Dropdown -->
+        <div class="custom-p-multiSelect-content">
+          <p-multiSelect [options]="phasesData" optionLabel="label" optionValue="phaseId" [filter]="true" [maxSelectedLabels]="1"
+            formControlName="phases" placeholder="Please select phases" class="form-select custom-select">
+          </p-multiSelect>
 
+        </div>
         <!-- Employee-->
-        <div class="d-flex align-items-center gap-2">
-          <div class="custom-p-multiSelect-content">
-            <p-multiSelect [options]="employeeData" optionLabel="name" optionValue="id" [filter]="true"
-              defaultLabel="Please select resource" formControlName="employeid"
-              class="form-select custom-select"></p-multiSelect>
-          </div>
+        <div class="custom-p-multiSelect-content">
+          <p-multiSelect [options]="employeeData" optionLabel="name" optionValue="id" [filter]="true"
+            [maxSelectedLabels]="1" defaultLabel="Please select employee" formControlName="employeid"
+            class="form-select custom-select"></p-multiSelect>
         </div>
            <!-- Date Range -->
         <div class="d-flex align-items-center gap-2">
@@ -103,6 +105,7 @@
         <th>Employee ID</th>
         <th>Employee Name</th>
         <th>Department</th>
+        <th>Phase/Milestone</th>
         <th>Total Allocated Hrs</th>
         <th>Total Logged Hrs</th>
        <th>Billable Hrs</th> 
@@ -125,6 +128,7 @@
           <td>{{ record.fusionEmpId ?? '-' }}</td>
           <td>{{ record.employeeName ?? '-' }}</td>
           <td>{{ record.department ?? '-' }}</td>
+          <td>{{ record.phaseName ?? '-' }}</td>
           <td>{{ record.allocatedHours ?? '-' }}</td>
           <td>{{ record.totalLoggedHours ?? '-' }}</td>
           <td>{{ record.billableHours ?? '-' }}</td>

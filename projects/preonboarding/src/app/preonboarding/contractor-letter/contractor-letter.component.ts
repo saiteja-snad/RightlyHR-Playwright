@@ -11,7 +11,6 @@ import moment from 'moment';
 import { NgxCountriesDropdownModule } from 'ngx-countries-dropdown';
 import { Select } from 'primeng/select';
 import { Subscription } from 'rxjs';
-import { DateformatPipe } from '../../../../../hrms/src/app/pipes/dateformat.pipe';
 import { PopupService } from '../../common-services/popup.service';
 import { HttpService } from '../../http-services/http.service';
 import { Iofferletter, IJobDetails } from '../../models/offer-letter.model';
@@ -20,6 +19,7 @@ import { DetailedStepProgressbarComponent } from '../../shared/detailed-step-pro
 import { DateFormatPipe } from "../../pipes/date-format.pipe";
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { LettersheaderComponent } from "../../../../../hrms/src/app/shared/letters-shared-content/lettersheader/lettersheader.component";
+import { DateformatPipe } from '../../../../../hrms/src/app/Pipes/dateformat.pipe';
 
 @Component({
   selector: 'app-contractor-letter',

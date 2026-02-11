@@ -71,6 +71,7 @@ export class ResourceAvailabilityReportComponent {
     { label: 20, value: 20 },
     { label: 25, value: 25 }
   ];
+  
   today: Date = new Date();
   employeeiddetails: any[] = [];
   constructor(

@@ -58,7 +58,7 @@ export class ProbationExtensionLetterComponent implements OnInit,OnDestroy {
   }
 
   naviagte() {
-    this.router.navigate(['/employee-management/probation-employees']);
+    this.router.navigate(['/letters/lettes-tabs']);
   }
 
   initializeForm() {

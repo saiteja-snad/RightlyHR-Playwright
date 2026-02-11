@@ -46,8 +46,8 @@
             bottom: 2rem;
 
             .powered-by-image {
-                width: 10rem;
-                height: 2.25rem;
+                width: 7rem;
+                height: 2.5rem;
             }
         }
     }
@@ -71,7 +71,7 @@
             padding: 2.25rem;
 
             .company-logo {
-              height: 1.25rem;
+                height: 1.25rem;
             }
 
             .logo-image {
@@ -182,7 +182,8 @@
     left: 0;
     width: 100%;
     height: 100%;
-    opacity: 0.01; /* Keep slightly above 0 to ensure clickability */
+    opacity: 0.01;
+    /* Keep slightly above 0 to ensure clickability */
     z-index: 10;
     overflow: hidden;
 }

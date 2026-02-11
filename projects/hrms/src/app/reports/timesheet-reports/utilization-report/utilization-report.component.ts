@@ -64,6 +64,7 @@ export class UtilizationReportComponent {
   rows = 10;
   collectionSize!: number;
   first = 0;
+    employeeiddetails: any[] = [];
   options = [
     { label: 10, value: 10 },
     { label: 15, value: 15 },
@@ -82,16 +83,19 @@ export class UtilizationReportComponent {
   ) { }
 
   ngOnInit(): void {
-    this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
+   this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.initializeForm();
     this.getClientsData();
+    this.getEmployeeData();
+    this.getProjectsData();
   }
 
-  initializeForm() {
+   initializeForm() {
     this.UtilizationReportForm = this.fb.group({
       clientId: [null],
-      projectId: [{ value: null, disabled: true }],
-      employeid: [{ value: null, disabled: true }],
+      projectId: [null],
+      employeid: [],
+       phases: [{ value: null, disabled: true }],
       dateRange: [null],
       billable: [null]
     });
@@ -99,22 +103,62 @@ export class UtilizationReportComponent {
       this.disableBtn = true;
     })
   }
+  // isFilterApplied(): boolean {
+  //   const formValue = this.UtilizationReportForm.value;
+  //   return (
+  //     (formValue.clientId !== null && formValue.clientId !== undefined && formValue.clientId !== '') ||
+  //     (formValue.projectId !== null && formValue.projectId !== undefined && formValue.projectId !== '') ||
+  //     (formValue.employeid && formValue.employeid.value !== null && formValue.employeid.value !== undefined) ||
+  //     (formValue.billable && formValue.billable.value !== null && formValue.billable.value !== undefined) ||
+  //     (formValue.dateRange && Array.isArray(formValue.dateRange) && formValue.dateRange.length > 0)
+  //   );
+  // }
+
+  // clearAllFilters(): void {
+  //   this.UtilizationReportForm.reset();
+  //   this.filteredutilizationRecord = [];
+  //   this.UtilizationReportForm.get('projectId')?.disable();
+  //   this.UtilizationReportForm.get('employeid')?.disable();
+  //   this.collectionSize = 0;
+  // }
+    // clear all button show hide
+
   isFilterApplied(): boolean {
     const formValue = this.UtilizationReportForm.value;
-    return (
-      (formValue.clientId !== null && formValue.clientId !== undefined && formValue.clientId !== '') ||
-      (formValue.projectId !== null && formValue.projectId !== undefined && formValue.projectId !== '') ||
-      (formValue.employeid && formValue.employeid.value !== null && formValue.employeid.value !== undefined) ||
-      (formValue.billable && formValue.billable.value !== null && formValue.billable.value !== undefined) ||
-      (formValue.dateRange && Array.isArray(formValue.dateRange) && formValue.dateRange.length > 0)
-    );
+    const isClientSelected = Array.isArray(formValue.clientId) ? formValue.clientId.length > 0 : !!formValue.clientId;
+    const isProjectSelected = Array.isArray(formValue.projectId) ? formValue.projectId.length > 0 : !!formValue.projectId;
+    const isEmployeeSelected = Array.isArray(formValue.employeid) ? formValue.employeid.length > 0 : !!formValue.employeid;
+    const isBillableSelected = formValue.billable != null;
+    const isDateRangeSelected = Array.isArray(formValue.dateRange) ? formValue.dateRange.length > 0 : !!formValue.dateRange;
+    const isPhaseSelected = formValue.phases != null && formValue.phases.value != null;
+    return (isClientSelected ||isProjectSelected ||isEmployeeSelected ||isBillableSelected ||isDateRangeSelected ||isPhaseSelected);
   }
-
+  // clear all button method
+  filteredProjects: any[] | undefined | null;
   clearAllFilters(): void {
+    this.filteredProjects = null;
+    //  Reset dropdown data (VERY IMPORTANT)
+    this.projectsList = [];
+    this.phasesData = [];
+    this.employeeData = [];
+    //  Reset form
+    this.UtilizationReportForm.reset();
     this.UtilizationReportForm.reset();
     this.filteredutilizationRecord = [];
-    this.UtilizationReportForm.get('projectId')?.disable();
-    this.UtilizationReportForm.get('employeid')?.disable();
+    // reset specific controls properly
+    this.UtilizationReportForm.get('employeid')?.setValue([]);
+    this.UtilizationReportForm.get('projectId')?.setValue(null);
+    this.UtilizationReportForm.get('clientId')?.setValue(null);
+    this.UtilizationReportForm.get('billable')?.setValue(null);
+    this.UtilizationReportForm.get('dateRange')?.setValue(null);
+    this.UtilizationReportForm.get('phases')?.setValue(null);
+    this.getClientsData();
+    this.getProjectsData();
+    this.getAllActiveEmployees();
+    this.getPhaseData();
+    this.getEmployeeData();
+    this.UtilizationReportForm.get('phases')?.disable();
+    // this.TimesheetSummeryReportForm.get('employeid')?.disable();
     this.collectionSize = 0;
   }
   // called for pagination 
@@ -140,9 +184,122 @@ export class UtilizationReportComponent {
     this.first = 0;
     this.generateUtilizationReport(this.page, this.pageSize, true, true);
   }
+      // manager access client,project data
+  getManagerDropdownData(managerId: number): void {
+    this.http.getData(`Project?status=Active&projectAuthorityId=${managerId}`).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res: any) => {
+        if (res.success && Array.isArray(res.data)) {
+          const projectData = res.data;
+          // Extract and map clients from project data
+          const clients = projectData.filter((p: any) => p.client).map((p: any) => ({
+            clientId: p.client.clientId,
+            clientName: p.client.clientName,
+            projects: [
+              {
+                projectId: p.projectId,
+                projectName: p.projectName,
+              },
+            ],
+          }));
+
+          // Group projects under the same clientId
+          const mergedClients: any[] = [];
+          clients.forEach((c: { clientId: any; projects: any; }) => {
+            const existing = mergedClients.find((x) => x.clientId === c.clientId);
+            if (existing) {
+              existing.projects.push(...c.projects);
+            } else {
+              mergedClients.push({ ...c });
+            }
+          });
+
+          // Add "No Client" entry with "No Project"
+          const noClientEntry = {
+            clientId: 0,
+            clientName: 'No Client',
+            projects: [
+              {
+                projectId: 0,
+                projectName: 'No Project',
+                isNoClientProject: true,
+              },
+            ],
+          };
+
+          // Final client list
+          this.clients = [noClientEntry, ...mergedClients];
+          // Build dropdowns for p-select
+          this.clientDropdownList = this.clients.map((client: any) => ({
+            label: client.clientName,
+            value: client.clientId,
+          }));
+
+          // For initial project dropdown (all projects combined)
+          const allProjects = this.clients.flatMap((c: any) => c.projects);
+          this.projectsList = allProjects.map((p: any) => ({
+            label: p.projectName,
+            value: p.projectId,
+          }));
+        } else {
+          // 🔹 Add "No Client" option only once
+          if (!this.noclientproject) {
+            this.clients.unshift({
+              clientId: 0,
+              clientName: 'No Client',
+              projects: [
+                {
+                  projectId: 0,
+                  projectName: 'No Project',
+                  isNoClientProject: true,
+                },
+              ]
+            });
+          }
+
+          this.clientDropdownList = [
+            { label: 'No Client', value: 0 },
+          ];
+          this.projectsList = [
+            { label: 'No Project', value: 0 },
+          ];
+        }
+      },
+      error: (err) => {
+        console.error('Error fetching manager dropdown data:', err);
+        this.clientDropdownList = [
+          { label: 'No Client', value: 0 },
+        ];
+        this.projectsList = [
+          { label: 'No Project', value: 0 },
+        ];
+      },
+    });
+  }
+  // manager access employee
+  getResourceDetailsByManagerId() {
+    const EmployeeId = this.empinfo?.employeeId;
+    this.subscription = this.http.getData(`Timesheet/get-resources?employeeId=${EmployeeId}`).subscribe({
+      next: (res: any) => {
+        if (res?.success) {
+          this.employeeiddetails = res.data.filter((emp: any) => emp.id !== EmployeeId).map((emp: any) => ({
+            ...emp,
+            fullName: emp.fusionEmpId ? `${emp.fusionEmpId} - ${emp.name}` : emp.name,
+            key: 'team'
+          }));
+          // Correct key mapping
+          this.employeeData = this.employeeiddetails.map((e: any) => ({
+            id: e.id,
+            name: e.fullName
+          }));
+        }
+      },
+      error: (err: any) => console.error(err)
+    });
+  }
+
   // get all client
   getClientsData(): void {
-    this.http.getData(`Client/GetAll?status=Active`).pipe(takeUntil(this.destroy$)).subscribe({
+    this.http.getData(`Client/GetAll?status=Active,Inactive`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.loading = false;
         if (Array.isArray(res?.data)) {
@@ -158,7 +315,7 @@ export class UtilizationReportComponent {
                   projectName: 'No Project',
                   isNoClientProject: true,
                 },
-              ]
+              ],
             });
           }
           // 🔹 Create dropdown list
@@ -177,74 +334,208 @@ export class UtilizationReportComponent {
       }
     });
   }
-  // client onchange call method
-  onClientChange(event: any): void {
-    const clientId = event.value;
-    this.UtilizationReportForm.patchValue({ projectId: null }); // reset project
-    this.UtilizationReportForm.get('projectId')?.enable();
-    this.UtilizationReportForm.get('employeid')?.disable();
-    this.UtilizationReportForm.get('employeid')?.setValue([]);
-    this.getProjectsByClientId(clientId);
-  }
-  // get project by client onchange
-  getProjectsByClientId(clientId: number): void {
-    //If "No Client" selected, show only "No Project"
-    if (clientId === 0) {
-      this.projectsList = [
-        { label: 'No Project', value: 0 }
-      ]; return;
-    }
 
-    if (!clientId) return;
+    // adin access all project
+  getProjectsData() {
     this.loading = true;
-    this.http.getData(`Project?clientId=${clientId}&status=Active`).pipe(takeUntil(this.destroy$)).subscribe({
+    this.http.getData('v2/Project?status=Active').pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
-        this.loading = false;
-        if (Array.isArray(res?.data)) {
-          this.projectsList = res.data.map((project: any) => ({
-            label: project.projectName,
-            value: project.projectId
-          }));
-        } else {
-          this.projectsList = [];
+        this.projectsData = res?.data ?? [];
+        // Add "No Project" only if not already present
+        const noProjectExists = this.projectsData?.some((p: any) => p.projectId === 0);
+        if (!noProjectExists) {
+          this.projectsData.unshift({
+            projectId: 0,
+            projectName: 'No Project',
+            clientId: 0,
+            isNoClientProject: true,
+          });
         }
+        // Map for dropdown
+        this.projectsList = this.projectsData.map((project: any) => ({
+          label: project.projectName,
+          value: project.projectId,
+        }));
       },
       error: (err) => {
+        console.error('Error fetching projects data:', err);
         this.loading = false;
-        console.error('Error fetching projects:', err);
+        this.projectsData = [];
+        this.projectsList = [];
+      },
+      complete: () => {
+        this.loading = false;
       }
     });
   }
+    // admin access all employee
+  getEmployeeData() {
+    const loggedInUser = this.authService.getToken();
+    const status = 'Active, Trainee Active, Active Contract'
+    this.subscription = this.http.getData(`Employeedata/v3/Getallemployees?statuses=${status}`).subscribe({
+      next: (data: any) => {
+        const employeedata = (data || [])
+          .map((employee: any) => {
+            const firstName = employee.firstName ? employee.firstName.trim() : '';
+            const middleName = employee.middleName ? employee.middleName.trim() : '';
+            const lastName = employee.lastName ? employee.lastName.trim() : '';
+            return {
+              ...employee,
+              firstName,
+              fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${firstName} ${middleName ? middleName + ' ' : ''}${lastName}`.trim(),
+            };
+          })
+        // Store all employees (including “All Employees” at the top)
+        this.employeeiddetails = [
+          ...employeedata
+        ];
 
+        // Step 2: Map for the dropdown component
+        this.employeeData = this.employeeiddetails.map((e: any) => ({
+          id: e.employeeId,
+          name: e.fullName
+        }));
+        // (Optional) log to verify
+        console.log('Employee dropdown data:', this.employeeData);
+      },
+      error: (reason: any) => {
+        console.error('Error fetching employees:', reason);
+        this.employeeData = [];
+      },
+    });
+  }
+
+ // onclient change method
+  onClientChange(event: any): void {
+    const clientIds = Array.isArray(event.value) ? event.value : [];
+    const oldProjectIdsRaw = this.UtilizationReportForm.get('projectId')?.value;
+    const oldProjectIds = Array.isArray(oldProjectIdsRaw) ? oldProjectIdsRaw : oldProjectIdsRaw ? [oldProjectIdsRaw] : [];
+    this.UtilizationReportForm.get('employeid')?.setValue([]);
+    this.getProjectsByClientId(clientIds, oldProjectIds);
+    if (!clientIds || clientIds.length === 0) {
+      this.projectsList = [];
+      this.UtilizationReportForm.get('phases')?.setValue([]);
+      this.UtilizationReportForm.get('phases')?.disable();
+      this.UtilizationReportForm.patchValue({ projectId: [] }); // Clear selected projects
+      return;
+    }
+  }
+  // client onchange get project
+  getProjectsByClientId(clientIds: number[], oldProjectIds?: number[]): void {
+    // after this.projectsList is filled
+    //  CASE 4: ALL deselected → show ALL projects
+    if (!clientIds || clientIds.length === 0) {
+      this.loadAllProjects();  // <-- New helper function
+      return;
+    }
+    const hasNoClient = clientIds.includes(0);
+    const realClientIds = clientIds.filter(id => id !== 0);
+    //  CASE 1: ONLY "No Client"
+    if (hasNoClient && realClientIds.length === 0) {
+      this.projectsList = [
+        { label: "No Project", value: 0 }
+      ];
+      return;
+    }
+    //  CASE 2 & 3: Fetch all real client project
+    this.loading = true;
+    this.http.getData(`v2/Project?clientId=${realClientIds.join(',')}&status=Active`).pipe(takeUntil(this.destroy$)).subscribe({
+        next: (res: any) => {
+          this.loading = false;
+          let projectList = [];
+          if (Array.isArray(res?.data)) {
+            projectList = res.data.map((p: any) => ({
+              label: p.projectName,
+              value: p.projectId
+            }));
+          }
+          //  CASE 3: Include No Project if 0 was selected WITH others
+          if (hasNoClient) {
+            projectList.unshift({ label: "No Project", value: 0 });
+          }
+          this.projectsList = projectList;
+          //  restore selected project AFTER list updated
+          const validSelectedProjects = (oldProjectIds || []).filter(id =>
+            this.projectsList.some(p => p.value === id)
+          );
+          this.UtilizationReportForm.patchValue({
+            projectId: validSelectedProjects.length ? validSelectedProjects : []
+          });
+        },
+        error: () => {
+          this.loading = false;
+        }
+      });
+  }
+  loadAllProjects() {
+    this.loading = true;
+    this.http.getData(`v2/Project?status=Active`).pipe(takeUntil(this.destroy$)).subscribe({ next: (res: any) => {
+          this.loading = false;
+          if (Array.isArray(res?.data)) {
+            this.projectsList = res.data.map((p: any) => ({
+              label: p.projectName,
+              value: p.projectId
+            }));
+          } else {
+            this.projectsList = [];
+          }
+        },
+        error: () => {
+          this.loading = false;
+        }
+      });
+  }
 
   /** When project selected */
-  onProjectChange(event: any) {
-    const selectedProjectId = event.value;
-    this.employeeData = [];
-    this.UtilizationReportForm.get('employeid')?.setValue([]);
-    if (selectedProjectId && selectedProjectId !== 0) {
-      this.projectId = selectedProjectId;
-      this.UtilizationReportForm.get('employeid')?.enable();
-      this.getAllActiveEmployees();
-    } else {
+   onProjectChange(event: any) {
+    const selectedProjectIds = event.value;
+    const selectedProjects: number[] = this.UtilizationReportForm.get('projectId')?.value || [];
+    // ---- CASE 1: No project selected ----
+    if (selectedProjects.length === 0) {
+      this.disablePhaseDropdown();
+      this.UtilizationReportForm.get('phases')?.setValue([]);
+      this.getEmployeeData();   // ← CALL THIS METHOD
+      return;
+    }
+    // ---- CASE 2: Only "No Project" selected (value = 0) ----
+    if (selectedProjects.length === 1 && selectedProjects[0] === 0) {
+      // Clear previous employee list + selected employees
+      this.employeeData = [];
+      this.UtilizationReportForm.get('employeid')?.setValue([]);
+      // Clear phases also + disable
+        this.phasesData = []; 
+      this.UtilizationReportForm.get('phases')?.setValue([]);
+      this.enablePhaseDropdown();
+      // Fetch team manager details
       this.getTeamManagersDetails();
-      this.projectId = 0;
-      // Wait briefly to ensure getTeamManagersDetails() completes (optional)
+      // Load fresh employee list ONLY from getTeamManagersDetails()
       setTimeout(() => {
         if (this.getEmployeeInfo?.length) {
           this.employeeData = this.getEmployeeInfo.map((emp: any) => ({
             id: emp.employeeId,
             name: emp.fullName
           }));
-          this.UtilizationReportForm.get('employeid')?.enable();
         }
       }, 300);
+      return;
     }
+    // ---- CASE 3: Real projects selected ----
+    this.enablePhaseDropdown();
+    this.projectId = selectedProjectIds;
+      this.getPhaseData();
+    this.getAllActiveEmployees();
+  }
+  enablePhaseDropdown() {
+    this.UtilizationReportForm.get('phases')?.enable();
+  }
+  disablePhaseDropdown() {
+    this.UtilizationReportForm.get('phases')?.disable();
   }
   /** Get all active employees for selected project */
   getAllActiveEmployees() {
-    this.http.getData(`ProjectResource?status=Active&entityType=project&entityRefId=${this.projectId}&isDistinct=${this.isDistinct}`)
-      .pipe(takeUntil(this.destroy$)).subscribe({
+    this.http.getData(`v2/ProjectResource?status=Active&entityType=project&entityRefId=${this.projectId}&isDistinct=${this.isDistinct}`)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
         next: (res: any) => {
           // this.employeeData = res?.data?.map((x: any) => x.employee) ?? [];
            this.employeeData =
@@ -265,7 +556,8 @@ export class UtilizationReportComponent {
       });
   }
 
-  // no project select call method to get resouces
+  
+  // if no project selected to get resouces
   getTeamManagersDetails() {
     const EmployeeId = this.empinfo.employeeId;
     this.subscription = this.http.getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`).subscribe({
@@ -286,15 +578,57 @@ export class UtilizationReportComponent {
       }
     });
   }
+    phasesData: any[] = [];
+      getPhaseData() {
+  const previousSelected = this.UtilizationReportForm.get('phases')?.value || [];
+  const params = {
+    projectId: this.projectId.join(','), 
+    status: 'yet to start,in progress,extended'
+  };
+  this.subscription = this.http.getDataIncludeParams('ProjectPhases/list', params).subscribe({
+      next: (data: any) => {
+        // Extract all phases
+        this.phasesData = data?.data?.map((x: any) => ({
+          phaseId: x.phaseId,
+          projectId: x.project?.projectId,      // if you want project-wise grouping
+          phaseName: x.phaseName,
+          code: x.project?.meta?.graphData?.code ?? ''
+        })) ?? [];
+        // Remove duplicate phases
+        this.phasesData = this.removeDuplicatePhases(this.phasesData);
+        this.phasesData = this.phasesData.map((p: any) => ({
+        ...p,label: p.code ? `${p.phaseName} (${p.code})` : p.phaseName
+      }));
+        // Keep previously selected phases if still present
+        const validSelections = previousSelected.filter((selectedId: any) =>
+          this.phasesData.some((p: any) => p.phaseId === selectedId)
+        );
+        this.UtilizationReportForm.get('phases')?.setValue(validSelections);
+        this.loading = false;
+      },
+      error: () => {
+        this.loading = false;
+        this.phasesData = [];
+        this.UtilizationReportForm.get('phases')?.setValue([]);
+      }
+    });
+}
+removeDuplicatePhases(list: any[]) {
+    const map = new Map();
+    list.forEach(item => map.set(item.phaseId, item));
+    return Array.from(map.values());
+  }
+
   // generate,export button for calling method for show/hide
   get isLeaveGenerateDisabled(): boolean {
-    const { clientId, projectId, employeid, dateRange, billable } = this.UtilizationReportForm.value;
+    const { clientId, projectId, employeid, dateRange, billable,phases } = this.UtilizationReportForm.value;
     const hasClient = clientId !== null && clientId !== undefined;
     const hasProject = projectId !== null && projectId !== undefined;
     const hasDateRange = dateRange && (dateRange.startDate || dateRange.endDate);
     const hasBillable = billable !== null && billable !== undefined;
     const hasEmployeid = employeid !== null && employeid !== undefined;
-    return !(hasClient || hasProject || hasDateRange || hasBillable || hasEmployeid);
+     const hasphase = phases !== null && phases !== undefined;
+    return !(hasClient || hasProject || hasDateRange || hasBillable || hasEmployeid || hasphase);
   }
   // payload for utilization report
   buildTimesheetReportParams() {
@@ -326,6 +660,9 @@ export class UtilizationReportComponent {
     }
     if (formValue.employeid !== null && formValue.employeid !== undefined) {
       params.EmployeeIds = formValue.employeid;
+    }
+     if (formValue.phases) {
+      params.PhaseIds = formValue.phases;
     }
     if (formValue.billable?.value) params.billable = formValue.billable.value;
     return params;

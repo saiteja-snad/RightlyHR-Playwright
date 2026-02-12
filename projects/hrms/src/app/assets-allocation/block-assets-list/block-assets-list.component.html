@@ -1,7 +1,7 @@
 <div class="custom-main-component-container">
   <div class="input-group custom-search mb-3">
     <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
-    <input type="search" class="form-control custom-search-input" placeholder="Search by asset category / asset sub category / serial number"
+    <input type="search" class="form-control custom-search-input" placeholder= 'Search by asset category / asset sub category / serial number'
      aria-label="Username" [(ngModel)]="searchQuery" (ngModelChange)="onSearchChange($event)" aria-describedby="basic-addon1">
   </div>
 
@@ -9,18 +9,18 @@
     @if(!loading){
     <table class="w-100">
       <thead>
-        <th>Asset Category</th>
-        <th>Asset Sub Category</th>
-        <th>Asset Model</th>
-        <th>Serial Number</th>
-        <th>Asset Status</th>
-        <th>Purchase Date</th>
-        <th>Reason</th>
-        <th>Location </th>
-        <th>Sub Location </th>
+        <th>{{'Asset Category'  | translate }}</th>
+       <th>{{'Asset Sub Category '  | translate }}</th>
+         <th>{{ 'Asset Model' | translate }}</th>
+         <th>{{ 'Serial Number' | translate }}</th>
+        <th>{{ 'Asset Status' | translate }}</th>
+        <th>{{ 'Purchase Date' | translate }}</th>
+        <th>{{ 'Reason' | translate }}</th>
+        <th>{{ 'Location' | translate }}</th>
+        <th>{{ 'Sub Location' | translate }}</th>
         @if(
         rbac.allowedToAccess('Block View Asset Details.view') || rbac.allowedToAccess('Block Update Asset Details.view') || rbac.allowedToAccess('Block Mark as Available Asset.view')){
-        <th class="text-center">Action</th>
+        <th class="text-center">{{'Action'| translate}}</th>
         }
       </thead>
       <tbody>
@@ -75,7 +75,7 @@
                   <li>
                     <a class="dropdown-item"
                       (click)="openModal(addassetes); storeassetid = asset.id;  viewupdate(asset);selectedAsset = asset">
-                      Update
+                      {{'Update' | translate }}
                     </a>
                   </li>
                   }  
@@ -142,7 +142,7 @@
         <div class="row ">
           <!-- Location Field -->
           <div class=" col-md-6 mb-2">
-            <label for="location" class="form-label custom-label mb-2 custom-label mb-2">Location<span
+            <label for="location" class="form-label custom-label mb-2 custom-label mb-2">{{'Location' | translate }}<span
                 class="error-msg">*</span></label>
             <input type="text" class="form-control custom-input custom-input" placeholder="Please enter location"
               formControlName="locationId">
@@ -153,7 +153,7 @@
 
           <!-- Sub Location Field -->
           <div class="col-md-6 mb-2">
-            <label for="subLocation" class="form-label custom-label mb-2 custom-label mb-2">Sub Location<span
+            <label for="subLocation" class="form-label custom-label mb-2 custom-label mb-2">{{'Sub Location' | translate }}<span
                 class="error-msg">*</span></label>
             <input type="text" class="form-control custom-input custom-input" placeholder="Please enter sub location"
               formControlName="subLocationId">
@@ -166,7 +166,7 @@
 
           <!-- Asset Category -->
           <div class="col-md-6 mb-2">
-            <label for="assetCategory" class="form-label custom-label mb-2 custom-label mb-2">Asset Category<span
+            <label for="assetCategory" class="form-label custom-label mb-2 custom-label mb-2">{{'Asset Category' | translate }}<span
                 class="error-msg">*</span></label>
             <div class="custom-p-select-content">
               <p-select [options]="assetCategorys" optionLabel="name" optionValue="id" formControlName="assetCategory"
@@ -182,8 +182,8 @@
 
           <!-- Asset Sub Category -->
           <div class="col-md-6 mb-2">
-            <label for="assetSubCategorys" class="form-label custom-label mb-2 custom-label mb-2">Asset Sub
-              Category<span class="error-msg">*</span></label>
+            <label for="assetSubCategorys" class="form-label custom-label mb-2 custom-label mb-2">{{'Asset Sub Category' | translate }}
+              <span class="error-msg">*</span></label>
 
             <div class="custom-p-select-content">
               <p-select [options]="assetSubCategory" optionLabel="name" optionValue="name"
@@ -198,7 +198,7 @@
 
           <!-- ASSET Model  -->
           <div class="col-md-6 mb-2">
-            <label for="assetModel" class="form-label custom-label mb-2 custom-label mb-2">Asset Model<span
+            <label for="assetModel" class="form-label custom-label mb-2 custom-label mb-2">{{'Asset Model' | translate }}<span
                 class="error-msg">*</span></label>
             <input id="assetModel"
               (keypress)="formValidation.restrictInputAllowAlphaNumericAndCommonSpecialChars($event)"
@@ -213,7 +213,7 @@
           </div>
 
           <div class="col-md-6  mb-2">
-            <label for="serialnumber" class="form-label custom-label mb-2 custom-label mb-2">Serial Number<span
+            <label for="serialnumber" class="form-label custom-label mb-2 custom-label mb-2">{{'Serial Number' | translate }}<span
                 class="error-msg">*</span></label>
             <input id="serialnumber" formControlName="serialnumber"
               (keypress)="formValidation.restrictInputAllowAlphaNumericAndCommonSpecialChars($event)"
@@ -228,7 +228,7 @@
           </div>
 
           <div class="col-md-6 mb-2">
-            <label for="vendordetailes" class="form-label custom-label mb-2 custom-label mb-2">Vendor Name<span
+            <label for="vendordetailes" class="form-label custom-label mb-2 custom-label mb-2">{{'Vendor Name' | translate}}<span
                 class="error-msg">*</span></label>
             <div class="custom-p-select-content">
               <p-select [options]="vendor" optionLabel="name" optionValue="id" formControlName="vendordetailes"
@@ -240,7 +240,7 @@
           </div>
 
           <div class="col-md-6 mb-2">
-            <label for="purchasedate" class="form-label custom-label mb-2 custom-label mb-2">Purchase Date<span
+            <label for="purchasedate" class="form-label custom-label mb-2 custom-label mb-2">{{'Purchase Date' | translate }}<span
                 class="error-msg">*</span></label>
             <input id="purchasedate" type="date" formControlName="purchasedate" onkeypress="return false;"
               class="form-control custom-input custom-input" [min]="minpurchesDate" [max]="maxpurchesDate">
@@ -256,14 +256,14 @@
                   <input class="form-check-input" type="checkbox" id="flexSwitchCheckCheckedIsPrimary"
                     [checked]="isToggledWarranty" (change)="onToggleChangeWarranty($event)" />
                 </div>
-                <label for="isPrimary" class="form-label custom-label mb-2 custom-label mb-0">Warranty Details</label>
+                <label for="isPrimary" class="form-label custom-label mb-2 custom-label mb-0">{{'Warranty Details' | translate }}</label>
               </div>
             </div>
           </div>
 
           <div class="col-md-6 mb-2">
-            <label for="warrantystartdate" class="form-label custom-label mb-2 custom-label mb-2">Warranty Start
-              Date<span class="error-msg" *ngIf="isToggledWarranty">*</span></label>
+            <label for="warrantystartdate" class="form-label custom-label mb-2 custom-label mb-2">{{'Warranty Start Date' | translate }}
+              <span class="error-msg" *ngIf="isToggledWarranty">*</span></label>
             <input id="warrantystartdate" type="date" onkeypress="return false;" formControlName="warrantystartdate"
               class="form-control custom-input custom-input" [min]="assetForm.get('purchasedate')?.value"
               (change)="onStartDateChange()">
@@ -277,8 +277,8 @@
           </div>
           <!-- Warranty date end -->
           <div class="col-md-6 mb-2">
-            <label for="warrantyenddate" class="form-label custom-label mb-2 custom-label mb-2">Warranty Expiry
-              Date<span class="error-msg" *ngIf="isToggledWarranty">*</span></label>
+            <label for="warrantyenddate" class="form-label custom-label mb-2 custom-label mb-2">{{'Warranty Expiry Date' | translate }}
+              <span class="error-msg" *ngIf="isToggledWarranty">*</span></label>
             <input id="warrantyenddate" type="date" onkeypress="return false;" formControlName="warrantyenddate"
               class="form-control custom-input custom-input" [min]="assetForm.get('warrantystartdate')?.value"
               (change)="checkDateMismatch()">
@@ -298,7 +298,7 @@
                   <input class="form-check-input" type="checkbox" id="flexSwitchCheckCheckedIsPrimary"
                     [checked]="isToggledamc" (change)="onToggleChangeamc($event)" />
                 </div>
-                <label for="isPrimary" class="form-label custom-label mb-2 custom-label mb-0">AMC Details</label>
+                <label for="isPrimary" class="form-label custom-label mb-2 custom-label mb-0">{{'AMC Details' | translate }}</label>
               </div>
             </div>
           </div>
@@ -307,7 +307,7 @@
           <!-- AMC Start Date -->
           <div class="col-md-6 mb-2">
             <label for="amcstartdate" class="form-label custom-label mb-2 custom-label mb-2">
-              AMC Start Date
+               {{'AMC Start Date' | translate }}
               <span class="error-msg" *ngIf="isToggledamc">*</span>
             </label>
             <input id="amcstartdate" type="date" onkeypress="return false;" formControlName="amcstartdate"
@@ -325,7 +325,7 @@
           <!-- AMC Expiry Date -->
           <div class="col-md-6 mb-2 ">
             <label for="amcenddate" class="form-label custom-label mb-2 custom-label mb-2">
-              AMC Expiry Date
+             {{'AMC Expiry Date' | translate }}
               <span class="error-msg" *ngIf="isToggledamc">*</span>
             </label>
             <input id="amcenddate" type="date" formControlName="amcenddate"
@@ -340,7 +340,7 @@
           </div>
 
           <div class="col-md-6 mb-2">
-            <label for="vendordetailes" class="form-label custom-label mb-2 custom-label mb-2">AMC Vendor Name<span
+            <label for="vendordetailes" class="form-label custom-label mb-2 custom-label mb-2">{{'AMC Vendor Name' | translate }}<span
                 class="error-msg" *ngIf="isToggledamc">*</span></label>
             <input type="text" formControlName="vendorname" class="form-control custom-input custom-input"
               (keypress)="formValidation.restrictInputAllowAlphaNumericAndCommonSpecialChars($event)" name="vendorname"
@@ -353,7 +353,7 @@
             </div>
           </div>
           <div class="col-md-6 mb-2">
-            <label for="vendor" class="form-label custom-label mb-2 custom-label mb-2">AMC Vendor Contact<span
+            <label for="vendor" class="form-label custom-label mb-2 custom-label mb-2">{{'AMC Vendor Contact' | translate }}<span
                 class="error-msg" *ngIf="isToggledamc">*</span></label>
             <input type="text" formControlName="contactnumber" (keypress)="formValidation.restrictAlphabets($event)"
               (paste)="formValidation.validatePaste($event)" autocomplete="off"

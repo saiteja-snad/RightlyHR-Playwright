@@ -82,7 +82,7 @@
                   <li>
                     <a class="dropdown-item"
                       (click)="openModal(addassetes); storeassetid = asset.id;  viewupdate(asset);selectedAsset = asset">
-                      Update
+                      {{'Update'|translate}}
                     </a>
                   </li>
                   }
@@ -433,36 +433,36 @@
       <form autocomplete="off" [formGroup]="inactiveForm" (ngSubmit)="postinactive(inactiveForm, storeassetid)">
         <div class="row">
           <div class="col-md-12 mb-2">
-            <label for="Department" class="form-label custom-label mb-2">Reason for Inactive <span
+            <label for="Department" class="form-label custom-label mb-2">{{'Reason for Inactive'|translate}} <span
                 class="text-danger">*</span></label>
             <div class="custom-p-select-content">
               <p-select [options]="assetinactivedropdrown" optionLabel="value" optionValue="value"
-                formControlName="assetsstatatues" placeholder="Please select reason"
+                formControlName="assetsstatatues" placeholder="{{'Please select reason'|translate}}"
                 class="form-select custom-select"></p-select>
             </div>
             <div class="error-msg"
               *ngIf="inactiveForm.controls['assetsstatatues'].invalid && (inactiveForm.controls['assetsstatatues'].touched || inactiveForm.controls['assetsstatatues'].dirty)">
               <span class="error-msg" *ngIf="inactiveForm.controls['assetsstatatues'].errors?.['required']">
-                Reason is required</span>
+                {{'Reason is required'|translate}}</span>
             </div>
           </div>
 
           <div class="col-md-12  mb-2">
             <label class="form-label custom-label mb-2">
-              Additional Comments
+              {{'Additional Comments'|translate}}
             </label>
             <div class="textarea-container">
               <textarea class="form-control custom-input" formControlName="reason"
-                placeholder="Please enter additional comments" maxlength="250" rows="3"></textarea>
+                placeholder="{{'Please enter additional comments'|translate}}" maxlength="250" rows="3"></textarea>
               <!-- Error messages -->
               <div>
                 <div class="error-msg"
                   *ngIf="inactiveForm.get('reason')?.invalid && inactiveForm.get('reason')?.touched">
                   <div *ngIf="inactiveForm.get('reason')?.errors?.['required']">
-                    Additional Comments is required.
+                    {{'Additional Comments is required.'|translate}}
                   </div>
                   <div *ngIf="inactiveForm.get('reason')?.errors?.['maxlength']">
-                    Additional Comments not exceed 250 characters.
+                    {{'Additional Comments not exceed 250 characters.'|translate}}
                   </div>
                 </div>
               </div>
@@ -476,8 +476,8 @@
 
         <div class="custom-modal-footer">
           <button type="button" class="custom-btn btn-secondary "
-            (click)="openModal(inativeconfromation)">Cancel</button>
-          <button type="submit" class="custom-btn btn-primary" [disabled]="inactiveForm.invalid">Submit</button>
+            (click)="openModal(inativeconfromation)">{{'Cancel'|translate}}</button>
+          <button type="submit" class="custom-btn btn-primary" [disabled]="inactiveForm.invalid">{{'Submit'|translate}}</button>
         </div>
       </form>
     </div>
@@ -488,14 +488,14 @@
   <div class="result-popup-content" ngbAutofocus>
     <div>
     <app-confirmation-icon />
-      <p class="confirmation-text mb-4"> Are you sure you want to cancel?</p>
+      <p class="confirmation-text mb-4"> {{'Are you sure you want to cancel?'|translate}}</p>
     </div>
     <div class="custom-modal-footer">
       <button type="button" class="custom-btn btn-secondary" (click)="model.dismiss()">
-        No
+        {{'No'|translate}}
       </button>
       <button type="submit" class="custom-btn btn-primary" (click)="conformationpoppup();model.dismiss()">
-        Yes
+        {{'Yes'|translate}}
       </button>
     </div>
   </div>
@@ -505,7 +505,7 @@
   <div class="custom-main-popup-container" ngbAutofocus>
     <div class="custom-poup-header-content popup-header-border">
       <div>
-        <p class="popup-heading mb-0">Release an Asset</p>
+        <p class="popup-heading mb-0">{{'Release an Asset'|translate}}</p>
       </div>
       <div>
         <a (click)="modal.dismiss();releaseform.reset();openModal(relaseconformation)"><img src="icons/close.png"
@@ -517,35 +517,35 @@
       <form autocomplete="off" [formGroup]="releaseform" (ngSubmit)="updaterealse(releaseform,storeassetid)">
         <div class="row">
           <div class="col-md-12 mb-3">
-            <label for="Department" class="form-label custom-label mb-2">Reason for Release <span
+            <label for="Department" class="form-label custom-label mb-2">{{'Reason for Release'|translate}} <span
                 class="text-danger">*</span></label>
             <div class="custom-p-select-content">
               <p-select [options]="assetsrealsedropdown" optionLabel="value" optionValue="value"
-                formControlName="assetsstatatue" placeholder="Please select reason"
+                formControlName="assetsstatatue" placeholder="{{'Please select reason'|translate}}"
                 class="form-select custom-select"></p-select>
             </div>
             <div class="error-msg"
               *ngIf="releaseform.controls['assetsstatatue'].invalid && (releaseform.controls['assetsstatatue'].touched || releaseform.controls['assetsstatatue'].dirty)">
               <span class="error-msg" *ngIf="releaseform.controls['assetsstatatue'].errors?.['required']">
-                Reason is required</span>
+                {{'Reason is required'|translate}}</span>
             </div>
           </div>
 
           <div class="col-md-12 mb-3">
             <label class="form-label custom-label mb-2 ">
-              Additional Comments
+              {{'Additional Comments'|translate}}
             </label>
             <div class="textarea-container">
               <textarea class="form-control custom-input" formControlName="reason"
-                (keypress)="formValidation.blockLeadingSpace($event)" placeholder="Please enter additional comments"
+                (keypress)="formValidation.blockLeadingSpace($event)" placeholder="{{'Please enter additional comments'|translate}}"
                 maxlength="250" rows="3"></textarea>
               <div>
                 <div class="error-msg" *ngIf="releaseform.get('reason')?.invalid && releaseform.get('reason')?.touched">
                   <div *ngIf="releaseform.get('reason')?.errors?.['required']">
-                    Additional Comments is required.
+                    {{'Additional Comments is required.'|translate}}
                   </div>
                   <div *ngIf="releaseform.get('reason')?.errors?.['maxlength']">
-                    Additional Comments not exceed 250 characters.
+                    {{'Additional Comments not exceed 250 characters.'|translate}}
                   </div>
                 </div>
               </div>
@@ -557,8 +557,8 @@
           </div>
         </div>
         <div class="custom-modal-footer">
-          <button type="button" class="custom-btn btn-secondary" (click)="openModal(relaseconformation)">Cancel</button>
-          <button type="submit" class="custom-btn btn-primary " [disabled]="releaseform.invalid">Submit</button>
+          <button type="button" class="custom-btn btn-secondary" (click)="openModal(relaseconformation)">{{'Cancel'|translate}}</button>
+          <button type="submit" class="custom-btn btn-primary " [disabled]="releaseform.invalid">{{'Submit'|translate}}</button>
         </div>
       </form>
     </div>
@@ -569,14 +569,14 @@
   <div class="result-popup-content" ngbAutofocus>
     <div>
       <img src="icons/reject.png" alt="failure icon" class="confirmation-icon mb-4">
-      <p class="confirmation-text mb-4"> Are you sure you want to cancel ?</p>
+      <p class="confirmation-text mb-4"> {{'Are you sure you want to cancel ?'|translate}}</p>
     </div>
     <div class="custom-modal-footer">
       <button type="button" class="custom-btn btn-secondary" (click)="model.dismiss()">
-        No
+        {{'No'|translate}}
       </button>
       <button type="submit" class="custom-btn btn-primary" (click)="resetassiginform();model.dismiss()">
-        Yes
+        {{'Yes'|translate}}
       </button>
     </div>
   </div>
@@ -587,7 +587,7 @@
   <div class="custom-main-popup-container" ngbAutofocus>
     <div class="d-flex justify-content-between popup-header-border p-3">
       <div class="pt-2">
-        <p class="popup-heading mb-0">Reallocate Asset</p>
+        <p class="popup-heading mb-0">{{'Reallocate Asset'|translate}}</p>
       </div>
       <div>
         <a (click)="modal.dismiss();assiginForm.reset();openModal(updateconformation)"><img src="icons/close.png"
@@ -599,31 +599,31 @@
       <form autocomplete="off" [formGroup]="reassiginForm" (ngSubmit)="updatereallowed(reassiginForm,storeassetid)">
         <div class="row">
           <div class="col-md-12 mb-3">
-            <label for="asseTID" class="form-label custom-label mb-2">Asset ID<span class="text-danger">*</span></label>
+            <label for="asseTID" class="form-label custom-label mb-2">{{'Asset ID'|translate}}<span class="text-danger">*</span></label>
             <input id="assetID" formControlName="assetid" class="form-control custom-input"
-              placeholder="Enter asset ID">
+              placeholder="{{'Enter asset ID'|translate}}">
             <div *ngIf="reassiginForm.get('assetid')?.hasError('required') && reassiginForm.get('assetid')?.touched">
-              <div class="error-msg">Asset ID is required</div>
+              <div class="error-msg">{{'Asset ID is required'|translate}}</div>
             </div>
           </div>
 
           <div class="col-md-12 mb-3 ">
-            <label for="asseTID" class="form-label custom-label mb-2">Select Employee ID<span
+            <label for="asseTID" class="form-label custom-label mb-2">{{'Select Employee ID'|translate}}<span
                 class="text-danger">*</span></label>
             <div class="custom-p-select-content">
               <p-select [options]="employeeiddetails" optionLabel="employeeName" [filter]="true"
                 [resetFilterOnHide]="true" filterBy="employeeName" (onChange)="onEmployeeSelect($event)"
-                formControlName="mReportingto" placeholder="Please select employee"
+                formControlName="mReportingto" placeholder="{{'Please select employee'|translate}}"
                 class="form-select custom-select"></p-select>
             </div>
             <div *ngIf="reassiginForm.get('mReportingto')?.invalid && reassiginForm.get('mReportingto')?.touched">
-              <div class="error-msg">Employee ID is required</div>
+              <div class="error-msg">{{'Employee ID is required'|translate}}</div>
             </div>
           </div>
           <div class="d-flex justify-content-end gap-3">
             <button type="button" class="custom-btn btn-secondary mt-3"
-              (click)="openModal(updateconformation)">Cancel</button>
-            <button type="submit" class="custom-btn btn-primary mt-3" [disabled]="reassiginForm.invalid">Submit</button>
+              (click)="openModal(updateconformation)">{{'Cancel'|translate}}</button>
+            <button type="submit" class="custom-btn btn-primary mt-3" [disabled]="reassiginForm.invalid">{{'Submit'|translate}}</button>
           </div>
         </div>
       </form>
@@ -635,14 +635,14 @@
   <div class="result-popup-content" ngbAutofocus>
     <div>
       <img src="icons/reject.png" alt="failure icon" class="confirmation-icon mb-4">
-      <p class="confirmation-text mb-4"> Are you sure you want to cancel?</p>
+      <p class="confirmation-text mb-4"> {{'Are you sure you want to cancel?'|translate}}</p>
     </div>
     <div class="d-flex justify-content-center gap-3 mt-4">
       <button type="button" class="custom-btn btn-secondary" (click)="model.dismiss()">
-        No
+        {{'No'|translate}}
       </button>
       <button type="submit" class="custom-btn btn-primary" (click)="resetassiginform();model.dismiss()">
-        Yes
+        {{'Yes'|translate}}
       </button>
     </div>
   </div>
@@ -654,7 +654,7 @@
       <img src="icons/conformation.png" alt="failure icon" class="confirmation-icon mb-2  pt-4">
     </div>
     <div class="text-center">
-      <h5 class="confirmation-text mb-2"> Are you sure you want to Mark as Maintenance?</h5>
+      <h5 class="confirmation-text mb-2"> {{'Are you sure you want to Mark as Maintenance?'|translate}}</h5>
     </div>
     <div class="custom-main-popup-content  p-4">
       <form autocomplete="off" [formGroup]="undermainteenceForm"
@@ -662,36 +662,36 @@
         <div class="row">
 
           <div class="col-md-12 mb-3">
-            <label for="Department" class="form-label custom-label mb-2">Select Reason <span
+            <label for="Department" class="form-label custom-label mb-2">{{'Select Reason'|translate}} <span
                 class="text-danger">*</span></label>
             <div class="custom-p-select-content">
               <p-select [options]="assetsundermaintanceDropdown" optionLabel="value" optionValue="value"
-                formControlName="assetsstatatues" placeholder="Please select reason"
+                formControlName="assetsstatatues" placeholder="{{'Please select reason'|translate}}"
                 class="form-select custom-select"></p-select>
             </div>
             <div class="error-msg"
               *ngIf="undermainteenceForm.controls['assetsstatatues'].invalid && (undermainteenceForm.controls['assetsstatatues'].touched || undermainteenceForm.controls['assetsstatatues'].dirty)">
               <span class="error-msg" *ngIf="undermainteenceForm.controls['assetsstatatues'].errors?.['required']">
-                Reason is required</span>
+                {{'Reason is required'|translate}}</span>
             </div>
 
           </div>
           <div class="col-12 mb-2">
             <label for="comments" class="form-label custom-label mb-2">
-              Additional Comments
+              {{'Additional Comments'|translate}}
             </label>
             <div class="textarea-container">
               <textarea class="form-control custom-input" formControlName="comments"
-                placeholder="Please enter additional comments" maxlength="250" rows="3"></textarea>
+                placeholder="{{'Please enter additional comments'|translate}}" maxlength="250" rows="3"></textarea>
 
               <div>
                 <div class="error-msg"
                   *ngIf="undermainteenceForm.get('comments')?.invalid && undermainteenceForm.get('comments')?.touched">
                   <div *ngIf="undermainteenceForm.get('comments')?.errors?.['required']">
-                    Additional Comments is required
+                    {{'Additional Comments is required'|translate}}
                   </div>
                   <div *ngIf="undermainteenceForm.get('comments')?.errors?.['maxlength']">
-                    Additional Comments must not exceed 250 characters
+                    {{'Additional Comments must not exceed 250 characters'|translate}}
                   </div>
                 </div>
               </div>
@@ -703,23 +703,23 @@
           </div>
 
           <div class="col-md-6 mb-2">
-            <label for="startdate" class="form-label custom-label mb-2">Start Date</label>
+            <label for="startdate" class="form-label custom-label mb-2">{{'Start Date'|translate}}</label>
             <input id="startdate" type="date" onkeypress="return false;" [min]="getToday()" formControlName="startdate"
               class="form-control custom-input">
             <div *ngIf="undermainteenceForm.get('startdate')?.invalid && undermainteenceForm.get('startdate')?.touched">
-              <div class="error-msg">Start date is required</div>
+              <div class="error-msg">{{'Start date is required'|translate}}</div>
             </div>
           </div>
 
           <div class="col-md-6 mb-2">
-            <label for="endate" class="form-label custom-label mb-2">End Date</label>
+            <label for="endate" class="form-label custom-label mb-2">{{'End Date'|translate}}</label>
             <input id="enddate" type="date" onkeypress="return false;" formControlName="enddate"
               [min]="undermainteenceForm.get('startdate')?.value" class="form-control custom-input">
             <div *ngIf="undermainteenceForm.get('enddate')?.invalid && undermainteenceForm.get('enddate')?.touched">
-              <div class="error-msg">End date is required</div>
+              <div class="error-msg">{{'End date is required'|translate}}</div>
             </div>
             <div *ngIf="datesShouldNotBeEqual">
-              <div class="error-msg">End date must be greater than start date</div>
+              <div class="error-msg">{{'End date must be greater than start date'|translate}}</div>
             </div>
           </div>
           <div class="col-md-12 mb-3">
@@ -728,40 +728,40 @@
                 <input class="form-check-input" type="checkbox" id="flexSwitchCheckCheckedIsPrimary"
                   [checked]="isToggledvender" (change)="onToggleChangevender($event)" />
               </div>
-              <label for="isPrimary" class="form-label custom-label mb-0">Vendor Details</label>
+              <label for="isPrimary" class="form-label custom-label mb-0">{{'Vendor Details'|translate}}</label>
             </div>
           </div>
 
           <div class="col-md-6 mb-3">
-            <label for="vendordetailes" class="form-label custom-label mb-2">Contact Name<span class="text-danger"
+            <label for="vendordetailes" class="form-label custom-label mb-2">{{'Contact Name'|translate}}<span class="text-danger"
                 *ngIf="isToggledvender">*</span></label>
             <input type="text" formControlName="vendorname" class="form-control custom-input"
-              placeholder="Contact Name" />
+              placeholder="{{'Contact Name'|translate}}" />
             <div
               *ngIf="undermainteenceForm.get('vendorname')?.invalid && undermainteenceForm.get('vendorname')?.touched">
-              <div class="error-msg">Contact Name is required</div>
+              <div class="error-msg">{{'Contact Name is required'|translate}}</div>
             </div>
           </div>
 
           <div class="col-md-6 mb-3">
-            <label for="vendor" class="form-label custom-label mb-2">Contact Number<span class="text-danger"
+            <label for="vendor" class="form-label custom-label mb-2">{{'Contact Number'|translate}}<span class="text-danger"
                 *ngIf="isToggledvender">*</span></label>
             <input type="text" formControlName="contactnumber" class="form-control custom-input"
-              placeholder="Contact Number" maxlength="10" />
+              placeholder="{{'Contact Number'|translate}}" maxlength="10" />
             <div
               *ngIf="undermainteenceForm.get('contactnumber')?.invalid && undermainteenceForm.get('contactnumber')?.touched">
-              <div class="error-msg">Contact Number is required</div>
+              <div class="error-msg">{{'Contact Number is required'|translate}}</div>
             </div>
             <div *ngIf="undermainteenceForm.get('contactnumber')?.errors?.['maxlength']" class="error-msg">
-              Contact Number cannot exceed 10 digits
+              {{'Contact Number cannot exceed 10 digits'|translate}}
             </div>
           </div>
 
         </div>
         <div class="d-flex justify-content-end gap-3">
           <button type="button" class="custom-btn btn-secondary "
-            (click)="openModal(conformationpopup);model.dismiss()">Cancel</button>
-          <button type="submit" class="custom-btn btn-primary " [disabled]="undermainteenceForm.invalid">Submit</button>
+            (click)="openModal(conformationpopup);model.dismiss()">{{'Cancel'|translate}}</button>
+          <button type="submit" class="custom-btn btn-primary " [disabled]="undermainteenceForm.invalid">{{'Submit'|translate}}</button>
         </div>
       </form>
     </div>
@@ -772,12 +772,12 @@
   <div class="result-popup-content" ngbAutofocus>
     <div>
     <app-confirmation-icon />
-      <p class="confirmation-text mb-4">Are you sure you want to mark this Asset as Active?</p>
+      <p class="confirmation-text mb-4">{{'Are you sure you want to mark this Asset as Active?'|translate}}</p>
     </div>
     <div class="d-flex justify-content-center gap-3 mt-4">
-      <button type="button" class="custom-btn btn-secondary" (click)="conformationpoppup();model.dismiss()">No</button>
+      <button type="button" class="custom-btn btn-secondary" (click)="conformationpoppup();model.dismiss()">{{'No'|translate}}</button>
       <button type="submit" class="custom-btn btn-primary"
-        (click)="avaliableassets(storeassetid);model.dismiss()">Yes</button>
+        (click)="avaliableassets(storeassetid);model.dismiss()">{{'Yes'|translate}}</button>
     </div>
   </div>
 </ng-template>
@@ -786,12 +786,12 @@
   <div class="result-popup-content" ngbAutofocus>
     <div>
     <app-confirmation-icon />
-      <p class="confirmation-text mb-4">Are you sure you want to mark this Asset as Active?</p>
+      <p class="confirmation-text mb-4">{{'Are you sure you want to mark this Asset as Active?'|translate}}</p>
     </div>
     <div class="d-flex justify-content-center gap-3 mt-4">
-      <button type="button" class="custom-btn btn-secondary" (click)="model.dismiss()">No</button>
+      <button type="button" class="custom-btn btn-secondary" (click)="model.dismiss()">{{'No'|translate}}</button>
       <button type="submit" class="custom-btn btn-primary"
-        (click)="activeassets(storeassetid);model.dismiss()">Yes</button>
+        (click)="activeassets(storeassetid);model.dismiss()">{{'Yes'|translate}}</button>
     </div>
   </div>
 </ng-template>

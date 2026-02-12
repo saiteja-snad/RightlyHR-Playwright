@@ -14,9 +14,11 @@ import { MODULE_INFOS } from '../../shared/modules-info';
 import { ChartModule } from 'primeng/chart';
 import { Skeleton } from 'primeng/skeleton';
 import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
+import { transition } from '@angular/animations';
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
   selector: 'app-desk-management',
-  imports: [CommonModule, TabsModule, RouterModule, ReactiveFormsModule, Select, ModuleInformationComponent, NgbPopoverModule, ChartModule, Skeleton, ModuleInfoIconComponent],
+  imports: [CommonModule, TabsModule, RouterModule, ReactiveFormsModule, Select, ModuleInformationComponent, NgbPopoverModule, ChartModule, Skeleton, ModuleInfoIconComponent,TranslateModule],
   templateUrl: './desk-management.component.html',
   styleUrl: './desk-management.component.scss',
   encapsulation: ViewEncapsulation.None

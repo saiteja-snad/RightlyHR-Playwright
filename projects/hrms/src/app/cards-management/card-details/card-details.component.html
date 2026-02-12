@@ -21,7 +21,7 @@
                 <th>{{'Expiry Date' | translate}}</th>
                 <!-- <th>{{'Allocated History'|translate}}</th> -->
                 <th>{{'Status'|translate}}</th>
-                <th *ngIf="rbac.allowedToAccess('Cards Available.delete') || rbac.allowedToAccess('Cards Available.update') || 
+                <th class="text-center" *ngIf="rbac.allowedToAccess('Cards Available.delete') || rbac.allowedToAccess('Cards Available.update') || 
                 rbac.allowedToAccess('Cards Available.create')">{{'Actions'|translate}}</th>
             </thead>
             <tbody>
@@ -55,7 +55,7 @@
                     <!-- status -->
                     <td>{{item?.status ? item?.status:'-'}}</td>
                     <!-- actions -->
-                    <td *ngIf="rbac.allowedToAccess('Cards Available.delete') || rbac.allowedToAccess('Cards Available.update') || 
+                    <td class="text-center" *ngIf="rbac.allowedToAccess('Cards Available.delete') || rbac.allowedToAccess('Cards Available.update') || 
                         rbac.allowedToAccess('Cards Available.create')">
                         <div class="dropdown">
                             <a data-bs-toggle="dropdown" aria-expanded="false">

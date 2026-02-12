@@ -2,7 +2,7 @@
   <!--Input search-->
   <div class="input-group custom-search mb-3">
     <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
-    <input type="search" class="form-control custom-search-input" placeholder="Search by desk ID / desk type / allocated to / approver"
+    <input type="search" class="form-control custom-search-input" [placeholder]="'Search by desk ID / desk type / allocated to / approver' | translate"
       aria-label="Username" [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange($event)"
       aria-describedby="basic-addon1">
   </div>
@@ -11,11 +11,11 @@
     @if(!loading){
     <table class="w-100">
       <thead>
-        <th>Desk ID</th>
-        <th>Desk Type</th>
-        <th>Location</th>
-        <th>Sub Location</th>
-        <th>Desk Status</th>
+        <th>{{ 'Desk ID' | translate }}</th>
+        <th>{{ 'Desk Type' | translate }}</th>
+        <th>{{ 'Location' | translate }}</th>
+        <th>{{ 'Sub Location' | translate }}</th>
+        <th>{{ 'Desk Status' | translate }}</th>
         @if(rbac.allowedToAccess('Inactive Mark as Available.view') || rbac.allowedToAccess('Inactive View Desk Details.view')){
           <th class="text-center">{{"Action" | translate}}</th>
         }
@@ -38,14 +38,14 @@
                   @if(rbac.allowedToAccess('Inactive Mark as Available.view')){
                   <li>
                     <a class="dropdown-item" (click)="openModal(avitivedest);selectedAsset=desk;viewdata(desk) ">
-                      Mark as active
+                      {{ 'Mark as active' | translate }}
                     </a>
                   </li>
                   }
                   @if(rbac.allowedToAccess('Inactive View Desk Details.view')){
                   <li>
                     <a class="dropdown-item" (click)="viewdata(desk);navigateToAsset(desk.deskId)">
-                      View Desk Details
+                      {{ 'View Desk Details' | translate }}
                     </a>
                   </li>
                   }
@@ -78,7 +78,7 @@
             </option>
           </select>
           <span class="pagination-label text-nowrap">
-            Showing {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize : (+first + +rows) }} of {{
+            {{ 'Showing' | translate }} {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize : (+first + +rows) }} {{ 'of' | translate }} {{
             collectionSize }}
           </span>
         </div>
@@ -92,12 +92,12 @@
   <div class="result-popup-content" ngbAutofocus>
     <div>
       <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
-      <p class="confirmation-text"> Are you sure you want to mark this desk as active?</p>
+      <p class="confirmation-text"> {{ 'Are you sure you want to mark this desk as active?' | translate }}</p>
     </div>
     <div class="custom-modal-footer">
-      <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
+      <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{ 'No' | translate }}</button>
       <button type="submit" class="custom-btn btn-primary"
-        (click)="activeassets(selectedAsset);modal.dismiss()">Yes</button>
+        (click)="activeassets(selectedAsset);modal.dismiss()">{{ 'Yes' | translate }}</button>
     </div>
   </div>
 </ng-template>

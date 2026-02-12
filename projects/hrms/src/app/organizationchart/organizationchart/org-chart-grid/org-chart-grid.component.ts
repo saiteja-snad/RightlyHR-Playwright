@@ -14,9 +14,10 @@ import { OpenModalService } from '../../../services/open-modal.service';
 import { ChatIconComponent } from "../../../icons/chat-icon/chat-icon.component";
 import { MailIconComponent } from "../../../icons/mail-icon/mail-icon.component";
 import { FormatcontactnumberPipe } from '../../../Pipes/formatcontactnumber.pipe';
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
   selector: 'app-org-chart-grid',
-  imports: [CommonModule, ProfileIconComponent, FormatcontactnumberPipe, ChatIconComponent, MailIconComponent],
+  imports: [CommonModule, ProfileIconComponent, FormatcontactnumberPipe, ChatIconComponent, MailIconComponent,TranslateModule],
   templateUrl: './org-chart-grid.component.html',
   styleUrl: './org-chart-grid.component.scss'
 })

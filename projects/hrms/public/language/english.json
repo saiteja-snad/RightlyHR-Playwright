@@ -1488,7 +1488,25 @@
   "Team Leave Summary": "Team Leave Summary",
   "Org Leave Balance": "Org Leave Balance",
   "Timesheet Reports": "Timesheet Reports",
-  "Expense Reports": "Expense Reports"
+  "Expense Reports": "Expense Reports",
+  "Skill Set": "Skill Set",
+  "Please Select Skills": "Please Select Skills",
+  "Please Select Department": "Please Select Department",
+  "Please Select Project": "Please Select Project",
+  "Search by Employee or Designation": "Search by Employee or Designation",
+  "Skills": "Skills",
+  "Projects": "Projects",
+  "Phase Name": "Phase Name",
+  "Please Select Proficiency": "Please Select Proficiency",
+  "Top 5 Trending skills": "Top 5 Trending skills",
+  "Skill Proficiency": "Skill Proficiency",
+  "Department Wise Skills": "Department Wise Skills",
+  "Skill Overview": "Skill Overview",
+  "Skill": "Skill",
+  "Resources Count": "Resources Count",
+  "Proficiency": "Proficiency",
+  "Resources with": "Resources with",
+  "Phases": "Phases"
 
 
 }

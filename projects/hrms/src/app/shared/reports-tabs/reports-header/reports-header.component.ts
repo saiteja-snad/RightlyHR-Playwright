@@ -1,11 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
+import { TranslatePipe } from '@ngx-translate/core';
 import { filter } from 'rxjs';
 
 @Component({
   selector: 'app-reports-header',
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule,TranslatePipe],
   templateUrl: './reports-header.component.html',
   styleUrl: './reports-header.component.scss'
 })

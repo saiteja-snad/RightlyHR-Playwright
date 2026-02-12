@@ -1,7 +1,7 @@
 <div class="custom-main-component-container">
   <div class="component-header-content">
     <div class="heading-content">
-      <div class="commpoment-name">Skill Set<span class="ms-1">
+      <div class="commpoment-name">{{ 'Skill Set' | translate }}<span class="ms-1">
           <i class="bi bi-chevron-double-right"></i></span></div>
       <div class="component-header">{{componentname | translate}}</div>
       <div>
@@ -11,23 +11,22 @@
 
     <div class="d-flex align-items-center gap-3">
       <!-- Status Filter -->
-      <button type="button" *ngIf="isAnyFilterApplied()" class="clear-all-btn" (click)="clearAllFilters()">Clear
-        All</button>
+      <button type="button" *ngIf="isAnyFilterApplied()" class="clear-all-btn" (click)="clearAllFilters()">{{ 'Clear All' | translate }}</button>
 
       <!-- Skills Multi select -->
       <div class="custom-p-multiSelect-content">
-        <p-multiselect [options]="multiSkillOptions" [(ngModel)]="selectedSkills" placeholder="Please Select Skills"
+        <p-multiselect [options]="multiSkillOptions" [(ngModel)]="selectedSkills" [placeholder]="'Please Select Skills' | translate"
           selectedItemsLabel="{2} items selected" [maxSelectedLabels]="2" resetFilterOnHide="true" optionLabel="label"
           optionValue="value" class="form-select custom-select" (onChange)="onSkillSelectionChange()" />
       </div>
       <div class="custom-p-multiSelect-content">
         <p-multiselect [options]="departmentOptions" [(ngModel)]="selectedDepartment"
-          placeholder="Please Select Department" selectedItemsLabel="{2} items selected" [maxSelectedLabels]="2"
+          [placeholder]="'Please Select Department' | translate" selectedItemsLabel="{2} items selected" [maxSelectedLabels]="2"
           resetFilterOnHide="true" optionLabel="label" optionValue="value" class="form-select custom-select"
           (onChange)="onSkillSelectionChange()" />
       </div>
       <div class="custom-p-multiSelect-content">
-        <p-multiselect [options]="projectOptions" [(ngModel)]="selectedProjects" placeholder="Please Select Project"
+        <p-multiselect [options]="projectOptions" [(ngModel)]="selectedProjects" [placeholder]="'Please Select Project' | translate"
           selectedItemsLabel="{2} items selected" [maxSelectedLabels]="2" resetFilterOnHide="true" optionLabel="label"
           optionValue="value" class="form-select custom-select" (onChange)="onSkillSelectionChange()" />
       </div>
@@ -46,7 +45,7 @@
           @if (spinnerLoaderforallrecodersforbutton) {
           <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
           } @else {
-          <span>Export</span>
+          <span>{{ 'Export' | translate }}</span>
           }
         </button>
       </div>
@@ -83,7 +82,7 @@
           <span class="input-group-text custom-input-group-search" id="basic-addon1">
             <i class="bi bi-search"></i>
           </span>
-          <input type="search" class="form-control custom-search-input" placeholder="Search by Employee or Designation"
+          <input type="search" class="form-control custom-search-input" [placeholder]="'Search by Employee or Designation' | translate"
             [(ngModel)]="searchQuery" (input)="onSearch()" />
         </div>
         <div class="custom-table-content">
@@ -91,11 +90,11 @@
           <table class="w-100">
             <thead>
               <tr>
-                <th>Employee ID</th>
-                <th>Employee Name</th>
-                <th>Designation</th>
-                <th>Skills</th>
-                <th class="skill-view text-center">View</th>
+                <th>{{ 'Employee ID' | translate }}</th>
+                <th>{{ 'Employee Name' | translate }}</th>
+                <th>{{ 'Designation' | translate }}</th>
+                <th>{{ 'Skills' | translate }}</th>
+                <th class="skill-view text-center">{{ 'View' | translate }}</th>
               </tr>
             </thead>
             <tbody>
@@ -150,8 +149,8 @@
                 (ngModelChange)="onPageSizeChange($event)">
                 <option *ngFor="let option of options" [value]="option.value">{{ option.label }}</option>
               </select>
-              <span class="pagination-label text-nowrap">Showing {{ +first + 1 }} -
-                {{(+first + +rows) > totalCount ? totalCount : (+first + +rows) }} of {{ totalCount }}
+              <span class="pagination-label text-nowrap">{{ 'Showing' | translate }} {{ +first + 1 }} -
+                {{(+first + +rows) > totalCount ? totalCount : (+first + +rows) }} {{ 'of' | translate }} {{ totalCount }}
               </span>
             </div>
             <p-paginator [first]="first" [rows]="rows" [totalRecords]="totalCount"
@@ -206,8 +205,8 @@
       <div class="custom-skill-set-tabs">
         <p-tabs value="0" [lazy]="false">
           <p-tablist>
-            <p-tab value="0">Skills</p-tab>
-            <p-tab value="1">Projects</p-tab>
+            <p-tab value="0">{{ 'Skills' | translate }}</p-tab>
+            <p-tab value="1">{{ 'Projects' | translate }}</p-tab>
           </p-tablist>
           <!-- Skills -->
           <p-tabpanel value="0">
@@ -293,7 +292,7 @@
         <span class="input-group-text custom-input-group-search" id="basic-addon1">
           <i class="bi bi-search"></i>
         </span>
-        <input type="search" class="form-control custom-search-input" placeholder="Search"
+        <input type="search" class="form-control custom-search-input" [placeholder]="'Search' | translate"
           [(ngModel)]="resourceSearchQuery" (input)="onSearch1()" />
       </div>
       <div *ngIf="isloading" class="text-center py-3">
@@ -348,10 +347,10 @@
           <table class="popup-table">
             <thead>
               <tr>
-                <th>Phase Name</th>
-                <th>Start Date</th>
-                <th>End Date</th>
-                <th class="text-center">Status</th>
+                <th>{{ 'Phase Name' | translate }}</th>
+                <th>{{ 'Start Date' | translate }}</th>
+                <th>{{ 'End Date' | translate }}</th>
+                <th class="text-center">{{ 'Status' | translate }}</th>
               </tr>
             </thead>
             <tbody>

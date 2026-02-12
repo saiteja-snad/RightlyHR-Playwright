@@ -1,9 +1,9 @@
 <div class="custom-main-component-container">
     <div class="component-header-content">
         <div class="heading-content">
-            <div class="commpoment-name">Expenses<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
+            <div class="commpoment-name">{{'Expenses' |translate}}<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
             </div>
-            <div class="component-header">My Expenses</div>
+            <div class="component-header">{{'My Expenses' |translate}}</div>
 
 
             <div>
@@ -33,8 +33,7 @@
                 </div>
             </div>
 
-            @if(rbac.allowedToAccess('All Employees (Expenses).view') && rbac.allowedToAccess('My Team
-            (Expenses).view')) {
+            @if(rbac.allowedToAccess('All Employees (Expenses).view') && rbac.allowedToAccess('My Team (Expenses).view')) {
             <div class="d-flex align-items-center gap-2">
                 <label for="education" class="form-label custom-label text-nowrap filter-labels m-0">
                     {{'Select Employee' | translate}}</label>
@@ -72,7 +71,7 @@
             @if(rbac.allowedToAccess('Expenses Module.create')){
             <div *ngIf="!employeeSelected">
                 <button type="button" (click)="navigatetoAddExpenses()" class="custom-btn btn-primary"
-                    [disabled]="getExpenseSummaryDetails.remainingReimbursement === 0">Add New Expense</button>
+                    [disabled]="getExpenseSummaryDetails.remainingReimbursement === 0">{{'Add New Expense' |translate }}</button>
             </div>
 
             <div *ngIf="getExpenseSummaryDetails.remainingReimbursement === 0">

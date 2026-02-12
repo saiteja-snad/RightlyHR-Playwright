@@ -12,7 +12,7 @@
       <!--Time Display-->
       @if(!intialLoading ){
       <div class="content-card present-day-content">
-        <div class="gesture-text mb-3">Have a nice day at work!</div>
+        <div class="gesture-text mb-3">{{'Have a nice day at work' | translate}}!</div>
         <div class="day-date-content">
           <div>
             <img [src]="iconPath" alt="Icon" class="icon">
@@ -80,7 +80,7 @@
       <!--Employee List Display-->
       @if(!chartLoader &&EmployeeInfoData){
       <div class="content-card employees-list-content">
-        <div class="all-text mb-3">Employees overview</div>
+        <div class="all-text mb-3">{{'Employees overview'|translate}}</div>
         <div class="total-leave-balance-graph-content">
           <div class="chart-content">
             <p-chart type="doughnut" [data]="EmployeeInfoData" [options]="EmployeeInfoDataOptions"
@@ -157,7 +157,7 @@
   <div class="custom-main-popup-container" ngbAutofocus>
     <div class="custom-poup-header-content popup-header-border">
       <div class="pt-2">
-        <p class="popup-heading mb-0">Attendance Logs ({{selectedDate|dateformat}})</p>
+        <p class="popup-heading mb-0">{{'Attendance Logs'|translate}} ({{selectedDate|dateformat}})</p>
       </div>
       <div>
         <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
@@ -168,16 +168,16 @@
       <p-accordion value="0">
         @if(punchPairs.length>0){
         <p-accordion-panel value="0">
-          <p-accordion-header>Biometric Logs</p-accordion-header>
+          <p-accordion-header>{{'Biometric Logs'|translate}}</p-accordion-header>
           <p-accordion-content>
             <div class="popup-table-wrapper">
               <div class="popup-table-scroll-container">
                 <table class="popup-table">
                   <thead>
                     <tr>
-                      <th>In</th>
-                      <th>Out</th>
-                      <th>Duration</th>
+                      <th>{{'In'|translate}}</th>
+                      <th>{{'Out'|translate}}</th>
+                      <th>{{'Duration'|translate}}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -190,7 +190,7 @@
                 </table>
               </div>
               <div class="popup-table-footer">
-                Total Duration: <b>{{ logsDuration }}</b>
+                {{'Total Duration'|translate}}: <b>{{ logsDuration }}</b>
               </div>
             </div>
           </p-accordion-content>
@@ -199,16 +199,16 @@
 
         @if(permissions_list.length>0){
         <p-accordion-panel value="1">
-          <p-accordion-header>Permission(s)</p-accordion-header>
+          <p-accordion-header>{{'Permission(s)'|translate}}</p-accordion-header>
           <p-accordion-content>
             <div class="popup-table-wrapper">
               <div class="popup-table-scroll-container">
                 <table class="popup-table">
                   <thead>
                     <tr>
-                      <th>Type</th>
-                      <th>Duration</th>
-                      <th>Status</th>
+                      <th>{{'Type'|translate}}</th>
+                      <th>{{'Duration'|translate}}</th>
+                      <th>{{'Status'|translate}}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -227,16 +227,16 @@
 
         @if(regularization_list.length>0){
         <p-accordion-panel value="2">
-          <p-accordion-header>Regularization(s)</p-accordion-header>
+          <p-accordion-header>{{'Regularization(s)'|translate}}</p-accordion-header>
           <p-accordion-content>
             <div class="popup-table-wrapper">
               <div class="popup-table-scroll-container">
                 <table class="popup-table">
                   <thead>
                     <tr>
-                      <th>Type</th>
-                      <th>Duration</th>
-                      <th>Status</th>
+                      <th>{{'Type'|translate}}</th>
+                      <th>{{'Duration'|translate}}</th>
+                      <th>{{'Status'|translate}}</th>
                     </tr>
                   </thead>
                   <tbody>

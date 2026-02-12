@@ -16,6 +16,7 @@ import { CalenderIconComponent } from "../../icons/calender-icon/calender-icon.c
 import { ItSupportIconComponent } from "../../icons/it-support-icon/it-support-icon.component";
 import { GearIconComponent } from "../../icons/gear-icon/gear-icon.component";
 import { ProfileIconComponent } from "../../icons/profile-icon/profile-icon.component";
+import { PredefinedThemesService } from '../../services/theme-service/predefined-themes.service';
 @Component({
   selector: 'app-header',
   imports: [CommonModule, RouterModule, TranslateModule, Skeleton, ReactiveFormsModule, CalenderIconComponent,
@@ -46,7 +47,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
     private modalservie: NgbModal,
     private conformationPopup: OpenModalService,
     private accessNav: AccessNavigationService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private predefinedThemesService: PredefinedThemesService
   ) { }
 
   ngOnInit(): void {
@@ -216,6 +218,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
   async onLogout() {
     this.spinnerLoader = true;
     this.authService.logout();
+    this.predefinedThemesService.setTheme('default-theme');
+    this.predefinedThemesService.setFont('Roboto-flex');
   }
 
   close() {

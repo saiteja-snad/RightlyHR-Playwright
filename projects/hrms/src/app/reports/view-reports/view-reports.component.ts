@@ -7,9 +7,10 @@ import { PolicyReportsTabsComponent } from "../../shared/reports-tabs/policy-rep
 import { RbacService } from '../../services/rbac.service';
 import { AccordionModule } from 'primeng/accordion';
 import { TimesheetReportTabsComponent } from '../../shared/reports-tabs/timesheet-report-tabs/timesheet-report-tabs.component';
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
   selector: 'app-view-reports',
-  imports: [RouterModule, StandardReportTabsComponent, AttandaceReportTabsComponent, PolicyReportsTabsComponent, AccordionModule,TimesheetReportTabsComponent],
+  imports: [RouterModule, StandardReportTabsComponent,TranslateModule, AttandaceReportTabsComponent, PolicyReportsTabsComponent, AccordionModule,TimesheetReportTabsComponent],
   templateUrl: './view-reports.component.html',
   styleUrl: './view-reports.component.scss',
   encapsulation:ViewEncapsulation.None

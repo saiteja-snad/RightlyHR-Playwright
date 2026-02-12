@@ -20,6 +20,7 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
 import { ReportsHeaderComponent } from "../../../shared/reports-tabs/reports-header/reports-header.component";
 import { DatePicker } from 'primeng/datepicker';
+import { TranslatePipe } from '@ngx-translate/core';
 @Component({
   selector: 'app-branch-location-wise-data',
   imports: [
@@ -31,7 +32,8 @@ import { DatePicker } from 'primeng/datepicker';
     DateformatPipe,
     DatePicker,
     DataLoaderContentComponent,
-    ReportsHeaderComponent
+    ReportsHeaderComponent,
+    TranslatePipe
   ],
   templateUrl: './branch-location-wise-data.component.html',
   styleUrl: './branch-location-wise-data.component.scss',

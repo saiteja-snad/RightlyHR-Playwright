@@ -11,9 +11,10 @@ import { Subject, takeUntil } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import { Router } from '@angular/router';
 import { ReportsHeaderComponent } from "../../shared/reports-tabs/reports-header/reports-header.component";
+import { TranslatePipe } from '@ngx-translate/core';
 @Component({
   selector: 'app-team-leave-summary',
-  imports: [CommonModule, Select, DataLoaderContentComponent, NoDataFoundComponent, FormsModule, DateformatPipe, NgbPopoverModule, ReportsHeaderComponent],
+  imports: [CommonModule, Select, DataLoaderContentComponent, NoDataFoundComponent, FormsModule, DateformatPipe, NgbPopoverModule, ReportsHeaderComponent, TranslatePipe],
   templateUrl: './team-leave-summary.component.html',
   styleUrl: './team-leave-summary.component.scss'
 })

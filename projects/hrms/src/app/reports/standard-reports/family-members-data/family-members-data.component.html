@@ -8,11 +8,11 @@
             <div class="d-flex gap-3">
                 @if(rbac.allowedToAccess('Family Members Data - Generate.view')){
                 <div class="d-flex gap-2 align-items-center">
-                    <div class="custom-label filter-labels text-nowrap m-0">Employee Status</div>
+                    <div class="custom-label filter-labels text-nowrap m-0">{{ 'Employee Status' | translate }}</div>
                     <div class="custom-p-select-content">
                         <p-select [options]="empStatusList" optionLabel="empStatusList" [filter]="false"
                             [showClear]="false" class="form-select custom-select" formControlName="status"
-                            placeholder="Please select status">
+                            [placeholder]="'Please select status' | translate">
                             <ng-template #selectedItem let-selectedOption>{{ selectedOption }}</ng-template>
                             <ng-template let-year #item>{{ year }}</ng-template>
                         </p-select>
@@ -26,9 +26,9 @@
                         [disabled]="reportForm.invalid || spinnerLoader1">
                         @if(spinnerLoader1){
                         <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                        <span>{{'Loading...'}}</span>
+                        <span>{{ 'Loading...' | translate }}</span>
                         }@else {
-                        <span>{{'Generate'}}</span>
+                        <span>{{ 'Generate' | translate }}</span>
                         }
                     </button>
                     }
@@ -37,9 +37,9 @@
                         [disabled]="familydata.length === 0 || disableBtn" (click)="exportAsExcelFile()">
                         @if(spinnerLoader2){
                         <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                        <span>{{'Loading...'}}</span>
+                        <span>{{ 'Loading...' | translate }}</span>
                         }@else {
-                        <span>{{'Export'}}</span>
+                        <span>{{ 'Export' | translate }}</span>
                         }
                     </button>
                     }
@@ -53,16 +53,16 @@
         <table class="w-100">
             <thead>
                 <tr>
-                    <th>{{ "Employee ID" }}</th>
-                    <th>{{ "First Name" }}</th>
-                    <th>{{ "Middle Name" }}</th>
-                    <th>{{ "Last Name" }}</th>
-                    <th>{{ "Work Email" }}</th>
-                    <th>{{ "Employee Status" }}</th>
-                    <th>{{ "Name" }}</th>
-                    <th>{{ "Relation" }}</th>
-                    <th>{{ "Date of Birth" }}</th>
-                    <th>{{ "Dependent" }}</th>
+                    <th>{{ 'Employee ID' | translate }}</th>
+                    <th>{{ 'First Name' | translate }}</th>
+                    <th>{{ 'Middle Name' | translate }}</th>
+                    <th>{{ 'Last Name' | translate }}</th>
+                    <th>{{ 'Work Email' | translate }}</th>
+                    <th>{{ 'Employee Status' | translate }}</th>
+                    <th>{{ 'Name' | translate }}</th>
+                    <th>{{ 'Relation' | translate }}</th>
+                    <th>{{ 'Date of Birth' | translate }}</th>
+                    <th>{{ 'Dependent' | translate }}</th>
                 </tr>
             </thead>
             <tbody>

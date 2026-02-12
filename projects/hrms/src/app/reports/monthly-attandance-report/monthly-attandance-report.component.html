@@ -1,4 +1,11 @@
 <div class="custom-main-component-container">
+    <div class="component-overlay-placeholder-content" *ngIf="isAttendanceDataTrue">
+        <div>
+            <app-attendance-placeholder />
+            <p class="context">Attendance data is currently unavailable as biometric device is not integrated</p>
+        </div>
+    </div>
+  
     <div class="component-header-content py-2">
         <!--header-->
         <app-reports-header/>

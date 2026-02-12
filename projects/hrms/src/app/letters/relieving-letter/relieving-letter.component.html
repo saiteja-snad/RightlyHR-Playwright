@@ -98,7 +98,7 @@
                             </div>
                             <div class="letter-header text-center mb-4">RELIEVING & EXPERIENCE LETTER </div>
                             <p>
-                                We hereby certify that <b>{{ employeeFullname }}</b> was employed with RightlyHR as a 
+                                We hereby certify that <b>{{ employeeFullname }}</b> was employed with Claim Genius as a 
                                 <b>{{ selectedEmployeeJobDetails?.jobRole || '' }}</b> from
                                 <b>{{ employeeForm.get('employee')?.value?.dateOfJoining | dateformat }}</b> to
                                 <b>{{ selectedEmployee?.lastworkingday | dateformat }}.</b>
@@ -116,7 +116,7 @@
                                 will achieve continued success in {{gender}} professional journey.
                             </p>
                             <p class="pt-4">Sincerely,</p>
-                            <p class="letter-sub-header">for RightlyHR,</p>
+                            <p class="letter-sub-header">for Claim Genius,</p>
                             <p class="m-0 letter-signature pt-4" *ngIf="authorityFullName">{{authorityFullName}}</p>
                             <p class="m-0" *ngIf="!authorityFullName">Authorized Signatory</p>
                             <p class="m-0">{{authorityFullName}}</p>

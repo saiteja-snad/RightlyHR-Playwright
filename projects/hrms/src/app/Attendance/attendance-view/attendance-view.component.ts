@@ -1,12 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import {
-  ReactiveFormsModule,
-  FormsModule,
-  FormGroup,
-  FormBuilder,
-  Validators,
-} from '@angular/forms';
+import { ReactiveFormsModule, FormsModule, FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { NgbPopoverModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
@@ -36,7 +30,7 @@ import { InfoIconComponent } from '../../icons/info-icon/info-icon.component';
 import { AccordionModule } from 'primeng/accordion';
 import { ChartModule } from 'primeng/chart';
 import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
-
+import { AttendancePlaceholderComponent } from "../../icons/attendance-placeholder/attendance-placeholder.component";
 @Component({
   selector: 'app-attendance-view',
   imports: [
@@ -59,11 +53,13 @@ import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-inf
     InfoIconComponent,
     AccordionModule,
     ChartModule,
+    AttendancePlaceholderComponent
   ],
   templateUrl: './attendance-view.component.html',
   styleUrl: './attendance-view.component.scss',
   encapsulation: ViewEncapsulation.None,
 })
+
 export class AttendanceViewComponent implements OnInit, OnDestroy {
   moduleinfo: string = '';
   dataLoader = false;
@@ -130,6 +126,7 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
   extraHoursForm!: FormGroup;
   totalCount: any;
   selectedDateTotalDuration: string = '00:00:00';
+  isAttendanceDataTrue: boolean = false;
 
   constructor(
     private authService: AuthService,
@@ -140,9 +137,10 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     public formsValidation: FormValidationsService,
     public readonly router: Router
-  ) {}
+  ) { }
 
   ngOnInit(): void {
+    this.getattendancedatabyentry();
     // Get current date
     const now = moment().startOf('month');
     this.date = now.toDate();
@@ -155,23 +153,36 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
     this.selectedYear = this.currentYear;
     this.maxMonth = new Date();
     this.empdata = this.authService.getToken();
-    this.getAttendnaceData(this.empdata);
-    this.getAttendanceCriteria();
-    this.getAllEmployeeDetails();
-    this.getEmployeeDetails();
-    this.initializeForm();
-    this.updateModuleInfo();
-    this.initiateUpdateModuleInfo();
-    this.initliazeExtraHoursForm();
-    this.getdatabyentriy();
+  }
+
+  getattendancedatabyentry() {
+    const params = 'AttendanceConfiguration';
+    const param = 'IsProcessing';
+    this.http.getDatabyentriyvalue(`entityAttributeValues`, params, param).subscribe({
+      next: (data: any) => {
+        this.isAttendanceDataTrue = String(data[0].value).toLowerCase() === 'true';
+        if (!this.isAttendanceDataTrue) {
+          this.getAttendnaceData(this.empdata);
+          this.getAttendanceCriteria();
+          this.getAllEmployeeDetails();
+          this.getEmployeeDetails();
+          this.initializeForm();
+          this.updateModuleInfo();
+          this.initiateUpdateModuleInfo();
+          this.initliazeExtraHoursForm();
+          this.getdatabyentriy();
+        }
+      },
+      error: (err) => {
+        console.error('Error fetching data:', err);
+      }
+    });
   }
 
   initiateUpdateModuleInfo() {
-    this.router.events
-      .pipe(filter((event) => event instanceof NavigationEnd))
-      .subscribe(() => {
-        this.updateModuleInfo();
-      });
+    this.router.events.pipe(filter((event) => event instanceof NavigationEnd)).subscribe(() => {
+      this.updateModuleInfo();
+    });
   }
 
   updateModuleInfo() {
@@ -241,12 +252,9 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
   }
 
   openModalLarge(content: any) {
-    this.modalService.open(content, {
-      centered: true,
-      size: 'lg',
-      backdrop: 'static',
-    });
+    this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
   }
+
   maxPastDaysAllowed: any;
   //function to get the attendance criteria
   getAttendanceCriteria() {
@@ -258,34 +266,26 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
       'maxRegularizeHoursPerMonth',
       'pastDaysAllowed',
     ];
-    this.subscription = this.http
-      .getDatabyentriyvalue(`entityAttributeValues/getv1`, params, param)
-      .subscribe({
-        next: (data: any) => {
-          this.regularizationValues = data as IPermissionsvalue[];
-          const pastDaysAllowedConfig = this.regularizationValues?.find(
-            (item: any) => item.attribute === 'pastDaysAllowed'
-          );
-          this.maxPastDaysAllowed = pastDaysAllowedConfig
-            ? parseFloat(pastDaysAllowedConfig.value)
-            : undefined;
-          console.log(this.maxPastDaysAllowed, 'maxPastDaysAllowed');
-          const maxHoursConfig = this.regularizationValues?.find(
-            (item) => item.attribute === 'maxRegularizeHoursPerDay'
-          );
-
-          const maxHours = maxHoursConfig
-            ? parseFloat(maxHoursConfig.value)
-            : 2; // default to 2 if not found
-          this.duration = [];
-          for (let i = 0.5; i <= maxHours; i += 0.5) {
-            this.duration.push({ name: i, value: i });
-          }
-        },
-        error: (err) => {
-          console.log('errors', err);
-        },
-      });
+    this.subscription = this.http.getDatabyentriyvalue(`entityAttributeValues/getv1`, params, param).subscribe({
+      next: (data: any) => {
+        this.regularizationValues = data as IPermissionsvalue[];
+        const pastDaysAllowedConfig = this.regularizationValues?.find(
+          (item: any) => item.attribute === 'pastDaysAllowed'
+        );
+        this.maxPastDaysAllowed = pastDaysAllowedConfig ? parseFloat(pastDaysAllowedConfig.value) : undefined;
+        const maxHoursConfig = this.regularizationValues?.find(
+          (item) => item.attribute === 'maxRegularizeHoursPerDay'
+        );
+        const maxHours = maxHoursConfig ? parseFloat(maxHoursConfig.value) : 2; // default to 2 if not found
+        this.duration = [];
+        for (let i = 0.5; i <= maxHours; i += 0.5) {
+          this.duration.push({ name: i, value: i });
+        }
+      },
+      error: (err) => {
+        console.log('errors', err);
+      },
+    });
   }
 
   isWithinPastDaysAllowed(date: Date | string): boolean {
@@ -328,13 +328,11 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
 
   //function to get the regularization types
   getDuration() {
-    this.subscription = this.http
-      .getData(`PermissionTypes?type=${'Regularization'}`)
-      .subscribe({
-        next: (response: any) => {
-          this.regularizationTypes = response;
-        },
-      });
+    this.subscription = this.http.getData(`PermissionTypes?type=${'Regularization'}`).subscribe({
+      next: (response: any) => {
+        this.regularizationTypes = response;
+      },
+    });
   }
 
   //function to post the regularization
@@ -382,13 +380,13 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
         });
     }
   }
-getApprovalStatusCounts() {
+  getApprovalStatusCounts() {
     let loggedInUser = this.authService.getToken();
     let EmployeeId = loggedInUser.employeeId;
     this.http.get(`PendingApproval/getApprovalStatusCounts?moduleId=${environment.leavesModuleId}&EmployeeId=${EmployeeId}`).subscribe((res: any) => {
       this.totalCount = res.reduce((acc: number, curr: any) => acc + curr.totalCount, 0);
-       this.http.updatePendingApprovalCounts(this.totalCount);
-   //Map counts to tabs
+      this.http.updatePendingApprovalCounts(this.totalCount);
+      //Map counts to tabs
     });
   }
   navigateToLeave(data: any) {
@@ -421,14 +419,13 @@ getApprovalStatusCounts() {
   getAttendnaceData(employee: any) {
     this.dataLoader = true;
     const employeeId = employee.employeeId;
-        this.empName = `${employee.fusionEmpId ?? ''} - ${employee.firstName}${
-      employee.middleName ? ' ' + employee.middleName : ''
-    }${employee.lastName ? ' ' + employee.lastName : ''}`;;
-    
+    this.empName = `${employee.fusionEmpId ?? ''} - ${employee.firstName}${employee.middleName ? ' ' + employee.middleName : ''
+      }${employee.lastName ? ' ' + employee.lastName : ''}`;;
+
     // Calculate start and end dates for the selected month
     const startDate = moment().year(this.selectedYear).month(this.selectedMonth - 1).startOf('month').format('YYYY-MM-DD');
     const endDate = moment().year(this.selectedYear).month(this.selectedMonth - 1).endOf('month').format('YYYY-MM-DD');
-    
+
     this.subscription = this.http
       .getData(
         `v2/AttendanceData/employee/${employeeId}?fromdate=${startDate}&todate=${endDate}`
@@ -499,11 +496,9 @@ getApprovalStatusCounts() {
               )
               .map((employee: any) => ({
                 ...employee,
-                fullName: `${
-                  employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
-                }${employee.firstName ?? ''} ${
-                  employee.middleName ? employee.middleName + ' ' : ''
-                }${employee.lastName ?? ''}`.trim(),
+                fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
+                  }${employee.firstName ?? ''} ${employee.middleName ? employee.middleName + ' ' : ''
+                  }${employee.lastName ?? ''}`.trim(),
               }))
               .sort((a: any, b: any) =>
                 (a.firstName ?? '').localeCompare(b.firstName ?? '')
@@ -516,32 +511,32 @@ getApprovalStatusCounts() {
       });
   }
 
-onclickRegularization(date: Date | string) {
-  const displayDateString =
-    typeof date === 'string'
-      ? date.split('T')[0]
-      : date.toISOString().split('T')[0];
+  onclickRegularization(date: Date | string) {
+    const displayDateString =
+      typeof date === 'string'
+        ? date.split('T')[0]
+        : date.toISOString().split('T')[0];
 
-  const selectedDateObj = new Date(displayDateString);
+    const selectedDateObj = new Date(displayDateString);
 
-  if (isNaN(selectedDateObj.getTime())) {
-    console.error('Invalid date received:', date);
-    return;
+    if (isNaN(selectedDateObj.getTime())) {
+      console.error('Invalid date received:', date);
+      return;
+    }
+
+    const attendanceRecord = this.attendanceData.value.find((item: any) => {
+      const itemDate = new Date(item.date);
+      return itemDate.toDateString() === selectedDateObj.toDateString();
+    });
+
+    // This is the key fix: use patchValue with emitEvent: false
+    this.regularizationForm.patchValue({
+      permissionDate: displayDateString
+    }, { emitEvent: false });
+
+    this.selectedDateTotalDuration =
+      attendanceRecord?.duration?.totalDuration || '00:00:00';
   }
-
-  const attendanceRecord = this.attendanceData.value.find((item: any) => {
-    const itemDate = new Date(item.date);
-    return itemDate.toDateString() === selectedDateObj.toDateString();
-  });
-
-  // This is the key fix: use patchValue with emitEvent: false
-  this.regularizationForm.patchValue({
-    permissionDate: displayDateString
-  }, { emitEvent: false });
-
-  this.selectedDateTotalDuration =
-    attendanceRecord?.duration?.totalDuration || '00:00:00';
-}
 
   getEmployeeDetails() {
     const EmployeeId = this.empdata.employeeId;
@@ -555,12 +550,10 @@ onclickRegularization(date: Date | string) {
               .map((employee: any) => {
                 return {
                   ...employee,
-                  fullName: `${
-                    employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
-                  }${employee.firstName}
-                ${employee.middleName ? employee.middleName + ' ' : ''}${
-                    employee.lastName
-                  }`,
+                  fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
+                    }${employee.firstName}
+                ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName
+                    }`,
                 };
               })
               .sort((a: any, b: any) => {

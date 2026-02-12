@@ -1,7 +1,7 @@
 <div class="custom-main-popup-container">
     <div class="custom-poup-header-content popup-header-border" ngbAutofocus>
         <div>
-            <p class="popup-heading mb-0">Add Event</p>
+            <p class="popup-heading mb-0">{{ 'Add Event' | translate }}</p>
         </div>
         <div>
             <a (click)="close()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
@@ -11,63 +11,62 @@
         <form autocomplete="off" [formGroup]="customEventForm" (ngSubmit)="postevents()">
             <div class="row">
                 <div class="col-md-6 mb-3">
-                    <label for="eventDate" class="form-label custom-label mb-2">Event Date<span
+                    <label for="eventDate" class="form-label custom-label mb-2">{{ 'Event Date' | translate }}<span
                             class="text-danger">*</span></label>
                     <input type="datetime-local" class="form-control custom-input" id="eventDate"
                         onkeypress="return false;" [min]="getToday()"  [max]="getMaxDate()" formControlName="eventDate">
-                    <div *ngIf="customEventForm.get('eventDate')?.errors?.['required'] &&  customEventForm.get('eventDate')?.touched" class="error-msg">Event date is required.
+                    <div *ngIf="customEventForm.get('eventDate')?.errors?.['required'] &&  customEventForm.get('eventDate')?.touched" class="error-msg">{{ 'Event date is required' | translate }}
                     </div>
                     <div *ngIf="customEventForm.get('eventDate')?.touched && customEventForm.get('eventDate')?.hasError('pastDate')"
-                        class="error-msg">Event date cannot be in the past
+                        class="error-msg">{{ 'Event date cannot be in the past' | translate }}
                     </div>
                 </div>
 
                 <div class="col-md-6 mb-3">
-                    <label for="title" class="form-label custom-label mb-2">Event Title<span
+                    <label for="title" class="form-label custom-label mb-2">{{ 'Event Title' | translate }}<span
                             class="text-danger">*</span></label>
                     <input type="text" class="form-control custom-input" id="title"
-                        placeholder="Please enter event title" formControlName="eventTitle"   (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)">
+                        [placeholder]="'Please enter event title' | translate" formControlName="eventTitle"   (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)">
                     <div *ngIf="customEventForm.get('eventTitle')?.errors?.['required'] && customEventForm.get('eventTitle')?.touched"
                         class="error-msg">
-                        Event Title is required
+                        {{ 'Event Title is required' | translate }}
                     </div>
                     <div  class="error-msg"  *ngIf="customEventForm.get('eventTitle')?.errors?.['maxlength']">
-                        Event Title cannot exceed 50 characters
+                        {{ 'Event Title cannot exceed 50 characters' | translate }}
                     </div>
                 </div>
 
                 <div class="col-md-12">
-                    <label for="description" class="form-label custom-label mb-2">Event Description<span
+                    <label for="description" class="form-label custom-label mb-2">{{ 'Event Description' | translate }}<span
                             class="text-danger">*</span></label>
                     <textarea class="form-control custom-input" formControlName="eventMessage"
-                        placeholder="Please enter description" id="description" maxlength="250"   (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)" ></textarea>
+                        [placeholder]="'Please enter description' | translate" id="description" maxlength="250"   (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)" ></textarea>
                     <div *ngIf=" customEventForm.get('eventMessage')?.touched && customEventForm.get('eventMessage')?.invalid "
                         class="error-msg">
-                        Event Description is required
+                        {{ 'Event Description is required' | translate }}
                     </div>
                     <div class="textarea-count-text">{{ customEventForm.get("eventMessage")?.value?.length || 0 }}/250
                     </div>
                 </div>
 
                 <div class="col-md-12 mb-3">
-                    <label for="file" class="form-label custom-label mb-2">Attachment</label>
+                    <label for="file" class="form-label custom-label mb-2">{{ 'Attachment' | translate }}</label>
                     <input type="file" accept=".jpg,.jpeg,.png,image/jpeg,image/png"  class="form-control custom-input px-0" (change)="onFileSelected($event)" id="file">
                     <div class="d-flex justify-content-between align-items-center mt-3">
-                        <p class="note-text"><span class="note">Note:</span> Only Image are allowed.
-                            The file size should be less than 2MB.</p>
+                        <p class="note-text"><span class="note">{{ 'Note' | translate }}:</span> {{ 'Only Image are allowed. The file size should be less than 2MB' | translate }}</p>
                     </div>
                 </div>
             </div>
 
             <div class="custom-modal-footer">
-                <button type="reset" class="custom-btn btn-secondary" (click)="close()">Cancel</button>
+                <button type="reset" class="custom-btn btn-secondary" (click)="close()">{{ 'Cancel' | translate }}</button>
                 <button type="submit" class="custom-btn btn-primary"
                     [disabled]="customEventForm.invalid || spinnerLoader">
                     @if(spinnerLoader) {
                     <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                    <span>{{'Loading' | translate}}...</span>
+                    <span>{{ 'Loading' | translate }}...</span>
                     } @else {
-                    <span>{{'Add'| translate}}</span>
+                    <span>{{ 'Add' | translate }}</span>
                     }
                 </button>
             </div>

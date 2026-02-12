@@ -6,10 +6,11 @@ import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { Router } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-desk',
-  imports: [CommonModule, DateformatPipe, NoDataFoundComponent, DataLoaderContentComponent],
+  imports: [CommonModule, DateformatPipe, NoDataFoundComponent,TranslateModule, DataLoaderContentComponent],
   templateUrl: './desk.component.html',
   styleUrl: './desk.component.scss'
 })

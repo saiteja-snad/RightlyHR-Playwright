@@ -16,9 +16,10 @@ import { Skeleton } from 'primeng/skeleton';
 import { EditIconComponent } from "../../../icons/edit-icon/edit-icon.component";
 import { TooltipModule } from 'primeng/tooltip';
 import { InfoIconComponent } from '../../../icons/info-icon/info-icon.component';
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
   selector: 'app-contact-details',
-  imports: [CommonModule, ReactiveFormsModule, NgxCountriesDropdownModule, Skeleton, EditIconComponent, TooltipModule, NgbPopoverModule, InfoIconComponent],
+  imports: [CommonModule, ReactiveFormsModule, NgxCountriesDropdownModule, Skeleton, EditIconComponent, TooltipModule, NgbPopoverModule, InfoIconComponent, TranslateModule],
   templateUrl: './contact-details.component.html',
   styleUrl: './contact-details.component.scss',
 })

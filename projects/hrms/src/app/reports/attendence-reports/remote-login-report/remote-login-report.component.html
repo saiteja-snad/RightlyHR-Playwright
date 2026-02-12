@@ -11,13 +11,13 @@
             remoteReportForm.get('employee')?.value ||
             remoteReportForm.get('manager')?.value  ||
             remoteReportForm.get('team')?.value" (click)="clearAllFilters()">
-          Clear All
+          {{'Clear All'|translate}}
         </button>
 
         <!-- Date Range -->
         <div class="d-flex align-items-center gap-2">
           <div class="custom-date-range-picker">
-            <p-datepicker formControlName="dateRange" [placeholder]="'Please Select Date'" selectionMode="range"
+            <p-datepicker formControlName="dateRange" [placeholder]="'Please Select Date'|translate" selectionMode="range"
              [showIcon]="true" [readonlyInput]="true" />
           </div>
         </div>
@@ -27,8 +27,8 @@
         <div class="d-flex align-items-center gap-2">
           <div class="custom-p-select-content">
             <p-select [options]="employeeiddetails" optionLabel="fullName" filterBy="fullName" [filter]="true"
-              formControlName="employee" placeholder="Please select employee" class="form-select custom-select"
-              filterPlaceholder="Search employee">
+              formControlName="employee" [placeholder]="'Please select employee'|translate" class="form-select custom-select"
+              [filterPlaceholder]="'Search employee'|translate">
               <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
               <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
             </p-select>
@@ -41,8 +41,8 @@
         <div class="d-flex align-items-center gap-2">
           <div class="custom-p-select-content">
             <p-select [options]="teamdetails" [filter]="true" optionLabel="fullName" filterBy="fullName"
-              formControlName="manager" placeholder="Please select manager" class="form-select custom-select"
-              filterPlaceholder="Search manager">
+              formControlName="manager" [placeholder]="'Please select manager'|translate" class="form-select custom-select"
+              [filterPlaceholder]="'Search manager'|translate">
               <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
               <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
             </p-select>
@@ -55,8 +55,8 @@
         <div class="d-flex align-items-center gap-2">
           <div class="custom-p-select-content">
             <p-select [options]="getEmployeeInfo" [filter]="true" optionLabel="fullName" filterBy="fullName"
-              formControlName="team" placeholder="Please select employee" class="form-select custom-select"
-              filterPlaceholder="Search employee" (onChange)="onClick($event)">
+              formControlName="team" [placeholder]="'Please select employee'|translate" class="form-select custom-select"
+              [filterPlaceholder]="'Search employee'|translate" (onChange)="onClick($event)">
               <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
               <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
             </p-select>
@@ -71,9 +71,9 @@
           <button type="submit" class="custom-btn btn-secondary" [disabled]="isRemoteGenerateDisabled">
             @if(spinnerLoader1){
             <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-            <span>{{'Loading...'}}</span>
+            <span>{{'Loading...'|translate}}</span>
             }@else {
-            <span>{{'Generate'}}</span>
+            <span>{{'Generate'|translate}}</span>
             }
           </button>
           }
@@ -82,9 +82,9 @@
             [disabled]="filteredRemoteRecord.length === 0 || disableBtn">
             @if(spinnerLoader2){
             <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-            <span>{{'Loading...'}}</span>
+            <span>{{'Loading...'|translate}}</span>
             }@else {
-            <span>{{'Export'}}</span>
+            <span>{{'Export'|translate}}</span>
             }
           </button>
           }
@@ -97,15 +97,15 @@
     @if(!isLoading){
     <table id="wfhReportTable" class="content w-100">
       <thead>
-        <th>Employee ID</th>
-        <th>Employee Name</th>
-        <th>Department</th>
-        <th>Team Manager</th>
-        <th>Location</th>
-        <th>Sub Location</th>
-        <th>Shift</th>
-        <th>Worked Date</th>
-        <th>Duration</th>
+        <th>{{'Employee ID'|translate}}</th>
+        <th>{{'Employee Name'|translate}}</th>
+        <th>{{'Department'|translate}}</th>
+        <th>{{'Team Manager'|translate}}</th>
+        <th>{{'Location'|translate}}</th>
+        <th>{{'Sub Location'|translate}}</th>
+        <th>{{'Shift'|translate}}</th>
+        <th>{{'Worked Date'|translate}}</th>
+        <th>{{'Duration'|translate}}</th>
       </thead>
       <tbody>
         @if (filteredRemoteRecord && filteredRemoteRecord.length > 0) {

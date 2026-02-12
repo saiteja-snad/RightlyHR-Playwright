@@ -2,7 +2,7 @@
   <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
       <p class="component-header mb-0">
-        <i class="bi bi-arrow-90deg-left me-2 cursor" (click)="openModal(Cancelback)"></i>Assessment Form - {{assessmentFormData?.formName}}
+        <i class="bi bi-arrow-90deg-left me-2 cursor" (click)="openModal(Cancelback)"></i>{{'Assessment Form' | translate}} - {{assessmentFormData?.formName}}
       </p>
     </div>
   </div>
@@ -22,25 +22,25 @@
         <!-- Left Column -->
         <div class="w-33">
           <div class="form-group">
-            <label for="employeeName" class="form-label custom-info-label">Name of the Employee</label>
+            <label for="employeeName" class="form-label custom-info-label">{{'Name of the Employee' | translate}}</label>
             <div>:</div>
             <input type="text" class="form-control text-truncate custom-info-input" id="employeeName"
               [value]="assessmentFormData?.employeeName" disabled [title]="assessmentFormData?.employeeName">
           </div>
           <div class="form-group">
-            <label for="designation" class="form-label custom-info-label">Designation</label>
+            <label for="designation" class="form-label custom-info-label">{{'Designation' | translate}}</label>
             <div>:</div>
             <input type="text" class="form-control text-truncate custom-info-input" id="designation"
               [value]="assessmentFormData?.designation" disabled>
           </div>
           <div class="form-group">
-            <label for="department" class="form-label custom-info-label">Department</label>
+            <label for="department" class="form-label custom-info-label">{{'Department' | translate}}</label>
             <div>:</div>
             <input type="text" class="form-control text-truncate custom-info-input" id="department"
               [value]="assessmentFormData?.departmentname" disabled>
           </div>
           <div class="form-group">
-            <label for="dateOfJoining" class="form-label custom-info-label">Date of Joining</label>
+            <label for="dateOfJoining" class="form-label custom-info-label">{{'Date of Joining' | translate}}</label>
             <div>:</div>
             <input type="text" class="form-control text-truncate custom-info-input" id="dateOfJoining"
               [value]="assessmentFormData?.dateOfJoining | dateformat" disabled>
@@ -50,20 +50,20 @@
         <!-- Middle Column -->
         <div class="w-33">
           <div class="form-group">
-            <label for="workEmail" class="form-label custom-info-label">Work Email ID</label>
+            <label for="workEmail" class="form-label custom-info-label">{{'Work Email ID' | translate}}</label>
             <div>:</div>
             <input type="email" class="form-control text-truncate custom-info-input" id="workEmail"
               [value]="assessmentFormData?.workemail" [title]="assessmentFormData?.workemail || 'No email available'"
               disabled>
           </div>
           <div class="form-group">
-            <label for="empId" class="form-label custom-info-label">Employee ID</label>
+            <label for="empId" class="form-label custom-info-label">{{'Employee ID' | translate}}</label>
             <div>:</div>
             <input type="text" class="form-control text-truncate custom-info-input" id="empId"
               [value]="assessmentFormData?.fusionEmployeeId" disabled>
           </div>
           <div class="form-group">
-            <label for="reportingManager" class="form-label custom-info-label">Reporting Manager</label>
+            <label for="reportingManager" class="form-label custom-info-label">{{'Reporting Manager' | translate}}</label>
             <div>:</div>
             <input type="text" class="form-control text-truncate custom-info-input" id="reportingManager"
               [value]="assessmentFormData?.rmName" disabled>
@@ -73,19 +73,19 @@
         <!-- Right Column -->
         <div class="w-33">
           <div class="form-group">
-            <label for="teamManager" class="form-label custom-info-label">Team Manager</label>
+            <label for="teamManager" class="form-label custom-info-label">{{'Team Manager' | translate}}</label>
             <div>:</div>
             <input type="text" class="form-control text-truncate custom-info-input" id="teamManager"
               [value]="assessmentFormData?.tmName" disabled>
           </div>
           <div class="form-group">
-            <label for="location" class="form-label custom-info-label">Location</label>
+            <label for="location" class="form-label custom-info-label">{{'Location' | translate}}</label>
             <div>:</div>
             <input type="text" class="form-control text-truncate custom-info-input" id="location"
               [value]="assessmentFormData?.location" disabled>
           </div>
           <div class="form-group">
-            <label for="subLocation" class="form-label custom-info-label">Sub Location</label>
+            <label for="subLocation" class="form-label custom-info-label">{{'Sub Location' | translate}}</label>
             <div>:</div>
             <input type="text" class="form-control text-truncate custom-info-input" id="subLocation"
               [value]="assessmentFormData?.sublocation" disabled>
@@ -100,18 +100,18 @@
         <table class="w-100">
           <thead>
             <tr>
-              <th>Competency</th>
-              <th>Questions</th>
+              <th>{{'Competency' | translate}}</th>
+              <th>{{'Questions' | translate}}</th>
               <!-- <th>Target</th>
               <th>Unit of<br> Measurement</th> -->
-              <th>Question Weightage</th>
-              <th>Weightage</th>
+              <th>{{'Question Weightage' | translate}}</th>
+              <th>{{'Weightage' | translate}}</th>
               <ng-container *ngFor="let response of assessmentFormData?.formResponses">
                 <th style="width: max-content" class="text-wrap" *ngIf="response.isRatingVisible">
-                  {{ response.name }} <br> Rating<span class="text-danger">*</span>
+                  {{ response.name }} <br> {{'Rating' | translate}}<span class="text-danger">*</span>
                 </th>
                 <th *ngIf="response.isCommentsVisible">
-                  {{ response.name }} Comments<span class="text-danger">*</span>
+                  {{ response.name }} {{'Comments' | translate}}<span class="text-danger">*</span>
                 </th>
               </ng-container>
             </tr>
@@ -137,7 +137,7 @@
                       <td class="text-wrap" *ngIf="formResponse.isRatingVisible">
                         <!-- Rating Input -->
                         <!--  oninput="this.value = (this.value > 5 || this.value < 1 || this.value == 6) ? '' : this.value" -->
-                        <input type="number" placeholder="Enter rating" id="ratingfield-{{i}}-{{j}}-{{k}}"
+                        <input type="number" placeholder="{{'Enter rating' | translate}}" id="ratingfield-{{i}}-{{j}}-{{k}}"
                           name="ratingfield-{{i}}-{{j}}-{{k}}" #rating="ngModel" class="form-control table-input text-center"
                           [(ngModel)]="sectionDetail.questions[j].optionsData?.meta.rating" [min]="min" [max]="max" step="1" pattern="^[1-9]$"
                           maxlength="1" oninput="this.value = (this.value < min ) ? '' : this.value"
@@ -145,22 +145,22 @@
                           (ngModelChange)="updateRating( section, question, formResponse, sectionDetail.questions[j].optionsData?.meta.rating, 
                                                 sectionDetail.questions[j].optionsData?.meta.comments)" required />
                         <div class="error-msg" *ngIf="rating.invalid &&(rating.dirty ||rating.touched ||form.submitted)">
-                          <span *ngIf="rating.errors?.['required']">Rating is required</span>
-                          <span *ngIf="rating.errors?.['min']">Rating must be at least {{min}}</span>
-                          <span *ngIf="rating.errors?.['max']">Rating must not be greater than {{max}}</span>
-                          <span *ngIf="rating.errors?.['pattern']">Please enter rating between {{min}} and {{max}}</span>
+                          <span *ngIf="rating.errors?.['required']">{{'Rating is required' | translate}}</span>
+                          <span *ngIf="rating.errors?.['min']">{{'Rating must be at least' | translate}} {{min}}</span>
+                          <span *ngIf="rating.errors?.['max']">{{'Rating must not be greater than' | translate}} {{max}}</span>
+                          <span *ngIf="rating.errors?.['pattern']">{{'Please enter rating between' | translate}} {{min}} {{'and' | translate}} {{max}}</span>
                         </div>
                       </td>
                       <td *ngIf="formResponse.isCommentsVisible">
                         <!-- Comment Input -->
                         <textarea class="form-control table-input" rows="3"
-                          placeholder="Please provide Comments" id="commentsfield-{{i}}-{{j}}-{{k}}"
+                          placeholder="{{'Please provide Comments' | translate}}" id="commentsfield-{{i}}-{{j}}-{{k}}"
                           #ratingcomments="ngModel" name="commentsfield-{{i}}-{{j}}-{{k}}" [maxLength]="250" [minLength]="1"
                           [disabled]="(currentStage !== formResponse?.order)|| (formResponse.status!=='Pending'&&formResponse.status!=='Draft')"
                           [(ngModel)]="sectionDetail.questions[j].optionsData?.meta.comments" (ngModelChange)="updateRating( section, question, formResponse, sectionDetail.questions[j].optionsData?.meta.rating, 
                           sectionDetail.questions[j].optionsData?.meta.comments)" required=""></textarea>
                         <div *ngIf="ratingcomments.invalid &&(ratingcomments.dirty ||ratingcomments.touched ||form.submitted)" class="error-msg">
-                            <span *ngIf="ratingcomments.errors?.['required']">Comments is required</span>
+                            <span *ngIf="ratingcomments.errors?.['required']">{{'Comments is required' | translate}}</span>
                         </div>
                         <div class="textarea-count-text" *ngIf="sectionDetail.questions[j].optionsData?.meta.comments">
                             {{sectionDetail.questions[j].optionsData?.meta.comments?.length?sectionDetail.questions[j].optionsData?.meta.comments?.length:0}}/250
@@ -174,12 +174,11 @@
           </tbody>
           <tfoot>
             <tr>
-              <td colspan="4"><b>Overall Ratings</b></td>
+              <td colspan="4"><b>{{'Overall Ratings' | translate}}</b></td>
               <!-- Dynamically render the overall rating fields and comments for each role -->
               <ng-container *ngFor="let response of assessmentFormData?.formResponses; let i=index">
                 <td *ngIf="response.name === 'Employee' && response.isRatingVisible">
-                  <label for="exampleInputEmail1" class="form-label custom-label">{{ response.name }} Overall
-                    Rating</label>
+                  <label for="exampleInputEmail1" class="form-label custom-label">{{ response.name }} {{'Overall Rating' | translate}}</label>
                   <input *ngIf="response.name === 'Employee'" type="number" id="overallrating-{{i}}"
                     name="overallrating-{{i}}" #overallrating="ngModel" class="form-control footer-input text-center"
                     [(ngModel)]="response.formresponse.employeeOverAllRating"
@@ -189,7 +188,7 @@
                   <p></p>
                 </td>
                 <td *ngIf="response.name === 'Team Manager' && response.isRatingVisible">
-                  <label for="exampleInputEmail1" class="form-label custom-label">{{ response.name }} Overall Rating</label>
+                  <label for="exampleInputEmail1" class="form-label custom-label">{{ response.name }} {{'Overall Rating' | translate}}</label>
                   <input *ngIf="response.name === 'Team Manager'" type="number" id="overallrating-{{i}}"
                     name="overallrating-{{i}}" #overallrating="ngModel" class="form-control footer-input text-center"
                     [(ngModel)]="response.formresponse.tmOverrAllRating" [disabled]="currentStage !== response.order"
@@ -199,8 +198,7 @@
                   <p></p>
                 </td>
                 <td *ngIf="response.name === 'Reporting Manager' && response.isRatingVisible">
-                  <label for="exampleInputEmail1" class="form-label custom-label">{{ response.name }} Overall
-                    Rating</label>
+                  <label for="exampleInputEmail1" class="form-label custom-label">{{ response.name }} {{'Overall Rating' | translate}}</label>
                   <input *ngIf="response.name === 'Reporting Manager'" type="number" id="overallrating-{{i}}"
                     name="overallrating-{{i}}" #overallrating="ngModel" class="form-control footer-input text-center"
                     [(ngModel)]="response.formresponse.rmOverAllRating" [disabled]="currentStage !== response.order"
@@ -210,8 +208,7 @@
                   <p></p>
                 </td>
                 <td *ngIf="response.name === 'HR' && response.isRatingVisible">
-                  <label for="exampleInputEmail1" class="form-label custom-label">{{ response.name }} Overall
-                    Rating</label>
+                  <label for="exampleInputEmail1" class="form-label custom-label">{{ response.name }} {{'Overall Rating' | translate}}</label>
                   <input *ngIf="response.name === 'HR'" type="number" id="overallrating-{{i}}"
                     name="overallrating-{{i}}" #overallrating="ngModel"
                     [(ngModel)]=" response.formresponse.hrOverAllRating" class="form-control footer-input text-center"
@@ -232,16 +229,16 @@
         <input class="form-check-input" type="checkbox" id="sameasprevious" name="sameasprevious"
           (click)="checkTmAndRm($event)" [(ngModel)]="assessmentFormData.isSameAsPreviousAssessor"
           [disabled]="!currentStage" />
-        <label class="form-check-label" for="sameAsRM">Same as {{currentStageName}} Rating and Comments</label>
+        <label class="form-check-label" for="sameAsRM">{{'Same as' | translate}} {{currentStageName}} {{'Rating and Comments' | translate}}</label>
       </div>
 
       <div class="row mb-4">
         <!-- Employee Comments -->
         <ng-container *ngFor="let response of assessmentFormData?.formResponses; let i = index">
           <div class="col-md-6 mb-3">
-            <label for="employeeComments-{{i}}" class="form-label custom-label">{{response.name}} Comments<span class="text-danger">*</span></label>
+            <label for="employeeComments-{{i}}" class="form-label custom-label">{{response.name}} {{'Comments' | translate}}<span class="text-danger">*</span></label>
             <textarea class="form-control custom-input" id="comments-{{i}}" name="comments-{{i}}" rows="3"
-              placeholder="Please provide comments" [(ngModel)]="response?.formresponse.employeeComments"
+              placeholder="{{'Please provide comments' | translate}}" [(ngModel)]="response?.formresponse.employeeComments"
               maxlength="500" [disabled]="(response.order !== this.currentStage)|| (response.status!=='Pending'&&response.status!=='Draft')"
               (ngModelChange)="postcomments(response?.formresponse.employeeComments)" required
               #employeeCommentsControl="ngModel">
@@ -251,7 +248,7 @@
             </div>
             <div *ngIf="employeeCommentsControl.touched && employeeCommentsControl.invalid" class="error-msg">
               <span *ngIf="employeeCommentsControl.errors?.['required']">
-                {{response.name}} Comment is required.</span>
+                {{response.name}} {{'Comment is required' | translate}}.</span>
               <!-- <small *ngIf="employeeCommentsControl.errors?.['minlength']">Minimum length is 10 characters.</small>   minlength="10"-->
             </div>
           </div>
@@ -265,26 +262,26 @@
               <div class="row">
                 <div class="col-lg-4 col-md-12 mb-3">
                   <div>
-                    <label for="" class="form-label custom-label">Overall Rating</label>
+                    <label for="" class="form-label custom-label">{{'Overall Rating' | translate}}</label>
                     <input class="form-control custom-input" type="text" id="hroverallrating" name="hroverallrating"
-                      [(ngModel)]="hrOverAllRatingForProrata" placeholder="Overall Rating"
+                      [(ngModel)]="hrOverAllRatingForProrata" placeholder="{{'Overall Rating' | translate}}"
                       aria-label="default input example" readonly>
                   </div>
                 </div>
                 <div class="col-lg-4 col-md-12 mb-3">
                   <div>
-                    <label for="" class="form-label custom-label"> Incremental Percentage Based on Pro Rata Basis</label>
+                    <label for="" class="form-label custom-label">{{'Incremental Percentage Based on Pro Rata Basis' | translate}}</label>
                     <input class="form-control custom-input" type="text" id="incrementalpercentage" name="incrementalpercentage"
                       [(ngModel)]="assessmentFormData.incrementpercentagebasedonprorata"
-                      placeholder="Increment in Amount based on Pro Rata Basis" aria-label="default input example"
+                      placeholder="{{'Increment in Amount based on Pro Rata Basis' | translate}}" aria-label="default input example"
                       readonly>
                   </div>
                 </div>
                 <div class="col-lg-4 col-md-12 mb-3">
                   <div>
-                    <label for="" class="form-label custom-label">Current Salary</label>
+                    <label for="" class="form-label custom-label">{{'Current Salary' | translate}}</label>
                     <input class="form-control custom-input" type="text" id="currentsalary" name="currentsalary"
-                      [(ngModel)]="assessmentFormData.currentSalaryAuto" placeholder="Current Salary"
+                      [(ngModel)]="assessmentFormData.currentSalaryAuto" placeholder="{{'Current Salary' | translate}}"
                       aria-label="default input example" readonly>
                   </div>
                 </div>
@@ -295,8 +292,8 @@
               <div class="row">
                 <div class="col-lg-4 col-md-12 mb-3">
                   <div>
-                    <label for="" class="form-label custom-label">Total Duration in Months</label>
-                    <input class="form-control custom-input" type="number" placeholder="Total Duration in Months" id="totalrating"
+                    <label for="" class="form-label custom-label">{{'Total Duration in Months' | translate}}</label>
+                    <input class="form-control custom-input" type="number" placeholder="{{'Total Duration in Months' | translate}}" id="totalrating"
                       name="totalrating" [min]="1" step="1" oninput="this.value = (this.value < 1 ) ? '' : this.value"
                       aria-label="default input example" [(ngModel)]="assessmentFormData.totaldurationinmonths"
                       (ngModelChange)="prorataCalculationBasedontotaldurationinmonths(assessmentFormData.totaldurationinmonths)"
@@ -305,18 +302,18 @@
                 </div>
                 <div class="col-lg-4 col-md-12 mb-3">
                   <div>
-                    <label for="" class="form-label custom-label">Increment in Amount based on Pro Rata Basis</label>
+                    <label for="" class="form-label custom-label">{{'Increment in Amount based on Pro Rata Basis' | translate}}</label>
                     <input class="form-control custom-input" type="number" id="incrementalamount" name="incrementalamount"
                       [(ngModel)]="assessmentFormData.IncrementalAmount"
-                      placeholder="Incremental Percentage Based on Pro Rata Basis" aria-label="default input example"
+                      placeholder="{{'Incremental Percentage Based on Pro Rata Basis' | translate}}" aria-label="default input example"
                       readonly>
                   </div>
                 </div>
                 <div class="col-lg-4 col-md-12 mb-3">
                   <div>
-                    <label for="" class="form-label custom-label">Revised Salary</label>
+                    <label for="" class="form-label custom-label">{{'Revised Salary' | translate}}</label>
                     <input class="form-control custom-input" type="text" id="revicedsalary" name="revicedsalary"
-                      [(ngModel)]="assessmentFormData.revicedSalary" placeholder="Revised Salary"
+                      [(ngModel)]="assessmentFormData.revicedSalary" placeholder="{{'Revised Salary' | translate}}"
                       aria-label="default input example" readonly>
                   </div>
                 </div>
@@ -330,20 +327,20 @@
               [(ngModel)]="assessmentFormData.considermanualinputcheck" (click)="considermanualinput($event)"
               id="flexCheckDefault" [disabled]="currentStage!==lastStage">
             <label class="form-check-label" for="flexCheckDefault">
-              Consider Manual Input
+              {{'Consider Manual Input' | translate}}
             </label>
           </div>
 
           <div class="row mb-4">
             <div class="col-lg-4 col-md-6 mb-3">
               <div>
-                <label for="" class="form-label custom-label">Incremental Percentage Based on Rating<span class="text-danger"
+                <label for="" class="form-label custom-label">{{'Incremental Percentage Based on Rating' | translate}}<span class="text-danger"
                     *ngIf="assessmentFormData.considermanualinputcheck">*</span></label>
                 <input class="form-control custom-input" type="number" step="1" [min]="1"
                   oninput="this.value = ( this.value < 1 ) ? '' : this.value" id="cmincrementalpercentage"
                   name="cmincrementalpercentage" [(ngModel)]="assessmentFormData.cmincrementpercentagebasedonprorata"
                   (ngModelChange)="considermanualinputProrataCheck(assessmentFormData.cmincrementpercentagebasedonprorata)"
-                  placeholder="Incremental Percentage Based on Rating" aria-label="default input example"
+                  placeholder="{{'Incremental Percentage Based on Rating' | translate}}" aria-label="default input example"
                   [required]="assessmentFormData.considermanualinputcheck"
                   [disabled]="!this.assessmentFormData.considermanualinputcheck ||currentStage!==lastStage">
               </div>
@@ -351,8 +348,8 @@
 
             <div class="col-lg-4 col-md-6 mb-3">
               <div>
-                <label for="" class="form-label custom-label">Current Salary</label>
-                <input class="form-control custom-input" type="text" placeholder="Current Salary" id="cmcurrentsalary"
+                <label for="" class="form-label custom-label">{{'Current Salary' | translate}}</label>
+                <input class="form-control custom-input" type="text" placeholder="{{'Current Salary' | translate}}" id="cmcurrentsalary"
                   [(ngModel)]="assessmentFormData.cmcurrentSalaryAuto" name="cmcurrentsalary"
                   aria-label="default input example" [disabled]="currentStage === 1" readonly>
               </div>
@@ -360,8 +357,8 @@
 
             <div class="col-lg-4 col-md-6 mb-3">
               <div>
-                <label for="" class="form-label custom-label">Revised Salary<span class="text-danger"></span></label>
-                <input class="form-control custom-input" type="text" placeholder="Revised Salary" aria-label="default input example"
+                <label for="" class="form-label custom-label">{{'Revised Salary' | translate}}<span class="text-danger"></span></label>
+                <input class="form-control custom-input" type="text" placeholder="{{'Revised Salary' | translate}}" aria-label="default input example"
                   [disabled]="currentStage === 1" id="cmrevicedsalary" name="cmrevicedsalary"
                   [(ngModel)]="assessmentFormData.cmrevicedSalary" readonly>
               </div>
@@ -369,10 +366,10 @@
 
             <div class="col-lg-4 col-md-6 mb-3">
               <div>
-                <label for="" class="form-label custom-label">Increment in Amount<span class="text-danger"
+                <label for="" class="form-label custom-label">{{'Increment in Amount' | translate}}<span class="text-danger"
                     *ngIf="assessmentFormData.considermanualinputcheck">*</span></label>
                 <input class="form-control custom-input" type="number" step="1" [min]="1"
-                  oninput="this.value = ( this.value < 1 ) ? '' : this.value" placeholder="Increment in Amount"
+                  oninput="this.value = ( this.value < 1 ) ? '' : this.value" placeholder="{{'Increment in Amount' | translate}}"
                   id="cmincrementalAmount" name="cmincrementalAmount"
                   [(ngModel)]="assessmentFormData.cmIncrementalAmount"
                   (ngModelChange)="considermanualinputProrataCheckforpercentage(assessmentFormData.cmIncrementalAmount)"
@@ -389,20 +386,20 @@
               [(ngModel)]="assessmentFormData.salaryCorrectioninputcheck" (click)="salaryCorrectionmanualinput($event)"
               id="flexCheckDefault" [disabled]="currentStage!==lastStage">
             <label class="form-check-label" for="flexCheckDefault">
-              Salary Correction
+              {{'Salary Correction' | translate}}
             </label>
           </div>
 
           <div class="row mb-4">
             <div class="col-lg-4 col-md-6 mb-3">
               <div>
-                <label for="" class="form-label custom-label">Incremental Percentage Based on Rating<span class="text-danger"
+                <label for="" class="form-label custom-label">{{'Incremental Percentage Based on Rating' | translate}}<span class="text-danger"
                     *ngIf="assessmentFormData.salaryCorrectioninputcheck">*</span></label>
                 <input class="form-control custom-input" type="number" step="1" [min]="1"
                   oninput="this.value = ( this.value < 1 ) ? '' : this.value" id="scincrementalpercentage"
                   name="scincrementalpercentage" [(ngModel)]="assessmentFormData.scincrementpercentagebasedonprorata"
                   (ngModelChange)="salaryCorrectionmanualinputProrataCheck(assessmentFormData.scincrementpercentagebasedonprorata)"
-                  placeholder="Incremental Percentage Based on Rating" aria-label="default input example"
+                  placeholder="{{'Incremental Percentage Based on Rating' | translate}}" aria-label="default input example"
                   [required]="assessmentFormData.salaryCorrectioninputcheck"
                   [disabled]="!this.assessmentFormData.salaryCorrectioninputcheck ||currentStage!==lastStage">
               </div>

@@ -12,10 +12,11 @@ import { IJobdetails } from '../../../admin/active-employees/active-model';
 import { Select } from 'primeng/select';
 import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import moment from 'moment';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-employe-off-boarding',
-  imports: [RouterModule, ReactiveFormsModule, CommonModule, Select, DateformatPipe],
+  imports: [RouterModule, ReactiveFormsModule, CommonModule,TranslateModule, Select, DateformatPipe],
   templateUrl: './employe-off-boarding.component.html',
   styleUrl: './employe-off-boarding.component.scss'
 })

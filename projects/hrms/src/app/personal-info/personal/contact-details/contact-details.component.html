@@ -3,7 +3,7 @@
   <div class="card custom-background-card">
     <div class="d-flex justify-content-between align-items-center mb-3">
       <div>
-        <span class="component-sub-header">Contact Info</span>
+        <span class="component-sub-header">{{ 'Contact Info' | translate }}</span>
       </div>
       @if(canAccessfield('update','contact')){
       @if(!buttons && ( employedata?.empstatus?.toLowerCase() !== 'inactive' &&
@@ -15,9 +15,9 @@
       }
       @if(buttons){
       <div class="d-flex justify-content-end gap-2">
-        <button type="submit" class="custom-btn btn-secondary" (click)="disableForm()">Close</button>
+        <button type="submit" class="custom-btn btn-secondary" (click)="disableForm()">{{ 'Close' | translate }}</button>
         <button type="submit" class="custom-btn btn-primary" [disabled]="contactForm.invalid"
-          (click)="updateAddressInfo()">Save</button>
+          (click)="updateAddressInfo()">{{ 'Save' | translate }}</button>
       </div>
       }
     </div>
@@ -27,7 +27,7 @@
       <div class="row">
 
         <div class="col-lg-4 col-md-6 mb-3">
-          <label for="location" class="form-label custom-label mb-2">Work Number@if(isFieldPendingApproval('Work Number')) {
+          <label for="location" class="form-label custom-label mb-2">{{ 'Work Number' | translate }}@if(isFieldPendingApproval('Work Number')) {
             <app-info-icon class="info-pending" [ngbPopover]="pendingPopover" triggers="click"
               popoverClass="pending-popover" (click)="setActiveMessage('Work Number')" />
         
@@ -41,27 +41,25 @@
               </lib-country-list>
             </div>
             <ng-template #loadingTemplate>
-              <p>Loading...</p>
+              <p>{{ 'Loading...' | translate }}</p>
             </ng-template>
             <input type="text" class="form-control custom-input" formControlName="workNumber"
               (input)="onWorkNumberInput()" (keypress)="formValidation.restrictAlphabets($event)"
-              placeholder="Please enter work number" id="phonenumbers" aria-describedby="phonenumbers"
+              [placeholder]="'Please enter work number' | translate" id="phonenumbers" aria-describedby="phonenumbers"
               autocomplete="off">
           </div>
           <div class="error-msg my-1"
             *ngIf="contactForm.get('workNumber')?.invalid &&  (contactForm.get('workNumber')?.touched || contactForm.get('workNumber')?.dirty)">
-            <div *ngIf="contactForm.get('workNumber')?.hasError('required')">Work number is
-              required</div>
-            <div *ngIf="contactForm.get('workNumber')?.hasError('pattern')">Please enter a valid
-              work number</div>
+            <div *ngIf="contactForm.get('workNumber')?.hasError('required')">{{ 'Work number is required' | translate }}</div>
+            <div *ngIf="contactForm.get('workNumber')?.hasError('pattern')">{{ 'Please enter a valid work number' | translate }}</div>
             <div *ngIf="contactForm.get('workNumber')?.hasError('invalidPhoneNumber')">
-              The phone number is not valid for the selected country
+              {{ 'The phone number is not valid for the selected country' | translate }}
             </div>
           </div>
         </div>
 
         <div class="col-md-6 col-lg-4 mb-3">
-          <label for="phoneNumber" class="form-label custom-label mb-2">Phone Number <span
+          <label for="phoneNumber" class="form-label custom-label mb-2">{{ 'Phone Number' | translate }} <span
               class="text-danger">*</span>@if(isFieldPendingApproval('Phone Number')) {
                 <app-info-icon class="info-pending" [ngbPopover]="pendingPopover" triggers="click"
               popoverClass="pending-popover" (click)="setActiveMessage('Phone Number')" />
@@ -76,62 +74,59 @@
               </lib-country-list>
             </div>
             <ng-template #loadingTemplate>
-              <p>Loading...</p>
+              <p>{{ 'Loading...' | translate }}</p>
             </ng-template>
             <input type="text" class="form-control custom-input" formControlName="phoneNumber"
               (input)="onPhoneNumberInput()" (keypress)="formValidation.restrictAlphabets($event)"
-              placeholder="Please enter phone number" id="phonenumbers" aria-describedby="phonenumbers"
+              [placeholder]="'Please enter phone number' | translate" id="phonenumbers" aria-describedby="phonenumbers"
               autocomplete="off" required>
           </div>
           <div class="error-msg my-1"
             *ngIf="contactForm.get('phoneNumber')?.invalid &&  (contactForm.get('phoneNumber')?.touched || contactForm.get('phoneNumber')?.dirty)">
-            <div *ngIf="contactForm.get('phoneNumber')?.hasError('required')">Mobile number is
-              required</div>
-            <div *ngIf="contactForm.get('phoneNumber')?.hasError('pattern')">Please enter a valid
-              mobile number</div>
+            <div *ngIf="contactForm.get('phoneNumber')?.hasError('required')">{{ 'Mobile number is required' | translate }}</div>
+            <div *ngIf="contactForm.get('phoneNumber')?.hasError('pattern')">{{ 'Please enter a valid mobile number' | translate }}</div>
             <div *ngIf="contactForm.get('phoneNumber')?.hasError('invalidPhoneNumber')">
-              The phone number is not valid for the selected country
+              {{ 'The phone number is not valid for the selected country' | translate }}
             </div>
           </div>
         </div>
 
         <div class="col-md-6 col-lg-4 mb-3">
-          <label for="workMail" class="form-label custom-label mb-2">Work Mail<span class="text-danger">*</span></label>
+          <label for="workMail" class="form-label custom-label mb-2">{{ 'Work Mail' | translate }}<span class="text-danger">*</span></label>
           <input type="email" class="form-control custom-input" id="workMail" formControlName="workMail"
-            placeholder="Please enter work mail">
+            [placeholder]="'Please enter work mail' | translate">
           <div class="error-msg" *ngIf="contactForm.get('workMail')?.invalid && contactForm.get('workMail')?.touched">
-            <div *ngIf="contactForm.get('workMail')?.errors?.['required']">Work mail is required</div>
-            <div *ngIf="contactForm.get('workMail')?.errors?.['email']">Work mail must be a valid email address</div>
+            <div *ngIf="contactForm.get('workMail')?.errors?.['required']">{{ 'Work mail is required' | translate }}</div>
+            <div *ngIf="contactForm.get('workMail')?.errors?.['email']">{{ 'Work mail must be a valid email address' | translate }}</div>
           </div>
         </div>
 
         <div class="col-md-6 col-lg-4 mb-3">
-          <label for="personalEmail" class="form-label custom-label mb-2">Personal Email<span
+          <label for="personalEmail" class="form-label custom-label mb-2">{{ 'Personal Email' | translate }}<span
               class="text-danger">*</span>@if(isFieldPendingApproval('Personal Email')) {
                 <app-info-icon class="info-pending" [ngbPopover]="pendingPopover" triggers="click"
               popoverClass="pending-popover" (click)="setActiveMessage('Personal Email')" />
 
             }</label>
           <input type="email" class="form-control custom-input" id="personalEmail" formControlName="personalEmail"
-            placeholder="Please enter personal email">
+            [placeholder]="'Please enter personal email' | translate">
           <div class="error-msg"
             *ngIf="contactForm.get('personalEmail')?.invalid && contactForm.get('personalEmail')?.touched">
-            <div *ngIf="contactForm.get('personalEmail')?.errors?.['required']">Personal email is required</div>
-            <div *ngIf="contactForm.get('personalEmail')?.errors?.['email']">Personal email must be a valid email
-              address</div>
+            <div *ngIf="contactForm.get('personalEmail')?.errors?.['required']">{{ 'Personal email is required' | translate }}</div>
+            <div *ngIf="contactForm.get('personalEmail')?.errors?.['email']">{{ 'Personal email must be a valid email address' | translate }}</div>
           </div>
         </div>
 
 
         <div class="col-md-6 col-lg-4 mb-3">
-          <label for="linkedinurl" class="form-label custom-label mb-2">LinkedIn Url
+          <label for="linkedinurl" class="form-label custom-label mb-2">{{ 'LinkedIn Url' | translate }}
           </label>
           <input type="email" class="form-control custom-input" id="linkedinurl" formControlName="linkedinurl"
-            placeholder="Please enter linkedIn Url">
+            [placeholder]="'Please enter linkedIn Url' | translate">
           <div class="error-msg"
             *ngIf="contactForm.get('linkedinurl')?.invalid && contactForm.get('linkedinurl')?.touched">
-            <div *ngIf="contactForm.get('linkedinurl')?.errors?.['required']">LinkedIn Url is required</div>
-            <div *ngIf="contactForm.get('linkedinurl')?.errors?.['pattern']"> Please enter a valid URL</div>
+            <div *ngIf="contactForm.get('linkedinurl')?.errors?.['required']">{{ 'LinkedIn Url is required' | translate }}</div>
+            <div *ngIf="contactForm.get('linkedinurl')?.errors?.['pattern']">{{ 'Please enter a valid URL' | translate }}</div>
           </div>
         </div>
 

@@ -11,7 +11,7 @@
             lvSummeryReportForm.get('manager')?.value ||
             lvSummeryReportForm.get('leaveCategory')?.value ||
             lvSummeryReportForm.get('team')?.value" (click)="clearAllFilters()">
-          Clear All
+          {{'Clear All'|translate}}
         </button>
 
         <!-- Employee -->
@@ -19,8 +19,8 @@
         <div class="d-flex align-items-center gap-2">
           <div class="custom-p-select-content">
             <p-select class="form-select custom-select" [options]="employeeiddetails" optionLabel="fullName" filterBy="fullName"
-              [filter]="true" formControlName="employee" placeholder="Please select employee"
-              filterPlaceholder="Search employee">
+              [filter]="true" formControlName="employee" [placeholder]="'Please select employee'|translate"
+              [filterPlaceholder]="'Search employee'|translate">
               <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
               <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
             </p-select>
@@ -33,8 +33,8 @@
         <div class="d-flex align-items-center gap-2">
           <div class="custom-p-select-content">
             <p-select [options]="teamdetails" optionLabel="fullName" filterBy="fullName" [filter]="true"
-              formControlName="manager" placeholder="Please select manager" class="form-select custom-select"
-              filterPlaceholder="Search manager">
+              formControlName="manager" [placeholder]="'Please select manager'|translate" class="form-select custom-select"
+              [filterPlaceholder]="'Search manager'|translate">
               <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
               <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
             </p-select>
@@ -48,8 +48,8 @@
         <div class="d-flex align-items-center gap-2">
           <div class="custom-p-select-content">
             <p-select [options]="getEmployeeInfo" [filter]="true" optionLabel="fullName" filterBy="fullName"
-              formControlName="team" placeholder="Please select employee" class="form-select custom-select"
-              filterPlaceholder="Search employee" (onChange)="onClick($event)">
+              formControlName="team" [placeholder]="'Please select employee'|translate" class="form-select custom-select"
+              [filterPlaceholder]="'Search employee'|translate" (onChange)="onClick($event)">
               <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
               <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
             </p-select>
@@ -62,8 +62,8 @@
           <div class="d-flex align-items-center gap-2">
             <div class="custom-p-select-content">
               <p-select [options]="uniqueLeaveCategory" optionLabel="label" filterBy="label"
-                formControlName="leaveCategory" placeholder="Please select leave category"
-                class="form-select custom-select" [filter]="true" filterPlaceholder="Search leave type">
+                formControlName="leaveCategory" [placeholder]="'Please select leave category'|translate"
+                class="form-select custom-select" [filter]="true" [filterPlaceholder]="'Search leave type'|translate">
                 <ng-template #selectedItem let-selectedOption>{{ selectedOption.label }}</ng-template>
                 <ng-template let-employee #item>{{ employee.label }}</ng-template>
               </p-select>
@@ -77,9 +77,9 @@
           <button type="submit" class="custom-btn btn-secondary" [disabled]="isLeaveGenerateDisabled">
             @if(spinnerLoader1){
             <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-            <span>{{'Loading...'}}</span>
+            <span>{{'Loading...'|translate}}</span>
             }@else {
-            <span>{{'Generate'}}</span>
+            <span>{{'Generate'|translate}}</span>
             }
           </button>
           }
@@ -89,9 +89,9 @@
             [disabled]="filterlvsumRecord.length === 0 || disableBtn">
             @if(spinnerLoader2){
             <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-            <span>{{'Loading...'}}</span>
+            <span>{{'Loading...'|translate}}</span>
             }@else {
-            <span>{{'Export'}}</span>
+            <span>{{'Export'|translate}}</span>
             }
           </button>
           }
@@ -104,16 +104,16 @@
     @if(!isLoading){
     <table id="levsumReportTable" class="w-100">
       <thead>
-        <th>Employee ID</th>
-        <th>Employee Name</th>
-        <th>Department</th>
-        <th>Team Manager</th>
-        <th>Location</th>
-        <th>Sub Location</th>
-        <th>Shift</th>
-        <th>Month</th>
-        <th>Leave Type</th>
-        <th>Leaves Availed</th>
+        <th>{{'Employee ID'|translate}}</th>
+        <th>{{'Employee Name'|translate}}</th>
+        <th>{{'Department'|translate}}</th>
+        <th>{{'Team Manager'|translate}}</th>
+        <th>{{'Location'|translate}}</th>
+        <th>{{'Sub Location'|translate}}</th>
+        <th>{{'Shift'|translate}}</th>
+        <th>{{'Month'|translate}}</th>
+        <th>{{'Leave Type'|translate}}</th>
+        <th>{{'Leaves Availed'|translate}}</th>
       </thead>
       <tbody>
         @if (!filterlvsumRecord || filterlvsumRecord.length === 0) {

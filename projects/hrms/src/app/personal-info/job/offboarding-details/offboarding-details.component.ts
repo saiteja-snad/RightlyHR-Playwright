@@ -10,10 +10,11 @@ import { Ipersonal } from '../../../Interfaces/personal-modal';
 import moment from 'moment';
 import { Router } from '@angular/router';
 import { Skeleton } from 'primeng/skeleton';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-offboarding-details',
-  imports: [CommonModule, ReactiveFormsModule,Skeleton],
+  imports: [CommonModule, ReactiveFormsModule,Skeleton,TranslateModule],
   templateUrl: './offboarding-details.component.html',
   styleUrl: './offboarding-details.component.scss'
 })

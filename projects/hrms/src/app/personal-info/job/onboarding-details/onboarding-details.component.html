@@ -3,7 +3,7 @@
     <div class="card custom-background-card p-4 mb-4">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <div>
-                <span class="component-sub-header">Onboarding Info</span>
+                <span class="component-sub-header">{{'Onboarding Info' | translate}}</span>
             </div>
             @if(canAccess('view','onboarding')){
             @if(!buttons && (empinfo?.empstatus?.toLowerCase() !== 'inactive' && empinfo?.empstatus?.toLowerCase() !=='trainee inactive' )){
@@ -19,8 +19,8 @@
             }
             <!-- Show buttons if 'buttons' is true -->
             <div *ngIf="buttons" class="d-flex justify-content-end gap-2">
-                <button type="button" class="custom-btn btn-secondary" (click)="showButtons()">Close</button>
-                <button type="submit" class="custom-btn btn-primary" [disabled]="this.onboardingForm.invalid" (click)="onSubmit()">Save</button>
+                <button type="button" class="custom-btn btn-secondary" (click)="showButtons()">{{'Close' | translate}}</button>
+                <button type="submit" class="custom-btn btn-primary" [disabled]="this.onboardingForm.invalid" (click)="onSubmit()">{{'Save' | translate}}</button>
             </div>
             }
         </div>
@@ -29,173 +29,172 @@
         <form autocomplete="off" [formGroup]="onboardingForm">
             <div class="row">
                 <div class="col-md-6 col-lg-4 mb-3">
-                    <label for="status" class="form-label custom-label mb-2">Status</label>
+                    <label for="status" class="form-label custom-label mb-2">{{'Status' | translate}}</label>
                     <div class="custom-p-select-content">
-                        <p-select [options]="Statusdetails" optionLabel="statusname" placeholder="Please select status"
+                        <p-select [options]="Statusdetails" optionLabel="statusname" [placeholder]="'Please select status' | translate"
                             formControlName="status" class="form-select custom-select"></p-select>
                     </div>
                     <div class="error-msg"
                         *ngIf="onboardingForm.get('status')?.invalid && onboardingForm.get('status')?.touched">
-                        Status is required
+                        {{'Status is required' | translate}}
                     </div>
                 </div>
 
                 <div class="col-md-6 col-lg-4 mb-3">
-                    <label for="dateOfJoining" class="form-label custom-label mb-2">Date Of Joining</label>
+                    <label for="dateOfJoining" class="form-label custom-label mb-2">{{'Date Of Joining' | translate}}</label>
                     <input type="date" class="form-control custom-input" id="dateOfJoining" [min]="offerletttersentdate"
                         formControlName="dateOfJoining">
                     <div class="error-msg"
                         *ngIf="onboardingForm.get('dateOfJoining')?.invalid && onboardingForm.get('dateOfJoining')?.touched">
-                        Date Of Joining is required
+                        {{'Date Of Joining is required' | translate}}
                     </div>
                 </div>
 
                 <div class="col-md-6 col-lg-4 mb-3">
-                    <label for="branchLocation" class="form-label custom-label mb-2">Branch Code</label>
+                    <label for="branchLocation" class="form-label custom-label mb-2">{{'Branch Code' | translate}}</label>
                     <div class="custom-p-select-content">
                         <p-select [options]="branchLocations" optionLabel="branchCode" optionValue="branchCode"
-                            formControlName="branchLocation" placeholder="Select Branch Code"
+                            formControlName="branchLocation" [placeholder]="'Select Branch Code' | translate"
                             class="form-select custom-select">
                         </p-select>
                     </div>
                     <div class="error-msg"
                         *ngIf="onboardingForm.get('branchLocation')?.invalid && onboardingForm.get('branchLocation')?.touched">
-                        Branch Location / Code is required
+                        {{'Branch Location / Code is required' | translate}}
                     </div>
                 </div>
 
                 <!-- Add New Fields -->
                 <div class="col-md-6 col-lg-4 mb-3" *ngIf="!((empdata?.empstatus === 'Active Contract' || empdata?.empstatus === 'Inactive Contract' || empdata?.empstatus === 'Prospective Contract') && empdata?.empType === 'Contract')">
-                    <label for="probationEndDate" class="form-label custom-label mb-2">Probation End Date</label>
+                    <label for="probationEndDate" class="form-label custom-label mb-2">{{'Probation End Date' | translate}}</label>
                     <input type="date" class="form-control custom-input" id="probationEndDate"
-                        formControlName="probationEndDate" placeholder="Please enter probation end date">
+                        formControlName="probationEndDate" [placeholder]="'Please enter probation end date' | translate">
                     <div class="error-msg"
                         *ngIf="onboardingForm.get('probationEndDate')?.invalid && onboardingForm.get('probationEndDate')?.touched">
-                        Probation End Date is required
+                        {{'Probation End Date is required' | translate}}
                     </div>
                 </div>
     
                 <div class="col-md-6 col-lg-4 mb-3" *ngIf="!((empdata?.empstatus === 'Active Contract' || empdata?.empstatus === 'Inactive Contract' || empdata?.empstatus === 'Prospective Contract') && empdata?.empType === 'Contract')">
-                    <label for="probationStatus" class="form-label custom-label mb-2">Probation Status</label>
+                    <label for="probationStatus" class="form-label custom-label mb-2">{{'Probation Status' | translate}}</label>
                     <div class="custom-p-select-content">
                         <p-select [options]="probation" optionLabel="probationstatus1" formControlName="probationStatus"
-                            placeholder="Select Probation Status" class="form-select custom-select">
+                            [placeholder]="'Select Probation Status' | translate" class="form-select custom-select">
                         </p-select>
                     </div>
                     <div class="error-msg"
                         *ngIf="onboardingForm.get('probationStatus')?.invalid && onboardingForm.get('probationStatus')?.touched">
-                        Probation Status is required
+                        {{'Probation Status is required' | translate}}
                     </div>
                 </div>
 
                 <div class="col-md-6 col-lg-4 mb-3">
-                    <label for="noticePeriodStatus" class="form-label custom-label mb-2">Notice Period Status
+                    <label for="noticePeriodStatus" class="form-label custom-label mb-2">{{'Notice Period Status' | translate}}
                     </label>
 
                     <div class="custom-p-select-content">
                         <p-select [options]="noticePeriod" optionLabel="name" formControlName="noticePeriodStatus"
-                            placeholder="Select Notice Period" class="form-select custom-select">
+                            [placeholder]="'Select Notice Period' | translate" class="form-select custom-select">
                         </p-select>
                     </div>
                     <div class="error-msg"
                         *ngIf="onboardingForm.get('noticePeriodStatus')?.invalid && onboardingForm.get('noticePeriodStatus')?.touched">
-                        Notice Period Status is required
+                        {{'Notice Period Status is required' | translate}}
                     </div>
                 </div>
 
                 <div class="col-md-6 col-lg-4 mb-3">
-                    <label for="backgroundCheckStatus" class="form-label custom-label mb-2">Background Check
-                        Status</label>
+                    <label for="backgroundCheckStatus" class="form-label custom-label mb-2">{{'Background Check Status' | translate}}</label>
                     <div class="custom-p-select-content">
                         <p-select [options]="backgroundDetails" optionLabel="backgroundcheckstatus1"
-                            formControlName="backgroundCheckStatus" placeholder="Please select background check status"
+                            formControlName="backgroundCheckStatus" [placeholder]="'Please select background check status' | translate"
                             class="form-select custom-select">
                         </p-select>
                     </div>
                     <div class="error-msg"
                         *ngIf="onboardingForm.get('backgroundCheckStatus')?.invalid && onboardingForm.get('backgroundCheckStatus')?.touched">
-                        Background Check Status is required
+                        {{'Background Check Status is required' | translate}}
                     </div>
                 </div>
 
                 <div class="col-md-6 col-lg-4 mb-3">
-                    <label for="salaryHold" class="form-label custom-label mb-2">Salary Hold</label>
+                    <label for="salaryHold" class="form-label custom-label mb-2">{{'Salary Hold' | translate}}</label>
                     <div class="custom-p-select-content">
                         <p-select [options]="salaryHoldDetails" optionLabel="name" formControlName="salaryHold"
-                            placeholder="Select Salary Hold" class="form-select custom-select">
+                            [placeholder]="'Select Salary Hold' | translate" class="form-select custom-select">
                         </p-select>
                     </div>
                     <div class="error-msg"
                         *ngIf="onboardingForm.get('salaryHold')?.invalid && onboardingForm.get('salaryHold')?.touched">
-                        Salary Hold is required
+                        {{'Salary Hold is required' | translate}}
                     </div>
                 </div>
     
                 <div class="col-md-6 col-lg-4 mb-3" *ngIf="!((empdata?.empstatus === 'Active Contract' || empdata?.empstatus === 'Inactive Contract' || empdata?.empstatus === 'Prospective Contract') && empdata?.empType === 'Contract')">
-                    <label for="pf" class="form-label custom-label mb-2">PF</label>
+                    <label for="pf" class="form-label custom-label mb-2">{{'PF' | translate}}</label>
                     <div class="custom-p-select-content">
                         <p-select [options]="pfdata" optionLabel="name" formControlName="pf"
-                            placeholder="Please enter PF details" class="form-select custom-select">
+                            [placeholder]="'Please enter PF details' | translate" class="form-select custom-select">
                         </p-select>
                     </div>
                     <div class="error-msg"
                         *ngIf="onboardingForm.get('pf')?.invalid && onboardingForm.get('pf')?.touched">
-                        PF is required
+                        {{'PF is required' | translate}}
                     </div>
                 </div>
     
                 <div class="col-md-6 col-lg-4 mb-3" *ngIf="!((empdata?.empstatus === 'Active Contract' || empdata?.empstatus === 'Inactive Contract' || empdata?.empstatus === 'Prospective Contract') && empdata?.empType === 'Contract')">
-                    <label for="esic" class="form-label custom-label mb-2">ESIC</label>
+                    <label for="esic" class="form-label custom-label mb-2">{{'ESIC' | translate}}</label>
                     <div class="custom-p-select-content">
                         <p-select [options]="esicdata" optionLabel="name" formControlName="esic"
-                            placeholder="Please enter ESIC details" class="form-select custom-select">
+                            [placeholder]="'Please enter ESIC details' | translate" class="form-select custom-select">
                         </p-select>
                     </div>
                     <div class="error-msg"
                         *ngIf="onboardingForm.get('esic')?.invalid && onboardingForm.get('esic')?.touched">
-                        ESIC is required
+                        {{'ESIC is required' | translate}}
                     </div>
                 </div>
     
                 <div class="col-md-6 col-lg-4 mb-3" *ngIf="!((empdata?.empstatus === 'Active Contract' || empdata?.empstatus === 'Inactive Contract' || empdata?.empstatus === 'Prospective Contract') && empdata?.empType === 'Contract')">
-                    <label for="pt" class="form-label custom-label mb-2">PT</label>
+                    <label for="pt" class="form-label custom-label mb-2">{{'PT' | translate}}</label>
                     <div class="custom-p-select-content">
                         <p-select [options]="ptdata" optionLabel="name" formControlName="pt"
-                            placeholder="Please enter PT details" class="form-select custom-select">
+                            [placeholder]="'Please enter PT details' | translate" class="form-select custom-select">
                         </p-select>
                     </div>
                     <div class="error-msg"
                         *ngIf="onboardingForm.get('pt')?.invalid && onboardingForm.get('pt')?.touched">
-                        PT is required
+                        {{'PT is required' | translate}}
                     </div>
                 </div>
 
                 <div class="col-md-6 col-lg-4 mb-3">
-                    <label for="totalExperience" class="form-label custom-label mb-2">Total Previous Years Experience</label>
+                    <label for="totalExperience" class="form-label custom-label mb-2">{{'Total Previous Years Experience' | translate}}</label>
                     <input type="text" class="form-control custom-input" id="totalExperience"
-                        formControlName="totalExperience" placeholder="Please enter total experience">
+                        formControlName="totalExperience" [placeholder]="'Please enter total experience' | translate">
                     <div class="error-msg"
                         *ngIf="onboardingForm.get('totalExperience')?.invalid && onboardingForm.get('totalExperience')?.touched">
-                        Total Experience is required
+                        {{'Total Experience is required' | translate}}
                     </div>
                 </div>
             </div>
             <div class="row" *ngIf="!((empdata?.empstatus === 'Active Contract' || empdata?.empstatus === 'Inactive Contract' || empdata?.empstatus === 'Prospective Contract') && empdata?.empType === 'Contract')">
                 <div class="mb-2">
-                    <span class="component-sub-header">Work From Home</span>
+                    <span class="component-sub-header">{{'Work From Home' | translate}}</span>
                 </div>
                 <!-- Work From Home -->
                 <div class="col-md-6 col-lg-4 mb-3">
-                    <label for="remoteLogin" class="form-label custom-label mb-2">Allow Work From Home</label>
+                    <label for="remoteLogin" class="form-label custom-label mb-2">{{'Allow Work From Home' | translate}}</label>
                     <div class="custom-p-select-content">
                         <p-select [options]="wfh" optionLabel="name" optionValue="value"
-                            formControlName="allowwfh" placeholder="Select Remote Login"
+                            formControlName="allowwfh" [placeholder]="'Select Remote Login' | translate"
                             class="form-select custom-select" appendTo="body">
                         </p-select>
                     </div>
                     <div class="error-msg"
                         *ngIf="onboardingForm.get('allowwfh')?.errors?.['required'] && onboardingForm.get('allowwfh')?.touched">
-                        Allow Work From Home is required
+                        {{'Allow Work From Home is required' | translate}}
                     </div>
                     <div class="error-msg" *ngIf="onboardingForm.get('allowwfh')?.errors?.['conflict']">
                         {{ onboardingForm.get('allowwfh')?.errors?.['conflict'] }}
@@ -204,31 +203,31 @@
                 <!-- Work From Home Work Location -->
                 @if (onboardingForm.get('allowwfh')?.value === true) {
                 <div class="col-md-6 col-lg-4 mb-3">
-                    <label for="workLocation" class="form-label custom-label mb-2">Work From Home Work Location</label>
+                    <label for="workLocation" class="form-label custom-label mb-2">{{'Work From Home Work Location' | translate}}</label>
                     <div class="custom-p-select-content">
                         <p-select [options]="filteredWorkLocations" formControlName="workLocation" optionLabel="value"
-                            optionValue="value" placeholder="Select Work Location" class="form-select custom-select"
+                            optionValue="value" [placeholder]="'Select Work Location' | translate" class="form-select custom-select"
                             appendTo="body">
                         </p-select>
                     </div>
                     <div class="error-msg"
                         *ngIf="onboardingForm.get('workLocation')?.invalid && onboardingForm.get('workLocation')?.touched">
-                        Work From Home Work Location is required
+                        {{'Work From Home Work Location is required' | translate}}
                     </div>
                 </div>
                 }
                 <!-- Work From Home Manager -->
                 @if (onboardingForm.get('allowwfh')?.value === true) {
                 <div class="col-md-6 col-lg-4 mb-3">
-                    <label for="workLocation" class="form-label custom-label mb-2">Work From Home Manager</label>
+                    <label for="workLocation" class="form-label custom-label mb-2">{{'Work From Home Manager' | translate}}</label>
                     <div class="custom-p-select-content">
                         <p-select [options]="Manager" formControlName="wfhmanger" optionLabel="name" optionValue="value"
-                            placeholder="Select Work From Home Maner" class="form-select custom-select" appendTo="body">
+                            [placeholder]="'Select Work From Home Maner' | translate" class="form-select custom-select" appendTo="body">
                         </p-select>
                     </div>
                     <div class="error-msg"
                         *ngIf="onboardingForm.get('workLocation')?.invalid && onboardingForm.get('workLocation')?.touched">
-                        Work From Home Manager is required
+                        {{'Work From Home Manager is required' | translate}}
                     </div>
                 </div>
                 }
@@ -236,20 +235,20 @@
 
             <div class="row" *ngIf="!((empdata?.empstatus === 'Active Contract' || empdata?.empstatus === 'Inactive Contract' || empdata?.empstatus === 'Prospective Contract') && empdata?.empType === 'Contract')">
                 <div class="mb-2">
-                    <span class="component-sub-header">Remote Login</span>
+                    <span class="component-sub-header">{{'Remote Login' | translate}}</span>
                 </div>
                 <!-- Remote Login -->
                 <div class="col-md-6 col-lg-4 mb-3">
-                    <label for="remoteLogin" class="form-label custom-label mb-2">Allow Remote Login</label>
+                    <label for="remoteLogin" class="form-label custom-label mb-2">{{'Allow Remote Login' | translate}}</label>
                     <div class="custom-p-select-content">
                         <p-select [options]="remoteLoginOptions" optionLabel="name" optionValue="value"
-                            formControlName="allowRemoteLogin" placeholder="Select Remote Login"
+                            formControlName="allowRemoteLogin" [placeholder]="'Select Remote Login' | translate"
                             class="form-select custom-select" appendTo="body">
                         </p-select>
                     </div>
                     <div class="error-msg"
                         *ngIf="onboardingForm.get('allowRemoteLogin')?.errors?.['required'] && onboardingForm.get('allowRemoteLogin')?.touched">
-                        Allow Remote Login is required
+                        {{'Allow Remote Login is required' | translate}}
                     </div>
                     <div class="error-msg" *ngIf="onboardingForm.get('allowRemoteLogin')?.errors?.['conflict']">
                         {{ onboardingForm.get('allowRemoteLogin')?.errors?.['conflict'] }}
@@ -258,30 +257,30 @@
                 <!-- Remote Login Work Location -->
                 @if (onboardingForm.get('allowRemoteLogin')?.value === true) {
                 <div class="col-md-6 col-lg-4 mb-3">
-                    <label for="workLocation" class="form-label custom-label mb-2">Remote Login Work Location</label>
+                    <label for="workLocation" class="form-label custom-label mb-2">{{'Remote Login Work Location' | translate}}</label>
                     <div class="custom-p-select-content">
                         <p-select [options]="filteredRemoteLoginWorkLocations" formControlName="remoteLoginWorkLocation" optionLabel="value"
-                            optionValue="value" placeholder="Select Work Location" class="form-select custom-select" appendTo="body">
+                            optionValue="value" [placeholder]="'Select Work Location' | translate" class="form-select custom-select" appendTo="body">
                         </p-select>
                     </div>
                     <div class="error-msg"
                         *ngIf="onboardingForm.get('remoteLoginWorkLocation')?.invalid && onboardingForm.get('remoteLoginWorkLocation')?.touched">
-                        Remote Login Work Location is required
+                        {{'Remote Login Work Location is required' | translate}}
                     </div>
                 </div>
                 }
                 <!-- Remote Login Manager -->
                 @if (onboardingForm.get('allowRemoteLogin')?.value === true) {
                 <div class="col-md-6 col-lg-4 mb-3">
-                    <label for="workLocation" class="form-label custom-label mb-2">Remote Login Manager</label>
+                    <label for="workLocation" class="form-label custom-label mb-2">{{'Remote Login Manager' | translate}}</label>
                     <div class="custom-p-select-content">
                         <p-select [options]="remoteLoginManagers" formControlName="remoteLoginManager" optionLabel="name" optionValue="value"
-                            placeholder="Select Remote Login Manager" class="form-select custom-select" appendTo="body">
+                            [placeholder]="'Select Remote Login Manager' | translate" class="form-select custom-select" appendTo="body">
                         </p-select>
                     </div>
                     <div class="error-msg"
                         *ngIf="onboardingForm.get('remoteLoginManager')?.invalid && onboardingForm.get('remoteLoginManager')?.touched">
-                        Remote Login Manager is required
+                        {{'Remote Login Manager is required' | translate}}
                     </div>
                 </div>
                 }
@@ -310,21 +309,21 @@
         *ngIf="empdata.empstatus === 'Trainee Prospective' || empdata.empstatus === 'Trainee Active'">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <div>
-                <span class="component-sub-header">Trainee Details</span>
+                <span class="component-sub-header">{{'Trainee Details' | translate}}</span>
             </div>
         </div>
         <form autocomplete="off" [formGroup]="traineeForm">
             <div class="row">
                 <div class="col-md-6 col-lg-4 mb-3">
-                    <label class="form-label custom-label mb-2">Employment Type Status</label>
+                    <label class="form-label custom-label mb-2">{{'Employment Type Status' | translate}}</label>
                     <input type="text" class="form-control custom-input" formControlName="empType"
-                        placeholder="Employment type status" />
+                        [placeholder]="'Employment type status' | translate" />
                 </div>
 
                 @if((empdata.empstatus === 'Trainee Prospective' || empdata.empstatus === 'Trainee Active') &&
                 isEditing){
                 <div class="col-md-6 col-lg-4 mb-3">
-                    <label class="form-label custom-label mb-2">Trainee Start Date</label>
+                    <label class="form-label custom-label mb-2">{{'Trainee Start Date' | translate}}</label>
                     <input type="date" class="form-control custom-input" formControlName="dateOfJoining" />
                 </div>
                 }
@@ -332,24 +331,24 @@
                 @if((empdata.empstatus === 'Trainee Prospective' || empdata.empstatus === 'Trainee Active') &&
                 !isEditing){
                 <div class="col-md-6 col-lg-4 mb-3">
-                    <label class="form-label custom-label mb-2">Trainee Start Date</label>
+                    <label class="form-label custom-label mb-2">{{'Trainee Start Date' | translate}}</label>
                     <input type="date" class="form-control custom-input" id="dateOfJoining"
-                        formControlName="dateOfJoining" placeholder="Please enter trainee start date"
+                        formControlName="dateOfJoining" [placeholder]="'Please enter trainee start date' | translate"
                         onkeydown="return false;">
                 </div>
                 }
 
                 <div class="col-md-6 col-lg-4 mb-3">
-                    <label class="form-label custom-label mb-2">Duration of Training</label>
+                    <label class="form-label custom-label mb-2">{{'Duration of Training' | translate}}</label>
                     <input type="text" class="form-control custom-input" formControlName="durationOfTrainee"
-                        placeholder="Duration of Training" (keypress)="letters($event)" />
+                        [placeholder]="'Duration of Training' | translate" (keypress)="letters($event)" />
                 </div>
 
                 @if(!isEditing ){
                 <div class="col-md-6 col-lg-4 mb-3">
-                    <label class="form-label custom-label mb-2">Training End Date</label>
+                    <label class="form-label custom-label mb-2">{{'Training End Date' | translate}}</label>
                     <input type="date" class="form-control custom-input" id="trainingEndDate"
-                        formControlName="trainingEndDate" placeholder="Please enter training end Date"
+                        formControlName="trainingEndDate" [placeholder]="'Please enter training end Date' | translate"
                         onkeydown="return false;">
                 </div>
                 }
@@ -360,44 +359,44 @@
     <div class="card custom-background-card p-4" *ngIf="(this.empinfo?.empstatus === 'Active Contract' || empdata?.empstatus === 'Inactive Contract' || this.empinfo?.empstatus === 'Prospective Contract') && this.empinfo?.empType === 'Contract'">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <div>
-                <span class="component-sub-header">Contract Details</span>
+                <span class="component-sub-header">{{'Contract Details' | translate}}</span>
             </div>
         </div>
         <form autocomplete="off" [formGroup]="contractForm">
             <div class="row">
                 <div class="col-md-6 col-lg-4 mb-3">
-                    <label class="form-label custom-label mb-2">Employment Type Status</label>
+                    <label class="form-label custom-label mb-2">{{'Employment Type Status' | translate}}</label>
                     <input type="text" class="form-control custom-input" formControlName="empType"
-                        placeholder="Employment type status" />
+                        [placeholder]="'Employment type status' | translate" />
                 </div>
 
                 @if((empdata.empstatus === 'Prospective Contract' || empdata.empstatus === 'Inactive Contract' || empdata.empstatus === 'Active Contract') && isEditing){
                 <div class="col-md-6 col-lg-4 mb-3">
-                    <label class="form-label custom-label mb-2">Contract Start Date</label>
+                    <label class="form-label custom-label mb-2">{{'Contract Start Date' | translate}}</label>
                     <input type="date" class="form-control custom-input" formControlName="dateOfJoining" />
                 </div>
                 }
 
                 @if((empdata.empstatus === 'Prospective Contract' || empdata.empstatus === 'Inactive Contract' || empdata.empstatus === 'Active Contract') && !isEditing){
                 <div class="col-md-6 col-lg-4 mb-3">
-                    <label class="form-label custom-label mb-2">Contract Start Date</label>
+                    <label class="form-label custom-label mb-2">{{'Contract Start Date' | translate}}</label>
                     <input type="date" class="form-control custom-input" id="dateOfJoining"
-                        formControlName="dateOfJoining" placeholder="Please enter contract start date"
+                        formControlName="dateOfJoining" [placeholder]="'Please enter contract start date' | translate"
                         onkeydown="return false;">
                 </div>
                 }
 
                 <div class="col-md-6 col-lg-4 mb-3">
-                    <label class="form-label custom-label mb-2">Duration of Contract</label>
+                    <label class="form-label custom-label mb-2">{{'Duration of Contract' | translate}}</label>
                     <input type="text" class="form-control custom-input" formControlName="durationofContracts"
-                        placeholder="Duration of Contract" (keypress)="letters($event)" />
+                        [placeholder]="'Duration of Contract' | translate" (keypress)="letters($event)" />
                 </div>
 
                 @if(!isEditing ){
                 <div class="col-md-6 col-lg-4 mb-3">
-                    <label class="form-label custom-label mb-2">Contract End Date</label>
+                    <label class="form-label custom-label mb-2">{{'Contract End Date' | translate}}</label>
                     <input type="date" class="form-control custom-input" id="contractEndDate"
-                        formControlName="contractEndDate" placeholder="Please enter contract end Date"
+                        formControlName="contractEndDate" [placeholder]="'Please enter contract end Date' | translate"
                         onkeydown="return false;">
                 </div>
                 }

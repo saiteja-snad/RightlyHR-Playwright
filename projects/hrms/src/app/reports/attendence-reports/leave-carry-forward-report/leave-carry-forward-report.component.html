@@ -13,7 +13,7 @@
         } -->
 
         <button type="button" class="custom-btn btn-secondary position-relative" (click)="toggleFilters(filterContent)">
-          <i class="bi bi-funnel me-2"></i>Filters
+          <i class="bi bi-funnel me-2"></i>{{'Filters'|translate}}
           <span *ngIf="isFilterApplied()" class="filter-indicator"></span>
         </button>
 
@@ -69,9 +69,9 @@
             [disabled]="filteredleaveRecord.length == 0 || disableBtn">
             @if(spinnerLoader2){
             <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-            <span>{{'Loading...'}}</span>
+            <span>{{'Loading...'|translate}}</span>
             }@else {
-            <span>{{'Export'}}</span>
+            <span>{{'Export'|translate}}</span>
             }
           </button>
           }
@@ -155,24 +155,24 @@
       <form [formGroup]="LeaveReportForm"  (ngSubmit)="generateleaveReport()" >
       <!-- Year -->
       <div class="mb-3">
-        <label class="form-label custom-label text-nowrap filter-labels mb-3">Select Year <span class="text-danger">*</span></label>
+        <label class="form-label custom-label text-nowrap filter-labels mb-3">{{'Select Year'|translate}} <span class="text-danger">*</span></label>
         <div class="custom-p-select-content">
           <p-select [options]="years" optionLabel="label" optionValue="value" formControlName="year"
-            placeholder="Select year" class="form-select custom-select" (onChange)="enableLocation()">
+            [placeholder]="'Select year'|translate" class="form-select custom-select" (onChange)="enableLocation()">
           </p-select>
         </div>
         <div *ngIf="LeaveReportForm.get('year')?.touched && LeaveReportForm.get('year')?.invalid"
           class="error-msg">
-          <div *ngIf="LeaveReportForm.get('year')?.errors?.['required']">Year is required</div>
+          <div *ngIf="LeaveReportForm.get('year')?.errors?.['required']">{{'Year is required'|translate}}</div>
         </div>
       </div>
         <!-- Location -->
         <div class="mb-3">
-           <label class="form-label custom-label text-nowrap filter-labels mb-3">Select Location</label>
+           <label class="form-label custom-label text-nowrap filter-labels mb-3">{{'Select Location'|translate}}</label>
           <div class="custom-p-select-content">
             <p-select [options]="locationDetails" optionLabel="jobLocationName" [filter]="true"
               class="form-select custom-select" filterBy="jobLocationName" [showClear]="false" [resetFilterOnHide]="true"
-              formControlName="location" placeholder="Select location" filterPlaceholder="Search location"
+              formControlName="location" [placeholder]="'Select location'|translate" [filterPlaceholder]="'Search location'|translate"
               (onChange)="onLocationChange($event.value)">
               <ng-template #selectedItem let-selectedOption>{{ selectedOption.jobLocationName }}</ng-template>
               <ng-template let-location #item>{{ location.jobLocationName }}</ng-template>
@@ -182,12 +182,12 @@
 
         <!-- Sub Location -->
         <div class="mb-3">
-          <label class="form-label custom-label text-nowrap filter-labels mb-3">Select Sub Location</label>
+          <label class="form-label custom-label text-nowrap filter-labels mb-3">{{'Select Sub Location'|translate}}</label>
           <div class="custom-p-select-content">
             <p-select [options]="subLocationDetails" optionLabel="jobSubLocationName" [filter]="true"
               class="form-select custom-select" filterBy="jobSubLocationName" [showClear]="false" [resetFilterOnHide]="true"
-              formControlName="subLocation" placeholder="Select sub location"
-              (onChange)="getAllShifts($event.value)" filterPlaceholder="Search sub location">
+              formControlName="subLocation" [placeholder]="'Select sub location'|translate"
+              (onChange)="getAllShifts($event.value)" [filterPlaceholder]="'Search sub location'|translate">
               <ng-template #selectedItem let-selectedOption>{{ selectedOption.jobSubLocationName }}</ng-template>
               <ng-template let-location #item>{{ location.jobSubLocationName }}</ng-template>
             </p-select>
@@ -196,11 +196,11 @@
 
         <!-- Shift -->
         <div class="mb-3">
-          <label class="form-label custom-label text-nowrap filter-labels mb-3">Select Shift</label>
+          <label class="form-label custom-label text-nowrap filter-labels mb-3">{{'Select Shift'|translate}}</label>
           <div class="custom-p-select-content">
             <p-select [options]="shiftDetails" optionLabel="shiftName" [filter]="true" filterBy="shiftName"
-              [showClear]="false" formControlName="shift" placeholder="Select shift" [resetFilterOnHide]="true"
-              (onChange)="getCategoryDetails($event.value)" class="form-select custom-select" filterPlaceholder="Search shift">
+              [showClear]="false" formControlName="shift" [placeholder]="'Select shift'|translate" [resetFilterOnHide]="true"
+              (onChange)="getCategoryDetails($event.value)" class="form-select custom-select" [filterPlaceholder]="'Search shift'|translate">
               <ng-template #selectedItem let-selectedOption>{{ selectedOption.shiftName }}</ng-template>
               <ng-template let-location #item>{{ location.shiftName }}</ng-template>
             </p-select>
@@ -209,11 +209,11 @@
 
         <!-- Category -->
         <div  class="mb-3">
-           <label class="form-label custom-label text-nowrap filter-labels mb-3">Select Category</label>
+           <label class="form-label custom-label text-nowrap filter-labels mb-3">{{'Select Category'|translate}}</label>
           <div class="custom-p-select-content">
             <p-select [options]="categoryDetails" optionLabel="name" [filter]="true" filterBy="name"
-              [showClear]="false" formControlName="categoryName" placeholder="Select category" [resetFilterOnHide]="true"
-              class="form-select custom-select" filterPlaceholder="Search category">
+              [showClear]="false" formControlName="categoryName" [placeholder]="'Select category'|translate" [resetFilterOnHide]="true"
+              class="form-select custom-select" [filterPlaceholder]="'Search category'|translate">
               <ng-template #selectedItem let-selectedOption>{{ selectedOption.name }}</ng-template>
               <ng-template let-category #item>{{ category.name }}</ng-template>
             </p-select>
@@ -223,11 +223,11 @@
          <!-- Employee -->
         @if(rbac.allowedToAccess('Attendance All Employees List(Leave Carry Forward & Encashment).view')){
         <div class="mb-3">
-          <label class="form-label custom-label text-nowrap filter-labels mb-3">Select Employee</label>
+          <label class="form-label custom-label text-nowrap filter-labels mb-3">{{'Select Employee'|translate}}</label>
           <div class="custom-p-select-content">
             <p-select [options]="employeeiddetails" optionLabel="fullName" filterBy="fullName" [filter]="true"
-              formControlName="employee" placeholder="Please select employee" class="form-select custom-select"
-              filterPlaceholder="Search employee" [resetFilterOnHide]="true">
+              formControlName="employee" [placeholder]="'Please select employee'|translate" class="form-select custom-select"
+              [filterPlaceholder]="'Search employee'|translate" [resetFilterOnHide]="true">
               <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
               <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
             </p-select>
@@ -244,9 +244,9 @@
           <button type="submit" class="custom-btn btn-primary w-100" [disabled]="isLeaveGenerateDisabled">
             @if(spinnerLoader1){
             <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-            <span>{{'Loading...'}}</span>
+            <span>{{'Loading...'|translate}}</span>
             }@else {
-            <span>{{'Generate'}}</span>
+            <span>{{'Generate'|translate}}</span>
             }
           </button>
           }

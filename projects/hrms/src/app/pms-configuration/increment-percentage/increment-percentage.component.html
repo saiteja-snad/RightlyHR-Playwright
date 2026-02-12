@@ -6,7 +6,7 @@
         </div>
         @if(rbac.allowedToAccess('Increment Create.view')){
         <div>
-            <button class="custom-btn btn-primary px-5" (click)="openAdd()">Create</button>
+            <button class="custom-btn btn-primary px-5" (click)="openAdd()">{{'Create'|translate}}</button>
         </div>
         }
     </div>
@@ -16,7 +16,7 @@
         <div class="input-group custom-search mb-3">
             <span class="input-group-text custom-input-group-search" id="basic-addon1">
                 <i class="bi bi-search"></i></span>
-            <input type="search" class="form-control custom-search-input" placeholder="Search by review cycle name / department / team / location / sub location" [(ngModel)]="searchText"
+            <input type="search" class="form-control custom-search-input" [placeholder]="'Search by review cycle name / department / team / location / sub location'|translate" [(ngModel)]="searchText"
                 (ngModelChange)="onSearchTextChange()" aria-label="Search">
         </div>
 
@@ -24,17 +24,17 @@
             @if(!dataload){
             <table class="w-100">
                 <thead>
-                    <th>Review Cycle Name</th>
-                    <th>Department</th>
-                    <th>Team</th>
-                    <th>Location</th>
-                    <th>Sub Location</th>
-                    <th>Rating Scale</th>
+                    <th>{{'Review Cycle Name'|translate}}</th>
+                    <th>{{'Department'|translate}}</th>
+                    <th>{{'Team'|translate}}</th>
+                    <th>{{'Location'|translate}}</th>
+                    <th>{{'Sub Location'|translate}}</th>
+                    <th>{{'Rating Scale'|translate}}</th>
                     @if (rbac.allowedToAccess('Increment Update(Status - Created).view') ||
                     rbac.allowedToAccess('Increment Delete(Status - Created).view') ||
                     rbac.allowedToAccess('Increment View(Status - Initiated).view') ||
                     rbac.allowedToAccess('Increment Update(Status - Review On Hold).view')) {
-                    <th>Action</th>
+                    <th>{{'Action'|translate}}</th>
                     }
                 </thead>
                 <tbody>
@@ -65,20 +65,20 @@
                                     @if (rbac.allowedToAccess('Increment Update(Status - Created).view')) {
                                     <li><a class="dropdown-item"
                                             *ngIf="item?.reviewCycleStatus ==='Created' || item?.reviewCycleStatus ==='Initiated'"
-                                            (click)="editDetails(item)">Update</a></li>
+                                            (click)="editDetails(item)">{{'Update'|translate}}</a></li>
                                     }
                                     @if(rbac.allowedToAccess('Increment Delete(Status - Created).view')){
                                     <li><a class="dropdown-item" *ngIf="item?.reviewCycleStatus ==='Created'"
-                                            (click)="openDelete(confirmation, item.id)">Delete</a></li>
+                                            (click)="openDelete(confirmation, item.id)">{{'Delete'|translate}}</a></li>
                                     }
                                     @if(rbac.allowedToAccess('Increment View(Status - Initiated).view')){
                                     <li><a class="dropdown-item" *ngIf="item?.reviewCycleStatus ==='Initiated'"
-                                            (click)="viewDetails(item)">View</a></li>
+                                            (click)="viewDetails(item)">{{'View'|translate}}</a></li>
                                     }
                                     @if(rbac.allowedToAccess('Increment Update(Status - Review On Hold).view')){
                                     @if(item?.reviewCycleStatus ==='Review on Hold'){
                                     <li>
-                                        <a class="dropdown-item" (click)="openHoldMsg()">Update</a>
+                                        <a class="dropdown-item" (click)="openHoldMsg()">{{'Update'|translate}}</a>
                                     </li>
                                     }
                                     }
@@ -113,8 +113,8 @@
                         </option>
                     </select>
                     <span class="pagination-label text-nowrap">
-                        Showing {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize : (+first +
-                        +rows) }} of {{ collectionSize }}
+                        {{'Showing'|translate}} {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize : (+first +
+                        +rows) }} {{'of'|translate}} {{ collectionSize }}
                     </span>
                 </div>
                 <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"
@@ -129,11 +129,11 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <img src="icons\delete-icon.png" alt="failure icon" class="confirmation-delete-icon">
-            <p class="confirmation-text">Are you sure you want to delete?</p>
+            <p class="confirmation-text">{{'Are you sure you want to delete?'|translate}}</p>
         </div>
         <div class="custom-modal-footer">
-            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
-            <button type="submit" class="custom-btn btn-primary" (click)="deleteData();modal.dismiss()">Yes</button>
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'|translate}}</button>
+            <button type="submit" class="custom-btn btn-primary" (click)="deleteData();modal.dismiss()">{{'Yes'|translate}}</button>
         </div>
     </div>
 </ng-template>

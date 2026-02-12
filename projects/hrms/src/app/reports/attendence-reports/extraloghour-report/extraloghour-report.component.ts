@@ -21,10 +21,11 @@ import { IWfhReportRequest } from '../../../Interfaces/reports.model';
 import * as XLSX from 'xlsx';
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { AttendancePlaceholderComponent } from "../../../icons/attendance-placeholder/attendance-placeholder.component";
 @Component({
   selector: 'app-extraloghour-report',
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, DatePicker, DropdownModule, SelectModule, TranslateModule,NgbPopoverModule,
-    NoDataFoundComponent, DataLoaderContentComponent, ReportsHeaderComponent, InfoIconComponent],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, DatePicker, DropdownModule, SelectModule, TranslateModule, NgbPopoverModule,
+    NoDataFoundComponent, DataLoaderContentComponent, ReportsHeaderComponent, InfoIconComponent, AttendancePlaceholderComponent],
   templateUrl: './extraloghour-report.component.html',
   styleUrl: './extraloghour-report.component.scss'
 })
@@ -68,7 +69,7 @@ moduleinfo: string = '';
     ],
   };
   localeOptions: any;
-
+  isAttendanceDataTrue: boolean = false;
   constructor(
     private authService: AuthService,
     private reportsService: ReportsService,
@@ -79,6 +80,7 @@ moduleinfo: string = '';
   ) { }
 
   ngOnInit(): void {
+     this.getattendancedatabyentry();
     this.localeOptions = {
       applyLabel: 'ok',
       format: this.authService.convertAngularDateFormatToJs(environment.dateformat).toUpperCase(),
@@ -90,6 +92,18 @@ moduleinfo: string = '';
     this.getEmployeeId();
     this.getTeam();
     this.getMyTeam();
+  }
+ getattendancedatabyentry() {
+    const params = 'AttendanceConfiguration';
+    const param = 'IsProcessing';
+    this.http.getDatabyentriyvalue(`entityAttributeValues`, params, param).subscribe({
+      next: (data: any) => {
+        this.isAttendanceDataTrue = String(data[0].value).toLowerCase() === 'true';
+      },
+      error: (err) => {
+        console.error('Error fetching data:', err);
+      }
+    });
   }
 
   initializeForm() {

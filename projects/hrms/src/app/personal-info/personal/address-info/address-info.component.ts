@@ -11,10 +11,11 @@ import { Router } from '@angular/router';
 import { AccessForEmployeeinfoService } from '../../../services/access-for-employeeinfo.service';
 import { Skeleton } from 'primeng/skeleton';
 import { EditIconComponent } from "../../../icons/edit-icon/edit-icon.component";
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-address-info',
-  imports: [CommonModule, ReactiveFormsModule, Skeleton, NgbPopoverModule, EditIconComponent],
+  imports: [CommonModule, ReactiveFormsModule, Skeleton, NgbPopoverModule, EditIconComponent, TranslateModule],
   templateUrl: './address-info.component.html',
   styleUrl: './address-info.component.scss'
 })

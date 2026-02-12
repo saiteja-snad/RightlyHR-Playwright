@@ -1,7 +1,7 @@
 <div class="custom-main-popup-container" ngbAutofocus>
   <div class="custom-poup-header-content popup-header-border">
     <div>
-      <p class="popup-heading mb-0">Update KRA Category</p>
+      <p class="popup-heading mb-0">{{'Update KRA Category'|translate}}</p>
     </div>
     <div>
       <a (click)="openconfirmationModelforcancle(cancel)">
@@ -14,40 +14,40 @@
     <form [formGroup]="kraForm" (ngSubmit)="onUpdate()">
       <div class="row">
         <div class="col-md-6 mb-4">
-          <label class="form-label custom-label">Category Name <span class="text-danger">*</span></label>
+          <label class="form-label custom-label">{{'Category Name'|translate}} <span class="text-danger">*</span></label>
           <input 
             type="text" 
             class="form-control custom-input" 
             formControlName="categoryName"
-            placeholder="Enter category name"
+            [placeholder]="'Enter category name'|translate"
             (input)="onCategoryInput('categoryName')">
           <div class="error-msg" *ngIf="kraForm.get('categoryName')?.touched && kraForm.get('categoryName')?.invalid">
-            Category Name is required
+            {{'Category Name is required'|translate}}
           </div>
         </div>
 
         <div class="col-md-6 mb-4">
-          <label class="form-label custom-label">Category Code <span class="text-danger">*</span></label>
+          <label class="form-label custom-label">{{'Category Code'|translate}} <span class="text-danger">*</span></label>
           <input 
             type="text" 
             class="form-control custom-input" 
             formControlName="categoryCode"
-            placeholder="Enter category code"
+            [placeholder]="'Enter category code'|translate"
             (input)="onCategoryInput('categoryCode')">
           <div class="error-msg" *ngIf="kraForm.get('categoryCode')?.touched && kraForm.get('categoryCode')?.invalid">
-            Category Code is required
+            {{'Category Code is required'|translate}}
           </div>
         </div>
 
         <div class="col-12 mb-4">
-          <label class="form-label custom-label">Description <span class="text-danger">*</span></label>
+          <label class="form-label custom-label">{{'Description'|translate}} <span class="text-danger">*</span></label>
           <textarea 
             class="form-control custom-input" 
             rows="4" 
             formControlName="description"
             minlength="10"
             maxlength="500"
-            placeholder="Enter Description"
+            [placeholder]="'Enter Description'|translate"
             (input)="onCategoryInput('description')">
           </textarea>
           
@@ -57,16 +57,16 @@
           </div>
           
           <div class="error-msg" *ngIf="kraForm.get('description')?.touched && kraForm.get('description')?.invalid">
-            <span *ngIf="kraForm.get('description')?.errors?.['required']">Description is required</span>
-            <span *ngIf="kraForm.get('description')?.errors?.['minlength']">Description must be at least 10 characters</span>
+            <span *ngIf="kraForm.get('description')?.errors?.['required']">{{'Description is required'|translate}}</span>
+            <span *ngIf="kraForm.get('description')?.errors?.['minlength']">{{'Description must be at least 10 characters'|translate}}</span>
           </div>
         </div>
       </div>
 
       <div class="custom-modal-footer">
-        <button type="button" class="custom-btn btn-secondary" (click)="openconfirmationModelforcancle(cancel)">Cancel</button>
+        <button type="button" class="custom-btn btn-secondary" (click)="openconfirmationModelforcancle(cancel)">{{'Cancel'|translate}}</button>
         <button type="submit" class="custom-btn btn-primary" [disabled]="kraForm.invalid || isLoading">
-          @if(!isLoading) { Update } @else { <span class="spinner-border spinner-border-sm me-2"></span> Updating... }
+          @if(!isLoading) { {{'Update'|translate}} } @else { <span class="spinner-border spinner-border-sm me-2"></span> {{'Updating...'|translate}} }
         </button>
       </div>
     </form>
@@ -77,11 +77,11 @@
   <div class="result-popup-content" ngbAutofocus>
     <div>
       <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
-      <p class="confirmation-text">Are you sure you want to cancel?</p>
+      <p class="confirmation-text">{{'Are you sure you want to cancel?'|translate}}</p>
     </div>
     <div class="custom-modal-footer">
-      <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
-      <button type="submit" class="custom-btn btn-primary" (click)="closeModal()">Yes</button>
+      <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'|translate}}</button>
+      <button type="submit" class="custom-btn btn-primary" (click)="closeModal()">{{'Yes'|translate}}</button>
     </div>
   </div>
 </ng-template>

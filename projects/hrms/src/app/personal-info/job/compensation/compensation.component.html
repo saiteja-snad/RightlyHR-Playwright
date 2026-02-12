@@ -1,14 +1,12 @@
 <div class="custom-main-component-container">
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <div><span class="component-sub-header">Compensations</span></div>
+        <div><span class="component-sub-header">{{'Compensations'|translate}}</span></div>
 
         @if(canAccess('create' ,'compensation')){
-        @if((empinfo?.empstatus?.toLowerCase() !== 'prospective' && empinfo?.empstatus?.toLowerCase() !== 'trainee
-        prospective'
+        @if((empinfo?.empstatus?.toLowerCase() !== 'prospective' && empinfo?.empstatus?.toLowerCase() !== 'trainee prospective'
         && empinfo?.empstatus?.toLowerCase() !== 'inactive' && empinfo?.empstatus?.toLowerCase() !== 'trainee inactive'
         )){
-        <div class="custom-add-btn" (click)="openModal(addcomfDetailes)"><i class="bi bi-plus plus-icon me-1"></i>Add
-            New</div>
+        <div class="custom-add-btn" (click)="openModal(addcomfDetailes)"><i class="bi bi-plus plus-icon me-1"></i>{{'Add New'|translate}}</div>
         }
         }
     </div>
@@ -18,15 +16,15 @@
         <table class="w-100">
             <thead>
                 <tr>
-                    <th class="text-center">Effective Date</th>
-                    <th>Overtime Eligibility</th>
-                    <th>Reason</th>
-                    <th>Frequency</th>
-                    <th>Pay Type</th>
-                    <th>Amount (Yearly CTC)</th>
-                    <th>Variable Pay</th>
-                    <th>Variable Pay Amount</th>
-                    <th>Next Compensation Review Date</th>
+                    <th class="text-center">{{'Effective Date'|translate}}</th>
+                    <th>{{'Overtime Eligibility'|translate}}</th>
+                    <th>{{'Reason'|translate}}</th>
+                    <th>{{'Frequency'|translate}}</th>
+                    <th>{{'Pay Type'|translate}}</th>
+                    <th>{{'Amount (Yearly CTC)'|translate}}</th>
+                    <th>{{'Variable Pay'|translate}}</th>
+                    <th>{{'Variable Pay Amount'|translate}}</th>
+                    <th>{{'Next Compensation Review Date'|translate}}</th>
                     @if(canAccess('update','compensation') ||
                     canAccess('delete','compensation')){
                     @if((empinfo?.empstatus?.toLowerCase() !== 'prospective' && empinfo?.empstatus?.toLowerCase() !==
@@ -42,14 +40,14 @@
                 <ng-container *ngIf="((compensationdetails | async) ?? []).length > 0; else noDataTemplate">
                     <tr *ngFor="let item of compensationdetails | async">
                         <td class="text-center text-nowrap">{{item.compeffectivedate | dateformat}}</td>
-                        <td>{{item.overtimeeligibility?item.overtimeeligibility:'NA'}}</td>
-                        <td>{{item.reason?item.reason:'NA'}}</td>
-                        <td>{{item.frequency?item.frequency:'NA'}}</td>
-                        <td class="text-center">{{item.paytype?item.paytype:'NA'}}</td>
-                        <td>{{item.compensationamount?item.compensationamount:'NA'}}</td>
-                        <td>{{item.isVariablePay ? 'Yes' : 'No'}}</td>
-                        <td>{{item.variablePayAmount?item.variablePayAmount:'NA'}}</td>
-                        <td>{{item.nextCompReviewDate?(item.nextCompReviewDate | dateformat):'NA'}}</td>
+                        <td>{{item.overtimeeligibility?item.overtimeeligibility:('NA'|translate)}}</td>
+                        <td>{{item.reason?item.reason:('NA'|translate)}}</td>
+                        <td>{{item.frequency?item.frequency:('NA'|translate)}}</td>
+                        <td class="text-center">{{item.paytype?item.paytype:('NA'|translate)}}</td>
+                        <td>{{item.compensationamount?item.compensationamount:('NA'|translate)}}</td>
+                        <td>{{item.isVariablePay ? ('Yes'|translate) : ('No'|translate)}}</td>
+                        <td>{{item.variablePayAmount?item.variablePayAmount:('NA'|translate)}}</td>
+                        <td>{{item.nextCompReviewDate?(item.nextCompReviewDate | dateformat):('NA'|translate)}}</td>
                         @if(canAccess('update','compensation') ||
                         canAccess('delete','compensation')){
                         @if((empinfo?.empstatus?.toLowerCase() !== 'prospective' && empinfo?.empstatus?.toLowerCase()
@@ -69,7 +67,7 @@
                                     empinfo?.empstatus?.toLowerCase() !== 'trainee inactive' )){
                                     <li (click)="openModalupdate(updatecomfDetailes, item)">
                                         <a class="dropdown-item">
-                                              <i class="bi bi-pencil me-2"></i>Update
+                                              <i class="bi bi-pencil me-2"></i>{{'Update'|translate}}
                                         </a>
                                     </li>
                                     }
@@ -81,7 +79,7 @@
                                     empinfo?.empstatus?.toLowerCase() !== 'trainee inactive' )){
                                     <li (click)="opendeletModal(deleteconformation,item)">
                                         <a class="dropdown-item">
-                                                <i class="bi bi-trash3 me-2"></i>Delete
+                                                <i class="bi bi-trash3 me-2"></i>{{'Delete'|translate}}
                                         </a>
                                     </li>
                                     }
@@ -112,7 +110,7 @@
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="d-flex justify-content-between popup-header-border p-3">
             <div class="pt-2">
-                <p class="popup-heading mb-0">Add Compensation</p>
+                <p class="popup-heading mb-0">{{'Add Compensation'|translate}}</p>
             </div>
             <div>
                 <a (click)="modal.dismiss();compForm.reset()"><img src="icons/close.png" alt="Close Icon"
@@ -123,80 +121,78 @@
             <form autocomplete="off" [formGroup]="compForm" (ngSubmit)="postcompensation(compForm)">
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <label class="form-label custom-label mb-2">Effective Date<span
+                        <label class="form-label custom-label mb-2">{{'Effective Date'|translate}}<span
                                 class="text-danger">*</span></label>
                         <input type="date" class="form-control custom-input" [min]="joiningDate"
                             formControlName="compeffectivedate" onkeypress="return false" />
                         <div class="error-msg"
                             *ngIf="compForm.get('compeffectivedate')?.hasError('required') && compForm.get('compeffectivedate')?.touched ">
-                            Effective Date is required
+                            {{'Effective Date is required'|translate}}
                         </div>
                         <div class="error-msg" *ngIf="compForm.get('compeffectivedate')?.hasError('dateInvalid') ">
-                            Effective Date cannot be less than Joining date
+                            {{'Effective Date cannot be less than Joining date'|translate}}
                         </div>
                     </div>
                    
                     <div class="col-md-6 mb-3">
-                        <label class="form-label custom-label mb-2"> Reason<span class="text-danger">*</span></label>
+                        <label class="form-label custom-label mb-2"> {{'Reason'|translate}}<span class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
                             <p-select [options]="compensationReason" optionLabel="reason" formControlName="reason"
-                                placeholder="Please select reason" class="form-select custom-select"></p-select>
+                                [placeholder]="'Please select reason'|translate" class="form-select custom-select"></p-select>
                         </div>
                         <div class="error-msg"
                             *ngIf="compForm.get('reason')?.invalid && compForm.get('reason')?.touched ">
-                            Reason is required
+                            {{'Reason is required'|translate}}
                         </div>
                     </div>
 
                     <div class="col-md-6 mb-3">
-                        <label class="form-label custom-label mb-2">Pay Type <span class="text-danger">*</span></label>
+                        <label class="form-label custom-label mb-2">{{'Pay Type'|translate}} <span class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
                             <p-select [options]="paytypeDetails" optionLabel="paytype1" formControlName="paytype"
-                                placeholder="Please select pay type" class="form-select custom-select"></p-select>
+                                [placeholder]="'Please select pay type'|translate" class="form-select custom-select"></p-select>
                         </div>
                         <div class="error-msg"
                             *ngIf="compForm.get('paytype')?.invalid && compForm.get('paytype')?.touched ">
-                            Reason is required
+                            {{'Reason is required'|translate}}
                         </div>
                     </div>
 
                     <div class="col-md-6 mb-3">
-                        <label class="form-label custom-label mb-2">Overtime Eligibility <span
+                        <label class="form-label custom-label mb-2">{{'Overtime Eligibility'|translate}} <span
                                 class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
                             <p-select [options]="overtimeDetails" optionLabel="overtimeeligibility1"
-                                formControlName="overtimeeligibility" placeholder="Please select overtime eligibility"
+                                formControlName="overtimeeligibility" [placeholder]="'Please select overtime eligibility'|translate"
                                 class="form-select custom-select"></p-select>
                         </div>
                         <div class="error-msg"
                             *ngIf="compForm.get('overtimeeligibility')?.invalid && compForm.get('overtimeeligibility')?.touched ">
-                            Overtime Eligibility is required
+                            {{'Overtime Eligibility is required'|translate}}
                         </div>
                     </div>
 
                     <div class="col-md-6 mb-3">
-                        <label class="form-label custom-label mb-2">Frequency<span class="text-danger">*</span></label>
+                        <label class="form-label custom-label mb-2">{{'Frequency'|translate}}<span class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
                             <p-select [options]="frequencyDetails" optionLabel="frequency1" formControlName="frequency"
-                                placeholder="Please select frequency" class="form-select custom-select"></p-select>
+                                [placeholder]="'Please select frequency'|translate" class="form-select custom-select"></p-select>
                         </div>
                         <div class="error-msg"
                             *ngIf="compForm.get('frequency')?.invalid && compForm.get('frequency')?.touched ">
-                            Frequency is required
+                            {{'Frequency is required'|translate}}
                         </div>
                     </div>
 
                     <div class="col-md-6 mb-3">
-                        <label class="form-label custom-label mb-2">Amount (Yearly CTC)<span
+                        <label class="form-label custom-label mb-2">{{'Amount (Yearly CTC)'|translate}}<span
                                 class="text-danger">*</span></label>
                         <input type="text" class="form-control custom-input" formControlName="compensationamount"
-                            placeholder="Please enter amount" maxlength="10" />
+                            [placeholder]="'Please enter amount'|translate" maxlength="10" />
                         <div class="error-msg"
                             *ngIf="compForm.get('compensationamount')?.invalid && compForm.get('compensationamount')?.touched">
-                            <div *ngIf="compForm.get('compensationamount')?.errors?.['required']">Amount is
-                                required.</div>
-                            <div *ngIf="compForm.get('compensationamount')?.errors?.['pattern']">Enter a valid
-                                amount (positive and non-zero).</div>
+                            <div *ngIf="compForm.get('compensationamount')?.errors?.['required']">{{'Amount is required.'|translate}}</div>
+                            <div *ngIf="compForm.get('compensationamount')?.errors?.['pattern']">{{'Enter a valid amount (positive and non-zero).'|translate}}</div>
                         </div>
                     </div>
                     <!-- Varibale Pay -->
@@ -206,7 +202,7 @@
                         </label>
                         <div class="custom-p-select-content">
                             <p-select [options]="variablePayOptions" optionLabel="name" optionValue="value"
-                                formControlName="isVariablePay" placeholder="Please select variable pay"
+                                formControlName="isVariablePay" [placeholder]="'Please select variable pay'|translate"
                                 (onChange)="onVariablePayChange()" [autoDisplayFirst]="false"
                                 class="custom-select w-100" id="variablePay" resetFilterOnHide="true"></p-select>
                         </div>
@@ -219,7 +215,7 @@
                         <label class="form-label custom-label mb-2">{{'Variable Pay Amount'| translate }}<span
                                 class="error-msg">*</span></label>
                         <input type="text" formControlName="variablePayAmount" class="form-control custom-input"
-                            id="variableamount" placeholder="Please enter variable pay amount" maxlength="10"
+                            id="variableamount" [placeholder]="'Please enter variable pay amount'|translate" maxlength="10"
                             (keypress)="numbers($event)" autocomplete="off" required>
                         <div
                             *ngIf="compForm.get('variablePayAmount')?.invalid && compForm.get('variablePayAmount')?.touched">
@@ -227,25 +223,25 @@
                         </div>
                     </div>
                      <div class="col-md-6 mb-3">
-                        <label class="form-label custom-label mb-2">Next Compensation Review Date<span
+                        <label class="form-label custom-label mb-2">{{'Next Compensation Review Date'|translate}}<span
                                 class="text-danger">*</span></label>
                         <input type="date" class="form-control custom-input" [min]="compForm.get('compeffectivedate')?.value"
                             formControlName="nextcompeffectivedate" onkeypress="return false" />
                         <div class="error-msg"
                             *ngIf="compForm.get('nextcompeffectivedate')?.hasError('required') && compForm.get('nextcompeffectivedate')?.touched ">
-                            Next Compensation Review Date is required
+                            {{'Next Compensation Review Date is required'|translate}}
                         </div>
                         <div class="error-msg" *ngIf="compForm.get('nextcompeffectivedate')?.hasError('dateInvalid') ">
-                            Next Compensation Review Date cannot be less than Compensation Effective Date
+                            {{'Next Compensation Review Date cannot be less than Compensation Effective Date'|translate}}
                         </div>
                     </div>
                 </div>
-                Total Amount (Yearly CTC): {{ (+compForm.get('compensationamount')?.value +
+                {{'Total Amount (Yearly CTC)'|translate}}: {{ (+compForm.get('compensationamount')?.value +
                 +compForm.get('variablePayAmount')?.value) }}
                 <div class="d-flex justify-content-end gap-3 mt-2">
                     <button type="reset" class="custom-btn btn-secondary"
-                        (click)="modal.dismiss();compForm.reset()">Close</button>
-                    <button type="submit" class="custom-btn btn-primary" [disabled]="compForm.invalid">Submit</button>
+                        (click)="modal.dismiss();compForm.reset()">{{'Close'|translate}}</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="compForm.invalid">{{'Submit'|translate}}</button>
                 </div>
             </form>
         </div>
@@ -256,7 +252,7 @@
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="d-flex justify-content-between popup-header-border p-3">
             <div class="pt-2">
-                <p class="popup-heading mb-0">Update Compensations</p>
+                <p class="popup-heading mb-0">{{'Update Compensations'|translate}}</p>
             </div>
         </div>
         <div class="custom-main-popup-content p-3">
@@ -384,13 +380,13 @@
                         </div>
                     </div>
                 </div>
-                Total Amount (Yearly CTC): {{ (+compupdateForm.get('compensationamount')?.value +
+                {{'Total Amount (Yearly CTC)'|translate}}: {{ (+compupdateForm.get('compensationamount')?.value +
                 +compupdateForm.get('variablePayAmount')?.value) }}
                 <div class="d-flex justify-content-end gap-3">
                     <button type="reset" class="custom-btn btn-secondary"
-                        (click)="modal.dismiss();compupdateForm.reset()">Close</button>
+                        (click)="modal.dismiss();compupdateForm.reset()">{{'Close'|translate}}</button>
                     <button type="submit" class="custom-btn btn-primary"
-                        [disabled]="compupdateForm.invalid">Update</button>
+                        [disabled]="compupdateForm.invalid">{{'Update'|translate}}</button>
                 </div>
             </form>
         </div>
@@ -401,11 +397,11 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <img src="icons\delete-icon.png" alt="failure icon" class="confirmation-delete-icon mb-4">
-            <p class="confirmation-text mb-4">Are you sure you want to delete the Compensation?</p>
+            <p class="confirmation-text mb-4">{{'Are you sure you want to delete the Compensation?'|translate}}</p>
         </div>
         <div class="d-flex justify-content-center gap-3">
-            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
-            <button type="submit" class="custom-btn btn-primary" (click)="compentiondelete()">Yes</button>
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'|translate}}</button>
+            <button type="submit" class="custom-btn btn-primary" (click)="compentiondelete()">{{'Yes'|translate}}</button>
         </div>
     </div>
 </ng-template>

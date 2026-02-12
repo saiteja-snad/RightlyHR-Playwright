@@ -15,7 +15,7 @@
           MyTimesheetReportForm.get('dateRange')?.value == null
           " (click)="clearAllFilters()">
           @if(isFilterApplied()) {
-          Clear All
+          {{ 'Clear All' | translate }}
           }
         </button>
 
@@ -23,7 +23,7 @@
         <div class="d-flex align-items-center gap-2">
           <div class="custom-p-multiSelect-content">
             <p-multiSelect [options]="clientDropdownList" optionLabel="label" optionValue="value" [filter]="true"
-              formControlName="client" class="form-select custom-select" placeholder="Please select client"
+              formControlName="client" class="form-select custom-select" [placeholder]="'Please select client' | translate"
               [maxSelectedLabels]="1" (onChange)="getAllActiveProjects($event)">
             </p-multiSelect>
           </div>
@@ -35,7 +35,7 @@
           <div class="custom-p-multiSelect-content">
             <p-multiSelect [options]="filteredProjects?.length ? filteredProjects : projectsData"
               optionLabel="displayprojectName" [maxSelectedLabels]="1" optionValue="projectId" [filter]="true"
-              formControlName="project" placeholder="Please select project" class="form-select custom-select"
+              formControlName="project" [placeholder]="'Please select project' | translate" class="form-select custom-select"
               (onChange)="onProjectChange($event)">
             </p-multiSelect>
 
@@ -46,7 +46,7 @@
           <div class="custom-p-multiSelect-content">
             <p-multiSelect [options]="phasesData" optionLabel="label" optionValue="phaseId" [filter]="true"[maxSelectedLabels]="1"
               [resetFilterOnHide]="true" filterBy="phaseName" formControlName="phases"
-              placeholder="Please select phases" class="form-select custom-select">
+              [placeholder]="'Please select phases' | translate" class="form-select custom-select">
             </p-multiSelect>
           </div>
         </div>
@@ -54,7 +54,7 @@
         <!-- Date Range -->
         <div class="d-flex align-items-center gap-2">
           <div class="custom-date-range-picker">
-            <p-datepicker formControlName="dateRange" [placeholder]="'Please select date range'" selectionMode="range"
+            <p-datepicker formControlName="dateRange" [placeholder]="'Please select date range' | translate" selectionMode="range"
               [showIcon]="true" [readonlyInput]="true" [maxDate]="today" />
           </div>
         </div>
@@ -63,7 +63,7 @@
         <div class="d-flex align-items-center gap-2">
           <div class="custom-p-select-content">
             <p-select [options]="BillableOptions" optionLabel="key" filterBy="key" formControlName="billable"
-              placeholder="Please select billable" class="form-select custom-select">
+              [placeholder]="'Please select billable' | translate" class="form-select custom-select">
             </p-select>
           </div>
         </div>
@@ -71,7 +71,7 @@
         <div class="d-flex align-items-center gap-2">
           <div class="custom-p-select-content">
             <p-select [options]="TimesheetStatus" [filter]="true" optionLabel="key" filterBy="key"
-              formControlName="status" placeholder="Please select status" class="form-select custom-select">
+              formControlName="status" [placeholder]="'Please select status' | translate" class="form-select custom-select">
             </p-select>
           </div>
         </div>
@@ -83,9 +83,9 @@
             [disabled]="!isFilterApplied() || isLeaveGenerateDisabled ">
             @if(spinnerLoader1){
             <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-            <span>{{'Loading...'}}</span>
+            <span>{{ 'Loading...' | translate }}</span>
             }@else {
-            <span>{{'Generate'}}</span>
+            <span>{{ 'Generate' | translate }}</span>
             }
           </button>
           }
@@ -95,9 +95,9 @@
             [disabled]=" !isFilterApplied() || filteredmytimesheetRecord.length == 0 || disableBtn">
             @if(spinnerLoader2){
             <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-            <span>{{'Loading...'}}</span>
+            <span>{{ 'Loading...' | translate }}</span>
             }@else {
-            <span>{{'Export'}}</span>
+            <span>{{ 'Export' | translate }}</span>
             }
           </button>
           }
@@ -110,15 +110,15 @@
     @if (!isLoading) {
     <table id="leaveReportTable" class="w-100">
       <thead>
-        <th>Worked Date</th>
-        <th>Client Name</th>
-        <th>Project Name</th>
-        <th>Phase/Milestone</th>
-        <th>Description</th>
-        <th>Logged Hrs</th>
-        <th>Billable/Non-Billable</th>
-        <th>Submitted Date</th>
-        <th>Status</th>
+        <th>{{ 'Worked Date' | translate }}</th>
+        <th>{{ 'Client Name' | translate }}</th>
+        <th>{{ 'Project Name' | translate }}</th>
+        <th>{{ 'Phase/Milestone' | translate }}</th>
+        <th>{{ 'Description' | translate }}</th>
+        <th>{{ 'Logged Hrs' | translate }}</th>
+        <th>{{ 'Billable/Non-Billable' | translate }}</th>
+        <th>{{ 'Submitted Date' | translate }}</th>
+        <th>{{ 'Status' | translate }}</th>
       </thead>
       <tbody>
         @if (!filteredmytimesheetRecord || filteredmytimesheetRecord.length === 0) {
@@ -178,8 +178,8 @@
           <option *ngFor="let option of options" [value]="option.value">{{ option.label }}</option>
         </select>
         <span class="pagination-label text-nowrap">
-          Showing {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize : (+first + +rows)}}
-          of {{collectionSize }}
+          {{ 'Showing' | translate }} {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize : (+first + +rows)}}
+          {{ 'of' | translate }} {{collectionSize }}
         </span>
       </div>
       <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"

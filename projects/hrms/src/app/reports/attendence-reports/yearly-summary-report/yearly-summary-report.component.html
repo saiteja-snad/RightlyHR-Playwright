@@ -11,15 +11,15 @@
             yearlyReportForm.get('manager')?.value ||
             yearlyReportForm.get('leaveCategory')?.value ||
             yearlyReportForm.get('year')?.value" (click)="clearAllFilters()">
-          Clear All
+          {{'Clear All'|translate}}
         </button>
 
         <!-- Employee -->
         <div class="d-flex align-items-center gap-2">
           <div class="custom-p-select-content">
             <p-select class="form-select custom-select" [options]="employeeiddetails" optionLabel="fullName"
-              filterBy="fullName" [filter]="true" formControlName="employee" placeholder="Please select employee"
-              filterPlaceholder="Search employee">
+              filterBy="fullName" [filter]="true" formControlName="employee" [placeholder]="'Please select employee'|translate"
+              [filterPlaceholder]="'Search employee'|translate">
               <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
               <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
             </p-select>
@@ -30,8 +30,8 @@
         <div class="d-flex align-items-center gap-2">
           <div class="custom-p-select-content">
             <p-select [options]="teamdetails" optionLabel="fullName" filterBy="fullName" [filter]="true"
-              formControlName="manager" placeholder="Please select manager" class="form-select custom-select"
-              filterPlaceholder="Search manager">
+              formControlName="manager" [placeholder]="'Please select manager'|translate" class="form-select custom-select"
+              [filterPlaceholder]="'Search manager'|translate">
               <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
               <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
             </p-select>
@@ -42,8 +42,8 @@
         <div class="d-flex align-items-center gap-2">
           <div class="custom-p-select-content">
             <p-select [options]="uniqueLeaveCategory" optionLabel="label" formControlName="leaveCategory"
-              placeholder="Please select leave category" class="form-select custom-select" [filter]="true"
-              filterPlaceholder="Search leave type">
+              [placeholder]="'Please select leave category'|translate" class="form-select custom-select" [filter]="true"
+              [filterPlaceholder]="'Search leave type'|translate">
             </p-select>
           </div>
         </div>
@@ -52,7 +52,7 @@
         <div class="d-flex align-items-center gap-2">
           <div class="custom-p-select-content">
             <p-select [options]="years" optionLabel="label" optionValue="value" formControlName="year"
-              placeholder="Select year" class="form-select custom-select">
+              [placeholder]="'Select year'|translate" class="form-select custom-select">
             </p-select>
           </div>
         </div>
@@ -64,9 +64,9 @@
           <button type="submit" class="custom-btn btn-secondary" [disabled]="isYearlyGenerateDisabled">
             @if(spinnerLoader1){
             <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-            <span>{{'Loading...'}}</span>
+            <span>{{'Loading...'|translate}}</span>
             }@else {
-            <span>{{'Generate'}}</span>
+            <span>{{'Generate'|translate}}</span>
             }
           </button>
           }
@@ -76,9 +76,9 @@
             [disabled]="filteredYearlyRecord.length == 0 || disableBtn">
             @if(spinnerLoader2){
             <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-            <span>{{'Loading...'}}</span>
+            <span>{{'Loading...'|translate}}</span>
             }@else {
-            <span>{{'Export'}}</span>
+            <span>{{'Export'|translate}}</span>
             }
           </button>
           }
@@ -91,18 +91,18 @@
     @if (!isLoading) {
     <table id="wfhReportTable" class="content w-100">
       <thead>
-        <th>Employee ID</th>
-        <th>Employee Name</th>
-        <th>Department</th>
-        <th>Team Manager</th>
-        <th>Location</th>
-        <th>Sub Location</th>
-        <th>Shift</th>
-        <th>Year</th>
-        <th>Leave Type</th>
-        <th>Entitled</th>
-        <th>Avail</th>
-        <th>Balance</th>
+        <th>{{'Employee ID'|translate}}</th>
+        <th>{{'Employee Name'|translate}}</th>
+        <th>{{'Department'|translate}}</th>
+        <th>{{'Team Manager'|translate}}</th>
+        <th>{{'Location'|translate}}</th>
+        <th>{{'Sub Location'|translate}}</th>
+        <th>{{'Shift'|translate}}</th>
+        <th>{{'Year'|translate}}</th>
+        <th>{{'Leave Type'|translate}}</th>
+        <th>{{'Entitled'|translate}}</th>
+        <th>{{'Avail'|translate}}</th>
+        <th>{{'Balance'|translate}}</th>
       </thead>
       <tbody>
         @if (filteredYearlyRecord && filteredYearlyRecord.length > 0) {

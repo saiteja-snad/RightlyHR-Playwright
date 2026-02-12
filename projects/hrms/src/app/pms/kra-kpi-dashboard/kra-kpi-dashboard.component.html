@@ -1,7 +1,7 @@
 <div class="custom-main-component-container">
   <div class="component-header-content">
     <div class="heading-content">
-      <div class="commpoment-name">PMS
+      <div class="commpoment-name">{{'PMS'  | translate}}
         <span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
       </div>
       <div class="component-header">{{"Dashboard" | translate}}</div>
@@ -43,7 +43,7 @@
         <label class="form-label filter-labels m-0">{{'My Team' | translate}}</label>
         <div class="custom-p-select-content">
           <p-select [options]="myTeamEmployees" optionLabel="fullName" optionValue="employeeId" showClear="true"
-            placeholder="Select employee name" [filter]="true" resetFilterOnHide="true" [autoDisplayFirst]="false"
+            placeholder="{{'Select employee name' | translate}}" [filter]="true" resetFilterOnHide="true" [autoDisplayFirst]="false"
             [(ngModel)]="selectedEmployeeId" (onChange)="onEmployeeChange($event.value)" class="form-select custom-select">
           </p-select>
         </div>
@@ -54,7 +54,7 @@
         <label class="form-label filter-labels m-0">{{ 'Review Cycle' | translate }}</label>
         <div class="custom-p-select-content">
           <p-select [options]="reviewCycleOptions" optionLabel="label" optionValue="value"
-            placeholder="Select Review Cycle" class="form-select custom-select"
+            placeholder="{{'Select Review Cycle' | translate}}" class="form-select custom-select"
             [(ngModel)]="selectedReviewCycleId" (onChange)="onReviewCycleChange($event.value)" (onClear)="onReviewCycleChange(null)" [filter]="true" />
         </div>
       </div>
@@ -76,7 +76,7 @@
           </div>
           <div>
             <div class="summary-title mb-1 d-flex align-items-center gap-1">
-              <div>{{ card.title }}</div>
+              <div>{{ card.title | translate }}</div>
               <!-- INFO ICON -->
               <div class="module-info-content">
                 <app-module-info-icon placement="bottom" [ngbPopover]="card.popover" class="module-icon" />
@@ -99,7 +99,7 @@
         <div class="col-xl-8 col-lg-7 mb-3">
           <div class="graph-card h-100 d-flex flex-column" style="height: 380px;">
             <div class="d-flex align-items-center gap-2 mb-3">
-              <div class="graph-header">Performance Distribution</div>
+              <div class="graph-header">{{'Performance Distribution'  | translate}}</div>
               <div class="module-info-content">
                 <app-module-info-icon placement="bottom" [ngbPopover]="performanceInfo" class="module-icon" />
                 <ng-template #performanceInfo>
@@ -141,7 +141,7 @@
         <div class="col-xl-4 col-lg-5 mb-3">
           <div class="graph-card h-100 d-flex flex-column" style="height: 250px;">
             <div class="d-flex align-items-center gap-2 mb-3">
-              <div class="graph-header">Completion Status</div>
+              <div class="graph-header">{{'Completion Status'  | translate}}</div>
               <div class="module-info-content">
                 <app-module-info-icon placement="bottom" [ngbPopover]="completionStatusInfo" class="module-icon" />
                 <ng-template #completionStatusInfo>This widget displays employee counts grouped by completion ranges (>80%, 50–80%, <50%) .It helps quickly assess overall progress and identify completion gaps.</ng-template>
@@ -220,7 +220,7 @@
               <span class="input-group-text custom-input-group-search">
                 <i class="bi bi-search"></i>
               </span>
-              <input type="search" class="form-control custom-search-input" placeholder="Search by Employee Name..."
+              <input type="search" class="form-control custom-search-input" placeholder="{{'Search by Employee Name...' | translate}}"
                 [(ngModel)]="searchText" (ngModelChange)="onSearchTextChange()" />
             </div>
 
@@ -230,11 +230,11 @@
               <table class="w-100">
                 <thead>
                   <tr>
-                    <th>Employee Name</th>
-                    <th class="text-center">Department</th>
-                    <th class="text-center">Role</th>
-                    <th class="text-center">KRA's</th>
-                    <th class="text-center">Overall Score</th>
+                    <th>{{'Employee Name' | translate}}</th>
+                    <th class="text-center">{{'Department' | translate}}</th>
+                    <th class="text-center">{{'Role' | translate}}</th>
+                    <th class="text-center">{{'KRA\'s' | translate}}</th>
+                    <th class="text-center">{{'Overall Score' | translate}}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -296,7 +296,7 @@
                     }
                   </select>
                   <span class="pagination-label text-nowrap">
-                    Showing {{ first + 1 }} - {{ (first + rows) > collectionSize ? collectionSize : (first + rows) }} of
+                    {{'Showing' | translate}} {{ first + 1 }} - {{ (first + rows) > collectionSize ? collectionSize : (first + rows) }} {{'of' | translate}}
                     {{ collectionSize }}
                   </span>
                 </div>
@@ -327,7 +327,7 @@
   <div class="custom-main-popup-container" ngbAutofocus>
     <div class="custom-poup-header-content popup-header-border">
       <div class="pt-2">
-        <p class="popup-heading mb-0">{{ selectedEmployeeName }} - KRA/KPI Details</p>
+        <p class="popup-heading mb-0">{{ selectedEmployeeName }} - {{'KRA/KPI Details' | translate}}</p>
       </div>
       <div>
         <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon" /></a>
@@ -345,12 +345,12 @@
             <table class="w-100">
               <thead>
                 <tr>
-                  <th>KPI Name</th>
-                  <th class="text-center">Weightage (%)</th>
-                  <th class="text-center">Target Value</th>
-                  <th class="text-center">Target Type</th>
-                  <th class="text-center">Target Date</th>
-                  <th class="text-center">Status</th>
+                  <th>{{'KPI Name' | translate}}</th>
+                  <th class="text-center">{{'Weightage (%)' | translate}}</th>
+                  <th class="text-center">{{'Target Value' | translate}}</th>
+                  <th class="text-center">{{'Target Type' | translate}}</th>
+                  <th class="text-center">{{'Target Date' | translate}}</th>
+                  <th class="text-center">{{'Status' | translate}}</th>
                 </tr>
               </thead>
               <tbody>
@@ -369,7 +369,7 @@
                 }
                 } @else {
                 <tr>
-                  <td colspan="6" class="text-center py-3 text-muted">No KPIs assigned for this KRA</td>
+                  <td colspan="6" class="text-center py-3 text-muted">{{'No KPIs assigned for this KRA' | translate}}</td>
                 </tr>
                 }
               </tbody>
@@ -386,7 +386,7 @@
       } @else {
       <div class="text-center py-4">
         <div class="spinner-border" role="status">
-          <span class="visually-hidden">Loading...</span>
+          <span class="visually-hidden">{{'Loading...' | translate}}</span>
         </div>
       </div>
       }

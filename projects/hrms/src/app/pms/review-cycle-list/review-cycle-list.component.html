@@ -28,7 +28,7 @@
     <!--Search input-->
     <div class="input-group custom-search mb-3">
         <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
-        <input type="search" class="form-control custom-search-input" placeholder="Search by review cycle name / department / team / location / sub location / status" [(ngModel)]="searchText"
+        <input type="search" class="form-control custom-search-input" placeholder="{{'Search by review cycle name / department / team / location / sub location / status' | translate}}" [(ngModel)]="searchText"
             (ngModelChange)="onSearchTextChange()" aria-label="Username" aria-describedby="basic-addon1">
     </div>
 
@@ -46,7 +46,7 @@
                     @if(rbac.allowedToAccess('Hold.view') || rbac.allowedToAccess('Resume.view') ||
                     rbac.allowedToAccess('Update.view') ||
                     rbac.allowedToAccess('View.view') || rbac.allowedToAccess('Initiate.view')){
-                    <th class="text-center">Action</th>
+                    <th class="text-center">{{"Action" |translate }}</th>
                     }
                 </tr>
             </thead>
@@ -73,35 +73,35 @@
                                 @if(cycle.status==='Initiated'){
                                 <li class="dropdown-item border-bottom"
                                     (click)="openModal(holdconformation);seletedid=cycle">
-                                    <a class="dropdown-custom-btn">Hold</a>
+                                    <a class="dropdown-custom-btn">{{'Hold' | translate}}</a>
                                 </li>
                                 }
                                 }
                                 @if(rbac.allowedToAccess('Resume.view')){
                                 @if(cycle.status==='Review on Hold'){
                                 <li class="dropdown-item" (click)="openModal(Resumeconformation);seletedid=cycle">
-                                    <a class="dropdown-custom-btn">Resume</a>
+                                    <a class="dropdown-custom-btn">{{'Resume' | translate}}</a>
                                 </li>
                                 }
                                 }
                                 @if(rbac.allowedToAccess('Update.view')){
                                 @if(cycle.status !=='Initiated' && cycle.status !=='Review on Hold'){
                                 <li class="dropdown-item" (click)="onUpdate(cycle)">
-                                    <a class="dropdown-custom-btn">Update</a>
+                                    <a class="dropdown-custom-btn">{{'Update' | translate}}</a>
                                 </li>
                                 }
                                 }
                                 @if(rbac.allowedToAccess('View.view')){
                                 @if(cycle.status ==='Initiated'){
                                 <li class="dropdown-item" (click)="onClickView(cycle)">
-                                    <a class="dropdown-custom-btn">View</a>
+                                    <a class="dropdown-custom-btn">{{'View' | translate}}</a>
                                 </li>
                                 }
                                 }
                                 @if(rbac.allowedToAccess('Initiate.view')){
                                 @if(cycle.status==='Created'){
                                 <li class="dropdown-item" (click)="openModal(intialconformation);seletedid=cycle">
-                                    <a class="dropdown-custom-btn"></a>Initiate
+                                    <a class="dropdown-custom-btn">{{'Initiate' | translate}}</a>
                                 </li>
                                 }
                                 }
@@ -128,8 +128,8 @@
                     </option>
                 </select>
                 <span class="pagination-label text-nowrap">
-                    Showing {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize : (+first + +rows)
-                    }} of {{ collectionSize }}
+                    {{'Showing' | translate}} {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize : (+first + +rows)
+                    }} {{'of' | translate}} {{ collectionSize }}
                 </span>
             </div>
             <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"
@@ -161,7 +161,7 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
-            <p class="confirmation-text">Are you sure you want to Hold the Review Cycle?</p>
+            <p class="confirmation-text">{{'Are you sure you want to Hold the Review Cycle?' | translate}}</p>
         </div>
         <div class="custom-modal-footer">
             <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'|translate}}</button>
@@ -176,7 +176,7 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
-            <p class="confirmation-text">Are you sure you want to Resume the Review cycle?</p>
+            <p class="confirmation-text">{{'Are you sure you want to Resume the Review cycle?' | translate}}</p>
         </div>
         <div class="custom-modal-footer">
             <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'|translate}}</button>
@@ -191,7 +191,7 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
-            <p class="confirmation-text">Are you sure you want to Initiate the Review Cycle?</p>
+            <p class="confirmation-text">{{'Are you sure you want to Initiate the Review Cycle?' | translate}}</p>
         </div>
         <div class="custom-modal-footer">
             <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'|translate}}</button>

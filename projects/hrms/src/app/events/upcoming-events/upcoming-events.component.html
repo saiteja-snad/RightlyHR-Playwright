@@ -1,14 +1,14 @@
 <div class="custom-main-component-container">
   <div class="component-header-content">
     <div class="heading-content py-2">
-      <div class="component-header">Events</div>
+      <div class="component-header">{{ 'Events' | translate }}</div>
       <div>
         <app-module-info-icon placement="bottom" [ngbPopover]="popContent" />
       </div>
     </div>
     @if(this.rbac.allowedToAccess('Events(Upcoming Events).create')){
     <div>
-      <button type="button" class="custom-btn btn-primary" (click)="openAddProspective()">Add Event</button>
+      <button type="button" class="custom-btn btn-primary" (click)="openAddProspective()">{{ 'Add Event' | translate }}</button>
     </div>
     }
   </div>
@@ -63,7 +63,7 @@
       <!--Todays Events-->
       <div class="card events-section-card  mb-3" *ngIf="todaysEvents.length > 0">
         <div class="mb-4">
-          <p class="component-sub-header mb-0">Today's Events</p>
+          <p class="component-sub-header mb-0">{{ "Today's Events" | translate }}</p>
         </div>
 
         <div class="d-flex flex-wrap gap-4">
@@ -90,11 +90,11 @@
                   <ul class="dropdown-menu custom-dropdown-menu">
                     @if(rbac.allowedToAccess('Events(Upcoming Events).update')){
                     <li (click)="openModalupdate(updateevets,item)"><a class="dropdown-item">
-                       <i class="bi bi-pencil me-2"></i>Update</a></li>
+                       <i class="bi bi-pencil me-2"></i>{{ 'Update' | translate }}</a></li>
                     }
                     @if(rbac.allowedToAccess('Events(Upcoming Events).delete')){
                     <li (click)="setdata=item;openmodal(deleteconformation)"><a class="dropdown-item">
-                        <i class="bi bi-trash3 me-2"></i>Delete</a></li>
+                        <i class="bi bi-trash3 me-2"></i>{{ 'Delete' | translate }}</a></li>
                     }
                   </ul>
                 </div>
@@ -116,7 +116,7 @@
       <!--Upcoming Events-->
       <div class="card events-section-card" *ngIf="(getEventsData$ | async)?.length > 0">
         <div class="mb-4">
-          <p class="component-sub-header mb-0">Custom Events</p>
+          <p class="component-sub-header mb-0">{{ 'Custom Events' | translate }}</p>
         </div>
 
         <div class="d-flex flex-wrap gap-4">
@@ -142,11 +142,11 @@
                 <ul class="dropdown-menu custom-dropdown-menu">
                   @if(rbac.allowedToAccess('Events(Upcoming Events).update')){
                   <li (click)="openModalupdate(updateevets,event)"><a class="dropdown-item">
-                     <i class="bi bi-pencil me-2"></i>Update</a></li>
+                     <i class="bi bi-pencil me-2"></i>{{ 'Update' | translate }}</a></li>
                   }
                   @if(rbac.allowedToAccess('Events(Upcoming Events).delete')){
                   <li (click)="setdata=event;openmodal(deleteconformation)"><a class="dropdown-item">
-                      <i class="bi bi-trash3 me-2"></i>Delete</a></li>
+                      <i class="bi bi-trash3 me-2"></i>{{ 'Delete' | translate }}</a></li>
                   }
                 </ul>
               </div>
@@ -181,7 +181,7 @@
   <div class="custom-main-popup-container">
     <div class="custom-poup-header-content popup-header-border" ngbAutofocus>
       <div class="pt-2">
-        <p class="popup-heading mb-0">Update Event</p>
+        <p class="popup-heading mb-0">{{ 'Update Event' | translate }}</p>
       </div>
       <div>
         <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
@@ -191,65 +191,63 @@
       <form autocomplete="off" [formGroup]="customEventupdateForm" (ngSubmit)="updateEvents(customEventupdateForm)">
         <div class="row">
           <div class="col-md-6 mb-3">
-            <label for="eventDate" class="form-label custom-label mb-2">Event Date<span
+            <label for="eventDate" class="form-label custom-label mb-2">{{ 'Event Date' | translate }}<span
                 class="text-danger">*</span></label>
             <input type="datetime-local" class="form-control custom-input" id="eventDate" onkeypress="return false;"
               [min]="getToday()" formControlName="eventDate" [max]="getMaxDate()">
             <div
               *ngIf="customEventupdateForm.get('eventDate')?.touched && customEventupdateForm.get('eventDate')?.errors?.['required']"
-              class="error-msg">Event date is required.</div>
+              class="error-msg">{{ 'Event date is required' | translate }}</div>
             <div
               *ngIf="customEventupdateForm.get('eventDate')?.touched && customEventupdateForm.get('eventDate')?.hasError('pastDate')"
-              class="error-msg">Event date cannot be in the past.
+              class="error-msg">{{ 'Event date cannot be in the past' | translate }}
             </div>
           </div>
           <div class="col-md-6 mb-3">
-            <label for="title" class="form-label custom-label mb-2">Event Title<span
+            <label for="title" class="form-label custom-label mb-2">{{ 'Event Title' | translate }}<span
                 class="text-danger">*</span></label>
-            <input type="text" class="form-control custom-input" id="title" placeholder="Please enter event title"
+            <input type="text" class="form-control custom-input" id="title" [placeholder]="'Please enter event title' | translate"
               formControlName="eventTitle"
               (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)">
-            <div class="error-msg" *ngIf="customEventupdateForm.get('eventTitle')?.errors?.['required']"> Event Title is
-              required.</div>
+            <div class="error-msg" *ngIf="customEventupdateForm.get('eventTitle')?.errors?.['required']">{{ 'Event Title is required' | translate }}</div>
             <div class="error-msg" *ngIf="customEventupdateForm.get('eventTitle')?.errors?.['maxlength']">
-              Event Title cannot exceed 50 characters
+              {{ 'Event Title cannot exceed 50 characters' | translate }}
             </div>
           </div>
           <div class="col-md-12">
-            <label for="description" class="form-label custom-label mb-2">Event Description<span
+            <label for="description" class="form-label custom-label mb-2">{{ 'Event Description' | translate }}<span
                 class="text-danger">*</span></label>
             <textarea class="form-control custom-input" formControlName="eventMessage"
-              placeholder="Please enter description" maxlength="250" id="description"
+              [placeholder]="'Please enter description' | translate" maxlength="250" id="description"
               (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)"></textarea>
             <div *ngIf="customEventupdateForm.get('eventMessage')?.errors?.['required']" class="error-msg">
-              Event Description is requied
+              {{ 'Event Description is required' | translate }}
             </div>
             <div class="textarea-count-text">{{ customEventupdateForm.get("eventMessage")?.value?.length || 0 }}/250
             </div>
           </div>
           <div class="col-md-12 mb-3">
-            <label for="file" class="form-label custom-label mb-2">Attachment</label>
+            <label for="file" class="form-label custom-label mb-2">{{ 'Attachment' | translate }}</label>
             <input type="file" accept=".jpg,.jpeg,.png,image/jpeg,image/png" class="form-control custom-input px-0"
               id="file" (change)="onFileSelected($event)">
             <div *ngIf="selectedImagePreview" class="custom-file-name text-wrap">
               {{ selectedImagePreview }}
               <div class="d-flex justify-content-between align-items-center mt-3">
-                <p class="note-text"><span class="note">Note:</span> Only Image are allowed.
-                  The file size should be less than 2MB.</p>
+                <p class="note-text"><span class="note">{{ 'Note' | translate }}:</span> {{ 'Only Image are allowed. The file size should be less than 2MB' | translate }}</p>
               </div>
             </div>
           </div>
         </div>
 
         <div class="custom-modal-footer">
-          <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">Cancel</button>
+          <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{ 'Cancel' | translate }}</button>
           <button type="submit" class="custom-btn btn-primary"
             [disabled]="customEventupdateForm.invalid || spinnerLoader">
             @if (spinnerLoader) {
             <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-            <span>{{'Loading' | translate}}...</span>
+            <span>{{ 'Loading' | translate }}...</span>
             } @else {
-            <span>{{'Update'| translate}}</span>
+            <span>{{ 'Update' | translate }}</span>
             }
           </button>
         </div>
@@ -263,11 +261,11 @@
   <div class="result-popup-content" ngbAutofocus>
     <div>
       <img src="icons\delete-icon.png" alt="failure icon" class="confirmation-delete-icon">
-      <p class="confirmation-text">Are you sure you want to delete the Event?</p>
+      <p class="confirmation-text">{{ 'Are you sure you want to delete the Event?' | translate }}</p>
     </div>
     <div class="custom-modal-footer">
-      <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
-      <button type="submit" class="custom-btn btn-primary" (click)="DeleteEvent(setdata.eventId)">Yes</button>
+      <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{ 'No' | translate }}</button>
+      <button type="submit" class="custom-btn btn-primary" (click)="DeleteEvent(setdata.eventId)">{{ 'Yes' | translate }}</button>
     </div>
   </div>
 </ng-template>

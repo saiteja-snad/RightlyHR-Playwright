@@ -19,9 +19,10 @@ import moment from 'moment';
 import { environment } from '../../../../environments/environment';
 import { EditIconComponent } from "../../../icons/edit-icon/edit-icon.component";
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
   selector: 'app-basic-info',
-  imports: [CommonModule, ReactiveFormsModule, Select, Skeleton, TooltipModule, NgbPopoverModule, ModuleInformationComponent, EditIconComponent, InfoIconComponent],
+  imports: [CommonModule, ReactiveFormsModule, Select, Skeleton, TooltipModule, NgbPopoverModule, ModuleInformationComponent, EditIconComponent, InfoIconComponent, TranslateModule],
   templateUrl: './basic-info.component.html',
   styleUrl: './basic-info.component.scss',
 })

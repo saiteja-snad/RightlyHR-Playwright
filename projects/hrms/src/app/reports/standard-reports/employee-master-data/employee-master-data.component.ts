@@ -21,9 +21,10 @@ import { RbacService } from '../../../services/rbac.service';
 import { Router } from '@angular/router';
 import { ReportsHeaderComponent } from "../../../shared/reports-tabs/reports-header/reports-header.component";
 import { DatePicker } from 'primeng/datepicker';
+import { TranslatePipe } from '@ngx-translate/core';
 @Component({
   selector: 'app-employee-master-data',
-  imports: [FormsModule, DateformatPipe, SelectModule, ReactiveFormsModule, CommonModule, NoDataFoundComponent, DataLoaderContentComponent, ReportsHeaderComponent, DatePicker],
+  imports: [FormsModule, DateformatPipe, SelectModule, ReactiveFormsModule, CommonModule, NoDataFoundComponent, DataLoaderContentComponent, ReportsHeaderComponent, DatePicker, TranslatePipe],
   templateUrl: './employee-master-data.component.html',
   styleUrl: './employee-master-data.component.scss',
   encapsulation: ViewEncapsulation.None

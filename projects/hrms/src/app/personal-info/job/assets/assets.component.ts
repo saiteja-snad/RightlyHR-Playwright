@@ -6,10 +6,11 @@ import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-foun
 import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { Router } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-assets',
-  imports: [CommonModule, NoDataFoundComponent, DateformatPipe, DataLoaderContentComponent],
+  imports: [CommonModule, NoDataFoundComponent, DateformatPipe, DataLoaderContentComponent,TranslateModule],
   templateUrl: './assets.component.html',
   styleUrl: './assets.component.scss'
 })

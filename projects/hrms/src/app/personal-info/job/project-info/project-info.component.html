@@ -2,12 +2,12 @@
   <!-- Header -->
   <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
     <div>
-      <span class="component-sub-header">Assigned Projects</span>
+      <span class="component-sub-header">{{'Assigned Projects' | translate}}</span>
     </div>
 
     <!-- Year Dropdown using PrimeNG p-select -->
     <div class="custom-p-select-content">
-      <p-dropdown [options]="availableYears" [(ngModel)]="selectedYear" placeholder="Select Year" optionLabel="label"
+      <p-dropdown [options]="availableYears" [(ngModel)]="selectedYear" [placeholder]="'Select Year' | translate" optionLabel="label"
         optionValue="value" (onChange)="onYearChange()" class="form-select custom-select custom-year-dropdown">
       </p-dropdown>
     </div>
@@ -19,11 +19,11 @@
     <table class="w-100">
       <thead>
         <tr>
-          <th>Project Name</th>
-          <th class="text-center">Project Code</th>
-          <th class="text-center">Project Type</th>
-          <th class="text-center">Phases</th>
-          <th>Hours Spent</th>
+          <th>{{'Project Name' | translate}}</th>
+          <th class="text-center">{{'Project Code' | translate}}</th>
+          <th class="text-center">{{'Project Type' | translate}}</th>
+          <th class="text-center">{{'Phases' | translate}}</th>
+          <th>{{'Hours Spent' | translate}}</th>
         </tr>
       </thead>
 
@@ -52,7 +52,7 @@
 
           <td>
             <span class="spent-hours">{{ convertDecimalToHours(project.spentHours) }}</span> /
-            {{ convertDecimalToHours(project.allocatedHours) }} Hrs
+            {{ convertDecimalToHours(project.allocatedHours) }} {{'Hrs' | translate}}
           </td>
 
         </tr>
@@ -86,11 +86,11 @@
           <table class="popup-table">
             <thead>
               <tr>
-                <th>Phase Name</th>
-                <th>Start Date</th>
-                <th>End Date</th>
-                <th>Hours Spent</th>
-                <th class="text-center">Status</th>
+                <th>{{'Phase Name' | translate}}</th>
+                <th>{{'Start Date' | translate}}</th>
+                <th>{{'End Date' | translate}}</th>
+                <th>{{'Hours Spent' | translate}}</th>
+                <th class="text-center">{{'Status' | translate}}</th>
               </tr>
             </thead>
             <tbody>
@@ -101,7 +101,7 @@
                 <td>{{ phase.endDate | date : "MMM d, y" }}</td>
                 <td>
                   <span class="spent-hours">{{ convertDecimalToHours(phase.spentHours) }}</span> /
-                  {{ convertDecimalToHours(phase.allocatedHours) }} Hrs
+                  {{ convertDecimalToHours(phase.allocatedHours) }} {{'Hrs' | translate}}
                 </td>
 
                 <td class="text-center">
@@ -117,9 +117,9 @@
 
         <div class="popup-table-footer">
           <div>
-            Total Logged Hours -
+            {{'Total Logged Hours' | translate}} -
             <span class="total-logged-hours">{{ convertDecimalToHours(selectedProject.totalPhaseSpentHours) }}
-              Hrs</span>
+              {{'Hrs' | translate}}</span>
           </div>
 
         </div>

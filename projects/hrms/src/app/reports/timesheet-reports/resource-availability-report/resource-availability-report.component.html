@@ -13,7 +13,7 @@
           ResourceAvailabilityReportForm.get('dateRange')?.value == null
         " (click)="clearAllFilters()">
           @if(isFilterApplied()) {
-          Clear All
+          {{ 'Clear All' | translate }}
           }
         </button>
 
@@ -22,7 +22,7 @@
         <div class="d-flex align-items-center gap-2">
           <div class="custom-p-multiSelect-content">
             <p-multiSelect [options]="employeeData" optionLabel="name" optionValue="id" [filter]="true"
-              [maxSelectedLabels]="1" defaultLabel="Please select employee" formControlName="employeid"
+              [maxSelectedLabels]="1" [defaultLabel]="'Please select employee' | translate" formControlName="employeid"
               class="form-select custom-select"></p-multiSelect>
           </div>
         </div>
@@ -30,7 +30,7 @@
         <div class="d-flex align-items-center gap-2">
           <div class="custom-p-multiSelect-content">
             <p-multiSelect [options]="projectsList" optionLabel="label" optionValue="value" [filter]="true" 
-              formControlName="projectId" [maxSelectedLabels]="1" placeholder="Please select project"
+              formControlName="projectId" [maxSelectedLabels]="1" [placeholder]="'Please select project' | translate"
               class="form-select custom-select" (onChange)="onProjectChange($event)">
             </p-multiSelect>
           </div>
@@ -40,7 +40,7 @@
           <div class="custom-p-multiSelect-content">
             <p-multiSelect [options]="phasesData" optionLabel="label" optionValue="phaseId" [filter]="true" [maxSelectedLabels]="1"
               [resetFilterOnHide]="true" filterBy="phaseName" formControlName="phases"
-              placeholder="Please select phases" class="form-select custom-select">
+              [placeholder]="'Please select phases' | translate" class="form-select custom-select">
             </p-multiSelect>
           </div>
         </div>
@@ -48,7 +48,7 @@
         <!-- Date Range -->
         <div class="d-flex align-items-center gap-2">
           <div class="custom-date-range-picker">
-            <p-datepicker formControlName="dateRange" [placeholder]="'Please select date range'" selectionMode="range"
+            <p-datepicker formControlName="dateRange" [placeholder]="'Please select date range' | translate" selectionMode="range"
               [showIcon]="true" [readonlyInput]="true" />
           </div>
         </div>
@@ -60,9 +60,9 @@
             [disabled]="!isFilterApplied() ||isLeaveGenerateDisabled ">
             @if(spinnerLoader1){
             <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-            <span>{{'Loading...'}}</span>
+            <span>{{ 'Loading...' | translate }}</span>
             }@else {
-            <span>{{'Generate'}}</span>
+            <span>{{ 'Generate' | translate }}</span>
             }
           </button>
           }
@@ -72,9 +72,9 @@
             [disabled]="!isFilterApplied() || filteredResourceAvailabilityRecord.length == 0 || disableBtn">
             @if(spinnerLoader2){
             <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-            <span>{{'Loading...'}}</span>
+            <span>{{ 'Loading...' | translate }}</span>
             }@else {
-            <span>{{'Export'}}</span>
+            <span>{{ 'Export' | translate }}</span>
             }
           </button>
           }
@@ -89,16 +89,16 @@
       <thead>
 
         <!-- <th>Employee ID</th> -->
-        <th>Employee Name</th>
-        <th>Department</th>
-        <th>Role</th>
+        <th>{{ 'Employee Name' | translate }}</th>
+        <th>{{ 'Department' | translate }}</th>
+        <th>{{ 'Role' | translate }}</th>
         <!-- <th>Designation</th> -->
-        <th>Project Assigned</th>
-        <th>Phase/Milestone</th>
-        <th>Project Start Date</th>
-        <th>Project End Date</th>
+        <th>{{ 'Project Assigned' | translate }}</th>
+        <th>{{ 'Phase/Milestone' | translate }}</th>
+        <th>{{ 'Project Start Date' | translate }}</th>
+        <th>{{ 'Project End Date' | translate }}</th>
         <!-- <th>Allocated To</th> -->
-        <th>Available From</th>
+        <th>{{ 'Available From' | translate }}</th>
       </thead>
       <tbody>
         @if (!filteredResourceAvailabilityRecord || filteredResourceAvailabilityRecord.length === 0) {
@@ -142,8 +142,8 @@
           <option *ngFor="let option of options" [value]="option.value">{{ option.label }}</option>
         </select>
         <span class="pagination-label text-nowrap">
-          Showing {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize : (+first + +rows)}}
-          of {{collectionSize }}
+          {{ 'Showing' | translate }} {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize : (+first + +rows)}}
+          {{ 'of' | translate }} {{collectionSize }}
         </span>
       </div>
       <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"

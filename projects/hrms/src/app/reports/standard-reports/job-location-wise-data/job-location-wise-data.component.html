@@ -8,7 +8,7 @@
                 <div class="d-flex align-items-center gap-3">
                        
                        <div *ngIf="locationReportsForm.get('dateOfJoining')?.value">
-          <button type="button" class="clear-all-btn" (click)="clearAllFilters()" > Clear All</button>
+          <button type="button" class="clear-all-btn" (click)="clearAllFilters()" >{{ 'Clear All' | translate }}</button>
         </div>
 
                                     <!-- Date of Joining -->
@@ -16,7 +16,7 @@
                     <div class="d-flex align-items-center gap-2">
                         <label class="custom-label filter-labels text-nowrap m-0">{{"Date of Joining" | translate}}</label>
                         <div class="custom-date-range-picker">
-                            <p-datepicker formControlName="dateOfJoining" [placeholder]="'Please Select Date'" selectionMode="range"
+                            <p-datepicker formControlName="dateOfJoining" [placeholder]="'Please Select Date' | translate" selectionMode="range"
                                 [showIcon]="true" [readonlyInput]="true" />
                         </div>
                     </div>
@@ -27,7 +27,7 @@
                         <div class="custom-p-select-content">
                             <p-select [options]="locationDetails" optionLabel="jobLocationName"
                                 filterBy="jobLocationName" [filter]="true" [showClear]="false"
-                                formControlName="location" placeholder="Please select location"
+                                formControlName="location" [placeholder]="'Please select location' | translate"
                                 class="form-select custom-select">
                                 <ng-template #selectedItem let-selectedOption>{{ selectedOption.jobLocationName }}</ng-template>
                                 <ng-template let-location #item>{{ location.jobLocationName }}</ng-template>
@@ -41,7 +41,7 @@
                         <div class="custom-p-select-content">
                             <p-select [options]="subLocationDetails" optionLabel="jobSubLocationName" [filter]="true"
                                 class="form-select custom-select" filterBy="jobSubLocationName" [showClear]="false"
-                                formControlName="subLocation" placeholder="Please select sub location">
+                                formControlName="subLocation" [placeholder]="'Please select sub location' | translate">
                                 <ng-template #selectedItem let-selectedOption>{{ selectedOption.jobSubLocationName }}</ng-template>
                                 <ng-template let-location #item>{{ location.jobSubLocationName }}</ng-template>
                             </p-select>
@@ -54,9 +54,9 @@
                             [disabled]="!locationReportsForm.get('dateOfJoining')?.value && !locationReportsForm.get('location')?.value && !locationReportsForm.get('subLocation')?.value">
                             @if(spinnerLoader1){
                             <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                            <span>{{'Loading...'}}</span>
+                            <span>{{ 'Loading...' | translate }}</span>
                             }@else {
-                            <span>{{'Generate'}}</span>
+                            <span>{{ 'Generate' | translate }}</span>
                             }
                         </button>
                         }
@@ -67,9 +67,9 @@
                             (click)="onClickJobLocationExport() ">
                             @if(spinnerLoader){
                             <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                            <span>{{'Loading...'}}</span>
+                            <span>{{ 'Loading...' | translate }}</span>
                             }@else {
-                            <span>{{'Export'}}</span>
+                            <span>{{ 'Export' | translate }}</span>
                             }
                         </button>
                         }
@@ -84,40 +84,40 @@
         <table class="w-100" id="jobLocation">
             <thead>
                 <tr>
-                    <th>Employee ID</th>
-                    <th>Salutation</th>
-                    <th>First Name</th>
-                    <th>Middle Name</th>
-                    <th>Last Name</th>
-                    <th>Status</th>
-                    <th>Date Of Joining</th>
-                    <th>Address Line 1(current)</th>
-                    <th>Address Line 2(current)</th>
-                    <th>City(current)</th>
-                    <th>State(current)</th>
-                    <th>Country(current)</th>
-                    <th>ZipCode(current)</th>
-                    <th>Address Line 1(permanent)</th>
-                    <th>Address Line 2(permanent)</th>
-                    <th>City(permanent)</th>
-                    <th>State(permanent)</th>
-                    <th>Country(permanent)</th>
-                    <th>ZipCode(permanent)</th>
-                    <th>Work Number</th>
-                    <th>Mobile Number</th>
-                    <th>Work Email</th>
-                    <th>Job Effective Date</th>
-                    <th>Job Role</th>
-                    <th>Grade Name</th>
-                    <th>Department</th>
-                    <th>Team</th>
-                    <th>Team Manager</th>
-                    <th>Reporting To</th>
-                    <th>Location</th>
-                    <th>Sub Location</th>
-                    <th>Shift</th>
-                    <th>Shift Code</th>
-                    <th>Job Type</th>
+                    <th>{{ 'Employee ID' | translate }}</th>
+                    <th>{{ 'Salutation' | translate }}</th>
+                    <th>{{ 'First Name' | translate }}</th>
+                    <th>{{ 'Middle Name' | translate }}</th>
+                    <th>{{ 'Last Name' | translate }}</th>
+                    <th>{{ 'Status' | translate }}</th>
+                    <th>{{ 'Date Of Joining' | translate }}</th>
+                    <th>{{ 'Address Line 1(current)' | translate }}</th>
+                    <th>{{ 'Address Line 2(current)' | translate }}</th>
+                    <th>{{ 'City(current)' | translate }}</th>
+                    <th>{{ 'State(current)' | translate }}</th>
+                    <th>{{ 'Country(current)' | translate }}</th>
+                    <th>{{ 'ZipCode(current)' | translate }}</th>
+                    <th>{{ 'Address Line 1(permanent)' | translate }}</th>
+                    <th>{{ 'Address Line 2(permanent)' | translate }}</th>
+                    <th>{{ 'City(permanent)' | translate }}</th>
+                    <th>{{ 'State(permanent)' | translate }}</th>
+                    <th>{{ 'Country(permanent)' | translate }}</th>
+                    <th>{{ 'ZipCode(permanent)' | translate }}</th>
+                    <th>{{ 'Work Number' | translate }}</th>
+                    <th>{{ 'Mobile Number' | translate }}</th>
+                    <th>{{ 'Work Email' | translate }}</th>
+                    <th>{{ 'Job Effective Date' | translate }}</th>
+                    <th>{{ 'Job Role' | translate }}</th>
+                    <th>{{ 'Grade Name' | translate }}</th>
+                    <th>{{ 'Department' | translate }}</th>
+                    <th>{{ 'Team' | translate }}</th>
+                    <th>{{ 'Team Manager' | translate }}</th>
+                    <th>{{ 'Reporting To' | translate }}</th>
+                    <th>{{ 'Location' | translate }}</th>
+                    <th>{{ 'Sub Location' | translate }}</th>
+                    <th>{{ 'Shift' | translate }}</th>
+                    <th>{{ 'Shift Code' | translate }}</th>
+                    <th>{{ 'Job Type' | translate }}</th>
                 </tr>
             </thead>
             <tbody>

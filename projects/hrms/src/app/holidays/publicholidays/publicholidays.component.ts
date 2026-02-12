@@ -8,10 +8,11 @@ import { Subscription } from 'rxjs';
 import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
 import { HolidayTabsComponent } from '../../shared/holiday-tabs/holiday-tabs.component';
 import { Skeleton } from 'primeng/skeleton';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-publicholidays',
-  imports: [RouterModule, ReactiveFormsModule, CommonModule, HolidayTabsComponent, NoDataFoundComponent, DataLoaderContentComponent,Skeleton],
+  imports: [RouterModule, ReactiveFormsModule, CommonModule, HolidayTabsComponent, NoDataFoundComponent, DataLoaderContentComponent,Skeleton,TranslateModule],
   templateUrl: './publicholidays.component.html',
   styleUrl: './publicholidays.component.scss'
 })

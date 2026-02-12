@@ -13,6 +13,7 @@ import { OpenModalService } from '../../../services/open-modal.service';
 import { RbacService } from '../../../services/rbac.service';
 import { Router } from '@angular/router';
 import { ReportsHeaderComponent } from "../../../shared/reports-tabs/reports-header/reports-header.component";
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-family-members-data',
@@ -24,7 +25,8 @@ import { ReportsHeaderComponent } from "../../../shared/reports-tabs/reports-hea
     NoDataFoundComponent,
     DateformatPipe,
     DataLoaderContentComponent,
-    ReportsHeaderComponent
+    ReportsHeaderComponent,
+    TranslatePipe
 ],
   templateUrl: './family-members-data.component.html',
   styleUrl: './family-members-data.component.scss',

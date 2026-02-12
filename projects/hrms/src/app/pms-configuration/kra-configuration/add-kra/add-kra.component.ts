@@ -8,6 +8,7 @@ import { AuthService } from '../../../services/auth.service';
 import { KraCategory } from '../add-kra/kra.model';  // Correct path
 import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
 import { CommonModule } from '@angular/common';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-add-kra',
@@ -15,7 +16,8 @@ import { CommonModule } from '@angular/common';
   styleUrl: './add-kra.component.scss',
   imports: [
     CommonModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    TranslateModule
   ]
 })
 export class AddKraComponent {

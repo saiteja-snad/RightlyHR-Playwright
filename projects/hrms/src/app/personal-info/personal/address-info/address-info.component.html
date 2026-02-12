@@ -3,7 +3,7 @@
   <div class="card custom-background-card">
     <div class="d-flex justify-content-between align-items-center mb-3">
       <div>
-        <span class="component-sub-header">Current Address</span>
+        <span class="component-sub-header">{{'Current Address'|translate}}</span>
       </div>
         @if(canAccess('update','address')){
       @if(!buttons && (employedata?.empstatus?.toLowerCase() !== 'prospective' && employedata?.empstatus?.toLowerCase() !== 'trainee prospective'
@@ -16,9 +16,9 @@
       @if(buttons && (employedata?.empstatus?.toLowerCase() !== 'prospective' && employedata?.empstatus?.toLowerCase() !== 'trainee prospective'
       && employedata?.empstatus?.toLowerCase() !== 'inactive' && employedata?.empstatus?.toLowerCase() !== 'trainee inactive')){
       <div class="d-flex justify-content-end gap-2">
-        <button type="reset" class="custom-btn btn-secondary" (click)="disableForm()">Close</button>
+        <button type="reset" class="custom-btn btn-secondary" (click)="disableForm()">{{'Close'|translate}}</button>
         <button type="submit" class="custom-btn btn-primary" [disabled]="addressForm.invalid"
-          (click)="updateAddressInfo()">Save</button>
+          (click)="updateAddressInfo()">{{'Save'|translate}}</button>
       </div>
       }
     </div>
@@ -27,80 +27,76 @@
         <!-- Current Address Fields -->
         <ng-container formGroupName="currentAddress">
           <div class="col-md-6 col-lg-4 mb-3">
-            <label for="currentAddressLine1" class="form-label custom-label mb-2">Address Line 1<span
+            <label for="currentAddressLine1" class="form-label custom-label mb-2">{{'Address Line 1'|translate}}<span
                 class="text-danger">*</span>@if(isFieldPendingApproval('Current Address Line 1')) {
             <i class="bi bi-info-circle-fill info-pending" [ngbPopover]="pendingPopover" triggers="click"
              (click)="setActiveMessage('Current Address Line 1')"
               popoverClass="pending-popover"></i>
             }</label>
             <input type="text" class="form-control custom-input" id="currentAddressLine1"  autocomplete="off" formControlName="addressLine1"
-              placeholder="Please enter address line 1"
+              placeholder="{{'Please enter address line 1'|translate}}"
               (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)" >
             <div class="error-msg"
               *ngIf="addressForm.get('currentAddress.addressLine1')?.errors?.['required'] && addressForm.get('currentAddress.addressLine1')?.touched">
-              Address Line 1 is required
+              {{'Address Line 1 is required'|translate}}
             </div>
-            <div  class="error-msg" *ngIf="addressForm.get('currentAddress.addressLine1')?.errors?.['maxlength']">Address Line 1 cannot exceed 250 characters</div>
+            <div  class="error-msg" *ngIf="addressForm.get('currentAddress.addressLine1')?.errors?.['maxlength']">{{'Address Line 1 cannot exceed 250 characters'|translate}}</div>
           
           </div>
           <div class="col-md-6 col-lg-4 mb-3">
-            <label for="currentAddressLine2" class="form-label custom-label mb-2">Address Line 2@if(isFieldPendingApproval('Current Address Line 2')) {
+            <label for="currentAddressLine2" class="form-label custom-label mb-2">{{'Address Line 2'|translate}}@if(isFieldPendingApproval('Current Address Line 2')) {
             <i class="bi bi-info-circle-fill info-pending" [ngbPopover]="pendingPopover" triggers="click"
              (click)="setActiveMessage('Current Address Line 2')"
               popoverClass="pending-popover"></i>
             }</label>
             <input type="text" class="form-control custom-input" id="currentAddressLine2"   autocomplete="off" formControlName="addressLine2"
-              placeholder="Please enter address line 2"
+              placeholder="{{'Please enter address line 2'|translate}}"
               (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)" >
-              <div class="error-msg" *ngIf="addressForm.get('currentAddress.addressLine2')?.errors?.['maxlength']">Address
-                Line 2 cannot exceed 250 characters</div>
+              <div class="error-msg" *ngIf="addressForm.get('currentAddress.addressLine2')?.errors?.['maxlength']">{{'Address Line 2 cannot exceed 250 characters'|translate}}</div>
           </div>
           <div class="col-md-6 col-lg-4 mb-3">
-            <label for="currentCity" class="form-label custom-label mb-2">City<span class="text-danger">*</span>@if(isFieldPendingApproval('Current City')) {
+            <label for="currentCity" class="form-label custom-label mb-2">{{'City'|translate}}<span class="text-danger">*</span>@if(isFieldPendingApproval('Current City')) {
             <i class="bi bi-info-circle-fill info-pending" [ngbPopover]="pendingPopover" triggers="click"
              (click)="setActiveMessage('Current City')"
               popoverClass="pending-popover"></i>
             }</label>
             <input type="text" class="form-control custom-input"  autocomplete="off" id="currentCity" formControlName="city"
-              placeholder="Please enter city" (keypress)="formValidation.restrictInput($event)">
+              placeholder="{{'Please enter city'|translate}}" (keypress)="formValidation.restrictInput($event)">
             <div class="error-msg"
               *ngIf="addressForm.get('currentAddress.city')?.errors?.['required'] && addressForm.get('currentAddress.city')?.touched">
-              City is required
+              {{'City is required'|translate}}
             </div>
-            <div class="error-msg" *ngIf="addressForm.get('currentAddress.city')?.errors?.['maxlength']">City cannot
-              exceed 50 characters</div>
+            <div class="error-msg" *ngIf="addressForm.get('currentAddress.city')?.errors?.['maxlength']">{{'City cannot exceed 50 characters'|translate}}</div>
           </div>
           <div class="col-md-6 col-lg-4 mb-3">
-            <label for="currentState" class="form-label custom-label mb-2">State<span
+            <label for="currentState" class="form-label custom-label mb-2">{{'State'|translate}}<span
                 class="text-danger">*</span>@if(isFieldPendingApproval('Current State')) {
             <i class="bi bi-info-circle-fill info-pending" [ngbPopover]="pendingPopover" triggers="click"
              (click)="setActiveMessage('Current State')"
               popoverClass="pending-popover"></i>
             }</label>
             <input type="text" class="form-control custom-input" id="currentState" formControlName="state"
-              placeholder="Please enter state"   autocomplete="off" (keypress)="formValidation.restrictInputallowspoint($event)">
+              placeholder="{{'Please enter state'|translate}}"   autocomplete="off" (keypress)="formValidation.restrictInputallowspoint($event)">
             <div class="error-msg"
               *ngIf="addressForm.get('currentAddress.state')?.errors?.['required'] && addressForm.get('currentAddress.state')?.touched">
-              State is required
+              {{'State is required'|translate}}
             </div>
-            <div class="error-msg" *ngIf="addressForm.get('currentAddress.state')?.errors?.['maxlength']">State cannot
-              exceed 50 characters</div>
+            <div class="error-msg" *ngIf="addressForm.get('currentAddress.state')?.errors?.['maxlength']">{{'State cannot exceed 50 characters'|translate}}</div>
           </div>
           <div class="col-md-6 col-lg-4 mb-3">
-            <label for="currentCountry" class="form-label custom-label mb-2">Country<span
+            <label for="currentCountry" class="form-label custom-label mb-2">{{'Country'|translate}}<span
                 class="text-danger">*</span>@if(isFieldPendingApproval('Current Country')) {
             <i class="bi bi-info-circle-fill info-pending" [ngbPopover]="pendingPopover" triggers="click"
              (click)="setActiveMessage('Current Country')"
               popoverClass="pending-popover"></i>
             }</label>
             <input type="text" class="form-control custom-input" id="currentCountry" formControlName="country"
-              placeholder="Please enter country"  autocomplete="off"  (keypress)="formValidation.restrictInput($event)">
+              placeholder="{{'Please enter country'|translate}}"  autocomplete="off"  (keypress)="formValidation.restrictInput($event)">
             <div class="error-msg"
               *ngIf="addressForm.get('currentAddress.country')?.errors?.['required'] && addressForm.get('currentAddress.country')?.touched">
-              Country is required
+              {{'Country is required'|translate}}
             </div>
-            <div class="error-msg" *ngIf="addressForm.get('currentAddress.country')?.errors?.['maxlength']">Country
-              cannot exceed 50 characters</div>
+            <div class="error-msg" *ngIf="addressForm.get('currentAddress.country')?.errors?.['maxlength']">{{'Country cannot exceed 50 characters'|translate}}</div>
           </div>
           <div class="col-md-6 col-lg-4 mb-3">
             <label for="currentZipCode" class="form-label custom-label mb-2">Zip Code/Postal Code<span
@@ -111,13 +107,12 @@
             }</label>
             <input type="text" class="form-control custom-input" id="currentZipCode"  autocomplete="off" formControlName="zipCode"
               [maxlength]="6" (keypress)="formValidation.restrictAlphabets($event)"
-              placeholder="Please enter zip code/postal code">
+              placeholder="{{'Please enter zip code/postal code'|translate}}">
             <div class="error-msg"
               *ngIf="addressForm.get('currentAddress.zipCode')?.invalid && addressForm.get('currentAddress.zipCode')?.touched">
-              <div *ngIf="addressForm.get('currentAddress.zipCode')?.errors?.['required']">Zip Code/Postal Code is required</div>
-              <div *ngIf="addressForm.get('currentAddress.zipCode')?.errors?.['pattern']">Zip Code/Postal Code must be a valid 5-6
-                digit number</div>
-                <div *ngIf="addressForm.get('currentAddress.zipCode')?.errors?.['invalidZipCode']">Zip Code/Postal Code cannot be all zeros</div>
+              <div *ngIf="addressForm.get('currentAddress.zipCode')?.errors?.['required']">{{'Zip Code/Postal Code is required'|translate}}</div>
+              <div *ngIf="addressForm.get('currentAddress.zipCode')?.errors?.['pattern']">{{'Zip Code/Postal Code must be a valid 5-6 digit number'|translate}}</div>
+                <div *ngIf="addressForm.get('currentAddress.zipCode')?.errors?.['invalidZipCode']">{{'Zip Code/Postal Code cannot be all zeros'|translate}}</div>
             </div>
           </div>
         </ng-container>
@@ -125,14 +120,14 @@
 
         <div>
         <div class=" mt-2 mb-3">
-          <span class="component-sub-header">Permanent Address</span>
+          <span class="component-sub-header">{{'Permanent Address'|translate}}</span>
         </div>
         <!-- Same as Current Address Checkbox -->
         <div class="form-check custom-label mb-3">
           <!-- <input class="form-check-input custom-check" type="checkbox" id="sameAddress"
             formControlName="sameAsPermanent" (change)="copyCurrentAddress($event)" /> -->
             <input type="checkbox" formControlName="sameAsPermanent" class="form-check-input custom-check" (change)="copyCurrentAddress($event)">
-          <label class="form-check-label custom-label mt-1" for="sameAddress">Same as Current Address</label>
+          <label class="form-check-label custom-label mt-1" for="sameAddress">{{'Same as Current Address'|translate}}</label>
         </div>
 
         <!-- Permanent Address Fields -->

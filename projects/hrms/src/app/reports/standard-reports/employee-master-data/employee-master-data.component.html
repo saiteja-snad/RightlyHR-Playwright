@@ -7,24 +7,24 @@
       <!-- DOJ -->
       <div class="d-flex align-items-center gap-3">
         <div *ngIf="masterDataForm.get('dateOfJoining')?.value">
-          <button type="button" class="clear-all-btn" (click)="clearAllFilters()" > Clear All</button>
+          <button type="button" class="clear-all-btn" (click)="clearAllFilters()" >{{ 'Clear All' | translate }}</button>
         </div>
 
         @if(rbac.allowedToAccess('Employee Master Data - Generate.view')){
         <div class="d-flex align-items-center gap-2">
-          <label class="custom-label filter-labels text-nowrap m-0">Date of Joining</label>
+          <label class="custom-label filter-labels text-nowrap m-0">{{ 'Date of Joining' | translate }}</label>
           <div class="custom-date-range-picker">
-            <p-datepicker formControlName="dateOfJoining" [placeholder]="'Please Select Date'" selectionMode="range"
+            <p-datepicker formControlName="dateOfJoining" [placeholder]="'Please Select Date' | translate" selectionMode="range"
              [showIcon]="true" [readonlyInput]="true" />
           </div>
         </div>
 
         <!-- Employee Status -->
         <div class="d-flex align-items-center gap-2">
-          <label class="custom-label filter-labels text-nowrap m-0">Employee Status</label>
+          <label class="custom-label filter-labels text-nowrap m-0">{{ 'Employee Status' | translate }}</label>
           <div class="custom-p-select-content">
             <p-select [options]="employeeStatusOptions" formControlName="empStatus" optionLabel="label"
-              optionValue="label" placeholder="Select employee status" class="custom-select w-100">
+              optionValue="label" [placeholder]="'Select employee status' | translate" class="custom-select w-100">
             </p-select>
           </div>
         </div>
@@ -36,9 +36,9 @@
             [disabled]="!masterDataForm.get('empStatus')?.value && !masterDataForm.get('dateOfJoining')?.value">
             @if(spinnerLoader1){
             <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-            <span>{{'Loading...'}}</span>
+            <span>{{ 'Loading...' | translate }}</span>
             }@else {
-            <span>{{'Generate'}}</span>
+            <span>{{ 'Generate' | translate }}</span>
             }
           </button>
           }
@@ -48,9 +48,9 @@
             (click)="onClickEmpMasterExport()" class="custom-btn btn-primary">
             @if(spinnerLoader2){
             <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-            <span>{{'Loading...'}}</span>
+            <span>{{ 'Loading...' | translate }}</span>
             }@else {
-            <span>{{'Export'}}</span>
+            <span>{{ 'Export' | translate }}</span>
             }
           </button>
           }

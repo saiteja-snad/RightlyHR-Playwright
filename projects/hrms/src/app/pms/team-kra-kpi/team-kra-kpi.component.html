@@ -1,7 +1,7 @@
 <div class="custom-main-component-container">
   <div class="component-header-content">
     <div class="heading-content">
-      <div class="commpoment-name">PMS
+      <div class="commpoment-name">{{'PMS' |translate}}
         <span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
       </div>
       <div class="component-header">{{"Team KRA's / KPI's" | translate}}</div>
@@ -23,7 +23,7 @@
         <label class="form-label filter-labels m-0">{{ 'Review Cycle' | translate }}</label>
         <div class="custom-p-select-content">
           <p-select [options]="reviewCycleOptions" optionLabel="label" optionValue="value"
-            placeholder="Select Review Cycle" class="form-select custom-select" [(ngModel)]="selectedReviewCycleId"
+            placeholder="{{'Select Review Cycle' | translate}}" class="form-select custom-select" [(ngModel)]="selectedReviewCycleId"
             (onChange)="onReviewCycleChange($event.value)" (onClear)="onReviewCycleChange(null)" [filter]="true"
             showClear="true" />
         </div>
@@ -35,7 +35,7 @@
       rbac.allowedToAccess('My Team (KRA).view')
       ) {
       <div class="d-flex align-items-center gap-2">
-        <label class="form-label custom-label text-nowrap filter-labels m-0">Select Employee</label>
+        <label class="form-label custom-label text-nowrap filter-labels m-0">{{'Select Employee' |translate}}</label>
         <div class="custom-p-select-content">
           <p-select [options]="activeEmplist" optionLabel="label" optionValue="value" [filter]="true" showClear="true"
             placeholder="Please select employee" [(ngModel)]="selectedEmployeeId" (onChange)="onEmployeeChange($event.value)"
@@ -47,7 +47,7 @@
 
       @else if (rbac.allowedToAccess('All Employees (KRA).view')){
       <div class="d-flex align-items-center gap-2">
-        <label class="form-label custom-label text-nowrap filter-labels m-0">Select Employee</label>
+        <label class="form-label custom-label text-nowrap filter-labels m-0">{{'Select Employee' |translate}}</label>
         <div class="custom-p-select-content">
           <p-select [options]="activeEmplist" optionLabel="label" optionValue="value" [filter]="true" showClear="true"
             placeholder="Please select employee" [(ngModel)]="selectedEmployeeId" (onChange)="onEmployeeChange($event.value)"
@@ -59,7 +59,7 @@
 
       @else if (rbac.allowedToAccess('My Team (KRA).view')) {
       <div class="d-flex align-items-center gap-2">
-        <label class="form-label custom-label text-nowrap filter-labels m-0">My Team</label>
+        <label class="form-label custom-label text-nowrap filter-labels m-0">{{'My Team' |translate}}</label>
         <div class="custom-p-select-content">
           <p-select [options]="myTeamEmployees" optionLabel="fullName" optionValue="employeeId" showClear="true"
             [filter]="true" placeholder="Please select employee" [(ngModel)]="selectedEmployeeId" (onChange)="onEmployeeChange($event.value)"
@@ -89,7 +89,7 @@
         <span class="input-group-text custom-input-group-search">
           <i class="bi bi-search"></i>
         </span>
-        <input type="search" class="form-control custom-search-input" placeholder="Search by employee name..."
+        <input type="search" class="form-control custom-search-input" placeholder="{{'Search by employee name...' | translate}}"
           [(ngModel)]="searchText" (ngModelChange)="onSearchTextChange()" />
       </div>
 
@@ -116,19 +116,19 @@
                     <div class="d-flex align-items-center">
                       <!-- Review Cycle -->
                       <div class="text-center" style="width: 250px;">
-                        <small class="text-muted me-1" style="font-size: 13px;">Review Cycle:</small>
+                        <small class="text-muted me-1" style="font-size: 13px;">{{'Review Cycle:' | translate}}</small>
                         <strong>{{ accordionItem.reviewCycleName }}</strong>
                       </div>
 
                       <!-- Total KRA Weightage -->
                       <div class="text-center" style="width: 200px;">
-                        <small class="text-muted me-1" style="font-size: 13px;">Total KRA Weightage:</small>
+                        <small class="text-muted me-1" style="font-size: 13px;">{{'Total KRA Weightage:' | translate}}</small>
                         <strong>{{ getTotalKraWeightage(accordionItem.allKras) }}%</strong>
                       </div>
 
                       <!-- Overall Rating -->
                       <div class="text-center" style="width: 150px;">
-                        <small class="text-muted me-1" style="font-size: 13px;">Overall Rating:</small>
+                        <small class="text-muted me-1" style="font-size: 13px;">{{'Overall Rating:' | translate}}</small>
                         <strong>{{ getOverallRating(accordionItem.allKras) }}</strong>
                       </div>
                     </div>
@@ -218,9 +218,9 @@
                 }
               </select>
               <span class="pagination-label text-nowrap">
-                Showing {{ first + 1 }} -
+                {{'Showing' | translate}} {{ first + 1 }} -
                 {{ (first + rows) > collectionSize ? collectionSize : (first + rows) }}
-                of {{ collectionSize }}
+                {{'of' | translate}} {{ collectionSize }}
               </span>
             </div>
             <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"
@@ -245,7 +245,7 @@
     <!-- HEADER -->
     <div class="offcanvas-filter-header-content offcanvas-filter-header-border">
       <p class="filter-header m-0">
-        KPIs ({{ kpiList.length }})
+        {{'KPIs' | translate}} ({{ kpiList.length }})
       </p>
       <a (click)="closeKpiCanvas()" class="cursor-pointer">
         <img src="icons/close.png" alt="Close" class="close-icon">
@@ -262,12 +262,12 @@
           <!-- THREE COLUMN SECTION -->
           <div class="d-flex justify-content-between gap-3 mb-3">
             <div class="text-center">
-              <p class="project-role mb-1">Weightage</p>
+              <p class="project-role mb-1">{{'Weightage' | translate}}</p>
               <p class="project-dates m-0">{{ kpi.assignedKpiWeightage }}%</p>
             </div>
 
             <div class="text-center">
-              <p class="project-role mb-1">Target Value</p>
+              <p class="project-role mb-1">{{'Target Value' | translate}}</p>
               <p class="project-dates m-0">
                 {{ kpi.targetValue }}
                 <span class="text-muted small">{{ kpi.targetType }}</span>
@@ -275,7 +275,7 @@
             </div>
 
             <div class="text-center">
-              <p class="project-role mb-1">Target Date</p>
+              <p class="project-role mb-1">{{'Target Date' | translate}}</p>
               <p class="project-dates m-0">
                 {{ kpi.targetDate | date:'MMM dd, yyyy' }}
               </p>
@@ -285,7 +285,7 @@
           <!-- RATING -->
           <div class="d-flex align-items-center justify-content-end mb-2">
             <p class="project-role m-1 fw-bold" style="color: var(--primary-color);">
-              Rating :
+              {{'Rating :' | translate}}
             </p>
             <p class="project-dates m-1">
               {{ kpi.assignedApproverRating || '-' }}

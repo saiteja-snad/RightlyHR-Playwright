@@ -1,26 +1,26 @@
 <div class="custom-main-component-container employee-label-info">
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <div><span class="component-sub-header">Bank Info</span></div>
+        <div><span class="component-sub-header">{{'Bank Info'|translate}}</span></div>
         @if(canAccess('create','bank') ){
         @if((employedata?.empstatus?.toLowerCase() !== 'prospective' && employedata?.empstatus?.toLowerCase() !==
         'trainee prospective'
         && employedata?.empstatus?.toLowerCase() !== 'inactive' && employedata?.empstatus?.toLowerCase() !== 'trainee inactive')){
-        <div class="custom-add-btn" (click)="openModal(addBankModal)"><i class="bi bi-plus plus-icon me-1"></i>Add New
+        <div class="custom-add-btn" (click)="openModal(addBankModal)"><i class="bi bi-plus plus-icon me-1"></i>{{'Add New'|translate}}
         </div>
         }}
     </div>
-     <div *ngIf="addedRecords.length>0" class="error-msg float-end">Note: Record addition request sent for approval</div>
+     <div *ngIf="addedRecords.length>0" class="error-msg float-end">{{'Note: Record addition request sent for approval'|translate}}</div>
     <div class="custom-table-content">
         @if (!loading) {
         <table class="w-100">
             <thead>
                 <tr>
-                    <th>Bank Name</th>
-                    <th>Account Holder's Name</th>
-                    <th>Account Number</th>
-                    <th>IFSC Code</th>
-                    <th class="text-center">Proof</th>
-                    <th class="text-center">Primary Bank</th>
+                    <th>{{'Bank Name'|translate}}</th>
+                    <th>{{'Account Holder\'s Name'|translate}}</th>
+                    <th>{{'Account Number'|translate}}</th>
+                    <th>{{'IFSC Code'|translate}}</th>
+                    <th class="text-center">{{'Proof'|translate}}</th>
+                    <th class="text-center">{{'Primary Bank'|translate}}</th>
                     @if(canAccess('update','bank') || canAccess('delete','bank')){
                     @if((employedata?.empstatus?.toLowerCase() !== 'prospective' &&
                     employedata?.empstatus?.toLowerCase() !== 'trainee prospective' )){
@@ -39,7 +39,7 @@
                                   <app-download-icon /></span>
                             <ng-template #noData>-</ng-template>
                         </td>
-                        <td class="text-center">{{bankiteams.isPrimary ? 'Yes' :'No'}}</td>
+                        <td class="text-center">{{bankiteams.isPrimary ? ('Yes'|translate) :('No'|translate)}}</td>
                         @if( canAccess('update','bank') || canAccess('delete','bank')){
                         <td class="text-center">
                             @if(disablePendingFields(bankiteams.bankId)){
@@ -55,14 +55,14 @@
                                     <li >
                                         <button class="dropdown-item"
                                         (click)="openModalupdate(updateBankmodal, bankiteams)">
-                                            <i class="bi bi-pencil me-2"></i>Update
+                                            <i class="bi bi-pencil me-2"></i>{{'Update'|translate}}
                                         </button>
                                     </li>
                                     }
                                     @if( canAccess('delete','bank')){
                                     <li >
                                         <button type="button" class="dropdown-item"(click)="opendeletModal(deleteconformation,bankiteams)">
-                                            <i class="bi bi-trash3 me-2"></i>Delete
+                                            <i class="bi bi-trash3 me-2"></i>{{'Delete'|translate}}
                                         </button>
                                     </li>
                                     }
@@ -94,39 +94,37 @@
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="custom-poup-header-content popup-header-border">
             <div>
-                <p class="popup-heading mb-0">Add Bank Info</p>
+                <p class="popup-heading mb-0">{{'Add Bank Info'|translate}}</p>
             </div>
         </div>
         <div class="custom-main-popup-content ">
             <form autocomplete="off" [formGroup]="bankDetailsForm" (ngSubmit)="postBankDetails()">
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <label for="bankName" class="form-label custom-label mb-2">Bank Name<span
+                        <label for="bankName" class="form-label custom-label mb-2">{{'Bank Name'|translate}}<span
                                 class="text-danger">*</span></label>
 
                         <div class="custom-p-select-content">
                             <p-select [options]="banknames" optionLabel="bankName1" [filter]="true"
                                 [resetFilterOnHide]="true" filterBy="bankName1" formControlName="bankName"
-                                placeholder="Please select bank name" class="form-select custom-select"></p-select>
+                                placeholder="{{'Please select bank name'|translate}}" class="form-select custom-select"></p-select>
                         </div>
                         <div class="error-msg"
                             *ngIf="bankDetailsForm.get('bankName')?.invalid && bankDetailsForm.get('bankName')?.touched">
-                            Bank Name is required
+                            {{'Bank Name is required'|translate}}
                         </div>
                     </div>
 
                     <div class="col-md-6 mb-3">
-                        <label for="accountName" class="form-label custom-label mb-2">Account Holder's Name<span
+                        <label for="accountName" class="form-label custom-label mb-2">{{'Account Holder\'s Name'|translate}}<span
                                 class="text-danger">*</span></label>
                         <input type="text" class="form-control custom-input" id="accountName"
-                            formControlName="accountName" placeholder="Please enter account holder's name"
+                            formControlName="accountName" placeholder="{{'Please enter account holder\'s name'|translate}}"
                             (keypress)="restrictInput($event)">
                         <div class="error-msg"
                             *ngIf="bankDetailsForm.get('accountName')?.invalid && bankDetailsForm.get('accountName')?.touched">
-                            <div *ngIf="bankDetailsForm.get('accountName')?.errors?.['required']">Account Holder's Name
-                                is required</div>
-                            <div *ngIf="bankDetailsForm.get('accountName')?.errors?.['maxlength']">Account Holder's Name
-                                cannot exceed 50 characters</div>
+                            <div *ngIf="bankDetailsForm.get('accountName')?.errors?.['required']">{{'Account Holder\'s Name is required'|translate}}</div>
+                            <div *ngIf="bankDetailsForm.get('accountName')?.errors?.['maxlength']">{{'Account Holder\'s Name cannot exceed 50 characters'|translate}}</div>
                         </div>
                     </div>
 

@@ -6,9 +6,9 @@
             <table class="w-100">
                 <thead>
                     <tr>
-                        <th>Name</th>
-                        <th>Value</th>
-                        <th *ngIf="rbac.allowedToAccess('Late Login Alert Configuration Tab.update')">Action</th>
+                        <th>{{ 'Name' | translate }}</th>
+                        <th>{{ 'Value' | translate }}</th>
+                        <th *ngIf="rbac.allowedToAccess('Late Login Alert Configuration Tab.update')">{{ 'Action' | translate }}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -36,7 +36,7 @@
                                         [ngModelOptions]="{ standalone: true }" min="1" max="480"
                                         (keypress)="validateDecimal($event)" (ngModelChange)="checkThresholdRange()"/>
                                     <div *ngIf="isThresholdInvalid" class="error-msg mt-2">
-                                        Value must be between 1 and 480.
+                                        {{ 'Value must be between 1 and 480.' | translate }}
                                     </div>
                                 </ng-container>
                             </ng-container>
@@ -52,7 +52,7 @@
                                     <li>
                                         <a class="dropdown-item"
                                             (click)="enableEditForLateLogin(i, login.id, login.value, login.attribute)">
-                                            <i class="bi bi-pencil me-2"></i>Update
+                                            <i class="bi bi-pencil me-2"></i>{{ 'Update' | translate }}
                                         </a>
                                     </li>
                                 </ul>
@@ -63,10 +63,10 @@
                                     <button class="custom-btn btn-primary" type="button"
                                         (click)="submitLateLoginForm(i, login.id, temporaryValue)"
                                         [disabled]="isThresholdInvalid">
-                                        Update
+                                        {{ 'Update' | translate }}
                                     </button>
                                     <button class="custom-btn btn-secondary" type="button" (click)="disableEdit()">
-                                        Cancel
+                                        {{ 'Cancel' | translate }}
                                     </button>
                                 </div>
                             </ng-template>

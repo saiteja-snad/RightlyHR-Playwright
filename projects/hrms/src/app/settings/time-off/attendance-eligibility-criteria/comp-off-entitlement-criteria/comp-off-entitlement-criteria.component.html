@@ -5,9 +5,9 @@
             <table class="w-100">
                 <thead>
                     <tr>
-                        <th>Name</th>
-                        <th>Value</th>
-                        <th class="text-center" *ngIf="rbac.allowedToAccess('Comp Off Entitlement Tab.update')">Action</th>
+                        <th>{{ 'Name' | translate }}</th>
+                        <th>{{ 'Value' | translate }}</th>
+                        <th class="text-center" *ngIf="rbac.allowedToAccess('Comp Off Entitlement Tab.update')">{{ 'Action' | translate }}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -34,7 +34,7 @@
                                 </a>
                                 <ul class="dropdown-menu custom-dropdown-menu">
                                     <li>
-                                        <a class="dropdown-item" (click)="enableEdit(i, criteria.id, criteria.value)"><i class="bi bi-pencil me-2"></i>Update</a>
+                                        <a class="dropdown-item" (click)="enableEdit(i, criteria.id, criteria.value)"><i class="bi bi-pencil me-2"></i>{{ 'Update' | translate }}</a>
                                     </li>
                                 </ul>
                             </div>
@@ -42,11 +42,10 @@
                             <ng-template #editingMode>
                             <div class="d-flex gap-2">
                                 <button class="custom-btn btn-primary" type="button" (click)="submitCompOffValue(i, temporaryValue)">
-                                    Update
+                                    {{ 'Update' | translate }}
                                 </button>
                                 <button class="custom-btn btn-secondary" type="button" (click)="disableEdit()">
-                                    <!-- <i class="bi bi-x-circle-fill"></i> -->
-                                    Cancel
+                                    {{ 'Cancel' | translate }}
                                 </button>
                             </div>
                             </ng-template>

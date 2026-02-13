@@ -12,11 +12,11 @@
         <div class="custom-table-content">
             <table class="w-100">
                 <thead>
-                    <th>Contact Name</th>
-                    <th>Email</th>
-                    <th>Phone Number</th>
-                    <th>Role</th>
-                    <th class="text-center" style="text-transform: none;">Set as Primary Contact</th>
+                    <th>{{"Contact Name" | translate}}</th>
+                    <th>{{"Email" | translate}}</th>
+                    <th>{{"Phone Number" | translate}}</th>
+                    <th>{{"Role" | translate}}</th>
+                    <th class="text-center" style="text-transform: none;">{{"Set as Primary Contact" | translate}}</th>
                     @if((rbac.allowedToAccess('Contact Info Tab.update') || rbac.allowedToAccess('Contact Info Tab.delete')) 
                     && inactiveStatus !== 'inactive'){
                     <th class="text-center">{{"Action" | translate}}</th>
@@ -45,14 +45,14 @@
                                         @if(rbac.allowedToAccess('Contact Info Tab.update')){
                                         <li (click)="openupdateModal(updatecontact ,contact)">
                                             <a class="dropdown-item">
-                                                <i class="bi bi-pencil me-2"></i>Update
+                                                <i class="bi bi-pencil me-2"></i>{{"Update" | translate}}
                                             </a>
                                         </li>
                                         }
                                         @if(rbac.allowedToAccess('Contact Info Tab.delete')){
                                         <li (click)="opendeletModal(deleteconformation ,contact)">
                                             <a class="dropdown-item">
-                                                <i class="bi bi-trash me-2"></i>Delete
+                                                <i class="bi bi-trash me-2"></i>{{"Delete" | translate}}
                                             </a>
                                         </li>
                                         }
@@ -124,12 +124,12 @@
                 <div class="row">
                     <!-- Project Name -->
                     <div class="col-md-6 mb-3">
-                        <label for="contactname" class="form-label custom-label mb-2">Contact Name<span class="text-danger">*</span></label>
+                        <label for="contactname" class="form-label custom-label mb-2">{{"Contact Name" | translate}}<span class="text-danger">*</span></label>
                         <input type="text" id="contactname" formControlName="contactname" minlength="2" maxlength="51"
-                            placeholder="Please enter contact name" (keypress)="formValidation.restrictInitialSpace($event)"
+                            [placeholder]="'Please enter contact name' | translate" (keypress)="formValidation.restrictInitialSpace($event)"
                             class="form-control custom-input">
                         <div class="error-msg" *ngIf="updatecontactFrom.get('contactname')?.touched && updatecontactFrom.get('contactname')?.invalid">
-                            <div *ngIf="updatecontactFrom.get('contactname')?.errors?.['required']">Contact Name is required</div>
+                            <div *ngIf="updatecontactFrom.get('contactname')?.errors?.['required']">{{"Contact Name is required" | translate}}</div>
                         </div>
                         <div *ngIf="updatecontactFrom.get('contactname')?.errors?.['maxCharacters'] || 
                         updatecontactFrom.get('contactname')?.errors?.['minCharacters']" class="error-msg">
@@ -138,18 +138,18 @@
                     </div>
 
                     <div class="col-md-6 mb-3">
-                        <label for="contactemail" class="form-label custom-label mb-2">Email
+                        <label for="contactemail" class="form-label custom-label mb-2">{{"Email" | translate}}
                             <span class="text-danger">*</span></label>
                         <input type="text" id="contactemail" formControlName="contactemail"
-                            class="form-control custom-input" placeholder="Please enter email">
+                            class="form-control custom-input" [placeholder]="'Please enter email' | translate">
                         <div class="error-msg" *ngIf="updatecontactFrom.get('contactemail')?.touched && updatecontactFrom.get('contactemail')?.invalid">
-                            <div *ngIf="updatecontactFrom.get('contactemail')?.errors?.['required']">Email is required</div>
-                            <div *ngIf="updatecontactFrom.get('contactemail')?.errors?.['email']">Please enter a valid email address</div>
+                            <div *ngIf="updatecontactFrom.get('contactemail')?.errors?.['required']">{{"Email is required" | translate}}</div>
+                            <div *ngIf="updatecontactFrom.get('contactemail')?.errors?.['email']">{{"Please enter a valid email address" | translate}}</div>
                         </div>
                     </div>
 
                     <div class="col-md-6 mb-3">
-                        <label for="contactPhone" class="form-label custom-label mb-2">Phone Number<span class="text-danger">*</span></label>
+                        <label for="contactPhone" class="form-label custom-label mb-2">{{"Phone Number" | translate}}<span class="text-danger">*</span></label>
                         <div class="d-flex custom-input-group position-relative custom-phone-number-content w-100">
                             <div>
                                 <lib-country-list class="country-input" [selectedCountryConfig]="selectedCountryConfig"
@@ -158,22 +158,22 @@
                                     (onCountryChange)="onCountryChange($event)">
                                 </lib-country-list>
                             </div>
-                            <input type="text" placeholder="Please enter phone number" class="form-control custom-input"
+                            <input type="text" [placeholder]="'Please enter phone number' | translate" class="form-control custom-input"
                                 formControlName="contactPhone" (keypress)="formValidation.restrictAlphabets($event)">
                         </div>
                         <div class="error-msg" *ngIf="updatecontactFrom.get('contactPhone')?.touched && updatecontactFrom.get('contactPhone')?.invalid">
-                            <div *ngIf="updatecontactFrom.get('contactPhone')?.errors?.['required']">Phone number is required</div>
-                            <div *ngIf="updatecontactFrom.get('contactPhone')?.errors?.['invalidPhoneNumber']">Invalid phone number</div>
+                            <div *ngIf="updatecontactFrom.get('contactPhone')?.errors?.['required']">{{"Phone number is required" | translate}}</div>
+                            <div *ngIf="updatecontactFrom.get('contactPhone')?.errors?.['invalidPhoneNumber']">{{"Invalid phone number" | translate}}</div>
                         </div>
                     </div>
 
                     <div class="col-md-6 mb-3">
-                        <label for="contactrole" class="form-label custom-label mb-2">Role<span class="text-danger">*</span></label>
+                        <label for="contactrole" class="form-label custom-label mb-2">{{"Role" | translate}}<span class="text-danger">*</span></label>
                         <input type="text" id="contactrole" formControlName="contactrole" maxlength="2" maxlength="51"
-                            (keypress)="formValidation.restrictInitialSpace($event)" placeholder="Please enter role"
+                            (keypress)="formValidation.restrictInitialSpace($event)" [placeholder]="'Please enter role' | translate"
                             class="form-control custom-input">
                         <div class="error-msg" *ngIf="updatecontactFrom.get('contactrole')?.touched && updatecontactFrom.get('contactrole')?.invalid">
-                            <div *ngIf="updatecontactFrom.get('contactrole')?.errors?.['required']">Role is required</div>
+                            <div *ngIf="updatecontactFrom.get('contactrole')?.errors?.['required']">{{"Role is required" | translate}}</div>
                         </div>
                         <div *ngIf="updatecontactFrom.get('contactrole')?.errors?.['maxCharacters'] || 
                         updatecontactFrom.get('contactrole')?.errors?.['minCharacters']" class="error-msg">
@@ -184,7 +184,7 @@
 
                 <!-- Form Buttons -->
                 <div class="custom-modal-footer">
-                    <button type="button" class="custom-btn btn-secondary" (click)="closepopup(confirmationpopupfornodue)">Cancel</button>
+                    <button type="button" class="custom-btn btn-secondary" (click)="closepopup(confirmationpopupfornodue)">{{"Cancel" | translate}}</button>
                     <button type="submit" class="custom-btn btn-primary" [disabled]="updatecontactFrom.invalid || spinnerLoader">
                         @if (spinnerLoader) {
                         <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
@@ -206,8 +206,8 @@
             <p class="confirmation-text">{{'Are you sure you want to cancel?' | translate}}</p>
         </div>
         <div class="custom-modal-footer">
-            <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">{{'No'}}</button>
-            <button type="button" class="custom-btn btn-primary" (click)="close();model.dismiss()">{{'Yes'}}</button>
+            <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">{{"No" | translate}}</button>
+            <button type="button" class="custom-btn btn-primary" (click)="close();model.dismiss()">{{"Yes" | translate}}</button>
         </div>
     </div>
 </ng-template>

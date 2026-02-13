@@ -9,7 +9,7 @@
 
       <div *ngIf="rbac.allowedToAccess('Team Time Sheet Filters Tab.view')">
         <button type="button" class="custom-btn btn-secondary position-relative" (click)="toggleFilters(filterContent)">
-          <i class="bi bi-funnel me-2"></i>Filters
+          <i class="bi bi-funnel me-2"></i>{{ 'Filters' | translate }}
           <span *ngIf="isFilterApplied()" class="filter-indicator"></span>
         </button>
       </div>
@@ -55,7 +55,7 @@
           <i class="bi bi-search"></i>
         </span>
         <input type="search" #search="ngModel" [(ngModel)]="searchValue" (ngModelChange)="onSearchChange()" class="form-control custom-search-input"
-          placeholder="Search by client name / project name / project type" aria-label="Search"
+          [placeholder]="'Search by client name / project name / project type' | translate" aria-label="Search"
           aria-describedby="basic-addon1">
       </div>
 
@@ -73,16 +73,16 @@
           <table class="w-100">
             <thead>
               @if(!isActive('/project-management/clients')){
-              <th>Client Name</th>
+              <th>{{ 'Client Name' | translate }}</th>
               }
-              <th>Project Name</th>
-              <th class="text-center">Project Code</th>
+              <th>{{ 'Project Name' | translate }}</th>
+              <th class="text-center">{{ 'Project Code' | translate }}</th>
               <!-- <th>Start Date</th>
                             <th>End Date</th>
                             <th>Effective Date</th>
                             <th>Kickoff Date</th> -->
-              <th class="text-center">Project Type</th>
-              <th>Department</th>
+              <th class="text-center">{{ 'Project Type' | translate }}</th>
+              <th>{{ 'Department' | translate }}</th>
               <!-- <th>Status</th> -->
               @if(( rbac.allowedToAccess('Project Details Tab.delete')) &&
               inactiveClientStatus!=='inactive'){
@@ -123,12 +123,12 @@
                         <ul class="dropdown-menu custom-dropdown-menu">
                           <li (click)="openModalstatus(statuschanges,project)">
                             <a class="dropdown-item">
-                              <i class="bi bi-check-circle me-2"></i>Active
+                              <i class="bi bi-check-circle me-2"></i>{{ 'Active' | translate }}
                             </a>
                           </li>
                           <li (click)="openModalstatus(statuschangeshold,project)">
                             <a class="dropdown-item">
-                              <i class="bi bi-slash-circle  me-2"></i>Inactive
+                              <i class="bi bi-slash-circle  me-2"></i>{{ 'Inactive' | translate }}
                             </a>
                           </li>
                         </ul>
@@ -155,7 +155,7 @@
                 <option *ngFor="let option of options" [value]="option.value">{{ option.label }}</option>
               </select>
               <span class="pagination-label text-nowrap">
-                Showing {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize : (+first + +rows) }} of {{ collectionSize }}
+                {{ 'Showing' | translate }} {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize : (+first + +rows) }} {{ 'of' | translate }} {{ collectionSize }}
               </span>
             </div>
             <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"
@@ -188,11 +188,11 @@
   <div class="result-popup-content" ngbAutofocus>
     <div>
       <app-confirmation-icon />
-      <p class="confirmation-text pt-3">{{'Are you sure you want to Inactive this project?'}}</p>
+      <p class="confirmation-text pt-3">{{ 'Are you sure you want to Inactive this project?' | translate }}</p>
     </div>
     <div class="custom-modal-footer">
-      <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'}}</button>
-      <button type="submit" class="custom-btn btn-primary" (click)="confirmStatusChangetohold(modal)">{{'Yes'}}</button>
+      <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{ 'No' | translate }}</button>
+      <button type="submit" class="custom-btn btn-primary" (click)="confirmStatusChangetohold(modal)">{{ 'Yes' | translate }}</button>
     </div>
   </div>
 </ng-template>
@@ -211,7 +211,7 @@
         <label class="form-label filter-labels mb-3">{{ 'Select Client' | translate }}</label>
         <div class="custom-p-multiSelect-content">
           <p-multiSelect [options]="clientDetails" optionLabel="clientName" [(ngModel)]="selectedClients"
-            placeholder="Please select client" [filter]="true" filterBy="clientName" class="form-select custom-select"
+            [placeholder]="'Please select client' | translate" [filter]="true" filterBy="clientName" class="form-select custom-select"
             (onChange)="onClientChange()" (onClear)="selectedClients = []; getdatabaedonRoute()" />
         </div>
       </div>
@@ -221,7 +221,7 @@
         <label class="form-label filter-labels mb-3">{{ 'Select Department' | translate }}</label>
         <div class="custom-p-multiSelect-content">
           <p-multiSelect [options]="departmentlist" optionLabel="departmentName" optionValue="sno"
-            defaultLabel="Please select department" [filter]="true" filterBy="departmentName"
+            [defaultLabel]="'Please select department' | translate" [filter]="true" filterBy="departmentName"
             [(ngModel)]="selectedDepartmentIds" class="form-select custom-select"
             (onChange)="onDepartmentChangelist($event)" (onClear)="selectedDepartmentIds = []; getdatabaedonRoute()" />
         </div>
@@ -232,7 +232,7 @@
         <label class="form-label filter-labels mb-3">{{ 'Select Project Type' | translate }}</label>
         <div class="custom-p-multiSelect-content">
           <p-multiSelect [options]="projecttypes" optionLabel="value" optionValue="value"
-            placeholder="Please select project type" [filter]="true" class="form-select custom-select"
+            [placeholder]="'Please select project type' | translate" [filter]="true" class="form-select custom-select"
             [(ngModel)]="selectedProjectTypes" (onChange)="onProjectTypeChange()"
             (onClear)="selectedProjectTypes = []; getdatabaedonRoute()" />
         </div>

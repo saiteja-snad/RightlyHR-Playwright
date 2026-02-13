@@ -1,7 +1,7 @@
 <div class="custom-main-popup-container" ngbAutofocus>
     <div class="custom-poup-header-content popup-header-border">
         <div>
-            <p class="popup-heading mb-0">{{'Add Contacts' }}</p>
+            <p class="popup-heading mb-0">{{'Add Contacts' | translate}}</p>
         </div>
     </div>
 
@@ -11,11 +11,11 @@
                 <table class="w-100">
                     <thead>
                         <tr>
-                            <th> Contact Name<span class="text-danger">*</span> </th>
-                            <th>Email<span class="text-danger">*</span></th>
-                            <th>Phone Number<span class="text-danger">*</span></th>
-                            <th>Role<span class="text-danger">*</span></th>
-                            <th>Action</th>
+                            <th>{{'Contact Name' | translate}}<span class="text-danger">*</span></th>
+                            <th>{{'Email' | translate}}<span class="text-danger">*</span></th>
+                            <th>{{'Phone Number' | translate}}<span class="text-danger">*</span></th>
+                            <th>{{'Role' | translate}}<span class="text-danger">*</span></th>
+                            <th>{{'Action' | translate}}</th>
                         </tr>
                     </thead>
                     <tbody formArrayName="contacts">
@@ -23,9 +23,9 @@
                             <td>
                                 <input type="text" class="form-control custom-input" minlength="2" maxlength="51"
                                     (keypress)="formValidation.restrictInitialSpace($event)"
-                                    placeholder="Please enter contact name" formControlName="contactName">
+                                    [placeholder]="'Please enter contact name' | translate" formControlName="contactName">
                                 <div class="error-msg" *ngIf="contact.get('contactName')?.touched && contact.get('contactName')?.invalid">
-                                    <div *ngIf="contact.get('contactName')?.errors?.['required']">Contact Name is required</div>
+                                    <div *ngIf="contact.get('contactName')?.errors?.['required']">{{'Contact Name is required' | translate}}</div>
                                 </div>
                                 <div *ngIf="contact.get('contactName')?.errors?.['maxCharacters'] || 
                                     contact.get('contactName')?.errors?.['minCharacters']" class="error-msg">
@@ -33,10 +33,10 @@
                                 </div>
                             </td>
                             <td>
-                                <input type="email" class="form-control custom-input" formControlName="contactEmail" placeholder="Please enter email">
+                                <input type="email" class="form-control custom-input" formControlName="contactEmail" [placeholder]="'Please enter email' | translate">
                                 <div class="error-msg" *ngIf="contact.get('contactEmail')?.touched && contact.get('contactEmail')?.invalid">
-                                    <div *ngIf="contact.get('contactEmail')?.errors?.['required']">Email is required</div>
-                                    <div *ngIf="contact.get('contactEmail')?.errors?.['email']">Please enter a valid email address</div>
+                                    <div *ngIf="contact.get('contactEmail')?.errors?.['required']">{{'Email is required' | translate}}</div>
+                                    <div *ngIf="contact.get('contactEmail')?.errors?.['email']">{{'Please enter a valid email address' | translate}}</div>
                                 </div>
                             </td>
                             <td>
@@ -48,19 +48,19 @@
                                         </lib-country-list>
                                     </div>
                                     <input type="text" class="form-control custom-input" (keypress)="formValidation.restrictAlphabets($event)"
-                                        formControlName="contactPhone" placeholder="Please enter phone number">
+                                        formControlName="contactPhone" [placeholder]="'Please enter phone number' | translate">
                                 </div>
                                 <div class="error-msg" *ngIf="contact.get('contactPhone')?.touched && contact.get('contactPhone')?.invalid">
-                                    <div *ngIf="contact.get('contactPhone')?.errors?.['required']">Phone number is required</div>
-                                    <div *ngIf="contact.get('contactPhone')?.errors?.['invalidPhoneNumber']">Please enter a valid phone number</div>
+                                    <div *ngIf="contact.get('contactPhone')?.errors?.['required']">{{'Phone number is required' | translate}}</div>
+                                    <div *ngIf="contact.get('contactPhone')?.errors?.['invalidPhoneNumber']">{{'Please enter a valid phone number' | translate}}</div>
                                 </div>
                             </td>
 
                             <td>
-                                <input type="text" class="form-control custom-input" maxlength="51" placeholder="Please enter role"
+                                <input type="text" class="form-control custom-input" maxlength="51" [placeholder]="'Please enter role' | translate"
                                     (keypress)="formValidation.restrictInitialSpace($event)" formControlName="contactRole">
                                 <div class="error-msg" *ngIf="contact.get('contactRole')?.touched && contact.get('contactRole')?.invalid">
-                                    <div *ngIf="contact.get('contactRole')?.errors?.['required']">Role is required</div>
+                                    <div *ngIf="contact.get('contactRole')?.errors?.['required']">{{'Role is required' | translate}}</div>
                                 </div>
                                 <div *ngIf="contact.get('contactRole')?.errors?.['maxCharacters'] || 
                                 contact.get('contactRole')?.errors?.['minCharacters']" class="error-msg">
@@ -89,14 +89,14 @@
             </div>
 
             <div class="custom-modal-footer">
-                <button type="button" class="custom-btn btn-secondary" (click)="closepopup(confirmationpopupfornodue)">Cancel</button>
+                <button type="button" class="custom-btn btn-secondary" (click)="closepopup(confirmationpopupfornodue)">{{'Cancel' | translate}}</button>
                 <button type="submit" class="custom-btn btn-primary"
                     [disabled]="addContactForm.invalid || spinnerLoader">
                     @if (spinnerLoader) {
                     <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                    <span>{{'Loading' }}...</span>
+                    <span>{{'Loading' | translate}}...</span>
                     } @else {
-                    <span>{{'Add'}}</span>
+                    <span>{{'Add' | translate}}</span>
                     }
                 </button>
             </div>
@@ -112,8 +112,8 @@
             <p class="confirmation-text">{{'Are you sure you want to cancel?' | translate}}</p>
         </div>
         <div class="custom-modal-footer">
-            <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">{{'No'}}</button>
-            <button type="button" class="custom-btn btn-primary" (click)="close();model.dismiss()">{{'Yes'}}</button>
+            <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">{{'No' | translate}}</button>
+            <button type="button" class="custom-btn btn-primary" (click)="close();model.dismiss()">{{'Yes' | translate}}</button>
         </div>
     </div>
 </ng-template>

@@ -1,8 +1,8 @@
 <div class="custom-main-popup-container">
     <div class="component-header-content">
         <div class="heading-content">
-            <div class="commpoment-name">Desk<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span></div>
-            <div class="component-header">Desk Management</div>
+            <div class="commpoment-name">{{ 'Desk' | translate }}<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span></div>
+            <div class="component-header">{{ 'Desk Management' | translate }}</div>
             <div>
                 <app-module-info-icon placement="bottom" [ngbPopover]="popContent" />
             </div>
@@ -12,19 +12,19 @@
             <form autocomplete="off" [formGroup]="locationfromdata">
                 <div class="d-flex gap-3 align-items-center">
                     <div class="d-flex gap-2 align-items-center">
-                        <label for="location" class="form-label custom-label filter-labels text-nowrap m-0">Locations</label>
+                        <label for="location" class="form-label custom-label filter-labels text-nowrap m-0">{{ 'Locations' | translate }}</label>
                         <select id="location" formControlName="locationId" class="form-select custom-select" (change)="onLocationChange()">
-                            <option [ngValue]="null">All Locations</option>
+                            <option [ngValue]="null">{{ 'All Locations' | translate }}</option>
                             <option *ngFor="let location of jobLocationDropDownData" [value]="location.id">
                                 {{ location.jobLocationName }}</option>
                         </select>
                     </div>
 
                     <div class="d-flex gap-2 align-items-center">
-                        <label for="subLocation" class="form-label custom-label filter-labels text-nowrap m-0">Sub Locations</label>
+                        <label for="subLocation" class="form-label custom-label filter-labels text-nowrap m-0">{{ 'Sub Locations' | translate }}</label>
                         <select id="subLocation" formControlName="subLocationId" class="form-select custom-select"
                             (change)="onSubLocationChange()">
-                            <option [ngValue]="null">All Sub Locations</option>
+                            <option [ngValue]="null">{{ 'All Sub Locations' | translate }}</option>
                             <option *ngFor="let subLocation of subLocationsDropdown" [value]="subLocation.id">
                                 {{ subLocation.jobSubLocationName }}
                             </option>
@@ -36,7 +36,7 @@
             <div>
                 @if(rbac.allowedToAccess('Desk Allocation - Create.view')){
                 <button type="button" class="custom-btn btn-primary" (click)="openModal(createDeskModal)">
-                    Register a Desk</button>
+                    {{ 'Register a Desk' | translate }}</button>
                 }
             </div>
         </div>
@@ -128,60 +128,60 @@
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="custom-poup-header-content popup-header-border">
             <div>
-                <p class="popup-heading mb-0">Register a Desk</p>
+                <p class="popup-heading mb-0">{{ 'Register a Desk' | translate }}</p>
             </div>
         </div>
         <div class="custom-main-popup-content">
             <form autocomplete="off" [formGroup]="deskForm" (ngSubmit)="postdesk(deskForm)">
                 <div class="row">
                     <div class="mb-3 col-md-6">
-                        <label for="location" class="form-label custom-label mb-2">Location
+                        <label for="location" class="form-label custom-label mb-2">{{ 'Location' | translate }}
                             <span class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
                             <p-select [options]="jobLocationDropDownData" optionLabel="jobLocationName" formControlName="locationId"
-                                placeholder="Please select location" class="form-select custom-select"
+                                [placeholder]="'Please select location' | translate" class="form-select custom-select"
                                 (onChange)="getSubLocationByid($event.value)" />
                         </div>
                         <div *ngIf="deskForm.get('locationId')?.invalid && deskForm.get('locationId')?.touched" class="error-msg">
-                            Location is required</div>
+                            {{ 'Location is required' | translate }}</div>
                     </div>
 
                     <!-- Sub Location Field -->
                     <div class="mb-3 col-md-6">
-                        <label for="subLocation" class="form-label custom-label mb-2">Sub Location<span class="text-danger">*</span></label>
+                        <label for="subLocation" class="form-label custom-label mb-2">{{ 'Sub Location' | translate }}<span class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
                             <p-select [options]="subLocationsDropdown" optionLabel="jobSubLocationName" formControlName="subLocationId"
-                                placeholder="Please select sub location" class="form-select custom-select"
+                                [placeholder]="'Please select sub location' | translate" class="form-select custom-select"
                                 (onChange)="getShiftBYid($event.value);getdeskid()" />
                         </div>
                         <div *ngIf="deskForm.get('subLocationId')?.invalid && deskForm.get('subLocationId')?.touched" class="error-msg">
-                            Sub Location is required
+                            {{ 'Sub Location is required' | translate }}
                         </div>
                     </div>
 
                     <!-- Desk Name Field -->
                     <div class="col-md-6 mb-3">
-                        <label for="assetId" class="form-label custom-label mb-2">Desk ID<span class="text-danger">*</span></label>
+                        <label for="assetId" class="form-label custom-label mb-2">{{ 'Desk ID' | translate }}<span class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
                             <p-select [options]="deskdataid" optionLabel="deskId" optionValue="id" formControlName="deskid"
-                                placeholder="Please select desk id" class="form-select custom-select" />
+                                [placeholder]="'Please select desk id' | translate" class="form-select custom-select" />
                         </div>
                         <div *ngIf="deskForm.get('deskid')?.invalid && deskForm.get('deskid')?.touched">
-                            <div class="error-msg">Desk ID is required</div>
+                            <div class="error-msg">{{ 'Desk ID is required' | translate }}</div>
                         </div>
                     </div>
 
                     <div class="col-md-6 mb-3">
-                        <label for="Department" class="form-label custom-label mb-2">Desk Type<span
+                        <label for="Department" class="form-label custom-label mb-2">{{ 'Desk Type' | translate }}<span
                                 class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
                             <p-select [options]="desktype" optionLabel="value" formControlName="desktype"
-                                placeholder="Please select desk type" class="form-select custom-select"></p-select>
+                                [placeholder]="'Please select desk type' | translate" class="form-select custom-select"></p-select>
                         </div>
                         <div class="error-msg"
                             *ngIf="deskForm.controls['desktype'].invalid && (deskForm.controls['desktype'].touched || deskForm.controls['desktype'].dirty)">
                             <span class="error-msg" *ngIf="deskForm.controls['desktype'].errors?.['required']">
-                                Desk Type is required</span>
+                                {{ 'Desk Type is required' | translate }}</span>
                         </div>
                     </div>
 
@@ -192,55 +192,55 @@
                                     <input class="form-check-input" type="checkbox" id="isPrimary" [checked]="isToggled"
                                         (change)="onToggleChange($event)">
                                 </div>
-                                <label for="isPrimary" class="form-label custom-label mb-0">Allocate To</label>
+                                <label for="isPrimary" class="form-label custom-label mb-0">{{ 'Allocate To' | translate }}</label>
                             </div>
                         </div>
                     </div>
 
                     <div class="col-md-6 mb-3">
-                        <label for="subLocation" class="form-label custom-label mb-2">Select Shift
+                        <label for="subLocation" class="form-label custom-label mb-2">{{ 'Select Shift' | translate }}
                             <span class="text-danger" *ngIf="isToggled">*</span></label>
                         <div class="custom-p-select-content">
                             <p-select [options]="shiftDropdown" optionLabel="shiftName" formControlName="shifts"
-                                placeholder="Please select shift" class="form-select custom-select" (onChange)="getEmployeedata()" />
+                                [placeholder]="'Please select shift' | translate" class="form-select custom-select" (onChange)="getEmployeedata()" />
                         </div>
                         <div class="error-msg" *ngIf="deskForm.get('shifts')?.invalid && deskForm.get('shifts')?.touched">
-                            Shift is required
+                            {{ 'Shift is required' | translate }}
                         </div>
                     </div>
                     <!-- Select Employee (Name) -->
                     <div class="col-md-6 mb-3 d-colourdata">
-                        <label for="asseTID" class="form-label custom-label mb-2">Select Employee
+                        <label for="asseTID" class="form-label custom-label mb-2">{{ 'Select Employee' | translate }}
                             <span class="text-danger" *ngIf="isToggled">*</span></label>
                         <div class="custom-p-select-content">
                             <p-select [options]="employeeiddetails" optionLabel="employeeName" [filter]="true" [resetFilterOnHide]="true"
                                 filterBy="employeeName" (onChange)="onEmployeeSelect($event)" formControlName="employeid"
-                                placeholder="Please select employee" class="form-select custom-select" />
+                                [placeholder]="'Please select employee' | translate" class="form-select custom-select" />
                         </div>
                         <div class="error-msg" *ngIf="deskForm.get('employeid')?.invalid && deskForm.get('employeid')?.touched">
-                            Employee is required
+                            {{ 'Employee is required' | translate }}
                         </div>
                     </div>
 
                     <div class="col-md-8 mb-3">
                         <label for="Approval" class="form-label custom-label mb-2">
-                            Select Approver<span class="error-msg" *ngIf="isToggled">*</span>
+                            {{ 'Select Approver' | translate }}<span class="error-msg" *ngIf="isToggled">*</span>
                         </label>
                         <div class="custom-p-select-content">
                             <p-select [options]="approvalname" optionLabel="employeeNames" [filter]="true" [resetFilterOnHide]="true"
-                                filterBy="employeeNames" formControlName="deskapprovalid" placeholder="Please select approver"
+                                filterBy="employeeNames" formControlName="deskapprovalid" [placeholder]="'Please select approver' | translate"
                                 class="form-select custom-select" (onChange)="onApprovalSelects($event)" />
                         </div>
                         <div class="error-msg" *ngIf="deskForm.get('deskapprovalid')?.invalid && deskForm.get('deskapprovalid')?.touched">
-                            Approver is required
+                            {{ 'Approver is required' | translate }}
                         </div>
                     </div>
                 </div>
 
                 <!-- Submit Button -->
                 <div class="custom-modal-footer">
-                    <button type="button" class="custom-btn btn-secondary" (click)="openConfirmationModal(confirmationpopup)">Cancel</button>
-                    <button type="submit" class="custom-btn btn-primary" [disabled]=" deskForm.invalid">Submit</button>
+                    <button type="button" class="custom-btn btn-secondary" (click)="openConfirmationModal(confirmationpopup)">{{ 'Cancel' | translate }}</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]=" deskForm.invalid">{{ 'Submit' | translate }}</button>
                 </div>
             </form>
         </div>
@@ -252,11 +252,11 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
-            <p class="confirmation-text"> Are you sure you want to cancel?</p>
+            <p class="confirmation-text"> {{ 'Are you sure you want to cancel?' | translate }}</p>
         </div>
         <div class="custom-modal-footer">
-            <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">No</button>
-            <button type="submit" class="custom-btn btn-primary" (click)="cleardata();model.dismiss()">Yes</button>
+            <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">{{ 'No' | translate }}</button>
+            <button type="submit" class="custom-btn btn-primary" (click)="cleardata();model.dismiss()">{{ 'Yes' | translate }}</button>
         </div>
     </div>
 </ng-template>

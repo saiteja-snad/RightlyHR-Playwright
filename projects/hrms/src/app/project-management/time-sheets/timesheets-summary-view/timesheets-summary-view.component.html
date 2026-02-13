@@ -1,18 +1,18 @@
 <div class="custom-main-component-container">
     <div class="component-header-content">
         <div class="heading-content">
-            <div class="commpoment-name">Project Management
+            <div class="commpoment-name">{{"Project Management" | translate}}
                 <span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
             </div>
             @if(isShowtimesheetforteamRoute()){
             <div class="commpoment-name">
-                <a (click)="navigatetoteam()"><u>Team Timesheet</u></a>
+                <a (click)="navigatetoteam()"><u>{{"Team Timesheet" | translate}}</u></a>
                 <span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
             </div>
             }
             @if(isShowtimesheetformyRoute()){
             <div class="commpoment-name">
-                <a (click)="navigatetomy()"><u>My Timesheet</u></a>
+                <a (click)="navigatetomy()"><u>{{"My Timesheet" | translate}}</u></a>
                 <span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
             </div>
             }
@@ -24,7 +24,7 @@
 
         <form [formGroup]="datepickerForm">
             <div class="d-flex align-items-center gap-3">
-                <div class="total-hrs">{{"Total Logged Hours" }}:<span class="total-duration ms-1">{{ totalhrs}} Hrs</span></div>
+                <div class="total-hrs">{{"Total Logged Hours" | translate}}:<span class="total-duration ms-1">{{ totalhrs}} {{"Hrs" | translate}}</span></div>
                 <!-- Clear All button for mysummary route -->
                 @if(isShowtimesheetformyRoute()) {
                 <button type="button" class="clear-all-btn" (click)="resetForm()">{{'Clear All' | translate}}</button>
@@ -32,7 +32,7 @@
                 <!-- Date Picker Outside Offcanvas -->
                 <div class="d-flex gap-2 align-items-center">
                     <div class="custom-date-range-picker">
-                        <p-datepicker formControlName="dateRange" [placeholder]="'Select Date Range'"
+                        <p-datepicker formControlName="dateRange" [placeholder]="'Select Date Range' | translate"
                             selectionMode="range" [showIcon]="true" [readonlyInput]="true" />
                     </div>
                 </div>
@@ -55,7 +55,7 @@
                         <div class="custom-p-select-content">
                             <p-select [options]="activeEmplist" [filter]="true" filterBy="label" optionLabel="label" optionValue="value"
                                 formControlName="resourceId" [resetFilterOnHide]="true"
-                                [placeholder]="activeEmplist.length === 0 ? 'No results found' : 'Please select employee'"
+                                [placeholder]="activeEmplist.length === 0 ? ('No results found' | translate) : ('Please select employee' | translate)"
                                 class="form-select custom-select" required></p-select>
                         </div>
                     </div>
@@ -65,7 +65,7 @@
                         <label class="form-label filter-labels m-0">{{'My Team'| translate}}</label>
                         <div class="custom-p-select-content">
                             <p-select [options]="resourcesList" optionLabel="fullName" [showClear]="false" name="myteamemployees"
-                                optionValue="id" [placeholder]="resourcesList.length === 0 ? 'No results found' : 'Please select employee'"
+                                optionValue="id" [placeholder]="resourcesList.length === 0 ? ('No results found' | translate) : ('Please select employee' | translate)"
                                 formControlName="resourceId" [filter]="true" [resetFilterOnHide]="true" class="form-select custom-select"
                                 [autoDisplayFirst]="false" required>
                             </p-select>
@@ -81,7 +81,7 @@
                 <!-- Hide Filters button for mysummary route -->
                 <div *ngIf="!isShowtimesheetformyRoute() && rbac.allowedToAccess('Team Time Sheet Filters Tab.view')">
                     <button type="button" class="custom-btn btn-secondary position-relative" (click)="toggleFilters(filterContent)">
-                        <i class="bi bi-funnel me-2"></i>Filters
+                        <i class="bi bi-funnel me-2"></i>{{"Filters" | translate}}
                         <span *ngIf="isFilterApplied()" class="filter-indicator"></span>
                     </button>
                 </div>
@@ -135,16 +135,16 @@
                         @if (!loading) {
                         <table class="w-100">
                             <thead>
-                                <th class="text-center">{{'Date' | translate}}</th>
-                                <th class="text-center">{{'Logged Hours' | translate }}</th>
-                                <th class="text-center">{{'Summary' | translate}}</th>
+                                <th class="text-center">{{"Date" | translate}}</th>
+                                <th class="text-center">{{"Logged Hours" | translate}}</th>
+                                <th class="text-center">{{"Summary" | translate}}</th>
                             </thead>
                             <tbody>
                                 <ng-container *ngIf="(attendanceSummaryData?.length ?? 0) > 0; else noDataTemplate">
                                     <tr *ngFor="let row of attendanceSummaryData">
                                         <td class="text-center">{{row.date | dateformat }}</td>
                                         <td class="text-center">{{row.dailySummary.totalLoggedHours === "00:00:00" ?
-                                            '-' : row.dailySummary.loggedHHMM + ' Hrs'}}</td>
+                                            '-' : row.dailySummary.loggedHHMM + ' ' + ('Hrs' | translate)}}</td>
                                         <td>
                                             <div
                                                 class="d-flex justify-content-center flex-column align-items-center text-center gap-2">
@@ -191,27 +191,27 @@
                         <div class="d-flex align-items-center gap-3">
                             <div class="d-flex align-items-center gap-2">
                                 <div class="circular-dot circle-weakend"></div>
-                                <div class="status-text">Weekend(WO)</div>
+                                <div class="status-text">{{"Weekend(WO)" | translate}}</div>
                             </div>
 
                             <div class="d-flex align-items-center gap-1">
                                 <div class="circular-dot circle-holiday "></div>
-                                <div class="status-text">Holidays(H)</div>
+                                <div class="status-text">{{"Holidays(H)" | translate}}</div>
                             </div>
 
                             <div class="d-flex align-items-center gap-2">
                                 <div class="circular-dot circle-red"></div>
-                                <div class="status-text">Absent(AB)</div>
+                                <div class="status-text">{{"Absent(AB)" | translate}}</div>
                             </div>
 
                             <div class="d-flex align-items-center gap-2">
                                 <div class="circular-dot circle-leave"></div>
-                                <div class="status-text">Leaves</div>
+                                <div class="status-text">{{"Leaves" | translate}}</div>
                             </div>
 
                             <div class="d-flex align-items-center gap-2">
                                 <div class="circular-dot circle-pending"></div>
-                                <div class="status-text">Pending(P)</div>
+                                <div class="status-text">{{"Pending(P)" | translate}}</div>
                             </div>
                         </div>
                     </div>
@@ -220,7 +220,7 @@
                 <div class="timesheet-graph-content p-3"
                     [ngClass]="{'custom-graph-content-height': isShowtimesheetforteamRoute()}">
                     <div class="summary-header d-flex gap-2 pb-3">
-                        <div>Timesheet Summary</div>
+                        <div>{{"Timesheet Summary" | translate}}</div>
                         <div>
                             <app-module-info-icon placement="bottom" [ngbPopover]="timesheetSummaryContent" class="module-icon" />
                             <ng-template #timesheetSummaryContent>
@@ -238,12 +238,12 @@
                                 + (approvedPercent + submittedPercent) + '%, ' + rejectedColor + ' ' + (approvedPercent + submittedPercent) + '%, '
                                 + rejectedColor + ' 100%)'"></div>
                                 <div class="progress-labels">
-                                    <div class="label" [style.color]="approvedColor">Approved: <span class="hrs">{{
-                                            displayApproved }} Hrs</span></div>
-                                    <div class="label" [style.color]="submittedColor">Submitted: <span class="hrs">{{
-                                            displaySubmitted }} Hrs</span></div>
-                                    <div class="label" [style.color]="rejectedColor">Rejected: <span class="hrs">{{
-                                            displayRejected }} Hrs</span></div>
+                                    <div class="label" [style.color]="approvedColor">{{"Approved" | translate}}: <span class="hrs">{{
+                                            displayApproved }} {{"Hrs" | translate}}</span></div>
+                                    <div class="label" [style.color]="submittedColor">{{"Submitted" | translate}}: <span class="hrs">{{
+                                            displaySubmitted }} {{"Hrs" | translate}}</span></div>
+                                    <div class="label" [style.color]="rejectedColor">{{"Rejected" | translate}}: <span class="hrs">{{
+                                            displayRejected }} {{"Hrs" | translate}}</span></div>
                                 </div>
                             </div>
                         </ng-container>
@@ -255,7 +255,7 @@
                     <div class="dashed-line my-3"></div>
 
                     <div class="summary-header d-flex gap-2 pb-3">
-                        <div>Project Wise Hours Summary</div>
+                        <div>{{"Project Wise Hours Summary" | translate}}</div>
                         <div>
                             <app-module-info-icon placement="bottom" [ngbPopover]="projectwisehoursSummarydata"
                                 class="module-icon" />
@@ -283,7 +283,7 @@
                                                 <div class="legend-name">{{ item.label }}</div>
                                             </div>
                                         </div>
-                                        <div class="hrs-display text-nowrap col-md-4">{{item.hours}} Hrs</div>
+                                        <div class="hrs-display text-nowrap col-md-4">{{item.hours}} {{"Hrs" | translate}}</div>
                                     </div>
                                 </div>
                             </div>
@@ -304,7 +304,7 @@
                     <div class="dashed-line my-3"></div>
 
                     <div class="summary-header d-flex gap-2 pb-3">
-                        <div>Allocated vs Actual Hours</div>
+                        <div>{{"Allocated vs Actual Hours" | translate}}</div>
                         <div>
                             <app-module-info-icon placement="bottom" [ngbPopover]="resourceSummaryContent" class="module-icon" />
                             <ng-template #resourceSummaryContent>
@@ -355,12 +355,12 @@
                     <table class="popup-table">
                         <thead>
                             <tr>
-                                <th>Project Details</th>
+                                <th>{{"Project Details" | translate}}</th>
 
-                                <th>Logged Hours</th>
-                                <th>Approver</th>
-                                <th>Description</th>
-                                <th>Status</th>
+                                <th>{{"Logged Hours" | translate}}</th>
+                                <th>{{"Approver" | translate}}</th>
+                                <th>{{"Description" | translate}}</th>
+                                <th>{{"Status" | translate}}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -401,7 +401,7 @@
                                         </div>
                                     </div>
                                 </td>
-                                <td>{{ entry.loggedHours }} hrs</td>
+                                <td>{{ entry.loggedHours }} {{"hrs" | translate}}</td>
                                 <td>
                                     <ng-container *ngIf="entry.finalApproverName || entry.approverDesignation; else noValue">
                                         {{ entry.finalApproverName || '-' }} ({{ entry.approverDesignation || '-' }})
@@ -419,7 +419,7 @@
                                 </td>
                                 <td [ngClass]="{'approved': entry.status === 'Processed', 'rejected': entry.status === 'Rejected',
                                     'waiting': entry.status === 'Waiting for Approval', 'draft': entry.status === 'draft'}">
-                                    {{ entry.status.toLowerCase() == "processed" ? "Approved" : entry.status }}
+                                    {{ entry.status.toLowerCase() == "processed" ? ("Approved" | translate) : entry.status }}
                                 </td>
                             </tr>
                         </tbody>
@@ -450,7 +450,7 @@
                     <div class="custom-p-multiSelect-content">
                         <p-multiSelect [options]="clientDetails" [filter]="true" filterBy="clientName"
                             [resetFilterOnHide]="true" optionLabel="clientName" optionValue="clientId"
-                            formControlName="clientId" (onChange)="getAllEmployeeDetails()" placeholder="Please select client"
+                            formControlName="clientId" (onChange)="getAllEmployeeDetails()" [placeholder]="'Please select client' | translate"
                             class="form-select custom-select" />
                     </div>
                 </div>
@@ -460,7 +460,7 @@
                     <div class="custom-p-multiSelect-content">
                         <p-multiSelect [options]="projectDetails" [filter]="true" filterBy="projectName"
                             [resetFilterOnHide]="true" optionLabel="projectName" optionValue="projectId"
-                            formControlName="projectId" (onChange)="getAllEmployeeDetails()" placeholder="Please select project"
+                            formControlName="projectId" (onChange)="getAllEmployeeDetails()" [placeholder]="'Please select project' | translate"
                             class="form-select custom-select" />
                     </div>
                 </div>
@@ -471,7 +471,7 @@
                         <p-multiSelect [options]="departmentDetails" [filter]="true" filterBy="departmentName"
                             [resetFilterOnHide]="true" optionLabel="departmentName" optionValue="sno"
                             formControlName="departmentId" (onChange)="getAllEmployeeDetails()"
-                            placeholder="Please select department" class="form-select custom-select" />
+                            [placeholder]="'Please select department' | translate" class="form-select custom-select" />
                     </div>
                 </div>
         
@@ -480,7 +480,7 @@
                     <div class="custom-p-multiSelect-content">
                         <p-multiSelect [options]="tmandRmDetails" [filter]="true" filterBy="fullName" [resetFilterOnHide]="true"
                             optionLabel="fullName" optionValue="employeeId" formControlName="tmorrmId"
-                            (onChange)="getAllEmployeeDetails()" placeholder="Please select rm/tm"
+                            (onChange)="getAllEmployeeDetails()" [placeholder]="'Please select rm/tm' | translate"
                             class="form-select custom-select" />
                     </div>
                 </div>
@@ -501,7 +501,7 @@
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="custom-poup-header-content popup-header-border">
             <div>
-                <p class="popup-heading m-0">Apllied Filters</p>
+                <p class="popup-heading m-0">{{"Apllied Filters" | translate}}</p>
             </div>
             <div>
                 <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>

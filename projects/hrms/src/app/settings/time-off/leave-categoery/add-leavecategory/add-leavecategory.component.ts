@@ -12,9 +12,10 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { IJob } from '../../../../Interfaces/letters-model';
 import { ILetterType } from '../../../../Interfaces/leave-type.model';
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
   selector: 'app-add-leavecategory',
-  imports: [CommonModule, Select, ReactiveFormsModule,MultiSelectModule],
+  imports: [CommonModule, Select, ReactiveFormsModule,MultiSelectModule, TranslateModule],
   templateUrl: './add-leavecategory.component.html',
   styleUrl: './add-leavecategory.component.scss',
   encapsulation: ViewEncapsulation.None

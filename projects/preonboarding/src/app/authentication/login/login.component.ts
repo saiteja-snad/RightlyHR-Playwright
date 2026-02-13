@@ -8,9 +8,10 @@ import { BnNgIdleService } from 'bn-ng-idle';
 import { Toast } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { FormValidationService } from '../../common-services/form-validation.service';
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
   selector: 'app-login',
-  imports: [CommonModule, ReactiveFormsModule, Toast],
+  imports: [CommonModule, ReactiveFormsModule, Toast, TranslateModule],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
   providers: [MessageService],

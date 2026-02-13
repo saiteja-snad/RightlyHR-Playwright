@@ -1,17 +1,17 @@
 <div class="custom-main-component-container">
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <div><span class="component-sub-header">Desk Info</span></div>
+        <div><span class="component-sub-header">{{'Desk Info'|translate}}</span></div>
     </div>
     <div class="custom-table-content mt-2">
       @if (!loading) {
         <table class="w-100">
             <thead>
                 <tr>
-                    <th>Desk ID</th>
-                    <th>Desk Type</th>
-                    <th>Desk Status</th>
-                    <th class="text-center">Allocated Date</th>
-                    <th class="text-center">Released Date</th>
+                    <th>{{'Desk ID'|translate}}</th>
+                    <th>{{'Desk Type'|translate}}</th>
+                    <th>{{'Desk Status'|translate}}</th>
+                    <th class="text-center">{{'Allocated Date'|translate}}</th>
+                    <th class="text-center">{{'Released Date'|translate}}</th>
                 </tr>
             </thead>
             <tbody>
@@ -21,7 +21,7 @@
                         <td>{{ data.deskType }}</td>
                         <td>{{ data.status }}</td>
                         <td class="text-center text-nowrap">{{ data.allocatedDate |dateformat }}</td>
-                        <td class="text-center text-nowrap">{{ data.releavedDate ? (data.releavedDate | dateformat) : 'N/A' }}</td>
+                        <td class="text-center text-nowrap">{{ data.releavedDate ? (data.releavedDate | dateformat) : ('N/A'|translate) }}</td>
                     </tr>
                 </ng-container>
 

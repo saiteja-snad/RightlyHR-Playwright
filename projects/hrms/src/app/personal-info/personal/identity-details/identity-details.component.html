@@ -5,20 +5,19 @@
         @if((employedata?.empstatus?.toLowerCase() !== 'prospective' && employedata?.empstatus?.toLowerCase() !==
         'trainee prospective'
         && employedata?.empstatus?.toLowerCase() !== 'inactive' && employedata?.empstatus?.toLowerCase() !== 'trainee inactive')){
-        <div class="custom-add-btn" (click)="openModal(addEducationmodal)"><i class="bi bi-plus plus-icon me-1"></i>Add
-            New</div>
+        <div class="custom-add-btn" (click)="openModal(addEducationmodal)"><i class="bi bi-plus plus-icon me-1"></i>{{ 'Add New' | translate }}</div>
         }}
     </div>
-     <div *ngIf="addedRecords.length>0" class="error-msg float-end">Note: Record addition request sent for approval</div>
+     <div *ngIf="addedRecords.length>0" class="error-msg float-end">{{ 'Note: Record addition request sent for approval' | translate }}</div>
 
     <div class="custom-table-content">
         @if (!loading) {
         <table class="w-100">
             <thead>
                 <tr>
-                    <th>Identity Type</th>
-                    <th>Identity Number</th>
-                    <th class="text-center">Attachment</th>
+                    <th>{{ 'Identity Type' | translate }}</th>
+                    <th>{{ 'Identity Number' | translate }}</th>
+                    <th class="text-center">{{ 'Attachment' | translate }}</th>
                     @if(canAccess('update','identity') || canAccess('delete','identity')){
                     @if((employedata?.empstatus?.toLowerCase() !== 'prospective' &&
                     employedata?.empstatus?.toLowerCase()
@@ -55,13 +54,13 @@
                                     @if(canAccess('update','identity')){
                                     <li >
                                         <button type="button" class="dropdown-item"  (click)="openModalupdate(updateidentityModal, identityDetails)">
-                                            <i class="bi bi-pencil me-2"></i>Update
+                                            <i class="bi bi-pencil me-2"></i>{{ 'Update' | translate }}
                                         </button>
                                     </li>}
                                     @if(canAccess('delete','identity')){
                                     <li >
                                         <button type="button" class="dropdown-item"(click)="opendeletModal(deleteconformation,identityDetails)">
-                                            <i class="bi bi-trash3 me-2"></i>Delete
+                                            <i class="bi bi-trash3 me-2"></i>{{ 'Delete' | translate }}
                                         </button>
                                     </li>}
                                 </ul>
@@ -91,73 +90,72 @@
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="d-flex justify-content-between popup-header-border p-3">
             <div class="pt-2">
-                <p class="popup-heading mb-0">Add Identity Info</p>
+                <p class="popup-heading mb-0">{{ 'Add Identity Info' | translate }}</p>
             </div>
         </div>
         <div class="custom-main-popup-content p-4">
             <form autocomplete="off" [formGroup]="identityForm" (ngSubmit)="submitIdentityForm(identityForm)">
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Identity Type<span
+                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{ 'Identity Type' | translate }}<span
                                 class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
                             <p-dropdown [options]="getidentitydropdetails" optionLabel="identityType1"
-                                formControlName="identityType" placeholder="Please select identity type"
+                                formControlName="identityType" [placeholder]="'Please select identity type' | translate"
                                 class="form-select custom-select"></p-dropdown>
                         </div>
                         <div class="error-msg"
                             *ngIf="identityForm.get('identityType')?.invalid && identityForm.get('identityType')?.touched">
-                            Identity Type is required
+                            {{ 'Identity Type is required' | translate }}
                         </div>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Identity Number<span
+                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{ 'Identity Number' | translate }}<span
                                 class="text-danger">*</span></label>
                         <input type="text" formControlName="identityNumber" (input)="toUppercase('identityNumber')"
                             class="form-control custom-input" id="exampleFormControlInput1"
-                            placeholder="Please enter Identity Number"
+                            [placeholder]="'Please enter Identity Number' | translate"
                             (keypress)="formValidation.restrictInputAllowAlphaNumeric($event)">
                         <div class="error-msg"
                             *ngIf="identityForm.get('identityNumber')?.invalid && (identityForm.get('identityNumber')?.touched   || identityForm.get('identityNumber')?.dirty)">
                             <div *ngIf="identityForm.get('identityNumber')?.errors?.['required']">
-                                Identity Number is required
+                                {{ 'Identity Number is required' | translate }}
                             </div>
                             <div *ngIf="identityForm.get('identityNumber')?.errors?.['minlength']">
-                                Invalid Identity Number
+                                {{ 'Invalid Identity Number' | translate }}
                             </div>
                             <div *ngIf="identityForm.get('identityNumber')?.errors?.['maxlength']">
-                                Invalid Identity Number
+                                {{ 'Invalid Identity Number' | translate }}
                             </div>
                             <div *ngIf="identityForm.get('identityNumber')?.errors?.['pattern']">
-                                Invalid format based on selected Identity Type.
+                                {{ 'Invalid format based on selected Identity Type.' | translate }}
                             </div>
                             <div class="error-msg"
                                 *ngIf="identityForm.get('identityNumber')?.errors?.['invalidIdentityNumber'] && identityForm.get('identityNumber')?.touched">
-                                Identity Number cannot be all zeroes
+                                {{ 'Identity Number cannot be all zeroes' | translate }}
                             </div>
 
                         </div>
                     </div>
 
                     <div class="col-md-12 mb-3">
-                        <label class="form-label custom-label mb-2">Attachment (Upload the Image/PDF)<span
+                        <label class="form-label custom-label mb-2">{{ 'Attachment (Upload the Image/PDF)' | translate }}<span
                                 class="text-danger">*</span></label>
                         <input type="file" class="form-control custom-input px-0" formControlName="identityAttachment"
                             (change)="onIdentityAttachmentSelected($event)" accept="image/*, .jpg, .pdf" />
                         <div class="error-msg"
                             *ngIf="identityForm.get('identityAttachment')?.invalid && identityForm.get('identityAttachment')?.touched">
-                            Attachment is required
+                            {{ 'Attachment is required' | translate }}
                         </div>
 
                         <div class="d-flex justify-content-between align-items-center mt-2">
-                            <p class="note-text"><span class="note">Note:</span> Only Pdf/Image files are allowed.
-                                The file size should be less than 25MB.</p>
+                            <p class="note-text"><span class="note">{{ 'Note:' | translate }}</span> {{ 'Only Pdf/Image files are allowed. The file size should be less than 25MB.' | translate }}</p>
                         </div>
                     </div>
                 </div>
 
                 <div class="d-flex justify-content-end gap-3">
-                    <button type="button" class="custom-btn btn-secondary" (click)="openConfirmationModal(confirmationforupadatepopup)">Cancel</button>
+                    <button type="button" class="custom-btn btn-secondary" (click)="openConfirmationModal(confirmationforupadatepopup)">{{ 'Cancel' | translate }}</button>
                     <button type="submit" class="custom-btn btn-primary"
                         [disabled]="identityForm.invalid || spinnerLoader">
                         @if (spinnerLoader) {
@@ -196,78 +194,77 @@
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="custom-poup-header-content popup-header-border">
             <div>
-                <p class="popup-heading mb-0">Update Identity Info</p>
+                <p class="popup-heading mb-0">{{ 'Update Identity Info' | translate }}</p>
             </div>
         </div>
         <div class="custom-main-popup-content">
             <form autocomplete="off" [formGroup]="identityupdateForm" (ngSubmit)="updateIdentity(identityupdateForm)">
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <label for="identityType" class="form-label custom-label mb-2">Identity Type<span
+                        <label for="identityType" class="form-label custom-label mb-2">{{ 'Identity Type' | translate }}<span
                                 class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
                             <p-dropdown [options]="getidentitydropdetails" optionLabel="identityType1"
-                                formControlName="identityupdateType" placeholder="Please select identity type"
+                                formControlName="identityupdateType" [placeholder]="'Please select identity type' | translate"
                                 class="form-select custom-select"></p-dropdown>
                         </div>
                         <div class="error-msg"
                             *ngIf="identityupdateForm.get('identityupdateType')?.invalid && identityupdateForm.get('identityupdateType')?.touched">
-                            Identity Type is required
+                            {{ 'Identity Type is required' | translate }}
                         </div>
                     </div>
 
                     <div class="col-md-6 mb-3">
-                        <label for="identityNumber" class="form-label custom-label mb-2">Identity Number<span
+                        <label for="identityNumber" class="form-label custom-label mb-2">{{ 'Identity Number' | translate }}<span
                                 class="text-danger">*</span></label>
                         <input type="text" formControlName="identityupdateNumber"
                             (input)="toUppercaseforupdate('identityupdateNumber')" class="form-control custom-input"
-                            id="identityNumber" placeholder="Please enter Identity Number"
+                            id="identityNumber" [placeholder]="'Please enter Identity Number' | translate"
                             (keypress)="formValidation.restrictInputAllowAlphaNumeric($event)">
                         <div class="error-msg"
                             *ngIf="identityupdateForm.get('identityupdateNumber')?.invalid && identityupdateForm.get('identityupdateNumber')?.touched">
                             <div *ngIf="identityupdateForm.get('identityupdateNumber')?.errors?.['required']">
-                                Identity Number is required
+                                {{ 'Identity Number is required' | translate }}
                             </div>
                             <div *ngIf="identityupdateForm.get('identityupdateNumber')?.errors?.['minlength']">
-                                Invalid Identity Number
+                                {{ 'Invalid Identity Number' | translate }}
                             </div>
                             <div *ngIf="identityupdateForm.get('identityupdateNumber')?.errors?.['maxlength']">
-                                Invalid Identity Number
+                                {{ 'Invalid Identity Number' | translate }}
                             </div>
                             <div *ngIf="identityupdateForm.get('identityupdateNumber')?.errors?.['pattern']">
-                                Invalid format based on selected Identity Type
+                                {{ 'Invalid format based on selected Identity Type' | translate }}
                             </div>
                             <div class="error-msg"
                                 *ngIf="identityupdateForm.get('identityupdateNumber')?.errors?.['invalidIdentityNumber'] && identityupdateForm.get('identityupdateNumber')?.touched">
-                                Identity Number cannot be all zeroes
+                                {{ 'Identity Number cannot be all zeroes' | translate }}
                             </div>
                         </div>
                     </div>
 
                     <div class="col-md-12 mb-3">
-                        <label class="form-label custom-label mb-2">Attachment (Upload the Pdf/Image)<span
+                        <label class="form-label custom-label mb-2">{{ 'Attachment (Upload the Pdf/Image)' | translate }}<span
                                 class="text-danger">*</span></label>
                         <input type="file" class="form-control custom-input px-0"
                             formControlName="identityupdateAttachment" (change)="onIdentityAttachmentSelected($event)"
                             accept="image/*, .jpg, .pdf" />
                         <div class="error-msg"
                             *ngIf="identityupdateForm.get('identityupdateAttachment')?.invalid && identityupdateForm.get('identityupdateAttachment')?.touched">
-                            Attachment is required
+                            {{ 'Attachment is required' | translate }}
                         </div>
                         <div *ngIf="displayidentiydocument" class="custom-file-name text-wrap mt-2">{{
                             displayidentiydocument?.name ||
                             displayidentiydocument }}</div>
                         <div class="d-flex justify-content-between align-items-center mt-2">
-                            <p class="note-text"><span class="note">Note:</span> Only Pdf/Image files are allowed.
-                                The file size should be less than 25MB.</p>
+                            <p class="note-text"><span class="note">{{ 'Note:' | translate }}</span> {{ 'Only Pdf/Image files are allowed. The file size should be less than 25MB.' | translate }}</p>
                         </div>
                     </div>
                 </div>
 
                 <div class="custom-modal-footer">
-                    <button type="button" class="custom-btn btn-secondary" (click)="openConfirmationModal(confirmationpopup)">Cancel</button>
+                    <button type="button" class="custom-btn btn-secondary" (click)="openConfirmationModal(confirmationpopup)">{{ 'Cancel' | translate }}</button>
                     <button type="submit" class="custom-btn btn-primary"
-                        [disabled]="identityupdateForm.invalid && !displayidentiydocument && identityupdateForm.get('identityupdateAttachment')?.invalid">Update</button>
+                        [disabled]="identityupdateForm.invalid && !displayidentiydocument && identityupdateForm.get('identityupdateAttachment')?.invalid">{{ 'Update' | translate }}</button>
                 </div>
             </form>
         </div>
@@ -297,11 +294,11 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <img src="icons\delete-icon.png" alt="failure icon" class="confirmation-delete-icon ">
-            <p class="confirmation-text mb-4">Are you sure you want to delete the Identity Info?</p>
+            <p class="confirmation-text mb-4">{{ 'Are you sure you want to delete the Identity Info?' | translate }}</p>
         </div>
         <div class="custom-modal-footer">
-            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
-            <button type="submit" class="custom-btn btn-primary" (click)="identityDelete()">Yes</button>
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{ 'No' | translate }}</button>
+            <button type="submit" class="custom-btn btn-primary" (click)="identityDelete()">{{ 'Yes' | translate }}</button>
         </div>
     </div>
 </ng-template>

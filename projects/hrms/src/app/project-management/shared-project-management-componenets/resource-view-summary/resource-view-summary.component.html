@@ -61,8 +61,8 @@
                             <option *ngFor="let option of options" [value]="option.value">{{ option.label }}</option>
                         </select>
                         <span class="pagination-label text-nowrap">
-                            Showing {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize :
-                            (+first + +rows)}} of {{collectionSize }}
+                            {{'Showing' | translate}} {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize :
+                            (+first + +rows)}} {{'of' | translate}} {{collectionSize }}
                         </span>
                     </div>
                     <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"
@@ -74,7 +74,7 @@
 
         <div class="timesheet-graph-content p-3">
             <div class="summary-header d-flex gap-2 mb-2">
-                <div>Allocated vs Actual Hours</div>
+                <div>{{'Allocated vs Actual Hours' | translate}}</div>
                 <div>
                     <app-module-info-icon placement="bottom" [ngbPopover]="allocatedVsActualContent"
                         class="module-icon" />
@@ -99,7 +99,7 @@
                                         <div class="legend-name text-nowrap">{{ item.label }}</div>
                                     </div>
                                 </div>
-                                <div class="hrs-display text-nowrap col-md-3">{{ item.value }} Hrs</div>
+                                <div class="hrs-display text-nowrap col-md-3">{{ item.value }} {{'Hrs' | translate}}</div>
                             </div>
                         </div>
                     </ng-container>
@@ -117,7 +117,7 @@
             <div class="dashed-line my-3"></div>
 
             <div class="summary-header d-flex gap-2 mb-2">
-                <div>Timesheet Summary</div>
+                <div>{{'Timesheet Summary' | translate}}</div>
                 <div>
                     <app-module-info-icon placement="bottom" [ngbPopover]="timesheetSummaryContent"
                         class="module-icon" />
@@ -138,12 +138,12 @@
                         + rejectedColor + ' 100%)'"></div>
 
                         <div class="progress-labels">
-                            <div class="label" [style.color]="approvedColor">Approved: <span class="hrs">{{
-                                    displayApproved }} Hrs</span></div>
-                            <div class="label" [style.color]="submittedColor">Submitted: <span class="hrs">{{
-                                    displaySubmitted }} Hrs</span></div>
-                            <div class="label" [style.color]="rejectedColor">Rejected: <span class="hrs">{{
-                                    displayRejected }} Hrs</span></div>
+                            <div class="label" [style.color]="approvedColor">{{'Approved' | translate}}: <span class="hrs">{{
+                                    displayApproved }} {{'Hrs' | translate}}</span></div>
+                            <div class="label" [style.color]="submittedColor">{{'Submitted' | translate}}: <span class="hrs">{{
+                                    displaySubmitted }} {{'Hrs' | translate}}</span></div>
+                            <div class="label" [style.color]="rejectedColor">{{'Rejected' | translate}}: <span class="hrs">{{
+                                    displayRejected }} {{'Hrs' | translate}}</span></div>
                         </div>
                     </div>
                 </ng-container>
@@ -155,7 +155,7 @@
             <div class="dashed-line my-3"></div>
 
             <div class="summary-header d-flex gap-2 mb-2">
-                <div>Billable vs Non-Billable Hours</div>
+                <div>{{'Billable vs Non-Billable Hours' | translate}}</div>
                 <div>
                     <app-module-info-icon placement="bottom" [ngbPopover]="billableVsNonbillableContent"
                         class="module-icon" />
@@ -180,7 +180,7 @@
                                         <div class="legend-name text-nowrap">{{ item.label }}</div>
                                     </div>
                                 </div>
-                                <div class="hrs-display text-nowrap col-md-3">{{ item.value }} Hrs</div>
+                                <div class="hrs-display text-nowrap col-md-3">{{ item.value }} {{'Hrs' | translate}}</div>
                             </div>
                         </div>
                     </ng-container>

@@ -14,14 +14,14 @@
           ProjectEffortReportForm.get('billable')?.value == null
         " (click)="clearAllFilters()">
           @if(isFilterApplied()) {
-          Clear All
+          {{ 'Clear All' | translate }}
           }
         </button>
         <!-- Project-->
         <div class="d-flex align-items-center gap-2">
           <div class="custom-p-multiSelect-content">
             <p-multiSelect [options]="projectsList" optionLabel="label" optionValue="value" [filter]="true"
-              [maxSelectedLabels]="1" placeholder="Please select project" formControlName="projectId"
+              [maxSelectedLabels]="1" [placeholder]="'Please select project' | translate" formControlName="projectId"
               class="form-select custom-select" (onChange)="onProjectChange($event)">
             </p-multiSelect>
           </div>
@@ -30,7 +30,7 @@
         <div class="d-flex align-items-center gap-2">
           <div class="custom-p-multiSelect-content">
             <p-multiSelect [options]="phasesData" optionLabel="label" optionValue="phaseId" [filter]="true" [maxSelectedLabels]="1"
-              formControlName="phases" placeholder="Please select phases" class="form-select custom-select">
+              formControlName="phases" [placeholder]="'Please select phases' | translate" class="form-select custom-select">
             </p-multiSelect>
 
           </div>
@@ -38,7 +38,7 @@
         <!-- Date Range -->
         <div class="d-flex align-items-center gap-2">
           <div class="custom-date-range-picker">
-            <p-datepicker formControlName="dateRange" [placeholder]="'Please select date range'" selectionMode="range"
+            <p-datepicker formControlName="dateRange" [placeholder]="'Please select date range' | translate" selectionMode="range"
               [showIcon]="true" [readonlyInput]="true" [maxDate]="today" />
           </div>
         </div>
@@ -50,9 +50,9 @@
             [disabled]="!isFilterApplied() || isLeaveGenerateDisabled ">
             @if(spinnerLoader1){
             <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-            <span>{{'Loading...'}}</span>
+            <span>{{ 'Loading...' | translate }}</span>
             }@else {
-            <span>{{'Generate'}}</span>
+            <span>{{ 'Generate' | translate }}</span>
             }
           </button>
           }
@@ -62,9 +62,9 @@
             [disabled]="!isFilterApplied() || filteredpendingapprovalRecord.length == 0 || disableBtn">
             @if(spinnerLoader2){
             <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-            <span>{{'Loading...'}}</span>
+            <span>{{ 'Loading...' | translate }}</span>
             }@else {
-            <span>{{'Export'}}</span>
+            <span>{{ 'Export' | translate }}</span>
             }
           </button>
           }
@@ -78,13 +78,13 @@
     <table id="leaveReportTable" class="w-100">
       <thead>
 
-        <th>Client Name</th>
-        <th>Project Name</th>
-        <th>Phase/Milestone</th>
-        <th>Allocated Hrs</th>
-        <th>Billable Hrs</th>
-        <th>Non-Billable Hrs</th>
-        <th>Total Logged Hrs</th>
+        <th>{{ 'Client Name' | translate }}</th>
+        <th>{{ 'Project Name' | translate }}</th>
+        <th>{{ 'Phase/Milestone' | translate }}</th>
+        <th>{{ 'Allocated Hrs' | translate }}</th>
+        <th>{{ 'Billable Hrs' | translate }}</th>
+        <th>{{ 'Non-Billable Hrs' | translate }}</th>
+        <th>{{ 'Total Logged Hrs' | translate }}</th>
       </thead>
       <tbody>
         @if (!filteredpendingapprovalRecord || filteredpendingapprovalRecord.length === 0) {
@@ -123,8 +123,8 @@
           <option *ngFor="let option of options" [value]="option.value">{{ option.label }}</option>
         </select>
         <span class="pagination-label text-nowrap">
-          Showing {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize : (+first + +rows)}}
-          of {{collectionSize }}
+          {{ 'Showing' | translate }} {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize : (+first + +rows)}}
+          {{ 'of' | translate }} {{collectionSize }}
         </span>
       </div>
       <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"

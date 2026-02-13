@@ -8,10 +8,11 @@ import { FormsModule } from '@angular/forms';
 import { OpenModalService } from '../../../../services/open-modal.service';
 import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
 import { RbacService } from '../../../../services/rbac.service';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-comp-off-entitlement-criteria',
-  imports: [CommonModule, NoDataFoundComponent, FormsModule, DataLoaderContentComponent],
+  imports: [CommonModule, NoDataFoundComponent, FormsModule, DataLoaderContentComponent, TranslateModule],
   templateUrl: './comp-off-entitlement-criteria.component.html',
   styleUrl: './comp-off-entitlement-criteria.component.scss',
 })

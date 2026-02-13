@@ -7,9 +7,10 @@ import { Subscription } from 'rxjs';
 import { Ipersonal } from '../../../Interfaces/personal-modal';
 import { Router } from '@angular/router';
 import { Skeleton } from 'primeng/skeleton';
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
   selector: 'app-pre-onboaring-details',
-  imports: [CommonModule, ReactiveFormsModule,Skeleton],
+  imports: [CommonModule, ReactiveFormsModule,Skeleton, TranslateModule],
   standalone: true,
   templateUrl: './pre-onboaring-details.component.html',
   styleUrl: './pre-onboaring-details.component.scss'

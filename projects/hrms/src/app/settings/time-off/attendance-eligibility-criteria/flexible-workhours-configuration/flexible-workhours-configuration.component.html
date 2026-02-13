@@ -6,9 +6,9 @@
             <table class="w-100">
                 <thead>
                     <tr>
-                        <th>Name</th>
-                        <th>Value</th>
-                        <th *ngIf="rbac.allowedToAccess('Flexible Work Hours Configuration Tab.update')">Action</th>
+                        <th>{{ 'Name' | translate }}</th>
+                        <th>{{ 'Value' | translate }}</th>
+                        <th *ngIf="rbac.allowedToAccess('Flexible Work Hours Configuration Tab.update')">{{ 'Action' | translate }}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -24,7 +24,7 @@
                                     [ngModelOptions]="{ standalone: true }" min="0"
                                     (keypress)="validateNumber($event)" (ngModelChange)="checkValueRange()"/>
                                 <div *ngIf="isValueInvalid" class="error-msg mt-2">
-                                    Value must be 0 or greater.
+                                    {{ 'Value must be 0 or greater.' | translate }}
                                 </div>
                             </ng-container>
                         </td>
@@ -38,7 +38,7 @@
                                     <li>
                                         <a class="dropdown-item"
                                             (click)="enableEdit(i, item.id, item.value)">
-                                            <i class="bi bi-pencil me-2"></i>Update
+                                            <i class="bi bi-pencil me-2"></i>{{ 'Update' | translate }}
                                         </a>
                                     </li>
                                 </ul>
@@ -49,10 +49,10 @@
                                     <button class="custom-btn btn-primary" type="button"
                                         (click)="submitForm(i, item.id, temporaryValue)"
                                         [disabled]="isValueInvalid">
-                                        Update
+                                        {{ 'Update' | translate }}
                                     </button>
                                     <button class="custom-btn btn-secondary" type="button" (click)="disableEdit()">
-                                        Cancel
+                                        {{ 'Cancel' | translate }}
                                     </button>
                                 </div>
                             </ng-template>

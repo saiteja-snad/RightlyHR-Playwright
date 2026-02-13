@@ -15,10 +15,11 @@ import { FormValidationService } from '../../../../../../preonboarding/src/app/c
 import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.service';
 import { DownloadExpenseComponent } from "../../download-expense/download-expense.component";
 import { DocumentViewIconComponent } from "../../../icons/document-view-icon/document-view-icon.component";
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-pending-expenses',
-  imports: [CommonModule, DateformatPipe, NgxDocViewerModule, FormsModule, NoDataFoundComponent, DataLoaderContentComponent, DownloadExpenseComponent, DocumentViewIconComponent],
+  imports: [CommonModule, DateformatPipe,TranslateModule, NgxDocViewerModule, FormsModule, NoDataFoundComponent, DataLoaderContentComponent, DownloadExpenseComponent, DocumentViewIconComponent],
   templateUrl: './pending-expenses.component.html',
   styleUrl: './pending-expenses.component.scss'
 })

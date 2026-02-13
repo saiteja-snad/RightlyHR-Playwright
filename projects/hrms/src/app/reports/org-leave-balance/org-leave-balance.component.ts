@@ -15,11 +15,12 @@ import { NavigationEnd, Router } from '@angular/router';
 import { HttpService } from '../../services/http.service';
 import { MODULE_INFOS } from '../../shared/modules-info';
 import { ReportsHeaderComponent } from '../../shared/reports-tabs/reports-header/reports-header.component';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-org-leave-balance',
   imports: [CommonModule, Select, AccordionModule, NoDataFoundComponent, DataLoaderContentComponent, FormsModule, 
-    DateformatPipe, ModuleInformationComponent, NgbPopoverModule, ReportsHeaderComponent],
+    DateformatPipe, ModuleInformationComponent, NgbPopoverModule, ReportsHeaderComponent, TranslatePipe],
   templateUrl: './org-leave-balance.component.html',
   styleUrl: './org-leave-balance.component.scss',
   encapsulation: ViewEncapsulation.None

@@ -111,7 +111,7 @@
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="custom-poup-header-content popup-header-border">
             <div class="pt-2">
-                <p class="popup-heading mb-0">Reject Reason</p>
+                <p class="popup-heading mb-0">{{'Reject Reason' | translate}}</p>
             </div>
             <div>
                 <a (click)="rejectDocument.reset();modal.dismiss()"><img src="icons/close.png" alt="Close Icon"
@@ -121,7 +121,7 @@
         <div class="custom-main-popup-content">
             <form autocomplete="off" [formGroup]="rejectDocument" (ngSubmit)="PostReasonandUpdateOfferDetails()">
                 <div class="mb-3">
-                    <label for="rejectReason">Reject Reason<span class="error-msg">*</span></label>
+                    <label for="rejectReason">{{'Reject Reason' | translate}}<span class="error-msg">*</span></label>
                     <textarea type="text" name="rejectReason" class="form-control"
                         placeholder="Please provide reason for rejection" rows="3" maxlength="250"
                         formControlName="comments"></textarea>

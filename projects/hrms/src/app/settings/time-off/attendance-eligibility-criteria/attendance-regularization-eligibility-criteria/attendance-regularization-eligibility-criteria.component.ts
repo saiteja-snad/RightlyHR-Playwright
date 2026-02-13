@@ -8,10 +8,11 @@ import { NoDataFoundComponent } from "../../../../shared/no-data-found/no-data-f
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-attendance-regularization-eligibility-criteria',
-  imports: [CommonModule, NoDataFoundComponent, FormsModule, DataLoaderContentComponent],
+  imports: [CommonModule, NoDataFoundComponent, FormsModule, DataLoaderContentComponent, TranslateModule],
   templateUrl: './attendance-regularization-eligibility-criteria.component.html',
   styleUrl: './attendance-regularization-eligibility-criteria.component.scss'
 })

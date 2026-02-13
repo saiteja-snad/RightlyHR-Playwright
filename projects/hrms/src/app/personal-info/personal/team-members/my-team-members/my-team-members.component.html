@@ -19,7 +19,7 @@
             <span class="input-group-text custom-input-group-search" id="basic-addon1"><i
                     class="bi bi-search"></i></span>
             <input type="search" class="form-control custom-search-input"
-                placeholder="Search by employee id / employee name / work email / phone number" aria-label="Username"
+                [placeholder]="'Search by employee id / employee name / work email / phone number' | translate" aria-label="Username"
                 #search="ngModel" [(ngModel)]="searchValue" autocomplete="off" aria-describedby="basic-addon1">
         </div>
         <div class="custom-tree-table">
@@ -36,10 +36,10 @@
             <!-- Table Header -->
             <ng-template pTemplate="header">
                 <tr>
-                    <th>Employee ID</th>
-                    <th>Employee Name</th>
-                    <th>Work Email</th>
-                    <th>Phone Number</th>
+                    <th>{{ 'Employee ID' | translate }}</th>
+                    <th>{{ 'Employee Name' | translate }}</th>
+                    <th>{{ 'Work Email' | translate }}</th>
+                    <th>{{ 'Phone Number' | translate }}</th>
                 </tr>
             </ng-template>
 

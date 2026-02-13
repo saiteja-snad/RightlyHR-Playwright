@@ -9,9 +9,10 @@ import { filter } from 'rxjs';
 import { MODULE_INFOS } from '../../shared/modules-info';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
   selector: 'app-holidays-layout',
-  imports: [RouterModule, CommonModule,ModuleInfoIconComponent, ReactiveFormsModule, Select, NgbPopoverModule, ModuleInformationComponent],
+  imports: [RouterModule, CommonModule,ModuleInfoIconComponent, ReactiveFormsModule, Select, NgbPopoverModule, ModuleInformationComponent,TranslateModule],
   templateUrl: './holidays-layout.component.html',
   styleUrl: './holidays-layout.component.scss',
   encapsulation: ViewEncapsulation.None

@@ -7,7 +7,7 @@
     </div>
     <!-- @if(rbac.allowedToAccess('Kra Create.view')) { -->
     <div>
-      <button class="custom-btn btn-primary px-5" (click)="openAdd()">Create</button>
+      <button class="custom-btn btn-primary px-5" (click)="openAdd()">{{'Create'|translate}}</button>
     </div>
     <!-- } -->
   </div>
@@ -19,7 +19,7 @@
         <i class="bi bi-search"></i>
       </span>
       <input type="search" class="form-control custom-search-input"
-             placeholder="Search by category name or code"
+             [placeholder]="'Search by category name or code'|translate"
              [(ngModel)]="searchText"
              (ngModelChange)="onSearchTextChange()"
              aria-label="Search">
@@ -30,12 +30,12 @@
       @if(!dataload) {
       <table class="w-100">
         <thead>
-          <th>Category Name</th>
-          <th class="text-center">Category Code</th>
-          <th class="text-center">Description</th>
+          <th>{{'Category Name'|translate}}</th>
+          <th class="text-center">{{'Category Code'|translate}}</th>
+          <th class="text-center">{{'Description'|translate}}</th>
           <!-- <th class="text-center">Status</th> -->
           @if(rbac.allowedToAccess('Kra Update(Status - Created).view') || rbac.allowedToAccess('Kra Delete(Status - Created).view')) {
-          <th class="text-center">Action</th>
+          <th class="text-center">{{'Action'|translate}}</th>
           }
         </thead>
         <tbody>
@@ -49,7 +49,7 @@
                   <app-info-icon ngbPopover="{{ item?.description }}" container="body">
                   </app-info-icon>
                 </div>
-                <ng-template #noDescription>NA</ng-template>
+                <ng-template #noDescription>{{'NA'|translate}}</ng-template>
               </td>
               <!-- <td class="text-center">
                 <span class="kra-status" [ngClass]="getStatusClass(item.status)">
@@ -67,13 +67,13 @@
                   <ul class="dropdown-menu custom-dropdown-menu">
                     @if(rbac.allowedToAccess('Kra Update(Status - Created).view')) {
                     <li>
-                      <a class="dropdown-item" (click)="editDetails(item)"><i class="bi bi-pencil me-2"></i>Update</a>
+                      <a class="dropdown-item" (click)="editDetails(item)"><i class="bi bi-pencil me-2"></i>{{'Update'|translate}}</a>
                     </li>
                     }
                     @if(rbac.allowedToAccess('Kra Delete(Status - Created).view')) {
                     <li>
                       <a class="dropdown-item text-danger" (click)="openDelete(confirmation, item.categoryId)">
-                        <i class="bi bi-trash3 me-2"></i>Delete
+                        <i class="bi bi-trash3 me-2"></i>{{'Delete'|translate}}
                       </a>
                     </li>
                     }
@@ -106,7 +106,7 @@
             <option *ngFor="let opt of pageOptions" [value]="opt">{{ opt }}</option>
           </select>
           <span class="pagination-label text-nowrap">
-            Showing {{ first + 1 }} - {{ (first + rows) > collectionSize ? collectionSize : (first + rows) }} of {{ collectionSize }}
+            {{'Showing'|translate}} {{ first + 1 }} - {{ (first + rows) > collectionSize ? collectionSize : (first + rows) }} {{'of'|translate}} {{ collectionSize }}
           </span>
         </div>
         <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"
@@ -122,12 +122,12 @@
   <div class="result-popup-content" ngbAutofocus>
     <div class="text-center mb-3">
       <img src="icons/delete-icon.png" alt="delete" class="confirmation-delete-icon">
-      <p class="confirmation-text mt-3">Are you sure you want to delete this KRA Category?</p>
+      <p class="confirmation-text mt-3">{{'Are you sure you want to delete this KRA Category?'|translate}}</p>
     </div>
     <div class="custom-modal-footer">
-      <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
+      <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'|translate}}</button>
       <button type="button" class="custom-btn btn-primary" (click)="deleteCategory(); modal.dismiss()">
-        Yes
+        {{'Yes'|translate}}
       </button>
     </div>
   </div>

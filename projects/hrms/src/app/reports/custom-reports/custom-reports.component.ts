@@ -18,6 +18,7 @@ import { Router } from '@angular/router';
 import { DatePicker } from 'primeng/datepicker';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { ReportsHeaderComponent } from "../../shared/reports-tabs/reports-header/reports-header.component";
+import { TranslatePipe } from '@ngx-translate/core';
 interface FieldGroup {
   name: string;
   fields: string[];
@@ -37,7 +38,8 @@ interface FieldGroup {
     AccordionModule,
     NoDataFoundComponent,
     NgbPopoverModule,
-    ReportsHeaderComponent
+    ReportsHeaderComponent,
+    TranslatePipe
 ],
   templateUrl: './custom-reports.component.html',
   styleUrl: './custom-reports.component.scss',

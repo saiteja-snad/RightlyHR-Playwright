@@ -3,25 +3,25 @@
     <div class="input-group custom-search mb-3">
         <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
         <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input"
-            placeholder="Search by ticket ID / ticket priority / subject / requester / department / team / assignee" aria-label="Username" aria-describedby="basic-addon1">
+            placeholder="{{ 'Search by ticket ID / ticket priority / subject / requester / department / team / assignee' | translate }}" aria-label="Username" aria-describedby="basic-addon1">
     </div>
 
     <div class="custom-table-content">
         @if (!dataloading) {
         <table class="w-100">
             <thead>
-                <th>Ticket ID</th>
-                <th>Ticket Priority</th>
-                <th>Subject</th>
-                <th>Requester</th>
-                <th>Requested Date</th>
-                <th>Department</th>
-                <th>Team</th>
-                <th>Assignee</th>
-                <th>Status</th>
-                <th>Updated Date</th>
+                <th>{{ 'Ticket ID' | translate }}</th>
+                <th>{{ 'Ticket Priority' | translate }}</th>
+                <th>{{ 'Subject' | translate }}</th>
+                <th>{{ 'Requester' | translate }}</th>
+                <th>{{ 'Requested Date' | translate }}</th>
+                <th>{{ 'Department' | translate }}</th>
+                <th>{{ 'Team' | translate }}</th>
+                <th>{{ 'Assignee' | translate }}</th>
+                <th>{{ 'Status' | translate }}</th>
+                <th>{{ 'Updated Date' | translate }}</th>
                 @if(rbac.allowedToAccess('Await On User Tickets Tab.update')){
-                <th>Action</th>
+                <th>{{ 'Action' | translate }}</th>
                 }
             </thead>
             <tbody>
@@ -57,7 +57,7 @@
                                 <ul class="dropdown-menu custom-dropdown-menu">
                                     <li (click)="openModal(updatetickets,ticket)">
                                         <a class="dropdown-item">
-                                             <i class="bi bi-pencil me-2"></i>Update
+                                             <i class="bi bi-pencil me-2"></i>{{ 'Update' | translate }}
                                         </a>
                                     </li>
                                 </ul>
@@ -83,135 +83,135 @@
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="d-flex justify-content-between popup-header-border p-4">
             <div class="pt-2">
-                <p class="popup-heading mb-0">Await On User Ticket</p>
+                <p class="popup-heading mb-0">{{ 'Await On User Ticket' | translate }}</p>
             </div>
         </div>
         <div class="custom-main-popup-content p-4">
             <form autocomplete="off" [formGroup]="itSupportForm" (ngSubmit)="onUpdate()">
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <label class="form-label custom-label mb-2">{{'Ticket Raised For' | translate}}<span
+                        <label class="form-label custom-label mb-2">{{ 'Ticket Raised For' | translate }}<span
                                 class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
                             <p-select [options]="ticketRaisedFor" name="employee"
-                                optionLabel="label" optionValue="label" placeholder="Please select"
+                                optionLabel="label" optionValue="label" [placeholder]="'Please select' | translate"
                                 formControlName="employee" class="custom-select w-100">
                             </p-select>
                         </div>
                         <div *ngIf="itSupportForm.get('employee')?.invalid && itSupportForm.get('employee')?.touched">
-                            <div class="error-msg">{{'Ticket Raised For is required' | translate}}</div>
+                            <div class="error-msg">{{ 'Ticket Raised For is required' | translate }}</div>
                         </div>
                     
                     </div>
                     <div class="col-md-6 mb-3">
-                        <label class="form-label custom-label mb-2">{{'Name' | translate}}<span
+                        <label class="form-label custom-label mb-2">{{ 'Name' | translate }}<span
                                 class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
                             <input type="text" class="form-control custom-input" formControlName="name"
-                            placeholder="Please enter employeename" onkeydown="return false;" />
+                            [placeholder]="'Please enter employeename' | translate" onkeydown="return false;" />
                         </div>
                         <div *ngIf="itSupportForm.get('name')?.invalid && itSupportForm.get('name')?.touched">
-                            <div class="error-msg">{{'Employee is required' | translate}}</div>
+                            <div class="error-msg">{{ 'Employee is required' | translate }}</div>
                         </div>
                     
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <label class="form-label custom-label mb-2">{{'Email' | translate}}<span
+                        <label class="form-label custom-label mb-2">{{ 'Email' | translate }}<span
                                 class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
                             <input type="text" class="form-control custom-input" formControlName="email"
-                            placeholder="Please enter email" onkeydown="return false;" />
+                            [placeholder]="'Please enter email' | translate" onkeydown="return false;" />
                           
                         </div>
                         <div *ngIf="itSupportForm.get('email')?.invalid && itSupportForm.get('email')?.touched">
-                            <div class="error-msg">{{'Email is required' | translate}}</div>
+                            <div class="error-msg">{{ 'Email is required' | translate }}</div>
                         </div>
                     
                     </div>
                     <div class="col-md-6 mb-3">
-                        <label class="form-label custom-label mb-2">{{'Phone Number' | translate}}<span
+                        <label class="form-label custom-label mb-2">{{ 'Phone Number' | translate }}<span
                             class="text-danger">*</span></label>
                     <div class="custom-p-select-content">
                         <input type="number" class="form-control custom-input" formControlName="phoneNumber"
-                        placeholder="Please enter phonenumber" onkeydown="return false;" />
+                        [placeholder]="'Please enter phonenumber' | translate" onkeydown="return false;" />
                       
                     </div>
                     <div *ngIf="itSupportForm.get('phoneNumber')?.invalid && itSupportForm.get('phoneNumber')?.touched">
-                        <div class="error-msg">{{'Phone Number is required' | translate}}</div>
+                        <div class="error-msg">{{ 'Phone Number is required' | translate }}</div>
                     </div>
 
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <label class="form-label custom-label mb-2">{{'Desk Details' | translate}}<span
+                        <label class="form-label custom-label mb-2">{{ 'Desk Details' | translate }}<span
                             class="text-danger">*</span></label>
                     <div class="custom-p-select-content">
                         <input type="text" class="form-control custom-input" formControlName="deskdetails"
-                        placeholder="Please enter Deskdetails" onkeydown="return false;" />
+                        [placeholder]="'Please enter Deskdetails' | translate" onkeydown="return false;" />
                       
                     </div>
                     <div *ngIf="itSupportForm.get('deskdetails')?.invalid && itSupportForm.get('deskdetails')?.touched">
-                        <div class="error-msg">{{'Desk Details is required' | translate}}</div>
+                        <div class="error-msg">{{ 'Desk Details is required' | translate }}</div>
                     </div>
 
                     </div>
                     <div class="col-md-6 mb-3">
-                        <label class="form-label custom-label mb-2">{{'Department Impacted' | translate}}<span
+                        <label class="form-label custom-label mb-2">{{ 'Department Impacted' | translate }}<span
                             class="text-danger">*</span></label>
                             <!-- <p-select [options]="departmentDetails"
                             optionLabel="departmentName" placeholder="Please select department"
                             formControlName="department" class="custom-select w-100">
                         </p-select> -->
                         <input type="text" class="form-control custom-input" formControlName="department"
-                        placeholder="Please enter department" onkeydown="return false;" />
+                        [placeholder]="'Please enter department' | translate" onkeydown="return false;" />
                         
                     <div *ngIf="itSupportForm.get('department')?.invalid && itSupportForm.get('department')?.touched">
-                        <div class="error-msg">{{'Department is required' | translate}}</div>
+                        <div class="error-msg">{{ 'Department is required' | translate }}</div>
                     </div>
 
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <label class="form-label custom-label mb-2">{{'Team Impacted' | translate}}<span
+                        <label class="form-label custom-label mb-2">{{ 'Team Impacted' | translate }}<span
                             class="text-danger">*</span></label>
                             <!-- <p-select [options]="teamDropdownValues" [filter]="true" filterBy="subdepartmentName" [showClear]="true"
                             optionLabel="subdepartmentName"  placeholder="Please select team"
                             formControlName="team" class="custom-select w-100" (onChange)="onSubDepartmentNameChange($event.value)">
                         </p-select> -->
                         <input type="text" class="form-control custom-input" formControlName="team"
-                        placeholder="Please enter department" onkeydown="return false;" />
+                        [placeholder]="'Please enter department' | translate" onkeydown="return false;" />
                     <div *ngIf="itSupportForm.get('team')?.invalid && itSupportForm.get('team')?.touched">
-                        <div class="error-msg">{{'Team is required' | translate}}</div>
+                        <div class="error-msg">{{ 'Team is required' | translate }}</div>
                     </div>
 
                     </div>
                      <div class="col-md-6 mb-3">
-                        <label class="form-label custom-label mb-2">{{'Category' | translate}}<span
+                        <label class="form-label custom-label mb-2">{{ 'Category' | translate }}<span
                                 class="text-danger">*</span></label>
                         <input type="text" class="form-control custom-input" formControlName="category"
-                            placeholder="Please enter category" onkeydown="return false;" />
+                            [placeholder]="'Please enter category' | translate" onkeydown="return false;" />
                         <div *ngIf="itSupportForm.get('category')?.invalid && itSupportForm.get('category')?.touched">
-                            <div class="error-msg">{{'Category is required' | translate}}</div>
+                            <div class="error-msg">{{ 'Category is required' | translate }}</div>
                         </div>
 
                     </div>
                 </div>
                 <div class="row">
                      <div class="col-md-6 mb-3">
-                        <label class="form-label custom-label mb-2">{{'Sub-Category' | translate}}<span
+                        <label class="form-label custom-label mb-2">{{ 'Sub-Category' | translate }}<span
                                 class="text-danger">*</span></label>
                         <input type="text" class="form-control custom-input" formControlName="subcategory"
-                            placeholder="Please enter subcategory" onkeydown="return false;" />
+                            [placeholder]="'Please enter subcategory' | translate" onkeydown="return false;" />
                         <div *ngIf="itSupportForm.get('subcategory')?.invalid && itSupportForm.get('subcategory')?.touched">
-                            <div class="error-msg">{{'Sub-Category is required' | translate}}</div>
+                            <div class="error-msg">{{ 'Sub-Category is required' | translate }}</div>
                         </div>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <label class="form-label custom-label mb-2">{{'Priority' | translate}}<span
+                        <label class="form-label custom-label mb-2">{{ 'Priority' | translate }}<span
                             class="text-danger">*</span></label>
                             <!-- <p-select [options]="priorityDetails"
                             optionLabel="label" optionValue="value" placeholder="Please select priority"
@@ -220,10 +220,10 @@
                         </p-select> -->
 
                         <input type="text" class="form-control custom-input" formControlName="priority"
-                        placeholder="Please enter department" onkeydown="return false;" />
+                        [placeholder]="'Please enter department' | translate" onkeydown="return false;" />
                         
                     <div *ngIf="itSupportForm.get('priority')?.invalid && itSupportForm.get('priority')?.touched">
-                        <div class="error-msg">{{'Priority is required' | translate}}</div>
+                        <div class="error-msg">{{ 'Priority is required' | translate }}</div>
                     </div>
 
                     </div>
@@ -232,26 +232,26 @@
 
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <label class="form-label custom-label mb-2">{{'Subject' | translate}}<span
+                        <label class="form-label custom-label mb-2">{{ 'Subject' | translate }}<span
                             class="text-danger">*</span></label>
                     <div class="custom-p-select-content">
                             <input type="text" class="form-control custom-input" formControlName="subject"
-                            placeholder="Please enter subject" />
+                            [placeholder]="'Please enter subject' | translate" />
                     </div>
                     <div *ngIf="itSupportForm.get('subject')?.invalid && itSupportForm.get('subject')?.touched">
-                        <div class="error-msg">{{'Subject is required' | translate}}</div>
+                        <div class="error-msg">{{ 'Subject is required' | translate }}</div>
                     </div>
 
                     </div>
                     <div class="col-md-6 mb-3">
-                        <label class="form-label custom-label mb-2">{{'Action'| translate}}<span class="text-danger">*</span></label>
+                        <label class="form-label custom-label mb-2">{{ 'Action' | translate }}<span class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="status" optionLabel="label" optionValue="" placeholder="Please select status"
+                            <p-select [options]="status" optionLabel="label" optionValue="" [placeholder]="'Please select status' | translate"
                                 formControlName="ticketStatus" class="custom-select w-100">
                             </p-select>
                         </div>
                         <div *ngIf="itSupportForm.get('ticketStatus')?.invalid && itSupportForm.get('ticketStatus')?.touched">
-                            <div class="error-msg">{{'Status is required' | translate}}</div>
+                            <div class="error-msg">{{ 'Status is required' | translate }}</div>
                         </div>
                     </div>
                     
@@ -260,10 +260,10 @@
 
                 <div class="row">
                    <div class="col-md-6 mb-3">
-                        <label class="form-label custom-label mb-2">{{'Ticket Assigned To'| translate}}</label>
+                        <label class="form-label custom-label mb-2">{{ 'Ticket Assigned To' | translate }}</label>
                         <div class="custom-p-select-content">
                             <p-select [options]="allEmployees" [filter]="true" filterBy="firstName"
-                            optionLabel="fullName" (onChange)="assigneeDetails($event.value)" placeholder="Please select employee"
+                            optionLabel="fullName" (onChange)="assigneeDetails($event.value)" [placeholder]="'Please select employee' | translate"
                             formControlName="assignedto" class="custom-select w-100" [dataKey]="'fusionEmpId'">
                         </p-select>
                         </div>
@@ -272,27 +272,27 @@
                         </div> -->
                     </div>
                     <div class="col-md-6 mb-3">
-                        <label class="form-label custom-label mb-2">{{'Description'| translate}}<span class="text-danger">*</span></label>
-                        <textarea class="form-control custom-input" formControlName="description" placeholder="Please enter description"></textarea>
+                        <label class="form-label custom-label mb-2">{{ 'Description' | translate }}<span class="text-danger">*</span></label>
+                        <textarea class="form-control custom-input" formControlName="description" [placeholder]="'Please enter description' | translate"></textarea>
                         <div *ngIf="itSupportForm.get('description')?.invalid && itSupportForm.get('description')?.touched">
-                            <div class="error-msg">{{'Description is required' | translate}}</div>
+                            <div class="error-msg">{{ 'Description is required' | translate }}</div>
                         </div>
                     </div>
 
                     <div class="col-md-6 mb-3">
-                        <label class="form-label custom-label mb-2">{{'Comments'| translate}}</label>
-                        <textarea class="form-control custom-input" formControlName="comments" placeholder="Please enter comments" pattern="^\S.*"></textarea>
+                        <label class="form-label custom-label mb-2">{{ 'Comments' | translate }}</label>
+                        <textarea class="form-control custom-input" formControlName="comments" [placeholder]="'Please enter comments' | translate" pattern="^\S.*"></textarea>
                         <div *ngIf="itSupportForm.get('comments')?.errors?.['pattern']">
-                            <div class="error-msg">{{'Comments is required' | translate}}</div>
+                            <div class="error-msg">{{ 'Comments is required' | translate }}</div>
                         </div>
                     </div>
                     
                 </div>
                 <div class="d-flex justify-content-end gap-3 mt-4">
-                    <button type="button" class="custom-btn btn-secondary" (click)="openConfirmationModal(confirmationpopup)">{{'Cancel' | translate}}</button>
+                    <button type="button" class="custom-btn btn-secondary" (click)="openConfirmationModal(confirmationpopup)">{{ 'Cancel' | translate }}</button>
                     <button type="submit" class="custom-btn btn-primary" [disabled]="itSupportForm.invalid || isLoading">
                         <span *ngIf="!isLoading">
-                            {{'Update' | translate}}
+                            {{ 'Update' | translate }}
                         </span>
                         <div *ngIf="isLoading" class="spinner-border spinner-border text-light" role="status">
                         </div>
@@ -306,15 +306,15 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
-            <p class="confirmation-text"> Are you sure you want to cancel?</p>
+            <p class="confirmation-text">{{ 'Are you sure you want to cancel?' | translate }}</p>
         </div>
 
         <div class="custom-modal-footer">
             <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">
-                No
+                {{ 'No' | translate }}
             </button>
             <button type="submit" class="custom-btn btn-primary" (click)="cleardata();model.dismiss()">
-                Yes
+                {{ 'Yes' | translate }}
             </button>
         </div>
     </div>

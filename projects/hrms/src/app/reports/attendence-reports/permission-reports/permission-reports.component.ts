@@ -17,9 +17,10 @@ import { RbacService } from '../../../services/rbac.service';
 import { Router } from '@angular/router';
 import { ReportsHeaderComponent } from "../../../shared/reports-tabs/reports-header/reports-header.component";
 import { DatePicker } from 'primeng/datepicker';
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
   selector: 'app-permission-reports',
-  imports: [CommonModule, ReactiveFormsModule, Select, DatePicker, DataLoaderContentComponent, NoDataFoundComponent, ReportsHeaderComponent],
+  imports: [CommonModule, ReactiveFormsModule, Select, DatePicker,TranslateModule, DataLoaderContentComponent, NoDataFoundComponent, ReportsHeaderComponent],
   templateUrl: './permission-reports.component.html',
   styleUrl: './permission-reports.component.scss'
 })

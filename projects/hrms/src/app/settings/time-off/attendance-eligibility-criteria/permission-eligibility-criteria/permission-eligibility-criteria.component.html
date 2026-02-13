@@ -5,9 +5,9 @@
             <table class="w-100">
                 <thead>
                     <tr>
-                        <th>Name</th>
-                        <th>Value</th>
-                        <th *ngIf="rbac.allowedToAccess('Permission Elgibility Tab.update')">Action</th>
+                        <th>{{ 'Name' | translate }}</th>
+                        <th>{{ 'Value' | translate }}</th>
+                        <th *ngIf="rbac.allowedToAccess('Permission Elgibility Tab.update')">{{ 'Action' | translate }}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -35,7 +35,7 @@
                                 </a>
                                 <ul class="dropdown-menu custom-dropdown-menu">
                                     <li>
-                                        <a class="dropdown-item"  (click)="enableEditForPermissionRegulization(i, permi.id, permi.value, permi.entity)"><i class="bi bi-pencil me-2"></i>Update</a>
+                                        <a class="dropdown-item"  (click)="enableEditForPermissionRegulization(i, permi.id, permi.value, permi.entity)"><i class="bi bi-pencil me-2"></i>{{ 'Update' | translate }}</a>
                                     </li>
                                 </ul>
                             </div>
@@ -43,11 +43,10 @@
                                 <div class="d-flex gap-2">
                                     <button class="custom-btn btn-primary" type="button" 
                                     (click)="submitPermissionEligibilityValue(i, temporaryValue)">
-                                        Update
+                                        {{ 'Update' | translate }}
                                     </button>
                                     <button class="custom-btn btn-secondary" type="button" (click)="disableEdit()">
-                                        <!-- <i class="bi bi-x-circle-fill"></i> -->
-                                        Cancel
+                                        {{ 'Cancel' | translate }}
                                     </button>
                                 </div>
                             </ng-template>

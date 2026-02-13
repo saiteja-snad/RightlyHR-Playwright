@@ -10,12 +10,14 @@ import { MY_INFO_DOCUMENTS_ROUTES, MY_INFO_JOB_ROUTES, MY_INFO_ONBOARD_REQUEST, 
 import { environment } from '../../../environments/environment';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AuthService } from '../../services/auth.service';
+import { TranslateModule } from '@ngx-translate/core';
 import { SignalsService } from '../../services/signals.service';
 @Component({
   selector: 'app-user-validation',
   imports: [
     FormsModule,
     CommonModule,
+    TranslateModule
   ],
   templateUrl: './user-validation.component.html',
   styleUrl: './user-validation.component.scss'

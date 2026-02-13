@@ -60,9 +60,7 @@
                         <td class="text-nowrap">{{ item.assessordueDate | date: 'dd MMM yyyy' }}</td>
                         <td>{{ item.formName }}</td>
                         <td>{{ item.rcItemStatus }}</td>
-                        @if(rbac.allowedToAccess('My Performance Assessment View.view') || rbac.allowedToAccess('My
-                        Performance Promotion Letter Download.view') ||
-                        rbac.allowedToAccess('My Performance Appraisal Letter Download.view')){
+                        @if(rbac.allowedToAccess('My Performance Assessment View.view') || rbac.allowedToAccess('My Performance Promotion Letter Download.view') || rbac.allowedToAccess('My Performance Appraisal Letter Download.view')){
                         <td class="text-center">
                             @if(showActionDropdownForItem(item)){
                             <div class="dropdown">

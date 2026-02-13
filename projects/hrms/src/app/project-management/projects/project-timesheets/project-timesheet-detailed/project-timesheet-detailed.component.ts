@@ -8,9 +8,10 @@ import { DateformatPipe } from "../../../../Pipes/dateformat.pipe";
 import { NoDataFoundComponent } from "../../../../shared/no-data-found/no-data-found.component";
 import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
 import { ChipModule } from 'primeng/chip';
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
   selector: 'app-project-timesheet-detailed',
-  imports: [CommonModule, DateformatPipe, NoDataFoundComponent, ChipModule, DataLoaderContentComponent],
+  imports: [CommonModule, DateformatPipe, NoDataFoundComponent,TranslateModule, ChipModule, DataLoaderContentComponent],
   templateUrl: './project-timesheet-detailed.component.html',
   styleUrl: './project-timesheet-detailed.component.scss',
   encapsulation: ViewEncapsulation.None

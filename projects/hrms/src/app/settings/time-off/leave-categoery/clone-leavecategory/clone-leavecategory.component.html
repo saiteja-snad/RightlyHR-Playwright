@@ -1,272 +1,272 @@
 <div class="custom-main-component-container w-100">
   <div class="component-header-content pt-2">
     <div class="heading-content">
-      <div class="commpoment-name navigator" (click)="navigate()">Leave Category
+      <div class="commpoment-name navigator" (click)="navigate()">{{ 'Leave Category' | translate }}
         <i class="bi bi-chevron-double-right ms-1"></i>
       </div>
-      <div class="component-header">Clone Leave Category</div>
+      <div class="component-header">{{ 'Clone Leave Category' | translate }}</div>
     </div>
   </div>
 
   <form autocomplete="off" [formGroup]="leavePolicyForm" (ngSubmit)="onSubmit()">
     <div class="custom-setting-right-content fields-data-container">
       <div class="row">
-        <div class="component-sub-header mb-3">Location/Shift</div>
+        <div class="component-sub-header mb-3">{{ 'Location/Shift' | translate }}</div>
         <!-- Year -->
         <div class="col-md-3 mb-3">
-          <label class="form-label custom-label mb-2" for="subLocation">Year<span class="text-danger">*</span></label>
+          <label class="form-label custom-label mb-2" for="subLocation">{{ 'Year' | translate }}<span class="text-danger">*</span></label>
           <div class="custom-p-select-content">
-            <p-select [options]="years" optionLabel="label" optionValue="value" placeholder="Select year"
+            <p-select [options]="years" optionLabel="label" optionValue="value" [placeholder]="'Select year' | translate"
               formControlName="applicableYear" class="custom-select w-100">
             </p-select>
           </div>
           <div class="error-msg" *ngIf="leavePolicyForm.get('applicableYear')?.invalid && 
                                               (leavePolicyForm.get('applicableYear')?.touched  )">
-            Year is required
+            {{ 'Year is required' | translate }}
           </div>
         </div>
 
         <!-- Location -->
         <div class="col-md-3 mb-3">
-          <label class="form-label custom-label mb-2" for="Location">Location<span class="text-danger">*</span></label>
+          <label class="form-label custom-label mb-2" for="Location">{{ 'Location' | translate }}<span class="text-danger">*</span></label>
           <div class="custom-p-select-content">
             <p-select [options]="jobLocationDropDownData" optionLabel="jobLocationName" optionValue=""
-              placeholder="Select location" formControlName="locationID" class="custom-select w-100"
+              [placeholder]="'Select location' | translate" formControlName="locationID" class="custom-select w-100"
               (onChange)="getSubLocationByid($event.value)">
             </p-select>
           </div>
           <div class="error-msg" *ngIf="leavePolicyForm.get('locationID')?.invalid && 
                                               (leavePolicyForm.get('locationID')?.touched  )">
-            Location is required
+            {{ 'Location is required' | translate }}
           </div>
         </div>
 
         <!-- Sub Location -->
         <div class="col-md-3 mb-3">
-          <label class="form-label custom-label mb-2" for="subLocation">Sub Location<span
+          <label class="form-label custom-label mb-2" for="subLocation">{{ 'Sub Location' | translate }}<span
               class="text-danger">*</span></label>
           <div class="custom-p-select-content">
             <p-select [options]="subLocationsDropdown" optionLabel="jobSubLocationName" optionValue=""
-              placeholder="Select sub-location" (onChange)="getShiftBYid($event.value)" formControlName="subLocation"
+              [placeholder]="'Select sub-location' | translate" (onChange)="getShiftBYid($event.value)" formControlName="subLocation"
               class="custom-select w-100">
             </p-select>
           </div>
           <div class="error-msg" *ngIf="leavePolicyForm.get('subLocation')?.invalid && 
                                               (leavePolicyForm.get('subLocation')?.touched  )">
-            Sub Location is required
+            {{ 'Sub Location is required' | translate }}
           </div>
         </div>
 
         <!-- Shift -->
         <div class="col-md-3 mb-3">
-          <label class="form-label custom-label mb-2" for="subLocation">Shift<span class="text-danger">*</span></label>
+          <label class="form-label custom-label mb-2" for="subLocation">{{ 'Shift' | translate }}<span class="text-danger">*</span></label>
           <div class="custom-p-select-content">
-            <p-select [options]="shiftsArray" optionLabel="label" optionValue="value" placeholder="Select shift"
+            <p-select [options]="shiftsArray" optionLabel="label" optionValue="value" [placeholder]="'Select shift' | translate"
               formControlName="shiftId" class="custom-select w-100">
             </p-select>
           </div>
           <div class="error-msg" *ngIf="leavePolicyForm.get('shiftId')?.invalid && 
                                               (leavePolicyForm.get('shiftId')?.touched  )">
-            Shift is required
+            {{ 'Shift is required' | translate }}
           </div>
         </div>
 
-        <div class="component-sub-header mb-3">Leave Category Information</div>
+        <div class="component-sub-header mb-3">{{ 'Leave Category Information' | translate }}</div>
 
         <!-- Leave Type  -->
         <div class="col-md-3 mb-3">
-          <label class="form-label custom-label mb-2" for="LeaveCategory">Leave Category Type<span
+          <label class="form-label custom-label mb-2" for="LeaveCategory">{{ 'Leave Category Type' | translate }}<span
               class="text-danger">*</span></label>
           <div class="custom-p-select-content">
             <p-select [options]="leaveCategoryType" optionLabel="label" optionValue="value"
-              placeholder="Select Category" formControlName="type" class="custom-select w-100">
+              [placeholder]="'Select Category' | translate" formControlName="type" class="custom-select w-100">
             </p-select>
           </div>
           <div class="error-msg" *ngIf="leavePolicyForm.get('type')?.invalid && 
                                               (leavePolicyForm.get('type')?.touched  )">
-            Leave Category Type is required
+            {{ 'Leave Category Type is required' | translate }}
           </div>
         </div>
 
         <!-- Leave Type -->
         <div class="col-md-3 mb-3">
-          <label class="form-label custom-label mb-2" for="LeaveType">Leave Type<span class="text-danger">*</span></label>
+          <label class="form-label custom-label mb-2" for="LeaveType">{{ 'Leave Type' | translate }}<span class="text-danger">*</span></label>
           <div class="custom-p-select-content">
-            <p-select [options]="leaveTypes" optionLabel="name" optionValue="id" placeholder="Select Leave Type"
+            <p-select [options]="leaveTypes" optionLabel="name" optionValue="id" [placeholder]="'Select Leave Type' | translate"
               formControlName="leaveType" class="custom-select w-100">
             </p-select>
           </div>
           <div class="error-msg" *ngIf="leavePolicyForm.get('leaveType')?.invalid && 
                                               (leavePolicyForm.get('leaveType')?.touched)">
-            Leave Type is required
+            {{ 'Leave Type is required' | translate }}
           </div>
         </div>
 
         <!-- Name -->
         <div class="col-md-3 mb-3">
-          <label class="form-label custom-label mb-2" for="email">Leave Category Name<span
+          <label class="form-label custom-label mb-2" for="email">{{ 'Leave Category Name' | translate }}<span
               class="text-danger">*</span></label>
           <input type="text" formControlName="name" class="form-control custom-input" id="name" autocomplete="off"
-            placeholder="Please enter name" required>
+            [placeholder]="'Please enter name' | translate" required>
           <div class="error-msg"
             *ngIf="leavePolicyForm.get('name')?.invalid &&  (leavePolicyForm.get('name')?.touched  )">
-            Leave Category Name is required
+            {{ 'Leave Category Name is required' | translate }}
           </div>
         </div>
 
         <!-- Code -->
         <div class="col-md-3 mb-3">
-          <label class="form-label custom-label mb-2" for="email">Leave Category Code<span
+          <label class="form-label custom-label mb-2" for="email">{{ 'Leave Category Code' | translate }}<span
               class="text-danger">*</span></label>
           <input type="text" formControlName="categoryCode" class="form-control custom-input" id="code"
-            autocomplete="off" placeholder="Please enter code" required>
+            autocomplete="off" [placeholder]="'Please enter code' | translate" required>
           <div class="error-msg" *ngIf="leavePolicyForm.get('categoryCode')?.invalid && 
                                               (leavePolicyForm.get('categoryCode')?.touched  )">
-            Leave Category Code is required
+            {{ 'Leave Category Code is required' | translate }}
           </div>
         </div>
 
         <!-- Valid Dates -->
         <div class="col-md-3 mb-3">
-          <label class="form-label custom-label mb-2" for="email">Valid Days <span class="text-danger">*</span></label>
+          <label class="form-label custom-label mb-2" for="email">{{ 'Valid Days' | translate }} <span class="text-danger">*</span></label>
           <input type="number" formControlName="validity" class="form-control custom-input" id="validdates"
-            autocomplete="off" placeholder="Please enter valid days" required>
+            autocomplete="off" [placeholder]="'Please enter valid days' | translate" required>
           <div class="error-msg"
             *ngIf="leavePolicyForm.get('validity')?.invalid && (leavePolicyForm.get('validity')?.touched  )">
             <span *ngIf="leavePolicyForm.get('validity')?.errors?.['required']">
-              Valid Days is required
+              {{ 'Valid Days is required' | translate }}
             </span>
           </div>
           <span class="error-msg" *ngIf="leavePolicyForm.get('validity')?.errors?.['max']">
-            Valid Days cannot exceed 366
+            {{ 'Valid Days cannot exceed 366' | translate }}
           </span>
         </div>
 
         <!-- Color -->
         <div class="col-md-3 mb-3">
-          <label class="form-label custom-label mb-2" for="email">Leave Category Color<span
+          <label class="form-label custom-label mb-2" for="email">{{ 'Leave Category Color' | translate }}<span
               class="text-danger">*</span></label>
           <input type="color" formControlName="categoryColor" class="form-control input-content mt-2" id="color"
-            placeholder="Please enter color" required>
+            [placeholder]="'Please enter color' | translate" required>
           <div class="error-msg" *ngIf="leavePolicyForm.get('categoryColor')?.invalid && 
                                               (leavePolicyForm.get('categoryColor')?.touched  )">
-            Leave Category Color is required
+            {{ 'Leave Category Color is required' | translate }}
           </div>
         </div>
 
         <!-- Is Dependent -->
         <div class="col-md-3 mb-3">
-          <label class="form-label custom-label mb-2" for="LeaveCategory">Is Dependent </label>
+          <label class="form-label custom-label mb-2" for="LeaveCategory">{{ 'Is Dependent' | translate }} </label>
           <div class="custom-p-select-content">
-            <p-select [options]="publishedCategories" optionLabel="name" optionValue="id" placeholder="Select option"
+            <p-select [options]="publishedCategories" optionLabel="name" optionValue="id" [placeholder]="'Select option' | translate"
               formControlName="parentId" class="custom-select w-100">
             </p-select>
           </div>
         </div>
 
-        <div class="component-sub-header mb-3">Additional Information</div>
+        <div class="component-sub-header mb-3">{{ 'Additional Information' | translate }}</div>
 
         <!-- Gender  -->
         <div class="col-md-3 mb-3">
-          <label class="form-label custom-label mb-2" for="gender ">Allowed Gender <span
+          <label class="form-label custom-label mb-2" for="gender ">{{ 'Allowed Gender' | translate }} <span
               class="text-danger">*</span></label>
           <div class="custom-p-select-content">
-            <p-select [options]="genderDetails" optionLabel="label" optionValue="value" placeholder="Select gender"
+            <p-select [options]="genderDetails" optionLabel="label" optionValue="value" [placeholder]="'Select gender' | translate"
               formControlName="allowedGender" class="custom-select w-100">
             </p-select>
           </div>
           <div class="error-msg" *ngIf="leavePolicyForm.get('allowedGender')?.invalid && 
                                               (leavePolicyForm.get('allowedGender')?.touched  )">
-            Allowed Gender is required
+            {{ 'Allowed Gender is required' | translate }}
           </div>
         </div>
 
         <!-- Marital status -->
         <div class="col-md-3 mb-3">
-          <label class="form-label custom-label mb-2" for="MaritalStatus">Allowed Marital Status<span
+          <label class="form-label custom-label mb-2" for="MaritalStatus">{{ 'Allowed Marital Status' | translate }}<span
               class="text-danger">*</span></label>
           <div class="custom-p-select-content">
             <p-select [options]="marriedDetails" optionLabel="label" optionValue="value"
-              placeholder="Select marital status" formControlName="allowedMaritalStatus" class="custom-select w-100">
+              [placeholder]="'Select marital status' | translate" formControlName="allowedMaritalStatus" class="custom-select w-100">
             </p-select>
           </div>
           <div class="error-msg" *ngIf="leavePolicyForm.get('allowedMaritalStatus')?.invalid && 
                                               (leavePolicyForm.get('allowedMaritalStatus')?.touched  )">
-            Allowed Marital Status is required
+            {{ 'Allowed Marital Status is required' | translate }}
           </div>
         </div>
 
         <!--Exclude Weekends  -->
         <div class="col-md-3 mb-3">
-          <label class="form-label custom-label mb-2" for="designation">Exclude Weekends<span
+          <label class="form-label custom-label mb-2" for="designation">{{ 'Exclude Weekends' | translate }}<span
               class="text-danger">*</span></label>
           <div class="custom-p-select-content">
-            <p-select [options]="global" optionLabel="label" optionValue="value" placeholder="Select option"
+            <p-select [options]="global" optionLabel="label" optionValue="value" [placeholder]="'Select option' | translate"
               formControlName="excludeWeekends" class="custom-select w-100">
             </p-select>
           </div>
           <div class="error-msg" *ngIf="leavePolicyForm.get('excludeWeekends')?.invalid && 
                                               (leavePolicyForm.get('excludeWeekends')?.touched  )">
-            Exclude Weekends is required
+            {{ 'Exclude Weekends is required' | translate }}
           </div>
         </div>
 
         <!-- Exclude Holidays  -->
         <div class="col-md-3 mb-3">
-          <label class="form-label custom-label mb-2" for="ExcludeHolidays">Exclude Holidays<span
+          <label class="form-label custom-label mb-2" for="ExcludeHolidays">{{ 'Exclude Holidays' | translate }}<span
               class="text-danger">*</span></label>
           <div class="custom-p-select-content">
-            <p-select [options]="global" optionLabel="label" optionValue="value" placeholder="Select option"
+            <p-select [options]="global" optionLabel="label" optionValue="value" [placeholder]="'Select option' | translate"
               formControlName="excludeHolidays" class="custom-select w-100">
             </p-select>
           </div>
           <div class="error-msg" *ngIf="leavePolicyForm.get('excludeHolidays')?.invalid && 
                                               (leavePolicyForm.get('excludeHolidays')?.touched  )">
-            Exclude Holidays is required
+            {{ 'Exclude Holidays is required' | translate }}
           </div>
         </div>
 
         <!-- optional holidays -->
         <div class="col-md-3 mb-3">
-          <label class="form-label custom-label mb-2" for="optionalHolidays">Is Optional Holiday<span
+          <label class="form-label custom-label mb-2" for="optionalHolidays">{{ 'Is Optional Holiday' | translate }}<span
               class="text-danger">*</span></label>
           <div class="custom-p-select-content">
-            <p-select [options]="global" optionLabel="label" optionValue="value" placeholder="Select option"
+            <p-select [options]="global" optionLabel="label" optionValue="value" [placeholder]="'Select option' | translate"
               formControlName="isOptionalHoliday" class="custom-select w-100">
             </p-select>
           </div>
           <div class="error-msg" *ngIf="leavePolicyForm.get('isOptionalHoliday')?.invalid && 
                                               (leavePolicyForm.get('isOptionalHoliday')?.touched  )">
-            Is Optional Holiday is required
+            {{ 'Is Optional Holiday is required' | translate }}
           </div>
         </div>
 
         <!--Half days allowed  -->
         <div class="col-md-3 mb-3">
-          <label class="form-label custom-label mb-2" for="designation">Half Day Leave Allowed<span
+          <label class="form-label custom-label mb-2" for="designation">{{ 'Half Day Leave Allowed' | translate }}<span
               class="text-danger">*</span></label>
           <div class="custom-p-select-content">
-            <p-select [options]="global" optionLabel="label" optionValue="value" placeholder="Select option"
+            <p-select [options]="global" optionLabel="label" optionValue="value" [placeholder]="'Select option' | translate"
               formControlName="allowedHalfDay" class="custom-select w-100">
             </p-select>
           </div>
           <div class="error-msg" *ngIf="leavePolicyForm.get('allowedHalfDay')?.invalid && 
                                               (leavePolicyForm.get('allowedHalfDay')?.touched  )">
-            Half Day Leave Allowed is required
+            {{ 'Half Day Leave Allowed is required' | translate }}
           </div>
         </div>
 
         <div class="col-md-3 mb-3">
-          <label class="form-label custom-label mb-2" for="prorata">Pro Rata Leave Allocation<span
+          <label class="form-label custom-label mb-2" for="prorata">{{ 'Pro Rata Leave Allocation' | translate }}<span
               class="text-danger">*</span></label>
           <div class="custom-p-select-content">
-            <p-select [options]="global" optionLabel="label" optionValue="value" placeholder="Select option"
+            <p-select [options]="global" optionLabel="label" optionValue="value" [placeholder]="'Select option' | translate"
               formControlName="isApplicableProRataLeave" class="custom-select w-100">
             </p-select>
           </div>
           <div class="error-msg" *ngIf="leavePolicyForm.get('isApplicableProRataLeave')?.invalid && 
                                               (leavePolicyForm.get('isApplicableProRataLeave')?.touched  )">
-            Pro Rata Leave Allocation is required
+            {{ 'Pro Rata Leave Allocation is required' | translate }}
           </div>
         </div>
 

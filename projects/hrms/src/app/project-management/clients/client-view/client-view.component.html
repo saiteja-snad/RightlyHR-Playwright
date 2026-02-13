@@ -8,16 +8,16 @@
     <div class="d-flex gap-3 align-items-center" *ngIf="isActive('/project-management/clients/details/resources')
             || isActive('/project-management/clients/details/inactive-resources')">
       <button type="button" class="clear-all-btn" (click)="clearResourceFilters()" *ngIf="isResourceFilterApplied()">
-        Clear All</button>
+        {{ 'Clear All' | translate }}</button>
 
       <button type="button" class="custom-btn btn-secondary position-relative" (click)="toggleFilters(resourceFilterContent)">
-        <i class="bi bi-funnel me-2"></i>Filters
+        <i class="bi bi-funnel me-2"></i>{{'Filters' | translate}}
         <span *ngIf="isFilterAppliedForResources()" class="filter-indicator"></span>
       </button>
 
       @if(rbac.allowedToAccess('Client Resources.create') && this.inactiveClientStatus !== 'inactive'){
       <div *ngIf="isActive('/project-management/clients/details/resources')" (click)="openModal(addResourcemodal)">
-        <button type="button" class="custom-btn btn-primary">{{'Add Resources'}}</button>
+        <button type="button" class="custom-btn btn-primary">{{ 'Add Resources' | translate }}</button>
       </div>
       }
     </div>
@@ -27,7 +27,7 @@
       @if(rbac.allowedToAccess('Client Documents.create') && this.inactiveClientStatus !== 'inactive'){
       <div *ngIf="isActive('/project-management/clients/details/documents')">
         <button type="button" class="custom-btn btn-primary" (click)="openModal(addDocumentmodal)">
-          {{'Add Document'}}</button>
+          {{ 'Add Document' | translate }}</button>
       </div>
       }
     </div>
@@ -36,10 +36,10 @@
     <div class="d-flex gap-3 align-items-center" *ngIf="isActive('/project-management/clients/details/projects')
         || isActive('/project-management/clients/details/inactiveprojects') || isActive('/project-management/clients/details/hold')">
       <!-- Clear All Button -->
-      <button type="button" class="clear-all-btn" (click)="clearAllFilters()">Clear All</button>
+      <button type="button" class="clear-all-btn" (click)="clearAllFilters()">{{ 'Clear All' | translate }}</button>
 
       <button type="button" class="custom-btn btn-secondary position-relative" (click)="toggleFilters(projectFilterContent)">
-        <i class="bi bi-funnel me-2"></i>Filters
+        <i class="bi bi-funnel me-2"></i>{{ 'Filters' | translate }}
         <span *ngIf="isFilterAppliedForProjects()" class="filter-indicator"></span>
       </button>
 
@@ -66,7 +66,7 @@
       <button type="button" class="clear-all-btn" (click)="resetForm()">{{ "Clear All" | translate }}</button>
       }
       <button type="button" class="custom-btn btn-secondary position-relative" (click)="toggleFilters(resourceSummaryfilterContent)">
-        <i class="bi bi-funnel me-2"></i>Filters
+        <i class="bi bi-funnel me-2"></i>{{'Filters' | translate}}
         <span *ngIf="isFilterAppliedDetailedSummary()" class="filter-indicator"></span>
       </button>
     </div>
@@ -78,7 +78,7 @@
       <button type="button" class="clear-all-btn" (click)="clearTimesheetFilters()">{{ "Clear All" | translate }}</button>
       }
       <button type="button" class="custom-btn btn-secondary position-relative" (click)="toggleFilters(summaryFilterContent)">
-        <i class="bi bi-funnel me-2"></i>Filters
+        <i class="bi bi-funnel me-2"></i>{{'Filters' | translate}}
         <span *ngIf="isFilterAppliedForResourceSummary()" class="filter-indicator"></span>
       </button>
     </div>
@@ -120,16 +120,16 @@
         <div class="row">
           <!-- Document Type -->
           <div class="col-md-6 mb-3">
-            <label for="documentType" class="form-label custom-label mb-2">Document Type
+            <label for="documentType" class="form-label custom-label mb-2">{{ 'Document Type' | translate }}
               <span class="text-danger">*</span></label>
             <div class="custom-p-select-content">
               <p-select [options]="documentTypes" filterBy="value" [filter]="true" [resetFilterOnHide]="true"
                 optionLabel="value" optionValue="value" formControlName="documentType"
-                placeholder="Please select document type" class="form-select custom-select"></p-select>
+                [placeholder]="'Please select document type' | translate" class="form-select custom-select"></p-select>
             </div>
             <div class="error-msg"
               *ngIf="addDocumentForm.get('documentType')?.touched && addDocumentForm.get('documentType')?.invalid">
-              Document Type is required
+              {{ 'Document Type is required' | translate }}
             </div>
           </div>
 
@@ -147,21 +147,21 @@
 
           <!-- Document Attachment -->
           <div class="col-md-6 mb-3">
-            <label for="documentAttachment" class="form-label custom-label mb-2">Attachment
+            <label for="documentAttachment" class="form-label custom-label mb-2">{{ 'Attachment' | translate }}
               <span class="text-danger">*</span></label>
             <input type="file" accept=".png, .jpg, .jpeg, .pdf, .doc, .docx, .xls, .xlsx"
               (change)="onChangeClientAttachment($event)" id="documentAttachment" formControlName="documentUrl"
               class="form-control custom-input px-0" />
             <div class="error-msg" *ngIf="fileErrorMessage">{{ fileErrorMessage }}</div>
             <div class="error-msg" *ngIf="addDocumentForm.get('documentUrl')?.touched &&
-                        addDocumentForm.get('documentUrl')?.invalid">Document Attachment is required</div>
+                        addDocumentForm.get('documentUrl')?.invalid">{{ 'Document Attachment is required' | translate }}</div>
           </div>
 
           <!-- Signed Copy -->
           <div class="col-md-12 mb-3">
             <div class="form-check form-switch">
               <input class="form-check-input" type="checkbox" role="switch" formControlName="signedCopy">
-              <label class="form-check-label custom-toggle-label">Signed Copy</label>
+              <label class="form-check-label custom-toggle-label">{{ 'Signed Copy' | translate }}</label>
             </div>
           </div>
         </div>
@@ -169,8 +169,8 @@
         <!-- Form Buttons -->
         <div class="custom-modal-footer">
           <button type="button" class="custom-btn btn-secondary"
-            (click)="closepopup(confirmationpopupfornodue)">Cancel</button>
-          <button type="submit" class="custom-btn btn-primary" [disabled]="addDocumentForm.invalid">Add</button>
+            (click)="closepopup(confirmationpopupfornodue)">{{ 'Cancel' | translate }}</button>
+          <button type="submit" class="custom-btn btn-primary" [disabled]="addDocumentForm.invalid">{{ 'Add' | translate }}</button>
         </div>
       </form>
     </div>
@@ -185,8 +185,8 @@
       <p class="confirmation-text">{{'Are you sure you want to cancel?' | translate}}</p>
     </div>
     <div class="custom-modal-footer">
-      <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">{{'No'}}</button>
-      <button type="button" class="custom-btn btn-primary" (click)="close();model.dismiss()">{{'Yes'}}</button>
+      <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">{{'No' | translate}}</button>
+      <button type="button" class="custom-btn btn-primary" (click)="close();model.dismiss()">{{'Yes' | translate}}</button>
     </div>
   </div>
 </ng-template>
@@ -201,40 +201,40 @@
 
     <div class="offcanvas-filter-content">
       <div class="mb-3">
-        <label class="form-label custom-label text-nowrap filter-labels mb-3">Select Role</label>
+        <label class="form-label custom-label text-nowrap filter-labels mb-3">{{'Select Role' | translate}}</label>
         <div class="custom-p-multiSelect-content">
           <p-multiSelect [options]="resourceRoleOptions" optionLabel="label" optionValue="value" resetFilterOnHide="true"
-            placeholder="Please select role" (onChange)="onResourceRoleChange()" [(ngModel)]="selectedResourceRoles"
+            [placeholder]="'Please select role' | translate" (onChange)="onResourceRoleChange()" [(ngModel)]="selectedResourceRoles"
             class="form-select custom-select">
           </p-multiSelect>
         </div>
       </div>
 
       <div class="mb-3">
-        <label class="form-label custom-label text-nowrap filter-labels mb-3">Select Phase</label>
+        <label class="form-label custom-label text-nowrap filter-labels mb-3">{{'Select Phase' | translate}}</label>
         <div class="custom-p-multiSelect-content">
           <p-multiSelect [options]="resourcePhaseOptions" optionLabel="label" optionValue="value" resetFilterOnHide="true"
-            placeholder="Please select phase" (onChange)="onResourcePhaseChange()" [(ngModel)]="selectedResourcePhases"
+            [placeholder]="'Please select phase' | translate" (onChange)="onResourcePhaseChange()" [(ngModel)]="selectedResourcePhases"
             class="form-select custom-select">
           </p-multiSelect>
         </div>
       </div>
 
       <div class="mb-3">
-        <label class="form-label custom-label text-nowrap filter-labels mb-3">Select Authority</label>
+        <label class="form-label custom-label text-nowrap filter-labels mb-3">{{'Select Authority' | translate}}</label>
         <div class="custom-p-multiSelect-content">
           <p-multiSelect [options]="resourceAuthorityOptions" optionLabel="label" optionValue="value"
-            resetFilterOnHide="true" placeholder="Please select authority" (onChange)="onResourceAuthorityChange()"
+            resetFilterOnHide="true" [placeholder]="'Please select authority' | translate" (onChange)="onResourceAuthorityChange()"
             [(ngModel)]="selectedResourceAuthorities" class="form-select custom-select">
           </p-multiSelect>
         </div>
       </div>
 
       <div class="mb-3">
-        <label class="form-label custom-label text-nowrap filter-labels mb-3">Select Project</label>
+        <label class="form-label custom-label text-nowrap filter-labels mb-3">{{'Select Project' | translate}}</label>
         <div class="custom-p-multiSelect-content">
           <p-multiSelect [options]="projectOptions" optionLabel="label" optionValue="value" resetFilterOnHide="true"
-            placeholder="Please select project" (onChange)="onProjectSelectionChange()" [(ngModel)]="selectedProjects"
+            [placeholder]="'Please select project' | translate" (onChange)="onProjectSelectionChange()" [(ngModel)]="selectedProjects"
             class="form-select custom-select">
           </p-multiSelect>
         </div>
@@ -261,19 +261,19 @@
     <div class="offcanvas-filter-content">
       <!-- Department Name Field -->
       <div class="mb-3">
-        <label class="form-label custom-label text-nowrap filter-labels mb-3">Select Department</label>
+        <label class="form-label custom-label text-nowrap filter-labels mb-3">{{'Select Department' | translate}}</label>
         <div class="custom-p-multiSelect-content">
           <p-multiSelect [options]="departmentlist" optionLabel="departmentName" optionValue="sno" [filter]="true"
-            resetFilterOnHide="true" defaultLabel="Please select department name" class="form-select custom-select"
+            resetFilterOnHide="true" [defaultLabel]="'Please select department name' | translate" class="form-select custom-select"
             (onChange)="onDepartmentChangelist($event)" [(ngModel)]="selectedDepartments" />
         </div>
       </div>
 
       <div class="mb-3">
-        <label class="form-label custom-label text-nowrap filter-labels mb-3">Select Project Type</label>
+        <label class="form-label custom-label text-nowrap filter-labels mb-3">{{'Select Project Type' | translate}}</label>
         <div class="custom-p-multiSelect-content">
           <p-multiSelect [options]="projectTypes" optionLabel="value" optionValue="value" resetFilterOnHide="true"
-            defaultLabel="Please select project type" [filter]="true" class="form-select custom-select"
+            [defaultLabel]="'Please select project type' | translate" [filter]="true" class="form-select custom-select"
             (onChange)="onProjectTypeChange($event)" [(ngModel)]="selectedProjectTypes" />
         </div>
       </div>
@@ -299,47 +299,47 @@
     <div class="offcanvas-filter-content">
       <form [formGroup]="datepickerForm" (ngSubmit)="onSubmit()">
         <div class="mb-3">
-          <label class="form-label custom-label text-nowrap filter-labels mb-3">Select date range</label>
+          <label class="form-label custom-label text-nowrap filter-labels mb-3">{{'Select date range' | translate}}</label>
           <div class="custom-date-range-picker">
-            <p-datepicker formControlName="dateRange" [placeholder]="'Please select date range'" selectionMode="range"
+            <p-datepicker formControlName="dateRange" [placeholder]="'Please select date range' | translate" selectionMode="range"
               [showIcon]="true" [readonlyInput]="true" />
           </div>
         </div>
 
         <div class="mb-3">
-          <label class="form-label custom-label text-nowrap filter-labels mb-3">Select resource</label>
+          <label class="form-label custom-label text-nowrap filter-labels mb-3">{{'Select resource' | translate}}</label>
           <div class="custom-p-select-content">
             <p-select [options]="resourcesData" [filter]="true" formControlName="resourceId" [resetFilterOnHide]="true"
-              filterBy="name" optionLabel="name" optionValue="id" placeholder="Please select resource name"
+              filterBy="name" optionLabel="name" optionValue="id" [placeholder]="'Please select resource name' | translate"
               class="form-select custom-select" />
           </div>
         </div>
 
         <div class="mb-3">
-          <label class="form-label custom-label text-nowrap filter-labels mb-3">Select Department</label>
+          <label class="form-label custom-label text-nowrap filter-labels mb-3">{{'Select Department' | translate}}</label>
           <div class="custom-p-multiSelect-content">
             <p-multiSelect [options]="departmentlist" optionLabel="departmentName" optionValue="sno"
               resetFilterOnHide="true" [(ngModel)]="selectedDepartmentIds" [ngModelOptions]="{standalone: true}"
-              placeholder="Please select department" [filter]="true" [showToggleAll]="true"
+              [placeholder]="'Please select department' | translate" [filter]="true" [showToggleAll]="true"
               selectedItemsLabel="{0} depts" class="form-select custom-select" />
           </div>
         </div>
 
         <div class="mb-3">
-          <label class="form-label custom-label text-nowrap filter-labels mb-3">Select role</label>
+          <label class="form-label custom-label text-nowrap filter-labels mb-3">{{'Select role' | translate}}</label>
           <div class="custom-p-multiSelect-content">
             <p-multiSelect [options]="rolesList" optionLabel="roleName" optionValue="id" [(ngModel)]="selectedRoleIds"
-              [ngModelOptions]="{standalone: true}" placeholder="Please select role" [filter]="true"
+              [ngModelOptions]="{standalone: true}" [placeholder]="'Please select role' | translate" [filter]="true"
               [showToggleAll]="true" resetFilterOnHide="true" selectedItemsLabel="{0} roles"
               class="form-select custom-select" />
           </div>
         </div>
 
         <div class="mb-3">
-          <label class="form-label custom-label text-nowrap filter-labels mb-3">Select phase</label>
+          <label class="form-label custom-label text-nowrap filter-labels mb-3">{{'Select phase' | translate}}</label>
           <div class="custom-p-multiSelect-content">
             <p-multiSelect [options]="phasesList" optionLabel="label" optionValue="phaseId"
-              [(ngModel)]="selectedPhaseIds" [ngModelOptions]="{standalone: true}" placeholder="Please select phase"
+              [(ngModel)]="selectedPhaseIds" [ngModelOptions]="{standalone: true}" [placeholder]="'Please select phase' | translate"
               [filter]="true" resetFilterOnHide="true" [showToggleAll]="true" selectedItemsLabel="{0} phases"
               class="form-select custom-select" />
           </div>
@@ -349,7 +349,7 @@
           <button type="button" class="custom-btn btn-secondary w-100" (click)="closeCanvas();resetForm()">
             {{'Close' | translate}}</button>
           <button type="submit" class="custom-btn btn-primary w-100"
-            [disabled]="!isFormCompletelyValid()">Apply</button>
+            [disabled]="!isFormCompletelyValid()">{{'Apply' | translate}}</button>
         </div>
       </form>
     </div>
@@ -367,19 +367,19 @@
     <div class="offcanvas-filter-content">
       <form [formGroup]="datepickerFormDataforsummary" (ngSubmit)="onSubmitforsummary()">
         <div class="mb-3">
-          <label class="form-label custom-label text-nowrap filter-labels mb-3">Select date range</label>
+          <label class="form-label custom-label text-nowrap filter-labels mb-3">{{'Select date range' | translate}}</label>
           <div class="custom-date-range-picker">
-            <p-datepicker formControlName="dateRange" [placeholder]="'Please select date range'" selectionMode="range"
+            <p-datepicker formControlName="dateRange" [placeholder]="'Please select date range' | translate" selectionMode="range"
               [showIcon]="true" [readonlyInput]="true" />
           </div>
         </div>
 
         <div class="mb-3">
-          <label class="form-label custom-label text-nowrap filter-labels mb-3">Select Department</label>
+          <label class="form-label custom-label text-nowrap filter-labels mb-3">{{'Select Department' | translate}}</label>
           <div class="custom-p-multiSelect-content">
             <p-multiSelect [options]="departmentlist" optionLabel="departmentName" optionValue="sno"
               [(ngModel)]="selectedDepartmentIds" [ngModelOptions]="{standalone: true}"
-              placeholder="Please select department" [filter]="true" [showToggleAll]="true"
+              [placeholder]="'Please select department' | translate" [filter]="true" [showToggleAll]="true"
               selectedItemsLabel="{0} depts" resetFilterOnHide="true" class="form-select custom-select" />
           </div>
         </div>
@@ -393,20 +393,20 @@
             </div> -->
 
         <div class="mb-3">
-          <label class="form-label custom-label text-nowrap filter-labels mb-3">Select Phase</label>
+          <label class="form-label custom-label text-nowrap filter-labels mb-3">{{'Select Phase' | translate}}</label>
           <div class="custom-p-multiSelect-content">
             <p-multiSelect [options]="phasesList" optionLabel="label" optionValue="phaseId" resetFilterOnHide="true"
-              [(ngModel)]="selectedPhaseIds" [ngModelOptions]="{standalone: true}" placeholder="Please select phase"
+              [(ngModel)]="selectedPhaseIds" [ngModelOptions]="{standalone: true}" [placeholder]="'Please select phase' | translate"
               [filter]="true" [showToggleAll]="true" selectedItemsLabel="{0} phases"
               class="form-select custom-select" />
           </div>
         </div>
 
         <div class="mb-3">
-          <label class="form-label custom-label text-nowrap filter-labels mb-3">Select Project</label>
+          <label class="form-label custom-label text-nowrap filter-labels mb-3">{{'Select Project' | translate}}</label>
           <div class="custom-p-multiSelect-content">
             <p-multiSelect [options]="projectOptions" optionLabel="label" optionValue="value" resetFilterOnHide="true"
-              placeholder="Please select project" [(ngModel)]="selectedProjectIds" [ngModelOptions]="{standalone: true}"
+              [placeholder]="'Please select project' | translate" [(ngModel)]="selectedProjectIds" [ngModelOptions]="{standalone: true}"
               class="form-select custom-select" />
           </div>
         </div>
@@ -414,7 +414,7 @@
         <div class="d-flex offcanvas-footer-content gap-3">
           <button type="button" class="custom-btn btn-secondary w-100"
             (click)="closeCanvas();clearTimesheetFilters()">{{'Close' | translate}}</button>
-          <button type="submit" class="custom-btn btn-primary w-100">Apply</button>
+          <button type="submit" class="custom-btn btn-primary w-100">{{'Apply' | translate}}</button>
         </div>
       </form>
     </div>

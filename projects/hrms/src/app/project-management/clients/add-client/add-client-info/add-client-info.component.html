@@ -4,9 +4,9 @@
             <div class="row">
                 <!-- Client Name -->
                 <div class="col-md-6 col-lg-4 mb-3">
-                    <label class="form-label custom-label mb-2">Client Name<span class="text-danger">*</span></label>
+                    <label class="form-label custom-label mb-2">{{"Client Name" | translate}}<span class="text-danger">*</span></label>
                     <input type="text" class="form-control custom-input" formControlName="clientName" [minlength]="2"
-                        placeholder="Please enter the client's name"
+                        [placeholder]="'Please enter the client\'s name' | translate"
                         (input)="formValidation.validateInput(clientForm.get('clientName'))" maxlength="51">
                     <div class="error-msg">
                         <div *ngIf="clientForm.get('clientName')?.touched && clientForm.get('clientName')?.invalid">
@@ -21,9 +21,9 @@
 
                 <!-- Tax Id -->
                 <div class="col-md-6 col-lg-4 mb-3">
-                    <label class="form-label custom-label mb-2">Tax ID</label>
+                    <label class="form-label custom-label mb-2">{{"Tax ID" | translate}}</label>
                     <input type="text" class="form-control custom-input" formControlName="taxId" [minlength]="3"
-                        placeholder="Please enter tax id" (keydown)="formValidation.restrictInitialSpace($event)" maxlength="51">
+                        [placeholder]="'Please enter tax id' | translate" (keydown)="formValidation.restrictInitialSpace($event)" maxlength="51">
                     <div class="error-msg">
                         <!-- <div *ngIf="clientForm.get('taxId')?.touched && clientForm.get('taxId')?.invalid">
                             <div *ngIf="clientForm.get('taxId')?.errors?.['required']">{{ 'Tax ID is required' | translate }}</div>
@@ -36,24 +36,24 @@
 
                 <!-- Website -->
                 <div class="col-md-6 col-lg-4 mb-3">
-                    <label class="form-label custom-label mb-2">Website<span class="text-danger">*</span></label>
+                    <label class="form-label custom-label mb-2">{{"Website" | translate}}<span class="text-danger">*</span></label>
                     <input type="text" class="form-control custom-input" formControlName="website" [maxlength]="50" [minlength]="5"
-                        placeholder="Please enter website URL">
+                        [placeholder]="'Please enter website URL' | translate">
                     <div class="error-msg">
                         <div *ngIf="clientForm.get('website')?.touched && clientForm.get('website')?.hasError('required')">
                             {{ 'Website URL is required ' | translate }}</div>
                         <div *ngIf="clientForm.get('website')?.touched && !clientForm.get('website')?.hasError('required') 
-                        && clientForm.get('website')?.hasError('pattern')">Please enter a valid website URL</div>
+                        && clientForm.get('website')?.hasError('pattern')">{{"Please enter a valid website URL" | translate}}</div>
                     </div>
                 </div>
 
                 <!-- Industry Type -->
                 <div class="col-md-6 col-lg-4 mb-3">
-                    <label class="form-label custom-label mb-2">Industry Type<span class="text-danger">*</span></label>
+                    <label class="form-label custom-label mb-2">{{"Industry Type" | translate}}<span class="text-danger">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="industryTypes" filterBy="value" [filter]="true" [resetFilterOnHide]="true"
                             optionLabel="value" optionValue="value" formControlName="industryType"
-                            placeholder="Please select industry type" class="form-select custom-select"></p-select>
+                            [placeholder]="'Please select industry type' | translate" class="form-select custom-select"></p-select>
                     </div>
                     <div class="error-msg" *ngIf="clientForm.get('industryType')?.touched && clientForm.get('industryType')?.invalid">
                         {{ 'Industry Type is required' | translate }}</div>
@@ -61,7 +61,7 @@
             
                 <!-- Logo -->
                 <div class="col-md-6 col-lg-4 mb-3">
-                    <label class="form-label custom-label mb-2">Logo<span class="text-danger">*</span></label>
+                    <label class="form-label custom-label mb-2">{{"Logo" | translate}}<span class="text-danger">*</span></label>
                     <input type="file" formControlName="logo" accept=".png, .jpg, .jpeg" (change)="onChangeClientAttachment($event)"
                         class="form-control custom-input px-0">
                     <div class="error-msg">
@@ -79,9 +79,9 @@
                 
                 <!-- Client Address -->
                 <div class="col-md-6 col-lg-4 mb-3">
-                    <label class="form-label custom-label mb-2">Client Company Address<span class="text-danger">*</span></label>
+                    <label class="form-label custom-label mb-2">{{"Client Company Address" | translate}}<span class="text-danger">*</span></label>
                     <textarea type="text" class="form-control custom-input" rows="3" formControlName="clientAddress" [minlength]="5"
-                        maxlength="250" placeholder="Please enter client address"></textarea>
+                        maxlength="250" [placeholder]="'Please enter client address' | translate"></textarea>
                     <div class="textarea-count-text">{{ clientForm.get("clientAddress")?.value?.length || 0 }}/250</div>
                     <div class="error-msg" *ngIf="clientForm.get('clientAddress')?.touched && clientForm.get('clientAddress')?.invalid">
                         <div *ngIf="clientForm.get('clientAddress')?.errors?.['required']"> {{ 'Client Address is required' | translate }}</div>
@@ -99,17 +99,17 @@
             <div class="d-flex gap-4">
                 <div class="form-check form-switch">
                     <input id="client-overtime-eligibility" class="form-check-input" type="checkbox" role="switch" formControlName="overtimeEligibility">
-                    <label for="client-overtime-eligibility" class="form-check-label custom-toggle-label">Overtime Eligibility</label>
+                    <label for="client-overtime-eligibility" class="form-check-label custom-toggle-label">{{"Overtime Eligibility" | translate}}</label>
                 </div>
             
                 <div class="form-check form-switch">
                     <input id="client-billable" class="form-check-input" type="checkbox" role="switch" formControlName="billable">
-                    <label for="client-billable" class="form-check-label custom-toggle-label">Billable</label>
+                    <label for="client-billable" class="form-check-label custom-toggle-label">{{"Billable" | translate}}</label>
                 </div>
             
                 <div class="form-check form-switch">
                     <input id="client-allow-weekend-work" class="form-check-input" type="checkbox" role="switch" formControlName="allowWeekendWork">
-                    <label for="client-allow-weekend-work" class="form-check-label custom-toggle-label">Allow Weekend Work</label>
+                    <label for="client-allow-weekend-work" class="form-check-label custom-toggle-label">{{"Allow Weekend Work" | translate}}</label>
                 </div>
             </div>
         </div>
@@ -117,8 +117,8 @@
         <!-- Submit -->
         <div class="footer-content">
             <div class="d-flex justify-content-end align-items-center gap-3">
-                <button type="button" class="custom-btn btn-secondary" (click)="closepopup(confirmationpopupfornodue)">Cancel</button>
-                <button type="submit" class="custom-btn btn-primary" [disabled]="clientForm.invalid">Next</button>
+                <button type="button" class="custom-btn btn-secondary" (click)="closepopup(confirmationpopupfornodue)">{{"Cancel" | translate}}</button>
+                <button type="submit" class="custom-btn btn-primary" [disabled]="clientForm.invalid">{{"Next" | translate}}</button>
             </div>
         </div>
     </form>
@@ -131,8 +131,8 @@
             <p class="confirmation-text">{{'Are you sure you want to cancel?' | translate}}</p>
         </div>
         <div class="custom-modal-footer">
-            <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">{{'No'}}</button>
-            <button type="button" class="custom-btn btn-primary" (click)="close();model.dismiss()">{{'Yes'}}</button>
+            <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">{{"No" | translate}}</button>
+            <button type="button" class="custom-btn btn-primary" (click)="close();model.dismiss()">{{"Yes" | translate}}</button>
         </div>
     </div>
 </ng-template>

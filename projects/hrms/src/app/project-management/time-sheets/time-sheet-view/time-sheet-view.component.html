@@ -57,11 +57,11 @@
                 </div>
             </div>
             } -->
-            <button type="button" class="custom-btn btn-primary px-4" (click)="navigation()">My Summary</button>
+            <button type="button" class="custom-btn btn-primary px-4" (click)="navigation()">{{"My Summary" | translate}}</button>
 
             <div *ngIf="employeeSelected">
                 <button type="button" class="custom-btn btn-primary px-4" (click)="mytimesheet()">
-                    My Timesheet
+                    {{"My Timesheet" | translate}}
                 </button>
             </div>
         </div>
@@ -78,7 +78,7 @@
                 <table class="w-100">
                     <thead>
                         <tr>
-                            <th>Project</th>
+                            <th>{{"Project" | translate}}</th>
                             <th *ngFor="let d of weekDates">{{ d | date:"EEE, MMM dd" }}</th>
                             <th></th>
                         </tr>
@@ -92,7 +92,7 @@
                                         [class.disabled]="employeeSelected || hasAnyDuration(project)"
                                         (click)="onDropdownClick($event)">
                                         <ng-container *ngIf="project.value.isNoClientProject; else hasProject">
-                                            <u>No Client - No Project</u>
+                                            <u>{{"No Client - No Project" | translate}}</u>
                                         </ng-container>
                                         <ng-template #hasProject>
                                             <ng-container
@@ -117,13 +117,13 @@
                                                     </div>
                                                 </div>
                                             </ng-container>
-                                            <ng-template #selectProject><u>Select Project or Client</u></ng-template>
+                                            <ng-template #selectProject><u>{{"Select Project or Client" | translate}}</u></ng-template>
                                         </ng-template>
                                     </div>
                                     <ul class="dropdown-menu custom-dropdown-menu">
                                         <li>
                                             <input type="search" class="form-control custom-search-input mb-2"
-                                                placeholder="Search Project or Client" formControlName="searchTerm">
+                                                [placeholder]="'Search Project or Client' | translate" formControlName="searchTerm">
                                         </li>
                                         <div class="custom-accordian-data-content">
                                             <p-accordion>
@@ -134,7 +134,7 @@
                                                             {{ client.clientName | titlecase }}
                                                             <small class="text-muted ms-2">
                                                                 ({{ showProjectsLength(client.projects,selectedPhaseIds)
-                                                                }}Projects)
+                                                                }}{{"Projects" | translate}})
                                                             </small>
                                                         </p-accordion-header>
                                                         <p-accordion-content>
@@ -380,7 +380,7 @@
         </tbody>
         <tfoot>
             <tr>
-                <td>Total Hours :<span class="total-duration ms-1">{{ totalDuration}} Hrs</span></td>
+                <td>{{"Total Hours" | translate}} :<span class="total-duration ms-1">{{ totalDuration}} {{"Hrs" | translate}}</span></td>
                 <td>{{ getTotalPerDay('mon') }}</td>
                 <td>{{ getTotalPerDay('tue') }}</td>
                 <td>{{ getTotalPerDay('wed') }}</td>
@@ -395,7 +395,7 @@
         <div class="d-flex justify-content-between flex-wrap align-items-center gap-2 p-3">
             <div class="d-flex align-items-center flex-wrap gap-3">
                 <div [style.visibility]="!employeeSelected ? 'visible' : 'hidden'">
-                    <button type="button" class="custom-btn btn-primary px-4" (click)="addProject()">+ Add Row</button>
+                    <button type="button" class="custom-btn btn-primary px-4" (click)="addProject()">{{"+ Add Row" | translate}}</button>
                 </div>
                 <div *ngIf="!employeeSelected">
                     <button type="button" class="custom-btn btn-primary px-4"
@@ -413,27 +413,27 @@
             <div class="d-flex align-items-center flex-wrap gap-3">
                 <div class="d-flex align-items-center gap-1">
                     <div class="circular-dot circle-holiday"></div>
-                    <div class="status-text">Holidays</div>
+                    <div class="status-text">{{"Holidays" | translate}}</div>
                 </div>
                 <div class="d-flex align-items-center gap-1">
                     <div class="circular-dot circle-leave"></div>
-                    <div class="status-text">Leaves</div>
+                    <div class="status-text">{{"Leaves" | translate}}</div>
                 </div>
                 <div class="d-flex align-items-center gap-1">
                     <div class="circular-dot circle-blue"></div>
-                    <div class="status-text">Draft</div>
+                    <div class="status-text">{{"Draft" | translate}}</div>
                 </div>
                 <div class="d-flex align-items-center gap-1">
                     <div class="circular-dot circle-green"></div>
-                    <div class="status-text">Approved</div>
+                    <div class="status-text">{{"Approved" | translate}}</div>
                 </div>
                 <div class="d-flex align-items-center gap-1">
                     <div class="circular-dot circle-red"></div>
-                    <div class="status-text">Rejected</div>
+                    <div class="status-text">{{"Rejected" | translate}}</div>
                 </div>
                 <div class="d-flex align-items-center gap-1">
                     <div class="circular-dot circle-yellow"></div>
-                    <div class="status-text">Waiting for Approval</div>
+                    <div class="status-text">{{"Waiting for Approval" | translate}}</div>
                 </div>
                 <!-- <div class="d-flex align-items-center gap-1">
                             <div class="circular-dot circle-orange"></div>
@@ -461,7 +461,7 @@
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="custom-poup-header-content popup-header-border">
             <div class="pt-2">
-                <p class="popup-heading mb-0">{{'Time Entry'}}</p>
+                <p class="popup-heading mb-0">{{"Time Entry" | translate}}</p>
             </div>
             <div>
                 <a (click)="openModalforconformation(confirmationpopup)" (mousedown)="$event.preventDefault()">
@@ -474,22 +474,22 @@
             <form [formGroup]="dayForm" *ngIf="dayForm" (ngSubmit)="saveDayEntry()">
                 <div class="mb-4">
                     <p class="day mb-2">{{dayForm.get('entryDate')?.value | dateformat}} </p>
-                    <p class="project-name">{{dayForm.get('clientName')?.value || 'No Client'}}@if(dayForm.get('projectName')?.value) { -
+                    <p class="project-name">{{dayForm.get('clientName')?.value || ('No Client' | translate)}}@if(dayForm.get('projectName')?.value) { -
                         {{dayForm.get('projectName')?.value}}
-                        } @else { - No Project
+                        } @else { - {{"No Project" | translate}}
                         }@if(dayForm.get('phaseName')?.value) { -
                         {{dayForm.get('phaseName')?.value}} }</p>
                 </div>
                 <div class="row">
                     <div class="col-md-12 mb-3">
-                        <label class="form-label custom-label mb-2">Description<span
+                        <label class="form-label custom-label mb-2">{{"Description" | translate}}<span
                                 class="text-danger">*</span></label>
                         <textarea formControlName="description" [maxlength]="500"
                             (keydown)="formValidation.restrictInitialSpace($event)" class="form-control custom-input"
-                            placeholder="Please enter description" rows="5"></textarea>
+                            [placeholder]="'Please enter description' | translate" rows="5"></textarea>
                         <div class="error-msg"
                             *ngIf="dayForm.get('description')?.touched && dayForm.get('description')?.hasError('required')">
-                            Description is required
+                            {{"Description is required" | translate}}
                         </div>
 
 
@@ -497,18 +497,18 @@
 
                     </div>
                     <div class="col-md-6 mb-3">
-                        <label class="form-label custom-label mb-2">Start Time</label>
+                        <label class="form-label custom-label mb-2">{{"Start Time" | translate}}</label>
                         <input type="time" formControlName="startTime" class="form-control custom-input"
                             placeholder="HH:MM" (change)="onTimeChange()">
                     </div>
                     <div class="col-md-6 mb-3">
-                        <label class="form-label custom-label mb-2">End Time</label>
+                        <label class="form-label custom-label mb-2">{{"End Time" | translate}}</label>
                         <input type="time" formControlName="endTime" class="form-control custom-input"
                             placeholder="HH:MM" (change)="onTimeChange()">
                     </div>
                 </div>
                 <div class="col-md-12 mb-3">
-                    <label class="form-label custom-label mb-2">Duration<span class="text-danger">*</span></label>
+                    <label class="form-label custom-label mb-2">{{"Duration" | translate}}<span class="text-danger">*</span></label>
                     <div class="input-group custom-input-group">
                         <input type="text" formControlName="duration" class="form-control custom-input border-none"
                             placeholder="HH:MM" maxlength="4" (keypress)="allowNumbersOnly($event)"
@@ -520,7 +520,7 @@
 
                     <div class="error-msg"
                         *ngIf="dayForm.get('duration')?.touched && dayForm.get('duration')?.hasError('required')">
-                        Duration is required
+                        {{"Duration is required" | translate}}
                     </div>
                 </div>
 
@@ -528,7 +528,7 @@
                     <div class="form-check form-switch">
                         <input id="project-overtime-eligibility" class="form-check-input" type="checkbox"
                             formControlName="isBillable">
-                        <label for="project-overtime-eligibility" class="form-label custom-toggle-label">Billable
+                        <label for="project-overtime-eligibility" class="form-label custom-toggle-label">{{"Billable" | translate}}
                         </label>
                     </div>
                 </div>
@@ -537,9 +537,9 @@
                 && !employeeSelected">
                     <span type="button" class="text-danger"
                         *ngIf="dayForm.get('approvalStatus')?.value && dayForm.get('approvalStatus')?.value !== 'Not Entered'"
-                        (click)="opendeleteModal(deleteconformation,dayForm.get('entryId')?.value)"><u>Delete</u></span>
+                        (click)="opendeleteModal(deleteconformation,dayForm.get('entryId')?.value)"><u>{{"Delete" | translate}}</u></span>
                     <button type="button" class="custom-btn btn-secondary w-100"
-                        (click)="openModalforconformation(confirmationpopup)">Cancel</button>
+                        (click)="openModalforconformation(confirmationpopup)">{{"Cancel" | translate}}</button>
                     <button type="submit" class="custom-btn btn-primary w-100"
                         [disabled]="!isDayFormDirtyOrFilled(dayForm) || spinnerLoader">
                         @if (spinnerLoader) {
@@ -560,12 +560,12 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <img src="icons\delete-icon.png" alt="failure icon" class="confirmation-delete-icon">
-            <p class="confirmation-text mb-4">{{'Are you sure you want to delete?'}}</p>
+            <p class="confirmation-text mb-4">{{"Are you sure you want to delete?" | translate}}</p>
         </div>
         <div class="custom-modal-footer">
-            <button type="button" class="custom-btn btn-secondary" (click)="onDeleteModalNo()">{{'No'}}</button>
+            <button type="button" class="custom-btn btn-secondary" (click)="onDeleteModalNo()">{{"No" | translate}}</button>
             <button type="submit" class="custom-btn btn-primary"
-                (click)="deletesingleentry();modal.dismiss()">{{'Yes'}}</button>
+                (click)="deletesingleentry();modal.dismiss()">{{"Yes" | translate}}</button>
         </div>
     </div>
 </ng-template>
@@ -575,12 +575,12 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <img src="icons\delete-icon.png" alt="failure icon" class="confirmation-delete-icon">
-            <p class="confirmation-text mb-4">{{'Are you sure you want to delete this row?'}}</p>
+            <p class="confirmation-text mb-4">{{"Are you sure you want to delete this row?" | translate}}</p>
         </div>
         <div class="custom-modal-footer">
-            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'}}</button>
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{"No" | translate}}</button>
             <button type="submit" class="custom-btn btn-primary"
-                (click)="removeProject(rowdelete);modal.dismiss()">{{'Yes'}}</button>
+                (click)="removeProject(rowdelete);modal.dismiss()">{{"Yes" | translate}}</button>
         </div>
     </div>
 </ng-template>
@@ -593,8 +593,8 @@
             <p class="confirmation-text">{{'Are you sure you want to cancel?'}}</p>
         </div>
         <div class="custom-modal-footer">
-            <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">{{'No'}}</button>
-            <button type="submit" class="custom-btn btn-primary" (click)="cleardata()">{{"Yes"}}</button>
+            <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">{{"No" | translate}}</button>
+            <button type="submit" class="custom-btn btn-primary" (click)="cleardata()">{{"Yes" | translate}}</button>
         </div>
     </div>
 </ng-template>
@@ -604,11 +604,11 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <app-confirmation-icon />
-            <p class="confirmation-text">{{'Are you sure you want to submit?'}}</p>
+            <p class="confirmation-text">{{"Are you sure you want to submit?" | translate}}</p>
         </div>
         <div class="custom-modal-footer">
-            <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">{{'No'}}</button>
-            <button type="submit" class="custom-btn btn-primary" (click)="submitTimesheet()">{{"Yes"}}</button>
+            <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">{{"No" | translate}}</button>
+            <button type="submit" class="custom-btn btn-primary" (click)="submitTimesheet()">{{"Yes" | translate}}</button>
         </div>
     </div>
 </ng-template>

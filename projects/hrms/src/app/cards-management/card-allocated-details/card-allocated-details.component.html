@@ -3,11 +3,12 @@
     <div class="input-group custom-search mb-3">
         <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
         <input type="search" #search="ngModel" [(ngModel)]="searchValue" (ngModelChange)="this.getCardDetails()"
-            class="form-control custom-search-input" placeholder="Search" aria-label="Username"
-            aria-describedby="basic-addon1">
+            class="form-control custom-search-input" placeholder="Search by card type / card holder name / bank name"
+            aria-label="Username" aria-describedby="basic-addon1">
     </div>
-@if(rbac.allowedToAccess('Cards Allocated.view')){
-<div class="custom-table-content">
+
+    @if(rbac.allowedToAccess('Cards Allocated.view')){
+    <div class="custom-table-content">
         @if (!loader) {
         <table class="w-100">
             <thead>
@@ -23,9 +24,9 @@
                 <th>{{'Allocated On'|translate}}</th>
                 <th>{{'Allocated By'|translate}}</th>
                 <!-- <th>{{'Allocated History'|translate}}</th> -->
-                <th>{{'Status'|translate}}</th>
-                <th class="text-center" *ngIf="rbac.allowedToAccess('Cards Allocated.create') || rbac.allowedToAccess('Cards Allocated.update')">
-                    {{'Actions'|translate}}</th>
+                <!-- <th>{{'Status'|translate}}</th> -->
+                <th class="text-center" *ngIf="rbac.allowedToAccess('Cards Allocated.create') || 
+                rbac.allowedToAccess('Cards Allocated.update')">{{'Actions'|translate}}</th>
             </thead>
             <tbody>
                 @if( cardDetails.length > 0){
@@ -44,42 +45,44 @@
                     <!-- <td>{{item?.expiryMonth?item?.expiryMonth:'-'}}</td> -->
                     <!-- expity year -->
                     <!-- <td>{{item?.expiryYear?item?.expiryYear:'-'}}</td> -->
-                     <td>{{ `${item?.expiryMonth?item?.expiryMonth:'-'} / ${item?.expiryYear?item?.expiryYear:'-'} `}}</td>
+                    <td>{{ `${item?.expiryMonth?item?.expiryMonth:'-'} / ${item?.expiryYear?item?.expiryYear:'-'} `}}
+                    </td>
                     <!-- allocated to -->
                     <td>{{item?.allocations?.employee?.name?item?.allocations?.employee?.name:'-'}}</td>
                     <!-- allocated on -->
                     <td>{{item?.allocations?.allocatedDate?(item?.allocations?.allocatedDate| dateformat ):'-'}}</td>
                     <!-- allocated by -->
                     <td>{{item?.allocations?.assignedBy?.name?item.allocations?.assignedBy?.name:'-'}}</td>
-                     <!-- allocated history -->
+                    <!-- allocated history -->
                     <!-- <td>
-                         @if (item.allocations) {
+                    @if (item.allocations) {
                     <div id="tooltip" (click)="approverHistoryFunction(item,historyPopup)" class="cursor">
                         <app-info-icon />
                     </div>
-                    
                     }
                     @else{-}
                     </td> -->
                     <!-- status -->
-                    <td>{{item?.status ? item?.status:'-'}}</td>
+                    <!-- <td>{{item?.status ? item?.status:'-'}}</td> -->
                     <!-- allocation status -->
                     <!-- <td>{{item?.allocationStatus ? item?.allocationStatus:'-'}}</td> -->
                     <!-- actions -->
-                    <td class="text-center" *ngIf="rbac.allowedToAccess('Cards Allocated.create') || rbac.allowedToAccess('Cards Allocated.update')">
+                    <td class="text-center"
+                        *ngIf="rbac.allowedToAccess('Cards Allocated.create') || rbac.allowedToAccess('Cards Allocated.update')">
                         @if(rbac.allowedToAccess('Cards Allocated.update')){
                         <div class="dropdown">
                             <a data-bs-toggle="dropdown" aria-expanded="false">
                                 <i class="bi bi-three-dots-vertical"></i>
                             </a>
                             <ul class="dropdown-menu custom-dropdown-menu">
-                                 <li *ngIf="rbac.allowedToAccess('Cards Allocated.view')">
+                                <li *ngIf="rbac.allowedToAccess('Cards Allocated.view')">
                                     <a class="dropdown-item" (click)="navigateToAsset(item.cardId)">View History</a>
                                 </li>
-                                <li *ngIf="rbac.allowedToAccess('Cards Allocated.update') && item?.status?.toLowerCase()==='allocated'">
+                                <li
+                                    *ngIf="rbac.allowedToAccess('Cards Allocated.update') && item?.status?.toLowerCase()==='allocated'">
                                     <a class="dropdown-item" (click)="updatePopup(release,item)">Release</a>
                                 </li>
-                               
+
                             </ul>
                         </div>
                         }
@@ -97,9 +100,8 @@
         <app-data-loader-content />
         }
     </div>
-}
-    
-    
+    }
+
     <div class="pagination-content" *ngIf="cardDetails.length > 0">
         <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
             <div class="d-flex align-items-center gap-3 p-2">
@@ -108,7 +110,7 @@
                     <option *ngFor="let option of options" [value]="option.value">{{ option.label }}</option>
                 </select>
                 <span class="pagination-label text-nowrap">
-                    Showing {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize : 
+                    Showing {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize :
                     (+first + + rows) }} of {{ collectionSize }}
                 </span>
             </div>
@@ -150,26 +152,24 @@
                             placeholder="Please provide comments" rows="3" maxlength="250" formControlName="addictionalcomments"
                             (keypress)="formValidations.restrictInitialSpace($event)"></textarea>
                         <div class="mt-1 textarea-count-text">
-                            <span class="color">{{ releaseDetailsForm.get('addictionalcomments')?.value?.length || 0
-                                }}/250</span>
+                            <span class="color">{{ releaseDetailsForm.get('addictionalcomments')?.value?.length || 0 }}/250</span>
                         </div>
                         <div *ngIf="releaseDetailsForm.get('addictionalcomments')?.touched && releaseDetailsForm.get('addictionalcomments')?.invalid"
                             class="error-msg">
-                            <div *ngIf="releaseDetailsForm.get('addictionalcomments')?.errors?.['required']">Additional Comments
-                                are required</div>
+                            <div *ngIf="releaseDetailsForm.get('addictionalcomments')?.errors?.['required']">Additional Comments are required</div>
                         </div>
                     </div>
                 </div>
             </div>
-        
+    
             <div class="custom-modal-footer">
                 <button type="button" (click)="model.dismiss();close()" class="custom-btn btn-secondary">No</button>
                 <button type="submit" class="custom-btn btn-primary"  [disabled]="releaseDetailsForm.invalid">Yes</button>
             </div>
         </form>
-       
     </div>
 </ng-template>
+
 <!--Avaliable popup-->
 <ng-template #available let-model>
     <div class="result-popup-content" ngbAutofocus>
@@ -183,6 +183,7 @@
         </div>
     </div>
 </ng-template>
+
 <!-- View comments Modal -->
 <ng-template #historyPopup let-modal>
   <div class="custom-main-popup-container" ngbAutofocus>
@@ -218,7 +219,6 @@
                 <td>{{item?.allocationStatus?item?.allocationStatus:'-'}}</td>
             </tr>
             }
-            
             @else {
             <tr>
                 <app-no-data-found />

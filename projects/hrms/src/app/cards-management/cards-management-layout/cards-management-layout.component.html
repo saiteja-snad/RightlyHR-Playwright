@@ -35,7 +35,8 @@
       <app-cardsmanagement-tabs />
     </div>
     }
-    <div class="component-right-content">
+
+    <div class="component-right-content"  [ngClass]="{'full-width': router.url.startsWith('/card-management/card-history')}">
       <router-outlet />
     </div>
   </div>

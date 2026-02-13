@@ -3,6 +3,8 @@ import { Component } from '@angular/core';
 import { PredefinedThemesService } from '../../services/theme-service/predefined-themes.service';
 import { FormsModule } from '@angular/forms';
 import { OpenModalService } from '../../services/open-modal.service';
+import { HttpService } from '../../services/http.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-predefined-theme-selection',
@@ -12,7 +14,7 @@ import { OpenModalService } from '../../services/open-modal.service';
 })
 
 export class PredefinedThemeSelectionComponent {
-  selectedTheme: string = localStorage.getItem('selected-theme') || 'default-theme';
+  selectedTheme: string = 'default-theme';
   themes = [
     { name: 'Default', value: 'default-theme', class: 'default-preview' },
     { name: 'Lavender', value: 'lavendar-theme', class: 'lavendar-preview' },
@@ -35,13 +37,32 @@ export class PredefinedThemeSelectionComponent {
     { name: 'DM Sans Italics', value: 'DM-SANS-italics' },
     { name: 'Lexend', value: 'LEXEND' },
   ];
-  selectedFont: string = localStorage.getItem('selected-font') || 'Roboto-flex';
+  selectedFont: string = 'Roboto-flex';
   confirmedFont: string = "";
+  empinfo: any;
+  subscription!: Subscription;
+  ThemeData: any;
 
-  constructor(private predefinedThemesService: PredefinedThemesService, private openModalService: OpenModalService) { }
+  constructor(private predefinedThemesService: PredefinedThemesService, private openModalService: OpenModalService, private http: HttpService) { }
 
   ngOnInit(): void {
-    this.predefinedThemesService.initTheme();
+    this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
+    this.getThemeData();
+  }
+
+  getThemeData() {
+    this.subscription = this.http.getData(`Employeedata/get-user-preference/${this.empinfo?.employeeId}`).subscribe({
+      next: (data: any) => {
+        this.selectedTheme = data?.data?.['CLAIM_GENIUS_WEB_Theme'] || 'default-theme';
+        this.selectedFont = data?.data?.['CLAIM_GENIUS_WEB_Font'] || 'Roboto-flex';
+        this.predefinedThemesService.setTheme(this.selectedTheme);
+        this.predefinedThemesService.setFont(this.selectedFont);
+      },
+      error: (reason) => {
+        this.predefinedThemesService.setTheme('default-theme');
+        this.predefinedThemesService.setFont('Roboto-flex');
+      },
+    });
   }
 
   selectedThemeColor(theme: string) {
@@ -50,10 +71,22 @@ export class PredefinedThemeSelectionComponent {
 
   onThemeChange(): void {
     this.selectedTheme = this.confirmedTheme;
-    setTimeout(() => {
-      this.openModalService.openSuccessModal("Theme Applied Successfully");
-      this.predefinedThemesService.setTheme(this.selectedTheme);
-    }, 500);
+    const payload = {
+      employeeId: this.empinfo?.employeeId || 0,
+      key: 'CLAIM_GENIUS_WEB_Theme',
+      value: this.selectedTheme
+    };
+
+    this.http.postdata('Employeedata/save-user-preference', payload).subscribe({
+      next: () => {
+        this.predefinedThemesService.setTheme(this.selectedTheme);
+        this.openModalService.openSuccessModal("Theme Applied Successfully");
+      },
+      error: (err) => {
+        console.error('Error saving theme preference:', err);
+        this.openModalService.openErrorModal("Failed to apply theme");
+      }
+    });
   }
 
   selectedFontFamily(font: string) {
@@ -62,9 +95,21 @@ export class PredefinedThemeSelectionComponent {
 
   applyFont(): void {
     this.selectedFont = this.confirmedFont;
-    setTimeout(() => {
-      this.openModalService.openSuccessModal("Font Applied Successfully");
-      this.predefinedThemesService.setFont(this.selectedFont);
-    }, 500);
+    const payload = {
+      employeeId: this.empinfo?.employeeId || 0,
+      key: 'CLAIM_GENIUS_WEB_Font',
+      value: this.selectedFont
+    };
+
+    this.http.postdata('Employeedata/save-user-preference', payload).subscribe({
+      next: () => {
+        this.predefinedThemesService.setFont(this.selectedFont);
+        this.openModalService.openSuccessModal("Font Applied Successfully");
+      },
+      error: (err) => {
+        console.error('Error saving font preference:', err);
+        this.openModalService.openErrorModal("Failed to apply font");
+      }
+    });
   }
 }

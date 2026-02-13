@@ -175,6 +175,7 @@ body {
         height: 1.25rem;
     }
 }
+
 //header stylings Ends
 
 //Side Bar Stylings
@@ -236,8 +237,8 @@ body {
     }
 
     .powered-by-image {
-        width: 4.5rem;
-        height: 3rem;
+        width: 4.25rem;
+        height: 3.25rem;
     }
 
     .custom-main-menu-dropdown {
@@ -1356,12 +1357,12 @@ select:focus {
     margin-bottom: 2rem;
 }
 
-.letter-page-content:has(.soft-copy-letter ) {
-  background-image: url('/images/claim-genius-watermark.png');
+.letter-page-content:has(.soft-copy-letter) {
+    background-image: url('/images/claim-genius-watermark.png');
 
-  .letter-footer{
-    display: block !important;
-  }
+    .letter-footer {
+        display: block !important;
+    }
 }
 
 .list-style-none {
@@ -2896,4 +2897,34 @@ input[type=number]::-webkit-outer-spin-button {
 .p-select-panel,
 .p-overlay {
     z-index: 10000 !important;
+}
+
+/* component overlay layer */
+.component-overlay-placeholder-content {
+    position: absolute;
+    width: 100%;
+    height: calc(100dvh - 3.5rem);
+    inset: 0;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.6);
+    /* faded white */
+    backdrop-filter: blur(8px);
+    /* modern glass effect */
+    z-index: 100;
+    text-align: center;
+
+    .image {
+        width: 18rem;
+        height: 18rem;
+    }
+
+    .context {
+        width: 30rem;
+        font-weight: 500;
+        font-size: var(--fontsize20);
+        line-height: 28px;
+    }
 }

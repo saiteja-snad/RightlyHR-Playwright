@@ -1,6 +1,6 @@
 <div class="custom-main-component-container">
   <div class="d-flex justify-content-between align-items-center mb-3">
-    <div><span class="component-sub-header">Leave Category</span></div>
+    <div><span class="component-sub-header">{{ 'Leave Category' | translate }}</span></div>
     <div class="custom-add-btn" (click)="navigateToAddLeaveCategory()" *ngIf="rbac.allowedToAccess('Leave Category Pending Tab.create')">
       <i class="bi bi-plus plus-icon me-1"></i>{{'Add New'|translate}}
     </div>
@@ -10,17 +10,17 @@
     @if (!loading) {
     <table class="w-100">
       <thead>
-        <th>Year</th>
-        <th>Location</th>
-        <th>Sub Location</th>
-        <th>Shift Name</th>
-        <th>Leave Category Type</th>
-        <th>Leave Category Name</th>
-        <th>Leave Category Code</th>
-        <th>Display Color</th>
-        <th>Expires After (Days)</th>
-        <th>Status</th>
-        <th *ngIf="rbac.allowedToAccess('Leave Category Published Tab.create') || rbac.allowedToAccess('Leave Category Published Tab.view')">Action</th>
+        <th>{{ 'Year' | translate }}</th>
+        <th>{{ 'Location' | translate }}</th>
+        <th>{{ 'Sub Location' | translate }}</th>
+        <th>{{ 'Shift Name' | translate }}</th>
+        <th>{{ 'Leave Category Type' | translate }}</th>
+        <th>{{ 'Leave Category Name' | translate }}</th>
+        <th>{{ 'Leave Category Code' | translate }}</th>
+        <th>{{ 'Display Color' | translate }}</th>
+        <th>{{ 'Expires After (Days)' | translate }}</th>
+        <th>{{ 'Status' | translate }}</th>
+        <th *ngIf="rbac.allowedToAccess('Leave Category Published Tab.create') || rbac.allowedToAccess('Leave Category Published Tab.view')">{{ 'Action' | translate }}</th>
       </thead>
       <tbody>
         <ng-container *ngIf="(submissiondata).length; else noResults">
@@ -29,7 +29,7 @@
             <td>{{details.locationName}}</td>
             <td>{{details.subLocationName}}</td>
             <td>{{details.shiftName}}</td>
-            <td>{{details.type ? 'General' : 'Flexible'}}</td>
+            <td>{{details.type ? ('General' | translate) : ('Flexible' | translate)}}</td>
             <td>{{details.name}}</td>
             <td>{{details.categoryCode}}</td>
             <td class="center"><input type="color" [(ngModel)]="details.categoryColor"

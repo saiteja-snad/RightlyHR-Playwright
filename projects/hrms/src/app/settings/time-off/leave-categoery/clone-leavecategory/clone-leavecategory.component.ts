@@ -12,9 +12,10 @@ import { OpenModalService } from '../../../../services/open-modal.service';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { IJob } from '../../../../Interfaces/letters-model';
 import { ILetterType } from '../../../../Interfaces/leave-type.model';
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
   selector: 'app-clone-leavecategory',
-  imports: [CommonModule, Select, ReactiveFormsModule, MultiSelectModule],
+  imports: [CommonModule, Select, ReactiveFormsModule, MultiSelectModule, TranslateModule],
   templateUrl: './clone-leavecategory.component.html',
   styleUrl: './clone-leavecategory.component.scss',
   encapsulation: ViewEncapsulation.None

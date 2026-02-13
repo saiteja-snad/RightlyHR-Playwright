@@ -1,20 +1,20 @@
 <div class="custom-main-component-container w-100">
   <div class="component-header-content pt-2">
     <div class="heading-content">
-      <div class="commpoment-name navigator" (click)="navigate()">Leave Category
+      <div class="commpoment-name navigator" (click)="navigate()">{{ 'Leave Category' | translate }}
         <i class="bi bi-chevron-double-right ms-1"></i>
       </div>
-      <div class="component-header">View Leave Category</div>
+      <div class="component-header">{{ 'View Leave Category' | translate }}</div>
     </div>
   </div>
 
   <form autocomplete="off" [formGroup]="leavePolicyForm" (ngSubmit)="onSubmit()">
     <div class="custom-setting-right-content fields-data-container">
       <div class="row">
-        <div class="component-sub-header mb-3">Location/Shift</div>
+        <div class="component-sub-header mb-3">{{ 'Location/Shift' | translate }}</div>
         <!-- Year -->
         <div class="col-md-3 mb-3">
-          <label class="form-label custom-label mb-2" for="subLocation">Year<span class="error-msg">*</span></label>
+          <label class="form-label custom-label mb-2" for="subLocation">{{ 'Year' | translate }}<span class="error-msg">*</span></label>
           <div class="custom-p-select-content">
             <p-select [options]="years" optionLabel="label" optionValue="value" placeholder="Select year"
               formControlName="applicableYear" class="custom-select w-100">
@@ -28,8 +28,8 @@
 
         <!-- Location -->
         <div class="col-md-3 mb-3">
-          <label class="form-label custom-label mb-2" for="Location">Location <span class="error-msg">*</span></label>
-          <input type="text" placeholder="Select location" class="form-control custom-input"
+          <label class="form-label custom-label mb-2" for="Location">{{ 'Location' | translate }} <span class="error-msg">*</span></label>
+          <input type="text" [placeholder]="'Select location' | translate" class="form-control custom-input"
             formControlName="locationID">
           <div class="error-msg" *ngIf="leavePolicyForm.get('locationID')?.invalid && 
                                       (leavePolicyForm.get('locationID')?.touched || leavePolicyForm.dirty)">
@@ -39,9 +39,9 @@
 
         <!-- Sub Location -->
         <div class="col-md-3 mb-3">
-          <label class="form-label custom-label mb-2" for="subLocation">Sub Location <span
+          <label class="form-label custom-label mb-2" for="subLocation">{{ 'Sub Location' | translate }} <span
               class="error-msg">*</span></label>
-          <input type="text" placeholder="Select sub-location" class="form-control custom-input"
+          <input type="text" [placeholder]="'Select sub-location' | translate" class="form-control custom-input"
             formControlName="subLocation">
           <div class="error-msg" *ngIf="leavePolicyForm.get('subLocation')?.invalid && 
                                       (leavePolicyForm.get('subLocation')?.touched || leavePolicyForm.dirty)">
@@ -51,19 +51,19 @@
 
         <!-- Shift -->
         <div class="col-md-3 mb-3">
-          <label class="form-label custom-label mb-2" for="subLocation ">Shift <span class="error-msg">*</span></label>
-          <input type="text" placeholder="Select shift" class="form-control custom-input" formControlName="shiftId">
+          <label class="form-label custom-label mb-2" for="subLocation ">{{ 'Shift' | translate }} <span class="error-msg">*</span></label>
+          <input type="text" [placeholder]="'Select shift' | translate" class="form-control custom-input" formControlName="shiftId">
           <div class="error-msg" *ngIf="leavePolicyForm.get('shiftId')?.invalid && 
                                       (leavePolicyForm.get('shiftId')?.touched || leavePolicyForm.dirty)">
             Shift is required
           </div>
         </div>
 
-        <div class="component-sub-header mb-3">Leave Category Information</div>
+        <div class="component-sub-header mb-3">{{ 'Leave Category Information' | translate }}</div>
 
          <!-- Leave Category Type  -->
         <div class="col-md-3 mb-3">
-          <label class="form-label custom-label mb-2" for="LeaveCategory">Leave Category Type<span
+          <label class="form-label custom-label mb-2" for="LeaveCategory">{{ 'Leave Category Type' | translate }}<span
               class="error-msg">*</span></label>
           <div class="custom-p-select-content">
             <p-select [options]="leaveCategoryType" optionLabel="label" optionValue="value" placeholder="Select shift"
@@ -78,7 +78,7 @@
 
          <!-- Leave Type -->
         <div class="col-md-3 mb-3">
-          <label class="form-label custom-label mb-2" for="LeaveType">Leave Type<span class="text-danger">*</span></label>
+          <label class="form-label custom-label mb-2" for="LeaveType">{{ 'Leave Type' | translate }}<span class="text-danger">*</span></label>
           <div class="custom-p-select-content">
             <p-select [options]="leaveTypes" optionLabel="name" optionValue="id" placeholder="Select Leave Type"
               formControlName="leaveType" class="custom-select w-100">
@@ -93,10 +93,10 @@
 
         <!-- Name -->
         <div class="col-md-3 mb-3">
-          <label class="form-label custom-label mb-2" for="email">Leave Category Name<span
+          <label class="form-label custom-label mb-2" for="email">{{ 'Leave Category Name' | translate }}<span
               class="error-msg">*</span></label>
           <input type="text" formControlName="name" class="form-control custom-input" id="name" autocomplete="off"
-            placeholder="Please enter name" required>
+            [placeholder]="'Please enter name' | translate" required>
           <div class="error-msg" *ngIf="leavePolicyForm.get('name')?.invalid && 
                                       (leavePolicyForm.get('name')?.touched || leavePolicyForm.dirty)">
             Leave Category Name is required
@@ -105,10 +105,10 @@
 
         <!-- Code -->
         <div class="col-md-3 mb-3">
-          <label class="form-label custom-label mb-2" for="email">Leave Category Code<span
+          <label class="form-label custom-label mb-2" for="email">{{ 'Leave Category Code' | translate }}<span
               class="error-msg">*</span></label>
           <input type="text" formControlName="categoryCode" class="form-control custom-input" id="code"
-            autocomplete="off" placeholder="Please enter code" required>
+            autocomplete="off" [placeholder]="'Please enter code' | translate" required>
           <div class="error-msg" *ngIf="leavePolicyForm.get('categoryCode')?.invalid && 
                                       (leavePolicyForm.get('categoryCode')?.touched || leavePolicyForm.dirty)">
             Leave Category Code is required
@@ -117,9 +117,9 @@
 
         <!-- Valid Dates -->
         <div class="col-md-3 mb-3">
-          <label class="form-label custom-label mb-2" for="email">Valid Days <span class="error-msg">*</span></label>
+          <label class="form-label custom-label mb-2" for="email">{{ 'Valid Days' | translate }} <span class="error-msg">*</span></label>
           <input type="number" formControlName="validity" class="form-control custom-input" id="validdates"
-            autocomplete="off" placeholder="Please enter valid days" required>
+            autocomplete="off" [placeholder]="'Please enter valid days' | translate" required>
           <div class="error-msg" *ngIf="leavePolicyForm.get('validity')?.invalid && 
                                       (leavePolicyForm.get('validity')?.touched || leavePolicyForm.dirty)">
             Valid Days is required
@@ -128,10 +128,10 @@
 
         <!-- Color -->
         <div class="col-md-3 mb-3">
-          <label class="form-label custom-label mb-2" for="email">Leave Category Color<span
+          <label class="form-label custom-label mb-2" for="email">{{ 'Leave Category Color' | translate }}<span
               class="error-msg">*</span></label>
           <input type="color" formControlName="categoryColor" class="form-control input-content" id="color"
-            placeholder="Please enter color" required>
+            [placeholder]="'Please enter color' | translate" required>
           <div class="error-msg" *ngIf="leavePolicyForm.get('categoryColor')?.invalid && 
                                       (leavePolicyForm.get('categoryColor')?.touched || leavePolicyForm.dirty)">
             Leave Category Color is required
@@ -140,12 +140,12 @@
 
         <!-- Is Dependent -->
         <div class="col-md-3 mb-3">
-          <label class="form-label custom-label mb-2" for="LeaveCategory">Is Dependent </label>
-          <input type="text" placeholder="Select dependent type" class="form-control custom-input"
+          <label class="form-label custom-label mb-2" for="LeaveCategory">{{ 'Is Dependent' | translate }} </label>
+          <input type="text" [placeholder]="'Select dependent type' | translate" class="form-control custom-input"
             formControlName="parentId">
         </div>
 
-        <div class="component-sub-header mb-3">Additional Information</div>
+        <div class="component-sub-header mb-3">{{ 'Additional Information' | translate }}</div>
 
         <!-- Gender  -->
         <div class="col-md-3 mb-3">

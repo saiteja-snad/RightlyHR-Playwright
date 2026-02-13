@@ -6,11 +6,11 @@
 
         <form [formGroup]="datepickerForm">
             <div class="d-flex align-items-center gap-3">
-                <div class="total-hrs">{{"Total Logged Hours" }} :<span class="total-duration ms-1">{{ totalhrs}} Hrs</span></div>
+                <div class="total-hrs">{{"Total Logged Hours" | translate}} :<span class="total-duration ms-1">{{ totalhrs}} {{"Hrs" | translate}}</span></div>
                 <!-- Date Picker Outside Offcanvas -->
                 <div class="d-flex gap-2 align-items-center">
                     <div class="custom-date-range-picker">
-                        <p-datepicker formControlName="dateRange" [placeholder]="'Select Date Range'"
+                        <p-datepicker formControlName="dateRange" [placeholder]="'Select Date Range' | translate"
                             selectionMode="range" [showIcon]="true" [readonlyInput]="true" />
                     </div>
                 </div>
@@ -21,7 +21,7 @@
                     <div class="custom-p-multiSelect-content" style="min-width: 250px;">
                         <p-multiSelect [options]="activeEmplist" [filter]="true" filterBy="label" [resetFilterOnHide]="true"
                             optionLabel="label" optionValue="value" formControlName="resourceId" (onChange)="onEmployeeChange($event)"
-                            [placeholder]="activeEmplist.length === 0 ? 'No results found' : 'Select employee'"
+                            [placeholder]="activeEmplist.length === 0 ? ('No results found' | translate) : ('Select employee' | translate)"
                             class="form-select custom-select" />
                     </div>
                 </div>
@@ -32,7 +32,7 @@
                     <div class="custom-p-multiSelect-content" style="min-width: 250px;">
                         <p-multiSelect [options]="resourcesList" [filter]="true" filterBy="fullName" [resetFilterOnHide]="true"
                             optionLabel="fullName" optionValue="id" formControlName="resourceId" (onChange)="onEmployeeChange($event)"
-                            [placeholder]="resourcesList.length === 0 ? 'No results found' : 'Select employee'"
+                            [placeholder]="resourcesList.length === 0 ? ('No results found' | translate) : ('Select employee' | translate)"
                             class="form-select custom-select" />
                     </div>
                 </div>
@@ -46,7 +46,7 @@
                 
                 <div *ngIf="rbac.allowedToAccess('Team Time Sheet Filters Tab.view')">
                     <button type="button" class="custom-btn btn-secondary position-relative" (click)="toggleFilters(filterContent)">
-                        <i class="bi bi-funnel me-2"></i>Filters
+                        <i class="bi bi-funnel me-2"></i>{{"Filters" | translate}}
                         <span *ngIf="isFilterApplied()" class="filter-indicator"></span>
                     </button>
                 </div>
@@ -76,7 +76,7 @@
                 @if (!loading) {
                 <table class="w-100">
                     <thead>
-                        <th>Employee Name</th>
+                        <th>{{"Employee Name" | translate}}</th>
                         <th *ngFor="let date of dateHeaders" [innerHTML]="date" class="text-center th-date"></th>
                         <!-- <th>Total hours</th> -->
                     </thead>
@@ -129,36 +129,36 @@
                 <div class="d-flex align-items-center gap-3">
                     <div class="d-flex align-items-center gap-2">
                         <div class="circular-dot circle-weakend"></div>
-                        <div class="status-text">Weekend(WO)</div>
+                        <div class="status-text">{{"Weekend(WO)" | translate}}</div>
                     </div>
 
                     <div class="d-flex align-items-center gap-1">
                         <div class="circular-dot circle-holiday "></div>
-                        <div class="status-text">Holidays(H)</div>
+                        <div class="status-text">{{"Holidays(H)" | translate}}</div>
                     </div>
                     <div class="d-flex align-items-center gap-2">
                         <div class="circular-dot circle-red"></div>
-                        <div class="status-text">Absent(AB)</div>
+                        <div class="status-text">{{"Absent(AB)" | translate}}</div>
                     </div>
 
                     <div class="d-flex align-items-center gap-2">
                         <div class="circular-dot circle-leave"></div>
-                        <div class="status-text">Leaves</div>
+                        <div class="status-text">{{"Leaves" | translate}}</div>
                     </div>
 
                     <div class="d-flex align-items-center gap-2">
                         <div class="circular-dot circle-pending"></div>
-                        <div class="status-text">Pending(P)</div>
+                        <div class="status-text">{{"Pending(P)" | translate}}</div>
                     </div>
 
                     <div class="d-flex align-items-center gap-1">
                         <div class="circular-dot circle-yellow"></div>
-                        <div class="status-text">Waiting for Approval</div>
+                        <div class="status-text">{{"Waiting for Approval" | translate}}</div>
                     </div>
 
                     <div class="d-flex align-items-center gap-1">
                         <div class="circular-dot circle-green"></div>
-                        <div class="status-text">Approved</div>
+                        <div class="status-text">{{"Approved" | translate}}</div>
                     </div>
                 </div>
             </div>
@@ -171,8 +171,8 @@
                             <option *ngFor="let option of options" [value]="option.value">{{ option.label }}</option>
                         </select>
                         <span class="pagination-label text-nowrap">
-                            Showing {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize :
-                            (+first + +rows) }} of {{ collectionSize }}
+                            {{"Showing" | translate}} {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize :
+                            (+first + +rows) }} {{"of" | translate}} {{ collectionSize }}
                         </span>
                     </div>
                     <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"
@@ -201,11 +201,11 @@
                     <table class="popup-table">
                         <thead>
                             <tr>
-                                <th>Project Details</th>
-                                <th>Logged Hours</th>
-                                <th>Approver</th>
-                                <th>Description</th>
-                                <th>Status</th>
+                                <th>{{"Project Details" | translate}}</th>
+                                <th>{{"Logged Hours" | translate}}</th>
+                                <th>{{"Approver" | translate}}</th>
+                                <th>{{"Description" | translate}}</th>
+                                <th>{{"Status" | translate}}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -248,7 +248,7 @@
                                         </div>
                                     </div>
                                 </td>
-                                <td>{{ entry.loggedHHMM }} Hrs</td>
+                                <td>{{ entry.loggedHHMM }} {{"Hrs" | translate}}</td>
                                 <td>
                                     <ng-container *ngIf="entry.finalApproverName || entry.approverDesignation; else noValue">
                                         {{ entry.finalApproverName || '-' }} ({{ entry.approverDesignation || '-' }})
@@ -268,7 +268,7 @@
                                 </td>
                                 <td [ngClass]="{'approved': entry.status === 'Processed', 'rejected': entry.status === 'Rejected',
                                  'waiting': entry.status === 'Waiting for Approval', 'draft': entry.status === 'draft'}">
-                                    {{ entry.status.toLowerCase() == "processed" ? "Approved" : entry.status }}</td>
+                                    {{ entry.status.toLowerCase() == "processed" ? ("Approved" | translate) : entry.status }}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -294,7 +294,7 @@
                     <div class="custom-p-multiSelect-content">
                         <p-multiSelect [options]="clientDetails" [filter]="true" filterBy="clientName" [resetFilterOnHide]="true"
                             optionLabel="clientName" optionValue="clientId" formControlName="clientId"
-                            (onChange)="getAllEmployeeDetails()" placeholder="Please select client" class="form-select custom-select" />
+                            (onChange)="getAllEmployeeDetails()" [placeholder]="'Please select client' | translate" class="form-select custom-select" />
                     </div>
                 </div>
 
@@ -303,7 +303,7 @@
                     <div class="custom-p-multiSelect-content">
                         <p-multiSelect [options]="projectDetails" [filter]="true" filterBy="projectName" [resetFilterOnHide]="true"
                             optionLabel="projectName" optionValue="projectId" formControlName="projectId"
-                            (onChange)="getAllEmployeeDetails()" placeholder="Please select project"
+                            (onChange)="getAllEmployeeDetails()" [placeholder]="'Please select project' | translate"
                             class="form-select custom-select" />
                     </div>
                 </div>
@@ -313,7 +313,7 @@
                     <div class="custom-p-multiSelect-content">
                         <p-multiSelect [options]="departmentDetails" [filter]="true" filterBy="departmentName"
                             [resetFilterOnHide]="true" optionLabel="departmentName" optionValue="sno" formControlName="departmentId"
-                            (onChange)="getAllEmployeeDetails()" placeholder="Please select department"
+                            (onChange)="getAllEmployeeDetails()" [placeholder]="'Please select department' | translate"
                             class="form-select custom-select" />
                     </div>
                 </div>
@@ -323,7 +323,7 @@
                     <div class="custom-p-multiSelect-content">
                         <p-multiSelect [options]="tmandRmDetails" [filter]="true" filterBy="fullName" [resetFilterOnHide]="true"
                             optionLabel="fullName" optionValue="employeeId" formControlName="tmorrmId"
-                            (onChange)="getAllEmployeeDetails()" placeholder="Please select rm/tm" class="form-select custom-select" />
+                            (onChange)="getAllEmployeeDetails()" [placeholder]="'Please select rm/tm' | translate" class="form-select custom-select" />
                     </div>
                 </div>
 
@@ -343,7 +343,7 @@
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="custom-poup-header-content popup-header-border">
             <div>
-                <p class="popup-heading m-0">Apllied Filters</p>
+                <p class="popup-heading m-0">{{"Apllied Filters" | translate}}</p>
             </div>
             <div>
                 <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>

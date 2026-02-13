@@ -41,6 +41,7 @@ export class ResourceAvailabilityReportComponent {
   destroy$ = new Subject<boolean>();
   empinfo: any;
   clients: Client[] = [];
+  phasesData: any[] = [];
   clientsData: any[] = [];
   clientDropdownList: { label: string; value: number }[] = [];
   projectsList: any[] = [];
@@ -49,7 +50,6 @@ export class ResourceAvailabilityReportComponent {
   employeeData: any[] = [];
   loading: boolean = true;
   noclientproject = false;
-  phasesData: any[] = [];
   getEmployeeInfo = [] as any;
   BillableOptions = [
     { key: 'Yes', value: 'true' },

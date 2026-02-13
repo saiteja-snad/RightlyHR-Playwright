@@ -40,6 +40,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
   Trainee!: number;
   traineeactive!: number;
   traineeInactive!: number;
+  activeContractCount!:number;
+  inActiveContractCount!: number;
+  prospectiveContractCount!: number;
+  inActiveTrainee!: number;
   PROBDATA!: number;
   active = 'Active';
   activeCount: number = 0;
@@ -161,31 +165,45 @@ export class DashboardComponent implements OnInit, OnDestroy {
         this.traineeactive = 0;
         this.traineeInactive = 0;
         this.Trainee = 0;
+        this.inActiveTrainee = 0;
+        this.activeContractCount = 0;
+        this.prospectiveContractCount = 0;
+        this.inActiveContractCount = 0;
         const statusList = this.employeesStatusCount?.statusWiseCount;
         if (Array.isArray(statusList)) {
           for (const statusItem of statusList) {
             switch (statusItem.status) {
               case 'Active Employees':
-                this.Active = statusItem.count;
+                this.Active = statusItem.count ?? 0;
                 break;
               case 'Inactive Employees':
-                this.Inactive = statusItem.count;
+                this.Inactive = statusItem.count ?? 0;
                 break;
               case 'Prospective Employees':
-                this.ACTDATA = statusItem.count;
+                this.ACTDATA = statusItem.count ?? 0;
                 break;
               case 'Probation Employees':
-                this.PROBDATA = statusItem.count;
-                break;
+                this.PROBDATA = statusItem.count ?? 0;
+                break; 
               case 'Active Trainees':
-                this.traineeactive = statusItem.count;
+                this.traineeactive = statusItem.count ?? 0;
                 break;
               case 'Inactive Trainees':
-                this.traineeInactive = statusItem.count;
+                this.traineeInactive = statusItem.count ?? 0;
                 break;
               case 'Prospective Trainees':
-                this.Trainee = statusItem.count;
+                this.Trainee = statusItem.count ?? 0;
                 break;
+              case 'Active Contract Employees':
+                this.activeContractCount = statusItem.count ?? 0;
+                break;
+              case 'Inactive Contract Employees':
+                this.inActiveContractCount = statusItem.count ?? 0;
+                break;
+              case 'Prospective Contract Employees':
+                this.prospectiveContractCount = statusItem.count ?? 0;
+                break;
+
             }
           }
         } else {
@@ -371,15 +389,23 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.cardItems = [
       {
         label: 'Active',
-        link: '/employee-management/active-employees',
+        link: '/employee-management/active/employees',
         count: this.Active,
         icon: '/employee-data/active-employees-icon.png',
         employeementTypeColor: '#F9D339',
         permission: { feature: 'Dashboard Active Employees Card', action: 'view' }
       },
       {
+        label: 'Inactive',
+        link: '/employee-management/inactive/employees',
+        count: this.Inactive,
+        icon: '/employee-data/active-employees-icon.png',
+        employeementTypeColor: '#F9D339',
+        permission: { feature: 'Dashboard Active Employees Card', action: 'view' }
+      },
+      {
         label: 'Probation',
-        link: '/employee-management/probation-employees',
+        link: '/employee-management/probation/employees',
         count: this.PROBDATA,
         icon: '/employee-data/Probation-Employee-icon.png',
         employeementTypeColor: '#FF8000',
@@ -387,7 +413,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       },
       {
         label: 'Prospective',
-        link: '/employee-management/prospective-employees',
+        link: '/employee-management/prospective/employees',
         count: this.ACTDATA,
         icon: '/employee-data/prospective-employee-icon.png',
         employeementTypeColor: '#00ABF9',
@@ -395,7 +421,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       },
       {
         label: 'Active Trainees',
-        link: '/employee-management/active-interns',
+        link: '/employee-management/active/interns',
         count: this.traineeactive,
         icon: '/employee-data/active-trainee-icon.png',
         employeementTypeColor: '#53D33A',
@@ -403,10 +429,42 @@ export class DashboardComponent implements OnInit, OnDestroy {
       },
       {
         label: 'Prospective Trainees',
-        link: '/employee-management/prospective-interns',
+        link: '/employee-management/prospective/interns',
         count: this.Trainee,
         icon: '/employee-data/prospective-trainee-icon.png',
         employeementTypeColor: '#1064CA',
+        permission: { feature: 'Dashboard Prospective Trainee Card', action: 'view' }
+      },
+      {
+        label: 'Inactive Trainees',
+        link: '/employee-management/inactive/interns',
+        count: this.inActiveTrainee,
+        icon: '/employee-data/prospective-trainee-icon.png',
+        employeementTypeColor: '#1064CA',
+        permission: { feature: 'Dashboard Prospective Trainee Card', action: 'view' }
+      },
+      {
+        label: 'Active Contractors',
+        link: '/employee-management/prospective/contract',
+        count: this.activeContractCount,
+        icon: '/employee-data/prospective-trainee-icon.png',
+        employeementTypeColor: '#00B5AD',
+        permission: { feature: 'Dashboard Prospective Trainee Card', action: 'view' }
+      },
+      {
+        label: 'Inactive Contractors',
+        link: '/employee-management/inactive/contract',
+        count: this.inActiveContractCount,
+        icon: '/employee-data/prospective-trainee-icon.png',
+        employeementTypeColor: '#E05D5D',
+        permission: { feature: 'Dashboard Prospective Trainee Card', action: 'view' }
+      },
+      {
+        label: 'Prospective Contractors',
+        link: '/employee-management/prospective/contract',
+        count: this.prospectiveContractCount,
+        icon: '/employee-data/prospective-trainee-icon.png',
+        employeementTypeColor: '#FFC107',
         permission: { feature: 'Dashboard Prospective Trainee Card', action: 'view' }
       },
     ];
@@ -417,11 +475,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
     const backgroundColors = this.cardItems.map(
       (item) => item.employeementTypeColor
     );
-    this.totalEmployeesCount = this.Active + this.ACTDATA + this.PROBDATA + this.traineeactive + this.Trainee;
+    this.totalEmployeesCount = this.Active + this.Inactive + this.ACTDATA + this.PROBDATA + this.traineeactive + this.Trainee +  this.inActiveTrainee + this.activeContractCount + this.inActiveContractCount + this.prospectiveContractCount;
     this.EmployeeInfoData = {
       datasets: [
         {
-          data: [this.Active, this.PROBDATA, this.ACTDATA, this.traineeactive, this.Trainee],
+          data: [this.Active,this.Inactive, this.PROBDATA, this.ACTDATA, this.traineeactive, this.Trainee,this.inActiveTrainee, this.activeContractCount, this.inActiveContractCount, this.prospectiveContractCount],
           backgroundColor: backgroundColors,
           borderWidth: 0,
         },

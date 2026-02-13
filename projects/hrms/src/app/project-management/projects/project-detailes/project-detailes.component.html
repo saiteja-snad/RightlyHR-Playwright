@@ -7,44 +7,44 @@
                 <div class="row">
                     <!--Client Name-->
                     <div class="col-md-6 col-lg-4 mb-3">
-                        <label for="currentAddressLine2" class="form-label custom-label mb-2">Client Name</label>
+                        <label for="currentAddressLine2" class="form-label custom-label mb-2">{{"Client Name" | translate}}</label>
                         <input type="text" class="form-control custom-input" id="currentAddressLine2" autocomplete="off"
-                            formControlName="clientName" placeholder="Please enter client name">
+                            formControlName="clientName" [placeholder]="'Please enter client name' | translate">
                     </div>
 
                     <!-- Project Code -->
                     <div class="col-md-6 col-lg-4 mb-3">
-                        <label for="code" class="form-label custom-label mb-2">Project Code</label>
+                        <label for="code" class="form-label custom-label mb-2">{{"Project Code" | translate}}</label>
                         <input type="text" class="form-control custom-input" formControlName="code"
-                            id="code" autocomplete="off" placeholder="Please enter project code">
+                            id="code" autocomplete="off" [placeholder]="'Please enter project code' | translate">
                     </div>
 
                     <!--Project Name-->
                     <div class="col-md-6 col-lg-4 mb-3">
-                        <label for="currentAddressLine1" class="form-label custom-label mb-2">Project Name</label>
+                        <label for="currentAddressLine1" class="form-label custom-label mb-2">{{"Project Name" | translate}}</label>
                         <input type="text" class="form-control custom-input" formControlName="projectName"
-                            id="currentAddressLine1" autocomplete="off" placeholder="Please enter project name">
+                            id="currentAddressLine1" autocomplete="off" [placeholder]="'Please enter project name' | translate">
                     </div>
 
                     <!-- Project Type -->
                     <div class="col-md-6 col-lg-4 mb-3">
-                        <label for="currentZipCode" class="form-label custom-label mb-2">Project Type</label>
+                        <label for="currentZipCode" class="form-label custom-label mb-2">{{"Project Type" | translate}}</label>
                         <input type="text" class="form-control custom-input" formControlName="projectType"
-                            id="currentZipCode" autocomplete="off" placeholder="Please enter project type">
+                            id="currentZipCode" autocomplete="off" [placeholder]="'Please enter project type' | translate">
                     </div>
 
                     <!-- Start Date-->
                     <div class="col-md-6 col-lg-4 mb-3">
-                        <label for="currentZipCode" class="form-label custom-label mb-2">Start Date</label>
+                        <label for="currentZipCode" class="form-label custom-label mb-2">{{"Start Date" | translate}}</label>
                         <input type="date" class="form-control custom-input" id="currentZipCode"
-                            formControlName="startDate" autocomplete="off" placeholder="Please enter start date">
+                            formControlName="startDate" autocomplete="off" [placeholder]="'Please enter start date' | translate">
                     </div>
 
                     <!-- End Date-->
                     <div class="col-md-6 col-lg-4 mb-3">
-                        <label for="currentAddressLine1" class="form-label custom-label mb-2">End Date</label>
+                        <label for="currentAddressLine1" class="form-label custom-label mb-2">{{"End Date" | translate}}</label>
                         <input type="date" class="form-control custom-input" formControlName="endDate"
-                            id="currentAddressLine1" autocomplete="off" placeholder="Please enter end date">
+                            id="currentAddressLine1" autocomplete="off" [placeholder]="'Please enter end date' | translate">
                     </div>
 
                     <!-- Effective Date -->
@@ -63,15 +63,15 @@
 
                     <!-- Kickoff Date -->
                     <div class="col-md-6 col-lg-4 mb-3">
-                        <label for="currentZipCode" class="form-label custom-label mb-2">Status</label>
+                        <label for="currentZipCode" class="form-label custom-label mb-2">{{"Status" | translate}}</label>
                         <input type="text" class="form-control custom-input" id="currentZipCode"
-                            formControlName="statuts" autocomplete="off" placeholder="Please enter status">
+                            formControlName="statuts" autocomplete="off" [placeholder]="'Please enter status' | translate">
                     </div>
 
                     <div class="col-md-6 col-lg-4 mb-3">
-                        <label for="projectType" class="form-label custom-label mb-2">Allocated Hours</label>
+                        <label for="projectType" class="form-label custom-label mb-2">{{"Allocated Hours" | translate}}</label>
                         <input type="text" id="projectType" formControlName="allocatedHours"
-                            class="form-control custom-input" placeholder="Enter allocated hours" />
+                            class="form-control custom-input" [placeholder]="'Enter allocated hours' | translate" />
                     </div>
 
                     <!-- <div class="col-md-6 col-lg-4 mb-3">
@@ -83,7 +83,7 @@
 
                     <!-- Project Color -->
                     <div class="col-md-6 col-lg-4 mb-3">
-                        <label for="color" class="form-label custom-label mb-2">Project Color</label>
+                        <label for="color" class="form-label custom-label mb-2">{{"Project Color" | translate}}</label>
                         <input type="color" id="color" class="form-control custom-color" formControlName="color"/>
                     </div>
 
@@ -91,17 +91,17 @@
                         <div class="d-flex gap-3 align-items-center">
                             <div class="form-check form-switch">
                                 <input class="form-check-input" type="checkbox" formControlName="overtimeEligible">
-                                <label class="form-label custom-label">Overtime Eligibility</label>
+                                <label class="form-label custom-label">{{"Overtime Eligibility" | translate}}</label>
                             </div>
 
                             <div class="form-check form-switch">
                                 <input class="form-check-input" type="checkbox" formControlName="billable">
-                                <label class="form-label custom-label">Billable</label>
+                                <label class="form-label custom-label">{{"Billable" | translate}}</label>
                             </div>
 
                             <div class="form-check form-switch">
                                 <input class="form-check-input" type="checkbox" formControlName="allowweekendWork">
-                                <label class="form-label custom-label">Allow Weekend Work</label>
+                                <label class="form-label custom-label">{{"Allow Weekend Work" | translate}}</label>
                             </div>
                         </div>
                     </div>

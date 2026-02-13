@@ -27,8 +27,7 @@
               <th>Timesheet Approval Authority</th>
               <th class="text-center">Phase / Milestone Description</th>
               <th class="text-center">Status</th>
-              @if((rbac.allowedToAccess('Project Phases Tab.update') || rbac.allowedToAccess('Project
-              PhasesTab.delete'))
+              @if((rbac.allowedToAccess('Project Phases Tab.update') || rbac.allowedToAccess('Project PhasesTab.delete'))
               && inactiveStatus !== 'inactive'){
               <th class="text-center">{{"Action" | translate}}</th>
               }

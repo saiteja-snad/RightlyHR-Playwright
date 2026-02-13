@@ -9,11 +9,11 @@
                 @if (!loading) {
                 <table class="w-100">
                     <thead>
-                        <th>Document Type</th>
-                        <th>Created Date</th>
+                        <th>{{"Document Type" | translate}}</th>
+                        <th>{{"Created Date" | translate}}</th>
                         <!-- <th>File Name</th> -->
-                        <th>Attachment</th>
-                        <th class="text-center">Download</th>
+                        <th>{{"Attachment" | translate}}</th>
+                        <th class="text-center">{{"Download" | translate}}</th>
                         @if((rbac.allowedToAccess('Documents Tab.update') || rbac.allowedToAccess('Documents Tab.delete')) 
                         && inactiveStatus !== 'inactive' ){
                         <th class="text-center">{{"Action" | translate}}</th>
@@ -50,7 +50,7 @@
                                             @if(rbac.allowedToAccess('Documents Tab.delete')){
                                             <li (click)="openModal(deleteconformation, data,'m')">
                                                 <a class="dropdown-item">
-                                                    <i class="bi bi-slash-circle me-2"></i>Archive
+                                                    <i class="bi bi-slash-circle me-2"></i>{{"Archive" | translate}}
                                                 </a>
                                             </li>
                                             }
@@ -109,35 +109,35 @@
 
                     <!-- Document Type -->
                     <div class="col-md-6 mb-3">
-                        <label for="documentType" class="form-label custom-label mb-2">Document Type<span
+                        <label for="documentType" class="form-label custom-label mb-2">{{"Document Type" | translate}}<span
                                 class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
                             <p-select [options]="documentTypes" filterBy="value" [filter]="true" [resetFilterOnHide]="true" optionLabel="value"
-                                optionValue="value" formControlName="documentType" placeholder="Please select project type"
+                                optionValue="value" formControlName="documentType" [placeholder]="'Please select project type' | translate"
                                 class="form-select custom-select"></p-select>
                         </div>
                         <div class="error-msg"
                             *ngIf="updateDocumentForm.get('documentType')?.touched && updateDocumentForm.get('documentType')?.invalid">
-                            Document Type is required
+                            {{"Document Type is required" | translate}}
                         </div>
                     </div>
 
                     <!-- Document Attachment -->
                     <div class="col-md-12 mb-3">
-                        <label for="documentAttachment" class="form-label custom-label mb-2">Attachment<span
+                        <label for="documentAttachment" class="form-label custom-label mb-2">{{"Attachment" | translate}}<span
                                 class="text-danger">*</span></label>
                         <input type="file" id="documentAttachment" accept=".png, .jpg, .jpeg, .pdf, .doc, .docx, .xls, .xlsx"
                             (change)="onChangeClientAttachment($event)" class="form-control custom-input px-0" />
                         <div class="custom-file-name text-wrap">{{ displayClientAttachment}}</div>
                         <div class="error-msg" *ngIf="fileErrorMessage">{{ fileErrorMessage }}</div>
                         <div class="error-msg" *ngIf="updateDocumentForm.get('documentUrl')?.touched && 
-                        updateDocumentForm.get('documentUrl')?.invalid">Attachment is required</div>
+                        updateDocumentForm.get('documentUrl')?.invalid">{{"Attachment is required" | translate}}</div>
                     </div>
                 </div>
 
                 <!-- Form Buttons -->
                 <div class="custom-modal-footer">
-                    <button type="button" class="custom-btn btn-secondary" (click)="closepopup(confirmationpopupfornodue)">Cancel</button>
+                    <button type="button" class="custom-btn btn-secondary" (click)="closepopup(confirmationpopupfornodue)">{{"Cancel" | translate}}</button>
                     <button type="submit" class="custom-btn btn-primary" [disabled]="updateDocumentForm.invalid || spinnerLoader ">
                         @if (spinnerLoader) {
                         <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
@@ -176,8 +176,8 @@
             <p class="confirmation-text pt-3">{{'Are you sure you want to cancel?'}}</p>
         </div>
         <div class="custom-modal-footer">
-            <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">{{'No'}}</button>
-            <button type="button" class="custom-btn btn-primary" (click)="close();model.dismiss()">{{'Yes'}}</button>
+            <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">{{"No" | translate}}</button>
+            <button type="button" class="custom-btn btn-primary" (click)="close();model.dismiss()">{{"Yes" | translate}}</button>
         </div>
     </div>
 </ng-template>

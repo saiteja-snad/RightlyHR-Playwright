@@ -7,12 +7,12 @@
             @if (!loading) {
             <table class="w-100">
                 <thead>
-                    <th>Document Type</th>
-                    <th>Created Date</th>
-                    <!-- <th>File Name</th> -->
-                    <th>Signed Copy</th>
-                    <th>Attachment</th>
-                    <th class="text-center">Dowload</th>
+                    <th>{{ 'Document Type' | translate }}</th>
+                    <th>{{ 'Created Date' | translate }}</th>
+                    <!-- <th>{{ 'File Name' | translate }}</th> -->
+                    <th>{{ 'Signed Copy' | translate }}</th>
+                    <th>{{ 'Attachment' | translate }}</th>
+                    <th class="text-center">{{ 'Dowload' | translate }}</th>
                     @if((rbac.allowedToAccess('Client Documents.update') || rbac.allowedToAccess('Client Documents.delete'))
                     && this.inactiveClientStatus !== 'inactive'){
                     <th class="text-center">{{"Action" | translate}}</th>
@@ -27,7 +27,7 @@
                             <td>
                                 @if(data.attributes?.length > 0){
                                 <span *ngFor="let attr of data.attributes">
-                                    <span class="text-capitalize"> {{attr.attributeValue === 'yes' ? 'Yes' : 'No'
+                                    <span class="text-capitalize"> {{attr.attributeValue === 'yes' ? ('Yes' | translate) : ('No' | translate)
                                         }}</span>
                                 </span>
                                 }
@@ -53,7 +53,7 @@
                                         @if(rbac.allowedToAccess('Client Documents.delete')){
                                         <li (click)="openModal(deleteconformation, data, 'm')">
                                             <a class="dropdown-item">
-                                                <i class="bi bi-check-circle me-2"></i>Restore
+                                                <i class="bi bi-check-circle me-2"></i>{{ 'Restore' | translate }}
                                             </a>
                                         </li>
                                         }

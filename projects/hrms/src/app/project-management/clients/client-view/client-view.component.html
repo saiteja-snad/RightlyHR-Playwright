@@ -8,7 +8,7 @@
     <div class="d-flex gap-3 align-items-center" *ngIf="isActive('/project-management/clients/details/resources')
             || isActive('/project-management/clients/details/inactive-resources')">
       <button type="button" class="clear-all-btn" (click)="clearResourceFilters()" *ngIf="isResourceFilterApplied()">
-        Clear All</button>
+        {{ 'Clear All' | translate }}</button>
 
       <button type="button" class="custom-btn btn-secondary position-relative" (click)="toggleFilters(resourceFilterContent)">
         <i class="bi bi-funnel me-2"></i>Filters
@@ -17,7 +17,7 @@
 
       @if(rbac.allowedToAccess('Client Resources.create') && this.inactiveClientStatus !== 'inactive'){
       <div *ngIf="isActive('/project-management/clients/details/resources')" (click)="openModal(addResourcemodal)">
-        <button type="button" class="custom-btn btn-primary">{{'Add Resources'}}</button>
+        <button type="button" class="custom-btn btn-primary">{{ 'Add Resources' | translate }}</button>
       </div>
       }
     </div>
@@ -27,7 +27,7 @@
       @if(rbac.allowedToAccess('Client Documents.create') && this.inactiveClientStatus !== 'inactive'){
       <div *ngIf="isActive('/project-management/clients/details/documents')">
         <button type="button" class="custom-btn btn-primary" (click)="openModal(addDocumentmodal)">
-          {{'Add Document'}}</button>
+          {{ 'Add Document' | translate }}</button>
       </div>
       }
     </div>
@@ -36,10 +36,10 @@
     <div class="d-flex gap-3 align-items-center" *ngIf="isActive('/project-management/clients/details/projects')
         || isActive('/project-management/clients/details/inactiveprojects') || isActive('/project-management/clients/details/hold')">
       <!-- Clear All Button -->
-      <button type="button" class="clear-all-btn" (click)="clearAllFilters()">Clear All</button>
+      <button type="button" class="clear-all-btn" (click)="clearAllFilters()">{{ 'Clear All' | translate }}</button>
 
       <button type="button" class="custom-btn btn-secondary position-relative" (click)="toggleFilters(projectFilterContent)">
-        <i class="bi bi-funnel me-2"></i>Filters
+        <i class="bi bi-funnel me-2"></i>{{ 'Filters' | translate }}
         <span *ngIf="isFilterAppliedForProjects()" class="filter-indicator"></span>
       </button>
 
@@ -120,16 +120,16 @@
         <div class="row">
           <!-- Document Type -->
           <div class="col-md-6 mb-3">
-            <label for="documentType" class="form-label custom-label mb-2">Document Type
+            <label for="documentType" class="form-label custom-label mb-2">{{ 'Document Type' | translate }}
               <span class="text-danger">*</span></label>
             <div class="custom-p-select-content">
               <p-select [options]="documentTypes" filterBy="value" [filter]="true" [resetFilterOnHide]="true"
                 optionLabel="value" optionValue="value" formControlName="documentType"
-                placeholder="Please select document type" class="form-select custom-select"></p-select>
+                [placeholder]="'Please select document type' | translate" class="form-select custom-select"></p-select>
             </div>
             <div class="error-msg"
               *ngIf="addDocumentForm.get('documentType')?.touched && addDocumentForm.get('documentType')?.invalid">
-              Document Type is required
+              {{ 'Document Type is required' | translate }}
             </div>
           </div>
 
@@ -147,21 +147,21 @@
 
           <!-- Document Attachment -->
           <div class="col-md-6 mb-3">
-            <label for="documentAttachment" class="form-label custom-label mb-2">Attachment
+            <label for="documentAttachment" class="form-label custom-label mb-2">{{ 'Attachment' | translate }}
               <span class="text-danger">*</span></label>
             <input type="file" accept=".png, .jpg, .jpeg, .pdf, .doc, .docx, .xls, .xlsx"
               (change)="onChangeClientAttachment($event)" id="documentAttachment" formControlName="documentUrl"
               class="form-control custom-input px-0" />
             <div class="error-msg" *ngIf="fileErrorMessage">{{ fileErrorMessage }}</div>
             <div class="error-msg" *ngIf="addDocumentForm.get('documentUrl')?.touched &&
-                        addDocumentForm.get('documentUrl')?.invalid">Document Attachment is required</div>
+                        addDocumentForm.get('documentUrl')?.invalid">{{ 'Document Attachment is required' | translate }}</div>
           </div>
 
           <!-- Signed Copy -->
           <div class="col-md-12 mb-3">
             <div class="form-check form-switch">
               <input class="form-check-input" type="checkbox" role="switch" formControlName="signedCopy">
-              <label class="form-check-label custom-toggle-label">Signed Copy</label>
+              <label class="form-check-label custom-toggle-label">{{ 'Signed Copy' | translate }}</label>
             </div>
           </div>
         </div>
@@ -169,8 +169,8 @@
         <!-- Form Buttons -->
         <div class="custom-modal-footer">
           <button type="button" class="custom-btn btn-secondary"
-            (click)="closepopup(confirmationpopupfornodue)">Cancel</button>
-          <button type="submit" class="custom-btn btn-primary" [disabled]="addDocumentForm.invalid">Add</button>
+            (click)="closepopup(confirmationpopupfornodue)">{{ 'Cancel' | translate }}</button>
+          <button type="submit" class="custom-btn btn-primary" [disabled]="addDocumentForm.invalid">{{ 'Add' | translate }}</button>
         </div>
       </form>
     </div>

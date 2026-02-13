@@ -222,9 +222,7 @@ export class SidenavComponent implements OnInit {
         this.router.navigate(['/organization-chart']);
       } else if (module.route === '/theme') {
         this.router.navigate(['/theme']);
-      }
-      
-      else {
+      } else {
         this.goToAccessibleRoute(module.route);
       }
     }

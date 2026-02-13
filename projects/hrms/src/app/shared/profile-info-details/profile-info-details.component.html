@@ -48,13 +48,15 @@
                 </span>
             </p>
             <p class="label-text text-truncate mb-2">
-                <!-- <a [href]="'tel:' +( ( ( empdata?.workPhoneCountryCode? empdata?.workPhoneCountryCode: '') + empdata?.workPhone) || ( ( empdata?.mobilePhoneCountryCode? empdata?.mobilePhoneCountryCode: '') + empdata?.contactnumber))"> -->
+                <!-- <a [href]="'tel:' +(  ( ( empdata?.mobilePhoneCountryCode? empdata?.mobilePhoneCountryCode: '') + empdata?.contactnumber))"> -->
                     <img src="/icons/call-icon.png" alt="Icon" class="custom-icon me-2">
                     <span class="link-text">
-                        <span *ngIf="empdata?.workPhone">{{ empdata?.workPhone ? 
-                        (empdata?.workPhone | formatcontactnumber:(empdata.workPhoneCountryFlag || '')) : '-' }}</span>
-                        <span *ngIf="!empdata?.workPhone && empdata?.contactnumber">{{ empdata?.contactnumber ? 
-                        (empdata?.contactnumber | formatcontactnumber:(empdata.contactNumberCountryFlag || '')) : '-' }}</span>
+                        <span *ngIf="empdata?.workPhone">
+                            {{ empdata?.workPhone ? ( empdata?.workPhoneCountryCode +' '+  empdata?.workPhone) : '-' }}
+                        </span>
+                        <span *ngIf="!empdata?.workPhone && empdata?.contactnumber">
+                            {{ empdata?.contactnumber ? empdata?.mobilePhoneCountryCode +' '+  (empdata?.contactnumber ) : '-' }}
+                        </span>
                     </span>
                 <!-- </a> -->
                 <span *ngIf="!empdata?.workPhone && !empdata?.contactnumber">NA</span>

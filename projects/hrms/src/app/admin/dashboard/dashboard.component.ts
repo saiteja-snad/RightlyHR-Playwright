@@ -392,7 +392,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         link: '/employee-management/active/employees',
         count: this.Active,
         icon: '/employee-data/active-employees-icon.png',
-        employeementTypeColor: '#F9D339',
+        employeementTypeColor: '#8B5CF6',
         permission: { feature: 'Dashboard Active Employees Card', action: 'view' }
       },
       {
@@ -400,7 +400,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         link: '/employee-management/inactive/employees',
         count: this.Inactive,
         icon: '/employee-data/active-employees-icon.png',
-        employeementTypeColor: '#F9D339',
+        employeementTypeColor: '#334155',
         permission: { feature: 'Dashboard Active Employees Card', action: 'view' }
       },
       {
@@ -440,7 +440,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         link: '/employee-management/inactive/interns',
         count: this.inActiveTrainee,
         icon: '/employee-data/prospective-trainee-icon.png',
-        employeementTypeColor: '#1064CA',
+        employeementTypeColor: '#973636',
         permission: { feature: 'Dashboard Prospective Trainee Card', action: 'view' }
       },
       {

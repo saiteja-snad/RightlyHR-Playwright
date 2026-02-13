@@ -11,6 +11,7 @@ import { ReportsService } from '../../../services/reports/reports.service';
 import { IStandardReportRequest } from '../../../Interfaces/reports.model';
 import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { SelectModule } from 'primeng/select';
+import { MultiSelectModule } from 'primeng/multiselect';
 import { HttpService } from '../../../services/http.service';
 import * as XLSX from "xlsx";
 import { CommonModule } from '@angular/common';
@@ -23,7 +24,7 @@ import { ReportsHeaderComponent } from "../../../shared/reports-tabs/reports-hea
 import { DatePicker } from 'primeng/datepicker';
 @Component({
   selector: 'app-employee-master-data',
-  imports: [FormsModule, DateformatPipe, SelectModule, ReactiveFormsModule, CommonModule, NoDataFoundComponent, DataLoaderContentComponent, ReportsHeaderComponent, DatePicker],
+  imports: [FormsModule, DateformatPipe, SelectModule, MultiSelectModule, ReactiveFormsModule, CommonModule, NoDataFoundComponent, DataLoaderContentComponent, ReportsHeaderComponent, DatePicker],
   templateUrl: './employee-master-data.component.html',
   styleUrl: './employee-master-data.component.scss',
   encapsulation: ViewEncapsulation.None
@@ -82,23 +83,35 @@ employeeStatusOptions = [
       applyLabel: 'ok',
       format: this.authService.convertAngularDateFormatToJs(environment.dateformat).toUpperCase(),
       direction: 'ltr',
-      clearLabel: 'Clear', // could be rtl
+      clearLabel: 'Clear',
     };
     this.loggedInUser = this.authService.getToken();
     this.initializeForm();
-    // this.getStandardReports();
-    this.masterDataForm.patchValue({
-      empStatus: 'All Employees',
-    });
+    this.handleEmployeeStatusChanges();
     this.masterDataForm.valueChanges.subscribe(() => {
       this.disableBtn = true;
+    });
+  }
+
+  handleEmployeeStatusChanges(): void {
+    this.masterDataForm.get('empStatus')?.valueChanges.subscribe((selected: string[]) => {
+      if (!selected || selected.length === 0) return;
+      
+      if (selected.length > 1) {
+        const lastSelected = selected[selected.length - 1];
+        if (lastSelected === '') {
+          setTimeout(() => this.masterDataForm.get('empStatus')?.setValue([''], { emitEvent: false }));
+        } else if (selected.includes('')) {
+          setTimeout(() => this.masterDataForm.get('empStatus')?.setValue(selected.filter(s => s !== ''), { emitEvent: false }));
+        }
+      }
     });
   }
 
   initializeForm() {
     this.masterDataForm = this.fb.group({
       dateOfJoining: [null],
-      empStatus: [''],
+      empStatus: [['']]
     });
   }
 
@@ -126,7 +139,7 @@ onSubmit(form: FormGroup) {
   this.spinnerLoader1 = true;
 
   const formData = form.value;
-  const isEmptyStatus = !formData.empStatus;
+  const isEmptyStatus = !formData.empStatus || formData.empStatus.length === 0;
   const isEmptyDateRange = !formData.dateOfJoining;
 
   if (isEmptyStatus && isEmptyDateRange) {
@@ -136,28 +149,15 @@ onSubmit(form: FormGroup) {
 
   this.dataload = true;
 
-  // 🔹 DOJ handling
   const dateRangeArray = formData.dateOfJoining || [];
   const startDate = dateRangeArray[0] ? dayjs(dateRangeArray[0]) : null;
   const endDate = dateRangeArray[1]
     ? dayjs(dateRangeArray[1])
     : startDate;
 
-  // 🔹 STATUS MAPPING (ONLY HERE)
-  let employeeStatus = formData.empStatus;
-
-  if (employeeStatus === 'Active') {
-    employeeStatus = "Active Contract,Active,Trainee Active,";
-  }
- if (employeeStatus === 'Inactive') {
-    employeeStatus = 'Inactive,Inactive Contract,Trainee Inactive' ;
-  }
-   if (employeeStatus === 'Prospective') {
-    employeeStatus = 'Prospective,Prospective Contract,Trainee Prospective';
-  }
-  if (employeeStatus === 'All Employees') {
-    employeeStatus = '';
-  }
+  const employeeStatus = formData.empStatus && formData.empStatus.length > 0 
+    ? formData.empStatus.join(',')
+    : '';
 
   const request: IStandardReportRequest = {
     dateRange: {
@@ -330,9 +330,20 @@ onSubmit(form: FormGroup) {
   return code.startsWith('+') ? code : '';
 }
 
+showClearAllButton(): boolean {
+  const form = this.masterDataForm;
+  const doj = form.get('dateOfJoining')?.value;
+  const empStatus = form.get('empStatus')?.value;
+  
+  const hasDoj = !!doj;
+  const hasEmpStatus = empStatus && empStatus.length > 0 && !(empStatus.length === 1 && empStatus[0] === '');
+
+  return hasDoj || hasEmpStatus;
+}
+
 clearAllFilters(){
   this.masterDataForm.get('dateOfJoining')?.setValue(null);
-  this.masterDataForm.get('empStatus')?.setValue('All Employees');
+  this.masterDataForm.get('empStatus')?.setValue(['']);
   this.onSubmit(this.masterDataForm);
 }
   ngOnDestroy(): void {

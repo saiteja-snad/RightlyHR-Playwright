@@ -1,40 +1,34 @@
 <div class="custom-main-component-container">
-  <div class="component-header-content">
+  <div class="component-header-content gap-3">
     <!-- Header -->
-    <app-reports-header/>
+    <app-reports-header />
 
     <form autocomplete="off" [formGroup]="inactiveReportForm" (ngSubmit)="generateInactiveReport()">
-      <div class="d-flex align-items-center gap-3">
+      <div class="d-flex align-items-center gap-3 flex-wrap">
         @if(rbac.allowedToAccess('Inactive Empolyee Report - Generate.view')){
-        <button type="reset" class="clear-all-btn"  *ngIf="
-            inactiveReportForm.get('employee')?.value ||
-            inactiveReportForm.get('manager')?.value ||
-            inactiveReportForm.get('leaveCategory')?.value" (click)="clearAllFilters()">
-          Clear All
+        <button type="reset" class="clear-all-btn" *ngIf="isAnyFilterApplied()" (click)="clearAllFilters()">
+          {{'Clear All' | translate}}
         </button>
         }
+
         <!-- Employee -->
-        <div class="d-flex align-items-center gap-2">
-          <div class="custom-p-select-content">
-            <p-select class="form-select custom-select" [options]="employeeiddetails" optionLabel="fullName"
-              filterBy="fullName" [filter]="true" formControlName="employee"
-              placeholder="Please select employee" filterPlaceholder="Search employee">
-              <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
-              <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
-            </p-select>
-          </div>
+        <div class="custom-p-select-content">
+          <p-select class="form-select custom-select" [options]="employeeiddetails" optionLabel="fullName"
+            filterBy="fullName" [filter]="true" formControlName="employee" placeholder="Please select employee"
+            filterPlaceholder="Search employee">
+            <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
+            <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
+          </p-select>
         </div>
 
         <!-- Team Manager -->
-        <div class="d-flex align-items-center gap-2">
-          <div class="custom-p-select-content">
-            <p-select class="form-select custom-select" [options]="teamdetails" [filter]="true"
-              optionLabel="fullName" filterBy="fullName" formControlName="manager" placeholder="Please select manager"
-              filterPlaceholder="Search manager">
-              <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
-              <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
-            </p-select>
-          </div>
+        <div class="custom-p-select-content">
+          <p-select class="form-select custom-select" [options]="teamdetails" [filter]="true" optionLabel="fullName"
+            filterBy="fullName" formControlName="manager" placeholder="Please select manager"
+            filterPlaceholder="Search manager">
+            <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
+            <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
+          </p-select>
         </div>
 
         <!-- Month Dropdown -->
@@ -47,15 +41,13 @@
           </div> -->
 
         <!-- Leave Category -->
-        <div class="d-flex align-items-center gap-2">
-          <div class="custom-p-select-content">
-            <p-select [options]="uniqueLeaveCategory" [filter]="true" optionLabel="label"
-              filterBy="label" formControlName="leaveCategory" placeholder="Select leave category"
-              class="form-select custom-select" filterPlaceholder="Search leave type">
-              <ng-template #selectedItem let-selectedOption>{{ selectedOption.label }}</ng-template>
-              <ng-template let-employee #item>{{ employee.label }}</ng-template>
-            </p-select>
-          </div>
+        <div class="custom-p-select-content">
+          <p-select [options]="uniqueLeaveCategory" [filter]="true" optionLabel="label" filterBy="label"
+            formControlName="leaveCategory" placeholder="Select leave category" class="form-select custom-select"
+            filterPlaceholder="Search leave type">
+            <ng-template #selectedItem let-selectedOption>{{ selectedOption.label }}</ng-template>
+            <ng-template let-employee #item>{{ employee.label }}</ng-template>
+          </p-select>
         </div>
 
         <!-- Buttons -->
@@ -66,19 +58,19 @@
             <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
             <span>{{'Loading...'}}</span>
             }@else {
-            <span>{{'Generate'}}</span>
+            <span>{{'Generate' | translate}}</span>
             }
           </button>
           }
-          @if(rbac.allowedToAccess('Inactive Empolyee Report - Generate.view') 
-          && rbac.allowedToAccess('Inactive Empolyee Report - Export.view')){
+
+          @if(rbac.allowedToAccess('Inactive Empolyee Report - Generate.view') && rbac.allowedToAccess('Inactive Empolyee Report - Export.view')){
           <button type="button" class="custom-btn btn-primary" (click)="exportToExcelInactive()"
             [disabled]="filteredInactiveRecord.length == 0 || disableBtn">
             @if(spinnerLoader2){
             <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
             <span>{{'Loading...'}}</span>
             }@else {
-            <span>{{'Export'}}</span>
+            <span>{{'Export' | translate}}</span>
             }
           </button>
           }
@@ -87,53 +79,50 @@
     </form>
   </div>
 
-
-
-
-      @if (isLoading) {
-      <div class="custom-compoent-data-loader">
-        <app-data-loader-content />
-      </div>
-      }@else {
-      <div class="custom-table-content">
-        <table id="wfhReportTable" class="content w-100">
-          <thead>
-            <th>Employee ID</th>
-            <th>Employee Name</th>
-            <th>Department</th>
-            <th>Team Manager</th>
-            <th>Location</th>
-            <th>Sub Location</th>
-            <th>Year</th>
-            <th>Leave Type</th>
-            <th>Entitled</th>
-            <th>Availed</th>
-            <th>Balance</th>
-          </thead>
-          <tbody>
-            @if (filteredInactiveRecord && filteredInactiveRecord.length > 0) {
-            @for (record of filteredInactiveRecord; track record) {
-            <tr>
-              <td>{{ record.fusionEmpId ?? '-' }}</td>
-              <td>{{ record.employeeName ?? '-' }}</td>
-              <td>{{ record.department ?? '-' }}</td>
-              <td>{{ record.teamManagerName ?? '-' }}</td>
-              <td>{{ record.location ?? '-' }}</td>
-              <td>{{ record.subLocation ?? '-' }}</td>
-              <td>{{ record.year ?? '-' }}</td>
-              <td>{{ record.leaveType ?? '-' }}</td>
-              <td>{{ record.entitled ?? '-' }}</td>
-              <td>{{ record.availed ?? '-' }}</td>
-              <td>{{ record.balance ?? '-' }}</td>
-            </tr>
-            }
-            } @else {
-            <tr>
-              <app-no-data-found></app-no-data-found>
-            </tr>
-            }
-          </tbody>
-        </table>
-      </div>
-      }
-    </div>
+  @if (isLoading) {
+  <div class="custom-compoent-data-loader">
+    <app-data-loader-content />
+  </div>
+  }@else {
+  <div class="custom-table-content">
+    <table id="wfhReportTable" class="content w-100">
+      <thead>
+        <th>{{ 'Employee ID' | translate }}</th>
+        <th>{{ 'Employee Name' | translate }}</th>
+        <th>{{ 'Department' | translate }}</th>
+        <th>{{ 'Team Manager' | translate }}</th>
+        <th>{{ 'Location' | translate }}</th>
+        <th>{{ 'Sub Location' | translate }}</th>
+        <th>{{ 'Year' | translate }}</th>
+        <th>{{ 'Leave Type' | translate }}</th>
+        <th>{{ 'Entitled' | translate }}</th>
+        <th>{{ 'Availed' | translate }}</th>
+        <th>{{ 'Balance' | translate }}</th>
+      </thead>
+      <tbody>
+        @if (filteredInactiveRecord && filteredInactiveRecord.length > 0) {
+        @for (record of filteredInactiveRecord; track record) {
+        <tr>
+          <td>{{ record.fusionEmpId ?? '-' }}</td>
+          <td>{{ record.employeeName ?? '-' }}</td>
+          <td>{{ record.department ?? '-' }}</td>
+          <td>{{ record.teamManagerName ?? '-' }}</td>
+          <td>{{ record.location ?? '-' }}</td>
+          <td>{{ record.subLocation ?? '-' }}</td>
+          <td>{{ record.year ?? '-' }}</td>
+          <td>{{ record.leaveType ?? '-' }}</td>
+          <td>{{ record.entitled ?? '-' }}</td>
+          <td>{{ record.availed ?? '-' }}</td>
+          <td>{{ record.balance ?? '-' }}</td>
+        </tr>
+        }
+        } @else {
+        <tr>
+          <app-no-data-found />
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+  }
+</div>

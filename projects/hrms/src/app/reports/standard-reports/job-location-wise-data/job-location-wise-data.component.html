@@ -7,7 +7,7 @@
             <form autocomplete="off" [formGroup]="locationReportsForm" (ngSubmit)="onSubmit(locationReportsForm)">
                 <div class="d-flex align-items-center gap-3">
                        
-                       <div *ngIf="locationReportsForm.get('dateOfJoining')?.value">
+                       <div *ngIf="showClearAllButton()">
           <button type="button" class="clear-all-btn" (click)="clearAllFilters()" > Clear All</button>
         </div>
 
@@ -45,6 +45,17 @@
                                 <ng-template #selectedItem let-selectedOption>{{ selectedOption.jobSubLocationName }}</ng-template>
                                 <ng-template let-location #item>{{ location.jobSubLocationName }}</ng-template>
                             </p-select>
+                        </div>
+                    </div>
+                    
+                    <!-- Employee Status -->
+                    <div class="d-flex align-items-center gap-2">
+                        <label class="custom-label filter-labels text-nowrap m-0">Employee Status</label>
+                        <div class="custom-p-multiSelect-content">
+                            <p-multiselect [options]="employeeStatusOptions" formControlName="empStatus" 
+                                optionLabel="label" optionValue="value" placeholder="Select employee status" 
+                                class="form-select custom-select" [showClear]="true">
+                            </p-multiselect>
                         </div>
                     </div>
                     }

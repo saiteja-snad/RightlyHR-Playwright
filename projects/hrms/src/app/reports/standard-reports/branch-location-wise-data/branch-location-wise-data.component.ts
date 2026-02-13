@@ -1,6 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SelectModule } from 'primeng/select';
+import { MultiSelectModule } from 'primeng/multiselect';
 import { HttpService } from '../../../services/http.service';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { CommonModule } from '@angular/common';
@@ -24,6 +25,7 @@ import { DatePicker } from 'primeng/datepicker';
   selector: 'app-branch-location-wise-data',
   imports: [
     SelectModule,
+    MultiSelectModule,
     ReactiveFormsModule,
     CommonModule,
     FormsModule,
@@ -45,6 +47,12 @@ export class BranchLocationWiseDataComponent implements OnInit, OnDestroy {
   destroy$: Subject<boolean> = new Subject<boolean>();
   standardReportData = [] as EmployeeDetails[];
   branchLocations = [] as Branch[];
+  employeeStatusOptions = [
+    { label: 'All Employees', value: '' },
+    { label: 'Active', value: 'Active,Trainee Active,Active Contract' },
+    { label: 'Inactive', value: 'Inactive,Trainee Inactive,Active Inactive,Trainee Inactive,Inactive Trainees' },
+    { label: 'Prospective', value: 'Prospective,Prospective Contractors,Prospective Contract Employees,Prospective Trainees,Trainee Prospective' }
+  ];
   localeOptions: any = {
     applyLabel: 'ok',
     format: environment.dateformat.toUpperCase(),
@@ -82,25 +90,57 @@ export class BranchLocationWiseDataComponent implements OnInit, OnDestroy {
       applyLabel: 'ok',
       format: this.authService.convertAngularDateFormatToJs(environment.dateformat).toUpperCase(),
       direction: 'ltr',
-      clearLabel: 'Clear', // could be rtl
+      clearLabel: 'Clear',
     };
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.initializeForm();
     this.getBranchLocations();
+    this.handleEmployeeStatusChanges();
     this.reportForm.valueChanges.subscribe(() => {
       this.disableBtn = true;
-    })
+    });
+  }
+
+  handleEmployeeStatusChanges(): void {
+    this.reportForm.get('empStatus')?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((selected: string[]) => {
+      if (!selected || selected.length === 0) return;
+      
+      if (selected.length > 1) {
+        const lastSelected = selected[selected.length - 1];
+        if (lastSelected === '') {
+          setTimeout(() => this.reportForm.get('empStatus')?.setValue([''], { emitEvent: false }));
+        } else if (selected.includes('')) {
+          setTimeout(() => this.reportForm.get('empStatus')?.setValue(selected.filter(s => s !== ''), { emitEvent: false }));
+        }
+      }
+    });
   }
 
   initializeForm() {
     this.reportForm = this.fb.group({
       location: [''],
       dateOfJoining: [null],
+      empStatus: [['']]
     });
   }
+
+  showClearAllButton(): boolean {
+    const form = this.reportForm;
+    const doj = form.get('dateOfJoining')?.value;
+    const location = form.get('location')?.value;
+    const empStatus = form.get('empStatus')?.value;
+    
+    const hasDoj = !!doj;
+    const hasLocation = location && location !== 'All' && location !== '';
+    const hasEmpStatus = empStatus && empStatus.length > 0 && !(empStatus.length === 1 && empStatus[0] === '');
+    
+    return hasDoj || hasLocation || hasEmpStatus;
+  }
+
 clearAllFilters(){
   this.reportForm.get('dateOfJoining')?.setValue(null);
   this.reportForm.get('location')?.setValue('All');
+  this.reportForm.get('empStatus')?.setValue(['']);
   this.onSubmit(this.reportForm);
 }
   getBranchLocations() {
@@ -133,12 +173,18 @@ clearAllFilters(){
       const dateRangeArray = formData.dateOfJoining || [];
       const startDate: Dayjs | null = dateRangeArray[0] ? dayjs(dateRangeArray[0]) : null;
       const endDate: Dayjs | null = dateRangeArray[1] ? dayjs(dateRangeArray[1]) : startDate ? startDate : null;
+      
+      const employeeStatus = formData.empStatus && formData.empStatus.length > 0 
+        ? formData.empStatus.join(',')
+        : '';
+      
       const request: IStandardReportRequest = {
         dateRange: {
           startDate: startDate,
           endDate: endDate
         },
         selectedBranchLocation: formData.location,
+        employeeStatus: employeeStatus
       };
       this.reportService.getStandardReports(request).pipe(takeUntil(this.destroy$))
         .subscribe({

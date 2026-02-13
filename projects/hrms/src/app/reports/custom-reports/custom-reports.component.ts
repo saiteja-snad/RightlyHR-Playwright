@@ -3,6 +3,7 @@ import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { HttpService } from '../../services/http.service';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SelectModule } from 'primeng/select';
+import { MultiSelectModule } from 'primeng/multiselect';
 import * as XLSX from 'xlsx';
 import { AuthService } from '../../services/auth.service';
 import { Subject, takeUntil } from 'rxjs';
@@ -28,6 +29,7 @@ interface FieldGroup {
   selector: 'app-custom-reports',
   imports: [
     SelectModule,
+    MultiSelectModule,
     ReactiveFormsModule,
     CommonModule,
     FormsModule,
@@ -72,7 +74,12 @@ export class CustomReportsComponent implements OnInit, OnDestroy {
   JobShowCard = false;
   loggedInUser: any = {};
   // Data arrays
-  empStatusList = ['All Employees', 'Active', 'Inactive', 'Prospective'];
+  empStatusList = [
+    { label: 'All Employees', value: 'All Employees' },
+    { label: 'Active', value: 'Active' },
+    { label: 'Inactive', value: 'Inactive' },
+    { label: 'Prospective', value: 'Prospective' }
+  ];
   selectedData: any[] = [];
   selectedFields: string[] = [
     // 'ID',
@@ -331,11 +338,27 @@ export class CustomReportsComponent implements OnInit, OnDestroy {
     this.getCustomReportDetails();
     this.getStatus();
     this.showPersonalData();
+    this.handleEmployeeStatusChanges();
+  }
+
+  handleEmployeeStatusChanges(): void {
+    this.reportForm.get('status')?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((selected: string[]) => {
+      if (!selected || selected.length === 0) return;
+      
+      if (selected.length > 1) {
+        const lastSelected = selected[selected.length - 1];
+        if (lastSelected === 'All Employees') {
+          setTimeout(() => this.reportForm.get('status')?.setValue(['All Employees'], { emitEvent: false }));
+        } else if (selected.includes('All Employees')) {
+          setTimeout(() => this.reportForm.get('status')?.setValue(selected.filter(s => s !== 'All Employees'), { emitEvent: false }));
+        }
+      }
+    });
   }
 
   inititalizeForm() {
     this.reportForm = this.fb.group({
-      status: ['All Employees'],
+      status: [['All Employees']],
       dateOfJoining: [null],
     });
     this.reportForm.get('status')?.valueChanges.subscribe(() => {
@@ -455,12 +478,9 @@ export class CustomReportsComponent implements OnInit, OnDestroy {
     const formData = this.reportForm.value;
     this.updateReportFields();
     this.hasPendingChanges = false;
-    // //if dateOfJoining present filter the data with provide range
-    // const startDate = formData.dateOfJoining?.startDate ? new Date(formData.dateOfJoining.startDate) : null;
-    // const endDate = formData.dateOfJoining?.endDate ? new Date(formData.dateOfJoining.endDate) : null;
-    // Step 1: Filter employees based on DoJ if date range is provided
-    const statusRaw = this.reportForm.get('status')?.value;
-    const empStatus = statusRaw?.toString().trim().toLowerCase();
+    
+    const statusArray = formData.status || [];
+    const empStatus = statusArray.join(',').toLowerCase();
     const startDate = formData.dateOfJoining?.startDate
       ? new Date(formData.dateOfJoining.startDate)
       : null;
@@ -468,31 +488,31 @@ export class CustomReportsComponent implements OnInit, OnDestroy {
       ? new Date(formData.dateOfJoining.endDate)
       : null;
     const filteredEmployees = this.emp.filter((user: Ipersonal) => {
-      // Filter by Status using statusMapping
-      if (empStatus !== 'all employees') {
-        const allowedStatuses = this.statusMapping[empStatus];
-        if (allowedStatuses) {
-           if (!user.empstatus || !allowedStatuses.some(s => s.toLowerCase() === user.empstatus.toLowerCase())) {
-             return false;
-           }
+      if (!empStatus.includes('all employees')) {
+        const statusParts = empStatus.split(',').map((s: string) => s.trim());
+        let matchFound = false;
+        for (const statusPart of statusParts) {
+          const allowedStatuses = this.statusMapping[statusPart];
+          if (allowedStatuses && user.empstatus && allowedStatuses.some(s => s.toLowerCase() === user.empstatus.toLowerCase())) {
+            matchFound = true;
+            break;
+          }
         }
+        if (!matchFound) return false;
       }
 
-      // Determine the date field to use based on the selected status
       let dateToCheck: Date | null = null;
-      if (empStatus === 'active' && user.dateOfJoining) {
+      if (empStatus.includes('active') && user.dateOfJoining) {
         dateToCheck = new Date(user.dateOfJoining);
-      } else if (empStatus === 'inactive' && user.lastworkingday) {
+      } else if (empStatus.includes('inactive') && user.lastworkingday) {
         dateToCheck = new Date(user.lastworkingday);
       }
-      // If date filtering is not applicable (dateToCheck is null), include the employee
       if (!dateToCheck || isNaN(dateToCheck.getTime())) return true;
-      // Apply date range filter only if a valid range is provided
-      if (empStatus === 'active' && (startDate || endDate)) {
+      if (empStatus.includes('active') && (startDate || endDate)) {
         if (startDate && dateToCheck < startDate) return false;
         if (endDate && dateToCheck > endDate) return false;
       }
-      if (empStatus === 'inactive' && (startDate || endDate)) {
+      if (empStatus.includes('inactive') && (startDate || endDate)) {
         if (startDate && dateToCheck < startDate) return false;
         if (endDate && dateToCheck > endDate) return false;
       }
@@ -662,46 +682,33 @@ export class CustomReportsComponent implements OnInit, OnDestroy {
     });
   }
 
-  options(employeeStatus: string) {
-    this.employeeStatus = employeeStatus;
-    if (employeeStatus) {
-      this.selectedFieldsOption = this.Statusdetails.find(
-        (e: { statusname: string }) => e.statusname == employeeStatus
-      );
-      this.emp = this.copyData;
-      this.filteredData = this.emp;
-
-      const allowedStatuses = this.statusMapping[employeeStatus.toLowerCase()];
-      if (allowedStatuses) {
-        this.filteredData = this.emp.filter(
-          (emp) => emp.empstatus && allowedStatuses.some(s => s.toLowerCase() === emp.empstatus.toLowerCase())
-        );
-      }
-      
-      // if (employeeStatus.toLowerCase() == 'prospective') {
-      //   this.filteredData = this.emp.filter(
-      //     (emp) => emp.empstatus.toLowerCase() == employeeStatus.toLowerCase()
-      //   );
-      // }
-      // if (employeeStatus.toLowerCase() == 'active') {
-      //   this.filteredData = this.emp.filter(
-      //     (emp) => emp.empstatus.toLowerCase() == employeeStatus.toLowerCase()
-      //   );
-      // }
-      // if (employeeStatus.toLowerCase() == 'inactive') {
-      //   this.filteredData = this.emp.filter(
-      //     (emp) => emp.empstatus.toLowerCase() == employeeStatus.toLowerCase()
-      //   );
-      // }
-      this.emp = this.filteredData;
-    } else {
+  options(employeeStatus: string[]) {
+    if (!employeeStatus || employeeStatus.length === 0) {
       this.selectedFieldsOption = [];
+      return;
     }
+    
+    this.emp = this.copyData;
+    this.filteredData = this.emp;
+
+    const statusLower = employeeStatus.map(s => s.toLowerCase());
+    
+    if (!statusLower.includes('all employees')) {
+      this.filteredData = this.emp.filter(emp => {
+        if (!emp.empstatus) return false;
+        return statusLower.some(status => {
+          const allowedStatuses = this.statusMapping[status];
+          return allowedStatuses && allowedStatuses.some(s => s.toLowerCase() === emp.empstatus.toLowerCase());
+        });
+      });
+    }
+    
+    this.emp = this.filteredData;
   }
 
 clearAllFilters(): void {
   this.reportForm.patchValue({
-    status: 'All Employees',
+    status: ['All Employees'],
     dateOfJoining: null
   });
 
@@ -715,18 +722,21 @@ clearAllFilters(): void {
 }
 
 isActiveOrInactive(): boolean {
-  const status = this.reportForm.get('status')?.value?.toLowerCase();
-  return status === 'active' || status === 'inactive';
+  const statusArray = this.reportForm.get('status')?.value || [];
+  const statusLower = statusArray.map((s: string) => s.toLowerCase());
+  return statusLower.includes('active') || statusLower.includes('inactive');
 }
 
   getDateLabel(): string {
-    const status = this.reportForm.get('status')?.value?.toLowerCase();
-    return status === 'active' ? 'Date of Joining' : 'Last Working Day';
+    const statusArray = this.reportForm.get('status')?.value || [];
+    const statusLower = statusArray.map((s: string) => s.toLowerCase());
+    return statusLower.includes('active') ? 'Date of Joining' : 'Last Working Day';
   }
 
 getDatePlaceholder(): string {
-  const status = this.reportForm.get('status')?.value?.toLowerCase();
-  return status === 'active'
+  const statusArray = this.reportForm.get('status')?.value || [];
+  const statusLower = statusArray.map((s: string) => s.toLowerCase());
+  return statusLower.includes('active')
     ? 'Please select date of joining'
     : 'Please select last working day';
 }

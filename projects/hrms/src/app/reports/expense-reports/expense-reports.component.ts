@@ -202,10 +202,10 @@ export class ExpenseReportsComponent implements OnInit, OnDestroy {
   //   return !(employee || manager || (dateRange && (dateRange.startDate || dateRange.endDate)) || leaveCategory || team);
   // }
 
-//   get isExpenseGenerateDisabled(): boolean {
-//   const { dateRange, status } = this.ExpenseReportForm.value;
-//   return this.spinnerLoader1 || !(dateRange && status);
-//  }
+  //   get isExpenseGenerateDisabled(): boolean {
+  //   const { dateRange, status } = this.ExpenseReportForm.value;
+  //   return this.spinnerLoader1 || !(dateRange && status);
+  //  }
 
   formatDate(date: Date): string {
     const year = date.getFullYear();
@@ -217,51 +217,51 @@ export class ExpenseReportsComponent implements OnInit, OnDestroy {
   parseDate(date: any): Date {
     return date instanceof Date ? date : new Date(date);
   }
-isAnyFilterSelected(): boolean {
-  if (!this.ExpenseReportForm) return false;
+  isAnyFilterSelected(): boolean {
+    if (!this.ExpenseReportForm) return false;
 
-  const {
-    employee,
-    dateRange,
-    manager,
-    leaveCategory,
-    team,
-    status
-  } = this.ExpenseReportForm.value;
+    const {
+      employee,
+      dateRange,
+      manager,
+      leaveCategory,
+      team,
+      status
+    } = this.ExpenseReportForm.value;
 
-  return !!(
-    employee ||
-    manager ||
-    team ||
-    status ||
-    leaveCategory ||
-    (dateRange && dateRange.length)
-  );
-}
+    return !!(
+      employee ||
+      manager ||
+      team ||
+      status ||
+      leaveCategory ||
+      (dateRange && dateRange.length)
+    );
+  }
 
-get isExpenseGenerateDisabled(): boolean {
-  if (!this.ExpenseReportForm) return true;
-  if (this.spinnerLoader1) return true;
+  get isExpenseGenerateDisabled(): boolean {
+    if (!this.ExpenseReportForm) return true;
+    if (this.spinnerLoader1) return true;
 
-  const {
-    dateRange,
-    employee,
-    manager,
-    team,
-    status,
-    leaveCategory
-  } = this.ExpenseReportForm.value;
+    const {
+      dateRange,
+      employee,
+      manager,
+      team,
+      status,
+      leaveCategory
+    } = this.ExpenseReportForm.value;
 
-  const isAnyFilterSelected =
-    (Array.isArray(dateRange) && dateRange.length > 0) ||
-    !!employee ||
-    !!manager ||
-    !!team ||
-    !!status ||
-    !!leaveCategory;
+    const isAnyFilterSelected =
+      (Array.isArray(dateRange) && dateRange.length > 0) ||
+      !!employee ||
+      !!manager ||
+      !!team ||
+      !!status ||
+      !!leaveCategory;
 
-  return !isAnyFilterSelected; // 👈 key line
-}
+    return !isAnyFilterSelected; // 👈 key line
+  }
 
 
   generateExpenseReport(): void {
@@ -324,20 +324,20 @@ get isExpenseGenerateDisabled(): boolean {
     // Call API
     this.reportsService.getExpenseReports(request).subscribe({
       next: (response: any) => {
-         if (
-    !response ||
-    response.length === 0 ||
-    (
-      response.length === 1 &&
-      response[0].totalExpenseCount === 0 &&
-      response[0].totalItemsCount === 0
-    )
-  ) {
-    // Treat as NO DATA
-    this.filteredleaveRecord = [];
-  } else {
-    this.filteredleaveRecord = response;
-  }
+        if (
+          !response ||
+          response.length === 0 ||
+          (
+            response.length === 1 &&
+            response[0].totalExpenseCount === 0 &&
+            response[0].totalItemsCount === 0
+          )
+        ) {
+          // Treat as NO DATA
+          this.filteredleaveRecord = [];
+        } else {
+          this.filteredleaveRecord = response;
+        }
 
       },
       error: () => {
@@ -366,170 +366,176 @@ get isExpenseGenerateDisabled(): boolean {
   }
 
 
-exportToExcelYearly(): void {
-  this.spinnerLoader2 = true;
+  exportToExcelYearly(): void {
+    this.spinnerLoader2 = true;
 
-  const HEADER_MAPPINGS: { [key: string]: string } = {
-    fusionEmpId: 'EMPLOYEE ID',
-    employeeName: 'EMPLOYEE NAME',
-    department: 'DEPARTMENT',
-    teamManagerName: 'TEAM MANAGER',
-    appliedDate: 'EXPENSE APPLIED DATE',
-    expenseTitle: 'EXPENSE TITLE',
-    totalAmount: 'TOTAL AMOUNT (INR)',
-    expensesStatus: 'STATUS',
-  };
-
-  const CHILD_HEADERS = [
-    'EXPENSE NAME',
-    'DESCRIPTION',
-    'EXPENSE DATE',
-    'AMOUNT (USD)',
-    'EXPENSE ITEM STATUS',
-    'RECEIPT NUMBER',
-  ];
-
-  const workbook = new ExcelJS.Workbook();
-  const worksheet = workbook.addWorksheet('Expense Report');
-
-  // === TITLE (2 rows merged & centered) ===
-  worksheet.mergeCells(1, 1, 2, Object.keys(HEADER_MAPPINGS).length + CHILD_HEADERS.length);
-  const titleCell = worksheet.getCell('A1');
-  titleCell.value = 'EXPENSE REPORT';
-  titleCell.font = { bold: true, size: 16 };
-  titleCell.alignment = { horizontal: 'center', vertical: 'middle' };
-
-  // Add one blank row after the title (for spacing)
-  worksheet.addRow([]);
-
-  // === HEADER ROW ===
-  const headerRow = worksheet.addRow([
-    ...Object.values(HEADER_MAPPINGS),
-    ...CHILD_HEADERS,
-  ]);
-
-  headerRow.eachCell((cell) => {
-    cell.fill = {
-      type: 'pattern',
-      pattern: 'solid',
-      fgColor: { argb: '305496' },
+    const HEADER_MAPPINGS: { [key: string]: string } = {
+      fusionEmpId: 'EMPLOYEE ID',
+      employeeName: 'EMPLOYEE NAME',
+      department: 'DEPARTMENT',
+      teamManagerName: 'TEAM MANAGER',
+      appliedDate: 'EXPENSE APPLIED DATE',
+      expenseTitle: 'EXPENSE TITLE',
+      totalAmount: 'TOTAL AMOUNT (INR)',
+      expensesStatus: 'STATUS',
     };
-    cell.font = { bold: true, color: { argb: 'FFFFFF' } };
-    cell.alignment = { horizontal: 'left', vertical: 'middle', wrapText: true };
-    cell.border = {
-      top: { style: 'thin' },
-      left: { style: 'thin' },
-      bottom: { style: 'thin' },
-      right: { style: 'thin' },
+
+    const CHILD_HEADERS = [
+      'EXPENSE NAME',
+      'DESCRIPTION',
+      'EXPENSE DATE',
+      'AMOUNT (INR)',
+      'EXPENSE ITEM STATUS',
+      'RECEIPT NUMBER',
+    ];
+
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Expense Report');
+
+    // === TITLE (2 rows merged & centered) ===
+    worksheet.mergeCells(1, 1, 2, Object.keys(HEADER_MAPPINGS).length + CHILD_HEADERS.length);
+    const titleCell = worksheet.getCell('A1');
+    titleCell.value = 'EXPENSE REPORT';
+    titleCell.font = { bold: true, size: 16 };
+    titleCell.alignment = { horizontal: 'center', vertical: 'middle' };
+
+    // Add one blank row after the title (for spacing)
+    worksheet.addRow([]);
+
+    // === HEADER ROW ===
+    const headerRow = worksheet.addRow([
+      ...Object.values(HEADER_MAPPINGS),
+      ...CHILD_HEADERS,
+    ]);
+
+    headerRow.eachCell((cell) => {
+      cell.fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: '305496' },
+      };
+      cell.font = { bold: true, color: { argb: 'FFFFFF' } };
+      cell.alignment = { horizontal: 'left', vertical: 'middle', wrapText: true };
+      cell.border = {
+        top: { style: 'thin' },
+        left: { style: 'thin' },
+        bottom: { style: 'thin' },
+        right: { style: 'thin' },
+      };
+    });
+
+    // Apply AutoFilter
+    worksheet.autoFilter = {
+      from: { row: headerRow.number, column: 1 },
+      to: { row: headerRow.number, column: Object.keys(HEADER_MAPPINGS).length + CHILD_HEADERS.length },
     };
-  });
 
-  // Apply AutoFilter
-  worksheet.autoFilter = {
-    from: { row: headerRow.number, column: 1 },
-    to: { row: headerRow.number, column: Object.keys(HEADER_MAPPINGS).length + CHILD_HEADERS.length },
-  };
+    const formatDate = (date: any) => {
+      if (!date) return '-';
+      const d = new Date(date);
+      const day = String(d.getDate()).padStart(2, '0');
+      const month = d.toLocaleString('default', { month: 'short' });
+      const year = d.getFullYear();
+      return `${day}-${month}-${year}`;
+    };
 
-  const formatDate = (date: any) => {
-    if (!date) return '-';
-    const d = new Date(date);
-    const day = String(d.getDate()).padStart(2, '0');
-    const month = d.toLocaleString('default', { month: 'short' });
-    const year = d.getFullYear();
-    return `${day}-${month}-${year}`;
-  };
+    const formatAmount = (val: any) => {
+      const n = Number(val);
+      return isNaN(n) ? '-' : n.toFixed(2);
+    };
 
-  const formatAmount = (val: any) => {
-    const n = Number(val);
-    return isNaN(n) ? '-' : n.toFixed(2);
-  };
+    // === DATA ROWS ===
+    this.filteredleaveRecord.forEach((record) => {
+      const items = record.expensesItems && record.expensesItems.length > 0
+        ? record.expensesItems
+        : [];
 
-  // === DATA ROWS ===
-  this.filteredleaveRecord.forEach((record) => {
-    const startRow = (worksheet.lastRow?.number ?? 0) + 1;
-    const items = record.expensesItems && record.expensesItems.length > 0
-      ? record.expensesItems
-      : [{}];
+      // ✅ SKIP RECORDS WITH NO ITEMS (prevents '-' row)
+      if (!items.length) {
+        return;
+      }
 
-    items.forEach((item: any) => {
-      const row = worksheet.addRow([
-        record.fusionEmpId ?? '-',
-        record.employeeName ?? '-',
-        record.department ?? '-',
-        record.teamManagerName ?? '-',
-        record.appliedDate ? formatDate(record.appliedDate) : '-',
-        record.expenseTitle ?? '-',
-        formatAmount(record.totalAmount),
-        record.expensesStatus ?? '-',
-        item.expenseItemName ?? '-',
-        item.expenseItemsDescription ?? '-',
-        item.expenseDate ? formatDate(item.expenseDate) : '-',
-        formatAmount(item.expenseAmount),
-        item.status ?? '-',
-        item.receiptNumber ?? '-',
-      ]);
+      const startRow = (worksheet.lastRow?.number ?? 0) + 1;
 
-      row.height = 25;
+      items.forEach((item: any) => {
+        const row = worksheet.addRow([
+          record.fusionEmpId ?? '-',
+          record.employeeName ?? '-',
+          record.department ?? '-',
+          record.teamManagerName ?? '-',
+          record.appliedDate ? formatDate(record.appliedDate) : '-',
+          record.expenseTitle ?? '-',
+          formatAmount(record.totalAmount),
+          record.expensesStatus ?? '-',
+          item.expenseItemName ?? '-',
+          item.expenseItemsDescription ?? '-',
+          item.expenseDate ? formatDate(item.expenseDate) : '-',
+          formatAmount(item.expenseAmount),
+          item.status ?? '-',
+          item.receiptNumber ?? '-',
+        ]);
 
-      // Apply border + alignment
+        row.height = 25;
+
+        // Apply border + alignment
+        row.eachCell((cell) => {
+          const isDash = cell.value === '-';
+          cell.border = {
+            top: { style: 'thin' },
+            left: { style: 'thin' },
+            bottom: { style: 'thin' },
+            right: { style: 'thin' },
+          };
+          cell.alignment = {
+            horizontal: isDash ? 'center' : 'left',
+            vertical: 'middle',
+            wrapText: true,
+          };
+        });
+      });
+
+      // === MERGE MAIN CELLS ===
+      if (items.length > 1) {
+        const endRow = worksheet.lastRow?.number ?? startRow;
+        for (let col = 1; col <= 7; col++) {
+          worksheet.mergeCells(startRow, col, endRow, col);
+          const mergedCell = worksheet.getCell(startRow, col);
+          const isDash = mergedCell.value === '-';
+          mergedCell.alignment = {
+            horizontal: isDash ? 'center' : 'left',
+            vertical: 'middle',
+            wrapText: true,
+          };
+        }
+      }
+    });
+
+    // === AUTO WIDTH ===
+    worksheet.columns.forEach((col) => {
+      col.width = 25;
+    });
+
+    // === FINAL GRID BORDER ===
+    worksheet.eachRow((row) => {
       row.eachCell((cell) => {
-        const isDash = cell.value === '-';
         cell.border = {
-          top: { style: 'thin' },
-          left: { style: 'thin' },
-          bottom: { style: 'thin' },
-          right: { style: 'thin' },
-        };
-        cell.alignment = {
-          horizontal: isDash ? 'center' : 'left',
-          vertical: 'middle',
-          wrapText: true,
+          top: { style: 'thin', color: { argb: '000000' } },
+          left: { style: 'thin', color: { argb: '000000' } },
+          bottom: { style: 'thin', color: { argb: '000000' } },
+          right: { style: 'thin', color: { argb: '000000' } },
         };
       });
     });
 
-    // === Merge main cells if multiple items ===
-    if (items.length > 1) {
-      const endRow = worksheet.lastRow?.number ?? startRow;
-      for (let col = 1; col <= 7; col++) {
-        worksheet.mergeCells(startRow, col, endRow, col);
-        const mergedCell = worksheet.getCell(startRow, col);
-        const isDash = mergedCell.value === '-';
-        mergedCell.alignment = {
-          horizontal: isDash ? 'center' : 'left',
-          vertical: 'middle',
-          wrapText: true,
-        };
-      }
-    }
-  });
-
-  // === AUTO WIDTH ===
-  worksheet.columns.forEach((col) => {
-    col.width = 25;
-  });
-
-  // === Final Grid Border (thin) ===
-  worksheet.eachRow((row) => {
-    row.eachCell((cell) => {
-      cell.border = {
-        top: { style: 'thin', color: { argb: '000000' } },
-        left: { style: 'thin', color: { argb: '000000' } },
-        bottom: { style: 'thin', color: { argb: '000000' } },
-        right: { style: 'thin', color: { argb: '000000' } },
-      };
+    // === SAVE FILE ===
+    workbook.xlsx.writeBuffer().then((data: any) => {
+      const blob = new Blob([data], {
+        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      });
+      saveAs(blob, `Expense_Report_${new Date().toISOString().split('T')[0]}.xlsx`);
+      this.spinnerLoader2 = false;
     });
-  });
-
-  // === SAVE FILE ===
-  workbook.xlsx.writeBuffer().then((data: any) => {
-    const blob = new Blob([data], {
-      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    });
-    saveAs(blob, `Expense_Report_${new Date().toISOString().split('T')[0]}.xlsx`);
-    this.spinnerLoader2 = false;
-  });
-}
+  }
 
 
   ngOnDestroy(): void {

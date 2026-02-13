@@ -10,6 +10,7 @@ import { SettingsItConfigurationTabsComponent } from '../../shared/settings-tabs
 import { RbacService } from '../../services/rbac.service';
 import { PmsSettingsTabsComponent } from "../../shared/pms-module-tabs/pms-settings-tabs/pms-settings-tabs.component";
 import { AccordionModule } from 'primeng/accordion';
+import { TranslateModule } from '@ngx-translate/core';
 import { Router } from '@angular/router';
 import { AccessNavigationService } from '../../services/access-navigation.service';
 import { SettingsLockingSystemTabsComponent } from "../../shared/settings-tabs/settings-locking-system-tabs/settings-locking-system-tabs.component";
@@ -21,7 +22,7 @@ import { SettingsEmployeeFieldsUpdateConfigurationsComponent } from '../../share
   selector: 'app-settings-overview',
   imports: [CommonModule, SettingsEmployeeFieldsModuleTabsComponent, SettingsRolePermissionsModuleTabsComponent,
     SettingsTimeOffTabsComponent, SettingsAssetsConfigurationsTabsComponent, SettingDynamicFormsTabsComponent, PmsSettingsTabsComponent,SettingsEmployeeFieldsUpdateConfigurationsComponent,
-    AccordionModule, SettingsLockingSystemTabsComponent, SettingsTimesheetLockingTabsComponent, SettingsItConfigurationTabsComponent],
+    AccordionModule, SettingsLockingSystemTabsComponent, SettingsTimesheetLockingTabsComponent, SettingsItConfigurationTabsComponent, TranslateModule],
 
   templateUrl: './settings-overview.component.html',
   styleUrl: './settings-overview.component.scss',

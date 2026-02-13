@@ -5,9 +5,9 @@
             <table class="w-100">
                 <thead>
                     <tr>
-                        <th>Name</th>
-                        <th>Value</th>
-                        <th *ngIf="rbac.allowedToAccess('WFH Entitlement Tab.update')">Action</th>
+                        <th>{{ 'Name' | translate }}</th>
+                        <th>{{ 'Value' | translate }}</th>
+                        <th *ngIf="rbac.allowedToAccess('WFH Entitlement Tab.update')">{{ 'Action' | translate }}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -27,15 +27,15 @@
                                 </a>
                                 <ul class="dropdown-menu custom-dropdown-menu">
                                     <li>
-                                        <a class="dropdown-item" (click)="enableEdit(i, criteria.id, criteria.value)"><i class="bi bi-pencil me-2"></i>Update</a>
+                                        <a class="dropdown-item" (click)="enableEdit(i, criteria.id, criteria.value)"><i class="bi bi-pencil me-2"></i>{{ 'Update' | translate }}</a>
                                     </li>
                                 </ul>
                             </div>
                             <ng-template #editingMode>
                                 <div class="d-flex gap-3">
                                     <button class="custom-btn btn-primary" type="button"
-                                        (click)="submitWFHValue(i,temporaryValue)">Update</button>
-                                    <button class="custom-btn btn-secondary" type="button" (click)="disableEdit()">Cancel</button>
+                                        (click)="submitWFHValue(i,temporaryValue)">{{ 'Update' | translate }}</button>
+                                    <button class="custom-btn btn-secondary" type="button" (click)="disableEdit()">{{ 'Cancel' | translate }}</button>
                                 </div>
                             </ng-template>
                         </td>

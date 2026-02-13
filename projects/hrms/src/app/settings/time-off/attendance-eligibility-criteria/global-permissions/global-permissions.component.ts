@@ -11,10 +11,11 @@ import { NoDataFoundComponent } from '../../../../shared/no-data-found/no-data-f
 import { RbacService } from '../../../../services/rbac.service';
 import { SettingsDeleteIconComponent } from '../../../../icons/settings-delete-icon/settings-delete-icon.component';
 import { SettingsUpdateIconComponent } from '../../../../icons/settings-update-icon/settings-update-icon.component';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-global-permissions',
-  imports: [CommonModule, NoDataFoundComponent, ReactiveFormsModule,SettingsDeleteIconComponent, SettingsUpdateIconComponent],
+  imports: [CommonModule, NoDataFoundComponent, ReactiveFormsModule,SettingsDeleteIconComponent, SettingsUpdateIconComponent, TranslateModule],
   templateUrl: './global-permissions.component.html',
   styleUrl: './global-permissions.component.scss'
 })

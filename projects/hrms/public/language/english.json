@@ -2308,7 +2308,19 @@
   "Warranty start date is required": "Warranty start date is required",
   "Search by asset category / asset sub category / serial number": "Search by asset category / asset sub category / serial number",
   "Mark as Active": "Mark as Active",
-  "Close Icon": "Close Icon"
+  "Close Icon": "Close Icon",
+  "Please enter value": "Please enter value",
+  "Please enter attendance regularization type": "Please enter attendance regularization type",
+  "Attendance regularization type is required": "Attendance regularization type is required",
+  "Update Attendance Regularization Type": "Update Attendance Regularization Type",
+  "Attendance Regularization Type": "Attendance Regularization Type",
+  "failure icon": "failure icon",
+  "Value must be 0 or greater.": "Value must be 0 or greater.",
+  "Please enter global permission": "Please enter global permission",
+  "Global permission is required": "Global permission is required",
+  "Edit Permission": "Edit Permission",
+  "Permission": "Permission",
+  "Value must be between 1 and 480.": "Value must be between 1 and 480."
 
 
 }

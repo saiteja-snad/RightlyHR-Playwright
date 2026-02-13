@@ -24,7 +24,7 @@
                 <th>{{'Allocated By'|translate}}</th>
                 <!-- <th>{{'Allocated History'|translate}}</th> -->
                 <th>{{'Status'|translate}}</th>
-                <th *ngIf="rbac.allowedToAccess('Cards Allocated.create') || rbac.allowedToAccess('Cards Allocated.update')">
+                <th class="text-center" *ngIf="rbac.allowedToAccess('Cards Allocated.create') || rbac.allowedToAccess('Cards Allocated.update')">
                     {{'Actions'|translate}}</th>
             </thead>
             <tbody>
@@ -66,7 +66,7 @@
                     <!-- allocation status -->
                     <!-- <td>{{item?.allocationStatus ? item?.allocationStatus:'-'}}</td> -->
                     <!-- actions -->
-                    <td *ngIf="rbac.allowedToAccess('Cards Allocated.create') || rbac.allowedToAccess('Cards Allocated.update')">
+                    <td class="text-center" *ngIf="rbac.allowedToAccess('Cards Allocated.create') || rbac.allowedToAccess('Cards Allocated.update')">
                         @if(rbac.allowedToAccess('Cards Allocated.update')){
                         <div class="dropdown">
                             <a data-bs-toggle="dropdown" aria-expanded="false">

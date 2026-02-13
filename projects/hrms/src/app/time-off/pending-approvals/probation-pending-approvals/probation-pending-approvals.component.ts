@@ -392,6 +392,7 @@ totalCount:any;
         this.getAllPendingApprovals();
         this.getApprovalStatusCounts();
         this.signalService.probationDetailsTriggerSignal()
+        this.http.setnewprobationDetails()
       },
       error: (reason: any) => {
         this.openModalService.openErrorModal(reason.error.message);
@@ -399,6 +400,7 @@ totalCount:any;
       complete: () => {
         this.getAllPendingApprovals();
         this.getApprovalStatusCounts();
+          this.http.setnewprobationDetails()
       },
     });
   }

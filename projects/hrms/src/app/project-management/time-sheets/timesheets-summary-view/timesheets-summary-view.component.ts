@@ -506,6 +506,7 @@ export class TimesheetsSummaryViewComponent implements OnInit, OnDestroy {
   }
 
   getProjectSummary(resoureID: any) {
+    this.loading = true;
     const formValue = this.datepickerForm.value;
     // const [startDate, endDate] = formValue.dateRange || [];
     // const resourceId = formValue.resourceId ? `&resourceId=${formValue.resourceId}` : '';

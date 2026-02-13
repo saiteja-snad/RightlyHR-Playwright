@@ -26,7 +26,7 @@
                         <td>{{ exp.expenses_Title }}</td>
                         <td >{{ exp?.expenseitem?.[0]?.expense_Date | dateformat }}</td>
                         <td>{{ exp.applied_date | dateformat }}</td>
-                        <td><span *ngIf="exp.totalExpenseAmount" class="me-1">₹</span>{{ exp.totalExpenseAmount }}</td>
+                        <td><span *ngIf="exp.totalExpenseAmount" class="me-1">$</span>{{ exp.totalExpenseAmount }}</td>
                         <td> <span class="me-2 status-colour">● {{ exp.status }}</span>
                         </td>
                         @if(rbac.allowedToAccess('Draft Tab.update')){
@@ -277,7 +277,7 @@
                         </div>
                     </div>
                     <div class="text-center" *ngIf="totalexpensesamount > 0 ? totalexpensesamount : ''">
-                        <b>Total Amount : </b> {{ totalexpensesamount > 0 ? (totalexpensesamount | currency:'INR':'symbol':'1.2-2') : '' }}
+                        <b>Total Amount : </b> {{ totalexpensesamount > 0 ? (totalexpensesamount | currency:'USD':'symbol':'1.2-2') : '' }}
                     </div>
                 </div>
                 <div class="custom-modal-footer" *ngIf="expenseItems.length > 0">

@@ -70,7 +70,7 @@
                      <label for="education" class="form-label custom-label text-nowrap filter-labels m-0">{{'Total Amount'
                     | translate}}:</label>
                <div >
-              <b><span class="me-1">₹</span>{{ filteredleaveRecord?.[filteredleaveRecord.length - 1]?.totalExpenseAmount }}</b>
+              <b><span class="me-1">$</span>{{ filteredleaveRecord?.[filteredleaveRecord.length - 1]?.totalExpenseAmount }}</b>
                </div>
                 </div>
                 <!-- Buttons -->
@@ -134,7 +134,7 @@
                     {{ record.appliedDate ? (record.appliedDate | dateformat) : '-' }}
                 </td>
                 <td>{{ record.expenseTitle ?? '-'}}</td>
-                <td class = "text-center"><span *ngIf="record.totalAmount" class="me-1">₹</span>{{( record.totalAmount | number:'1.2-2') ?? '-'}}</td>
+                <td class = "text-center"><span *ngIf="record.totalAmount" class="me-1">$</span>{{( record.totalAmount | number:'1.2-2') ?? '-'}}</td>
                 <td>{{ record.expensesStatus ?? '-' }}</td>
                 <td class="text-start cursor">
                     <ng-container *ngIf="record.expensesItems?.length; else noDetails">

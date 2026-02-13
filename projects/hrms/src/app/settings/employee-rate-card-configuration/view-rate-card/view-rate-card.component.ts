@@ -97,7 +97,7 @@ export class ViewRateCardComponent {
   {
     code: "INR",
     name: "Indian Rupee",
-    symbol: "₹"
+    symbol: "$"
   },
   {
     code: "GBP",

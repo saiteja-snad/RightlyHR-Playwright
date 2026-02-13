@@ -162,7 +162,7 @@ export class ContractorLetterComponent {
         this.offerLetterData.note = this.getofferdata.note
         this.offerLetterData.address = this.getofferdata.address;
         if (this.getofferdata.currencyType === 'INR') {
-          this.selectedSymbol = '₹'
+          this.selectedSymbol = '$'
         }
         if (this.getofferdata.currencyType === 'USD') {
           this.selectedSymbol = '$'

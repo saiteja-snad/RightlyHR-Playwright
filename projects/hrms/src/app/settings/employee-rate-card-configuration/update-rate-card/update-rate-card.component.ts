@@ -73,7 +73,7 @@ export class UpdateRateCardComponent {
   {
     code: "INR",
     name: "Indian Rupee",
-    symbol: "₹"
+    symbol: "$"
   },
   {
     code: "JPY",

@@ -242,7 +242,7 @@
 
                     <div class="text-center" *ngIf="totalexpensesamount > 0 ? totalexpensesamount : ''">
                         <b>{{ 'Total Amount' | translate }}: </b>
-                        {{ totalexpensesamount > 0 ? (totalexpensesamount | currency:'INR':'symbol':'1.2-2') : '' }}
+                        {{ totalexpensesamount > 0 ? (totalexpensesamount | currency:'USD':'symbol':'1.2-2') : '' }}
                     </div>
                 </div>
 

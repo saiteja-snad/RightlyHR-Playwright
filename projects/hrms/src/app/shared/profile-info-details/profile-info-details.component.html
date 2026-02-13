@@ -51,17 +51,16 @@
                 <a [href]="'tel:' +(  ( ( empdata?.mobilePhoneCountryCode? empdata?.mobilePhoneCountryCode: '') + empdata?.contactnumber))">
                     <img src="/icons/call-icon.png" alt="Icon" class="custom-icon me-2">
                     <span class="link-text">
-                        <span *ngIf="empdata?.contactnumber">
-                            <u>{{ empdata?.contactnumber
-                                ? (empdata?.contactnumber | formatcontactnumber:(empdata.mobilePhoneCountryCode || ''))
+                        <span *ngIf="empdata?.workPhone">
+                            <u>{{ empdata?.workPhone
+                                ? ( empdata?.workPhoneCountryCode +' '+  empdata?.workPhone)
                                 : '-' }}</u>
                         </span>
-                        <!-- <span *ngIf="!empdata?.workPhone && empdata?.contactnumber">
+                        <span *ngIf="!empdata?.workPhone && empdata?.contactnumber">
                             <u>{{ empdata?.contactnumber
-                                ? (empdata?.contactnumber | formatcontactnumber:(empdata.mobilePhoneCountryCode ||
-                                ''))
+                                ? empdata?.mobilePhoneCountryCode +' '+  (empdata?.contactnumber )
                                 : '-' }}</u>
-                        </span> -->
+                        </span>
                 
                     </span>
                     

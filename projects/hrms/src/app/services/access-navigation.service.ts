@@ -719,13 +719,13 @@ export class AccessNavigationService {
 
 
 
-      case '/admin':
+      case '/dashboard':
         if (this.rbac.allowedToAccess('Dashboard.view')) {
-          return route = '/admin/dashboard'
+          return route = '/dashboard'
         }
         break;
 
-      case '/admin/active-new-user':
+      case '/dashboard/active-new-user':
         if (this.rbac.allowedToAccess('Invite New User.view')) {
           for (const item of INVITE_NEW_USER_TABS) {
             if (this.rbac.allowedToAccess(item.permission)) {
@@ -1736,6 +1736,7 @@ export class AccessNavigationService {
         }
         break;
 
+     
       case '/pending-approvals/on-boarding':
         if (this.rbac.allowedToAccess('Onboarding main Tab.view')) {
           for (const item of ONBOARDING_APPROVALS_TABS) {
@@ -1748,6 +1749,36 @@ export class AccessNavigationService {
             if (this.rbac.allowedToAccess(item.permission) && item.permission === 'Trainee Details Tab.view') {
               if (item.route === '/pending-approvals/on-boarding/trainee-approvals') {
                 return (route = '/pending-approvals/on-boarding/trainee-approvals');
+              }
+            }
+
+            if (this.rbac.allowedToAccess(item.permission) && item.permission === 'Documents History Offer Letter.view') {
+              if (item.route === '/pending-approvals/on-boarding/offer-letter-history') {
+                return (route = '/pending-approvals/on-boarding/offer-letter-history');
+              }
+            }
+
+            if (this.rbac.allowedToAccess(item.permission) && item.permission === 'Documents History Contract Offer Letter.view') {
+              if (item.route === '/pending-approvals/on-boarding/contractor-offer-letter-history') {
+                return (route = '/pending-approvals/on-boarding/contractor-offer-letter-history');
+              }
+            }
+
+            if (this.rbac.allowedToAccess(item.permission) && item.permission === 'Documents History Trainee Offer Letter.view') {
+              if (item.route === '/pending-approvals/on-boarding/intern-offer-letter-history') {
+                return (route = '/pending-approvals/on-boarding/intern-offer-letter-history');
+              }
+            }
+
+            if (this.rbac.allowedToAccess(item.permission) && item.permission === 'Documents History Appointment Letter.view') {
+              if (item.route === '/pending-approvals/on-boarding/appointment-letter-history') {
+                return (route = '/pending-approvals/on-boarding/appointment-letter-history');
+              }
+            }
+
+            if (this.rbac.allowedToAccess(item.permission) && item.permission === 'Documents History Non-Disclosure Agreement Letter.view') {
+              if (item.route === '/pending-approvals/on-boarding/nda-letter-history') {
+                return (route = '/pending-approvals/on-boarding/nda-letter-history');
               }
             }
           }
@@ -1763,6 +1794,36 @@ export class AccessNavigationService {
       case '/pending-approvals/on-boarding/trainee-approvals':
         if (this.rbac.allowedToAccess('Trainee Details Tab.view')) {
           return (route = '/pending-approvals/on-boarding/trainee-approvals');
+        }
+        break;
+
+      case '/pending-approvals/on-boarding/offer-letter-history':
+        if (this.rbac.allowedToAccess('Documents History Offer Letter.view')) {
+          return (route = '/pending-approvals/on-boarding/offer-letter-history');
+        }
+        break;
+
+      case '/pending-approvals/on-boarding/contractor-offer-letter-history':
+        if (this.rbac.allowedToAccess('Documents History Contract Offer Letter.view')) {
+          return (route = '/pending-approvals/on-boarding/contractor-offer-letter-history');
+        }
+        break;
+
+      case '/pending-approvals/on-boarding/intern-offer-letter-history':
+        if (this.rbac.allowedToAccess('Documents History Trainee Offer Letter.view')) {
+          return (route = '/pending-approvals/on-boarding/intern-offer-letter-history');
+        }
+        break;
+
+      case '/pending-approvals/on-boarding/appointment-letter-history':
+        if (this.rbac.allowedToAccess('Documents History Appointment Letter.view')) {
+          return (route = '/pending-approvals/on-boarding/appointment-letter-history');
+        }
+        break;
+      
+      case '/pending-approvals/on-boarding/nda-letter-history':
+           if (this.rbac.allowedToAccess('Documents History Non-Disclosure Agreement Letter.view')) {
+          return (route = '/pending-approvals/on-boarding/nda-letter-history');
         }
         break;
 

@@ -1,15 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import {
-  AbstractControl,
-  FormBuilder,
-  FormGroup,
-  FormsModule,
-  ReactiveFormsModule,
-  ValidationErrors,
-  ValidatorFn,
-  Validators,
-} from '@angular/forms';
+import { Component } from '@angular/core';
+import { AbstractControl, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, 
+  ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
@@ -25,25 +17,15 @@ import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-foun
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import moment from 'moment';
 import { DatePicker } from 'primeng/datepicker';
-import { ConfirmationIconComponent } from "../../../icons/confirmation-icon/confirmation-icon.component";
-
+import { OnboardingFilterService } from '../../../shared/time-off-module-tabs/pending-approvals-tabs/onboarding-filter.service';
 @Component({
   selector: 'app-document-history-intern-offer-letter',
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    TranslateModule,
-    DateformatPipe,
-    FormsModule,
-    OfferletterdashboardpipePipe,
-    NoDataFoundComponent,
-    DataLoaderContentComponent,
-    DatePicker,
-    ConfirmationIconComponent
-],
+  imports: [CommonModule, ReactiveFormsModule, TranslateModule, DateformatPipe, FormsModule, OfferletterdashboardpipePipe,
+    NoDataFoundComponent, DataLoaderContentComponent, DatePicker],
   templateUrl: './document-history-intern-offer-letter.component.html',
   styleUrl: './document-history-intern-offer-letter.component.scss',
 })
+
 export class DocumentHistoryInternOfferLetterComponent {
   subscription!: Subscription;
   searchValue: any;
@@ -58,16 +40,12 @@ export class DocumentHistoryInternOfferLetterComponent {
   selectedYear: number | null = null;
   maxMonth: Date = new Date();
   offerLetters: any[] = [];
-  constructor(
-    private router: Router,
-    private modalService: NgbModal,
-    private fb: FormBuilder,
-    private http: HttpService,
-    private authService: AuthService,
-    private conformationPopup: OpenModalService, public rbac: RbacService
-  ) {
+
+  constructor(private modalService: NgbModal, private fb: FormBuilder, private http: HttpService,
+    private authService: AuthService, private conformationPopup: OpenModalService, public rbac: RbacService,private onboardingFilter: OnboardingFilterService) {
     this.initializeForm();
   }
+
   ngOnInit(): void {
     const today = new Date();
     this.selectedMonth = today.getMonth() + 1;
@@ -76,6 +54,7 @@ export class DocumentHistoryInternOfferLetterComponent {
     this.initializeForm();
     this.getTraineeOfferLetters();
   }
+
   blockLeadingSpace(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       const value = control.value as string;
@@ -85,12 +64,9 @@ export class DocumentHistoryInternOfferLetterComponent {
       return null;
     };
   }
+
   openModal(content: any) {
-    this.modalService.open(content, {
-      centered: true,
-      backdrop: 'static',
-      keyboard: false,
-    });
+    this.modalService.open(content, { centered: true, backdrop: 'static', keyboard: false });
   }
 
   initializeForm() {
@@ -101,25 +77,21 @@ export class DocumentHistoryInternOfferLetterComponent {
 
   getTraineeOfferLetters() {
     this.loading = true;
-    this.subscription = this.http
-      .getData('TraineeOfferLetter/getAllNames/approverNames')
-      .subscribe({
-        next: (data: any) => {
-          console.log(data);
-          this.loading = false;
-          this.traineeofferletters = data;
-          this.filterByMonth();
-        },
-        error: (reason: any) => {
-          this.loading = false;
-          console.log(reason);
-        },
-        complete: () => {
-          this.loading = false;
-        },
-      });
-
+    this.subscription = this.http.getData('TraineeOfferLetter/getAllNames/approverNames').subscribe({
+      next: (data: any) => {
+        this.loading = false;
+        this.traineeofferletters = data;
+        this.filterByMonth();
+      },
+      error: (reason: any) => {
+        this.loading = false;
+      },
+      complete: () => {
+        this.loading = false;
+      },
+    });
   }
+
   filterByMonth() {
     if (this.selectedMonth && this.selectedYear) {
       this.offerLetters = this.traineeofferletters.filter(item => {
@@ -129,6 +101,8 @@ export class DocumentHistoryInternOfferLetterComponent {
     } else {
       this.offerLetters = this.traineeofferletters; // show all if no filter
     }
+  //this.onboardingFilter.setMonthYear(this.selectedMonth || new Date().getMonth() + 1, this.selectedYear || new Date().getFullYear());
+
   }
 
   onMonthChange(value: any) {
@@ -136,29 +110,22 @@ export class DocumentHistoryInternOfferLetterComponent {
     this.selectedMonth = selected.month() + 1;
     this.selectedYear = selected.year();
     this.filterByMonth();
+     this.onboardingFilter.setMonthYear(this.selectedMonth, this.selectedYear);
   }
 
   onSelectDownload(file: any) {
-    this.subscription = this.http
-      .DownloadDataWithQuery('FileSystem/Downloadfile', file.documentUrl)
-      .subscribe({
-        next: (res: any) => {
-          let fileName = res.headers
-            .get('content-disposition')
-            ?.split(':')[1]
-            .split('=')[1];
-          let blob: Blob = res.body as Blob;
-          // console.log(fileName);
-
-          let a = document.createElement('a');
-          a.href = window.URL.createObjectURL(blob);
-          let filename =
-            file.documentUrl.split('/')[file.documentUrl.split('/').length - 1];
-          a.download = filename;
-          a.click();
-        },
-        error: (reason) => console.log(reason),
-      });
+    this.subscription = this.http.DownloadDataWithQuery('FileSystem/Downloadfile', file.documentUrl).subscribe({
+      next: (res: any) => {
+        let fileName = res.headers.get('content-disposition')?.split(':')[1].split('=')[1];
+        let blob: Blob = res.body as Blob;
+        let a = document.createElement('a');
+        a.href = window.URL.createObjectURL(blob);
+        let filename = file.documentUrl.split('/')[file.documentUrl.split('/').length - 1];
+        a.download = filename;
+        a.click();
+      },
+      error: (reason) => console.log(reason),
+    });
   }
 
   releaseTraineeOfferLetter(Values: any) {
@@ -184,21 +151,17 @@ export class DocumentHistoryInternOfferLetterComponent {
       note: Values.note,
       durationOfTraining: Values.offerdurationOfTraining,
     };
-    this.subscription = this.http
-      .postdata('TraineeOfferLetter/UPDATE', updateTraineeOfferLetterDetails)
-      .subscribe({
-        next: (data: any) => {
-          console.log(data);
-          this.getTraineeOfferLetters();
-          this.employeeEmailTrainee(Values);
-          if (data) {
-          }
-        },
-        error: (reason: any) => {
-          console.log(reason);
-          this.conformationPopup.openErrorModal('Released Failed');
-        },
-      });
+    this.subscription = this.http.postdata('TraineeOfferLetter/UPDATE', updateTraineeOfferLetterDetails).subscribe({
+      next: (data: any) => {
+        this.getTraineeOfferLetters();
+        this.employeeEmailTrainee(Values);
+        if (data) { }
+      },
+      error: (reason: any) => {
+        console.log(reason);
+        this.conformationPopup.openErrorModal('Released Failed');
+      },
+    });
   }
 
   updateTraineeOfferDetails(Values: any) {
@@ -224,20 +187,18 @@ export class DocumentHistoryInternOfferLetterComponent {
       note: Values.note,
       durationOfTraining: Values.offerdurationOfTraining,
     };
-    this.subscription = this.http
-      .postdata('TraineeOfferLetter/UPDATE', updateTraineeOfferLetterDetails)
-      .subscribe({
-        next: (data: any) => {
-          if (data) {
-            this.getTraineeOfferLetters();
-            this.ApproveEmailTrainee(Values);
-          }
-        },
-        error: (reason: any) => {
-          console.log(reason);
-          this.conformationPopup.openErrorModal('Update Failed');
-        },
-      });
+    this.subscription = this.http.postdata('TraineeOfferLetter/UPDATE', updateTraineeOfferLetterDetails).subscribe({
+      next: (data: any) => {
+        if (data) {
+          this.getTraineeOfferLetters();
+          this.ApproveEmailTrainee(Values);
+        }
+      },
+      error: (reason: any) => {
+        console.log(reason);
+        this.conformationPopup.openErrorModal('Update Failed');
+      },
+    });
   }
 
   ApproveEmailTrainee(personValues: any) {
@@ -251,25 +212,20 @@ export class DocumentHistoryInternOfferLetterComponent {
       documentUrl: personValues.documentUrl,
       workLocation: datas.workLocation,
       senderName: `${loggedInUser.firstName}${loggedInUser.middleName ? ' ' + loggedInUser.middleName : ''} ${loggedInUser.lastName ?? ''}`,
-
       senderEmail: loggedInUser.workEmail,
       approvedBy: loggedInUser.employeeId,
-      approvedByName:`${loggedInUser.firstName}${loggedInUser.middleName ? ' ' + loggedInUser.middleName : ''} ${loggedInUser.lastName ?? ''}`,
+      approvedByName: `${loggedInUser.firstName}${loggedInUser.middleName ? ' ' + loggedInUser.middleName : ''} ${loggedInUser.lastName ?? ''}`,
       firstName: datas.employeeName,
     };
-    this.subscription = this.http
-      .postdata(`CustomEmail/offerApproval`, emailData)
-      .subscribe({
-        next: (data: any) => {
-          if (data) {
-            this.conformationPopup.openSuccessModal(
-              'Trainee Offer approved successfully'
-            );
-            this.getTraineeOfferLetters();
-            this.ApprovedTaineenotification(datas);
-          }
-        },
-      });
+    this.subscription = this.http.postdata(`CustomEmail/offerApproval`, emailData).subscribe({
+      next: (data: any) => {
+        if (data) {
+          this.conformationPopup.openSuccessModal('Trainee Offer approved successfully');
+          this.getTraineeOfferLetters();
+          this.ApprovedTaineenotification(datas);
+        }
+      },
+    });
   }
 
   ApprovedTaineenotification(personname: any) {
@@ -281,14 +237,12 @@ export class DocumentHistoryInternOfferLetterComponent {
       isRead: false,
       isDelete: false,
       notificationDate: currentDate,
-      notificationType: `${loggedInUser?.firstName} ${loggedInUser?.middleName ?? ''
-        } ${loggedInUser?.lastName ?? ''} Approved  ${personname.employeeName
-        } Trainee Offer Letter`,
+      notificationType: `${loggedInUser?.firstName} ${loggedInUser?.middleName ?? ''} 
+      ${loggedInUser?.lastName ?? ''} Approved  ${personname.employeeName} Trainee Offer Letter`,
       empId: personname.offerSentByName,
     };
     this.subscription = this.http.postdata(`Notification`, senddata).subscribe({
       next: (data: any) => {
-        console.log(data);
         this.getTraineeOfferLetters();
       },
       error: (err: any) => {
@@ -296,13 +250,13 @@ export class DocumentHistoryInternOfferLetterComponent {
       },
     });
   }
+
   employeeEmailTrainee(Values: any) {
     let loggedInUser = this.authService.getToken();
     let emaildetails = {
       personEmail: Values.emailaddress,
       senderEmail: loggedInUser.workEmail,
-      senderName: `${loggedInUser.firstName} ${loggedInUser.middleName ?? ''} ${loggedInUser.lastName ?? ''
-        }`,
+      senderName: `${loggedInUser.firstName} ${loggedInUser.middleName ?? ''} ${loggedInUser.lastName ?? ''}`,
       personName: Values.employeeName,
       personRole: Values.jobRole,
       employeeId: Values.empId,
@@ -312,46 +266,39 @@ export class DocumentHistoryInternOfferLetterComponent {
       offerExpiryDate: Values.offerExpiryDate,
       approvedBy: loggedInUser.employeeId
     };
-    this.subscription = this.http
-      .postdata(`CustomEmail/offerletter`, emaildetails)
-      .subscribe({
-        next: (data: any) => {
-          if (data) {
-            this.conformationPopup.openSuccessModal(
-              'Intern offer letter released successfully'
-            );
-            this.getTraineeOfferLetters();
-          }
-        },
-        error: (err: any) => {
-          console.log(err);
-        },
-      });
+    this.subscription = this.http.postdata(`CustomEmail/offerletter`, emaildetails).subscribe({
+      next: (data: any) => {
+        if (data) {
+          this.conformationPopup.openSuccessModal('Intern offer letter released successfully');
+          this.getTraineeOfferLetters();
+        }
+      },
+      error: (err: any) => {
+        console.log(err);
+      },
+    });
   }
 
   //function to get the data of selected
   SelectData(value: any) {
     this.selectedValuesOfOffer = value;
-    console.log(this.selectedValuesOfOffer);
     this.getEmployeeId(value.empId);
   }
+
   //function to get the employee details based on the employee id
   getEmployeeId(Values: any) {
     let employeeId = Values;
-    this.subscription = this.http
-      .getData(`Employeedata/${employeeId}`)
-      .subscribe({
-        next: (data: any) => {
-          console.log(data);
-          this.employeedata = data;
-        },
-        error: (reason) => console.log(reason),
-      });
+    this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
+      next: (data: any) => {
+        this.employeedata = data;
+      },
+      error: (reason) => console.log(reason),
+    });
   }
+
   //post reason to offerletter table
   PostReasonandUpdateTraineeOfferDetails() {
     let loggedInUser = this.authService.getToken();
-    console.log(loggedInUser);
     let updateOfferLetterDetails = {
       id: this.selectedValuesOfOffer.id,
       employeeId: this.selectedValuesOfOffer.empId,
@@ -373,40 +320,31 @@ export class DocumentHistoryInternOfferLetterComponent {
       note: this.selectedValuesOfOffer.note,
       durationOfTraining: this.selectedValuesOfOffer.offerdurationOfTraining,
     };
-    console.log(updateOfferLetterDetails);
-
-    this.subscription = this.http
-      .postdata('TraineeOfferLetter/UPDATE', updateOfferLetterDetails)
-      .subscribe({
-        next: (data: any) => {
-          console.log(data);
-          this.rejectDocument.reset();
-          this.modalService.dismissAll();
-          this.updatetraineeemployeestatus(data);
-          this.rejectTraineeEmail();
-          //this.RejectTraineenotification();
-          this.getTraineeOfferLetters();
-        },
-        error: (reason: any) => {
-          console.log(reason);
-        },
-      });
+    this.subscription = this.http.postdata('TraineeOfferLetter/UPDATE', updateOfferLetterDetails).subscribe({
+      next: (data: any) => {
+        this.rejectDocument.reset();
+        this.modalService.dismissAll();
+        this.updatetraineeemployeestatus(data);
+        this.rejectTraineeEmail();
+        //this.RejectTraineenotification();
+        this.getTraineeOfferLetters();
+      },
+      error: (reason: any) => {
+        console.log(reason);
+      },
+    });
   }
 
   //function to update the employee substatus
   updatetraineeemployeestatus(Value: any) {
-    console.log(Value.employeeId);
-
     (this.employeedata.employeeId = Value.employeeId),
       (this.employeedata.empstatus = 'Trainee Prospective');
     this.employeedata.substatus = 'Offer Letter Rejected By Manager';
-    this.subscription = this.http
-      .postdata('Employeedata/UPDATER', this.employeedata)
-      .subscribe({
-        next: (data: any) => {
-          console.log(data);
-        },
-      });
+    this.subscription = this.http.postdata('Employeedata/UPDATER', this.employeedata).subscribe({
+      next: (data: any) => {
+        console.log(data);
+      },
+    });
   }
 
   //Function for Reject Email
@@ -419,8 +357,8 @@ export class DocumentHistoryInternOfferLetterComponent {
       employeeId: this.selectedValuesOfOffer.offerSentBy,
       documentUrl: this.selectedValuesOfOffer.documentUrl,
       workLocation: this.selectedValuesOfOffer.workLocation,
-      senderName: `${loggedInUser?.firstName ?? ''} ${loggedInUser?.middleName ?? ''
-        } ${loggedInUser?.lastName ?? ''}`,
+      senderName: `${loggedInUser?.firstName ?? ''} ${loggedInUser?.middleName ?? ''} 
+      ${loggedInUser?.lastName ?? ''}`,
       senderEmail: loggedInUser.workEmail,
       approvedBy: this.selectedValuesOfOffer.approvedBy,
       approvedByName: this.selectedValuesOfOffer.approvedByName,
@@ -428,33 +366,25 @@ export class DocumentHistoryInternOfferLetterComponent {
       // lastName: string,
       comments: this.rejectDocument.value.reason,
     };
-    console.log(emaildate);
-
-    this.subscription = this.http
-      .postdata(`CustomEmail/OfferRejection`, emaildate)
-      .subscribe({
-        next: (data: any) => {
-          console.log(data);
-          if (data) {
-            setTimeout(() => {
-              this.conformationPopup.openSuccessModal(
-                'Trainee offer letter rejected successfully'
-              );
-            }, 3000);
-            this.getTraineeOfferLetters();
-          }
-        },
-        error: (err: any) => {
-          console.log(err);
-          this.conformationPopup.openErrorModal('Email Sent Failed');
-        },
-      });
+    this.subscription = this.http.postdata(`CustomEmail/OfferRejection`, emaildate).subscribe({
+      next: (data: any) => {
+        if (data) {
+          setTimeout(() => {
+            this.conformationPopup.openSuccessModal('Trainee offer letter rejected successfully');
+          }, 3000);
+          this.getTraineeOfferLetters();
+        }
+      },
+      error: (err: any) => {
+        console.log(err);
+        this.conformationPopup.openErrorModal('Email Sent Failed');
+      },
+    });
   }
 
   //function for reject notification
   Rejectnotification() {
     const currentDate = new Date();
-
     const loggedInUser = this.authService.getToken();
     const senddata = {
       message: `Offer Letter Rejected`,
@@ -462,8 +392,8 @@ export class DocumentHistoryInternOfferLetterComponent {
       isRead: false,
       isDelete: false,
       notificationDate: currentDate,
-      notificationType: `${loggedInUser.firstName}${loggedInUser.middleName ? ' ' + loggedInUser.middleName : ''} ${loggedInUser.lastName ?? ''} Rejected
-           ${this.selectedValuesOfOffer.employeeName} Offer Letter`,
+      notificationType: `${loggedInUser.firstName}${loggedInUser.middleName ? ' ' + loggedInUser.middleName : ''} 
+      ${loggedInUser.lastName ?? ''} Rejected ${this.selectedValuesOfOffer.employeeName} Offer Letter`,
       empId: this.selectedValuesOfOffer.offerSentBy,
     };
     this.subscription = this.http.postdata(`Notification`, senddata).subscribe({
@@ -475,6 +405,7 @@ export class DocumentHistoryInternOfferLetterComponent {
       },
     });
   }
+
   ngOnDestroy(): void {
     if (this.subscription) {
       this.subscription.unsubscribe();

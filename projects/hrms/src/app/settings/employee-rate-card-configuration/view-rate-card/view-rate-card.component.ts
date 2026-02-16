@@ -300,8 +300,8 @@ getFirstCurrency(rateItem: FormGroup): FormGroup | null {
     subLocation: [{ value: [], disabled: true }, Validators.required],
     role: [{ value: [], disabled: true }, Validators.required],
     effectivefrom: [{ value: '', disabled: true }, Validators.required],
-    currency: ['', Validators.required],
-    clientType: ['', Validators.required],
+    currency: [{ value: '', disabled: true }, Validators.required],
+    clientType: [{ value: '', disabled: true },Validators.required],
     rateItems: this.fb.array([])
   });
 

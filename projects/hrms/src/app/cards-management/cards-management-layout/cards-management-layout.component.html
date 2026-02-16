@@ -109,7 +109,7 @@
             </div>
             <div class="error-msg" *ngIf="cardDetailsForm.controls['bankName'].invalid && (cardDetailsForm.controls['bankName'].touched 
             || cardDetailsForm.controls['bankName'].dirty)">
-              <span *ngIf="cardDetailsForm.controls['bankName'].errors?.['required']">Bank name is required</span>
+              <span *ngIf="cardDetailsForm.controls['bankName'].errors?.['required']">Bank Name is required / Please limit your input to 100 characters</span>
             </div>
           </div>
 

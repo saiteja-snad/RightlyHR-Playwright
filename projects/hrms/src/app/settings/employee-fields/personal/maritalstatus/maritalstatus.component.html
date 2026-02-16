@@ -16,7 +16,7 @@
             <div *ngIf="MaritalStatusForm.get('MaritalStatus')?.touched && MaritalStatusForm.get('MaritalStatus')?.invalid"
                 class="error-msg">
                 <div *ngIf="MaritalStatusForm.get('MaritalStatus')?.errors?.['required']">
-                    {{ 'Marital Status is required' | translate }}
+                    {{ 'Marital status is required' | translate }}
                 </div>
             </div>
             <div *ngIf="MaritalStatusForm.get('MaritalStatus')?.errors?.['pattern']" class="error-msg">
@@ -82,8 +82,7 @@
             </div>
             <div class="custom-main-popup-content">
                 <div class="mb-4">
-                    <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Marital
-                        Status'|translate}}
+                    <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Marital Status'|translate}}
                         <span class="error-msg">*</span></label>
                     <input type="text" class="form-control custom-input" formControlName="MaritalStatus"
                         placeholder="Please enter marital status"
@@ -92,7 +91,7 @@
                     <div *ngIf="updateForm.get('MaritalStatus')?.touched && updateForm.get('MaritalStatus')?.invalid"
                         class="error-msg">
                         <div *ngIf="updateForm.get('MaritalStatus')?.errors?.['required']">
-                            {{ 'Marital Status is required' | translate }}
+                            {{ 'Marital status is required' | translate }}
                         </div>
                     </div>
                     <div *ngIf="updateForm.get('MaritalStatus')?.errors?.['pattern']" class="error-msg">

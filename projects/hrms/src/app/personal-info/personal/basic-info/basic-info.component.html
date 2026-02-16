@@ -25,13 +25,14 @@
         @if((empinfo.empstatus=='Prospective' && empinfo.empType!='onboard')|| empinfo.empstatus =='Trainee Prospective'){
         <div class="col-md-6 col-lg-4 mb-3">
           <label for="employeeId" class="form-label custom-label mb-2">ID<span class="text-danger">*</span></label>
-          <input type="text" autocomplete="off" class="form-control custom-input" id="employeeId" formControlName="employeeId"
-            placeholder="Please enter employee ID" />
-          <div *ngIf="basicInfoForm.get('employeeId')?.invalid && basicInfoForm.get('employeeId')?.touched" class="error-msg">
-            Employee ID is required</div>
-        </div>
-        }
-        @if((empinfo.empstatus != 'Prospective' || (empinfo.empstatus == 'Prospective' && empinfo.empType == 'onboard')) &&
+          <input type="text" autocomplete="off" class="form-control custom-input" id="employeeId"
+            formControlName="employeeId" placeholder="Please enter employee Id" />
+          <div *ngIf="basicInfoForm.get('employeeId')?.invalid && basicInfoForm.get('employeeId')?.touched"
+            class="error-msg">
+          Employee id is required
+          </div>
+        </div>}
+        @if((empinfo.empstatus != 'Prospective' || (empinfo.empstatus=='Prospective' && empinfo.empType=='onboard')) &&
         empinfo.empstatus != 'Trainee Prospective'){
         <div class="col-md-6 col-lg-4 mb-3">
           <label for="employeeId" class="form-label custom-label mb-2">Employee ID<span class="text-danger">*</span></label>
@@ -119,7 +120,7 @@
           </label>
           <input type="date" class="form-control custom-input" id="dob" formControlName="dob" onkeypress="return false" />
           <div *ngIf="basicInfoForm.get('dob')?.touched" class="error-msg">
-            <div *ngIf="basicInfoForm.get('dob')?.errors?.['required']">Date of Birth is required</div>
+            <div *ngIf="basicInfoForm.get('dob')?.errors?.['required']">Date of birth is required</div>
             <div *ngIf="!basicInfoForm.get('dob')?.errors?.['required'] && basicInfoForm.get('dob')?.errors?.['invalidAge']">
               Age must be between 18 and 75</div>
           </div>

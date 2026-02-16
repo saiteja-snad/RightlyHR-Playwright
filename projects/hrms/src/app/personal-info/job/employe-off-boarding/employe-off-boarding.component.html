@@ -18,7 +18,7 @@
                         </p-select>
                     </div>
                     <div class="error-msg" *ngIf="offBoardingForm.get('exitType')?.touched && offBoardingForm.get('exitType')?.invalid">
-                        Exit Type is required
+                        Exit type is required
                     </div>
                 </div>
                 <!-- Exit Reason -->
@@ -30,7 +30,7 @@
                     </div>
                     <div class="error-msg"
                         *ngIf="offBoardingForm.get('exit')?.touched && offBoardingForm.get('exit')?.invalid">
-                        Exit Reason is required
+                        Exit reason is required
                     </div>
                 </div>
 
@@ -65,7 +65,7 @@
                     <label class="form-label custom-label mb-2">Last Working Day<span class="text-danger">*</span></label>
                     <input type="date" [min]="dateOfJoining" formControlName="lastdate" class="form-control custom-input" [max]="currentDate">
                     <div class="error-msg" *ngIf="offBoardingForm.get('lastdate')?.touched && offBoardingForm.get('lastdate')?.invalid">
-                        Last Working Day is required
+                        Last working day is required
                     </div>
                     <div class="error-msg" *ngIf="islastworking">Last working day should be after date of joining</div>
                 </div>

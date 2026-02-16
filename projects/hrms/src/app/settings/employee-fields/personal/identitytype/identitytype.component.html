@@ -1,6 +1,5 @@
 <div class="custom-main-component-container">
-    <form autocomplete="off" [formGroup]="IdentityForm" (ngSubmit)="addIdentityType()"
-        *ngIf="rbac.allowedToAccess('Identity Type.create')">
+    <form autocomplete="off" [formGroup]="IdentityForm" (ngSubmit)="addIdentityType()" *ngIf="rbac.allowedToAccess('Identity Type.create')">
         <!-- Add Input-->
         <div class="mb-4">
             <div class="custom-settings-add-input input-group">
@@ -11,10 +10,8 @@
                     <button type="submit" class="custom-btn btn-primary" [disabled]="IdentityForm.invalid">{{'Add'|translate}}</button>
                 </span>
             </div>
-            <div class="error-msg">
-                <div *ngIf="IdentityForm.get('IdentityType')?.touched && IdentityForm.get('IdentityType')?.invalid">
-                    <div *ngIf="IdentityForm.get('IdentityType')?.errors?.['required']">{{ 'Identity Type is required' | translate }}</div>
-                </div>
+            <div *ngIf="IdentityForm.get('IdentityType')?.touched && IdentityForm.get('IdentityType')?.invalid" class="error-msg">
+                <div *ngIf="IdentityForm.get('IdentityType')?.errors?.['required']">{{ 'Identity type is required' | translate }}</div>
                 <div *ngIf="IdentityForm.get('IdentityType')?.errors?.['pattern']">{{ 'Field cannot start with a space' | translate }}</div>
                 <div *ngIf="IdentityForm.get('IdentityType')?.errors?.['maxCharacters']">{{ 'Please limit your input to 50 characters' | translate }}</div>
             </div>
@@ -77,12 +74,11 @@
                 <div class="mb-4">
                     <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Identity Type'|translate}}
                         <span class="error-msg">*</span></label>
-                    <input type="text" class="form-control custom-input" formControlName="IdentityType" placeholder="Please enter identity type" 
-                    (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)" maxlength="51">
-                    <div class="error-msg">
-                        <div *ngIf="updateForm.get('IdentityType')?.touched && updateForm.get('IdentityType')?.invalid">
-                            <div *ngIf="updateForm.get('IdentityType')?.errors?.['required']">{{ 'Identity Type is required' | translate }}</div>
-                        </div>
+                    <input type="text" class="form-control custom-input" formControlName="IdentityType"
+                        placeholder="Please enter identity type" (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)" 
+                        maxlength="51">
+                    <div *ngIf="updateForm.get('IdentityType')?.touched && updateForm.get('IdentityType')?.invalid" class="error-msg">
+                        <div *ngIf="updateForm.get('IdentityType')?.errors?.['required']">{{ 'Identity type is required' | translate }}</div>
                         <div *ngIf="updateForm.get('IdentityType')?.errors?.['pattern']">{{ 'Field cannot start with a space' | translate }}</div>
                         <div *ngIf="updateForm.get('IdentityType')?.errors?.['maxCharacters']">{{ 'Please limit your input to 50 characters' | translate }}</div>
                     </div>

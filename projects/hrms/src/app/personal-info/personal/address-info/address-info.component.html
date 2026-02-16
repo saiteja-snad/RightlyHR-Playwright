@@ -38,9 +38,9 @@
               (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)" >
             <div class="error-msg"
               *ngIf="addressForm.get('currentAddress.addressLine1')?.errors?.['required'] && addressForm.get('currentAddress.addressLine1')?.touched">
-              Address Line 1 is required
+              Address line 1 is required
             </div>
-            <div  class="error-msg" *ngIf="addressForm.get('currentAddress.addressLine1')?.errors?.['maxlength']">Address Line 1 cannot exceed 250 characters</div>
+            <div  class="error-msg" *ngIf="addressForm.get('currentAddress.addressLine1')?.errors?.['maxlength']">Address line 1 cannot exceed 250 characters</div>
           
           </div>
           <div class="col-md-6 col-lg-4 mb-3">
@@ -149,10 +149,10 @@
               formControlName="addressLine1" placeholder="Please enter address line 1"  (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)">
             <div class="error-msg"
               *ngIf="addressForm.get('permanentAddress.addressLine1')?.errors?.['required'] && addressForm.get('permanentAddress.addressLine1')?.touched">
-              Address Line 1 is required
+              Address line 1 is required
             </div>
             <div class="error-msg" *ngIf="addressForm.get('permanentAddress.addressLine1')?.errors?.['maxlength']">
-              Address Line 1 cannot exceed 250 characters</div>
+              Address line 1 cannot exceed 250 characters</div>
           </div>
           <div class="col-md-6 col-lg-4 mb-3">
             <label for="permanentAddressLine2" class="form-label custom-label mb-2">Address Line 2@if(isFieldPendingApproval('Permanent Address Line 2')) {

@@ -112,7 +112,7 @@
                             </p-select>
                             <div class="error-msg"
                                 *ngIf="TimesheetLockForm.get('categoryType')?.invalid && TimesheetLockForm.get('categoryType')?.touched">
-                                Category Type is required
+                                Category type is required
                             </div>
                         </div>
                     </div>
@@ -137,7 +137,7 @@
                             [min]="fromDateString" (change)="onToDateChange(TimesheetLockForm)" />
                         <div class="error-msg"
                             *ngIf="TimesheetLockForm.get('toDate')?.invalid && TimesheetLockForm.get('toDate')?.touched">
-                            To Date is required
+                            To date is required
                         </div>
                         <div class="error-msg" *ngIf="toDateInvalid">
                             To Date cannot be less than From Date
@@ -207,7 +207,7 @@
 
                             <div class="error-msg"
                                 *ngIf="updateTimesheetLockForm.get('categoryType')?.invalid && updateTimesheetLockForm.get('categoryType')?.touched">
-                                Category Type is required
+                                Category type is required
                             </div>
                         </div>
                     </div>
@@ -234,7 +234,7 @@
                         <!-- Required Validation -->
                         <div class="error-msg" *ngIf="updateTimesheetLockForm.get('toDate')?.hasError('required') &&
                                 updateTimesheetLockForm.get('toDate')?.touched">
-                            To Date is required
+                            To date is required
                         </div>
 
                         <!-- To Date cannot be less than From Date -->

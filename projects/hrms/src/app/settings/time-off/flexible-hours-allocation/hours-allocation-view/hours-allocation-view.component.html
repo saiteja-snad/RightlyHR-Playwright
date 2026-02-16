@@ -14,7 +14,7 @@
       <label for="education" class="form-label custom-label text-nowrap filter-labels m-0">{{'Select Employee' | translate}}</label>
       <div class="custom-p-select-content">
         <p-select [options]="activeEmplist" [filter]="true" filterBy="label" resetFilterOnHide="true" optionLabel="label"
-          optionValue="value" showClear="true" placeholder="Select employee name/Id"
+          optionValue="value" showClear="true" placeholder="Please select employee name/Id"
           (onChange)="onCheckemployee($event.value)" class="form-select custom-select"></p-select>
       </div>
     </div>

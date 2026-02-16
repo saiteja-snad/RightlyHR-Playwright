@@ -618,11 +618,11 @@
             <div class="custom-p-select-content">
               <p-select [options]="employeeiddetails" optionLabel="employeeName" [filter]="true"
                 [resetFilterOnHide]="true" filterBy="employeeName" (onChange)="onEmployeeSelect($event)"
-                formControlName="mReportingto" placeholder="Please select employee"
+                formControlName="mReportingto" placeholder="Select Employee"
                 class="form-select custom-select"></p-select>
             </div>
             <div *ngIf="reassiginForm.get('mReportingto')?.invalid && reassiginForm.get('mReportingto')?.touched">
-              <div class="error-msg">Employee ID is required</div>
+              <div class="error-msg">Employee is required</div>
             </div>
           </div>
           <div class="d-flex justify-content-end gap-3">

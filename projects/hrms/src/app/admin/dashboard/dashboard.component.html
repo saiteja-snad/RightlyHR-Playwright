@@ -10,7 +10,7 @@
 
                 <div class="top-grid" >
                     <!--Day Display-->
-                    @if(rbac.allowedToAccess('Sun View.view')){
+                  
                     @if(!intialLoading ){
                     <div class="present-day-content">
                         <div class="gesture-text mb-1">Have a nice day at work!</div>
@@ -29,7 +29,7 @@
                     }@else {
                     <p-skeleton height="8rem" />
                     }
-                    }
+                    
                     <!--Employee List Display-->
                     @if(rbac.allowedToAccess('All Employees.view')){
                     <div class="content-card employees-list-content employees-section span-left">

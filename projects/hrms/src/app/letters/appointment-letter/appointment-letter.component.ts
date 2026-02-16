@@ -440,10 +440,11 @@ export class AppointmentLetterComponent implements OnInit,OnDestroy {
       emaildetails.senderName = `${loggedInUser.firstName} ${loggedInUser.lastName}`
       emaildetails.appointee = `${loggedInUser.firstName} ${loggedInUser.lastName}`
     }
-    this.subscription = this.http.postdata(`CustomEmail/appointmentletter`, emaildetails).subscribe({
+  this.subscription = this.http.postdata(`CustomEmail/appointmentletter`, emaildetails).subscribe({
       next: (data: any) => {
         this.spinnerLoader= false;
         this.conformationPopup.openSuccessModal('Email has been sent successfully');
+        this.router.navigate(['/admin/dashboard']);
       },
       error: (err: any) => {
         this.spinnerLoader = false;

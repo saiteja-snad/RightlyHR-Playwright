@@ -62,9 +62,9 @@ export class ClonePoliciesComponent implements OnInit, OnDestroy {
     this.updatePoliciesData.orgPolicyItems.forEach((row: any) => {
       this.policies.push(
         this.fb.group({
-          policyName: [row.policyName, [Validators.required, Validators.pattern(/^(?!\s)[A-Za-z0-9 _\-\/]+$/)]],
+          policyName: [row.policyName, [Validators.required]],
           policyFile: [row.policyAttachment],
-          policyDescription: [row.policyDescription,[Validators.required, Validators.pattern(/^(?!\s)[A-Za-z0-9 .,:;?\-_\/&()%'"\n\r]+$/)]],
+          policyDescription: [row.policyDescription,[Validators.required]],
           policyNewFile: [''],
           acknowledged: [row.requiresAcknowledgment],
           notification: [row.sendEmailNotification],
@@ -82,35 +82,8 @@ export class ClonePoliciesComponent implements OnInit, OnDestroy {
     });
   }
 
-  // allowed characters A-Z a-z 0-9 space - _ /
-restrictPolicyName(event: KeyboardEvent) {
-  const key = event.key;
-  const input = event.target as HTMLInputElement;
 
-  // Allow control keys
-  if (
-    key === 'Backspace' ||
-    key === 'Delete' ||
-    key === 'ArrowLeft' ||
-    key === 'ArrowRight' ||
-    key === 'Tab'
-  ) {
-    return;
-  }
-
-  // Prevent leading space
-  if (key === ' ' && input.selectionStart === 0) {
-    event.preventDefault();
-    return;
-  }
-
-  // Allowed: A-Z a-z 0-9 space - _ /
-  const allowed = /^[A-Za-z0-9 _\-\/]$/;
-  if (!allowed.test(key)) {
-    event.preventDefault();
-  }
-}
-restrictPolicyDescription(event: KeyboardEvent) {
+restrictPolicyNamedescription(event: KeyboardEvent) {
   const key = event.key;
   const input = event.target as HTMLInputElement;
 

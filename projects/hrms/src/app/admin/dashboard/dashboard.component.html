@@ -219,6 +219,10 @@
                         <div class="department-graph-content">
                             <p-chart type="bar" [data]="departmentHeadCountChartData" [options]="departmentHeadCountChartDataOptions" />
                         </div>
+
+                        <div *ngIf="!departmentHeadCountChartData">
+                            <app-no-data-found></app-no-data-found>
+                        </div>
                     </div>
                 </div>
                 }

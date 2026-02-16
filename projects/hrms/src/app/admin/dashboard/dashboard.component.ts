@@ -480,11 +480,16 @@ export class DashboardComponent implements OnInit, OnDestroy {
       error: (reason) => {
         this.attendanceData = {} as AttendanceResponse;
         this.departmentHeadCountsLoader = false;
+        this.setDepartmentHeadCountChart(null)
       },
     });
   }
 
   setDepartmentHeadCountChart(response: any) {
+      if (!response || !response.data || response.data.length === 0) {
+    this.departmentHeadCountChartData = null;
+    return;
+  }
     const departments = response.data;
     const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim();
     const labels = departments.map((d: any) => d.departmentName);

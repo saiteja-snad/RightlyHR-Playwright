@@ -222,10 +222,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.getCategoryempDetails(this.empinfo?.employeeId);
     this.buildDisabledFutureWeekDates();
     this.intialLoading = false;
-    this.getAttendenceLogsOfLoginedUser(this.employeedata.employeeId, this.currentYear, this.currentMonth, this.currentDay);
+    // this.getAttendenceLogsOfLoginedUser(this.employeedata.employeeId, this.currentYear, this.currentMonth, this.currentDay);
     this.getEmployeeStatusCount();
     this.getHeadCountByDepartment();
-    this.getpreviousloggedtime();
+    // this.getpreviousloggedtime();
     this.todayMaxdate = new Date();
     this.widgetCount();
   }

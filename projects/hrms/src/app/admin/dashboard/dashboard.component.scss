@@ -13,22 +13,13 @@
 
     .top-grid {
         display: grid;
-        grid-template-columns: 300px 380px 1fr;
+        grid-template-columns: 280px 1fr 1fr;
         gap: 1rem;
-    }
-
-    .single-content {
-        grid-template-columns: 1fr 2fr;
     }
 
     @media (max-width: 1500px) {
         .top-grid {
             grid-template-columns: 1fr 1fr;
-        }
-
-        .full-row {
-            grid-column: 1 / -1;
-            /* 🔥 key line */
         }
     }
 
@@ -198,8 +189,9 @@
     .total-leave-balance-graph-content {
         width: 100%;
         display: flex;
-        gap: 1.5rem;
+        gap: 1.25rem;
         justify-content: center;
+        align-items: center;
 
         li {
             height: 1.125rem;
@@ -236,8 +228,8 @@
         }
 
         canvas {
-            width: 100px !important;
-            height: 100px !important;
+            width: 120px !important;
+            height: 120px !important;
         }
 
         .bi-circle-fill {
@@ -259,7 +251,13 @@
 
     .employees-type-grid {
         display: grid;
-        grid-template-columns: repeat(2, 1fr); // Default: 2 columns
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    @media (max-width: 1600px) {
+        .employees-type-grid {
+            grid-template-columns: repeat(2, 1fr) !important;
+        }
     }
 
     .employees-type-grid> :last-child {
@@ -904,6 +902,12 @@
 .quick-links-card {
     overflow: auto;
 
+    .quick-links-grid {
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+    }
+
     .quick-links-content {
         min-width: 7rem;
         padding: 1rem 0.75rem;
@@ -997,3 +1001,4 @@
     background: linear-gradient(180deg, #FFFFFF 0%, var(--display-grid-cards-bg-color) 100%);
     border: 2px solid #FFFFFF;
 }
+

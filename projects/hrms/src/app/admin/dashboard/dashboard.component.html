@@ -1,7 +1,6 @@
 <div class="main-dashboard-content">
     <div class="dashboard-mid-section">
-        <div class="dashboard-left-content custom-dashboard-main-container"
-            [ngStyle]="noEventAccess ? {'width': '100%'} : {}">
+        <div class="dashboard-left-content custom-dashboard-main-container" [ngStyle]="noEventAccess ? {'width': '100%'} : {}">
             <div class="dashboard-top-section mb-3">
                 <div class="welcome-text d-flex align-items-center gap-1">
                     <div>{{greetingMessage}},</div>
@@ -9,7 +8,7 @@
                         {{this.employeedata.lastName}}!</div>
                 </div>
 
-                <div class="top-grid" [ngClass]="{'single-content': (topwidgetCount === 2)}">
+                <div class="top-grid">
                     <!--Day Display-->
                     @if(rbac.allowedToAccess('Sun View.view')){
                     @if(!intialLoading ){
@@ -35,7 +34,7 @@
                     @if(rbac.allowedToAccess('All Employees.view')){
                     <div class="content-card employees-list-content employees-section span-left">
                         @if(!chartLoader && EmployeeInfoData){
-                        <div class="flex-between-content mb-3 pb-2">
+                        <div class="flex-between-content mb-3">
                             <div class="summary-header d-inline-flex gap-1">
                                 <div class="section-title">Employees overview</div>
                                 <div>
@@ -48,7 +47,7 @@
                             </div>
                         </div>
 
-                        <div class="total-leave-balance-graph-content pb-2">
+                        <div class="total-leave-balance-graph-content">
                             <div class="chart-content">
                                 <p-chart type="doughnut" [data]="EmployeeInfoData" [options]="EmployeeInfoDataOptions"
                                     class="doughnut-chart" />
@@ -56,7 +55,7 @@
                                     <p class="count m-0 p-0">{{totalEmployeesCount}}</p>
                                 </div>
                             </div>
-                            <div class="employees-type-grid mb-3">
+                            <div class="employees-type-grid">
                                 @for (item of cardItems; track $index) {
                                 <div [ngStyle]="{ 'border-left': '4px solid ' + item.employeementTypeColor }"
                                     [routerLink]="item.link" class="mb-2 ps-2 cursor">
@@ -119,7 +118,7 @@
                 </div>
             </div>
 
-            <div class="row">
+            <div>
                 <!-- Team Members Section -->
                 @if(rbac.allowedToAccess('Team Members.view')){
                 <!-- Team Members Section -->
@@ -135,11 +134,9 @@
                                 </ng-template>
                             </div>
                         </div>
-
-
                     </div>
 
-                    <div class="member-list-container">
+                    <div class="member-list-container pb-1">
                         <p-tabs scrollable>
                             <p-tablist p-tablistNav>
                                 <ng-container *ngIf="!loading; else tabsSkeleton">
@@ -177,8 +174,8 @@
                 }
                 <!--Quick Links-->
                 @if(rbac.allowedToAccess('Quick Links.view')){
-                <div class="content-card quick-links-card span-right mb-3">
-                    <div class="flex-between-content mb-3 py-3">
+                <div class="content-card quick-links-card mb-3">
+                    <div class="flex-between-content mb-3">
                         <div class="summary-header d-inline-flex gap-1">
                             <div class="section-title">Quick Links</div>
                             <div>
@@ -191,7 +188,7 @@
                         </div>
                     </div>
 
-                    <div class="quick-links-grid d-flex gap-3 justify-content-around">
+                    <div class="quick-links-grid pb-2">
                         @for (item of quickMenuItems; track $index) {
                         <div class="quick-links-content text-center">
                             <img [src]="item.icon" [alt]="item.label" class="icon mb-2" />
@@ -220,8 +217,7 @@
 
                     <div class="disply-grid-custom">
                         <div class="department-graph-content">
-                            <p-chart type="bar" [data]="departmentHeadCountChartData"
-                                [options]="departmentHeadCountChartDataOptions" />
+                            <p-chart type="bar" [data]="departmentHeadCountChartData" [options]="departmentHeadCountChartDataOptions" />
                         </div>
                     </div>
                 </div>
@@ -231,7 +227,6 @@
                     <p-skeleton height="10.3rem" borderRadius="12px" />
                 </div>
                 }}
-
                 <!-- Gender Diversity -->
                 @if(rbac.allowedToAccess('Headcount by Gender.view')){
                 @if(!genderCountLoader){
@@ -240,8 +235,7 @@
                         <div class="summary-header d-inline-flex gap-1">
                             <div class="section-title">Gender Diversity</div>
                             <div>
-                                <app-module-info-icon placement="bottom" [ngbPopover]="genderdata"
-                                    class="module-icon" />
+                                <app-module-info-icon placement="bottom" [ngbPopover]="genderdata" class="module-icon" />
                                 <ng-template #genderdata>
                                     <div class="module-info-text">{{genderdiversityinfo}}</div>
                                 </ng-template>
@@ -251,8 +245,7 @@
                     </div>
                     <div class="disply-grid-custom">
                         <div class="gender-graph">
-                            <p-chart type="bar" [data]="genderChartData" [options]="genderChartOptions"
-                                [plugins]="[ChartDataLabels]" />
+                            <p-chart type="bar" [data]="genderChartData" [options]="genderChartOptions" [plugins]="[ChartDataLabels]" />
                         </div>
                     </div>
                 </div>
@@ -364,12 +357,9 @@
                                         </div>
                                         <div *ngSwitchCase="'Marriage Anniversary'">
                                             <p class="event-name mb-2">{{ item.name }}</p>
-                                            <p class="m-0">{{'Celebrating their Marriage Anniversary today...'|
-                                                translate}}
-                                            </p>
+                                            <p class="m-0">{{'Celebrating their Marriage Anniversary today...'| translate}}</p>
                                         </div>
-                                        <div *ngSwitchDefault
-                                            class="d-flex justify-content-center align-items-center event-name">
+                                        <div *ngSwitchDefault class="d-flex justify-content-center align-items-center event-name">
                                             {{ item.quotationname }}</div>
                                     </ng-container>
                                 </div>

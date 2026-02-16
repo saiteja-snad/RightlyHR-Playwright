@@ -70,7 +70,7 @@ export class OnboardingApprovalTabsComponent implements OnInit, OnDestroy {
       icon: '/letters-icon/appointment-letter-icon.png',
     },
     {
-      label: 'Non-Disclosure Agreement Letter',
+      label: 'NDA Letter',
       route: '/pending-approvals/on-boarding/nda-letter-history',
       moduleId: environment.traineeoffboardingModuleId,
       permission: { feature: 'Documents History Non-Disclosure Agreement Letter', action: 'view' },

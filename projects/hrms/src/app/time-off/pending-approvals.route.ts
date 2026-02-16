@@ -181,17 +181,17 @@ export default [
         path: 'on-boarding',
         children: [
             // offer letter
-            { path: 'offer-letter-history', component: DocumentHistoryOfferLetterComponent, data: { permission: 'Probation Details.view' } },
+            { path: 'offer-letter-history', component: DocumentHistoryOfferLetterComponent, data: { permission: 'Documents History Offer Letter.view' } },
             // appointment
-            { path: 'appointment-letter-history', component: DocumentHistoryAppointmentLetterComponent, data: { permission: 'Trainee Details.view' } },
+            { path: 'appointment-letter-history', component: DocumentHistoryAppointmentLetterComponent, data: { permission: 'Documents History Appointment Letter.view' } },
             // contract offer letter
-            { path: 'contractor-offer-letter-history', component: DocumentHistoryContractOfferLetterComponent, data: { permission: 'Probation Details.view' } },
+            { path: 'contractor-offer-letter-history', component: DocumentHistoryContractOfferLetterComponent, data: { permission: 'Documents History Contract Offer Letter.view' } },
             // intern offer letter
             { path: 'intern-offer-letter-history', component: DocumentHistoryInternOfferLetterComponent, data: { permission: 'Trainee Details.view' } },
             // intern appointment letter
             { path: 'intern-appointment-letter-history', component: DocumentHistoryInternAppointmentComponent, data: { permission: 'Probation Details.view' } },
             // nda letter
-            { path: 'nda-letter-history', component: DocumentHistoryNdaLetterComponent, data: { permission: 'Trainee Details.view' } },
+            { path: 'nda-letter-history', component: DocumentHistoryNdaLetterComponent, data: { permission: 'Documents History Non-Disclosure Agreement Letter.view' } },
             // probation
             { path: 'probation-request', component: ProbationPendingApprovalsComponent, data: { permission: 'Probation Details.view' } },
             // Trainee

@@ -13,6 +13,7 @@ export class OfferletterdashboardpipePipe implements PipeTransform {
     return probation.filter(p =>
       p.firstName?.toLowerCase().includes(searchValue.toLowerCase()) ||
       p.lastName?.toLowerCase().includes(searchValue.toLowerCase()) ||
+      p.employeeName?.toLowerCase().includes(searchValue.toLowerCase()) ||  
       p.emailaddress?.toLowerCase().includes(searchValue.toLowerCase()) ||
       `${p.firstName?.toLowerCase()} ${p.lastName?.toLowerCase()}`.includes(searchValue.toLowerCase()) ||
       p.fusionEmpId?.toLowerCase().includes(searchValue.toLowerCase()) ||

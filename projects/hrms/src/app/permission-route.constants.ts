@@ -324,6 +324,11 @@ export const PENDING_APPROVALS_EXTRA_HOURS_SUB_TABS = [
 ]
 
 export const ONBOARDING_APPROVALS_TABS = [
+  { route: '/pending-approvals/on-boarding/offer-letter-history', permission: 'Documents History Offer Letter.view' },
+  { route: '/pending-approvals/on-boarding/contractor-offer-letter-history', permission: 'Documents History Contract Offer Letter.view' },
+  { route: '/pending-approvals/on-boarding/intern-offer-letter-history', permission: 'Documents History Trainee Offer Letter.view' },
+  { route: '/pending-approvals/on-boarding/appointment-letter-history', permission: 'Documents History Appointment Letter.view' },
+  { route: '/pending-approvals/on-boarding/nda-letter-history', permission: 'Documents History Non-Disclosure Agreement Letter.view' },
   { route: '/pending-approvals/on-boarding/probation-request', permission: 'Probation Details Tab.view' },
   { route: '/pending-approvals/on-boarding/trainee-approvals', permission: 'Trainee Details Tab.view' },
 ]

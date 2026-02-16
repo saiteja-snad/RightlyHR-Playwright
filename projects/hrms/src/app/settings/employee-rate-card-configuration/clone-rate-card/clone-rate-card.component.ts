@@ -71,7 +71,7 @@ export class CloneRateCardComponent {
   {
     code: "INR",
     name: "Indian Rupee",
-    symbol: "₹"
+    symbol: "$"
   },
   {
     code: "JPY",

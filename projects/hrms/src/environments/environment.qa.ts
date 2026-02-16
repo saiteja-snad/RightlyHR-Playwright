@@ -36,7 +36,7 @@ export const environment = {
     }
   },
 
-
+  currencyCode: 'USD',
   dateformat: 'MMM d, y',
   paidLeaveCategoryId: 172,
   wfhModuleId:2,

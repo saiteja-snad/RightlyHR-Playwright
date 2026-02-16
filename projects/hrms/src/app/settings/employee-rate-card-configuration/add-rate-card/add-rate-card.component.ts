@@ -74,7 +74,7 @@ export class AddRateCardComponent implements OnInit, OnDestroy {
   {
     code: "INR",
     name: "Indian Rupee",
-    symbol: "₹"
+    symbol: "$"
   },
   {
     code: "JPY",

@@ -48,6 +48,7 @@ export class HttpService {
     nodue: false,
     timeoff: false,
   });
+
   desklocationIdSubject = new BehaviorSubject<string | null>(null);
   desksublocationIdSubject = new BehaviorSubject<string | null>(null);
   assetslocationIdSubject = new BehaviorSubject<string | null>(null);
@@ -105,6 +106,11 @@ export class HttpService {
     this.profliepicDetailes.next();
   }
 
+  probationcounts = new Subject<void>();
+  probationcountfuntion$ = this.probationcounts.asObservable();
+  setnewprobationDetails() {
+    this.probationcounts.next();
+  }
   //funtion to call add desk
   deskadded = new Subject<void>();
   deskDetailesadded$ = this.deskadded.asObservable();
@@ -229,14 +235,14 @@ export class HttpService {
     console.log('Selected On Behalf Of Expenses Employee:', emp);
   }
 
-// http.service.ts (add inside the service class)
-private _onBehalfExpensesUpdated$ = new BehaviorSubject<number | null>(null);
-public onBehalfExpensesUpdated$ = this._onBehalfExpensesUpdated$.asObservable();
+  // http.service.ts (add inside the service class)
+  private _onBehalfExpensesUpdated$ = new BehaviorSubject<number | null>(null);
+  public onBehalfExpensesUpdated$ = this._onBehalfExpensesUpdated$.asObservable();
 
-setOnBehalfExpensesUpdated(empId: number | null) {
-  // push empId (or null) to notify subscribers
-  this._onBehalfExpensesUpdated$.next(empId ?? null);
-}
+  setOnBehalfExpensesUpdated(empId: number | null) {
+    // push empId (or null) to notify subscribers
+    this._onBehalfExpensesUpdated$.next(empId ?? null);
+  }
 
 
   // function for employeid TIMEOFF
@@ -277,7 +283,7 @@ setOnBehalfExpensesUpdated(empId: number | null) {
   // Observable for components to subscribe to
   selectedEmployeeIdExpensesforonbehalf$ = this.selectedEmployeeIdExpensesforonbehalf.asObservable();
   // Method to update the employeeId
-  setEmployeeIdExpensesforonbehalf(id:any | null): void {
+  setEmployeeIdExpensesforonbehalf(id: any | null): void {
     this.selectedEmployeeIdExpensesforonbehalf.next(id);
     console.log('Selected Employee Expenses ID:', id);
   }
@@ -357,11 +363,11 @@ setOnBehalfExpensesUpdated(empId: number | null) {
   assetsUpdateCatageoryId(id: string | null) {
     this.assetscategoryIdSubject.next(id);
   }
-    //function to update the desk sublocation
+  //function to update the desk sublocation
   assetsUpdateSubCatageoryId(id: string | null) {
     this.assetssubcategeoryIdSubject.next(id);
   }
-    // ---------- FROM DATE ----------
+  // ---------- FROM DATE ----------
   private fromDateSubject = new BehaviorSubject<string | null>(null);
   fromDate$ = this.fromDateSubject.asObservable();
 
@@ -377,12 +383,12 @@ setOnBehalfExpensesUpdated(empId: number | null) {
     this.toDateSubject.next(date);
   }
 
-//availlableSearchCount = new BehaviorSubject<number>(0);
-setAvaillableSearchCount(count: number) {
-  //this.availlableSearchCount.next(count);
-     this.avilableassetCountSubject.next(count);
-  
-}
+  //availlableSearchCount = new BehaviorSubject<number>(0);
+  setAvaillableSearchCount(count: number) {
+    //this.availlableSearchCount.next(count);
+    this.avilableassetCountSubject.next(count);
+
+  }
   //to get the employee id
   employeeIdSubject = new BehaviorSubject<number>(0);
   employeeId$ = this.employeeIdSubject.asObservable();
@@ -492,7 +498,7 @@ setAvaillableSearchCount(count: number) {
       responseType: 'blob',
     });
   }
-   downloadEmployeeSkillsReport(url: string, isActive: boolean, resourceStatus?: string, searchQuery?: string, fromDate?: string, toDate?: string, skillSearch?: string ,departmentIds?:string ,projectIds?:string): Observable<Blob> {
+  downloadEmployeeSkillsReport(url: string, isActive: boolean, resourceStatus?: string, searchQuery?: string, fromDate?: string, toDate?: string, skillSearch?: string, departmentIds?: string, projectIds?: string): Observable<Blob> {
     let apiUrl = `${this.ApiUrl}${url}?isActive=${isActive}`;
 
     if (resourceStatus) apiUrl += `&resourceStatus=${resourceStatus}`;
@@ -575,10 +581,10 @@ setAvaillableSearchCount(count: number) {
     url: string,
     selectedLocationId: any,
     selectedSubLocationId: any,
-    category:any,
-    subcatageory:any,
-    fromDate:any,
-    toDate:any,
+    category: any,
+    subcatageory: any,
+    fromDate: any,
+    toDate: any,
     status: string,
     page: number,
     pageSize: number,
@@ -587,10 +593,10 @@ setAvaillableSearchCount(count: number) {
     const params: { [key: string]: any } = {
       locationid: selectedLocationId,
       sublocationid: selectedSubLocationId,
-      category:category,
-      subcategory:subcatageory,
-      fromDate:fromDate,
-      toDate:toDate,
+      category: category,
+      subcategory: subcatageory,
+      fromDate: fromDate,
+      toDate: toDate,
       status: status,
       page: page,
       pageSize: pageSize,
@@ -853,7 +859,7 @@ setAvaillableSearchCount(count: number) {
   allocatedassetCountSubject = new BehaviorSubject<number>(0);
   undermatinaceassetCountSubject = new BehaviorSubject<number>(0);
   inactiveaceassetCountSubject = new BehaviorSubject<number>(0);
-   blockassetCountSubject = new BehaviorSubject<number>(0);
+  blockassetCountSubject = new BehaviorSubject<number>(0);
   setAssetCount(count: number) {
     this.assetCountSubject.next(count);
   }
@@ -865,29 +871,29 @@ setAvaillableSearchCount(count: number) {
   setallocatedAssetCount(count: any) {
     this.allocatedassetCountSubject.next(count);
   }
-setAllocatedSearchCount(count: any) {
-     this.allocatedassetCountSubject.next(count);
-}
+  setAllocatedSearchCount(count: any) {
+    this.allocatedassetCountSubject.next(count);
+  }
   setundermatinaceAssetCount(count: any) {
     this.undermatinaceassetCountSubject.next(count);
   }
   setundermatinaceSearchCount(count: any) {
-     this.undermatinaceassetCountSubject.next(count);
-}
- setblockAssetCount(count: any) {
+    this.undermatinaceassetCountSubject.next(count);
+  }
+  setblockAssetCount(count: any) {
     this.blockassetCountSubject.next(count);
   }
 
-setblockSearchCount(count: any) {
-     this.blockassetCountSubject.next(count);
-}
+  setblockSearchCount(count: any) {
+    this.blockassetCountSubject.next(count);
+  }
   setinactiveSubjectAssetCount(count: any) {
     this.inactiveaceassetCountSubject.next(count);
   }
 
-setinactiveSearchCount(count: any) {
-     this.inactiveaceassetCountSubject.next(count);
-}
+  setinactiveSearchCount(count: any) {
+    this.inactiveaceassetCountSubject.next(count);
+  }
   getFilteredleavesDataByID(employeeId: number, params?: any) {
     return this.http.get(`${this.ApiUrl}Timeoff/${employeeId}?year=${params}`);
   }
@@ -1090,10 +1096,10 @@ setinactiveSearchCount(count: any) {
   }
 
   // update count
-pendingApprovalCount$ = new BehaviorSubject<any[]>([]);
-updatePendingApprovalCounts(counts: any[]) {
-  this.pendingApprovalCount$.next(counts);
-}
+  pendingApprovalCount$ = new BehaviorSubject<any[]>([]);
+  updatePendingApprovalCounts(counts: any[]) {
+    this.pendingApprovalCount$.next(counts);
+  }
 
   //store project types
   private projectTypeFilterSource = new BehaviorSubject<string[]>([]);
@@ -1183,7 +1189,7 @@ updatePendingApprovalCounts(counts: any[]) {
     this.clientTimesheetPhaseFilterSource.next([]);
   }
 
-    // store project in timsheet sunnary
+  // store project in timsheet sunnary
   private clientTimesheetProjectFilterSource = new BehaviorSubject<number[]>([]);
 
   clientTimesheetProjectFilter$ =
@@ -1273,7 +1279,7 @@ updatePendingApprovalCounts(counts: any[]) {
     this.projectTimesheetPhaseFilter.next(ids);
   }
 
-   setProjectTimesheetProjectFilter(ids: number[]) {
+  setProjectTimesheetProjectFilter(ids: number[]) {
     this.projectTimesheetProjectFilter.next(ids);
   }
 
@@ -1295,7 +1301,7 @@ updatePendingApprovalCounts(counts: any[]) {
     return this.projectTimesheetPhaseFilter.getValue();
   }
 
-    getCurrentProjectTimesheetProjectIds(): number[] {
+  getCurrentProjectTimesheetProjectIds(): number[] {
     return this.projectTimesheetProjectFilter.getValue();
   }
 

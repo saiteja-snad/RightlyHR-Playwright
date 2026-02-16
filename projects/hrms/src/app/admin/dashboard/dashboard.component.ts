@@ -445,7 +445,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       },
       {
         label: 'Active Contractors',
-        link: '/employee-management/prospective/contract',
+        link: '/employee-management/active/contract',
         count: this.activeContractCount,
         icon: '/employee-data/prospective-trainee-icon.png',
         employeementTypeColor: '#00B5AD',

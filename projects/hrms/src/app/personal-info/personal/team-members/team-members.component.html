@@ -124,7 +124,7 @@
                         </div>
                         <div *ngIf="requestForm.get('teamEmpselectedOptions')?.touched && requestForm.get('teamEmpselectedOptions')?.invalid"
                             class="error-msg">
-                            Please select at least one employee
+                            Please select employee(s)
                         </div>
                     </div>
 
@@ -224,7 +224,7 @@
                         </div>
                         <div *ngIf="foremployeeForm.get('teamEmpselectedOptions')?.touched && foremployeeForm.get('teamEmpselectedOptions')?.invalid"
                             class="error-msg">
-                            Please select at least one employee
+                            Please select employee(s)
                         </div>
                     </div>
 
@@ -388,7 +388,7 @@
                         </div>
                         <div class="error-msg"
                             *ngIf="teamForm.get('reportingManager')?.invalid && teamForm.get('reportingManager')?.touched">
-                            Reporting Manager is required
+                            Reporting manager is required
                         </div>
                     </div>
                 </div>

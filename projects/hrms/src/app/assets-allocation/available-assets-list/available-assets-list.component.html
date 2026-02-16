@@ -629,7 +629,7 @@
             <div class="custom-p-select-content">
               <p-select [options]="employeeiddetails" optionLabel="employeeName" [filter]="true" [resetFilterOnHide]="true" filterBy="employeeName"
                 (onChange)="onEmployeeSelect($event)" formControlName="mReportingto"
-                placeholder="Select Employee" class="form-select custom-select"></p-select>
+                placeholder="Please select employee" class="form-select custom-select"></p-select>
             </div>
             <div *ngIf="assiginForm.get('mReportingto')?.invalid && assiginForm.get('mReportingto')?.touched">
               <div class="error-msg"> Employee is required</div>
@@ -724,7 +724,7 @@
             <div
               *ngIf="locationfromdata.get('subLocationId')?.invalid && locationfromdata.get('subLocationId')?.touched"
               class="error-msg">
-              Sub Location is required.
+              Sub location is required.
             </div>
           </div>
 
@@ -789,7 +789,7 @@
       <img src="icons/conformation.png" alt="failure icon" class="confirmation-icon mb-2  pt-4">
     </div>
     <div class="text-center">
-      <h5 class="confirmation-text mb-2"> Are you sure you want to Mark as Maintenance?</h5>
+      <h5 class="confirmation-text mb-2"> Are you sure you want to mark as maintenance?</h5>
     </div>
     <div class="custom-main-popup-content ">
       <form autocomplete="off" [formGroup]="undermainteenceForm"
@@ -824,10 +824,10 @@
                 <div class="error-msg"
                   *ngIf="undermainteenceForm.get('comments')?.invalid && undermainteenceForm.get('comments')?.touched">
                   <div *ngIf="undermainteenceForm.get('comments')?.errors?.['required']">
-                    Additional Comments is required.
+                    Additional comments is required.
                   </div>
                   <div *ngIf="undermainteenceForm.get('comments')?.errors?.['maxlength']">
-                    Additional Comments must not exceed 250 characters.
+                    Additional comments must not exceed 250 characters.
                   </div>
                 </div>
               </div>
@@ -872,10 +872,10 @@
             <label for="vendordetailes" class="form-label custom-label mb-2">Contact Name<span class="text-danger"
                 *ngIf="isToggledvender">*</span></label>
             <input type="text" formControlName="vendorname" class="form-control custom-input"
-              (keypress)="formValidation.restrictInput($event)" (paste)="formValidation.validatePaste($event)" placeholder="Contact Name" />
+              (keypress)="formValidation.restrictInput($event)" (paste)="formValidation.validatePaste($event)" placeholder= " Please enter contact name" />
             <div
               *ngIf="undermainteenceForm.get('vendorname')?.invalid && undermainteenceForm.get('vendorname')?.touched">
-              <div class="error-msg">Contact Name is required</div>
+              <div class="error-msg">Contact name is required</div>
             </div>
           </div>
 
@@ -887,13 +887,13 @@
               minlength="10" />
             <div class="error-msg"
               *ngIf="undermainteenceForm.get('contactnumber')?.errors?.['required'] && undermainteenceForm.get('contactnumber')?.touched">
-              Contact Number is required
+              Contact number is required
             </div>
             <div *ngIf="undermainteenceForm.get('contactnumber')?.errors?.['maxlength']" class="error-msg">
-              Contact Number must be 10 to 15 digits
+              Contact number must be 10 to 15 digits
             </div>
             <div *ngIf="undermainteenceForm.get('contactnumber')?.errors?.['minlength']" class="error-msg">
-              Contact Number must be 10 to 15 digits
+              Contact number must be 10 to 15 digits
             </div>
             <!-- Pattern error for Mobile number length -->
             <div *ngIf="undermainteenceForm.get('contactnumber')?.errors?.['allZeroesIfMaxLength']" class="error-msg">
@@ -906,17 +906,17 @@
             <!-- Required error -->
             <div
               *ngIf="assetForm.controls['contactnumber'].errors?.['required'] && assetForm.controls['contactnumber'].touched">
-              AMC vendor Contact is required
+              AMC vendor contact is required
             </div>
             <div *ngIf="assetForm.controls['contactnumber'].errors?.['maxlength']">
-              AMC vendor Contact must be 10 to 15 digits
+              AMC vendor contact must be 10 to 15 digits
             </div>
             <div *ngIf="assetForm.controls['contactnumber'].errors?.['minlength']">
-              AMC vendor Contact must be 10 to 15 digits
+              AMC vendor contact must be 10 to 15 digits
             </div>
             <!-- Pattern error for Mobile number length -->
             <div *ngIf="assetForm.controls['contactnumber'].errors?.['allZeroesIfMaxLength']">
-              AMC vendor Contact is not valid
+              AMC vendor contact is not valid
             </div>
           </div>
         </div>
@@ -934,7 +934,7 @@
   <div class="result-popup-content" ngbAutofocus>
     <div>
     <app-confirmation-icon />
-      <p class="confirmation-text mb-4">Are you sure you want to mark this Asset as Active?</p>
+      <p class="confirmation-text mb-4">Are you sure you want to mark this asset as active?</p>
     </div>
     <div class="d-flex justify-content-center gap-3 mt-4">
       <button type="button" class="custom-btn btn-secondary" (click)="conformationpoppup();model.dismiss()">No</button>
@@ -948,7 +948,7 @@
   <div class="result-popup-content" ngbAutofocus>
     <div>
     <app-confirmation-icon />
-      <p class="confirmation-text mb-4">Are you sure you want to mark this Asset as Active?</p>
+      <p class="confirmation-text mb-4">Are you sure you want to mark this asset as active?</p>
     </div>
     <div class="d-flex justify-content-center gap-3 mt-4">
       <button type="button" class="custom-btn btn-secondary" (click)="model.dismiss()">No</button>

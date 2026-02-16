@@ -10,7 +10,7 @@
                         <input type="date" class="form-control custom-input" formControlName="effectiveDate" placeholder="Please enter Date"
                             onkeypress="return false" />
                         <div *ngIf="clientForm.get('effectiveDate')?.invalid && clientForm.get('effectiveDate')?.touched" class="error-msg">
-                            <div>Effective Date is required</div>
+                            <div>Effective date is required</div>
                         </div>
                     </div>
 
@@ -20,7 +20,7 @@
                         <input type="text" class="form-control custom-input" (keydown)="formValidation.restrictInitialSpace($event)"
                             formControlName="companyName" placeholder="Please select client name">
                         <div *ngIf="clientForm.get('companyName')?.invalid && clientForm.get('companyName')?.touched" class="error-msg">
-                            <div>Client Name is required</div>
+                            <div>Client name is required</div>
                         </div>
                     </div>
 
@@ -117,7 +117,7 @@
                         </div>
                         <div class="error-msg"
                             *ngIf="clientForm.get('noticePeriodfrequency')?.invalid && clientForm.get('noticePeriodfrequency')?.touched ">
-                            Term Frequency is required
+                            Term frequency is required
                         </div>
                     </div>
 
@@ -159,7 +159,7 @@
                             [maxlength]="501"></textarea>
                         <div *ngIf="clientForm.get('governingLaw')?.errors?.['required'] && clientForm.get('governingLaw')?.touched"
                             class="error-msg">
-                            <div>Governing Law is required</div>
+                            <div>Governing law is required</div>
                         </div>
                         <div *ngIf="clientForm.get('governingLaw')?.touched && clientForm.get('serviceProviderAddress')?.errors?.['maxlength']"
                             class="error-msg">
@@ -177,7 +177,7 @@
                             </p-select>
                         </div>
                         <div *ngIf="clientForm.get('documentType')?.invalid && clientForm.get('documentType')?.touched">
-                            <div class="error-msg">Document Type is required</div>
+                            <div class="error-msg">Document type is required</div>
                         </div>
                     </div>
 

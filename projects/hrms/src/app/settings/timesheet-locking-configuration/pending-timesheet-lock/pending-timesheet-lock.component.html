@@ -125,7 +125,7 @@
                             (change)="onFromDateChange(TimesheetLockForm)" />
                         <div class="error-msg"
                             *ngIf="TimesheetLockForm.get('fromDate')?.invalid && TimesheetLockForm.get('fromDate')?.touched">
-                            From Date is required
+                            From date is required
                         </div>
                     </div>
 
@@ -152,7 +152,7 @@
                             [min]="getEffectiveDateMin()" (change)="onEffectiveDateChange(TimesheetLockForm)" />
                         <div class="error-msg" *ngIf="TimesheetLockForm.get('effectiveDate')?.hasError('required') &&
                                    TimesheetLockForm.get('effectiveDate')?.touched">
-                            Effective Date is required
+                            Effective date is required
                         </div>
 
                         <!-- Greater than To Date Validation -->
@@ -220,7 +220,7 @@
                             (change)="onFromDateChange(updateTimesheetLockForm)" [disabled]="isPublished" />
                         <div class="error-msg"
                             *ngIf="updateTimesheetLockForm.get('fromDate')?.invalid && updateTimesheetLockForm.get('fromDate')?.touched">
-                            From Date is required
+                            From date is required
                         </div>
                     </div>
 
@@ -252,7 +252,7 @@
                             [disabled]="!isPublished" />
                         <div class="error-msg"
                             *ngIf="updateTimesheetLockForm.get('effectiveDate')?.hasError('required') && updateTimesheetLockForm.get('effectiveDate')?.touched">
-                            Effective Date is required
+                            Effective date is required
                         </div>
                         <!-- Effective Date cannot be greater than Effective Date -->
                         <div class="error-msg" *ngIf="effectiveDateInvalid">

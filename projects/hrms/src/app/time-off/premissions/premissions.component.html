@@ -92,7 +92,7 @@
                             onkeydown="return false" placeholder="Select Date" autocomplete="off" [min]="getPastDate()"
                             [max]="getFutureDate()" />
                         <div *ngIf="permissionForm.get('permissionDate')?.touched && permissionForm.get('permissionDate')?.invalid"
-                            class="error-msg">Permission Date is required</div>
+                            class="error-msg">Permission date is required</div>
                     </div>
                 </div>
 
@@ -116,7 +116,7 @@
                                 placeholder="Please select permission type" id="leaveType" class="form-select custom-select" />
                         </div>
                         <div *ngIf="permissionForm.get('leaveType')?.touched && permissionForm.get('leaveType')?.invalid" class="error-msg">
-                            Permission Type is required
+                            Permission type is required
                         </div>
                     </div>
 

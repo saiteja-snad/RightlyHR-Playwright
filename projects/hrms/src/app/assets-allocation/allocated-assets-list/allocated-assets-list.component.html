@@ -623,12 +623,12 @@
           </div>
 
           <div class="col-md-12 mb-3 ">
-            <label for="asseTID" class="form-label custom-label mb-2">Select Employee ID<span
+            <label for="asseTID" class="form-label custom-label mb-2">Select Employee <span
                 class="text-danger">*</span></label>
             <div class="custom-p-select-content">
               <p-select [options]="employeeiddetails" optionLabel="employeeName" [filter]="true"
                 [resetFilterOnHide]="true" filterBy="employeeName" (onChange)="onEmployeeSelect($event)"
-                formControlName="mReportingto" placeholder="Select Employee"
+                formControlName="mReportingto" placeholder="Please select employee"
                 class="form-select custom-select"></p-select>
             </div>
             <div *ngIf="reassiginForm.get('mReportingto')?.invalid && reassiginForm.get('mReportingto')?.touched">
@@ -754,7 +754,7 @@
               placeholder="Contact Name" />
             <div
               *ngIf="undermainteenceForm.get('vendorname')?.invalid && undermainteenceForm.get('vendorname')?.touched">
-              <div class="error-msg">Contact Name is required</div>
+              <div class="error-msg">Contact name is required</div>
             </div>
           </div>
 

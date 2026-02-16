@@ -262,7 +262,7 @@
                     </div>
                     <div
                         *ngIf="employeeForm.get('JobSubLocationName')?.invalid && employeeForm.get('JobSubLocationName')?.touched">
-                        <div class="error-msg">Sub Location is required</div>
+                        <div class="error-msg">Sub location is required</div>
                     </div>
                 </div>
 
@@ -281,7 +281,7 @@
                         (click)="pathValuesFuction()" onkeydown="return false;" />
                     <div
                         *ngIf="employeeForm.get('offerIssuedDate')?.invalid && employeeForm.get('offerIssuedDate')?.touched">
-                        <div class="error-msg">Offer Issued Date is required</div>
+                        <div class="error-msg">Offer Issued date is required</div>
                         <div *ngIf="employeeForm.hasError('offerDateInvalid') && employeeForm.get('offerIssuedDate')?.touched"
                             class="error-msg">Offer Expiry Date should be after the Offer Issued Date
                         </div>
@@ -296,7 +296,7 @@
                         [min]="startDatevalidate" onkeydown="return false;" />
                     <div
                         *ngIf="employeeForm.get('dateOfJoining')?.invalid && employeeForm.get('dateOfJoining')?.touched">
-                        <div class="error-msg">Expected Start Date is required</div>
+                        <div class="error-msg">Expected Start date is required</div>
                     </div>
                     <div *ngIf="employeeForm.hasError('offerdateofjoiningDateInvalid') && employeeForm.get('dateOfJoining')?.touched"
                         class="error-msg">
@@ -317,7 +317,7 @@
                     <div class="error-msg">
                         <div
                             *ngIf="employeeForm.get('offerExpiryDate')?.invalid && employeeForm.get('offerExpiryDate')?.touched">
-                            Offer Expiry Date is required
+                            Offer Expiry date is required
                         </div>
                         <div
                             *ngIf="employeeForm.hasError('offerDateInvalid') && employeeForm.get('offerExpiryDate')?.touched">
@@ -336,7 +336,7 @@
                     </div>
                     <div *ngIf="employeeForm.get('Copys')?.invalid && employeeForm.get('Copys')?.touched"
                         class="error-msg">
-                        Document Type is required
+                        Document type is required
                     </div>
                 </div>
 

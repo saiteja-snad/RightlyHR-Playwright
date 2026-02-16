@@ -195,7 +195,7 @@
                         </div>
                         <div class="error-msg" *ngIf="updateDetailsForm.controls['bankName'].invalid && (updateDetailsForm.controls['bankName'].touched 
                             || updateDetailsForm.controls['bankName'].dirty)">
-                            <span *ngIf="updateDetailsForm.controls['bankName'].errors?.['required']">Bank Name is required</span>
+                            <span *ngIf="updateDetailsForm.controls['bankName'].errors?.['required']">Bank name is required</span>
                         </div>
                     </div>
 
@@ -208,7 +208,7 @@
                             placeholder="Please enter cardholder name" (keypress)="formValidations.restrictInitialSpace($event)">
                         <div class="error-msg"
                             *ngIf="updateDetailsForm.get('cardHolderName')?.invalid && updateDetailsForm.get('cardHolderName')?.touched">
-                            Card Holder Name is required
+                            Card holder name is required
                         </div>
                     </div>
 
@@ -266,7 +266,7 @@
                         <input type="number" class="form-control custom-input" min="0" formControlName="creditLimit" placeholder="Enter credit limit">
                         <div class="error-msg"
                             *ngIf="updateDetailsForm.get('creditLimit')?.hasError('required') && updateDetailsForm.get('creditLimit')?.touched">
-                            Credit Limit is required
+                            Credit limit is required
                         </div>
                         
                         <div class="error-msg"
@@ -328,7 +328,7 @@
                         <label for="allocatedDate" class="form-label custom-label mb-2">Allocated Date<span class="error-msg">*</span></label>
                         <input type="date" class="form-control custom-input" formControlName="allocatedDate" />
                         <div *ngIf="allocateDetailsForm.get('allocatedDate')?.touched && allocateDetailsForm.get('allocatedDate')?.invalid" class="error-msg">
-                            <div *ngIf="allocateDetailsForm.get('allocatedDate')?.errors?.['required']">{{'Allocated Date is required'|translate}}</div>
+                            <div *ngIf="allocateDetailsForm.get('allocatedDate')?.errors?.['required']">{{'Allocated date is required'|translate}}</div>
                         </div>
                     </div>
 
@@ -340,7 +340,7 @@
                                 [showClear]="false" formControlName="employeeId" optionValue="employeeId" placeholder="Please select employee"
                                 optionLabel="fullName" />
                             <div *ngIf="allocateDetailsForm.get('employeeId')?.touched && allocateDetailsForm.get('employeeId')?.invalid" class="error-msg">
-                                <div *ngIf="allocateDetailsForm.get('employeeId')?.errors?.['required']">Allocated To is required</div>
+                                <div *ngIf="allocateDetailsForm.get('employeeId')?.errors?.['required']">Allocated to is required</div>
                             </div>
                         </div>
                     </div>
@@ -406,7 +406,7 @@
                             <span class="color">{{ holdDetailsForm.get('addictionalcomments')?.value?.length || 0 }}/250</span>
                         </div>
                         <div *ngIf="holdDetailsForm.get('addictionalcomments')?.touched && holdDetailsForm.get('addictionalcomments')?.invalid" class="error-msg">
-                            <div *ngIf="holdDetailsForm.get('addictionalcomments')?.errors?.['required']">Additional Comments are required</div>
+                            <div *ngIf="holdDetailsForm.get('addictionalcomments')?.errors?.['required']">Additional comments are required</div>
                         </div>
                     </div>
                 </div>

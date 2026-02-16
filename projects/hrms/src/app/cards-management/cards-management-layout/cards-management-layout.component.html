@@ -84,7 +84,7 @@
                 class="form-select custom-select"></p-select>
             </div>
             <div *ngIf="cardDetailsForm.get('cardType')?.invalid && cardDetailsForm.get('cardType')?.touched" class="error-msg">
-              Card Type is required
+              Card type is required
             </div>
           </div>
 
@@ -109,7 +109,7 @@
             </div>
             <div class="error-msg" *ngIf="cardDetailsForm.controls['bankName'].invalid && (cardDetailsForm.controls['bankName'].touched 
             || cardDetailsForm.controls['bankName'].dirty)">
-              <span *ngIf="cardDetailsForm.controls['bankName'].errors?.['required']">Bank Name is required</span>
+              <span *ngIf="cardDetailsForm.controls['bankName'].errors?.['required']">Bank name is required</span>
             </div>
           </div>
 
@@ -119,7 +119,7 @@
             <input type="text" class="form-control custom-input" formControlName="cardHolderName"
               placeholder="Please enter card holder name" (keypress)="restrictInput($event)">
             <div class="error-msg" *ngIf="cardDetailsForm.get('cardHolderName')?.invalid && cardDetailsForm.get('cardHolderName')?.touched">
-              Card Holder Name is required
+              Card holder name is required
             </div>
           </div>
 
@@ -169,7 +169,7 @@
             <input type="number" class="form-control custom-input" min="0" formControlName="creditLimit" placeholder="Enter credit limit">
               <div class="error-msg"
                 *ngIf="cardDetailsForm.get('creditLimit')?.hasError('required') && cardDetailsForm.get('creditLimit')?.touched">
-                Credit Limit is required
+                Credit limit is required
               </div>
               <div class="error-msg"
                 *ngIf="cardDetailsForm.get('creditLimit')?.hasError('min') && cardDetailsForm.get('creditLimit')?.touched">

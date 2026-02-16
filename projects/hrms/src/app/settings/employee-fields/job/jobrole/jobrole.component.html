@@ -81,7 +81,7 @@
             maxlength="101">
             <div *ngIf="updateForm.get('Updatejobrole')?.touched && updateForm.get('Updatejobrole')?.invalid" class="error-msg">
               <div *ngIf="updateForm.get('Updatejobrole')?.errors?.['required']">
-                  {{ 'Job Role is required' | translate }}
+                  {{ 'Job role is required' | translate }}
               </div>
           </div>
           <div *ngIf="updateForm.get('Updatejobrole')?.errors?.['pattern']" class="error-msg">
@@ -145,7 +145,7 @@
             maxlength="101" />
             <div *ngIf="AddForm.get('Addjobrole')?.touched && AddForm.get('Addjobrole')?.invalid" class="error-msg">
               <div *ngIf="AddForm.get('Addjobrole')?.errors?.['required']">
-                  {{ 'Job Role is required' | translate }}
+                  {{ 'Job role is required' | translate }}
               </div>
           </div>
            <div *ngIf="AddForm.get('Addjobrole')?.errors?.['pattern']" class="error-msg">

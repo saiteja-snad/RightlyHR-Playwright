@@ -100,7 +100,7 @@
                             (change)="weekendAndHolidaysCheck(addCompOffForm.get('workedDate')?.value)">
                         <div class="error-msg">
                             <div *ngIf="addCompOffForm.get('workedDate')?.touched && addCompOffForm.get('workedDate')?.invalid">
-                                <div *ngIf="addCompOffForm.get('workedDate')?.errors?.['required']">Worked Date is required</div>
+                                <div *ngIf="addCompOffForm.get('workedDate')?.errors?.['required']">Worked date is required</div>
                             </div>
                             <div *ngIf="addCompOffForm.get('workedDate')?.errors?.['beforeJoining']">Date must be after your date of joining</div>
                             <div *ngIf="!(isHolidaySelected || isWeekOffSelected)">Selected date is not eligible for compoff</div>

@@ -102,7 +102,7 @@
               (change)="weekendAndHolidaysCheck(addremoteForm.get('workedDate')?.value)" />
             <div class="error-msg">
               <div *ngIf="addremoteForm.get('workedDate')?.touched && addremoteForm.get('workedDate')?.invalid">
-                Worked Date is required.</div>
+                Worked date is required.</div>
               <div *ngIf="addremoteForm.get('workedDate')?.errors?.['beforeJoining']">
                 Date must be after your date of joining.</div>
               <div *ngIf="(isHolidaySelected || isWeekOffSelected)">Selected date is not

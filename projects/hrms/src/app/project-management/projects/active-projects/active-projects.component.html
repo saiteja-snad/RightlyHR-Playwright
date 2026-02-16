@@ -182,7 +182,7 @@
                 placeholder="Please select client name" class="form-select custom-select" />
             </div>
             <div class="error-msg" *ngIf="updateprojectform.get('updateclientName')?.touched &&
-              updateprojectform.get('updateclientName')?.invalid">Client Name is required</div>
+              updateprojectform.get('updateclientName')?.invalid">Client name is required</div>
           </div>
 
           <!-- Project Code -->
@@ -192,7 +192,7 @@
             <input type="text" class="form-control custom-input" (keydown)="formValidation.restrictInitialSpace($event)"
               formControlName="updatecode" maxlength="13" placeholder="Please enter project code">
             <div class="error-msg" *ngIf="updateprojectform.get('updatecode')?.touched &&
-              updateprojectform.get('updatecode')?.errors?.['required']">Project Code is required</div>
+              updateprojectform.get('updatecode')?.errors?.['required']">Project code is required</div>
             <div class="error-msg"
               *ngIf="updateprojectform.get('updatecode')?.touched && updateprojectform.get('updatecode')?.errors?.['maxlength']">
               Project Code cannot exceed 12 characters
@@ -208,7 +208,7 @@
               (input)="formValidation.validateInput(updateprojectform.get('updateprojectName'))"
               class="form-control custom-input">
             <div class="error-msg" *ngIf="updateprojectform.get('updateprojectName')?.touched">
-              <div *ngIf="updateprojectform.get('updateprojectName')?.errors?.['required']">Project Name is required
+              <div *ngIf="updateprojectform.get('updateprojectName')?.errors?.['required']">Project name is required
               </div>
               <div *ngIf="updateprojectform.get('updateprojectName')?.errors?.['maxCharacters'] ||
               updateprojectform.get('updateprojectName')?.errors?.['minCharacters']" class="error-msg">
@@ -227,7 +227,7 @@
                 placeholder="Please select project type" class="form-select custom-select" />
             </div>
             <div class="error-msg" *ngIf="updateprojectform.get('updateprojectType')?.touched &&
-            updateprojectform.get('updateprojectType')?.invalid">Project Type is required</div>
+            updateprojectform.get('updateprojectType')?.invalid">Project type is required</div>
           </div>
 
           <!-- Department Name Field -->
@@ -254,7 +254,7 @@
             <input type="date" id="updatestartDate" formControlName="updatestartDate"
               class="form-control custom-input" />
             <div class="error-msg" *ngIf="updateprojectform.get('updatestartDate')?.touched &&
-            updateprojectform.get('updatestartDate')?.invalid">Start Date is required</div>
+            updateprojectform.get('updatestartDate')?.invalid">Start date is required</div>
             <div *ngIf="!startndEndDateValid">
               <div class="error-msg"> Start Date must be before end Date</div>
             </div>
@@ -268,7 +268,7 @@
               class="form-control custom-input" />
             <div class="error-msg"
               *ngIf="updateprojectform.get('updateendDate')?.touched && updateprojectform.get('updateendDate')?.invalid">
-              End Date is required</div>
+              End date is required</div>
             <div *ngIf="!startndEndDateValid">
               <div class="error-msg"> End Date cannot be before start Date</div>
             </div>
@@ -294,7 +294,7 @@
             <input type="date" id="updateeffectiveDate" formControlName="updateeffectiveDate" [min]="minEffectiveDate"
               [max]="maxEffectiveDate" class="form-control custom-input" />
             <div class="error-msg" *ngIf="updateprojectform.get('updateeffectiveDate')?.touched &&
-            updateprojectform.get('updateeffectiveDate')?.invalid">Effective Date is required</div>
+            updateprojectform.get('updateeffectiveDate')?.invalid">Effective date is required</div>
             <div class="error-msg" *ngIf="!effectiveDateValidRange">Effective Date must be between Start Date and End
               Date</div>
             <div class="error-msg" *ngIf="!effectiveAfterKickoffValid">Effective Date must be on or after the Kickoff
@@ -308,7 +308,7 @@
               class="form-control custom-input" placeholder="Please enter allocated hours" />
             <div class="error-msg"
               *ngIf="updateprojectform.get('updateallocatedHours')?.touched && updateprojectform.get('updateallocatedHours')?.invalid">
-              Allocated Hours is required
+              Allocated hours is required
             </div>
           </div> -->
 
@@ -340,7 +340,7 @@
             </div>
             <div class="error-msg"
               *ngIf="updateprojectform.get('approvalidAuthority')?.invalid && updateprojectform.get('approvalidAuthority')?.touched">
-              Timesheet Approval Authority is required
+              Timesheet approval authority is required
             </div>
           </div>
           </div> -->

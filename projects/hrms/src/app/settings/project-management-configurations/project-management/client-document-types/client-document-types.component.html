@@ -95,7 +95,7 @@
                     <div *ngIf="updateForm.get('documentType')?.touched && updateForm.get('documentType')?.invalid"
                         class="error-msg">
                         <div *ngIf="updateForm.get('documentType')?.errors?.['required']">
-                            {{ 'Client Document Type is required' | translate }}
+                            {{ 'Client Document type is required' | translate }}
                         </div>
                     </div>
                     <div *ngIf="updateForm.get('documentType')?.errors?.['pattern']" class="error-msg">

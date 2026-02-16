@@ -156,7 +156,7 @@
                             [max]="todayString" (change)="onFromDateChange(attendanceLockForm)" />
                         <div class="error-msg"
                             *ngIf="attendanceLockForm.get('fromDate')?.invalid && attendanceLockForm.get('fromDate')?.touched">
-                            From Date is required
+                            From date is required
                         </div>
                     </div>
 
@@ -180,7 +180,7 @@
                             [min]="getEffectiveDateMin()" />
                         <div class="error-msg"
                             *ngIf="attendanceLockForm.get('effectiveDate')?.invalid && attendanceLockForm.get('effectiveDate')?.touched">
-                            Effective Date is required
+                            Effective date is required
                         </div>
                     </div>
                 </div>
@@ -248,7 +248,7 @@
                             [disabled]="isPublished" />
                         <div class="error-msg"
                             *ngIf="updateAttendanceLockForm.get('fromDate')?.invalid && updateAttendanceLockForm.get('fromDate')?.touched">
-                            From Date is required
+                            From date is required
                         </div>
                     </div>
 
@@ -273,7 +273,7 @@
                             [min]="toDateString" [disabled]="!isPublished" />
                         <div class="error-msg"
                             *ngIf="updateAttendanceLockForm.get('effectiveDate')?.invalid && updateAttendanceLockForm.get('effectiveDate')?.touched">
-                            Effective Date is required
+                            Effective date is required
                         </div>
                     </div>
                 </div>

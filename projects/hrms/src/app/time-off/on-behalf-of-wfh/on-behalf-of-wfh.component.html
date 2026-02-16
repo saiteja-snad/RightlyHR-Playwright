@@ -87,7 +87,7 @@
                         autocomplete="off" formControlName="workedDate" [max]="today">
                     <div class="error-msg">
                         <div *ngIf="addWFHForm.get('workedDate')?.touched && addWFHForm.get('workedDate')?.invalid">
-                            Worked Date is required</div>
+                            Worked date is required</div>
                         <div *ngIf="addWFHForm.get('workedDate')?.errors?.['weekend']">Selected date is not eligible for
                             WFH</div>
                         <div *ngIf="addWFHForm.get('workedDate')?.errors?.['beforeJoining']">Date must be after your

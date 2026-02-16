@@ -99,7 +99,7 @@
                             placeholder="Please select sub location(s)" />
                     </div>
                     <div *ngIf="reviewCycleForm.get('subLocationId')?.touched && reviewCycleForm.get('subLocationId')?.hasError('required')"
-                        class="error-msg">Sub Location is required
+                        class="error-msg">Sub location is required
                     </div>
                 </div>
 
@@ -111,7 +111,7 @@
                         autocomplete="off">
                     <div *ngIf="reviewCycleForm.get('startDate')?.touched && reviewCycleForm.get('startDate')?.hasError('required')"
                         class="error-msg">
-                        Review Cycle Start Date is required
+                        Review Cycle Start date is required
                     </div>
                 </div>
 
@@ -123,7 +123,7 @@
                         aria-label="default input example" autocomplete="off">
                     <div *ngIf="reviewCycleForm.get('endDate')?.touched && reviewCycleForm.get('endDate')?.hasError('required')"
                         class="error-msg">
-                        Review Cycle End Date is required
+                        Review Cycle End date is required
                     </div>
                     <div *ngIf="reviewCycleForm.errors?.['endDateInvalid']" class="error-msg">
                         Review Cycle End date should be greater than the review cycle start date
@@ -177,7 +177,7 @@
             </div>
 
             <div class="custom-modal-footer">
-                <button type="reset" class="custom-btn btn-secondary" (click)="close()">{{'Cancel'|translate}}</button>
+                <button type="reset" class="custom-btn btn-secondary" (click)="openmodalforcancel(cancelationConfirmation)">{{'Cancel'|translate}}</button>
                 <button type="submit" class="custom-btn btn-primary" [disabled]="reviewCycleForm.invalid ">
                     <span *ngIf="!isLoading">{{'Save'|translate}} </span>
                     <div *ngIf="isLoading" class="spinner-border spinner-border text-light" role="status"></div>
@@ -191,11 +191,11 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
-            <p class="confirmation-text">Are you sure you want to Cancel?</p>
+            <p class="confirmation-text">Are you sure you want to cancel?</p>
         </div>
         <div class="custom-modal-footer">
             <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'|translate}}</button>
-            <button type="submit" class="custom-btn btn-primary" (click)="onClickYes()">{{'Yes'|translate}}</button>
+            <button type="submit" class="custom-btn btn-primary" (click)="close()">{{'Yes'|translate}}</button>
         </div>
     </div>
 </ng-template>

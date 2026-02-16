@@ -15,7 +15,7 @@
             </div>
             <div *ngIf="bankForm.get('bank')?.touched && bankForm.get('bank')?.invalid" class="error-msg">
                 <div *ngIf="bankForm.get('bank')?.errors?.['required']">
-                    {{ 'Bank Name is required' | translate }}
+                    {{ 'Bank name is required' | translate }}
                 </div>
             </div>
             <div *ngIf="bankForm.get('bank')?.errors?.['pattern']" class="error-msg">
@@ -90,7 +90,7 @@
                     <div *ngIf="updateForm.get('bankName2')?.touched && updateForm.get('bankName2')?.invalid"
                         class="error-msg">
                         <div *ngIf="updateForm.get('bankName2')?.errors?.['required']">
-                            {{ 'Bank Name is required' | translate }}
+                            {{ 'Bank name is required' | translate }}
                         </div>
                     </div>
                     <div *ngIf="updateForm.get('bankName2')?.errors?.['pattern']" class="error-msg">

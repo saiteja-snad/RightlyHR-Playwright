@@ -162,7 +162,7 @@
                             </div>
                             <div *ngIf="employeeExperienceForm.get('employmentType')?.invalid && employeeExperienceForm.get('employmentType')?.touched"
                                 class="error-msg">
-                                Employment Type is required
+                                Employment type is required
                             </div>
                         </div>
 
@@ -174,7 +174,7 @@
                                 [max]="currentDate | date: 'yyyy-MM-dd'" />
                             <div *ngIf="employeeExperienceForm.get('fromDate')?.invalid && employeeExperienceForm.get('fromDate')?.touched"
                                 class="error-msg">
-                                From Date is required
+                                From date is required
                             </div>
                             <div *ngIf="isCurrentdateDisable" class="error-msg">
                                 From date cannot be set in the future, and it should be on or before the current date
@@ -201,7 +201,7 @@
                                 (keypress)="restrictInput($event)" placeholder=" Please enter job role" />
                             <div *ngIf="employeeExperienceForm.get('jobTitle')?.invalid && employeeExperienceForm.get('jobTitle')?.touched"
                                 class="error-msg">
-                                Job Role is required
+                                Job role is required
                             </div>
                             <div *ngIf="employeeExperienceForm.get('jobTitle')?.errors?.['maxlength']"
                                 class="error-msg"> Job Role cannot exceed 50 characters</div>
@@ -218,7 +218,7 @@
                             placeholder="Please enter contact name" (keypress)="restrictInput($event)" />
                         <div *ngIf="employeeExperienceForm.get('previousContactName')?.invalid && employeeExperienceForm.get('previousContactName')?.touched"
                             class="error-msg">
-                            Contact Name is required
+                            Contact name is required
                         </div>
                         <div *ngIf="employeeExperienceForm.get('previousContactName')?.errors?.['maxlength']"
                             class="error-msg"> Contact Name cannot exceed 50 characters</div>
@@ -352,7 +352,7 @@
                             </div>
                             <div *ngIf="employeeExperienceupdateForm.get('employmentTypeudate')?.invalid && employeeExperienceupdateForm.get('employmentTypeudate')?.touched"
                                 class="error-msg">
-                                Employment Type is required
+                                Employment type is required
                             </div>
                         </div>
 
@@ -364,7 +364,7 @@
                                 onkeypress="return false" (change)="currentDateValidation()" />
                             <div *ngIf="employeeExperienceupdateForm.get('fromDateupdate')?.invalid && employeeExperienceupdateForm.get('fromDateupdate')?.touched"
                                 class="error-msg">
-                                From Date is required
+                                From date is required
                             </div>
                             <div *ngIf="isCurrentdateDisable" class="error-msg">
                                 From date cannot be set in the future, and it should be on or before the current date.
@@ -393,7 +393,7 @@
                                 placeholder="Please enter job role" />
                             <div *ngIf="employeeExperienceupdateForm.get('jobTitleupdate')?.invalid && employeeExperienceupdateForm.get('jobTitleupdate')?.touched"
                                 class="error-msg">
-                                Job Role is required
+                                Job role is required
                             </div>
                             <div class="error-msg"
                                 *ngIf="employeeExperienceupdateForm.get('jobTitleupdate')?.errors?.['maxlength']"> Job
@@ -411,7 +411,7 @@
                                 (keypress)="restrictInput($event)" />
                             <div *ngIf="employeeExperienceupdateForm.get('previousContactNameupdate')?.invalid && employeeExperienceupdateForm.get('previousContactNameupdate')?.touched"
                                 class="error-msg">
-                                Contact Name is required
+                                Contact name is required
                             </div>
                             <div *ngIf="employeeExperienceupdateForm.get('previousContactNameupdate')?.errors?.['maxlength']"
                                 class="error-msg"> Contact Name cannot exceed 50 characters</div>

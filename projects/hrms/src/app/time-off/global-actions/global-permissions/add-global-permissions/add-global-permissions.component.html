@@ -58,7 +58,7 @@
             </div>
             <div class="error-msg"
               *ngIf="requestForm.get('sublocation')?.touched && requestForm.get('sublocation')?.invalid">
-              Sub Location is required
+              Sub location is required
             </div>
           </div>
 
@@ -175,7 +175,7 @@
               [min]="minDate" [max]="maxDate" endKey="end" showCancel="true" />
             <div class="error-msg"
               *ngIf="requestForm.get('permissionDate')?.touched && requestForm.get('permissionDate')?.invalid">
-              Permission Date is required
+              Permission date is required
             </div>
           </div>
 
@@ -201,7 +201,7 @@
               </p-select>
             </div>
             <div class="error-msg" *ngIf="requestForm.get('name')?.touched && requestForm.get('name')?.invalid">
-              Permission Type is required
+              Permission type is required
             </div>
           </div>
 
@@ -210,7 +210,7 @@
               <span class="error-msg">*</span></label>
             <textarea class="form-control" (keypress)="formValidation.restrictInputallowspicalcharters($event)"
               id="exampleFormControlTextarea1" formControlName="notes" (input)="onReasonInput()"
-              placeholder="Reason for Permission" maxlength="250"></textarea>
+              placeholder="Please enter reason for permissions" maxlength="250"></textarea>
             <div class="mt-2 textarea-count-text">
               <span class="color">{{requestForm.get('notes')?.value?.length || 0}}/250</span>
             </div>
@@ -229,7 +229,7 @@
               formControlName="workedDate">
             <div class="error-msg">
               <div *ngIf="requestForm.get('workedDate')?.touched && requestForm.get('workedDate')?.invalid">
-                Worked Date is required</div>
+                Worked date is required</div>
               <div *ngIf="requestForm.get('workedDate')?.errors?.['weekend']">Selected date is not eligible for WFH</div>
               <div *ngIf="requestForm.get('workedDate')?.errors?.['beforeJoining']">Date must be after your date of joining.</div>
             </div>

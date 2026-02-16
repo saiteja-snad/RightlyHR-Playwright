@@ -13,7 +13,7 @@
             </div>
             <div *ngIf="PaytypeForm.get('Paytype')?.touched && PaytypeForm.get('Paytype')?.invalid" class="error-msg">
                 <div *ngIf="PaytypeForm.get('Paytype')?.errors?.['required']">
-                    {{ 'Pay Type is required' | translate }}
+                    {{ 'Pay type is required' | translate }}
                 </div>
             </div>
             <div *ngIf="PaytypeForm.get('Paytype')?.errors?.['maxCharacters']" class="error-msg">
@@ -88,7 +88,7 @@
                     <div *ngIf="updateForm.get('Paytype')?.touched && updateForm.get('Paytype')?.invalid"
                 class="error-msg">
                 <div *ngIf="updateForm.get('Paytype')?.errors?.['required']">
-                    {{ 'Pay Type is required' | translate }}
+                    {{ 'Pay type is required' | translate }}
                 </div>
                  <div *ngIf="updateForm.get('Paytype')?.errors?.['pattern']" class="error-msg">
                     {{ 'Field cannot start with a space' | translate }}

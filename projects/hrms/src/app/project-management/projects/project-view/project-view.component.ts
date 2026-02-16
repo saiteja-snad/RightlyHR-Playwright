@@ -89,7 +89,8 @@ export class ProjectViewComponent implements OnInit {
   selectedDepartmentIds: number[] = [];
   selectedRoleIds: number[] = [];
   selectedPhaseIds: number[] = [];
-
+   currentdata = new Date();
+  projectstartdate : any;
   constructor(
     private router: Router,
     private fb: FormBuilder,
@@ -109,7 +110,7 @@ export class ProjectViewComponent implements OnInit {
     // this.setDefaultRanges();
     // this.setDefaultWeek();
     this.datepickerFormdata();
-    this.setDefaultmounth();
+    // this.setDefaultmounth();
     this.datepickerforsummaryview();
     this.loadAuthorities();
     this.route.queryParams.subscribe((params) => {
@@ -119,7 +120,7 @@ export class ProjectViewComponent implements OnInit {
         this.getProjects(projectId);
         this.getAllresourcesData();
         this.loadResourceFilters();
-        this.setDefaultmounth();
+        // this.setDefaultmounth();
       }
     });
     this.http.clickingonresource$.subscribe((triggered) => {
@@ -371,16 +372,28 @@ export class ProjectViewComponent implements OnInit {
   }
 
   setDefaultmounth() {
-    const startOfMonth = dayjs().startOf('month').toDate();
-    const endOfMonth = dayjs().endOf('month').toDate();
-    this.datepickerFormData.patchValue({
-      dateRange: [startOfMonth, endOfMonth],
-    });
-    const startOfMonths = dayjs().startOf('month').toDate();
-    const endOfMonths = dayjs().endOf('month').toDate();
-    this.datepickerFormDataforsummary?.patchValue({
-      dateRange: [startOfMonths, endOfMonths],
-    });
+    // const startOfMonth = dayjs().startOf('month').toDate();
+    // const endOfMonth = dayjs().endOf('month').toDate();
+    // this.datepickerFormData.patchValue({
+    //   dateRange: [startOfMonth, endOfMonth],
+    // });
+    // const startOfMonths = dayjs().startOf('month').toDate();
+    // const endOfMonths = dayjs().endOf('month').toDate();
+    // this.datepickerFormDataforsummary?.patchValue({
+    //   dateRange: [startOfMonths, endOfMonths],
+    // });
+  const startOfMonth = dayjs().startOf('month').toDate();
+  const endOfMonth = dayjs().endOf('month').toDate();
+  this.datepickerFormData.patchValue({
+    dateRange: [startOfMonth, endOfMonth],
+  });
+
+  this.currentdata = new Date();
+  // Convert project start date properly to Date object
+  const formattedStartDate = dayjs(this.projectstartdate).toDate();
+  this.datepickerFormDataforsummary?.patchValue({
+    dateRange: [formattedStartDate,  this.currentdata],
+  });
   }
 
   // Create a single contact form group
@@ -514,6 +527,9 @@ export class ProjectViewComponent implements OnInit {
             )
               ? 'inactive'
               : 'active';
+              this.projectstartdate = project.startDate;
+              this.projectstartdate =   dayjs(this.projectstartdate).toDate();
+              this.setDefaultmounth();
           } else {
             this.clientsId = null; // No projects returned
           }

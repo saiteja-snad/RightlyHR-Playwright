@@ -86,7 +86,7 @@
                         autocomplete="off" formControlName="workedDate" [max]="today">
                     <div class="error-msg">
                         <div *ngIf="addRemoteLoginForm.get('workedDate')?.touched && addRemoteLoginForm.get('workedDate')?.invalid">
-                            Worked Date is required</div>
+                            Worked date is required</div>
                         <div *ngIf="addRemoteLoginForm.get('workedDate')?.errors?.['weekend']">Selected date is not eligible for
                             Remote login</div>
                         <div *ngIf="addRemoteLoginForm.get('workedDate')?.errors?.['beforeJoining']">Date must be after your

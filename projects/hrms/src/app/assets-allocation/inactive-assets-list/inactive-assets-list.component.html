@@ -141,7 +141,7 @@
 
                         <div *ngIf="assetForm.get('subLocationId')?.invalid && assetForm.get('subLocationId')?.touched"
                             class="error-msg">
-                            Sub Location is required.
+                            Sub location is required.
                         </div>
                     </div>
 
@@ -259,7 +259,7 @@
                             [min]="assetForm.get('purchasedate')?.value" (change)="onStartDateChange()">
                         <div
                             *ngIf="assetForm.get('warrantystartdate')?.invalid && assetForm.get('warrantystartdate')?.touched">
-                            <div class="error-msg">Warranty Start Date is required</div>
+                            <div class="error-msg">Warranty Start date is required</div>
                         </div>
                         <!-- Custom error message for mismatched dates -->
                         <div *ngIf="dateMismatch">
@@ -276,7 +276,7 @@
                             [min]="assetForm.get('warrantystartdate')?.value" (change)="checkDateMismatch()">
                         <div
                             *ngIf="assetForm.get('warrantyenddate')?.invalid && assetForm.get('warrantyenddate')?.touched">
-                            <div class="error-msg">Warranty Expiry Date is required</div>
+                            <div class="error-msg">Warranty Expiry date is required</div>
                         </div>
                         <div *ngIf="warrantydateMismatch">
                             <div class="error-msg">Warranty Expiry Date must be greater than warranty start date</div>
@@ -308,7 +308,7 @@
                             class="form-control custom-input custom-input"
                             [min]="assetForm.get('warrantyenddate')?.value" (change)="onStartDateChangeamc()" />
                         <div *ngIf="assetForm.get('amcstartdate')?.invalid && assetForm.get('amcstartdate')?.touched">
-                            <div class="error-msg">AMC Start Date is required</div>
+                            <div class="error-msg">AMC Start date is required</div>
                         </div>
                         <div *ngIf="amcDateMismatch">
                             <div class="error-msg">AMC Start Date must be equal to or greater than the warranty expiry
@@ -326,7 +326,7 @@
                             class="form-control custom-input custom-input" onkeypress="return false;"
                             [min]="assetForm.get('amcstartdate')?.value" (change)="checkAmcDateMismatch()" />
                         <div *ngIf="assetForm.get('amcenddate')?.invalid && assetForm.get('amcenddate')?.touched">
-                            <div class="error-msg">AMC Expiry Date is required</div>
+                            <div class="error-msg">AMC Expiry date is required</div>
                         </div>
                         <div *ngIf="amcDateMismatch">
                             <div class="error-msg">AMC Expiry Date must be greater than AMC start date</div>

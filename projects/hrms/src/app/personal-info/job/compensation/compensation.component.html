@@ -129,7 +129,7 @@
                             formControlName="compeffectivedate" onkeypress="return false" />
                         <div class="error-msg"
                             *ngIf="compForm.get('compeffectivedate')?.hasError('required') && compForm.get('compeffectivedate')?.touched ">
-                            Effective Date is required
+                            Effective date is required
                         </div>
                         <div class="error-msg" *ngIf="compForm.get('compeffectivedate')?.hasError('dateInvalid') ">
                             Effective Date cannot be less than Joining date
@@ -170,7 +170,7 @@
                         </div>
                         <div class="error-msg"
                             *ngIf="compForm.get('overtimeeligibility')?.invalid && compForm.get('overtimeeligibility')?.touched ">
-                            Overtime Eligibility is required
+                            Overtime eligibility is required
                         </div>
                     </div>
 
@@ -233,7 +233,7 @@
                             formControlName="nextcompeffectivedate" onkeypress="return false" />
                         <div class="error-msg"
                             *ngIf="compForm.get('nextcompeffectivedate')?.hasError('required') && compForm.get('nextcompeffectivedate')?.touched ">
-                            Next Compensation Review Date is required
+                            Next Compensation review date is required
                         </div>
                         <div class="error-msg" *ngIf="compForm.get('nextcompeffectivedate')?.hasError('dateInvalid') ">
                             Next Compensation Review Date cannot be less than Compensation Effective Date
@@ -269,7 +269,7 @@
                             [min]="joiningDate" onkeypress="return false" />
                         <div class="error-msg"
                             *ngIf="compupdateForm.get('compeffectivedate')?.invalid && compupdateForm.get('compeffectivedate')?.touched ">
-                            Effective Date is required
+                            Effective date is required
                         </div>
                         <div class="error-msg"
                             *ngIf="compupdateForm.get('compeffectivedate')?.hasError('dateInvalid') ">
@@ -299,7 +299,7 @@
                         </div>
                         <div class="error-msg"
                             *ngIf="compupdateForm.get('paytype')?.invalid && compupdateForm.get('paytype')?.touched ">
-                            Pay Type is required
+                            Pay type is required
                         </div>
                     </div>
 
@@ -314,7 +314,7 @@
                         </div>
                         <div class="error-msg"
                             *ngIf="compupdateForm.get('overtimeeligibility')?.invalid   && compupdateForm.get('overtimeeligibility')?.touched ">
-                            Overtime Eligibility is required
+                            Overtime eligibility is required
                         </div>
                     </div>
 
@@ -377,7 +377,7 @@
                             formControlName="nextcompeffectivedate" onkeypress="return false" />
                         <div class="error-msg"
                             *ngIf="compupdateForm.get('nextcompeffectivedate')?.hasError('required') && compupdateForm.get('nextcompeffectivedate')?.touched ">
-                            Next Compensation Review Date is required
+                            Next Compensation review date is required
                         </div>
                         <div class="error-msg" *ngIf="compupdateForm.get('nextcompeffectivedate')?.hasError('dateInvalid') ">
                             Next Compensation Review Date cannot be less than Compensation Effective Date

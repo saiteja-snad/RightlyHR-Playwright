@@ -85,7 +85,7 @@ export class ProjectTypeComponent implements OnInit, OnDestroy {
       };
       this.subscription = this.http.postdata('entityAttributeValues', payload).subscribe({
         next: (data: any) => {
-          this.conformationPopup.openSuccessModal('Project Type added successfully');
+          this.conformationPopup.openSuccessModal('Project type added successfully');
           modal.close();
         },
         error: (error: any) => {
@@ -142,7 +142,7 @@ export class ProjectTypeComponent implements OnInit, OnDestroy {
       this.subscription = this.http.postdata('entityAttributeValues/update', payload).subscribe({
         next: (data: any) => {
           this.modalService.dismissAll();
-          this.conformationPopup.openSuccessModal('Project Type updated successfully');
+          this.conformationPopup.openSuccessModal('Project type updated successfully');
         },
         error: (error: any) => {
           this.conformationPopup.openErrorModal(error?.error?.Message || 'Failed to update Project Type');
@@ -161,7 +161,7 @@ export class ProjectTypeComponent implements OnInit, OnDestroy {
       this.subscription = this.http.deleteData(`entityAttributeValues/${this.selectedEAV.id}`).subscribe({
         next: (data: any) => {
           this.modalService.dismissAll();
-          this.conformationPopup.openSuccessModal('Project Type deleted successfully');
+          this.conformationPopup.openSuccessModal('Project type deleted successfully');
         },
         error: (error: any) => {
           this.conformationPopup.openErrorModal(error?.error?.Message || 'Failed to delete Project Type');

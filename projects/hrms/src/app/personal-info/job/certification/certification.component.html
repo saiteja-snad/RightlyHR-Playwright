@@ -155,7 +155,7 @@
                             [max]="currentDate | date: 'yyyy-MM-dd'" (change)="changesstartdate()" />
                         <div class="error-msg"
                             *ngIf="certificationForm.get('issuedDate')?.invalid && certificationForm.get('issuedDate')?.touched">
-                            Issued Date is required
+                            Issued date is required
                         </div>
                     </div>
 
@@ -167,7 +167,7 @@
                             formControlName="expiryDate" [min]="getMinEndDate()" />
                         <div class="error-msg"
                             *ngIf="certificationForm.get('expiryDate')?.invalid && certificationForm.get('expiryDate')?.touched">
-                            Expiry Date is required
+                            Expiry date is required
                         </div>
                         <!-- <div class="error-msg" *ngIf="!isExpiryDate">Expiry Date cannot be less than Issued Date</div> -->
                         <div class="form-check">
@@ -269,7 +269,7 @@
                             [min]="dateofbirth" [max]="currentDate | date: 'yyyy-MM-dd'" />
                         <div class="error-msg"
                             *ngIf="updateCertificationForm.get('issuedDate')?.invalid && updateCertificationForm.get('issuedDate')?.touched">
-                            Issued Date is required
+                            Issued date is required
                         </div>
                     </div>
 
@@ -281,7 +281,7 @@
                             formControlName="expiryDate" [min]="getupdateMinEndDate()" />
                         <div class="error-msg"
                             *ngIf="updateCertificationForm.get('expiryDate')?.invalid && updateCertificationForm.get('expiryDate')?.touched">
-                            Expiry Date is required
+                            Expiry date is required
                         </div>
                         <!-- <div class="error-msg" *ngIf="!isExpiryDate">Expiry Date cannot be less than Issued Date</div> -->
                         <div class="form-check">

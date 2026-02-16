@@ -26,7 +26,7 @@
                         (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)">
                     <div *ngIf="experienceForm.get('companyName')?.invalid && experienceForm.get('companyName')?.touched"
                         class="error-msg">
-                        Company Name is required
+                        Company name is required
                     </div>
                 </div>
 
@@ -40,7 +40,7 @@
                     </div>
                     <div *ngIf="experienceForm.get('employmentType')?.invalid && experienceForm.get('employmentType')?.touched"
                         class="error-msg">
-                        Employment Type is required
+                        Employment type is required
                     </div>
                 </div>
 
@@ -51,7 +51,7 @@
                         placeholder="From Date" autocomplete="off" onkeydown="return false;">
                     <div *ngIf="experienceForm.get('fromDate')?.invalid && experienceForm.get('fromDate')?.touched"
                         class="error-msg">
-                        From Date is required
+                        From date is required
                     </div>
                 </div>
     
@@ -62,7 +62,7 @@
                         [min]="startDatevalidate" [disabled]="isDisabletoDate" onkeydown="return false;">
                     <div *ngIf="experienceForm.get('toDate')?.invalid && experienceForm.get('toDate')?.touched"
                         class="error-msg">
-                        To Date is required
+                        To date is required
                     </div>
                 </div> -->
 
@@ -79,7 +79,7 @@
                     />
                     <div *ngIf="experienceForm.get('fromDate')?.invalid && experienceForm.get('fromDate')?.touched"
                         class="error-msg">
-                        From Date is required
+                        From date is required
                     </div>
                 </div>
 
@@ -94,7 +94,7 @@
                     />
                     <div *ngIf="experienceForm.get('toDate')?.invalid && experienceForm.get('toDate')?.touched"
                         class="error-msg">
-                        To Date is required
+                        To date is required
                     </div>
                 </div>
 
@@ -105,7 +105,7 @@
                         (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)">
                     <div *ngIf="experienceForm.get('jobTitle')?.invalid && experienceForm.get('jobTitle')?.touched"
                         class="error-msg">
-                        Job Role is required
+                        Job role is required
                     </div>
                 </div>
 
@@ -129,7 +129,7 @@
                     <input type="text" class="form-control custom-input" formControlName="previousContactName" (keypress)="formValidation.restrictInitialSpace($event)"
                         placeholder="Contact name">
                     <!-- <div *ngIf="experienceForm.get('previousContactName')?.invalid && experienceForm.get('previousContactName')?.touched" class="error-msg">
-                            Contact Name is required
+                            Contact name is required
                         </div> -->
                 </div>
 

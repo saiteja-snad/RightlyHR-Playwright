@@ -25,7 +25,7 @@
                                     (keypress)="formValidation.restrictInitialSpace($event)"
                                     placeholder="Please enter contact name" formControlName="contactName">
                                 <div class="error-msg" *ngIf="contact.get('contactName')?.touched && contact.get('contactName')?.invalid">
-                                    <div *ngIf="contact.get('contactName')?.errors?.['required']">Contact Name is required</div>
+                                    <div *ngIf="contact.get('contactName')?.errors?.['required']">Contact name is required</div>
                                 </div>
                                 <div *ngIf="contact.get('contactName')?.errors?.['maxCharacters'] || 
                                     contact.get('contactName')?.errors?.['minCharacters']" class="error-msg">

@@ -19,7 +19,7 @@
           </div>
           <div class="error-msg"
             *ngIf="addprojectform.get('clientName')?.touched && addprojectform.get('clientName')?.invalid">
-            Client Name is required
+            Client name is required
           </div>
         </div>
 
@@ -30,7 +30,7 @@
             placeholder="Please enter project code" (keydown)="formValidation.restrictInitialSpace($event)">
           <div class="error-msg"
             *ngIf="addprojectform.get('code')?.touched && addprojectform.get('code')?.errors?.['required']">
-            Project Code is required
+            Project code is required
           </div>
           <div class="error-msg"
             *ngIf="addprojectform.get('code')?.touched && addprojectform.get('code')?.errors?.['maxlength']">
@@ -46,7 +46,7 @@
             maxlength="101" placeholder="Please enter project name"
             (keydown)="formValidation.restrictInputallowspicalcharterswithnumbers($event)">
           <div class="error-msg" *ngIf="addprojectform.get('projectName')?.touched">
-            <div *ngIf="addprojectform.get('projectName')?.errors?.['required']">Project Name is required</div>
+            <div *ngIf="addprojectform.get('projectName')?.errors?.['required']">Project name is required</div>
             <div *ngIf="addprojectform.get('projectName')?.errors?.['maxCharacters'] || 
               addprojectform.get('projectName')?.errors?.['minCharacters']">
               {{ 'Project Name must be between 2-100 characters' | translate }}
@@ -65,7 +65,7 @@
           </div>
           <div class="error-msg"
             *ngIf="addprojectform.get('projectType')?.touched && addprojectform.get('projectType')?.invalid">
-            Project Type is required
+            Project type is required
           </div>
         </div>
 
@@ -95,7 +95,7 @@
             class="form-control custom-input" />
           <div class="error-msg"
             *ngIf="addprojectform.get('startDate')?.touched && addprojectform.get('startDate')?.invalid">
-            Start Date is required
+            Start date is required
           </div>
           <div *ngIf="!startndEndDateValid" class="error-msg">Start Date cannot be after End Date</div>
         </div>
@@ -107,7 +107,7 @@
             class="form-control custom-input" />
           <div class="error-msg"
             *ngIf="addprojectform.get('endDate')?.touched && addprojectform.get('endDate')?.invalid">
-            End Date is required
+            End date is required
           </div>
           <div *ngIf="!startndEndDateValid" class="error-msg">End Date cannot be before start Date</div>
         </div>
@@ -134,7 +134,7 @@
             [min]="minEffectiveDate" [max]="maxEffectiveDate" class="form-control custom-input" />
           <div class="error-msg">
             <div *ngIf="addprojectform.get('effectiveDate')?.touched && addprojectform.get('effectiveDate')?.invalid">
-              Effective Date is required
+              Effective date is required
             </div>
             <div *ngIf="!effectiveDateValidRange">Effective Date must be between Start Date and End Date</div>
             <div *ngIf="!effectiveAfterKickoffValid">Effective Date must be on or after the Kickoff Date</div>
@@ -147,7 +147,7 @@
           <input type="text" id="projectType" formControlName="allocatedHours" class="form-control custom-input"
             maxlength="5" (keydown)="formValidation.restrictAlphabets($event)" placeholder="Please enter allocated hours" />
           <div class="error-msg" *ngIf="addprojectform.get('allocatedHours')?.touched && addprojectform.get('allocatedHours')?.invalid">
-            Allocated Hours is required</div>
+            Allocated hours is required</div>
          Error Messages -->
         <!-- <div class="error-msg" *ngIf="addprojectform.get('allocatedHours')?.touched && addprojectform.get('allocatedHours')?.errors?.['positiveInteger']">
             Allocated Hours must be a valid number</div> -->
@@ -180,7 +180,7 @@
           </div>
           <div class="error-msg"
             *ngIf="addprojectform.get('approvalidAuthority')?.invalid && addprojectform.get('approvalidAuthority')?.touched">
-            Timesheet Approval Authority is required
+            Timesheet approval authority is required
           </div>
         </div> -->
 

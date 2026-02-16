@@ -8,6 +8,7 @@ import { OpenModalService } from '../../../services/open-modal.service';
 import { Select } from 'primeng/select';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { TranslateModule } from '@ngx-translate/core';
+import { content } from 'html2canvas/dist/types/css/property-descriptors/content';
 @Component({
   selector: 'app-create',
   imports: [CommonModule, FormsModule, NgbPopoverModule, ReactiveFormsModule, Select, TranslateModule, MultiSelectModule],
@@ -233,6 +234,9 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.modalService.dismissAll()
   }
 
+  openmodalforcancel(content:any){
+    this.modalService.open(content, { centered: true });
+  }
   onReviewCycleSubmit() {
     this.isLoading = true;
     if (this.reviewCycleForm.valid) {

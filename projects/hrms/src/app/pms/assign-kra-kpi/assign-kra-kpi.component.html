@@ -317,7 +317,7 @@
             <div class="error-msg"
               *ngIf="assignForm.get('effectiveDate')?.touched && assignForm.get('effectiveDate')?.invalid">
               <span *ngIf="assignForm.get('effectiveDate')?.hasError('required')">
-                Effective Date is required</span>
+                Effective date is required</span>
               <span *ngIf="assignForm.get('effectiveDate')?.hasError('pastDate')">
                 Effective Date cannot be in the past</span>
             </div>

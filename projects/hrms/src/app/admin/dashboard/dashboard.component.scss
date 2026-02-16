@@ -41,6 +41,29 @@
         color: #909090;
     }
 
+<<<<<<< HEAD
+=======
+    .dashboard-grid {
+        width: 100%;
+        display: grid;
+        grid-template-columns: 400px 1fr 480px;
+        gap: 1rem;
+    }
+
+    .content-card {
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(180deg, #FFFFFF 0%, var(--display-grid-cards-bg-color) 100%);
+        border: 3px solid #FFFFFF;
+        border-radius: 0.75rem;
+    }
+
+    .present-day-content {
+        background: none !important;
+        border: 0px !important;
+    }
+
+>>>>>>> cfb7853a8dc025e8b671aa26db11a02ff02d1100
     .day-date-content {
         display: flex;
         align-items: center;
@@ -148,10 +171,75 @@
             width: 8rem;
         }
 
+<<<<<<< HEAD
         .circular-dot {
             width: 10px;
             height: 10px;
             border-radius: 50%;
+=======
+        // total leave summary
+        .total-leave-balance-graph-content {
+            width: 100%;
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+
+            li {
+                height: 1.125rem;
+            }
+
+            li:last-child {
+                .employee-type-text:last-child {
+                    margin-bottom: 0rem;
+                }
+            }
+
+            .chart-content {
+                position: relative;
+                width: max-content;
+                height: max-content;
+                display: flex;
+                justify-content: center;
+
+                .total-count-content {
+                    position: absolute;
+                    top: 48%;
+
+                    .count {
+                        font-weight: 700;
+                        font-size: var(--fontsize18);
+                        color: var(--primary-color);
+                    }
+
+                    .total-count-text {
+                        font-weight: 400;
+                        font-size: 10px;
+                        color: #999999;
+                    }
+                }
+            }
+
+            canvas {
+                width: 140px !important;
+                height: 140px !important;
+            }
+
+            .bi-circle-fill {
+                font-size: 8px;
+            }
+
+            .employee-type-text {
+                font-weight: 400;
+                font-size: 10px;
+                letter-spacing: 0%;
+                color: #747474;
+            }
+
+            .count-text {
+                font-weight: 600 !important;
+                color: var(--primary-color) !important;
+            }
+>>>>>>> cfb7853a8dc025e8b671aa26db11a02ff02d1100
         }
 
         .circle-work-anniversary {
@@ -159,6 +247,7 @@
             border: 0.4px solid #95267A;
         }
 
+<<<<<<< HEAD
         .circle-birthday {
             background: #E1E8FE;
             border: 0.4px solid #131C6D;
@@ -175,6 +264,10 @@
 
         .content-date {
             color: #A9A9A9;
+=======
+        .employee-type-grid> :last-child {
+            text-wrap: nowrap;
+>>>>>>> cfb7853a8dc025e8b671aa26db11a02ff02d1100
         }
     }
 }
@@ -670,6 +763,7 @@
     }
 }
 
+<<<<<<< HEAD
 /* Team Members */
 .member-list-container {
     width: 100%;
@@ -1001,4 +1095,31 @@
     overflow-y: auto;
     background: linear-gradient(180deg, #FFFFFF 0%, var(--display-grid-cards-bg-color) 100%);
     border: 2px solid #FFFFFF;
+=======
+.total-leave-balance-graph-content canvas {
+    width: 160px !important;
+    height: 160px !important;
+}
+
+@media (max-width: 1600px) {
+    .dashboard-grid {
+        grid-template-columns: 360px 1fr 360px !important;
+    }
+
+    .dashboard-diplay-section .employees-list-content .total-leave-balance-graph-content canvas {
+        width: 100px !important;
+        height: 100px !important;
+    }
+}
+
+@media (max-width: 1380px) {
+    .dashboard-grid {
+        grid-template-columns: 280px 1fr 280px !important;
+    }
+
+    .dashboard-diplay-section .employees-list-content .total-leave-balance-graph-content canvas {
+        width: 100px !important;
+        height: 100px !important;
+    }
+>>>>>>> cfb7853a8dc025e8b671aa26db11a02ff02d1100
 }

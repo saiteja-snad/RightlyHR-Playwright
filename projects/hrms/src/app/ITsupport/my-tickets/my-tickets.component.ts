@@ -413,7 +413,7 @@ subCategoryDetails=[] as any;
     this.itTicketDetails.subcategoryName= this.itSupportForm.value.subcategoryId.value,
     this.subscription = this.http.postdata(`Tickets`, this.itTicketDetails).subscribe({
       next: (data: any) => {
-        this.confirmation.openSuccessModal('Ticket has been added successfully');
+        this.confirmation.openSuccessModal('Support ticket raised successfully');
         localStorage.setItem('ticketDetails', JSON.stringify(data));
         setTimeout(() => {
           this.itSupportForm.reset();

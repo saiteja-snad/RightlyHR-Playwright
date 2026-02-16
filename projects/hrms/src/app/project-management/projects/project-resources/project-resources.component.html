@@ -141,7 +141,7 @@
                         <input type="text" id="projectName" formControlName="projectName"
                             class="form-control custom-input" placeholder="Enter project name" readonly />
                         <div class="error-msg" *ngIf="updateResourceForm.get('projectName')?.touched &&
-                         updateResourceForm.get('projectName')?.invalid">Project Name is required</div>
+                         updateResourceForm.get('projectName')?.invalid">Project name is required</div>
                     </div>
 
                     <!-- Project Type -->
@@ -165,7 +165,7 @@
                         <div class="error-msg">
                             <div
                                 *ngIf=" updateResourceForm.get('resourcePhase')?.touched && updateResourceForm.get('resourcePhase')?.errors?.['required'] ">
-                                Phase / Milestone Name is required
+                                Phase / milestone name is required
                             </div>
                         </div>
                     </div>
@@ -183,7 +183,7 @@
                             </p-select>
                         </div>
                         <div class="error-msg" *ngIf="updateResourceForm.get('resourceName')?.touched &&
-                        updateResourceForm.get('resourceName')?.invalid">Resource Name is required</div>
+                        updateResourceForm.get('resourceName')?.invalid">Resource name is required</div>
                     </div>
                     <!-- Designation -->
                     <div class="col-md-6 mb-3">
@@ -239,7 +239,7 @@
                             (change)="oncheckdates(updateResourceForm.get('startDate')?.value)"
                             class="form-control custom-input" />
                         <div class="error-msg" *ngIf="updateResourceForm.get('startDate')?.touched &&
-                        updateResourceForm.get('startDate')?.invalid">Start Date is required</div>
+                        updateResourceForm.get('startDate')?.invalid">Start date is required</div>
                         <div *ngIf="!startndEndDateValid" class="error-msg">Start Date cannot be after End Date</div>
                     </div>
 
@@ -252,7 +252,7 @@
                             [max]="projectEndDate ? (projectEndDate | date:'yyyy-MM-dd') : null " />
                         <div class="error-msg"
                             *ngIf="updateResourceForm.get('endDate')?.touched && updateResourceForm.get('endDate')?.invalid">
-                            End Date is required
+                            End date is required
                         </div>
                     </div>
 
@@ -284,7 +284,7 @@
 
                         <div class="error-msg" *ngIf="updateResourceForm.get('resourceAuthority')?.touched &&
                         updateResourceForm.get('resourceAuthority')?.invalid">
-                            Resource Name is required
+                            Resource name is required
                         </div>
                     </div>
 
@@ -401,7 +401,7 @@
                     class="form-control custom-input" />
                 <div class="error-msg"
                     *ngIf="reasonForm.get('statusEffectiveDate')?.touched && reasonForm.get('statusEffectiveDate')?.invalid">
-                    Effective Date is required
+                    Effective date is required
                 </div>
             </div>
 
@@ -453,7 +453,7 @@
                     [readonly]="extendForm.get('newStartDate')?.disabled" />
                 <div class="error-msg"
                     *ngIf="extendForm.get('newStartDate')?.touched && extendForm.get('newStartDate')?.invalid">
-                    Start Date is required
+                    Start date is required
                 </div>
                 <div *ngIf="!startndEndDateValid" class="error-msg">Start Date cannot be after End Date</div>
             </div>
@@ -466,7 +466,7 @@
                     [min]="extendForm.get('newStartDate')?.value" [max]="projectMaxEndDate" />
                 <div class="error-msg"
                     *ngIf="extendForm.get('newEndDate')?.touched && extendForm.get('newEndDate')?.invalid">
-                    End Date is required
+                    End date is required
                 </div>
                 <div *ngIf="!startndEndDateValid" class="error-msg">End Date cannot be before start Date</div>
             </div>

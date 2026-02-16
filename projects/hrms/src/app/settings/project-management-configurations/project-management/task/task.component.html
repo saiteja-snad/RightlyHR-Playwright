@@ -84,7 +84,7 @@
                     <div *ngIf="addForm.get('projectType')?.touched && addForm.get('projectType')?.invalid"
                         class="error-msg">
                         <div *ngIf="addForm.get('projectType')?.errors?.['required']">
-                            {{ 'Project Type is required' | translate }}
+                            {{ 'Project type is required' | translate }}
                         </div>
                     </div>
                     <div *ngIf="addForm.get('projectType')?.errors?.['pattern']" class="error-msg">
@@ -174,7 +174,7 @@
                     <div *ngIf="updateForm.get('projectType')?.touched && updateForm.get('projectType')?.invalid"
                         class="error-msg">
                         <div *ngIf="updateForm.get('projectType')?.errors?.['required']">
-                            {{ 'Project Type is required' | translate }}
+                            {{ 'Project type is required' | translate }}
                         </div>
                     </div>
                     <div *ngIf="updateForm.get('projectType')?.errors?.['pattern']" class="error-msg">

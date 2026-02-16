@@ -128,7 +128,7 @@
                             maxlength="101" placeholder="Please enter phase / milestone name"
                             (keydown)="formValidation.restrictInputallowspicalcharterswithnumbers($event)">
                         <div class="error-msg" *ngIf="updatePhaseForm.get('phaseName')?.touched">
-                            <div *ngIf="updatePhaseForm.get('phaseName')?.errors?.['required']">Project Name is required</div>
+                            <div *ngIf="updatePhaseForm.get('phaseName')?.errors?.['required']">Project name is required</div>
                             <div *ngIf="updatePhaseForm.get('phaseName')?.errors?.['maxCharacters'] || 
                             updatePhaseForm.get('phaseName')?.errors?.['minCharacters']">
                                 {{ 'Project Name must be between 2-100 characters' | translate }}
@@ -143,7 +143,7 @@
                         <input type="text" id="projectType" formControlName="allocatedHours" class="form-control custom-input" maxlength="5"
                             (keydown)="formValidation.restrictAlphabets($event)" placeholder="Please enter allocated hours" />
                         <div class="error-msg" *ngIf="updatePhaseForm.get('allocatedHours')?.touched && updatePhaseForm.get('allocatedHours')?.invalid">
-                            Allocated Hours is required</div>
+                            Allocated hours is required</div>
                         <!-- Error Messages -->
                         <div class="error-msg"
                             *ngIf="updatePhaseForm.get('allocatedHours')?.touched && updatePhaseForm.get('allocatedHours')?.errors?.['positiveInteger']">
@@ -157,7 +157,7 @@
                             class="form-control custom-input" [min]="projectMinStartDate" />
                         <div class="error-msg"
                             *ngIf="updatePhaseForm.get('startDate')?.touched && updatePhaseForm.get('startDate')?.invalid">
-                            Start Date is required
+                            Start date is required
                         </div>
                         <div *ngIf="!startndEndDateValid" class="error-msg">Start Date cannot be after End Date</div>
                     </div>
@@ -168,7 +168,7 @@
                         <input type="date" id="endDate" formControlName="endDate" onkeypress="return false"
                             [min]="minEffectiveDate" [max]="projectMaxEndDate" class="form-control custom-input" />
                         <div class="error-msg" *ngIf="updatePhaseForm.get('endDate')?.touched && updatePhaseForm.get('endDate')?.invalid">
-                            End Date is required
+                            End date is required
                         </div>
                         <div *ngIf="!startndEndDateValid" class="error-msg">End Date cannot be before start Date</div>
                     </div>
@@ -193,7 +193,7 @@
                             [min]="minEffectiveDate" [max]="maxEffectiveDate" class="form-control custom-input" />
                         <div class="error-msg">
                             <div *ngIf="updatePhaseForm.get('effectiveDate')?.touched && updatePhaseForm.get('effectiveDate')?.invalid">
-                                Effective Date is required</div>
+                                Effective date is required</div>
                             <div *ngIf="!effectiveDateValidRange">Effective Date must be between Start Date and End Date</div>
                             <div *ngIf="!effectiveAfterKickoffValid">Effective Date must be on or after the Kickoff Date</div>
                         </div>
@@ -222,7 +222,7 @@
                         </div>
                         <div class="error-msg"
                             *ngIf="updatePhaseForm.get('approvalidAuthority')?.invalid && updatePhaseForm.get('approvalidAuthority')?.touched">
-                            Timesheet Approval Authority is required
+                            Timesheet approval authority is required
                         </div>
                     </div>
 
@@ -327,7 +327,7 @@
                 <input type="date" id="newStartDate" formControlName="newStartDate" class="form-control custom-input" 
                 [min]="projectMinStartDate" [max]="newEndDate" [readonly]="extendForm.get('newStartDate')?.disabled" />
                 <div class="error-msg" *ngIf="extendForm.get('newStartDate')?.touched && extendForm.get('newStartDate')?.invalid">
-                    Start Date is required</div>
+                    Start date is required</div>
                 <div *ngIf="!startndEndDateValid" class="error-msg">Start Date cannot be after End Date</div>
             </div>
 
@@ -337,7 +337,7 @@
                 <input type="date" id="newEndDate" formControlName="newEndDate" class="form-control custom-input"
                     [min]="projectMinEndDate" [max]="projectMaxEndDate" />
                 <div class="error-msg" *ngIf="extendForm.get('newEndDate')?.touched && extendForm.get('newEndDate')?.invalid">
-                    End Date is required</div>
+                    End date is required</div>
                 <div *ngIf="!startndEndDateValid" class="error-msg">End Date cannot be before start Date</div>
             </div>
             <div class="mb-3 text-start">

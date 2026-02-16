@@ -21,7 +21,7 @@
                         </div>
                         <div class="error-msg"
                             *ngIf="leaveForm.get('leaveType')?.invalid && leaveForm.get('leaveType')?.touched">
-                            Leave Type is required</div>
+                            Leave type is required</div>
                     </div>
 
                     <div class="col-md-6 mb-3">
@@ -32,7 +32,7 @@
                             (ngModelChange)="onStartDateChange()">
                         <div class="error-msg"
                             *ngIf="leaveForm.get('startdate')?.invalid && leaveForm.get('startdate')?.touched">
-                            Start Date is required
+                            Start date is required
                         </div>
                         <div class="error-msg" *ngIf="isoptionalnotallowedatWorkingdate && leaveForm.get('startdate')?.value">
                             Please select optional holiday
@@ -60,7 +60,7 @@
                             [min]="leaveFormData.startdate" [min]="minDate" [max]="minDate" (ngModelChange)="onEndDate('add')">
                         <div class="error-msg"
                             *ngIf="(leaveForm.get('enddate')?.invalid && leaveForm.get('enddate')?.touched)">
-                            End Date is required
+                            End date is required
                         </div>
                         <!-- Weekend Error -->
                         <div class="error-msg" *ngIf="(isWeekOffSelectedEndate)">

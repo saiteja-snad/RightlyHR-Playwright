@@ -30,7 +30,7 @@
                 <label class="form-label filter-labels m-0">{{'My Team'| translate}}</label>
                 <div class="custom-p-select-content">
                     <p-select [options]="myTeamData" optionLabel="fullName" showClear="true" optionValue="employeeId"
-                        name="myteamemployees" placeholder="Select employee name" [filter]="true"
+                        name="myteamemployees" placeholder="Please select employee name" [filter]="true"
                         resetFilterOnHide="true" class="form-select custom-select" (onClear)="onClearEmployee()"
                         [autoDisplayFirst]="false" required (onChange)="onEmployeeChange($event.value)">
                     </p-select>

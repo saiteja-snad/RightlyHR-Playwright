@@ -101,7 +101,7 @@
                 (input)="restrictDecimal($event)" />
               <div class="error-msg"
                 *ngIf="ratingform.get('minimumRatingScale')?.errors?.['required'] && ratingform.get('minimumRatingScale')?.touched">
-                Rating Scale is required.
+                Rating scale is required.
               </div>
               <div class="error-msg" *ngIf="ratingform.errors?.['invalidRange']">
                 "From" value cannot be greater than the "To" value.
@@ -115,7 +115,7 @@
                 (input)="restrictDecimal($event)" />
               <div class="error-msg"
                 *ngIf="ratingform.get('maximumRatingScale')?.errors?.['required'] && ratingform.get('maximumRatingScale')?.touched">
-                Rating Scale is required.
+                Rating scale is required.
               </div>
             </div>
           </div>
@@ -145,7 +145,7 @@
               <div class="textarea-count-text">{{ ratingform.get('ratingType')?.value?.length || 0 }}/50</div>
               <div class="error-msg">
                 <div *ngIf="ratingform.get('ratingType')?.errors?.['required'] && ratingform.get('ratingType')?.touched">
-                  Rating Type is required.
+                  Rating type is required.
                 </div>
                 <div *ngIf="ratingform.get('ratingType')?.hasError('maxlength') && ratingform.get('ratingType')?.touched">
                   Rating Type must not exceed 50 characters.
@@ -228,7 +228,7 @@
                 (input)="restrictDecimal($event)" />
               <div class="error-msg"
                 *ngIf="updateFormRating.get('minimumRatingScale')?.errors?.['required'] && updateFormRating.get('minimumRatingScale')?.touched">
-                Rating Scale is required.
+                Rating scale is required.
               </div>
               <div class="error-msg" *ngIf="updateFormRating.errors?.['invalidRange']">
                 "From" value cannot be greater than the "To" value.
@@ -241,7 +241,7 @@
                 (input)="restrictDecimal($event)" />
               <div class="error-msg"
                 *ngIf="updateFormRating.get('maximumRatingScale')?.errors?.['required'] && updateFormRating.get('maximumRatingScale')?.touched">
-                Rating Scale is required.
+                Rating scale is required.
               </div>
             </div>
           </div>
@@ -271,7 +271,7 @@
               <div class="textarea-count-text">{{ updateFormRating.get('ratingType')?.value?.length || 0 }}/50</div>
               <div class="error-msg">
                 <div *ngIf="updateFormRating.get('ratingType')?.errors?.['required'] && updateFormRating.get('ratingType')?.touched">
-                  Rating Type is required.
+                  Rating type is required.
                 </div>
                 <div *ngIf="updateFormRating.get('ratingType')?.hasError('maxlength') && updateFormRating.get('ratingType')?.touched">
                   Rating Type must not exceed 50 characters.

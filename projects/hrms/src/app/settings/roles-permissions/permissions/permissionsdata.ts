@@ -1141,5 +1141,5 @@ export const permissionsData = [
   { fields: 'Today Events', View: false, Update: false, Create: false, Delete: false },
   // { fields: 'Attendance Overview', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Quick Links', View: false, Update: false, Create: false, Delete: false },
-    { fields: 'Sun View', View: false, Update: false, Create: false, Delete: false },
+    // { fields: 'Sun View', View: false, Update: false, Create: false, Delete: false },
 ];

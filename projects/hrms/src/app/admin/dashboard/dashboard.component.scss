@@ -17,6 +17,7 @@
         gap: 1rem;
     }
 
+
     @media (max-width: 1500px) {
         .top-grid {
             grid-template-columns: 1fr 1fr;
@@ -1001,4 +1002,3 @@
     background: linear-gradient(180deg, #FFFFFF 0%, var(--display-grid-cards-bg-color) 100%);
     border: 2px solid #FFFFFF;
 }
-

@@ -464,9 +464,35 @@ export class DashboardComponent implements OnInit, OnDestroy {
         },
       ],
     };
-    this.EmployeeInfoDataOptions = {
-      cutout: '70%',
-    };
+   this.EmployeeInfoDataOptions = {
+  cutout: '70%',
+  plugins: {
+    tooltip: {
+      backgroundColor: '#1f2937', // dark modern background
+      titleColor: '#ffffff',
+      bodyColor: '#ffffff',
+    
+      displayColors: true,
+      callbacks: {
+        title: (context: any) => {
+          return context[0].label; // Show label as title
+        },
+        label: (context: any) => {
+          return ` ${context.raw}`; // Show count clearly
+        }
+      }
+    },
+    legend: {
+      display: true,
+      position: 'bottom',
+      labels: {
+        boxWidth: 12,
+        padding: 15
+      }
+    }
+  }
+};
+
     this.chartLoader = false;
   }
 

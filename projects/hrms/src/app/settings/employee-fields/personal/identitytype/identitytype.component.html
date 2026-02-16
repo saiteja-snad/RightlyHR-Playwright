@@ -16,7 +16,7 @@
             <div *ngIf="IdentityForm.get('IdentityType')?.touched && IdentityForm.get('IdentityType')?.invalid"
                 class="error-msg">
                 <div *ngIf="IdentityForm.get('IdentityType')?.errors?.['required']">
-                    {{ 'Identity Type is required' | translate }}
+                    {{ 'Identity type is required' | translate }}
                 </div>
             </div>
             <div *ngIf="IdentityForm.get('IdentityType')?.errors?.['pattern']" class="error-msg">
@@ -89,7 +89,7 @@
                     <div *ngIf="updateForm.get('IdentityType')?.touched && updateForm.get('IdentityType')?.invalid"
                         class="error-msg">
                         <div *ngIf="updateForm.get('IdentityType')?.errors?.['required']">
-                            {{ 'Identity Type is required' | translate }}
+                            {{ 'Identity type is required' | translate }}
                         </div>
                     </div>
                     <div *ngIf="updateForm.get('IdentityType')?.errors?.['pattern']" class="error-msg">

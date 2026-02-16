@@ -41,7 +41,7 @@
             <div class="custom-p-select-content">
               <p-select [options]="activeEmplist" [filter]="true" filterBy="label" [resetFilterOnHide]="true"
                 optionLabel="label" optionValue="value" formControlName="resourceId"
-                [placeholder]="activeEmplist.length === 0 ? 'No results found' : 'Select employee'"
+                [placeholder]="activeEmplist.length === 0 ? 'No results found' : 'Please select employee'"
                 class="form-select custom-select" />
             </div>
           </div>
@@ -52,7 +52,7 @@
             <div class="custom-p-select-content">
               <p-select [options]="resourcesList" [filter]="true" filterBy="fullName" [resetFilterOnHide]="true"
                 optionLabel="fullName" optionValue="id" formControlName="resourceId"
-                [placeholder]="resourcesList.length === 0 ? 'No results found' : 'Select employee'"
+                [placeholder]="resourcesList.length === 0 ? 'No results found' : 'Please select employee'"
                 class="form-select custom-select" />
             </div>
           </div>

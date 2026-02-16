@@ -188,7 +188,7 @@
                                 onkeypress="return false" [min]="getMinEndDate()" [max]="currentDate" />
                             <div *ngIf="employeeExperienceForm.get('toDate')?.invalid && employeeExperienceForm.get('toDate')?.touched"
                                 class="error-msg">
-                                To Date is required
+                                To date is required
                             </div>
                             <div *ngIf="isInvalidToDate" class="error-msg">To Date cannot be less than From Date</div>
                             <div *ngIf="isFutureDate" class="error-msg">Future dates cannot be selected</div>
@@ -379,7 +379,7 @@
 
                             <div *ngIf=" employeeExperienceupdateForm.get('toDateupdate')?.invalid &&
                                 employeeExperienceupdateForm.get('toDateupdate')?.touched" class="error-msg">
-                                To Date is required
+                                To date is required
                             </div>
                             <div *ngIf="isInvalidToDate" class="error-msg">To Date cannot be less than From Date</div>
                             <div *ngIf="isFutureDate" class="error-msg">Future dates cannot be selected</div>

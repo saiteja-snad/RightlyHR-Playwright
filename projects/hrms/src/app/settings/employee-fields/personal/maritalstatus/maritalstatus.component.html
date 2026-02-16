@@ -16,7 +16,7 @@
             <div *ngIf="MaritalStatusForm.get('MaritalStatus')?.touched && MaritalStatusForm.get('MaritalStatus')?.invalid"
                 class="error-msg">
                 <div *ngIf="MaritalStatusForm.get('MaritalStatus')?.errors?.['required']">
-                    {{ 'Marital Status is required' | translate }}
+                    {{ 'Marital status is required' | translate }}
                 </div>
             </div>
             <div *ngIf="MaritalStatusForm.get('MaritalStatus')?.errors?.['pattern']" class="error-msg">
@@ -92,7 +92,7 @@
                     <div *ngIf="updateForm.get('MaritalStatus')?.touched && updateForm.get('MaritalStatus')?.invalid"
                         class="error-msg">
                         <div *ngIf="updateForm.get('MaritalStatus')?.errors?.['required']">
-                            {{ 'Marital Status is required' | translate }}
+                            {{ 'Marital status is required' | translate }}
                         </div>
                     </div>
                     <div *ngIf="updateForm.get('MaritalStatus')?.errors?.['pattern']" class="error-msg">

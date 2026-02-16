@@ -40,7 +40,7 @@
                     {{'Select Employee' | translate}}</label>
                 <div class="custom-p-select-content">
                     <p-select [options]="activeEmplist" [filter]="true" filterBy="label" resetFilterOnHide="true"
-                        optionLabel="label" optionValue="value" showClear="true" placeholder="Select employee name"
+                        optionLabel="label" optionValue="value" showClear="true" placeholder="Please select employee name"
                         (onChange)="onCheckemployee($event.value)" class="form-select custom-select"></p-select>
                 </div>
             </div>
@@ -51,7 +51,7 @@
                     {{'Select Employee' | translate}}</label>
                 <div class="custom-p-select-content">
                     <p-select [options]="activeEmplist" [filter]="true" filterBy="label" resetFilterOnHide="true"
-                        optionLabel="label" optionValue="value" showClear="true" placeholder="Select employee name"
+                        optionLabel="label" optionValue="value" showClear="true" placeholder="Please select employee name"
                         (onChange)="onCheckemployee($event.value)" class="form-select custom-select"></p-select>
                 </div>
             </div>
@@ -61,7 +61,7 @@
                 <label class="form-label filter-labels m-0">{{'My Team'| translate}}</label>
                 <div class="custom-p-select-content">
                     <p-select [options]="getEmployeeInfo" optionLabel="fullName" showClear="true"
-                        optionValue="employeeId" name="myteamemployees" placeholder="Select employee name"
+                        optionValue="employeeId" name="myteamemployees" placeholder="Please select employee name"
                         [filter]="true" resetFilterOnHide="true" class="form-select custom-select"
                         [autoDisplayFirst]="false" required (onChange)="onCheckemployee($event.value)">
                     </p-select>

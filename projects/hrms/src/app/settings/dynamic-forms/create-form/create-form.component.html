@@ -20,18 +20,18 @@
                     <div class="error-msg">
                         <div
                             *ngIf="createForm.get('formHeader')?.errors?.['required'] && createForm.get('formHeader')?.touched">
-                            Form Name is required.
+                            Form name is required.
                         </div>
                         <div
                             *ngIf="createForm.get('formHeader')?.hasError('maxlength') && createForm.get('formHeader')?.touched">
-                            Form Name must not exceed 255 characters
+                            Form name must not exceed 255 characters
                         </div>
                         <div
                             *ngIf="createForm.get('formHeader')?.hasError('whitespace') && !createForm.get('formHeader')?.hasError('required')">
-                            Form Name cannot be empty or contain only spaces.
+                            Form name cannot be empty or contain only spaces.
                         </div>
                         <div *ngIf="createForm.get('formHeader')?.hasError('onlySpecialChars')">
-                            Form Name cannot contain only special characters.
+                            Form name cannot contain only special characters.
                         </div>
                     </div>
                 </div>
@@ -52,7 +52,7 @@
                     </div>
                     <div class="error-msg"
                         *ngIf="createForm.get('moduleId')?.errors?.['required'] && createForm.get('moduleId')?.touched">
-                        Module Name is required.
+                        Module name is required.
                     </div>
                 </div>
 
@@ -75,7 +75,7 @@
                     </div>
                     <div class="error-msg"
                         *ngIf="createForm.get('ratingScaleRange')?.errors?.['required'] && createForm.get('ratingScaleRange')?.touched">
-                        Rating Scale Range is required.
+                        Rating scale range is required.
                     </div>
                 </div>
 
@@ -88,11 +88,11 @@
                         placeholder="Enter Overall rating" min="1" pattern="[0-9]*" (input)="restrictToNumbers($event)">
                     <div class="error-msg"
                         *ngIf="createForm.get('overAllRating')?.errors?.['required'] && createForm.get('overAllRating')?.touched">
-                        Overall Rating is required.
+                        Overall rating is required.
                     </div>
                     <div class="error-msg"
                         *ngIf="createForm.get('overAllRating')?.errors?.['min'] && createForm.get('overAllRating')?.touched">
-                        Overall Rating must be at least 1.
+                        Overall rating must be at least 1.
                     </div>
                 </div>
 
@@ -105,14 +105,14 @@
                         placeholder="Enter CutOff rating" min="1" (input)="restrictToNumbers($event)">
                     <div class="error-msg"
                         *ngIf="createForm.get('cutOffRating')?.errors?.['required'] && createForm.get('cutOffRating')?.touched">
-                        Cut Off Rating is required.
+                        Cut Off rating is required.
                     </div>
                     <div class="error-msg"
                         *ngIf="createForm.get('cutOffRating')?.errors?.['min'] && createForm.get('cutOffRating')?.touched">
-                        Cut Off Rating must be at least 1.
+                        Cut Off rating must be at least 1.
                     </div>
                     <div class="error-msg" *ngIf="createForm.errors?.['cutOffGreaterThanOverall']">
-                        Cut Off Rating cannot be greater than Overall Rating.
+                        Cut Off rating cannot be greater than Overall Rating.
                     </div>
                 </div>
 
@@ -141,15 +141,15 @@
                                     placeholder="Enter Section Name">
                                 <div class="error-msg"
                                     *ngIf="section.get('sectionName')?.errors?.['required'] && section.get('sectionName')?.touched">
-                                    Section Name is required.
+                                    Section name is required.
                                 </div>
                                 <div class="error-msg"
                                     *ngIf="section.get('sectionName')?.hasError('maxlength') && section.get('sectionName')?.touched">
-                                    Section Name must not exceed 255 characters
+                                    Section name must not exceed 255 characters
                                 </div>
                                 <div class="error-msg"
                                     *ngIf="section.get('sectionName')?.hasError('onlySpecialChars') ">
-                                    Section Name cannot contain only special characters.
+                                    Section name cannot contain only special characters.
                                 </div>
                             </div>
 
@@ -171,7 +171,7 @@
                                 </div>
                                 <div class="error-msg"
                                     *ngIf="section.get('type')?.errors?.['required'] && section.get('type')?.touched">
-                                    Section Type is required
+                                    Section type is required
                                 </div>
                             </div>
 
@@ -185,11 +185,11 @@
                                 <div class="error-msg">
                                     <div
                                         *ngIf="section.get('weightage')?.errors?.['required'] && section.get('weightage')?.touched">
-                                        Section Weightage is required.
+                                        Section weightage is required.
                                     </div>
                                     <div
                                         *ngIf="section.get('weightage')?.errors?.['min'] && section.get('weightage')?.touched">
-                                        Section Weightage must be at least 1.
+                                        Section weightage must be at least 1.
                                     </div>
                                     <div
                                         *ngIf="createForm.errors?.['weightageGreaterThanOverall'] && section.get('weightage')?.touched">
@@ -224,7 +224,7 @@
                                 </div>
                                 <div class="error-msg"
                                     *ngIf="section.get('ratingScaleType')?.errors?.['required'] && section.get('ratingScaleType')?.touched">
-                                    Rating Scale Type is required.
+                                    Rating scale type is required.
                                 </div>
                             </div>
                             <!-- questions with section type rating -->
@@ -256,11 +256,11 @@
                                                 <div class="error-msg">
                                                     <div
                                                         *ngIf="question.get('questionWeightage')?.errors?.['required'] && question.get('questionWeightage')?.touched">
-                                                        Question Weightage is required.
+                                                        Question weightage is required.
                                                     </div>
                                                     <div
                                                         *ngIf="question.get('questionWeightage')?.errors?.['min'] && question.get('questionWeightage')?.touched">
-                                                        Question Weightage must be at least 1.
+                                                        Question weightage must be at least 1.
                                                     </div>
                                                     <div
                                                         *ngIf="!question.get('questionWeightage')?.errors?.['required'] && createForm.errors?.['section' + sectionIndex + 'QuestionWeightageNotEqualTo100'] 

@@ -156,7 +156,7 @@
             <span class="text-danger">*</span></label>
           <div class="custom-p-multiSelect-content">
             <p-multiSelect formControlName="employee" [options]="usersList" name="user" id="user" optionLabel="fullName"
-              placeholder="Select employee" resetFilterOnHide="true" field="selectedUser"
+              placeholder="Please select employee" resetFilterOnHide="true" field="selectedUser"
               class="form-select custom-select" [selectedItemsLabel]="customLabelTemplate"
               (ngModelChange)="selectedUserDetails($event)">
               <ng-template let-user pTemplate="item">
@@ -291,7 +291,7 @@
           <label class="form-label custom-label mb-2">Employee <span class="text-danger">*</span></label>
           <div class="custom-p-multiSelect-content">
             <p-multiSelect formControlName="Updateemployee" resetFilterOnHide="true" [options]="usersList"
-              optionLabel="fullName" placeholder="Select employee" field="selectedUser"
+              optionLabel="fullName" placeholder="Please select employee" field="selectedUser"
               class="form-select custom-select" [selectedItemsLabel]="customLabelTemplate">
               <ng-template let-user pTemplate="item">{{ user.firstName }} {{ user.middleName }}
                 {{ user.lastName }}</ng-template>

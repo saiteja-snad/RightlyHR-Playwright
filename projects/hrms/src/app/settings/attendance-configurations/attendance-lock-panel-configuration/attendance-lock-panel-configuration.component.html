@@ -143,7 +143,7 @@
                             </p-select>
                             <div class="error-msg"
                                 *ngIf="attendanceLockForm.get('categoryType')?.invalid && attendanceLockForm.get('categoryType')?.touched">
-                                Category Type is required
+                                Category type is required
                             </div>
                         </div>
                     </div>
@@ -168,7 +168,7 @@
                             [min]="fromDateString" (change)="onToDateChange(attendanceLockForm)" />
                         <div class="error-msg"
                             *ngIf="attendanceLockForm.get('toDate')?.invalid && attendanceLockForm.get('toDate')?.touched">
-                            To Date is required
+                            To date is required
                         </div>
                     </div>
 
@@ -234,7 +234,7 @@
                             </p-select>
                             <div class="error-msg"
                                 *ngIf="updateAttendanceLockForm.get('categoryType')?.invalid && updateAttendanceLockForm.get('categoryType')?.touched">
-                                Category Type is required
+                                Category type is required
                             </div>
                         </div>
                     </div>
@@ -261,7 +261,7 @@
                             [disabled]="isPublished" />
                         <div class="error-msg"
                             *ngIf="updateAttendanceLockForm.get('toDate')?.invalid && updateAttendanceLockForm.get('toDate')?.touched">
-                            To Date is required
+                            To date is required
                         </div>
                     </div>
 

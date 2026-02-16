@@ -119,7 +119,7 @@
                         <div class="custom-p-multiSelect-content">
                             <p-multiSelect [options]="teamMemberArray" class="form-select custom-select"
                                 formControlName="teamEmpselectedOptions" optionLabel="fullName" filterBy="fullName"
-                                filter="true" optionValue="employeeId" placeholder="Select employee(s)">
+                                filter="true" optionValue="employeeId" placeholder="Please select employee(s)">
                             </p-multiSelect>
                         </div>
                         <div *ngIf="requestForm.get('teamEmpselectedOptions')?.touched && requestForm.get('teamEmpselectedOptions')?.invalid"
@@ -365,7 +365,7 @@
                                 class="error-msg">*</span></label>
                         <div class="custom-p-multiSelect-content">
                             <p-multiSelect formControlName="teamMembers" id="teamMembers" optionLabel="fullName"
-                                [options]="teamMemberArray" placeholder="Select Team Member(s)" resetFilterOnHide="true"
+                                [options]="teamMemberArray" placeholder="Please select team member(s)" resetFilterOnHide="true"
                                 class="w-100" multiple="true" filterBy="fullName" filter="true"
                                 (onChange)="onSelectManagers($event, 'teamMembers')">
                             </p-multiSelect>
@@ -381,7 +381,7 @@
                         </label>
                         <div class="custom-p-select-content">
                             <p-select formControlName="reportingManager" id="reportingManager" optionLabel="name"
-                                [options]="managers" placeholder="Select Reporting Manager" filterBy="name"
+                                [options]="managers" placeholder="Please select reporting manager" filterBy="name"
                                 filter="true" class="form-select custom-select" resetFilterOnHide="true"
                                 (onChange)="onSelectManagers($event, 'reportingManager')">
                             </p-select>

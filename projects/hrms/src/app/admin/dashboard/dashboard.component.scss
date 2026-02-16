@@ -673,19 +673,27 @@
 
 /* Team Members */
 .member-list-container {
-    max-height: 40dvh;
-    overflow-y: auto;
+    width: 100%;
 
-    .team-members-grid {
-        width: 100%;
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(10.5rem, 1fr));
-        gap: 1rem;
+    .p-tab {
+        padding: 0rem 0.75rem !important;
+        cursor: auto !important;
+    }
+
+    .p-tablist-tab-list {
+        background: transparent !important;
+        border-style: none !important;
+    }
+
+    .p-tablist-nav-button {
+        background: linear-gradient(90.05deg, #FFFFFF -87.95%, var(--primary-color) 99.96%) !important;
+        color: #FFFFFF;
+        border-radius: 0.5rem !important;
     }
 
     .member-card {
-        width: 10.5rem;
-        height: 7.5rem;
+        width: 9rem;
+        height: 7rem;
         display: flex;
         flex-direction: column;
         justify-content: flex-start;
@@ -703,24 +711,19 @@
         }
 
         .name {
-            font-weight: 600;
-            font-size: 11px;
+            font-weight: 700;
+            font-size: var(--fontsize10);
             color: #444444;
         }
 
         .role {
             font-weight: 400;
-            font-size: 9px;
+            font-size: 8px;
             color: #8F8F8F;
         }
     }
 }
 
-.multi-both {
-    .member-list-container {
-        max-height: 28dvh;
-    }
-}
 
 .disply-grid-custom {
     width: 100%;

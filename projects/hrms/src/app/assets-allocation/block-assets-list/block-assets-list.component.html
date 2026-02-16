@@ -1,8 +1,9 @@
 <div class="custom-main-component-container">
   <div class="input-group custom-search mb-3">
     <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
-    <input type="search" class="form-control custom-search-input" placeholder="Search by asset category / asset sub category / serial number"
-     aria-label="Username" [(ngModel)]="searchQuery" (ngModelChange)="onSearchChange($event)" aria-describedby="basic-addon1">
+    <input type="search" class="form-control custom-search-input"
+      placeholder="Search by asset category / asset sub category / serial number" aria-label="Username"
+      [(ngModel)]="searchQuery" (ngModelChange)="onSearchChange($event)" aria-describedby="basic-addon1">
   </div>
 
   <div class="custom-table-content">
@@ -19,74 +20,77 @@
         <th>Location </th>
         <th>Sub Location </th>
         @if(
-        rbac.allowedToAccess('Block View Asset Details.view') || rbac.allowedToAccess('Block Update Asset Details.view') || rbac.allowedToAccess('Block Mark as Available Asset.view')){
+        rbac.allowedToAccess('Block View Asset Details.view') || rbac.allowedToAccess('Block Update Asset Details.view')
+        || rbac.allowedToAccess('Block Mark as Available Asset.view')){
         <th class="text-center">Action</th>
         }
       </thead>
       <tbody>
         <ng-container *ngIf="((assetslist | async) ?? []).length > 0; else noDataTemplate">
           <tr *ngFor="let asset of assetslist | async">
-            <td>{{ asset.assetCategory }}</td>         
+            <td>{{ asset.assetCategory }}</td>
             <td>{{ asset.assetSubCategory }}</td>
-             <td>{{ asset.assetModel }}</td>
+            <td>{{ asset.assetModel }}</td>
             <td>{{ asset.serialNumber }}</td>
             <td>{{ asset.status }}</td>
-             <td>{{ asset.purchaseDate | date }}</td>
-              <td>
-                <div class="d-flex align-items-center gap-1">
-                  <!-- Show info icon only when comment exists -->
-                  <ng-container *ngIf="asset.additionalComments?.[0]?.comments?.length > 0 &&
+            <td>{{ asset.purchaseDate | date }}</td>
+            <td>
+              <div class="d-flex align-items-center gap-1">
+                <!-- Show info icon only when comment exists -->
+                <ng-container *ngIf="asset.additionalComments?.[0]?.comments?.length > 0 &&
                     asset.additionalComments?.[0]?.comments && asset.additionalComments?.[0]?.comments.trim() !== '' &&
                     asset.additionalComments?.[0]?.comments.trim() !== '-';
                     else noComment">
-                    <div [ngbPopover]="commentPopup">
-                      <app-info-icon></app-info-icon>
-                    </div>
-                  </ng-container>
-                  <!-- Fallback when no comments -->
-                  <ng-template #noComment>
-                    <div>-</div>
-                  </ng-template>
-                  <!-- Popup content -->
-                  <ng-template #commentPopup>
-                    {{ asset.additionalComments?.[0]?.comments}}
-                  </ng-template>
-                </div>
-              </td>
+                  <div [ngbPopover]="commentPopup">
+                    <app-info-icon></app-info-icon>
+                  </div>
+                </ng-container>
+                <!-- Fallback when no comments -->
+                <ng-template #noComment>
+                  <div>-</div>
+                </ng-template>
+                <!-- Popup content -->
+                <ng-template #commentPopup>
+                  {{ asset.additionalComments?.[0]?.comments}}
+                </ng-template>
+              </div>
+            </td>
             <td>{{ asset.locationName }}</td>
             <td>{{ asset?.sublocationName || 'N/A' }}</td>
             @if(
-            rbac.allowedToAccess('Block View Asset Details.view') || rbac.allowedToAccess('Block Update Asset Details.view') || rbac.allowedToAccess('Block Mark as Available Asset.view')){
+            rbac.allowedToAccess('Block View Asset Details.view') || rbac.allowedToAccess('Block Update Asset
+            Details.view') || rbac.allowedToAccess('Block Mark as Available Asset.view')){
             <td class="text-center">
               <div class="dropdown">
                 <a data-bs-toggle="dropdown" aria-expanded="false">
                   <i class="bi bi-three-dots-vertical"></i>
                 </a>
                 <ul class="dropdown-menu custom-dropdown-menu">
-                  <ng-container *ngIf="asset.status === 'Block'">                 
-                  @if(rbac.allowedToAccess('Block View Asset Details.view')) {
-                  <li>
-                    <a class="dropdown-item" (click)="navigateToAsset(asset.id)">
-                      View Asset Details
-                    </a>
-                  </li>
-                  }
-                  @if(rbac.allowedToAccess('Block Update Asset Details.view')) {
-                  <li>
-                    <a class="dropdown-item"
-                      (click)="openModal(addassetes); storeassetid = asset.id;  viewupdate(asset);selectedAsset = asset">
-                      Update
-                    </a>
-                  </li>
-                  }  
-                  @if(rbac.allowedToAccess('Block Mark as Available Asset.view')){
-                  <li>
-                    <a class="dropdown-item" (click)="openModal(avilableasstes); storeassetid = asset.id; selectedAsset = asset">
-                      Mark as Available
-                    </a>
-                  </li>
-                  }
-                </ng-container>
+                  <ng-container *ngIf="asset.status === 'Block'">
+                    @if(rbac.allowedToAccess('Block View Asset Details.view')) {
+                    <li>
+                      <a class="dropdown-item" (click)="navigateToAsset(asset.id)">
+                        View Asset Details
+                      </a>
+                    </li>
+                    }
+                    @if(rbac.allowedToAccess('Block Update Asset Details.view')) {
+                    <li>
+                      <a class="dropdown-item"
+                        (click)="openModal(addassetes); storeassetid = asset.id;  viewupdate(asset);selectedAsset = asset">
+                        Update
+                      </a>
+                    </li>
+                    }
+                    @if(rbac.allowedToAccess('Block Mark as Available Asset.view')){
+                    <li>
+                      <a class="dropdown-item"
+                        (click)="openModal(avilableasstes); storeassetid = asset.id; selectedAsset = asset">
+                        Mark as Available
+                      </a>
+                    </li>
+                    }
+                  </ng-container>
                 </ul>
               </div>
             </td>
@@ -314,10 +318,10 @@
               class="form-control custom-input custom-input" [min]="assetForm.get('warrantyenddate')?.value"
               (change)="onStartDateChangeamc()" />
             <div *ngIf="assetForm.get('amcstartdate')?.invalid && assetForm.get('amcstartdate')?.touched">
-              <div class="error-msg">AMC Start Date is required</div>
+              <div class="error-msg">AMC start date is required</div>
             </div>
             <div *ngIf="amcDateMismatch">
-              <div class="error-msg">AMC Start Date must be equal to or greater than the warranty expiry
+              <div class="error-msg">AMC start date must be equal to or greater than the warranty expiry
                 date</div>
             </div>
           </div>
@@ -332,10 +336,10 @@
               class="form-control custom-input custom-input" onkeypress="return false;"
               [min]="assetForm.get('amcstartdate')?.value" (change)="checkAmcDateMismatch()" />
             <div *ngIf="assetForm.get('amcenddate')?.invalid && assetForm.get('amcenddate')?.touched">
-              <div class="error-msg">AMC Expiry Date is required</div>
+              <div class="error-msg">AMC expiry date is required</div>
             </div>
             <div *ngIf="amcDateMismatch">
-              <div class="error-msg">AMC Expiry Date must be greater than AMC start date</div>
+              <div class="error-msg">AMC expiry date must be greater than AMC start date</div>
             </div>
           </div>
 
@@ -344,12 +348,12 @@
                 class="error-msg" *ngIf="isToggledamc">*</span></label>
             <input type="text" formControlName="vendorname" class="form-control custom-input custom-input"
               (keypress)="formValidation.restrictInputAllowAlphaNumericAndCommonSpecialChars($event)" name="vendorname"
-              placeholder="AMC Vendor Name" autocomplete="off" />
+              placeholder="Please enter amc vendor name" autocomplete="off" />
             <div *ngIf="assetForm.get('vendorname')?.invalid && assetForm.get('vendorname')?.touched">
-              <div class="error-msg">AMC Vendor Name is required</div>
+              <div class="error-msg">AMC vendor name is required</div>
             </div>
             <div class="error-msg" *ngIf="assetForm.get('vendorname')?.errors?.['maxlength'] ">
-              AMC Vendor Name cannot be more than 20 characters
+              AMC vendor name cannot be more than 20 characters
             </div>
           </div>
           <div class="col-md-6 mb-2">
@@ -358,30 +362,33 @@
             <input type="text" formControlName="contactnumber" (keypress)="formValidation.restrictAlphabets($event)"
               (paste)="formValidation.validatePaste($event)" autocomplete="off"
               class="form-control custom-input custom-input" maxlength="15" minlength="10"
-              placeholder="AMC Vendor Contact" />
+              placeholder="Please enter amc vendor contact" />
             <div class="error-msg"
               *ngIf="assetForm.get('contactnumber')?.errors?.['required'] && assetForm.get('contactnumber')?.touched">
-              AMC Vendor Contact is required
+              AMC vendor contact is required
             </div>
 
             <div class="error-msg" *ngIf="assetForm.get('contactnumber')?.errors?.['minlength'] ">
-              AMC Vendor Contact must be 10 to 15 digits
+              AMC vendor contact must be 10 to 15 digits
             </div>
             <div class="error-msg" *ngIf="assetForm.get('contactnumber')?.errors?.['maxlength'] ">
-              AMC Vendor Contact must be 10 to 15 digits
+              AMC vendor contact must be 10 to 15 digits
             </div>
             <!-- Pattern error for Mobile number length -->
             <div class="error-msg" *ngIf="assetForm.get('contactnumber')?.errors?.['allZeroesIfMaxLength']">
-              AMC Vendor Contact is not valid
+              AMC vendor contact is not valid
             </div>
           </div>
+
+
         </div>
 
         <div class="custom-modal-footer">
           <button type="button" class="custom-btn btn-secondary "
             (click)="openupdatepopup(updateconformation)">Cancel</button>
-          <button type="submit" class="custom-btn btn-primary " [disabled]="assetForm.invalid || 
-          (isToggledWarranty && assetForm.get('warrantystartdate')?.invalid) ||  (isToggledamc && assetForm.get('amcstartdate')?.invalid)">
+          <button type="submit" class="custom-btn btn-primary " [disabled]="assetForm.invalid 
+                                     ||  (isToggledWarranty && assetForm.get('warrantystartdate')?.invalid) || 
+                                     (isToggledamc && assetForm.get('amcstartdate')?.invalid)">
             Submit
           </button>
 
@@ -440,16 +447,16 @@
 </ng-template>
 
 <ng-template #avilableasstes let-model>
-    <div class="result-popup-content" ngbAutofocus>
-        <div>
-            <img src="icons/conformation.png" alt="failure icon" class="confirmation-icon mb-4">
-            <p class="confirmation-text mb-4">Are you sure you want to mark this Asset as Available?</p>
-        </div>
-        <div class="custom-modal-footer">
-            <button type="button" class="custom-btn btn-secondary"
-                (click)="conformationpoppupavailable();model.dismiss()">No</button>
-            <button type="submit" class="custom-btn btn-primary"
-                (click)="avaliableassets(storeassetid);model.dismiss()">Yes</button>
-        </div>
+  <div class="result-popup-content" ngbAutofocus>
+    <div>
+      <img src="icons/conformation.png" alt="failure icon" class="confirmation-icon mb-4">
+      <p class="confirmation-text mb-4">Are you sure you want to mark this Asset as Available?</p>
     </div>
+    <div class="custom-modal-footer">
+      <button type="button" class="custom-btn btn-secondary"
+        (click)="conformationpoppupavailable();model.dismiss()">No</button>
+      <button type="submit" class="custom-btn btn-primary"
+        (click)="avaliableassets(storeassetid);model.dismiss()">Yes</button>
+    </div>
+  </div>
 </ng-template>

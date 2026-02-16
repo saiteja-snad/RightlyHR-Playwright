@@ -2331,7 +2331,7 @@
                                 </td>
                                 <td scope="row">
                                     <input type="checkbox" [(ngModel)]="per.Update" name="{{ per.fields }}.update"
-                                        (change)="onCheckboxChange(per, 'Update')" [disabled]="!roleToFilter?.id">
+                                        (change)="onCheckboxChange(per, 'Update')"    [disabled]="true">
                                 </td>
                                 <td scope="row">
                                     <input type="checkbox" [(ngModel)]="per.Create" name="{{ per.fields }}.create"
@@ -2339,7 +2339,7 @@
                                 </td>
                                 <td scope="row">
                                     <input type="checkbox" [(ngModel)]="per.Delete" name="{{ per.fields }}.delete"
-                                        (change)="onCheckboxChange(per, 'Delete')" [disabled]="!roleToFilter?.id">
+                                        (change)="onCheckboxChange(per, 'Delete')"    [disabled]="true">
                                 </td>
                             </tr>
                         </ng-container>

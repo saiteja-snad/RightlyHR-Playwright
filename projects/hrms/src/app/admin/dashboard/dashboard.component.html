@@ -263,9 +263,7 @@
             </div>
         </div>
 
-        @if(rbac.allowedToAccess('Upcoming Work Anniversaries.view') || rbac.allowedToAccess('Upcoming Birthdays.view')
-        ||
-        rbac.allowedToAccess('Today Events.view')){
+        @if(rbac.allowedToAccess('Upcoming Work Anniversaries.view') || rbac.allowedToAccess('Upcoming Birthdays.view') || rbac.allowedToAccess('Today Events.view')){
         <div class="dashboard-right-content" [ngStyle]="noEventAccess ? {'width': '0%'} : {}">
             <!-- Upcoming Work Anniversary's Panel -->
             @if(rbac.allowedToAccess('Upcoming Work Anniversaries.view')){

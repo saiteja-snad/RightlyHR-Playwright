@@ -460,6 +460,12 @@ export class CloneRateCardComponent {
                this.modalService.dismissAll();
              }, 5000);
            }
+           else {
+            this.openModal(this.Summary);
+            setTimeout(() => {
+              this.modalService.dismissAll();
+            }, 5000);
+          }
            // this.getAllRateCardDetails();
            this.nagvition();
            },

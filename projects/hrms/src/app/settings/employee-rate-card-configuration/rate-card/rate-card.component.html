@@ -4,30 +4,30 @@
     <app-settings-header />
     <div class="d-flex align-items-center gap-3">
        <button type="button" class="clear-all-btn" (click)="resetall()" *ngIf="this.yearSelectionForm.get('location')?.value||this.yearSelectionForm.get('subLocation')?.value">
-        Clear All</button>
+        {{'Clear All' |translate}}</button>
       <form autocomplete="off" [formGroup]="yearSelectionForm" class="d-flex align-items-center gap-2">
-        <label class="form-label custom-label filter-labels m-0" for="">Select Year</label>
+        <label class="form-label custom-label filter-labels m-0" for="">{{'Select Year' |translate}}</label>
         <div class="custom-p-select-content">
           <p-select formControlName="selectedYear" [options]="years" placeholder="Select Year"
             class="form-select custom-select"  (onChange)="onYearChange()" />
         </div>
-        <label class="form-label custom-label filter-labels m-0" for="">Location</label>
+        <label class="form-label custom-label filter-labels m-0" for="">{{'Location' |translate}}</label>
         <div class="custom-p-select-content">
           <p-select formControlName="location" [options]="locations" placeholder="Select location"
           [resetFilterOnHide]="true"[showClear]="false" [filter]="true"filterBy="jobLocationName" optionLabel="jobLocationName" optionValue="id"
             class="form-select custom-select" (onChange)="onLocationChange($event.value)" />
         </div>
-        <label class="form-label custom-label filter-labels m-0" for="">Sub-Location</label>
+        <label class="form-label custom-label filter-labels m-0" for="">{{'Sub Location' |translate}}</label>
         <div class="custom-p-select-content">
           <p-select formControlName="subLocation" [options]="subLocations" placeholder="Select sub-location"  
           filterBy="jobSubLocationName"optionLabel="jobSubLocationName" optionValue="id"
           [resetFilterOnHide]="true" [showClear]="false" [filter]="true"
             class="form-select custom-select"  />
         </div>
-        <button class="custom-btn btn-primary px-5" *ngIf="this.yearSelectionForm.get('location')?.value||this.yearSelectionForm.get('subLocation')?.value" (click)="this.getAllRateCardDetails()">Apply</button>
+        <button class="custom-btn btn-primary px-5" *ngIf="this.yearSelectionForm.get('location')?.value||this.yearSelectionForm.get('subLocation')?.value" (click)="this.getAllRateCardDetails()">{{'Apply' |translate}}</button>
       </form>
 
-      <button class="custom-btn btn-primary px-5" *ngIf="rbac.allowedToAccess('Rate Card Active Tab.create')" (click)="openAdd()">Create</button>
+      <button class="custom-btn btn-primary px-5" *ngIf="rbac.allowedToAccess('Rate Card Active Tab.create')" (click)="openAdd()">{{'Create' |translate}}</button>
     </div>
   </div>
 
@@ -84,7 +84,7 @@
               </ul> -->
                   <ul class="dropdown-menu custom-dropdown-menu" *ngIf="item.status==='Active'">
                     <li (click)="onClick(item,confirmationpopup)" *ngIf="rbac.allowedToAccess('Rate Card Active Tab.delete')">
-                      <a class="dropdown-item"><i class="bi bi-slash-circle me-2"></i> Inactive</a>
+                      <a class="dropdown-item"><i class="bi bi-slash-circle me-2"></i> {{'Inactive' |translate}}</a>
                     </li>
                      <li (click)="updateNavigation(item)" *ngIf="rbac.allowedToAccess('Rate Card Active Tab.update')">
                         <a class="dropdown-item">
@@ -159,15 +159,15 @@
   <div class="result-popup-content" ngbAutofocus>
     <div>
       <img src="/icons/reject.png" alt="failure icon" class="confirmation-icon mb-4">
-      <p class="confirmation-text mb-4"> Are you sure you want to Inactive ?</p>
+      <p class="confirmation-text mb-4"> {{'Are you sure you want to Inactive?' |translate}}</p>
     </div>
 
     <div class="d-flex justify-content-center gap-3 mt-4">
       <button type="button" class="custom-btn btn-secondary" (click)="model.dismiss()">
-        No
+        {{'No' |translate}}
       </button>
       <button type="submit" class="custom-btn btn-primary" (click)="activeRateCard(); model.close()">
-        Yes
+        {{'Yes' |translate}}
       </button>
     </div>
   </div>

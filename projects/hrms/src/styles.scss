@@ -172,7 +172,7 @@ body {
     background-color: var(--header-background-color);
 
     .company-logo-image {
-        height: 1.25rem;
+        height: 2.5rem;
     }
 }
 
@@ -1251,11 +1251,26 @@ select:focus {
             min-width: 280mm;
         }
 
+       .letter-data-content {
+        width: 100%;
+        flex: 1;
+        height: calc(100dvh - 8rem);
+        overflow: auto;
+        padding: 1.125rem;
+        text-align: justify;
+
+        .letter-sub-data-content {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            min-width: 280mm;
+        }
+
         .letter-page-content {
             height: 380mm;
             width: 270mm;
             position: relative;
-            // background-image: url('/images/claim-genius-watermark.png');
+            background-image: url('/images/water-mark.png');
             background-repeat: no-repeat;
             background-position: center;
             box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
@@ -1268,9 +1283,8 @@ select:focus {
             }
 
             .letter-footer {
-                display: none;
                 width: 270mm;
-                background-color: #546e7a;
+                background-color: #0B3A83;
                 color: #fff;
                 position: absolute;
                 bottom: 0px;
@@ -1287,6 +1301,7 @@ select:focus {
                 }
             }
         }
+    }
     }
 
     input:focus {

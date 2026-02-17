@@ -10,8 +10,7 @@
                 <i class="bi bi-search"></i>
             </span>
             <input type="search" [(ngModel)]="searchValue" (ngModelChange)="onSearchChange()" class="form-control custom-search-input"
-                placeholder="Search by employee name / project name / role" aria-label="Search"
-                aria-describedby="basic-addon1">
+                placeholder="Search by employee name / project name / role" aria-label="Search" aria-describedby="basic-addon1">
         </div>
 
         <div class="custom-table-content">
@@ -56,8 +55,7 @@
                             <td class="text-center">
                                 <div>
                                     <span>{{ (data?.status | titlecase) || '-' }}</span>
-                                    <ng-container
-                                        *ngIf="data?.reason && data.status?.toLowerCase() !== 'active'; else noStatusReason">
+                                    <ng-container *ngIf="data?.reason && data.status?.toLowerCase() !== 'active'; else noStatusReason">
                                         <span type="button" [ngbPopover]="statusReasonPopover">
                                             <app-info-icon />
                                         </span>
@@ -127,7 +125,7 @@
                                 (onChange)="selectProject($event.value)"></p-select>
                         </div>
                         <div class="error-msg" *ngIf="updateResourceForm.get('projectName')?.touched &&
-                        updateResourceForm.get('projectName')?.invalid">Project Name is required</div>
+                        updateResourceForm.get('projectName')?.invalid">Project name is required</div>
                     </div>
 
                     <!-- Project Type -->
@@ -138,39 +136,39 @@
                             class="form-control custom-input" placeholder="Enter project type" readonly />
                         <div class="error-msg"
                             *ngIf="updateResourceForm.get('projectType')?.touched && updateResourceForm.get('projectType')?.invalid">
-                            Project Type is required
+                            Project type is required
                         </div>
                     </div>
-                         <!--Phase/Milestone Name-->
+
+                    <!--Phase/Milestone Name-->
                     <div class="col-md-6 mb-3">
-                        <label for="resourceRole" class="form-label custom-label mb-2">Phase / Milestone Name <span
-                                class="text-danger">*</span></label>
+                        <label for="resourceRole" class="form-label custom-label mb-2">Phase / Milestone Name 
+                            <span class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
                             <p-select [options]="phaseDropdown" optionLabel="label" optionValue="value" [filter]="true"
                                 [resetFilterOnHide]="true" filterBy="label" formControlName="resourcePhase"
                                 placeholder="Please select phase / milestone" class="form-select custom-select"
-                                (onChange)="onPhaseChange($event)">
-                            </p-select>
+                                (onChange)="onPhaseChange($event)" />
                         </div>
                         <div class="error-msg">
                             <div *ngIf=" updateResourceForm.get('resourcePhase')?.touched && updateResourceForm.get('resourcePhase')?.errors?.['required'] ">
-                                Phase / Milestone Name is required
+                                Phase / milestone name is required
                             </div>
                         </div>
                     </div>
+
                     <!-- Resource Name -->
                     <div class="col-md-6 mb-3">
                         <label for="resourceName" class="form-label custom-label mb-2">Resource Name
                             <span class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="employeeDetails" optionLabel="fullName" [filter]="true" filterBy="fullName" [showClear]="false"
-                                optionValue="id" placeholder="Please select employee" formControlName="resourceName" class="custom-select w-100"
-                                (onChange)="onClickEmployee($event)" resetFilterOnHide="true" [readonly]="true"
-                                [ngClass]="{ 'readonly-select': true }">
-                            </p-select>
+                            <p-select [options]="employeeDetails" optionLabel="fullName" [filter]="true" filterBy="fullName"
+                                [showClear]="false" optionValue="id" placeholder="Please select employee" formControlName="resourceName"
+                                class="custom-select w-100" (onChange)="onClickEmployee($event)" resetFilterOnHide="true" [readonly]="true"
+                                [ngClass]="{ 'readonly-select': true }" />
                         </div>
-                        <div class="error-msg" *ngIf="updateResourceForm.get('resourceName')?.touched &&
-                        updateResourceForm.get('resourceName')?.invalid">Resource Name is required</div>
+                        <div class="error-msg" *ngIf="updateResourceForm.get('resourceName')?.touched && 
+                        updateResourceForm.get('resourceName')?.invalid">Resource name is required</div>
                     </div>
 
                     <!-- Designation -->
@@ -208,8 +206,7 @@
                         <div class="custom-p-select-content">
                             <p-select [options]="projectRoleDropdown" optionLabel="label" optionValue="value" [filter]="true"
                                 [resetFilterOnHide]="true" filterBy="label" formControlName="resourceRole" placeholder="Please select role"
-                                class="form-select custom-select" (onChange)="onRoleChange($event.value)">
-                            </p-select>
+                                class="form-select custom-select" (onChange)="onRoleChange($event.value)" />
                         </div>
                         <div class="error-msg">
                             <div *ngIf="updateResourceForm.get('resourceRole')?.touched && updateResourceForm.get('resourceRole')?.errors?.['required']">
@@ -220,11 +217,6 @@
                         </div>
                     </div>
 
-
-
-
-
-
                     <!-- Start Date -->
                     <div class="col-md-6 mb-3">
                         <label for="startDate" class="form-label custom-label mb-2">Start Date
@@ -234,7 +226,7 @@
                             [max]="projectEndDate ? (projectEndDate | date:'yyyy-MM-dd') : null "
                             (change)="oncheckdates(updateResourceForm.get('startDate')?.value)" class="form-control custom-input" />
                         <div class="error-msg" *ngIf="updateResourceForm.get('startDate')?.touched &&
-                        updateResourceForm.get('startDate')?.invalid">Start Date is required</div>
+                        updateResourceForm.get('startDate')?.invalid">Start date is required</div>
                         <div *ngIf="!startndEndDateValid" class="error-msg">Start Date cannot be after End Date</div>
                     </div>
 
@@ -245,9 +237,8 @@
                         <input type="date" id="endDate" formControlName="endDate" class="form-control custom-input"
                             [min]="projectStartDate ? (projectStartDate | date:'yyyy-MM-dd') : null"
                             [max]="projectEndDate ? (projectEndDate | date:'yyyy-MM-dd') : null " />
-                        <div class="error-msg"
-                            *ngIf="updateResourceForm.get('endDate')?.touched && updateResourceForm.get('endDate')?.invalid">
-                            End Date is required
+                        <div class="error-msg" *ngIf="updateResourceForm.get('endDate')?.touched && updateResourceForm.get('endDate')?.invalid">
+                            End date is required
                         </div>
                     </div>
 
@@ -273,11 +264,10 @@
                         <div class="custom-p-select-content">
                             <p-select [options]="resoucesDropDownData" optionLabel="label" optionValue="value" [filter]="true" filterBy="label"
                                 [showClear]="false" placeholder="Please select resource name" formControlName="resourceAuthority"
-                                class="custom-select w-100" resetFilterOnHide="true">
-                            </p-select>
+                                class="custom-select w-100" resetFilterOnHide="true" />
                         </div>
                         <div class="error-msg" *ngIf="updateResourceForm.get('resourceAuthority')?.touched &&
-                        updateResourceForm.get('resourceAuthority')?.invalid">Timesheet Approval Authority is required</div>
+                        updateResourceForm.get('resourceAuthority')?.invalid">Timesheet approval authority is required</div>
                     </div>
 
                     <!-- Resource Allocation Hours -->
@@ -368,7 +358,6 @@
 <ng-template #reasonModal let-modal>
     <form [formGroup]="reasonForm" (ngSubmit)="submitReason(modal)">
         <div class="result-popup-content" ngbAutofocus>
-
             <div>
                 <img src="icons/conformation.png" alt="icon" class="confirmation-delete-icon">
                 <p class="confirmation-text">{{ modalData?.title }}</p>
@@ -376,10 +365,10 @@
 
             <div class="mb-3 mt-3" *ngIf="modalData?.title?.includes('release')">
                 <label for="statusEffectiveDate" class="form-label custom-label mb-2">Effective Date<span class="error-msg">*</span></label>
-                <input type="date" id="statusEffectiveDate" [min]="resourcestartdate | date:'yyyy-MM-dd'"  formControlName="statusEffectiveDate" class="form-control custom-input" />
+                <input type="date" id="statusEffectiveDate" [min]="resourcestartdate | date:'yyyy-MM-dd'"  formControlName="statusEffectiveDate" 
+                class="form-control custom-input" />
                 <div class="error-msg" *ngIf="reasonForm.get('statusEffectiveDate')?.touched && reasonForm.get('statusEffectiveDate')?.invalid">
-                    Effective Date is required
-                </div>
+                    Effective date is required</div>
             </div>
 
             <div class="mb-3" [ngClass]="{'mt-3': !modalData?.title?.includes('release')}">
@@ -419,8 +408,7 @@
                 <input type="date" id="newStartDate" formControlName="newStartDate" class="form-control custom-input"
                     [min]="projectMinStartDate" [max]="newEndDate" [readonly]="extendForm.get('newStartDate')?.disabled" />
                 <div class="error-msg" *ngIf="extendForm.get('newStartDate')?.touched && extendForm.get('newStartDate')?.invalid">
-                    Start Date is required
-                </div>
+                    Start date is required</div>
                 <div *ngIf="!startndEndDateValid" class="error-msg">Start Date cannot be after End Date</div>
             </div>
 
@@ -429,10 +417,8 @@
                 <label for="newEndDate" class="form-label custom-label mb-2">End Date<span class="text-danger">*</span></label>
                 <input type="date" id="newEndDate" formControlName="newEndDate" class="form-control custom-input"
                     [min]="extendForm.get('newStartDate')?.value" [max]="projectMaxEndDate" />
-                <div class="error-msg"
-                    *ngIf="extendForm.get('newEndDate')?.touched && extendForm.get('newEndDate')?.invalid">
-                    End Date is required
-                </div>
+                <div class="error-msg" *ngIf="extendForm.get('newEndDate')?.touched && extendForm.get('newEndDate')?.invalid">
+                    End date is required</div>
                 <div *ngIf="!startndEndDateValid" class="error-msg">End Date cannot be before start Date</div>
             </div>
 

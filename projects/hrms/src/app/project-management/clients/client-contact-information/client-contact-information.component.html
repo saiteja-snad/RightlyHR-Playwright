@@ -104,7 +104,7 @@
                             (keydown)="formValidation.restrictInitialSpace($event)">
                         <div class="error-msg"
                             *ngIf="updatecontactFrom.get('contactname')?.touched && updatecontactFrom.get('contactname')?.invalid">
-                            <div *ngIf="updatecontactFrom.get('contactname')?.errors?.['required']">Contact Name is required</div>
+                            <div *ngIf="updatecontactFrom.get('contactname')?.errors?.['required']">Contact name is required</div>
                             <div *ngIf="updatecontactFrom.get('contactname')?.errors?.['minlength']">Minimum 2 characters required</div>
                         </div>
                     </div>

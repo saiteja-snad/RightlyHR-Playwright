@@ -697,7 +697,7 @@ export class OnboardingDetailsComponent implements OnInit, OnDestroy{
         next: (data: any) => {
           if (data.statusCode === 200) {
             this.conformationPopup.openSuccessModal(
-              'Onboarding Information updated successfully'
+              'Onboarding information updated successfully'
             );
             this.getEmployeeId();
             this.buttons = !this.buttons;

@@ -1,8 +1,10 @@
 <div class="custom-main-component-container">
   <div class="input-group custom-search mb-3">
     <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
-    <input type="search" class="form-control custom-search-input" placeholder="Search by asset ID / asset category / asset sub category / serial number / allocated to"
-      aria-label="Username" [(ngModel)]="searchQuery" (ngModelChange)="onSearchChange($event)" aria-describedby="basic-addon1">
+    <input type="search" class="form-control custom-search-input"
+      placeholder="Search by asset ID / asset category / asset sub category / serial number / allocated to"
+      aria-label="Username" [(ngModel)]="searchQuery" (ngModelChange)="onSearchChange($event)"
+      aria-describedby="basic-addon1">
   </div>
 
   <div class="custom-table-content">
@@ -11,7 +13,7 @@
       <thead>
         <th>Asset Category</th>
         <th>Asset Sub Category</th>
-          <th>Asset Model</th>
+        <th>Asset Model</th>
         <th>Serial Number</th>
         <th>Asset Status</th>
         <th>Purchase Date</th>
@@ -19,8 +21,10 @@
         <th>Asset ID</th>
         <th>Location </th>
         <th>Sub Location </th>
-        @if(rbac.allowedToAccess('Allocated Reallocate Asset.view') || rbac.allowedToAccess('Allocated Release Asset.view') ||
-        rbac.allowedToAccess('Allocated View Asset Details.view') || rbac.allowedToAccess('Allocated Update Asset Details.view')){
+        @if(rbac.allowedToAccess('Allocated Reallocate Asset.view') || rbac.allowedToAccess('Allocated Release
+        Asset.view') ||
+        rbac.allowedToAccess('Allocated View Asset Details.view') || rbac.allowedToAccess('Allocated Update Asset
+        Details.view')){
         <th class="text-center">Action</th>
         }
       </thead>
@@ -32,7 +36,7 @@
             <td>{{ asset.assetModel }}</td>
             <td>{{ asset.serialNumber }}</td>
             <td>{{ asset.status }}</td>
-             <td>{{ asset.purchaseDate | date }}</td>
+            <td>{{ asset.purchaseDate | date }}</td>
             <td>
               <ng-container *ngIf="asset.assignedTo; else unassigned">
                 {{ asset.assignedTo.firstName }}&nbsp;{{asset.assignedTo.middleName }}&nbsp;{{
@@ -135,7 +139,7 @@
         <p class="popup-heading mb-0">Update an Asset</p>
       </div>
       <div>
-        <a (click)="openclosemodal(updatecloseconformation)"><img src="icons/close.png" alt="Close Icon"
+        <a (click)="openclosemodal(updateconformation)"><img src="icons/close.png" alt="Close Icon"
             class="close-icon"></a>
       </div>
     </div>
@@ -163,7 +167,7 @@
 
             <div *ngIf="assetForm.get('subLocationId')?.invalid && assetForm.get('subLocationId')?.touched"
               class="error-msg">
-              Sub Location is required.
+              Sub location is required.
             </div>
           </div>
 
@@ -178,7 +182,7 @@
 
             </div>
             <div *ngIf="assetForm.get('assetCategory')?.invalid && assetForm.get('assetCategory')?.touched">
-              <div class="error-msg">Asset Category is required</div>
+              <div class="error-msg">Asset category is required</div>
             </div>
 
           </div>
@@ -194,7 +198,7 @@
                 class="form-select custom-select"></p-select>
             </div>
             <div *ngIf="assetForm.get('assetSubCategory')?.invalid && assetForm.get('assetSubCategory')?.touched">
-              <div class="error-msg">Asset Sub Category is required</div>
+              <div class="error-msg">Asset sub category is required</div>
             </div>
           </div>
 
@@ -203,14 +207,15 @@
           <div class="col-md-6 mb-2">
             <label for="assetModel" class="form-label custom-label mb-2 custom-label mb-2">Asset Model<span
                 class="error-msg">*</span></label>
-            <input id="assetModel" formControlName="assetModel"
-              (keypress)="formValidation.restrictInputAllowAlphaNumericAndCommonSpecialChars($event)" autocomplete="off"
-              class="form-control custom-input custom-input" placeholder="Enter asset model">
+            <input id="assetModel"
+              (keypress)="formValidation.restrictInputAllowAlphaNumericAndCommonSpecialChars($event)"
+              formControlName="assetModel" class="form-control custom-input custom-input"
+              placeholder="Please enter asset model ">
             <div *ngIf="assetForm.get('assetModel')?.hasError('required') && assetForm.get('assetModel')?.touched">
-              <div class="error-msg">Asset Model is required</div>
+              <div class="error-msg">Asset model is required</div>
             </div>
             <div *ngIf="assetForm.get('assetModel')?.hasError('maxlength') && assetForm.get('assetModel')?.touched">
-              <div class="error-msg">Asset Model cannot be more than 20 characters</div>
+              <div class="error-msg">Asset model cannot be more than 20 characters</div>
             </div>
           </div>
 
@@ -219,12 +224,12 @@
                 class="error-msg">*</span></label>
             <input id="serialnumber" formControlName="serialnumber"
               (keypress)="formValidation.restrictInputAllowAlphaNumericAndCommonSpecialChars($event)"
-              class="form-control custom-input custom-input" placeholder="Enter serial number">
+              class="form-control custom-input custom-input" placeholder="Please enter serial  number">
             <div *ngIf="assetForm.get('serialnumber')?.hasError('required') && assetForm.get('serialnumber')?.touched">
-              <div class="error-msg">Serial Number is required</div>
+              <div class="error-msg">Serial number is required</div>
             </div>
             <div *ngIf="assetForm.get('serialnumber')?.hasError('maxlength') && assetForm.get('serialnumber')?.touched">
-              <div class="error-msg">Serial Number cannot be more than 30 characters</div>
+              <div class="error-msg">Serial number cannot be more than 30 characters</div>
             </div>
 
           </div>
@@ -237,7 +242,7 @@
                 placeholder="Please select vendor name" class="form-select custom-select"></p-select>
             </div>
             <div *ngIf="assetForm.get('vendordetailes')?.touched && assetForm.get('vendordetailes')?.invalid">
-              <div class="error-msg">Vendor Name is required</div>
+              <div class="error-msg">Vendor name is required</div>
             </div>
           </div>
 
@@ -247,7 +252,7 @@
             <input id="purchasedate" type="date" formControlName="purchasedate" onkeypress="return false;"
               class="form-control custom-input custom-input" [min]="minpurchesDate" [max]="maxpurchesDate">
             <div *ngIf="assetForm.get('purchasedate')?.invalid && assetForm.get('purchasedate')?.touched">
-              <div class="error-msg">Purchase Date is required</div>
+              <div class="error-msg">Purchase date is required</div>
             </div>
           </div>
 
@@ -270,14 +275,13 @@
               class="form-control custom-input custom-input" [min]="assetForm.get('purchasedate')?.value"
               (change)="onStartDateChange()">
             <div *ngIf="assetForm.get('warrantystartdate')?.invalid && assetForm.get('warrantystartdate')?.touched">
-              <div class="error-msg">Warranty Start Date is required</div>
+              <div class="error-msg">Warranty start date is required</div>
             </div>
             <!-- Custom error message for mismatched dates -->
             <div *ngIf="dateMismatch">
-              <div class="error-msg">Warranty Start Date must be equal to the Purchase Date</div>
+              <div class="error-msg">Warranty start date must be equal to the purchase date</div>
             </div>
           </div>
-
           <!-- Warranty date end -->
           <div class="col-md-6 mb-2">
             <label for="warrantyenddate" class="form-label custom-label mb-2 custom-label mb-2">Warranty Expiry
@@ -286,14 +290,15 @@
               class="form-control custom-input custom-input" [min]="assetForm.get('warrantystartdate')?.value"
               (change)="checkDateMismatch()">
             <div *ngIf="assetForm.get('warrantyenddate')?.invalid && assetForm.get('warrantyenddate')?.touched">
-              <div class="error-msg">Warranty Expiry Date is required</div>
+              <div class="error-msg">Warranty expiry date is required</div>
             </div>
             <div *ngIf="warrantydateMismatch">
-              <div class="error-msg">Warranty Expiry Date must be greater than warranty start date</div>
+              <div class="error-msg">Warranty expiry date must be greater than warranty start date</div>
             </div>
           </div>
 
           <div class="row">
+
             <div class="col-md-6 mb-3">
               <div class="custom-toggle-btn">
                 <div class="form-check form-switch">
@@ -305,6 +310,7 @@
             </div>
           </div>
 
+
           <!-- AMC Start Date -->
           <div class="col-md-6 mb-2">
             <label for="amcstartdate" class="form-label custom-label mb-2 custom-label mb-2">
@@ -315,10 +321,10 @@
               class="form-control custom-input custom-input" [min]="assetForm.get('warrantyenddate')?.value"
               (change)="onStartDateChangeamc()" />
             <div *ngIf="assetForm.get('amcstartdate')?.invalid && assetForm.get('amcstartdate')?.touched">
-              <div class="error-msg">AMC Start Date is required</div>
+              <div class="error-msg">AMC start date is required</div>
             </div>
             <div *ngIf="amcDateMismatch">
-              <div class="error-msg">AMC Start Date must be equal to or greater than the warranty expiry
+              <div class="error-msg">AMC start date must be equal to or greater than the warranty expiry
                 date</div>
             </div>
           </div>
@@ -333,10 +339,10 @@
               class="form-control custom-input custom-input" onkeypress="return false;"
               [min]="assetForm.get('amcstartdate')?.value" (change)="checkAmcDateMismatch()" />
             <div *ngIf="assetForm.get('amcenddate')?.invalid && assetForm.get('amcenddate')?.touched">
-              <div class="error-msg">AMC Expiry Date is required</div>
+              <div class="error-msg">AMC expiry date is required</div>
             </div>
             <div *ngIf="amcDateMismatch">
-              <div class="error-msg">AMC Expiry Date must be greater than AMC start date</div>
+              <div class="error-msg">AMC expiry date must be greater than AMC start date</div>
             </div>
           </div>
 
@@ -344,46 +350,50 @@
             <label for="vendordetailes" class="form-label custom-label mb-2 custom-label mb-2">AMC Vendor Name<span
                 class="error-msg" *ngIf="isToggledamc">*</span></label>
             <input type="text" formControlName="vendorname" class="form-control custom-input custom-input"
-              name="vendorname" placeholder="AMC Vendor Name" autocomplete="off" />
+              (keypress)="formValidation.restrictInputAllowAlphaNumericAndCommonSpecialChars($event)" name="vendorname"
+              placeholder="Please enter amc vendor name" autocomplete="off" />
             <div *ngIf="assetForm.get('vendorname')?.invalid && assetForm.get('vendorname')?.touched">
-              <div class="error-msg">AMC Vendor Name is required</div>
+              <div class="error-msg">AMC vendor name is required</div>
             </div>
             <div class="error-msg" *ngIf="assetForm.get('vendorname')?.errors?.['maxlength'] ">
-              AMC Vendor Name cannot be more than 20 characters
+              AMC vendor name cannot be more than 20 characters
             </div>
           </div>
           <div class="col-md-6 mb-2">
             <label for="vendor" class="form-label custom-label mb-2 custom-label mb-2">AMC Vendor Contact<span
                 class="error-msg" *ngIf="isToggledamc">*</span></label>
-            <input type="text" formControlName="contactnumber" class="form-control custom-input custom-input"
-              maxlength="15" minlength="10" (paste)="formValidation.validatePaste($event)"
-              (keypress)="formValidation.restrictAlphabets($event)" autocomplete="off"
-              placeholder="AMC Vendor Contact" />
+            <input type="text" formControlName="contactnumber" (keypress)="formValidation.restrictAlphabets($event)"
+              (paste)="formValidation.validatePaste($event)" autocomplete="off"
+              class="form-control custom-input custom-input" maxlength="15" minlength="10"
+              placeholder="Please enter amc vendor contact" />
             <div class="error-msg"
               *ngIf="assetForm.get('contactnumber')?.errors?.['required'] && assetForm.get('contactnumber')?.touched">
-              AMC Vendor Contact is required
+              AMC vendor contact is required
             </div>
+
             <div class="error-msg" *ngIf="assetForm.get('contactnumber')?.errors?.['minlength'] ">
-              AMC vendor Contact must be 10 to 15 digits
+              AMC vendor contact must be 10 to 15 digits
             </div>
             <div class="error-msg" *ngIf="assetForm.get('contactnumber')?.errors?.['maxlength'] ">
-              AMC Vendor Contact must be 10 to 15 digits
+              AMC vendor contact must be 10 to 15 digits
             </div>
             <!-- Pattern error for Mobile number length -->
             <div class="error-msg" *ngIf="assetForm.get('contactnumber')?.errors?.['allZeroesIfMaxLength']">
-              AMC Vendor Contact is not valid
+              AMC vendor contact is not valid
             </div>
           </div>
+
+
         </div>
 
         <div class="custom-modal-footer">
           <button type="button" class="custom-btn btn-secondary "
-            (click)="openclosemodal(updatecloseconformation)">Cancel</button>
-          <button type="submit" class="custom-btn btn-primary " [disabled]="assetForm.invalid
-           || (isToggledWarranty && assetForm.get('warrantystartdate')?.invalid) || 
-           (isToggledamc && assetForm.get('amcstartdate')?.invalid)">
+            (click)="openclosemodal(updateconformation)">Cancel</button>
+          <button type="submit" class="custom-btn btn-primary " [disabled]="assetForm.invalid 
+                                     ||  (isToggledWarranty && assetForm.get('warrantystartdate')?.invalid) ||  (isToggledamc && assetForm.get('amcstartdate')?.invalid)">
             Submit
           </button>
+
         </div>
       </form>
     </div>
@@ -411,7 +421,7 @@
 <ng-template #conformationpopup let-model>
   <div class="result-popup-content" ngbAutofocus>
     <div>
-    <app-confirmation-icon />
+      <app-confirmation-icon />
       <p class="confirmation-text mb-4"> Are you sure you want to cancel?</p>
     </div>
     <div class="custom-modal-footer">
@@ -432,7 +442,7 @@
       <img src="icons/conformation.png" alt="failure icon" class="confirmation-icon mb-2  pt-4">
     </div>
     <div class="text-center">
-      <h5 class="confirmation-text mb-2"> Are you sure you want to Inactive this Asset ?</h5>
+      <h5 class="confirmation-text mb-2"> Are you sure you want to inactive this asset ?</h5>
     </div>
     <div class="custom-main-popup-content">
       <form autocomplete="off" [formGroup]="inactiveForm" (ngSubmit)="postinactive(inactiveForm, storeassetid)">
@@ -492,7 +502,7 @@
 <ng-template #inativeconfromation let-model>
   <div class="result-popup-content" ngbAutofocus>
     <div>
-    <app-confirmation-icon />
+      <app-confirmation-icon />
       <p class="confirmation-text mb-4"> Are you sure you want to cancel?</p>
     </div>
     <div class="custom-modal-footer">
@@ -547,10 +557,10 @@
               <div>
                 <div class="error-msg" *ngIf="releaseform.get('reason')?.invalid && releaseform.get('reason')?.touched">
                   <div *ngIf="releaseform.get('reason')?.errors?.['required']">
-                    Additional Comments is required.
+                    Additional comments is required.
                   </div>
                   <div *ngIf="releaseform.get('reason')?.errors?.['maxlength']">
-                    Additional Comments not exceed 250 characters.
+                    Additional comments not exceed 250 characters.
                   </div>
                 </div>
               </div>
@@ -613,7 +623,7 @@
           </div>
 
           <div class="col-md-12 mb-3 ">
-            <label for="asseTID" class="form-label custom-label mb-2">Select Employee ID<span
+            <label for="asseTID" class="form-label custom-label mb-2">Select Employee <span
                 class="text-danger">*</span></label>
             <div class="custom-p-select-content">
               <p-select [options]="employeeiddetails" optionLabel="employeeName" [filter]="true"
@@ -622,7 +632,7 @@
                 class="form-select custom-select"></p-select>
             </div>
             <div *ngIf="reassiginForm.get('mReportingto')?.invalid && reassiginForm.get('mReportingto')?.touched">
-              <div class="error-msg">Employee ID is required</div>
+              <div class="error-msg">Employee is required</div>
             </div>
           </div>
           <div class="d-flex justify-content-end gap-3">
@@ -744,7 +754,7 @@
               placeholder="Contact Name" />
             <div
               *ngIf="undermainteenceForm.get('vendorname')?.invalid && undermainteenceForm.get('vendorname')?.touched">
-              <div class="error-msg">Contact Name is required</div>
+              <div class="error-msg">Contact name is required</div>
             </div>
           </div>
 
@@ -776,7 +786,7 @@
 <ng-template #avilableasstes let-model>
   <div class="result-popup-content" ngbAutofocus>
     <div>
-    <app-confirmation-icon />
+      <app-confirmation-icon />
       <p class="confirmation-text mb-4">Are you sure you want to mark this Asset as Active?</p>
     </div>
     <div class="d-flex justify-content-center gap-3 mt-4">
@@ -790,7 +800,7 @@
 <ng-template #activeanasstes let-model>
   <div class="result-popup-content" ngbAutofocus>
     <div>
-    <app-confirmation-icon />
+      <app-confirmation-icon />
       <p class="confirmation-text mb-4">Are you sure you want to mark this Asset as Active?</p>
     </div>
     <div class="d-flex justify-content-center gap-3 mt-4">

@@ -191,7 +191,7 @@
             <input type="date" class="form-control custom-input" placeholder="" [min]="this.dojDate" formControlName="contractstartdate" id="Contract Start Date" />
             <div class="error-msg"
               *ngIf="extendreasonForm.get('contractstartdate')?.invalid && extendreasonForm.get('contractstartdate')?.touched">
-              Contract Start Date is required</div>
+              Contract Start date is required</div>
           </div>
           <!-- //EndDate -->
           <div class="col-md-6 mb-3">
@@ -200,7 +200,7 @@
             <div class="error-msg"
               *ngIf="extendreasonForm.get('contractenddate')?.touched && extendreasonForm.get('contractenddate')?.errors">
               <ng-container *ngIf="extendreasonForm.get('contractenddate')?.errors?.['required']">
-                Contract End Date is required
+                Contract End date is required
               </ng-container>
               <ng-container *ngIf="extendreasonForm.get('contractenddate')?.errors?.['invalidRange']">
                 Contract End Date must be greater than or equal to Contract Start Date
@@ -275,7 +275,7 @@
               id="Contract Start Date" />
             <div class="error-msg"
               *ngIf="extendreasonForm.get('contractstartdate')?.invalid && extendreasonForm.get('contractstartdate')?.touched">
-              Contract Start Date is required</div>
+              Contract Start date is required</div>
           </div>
           <!-- //EndDate -->
           <div class="col-md-6 mb-3">
@@ -284,7 +284,7 @@
               id="Contract End Date" />
             <div class="error-msg"
               *ngIf="extendreasonForm.get('contractenddate')?.invalid && extendreasonForm.get('contractenddate')?.touched">
-              Contract End Date is required</div>
+              Contract End date is required</div>
           </div>
           <!-- //ExtendedDate -->
           <!-- <div class="col-md-6 mb-3">

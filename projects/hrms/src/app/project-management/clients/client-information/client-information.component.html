@@ -29,7 +29,7 @@
                         placeholder="Please enter client name">
                     <div *ngIf="clientForm.get('clientName')?.touched && clientForm.get('clientName')?.invalid" class="error-msg">
                         <div *ngIf="clientForm.get('clientName')?.errors?.['required']">
-                            {{ 'Client Name is required' | translate }}
+                            {{ 'Client name is required' | translate }}
                         </div>
                     </div>
                     <div *ngIf="clientForm.get('clientName')?.errors?.['maxCharacters'] || 
@@ -61,7 +61,7 @@
                     <input type="text"  (keydown)="formValidation.restrictInitialSpace($event)"  class="form-control custom-input" formControlName="website" [maxlength]="50"
                         placeholder="Please enter website URL">
                     <div class="error-msg" *ngIf="clientForm.get('website')?.touched && clientForm.get('website')?.hasError('required')">
-                        {{ 'Website URL is required' | translate }}
+                        {{ 'Website url is required' | translate }}
                     </div>
                     <div class="error-msg" *ngIf="clientForm.get('website')?.touched && !clientForm.get('website')?.hasError('required') && 
                     clientForm.get('website')?.hasError('pattern')">Please enter a valid website URL.</div>
@@ -76,7 +76,7 @@
                             placeholder="Please select industry type" class="form-select custom-select"></p-select>
                     </div>
                     <div class="error-msg" *ngIf="clientForm.get('industryType')?.touched && clientForm.get('industryType')?.invalid">
-                        {{ 'Industry Type is required' | translate }}
+                        {{ 'Industry type is required' | translate }}
                     </div>
                 </div>
 
@@ -86,7 +86,7 @@
                     <input type="file" formControlName="logo" accept=".png, .jpg, .jpeg " (change)="onChangeClientAttachment($event)"
                         class="form-control custom-input px-0">
                     <div class="error-msg" *ngIf="clientForm.get('logo')?.touched && clientForm.get('logo')?.invalid">
-                        {{ 'Client Logo is required' | translate }}
+                        {{ 'Client logo is required' | translate }}
                     </div>
                     <div *ngIf="displayClientAttachment" class="custom-file-name text-wrap">
                         {{ displayClientAttachment?.name || displayClientAttachment }}</div>
@@ -105,7 +105,7 @@
                     <textarea type="text"  class="form-control custom-input" formControlName="clientAddress"
                         placeholder="Please enter client address" (keydown)="formValidation.restrictInitialSpace($event)" rows="3" [maxlength]="500"></textarea> 
                     <div class="error-msg" *ngIf="clientForm.get('clientAddress')?.touched && clientForm.get('clientAddress')?.invalid">
-                        {{ 'Client Address is required' | translate }}</div>
+                        {{ 'Client address is required' | translate }}</div>
                     <div *ngIf="clientForm.get('clientAddress')?.errors?.['maxCharacters'] || 
                     clientForm.get('clientAddress')?.errors?.['minCharacters']" class="error-msg">
                         {{ 'Address must be between 5-250 characters' | translate}}</div>

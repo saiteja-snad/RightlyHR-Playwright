@@ -3,22 +3,18 @@
   <div class="card custom-background-card">
     <div class="d-flex justify-content-between align-items-center mb-3">
       <div class="component-sub-header">Basic Info</div>
-      @if(!buttons && ( empyployeedata?.empstatus?.toLowerCase() !== 'inactive' &&
-      empyployeedata?.empstatus?.toLowerCase() !=='trainee inactive' )){
-
+      @if(!buttons && ( empyployeedata?.empstatus?.toLowerCase() !== 'inactive' && empyployeedata?.empstatus?.toLowerCase() !=='trainee inactive' )){
       @if(canAccessfield('update','basicinfo')){
       <div>
-        <a (click)="showButtons()">
-          <app-edit-icon />
-        </a>
+        <a (click)="showButtons()"><app-edit-icon /></a>
       </div>
       }
       }
       @if(buttons){
       <div class="d-flex justify-content-end gap-2">
         <button type="reset" class="custom-btn btn-secondary" (click)="showButtons()">Close</button>
-        <button type="submit" class="custom-btn btn-primary"
-          [disabled]="basicInfoForm.invalid ||salutationValidationcheck" (click)="updateBasicInfo()">Save</button>
+        <button type="submit" class="custom-btn btn-primary" [disabled]="basicInfoForm.invalid || 
+        salutationValidationcheck" (click)="updateBasicInfo()">Save</button>
       </div>
       }
     </div>
@@ -26,105 +22,89 @@
     <!--input content-->
     <form autocomplete="off" [formGroup]="basicInfoForm">
       <div class="row">
-        @if((empinfo.empstatus=='Prospective' && empinfo.empType!='onboard')|| empinfo.empstatus =='Trainee
-        Prospective'){
+        @if((empinfo.empstatus=='Prospective' && empinfo.empType!='onboard')|| empinfo.empstatus =='Trainee Prospective'){
         <div class="col-md-6 col-lg-4 mb-3">
           <label for="employeeId" class="form-label custom-label mb-2">ID<span class="text-danger">*</span></label>
           <input type="text" autocomplete="off" class="form-control custom-input" id="employeeId"
-            formControlName="employeeId" placeholder="Please enter employee ID" />
+            formControlName="employeeId" placeholder="Please enter employee Id" />
           <div *ngIf="basicInfoForm.get('employeeId')?.invalid && basicInfoForm.get('employeeId')?.touched"
             class="error-msg">
-            Employee ID is required
+          Employee id is required
           </div>
         </div>}
         @if((empinfo.empstatus != 'Prospective' || (empinfo.empstatus=='Prospective' && empinfo.empType=='onboard')) &&
         empinfo.empstatus != 'Trainee Prospective'){
         <div class="col-md-6 col-lg-4 mb-3">
-          <label for="employeeId" class="form-label custom-label mb-2">Employee ID<span
-              class="text-danger">*</span></label>
+          <label for="employeeId" class="form-label custom-label mb-2">Employee ID<span class="text-danger">*</span></label>
           <input type="text" autocomplete="off" class="form-control custom-input" id="fusionEmpId"
             formControlName="fusionEmpId" placeholder="Please enter employee ID" />
           <div *ngIf="basicInfoForm.get('fusionEmpId')?.invalid && basicInfoForm.get('fusionEmpId')?.touched"
-            class="error-msg">
-            Employee ID is required
-          </div>
+            class="error-msg">Employee ID is required</div>
         </div>
         }
         <div class="col-md-6 col-lg-4 mb-3">
-          <label for="salutation" class="form-label custom-label mb-2">Salutation<span
-              class="text-danger">*</span>@if(isFieldPendingApproval('Salutation')) {
+          <label for="salutation" class="form-label custom-label mb-2">Salutation<span class="text-danger">*</span>
+            @if(isFieldPendingApproval('Salutation')) {
             <app-info-icon [ngbPopover]="pendingPopover" class=" info-pending" triggers="click"
               (click)="setActiveMessage('Salutation')" />
-
-            }</label>
+            }
+          </label>
           <div class="custom-p-select-content">
             <p-select [options]="titledetails" optionLabel="titlename" placeholder="Please select salutation"
-              formControlName="salutation" class="form-select custom-select"
-              (onChange)="onsalutationvalidation()"></p-select>
+              formControlName="salutation" class="form-select custom-select" (onChange)="onsalutationvalidation()"></p-select>
           </div>
-          <div *ngIf="basicInfoForm.get('salutation')?.invalid && basicInfoForm.get('salutation')?.touched"
-            class="error-msg">
-            Salutation is required
-          </div>
-
+          <div *ngIf="basicInfoForm.get('salutation')?.invalid && basicInfoForm.get('salutation')?.touched" class="error-msg">
+            Salutation is required</div>
           <div *ngIf="salutationValidationcheck" class="error-msg">Please select a valid salutation</div>
         </div>
 
         <div class="col-md-6 col-lg-4 mb-3">
-          <label for="firstName" class="form-label custom-label mb-2">First Name<span
-              class="text-danger">*</span>@if(isFieldPendingApproval('First Name')) {
+          <label for="firstName" class="form-label custom-label mb-2">First Name<span class="text-danger">*</span>
+            @if(isFieldPendingApproval('First Name')) {
             <app-info-icon [ngbPopover]="pendingPopover" triggers="click" popoverClass="my-info-popover"
               (click)="setActiveMessage('First Name')" class=" info-pending" />
-
-            }</label>
-          <input type="text" autocomplete="off" class="form-control custom-input" id="firstName"
-            formControlName="firstName" placeholder="Please enter first name"
-            (keypress)="formValidation.restrictInput($event)" />
-          <div *ngIf="basicInfoForm.get('firstName')?.invalid && basicInfoForm.get('firstName')?.touched"
-            class="error-msg">
-            First Name is required
-          </div>
+            }
+          </label>
+          <input type="text" autocomplete="off" class="form-control custom-input" id="firstName" formControlName="firstName"
+            placeholder="Please enter first name" (keypress)="formValidation.restrictInput($event)" />
+          <div *ngIf="basicInfoForm.get('firstName')?.invalid && basicInfoForm.get('firstName')?.touched" class="error-msg">
+            First Name is required</div>
         </div>
 
         <div class="col-md-6 col-lg-4 mb-3">
-          <label for="middleName" class="form-label custom-label mb-2">Middle Name@if(isFieldPendingApproval('Middle Name')) {
-             <app-info-icon class="info-pending" [ngbPopover]="pendingPopover" triggers="click"
-              popoverClass="pending-popover" (click)="setActiveMessage('Middle Name')" />
-
-
-            }</label>
-          <input type="text" autocomplete="off" class="form-control custom-input" id="middleName"
-            formControlName="middleName" placeholder="Please enter middle name"
-            (keypress)="formValidation.restrictInput($event)" />
+          <label for="middleName" class="form-label custom-label mb-2">Middle Name
+            @if(isFieldPendingApproval('Middle Name')) {
+            <app-info-icon class="info-pending" [ngbPopover]="pendingPopover" triggers="click" popoverClass="pending-popover"
+              (click)="setActiveMessage('Middle Name')" />
+            }
+          </label>
+          <input type="text" autocomplete="off" class="form-control custom-input" id="middleName" formControlName="middleName"
+            placeholder="Please enter middle name" (keypress)="formValidation.restrictInput($event)" />
         </div>
 
         <div class="col-md-6 col-lg-4 mb-3">
-          <label for="lastName" class="form-label custom-label mb-2">Last Name<span
-              class="text-danger">*</span>@if(isFieldPendingApproval('Last Name')) {
-                 <app-info-icon class="info-pending" [ngbPopover]="pendingPopover" triggers="click"
-              popoverClass="pending-popover" (click)="setActiveMessage('Last Name')" />
-
-
-            }</label>
-          <input type="text" autocomplete="off" class="form-control custom-input" id="lastName"
-            formControlName="lastName" placeholder="Please enter last name"
-            (keypress)="formValidation.restrictInput($event)" />
-          <div *ngIf="basicInfoForm.get('lastName')?.invalid && basicInfoForm.get('lastName')?.touched"
-            class="error-msg">
-            Last Name is required
-          </div>
+          <label for="lastName" class="form-label custom-label mb-2">Last Name<span class="text-danger">*</span>
+          @if(isFieldPendingApproval('Last Name')) {
+          <app-info-icon class="info-pending" [ngbPopover]="pendingPopover" triggers="click" 
+          popoverClass="pending-popover" (click)="setActiveMessage('Last Name')" />
+          }
+          </label>
+          <input type="text" autocomplete="off" class="form-control custom-input" id="lastName" formControlName="lastName"
+            placeholder="Please enter last name" (keypress)="formValidation.restrictInput($event)" />
+          <div *ngIf="basicInfoForm.get('lastName')?.invalid && basicInfoForm.get('lastName')?.touched" class="error-msg">
+            Last Name is required</div>
         </div>
 
         <div class="col-md-6 col-lg-4 mb-3">
-          <label for="gender" class="form-label custom-label mb-2">Gender<span
-              class="text-danger">*</span>@if(isFieldPendingApproval('Gender')) {
-                 <app-info-icon class="info-pending" [ngbPopover]="pendingPopover" triggers="click"
-              popoverClass="pending-popover" (click)="setActiveMessage('Gender')" />
-            }</label>
+          <label for="gender" class="form-label custom-label mb-2">Gender<span class="text-danger">*</span>
+            @if(isFieldPendingApproval('Gender')) {
+            <app-info-icon class="info-pending" [ngbPopover]="pendingPopover" triggers="click" popoverClass="pending-popover"
+              (click)="setActiveMessage('Gender')" />
+            }
+          </label>
           <div class="custom-p-select-content">
-            <p-select [options]="Gender" optionLabel="genderName" optionValue="genderName"
-              placeholder="Please select gender" (onChange)="onsalutationvalidation()" formControlName="gender"
-              class="form-select custom-select"></p-select>
+            <p-select [options]="Gender" optionLabel="genderName" optionValue="genderName" placeholder="Please select gender"
+              (onChange)="onsalutationvalidation()" formControlName="gender" class="form-select custom-select"></p-select>
           </div>
           <div *ngIf="basicInfoForm.get('gender')?.invalid && basicInfoForm.get('gender')?.touched" class="error-msg">
             Gender is required
@@ -132,70 +112,61 @@
         </div>
 
         <div class="col-md-6 col-lg-4 mb-3">
-          <label for="dob" class="form-label custom-label mb-2">Date Of Birth<span
-              class="text-danger">*</span>@if(isFieldPendingApproval('Date of Birth')) {
-                 <app-info-icon class="info-pending" [ngbPopover]="pendingPopover" triggers="click"
-              popoverClass="pending-popover" (click)="setActiveMessage('Date of Birth')" />
-            }</label>
-          <input type="date" class="form-control custom-input" id="dob" formControlName="dob"
-            onkeypress="return false" />
+          <label for="dob" class="form-label custom-label mb-2">Date Of Birth<span class="text-danger">*</span>
+            @if(isFieldPendingApproval('Date of Birth')) {
+            <app-info-icon class="info-pending" [ngbPopover]="pendingPopover" triggers="click" popoverClass="pending-popover"
+              (click)="setActiveMessage('Date of Birth')" />
+            }
+          </label>
+          <input type="date" class="form-control custom-input" id="dob" formControlName="dob" onkeypress="return false" />
           <div *ngIf="basicInfoForm.get('dob')?.touched" class="error-msg">
-            <div *ngIf="basicInfoForm.get('dob')?.errors?.['required']">Date of Birth is required</div>
-            <div
-              *ngIf="!basicInfoForm.get('dob')?.errors?.['required'] && basicInfoForm.get('dob')?.errors?.['invalidAge']">
-              Age must be between 18 and 75
-            </div>
+            <div *ngIf="basicInfoForm.get('dob')?.errors?.['required']">Date of birth is required</div>
+            <div *ngIf="!basicInfoForm.get('dob')?.errors?.['required'] && basicInfoForm.get('dob')?.errors?.['invalidAge']">
+              Age must be between 18 and 75</div>
           </div>
         </div>
 
         <div class="col-md-6 col-lg-4 mb-3">
           <label for="bloodGroup" class="form-label custom-label mb-2">Blood Group@if(isFieldPendingApproval('Blood Group')) {
-             <app-info-icon class="info-pending" [ngbPopover]="pendingPopover" triggers="click"
-              popoverClass="pending-popover" (click)="setActiveMessage('BloodGroup')" />
-
-
+            <app-info-icon class="info-pending" [ngbPopover]="pendingPopover" triggers="click" popoverClass="pending-popover"
+              (click)="setActiveMessage('BloodGroup')" />
             }
           </label>
           <div class="custom-p-select-content">
             <p-select [options]="bloodGroups" optionLabel="name" placeholder="Please select blood group"
               formControlName="bloodGroup" class="form-select custom-select"></p-select>
           </div>
-          <div *ngIf="basicInfoForm.get('bloodGroup')?.invalid && basicInfoForm.get('bloodGroup')?.touched"
-            class="error-msg">
-            Blood Group is required
-          </div>
+          <div *ngIf="basicInfoForm.get('bloodGroup')?.invalid && basicInfoForm.get('bloodGroup')?.touched" class="error-msg">
+            Blood Group is required</div>
         </div>
 
         <div class="col-md-6 col-lg-4 mb-3">
-          <label for="maritalStatus" class="form-label custom-label mb-2">Marital Status<span
-              class="text-danger">*</span>@if(isFieldPendingApproval('Marital Status')) {
-            <app-info-icon class="info-pending" [ngbPopover]="pendingPopover" triggers="click"
-              popoverClass="pending-popover" (click)="setActiveMessage('Marital Status')" />
-
-            }</label>
+          <label for="maritalStatus" class="form-label custom-label mb-2">Marital Status<span class="text-danger">*</span>
+            @if(isFieldPendingApproval('Marital Status')) {
+            <app-info-icon class="info-pending" [ngbPopover]="pendingPopover" triggers="click" popoverClass="pending-popover"
+              (click)="setActiveMessage('Marital Status')" />
+            }
+          </label>
           <div class="custom-p-select-content">
             <p-select [options]="Maritaldetails" optionLabel="maritalstatus1" (onChange)="changemaritalstatus()"
               placeholder="Please select marital status" formControlName="maritalStatus"
               class="form-select custom-select"></p-select>
           </div>
           <div *ngIf="basicInfoForm.get('maritalStatus')?.invalid && basicInfoForm.get('maritalStatus')?.touched"
-            class="error-msg">
-            Marital Status is required
-          </div>
+            class="error-msg">Marital status is required</div>
         </div>
-        <div class="col-md-6 col-lg-4 mb-3"
-          *ngIf="basicInfoForm.get('maritalStatus')?.value?.maritalstatus1 === 'Married'">
-          <label for="maritalStatus" class="form-label custom-label mb-2">Married date<span
-              class="text-danger">*</span>@if(isFieldPendingApproval('Married Date')) {
-            <app-info-icon class="info-pending" [ngbPopover]="pendingPopover" triggers="click"
-              popoverClass="pending-popover" (click)="setActiveMessage('Married Date')" />
-            }</label>
-          <input type="date" class="form-control custom-input" id="dob" formControlName="marriageDate"
-            [min]="getdateofbirth()" [max]="currentdata | date:'yyyy-MM-dd'" onkeypress="return false" />
+
+        <div class="col-md-6 col-lg-4 mb-3" *ngIf="basicInfoForm.get('maritalStatus')?.value?.maritalstatus1 === 'Married'">
+          <label for="maritalStatus" class="form-label custom-label mb-2">Married date<span class="text-danger">*</span>
+            @if(isFieldPendingApproval('Married Date')) {
+            <app-info-icon class="info-pending" [ngbPopover]="pendingPopover" triggers="click" popoverClass="pending-popover"
+              (click)="setActiveMessage('Married Date')" />
+            }
+          </label>
+          <input type="date" class="form-control custom-input" id="dob" formControlName="marriageDate" [min]="getdateofbirth()"
+            [max]="currentdata | date:'yyyy-MM-dd'" onkeypress="return false" />
           <div *ngIf="basicInfoForm.get('marriageDate')?.invalid && basicInfoForm.get('marriageDate')?.touched"
-            class="error-msg">
-            Married date is required
-          </div>
+            class="error-msg">Married date is required</div>
         </div>
       </div>
     </form>

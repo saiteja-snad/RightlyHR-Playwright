@@ -15,7 +15,7 @@ import { ModuleInformationComponent } from "../../shared/module-information/modu
 import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
 @Component({
   selector: 'app-blood-bank',
-  imports: [CommonModule, FormsModule, TranslateModule, TabsModule, Skeleton, NoDataFoundComponent, NgbPopoverModule, ModuleInformationComponent,ModuleInfoIconComponent],
+  imports: [CommonModule, FormsModule, TranslateModule, TabsModule, Skeleton, NoDataFoundComponent, NgbPopoverModule, ModuleInformationComponent, ModuleInfoIconComponent],
   templateUrl: './blood-bank.component.html',
   styleUrl: './blood-bank.component.scss',
   encapsulation: ViewEncapsulation.None,

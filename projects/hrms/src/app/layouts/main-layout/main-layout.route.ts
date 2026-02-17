@@ -31,11 +31,9 @@ import { EmployeeDashboardComponent } from "../../employee-dashboard/employee-da
 
 
 export default [
-    { path: '', redirectTo: '/admin', pathMatch: 'full' },
-    { path: 'admin', component: AdminLayoutComponent, canActivate: [authGuard], loadChildren: () => import('../../admin/admin.route') },
-    { path: 'employee-dashboard', component: EmployeeDashboardComponent, canActivate: [authGuard], },
-    { path: 'dashboard', component: PersonalinfoLayoutComponent, canActivate: [authGuard], loadChildren: () => import('../../personal-info/personal-info-routes') },
-    { path: 'personalinfo', component: PersonalinfoLayoutComponent, canActivate: [authGuard], loadChildren: () => import('../../personal-info/personal-info-routes') },
+    { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
+    { path: 'dashboard', component: AdminLayoutComponent, canActivate: [authGuard], loadChildren: () => import('../../admin/admin.route') },
+      { path: 'personalinfo', component: PersonalinfoLayoutComponent, canActivate: [authGuard], loadChildren: () => import('../../personal-info/personal-info-routes') },
     { path: 'myinfo', component: PersonalinfoLayoutComponent, canActivate: [authGuard], loadChildren: () => import('../../personal-info/personal-info-routes') },
     { path: 'time-off', component: TimeOffLayoutComponent, canActivate: [authGuard], loadChildren: () => import('../../time-off/time-off.route') },
     { path: 'events', component: EventsLayoutComponent, canActivate: [authGuard], loadChildren: () => import('../../events/events.route') },

@@ -2,7 +2,7 @@
   <div class="component-overlay-placeholder-content" *ngIf="isAttendanceDataTrue">
     <div>
       <app-attendance-placeholder />
-      <p class="context">Attendance data is currently unavailable as biometric device is not integrated</p>
+      <p class="context">Attendance data is currently unavailable due to pending biometric integration. Please contact the administrator for assistance.</p>
     </div>
   </div>
 
@@ -229,7 +229,7 @@
             <input type="hidden" formControlName="permissionDate" />
             <div *ngIf="regularizationForm.get('permissionDate')?.touched && regularizationForm.get('permissionDate')?.invalid"
               class="error-msg">
-              Permission Date is required
+              Permission date is required
             </div>
           </div>
 

@@ -6,7 +6,6 @@
     <!-- FILTERS ROW (NEW) -->
     <div class="d-flex align-items-center gap-3 flex-wrap">
       <!-- Reset Filters -->
-
       <div *ngIf="rbac.allowedToAccess('Team Time Sheet Filters Tab.view')">
         <button type="button" class="custom-btn btn-secondary position-relative" (click)="toggleFilters(filterContent)">
           <i class="bi bi-funnel me-2"></i>Filters
@@ -21,14 +20,10 @@
     <div class="d-flex align-items-center gap-2 flex-wrap">
       <p-chip *ngFor="let filter of getSelectedFilters() | slice:0:3" [label]="filter.label" [removable]="true"
         (onRemove)="removeFilter(filter)" />
-
       <!-- +X More chip -->
       <p-chip *ngIf="getSelectedFilters().length > 3" class="more-chip" [removable]="false"
         label="+{{ getSelectedFilters().length - 3 }} More" (click)="toggleFilters(filterContent)" />
-
-      <button type="button" class="clear-all-btn" (click)="clearAllFilters()">
-        {{ 'Clear All' | translate }}
-      </button>
+      <button type="button" class="clear-all-btn" (click)="clearAllFilters()">{{ 'Clear All' | translate }}</button>
     </div>
   </div>
 
@@ -37,25 +32,22 @@
       <app-projects-side-tabs />
     </div>
 
-    <div class="main-content"
-      [ngClass]="{'project-main-active-content': isActive('/project-management/projects/active')}">
+    <div class="main-content" [ngClass]="{'project-main-active-content': isActive('/project-management/projects/active')}">
       <div *ngIf="isActive('/project-management/clients')" class="mb-3">
         <app-projects-side-tabs-for-clients />
       </div>
-
       <!-- <div class="main-content"
             [ngClass]="{'project-main-active-content': isActive('/project-management/projects/active')}">
             <div *ngIf="isActive('/project-management/clients')" class="mb-3">
                 <app-projects-side-tabs-for-clients />
             </div> -->
-
       <!--Input search-->
       <div class="input-group custom-search mb-3">
         <span class="input-group-text custom-input-group-search" id="basic-addon1">
           <i class="bi bi-search"></i>
         </span>
         <input type="search" #search="ngModel" [(ngModel)]="searchValue" (ngModelChange)="onSearchChange()" class="form-control custom-search-input"
-          placeholder="Search by client name / project name / project type" aria-label="Search"
+          placeholder="Search by project name / project type / project code / department" aria-label="Search"
           aria-describedby="basic-addon1">
       </div>
 

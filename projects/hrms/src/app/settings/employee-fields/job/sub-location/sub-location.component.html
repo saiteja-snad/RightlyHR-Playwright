@@ -111,7 +111,7 @@
                     <div *ngIf="AddForm.get('AddLocation')?.touched && AddForm.get('AddLocation')?.invalid"
                         class="error-msg">
                         <div *ngIf="AddForm.get('AddLocation')?.errors?.['required']">
-                            {{ 'Sub Location is required' | translate }}
+                            {{ 'Sub location is required' | translate }}
                         </div>
                     </div>
                     <div *ngIf="AddForm.get('AddLocation')?.errors?.['maxCharacters']" class="error-msg">
@@ -204,7 +204,7 @@
                     <div *ngIf="updateForm.get('UpdateSubLocation')?.touched && updateForm.get('UpdateSubLocation')?.invalid"
                         class="error-msg">
                         <div *ngIf="updateForm.get('UpdateSubLocation')?.errors?.['required']">
-                            {{ 'Sub Location is required' | translate }}
+                            {{ 'Sub location is required' | translate }}
                         </div>
                     </div>
                     <div *ngIf="updateForm.get('UpdateSubLocation')?.errors?.['maxCharacters']" class="error-msg">

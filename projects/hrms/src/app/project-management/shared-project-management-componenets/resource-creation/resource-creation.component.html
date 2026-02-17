@@ -21,7 +21,7 @@
                     </div>
                     <div class="error-msg"
                         *ngIf="addResourceForm.get('projectName')?.touched && addResourceForm.get('projectName')?.invalid">
-                        Project Name is required
+                        Project name is required
                     </div>
                 </div>
 
@@ -33,7 +33,7 @@
                         placeholder="Project type" readonly />
                     <!-- <div class="error-msg"
                         *ngIf="addResourceForm.get('projectType')?.touched && addResourceForm.get('projectType')?.invalid">
-                        Project Type is required
+                        Project type is required
                     </div> -->
                 </div>
                 <!--Phase/Milestone Name-->
@@ -50,7 +50,7 @@
                     <div class="error-msg">
                         <div
                             *ngIf=" addResourceForm.get('resourcePhase')?.touched && addResourceForm.get('resourcePhase')?.errors?.['required'] ">
-                            Phase / Milestone Name is required
+                            Phase / milestone name is required
                         </div>
                     </div>
                 </div>
@@ -65,7 +65,7 @@
                         </p-select>
                     </div>
                     <div class="error-msg" *ngIf="addResourceForm.get('resourceName')?.touched && 
-                    addResourceForm.get('resourceName')?.invalid">Resource Name is required</div>
+                    addResourceForm.get('resourceName')?.invalid">Resource name is required</div>
                 </div>
                 <!-- Designation -->
                 <div class="col-md-6 mb-3">
@@ -123,7 +123,7 @@
                         (change)="oncheckdates(addResourceForm.get('startDate')?.value)"
                         class="form-control custom-input" />
                     <div class="error-msg" *ngIf="addResourceForm.get('startDate')?.touched && 
-                    addResourceForm.get('startDate')?.invalid">Start Date is required</div>
+                    addResourceForm.get('startDate')?.invalid">Start date is required</div>
                     <div class="error-msg" *ngIf="addResourceForm.hasError('endBeforeStart')">Start Date cannot be after
                         End Date</div>
                 </div>
@@ -137,7 +137,7 @@
                         [max]="projectEndDate ? (projectEndDate | date:'yyyy-MM-dd') : null " onkeypress="return false"
                         class="form-control custom-input" />
                     <div class="error-msg" *ngIf="addResourceForm.get('endDate')?.touched && 
-                    addResourceForm.get('endDate')?.invalid">End Date is required</div>
+                    addResourceForm.get('endDate')?.invalid">End date is required</div>
                 </div>
                 <!-- Authority Name -->
                 <div class="col-md-6 mb-3">
@@ -176,7 +176,7 @@
                         class="form-control custom-input " [maxlength]="5"
                         (keypress)="formValidation.restrictAlphabets($event)" placeholder="Please enter hours" />
                     <div class="error-msg" *ngIf="addResourceForm.get('resourceAllocationhrs')?.touched && 
-                    addResourceForm.get('resourceAllocationhrs')?.invalid">Allocation Hours is required</div>
+                    addResourceForm.get('resourceAllocationhrs')?.invalid">Allocation hours is required</div>
                 </div>
 
                 <!--Color Picker-->
@@ -194,7 +194,7 @@
 
 
                 <!-- <div class="error-msg" *ngIf="addResourceForm.get('resourceAllocationhrs')?.touched && addResourceForm.get('resourceAllocationhrs')?.invalid">
-                        <div *ngIf="addResourceForm.get('resourceAllocationhrs')?.errors?.['required']">Allocation Hours is required</div>
+                        <div *ngIf="addResourceForm.get('resourceAllocationhrs')?.errors?.['required']">Allocation hours is required</div>
                         <div *ngIf="addResourceForm.get('resourceAllocationhrs')?.errors?.['maxHoursWeek']">Maximum 168 hours allowed per week</div>
                         <div *ngIf="addResourceForm.get('resourceAllocationhrs')?.errors?.['maxHoursMonth']">Maximum 744 hours allowed per month</div>
                         <div *ngIf="addResourceForm.get('resourceAllocationhrs')?.errors?.['maxHoursProject']">Maximum 99999 hours allowed per project</div>

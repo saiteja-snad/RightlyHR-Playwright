@@ -709,7 +709,7 @@ onassetcategoryfilter() {
       this.http.postdata('AssetMaster', payload).pipe(takeUntil(this.destroy$)).subscribe({
         next: (res) => {
           this.modalService.dismissAll();
-          this.conformationPopup.openSuccessModal('Asset Registered successfully ');
+          this.conformationPopup.openSuccessModal('Asset registered successfully ');
           this.getassetsdata(this.page, this.pageSize, null, null,null,null,null,null, this.Status);
           this.getcount(null, null,null,null,null,null);
           this.assetForm.reset();

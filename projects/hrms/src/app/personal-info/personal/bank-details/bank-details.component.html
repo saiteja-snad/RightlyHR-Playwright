@@ -111,7 +111,7 @@
                         </div>
                         <div class="error-msg"
                             *ngIf="bankDetailsForm.get('bankName')?.invalid && bankDetailsForm.get('bankName')?.touched">
-                            Bank Name is required
+                            Bank Name is required / Please limit your input to 100 characters
                         </div>
                     </div>
 
@@ -164,7 +164,7 @@
                             (keypress)="formValidation.restrictInputAllowsAlphaNumericAndHyphen($event)">
                         <div class="error-msg"
                             *ngIf="bankDetailsForm.get('ifscCode')?.invalid && bankDetailsForm.get('ifscCode')?.touched">
-                            <div *ngIf="bankDetailsForm.get('ifscCode')?.errors?.['required']">IFSC Code is required
+                            <div *ngIf="bankDetailsForm.get('ifscCode')?.errors?.['required']">IFSC code is required
                             </div>
                             <div *ngIf="bankDetailsForm.get('ifscCode')?.errors?.['pattern']">Enter a valid IFSC Code
                             </div>
@@ -256,7 +256,7 @@
                         </div>
                         <div class="error-msg"
                             *ngIf="bankDetailsUpdateForm.get('bankNameupdate')?.invalid && bankDetailsUpdateForm.get('bankNameupdate')?.touched">
-                            Bank Name is required
+                            Bank Name is required / Please limit your input to 100 characters
                         </div>
                     </div>
 

@@ -8,5 +8,7 @@
 }
 
 .custom-component-right-content {
+    position: relative;
+    width: calc(100% - 8.5rem) !important;
     height: calc(100vh - 8rem);
 }

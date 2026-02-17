@@ -87,7 +87,7 @@
                             placeholder="Please select sub location(s)" />
                     </div>
                     <div class="error-msg" *ngIf="reviewCycleForm.get('subLocationId')?.touched && reviewCycleForm.get('subLocationId')?.hasError('required')">
-                        Sub Location is required</div>
+                        Sub location is required</div>
                 </div>
 
                 <div class="col-md-6 mb-3">
@@ -98,7 +98,7 @@
                         autocomplete="off">
                     <div *ngIf="reviewCycleForm.get('startDate')?.touched && reviewCycleForm.get('startDate')?.hasError('required')"
                         class="error-msg">
-                        Review Cycle Start Date is required
+                        Review Cycle Start date is required
                     </div>
                 </div>
 
@@ -109,7 +109,7 @@
                         [disabled]="!reviewCycleForm.get('startDate')?.valid" placeholder="Please select date"
                         aria-label="default input example" onkeypress="return false;" autocomplete="off">
                     <div *ngIf="reviewCycleForm.get('endDate')?.touched && reviewCycleForm.get('endDate')?.hasError('required')"
-                        class="error-msg">Review Cycle End Date is required
+                        class="error-msg">Review Cycle End date is required
                     </div>
                     <div *ngIf="reviewCycleForm.errors?.['endDateInvalid']" class="error-msg">
                         Review Cycle End date should be greater than the review cycle start date

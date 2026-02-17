@@ -134,7 +134,7 @@
                             </p-select>
                             <div class="error-msg"
                                 *ngIf="attendanceLockForm.get('categoryType')?.invalid && attendanceLockForm.get('categoryType')?.touched">
-                                Category Type is required
+                                Category type is required
                             </div>
                         </div>
                     </div>
@@ -147,7 +147,7 @@
                             (change)="onFromDateChange(attendanceLockForm)" />
                         <div class="error-msg"
                             *ngIf="attendanceLockForm.get('fromDate')?.invalid && attendanceLockForm.get('fromDate')?.touched">
-                            From Date is required
+                            From date is required
                         </div>
                     </div>
 
@@ -159,7 +159,7 @@
                             [min]="fromDateString" (change)="onToDateChange(attendanceLockForm)" />
                         <div class="error-msg"
                             *ngIf="attendanceLockForm.get('toDate')?.invalid && attendanceLockForm.get('toDate')?.touched">
-                            To Date is required
+                            To date is required
                         </div>
                         <div class="error-msg" *ngIf="toDateInvalid">
                             To Date cannot be less than From Date
@@ -174,7 +174,7 @@
                             [min]="getEffectiveDateMin()" (change)="onEffectiveDateChange(attendanceLockForm)" />
                         <!-- <div class="error-msg"
                             *ngIf="attendanceLockForm.get('effectiveDate')?.invalid && attendanceLockForm.get('effectiveDate')?.touched">
-                            Effective Date is required
+                            Effective date is required
                         </div>
                         <div class="error-msg" *ngIf="attendanceLockForm.get('effectiveDate')?.value &&
                                    toDateString &&
@@ -183,7 +183,7 @@
                         </div> -->
                         <div class="error-msg" *ngIf="attendanceLockForm.get('effectiveDate')?.hasError('required') &&
                                    attendanceLockForm.get('effectiveDate')?.touched">
-                            Effective Date is required
+                            Effective date is required
                         </div>
 
                         <!-- Greater than To Date Validation -->
@@ -242,7 +242,7 @@
                             </p-select>
                             <div class="error-msg"
                                 *ngIf="updateAttendanceLockForm.get('categoryType')?.invalid && updateAttendanceLockForm.get('categoryType')?.touched">
-                                Category Type is required
+                                Category type is required
                             </div>
                         </div>
                     </div>
@@ -255,7 +255,7 @@
                             (change)="onFromDateChange(updateAttendanceLockForm)" [disabled]="isPublished" />
                         <div class="error-msg"
                             *ngIf="updateAttendanceLockForm.get('fromDate')?.invalid && updateAttendanceLockForm.get('fromDate')?.touched">
-                            From Date is required
+                            From date is required
                         </div>
                     </div>
 
@@ -269,7 +269,7 @@
                         <!-- Required Validation -->
                         <div class="error-msg" *ngIf="updateAttendanceLockForm.get('toDate')?.hasError('required') &&
                                 updateAttendanceLockForm.get('toDate')?.touched">
-                            To Date is required
+                            To date is required
                         </div>
 
                         <!-- To Date cannot be less than From Date -->
@@ -287,7 +287,7 @@
                             [disabled]="!isPublished" />
                         <div class="error-msg"
                             *ngIf="updateAttendanceLockForm.get('effectiveDate')?.hasError('required') && updateAttendanceLockForm.get('effectiveDate')?.touched">
-                            Effective Date is required
+                            Effective date is required
                         </div>
                         <!-- Effective Date cannot be greater than Effective Date -->
                         <div class="error-msg" *ngIf="effectiveDateInvalid">

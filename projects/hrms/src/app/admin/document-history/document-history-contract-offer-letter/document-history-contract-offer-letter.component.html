@@ -11,12 +11,11 @@
         <div class="custom-year-month-picker">
             <p-datepicker [(ngModel)]="selectedDate" placeholder="Select Month & Year"
                 (ngModelChange)="onMonthChange($event)" [showIcon]="true" view="month" dateFormat="mm/yy"
-                [readonlyInput]="true" [maxDate]="maxMonth">
-            </p-datepicker>
+                [readonlyInput]="true" [maxDate]="maxMonth" />
         </div>
     </div>
 
-    <div class="custom-table-content">
+    <div class="custom-table-content documnet-history-table-height">
         @if(!isloading){
         <!--search input-->
         <table class="w-100">
@@ -48,7 +47,7 @@
                     <td>{{offerLetter.jobRole?offerLetter.jobRole:'-'}}</td>
                     <td>{{offerLetter.status?offerLetter.status:'-'}} </td>
                     <td>{{offerLetter.empSubstatus?offerLetter.empSubstatus:'-'}} </td>
-                    @if(rbac.allowedToAccess('Offer Letter Download.view') || rbac.allowedToAccess('Offer Letter Release Offer.view') 
+                    @if(rbac.allowedToAccess('Offer Letter Download.view') || rbac.allowedToAccess('Offer Letter Release Offer.view')
                     || rbac.allowedToAccess('Offer Letter Approve.view') || rbac.allowedToAccess('Offer Letter Reject.view')){
                     <td class="text-center">
                         <div class="dropdown">
@@ -86,7 +85,6 @@
                                 }
                             </ul>
                         </div>
-
                     </td>
                     }
                 </tr>
@@ -114,33 +112,28 @@
                 <p class="popup-heading mb-0">Reject Reason</p>
             </div>
             <div>
-                <a (click)="rejectDocument.reset();modal.dismiss()"><img src="icons/close.png" alt="Close Icon"
-                        class="close-icon"></a>
+                <a (click)="rejectDocument.reset();modal.dismiss()">
+                    <img src="icons/close.png" alt="Close Icon" class="close-icon">
+                </a>
             </div>
         </div>
         <div class="custom-main-popup-content">
             <form autocomplete="off" [formGroup]="rejectDocument" (ngSubmit)="PostReasonandUpdateOfferDetails()">
                 <div class="mb-3">
                     <label for="rejectReason">Reject Reason<span class="error-msg">*</span></label>
-                    <textarea type="text" name="rejectReason" class="form-control"
-                        placeholder="Please provide reason for rejection" rows="3" maxlength="250"
-                        formControlName="comments"></textarea>
+                    <textarea type="text" name="rejectReason" class="form-control" placeholder="Please provide reason for rejection"
+                        rows="3" maxlength="250" formControlName="comments"></textarea>
                     <div class="mt-2 textarea-count-text">
                         <span class="color">{{ rejectDocument.get('comments')?.value?.length || 0 }} / 250</span>
                     </div>
-                    <div *ngIf="rejectDocument.get('comments')?.invalid && rejectDocument.get('comments')?.touched"
-                        class="error-msg">
-                        {{'Reject Reason is required'| translate}}
-                    </div>
+                    <div *ngIf="rejectDocument.get('comments')?.invalid && rejectDocument.get('comments')?.touched" class="error-msg">
+                        {{'Reject Reason is required'| translate}}</div>
                     <div class="error-msg" *ngIf="rejectDocument.get('comments')?.hasError('leadingSpace')">
-                        Please enter valid input
-                    </div>
+                        Please enter valid input</div>
                 </div>
                 <div class="custom-modal-footer">
-                    <button type="button" class="custom-btn btn-secondary"
-                        (click)="rejectDocument.reset();modal.dismiss()">{{'Close'|translate}}</button>
-                    <button type="submit" class="custom-btn btn-primary"
-                        [disabled]="rejectDocument.invalid">{{'Submit'|translate}}</button>
+                    <button type="button" class="custom-btn btn-secondary" (click)="rejectDocument.reset();modal.dismiss()">{{'Close'|translate}}</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="rejectDocument.invalid">{{'Submit'|translate}}</button>
                 </div>
             </form>
         </div>

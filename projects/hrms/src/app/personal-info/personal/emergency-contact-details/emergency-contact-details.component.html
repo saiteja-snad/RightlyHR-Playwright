@@ -19,37 +19,33 @@
           (click)="saveForm()">Save</button>
       </div>
     </div>
-    <div class="d-flex justify-content-between align-items-center mb-3">
-      <div>
-        <span class="component-sub-header">Primary Contact</span>
-      </div>
-    </div>
+
+    <div class="component-sub-header mb-3">Primary Contact</div>
+
     <!-- Reactive Form -->
     <form autocomplete="off" [formGroup]="emergencyContactForm">
       <div class="row">
         <div class="col-md-6 col-lg-4 mb-3">
-          <label for="contact1Name" class="form-label custom-label mb-2">Name<span
-              class="text-danger">*</span>@if(isFieldPendingApproval('Primary Contact Name')) {
-                <app-info-icon class="info-pending" [ngbPopover]="pendingPopover" triggers="click"
-              popoverClass="pending-popover" (click)="setActiveMessage('Primary Contact Name')" />
-       
-            }</label>
+          <label for="contact1Name" class="form-label custom-label mb-2">Name<span class="text-danger">*</span>
+            @if(isFieldPendingApproval('Primary Contact Name')) {
+            <app-info-icon class="info-pending" [ngbPopover]="pendingPopover" triggers="click" popoverClass="pending-popover"
+              (click)="setActiveMessage('Primary Contact Name')" />
+            }
+          </label>
           <input type="text" class="form-control custom-input" id="contact1Name" formControlName="contact1Name"
             placeholder="Please enter name" (keypress)="formValidation.restrictInput($event)"
             (paste)="formValidation.validatePasteAlphabets($event)">
-          <div class="error-msg"
-            *ngIf="emergencyContactForm.get('contact1Name')?.invalid && emergencyContactForm.get('contact1Name')?.touched">
-            Name is required
-          </div>
+          <div class="error-msg" *ngIf="emergencyContactForm.get('contact1Name')?.invalid && 
+          emergencyContactForm.get('contact1Name')?.touched">Name is required</div>
         </div>
 
         <div class="col-md-6 col-lg-4 mb-3">
-          <label for="contact1Email" class="form-label custom-label mb-2">Email ID@if(isFieldPendingApproval('Primary
-            Contact Email Id')) {
+          <label for="contact1Email" class="form-label custom-label mb-2">Email ID
+            @if(isFieldPendingApproval('Primary Contact Email Id')) {
             <app-info-icon class="info-pending" [ngbPopover]="pendingPopover" triggers="click"
               popoverClass="pending-popover" (click)="setActiveMessage('Primary Contact Email Id')" />
-           
-            }</label>
+            }
+          </label>
           <input type="email" class="form-control custom-input" id="contact1Email" formControlName="contact1Email"
             placeholder="Please enter email">
           <div class="error-msg"
@@ -60,12 +56,12 @@
         </div>
 
         <div class="col-md-6 col-lg-4 mb-3">
-          <label for="contact2Phone" class="form-label custom-label mb-2">Phone Number<span
-              class="text-danger">*</span>@if(isFieldPendingApproval('Primary Contact Phone Number')) {
-                 <app-info-icon class="info-pending" [ngbPopover]="pendingPopover" triggers="click"
+          <label for="contact2Phone" class="form-label custom-label mb-2">Phone Number<span class="text-danger">*</span>
+            @if(isFieldPendingApproval('Primary Contact Phone Number')) {
+            <app-info-icon class="info-pending" [ngbPopover]="pendingPopover" triggers="click"
               popoverClass="pending-popover" (click)="setActiveMessage('Primary Contact Phone Number')" />
-
-            }</label>
+            }
+          </label>
           <div class="d-flex custom-input-group position-relative custom-phone-number-content w-100">
             <div *ngIf="!loading; else loadingTemplate">
               <lib-country-list [selectedCountryConfig]="selectedCountryConfig" class="country-input"
@@ -82,12 +78,10 @@
               (input)="onEmergencyContact1PhoneInput()" (keypress)="formValidation.restrictAlphabets($event)"
               autocomplete="off" required>
           </div>
-          <div class="error-msg my-1"
-            *ngIf="emergencyContactForm.get('contact1Phone')?.invalid &&  (emergencyContactForm.get('contact1Phone')?.touched || emergencyContactForm.get('contact1Phone')?.dirty)">
-            <div *ngIf="emergencyContactForm.get('contact1Phone')?.hasError('required')">Phone number is
-              required</div>
-            <div *ngIf="emergencyContactForm.get('contact1Phone')?.hasError('pattern')">Please enter a valid
-              mobile number</div>
+          <div class="error-msg my-1" *ngIf="emergencyContactForm.get('contact1Phone')?.invalid && 
+          (emergencyContactForm.get('contact1Phone')?.touched || emergencyContactForm.get('contact1Phone')?.dirty)">
+            <div *ngIf="emergencyContactForm.get('contact1Phone')?.hasError('required')">Phone number is required</div>
+            <div *ngIf="emergencyContactForm.get('contact1Phone')?.hasError('pattern')">Please enter a valid mobile number</div>
             <div *ngIf="emergencyContactForm.get('contact1Phone')?.hasError('invalidPhoneNumber')">
               The phone number is not valid for the selected country
             </div>
@@ -95,19 +89,18 @@
         </div>
 
         <div class="col-md-6 col-lg-4 mb-3">
-          <label for="contact1Relationship" class="form-label custom-label mb-2">Relationship<span
-              class="text-danger">*</span>@if(isFieldPendingApproval('Primary Contact Relationship')) {
-                 <app-info-icon class="info-pending" [ngbPopover]="pendingPopover" triggers="click"
+          <label for="contact1Relationship" class="form-label custom-label mb-2">Relationship<span class="text-danger">*</span>
+            @if(isFieldPendingApproval('Primary Contact Relationship')) {
+            <app-info-icon class="info-pending" [ngbPopover]="pendingPopover" triggers="click"
               popoverClass="pending-popover" (click)="setActiveMessage('Primary Contact Relationship')" />
-            }</label>
+            }
+          </label>
           <div class="custom-p-select-content">
             <p-select [options]="familyRelations" optionLabel="relationship1" formControlName="contact1Relationship"
               placeholder="Please select relationship" class="form-select custom-select"></p-select>
           </div>
-          <div class="error-msg"
-            *ngIf="emergencyContactForm.get('contact1Relationship')?.invalid && emergencyContactForm.get('contact1Relationship')?.touched">
-            Relationship is required
-          </div>
+          <div class="error-msg" *ngIf="emergencyContactForm.get('contact1Relationship')?.invalid && 
+          emergencyContactForm.get('contact1Relationship')?.touched">Relationship is required</div>
         </div>
       </div>
     </form>
@@ -124,75 +117,67 @@
     <form autocomplete="off" [formGroup]="emergencyContactForm">
       <div class="row">
         <div class="col-md-6 col-lg-4 mb-3">
-          <label for="contact2Name" class="form-label custom-label mb-2">Name<span
-              class="text-danger">*</span>@if(isFieldPendingApproval('Secondary Contact Name')) {
-                 <app-info-icon class="info-pending" [ngbPopover]="pendingPopover" triggers="click"
+          <label for="contact2Name" class="form-label custom-label mb-2">Name<span class="text-danger">*</span>
+            @if(isFieldPendingApproval('Secondary Contact Name')) {
+            <app-info-icon class="info-pending" [ngbPopover]="pendingPopover" triggers="click"
               popoverClass="pending-popover" (click)="setActiveMessage('Secondary Contact Name')" />
-            }</label>
+            }
+          </label>
           <input type="text" class="form-control custom-input" id="contact2Name" formControlName="contact2Name"
             placeholder="Please enter name" (keypress)="formValidation.restrictInput($event)"
             (paste)="formValidation.validatePasteAlphabets($event)">
-          <div class="error-msg"
-            *ngIf="emergencyContactForm.get('contact2Name')?.invalid && emergencyContactForm.get('contact2Name')?.touched">
-            Name is required
-          </div>
+          <div class="error-msg" *ngIf="emergencyContactForm.get('contact2Name')?.invalid && emergencyContactForm.get('contact2Name')?.touched">
+            Name is required</div>
         </div>
 
         <div class="col-md-6 col-lg-4 mb-3">
-          <label for="contact2Email" class="form-label custom-label mb-2">Email ID@if(isFieldPendingApproval('Secondary
-            Contact Email Id')) {
-             <app-info-icon class="info-pending" [ngbPopover]="pendingPopover" triggers="click"
-              popoverClass="pending-popover" (click)="setActiveMessage('Secondary Contact Email Id')" />
-            }</label>
+          <label for="contact2Email" class="form-label custom-label mb-2">Email ID
+            @if(isFieldPendingApproval('Secondary Contact Email Id')) {
+            <app-info-icon class="info-pending" [ngbPopover]="pendingPopover" triggers="click" popoverClass="pending-popover"
+              (click)="setActiveMessage('Secondary Contact Email Id')" />
+            }
+          </label>
           <input type="email" class="form-control custom-input" id="contact2Email" formControlName="contact2Email"
             placeholder="Please enter email">
-          <div class="error-msg"
-            *ngIf="emergencyContactForm.get('contact2Email')?.invalid && emergencyContactForm.get('contact2Email')?.touched">
+          <div class="error-msg" *ngIf="emergencyContactForm.get('contact2Email')?.invalid && emergencyContactForm.get('contact2Email')?.touched">
             <span *ngIf="emergencyContactForm.get('contact2Email')?.errors?.['required']">Email is required</span>
             <span *ngIf="emergencyContactForm.get('contact2Email')?.errors?.['email']">Invalid email format</span>
           </div>
         </div>
 
         <div class="col-md-6 col-lg-4 mb-3">
-          <label for="contact2Phone" class="form-label custom-label mb-2">Phone Number <span
-              class="text-danger">*</span>@if(isFieldPendingApproval('Secondary Contact Phone Number')) {
-                 <app-info-icon class="info-pending" [ngbPopover]="pendingPopover" triggers="click"
-              popoverClass="pending-popover" (click)="setActiveMessage('Secondary Contact Phone Number')" />
-
-            }</label>
+          <label for="contact2Phone" class="form-label custom-label mb-2">Phone Number<span class="text-danger">*</span>
+            @if(isFieldPendingApproval('Secondary Contact Phone Number')) {
+            <app-info-icon class="info-pending" [ngbPopover]="pendingPopover" triggers="click" popoverClass="pending-popover"
+              (click)="setActiveMessage('Secondary Contact Phone Number')" />
+            }
+          </label>
           <div class="d-flex custom-input-group position-relative custom-phone-number-content w-100">
             <div *ngIf="!loading; else loadingTemplate">
-              <lib-country-list [selectedCountryConfig]="selectedCountryConfig"
-                [selectedCountryCode]="selectedemergency1coutrycode()" [countryListConfig]="countryListConfig"
-                class="country-input"
-                [ngClass]="{'disabled-country': isSecondaryCountryDisabled,'disabled-country-code': !buttons}"
-                (onCountryChange)="onCountryChange1($event)">
-              </lib-country-list>
+              <lib-country-list [selectedCountryConfig]="selectedCountryConfig" [selectedCountryCode]="selectedemergency1coutrycode()" 
+              [countryListConfig]="countryListConfig" class="country-input" [ngClass]="{'disabled-country': isSecondaryCountryDisabled,
+              'disabled-country-code': !buttons}" (onCountryChange)="onCountryChange1($event)"></lib-country-list>
             </div>
             <ng-template #loadingTemplate>
               <p>Loading...</p>
             </ng-template>
             <input type="text" class="form-control custom-input" formControlName="contact2Phone"
               (input)="onEmergencyContact2PhoneInput()" (keypress)="formValidation.restrictAlphabets($event)"
-              placeholder="Please enter phone number" id="phonenumbers" aria-describedby="phonenumbers"
-              autocomplete="off" required>
+              placeholder="Please enter phone number" id="phonenumbers" aria-describedby="phonenumbers" autocomplete="off"
+              required>
           </div>
           <div class="error-msg my-1"
             *ngIf="emergencyContactForm.get('contact2Phone')?.invalid &&  (emergencyContactForm.get('contact2Phone')?.touched || emergencyContactForm.get('contact2Phone')?.dirty)">
-            <div *ngIf="emergencyContactForm.get('contact2Phone')?.hasError('required')">Phone number is
-              required</div>
-            <div *ngIf="emergencyContactForm.get('contact2Phone')?.hasError('pattern')">Please enter a valid
-              mobile number</div>
-            <div *ngIf="emergencyContactForm.get('contact2Phone')?.hasError('invalidPhoneNumber')">
-              The phone number is not valid for the selected country
-            </div>
+            <div *ngIf="emergencyContactForm.get('contact2Phone')?.hasError('required')">Phone number is required</div>
+            <div *ngIf="emergencyContactForm.get('contact2Phone')?.hasError('pattern')">Please enter a valid mobile number</div>
+            <div *ngIf="emergencyContactForm.get('contact2Phone')?.hasError('invalidPhoneNumber')">The phone number is not valid for the selected country</div>
           </div>
         </div>
 
         <div class="col-md-6 col-lg-4 mb-3">
           <label for="contact2Relationship" class="form-label custom-label mb-2">Relationship<span
               class="text-danger">*</span>@if(isFieldPendingApproval('Secondary Contact Relationship')) {
-                 <app-info-icon class="info-pending" [ngbPopover]="pendingPopover" triggers="click"
+            <app-info-icon class="info-pending" [ngbPopover]="pendingPopover" triggers="click"
               popoverClass="pending-popover" (click)="setActiveMessage('Secondary Contact Relationship')" />
             }</label>
           <div class="custom-p-select-content">
@@ -246,8 +231,6 @@
   </div>
   }
 </div>
-
-
 
 <div class="employee-label-info">
   <ng-template #pendingPopover>

@@ -107,7 +107,7 @@
                         </div>
                         <div class="error-msg"
                             *ngIf="identityForm.get('identityType')?.invalid && identityForm.get('identityType')?.touched">
-                            Identity Type is required
+                            Identity type is required
                         </div>
                     </div>
                     <div class="col-md-6 mb-3">
@@ -120,7 +120,7 @@
                         <div class="error-msg"
                             *ngIf="identityForm.get('identityNumber')?.invalid && (identityForm.get('identityNumber')?.touched   || identityForm.get('identityNumber')?.dirty)">
                             <div *ngIf="identityForm.get('identityNumber')?.errors?.['required']">
-                                Identity Number is required
+                                Identity number is required
                             </div>
                             <div *ngIf="identityForm.get('identityNumber')?.errors?.['minlength']">
                                 Invalid Identity Number
@@ -212,7 +212,7 @@
                         </div>
                         <div class="error-msg"
                             *ngIf="identityupdateForm.get('identityupdateType')?.invalid && identityupdateForm.get('identityupdateType')?.touched">
-                            Identity Type is required
+                            Identity type is required
                         </div>
                     </div>
 
@@ -226,7 +226,7 @@
                         <div class="error-msg"
                             *ngIf="identityupdateForm.get('identityupdateNumber')?.invalid && identityupdateForm.get('identityupdateNumber')?.touched">
                             <div *ngIf="identityupdateForm.get('identityupdateNumber')?.errors?.['required']">
-                                Identity Number is required
+                                Identity number is required
                             </div>
                             <div *ngIf="identityupdateForm.get('identityupdateNumber')?.errors?.['minlength']">
                                 Invalid Identity Number

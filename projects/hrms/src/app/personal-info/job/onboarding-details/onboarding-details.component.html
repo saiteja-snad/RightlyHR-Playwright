@@ -173,9 +173,29 @@
                 <div class="col-md-6 col-lg-4 mb-3">
                     <label for="totalExperience" class="form-label custom-label mb-2">Total Previous Years Experience</label>
                     <input type="text" class="form-control custom-input" id="totalExperience"
-                        formControlName="totalExperience" placeholder="Please enter total experience">
+                        formControlName="totalExperience" placeholder="Please enter total previous experience">
                     <div class="error-msg"
                         *ngIf="onboardingForm.get('totalExperience')?.invalid && onboardingForm.get('totalExperience')?.touched">
+                        Total Previous Years Experience is required
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-4 mb-3">
+                    <label for="currentYearsOfExperience" class="form-label custom-label mb-2">Total Current Years of Experience</label>
+                    <input type="text" class="form-control custom-input" id="currentYearsOfExperience"
+                        formControlName="currentYearsOfExperience" placeholder="Please enter current years of experience">
+                    <div class="error-msg"
+                        *ngIf="onboardingForm.get('currentYearsOfExperience')?.invalid && onboardingForm.get('currentYearsOfExperience')?.touched">
+                        Total Current Years of Experience is required
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-4 mb-3">
+                    <label for="totalYearsOfExperience" class="form-label custom-label mb-2">Total Experience</label>
+                    <input type="text" class="form-control custom-input" id="totalYearsOfExperience"
+                        formControlName="totalYearsOfExperience" placeholder="Please enter total experience">
+                    <div class="error-msg"
+                        *ngIf="onboardingForm.get('totalYearsOfExperience')?.invalid && onboardingForm.get('totalYearsOfExperience')?.touched">
                         Total Experience is required
                     </div>
                 </div>

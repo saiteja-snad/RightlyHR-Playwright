@@ -254,15 +254,15 @@
   <div class="result-popup-content" ngbAutofocus>
     <div>
       <img src="/icons/reject.png" alt="failure icon" class="confirmation-icon mb-4">
-      <p class="confirmation-text mb-4"> Are you sure you want to cancel?</p>
+      <p class="confirmation-text mb-4"> {{'Are you sure you want to cancel?'| translate }}</p>
     </div>
 
     <div class="d-flex justify-content-center gap-3 mt-4">
       <button type="button" class="custom-btn btn-secondary" (click)="model.dismiss()">
-        No
+        {{'No' | translate }}
       </button>
       <button type="submit" class="custom-btn btn-primary" (click)="cancle();model.dismiss()">
-        Yes
+      {{'Yes' | translate}}
       </button>
     </div>
   </div>

@@ -1,17 +1,17 @@
 <div class="custom-main-component-container w-100">
   <div class="component-header-content pt-2">
     <div class="heading-content">
-      <div class="commpoment-name navigator" (click)="navigate()">Leave Category
+      <div class="commpoment-name navigator" (click)="navigate()">{{'Leave Category' | translate}}
         <i class="bi bi-chevron-double-right ms-1"></i>
       </div>
-      <div class="component-header">Update Leave Category</div>
+      <div class="component-header">{{'Update Leave Category' | translate}}</div>
     </div>
   </div>
 
   <form autocomplete="off" [formGroup]="leavePolicyForm" (ngSubmit)="onSubmit()">
     <div class="custom-setting-right-content fields-data-container">
       <div class="row">
-        <div class="component-sub-header mb-3">Location/Shift</div>
+        <div class="component-sub-header mb-3">{{'Location/Shift' | translate}}</div>
         <!-- Year -->
         <div class="col-md-3 mb-3">
           <label class="form-label custom-label mb-2" for="subLocation">Year<span class="text-danger">*</span></label>
@@ -72,11 +72,11 @@
           </div>
         </div>
 
-        <div class="component-sub-header mb-3">Leave Category Information</div>
+        <div class="component-sub-header mb-3">{{'Leave Category Information' | translate }}</div>
 
         <!-- Leave Type  -->
         <div class="col-md-3 mb-3">
-          <label class="form-label custom-label mb-2" for="LeaveCategory">Leave Category Type<span
+          <label class="form-label custom-label mb-2" for="LeaveCategory">{{'Leave Category Type' | translate}}<span
               class="text-danger">*</span></label>
           <div class="custom-p-select-content">
             <p-select [options]="leaveCategoryType" optionLabel="label" optionValue="value"
@@ -91,7 +91,7 @@
 
         <!-- Leave Type -->
         <div class="col-md-3 mb-3">
-          <label class="form-label custom-label mb-2" for="LeaveType">Leave Type<span class="text-danger">*</span></label>
+          <label class="form-label custom-label mb-2" for="LeaveType">{{'Leave Type' | translate}}<span class="text-danger">*</span></label>
           <div class="custom-p-select-content">
             <p-select [options]="leaveTypes" optionLabel="name" optionValue="id" placeholder="Select Leave Type"
               formControlName="leaveType" class="custom-select w-100">
@@ -105,7 +105,7 @@
 
         <!-- Name -->
         <div class="col-md-3 mb-3">
-          <label class="form-label custom-label mb-2" for="email">Leave Category Name<span
+          <label class="form-label custom-label mb-2" for="email">{{'Leave Category Name' | translate}}<span
               class="text-danger">*</span></label>
           <input type="text" formControlName="name" class="form-control custom-input" id="name" autocomplete="off"
             placeholder="Please enter name" required>
@@ -117,7 +117,7 @@
 
         <!-- Code -->
         <div class="col-md-3 mb-3">
-          <label class="form-label custom-label mb-2" for="email">Leave Category Code<span
+          <label class="form-label custom-label mb-2" for="email">{{'Leave Category Code' | translate}}<span
               class="text-danger">*</span></label>
           <input type="text" formControlName="categoryCode" class="form-control custom-input" id="code"
             autocomplete="off" placeholder="Please enter code" required>
@@ -129,7 +129,7 @@
 
         <!-- Valid Dates -->
         <div class="col-md-3 mb-3">
-          <label class="form-label custom-label mb-2" for="email">Valid Days <span class="text-danger">*</span></label>
+          <label class="form-label custom-label mb-2" for="email">{{'Valid Days' | translate}} <span class="text-danger">*</span></label>
           <input type="number" formControlName="validity" class="form-control custom-input" id="validdates"
             autocomplete="off" placeholder="Please enter valid days" required>
              <div class="error-msg" *ngIf="leavePolicyForm.get('validity')?.invalid && (leavePolicyForm.get('validity')?.touched  )">
@@ -144,7 +144,7 @@
 
         <!-- Color -->
         <div class="col-md-3 mb-3">
-          <label class="form-label custom-label mb-2" for="email">Leave Category Color<span
+          <label class="form-label custom-label mb-2" for="email">{{'Leave Category Color' | translate }}<span
               class="text-danger">*</span></label>
           <input type="color" formControlName="categoryColor" class="form-control custom-input mt-2" id="color"
             placeholder="Please enter color" required>
@@ -156,7 +156,7 @@
 
         <!-- Is Dependent -->
         <div class="col-md-3 mb-3">
-          <label class="form-label custom-label mb-2" for="LeaveCategory">Is Dependent </label>
+          <label class="form-label custom-label mb-2" for="LeaveCategory">{{'Is Dependent' | translate}} </label>
           <div class="custom-p-select-content">
             <p-select [options]="publishedCategories" optionLabel="name" optionValue="id" placeholder="Select option"
               formControlName="parentId" class="custom-select w-100">
@@ -164,11 +164,11 @@
           </div>
         </div>
 
-        <div class="component-sub-header mb-3">Additional Information</div>
+        <div class="component-sub-header mb-3">{{'Additional Information' | translate}}</div>
 
         <!-- Gender  -->
         <div class="col-md-3 mb-3">
-          <label class="form-label custom-label mb-2" for="gender ">Allowed Gender <span
+          <label class="form-label custom-label mb-2" for="gender ">{{'Allowed Gender' | translate}} <span
               class="text-danger">*</span></label>
           <div class="custom-p-select-content">
             <p-select [options]="genderDetails" optionLabel="label" optionValue="value" placeholder="Select gender"
@@ -183,7 +183,7 @@
 
         <!-- Marital status -->
         <div class="col-md-3 mb-3">
-          <label class="form-label custom-label mb-2" for="MaritalStatus">Allowed Marital Status<span
+          <label class="form-label custom-label mb-2" for="MaritalStatus">{{'Allowed Marital Status' | translate}}<span
               class="text-danger">*</span></label>
           <div class="custom-p-select-content">
             <p-select [options]="marriedDetails" optionLabel="label" optionValue="value"
@@ -198,7 +198,7 @@
 
         <!--Exclude Weekends  -->
         <div class="col-md-3 mb-3">
-          <label class="form-label custom-label mb-2" for="designation">Exclude Weekends<span
+          <label class="form-label custom-label mb-2" for="designation">{{'Exclude Weekends' | translate}}<span
               class="text-danger">*</span></label>
           <div class="custom-p-select-content">
             <p-select [options]="global" optionLabel="label" optionValue="value" placeholder="Select option"
@@ -213,7 +213,7 @@
 
         <!-- Exclude Holidays  -->
         <div class="col-md-3 mb-3">
-          <label class="form-label custom-label mb-2" for="ExcludeHolidays">Exclude Holidays<span
+          <label class="form-label custom-label mb-2" for="ExcludeHolidays">{{'Exclude Holidays' | translate}}<span
               class="text-danger">*</span></label>
           <div class="custom-p-select-content">
             <p-select [options]="global" optionLabel="label" optionValue="value" placeholder="Select option"
@@ -228,7 +228,7 @@
 
         <!-- optional holidays -->
         <div class="col-md-3 mb-3">
-          <label class="form-label custom-label mb-2" for="optionalHolidays">Is Optional Holiday<span
+          <label class="form-label custom-label mb-2" for="optionalHolidays">{{'Is Optional Holiday' | translate}}<span
               class="text-danger">*</span></label>
           <div class="custom-p-select-content">
             <p-select [options]="global" optionLabel="label" optionValue="value" placeholder="Select option"
@@ -243,7 +243,7 @@
 
         <!--Half days allowed  -->
         <div class="col-md-3 mb-3">
-          <label class="form-label custom-label mb-2" for="designation">Half Day Leave Allowed<span
+          <label class="form-label custom-label mb-2" for="designation">{{'Half Day Leave Allowed' | translate}}<span
               class="text-danger">*</span></label>
           <div class="custom-p-select-content">
             <p-select [options]="global" optionLabel="label" optionValue="value" placeholder="Select option"
@@ -257,7 +257,7 @@
         </div>
 
         <div class="col-md-3 mb-3">
-          <label class="form-label custom-label mb-2" for="prorata">Pro Rata Leave Allocation<span
+          <label class="form-label custom-label mb-2" for="prorata">{{'Pro Rata Leave Allocation' | translate}}<span
               class="text-danger">*</span></label>
           <div class="custom-p-select-content">
             <p-select [options]="global" optionLabel="label" optionValue="value" placeholder="Select option"
@@ -273,10 +273,10 @@
          <!-- Advanced Leave Settings Section -->
     
       <div class="row">
-        <div class="component-sub-header mb-3">Advance Notice</div>
+        <div class="component-sub-header mb-3">{{'Advance Notice' | translate}}</div>
         <!-- Minimum Advance Apply Days -->
         <div class="col-md-3 mb-3">
-          <label class="form-label custom-label mb-2" for="minimumAdvanceApplyDays">Minimum Advance Apply Days</label>
+          <label class="form-label custom-label mb-2" for="minimumAdvanceApplyDays">{{'Minimum Advance Apply Days' | translate}}</label>
           <input type="number" formControlName="minimumAdvanceApplyDays" class="form-control custom-input"
             id="minimumAdvanceApplyDays" placeholder="Enter days" autocomplete="off"  (input)="onNumberInput($event, 'minimumAdvanceApplyDays')">
           <div class="error-msg"
@@ -293,7 +293,7 @@
       </div>
       
       <div class="row">
-        <div class="component-sub-header mb-3">Maximum Leave Duration</div>
+        <div class="component-sub-header mb-3">{{'Maximum Leave Duration' | translate}}</div>
         <!-- Max Leave Duration Calendar Days -->
         <div class="col-md-3 mb-3">
           <label class="form-label custom-label mb-2" for="maxLeaveDurationCalendarDays">Max Leave Duration (Calendar Days)</label>
@@ -313,7 +313,7 @@
 
         <!-- Include Weekends -->
         <div class="col-md-3 mb-3">
-          <label class="form-label custom-label mb-2" for="includeWeekends">Include Weekends</label>
+          <label class="form-label custom-label mb-2" for="includeWeekends">{{'Include Weekends' | translate}}</label>
           <div class="custom-p-select-content">
             <p-select [options]="global" optionLabel="label" optionValue="value" placeholder="Select option"
               formControlName="includeWeekends" class="custom-select w-100"
@@ -327,7 +327,7 @@
 
         <!-- Include Holidays -->
         <div class="col-md-3 mb-3">
-          <label class="form-label custom-label mb-2" for="includeHolidays">Include Holidays</label>
+          <label class="form-label custom-label mb-2" for="includeHolidays">{{'Include Holidays' | translate}}</label>
           <div class="custom-p-select-content">
             <p-select [options]="global" optionLabel="label" optionValue="value" placeholder="Select option"
               formControlName="includeHolidays" class="custom-select w-100"
@@ -341,10 +341,10 @@
       </div>
 
       <div class="row">
-        <div class="component-sub-header mb-3">Leave Combination</div>
+        <div class="component-sub-header mb-3">{{'Leave Combination' | translate}}</div>
         <!-- Allow Leave Combination -->
         <div class="col-md-3 mb-3">
-          <label class="form-label custom-label mb-2" for="allowLeaveCombination">Allow Leave Combination</label>
+          <label class="form-label custom-label mb-2" for="allowLeaveCombination">{{'Allow Leave Combination' | translate   }}</label>
           <div class="custom-p-select-content">
             <p-select [options]="global" optionLabel="label" optionValue="value" placeholder="Select option"
               formControlName="allowLeaveCombination" class="custom-select w-100">

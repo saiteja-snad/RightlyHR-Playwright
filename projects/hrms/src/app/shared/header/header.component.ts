@@ -9,18 +9,19 @@ import { AccessNavigationService } from '../../services/access-navigation.servic
 import { OpenModalService } from '../../services/open-modal.service';
 import { AuthService } from '../../services/auth.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Skeleton } from 'primeng/skeleton';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CalenderIconComponent } from "../../icons/calender-icon/calender-icon.component";
 import { ItSupportIconComponent } from "../../icons/it-support-icon/it-support-icon.component";
 import { GearIconComponent } from "../../icons/gear-icon/gear-icon.component";
 import { ProfileIconComponent } from "../../icons/profile-icon/profile-icon.component";
 import { PredefinedThemesService } from '../../services/theme-service/predefined-themes.service';
+import { Select } from 'primeng/select';
 @Component({
   selector: 'app-header',
-  imports: [CommonModule, RouterModule, TranslateModule, Skeleton, ReactiveFormsModule, CalenderIconComponent,
-    ItSupportIconComponent, GearIconComponent, ProfileIconComponent],
+  imports: [CommonModule, RouterModule,Select, TranslateModule, Skeleton, ReactiveFormsModule, CalenderIconComponent,
+    ItSupportIconComponent, GearIconComponent, ProfileIconComponent,FormsModule],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss',
 })
@@ -37,14 +38,19 @@ export class HeaderComponent implements OnInit, OnDestroy {
   isloading: boolean = false;
   currentUser: any;
   @ViewChild('logoutpopup') logoutpopup: any;
+  language = [
+    { label: 'English', value: 'english' },
+    { label: 'Hindi', value: 'hin' },
 
+  ]
+  selectedLang = localStorage.getItem('lang') || 'english'
   constructor(
     public readonly router: Router,
     private http: HttpService,
     private sanitizer: DomSanitizer,
     public rbac: RbacService,
     private authService: AuthService,
-    private modalservie: NgbModal,
+    private modalservie: NgbModal, private translate: TranslateService,
     private conformationPopup: OpenModalService,
     private accessNav: AccessNavigationService,
     private fb: FormBuilder,
@@ -62,6 +68,16 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.http.profliepicadd$.subscribe(() => {
       this.getEmployeeId();
     });
+  }
+
+    changeLanguage(lang: string) {
+    this.selectedLang = lang;
+    this.translate.use(lang);
+    localStorage.setItem('lang', lang);
+  }
+  get selectedLangLabel(): string {
+    const lang = this.language.find(l => l.value === this.selectedLang);
+    return lang ? lang.label : this.selectedLang;
   }
 
   goToAccessibleRoute(actualRoute: string) {

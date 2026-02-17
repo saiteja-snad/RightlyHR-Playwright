@@ -85,8 +85,8 @@ export const SETTINGS_TIMEOFF_load_entitlement_TABS = [
 ]
 export const SETTINGS_ASSEST_CONFIGURATION_TABS = [
   { route: '/settings/assets-configuration/vendor-detiles', permission: 'Vendor Details.view' },
-  { route: '/settings/assets-configuration/asset-catagory', permission: 'Asset Category.view' },
-  { route: '/settings/assets-configuration/asset-subcatagory', permission: 'Asset Sub Category.view' }
+  { route: '/settings/assets-configuration/asset-catagory', permission: 'Asset Catagory.view' },
+  { route: '/settings/assets-configuration/asset-subcatagory', permission: 'Asset Sub Catagory.view' }
 ];
 
 // Attendance Locking

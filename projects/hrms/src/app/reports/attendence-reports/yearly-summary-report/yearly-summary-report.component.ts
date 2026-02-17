@@ -97,64 +97,58 @@ export class YearlySummaryReportComponent implements OnInit,OnDestroy {
     );
   }
 
+  isAnyFilterApplied(): boolean {
+    const form = this.yearlyReportForm;
+    return !!(
+      form.get('employee')?.value ||
+      form.get('manager')?.value ||
+      form.get('leaveCategory')?.value ||
+      form.get('year')?.value
+    );
+  }
+
  
 
- getEmployeeId() {
-  const loggedInUser = this.authService.getToken();
-  this.subscription = this.http.getData('Employeedata/ActiveEmployees').subscribe({
-    next: (data: any) => {
-      const employeedata = data
-        .map((employee: any) => {
-          const firstName = employee.firstName ? employee.firstName.trim() : '';
-          const middleName = employee.middleName ? employee.middleName.trim() : '';
-          const lastName = employee.lastName ? employee.lastName.trim() : '';
+  getEmployeeId() {
+    const loggedInUser = this.authService.getToken();
+    this.subscription = this.http
 
-          return {
-            ...employee,
-            firstName, // trimmed for sorting
-            lastName,  //  trimmed for fallback
-            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${firstName} ${middleName ? middleName + ' ' : ''}${lastName}`.trim(),
-          };
-        })
-        .sort((a: any, b: any) => 
-          a.firstName.toLowerCase().localeCompare(b.firstName.toLowerCase()) // Alphabetical by first name
-        );
+      .getData('Employeedata/ActiveEmployees')
+      .subscribe({
+        next: (data: any) => {
+          const employeedata = data.map((employee: any) => {
+            return {
+              ...employee,
+              fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
+                }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
+                }${employee.lastName}`,
+            };
+          });
 
-      this.employeeiddetails = [
-        { fullName: 'All Employees', employeeId: 'all' },
-        ...employeedata
-      ];
-    },
-    error: (reason: any) => console.log(reason),
-  });
-}
-
+          this.employeeiddetails = [
+            { fullName: 'All Employees', employeeId: 'all' },
+            ...employeedata
+          ];
+        },
+        error: (reason: any) => {
+          console.log(reason);
+        },
+      });
+  }
 
   getTeam() {
-  const statuses = 'Active';
-  this.subscription = this.http.getData(`PendingApprovalsAuthority/getAll?statuses=${encodeURIComponent(statuses)}`).subscribe({
-    next: (data: any) => {
-      this.teamdetails = data
-        .map((employee: any) => {
-          const firstName = employee.firstName ? employee.firstName.trim() : '';
-          const middleName = employee.middleName ? employee.middleName.trim() : '';
-          const lastName = employee.lastName ? employee.lastName.trim() : '';
-
+    this.subscription = this.http.getData('PendingApprovalsAuthority/getAll').subscribe({
+      next: (data: any) => {
+        this.teamdetails = data.map((employee: any) => {
           return {
             ...employee,
-            firstName, //  trimmed for sorting
-            lastName,  //  trimmed if needed
-            fullName: `${employee.fusionEmployeeId ? employee.fusionEmployeeId + ' - ' : ''}${firstName} ${middleName ? middleName + ' ' : ''}${lastName}`.trim(),
+            fullName: `${employee.fusionEmployeeId ? employee.fusionEmployeeId + ' - ' : ''}${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
           };
-        })
-        .sort((a: any, b: any) => 
-          a.firstName.toLowerCase().localeCompare(b.firstName.toLowerCase()) //  alphabetical sort
-        );
-    },
-    error: (reason: any) => console.log(reason),
-  });
-}
-
+        });
+      },
+      error: (reason: any) => console.log(reason),
+    });
+  }
 
   getYearlyReports() {
     this.subscription = this.reportsService.getYearlyReports({}).subscribe({
@@ -226,11 +220,9 @@ export class YearlySummaryReportComponent implements OnInit,OnDestroy {
         // Extract the year from startDate and add it to each record
         this.filteredYearlyRecord = data.map((record: any) => {
           const startDate = new Date(record.startDate);  // Assuming startDate is in a valid format
-          const yearFromStartDate = startDate.getFullYear();
           return {
             ...record,
-            // year: startDate.getFullYear()  // Add the year as a new field
-            year : record.year || yearFromStartDate
+            year: startDate.getFullYear()  // Add the year as a new field
           };
         });
 
@@ -274,7 +266,7 @@ export class YearlySummaryReportComponent implements OnInit,OnDestroy {
       entitlementYear: 'YEAR',
       entitled: 'ENTITLED',
       availed: 'AVAILED',
-      balance: 'BALANCE'
+      balanced: 'BALANCE'
     };
 
     // Define new sequence

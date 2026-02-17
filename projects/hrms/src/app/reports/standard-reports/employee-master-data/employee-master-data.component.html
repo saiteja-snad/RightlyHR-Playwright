@@ -6,7 +6,7 @@
     <form autocomplete="off" [formGroup]="masterDataForm" (ngSubmit)="onSubmit(masterDataForm)">
       <!-- DOJ -->
       <div class="d-flex align-items-center gap-3">
-        <div *ngIf="masterDataForm.get('dateOfJoining')?.value">
+        <div *ngIf="showClearAllButton()">
           <button type="button" class="clear-all-btn" (click)="clearAllFilters()" > Clear All</button>
         </div>
 
@@ -22,10 +22,11 @@
         <!-- Employee Status -->
         <div class="d-flex align-items-center gap-2">
           <label class="custom-label filter-labels text-nowrap m-0">Employee Status</label>
-          <div class="custom-p-select-content">
-            <p-select [options]="employeeStatusOptions" formControlName="empStatus" optionLabel="label"
-              optionValue="label" placeholder="Please select employee status" class="custom-select w-100">
-            </p-select>
+          <div class="custom-p-multiSelect-content">
+            <p-multiselect [options]="employeeStatusOptions" formControlName="empStatus" 
+              optionLabel="label" optionValue="value" placeholder="Select employee status" 
+              class="custom-select w-100" [showClear]="true">
+            </p-multiselect>
           </div>
         </div>
         }
@@ -118,7 +119,7 @@
           <th>UAN Number</th>
           <th>Bank Name</th>
           <th>Account Number</th>
-          <th>Account Holder Name</th>
+          <th>Account Holder's Name</th>
           <th>IFSC Code</th>
           <th>Offer Sent Date</th>
           <th>Offer Sent By</th>
@@ -223,8 +224,8 @@
           <td>{{ emp.pf || '-' }}</td>
           <td>{{ emp.uan || '-' }}</td>
           <td>{{ emp.bankName || '-' }}</td>
-          <td>{{ emp.accountName || '-' }}</td>
           <td>{{ emp.accountNo || '-' }}</td>
+          <td>{{ emp.accountName || '-' }}</td>
           <td>{{ emp.ifscCode || '-' }}</td>
           <td>{{ emp.offerSentDate ? (emp.offerSentDate | dateformat) : '-' }}</td>
           <td>{{ emp.offersentby || '-' }}</td>

@@ -5,8 +5,8 @@
         <!--right data-->
         <form autocomplete="off" [formGroup]="reportForm" (ngSubmit)="onSubmit(reportForm)">
             <div class="d-flex align-items-center gap-3">
-                   <div *ngIf="reportForm.get('dateOfJoining')?.value">
-          <button type="button" class="clear-all-btn" (click)="clearAllFilters()" > Clear All</button>
+                   <div *ngIf="showClearAllButton()">
+          <button type="button" class="clear-all-btn" (click)="clearAllFilters()"> Clear All</button>
         </div>
                 @if(rbac.allowedToAccess('Branch Location Wise Data - Generate.view')){
                 <div class="d-flex gap-2 align-items-center">
@@ -28,6 +28,17 @@
                             <ng-template let-selectedOption pTemplate="selectedItem">{{ selectedOption.branchLocation1
                                 }}/{{selectedOption.branchCode}}</ng-template>
                         </p-select>
+                    </div>
+                </div>
+                
+                <!-- Employee Status -->
+                <div class="d-flex gap-2 align-items-center">
+                    <label class="filter-labels text-nowrap m-0">Employee Status</label>
+                    <div class="custom-p-multiSelect-content">
+                        <p-multiselect [options]="employeeStatusOptions" formControlName="empStatus" 
+                            optionLabel="label" optionValue="value" placeholder="Select employee status" 
+                            class="form-select custom-select" [showClear]="true">
+                        </p-multiselect>
                     </div>
                 </div>
                 }

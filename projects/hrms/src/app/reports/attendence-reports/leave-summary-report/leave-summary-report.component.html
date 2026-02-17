@@ -1,76 +1,64 @@
 <div class="custom-main-component-container">
-  <div class="component-header-content">
+  <div class="component-header-content gap-3">
     <!-- Header -->
-    <app-reports-header/>
+    <app-reports-header />
 
     <form autocomplete="off" [formGroup]="lvSummeryReportForm" (ngSubmit)="leavesummeryReport()">
-      <div class="d-flex align-items-center gap-3">
+      <div class="d-flex align-items-center gap-3 flex-wrap">
         @if(rbac.allowedToAccess('Leave Summary Report - Generate.view')){
-        <button type="reset" class="clear-all-btn" *ngIf="
-            lvSummeryReportForm.get('employee')?.value ||
-            lvSummeryReportForm.get('manager')?.value ||
-            lvSummeryReportForm.get('leaveCategory')?.value ||
-            lvSummeryReportForm.get('team')?.value" (click)="clearAllFilters()">
-          Clear All
+        <button type="reset" class="clear-all-btn" *ngIf="isAnyFilterApplied()" (click)="clearAllFilters()">
+         {{'Clear All' | translate}}
         </button>
 
         <!-- Employee -->
         @if(rbac.allowedToAccess('Attendance All Employees List(Leave Summary).view')){
-        <div class="d-flex align-items-center gap-2">
-          <div class="custom-p-select-content">
-            <p-select class="form-select custom-select" [options]="employeeiddetails" optionLabel="fullName" filterBy="fullName"
-              [filter]="true" formControlName="employee" placeholder="Please select employee"
-              filterPlaceholder="Search employee">
-              <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
-              <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
-            </p-select>
-          </div>
+        <div class="custom-p-select-content">
+          <p-select class="form-select custom-select" [options]="employeeiddetails" optionLabel="fullName"
+            filterBy="fullName" [filter]="true" formControlName="employee" placeholder="Please select employee"
+            filterPlaceholder="Search employee">
+            <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
+            <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
+          </p-select>
         </div>
         }
 
         <!-- Team Manager -->
         @if(rbac.allowedToAccess('Attendance Team Manager List(Leave Summary).view')){
-        <div class="d-flex align-items-center gap-2">
-          <div class="custom-p-select-content">
-            <p-select [options]="teamdetails" optionLabel="fullName" filterBy="fullName" [filter]="true"
-              formControlName="manager" placeholder="Please select manager" class="form-select custom-select"
-              filterPlaceholder="Search manager">
-              <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
-              <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
-            </p-select>
-          </div>
+        <div class="custom-p-select-content">
+          <p-select [options]="teamdetails" optionLabel="fullName" filterBy="fullName" [filter]="true"
+            formControlName="manager" placeholder="Please select manager" class="form-select custom-select"
+            filterPlaceholder="Search manager">
+            <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
+            <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
+          </p-select>
         </div>
-      }
+        }
+
         <!-- My Team-->
-        @if(rbac.allowedToAccess('My Team Report(Leave Summary).view') 
+        @if(rbac.allowedToAccess('My Team Report(Leave Summary).view')
         &&!rbac.allowedToAccess('Attendance All Employees List(Leave Summary).view')
         && !rbac.allowedToAccess('Attendance Team Manager List(Leave Summary).view')){
-        <div class="d-flex align-items-center gap-2">
-          <div class="custom-p-select-content">
-            <p-select [options]="getEmployeeInfo" [filter]="true" optionLabel="fullName" filterBy="fullName"
-              formControlName="team" placeholder="Please select employee" class="form-select custom-select"
-              filterPlaceholder="Search employee" (onChange)="onClick($event)">
-              <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
-              <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
-            </p-select>
-          </div>
+        <div class="custom-p-select-content">
+          <p-select [options]="getEmployeeInfo" [filter]="true" optionLabel="fullName" filterBy="fullName"
+            formControlName="team" placeholder="Please select employee" class="form-select custom-select"
+            filterPlaceholder="Search employee" (onChange)="onClick($event)">
+            <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
+            <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
+          </p-select>
         </div>
         }
 
         <!-- Leave Category -->
-        <div class="d-flex align-items-center gap-2">
-          <div class="d-flex align-items-center gap-2">
-            <div class="custom-p-select-content">
-              <p-select [options]="uniqueLeaveCategory" optionLabel="label" filterBy="label"
-                formControlName="leaveCategory" placeholder="Please select leave category"
-                class="form-select custom-select" [filter]="true" filterPlaceholder="Search leave type">
-                <ng-template #selectedItem let-selectedOption>{{ selectedOption.label }}</ng-template>
-                <ng-template let-employee #item>{{ employee.label }}</ng-template>
-              </p-select>
-            </div>
-          </div>
+        <div class="custom-p-select-content">
+          <p-select [options]="uniqueLeaveCategory" optionLabel="label" filterBy="label" formControlName="leaveCategory"
+            placeholder="Please select leave category" class="form-select custom-select" [filter]="true"
+            filterPlaceholder="Search leave type">
+            <ng-template #selectedItem let-selectedOption>{{ selectedOption.label }}</ng-template>
+            <ng-template let-employee #item>{{ employee.label }}</ng-template>
+          </p-select>
         </div>
         }
+
         <!-- Buttons -->
         <div class="d-flex gap-2">
           @if(rbac.allowedToAccess('Leave Summary Report - Generate.view')){
@@ -83,8 +71,9 @@
             }
           </button>
           }
+
           @if(rbac.allowedToAccess('Leave Summary Report - Generate.view')
-           && rbac.allowedToAccess('Leave Summary Report - Export.view')){
+          && rbac.allowedToAccess('Leave Summary Report - Export.view')){
           <button type="button" class="custom-btn btn-primary" (click)="exportToExcelYearly()"
             [disabled]="filterlvsumRecord.length === 0 || disableBtn">
             @if(spinnerLoader2){
@@ -104,21 +93,21 @@
     @if(!isLoading){
     <table id="levsumReportTable" class="w-100">
       <thead>
-        <th>Employee ID</th>
-        <th>Employee Name</th>
-        <th>Department</th>
-        <th>Team Manager</th>
-        <th>Location</th>
-        <th>Sub Location</th>
-        <th>Shift</th>
-        <th>Month</th>
-        <th>Leave Type</th>
-        <th>Leaves Availed</th>
+        <th>{{ 'Employee ID' | translate }}</th>
+        <th>{{ 'Employee Name' | translate }}</th>
+        <th>{{ 'Department' | translate }}</th>
+        <th>{{ 'Team Manager' | translate }}</th>
+        <th>{{ 'Location' | translate }}</th>
+        <th>{{ 'Sub Location' | translate }}</th>
+        <th>{{ 'Shift' | translate }}</th>
+        <th>{{ 'Month' | translate }}</th>
+        <th>{{ 'Leave Type' | translate }}</th>
+        <th>{{ 'Leaves Availed' | translate }}</th>
       </thead>
       <tbody>
         @if (!filterlvsumRecord || filterlvsumRecord.length === 0) {
         <tr>
-          <app-no-data-found></app-no-data-found>
+          <app-no-data-found />
         </tr>
         }
         @else {
@@ -131,9 +120,9 @@
           <td>{{ record.location ?? '-' }}</td>
           <td>{{ record.subLocation ?? '-' }}</td>
           <td>{{ record.shift ?? '-' }}</td>
-          <td>{{record.monthName ?? '-' }}</td>
-          <td>{{record.leaveType ?? '-' }}</td>
-          <td>{{record.availed ?? '-'}}</td>
+          <td>{{ record.monthName ?? '-' }}</td>
+          <td>{{ record.leaveType ?? '-' }}</td>
+          <td>{{ record.availed ?? '-' }}</td>
         </tr>
         }
         }

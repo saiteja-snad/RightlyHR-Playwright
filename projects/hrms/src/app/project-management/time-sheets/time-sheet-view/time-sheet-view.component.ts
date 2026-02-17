@@ -8,7 +8,6 @@ import { DatePicker } from 'primeng/datepicker';
 import { AuthService } from '../../../services/auth.service';
 import { HttpService } from '../../../services/http.service';
 import { AccordionModule } from 'primeng/accordion';
-import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { Subject, Subscription, takeUntil } from 'rxjs';
 import { IResourceDetail, TimesheetResponse } from '../../../timesheetmodel';
@@ -22,11 +21,12 @@ import { Router } from '@angular/router';
 import { EncriptdecriptService } from '../../../services/encriptdecript.service';
 import { FormValidationsService } from '../../../services/form-validations.service';
 import { environment } from '../../../../environments/environment';
+import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 @Component({
   selector: 'app-time-sheet-view',
   imports: [ProjectManagementModuleInfoComponent, NgbDatepickerModule, FormsModule, ReactiveFormsModule,
-    NgbPopover, CommonModule, DatePicker, DateformatPipe, AccordionModule, InfoIconComponent, ConfirmationIconComponent,
-    TranslateModule, DataLoaderContentComponent, TimesheetsTabsComponent],
+    NgbPopover, CommonModule, DatePicker, AccordionModule, InfoIconComponent, ConfirmationIconComponent,
+    TranslateModule, DataLoaderContentComponent, TimesheetsTabsComponent, DateformatPipe],
   templateUrl: './time-sheet-view.component.html',
   styleUrl: './time-sheet-view.component.scss',
 })
@@ -371,6 +371,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       isBlocked: [{ value: day?.isBlocked || false, disabled: true }],
       rejectReason: [day?.rejectReason || ''],
       blockReason: [blockReason],
+      resourceId: [{ value: day?.resourceId || null}],
     });
   }
 
@@ -1419,8 +1420,6 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
         this.isModalOpen = false;
       });
       this.dayForm = dayForm; // keep reference
-      console.log(this.dayForm);
-      
       const selectedResource = this.resourcesArrayList.find(
         (res: any) => res.project?.projectId === this.dayForm.get('projectId')?.value &&
           res.client?.clientId === this.dayForm.get('clientId')?.value && res.phase?.phaseId === this.dayForm.get('phaseId')?.value
@@ -1616,11 +1615,12 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       clientId: formValue.clientId || this.selectedclientid || null,
       projectId: formValue.projectId || this.selectedprojectid || null,
       phaseId: formValue.phaseId || this.selectedPhaseId || null,
-      timesheetId: this.timesheetdata?.timesheetId || 0,
+      timesheetId: this.timesheetdata?.timesheetId || null,
       isOverride: formValue.isBlocked || false,
       totalDurationSeconds: this.hhmmToSeconds(formValue.duration) || 0,
       isBillable: formValue.isBillable || false,
       moduleId: 30,
+      resourceId: formValue?.resourceId?.value || null
     };
     // POST request
     this.http.postdata('Timesheet/save-or-update', payload).subscribe({
@@ -1663,11 +1663,6 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
 
   cleardata() {
     this.timesheetForm.reset()
-    this.dayForm.reset();
-    this.selectedclientid = null;
-    this.selectedprojectid = null;
-    this.selectedPhaseId=null;
-    this.selectedProjectResource=null;
     this.modalService.dismissAll();
     this.formattedweakendStart = moment(this.start).format('YYYY-MM-DD');
     this.getTimeSheetEntriesbyEmployeeId(this.employeeId, this.formattedweakendStart);

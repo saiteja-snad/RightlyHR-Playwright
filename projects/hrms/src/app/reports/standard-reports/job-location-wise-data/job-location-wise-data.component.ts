@@ -7,6 +7,7 @@ import {  Subject, takeUntil } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
 import { ILocation, ILocationReportData, ISubLocation } from './location-reports.model';
 import { SelectModule } from 'primeng/select';
+import { MultiSelectModule } from 'primeng/multiselect';
 import { TranslateModule } from '@ngx-translate/core';
 import { ReportsService } from '../../../services/reports/reports.service';
 import { IStandardReportRequest } from '../../../Interfaces/reports.model';
@@ -21,7 +22,7 @@ import { ReportsHeaderComponent } from "../../../shared/reports-tabs/reports-hea
 import { DatePicker } from 'primeng/datepicker';
 @Component({
   selector: 'app-job-location-wise-data',
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, DatePicker, SelectModule, TranslateModule, NoDataFoundComponent, DataLoaderContentComponent, ReportsHeaderComponent],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, DatePicker, SelectModule, MultiSelectModule, TranslateModule, NoDataFoundComponent, DataLoaderContentComponent, ReportsHeaderComponent],
   templateUrl: './job-location-wise-data.component.html',
   styleUrls: ['./job-location-wise-data.component.scss']
 })
@@ -39,6 +40,12 @@ export class JobLocationWiseDataComponent implements OnInit, OnDestroy {
   locationReportList = [] as ILocationReportData[];
   empinfo = {} as IJob;
   destroy$: Subject<boolean> = new Subject<boolean>();
+  employeeStatusOptions = [
+    { label: 'All Employees', value: '' },
+    { label: 'Active', value: 'Active,Trainee Active,Active Contract' },
+    { label: 'Inactive', value: 'Inactive,Trainee Inactive,Active Inactive,Trainee Inactive,Inactive Trainees' },
+    { label: 'Prospective', value: 'Prospective,Prospective Contractors,Prospective Contract Employees,Prospective Trainees,Trainee Prospective' }
+  ];
 
   constructor(
     private reports: ReportsService,
@@ -53,18 +60,34 @@ export class JobLocationWiseDataComponent implements OnInit, OnDestroy {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.initializeForm();
     this.handleFormValueChanges();
-    // this.getStandardReports();
+    this.handleEmployeeStatusChanges();
     this.getAllLocations();
     this.locationReportsForm.valueChanges.subscribe(()=>{
       this.disableBtn= true;
-    })
+    });
+  }
+
+  handleEmployeeStatusChanges(): void {
+    this.locationReportsForm.get('empStatus')?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((selected: string[]) => {
+      if (!selected || selected.length === 0) return;
+      
+      if (selected.length > 1) {
+        const lastSelected = selected[selected.length - 1];
+        if (lastSelected === '') {
+          setTimeout(() => this.locationReportsForm.get('empStatus')?.setValue([''], { emitEvent: false }));
+        } else if (selected.includes('')) {
+          setTimeout(() => this.locationReportsForm.get('empStatus')?.setValue(selected.filter(s => s !== ''), { emitEvent: false }));
+        }
+      }
+    });
   }
 
   initializeForm() {
     this.locationReportsForm = this.fb.group({
       dateOfJoining: [null],
       location: [''],
-      subLocation: ['']
+      subLocation: [''],
+      empStatus: [['']]
     });
   }
 
@@ -190,25 +213,55 @@ export class JobLocationWiseDataComponent implements OnInit, OnDestroy {
       }
     });
   }
+
+  showClearAllButton(): boolean {
+    const form = this.locationReportsForm;
+    const doj = form.get('dateOfJoining')?.value;
+    const location = form.get('location')?.value;
+    const subLocation = form.get('subLocation')?.value;
+    const empStatus = form.get('empStatus')?.value;
+    
+    const hasDoj = !!doj;
+    const hasLocation = location && location.id !== -1 && location !== '';
+    const hasSubLocation = subLocation && subLocation.id !== -1 && subLocation !== '';
+    const hasEmpStatus = empStatus && empStatus.length > 0 && !(empStatus.length === 1 && empStatus[0] === '');
+    
+    return hasDoj || hasLocation || hasSubLocation || hasEmpStatus;
+  }
+
 clearAllFilters(){
-  this.locationReportsForm.get('dateOfJoining')?.setValue(null);
-  this.locationReportsForm.get('empStatus')?.setValue('All Employees');
-  this.onSubmit(this.locationReportsForm);
-}
+    this.locationReportsForm.get('dateOfJoining')?.setValue(null);
+    this.locationReportsForm.get('empStatus')?.setValue(['']);
+    
+    const allLocation = this.locationDetails.find(l => l.id === -1);
+    if (allLocation) {
+      this.locationReportsForm.get('location')?.setValue(allLocation);
+    }
+
+    const allSubLocationOption: ISubLocation = {
+      id: -1,
+      jobLocationId: -1,
+      jobSubLocationName: 'All Sub Locations',
+      isDeleted: false,
+      jobLocationName: 'All Locations'
+    };
+    this.subLocationDetails = [allSubLocationOption];
+    this.locationReportsForm.get('subLocation')?.setValue(allSubLocationOption);
+
+    this.onSubmit(this.locationReportsForm);
+  }
   // Function to get the data after click on Generat button
   onSubmit(form: FormGroup) {
     const formData = form.value;
-    if (formData.location.jobLocationName === 'All Locations' && formData.dateOfJoining == null){
-      this.getStandardReports();
-    } else{
-      const isEmptyDate = !formData.dateOfJoining;
-      const isEmptyLocation = !formData.location;
-      const isEmptySubLocation = !formData.subLocation;
-      if (isEmptyDate && isEmptyLocation && isEmptySubLocation) {
-        return;
-      }
-      this.getFilterReports(formData); 
+    const isEmptyDate = !formData.dateOfJoining;
+    const isEmptyLocation = !formData.location;
+    const isEmptySubLocation = !formData.subLocation;
+    const isEmptyStatus = !formData.empStatus || formData.empStatus.length === 0;
+    
+    if (isEmptyDate && isEmptyLocation && isEmptySubLocation && isEmptyStatus) {
+      return;
     }
+    this.getFilterReports(formData);
   }
 
   // Function to get the report data based on filters selection
@@ -218,13 +271,19 @@ clearAllFilters(){
     const dateRangeArray = formData.dateOfJoining || [];
     const startDate: Dayjs | null = dateRangeArray[0] ? dayjs(dateRangeArray[0]) : null;
     const endDate: Dayjs | null = dateRangeArray[1] ? dayjs(dateRangeArray[1]) : startDate ? startDate : null;
+    
+    const employeeStatus = formData.empStatus && formData.empStatus.length > 0 
+      ? formData.empStatus.join(',')
+      : '';
+    
     const request: IStandardReportRequest = {
       dateRange: {
         startDate: startDate,
         endDate: endDate
       },
       selectedJobLocation: formData.location?.jobLocationName === 'All Locations'? '' : formData.location?.jobLocationName,
-      selectedJobSubLocation:  formData.subLocation?.jobSubLocationName === 'All Sub Locations'? '' : formData.subLocation?.jobSubLocationName
+      selectedJobSubLocation:  formData.subLocation?.jobSubLocationName === 'All Sub Locations'? '' : formData.subLocation?.jobSubLocationName,
+      employeeStatus: employeeStatus
     };
     this.reports.getStandardReports(request).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {

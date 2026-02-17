@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { from, Subscription } from 'rxjs';
+import {  from, Subscription } from 'rxjs';
 import { IemployeeDetails } from '../../../Interfaces/letters-model';
 import { AuthService } from '../../../services/auth.service';
 import { HttpService } from '../../../services/http.service';
@@ -17,7 +17,7 @@ import { ILeavesummery } from '../../../Interfaces/reports.model';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { RbacService } from '../../../services/rbac.service';
-import { Router } from '@angular/router';
+import {  Router } from '@angular/router';
 import { ReportsHeaderComponent } from "../../../shared/reports-tabs/reports-header/reports-header.component";
 
 @Component({
@@ -30,13 +30,14 @@ import { ReportsHeaderComponent } from "../../../shared/reports-tabs/reports-hea
     TranslateModule,
     ReactiveFormsModule, NoDataFoundComponent,
     DataLoaderContentComponent,
-    ReportsHeaderComponent
-  ],
+    ReportsHeaderComponent,
+    TranslateModule
+],
   templateUrl: './leave-summary-report.component.html',
   styleUrl: './leave-summary-report.component.scss'
 })
 export class LeaveSummaryReportComponent implements OnInit, OnDestroy {
-  moduleinfo: string = '';
+  moduleinfo : string = '';
   subscription!: Subscription;
   loggedInUser = {} as IemployeeDetails;
   isLoading: boolean = false;
@@ -73,7 +74,6 @@ export class LeaveSummaryReportComponent implements OnInit, OnDestroy {
   };
   localeOptions: any;
 
-
   constructor(
     private authService: AuthService,
     private reportsService: ReportsService,
@@ -84,7 +84,7 @@ export class LeaveSummaryReportComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-    this.localeOptions = {
+      this.localeOptions = {
       applyLabel: 'ok',
       format: this.authService.convertAngularDateFormatToJs(environment.dateformat).toUpperCase(),
       direction: 'ltr',
@@ -109,7 +109,7 @@ export class LeaveSummaryReportComponent implements OnInit, OnDestroy {
       employee: [null],
       manager: [null],
       year: [''],
-      team: [null],
+      team:[null],
       leaveCategory: [null]
     });
 
@@ -124,8 +124,8 @@ export class LeaveSummaryReportComponent implements OnInit, OnDestroy {
       this.filteredleaveRecords = true;
       this.selectLeaveEmployeeIds = [];
       this.selectedEmployeeId = [];
-      if (employeeIds.value.employeeId == this.loggedInUser.employeeId) {
-        this.selectLeaveEmployeeIds = this.getEmployeeInfo.filter((employee: any) => employee.employeeId !== this.loggedInUser.employeeId).map((employee: any) => employee.employeeId);
+      if (employeeIds.value.employeeId== this.loggedInUser.employeeId) {
+        this.selectLeaveEmployeeIds = this.getEmployeeInfo.filter((employee: any) => employee.employeeId !== this.loggedInUser.employeeId).map((employee: any) => employee.employeeId); 
         this.selectedEmployeeId = this.getEmployeeInfo.filter((employee: any) => employee.employeeId !== this.loggedInUser.employeeId).map((employee: any) => employee.employeeId);
       } else {
         this.selectLeaveEmployeeIds.push(employeeIds.value.employeeId);
@@ -136,97 +136,73 @@ export class LeaveSummaryReportComponent implements OnInit, OnDestroy {
 
 
   getMyTeam() {
-  const EmployeeId = this.loggedInUser?.employeeId;
-  this.subscription = this.http.getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`).subscribe({
-    next: (response: any) => {
-      if (response) {
-        const myTeam = response.filter((e: any) => e.isAccess);
+    const EmployeeId = this.loggedInUser?.employeeId;
+    console.log(this.loggedInUser)
+    this.subscription = this.http
+      .getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`)
+      .subscribe({
+        next: (response: any) => {
+          console.log(response);
+          if (response) {
+            const myTeam = response.filter((e: any) => e.isAccess);
+            this.getEmployeeInfo = myTeam.map((employee: any) => ({
+              ...employee,
+              fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
+                }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
+                }${employee.lastName}`,
+            }));
 
-        this.getEmployeeInfo = myTeam
-          .map((employee: any) => {
-            const firstName = employee.firstName ? employee.firstName.trim() : '';
-            const middleName = employee.middleName ? employee.middleName.trim() : '';
-            const lastName = employee.lastName ? employee.lastName.trim() : '';
+            this.getEmployeeInfo.unshift({
+              fullName: 'All Employees',
+              fusionEmpId: this.loggedInUser.fusionEmpId,
+              employeeId: this.loggedInUser.employeeId,
+            });
+          }
+        },
+      });
+  }
 
+
+  getEmployeeId() {
+    const loggedInUser = this.authService.getToken();
+    this.subscription = this.http
+
+      .getData('Employeedata/ActiveEmployees')
+      .subscribe({
+        next: (data: any) => {
+          const employeedata = data.map((employee: any) => {
             return {
               ...employee,
-              firstName, //  trimmed
-              fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${firstName} ${middleName ? middleName + ' ' : ''}${lastName}`.trim(),
+              fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
+                }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
+                }${employee.lastName}`,
             };
-          })
-          .sort((a: any, b: any) =>
-            a.firstName.toLowerCase().localeCompare(b.firstName.toLowerCase()) //  Alphabetical by first name
-          );
+          });
 
-        // Insert "All Employees" at the top
-        this.getEmployeeInfo.unshift({
-          fullName: 'All Employees',
-          fusionEmpId: this.loggedInUser.fusionEmpId,
-          employeeId: this.loggedInUser.employeeId,
+          this.employeeiddetails = [
+            { fullName: 'All Employees', employeeId: 'all' },
+            ...employeedata
+          ];
+        },
+        error: (reason: any) => {
+          console.log(reason);
+        },
+      });
+  }
+
+  getTeam() {
+    this.subscription = this.http.getData('PendingApprovalsAuthority/getAll').subscribe({
+      next: (data: any) => {
+        this.teamdetails = data.map((employee: any) => {
+          return {
+            ...employee,
+            fullName: `${employee.fusionEmployeeId ? employee.fusionEmployeeId + ' - ' : ''}${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
+          };
         });
-      }
-    },
-    error: (err) => console.log(err),
-  });
-}
-
-
-
- getEmployeeId() {
-  const loggedInUser = this.authService.getToken();
-  this.subscription = this.http.getData('Employeedata/ActiveEmployees').subscribe({
-    next: (data: any) => {
-      const employeedata = data
-        .map((employee: any) => {
-          const firstName = employee.firstName ? employee.firstName.trim() : '';
-          const middleName = employee.middleName ? employee.middleName.trim() : '';
-          const lastName = employee.lastName ? employee.lastName.trim() : '';
-
-          return {
-            ...employee,
-            firstName, //  trimmed
-            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${firstName} ${middleName ? middleName + ' ' : ''}${lastName}`.trim(),
-          };
-        })
-        .filter((employee: any) => employee.employeeId !== loggedInUser.employeeId)
-        .sort((a: any, b: any) =>
-          a.firstName.toLowerCase().localeCompare(b.firstName.toLowerCase()) //  Alphabetical by first name
-        );
-
-      this.employeeiddetails = [
-        { fullName: 'All Employees', employeeId: 'all' },
-        ...employeedata
-      ];
-    },
-    error: (reason: any) => {
-      console.log(reason);
-    },
-  });
-}
-
-getTeam() {
-  const statuses = 'Active';
-  this.subscription = this.http.getData(`PendingApprovalsAuthority/getAll?statuses=${encodeURIComponent(statuses)}`).subscribe({
-    next: (data: any) => {
-      this.teamdetails = data
-        .map((employee: any) => {
-          const firstName = employee.firstName ? employee.firstName.trim() : '';
-          const middleName = employee.middleName ? employee.middleName.trim() : '';
-          const lastName = employee.lastName ? employee.lastName.trim() : '';
-
-          return {
-            ...employee,
-            firstName, //  trimmed
-            fullName: `${employee.fusionEmployeeId ? employee.fusionEmployeeId + ' - ' : ''}${firstName} ${middleName ? middleName + ' ' : ''}${lastName}`.trim(),
-          };
-        })
-        .sort((a: any, b: any) =>
-          a.firstName.toLowerCase().localeCompare(b.firstName.toLowerCase()) //  Alphabetical by first name
-        );
-    },
-    error: (reason: any) => console.log(reason),
-  });
-}
+      },
+      error: (reason: any) => console.log(reason),
+    });
+  }
 
   getLeaveSummaryReport() {
     this.subscription = this.reportsService.getLeaveSummaryReport({}).subscribe({
@@ -269,6 +245,16 @@ getTeam() {
     );
   }
 
+  isAnyFilterApplied(): boolean {
+    const form = this.lvSummeryReportForm;
+    return !!(
+      form.get('employee')?.value ||
+      form.get('manager')?.value ||
+      form.get('leaveCategory')?.value ||
+      form.get('team')?.value
+    );
+  }
+
   leavesummeryReport(): void {
     this.spinnerLoader1 = true;
     this.isLoading = true;
@@ -300,7 +286,7 @@ getTeam() {
     if (formValue.employee?.employeeId) {
       request.EmployeeId = formValue.employee.employeeId !== 'all';
     }
-
+    
     // Manager full name
     if (formValue.manager) {
       request.teamManagerID = formValue.manager.employeeId;
@@ -317,35 +303,6 @@ getTeam() {
     if (!isAllEmployeesSelected && formValue.employee?.employeeId) {
       request.EmployeeId = formValue.employee.employeeId;
     }
-
-    // Debug log to verify the request
-    console.log('Generated Request:', request);
-
-    // if (this.selectLeaveEmployeeIds.length >= 0) {
-    //   const ids = this.selectLeaveEmployeeIds?.join(',');
-    //   request.EmployeeId = ids;  // The selected employee IDs are set here
-    // }
-
-    // if (formValue.employee?.employeeId) {
-    //   request.EmployeeId = formValue.employee.employeeId !== 'all';
-    // }
-
-    // // Manager full name
-    // if (formValue.manager) {
-    //   request.teamManagerID = formValue.manager.employeeId;
-    // }
-
-    // // Leave category
-    // if (formValue.leaveCategory) {
-    //   request.LeaveName = formValue.leaveCategory.value;
-    // }
-    // // Year
-    // if (formValue.year) {
-    //   request.Year = formValue.year;
-    // }
-    // if (!isAllEmployeesSelected && formValue.employee?.employeeId) {
-    //   request.EmployeeId = formValue.employee.employeeId;
-    // }
 
 
     // Call service with the constructed request
@@ -487,7 +444,7 @@ getTeam() {
     // Set minimum width to 10
     return Math.max(10, maxWidth);
   }
-  navigation() {
+   navigation(){
     this.router.navigate(['/reports']);
   }
 

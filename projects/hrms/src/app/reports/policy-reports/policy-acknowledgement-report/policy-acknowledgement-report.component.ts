@@ -17,6 +17,7 @@ import * as XLSX from 'xlsx';
 import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { MODULE_INFOS } from '../../../shared/modules-info';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { ModuleInfoIconComponent } from '../../../icons/module-info-icon/module-info-icon.component';
 
 @Component({
   selector: 'app-policy-acknowledgement-report',
@@ -30,7 +31,7 @@ import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
     DataLoaderContentComponent,
     ModuleInformationComponent, 
     DateformatPipe,
-    NgbPopoverModule
+    NgbPopoverModule, ModuleInfoIconComponent
   ],
   templateUrl: './policy-acknowledgement-report.component.html',
   styleUrl: './policy-acknowledgement-report.component.scss'
@@ -331,7 +332,11 @@ clearDropdowns(keys: string[]) {
 
   clearAllFilters(): void {
     this.policyAcknowledgementReport.reset();
-      this.policyAcknowledgementReports = [];
+    this.policyAcknowledgementReports = [];
+    this.isReportGenerated = false;
+    this.subLocationsDropdown = [];
+    this.shiftDropdown = [];
+    this.policyItemsData = [];
   }
 
   navigation(){
@@ -341,32 +346,31 @@ clearDropdowns(keys: string[]) {
   exportToExcelPolicyAck(): void {
     this.spinnerLoader2 = true;
     const HEADER_MAPPINGS: { [key: string]: string } = {
-      fusionEmpId: 'Employee ID',
-      employeeName: 'Employee Name',
-      workEmail: 'WorkEmail',
-      location: 'Location',
-      subLocation: 'SubLocation',
-      shift: 'Shift',
-      source: 'Source',
-      acknowledged: 'Acknowledged',
-      acknowledgedDate: 'Acknowledged Date',
-      policyName: 'Policy Name',
+      fusionEmpId: 'EMPLOYEE ID',
+      employeeName: 'EMPLOYEE NAME',
+      workEmail: 'WORK EMAIL',
+      location: 'LOCATION',
+      subLocation: 'SUB LOCATION',
+      shift: 'SHIFT',
+      source: 'SOURCE',
+      acknowledged: 'ACKNOWLEDGED',
+      acknowledgedDate: 'ACKNOWLEDGED DATE',
+      policyName: 'POLICY NAME',
     };
 
     const NEW_SEQUENCE: string[] = [
-      'Employee ID',
-      'Employee Name',
-      'WorkEmail',
-      'Location',
-      'SubLocation',
-      'Shift',
-      'Source',
-      'Acknowledged',
-      'Acknowledged Date',
-      'Policy Name',
+      'EMPLOYEE ID',
+      'EMPLOYEE NAME',
+      'WORK EMAIL',
+      'LOCATION',
+      'SUB LOCATION',
+      'SHIFT',
+      'SOURCE',
+      'ACKNOWLEDGED',
+      'ACKNOWLEDGED DATE',
+      'POLICY NAME',
     ];
 
-const UPPERCASE_HEADERS = NEW_SEQUENCE.map(h => h.toUpperCase());
     const modifiedData = this.policyAcknowledgementReports.map((record) => {
       const modifiedRecord: any = {};
       const recordAny = record as any;
@@ -405,7 +409,7 @@ const UPPERCASE_HEADERS = NEW_SEQUENCE.map(h => h.toUpperCase());
     });
 
     // Add headers
-   XLSX.utils.sheet_add_aoa(ws, [UPPERCASE_HEADERS], { origin: 'A2' });
+    XLSX.utils.sheet_add_aoa(ws, [NEW_SEQUENCE], { origin: 'A2' });
 
     // Add data
     XLSX.utils.sheet_add_json(ws, modifiedData, {

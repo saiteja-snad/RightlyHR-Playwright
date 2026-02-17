@@ -1251,21 +1251,6 @@ select:focus {
             min-width: 280mm;
         }
 
-       .letter-data-content {
-        width: 100%;
-        flex: 1;
-        height: calc(100dvh - 8rem);
-        overflow: auto;
-        padding: 1.125rem;
-        text-align: justify;
-
-        .letter-sub-data-content {
-            display: flex;
-            justify-content: center;
-            width: 100%;
-            min-width: 280mm;
-        }
-
         .letter-page-content {
             height: 380mm;
             width: 270mm;
@@ -1301,7 +1286,6 @@ select:focus {
                 }
             }
         }
-    }
     }
 
     input:focus {
@@ -1374,7 +1358,7 @@ select:focus {
 }
 
 .letter-page-content:has(.soft-copy-letter) {
-    background-image: url('/images/claim-genius-watermark.png');
+    background-image: url('/images/water-mark.png');
 
     .letter-footer {
         display: block !important;

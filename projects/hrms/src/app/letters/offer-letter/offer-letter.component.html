@@ -282,7 +282,7 @@
           </div>
           <div
             *ngIf="employeeForm.get('JobSubLocationName')?.invalid && employeeForm.get('JobSubLocationName')?.touched">
-            <div class="error-msg">Sub Location is required</div>
+            <div class="error-msg">Sub location is required</div>
           </div>
         </div>
 
@@ -292,7 +292,7 @@
             [min]="issuedDatevalidate" placeholder="Please enter offer issued date" (click)="pathValuesFuction()"
             onkeydown="return false;" />
           <div *ngIf="employeeForm.get('offerIssuedDate')?.invalid && employeeForm.get('offerIssuedDate')?.touched">
-            <div class="error-msg">Offer Issued Date is required</div>
+            <div class="error-msg">Offer Issued date is required</div>
             <div *ngIf="employeeForm.hasError('offerDateInvalid') && employeeForm.get('offerIssuedDate')?.touched"
               class="error-msg">Offer Expiry Date should be after the Offer Issued Date
             </div>
@@ -305,7 +305,7 @@
             (click)="pathValuesFuction()" placeholder="Please enter expected start date" [min]="startDatevalidate"
             onkeydown="return false;" />
           <div *ngIf="employeeForm.get('dateOfJoining')?.invalid && employeeForm.get('dateOfJoining')?.touched">
-            <div class="error-msg">Expected Start Date is required</div>
+            <div class="error-msg">Expected Start date is required</div>
           </div>
           <div
             *ngIf="employeeForm.hasError('offerdateofjoiningDateInvalid') && employeeForm.get('dateOfJoining')?.touched"
@@ -325,7 +325,7 @@
             (click)="pathValuesFuction()"  onkeydown="return false;" placeholder="Please enter offer expiry date" />
           <div class="error-msg">
             <div *ngIf="employeeForm.get('offerExpiryDate')?.invalid && employeeForm.get('offerExpiryDate')?.touched">
-              Offer Expiry Date is required
+              Offer Expiry date is required
             </div>
             <div *ngIf="employeeForm.hasError('offerDateInvalid') && employeeForm.get('offerExpiryDate')?.touched">
               Offer Expiry Date should be after the Offer Issued Date
@@ -341,7 +341,7 @@
               resetFilterOnHide="true"></p-select>
           </div>
           <div *ngIf="employeeForm.get('Copys')?.invalid && employeeForm.get('Copys')?.touched" class="error-msg">
-            Document Type is required
+            Document type is required
           </div>
         </div>
 
@@ -441,7 +441,7 @@
                   {{prospectiveEmpData.lastName}},</p>
               </div>
 
-              <p>Congratulations and Welcome to RightlyHR!!!</p>
+              <p>Congratulations and Welcome to Claim Genius!!!</p>
 
               <p>Further to your application for employment with us, and the subsequent selection process, we are
                 delighted to offer you the role of <b>{{prospectiveEmpData?.jobRole}}</b> in our organization and your
@@ -449,12 +449,12 @@
                   || 0)}}</b> per annum.
               </p>
 
-              <p>RightlyHR is formed as an INDIAN Spin-off of RightlyHR, a
+              <p>Claim Genius is formed as an INDIAN Spin-off of Claim Genius, a
                 US based organization for providing Software Development and Services to various IT Organizations across
                 the globe. We are a core team of engineers with a mindset to excel as a family under the guidance of our
                 superior leadership.</p>
 
-              <p>Your reporting location will be <b> RightlyHR, Vijaya Krishna Towers, Floor#16,
+              <p>Your reporting location will be <b> Claim Genius, Vijaya Krishna Towers, Floor#16,
                   Madhava Reddy Colony, Gachibowli, Hyderabad, Telangana - 500032, India. Your date of joining would
                   be {{prospectiveEmpData.dateOfJoining | dateformat}}.</b></p>
 
@@ -521,7 +521,7 @@
                   <div class="hard-copy-letter"></div>
                 </ng-template>
                 <ul class="bullet">
-                  <li class="mb-3">Information pertaining to RightlyHR operations and intellectual property
+                  <li class="mb-3">Information pertaining to Claim Genius operations and intellectual property
                     is confidential and you will sign a non-disclosure agreement. If you are bound by a confidentiality
                     agreement with a previous employer, you must notify the Company and indemnify the Company against
                     any breach thereof. </li>
@@ -607,7 +607,7 @@
                 </ng-template>
                 <div>
                   <p>Yours Sincerely,</p>
-                  <p class="mb-5 letter-sub-header">For RightlyHR </p>
+                  <p class="mb-5 letter-sub-header">For Claim Genius </p>
                   <div class="stamp"></div>
                   <p class="m-0 letter-signature" *ngIf="prospectiveEmpData.authorityName?.trim()">
                     {{prospectiveEmpData.authorityName}}</p>
@@ -655,7 +655,7 @@
                 <p class="mb-3">On the day joining, you are requested to bring to the following original
                   documents and certificates (For verification purpose), along with 1 copy of each</p>
                 <div class="mb-1">
-                  <div class="box"></div> Acceptance copies of RightlyHR. duly signed offer Letter.
+                  <div class="box"></div> Acceptance copies of Claim Genius. duly signed offer Letter.
                 </div>
                 <div class="mb-1">
                   <div class="mb-3">
@@ -918,7 +918,7 @@
                 <!-- table end -->
                 <p class="letter-sub-header mb-1 mt-2">Note: {{prospectiveEmpData.note}}</p>
                 <p class="letter-sub-header mb-2 mt-2">The Company presently has a Perfomance Award Program. Performance
-                  Award Program will be made available to you upon joining RightlyHR. Please note: RightlyHR reserves
+                  Award Program will be made available to you upon joining Claim Genius. Please note: Claim Genius reserves
                   the
                   right in its sole discretion to amend, change, suspend, or terminate the Performance Award Program at
                   any time.

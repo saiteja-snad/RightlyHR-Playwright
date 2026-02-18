@@ -1,63 +1,63 @@
 <div class="custom-main-component-container">
-    <div class="component-header mb-3">Load Entitlements</div>
+    <div class="component-header mb-3">{{ 'Load Entitlements' | translate }}</div>
 
     <div class="row">
         <div class="col-md-4 mb-3">
-            <label class="form-label custom-label">Employee Id</label>
+            <label class="form-label custom-label">{{ 'Employee Id' | translate }}</label>
             <input type="search" class="form-select custom-input w-100" aria-label="Employee" name="Employee"
-                placeholder="Search by Employee Id or Name" [(ngModel)]="fusionEmployeeId"
+                placeholder="{{ 'Search by Employee Id or Name' | translate }}" [(ngModel)]="fusionEmployeeId"
                 (input)="onSearchChange(fusionEmployeeId)" (click)="toggleDropdown('empid')" (search)="onClearSearch()"
                 [class.open]="isDropdownOpen" autocomplete="off" required />
             <div class="dropdown-menu" #dropdownMenu [class.show]="isDropdownOpen"></div>
         </div>
 
         <div class="col-md-4 mb-3">
-            <label for="DateOfJoining" class="form-label custom-label">Date Of Joining</label>
+            <label for="DateOfJoining" class="form-label custom-label">{{ 'Date Of Joining' | translate }}</label>
             <input type="text" class="form-control custom-input" id="dateOfJoining" name="DateOfJoining" disabled
-                placeholder="Date Of Joining">
+                placeholder="{{ 'Date Of Joining' | translate }}">
         </div>
 
         <div class="col-md-4 mb-3">
-            <label for="Location" class="form-label custom-label">Location</label>
+            <label for="Location" class="form-label custom-label">{{ 'Location' | translate }}</label>
             <input type="text" class="form-control custom-input" id="location" name="Location" disabled
-                placeholder="Location">
+                placeholder="{{ 'Location' | translate }}">
         </div>
 
         <div class="col-md-4 mb-3">
-            <label for="Sub Location" class="form-label custom-label">Sub Location</label>
+            <label for="Sub Location" class="form-label custom-label">{{ 'Sub Location' | translate }}</label>
             <input type="text" class="form-control custom-input" id="sublocation" name="Sub Location" disabled
-                placeholder="Sub Location">
+                placeholder="{{ 'Sub Location' | translate }}">
         </div>
 
         <div class="col-md-4 mb-3">
-            <label for="shift" class="form-label custom-label">Shift</label>
-            <input type="text" class="form-control custom-input" id="shift" name="Shift" disabled placeholder="Shift">
+            <label for="shift" class="form-label custom-label">{{ 'Shift' | translate }}</label>
+            <input type="text" class="form-control custom-input" id="shift" name="Shift" disabled placeholder="{{ 'Shift' | translate }}">
         </div>
 
         <div class="col-md-4 mb-3">
-            <label for="FirstName" class="form-label custom-label">First Name</label>
-            <input type="text" class="form-control custom-input" id="FirstName" placeholder="First Name" disabled>
+            <label for="FirstName" class="form-label custom-label">{{ 'First Name' | translate }}</label>
+            <input type="text" class="form-control custom-input" id="FirstName" placeholder="{{ 'First Name' | translate }}" disabled>
         </div>
 
         <div class="col-md-4 mb-3">
-            <label for="LastName" class="form-label custom-label">Last Name</label>
-            <input type="text" class="form-control custom-input" id="LastName" placeholder="Last Name" disabled>
+            <label for="LastName" class="form-label custom-label">{{ 'Last Name' | translate }}</label>
+            <input type="text" class="form-control custom-input" id="LastName" placeholder="{{ 'Last Name' | translate }}" disabled>
         </div>
 
         <div class="col-md-4 mb-3">
-            <label for="WorkEmail" class="form-label custom-label">Work Email</label>
-            <input type="email" class="form-control custom-input" id="WorkEmail" placeholder="Work Email" disabled>
+            <label for="WorkEmail" class="form-label custom-label">{{ 'Work Email' | translate }}</label>
+            <input type="email" class="form-control custom-input" id="WorkEmail" placeholder="{{ 'Work Email' | translate }}" disabled>
         </div>
     </div>
 
     <div class="custom-table-content">
         <table class="w-100"> <!-- Table shown only if records exist -->
             <thead>
-                <th>No</th>
-                <th>Category</th>
-                <th>Policy Leaves</th>
-                <th>Entitled Leaves</th>
-                <th>Action</th>
+                <th>{{ 'No' | translate }}</th>
+                <th>{{ 'Category' | translate }}</th>
+                <th>{{ 'Policy Leaves' | translate }}</th>
+                <th>{{ 'Entitled Leaves' | translate }}</th>
+                <th>{{ 'Action' | translate }}</th>
             </thead>
             <tbody>
                 <tr *ngFor="let record of leavePolicyRecords; let i = index">
@@ -65,7 +65,7 @@
                     <td>{{ record.category }}</td>
                     <td>{{ record.policyLeaves }}</td>
                     <td contenteditable="false" #entitledLeaves>{{ record.entitledLeaves }}</td>
-                    <td><button class="btn btn-primary" (click)="editRow(entitledLeaves, record)">Edit</button></td>
+                    <td><button class="btn btn-primary" (click)="editRow(entitledLeaves, record)">{{ 'Edit' | translate }}</button></td>
                 </tr>
             </tbody>
         </table>
@@ -76,7 +76,7 @@
     </div>
 
     <div class="w-100 text-center pt-3">
-        <button class="custom-btn btn-primary" (click)="sendEntitlementRequest()">Load Entitlements</button>
+        <button class="custom-btn btn-primary" (click)="sendEntitlementRequest()">{{ 'Load Entitlements' | translate }}</button>
     </div>
 </div>
 
@@ -98,7 +98,7 @@
         <div class="modal-content d-flex flex-column justify-content-cenetr align-items-center pb-5">
             <i class="bi bi-exclamation-circle mt-4 mb-3"></i>
             <h4 class="text-center ps-3 pe-3 mb-3 ">{{StatusMsg}}</h4>
-            <button class="btn btn-primary px-5" (click)="close()">OK</button>
+            <button class="btn btn-primary px-5" (click)="close()">{{ 'OK' | translate }}</button>
         </div>
     </div>
 </div>

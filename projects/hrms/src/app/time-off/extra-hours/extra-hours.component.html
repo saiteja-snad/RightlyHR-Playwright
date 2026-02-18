@@ -1,8 +1,8 @@
 <div class="custom-main-component-container">
     <div class="component-header-content">
         <div class="heading-content">
-            <div class="commpoment-name">Time Off<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span></div>
-            <div class="component-header">Extra Hours</div>
+            <div class="commpoment-name">{{'Time Off' | translate}}<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span></div>
+            <div class="component-header">{{'Extra Hours' | translate }}</div>
 
 
             <div>
@@ -43,7 +43,7 @@
             </div>
             }
             <div class="d-flex gap-2 align-items-center">
-                <label class="form-label custom-label filter-labels m-0" for="">Select Year</label>
+                <label class="form-label custom-label filter-labels m-0" for="">{{'Select Year' | translate}}</label>
                 <form autocomplete="off" [formGroup]="yearSelectionForm">
                     <div class="custom-p-select-content">
                         <p-select formControlName="selectedYear" [options]="years" placeholder="Select Year"

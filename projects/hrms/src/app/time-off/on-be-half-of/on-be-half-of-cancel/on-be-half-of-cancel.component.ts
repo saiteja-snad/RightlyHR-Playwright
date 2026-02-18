@@ -14,10 +14,11 @@ import { RbacService } from '../../../services/rbac.service';
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.service';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-on-be-half-of-cancel',
-  imports: [CommonModule, NgbNavModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe, NoDataFoundComponent, InfoIconComponent, DataLoaderContentComponent],
+  imports: [CommonModule, NgbNavModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe, NoDataFoundComponent, InfoIconComponent, DataLoaderContentComponent, TranslateModule],
   templateUrl: './on-be-half-of-cancel.component.html',
   styleUrl: './on-be-half-of-cancel.component.scss'
 })

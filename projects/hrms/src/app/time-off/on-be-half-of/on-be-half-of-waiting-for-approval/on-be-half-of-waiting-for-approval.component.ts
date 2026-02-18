@@ -13,6 +13,7 @@ import { Ilpid } from '../../../Interfaces/timoff-model';
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.service';
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
   selector: 'app-on-be-half-of-waiting-for-approval',
   imports: [
@@ -25,7 +26,8 @@ import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.
     DateformatPipe,
     NoDataFoundComponent,
     InfoIconComponent,
-    DataLoaderContentComponent
+    DataLoaderContentComponent,
+    TranslateModule
 ],
   templateUrl: './on-be-half-of-waiting-for-approval.component.html',
   styleUrl: './on-be-half-of-waiting-for-approval.component.scss',

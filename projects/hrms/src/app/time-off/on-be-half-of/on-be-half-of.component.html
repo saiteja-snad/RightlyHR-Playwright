@@ -1,9 +1,9 @@
 <div class="custom-main-component-container">
     <div class="component-header-content">
         <div class="heading-content">
-            <div class="commpoment-name">On Behalf Of <span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
+            <div class="commpoment-name">{{ 'On Behalf Of' | translate }} <span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
             </div>
-            <div class="component-header">On Behalf Of Leave</div>
+            <div class="component-header">{{ 'On Behalf Of Leave' | translate }}</div>
             <div>
                 <app-module-info-icon placement="bottom" [ngbPopover]="popContent" class="cursor" />
             </div>
@@ -12,10 +12,10 @@
         <div class="d-flex align-items-center gap-3">
             @if (rbac.allowedToAccess('On Behalf Of All Employees.view')) {
            <div class="d-flex align-items-center gap-3" >
-             <label class="form-label filter-labels m-0">Select Employee</label>
+             <label class="form-label filter-labels m-0">{{ 'Select Employee' | translate }}</label>
             <div class="custom-p-select-content">
                 <p-select [options]="employeeiddetails" optionValue="employeeId" [(ngModel)]="selectedOtherEmployee"  optionLabel="fullName" [filter]="true"
-                    filterBy="fullName" [showClear]="true" placeholder="Please select employee"  (onChange)="onEmployeeChange($event)"
+                    filterBy="fullName" [showClear]="true" placeholder="{{ 'Please select employee' | translate }}"  (onChange)="onEmployeeChange($event)"
                     class="form-select custom-select" resetFilterOnHide="true">
                 </p-select>
             </div>
@@ -26,17 +26,17 @@
             <label class="form-label filter-labels m-0">{{'My Team'| translate}}</label>
             <div class="custom-p-select-content">
                 <p-select [options]="getEmployeeInfo" optionLabel="fullName" optionValue="employeeId"
-                    class="form-select custom-select" name="myteamemployees" placeholder="Please select employee" [filter]="true"
+                    class="form-select custom-select" name="myteamemployees" placeholder="{{ 'Please select employee' | translate }}" [filter]="true"
                     resetFilterOnHide="true" [showClear]="true" [(ngModel)]="selectedMyTeamEmployee"  (onChange)="onMyTeamChange($event)">
                 </p-select>
             </div>
             }
 
             <div class="d-flex gap-2 align-items-center">
-                <label class="form-label custom-label filter-labels m-0" for="">Select Year</label>
+                <label class="form-label custom-label filter-labels m-0" for="">{{ 'Select Year' | translate }}</label>
                 <form autocomplete="off" [formGroup]="yearSelectionForm">
                     <div class="custom-p-select-content">
-                        <p-select formControlName="selectedYear" [options]="years" placeholder="Select Year"
+                        <p-select formControlName="selectedYear" [options]="years" placeholder="{{ 'Select Year' | translate }}"
                             class="form-select custom-select" (onChange)="onYearChange()">
                         </p-select>
                     </div>
@@ -46,7 +46,7 @@
             <!-- @if(showbutton){ -->
              @if(rbac.allowedToAccess('Request On Behalf Button.view') ) {
             <button type="button" class="custom-btn btn-primary" (click)="openModal(addleave)"
-                [disabled]="!selectedEmployeeId">Apply On Behalf Of</button>
+                [disabled]="!selectedEmployeeId">{{ 'Apply On Behalf Of' | translate }}</button>
             <!-- } -->
             }
         </div>
@@ -87,12 +87,12 @@
                         item.category.name }}</p>
                     <div class="d-flex gap-2">
                         <div class="leave-category-text">
-                            <p class="m-0">Booked</p>
+                            <p class="m-0">{{ 'Booked' | translate }}</p>
                             <p class="m-0">{{item.booked}}</p>
                         </div>
                         <div class="separator"></div>
                         <div class="leave-category-text">
-                        <p class="m-0">Processed</p>
+                        <p class="m-0">{{ 'Processed' | translate }}</p>
                             @if (item.category.isProbationAllowed && item.probationLeaves > 0) {
                             <p class="m-0">{{item.utilizedDays ? item.utilizedDays : '0'}}</p>
                             }
@@ -155,7 +155,7 @@
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="custom-poup-header-content popup-header-border">
             <div class="pt-2">
-                <p class="popup-heading mb-0">Apply Leave On Behalf Of - <span>{{selectedEmployeeName}}</span></p>
+                <p class="popup-heading mb-0">{{ 'Apply Leave On Behalf Of' | translate }} - <span>{{selectedEmployeeName}}</span></p>
             </div>
         </div>
 
@@ -362,8 +362,8 @@
             <p class="confirmation-text">{{'Are you sure you want to cancel?' | translate}}</p>
         </div>
         <div class="custom-modal-footer">
-            <button type="button" class="custom-btn btn-secondary" (click)="model.dismiss()">No</button>
-            <button type="submit" class="custom-btn btn-primary" (click)="cleardata();model.dismiss()">Yes</button>
+            <button type="button" class="custom-btn btn-secondary" (click)="model.dismiss()">{{ 'No' | translate }}</button>
+            <button type="submit" class="custom-btn btn-primary" (click)="cleardata();model.dismiss()">{{ 'Yes' | translate }}</button>
         </div>
     </div>
 </ng-template>
@@ -379,8 +379,8 @@
             <p class="confirmation-text mb-4">{{ sandwichMessage }}</p>
         </div> -->
         <div class="custom-modal-footer">
-            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">Cancel</button>
-            <button type="button" class="custom-btn btn-primary" (click)="confirmSandwichPolicy(modal)">Proceed</button>
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{ 'Cancel' | translate }}</button>
+            <button type="button" class="custom-btn btn-primary" (click)="confirmSandwichPolicy(modal)">{{ 'Proceed' | translate }}</button>
         </div>
     </div>
 </ng-template>

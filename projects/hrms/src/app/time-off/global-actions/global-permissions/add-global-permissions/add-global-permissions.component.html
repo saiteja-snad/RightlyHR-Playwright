@@ -15,111 +15,111 @@
       <div>
         <!-- Request Type Dropdown -->
         <div class="mb-3">
-          <label for="selectType" class="form-label custom-label">Select Type <span class="error-msg">*</span></label>
+          <label for="selectType" class="form-label custom-label">{{'Select Type' | translate}} <span class="error-msg">*</span></label>
           <div class="custom-p-select-content">
             <p-select [options]="selectTypes" optionValue="Value" optionLabel="item_text" [filter]="true"
-              filterBy="item_text" [showClear]="true" placeholder="Select Type" formControlName="selectType"
+              filterBy="item_text" [showClear]="true" [placeholder]="'Select Type' | translate" formControlName="selectType"
               class="form-select w-100" (onChange)="validationCheck()"  class="form-select custom-select">
             </p-select>
           </div>
           <div class="error-msg"
             *ngIf="requestForm.get('selectType')?.touched && requestForm.get('selectType')?.invalid">
-            Select type is required
+            {{'Select type is required' | translate}}
           </div>
         </div>
 
         <!-- Multi-select Dropdown for Options -->
         <ng-container *ngIf="requestForm.get('selectType')?.value==='Location/Sub Location'">
           <div class="mb-3">
-            <label for="location" class="form-label custom-label">Location <span class="error-msg">*</span></label>
+            <label for="location" class="form-label custom-label">{{'Location' | translate}} <span class="error-msg">*</span></label>
             <div class="custom-p-multiSelect-content">
               <p-multiSelect [options]="jobLocationDropDownData" optionValue="id" optionLabel="jobLocationName"
                 [filter]="true" filterBy="jobLocationName" [resetFilterOnHide]="true" [showClear]="true"
-                placeholder="Select Location" formControlName="location" (onChange)="getSubLocationByid();"
+                [placeholder]="'Select Location' | translate" formControlName="location" (onChange)="getSubLocationByid();"
                 [selectedItemsLabel]="`${requestForm.get('location')?.value?.length} Locations selected`"
                 class="custom-select w-100">
               </p-multiSelect>
             </div>
             <div class="error-msg" *ngIf="requestForm.get('location')?.touched && requestForm.get('location')?.invalid">
-              Location is required
+              {{'Location is required' | translate}}
             </div>
           </div>
 
           <div class="mb-3">
-            <label for="sublocation" class="form-label custom-label">Sub Location <span
+            <label for="sublocation" class="form-label custom-label">{{'Sub Location' | translate}} <span
                 class="error-msg">*</span></label>
             <div class="custom-p-multiSelect-content">
               <p-multiSelect [options]="subLocationsDropdown" optionValue="id" optionLabel="jobSubLocationName"
                 [filter]="true" filterBy="name" [showClear]="true" [resetFilterOnHide]="true"
-                placeholder="Select Sub Location" formControlName="sublocation" (onChange)="getEmployeesLocationwise()"
+                [placeholder]="'Select Sub Location' | translate" formControlName="sublocation" (onChange)="getEmployeesLocationwise()"
                 class="custom-select w-100"
                 [selectedItemsLabel]="`${requestForm.get('sublocation')?.value?.length} Sublocations selected`">
               </p-multiSelect>
             </div>
             <div class="error-msg"
               *ngIf="requestForm.get('sublocation')?.touched && requestForm.get('sublocation')?.invalid">
-              Sub Location is required
+              {{'Sub Location is required' | translate}}
             </div>
           </div>
 
           <div class="mb-3">
-            <label for="employees" class="form-label custom-label">Employees <span class="error-msg">*</span></label>
+            <label for="employees" class="form-label custom-label">{{'Employees' | translate}} <span class="error-msg">*</span></label>
             <div class="custom-p-multiSelect-content">
               <!-- <p-multiSelect [options]="locationWiseEmployeesDetails" optionValue="employeeId" optionLabel="fullName"
                 [filter]="true" filterBy="fullName" [showClear]="true" placeholder="Select Employees" [resetFilterOnHide]="true" 
                 formControlName="selectedOptions" class="custom-select w-100" [selectedItemsLabel]="`${requestForm.get('selectedOptions')?.value?.length} Employees selected`">
               </p-multiSelect> -->
               <p-multiSelect [options]="locationWiseEmployeesDetails" optionValue="employeeId" optionLabel="fullName"
-                formControlName="selectedOptions" class="custom-select w-100" placeholder="Select Employees"
+                formControlName="selectedOptions" class="custom-select w-100" [placeholder]="'Select Employees' | translate"
                 [filter]="true" [resetFilterOnHide]="true" [showClear]="true"
                 (onPanelHide)="onEmployeeDropdownTouched()" (onClear)="onEmployeeDropdownTouched()"
                 [selectedItemsLabel]="`${requestForm.get('selectedOptions')?.value?.length} Employees selected`" />
             </div>
             <div class="error-msg"
               *ngIf="requestForm.get('selectedOptions')?.touched && requestForm.get('selectedOptions')?.invalid">
-              Employees are required
+              {{'Employees are required' | translate}}
             </div>
           </div>
         </ng-container>
 
         <ng-container *ngIf="requestForm.get('selectType')?.value==='Department/Team'">
           <div class="mb-3">
-            <label for="department" class="form-label custom-label">Department <span class="error-msg">*</span></label>
+            <label for="department" class="form-label custom-label">{{'Department' | translate}} <span class="error-msg">*</span></label>
             <div class="custom-p-multiSelect-content">
               <p-multiSelect [options]="departmentDetails" optionValue="sno" optionLabel="departmentName"
                 [filter]="true" filterBy="departmentName" [resetFilterOnHide]="true" [showClear]="true"
-                placeholder="Select Department"
+                [placeholder]="'Select Department' | translate"
                 [selectedItemsLabel]="`${requestForm.get('department')?.value?.length} Departments selected`"
                 formControlName="department" (onChange)="getTeamData()" class="custom-select w-100">
               </p-multiSelect>
             </div>
             <div class="error-msg"
               *ngIf="requestForm.get('department')?.touched && requestForm.get('department')?.invalid">
-              Department is required
+              {{'Department is required' | translate}}
             </div>
           </div>
 
           <div class="custom-p-select-content mb-3">
-            <label for="team" class="form-label custom-label">Team <span class="error-msg">*</span></label>
+            <label for="team" class="form-label custom-label">{{'Team' | translate}} <span class="error-msg">*</span></label>
             <div class="custom-p-multiSelect-content">
               <p-multiSelect [options]="teamDetails" optionValue="subdepartmentId" optionLabel="subdepartmentName"
                 [filter]="true" filterBy="subdepartmentName" [resetFilterOnHide]="true" [showClear]="true"
-                placeholder="Select team"
+                [placeholder]="'Select team' | translate"
                 [selectedItemsLabel]="`${requestForm.get('teamSelectedOptions')?.value?.length} Teams selected`"
                 formControlName="teamSelectedOptions" (onChange)="getEmployeesTeamwise()" class="custom-select w-100">
               </p-multiSelect>
             </div>
             <div class="error-msg"
               *ngIf="requestForm.get('teamSelectedOptions')?.touched && requestForm.get('teamSelectedOptions')?.invalid">
-              Team is required
+              {{'Team is required' | translate}}
             </div>
           </div>
 
           <div class="custom-p-select-content mb-3">
-            <label for="teamemployee" class="form-label custom-label">Employees <span class="error-msg">*</span></label>
+            <label for="teamemployee" class="form-label custom-label">{{'Employees' | translate}} <span class="error-msg">*</span></label>
             <div class="custom-p-multiSelect-content">
               <p-multiSelect [options]="teamWiseEmployeesDetails" optionValue="employeeId" optionLabel="fullName"
-                [filter]="true" filterBy="fullName" [showClear]="true" placeholder="Select Employees"
+                [filter]="true" filterBy="fullName" [showClear]="true" [placeholder]="'Select Employees' | translate"
                 [resetFilterOnHide]="true"
                 [selectedItemsLabel]="`${requestForm.get('teamEmpselectedOptions')?.value?.length} Employees selected`"
                 formControlName="teamEmpselectedOptions" class="custom-select w-100">
@@ -127,7 +127,7 @@
             </div>
             <div class="error-msg"
               *ngIf="requestForm.get('teamEmpselectedOptions')?.touched && requestForm.get('teamEmpselectedOptions')?.invalid">
-              Employees are required
+              {{'Employees are required' | translate}}
             </div>
           </div>
         </ng-container>

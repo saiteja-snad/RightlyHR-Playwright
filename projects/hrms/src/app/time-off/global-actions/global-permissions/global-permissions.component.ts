@@ -25,10 +25,11 @@ import { MODULE_INFOS } from '../../../shared/modules-info';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { Iglobalpermissions } from './globalpermissions-modal';
 import { GlobalActionsTabsComponent } from "../../../shared/time-off-module-tabs/global-actions-tabs/global-actions-tabs.component";
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
   selector: 'app-global-permissions',
   imports: [CommonModule, NgbPopoverModule, FormsModule, ReactiveFormsModule, PaginatorModule,
-    DropdownModule, DateformatPipe, NoDataFoundComponent, GlobalpermissionsPipe, InfoIconComponent,
+    DropdownModule, DateformatPipe, NoDataFoundComponent, GlobalpermissionsPipe, InfoIconComponent,TranslateModule,
     ModuleInformationComponent, DataLoaderContentComponent, ModuleInfoIconComponent, Select, GlobalActionsTabsComponent],
   templateUrl: './global-permissions.component.html',
   styleUrl: './global-permissions.component.scss'

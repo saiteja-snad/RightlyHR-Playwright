@@ -341,10 +341,10 @@ getFirstCurrency(rateItem: FormGroup): FormGroup | null {
           const existingRate = existingRates.find(r => r.code === currencyCode)?.rate || '';
           currenciesArray.push(
             this.fb.group({
-              currencyCode: [currencyCode, Validators.required],
-              currencyName: [currency?.name || ''],
-              symbol: [currency?.symbol || ''],
-              rate: [existingRate, Validators.required]
+              currencyCode: [{value:currencyCode,disabled: true}, Validators.required],
+              currencyName: [{value:currency?.name || '',disabled: true}],
+              symbol: [{value:currency?.symbol || '',disabled: true}],
+              rate: [{vale:existingRate,disabled: true}, Validators.required]
             })
           );
         });

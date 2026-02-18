@@ -1,7 +1,7 @@
 <div class="custom-main-component-container">
     <div class="component-header-content pt-2">
         <div class="heading-content">
-            <div class="commpoment-name navigator" (click)="nagvition()">Employee Rate Card
+            <div class="commpoment-name navigator" (click)="nagvition()">{{'Employee Rate Card' |translate}}
                 <i class="bi bi-chevron-double-right ms-1"></i>
             </div>
             <div class="component-header">{{'Update Rate Card'|translate}}</div>
@@ -143,10 +143,10 @@
                     <table class="w-100">
                         <thead>
                             <tr>
-                                <th>Experience</th>
+                                <th>{{'Experience' |translate}}</th>
                                 <th *ngFor="let currencyCode of updateratecardForm.get('currency')?.value">{{getCurrencyName(currencyCode)}}
                                 </th>
-                                <th class="text-center">Action</th>
+                                <th class="text-center">{{'Action' |translate}}</th>
                                 <th class="text-center"></th>
                             </tr>
                         </thead>
@@ -258,7 +258,7 @@
   <div class="result-popup-content" ngbAutofocus>
     <div>
       <img src="icons\delete-icon.png" alt="failure icon" class="confirmation-delete-icon">
-      <p class="confirmation-text">Are you sure you want to Delete?</p>
+      <p class="confirmation-text">{{'Are you sure you want to Delete?' |translate}}</p>
     </div>
     <div class="custom-modal-footer">
       <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'|translate}}</button>

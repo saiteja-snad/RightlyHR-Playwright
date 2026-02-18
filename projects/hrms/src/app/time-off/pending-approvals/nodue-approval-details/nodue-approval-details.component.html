@@ -111,7 +111,7 @@
               <div class="d-flex align-items-center flex-wrap gap-2 mb-3">
                 <button type="button" class="custom-btn btn-secondary chip-btn" [class.active]="selectedLeaveStatus === 'approved'"
                     (click)="onStatusApproveSelect('approved')">
-                    Approved
+                    {{'Approved' | translate}}
                 </button>
             </div>
             <div class="custom-modal-footer">
@@ -182,11 +182,11 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <img src="icons\reject.png" alt="failure icon" class="confirmation-delete-icon">
-            <p class="confirmation-text">Are you sure you want to cancel?</p>
+            <p class="confirmation-text">{{'Are you sure you want to cancel?' | translate}}</p>
         </div>
         <div class="custom-modal-footer">
-            <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">No</button>
-            <button type="submit" class="custom-btn btn-primary" (click)="resetForm()">Yes</button>
+            <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">{{'No' | translate}}</button>
+            <button type="submit" class="custom-btn btn-primary" (click)="resetForm()">{{'Yes' | translate}}</button>
         </div>
     </div>
 </ng-template>
@@ -196,11 +196,11 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <img src="icons\reject.png" alt="failure icon" class="confirmation-delete-icon">
-            <p class="confirmation-text">Are you sure you want to cancel?</p>
+            <p class="confirmation-text">{{'Are you sure you want to cancel?' | translate}}</p>
         </div>
         <div class="custom-modal-footer">
-            <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">No</button>
-            <button type="button" class="custom-btn btn-primary" (click)="close()">Yes</button>
+            <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">{{'No' | translate }}</button>
+            <button type="button" class="custom-btn btn-primary" (click)="close()">{{'Yes' | translate}}</button>
         </div>
     </div>
 </ng-template>

@@ -49,7 +49,7 @@
               -
             </ng-template>
           </td>
-          <td class="text-nowrap"><span *ngIf="act.contactnumber;else contactnumb">+91 {{act.contactnumber}}</span>
+          <td class="text-nowrap"><span *ngIf="act.contactnumber;else contactnumb">{{act.mobilePhoneCountryCode}} {{act.contactnumber}}</span>
             <ng-template #contactnumb>
               -
             </ng-template>

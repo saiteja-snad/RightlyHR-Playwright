@@ -652,6 +652,18 @@
   "Remote Login Manager": "Remote Login Manager",
   "Select Remote Login Manager": "Select Remote Login Manager",
   "Remote Login Manager is required": "Remote Login Manager is required",
+  "View Expense": "View Expense",
+  "Search by employee name / expense title / status / total amount": "Search by employee name / expense title / status / total amount",
+  "Please provide comments": "Please provide comments",
+  "Comment is required": "Comment is required",
+  "Comment cannot exceed 250 characters": "Comment cannot exceed 250 characters",
+  "Verified": "Verified",
+  "Search by employee name / desk ID / desk type / location / sub location / shift": "Search by employee name / desk ID / desk type / location / sub location / shift",
+  "Allocation Date": "Allocation Date",
+  "Are you sure you want to reject?": "Are you sure you want to reject?",
+  "Please enter comments": "Please enter comments",
+  "Comments are required": "Comments are required",
+  "Search by employee Name / desk ID / desk type / location / sub location / shift": "Search by employee Name / desk ID / desk type / location / sub location / shift",
   "Trainee Details": "Trainee Details",
   "Employment Type Status": "Employment Type Status",
   "Employment type status": "Employment type status",
@@ -2504,4 +2516,16 @@
   "Global WFH": "Global WFH",
   "WFH Requested Date": "WFH Requested Date",
   "List of Employees": "List of Employees"
+}
+,
+  "Expense Name": "Expense Name"
+}
+,
+  "Select Reportee": "Select Reportee",
+  "Please select reportee": "Please select reportee",
+  "Apply On Behalf Of": "Apply On Behalf Of",
+  "Apply Remote Login On Behalf Of": "Apply Remote Login On Behalf Of",
+  "Selected date is not eligible for Remote login": "Selected date is not eligible for Remote login",
+  "Date must be after your date of joining": "Date must be after your date of joining",
+  "Reason for Remote login": "Reason for Remote login"
 }

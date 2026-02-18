@@ -15,10 +15,11 @@ import { IExpenseHeaders, IExpense } from '../../../../Interfaces/claimsandexpen
 import { HttpService } from '../../../../services/http.service';
 import { TimeoffYearFilterService } from '../../../../services/timeoff-year-filter.service';
 import { DataLoaderContentComponent } from '../../../../shared/data-loader-content/data-loader-content.component';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-on-behalf-of-expenses-processed',
-  imports: [CommonModule, DateformatPipe, NgxDocViewerModule, FormsModule, NoDataFoundComponent, DataLoaderContentComponent, InfoIconComponent, DownloadExpenseComponent],
+  imports: [CommonModule, DateformatPipe, NgxDocViewerModule, FormsModule, NoDataFoundComponent, DataLoaderContentComponent, InfoIconComponent, DownloadExpenseComponent, TranslateModule],
   templateUrl: './on-behalf-of-expenses-processed.component.html',
   styleUrl: './on-behalf-of-expenses-processed.component.scss'
 })

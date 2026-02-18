@@ -2,23 +2,23 @@
     @if (selectedLeavesItems && selectedLeavesItems.length > 0 && multiSelect) {
     <div class="component-header-content custom-header-btn-content">
         @if(selectedLeavesItems){
-        <div class="component-sub-header">Selected Records: {{selectedLeavesItems.length}}</div>
+        <div class="component-sub-header">{{'Selected Records'|translate}}: {{selectedLeavesItems.length}}</div>
         }
         <div class="d-flex gap-3">
             @if (canBulkApprove()) {
             @if(rbac.allowedToAccess('Comp Off (On Behalf Of Approvals).update')){
-            <button class="custom-btn btn-primary-approve" (click)="bulkapprove(approval)">Approve</button>
+            <button class="custom-btn btn-primary-approve" (click)="bulkapprove(approval)">{{'Approve'|translate}}</button>
             }
             @if(rbac.allowedToAccess('Comp Off (On Behalf Of Approvals).delete')){
-            <button class="custom-btn btn-primary-reject" (click)="bulkReject(rejectmodal)">Reject</button>
+            <button class="custom-btn btn-primary-reject" (click)="bulkReject(rejectmodal)">{{'Reject'|translate}}</button>
             }
             }
             @if (canBulkProcess()) {
             @if(rbac.allowedToAccess('Comp Off (On Behalf Of Approvals).update')){
-            <button class="custom-btn btn-primary-approve" (click)="bulkProcess()">Process</button>
+            <button class="custom-btn btn-primary-approve" (click)="bulkProcess()">{{'Process'|translate}}</button>
             }
             @if(rbac.allowedToAccess('Comp Off (On Behalf Of Approvals).delete')){
-            <button class="custom-btn btn-primary-reject" (click)="bulkReject(rejectmodal)">Reject</button>
+            <button class="custom-btn btn-primary-reject" (click)="bulkReject(rejectmodal)">{{'Reject'|translate}}</button>
             }
             }
         </div>
@@ -30,7 +30,7 @@
         <span class="input-group-text custom-input-group-search" id="basic-addon1">
             <i class="bi bi-search"></i></span>
         <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input"
-            (ngModelChange)="onSearchChange()" placeholder="Search here" aria-label="Username"
+            (ngModelChange)="onSearchChange()" [placeholder]="'Search here'|translate" aria-label="Username"
             aria-describedby="basic-addon1" autocomplete="off">
     </div>
 
@@ -43,16 +43,16 @@
                     <th style="width: 4rem">
                         <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
                     </th>
-                    <th>Employee ID </th>
-                    <th>Employee Name</th>
-                    <th>Worked Date</th>
-                    <th>Availed</th>
-                    <th class="text-center">Reason</th>
-                    <th class="text-center">Approver Comments</th>
-                    <th>Applied Date</th>
+                    <th>{{'Employee ID'|translate}}</th>
+                    <th>{{'Employee Name'|translate}}</th>
+                    <th>{{'Worked Date'|translate}}</th>
+                    <th>{{'Availed'|translate}}</th>
+                    <th class="text-center">{{'Reason'|translate}}</th>
+                    <th class="text-center">{{'Approver Comments'|translate}}</th>
+                    <th>{{'Applied Date'|translate}}</th>
                     @if(!multiSelect && (rbac.allowedToAccess('Comp Off (On Behalf Of Approvals).update') ||
                     rbac.allowedToAccess('Comp Off (On Behalf Of Approvals).delete'))) {
-                    <th class="text-center">Action</th>
+                    <th class="text-center">{{'Action'|translate}}</th>
                     }
                 </tr>
             </ng-template>
@@ -103,8 +103,7 @@
                                 @if( leave.approvalHeader.currentapprovalStage !=
                                 leave.approvalHeader.finalapprovalStage){
                                 <li (click)="openApproveModal(approval,leave)">
-                                    <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{'Approve' |
-                                        translate}}</a>
+                                    <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{'Approve' | translate}}</a>
                                 </li>
                                 }
                                 }
@@ -112,15 +111,13 @@
                                 @if( leave.approvalHeader.currentapprovalStage ==
                                 leave.approvalHeader.finalapprovalStage){
                                 <li (click)="handleProcess(leave)">
-                                    <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{'Process' |
-                                        translate}}</a>
+                                    <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{'Process' | translate}}</a>
                                 </li>
                                 }
                                 }
                                 @if( rbac.allowedToAccess('Comp Off (On Behalf Of Approvals).delete')) {
                                 <li (click)="openRejectModal(rejectmodal,leave)">
-                                    <a class="dropdown-item"><i class="bi bi-x-circle me-2"></i>{{'Reject' |
-                                        translate}}</a>
+                                    <a class="dropdown-item"><i class="bi bi-x-circle me-2"></i>{{'Reject' | translate}}</a>
                                 </li>
                                 }
 
@@ -156,23 +153,22 @@
                 <div class="mb-3">
                     <label for="comments" class="form-label custom-label mb-2">{{'Comments' | translate}}
                         <span class="text-danger">*</span></label>
-                    <textarea class="form-control custom-input" id="comments" placeholder="Please provide comments"
+                    <textarea class="form-control custom-input" id="comments" [placeholder]="'Please provide comments'|translate"
                         formControlName="comments" maxlength="250"
                         (keydown)="formsValidation.restrictInitialSpace($event)"></textarea>
                     <!-- Character counter -->
                     <div class="textarea-count-text">{{ approveForm.get('comments')?.value?.length || 0 }}/250</div>
                     <div class="error-msg"
                         *ngIf="approveForm.get('comments')?.touched && approveForm.get('comments')?.invalid">
-                        <div *ngIf="approveForm.get('comments')?.errors?.['required']">Comments are required</div>
-                        <div *ngIf="approveForm.get('comments')?.errors?.['maxlength']">Comments cannot exceed 250
-                            characters</div>
+                        <div *ngIf="approveForm.get('comments')?.errors?.['required']">{{'Comments are required'|translate}}</div>
+                        <div *ngIf="approveForm.get('comments')?.errors?.['maxlength']">{{'Comments cannot exceed 250 characters'|translate}}</div>
                     </div>
                 </div>
             </div>
             <div class="d-flex align-items-center flex-wrap gap-2 mb-3">
                 <button type="button" class="custom-btn btn-secondary chip-btn"
                     [class.active]="selectedLeaveStatus === 'approved'" (click)="onStatusApproveSelect('approved')">
-                    Approved
+                    {{'Approved'|translate}}
                 </button>
             </div>
             <div class="custom-modal-footer">
@@ -182,7 +178,7 @@
                     @if(spinnerLoader){
                     <div class="button-loader-content">
                         <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
-                        <span>{{'Loading...'}}</span>
+                        <span>{{'Loading...'|translate}}</span>
                     </div>
                     }@else {
                     <span>{{'Approve'| translate}}</span>
@@ -205,17 +201,17 @@
                 <div class="mb-3">
                     <label for="comments" class="form-label custom-label mb-2">{{"Comments" | translate}}
                         <span class="text-danger">*</span></label>
-                    <textarea class="form-control custom-input" id="comments" placeholder="Please provide comments"
+                    <textarea class="form-control custom-input" id="comments" [placeholder]="'Please provide comments'|translate"
                         formControlName="comments" maxlength="250"
                         (keydown)="formsValidation.restrictInitialSpace($event)"></textarea>
                     <div class="textarea-count-text">{{ rejectForm.get('comments')?.value?.length || 0 }}/250</div>
                     <div class="error-msg"
                         *ngIf="rejectForm.get('comments')?.touched && rejectForm.get('comments')?.invalid">
                         <div *ngIf="rejectForm.get('comments')?.errors?.['required']">
-                            Comments are required
+                            {{'Comments are required'|translate}}
                         </div>
                         <div *ngIf="rejectForm.get('comments')?.errors?.['maxlength']">
-                            Comments cannot exceed 250 characters
+                            {{'Comments cannot exceed 250 characters'|translate}}
                         </div>
                     </div>
                 </div>
@@ -223,7 +219,7 @@
             <div class="d-flex align-items-center flex-wrap gap-2 mb-3">
                 <button type="button" class="custom-btn btn-secondary chip-btn"
                     [class.active]="selectedLeaveStatus === 'reject'" (click)="onStatusRejectSelect('reject')">
-                    Rejected
+                    {{'Rejected'|translate}}
                 </button>
             </div>
             <div class="custom-modal-footer">
@@ -233,7 +229,7 @@
                     @if(spinnerLoader){
                     <div class="button-loader-content">
                         <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
-                        <span>{{'Loading...'}}</span>
+                        <span>{{'Loading...'|translate}}</span>
                     </div>
                     }@else {
                     <span>{{'Reject'| translate}}</span>

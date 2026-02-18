@@ -2397,7 +2397,22 @@
   "Asset Category is required": "Asset Category is required",
   "Asset Category should not exceed 30 characters": "Asset Category should not exceed 30 characters",
   "Update Asset Category": "Update Asset Category",
-  "Are you sure you want to delete the asset category?": "Are you sure you want to delete the asset category?"
+  "Are you sure you want to delete the asset category?": "Are you sure you want to delete the asset category?",
+  "On Behalf Of": "On Behalf Of",
+  "Select Reportee": "Select Reportee",
+  "Please select reportee": "Please select reportee",
+  "Apply On Behalf Of": "Apply On Behalf Of",
+  "Apply WFH On Behalf Of": "Apply WFH On Behalf Of",
+  "Worked Date is required": "Worked Date is required",
+  "Selected date is not eligible for WFH": "Selected date is not eligible for WFH",
+  "Date must be after your date of joining": "Date must be after your date of joining",
+  "Selected Records": "Selected Records",
+  "Search here": "Search here",
+  "Please provide comments": "Please provide comments",
+  "Comments are required": "Comments are required",
+  "Comments cannot exceed 250 characters": "Comments cannot exceed 250 characters",
+  "Success Records": "Success Records",
+  "Failed Records": "Failed Records"
 
 
 }

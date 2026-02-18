@@ -14,10 +14,11 @@ import { DownloadExpenseComponent } from '../../../../claimsandexpenses/download
 import { DateformatPipe } from '../../../../Pipes/dateformat.pipe';
 import { DataLoaderContentComponent } from '../../../../shared/data-loader-content/data-loader-content.component';
 import { NoDataFoundComponent } from '../../../../shared/no-data-found/no-data-found.component';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-on-behalf-of-expenses-waiting-for-approval',
-  imports: [CommonModule, DateformatPipe, NgxDocViewerModule, FormsModule, NoDataFoundComponent, DataLoaderContentComponent, DownloadExpenseComponent],
+  imports: [CommonModule, DateformatPipe, NgxDocViewerModule, FormsModule, NoDataFoundComponent, DataLoaderContentComponent, DownloadExpenseComponent,TranslateModule],
   templateUrl: './on-behalf-of-expenses-waiting-for-approval.component.html',
   styleUrl: './on-behalf-of-expenses-waiting-for-approval.component.scss'
 })

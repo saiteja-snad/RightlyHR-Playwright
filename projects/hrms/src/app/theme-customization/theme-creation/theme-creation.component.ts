@@ -5,10 +5,11 @@ import { Router } from '@angular/router';
 import { ThemeService } from '../../services/theme-service/theme.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { OpenModalService } from '../../services/open-modal.service';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-theme-creation',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule,TranslateModule],
   templateUrl: './theme-creation.component.html',
   styleUrl: './theme-creation.component.scss'
 })

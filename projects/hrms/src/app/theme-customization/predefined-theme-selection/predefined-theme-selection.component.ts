@@ -3,10 +3,11 @@ import { Component } from '@angular/core';
 import { PredefinedThemesService } from '../../services/theme-service/predefined-themes.service';
 import { FormsModule } from '@angular/forms';
 import { OpenModalService } from '../../services/open-modal.service';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-predefined-theme-selection',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule,TranslateModule],
   templateUrl: './predefined-theme-selection.component.html',
   styleUrl: './predefined-theme-selection.component.scss'
 })

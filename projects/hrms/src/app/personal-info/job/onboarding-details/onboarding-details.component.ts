@@ -373,6 +373,9 @@ export class OnboardingDetailsComponent implements OnInit, OnDestroy{
     return null; // Return null or handle the case when dateString is empty or invalid
   }
 
+
+  
+
   patchForm(data: any): void {
     const remoteLoginWorkLocation = this.filteredRemoteLoginWorkLocations.find(
       (item: any) => item.value == data?.remoteLoginWorkLocation
@@ -447,9 +450,9 @@ export class OnboardingDetailsComponent implements OnInit, OnDestroy{
       .subscribe({
         next: (data: any) => {
         // Filter out records with Active status
-        
+
         const filteredData = data.data;
-        
+
         if (filteredData.length > 0) {
           const contract = filteredData[0];
           this.contractForm.patchValue({
@@ -744,10 +747,10 @@ export class OnboardingDetailsComponent implements OnInit, OnDestroy{
         console.log(this.empdata?.substatus);
         this.onboardingForm.get('status')?.enable();
       }
-      
+
     } else {
       this.getEmployeeId();
-      
+
       this.onboardingForm.disable();
     }
   }

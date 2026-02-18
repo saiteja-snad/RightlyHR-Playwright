@@ -1,10 +1,10 @@
 <div class="custom-main-component-container">
     <div class="component-header-content">
         <div class="heading-content">
-            <div class="commpoment-name navigator" (click)="openModal(navigateToTable)">Dynamic Form
+            <div class="commpoment-name navigator" (click)="openModal(navigateToTable)">{{'Dynamic Form' | translate}}
                 <i class="bi bi-chevron-double-right ms-1"></i>
             </div>
-            <div class="component-header">Create Form</div>
+            <div class="component-header">{{'Create Form' | translate}}</div>
         </div>
     </div>
 
@@ -14,34 +14,34 @@
             <div class="row mb-3">
                 <!-- Form Name -->
                 <div class="col-md-4 mb-3">
-                    <label class="form-label custom-label mb-2">Form Name<span class="text-danger">*</span></label>
+                    <label class="form-label custom-label mb-2">{{'Form Name' | translate}}<span class="text-danger">*</span></label>
                     <input formControlName="formHeader" class="form-control custom-input"
-                        (keypress)="formsValidations.restrictInitialSpace($event)" placeholder="Enter Form Name">
+                        (keypress)="formsValidations.restrictInitialSpace($event)" [placeholder]="'Enter Form Name' | translate">
                     <div class="error-msg">
                         <div
                             *ngIf="createForm.get('formHeader')?.errors?.['required'] && createForm.get('formHeader')?.touched">
-                            Form Name is required.
+                            {{'Form Name is required' | translate}}
                         </div>
                         <div
                             *ngIf="createForm.get('formHeader')?.hasError('maxlength') && createForm.get('formHeader')?.touched">
-                            Form Name must not exceed 255 characters
+                            {{'Form Name must not exceed 255 characters' | translate}}
                         </div>
                         <div
                             *ngIf="createForm.get('formHeader')?.hasError('whitespace') && !createForm.get('formHeader')?.hasError('required')">
-                            Form Name cannot be empty or contain only spaces.
+                            {{'Form Name cannot be empty or contain only spaces' | translate}}
                         </div>
                         <div *ngIf="createForm.get('formHeader')?.hasError('onlySpecialChars')">
-                            Form Name cannot contain only special characters.
+                            {{'Form Name cannot contain only special characters' | translate}}
                         </div>
                     </div>
                 </div>
 
                 <!-- Module Name -->
                 <div class="col-md-4 mb-3">
-                    <label class="form-label custom-label mb-2">Module Name <span class="text-danger">*</span></label>
+                    <label class="form-label custom-label mb-2">{{'Module Name' | translate}} <span class="text-danger">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="modules" optionLabel="moduleName" [filter]="false" [showClear]="false"
-                            class="custom-select w-100" formControlName="moduleId" placeholder="Select Module"
+                            class="custom-select w-100" formControlName="moduleId" [placeholder]="'Select Module' | translate"
                             (onChange)="onModuleChange($event.value)">
                             <!-- Selected item template -->
                             <ng-template let-selectedOption pTemplate="selectedItem">{{ selectedOption?.moduleName
@@ -52,18 +52,18 @@
                     </div>
                     <div class="error-msg"
                         *ngIf="createForm.get('moduleId')?.errors?.['required'] && createForm.get('moduleId')?.touched">
-                        Module Name is required.
+                        {{'Module Name is required' | translate}}
                     </div>
                 </div>
 
                 <!-- Rating Scale Range -->
                 <div class="col-md-4 mb-3" *ngIf="createForm.get('moduleId')?.value?.id !== 33">
-                    <label class="form-label custom-label mb-2">Rating Scale Range<span
+                    <label class="form-label custom-label mb-2">{{'Rating Scale Range' | translate}}<span
                             class="text-danger">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="uniqueRatingScaleRanges" [filter]="false" [showClear]="false"
                             class="form-select custom-select" formControlName="ratingScaleRange"
-                            placeholder="Select Rating Scale Range" (onChange)="onRatingScaleRangeChange($event)">
+                            [placeholder]="'Select Rating Scale Range' | translate" (onChange)="onRatingScaleRangeChange($event)">
                             <!-- Selected item template -->
                             <ng-template let-selectedOption pTemplate="selectedItem">
                                 {{ selectedOption?.minimum }} to {{ selectedOption?.maximum }}
@@ -75,7 +75,7 @@
                     </div>
                     <div class="error-msg"
                         *ngIf="createForm.get('ratingScaleRange')?.errors?.['required'] && createForm.get('ratingScaleRange')?.touched">
-                        Rating Scale Range is required.
+                        {{'Rating Scale Range is required' | translate}}
                     </div>
                 </div>
 
@@ -83,36 +83,36 @@
                 <!-- Overall Rating -->
                 <div class="col-md-4 mb-3"
                     *ngIf="createForm.get('moduleId')?.value && (createForm.get('moduleId')?.value?.id !== 24 && createForm.get('moduleId')?.value?.id !== 33)">
-                    <label class="form-label custom-label mb-2">Overall Rating<span class="text-danger">*</span></label>
+                    <label class="form-label custom-label mb-2">{{'Overall Rating' | translate}}<span class="text-danger">*</span></label>
                     <input type="number" formControlName="overAllRating" class="form-control custom-input"
-                        placeholder="Enter Overall rating" min="1" pattern="[0-9]*" (input)="restrictToNumbers($event)">
+                        [placeholder]="'Enter Overall rating' | translate" min="1" pattern="[0-9]*" (input)="restrictToNumbers($event)">
                     <div class="error-msg"
                         *ngIf="createForm.get('overAllRating')?.errors?.['required'] && createForm.get('overAllRating')?.touched">
-                        Overall Rating is required.
+                        {{'Overall Rating is required' | translate}}
                     </div>
                     <div class="error-msg"
                         *ngIf="createForm.get('overAllRating')?.errors?.['min'] && createForm.get('overAllRating')?.touched">
-                        Overall Rating must be at least 1.
+                        {{'Overall Rating must be at least 1' | translate}}
                     </div>
                 </div>
 
                 <!-- CutOff Rating -->
                 <div class="col-md-4 mb-3"
                     *ngIf="createForm.get('moduleId')?.value && (createForm.get('moduleId')?.value?.id !== 24 && createForm.get('moduleId')?.value?.id !== 33)">
-                    <label class="form-label custom-label mb-2">Cut Off Rating <span
+                    <label class="form-label custom-label mb-2">{{'Cut Off Rating' | translate}} <span
                             class="text-danger">*</span></label>
                     <input type="number" formControlName="cutOffRating" class="form-control custom-input"
-                        placeholder="Enter CutOff rating" min="1" (input)="restrictToNumbers($event)">
+                        [placeholder]="'Enter CutOff rating' | translate" min="1" (input)="restrictToNumbers($event)">
                     <div class="error-msg"
                         *ngIf="createForm.get('cutOffRating')?.errors?.['required'] && createForm.get('cutOffRating')?.touched">
-                        Cut Off Rating is required.
+                        {{'Cut Off Rating is required' | translate}}
                     </div>
                     <div class="error-msg"
                         *ngIf="createForm.get('cutOffRating')?.errors?.['min'] && createForm.get('cutOffRating')?.touched">
-                        Cut Off Rating must be at least 1.
+                        {{'Cut Off Rating must be at least 1' | translate}}
                     </div>
                     <div class="error-msg" *ngIf="createForm.errors?.['cutOffGreaterThanOverall']">
-                        Cut Off Rating cannot be greater than Overall Rating.
+                        {{'Cut Off Rating cannot be greater than Overall Rating' | translate}}
                     </div>
                 </div>
 
@@ -134,32 +134,32 @@
 
                             <!-- Section Name -->
                             <div class="col-md-3 mt-1">
-                                <label class="form-label custom-label mb-2">Section Name<span
+                                <label class="form-label custom-label mb-2">{{'Section Name' | translate}}<span
                                         class="text-danger">*</span></label>
                                 <input formControlName="sectionName" class="form-control custom-input"
                                     (keypress)="formsValidations.restrictInitialSpace($event)"
-                                    placeholder="Enter Section Name">
+                                    [placeholder]="'Enter Section Name' | translate">
                                 <div class="error-msg"
                                     *ngIf="section.get('sectionName')?.errors?.['required'] && section.get('sectionName')?.touched">
-                                    Section Name is required.
+                                    {{'Section Name is required' | translate}}
                                 </div>
                                 <div class="error-msg"
                                     *ngIf="section.get('sectionName')?.hasError('maxlength') && section.get('sectionName')?.touched">
-                                    Section Name must not exceed 255 characters
+                                    {{'Section Name must not exceed 255 characters' | translate}}
                                 </div>
                                 <div class="error-msg"
                                     *ngIf="section.get('sectionName')?.hasError('onlySpecialChars') ">
-                                    Section Name cannot contain only special characters.
+                                    {{'Section Name cannot contain only special characters' | translate}}
                                 </div>
                             </div>
 
                             <!-- Section Type -->
                             <div class="col-md-3 mt-1">
-                                <label class="form-label custom-label mb-2">Choose Section Type<span
+                                <label class="form-label custom-label mb-2">{{'Choose Section Type' | translate}}<span
                                         class="text-danger">*</span></label>
                                 <div class="custom-p-select-content">
                                     <p-select [options]="sectionTypes" optionLabel="label" optionValue="value"
-                                        formControlName="type" placeholder="Choose Section Type"
+                                        formControlName="type" [placeholder]="'Choose Section Type' | translate"
                                         class="form-select custom-select" [filter]="false" [showClear]="false"
                                         (onChange)="onSectionTypeChange(section)">
                                         <!-- Selected item template -->
@@ -171,33 +171,33 @@
                                 </div>
                                 <div class="error-msg"
                                     *ngIf="section.get('type')?.errors?.['required'] && section.get('type')?.touched">
-                                    Section Type is required
+                                    {{'Section Type is required' | translate}}
                                 </div>
                             </div>
 
                             <!-- Section Weightage -->
                             <div class="col-md-3 mt-1" *ngIf="createForm.get('moduleId')?.value?.id !== 33">
-                                <label class="form-label custom-label mb-2">Section Weightage <span
+                                <label class="form-label custom-label mb-2">{{'Section Weightage' | translate}} <span
                                         class="text-danger">*</span></label>
                                 <input type="number" formControlName="weightage" id="sectionweightage"
                                     name="sectionweightage" class="form-control custom-input"
-                                    placeholder="Enter Weightage" min="1" (input)="restrictToNumbers($event)">
+                                    [placeholder]="'Enter Weightage' | translate" min="1" (input)="restrictToNumbers($event)">
                                 <div class="error-msg">
                                     <div
                                         *ngIf="section.get('weightage')?.errors?.['required'] && section.get('weightage')?.touched">
-                                        Section Weightage is required.
+                                        {{'Section Weightage is required' | translate}}
                                     </div>
                                     <div
                                         *ngIf="section.get('weightage')?.errors?.['min'] && section.get('weightage')?.touched">
-                                        Section Weightage must be at least 1.
+                                        {{'Section Weightage must be at least 1' | translate}}
                                     </div>
                                     <div
                                         *ngIf="createForm.errors?.['weightageGreaterThanOverall'] && section.get('weightage')?.touched">
-                                        Each section's weightage must be less than or equal to the Overall Rating.
+                                        {{'Each section weightage must be less than or equal to the Overall Rating' | translate}}
                                     </div>
                                     <div
                                         *ngIf="!section.get('weightage')?.errors?.['required'] && createForm.errors?.['weightageNotEqualTo100'] && section.get('weightage')?.touched">
-                                        Sum of all sections weightage should be equal to 100
+                                        {{'Sum of all sections weightage should be equal to 100' | translate}}
                                     </div>
                                 </div>
                             </div>
@@ -218,13 +218,13 @@
                                     <p-select [options]="filteredRatingScaleTypes" optionLabel="ratingType"
                                         optionValue="ratingType" [filter]="false" [showClear]="false"
                                         class="custom-select" formControlName="ratingScaleType"
-                                        placeholder="Choose rating scale type">
+                                        [placeholder]="'Choose rating scale type' | translate">
                                     </p-select>
                                     <span class="text-danger">*</span>
                                 </div>
                                 <div class="error-msg"
                                     *ngIf="section.get('ratingScaleType')?.errors?.['required'] && section.get('ratingScaleType')?.touched">
-                                    Rating Scale Type is required.
+                                    {{'Rating Scale Type is required' | translate}}
                                 </div>
                             </div>
                             <!-- questions with section type rating -->
@@ -245,27 +245,27 @@
 
                                             <!-- Question Weightage -->
                                             <div class="col-md-3" *ngIf="createForm.get('moduleId')?.value?.id !== 33">
-                                                <label class="form-label custom-label mb-2">Question Weightage<span
+                                                <label class="form-label custom-label mb-2">{{'Question Weightage' | translate}}<span
                                                         class="text-danger">*</span></label>
                                                 <div>
                                                     <input type="number" formControlName="questionWeightage"
                                                         class="form-control custom-input"
-                                                        placeholder="Enter Question Weightage" min="1"
+                                                        [placeholder]="'Enter Question Weightage' | translate" min="1"
                                                         (input)="restrictToNumbers($event)">
                                                 </div>
                                                 <div class="error-msg">
                                                     <div
                                                         *ngIf="question.get('questionWeightage')?.errors?.['required'] && question.get('questionWeightage')?.touched">
-                                                        Question Weightage is required.
+                                                        {{'Question Weightage is required' | translate}}
                                                     </div>
                                                     <div
                                                         *ngIf="question.get('questionWeightage')?.errors?.['min'] && question.get('questionWeightage')?.touched">
-                                                        Question Weightage must be at least 1.
+                                                        {{'Question Weightage must be at least 1' | translate}}
                                                     </div>
                                                     <div
                                                         *ngIf="!question.get('questionWeightage')?.errors?.['required'] && createForm.errors?.['section' + sectionIndex + 'QuestionWeightageNotEqualTo100'] 
                                                                                         && question.get('questionWeightage')?.touched">
-                                                        Total questions weightage in this section must be 100.
+                                                        {{'Total questions weightage in this section must be 100' | translate}}
                                                     </div>
                                                 </div>
                                             </div>
@@ -298,18 +298,18 @@
                                         <div class="pt-3">
                                             <div class="d-flex">
                                                 <input formControlName="question" class="form-control custom-input"
-                                                    placeholder="Enter your Question"
+                                                    [placeholder]="'Enter your Question' | translate"
                                                     (input)="validateInput(question.get('question'))"
                                                     [maxlength]="1000">
                                                 <span class="text-danger">*</span>
                                             </div>
                                             <div class="error-msg"
                                                 *ngIf="question.get('question')?.errors?.['required'] && question.get('question')?.touched">
-                                                Question is required.
+                                                {{'Question is required' | translate}}
                                             </div>
                                             <div class="error-msg"
                                                 *ngIf="question.get('question')?.hasError('maxlength') && question.get('question')?.touched">
-                                                Question must not exceed 1000 characters
+                                                {{'Question must not exceed 1000 characters' | translate}}
                                             </div>
                                         </div>
 
@@ -331,7 +331,7 @@
                                                     id="requiredSwitch{{sectionIndex}}{{questionIndex}}"
                                                     formControlName="isRequired" [ngbPopover]="getPopoverMessage(sectionIndex, questionIndex)" placement="start">
                                                 <label class="form-check-label" for="requiredSwitch{{sectionIndex}}{{questionIndex}}">
-                                                    Required
+                                                    {{'Required' | translate}}
                                                 </label>
                                             </div>
 
@@ -431,7 +431,7 @@
                                             </div>
                                             <div class="error-msg"
                                                 *ngIf="question.get('type')?.errors?.['required'] && question.get('type')?.touched">
-                                                Question Type is required.
+                                                {{'Question Type is required' | translate}}
                                             </div>
                                         </div>
 
@@ -440,22 +440,21 @@
                                             <div class="d-flex">
                                                 <input type="number" formControlName="questionWeightage"
                                                     class="form-control custom-input"
-                                                    placeholder="Enter Question Weightage" min="1"
+                                                    [placeholder]="'Enter Question Weightage' | translate" min="1"
                                                     (input)="restrictToNumbers($event)">
                                                 <span class="text-danger">*</span>
                                             </div>
                                             <div class="error-msg"
                                                 *ngIf="question.get('questionWeightage')?.errors?.['required'] && question.get('questionWeightage')?.touched">
-                                                Question Weightage is required.
+                                                {{'Question Weightage is required' | translate}}
                                             </div>
                                             <div class="error-msg"
                                                 *ngIf="question.get('questionWeightage')?.errors?.['min'] && question.get('questionWeightage')?.touched">
-                                                Question Weightage must be at least 1.
+                                                {{'Question Weightage must be at least 1' | translate}}
                                             </div>
                                             <div class="error-msg"
                                                 *ngIf="!question.get('questionWeightage')?.errors?.['required'] && createForm.errors?.['section' + sectionIndex + 'QuestionWeightageNotEqualTo100']  && question.get('questionWeightage')?.touched">
-                                                <span class="error">Total question weightage in this section
-                                                    must be 100.</span>
+                                                <span class="error">{{'Total question weightage in this section must be 100' | translate}}</span>
                                             </div>
                                         </div>
 
@@ -464,17 +463,17 @@
                                     <div class="my-3">
                                         <div class="d-flex">
                                             <input formControlName="question" class="form-control custom-input"
-                                                placeholder="Enter your Question" [maxlength]="1000"
+                                                [placeholder]="'Enter your Question' | translate" [maxlength]="1000"
                                                 (input)="validateInput(question.get('question'))">
                                             <span class="text-danger">*</span>
                                         </div>
                                         <div class="error-msg"
                                             *ngIf="question.get('question')?.errors?.['required'] && question.get('question')?.touched">
-                                            Question is required.
+                                            {{'Question is required' | translate}}
                                         </div>
                                         <div class="error-msg"
                                             *ngIf="question.get('question')?.hasError('maxlength') && question.get('question')?.touched">
-                                            Question must not exceed 1000 characters
+                                            {{'Question must not exceed 1000 characters' | translate}}
                                         </div>
                                     </div>
 

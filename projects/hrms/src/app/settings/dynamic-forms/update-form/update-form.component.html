@@ -2,9 +2,9 @@
     <div class="component-header-content">
         <div class="heading-content">
             <div class="commpoment-name cursor" (click)="openModal(navigateToTable, {size:'md',centered: true})">
-                Dynamic Form<i class="bi bi-chevron-double-right ms-1"></i>
+                {{'Dynamic Form' | translate}}<i class="bi bi-chevron-double-right ms-1"></i>
             </div>
-            <div class="component-header">Update Form</div>
+            <div class="component-header">{{'Update Form' | translate}}</div>
         </div>
     </div>
 
@@ -13,14 +13,14 @@
             <div class="row mb-3">
                 <!-- Form Name -->
                 <div class="col-md-4">
-                    <label class="form-label custom-label mb-2" for="formHeader">Form Name<span
+                    <label class="form-label custom-label mb-2" for="formHeader">{{'Form Name' | translate}}<span
                             class="text-danger">*</span></label>
                     <input formControlName="formHeader" class="form-control custom-input"
-                        (keypress)="formsValidations.restrictInitialSpace($event)" placeholder="Enter Form Name" />
+                        (keypress)="formsValidations.restrictInitialSpace($event)" [placeholder]="'Enter Form Name' | translate" />
                     <div class="error-msg">
                         <div
                             *ngIf="updateForm.get('formHeader')?.errors?.['required'] && updateForm.get('formHeader')?.touched">
-                            Form Name is required.</div>
+                            {{'Form Name is required' | translate}}</div>
                         <div
                             *ngIf="updateForm.get('formHeader')?.hasError('maxlength') && updateForm.get('formHeader')?.touched">
                             Form Name must not exceed 255 characters
@@ -33,10 +33,10 @@
 
                 <!-- Module Name -->
                 <div class="col-md-4">
-                    <label class="form-label custom-label mb-2">Module Name<span class="text-danger">*</span></label>
+                    <label class="form-label custom-label mb-2">{{'Module Name' | translate}}<span class="text-danger">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="modules" optionLabel="moduleName" [filter]="false" [showClear]="false"
-                            class="custom-select w-100" formControlName="moduleId" placeholder="Select Module"
+                            class="custom-select w-100" formControlName="moduleId" [placeholder]="'Select Module' | translate"
                             (onChange)="onModuleChange($event.value)">
                             <!-- Selected item template -->
                             <ng-template let-selectedOption pTemplate="selectedItem">{{ selectedOption?.moduleName
@@ -47,17 +47,17 @@
                     </div>
                     <div class="error-msg"
                         *ngIf="updateForm.get('moduleId')?.errors?.['required'] && updateForm.get('moduleId')?.touched">
-                        Module Name is required.
+                        {{'Module Name is required' | translate}}
                     </div>
                 </div>
 
                 <!-- Rating Scale Range -->
                 <div class="col-md-4 custom-p-select-content" *ngIf="updateForm.get('moduleId')?.value?.id !== 33">
-                    <label class="content-heading mb-2">Rating Scale Range<span class="text-danger">*</span></label>
+                    <label class="content-heading mb-2">{{'Rating Scale Range' | translate}}<span class="text-danger">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="uniqueRatingScaleRanges" [filter]="false" [showClear]="false"
                             class="custom-select w-100" formControlName="ratingScaleRange"
-                            placeholder="Select Rating Scale Range" (onChange)="onRatingScaleRangeChange($event)">
+                            [placeholder]="'Select Rating Scale Range' | translate" (onChange)="onRatingScaleRangeChange($event)">
                             <!-- Selected item template -->
                             <ng-template let-selectedOption pTemplate="selectedItem">{{ selectedOption?.minimum }} to
                                 {{ selectedOption?.maximum }}</ng-template>
@@ -76,10 +76,10 @@
             <div class="row mb-3">
                 <!-- Overall Rating -->
                 <div class="col-md-4" *ngIf="updateForm.get('moduleId')?.value?.id !== 24 && updateForm.get('moduleId')?.value?.id !== 33">
-                    <label class="form-label custom-label mb-2" for="overAllRating">Overall Rating
+                    <label class="form-label custom-label mb-2" for="overAllRating">{{'Overall Rating' | translate}}
                         <span class="text-danger">*</span></label>
                     <input type="number" formControlName="overAllRating" class="form-control custom-input"
-                        placeholder="Enter Overall rating" min="1" (input)="restrictToNumbers($event)" />
+                        [placeholder]="'Enter Overall rating' | translate" min="1" (input)="restrictToNumbers($event)" />
                     <div class="error-msg">
                         <div
                             *ngIf="updateForm.get('overAllRating')?.errors?.['required'] && updateForm.get('overAllRating')?.touched">
@@ -93,10 +93,10 @@
 
                 <!-- Cut Off Rating -->
                 <div class="col-md-4" *ngIf="updateForm.get('moduleId')?.value?.id !== 24 && updateForm.get('moduleId')?.value?.id !== 33">
-                    <label class="form-label custom-label mb-2" for="cutOffRating">Cut Off Rating
+                    <label class="form-label custom-label mb-2" for="cutOffRating">{{'Cut Off Rating' | translate}}
                         <span class="text-danger">*</span></label>
                     <input type="number" formControlName="cutOffRating" class="form-control custom-input"
-                        placeholder="Enter CutOff rating" min="1" (input)="restrictToNumbers($event)" />
+                        [placeholder]="'Enter CutOff rating' | translate" min="1" (input)="restrictToNumbers($event)" />
                     <div class="error-msg">
                         <div *ngIf="updateForm.get('cutOffRating')?.errors?.['required'] && updateForm.get('cutOffRating')?.touched">
                         Cut Off Rating is required.</div>
@@ -127,11 +127,11 @@
                             </div>
                             <!-- Section Name -->
                             <div class="col-md-3">
-                                <label class="form-label custom-label mb-2">Section Name<span
+                                <label class="form-label custom-label mb-2">{{'Section Name' | translate}}<span
                                         class="text-danger">*</span></label>
                                 <input formControlName="sectionName" class="form-control custom-input"
                                     (keypress)="formsValidations.restrictInitialSpace($event)"
-                                    placeholder="Enter Section Name">
+                                    [placeholder]="'Enter Section Name' | translate">
                                 <div class="error-msg">
                                     <div
                                         *ngIf="section.get('sectionName')?.errors?.['required'] && section.get('sectionName')?.touched">
@@ -148,10 +148,10 @@
                             </div>
                             <!-- Section Type -->
                             <div class="col-md-3">
-                                <label class="form-label">Choose Section Type<span class="text-danger">*</span></label>
+                                <label class="form-label">{{'Choose Section Type' | translate}}<span class="text-danger">*</span></label>
                                 <div class="custom-p-select-content">
                                     <p-select [options]="sectionTypes" optionLabel="label" optionValue="value"
-                                        formControlName="sectionType" placeholder="Choose Section Type"
+                                        formControlName="sectionType" [placeholder]="'Choose Section Type' | translate"
                                         class="custom-select w-100" [filter]="false" [showClear]="false"
                                         (onChange)="onSectionTypeChange(section)">
                                         <!-- Selected item template -->
@@ -168,10 +168,10 @@
                             </div>
                             <!-- Section Weightage -->
                             <div class="col-md-3" *ngIf="updateForm.get('moduleId')?.value?.id !== 33">
-                                <label class="form-label custom-label mb-2">Section Weightage <span
+                                <label class="form-label custom-label mb-2">{{'Section Weightage' | translate}} <span
                                         class="text-danger">*</span></label>
                                 <input type="number" formControlName="weightage" class="form-control custom-input"
-                                    placeholder="Enter Weightage" min="1" (input)="restrictToNumbers($event)">
+                                    [placeholder]="'Enter Weightage' | translate" min="1" (input)="restrictToNumbers($event)">
                                 <div class="error-msg">
                                     <div
                                         *ngIf="section.get('weightage')?.errors?.['required'] && section.get('weightage')?.touched">
@@ -205,7 +205,7 @@
                                     <p-select [options]="filteredRatingScaleTypes" optionLabel="ratingType"
                                         optionValue="ratingType" [filter]="false" [showClear]="false"
                                         class="form-select question-type rounded-2" formControlName="ratingScaleType"
-                                        placeholder="Choose rating scale type">
+                                        [placeholder]="'Choose rating scale type' | translate">
                                     </p-select>
                                     <span class="text-danger">*</span>
                                 </div>
@@ -231,11 +231,11 @@
                                             </div>
                                             <!-- Question Weightage -->
                                             <div class="col-md-3" *ngIf="updateForm.get('moduleId')?.value?.id !== 33">
-                                                <label class="form-label custom-label mb-2">Question Weightage<span
+                                                <label class="form-label custom-label mb-2">{{'Question Weightage' | translate}}<span
                                                         class="text-danger">*</span></label>
                                                 <input type="number" formControlName="questionWeightage"
                                                     class="form-control custom-input"
-                                                    placeholder="Enter Question Weightage" min="1"
+                                                    [placeholder]="'Enter Question Weightage' | translate" min="1"
                                                     (input)="restrictToNumbers($event)">
                                                 <div class="error-msg"
                                                     *ngIf="question.get('questionWeightage')?.errors?.['required'] && question.get('questionWeightage')?.touched">
@@ -283,7 +283,7 @@
                                             <div class="d-flex ms-4">
                                                 <input formControlName="question"
                                                     class="form-control hide-input rounded-2"
-                                                    placeholder="Enter your Question"
+                                                    [placeholder]="'Enter your Question' | translate"
                                                     (input)="validateInput(question.get('question'))">
                                                 <span class="text-danger">*</span>
                                             </div>
@@ -317,7 +317,7 @@
                                                     formControlName="required" [ngbPopover]="getPopoverMessage(sectionIndex, questionIndex)" placement="start">
                                                 <label class="form-check-label"
                                                     for="requiredSwitch{{sectionIndex}}{{questionIndex}}">
-                                                    Required
+                                                    {{'Required' | translate}}
                                                 </label>
                                             </div>
                                             <div>
@@ -445,7 +445,7 @@
                                     <div class="mt-3">
                                         <div class="d-flex">
                                             <input formControlName="question" class="form-control hide-input rounded-2"
-                                                placeholder="Enter your Question"
+                                                [placeholder]="'Enter your Question' | translate"
                                                 (input)="validateInput(question.get('question'))">
                                             <span class="text-danger">*</span>
                                         </div>
@@ -479,7 +479,7 @@
                                                 </ng-container>
                                                 <div class="d-flex w-100">
                                                     <input formControlName="option" class="form-control w-25"
-                                                        placeholder="Enter option"
+                                                        [placeholder]="'Enter option' | translate"
                                                         (keypress)="formsValidations.restrictInitialSpace($event)" />
                                                     <span class="text-danger">*</span>
                                                     <button type="button" class="btn float-end"
@@ -492,7 +492,7 @@
                                             </div>
                                         </div>
                                         <button type="button" class="custom-btn btn-primary me-2"
-                                            (click)="addUpdateOption(sectionIndex, questionIndex)">Add Option</button>
+                                            (click)="addUpdateOption(sectionIndex, questionIndex)">{{'Add Option' | translate}}</button>
                                     </div>
 
                                     <!-- Question Type => Text | Textarea-->
@@ -520,7 +520,7 @@
                                             <input class="form-check-input" type="checkbox" id="requiredSwitch{{sectionIndex}}{{questionIndex}}"
                                                 formControlName="required" [ngbPopover]="getPopoverMessage(sectionIndex, questionIndex)" placement="start">
                                             <label class="form-check-label" for="requiredSwitch{{sectionIndex}}{{questionIndex}}">
-                                                Required
+                                                {{'Required' | translate}}
                                             </label>
                                         </div>
                                         <!-- Remove Question Button -->
@@ -538,7 +538,7 @@
                                 <!-- Add Question Button -->
                                 <button type="button" class="custom-btn btn-primary width-max"
                                     (click)="addUpdateQuestion(sectionIndex)">
-                                    Add Question</button>
+                                    {{'Add Question' | translate}}</button>
                             </div>
                         </div>
                     </div>
@@ -549,11 +549,10 @@
             </div>
             <div class="d-flex gap-3 justify-content-end">
                 <!-- Add Section -->
-                <button type="button" class="custom-btn btn-primary" (click)="addUpdateSection()">Add Section</button>
+                <button type="button" class="custom-btn btn-primary" (click)="addUpdateSection()">{{'Add Section' | translate}}</button>
                 <!-- Save as Draft -->
                 <button type="button" class="custom-btn btn-primary" *ngIf="formStatus === 'draft'"
-                    [disabled]="updateForm.invalid" (click)="openconfirmationModel(confirmationtosaveasdraft)">Save as
-                    Draft</button>
+                    [disabled]="updateForm.invalid" (click)="openconfirmationModel(confirmationtosaveasdraft)">{{'Save as Draft' | translate}}</button>
                 <!-- Submit | Update -->
                 <button type="button" class="custom-btn btn-primary"
                     (click)="openconfirmationModel(confirmationtosave);statuscheck(formStatus)"
@@ -567,7 +566,7 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <img src="/icons/conformation.png" alt="delete-icon" class="confirmation-delete-icon">
-            <p class="confirmation-text">Are you sure you want to Save?</p>
+            <p class="confirmation-text">{{'Are you sure you want to Save?' | translate}}</p>
         </div>
         <div class="custom-modal-footer">
             <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'|translate}}</button>

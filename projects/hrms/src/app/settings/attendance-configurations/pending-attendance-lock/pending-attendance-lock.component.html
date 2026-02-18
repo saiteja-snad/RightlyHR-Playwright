@@ -3,8 +3,7 @@
         <div><span class="component-sub-header">{{'Attendance Lock'|translate}}</span></div>
         <div class="custom-add-btn" class="d-flex gap-3 align-items-center">
             <button type="button" *ngIf="rbac.allowedToAccess('Attendance Pending Tab.create')"
-                (click)="openModal(addAttendanceLockModal)" class="custom-btn btn-primary">Add
-                Attendance Lock</button>
+                (click)="openModal(addAttendanceLockModal)" class="custom-btn btn-primary">{{'Add Attendance Lock' |translate }}</button>
         </div>
     </div>
     <ng-container *ngIf="dataLoad; else maincontent">

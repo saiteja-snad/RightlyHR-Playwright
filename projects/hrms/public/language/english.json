@@ -2397,7 +2397,19 @@
   "Asset Category is required": "Asset Category is required",
   "Asset Category should not exceed 30 characters": "Asset Category should not exceed 30 characters",
   "Update Asset Category": "Update Asset Category",
-  "Are you sure you want to delete the asset category?": "Are you sure you want to delete the asset category?"
+  "Are you sure you want to delete the asset category?": "Are you sure you want to delete the asset category?",
+  "Asset Category must not exceed 30 characters": "Asset Category must not exceed 30 characters",
+  "Are you sure you want to Inactive this form?":"Are you sure you want to Inactive this form?",
+  "Add Rating Scale": "Add Rating Scale",
+  "Rating Scale": "Rating Scale",
+  "From": "From",
+  "To": "To",
+  "Enter Rating": "Enter Rating",
+  "From value cannot be greater than the To value": "From value cannot be greater than the To value",
+  "Enter Rating Type": "Enter Rating Type",
+  "Enter Description": "Enter Description",
+  "Update Rating Scale": "Update Rating Scale",
+  "Are you sure you want to Active this form?":"Are you sure you want to Active this form?"
 
 
 }

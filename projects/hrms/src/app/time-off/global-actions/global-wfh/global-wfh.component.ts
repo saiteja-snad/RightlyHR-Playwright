@@ -25,10 +25,11 @@ import { DataLoaderContentComponent } from "../../../shared/data-loader-content/
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { GlobalpermissionsPipe } from "../../../Pipes/globalpermissions.pipe";
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
   selector: 'app-global-wfh',
   imports: [CommonModule, NgbPopoverModule, FormsModule, ReactiveFormsModule, PaginatorModule,
-    DropdownModule, ModuleInformationComponent, ModuleInfoIconComponent, Select, GlobalActionsTabsComponent, NoDataFoundComponent, DataLoaderContentComponent, InfoIconComponent, DateformatPipe, GlobalpermissionsPipe],
+    DropdownModule, ModuleInformationComponent, ModuleInfoIconComponent, Select, GlobalActionsTabsComponent, NoDataFoundComponent, DataLoaderContentComponent, InfoIconComponent, DateformatPipe, GlobalpermissionsPipe, TranslateModule],
   templateUrl: './global-wfh.component.html',
   styleUrl: './global-wfh.component.scss'
 })

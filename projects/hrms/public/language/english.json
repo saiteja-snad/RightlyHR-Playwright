@@ -2500,3 +2500,8 @@
   "Request Raised Date": "Request Raised Date",
   "Employee Name": "Employee Name"
 }
+,
+  "Global WFH": "Global WFH",
+  "WFH Requested Date": "WFH Requested Date",
+  "List of Employees": "List of Employees"
+}

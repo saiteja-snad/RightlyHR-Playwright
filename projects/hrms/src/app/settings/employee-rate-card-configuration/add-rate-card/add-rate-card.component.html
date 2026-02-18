@@ -138,10 +138,10 @@
                     <table class="w-100">
                         <thead>
                             <tr>
-                                <th>Experience</th>
+                                <th>{{'Experience Range'|translate}}</th>
                                 <th *ngFor="let currencyCode of ratecardForm.get('currency')?.value">{{getCurrencyName(currencyCode)}}
                                 </th>
-                                <th class="text-center">Action</th>
+                                <th class="text-center">{{'Action'|translate}}</th>
                                 <th class="text-center"></th>
                             </tr>
                         </thead>
@@ -150,12 +150,12 @@
                                 <td>
                                     <div class="d-flex gap-2">
                                         <input type="text" class="form-control custom-input" formControlName="experienceFrom"
-                                            placeholder="Min" (input)="onExperienceInput($event, i, 'experienceFrom')"
+                                            placeholder="Min(Year)" (input)="onExperienceInput($event, i, 'experienceFrom')"
                                             (blur)="onExperienceBlur(i, 'experienceFrom')" (keydown)="preventInvalidKeys($event)"
                                             (wheel)="disableScroll($event)" />
                                         <span class="pt-2">-</span>
                                         <input type="text" class="form-control custom-input" formControlName="experienceTo"
-                                            placeholder="Max" (blur)="onExperienceBlur(i, 'experienceTo')"
+                                            placeholder="Max(Year)" (blur)="onExperienceBlur(i, 'experienceTo')"
                                             (keydown)="preventInvalidKeys($event)" (input)="onExperienceInput($event, i, 'experienceTo')"
                                             (wheel)="disableScroll($event)" />
                                     </div>

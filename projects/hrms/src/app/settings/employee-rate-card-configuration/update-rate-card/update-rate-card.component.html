@@ -1,7 +1,7 @@
 <div class="custom-main-component-container">
     <div class="component-header-content pt-2">
         <div class="heading-content">
-            <div class="commpoment-name navigator" (click)="nagvition()">{{'Employee Rate Card' | translate}}
+            <div class="commpoment-name navigator" (click)="nagvition()">{{'Rate Card Configuration'|translate}}
                 <i class="bi bi-chevron-double-right ms-1"></i>
             </div>
             <div class="component-header">{{'Update Rate Card'|translate}}</div>
@@ -155,12 +155,12 @@
                                 <td>
                                     <div class="d-flex gap-2">
                                         <input type="text" class="form-control custom-input" formControlName="experienceFrom"
-                                            [placeholder]="'Min' | translate" (input)="onExperienceInput($event, i, 'experienceFrom')"
+                                            placeholder="Min(Year)" (input)="onExperienceInput($event, i, 'experienceFrom')"
                                             (blur)="onExperienceBlur(i, 'experienceFrom')" (keydown)="preventInvalidKeys($event)"
                                             (wheel)="disableScroll($event)" />
                                         <span class="pt-2">-</span>
                                         <input type="text" class="form-control custom-input" formControlName="experienceTo"
-                                            [placeholder]="'Max' | translate" (blur)="onExperienceBlur(i, 'experienceTo')"
+                                            placeholder="Max(Year)" (blur)="onExperienceBlur(i, 'experienceTo')"
                                             (keydown)="preventInvalidKeys($event)" (input)="onExperienceInput($event, i, 'experienceTo')"
                                             (wheel)="disableScroll($event)" />
                                     </div>

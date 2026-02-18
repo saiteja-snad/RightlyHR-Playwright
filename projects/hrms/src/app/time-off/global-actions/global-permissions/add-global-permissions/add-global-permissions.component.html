@@ -134,7 +134,7 @@
 
         <ng-container *ngIf="requestForm.get('selectType')?.value==='Employees'">
           <div class="mb-3">
-            <label for="employees" class="form-label custom-label">Employees <span class="error-msg">*</span></label>
+            <label for="employees" class="form-label custom-label">{{'Employees' | translate}} <span class="error-msg">*</span></label>
             <div class="custom-p-multiSelect-content">
               <p-multiSelect [options]="getAllEmployeesDetails" optionValue="employeeId" optionLabel="fullName"
                 [filter]="true" filterBy="fullName" [showClear]="true" placeholder="Select Employees"
@@ -150,7 +150,7 @@
         </ng-container>
 
         <div class="mb-3">
-          <label for="requestType" class="form-label custom-label">Request Type<span class="error-msg">*</span></label>
+          <label for="requestType" class="form-label custom-label">{{'Request Type' | translate}}<span class="error-msg">*</span></label>
           <div class="custom-p-select-content">
             <p-select formControlName="requestType" [options]="permissionTypes" optionLabel="item_text"
               optionValue="item_text" placeholder="Select Request Type"  class="form-select custom-select">
@@ -169,7 +169,7 @@
         <!-- content -->
         <ng-container *ngIf="requestForm.get('requestType')?.value==='Permission'">
           <div class="mb-3">
-            <label for="requsteddate" class="form-lable custom-label">Permission Date<span class="error-msg">*</span></label>
+            <label for="requsteddate" class="form-lable custom-label">{{'Permission Date' | translate}}<span class="error-msg">*</span></label>
             <input type="date" class="form-control custom-input" formControlName="permissionDate" id="requsteddate"
               aria-label="Default select example" onkeydown="return false" autocomplete="off" startKey="start"
               [min]="minDate" [max]="maxDate" endKey="end" showCancel="true" />
@@ -180,7 +180,7 @@
           </div>
 
           <div class="mb-3">
-            <label for="Duration" class="custom-label">Duration(In Hours)<span class="error-msg">*</span></label>
+            <label for="Duration" class="custom-label">{{'Duration(In Hours)' | translate}}<span class="error-msg">*</span></label>
             <div class="custom-p-select-content">
               <p-select [options]="permissionHours" optionValue="duration" optionLabel="duration" [filter]="true"
                 filterBy="duration" [showClear]="true" placeholder="Select duration" formControlName="duration"
@@ -193,7 +193,7 @@
           </div>
 
           <div class="mb-3">
-            <label for="type" class="custom-label"> Permission Type<span class="error-msg">*</span></label>
+            <label for="type" class="custom-label">{{'Permission Type' | translate}}<span class="error-msg">*</span></label>
             <div class="custom-p-select-content">
               <p-select [options]="permissionsType" optionValue="name" optionLabel="name" [filter]="true"
                 filterBy="name" [showClear]="true" placeholder="Select Permission Type" (onChange)="onTypeChange()"
@@ -223,7 +223,7 @@
         <ng-container *ngIf="requestForm.get('requestType')?.value==='WFH'">
           <!-- Worked Date -->
           <div class="mb-3">
-            <label for="workedDate" class="form-label custom-label mb-2">Worked Date
+            <label for="workedDate" class="form-label custom-label mb-2">{{'Worked Date' | translate}}
               <span class="text-danger">*</span></label>
             <input type="date" class="form-control custom-input" onkeydown="return false" id="workedDate" autocomplete="off"
               formControlName="workedDate">
@@ -237,7 +237,7 @@
 
           <!-- Availing -->
           <div class="mb-3">
-            <label class="form-label custom-label mb-3">Availing<span class="text-danger">*</span></label>
+            <label class="form-label custom-label mb-3">{{'Availing' | translate}}<span class="text-danger">*</span></label>
             <div class="d-flex gap-3">
               <div class="form-check">
                 <input type="radio" class="form-check-input" id="halfDay" value="Half Day"
@@ -259,7 +259,7 @@
               <div class="form-check">
                 <input type="radio" class="form-check-input" id="fullDay" value="Full Day"
                   formControlName="availing" [value]="2" (change)="updateDuration()">
-                <label class="form-check-label custom-label" for="fullDay">Full Day</label>
+                <label class="form-check-label custom-label" for="fullDay">{{'Full Day' | translate}}</label>
               </div>
             </div>
           </div>
@@ -296,7 +296,7 @@
   <div class="result-popup-content" ngbAutofocus>
     <div>
       <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
-      <p class="confirmation-text">Are you sure you want to cancel?</p>
+      <p class="confirmation-text">{{'Are you sure you want to cancel?' | translate}}</p>
     </div>
     <div class="custom-modal-footer">
       <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'|translate}}</button>
@@ -311,7 +311,7 @@
   <div class="result-popup-content" ngbAutofocus>
     <div>
       <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
-      <p class="confirmation-text">Are you sure you want to submit?</p>
+      <p class="confirmation-text">{{'Are you sure you want to submit?' | translate}}</p>
     </div>
     <div class="custom-modal-footer">
       <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'|translate}}</button>

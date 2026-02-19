@@ -334,7 +334,8 @@ onSubmit(form: FormGroup) {
 clearAllFilters(){
   this.masterDataForm.get('dateOfJoining')?.setValue(null);
   this.masterDataForm.get('empStatus')?.setValue('All Employees');
-  this.onSubmit(this.masterDataForm);
+  this.employeeMasterData = [];
+
 }
   ngOnDestroy(): void {
     if (this.subscription) {

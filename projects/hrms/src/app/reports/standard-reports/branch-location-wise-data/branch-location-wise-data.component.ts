@@ -80,7 +80,7 @@ export class BranchLocationWiseDataComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-     this.localeOptions = {
+    this.localeOptions = {
       applyLabel: 'ok',
       format: this.authService.convertAngularDateFormatToJs(environment.dateformat).toUpperCase(),
       direction: 'ltr',
@@ -100,11 +100,11 @@ export class BranchLocationWiseDataComponent implements OnInit, OnDestroy {
       dateOfJoining: [null],
     });
   }
-clearAllFilters(){
-  this.reportForm.get('dateOfJoining')?.setValue(null);
-  this.reportForm.get('location')?.setValue('All');
-  this.onSubmit(this.reportForm);
-}
+  clearAllFilters() {
+    this.reportForm.get('dateOfJoining')?.setValue(null);
+    this.reportForm.get('location')?.setValue('All');
+    this.standardReportData = []
+  }
   getBranchLocations() {
     this.http.getData('BranchLocation').pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
@@ -287,14 +287,14 @@ clearAllFilters(){
   }
 
   extractPhoneCode(code: string | undefined): string {
-  if (!code) return '';
-  const match = code.match(/\((\+\d+)\)/);
-  if (match) {
-    return match[1];
-  }
+    if (!code) return '';
+    const match = code.match(/\((\+\d+)\)/);
+    if (match) {
+      return match[1];
+    }
 
-  return code.startsWith('+') ? code : '';
-}
+    return code.startsWith('+') ? code : '';
+  }
 
   ngOnDestroy(): void {
     this.destroy$.next(true);

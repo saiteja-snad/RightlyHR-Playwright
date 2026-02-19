@@ -2,9 +2,10 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { NewUserInvitationTabsComponent } from "../../shared/new-user-invitation-tabs/new-user-invitation-tabs.component";
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
   selector: 'app-invite-user-layout',
-  imports: [CommonModule, RouterModule, NewUserInvitationTabsComponent],
+  imports: [CommonModule, RouterModule, NewUserInvitationTabsComponent,TranslateModule],
   templateUrl: './invite-user-layout.component.html',
   styleUrl: './invite-user-layout.component.scss'
 })

@@ -83,8 +83,6 @@ getEmployeeId() {
       next: (data: any) => {
         this.isloading = false;
         this.empdata = data;
-        console.log(this.empdata);
-        
         if (this.empdata.profileUrl) this.onSelectprofilePicDownload(this.empdata)
       },
       error: (reason)=>{ console.log(reason)

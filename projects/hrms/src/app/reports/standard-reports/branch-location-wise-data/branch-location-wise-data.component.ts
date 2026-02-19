@@ -20,6 +20,7 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
 import { ReportsHeaderComponent } from "../../../shared/reports-tabs/reports-header/reports-header.component";
 import { DatePicker } from 'primeng/datepicker';
+import { TranslatePipe } from '@ngx-translate/core';
 @Component({
   selector: 'app-branch-location-wise-data',
   imports: [
@@ -31,7 +32,8 @@ import { DatePicker } from 'primeng/datepicker';
     DateformatPipe,
     DatePicker,
     DataLoaderContentComponent,
-    ReportsHeaderComponent
+    ReportsHeaderComponent,
+    TranslatePipe
   ],
   templateUrl: './branch-location-wise-data.component.html',
   styleUrl: './branch-location-wise-data.component.scss',
@@ -78,7 +80,7 @@ export class BranchLocationWiseDataComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-     this.localeOptions = {
+    this.localeOptions = {
       applyLabel: 'ok',
       format: this.authService.convertAngularDateFormatToJs(environment.dateformat).toUpperCase(),
       direction: 'ltr',
@@ -98,11 +100,11 @@ export class BranchLocationWiseDataComponent implements OnInit, OnDestroy {
       dateOfJoining: [null],
     });
   }
-clearAllFilters(){
-  this.reportForm.get('dateOfJoining')?.setValue(null);
-  this.reportForm.get('location')?.setValue('All');
-  this.onSubmit(this.reportForm);
-}
+  clearAllFilters() {
+    this.reportForm.get('dateOfJoining')?.setValue(null);
+    this.reportForm.get('location')?.setValue('All');
+    this.standardReportData = []
+  }
   getBranchLocations() {
     this.http.getData('BranchLocation').pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
@@ -285,14 +287,14 @@ clearAllFilters(){
   }
 
   extractPhoneCode(code: string | undefined): string {
-  if (!code) return '';
-  const match = code.match(/\((\+\d+)\)/);
-  if (match) {
-    return match[1];
-  }
+    if (!code) return '';
+    const match = code.match(/\((\+\d+)\)/);
+    if (match) {
+      return match[1];
+    }
 
-  return code.startsWith('+') ? code : '';
-}
+    return code.startsWith('+') ? code : '';
+  }
 
   ngOnDestroy(): void {
     this.destroy$.next(true);

@@ -1,7 +1,7 @@
 <div class="custom-main-component-container">
     <div class="component-header-content">
         <div class="heading-content py-2">
-            <div class="commpoment-name">PMS <span class="ms-1"><i class="bi bi-chevron-double-right"></i></span></div>
+            <div class="commpoment-name">{{ 'PMS' | translate }} <span class="ms-1"><i class="bi bi-chevron-double-right"></i></span></div>
             <div class="component-header">{{'Review Cycle Employee List' | translate}}</div>
 
             <div>
@@ -68,7 +68,7 @@
                 <div class="custom-p-select-content">
                     <p-select [options]="reviewCyclesList" optionLabel="reviewCycleName" [filter]="true"
                         filterBy="reviewCycleName" [showClear]="false" formControlName="selectedReviewCycle"
-                        placeholder="Please select review cycle" (onChange)="onReviewCycleChange($event)">
+                        [placeholder]="'Please select review cycle' | translate" (onChange)="onReviewCycleChange($event)">
                         <ng-template #selectedItem let-selectedOption>{{ selectedOption.reviewCycleName }}</ng-template>
                         <ng-template let-maker #item>{{ maker.reviewCycleName }}</ng-template>
                     </p-select>
@@ -82,7 +82,7 @@
                     <span class="text-danger">*</span></label>
                 <div class="custom-p-multiSelect-content">
                     <p-multiSelect formControlName="departmentId" [options]="departmentDetails"
-                        optionLabel="departmentName" placeholder="Search department" class="w-100"
+                        optionLabel="departmentName" [placeholder]="'Search department' | translate" class="w-100"
                         (onChange)="onDepartmentNameChange($event)">
                         <ng-template let-dept pTemplate="item">{{ dept.departmentName }}</ng-template>
                     </p-multiSelect>
@@ -96,7 +96,7 @@
                 </label>
                 <div class="custom-p-multiSelect-content">
                     <p-multiSelect formControlName="subDepartmentId" [options]="subDepartmentsDropdownValues"
-                        optionLabel="subDepartmentName" placeholder="Search sub department" class="w-100"
+                        optionLabel="subDepartmentName" [placeholder]="'Search sub department' | translate" class="w-100"
                         (onChange)="onSubDepartmentNameChange($event)">
                         <ng-template let-dept pTemplate="item">{{ dept.subDepartmentName }}</ng-template>
                     </p-multiSelect>
@@ -110,7 +110,7 @@
                     <span class="text-danger">*</span></label>
                 <div class="custom-p-multiSelect-content">
                     <p-multiSelect formControlName="locationId" [options]="jobLocationDropDownData"
-                        optionLabel="locationName" placeholder="Search location" class="w-100"
+                        optionLabel="locationName" [placeholder]="'Search location' | translate" class="w-100"
                         (onChange)="onLocationChange($event)">
                         <ng-template let-dept pTemplate="item">{{ dept.locationName }}</ng-template>
                     </p-multiSelect>
@@ -124,7 +124,7 @@
                     <span class="text-danger">*</span></label>
                 <div class="custom-p-multiSelect-content">
                     <p-multiSelect formControlName="subLocationId" [options]="subLocationsDropdown"
-                        optionLabel="subLocationName" placeholder="Search sub location" class="w-100"
+                        optionLabel="subLocationName" [placeholder]="'Search sub location' | translate" class="w-100"
                         (onChange)="onSubLocationChange($event)">
                         <ng-template let-dept pTemplate="item">{{ dept.subLocationName }}</ng-template>
                     </p-multiSelect>
@@ -138,7 +138,7 @@
                     <span class="text-danger">*</span></label>
                 <div class="custom-p-select-content">
                     <p-select formControlName="promoted" (onChange)="onPromotedChange($event)"
-                        [options]="promotedOptions" optionLabel="label" placeholder="Select Promoted" class="w-100"
+                        [options]="promotedOptions" optionLabel="label" [placeholder]="'Select Promoted' | translate" class="w-100"
                         [showClear]="true">
                         <ng-template let-option pTemplate="item">{{ option.label }}</ng-template>
                     </p-select>
@@ -151,7 +151,7 @@
     <div class="input-group custom-search mb-3">
         <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
         <input type="search" class="form-control custom-search-input"
-            placeholder="Search by employee ID / employee name/ review cycle name / department / team / location / sub location / status"
+            [placeholder]="'Search by employee ID / employee name/ review cycle name / department / team / location / sub location / status' | translate"
             [(ngModel)]="searchText" (ngModelChange)="onSearchTextChange()" aria-label="Username">
     </div>
 
@@ -253,7 +253,7 @@
                                         @if(rbac.allowedToAccess('Employee List Hold.view')){
                                         <li *ngIf="employee.status !== 'Review on Hold'"
                                             (click)="openModal(holdconformation);seletedid=employee.id">
-                                            <a class="dropdown-item">Hold</a>
+                                            <a class="dropdown-item">{{ 'Hold' | translate }}</a>
                                         </li>
                                         }
                                         @if(rbac.allowedToAccess('Assign Review Template(Employee).view') ||
@@ -315,7 +315,7 @@
                                         <li 
                                             *ngIf="employee.applicableForPromotion===false && employee.status ==='Appraisal Letter Generated'"
                                             (click)="seletedid=employee.id;onclickstatusforappraisalById('Appraisal Letter Sent',employee.id)">
-                                            <a class="dropdown-item">Send Appraisal Letter</a>
+                                            <a class="dropdown-item">{{ 'Send Appraisal Letter' | translate }}</a>
                                         </li>
                                         }
                                         @if(rbac.allowedToAccess('Re-Generate Appraisal Letter.view')){
@@ -371,7 +371,7 @@
                                         <li 
                                             *ngIf="employee.applicableForPromotion===true && employee.status ==='Promotion Letter Generated'"
                                             (click)="seletedid=employee.id;onclickstatusforPromotionById('Promotion Letter Sent',employee.id)">
-                                            <a class="dropdown-item ">Send Promotion Letter</a>
+                                            <a class="dropdown-item ">{{ 'Send Promotion Letter' | translate }}</a>
                                         </li>
                                         }
                                         @if (rbac.allowedToAccess('Re-Send Promotion Letter.view')) {
@@ -472,7 +472,7 @@
                     <div class="custom-p-select-content">
                         <p-select [options]="listofReviewTemplates" optionLabel="formName" [filter]="true"
                             filterBy="formName" [showClear]="false" formControlName="reviewTemplateId"
-                            placeholder="Please select review template" class="custom-select w-100">
+                            [placeholder]="'Please select review template' | translate" class="custom-select w-100">
                             <ng-template #selectedItem let-selectedOption>{{ selectedOption.formName }}</ng-template>
                             <ng-template let-form #item>{{ form.formName }}</ng-template>
                         </p-select>
@@ -492,7 +492,7 @@
                             <div class="button-loader-content">
                                 <span class="spinner-border button-spinner text-light" role="status"
                                     aria-hidden="true"></span>
-                                <span>{{'Loading...'}}</span>
+                                <span>{{ 'Loading...' | translate }}</span>
                             </div>
                         </ng-container>
                         <ng-template #addText>
@@ -543,7 +543,7 @@
                         [min]="selectedEmployee?.dateofjoining | date:'yyyy-MM-dd'">
                     <div *ngIf="Effectivedatefrom.get('effectiveFromDATE')?.touched && Effectivedatefrom.get('effectiveFromDATE')?.hasError('required')"
                         class="error-msg">
-                        Effective From date is required
+                        Effective From Date is required
                     </div>
                 </div>
 
@@ -615,7 +615,7 @@
                         [min]="selectedEmployee?.dateofjoining | date:'yyyy-MM-dd'">
                     <div *ngIf="Effectivedatefrom.get('effectiveFromDATE')?.touched && Effectivedatefrom.get('effectiveFromDATE')?.hasError('required')"
                         class="error-msg">
-                        Effective From date is required
+                        Effective From Date is required
                     </div>
                 </div>
 
@@ -781,7 +781,7 @@
                         id="effectiveFrom" placeholder="Effective From" onkeypress="return false">
                     <div *ngIf="Effectivedatefrom.get('effectiveFromDATE')?.touched && Effectivedatefrom.get('effectiveFromDATE')?.hasError('required')"
                         class="error-msg">
-                        Effective From date is required
+                        Effective From Date is required
                     </div>
                     <!-- <div *ngIf="Effectivedatefrom.get('effectiveFromDATE')?.touched && Effectivedatefrom.get('effectiveFromDATE')?.hasError('invalidEffectiveDate')"
                         class="error-msg">
@@ -795,7 +795,7 @@
                     <input type="date" class="form-control custom-input" formControlName="effectiveFromDATE"
                         id="effectiveFrom" placeholder="Effective From" onkeypress="return false">
                     <div *ngIf="Effectivedatefrom.get('effectiveFromDATE')?.touched && Effectivedatefrom.get('effectiveFromDATE')?.hasError('required')"
-                        class="error-msg">Effective From date is required
+                        class="error-msg">Effective From Date is required
                     </div>
                     <div *ngIf="Effectivedatefrom.get('effectiveFromDATE')?.touched && Effectivedatefrom.get('effectiveFromDATE')?.hasError('invalidEffectiveDate')"
                         class="error-msg">
@@ -854,7 +854,7 @@
                     <input type="date" class="form-control custom-input" formControlName="effectiveFromDATE"
                         id="effectiveFrom" placeholder="Effective From" onkeypress="return false">
                     <div *ngIf="Effectivedatefrom.get('effectiveFromDATE')?.touched && Effectivedatefrom.get('effectiveFromDATE')?.hasError('required')"
-                        class="error-msg">{{'Effective From date is required' | translate}}
+                        class="error-msg">{{'Effective From Date is required' | translate}}
                     </div>
                 </div>
 
@@ -894,7 +894,7 @@
     <div class="result-popup-content" ngbAutofocus>
         <div class="text-center p-5" ngbAutofocus>
             <div class="spinner-border text-primary" role="status"></div>
-            <p class="confirmation-text">Update in progress...</p>
+            <p class="confirmation-text">{{ 'Update in progress...' | translate }}</p>
         </div>
     </div>
 </ng-template>

@@ -5,10 +5,10 @@ import { FormsModule } from '@angular/forms';
 import { OpenModalService } from '../../services/open-modal.service';
 import { HttpService } from '../../services/http.service';
 import { Subscription } from 'rxjs';
-
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
   selector: 'app-predefined-theme-selection',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, TranslateModule],
   templateUrl: './predefined-theme-selection.component.html',
   styleUrl: './predefined-theme-selection.component.scss'
 })
@@ -53,8 +53,8 @@ export class PredefinedThemeSelectionComponent {
   getThemeData() {
     this.subscription = this.http.getData(`Employeedata/get-user-preference/${this.empinfo?.employeeId}`).subscribe({
       next: (data: any) => {
-        this.selectedTheme = data?.data?.['CLAIM_GENIUS_WEB_Theme'] || 'default-theme';
-        this.selectedFont = data?.data?.['CLAIM_GENIUS_WEB_Font'] || 'Roboto-flex';
+        this.selectedTheme = data?.data?.['RHR_WEB_Theme'] || 'default-theme';
+        this.selectedFont = data?.data?.['RHR_WEB_Font'] || 'Roboto-flex';
         this.predefinedThemesService.setTheme(this.selectedTheme);
         this.predefinedThemesService.setFont(this.selectedFont);
       },
@@ -73,7 +73,7 @@ export class PredefinedThemeSelectionComponent {
     this.selectedTheme = this.confirmedTheme;
     const payload = {
       employeeId: this.empinfo?.employeeId || 0,
-      key: 'CLAIM_GENIUS_WEB_Theme',
+      key: 'RHR_WEB_Theme',
       value: this.selectedTheme
     };
 
@@ -97,7 +97,7 @@ export class PredefinedThemeSelectionComponent {
     this.selectedFont = this.confirmedFont;
     const payload = {
       employeeId: this.empinfo?.employeeId || 0,
-      key: 'CLAIM_GENIUS_WEB_Font',
+      key: 'RHR_WEB_Font',
       value: this.selectedFont
     };
 

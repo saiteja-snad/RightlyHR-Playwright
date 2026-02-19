@@ -8,7 +8,7 @@
                             class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="employeeiddetails" optionValue="employeeId" optionLabel="fullName"
-                            [filter]="true" filterBy="fullName" placeholder="Please select employee"
+                            [filter]="true" filterBy="fullName" placeholder="Select employee"
                             placeholder="Please select employee" (onChange)="onClickValidation($event)"
                             formControlName="fusionEmpId" resetFilterOnHide="true" class="custom-select w-100">
                         </p-select>
@@ -231,7 +231,7 @@
                     </div>
                     <div
                         *ngIf="employeeForm.get('JobSubLocationName')?.invalid && employeeForm.get('JobSubLocationName')?.touched">
-                        <div class="error-msg">Sub location is required</div>
+                        <div class="error-msg">Sub Location is required</div>
                     </div>
                 </div>
 
@@ -241,7 +241,7 @@
                     <input type="date" class="form-control custom-input" formControlName="offerSentDate"  [min]="issuedDatevalidate" (change)="updateEndDateValidityupdate();updateEndDateValidityForExpectedStartDate();updateEndDateValidity()"
                         placeholder="Please enter offer issued date" onkeydown="return false;" (change)="isDataPopulated()" />
                     <div *ngIf="employeeForm.get('offerSentDate')?.invalid && employeeForm.get('offerSentDate')?.touched">
-                        <div class="error-msg">Offer Issued date is required</div>
+                        <div class="error-msg">Offer Issued Date is required</div>
                     </div>
                 </div>
 
@@ -255,7 +255,7 @@
                         (change)="updateEndDateValidityForExpectedStartDate()" />
                     <div
                         *ngIf="employeeForm.get('dateOfJoining')?.invalid && employeeForm.get('dateOfJoining')?.touched">
-                        <div class="error-msg">Expected Start date is required</div>
+                        <div class="error-msg">Expected Start Date is required</div>
                     </div>
                     <div *ngIf="!isStartDateValid" class="error-msg">
                         Expected Start Date should be after the Offer Issued Date
@@ -268,7 +268,7 @@
                     <input type="date" class="form-control custom-input" formControlName="offerExpiryDate"
                         placeholder="Please enter offer expiry date" (change)="updateEndDateValidity()" onkeydown="return false;" min="traineeEmpData.offerIssuedDate" />
                     <div *ngIf="employeeForm.get('offerExpiryDate')?.invalid && employeeForm.get('offerExpiryDate')?.touched">
-                        <div class="error-msg">Offer Expiry date is required</div>
+                        <div class="error-msg">Offer Expiry Date is required</div>
                     </div>
                     <div *ngIf="isExpiryDateValid" class="error-msg">Offer Expiry Date should be after the
                         Offer Issued Date</div>
@@ -305,7 +305,7 @@
                     </div>
                     <div
                         *ngIf="employeeForm.get('reportingmanagerId')?.invalid && employeeForm.get('reportingmanagerId')?.touched">
-                        <div class="error-msg">Reporting manager is required</div>
+                        <div class="error-msg">Reporting Manager is required</div>
                     </div>
                 </div>
 
@@ -318,7 +318,7 @@
                         </p-select>
                     </div>
                     <div *ngIf="employeeForm.get('documentType')?.invalid && employeeForm.get('documentType')?.touched">
-                        <div class="error-msg">Document type is required</div>
+                        <div class="error-msg">Document Type is required</div>
                     </div>
                 </div>
 
@@ -428,7 +428,8 @@
                                     </li>
                                     <li class="mb-2"><b>{{'Working Hours and Location'}}:
                                         </b>The standard working hours are (10:00 AM to 7:00 PM), from (Monday to
-                                        Friday), at our office located at Claim Genius, Artefact Tower, Block B,6th Floor, 54/3, Chatrapati Square, Wardha Rd, Nagpur, Maharashtra 440015. Occasionally, you may be
+                                        Friday), at our office located at RightlyHR, Floor#16, Vijay Krishna Towers,
+                                        Madhava Reddy Colony, Gachibowli, HYD - 500032. Occasionally, you may be
                                         required to work additional hours or remotely, depending on the nature of the
                                         projects
                                         and business requirements.
@@ -440,7 +441,7 @@
                                         <b>{{'Stipend/Salary and Benefits'}}: </b>During the internship
                                         period, you’re eligible to receive Rs.10,000/- per month as a stipend/salary.
                                         After successful completion of the internship period, you will be appointed as
-                                        an employee of Claim Genius with a CTC of <b>{{traineeEmpData.amount}}</b> per
+                                        an employee of RightlyHR with a CTC of <b>{{traineeEmpData.amount}}</b> per
                                         annum.
                                     </li>
                                     <li class="mb-2">
@@ -496,7 +497,7 @@
                                     <p>We are excited about the possibility of you joining our
                                         team and look forward to a productive and successful internship.</p>
                                     <p class="mb-2">Sincerely,</p>
-                                    <p class="mb-2"><b>for Claim Genius</b></p>
+                                    <p class="mb-2"><b>for RightlyHR</b></p>
                                 </div>
                                 <div class="pt-3">
                                     <p class="letter-signature">{{traineeEmpData.authorityName}}</p>

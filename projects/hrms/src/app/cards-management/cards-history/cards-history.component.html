@@ -15,8 +15,10 @@
             </div>
         </div>
 
-        <div class="custom-component-right-content  p-3">
-            @if(cardHistoryResponse.length > 0){
+        <div class="custom-component-right-content p-3">
+            @if(cardHistoryResponse.length>0){
+
+
             <div class="card p-3 mb-3" *ngFor="let item of cardHistoryResponse">
                 <p class=" component-header cursor mb-4">{{'Card Details' | translate}}</p>
                 <div class="row mb-3">

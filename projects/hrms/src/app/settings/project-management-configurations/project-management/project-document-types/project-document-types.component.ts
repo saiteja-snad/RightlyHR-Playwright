@@ -78,7 +78,7 @@ export class ProjectDocumentTypesComponent {
       };
       this.subscription = this.http.postdata('entityAttributeValues', payload).subscribe({
         next: (data: any) => {
-          this.conformationPopup.openSuccessModal('Document type added successfully');
+          this.conformationPopup.openSuccessModal('Document Type added successfully');
         },
         error: (error: any) => {
           this.conformationPopup.openErrorModal(error?.error?.Message || 'Failed to add Document Type');
@@ -118,7 +118,7 @@ export class ProjectDocumentTypesComponent {
       this.subscription = this.http.postdata('entityAttributeValues/update', payload).subscribe({
         next: (data: any) => {
           this.modalService.dismissAll();
-          this.conformationPopup.openSuccessModal('Document type updated successfully');
+          this.conformationPopup.openSuccessModal('Document Type updated successfully');
         },
         error: (error: any) => {
           this.conformationPopup.openErrorModal(error?.error?.Message || 'Failed to update Document Type');
@@ -143,7 +143,7 @@ export class ProjectDocumentTypesComponent {
       this.subscription = this.http.deleteData(`entityAttributeValues/${this.selectedEAV.id}`).subscribe({
         next: (data: any) => {
           this.modalService.dismissAll();
-          this.conformationPopup.openSuccessModal('Document type deleted successfully');
+          this.conformationPopup.openSuccessModal('Document Type deleted successfully');
         },
         error: (error: any) => {
           this.conformationPopup.openErrorModal(error?.error?.Message || 'Failed to delete Document Type');

@@ -8,6 +8,7 @@ import { OpenModalService } from '../../../../services/open-modal.service';
 import { RbacService } from '../../../../services/rbac.service';
 import { DataLoaderContentComponent } from '../../../../shared/data-loader-content/data-loader-content.component';
 import { NoDataFoundComponent } from '../../../../shared/no-data-found/no-data-found.component';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-remote-login-eligibility-criteria',
@@ -16,6 +17,7 @@ import { NoDataFoundComponent } from '../../../../shared/no-data-found/no-data-f
     NoDataFoundComponent,
     FormsModule,
     DataLoaderContentComponent,
+    TranslateModule,
   ],
   templateUrl: './remote-login-eligibility-criteria.component.html',
   styleUrl: './remote-login-eligibility-criteria.component.scss',

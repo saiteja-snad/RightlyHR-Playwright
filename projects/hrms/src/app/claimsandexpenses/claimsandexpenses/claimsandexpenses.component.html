@@ -1,9 +1,9 @@
 <div class="custom-main-component-container">
     <div class="component-header-content">
         <div class="heading-content">
-            <div class="commpoment-name">Expenses<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
+            <div class="commpoment-name">{{'Expenses' |translate}}<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
             </div>
-            <div class="component-header">My Expenses</div>
+            <div class="component-header">{{'My Expenses' |translate}}</div>
 
 
             <div>
@@ -33,14 +33,13 @@
                 </div>
             </div>
 
-            @if(rbac.allowedToAccess('All Employees (Expenses).view') && rbac.allowedToAccess('My Team
-            (Expenses).view')) {
+            @if(rbac.allowedToAccess('All Employees (Expenses).view') && rbac.allowedToAccess('My Team (Expenses).view')) {
             <div class="d-flex align-items-center gap-2">
                 <label for="education" class="form-label custom-label text-nowrap filter-labels m-0">
                     {{'Select Employee' | translate}}</label>
                 <div class="custom-p-select-content">
                     <p-select [options]="activeEmplist" [filter]="true" filterBy="label" resetFilterOnHide="true"
-                        optionLabel="label" optionValue="value" showClear="true" placeholder="Please select employee name"
+                        optionLabel="label" optionValue="value" showClear="true" placeholder="Select employee name"
                         (onChange)="onCheckemployee($event.value)" class="form-select custom-select"></p-select>
                 </div>
             </div>
@@ -51,7 +50,7 @@
                     {{'Select Employee' | translate}}</label>
                 <div class="custom-p-select-content">
                     <p-select [options]="activeEmplist" [filter]="true" filterBy="label" resetFilterOnHide="true"
-                        optionLabel="label" optionValue="value" showClear="true" placeholder="Please select employee name"
+                        optionLabel="label" optionValue="value" showClear="true" placeholder="Select employee name"
                         (onChange)="onCheckemployee($event.value)" class="form-select custom-select"></p-select>
                 </div>
             </div>
@@ -61,7 +60,7 @@
                 <label class="form-label filter-labels m-0">{{'My Team'| translate}}</label>
                 <div class="custom-p-select-content">
                     <p-select [options]="getEmployeeInfo" optionLabel="fullName" showClear="true"
-                        optionValue="employeeId" name="myteamemployees" placeholder="Please select employee name"
+                        optionValue="employeeId" name="myteamemployees" placeholder="Select employee name"
                         [filter]="true" resetFilterOnHide="true" class="form-select custom-select"
                         [autoDisplayFirst]="false" required (onChange)="onCheckemployee($event.value)">
                     </p-select>
@@ -72,7 +71,7 @@
             @if(rbac.allowedToAccess('Expenses Module.create')){
             <div *ngIf="!employeeSelected">
                 <button type="button" (click)="navigatetoAddExpenses()" class="custom-btn btn-primary"
-                    [disabled]="getExpenseSummaryDetails.remainingReimbursement === 0">Add New Expense</button>
+                    [disabled]="getExpenseSummaryDetails.remainingReimbursement === 0">{{'Add New Expense' |translate }}</button>
             </div>
 
             <div *ngIf="getExpenseSummaryDetails.remainingReimbursement === 0">
@@ -125,7 +124,7 @@
                                 <p class="content-text m-0">{{ tab.label }}</p>
                                 <p class="m-0">
                                     <span class="amount-value me-2">{{ tab.count }}</span><span
-                                        class="frequency-value">$ {{ tab.value }}</span>
+                                        class="frequency-value">₹ {{ tab.value }}</span>
                                     <span class="frequency-value"
                                         *ngIf="tab.showFrequency && getExpenseSummaryDetails?.frequency">
                                         / <b> {{ getExpenseSummaryDetails.frequency }}</b></span>

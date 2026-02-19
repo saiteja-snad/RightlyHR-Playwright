@@ -4,7 +4,7 @@
   <div class="component-header-content">
     <div class="heading-content">
       <div class="commpoment-name cursor">
-        PMS <span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
+        {{'PMS'  | translate}} <span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
       </div>
       <div class="component-header">{{ 'Assign KRA / KPI' | translate }}</div>
       <div>
@@ -70,7 +70,7 @@
 
   @if (selectedItems.length > 0 && multiSelect) {
   <div class="component-header-content mt-3">
-    <div class="component-sub-header">Selected Records: {{ selectedItems.length }}</div>
+    <div class="component-sub-header">{{'Selected Records'  | translate}}: {{ selectedItems.length }}</div>
   </div>
   }
 
@@ -79,7 +79,7 @@
   <div class="input-group custom-search mb-3">
     <span class="input-group-text custom-input-group-search"><i class="bi bi-search"></i></span>
     <input type="search" [(ngModel)]="searchText" class="form-control custom-search-input"
-      placeholder="Search by employee name" (ngModelChange)="onSearchTextChange()" autocomplete="off">
+      placeholder="{{'Search by employee name' | translate}}" (ngModelChange)="onSearchTextChange()" autocomplete="off">
   </div>
   <!-- } -->
 
@@ -108,25 +108,25 @@
 
                   <!-- Total KRA Weightage -->
                   <div class="text-center" style="width: 300px;">
-                    <small class="text-muted me-1" style="font-size: 13px;">Total KRA Weightage:</small>
+                    <small class="text-muted me-1" style="font-size: 13px;">{{'Total KRA Weightage:' | translate}}</small>
                     <strong>{{ emp.totalKraWeightage }}%</strong>
                   </div>
 
                   <!-- Review Cycle -->
                   <div class="text-center" style="width: 300px;">
-                    <small class="text-muted me-1" style="font-size: 13px;">Review Cycle:</small>
+                    <small class="text-muted me-1" style="font-size: 13px;">{{'Review Cycle:' | translate}}</small>
                     <strong>{{ emp.assignments?.[0]?.kpis?.[0]?.reviewCycleData?.reviewCycleName || '-' }}</strong>
                   </div>
 
                   <!-- Assigned Rating -->
                   <div class="text-center" style="width: 300px;">
-                    <small class="text-muted me-1" style="font-size: 13px;">Rating:</small>
+                    <small class="text-muted me-1" style="font-size: 13px;">{{'Rating:' | translate}}</small>
                     <strong>{{ getAverageAssignedRating(emp) }}</strong>
                   </div>
 
                   <!-- Assigned Status -->
                   <div class="text-center" style="width: 300px;">
-                    <small class="text-muted me-1" style="font-size: 13px;">Status:</small>
+                    <small class="text-muted me-1" style="font-size: 13px;">{{'Status:' | translate}}</small>
                     <strong>
                       {{ getEmpAssignedStatus(emp) }}
                     </strong>
@@ -143,15 +143,15 @@
                 <p-table [value]="emp.assignments">
                   <ng-template pTemplate="header">
                     <tr>
-                      <th>KRA</th>
-                      <th class="text-center">Review Cycle</th>
-                      <th class="text-center">Total KPIs</th>
-                      <th class="text-center">Weightage (%)</th>
-                      <th class="text-center">Effective Date</th>
-                      <th class="text-center">Target Date</th>
-                      <th class="text-center">Progress (%)</th>
-                      <th class="text-center">KRA Rating</th>
-                      <th class="text-center">Action</th>
+                      <th>{{'KRA' | translate}}</th>
+                      <th class="text-center">{{'Review Cycle' | translate}}</th>
+                      <th class="text-center">{{'Total KPIs' | translate}}</th>
+                      <th class="text-center">{{'Weightage (%)' | translate}}</th>
+                      <th class="text-center">{{'Effective Date' | translate}}</th>
+                      <th class="text-center">{{'Target Date' | translate}}</th>
+                      <th class="text-center">{{'Progress (%)' | translate}}</th>
+                      <th class="text-center">{{'KRA Rating' | translate}}</th>
+                      <th class="text-center">{{'Action' | translate}}</th>
                     </tr>
                   </ng-template>
                   <ng-template pTemplate="body" let-kra>
@@ -192,7 +192,7 @@
                             @if(rbac.allowedToAccess('Assign KRA KPI.update')){
                             <li class="dropdown-item" (click)="onUpdate(kra)">
                               <a class="dropdown-custom-btn">
-                                <i class="bi bi-pencil me-2"></i>Update
+                                <i class="bi bi-pencil me-2"></i>{{'Update' | translate}}
                               </a>
                             </li>
                             }
@@ -228,8 +228,8 @@
                 </option>
               </select>
               <span class="pagination-label text-nowrap">
-                Showing {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize : (+first + +rows) }}
-                of
+                {{'Showing' | translate}} {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize : (+first + +rows) }}
+                {{'of' | translate}}
                 {{ collectionSize }}
               </span>
             </div>
@@ -270,7 +270,7 @@
   <div class="custom-main-popup-container" ngbAutofocus>
     <div class="custom-poup-header-content popup-header-border">
       <p class="popup-heading mb-0">
-        {{ isEditMode ? 'Update KRA & KPIs' : 'Assign KRA & KPIs' }}
+        {{ isEditMode ? ('Update KRA & KPIs' | translate) : ('Assign KRA & KPIs' | translate) }}
       </p>
     </div>
 
@@ -285,11 +285,11 @@
             </label>
             <div class="custom-p-select-content">
               <p-select [options]="kraListForDropdown" optionLabel="kraName" optionValue="kraId"
-                class="form-select custom-select" placeholder="Select KRA" [filter]="true" resetFilterOnHide="true"
+                class="form-select custom-select" placeholder="{{'Select KRA' | translate}}" [filter]="true" resetFilterOnHide="true"
                 [showClear]="true" formControlName="kraId" (onChange)="onKraSelected()" />
             </div>
             <div class="error-msg" *ngIf="assignForm.get('kraId')?.touched && assignForm.get('kraId')?.invalid">
-              Please select a KRA
+              {{'Please select a KRA' | translate}}
             </div>
           </div>
 
@@ -299,11 +299,11 @@
               {{ 'Weightage (%)' | translate }} <span class="text-danger">*</span>
             </label>
             <input type="number" class="form-control custom-input" formControlName="weightage" min="1" max="100"
-              placeholder="Enter weightage">
+              placeholder="{{'Enter weightage' | translate}}">
             <div class="error-msg" *ngIf="assignForm.get('weightage')?.touched && assignForm.get('weightage')?.invalid">
-              <span *ngIf="assignForm.get('weightage')?.hasError('required')">Weightage is required</span>
-              <span *ngIf="assignForm.get('weightage')?.hasError('min')">Weightage must be at least 1</span>
-              <span *ngIf="assignForm.get('weightage')?.hasError('max')">Weightage cannot exceed 100%</span>
+              <span *ngIf="assignForm.get('weightage')?.hasError('required')">{{'Weightage is required' | translate}}</span>
+              <span *ngIf="assignForm.get('weightage')?.hasError('min')">{{'Weightage must be at least 1' | translate}}</span>
+              <span *ngIf="assignForm.get('weightage')?.hasError('max')">{{'Weightage cannot exceed 100%' | translate}}</span>
             </div>
           </div>
 
@@ -317,9 +317,9 @@
             <div class="error-msg"
               *ngIf="assignForm.get('effectiveDate')?.touched && assignForm.get('effectiveDate')?.invalid">
               <span *ngIf="assignForm.get('effectiveDate')?.hasError('required')">
-                Effective date is required</span>
+                {{'Effective Date is required' | translate}}</span>
               <span *ngIf="assignForm.get('effectiveDate')?.hasError('pastDate')">
-                Effective Date cannot be in the past</span>
+                {{'Effective Date cannot be in the past' | translate}}</span>
             </div>
           </div>
 
@@ -331,12 +331,12 @@
             <input type="date" class="form-control custom-input" formControlName="targetDate" onkeydown="return false">
             <div class="error-msg"
               *ngIf="assignForm.get('targetDate')?.touched && assignForm.get('targetDate')?.invalid">
-              <span *ngIf="assignForm.get('targetDate')?.hasError('required')">Target Date is required</span>
-              <span *ngIf="assignForm.get('targetDate')?.hasError('pastDate')">Target Date cannot be in the past</span>
+              <span *ngIf="assignForm.get('targetDate')?.hasError('required')">{{'Target Date is required' | translate}}</span>
+              <span *ngIf="assignForm.get('targetDate')?.hasError('pastDate')">{{'Target Date cannot be in the past' | translate}}</span>
             </div>
 
             <div class="error-msg" *ngIf="assignForm.touched && assignForm.hasError('effectiveGreaterThanTarget')">
-              Effective Date must be earlier than Target Date
+              {{'Effective Date must be earlier than Target Date' | translate}}
             </div>
           </div>
 
@@ -347,12 +347,12 @@
             </label>
             <div class="custom-p-select-content">
               <p-select [options]="reviewCycleOptions" optionLabel="label" optionValue="value"
-                placeholder="Select Review Cycle" class="form-select custom-select" [filter]="true"
+                placeholder="{{'Select Review Cycle' | translate}}" class="form-select custom-select" [filter]="true"
                 formControlName="reviewCycle" />
             </div>
             <div class="error-msg"
               *ngIf="assignForm.get('reviewCycle')?.touched && assignForm.get('reviewCycle')?.invalid">
-              Please select a review cycle
+              {{'Please select a review cycle' | translate}}
             </div>
           </div>
 
@@ -363,12 +363,12 @@
             </label>
             <div class="custom-p-select-content">
               <p-select [options]="ratingScaleOptions" optionLabel="label" optionValue="value"
-                placeholder="Select Rating Scale" class="form-select custom-select" [filter]="true"
+                placeholder="{{'Select Rating Scale' | translate}}" class="form-select custom-select" [filter]="true"
                 formControlName="ratingScale" />
             </div>
             <div class="error-msg"
               *ngIf="assignForm.get('ratingScale')?.touched && assignForm.get('ratingScale')?.invalid">
-              Please select a rating scale
+              {{'Please select a rating scale' | translate}}
             </div>
           </div>
         </div>
@@ -393,37 +393,37 @@
                 <td>
                   <div class="custom-p-select-content">
                     <p-select [options]="allKpiOptions" optionLabel="kpiName" optionValue="kpiId" [filter]="true"
-                      [showClear]="true" placeholder="Select or search KPI" class="form-select custom-select"
+                      [showClear]="true" placeholder="{{'Select or search KPI' | translate}}" class="form-select custom-select"
                       formControlName="kpiId" />
                   </div>
                   <div class="error-msg small mt-1"
                     *ngIf="row.get('kpiId')?.touched && row.get('kpiId')?.hasError('duplicateKpi')">
-                    This KPI is already added. Please select another KPI.
+                    {{'This KPI is already added. Please select another KPI.' | translate}}
                   </div>
                 </td>
                 <td>
                   <input type="number" class="form-control custom-input" formControlName="weightage" min="1" max="100"
-                    placeholder="e.g. 20">
+                    placeholder="{{'e.g. 20' | translate}}">
                 </td>
                 <!-- Unit of Measurement -->
                 <td>
                   <div class="custom-p-select-content">
-                    <p-select [options]="uomOptions" optionLabel="label" optionValue="value" placeholder="Select UOM"
+                    <p-select [options]="uomOptions" optionLabel="label" optionValue="value" placeholder="{{'Select UOM' | translate}}"
                       [filter]="true" formControlName="uom" [disabled]="true" />
                   </div>
                 </td>
                 <td>
                   <input type="number" class="form-control custom-input" formControlName="targetValue"
-                    placeholder="Enter Target Value">
+                    placeholder="{{'Enter Target Value' | translate}}">
                   <div class="error-msg small mt-1"
                     *ngIf="row.get('targetValue')?.touched && row.get('targetValue')?.invalid">
-                    <span *ngIf="row.get('targetValue')?.hasError('required')">Target value is required</span>
-                    <span *ngIf="row.get('targetValue')?.hasError('min')">Value must be at least 1</span>
+                    <span *ngIf="row.get('targetValue')?.hasError('required')">{{'Target value is required' | translate}}</span>
+                    <span *ngIf="row.get('targetValue')?.hasError('min')">{{'Value must be at least 1' | translate}}</span>
                     <span *ngIf="row.get('targetValue')?.hasError('max')">
                       <ng-container [ngSwitch]="row.get('uom')?.value">
-                        <span *ngSwitchCase="'%'">Percentage must be between 1 and 100</span>
-                        <span *ngSwitchCase="'Hrs'">Hours must be between 1 and 999</span>
-                        <span *ngSwitchCase="'Days'">Days must be between 1 and 999</span>
+                        <span *ngSwitchCase="'%'">{{'Percentage must be between 1 and 100' | translate}}</span>
+                        <span *ngSwitchCase="'Hrs'">{{'Hours must be between 1 and 999' | translate}}</span>
+                        <span *ngSwitchCase="'Days'">{{'Days must be between 1 and 999' | translate}}</span>
                       </ng-container>
                     </span>
                   </div>
@@ -437,20 +437,20 @@
 
                     <!-- Priority 1: Required -->
                     <span *ngIf="row.get('targetDate')?.hasError('required')">
-                      Required
+                      {{'Required' | translate}}
                     </span>
 
                     <!-- Priority 2: Past date (even if it's before effective) -->
                     <span
                       *ngIf="!row.get('targetDate')?.hasError('required') && row.get('targetDate')?.hasError('pastDate')">
-                      Target Date cannot be a past date
+                      {{'Target Date cannot be a past date' | translate}}
                     </span>
 
                     <!-- Priority 3: Before KRA Effective (only if not past & not required) -->
                     <span *ngIf="!row.get('targetDate')?.hasError('required')
                 && !row.get('targetDate')?.hasError('pastDate')
                 && row.get('targetDate')?.hasError('kpiTargetBeforeKraEffective')">
-                      KPI Target Date cannot be before KRA Effective Date
+                      {{'KPI Target Date cannot be before KRA Effective Date' | translate}}
                     </span>
 
                     <!-- Priority 4: Exceeds KRA Target -->
@@ -458,7 +458,7 @@
                 && !row.get('targetDate')?.hasError('pastDate')
                 && !row.get('targetDate')?.hasError('kpiTargetBeforeKraEffective')
                 && row.get('targetDate')?.hasError('kpiTargetExceedsKra')">
-                      KPI Target Date cannot exceed KRA Target Date
+                      {{'KPI Target Date cannot exceed KRA Target Date' | translate}}
                     </span>
 
                   </div>
@@ -466,7 +466,7 @@
                 <!-- Description -->
                 <td>
                   <textarea class="form-control custom-input" rows="2" formControlName="description"
-                    placeholder="Enter description"></textarea>
+                    placeholder="{{'Enter description' | translate}}"></textarea>
                 </td>
                 <td class="text-center align-middle">
                   <div class="d-flex justify-content-center align-items-center gap-2">
@@ -492,7 +492,7 @@
           <!-- KPI Weightage Feedback Messages -->
           <div class="m-3">
             <div class="text-danger small fw-medium" *ngIf="totalNewKpiWeightage !== 100">
-              <span>Note: The total KPI weightage must be exactly 100% to assign.</span>
+              <span>{{'Note: The total KPI weightage must be exactly 100% to assign.' | translate}}</span>
             </div>
           </div>
         </div>
@@ -504,9 +504,9 @@
           <button type="submit" class="custom-btn btn-primary"
             [disabled]="assignForm.invalid || isSubmitting || kpiRows.length === 0 || !canSubmitKpiWeightage() || hasDuplicateKpis() || totalNewKpiWeightage !== 100">
             @if (isSubmitting) {
-            <span class="spinner-border spinner-border-sm me-2"></span>{{ isEditMode ? 'Updating...' : 'Assigning...'}}
+            <span class="spinner-border spinner-border-sm me-2"></span>{{ isEditMode ? ('Updating...' | translate) : ('Assigning...' | translate)}}
             } @else {
-            {{ isEditMode ? 'Update' : 'Assign' }}
+            {{ isEditMode ? ('Update' | translate) : ('Assign' | translate) }}
             }
           </button>
         </div>
@@ -599,7 +599,7 @@
   <div class="custom-filter-container">
     <!-- HEADER -->
     <div class="offcanvas-filter-header-content offcanvas-filter-header-border">
-      <p class="filter-header m-0">KPI's ({{ assignKpiList.length }})</p>
+      <p class="filter-header m-0">{{'KPI\'s' | translate}} ({{ assignKpiList.length }})</p>
       <a (click)="closeAssignedKpiCanvas()" class="cursor-pointer">
         <img src="icons/close.png" alt="Close" class="close-icon">
       </a>
@@ -616,24 +616,24 @@
           <p class="project-name">{{ kpi.kpiName }}</p>
           <div class="d-flex justify-content-between gap-3 mb-3">
             <div class="text-center">
-              <p class="project-role mb-1">Weightage</p>
+              <p class="project-role mb-1">{{'Weightage' | translate}}</p>
               <p class="project-dates m-0">{{ kpi.assignedKpiWeightage }}%</p>
             </div>
             <div class="text-center">
-              <p class="project-role mb-1">Target Value</p>
+              <p class="project-role mb-1">{{'Target Value' | translate}}</p>
               <p class="project-dates m-0">
                 {{ kpi.targetValue }}
                 <span class="text-muted small">{{ kpi.targetType }}</span>
               </p>
             </div>
             <div class="text-center">
-              <p class="project-role mb-1">Target Date</p>
+              <p class="project-role mb-1">{{'Target Date' | translate}}</p>
               <p class="project-dates m-0">{{ kpi.targetDate | date:'MMM dd, yyyy' }}</p>
             </div>
           </div>
 
           <div class="d-flex align-items-center justify-content-end mb-2">
-            <p class="project-role m-1 fw-bold" style="color: var(--primary-color);">Rating : </p>
+            <p class="project-role m-1 fw-bold" style="color: var(--primary-color);">{{'Rating :' | translate}} </p>
             <p class="project-dates m-1">{{ kpi.assignedApproverRating || '-' }}</p>
           </div>
 
@@ -656,7 +656,7 @@
     <div>
       <img src="icons/delete-icon.png" alt="delete icon" class="confirmation-delete-icon">
       <p class="confirmation-text mb-4">
-        Are you sure you want to remove this KPI?
+        {{'Are you sure you want to remove this KPI?' | translate}}
       </p>
       <!-- Optional: show the KPI name dynamically -->
       <!-- <p class="confirmation-text mb-4 text-center fw-medium" *ngIf="kpiToDeleteName">
@@ -665,10 +665,10 @@
     </div>
     <div class="custom-modal-footer">
       <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss('cancel')">
-        No
+        {{'No' | translate}}
       </button>
       <button type="button" class="custom-btn btn-primary" (click)="confirmKpiDelete(); modal.close('delete')">
-        Yes
+        {{'Yes' | translate}}
       </button>
     </div>
   </div>
@@ -680,7 +680,7 @@
     <div>
       <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
       <p class="confirmation-text mb-3 fw-medium">
-        Assign KRA with its KPIs to selected employees?
+        {{'Assign KRA with its KPIs to selected employees?' | translate}}
       </p>
       <!-- <p class="confirmation-text mb-4 text-center">
         <strong>"{{ confirmAssignKraName }}"</strong><br>
@@ -689,10 +689,10 @@
     </div>
     <div class="custom-modal-footer">
       <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss('no')">
-        No
+        {{'No' | translate}}
       </button>
       <button type="button" class="custom-btn btn-primary" (click)="confirmAssignToEmployees(); modal.close('yes')">
-        Yes
+        {{'Yes' | translate}}
       </button>
     </div>
   </div>

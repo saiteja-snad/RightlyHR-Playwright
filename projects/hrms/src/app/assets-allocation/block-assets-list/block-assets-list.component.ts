@@ -17,10 +17,11 @@ import { OpenModalService } from '../../services/open-modal.service';
 import { RbacService } from '../../services/rbac.service';
 import { FormValidationService } from '../../../../../preonboarding/src/app/common-services/form-validation.service';
 import { InfoIconComponent } from "../../icons/info-icon/info-icon.component";
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-block-assets-list',
-imports: [CommonModule, ReactiveFormsModule,NgbPopoverModule, FormsModule, NoDataFoundComponent, Select, PaginatorModule, DropdownModule, DataLoaderContentComponent, InfoIconComponent],
+imports: [CommonModule, ReactiveFormsModule,NgbPopoverModule, FormsModule, NoDataFoundComponent, Select, PaginatorModule, DropdownModule, DataLoaderContentComponent, InfoIconComponent,TranslateModule],
   templateUrl: './block-assets-list.component.html',
   styleUrl: './block-assets-list.component.scss',
     providers: [DatePipe]

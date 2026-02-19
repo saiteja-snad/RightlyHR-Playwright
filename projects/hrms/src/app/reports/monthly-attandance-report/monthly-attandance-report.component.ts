@@ -13,17 +13,15 @@ import { ModuleInformationComponent } from "../../shared/module-information/modu
 import { filter } from 'rxjs';
 import { MODULE_INFOS } from '../../shared/modules-info';
 import { ReportsHeaderComponent } from "../../shared/reports-tabs/reports-header/reports-header.component";
-import { AttendancePlaceholderComponent } from "../../icons/attendance-placeholder/attendance-placeholder.component";
 @Component({
   selector: 'app-monthly-attandance-report',
-  imports: [RouterModule, Select, ReactiveFormsModule, CommonModule, TranslateModule, ModuleInformationComponent,
-    NgbPopoverModule, ReportsHeaderComponent, AttendancePlaceholderComponent],
+  imports: [RouterModule, Select, ReactiveFormsModule, CommonModule, TranslateModule, ModuleInformationComponent, NgbPopoverModule, ReportsHeaderComponent],
   templateUrl: './monthly-attandance-report.component.html',
   styleUrl: './monthly-attandance-report.component.scss'
 })
 
-export class MonthlyAttandanceReportComponent {
-  moduleinfo: string = '';
+export class MonthlyAttandanceReportComponent  {
+  moduleinfo : string = '';
   monthlyReportForm!: FormGroup;
   years: { label: string; value: number }[] = [];
   selectedMonth: string | null = null;
@@ -32,7 +30,7 @@ export class MonthlyAttandanceReportComponent {
   isFilterGiven = false;
   StatusMsg: any;
   isLoading = false;
-  spinnerLoader = false;
+  spinnerLoader= false;
   // Months
   months = [
     { value: 1, name: 'January' },
@@ -48,54 +46,43 @@ export class MonthlyAttandanceReportComponent {
     { value: 11, name: 'November' },
     { value: 12, name: 'December' }
   ];
-  isAttendanceDataTrue: boolean = false;
 
   constructor(
-    private http: HttpService,
+    private http: HttpService, 
     private router: Router,
-    private openmodalservice: OpenModalService,
-    private modalService: NgbModal,
+    private openmodalservice:OpenModalService,
+    private modalService:NgbModal,
     private fb: FormBuilder,
     public rbac: RbacService,
   ) { }
 
   ngOnInit(): void {
-    this.getattendancedatabyentry();
     this.generateYear();
     this.initializeForm();
     this.updateModuleInfo();
     this.initiateUpdateModuleInfo();
   }
 
-  getattendancedatabyentry() {
-    const params = 'AttendanceConfiguration';
-    const param = 'IsProcessing';
-    this.http.getDatabyentriyvalue(`entityAttributeValues`, params, param).subscribe({
-      next: (data: any) => {
-        this.isAttendanceDataTrue = String(data[0].value).toLowerCase() === 'true';
-      },
-      error: (err) => {
-        console.error('Error fetching data:', err);
-      }
-    });
-  }
-
-  initiateUpdateModuleInfo() {
-    this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe(() => {
+  initiateUpdateModuleInfo(){
+    this.router.events
+    .pipe(filter(event => event instanceof NavigationEnd))
+    .subscribe(() => {
       this.updateModuleInfo();
     });
   }
 
   updateModuleInfo() {
     const url = this.router.url;
+  
     const routeToInfoMap: { [key: string]: string } = {
       '/reports/monthly-attandance-reports': MODULE_INFOS.MONTHLY_ATTENDANCE_REPORT_MODULE_INFO
     };
+  
     const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
     this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
 
-  generateYear() {
+  generateYear(){
     this.currentYear = moment().year();
     this.years = [];  // Reset the array
     const pastYears = 2;
@@ -105,27 +92,27 @@ export class MonthlyAttandanceReportComponent {
     }
   }
 
-  initializeForm() {
-    this.monthlyReportForm = this.fb.group({
+  initializeForm(){
+    this.monthlyReportForm= this.fb.group({
       month: ['', Validators.required],
       year: ['', Validators.required]
     })
   }
-
-
 
   onMonthChangeLeave(event: any): void {
     this.selectedMonth = event.value;
   }
 
   generateReport(f: FormGroup) {
-    this.spinnerLoader = true;
-    const formData = f.value;
-    const month = formData.month.value;
-    const year = formData.year.value;
+    this.spinnerLoader= true;
+    const formData= f.value;
+    const month= formData.month.value;
+    const year= formData.year.value;
+    
     // Calculate start and end dates for the selected month
     const startDate = moment().year(year).month(month - 1).startOf('month').format('YYYY-MM-DD');
     const endDate = moment().year(year).month(month - 1).endOf('month').format('YYYY-MM-DD');
+    
     this.http.downloadMonthlyAttendanceReportV2(`Reports/MonthlyAttendanceReportV2`, startDate, endDate).subscribe({
       next: (response: any) => {
         const blob = new Blob([response], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
@@ -136,13 +123,13 @@ export class MonthlyAttandanceReportComponent {
         link.click();
         this.openmodalservice.openSuccessModal("Monthly Attendance Report Generated Sucessfully");
       },
-      error: (err: any) => {
-        this.spinnerLoader = false;
+      error:(err: any) => {
+        this.spinnerLoader= false;
         // err.error.message? err.error.message : 'Error downloading the file'
         this.openmodalservice.openErrorModal('No records found');
       },
-      complete: () => {
-        this.spinnerLoader = false;
+      complete: ()=>{
+        this.spinnerLoader= false;
       }
     });
   }
@@ -153,12 +140,13 @@ export class MonthlyAttandanceReportComponent {
       this.router.navigate([uri])
     });
   }
-
-  navigation() {
+   navigation(){
     this.router.navigate(['/reports']);
   }
+
 
   close() {
     this.redirectTo(this.router.url);
   }
+
 }

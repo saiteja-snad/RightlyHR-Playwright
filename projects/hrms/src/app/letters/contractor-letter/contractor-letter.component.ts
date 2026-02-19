@@ -91,7 +91,7 @@ export class ContractorLetterComponent implements OnInit, OnDestroy{
   countryCode = 'Country code'
   frequencyDetails = [] as IFrequency[];
   currencyDetails = [
-    { key: 'INR', value: '$' },
+    { key: 'INR', value: '₹' },
     { key: 'USD', value: '$' }
     // add more as needed
   ];

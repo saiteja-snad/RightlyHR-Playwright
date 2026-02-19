@@ -172,6 +172,6 @@
     </div>
     <div class="d-flex justify-content-end gap-3 p-3"
         *ngIf="rbac.allowedToAccess('Flexible Leave Allocation Tab.create')">
-        <button type="submit" class="custom-btn btn-primary px-5" [disabled]="leaveAllocationForm.invalid">Add</button>
+        <button type="submit" class="custom-btn btn-primary px-5" [disabled]="leaveAllocationForm.invalid">{{'Add' | translate}}</button>
     </div>
 </form>

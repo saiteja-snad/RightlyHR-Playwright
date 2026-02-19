@@ -583,22 +583,6 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Contacts Directory',
     'Cards Management',
   ];
-
-    dashboardTabsFields = [
-    'Headcount by Department',
-    'Consumed Leave Types',
-    'Weekly Work Logs',
-    'Headcount by Gender',
-    'Attendance Overview',
-    'Team Members',
-    'All Employees',
-    'My Team Availability',
-    'Upcoming Birthdays',
-    'Upcoming Work Anniversaries',
-    'Today Events',
-    'Quick Links',
-    'Sun View'
-  ]
   expensesModuleTabs = [
     'Draft Tab',
     'Approved Tab',

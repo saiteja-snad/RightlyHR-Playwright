@@ -142,7 +142,7 @@
                     </div>
                     <div *ngIf="hoursAllocationForm.get('employeeId')?.touched && hoursAllocationForm.get('employeeId')?.invalid"
                         class="error-msg">
-                        <div *ngIf="hoursAllocationForm.get('employeeId')?.errors?.['required']">Please select employee(s)
+                        <div *ngIf="hoursAllocationForm.get('employeeId')?.errors?.['required']">Please select at least one employee
                         </div>
                     </div>
                 </div>

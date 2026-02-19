@@ -2,7 +2,7 @@
   <!--Input search-->
   <div class="input-group custom-search mb-3">
     <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
-    <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input" placeholder="Search by employee name / department / team / designation" aria-label="Username"
+    <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input" [placeholder]="'Search by employee name / department / team / designation' | translate" aria-label="Username"
       aria-describedby="basic-addon1">
   </div>
 
@@ -22,7 +22,7 @@
           <th>{{'Request Type' | translate}}</th>
           <th>{{'Approver History' | translate}}</th>
           @if(rbac.allowedToAccess('For You (Recall Requests).update') || rbac.allowedToAccess('For You (Recall Requests).delete')) {
-          <th>Action</th>
+          <th>{{'Action' | translate}}</th>
           }
       </thead>
       <tbody>
@@ -74,7 +74,7 @@
                   @if(rbac.allowedToAccess('For You (Recall Requests).update')) {
                   @if(item.approvalHeader?.currentapprovalStage != item.approvalHeader?.finalapprovalStage){
                   <li (click)="openModal(approval);handleRequest(item)">
-                    <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>Approve</a>
+                    <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{'Approve' | translate}}</a>
                   </li>
                   }
                 }
@@ -82,14 +82,14 @@
                   @if((item.approvalHeader?.currentapprovalStage != item.approvalHeader?.finalapprovalStage) ||
                   (item.approvalHeader?.currentapprovalStage == item.approvalHeader?.finalapprovalStage)){
                   <li (click)="openModal(rejectmodal);handleRequest(item)">
-                    <a class="dropdown-item"><i class="bi bi-x-circle me-2"></i>Reject</a>
+                    <a class="dropdown-item"><i class="bi bi-x-circle me-2"></i>{{'Reject' | translate}}</a>
                   </li>
                   }
                 }
                 @if(rbac.allowedToAccess('For You (Recall Requests).delete')) {
                   @if(item?.approvalHeader?.currentapprovalStage == item?.approvalHeader?.finalapprovalStage){
                   <li (click)="openModal(processmodal);handleRequest(item)">
-                    <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>Process</a>
+                    <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{'Process' | translate}}</a>
                   </li>
                   }
                 }
@@ -117,7 +117,7 @@
   <div class="custom-main-popup-container" ngbAutofocus>
     <div class="custom-poup-header-content popup-header-border">
       <div class="pt-2">
-        <p class="popup-heading mb-0">Approver History Details</p>
+        <p class="popup-heading mb-0">{{'Approver History Details' | translate}}</p>
       </div>
       <div>
         <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
@@ -129,29 +129,29 @@
         <table class="w-100">
           <thead>
             <tr>
-              <th class="text-nowrap">Approver Role</th>
-              <th class="text-nowrap">Approved Date</th>
-              <th class="text-nowrap">Approved by</th>
-              <th class="text-nowrap">Comments </th>
-              <th class="text-nowrap">Last Working Date</th>
-              <th class="text-nowrap">Early Relieving Date</th>
-              <th class="text-nowrap">Extended Date</th>
-              <th class="text-nowrap">Accept Early Relieving</th>
-              <th class="text-nowrap">Status</th>
+              <th class="text-nowrap">{{'Approver Role' | translate}}</th>
+              <th class="text-nowrap">{{'Approved Date' | translate}}</th>
+              <th class="text-nowrap">{{'Approved by' | translate}}</th>
+              <th class="text-nowrap">{{'Comments' | translate}}</th>
+              <th class="text-nowrap">{{'Last Working Date' | translate}}</th>
+              <th class="text-nowrap">{{'Early Relieving Date' | translate}}</th>
+              <th class="text-nowrap">{{'Extended Date' | translate}}</th>
+              <th class="text-nowrap">{{'Accept Early Relieving' | translate}}</th>
+              <th class="text-nowrap">{{'Status' | translate}}</th>
             </tr>
           </thead>
           <tbody>
             <tr *ngFor="let comment of myApproverComments">
               <td>
                 <span *ngIf="comment?.approverRole;else approverrole">{{comment.approverRole}}</span>
-                <ng-template #approverrole>NA</ng-template>
+                <ng-template #approverrole>{{'NA' | translate}}</ng-template>
               </td>
               <td><span *ngIf="comment.addedDate;else addeddate">{{comment.addedDate | date}}</span>
-                <ng-template #addeddate>NA</ng-template>
+                <ng-template #addeddate>{{'NA' | translate}}</ng-template>
               </td>
               <td><span *ngIf="comment.addedName;else addedname">{{comment.addedName}}
                   ({{comment.addedByFusionEmpId}})</span>
-                <ng-template #addedname>NA</ng-template>
+                <ng-template #addedname>{{'NA' | translate}}</ng-template>
               </td>
               <td>
                 <div class="text-center" *ngIf="comment?.comments;else popupcomments">
@@ -162,31 +162,31 @@
                     <p class="mb-0">{{comment?.comments}} </p>
                   </ng-template>
                 </div>
-                <ng-template #popupcomments>NA</ng-template>
+                <ng-template #popupcomments>{{'NA' | translate}}</ng-template>
               </td>
               <td>
                 <span *ngIf="comment?.metadata?.splastworkingDate;else lastworkingdate">
                   {{comment.metadata.splastworkingDate |date}}</span>
-                <ng-template #lastworkingdate>NA</ng-template>
+                <ng-template #lastworkingdate>{{'NA' | translate}}</ng-template>
               </td>
               <td>
                 <span *ngIf="comment?.metadata?.spearlyReliveingDate;else earlydate">
                   {{comment.metadata.spearlyReliveingDate |date}}</span>
-                <ng-template #earlydate>NA</ng-template>
+                <ng-template #earlydate>{{'NA' | translate}}</ng-template>
               </td>
               <td>
                 <span *ngIf="comment?.metadata?.spExtendedDate;else extenddate">
                   {{comment.metadata.spExtendedDate |date}}</span>
-                <ng-template #extenddate>NA</ng-template>
+                <ng-template #extenddate>{{'NA' | translate}}</ng-template>
               </td>
               <td>
                 <span
                   *ngIf="comment?.metadata?.isAcceptEarlyRequest;else isaccept">{{comment.metadata.isAcceptEarlyRequest}}</span>
-                <ng-template #isaccept>NA</ng-template>
+                <ng-template #isaccept>{{'NA' | translate}}</ng-template>
               </td>
               <td>
                 <span *ngIf="comment?.metadata?.status;else isaccept">{{comment.metadata.status}}</span>
-                <ng-template #isaccept>NA</ng-template>
+                <ng-template #isaccept>{{'NA' | translate}}</ng-template>
               </td>
             </tr>
           </tbody>
@@ -208,23 +208,20 @@
         <label for="comments" class="form-label custom-label mb-2">{{'Comments' | translate}}<span
             class="text-danger">*</span></label>
         <textarea id="exampleFormControlTextarea1" class="form-control custom-input" formControlName="AcceptReason" maxlength="250"
-          placeholder="Please enter comments" rows="3" (keydown)="formsValidation.restrictInitialSpace($event)" ></textarea>
+          [placeholder]="'Please enter comments' | translate" rows="3" (keydown)="formsValidation.restrictInitialSpace($event)" ></textarea>
         <!-- Character counter -->
         <div class="textarea-count-text">{{ recallAcceptForm.get('AcceptReason')?.value?.length || 0 }} /250</div>
         <div class="error-msg"
           *ngIf="recallAcceptForm.get('AcceptReason')?.touched && recallAcceptForm.get('AcceptReason')?.invalid">
-          <ng-container *ngIf="recallAcceptForm.get('AcceptReason')?.errors?.['required']">Comments is
-            required</ng-container>
-          <ng-container *ngIf="recallAcceptForm.get('AcceptReason')?.errors?.['maxlength']">Maximum 250 characters
-            allowed</ng-container>
-          <ng-container *ngIf="recallAcceptForm.get('AcceptReason')?.errors?.['pattern']">Leading spaces are not
-            allowed</ng-container>
+          <ng-container *ngIf="recallAcceptForm.get('AcceptReason')?.errors?.['required']">{{'Comments is required' | translate}}</ng-container>
+          <ng-container *ngIf="recallAcceptForm.get('AcceptReason')?.errors?.['maxlength']">{{'Maximum 250 characters allowed' | translate}}</ng-container>
+          <ng-container *ngIf="recallAcceptForm.get('AcceptReason')?.errors?.['pattern']">{{'Leading spaces are not allowed' | translate}}</ng-container>
         </div>
       </div>
           <div class="d-flex align-items-center flex-wrap gap-2 mb-3">
                 <button type="button" class="custom-btn btn-secondary chip-btn" [class.active]="selectedLeaveStatus === 'approved'"
                     (click)="onStatusApproveSelect('approved')">
-                    Approved
+                    {{'Approved' | translate}}
                 </button>
             </div>
       <div class="custom-modal-footer">
@@ -253,28 +250,28 @@
 
     <form autocomplete="off" [formGroup]="rejectSeparationForm" (ngSubmit)="handlerecallReject()">
       <div class="custom-main-popup-content">
-        <label for="comments" class="form-label custom-label mb-2">Comments
+        <label for="comments" class="form-label custom-label mb-2">{{'Comments' | translate}}
           <span class="text-danger">*</span></label>
-        <textarea class="form-control custom-input" id="exampleFormControlTextarea1" placeholder="Please enter comments"
+        <textarea class="form-control custom-input" id="exampleFormControlTextarea1" [placeholder]="'Please enter comments' | translate"
           formControlName="notes" rows="3" maxlength="250" (keydown)="formsValidation.restrictInitialSpace($event)"></textarea>
         <div class="textarea-count-text">{{ rejectSeparationForm.get('notes')?.value?.length || 0 }}/250</div>
         <div class="error-msg"
           *ngIf="rejectSeparationForm.get('notes')?.touched && rejectSeparationForm.get('notes')?.invalid">
           <ng-container *ngIf="rejectSeparationForm.get('notes')?.errors?.['required']">
-            Comments are required
+            {{'Comments are required' | translate}}
           </ng-container>
           <ng-container *ngIf="rejectSeparationForm.get('notes')?.errors?.['maxlength']">
-            Maximum 250 characters allowed
+            {{'Maximum 250 characters allowed' | translate}}
           </ng-container>
           <ng-container *ngIf="rejectSeparationForm.get('notes')?.errors?.['pattern']">
-            Leading spaces are not allowed
+            {{'Leading spaces are not allowed' | translate}}
           </ng-container>
         </div>
       </div>
             <div class="d-flex align-items-center flex-wrap gap-2 mb-3">
                 <button type="button" class="custom-btn btn-secondary chip-btn" [class.active]="selectedLeaveStatus === 'reject'"
                     (click)="onStatusRejectSelect('reject')">
-                    Rejected
+                    {{'Rejected' | translate}}
                 </button>
             </div>
 
@@ -307,20 +304,20 @@
       <div class="custom-main-popup-content">
         <label for="comments" class="form-label custom-label mb-2">{{'Comments' | translate}}<span
             class="text-danger">*</span></label>
-        <textarea class="form-control custom-input" id="recallReason" placeholder="Please enter comments"
+        <textarea class="form-control custom-input" id="recallReason" [placeholder]="'Please enter comments' | translate"
           formControlName="recallReason" rows="3" maxlength="250"></textarea>
         <!-- Character counter -->
         <div class="textarea-count-text">{{ recallAcceptFormForProcess.get('recallReason')?.value?.length || 0 }} / 250</div>
         <div class="error-msg"
           *ngIf="recallAcceptFormForProcess.get('recallReason')?.touched && recallAcceptFormForProcess.get('recallReason')?.invalid">
           <ng-container *ngIf="recallAcceptFormForProcess.get('recallReason')?.errors?.['required']">
-            Comments is required
+            {{'Comments is required' | translate}}
           </ng-container>
           <ng-container *ngIf="recallAcceptFormForProcess.get('recallReason')?.errors?.['maxlength']">
-            Maximum 250 characters allowed
+            {{'Maximum 250 characters allowed' | translate}}
           </ng-container>
           <ng-container *ngIf="recallAcceptFormForProcess.get('recallReason')?.errors?.['pattern']">
-            Leading spaces are not allowed
+            {{'Leading spaces are not allowed' | translate}}
           </ng-container>
         </div>
       </div>
@@ -348,12 +345,12 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <img src="icons\reject.png" alt="failure icon" class="confirmation-delete-icon">
-            <p class="confirmation-text">Are you sure you want to cancel?</p>
+            <p class="confirmation-text">{{'Are you sure you want to cancel?' | translate}}</p>
         </div>
         <div class="custom-modal-footer">
-            <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">No</button>
+            <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">{{'No' | translate}}</button>
             <button type="submit" class="custom-btn btn-primary"
-                (click)="resetForm()">Yes</button>
+                (click)="resetForm()">{{'Yes' | translate}}</button>
         </div>
     </div>
 </ng-template>
@@ -363,11 +360,11 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <img src="icons\reject.png" alt="failure icon" class="confirmation-delete-icon">
-            <p class="confirmation-text">Are you sure you want to cancel?</p>
+            <p class="confirmation-text">{{'Are you sure you want to cancel?' | translate}}</p>
         </div>
         <div class="custom-modal-footer">
-            <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">No</button>
-            <button type="button" class="custom-btn btn-primary" (click)="close()">Yes</button>
+            <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">{{'No' | translate}}</button>
+            <button type="button" class="custom-btn btn-primary" (click)="close()">{{'Yes' | translate}}</button>
         </div>
     </div>
 </ng-template>

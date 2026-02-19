@@ -6,6 +6,7 @@ import { OpenModalService } from '../../../services/open-modal.service';
 import { AuthService } from '../../../services/auth.service';
 import { KraCategory } from '../add-kra/kra.model';
 import { CommonModule } from '@angular/common';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-update-kra',
@@ -13,7 +14,8 @@ import { CommonModule } from '@angular/common';
   styleUrl: './update-kra.component.scss',
   imports: [
     CommonModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    TranslateModule
   ]
 })
 export class UpdateKraComponent implements OnInit {

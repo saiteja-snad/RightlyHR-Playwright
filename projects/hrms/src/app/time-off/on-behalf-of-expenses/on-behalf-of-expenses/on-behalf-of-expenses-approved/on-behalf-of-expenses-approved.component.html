@@ -20,7 +20,7 @@
             <td>{{ exp.expenses_Title }}</td>
             <td class="text-nowrap">{{ exp?.expenseitem?.[0]?.expense_Date | dateformat }}</td>
             <td class="text-nowrap">{{ exp?.applied_date | dateformat }}</td>
-            <td class="text-nowrap"><span class="me-1" *ngIf="exp.totalExpenseAmount">$</span> {{ exp.totalExpenseAmount
+            <td class="text-nowrap"><span class="me-1" *ngIf="exp.totalExpenseAmount">₹</span> {{ exp.totalExpenseAmount
               }}</td>
             <td> <span class="me-2 status-colour">● {{ exp.status }}</span>
             </td>
@@ -39,7 +39,7 @@
                       <i class="bi bi-eye-fill me-2"></i>{{'View' | translate}}</a></li>
                   <li>
                     <a class="dropdown-item" (click)="openpopupforDownload(openpopupForDownload,exp)">
-                      <i class="bi bi-download me-1"></i>Download
+                      <i class="bi bi-download me-1"></i>{{'Download' | translate}}
                     </a>
                   </li>
                 </ul>
@@ -174,7 +174,7 @@
 <ng-template #openpopupForDownload let-modal>
   <div class="popup-container" ngbAutofocus>
     <div class="modal-header">
-      <h4 class="modal-title" id="modal-basic-title">Expense</h4>
+      <h4 class="modal-title" id="modal-basic-title">{{'Expense' | translate}}</h4>
       <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
     </div>
     <div class="popup-content">

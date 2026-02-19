@@ -3,7 +3,7 @@
         <div class="card shadow mx-auto">
             <div class="off-heading-div pt-0">
                 <span class="offBoarding-header pt-0">
-                    Offboarding Info
+                    {{'Offboarding Info'|translate}}
                 </span>
             </div>
             
@@ -11,70 +11,70 @@
             <form autocomplete="off" [formGroup]="offBoardingForm" (ngSubmit)="postOffBoardingDetails()">
                  <!--Exit Type-->
                 <div class="mb-4">
-                    <label class="form-label custom-label mb-2">Exit Type<span class="text-danger">*</span></label>
+                    <label class="form-label custom-label mb-2">{{'Exit Type'|translate}}<span class="text-danger">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="exitTypeOptions" optionLabel="label" optionValue="value" formControlName="exitType"
-                            placeholder="Please select exit type" class="form-select custom-select">
+                            [placeholder]="'Please select exit type'|translate" class="form-select custom-select">
                         </p-select>
                     </div>
                     <div class="error-msg" *ngIf="offBoardingForm.get('exitType')?.touched && offBoardingForm.get('exitType')?.invalid">
-                        Exit type is required
+                        {{'Exit Type is required'|translate}}
                     </div>
                 </div>
                 <!-- Exit Reason -->
                 <div class="mb-4">
-                    <label class="form-label custom-label mb-2">Exit Reason<span class="text-danger">*</span></label>
+                    <label class="form-label custom-label mb-2">{{'Exit Reason'|translate}}<span class="text-danger">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="terminationDetails" optionLabel="reason" formControlName="exit"
-                            placeholder="Please select exit reason" class="form-select custom-select"></p-select>
+                            [placeholder]="'Please select exit reason'|translate" class="form-select custom-select"></p-select>
                     </div>
                     <div class="error-msg"
                         *ngIf="offBoardingForm.get('exit')?.touched && offBoardingForm.get('exit')?.invalid">
-                        Exit reason is required
+                        {{'Exit Reason is required'|translate}}
                     </div>
                 </div>
 
                 <!-- Eligible for Rehire -->
                 <div class="mb-4">
-                    <label class="form-label custom-label mb-2">Eligible For Rehire<span class="text-danger">*</span></label>
+                    <label class="form-label custom-label mb-2">{{'Eligible For Rehire'|translate}}<span class="text-danger">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="rehireDetails" optionLabel="eligibleforrehire1"
-                          formControlName="eligiblefor" placeholder="Please select eligible for rehire"
+                          formControlName="eligiblefor" [placeholder]="'Please select eligible for rehire'|translate"
                             class="form-select custom-select"></p-select>
                     </div>
                     <div class="error-msg"
                         *ngIf="offBoardingForm.get('eligiblefor')?.touched && offBoardingForm.get('eligiblefor')?.invalid">
-                        Eligible for rehire is required
+                        {{'Eligible for rehire is required'|translate}}
                     </div>
                 </div>
                 <!-- Status -->
                 <div class="mb-4">
-                    <label class="form-label custom-label mb-2">Status<span class="text-danger">*</span></label>
+                    <label class="form-label custom-label mb-2">{{'Status'|translate}}<span class="text-danger">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="Statusdetails" optionLabel="statusname" formControlName="status"
-                            placeholder="Please select status" class="form-select custom-select"></p-select>
+                            [placeholder]="'Please select status'|translate" class="form-select custom-select"></p-select>
                     </div>
                     <div class="error-msg"
                         *ngIf="offBoardingForm.get('status')?.touched && offBoardingForm.get('status')?.invalid">
-                        Status is required
+                        {{'Status is required'|translate}}
                     </div>
                 </div>
 
                 <!-- Last Working Day -->
                 <div class="mb-4">
-                    <label class="form-label custom-label mb-2">Last Working Day<span class="text-danger">*</span></label>
+                    <label class="form-label custom-label mb-2">{{'Last Working Day'|translate}}<span class="text-danger">*</span></label>
                     <input type="date" [min]="dateOfJoining" formControlName="lastdate" class="form-control custom-input" [max]="currentDate">
                     <div class="error-msg" *ngIf="offBoardingForm.get('lastdate')?.touched && offBoardingForm.get('lastdate')?.invalid">
-                        Last working day is required
+                        {{'Last Working Day is required'|translate}}
                     </div>
-                    <div class="error-msg" *ngIf="islastworking">Last working day should be after date of joining</div>
+                    <div class="error-msg" *ngIf="islastworking">{{'Last working day should be after date of joining'|translate}}</div>
                 </div>
 
                 <!-- Buttons -->
                 <div class="d-flex justify-content-end gap-3 mt-4">
-                    <button type="button" (click)="openModal(confirmationpopup)" class="custom-btn btn-secondary">Cancel</button>
+                    <button type="button" (click)="openModal(confirmationpopup)" class="custom-btn btn-secondary">{{'Cancel'|translate}}</button>
                     <button type="submit" class="custom-btn btn-primary"
-                        [disabled]="offBoardingForm.invalid || islastworking">Submit</button>
+                        [disabled]="offBoardingForm.invalid || islastworking">{{'Submit'|translate}}</button>
                 </div>
             </form>
         </div>
@@ -85,12 +85,12 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <img src="icons\reject.png" alt="failure icon" class="confirmation-delete-icon">
-            <p class="confirmation-text mb-4">Are you sure you want to cancel?</p>
+            <p class="confirmation-text mb-4">{{'Are you sure you want to cancel?'|translate}}</p>
         </div>
 
         <div class="custom-modal-footer">
-            <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">No</button>
-            <button type="submit" class="custom-btn btn-primary" (click)="cleardata();model.dismiss()">Yes</button>
+            <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">{{'No'|translate}}</button>
+            <button type="submit" class="custom-btn btn-primary" (click)="cleardata();model.dismiss()">{{'Yes'|translate}}</button>
         </div>
     </div>
 </ng-template>

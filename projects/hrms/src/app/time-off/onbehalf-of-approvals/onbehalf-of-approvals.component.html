@@ -1,8 +1,8 @@
 <div class="custom-main-component-container">
   <div class="component-header-content">
     <div class="heading-content">
-      <div class="commpoment-name">On Behalf Of<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span></div>
-      <div class="component-header">On Behalf Of Approvals</div>
+      <div class="commpoment-name">{{'On Behalf Of' |translate}}<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span></div>
+      <div class="component-header">{{'On Behalf Of Approvals' |translate}}</div>
       <div>
         <app-module-info-icon placement="bottom" [ngbPopover]="popContent" />
       </div>
@@ -10,7 +10,7 @@
     <div class="d-flex gap-3 align-items-center">
       @if (rbac.allowedToAccess('On Behalf Of Approvals All Employees.view')) {
       <div class="d-flex align-items-center gap-3">
-        <label class="form-label component-sub-header m-0">Select Employee</label>
+        <label class="form-label component-sub-header m-0">{{'Select Employee' | translate}}</label>
         <div class="custom-p-select-content">
           <p-select [options]="employeeiddetails" optionValue="employeeId" [(ngModel)]="selectedOtherEmployee"
             optionLabel="fullName" [filter]="true" filterBy="fullName" [showClear]="true"
@@ -55,7 +55,7 @@
           <li class="nav-item">
             <div class="nav-link" [class.active]="activeTab === 'timeOff'" (click)="setActiveTab('timeOff')">
               <img src="/time-off-icon/leaves-icon.png" alt="Icon" class="icon mb-2">
-              <div>Time Off ({{ timeOffCount }})</div>
+              <div>{{'Time Off' |translate}} ({{ timeOffCount }})</div>
             </div>
             <div class="tabs-border-bottom"></div>
           </li>
@@ -64,7 +64,7 @@
           <li class="nav-item">
             <div class="nav-link" [class.active]="activeTab === 'compOff'" (click)="setActiveTab('compOff')">
               <img src="/time-off-icon/comp-off.png" alt="Icon" class="icon mb-2">
-              <div>Comp Off ({{ compOffCount }})</div>
+              <div>{{'Comp Off' |translate}} ({{ compOffCount }})</div>
             </div>
             <div class="tabs-border-bottom"></div>
           </li>
@@ -73,7 +73,7 @@
           <li class="nav-item">
             <div class="nav-link" [class.active]="activeTab === 'wfh'" (click)="setActiveTab('wfh')">
               <img src="/time-off-icon/WFH-icon.png" alt="Icon" class="icon mb-2">
-              <div>WFH ({{ wfhCount }})</div>
+              <div>{{'WFH' |translate}} ({{ wfhCount }})</div>
             </div>
             <div class="tabs-border-bottom"></div>
           </li>
@@ -82,7 +82,7 @@
           <li class="nav-item">
             <div class="nav-link" [class.active]="activeTab === 'permissions'" (click)="setActiveTab('permissions')">
               <img src="/time-off-icon/permissions-icon.png" alt="Icon" class="icon mb-2">
-              <div>Permissions ({{ permissionsCount }})</div>
+              <div>{{'Permissions' |translate}} ({{ permissionsCount }})</div>
             </div>
             <div class="tabs-border-bottom"></div>
           </li>
@@ -91,7 +91,7 @@
           <li class="nav-item">
             <div class="nav-link" [class.active]="activeTab === 'traineeRequests'" (click)="setActiveTab('traineeRequests')">
               <img src="/time-off-icon/trainee-icon.png" alt="Icon" class="icon mb-2">
-              <div>Trainee Requests ({{ traineeRequestsCount }})</div>
+              <div>{{'Trainee Requests ' |translate}}({{ traineeRequestsCount }})</div>
             </div>
           </li>
           }
@@ -99,7 +99,7 @@
           <li class="nav-item">
             <div class="nav-link" [class.active]="activeTab === 'regularization'" (click)="setActiveTab('regularization')">
               <img src="/time-off-icon/regularization-icon.png" alt="Icon" class="icon mb-2">
-              <div>Regularization ({{ regularizationCount }})</div>
+              <div>{{'Regularization' |translate}} ({{ regularizationCount }})</div>
             </div>
           </li>
           }
@@ -107,7 +107,7 @@
           <li class="nav-item">
             <div class="nav-link" [class.active]="activeTab === 'expenses'" (click)="setActiveTab('expenses')">
               <img src="/main-menu-icons/expenses-icon.png" alt="Icon" class="icon mb-2">
-              <div>Expenses ({{ expensesCount }})</div>
+              <div>{{'Expenses' |translate}} ({{ expensesCount }})</div>
             </div>
           </li>
         }

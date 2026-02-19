@@ -1,10 +1,10 @@
 <div class="custom-main-component-container">
     <div class="component-header-content">
         <div class="heading-content">
-            <div class="commpoment-name navigator" (click)="navigateassets()">Desk Management
+            <div class="commpoment-name navigator" (click)="navigateassets()">{{'Desk Management'|translate}}
                 <span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
             </div>
-            <div class="component-header">Desk History</div>
+            <div class="component-header">{{'Desk History'|translate}}</div>
         </div>
     </div>
 
@@ -34,27 +34,27 @@
                                 <div class="card-body">
                                     <div class="row mb-3">
                                         <div class="col-4">
-                                            <p class="component-sub-header mb-0">Employee Name</p>{{ desk.allocatedName }}
+                                            <p class="component-sub-header mb-0">{{'Employee Name'|translate}}</p>{{ desk.allocatedName }}
                                         </div>
                                         <div class="col-4">
-                                            <p class="component-sub-header mb-0">Desk ID</p>{{ deskResponse.deskName }}
+                                            <p class="component-sub-header mb-0">{{'Desk ID'|translate}}</p>{{ deskResponse.deskName }}
                                         </div>
                                         <div class="col-4">
-                                            <p class="component-sub-header mb-0">Desk Type</p>{{ deskResponse.deskType }}
+                                            <p class="component-sub-header mb-0">{{'Desk Type'|translate}}</p>{{ deskResponse.deskType }}
                                         </div>
     
                                     </div>
                                     <div class="row mb-3">
                                         <div class="col-4">
-                                            <p class="component-sub-header mb-0">Allocation Date</p>{{ desk.allocatedDate |
+                                            <p class="component-sub-header mb-0">{{'Allocation Date'|translate}}</p>{{ desk.allocatedDate |
                                             dateformat }}
                                         </div>
                                         <div class="col-4">
-                                            <p class="component-sub-header mb-0">Release Date</p>{{ desk.releavedDate ?
-                                            (desk.releavedDate | dateformat) : 'N/A' }}
+                                            <p class="component-sub-header mb-0">{{'Release Date'|translate}}</p>{{ desk.releavedDate ?
+                                            (desk.releavedDate | dateformat) : ('N/A'|translate) }}
                                         </div>
                                         <div class="col-4">
-                                            <p class="component-sub-header mb-0">Desk Status</p>{{ desk.status }}
+                                            <p class="component-sub-header mb-0">{{'Desk Status'|translate}}</p>{{ desk.status }}
                                         </div>
                                     </div>
                                 </div>
@@ -70,27 +70,26 @@
                                     <div class="card-body">
                                         <div class="row mb-3">
                                             <div class="col-4">
-                                                <p class="component-sub-header mb-0">Desk ID</p>{{ deskResponse.deskName }}
+                                                <p class="component-sub-header mb-0">{{'Desk ID'|translate}}</p>{{ deskResponse.deskName }}
                                             </div>
                                             <div class="col-4">
-                                                <p class="component-sub-header mb-0">Desk Type</p>{{ deskResponse.deskType
+                                                <p class="component-sub-header mb-0">{{'Desk Type'|translate}}</p>{{ deskResponse.deskType
                                                 }}
                                             </div>
                                             <div class="col-4">
-                                                <p class="component-sub-header mb-0">Reason</p>{{ desk.reason }}
+                                                <p class="component-sub-header mb-0">{{'Reason'|translate}}</p>{{ desk.reason }}
                                             </div>
                                         </div>
                                         <div class="row mb-3">
                                             <div class="col-4">
-                                                <p class="component-sub-header mb-0">Desk Status</p>{{ desk.status }}
+                                                <p class="component-sub-header mb-0">{{'Desk Status'|translate}}</p>{{ desk.status }}
                                             </div>
                                             <div class="col-4" *ngIf="desk.status !== 'Inactive'">
-                                                <p class="component-sub-header mb-0">From
-                                                    Date</p>{{ desk.fromDate ? (desk.fromDate | dateformat) : 'N/A' }}
+                                                <p class="component-sub-header mb-0">{{'From Date'|translate}}</p>{{ desk.fromDate ? (desk.fromDate | dateformat) : ('N/A'|translate) }}
                                             </div>
                                             <div class="col-4" *ngIf="desk.status !== 'Inactive'">
-                                                <p class="component-sub-header mb-0">To Date</p>{{
-                                                desk.toDate ? (desk.toDate | dateformat) : 'N/A' }}
+                                                <p class="component-sub-header mb-0">{{'To Date'|translate}}</p>{{
+                                                desk.toDate ? (desk.toDate | dateformat) : ('N/A'|translate) }}
                                             </div>
                                         </div>
                                     </div>

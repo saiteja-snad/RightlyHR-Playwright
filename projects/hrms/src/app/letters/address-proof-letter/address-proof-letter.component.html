@@ -45,7 +45,7 @@
                         </p-select>
                     </div>
                     <div *ngIf="employeeForm.get('Documenttype')?.invalid && employeeForm.get('Documenttype')?.touched">
-                        <div class="error-msg">Document type is required</div>
+                        <div class="error-msg">Document Type is required</div>
                     </div>
                 </div>
 
@@ -74,7 +74,7 @@
                             <div class="button-loader-content">
                                 <span class="spinner-border button-spinner text-light" role="status"
                                     aria-hidden="true"></span>
-                                <span>{{'Loading...'}}</span>
+                                <span>{{'Loading...' | translate}}</span>
                             </div>
                         </ng-container>
                         <ng-template #addText>
@@ -109,7 +109,7 @@
                                         <b>{{ employeeForm.value.firstName }} {{ employeeForm.value.middleName }}
                                             {{ employeeForm.value.lastName }}</b>
                                     </ng-template>
-                                    has been working in our Establishment "Claim Genius" as
+                                    has been working in our Establishment "RightlyHR" as
                                     <span
                                         *ngIf="employeeForm.get('jobRole')?.value === 'Fetching...'; else role">Fetching...</span>
                                     <ng-template #role>
@@ -158,7 +158,7 @@
                         </div>
                         <div class="mb-5">
                             <p class="mb-0">Sincerely,</p>
-                            <p><b>For Claim Genius</b></p>
+                            <p><b>For RightlyHR</b></p>
                         </div>
                         <div>
                             <!-- Show "Authority Signature" only when no authority is selected -->

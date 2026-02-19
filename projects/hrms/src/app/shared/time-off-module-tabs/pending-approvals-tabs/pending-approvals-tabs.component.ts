@@ -35,88 +35,63 @@ export class PendingApprovalsTabsComponent {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.allowedWfh = this.empinfo.allowWFH;
     this.allowRemoteLogin = this.empinfo.allowRemoteLogin;
-    // Subscribe to live updates
-    this.http.pendingApprovalCount$.pipe(takeUntil(this.destroy$)).subscribe(counts => {
-      if (counts) {
-        this.approvalCounts = counts;
-        this.getApprovalStatusCounts();
-      }
-    });
+     // Subscribe to live updates
+      this.http.pendingApprovalCount$.pipe(takeUntil(this.destroy$)).subscribe(counts => {
+          if (counts) {
+            this.approvalCounts = counts;
+            this.getApprovalStatusCounts();
+          }
+        });
 
-    // Load initial data
+  // Load initial data
     this.navTabs = [
-      { label: 'Time-Off', link: '/pending-approvals/time-off', icon: '/main-menu-icons/Time-off-settings-icon.png', permission: { feature: 'Time Off main Tab', action: 'view' }, moduleIds: [1, 2, 3, 11, 18, 31, 17] },
+      { label: 'Time-Off', link: '/pending-approvals/time-off', icon: '/main-menu-icons/Time-off-settings-icon.png', permission: { feature: 'Time Off main Tab', action: 'view' }, moduleIds: [1,2,3,11,18,31,17] },
       { label: 'Onboarding', link: '/pending-approvals/on-boarding', icon: '/images/onboarding.png', permission: { feature: 'Onboarding main Tab', action: 'view' }, moduleIds: [20, 15] },
       { label: 'Contractors', link: '/pending-approvals/contractors', icon: '/my-info-icons/contractor.png', permission: { feature: 'Contractors main Tab', action: 'view' }, moduleIds: [25, 26] },
       { label: 'Offboarding', link: '/pending-approvals/off-boarding', icon: '/images/sepration-request.png', permission: { feature: 'Offboarding main Tab', action: 'view' }, moduleIds: [13, 14] },
       { label: 'Desks', link: '/pending-approvals/desk-approval', icon: '/main-menu-icons/desk-icon.png', permission: { feature: 'Desk Requests Tab', action: 'view' }, moduleIds: [23] },
       { label: 'Expenses', link: '/pending-approvals/claimsandexpenses-request', icon: '/main-menu-icons/expenses-icon.png', permission: { feature: 'Claims and Expenses Tab', action: 'view' }, moduleIds: [19] },
       { label: 'Timesheets', link: '/pending-approvals/time-sheets', icon: '/time-off-icon/calender-activity.png', permission: { feature: 'Time Sheet approval Tab', action: 'view' }, moduleIds: [30] },
-      { label: 'Employee Info', link: '/pending-approvals/employeeinfo-request', icon: '/time-off-icon/employee-info-approvals.png', permission: { feature: 'EmployeeInfo Tab', action: 'view' }, moduleIds: [32] },
-      { label: "KRA/KPI's", link: '/pending-approvals/kra-kpi', icon: '/main-menu-icons/kra-kpi.png', permission: { feature: 'KRA KPI approval Tab', action: 'view' }, moduleIds: [], totalCount: 0 }
+      { label: 'Employee Info', link: '/pending-approvals/employeeinfo-request', icon: '/time-off-icon/employee-info-approvals.png', permission: { feature: 'EmployeeInfo Tab', action: 'view' },moduleIds: [32]  },
+      { label: "KRA/KPI's", link: '/pending-approvals/kra-kpi', icon: '/main-menu-icons/kra-kpi.png', permission: { feature: 'KRA KPI approval Tab', action: 'view' },  moduleIds: [], totalCount: 0  }
     ];
     this.getApprovalStatusCounts();
     this.loadKraKpiApprovalCount();
-    
   }
 
-  getApprovalStatusCounts() {
-    this.http.get(`PendingApproval/getApprovalStatusCounts?EmployeeId=${this.empinfo.employeeId}`).subscribe((res: any) => {
-      this.approvalCounts = res;
-      this.updateTabCounts();
-      this.refreshFilteredTabs();
-      this.getAllPendingApprovalsCount();
-    });
-  }
+getApprovalStatusCounts() {
+  this.http.get(`PendingApproval/getApprovalStatusCounts?EmployeeId=${this.empinfo.employeeId}`).subscribe((res: any) => {
+    this.approvalCounts = res;
+    this.updateTabCounts();
+    this.refreshFilteredTabs();
+  });
+}
 
-  refreshFilteredTabs(): void {
-    this.filteredTabs = this.navTabs
-      .filter(tab => {
-        if (!tab.permission) return true;
-        const { feature, action } = tab.permission;
-        const permissionString = `${feature}.${action}`;
-        return this.rbac.allowedToAccess(permissionString);
-      })
-      .map(tab => ({ ...tab }));
-  }
+refreshFilteredTabs(): void {
+  this.filteredTabs = this.navTabs
+    .filter(tab => {
+      if (!tab.permission) return true;
+      const { feature, action } = tab.permission;
+      const permissionString = `${feature}.${action}`;
+      return this.rbac.allowedToAccess(permissionString);
+    })
+    .map(tab => ({ ...tab }));
+}
 
-  updateTabCounts() {
-    this.navTabs.forEach(tab => {
-      if (tab.moduleIds && tab.moduleIds.length > 0) {
-        let total = 0;
-        tab.moduleIds.forEach((id: any) => {
-          const result = this.approvalCounts.find(x => x.moduleId === id);
-          if (result) {
-            total += result.totalCount;
-          }
-        });
-        tab.totalCount = total;
-      }
-    });
-  }
-
-  getAllPendingApprovalsCount() {
-    const employeeId = Number.parseInt(this.empinfo.employeeId);
-    const currentDate = new Date();
-    const month = currentDate.getMonth() + 1; // getMonth() is 0-based
-    const year = currentDate.getFullYear();
-    this.http.getData(`PendingApproval/onboard-requests-count?month=${month}&year=${year}&EmployeeId=${employeeId}  `).subscribe({
-      next: (response: any) => {
-        if (response.success) {
-          const onboardingTab = this.navTabs.find(tab => tab.label === 'Onboarding');
-          if (onboardingTab) {
-            onboardingTab.totalCount = response.data.totalCount;
-            console.log("Onboarding Total Count: ", onboardingTab.totalCount);  
-          }
-          this.refreshFilteredTabs();
+updateTabCounts() {
+  this.navTabs.forEach(tab => {
+    if (tab.moduleIds && tab.moduleIds.length > 0) {
+      let total = 0;
+      tab.moduleIds.forEach((id: any) => {
+        const result = this.approvalCounts.find(x => x.moduleId === id);
+        if (result) {
+          total += result.totalCount;
         }
-      },
-      error: (err: any) => {
-
-      },
-    });
-  }
-
+      });
+      tab.totalCount = total;
+    }
+  });
+}
 
 
 
@@ -176,33 +151,33 @@ export class PendingApprovalsTabsComponent {
     return !this.isFirstColumn(index) && !this.isLastColumn(index);
   }
 
-  loadKraKpiApprovalCount(): void {
-    const params: any = {
-      pageNumber: 1,
-      pageSize: 1000,
-      managerEmployeeId: this.empinfo?.employeeId,
-    };
+loadKraKpiApprovalCount(): void {
+  const params: any = {
+    pageNumber: 1,
+    pageSize: 1000,
+    managerEmployeeId: this.empinfo?.employeeId,
+  };
 
-    this.http.getDataIncludeParams('Kpi/getPendingApprovalsData', params).subscribe({
-      next: (res: any) => {
-        this.kraKpiTotalCount = res?.data?.length || 0;
-        console.log("KRA Total Count: ", this.kraKpiTotalCount);
+  this.http.getDataIncludeParams('Kpi/getPendingApprovalsData', params).subscribe({
+    next: (res: any) => {
+      this.kraKpiTotalCount = res?.data?.length || 0;
+      console.log("KRA Total Count: ", this.kraKpiTotalCount);
 
-        const kraTab = this.navTabs.find(t => t.label === "KRA/KPI's");
-        if (kraTab) {
-          kraTab.totalCount = this.kraKpiTotalCount;
-        }
-
-        this.refreshFilteredTabs(); // <-- Critical: refresh UI after KRA update
-      },
-      error: () => {
-        this.kraKpiTotalCount = 0;
-        const kraTab = this.navTabs.find(t => t.label === "KRA/KPI's");
-        if (kraTab) kraTab.totalCount = 0;
-        this.refreshFilteredTabs();
+      const kraTab = this.navTabs.find(t => t.label === "KRA/KPI's");
+      if (kraTab) {
+        kraTab.totalCount = this.kraKpiTotalCount;
       }
-    });
-  }
+
+      this.refreshFilteredTabs(); // <-- Critical: refresh UI after KRA update
+    },
+    error: () => {
+      this.kraKpiTotalCount = 0;
+      const kraTab = this.navTabs.find(t => t.label === "KRA/KPI's");
+      if (kraTab) kraTab.totalCount = 0;
+      this.refreshFilteredTabs();
+    }
+  });
+}
 
 
   ngOnDestroy(): void {

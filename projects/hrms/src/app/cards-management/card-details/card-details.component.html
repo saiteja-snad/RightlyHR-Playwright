@@ -3,12 +3,11 @@
     <div class="input-group custom-search mb-3">
         <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
         <input type="search" #search="ngModel" [(ngModel)]="searchValue" (ngModelChange)="this.getCardDetails()"
-            class="form-control custom-search-input" placeholder="Search by card type / card holder name / bank name"
-            aria-label="Username" aria-describedby="basic-addon1">
+            class="form-control custom-search-input" placeholder="Search" aria-label="Username"
+            aria-describedby="basic-addon1">
     </div>
-
-    @if(rbac.allowedToAccess('Cards Available.view')){
-    <div class="custom-table-content">
+   @if(rbac.allowedToAccess('Cards Available.view')){
+ <div class="custom-table-content">
         @if (!loader) {
         <table class="w-100">
             <thead>
@@ -21,7 +20,7 @@
                 <th>{{'Card Expiry Year'|translate}}</th> -->
                 <th>{{'Expiry Date' | translate}}</th>
                 <!-- <th>{{'Allocated History'|translate}}</th> -->
-                <!-- <th>{{'Status'|translate}}</th> -->
+                <th>{{'Status'|translate}}</th>
                 <th class="text-center" *ngIf="rbac.allowedToAccess('Cards Available.delete') || rbac.allowedToAccess('Cards Available.update') || 
                 rbac.allowedToAccess('Cards Available.create')">{{'Actions'|translate}}</th>
             </thead>
@@ -42,19 +41,19 @@
                     <!-- <td>{{item?.expiryMonth?item?.expiryMonth:'-'}}</td> -->
                     <!-- expity year -->
                     <!-- <td>{{item?.expiryYear?item?.expiryYear:'-'}}</td> -->
-                    <td>{{ `${item?.expiryMonth?item?.expiryMonth:'-'} / ${item?.expiryYear?item?.expiryYear:'-'} `}}
-                    </td>
+                     <td>{{ `${item?.expiryMonth?item?.expiryMonth:'-'} / ${item?.expiryYear?item?.expiryYear:'-'} `}}</td>
                     <!-- allocated history -->
                     <!-- <td>
                          @if (item.allocations) {
                     <div id="tooltip" (click)="approverHistoryFunction(item,historyPopup)" class="cursor">
                         <app-info-icon />
                     </div>
+                    
                     }
                     @else{-}
                     </td> -->
                     <!-- status -->
-                    <!-- <td>{{item?.status ? item?.status:'-'}}</td> -->
+                    <td>{{item?.status ? item?.status:'-'}}</td>
                     <!-- actions -->
                     <td class="text-center" *ngIf="rbac.allowedToAccess('Cards Available.delete') || rbac.allowedToAccess('Cards Available.update') || 
                         rbac.allowedToAccess('Cards Available.create')">
@@ -91,17 +90,17 @@
         <app-data-loader-content />
         }
     </div>
-    }
+   }
+   
 
     <div class="pagination-content" *ngIf="cardDetails.length > 0">
         <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
             <div class="d-flex align-items-center gap-3 p-2">
-                <select title="text" class="form-select custom-pagination-select" [(ngModel)]="rows"
-                    (ngModelChange)="onPageSizeChange($event)">
+                <select title="text" class="form-select custom-pagination-select" [(ngModel)]="rows" (ngModelChange)="onPageSizeChange($event)">
                     <option *ngFor="let option of options" [value]="option.value">{{ option.label }}</option>
                 </select>
                 <span class="pagination-label text-nowrap">
-                    Showing {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize :
+                    Showing {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize : 
                     (+first + + rows) }} of {{ collectionSize }}
                 </span>
             </div>
@@ -195,8 +194,7 @@
                         </div>
                         <div class="error-msg" *ngIf="updateDetailsForm.controls['bankName'].invalid && (updateDetailsForm.controls['bankName'].touched 
                             || updateDetailsForm.controls['bankName'].dirty)">
-                            <span *ngIf="updateDetailsForm.controls['bankName'].errors?.['required']">Bank Name is required / 
-                                Please limit your input to 100 characters</span>
+                            <span *ngIf="updateDetailsForm.controls['bankName'].errors?.['required']">Bank Name is required</span>
                         </div>
                     </div>
 
@@ -209,7 +207,7 @@
                             placeholder="Please enter cardholder name" (keypress)="formValidations.restrictInitialSpace($event)">
                         <div class="error-msg"
                             *ngIf="updateDetailsForm.get('cardHolderName')?.invalid && updateDetailsForm.get('cardHolderName')?.touched">
-                            Card holder name is required
+                            Card Holder Name is required
                         </div>
                     </div>
 
@@ -267,7 +265,7 @@
                         <input type="number" class="form-control custom-input" min="0" formControlName="creditLimit" placeholder="Enter credit limit">
                         <div class="error-msg"
                             *ngIf="updateDetailsForm.get('creditLimit')?.hasError('required') && updateDetailsForm.get('creditLimit')?.touched">
-                            Credit limit is required
+                            Credit Limit is required
                         </div>
                         
                         <div class="error-msg"
@@ -329,7 +327,7 @@
                         <label for="allocatedDate" class="form-label custom-label mb-2">Allocated Date<span class="error-msg">*</span></label>
                         <input type="date" class="form-control custom-input" formControlName="allocatedDate" />
                         <div *ngIf="allocateDetailsForm.get('allocatedDate')?.touched && allocateDetailsForm.get('allocatedDate')?.invalid" class="error-msg">
-                            <div *ngIf="allocateDetailsForm.get('allocatedDate')?.errors?.['required']">{{'Allocated date is required'|translate}}</div>
+                            <div *ngIf="allocateDetailsForm.get('allocatedDate')?.errors?.['required']">{{'Allocated Date is required'|translate}}</div>
                         </div>
                     </div>
 
@@ -339,9 +337,10 @@
                         <div class="custom-p-select-content">
                             <p-select [options]="getAllEmployeeInfo" [filter]="true" class="custom-select w-100" filterBy="fullName"
                                 [showClear]="false" formControlName="employeeId" optionValue="employeeId" placeholder="Please select employee"
-                                optionLabel="fullName" />
+                                optionLabel="fullName">
+                            </p-select>
                             <div *ngIf="allocateDetailsForm.get('employeeId')?.touched && allocateDetailsForm.get('employeeId')?.invalid" class="error-msg">
-                                <div *ngIf="allocateDetailsForm.get('employeeId')?.errors?.['required']">Allocated to is required</div>
+                                <div *ngIf="allocateDetailsForm.get('employeeId')?.errors?.['required']">Allocated To is required</div>
                             </div>
                         </div>
                     </div>
@@ -390,8 +389,9 @@
                         <div class="custom-p-select-content">
                             <p-select [options]="reasonDetails" optionLabel="value" [filter]="true" optionValue="value"
                                 [resetFilterOnHide]="true" filterBy="value" formControlName="reason"
-                                placeholder="Select reason" class="form-select custom-select" />
-                            <div *ngIf="holdDetailsForm.get('reason')?.touched && holdDetailsForm.get('reason')?.invalid" class="error-msg">
+                                placeholder="Select reason" class="form-select custom-select"></p-select>
+                            <div *ngIf="holdDetailsForm.get('reason')?.touched && holdDetailsForm.get('reason')?.invalid"
+                                class="error-msg">
                                 <div *ngIf="holdDetailsForm.get('reason')?.errors?.['required']">Reason is required</div>
                             </div>
                         </div>
@@ -404,10 +404,13 @@
                             placeholder="Please provide comments" rows="3" maxlength="250" formControlName="addictionalcomments"
                             (keypress)="formValidations.restrictInitialSpace($event)"></textarea>
                         <div class="mt-1 textarea-count-text">
-                            <span class="color">{{ holdDetailsForm.get('addictionalcomments')?.value?.length || 0 }}/250</span>
+                            <span class="color">{{ holdDetailsForm.get('addictionalcomments')?.value?.length || 0
+                                }}/250</span>
                         </div>
-                        <div *ngIf="holdDetailsForm.get('addictionalcomments')?.touched && holdDetailsForm.get('addictionalcomments')?.invalid" class="error-msg">
-                            <div *ngIf="holdDetailsForm.get('addictionalcomments')?.errors?.['required']">Additional comments are required</div>
+                        <div *ngIf="holdDetailsForm.get('addictionalcomments')?.touched && holdDetailsForm.get('addictionalcomments')?.invalid"
+                            class="error-msg">
+                            <div *ngIf="holdDetailsForm.get('addictionalcomments')?.errors?.['required']">Additional Comments
+                                are required</div>
                         </div>
                     </div>
                 </div>
@@ -420,7 +423,6 @@
         
     </div>
 </ng-template>
-
 <!-- View comments Modal -->
 <ng-template #historyPopup let-modal>
   <div class="custom-main-popup-container" ngbAutofocus>
@@ -448,7 +450,7 @@
             </tr>
           </thead>
           <tbody>
-            @if(allocated_history.length>0){
+              @if(allocated_history.length>0){
             <tr *ngFor="let item of allocated_history">
               <td>{{item?.assignedBy?.name?item?.assignedBy?.name:'-'}}</td>
               <td>{{item?.employee?.name?item.employee.name:'-'}}</td>
@@ -483,6 +485,7 @@
               <td>{{item?.allocationStatus?item?.allocationStatus:'-'}}</td>
             </tr>
             }
+            
             @else {
             <tr>
               <app-no-data-found />

@@ -1,9 +1,9 @@
 <div class="user-validation-container">
     <div class="text-center w-100">
-        <p class="welcome-text">Welcome, <span>{{name}}</span></p>
+        <p class="welcome-text">{{ 'Welcome' | translate }}, <span>{{name}}</span></p>
         <div class="d-flex justify-content-center align-items-center gap-2">
             <div>
-                <span class="content-text">Please wait while we setup your dashboard</span>
+                <span class="content-text">{{ 'Please wait while we setup your dashboard' | translate }}</span>
             </div>
             <div>
                 <span class="spinner-grow spinner-grow-sm me-2" role="status" aria-hidden="true"></span>
@@ -28,13 +28,10 @@
                 </div>
             </div>
             <div>
-                <p class="welcome-text mb-4">Welcome to RightlyHR 2.0!</p>
+                <p class="welcome-text mb-4">{{ 'Welcome to RightlyHR 2.0!' | translate }}</p>
 
-                <p class="content-text mb-4">We’re excited to bring you a refreshed and modern HR experience.
-                    With improved performance, intuitive navigation, and new features tailored for your daily tasks,
-                    RightlyHR 2.0 is here to simplify your workday.
-                    Go ahead and explore what’s new!</p>
-                <button type="button" class="custom-btn btn-primary" (click)="onClickGetStarted()">Get Started</button>
+                <p class="content-text mb-4">{{ 'We are excited to bring you a refreshed and modern HR experience. With improved performance, intuitive navigation, and new features tailored for your daily tasks, RightlyHR 2.0 is here to simplify your workday. Go ahead and explore what is new!' | translate }}</p>
+                <button type="button" class="custom-btn btn-primary" (click)="onClickGetStarted()">{{ 'Get Started' | translate }}</button>
             </div>
         </div>
     </div>

@@ -1,7 +1,7 @@
 <div class="custom-main-component-container">
     <div class="component-header-content">
         <div class="heading-content">
-            <div class="component-header">Blood Bank ({{selectedBloodGroup}})</div>
+            <div class="component-header">{{ 'Blood Bank' | translate }} ({{selectedBloodGroup}})</div>
             <div>
                 <app-module-info-icon  placement="bottom" [ngbPopover]="popContent" />
             </div>
@@ -32,7 +32,7 @@
             <i class="bi bi-search"></i>
         </span>
         <input type="search" [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()"
-            class="form-control custom-search-input" placeholder="Search by employee name">
+            class="form-control custom-search-input" [placeholder]="'Search by employee name' | translate">
     </div>
 
     <div class="custom-component-right-content">
@@ -69,7 +69,7 @@
                                 {{ item.firstName }} {{ item.middleName || '' }} {{ item.lastName }}
                             </div>
                             <div class="email text-truncate">
-                                <i class="bi bi-envelope icon-colour me-1"></i>{{ item.workEmail || 'N/A' }}
+                                <i class="bi bi-envelope icon-colour me-1"></i>{{ item.workEmail || ('N/A' | translate) }}
                             </div>
                         </div>
                     </div>

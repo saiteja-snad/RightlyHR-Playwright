@@ -28,14 +28,13 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
   subscription!: Subscription;
   @ViewChild('changepasswordModal', { static: true }) changepasswordModal!: TemplateRef<any>;
   @ViewChild('getstarted', { static: true }) getstarted!: TemplateRef<any>;
-
   StrongPasswordRegx: RegExp = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>])(?!.*\s).{8,}$/;
 
   constructor(private fb: FormBuilder, public readonly router: Router, private http: HttpService,
     private modalService: NgbModal, private conformationPopup: OpenModalService, public formsValidation: FormValidationsService,
     private predefinedThemesService: PredefinedThemesService) { }
 
-   async ngOnInit() {
+  async ngOnInit() {
     this.intilaizeChangePasswordForm();
     this.intializeGetStartedForm();
     this.empinfo = JSON.parse(localStorage.getItem('currentUser') || '{}');

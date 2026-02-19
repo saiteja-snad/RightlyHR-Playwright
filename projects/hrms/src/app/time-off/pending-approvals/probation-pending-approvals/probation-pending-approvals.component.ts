@@ -24,7 +24,6 @@ import { DataLoaderContentComponent } from "../../../shared/data-loader-content/
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 import { FormValidationsService } from '../../../services/form-validations.service';
 import { DocumentViewIconComponent } from "../../../icons/document-view-icon/document-view-icon.component";
-import { SignalsService } from '../../../services/signals.service';
 @Component({
   selector: 'app-probation-pending-approvals',
   imports: [CommonModule, RouterModule, NgbPopoverModule, FormsModule, NgbPopoverModule,
@@ -62,7 +61,6 @@ export class ProbationPendingApprovalsComponent {
 totalCount:any;
   constructor(private modalService: NgbModal, private http: HttpService, public rbac: RbacService, 
     private authService: AuthService, private openModalService: OpenModalService, 
-    private signalService: SignalsService,
     public formsValidation: FormValidationsService) { }
 
   openModal(content: any) {
@@ -171,7 +169,7 @@ totalCount:any;
       },
       error: (err: any) => {
         console.log(err);
-        alert('Insertion of data faild');
+        
       },
     });
   }
@@ -390,9 +388,7 @@ totalCount:any;
         this.modalService.dismissAll();
         this.openModalService.openSuccessModal(successMessage);
         this.getAllPendingApprovals();
-        this.getApprovalStatusCounts();
-        this.signalService.probationDetailsTriggerSignal()
-        this.http.setnewprobationDetails()
+         this.http.setnewprobationDetails()
       },
       error: (reason: any) => {
         this.openModalService.openErrorModal(reason.error.message);
@@ -400,7 +396,6 @@ totalCount:any;
       complete: () => {
         this.getAllPendingApprovals();
         this.getApprovalStatusCounts();
-          this.http.setnewprobationDetails()
       },
     });
   }

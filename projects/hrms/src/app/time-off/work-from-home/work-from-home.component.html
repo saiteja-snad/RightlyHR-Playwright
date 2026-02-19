@@ -17,7 +17,7 @@
                     {{'Select Employee' | translate}}</label>
                 <div class="custom-p-select-content">
                     <p-select [options]="activeEmplist" [filter]="true" filterBy="label" resetFilterOnHide="true"
-                        optionLabel="label" optionValue="value" showClear="true" placeholder="Please select employee name"
+                        optionLabel="label" optionValue="value" showClear="true" placeholder="Select employee name"
                         (onChange)="onCheckemployee($event.value)" class="form-select custom-select"></p-select>
                 </div>
             </div>
@@ -28,7 +28,7 @@
                     {{'Select Employee' | translate}}</label>
                 <div class="custom-p-select-content">
                     <p-select [options]="activeEmplist" [filter]="true" filterBy="label" resetFilterOnHide="true"
-                        optionLabel="label" optionValue="value" showClear="true" placeholder="Please select employee name"
+                        optionLabel="label" optionValue="value" showClear="true" placeholder="Select employee name"
                         (onChange)="onCheckemployee($event.value)" class="form-select custom-select"></p-select>
                 </div>
             </div>
@@ -37,7 +37,7 @@
             <label class="form-label filter-labels m-0">{{'My Team'| translate}}</label>
             <div class="custom-p-select-content">
                 <p-select [options]="getEmployeeInfo" optionLabel="fullName" optionValue="employeeId"
-                    class="form-select custom-select" name="myteamemployees" placeholder="Please select employee name"
+                    class="form-select custom-select" name="myteamemployees" placeholder="Select employee name"
                     [filter]="true" resetFilterOnHide="true" showClear="true" required
                     (onChange)="onCheckemployee($event.value)">
                 </p-select>
@@ -163,7 +163,7 @@
                         [max]="getFutureDate()">
                     <div class="error-msg">
                         <div *ngIf="addWFHForm.get('workedDate')?.touched && addWFHForm.get('workedDate')?.invalid">
-                            Worked date is required</div>
+                            Worked Date is required</div>
                         <div *ngIf="addWFHForm.get('workedDate')?.errors?.['weekend']">Selected date is not eligible for WFH</div>
                         <div *ngIf="addWFHForm.get('workedDate')?.errors?.['beforeJoining']">Date must be after your date of joining.</div>
                     </div>

@@ -686,7 +686,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
 
     const id = this.selectedIds.toString();
     if(id === null ||id === ""){
-      this.modal.openErrorModal('Please select employee(s) to assign the review cycle');
+      this.modal.openErrorModal('Please select at least one employee to assign the review cycle');
       this.spinnerLoader = false;
       return;
       

@@ -7,24 +7,24 @@
       <!-- DOJ -->
       <div class="d-flex align-items-center gap-3">
         <div *ngIf="masterDataForm.get('dateOfJoining')?.value">
-          <button type="button" class="clear-all-btn" (click)="clearAllFilters()" > Clear All</button>
+          <button type="button" class="clear-all-btn" (click)="clearAllFilters()" >{{ 'Clear All' | translate }}</button>
         </div>
 
         @if(rbac.allowedToAccess('Employee Master Data - Generate.view')){
         <div class="d-flex align-items-center gap-2">
-          <label class="custom-label filter-labels text-nowrap m-0">Date of Joining</label>
+          <label class="custom-label filter-labels text-nowrap m-0">{{ 'Date of Joining' | translate }}</label>
           <div class="custom-date-range-picker">
-            <p-datepicker formControlName="dateOfJoining" [placeholder]="'Please Select Date'" selectionMode="range"
+            <p-datepicker formControlName="dateOfJoining" [placeholder]="'Please Select Date' | translate" selectionMode="range"
              [showIcon]="true" [readonlyInput]="true" />
           </div>
         </div>
 
         <!-- Employee Status -->
         <div class="d-flex align-items-center gap-2">
-          <label class="custom-label filter-labels text-nowrap m-0">Employee Status</label>
+          <label class="custom-label filter-labels text-nowrap m-0">{{ 'Employee Status' | translate }}</label>
           <div class="custom-p-select-content">
             <p-select [options]="employeeStatusOptions" formControlName="empStatus" optionLabel="label"
-              optionValue="label" placeholder="Please select employee status" class="custom-select w-100">
+              optionValue="label" [placeholder]="'Select employee status' | translate" class="custom-select w-100">
             </p-select>
           </div>
         </div>
@@ -36,9 +36,9 @@
             [disabled]="!masterDataForm.get('empStatus')?.value && !masterDataForm.get('dateOfJoining')?.value">
             @if(spinnerLoader1){
             <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-            <span>{{'Loading...'}}</span>
+            <span>{{ 'Loading...' | translate }}</span>
             }@else {
-            <span>{{'Generate'}}</span>
+            <span>{{ 'Generate' | translate }}</span>
             }
           </button>
           }
@@ -48,9 +48,9 @@
             (click)="onClickEmpMasterExport()" class="custom-btn btn-primary">
             @if(spinnerLoader2){
             <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-            <span>{{'Loading...'}}</span>
+            <span>{{ 'Loading...' | translate }}</span>
             }@else {
-            <span>{{'Export'}}</span>
+            <span>{{ 'Export' | translate }}</span>
             }
           </button>
           }
@@ -65,100 +65,100 @@
       <thead>
         <tr>
           <!-- <th>ID</th> -->
-          <th>Employee ID</th>
-          <th>Salutation</th>
-          <th>First Name</th>
-          <th>Middle Name</th>
-          <th>Last Name</th>
-          <th>Status</th>
-          <th>Date Of Joining</th>
-          <th>Marital Status</th>
-          <th>Gender</th>
-          <th>Date of Birth</th>
-          <th>Blood Group</th>
+          <th>{{'Employee ID'|translate}}</th>
+          <th>{{'Salutation'|translate}}</th>
+          <th>{{'First Name'|translate}}</th>
+          <th>{{'Middle Name'|translate}}</th>
+          <th>{{'Last Name'|translate}}</th>
+          <th>{{'Status'|translate}}</th>
+          <th>{{'Date Of Joining'|translate}}</th>
+          <th>{{'Marital Status'|translate}}</th>
+          <th>{{'Gender'|translate}}</th>
+          <th>{{'Date of Birth'|translate}}</th>
+          <th>{{'Blood Group'|translate}}</th>
           <!-- <th>Secondary Language</th> -->
-          <th>Address Line 1(current)</th>
-          <th>Address Line 2(current)</th>
-          <th>City(current)</th>
-          <th>State(current)</th>
-          <th>Country(current)</th>
-          <th>Zip Code/Post Code(current)</th>
-          <th>Address Line 1(permanent)</th>
-          <th>Address Line 2(permanent)</th>
-          <th>City(permanent)</th>
-          <th>State(permanent)</th>
-          <th>Country(permanent)</th>
-          <th>Zip Code/Post Code(permanent)</th>
-          <th>Work Number</th>
-          <th>Phone Number</th>
-          <th>Work Mail</th>
-          <th>Personal Email</th>
-          <th>Name (contact1)</th>
-          <th>Email-Id (contact1)</th>
-          <th>Phone Number (contact1)</th>
-          <th>Relationship (contact1)</th>
-          <th>Name (contact2)</th>
-          <th>Email-Id (contact2)</th>
-          <th>Phone Number (contact2)</th>
-          <th>Relationship (contact2)</th>
-          <th>Degree</th>
-          <th>University</th>
-          <th>Specialization</th>
-          <th>GPA</th>
-          <th>Degree Start Date</th>
-          <th>Degree End Date</th>
-          <th>Visa Type</th>
-          <th>Issued Country</th>
-          <th>Issued Date</th>
-          <th>Expiry Date</th>
-          <th>Aadhaar Number</th>
-          <th>PAN Number</th>
-          <th>ESIC Number</th>
-          <th>PF Number</th>
-          <th>UAN Number</th>
-          <th>Bank Name</th>
-          <th>Account Number</th>
-          <th>Account Holder Name</th>
-          <th>IFSC Code</th>
-          <th>Offer Sent Date</th>
-          <th>Offer Sent By</th>
-          <th>Offer Sent Status</th>
-          <th>Appointment Sent Date</th>
-          <th>Appointment Sent By</th>
-          <th>Appointment Sent Status</th>
-          <th>Probation End Date</th>
-          <th>Probation Status</th>
-          <th>Branch Location/Code</th>
-          <th>Notice Period</th>
-          <th>Background Check Status</th>
-          <th>Salary Hold</th>
-          <th>PT</th>
-          <th>ESIC</th>
-          <th>PF</th>
-          <th>Insurance</th>
-          <th>Last Working Day</th>
-          <th>Eligible For Rehire</th>
-          <th>Exit Reason</th>
+          <th>{{'Address Line 1(current)'|translate}}</th>
+          <th>{{'Address Line 2(current)'|translate}}</th>
+          <th>{{'City(current)'|translate}}</th>
+          <th>{{'State(current)'|translate}}</th>
+          <th>{{'Country(current)'|translate}}</th>
+          <th>{{'Zip Code/Post Code(current)'|translate}}</th>
+          <th>{{'Address Line 1(permanent)'|translate}}</th>
+          <th>{{'Address Line 2(permanent)'|translate}}</th>
+          <th>{{'City(permanent)'|translate}}</th>
+          <th>{{'State(permanent)'|translate}}</th>
+          <th>{{'Country(permanent)'|translate}}</th>
+          <th>{{'Zip Code/Post Code(permanent)'|translate}}</th>
+          <th>{{'Work Number'|translate}}</th>
+          <th>{{'Phone Number'|translate}}</th>
+          <th>{{'Work Mail'|translate}}</th>
+          <th>{{'Personal Email'|translate}}</th>
+          <th>{{'Name (contact1)'|translate}}</th>
+          <th>{{'Email-Id (contact1)'|translate}}</th>
+          <th>{{'Phone Number (contact1)'|translate}}</th>
+          <th>{{'Relationship (contact1)'|translate}}</th>
+          <th>{{'Name (contact2)'|translate}}</th>
+          <th>{{'Email-Id (contact2)'|translate}}</th>
+          <th>{{'Phone Number (contact2)'|translate}}</th>
+          <th>{{'Relationship (contact2)'|translate}}</th>
+          <th>{{'Degree'|translate}}</th>
+          <th>{{'University'|translate}}</th>
+          <th>{{'Specialization'|translate}}</th>
+          <th>{{'GPA'|translate}}</th>
+          <th>{{'Degree Start Date'|translate}}</th>
+          <th>{{'Degree End Date'|translate}}</th>
+          <th>{{'Visa Type'|translate}}</th>
+          <th>{{'Issued Country'|translate}}</th>
+          <th>{{'Issued Date'|translate}}</th>
+          <th>{{'Expiry Date'|translate}}</th>
+          <th>{{'Aadhaar Number'|translate}}</th>
+          <th>{{'PAN Number'|translate}}</th>
+          <th>{{'ESIC Number'|translate}}</th>
+          <th>{{'PF Number'|translate}}</th>
+          <th>{{'UAN Number'|translate}}</th>
+          <th>{{'Bank Name'|translate}}</th>
+          <th>{{'Account Number'|translate}}</th>
+          <th>{{'Account Holder Name'|translate}}</th>
+          <th>{{'IFSC Code'|translate}}</th>
+          <th>{{'Offer Sent Date'|translate}}</th>
+          <th>{{'Offer Sent By'|translate}}</th>
+          <th>{{'Offer Sent Status'|translate}}</th>
+          <th>{{'Appointment Sent Date'|translate}}</th>
+          <th>{{'Appointment Sent By'|translate}}</th>
+          <th>{{'Appointment Sent Status'|translate}}</th>
+          <th>{{'Probation End Date'|translate}}</th>
+          <th>{{'Probation Status'|translate}}</th>
+          <th>{{'Branch Location/Code'|translate}}</th>
+          <th>{{'Notice Period'|translate}}</th>
+          <th>{{'Background Check Status'|translate}}</th>
+          <th>{{'Salary Hold'|translate}}</th>
+          <th>{{'PT'|translate}}</th>
+          <th>{{'ESIC'|translate}}</th>
+          <th>{{'PF'|translate}}</th>
+          <th>{{'Insurance'|translate}}</th>
+          <th>{{'Last Working Day'|translate}}</th>
+          <th>{{'Eligible For Rehire'|translate}}</th>
+          <th>{{'Exit Reason'|translate}}</th>
           <!-- <th>Employment Effective Date</th> -->
-          <th>Job Type</th>
-          <th>Grade Name</th>
+          <th>{{'Job Type'|translate}}</th>
+          <th>{{'Grade Name'|translate}}</th>
           <!-- <th>Job Grade</th> -->
-          <th>Job Effective Date</th>
-          <th>Job Role</th>
-          <th>Department</th>
-          <th>Team</th>
-          <th>Team Manager</th>
-          <th>Reporting To</th>
-          <th>Location</th>
-          <th>Sub Location</th>
-          <th>Shift</th>
-          <th>Shift Code</th>
-          <th>Compensation Effective Date</th>
-          <th>Overtime Eligibility</th>
-          <th>Reason</th>
-          <th>Frequency</th>
-          <th>Pay Type</th>
-          <th>Yearly CTC</th>
+          <th>{{'Job Effective Date'|translate}}</th>
+          <th>{{'Job Role'|translate}}</th>
+          <th>{{'Department'|translate}}</th>
+          <th>{{'Team'|translate}}</th>
+          <th>{{'Team Manager'|translate}}</th>
+          <th>{{'Reporting To'|translate}}</th>
+          <th>{{'Location'|translate}}</th>
+          <th>{{'Sub Location'|translate}}</th>
+          <th>{{'Shift'|translate}}</th>
+          <th>{{'Shift Code'|translate}}</th>
+          <th>{{'Compensation Effective Date'|translate}}</th>
+          <th>{{'Overtime Eligibility'|translate}}</th>
+          <th>{{'Reason'|translate}}</th>
+          <th>{{'Frequency'|translate}}</th>
+          <th>{{'Pay Type'|translate}}</th>
+          <th>{{'Yearly CTC'|translate}}</th>
         </tr>
       </thead>
       <tbody>

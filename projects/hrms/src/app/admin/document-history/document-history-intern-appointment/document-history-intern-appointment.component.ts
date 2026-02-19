@@ -12,17 +12,25 @@ import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-foun
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import moment from 'moment';
 import { DatePicker } from 'primeng/datepicker';
-import { DownloadIconComponent } from "../../../icons/download-icon/download-icon.component";
-import { OnboardingFilterService } from '../../../shared/time-off-module-tabs/pending-approvals-tabs/onboarding-filter.service';
+
 @Component({
   selector: 'app-document-history-intern-appointment',
-  imports: [CommonModule, ReactiveFormsModule, TranslateModule, DateformatPipe, FormsModule, AppointmentletterpipePipe,
-    NoDataFoundComponent, DataLoaderContentComponent, DatePicker, DownloadIconComponent],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    TranslateModule,
+    DateformatPipe,
+    FormsModule,
+    AppointmentletterpipePipe,
+    NoDataFoundComponent,
+    DataLoaderContentComponent,
+    DatePicker
+  ],
   templateUrl: './document-history-intern-appointment.component.html',
   styleUrl: './document-history-intern-appointment.component.scss',
 })
-
-export class DocumentHistoryInternAppointmentComponent implements OnInit, OnDestroy {
+export class DocumentHistoryInternAppointmentComponent
+  implements OnInit, OnDestroy {
   subscription!: Subscription;
   AppointmentLetters = [] as IAppointmentLetterDetails[];
   searchValue: any;
@@ -32,8 +40,7 @@ export class DocumentHistoryInternAppointmentComponent implements OnInit, OnDest
   selectedYear: number | null = null;
   maxMonth: Date = new Date();
   offerLetters: any[] = [];
-
-  constructor(private http: HttpService, public rbac: RbacService, private onboardingFilter: OnboardingFilterService) { }
+  constructor(private http: HttpService, public rbac: RbacService) { }
 
   ngOnInit(): void {
     const today = new Date();
@@ -44,20 +51,22 @@ export class DocumentHistoryInternAppointmentComponent implements OnInit, OnDest
 
   getAppointmentLetters() {
     this.dataloader = true;
-    this.subscription = this.http.getData('TraineeAppointmentLetter/getAllNames').subscribe({
-      next: (data: any) => {
-        this.dataloader = false;
-        this.AppointmentLetters = data;
-        this.filterByMonth();
-      },
-      error: (error: any) => {
-        this.dataloader = false;
-        console.error('Error fetching appointment letters:', error);
-      },
-      complete: () => {
-        console.log('Appointment letters fetched successfully');
-      }
-    });
+    this.subscription = this.http
+      .getData('TraineeAppointmentLetter/getAllNames')
+      .subscribe({
+        next: (data: any) => {
+          this.dataloader = false;
+          this.AppointmentLetters = data;
+          this.filterByMonth();
+        },
+        error: (error: any) => {
+          this.dataloader = false;
+          console.error('Error fetching appointment letters:', error);
+        },
+        complete: () => {
+          console.log('Appointment letters fetched successfully');
+        }
+      });
   }
 
   filterByMonth() {
@@ -69,8 +78,6 @@ export class DocumentHistoryInternAppointmentComponent implements OnInit, OnDest
     } else {
       this.offerLetters = this.AppointmentLetters; // show all if no filter
     }
-    //this.onboardingFilter.setMonthYear(this.selectedMonth || new Date().getMonth() + 1, this.selectedYear || new Date().getFullYear());
-
   }
 
   onMonthChange(value: any) {
@@ -78,22 +85,27 @@ export class DocumentHistoryInternAppointmentComponent implements OnInit, OnDest
     this.selectedMonth = selected.month() + 1;
     this.selectedYear = selected.year();
     this.filterByMonth();
-     this.onboardingFilter.setMonthYear(this.selectedMonth, this.selectedYear);
   }
 
   onSelectDownload(file: any) {
-    this.subscription = this.http.DownloadDataWithQuery('FileSystem/Downloadfile', file.documentUrl).subscribe({
-      next: (res: any) => {
-        let fileName = res.headers.get('content-disposition')?.split(':')[1].split('=')[1];
-        let blob: Blob = res.body as Blob;
-        let a = document.createElement('a');
-        a.href = window.URL.createObjectURL(blob);
-        let filename = file.documentUrl.split('/')[file.documentUrl.split('/').length - 1];
-        a.download = filename;
-        a.click();
-      },
-      error: (reason) => console.log(reason),
-    });
+    this.subscription = this.http
+      .DownloadDataWithQuery('FileSystem/Downloadfile', file.documentUrl)
+      .subscribe({
+        next: (res: any) => {
+          let fileName = res.headers
+            .get('content-disposition')
+            ?.split(':')[1]
+            .split('=')[1];
+          let blob: Blob = res.body as Blob;
+          let a = document.createElement('a');
+          a.href = window.URL.createObjectURL(blob);
+          let filename =
+            file.documentUrl.split('/')[file.documentUrl.split('/').length - 1];
+          a.download = filename;
+          a.click();
+        },
+        error: (reason) => console.log(reason),
+      });
   }
 
   ngOnDestroy(): void {

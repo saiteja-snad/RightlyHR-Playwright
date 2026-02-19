@@ -1,7 +1,7 @@
 <div class="custom-main-component-container">
   <div class="component-header-content py-2">
     <div class="heading-content">
-      <div class="component-header">Phone Book</div>
+      <div class="component-header">{{'Phone Book' | translate}}</div>
       <div>
         <app-module-info-icon placement="bottom" [ngbPopover]="popContent" />
       </div>
@@ -72,11 +72,15 @@
             </p>
             <p class="text-label text-truncate mb-2">
               <img src="/icons/call-icon.png" alt="Icon" class="custom-icon me-2">
-              <span class="link-text">{{ emp.workPhoneCountryCode }}{{ emp.workPhone }}</span>
+              <span class="link-text">
+                <u>{{ emp.workPhoneCountryCode }}{{ emp.workPhone }}</u>
+              </span>
             </p>
             <p class="text-label text-truncate mb-2">
               <img src="/icons/call-icon.png" alt="Icon" class="custom-icon me-2">
-              <span class="link-text">{{ emp.mobilePhoneCountryCode }}{{ emp.contactNumber }}</span>
+              <span class="link-text">
+                <u>{{ emp.mobilePhoneCountryCode }}{{ emp.contactNumber }}</u>
+              </span>
             </p>
           </div>
         </div>
@@ -88,5 +92,6 @@
       }
       }
     </div>
+
   </div>
 </div>

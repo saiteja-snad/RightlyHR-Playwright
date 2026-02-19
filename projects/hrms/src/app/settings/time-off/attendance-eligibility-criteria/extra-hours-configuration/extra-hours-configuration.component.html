@@ -5,9 +5,9 @@
                 <table class="w-100">
                     <thead>
                         <tr>
-                            <th>Name</th>
-                            <th>Value</th>
-                            <th *ngIf="rbac.allowedToAccess('Extra Hours Configuration Tab.update')">Action</th>
+                            <th>{{ 'Name' | translate }}</th>
+                            <th>{{ 'Value' | translate }}</th>
+                            <th *ngIf="rbac.allowedToAccess('Extra Hours Configuration Tab.update')">{{ 'Action' | translate }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -22,7 +22,7 @@
                                 <!-- Edit Mode -->
                                 <ng-container *ngIf="editingIndex === i">
                                     <input class="form-control custom-input" type="text"
-                                        placeholder="Please enter value" [(ngModel)]="temporaryValue"
+                                        [placeholder]="'Please enter value' | translate" [(ngModel)]="temporaryValue"
                                         (keypress)="validateInput($event, temporaryValue || '', permi.attribute)"
                                         [maxlength]="5" (paste)="blockPaste($event)" (copy)="blockPaste($event)"
                                         (cut)="blockPaste($event)" (drop)="blockPaste($event)" />
@@ -41,7 +41,7 @@
                                             <li>
                                                 <button class="dropdown-item"
                                                     (click)="startEdit(i, permi.id, permi.value, permi.entity)">
-                                                    <i class="bi bi-pencil me-2"></i>Update
+                                                    <i class="bi bi-pencil me-2"></i>{{ 'Update' | translate }}
                                                 </button>
                                             </li>
                                         </ul>
@@ -54,10 +54,10 @@
                                         <button class="custom-btn btn-primary" type="button"
                                             (click)="submitValue(i, temporaryValue)"
                                             [disabled]="!temporaryValue || temporaryValue.toString().trim() === ''">
-                                            Update
+                                            {{ 'Update' | translate }}
                                         </button>
                                         <button class="custom-btn btn-secondary" type="button" (click)="cancelEdit()">
-                                            Cancel
+                                            {{ 'Cancel' | translate }}
                                         </button>
                                     </div>
                                 </ng-template>

@@ -5,7 +5,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal, NgbPopover } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { SelectModule } from 'primeng/select';
-import { IEmployeeDetails } from '../../../letters/letters.modal';
 import { Subject, Subscription, takeUntil } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
 import { Project } from '../../../Interfaces/projects.model';
@@ -15,6 +14,7 @@ import { FormValidationService } from '../../../../../../preonboarding/src/app/c
 import { IPhases } from '../../../Interfaces/project-management/phases.model';
 import { IResource } from '../../../Interfaces/project-management/resources.model';
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
+import { IEmployeeDetails } from '../../../letters/letters.modal';
 @Component({
   selector: 'app-resource-creation',
   imports: [CommonModule, TranslateModule, ReactiveFormsModule, NgbPopover, SelectModule, InfoIconComponent],
@@ -291,7 +291,8 @@ export class ResourceCreationComponent implements OnInit, OnDestroy {
   }
 
   getAllActiveEmployees() {
-    this.subscription = this.http.getData('Employeedata/ActiveEmployees').subscribe({
+    const statuses: string = 'Active,Trainee Active,Active Contract';
+    this.subscription = this.http.getData(`Employeedata/v3/Getallemployees?statuses=${statuses}`).subscribe({
       next: (data: any) => {
         this.employeeDetails = data.map((employee: any) => {
           return {

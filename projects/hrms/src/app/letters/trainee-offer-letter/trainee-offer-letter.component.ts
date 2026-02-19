@@ -1049,7 +1049,7 @@ export class TraineeOfferLetterComponent implements OnInit, OnDestroy {
         }
         this.Approvalloader = false;
         setTimeout(() => {
-          this.router.navigate(['/letters/lettes-tabs']);
+          this.router.navigate(['/admin/dashboard']);
         }, 1000);
       },
       error: (err: any) => {

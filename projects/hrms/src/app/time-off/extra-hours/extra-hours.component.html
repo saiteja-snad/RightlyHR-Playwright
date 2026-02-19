@@ -1,8 +1,8 @@
 <div class="custom-main-component-container">
     <div class="component-header-content">
         <div class="heading-content">
-            <div class="commpoment-name">Time Off<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span></div>
-            <div class="component-header">Extra Hours</div>
+            <div class="commpoment-name">{{'Time Off' | translate}}<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span></div>
+            <div class="component-header">{{'Extra Hours' | translate }}</div>
 
 
             <div>
@@ -17,7 +17,7 @@
                     {{'Select Employee' | translate}}</label>
                 <div class="custom-p-select-content">
                     <p-select [options]="activeEmplist" [filter]="true" filterBy="label" resetFilterOnHide="true"
-                     optionLabel="label" optionValue="value" showClear="true" placeholder="Please select employee name"
+                     optionLabel="label" optionValue="value" showClear="true" placeholder="Select employee name"
                      (onChange)="onCheckemployee($event.value)" class="form-select custom-select"></p-select>
                 </div>
             </div>
@@ -27,7 +27,7 @@
                 <label for="education" class="form-label custom-label text-nowrap filter-labels m-0">{{'Select Employee' | translate}}</label>
                 <div class="custom-p-select-content">
                     <p-select [options]="activeEmplist" [filter]="true" filterBy="label" resetFilterOnHide="true" optionLabel="label"
-                    optionValue="value" showClear="true" placeholder="Please select employee name" (onChange)="onCheckemployee($event.value)" 
+                    optionValue="value" showClear="true" placeholder="Select employee name" (onChange)="onCheckemployee($event.value)" 
                     class="form-select custom-select"></p-select>
                 </div>
             </div>
@@ -36,14 +36,14 @@
             <label class="form-label filter-labels m-0">{{'My Team'| translate}}</label>
             <div class="custom-p-select-content">
                 <p-select [options]="getEmployeeInfo" optionLabel="fullName" optionValue="employeeId"
-                    class="form-select custom-select" name="myteamemployees" placeholder="Please select employee name"
+                    class="form-select custom-select" name="myteamemployees" placeholder="Select employee name"
                     [filter]="true" resetFilterOnHide="true" showClear="true" required
                     (onChange)="onCheckemployee($event.value)">
                 </p-select>
             </div>
             }
             <div class="d-flex gap-2 align-items-center">
-                <label class="form-label custom-label filter-labels m-0" for="">Select Year</label>
+                <label class="form-label custom-label filter-labels m-0" for="">{{'Select Year' | translate}}</label>
                 <form autocomplete="off" [formGroup]="yearSelectionForm">
                     <div class="custom-p-select-content">
                         <p-select formControlName="selectedYear" [options]="years" placeholder="Select Year"

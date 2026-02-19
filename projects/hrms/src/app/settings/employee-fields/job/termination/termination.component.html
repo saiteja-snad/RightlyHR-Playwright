@@ -16,7 +16,7 @@
             <div *ngIf="ExistForm.get('TERMINATION')?.touched && ExistForm.get('TERMINATION')?.invalid"
                 class="error-msg">
                 <div *ngIf="ExistForm.get('TERMINATION')?.errors?.['required']">
-                    {{ 'Exit reason is required' | translate }}
+                    {{ 'Exit Reason is required' | translate }}
                 </div>
             </div>
             <div *ngIf="ExistForm.get('TERMINATION')?.errors?.['maxCharacters']" class="error-msg">
@@ -96,7 +96,7 @@
                     <div *ngIf="updateForm.get('TERMINATION')?.touched && updateForm.get('TERMINATION')?.invalid"
                         class="error-msg">
                         <div *ngIf="updateForm.get('TERMINATION')?.errors?.['required']">
-                            {{ 'Exit reason is required' | translate }}
+                            {{ 'Exit Reason is required' | translate }}
                         </div>
                     </div>
                     <div *ngIf="updateForm.get('TERMINATION')?.errors?.['maxCharacters']" class="error-msg">

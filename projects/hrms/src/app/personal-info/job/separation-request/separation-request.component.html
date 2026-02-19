@@ -18,7 +18,7 @@
                        empinfo?.empstatus?.toLowerCase() !== 'inactive' &&
                        empinfo?.empstatus?.toLowerCase() !== 'trainee inactive'">
         <div class="custom-add-btn" (click)="openModalLg(raiseNodue)">
-          <i class="bi bi-plus plus-icon me-1"></i>Raise No Due
+          <i class="bi bi-plus plus-icon me-1"></i>{{'Raise No Due'|translate}}
         </div>
       </ng-container>
     </ng-container>
@@ -31,7 +31,7 @@
                        empinfo?.empstatus?.toLowerCase() !== 'inactive' &&
                        empinfo?.empstatus?.toLowerCase() !== 'trainee inactive'">
         <div class="custom-add-btn" (click)="openModalLg(raiseNodue)">
-          <i class="bi bi-plus plus-icon me-1"></i>Raise No Due
+          <i class="bi bi-plus plus-icon me-1"></i>{{'Raise No Due'|translate}}
         </div>
       </ng-container>
     </ng-container>
@@ -73,14 +73,14 @@
           <td>{{ item.appliedDate?(item.appliedDate | date):'-' }}</td>
           <td>
             @if(item.recallStatus == 'Recalled'){
-            <div>NA</div>
+            <div>{{'NA'|translate}}</div>
             }
             @else{
-            {{ item.noticePeriodDuration?item.noticePeriodDuration:'NA' }}
+            {{ item.noticePeriodDuration?item.noticePeriodDuration:('NA'|translate) }}
             }
           </td>
           <td>
-            {{ item.lastWorkingDate ? (item.lastWorkingDate | date) : 'NA' }}
+            {{ item.lastWorkingDate ? (item.lastWorkingDate | date) : ('NA'|translate) }}
           </td>
           <td class="text-center">
             @if(item.description){
@@ -89,7 +89,7 @@
             </div>
             }
             @else {
-            <div>NA</div>
+            <div>{{'NA'|translate}}</div>
             }
             <div>
             </div>
@@ -101,7 +101,7 @@
             </div>
             }
             @else{
-            <div>NA</div>
+            <div>{{'NA'|translate}}</div>
             }
           </td>
           <td>
@@ -111,7 +111,7 @@
             }
             {{ item.recallStatus }}
             } @else {
-            <div>NA</div>
+            <div>{{'NA'|translate}}</div>
             }
           </td>
           <td class="text-center">
@@ -121,10 +121,10 @@
               </div>
             </ng-container>
             <ng-template #noNotice>
-              <div>NA</div>
+              <div>{{'NA'|translate}}</div>
             </ng-template>
           </td>
-          <td>{{item.status?item.status:'NA'}}</td>
+          <td>{{item.status?item.status:('NA'|translate)}}</td>
           @if(canAccess('view','recall')|| canAccess('view','earlyrelieving')){
           @if((empinfo?.empstatus?.toLowerCase() !== 'prospective' && empinfo?.empstatus?.toLowerCase() !== 'trainee prospective' && empinfo?.empstatus?.toLowerCase() !== 'inactive' && empinfo?.empstatus?.toLowerCase() !== 'trainee inactive' )){
           <td class="text-center">
@@ -140,19 +140,18 @@
                 @if(canAccess('view','recall')){
                 <li (click)="recallRequest(item,recallrequestpopup)">
                   <a class="dropdown-item">
-                    <i class="bi bi-repeat me-2"></i>Recall
+                    <i class="bi bi-repeat me-2"></i>{{'Recall'|translate}}
                   </a>
                 </li>}
                 @if(canAccess('view','earlyrelieving')){
                 @if( item.recallStatus.toLowerCase() != 'earlyrelieving' && !recallandearlyrelievingbuttonConditions){
                 <li (click)="earlyReleivingdata(item,earlyrequestpopup)">
-                  <a class="dropdown-item"><img src="icons/sepration.png" alt="" class="speration-icon me-2">Early
-                    Relieving</a>
+                  <a class="dropdown-item"><img src="icons/sepration.png" alt="" class="speration-icon me-2">{{'Early Relieving'|translate}}</a>
                 </li>}
                 }
                 @if(canAccess('view','initiateexitfeedbackform') && (item.status === 'Processed' || item.status === 'Early Relieving Processed') && empdata?.substatus?.toLowerCase() === 'cleared no due' && areAllNodueRecordsApproved(item) && canInitiateExitFeedback(item) && !recallandearlyrelievingbuttonConditions){
                 <li (click)="openInitiateModal(item)">
-                  <a class="dropdown-item"><img src="icons/sepration.png" alt="" class="speration-icon me-2">Initiate Exit Feedback</a>
+                  <a class="dropdown-item"><img src="icons/sepration.png" alt="" class="speration-icon me-2">{{'Initiate Exit Feedback'|translate}}</a>
                 </li>
                 }
               </ul>
@@ -185,14 +184,14 @@
   <div class="custom-main-popup-container" ngbAutofocus>
     <div class="custom-poup-header-content popup-header-border">
       <div class="pt-2">
-        <p class="popup-heading mb-0">View Reason</p>
+        <p class="popup-heading mb-0">{{'View Reason'|translate}}</p>
       </div>
       <div>
         <a (click)="closeModel()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
       </div>
     </div>
     <div class="custom-main-popup-content">
-      <p><b>Reason:</b> {{ decription_Storing_Variable }}</p>
+      <p><b>{{'Reason'|translate}}:</b> {{ decription_Storing_Variable }}</p>
     </div>
   </div>
 </ng-template>
@@ -202,7 +201,7 @@
   <div class="custom-main-popup-container" ngbAutofocus>
     <div class="custom-poup-header-content popup-header-border">
       <div class="pt-2">
-        <p class="popup-heading mb-0">Approver History Details</p>
+        <p class="popup-heading mb-0">{{'Approver History Details'|translate}}</p>
       </div>
       <div>
         <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
@@ -214,66 +213,66 @@
         <table class="w-100">
           <thead>
             <tr>
-              <th class="text-nowrap">Approver Role</th>
-              <th class="text-nowrap">Approved Date</th>
-              <th class="text-nowrap">Approved by</th>
-              <th class="text-nowrap">comments</th>
-              <th class="text-nowrap">Last Working Date</th>
-              <th class="text-nowrap">Early Relieving Date</th>
-              <th class="text-nowrap">Extended Date</th>
-              <th class="text-nowrap">Accept Early Relieving</th>
-              <th class="text-nowrap">Status</th>
+              <th class="text-nowrap">{{'Approver Role'|translate}}</th>
+              <th class="text-nowrap">{{'Approved Date'|translate}}</th>
+              <th class="text-nowrap">{{'Approved by'|translate}}</th>
+              <th class="text-nowrap">{{'comments'|translate}}</th>
+              <th class="text-nowrap">{{'Last Working Date'|translate}}</th>
+              <th class="text-nowrap">{{'Early Relieving Date'|translate}}</th>
+              <th class="text-nowrap">{{'Extended Date'|translate}}</th>
+              <th class="text-nowrap">{{'Accept Early Relieving'|translate}}</th>
+              <th class="text-nowrap">{{'Status'|translate}}</th>
             </tr>
           </thead>
           <tbody>
             <tr *ngFor="let comment of appover_comments">
               <td>
                 <span *ngIf="comment?.approverRole;else approverrole"> <span
-                    *ngIf="comment?.approverRole.toLowerCase()=='em';else maincontent">HR</span>
+                    *ngIf="comment?.approverRole.toLowerCase()=='em';else maincontent">{{'HR'|translate}}</span>
                   <ng-template #maincontent> {{comment.approverRole}}</ng-template>
                 </span>
-                <ng-template #approverrole>NA</ng-template>
+                <ng-template #approverrole>{{'NA'|translate}}</ng-template>
               </td>
               <td>
                 <span *ngIf="comment.addedDate; else addeddate">
                   {{ comment.addedDate | date }}</span>
-                <ng-template #addeddate>NA</ng-template>
+                <ng-template #addeddate>{{'NA'|translate}}</ng-template>
               </td>
 
               <td>
                 <span *ngIf="comment.employeeName; else addedname">
                   {{ comment.employeeName }} ({{ comment.fusionEmployeeId }})</span>
-                <ng-template #addedname>NA</ng-template>
+                <ng-template #addedname>{{'NA'|translate}}</ng-template>
               </td>
               <td>
                 <div class="text-center" *ngIf="comment.comments; else popupcomments">
                   <app-info-icon ngbPopover="{{ comment?.comments }}" container="body" />
                 </div>
-                <ng-template #popupcomments>NA</ng-template>
+                <ng-template #popupcomments>{{'NA'|translate}}</ng-template>
               </td>
               <td>
                 <span *ngIf="comment?.metadata?.splastworkingDate;else lastworkingdate">
                   {{ comment.metadata.splastworkingDate | date }}</span>
-                <ng-template #lastworkingdate>NA</ng-template>
+                <ng-template #lastworkingdate>{{'NA'|translate}}</ng-template>
               </td>
               <td>
                 <span *ngIf="comment?.metadata?.spearlyReliveingDate; else earlydate">
                   {{ comment.metadata.spearlyReliveingDate | date }}</span>
-                <ng-template #earlydate>NA</ng-template>
+                <ng-template #earlydate>{{'NA'|translate}}</ng-template>
               </td>
               <td>
                 <span *ngIf="comment?.metadata?.spExtendedDate; else extenddate">
                   {{ comment.metadata.spExtendedDate | date }}</span>
-                <ng-template #extenddate>NA</ng-template>
+                <ng-template #extenddate>{{'NA'|translate}}</ng-template>
               </td>
               <td>
                 <span *ngIf="comment?.metadata?.isAcceptEarlyRequest; else isaccept">
                   {{ comment.metadata.isAcceptEarlyRequest }}</span>
-                <ng-template #isaccept>NA</ng-template>
+                <ng-template #isaccept>{{'NA'|translate}}</ng-template>
               </td>
               <td>
                 <span *ngIf="comment?.metadata?.status; else isaccept">{{ comment.metadata.status }}</span>
-                <ng-template #isaccept>NA</ng-template>
+                <ng-template #isaccept>{{'NA'|translate}}</ng-template>
               </td>
             </tr>
           </tbody>
@@ -288,27 +287,26 @@
   <div class="result-popup-content" ngbAutofocus>
     <div>
       <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
-      <p class="confirmation-text">Are you sure you want to recall the {{this.selectRecallrequest?.requestType?? 'Early
-        Relieving'}} Request?</p>
+      <p class="confirmation-text">{{'Are you sure you want to recall the'|translate}} {{this.selectRecallrequest?.requestType?? ('Early Relieving'|translate)}} {{'Request?'|translate}}</p>
     </div>
     <div class="custom-main-popup-content p-0 pt-3">
       <form autocomplete="off" [formGroup]="recallreason" (ngSubmit)="postRecallRequest()">
         <div class="mb-3">
-          <label class="form-label custom-label mb-2">Reason For Recall<span class="error-msg">*</span></label>
+          <label class="form-label custom-label mb-2">{{'Reason For Recall'|translate}}<span class="error-msg">*</span></label>
           <textarea class="form-control custom-input" id="recallreason" maxlength="250"
-            placeholder="Please enter recall reason" (keydown)="formValidations.restrictInitialSpace($event)"
+            [placeholder]="'Please enter recall reason'|translate" (keydown)="formValidations.restrictInitialSpace($event)"
             name="recallReason" formControlName="recallReason"></textarea>
           <div class="textarea-count-text">{{ recallreason.get('recallReason')?.value?.length || 0 }} / 250</div>
           <div class="error-msg"
             *ngIf="recallreason.get('recallReason')?.touched && recallreason.get('recallReason')?.invalid">
             <ng-container *ngIf="recallreason.get('recallReason')?.errors?.['required']">
-              Recall Reason is required
+              {{'Recall Reason is required'|translate}}
             </ng-container>
             <ng-container *ngIf="recallreason.get('recallReason')?.errors?.['maxlength']">
-              Maximum 400 characters allowed
+              {{'Maximum 400 characters allowed'|translate}}
             </ng-container>
             <ng-container *ngIf="recallreason.get('recallReason')?.errors?.['pattern']">
-              Reason for Recall should not start with a space.
+              {{'Reason for Recall should not start with a space.'|translate}}
             </ng-container>
           </div>
         </div>
@@ -337,24 +335,24 @@
   <div class="result-popup-content" ngbAutofocus>
     <div>
       <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
-      <p class="confirmation-text">Request For Early Relieving</p>
+      <p class="confirmation-text">{{'Request For Early Relieving'|translate}}</p>
     </div>
     <div class="custom-main-popup-content p-0 pt-3">
       <form autocomplete="off" [formGroup]="earlyReleivingform" (ngSubmit)="postEarlyrelieving()">
         <div class="mb-4">
-          <label class="form-label custom-label mb-2">Expected Early Relieving Date<span
+          <label class="form-label custom-label mb-2">{{'Expected Early Relieving Date'|translate}}<span
               class="error-msg">*</span></label>
           <input type="date" class="form-control custom-input" placeholder="" formControlName="earlyReleivingDate"
             id="Effective Date" [min]="formattedAppliedDate" [max]="lastWorkingDate"
             (change)="getBlockedFutureDate(postEarlyRelievingRequest.lastWorkingDate)" />
           <div class="error-msg"
             *ngIf="earlyReleivingform.get('earlyReleivingDate')?.invalid && earlyReleivingform.get('earlyReleivingDate')?.touched">
-            Early relieving Date is required</div>
+            {{'Early relieving Date is required'|translate}}</div>
         </div>
         <div class="mb-3">
-          <label class="form-label custom-label mb-2">Reason for Early Relieving<span class="error-msg">*</span></label>
+          <label class="form-label custom-label mb-2">{{'Reason for Early Relieving'|translate}}<span class="error-msg">*</span></label>
           <textarea class="form-control custom-input" maxlength="250" rows="3"
-            placeholder="Please provide early relieving reason...."
+            [placeholder]="'Please provide early relieving reason....'|translate"
             (keydown)="formValidations.restrictInitialSpace($event)" name="Reason"
             formControlName="earlyReleivingReason"></textarea>
           <div class="textarea-count-text">{{ earlyReleivingform.get('earlyReleivingReason')?.value?.length || 0 }}/400
@@ -362,13 +360,13 @@
           <div class="error-msg"
             *ngIf="earlyReleivingform.get('earlyReleivingReason')?.touched && earlyReleivingform.get('earlyReleivingReason')?.invalid">
             <ng-container *ngIf="earlyReleivingform.get('earlyReleivingReason')?.errors?.['required']">
-              Reason for Early Relieving is required
+              {{'Reason for Early Relieving is required'|translate}}
             </ng-container>
             <ng-container *ngIf="earlyReleivingform.get('earlyReleivingReason')?.errors?.['maxlength']">
-              Maximum 400 characters allowed
+              {{'Maximum 400 characters allowed'|translate}}
             </ng-container>
             <ng-container *ngIf="earlyReleivingform.get('earlyReleivingReason')?.errors?.['pattern']">
-              Reason for Early Relieving should not start with a space.
+              {{'Reason for Early Relieving should not start with a space.'|translate}}
             </ng-container>
           </div>
         </div>
@@ -398,19 +396,19 @@
   <div class="custom-main-popup-container" ngbAutofocus>
     <div class="custom-poup-header-content popup-header-border">
       <div class="pt-2">
-        <p class="popup-heading mb-0">Raise No Due Request</p>
+        <p class="popup-heading mb-0">{{'Raise No Due Request'|translate}}</p>
       </div>
     </div>
 
     <div class="custom-main-popup-content">
-      <p class="popup-heading">Provide your official work email addresses!</p>
+      <p class="popup-heading">{{'Provide your official work email addresses!'|translate}}</p>
       <form autocomplete="off" [formGroup]="profileForm">
         <div>
-          <label for="comments" class="form-label custom-label mb-2">Add Emails
+          <label for="comments" class="form-label custom-label mb-2">{{'Add Emails'|translate}}
             <span class="text-danger">*</span></label>
           <div class="mb-3">
             <div class="d-flex align-items-center gap-2">
-              <input name="addemail" class="form-control custom-input" placeholder="Enter email" type="text"
+              <input name="addemail" class="form-control custom-input" [placeholder]="'Enter email'|translate" type="text"
                 formControlName="emails" />
               <div>
                 <a><img src="/icons/cancel-circle.png" alt="Icon" class="popup-icon"></a>
@@ -418,8 +416,8 @@
             </div>
             <!-- Error message for the main email input -->
             <div *ngIf="emails?.invalid && (emails?.dirty || emails?.touched)" class="error-msg">
-              <div *ngIf="emails?.errors?.['required']">Email is required</div>
-              <div *ngIf="emails?.errors?.['email']">Invalid email format</div>
+              <div *ngIf="emails?.errors?.['required']">{{'Email is required'|translate}}</div>
+              <div *ngIf="emails?.errors?.['email']">{{'Invalid email format'|translate}}</div>
             </div>
           </div>
 
@@ -427,22 +425,22 @@
           <div formArrayName="noduerequestedemails">
             <div *ngFor="let item of formemailsfornodue.controls; let i = index" class="mb-3">
               <div class="d-flex align-items-center gap-2">
-                <input type="text" [formControlName]="i" class="form-control custom-input" placeholder="Enter email"
+                <input type="text" [formControlName]="i" class="form-control custom-input" [placeholder]="'Enter email'|translate"
                   id="item-{{ i }}" />
                 <div>
                   <a (click)="removeSection(i)"><img src="/icons/cancel-circle.png" alt="Icon" class="popup-icon"></a>
                 </div>
               </div>
               <div *ngIf="item.invalid && (item.dirty || item.touched)" class="error-msg">
-                <div *ngIf="item.errors?.['required']">Email is required</div>
-                <div *ngIf="item.errors?.['email']">Invalid email format</div>
-                <div *ngIf="item.errors?.['duplicate']">Duplicate email is not allowed</div>
+                <div *ngIf="item.errors?.['required']">{{'Email is required'|translate}}</div>
+                <div *ngIf="item.errors?.['email']">{{'Invalid email format'|translate}}</div>
+                <div *ngIf="item.errors?.['duplicate']">{{'Duplicate email is not allowed'|translate}}</div>
               </div>
             </div>
           </div>
 
           <div class="d-flex justify-content-end mb-3">
-            <button type="button" class="custom-btn btn-primary text-nowrap px-4" (click)="addAlias()">+ Add</button>
+            <button type="button" class="custom-btn btn-primary text-nowrap px-4" (click)="addAlias()">{{'+ Add'|translate}}</button>
           </div>
         </div>
         <div class="custom-modal-footer">
@@ -471,11 +469,11 @@
   <div class="result-popup-content" ngbAutofocus>
     <div>
       <img src="icons\reject.png" alt="failure icon" class="confirmation-delete-icon">
-      <p class="confirmation-text">Are you sure you want to cancel?</p>
+      <p class="confirmation-text">{{'Are you sure you want to cancel?'|translate}}</p>
     </div>
     <div class="custom-modal-footer">
-      <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">No</button>
-      <button type="button" class="custom-btn btn-primary" (click)="popupclose();model.dismiss()">Yes</button>
+      <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">{{'No'|translate}}</button>
+      <button type="button" class="custom-btn btn-primary" (click)="popupclose();model.dismiss()">{{'Yes'|translate}}</button>
     </div>
   </div>
 </ng-template>
@@ -484,11 +482,11 @@
   <div class="result-popup-content" ngbAutofocus>
     <div>
       <img src="icons\reject.png" alt="failure icon" class="confirmation-delete-icon">
-      <p class="confirmation-text">Are you sure you want to cancel?</p>
+      <p class="confirmation-text">{{'Are you sure you want to cancel?'|translate}}</p>
     </div>
     <div class="custom-modal-footer">
-      <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">No</button>
-      <button type="button" class="custom-btn btn-primary" (click)="popupclose();model.dismiss()">Yes</button>
+      <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">{{'No'|translate}}</button>
+      <button type="button" class="custom-btn btn-primary" (click)="popupclose();model.dismiss()">{{'Yes'|translate}}</button>
     </div>
   </div>
 </ng-template>
@@ -504,8 +502,8 @@
       </div>
     </div>
     <div class="modal-body mb-2">
-      <div><strong>Type:</strong> {{ noticeDetailsData?.noticePeriodType }}</div>
-      <div><strong>Days:</strong> {{ noticeDetailsData?.noticePeriodTypeDays }}</div>
+      <div><strong>{{'Type'|translate}}:</strong> {{ noticeDetailsData?.noticePeriodType }}</div>
+      <div><strong>{{'Days'|translate}}:</strong> {{ noticeDetailsData?.noticePeriodTypeDays }}</div>
     </div>
   </div>
 </ng-template>
@@ -514,7 +512,7 @@
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="custom-poup-header-content popup-header-border">
             <div class="pt-2">
-                <p class="popup-heading mb-0">Initiate Exit Feedback Form</p>
+                <p class="popup-heading mb-0">{{'Initiate Exit Feedback Form'|translate}}</p>
             </div>
             <div>
                 <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
@@ -523,34 +521,34 @@
         <div class="custom-main-popup-content">
             <form [formGroup]="initiateForm" (ngSubmit)="initiateExitFeedback()">
                 <div class="mb-3">
-                    <label for="formId" class="form-label custom-label mb-2">Select Form<span class="text-danger">*</span></label>
+                    <label for="formId" class="form-label custom-label mb-2">{{'Select Form'|translate}}<span class="text-danger">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select 
                             [options]="availableForms" 
                             optionLabel="formName" 
                             optionValue="formId"
-                            placeholder="Please select a form" 
+                            [placeholder]="'Please select a form'|translate" 
                             class="form-select custom-select" 
                             formControlName="formId">
                         </p-select>
                     </div>
                     <div *ngIf="initiateForm.get('formId')?.touched && initiateForm.get('formId')?.invalid" class="error-msg">
-                        Form selection is required
+                        {{'Form selection is required'|translate}}
                     </div>
                 </div>
                 
                 <div class="d-flex justify-content-end gap-3">
                     <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">
-                        Cancel
+                        {{'Cancel'|translate}}
                     </button>
                     <button type="submit" class="custom-btn btn-primary" [disabled]="initiateForm.invalid || isLoading">
                         @if(isLoading){
                         <div class="button-loader-content">
                             <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
-                            <span>Loading...</span>
+                            <span>{{'Loading...'|translate}}</span>
                         </div>
                         }@else {
-                        <span>Initiate</span>
+                        <span>{{'Initiate'|translate}}</span>
                         }
                     </button>
                 </div>

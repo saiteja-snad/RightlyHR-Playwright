@@ -25,7 +25,7 @@
             <td>{{ exp.expenses_Title }}</td>
             <td class="text-nowrap">{{ exp?.expenseitem?.[0]?.expense_Date | dateformat }}</td>
             <td class="text-nowrap">{{ exp?.applied_date | dateformat }}</td>
-            <td class="text-nowrap"><span class="me-1" *ngIf="exp.totalExpenseAmount">$</span> {{ exp.totalExpenseAmount }}</td>
+            <td class="text-nowrap"><span class="me-1" *ngIf="exp.totalExpenseAmount">₹</span> {{ exp.totalExpenseAmount }}</td>
             <td> <span class="me-2 status-colour">● {{ exp.status }}</span>
             </td>
             <td class="text-center">

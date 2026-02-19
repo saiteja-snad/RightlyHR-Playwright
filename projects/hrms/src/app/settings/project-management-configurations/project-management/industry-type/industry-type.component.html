@@ -11,7 +11,7 @@
             </div>
             <div *ngIf="addForm.get('industryType')?.touched && addForm.get('industryType')?.invalid" class="error-msg">
                 <div *ngIf="addForm.get('industryType')?.errors?.['required']">
-                    {{ 'Industry type is required' | translate }}
+                    {{ 'Industry Type is required' | translate }}
                 </div>
             </div>
             <div *ngIf="addForm.get('industryType')?.errors?.['pattern']" class="error-msg">
@@ -91,7 +91,7 @@
                     <div class="error-msg">
                         <div *ngIf="updateForm.get('industryType')?.touched && updateForm.get('industryType')?.invalid">
                             <div *ngIf="updateForm.get('industryType')?.errors?.['required']">
-                                {{ 'Industry type is required' | translate }}
+                                {{ 'Industry Type is required' | translate }}
                             </div>
                         </div>
                         <div *ngIf="updateForm.get('industryType')?.errors?.['pattern']">

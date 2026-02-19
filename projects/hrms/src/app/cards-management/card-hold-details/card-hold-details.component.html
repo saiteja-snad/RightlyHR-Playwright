@@ -20,8 +20,8 @@
                 <th>{{'Card Expiry Year'|translate}}</th> -->
                 <th>{{'Expiry Date' | translate}}</th>
                 <!-- <th>{{'Allocated History'|translate}}</th> -->
-                <!-- <th>{{'Status'|translate}}</th> -->
-                <th  class="text-center"*ngIf="rbac.allowedToAccess('Cards Hold.update') ||rbac.allowedToAccess('Cards Hold.view')">{{'Actions'|translate}}</th>
+                <th>{{'Status'|translate}}</th>
+                <th class="text-center" *ngIf="rbac.allowedToAccess('Cards Hold.update') ||rbac.allowedToAccess('Cards Hold.view')">{{'Actions'|translate}}</th>
             </thead>
             <tbody>
                 @if( cardDetails.length > 0){
@@ -47,12 +47,13 @@
                     <div id="tooltip" (click)="approverHistoryFunction(item,historyPopup)" class="cursor">
                         <app-info-icon />
                     </div>
+                    
                     }
                     @else{-}
                     </td> -->
                     <!-- status -->
-                    <!-- <td>{{item?.status ? item?.status:'-'}}</td> -->
-                    <td class="text-center" >
+                    <td>{{item?.status ? item?.status:'-'}}</td>
+                    <td class="text-center">
                         <div class="dropdown">
                             <a data-bs-toggle="dropdown" aria-expanded="false">
                                 <i class="bi bi-three-dots-vertical"></i>

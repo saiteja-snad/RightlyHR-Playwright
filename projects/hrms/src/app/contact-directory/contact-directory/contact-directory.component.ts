@@ -12,36 +12,33 @@ import { MODULE_INFOS } from '../../shared/modules-info';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
 import { ProfileIconComponent } from "../../icons/profile-icon/profile-icon.component";
-import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
 @Component({
   selector: 'app-contact-directory',
-  imports: [CommonModule, FormsModule, TranslateModule, TabsModule, Skeleton, NgbPopoverModule, 
-    ModuleInformationComponent, ProfileIconComponent, ModuleInfoIconComponent],
+  imports: [CommonModule, FormsModule, TranslateModule, TabsModule, Skeleton, NgbPopoverModule, ModuleInformationComponent, ProfileIconComponent],
   templateUrl: './contact-directory.component.html',
   styleUrl: './contact-directory.component.scss'
 })
-
 export class ContactDirectoryComponent implements OnInit, OnDestroy {
   subscription!: Subscription
   contactData: any;
   moduleinfo: any
   loading: boolean = false;
-
-  constructor(public router: Router, private http: HttpService, public formValidation: FormValidationService) { }
-
+  constructor(public router: Router,
+    private http: HttpService, public formValidation: FormValidationService,) { }
   ngOnInit(): void {
     this.getContactData();
     this.updateModuleInfo();
     this.initiateUpdateModuleInfo();
   }
-
   getContactData() {
     this.loading = true;
     this.subscription = this.http.getData('ContactDirectory').subscribe({
       next: (data: any) => {
         this.loading = false;
+        console.log('Grouped Contact Data-1', data);
         // Group contacts by department
         const groupedData: any[] = [];
+
         data.forEach((item: { departmentName: any; }) => {
           let deptGroup = groupedData.find(group => group.department === item.departmentName);
           if (!deptGroup) {
@@ -53,19 +50,23 @@ export class ContactDirectoryComponent implements OnInit, OnDestroy {
           }
           deptGroup.employees.push(item);
         });
+
         this.contactData = groupedData;
+        console.log('Grouped Contact Data', this.contactData);
       },
       error: (reason) => {
         console.error('Error fetching contact data:', reason)
         this.loading = false;
+
       },
     });
   }
-
   initiateUpdateModuleInfo() {
-    this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe(() => {
-      this.updateModuleInfo();
-    });
+    this.router.events
+      .pipe(filter(event => event instanceof NavigationEnd))
+      .subscribe(() => {
+        this.updateModuleInfo();
+      });
   }
 
   updateModuleInfo() {
@@ -82,4 +83,5 @@ export class ContactDirectoryComponent implements OnInit, OnDestroy {
       this.subscription.unsubscribe()
     }
   }
+
 }

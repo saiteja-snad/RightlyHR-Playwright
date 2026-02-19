@@ -19,7 +19,7 @@
                         <p-select formControlName="year" placeholder="Select Year" [options]="years"
                             class="form-select custom-select"></p-select>
                     </div>
-                    <div class="error-msg" *ngIf="ratecardForm.controls['year'].invalid && (ratecardForm.controls['year'].touched || 
+                    <div class="error-msg" *ngIf="ratecardForm.controls['year'].invalid && (ratecardForm.controls['year'].touched ||
                                         ratecardForm.controls['year'].dirty)">
                         <div *ngIf="ratecardForm.controls['year'].errors?.['required']">{{'Year is required'|translate}}
                         </div>
@@ -60,7 +60,7 @@
                     <div class="error-msg"
                         *ngIf="ratecardForm.controls['subLocation'].invalid &&  (ratecardForm.controls['subLocation'].touched || ratecardForm.controls['subLocation'].dirty)">
                         <div *ngIf="ratecardForm.controls['subLocation'].errors?.['required']">
-                            {{'Sub location is required'|translate}}
+                            {{'Sub Location is required'|translate}}
                         </div>
                     </div>
                 </div>
@@ -95,125 +95,103 @@
                         </div>
                     </div>
                 </div>
-
-                <div class="pt-4 mt-1">
-                    <button type="button" class="custom-btn btn-primary px-4" (click)="addRateCardItems()">
-                        <i class="bi bi-plus me-2"></i> {{'Add New'|translate}}
-                    </button>
+                 <!-- Clients -->
+                 <div>
+                    <label class="form-label custom-label mb-2">{{'Client Type'|translate}}<span
+                            class="text-danger">*</span></label>
+                    <div class="custom-p-multiSelect-content">
+                        <p-multiSelect class="form-select custom-select" optionLabel="lable"
+                            optionValue="value" [options]="clientTypeOptions" display="chip" filterBy="lable"
+                            [showClear]="false" [filter]="true" placeholder="Please select client type"
+                            formControlName="clientType">
+                        </p-multiSelect>
+                    </div>
+                    <div class="error-msg"
+                        *ngIf="ratecardForm.controls['clientType'].invalid &&  (ratecardForm.controls['clientType'].touched || ratecardForm.controls['clientType'].dirty)">
+                        <div *ngIf="ratecardForm.controls['clientType'].errors?.['required']">
+                            {{'Client Type is required'|translate}}
+                        </div>
+                    </div>
                 </div>
-            </div>
-
-            <div formArrayName="rateItems">
-                <div *ngFor="let ratecard of rateItems.controls; let i = index" [formGroupName]="i"
-                    class="card custom-background-card p-3 mb-3">
-                    <div class="d-flex w-100 gap-3 mb-3">
-                        <!-- Experince -->
-                        <div class="w-100">
-                            <label class="form-label custom-label">{{'Experience'|translate}}
-                                <span class="text-danger">*</span></label>
-                            <div class="d-flex">
-                                <div>
-                                    <!-- <input type="number" class="form-control custom-input" (input)="limitDigits($event, 4)"
-                                        formControlName="experienceFrom" placeholder="min (year)" (keydown)="preventInvalidKeys($event)" (wheel)="disableScroll($event)" required /> -->
-
-                                        <input type="text" class="form-control custom-input" formControlName="experienceFrom" placeholder="min (year)"
-                                            (input)="onExperienceInput($event, i, 'experienceFrom')" (blur)="onExperienceBlur(i, 'experienceFrom')"
-                                            (keydown)="preventInvalidKeys($event)" (wheel)="disableScroll($event)" />
-                                        
-                                        <div class="error-msg" *ngIf="ratecard.get('experienceFrom')?.errors?.['invalidMonth']">
-                                            Decimal value must be between 0 to 12
-                                        </div>
-                                        <!-- <div *ngIf="ratecard.get('experienceFrom')?.invalid && (ratecard.get('experienceFrom')?.dirty || ratecard.get('experienceFrom')?.touched)"
-                                            class="error-msg">
-                                            <span>Experiencefrom is required</span>
-                                        </div> -->
-                                </div>
-                                
-                                <div class="pt-2">
-                                    <span class="mx-2">-</span>
-                                </div>
-                                <div>
-                                    <!-- <input type="number" class="form-control custom-input" (input)="limitDigits($event, 4)"
-                                        formControlName="experienceTo" placeholder="max (year)" (keydown)="preventInvalidKeys($event)" (wheel)="disableScroll($event)" required /> -->
-                                        <input type="text" class="form-control custom-input" formControlName="experienceTo" placeholder="max (year)"
-                                        (blur)="onExperienceBlur(i, 'experienceTo')" (keydown)="preventInvalidKeys($event)" (input)="onExperienceInput($event, i, 'experienceTo')"
-                                        (wheel)="disableScroll($event)" />
-
-                                    <div class="error-msg" *ngIf="ratecard.get('experienceTo')?.errors?.['invalidMonth']">
-                                            Decimal value must be between 0 to 12
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Rate Basic -->
-                        <div class="w-100">
-                            <label class="form-label custom-label">{{'Rate Basic'|translate}}<span
-                                    class="text-danger">*</span></label>
-                            <div class="custom-p-select-content">
-                                <p-select formControlName="frequencyType" placeholder="Please select rate basic"
-                                    optionLabel="label" optionValue="value" class="form-select custom-select"  [filter]="true"  filterBy="value" [showClear]="false" resetFilterOnHide="true"
-                                    [options]="FrequencyDetail">
-                                </p-select>
-                            </div>
-                            <div *ngIf="ratecard.get('frequencyType')?.invalid && (ratecard.get('frequencyType')?.dirty || ratecard.get('frequencyType')?.touched)"
-                                class="error-msg">
-                                <span *ngIf="ratecard.get('frequencyType')?.errors?.['required']">{{'Rate Basic is required'| translate}}</span>
-                            </div>
-                        </div>
-
-                        <!-- Currency -->
-                        <div class="w-100">
-                            <label class="form-label custom-label">{{'Currency' | translate}}<span
-                                    class="text-danger">*</span></label>
-                                    <div class="custom-p-select-content">
-                                        <p-select [options]="currencyCodes" optionLabel="code" [filter]="true" class="form-select custom-select"
-                                            filterBy="code" [showClear]="false" placeholder="Please select currency" resetFilterOnHide="true" formControlName="currency"
-                                            (onChange)="onCountryChange($event,i)">
-                                        </p-select>
-                                    </div>
-                            <div *ngIf="ratecard.get('currency')?.invalid && (ratecard.get('currency')?.dirty || ratecard.get('currency')?.touched)"
-                                class="error-msg">
-                                <span>Currency is required</span>
-                            </div>
-                        </div>
-
-                        <!-- Rate -->
-                        <div class="w-100 ">
-                            <label class="form-label custom-label">{{'Rate' | translate}}<span
-                                    class="text-danger">*</span></label>
-                            <div class="d-flex gap-2">
-                                <div>
-                                    <!-- Currencies -->
-                                    <div formArrayName="currencies" class="w-100">
-                                        <div *ngFor="let currency of getCurrencies(i).controls; let j = index"
-                                            [formGroupName]="j">
-                                            <div class="d-flex gap-2">
-                                                <input type="number" class="form-control custom-input w-100"
-                                                    formControlName="rate" placeholder="Please enter rate" 
-                                                    (input)="onRateChange(i, j);limitDigits($event, 20)" (keydown)="preventInvalidKeys($event)" (wheel)="disableScroll($event)" />
-                                            </div>
-                                            <div *ngIf="currency.get('rate')?.invalid && (currency.get('rate')?.dirty || currency.get('rate')?.touched)"
-                                                class="error-msg">
-                                                <span *ngIf="currency.get('rate')?.errors?.['required']">Rate is
-                                                    required</span>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                </div>
-                                <div class="mb-2" *ngIf="i>0">
-                                    <!-- Delete Icon -->
-                                    <button type="button" class="custom-icon btn p-0" (click)="openModal(deleterowassessor);removeRowdata=i">
-                                        <i class="bi bi-trash text-danger"></i>
-                                    </button>
-                                </div>
-                            </div>
+                <!-- currency -->
+                 <div>
+                    <label class="form-label custom-label mb-2">{{'Currency'|translate}}<span
+                            class="text-danger">*</span></label>
+                    <div class="custom-p-multiSelect-content">
+                        <p-multiSelect class="form-select custom-select" optionLabel="code"
+                            optionValue="code" [options]="currencyCodes" display="chip" filterBy="code"
+                            [showClear]="false" [filter]="true" placeholder="Please select currency"
+                            formControlName="currency">
+                        </p-multiSelect>
+                    </div>
+                    <div class="error-msg"
+                        *ngIf="ratecardForm.controls['currency'].invalid &&  (ratecardForm.controls['currency'].touched || ratecardForm.controls['currency'].dirty)">
+                        <div *ngIf="ratecardForm.controls['currency'].errors?.['required']">
+                            {{'Currency is required'|translate}}
                         </div>
                     </div>
                 </div>
             </div>
-            <!-- <div class="error-msg my-1">Note: All Fields are Mandatory Fields</div> -->
+
+            <div formArrayName="rateItems" *ngIf="rateItems.length > 0">
+                <div class="custom-table-content mb-3">
+                    <table class="w-100">
+                        <thead>
+                            <tr>
+                                <th>Experience</th>
+                                <th *ngFor="let currencyCode of ratecardForm.get('currency')?.value">{{getCurrencyName(currencyCode)}}
+                                </th>
+                                <th class="text-center">Action</th>
+                                <th class="text-center"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let ratecard of rateItems.controls; let i = index" [formGroupName]="i">
+                                <td>
+                                    <div class="d-flex gap-2">
+                                        <input type="text" class="form-control custom-input" formControlName="experienceFrom"
+                                            placeholder="Min" (input)="onExperienceInput($event, i, 'experienceFrom')"
+                                            (blur)="onExperienceBlur(i, 'experienceFrom')" (keydown)="preventInvalidKeys($event)"
+                                            (wheel)="disableScroll($event)" />
+                                        <span class="pt-2">-</span>
+                                        <input type="text" class="form-control custom-input" formControlName="experienceTo"
+                                            placeholder="Max" (blur)="onExperienceBlur(i, 'experienceTo')"
+                                            (keydown)="preventInvalidKeys($event)" (input)="onExperienceInput($event, i, 'experienceTo')"
+                                            (wheel)="disableScroll($event)" />
+                                    </div>
+                                    <div class="error-msg" *ngIf="ratecard.get('experienceFrom')?.errors?.['invalidMonth']">
+                                        Decimal value must be between 0 to 12
+                                    </div>
+                                    <div class="error-msg" *ngIf="ratecard.get('experienceTo')?.errors?.['invalidMonth']">
+                                        Decimal value must be between 0 to 12
+                                    </div>
+                                </td>
+                                <td *ngFor="let currency of getCurrencies(i).controls; let j = index">
+                                    <div formArrayName="currencies">
+                                        <div [formGroupName]="j">
+                                            <input type="number" class="form-control custom-input" formControlName="rate"
+                                                placeholder="Enter rate" (input)="limitDigits($event, 20)"
+                                                (keydown)="preventInvalidKeys($event)" (wheel)="disableScroll($event)" />
+                                            <div *ngIf="currency.get('rate')?.invalid && (currency.get('rate')?.dirty || currency.get('rate')?.touched)"
+                                                class="error-msg">
+                                                <span *ngIf="currency.get('rate')?.errors?.['required']">Rate is required</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="text-center"><a class="custom-action-btn" *ngIf="i>0" (click)="openModal(deleterowassessor);removeRowdata=i">
+                                    <i class="bi bi-trash3 text-danger custom-action-btn-icon"></i></a></td>
+                                <td><button type="button" class="custom-action-btn" (click)="addMoreRateItems()"
+                                    [disabled]="ratecardForm.get('currency')?.invalid">
+                                    <i class="bi bi-plus-circle-fill custom-action-btn-icon"></i>
+                                  </button>
+                                </td>
+
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
 
         </div>
         <div class="d-flex gap-3 justify-content-end">

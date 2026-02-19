@@ -53,7 +53,7 @@
           </div>
           <div class="error-msg" *ngIf="leavePolicyForm.get('subLocation')?.invalid && 
                                           (leavePolicyForm.get('subLocation')?.touched   )">
-            Sub location is required
+            Sub Location is required
           </div>
         </div>
 
@@ -85,7 +85,7 @@
           </div>
           <div class="error-msg" *ngIf="leavePolicyForm.get('type')?.invalid && 
                                           (leavePolicyForm.get('type')?.touched   )">
-            Leave Category type is required
+            Leave Category Type is required
           </div>
         </div>
 
@@ -99,7 +99,7 @@
           </div>
           <div class="error-msg" *ngIf="leavePolicyForm.get('leaveType')?.invalid && 
                                           (leavePolicyForm.get('leaveType')?.touched)">
-            Leave type is required
+            Leave Type is required
           </div>
         </div>
 
@@ -192,7 +192,7 @@
           </div>
           <div class="error-msg" *ngIf="leavePolicyForm.get('allowedMaritalStatus')?.invalid && 
                                           (leavePolicyForm.get('allowedMaritalStatus')?.touched   )">
-            Allowed Marital status is required
+            Allowed Marital Status is required
           </div>
         </div>
 
@@ -405,7 +405,7 @@
             id="minimumGapBetweenSameLeaveType" placeholder="Default: 30 days" autocomplete="off" min="0" (input)="onNumberInput($event, 'minimumGapBetweenSameLeaveType')">
            <div class="error-msg"
               *ngIf="leavePolicyForm.get('minimumGapBetweenSameLeaveType')?.hasError('required') && leavePolicyForm.get('minimumGapBetweenSameLeaveType')?.touched">
-              Minimum Gap Between Same Leave type is required
+              Minimum Gap Between Same Leave Type is required
             </div>
             <div class="error-msg" *ngIf="leavePolicyForm.get('minimumGapBetweenSameLeaveType')?.errors?.['max']">
               Minimum Gap Between Same Leave Type cannot exceed 366

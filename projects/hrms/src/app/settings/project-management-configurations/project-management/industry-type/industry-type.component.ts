@@ -80,7 +80,7 @@ export class IndustryTypeComponent implements OnInit, OnDestroy{
       };
       this.subscription = this.http.postdata('entityAttributeValues', payload).subscribe({
         next: (data: any) => {
-          this.conformationPopup.openSuccessModal('Industry type added successfully');
+          this.conformationPopup.openSuccessModal('Industry Type added successfully');
         },
         error: (error: any) => {
           this.conformationPopup.openErrorModal(error?.error?.Message || 'Failed to add Industry Type');
@@ -121,7 +121,7 @@ export class IndustryTypeComponent implements OnInit, OnDestroy{
       this.subscription = this.http.postdata('entityAttributeValues/update', payload).subscribe({
         next: (data: any) => {
           this.modalService.dismissAll();
-          this.conformationPopup.openSuccessModal('Industry type updated successfully');
+          this.conformationPopup.openSuccessModal('Industry Type updated successfully');
         },
         error: (error: any) => {
           this.conformationPopup.openErrorModal(error?.error?.Message || 'Failed to update Industry Type');
@@ -146,7 +146,7 @@ export class IndustryTypeComponent implements OnInit, OnDestroy{
       this.subscription = this.http.deleteData(`entityAttributeValues/${this.selectedEAV.id}`).subscribe({
         next: (data: any) => {
           this.modalService.dismissAll();
-          this.conformationPopup.openSuccessModal('Industry type deleted successfully');
+          this.conformationPopup.openSuccessModal('Industry Type deleted successfully');
         },
         error: (error: any) => {
           this.conformationPopup.openErrorModal(error?.error?.Message || 'Failed to delete Industry Type');

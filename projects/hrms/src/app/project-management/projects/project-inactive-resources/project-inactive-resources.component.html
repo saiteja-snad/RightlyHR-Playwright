@@ -11,7 +11,7 @@
                     <i class="bi bi-search"></i>
                 </span>
                 <input type="search" [(ngModel)]="searchValue" (ngModelChange)="onSearchChange()" class="form-control custom-search-input"
-                    placeholder="Search by employee name / phase name / role" aria-label="Search"
+                    [placeholder]="'Search by employee name / phase name / role' | translate" aria-label="Search"
                     aria-describedby="basic-addon1">
             </div>
 
@@ -20,15 +20,15 @@
                 <table class="w-100">
                     <thead>
                         <!-- <th>Employee ID</th> -->
-                        <th>Name</th>
-                        <th>Phases / Milestones</th>
-                        <th class="text-center">Role</th>
-                        <th class="text-center">Start Date</th>
-                        <th class="text-center">End Date</th>
-                        <th class="text-center">Allocated Hours</th>
-                        <th>Timesheet Approval Authority</th>
-                        <th class="text-center">Status</th>
-                        <th class="text-center">Effective Date</th>
+                        <th>{{"Name" | translate}}</th>
+                        <th>{{"Phases / Milestones" | translate}}</th>
+                        <th class="text-center">{{"Role" | translate}}</th>
+                        <th class="text-center">{{"Start Date" | translate}}</th>
+                        <th class="text-center">{{"End Date" | translate}}</th>
+                        <th class="text-center">{{"Allocated Hours" | translate}}</th>
+                        <th>{{"Timesheet Approval Authority" | translate}}</th>
+                        <th class="text-center">{{"Status" | translate}}</th>
+                        <th class="text-center">{{"Effective Date" | translate}}</th>
                         <!-- @if((rbac.allowedToAccess('Resources Tab.update') || rbac.allowedToAccess('Resources Tab.delete'))
                         && inactiveStatus !== 'inactive'){
                         <th class="text-center">{{"Action" | translate}}</th>
@@ -132,60 +132,60 @@
 
                     <!-- Resource Name -->
                     <div class="col-md-6 mb-3">
-                        <label for="resourceName" class="form-label custom-label mb-2">Resource Name
+                        <label for="resourceName" class="form-label custom-label mb-2">{{"Resource Name" | translate}}
                             <span class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
                             <p-select [options]="employeeDetails" optionLabel="fullName" [filter]="true"
                                 filterBy="fullName" [showClear]="false" optionValue="id"
-                                placeholder="Please select employee" formControlName="resourceName"
+                                [placeholder]="'Please select employee' | translate" formControlName="resourceName"
                                 class="custom-select w-100" (onChange)="onClickEmployee($event)"
                                 resetFilterOnHide="true" [readonly]="true" [ngClass]="{ 'readonly-select': true }">
                             </p-select>
                         </div>
                         <div class="error-msg" *ngIf="updateResourceForm.get('resourceName')?.touched && 
-                         updateResourceForm.get('resourceName')?.invalid">Resource name is required</div>
+                         updateResourceForm.get('resourceName')?.invalid">{{"Resource Name is required" | translate}}</div>
                     </div>
 
                     <!-- Designation -->
                     <div class="col-md-6 mb-3">
-                        <label for="designation" class="form-label custom-label mb-2">Designation<span
+                        <label for="designation" class="form-label custom-label mb-2">{{"Designation" | translate}}<span
                                 class="text-danger">*</span></label>
                         <input type="text" id="designation" formControlName="designation"
-                            class="form-control custom-input" placeholder="Designation" readonly />
+                            class="form-control custom-input" [placeholder]="'Designation' | translate" readonly />
                     </div>
 
                     <!-- Project Name -->
                     <div class="col-md-6 mb-3">
-                        <label for="projectName" class="form-label custom-label mb-2">Project Name
+                        <label for="projectName" class="form-label custom-label mb-2">{{"Project Name" | translate}}
                             <span class="text-danger">*</span></label>
                         <input type="text" id="projectName" formControlName="projectName"
-                            class="form-control custom-input" placeholder="Enter project name" readonly />
+                            class="form-control custom-input" [placeholder]="'Enter project name' | translate" readonly />
                         <div class="error-msg" *ngIf="updateResourceForm.get('projectName')?.touched && 
-                         updateResourceForm.get('projectName')?.invalid">Project name is required</div>
+                         updateResourceForm.get('projectName')?.invalid">{{"Project Name is required" | translate}}</div>
                     </div>
 
                     <!-- Project Type -->
                     <div class="col-md-6 mb-3">
-                        <label for="projectType" class="form-label custom-label mb-2">Project Type<span
+                        <label for="projectType" class="form-label custom-label mb-2">{{"Project Type" | translate}}<span
                                 class="text-danger">*</span></label>
                         <input type="text" id="projectType" formControlName="projectType"
-                            class="form-control custom-input" placeholder="Enter project type" readonly />
+                            class="form-control custom-input" [placeholder]="'Enter project type' | translate" readonly />
                     </div>
 
                     <div class="col-md-6 mb-3">
-                        <label for="resourceRole" class="form-label custom-label mb-2">Role <span
+                        <label for="resourceRole" class="form-label custom-label mb-2">{{"Role" | translate}} <span
                                 class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
                             <p-select [options]="projectRoleDropdown" optionLabel="label" optionValue="value"
                                 [filter]="true" [resetFilterOnHide]="true" filterBy="label"
-                                formControlName="resourceRole" placeholder="Please select role"
+                                formControlName="resourceRole" [placeholder]="'Please select role' | translate"
                                 class="form-select custom-select" (onChange)="onRoleChange($event.value)">
                             </p-select>
                         </div>
                         <div class="error-msg">
                             <div
                                 *ngIf="updateResourceForm.get('resourceRole')?.touched && updateResourceForm.get('resourceRole')?.errors?.['required']">
-                                Role is required</div>
+                                {{"Role is required" | translate}}</div>
                             <div
                                 *ngIf="updateResourceForm.get('resourceRole')?.errors?.['maxCharacters'] || updateResourceForm.get('resourceRole')?.errors?.['maxlength'] 
                             || updateResourceForm.get('resourceRole')?.errors?.['minCharacters'] || updateResourceForm.get('resourceRole')?.errors?.['minlength']">
@@ -195,19 +195,19 @@
 
                     <!--Phase/Milestone Name-->
                     <div class="col-md-6 mb-3">
-                        <label for="resourceRole" class="form-label custom-label mb-2">Phase / Milestone Name <span
+                        <label for="resourceRole" class="form-label custom-label mb-2">{{"Phase / Milestone Name" | translate}} <span
                                 class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
                             <p-select [options]="phaseDropdown" optionLabel="label" optionValue="value" [filter]="true"
                                 [resetFilterOnHide]="true" filterBy="label" formControlName="resourcePhase"
-                                placeholder="Please select phase / milestone" class="form-select custom-select"
+                                [placeholder]="'Please select phase / milestone' | translate" class="form-select custom-select"
                                 (onChange)="onPhaseChange($event)">
                             </p-select>
                         </div>
                         <div class="error-msg">
                             <div
                                 *ngIf=" updateResourceForm.get('resourcePhase')?.touched && updateResourceForm.get('resourcePhase')?.errors?.['required'] ">
-                                Phase / milestone name is required
+                                {{"Phase / Milestone Name is required" | translate}}
                             </div>
                         </div>
                     </div>
@@ -216,7 +216,7 @@
                     <div class="col-md-6 mb-3">
                         <div class="d-flex gap-2">
                             <label for="resourceAuthority" class="form-label custom-label mb-2">
-                                Timesheet Approval Authority
+                                {{"Timesheet Approval Authority" | translate}}
                             </label>
 
                             <!-- Show popover only when dropdown data is empty -->
@@ -228,7 +228,7 @@
                                 </div>
 
                                 <ng-template #noResourcePopover>
-                                    <p class="mb-0">This field will be enabled after allocating resources to this phase
+                                    <p class="mb-0">{{"This field will be enabled after allocating resources to this phase" | translate}}
                                     </p>
                                 </ng-template>
                             </ng-container>
@@ -237,7 +237,7 @@
                         <div class="custom-p-select-content">
                             <p-select [options]="resoucesDropDownData" optionLabel="label" optionValue="value"
                                 [filter]="true" filterBy="label" optionValue="value" [showClear]="false"
-                                placeholder="Please select resource name" formControlName="resourceAuthority"
+                                [placeholder]="'Please select resource name' | translate" formControlName="resourceAuthority"
                                 class="custom-select w-100" resetFilterOnHide="true"
                                 (onChange)="onClickEmployee($event)"></p-select>
                         </div>
@@ -246,29 +246,29 @@
                           updateResourceForm.get('resourceAuthority')?.touched &&
                           updateResourceForm.get('resourceAuthority')?.invalid
                         ">
-                            Resource name is required
+                            Resource Name is required
                         </div>
                     </div>
 
 
                     <!-- Resource Email -->
                     <div class="col-md-6 mb-3">
-                        <label for="resourceEmail" class="form-label custom-label mb-2">Email<span
+                        <label for="resourceEmail" class="form-label custom-label mb-2">{{"Email" | translate}}<span
                                 class="text-danger">*</span></label>
                         <input type="email" id="resourceEmail" formControlName="resourceEmail"
-                            class="form-control custom-input" placeholder="Enter email address" readonly />
+                            class="form-control custom-input" [placeholder]="'Enter email address' | translate" readonly />
                     </div>
 
                     <!-- Phone Number -->
                     <div class="col-md-6 mb-3">
-                        <label for="resourcePhone" class="form-label custom-label mb-2">Phone Number</label>
+                        <label for="resourcePhone" class="form-label custom-label mb-2">{{"Phone Number" | translate}}</label>
                         <input type="text" id="resourcePhone" formControlName="resourcePhone"
-                            class="form-control custom-input" placeholder="Please enter phone number" readonly />
+                            class="form-control custom-input" [placeholder]="'Please enter phone number' | translate" readonly />
                     </div>
 
                     <!-- Start Date -->
                     <div class="col-md-6 mb-3">
-                        <label for="startDate" class="form-label custom-label mb-2">Start Date
+                        <label for="startDate" class="form-label custom-label mb-2">{{"Start Date" | translate}}
                             <span class="text-danger">*</span></label>
                         <input type="date" id="startDate" formControlName="startDate"
                             [min]="projectStartDate ? (projectStartDate | date:'yyyy-MM-dd') : null"
@@ -276,30 +276,30 @@
                             (change)="oncheckdates(updateResourceForm.get('startDate')?.value)"
                             class="form-control custom-input" />
                         <div class="error-msg" *ngIf="updateResourceForm.get('startDate')?.touched && 
-                        updateResourceForm.get('startDate')?.invalid">Start date is required</div>
-                        <div *ngIf="!startndEndDateValid" class="error-msg">Start Date cannot be after End Date</div>
+                        updateResourceForm.get('startDate')?.invalid">{{"Start Date is required" | translate}}</div>
+                        <div *ngIf="!startndEndDateValid" class="error-msg">{{"Start Date cannot be after End Date" | translate}}</div>
                     </div>
 
                     <!-- End Date -->
                     <div class="col-md-6 mb-3">
-                        <label for="endDate" class="form-label custom-label mb-2">End Date
+                        <label for="endDate" class="form-label custom-label mb-2">{{"End Date" | translate}}
                             <span class="text-danger">*</span></label>
                         <input type="date" id="endDate" formControlName="endDate" class="form-control custom-input"
                             [min]="projectStartDate ? (projectStartDate | date:'yyyy-MM-dd') : null"
                             [max]="projectEndDate ? (projectEndDate | date:'yyyy-MM-dd') : null " />
                         <div class="error-msg"
                             *ngIf="updateResourceForm.get('endDate')?.touched && updateResourceForm.get('endDate')?.invalid">
-                            End date is required
+                            {{"End Date is required" | translate}}
                         </div>
                     </div>
 
                     <!-- Resource Allocation Hours -->
                     <div class="col-md-6 mb-3">
-                        <label for="resourceAllocationhrs" class="form-label custom-label mb-2">Allocation Hours
+                        <label for="resourceAllocationhrs" class="form-label custom-label mb-2">{{"Allocation Hours" | translate}}
                             <span class="text-danger">*</span></label>
                         <div class="d-flex w-100">
                             <input type="text" id="resourceAllocationhrs" formControlName="resourceAllocationhrs"
-                                class="form-control custom-input " placeholder="Please enter hours" [maxlength]="5" />
+                                class="form-control custom-input " [placeholder]="'Please enter hours' | translate" [maxlength]="5" />
                         </div>
                     </div>
 
@@ -316,20 +316,19 @@
                                 <input id="clients-overtime-eligibility" class="form-check-input" type="checkbox"
                                     formControlName="overtimeEligible">
                                 <label for="clients-overtime-eligibility"
-                                    class="form-label custom-toggle-label">Overtime Eligibility</label>
+                                    class="form-label custom-toggle-label">{{"Overtime Eligibility" | translate}}</label>
                             </div>
 
                             <div class="form-check form-switch">
                                 <input id="client-billable" class="form-check-input" type="checkbox"
                                     formControlName="billable">
-                                <label for="client-billable" class="form-label custom-toggle-label">Billable</label>
+                                <label for="client-billable" class="form-label custom-toggle-label">{{"Billable" | translate}}</label>
                             </div>
 
                             <div class="form-check form-switch">
                                 <input id="client-allow-weekend-work" class="form-check-input" type="checkbox"
                                     formControlName="allowweekendWork">
-                                <label for="client-allow-weekend-work" class="form-label custom-toggle-label">Allow
-                                    Weekend Work</label>
+                                <label for="client-allow-weekend-work" class="form-label custom-toggle-label">{{"Allow Weekend Work" | translate}}</label>
                             </div>
                         </div>
                     </div>
@@ -338,7 +337,7 @@
                 <!-- Form Buttons -->
                 <div class="custom-modal-footer">
                     <button type="button" class="custom-btn btn-secondary"
-                        (click)="closepopup(confirmationpopupfornodue)">Cancel</button>
+                        (click)="closepopup(confirmationpopupfornodue)">{{"Cancel" | translate}}</button>
                     <button type="submit" class="custom-btn btn-primary"
                         [disabled]="updateResourceForm.invalid || loader">
 
@@ -346,12 +345,12 @@
                             <div class="button-loader-content">
                                 <span class="spinner-border button-spinner text-light" role="status"
                                     aria-hidden="true"></span>
-                                <span>Loading...</span>
+                                <span>{{"Loading..." | translate}}</span>
                             </div>
                         </ng-container>
 
                         <ng-template #addText>
-                            <span>Update</span>
+                            <span>{{"Update" | translate}}</span>
                         </ng-template>
                     </button>
                 </div>
@@ -400,30 +399,30 @@
             </div>
 
             <div class="mb-3 mt-3" *ngIf="modalData?.title?.includes('release')">
-                <label for="statusEffectiveDate" class="form-label custom-label mb-2">Effective Date<span class="error-msg">*</span></label>
+                <label for="statusEffectiveDate" class="form-label custom-label mb-2">{{"Effective Date" | translate}}<span class="error-msg">*</span></label>
                 <input type="date" id="statusEffectiveDate" formControlName="statusEffectiveDate" class="form-control custom-input" />
                 <div class="error-msg" *ngIf="reasonForm.get('statusEffectiveDate')?.touched && reasonForm.get('statusEffectiveDate')?.invalid">
-                    Effective date is required
+                    {{"Effective Date is required" | translate}}
                 </div>
             </div>
 
             <div class="mb-3" [ngClass]="{'mt-3': !modalData?.title?.includes('release')}">
-                <label class="form-label custom-label mb-2">Reason<span class="error-msg">*</span></label>
+                <label class="form-label custom-label mb-2">{{"Reason" | translate}}<span class="error-msg">*</span></label>
                 <textarea class="form-control custom-input" formControlName="reason" maxlength="250"
-                    placeholder="Please enter reason" (keydown)="formValidation.restrictInitialSpace($event)">
+                    [placeholder]="'Please enter reason' | translate" (keydown)="formValidation.restrictInitialSpace($event)">
                 </textarea>
 
                 <div class="textarea-count-text">{{ reasonForm.get('reason')?.value?.length || 0 }} / 250</div>
 
                 <div class="error-msg" *ngIf="reasonForm.get('reason')?.touched && reasonForm.get('reason')?.invalid">
                     <ng-container *ngIf="reasonForm.get('reason')?.errors?.['required']">
-                        Reason is required
+                        {{"Reason is required" | translate}}
                     </ng-container>
                     <ng-container *ngIf="reasonForm.get('reason')?.errors?.['maxlength']">
-                        Maximum 250 characters allowed
+                        {{"Maximum 250 characters allowed" | translate}}
                     </ng-container>
                     <ng-container *ngIf="reasonForm.get('reason')?.errors?.['pattern']">
-                        Reason should not start with a space.
+                        {{"Reason should not start with a space." | translate}}
                     </ng-container>
                 </div>
             </div>
@@ -445,32 +444,32 @@
         <div class="result-popup-content" ngbAutofocus>
             <div>
                 <img src="icons/conformation.png" alt="icon" class="confirmation-delete-icon">
-                <p class="confirmation-text">Are you sure you want to extend phase?</p>
+                <p class="confirmation-text">{{"Are you sure you want to extend phase?" | translate}}</p>
             </div>
 
             <!-- Start Date -->
             <div class="mb-3 mt-3">
-                <label for="newStartDate" class="form-label custom-label mb-2">Start Date<span
+                <label for="newStartDate" class="form-label custom-label mb-2">{{"Start Date" | translate}}<span
                         class="text-danger">*</span></label>
                 <input type="date" id="newStartDate" formControlName="newStartDate" class="form-control custom-input"
                     [min]="projectMinStartDate" [max]="newEndDate"
                     [readonly]="extendForm.get('newStartDate')?.disabled" />
                 <div class="error-msg"
                     *ngIf="extendForm.get('newStartDate')?.touched && extendForm.get('newStartDate')?.invalid">
-                    Start date is required
+                    {{"Start Date is required" | translate}}
                 </div>
                 <div *ngIf="!startndEndDateValid" class="error-msg">Start Date cannot be after End Date</div>
             </div>
 
             <!-- End Date -->
             <div class="mb-3 mt-3">
-                <label for="newEndDate" class="form-label custom-label mb-2">End Date <span
+                <label for="newEndDate" class="form-label custom-label mb-2">{{"End Date" | translate}} <span
                         class="text-danger">*</span></label>
                 <input type="date" id="newEndDate" formControlName="newEndDate" class="form-control custom-input"
                     [min]="extendForm.get('newStartDate')?.value" [max]="projectMaxEndDate" />
                 <div class="error-msg"
                     *ngIf="extendForm.get('newEndDate')?.touched && extendForm.get('newEndDate')?.invalid">
-                    End date is required
+                    {{"End Date is required" | translate}}
                 </div>
                 <div *ngIf="!startndEndDateValid" class="error-msg">End Date cannot be before start Date</div>
             </div>

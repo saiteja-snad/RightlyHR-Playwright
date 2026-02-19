@@ -18,6 +18,7 @@ import { DataLoaderContentComponent } from '../../shared/data-loader-content/dat
 import { SettingsHeaderComponent } from '../../shared/settings-tabs/settings-header/settings-header.component';
 import { effect } from '@angular/core';
 import { InfoIconComponent } from '../../icons/info-icon/info-icon.component';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-kra-configuration',
@@ -34,6 +35,7 @@ import { InfoIconComponent } from '../../icons/info-icon/info-icon.component';
     DataLoaderContentComponent,
     SettingsHeaderComponent,
     InfoIconComponent,
+    TranslateModule,
   ],
 })
 export class KraConfigurationComponent implements OnInit, OnDestroy {

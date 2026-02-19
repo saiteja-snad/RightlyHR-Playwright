@@ -5,7 +5,7 @@
         </div>
         @if(rbac.allowedToAccess('Assessor Create.view')){
         <div>
-            <button class="custom-btn btn-primary px-5" (click)="openAdd()">Create</button>
+            <button class="custom-btn btn-primary px-5" (click)="openAdd()">{{'Create' | translate}}</button>
         </div>
         }
     </div>
@@ -15,7 +15,7 @@
         <div class="input-group custom-search mb-3">
             <span class="input-group-text custom-input-group-search" id="basic-addon1"><i
                     class="bi bi-search"></i></span>
-            <input type="search" class="form-control custom-search-input" placeholder="Search by review cycle name / department / team / location / sub location" [(ngModel)]="searchText"
+            <input type="search" class="form-control custom-search-input" placeholder="{{'Search by review cycle name / department / team / location / sub location' | translate}}" [(ngModel)]="searchText"
                 (ngModelChange)="onSearchTextChange()" aria-label="Search">
         </div>
 
@@ -31,16 +31,16 @@
                 <table class="w-100">
                     <thead>
                         <tr>
-                            <th>Review Cycle</th>
-                            <th>Department</th>
-                            <th>Team</th>
-                            <th>Location</th>
-                            <th>Sub Location</th>
+                            <th>{{'Review Cycle' | translate}}</th>
+                            <th>{{'Department' | translate}}</th>
+                            <th>{{'Team' | translate}}</th>
+                            <th>{{'Location' | translate}}</th>
+                            <th>{{'Sub Location' | translate}}</th>
                             @if(rbac.allowedToAccess('Assessor Update(Status - Created).view') ||
                             rbac.allowedToAccess('Assessor Delete(Status - Created).view') ||
                             rbac.allowedToAccess('Assessor Update(Status - Initiated).view') ||
                             rbac.allowedToAccess('Assessor Update(Status - Review On Hold).view')) {
-                            <th>Action</th>
+                            <th>{{'Action' | translate}}</th>
                             }
                         </tr>
                     </thead>
@@ -66,23 +66,23 @@
                                     <ul class="dropdown-menu custom-dropdown-menu">
                                         @if(rbac.allowedToAccess('Assessor Update(Status - Created).view')){
                                         <li *ngIf="item?.reviewCycleHeaderStatus==='Created'">
-                                            <a class="dropdown-item" (click)="updateDetails(item)">Update</a>
+                                            <a class="dropdown-item" (click)="updateDetails(item)">{{'Update' | translate}}</a>
                                         </li>
                                         }
                                         @if(rbac.allowedToAccess('Assessor Delete(Status - Created).view')){
                                         <li *ngIf="item?.reviewCycleHeaderStatus==='Created'">
-                                            <a class="dropdown-item" (click)="openDelete(confirmation, item)">Delete</a>
+                                            <a class="dropdown-item" (click)="openDelete(confirmation, item)">{{'Delete' | translate}}</a>
                                         </li>
                                         }
                                         @if(rbac.allowedToAccess('Assessor Update(Status - Initiated).view')){
                                         <li *ngIf="item?.reviewCycleHeaderStatus==='Initiated'">
-                                            <a class="dropdown-item" (click)="editDetails(item)">Update</a>
+                                            <a class="dropdown-item" (click)="editDetails(item)">{{'Update' | translate}}</a>
                                         </li>
                                         }
                                         @if(rbac.allowedToAccess('Assessor Update(Status - Review On Hold).view')){
                                         @if(item?.reviewCycleHeaderStatus==='Review on Hold'){
                                         <li>
-                                            <a class="dropdown-item" (click)="openHoldMsg()">Update</a>
+                                            <a class="dropdown-item" (click)="openHoldMsg()">{{'Update' | translate}}</a>
                                         </li>
                                         }
                                         }
@@ -113,8 +113,8 @@
                             </option>
                         </select>
                         <span class="pagination-label text-nowrap">
-                            Showing {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize : (+first +
-                            +rows) }} of {{ collectionSize }}
+                            {{'Showing' | translate}} {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize : (+first +
+                            +rows) }} {{'of' | translate}} {{ collectionSize }}
                         </span>
                     </div>
                     <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"
@@ -135,8 +135,8 @@
             <p class="confirmation-text">Are you sure you want to delete?</p>
         </div>
         <div class="custom-modal-footer">
-            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
-            <button type="submit" class="custom-btn btn-primary" (click)="deleteData();modal.dismiss()">Yes</button>
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No' | translate}}</button>
+            <button type="submit" class="custom-btn btn-primary" (click)="deleteData();modal.dismiss()">{{'Yes' | translate}}</button>
         </div>
     </div>
 </ng-template>
@@ -216,7 +216,7 @@
                             [(ngModel)]="updateassesorConfiguration.sublocation" placeholder="Sub Location" disabled>
                         <div class="error-msg"
                             *ngIf="(sublocation.touched && sublocation.invalid) || (sublocation.invalid && UpdateAssesorDetails.submitted)">
-                            Sub location is required
+                            Sub Location is required
                         </div>
                     </div>
                 </div>

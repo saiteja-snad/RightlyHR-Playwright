@@ -61,13 +61,13 @@
                             *ngIf="shiftForm.controls['subLocation'].invalid && 
                                                                 (shiftForm.controls['subLocation'].touched || shiftForm.controls['subLocation'].dirty)">
                             <div *ngIf="shiftForm.controls ['subLocation'].errors?.['required']">
-                                {{'Sub location is required'|translate}}
+                                {{'Sub Location is required'|translate}}
                             </div>
                         </div> -->
                     <div class="error-msg" *ngIf="shiftForm.controls['subLocation'].invalid && 
                     (shiftForm.controls['subLocation'].touched || shiftForm.controls['subLocation'].dirty)">
                         <div *ngIf="shiftForm.controls['subLocation'].errors?.['required']">
-                            {{'Sub location is required' | translate}}
+                            {{'Sub Location is required' | translate}}
                         </div>
                     </div>
                 </div>

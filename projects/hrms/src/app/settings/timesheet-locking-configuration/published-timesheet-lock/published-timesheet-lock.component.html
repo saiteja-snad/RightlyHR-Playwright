@@ -86,7 +86,7 @@
                             </p-select>
                             <div class="error-msg"
                                 *ngIf="updateTimesheetLockForm.get('categoryType')?.invalid && updateTimesheetLockForm.get('categoryType')?.touched">
-                                Category type is required
+                                Category Type is required
                             </div>
                         </div>
                     </div>
@@ -100,7 +100,7 @@
                             [disabled]="isPublished" />
                         <div class="error-msg"
                             *ngIf="TimesheetLockForm.get('fromDate')?.invalid && TimesheetLockForm.get('fromDate')?.touched">
-                            From date is required
+                            From Date is required
                         </div>
                     </div>
 
@@ -114,7 +114,7 @@
                         <!-- Required Validation -->
                         <div class="error-msg" *ngIf="updateTimesheetLockForm.get('toDate')?.hasError('required') &&
                                 updateTimesheetLockForm.get('toDate')?.touched">
-                            To date is required
+                            To Date is required
                         </div>
 
                         <!-- To Date cannot be less than From Date -->
@@ -132,7 +132,7 @@
                             [disabled]="!isPublished" />
                         <div class="error-msg"
                             *ngIf="updateTimesheetLockForm.get('effectiveDate')?.hasError('required') && updateTimesheetLockForm.get('effectiveDate')?.touched">
-                            Effective date is required
+                            Effective Date is required
                         </div>
                         <!-- Effective Date cannot be greater than Effective Date -->
                         <div class="error-msg" *ngIf="effectiveDateInvalid">

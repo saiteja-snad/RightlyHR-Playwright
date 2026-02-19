@@ -31,7 +31,7 @@
             <td>{{ leave.entity.employeeName }}</td>
             <td>{{ leave.entity.expenses_Title }}</td>
             <td>{{ leave.entity.applied_date | dateformat }}</td>
-            <td>$ {{ leave.entity.totalExpenseAmount | number: '1.2-2'}}</td>
+            <td>₹ {{ leave.entity.totalExpenseAmount | number: '1.2-2'}}</td>
             <td>{{ leave.entity.status }}</td>
             <td class="text-center">
               <div class="dropdown">
@@ -243,7 +243,7 @@
               <td>{{ item?.expenseType }}</td>
               <td>{{ item?.item_Name }}</td>
               <td>{{ item?.expense_Date | dateformat}}</td>
-              <td> $ {{ item?.expense_Amount | number: '1.2-2' }}</td>
+              <td> ₹ {{ item?.expense_Amount | number: '1.2-2' }}</td>
               <td>{{ item?.status }}</td>
               <td>{{ item?.receipt_Number }}</td>
           <!-- <td class="text-center">
@@ -303,7 +303,7 @@
           </tbody>
         </table>
         <div class="text-center mt-3">
-          <b>Total Amount : $ {{expenseheaderiteams?.expense_Amount | number: '1.2-2'}}</b>
+          <b>Total Amount : ₹ {{expenseheaderiteams?.expense_Amount | number: '1.2-2'}}</b>
         </div>
       </div>
     </div>

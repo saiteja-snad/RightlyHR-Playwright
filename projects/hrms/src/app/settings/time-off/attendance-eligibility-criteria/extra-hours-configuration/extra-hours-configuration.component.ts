@@ -9,11 +9,12 @@ import { HttpService } from '../../../../services/http.service';
 import { OpenModalService } from '../../../../services/open-modal.service';
 import { RbacService } from '../../../../services/rbac.service';
 import { IEAV } from '../../../../Interfaces/timoff-model';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-extra-hours-configuration',
   standalone: true,
-  imports: [CommonModule, FormsModule, DataLoaderContentComponent, NoDataFoundComponent],
+  imports: [CommonModule, FormsModule, DataLoaderContentComponent, NoDataFoundComponent, TranslateModule],
   templateUrl: './extra-hours-configuration.component.html',
   styleUrls: ['./extra-hours-configuration.component.scss']
 })

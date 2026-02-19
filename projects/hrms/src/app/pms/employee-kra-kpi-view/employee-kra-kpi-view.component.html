@@ -1,10 +1,10 @@
 <div class="custom-main-component-container">
   <div class="component-header-content">
     <div class="heading-content">
-      <div class="commpoment-name">PMS
+      <div class="commpoment-name">{{'PMS'  | translate}}
         <span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
       </div>
-      <div class="commpoment-name cursor" (click)="navigateTeamKRAKPI()"><u>Team KRA's / KPI's</u>
+      <div class="commpoment-name cursor" (click)="navigateTeamKRAKPI()"><u>{{'Team KRA\'s / KPI\'s' | translate}}</u>
         <span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
       </div>
       <div class="component-header">
@@ -22,7 +22,7 @@
         <label class="form-label custom-label text-nowrap filter-labels m-0">{{'Select Employee' | translate}}</label>
         <div class="custom-p-select-content">
           <p-select [options]="activeEmplist" [filter]="true" filterBy="label" resetFilterOnHide="true"
-            optionLabel="label" optionValue="value" showClear="true" placeholder="Please select employee name"
+            optionLabel="label" optionValue="value" showClear="true" placeholder="Select employee name"
             (onChange)="onEmployeeChange($event.value)" class="form-select custom-select">
           </p-select>
         </div>
@@ -33,7 +33,7 @@
         <label class="form-label custom-label text-nowrap filter-labels m-0">{{'Select Employee' | translate}}</label>
         <div class="custom-p-select-content">
           <p-select [options]="activeEmplist" [filter]="true" filterBy="label" resetFilterOnHide="true"
-            optionLabel="label" optionValue="value" showClear="true" placeholder="Please select employee name"
+            optionLabel="label" optionValue="value" showClear="true" placeholder="Select employee name"
             (onChange)="onEmployeeChange($event.value)" class="form-select custom-select">
           </p-select>
         </div>
@@ -44,7 +44,7 @@
         <label class="form-label filter-labels m-0">{{'My Team' | translate}}</label>
         <div class="custom-p-select-content">
           <p-select [options]="myTeamEmployees" optionLabel="fullName" optionValue="employeeId" showClear="true"
-            placeholder="Please select employee name" [filter]="true" resetFilterOnHide="true" [autoDisplayFirst]="false"
+            placeholder="Select employee name" [filter]="true" resetFilterOnHide="true" [autoDisplayFirst]="false"
             (onChange)="onEmployeeChange($event.value)" class="form-select custom-select">
           </p-select>
         </div>
@@ -61,7 +61,7 @@
         <span class="input-group-text custom-input-group-search">
           <i class="bi bi-search"></i>
         </span>
-        <input type="search" class="form-control custom-search-input" placeholder="Search KRA / KPI..."
+        <input type="search" class="form-control custom-search-input" placeholder="{{'Search KRA / KPI...' | translate}}"
           [(ngModel)]="searchText" (ngModelChange)="onSearchTextChange()" />
       </div>
 
@@ -93,12 +93,12 @@
                   <p-table [value]="kraItem.kpis">
                     <ng-template pTemplate="header">
                       <tr>
-                        <th>KPI Name</th>
-                        <th class="text-center">Weightage (%)</th>
-                        <th class="text-center">Target Value</th>
-                        <th class="text-center">Target Date</th>
-                        <th class="text-center">Description</th>
-                        <th class="text-center">Progress</th>
+                        <th>{{'KPI Name' | translate}}</th>
+                        <th class="text-center">{{'Weightage (%)' | translate}}</th>
+                        <th class="text-center">{{'Target Value' | translate}}</th>
+                        <th class="text-center">{{'Target Date' | translate}}</th>
+                        <th class="text-center">{{'Description' | translate}}</th>
+                        <th class="text-center">{{'Progress' | translate}}</th>
                         <!-- <th class="text-center">Status</th> -->
                       </tr>
                     </ng-template>
@@ -139,7 +139,7 @@
                     </ng-template>
                   </p-table>
                   } @else {
-                  <div class="p-4 text-center text-muted">No KPIs assigned to this KRA</div>
+                  <div class="p-4 text-center text-muted">{{'No KPIs assigned to this KRA' | translate}}</div>
                   }
                 </div>
               </p-accordion-content>

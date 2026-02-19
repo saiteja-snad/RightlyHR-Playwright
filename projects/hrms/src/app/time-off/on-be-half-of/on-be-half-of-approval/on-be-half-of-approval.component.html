@@ -3,15 +3,15 @@
         @if(!loading){
         <table class="w-100">
             <thead>
-                <th>Date</th>
-                <th>Leave Type</th>
-                <th>Duration(In Days)</th>
-                <th>Availed</th>
-                <th>Start Date</th>
-                <th>End Date</th>
-                <th class="text-center">Reason</th>
-                <th class="text-center">Approved Reason</th>
-                <th>Status</th>
+                <th>{{'Date' | translate}}</th>
+                <th>{{'Leave Type' | translate}}</th>
+                <th>{{'Duration(In Days)' | translate}}</th>
+                <th>{{'Availed' | translate}}</th>
+                <th>{{'Start Date' | translate}}</th>
+                <th>{{'End Date' | translate}}</th>
+                <th class="text-center">{{'Reason' | translate}}</th>
+                <th class="text-center">{{'Approved Reason' | translate}}</th>
+                <th>{{'Status' | translate}}</th>
             </thead>
             <tbody>
                 @if(approvedLeaves.length > 0){
@@ -25,8 +25,8 @@
                             {{lev?.duration}}
                         }
                     </td>
-                    <td>{{ lev.durationType == 1 ? 'First Half' : lev.durationType == 2 ? 'Full Day' :
-                        lev.durationType == 3 ? 'Second Half' : 'Unknown' }}</td>
+                    <td>{{ lev.durationType == 1 ? ('First Half' | translate) : lev.durationType == 2 ? ('Full Day' | translate) :
+                        lev.durationType == 3 ? ('Second Half' | translate) : ('Unknown' | translate) }}</td>
                     <td>{{lev.startdate | dateformat}}</td>
                     <td>{{lev.enddate | dateformat}}</td>
                     <td class="text-center">
@@ -68,7 +68,7 @@
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="custom-poup-header-content popup-header-border">
             <div>
-                <p class="popup-heading mb-0">{{selectedSandwichItem?.firstName}} {{selectedSandwichItem?.lastName}} ({{selectedSandwichItem?.fusionEmpId}}) - Sandwich Leave Breakdown</p>
+                <p class="popup-heading mb-0">{{selectedSandwichItem?.firstName}} {{selectedSandwichItem?.lastName}} ({{selectedSandwichItem?.fusionEmpId}}) - {{'Sandwich Leave Breakdown' | translate}}</p>
             </div>
             <div>
                 <a (click)="modal.dismiss('Cross click')">
@@ -82,10 +82,10 @@
                     <table class="popup-table">
                         <thead>
                             <tr>
-                                <th>Leave Type</th>
-                                <th>Duration</th>
-                                <th>Start Date</th>
-                                <th>End Date</th>
+                                <th>{{'Leave Type' | translate}}</th>
+                                <th>{{'Duration' | translate}}</th>
+                                <th>{{'Start Date' | translate}}</th>
+                                <th>{{'End Date' | translate}}</th>
                             </tr>
                         </thead>
                         <tbody>

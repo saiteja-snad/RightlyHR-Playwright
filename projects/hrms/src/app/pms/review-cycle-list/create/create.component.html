@@ -1,7 +1,7 @@
 <div class="custom-main-popup-container" ngbAutofocus>
     <div class="custom-poup-header-content popup-header-border">
         <div>
-            <p class="popup-heading mb-0">Create Review Cycle</p>
+            <p class="popup-heading mb-0">{{'Create Review Cycle' | translate}}</p>
         </div>
         <div>
             <div>
@@ -17,18 +17,18 @@
                     <label for="" class="form-label custom-label">{{'Review Cycle Name'|translate}}<span
                             class="text-danger">*</span></label>
                     <input class="form-control custom-input" id="reviewCycleName" formControlName="reviewCycleName"
-                        type="text" maxlength="50" placeholder="Please enter review cycle name" autocomplete="off">
+                        type="text" maxlength="50" placeholder="{{'Please enter review cycle name' | translate}}" autocomplete="off">
                     <div *ngIf="reviewCycleForm.get('reviewCycleName')?.touched &&reviewCycleForm.get('reviewCycleName')?.hasError('required')"
                         class="error-msg">
-                        Review Cycle Name is required
+                        {{'Review Cycle Name is required' | translate}}
                     </div>
                     <div *ngIf="reviewCycleForm.get('reviewCycleName')?.touched && reviewCycleForm.get('reviewCycleName')?.hasError('invalidStart') && 
                                         !reviewCycleForm.get('reviewCycleName')?.hasError('required')"
                         class="error-msg">
-                        Review Cycle Name cannot contain only special characters or spaces
+                        {{'Review Cycle Name cannot contain only special characters or spaces' | translate}}
                     </div>
                     <div *ngIf="reviewCycleForm.get('reviewCycleName')?.hasError('maxlength')" class="error-msg">
-                        Review Cycle Name must be less than 50 characters</div>
+                        {{'Review Cycle Name must be less than 50 characters' | translate}}</div>
                 </div>
 
                 <div class="col-md-6 mb-3">
@@ -36,13 +36,13 @@
                             class="text-danger">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="ReviewCycleTypes" optionLabel="value" optionValue="value" 
-                            placeholder="Please select review cycle type" formControlName="reviewCycleType"
+                            placeholder="{{'Please select review cycle type' | translate}}" formControlName="reviewCycleType"
                             class="form-select custom-select">
                         </p-select>
                     </div>
                     <div *ngIf="reviewCycleForm.get('reviewCycleType')?.touched && reviewCycleForm.get('reviewCycleType')?.hasError('required')"
                         class="error-msg">
-                        Review Cycle Type is required
+                        {{'Review Cycle Type is required' | translate}}
                     </div>
                 </div>
 
@@ -52,11 +52,11 @@
                     <div class="custom-p-multiSelect-content">
                         <p-multiselect class="form-select custom-select" [options]="departmentDetails"
                             formControlName="departmentId" optionLabel="departmentName" resetFilterOnHide="true" optionValue="sno"
-                            placeholder="Please select department(s)" (onChange)="onDepartmentNameChange($event);" />
+                            placeholder="{{'Please select department(s)' | translate}}" (onChange)="onDepartmentNameChange($event);" />
                     </div>
                     <div *ngIf="reviewCycleForm.get('departmentId')?.touched && reviewCycleForm.get('departmentId')?.hasError('required')"
                         class="error-msg">
-                        Department is required
+                        {{'Department is required' | translate}}
                     </div>
                 </div>
 
@@ -69,12 +69,12 @@
                             placeholder="Please select team(s)" /> -->
                         <p-multiselect class="form-select custom-select" [options]="subDepartmentsDropdownValues"
                             formControlName="subDepartmentId" optionValue="subdepartmentId" resetFilterOnHide="true"
-                            optionLabel="subdepartmentName" placeholder="Please select team(s)"
+                            optionLabel="subdepartmentName" placeholder="{{'Please select team(s)' | translate}}"
                             [resetFilterOnHide]="true" />
                     </div>
                     <div *ngIf="reviewCycleForm.get('subDepartmentId')?.touched && reviewCycleForm.get('subDepartmentId')?.hasError('required')"
                         class="error-msg">
-                        Team is required
+                        {{'Team is required' | translate}}
                     </div>
                 </div>
 
@@ -84,10 +84,10 @@
                     <div class="custom-p-multiSelect-content">
                         <p-multiselect class="form-select custom-select" [options]="jobLocationDropDownData"
                             optionValue="id" optionLabel="jobLocationName" resetFilterOnHide="true" formControlName="locationId"
-                            placeholder="Please select location(s)" (onChange)="OnClickLocation($event)" />
+                            placeholder="{{'Please select location(s)' | translate}}" (onChange)="OnClickLocation($event)" />
                     </div>
                     <div *ngIf="reviewCycleForm.get('locationId')?.touched && reviewCycleForm.get('locationId')?.hasError('required')"
-                        class="error-msg">Location is required</div>
+                        class="error-msg">{{'Location is required' | translate}}</div>
                 </div>
 
                 <div class="col-md-6 mb-3">
@@ -96,10 +96,10 @@
                     <div class="custom-p-multiSelect-content">
                         <p-multiselect class="form-select custom-select" [options]="subLocationsDropdown"
                             formControlName="subLocationId" optionLabel="jobSubLocationName" optionValue="id" resetFilterOnHide="true"
-                            placeholder="Please select sub location(s)" />
+                            placeholder="{{'Please select sub location(s)' | translate}}" />
                     </div>
                     <div *ngIf="reviewCycleForm.get('subLocationId')?.touched && reviewCycleForm.get('subLocationId')?.hasError('required')"
-                        class="error-msg">Sub location is required
+                        class="error-msg">{{'Sub Location is required' | translate}}
                     </div>
                 </div>
 
@@ -111,7 +111,7 @@
                         autocomplete="off">
                     <div *ngIf="reviewCycleForm.get('startDate')?.touched && reviewCycleForm.get('startDate')?.hasError('required')"
                         class="error-msg">
-                        Review Cycle Start date is required
+                        {{'Review Cycle Start Date is required' | translate}}
                     </div>
                 </div>
 
@@ -123,10 +123,10 @@
                         aria-label="default input example" autocomplete="off">
                     <div *ngIf="reviewCycleForm.get('endDate')?.touched && reviewCycleForm.get('endDate')?.hasError('required')"
                         class="error-msg">
-                        Review Cycle End date is required
+                        {{'Review Cycle End Date is required' | translate}}
                     </div>
                     <div *ngIf="reviewCycleForm.errors?.['endDateInvalid']" class="error-msg">
-                        Review Cycle End date should be greater than the review cycle start date
+                        {{'Review Cycle End date should be greater than the review cycle start date' | translate}}
                     </div>
                 </div>
 
@@ -135,14 +135,13 @@
                         Before)'|translate}}<span class="text-danger">*</span></label>
                     <input class="form-control custom-input" id="applicableEmployeesJoinedBefore"
                         onkeypress="return false;" formControlName="applicableEmployeesJoinedBefore" type="date"
-                        placeholder="Please select date" aria-label="default input example" autocomplete="off">
+                        placeholder="{{'Please select date' | translate}}" aria-label="default input example" autocomplete="off">
                     <div *ngIf="reviewCycleForm.get('applicableEmployeesJoinedBefore')?.touched && reviewCycleForm.get('applicableEmployeesJoinedBefore')?.hasError('required')"
                         class="error-msg">
-                        Applicable Employees (Joined Before) is required
+                        {{'Applicable Employees (Joined Before) is required' | translate}}
                     </div>
                     <div *ngIf="reviewCycleForm.errors?.['joinDateInvalid']" class="error-msg">
-                        Applicable Employees Joined date must be greater than the Review Cycle Start Date and less than
-                        Review Cycle End Date
+                        {{'Applicable Employees Joined date must be greater than the Review Cycle Start Date and less than Review Cycle End Date' | translate}}
                     </div>
                 </div>
 
@@ -150,14 +149,14 @@
                     <label for="" class="form-label custom-label">{{'Description'|translate}}</label>
                     <div class="textarea-container">
                         <textarea class="form-control custom-input" id="description" formControlName="description"
-                            type="text" placeholder="Please enter description" maxlength="250" id="floatingTextarea2"
+                            type="text" placeholder="{{'Please enter description' | translate}}" maxlength="250" id="floatingTextarea2"
                             rows="3"></textarea>
                         <div *ngIf="reviewCycleForm.get('description')?.touched" class="error-msg">
                             <div *ngIf="reviewCycleForm.get('description')?.errors?.['maxlength']">
-                                Description must not exceed 250 characters
+                                {{'Description must not exceed 250 characters' | translate}}
                             </div>
                             <div *ngIf="reviewCycleForm.get('description')?.errors?.['whitedespritionspace']">
-                                Description cannot be empty or contain only white spaces
+                                {{'Description cannot be empty or contain only white spaces' | translate}}
                             </div>
                         </div>
                         <div>{{ reviewCycleForm.get("description")?.value?.length || 0 }}/250</div>
@@ -177,7 +176,7 @@
             </div>
 
             <div class="custom-modal-footer">
-                <button type="reset" class="custom-btn btn-secondary" (click)="openmodalforcancel(cancelationConfirmation)">{{'Cancel'|translate}}</button>
+                <button type="reset" class="custom-btn btn-secondary" (click)="close()">{{'Cancel'|translate}}</button>
                 <button type="submit" class="custom-btn btn-primary" [disabled]="reviewCycleForm.invalid ">
                     <span *ngIf="!isLoading">{{'Save'|translate}} </span>
                     <div *ngIf="isLoading" class="spinner-border spinner-border text-light" role="status"></div>
@@ -191,11 +190,11 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
-            <p class="confirmation-text">Are you sure you want to cancel?</p>
+            <p class="confirmation-text">{{'Are you sure you want to Cancel?' | translate}}</p>
         </div>
         <div class="custom-modal-footer">
             <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'|translate}}</button>
-            <button type="submit" class="custom-btn btn-primary" (click)="close()">{{'Yes'|translate}}</button>
+            <button type="submit" class="custom-btn btn-primary" (click)="onClickYes()">{{'Yes'|translate}}</button>
         </div>
     </div>
 </ng-template>

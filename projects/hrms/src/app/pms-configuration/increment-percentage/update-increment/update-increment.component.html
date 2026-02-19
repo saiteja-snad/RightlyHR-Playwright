@@ -14,67 +14,67 @@
       (ngSubmit)="Updateincrementalpercentage.valid && updateincermement()">
       <div class="row">
         <div class="col-md-6 mb-3">
-          <label for="reviewcycle" class="form-label custom-label">Review Cycle Name<span class="text-danger">*</span></label>
+          <label for="reviewcycle" class="form-label custom-label">{{'Review Cycle Name'|translate}}<span class="text-danger">*</span></label>
           <div class="custom-p-select-content">
             <p-select [disabled]="true" [options]="reviewCycleDropDownData" optionValue="id" optionLabel="reviewCycleName"
               [filter]="true" id="reviewcycle" name="reviewcycle" #reviewcycle="ngModel"
               [(ngModel)]="UpdateIncrementalpercentage.reviewCycleId" filterBy="item_text" [showClear]="true"
-              placeholder="Please Select Review Cycle Name" class="form-select custom-select">
+              [placeholder]="'Please Select Review Cycle Name'|translate" class="form-select custom-select">
             </p-select>
           </div>
           <div class="error-msg"
             *ngIf="(reviewcycle.touched &&  reviewcycle.invalid) || (reviewcycle.invalid && Updateincrementalpercentage.submitted)">
-            Review Cycle Name is required
+            {{'Review Cycle Name is required'|translate}}
           </div>
         </div>
 
         <div class="col-md-6 mb-3">
-          <label for="ratingscale" class="form-label custom-label">Rating Scale<span class="text-danger">*</span></label>
+          <label for="ratingscale" class="form-label custom-label">{{'Rating Scale'|translate}}<span class="text-danger">*</span></label>
           <input class="form-control" aria-label="Default select example" id="ratingscale" name="ratingscale"
-            #ratingscale="ngModel" [(ngModel)]="UpdateIncrementalpercentage.ratingscale" placeholder="Rating Scale" disabled>
+            #ratingscale="ngModel" [(ngModel)]="UpdateIncrementalpercentage.ratingscale" [placeholder]="'Rating Scale'|translate" disabled>
           <div class="error-msg"
             *ngIf="(team.touched &&  team.invalid) || (team.invalid && Updateincrementalpercentage.submitted)">
-            Rating Scale is required
+            {{'Rating Scale is required'|translate}}
           </div>
         </div>
 
         <div class="col-md-6 mb-3">
-          <label for="department" class="form-label custom-label">Department<span class="text-danger">*</span></label>
+          <label for="department" class="form-label custom-label">{{'Department'|translate}}<span class="text-danger">*</span></label>
           <input class="form-control" #deparment="ngModel" [(ngModel)]="UpdateIncrementalpercentage.department" id="department"
-            name="department" aria-label="Default select example" placeholder="Department" disabled>
+            name="department" aria-label="Default select example" [placeholder]="'Department'|translate" disabled>
           <div class="error-msg"
             *ngIf="(deparment.touched &&  reviewcycle.invalid) || (deparment.invalid && Updateincrementalpercentage.submitted)">
-            Department is required
+            {{'Department is required'|translate}}
           </div>
         </div>
 
         <div class="col-md-6 mb-3">
-          <label for="team" class="form-label custom-label">Team<span class="text-danger">*</span></label>
+          <label for="team" class="form-label custom-label">{{'Team'|translate}}<span class="text-danger">*</span></label>
           <input class="form-control" aria-label="Default select example" id="team" name="team" #team="ngModel"
-            [(ngModel)]="UpdateIncrementalpercentage.team" placeholder="Team" disabled>
+            [(ngModel)]="UpdateIncrementalpercentage.team" [placeholder]="'Team'|translate" disabled>
           <div class="error-msg"
             *ngIf="(team.touched &&  team.invalid) || (team.invalid && Updateincrementalpercentage.submitted)">
-            Team is required
+            {{'Team is required'|translate}}
           </div>
         </div>
 
         <div class="col-md-6 mb-3">
-          <label for="location" class="form-label custom-label">Location<span class="text-danger">*</span></label>
+          <label for="location" class="form-label custom-label">{{'Location'|translate}}<span class="text-danger">*</span></label>
           <input class="form-control" aria-label="Default select example" id="location" name="location" #location="ngModel"
-            [(ngModel)]="UpdateIncrementalpercentage.location" placeholder="Location" disabled>
+            [(ngModel)]="UpdateIncrementalpercentage.location" [placeholder]="'Location'|translate" disabled>
           <div class="error-msg"
             *ngIf="(location.touched &&  location.invalid) || (location.invalid && Updateincrementalpercentage.submitted)">
-            Location is required
+            {{'Location is required'|translate}}
           </div>
         </div>
 
         <div class="col-md-6 mb-3">
-          <label for="sublocation" class="form-label custom-label">Sub Location<span class="text-danger">*</span></label>
+          <label for="sublocation" class="form-label custom-label">{{'Sub Location'|translate}}<span class="text-danger">*</span></label>
           <input class="form-control" aria-label="Default select example" id="sublocation" name="sublocation"
-            #sublocation="ngModel" [(ngModel)]="UpdateIncrementalpercentage.sublocation" placeholder="Sub Location" disabled>
+            #sublocation="ngModel" [(ngModel)]="UpdateIncrementalpercentage.sublocation" [placeholder]="'Sub Location'|translate" disabled>
           <div class="error-msg"
             *ngIf="(sublocation.touched && sublocation.invalid) || (sublocation.invalid && Updateincrementalpercentage.submitted)">
-            Sub location is required
+            {{'Sub Location is required'|translate}}
           </div>
         </div>       
       </div>
@@ -83,9 +83,9 @@
         <table class="w-100">
           <thead>
             <tr>
-              <th>Increment Percentage/Rating</th>
+              <th>{{'Increment Percentage/Rating'|translate}}</th>
               <th class="text-center" *ngFor="let item of ratingrangeloop">{{ item }}</th>
-              <th class="text-center">Action</th>
+              <th class="text-center">{{'Action'|translate}}</th>
               <th></th>
             </tr>
           </thead>
@@ -96,7 +96,7 @@
                 <div class="d-flex">
                   <div>
                     <input type="number" class="form-control value-input" [(ngModel)]="detail.min"
-                      (input)="validateNumber($event)" id="min-{{i}}" name="min-{{i}}" min="0" placeholder="Min"
+                      (input)="validateNumber($event)" id="min-{{i}}" name="min-{{i}}" min="0" [placeholder]="'Min'|translate"
                       required />
                   </div>
                   <div class="pt-2">
@@ -104,14 +104,14 @@
                   </div>
                   <div>
                     <input type="number" class="form-control value-input" [(ngModel)]="detail.max"
-                      (input)="validateNumber($event)" id="max-{{i}}" name="max-{{i}}" min="0" placeholder="Max"
+                      (input)="validateNumber($event)" id="max-{{i}}" name="max-{{i}}" min="0" [placeholder]="'Max'|translate"
                       required />
                   </div>
                 </div>
               </td>
               <td *ngFor="let column of detail.ratingDetails; let j = index" class="text-center text-td">
                 <input type="number" class="form-control number-input" [(ngModel)]="column.percentage" min="0"
-                  id="percentage-{{i}}-{{j}}" name="percentage-{{i}}-{{j}}" placeholder="Percentage"
+                  id="percentage-{{i}}-{{j}}" name="percentage-{{i}}-{{j}}" [placeholder]="'Percentage'|translate"
                   (input)="validateNumber($event)" required />
               </td>
               <td class="text-center">
@@ -143,10 +143,10 @@
   <div class="result-popup-content" ngbAutofocus>
     <div>
       <img src="icons\delete-icon.png" alt="failure icon" class="confirmation-delete-icon">
-      <p class="confirmation-text">Are you sure you want to Delete?</p>
+      <p class="confirmation-text">{{'Are you sure you want to Delete?'|translate}}</p>
     </div>
     <div class="custom-modal-footer">
-      <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
+      <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'|translate}}</button>
       <button type="submit" class="custom-btn btn-primary" (click)="deleteRow(removerow);modal.dismiss()" [disabled]="isLoading">
         @if(!isLoading){ {{'Yes'|translate}} }
         @else {
@@ -164,7 +164,7 @@
   <div class="result-popup-content" ngbAutofocus>
     <div>
       <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
-      <p class="confirmation-text">Are you sure you want to cancel?</p>
+      <p class="confirmation-text">{{'Are you sure you want to cancel?'|translate}}</p>
     </div>
     <div class="custom-modal-footer">
       <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'|translate}}</button>
@@ -177,7 +177,7 @@
   <div class="result-popup-content" ngbAutofocus>
     <div>
       <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
-      <p class="confirmation-text">Are you sure you want to Update?</p>
+      <p class="confirmation-text">{{'Are you sure you want to Update?'|translate}}</p>
     </div>
     <div class="custom-modal-footer">
       <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'|translate}}</button>

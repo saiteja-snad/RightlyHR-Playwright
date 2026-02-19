@@ -7,10 +7,10 @@
     rbac.allowedToAccess('My Team (KRA KPI).view')
     ) {
     <div class="d-flex align-items-center gap-2 mb-3">
-      <label class="form-label custom-label text-nowrap filter-labels m-0">Select Employee</label>
+      <label class="form-label custom-label text-nowrap filter-labels m-0">{{'Select Employee' | translate}}</label>
       <div class="custom-p-select-content">
         <p-select [options]="activeEmplist" optionLabel="label" optionValue="value" [filter]="true" showClear="true"
-          placeholder="Please select employee" (onChange)="onEmployeeChange($event.value)"
+          [placeholder]="'Please select employee' | translate" (onChange)="onEmployeeChange($event.value)"
           class="form-select custom-select">
         </p-select>
       </div>
@@ -19,10 +19,10 @@
 
     @else if (rbac.allowedToAccess('All Employees (KRA KPI).view')){
       <div class="d-flex align-items-center gap-2 mb-3">
-      <label class="form-label custom-label text-nowrap filter-labels m-0">Select Employee</label>
+      <label class="form-label custom-label text-nowrap filter-labels m-0">{{'Select Employee' | translate}}</label>
       <div class="custom-p-select-content">
         <p-select [options]="activeEmplist" optionLabel="label" optionValue="value" [filter]="true" showClear="true"
-          placeholder="Please select employee" (onChange)="onEmployeeChange($event.value)"
+          [placeholder]="'Please select employee' | translate" (onChange)="onEmployeeChange($event.value)"
           class="form-select custom-select">
         </p-select>
       </div>
@@ -31,10 +31,10 @@
 
     @else if (rbac.allowedToAccess('My Team (KRA KPI).view')) {
     <div class="d-flex align-items-center gap-2 mb-3">
-      <label class="form-label custom-label text-nowrap filter-labels m-0">My Team</label>
+      <label class="form-label custom-label text-nowrap filter-labels m-0">{{'My Team' | translate}}</label>
       <div class="custom-p-select-content">
         <p-select [options]="myTeamEmployees" optionLabel="fullName" optionValue="employeeId" showClear="true"
-          [filter]="true" placeholder="Please select employee" (onChange)="onEmployeeChange($event.value)"
+          [filter]="true" [placeholder]="'Please select employee' | translate" (onChange)="onEmployeeChange($event.value)"
           class="form-select custom-select">
         </p-select>
       </div>
@@ -97,14 +97,14 @@
                     <!-- TABLE HEADER -->
                     <ng-template pTemplate="header">
                       <tr>
-                        <th>Review Cycle</th>
-                        <th>KRA Name</th>
-                        <th>KPI Name</th>
+                        <th>{{'Review Cycle' | translate}}</th>
+                        <th>{{'KRA Name' | translate}}</th>
+                        <th>{{'KPI Name' | translate}}</th>
                         <!-- <th class="text-center">Target</th>
                         <th class="text-center">Weightage</th> -->
-                        <th class="text-center">Progress</th>
-                        <th class="text-center">Status</th>
-                        <th class="text-center">Actions</th>
+                        <th class="text-center">{{'Progress' | translate}}</th>
+                        <th class="text-center">{{'Status' | translate}}</th>
+                        <th class="text-center">{{'Actions' | translate}}</th>
                       </tr>
                     </ng-template>
 
@@ -152,7 +152,7 @@
                   </p-table>
                   } @else {
                   <div class="p-4 text-center text-muted">
-                    No KPI data available
+                    {{'No KPI data available' | translate}}
                   </div>
                   }
                 </div>
@@ -199,7 +199,7 @@
     <div class="text-center mb-2">
       <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
       <p class="confirmation-text mt-2">
-        Are you sure you want to approve this KRA/KPI?
+        {{'Are you sure you want to approve this KRA/KPI?' | translate}}
       </p>
     </div>
 
@@ -209,25 +209,25 @@
         <!-- Percentage -->
         <div class="mb-3">
           <label class="form-label custom-label mb-2">
-            Percentage <span class="text-danger">*</span>
+            {{'Percentage' | translate}} <span class="text-danger">*</span>
           </label>
 
           <input type="number" class="form-control custom-input" formControlName="percentage"
-            placeholder="Enter percentage" min="0" max="100" />
+            [placeholder]="'Enter percentage' | translate" min="0" max="100" />
 
           <div class="error-msg"
             *ngIf="actionForm.get('percentage')?.touched && actionForm.get('percentage')?.errors?.['required']">
-            Percentage is required
+            {{'Percentage is required' | translate}}
           </div>
 
           <div class="error-msg"
             *ngIf="actionForm.get('percentage')?.touched && actionForm.get('percentage')?.errors?.['min']">
-            Percentage cannot be less than 0
+            {{'Percentage cannot be less than 0' | translate}}
           </div>
 
           <div class="error-msg"
             *ngIf="actionForm.get('percentage')?.touched && actionForm.get('percentage')?.errors?.['max']">
-            Percentage cannot be more than 100
+            {{'Percentage cannot be more than 100' | translate}}
           </div>
         </div>
 
@@ -235,30 +235,30 @@
         <!-- Rating -->
         <div class="mb-3">
           <label class="form-label custom-label mb-2">
-            Rating <span class="text-danger">*</span>
+            {{'Rating' | translate}} <span class="text-danger">*</span>
           </label>
-          <input type="number" class="form-control custom-input" formControlName="rating" placeholder="Enter rating"
+          <input type="number" class="form-control custom-input" formControlName="rating" [placeholder]="'Enter rating' | translate"
             [attr.min]="currentMinRating" [attr.max]="currentMaxRating" />
           <div class="error-msg"
             *ngIf="actionForm.get('rating')?.touched && actionForm.get('rating')?.errors?.['required']">
-            Rating is required
+            {{'Rating is required' | translate}}
           </div>
 
           <div class="error-msg" *ngIf="actionForm.get('rating')?.touched && actionForm.get('rating')?.errors?.['min']">
-            Minimum rating is {{ currentMinRating }}
+            {{'Minimum rating is' | translate}} {{ currentMinRating }}
           </div>
 
           <div class="error-msg" *ngIf="actionForm.get('rating')?.touched && actionForm.get('rating')?.errors?.['max']">
-            Maximum rating is {{ currentMaxRating }}
+            {{'Maximum rating is' | translate}} {{ currentMaxRating }}
           </div>
 
         </div>
 
         <!-- Approver Comments -->
         <div>
-          <label class="form-label custom-label mb-2">Approver Comments</label>
+          <label class="form-label custom-label mb-2">{{'Approver Comments' | translate}}</label>
           <textarea class="form-control custom-input" formControlName="comments" rows="3" maxlength="250"
-            placeholder="Enter comments (optional)"></textarea>
+            [placeholder]="'Enter comments (optional)' | translate"></textarea>
           <div class="textarea-count-text">
             {{ actionForm.get('comments')?.value?.length || 0 }} / 250
           </div>
@@ -266,14 +266,14 @@
         <div class="d-flex align-items-center flex-wrap gap-2 mb-3">
           <button type="button" class="custom-btn btn-secondary chip-btn" [class.active]="selectedActionStatus === 'approve'"
             (click)="onApproveChipSelect()">
-            Approved
+            {{'Approved' | translate}}
           </button>
         </div>
 
 
         <!-- Attachment -->
         <div class="mb-3">
-          <label class="form-label custom-label mb-2">Attachment</label>
+          <label class="form-label custom-label mb-2">{{'Attachment' | translate}}</label>
           <input type="file" class="form-control custom-input" (change)="onFileSelect($event)"
             accept=".pdf,.jpg,.jpeg,.png">
           <!-- @if (selectedFileName) {
@@ -285,15 +285,15 @@
 
       <div class="custom-modal-footer">
         <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()" [disabled]="isSubmitting">
-          No
+          {{'No' | translate}}
         </button>
         <button type="submit" class="custom-btn btn-primary" [disabled]="actionForm.invalid || isSubmitting">
           @if (!isSubmitting) {
-          Approve
+          {{'Approve' | translate}}
           } @else {
           <div class="button-loader-content">
             <div class="spinner-border button-spinner text-light" role="status"></div>
-            <span>Submitting...</span>
+            <span>{{'Submitting...' | translate}}</span>
           </div>
           }
         </button>
@@ -307,7 +307,7 @@
     <div class="text-center mb-2">
       <img src="/icons/reject.png" alt="reject-icon" class="confirmation-delete-icon">
       <p class="confirmation-text mt-2">
-        Are you sure you want to reject this KRA/KPI?
+        {{'Are you sure you want to reject this KRA/KPI?' | translate}}
       </p>
     </div>
 
@@ -317,10 +317,10 @@
         <!-- Approver Rejecting Comments - REQUIRED for Reject -->
         <div>
           <label class="form-label custom-label mb-2">
-            Rejection Comments <span class="text-danger">*</span>
+            {{'Rejection Comments' | translate}} <span class="text-danger">*</span>
           </label>
           <textarea class="form-control custom-input" formControlName="comments" rows="3" maxlength="250"
-            placeholder="Please provide reason for rejection">
+            [placeholder]="'Please provide reason for rejection' | translate">
           </textarea>
           <div class="textarea-count-text">
             {{ actionForm.get('comments')?.value?.length || 0 }} / 250
@@ -328,21 +328,21 @@
 
           <div class="error-msg"
             *ngIf="actionForm.get('comments')?.touched && actionForm.get('comments')?.errors?.['required']">
-            Rejecting comments are required
+            {{'Rejecting comments are required' | translate}}
           </div>
         </div>
 
         <div class="d-flex align-items-center flex-wrap gap-2 mb-3">
           <button type="button" class="custom-btn btn-secondary chip-btn"
             [class.active]="selectedActionStatus === 'reject'" (click)="onRejectChipSelect()">
-            Rejected
+            {{'Rejected' | translate}}
           </button>
         </div>
 
 
         <!-- Attachment (Optional) -->
         <div class="mb-3">
-          <label class="form-label custom-label mb-2">Attachment</label>
+          <label class="form-label custom-label mb-2">{{'Attachment' | translate}}</label>
           <input type="file" class="form-control custom-input" (change)="onFileSelect($event)"
             accept=".pdf,.jpg,.jpeg,.png">
           <!-- <small *ngIf="selectedFileName" class="text-success d-block mt-1">{{ selectedFileName }}</small> -->
@@ -352,15 +352,15 @@
 
       <div class="custom-modal-footer">
         <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()" [disabled]="isSubmitting">
-          No
+          {{'No' | translate}}
         </button>
         <button type="submit" class="custom-btn btn-primary" [disabled]="actionForm.invalid || isSubmitting">
           @if (!isSubmitting) {
-          Reject
+          {{'Reject' | translate}}
           } @else {
           <div class="button-loader-content">
             <div class="spinner-border button-spinner text-light" role="status"></div>
-            <span>Submitting...</span>
+            <span>{{'Submitting...' | translate}}</span>
           </div>
           }
         </button>

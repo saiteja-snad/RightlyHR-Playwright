@@ -13,14 +13,14 @@
         <table class="w-100">
             <thead>
                 <tr>
-                    <th>Vendor Name</th>
-                    <th>Primary Contact Number</th>
-                    <th>Secondary Contact Number </th>
-                    <th>Status </th>
-                    <th>Email Address</th>
-                    <th>Address </th>
+                    <th>{{ 'Vendor Name' | translate }}</th>
+                    <th>{{ 'Primary Contact Number' | translate }}</th>
+                    <th>{{ 'Secondary Contact Number' | translate }}</th>
+                    <th>{{ 'Status' | translate }}</th>
+                    <th>{{ 'Email Address' | translate }}</th>
+                    <th>{{ 'Address' | translate }}</th>
                     @if(rbac.allowedToAccess('Vendor Details.update') || rbac.allowedToAccess('Vendor Details.update')){
-                    <th class="text-center">Action</th>
+                    <th class="text-center">{{ 'Action' | translate }}</th>
                     }
                 </tr>
             </thead>
@@ -43,19 +43,19 @@
                                     <ul class="dropdown-menu custom-dropdown-menu">
                                         <li *ngIf="rbac.allowedToAccess('Vendor Details.update')">
                                             <a class="dropdown-item" (click)="openModal(updateanassets );viewdata(asset);selectedAsset = asset">
-                                               <i class="bi bi-pencil me-2"></i> Update
+                                               <i class="bi bi-pencil me-2"></i> {{ 'Update' | translate }}
                                             </a>
                                         </li>
                                         <li *ngIf="asset.status==='Active' && rbac.allowedToAccess('Vendor Details.delete')">
                                             <a class="dropdown-item" (click)="openModal(inactivevendor);viewdata(asset);selectedAsset = asset">
-                                                    <i class="bi bi-trash3 me-2"></i> Inactive
+                                                    <i class="bi bi-trash3 me-2"></i> {{ 'Inactive' | translate }}
                                             </a>
                                         </li>
                                         <li
                                             *ngIf="asset.status==='Inactive' && rbac.allowedToAccess('Vendor Details.update')">
                                             <a class="dropdown-item"
                                                 (click)="openModal(activevendor);viewdata(asset);selectedAsset = asset">
-                                                 <i class="bi bi-trash3 me-2"></i>Active
+                                                 <i class="bi bi-trash3 me-2"></i>{{ 'Active' | translate }}
                                             </a>
                                         </li>
                                     </ul>
@@ -86,7 +86,7 @@
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="custom-poup-header-content popup-header-border">
             <div>
-                <p class="popup-heading mb-0">Add Vendor Details</p>
+                <p class="popup-heading mb-0">{{ 'Add Vendor Details' | translate }}</p>
             </div>
             <div>
                 <a (click)="openaddventermodal(confirmationdeletepopup)">
@@ -100,55 +100,55 @@
                 <div class="row">
                     <!-- Vendor Details -->
                     <div class="col-md-6 mb-3">
-                        <label class="form-label custom-label mb-2" for="vendordetailes">Vendor Name<span
+                        <label class="form-label custom-label mb-2" for="vendordetailes">{{ 'Vendor Name' | translate }}<span
                                 class="text-danger">*</span></label>
                         <input id="vendordetailes" type="text" (keypress)="formValidation.restrictInputAllowAlphaNumericAndCommonSpecialChars($event)"
                             formControlName="vendordetailes" class="form-control custom-input" autocomplete="off"
-                            placeholder="Please enter vendor name" />
+                            [placeholder]="'Please enter vendor name' | translate" />
                         <div class="error-msg"
                             *ngIf="assetForm.get('vendordetailes')?.invalid && assetForm.get('vendordetailes')?.touched">
                             <!-- Required error -->
                             <div *ngIf="assetForm.get('vendordetailes')?.errors?.['required']">
-                                Vendor Name is required
+                                {{ 'Vendor Name is required' | translate }}
                             </div>
                             <div *ngIf="assetForm.get('vendordetailes')?.errors?.['whitespace']">
-                                Enter a valid Vendor name
+                                {{ 'Enter a valid Vendor name' | translate }}
                             </div>
                             <div *ngIf="assetForm.get('vendordetailes')?.errors?.['pattern']" class="error-msg">
                                 {{ 'Field cannot start with a space' | translate }}
                             </div>
                             <!-- Maxlength error -->
                             <div *ngIf="assetForm.get('vendordetailes')?.errors?.['maxlength']">
-                                Vendor name must not exceed 50 characters
+                                {{ 'Vendor name must not exceed 50 characters' | translate }}
                             </div>
                         </div>
                     </div>
 
                     <!-- Mobile Number -->
                     <div class="col-md-6 mb-3">
-                        <label class="form-label custom-label mb-2" for="phonenumber">Primary Contact<span
+                        <label class="form-label custom-label mb-2" for="phonenumber">{{ 'Primary Contact' | translate }}<span
                                 class="text-danger">*</span></label>
                         <input id="phonenumber" type="text"  (paste)="formValidation.validatePaste($event)" inputmode="numeric" maxlength="15" minlength="10" formControlName="phonenumber"
                             class="form-control custom-input"
                             (keypress)="formValidation.restrictAlphabets($event)"autocomplete="off"
-                            placeholder="Please enter primary contact no" />
+                            [placeholder]="'Please enter primary contact no' | translate" />
 
                         <div class="error-msg"
                             *ngIf="assetForm.controls['phonenumber'].invalid && (assetForm.controls['phonenumber'].touched)">
                             <!-- Required error -->
                             <div
                                 *ngIf="assetForm.controls['phonenumber'].errors?.['required'] && assetForm.controls['phonenumber'].touched">
-                                Primary Contact is required
+                                {{ 'Primary Contact is required' | translate }}
                             </div>
                             <div *ngIf="assetForm.controls['phonenumber'].errors?.['maxlength']">
-                                Primary Contact must be 10 to 15 digits
+                                {{ 'Primary Contact must be 10 to 15 digits' | translate }}
                             </div>
                             <div *ngIf="assetForm.controls['phonenumber'].errors?.['minlength']">
-                                Primary Contact must be 10 to 15  digits
+                                {{ 'Primary Contact must be 10 to 15 digits' | translate }}
                             </div>
                             <!-- Pattern error for Mobile number length -->
                             <div *ngIf="assetForm.controls['phonenumber'].errors?.['allZeroesIfMaxLength']">
-                                Primary Contact is not valid
+                                {{ 'Primary Contact is not valid' | translate }}
                             </div>
                         </div>
                     </div>

@@ -1,7 +1,7 @@
 <div class="custom-main-component-container">
     <div class="component-header-content">
         <div class="heading-content">
-            <div class="commpoment-name">Skill Set<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
+            <div class="commpoment-name">{{ 'Skill Set' | translate }}<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
             </div>
             <div class="component-header">{{componentname | translate}}</div>
             <div>
@@ -10,21 +10,21 @@
         </div>
 
         <div class="d-flex align-items-center gap-3">
-            <div><button type="button" class="clear-all-btn" (click)="clearAllFilters()">Clear All</button></div>
-        
+            <div><button type="button" class="clear-all-btn" (click)="clearAllFilters()">{{ 'Clear All' | translate }}</button></div>
+
             <div class="custom-p-multiSelect-content">
-                <p-multiselect [options]="EmpProficiency" [(ngModel)]="selectedStatus" optionLabel="label" optionValue="value"
-                    placeholder="Please Select Proficiency" [filter]="false" [showToggleAll]="false"
+                <p-multiselect [options]="EmpProficiency" [(ngModel)]="selectedStatus" optionLabel="label"
+                    optionValue="value" [placeholder]="'Please Select Proficiency' | translate" [filter]="false" [showToggleAll]="false"
                     selectedItemsLabel="{0} items selected" [maxSelectedLabels]="3" class="form-select custom-select"
                     (onChange)="onCheckemployeeProficiency($event)" />
             </div>
-        
+
             <!-- Skills Multi select -->
             <div class="custom-p-multiSelect-content">
-                <p-multiselect [options]="multiSkillOptions" [(ngModel)]="selectedSkills" placeholder="Please Select Skills"
-                    optionLabel="label" optionValue="value" [maxSelectedLabels]="3" selectedItemsLabel="{3} items selected"
-                    [filter]="true" resetFilterOnHide="true" class="form-select custom-select"
-                    (onChange)="onSkillSelectionChange($event)" />
+                <p-multiselect [options]="multiSkillOptions" [(ngModel)]="selectedSkills"
+                    [placeholder]="'Please Select Skills' | translate" optionLabel="label" optionValue="value" [maxSelectedLabels]="3"
+                    selectedItemsLabel="{3} items selected" [filter]="true" resetFilterOnHide="true"
+                    class="form-select custom-select" (onChange)="onSkillSelectionChange($event)" />
             </div>
         </div>
     </div>
@@ -67,7 +67,7 @@
                 <div class="col-xl-7 col-lg-6 mb-3">
                     <div class="graph-card">
                         <div class="d-flex align-items-center gap-2 mb-3">
-                            <div class="graph-header">Top 5 Trending skills</div>
+                            <div class="graph-header">{{ 'Top 5 Trending skills' | translate }}</div>
                             <div class="module-info-content">
                                 <app-module-info-icon placement="bottom" [ngbPopover]="topTrendingContent" class="module-icon" />
                                 <ng-template #topTrendingContent>{{topTrendingContentInfo}}</ng-template>
@@ -96,7 +96,7 @@
                 <div class="col-xl-5 col-lg-6 mb-3">
                     <div class="graph-card">
                         <div class="d-flex align-items-center gap-2 mb-3">
-                            <div class="graph-header">Skill Proficiency</div>
+                            <div class="graph-header">{{ 'Skill Proficiency' | translate }}</div>
                             <div class="module-info-content">
                                 <app-module-info-icon placement="bottom" [ngbPopover]="skillProficiencyContent" class="module-icon" />
                                 <ng-template #skillProficiencyContent>{{skillProficiencyContentInfo}}</ng-template>
@@ -131,7 +131,7 @@
                 <div class="col-xl-5 col-lg-6 mb-3">
                     <div class="graph-card">
                         <div class="d-flex align-items-center gap-2 mb-3">
-                            <div class="graph-header">Department Wise Skills</div>
+                            <div class="graph-header">{{ 'Department Wise Skills' | translate }}</div>
                             <div class="module-info-content">
                                 <app-module-info-icon placement="bottom" [ngbPopover]="departmentWiseContent" class="module-icon" />
                                 <ng-template #departmentWiseContent>{{departmentWiseContentInfo}}</ng-template>
@@ -167,7 +167,7 @@
                 <div class="col-xl-7 col-lg-6 mb-3">
                     <div class="graph-card">
                         <div class="d-flex align-items-center gap-2 mb-3">
-                            <div class="graph-header">Skill Overview</div>
+                            <div class="graph-header">{{ 'Skill Overview' | translate }}</div>
                             <div class="module-info-content">
                                 <app-module-info-icon placement="bottom" [ngbPopover]="skillOverviewContent" class="module-icon" />
                                 <ng-template #skillOverviewContent>{{skillOverviewContentInfo}}</ng-template>
@@ -240,7 +240,7 @@
 <!-- view Details Content  -->
 <ng-template #content let-offcanvas>
     <div class="custom-offcanvas-header p-2">
-        <div class="custom-offcanvas-title text-capitalize">Resources with <b>{{ selectedSkillName }}</b>
+        <div class="custom-offcanvas-title text-capitalize">{{ 'Resources with' | translate }} <b>{{ selectedSkillName }}</b>
             <span *ngIf="employeeList?.length" class="ms-2">({{employeeList.length }})</span>
         </div>
         <div>
@@ -256,7 +256,7 @@
             <span class="input-group-text custom-input-group-search" id="basic-addon1">
                 <i class="bi bi-search"></i>
             </span>
-            <input type="search" class="form-control custom-search-input" placeholder="Search" [(ngModel)]="searchQuery"
+            <input type="search" class="form-control custom-search-input" [placeholder]="'Search' | translate" [(ngModel)]="searchQuery"
                 (input)="searchSubject.next(selectedSkillName)" />
         </div>
 
@@ -308,7 +308,7 @@
     <div class="custom-offcanvas-body p-3">
         <div class="custom-p-multiSelect-content custom-select-width mb-3">
             <p-multiselect [options]="departmentOptions" [(ngModel)]="selectedDepartment"
-                placeholder="Please Select Department" selectedItemsLabel="{2} items selected" [maxSelectedLabels]="2"
+                [placeholder]="'Please Select Department' | translate" selectedItemsLabel="{2} items selected" [maxSelectedLabels]="2"
                 resetFilterOnHide="true" optionLabel="label" optionValue="value" class="form-select custom-select"
                 (onChange)="ondepSelectionChange()" />
         </div>
@@ -318,8 +318,8 @@
             <span class="input-group-text custom-input-group-search" id="basic-addon1">
                 <i class="bi bi-search"></i>
             </span>
-            <input type="search" class="form-control custom-search-input" placeholder="Search by employee name / employee Id / role / designation" 
-            [(ngModel)]="searchQuery" (input)="onSearch()" />
+            <input type="search" class="form-control custom-search-input" [placeholder]="'Search' | translate" [(ngModel)]="searchQuery"
+                (input)="onSearch()" />
         </div>
 
         <div *ngIf="isloading" class="text-center py-3">
@@ -344,7 +344,9 @@
                     <u>{{ emp.employeeName }} - ({{ emp.fusionEmployeeId }})</u>
                 </div>
                 <div class="d-flex justify-content-between flex-wrap w-100">
-                    <div class="designation">{{ emp.jobRole || '' }} - {{ emp.departmentName || '' }}</div>
+                    <div class="designation">
+                        {{ emp.jobRole || '' }} - {{ emp.departmentName || '' }}
+                    </div>
                 </div>
             </div>
         </div>
@@ -389,8 +391,8 @@
             <div class="custom-skill-set-tabs">
                 <p-tabs value="0" [lazy]="false">
                     <p-tablist>
-                        <p-tab value="0">Skills</p-tab>
-                        <p-tab value="1">Projects</p-tab>
+                        <p-tab value="0">{{ 'Skills' | translate }}</p-tab>
+                        <p-tab value="1">{{ 'Projects' | translate }}</p-tab>
                     </p-tablist>
                     <!-- Skills -->
                     <p-tabpanel value="0">
@@ -411,7 +413,9 @@
                                             <div class="skill-set-display-card">
                                                 <div class="d-flex flex-wrap gap-2">
                                                     <p-chip *ngFor="let skill of getSkillsByLevel(level, cat.skills)"
-                                                        [label]="skill.skillName" [ngClass]="getProficiencyClass(skill.proficiencyLevel)" />
+                                                        [label]="skill.skillName"
+                                                        [ngClass]="getProficiencyClass(skill.proficiencyLevel)">
+                                                    </p-chip>
                                                 </div>
                                             </div>
                                         </div>
@@ -438,7 +442,7 @@
                                     <div class="offcanvas-chips">
                                         <p-chip class="mb-0">
                                             <a class="Phase-link" *ngIf="proj.phasesCount > 0" (click)="openModal2(projectDisplay, proj)">
-                                                Phases ({{ proj.phasesCount }})
+                                                {{ 'Phases' | translate }} ({{ proj.phasesCount }})
                                             </a>
                                         </p-chip>
                                     </div>
@@ -471,10 +475,10 @@
           <table class="popup-table">
             <thead>
               <tr>
-                <th>Phase Name</th>
-                <th>Start Date</th>
-                <th>End Date</th>
-                <th class="text-center">Status</th>
+                <th>{{ 'Phase Name' | translate }}</th>
+                <th>{{ 'Start Date' | translate }}</th>
+                <th>{{ 'End Date' | translate }}</th>
+                <th class="text-center">{{ 'Status' | translate }}</th>
               </tr>
             </thead>
             <tbody>

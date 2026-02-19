@@ -35,8 +35,7 @@
       <app-cardsmanagement-tabs />
     </div>
     }
-
-    <div class="component-right-content"  [ngClass]="{'full-width': router.url.startsWith('/card-management/card-history')}">
+    <div class="component-right-content">
       <router-outlet />
     </div>
   </div>
@@ -84,7 +83,7 @@
                 class="form-select custom-select"></p-select>
             </div>
             <div *ngIf="cardDetailsForm.get('cardType')?.invalid && cardDetailsForm.get('cardType')?.touched" class="error-msg">
-              Card type is required
+              Card Type is required
             </div>
           </div>
 
@@ -109,7 +108,7 @@
             </div>
             <div class="error-msg" *ngIf="cardDetailsForm.controls['bankName'].invalid && (cardDetailsForm.controls['bankName'].touched 
             || cardDetailsForm.controls['bankName'].dirty)">
-              <span *ngIf="cardDetailsForm.controls['bankName'].errors?.['required']">Bank Name is required / Please limit your input to 100 characters</span>
+              <span *ngIf="cardDetailsForm.controls['bankName'].errors?.['required']">Bank Name is required</span>
             </div>
           </div>
 
@@ -119,7 +118,7 @@
             <input type="text" class="form-control custom-input" formControlName="cardHolderName"
               placeholder="Please enter card holder name" (keypress)="restrictInput($event)">
             <div class="error-msg" *ngIf="cardDetailsForm.get('cardHolderName')?.invalid && cardDetailsForm.get('cardHolderName')?.touched">
-              Card holder name is required
+              Card Holder Name is required
             </div>
           </div>
 
@@ -169,7 +168,7 @@
             <input type="number" class="form-control custom-input" min="0" formControlName="creditLimit" placeholder="Enter credit limit">
               <div class="error-msg"
                 *ngIf="cardDetailsForm.get('creditLimit')?.hasError('required') && cardDetailsForm.get('creditLimit')?.touched">
-                Credit limit is required
+                Credit Limit is required
               </div>
               <div class="error-msg"
                 *ngIf="cardDetailsForm.get('creditLimit')?.hasError('min') && cardDetailsForm.get('creditLimit')?.touched">

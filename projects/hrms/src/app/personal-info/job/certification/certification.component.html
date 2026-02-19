@@ -1,12 +1,12 @@
 <div class="custom-main-component-container">
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <div><span class="component-sub-header">Certifications</span></div>
+        <div><span class="component-sub-header">{{'Certifications'|translate}}</span></div>
 
         @if(canAccess('create','certification')){
         @if((empinfo?.empstatus?.toLowerCase() !== 'prospective' && empinfo?.empstatus?.toLowerCase() !== 'trainee prospective'
         && empinfo?.empstatus?.toLowerCase() !== 'inactive' && empinfo?.empstatus?.toLowerCase() !== 'trainee inactive' )){
         <div class="custom-add-btn" (click)="openModal(addCertificationmodal)">
-            <i class="bi bi-plus plus-icon me-1"></i>Add New
+            <i class="bi bi-plus plus-icon me-1"></i>{{'Add New'|translate}}
         </div>
         }
         }
@@ -17,11 +17,11 @@
         <table class="w-100">
             <thead>
                 <tr>
-                    <th>Certification Name</th>
-                    <th>Certification Id</th>
-                    <th class="text-center">Issued Date</th>
-                    <th class="text-center">Expiry Date</th>
-                    <th class="text-center">Document</th>
+                    <th>{{'Certification Name'|translate}}</th>
+                    <th>{{'Certification Id'|translate}}</th>
+                    <th class="text-center">{{'Issued Date'|translate}}</th>
+                    <th class="text-center">{{'Expiry Date'|translate}}</th>
+                    <th class="text-center">{{'Document'|translate}}</th>
                     @if(canAccess('update','certification') || canAccess('delete','certification')){
                     @if((empinfo?.empstatus?.toLowerCase() !== 'prospective' && empinfo?.empstatus?.toLowerCase() !== 'trainee prospective'
                     && empinfo?.empstatus?.toLowerCase() !== 'inactive' && empinfo?.empstatus?.toLowerCase() !== 'trainee inactive' )){
@@ -38,7 +38,7 @@
                         <td class="text-center text-nowrap">{{empcreficition.issuedDate | dateformat}}</td>
                         <td class="text-center text-nowrap">
                             <span *ngIf="empcreficition.expirationDate != null; else NoExpiration"></span><ng-template
-                                #NoExpiration>No Expiration</ng-template>{{ empcreficition.expirationDate | dateformat }}
+                                #NoExpiration>{{'No Expiration'|translate}}</ng-template>{{ empcreficition.expirationDate | dateformat }}
                         </td>
                         <td class="text-center">
                             <span *ngIf="empcreficition.attachment;else noData" (click)="onSelectBankProofDownload(empcreficition)">
@@ -62,7 +62,7 @@
                                     empinfo?.empstatus?.toLowerCase() !== 'trainee inactive' )){
                                     <li (click)="openModalupdate(updateexperincemodal, empcreficition)">
                                         <a class="dropdown-item">
-                                             <i class="bi bi-pencil me-2"></i>Update
+                                             <i class="bi bi-pencil me-2"></i>{{'Update'|translate}}
                                         </a>
                                     </li>}
                                     }
@@ -73,7 +73,7 @@
                                     empinfo?.empstatus?.toLowerCase() !== 'trainee inactive' )){
                                     <li (click)="opendeletModal(deleteconformation,empcreficition)">
                                         <a class="dropdown-item">
-                                                <i class="bi bi-trash3 me-2"></i>Delete
+                                                <i class="bi bi-trash3 me-2"></i>{{'Delete'|translate}}
                                         </a>
                                     </li>}
                                     }
@@ -103,7 +103,7 @@
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="d-flex justify-content-between popup-header-border p-3">
             <div class="pt-2">
-                <p class="popup-heading mb-0">Add Certification
+                <p class="popup-heading mb-0">{{'Add Certification'|translate}}
                 </p>
             </div>
         </div>
@@ -112,91 +112,85 @@
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label for="certificationName" class="form-label custom-label mb-2">
-                            Certification Name <span class="text-danger">*</span>
+                            {{'Certification Name'|translate}} <span class="text-danger">*</span>
                         </label>
                         <input type="text" class="form-control custom-input" id="certificationName"
-                            formControlName="certificationName" placeholder="Please enter certification name"
+                            formControlName="certificationName" [placeholder]="'Please enter certification name'|translate"
                             (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)" />
                         <div class="error-msg"
                             *ngIf="certificationForm.get('certificationName')?.invalid && certificationForm.get('certificationName')?.touched">
-                            <div *ngIf="certificationForm.get('certificationName')?.errors?.['required']">Certification
-                                Name is required</div>
-                            <div *ngIf="certificationForm.get('certificationName')?.errors?.['pattern']">Enter a
-                                valid Certification Name</div>
+                            <div *ngIf="certificationForm.get('certificationName')?.errors?.['required']">{{'Certification Name is required'|translate}}</div>
+                            <div *ngIf="certificationForm.get('certificationName')?.errors?.['pattern']">{{'Enter a valid Certification Name'|translate}}</div>
                             <div *ngIf="certificationForm.get('certificationName')?.errors?.['maxlength']">
-                                Certification Name cannot exceed 50 characters</div>
+                                {{'Certification Name cannot exceed 50 characters'|translate}}</div>
 
                         </div>
                     </div>
 
                     <div class="col-md-6 mb-3">
                         <label for="certificationId" class="form-label custom-label mb-2">
-                            Certification ID <span class="text-danger">*</span>
+                            {{'Certification ID'|translate}} <span class="text-danger">*</span>
                         </label>
                         <input type="text" class="form-control custom-input" id="certificationId"
-                            formControlName="certificationId" placeholder="Please enter certification ID" />
+                            formControlName="certificationId" [placeholder]="'Please enter certification ID'|translate" />
                         <div class="error-msg"
                             *ngIf="certificationForm.get('certificationId')?.invalid && certificationForm.get('certificationId')?.touched">
-                            <div *ngIf="certificationForm.get('certificationId')?.errors?.['required']">Certification
-                                ID is required</div>
-                            <div *ngIf="certificationForm.get('certificationId')?.errors?.['pattern']">Enter a
-                                valid Certification ID</div>
-                            <div *ngIf="certificationForm.get('certificationId')?.errors?.['maxlength']">Certification
-                                ID cannot exceed 50 characters</div>
+                            <div *ngIf="certificationForm.get('certificationId')?.errors?.['required']">{{'Certification ID is required'|translate}}</div>
+                            <div *ngIf="certificationForm.get('certificationId')?.errors?.['pattern']">{{'Enter a valid Certification ID'|translate}}</div>
+                            <div *ngIf="certificationForm.get('certificationId')?.errors?.['maxlength']">{{'Certification ID cannot exceed 50 characters'|translate}}</div>
                         </div>
                     </div>
 
                     <div class="col-md-6 mb-3">
                         <label for="issuedDate" class="form-label custom-label mb-2 ">
-                            Issued Date <span class="text-danger">*</span>
+                            {{'Issued Date'|translate}} <span class="text-danger">*</span>
                         </label>
                         <input type="date" class="form-control custom-input" id="issuedDate"
                             formControlName="issuedDate" onkeypress="return false" [min]="dateofbirth"
                             [max]="currentDate | date: 'yyyy-MM-dd'" (change)="changesstartdate()" />
                         <div class="error-msg"
                             *ngIf="certificationForm.get('issuedDate')?.invalid && certificationForm.get('issuedDate')?.touched">
-                            Issued date is required
+                            {{'Issued Date is required'|translate}}
                         </div>
                     </div>
 
                     <div class="col-md-6 mb-3">
                         <label for="expiryDate" class="form-label custom-label mb-2">
-                            Expiry Date <span class="text-danger">*</span>
+                            {{'Expiry Date'|translate}} <span class="text-danger">*</span>
                         </label>
                         <input type="date" class="form-control custom-input" id="expiryDate"
                             formControlName="expiryDate" [min]="getMinEndDate()" />
                         <div class="error-msg"
                             *ngIf="certificationForm.get('expiryDate')?.invalid && certificationForm.get('expiryDate')?.touched">
-                            Expiry date is required
+                            {{'Expiry Date is required'|translate}}
                         </div>
                         <!-- <div class="error-msg" *ngIf="!isExpiryDate">Expiry Date cannot be less than Issued Date</div> -->
                         <div class="form-check">
                             <input class="form-check-input mt-2" type="checkbox" id="noExpiry"
                                 formControlName="isExpired" />
-                            <label class="form-check-label  custom-label mt-2" for="noExpiry">No Expiry</label>
+                            <label class="form-check-label  custom-label mt-2" for="noExpiry">{{'No Expiry'|translate}}</label>
                         </div>
                     </div>
 
                     <div class="col-md-6 mb-3">
                         <label for="attachment" class="form-label custom-label mb-2">
-                            Attachment(Upload the Pdf/Image) <span class="text-danger">*</span>
+                            {{'Attachment(Upload the Pdf/Image)'|translate}} <span class="text-danger">*</span>
                         </label>
                         <input class="form-control custom-input px-0" type="file" id="attachment"
                             formControlName="attachment" (change)="onFileChange($event)" accept=".pdf,image/*,.png" />
                         <div class="error-msg"
                             *ngIf="certificationForm.get('attachment')?.invalid && certificationForm.get('attachment')?.touched">
-                            File is required
+                            {{'File is required'|translate}}
                         </div>
                         <div class="d-flex justify-content-between align-items-center mt-2">
-                            <p class="note-text"><span class="note">Note:</span> Only Pdf/Image files are allowed.
-                                The file size should be less than 25MB.</p>
+                            <p class="note-text"><span class="note">{{'Note'|translate}}:</span> {{'Only Pdf/Image files are allowed. The file size should be less than 25MB.'|translate}}</p>
                         </div>
 
                     </div>
                 </div>
 
                 <div class="d-flex justify-content-end gap-3">
-                    <button type="reset" class="custom-btn btn-secondary px-4" (click)="modal.dismiss()">Close</button>
+                    <button type="reset" class="custom-btn btn-secondary px-4" (click)="modal.dismiss()">{{'Close'|translate}}</button>
                     <button type="submit" class="custom-btn btn-primary px-4"
                         [disabled]="certificationForm.invalid || spinnerLoader">
                         @if (spinnerLoader) {
@@ -217,7 +211,7 @@
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="d-flex justify-content-between popup-header-border p-3">
             <div class="pt-2">
-                <p class="popup-heading mb-0">Update Certifications</p>
+                <p class="popup-heading mb-0">{{'Update Certifications'|translate}}</p>
             </div>
         </div>
         <div class="custom-main-popup-content p-4">
@@ -269,7 +263,7 @@
                             [min]="dateofbirth" [max]="currentDate | date: 'yyyy-MM-dd'" />
                         <div class="error-msg"
                             *ngIf="updateCertificationForm.get('issuedDate')?.invalid && updateCertificationForm.get('issuedDate')?.touched">
-                            Issued date is required
+                            Issued Date is required
                         </div>
                     </div>
 
@@ -281,7 +275,7 @@
                             formControlName="expiryDate" [min]="getupdateMinEndDate()" />
                         <div class="error-msg"
                             *ngIf="updateCertificationForm.get('expiryDate')?.invalid && updateCertificationForm.get('expiryDate')?.touched">
-                            Expiry date is required
+                            Expiry Date is required
                         </div>
                         <!-- <div class="error-msg" *ngIf="!isExpiryDate">Expiry Date cannot be less than Issued Date</div> -->
                         <div class="form-check">
@@ -301,8 +295,8 @@
                             *ngIf="updateCertificationForm.get('attachment')?.invalid && updateCertificationForm.get('attachment')?.touched">
                             File is required
                         </div>
-                        <div class="error-msg" *ngIf="showError">Only Pdf/Image files are allowed.</div>
-                        <div class="error-msg" *ngIf="showErrorr">The file size should be less than 25MB.</div>
+                        <div class="error-msg" *ngIf="showError">{{'Only Pdf/Image files are allowed.'|translate}}</div>
+                        <div class="error-msg" *ngIf="showErrorr">{{'The file size should be less than 25MB.'|translate}}</div>
                         <div *ngIf="displaycertification" class="custom-file-name text-wrap mt-2">
                             {{ displaycertification?.name || displaycertification }}
                         </div>
@@ -313,7 +307,7 @@
                     </div>
                 </div>
                 <div class="d-flex justify-content-end gap-3">
-                    <button type="button" class="custom-btn btn-secondary px-4" (click)="modal.dismiss()">Close</button>
+                    <button type="button" class="custom-btn btn-secondary px-4" (click)="modal.dismiss()">{{'Close'|translate}}</button>
                     <button type="submit" class="custom-btn btn-primary px-4"
                         [disabled]="updateCertificationForm.invalid && !displaycertification && updateCertificationForm.get('attachment')?.invalid ||   spinnerLoader">
                         @if (spinnerLoader) {
@@ -334,11 +328,11 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <img src="icons\delete-icon.png" alt="failure icon" class="confirmation-delete-icon mb-4">
-            <p class="confirmation-text mb-4">Are you sure you want to delete the Certification?</p>
+            <p class="confirmation-text mb-4">{{'Are you sure you want to delete the Certification?'|translate}}</p>
         </div>
         <div class="d-flex justify-content-center gap-3 mt-4">
-            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
-            <button type="submit" class="custom-btn btn-primary" (click)="deleteCertification()">Yes</button>
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'|translate}}</button>
+            <button type="submit" class="custom-btn btn-primary" (click)="deleteCertification()">{{'Yes'|translate}}</button>
         </div>
     </div>
 </ng-template>

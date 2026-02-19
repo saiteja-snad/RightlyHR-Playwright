@@ -1,10 +1,10 @@
 <div class="custom-main-component-container">
   <div class="d-flex justify-content-end gap-3">
     <div class="d-flex gap-2 align-items-center">
-      <label class="form-label custom-label filter-labels m-0" for="">Select Year</label>
+      <label class="form-label custom-label filter-labels m-0" for="">{{ 'Select Year' | translate }}</label>
       <form autocomplete="off" [formGroup]="yearSelectionForm">
         <div class="custom-p-select-content">
-          <p-select formControlName="selectedYear" [options]="years" placeholder="Select Year"
+          <p-select formControlName="selectedYear" [options]="years" [placeholder]="'Select Year' | translate"
             class="form-select custom-select" (onChange)="onYearChange()">
           </p-select>
         </div>
@@ -14,7 +14,7 @@
       <label for="education" class="form-label custom-label text-nowrap filter-labels m-0">{{'Select Employee' | translate}}</label>
       <div class="custom-p-select-content">
         <p-select [options]="activeEmplist" [filter]="true" filterBy="label" resetFilterOnHide="true" optionLabel="label"
-          optionValue="value" showClear="true" placeholder="Please select employee name/Id"
+          optionValue="value" showClear="true" [placeholder]="'Select employee name/Id' | translate"
           (onChange)="onCheckemployee($event.value)" class="form-select custom-select"></p-select>
       </div>
     </div>
@@ -25,7 +25,7 @@
 <div class="input-group custom-search mb-3 mt-2">
     <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
     <input type="search" #search="ngModel" [(ngModel)]="searchValue" (ngModelChange)="getAllhoursallocations()"
-        class="form-control custom-search-input" placeholder="Search with employee name" aria-label="Username"
+        class="form-control custom-search-input" [placeholder]="'Search with employee name' | translate" aria-label="Username"
         aria-describedby="basic-addon1">
 </div>
 <div class="custom-table-content">
@@ -34,12 +34,12 @@
             <tr>
                 <th class="text-center">{{'Employee Name'|translate}}</th>
                 <!-- <th class="text-center">{{'Shift Name'|translate}}</th> -->
-                <th class="text-center">{{'Effective From'|translate}}</th>
-                <th class="text-center">{{'Effective To'|translate}}</th>
-                <th class="text-center">{{'Half Day Min Hrs'|translate}}</th>
-                <th class="text-center">{{'Full Day Min Hr'|translate}}s</th>
-                <th class="text-center">{{'Allocated By'|translate}}</th>
-                <th class="text-center">{{'Allocated On'|translate}}</th>
+                <th class="text-center">{{ 'Effective From' | translate }}</th>
+                <th class="text-center">{{ 'Effective To' | translate }}</th>
+                <th class="text-center">{{ 'Half Day Min Hrs' | translate }}</th>
+                <th class="text-center">{{ 'Full Day Min Hrs' | translate }}</th>
+                <th class="text-center">{{ 'Allocated By' | translate }}</th>
+                <th class="text-center">{{ 'Allocated On' | translate }}</th>
                 <th class="text-center">{{'Status'|translate}}</th>
                 <th></th>
                 <!-- <th>Last Updated By</th>
@@ -71,7 +71,7 @@
               </ul> -->
               <ul class="dropdown-menu custom-dropdown-menu" *ngIf="item.status==='Active'">
                 <li (click)="onClick(item,confirmationpopup)">
-                  <a class="dropdown-item">Inactive</a>
+                  <a class="dropdown-item">{{ 'Inactive' | translate }}</a>
                 </li>
               </ul>
             </div></td>
@@ -99,8 +99,8 @@
                 <option *ngFor="let option of options" [value]="option.value">{{ option.label }}</option>
             </select>
             <span class="pagination-label text-nowrap">
-                Showing {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize :
-                (+first + + rows) }} of {{ collectionSize }}
+                {{ 'Showing' | translate }} {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize :
+                (+first + + rows) }} {{ 'of' | translate }} {{ collectionSize }}
             </span>
         </div>
         <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"
@@ -114,10 +114,10 @@
   <div class="custom-main-popup-container" ngbAutofocus>
     <div class="custom-poup-header-content popup-header-border">
       <div class="pt-2">
-        <p class="popup-heading mb-0">{{'History Details' | translate}}</p>
+        <p class="popup-heading mb-0">{{ 'History Details' | translate }}</p>
       </div>
       <div>
-        <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+        <a (click)="modal.dismiss()"><img src="icons/close.png" [alt]="'Close Icon' | translate" class="close-icon"></a>
       </div>
     </div>
 
@@ -126,11 +126,11 @@
         <table class="w-100">
           <thead>
             <tr>
-             <th class="text-nowrap">{{'Employee Name' | translate}}</th>
-              <th class="text-nowrap">{{'Effective Date' | translate}}</th>
-              <th class="text-nowrap">{{'Days' | translate}}</th>
-              <th class="text-nowrap">{{'Allocated By' |translate}}</th>
-              <th class="text-nowrap">{{'Allocated On' |translate}}</th>
+             <th class="text-nowrap">{{ 'Employee Name' | translate }}</th>
+              <th class="text-nowrap">{{ 'Effective Date' | translate }}</th>
+              <th class="text-nowrap">{{ 'Days' | translate }}</th>
+              <th class="text-nowrap">{{ 'Allocated By' | translate }}</th>
+              <th class="text-nowrap">{{ 'Allocated On' | translate }}</th>
             </tr>
           </thead>
           <tbody>
@@ -158,16 +158,16 @@
 <ng-template #confirmationpopup let-model>
   <div class="result-popup-content" ngbAutofocus>
     <div>
-      <img src="/icons/reject.png" alt="failure icon" class="confirmation-icon mb-4">
-      <p class="confirmation-text mb-4"> Are you sure you want to Inactive ?</p>
+      <img src="/icons/reject.png" [alt]="'failure icon' | translate" class="confirmation-icon mb-4">
+      <p class="confirmation-text mb-4">{{ 'Are you sure you want to Inactive ?' | translate }}</p>
     </div>
 
     <div class="d-flex justify-content-center gap-3 mt-4">
       <button type="button" class="custom-btn btn-secondary" (click)="model.dismiss()">
-        No
+        {{ 'No' | translate }}
       </button>
       <button type="submit" class="custom-btn btn-primary" (click)="InactiveWFHAllocation(); model.close()">
-        Yes
+        {{ 'Yes' | translate }}
       </button>
     </div>
   </div>
@@ -175,16 +175,16 @@
 <ng-template #Activeconfirmationpopup let-model>
   <div class="result-popup-content" ngbAutofocus>
     <div>
-      <img src="/icons/reject.png" alt="failure icon" class="confirmation-icon mb-4">
-      <p class="confirmation-text mb-4"> Are you sure you want to active?</p>
+      <img src="/icons/reject.png" [alt]="'failure icon' | translate" class="confirmation-icon mb-4">
+      <p class="confirmation-text mb-4">{{ 'Are you sure you want to active?' | translate }}</p>
     </div>
 
     <div class="d-flex justify-content-center gap-3 mt-4">
       <button type="button" class="custom-btn btn-secondary" (click)="model.dismiss()">
-        No
+        {{ 'No' | translate }}
       </button>
       <button type="submit" class="custom-btn btn-primary" (click)="activeWFHAllocation(); model.close()">
-        Yes
+        {{ 'Yes' | translate }}
       </button>
     </div>
   </div>

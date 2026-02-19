@@ -72,7 +72,7 @@ export class CardsManagementLayoutComponent implements OnInit, OnDestroy {
   updateModuleInfo() {
     const url = this.router.url;
     const routeToInfoMap: { [key: string]: string } = {
-      '/card-management': MODULE_INFOS.CARDS_MANAGEMENT_MODULE_INFO,
+      '/card-management/details': MODULE_INFOS.CARDS_MANAGEMENT_MODULE_INFO,
       '/card-management/card-history' :MODULE_INFOS.CARDS_HISTORY_MODULE_INFO,
     };
     const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));

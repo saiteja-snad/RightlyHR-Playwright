@@ -4,10 +4,10 @@
         <form autocomplete="off" [formGroup]="ExpenseReportForm" (ngSubmit)="generateExpenseReport()"
             *ngIf="ExpenseReportForm">
             <div class="d-flex align-items-center gap-3 flex-wrap">
-             @if(
-  rbac.allowedToAccess('Expense Report - Generate.view') &&
-  isAnyFilterSelected()
-){
+                @if(
+                rbac.allowedToAccess('Expense Report - Generate.view') &&
+                isAnyFilterSelected()
+                ){
                 <button type="button" class="clear-all-btn" [disabled]="
                 !ExpenseReportForm.get('employee')?.value &&
                 !ExpenseReportForm.get('dateRange')?.value &&
@@ -16,7 +16,7 @@
                 !ExpenseReportForm.get('team')?.value" (click)="clearAllFilters()">
                     {{'Clear All' | translate}}
                 </button>
-            }
+                }
                 <!-- Date Range -->
                 <div class="custom-date-range-picker">
                     <p-datepicker formControlName="dateRange" [placeholder]="'Please Select Date'" selectionMode="range"
@@ -28,7 +28,8 @@
                 <div class="custom-p-select-content">
                     <p-select [options]="employeeiddetails" optionLabel="fullName" filterBy="fullName" [filter]="true"
                         formControlName="employee" placeholder="Please select employee"
-                        class="form-select custom-select" filterPlaceholder="Search employee" [resetFilterOnHide]="true">
+                        class="form-select custom-select" filterPlaceholder="Search employee"
+                        [resetFilterOnHide]="true">
                         <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
                         <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
                     </p-select>
@@ -66,12 +67,13 @@
                         placeholder="Please select status" class="form-select custom-select"></p-select>
                 </div>
                 <!-- } -->
-                <div *ngIf="filteredleaveRecord?.[filteredleaveRecord.length - 1]?.totalExpenseAmount" class="d-flex align-items-center gap-2">
-                     <label for="education" class="form-label custom-label text-nowrap filter-labels m-0">{{'Total Amount'
-                    | translate}}:</label>
-               <div >
-              <b><span class="me-1">$</span>{{ filteredleaveRecord?.[filteredleaveRecord.length - 1]?.totalExpenseAmount }}</b>
-               </div>
+                <div *ngIf="filteredleaveRecord?.[filteredleaveRecord.length - 1]?.totalExpenseAmount"
+                    class="d-flex align-items-center gap-2">
+                    <label for="education" class="form-label custom-label text-nowrap filter-labels m-0">{{'Total Amount'| translate}}:</label>
+                    <div>
+                        <b><span class="me-1">₹</span>{{ filteredleaveRecord?.[filteredleaveRecord.length -
+                            1]?.totalExpenseAmount }}</b>
+                    </div>
                 </div>
                 <!-- Buttons -->
                 <div class="d-flex gap-2">
@@ -86,7 +88,7 @@
                     </button>
                     }
 
-                    @if(rbac.allowedToAccess('Expense Report - Generate.view') && rbac.allowedToAccess('Expense Report - Export.view')){
+                    @if(rbac.allowedToAccess('Expense Report - Generate.view') && rbac.allowedToAccess('Expense Report -Export.view')){
                     <button type="button" class="custom-btn btn-primary" (click)="exportToExcelYearly()"
                         [disabled]="filteredleaveRecord.length == 0 || disableBtn">
                         @if(spinnerLoader2){
@@ -134,12 +136,13 @@
                     {{ record.appliedDate ? (record.appliedDate | dateformat) : '-' }}
                 </td>
                 <td>{{ record.expenseTitle ?? '-'}}</td>
-                <td class = "text-center"><span *ngIf="record.totalAmount" class="me-1">$</span>{{( record.totalAmount | number:'1.2-2') ?? '-'}}</td>
+                <td class="text-center"><span *ngIf="record.totalAmount" class="me-1">₹</span>{{( record.totalAmount |
+                    number:'1.2-2') ?? '-'}}</td>
                 <td>{{ record.expensesStatus ?? '-' }}</td>
                 <td class="text-start cursor">
                     <ng-container *ngIf="record.expensesItems?.length; else noDetails">
                         <u class="clickable-text" (click)="openExpenseDetails(record)">
-                            View Details
+                            {{'View Details' | translate}}
                         </u>
                     </ng-container>
                     <ng-template #noDetails>-</ng-template>
@@ -164,7 +167,7 @@
                         <thead>
                             <tr>
                                 <th colspan="7" class="custom-popup-header">
-                                    {{ selectedEmployee?.employeeName }} - Expense Details
+                                    {{ selectedEmployee?.employeeName }} - {{'Expense Details' | translate}}
                                 </th>
                             </tr>
                             <tr>

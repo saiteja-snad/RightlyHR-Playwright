@@ -325,31 +325,3 @@
 .clear-all-btn:focus {
   outline: none;
 }
-.module-info-content {
-  .popover-body {
-    padding: 0.5rem !important;
-    border-radius: 0.5rem;
-    border: 2px solid #FFF !important;
-    box-shadow: 0px 0px 10px 0px rgba(11, 58, 131, 0.5019607843) !important;
-    font-weight: 400 !important;
-    font-size: var(--fontsize12) !important;
-    letter-spacing: 0%;
-    color: #424242 !important;
-  }
-
-  .module-icon {
-    width: 1.25rem;
-    height: 1.25rem;
-    cursor: pointer;
-  }
-
-  .popover {
-    --bs-popover-max-width: 25rem !important;
-    --bs-popover-border-color: var(--module-info-bg) !important;
-    background: var(--module-info-bg) !important;
-  }
-
-  .bs-popover-bottom>.popover-arrow::after {
-    border-bottom-color: #FFFFFF !important;
-  }
-}

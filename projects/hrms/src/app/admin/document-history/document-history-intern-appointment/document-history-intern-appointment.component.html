@@ -10,11 +10,12 @@
         <div class="custom-year-month-picker">
             <p-datepicker [(ngModel)]="selectedDate" placeholder="Select Month & Year"
                 (ngModelChange)="onMonthChange($event)" [showIcon]="true" view="month" dateFormat="mm/yy"
-                [readonlyInput]="true" [maxDate]="maxMonth" />
+                [readonlyInput]="true" [maxDate]="maxMonth">
+            </p-datepicker>
         </div>
     </div>
 
-    <div class="custom-table-content documnet-history-table-height">
+    <div class="custom-table-content">
         @if(!dataloader){
         <table class="w-100">
             <thead>
@@ -28,17 +29,17 @@
             </thead>
             <tbody>
                 @if(offerLetters.length > 0){
-                @for (appointmentLetter of offerLetters | appointmentletterpipe : searchValue; ; track appointmentLetter.id){
+                @for (appointmentLetter of offerLetters | appointmentletterpipe : searchValue; ; track
+                appointmentLetter.id){
                 <tr>
                     <td>{{appointmentLetter.appointmentSentDate | dateformat }}</td>
                     <td>{{appointmentLetter.employeeName ?appointmentLetter.employeeName:'-'}}</td>
                     @if(rbac.allowedToAccess('Trainee Appointment Letter Download.view')){
                     <td>
                         <span (click)="onSelectDownload(appointmentLetter)">
-                            <app-download-icon />
+                              <app-download-icon />
                         </span>
-                    </td>
-                    }
+                    </td>}
                 </tr>
                 }
                 }

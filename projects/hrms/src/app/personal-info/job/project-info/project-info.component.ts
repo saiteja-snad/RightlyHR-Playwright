@@ -9,6 +9,7 @@ import { DropdownModule } from 'primeng/dropdown';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TooltipModule } from 'primeng/tooltip';
 import { Subscription } from 'rxjs';
+import { TranslateModule } from '@ngx-translate/core';
 
 
 @Component({
@@ -21,6 +22,7 @@ import { Subscription } from 'rxjs';
     TooltipModule,
     NoDataFoundComponent,
     DataLoaderContentComponent,
+    TranslateModule,
   ],
   templateUrl: './project-info.component.html',
   styleUrls: ['./project-info.component.scss'],

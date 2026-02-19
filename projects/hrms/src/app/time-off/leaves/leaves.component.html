@@ -15,7 +15,7 @@
                     {{'Select Employee' | translate}}</label>
                 <div class="custom-p-select-content">
                     <p-select [options]="activeEmplist" [filter]="true" filterBy="label" resetFilterOnHide="true"
-                     optionLabel="label" optionValue="value" showClear="true" placeholder="Please select employee name"
+                     optionLabel="label" optionValue="value" showClear="true" placeholder="Select employee name"
                      (onChange)="onCheckemployee($event.value)" class="form-select custom-select"></p-select>
                 </div>
             </div>
@@ -25,7 +25,7 @@
                 <label for="education" class="form-label custom-label text-nowrap filter-labels m-0">{{'Select Employee' | translate}}</label>
                 <div class="custom-p-select-content">
                     <p-select [options]="activeEmplist" [filter]="true" filterBy="label" resetFilterOnHide="true" optionLabel="label"
-                    optionValue="value" showClear="true" placeholder="Please select employee name" (onChange)="onCheckemployee($event.value)"
+                    optionValue="value" showClear="true" placeholder="Select employee name" (onChange)="onCheckemployee($event.value)"
                     class="form-select custom-select"></p-select>
                 </div>
             </div>
@@ -35,7 +35,7 @@
                 <label class="form-label filter-labels m-0">{{'My Team'| translate}}</label>
                 <div class="custom-p-select-content">
                     <p-select [options]="getEmployeeInfo" optionLabel="fullName" showClear="true" optionValue="employeeId"
-                        name="myteamemployees" placeholder="Please select employee name" [filter]="true" resetFilterOnHide="true"
+                        name="myteamemployees" placeholder="Select employee name" [filter]="true" resetFilterOnHide="true"
                         class="form-select custom-select" [autoDisplayFirst]="false" required
                         (onChange)="onCheckemployee($event.value)">
                     </p-select>
@@ -190,7 +190,7 @@
                                 (onChange)="onleaveSelect($event.value)"></p-select>
                         </div>
                         <div class="error-msg" *ngIf="leaveForm.get('leaveType')?.invalid && leaveForm.get('leaveType')?.touched">
-                            Leave type is required</div>
+                            Leave Type is required</div>
                     </div>
 
                     <div class="col-md-6 mb-3">
@@ -199,7 +199,7 @@
                         <input type="date" class="form-control custom-input" formControlName="startdate" (keypress)="false"
                             (ngModelChange)="onstartdate('add')" (ngModelChange)="onStartDateChange()">
                         <div class="error-msg">
-                            <div *ngIf="leaveForm.get('startdate')?.invalid && leaveForm.get('startdate')?.touched">Start date is required</div>
+                            <div *ngIf="leaveForm.get('startdate')?.invalid && leaveForm.get('startdate')?.touched">Start Date is required</div>
                             <div *ngIf="isoptionalnotallowedatWorkingdate && leaveForm.get('startdate')?.value">Please select optional holiday</div>
                             <div *ngIf="(isHolidaySelected || isNonOptionalHolidaySelected)">Selected date is a holiday</div>
                             <div *ngIf="(isWeekOffSelected)">Selected date is a weekend</div>
@@ -217,7 +217,7 @@
                         <input type="date" class="form-control custom-input" formControlName="enddate" [min]="leaveForm.get('startdate')?.value"
                             (ngModelChange)="onEndDate('add')" />
                         <div class="error-msg">
-                            <div *ngIf="(leaveForm.get('enddate')?.invalid && leaveForm.get('enddate')?.touched)">End date is required</div>
+                            <div *ngIf="(leaveForm.get('enddate')?.invalid && leaveForm.get('enddate')?.touched)">End Date is required</div>
                             <!-- Weekend Error -->
                             <div *ngIf="(isWeekOffSelectedEndate)">Selected date is a weekend</div>
                             <div *ngIf="((leaveForm.get('enddate')?.invalid || leaveForm.get('enddate')?.touched) &&

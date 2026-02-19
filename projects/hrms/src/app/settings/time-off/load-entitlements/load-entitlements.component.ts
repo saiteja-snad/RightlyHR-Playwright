@@ -6,9 +6,10 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { OpenModalService } from '../../../services/open-modal.service';
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
   selector: 'app-load-entitlements',
-  imports: [CommonModule, FormsModule, NoDataFoundComponent],
+  imports: [CommonModule, FormsModule, NoDataFoundComponent, TranslateModule],
   templateUrl: './load-entitlements.component.html',
   styleUrl: './load-entitlements.component.scss',
 })

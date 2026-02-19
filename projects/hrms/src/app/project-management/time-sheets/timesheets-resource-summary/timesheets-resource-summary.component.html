@@ -1,18 +1,18 @@
 <div class="custom-main-component-container">
   <div class="component-header-content">
     <div class="heading-content">
-      <div class="commpoment-name">Project Management
+      <div class="commpoment-name">{{"Project Management" | translate}}
         <span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
       </div>
       @if(isShowtimesheetforteamRoute()){
       <div class="commpoment-name">
-        <a (click)="navigatetoteam()"><u>Team Timesheet</u></a>
+        <a (click)="navigatetoteam()"><u>{{"Team Timesheet" | translate}}</u></a>
         <span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
       </div>
       }
       @if(isShowtimesheetformyRoute()){
       <div class="commpoment-name">
-        <a (click)="navigatetomy()"><u>My Timesheet</u></a>
+        <a (click)="navigatetomy()"><u>{{"My Timesheet" | translate}}</u></a>
         <span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
       </div>
       }
@@ -24,13 +24,13 @@
     </div>
 
     <div class="d-flex align-items-center gap-3">
-      <div class="total-hrs">{{"Total Logged Hours" }}:<span class="total-duration ms-1">{{ totalhrs}} Hrs</span></div>
+      <div class="total-hrs">{{"Total Logged Hours" | translate}}:<span class="total-duration ms-1">{{ totalhrs}} {{"Hrs" | translate}}</span></div>
       <form [formGroup]="datepickerForm">
         <div class="d-flex gap-3 align-items-center">
           <!-- Date Picker Outside Offcanvas -->
           <div class="d-flex gap-2 align-items-center">
             <div class="custom-date-range-picker">
-              <p-datepicker formControlName="dateRange" [placeholder]="'Please Select Date range'" selectionMode="range"
+              <p-datepicker formControlName="dateRange" [placeholder]="'Please Select Date range' | translate" selectionMode="range"
                 [showIcon]="true" [readonlyInput]="true" />
             </div>
           </div>
@@ -41,7 +41,7 @@
             <div class="custom-p-select-content">
               <p-select [options]="activeEmplist" [filter]="true" filterBy="label" [resetFilterOnHide]="true"
                 optionLabel="label" optionValue="value" formControlName="resourceId"
-                [placeholder]="activeEmplist.length === 0 ? 'No results found' : 'Please select employee'"
+                [placeholder]="activeEmplist.length === 0 ? ('No results found' | translate) : ('Select employee' | translate)"
                 class="form-select custom-select" />
             </div>
           </div>
@@ -52,7 +52,7 @@
             <div class="custom-p-select-content">
               <p-select [options]="resourcesList" [filter]="true" filterBy="fullName" [resetFilterOnHide]="true"
                 optionLabel="fullName" optionValue="id" formControlName="resourceId"
-                [placeholder]="resourcesList.length === 0 ? 'No results found' : 'Please select employee'"
+                [placeholder]="resourcesList.length === 0 ? ('No results found' | translate) : ('Select employee' | translate)"
                 class="form-select custom-select" />
             </div>
           </div>
@@ -62,7 +62,7 @@
           <div *ngIf="!isShowtimesheetformyRoute() && rbac.allowedToAccess('Team Time Sheet Filters Tab.view')">
             <button type="button" class="custom-btn btn-secondary position-relative"
               (click)="toggleFilters(filterContent)">
-              <i class="bi bi-funnel me-2"></i>Filters
+              <i class="bi bi-funnel me-2"></i>{{"Filters" | translate}}
               <span *ngIf="isFilterApplied()" class="filter-indicator"></span>
             </button>
           </div>
@@ -101,7 +101,7 @@
               <form [formGroup]="datepickerForm">
                 <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
                   <div class="summary-header d-inline-flex gap-2">
-                    <div>Projects Summary</div>
+                    <div>{{"Projects Summary" | translate}}</div>
                     <div>
                       <app-module-info-icon placement="bottom" [ngbPopover]="resourceSummaryContent"
                         class="module-icon" />
@@ -118,12 +118,12 @@
                 <table class="w-100">
                   <thead>
                     <th>{{'Project Name'|translate}}</th>
-                    <th class="text-center">{{'Project Code'|translate}}</th>
-                    <th class="text-center">{{'Department'|translate}}</th>
-                    <th class="text-center">{{'Phase'|translate}}</th>
-                    <th class="text-center">{{'Role'|translate}}</th>
-                    <th class="text-center">{{'Total Hours'|translate}}</th>
-                    <th class="text-center">{{'Status'|translate}}</th>
+                    <th>{{"Project Code" | translate}}</th>
+                    <th class="text-center">{{"Department" | translate}}</th>
+                    <th class="text-center">{{"Phase" | translate}}</th>
+                    <th class="text-center">{{"Role" | translate}}</th>
+                    <th class="text-center">{{"Total Hours" | translate}}</th>
+                    <th class="text-center">{{"Status" | translate}}</th>
                   </thead>
                   <tbody>
                     <tr *ngFor="let item of projectSummeryData">
@@ -160,7 +160,7 @@
             @if (!timeAllocatedLoader) {
             <div class="time-sheet-graph-card">
               <div class="summary-header d-flex gap-2 mb-2">
-                <div>Project-wise Time Allocation</div>
+                <div>{{"Project-wise Time Allocation" | translate}}</div>
                 <div>
                   <app-module-info-icon placement="bottom" [ngbPopover]="projectTypedata" class="module-icon" />
                   <ng-template #projectTypedata>
@@ -238,7 +238,7 @@
             <div class="time-sheet-graph-card p-3">
               <div class="d-flex flex-wrap justify-content-between align-items-center pb-3">
                 <div class="summary-header d-flex gap-2 mb-2">
-                  <div>Allocated vs Actual Hours</div>
+                  <div>{{"Allocated vs Actual Hours" | translate}}</div>
                   <div>
                     <app-module-info-icon placement="bottom" [ngbPopover]="estimatedContent"
                       class="module-icon" />
@@ -252,7 +252,7 @@
                 <div class="d-flex align-items-center gap-2">
                   <div class="d-flex align-items-center gap-1" *ngFor="let item of estimatedlabels">
                     <span class="legend-circle" [ngStyle]="{ 'background-color': item.color }"></span>
-                    <span class="legend-label">{{ item.label }}</span>
+                    <span class="legend-label">{{item.label | translate}}</span>
                   </div>
                 </div>
               </div>
@@ -278,7 +278,7 @@
             <div class="time-sheet-graph-card">
               <div class="d-flex flex-wrap justify-content-between align-items-center pb-3">
                 <div class="summary-header d-flex gap-2">
-                  <div>Billable vs Non-Billable Hours</div>
+                  <div>{{"Billable vs Non-Billable Hours" | translate}}</div>
                   <div>
                     <app-module-info-icon placement="bottom" [ngbPopover]="billablevsNonBillableHoursdata"
                       class="module-icon" />
@@ -291,7 +291,7 @@
                 <div class="d-flex align-items-center gap-2">
                   <div class="d-flex align-items-center gap-1" *ngFor="let item of billablelabels">
                     <span class="legend-circle" [ngStyle]="{ 'background-color': item.color }"></span>
-                    <span class="legend-label">{{ item.label }}</span>
+                    <span class="legend-label">{{item.label | translate}}</span>
                   </div>
                 </div>
               </div>
@@ -368,7 +368,7 @@
           <div class="custom-p-multiSelect-content">
             <p-multiSelect [options]="clientDetails" [filter]="true" filterBy="clientName" [resetFilterOnHide]="true"
               optionLabel="clientName" optionValue="clientId" formControlName="clientId"
-              (onChange)="getAllEmployeeDetails()" placeholder="Please select client"
+              (onChange)="getAllEmployeeDetails()" [placeholder]="'Please select client' | translate"
               class="form-select custom-select" />
           </div>
         </div>
@@ -378,7 +378,7 @@
           <div class="custom-p-multiSelect-content">
             <p-multiSelect [options]="projectDetails" [filter]="true" filterBy="projectName" [resetFilterOnHide]="true"
               optionLabel="projectName" optionValue="projectId" formControlName="projectId"
-              (onChange)="getAllEmployeeDetails()" placeholder="Please select project"
+              (onChange)="getAllEmployeeDetails()" [placeholder]="'Please select project' | translate"
               class="form-select custom-select" />
           </div>
         </div>
@@ -388,7 +388,7 @@
           <div class="custom-p-multiSelect-content">
             <p-multiSelect [options]="departmentDetails" [filter]="true" filterBy="departmentName"
               [resetFilterOnHide]="true" optionLabel="departmentName" optionValue="sno" formControlName="departmentId"
-              (onChange)="getAllEmployeeDetails()" placeholder="Please select department"
+              (onChange)="getAllEmployeeDetails()" [placeholder]="'Please select department' | translate"
               class="form-select custom-select" />
           </div>
         </div>
@@ -398,7 +398,7 @@
           <div class="custom-p-multiSelect-content">
             <p-multiSelect [options]="tmandRmDetails" [filter]="true" filterBy="fullName" [resetFilterOnHide]="true"
               optionLabel="fullName" optionValue="employeeId" formControlName="tmorrmId"
-              (onChange)="getAllEmployeeDetails()" placeholder="Please select rm/tm"
+              (onChange)="getAllEmployeeDetails()" [placeholder]="'Please select rm/tm' | translate"
               class="form-select custom-select" />
           </div>
         </div>
@@ -419,7 +419,7 @@
   <div class="custom-main-popup-container" ngbAutofocus>
     <div class="custom-poup-header-content popup-header-border">
       <div>
-        <p class="popup-heading m-0">Apllied Filters</p>
+        <p class="popup-heading m-0">{{"Apllied Filters" | translate}}</p>
       </div>
       <div>
         <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>

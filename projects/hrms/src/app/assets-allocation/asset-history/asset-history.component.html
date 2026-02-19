@@ -35,37 +35,36 @@
                                 <div class="card-body">
                                     <div class="row mb-3">
                                         <div class="col">
-                                            <p class="component-sub-header mb-0">Asset ID</p>{{ asset?.assetIdName }}
+                                            <p class="component-sub-header mb-0">{{'Asset ID'|translate}}</p>{{ asset?.assetIdName }}
                                         </div>
                                         <div class="col">
-                                            <p class="component-sub-header mb-0">Asset Category</p>{{ assetDetails?.assetCategory }}
+                                            <p class="component-sub-header mb-0">{{'Asset Category'|translate}}</p>{{ assetDetails?.assetCategory }}
                                         </div>
                                         <div class="col">
-                                            <p class="component-sub-header mb-0">Asset Sub
-                                                Category</p>{{assetDetails?.assetSubCategory}}
+                                            <p class="component-sub-header mb-0">{{'Asset Sub Category'|translate}}</p>{{assetDetails?.assetSubCategory}}
                                         </div>
                                         <div class="col">
-                                            <p class="component-sub-header mb-0">Serial Number</p>{{
+                                            <p class="component-sub-header mb-0">{{'Serial Number'|translate}}</p>{{
                                             assetDetails?.serialNumber }}
                                         </div>
                                     </div>
                                     <div class="row mb-3">
                                         <div class="col">
-                                            <p class="component-sub-header mb-0">Asset Status</p>{{ asset.status }}
+                                            <p class="component-sub-header mb-0">{{'Asset Status'|translate}}</p>{{ asset.status }}
                                         </div>
                                         <div class="col">
-                                            <p class="component-sub-header mb-0">Allocated To</p>{{ asset.firstName
+                                            <p class="component-sub-header mb-0">{{'Allocated To'|translate}}</p>{{ asset.firstName
                                             }}
                                             {{ asset.lastName }}
                                         </div>
                                         <div class="col">
-                                            <p class="component-sub-header mb-0">Allocation Date</p>{{
+                                            <p class="component-sub-header mb-0">{{'Allocation Date'|translate}}</p>{{
                                             asset.allocatedDate | dateformat }}
                                         </div>
                                         <div class="col">
-                                            <p class="component-sub-header mb-0">Released Date</p>{{
+                                            <p class="component-sub-header mb-0">{{'Released Date'|translate}}</p>{{
                                             asset.returnDate ?
-                                            (asset.returnDate | dateformat) : 'N/A' }}
+                                            (asset.returnDate | dateformat) : ('N/A'|translate) }}
                                         </div>
                                     </div>
                                 </div>
@@ -83,19 +82,19 @@
 
                                     <div class="row mb-3">
                                         <div class="col">
-                                            <p class="component-sub-header mb-0">From Location</p><br>
+                                            <p class="component-sub-header mb-0">{{'From Location'|translate}}</p><br>
                                             {{ transfer.fromlocationname }}
                                         </div>
                                         <div class="col">
-                                            <p class="component-sub-header mb-0">From Sub Location</p><br>
+                                            <p class="component-sub-header mb-0">{{'From Sub Location'|translate}}</p><br>
                                             {{ transfer.fromsublocationname }}
                                         </div>
                                         <div class="col">
-                                            <p class="component-sub-header mb-0">To Location</p><br>
+                                            <p class="component-sub-header mb-0">{{'To Location'|translate}}</p><br>
                                             {{ transfer.locationname }}
                                         </div>
                                         <div class="col">
-                                            <p class="component-sub-header mb-0">To Sub Location</p><br>
+                                            <p class="component-sub-header mb-0">{{'To Sub Location'|translate}}</p><br>
                                             {{ transfer.sublocationname }}
                                         </div>
                                     </div>
@@ -113,26 +112,24 @@
                                 *ngIf="transaction.status === 'Under Maintenance' || transaction.status === 'Available' ">
                                 <div class="card-body">
                                     <div class="row mb-3">
-                                        <div class="col"><strong>Asset Category</strong><br>{{
+                                        <div class="col"><strong>{{'Asset Category'|translate}}</strong><br>{{
                                             assetDetails?.assetCategory}}</div>
-                                        <div class="col"><strong>Asset Sub
-                                                Category</strong><br>{{assetDetails?.assetSubCategory}}</div>
-                                        <div class="col"><strong>Serial Number</strong><br>{{
+                                        <div class="col"><strong>{{'Asset Sub Category'|translate}}</strong><br>{{assetDetails?.assetSubCategory}}</div>
+                                        <div class="col"><strong>{{'Serial Number'|translate}}</strong><br>{{
                                             assetDetails?.serialNumber }}</div>
-                                        <div class="col"><strong>Asset Model</strong> <br> {{
+                                        <div class="col"><strong>{{'Asset Model'|translate}}</strong> <br> {{
                                             assetDetails?.assetModel }}</div>
                                     </div>
                                     <div class="row mb-3">
-                                        <div class="col"><strong>Reason</strong><br>{{ transaction.reason }}</div>
-                                        <div class="col"><strong> Asset Status</strong><br>{{ transaction.status }}
+                                        <div class="col"><strong>{{'Reason'|translate}}</strong><br>{{ transaction.reason }}</div>
+                                        <div class="col"><strong>{{'Asset Status'|translate}}</strong><br>{{ transaction.status }}
                                         </div>
                                         <div class="col" *ngIf="transaction.status !== 'Inactive'">
-                                            <strong>Maintenance Start Date</strong><br>
-                                            {{ transaction.fromDate ? (transaction.fromDate | dateformat) : 'N/A' }}
+                                            <strong>{{'Maintenance Start Date'|translate}}</strong><br>
+                                            {{ transaction.fromDate ? (transaction.fromDate | dateformat) : ('N/A'|translate) }}
                                         </div>
-                                        <div class="col" *ngIf="transaction.status !== 'Inactive'"><strong>
-                                                Maintenance End Date</strong><br>{{ transaction.toDate ?
-                                            (transaction.toDate | dateformat) : 'N/A' }}</div>
+                                        <div class="col" *ngIf="transaction.status !== 'Inactive'"><strong>{{'Maintenance End Date'|translate}}</strong><br>{{ transaction.toDate ?
+                                            (transaction.toDate | dateformat) : ('N/A'|translate) }}</div>
                                     </div>
                                 </div>
                             </div>
@@ -142,18 +139,17 @@
                                 *ngIf="transaction.status === 'Block' ">
                                 <div class="card-body">
                                     <div class="row mb-3">
-                                        <div class="col"><strong>Asset Category</strong><br>{{
+                                        <div class="col"><strong>{{'Asset Category'|translate}}</strong><br>{{
                                             assetDetails?.assetCategory}}</div>
-                                        <div class="col"><strong>Asset Sub
-                                                Category</strong><br>{{assetDetails?.assetSubCategory}}</div>
-                                        <div class="col"><strong>Serial Number</strong><br>{{
+                                        <div class="col"><strong>{{'Asset Sub Category'|translate}}</strong><br>{{assetDetails?.assetSubCategory}}</div>
+                                        <div class="col"><strong>{{'Serial Number'|translate}}</strong><br>{{
                                             assetDetails?.serialNumber }}</div>
-                                        <div class="col"><strong>Asset Model</strong> <br> {{
+                                        <div class="col"><strong>{{'Asset Model'|translate}}</strong> <br> {{
                                             assetDetails?.assetModel }}</div>
                                     </div>
                                     <div class="row mb-3">
                                         <div class="col">
-                                            <strong>Reason</strong><br>                                 
+                                            <strong>{{'Reason'|translate}}</strong><br>                                 
                                             <div class="d-flex align-items-center gap-1">
                                                 <!-- Show info icon only when comment exists -->
                                                 <ng-container 
@@ -174,7 +170,7 @@
                                                 </ng-template>                                
                                             </div>
                                         </div>
-                                        <div class="col"><strong> Asset Status</strong><br>{{ transaction.status }}
+                                        <div class="col"><strong>{{'Asset Status'|translate}}</strong><br>{{ transaction.status }}
                                         </div>
                                         <!-- <div class="col" *ngIf="transaction.status !== 'Inactive'">
                                             <strong>Maintenance Start Date</strong><br>
@@ -193,16 +189,15 @@
                                 *ngIf="transaction.status === 'Available' || transaction.status === 'Inactive'">
                                 <div class="card-body">
                                     <div class="row mb-3">
-                                        <div class="col"><strong>Asset Category</strong><br>{{
+                                        <div class="col"><strong>{{'Asset Category'|translate}}</strong><br>{{
                                             assetDetails?.assetCategory}}</div>
-                                        <div class="col"><strong>Asset Sub
-                                                Category</strong><br>{{assetDetails?.assetSubCategory}}</div>
-                                        <div class="col"><strong>Serial Number</strong><br>{{
+                                        <div class="col"><strong>{{'Asset Sub Category'|translate}}</strong><br>{{assetDetails?.assetSubCategory}}</div>
+                                        <div class="col"><strong>{{'Serial Number'|translate}}</strong><br>{{
                                             assetDetails?.serialNumber }}</div>
-                                        <div class="col"><strong>Asset Model</strong> <br> {{
+                                        <div class="col"><strong>{{'Asset Model'|translate}}</strong> <br> {{
                                             assetDetails?.assetModel }}</div>
-                                        <div class="col"><strong>Reason</strong><br>{{ transaction.reason }}</div>
-                                        <div class="col"><strong> Asset Status</strong><br>{{ transaction.status }}
+                                        <div class="col"><strong>{{'Reason'|translate}}</strong><br>{{ transaction.reason }}</div>
+                                        <div class="col"><strong>{{'Asset Status'|translate}}</strong><br>{{ transaction.status }}
                                         </div>
                                     </div>
                                 </div>

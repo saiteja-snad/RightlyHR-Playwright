@@ -9,7 +9,7 @@
 
         <div>
             @if (rbac.allowedToAccess('Dynamic Forms Module.create')) {
-            <button class="custom-btn btn-primary" (click)="navigateToCreateFormComponent()">Create a Form</button>
+            <button class="custom-btn btn-primary" (click)="navigateToCreateFormComponent()">{{'Create a Form' | translate}}</button>
             }
         </div>
     </div>

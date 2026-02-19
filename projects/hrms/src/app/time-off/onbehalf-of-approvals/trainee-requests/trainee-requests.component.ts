@@ -13,6 +13,7 @@ import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-foun
 import { DataLoaderContentComponent } from '../../../shared/data-loader-content/data-loader-content.component';
 import { InfoIconComponent } from '../../../icons/info-icon/info-icon.component';
 import { environment } from '../../../../environments/environment';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-trainee-requests',
@@ -24,6 +25,7 @@ import { environment } from '../../../../environments/environment';
     NoDataFoundComponent,
     DataLoaderContentComponent,
     InfoIconComponent,
+    TranslateModule
   ],
   templateUrl: './trainee-requests.component.html',
   styleUrl: './trainee-requests.component.scss',

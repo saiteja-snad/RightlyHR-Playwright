@@ -29,7 +29,7 @@
                     <div class="error-msg">
                         <div
                             *ngIf="probationConfirmationForm.get('issuedDate')?.invalid && probationConfirmationForm.get('issuedDate')?.touched">
-                            Issued date is required
+                            Issued Date is required
                         </div>
                         <!-- Custom validation error from DateValidation -->
                         <!-- <div class="error-msg" *ngIf="!isdateofprobation">Issued Date should not be after Probation End Date
@@ -48,7 +48,7 @@
                     <div class="error-msg">
                         <div
                             *ngIf="probationConfirmationForm.get('effectiveDate')?.invalid && probationConfirmationForm.get('effectiveDate')?.touched">
-                            Effective date is required</div>
+                            Effective Date is required</div>
                         <!-- Custom validation error from DateValidation -->
                         <div *ngIf="!isdateofprobation">Effective Date should not be after Probation End Date</div>
                     </div>
@@ -65,7 +65,7 @@
                     </div>
                     <div *ngIf="probationConfirmationForm.get('Documenttype')?.invalid && probationConfirmationForm.get('Documenttype')?.touched"
                         class="error-msg">
-                        Document type is required
+                        Document Type is required
                     </div>
                 </div>
 
@@ -161,7 +161,7 @@
 
                                 <p class="mb-4">We are pleased to inform you that, following a comprehensive
                                     assessment of your performance during the probationary period, you have successfully
-                                    completed your probationary period with Claim Genius. </p>
+                                    completed your probationary period with RightlyHR. </p>
 
                                 <p class="mb-4">
                                     Effective from {{probationLetterData.effectiveDate|dateformat}}, your position as
@@ -171,7 +171,7 @@
                                 </p>
 
                                 <p class="mb-4">
-                                    We believe that your continued presence at Claim Genius will
+                                    We believe that your continued presence at RightlyHR will
                                     further contribute to our success, and we look forward to seeing your continued
                                     growth and contributions to the organization.
                                 </p>
@@ -182,7 +182,7 @@
                                 </p>
 
                                 <p class="mb-2 pt-4">Sincerely,</p>
-                                <p class="letter-sub-header"><b>for Claim Genius</b></p>
+                                <p class="letter-sub-header"><b>for RightlyHR</b></p>
                                 <!-- Show "Authority Signature" only when no authority is selected -->
                                 <div *ngIf="!probationLetterData.authorityName" class="letter-sub-header pt-4">Authority
                                     Signature</div>

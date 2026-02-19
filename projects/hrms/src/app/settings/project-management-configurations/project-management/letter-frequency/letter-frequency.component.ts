@@ -88,7 +88,7 @@ export class LetterFrequencyComponent {
       };
       this.subscription = this.http.postdata('entityAttributeValues', payload).subscribe({
         next: (data: any) => {
-          this.conformationPopup.openSuccessModal('Frequency configurations added successfully');
+          this.conformationPopup.openSuccessModal('Frequency Configurations added successfully');
         },
         error: (error: any) => {
           this.conformationPopup.openErrorModal(error?.error?.Message || 'Failed to add Frequency Configurations');
@@ -128,7 +128,7 @@ export class LetterFrequencyComponent {
       this.subscription = this.http.postdata('entityAttributeValues/update', payload).subscribe({
         next: (data: any) => {
           this.modalService.dismissAll();
-          this.conformationPopup.openSuccessModal('Frequency configurations updated successfully');
+          this.conformationPopup.openSuccessModal('Frequency Configurations updated successfully');
         },
         error: (error: any) => {
           this.conformationPopup.openErrorModal(error?.error?.Message || 'Failed to update Frequency Configurations');
@@ -153,7 +153,7 @@ export class LetterFrequencyComponent {
       this.subscription = this.http.deleteData(`entityAttributeValues/${this.selectedEAV.id}`).subscribe({
         next: (data: any) => {
           this.modalService.dismissAll();
-          this.conformationPopup.openSuccessModal('Frequency configurations deleted successfully');
+          this.conformationPopup.openSuccessModal('Frequency Configurations deleted successfully');
         },
         error: (error: any) => {
           this.conformationPopup.openErrorModal(error?.error?.message || 'Failed to delete Document Type');

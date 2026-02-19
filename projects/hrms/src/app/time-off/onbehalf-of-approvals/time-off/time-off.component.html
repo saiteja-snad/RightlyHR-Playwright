@@ -1,22 +1,22 @@
 <div class="custom-main-component-container">
     @if (selectedProducts && selectedProducts.length > 0 && multiSelect) {
     <div class="component-header-content custom-header-btn-content">
-        <div class="component-sub-header">Selected Records: {{selectedProducts.length}}</div>
+        <div class="component-sub-header">{{'Selected Records' | translate}}: {{selectedProducts.length}}</div>
         <div class="d-flex gap-3">
             @if (canBulkApprove()) {
             @if(rbac.allowedToAccess('Time Off (On Behalf Of Approvals).update')){
-            <button class="custom-btn btn-primary-approve" (click)="bulkapprove(approverPopup)">Approve</button>
+            <button class="custom-btn btn-primary-approve" (click)="bulkapprove(approverPopup)">{{'Approve' | translate}}</button>
             }
             @if(rbac.allowedToAccess('Time Off (On Behalf Of Approvals).delete')){
-            <button class="custom-btn btn-primary-reject" (click)="bulkReject(rejectPopup)">Reject</button>
+            <button class="custom-btn btn-primary-reject" (click)="bulkReject(rejectPopup)">{{'Reject' | translate}}</button>
             }
             }
             @if (canBulkProcess()) {
             @if(rbac.allowedToAccess('Time Off (On Behalf Of Approvals).update')){
-            <button class="custom-btn btn-primary-approve" (click)="bulkProcess()">Process</button>
+            <button class="custom-btn btn-primary-approve" (click)="bulkProcess()">{{'Process' | translate}}</button>
             }
             @if(rbac.allowedToAccess('Time Off (On Behalf Of Approvals).delete')){
-            <button class="custom-btn btn-primary-reject" (click)="bulkReject(rejectPopup)">Reject</button>
+            <button class="custom-btn btn-primary-reject" (click)="bulkReject(rejectPopup)">{{'Reject' | translate}}</button>
             }
             }
         </div>
@@ -28,7 +28,7 @@
         <span class="input-group-text custom-input-group-search" id="basic-addon1">
             <i class="bi bi-search"></i></span>
         <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input" (ngModelChange)="onSearchChange()"
-            placeholder="Search here" aria-label="Username" aria-describedby="basic-addon1" autocomplete="off">
+            [placeholder]="'Search here' | translate" aria-label="Username" aria-describedby="basic-addon1" autocomplete="off">
     </div>
 
     <div class="custom-p-multi-select-table">
@@ -40,19 +40,19 @@
                     <th style="width: 4rem">
                         <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
                     </th>
-                    <th>Employee ID </th>
-                    <th>Employee Name</th>
-                    <th>Leave Type </th>
-                    <th>Duration</th>
-                    <th>Availed</th>
-                    <th>Applied Date</th>
-                    <th>Start Date</th>
-                    <th>End Date</th>
-                    <th class="text-center">Reason</th>
-                    <th class="text-center">Approver Comments</th>
+                    <th>{{'Employee ID' | translate}} </th>
+                    <th>{{'Employee Name' | translate}}</th>
+                    <th>{{'Leave Type' | translate}} </th>
+                    <th>{{'Duration' | translate}}</th>
+                    <th>{{'Availed' | translate}}</th>
+                    <th>{{'Applied Date' | translate}}</th>
+                    <th>{{'Start Date' | translate}}</th>
+                    <th>{{'End Date' | translate}}</th>
+                    <th class="text-center">{{'Reason' | translate}}</th>
+                    <th class="text-center">{{'Approver Comments' | translate}}</th>
                     @if(!multiSelect && (rbac.allowedToAccess('Time Off (On Behalf Of Approvals).update') ||
                     rbac.allowedToAccess('Time Off (On Behalf Of Approvals).delete'))) {
-                    <th class="text-center">Action</th>
+                    <th class="text-center">{{'Action' | translate}}</th>
                     }
                 </tr>
             </ng-template>
@@ -166,7 +166,7 @@
         <div class="custom-poup-header-content popup-header-border">
             <div>
                 <p class="popup-heading mb-0">
-                    Leave Balances
+                    {{'Leave Balances' | translate}}
                 </p>
             </div>
             <div>
@@ -179,14 +179,14 @@
                     <table class="popup-table">
                         <thead>
                             <tr>
-                                <th class="text-center">Leave Type</th>
-                                <th class="text-center">Entitled</th>
-                                <th class="text-center">Booked</th>
-                                <th class="text-center">Processed</th>
-                                <th class="text-center">Available</th>
+                                <th class="text-center">{{'Leave Type' | translate}}</th>
+                                <th class="text-center">{{'Entitled' | translate}}</th>
+                                <th class="text-center">{{'Booked' | translate}}</th>
+                                <th class="text-center">{{'Processed' | translate}}</th>
+                                <th class="text-center">{{'Available' | translate}}</th>
                                 <th class="text-center"
                                     *ngIf="leaveEntitlementsList.category?.isProbationAllowed && leaveEntitlementsList.probationLeaves > 0">
-                                    Probation Leaves
+                                    {{'Probation Leaves' | translate}}
                                 </th>
                             </tr>
                         </thead>
@@ -220,7 +220,7 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
-            <p class="confirmation-text">Is it a planned leave?</p>
+            <p class="confirmation-text">{{'Is it a planned leave?' | translate}}</p>
         </div>
 
         <form autocomplete="off" name="leaveapprovee" #leaveapprovee="ngForm" (ngSubmit)="leaveapprovee.valid">
@@ -230,7 +230,7 @@
                         <input class="form-check-input" type="radio" [value]="true" id="Planned" name="isPlannedLeave"
                             [(ngModel)]="selectedLeaveData.isPlannedLeave" #isPlannedLeave="ngModel" required>
                         <label class="form-check-label me-2" for="Planned">
-                            Yes
+                            {{'Yes' | translate}}
                         </label>
                     </div>
                     <div class="form-check">
@@ -238,15 +238,15 @@
                             name="isPlannedLeave" [(ngModel)]="selectedLeaveData.isPlannedLeave"
                             #isPlannedLeave="ngModel" required>
                         <label class="form-check-label" for="Unplanned">
-                            No
+                            {{'No' | translate}}
                         </label>
                     </div>
                 </div>
 
                 <div class="mb-3">
-                    <label for="exampleFormControlTextarea1" class="form-label custom-label">Comments<span
+                    <label for="exampleFormControlTextarea1" class="form-label custom-label">{{'Comments' | translate}}<span
                             class="error-msg">*</span></label>
-                    <textarea class="form-control custom-input" id="Reasons" placeholder="Please provide comments"
+                    <textarea class="form-control custom-input" id="Reasons" [placeholder]="'Please provide comments' | translate"
                         name="Reasons" #Reasons="ngModel" maxlength="250" required pattern="^\S.*"
                         [(ngModel)]="selectedLeaveData.comments"
                         (ngModelChange)="ifreasonnull(selectedLeaveData.comments)" rows="3">
@@ -257,24 +257,24 @@
                     </div>
                     <div class="error-msg"
                         *ngIf="(Reasons.touched && Reasons.invalid) || (leaveapprovee.submitted && Reasons.invalid)">
-                        Comments are required
+                        {{'Comments are required' | translate}}
                     </div>
                 </div>
             </div>
                <div class="d-flex align-items-center flex-wrap gap-2 mb-3">
                     <button type="button" class="custom-btn btn-secondary chip-btn" [class.active]="selectedLeaveStatus === 'approved'"
                         (click)="onStatusApproveSelect('approved')">
-                        Approved
+                        {{'Approved' | translate}}
                     </button>
                 
                     <button type="button" class="custom-btn btn-secondary chip-btn" [class.active]="selectedLeaveStatus === 'planned'"
                         (click)="onStatusApproveSelect('planned')">
-                        Planned Leave
+                        {{'Planned Leave' | translate}}
                     </button>
                 
                     <button type="button" class="custom-btn btn-secondary chip-btn" [class.active]="selectedLeaveStatus === 'unplanned'"
                         (click)="onStatusApproveSelect('unplanned')">
-                        Unplanned Leave
+                        {{'Unplanned Leave' | translate}}
                     </button>
                 </div>
 
@@ -286,7 +286,7 @@
                     @if(spinnerLoader){
                     <div class="button-loader-content">
                         <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
-                        <span>{{'Loading...'}}</span>
+                        <span>{{'Loading...' | translate}}</span>
                     </div>
                     }@else {
                     <span>{{'Approve'| translate}}</span>
@@ -301,15 +301,15 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <img src="icons\reject.png" alt="failure icon" class="confirmation-delete-icon">
-            <p class="confirmation-text">Are you sure you want to reject?</p>
+            <p class="confirmation-text">{{'Are you sure you want to reject?' | translate}}</p>
         </div>
 
         <form autocomplete="off" name="leaveapprovee" #leaveapprovee="ngForm" (ngSubmit)="leaveapprovee.valid">
             <div class="custom-main-popup-content">
                 <div class="mb-3">
-                    <label for="exampleFormControlTextarea1" class="form-label custom-label">Comments<span
+                    <label for="exampleFormControlTextarea1" class="form-label custom-label">{{'Comments' | translate}}<span
                             class="text-danger">*</span></label>
-                    <textarea class="form-control custom-input" id="Reasons" placeholder="Please provide comments"
+                    <textarea class="form-control custom-input" id="Reasons" [placeholder]="'Please provide comments' | translate"
                         name="Reasons" #Reasons="ngModel" maxlength="250" [(ngModel)]="selectedLeaveData.comments"
                         pattern="^\S.*" (ngModelChange)="ifreasonnull(selectedLeaveData.comments)" rows="3"
                         required></textarea>
@@ -317,24 +317,24 @@
                         {{selectedLeaveData.comments?.length?selectedLeaveData.comments?.length:0}}/250</div>
                     <div class="error-msg"
                         *ngIf="(Reasons.touched && Reasons.invalid) || (leaveapprovee.submitted && Reasons.invalid)">
-                        Comments are required
+                        {{'Comments are required' | translate}}
                     </div>
                 </div>
             </div>
               <div class="d-flex align-items-center flex-wrap gap-2 mb-3">
                 <button type="button" class="custom-btn btn-secondary chip-btn"
                     [class.active]="selectedLeaveStatus === 'reject'" (click)="onStatusRejectSelect('reject')">
-                    Rejected
+                    {{'Rejected' | translate}}
                 </button>
 
                 <button type="button" class="custom-btn btn-secondary chip-btn"
                     [class.active]="selectedLeaveStatus === 'planned'" (click)="onStatusRejectSelect('planned')">
-                    Planned Leave
+                    {{'Planned Leave' | translate}}
                 </button>
 
                 <button type="button" class="custom-btn btn-secondary chip-btn"
                     [class.active]="selectedLeaveStatus === 'unplanned'" (click)="onStatusRejectSelect('unplanned')">
-                    Unplanned Leave
+                    {{'Unplanned Leave' | translate}}
                 </button>
             </div>
 
@@ -346,7 +346,7 @@
                     @if(spinnerLoader){
                     <div class="button-loader-content">
                         <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
-                        <span>{{'Loading...'}}</span>
+                        <span>{{'Loading...' | translate}}</span>
                     </div>
                     }@else {
                     <span>{{'Reject'| translate}}</span>

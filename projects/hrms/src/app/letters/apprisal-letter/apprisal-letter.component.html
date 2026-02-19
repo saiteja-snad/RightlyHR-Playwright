@@ -63,7 +63,7 @@
               inputId="documenttype" class="custom-select w-100" resetFilterOnHide="true"></p-select>
           </div>
           <div *ngIf="employeeForm.get('Documenttype')?.invalid && employeeForm.get('Documenttype')?.touched">
-            <div class="error-msg"> {{'Document type is required'| translate }}</div>
+            <div class="error-msg"> {{'Document Type is required'| translate }}</div>
           </div>
         </div>
     
@@ -115,7 +115,7 @@
         </div>
     
         <div>
-          <p class="note-text"><span class="note me-2">{{'Note'| translate }}:</span>{{'Please update the salary, compensation effective date in job tab before generating the document.' |translate}}</p>
+          <p class="note-text"><span class="note me-2">{{'Note'| translate }}:</span>{{'Please Update Updated Salary, Compensation Effective Date in Job Tab Before Generating the Document.' |translate}}</p>
         </div>
 
         <div *ngIf="jobErrorMessage" class="error-msg">
@@ -186,7 +186,7 @@
               <p class="letter-sub-header">Dear {{appraisalData.firstName}} {{appraisalData.middleName}} {{appraisalData.lastName}},</p>
 
               <p>We are pleased to present you with this appraisal letter on behalf of
-                Claim Genius. We want to extend our gratitude for your dedication and substantial
+                RightlyHR. We want to extend our gratitude for your dedication and substantial
                 contributions to the organization. Your hard work and commitment have made a significant impact on our
                 success.</p>
 
@@ -418,7 +418,7 @@
                   dateformat}}</u>. We look forward to even greater contribution from you in the future.</p>
               <!-- end of second table -->
 
-              <p class="letter-sub-header pt-4"><b>for Claim Genius</b></p>
+              <p class="letter-sub-header pt-4"><b>for RightlyHR</b></p>
 
               <div class="pb-4">
                 <span class="letter-signature">{{appraisalData.authorityName}}</span><br>

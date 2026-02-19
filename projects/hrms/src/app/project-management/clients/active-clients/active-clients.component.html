@@ -6,7 +6,7 @@
 
         <div class="d-flex gap-3 align-items-center">
             @if(rbac.allowedToAccess('Client Information.create')){
-            <button type="button" class="custom-btn btn-primary" (click)="navigateAddClient()">Add Client</button>
+            <button type="button" class="custom-btn btn-primary" (click)="navigateAddClient()">{{"Add Client" | translate}}</button>
             }
         </div>
     </div>
@@ -24,7 +24,7 @@
                 </span>
                 <input type="search" #search="ngModel" [(ngModel)]="searchValue"
                     class="form-control custom-search-input"
-                    placeholder="Search by client name / contact name / email / role" aria-label="Search"
+                    [placeholder]="'Search by client name / contact name / email / role' | translate" aria-label="Search"
                     aria-describedby="basic-addon1">
             </div>
 
@@ -33,12 +33,12 @@
                 @if (!loading) {
                 <table class="w-100">
                     <thead>
-                        <th>Logo</th>
-                        <th>Client Name</th>
-                        <th>Contact name</th>
-                        <th>Email</th>
-                        <th>Phone Number</th>
-                        <th>Role</th>
+                        <th>{{"Logo" | translate}}</th>
+                        <th>{{"Client Name" | translate}}</th>
+                        <th>{{"Contact name" | translate}}</th>
+                        <th>{{"Email" | translate}}</th>
+                        <th>{{"Phone Number" | translate}}</th>
+                        <th>{{"Role" | translate}}</th>
                         @if(rbac.allowedToAccess('Client Information.delete')){
                         <th class="text-center">{{"Action" | translate}}</th>
                         }
@@ -68,7 +68,7 @@
                                             <ul class="dropdown-menu custom-dropdown-menu">
                                                 <li (click)="openModalstatus(statuschanges, client)">
                                                     <a class="dropdown-item">
-                                                        <i class="bi bi-check-circle me-2"></i>Inactive
+                                                        <i class="bi bi-check-circle me-2"></i>{{"Inactive" | translate}}
                                                     </a>
                                                 </li>
                                                 <!-- <li (click)="openModalstatus(statuschangeshold, client)">
@@ -103,11 +103,11 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <app-confirmation-icon />
-            <p class="confirmation-text pt-3">{{'Are you sure you want to Inactive this client?'}}</p>
+            <p class="confirmation-text pt-3">{{"Are you sure you want to Inactive this client?" | translate}}</p>
         </div>
         <div class="custom-modal-footer">
-            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'}}</button>
-            <button type="submit" class="custom-btn btn-primary" (click)="confirmStatusChange(modal)">{{'Yes'}}</button>
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{"No" | translate}}</button>
+            <button type="submit" class="custom-btn btn-primary" (click)="confirmStatusChange(modal)">{{"Yes" | translate}}</button>
         </div>
     </div>
 </ng-template>
@@ -116,12 +116,12 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <app-confirmation-icon />
-            <p class="confirmation-text pt-3">{{'Are you sure you want to Hold this client?'}}</p>
+            <p class="confirmation-text pt-3">{{"Are you sure you want to Hold this client?" | translate}}</p>
         </div>
         <div class="custom-modal-footer">
-            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'}}</button>
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{"No" | translate}}</button>
             <button type="submit" class="custom-btn btn-primary"
-                (click)="confirmStatusChangetohold(modal)">{{'Yes'}}</button>
+                (click)="confirmStatusChangetohold(modal)">{{"Yes" | translate}}</button>
         </div>
     </div>
 </ng-template>

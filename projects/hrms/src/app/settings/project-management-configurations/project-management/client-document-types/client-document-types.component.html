@@ -11,7 +11,7 @@
             </div>
             <div *ngIf="addForm.get('documentType')?.touched && addForm.get('documentType')?.invalid" class="error-msg">
                 <div *ngIf="addForm.get('documentType')?.errors?.['required']">
-                    {{ 'Client document is required' | translate }}
+                    {{ 'Client Document is required' | translate }}
                 </div>
             </div>
             <div *ngIf="addForm.get('documentType')?.errors?.['pattern']" class="error-msg">
@@ -95,7 +95,7 @@
                     <div *ngIf="updateForm.get('documentType')?.touched && updateForm.get('documentType')?.invalid"
                         class="error-msg">
                         <div *ngIf="updateForm.get('documentType')?.errors?.['required']">
-                            {{ 'Client Document type is required' | translate }}
+                            {{ 'Client Document Type is required' | translate }}
                         </div>
                     </div>
                     <div *ngIf="updateForm.get('documentType')?.errors?.['pattern']" class="error-msg">

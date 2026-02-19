@@ -3,8 +3,7 @@
   <div class="input-group custom-search mb-3">
     <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
     <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input"
-       placeholder="Search by employee ID / employee name / work email / phone number / location / sub location / shift name / designation" 
-       aria-label="Username" aria-describedby="basic-addon1">
+       placeholder="Search by employee ID / employee name / work email / phone number / location / sub location / Shift Name / designation " aria-label="Username" aria-describedby="basic-addon1">
   </div>
 
   <div class="custom-table-content">
@@ -40,7 +39,7 @@
               -
             </ng-template>
           </td>
-          <td class="text-nowrap"><span *ngIf="act.contactnumber;else contactnumb">+91 {{act.contactnumber}}</span>
+          <td class="text-nowrap"><span *ngIf="act.contactnumber;else contactnumb">{{act.mobilePhoneCountryCode}} {{act.contactnumber}}</span>
             <ng-template #contactnumb>
               -
             </ng-template>

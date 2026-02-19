@@ -4,14 +4,14 @@
             <!-- Add Input-->
             <div class="mb-4">
                 <div class="custom-settings-add-input input-group">
-                    <input type="text" class="form-control custom-input" placeholder="Please enter global permission" formControlName="name" 
+                    <input type="text" class="form-control custom-input" [placeholder]="'Please enter global permission' | translate" formControlName="name" 
                     (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)">
                     <span class="input-group-text" id="saluation">
-                        <button type="submit" class="custom-btn btn-primary" [disabled]="permissionsForm.invalid">{{'Add'}}</button>
+                        <button type="submit" class="custom-btn btn-primary" [disabled]="permissionsForm.invalid">{{ 'Add' | translate }}</button>
                     </span>
                 </div>
                 <div *ngIf="permissionsForm.get('name')?.touched && permissionsForm.get('name')?.invalid" class="error-msg mt-2">
-                    <div *ngIf="permissionsForm.get('name')?.errors?.['required']">{{'Global permission is required'}}</div>
+                    <div *ngIf="permissionsForm.get('name')?.errors?.['required']">{{ 'Global permission is required' | translate }}</div>
                 </div>
             </div>
         </form>
@@ -22,9 +22,9 @@
             <table class="w-100">
                 <thead>
                     <tr>
-                        <th>Name</th>
+                        <th>{{ 'Name' | translate }}</th>
                         <th class="text-center" *ngIf="rbac.allowedToAccess('Eligibility Global Permissions Tab.update') || 
-                        rbac.allowedToAccess('Eligibility Global Permissions Tab.delete')">Action</th>
+                        rbac.allowedToAccess('Eligibility Global Permissions Tab.delete')">{{ 'Action' | translate }}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -36,12 +36,12 @@
                                 <ul class="dropdown-menu custom-dropdown-menu">
                                     <li *ngIf="rbac.allowedToAccess('Eligibility Global Permissions Tab.update')">
                                         <a class="dropdown-item" (click)="openModal(updatePermissionModal,permission)">
-                                            <i class="bi bi-pencil me-2"></i>Update
+                                            <i class="bi bi-pencil me-2"></i>{{ 'Update' | translate }}
                                         </a>
                                     </li>
                                     <li *ngIf="rbac.allowedToAccess('Eligibility Global Permissions Tab.delete')">
                                         <a class="dropdown-item" (click)="openDeleteModal(deletePermissionModal,permission)">
-                                            <i class="bi bi-trash3 me-2"></i>Delete
+                                            <i class="bi bi-trash3 me-2"></i>{{ 'Delete' | translate }}
                                         </a>
                                     </li>
                                 </ul>
@@ -67,25 +67,25 @@
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="d-flex justify-content-between popup-header-border p-3">
             <div class="pt-2">
-                <p class="popup-heading mb-0">Edit Permission</p>
+                <p class="popup-heading mb-0">{{ 'Edit Permission' | translate }}</p>
             </div>
             <div>
-                <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+                <a (click)="modal.dismiss()"><img src="icons/close.png" [alt]="'Close Icon' | translate" class="close-icon"></a>
             </div>
         </div>
         <div class="custom-main-popup-content">
             <form autocomplete="off" [formGroup]="permissionUpdateForm"  (ngSubmit)="updatePermission(permissionUpdateForm)">
                 <div class="mb-4">
-                    <label for="name" class="form-label custom-label mb-2">Permission</label>
+                    <label for="name" class="form-label custom-label mb-2">{{ 'Permission' | translate }}</label>
                     <input title="text" type="text" name="name" formControlName="name" class="form-control" autocomplete="off"
                         id="backgroundcheckstatus1" (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)">
                         <div *ngIf="permissionUpdateForm.get('name')?.touched && permissionUpdateForm.get('name')?.invalid" class="error-msg mt-2">
-                            <div *ngIf="permissionUpdateForm.get('name')?.errors?.['required']">{{'Global permission is required'}}</div>
+                            <div *ngIf="permissionUpdateForm.get('name')?.errors?.['required']">{{ 'Global permission is required' | translate }}</div>
                         </div>
                 </div>
                 <div class="custom-modal-footer">
-                    <button type="button" class="custom-btn btn-secondary " (click)="modal.dismiss()">Cancel</button>
-                    <button type="submit" class="custom-btn btn-primary " [disabled]="permissionUpdateForm.invalid">Update</button>
+                    <button type="button" class="custom-btn btn-secondary " (click)="modal.dismiss()">{{ 'Cancel' | translate }}</button>
+                    <button type="submit" class="custom-btn btn-primary " [disabled]="permissionUpdateForm.invalid">{{ 'Update' | translate }}</button>
                 </div>
             </form>
         </div>
@@ -95,12 +95,12 @@
 <ng-template #deletePermissionModal let-modal>
     <div class="result-popup-content" ngbAutofocus>
         <div>
-            <img src="icons\delete-icon.png" alt="failure icon" class="confirmation-delete-icon">
-            <p class="confirmation-text mb-4">Are you sure you want to delete?</p>
+            <img src="icons\delete-icon.png" [alt]="'failure icon' | translate" class="confirmation-delete-icon">
+            <p class="confirmation-text mb-4">{{ 'Are you sure you want to delete?' | translate }}</p>
         </div>
         <div class="custom-modal-footer">
-            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
-            <button type="submit" class="custom-btn btn-primary" (click)="deletePermission();">Yes</button>
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{ 'No' | translate }}</button>
+            <button type="submit" class="custom-btn btn-primary" (click)="deletePermission();">{{ 'Yes' | translate }}</button>
         </div>
     </div>
 </ng-template>

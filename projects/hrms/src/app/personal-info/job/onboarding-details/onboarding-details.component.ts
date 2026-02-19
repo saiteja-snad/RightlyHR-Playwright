@@ -14,9 +14,10 @@ import { Router } from '@angular/router';
 import { AccessForEmployeeinfoService } from '../../../services/access-for-employeeinfo.service';
 import { Skeleton } from 'primeng/skeleton';
 import { EditIconComponent } from "../../../icons/edit-icon/edit-icon.component";
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
   selector: 'app-onboarding-details',
-  imports: [CommonModule, ReactiveFormsModule, Select, Skeleton, EditIconComponent],
+  imports: [CommonModule, ReactiveFormsModule, Select, Skeleton, EditIconComponent, TranslateModule],
   templateUrl: './onboarding-details.component.html',
   styleUrl: './onboarding-details.component.scss',
   encapsulation: ViewEncapsulation.None,
@@ -704,7 +705,7 @@ export class OnboardingDetailsComponent implements OnInit, OnDestroy{
         next: (data: any) => {
           if (data.statusCode === 200) {
             this.conformationPopup.openSuccessModal(
-              'Onboarding information updated successfully'
+              'Onboarding Information updated successfully'
             );
             this.getEmployeeId();
             this.buttons = !this.buttons;

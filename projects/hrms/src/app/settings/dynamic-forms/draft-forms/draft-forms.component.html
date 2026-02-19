@@ -40,21 +40,21 @@
                     @if(rbac.allowedToAccess('Mark As Active Action.view')){
                     <li>
                       <a class="dropdown-item" (click)="openmodal(activedfrom);seletedid=form.formId">
-                        <i class="bi bi-pencil me-2"></i>{{'Make as Active'}}
+                        <i class="bi bi-pencil me-2"></i>{{'Make as Active' | translate}}
                       </a>
                     </li>
                     }
                     @if(rbac.allowedToAccess('Draft Forms.update')){
                     <li>
                       <a class="dropdown-item" (click)="navigationToFrom(form.formId);">
-                        <i class="bi bi-pencil me-2"></i>{{'Update'}}
+                        <i class="bi bi-pencil me-2"></i>{{'Update' | translate}}
                       </a>
                     </li>
                     }
                     @if(rbac.allowedToAccess('Draft Forms.delete')){
                     <li>
                       <a class="dropdown-item" (click)="openConfirmModal(form.formId);">
-                        <i class="bi bi-trash me-2"></i>{{'Delete'}}
+                        <i class="bi bi-trash me-2"></i>{{'Delete' | translate}}
                       </a>
                     </li>
                     }
@@ -87,7 +87,7 @@
   <div class="result-popup-content" ngbAutofocus>
     <div>
       <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-delete-icon">
-      <p class="confirmation-text">Are you sure you want to delete the form?</p>
+      <p class="confirmation-text">{{'Are you sure you want to delete the form?' |translate}}</p>
     </div>
     <div class="custom-modal-footer">
       <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'|translate}}</button>
@@ -102,7 +102,7 @@
   <div class="result-popup-content" ngbAutofocus>
     <div>
       <img src="/icons/conformation.png" alt="delete-icon" class="confirmation-delete-icon">
-      <p class="confirmation-text">Are you sure you want to Active this form?</p>
+      <p class="confirmation-text">{{'Are you sure you want to Active this form?' |translate}}</p>
     </div>
     <div class="custom-modal-footer">
       <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'|translate}}</button>

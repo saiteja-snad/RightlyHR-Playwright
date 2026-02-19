@@ -86,7 +86,7 @@
                     </div>
                     <div *ngIf="reviewCycleupdateForm.get('subLocationId')?.touched && reviewCycleupdateForm.get('subLocationId')?.hasError('required')"
                         class="error-msg">
-                        Sub location is required
+                        Sub Location is required
                     </div>
                 </div>
 
@@ -97,7 +97,7 @@
                         [max]="todayDate" placeholder="Please select date" aria-label="default input example">
                     <div *ngIf="reviewCycleupdateForm.get('startDate')?.touched && reviewCycleupdateForm.get('startDate')?.hasError('required')"
                         class="error-msg">
-                        Review Cycle Start date is required
+                        Review Cycle Start Date is required
                     </div>
                 </div>
 
@@ -107,7 +107,7 @@
                     <input class="form-control custom-input" id="endDate" formControlName="endDate" type="date"
                         [disabled]="!reviewCycleupdateForm.get('startDate')?.valid" placeholder="Please select date">
                     <div *ngIf="reviewCycleupdateForm.get('endDate')?.touched && reviewCycleupdateForm.get('endDate')?.hasError('required')"
-                        class="error-msg">Review Cycle End date is required
+                        class="error-msg">Review Cycle End Date is required
                     </div>
                     <div *ngIf="reviewCycleupdateForm.errors?.['endDateInvalid']" class="error-msg">Review Cycle End
                         date should be

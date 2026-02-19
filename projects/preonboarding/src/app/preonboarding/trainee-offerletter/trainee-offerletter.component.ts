@@ -8,10 +8,10 @@ import moment from 'moment';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { DateformatPipe } from "../../../../../hrms/src/app/pipes/dateformat.pipe";
 import { CommonModule } from '@angular/common';
 import { PopupService } from '../../common-services/popup.service';
 import { DetailedStepProgressbarComponent } from "../../shared/detailed-step-progressbar/detailed-step-progressbar.component";
+import { DateformatPipe } from '../../../../../hrms/src/app/Pipes/dateformat.pipe';
 @Component({
   selector: 'app-trainee-offerletter',
   imports: [DateformatPipe, ReactiveFormsModule, CommonModule, DetailedStepProgressbarComponent],

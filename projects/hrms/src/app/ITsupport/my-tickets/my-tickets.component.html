@@ -147,7 +147,7 @@
                         </div>
                         <div
                             *ngIf="itSupportForm.get('phoneNumber')?.invalid && itSupportForm.get('phoneNumber')?.touched">
-                            <div class="error-msg">{{'Phone number is required' | translate}}</div>
+                            <div class="error-msg">{{'Phone Number is required' | translate}}</div>
                         </div>
                     </div>
 
@@ -156,11 +156,11 @@
                                 class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
                             <input type="text" class="form-control custom-input" formControlName="deskdetails"
-                                placeholder="Please enter desk details" readOnly="true" onkeydown="return false;" />
+                                placeholder="Please enter Deskdetails" readOnly="true" onkeydown="return false;" />
                         </div>
                         <div
                             *ngIf="itSupportForm.get('deskdetails')?.invalid && itSupportForm.get('deskdetails')?.touched">
-                            <div class="error-msg">{{'Desk details is required' | translate}}</div>
+                            <div class="error-msg">{{'Desk Details is required' | translate}}</div>
                         </div>
                     </div>
 
@@ -216,12 +216,12 @@
                         <div class="custom-p-select-content">
                             <p-select [options]="subCategoryDetails" resetFilterOnHide="true" [filter]="true"
                                 filterBy="value" optionLabel="value"
-                                placeholder="Please select sub category" formControlName="subcategoryId" class="custom-select w-100"
+                                placeholder="Please select Sub Category" formControlName="subcategoryId" class="custom-select w-100"
                                 >
                             </p-select>
                         </div>
                         <div *ngIf="itSupportForm.get('subcategoryId')?.invalid && itSupportForm.get('subcategoryId')?.touched">
-                            <div class="error-msg">{{'Sub category is required' | translate}}</div>
+                            <div class="error-msg">{{'Sub Category is required' | translate}}</div>
                         </div>
                     </div>
 <!-- 

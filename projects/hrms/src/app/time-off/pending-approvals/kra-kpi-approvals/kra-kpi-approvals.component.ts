@@ -20,6 +20,7 @@ import { RbacService } from '../../../services/rbac.service';
 import { PendingApprovalsComponent } from '../pending-approvals.component';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { OpenModalService } from '../../../services/open-modal.service';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-kra-kpi-approvals',
@@ -36,6 +37,8 @@ import { OpenModalService } from '../../../services/open-modal.service';
     DataLoaderContentComponent,
     SelectModule,
     Select,
+    TranslateModule
+  
   ],
   templateUrl: './kra-kpi-approvals.component.html',
   styleUrl: './kra-kpi-approvals.component.scss',

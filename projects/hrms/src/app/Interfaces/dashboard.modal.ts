@@ -95,7 +95,6 @@ export interface Duration {
   biometricDuration: string;
   regularizationDuration: string;
   totalDuration: string;
-  breakDuration: string;
 }
 
 export interface DisplayStatus {

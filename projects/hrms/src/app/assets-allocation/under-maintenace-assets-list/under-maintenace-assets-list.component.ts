@@ -15,10 +15,11 @@ import { DataLoaderContentComponent } from "../../shared/data-loader-content/dat
 import { RbacService } from '../../services/rbac.service';
 import { FormValidationService } from '../../../../../preonboarding/src/app/common-services/form-validation.service';
 import { ConfirmationIconComponent } from "../../icons/confirmation-icon/confirmation-icon.component";
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-under-maintenace-assets-list',
-  imports: [CommonModule, ReactiveFormsModule, FormsModule, NoDataFoundComponent, Select, PaginatorModule, DropdownModule, DataLoaderContentComponent, ConfirmationIconComponent],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, NoDataFoundComponent, Select, PaginatorModule, DropdownModule, DataLoaderContentComponent, ConfirmationIconComponent,TranslateModule],
   templateUrl: './under-maintenace-assets-list.component.html',
   styleUrl: './under-maintenace-assets-list.component.scss',
   providers: [DatePipe]

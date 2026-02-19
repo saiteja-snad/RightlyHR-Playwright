@@ -47,12 +47,6 @@ import { EmployeeinfoRequestComponent } from './pending-approvals/employee-info/
 import { EmployeeinfoForYouRequestComponent } from './pending-approvals/employee-info/employeeinfo-for-you-request/employeeinfo-for-you-request.component';
 import { EmployeeinfoForYourRoleRequestComponent } from './pending-approvals/employee-info/employeeinfo-for-your-role-request/employeeinfo-for-your-role-request.component';
 import { KraKpiApprovalsComponent } from './pending-approvals/kra-kpi-approvals/kra-kpi-approvals.component';
-import { DocumentHistoryOfferLetterComponent } from '../admin/document-history/document-history-offer-letter/document-history-offer-letter.component';
-import { DocumentHistoryAppointmentLetterComponent } from '../admin/document-history/document-history-appointment-letter/document-history-appointment-letter.component';
-import { DocumentHistoryContractOfferLetterComponent } from '../admin/document-history/document-history-contract-offer-letter/document-history-contract-offer-letter.component';
-import { DocumentHistoryInternAppointmentComponent } from '../admin/document-history/document-history-intern-appointment/document-history-intern-appointment.component';
-import { DocumentHistoryInternOfferLetterComponent } from '../admin/document-history/document-history-intern-offer-letter/document-history-intern-offer-letter.component';
-import { DocumentHistoryNdaLetterComponent } from '../admin/document-history/document-history-nda-letter/document-history-nda-letter.component';
 
 export default [
     // Leaves
@@ -177,21 +171,9 @@ export default [
         ],
     },
     // onboarding
-     {
+    {
         path: 'on-boarding',
         children: [
-            // offer letter
-            { path: 'offer-letter-history', component: DocumentHistoryOfferLetterComponent, data: { permission: 'Documents History Offer Letter.view' } },
-            // appointment
-            { path: 'appointment-letter-history', component: DocumentHistoryAppointmentLetterComponent, data: { permission: 'Documents History Appointment Letter.view' } },
-            // contract offer letter
-            { path: 'contractor-offer-letter-history', component: DocumentHistoryContractOfferLetterComponent, data: { permission: 'Documents History Contract Offer Letter.view' } },
-            // intern offer letter
-            { path: 'intern-offer-letter-history', component: DocumentHistoryInternOfferLetterComponent, data: { permission: 'Trainee Details.view' } },
-            // intern appointment letter
-            { path: 'intern-appointment-letter-history', component: DocumentHistoryInternAppointmentComponent, data: { permission: 'Probation Details.view' } },
-            // nda letter
-            { path: 'nda-letter-history', component: DocumentHistoryNdaLetterComponent, data: { permission: 'Documents History Non-Disclosure Agreement Letter.view' } },
             // probation
             { path: 'probation-request', component: ProbationPendingApprovalsComponent, data: { permission: 'Probation Details.view' } },
             // Trainee

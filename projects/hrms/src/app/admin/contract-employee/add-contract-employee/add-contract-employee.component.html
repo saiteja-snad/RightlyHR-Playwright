@@ -83,7 +83,7 @@
                     </div>
                     <div *ngIf="employeeForm.get('employmentType')?.invalid && employeeForm.get('employmentType')?.touched"
                         class="error-msg">
-                        {{'Employment type is required'|translate}}
+                        {{'Employment Type is required'|translate}}
                     </div>
                 </div>
                 <div class="col-md-6 mb-3">
@@ -112,7 +112,7 @@
                     </div>
                     <div *ngIf="employeeForm.get('subLocation')?.invalid && employeeForm.get('subLocation')?.touched"
                         class="error-msg">
-                        {{'Sub location is required'|translate}}
+                        {{'Sub Location is required'|translate}}
                     </div>
                 </div>
             </div>
@@ -128,11 +128,11 @@
   <div class="result-popup-content" ngbAutofocus>
     <div>
       <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
-      <p class="confirmation-text">Are you sure you want to cancel?</p>
+      <p class="confirmation-text">{{'Are you sure you want to cancel?'| translate }}</p>
     </div>
     <div class="custom-modal-footer">
-      <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">No</button>
-      <button type="button" class="custom-btn btn-primary" (click)="close()">Yes</button>
+      <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">{{'No' | translate}}</button>
+      <button type="button" class="custom-btn btn-primary" (click)="close()">{{'Yes' |translate}}</button>
     </div>
   </div>
 </ng-template>

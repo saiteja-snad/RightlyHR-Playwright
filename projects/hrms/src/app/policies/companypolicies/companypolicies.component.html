@@ -1,14 +1,14 @@
 <div class="custom-main-component-container">
   <div class="component-header-content">
     <div class="heading-content">
-      <div class="component-header">Policies</div>
+      <div class="component-header">{{'Policies'|translate}}</div>
        <div>
                 <app-module-info-icon  placement="bottom" [ngbPopover]="popContent" />
             </div>
     </div>
 
     <div class="d-flex align-items-center gap-2">
-      <label class="form-label custom-label m-0">Select Year</label>
+      <label class="form-label custom-label m-0">{{'Select Year'|translate}}</label>
       <form autocomplete="off" [formGroup]="policiesform" class="m-0">
         <div class="custom-p-select-content m-0">
           <p-select formControlName="selectedYear" [options]="years" class="custom-select w-100"></p-select>
@@ -45,15 +45,15 @@
             <td class="text-center acknowledge-content">
               <ng-container *ngIf="item.requiresAcknowledgment">
                 <ng-container *ngIf="item.acknowledged; else showAcknowledge">
-                 <span class="success-text">Yes</span>
+                 <span class="success-text">{{'Yes'|translate}}</span>
                 </ng-container>
                 <ng-template #showAcknowledge>
                   <a class="acknowledge-btn" (click)="onViewAttachement(item.policyAttachment, item.policyName, item)">
-                    <u>Acknowledge</u></a>
+                    <u>{{'Acknowledge'|translate}}</u></a>
                 </ng-template>
               </ng-container>
               <ng-container *ngIf="!item.requiresAcknowledgment">
-                <span>NA</span>
+                <span>{{'NA'|translate}}</span>
               </ng-container>
             </td>
           </tr>
@@ -102,13 +102,13 @@
           <div class="form-check">
             <input class="form-check-input" type="checkbox" id="ackCheckbox" formControlName="acknowledged" />
             <label class="form-check-label" for="ackCheckbox">
-              I acknowledge that I have read and agree to the policy.
+              {{'I acknowledge that I have read and agree to the policy.'|translate}}
             </label>
           </div>
 
           <button class="btn btn-primary" [disabled]="ackForm.invalid || loading"
             (click)="postacknowledgement(selectedItem)">
-            <span *ngIf="!loading">Acknowledge</span>
+            <span *ngIf="!loading">{{'Acknowledge'|translate}}</span>
             <span *ngIf="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
           </button>
         </form>

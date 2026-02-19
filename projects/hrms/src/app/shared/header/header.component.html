@@ -3,7 +3,7 @@
         <!--Logo-->
         <div>
             <!-- <img src="/logos/snad-Logo-new-latest.png" alt="Company Logo" class="company-logo-image"> -->
-            <img src="/logos/claim-genius.png" alt="Company Logo" class="company-logo-image">
+            <img src="/logos/rightlyhr-full-logo.png" alt="Company Logo" class="company-logo-image">
         </div>
 
         <div class="d-flex gap-3 align-items-center">
@@ -73,16 +73,15 @@
                                 <p class="sub-text m-0 mb-1">{{jobRole}}</p>
                                 <div class="border-bottom"></div>
                                 <div class="mb-2">
-                                    <a class="profile-btn" (click)="goToAccessibleRoute('/myinfo')">View Profile</a>
+                                    <a class="profile-btn" (click)="goToAccessibleRoute('/myinfo')">{{'View Profile'|translate}}</a>
                                 </div>
                                 @if(currentUser?.loginType?.toLowerCase() === 'classic login'){
                                 <div class="mb-2">
-                                    <a class="profile-btn" (click)="openchangepasswordModal(changepasswordModal)">Change
-                                        Password</a>
+                                    <a class="profile-btn" (click)="openchangepasswordModal(changepasswordModal)">{{'Change Password'|translate}}</a>
                                 </div>
                                 }
                                 <button class="custom-btn btn-primary" (click)="openlogoutModal()">
-                                    <img src="/icons/logout-icon.png" alt="Logout" class="logout-icon me-1">Logout
+                                    <img src="/icons/logout-icon.png" alt="Logout" class="logout-icon me-1">{{'Logout'|translate}}
                                 </button>
                             </div>
                         </div>
@@ -133,7 +132,7 @@
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="custom-poup-header-content popup-header-border">
             <div class="pt-2">
-                <p class="popup-heading mb-0">Change Password</p>
+                <p class="popup-heading mb-0">{{'Change Password'|translate}}</p>
             </div>
         </div>
 
@@ -142,11 +141,11 @@
                 autocomplete="off">
                 <!-- New Password Field -->
                 <div class="mb-3">
-                    <label for="currentPassword" class="form-label custom-label mb-2">Current Password
+                    <label for="currentPassword" class="form-label custom-label mb-2">{{'Current Password'|translate}}
                         <span class="text-danger">*</span></label>
                     <div class="input-group">
                         <input type="{{ showPassword1 ? 'text' : 'password' }}" id="currentPassword"
-                            formControlName="currentPassword" placeholder="Please enter current password"
+                            formControlName="currentPassword" placeholder="{{'Please enter current password'|translate}}"
                             class="form-control custom-input border-right-none" />
                         <span class="input-group-text border-left-none" id="basic-addon1"
                             (click)="togglePasswordVisibility1()">
@@ -154,16 +153,16 @@
                         </span>
                     </div>
                     <div *ngIf="changePasswordForm.get('currentPassword')?.errors?.['required'] && changePasswordForm.get('currentPassword')?.touched"
-                        class="error-msg">Current Password is required</div>
+                        class="error-msg">{{'Current Password is required'|translate}}</div>
                 </div>
 
                 <!-- New Password Field -->
                 <div class="mb-3">
-                    <label for="newPassword" class="form-label custom-label mb-2">New Password
+                    <label for="newPassword" class="form-label custom-label mb-2">{{'New Password'|translate}}
                         <span class="text-danger">*</span></label>
                     <div class="input-group">
                         <input type="{{ showPassword2 ? 'text' : 'password' }}" id="newPassword"
-                            placeholder="Please enter new password" class="form-control custom-input border-right-none"
+                            placeholder="{{'Please enter new password'|translate}}" class="form-control custom-input border-right-none"
                             formControlName="newPassword" />
                         <span class="input-group-text border-left-none" id="basic-addon1"
                             (click)="togglePasswordVisibility2()">
@@ -171,20 +170,19 @@
                         </span>
                     </div>
                     <div *ngIf="changePasswordForm.get('newPassword')?.errors?.['required'] && 
-                    changePasswordForm.get('newPassword')?.touched" class="error-msg">New Password is required</div>
+                    changePasswordForm.get('newPassword')?.touched" class="error-msg">{{'New Password is required'|translate}}</div>
                     <div *ngIf="changePasswordForm.controls['newPassword'].errors?.['pattern']" class="error-msg">
-                        Your password must be at least 8 characters long and include at least one uppercase
-                        letter, one number, and one special character
+                        {{'Your password must be at least 8 characters long and include at least one uppercase letter, one number, and one special character'|translate}}
                     </div>
                 </div>
 
                 <!-- Confirm Password Field -->
                 <div class="mb-3">
-                    <label for="confirmPassword" class="form-label custom-label mb-2">Confirm Password
+                    <label for="confirmPassword" class="form-label custom-label mb-2">{{'Confirm Password'|translate}}
                         <span class="text-danger">*</span></label>
                     <div class="input-group">
                         <input type="{{ showPassword3 ? 'text' : 'password' }}" id="confirmPassword"
-                            placeholder="Please re enter new password"
+                            placeholder="{{'Please re enter new password'|translate}}"
                             class="form-control custom-input border-right-none" formControlName="confirmPassword" />
                         <span class="input-group-text border-left-none" id="basic-addon1"
                             (click)="togglePasswordVisibility3()">
@@ -193,29 +191,28 @@
                     </div>
                     <div *ngIf="changePasswordForm.get('confirmPassword')?.errors?.['required'] && changePasswordForm.get('confirmPassword')?.touched"
                         class="error-msg">
-                        Confirm Password is required
+                        {{'Confirm Password is required'|translate}}
                     </div>
                     <div *ngIf="changePasswordForm.hasError('passwordMismatch') && changePasswordForm.get('confirmPassword')?.touched"
                         class="error-msg">
-                        Confirm Password must match the new password
+                        {{'Confirm Password must match the new password'|translate}}
                     </div>
                     <div *ngIf="changePasswordForm.controls['confirmPassword'].errors?.['pattern']" class="error-msg">
-                        Your password must be at least 8 characters long and include at least one uppercase
-                        letter, one number, and one special character</div>
+                        {{'Your password must be at least 8 characters long and include at least one uppercase letter, one number, and one special character'|translate}}</div>
                 </div>
 
                 <div *ngIf="backendError" class="error-msg">{{ backendError }}</div>
 
                 <!-- Buttons -->
                 <div class="custom-modal-footer">
-                    <button type="reset" class="custom-btn btn-secondary" (click)="closeModal()">Cancel</button>
+                    <button type="reset" class="custom-btn btn-secondary" (click)="closeModal()">{{'Cancel'|translate}}</button>
                     <button type="submit" class="custom-btn btn-primary"
                         [disabled]="changePasswordForm.invalid || spinnerLoader">
                         @if(spinnerLoader){
                         <div class="button-loader-content">
                             <span class="spinner-border button-spinner text-light" role="status"
                                 aria-hidden="true"></span>
-                            <span>{{'Loading...'}}</span>
+                            <span>{{'Loading...'|translate}}</span>
                         </div>
                         }@else {
                         <span>{{'Submit'| translate}}</span>

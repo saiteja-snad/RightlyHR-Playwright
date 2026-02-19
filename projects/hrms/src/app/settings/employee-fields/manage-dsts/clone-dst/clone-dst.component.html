@@ -62,7 +62,7 @@
                         </p-select>
                         <div *ngIf="dstForm.get('subLocation')?.touched && dstForm.get('subLocation')?.hasError('required')"
                             class="error-msg">
-                            {{'Sub location is required'|translate}}
+                            {{'Sub Location is required'|translate}}
                         </div>
                     </div>
                 </div>
@@ -112,7 +112,7 @@
                                 <div *ngIf="row.get('startDate')?.invalid && (row.get('startDate')?.dirty || row.get('startDate')?.touched)"
                                     class="error-msg">
                                     <span *ngIf="row.get('startDate')?.errors?.['required']">
-                                        {{ 'Start date is required' | translate }}
+                                        {{ 'Start Date is required' | translate }}
                                     </span>
                                 </div>
                             </td>
@@ -122,7 +122,7 @@
                                 <div *ngIf="row.get('endDate')?.invalid && (row.get('endDate')?.dirty || row.get('endDate')?.touched)"
                                     class="error-msg">
                                     <span *ngIf="row.get('endDate')?.errors?.['required']">
-                                        {{ 'End date is required' | translate }}
+                                        {{ 'End Date is required' | translate }}
                                     </span>
                                 </div>
                             </td>

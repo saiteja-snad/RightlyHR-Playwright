@@ -1,10 +1,10 @@
 <div class="custom-main-component-container">
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <div><span class="component-sub-header">Trainee Onboarding Verification</span></div>
+        <div><span class="component-sub-header">{{'Trainee Onboarding Verification' | translate}}</span></div>
         @if((this.rbac.allowedToAccess('Request for Onboard Button.view') &&
         empdata?.empstatus?.toLowerCase() == 'trainee active' && dynamicData.value.length <= 0)||buttonviewwhenExtended){ 
         <div class="custom-add-btn" (click)="requestForOnboard()">
-            <i class="bi bi-plus plus-icon me-1"></i>Request For Onboard
+            <i class="bi bi-plus plus-icon me-1"></i>{{'Request For Onboard' | translate}}
         </div>
         }
     </div>
@@ -14,12 +14,12 @@
         <table class="w-100">
             <thead>
                 <tr>
-                    <th>Request Date</th>
-                    <th class="text-center">Training Start Date</th>
-                    <th class="text-center">Training End Date</th>
-                    <th class="text-center">Training Extension Date</th>
-                    <th>Status</th>
-                    <th>Training Feedback</th>
+                    <th>{{'Request Date' | translate}}</th>
+                    <th class="text-center">{{'Training Start Date' | translate}}</th>
+                    <th class="text-center">{{'Training End Date' | translate}}</th>
+                    <th class="text-center">{{'Training Extension Date' | translate}}</th>
+                    <th>{{'Status' | translate}}</th>
+                    <th>{{'Training Feedback' | translate}}</th>
                     <th></th>
                 </tr>
             </thead>
@@ -48,7 +48,7 @@
                                     <ul class="dropdown-menu custom-dropdown-menu">
                                         <li *ngIf="item.status=='Processed' && this.empdata.substatus === 'Offer Letter Accepted' && this.empdata.empstatus === 'Trainee Active' ">
                                             <a class="dropdown-item" (click)="openmodel(readyforonboard)">
-                                                Ready for Onboard
+                                                {{'Ready for Onboard' | translate}}
                                             </a>
                                         </li>
                                     </ul>
@@ -75,7 +75,7 @@
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="custom-poup-header-content popup-header-border">
             <div>
-                <p class="popup-heading mb-0">View Comments</p>
+                <p class="popup-heading mb-0">{{'View Comments' | translate}}</p>
             </div>
             <div>
                 <a><img src="icons/close.png" alt="Close Icon" class="close-icon" (click)="closeonBoard()"></a>
@@ -91,7 +91,7 @@
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="custom-poup-header-content popup-header-border">
             <div>
-                <p class="popup-heading mb-0">View Comments</p>
+                <p class="popup-heading mb-0">{{'View Comments' | translate}}</p>
             </div>
             <div>
                 <a><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
@@ -107,7 +107,7 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
-            <p class="confirmation-text">Are you sure you want to Onboard?</p>
+            <p class="confirmation-text">{{'Are you sure you want to Onboard?' | translate}}</p>
         </div>
         <div class="custom-modal-footer">
             <button type="button" class="custom-btn btn-secondary" (click)="closeonBoard()">{{'No'| translate}}</button>

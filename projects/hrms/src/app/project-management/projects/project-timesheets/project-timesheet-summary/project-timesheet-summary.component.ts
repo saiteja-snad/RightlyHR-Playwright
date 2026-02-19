@@ -68,11 +68,7 @@ export class ProjectTimesheetSummaryComponent implements OnInit, OnDestroy {
   billablevsNonBillableHoursLoader = false;
   projectBurndownLoader = false;
   overrunValue: any;
-  projectId: any;
-  projectstartdate: any;
-  projectsData: any;
-  currentdata: any;
-  
+
   constructor(private router: Router, public formValidation: FormValidationsService, private http: HttpService, private route: ActivatedRoute) { }
 
   // ngOnInit() {
@@ -98,13 +94,6 @@ export class ProjectTimesheetSummaryComponent implements OnInit, OnDestroy {
 
 ngOnInit(): void {
   // 1. Main "Apply" button filter (from form submit)
-    this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe(params => {
-    this.projectId = params['id'];
-    if (this.projectId) {
-      this.getProjects(this.projectId);
-    }
-  });
-  
   this.http.projectTimesheetFilterData$
     .pipe(takeUntil(this.destroy$))
     .subscribe((request: any) => {
@@ -149,47 +138,17 @@ ngOnInit(): void {
   this.triggerLiveFilterRefresh();
 }
 
-getProjects(projectId: string) {
-  this.http.getData(`Project?projectId=${projectId}`)
-    .pipe(takeUntil(this.destroy$))
-    .subscribe({
-      next: (res: any) => {
-
-        this.projectsData = Array.isArray(res?.data) ? res.data : [];
-
-        if (this.projectsData.length > 0) {
-          const rawStart = this.projectsData[0].startDate;
-
-          this.projectstartdate = dayjs(rawStart).format('YYYY-MM-DD');
-          this.currentdata = dayjs().format('YYYY-MM-DD');
-          this.projectstartdate = dayjs(res.startDate).format('YYYY-MM-DD');
-          this.currentdata = dayjs().format('YYYY-MM-DD');
-
-          console.log("Project Start:", this.projectstartdate);
-          console.log("Today:", this.currentdata);
-
-          // IMPORTANT
-          this.triggerLiveFilterRefresh();
-        }
-      }
-    });
-}
 
 private triggerLiveFilterRefresh(): void {
   let dateRange = this.http.getCurrentDateRange();
 
   // EXACT FIX: If no date selected → force current month (Dec 1 – Dec 31)
-  // if (!dateRange?.startDate || !dateRange?.endDate) {
-  //   const start = dayjs().startOf('month').format('YYYY-MM-DD');
-  //   const end = dayjs().endOf('month').format('YYYY-MM-DD');
-  //   dateRange = { startDate: start, endDate: end };
-  // }
-if (!dateRange?.startDate || !dateRange?.endDate) {
-  dateRange = {
-    startDate: this.projectstartdate,
-    endDate: this.currentdata
-  };
-}
+  if (!dateRange?.startDate || !dateRange?.endDate) {
+    const start = dayjs().startOf('month').format('YYYY-MM-DD');
+    const end = dayjs().endOf('month').format('YYYY-MM-DD');
+    dateRange = { startDate: start, endDate: end };
+  }
+
   const deptIds = this.http.getCurrentProjectTimesheetDepartmentIds() || [];
   const roleIds = this.http.getCurrentProjectTimesheetRoleIds() || [];
   const phaseIds = this.http.getCurrentProjectTimesheetPhaseIds() || [];
@@ -208,13 +167,8 @@ if (!dateRange?.startDate || !dateRange?.endDate) {
 }
 
   private refreshAllCharts(request: any = {}): void {
-    // const startDate = request.dateRange?.startDate;
-    // const endDate = request.dateRange?.endDate;
-      if (!this.projectstartdate || !this.currentdata) {
-    return;
-    }
-    const startDate = request?.dateRange?.startDate || this.projectstartdate;
-    const endDate = request?.dateRange?.endDate || this.currentdata;
+    const startDate = request.dateRange?.startDate;
+    const endDate = request.dateRange?.endDate;
 
     this.projectResourceSummary(startDate, endDate, request.departmentIds, request.roleIds, request.phaseIds);
     this.roleWiseHoursGraph(startDate, endDate, request.departmentIds, request.roleIds, request.phaseIds);

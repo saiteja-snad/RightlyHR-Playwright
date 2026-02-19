@@ -1,7 +1,7 @@
 <div class="custom-main-component-container">
   <div class="input-group custom-search mb-3">
     <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
-    <input type="search" class="form-control custom-search-input" placeholder="Search by desk ID / desk type / allocated to / shift / approver"
+    <input type="search" class="form-control custom-search-input" [placeholder]="'Search by desk ID / desk type / allocated to / shift / approver' | translate"
       aria-label="Username" [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange($event)"
       aria-describedby="basic-addon1">
   </div>
@@ -10,16 +10,16 @@
       @if(!loading){
       <table class="w-100">
         <thead>
-          <th>Desk ID</th>
-          <th>Desk Type</th>
-          <th>Allocated To</th>
-          <th>Location</th>
-          <th>Sub Location</th>
-          <th>Shift</th>
-          <th>Desk Status</th>
-          <th>Approver</th>
+          <th>{{ 'Desk ID' | translate }}</th>
+          <th>{{ 'Desk Type' | translate }}</th>
+          <th>{{ 'Allocated To' | translate }}</th>
+          <th>{{ 'Location' | translate }}</th>
+          <th>{{ 'Sub Location' | translate }}</th>
+          <th>{{ 'Shift' | translate }}</th>
+          <th>{{ 'Desk Status' | translate }}</th>
+          <th>{{ 'Approver' | translate }}</th>
           @if(rbac.allowedToAccess('Waiting For Approval View Desk Details.view')){
-          <th class="text-center">Action</th>
+          <th class="text-center">{{ 'Action' | translate }}</th>
           }
         </thead>
         <tbody>
@@ -27,12 +27,12 @@
             <tr *ngFor="let desk of desklist | async">
               <td>{{ desk.deskName }}</td>
               <td>{{ desk.deskType }}</td>
-              <td>{{ desk.allocatedToDetails?.employeeName || 'N/A' }}</td>
+              <td>{{ desk.allocatedToDetails?.employeeName || ('N/A' | translate) }}</td>
               <td>{{ desk.location?.jobLocationName }}</td>
               <td>{{ desk.subLocation?.jobSubLocationName }}</td>
               <td>{{desk.latestAllocationItem?.shiftName}}</td>
               <td>{{ desk.deskStatus }}</td>
-              <td>{{desk.allocatedToDetails?.approverIdName || 'N/A' }}</td>
+              <td>{{desk.allocatedToDetails?.approverIdName || ('N/A' | translate) }}</td>
               @if(rbac.allowedToAccess('Waiting For Approval View Desk Details.view')){
               <td class="text-center">
                 <div class="dropdown">
@@ -42,7 +42,7 @@
                   <ul class="dropdown-menu custom-dropdown-menu">
                     <li>
                       <a class="dropdown-item" (click)="viewdata(desk);navigateToAsset(desk.deskId)">
-                        View Desk Details
+                        {{ 'View Desk Details' | translate }}
                       </a>
                     </li>
                   </ul>

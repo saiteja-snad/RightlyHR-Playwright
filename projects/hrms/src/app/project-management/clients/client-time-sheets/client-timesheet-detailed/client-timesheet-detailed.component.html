@@ -7,8 +7,8 @@
                 <p-accordion-panel *ngFor="let project of projectDetails; let i = index" [value]="i">
                     <p-accordion-header>
                         <div class="accordian-header-text text-truncate" >{{ project?.project?.projectName }}</div>
-                        <div class="total-hrs-text text-truncate"><span class="total-hrs me-2">Total Logged Hours:</span>
-                            <span class="hrs-text">{{project?.project?.spentHoursHHMM }} Hrs</span>
+                        <div class="total-hrs-text text-truncate"><span class="total-hrs me-2">{{'Total Logged Hours' | translate}}:</span>
+                            <span class="hrs-text">{{project?.project?.spentHoursHHMM }} {{'Hrs' | translate}}</span>
                         </div>
 
                     </p-accordion-header>
@@ -18,11 +18,11 @@
                                 [value]="project?.groupedResources">
                                 <ng-template pTemplate="header">
                                     <tr>
-                                        <th>Resource Name</th>
-                                        <th class="text-center">Role</th>
-                                        <th class="text-center">Department</th>
-                                        <th class="text-center">Phases / Milestones</th>
-                                        <th class="text-center">Total Logged Hours</th>
+                                        <th>{{'Resource Name' | translate}}</th>
+                                        <th class="text-center">{{'Role' | translate}}</th>
+                                        <th class="text-center">{{'Department' | translate}}</th>
+                                        <th class="text-center">{{'Phases / Milestones' | translate}}</th>
+                                        <th class="text-center">{{'Total Logged Hours' | translate}}</th>
 
                                     </tr>
                                 </ng-template>
@@ -114,12 +114,12 @@
                         <thead>
                             <tr>
 
-                                <th>Phase / Milestone</th>
-                                <th>Role</th>
-                                <th>Start Date</th>
-                                <th>End Date</th>
-                                <th> Hours Spent</th>
-                                <th>Status</th>
+                                <th>{{'Phase / Milestone' | translate}}</th>
+                                <th>{{'Role' | translate}}</th>
+                                <th>{{'Start Date' | translate}}</th>
+                                <th>{{'End Date' | translate}}</th>
+                                <th>{{'Hours Spent' | translate}}</th>
+                                <th>{{'Status' | translate}}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -132,7 +132,7 @@
                                 </td>
                                 <td>{{ entry?.resourceEndDate ? (entry.resourceEndDate | dateformat) : '-' }}</td>
 
-                                <td><b>{{ entry?.loggedHoursHHMM ?? 0}}</b>/{{entry?.allocatedHours ?? 0}} Hrs</td>
+                                <td><b>{{ entry?.loggedHoursHHMM ?? 0}}</b>/{{entry?.allocatedHours ?? 0}} {{'Hrs' | translate}}</td>
 
                                 <td [ngClass]="{
                                     'active': entry?.resourceStatus?.toLowerCase() === 'active',

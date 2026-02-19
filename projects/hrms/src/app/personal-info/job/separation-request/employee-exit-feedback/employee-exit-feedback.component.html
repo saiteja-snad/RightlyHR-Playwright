@@ -39,7 +39,7 @@
                     <td>
                         @if(item.status === 'Initiated') {
                         <div>
-                            <button (click)="openForm(item)" type="button" class="custom-btn btn-primary">Form Submit</button>
+                            <button (click)="openForm(item)" type="button" class="custom-btn btn-primary">{{'Form Submit' | translate}}</button>
                         </div>
                         } @else {
                         <div class="text-muted">-</div>
@@ -69,7 +69,7 @@
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="custom-poup-header-content popup-header-border">
             <div class="pt-2">
-                <p class="popup-heading mb-0">Document Viewer</p>
+                <p class="popup-heading mb-0">{{'Document Viewer' | translate}}</p>
             </div>
             <div>
                 <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>

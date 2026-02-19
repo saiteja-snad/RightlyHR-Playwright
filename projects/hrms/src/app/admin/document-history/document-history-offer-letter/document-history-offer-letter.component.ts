@@ -1,6 +1,15 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  ValidationErrors,
+  ValidatorFn,
+  Validators,
+} from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
@@ -8,23 +17,35 @@ import { HttpService } from '../../../services/http.service';
 import { AuthService } from '../../../services/auth.service';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { Subscription } from 'rxjs';
+import { IOfferLetterDetails } from '../../../Interfaces/documentsHistory';
 import { OfferletterdashboardpipePipe } from '../../../Pipes/offerletterdashboardpipe.pipe';
 import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { RbacService } from '../../../services/rbac.service';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { DataLoaderContentComponent } from '../../../shared/data-loader-content/data-loader-content.component';
 import moment from 'moment';
+import { Ipersonal } from '../../../Interfaces/personal-modal';
 import { DatePicker } from 'primeng/datepicker';
-import { OnboardingFilterService } from '../../../shared/time-off-module-tabs/pending-approvals-tabs/onboarding-filter.service';
+import { ConfirmationIconComponent } from "../../../icons/confirmation-icon/confirmation-icon.component";
+
 @Component({
   selector: 'app-document-history-offer-letter',
-  imports: [CommonModule, ReactiveFormsModule, TranslateModule, FormsModule, DateformatPipe,
-    OfferletterdashboardpipePipe, NoDataFoundComponent, DataLoaderContentComponent, DatePicker],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    TranslateModule,
+    FormsModule,
+    DateformatPipe,
+    OfferletterdashboardpipePipe,
+    NoDataFoundComponent,
+    DataLoaderContentComponent,
+    DatePicker,
+    ConfirmationIconComponent
+],
   templateUrl: './document-history-offer-letter.component.html',
   styleUrl: './document-history-offer-letter.component.scss',
   encapsulation: ViewEncapsulation.None,
 })
-
 export class DocumentHistoryOfferLetterComponent implements OnInit, OnDestroy {
   subscription!: Subscription;
   searchValue: any;
@@ -41,8 +62,15 @@ export class DocumentHistoryOfferLetterComponent implements OnInit, OnDestroy {
   allOfferLetters: any[] = []; // full data
   offerLetters: any[] = []; // filtered data shown in table
 
-  constructor(private router: Router, private modalService: NgbModal, private fb: FormBuilder, private http: HttpService,
-    private authService: AuthService, private conformationPopup: OpenModalService, public rbac: RbacService, private onboardingFilter: OnboardingFilterService) {
+  constructor(
+    private router: Router,
+    private modalService: NgbModal,
+    private fb: FormBuilder,
+    private http: HttpService,
+    private authService: AuthService,
+    private conformationPopup: OpenModalService,
+    public rbac: RbacService
+  ) {
     this.initializeForm();
   }
 
@@ -51,23 +79,32 @@ export class DocumentHistoryOfferLetterComponent implements OnInit, OnDestroy {
     const today = new Date();
     this.selectedMonth = today.getMonth() + 1;
     this.selectedYear = today.getFullYear();
+
     this.loginuserdata = this.authService.getToken();
     this.initializeForm();
     this.getOfferLetters();
   }
-
   //function to open the popup model
   openModal(content: any) {
-    this.modalService.open(content, { centered: true, backdrop: 'static', keyboard: false });
+    this.modalService.open(content, {
+      centered: true,
+      backdrop: 'static',
+      keyboard: false,
+    });
   }
-
   //functio to inialize the form
   initializeForm() {
     this.rejectDocument = this.fb.group({
-      comments: ['', [Validators.required, Validators.maxLength(250), this.blockLeadingSpace()],],
+      comments: [
+        '',
+        [
+          Validators.required,
+          Validators.maxLength(250),
+          this.blockLeadingSpace(),
+        ],
+      ],
     });
   }
-
   blockLeadingSpace(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       const value = control.value as string;
@@ -81,29 +118,32 @@ export class DocumentHistoryOfferLetterComponent implements OnInit, OnDestroy {
   //to get all offer Letters
   getOfferLetters() {
     this.isloading = true;
-    this.subscription = this.http.getData('OfferLetter/getAllNames/approverNames').subscribe({
-      next: (data: any) => {
-        this.isloading = false;
-        this.allOfferLetters = data;
-        this.filterByMonth(); // Filter immediately if month is selected
-      },
-      error: (reason: any) => {
-        this.isloading = false;
-        console.error(reason);
-      },
-    });
+    this.subscription = this.http
+      .getData('OfferLetter/getAllNames/approverNames?empType=Offer Letter')
+      .subscribe({
+        next: (data: any) => {
+          this.isloading = false;
+          this.allOfferLetters = data.filter((x: any) => x.empType !== 'Contract');
+          this.filterByMonth(); // Filter immediately if month is selected
+        },
+        error: (reason: any) => {
+          this.isloading = false;
+          console.error(reason);
+        },
+      });
   }
-
   filterByMonth() {
     if (this.selectedMonth && this.selectedYear) {
       this.offerLetters = this.allOfferLetters.filter((item) => {
         const date = moment(item.offerSentDate);
-        return (date.month() + 1 === this.selectedMonth && date.year() === this.selectedYear);
+        return (
+          date.month() + 1 === this.selectedMonth &&
+          date.year() === this.selectedYear
+        );
       });
     } else {
       this.offerLetters = this.allOfferLetters; // show all if no filter
     }
-    // this.onboardingFilter.setMonthYear(this.selectedMonth || new Date().getMonth() + 1, this.selectedYear || new Date().getFullYear());
   }
 
   onMonthChange(value: any) {
@@ -111,26 +151,31 @@ export class DocumentHistoryOfferLetterComponent implements OnInit, OnDestroy {
     this.selectedMonth = selected.month() + 1;
     this.selectedYear = selected.year();
     this.filterByMonth();
-    // Update the service with new month/year
-    this.onboardingFilter.setMonthYear(this.selectedMonth, this.selectedYear);
   }
 
   //function to download the document
   onSelectDownload(file: any) {
-    this.subscription = this.http.DownloadDataWithQuery('FileSystem/Downloadfile', file.documentUrl).subscribe({
-      next: (res: any) => {
-        let fileName = res.headers.get('content-disposition')?.split(':')[1].split('=')[1];
-        let blob: Blob = res.body as Blob;
-        let a = document.createElement('a');
-        a.href = window.URL.createObjectURL(blob);
-        let filename = file.documentUrl.split('/')[file.documentUrl.split('/').length - 1];
-        a.download = filename;
-        a.click();
-      },
-      error: (reason) => console.log(reason),
-    });
-  }
+    this.subscription = this.http
+      .DownloadDataWithQuery('FileSystem/Downloadfile', file.documentUrl)
+      .subscribe({
+        next: (res: any) => {
+          let fileName = res.headers
+            .get('content-disposition')
+            ?.split(':')[1]
+            .split('=')[1];
+          let blob: Blob = res.body as Blob;
+          // console.log(fileName);
 
+          let a = document.createElement('a');
+          a.href = window.URL.createObjectURL(blob);
+          let filename =
+            file.documentUrl.split('/')[file.documentUrl.split('/').length - 1];
+          a.download = filename;
+          a.click();
+        },
+        error: (reason) => console.log(reason),
+      });
+  }
   //function to release the document
   releaseOfferletter(Values: any) {
     let loggedInUser = this.authService.getToken();
@@ -155,28 +200,27 @@ export class DocumentHistoryOfferLetterComponent implements OnInit, OnDestroy {
       note: Values.note,
       rolesAndResponsibilitesId: Values.rolesAndResponsibilitesId,
       documentType: Values.documentType,
-      letterType: Values.letterType,
-      currencyType: Values.currencyType
+      letterType : 'Offer Letter',
+      currencyType : Values.currencyType
     };
-    this.subscription = this.http.postdata('OfferLetter/UPDATE', updateOfferLetterDetails).subscribe({
-      next: (data: any) => {
-        this.employeeEmail(Values);
-        this.onboardingFilter.setMonthYear(this.selectedMonth || new Date().getMonth() + 1, this.selectedYear || new Date().getFullYear());
-
-      },
-      error: (reason: any) => {
-        console.log(reason);
-      },
-    });
+    this.subscription = this.http
+      .postdata('OfferLetter/UPDATE', updateOfferLetterDetails)
+      .subscribe({
+        next: (data: any) => {
+          this.employeeEmail(Values);
+        },
+        error: (reason: any) => {
+          console.log(reason);
+        },
+      });
   }
-
+  
   employeeEmail(Values: any) {
     const loggedInUser = this.authService.getToken();
     let emaildetails = {
       personEmail: Values.emailaddress,
       senderEmail: loggedInUser.workEmail,
-      senderName: `${loggedInUser.firstName}${loggedInUser.middleName ? ' ' +
-        loggedInUser.middleName : ''}${loggedInUser.lastName ? ' ' + loggedInUser.lastName : ''}`,
+      senderName: `${loggedInUser.firstName}${loggedInUser.middleName ? ' ' + loggedInUser.middleName : ''}${loggedInUser.lastName ? ' ' + loggedInUser.lastName : ''}`,
       personName: Values.employeeName,
       personRole: Values.jobRole,
       employeeId: Values.empId,
@@ -186,20 +230,24 @@ export class DocumentHistoryOfferLetterComponent implements OnInit, OnDestroy {
       offerExpiryDate: Values.offerExpiryDate,
       approvedBy: loggedInUser.employeeId
     };
-    this.subscription = this.http.postdata(`CustomEmail/offerletter`, emaildetails).subscribe({
-      next: (data: any) => {
-        this.conformationPopup.openSuccessModal('Offer letter released successfully ');
-        this.getOfferLetters();
-      },
-      error: (err: any) => {
-        console.log(err);
-      },
-    });
+    this.subscription = this.http
+      .postdata(`CustomEmail/offerletter`, emaildetails)
+      .subscribe({
+        next: (data: any) => {
+          this.conformationPopup.openSuccessModal(
+            'Offer letter released successfully '
+          );
+          this.getOfferLetters();
+        },
+        error: (err: any) => {
+          console.log(err);
+        },
+      });
   }
-
   //function to update OfferLetter Details When Approve
   updateOfferDetails(Values: any) {
     let loggedInUser = this.authService.getToken();
+    console.log(loggedInUser);
     let updateOfferLetterDetails = {
       id: Values.id,
       empId: Values.empId,
@@ -219,25 +267,28 @@ export class DocumentHistoryOfferLetterComponent implements OnInit, OnDestroy {
       note: Values.note,
       rolesAndResponsibilitesId: Values.rolesAndResponsibilitesId,
       documentType: Values.documentType,
-      letterType: Values.letterType,
-      currencyType: Values.currencyType
+      letterType : 'Offer Letter',
+      currencyType : Values.currencyType
     };
-    this.subscription = this.http.postdata('OfferLetter/UPDATE', updateOfferLetterDetails).subscribe({
-      next: (data: any) => {
-        this.getOfferLetters();
-        this.ApproveEmail(Values);
-          this.onboardingFilter.setMonthYear(this.selectedMonth || new Date().getMonth() + 1, this.selectedYear || new Date().getFullYear());
-
-      },
-      error: (reason: any) => {
-        console.log(reason);
-      },
-    });
+    console.log(updateOfferLetterDetails);
+    this.subscription = this.http
+      .postdata('OfferLetter/UPDATE', updateOfferLetterDetails)
+      .subscribe({
+        next: (data: any) => {
+          console.log(data);
+          this.getOfferLetters();
+          this.ApproveEmail(Values);
+        },
+        error: (reason: any) => {
+          console.log(reason);
+        },
+      });
   }
 
   //function for Approve email
   ApproveEmail(personValues: any) {
     let datas = personValues;
+    console.log(datas);
     let loggedInUser = this.authService.getToken();
     let emailData = {
       personName: datas.offerSentByName,
@@ -246,20 +297,25 @@ export class DocumentHistoryOfferLetterComponent implements OnInit, OnDestroy {
       employeeId: datas.offerSentBy,
       documentUrl: personValues.documentUrl,
       workLocation: datas.workLocation,
-      senderName: `${loggedInUser.firstName}${loggedInUser.middleName ? ' ' +
-        loggedInUser.middleName : ''} ${loggedInUser.lastName ?? ''}`,
+      senderName: `${loggedInUser.firstName}${
+        loggedInUser.middleName ? ' ' + loggedInUser.middleName : ''
+      } ${loggedInUser.lastName ?? ''}`,
       senderEmail: loggedInUser.workEmail,
       approvedBy: loggedInUser.employeeId,
-      approvedByName: `${loggedInUser.firstName}${loggedInUser.middleName ? ' ' +
-        loggedInUser.middleName : ''}${loggedInUser.lastName ? ' ' + loggedInUser.lastName : ''}`,
+      approvedByName: `${loggedInUser.firstName}${loggedInUser.middleName ? ' ' + loggedInUser.middleName : ''}${loggedInUser.lastName ? ' ' + loggedInUser.lastName : ''}`,
       firstName: datas.employeeName,
     };
-    this.subscription = this.http.postdata(`CustomEmail/offerApproval`, emailData).subscribe({
-      next: (data: any) => {
-        this.Approvednotification(datas);
-        this.conformationPopup.openSuccessModal('Offer letter approved successfully ');
-      },
-    });
+    console.log(emailData);
+    this.subscription = this.http
+      .postdata(`CustomEmail/offerApproval`, emailData)
+      .subscribe({
+        next: (data: any) => {
+          this.Approvednotification(datas);
+          this.conformationPopup.openSuccessModal(
+            'Offer letter approved successfully '
+          );
+        },
+      });
   }
 
   //function for approved notification
@@ -272,12 +328,14 @@ export class DocumentHistoryOfferLetterComponent implements OnInit, OnDestroy {
       isRead: false,
       isDelete: false,
       notificationDate: currentDate,
-      notificationType: `${loggedInUser.firstName}${loggedInUser.middleName ? ' ' + loggedInUser.middleName : ''}
-      ${loggedInUser.lastName ? ' ' + loggedInUser.lastName : ''} Approved ${personname.employeeName} Offer Letter`,
+      notificationType: `${loggedInUser.firstName}${loggedInUser.middleName ? ' ' + loggedInUser.middleName : ''}${loggedInUser.lastName ? ' ' + loggedInUser.lastName : ''}
+                         Approved 
+         ${personname.employeeName} Offer Letter`,
       empId: personname.offerSentBy,
     };
     this.subscription = this.http.postdata(`Notification`, senddata).subscribe({
       next: (data: any) => {
+        console.log(data);
         this.getOfferLetters();
       },
       error: (err: any) => {
@@ -289,24 +347,29 @@ export class DocumentHistoryOfferLetterComponent implements OnInit, OnDestroy {
   //function to get the data of selected
   SelectData(value: any) {
     this.selectedValuesOfOffer = value;
+    console.log(this.selectedValuesOfOffer);
     this.getEmployeeId(value.empId);
   }
 
   //function to get the employee details based on the employee id
   getEmployeeId(Values: any) {
     let employeeId = Values;
-    this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
-      next: (data: any) => {
-        this.employeedata = data;
-      },
-      error: (reason) => console.log(reason),
-    });
+    this.subscription = this.http
+      .getData(`Employeedata/${employeeId}`)
+      .subscribe({
+        next: (data: any) => {
+          console.log(data);
+          this.employeedata = data;
+        },
+        error: (reason) => console.log(reason),
+      });
   }
 
   //post reason to offerletter table
   PostReasonandUpdateOfferDetails() {
     let currentDate = new Date();
     let loggedInUser = this.authService.getToken();
+    console.log(loggedInUser);
     let updateOfferLetterDetails = {
       id: this.selectedValuesOfOffer.id,
       empId: this.selectedValuesOfOffer.empId,
@@ -326,36 +389,42 @@ export class DocumentHistoryOfferLetterComponent implements OnInit, OnDestroy {
       authoritySignature: this.selectedValuesOfOffer.authoritySignature,
       addressType: this.selectedValuesOfOffer.addressType,
       note: this.selectedValuesOfOffer.note,
-      rolesAndResponsibilitesId: this.selectedValuesOfOffer.rolesAndResponsibilitesId,
+      rolesAndResponsibilitesId:
+        this.selectedValuesOfOffer.rolesAndResponsibilitesId,
       documentType: this.selectedValuesOfOffer.documentType,
-      letterType: this.selectedValuesOfOffer.letterType,
-      currencyType: this.selectedValuesOfOffer.currencyType
+      letterType : 'Offer Letter',
+      currencyType : this.selectedValuesOfOffer.currencyType
     };
-    this.subscription = this.http.postdata('OfferLetter/UPDATE', updateOfferLetterDetails).subscribe({
-      next: (data: any) => {
-        this.updateemployeestatus(data);
-        this.rejectEmail();
-        this.Rejectnotification();
-        this.getOfferLetters();
-          this.onboardingFilter.setMonthYear(this.selectedMonth || new Date().getMonth() + 1, this.selectedYear || new Date().getFullYear());
-
-      },
-      error: (reason: any) => {
-        console.log(reason);
-      },
-    });
+    console.log(updateOfferLetterDetails);
+    this.subscription = this.http
+      .postdata('OfferLetter/UPDATE', updateOfferLetterDetails)
+      .subscribe({
+        next: (data: any) => {
+          console.log(data);
+          this.updateemployeestatus(data);
+          this.rejectEmail();
+          this.Rejectnotification();
+          this.getOfferLetters();
+        },
+        error: (reason: any) => {
+          console.log(reason);
+        },
+      });
   }
 
   //function to update the employee substatus
   updateemployeestatus(Value: any) {
+    console.log(Value.empId);
     (this.employeedata.employeeId = Value.empId),
       (this.employeedata.empstatus = 'Prospective');
     this.employeedata.substatus = 'Offer Letter Rejected By Manager';
-    this.subscription = this.http.postdata('Employeedata/UPDATER', this.employeedata).subscribe({
-      next: (data: any) => {
-        console.log(data);
-      },
-    });
+    this.subscription = this.http
+      .postdata('Employeedata/UPDATER', this.employeedata)
+      .subscribe({
+        next: (data: any) => {
+          console.log(data);
+        },
+      });
   }
 
   //Function for Reject Email
@@ -368,8 +437,7 @@ export class DocumentHistoryOfferLetterComponent implements OnInit, OnDestroy {
       employeeId: this.selectedValuesOfOffer.offerSentBy,
       documentUrl: this.selectedValuesOfOffer.documentUrl,
       workLocation: this.selectedValuesOfOffer.workLocation,
-      senderName: `${loggedInUser.firstName}${loggedInUser.middleName ? ' ' + loggedInUser.middleName : ''}
-      ${loggedInUser.lastName ? ' ' + loggedInUser.lastName : ''}`,
+      senderName: `${loggedInUser.firstName}${loggedInUser.middleName ? ' ' + loggedInUser.middleName : ''}${loggedInUser.lastName ? ' ' + loggedInUser.lastName : ''}`,
       senderEmail: loggedInUser.workEmail,
       approvedBy: this.selectedValuesOfOffer.approvedBy,
       approvedByName: this.selectedValuesOfOffer.approvedByName,
@@ -377,18 +445,22 @@ export class DocumentHistoryOfferLetterComponent implements OnInit, OnDestroy {
       // lastName: string,
       comments: this.rejectDocument.value.comments,
     };
-    this.subscription = this.http.postdata(`CustomEmail/OfferRejection`, emaildate).subscribe({
-      next: (data: any) => {
-        if (data) {
-          this.rejectDocument.reset();
-          this.modalService.dismissAll();
-          this.conformationPopup.openSuccessModal('Offer letter rejected successfully ');
-        }
-      },
-      error: (err: any) => {
-        console.log(err);
-      },
-    });
+    this.subscription = this.http
+      .postdata(`CustomEmail/OfferRejection`, emaildate)
+      .subscribe({
+        next: (data: any) => {
+          if (data) {
+            this.rejectDocument.reset();
+            this.modalService.dismissAll();
+            this.conformationPopup.openSuccessModal(
+              'Offer letter rejected successfully '
+            );
+          }
+        },
+        error: (err: any) => {
+          console.log(err);
+        },
+      });
   }
 
   //function for reject notification
@@ -401,9 +473,8 @@ export class DocumentHistoryOfferLetterComponent implements OnInit, OnDestroy {
       isRead: false,
       isDelete: false,
       notificationDate: currentDate,
-      notificationType: `${loggedInUser.firstName}${loggedInUser.middleName ? ' ' + loggedInUser.middleName : ''}
-      ${loggedInUser.lastName ? ' ' + loggedInUser.lastName : ''} Rejected 
-      ${this.selectedValuesOfOffer.employeeName} Offer Letter`,
+      notificationType: `${loggedInUser.firstName}${loggedInUser.middleName ? ' ' + loggedInUser.middleName : ''}${loggedInUser.lastName ? ' ' + loggedInUser.lastName : ''} Rejected 
+           ${this.selectedValuesOfOffer.employeeName} Offer Letter`,
       empId: this.selectedValuesOfOffer.offerSentBy,
     };
     this.subscription = this.http.postdata(`Notification`, senddata).subscribe({

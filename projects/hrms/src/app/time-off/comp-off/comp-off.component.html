@@ -1,7 +1,7 @@
 <div class="custom-main-component-container">
     <div class="component-header-content">
         <div class="heading-content">
-            <div class="commpoment-name">Time Off<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
+            <div class="commpoment-name">{{ 'Time Off' | translate }}<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
             </div>
             <div class="component-header">{{'Comp-Off'|translate}}</div>
             <div>
@@ -16,7 +16,7 @@
                     {{'Select Employee' | translate}}</label>
                 <div class="custom-p-select-content">
                     <p-select [options]="activeEmplist" [filter]="true" filterBy="label" resetFilterOnHide="true"
-                     optionLabel="label" optionValue="value" showClear="true" placeholder="Please select employee name"
+                     optionLabel="label" optionValue="value" showClear="true" placeholder="{{ 'Select employee name' | translate }}"
                      (onChange)="onCheckemployee($event.value)" class="form-select custom-select"></p-select>
                 </div>
             </div>
@@ -26,7 +26,7 @@
                 <label for="education" class="form-label custom-label text-nowrap filter-labels m-0">{{'Select Employee' | translate}}</label>
                 <div class="custom-p-select-content">
                     <p-select [options]="activeEmplist" [filter]="true" filterBy="label" resetFilterOnHide="true" optionLabel="label"
-                    optionValue="value" showClear="true" placeholder="Please select employee name" (onChange)="onCheckemployee($event.value)" 
+                    optionValue="value" showClear="true" placeholder="{{ 'Select employee name' | translate }}" (onChange)="onCheckemployee($event.value)" 
                     class="form-select custom-select"></p-select>
                 </div>
             </div>
@@ -36,7 +36,7 @@
                 <label class="form-label filter-labels m-0">{{'My Team'| translate}}</label>
                 <div class="custom-p-select-content">
                     <p-select [options]="getEmployeeInfo" optionLabel="fullName" optionValue="employeeId"
-                        class="form-select custom-select" name="myteamemployees" placeholder="Please select employee name" [filter]="true"
+                        class="form-select custom-select" name="myteamemployees" placeholder="{{ 'Select employee name' | translate }}" [filter]="true"
                         resetFilterOnHide="true" showClear="true" required (onChange)="onCheckemployee($event.value)">
                     </p-select>
                 </div>
@@ -44,10 +44,10 @@
             }
 
             <div class="d-flex gap-2 align-items-center">
-                <label class="form-label custom-label filter-labels m-0" for="">Select Year</label>
+                <label class="form-label custom-label filter-labels m-0" for="">{{ 'Select Year' | translate }}</label>
                 <form autocomplete="off" [formGroup]="yearSelectionForm">
                     <div class="custom-p-select-content">
-                        <p-select formControlName="selectedYear" [options]="years" placeholder="Select Year"
+                        <p-select formControlName="selectedYear" [options]="years" placeholder="{{ 'Select Year' | translate }}"
                             class="form-select custom-select" (onChange)="onYearChange()">
                         </p-select>
                     </div>
@@ -56,7 +56,7 @@
 
             <div *ngIf="disaplyapplybutton">
                 @if(rbac.allowedToAccess('Request Comp Off Button.view')){
-                <button type="button" (click)="openModal(addcompoff)" class="custom-btn btn-primary">Request Comp-Off</button>
+                <button type="button" (click)="openModal(addcompoff)" class="custom-btn btn-primary">{{ 'Request Comp-Off' | translate }}</button>
                 }
             </div>
         </div>
@@ -83,7 +83,7 @@
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="custom-poup-header-content popup-header-border">
             <div class="pt-2">
-                <p class="popup-heading mb-0">Request Comp-Off</p>
+                <p class="popup-heading mb-0">{{ 'Request Comp-Off' | translate }}</p>
             </div>
         </div>
 
@@ -93,17 +93,17 @@
                 <!-- Worked Date -->
                 <div class="row">
                     <div class="col-md-12 mb-3">
-                        <label for="workedDate" class="form-label custom-label mb-2">Worked Date
+                        <label for="workedDate" class="form-label custom-label mb-2">{{ 'Worked Date' | translate }}
                             <span class="text-danger">*</span></label>
                         <input type="date" class="form-control custom-input" onkeydown="return false" id="workedDate"
                             autocomplete="off" [min]="getPastDate()" [max]="getFutureDate()" formControlName="workedDate" required
                             (change)="weekendAndHolidaysCheck(addCompOffForm.get('workedDate')?.value)">
                         <div class="error-msg">
                             <div *ngIf="addCompOffForm.get('workedDate')?.touched && addCompOffForm.get('workedDate')?.invalid">
-                                <div *ngIf="addCompOffForm.get('workedDate')?.errors?.['required']">Worked date is required</div>
+                                <div *ngIf="addCompOffForm.get('workedDate')?.errors?.['required']">{{ 'Worked Date is required' | translate }}</div>
                             </div>
-                            <div *ngIf="addCompOffForm.get('workedDate')?.errors?.['beforeJoining']">Date must be after your date of joining</div>
-                            <div *ngIf="!(isHolidaySelected || isWeekOffSelected)">Selected date is not eligible for compoff</div>
+                            <div *ngIf="addCompOffForm.get('workedDate')?.errors?.['beforeJoining']">{{ 'Date must be after your date of joining' | translate }}</div>
+                            <div *ngIf="!(isHolidaySelected || isWeekOffSelected)">{{ 'Selected date is not eligible for compoff' | translate }}</div>
                         </div>
                     </div>
                 </div>
@@ -111,23 +111,23 @@
                 <!-- Availing -->
                 <div class="row">
                     <div class="col-md-12 mb-3">
-                        <label class="form-label custom-label mb-3">Availing<span class="text-danger">*</span></label>
+                        <label class="form-label custom-label mb-3">{{ 'Availing' | translate }}<span class="text-danger">*</span></label>
                         <div class="d-flex gap-3">
                             <div class="form-check">
                                 <input type="radio" class="form-check-input" id="halfDay" value="Half Day" formControlName="availing">
-                                <label class="form-check-label custom-label" for="halfDay">Half Day</label>
+                                <label class="form-check-label custom-label" for="halfDay">{{ 'Half Day' | translate }}</label>
                                 <!-- Half Day Selection -->
                                 <div *ngIf="addCompOffForm.get('availing')?.value === 'Half Day'">
                                     <div class="form-check my-2">
                                         <input type="radio" class="form-check-input" id="firstHalf" value="1"
                                             formControlName="halfType">
-                                        <label class="form-check-label" for="firstHalf">First Half</label>
+                                        <label class="form-check-label" for="firstHalf">{{ 'First Half' | translate }}</label>
                                     </div>
 
                                     <div class="form-check">
                                         <input type="radio" class="form-check-input" id="secondHalf" value="3"
                                             formControlName="halfType">
-                                        <label class="form-check-label" for="secondHalf">Second Half</label>
+                                        <label class="form-check-label" for="secondHalf">{{ 'Second Half' | translate }}</label>
                                     </div>
                                 </div>
                             </div>
@@ -135,7 +135,7 @@
                             <div class="form-check">
                                 <input type="radio" class="form-check-input" id="fullDay" value="Full Day"
                                     formControlName="availing" value="2" (change)="updateDuration()">
-                                <label class="form-check-label custom-label" for="fullDay">Full Day</label>
+                                <label class="form-check-label custom-label" for="fullDay">{{ 'Full Day' | translate }}</label>
                             </div>
                         </div>
                     </div>
@@ -144,13 +144,13 @@
                 <!-- Reason -->
                 <div class="row">
                     <div class="col-md-12 mb-3">
-                        <label for="reason" class="form-label custom-label mb-2">Reason<span class="text-danger">*</span></label>
+                        <label for="reason" class="form-label custom-label mb-2">{{ 'Reason' | translate }}<span class="text-danger">*</span></label>
                         <textarea class="form-control custom-input" id="reason" formControlName="reason" rows="3"
-                            placeholder="Reason for comp off" maxlength="250"
+                            placeholder="{{ 'Reason for comp off' | translate }}" maxlength="250"
                             (input)="formsValidation.validateInput(addCompOffForm.get('reason'))"></textarea>
                         <div class="error-msg" *ngIf="addCompOffForm.get('reason')?.touched && addCompOffForm.get('reason')?.invalid">
-                            <div *ngIf="addCompOffForm.get('reason')?.errors?.['required']">Reason is required</div>
-                            <div *ngIf="addCompOffForm.get('reason')?.errors?.['maxlength']">Reason cannot exceed 250 characters</div>
+                            <div *ngIf="addCompOffForm.get('reason')?.errors?.['required']">{{ 'Reason is required' | translate }}</div>
+                            <div *ngIf="addCompOffForm.get('reason')?.errors?.['maxlength']">{{ 'Reason cannot exceed 250 characters' | translate }}</div>
                         </div>
                         <div class="textarea-count-text">{{ addCompOffForm.get('reason')?.value?.length || 0 }}/250</div>
                     </div>
@@ -181,12 +181,12 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
           <app-confirmation-icon />
-            <p class="confirmation-text mb-4">Are you sure you want to cancel?</p>
+            <p class="confirmation-text mb-4">{{ 'Are you sure you want to cancel?' | translate }}</p>
         </div>
 
         <div class="custom-modal-footer">
-            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss();">No</button>
-            <button type="submit" class="custom-btn btn-primary" (click)="cleardata()">Yes</button>
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss();">{{ 'No' | translate }}</button>
+            <button type="submit" class="custom-btn btn-primary" (click)="cleardata()">{{ 'Yes' | translate }}</button>
         </div>
     </div>
 </ng-template>

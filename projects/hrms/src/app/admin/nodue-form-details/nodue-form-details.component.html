@@ -2,9 +2,9 @@
     <div class="component-header-content">
         <div class="heading-content">
             <div class="commpoment-name navigator" (click)="back()">
-                No Due Clearance Info<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
+                {{ 'No Due Clearance Info' | translate }}<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
             </div>
-            <div class="component-header">No Due Clearance Form</div>
+            <div class="component-header">{{ 'No Due Clearance Form' | translate }}</div>
         </div>
     </div>
 
@@ -15,13 +15,13 @@
                     <app-lettersheader />
                 </div>
 
-                <p class="component-header text-uppercase text-center mb-5">NO DUE CLEARANCE FORM</p>
+                <p class="component-header text-uppercase text-center mb-5">{{ 'NO DUE CLEARANCE FORM' | translate }}</p>
         
                 <!--Grid content-->
                 <div class="row my-4 mx-1">
                     <div class="col-md-6 border">
                         <div class="d-flex p-2">
-                            <div class="label-name me-1">Name of the employee:</div>
+                            <div class="label-name me-1">{{ 'Name of the employee' | translate }}:</div>
                             <div class="label-text">
                                 {{this.empdata?.firstName ?? ''}} {{this.empdata?.middleName ?? ''}}
                                 {{this.empdata?.lastName ?? ''}}
@@ -30,26 +30,26 @@
                     </div>
                     <div class="col-md-6 border">
                         <div class="d-flex p-2">
-                            <div class="label-name me-1">Work Email:</div>
+                            <div class="label-name me-1">{{ 'Work Email' | translate }}:</div>
                             <div class="label-text">{{this.empdata.workEmail}}</div>
                         </div>
                     </div>
                     <div class="col-md-6 border">
                         <div class="d-flex p-2">
-                            <div class="label-name me-1">Designation:</div>
+                            <div class="label-name me-1">{{ 'Designation' | translate }}:</div>
                             <div class="label-text">{{this.jobdetails.jobRole}}</div>
                         </div>
                     </div>
                     <div class="col-md-6 border">
                         <div class="d-flex p-2">
-                            <div class="label-name me-1">EmpID:</div>
+                            <div class="label-name me-1">{{ 'EmpID' | translate }}:</div>
                             <div class="label-text">{{this.empdata.fusionEmpId}}</div>
                         </div>
                     </div>
                     <div class="col-md-6 border">
                         <div class="d-flex p-2">
                             <div class="label-name me-1">
-                                Team Manager:
+                                {{ 'Team Manager' | translate }}:
                             </div>
                             <div class="label-text">
                                 {{this.jobdetails.firstName?? ''}} {{this.jobdetails.middleName?? ''}}
@@ -60,7 +60,7 @@
                     <div class="col-md-6 border">
                         <div class="d-flex p-2">
                             <div class="label-name me-1">
-                                Reporting Manager:
+                                {{ 'Reporting Manager' | translate }}:
                             </div>
                             <div class="label-text">
                                 {{this.jobdetails.fName?? ''}} {{this.jobdetails.mName?? ''}}
@@ -71,7 +71,7 @@
                     <div class="col-md-6 border">
                         <div class="d-flex p-2">
                             <div class="label-name me-1">
-                                Date of Joining:
+                                {{ 'Date of Joining' | translate }}:
                             </div>
                             <div class="label-text">
                                 {{this.empdata.dateOfJoining|dateformat}}
@@ -81,7 +81,7 @@
                     <div class="col-md-6 border">
                         <div class="d-flex p-2">
                             <div class="label-name me-1">
-                                Deparment:
+                                {{ 'Department' | translate }}:
                             </div>
                             <div class="label-text">
                                 {{this.jobdetails.departmentName}}
@@ -91,7 +91,7 @@
                     <div class="col-md-6 border">
                         <div class="d-flex p-2">
                             <div class="label-name me-1">
-                                Date of Relieving:
+                                {{ 'Date of Relieving' | translate }}:
                             </div>
                             <div class="label-text">
                                 {{this.empdata.lastworkingday|dateformat}}
@@ -100,7 +100,7 @@
                     </div>
                     <div class="col-md-6 border">
                         <div class="d-flex p-2">
-                            <div class="label-name me-1">Location:</div>
+                            <div class="label-name me-1">{{ 'Location' | translate }}:</div>
                             <div class="label-text">
                                 {{this.jobdetails.sublocationName }},{{this.jobdetails.locationName}}
                             </div>
@@ -113,10 +113,10 @@
                     <table class="w-100">
                         <thead>
                             <tr>
-                                <th>Department</th>
-                                <th>Manager Name & Emp ID</th>
-                                <th>Signature</th>
-                                <th>Date</th>
+                                <th>{{ 'Department' | translate }}</th>
+                                <th>{{ 'Manager Name & Emp ID' | translate }}</th>
+                                <th>{{ 'Signature' | translate }}</th>
+                                <th>{{ 'Date' | translate }}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -139,7 +139,7 @@
                     <div class="col-md-6">
                         <div class="d-flex align-items-center py-2">
                             <div class="label-name me-1">
-                                Employee Signature:
+                                {{ 'Employee Signature' | translate }}:
                             </div>
                             <div class="letter-signature">
                                 {{this.empdata?.firstName ?? ''}} {{this.empdata?.middleName ?? ''}}
@@ -150,7 +150,7 @@
                     <div class="col-md-6">
                         <div class="d-flex align-items-center py-2">
                             <div class="label-name me-1">
-                                Signature:
+                                {{ 'Signature' | translate }}:
                             </div>
                             <div class="letter-signature">
                                 {{authorityDetails.firstName ?? ''}} {{authorityDetails.middleName ?? ''}}
@@ -165,10 +165,10 @@
         <!--Button Content-->
         <div class="d-flex gap-3 my-4">
             <button type="button" class="custom-btn btn-secondary px-5" (click)="openModal(cancelConfirmation)">
-                {{'Cancel'|translate}}
+                {{ 'Cancel' | translate }}
             </button>
             <button type="button" class="custom-btn btn-primary px-5" (click)="openModal(confirmationpopup)">
-                {{'Submit'|translate}}
+                {{ 'Submit' | translate }}
             </button>
         </div>
     </div>
@@ -178,19 +178,19 @@
     <div class="result-popup-content" ngbAutofocus>
       <div>
       <app-confirmation-icon />
-        <p class="confirmation-text mb-4">Are you sure you want to Submit?</p>
+        <p class="confirmation-text mb-4">{{ 'Are you sure you want to Submit?' | translate }}</p>
       </div>
   
       <div class="d-flex justify-content-center gap-3 mt-4">
-        <button type="button" class="custom-btn btn-secondary" [disabled]="isLoading" (click)="modal.dismiss()">{{'No'|translate}}</button>
+        <button type="button" class="custom-btn btn-secondary" [disabled]="isLoading" (click)="modal.dismiss()">{{ 'No' | translate }}</button>
         <button type="button" class="custom-btn btn-primary" [disabled]="isLoading" (click)="FormDownload()">
             @if(!isLoading){
-            {{'Yes'|translate}}
+            {{ 'Yes' | translate }}
             }
             @else {
             <div class="button-loader-content" *ngIf="isLoading">
                 <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
-                <span>{{'Submitting...'}}</span>
+                <span>{{ 'Submitting...' | translate }}</span>
             </div>
             }
         </button>
@@ -202,11 +202,11 @@
   <div class="result-popup-content" ngbAutofocus>
     <div>
       <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
-      <p class="confirmation-text">Are you sure you want to cancel?</p>
+      <p class="confirmation-text">{{ 'Are you sure you want to cancel?' | translate }}</p>
     </div>
     <div class="custom-modal-footer">
-      <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">No</button>
-      <button type="button" class="custom-btn btn-primary" (click)="back()">Yes</button>
+      <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">{{ 'No' | translate }}</button>
+      <button type="button" class="custom-btn btn-primary" (click)="back()">{{ 'Yes' | translate }}</button>
     </div>
   </div>
 </ng-template>

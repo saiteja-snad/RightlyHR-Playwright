@@ -7,12 +7,12 @@
             @if (!loading) {
             <table class="w-100">
                 <thead>
-                    <th>Document Type</th>
-                    <th>Created Date</th>
+                    <th>{{"Document Type" | translate}}</th>
+                    <th>{{"Created Date" | translate}}</th>
                     <!-- <th>File Name</th> -->
-                    <th>Signed Copy</th>
-                    <th>Attachment</th>
-                    <th class="text-center">Dowload</th>
+                    <th>{{"Signed Copy" | translate}}</th>
+                    <th>{{"Attachment" | translate}}</th>
+                    <th class="text-center">{{"Dowload" | translate}}</th>
                     @if((rbac.allowedToAccess('Client Documents.update') || rbac.allowedToAccess('Client Documents.delete'))
                     && this.inactiveClientStatus !== 'inactive'){
                     <th class="text-center">{{"Action" | translate}}</th>
@@ -28,8 +28,8 @@
                                 <ng-container *ngIf="data.attributes?.length > 0; else noAttributes">
                                     <ng-container *ngFor="let attr of data.attributes">
                                         <span class="text-capitalize">
-                                            {{ attr.attributeValue === true || attr.attributeValue === 'yes' ? 'Yes' :
-                                            'No'}}
+                                            {{ attr.attributeValue === true || attr.attributeValue === 'yes' ? ('Yes' | translate) :
+                                            ('No' | translate)}}
                                         </span>
                                     </ng-container>
                                 </ng-container>
@@ -62,7 +62,7 @@
                                         @if(rbac.allowedToAccess('Client Documents.delete')){
                                         <li (click)="openModal(deleteconformation, data, 'm')">
                                             <a class="dropdown-item">
-                                                <i class="bi bi-slash-circle me-2"></i>Archive
+                                                <i class="bi bi-slash-circle me-2"></i>{{"Archive" | translate}}
                                             </a>
                                         </li>
                                         }
@@ -102,16 +102,16 @@
                 <div class="row">
                     <!-- Document Type -->
                     <div class="col-md-6 mb-3">
-                        <label for="documentType" class="form-label custom-label mb-2">Document Type<span
+                        <label for="documentType" class="form-label custom-label mb-2">{{"Document Type" | translate}}<span
                                 class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
                             <p-select [options]="documentTypes" filterBy="value" [filter]="true"
                                 [resetFilterOnHide]="true" optionLabel="value" optionValue="value"
-                                formControlName="documentType" placeholder="Please select document type"
+                                formControlName="documentType" [placeholder]="'Please select document type' | translate"
                                 class="form-select custom-select"></p-select>
                         </div>
                         <div class="error-msg" *ngIf="updateDocumentForm.get('documentType')?.touched && 
-                        updateDocumentForm.get('documentType')?.invalid">Document type is required</div>
+                        updateDocumentForm.get('documentType')?.invalid">{{"Document Type is required" | translate}}</div>
                     </div>
 
                     <!-- File Name -->
@@ -128,7 +128,7 @@
 
                     <!-- Document Attachment -->
                     <div class="col-md-6 mb-3">
-                        <label for="documentAttachment" class="form-label custom-label mb-2">Attachment<span
+                        <label for="documentAttachment" class="form-label custom-label mb-2">{{"Attachment" | translate}}<span
                                 class="text-danger">*</span></label>
                         <input type="file" id="documentAttachment"
                             accept=".png, .jpg, .jpeg, .pdf, .doc, .docx, .xls, .xlsx"
@@ -140,22 +140,22 @@
                             updateDocumentForm.get('documentUrl')?.value.split('/').pop() : '_'))}}
                         </span>
                         <div class="error-msg" *ngIf="updateDocumentForm.get('documentAttachment')?.touched && 
-                        updateDocumentForm.get('documentAttachment')?.invalid">Attachment is required</div>
+                        updateDocumentForm.get('documentAttachment')?.invalid">{{"Attachment is required" | translate}}</div>
                     </div>
 
                     <!-- Signed Copy -->
                     <div class="form-check form-switch mb-3">
                         <input class="form-check-input" type="checkbox" role="switch" formControlName="signedCopy">
-                        <label class="form-check-label custom-toggle-label">Signed Copy</label>
+                        <label class="form-check-label custom-toggle-label">{{"Signed Copy" | translate}}</label>
                     </div>
                 </div>
 
                 <!-- Form Buttons -->
                 <div class="custom-modal-footer">
                     <button type="button" class="custom-btn btn-secondary"
-                        (click)="closepopup(confirmationpopupfornodue)">Cancel</button>
+                        (click)="closepopup(confirmationpopupfornodue)">{{"Cancel" | translate}}</button>
                     <button type="submit" class="custom-btn btn-primary"
-                        [disabled]="updateDocumentForm.invalid">Update</button>
+                        [disabled]="updateDocumentForm.invalid">{{"Update" | translate}}</button>
                 </div>
             </form>
         </div>
@@ -186,8 +186,8 @@
             <p class="confirmation-text">{{'Are you sure you want to cancel?' | translate}}</p>
         </div>
         <div class="custom-modal-footer">
-            <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">{{'No'}}</button>
-            <button type="button" class="custom-btn btn-primary" (click)="close();model.dismiss()">{{'Yes'}}</button>
+            <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">{{"No" | translate}}</button>
+            <button type="button" class="custom-btn btn-primary" (click)="close();model.dismiss()">{{"Yes" | translate}}</button>
         </div>
     </div>
 </ng-template>

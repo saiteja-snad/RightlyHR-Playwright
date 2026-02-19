@@ -8,16 +8,16 @@
       <div class="d-flex gap-3">
          @if(rbac.allowedToAccess('Custom Reports - Generate.view')){
       <button type="button" class="clear-all-btn" *ngIf="isActiveOrInactive()" (click)="clearAllFilters()">
-        Clear All
+        {{ 'Clear All' | translate }}
       </button>
       }
         @if(rbac.allowedToAccess('Custom Reports - Generate.view')){
         <div class="d-flex gap-2 align-items-center">
-          <div class="custom-label filter-labels text-nowrap">Employee Status</div>
+          <div class="custom-label filter-labels text-nowrap">{{ 'Employee Status' | translate }}</div>
           <div class="custom-p-select-content">
             <p-select [options]="empStatusList" optionLabel="empStatusList" [filter]="false" [showClear]="false"
               class="form-select custom-select" (onChange)="options($event.value)" formControlName="status"
-              placeholder="Please select status">
+              [placeholder]="'Please select status' | translate">
               <ng-template #selectedItem let-selectedOption>{{ selectedOption }}</ng-template>
               <ng-template let-year #item>{{ year }}</ng-template>
             </p-select>
@@ -29,10 +29,10 @@
        <!-- Date Picker -->
         <div class="d-flex align-items-center gap-2" *ngIf="isActiveOrInactive()">
           <div class="custom-label filter-labels text-nowrap m-0">
-            {{ getDateLabel() }}
+            {{ getDateLabel() | translate }}
           </div>
           <div class="custom-date-range-picker">
-            <p-datepicker formControlName="dateOfJoining" [placeholder]="'Please Select Date'" selectionMode="range"
+            <p-datepicker formControlName="dateOfJoining" [placeholder]="'Please Select Date' | translate" selectionMode="range"
               [showIcon]="true" [readonlyInput]="true" />
           </div>
           <!-- <input type="text" ngxDaterangepickerBootstrap [autoApply]="true" [ranges]="ranges"
@@ -47,9 +47,9 @@
             [disabled]="selectedFields.length == 0 || spinnerLoader1">
             @if(spinnerLoader1){
             <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-            <span>{{'Loading...'}}</span>
+            <span>{{ 'Loading...' | translate }}</span>
             }@else {
-            <span>{{ 'Generate' }}</span>
+            <span>{{ 'Generate' | translate }}</span>
             }
           </button>
           }
@@ -59,9 +59,9 @@
             [disabled]="selectedData.length == 0 || hasPendingChanges ||   disableBtn" (click)="generateExcel()">
             @if(spinnerLoader2){
             <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-            <span>{{'Loading...'}}</span>
+            <span>{{ 'Loading...' | translate }}</span>
             }@else {
-            <span>{{'Export'}}</span>
+            <span>{{ 'Export' | translate }}</span>
             }
           </button>
           }
@@ -73,7 +73,7 @@
   <div class="custom-accordian-data-content">
     <p-accordion [(value)]="activeIndex">
       <p-accordion-panel value="0">
-        <p-accordion-header>Choose Fields</p-accordion-header>
+        <p-accordion-header>{{ 'Choose Fields' | translate }}</p-accordion-header>
         <p-accordion-content>
           <div class="employee-fields-main-container d-flex gap-3 w-100 p-3">
             <div class="custom-component-left-content p-2">
@@ -81,10 +81,10 @@
                 <div class="d-flex gap-2">
                   <button class="custom-btn  custom-btn-width"
                     [ngClass]="{'btn-secondary': !showCard,'btn-primary': showCard}"
-                    (click)="showPersonalData()">Personal</button>
+                    (click)="showPersonalData()">{{ 'Personal' | translate }}</button>
                   <button class="custom-btn custom-btn-width"
                     [ngClass]="{'btn-secondary': !JobShowCard,'btn-primary': JobShowCard}"
-                    (click)="showJobData()">Job</button>
+                    (click)="showJobData()">{{ 'Job' | translate }}</button>
                 </div>
               </div>
 
@@ -93,13 +93,13 @@
                 <!-- Basic Info -->
                 <table class="w-100 mb-3">
                   <thead>
-                    <th>Basic Information</th>
+                    <th>{{ 'Basic Information' | translate }}</th>
                   </thead>
                   <tbody class="p-4">
                     <tr>
                       <td>
                         <input class="form-check-input" type="checkbox" [checked]="fieldGroups['basicInfo'].selectAll"
-                          (change)="toggleSelectAll($event, 'basicInfo')"><span class="ms-2">Select All</span>
+                          (change)="toggleSelectAll($event, 'basicInfo')"><span class="ms-2">{{ 'Select All' | translate }}</span>
                       </td>
                     </tr>
                     <tr *ngFor="let field of fieldGroups['basicInfo'].fields">
@@ -118,13 +118,13 @@
                 <!-- Current Address -->
                 <table class="w-100 mb-3">
                   <thead>
-                    <th>Current Address</th>
+                    <th>{{ 'Current Address' | translate }}</th>
                   </thead>
                   <tr>
                     <td>
                       <input class="form-check-input" type="checkbox"
                         [checked]="fieldGroups['currentAddress'].selectAll"
-                        (change)="toggleSelectAll($event, 'currentAddress')"><span class="ms-2">Select All</span>
+                        (change)="toggleSelectAll($event, 'currentAddress')"><span class="ms-2">{{ 'Select All' | translate }}</span>
                     </td>
                   </tr>
                   <tr *ngFor="let field of fieldGroups['currentAddress'].fields">
@@ -142,13 +142,13 @@
                 <!-- Permanent Address -->
                 <table class="w-100 mb-3">
                   <thead>
-                    <th>Permanent Address</th>
+                    <th>{{ 'Permanent Address' | translate }}</th>
                   </thead>
                   <tr>
                     <td>
                       <input class="form-check-input" type="checkbox"
                         [checked]="fieldGroups['permanentAddress'].selectAll"
-                        (change)="toggleSelectAll($event, 'permanentAddress')"><span class="ms-2">Select All</span>
+                        (change)="toggleSelectAll($event, 'permanentAddress')"><span class="ms-2">{{ 'Select All' | translate }}</span>
                     </td>
                   </tr>
                   <tr *ngFor="let field of fieldGroups['permanentAddress'].fields">
@@ -166,13 +166,13 @@
                 <!-- Contact Details -->
                 <table class="w-100 mb-3">
                   <thead>
-                    <th>Contact Details</th>
+                    <th>{{ 'Contact Details' | translate }}</th>
                   </thead>
                   <tr>
                     <td>
                       <input class="form-check-input" type="checkbox"
                         [checked]="fieldGroups['contactDetails'].selectAll"
-                        (change)="toggleSelectAll($event, 'contactDetails')"><span class="ms-2">Select All</span>
+                        (change)="toggleSelectAll($event, 'contactDetails')"><span class="ms-2">{{ 'Select All' | translate }}</span>
                     </td>
                   </tr>
                   <tr *ngFor="let field of fieldGroups['contactDetails'].fields">
@@ -190,13 +190,13 @@
                 <!-- Emergency Contact 1 -->
                 <table class="w-100 mb-3">
                   <thead>
-                    <th>Emergency Contact Details<br><br>Contact 1</th>
+                    <th>{{ 'Emergency Contact Details' | translate }}<br><br>{{ 'Contact 1' | translate }}</th>
                   </thead>
                   <tr>
                     <td>
                       <input class="form-check-input" type="checkbox"
                         [checked]="fieldGroups['emergencyContact1'].selectAll"
-                        (change)="toggleSelectAll($event, 'emergencyContact1')"><span class="ms-2">Select All</span>
+                        (change)="toggleSelectAll($event, 'emergencyContact1')"><span class="ms-2">{{ 'Select All' | translate }}</span>
                     </td>
                   </tr>
                   <tr *ngFor="let field of fieldGroups['emergencyContact1'].fields">
@@ -214,13 +214,13 @@
                 <!-- Emergency Contact 2 -->
                 <table class="w-100 mb-3">
                   <thead>
-                    <th>Emergency Contact Details<br><br>Contact 2</th>
+                    <th>{{ 'Emergency Contact Details' | translate }}<br><br>{{ 'Contact 2' | translate }}</th>
                   </thead>
                   <tr>
                     <td>
                       <input class="form-check-input" type="checkbox"
                         [checked]="fieldGroups['emergencyContact2'].selectAll"
-                        (change)="toggleSelectAll($event, 'emergencyContact2')"><span class="ms-2">Select All</span>
+                        (change)="toggleSelectAll($event, 'emergencyContact2')"><span class="ms-2">{{ 'Select All' | translate }}</span>
                     </td>
                   </tr>
                   <tr *ngFor="let field of fieldGroups['emergencyContact2'].fields">
@@ -238,13 +238,13 @@
                 <!-- Education Details -->
                 <table class="w-100 mb-3">
                   <thead>
-                    <th>Education Details</th>
+                    <th>{{ 'Education Details' | translate }}</th>
                   </thead>
                   <tr>
                     <td>
                       <input class="form-check-input" type="checkbox"
                         [checked]="fieldGroups['educationDetails'].selectAll"
-                        (change)="toggleSelectAll($event, 'educationDetails')"><span class="ms-2">Select All</span>
+                        (change)="toggleSelectAll($event, 'educationDetails')"><span class="ms-2">{{ 'Select All' | translate }}</span>
                     </td>
                   </tr>
                   <tr *ngFor="let field of fieldGroups['educationDetails'].fields">
@@ -262,12 +262,12 @@
                 <!-- Visa Details -->
                 <table class="w-100 mb-3">
                   <thead>
-                    <th>Visa Details</th>
+                    <th>{{ 'Visa Details' | translate }}</th>
                   </thead>
                   <tr>
                     <td>
                       <input class="form-check-input" type="checkbox" [checked]="fieldGroups['visaDetails'].selectAll"
-                        (change)="toggleSelectAll($event, 'visaDetails')"><span class="ms-2">Select All</span>
+                        (change)="toggleSelectAll($event, 'visaDetails')"><span class="ms-2">{{ 'Select All' | translate }}</span>
                     </td>
                   </tr>
                   <tr *ngFor="let field of fieldGroups['visaDetails'].fields">
@@ -285,13 +285,13 @@
                 <!-- Identity Details -->
                 <table class="w-100 mb-3">
                   <thead>
-                    <th>Identity Details</th>
+                    <th>{{ 'Identity Details' | translate }}</th>
                   </thead>
                   <tr>
                     <td>
                       <input class="form-check-input" type="checkbox"
                         [checked]="fieldGroups['identityDetails'].selectAll"
-                        (change)="toggleSelectAll($event, 'identityDetails')"><span class="ms-2">Select All</span>
+                        (change)="toggleSelectAll($event, 'identityDetails')"><span class="ms-2">{{ 'Select All' | translate }}</span>
                     </td>
                   </tr>
                   <tr *ngFor="let field of fieldGroups['identityDetails'].fields">
@@ -309,12 +309,12 @@
                 <!-- Bank Details -->
                 <table class="w-100 mb-3">
                   <thead>
-                    <th>Bank Details</th>
+                    <th>{{ 'Bank Details' | translate }}</th>
                   </thead>
                   <tr>
                     <td>
                       <input class="form-check-input" type="checkbox" [checked]="fieldGroups['bankDetails'].selectAll"
-                        (change)="toggleSelectAll($event, 'bankDetails')"><span class="ms-2">Select All</span>
+                        (change)="toggleSelectAll($event, 'bankDetails')"><span class="ms-2">{{ 'Select All' | translate }}</span>
                     </td>
                   </tr>
                   <tr *ngFor="let field of fieldGroups['bankDetails'].fields">
@@ -335,13 +335,13 @@
                 <!-- Pre Onboarding -->
                 <table class="w-100 mb-3">
                   <thead>
-                    <th>Pre Onboarding Details</th>
+                    <th>{{ 'Pre Onboarding Details' | translate }}</th>
                   </thead>
                   <tr>
                     <td>
                       <input class="form-check-input" type="checkbox"
                         [checked]="fieldGroups['preOnboardingDetails'].selectAll"
-                        (change)="toggleSelectAll($event, 'preOnboardingDetails')"><span class="ms-2">Select All</span>
+                        (change)="toggleSelectAll($event, 'preOnboardingDetails')"><span class="ms-2">{{ 'Select All' | translate }}</span>
                     </td>
                   </tr>
                   <tr *ngFor="let field of fieldGroups['preOnboardingDetails'].fields">
@@ -359,13 +359,13 @@
                 <!-- Onboarding -->
                 <table class="w-100 mb-3">
                   <thead>
-                    <th>Onboarding Details</th>
+                    <th>{{ 'Onboarding Details' | translate }}</th>
                   </thead>
                   <tr>
                     <td>
                       <input class="form-check-input" type="checkbox"
                         [checked]="fieldGroups['onboardingDetails'].selectAll"
-                        (change)="toggleSelectAll($event, 'onboardingDetails')"><span class="ms-2">Select All</span>
+                        (change)="toggleSelectAll($event, 'onboardingDetails')"><span class="ms-2">{{ 'Select All' | translate }}</span>
                     </td>
                   </tr>
                   <tr *ngFor="let field of fieldGroups['onboardingDetails'].fields">
@@ -383,13 +383,13 @@
                 <!-- Offboarding -->
                 <table class="w-100 mb-3">
                   <thead>
-                    <th>Offboarding Details</th>
+                    <th>{{ 'Offboarding Details' | translate }}</th>
                   </thead>
                   <tr>
                     <td>
                       <input class="form-check-input" type="checkbox"
                         [checked]="fieldGroups['offboardingDetails'].selectAll"
-                        (change)="toggleSelectAll($event, 'offboardingDetails')"><span class="ms-2">Select All</span>
+                        (change)="toggleSelectAll($event, 'offboardingDetails')"><span class="ms-2">{{ 'Select All' | translate }}</span>
                     </td>
                   </tr>
                   <tr *ngFor="let field of fieldGroups['offboardingDetails'].fields">
@@ -406,12 +406,12 @@
                 <!-- Job Details -->
                 <table class="w-100 mb-3">
                   <thead>
-                    <th>Job Details</th>
+                    <th>{{ 'Job Details' | translate }}</th>
                   </thead>
                   <tr>
                     <td>
                       <input class="form-check-input" type="checkbox" [checked]="fieldGroups['jobDetails'].selectAll"
-                        (change)="toggleSelectAll($event, 'jobDetails')"><span class="ms-2">Select All</span>
+                        (change)="toggleSelectAll($event, 'jobDetails')"><span class="ms-2">{{ 'Select All' | translate }}</span>
                     </td>
                   </tr>
                   <tr *ngFor="let field of fieldGroups['jobDetails'].fields">
@@ -429,13 +429,13 @@
                 <!-- Compensation -->
                 <table class="w-100 mb-3">
                   <thead>
-                    <th>Compensation Details</th>
+                    <th>{{ 'Compensation Details' | translate }}</th>
                   </thead>
                   <tr>
                     <td>
                       <input class="form-check-input" type="checkbox"
                         [checked]="fieldGroups['compensationDetails'].selectAll"
-                        (change)="toggleSelectAll($event, 'compensationDetails')"><span class="ms-2">Select All</span>
+                        (change)="toggleSelectAll($event, 'compensationDetails')"><span class="ms-2">{{ 'Select All' | translate }}</span>
                     </td>
                   </tr>
                   <tr *ngFor="let field of fieldGroups['compensationDetails'].fields">
@@ -458,7 +458,7 @@
                 <table class="w-100">
                   <thead>
                     <tr>
-                      <th>Selected Fields</th>
+                      <th>{{ 'Selected Fields' | translate }}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -474,7 +474,7 @@
       </p-accordion-panel>
 
       <p-accordion-panel value="1" [disabled]="!(reportFields.length > 0 && reportFields.length > 0)">
-        <p-accordion-header>Results</p-accordion-header>
+        <p-accordion-header>{{ 'Results' | translate }}</p-accordion-header>
         <p-accordion-content>
           <div class="p-3">
             <!--table content-->

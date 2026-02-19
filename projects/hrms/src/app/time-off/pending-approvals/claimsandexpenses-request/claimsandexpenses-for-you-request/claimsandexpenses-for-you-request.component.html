@@ -232,7 +232,7 @@
               <td>{{ item?.expenseType }}</td>
               <td>{{ item?.item_Name }}</td>
               <td>{{ item?.expense_Date | dateformat}}</td>
-              <td> $ {{ item?.expense_Amount | number: '1.2-2' }}</td>
+              <td> ₹ {{ item?.expense_Amount | number: '1.2-2' }}</td>
               <td>{{ item?.status }}</td>
               <td>{{ item?.receipt_Number }}</td>
                   <td class="text-center">
@@ -300,7 +300,7 @@
           </tbody>
         </table>
         <div class="text-center mt-3">
-          <b>Total Amount : $ {{expenseheaderiteams?.expense_Amount | number: '1.2-2'}}</b>
+          <b>Total Amount : ₹ {{expenseheaderiteams?.expense_Amount | number: '1.2-2'}}</b>
         </div>
       </div>
     </div>

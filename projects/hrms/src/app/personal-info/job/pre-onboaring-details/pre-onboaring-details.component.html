@@ -3,7 +3,7 @@
     <div class="card custom-background-card p-4 mb-4">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <div>
-                <span class="component-sub-header">Pre Onboarding Info</span>
+                <span class="component-sub-header">{{'Pre Onboarding Info' | translate}}</span>
             </div>
         </div>
 
@@ -11,95 +11,92 @@
         <form autocomplete="off" [formGroup]="preOnboardingForm">
             <div class="row">
                 <div class="col-md-6 col-lg-4 mb-3">
-                    <label for="offerSentDate" class="form-label custom-label mb-2">Offer Sent Date</label>
+                    <label for="offerSentDate" class="form-label custom-label mb-2">{{'Offer Sent Date' | translate}}</label>
                     <input type="date" class="form-control custom-input" id="offerSentDate"
                         formControlName="offerSentDate">
                     <div class="error-msg"
                         *ngIf="preOnboardingForm.get('offerSentDate')?.invalid && preOnboardingForm.get('offerSentDate')?.touched">
-                        Offer Sent Date is required.
+                        {{'Offer Sent Date is required.' | translate}}
                     </div>
                 </div>
 
                 <div class="col-md-6 col-lg-4 mb-3">
-                    <label for="offerSentBy" class="form-label custom-label mb-2">Offer Sent By</label>
+                    <label for="offerSentBy" class="form-label custom-label mb-2">{{'Offer Sent By' | translate}}</label>
                     <input type="text" class="form-control custom-input" id="offerSentBy" formControlName="offerSentBy"
-                        placeholder="Please enter offer sent by">
+                        [placeholder]="'Please enter offer sent by' | translate">
                     <div class="error-msg"
                         *ngIf="preOnboardingForm.get('offerSentBy')?.invalid && preOnboardingForm.get('offerSentBy')?.touched">
-                        Offer Sent By is required.
+                        {{'Offer Sent By is required.' | translate}}
                     </div>
                 </div>
 
                 <div class="col-md-6 col-lg-4 mb-3">
-                    <label for="offerSentStatus" class="form-label custom-label mb-2">Offer Sent Status</label>
+                    <label for="offerSentStatus" class="form-label custom-label mb-2">{{'Offer Sent Status' | translate}}</label>
                     <input type="text" class="form-control custom-input" id="offerSentStatus"
-                        formControlName="offerSentStatus" placeholder="Please enter offer sent status">
+                        formControlName="offerSentStatus" [placeholder]="'Please enter offer sent status' | translate">
                     <div class="error-msg"
                         *ngIf="preOnboardingForm.get('offerSentStatus')?.invalid && preOnboardingForm.get('offerSentStatus')?.touched">
-                        Offer Sent Status is required.
+                        {{'Offer Sent Status is required.' | translate}}
                     </div>
                 </div>
 
                 <div class="col-md-6 col-lg-4 mb-3">
-                    <label for="appointmentSentDate" class="form-label custom-label mb-2">Appointment Sent Date</label>
+                    <label for="appointmentSentDate" class="form-label custom-label mb-2">{{'Appointment Sent Date' | translate}}</label>
                     <input type="date" class="form-control custom-input" id="appointmentSentDate"
                         formControlName="appointmentSentDate">
                     <div class="error-msg"
                         *ngIf="preOnboardingForm.get('appointmentSentDate')?.invalid && preOnboardingForm.get('appointmentSentDate')?.touched">
-                        Appointment Sent Date is required.
+                        {{'Appointment Sent Date is required.' | translate}}
                     </div>
                 </div>
 
                 <div class="col-md-6 col-lg-4 mb-3">
-                    <label for="appointmentSentBy" class="form-label custom-label mb-2">Appointment Sent By</label>
+                    <label for="appointmentSentBy" class="form-label custom-label mb-2">{{'Appointment Sent By' | translate}}</label>
                     <input type="text" class="form-control custom-input" id="appointmentSentBy"
-                        formControlName="appointmentSentBy" placeholder="Please enter appointment sent by">
+                        formControlName="appointmentSentBy" [placeholder]="'Please enter appointment sent by' | translate">
                     <div class="error-msg"
                         *ngIf="preOnboardingForm.get('appointmentSentBy')?.invalid && preOnboardingForm.get('appointmentSentBy')?.touched">
-                        Appointment Sent By is required.
+                        {{'Appointment Sent By is required.' | translate}}
                     </div>
                 </div>
 
                 <div class="col-md-6 col-lg-4 mb-3">
-                    <label for="appointmentSentStatus" class="form-label custom-label mb-2">Appointment Sent
-                        Status</label>
+                    <label for="appointmentSentStatus" class="form-label custom-label mb-2">{{'Appointment Sent Status' | translate}}</label>
                     <input type="text" class="form-control custom-input" id="appointmentSentStatus"
-                        formControlName="appointmentSentStatus" placeholder="Please enter appointment sent status">
+                        formControlName="appointmentSentStatus" [placeholder]="'Please enter appointment sent status' | translate">
                     <div class="error-msg"
                         *ngIf="preOnboardingForm.get('appointmentSentStatus')?.invalid && preOnboardingForm.get('appointmentSentStatus')?.touched">
-                        Appointment Sent Status is required.
+                        {{'Appointment Sent Status is required.' | translate}}
                     </div>
                 </div>
 
                 <div class="col-md-6 col-lg-4 mb-3">
-                    <label for="traineeOfferSentDate" class="form-label custom-label mb-2">Trainee Offer Sent
-                        Date</label>
+                    <label for="traineeOfferSentDate" class="form-label custom-label mb-2">{{'Trainee Offer Sent Date' | translate}}</label>
                     <input type="date" class="form-control custom-input" id="traineeOfferSentDate"
                         formControlName="traineeOfferSentDate">
                     <div class="error-msg"
                         *ngIf="preOnboardingForm.get('traineeOfferSentDate')?.invalid && preOnboardingForm.get('traineeOfferSentDate')?.touched">
-                        Trainee Offer Sent Date is required.
+                        {{'Trainee Offer Sent Date is required.' | translate}}
                     </div>
                 </div>
 
                 <div class="col-md-6 col-lg-4 mb-3">
-                    <label for="traineeOfferSentBy" class="form-label custom-label mb-2">Trainee Offer Sent By</label>
+                    <label for="traineeOfferSentBy" class="form-label custom-label mb-2">{{'Trainee Offer Sent By' | translate}}</label>
                     <input type="text" class="form-control custom-input" id="traineeOfferSentBy"
-                        formControlName="traineeOfferSentBy" placeholder="Please enter trainee offer sent by">
+                        formControlName="traineeOfferSentBy" [placeholder]="'Please enter trainee offer sent by' | translate">
                     <div class="error-msg"
                         *ngIf="preOnboardingForm.get('traineeOfferSentBy')?.invalid && preOnboardingForm.get('traineeOfferSentBy')?.touched">
-                        Trainee Offer Sent By is required.
+                        {{'Trainee Offer Sent By is required.' | translate}}
                     </div>
                 </div>
 
                 <div class="col-md-6 col-lg-4 mb-3">
-                    <label for="traineeOfferSentStatus" class="form-label custom-label mb-2">Trainee Offer Sent
-                        Status</label>
+                    <label for="traineeOfferSentStatus" class="form-label custom-label mb-2">{{'Trainee Offer Sent Status' | translate}}</label>
                     <input type="text" class="form-control custom-input" id="traineeOfferSentStatus"
-                        formControlName="traineeOfferSentStatus" placeholder="Please enter trainee offer sent status">
+                        formControlName="traineeOfferSentStatus" [placeholder]="'Please enter trainee offer sent status' | translate">
                     <div class="error-msg"
                         *ngIf="preOnboardingForm.get('traineeOfferSentStatus')?.invalid && preOnboardingForm.get('traineeOfferSentStatus')?.touched">
-                        Trainee Offer Sent Status is required.
+                        {{'Trainee Offer Sent Status is required.' | translate}}
                     </div>
                 </div>
             </div>
@@ -109,7 +106,7 @@
     <div class="card custom-background-card p-4" *ngIf="(this.empdata?.empstatus === 'Active Contract' || this.empdata?.empstatus === 'Inactive Contract' || this.empdata?.empstatus === 'Prospective Contract') && this.empdata?.empType === 'Contract'">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <div>
-                <span class="component-sub-header">Contract Offer Letter Info</span>
+                <span class="component-sub-header">{{'Contract Offer Letter Info' | translate}}</span>
             </div>
         </div>
 
@@ -117,32 +114,32 @@
         <form autocomplete="off" [formGroup]="contractForm">
             <div class="row">
                 <div class="col-md-6 col-lg-4 mb-3">
-                    <label for="offerSentDate" class="form-label custom-label mb-2">Offer Sent Date</label>
+                    <label for="offerSentDate" class="form-label custom-label mb-2">{{'Offer Sent Date' | translate}}</label>
                     <input type="date" class="form-control custom-input" id="offerSentDate"
                         formControlName="offerSentDate">
                     <div class="error-msg"
                         *ngIf="contractForm.get('offerSentDate')?.invalid && contractForm.get('offerSentDate')?.touched">
-                        Offer Sent Date is required.
+                        {{'Offer Sent Date is required.' | translate}}
                     </div>
                 </div>
 
                 <div class="col-md-6 col-lg-4 mb-3">
-                    <label for="offerSentBy" class="form-label custom-label mb-2">Offer Sent By</label>
+                    <label for="offerSentBy" class="form-label custom-label mb-2">{{'Offer Sent By' | translate}}</label>
                     <input type="text" class="form-control custom-input" id="offerSentBy" formControlName="offerSentBy"
-                        placeholder="Please enter offer sent by">
+                        [placeholder]="'Please enter offer sent by' | translate">
                     <div class="error-msg"
                         *ngIf="contractForm.get('offerSentBy')?.invalid && contractForm.get('offerSentBy')?.touched">
-                        Offer Sent By is required.
+                        {{'Offer Sent By is required.' | translate}}
                     </div>
                 </div>
 
                 <div class="col-md-6 col-lg-4 mb-3">
-                    <label for="offerSentStatus" class="form-label custom-label mb-2">Offer Sent Status</label>
+                    <label for="offerSentStatus" class="form-label custom-label mb-2">{{'Offer Sent Status' | translate}}</label>
                     <input type="text" class="form-control custom-input" id="offerSentStatus"
-                        formControlName="offerSentStatus" placeholder="Please enter offer sent status">
+                        formControlName="offerSentStatus" [placeholder]="'Please enter offer sent status' | translate">
                     <div class="error-msg"
                         *ngIf="contractForm.get('offerSentStatus')?.invalid && contractForm.get('offerSentStatus')?.touched">
-                        Offer Sent Status is required.
+                        {{'Offer Sent Status is required.' | translate}}
                     </div>
                 </div>
 

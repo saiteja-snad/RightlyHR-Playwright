@@ -13,7 +13,7 @@
             </div>
             <div *ngIf="OvertimeForm.get('overtime')?.touched && OvertimeForm.get('overtime')?.invalid" class="error-msg">
                 <div *ngIf="OvertimeForm.get('overtime')?.errors?.['required']">
-                    {{ 'Overtime eligibility is required' | translate }}
+                    {{ 'Overtime Eligibility is required' | translate }}
                 </div>
             </div>
             <div *ngIf="OvertimeForm.get('overtime')?.errors?.['maxCharacters']" class="error-msg">
@@ -87,7 +87,7 @@
                         (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)" maxlength="101">
                     <div *ngIf="updateForm.get('overtime')?.touched && updateForm.get('overtime')?.invalid" class="error-msg">
                         <div *ngIf="updateForm.get('overtime')?.errors?.['required']">
-                            {{ 'Overtime eligibility is required' | translate }}
+                            {{ 'Overtime Eligibility is required' | translate }}
                         </div>
                     </div>
                     <div *ngIf="updateForm.get('overtime')?.errors?.['maxCharacters']" class="error-msg">

@@ -32,7 +32,7 @@ export class PredefinedThemesService {
       const response: any = await firstValueFrom(
         this.http.getData(`Employeedata/get-user-preference/${employeeId}`)
       );
-      const theme = response?.data?.['CLAIM_GENIUS_WEB_Theme'] || 'default-theme';
+      const theme = response?.data?.['RHR_WEB_Theme'] || 'default-theme';
       this.setTheme(theme);
     } catch (error) {
       console.error('Error loading theme:', error);
@@ -59,7 +59,7 @@ export class PredefinedThemesService {
       const response: any = await firstValueFrom(
         this.http.getData(`Employeedata/get-user-preference/${employeeId}`)
       );
-      const font = response?.data?.['CLAIM_GENIUS_WEB_Font'] || 'Roboto-flex';
+      const font = response?.data?.['RHR_WEB_Font'] || 'Roboto-flex';
       this.setFont(font);
     } catch (error) {
       console.error('Error loading font:', error);

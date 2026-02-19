@@ -226,7 +226,7 @@ export class BankLoanLetterComponent implements OnInit, OnDestroy {
       },
       complete: () => {
         setTimeout(() => {
-          this.router.navigate(['/letters/lettes-tabs']);
+          this.router.navigate(['/employee-management/all-employees']);
         }, 2000)
         this.spinnerLoader = false;
         this.employeeForm.reset();

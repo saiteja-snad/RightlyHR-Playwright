@@ -13,9 +13,10 @@ import { RbacService } from '../../../services/rbac.service';
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.service';
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
   selector: 'app-on-be-half-of-approval',
-  imports: [CommonModule, NgbNavModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe, NoDataFoundComponent, InfoIconComponent, DataLoaderContentComponent],
+  imports: [CommonModule, NgbNavModule, NgbPopoverModule,TranslateModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe, NoDataFoundComponent, InfoIconComponent, DataLoaderContentComponent],
   templateUrl: './on-be-half-of-approval.component.html',
   styleUrl: './on-be-half-of-approval.component.scss'
 })

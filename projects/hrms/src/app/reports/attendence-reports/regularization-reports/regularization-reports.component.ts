@@ -17,10 +17,10 @@ import { RbacService } from '../../../services/rbac.service';
 import { Router } from '@angular/router';
 import { ReportsHeaderComponent } from "../../../shared/reports-tabs/reports-header/reports-header.component";
 import { DatePicker } from 'primeng/datepicker';
-import { AttendancePlaceholderComponent } from "../../../icons/attendance-placeholder/attendance-placeholder.component";
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
   selector: 'app-regularization-reports',
-  imports: [CommonModule, ReactiveFormsModule, Select, DatePicker, DataLoaderContentComponent, NoDataFoundComponent, ReportsHeaderComponent, AttendancePlaceholderComponent],
+  imports: [CommonModule, ReactiveFormsModule, Select, DatePicker, DataLoaderContentComponent, NoDataFoundComponent,TranslateModule, ReportsHeaderComponent],
   templateUrl: './regularization-reports.component.html',
   styleUrl: './regularization-reports.component.scss'
 })
@@ -54,7 +54,7 @@ export class RegularizationReportsComponent implements OnInit, OnDestroy {
     ],
   };
   localeOptions: any;
-  isAttendanceDataTrue: boolean = false;
+
   constructor(
     private authService: AuthService,
     private reportsService: ReportsService,
@@ -65,7 +65,6 @@ export class RegularizationReportsComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-     this.getattendancedatabyentry();
     this.localeOptions = {
       applyLabel: 'ok',
       format: this.authService.convertAngularDateFormatToJs(environment.dateformat).toUpperCase(),
@@ -78,18 +77,6 @@ export class RegularizationReportsComponent implements OnInit, OnDestroy {
     this.getTeam();
     this.getMyTeam();
     // this.getAttendanceReports();
-  }
- getattendancedatabyentry() {
-    const params = 'AttendanceConfiguration';
-    const param = 'IsProcessing';
-    this.http.getDatabyentriyvalue(`entityAttributeValues`, params, param).subscribe({
-      next: (data: any) => {
-        this.isAttendanceDataTrue = String(data[0].value).toLowerCase() === 'true';
-      },
-      error: (err) => {
-        console.error('Error fetching data:', err);
-      }
-    });
   }
 
   initializeForm() {

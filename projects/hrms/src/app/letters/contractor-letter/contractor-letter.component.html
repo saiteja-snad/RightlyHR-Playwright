@@ -262,7 +262,7 @@
                     </div>
                     <div
                         *ngIf="employeeForm.get('JobSubLocationName')?.invalid && employeeForm.get('JobSubLocationName')?.touched">
-                        <div class="error-msg">Sub location is required</div>
+                        <div class="error-msg">Sub Location is required</div>
                     </div>
                 </div>
 
@@ -281,7 +281,7 @@
                         (click)="pathValuesFuction()" onkeydown="return false;" />
                     <div
                         *ngIf="employeeForm.get('offerIssuedDate')?.invalid && employeeForm.get('offerIssuedDate')?.touched">
-                        <div class="error-msg">Offer Issued date is required</div>
+                        <div class="error-msg">Offer Issued Date is required</div>
                         <div *ngIf="employeeForm.hasError('offerDateInvalid') && employeeForm.get('offerIssuedDate')?.touched"
                             class="error-msg">Offer Expiry Date should be after the Offer Issued Date
                         </div>
@@ -296,7 +296,7 @@
                         [min]="startDatevalidate" onkeydown="return false;" />
                     <div
                         *ngIf="employeeForm.get('dateOfJoining')?.invalid && employeeForm.get('dateOfJoining')?.touched">
-                        <div class="error-msg">Expected Start date is required</div>
+                        <div class="error-msg">Expected Start Date is required</div>
                     </div>
                     <div *ngIf="employeeForm.hasError('offerdateofjoiningDateInvalid') && employeeForm.get('dateOfJoining')?.touched"
                         class="error-msg">
@@ -317,7 +317,7 @@
                     <div class="error-msg">
                         <div
                             *ngIf="employeeForm.get('offerExpiryDate')?.invalid && employeeForm.get('offerExpiryDate')?.touched">
-                            Offer Expiry date is required
+                            Offer Expiry Date is required
                         </div>
                         <div
                             *ngIf="employeeForm.hasError('offerDateInvalid') && employeeForm.get('offerExpiryDate')?.touched">
@@ -336,7 +336,7 @@
                     </div>
                     <div *ngIf="employeeForm.get('Copys')?.invalid && employeeForm.get('Copys')?.touched"
                         class="error-msg">
-                        Document type is required
+                        Document Type is required
                     </div>
                 </div>
 
@@ -454,18 +454,18 @@
                                     {{prospectiveEmpData.lastName}},</p>
                             </div>
 
-                            <p class="mb-3">We are pleased to offer you contract employment in Claim Genius
+                            <p class="mb-3">We are pleased to offer you contract employment in RightlyHR
                                 . as a <b>{{prospectiveEmpData?.jobRole}}</b> on a remuneration of
                                 <b>{{ selectedSymbol }} {{this.employeeForm.get('currencyType')?.value}} {{prospectiveEmpData.amount ?? 0 }} <span *ngIf="employeeForm.get('currencyType')?.value === 'INR'"> /-</span> per
                                     {{employeeForm.get('frequency')?.value}}</b>.
                                 You will have to submit weekly/monthly Time sheet approved by the reporting
                                 manager.
-                                You will be working part time as required by Claim Genius. Your approximate start
+                                You will be working part time as required by RightlyHR. Your approximate start
                                 date with the company is {{(employeeForm.get('dateOfJoining')?.value)|dateformat}}.
                             <p class="mb-3">Please note the following details regarding your consultancy engagement </p>
 
                             <div class="dynamicdata mb-3" [innerHTML]="safeRolesAndResponsibilities"></div>
-                            <p>Claim Genius is in the business of product development and
+                            <p>RightlyHR is in the business of product development and
                                 deployment and also providing technology and business consultants to various
                                 multinational companies. </p>
                                
@@ -492,7 +492,7 @@
                                     our office to
                                     confirm your acceptance of this offer. </p>
                                 <p><b>Yours Sincerely</b>,</p>
-                                <p class="mb-5 signature">For Claim Genius</p>
+                                <p class="mb-5 signature">For RightlyHR</p>
                                 <div class="mb-3"></div>
                                 <p class="letter-signature" *ngIf="prospectiveEmpData.authorityName?.trim()">
                                     {{prospectiveEmpData.authorityName}}</p>

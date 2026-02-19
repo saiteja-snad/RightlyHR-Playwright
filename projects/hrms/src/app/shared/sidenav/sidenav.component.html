@@ -3,30 +3,30 @@
         <ul class="nav-items-list text-center ps-0">
             <!--Dashboard-->
             @if(this.rbac.allowedToAccess('Dashboard.view')){
-            <li class="nav-item menu-item-clear" (click)="goToAccessibleRoute('/dashboard');resetDropdown()"
-                [class.active-nav-link]="isActiveRoute('/dashboard')">
-                <img src="main-menu-icons/dashboard-square.png" alt="Icon" class="main-menu-icon">Dashboard
+            <li class="nav-item menu-item-clear" (click)="goToAccessibleRoute('/admin');resetDropdown()"
+                [class.active-nav-link]="isActiveRoute('/admin')">
+                <img src="main-menu-icons/dashboard-square.png" alt="Icon" class="main-menu-icon">{{ 'Dashboard' | translate }}
             </li>
             }
             <!--Employee Dashboard-->
-            <!-- @if(this.rbac.allowedToAccess('Employee Dashboard.view')){
+            @if(this.rbac.allowedToAccess('Employee Dashboard.view')){
             <li class="nav-item menu-item-clear" (click)="goToAccessibleRoute('/employee-dashboard');resetDropdown()"
                 [class.active-nav-link]="isActiveRoute('/employee-dashboard')">
-                <img src="main-menu-icons/dashboard-square.png" alt="Icon" class="main-menu-icon"> Dashboard
+                <img src="main-menu-icons/dashboard-square.png" alt="Icon" class="main-menu-icon"> {{ 'Dashboard' | translate }}
             </li>
-            } -->
+            }
             <!--My Info-->
             @if(this.rbac.allowedToAccess('My Info.view')){
             <li class="nav-item menu-item-clear" (click)="goToAccessibleRoute('/myinfo');resetDropdown()"
                 [class.active-nav-link]="isActiveRoute('/myinfo')">
-                <img src="/main-menu-icons/my-Info-icon.png" alt="Icon" class="main-menu-icon">My Info
+                <img src="/main-menu-icons/my-Info-icon.png" alt="Icon" class="main-menu-icon">{{ 'My Info' | translate }}
             </li>
             }
             <!--Employee Management-->
             @if(this.rbac.allowedToAccess('Employees.view')){
             <li class="nav-item menu-item-clear" (click)="resetDropdown()" routerLink="/employee-management"
                 [ngClass]="{ 'active': ActiveRoute() }">
-                <img src="main-menu-icons/employee-management-icon.png" alt="Icon" class="main-menu-icon">Employees
+                <img src="main-menu-icons/employee-management-icon.png" alt="Icon" class="main-menu-icon">{{ 'Employees' | translate }}
             </li>
             }
             <!--Time Off-->
@@ -34,7 +34,7 @@
             <li class="nav-item menu-item-clear" [class.active-nav-link]="isActiveRoute('/time-off')">
                 <div class="btn-group dropend custom-main-menu-dropdown">
                     <div class="d-flex flex-column align-items-center" data-bs-toggle="dropdown" aria-expanded="false">
-                        <img src="main-menu-icons/clock.png" alt="Icon" class="main-menu-icon">Time-Off
+                        <img src="main-menu-icons/clock.png" alt="Icon" class="main-menu-icon">{{ 'Time-Off' | translate }}
                     </div>
                     <ul class="dropdown-menu">
                         <app-time-off-tabs />
@@ -46,14 +46,14 @@
             @if(this.rbac.allowedToAccess('Attendance.view')){
             <li class="nav-item menu-item-clear" (click)="goToAccessibleRoute('/attendance');resetDropdown()"
                 [class.active-nav-link]="isActiveRoute('/attendance')">
-                <img src="main-menu-icons/finger-print.png" alt="Icon" class="main-menu-icon">Attendance
+                <img src="main-menu-icons/finger-print.png" alt="Icon" class="main-menu-icon">{{ 'Attendance' | translate }}
             </li>
             }
             <!--Reports-->
             @if(this.rbac.allowedToAccess('Reports.view')){
             <li class="nav-item menu-item-clear" (click)="goToAccessibleRoute('/reports');resetDropdown()"
                 [class.active-nav-link]="isActiveRoute('/reports')">
-                <img src="main-menu-icons/reports.png" alt="Icon" class="main-menu-icon">Reports
+                <img src="main-menu-icons/reports.png" alt="Icon" class="main-menu-icon">{{ 'Reports' | translate }}
             </li>
             }
             <!--Project Management-->
@@ -62,7 +62,7 @@
                 <div class="btn-group dropend custom-main-menu-dropdown">
                     <div class="d-flex flex-column align-items-center" data-bs-toggle="dropdown" aria-expanded="false">
                         <img src="main-menu-icons/project-management-icon.png" alt="Icon" class="main-menu-icon">
-                        Project Management
+                        {{ 'Project Management' | translate }}
                     </div>
                     <ul class="dropdown-menu">
                         <app-project-management-main-tabs />
@@ -74,7 +74,7 @@
             @if(this.rbac.allowedToAccess('Skill Set Management.view')){
             <li class="nav-item menu-item-clear" (click)="goToAccessibleRoute('/skill-management');resetDropdown()"
                 [class.active-nav-link]="isActiveRoute('/skill-management')">
-                <img src="main-menu-icons/skill-management.png" alt="Icon" class="main-menu-icon">Skill Set
+                <img src="main-menu-icons/skill-management.png" alt="Icon" class="main-menu-icon">{{ 'Skill Set' | translate }}
             </li>
             }
 
@@ -97,7 +97,7 @@
             <li class="nav-item menu-item-clear" [class.active-nav-link]="isActiveRoute('/on-behalf-of')">
                 <div class="btn-group dropend custom-main-menu-dropdown">
                     <div class="d-flex flex-column align-items-center" data-bs-toggle="dropdown" aria-expanded="false">
-                        <img src="main-menu-icons/clock.png" alt="Icon" class="main-menu-icon">On Behalf Of
+                        <img src="main-menu-icons/clock.png" alt="Icon" class="main-menu-icon">{{ 'On Behalf Of' | translate }}
                     </div>
                     <ul class="dropdown-menu">
                         <app-onbehalfof-main-tabs />
@@ -110,8 +110,8 @@
             <li class="nav-item menu-item-clear" [class.active-nav-link]="isActiveRoute('/pending-approvals')">
                 <div class="btn-group dropend custom-main-menu-dropdown">
                     <div class="d-flex flex-column align-items-center" data-bs-toggle="dropdown" aria-expanded="false">
-                        <img src="main-menu-icons/pending-approvals.png" alt="Icon" class="main-menu-icon">Pending
-                        Approvals
+                        <img src="main-menu-icons/pending-approvals.png" alt="Icon" class="main-menu-icon">{{ 'Pending' | translate }}
+                        {{ 'Approvals' | translate }}
                     </div>
                     <ul class="dropdown-menu">
                         <app-pending-approvals-tabs />
@@ -124,7 +124,7 @@
             <li class="nav-item menu-item-clear" [class.active-nav-link]="isActiveRoute('/pms')">
                 <div class="btn-group dropend custom-main-menu-dropdown">
                     <div class="d-flex flex-column align-items-center" data-bs-toggle="dropdown" aria-expanded="false">
-                        <img src="/main-menu-icons/pms.png" alt="Icon" class="main-menu-icon">PMS
+                        <img src="/main-menu-icons/pms.png" alt="Icon" class="main-menu-icon">{{ 'PMS' | translate }}
                     </div>
                     <ul class="dropdown-menu">
                         <app-pms-main-tabs />
@@ -137,7 +137,7 @@
                 (click)="goToAccessibleRoute(selectedDropdownModule.route)"
                 [class.active-nav-link]="isActiveRoute(selectedDropdownModule.route)">
                 <img [src]="selectedDropdownModule.activeIcon" alt="Icon" class="main-menu-icon">
-                {{ selectedDropdownModule.label }}
+                {{ selectedDropdownModule.label | translate }}
             </li>
             <!--Drop Menu Items-->
             <li class="nav-item text-wrap align-items-center">

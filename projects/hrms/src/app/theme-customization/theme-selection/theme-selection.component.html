@@ -2,10 +2,10 @@
     <!-- Header -->
     <div class="d-flex justify-content-between align-items-center mb-3">
         <div>
-            <p class="component-header mb-0">Themes</p>
+            <p class="component-header mb-0">{{'Themes' | translate}}</p>
         </div>
         <div>
-            <button class="custom-btn btn-primary" (click)="navigateNewTheme()">Add Theme</button>
+            <button class="custom-btn btn-primary" (click)="navigateNewTheme()">{{'Add Theme' | translate}}</button>
         </div>
     </div>
 
@@ -26,7 +26,7 @@
                     </div>
                 </div>
                 <div>
-                    <p class="layout-name medium3 mt-2">Default Theme</p>
+                    <p class="layout-name medium3 mt-2">{{'Default Theme' | translate}}</p>
                 </div>
             </div>
 
@@ -53,9 +53,9 @@
             <div class="d-flex gap-3">
                 <!-- Edit Theme button -->
                 <button class="custom-btn btn-secondary" *ngIf="savedThemes.length > 0 && selectedTheme !== defaultTheme"
-                    (click)="editSelectedTheme()">Edit Theme</button>
+                    (click)="editSelectedTheme()">{{'Edit Theme' | translate}}</button>
                 <!-- Apply Theme button -->
-                <button class="custom-btn btn-primary" *ngIf="savedThemes.length > 0" (click)="applyTheme()">Apply Theme</button>
+                <button class="custom-btn btn-primary" *ngIf="savedThemes.length > 0" (click)="applyTheme()">{{'Apply Theme' | translate}}</button>
             </div>
         </div>
     </div>

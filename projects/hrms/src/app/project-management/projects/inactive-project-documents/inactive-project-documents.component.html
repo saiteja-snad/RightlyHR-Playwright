@@ -8,11 +8,11 @@
                 @if (!loading) {
                 <table class="w-100">
                     <thead>
-                        <th>Document Type</th>
-                        <th class="text-center">Created Date</th>
-                        <!-- <th>File Name</th> -->
-                        <th>Attachment</th>
-                        <th class="text-center">Download</th>
+                        <th>{{ 'Document Type' | translate }}</th>
+                        <th class="text-center">{{ 'Created Date' | translate }}</th>
+                        <!-- <th>{{ 'File Name' | translate }}</th> -->
+                        <th>{{ 'Attachment' | translate }}</th>
+                        <th class="text-center">{{ 'Download' | translate }}</th>
                         @if((rbac.allowedToAccess('Documents Tab.update') || rbac.allowedToAccess('Documents Tab.delete'))
                         &&
                         inactiveStatus !== 'inactive'){
@@ -43,7 +43,7 @@
                                             @if(rbac.allowedToAccess('Documents Tab.delete')){
                                             <li (click)="openModal(deleteconformation, data,'m')">
                                                 <a class="dropdown-item">
-                                                    <i class="bi bi-check-circle me-2"></i>Restore
+                                                    <i class="bi bi-check-circle me-2"></i>{{ 'Restore' | translate }}
                                                 </a>
                                             </li>
                                             }
@@ -75,7 +75,7 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <app-confirmation-icon />
-            <p class="confirmation-text">{{'Are you sure you want to restore this document?' | translate}}</p>
+            <p class="confirmation-text">{{ 'Are you sure you want to restore this document?' | translate }}</p>
         </div>
         <div class="custom-modal-footer">
             <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No' |

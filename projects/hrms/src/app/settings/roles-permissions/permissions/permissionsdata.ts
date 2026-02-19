@@ -1128,18 +1128,4 @@ export const permissionsData = [
   { fields: 'Employee Personal Approval History', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Employee Job Approval History', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Employee Documents Approval History', View: false, Update: false, Create: false, Delete: false },
-    //dashboard Extra Hours
-  { fields: 'Headcount by Department', View: false, Update: false, Create: false, Delete: false },
-  { fields: 'All Employees', View: false, Update: false, Create: false, Delete: false },
-  { fields: 'Consumed Leave Types', View: false, Update: false, Create: false, Delete: false },
-  // { fields: 'Weekly Work Logs', View: false, Update: false, Create: false, Delete: false },
-  { fields: 'Headcount by Gender', View: false, Update: false, Create: false, Delete: false },
-  { fields: 'Upcoming Birthdays', View: false, Update: false, Create: false, Delete: false },
-  { fields: 'Team Members', View: false, Update: false, Create: false, Delete: false },
-  // { fields: 'My Team Availability', View: false, Update: false, Create: false, Delete: false },
-  { fields: 'Upcoming Work Anniversaries', View: false, Update: false, Create: false, Delete: false },
-  { fields: 'Today Events', View: false, Update: false, Create: false, Delete: false },
-  // { fields: 'Attendance Overview', View: false, Update: false, Create: false, Delete: false },
-  { fields: 'Quick Links', View: false, Update: false, Create: false, Delete: false },
-    // { fields: 'Sun View', View: false, Update: false, Create: false, Delete: false },
 ];

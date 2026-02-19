@@ -1,11 +1,4 @@
 <div class="custom-main-component-container">
-    <div class="component-overlay-placeholder-content" *ngIf="isAttendanceDataTrue">
-        <div>
-            <app-attendance-placeholder />
-            <p class="context">Attendance data is currently unavailable due to pending biometric integration. Please contact the administrator for assistance.</p>
-        </div>
-    </div>
-  
     <div class="component-header-content py-2">
         <!--header-->
         <app-reports-header/>
@@ -20,9 +13,9 @@
                         class="text-danger">*</span></label>
                 <div class="custom-p-select-content">
                     <p-select [options]="months" optionLabel="name" filterBy="name" [filter]="true" [showClear]="false"
-                        formControlName="month" placeholder="Please select month" class="form-select custom-select">
-                        <ng-template #selectedItem let-selectedOption>{{ selectedOption.name }}</ng-template>
-                        <ng-template let-location #item>{{ location.name }}</ng-template>
+                        formControlName="month" [placeholder]="'Please select month' | translate" class="form-select custom-select">
+                        <ng-template #selectedItem let-selectedOption>{{ selectedOption.name | translate }}</ng-template>
+                        <ng-template let-location #item>{{ location.name | translate }}</ng-template>
                     </p-select>
                 </div>
             </div>
@@ -32,7 +25,7 @@
                         class="text-danger">*</span></label>
                 <div class="custom-p-select-content">
                     <p-select [options]="years" optionLabel="value" filterBy="value" [filter]="true" [showClear]="false"
-                        formControlName="year" placeholder="Please select year" class="form-select custom-select">
+                        formControlName="year" [placeholder]="'Please select year' | translate" class="form-select custom-select">
                         <ng-template #selectedItem let-selectedOption>{{ selectedOption.value }}</ng-template>
                         <ng-template let-location #item>{{ location.value }}</ng-template>
                     </p-select>

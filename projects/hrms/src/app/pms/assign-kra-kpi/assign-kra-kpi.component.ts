@@ -834,7 +834,7 @@ export class AssignKraKpiComponent implements OnInit {
       // Assign mode: multiple employees from checkboxes
       const selectedEmployees = this.groupedKraList.filter((emp) => emp.selected === true).map((emp) => emp.employeeId);
       if (selectedEmployees.length === 0) {
-        this.popup.openErrorModal('Please select employee(s)');
+        this.popup.openErrorModal('Please select at least one employee');
         return;
       }
       selectedEmployeeIds = selectedEmployees.join(',');
@@ -1434,7 +1434,7 @@ export class AssignKraKpiComponent implements OnInit {
     const selectedEmployees = this.groupedKraList.filter((emp) => emp.selected);
     if (selectedEmployees.length === 0) {
       this.errorModalType = 'selection';
-      this.errorModalMessage = 'Please select employee(s) to assign the KRAs/KPIs.';
+      this.errorModalMessage = 'Please select at least one employee to assign the KRAs/KPIs.';
       this.modalService.open(this.errorModal, { centered: true, backdrop: 'static' });
       return;
     }

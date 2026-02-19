@@ -6,51 +6,49 @@
     <form autocomplete="off" [formGroup]="UtilizationReportForm" (ngSubmit)="generateUtilizationReport(page, pageSize,true,true)" *ngIf="UtilizationReportForm">
       <div class="d-flex align-items-center gap-3">
         @if(rbac.allowedToAccess('Utilization Report - Generate.view')){
-       <button type="button" class="clear-all-btn" [disabled]="
-           UtilizationReportForm.get('clientId')?.value == null &&
+        <button type="button" class="clear-all-btn" [disabled]="
+          UtilizationReportForm.get('clientId')?.value == null &&
           UtilizationReportForm.get('projectId')?.value == null &&
-           UtilizationReportForm.get('employeid')?.value == null &&
           UtilizationReportForm.get('dateRange')?.value == null &&
-          UtilizationReportForm.get('billable')?.value == null 
-        
-          " [disabled]="!isFilterApplied()"
-          (click)="clearAllFilters()">
+          UtilizationReportForm.get('status')?.value == null &&
+          UtilizationReportForm.get('billable')?.value == null
+        " (click)="clearAllFilters()">
           @if(isFilterApplied()) {
-          Clear All
+          {{ 'Clear All' | translate }}
           }
         </button>
           <!-- Client-->
-          <!-- Client-->
-        <div class="custom-p-multiSelect-content">
-          <p-multiSelect [options]="clientDropdownList" optionLabel="label" optionValue="value" [filter]="true"
-            formControlName="clientId" placeholder="Please select client" class="form-select custom-select"
-            [maxSelectedLabels]="1" (onChange)="onClientChange($event)">
-          </p-multiSelect>
+        <div class="d-flex align-items-center gap-2">
+          <div class="custom-p-select-content">
+            <p-select [options]="clientDropdownList" optionLabel="label" optionValue="value" [filter]="true"
+              formControlName="clientId" [placeholder]="'Please select client' | translate" class="form-select custom-select"
+              (onChange)="onClientChange($event)">
+            </p-select>
+          </div>
         </div>
-        <!-- Project-->
-        <div class="custom-p-multiSelect-content">
-          <p-multiSelect [options]="projectsList" optionLabel="label" optionValue="value" [filter]="true"
-            placeholder="Please select project" formControlName="projectId" class="form-select custom-select"
-            [maxSelectedLabels]="1" (onChange)="onProjectChange($event)">
-          </p-multiSelect>
-        </div>
-        <!-- Phases Dropdown -->
-        <div class="custom-p-multiSelect-content">
-          <p-multiSelect [options]="phasesData" optionLabel="label" optionValue="phaseId" [filter]="true" [maxSelectedLabels]="1"
-            formControlName="phases" placeholder="Please select phases" class="form-select custom-select">
-          </p-multiSelect>
 
+        <!-- Project-->
+        <div class="d-flex align-items-center gap-2">
+          <div class="custom-p-select-content">
+            <p-select [options]="projectsList" optionLabel="label" optionValue="value" [filter]="true"
+              [placeholder]="'Please select project' | translate" formControlName="projectId" class="form-select custom-select"
+              (onChange)="onProjectChange($event)">
+            </p-select>
+          </div>
         </div>
+
         <!-- Employee-->
-        <div class="custom-p-multiSelect-content">
-          <p-multiSelect [options]="employeeData" optionLabel="name" optionValue="id" [filter]="true"
-            [maxSelectedLabels]="1" defaultLabel="Please select employee" formControlName="employeid"
-            class="form-select custom-select"></p-multiSelect>
+        <div class="d-flex align-items-center gap-2">
+          <div class="custom-p-multiSelect-content">
+            <p-multiSelect [options]="employeeData" optionLabel="name" optionValue="id" [filter]="true"
+              [defaultLabel]="'Please select resource' | translate" formControlName="employeid"
+              class="form-select custom-select"></p-multiSelect>
+          </div>
         </div>
            <!-- Date Range -->
         <div class="d-flex align-items-center gap-2">
           <div class="custom-date-range-picker">
-            <p-datepicker formControlName="dateRange" [placeholder]="'Please select date range'" selectionMode="range"
+            <p-datepicker formControlName="dateRange" [placeholder]="'Please select date range' | translate" selectionMode="range"
               [showIcon]="true" [readonlyInput]="true" [maxDate]="today" />
           </div>
         </div>
@@ -60,7 +58,7 @@
            <div class="d-flex align-items-center gap-2">
           <div class="custom-p-select-content">
             <p-select [options]="BillableOptions" optionLabel="key" filterBy="key"
-              formControlName="billable" placeholder="Please select billable" class="form-select custom-select">
+              formControlName="billable" [placeholder]="'Please select billable' | translate" class="form-select custom-select">
             </p-select>
           </div>
         </div>
@@ -72,9 +70,9 @@
           <button type="submit" class="custom-btn btn-secondary " [disabled]="isLeaveGenerateDisabled ">
             @if(spinnerLoader1){
             <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-            <span>{{'Loading...'}}</span>
+            <span>{{ 'Loading...' | translate }}</span>
             }@else {
-            <span>{{'Generate'}}</span>
+            <span>{{ 'Generate' | translate }}</span>
             }
           </button>
           }
@@ -84,9 +82,9 @@
             [disabled]="filteredutilizationRecord.length == 0 || disableBtn">
             @if(spinnerLoader2){
             <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-            <span>{{'Loading...'}}</span>
+            <span>{{ 'Loading...' | translate }}</span>
             }@else {
-            <span>{{'Export'}}</span>
+            <span>{{ 'Export' | translate }}</span>
             }
           </button>
           }
@@ -100,17 +98,16 @@
     <table id="leaveReportTable" class="w-100">
       <thead>
   
-        <th>Client Name</th>
-        <th>Project Name</th>
-        <th>Employee ID</th>
-        <th>Employee Name</th>
-        <th>Department</th>
-        <th>Phase/Milestone</th>
-        <th>Total Allocated Hrs</th>
-        <th>Total Logged Hrs</th>
-       <th>Billable Hrs</th> 
-       <th>Non-Billable Hrs</th> 
-        <th>Utilization <i class="bi bi-percent"></i></th>
+        <th>{{ 'Client Name' | translate }}</th>
+        <th>{{ 'Project Name' | translate }}</th>
+        <th>{{ 'Employee ID' | translate }}</th>
+        <th>{{ 'Employee Name' | translate }}</th>
+        <th>{{ 'Department' | translate }}</th>
+        <th>{{ 'Total Allocated Hrs' | translate }}</th>
+        <th>{{ 'Total Logged Hrs' | translate }}</th>
+       <th>{{ 'Billable Hrs' | translate }}</th> 
+       <th>{{ 'Non-Billable Hrs' | translate }}</th> 
+        <th>{{ 'Utilization' | translate }} <i class="bi bi-percent"></i></th>
       </thead>
       <tbody>
         @if (!filteredutilizationRecord || filteredutilizationRecord.length === 0) {
@@ -128,7 +125,6 @@
           <td>{{ record.fusionEmpId ?? '-' }}</td>
           <td>{{ record.employeeName ?? '-' }}</td>
           <td>{{ record.department ?? '-' }}</td>
-          <td>{{ record.phaseName ?? '-' }}</td>
           <td>{{ record.allocatedHours ?? '-' }}</td>
           <td>{{ record.totalLoggedHours ?? '-' }}</td>
           <td>{{ record.billableHours ?? '-' }}</td>
@@ -155,8 +151,8 @@
           <option *ngFor="let option of options" [value]="option.value">{{ option.label }}</option>
         </select>
         <span class="pagination-label text-nowrap">
-          Showing {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize : (+first + +rows)}}
-          of {{collectionSize }}
+          {{ 'Showing' | translate }} {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize : (+first + +rows)}}
+          {{ 'of' | translate }} {{collectionSize }}
         </span>
       </div>
       <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"

@@ -747,7 +747,7 @@ export class SalaryRevisionLetterComponent implements OnInit, OnDestroy {
   }
 
   navigateDashboard() {
-    this.router.navigate(['/letters/lettes-tabs'])
+    this.router.navigate(['/employee-management/all-employees'])
   }
   releaseToEmployee() {
     this.releaseLoader = true;

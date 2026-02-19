@@ -20,9 +20,10 @@ import { RbacService } from '../../../../services/rbac.service';
 import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
 import { SettingsDeleteIconComponent } from "../../../../icons/settings-delete-icon/settings-delete-icon.component";
 import { SettingsUpdateIconComponent } from "../../../../icons/settings-update-icon/settings-update-icon.component";
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
   selector: 'app-permissions',
-  imports: [CommonModule, NoDataFoundComponent, ReactiveFormsModule, DataLoaderContentComponent, SettingsDeleteIconComponent, SettingsUpdateIconComponent],
+  imports: [CommonModule, NoDataFoundComponent, ReactiveFormsModule, DataLoaderContentComponent, SettingsDeleteIconComponent, SettingsUpdateIconComponent, TranslateModule],
   templateUrl: './permissions.component.html',
   styleUrl: './permissions.component.scss',
 })

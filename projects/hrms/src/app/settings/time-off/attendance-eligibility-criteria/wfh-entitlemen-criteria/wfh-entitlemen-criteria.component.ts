@@ -8,9 +8,10 @@ import { FormsModule } from '@angular/forms';
 import { OpenModalService } from '../../../../services/open-modal.service';
 import { RbacService } from '../../../../services/rbac.service';
 import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
   selector: 'app-wfh-entitlemen-criteria',
-  imports: [CommonModule, NoDataFoundComponent, FormsModule, DataLoaderContentComponent],
+  imports: [CommonModule, NoDataFoundComponent, FormsModule, DataLoaderContentComponent, TranslateModule],
   templateUrl: './wfh-entitlemen-criteria.component.html',
   styleUrl: './wfh-entitlemen-criteria.component.scss'
 })

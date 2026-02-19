@@ -1,14 +1,14 @@
 <div class="custom-main-component-container">
   <div class="d-flex justify-content-between align-items-center mb-3">
-    <div><span class="component-sub-header">Contractor Info</span></div>
+    <div><span class="component-sub-header">{{'Contractor Info'|translate}}</span></div>
     <div class="d-flex gap-3 align-items-center">
       <button class="custom-btn btn-primary" *ngIf="rbac.allowedToAccess('Request for Contract Extension Button.view') 
                  && (!disablebuttonforonboard1 && !disablebuttonforonboard2 && (this.convdata?.status === 'Active')) && ((dynamicData | async)?.length > 0)"  (click)="openmodel(readyforonboard,this.convdata)">
-      Request For Extension
+      {{'Request For Extension'|translate}}
     </button>
     <button class="custom-btn btn-primary" *ngIf="rbac.allowedToAccess('Employee Info Contract Conversion Request.view') 
                  && (!disablebuttonforonboard1 && !disablebuttonforonboard2) && ((dynamicData | async)?.length > 0)" (click)="requestForConvertion()">
-      Request For Conversion
+      {{'Request For Conversion'|translate}}
     </button>
     </div>
     
@@ -19,16 +19,16 @@
     <table class="w-100">
       <thead>
         <tr>
-          <th>Request Date</th>
+          <th>{{'Request Date'|translate}}</th>
           <!-- <th class="text-center">Contract Duration(Days)</th> -->
-          <th class="text-center">Contract Start Date</th>
-          <th class="text-center">Contract End Date</th>
-          <th class="text-center">Contract Extension Date</th>
+          <th class="text-center">{{'Contract Start Date'|translate}}</th>
+          <th class="text-center">{{'Contract End Date'|translate}}</th>
+          <th class="text-center">{{'Contract Extension Date'|translate}}</th>
           <!-- <th class="text-center">Contract Conversion Requested Date</th> -->
-          <th class="text-center">Contract Conversion Date</th>
-          <th>Contract Type</th>
-          <th>Approver History</th>
-          <th>Status</th>
+          <th class="text-center">{{'Contract Conversion Date'|translate}}</th>
+          <th>{{'Contract Type'|translate}}</th>
+          <th>{{'Approver History'|translate}}</th>
+          <th>{{'Status'|translate}}</th>
           <!-- <th>Conversion Status</th> -->
           <th></th>
         </tr>
@@ -36,11 +36,11 @@
       <tbody>
         <ng-container *ngIf="((dynamicData | async) ?? []).length > 0; else noDataTemplate">
           <tr *ngFor="let item of dynamicData | async; let first = first">
-            <td>{{ item.requestedDate ? (item.requestedDate | dateformat) : 'NA' }}</td>
-            <td class="text-center text-nowrap">{{ item.contractStartDate ?  (item.contractStartDate| dateformat) : 'NA' }}</td>
-            <td class="text-center text-nowrap">{{ item.contractEndDate ? (item.contractEndDate| dateformat) : 'NA' }}</td>
-            <td class="text-center text-nowrap">{{ item.contractExtendedDate ? (item.contractExtendedDate | dateformat) : 'NA' }}</td>
-            <td class="text-center text-nowrap">{{ item.conversionProcessedDate ? (item.conversionProcessedDate | dateformat) : 'NA' }}</td>
+            <td>{{ item.requestedDate ? (item.requestedDate | dateformat) : ('NA'|translate) }}</td>
+            <td class="text-center text-nowrap">{{ item.contractStartDate ?  (item.contractStartDate| dateformat) : ('NA'|translate) }}</td>
+            <td class="text-center text-nowrap">{{ item.contractEndDate ? (item.contractEndDate| dateformat) : ('NA'|translate) }}</td>
+            <td class="text-center text-nowrap">{{ item.contractExtendedDate ? (item.contractExtendedDate | dateformat) : ('NA'|translate) }}</td>
+            <td class="text-center text-nowrap">{{ item.conversionProcessedDate ? (item.conversionProcessedDate | dateformat) : ('NA'|translate) }}</td>
             <td class="text-center text-nowrap">{{ item.contractType }}</td> 
             <td class="text-center">
               <span *ngIf="item.approvers && item.approvers.length > 0; else feedbackComment">
@@ -48,9 +48,9 @@
                   <app-info-icon />
                 </div>
               </span>
-              <ng-template #feedbackComment>NA</ng-template>
+              <ng-template #feedbackComment>{{'NA'|translate}}</ng-template>
             </td>
-            <td>{{ item.status ? item.status : 'NA' }}</td>
+            <td>{{ item.status ? item.status : ('NA'|translate) }}</td>
             <td class="text-center" [ngClass]="{ 'disabled-button': isEditing }">
               <!-- @if(first && (( item.status ==='Rejected' || item.status ==='Processed') && (this.empdata.substatus === 'NDA Letter Accepted' || this.empdata.substatus === 'Contract Extended') &&
               this.empdata.empstatus === 'Active Contract') && disablebuttonforonboard3){
@@ -77,7 +77,7 @@
                   <li
                     *ngIf="item.status==='Processed' && this.empdata.substatus === 'Contract Converted' && this.empdata.empstatus === 'Active Contract'">
                     <a class="dropdown-item" (click)="openmodel(readyforonboardrequest,item)">
-                      Ready For Onboard
+                      {{'Ready For Onboard'|translate}}
                     </a>
                   </li>
                 </ul>
@@ -103,7 +103,7 @@
   <div class="custom-main-popup-container" ngbAutofocus>
     <div class="custom-poup-header-content popup-header-border">
       <div class="pt-2">
-        <p class="popup-heading mb-0">Approver History Details</p>
+        <p class="popup-heading mb-0">{{'Approver History Details'|translate}}</p>
       </div>
       <div>
         <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
@@ -115,42 +115,42 @@
         <table class="w-100">
           <thead>
             <tr>
-              <th class="text-nowrap">Approver Role</th>
-              <th class="text-nowrap">Approved Date</th>
-              <th class="text-nowrap">Approved by</th>
-              <th class="text-center">Comments</th>
-              <th class="text-nowrap">Status</th>
+              <th class="text-nowrap">{{'Approver Role'|translate}}</th>
+              <th class="text-nowrap">{{'Approved Date'|translate}}</th>
+              <th class="text-nowrap">{{'Approved by'|translate}}</th>
+              <th class="text-center">{{'Comments'|translate}}</th>
+              <th class="text-nowrap">{{'Status'|translate}}</th>
             </tr>
           </thead>
           <tbody>
             <tr *ngFor="let comment of appover_comments">
               <td>
                 <span *ngIf="comment?.approverRole;else approverrole"> <span
-                    *ngIf="comment?.approverRole.toLowerCase()=='em';else maincontent">HR</span>
+                    *ngIf="comment?.approverRole.toLowerCase()=='em';else maincontent">{{'HR'|translate}}</span>
                   <ng-template #maincontent> {{comment.approverRole}}</ng-template>
                 </span>
-                <ng-template #approverrole>NA</ng-template>
+                <ng-template #approverrole>{{'NA'|translate}}</ng-template>
               </td>
               <td>
                 <span *ngIf="comment.addedDate; else addeddate">
                   {{ comment.addedDate | date }}</span>
-                <ng-template #addeddate>NA</ng-template>
+                <ng-template #addeddate>{{'NA'|translate}}</ng-template>
               </td>
 
               <td>
                 <span *ngIf="comment.employeeName; else addedname">
                   {{ comment.employeeName }} ({{ comment.fusionEmployeeId }})</span>
-                <ng-template #addedname>NA</ng-template>
+                <ng-template #addedname>{{'NA'|translate}}</ng-template>
               </td>
               <td>
                 <div class="text-center" *ngIf="comment.comments; else popupcomments">
                   <app-info-icon ngbPopover="{{ comment?.comments }}" container="body" />
                 </div>
-                <ng-template #popupcomments>NA</ng-template>
+                <ng-template #popupcomments>{{'NA'|translate}}</ng-template>
               </td>
               <td>
                 <span *ngIf="comment?.status; else isaccept">{{ comment.status }}</span>
-                <ng-template #isaccept>NA</ng-template>
+                <ng-template #isaccept>{{'NA'|translate}}</ng-template>
               </td>
             </tr>
           </tbody>
@@ -164,7 +164,7 @@
   <div class="custom-main-popup-container" ngbAutofocus>
     <div class="custom-poup-header-content popup-header-border">
       <div>
-        <p class="popup-heading mb-0">View Comments</p>
+        <p class="popup-heading mb-0">{{'View Comments'|translate}}</p>
       </div>
       <div>
         <a><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
@@ -180,30 +180,30 @@
   <div class="result-popup-content" ngbAutofocus>
     <div>
       <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
-      <p class="confirmation-text">Are you sure you want to Extend?</p>
+      <p class="confirmation-text">{{'Are you sure you want to Extend?'|translate}}</p>
     </div>
     <div class="custom-main-popup-content p-0 pt-3">
       <form autocomplete="off" [formGroup]="extendreasonForm" (ngSubmit)="requestForextension()">
         <div class="row">
           <!-- //StartDate -->
           <div class="col-md-6 mb-3">
-            <label class="form-label custom-label mb-2">Contract Start Date<span class="error-msg">*</span></label>
+            <label class="form-label custom-label mb-2">{{'Contract Start Date'|translate}}<span class="error-msg">*</span></label>
             <input type="date" class="form-control custom-input" placeholder="" [min]="this.dojDate" formControlName="contractstartdate" id="Contract Start Date" />
             <div class="error-msg"
               *ngIf="extendreasonForm.get('contractstartdate')?.invalid && extendreasonForm.get('contractstartdate')?.touched">
-              Contract Start date is required</div>
+              {{'Contract Start Date is required'|translate}}</div>
           </div>
           <!-- //EndDate -->
           <div class="col-md-6 mb-3">
-            <label class="form-label custom-label mb-2">Contract End Date<span class="error-msg">*</span></label>
+            <label class="form-label custom-label mb-2">{{'Contract End Date'|translate}}<span class="error-msg">*</span></label>
             <input type="date" class="form-control custom-input" placeholder="" [min]="this.extendreasonForm.get('contractstartdate')?.value" formControlName="contractenddate" id="Contract End Date"/>
             <div class="error-msg"
               *ngIf="extendreasonForm.get('contractenddate')?.touched && extendreasonForm.get('contractenddate')?.errors">
               <ng-container *ngIf="extendreasonForm.get('contractenddate')?.errors?.['required']">
-                Contract End date is required
+                {{'Contract End Date is required'|translate}}
               </ng-container>
               <ng-container *ngIf="extendreasonForm.get('contractenddate')?.errors?.['invalidRange']">
-                Contract End Date must be greater than or equal to Contract Start Date
+                {{'Contract End Date must be greater than or equal to Contract Start Date'|translate}}
               </ng-container>
             </div>
 
@@ -220,21 +220,21 @@
         </div>
         
         <div class="mb-3">
-          <label class="form-label custom-label mb-2">Reason For Extend<span class="error-msg">*</span></label>
+          <label class="form-label custom-label mb-2">{{'Reason For Extend'|translate}}<span class="error-msg">*</span></label>
           <textarea class="form-control custom-input" id="extendreason" maxlength="250"
-            placeholder="Please enter extend reason" (keydown)="formValidations.restrictInitialSpace($event)"
+            [placeholder]="'Please enter extend reason'|translate" (keydown)="formValidations.restrictInitialSpace($event)"
             name="extendreason" formControlName="extendReason"></textarea>
           <div class="textarea-count-text">{{ extendreasonForm.get('extendReason')?.value?.length || 0 }} / 250</div>
           <div class="error-msg"
             *ngIf="extendreasonForm.get('extendReason')?.touched && extendreasonForm.get('extendReason')?.invalid">
             <ng-container *ngIf="extendreasonForm.get('extendReason')?.errors?.['required']">
-              Reason is required
+              {{'Reason is required'|translate}}
             </ng-container>
             <ng-container *ngIf="extendreasonForm.get('extendReason')?.errors?.['maxlength']">
-              Maximum 400 characters allowed
+              {{'Maximum 400 characters allowed'|translate}}
             </ng-container>
             <ng-container *ngIf="extendreasonForm.get('extendReason')?.errors?.['pattern']">
-              Reason should not start with a space.
+              {{'Reason should not start with a space.'|translate}}
             </ng-container>
           </div>
         </div>
@@ -264,7 +264,7 @@
     <div>
       <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
       @if((this.selectedData.contractType === 'Extension' || this.selectedData.contractType === 'Contract')){
-         <p class="confirmation-text">Are you sure you want to Extend?</p>
+         <p class="confirmation-text">{{'Are you sure you want to Extend?'|translate}}</p>
          <div class="custom-main-popup-content p-0 pt-3">
       <form autocomplete="off" [formGroup]="extendreasonForm" (ngSubmit)="reRequestContract()">
         <div class="row">
@@ -275,7 +275,7 @@
               id="Contract Start Date" />
             <div class="error-msg"
               *ngIf="extendreasonForm.get('contractstartdate')?.invalid && extendreasonForm.get('contractstartdate')?.touched">
-              Contract Start date is required</div>
+              Contract Start Date is required</div>
           </div>
           <!-- //EndDate -->
           <div class="col-md-6 mb-3">
@@ -284,7 +284,7 @@
               id="Contract End Date" />
             <div class="error-msg"
               *ngIf="extendreasonForm.get('contractenddate')?.invalid && extendreasonForm.get('contractenddate')?.touched">
-              Contract End date is required</div>
+              Contract End Date is required</div>
           </div>
           <!-- //ExtendedDate -->
           <!-- <div class="col-md-6 mb-3">
@@ -334,7 +334,7 @@
     </div>
       }
       @else {
-        <p class="confirmation-text">Are you sure you want to Re-Request?</p>
+        <p class="confirmation-text">{{'Are you sure you want to Re-Request?'|translate}}</p>
         <div class="custom-main-popup-content p-0 pt-3">
       <form autocomplete="off" [formGroup]="extendreasonForm" (ngSubmit)="reRequestContract()">
         <!-- <div class="mb-4">
@@ -347,9 +347,9 @@
             Extend Date is required</div>
         </div> -->
         <div class="mb-3">
-          <label class="form-label custom-label mb-2">Reason For Conversion<span class="error-msg">*</span></label>
+          <label class="form-label custom-label mb-2">{{'Reason For Conversion'|translate}}<span class="error-msg">*</span></label>
           <textarea class="form-control custom-input" id="extendreason" maxlength="250"
-            placeholder="Please enter extend reason" (keydown)="formValidations.restrictInitialSpace($event)"
+            [placeholder]="'Please enter extend reason'|translate" (keydown)="formValidations.restrictInitialSpace($event)"
             name="extendreason" formControlName="extendReason"></textarea>
           <div class="textarea-count-text">{{ extendreasonForm.get('extendReason')?.value?.length || 0 }} / 250</div>
           <div class="error-msg"
@@ -391,7 +391,7 @@
   <div class="result-popup-content" ngbAutofocus>
     <div>
       <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
-      <p class="confirmation-text">Are you sure you want to Onboard?</p>
+      <p class="confirmation-text">{{'Are you sure you want to Onboard?'|translate}}</p>
     </div>
     <div class="custom-modal-footer">
       <button type="button" class="custom-btn btn-secondary" (click)="closeonBoard()">{{'No'| translate}}</button>

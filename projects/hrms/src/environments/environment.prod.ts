@@ -30,7 +30,7 @@ export const environment = {
       scope: 'openid profile email',
     }
   },
-  currencyCode: 'USD',
+
   dateformat: 'MMM d, y',
   paidLeaveCategoryId: 172,
   wfhModuleId:2,

@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { FormArray, FormControl, FormGroup, FormsModule, ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
+import { FormArray, FormControl, FormGroup, FormsModule, ReactiveFormsModule, FormBuilder, Validators, AbstractControl } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import moment from 'moment';
 import { Select } from 'primeng/select';
@@ -59,10 +59,10 @@ export class AddPoliciesComponent implements OnInit, OnDestroy {
 
   addPolicyRow() {
     return this.fb.group({
-      policyName: ['', [Validators.required, Validators.maxLength(50), Validators.pattern(/^(?!\s)[A-Za-z0-9 _\-\/]+$/)]],
+      policyName: ['', [Validators.required, Validators.maxLength(50)]],
       policyFile: ['', Validators.required],
       policyFilePath: [''],
-      policyDescription: ['', [Validators.required, Validators.maxLength(50), Validators.pattern(/^(?!\s)[A-Za-z0-9 .,:;?\-_\/&()%'"\n\r]+$/)]],
+      policyDescription: ['', [Validators.required, Validators.maxLength(50)]],
       acknowledged: [false],
       notification: [false],
     },
@@ -71,35 +71,9 @@ export class AddPoliciesComponent implements OnInit, OnDestroy {
       }
     );
   }
-  // allowed characters A-Z a-z 0-9 space - _ /
-restrictPolicyName(event: KeyboardEvent) {
-  const key = event.key;
-  const input = event.target as HTMLInputElement;
 
-  // Allow control keys
-  if (
-    key === 'Backspace' ||
-    key === 'Delete' ||
-    key === 'ArrowLeft' ||
-    key === 'ArrowRight' ||
-    key === 'Tab'
-  ) {
-    return;
-  }
 
-  // Prevent leading space
-  if (key === ' ' && input.selectionStart === 0) {
-    event.preventDefault();
-    return;
-  }
-
-  // Allowed: A-Z a-z 0-9 space - _ /
-  const allowed = /^[A-Za-z0-9 _\-\/]$/;
-  if (!allowed.test(key)) {
-    event.preventDefault();
-  }
-}
-restrictPolicyDescription(event: KeyboardEvent) {
+restrictPolicyNamedescription(event: KeyboardEvent) {
   const key = event.key;
   const input = event.target as HTMLInputElement;
 

@@ -10,7 +10,7 @@
                 </span>
             </div>
             <div *ngIf="addForm.get('documentType')?.touched && addForm.get('documentType')?.invalid" class="error-msg">
-                <div *ngIf="addForm.get('documentType')?.errors?.['required']">{{ 'Project Document type is required' | translate }}</div>
+                <div *ngIf="addForm.get('documentType')?.errors?.['required']">{{ 'Project Document Type is required' | translate }}</div>
             </div>
             <div *ngIf="addForm.get('documentType')?.errors?.['pattern']" class="error-msg">
                 {{ 'Field cannot start with a space' | translate }}
@@ -90,7 +90,7 @@
                     <div *ngIf="updateForm.get('documentType')?.touched && updateForm.get('documentType')?.invalid"
                         class="error-msg">
                         <div *ngIf="updateForm.get('documentType')?.errors?.['required']">
-                            {{ 'Project Document type is required' | translate }}
+                            {{ 'Project Document Type is required' | translate }}
                         </div>
                     </div>
                     <div *ngIf="updateForm.get('documentType')?.errors?.['pattern']" class="error-msg">

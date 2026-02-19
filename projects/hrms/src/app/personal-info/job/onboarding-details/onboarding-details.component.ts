@@ -150,6 +150,8 @@ export class OnboardingDetailsComponent implements OnInit, OnDestroy{
         esic: [{ value: null, disabled: true }],
         pt: [{ value: null, disabled: true }],
         totalExperience: [{ value: null, disabled: true }],
+        currentYearsOfExperience: [{ value: null, disabled: true }],
+        totalYearsOfExperience: [{ value: null, disabled: true }],
         allowwfh: [{ value: null, disabled: true }],
         allowRemoteLogin: [{ value: null, disabled: true }],
         workLocation: [{ value: null, disabled: true }],
@@ -372,6 +374,9 @@ export class OnboardingDetailsComponent implements OnInit, OnDestroy{
     return null; // Return null or handle the case when dateString is empty or invalid
   }
 
+
+  
+
   patchForm(data: any): void {
     const remoteLoginWorkLocation = this.filteredRemoteLoginWorkLocations.find(
       (item: any) => item.value == data?.remoteLoginWorkLocation
@@ -396,7 +401,9 @@ export class OnboardingDetailsComponent implements OnInit, OnDestroy{
       pf: this.pfdata.find((item: any) => item.value === data?.pf),
       esic: this.esicdata.find((item: any) => item.value === data?.esic),
       pt: this.ptdata.find((item: any) => item.value === data?.pt),
-      totalExperience: data.totalYearsOfExperience,
+      totalExperience: data.previousYearsOfExperience,
+      currentYearsOfExperience: data.currentYearsOfExperience,
+      totalYearsOfExperience: data.totalYearsOfExperience,
       allowwfh: data.allowWFH,
       workLocation: data?.workLocation,
       wfhmanger: data.wfhManagerId,
@@ -444,9 +451,9 @@ export class OnboardingDetailsComponent implements OnInit, OnDestroy{
       .subscribe({
         next: (data: any) => {
         // Filter out records with Active status
-        
+
         const filteredData = data.data;
-        
+
         if (filteredData.length > 0) {
           const contract = filteredData[0];
           this.contractForm.patchValue({
@@ -727,6 +734,8 @@ export class OnboardingDetailsComponent implements OnInit, OnDestroy{
       this.onboardingForm.enable();
       this.getEmployeeId();
       this.onboardingForm.get('totalExperience')?.disable();
+      this.onboardingForm.get('currentYearsOfExperience')?.disable();
+      this.onboardingForm.get('totalYearsOfExperience')?.disable();
       this.onboardingForm.get('status')?.disable();
       if(this.statustoprint === 'offer letter accepted' && this.empinfo.empType === 'Contract'){
         this.onboardingForm.get('status')?.disable();
@@ -739,10 +748,10 @@ export class OnboardingDetailsComponent implements OnInit, OnDestroy{
         console.log(this.empdata?.substatus);
         this.onboardingForm.get('status')?.enable();
       }
-      
+
     } else {
       this.getEmployeeId();
-      
+
       this.onboardingForm.disable();
     }
   }

@@ -109,7 +109,7 @@
                                 class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
                             <input type="text" class="form-control custom-input" formControlName="name"
-                                [placeholder]="'Please enter employeename' | translate" onkeydown="return false;" />
+                                [placeholder]="'Please enter employee name' | translate" onkeydown="return false;" />
                         </div>
                         <div *ngIf="itSupportForm.get('name')?.invalid && itSupportForm.get('name')?.touched">
                             <div class="error-msg">{{'Employee is required' | translate}}</div>

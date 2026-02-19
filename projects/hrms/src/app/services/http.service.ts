@@ -955,6 +955,11 @@ setinactiveSearchCount(count: any) {
     this.projectadded.next();
   }
 
+   probationcounts = new Subject<void>();
+  probationcountfuntion$ = this.probationcounts.asObservable();
+  setnewprobationDetails() {
+    this.probationcounts.next();
+  }
   //for contactadded  for projects and clients
   contactadded = new Subject<void>();
   contactDetailesadded$ = this.contactadded.asObservable();

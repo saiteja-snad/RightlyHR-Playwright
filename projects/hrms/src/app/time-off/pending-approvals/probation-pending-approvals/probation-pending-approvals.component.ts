@@ -169,7 +169,7 @@ totalCount:any;
       },
       error: (err: any) => {
         console.log(err);
-        alert('Insertion of data faild');
+        
       },
     });
   }
@@ -388,6 +388,7 @@ totalCount:any;
         this.modalService.dismissAll();
         this.openModalService.openSuccessModal(successMessage);
         this.getAllPendingApprovals();
+         this.http.setnewprobationDetails()
       },
       error: (reason: any) => {
         this.openModalService.openErrorModal(reason.error.message);

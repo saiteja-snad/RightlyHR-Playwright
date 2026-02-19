@@ -69,9 +69,7 @@
                 <!-- } -->
                 <div *ngIf="filteredleaveRecord?.[filteredleaveRecord.length - 1]?.totalExpenseAmount"
                     class="d-flex align-items-center gap-2">
-                    <label for="education" class="form-label custom-label text-nowrap filter-labels m-0">{{'Total
-                        Amount'
-                        | translate}}:</label>
+                    <label for="education" class="form-label custom-label text-nowrap filter-labels m-0">{{'Total Amount'| translate}}:</label>
                     <div>
                         <b><span class="me-1">₹</span>{{ filteredleaveRecord?.[filteredleaveRecord.length -
                             1]?.totalExpenseAmount }}</b>
@@ -90,8 +88,7 @@
                     </button>
                     }
 
-                    @if(rbac.allowedToAccess('Expense Report - Generate.view') && rbac.allowedToAccess('Expense Report -
-                    Export.view')){
+                    @if(rbac.allowedToAccess('Expense Report - Generate.view') && rbac.allowedToAccess('Expense Report -Export.view')){
                     <button type="button" class="custom-btn btn-primary" (click)="exportToExcelYearly()"
                         [disabled]="filteredleaveRecord.length == 0 || disableBtn">
                         @if(spinnerLoader2){
@@ -145,7 +142,7 @@
                 <td class="text-start cursor">
                     <ng-container *ngIf="record.expensesItems?.length; else noDetails">
                         <u class="clickable-text" (click)="openExpenseDetails(record)">
-                            View Details
+                            {{'View Details' | translate}}
                         </u>
                     </ng-container>
                     <ng-template #noDetails>-</ng-template>
@@ -170,7 +167,7 @@
                         <thead>
                             <tr>
                                 <th colspan="7" class="custom-popup-header">
-                                    {{ selectedEmployee?.employeeName }} - Expense Details
+                                    {{ selectedEmployee?.employeeName }} - {{'Expense Details' | translate}}
                                 </th>
                             </tr>
                             <tr>

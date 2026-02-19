@@ -76,6 +76,10 @@ export class OnboardingApprovalTabsComponent {
       (tab) => tab.permission && tab.permission.feature && tab.permission.action &&
         this.rbac.allowedToAccess(`${tab.permission.feature}.${tab.permission.action}`)
     );
+      this.http.probationcountfuntion$.subscribe(() => {
+        this.getAllPendingApprovalsCount();
+    });
+
   }
 
   getAllPendingApprovalsCount() {

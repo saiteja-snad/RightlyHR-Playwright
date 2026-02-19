@@ -96,8 +96,7 @@
                     <td>{{ project.client.clientName }}</td>
                     }
                     <td>
-                      <a class="project-name cursor" (click)="navigateView(project.projectId)">{{
-                        project.projectName }}</a>
+                      <a class="data-nav-btn" (click)="navigateView(project.projectId)">{{ project.projectName }}</a>
                     </td>
                     <td class="d-flex  justify-content-center">
                       <div class="timesheet-chip " [style.color]="project?.meta?.graphData?.color"

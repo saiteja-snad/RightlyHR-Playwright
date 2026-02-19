@@ -696,13 +696,6 @@ a {
     margin: 0.25rem 0rem;
 }
 
-.select-item {
-    color: var(--black-color-100) !important;
-    text-decoration: none !important;
-    border-bottom: 2px solid var(--primary-color);
-    line-height: 1.5rem !important;
-}
-
 // scroll bar stylings
 ::-webkit-scrollbar {
     width: 0.4rem;
@@ -771,6 +764,16 @@ a {
     margin-right: 0.5rem;
     width: 1.5rem;
     height: 1.5rem;
+}
+
+.data-nav-btn {
+    font-weight: 700;
+    font-style: Bold;
+    font-size: 14px;
+    text-decoration: none;
+    color: var(--primary-color);
+    text-decoration: underline;
+    cursor: pointer;
 }
 
 // disable-btn

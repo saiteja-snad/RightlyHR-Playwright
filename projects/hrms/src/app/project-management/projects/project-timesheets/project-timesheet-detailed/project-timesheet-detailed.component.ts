@@ -11,7 +11,7 @@ import { ChipModule } from 'primeng/chip';
 import { TranslateModule } from '@ngx-translate/core';
 @Component({
   selector: 'app-project-timesheet-detailed',
-  imports: [CommonModule, DateformatPipe, NoDataFoundComponent,TranslateModule, ChipModule, DataLoaderContentComponent],
+  imports: [CommonModule, DateformatPipe, NoDataFoundComponent, TranslateModule, ChipModule, DataLoaderContentComponent],
   templateUrl: './project-timesheet-detailed.component.html',
   styleUrl: './project-timesheet-detailed.component.scss',
   encapsulation: ViewEncapsulation.None
@@ -33,8 +33,8 @@ export class ProjectTimesheetDetailedComponent {
     this.route.queryParams.subscribe((params: { [x: string]: any; }) => {
       const projectid = params['id'];
       if (projectid) {
-        this.projectId = projectid
-        this.getResourceDetails(projectid)
+        this.projectId = projectid;
+        this.getResourceDetails(projectid);
       }
     });
   }
@@ -67,8 +67,6 @@ export class ProjectTimesheetDetailedComponent {
   }
 
   openModal(entry: any, content: any) {
-
-
     this.employeeName = {
       id: entry.employee.id,
       fusionEmployeeId: entry.employee.fusionEmployeeId,

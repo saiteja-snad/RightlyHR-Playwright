@@ -47,7 +47,6 @@
   text-decoration: underline;
 }
 
-
 .projects-container {
   .project-card {
     background: #e2e4ea4f;
@@ -99,11 +98,11 @@
   color: #dc3545;
 }
 
-.status-waiting{
+.status-waiting {
   color: rgb(255, 166, 0);
 }
 
-.status-created{
+.status-created {
   color: #0056E6;
 }
 
@@ -137,9 +136,9 @@
 
 // Fix pagination arrow direction
 .pagination-content .p-paginator .p-icon {
-     transform: none !important;
+  transform: none !important;
 }
 
- .p-paginator {
+.p-paginator {
   direction: ltr !important;
 }

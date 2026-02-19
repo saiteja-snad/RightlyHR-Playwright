@@ -3,7 +3,7 @@
     <div class="input-group custom-search mb-3">
         <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
         <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input"
-         placeholder="Search by employee ID / employee name / work email / phone number / designation "
+            placeholder="Search by employee ID / employee name / work email / phone number / designation"
             aria-label="Username" aria-describedby="basic-addon1">
     </div>
 
@@ -16,31 +16,22 @@
                 <th>{{'Work Email'|translate}}</th>
                 <th>{{'Phone Number'|translate}}</th>
                 <th>
-                     <div class="d-flex align-items-center">
-                            <span>{{'Probation Start Date'|translate}}</span>
-                            <i class="bi bi-arrow-up cursor-pointer" (click)="sortData('dateOfJoining','asc')" [ngClass]="{
-                            'text-primary': isSorted('dateOfJoining','asc'),
-                            'text-muted': !isSorted('dateOfJoining','asc')
-                        }"></i>
-                            <i class="bi bi-arrow-down cursor-pointer" (click)="sortData('dateOfJoining','desc')" [ngClass]="{
-                            'text-primary': isSorted('dateOfJoining','desc'),
-                            'text-muted': !isSorted('dateOfJoining','desc')
-                        }"></i>
-                        </div>
-
+                    <div class="d-flex align-items-center">
+                        <span>{{'Probation Start Date'|translate}}</span>
+                        <i class="bi bi-arrow-up cursor-pointer" (click)="sortData('dateOfJoining','asc')" 
+                        [ngClass]="{'text-primary': isSorted('dateOfJoining','asc'),'text-muted': !isSorted('dateOfJoining','asc')}"></i>
+                        <i class="bi bi-arrow-down cursor-pointer" (click)="sortData('dateOfJoining','desc')" 
+                        [ngClass]="{'text-primary': isSorted('dateOfJoining','desc'),'text-muted': !isSorted('dateOfJoining','desc')}"></i>
+                    </div>
                 </th>
                 <th>
                     <div class="d-flex align-items-center">
-                            <span>{{'Probation End Date'|translate}}</span>
-                            <i class="bi bi-arrow-up cursor-pointer" (click)="sortData('probationEndDate','asc')" [ngClass]="{
-                            'text-primary': isSorted('probationEndDate','asc'),
-                            'text-muted': !isSorted('probationEndDate','asc')
-                        }"></i>
-                            <i class="bi bi-arrow-down cursor-pointer" (click)="sortData('probationEndDate','desc')" [ngClass]="{
-                            'text-primary': isSorted('probationEndDate','desc'),
-                            'text-muted': !isSorted('probationEndDate','desc')
-                        }"></i>
-                        </div>
+                        <span>{{'Probation End Date'|translate}}</span>
+                        <i class="bi bi-arrow-up cursor-pointer" (click)="sortData('probationEndDate','asc')" 
+                        [ngClass]="{'text-primary': isSorted('probationEndDate','asc'),'text-muted': !isSorted('probationEndDate','asc')}"></i>
+                        <i class="bi bi-arrow-down cursor-pointer" (click)="sortData('probationEndDate','desc')" 
+                        [ngClass]="{'text-primary': isSorted('probationEndDate','desc'),'text-muted': !isSorted('probationEndDate','desc')}"></i>
+                    </div>
                 </th>
                 <th>{{'Probation Extended Date'|translate}}</th>
                 <th>{{'Designation'|translate}}</th>
@@ -53,31 +44,30 @@
                             <ng-template #fusionid> - </ng-template>
                         </td>
                         <td>
-                            <span *ngIf="item.firstName;else fistname"> </span>
-                            <a class="select-item cursor" (click)="select(item)">
-                                {{item?.firstName}} {{item?.middleName}} {{item?.lastName}}</a>
-                            <ng-template #fistname> - </ng-template>
+                            <span *ngIf="item.firstName;else fistname">
+                                <a class="data-nav-btn" (click)="select(item)">{{item?.firstName}} {{item?.middleName}} {{item?.lastName}}</a>
+                            </span>
+                            <ng-template #fistname>-</ng-template>
                         </td>
                         <td>
                             <span *ngIf="item.workEmail;else workemail">{{item.workEmail}}</span>
-                            <ng-template #workemail> - </ng-template>
+                            <ng-template #workemail>-</ng-template>
                         </td>
                         <td>
                             <span *ngIf="item?.contactnumber;else contactnumb">{{item.mobilePhoneCountryCode}} {{item.contactnumber}}</span>
-                            <ng-template #contactnumb> - </ng-template>
+                            <ng-template #contactnumb>-</ng-template>
                         </td>
                         <td>
-                            <span *ngIf="item.dateOfJoining;else prostartdate"> {{item.dateOfJoining | date }}</span>
-                            <ng-template #prostartdate> - </ng-template>
+                            <span *ngIf="item.dateOfJoining;else prostartdate">{{item.dateOfJoining | date }}</span>
+                            <ng-template #prostartdate>-</ng-template>
                         </td>
                         <td>
-                            <span *ngIf="item?.probationEndDate;else proenddate"> {{item?.probationEndDate | date}}</span>
-                            <ng-template #proenddate> - </ng-template>
+                            <span *ngIf="item?.probationEndDate;else proenddate">{{item?.probationEndDate | date}}</span>
+                            <ng-template #proenddate>-</ng-template>
                         </td>
                         <td>
-                            <span *ngIf="item.probationExtendedDate;else proextenddate"> {{item.probationExtendedDate |
-                                date}}</span>
-                            <ng-template #proextenddate> - </ng-template>
+                            <span *ngIf="item.probationExtendedDate;else proextenddate">{{item.probationExtendedDate | date}}</span>
+                            <ng-template #proextenddate>-</ng-template>
                         </td>
                         <td>
                             <span *ngIf="item.jobDetails;else designation"> {{item.jobDetails.jobRole}}</span>
@@ -85,7 +75,7 @@
                         </td>
                     </tr>
                     <tr *ngIf="filteredData.length === 0">
-                        <app-no-data-found></app-no-data-found>
+                        <app-no-data-found />
                     </tr>
                 </ng-container>
             </tbody>

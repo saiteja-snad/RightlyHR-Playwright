@@ -15,7 +15,7 @@
                 @if(projectEmployeeDetails?.length > 0){
                 <tr *ngFor="let project of projectEmployeeDetails; let i = index">
                     <td>
-                        <a class="project-name cursor" (click)="navigateView(project?.employee?.id)">
+                        <a class="data-nav-btn" (click)="navigateView(project?.employee?.id)">
                             {{ project?.employee?.name }}
                         </a>
                     </td>
@@ -34,7 +34,7 @@
                         } @else { - }
                     </td>
                     <td class="text-center">
-                        <a class="project-name cursor" (click)="project?.phasesCount !== 0 && openModal(project, summaryforlogs)">
+                        <a class="data-nav-btn" (click)="project?.phasesCount !== 0 && openModal(project, summaryforlogs)">
                             {{ project?.phasesCount ?? 0 }}</a>
                     </td>
                     <td class="text-center">{{ project?.totalLoggedHoursHHMM ?? '-' }}</td>

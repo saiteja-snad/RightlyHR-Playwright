@@ -8,14 +8,12 @@
                         <div class="summary-header d-inline-flex gap-2 mb-2">
                             <div>{{'Project Summary' | translate}}</div>
                             <div>
-                                <app-module-info-icon placement="bottom" [ngbPopover]="resourceSummaryContent"
-                                    class="module-icon" />
+                                <app-module-info-icon placement="bottom" [ngbPopover]="resourceSummaryContent" class="module-icon" />
                                 <ng-template #resourceSummaryContent>
                                     <div class="module-info-text">{{projectsummaryinfo}}</div>
                                 </ng-template>
                             </div>
                         </div>
-
 
                         <div class="d-flex gap-2 align-items-center">
                             <div class="custom-p-select-content custom-icon">

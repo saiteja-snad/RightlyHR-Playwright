@@ -4,7 +4,7 @@ import { ProjectManagementModuleInfoComponent } from "../../../shared/project-ma
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { FormValidationsService } from '../../../services/form-validations.service';
 import { OpenModalService } from '../../../services/open-modal.service';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { Subject, Subscription, takeUntil } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
@@ -34,7 +34,7 @@ export class ActiveClientsComponent implements OnInit, OnDestroy {
   destroy$: Subject<boolean> = new Subject<boolean>();
   subscription!: Subscription;
 
-  constructor(private modalService: NgbModal, public rbac: RbacService, private http: HttpService, 
+  constructor(private modalService: NgbModal, public rbac: RbacService, private http: HttpService,
     public formValidation: FormValidationsService, private conformationPopup: OpenModalService, private router: Router) { }
 
   ngOnInit(): void {

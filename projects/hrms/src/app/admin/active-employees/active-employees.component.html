@@ -3,7 +3,7 @@
   <div class="input-group custom-search mb-3">
     <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
     <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input"
-      placeholder="Search by employee ID / employee name / work email / phone number / location / sub location / Shift Name / designation "
+      placeholder="Search by employee ID / employee name / work email / phone number / location / sub location / shift name / designation"
       aria-label="Username" aria-describedby="basic-addon1">
   </div>
 
@@ -29,22 +29,19 @@
             <ng-template #fusionid>-</ng-template>
           </td>
           <td>
-            <span *ngIf="act.firstName;else fistname"> </span><a class="select-item cursor" (click)="select(act)">
-              {{act?.firstName}} {{act?.middleName}} {{act?.lastName}}</a>
+            <span *ngIf="act.firstName;else fistname">
+              <a class="data-nav-btn" (click)="select(act)">{{act?.firstName}} {{act?.middleName}} {{act?.lastName}}</a>
+            </span>
             <ng-template #fistname>-</ng-template>
           </td>
-           <!-- Shift Name -->
-        <!-- Date of joining -->
+          <!-- Date of joining -->
           <td>
-            <span *ngIf="act.dateOfJoining; else noDateOfJoining">
-              {{ act.dateOfJoining | date }}
-            </span>
+            <span *ngIf="act.dateOfJoining; else noDateOfJoining">{{ act.dateOfJoining | date }}</span>
             <ng-template #noDateOfJoining>-</ng-template>
-          </td>       
-          <td><span *ngIf="act.workEmail;else workemail">{{act.workEmail}}</span>
-            <ng-template #workemail>
-              -
-            </ng-template>
+          </td>
+          <td>
+            <span *ngIf="act.workEmail;else workemail">{{act.workEmail}}</span>
+            <ng-template #workemail>-</ng-template>
           </td>
           <td class="text-nowrap">
             <span *ngIf="act.contactnumber;else contactnumb">{{act.mobilePhoneCountryCode}} {{act.contactnumber}}</span>

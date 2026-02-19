@@ -8,9 +8,10 @@ import { CommonModule } from '@angular/common';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { HttpService } from '../../../services/http.service';
 import { ModuleInfoIconComponent } from '../../../icons/module-info-icon/module-info-icon.component';
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
   selector: 'app-project-management-module-info',
-  imports: [CommonModule, ModuleInformationComponent, NgbPopoverModule, ModuleInfoIconComponent],
+  imports: [CommonModule, ModuleInformationComponent, NgbPopoverModule, ModuleInfoIconComponent,TranslateModule],
   templateUrl: './project-management-module-info.component.html',
   styleUrl: './project-management-module-info.component.scss'
 })

@@ -342,7 +342,7 @@
             <div class="events-content">
                 <div class="carousel-content">
                     <p-carousel [value]="eventItems" [numVisible]="1" [numScroll]="1" showNavigators="false"
-                        [circular]="true" [autoplayInterval]="5000" (onPage)="onCarouselPageChange($event)"
+                        [circular]="eventItems.length > 1" [autoplayInterval]="eventItems.length > 1 ? 5000 : 0" (onPage)="onCarouselPageChange($event)"
                         [showIndicators]="false">
                         <ng-template pTemplate="item" let-item>
                             <div class="accordian-text">

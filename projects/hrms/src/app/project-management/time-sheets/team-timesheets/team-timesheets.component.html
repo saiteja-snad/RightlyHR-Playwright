@@ -86,7 +86,7 @@
                                 <td>
                                     @if(rbac.allowedToAccess('Team Time Sheet Summary Tab.view') ||
                                     rbac.allowedToAccess('Team Time Sheet Detailed Tab.view')){
-                                    <a class="project-name cursor" (click)="navigateView(emp.employee.id)">{{ emp.employee.name}}</a>
+                                    <a class="data-nav-btn" (click)="navigateView(emp.employee.id)">{{ emp.employee.name}}</a>
                                     }
                                     @else{ <span class="project-name-nopermission">{{emp.employee.name}}</span> }
                                 </td>

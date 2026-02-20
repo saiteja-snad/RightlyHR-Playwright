@@ -3,8 +3,6 @@
         <div class="heading-content">
             <app-project-management-module-info />
         </div>
-
-
     </div>
 
     <div class="d-flex w-100 gap-3">
@@ -18,12 +16,11 @@
                 <span class="input-group-text custom-input-group-search" id="basic-addon1">
                     <i class="bi bi-search"></i>
                 </span>
-                <input type="search" #search="ngModel" [(ngModel)]="searchValue"
-                    class="form-control custom-search-input"
+                <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input"
                     [placeholder]="'Search by client name / contact name / email / role' | translate" aria-label="Search"
                     aria-describedby="basic-addon1">
             </div>
-
+            
             <div class="custom-table-content w-100">
                 @if (!loading) {
                 <table class="w-100">
@@ -47,14 +44,11 @@
                                         <img [src]="getImageUrl(client.logoPath)" alt="Logo" class="client-image" />
                                     </td>
                                     <td>
-                                        <a class="project-name cursor" (click)="navigateView(client.clientId)">
-                                            {{ client.clientName }}
-                                        </a>
+                                        <a class="data-nav-btn" (click)="navigateView(client.clientId)">{{ client.clientName }}</a>
                                     </td>
                                     <td>{{client?.contact?.name || '-'}}</td>
                                     <td>{{client?.contact?.email || '-'}}</td>
-                                    <td>{{client?.contact?.phoneDialCode || '-'}} {{client?.contact?.phoneNumber ||
-                                        '-'}}</td>
+                                    <td>{{client?.contact?.phoneDialCode || '-'}} {{client?.contact?.phoneNumber || '-'}}</td>
                                     <td>{{client?.contact?.role || '-'}}</td>
                                     <td>{{ client.status }}</td>
                                     <td class="text-center">
@@ -68,7 +62,6 @@
                                                         <i class="bi bi-check-circle me-2"></i> {{ 'Active' | translate }}
                                                     </a>
                                                 </li>
-
                                                 <li (click)="openModalstatus(statuschangesInactive, client)">
                                                     <a class="dropdown-item">
                                                         <i class="bi bi-check-circle me-2"></i> {{ 'Inactive' | translate }}
@@ -92,10 +85,8 @@
                 <app-data-loader-content />
                 }
             </div>
-
         </div>
     </div>
-
 </div>
 
 <ng-template #statuschanges let-modal>
@@ -111,7 +102,6 @@
     </div>
 </ng-template>
 
-
 <ng-template #statuschangesInactive let-modal>
     <div class="result-popup-content" ngbAutofocus>
         <div>
@@ -120,8 +110,7 @@
         </div>
         <div class="custom-modal-footer">
             <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{ 'No' | translate }}</button>
-            <button type="submit" class="custom-btn btn-primary"
-                (click)="confirmStatusChangetoInactive(modal)">{{ 'Yes' | translate }}</button>
+            <button type="submit" class="custom-btn btn-primary" (click)="confirmStatusChangetoInactive(modal)">{{ 'Yes' | translate }}</button>
         </div>
     </div>
 </ng-template>

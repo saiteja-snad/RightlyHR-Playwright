@@ -10,6 +10,7 @@ import { OpenModalService } from '../../services/open-modal.service';
 import { FormValidationsService } from '../../services/form-validations.service';
 import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs';
+import { PredefinedThemesService } from '../../services/theme-service/predefined-themes.service';
 @Component({
   selector: 'app-main-layout',
   imports: [SidenavComponent, HeaderComponent, RouterOutlet, CommonModule, ReactiveFormsModule,],
@@ -27,19 +28,20 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
   subscription!: Subscription;
   @ViewChild('changepasswordModal', { static: true }) changepasswordModal!: TemplateRef<any>;
   @ViewChild('getstarted', { static: true }) getstarted!: TemplateRef<any>;
-
   StrongPasswordRegx: RegExp = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>])(?!.*\s).{8,}$/;
 
   constructor(private fb: FormBuilder, public readonly router: Router, private http: HttpService,
-    private modalService: NgbModal, private conformationPopup: OpenModalService, public formsValidation: FormValidationsService,) { }
+    private modalService: NgbModal, private conformationPopup: OpenModalService, public formsValidation: FormValidationsService,
+    private predefinedThemesService: PredefinedThemesService) { }
 
-  ngOnInit() {
+  async ngOnInit() {
     this.intilaizeChangePasswordForm();
     this.intializeGetStartedForm();
-     
     this.empinfo = JSON.parse(localStorage.getItem('currentUser') || '{}');
     this.employeeName = this.empinfo.name;
     this.getUserPreference(this.empinfo.employeeId);
+    await this.predefinedThemesService.initTheme();
+    await this.predefinedThemesService.initFont();
   }
 
   getUserPreference(employeeId: number) {

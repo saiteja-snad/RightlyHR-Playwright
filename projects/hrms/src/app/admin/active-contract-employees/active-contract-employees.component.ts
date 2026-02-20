@@ -11,14 +11,14 @@ import { RbacService } from '../../services/rbac.service';
 import { DataLoaderContentComponent } from '../../shared/data-loader-content/data-loader-content.component';
 import { NoDataFoundComponent } from '../../shared/no-data-found/no-data-found.component';
 import { Iactive } from '../active-employees/active-model';
-
 @Component({
   selector: 'app-active-contract-employees',
   imports: [CommonModule, RouterModule, ActiveEmployeePipe, TranslateModule, FormsModule, DataLoaderContentComponent, NoDataFoundComponent,],
   templateUrl: './active-contract-employees.component.html',
   styleUrl: './active-contract-employees.component.scss'
 })
-export class ActiveContractEmployeesComponent implements OnInit,OnDestroy {
+
+export class ActiveContractEmployeesComponent implements OnInit, OnDestroy {
   subscription!: Subscription;
   Active = [] as Iactive[];
   searchValue: any;
@@ -34,10 +34,9 @@ export class ActiveContractEmployeesComponent implements OnInit,OnDestroy {
   //function for active Employees
   empdata() {
     this.loader = true;
-    const status='Active Contract';
+    const status = 'Active Contract';
     this.subscription = this.http.getData(`Employeedata/TraineeActiveEmployees/${status}`).subscribe({
       next: (data: any) => {
-        console.log(data)
         this.Active = data as Iactive[];
         this.loader = false;
       },

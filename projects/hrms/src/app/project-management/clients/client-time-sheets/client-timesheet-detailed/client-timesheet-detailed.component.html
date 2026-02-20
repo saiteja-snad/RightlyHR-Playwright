@@ -6,16 +6,14 @@
             <p-accordion>
                 <p-accordion-panel *ngFor="let project of projectDetails; let i = index" [value]="i">
                     <p-accordion-header>
-                        <div class="accordian-header-text text-truncate" >{{ project?.project?.projectName }}</div>
+                        <div class="accordian-header-text text-truncate">{{ project?.project?.projectName }}</div>
                         <div class="total-hrs-text text-truncate"><span class="total-hrs me-2">{{'Total Logged Hours' | translate}}:</span>
                             <span class="hrs-text">{{project?.project?.spentHoursHHMM }} {{'Hrs' | translate}}</span>
                         </div>
-
                     </p-accordion-header>
-
                     <p-accordion-content>
-                        <div class="custom-p-multi-select-table custom-accordian-table"> <p-table
-                                [value]="project?.groupedResources">
+                        <div class="custom-p-multi-select-table custom-accordian-table">
+                            <p-table [value]="project?.groupedResources">
                                 <ng-template pTemplate="header">
                                     <tr>
                                         <th>{{'Resource Name' | translate}}</th>
@@ -23,52 +21,44 @@
                                         <th class="text-center">{{'Department' | translate}}</th>
                                         <th class="text-center">{{'Phases / Milestones' | translate}}</th>
                                         <th class="text-center">{{'Total Logged Hours' | translate}}</th>
-
                                     </tr>
                                 </ng-template>
-
                                 <ng-template pTemplate="body" let-entry>
                                     <tr>
                                         <td>
-                                            <a class="project-name cursor"
-                                                (click)="navigateView(project?.project,entry?.employee?.id )">
+                                            <a class="data-nav-btn" (click)="navigateView(project?.project,entry?.employee?.id )">
                                                 {{ entry?.employee?.name}}
                                             </a>
                                         </td>
-
                                         <td class="text-center">
                                             @if(entry?.roles) {
-                                                <div class="d-flex align-items-center justify-content-center gap-2 flex-wrap ">
-                                                    <p-chip *ngFor="let role of entry?.roles.split(',')" [label]="role.trim()" />
-                                                </div>
-
+                                            <div class="d-flex align-items-center justify-content-center gap-2 flex-wrap ">
+                                                <p-chip *ngFor="let role of entry?.roles.split(',')" [label]="role.trim()" />
+                                            </div>
                                             } @else {
-                                                -
+                                            -
                                             }
                                         </td>
                                         <td class="text-center">
                                             @if(entry?.departments) {
-                                                <div class="d-flex align-items-center justify-content-center gap-2 flex-wrap ">
-                                                    <p-chip *ngFor="let dept of entry?.departments.split(',')" [label]="dept.trim()"/>
-                                                 </div>
+                                            <div class="d-flex align-items-center justify-content-center gap-2 flex-wrap ">
+                                                <p-chip *ngFor="let dept of entry?.departments.split(',')" [label]="dept.trim()" />
+                                            </div>
                                             } @else {
-                                                -
+                                            -
                                             }
                                         </td>
-                                       <td class="text-center"><a class="project-name cursor"
-                                        (click)="entry?.phasesCount !== 0 && openModal(entry, project, summaryforlogs)">
-                                        {{ entry?.phasesCount ?? 0 }}</a></td>
+                                        <td class="text-center">
+                                            <a class="data-nav-btn" (click)="entry?.phasesCount !== 0 && openModal(entry, project, summaryforlogs)">
+                                                {{ entry?.phasesCount ?? 0 }}</a>
+                                        </td>
                                         <td class="text-center">{{ entry?.totalLoggedHoursHHMM ?? '-' }}</td>
-
                                     </tr>
                                 </ng-template>
-
                             </p-table>
                         </div>
-
                     </p-accordion-content>
                 </p-accordion-panel>
-
             </p-accordion>
             }@else {
             <app-no-data-found />
@@ -80,22 +70,20 @@
         <ng-template pTemplate="header">
             <tr>
                 <th *ngFor="let h of [1]">
-                    <p-skeleton width="100%" height="1rem" styleClass="mb-2"></p-skeleton>
+                    <p-skeleton width="100%" height="1rem" styleClass="mb-2" />
                 </th>
             </tr>
         </ng-template>
-
         <ng-template pTemplate="body" let-row>
             <tr>
                 <td *ngFor="let col of [1]">
-                    <p-skeleton width="100%" styleClass="mb-2" height="1.2rem"></p-skeleton>
+                    <p-skeleton width="100%" styleClass="mb-2" height="1.2rem" />
                 </td>
             </tr>
         </ng-template>
     </p-table>
     }
 </div>
-
 
 <ng-template #summaryforlogs let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
@@ -113,7 +101,6 @@
                     <table class="popup-table">
                         <thead>
                             <tr>
-
                                 <th>{{'Phase / Milestone' | translate}}</th>
                                 <th>{{'Role' | translate}}</th>
                                 <th>{{'Start Date' | translate}}</th>
@@ -124,23 +111,16 @@
                         </thead>
                         <tbody>
                             <tr *ngFor="let entry of selectedEntries">
-
                                 <td>{{ entry?.phaseName ?? '-' }}</td>
                                 <td class="resoure-role-text">{{entry?.resourceRole ?? '-'}}</td>
-                                <td>
-                                    {{ entry?.resourceStartDate ? (entry.resourceStartDate | dateformat) : '-' }}
-                                </td>
+                                <td>{{ entry?.resourceStartDate ? (entry.resourceStartDate | dateformat) : '-' }}</td>
                                 <td>{{ entry?.resourceEndDate ? (entry.resourceEndDate | dateformat) : '-' }}</td>
-
                                 <td><b>{{ entry?.loggedHoursHHMM ?? 0}}</b>/{{entry?.allocatedHours ?? 0}} {{'Hrs' | translate}}</td>
-
                                 <td [ngClass]="{
                                     'active': entry?.resourceStatus?.toLowerCase() === 'active',
                                     'released': entry?.resourceStatus?.toLowerCase() === 'released',
-                                    'assigned': entry?.resourceStatus?.toLowerCase() === 'assigned'
-                                }">
-                                   <b> {{
-                                    entry?.resourceStatus ?? '-' }}</b>
+                                    'assigned': entry?.resourceStatus?.toLowerCase() === 'assigned' }">
+                                    <b>{{ entry?.resourceStatus ?? '-' }}</b>
                                 </td>
                             </tr>
                         </tbody>

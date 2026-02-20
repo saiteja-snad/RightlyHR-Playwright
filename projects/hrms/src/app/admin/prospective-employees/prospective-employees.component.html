@@ -3,7 +3,7 @@
   <div class="input-group custom-search mb-3">
     <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
     <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input"
-      placeholder="{{'Search by employee ID / employee name / personal email / phone number / location / sub location / designation / sub status ' | translate}}"
+      placeholder="{{'Search by employee ID / employee name / personal email / phone number / location / sub location / designation / sub status' | translate}}"
       aria-label="Username" aria-describedby="basic-addon1">
   </div>
 
@@ -22,23 +22,19 @@
         <th>{{'Sub Status'|translate}}</th>
       </thead>
       <tbody>
-        @if( ((Prospective | async) ?? []).length > 0){
+        @if(((Prospective | async) ?? []).length > 0){
         @for (act of ((Prospective | async) ?? []) | prospective : searchValue; track act.id) {
         <tr>
           <td>{{act.employeeId}}</td>
           <td>
             <span *ngIf="act.firstName ; else firstname">
-              <a class="select-item cursor" (click)="select(act)">
-                {{act.firstName?act.firstName:''}} {{act.middleName ?act.middleName:''}} {{act.lastName ?
-                act.lastName:''}}
-              </a>
+              <a class="data-nav-btn" (click)="select(act)">{{act.firstName?act.firstName:''}} {{act.middleName ?act.middleName:''}} {{act.lastName ? act.lastName:''}}</a>
             </span>
             <ng-template #firstname>-</ng-template>
           </td>
-          <td>{{ act.dateOfJoining ? (act.dateOfJoining | date) : '-' }}</td>
+          <td>{{act.dateOfJoining ? (act.dateOfJoining | date) : '-'}}</td>
           <td>{{act.emailaddress?act.emailaddress:'-'}}</td>
-          <td>{{act.mobilePhoneCountryCode?act.mobilePhoneCountryCode:''}} {{act.contactnumber?act.contactnumber:'-'}}
-          </td>
+          <td>{{act.mobilePhoneCountryCode?act.mobilePhoneCountryCode:''}} {{act.contactnumber?act.contactnumber:'-'}}</td>
           <td>
             @if(act.jobDetails!.length > 0){
             @for(jobDetail of act?.jobDetails;track jobDetail.id){

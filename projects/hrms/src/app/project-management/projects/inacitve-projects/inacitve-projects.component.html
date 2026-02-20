@@ -3,11 +3,10 @@
     <div class="heading-content">
       <app-project-management-module-info />
     </div>
+
     <!-- FILTERS ROW (NEW) -->
     <div class="d-flex align-items-center gap-3 flex-wrap">
       <!-- Reset Filters -->
-
-
       <div *ngIf="rbac.allowedToAccess('Team Time Sheet Filters Tab.view')">
         <button type="button" class="custom-btn btn-secondary position-relative" (click)="toggleFilters(filterContent)">
           <i class="bi bi-funnel me-2"></i>{{ 'Filters' | translate }}
@@ -18,17 +17,14 @@
   </div>
 
   <!-- Filter Chips Display - NEW -->
-  <div class="fliter-chip-content mb-2" *ngIf="isActive('/project-management/projects/inactive') && getSelectedFilters().length > 0">
+  <div class="fliter-chip-content mb-2"
+    *ngIf="isActive('/project-management/projects/inactive') && getSelectedFilters().length > 0">
     <div class="d-flex align-items-center gap-2 flex-wrap">
       <p-chip *ngFor="let filter of getSelectedFilters() | slice:0:3" [label]="filter.label" [removable]="true"
         (onRemove)="removeFilter(filter)" />
-
       <p-chip *ngIf="getSelectedFilters().length > 3" class="more-chip" [removable]="false"
         label="+{{ getSelectedFilters().length - 3 }} More" (click)="toggleFilters(filterContent)" />
-
-      <button type="button" class="clear-all-btn" (click)="clearAllFilters()">
-        {{ 'Clear All' | translate }}
-      </button>
+      <button type="button" class="clear-all-btn" (click)="clearAllFilters()">{{ 'Clear All' | translate }}</button>
     </div>
   </div>
 
@@ -37,8 +33,7 @@
       <app-projects-side-tabs />
     </div>
 
-    <div class="main-content"
-      [ngClass]="{'project-main-active-content': isActive('/project-management/projects/active')}">
+    <div class="main-content" [ngClass]="{'project-main-active-content': isActive('/project-management/projects/active')}">
       <div *ngIf="isActive('/project-management/clients')" class="mb-3">
         <app-projects-side-tabs-for-clients />
       </div>
@@ -87,7 +82,7 @@
                   <td>{{ project.client.clientName }}</td>
                   }
                   <td>
-                    <a class="project-name cursor" (click)="navigateView(project.projectId)">{{
+                    <a class="data-nav-btn" (click)="navigateView(project.projectId)">{{
                       project.projectName }}</a>
                   </td>
                   <td class="d-flex  justify-content-center">
@@ -96,7 +91,6 @@
                       <b>{{project?.meta?.graphData?.code || '-' }}</b>
                     </div>
                   </td>
-
                   <!-- <td>{{ project.startDate | dateformat }}</td>
                                         <td>{{ project.endDate | dateformat }}</td>
                                         <td>{{ project.effectiveDate | dateformat }}</td>
@@ -140,12 +134,12 @@
       <div class="pagination-content" *ngIf="projectsData.length > 0">
         <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
           <div class="d-flex align-items-center gap-3 p-2">
-            <select title="text" class="form-select custom-pagination-select" [(ngModel)]="rows"
-              (ngModelChange)="onPageSizeChange($event)">
+            <select title="text" class="form-select custom-pagination-select" [(ngModel)]="rows" (ngModelChange)="onPageSizeChange($event)">
               <option *ngFor="let option of options" [value]="option.value">{{ option.label }}</option>
             </select>
             <span class="pagination-label text-nowrap">
-              {{ 'Showing' | translate }} {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize : (+first + +rows) }} {{ 'of' | translate }} {{ collectionSize }}
+              {{ 'Showing' | translate }} {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize : 
+              (+first + +rows) }} {{ 'of' | translate }} {{ collectionSize }}
             </span>
           </div>
           <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"
@@ -165,12 +159,10 @@
       </div>
       <div class="custom-modal-footer">
         <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No' | translate}}</button>
-        <button type="submit" class="custom-btn btn-primary" (click)="confirmStatusChange(modal)">{{'Yes' |
-          translate}}</button>
+        <button type="submit" class="custom-btn btn-primary" (click)="confirmStatusChange(modal)">{{'Yes' | translate}}</button>
       </div>
     </div>
   </ng-template>
-
 
   <!-- Data Filters off canvas -->
   <ng-template #filterContent let-offcanvas>
@@ -179,7 +171,6 @@
         <p class="filter-header m-0">{{'Filters' | translate}}</p>
         <a (click)="closeCanvas()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
       </div>
-
       <div class="offcanvas-filter-content">
         <!-- Client Name Filter -->
         <div class="mb-3">
@@ -190,19 +181,16 @@
               (onChange)="onClientChange()" (onClear)="selectedClients = []; getdatabaedonRoute()" />
           </div>
         </div>
-
         <!-- Department Name -->
         <div class="mb-3">
           <label class="form-label filter-labels mb-3">{{ 'Select Department' | translate }}</label>
           <div class="custom-p-multiSelect-content">
             <p-multiSelect [options]="departmentlist" optionLabel="departmentName" optionValue="sno"
               [defaultLabel]="'Please select department' | translate" [filter]="true" filterBy="departmentName"
-              [(ngModel)]="selectedDepartmentIds" class="form-select custom-select"
-              (onChange)="onDepartmentChangelist($event)"
+              [(ngModel)]="selectedDepartmentIds" class="form-select custom-select" (onChange)="onDepartmentChangelist($event)"
               (onClear)="selectedDepartmentIds = []; getdatabaedonRoute()" />
           </div>
         </div>
-
         <!-- Project Type -->
         <div class="mb-3">
           <label class="form-label filter-labels mb-3">{{ 'Select Project Type' | translate }}</label>
@@ -213,7 +201,6 @@
               (onClear)="selectedProjectTypes = []; getdatabaedonRoute()" />
           </div>
         </div>
-
         <div class="d-flex offcanvas-footer-content gap-3">
           <button type="button" class="custom-btn btn-secondary w-100" (click)="clearAllFilters()">
             {{'Clear All' | translate}}</button>

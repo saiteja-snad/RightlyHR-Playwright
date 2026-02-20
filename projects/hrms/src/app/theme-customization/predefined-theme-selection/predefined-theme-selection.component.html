@@ -1,12 +1,12 @@
 <div class="custom-main-component-container">
     <div class="component-header-content">
         <div class="heading-content">
-            <div class="component-header">{{'Themes' | translate}}</div>
+            <div class="component-header">{{'Personalization' | translate}}</div>
         </div>
 
         <div class="d-flex align-items-center gap-3">
-            <button class="custom-btn btn-primary px-5" [disabled]="!selectedTheme || selectedTheme === confirmedTheme" (click)="onThemeChange()">{{'Apply Theme' | translate}}</button>
-            <button class="custom-btn btn-primary px-5" [disabled]="!selectedFont || selectedFont === confirmedFont" (click)="applyFont()">{{'Apply Font' | translate}}</button>
+            <button class="custom-btn btn-primary px-5" [disabled]="!confirmedTheme || selectedTheme === confirmedTheme" (click)="onThemeChange()">Apply Theme</button>
+            <button class="custom-btn btn-primary px-5" [disabled]="!confirmedFont || selectedFont === confirmedFont" (click)="applyFont()">Apply Font</button>
         </div>
     </div>
 
@@ -30,9 +30,7 @@
         <div class="themes-grid">
             <div class="theme-content font-content" [class.confirmedFont]="confirmedFont === font.value" *ngFor="let font of fonts"
                 [class.selected]="selectedFont === font.value" (click)="selectedFontFamily(font.value)">
-                <div class="check-icon" *ngIf="selectedFont === font.value">
-                  
-                </div>
+                <div class="check-icon" *ngIf="selectedFont === font.value"></div>
                 <div class="theme-name">{{ font.name }}</div>
             </div>
         </div>

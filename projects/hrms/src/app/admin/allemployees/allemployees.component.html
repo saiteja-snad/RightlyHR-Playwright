@@ -26,66 +26,49 @@
         <tr *ngFor="let act of Allemployees | allEmployees : searchValue">
           <td>
             <span *ngIf="act.fusionEmpId;else fusionid"> {{act.fusionEmpId}}</span>
-            <ng-template #fusionid>
-              -
-            </ng-template>
+            <ng-template #fusionid>-</ng-template>
           </td>
-          <td> <span *ngIf="act.firstName;else fistname"> </span><a class="select-item cursor" (click)="select(act)">
-              {{act?.firstName}} {{act?.middleName}} {{act?.lastName}}</a>
-            <ng-template #fistname>
-              -
-            </ng-template>
+          <td>
+            <span *ngIf="act.firstName;else fistname">
+              <a class="data-nav-btn" (click)="select(act)">{{act?.firstName}} {{act?.middleName}} {{act?.lastName}}</a>
+            </span>
+            <ng-template #fistname>-</ng-template>
           </td>
           <!-- Date of joining -->
           <td>
-            <span *ngIf="act.dateOfJoining; else noDateOfJoining">
-              {{ act.dateOfJoining | date }}
-            </span>
+            <span *ngIf="act.dateOfJoining; else noDateOfJoining">{{ act.dateOfJoining | date }}</span>
             <ng-template #noDateOfJoining>-</ng-template>
           </td>
-          <td><span *ngIf="act.workEmail;else workemail">{{act.workEmail}}</span>
-            <ng-template #workemail>
-              -
-            </ng-template>
+          <td>
+            <span *ngIf="act.workEmail;else workemail">{{act.workEmail}}</span>
+            <ng-template #workemail>-</ng-template>
           </td>
-          <td><span *ngIf="act.workEmail;else workemail">{{act.workEmail}}</span>
-            <ng-template #workemail>
-              -
-            </ng-template>
+          <td>
+            <span *ngIf="act.workEmail;else workemail">{{act.workEmail}}</span>
+            <ng-template #workemail>-</ng-template>
           </td>
-          <td><span *ngIf="act.contactnumber;else contactnumb">+91 {{act.contactnumber}}</span>
-            <ng-template #contactnumb>
-              -
-            </ng-template>
+          <td>
+            <span *ngIf="act.contactnumber;else contactnumb">+91 {{act.contactnumber}}</span>
+            <ng-template #contactnumb>-</ng-template>
           </td>
           <!-- Location -->
           <td>
-            <span *ngIf="act.jobDetails?.lopcation; else noLocation">
-              {{ act.jobDetails?.lopcation }}
-            </span>
+            <span *ngIf="act.jobDetails?.lopcation; else noLocation">{{ act.jobDetails?.lopcation }}</span>
             <ng-template #noLocation>-</ng-template>
           </td>
           <!-- Sub Location -->
           <td>
-            <span *ngIf="act.jobDetails?.subLocation; else noSubLocation">
-              {{ act.jobDetails?.subLocation }}
-            </span>
+            <span *ngIf="act.jobDetails?.subLocation; else noSubLocation">{{ act.jobDetails?.subLocation }}</span>
             <ng-template #noSubLocation>-</ng-template>
           </td>
-
           <!-- Shift Name -->
           <td>
-            <span *ngIf="act.jobDetails?.shiftName; else noShift">
-              {{ act.jobDetails?.shiftName }}
-            </span>
+            <span *ngIf="act.jobDetails?.shiftName; else noShift">{{ act.jobDetails?.shiftName }}</span>
             <ng-template #noShift>-</ng-template>
           </td>
-
           <!-- Designation -->
           <td>
-            <span *ngIf="act.jobDetails?.jobRole; else noRole">
-              {{ act.jobDetails?.jobRole }}
-            </span>
+            <span *ngIf="act.jobDetails?.jobRole; else noRole">{{ act.jobDetails?.jobRole }}</span>
             <ng-template #noRole>-</ng-template>
           </td>
         </tr>

@@ -6,7 +6,7 @@
     </div>
 
     <div class="d-flex w-100 gap-3">
-        <div class="component-left-tabs-container" >
+        <div class="component-left-tabs-container">
             <app-client-side-tabs />
         </div>
 
@@ -50,7 +50,7 @@
                                             <img [src]="getImageUrl(client.logoPath)" alt="Logo" class="client-image" />
                                         </td>
                                         <td>
-                                            <a class="project-name cursor" (click)="navigateView(client.clientId)">{{ client.clientName }}</a>
+                                            <a class="data-nav-btn" (click)="navigateView(client.clientId)">{{ client.clientName }}</a>
                                         </td>
                                         <td>{{client?.contact?.name || '-'}}</td>
                                         <td>{{client?.contact?.email || '-'}}</td>
@@ -65,7 +65,7 @@
                                                 <ul class="dropdown-menu custom-dropdown-menu">
                                                     <li (click)="openModalstatus(statuschanges, client)">
                                                         <a class="dropdown-item">
-                                                            <i class="bi bi-check-circle me-2"></i> {{ 'Active' | translate }}
+                                                            <i class="bi bi-check-circle me-2"></i>{{ 'Active' | translate }}
                                                         </a>
                                                     </li>
                                                 </ul>
@@ -86,7 +86,6 @@
             </ng-template>
         </div>
     </div>
-
 </div>
 
 <!--confirmation-->

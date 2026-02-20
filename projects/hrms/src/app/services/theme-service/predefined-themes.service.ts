@@ -1,5 +1,6 @@
 import { Injectable, Renderer2, RendererFactory2 } from '@angular/core';
-
+import { HttpService } from '../http.service';
+import { firstValueFrom } from 'rxjs';
 @Injectable({
   providedIn: 'root'
 })
@@ -9,10 +10,8 @@ export class PredefinedThemesService {
   private currentTheme = 'default-theme';
   private currentFont = 'Roboto-flex';
 
-  constructor(rendererFactory: RendererFactory2) {
+  constructor(rendererFactory: RendererFactory2, private http: HttpService) {
     this.renderer = rendererFactory.createRenderer(null, null);
-    this.initTheme();
-    this.initFont();
   }
 
   setTheme(themeName: string): void {
@@ -20,12 +19,25 @@ export class PredefinedThemesService {
     this.renderer.removeClass(body, this.currentTheme);
     this.renderer.addClass(body, themeName);
     this.currentTheme = themeName;
-    localStorage.setItem('selected-theme', themeName);
   }
 
-  initTheme(): void {
-    const savedTheme = localStorage.getItem('selected-theme') || 'default-theme';
-    this.setTheme(savedTheme);
+  async initTheme(): Promise<void> {
+    try {
+      const empInfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
+      const employeeId = empInfo?.employeeId;
+      if (!employeeId) {
+        this.setTheme('default-theme');
+        return;
+      }
+      const response: any = await firstValueFrom(
+        this.http.getData(`Employeedata/get-user-preference/${employeeId}`)
+      );
+      const theme = response?.data?.['RHR_WEB_Theme'] || 'default-theme';
+      this.setTheme(theme);
+    } catch (error) {
+      console.error('Error loading theme:', error);
+      this.setTheme('default-theme');
+    }
   }
 
   // FONTS
@@ -34,11 +46,24 @@ export class PredefinedThemesService {
     this.renderer.removeClass(body, this.currentFont);
     this.renderer.addClass(body, fontName);
     this.currentFont = fontName;
-    localStorage.setItem('selected-font', fontName);
   }
 
-  initFont(): void {
-    const savedFont = localStorage.getItem('selected-font') || 'Roboto-flex';
-    this.setFont(savedFont);
+  async initFont(): Promise<void> {
+    try {
+      const empInfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
+      const employeeId = empInfo?.employeeId;
+      if (!employeeId) {
+        this.setFont('Roboto-flex');
+        return;
+      }
+      const response: any = await firstValueFrom(
+        this.http.getData(`Employeedata/get-user-preference/${employeeId}`)
+      );
+      const font = response?.data?.['RHR_WEB_Font'] || 'Roboto-flex';
+      this.setFont(font);
+    } catch (error) {
+      console.error('Error loading font:', error);
+      this.setFont('Roboto-flex');
+    }
   }
 }

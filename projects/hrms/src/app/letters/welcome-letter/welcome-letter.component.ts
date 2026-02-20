@@ -202,7 +202,7 @@ export class WelcomeLetterComponent implements OnInit,OnDestroy {
       },
       complete: () => {
         setTimeout(() => {
-          this.router.navigate(['/admin/dashboard']);
+          this.router.navigate(['/letters/lettes-tabs']);
         }, 2000)
         this.spinnerLoader = false;
         this.employeeForm.reset();
@@ -219,7 +219,7 @@ export class WelcomeLetterComponent implements OnInit,OnDestroy {
   }
 
   navigateDashboard() {
-    this.router.navigate(['/admin/dashboard'])
+    this.router.navigate(['/letters/lettes-tabs'])
   }
 
   ngOnDestroy(): void {

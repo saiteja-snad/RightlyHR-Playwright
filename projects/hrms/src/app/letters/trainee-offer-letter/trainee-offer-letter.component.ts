@@ -1049,7 +1049,7 @@ export class TraineeOfferLetterComponent implements OnInit, OnDestroy {
         }
         this.Approvalloader = false;
         setTimeout(() => {
-          this.router.navigate(['/admin/dashboard']);
+          this.router.navigate(['/letters/lettes-tabs']);
         }, 1000);
       },
       error: (err: any) => {
@@ -1143,7 +1143,7 @@ export class TraineeOfferLetterComponent implements OnInit, OnDestroy {
   }
 
   navigateDashboard() {
-    this.router.navigate(['/admin/dashboard']);
+    this.router.navigate(['/letters/lettes-tabs']);
   }
 
   onclickDocumentType(Value: any) {

@@ -1,31 +1,28 @@
 <div class="custom-main-component-container">
-    @if(!loading){
-    <div class="card custom-background-card p-4 mb-4">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <div>
-                <span class="component-sub-header">{{'Onboarding Info' | translate}}</span>
-            </div>
-            @if(canAccess('view','onboarding')){
+  @if(!loading){
+  <div class="card custom-background-card p-4 mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <div>
+        <span class="component-sub-header">{{'Onboarding Info' | translate}}</span>
+      </div>
+          @if(canAccess('view','onboarding')){
             @if(!buttons && (empinfo?.empstatus?.toLowerCase() !== 'inactive' && empinfo?.empstatus?.toLowerCase() !=='trainee inactive' )){
-
+    
             @if(canAccess('update','onboarding')){
 
-      @if(canAccess('update','onboarding')){
+            <div>
+                <a (click)="showButtons()"><app-edit-icon /></a>
+            </div>
 
-      <div>
-        <a (click)="showButtons()"><app-edit-icon /></a>
-      </div>
+            }
 
-      }
-
-      }
-      <!-- Show buttons if 'buttons' is true -->
-      <div *ngIf="buttons" class="d-flex justify-content-end gap-2">
-        <button type="button" class="custom-btn btn-secondary" (click)="showButtons()">Close</button>
-        <button type="submit" class="custom-btn btn-primary" [disabled]="this.onboardingForm.invalid"
-          (click)="onSubmit()">Save</button>
-      </div>
-      }}
+            }
+            <!-- Show buttons if 'buttons' is true -->
+            <div *ngIf="buttons" class="d-flex justify-content-end gap-2">
+                <button type="button" class="custom-btn btn-secondary" (click)="showButtons()">Close</button>
+                <button type="submit" class="custom-btn btn-primary" [disabled]="this.onboardingForm.invalid" (click)="onSubmit()">Save</button>
+            </div>
+            }
     </div>
 
     <!--input content-->

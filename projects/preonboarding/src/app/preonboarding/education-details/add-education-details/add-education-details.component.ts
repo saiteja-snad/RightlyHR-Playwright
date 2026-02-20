@@ -64,7 +64,8 @@ export class AddEducationDetailsComponent {
         Validators.pattern(/^([1-9](\.\d{1,2})?|10(\.0{1,2})?)$/)
       ]],
       startDate: ['', Validators.required ],
-      endDate: ['', Validators.required]
+      endDate: ['', Validators.required],
+      attachment: [null, Validators.required]
     },
     { validators: [this.DateValidator()] }
   );
@@ -111,17 +112,22 @@ DateValidator(): ValidatorFn {
       if (!allowedTypes.includes(file.type)) {
         this.showErrorforpdf = true;
         this.showErrorforsize = false;
+        this.educationForm.get('attachment')?.setValue(null);
         input.value = '';
       }
       else if (file.size > maxSizeInBytes) {
         this.showErrorforsize = true;
         this.showErrorforpdf = false;
+        this.educationForm.get('attachment')?.setValue(null);
         input.value = '';
       }
       else {
         this.showErrorforpdf = false;
         this.showErrorforsize = false;
+        this.educationForm.get('attachment')?.setValue(file);
       }
+    } else {
+      this.educationForm.get('attachment')?.setValue(null);
     }
   }
 

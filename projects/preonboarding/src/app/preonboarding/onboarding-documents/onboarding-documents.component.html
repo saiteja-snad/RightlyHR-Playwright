@@ -161,6 +161,10 @@
                         @if(this.documentSelectFields.documentUrl){
                         <div class="custom-label file-name my-1">File Name: {{getFileName(this.documentSelectFields.documentUrl)}}</div>
                         }
+                        <div *ngIf="documentForm.get('docFile')?.invalid && documentForm.get('docFile')?.touched"
+                            class="error-msg my-1">
+                            File is required
+                        </div>
                         @if(showErrorrforsize){
                         <div class="error-msg my-1">The file size should be less than 25MB.</div>
                         }

@@ -320,7 +320,7 @@
             {{'Rejection Comments' | translate}} <span class="text-danger">*</span>
           </label>
           <textarea class="form-control custom-input" formControlName="comments" rows="3" maxlength="250"
-            [placeholder]="'Please provide reason for rejection' | translate">
+            [placeholder]="'Please enter reject reason' | translate">
           </textarea>
           <div class="textarea-count-text">
             {{ actionForm.get('comments')?.value?.length || 0 }} / 250
@@ -328,7 +328,7 @@
 
           <div class="error-msg"
             *ngIf="actionForm.get('comments')?.touched && actionForm.get('comments')?.errors?.['required']">
-            {{'Rejecting comments are required' | translate}}
+            {{'Rejecting Comment is required' | translate}}
           </div>
         </div>
 

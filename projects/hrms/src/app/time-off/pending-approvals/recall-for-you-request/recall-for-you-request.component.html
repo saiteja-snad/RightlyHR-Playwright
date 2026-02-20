@@ -258,7 +258,7 @@
         <div class="error-msg"
           *ngIf="rejectSeparationForm.get('notes')?.touched && rejectSeparationForm.get('notes')?.invalid">
           <ng-container *ngIf="rejectSeparationForm.get('notes')?.errors?.['required']">
-            {{'Comments are required' | translate}}
+            {{'Comment is required' | translate}}
           </ng-container>
           <ng-container *ngIf="rejectSeparationForm.get('notes')?.errors?.['maxlength']">
             {{'Maximum 250 characters allowed' | translate}}

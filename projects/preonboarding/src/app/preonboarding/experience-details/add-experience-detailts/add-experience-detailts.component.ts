@@ -52,7 +52,7 @@ export class AddExperienceDetailtsComponent {
   submissionInProgress = false;
   today = new Date().toISOString().split('T')[0];
 
-  constructor(private http: HttpService,private formValidationService:FormValidationService, private fb: FormBuilder, private modalService: NgbModal, private openPopup:PopupService, 
+  constructor(private http: HttpService,private formValidationService:FormValidationService, private fb: FormBuilder, private modalService: NgbModal, private openPopup:PopupService,
     private getData:DataService, public formValidation: FormValidationService) { }
 
   ngOnInit(): void {
@@ -67,7 +67,7 @@ export class AddExperienceDetailtsComponent {
       companyName: [null, [Validators.required, Validators.maxLength(100)]],
       employmentType: [null, Validators.required],
       fromDate: [null, Validators.required],
-      toDate: [null],
+      toDate: [null, Validators.required],
       jobTitle: [null, [Validators.required, Validators.maxLength(100)]],
       description: [null],
       previousContactName: [null],
@@ -103,7 +103,7 @@ DateValidator(): ValidatorFn {
     // Save formatted value (optional)
     this.startDatevalidate = formattedStart.format('YYYY-MM-DD');
 
-    
+
 
     return null; // valid
   };
@@ -130,7 +130,7 @@ DateValidator(): ValidatorFn {
       event.preventDefault();
     }
   }
-  
+
   checkboxCondition(event: any) {
     if (event.target.checked) {
       this.required=false;
@@ -165,9 +165,9 @@ DateValidator(): ValidatorFn {
     })
   }
 
-  //function to select the file in post 
+  //function to select the file in post
   onChangeexperience(event: any) {
-   
+
   this.isfileselected = false;
     this.file = event.target.files[0];
     let d: Date = new Date()
@@ -181,9 +181,9 @@ DateValidator(): ValidatorFn {
       this.experienceForm.get('attachment')?.setValue(null);
         this.experienceForm.get('attachment')?.updateValueAndValidity();
     }
-  
+
   }
-  
+
   onChange(event: Event) {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
@@ -208,7 +208,7 @@ DateValidator(): ValidatorFn {
   }
 
   postExpDetails() {
-  if (this.submissionInProgress) return; 
+  if (this.submissionInProgress) return;
   this.submissionInProgress = true;
 
   const formData = this.experienceForm.value;
@@ -228,7 +228,7 @@ DateValidator(): ValidatorFn {
         this.openPopup.openSuccess("Employment history added successfully");
         this.getData.getExperience.set(true);
         this.experienceForm.reset();
-        this.submissionInProgress = false; 
+        this.submissionInProgress = false;
       },
       error: (error: any) => {
         console.log('Save failed:', error);
@@ -239,7 +239,7 @@ DateValidator(): ValidatorFn {
         } else {
           this.openPopup.openError("Insertion of data is failed");
         }
-        this.submissionInProgress = false; 
+        this.submissionInProgress = false;
       }
     });
   };
@@ -254,7 +254,7 @@ DateValidator(): ValidatorFn {
         },
         error: (error: any) => {
           this.openPopup.openError("File upload failed");
-          this.submissionInProgress = false; 
+          this.submissionInProgress = false;
         }
       });
   } else {

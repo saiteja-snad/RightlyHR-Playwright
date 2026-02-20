@@ -234,7 +234,7 @@
           </div>
 
           <!-- <div *ngIf="appraisalData.note">
-           
+
             </div> -->
 
 
@@ -369,7 +369,7 @@
 
           <div class="error-msg" *ngIf="rejectForm.get('comments')?.touched && rejectForm.get('comments')?.invalid">
             <div *ngIf="rejectForm.get('comments')?.errors?.['required']">
-              Comments are required
+              Comment is required
             </div>
             <div *ngIf="rejectForm.get('comments')?.errors?.['maxlength']">
               Comments cannot exceed 250 characters

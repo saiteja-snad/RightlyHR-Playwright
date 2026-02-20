@@ -100,17 +100,17 @@
                     </div>
                 </div>
                 <div class="col-md-6 mb-3">
-                    <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Sub Location'|translate}}
+                    <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Sublocation'|translate}}
                         <span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="subLocationsDropdown" optionValue="id" optionLabel="jobSubLocationName"
-                            placeholder="{{'Please select sub location'|translate}}" class="form-select custom-select" id="sublocation"
+                            placeholder="{{'Please select sublocation'|translate}}" class="form-select custom-select" id="sublocation"
                             name="sublocation" (change)="onClickValue()" formControlName="subLocation" required>
                         </p-select>
                     </div>
                     <div *ngIf="employeeForm.get('subLocation')?.invalid && employeeForm.get('subLocation')?.touched"
                         class="error-msg">
-                        {{'Sub Location is required'|translate}}
+                        {{'Sublocation is required'|translate}}
                     </div>
                 </div>
             </div>

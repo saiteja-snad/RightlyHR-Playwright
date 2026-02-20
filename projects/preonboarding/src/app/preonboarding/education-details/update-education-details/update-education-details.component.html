@@ -13,8 +13,8 @@
                 <div class="col-md-6 mb-3">
                     <label for="education" class="form-label custom-label mb-2">Qualification<span class="text-danger">*</span></label>
                     <div class="custom-p-select-content">
-                        <p-select [options]="degreeDetails" optionLabel="degreeName" optionValue="degreeName" id="education" formControlName="education" 
-                          placeholder="Please select education" class="form-select custom-select"></p-select>
+                        <p-select [options]="degreeDetails" optionLabel="degreeName" optionValue="degreeName" id="education" formControlName="education"
+                          placeholder="please select qualification" class="form-select custom-select"></p-select>
                     </div>
                 </div>
 
@@ -23,7 +23,7 @@
                     <input type="text" class="form-control custom-input" id="university" formControlName="university" placeholder="Please enter university name" autoComplete="off"
                      (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)">
                     <div *ngIf="educationForm.get('university')?.hasError('required') && educationForm.get('university')?.touched" class="error-msg">
-                        University is required
+                        University name is required
                     </div>
                     <div *ngIf="educationForm.get('university')?.hasError('pattern') && educationForm.get('university')?.touched" class="error-msg">
                         University should contain only alphabets and special characters
@@ -52,7 +52,7 @@
                     <label for="gpa" class="form-label custom-label mb-2">GPA<span class="text-danger">*</span></label>
                     <input type="text" class="form-control custom-input" id="gpa" formControlName="gpa" placeholder="Please enter GPA" autocomplete="off">
                     <div *ngIf="educationForm.get('gpa')?.hasError('required') && educationForm.get('gpa')?.touched" class="error-msg">
-                        GPA is required 
+                        GPA is required
                     </div>
                     <div *ngIf="educationForm.get('gpa')?.hasError('required') && educationForm.get('gpa')?.touched" class="error-msg">
                         GPA should be between 1 and 10

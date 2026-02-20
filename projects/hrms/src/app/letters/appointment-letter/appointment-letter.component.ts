@@ -444,7 +444,7 @@ export class AppointmentLetterComponent implements OnInit,OnDestroy {
       next: (data: any) => {
         this.spinnerLoader= false;
         this.conformationPopup.openSuccessModal('Email has been sent successfully');
-        this.router.navigate(['/admin/dashboard']);
+        this.router.navigate(['/letters/lettes-tabs']);
       },
       error: (err: any) => {
         this.spinnerLoader = false;

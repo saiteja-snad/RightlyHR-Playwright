@@ -250,10 +250,10 @@
                 <button type="reset" class="custom-btn btn-secondary"
                     (click)="reload(acceptForm)">{{'Close'|translate}}</button>
                 <button *ngIf="!discontinue" type="submit" class="custom-btn btn-primary"
-                    [disabled]="!selectedLeaveData.trcomments || !selectedLeaveData.extenddate"
+                    [disabled]="!selectedLeaveData.trcomments || !selectedLeaveData.extenddate  || !isempeffectivevaild"
                     (click)="handleExtend(acceptForm)">{{'Reject' | translate}}</button>
                 <button type="submit" class="custom-btn btn-primary" *ngIf="discontinue && !extend"
-                    [disabled]="!selectedLeaveData.rejectedReason" (click)="handleReject(acceptForm)">{{'Reject' |
+                    [disabled]="!selectedLeaveData.rejectedReason  || !isempeffectivevaild" (click)="handleReject(acceptForm)">{{'Reject' |
                     translate}}</button>
             </div>
         </form>

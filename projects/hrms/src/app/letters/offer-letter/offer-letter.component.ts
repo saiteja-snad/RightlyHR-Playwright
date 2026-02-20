@@ -1183,7 +1183,7 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
     };
     this.subscription = this.http.postdata(`Notification/Notify/Manager`, senddata).subscribe({
       next: (data: any) => {
-        this.router.navigate(['/admin/dashboard']);
+        this.router.navigate(['/letters/lettes-tabs']);
       },
       error: (err: any) => {
         console.log(err);

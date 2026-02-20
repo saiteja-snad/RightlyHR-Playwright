@@ -201,7 +201,7 @@ export class TraineeAppointmentLetterComponent {
   }
 
   navigateDashboard() {
-    this.router.navigate(['/admin/dashboard'])
+    this.router.navigate(['/letters/lettes-tabs'])
   }
 
   onclickSelectAddress(Value: any) {
@@ -502,7 +502,7 @@ export class TraineeAppointmentLetterComponent {
     this.subscription = this.http.postdata('TraineeAppointmentLetter', postAppDetails).subscribe({
       next: (data: any) => {
         this.conformationPopup.openSuccessModal('Appointment letter generated successfully')
-        this.router.navigate(['/admin/dashboard']);
+        this.router.navigate(['/letters/lettes-tabs']);
       },
       error: (reason: any) => {
         this.spinnerLoader = false;

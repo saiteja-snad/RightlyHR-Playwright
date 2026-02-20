@@ -123,7 +123,7 @@
                 <div class="textarea-count-text">{{ approveForm.get('comments')?.value?.length || 0 }}/250</div>
                 <div class="error-msg"
                     *ngIf="approveForm.get('comments')?.touched && approveForm.get('comments')?.invalid">
-                    <div *ngIf="approveForm.get('comments')?.errors?.['required']">{{'Comments are required' | translate}}</div>
+                    <div *ngIf="approveForm.get('comments')?.errors?.['required']">{{'Comment is required' | translate}}</div>
                     <div *ngIf="approveForm.get('comments')?.errors?.['maxlength']">{{'Comments cannot exceed 250 characters' | translate}}
                     </div>
                 </div>
@@ -166,7 +166,7 @@
                 <div class="textarea-count-text">{{ rejectForm.get('comments')?.value?.length || 0 }}/250</div>
                 <div class="error-msg"
                     *ngIf="rejectForm.get('comments')?.touched && rejectForm.get('comments')?.invalid">
-                    <div *ngIf="rejectForm.get('comments')?.errors?.['required']">{{'Comments are required' | translate}}</div>
+                    <div *ngIf="rejectForm.get('comments')?.errors?.['required']">{{'Comment is required' | translate}}</div>
                     <div *ngIf="rejectForm.get('comments')?.errors?.['maxlength']">{{'Comments cannot exceed 250 characters' | translate}}
                     </div>
                 </div>

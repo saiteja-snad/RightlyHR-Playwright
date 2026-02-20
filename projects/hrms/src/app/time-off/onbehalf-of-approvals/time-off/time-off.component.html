@@ -22,7 +22,7 @@
         </div>
     </div>
     }
-    
+
     <!--Input search-->
     <div class="input-group custom-search mb-3">
         <span class="input-group-text custom-input-group-search" id="basic-addon1">
@@ -127,9 +127,9 @@
             </ng-template>
         </p-table>
         }@else {
-      
+
             <app-data-loader-content />
-      
+
         }
     </div>
 </div>
@@ -257,7 +257,7 @@
                     </div>
                     <div class="error-msg"
                         *ngIf="(Reasons.touched && Reasons.invalid) || (leaveapprovee.submitted && Reasons.invalid)">
-                        {{'Comments are required' | translate}}
+                        {{'Comment is required' | translate}}
                     </div>
                 </div>
             </div>
@@ -266,12 +266,12 @@
                         (click)="onStatusApproveSelect('approved')">
                         {{'Approved' | translate}}
                     </button>
-                
+
                     <button type="button" class="custom-btn btn-secondary chip-btn" [class.active]="selectedLeaveStatus === 'planned'"
                         (click)="onStatusApproveSelect('planned')">
                         {{'Planned Leave' | translate}}
                     </button>
-                
+
                     <button type="button" class="custom-btn btn-secondary chip-btn" [class.active]="selectedLeaveStatus === 'unplanned'"
                         (click)="onStatusApproveSelect('unplanned')">
                         {{'Unplanned Leave' | translate}}
@@ -317,7 +317,7 @@
                         {{selectedLeaveData.comments?.length?selectedLeaveData.comments?.length:0}}/250</div>
                     <div class="error-msg"
                         *ngIf="(Reasons.touched && Reasons.invalid) || (leaveapprovee.submitted && Reasons.invalid)">
-                        {{'Comments are required' | translate}}
+                        {{'Comment is required' | translate}}
                     </div>
                 </div>
             </div>

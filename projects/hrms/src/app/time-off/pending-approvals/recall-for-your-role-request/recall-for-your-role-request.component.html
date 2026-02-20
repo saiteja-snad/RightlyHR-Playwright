@@ -9,7 +9,7 @@
   <div class="custom-table-content">
     @if (!isDataLoader) {
     <table class="w-100">
-     
+
       <thead>
           <th>{{'Employee Name' | translate}}</th>
           <th>{{'Employee ID' | translate}}</th>
@@ -258,7 +258,7 @@
         <div class="error-msg"
           *ngIf="rejectSeparationForm.get('notes')?.touched && rejectSeparationForm.get('notes')?.invalid">
           <ng-container *ngIf="rejectSeparationForm.get('notes')?.errors?.['required']">
-            {{'Comments are required' | translate}}
+            {{'Comment is required' | translate}}
           </ng-container>
           <ng-container *ngIf="rejectSeparationForm.get('notes')?.errors?.['maxlength']">
             {{'Maximum 250 characters allowed' | translate}}
@@ -312,7 +312,7 @@
         <div class="error-msg"
           *ngIf="recallAcceptFormForProcess.get('recallReason')?.touched && recallAcceptFormForProcess.get('recallReason')?.invalid">
           <ng-container *ngIf="recallAcceptFormForProcess.get('recallReason')?.errors?.['required']">
-            {{'Comments are required' | translate}}
+            {{'Comment is required' | translate}}
           </ng-container>
           <ng-container *ngIf="recallAcceptFormForProcess.get('recallReason')?.errors?.['maxlength']">
             {{'Maximum 250 characters allowed' | translate}}

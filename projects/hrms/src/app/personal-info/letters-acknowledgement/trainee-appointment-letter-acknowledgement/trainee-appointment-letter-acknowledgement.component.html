@@ -544,7 +544,7 @@
                                                 <span>{{ traineeAppointmentletterData.addressLine1 }}</span>,<br />
                                                 <span>{{ traineeAppointmentletterData.addressLine2 }}</span>,<br />
                                                 <span>{{ traineeAppointmentletterData.city }}, {{ traineeAppointmentletterData.state }},</span><br />
-                                                <span>{{ traineeAppointmentletterData.country }} <span> </span> - 
+                                                <span>{{ traineeAppointmentletterData.country }} <span> </span> -
                                                 {{ traineeAppointmentletterData.zipCode }}.</span>
                                             </b> -->
                                     </ng-template>
@@ -618,7 +618,7 @@
                             <div>
                                 <div class="d-flex mt-3">
                                     <div class="mt-3">
-                                         Signature: 
+                                         Signature:
                                     </div>
                                     <div class="letter-signature mb-3">
                                         {{employeeName}}
@@ -793,7 +793,7 @@
                             <div class="row d-flex justify-content-evenly mt-2">
                                 <div class="d-flex mt-3">
                                     <div class="mt-3">
-                                         Signature: 
+                                         Signature:
                                     </div>
                                     <div class="letter-signature mb-3">
                                         {{employeeName}}
@@ -959,7 +959,7 @@
                             <div class="mt-4">
                                 <div class="d-flex mt-3">
                                     <div class="mt-3">
-                                         Signature: 
+                                         Signature:
                                     </div>
                                     <div class="letter-signature mb-3">
                                         {{employeeName}}
@@ -1263,7 +1263,7 @@
                             <div>
                                 <div class="d-flex mt-3">
                                     <div class="mt-3">
-                                         Signature: 
+                                         Signature:
                                     </div>
                                     <div class="letter-signature mb-3">
                                         {{employeeName}}
@@ -1349,7 +1349,7 @@
                         (keydown)="formsValidation.restrictInitialSpace($event)" rows="3"></textarea>
                     <div class="textarea-count-text">{{ rejectForm.get('notes')?.value?.length || 0 }}/250</div>
                     <div class="error-msg" *ngIf="rejectForm.get('notes')?.touched && rejectForm.get('notes')?.invalid">
-                        <div *ngIf="rejectForm.get('notes')?.errors?.['required']">Comments are required</div>
+                        <div *ngIf="rejectForm.get('notes')?.errors?.['required']">Comment is required</div>
                         <div *ngIf="rejectForm.get('notes')?.errors?.['maxlength']">Comments cannot exceed 250 characters</div>
                     </div>
                 </div>

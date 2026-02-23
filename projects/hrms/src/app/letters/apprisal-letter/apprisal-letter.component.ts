@@ -363,7 +363,7 @@ export class ApprisalLetterComponent implements OnInit, OnDestroy {
             let res = data.sort((a: any, b: any) => b.compeffectivedate - a.compeffectivedate)[0];
             this.employeeCompensationData = res;
             this.appraisalData.employeeId = res.employeeId;
-            // this.appraisalData.bonus = res.bonusAmountData;
+            this.appraisalData.bonus = res.bonusAmountData;
             this.previusSalary = data[0];
             this.incrementSalary = res?.compensationamount - this.previusSalary.compensationamount;
             this.employeeCompensationDetails = res;
@@ -655,21 +655,21 @@ export class ApprisalLetterComponent implements OnInit, OnDestroy {
     let data = this.employeeJobDetails;
     this.appraisalData.status = 'Active';
     const jobdata = {
-      employeeId: data.employeeId,
-      effectiveDate: this.employeeCompensationDetails.compeffectivedate,
-      locationid: data.locationid,
-      sublocationid: data.sublocationid,
+      employeeId: data?.employeeId,
+      effectiveDate: this.employeeCompensationDetails?.compeffectivedate,
+      locationid: data?.locationid,
+      sublocationid: data?.sublocationid,
       jobRole: this.employeeForm.get('JobRole')?.value?.value,
       status: 'Active',
-      subdeptId: data.subdeptId,
-      createddate: data.createddate,
-      gradeId: this.gradeIdValue.gradeId ? this.gradeIdValue.gradeId : data.gradeId,
-      reportsto: data.reportsto,
-      shiftId: data.shiftId,
-      jobTypeId: data.jobTypeId,
-      lopcation: data.lopcation,
-      bussinessArea: data.bussinessArea,
-      updateddate: data.updateddate,
+      subdeptId: data?.subdeptId,
+      createddate: data?.createddate,
+      gradeId: this.gradeIdValue?.gradeId ? this.gradeIdValue?.gradeId : data?.gradeId,
+      reportsto: data?.reportsto,
+      shiftId: data?.shiftId,
+      jobTypeId: data?.jobTypeId,
+      lopcation: data?.lopcation,
+      bussinessArea: data?.bussinessArea,
+      updateddate: data?.updateddate,
     };
     console.log(jobdata);
 
@@ -697,7 +697,7 @@ export class ApprisalLetterComponent implements OnInit, OnDestroy {
       isVariablePay: this.appraisalData.isVariablePay,
       status: 'Active',
       compensationcomments: data.compensationcomments,
-      // bonusAmountData: this.appraisalData.bonus,
+      bonusAmountData: this.appraisalData.bonus,
       nextCompReviewDate: this.appraisalData.reviewdate,
     };
     this.subscription = this.http.postdata('Compensationdata/UPDATER', Compensationdataupdate).subscribe({
@@ -1098,7 +1098,7 @@ export class ApprisalLetterComponent implements OnInit, OnDestroy {
   }
 
   navigateDashboard() {
-    this.router.navigate(['/employee-management/all-employees'])
+    this.router.navigate(['/letters/lettes-tabs'])
   }
 
   initializeForm() {
@@ -1113,7 +1113,7 @@ export class ApprisalLetterComponent implements OnInit, OnDestroy {
       isPromotion: [false, Validators.required],
      isVariablePay: [{ value: '' }, Validators.required],
       variablePayAmount: [{ value: '' }, Validators.required],
-      bonus: ['']
+      // bonus: ['']
     })
   }
 }

@@ -67,14 +67,14 @@
           </div>
         </div>
     
-        <div class="mb-3">
+        <!-- <div class="mb-3">
           <label class="form-label custom-label mb-2"> {{'Performance Variable Bonus'| translate }}</label>
           <input type="number" class="form-control custom-input" placeholder="Please enter performance variable bonus" 
            formControlName="bonus" (input)="sanitizeInput($event)" />
           <div *ngIf="employeeForm.get('bonus')?.invalid && employeeForm.get('bonus')?.touched">
             <div class="error-msg">{{'Performance variable bonus is required'| translate }}</div>
           </div>
-        </div>
+        </div> -->
 
         <!-- Varibale Pay -->
         <div class="mb-3">
@@ -367,17 +367,22 @@
                         <ng-template #grossper>{{appraisalData.salary}}</ng-template>
                       </td>
                     </tr>
-                    <tr>
+                    <!-- <tr>
                       <td class="text-center"><b>Variable Bonus-based on Performance</b></td>
                       <td colspan="2" class="text-center ">{{appraisalData.bonus}} <span *ngIf="appraisalData.bonus">Per
                           Annum</span></td>
-                    </tr>
+                    </tr> -->
                     <tr>
                       <td class="text-center"><b>Variable Amount</b></td>
                       <td colspan="2" class="text-center">
                         <span *ngIf="!appraisalData.variablePayAmount; else vamount"></span>
                         <ng-template #vamount>{{appraisalData.variablePayAmount }}</ng-template>
                       </td>
+                    </tr>
+                    <tr>
+                      <td class="text-center"><b>Total CTC (Including Variable Pay & ESOP)</b></td>
+                      <td colspan="2" class="text-center "><b>{{ (employeeCompensationDetails?.compensationamount || 0)
+                          + (appraisalData?.variablePayAmount || 0) }} </b></td>
                     </tr>
                   </tbody>
                 </table>

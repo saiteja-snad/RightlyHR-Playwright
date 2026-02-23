@@ -54,7 +54,7 @@
                             <tr class="text-align-center" *ngIf="per.fields === 'Roles' || per.fields === 'Employee Fields Module'|| per.fields === 'Settings Timeoff Module' ||
                                 per.fields === 'Assets Management Configuration Module' || per.fields === 'Dynamic Forms Module' ||  per.fields === 'Employee Fields Config Update Module' ||
                                 per.fields === 'Project Management Configuration Module' || per.fields === 'Attendance Configuration Module' ||
-                                per.fields === 'Locking System Configuration Module'|| per.fields === 'Rate Card Module'">
+                                per.fields === 'Locking System Configuration Module'|| per.fields === 'Rate Card Configuration Module'">
                                 <td class="text-align-center">{{ per.fields }}</td>
                                 <td scope="row">
                                     <input type="checkbox" [(ngModel)]="per.View" name="{{ per.fields }}.view"
@@ -91,7 +91,7 @@
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center"
-                                *ngIf="per.fields === 'Rate Card In-active Tab'|| per.fields === 'Rate Card Active Tab'">
+                                *ngIf="per.fields === 'Rate Card Active Tab' || per.fields === 'Rate Card Inactive Tab'">
                                 <td class="text-align-center">{{ per.fields }}</td>
                                 <td scope="row">
                                     <input type="checkbox" [(ngModel)]="per.View" name="{{ per.fields }}.view"
@@ -100,7 +100,7 @@
                                 <td scope="row">
                                     <input type="checkbox" [(ngModel)]="per.Update" [name]="per.fields + '.update'"
                                         (change)="onCheckboxChange(per, 'update')" [disabled]="!roleToFilter?.id || ![
-                                    'Rate Card Active Tab','Rate Card In-active Tab'
+                                    'Rate Card Active Tab','Rate Card Inactive Tab'
                                 ].includes(per.fields)">
                                 </td>
                                 <td scope="row">

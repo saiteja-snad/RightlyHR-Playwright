@@ -32,7 +32,7 @@ export class RateCardTabsComponent implements OnInit {
       icon: '/settings-icon/Inactive.png',
       route:
         '/settings/employee-rate-card/rate-card/rate-card-inactive',
-      permission: { feature: 'Rate Card In-active Tab', action: 'view' },
+      permission: { feature: 'Rate Card Inactive Tab', action: 'view' },
       statusKey: 'inactive'
     },
   ];

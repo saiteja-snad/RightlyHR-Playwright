@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, effect, OnDestroy, OnInit, signal, ViewChild, TemplateRef} from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { RouterModule, Router } from '@angular/router';
-import { NgbPopoverModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbPopoverModule, NgbModal, NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { Select } from 'primeng/select';
 import { TabsModule } from 'primeng/tabs';
@@ -13,6 +13,7 @@ import moment from 'moment';
 import { Subscription } from 'rxjs';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { NgxCountriesDropdownModule } from 'ngx-countries-dropdown';
+import { Chip } from "primeng/chip";
 
 @Component({
   selector: 'app-view-rate-card',
@@ -27,7 +28,8 @@ import { NgxCountriesDropdownModule } from 'ngx-countries-dropdown';
     InfoIconComponent,
     NgbPopoverModule,
     NgxCountriesDropdownModule,
-  ],
+    Chip
+],
   templateUrl: './view-rate-card.component.html',
   styleUrl: './view-rate-card.component.scss'
 })
@@ -106,11 +108,19 @@ export class ViewRateCardComponent {
       private fb: FormBuilder,
       private http: HttpService,
       private modalService: NgbModal,
-      private conformationPopup: OpenModalService
+      private conformationPopup: OpenModalService,
+       private offcanvasService: NgbOffcanvas
     ) {
     }
   
       ngOnInit(): void {
+        this.currencyCodes = this.currencyCodes.map(c => ({
+         label: `${c.code} - ${c.name} (${c.symbol})`,
+         value: c.code,
+         code: c.code,
+         name: c.name,
+         symbol: c.symbol
+       }));
       this.employeedetails = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
     this.viewratecardData= JSON.parse(localStorage.getItem("viewratecard") || '{}');
     console.log('viewratecard', this.viewratecardData );
@@ -165,6 +175,9 @@ export class ViewRateCardComponent {
       }
     });
     }
+    toggleFilters(content: TemplateRef<any>) {
+    this.offcanvasService.open(content, { position: 'end', backdrop: 'static', keyboard: false });
+  }
      limitDigits(event: any, maxDigits: number) {
     const value = event.target.value;
     if (value.length > maxDigits) {
@@ -255,9 +268,12 @@ getJobrole() {
   }
    getCurrencyName(code: string): string {
       const currency = this.currencyCodes.find(c => c.code === code);
-      return currency ? `${currency.code} - ${currency.name}` : code;
+      return currency ? `${currency.code} - ${currency.name} (${currency.symbol})` : code;
     }
-  
+  getCurrencyNamelist(code: string): string {
+      const currency = this.currencyCodes.find(c => c.code === code);
+      return currency ? `${currency.code} - ${currency.name} (${currency.symbol})` : code;
+    }
   
      ////this method used for location list show in location dropdown 
   geAllLocations() {
@@ -341,10 +357,10 @@ getFirstCurrency(rateItem: FormGroup): FormGroup | null {
           const existingRate = existingRates.find(r => r.code === currencyCode)?.rate || '';
           currenciesArray.push(
             this.fb.group({
-              currencyCode: [currencyCode, Validators.required],
-              currencyName: [currency?.name || ''],
-              symbol: [currency?.symbol || ''],
-              rate: [existingRate, Validators.required]
+              currencyCode: [{value:currencyCode,disabled: true}, Validators.required],
+              currencyName: [{value:currency?.name || '',disabled: true}],
+              symbol: [{value:currency?.symbol || '',disabled: true}],
+              rate: [{vale:existingRate,disabled: true}, Validators.required]
             })
           );
         });

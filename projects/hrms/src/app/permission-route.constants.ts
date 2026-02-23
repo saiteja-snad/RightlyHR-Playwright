@@ -214,7 +214,7 @@ export const STANDARD_REPORTS_TABS = [
 
 export const SETTINGS_RATECARD_TABS = [
   { route: '/settings/employee-rate-card/rate-card/rate-card-active', permission: 'Rate Card Active Tab.view' },
-  { route: '/settings/employee-rate-card/rate-card/rate-card-inactive', permission: 'Rate Card In-active Tab.view' },
+  { route: '/settings/employee-rate-card/rate-card/rate-card-inactive', permission: 'Rate Card Inactive Tab.view' },
 ]
 
 export const ATTENDANCE_REPORTS_TABS = [

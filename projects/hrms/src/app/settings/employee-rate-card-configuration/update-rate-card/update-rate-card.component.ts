@@ -97,6 +97,13 @@ maxDate: string = '';
   }
 
     ngOnInit(): void {
+       this.currencyCodes = this.currencyCodes.map(c => ({
+         label: `${c.code} - ${c.name} (${c.symbol})`,
+         value: c.code,
+         code: c.code,
+         name: c.name,
+         symbol: c.symbol
+       }));
     this.employeedetails = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
     this.updateratecardData = JSON.parse(localStorage.getItem("updateratecard") || '{}');
     console.log('updateratecard',   this.updateratecardData );
@@ -142,15 +149,17 @@ maxDate: string = '';
     const effectiveFromCtrl = this.updateratecardForm.get('effectivefrom');
 
     if (year) {
-      this.minDate = `${year}-01-01`;
-      this.maxDate = `${year}-12-31`;
-      effectiveFromCtrl?.enable();
-      effectiveFromCtrl?.reset();
-    } else {
-      effectiveFromCtrl?.disable();
-      this.minDate = '';
-      this.maxDate = '';
-    }
+          const selectedYearStart = `${year}-01-01`;
+          const today = moment().format('YYYY-MM-DD');
+          this.minDate = moment(today).isAfter(selectedYearStart) ? today : selectedYearStart;
+          this.maxDate = `${year}-12-31`;
+          effectiveFromCtrl?.enable();
+          effectiveFromCtrl?.reset();
+        } else {
+          effectiveFromCtrl?.disable();
+          this.minDate = '';
+          this.maxDate = '';
+        }
   });
   }
    limitDigits(event: any, maxDigits: number) {
@@ -247,7 +256,7 @@ setExperienceBands() {
 }
  getCurrencyName(code: string): string {
     const currency = this.currencyCodes.find(c => c.code === code);
-    return currency ? `${currency.code} - ${currency.name}` : code;
+    return currency ? `${currency.code} - ${currency.name} (${currency.symbol})` : code;
   }
 
 
@@ -317,30 +326,51 @@ getCurrencies(rateIndex: number): FormArray {
   addRateCardItems() {
     const selectedCurrencies = this.updateratecardForm.get('currency')?.value || [];
 
-    this.rateItems.controls.forEach((rateItem: any, rateIndex: number) => {
-      const currenciesArray = rateItem.get('currencies') as FormArray;
-      const existingRates = currenciesArray.controls.map((c: any) => ({
-        code: c.get('currencyCode')?.value,
-        rate: c.get('rate')?.value
-      }));
-      
-      while (currenciesArray.length > 0) {
-        currenciesArray.removeAt(0);
-      }
-
+    if (this.rateItems.length === 0 && selectedCurrencies.length > 0) {
+      const currenciesArray = this.fb.array<FormGroup>([]);
       selectedCurrencies.forEach((currencyCode: string) => {
         const currency = this.currencyCodes.find(c => c.code === currencyCode);
-        const existingRate = existingRates.find(r => r.code === currencyCode)?.rate || '';
         currenciesArray.push(
           this.fb.group({
             currencyCode: [currencyCode, Validators.required],
             currencyName: [currency?.name || ''],
             symbol: [currency?.symbol || ''],
-            rate: [existingRate, Validators.required]
-          })
+            rate: ['', Validators.required]
+          }) as FormGroup
         );
       });
-    });
+      this.rateItems.push(
+        this.fb.group({
+          experienceFrom: ['', Validators.required],
+          experienceTo: ['', Validators.required],
+          status: ['Active'],
+          currencies: currenciesArray
+        })
+      );
+    } else {
+      this.rateItems.controls.forEach((rateItem: any) => {
+        const currenciesArray = rateItem.get('currencies') as FormArray;
+        const existingRates = currenciesArray.controls.map((c: any) => ({
+          code: c.get('currencyCode')?.value,
+          rate: c.get('rate')?.value
+        }));
+        
+        currenciesArray.clear();
+
+        selectedCurrencies.forEach((currencyCode: string) => {
+          const currency = this.currencyCodes.find(c => c.code === currencyCode);
+          const existingRate = existingRates.find(r => r.code === currencyCode)?.rate || '';
+          currenciesArray.push(
+            this.fb.group({
+              currencyCode: [currencyCode, Validators.required],
+              currencyName: [currency?.name || ''],
+              symbol: [currency?.symbol || ''],
+              rate: [existingRate, Validators.required]
+            })
+          );
+        });
+      });
+    }
   }
    addMoreRateItems() {
     const selectedCurrencies = this.updateratecardForm.get('currency')?.value || [];
@@ -399,7 +429,7 @@ createRateCardItems(): FormGroup {
     }
   }
   yearsList() {
-    for (let i = this.currentYear - 1; i <= this.currentYear + 1; i++) {
+    for (let i = this.currentYear; i <= this.currentYear + 1; i++) {
       this.years.push(i);
     }
   }
@@ -470,6 +500,7 @@ updateRateCard(){
             );
           }
           // this.getAllRateCardDetails();
+          this.http.setnewcountDetailsforratecard();
           this.nagvition();
           },
           error: (err: any) => {

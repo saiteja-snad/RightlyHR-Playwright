@@ -500,6 +500,7 @@ updateRateCard(){
             );
           }
           // this.getAllRateCardDetails();
+          this.http.setnewcountDetailsforratecard();
           this.nagvition();
           },
           error: (err: any) => {

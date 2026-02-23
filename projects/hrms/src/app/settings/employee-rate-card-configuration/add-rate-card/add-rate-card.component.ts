@@ -322,6 +322,7 @@ openModal(content: any) {
             }, 5000);
           }
             this.router.navigate(['/settings/employee-rate-card/rate-card/rate-card-active']);
+            this.http.setnewcountDetailsforratecard();
           },
           error: (err: any) => {
             this.isloading = false;

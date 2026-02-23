@@ -499,6 +499,7 @@ export class CloneRateCardComponent {
             }, 5000);
           }
            // this.getAllRateCardDetails();
+           this.http.setnewcountDetailsforratecard();
            this.nagvition();
            },
            error: (err: any) => {

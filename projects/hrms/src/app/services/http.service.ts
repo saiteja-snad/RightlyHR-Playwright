@@ -1364,4 +1364,9 @@ updatePendingApprovalCounts(counts: any[]) {
 
     return this.http.get<any>(`${this.ApiUrl}${apiUrl}`, { params });
   }
+   ratecardcount = new Subject<void>();
+  ratecardcountfuntion$ = this.ratecardcount.asObservable();
+  setnewcountDetailsforratecard() {
+    this.ratecardcount.next();
+  }
 }

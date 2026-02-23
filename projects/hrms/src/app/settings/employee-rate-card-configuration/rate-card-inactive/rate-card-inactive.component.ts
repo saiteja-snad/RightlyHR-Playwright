@@ -18,6 +18,7 @@ import { RateCardTabsComponent } from '../rate-card-tabs/rate-card-tabs.componen
 import { IRateCardActiveViewModel } from '../rate-card/rate-card-model';
 import { AuthService } from '../../../services/auth.service';
 import moment from 'moment';
+import { ConfirmationIconComponent } from "../../../icons/confirmation-icon/confirmation-icon.component";
 
 @Component({
   selector: 'app-rate-card-inactive',
@@ -30,7 +31,7 @@ import moment from 'moment';
     DataLoaderContentComponent,
     FormsModule,
     Paginator,
-    NgbPopoverModule, RateCardTabsComponent, SettingsHeaderComponent],
+    NgbPopoverModule, RateCardTabsComponent, SettingsHeaderComponent, ConfirmationIconComponent],
   templateUrl: './rate-card-inactive.component.html',
   styleUrl: './rate-card-inactive.component.scss'
 })
@@ -286,6 +287,7 @@ getActiveRateCardDetails$ = new BehaviorSubject<IRateCardActiveViewModel[]>([]);
       .subscribe({
         next: (res: any) => {
           this.modal.openSuccessModal(`Rate Card activated successfully`);
+          this.http.setnewcountDetailsforratecard();
           this.getAllRateCardDetails();
         },
         error: (err: any) => {

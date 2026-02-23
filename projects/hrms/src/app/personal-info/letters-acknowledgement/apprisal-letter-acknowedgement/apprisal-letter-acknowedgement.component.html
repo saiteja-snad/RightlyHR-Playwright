@@ -44,7 +44,7 @@
           <p *ngIf="nopromotion">Based on your excellent performance, we have revised your compensation and benefits,
             effective from <u>
               <span *ngIf="!employeeCompensationDetails.compeffectivedate">DD/MM/YYYY</span>
-              {{employeeCompensationDetails.compeffectivedate | dateformat}}</u>.
+              {{employeeCompensationDetails?.compeffectivedate | dateformat}}</u>.
             Your annual remuneration has been revised to <b>
               <span *ngIf="!incrementSalary">Rs.{{ (employeeCompensationDetails?.compensationamount || 0) +
                 (appraisalData?.variablePayAmount || 0) }}</span></b>
@@ -216,6 +216,11 @@
                     <ng-template #grossper><b>{{appraisalData.salary}}</b></ng-template>
                   </td>
                 </tr>
+                 <!-- <tr>
+                      <td class="text-center"><b>Variable Bonus-based on Performance</b></td>
+                      <td colspan="2" class="text-center ">{{appraisalData.bonus}} <span *ngIf="appraisalData.bonus">Per
+                          Annum</span></td>
+                    </tr> -->
                 <tr>
                   <td class="text-center"><b>Variable Pay</b></td>
                   <td colspan="2" class="text-center">
@@ -223,11 +228,11 @@
                     <ng-template #vamount> <b>{{appraisalData.variablePayAmount }}</b></ng-template>
                   </td>
                 </tr>
-                <!-- <tr>
+                <tr>
                   <td class="text-center"><b>Total CTC (Including Variable Pay & ESOP)</b></td>
                   <td colspan="2" class="text-center "><b>{{ (employeeCompensationDetails?.compensationamount || 0) +
                       (appraisalData?.variablePayAmount || 0) }} </b></td>
-                </tr> -->
+                </tr>
 
               </tbody>
             </table>
@@ -281,7 +286,7 @@
 
           <p class="letter-sub-header mb-4"><b>For RightlyHR</b></p>
           <!-- <div class="mb-3"></div> -->
-          <p class="letter-signature ">{{appraisalData.authorityName}}</p>
+          <p class="letter-signature">{{appraisalData.authorityName}}</p>
           <div class="pb-3">
             <p class="mb-1"><b>Authorized Signatory,</b></p>
             <p class="mb-1"><b>

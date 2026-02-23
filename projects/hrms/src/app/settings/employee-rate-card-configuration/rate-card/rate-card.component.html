@@ -41,7 +41,7 @@
       <div class="input-group custom-search mb-3">
         <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
         <input type="search" #search="ngModel" [(ngModel)]="searchValue" (ngModelChange)="getAllRateCardDetails()"
-          class="form-control custom-search-input" [placeholder]="'Search with role, location, sublocation' | translate" aria-label="Username"
+          class="form-control custom-search-input" [placeholder]="'Search with Role, Location, Sub-Location' | translate" aria-label="Username"
           aria-describedby="basic-addon1">
       </div>
       <div class="custom-table-content">
@@ -86,17 +86,19 @@
               </ul> -->
                   <ul class="dropdown-menu custom-dropdown-menu" *ngIf="item.status==='Active'">
                     <li (click)="onClick(item,confirmationpopup)" *ngIf="rbac.allowedToAccess('Rate Card Active Tab.delete')">
-                      <a class="dropdown-item"><i class="bi bi-slash-circle me-2"></i> {{'Inactive' | translate}}</a>
+                      <a class="dropdown-item"> <img src="/icons/inactive-icon.png" alt="icon" class="custom-icon me-2">{{'Inactive' | translate}}</a>
+                      <!-- <a class="dropdown-item"><i class="bi bi-slash-circle me-2"></i> {{'Inactive' | translate}}</a> -->
                     </li>
                      <li (click)="updateNavigation(item)" *ngIf="rbac.allowedToAccess('Rate Card Active Tab.update')">
-                        <a class="dropdown-item">
-                           <app-settings-update-icon /> {{"Update" | translate}}
+                        <a class="dropdown-item"><img src="/icons/update-icon.png" alt="icon" class="custom-icon me-2"> {{"Update" | translate}}
                         </a>
                        </li>
                        <li (click)="closeNavigation(item)" *ngIf="rbac.allowedToAccess('Rate Card Active Tab.create')">
-                        <a class="dropdown-item">
-                           <i class="bi bi-copy me-2"></i>{{"Clone" | translate}}
+                        <a class="dropdown-item"><img src="/icons/Clone-icon.png" alt="icon" class="custom-icon me-2"> {{"Clone" | translate}}
                         </a>
+                        <!-- <a class="dropdown-item">
+                           <i class="bi bi-copy me-2"></i>{{"Clone" | translate}}
+                        </a> -->
                        </li>
                         <!-- <li (click)="viewNavigation(item)" *ngIf="rbac.allowedToAccess('Rate Card Active Tab.view')">
                         <a class="dropdown-item">

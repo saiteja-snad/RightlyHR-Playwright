@@ -43,18 +43,18 @@ getActiveRateCardDetails$ = new BehaviorSubject<IRateCardActiveViewModel[]>([]);
   isloading = false;
   searchValue: string | null = null;
   pageNumber = 1;
-  pageSize = 10;
+  pageSize = 50;
   hasPreviousPage!: Boolean;
   hasNextPage!: Boolean;
-  rows = 10;
+  rows = 50;
   collectionSize!: number;
   first = 0;
   totalRecords = 0;
   options = [
-    { label: 10, value: 10 },
-    { label: 15, value: 15 },
-    { label: 20, value: 20 },
-    { label: 25, value: 25 },
+    { label: 50, value: 50 },
+    { label: 100, value: 100 },
+    { label: 150, value: 150 },
+    { label: 200, value: 200 },
   ];
   hours_history=[] as any;
   yearSelectionForm!: FormGroup;

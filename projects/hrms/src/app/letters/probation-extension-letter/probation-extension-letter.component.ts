@@ -58,7 +58,7 @@ export class ProbationExtensionLetterComponent implements OnInit,OnDestroy {
   }
 
   naviagte() {
-    this.router.navigate(['/employee-management/probation-employees']);
+    this.router.navigate(['/letters/lettes-tabs']);
   }
 
   initializeForm() {
@@ -220,21 +220,21 @@ export class ProbationExtensionLetterComponent implements OnInit,OnDestroy {
         this.getProbationDetails = response.find((ele: any) => {
           return (ele.status?.toLowerCase() === 'extended');
         });
-        this.probationExtensionLetterData.probationExtendedDate = this.getProbationDetails.probationExtendedDate
-        this.probationExtensionLetterData.probationmonths = this.convertDaysToMonths(this.getProbationDetails.probationEndDate,
-          this.getProbationDetails.probationExtendedDate)
+        this.probationExtensionLetterData.probationExtendedDate = this.getProbationDetails?.probationExtendedDate
+        this.probationExtensionLetterData.probationmonths = this.convertDaysToMonths(this.getProbationDetails?.probationEndDate,
+          this.getProbationDetails?.probationExtendedDate)
       }
     })
   }
 
   uploadprobationextentionLetter() {
 
-    let filePath = `/FusionDocuments/Employee Documents/Probation Documents/${this.probationExtensionLetterData.employeeId}`;
+    let filePath = `/FusionDocuments/Employee Documents/Probation Documents/${this.probationExtensionLetterData?.employeeId}`;
     this.subscription = this.http.uploadFileWithQuery('FileSystem/uploadfiletodirectory', filePath, this.probationFile).subscribe({
       next: (data: any) => {
         if (data) {
           this.enableBtn = true;
-          this.postProbationDetails(data.path);
+          this.postProbationDetails(data?.path);
           // this.openModalService.openSuccessModal('Probation Extension Letter Generated Successfully');
         }
 
@@ -252,37 +252,37 @@ export class ProbationExtensionLetterComponent implements OnInit,OnDestroy {
   Documenturlresult: any;
   postProbationDetails(docurl: string) {
     let payload = {
-      probationId: this.getProbationDetails.probationId,
-      formId: this.getProbationDetails.formId,
-      employeeId: this.getProbationDetails.employeeId,
-      responseId: this.getProbationDetails.responseId,
-      probationStartDate: this.getProbationDetails.probationStartDate,
-      probationEndDate: this.getProbationDetails.probationEndDate,
-      probationExtendedDate: this.getProbationDetails.probationExtendedDate,
-      status: this.getProbationDetails.status,
-      createdBy: this.Employeeinfo.employeeId,
-      updatedBy: this.Employeeinfo.employeeId,
+      probationId: this.getProbationDetails?.probationId,
+      formId: this.getProbationDetails?.formId,
+      employeeId: this.getProbationDetails?.employeeId,
+      responseId: this.getProbationDetails?.responseId,
+      probationStartDate: this.getProbationDetails?.probationStartDate,
+      probationEndDate: this.getProbationDetails?.probationEndDate,
+      probationExtendedDate: this.getProbationDetails?.probationExtendedDate,
+      status: this.getProbationDetails?.status,
+      createdBy: this.Employeeinfo?.employeeId,
+      updatedBy: this.Employeeinfo?.employeeId,
       updatedAt: this.todayDate,
-      probationDays: this.getProbationDetails.probationDays,
-      raisedBy: this.getProbationDetails.raisedBy,
+      probationDays: this.getProbationDetails?.probationDays,
+      raisedBy: this.getProbationDetails?.raisedBy,
       documentURL: docurl,
-      parentId: this.getProbationDetails.parentId,
-      probationExtendCount: this.getProbationDetails.probationExtendCount,
-      meta: this.getProbationDetails.meta,
-      appliedDate: this.getProbationDetails.appliedDate,
-      comments: this.getProbationDetails.comments,
+      parentId: this.getProbationDetails?.parentId,
+      probationExtendCount: this.getProbationDetails?.probationExtendCount,
+      meta: this.getProbationDetails?.meta,
+      appliedDate: this.getProbationDetails?.appliedDate,
+      comments: this.getProbationDetails?.comments,
       candidateStatus: 'Generated',
       IssuedDate: this.probationExtensionForm.get('issuedDate')?.value,
-      AuthoritySignature: this.probationExtensionForm.get('authorityid')?.value.employeeId,
+      AuthoritySignature: this.probationExtensionForm.get('authorityid')?.value?.employeeId,
       generatedDate: this.todayDate,
-      generatedBy: this.Employeeinfo.employeeId,
+      generatedBy: this.Employeeinfo?.employeeId,
       DocType: this.probationExtensionForm.get('Documenttype')?.value,
       letterType : 'Probation Extension Letter'
     }
-    this.getProbationDetails.documentURL = docurl;
+    // this.getProbationDetails.documentURL = docurl;
     this.subscription = this.http.postdata('ProbationFlow/updateProbationActivationEmployees', payload).subscribe({
       next: (data: any) => {
-        this.Documenturlresult = data.documentURL;
+        this.Documenturlresult = data?.documentURL;
         this.disableFieldsForApproval = false;
         this.loading = false;
         this.openModalService.openSuccessModal('Probation extension letter generated successfully');

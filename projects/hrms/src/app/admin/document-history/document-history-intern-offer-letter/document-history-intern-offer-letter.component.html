@@ -7,16 +7,15 @@
                 placeholder="Search by employee name / location / sub location / designation / status / sub status"
                 aria-label="Username" aria-describedby="basic-addon1">
         </div>
-
+    
         <div class="custom-year-month-picker">
             <p-datepicker [(ngModel)]="selectedDate" placeholder="Select Month & Year"
                 (ngModelChange)="onMonthChange($event)" [showIcon]="true" view="month" dateFormat="mm/yy"
-                [readonlyInput]="true" [maxDate]="maxMonth">
-            </p-datepicker>
+                [readonlyInput]="true" [maxDate]="maxMonth" />
         </div>
     </div>
 
-    <div class="custom-table-content">
+    <div class="custom-table-content documnet-history-table-height">
         @if(!loading){
         <table class="w-100">
             <thead>
@@ -62,32 +61,27 @@
                             <ul class="dropdown-menu custom-dropdown-menu">
                                 @if(rbac.allowedToAccess('Trainee Offer Letter Download.view')) {
                                 <li (click)="onSelectDownload(traineeofferLetter)">
-                                    <a class="dropdown-item"><i class="bi bi-download me-2"></i>{{'Download' |
-                                        translate}}</a>
+                                    <a class="dropdown-item"><i class="bi bi-download me-2"></i>{{'Download' | translate}}</a>
                                 </li>
                                 }
                                 @if(rbac.allowedToAccess('Trainee Offer Letter Release Offer.view')) {
                                 @if(traineeofferLetter.status=='Approved'){
-                                <li (click)="openModal(confirmpopup)">
-                                    <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{'Release Offer' |
-                                        translate}}</a>
+                                <li (click)="releaseTraineeOfferLetter(traineeofferLetter)">
+                                    <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{'Release Offer' | translate}}</a>
                                 </li>
                                 }}
                                 @if(rbac.allowedToAccess('Trainee Offer Letter Approve.view')) {
-                                @if (traineeofferLetter?.status !== 'Approved' && traineeofferLetter?.status !==
-                                'Rejected'
+                                @if (traineeofferLetter?.status !== 'Approved' && traineeofferLetter?.status !== 'Rejected'
                                 && traineeofferLetter?.status !== 'Released') {
                                 <li (click)="updateTraineeOfferDetails(traineeofferLetter)">
-                                    <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{'Approve' |
-                                        translate}}</a>
+                                    <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{'Approve' | translate}}</a>
                                 </li>
                                 }}
                                 @if(rbac.allowedToAccess('Trainee Offer Letter Reject.view')) {
                                 @if((traineeofferLetter.status!='Approved'&&
                                 traineeofferLetter.status!='Rejected'&&traineeofferLetter.status!='Released' ) ){
                                 <li (click)="SelectData(traineeofferLetter);openModal(rejectpopup)">
-                                    <a class="dropdown-item"><i class="bi bi-x-circle me-2"></i>{{'Reject' |
-                                        translate}}</a>
+                                    <a class="dropdown-item"><i class="bi bi-x-circle me-2"></i>{{'Reject' | translate}}</a>
                                 </li>
                                 }}
                             </ul>
@@ -117,29 +111,12 @@
                             </div> -->
                     </td>}
                 </tr>
-                    <!--Delete Confirmation popup-->
-            <ng-template #confirmpopup let-model>
-                <div class="result-popup-content" ngbAutofocus>
-                    <div>
-                        <app-confirmation-icon />
-                        <p class="confirmation-text mb-4">Are you sure you want to release the Intern offer letter?</p>
-                    </div>
-                    <div class="custom-modal-footer">
-                        <button type="button" class="custom-btn btn-secondary" (click)="model.dismiss()">No</button>
-                        <button type="submit" class="custom-btn btn-primary"
-                            (click)="releaseTraineeOfferLetter(traineeofferLetter);model.dismiss()">Yes</button>
-
-                    </div>
-                </div>
-            </ng-template>
                 }
                 }
                 @else {
                 <tr>
-
                     <app-no-data-found />
                 </tr>
-
                 }
             </tbody>
         </table>
@@ -150,6 +127,7 @@
     </div>
 </div>
 }
+
 <!--reject popup-->
 <ng-template #rejectpopup let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
@@ -158,33 +136,28 @@
                 <p class="popup-heading mb-0">Reject Reason</p>
             </div>
             <div>
-                <a (click)="rejectDocument.reset();modal.dismiss()"><img src="icons/close.png" alt="Close Icon"
-                        class="close-icon"></a>
+                <a (click)="rejectDocument.reset();modal.dismiss()">
+                    <img src="icons/close.png" alt="Close Icon" class="close-icon">
+                </a>
             </div>
         </div>
         <div class="custom-main-popup-content">
             <form autocomplete="off" [formGroup]="rejectDocument" (ngSubmit)="PostReasonandUpdateTraineeOfferDetails()">
                 <div class="mb-3">
                     <label for="rejectReason">Reject Reason<span class="error-msg">*</span></label>
-                    <textarea type="text" name="rejectReason" class="form-control"
-                        placeholder="Please enter reject reason" rows="3" maxlength="250"
-                        formControlName="comments"></textarea>
+                    <textarea type="text" name="rejectReason" class="form-control" placeholder="Please provide reason for rejection"
+                        rows="3" maxlength="250" formControlName="comments"></textarea>
                     <div class="mt-2 textarea-count-text">
                         <span class="color">{{ rejectDocument.get('comments')?.value?.length || 0 }} / 250</span>
                     </div>
-                    <div *ngIf="rejectDocument.get('comments')?.invalid && rejectDocument.get('comments')?.touched"
-                        class="error-msg">
-                        {{'Reject Reason is required'| translate}}
-                    </div>
+                    <div *ngIf="rejectDocument.get('comments')?.invalid && rejectDocument.get('comments')?.touched" class="error-msg">
+                        {{'Reject Reason is required'| translate}}</div>
                     <div class="error-msg" *ngIf="rejectDocument.get('comments')?.hasError('leadingSpace')">
-                        Please enter valid input
-                    </div>
+                        Please enter valid input</div>
                 </div>
                 <div class="custom-modal-footer">
-                    <button type="button" class="custom-btn btn-secondary"
-                        (click)="rejectDocument.reset();modal.dismiss()">{{'Close'|translate}}</button>
-                    <button type="submit" class="custom-btn btn-primary"
-                        [disabled]="rejectDocument.invalid">{{'Reject'|translate}}</button>
+                    <button type="button" class="custom-btn btn-secondary" (click)="rejectDocument.reset();modal.dismiss()">{{'Close'|translate}}</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="rejectDocument.invalid">{{'Submit'|translate}}</button>
                 </div>
             </form>
         </div>

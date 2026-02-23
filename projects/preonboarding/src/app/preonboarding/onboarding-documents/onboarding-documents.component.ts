@@ -82,9 +82,7 @@ export class OnboardingDocumentsComponent implements OnInit, OnDestroy {
     });
   }
 
-  navigateDashboard() {
-    this.router.navigate(['/admin/dashboard'])
-  }
+
 
   navigatePrevious() {
     this.router.navigate(['/personal-details']);

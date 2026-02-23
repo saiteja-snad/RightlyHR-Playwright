@@ -2901,3 +2901,220 @@ input[type=number]::-webkit-outer-spin-button {
 .p-overlay {
     z-index: 10000 !important;
 }
+
+//date picker styling
+.custom-year-month-picker {
+    width: 15rem;
+
+    .p-inputtext {
+        border: 1px solid #DEE8F3 !important;
+        padding: 0.5rem 0.75rem !important;
+        border-radius: 0.5rem !important;
+        font-weight: 400 !important;
+        font-size: var(--fontsize14) !important;
+        vertical-align: middle !important;
+        color: #222222 !important;
+        background-color: #F8FBFF !important;
+        cursor: pointer !important;
+        border-top-right-radius: 0rem !important;
+        border-bottom-right-radius: 0rem !important;
+    }
+
+    .p-datepicker-month-selected {
+        color: var(--p-datepicker-date-selected-color);
+        background: var(--primary-color) !important;
+    }
+
+    .p-button-text {
+        background: transparent;
+        border-color: transparent;
+        color: var(--primary-color) !important;
+    }
+
+    .p-datepicker-month {
+        font-size: var(--fontsize14) !important;
+    }
+}
+
+// custom dashboard grid stylings
+.custom-dashboard-main-container {
+    .dashboard-grid {
+        display: grid;
+        grid-template-columns: 400px minmax(0, 1fr);
+        gap: 1rem;
+        grid-auto-rows: minmax(140px, auto);
+        grid-auto-flow: dense;
+        align-items: stretch;
+    }
+
+    .span-left {
+        grid-column: 1;
+    }
+
+    .span-right {
+        grid-column: 2;
+    }
+
+    .dashboard-grid.single-right {
+        grid-template-columns: repeat(3, minmax(400px, 1fr));
+
+        .member-list-container {
+            max-height: 30dvh !important;
+        }
+    }
+
+    .dashboard-grid.single-right .span-left {
+        grid-column: auto;
+    }
+
+    .dashboard-grid.single-right .span-right {
+        grid-column: 1 / -1;
+    }
+
+    .no-left {
+        grid-column: auto;
+        grid-template-columns: 1fr !important;
+
+        .span-right {
+            grid-column: 1;
+        }
+    }
+
+    /* SINGLE LEFT MODE */
+    /* FIRST ROW: allow 2 columns */
+    .dashboard-grid.single-left>.content-card:nth-child(1),
+    .dashboard-grid.single-left>.content-card:nth-child(2) {
+        grid-column: auto;
+    }
+
+    /* FROM SECOND ROW ONWARD: full width */
+    .dashboard-grid.single-left>.content-card:nth-child(n + 3) {
+        grid-column: 1 / -1;
+    }
+
+    @media (max-width: 1700px) {
+        .dashboard-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        /* ================= NORMAL (LEFT + RIGHT) ================= */
+        /* LEFT: first row → 2 columns */
+        .dashboard-grid>.span-left:nth-child(1),
+        .dashboard-grid>.span-left:nth-child(2) {
+            grid-column: auto;
+        }
+
+        /* LEFT: from 3rd onward → full width */
+        .dashboard-grid>.span-left:nth-child(n + 3) {
+            grid-column: 1 / -1;
+        }
+
+        /* RIGHT: always full width */
+        .dashboard-grid>.span-right {
+            grid-column: 1 / -1;
+        }
+    }
+
+    @media (max-width: 1700px) {
+
+        .dashboard-grid.no-left>.span-right:nth-child(1),
+        .dashboard-grid.no-left>.span-right:nth-child(2) {
+            grid-column: auto;
+        }
+
+        .dashboard-grid.no-left>.span-right:nth-child(n + 3) {
+            grid-column: 1 / -1;
+        }
+    }
+
+    @media (max-width: 1200px) {
+        .dashboard-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .span-left,
+        .span-right {
+            grid-column: auto;
+        }
+    }
+
+    .span-2 {
+        grid-row: span 2;
+    }
+
+    .span-3 {
+        grid-row: span 3;
+    }
+
+    .dashboard-grid.single-left-team {
+
+
+        .span-left {
+            grid-column: 1;
+            grid-row: 1 / span 2;
+        }
+
+
+        .span-right:nth-child(2),
+        .span-right:nth-child(3) {
+            grid-column: 2;
+        }
+
+
+        .span-right:nth-child(n + 4) {
+            grid-column: 1 / -1;
+        }
+
+    }
+
+    /* ================= DOUBLE LEFT MODE ================= */
+
+    .dashboard-grid.double-left {
+
+        /* First two LEFT widgets stay in column 1 */
+
+        .span-left:nth-child(1) {
+
+            grid-column: 1;
+
+            grid-row: 1;
+
+        }
+
+        .span-left:nth-child(2) {
+
+            grid-column: 1;
+
+            grid-row: 2;
+
+        }
+
+        /* First two RIGHT widgets align beside left widgets */
+
+        .span-right:nth-child(3) {
+
+            grid-column: 2;
+
+            grid-row: 1;
+
+        }
+
+        .span-right:nth-child(4) {
+
+            grid-column: 2;
+
+            grid-row: 2;
+
+        }
+
+        /* Remaining RIGHT widgets go full width */
+
+        .span-right:nth-child(n + 5) {
+
+            grid-column: 1 / -1;
+
+        }
+
+    }
+
+}

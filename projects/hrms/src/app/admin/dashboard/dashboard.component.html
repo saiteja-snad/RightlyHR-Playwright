@@ -73,7 +73,7 @@
                                     @if( attendanceData.data.attendanceData[0].status !== 'WFH' &&
                                     attendanceData.data.attendanceData[0].status !== 'Leave' &&
                                     attendanceData.data.attendanceData[0].status !== 'Absent'){
-                                    <div>
+                                    <div *ngIf="punchPairs.length>0">
                                         <app-dash-att-icon alt="Icon" class="info-icon"
                                             (click)="openModalLarge(punchintimes); dayLogsData(attendanceData.data.attendanceData[0].biometricLogs,attendanceData.data.attendanceData[0].date,
                                             attendanceData.data.attendanceData[0].duration.biometricDuration,attendanceData.data.attendanceData[0].permissions,

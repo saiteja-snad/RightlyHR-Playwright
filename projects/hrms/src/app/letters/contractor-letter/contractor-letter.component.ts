@@ -440,7 +440,7 @@ export class ContractorLetterComponent implements OnInit, OnDestroy{
     if (signatureAuthorityDetails) {
       this.authorityDesignation = signatureAuthorityDetails.designation;
       this.prospectiveEmpData.authorityName = signatureAuthorityDetails.fullName;
-      this.prospectiveEmpData.authorityName = `${signatureAuthorityDetails.firstName} ${signatureAuthorityDetails.lastName}`;
+      this.prospectiveEmpData.authorityName = `${signatureAuthorityDetails.firstName} ${signatureAuthorityDetails?.middleName ?? ''}  ${signatureAuthorityDetails.lastName}`;
     }
   }
 

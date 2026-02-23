@@ -60,7 +60,7 @@ export class AssessmentformComponent {
   selectedLeaveStatus: any;
   totalCount: any;
 
-  constructor(private router: Router, private http: HttpService, private authService: AuthService, config: NgbModalConfig, 
+  constructor(private router: Router, private http: HttpService, private authService: AuthService, config: NgbModalConfig,
     private modalService: NgbModal, private openModalService: OpenModalService, public rbac: RbacService,) {
     config.backdrop = 'static';
     config.keyboard = false;
@@ -264,15 +264,15 @@ export class AssessmentformComponent {
     } else {
       questions.forEach((ele: any) => {
         if (ele.options.length > 0) {
-          this.selected_questions.push({
-            id: sectionId,
-            data: {
-              questionId: ele.id,
-              optionId: optionId,
-              meta: meta,
-              sectionId: sectionId,
-            },
-          });
+        this.selected_questions.push({
+          id: sectionId,
+          data: {
+            questionId: ele.id,
+            optionId: optionId,
+            meta: meta,
+            sectionId: sectionId,
+          },
+        });
         } else {
           this.selected_questions.push({
             id: sectionId,
@@ -750,7 +750,7 @@ export class AssessmentformComponent {
                   this.dynamicFormHeader, ele.id, question.quetsionId, question.meta);
               });
             } else {
-              this.defaultaddingforvalues(ele.questions, ele.rating, 0, this.dynamicFormHeader, 
+              this.defaultaddingforvalues(ele.questions, ele.rating, 0, this.dynamicFormHeader,
                 ele.id, question.quetsionId, question.meta);
             }
           });

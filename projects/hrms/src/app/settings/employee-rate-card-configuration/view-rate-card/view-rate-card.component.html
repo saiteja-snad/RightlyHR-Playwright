@@ -114,14 +114,14 @@
                     </div>
                 </div>
                 <!-- currency -->
-                 <div>
+                 <!-- <div>
                     <label class="form-label custom-label mb-2">{{'Currency'|translate}}<span
                             class="text-danger">*</span></label>
                     <div class="custom-p-multiSelect-content">
-                        <p-multiSelect class="form-select custom-select" optionLabel="code"
+                        <p-multiSelect class="form-select custom-select" optionLabel="label"
                             optionValue="code" [options]="currencyCodes" display="chip" filterBy="code"
                             [showClear]="false" [filter]="true" [placeholder]="'Please select currency' | translate"
-                            formControlName="currency">
+                            formControlName="currency" >
                         </p-multiSelect>
                     </div>
                     <div class="error-msg"
@@ -130,14 +130,24 @@
                             {{'Currency is required'|translate}}
                         </div>
                     </div>
-                </div>
+                </div> -->
                 <!-- <div class="pt-4 mt-1">
                     <button type="button" class="custom-btn btn-primary px-4" (click)="addRateCardItems()">
                         <i class="bi bi-plus me-2"></i> {{'Add New'|translate}}
                     </button>
                 </div> -->
             </div>
-
+            <div class="fliter-chip-content mb-2">
+                <label class="form-label custom-label mb-2">{{'Currency'|translate}}<span
+                            class="text-danger">*</span></label>
+                <div class="d-flex align-items-center gap-2 flex-wrap">
+                    <p-chip *ngFor="let filter of viewratecardForm.get('currency')?.value | slice:0:15" [label]="getCurrencyNamelist($any(filter))" [removable]="false" />
+            
+                    <!-- +X More chip -->
+                    <!-- <p-chip *ngIf="currencyCodes.length > 3" class="more-chip" [removable]="false"
+                        label="+{{ currencyCodes.length - 3 }} More" /> -->
+                </div>
+            </div>
             <div formArrayName="rateItems">
                 <div class="custom-table-content mb-3">
                     <table class="w-100">

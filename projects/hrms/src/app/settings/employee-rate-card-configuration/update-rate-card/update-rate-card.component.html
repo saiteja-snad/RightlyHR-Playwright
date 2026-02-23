@@ -118,10 +118,10 @@
                     <label class="form-label custom-label mb-2">{{'Currency'|translate}}<span
                             class="text-danger">*</span></label>
                     <div class="custom-p-multiSelect-content">
-                        <p-multiSelect class="form-select custom-select" optionLabel="code"
+                        <p-multiSelect class="form-select custom-select" optionLabel="label"
                             optionValue="code" [options]="currencyCodes" display="chip" filterBy="code"
                             [showClear]="false" [filter]="true" [placeholder]="'Please select currency' | translate"
-                            formControlName="currency">
+                            formControlName="currency" >
                         </p-multiSelect>
                     </div>
                     <div class="error-msg"
@@ -204,7 +204,7 @@
             <button type="button" class="custom-btn btn-secondary px-5"
                 (click)="Cancel()">{{'Cancel'|translate}}</button>
             <button type="submit" class="custom-btn btn-primary px-5"
-                [disabled]="updateratecardForm.invalid||isloading">{{'Submit'|translate}}</button>
+                [disabled]="updateratecardForm.invalid||isloading">{{'Update'|translate}}</button>
         </div>
     </form>
 </div>

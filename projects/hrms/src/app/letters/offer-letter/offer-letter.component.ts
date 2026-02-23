@@ -311,7 +311,7 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
         (address: IAddress) => address?.type?.toLowerCase() == Value?.value?.toLowerCase()
       );
       console.log(this.address);
-      
+
     }
     this.prospectiveEmpData.addressLine1 = this.address?.addressLine1;
     this.prospectiveEmpData.addressLine2 = this.address?.addressLine2;
@@ -360,7 +360,7 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
     if (signatureAuthorityDetails) {
       this.authorityDesignation = signatureAuthorityDetails.designation;
       this.prospectiveEmpData.authorityName = signatureAuthorityDetails.fullName;
-      this.prospectiveEmpData.authorityName = `${signatureAuthorityDetails.firstName} ${signatureAuthorityDetails.lastName}`;
+      this.prospectiveEmpData.authorityName = `${signatureAuthorityDetails.firstName} ${signatureAuthorityDetails.middleName ? signatureAuthorityDetails.middleName + ' ' : ''} ${signatureAuthorityDetails.lastName}`;
     }
   }
 
@@ -854,13 +854,13 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
       this.prospectiveEmpData.dateOfJoining = this.employeeForm.get('dateOfJoining')?.value,
       this.prospectiveEmpData.substatus = 'Offer Letter Generated',
       this.prospectiveEmpData.password = this.employeeaddress.password
-      this.prospectiveEmpData.reportsTo = this.prospectiveEmpData.reportsTo?.toString();
-      this.prospectiveEmpData.note = this.employeeForm?.get('note')?.value ? this.employeeForm?.get('note')?.value : null;
-      this.prospectiveEmpData.offerIssuedDate = this.employeeForm?.get('offerIssuedDate')?.value ? this.employeeForm?.get('offerIssuedDate')?.value : null;
-      this.prospectiveEmpData.offerExpiryDate = this.employeeForm?.get('offerExpiryDate')?.value ? this.employeeForm?.get('offerExpiryDate')?.value : null;
-      this.prospectiveEmpData.empId = this.prospectiveEmpData.empId.toString();
-      this.prospectiveEmpData.workEmail=this.prospectiveEmpData.workEmail;
-      this.prospectiveEmpData.maritalStatus=this.prospectiveEmpData.maritalStatus
+    this.prospectiveEmpData.reportsTo = this.prospectiveEmpData.reportsTo?.toString();
+    this.prospectiveEmpData.note = this.employeeForm?.get('note')?.value ? this.employeeForm?.get('note')?.value : null;
+    this.prospectiveEmpData.offerIssuedDate = this.employeeForm?.get('offerIssuedDate')?.value ? this.employeeForm?.get('offerIssuedDate')?.value : null;
+    this.prospectiveEmpData.offerExpiryDate = this.employeeForm?.get('offerExpiryDate')?.value ? this.employeeForm?.get('offerExpiryDate')?.value : null;
+    this.prospectiveEmpData.empId = this.prospectiveEmpData.empId.toString();
+    this.prospectiveEmpData.workEmail = this.prospectiveEmpData.workEmail;
+    this.prospectiveEmpData.maritalStatus = this.prospectiveEmpData.maritalStatus
     if (this.buttonValue == 'Regenerate Offer Letter' && this.employeeaddress.substatus != 'Offer Letter Rejected By Manager'
     ) {
       this.prospectiveEmpData.substatus = 'Offer Letter Regenerated';
@@ -975,17 +975,17 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
   }
 
   //function to updated details to respective tables
-  jobdetailsupdate!:any;
+  jobdetailsupdate!: any;
   UpdateFieldsToRespectiveTables() {
-    if(this.employeeaddress.empstatus != 'Prospective' && this.buttonValue!='Regenerate Offer Letter'){
-    this.postjobdetails(this.currentDate);
+    if (this.employeeaddress.empstatus != 'Prospective' && this.buttonValue != 'Regenerate Offer Letter') {
+      this.postjobdetails(this.currentDate);
     }
-    else{
-    this.updatejobdetails();
+    else {
+      this.updatejobdetails();
     }
   }
-    //funtion to post the jobdetails
-  postjobdetails(currentDate:any){
+  //funtion to post the jobdetails
+  postjobdetails(currentDate: any) {
     let data = this.prospectiveEmpData;
     const jobdata = {
       employeeId: data.empId,
@@ -1011,15 +1011,15 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
         },
         error: (Reason) => console.log(Reason),
       });
-      if(this.buttonValue=='Regenerate Offer Letter'){
-        this.regenerateUpdate();
-      }
-      else{
-        this.generatepostingtorepectivefields(this.currentDate)
-      }
+    if (this.buttonValue == 'Regenerate Offer Letter') {
+      this.regenerateUpdate();
     }
+    else {
+      this.generatepostingtorepectivefields(this.currentDate)
+    }
+  }
   updatejobdetails() {
-  let data = this.prospectiveEmpData;
+    let data = this.prospectiveEmpData;
     console.log(this.result);
     const jobdata = {
       id: data.jobId,
@@ -1036,7 +1036,7 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
       shiftId: data.shiftId,
       jobTypeId: data.jobTypeId,
     };
-    
+
     // console.log(jobdata);
     this.subscription = this.http
       .postdata('JobDetails/UPDATER', jobdata)
@@ -1048,17 +1048,17 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
         error: (Reason) => console.log(Reason),
       });
 
- 
-      if(this.buttonValue=='Regenerate Offer Letter'){
-        this.regenerateUpdate();
-      }
-      else{
-        this.generatepostingtorepectivefields(data.dateOfJoining)
-      }
+
+    if (this.buttonValue == 'Regenerate Offer Letter') {
+      this.regenerateUpdate();
+    }
+    else {
+      this.generatepostingtorepectivefields(data.dateOfJoining)
+    }
   }
 
   //function to posting to respective fields data of job,compensation,employment
-  generatepostingtorepectivefields(currentDate:any) {
+  generatepostingtorepectivefields(currentDate: any) {
     let data = this.prospectiveEmpData;
     const Compensationdata = {
       employeeId: data.empId,

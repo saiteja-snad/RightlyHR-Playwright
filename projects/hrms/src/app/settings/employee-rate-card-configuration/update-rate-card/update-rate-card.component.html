@@ -16,7 +16,7 @@
                     <label class="form-label custom-label mb-2">{{'Year'|translate}}
                         <span class="text-danger">*</span></label>
                     <div class="custom-p-select-content">
-                        <p-select formControlName="year" placeholder="Select Year" [options]="years"
+                        <p-select formControlName="year" [placeholder]="'Select Year' | translate" [options]="years"
                             class="form-select custom-select"></p-select>
                     </div>
                     <div class="error-msg" *ngIf="updateratecardForm.controls['year'].invalid && (updateratecardForm.controls['year'].touched || 
@@ -33,7 +33,7 @@
                     <div class="custom-p-multiSelect-content">
                         <p-multiSelect [options]="locations" optionLabel="jobLocationName" optionValue="id"
                             class="form-select custom-select" formControlName="location"
-                            placeholder="Please select location" filterBy="jobLocationName" [resetFilterOnHide]="true"
+                            [placeholder]="'Please select location' | translate" filterBy="jobLocationName" [resetFilterOnHide]="true"
                             [showClear]="false" [filter]="true" display="chip"
                             (onChange)="onLocationChange($event.value)">
                         </p-multiSelect>
@@ -53,7 +53,7 @@
                     <div class="custom-p-multiSelect-content">
                         <p-multiSelect class="form-select custom-select" optionLabel="jobSubLocationName"
                             optionValue="id" [options]="subLocations" display="chip" filterBy="jobSubLocationName"
-                            [showClear]="false" [filter]="true" placeholder="Please select sub location"
+                            [showClear]="false" [filter]="true" [placeholder]="'Please select sub location' | translate"
                             formControlName="subLocation">
                         </p-multiSelect>
                     </div>
@@ -69,7 +69,7 @@
                     <label class="form-label custom-label mb-2">{{'Role'|translate}}
                         <span class="text-danger">*</span></label>
                     <div class="custom-p-multiSelect-content">
-                        <p-multiSelect formControlName="role" placeholder="Please select role" optionLabel="projectrole"
+                        <p-multiSelect formControlName="role" [placeholder]="'Please select role' | translate" optionLabel="projectrole"
                             optionValue="id" display="chip" filterBy="projectrole" [showClear]="false" [filter]="true"
                             class="form-select custom-select" [options]="ProjectroleDetails">
                         </p-multiSelect>
@@ -102,7 +102,7 @@
                     <div class="custom-p-multiSelect-content">
                         <p-multiSelect class="form-select custom-select" optionLabel="lable"
                             optionValue="value" [options]="clientTypeOptions" display="chip" filterBy="lable"
-                            [showClear]="false" [filter]="true" placeholder="Please select client type"
+                            [showClear]="false" [filter]="true" [placeholder]="'Please select client type' | translate"
                             formControlName="clientType">
                         </p-multiSelect>
                     </div>
@@ -120,7 +120,7 @@
                     <div class="custom-p-multiSelect-content">
                         <p-multiSelect class="form-select custom-select" optionLabel="code"
                             optionValue="code" [options]="currencyCodes" display="chip" filterBy="code"
-                            [showClear]="false" [filter]="true" placeholder="Please select currency"
+                            [showClear]="false" [filter]="true" [placeholder]="'Please select currency' | translate"
                             formControlName="currency">
                         </p-multiSelect>
                     </div>
@@ -143,10 +143,10 @@
                     <table class="w-100">
                         <thead>
                             <tr>
-                                <th>{{'Experience Range'|translate}}</th>
+                                <th>{{'Experience' | translate}}</th>
                                 <th *ngFor="let currencyCode of updateratecardForm.get('currency')?.value">{{getCurrencyName(currencyCode)}}
                                 </th>
-                                <th class="text-center">{{'Action'|translate}}</th>
+                                <th class="text-center">{{'Action' | translate}}</th>
                                 <th class="text-center"></th>
                             </tr>
                         </thead>
@@ -165,21 +165,21 @@
                                             (wheel)="disableScroll($event)" />
                                     </div>
                                     <div class="error-msg" *ngIf="ratecard.get('experienceFrom')?.errors?.['invalidMonth']">
-                                        Decimal value must be between 0 to 12
+                                        {{'Decimal value must be between 0 to 12' | translate}}
                                     </div>
                                     <div class="error-msg" *ngIf="ratecard.get('experienceTo')?.errors?.['invalidMonth']">
-                                        Decimal value must be between 0 to 12
+                                        {{'Decimal value must be between 0 to 12' | translate}}
                                     </div>
                                 </td>
                                 <td *ngFor="let currency of getCurrencies(i).controls; let j = index">
                                     <div formArrayName="currencies">
                                         <div [formGroupName]="j">
                                             <input type="number" class="form-control custom-input" formControlName="rate"
-                                                placeholder="Enter rate" (input)="limitDigits($event, 20)"
+                                                [placeholder]="'Enter rate' | translate" (input)="limitDigits($event, 20)"
                                                 (keydown)="preventInvalidKeys($event)" (wheel)="disableScroll($event)" />
                                             <div *ngIf="currency.get('rate')?.invalid && (currency.get('rate')?.dirty || currency.get('rate')?.touched)"
                                                 class="error-msg">
-                                                <span *ngIf="currency.get('rate')?.errors?.['required']">Rate is required</span>
+                                                <span *ngIf="currency.get('rate')?.errors?.['required']">{{'Rate is required' | translate}}</span>
                                             </div>
                                         </div>
                                     </div>
@@ -258,7 +258,7 @@
   <div class="result-popup-content" ngbAutofocus>
     <div>
       <img src="icons\delete-icon.png" alt="failure icon" class="confirmation-delete-icon">
-      <p class="confirmation-text">Are you sure you want to Delete?</p>
+      <p class="confirmation-text">{{'Are you sure you want to Delete?' | translate}}</p>
     </div>
     <div class="custom-modal-footer">
       <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'|translate}}</button>

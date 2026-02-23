@@ -166,10 +166,10 @@
                     <label class="form-label custom-label mb-2">Attachment (Upload the Image and PDF)<span
                             class="error-msg">*</span></label>
                     <input type="file" class="form-control custom-input px-0"
-                        (change)="onChangeexperience($event);onChange($event)">
+                        (change)="onChangeexperience($event);onChange($event)" (blur)="experienceForm.get('attachment')?.markAsTouched()">
                     <div class="error-msg"
                         *ngIf="experienceForm.get('attachment')?.invalid && experienceForm.get('attachment')?.touched">
-                        Please choose a file
+                        File is required
                     </div>
                     <div class="error-msg" *ngIf="showErrorforpdf">Only Pdf/Image files are allowed</div>
                     <div class="error-msg" *ngIf="showErrorforsize">The file size should be less than 25MB</div>

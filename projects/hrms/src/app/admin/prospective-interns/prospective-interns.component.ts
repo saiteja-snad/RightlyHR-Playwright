@@ -72,7 +72,7 @@ export class ProspectiveInternsComponent implements OnInit, OnDestroy {
   }
 
   navigateDashboard() {
-    this.router.navigate(['/admin/dashboard'])
+    this.router.navigate(['/letters/lettes-tabs'])
   }
 
   select(act: any) {

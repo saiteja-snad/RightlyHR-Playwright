@@ -84,13 +84,13 @@
                                 <table class="w-100">
                                     <thead>
                                         <tr>
-                                            <th>QUALIFICATION</th>
-                                            <th>UNIVERSITY</th>
-                                            <th>SPECIALIZATION</th>
-                                            <th>FROM DATE</th>
-                                            <th>TO DATE</th>
+                                            <th>Qualification</th>
+                                            <th>University</th>
+                                            <th>Specialization</th>
+                                            <th>From Date</th>
+                                            <th>To Date</th>
                                             <th>GPA</th>
-                                            <th>ATTACHMENT</th>
+                                            <th>Attachment</th>
                                         </tr>
                                     </thead>
                                     <tbody class="bg-white">
@@ -102,7 +102,7 @@
                                             <td>{{ed.degreeEndDate | dateFormat}}</td>
                                             <td>{{ed.gpa }}</td>
                                             <td>{{ed.attachment ? '' : '-'}}
-                                                <a class="view-btn" *ngIf="ed.attachment.endsWith('jpg') || ed.attachment.toLowerCase().endsWith('jpeg') || 
+                                                <a class="view-btn" *ngIf="ed.attachment.endsWith('jpg') || ed.attachment.toLowerCase().endsWith('jpeg') ||
                                                 ed.attachment.toLowerCase().endsWith('png') ;else eddownloadView" (click)="onViewClick(ed.attachment);openModal(myModall)">
                                                       <app-document-view-icon />View</a>
                                                 <ng-template #eddownloadView>
@@ -133,12 +133,12 @@
                                 <table class="w-100">
                                     <thead>
                                         <tr>
-                                            <th>COMPANY NAME</th>
-                                            <th>EMPLOYMENT TYPE</th>
-                                            <th>JOB ROLE</th>
-                                            <th>FROM DATE</th>
-                                            <th>TO DATE</th>
-                                            <th>ATTACHMENT</th>
+                                            <th>Company Name</th>
+                                            <th>Employment Type</th>
+                                            <th>Job Role</th>
+                                            <th>From Date</th>
+                                            <th>To Date</th>
+                                            <th>Attachment</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -151,7 +151,7 @@
                                             <ng-template #todate>-</ng-template>
                                             </td>
                                             <td>{{exp.attachment ? "" : ''}}
-                                                <a class="view-btn" *ngIf="exp.attachment.endsWith('jpg') || exp.attachment.toLowerCase().endsWith('jpeg') || 
+                                                <a class="view-btn" *ngIf="exp.attachment.endsWith('jpg') || exp.attachment.toLowerCase().endsWith('jpeg') ||
                                                 exp.attachment.toLowerCase().endsWith('png') ;else downloadView" (click)="onViewClick(exp.attachment);openModal(myModall)">
                                                   <app-document-view-icon />View</a>
                                                 <ng-template #downloadView>
@@ -184,7 +184,7 @@
         </div>
 
         <div class="footer-btn-content d-flex justify-content-between pt-4">
-            
+
             @if(this.empDetails.substatus !== 'Offer Letter Accepted' && this.empDetails?.empstatus?.toLowerCase() === 'prospective contract'&& (this.prosempdata?.substatus?.toLowerCase() == 'nda letter released'||this.prosempdata?.substatus?.toLowerCase() == 'nda letter regenerated'||this.prosempdata?.substatus?.toLowerCase() == 'nda letter accepted')){
                 <button class="custom-btn btn-secondary rounded-pill px-5" (click)="navigatePreviousndcletter()">
                     Non-Disclosure Agreement Letter

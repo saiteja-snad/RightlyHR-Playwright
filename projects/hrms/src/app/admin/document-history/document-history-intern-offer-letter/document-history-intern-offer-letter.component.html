@@ -7,7 +7,7 @@
                 placeholder="Search by employee name / location / sub location / designation / status / sub status"
                 aria-label="Username" aria-describedby="basic-addon1">
         </div>
-    
+
         <div class="custom-year-month-picker">
             <p-datepicker [(ngModel)]="selectedDate" placeholder="Select Month & Year"
                 (ngModelChange)="onMonthChange($event)" [showIcon]="true" view="month" dateFormat="mm/yy"
@@ -128,7 +128,7 @@
                         <button type="button" class="custom-btn btn-secondary" (click)="model.dismiss()">No</button>
                         <button type="submit" class="custom-btn btn-primary"
                             (click)="releaseTraineeOfferLetter(traineeofferLetter);model.dismiss()">Yes</button>
-                        
+
                     </div>
                 </div>
             </ng-template>
@@ -167,7 +167,7 @@
                 <div class="mb-3">
                     <label for="rejectReason">Reject Reason<span class="error-msg">*</span></label>
                     <textarea type="text" name="rejectReason" class="form-control"
-                        placeholder="Please provide reason for rejection" rows="3" maxlength="250"
+                        placeholder="Please enter reject reason" rows="3" maxlength="250"
                         formControlName="comments"></textarea>
                     <div class="mt-2 textarea-count-text">
                         <span class="color">{{ rejectDocument.get('comments')?.value?.length || 0 }} / 250</span>
@@ -184,7 +184,7 @@
                     <button type="button" class="custom-btn btn-secondary"
                         (click)="rejectDocument.reset();modal.dismiss()">{{'Close'|translate}}</button>
                     <button type="submit" class="custom-btn btn-primary"
-                        [disabled]="rejectDocument.invalid">{{'Submit'|translate}}</button>
+                        [disabled]="rejectDocument.invalid">{{'Reject'|translate}}</button>
                 </div>
             </form>
         </div>

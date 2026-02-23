@@ -21,7 +21,7 @@
                 <th>{{'Expiry Date' | translate}}</th>
                 <!-- <th>{{'Allocated History'|translate}}</th> -->
                 <th>{{'Status'|translate}}</th>
-                <th class="text-center" *ngIf="rbac.allowedToAccess('Cards Available.delete') || rbac.allowedToAccess('Cards Available.update') || 
+                <th class="text-center" *ngIf="rbac.allowedToAccess('Cards Available.delete') || rbac.allowedToAccess('Cards Available.update') ||
                 rbac.allowedToAccess('Cards Available.create')">{{'Actions'|translate}}</th>
             </thead>
             <tbody>
@@ -48,14 +48,14 @@
                     <div id="tooltip" (click)="approverHistoryFunction(item,historyPopup)" class="cursor">
                         <app-info-icon />
                     </div>
-                    
+
                     }
                     @else{-}
                     </td> -->
                     <!-- status -->
                     <td>{{item?.status ? item?.status:'-'}}</td>
                     <!-- actions -->
-                    <td class="text-center" *ngIf="rbac.allowedToAccess('Cards Available.delete') || rbac.allowedToAccess('Cards Available.update') || 
+                    <td class="text-center" *ngIf="rbac.allowedToAccess('Cards Available.delete') || rbac.allowedToAccess('Cards Available.update') ||
                         rbac.allowedToAccess('Cards Available.create')">
                         <div class="dropdown">
                             <a data-bs-toggle="dropdown" aria-expanded="false">
@@ -91,7 +91,7 @@
         }
     </div>
    }
-   
+
 
     <div class="pagination-content" *ngIf="cardDetails.length > 0">
         <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
@@ -100,7 +100,7 @@
                     <option *ngFor="let option of options" [value]="option.value">{{ option.label }}</option>
                 </select>
                 <span class="pagination-label text-nowrap">
-                    Showing {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize : 
+                    Showing {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize :
                     (+first + + rows) }} of {{ collectionSize }}
                 </span>
             </div>
@@ -130,7 +130,7 @@
                             <span class="input-group-text border-left-none" (click)="toggleCardView()" (keypress)="allowonlynumbers($event)" *ngIf="visible">
                                 <i [ngClass]="visible ? 'bi bi-eye' : 'bi bi-eye-slash'"></i>
                             </span>
-                        
+
                             <!-- unvisible card number -->
                             <input class="form-control custom-input login-input border-right-none" formControlName="displayCardNumber"
                                 placeholder="Enter card number" *ngIf="!visible">
@@ -142,13 +142,13 @@
                             *ngIf="updateDetailsForm.get('cardNumber')?.hasError('required') && updateDetailsForm.get('cardNumber')?.touched">
                             Card number is required
                         </div>
-                        
+
                         <!-- Show when pattern invalid -->
                         <div class="error-msg"
                             *ngIf="updateDetailsForm.get('cardNumber')?.hasError('pattern') && updateDetailsForm.get('cardNumber')?.touched">
                             Card number must be 16 digits
                         </div>
-                        
+
                         <!-- Show when Luhn check fails -->
                         <div class="error-msg"
                             *ngIf="updateDetailsForm.get('cardNumber')?.hasError('validateCCNumber') && updateDetailsForm.get('cardNumber')?.touched">
@@ -192,7 +192,7 @@
                                 placeholder="Enter card holder name"
                                 (keypress)="formValidations.restrictInitialSpace($event)"> -->
                         </div>
-                        <div class="error-msg" *ngIf="updateDetailsForm.controls['bankName'].invalid && (updateDetailsForm.controls['bankName'].touched 
+                        <div class="error-msg" *ngIf="updateDetailsForm.controls['bankName'].invalid && (updateDetailsForm.controls['bankName'].touched
                             || updateDetailsForm.controls['bankName'].dirty)">
                             <span *ngIf="updateDetailsForm.controls['bankName'].errors?.['required']">Bank Name is required</span>
                         </div>
@@ -267,7 +267,7 @@
                             *ngIf="updateDetailsForm.get('creditLimit')?.hasError('required') && updateDetailsForm.get('creditLimit')?.touched">
                             Credit Limit is required
                         </div>
-                        
+
                         <div class="error-msg"
                             *ngIf="updateDetailsForm.get('creditLimit')?.hasError('min') && updateDetailsForm.get('creditLimit')?.touched">
                             Must be a positive number
@@ -280,7 +280,7 @@
                             <input class="form-check-input" type="checkbox" formControlName="sharedLimit">
                             <label class="form-label custom-toggle-label">Shared Limit</label>
                         </div>
-                        <div class="error-msg" *ngIf="updateDetailsForm.get('sharedLimit')?.invalid && 
+                        <div class="error-msg" *ngIf="updateDetailsForm.get('sharedLimit')?.invalid &&
                         updateDetailsForm.get('sharedLimit')?.touched">Shared Limit is required</div>
                     </div>
                 </div>
@@ -355,7 +355,7 @@
                             <span class="color">{{ allocateDetailsForm.get('description')?.value?.length || 0 }}/250</span>
                         </div>
                         <div *ngIf="allocateDetailsForm.get('description')?.touched && allocateDetailsForm.get('description')?.invalid" class="error-msg">
-                            <div *ngIf="allocateDetailsForm.get('description')?.errors?.['required']">Comments are required</div>
+                            <div *ngIf="allocateDetailsForm.get('description')?.errors?.['required']">Comment is required</div>
                         </div>
                     </div>
                 </div>
@@ -381,7 +381,7 @@
         </div>
         <form autocomplete="off" [formGroup]="holdDetailsForm" (ngSubmit)="holdCards(holdDetailsForm)">
           <div class="custom-main-popup-content">
-        
+
                 <div class="row">
                     <div class="col-md-12 mb-3">
                         <label class="form-label custom-label mb-2">{{'Reason' | translate}}<span
@@ -396,7 +396,7 @@
                             </div>
                         </div>
                     </div>
-        
+
                     <!-- addictionalcomments -->
                     <div class="col-md-12 mb-3">
                         <label for="addictionalcomments" class="form-label custom-label mb-2">{{'Additional Comments'|translate}}<span class="error-msg">*</span></label>
@@ -420,7 +420,7 @@
             <button type="submit" class="custom-btn btn-primary" [disabled]="holdDetailsForm.invalid">Submit</button>
         </div>
         </form>
-        
+
     </div>
 </ng-template>
 <!-- View comments Modal -->
@@ -485,7 +485,7 @@
               <td>{{item?.allocationStatus?item?.allocationStatus:'-'}}</td>
             </tr>
             }
-            
+
             @else {
             <tr>
               <app-no-data-found />

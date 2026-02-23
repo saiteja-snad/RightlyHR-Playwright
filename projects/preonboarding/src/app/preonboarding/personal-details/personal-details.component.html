@@ -2,7 +2,7 @@
     <div class="my-3">
         <app-detailed-step-progressbar/>
     </div>
-    
+
     <div class="component-data-content">
         <div class="component-header mb-4">Personal Details</div>
         <form autocomplete="off" [formGroup]="personalDetailsForm" (ngSubmit)="onSubmit()">
@@ -21,7 +21,7 @@
                             </div>
                         </div>
                     </div>
-        
+
                     <!-- Middle Name -->
                     <div class="col-lg-4 col-md-6 mb-3">
                         <label for="middleName" class="form-label custom-label mb-2">Middle Name</label>
@@ -29,7 +29,7 @@
                             (keydown)="enforceMaxLength($event, 50)" formControlName="middleName"
                             placeholder="Please enter middle name" autocomplete="off" (keypress)="formValidation.restrictInput($event)"/>
                     </div>
-        
+
                     <!-- Last Name -->
                     <div class="col-lg-4 col-md-6 mb-3">
                         <label for="lastName" class="form-label custom-label mb-2">Last Name<span
@@ -45,7 +45,7 @@
                         </div>
                     </div>
                     <!-- Gender -->
-        
+
                     <!-- Gender -->
                     <div class="col-lg-4 col-md-6 mb-3">
                         <label for="gender" class="form-label custom-label mb-2">
@@ -60,7 +60,7 @@
                             class="error-msg">Gender is required
                         </div>
                     </div>
-        
+
                     <!-- Salutation -->
                     <div class="col-lg-4 col-md-6 mb-3">
                         <label for="salutation" class="form-label custom-label mb-2">
@@ -76,7 +76,7 @@
                         </div>
                         <div *ngIf="salutationValidationcheck" class="error-msg">Please select a valid value</div>
                     </div>
-        
+
                     <!--Mobile Number-->
                     <div class="col-lg-4 col-md-6 mb-3">
                         <label for="location" class="form-label custom-label mb-2">Mobile Number<span
@@ -107,7 +107,7 @@
                             </div>
                         </div>
                     </div>
-        
+
                     <!-- Date of birth -->
                     <div class="col-lg-4 col-md-6 mb-3">
                         <label for="dob" class="form-label custom-label mb-2">Date Of Birth <span
@@ -122,7 +122,7 @@
                             Date Of Birth is required
                         </div>
                     </div>
-        
+
                     <!-- blood group -->
                     <div class="col-lg-4 col-md-6 mb-3">
                         <label for="bloodGroup" class="form-label custom-label mb-2">Blood Group</label>
@@ -137,7 +137,7 @@
                             Blood Group is required
                         </div>
                     </div>
-        
+
                     <!-- Location -->
                     <div class="col-lg-4 col-md-6 mb-3">
                         <label for="location" class="form-label custom-label mb-2">Location<span
@@ -145,7 +145,7 @@
                         <input type="text" class="form-control custom-input text-capitalize" id="location"
                             formControlName="location" placeholder="Please enter location" autocomplete="off" />
                     </div>
-        
+
                     <!-- Sub Location -->
                     <div class="col-lg-4 col-md-6 mb-3">
                         <label for="subLocation" class="form-label custom-label mb-2">Sub Location<span
@@ -153,7 +153,7 @@
                         <input type="text" class="form-control custom-input text-capitalize" id="subLocation"
                             formControlName="subLocation" placeholder="Please enter sub location" autocomplete="off" />
                     </div>
-        
+
                     <!-- Designation -->
                     <div class="col-lg-4 col-md-6 mb-3">
                         <label for="designation" class="form-label custom-label mb-2">Designation<span
@@ -161,7 +161,7 @@
                         <input type="text" class="form-control custom-input text-capitalize" id="designation"
                             formControlName="designation" placeholder="Please enter sub location" autocomplete="off" />
                     </div>
-        
+
                     <!-- Personal Email -->
                     <div class="col-lg-4 col-md-6 mb-3">
                         <label for="personalEmail" class="form-label custom-label mb-2">Personal Email ID<span
@@ -169,10 +169,10 @@
                         <input type="email" class="form-control custom-input" id="personalEmail" formControlName="personalEmail"
                             placeholder="Please enter personal email Id" autocomplete="off" />
                     </div>
-        
+
                     <!-- Current Address Heading -->
                     <div class="component-header my-3">Current Address</div>
-        
+
                     <!-- Current Address Fields -->
                     <ng-container formGroupName="currentAddress">
                         <div class="col-lg-4 col-md-6 mb-3">
@@ -187,8 +187,7 @@
                             </div>
                         </div>
                         <div class="col-lg-4 col-md-6 mb-3">
-                            <label for="currentAddressLine2" class="form-label custom-label mb-2">Address Line2<span
-                                    class="text-danger">*</span></label>
+                            <label for="currentAddressLine2" class="form-label custom-label mb-2">Address Line2</label>
                             <input type="text" class="form-control custom-input" (input)="onCurrentAddressChange()"
                                 id="currentAddressLine2" [maxLength]="100" formControlName="addressLine2"
                                 placeholder="Please enter address line 2" autocomplete="off" (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)">
@@ -202,7 +201,7 @@
                                     class="text-danger">*</span></label>
                             <input type="text" class="form-control custom-input" id="currentCity"
                                 (input)="onCurrentAddressChange()" formControlName="city"
-                                (keydown)="enforceMaxLength($event, 50)" placeholder="Please enter city" autocomplete="off" (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)"/>
+                                (keydown)="enforceMaxLength($event, 50)" placeholder="Please enter city" autocomplete="off" (keypress)="formValidation.restrictInput($event)"/>
                             <div *ngIf="personalDetailsForm.get('currentAddress.city')?.invalid && personalDetailsForm.get('currentAddress.city')?.touched"
                                 class="error-msg">
                                 City is required
@@ -213,7 +212,7 @@
                                     class="text-danger">*</span></label>
                             <input type="text" class="form-control custom-input" id="currentState"
                                 (input)="onCurrentAddressChange()" (keydown)="enforceMaxLength($event, 50)"
-                                placeholder="Please enter state" formControlName="state" autocomplete="off" (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)">
+                                placeholder="Please enter state" formControlName="state" autocomplete="off" (keypress)="formValidation.restrictInput($event)">
                             <div *ngIf="personalDetailsForm.get('currentAddress.state')?.invalid && personalDetailsForm.get('currentAddress.state')?.touched"
                                 class="error-msg">
                                 State is required
@@ -224,7 +223,7 @@
                                     class="text-danger">*</span></label>
                             <input type="text" class="form-control custom-input" (input)="onCurrentAddressChange()"
                                 id="currentCountry" (keydown)="enforceMaxLength($event, 50)" placeholder="Please enter country"
-                                formControlName="country" autocomplete="off" (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)">
+                                formControlName="country" autocomplete="off" (keypress)="formValidation.restrictInput($event)">
                             <div *ngIf="personalDetailsForm.get('currentAddress.country')?.invalid && personalDetailsForm.get('currentAddress.country')?.touched"
                                 class="error-msg">
                                 Country is required
@@ -254,16 +253,16 @@
                             </div>
                         </div>
                     </ng-container>
-        
+
                     <!-- Permanent Address Heading -->
                     <div class="component-header my-3">Permanent Address</div>
-        
+
                     <div class="form-check custom-label mb-3 mx-3">
                         <input class="form-check-input custom-check" type="checkbox" id="sameAddress"
                             formControlName="sameAsPermanent" (change)="copyCurrentAddress($event)" />
                         <label class="form-check-label" for="sameAddress">Same as Current Address</label>
                     </div>
-        
+
                     <!-- Permanent Address Fields -->
                     <ng-container formGroupName="permanentAddress">
                         <div class="col-lg-4 col-md-6 mb-3">
@@ -278,7 +277,7 @@
                         </div>
                         <div class="col-lg-4 col-md-6 mb-3">
                             <label for="permanentAddressLine2" class="form-label custom-label mb-2">Address Line 2
-                                <span class="text-danger">*</span></label>
+                                </label>
                             <input type="text" class="form-control custom-input" id="permanentAddressLine2" [maxLength]="100"
                                 formControlName="addressLine2" (input)="onCurrentAddressChange()"
                                 placeholder="Please enter address line 2" autocomplete="off" (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)"/>
@@ -345,7 +344,7 @@
                     </ng-container>
                 </div>
             </div>
-        
+
             <div class="footer-btn-content d-flex justify-content-end pt-4 pe-3">
                 <button type="submit" class="custom-btn btn-primary py-2 px-5"
                     [disabled]="personalDetailsForm.invalid || disableValidationDob || salutationValidationcheck">Next</button>

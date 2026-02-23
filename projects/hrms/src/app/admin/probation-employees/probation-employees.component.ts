@@ -78,7 +78,7 @@ export class ProbationEmployeesComponent {
   }
 
   navigateDashboard() {
-    this.router.navigate(['/admin/dashboard'])
+    this.router.navigate(['/letters/lettes-tabs'])
   }
   /** Sort immediately and re‑render */
   sortData(field: keyof IProbationEmployees, direction: 'asc' | 'desc'): void {

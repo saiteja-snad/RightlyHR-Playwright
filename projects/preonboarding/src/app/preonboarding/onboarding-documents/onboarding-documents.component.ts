@@ -288,7 +288,6 @@ documentUrl:any;
     // Fake a valid file value to pass validation
     this.documentForm.get('docFile')?.setValue(null)
     this.documentForm.get('docFile')?.setValidators( Validators.required)
-    this.documentForm.get('docFile')?.markAsTouched();
     this.documentForm.get('docFile')?.updateValueAndValidity();
   }else{
     this.documentForm .get('docFile')?.clearValidators();

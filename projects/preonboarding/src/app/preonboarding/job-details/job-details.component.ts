@@ -23,7 +23,7 @@ export class JobDetailsComponent implements OnInit {
   documentReviewStatus: any;
   offerletterrejected: any;
   documentsRejected: any;
-  // progress bar 
+  // progress bar
   Inprogress = '/images/yellowcheck.png';
   completed = '/images/check.png';
   onboarding = '/images/hands.png';

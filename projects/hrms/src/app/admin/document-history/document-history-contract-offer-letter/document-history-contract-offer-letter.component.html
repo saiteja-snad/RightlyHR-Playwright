@@ -48,7 +48,7 @@
                     <td>{{offerLetter.jobRole?offerLetter.jobRole:'-'}}</td>
                     <td>{{offerLetter.status?offerLetter.status:'-'}} </td>
                     <td>{{offerLetter.empSubstatus?offerLetter.empSubstatus:'-'}} </td>
-                    @if(rbac.allowedToAccess('Offer Letter Download.view') || rbac.allowedToAccess('Offer Letter Release Offer.view') 
+                    @if(rbac.allowedToAccess('Offer Letter Download.view') || rbac.allowedToAccess('Offer Letter Release Offer.view')
                     || rbac.allowedToAccess('Offer Letter Approve.view') || rbac.allowedToAccess('Offer Letter Reject.view')){
                     <td class="text-center">
                         <div class="dropdown">
@@ -123,7 +123,7 @@
                 <div class="mb-3">
                     <label for="rejectReason">{{'Reject Reason' | translate}}<span class="error-msg">*</span></label>
                     <textarea type="text" name="rejectReason" class="form-control"
-                        placeholder="Please provide reason for rejection" rows="3" maxlength="250"
+                        placeholder="Please enter reject reason" rows="3" maxlength="250"
                         formControlName="comments"></textarea>
                     <div class="mt-2 textarea-count-text">
                         <span class="color">{{ rejectDocument.get('comments')?.value?.length || 0 }} / 250</span>

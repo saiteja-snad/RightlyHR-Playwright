@@ -73,7 +73,7 @@ export class NdaComponent {
   }
 
   navigateDashboard() {
-    this.router.navigate(['/admin/dashboard'])
+    this.router.navigate(['/letters/lettes-tabs'])
   }
 
   //function to get the client details

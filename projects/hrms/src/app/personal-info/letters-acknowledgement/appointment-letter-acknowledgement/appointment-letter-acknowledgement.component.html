@@ -30,8 +30,7 @@
             <div class="pb-2">
               <p>
                 Pursuant to your application for employment with us, and the subsequent selection process, it gives
-                us great pleasure to appoint you as <b>{{employeeJobDetails?.jobRole}}</b> with SNAD Developers India
-                Pvt Ltd at
+                us great pleasure to appoint you as <b>{{employeeJobDetails?.jobRole}}</b> with RightlyHR at
                 the location that will be informed to you separately.
               </p>
             </div>
@@ -1254,7 +1253,7 @@
 
           <div class="error-msg" *ngIf="rejectForm.get('notes')?.touched && rejectForm.get('notes')?.invalid">
             <div *ngIf="rejectForm.get('notes')?.errors?.['required']">
-              Comments are required
+              Comment is required
             </div>
             <div *ngIf="rejectForm.get('notes')?.errors?.['maxlength']">
               Comments cannot exceed 250 characters

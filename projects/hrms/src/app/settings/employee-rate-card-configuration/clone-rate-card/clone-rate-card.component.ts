@@ -137,20 +137,24 @@ export class CloneRateCardComponent {
    }
      this.Employeeinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
       
-     this.updateratecardForm.get('year')?.valueChanges.subscribe((year: number) => {
-     const effectiveFromCtrl = this.updateratecardForm.get('effectivefrom');
- 
-     if (year) {
-       this.minDate = `${year}-01-01`;
-       this.maxDate = `${year}-12-31`;
-       effectiveFromCtrl?.enable();
-       effectiveFromCtrl?.reset();
-     } else {
-       effectiveFromCtrl?.disable();
-       this.minDate = '';
-       this.maxDate = '';
-     }
-   });
+     this.minDate = moment().format('YYYY-MM-DD');
+         this.maxDate = `${this.currentYear}-12-31`;
+         this.updateratecardForm.get('year')?.valueChanges.subscribe((year: number) => {
+         const effectiveFromCtrl = this.updateratecardForm.get('effectivefrom');
+     
+         if (year) {
+           const selectedYearStart = `${year}-01-01`;
+           const today = moment().format('YYYY-MM-DD');
+           this.minDate = moment(today).isAfter(selectedYearStart) ? today : selectedYearStart;
+           this.maxDate = `${year}-12-31`;
+           effectiveFromCtrl?.enable();
+           effectiveFromCtrl?.reset();
+         } else {
+           effectiveFromCtrl?.disable();
+           this.minDate = '';
+           this.maxDate = '';
+         }
+       });
    }
     limitDigits(event: any, maxDigits: number) {
    const value = event.target.value;
@@ -398,7 +402,7 @@ export class CloneRateCardComponent {
      }
    }
    yearsList() {
-     for (let i = this.currentYear - 1; i <= this.currentYear + 1; i++) {
+     for (let i = this.currentYear; i <= this.currentYear + 1; i++) {
        this.years.push(i);
      }
    }

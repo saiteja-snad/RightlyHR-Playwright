@@ -198,7 +198,7 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
 
   initializeForm(): void {
     this.separationRequestForm = this.fb.group({
-      appliedDate: [new Date().toISOString().substring(0, 10), Validators.required],
+      appliedDate: [{value: new Date().toISOString().substring(0, 10),disabled:true}, Validators.required],
       jobRole: [{ value: null, disabled: true }],
       departmentName: [{ value: '', disabled: true }],
       team: [{ value: null, disabled: true }],
@@ -752,6 +752,7 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
     console.log('separation', data)
     this.postSeparationRequest = data
     this.separationRequestForm.patchValue({
+      appliedDate: this.formatDate(new Date()),
       jobRole: data.jobRole,
       departmentName: data.departmentName,
       team: data.subdepartmentName,

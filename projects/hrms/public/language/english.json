@@ -2428,6 +2428,8 @@
 "Are you sure you want to Delete?":"Are you sure you want to Delete?",
 "Total Records":"Total Records",
 "Success Records":"Success Records",
-"Failed Records":"Failed Records"
-
+"Failed Records":"Failed Records",
+"Min(Year) is required":"Min(Year) is required",
+"Decimal value must be between 0 to 12":"Decimal value must be between 0 to 12",
+"Max(Year) is required":"Max(Year) is required"
 }

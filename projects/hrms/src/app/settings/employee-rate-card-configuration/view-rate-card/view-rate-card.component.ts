@@ -248,18 +248,18 @@ getJobrole() {
       band.currencies?.forEach((curr: any) => {
         currenciesArray.push(
           this.fb.group({
-            currencyCode: [curr.currencyCode, Validators.required],
-            currencyName: [curr.currencyName, Validators.required],
-            symbol: [curr.symbol],
-            rate: [curr.rate, Validators.required]
+            currencyCode: [{ value: curr.currencyCode, disabled: true }, Validators.required],
+            currencyName: [{ value: curr.currencyName, disabled: true }, Validators.required],
+            symbol: [{ value: curr.symbol, disabled: true }],
+            rate: [{ value: curr.rate, disabled: true }, Validators.required]
           }) as FormGroup
         );
       });
   
       rateArray.push(
         this.fb.group({
-          experienceFrom: [band.experienceFrom, Validators.required],
-          experienceTo: [band.experienceTo, Validators.required],
+          experienceFrom: [{ value: band.experienceFrom, disabled: true }, Validators.required],
+          experienceTo: [{ value: band.experienceTo, disabled: true }, Validators.required],
           status: [band.status],
           currencies: currenciesArray
         })

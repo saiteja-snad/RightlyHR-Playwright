@@ -142,6 +142,7 @@ existingDocumentUrl: string = '';
 
   @ViewChild('statusConfirmModal') statusConfirmModal: any;
   @ViewChild('viewattamchment') viewattamchment!: any;
+  @ViewChild('cancelConfirmModal') cancelConfirmModal!: any;
 
   constructor(
     private fb: FormBuilder,
@@ -158,8 +159,8 @@ existingDocumentUrl: string = '';
     this.kraForm = this.fb.group(
       {
         categoryId: [null as number | null, Validators.required],
-        kraName: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(150)]],
-        description: ['', [Validators.required, Validators.minLength(10), ]],
+        kraName: ['', [Validators.required, Validators.maxLength(50)]],
+        description: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(500)]],
         attachment: [null as File | null],
       },
       {}
@@ -838,5 +839,35 @@ onViewAttachement(url: string) {
 
   ngOnDestroy() {
     this.subscription?.unsubscribe();
+  }
+
+  alphaNumericOnly(event: KeyboardEvent): boolean {
+    const charCode = event.key.charCodeAt(0);
+    if (
+      (charCode >= 48 && charCode <= 57) || // 0-9
+      (charCode >= 65 && charCode <= 90) || // A-Z
+      (charCode >= 97 && charCode <= 122) || // a-z
+      charCode === 32 // space
+    ) {
+      return true;
+    }
+    event.preventDefault();
+    return false;
+  }
+
+  openCancelConfirmModal() {
+    this.modalService.open(this.cancelConfirmModal, {
+      centered: true,
+      backdrop: 'static',
+    });
+  }
+
+  confirmCancel() {
+    this.kraForm.reset();
+    this.isEditMode = false;
+    this.currentEditingKraId = null;
+    this.existingAttachmentName = '';
+    this.existingDocumentUrl = '';
+    this.modalService.dismissAll();
   }
 }

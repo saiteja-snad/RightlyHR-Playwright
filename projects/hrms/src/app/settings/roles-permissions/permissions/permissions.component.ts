@@ -399,8 +399,8 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Assets Management Configuration Module',
     'Dynamic Forms Module',
     "Timesheet Locking Configuration Module",
-    "Rate Card Module",
-    "Rate Card In-active Tab",
+    "Rate Card Configuration Module",
+    "Rate Card Inactive Tab",
     "Rate Card Active Tab"
   ];
   employeeFields = [
@@ -641,7 +641,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
   ratecardsModuleFields = [
     'Rate Card View',
     'Rate Card Active Tab',
-    'Rate Card In-active Tab',
+    'Rate Card Inactive Tab',
   ];
   deskAllocationAllTabActions = [
     'Request for Allocation',

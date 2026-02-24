@@ -1,7 +1,7 @@
 <div class="custom-main-component-container">
     <div class="component-header-content pt-2">
         <div class="heading-content">
-            <div class="commpoment-name navigator" (click)="nagvition()">Employee Rate Card
+            <div class="commpoment-name navigator" (click)="nagvition()">{{'Rate Card Configuration' |translate}}
                 <i class="bi bi-chevron-double-right ms-1"></i>
             </div>
             <div class="component-header">{{'Add Rate Card'|translate}}</div>
@@ -118,7 +118,7 @@
                     <label class="form-label custom-label mb-2">{{'Currency'|translate}}<span
                             class="text-danger">*</span></label>
                     <div class="custom-p-multiSelect-content">
-                        <p-multiSelect class="form-select custom-select" optionLabel="code"
+                        <p-multiSelect class="form-select custom-select" optionLabel="label"
                             optionValue="code" [options]="currencyCodes" display="chip" filterBy="code"
                             [showClear]="false" [filter]="true" placeholder="Please select currency"
                             formControlName="currency">
@@ -138,10 +138,10 @@
                     <table class="w-100">
                         <thead>
                             <tr>
-                                <th>Experience</th>
+                                <th>{{'Experience Range'|translate}}</th>
                                 <th *ngFor="let currencyCode of ratecardForm.get('currency')?.value">{{getCurrencyName(currencyCode)}}
                                 </th>
-                                <th class="text-center">Action</th>
+                                <th class="text-center">{{'Action'|translate}}</th>
                                 <th class="text-center"></th>
                             </tr>
                         </thead>
@@ -149,22 +149,29 @@
                             <tr *ngFor="let ratecard of rateItems.controls; let i = index" [formGroupName]="i">
                                 <td>
                                     <div class="d-flex gap-2">
-                                        <input type="text" class="form-control custom-input" formControlName="experienceFrom"
-                                            placeholder="Min" (input)="onExperienceInput($event, i, 'experienceFrom')"
-                                            (blur)="onExperienceBlur(i, 'experienceFrom')" (keydown)="preventInvalidKeys($event)"
-                                            (wheel)="disableScroll($event)" />
+                                        <div class="flex-fill">
+                                            <input type="text" class="form-control custom-input" formControlName="experienceFrom"
+                                                placeholder="Min(Year)" (input)="onExperienceInput($event, i, 'experienceFrom')"
+                                                (blur)="onExperienceBlur(i, 'experienceFrom')" (keydown)="preventInvalidKeys($event)"
+                                                (wheel)="disableScroll($event)" />
+                                            <div class="error-msg" *ngIf="ratecard.get('experienceFrom')?.invalid && (ratecard.get('experienceFrom')?.dirty || ratecard.get('experienceFrom')?.touched)">
+                                                <span *ngIf="ratecard.get('experienceFrom')?.errors?.['required']">{{'Min(Year) is required' | translate}}</span>
+                                                <span *ngIf="ratecard.get('experienceFrom')?.errors?.['invalidMonth']">{{'Decimal value must be between 0 to 12'|translate}}</span>
+                                            </div>
+                                        </div>
                                         <span class="pt-2">-</span>
-                                        <input type="text" class="form-control custom-input" formControlName="experienceTo"
-                                            placeholder="Max" (blur)="onExperienceBlur(i, 'experienceTo')"
-                                            (keydown)="preventInvalidKeys($event)" (input)="onExperienceInput($event, i, 'experienceTo')"
-                                            (wheel)="disableScroll($event)" />
+                                        <div class="flex-fill">
+                                            <input type="text" class="form-control custom-input" formControlName="experienceTo"
+                                                placeholder="Max(Year)" (blur)="onExperienceBlur(i, 'experienceTo')"
+                                                (keydown)="preventInvalidKeys($event)" (input)="onExperienceInput($event, i, 'experienceTo')"
+                                                (wheel)="disableScroll($event)" />
+                                            <div class="error-msg" *ngIf="ratecard.get('experienceTo')?.invalid && (ratecard.get('experienceTo')?.dirty || ratecard.get('experienceTo')?.touched)">
+                                                <span *ngIf="ratecard.get('experienceTo')?.errors?.['required']">{{'Max(Year) is required'|translate}}</span>
+                                                <span *ngIf="ratecard.get('experienceTo')?.errors?.['invalidMonth']">{{'Decimal value must be between 0 to 12'|translate}}</span>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="error-msg" *ngIf="ratecard.get('experienceFrom')?.errors?.['invalidMonth']">
-                                        Decimal value must be between 0 to 12
-                                    </div>
-                                    <div class="error-msg" *ngIf="ratecard.get('experienceTo')?.errors?.['invalidMonth']">
-                                        Decimal value must be between 0 to 12
-                                    </div>
+                                    
                                 </td>
                                 <td *ngFor="let currency of getCurrencies(i).controls; let j = index">
                                     <div formArrayName="currencies">
@@ -252,7 +259,7 @@
   <div class="result-popup-content" ngbAutofocus>
     <div>
       <img src="icons\delete-icon.png" alt="failure icon" class="confirmation-delete-icon">
-      <p class="confirmation-text">Are you sure you want to Delete?</p>
+      <p class="confirmation-text">{{'Are you sure you want to delete?' |translate }}</p>
     </div>
     <div class="custom-modal-footer">
       <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'|translate}}</button>

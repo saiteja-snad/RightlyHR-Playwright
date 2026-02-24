@@ -304,7 +304,7 @@ export class AccessNavigationService {
         if (this.rbac.allowedToAccess('Attendance Configuration Module.view')) {
           return '/settings/attendance-configuration';
         }
-        if (this.rbac.allowedToAccess('Rate Card Module.view')) {
+        if (this.rbac.allowedToAccess('Rate Card Configuration Module.view')) {
           for (const item of SETTINGS_RATECARD_TABS) {
             if (this.rbac.allowedToAccess(item.permission)) {
               return item.route;
@@ -933,7 +933,7 @@ export class AccessNavigationService {
 
         break;
       case '/settings/employee-rate-card/rate-card':
-        if (this.rbac.allowedToAccess('Rate Card Module.view')) {
+        if (this.rbac.allowedToAccess('Rate Card Configuration Module.view')) {
           // return (route = '/settings/employee-rate-card/rate-card');
           for (const item of SETTINGS_RATECARD_TABS) {
             if (this.rbac.allowedToAccess(item.permission)) {

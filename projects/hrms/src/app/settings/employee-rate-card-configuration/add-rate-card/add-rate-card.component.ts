@@ -97,6 +97,13 @@ maxDate: string = '';
   ) {
   }
   ngOnInit(): void {
+     this.currencyCodes = this.currencyCodes.map(c => ({
+         label: `${c.code} - ${c.name} (${c.symbol})`,
+         value: c.code,
+         code: c.code,
+         name: c.name,
+         symbol: c.symbol
+       }));
     this.initializeForm();
     this.yearsList();
     this.geAllLocations();
@@ -105,13 +112,15 @@ maxDate: string = '';
     this.Employeeinfo = JSON.parse(
       localStorage.getItem('rightlyHrUser') || '{}'
     );
-    this.minDate = `${this.currentYear}-01-01`;
+    this.minDate = moment().format('YYYY-MM-DD');
     this.maxDate = `${this.currentYear}-12-31`;
     this.ratecardForm.get('year')?.valueChanges.subscribe((year: number) => {
     const effectiveFromCtrl = this.ratecardForm.get('effectivefrom');
 
     if (year) {
-      this.minDate = `${year}-01-01`;
+      const selectedYearStart = `${year}-01-01`;
+      const today = moment().format('YYYY-MM-DD');
+      this.minDate = moment(today).isAfter(selectedYearStart) ? today : selectedYearStart;
       this.maxDate = `${year}-12-31`;
       effectiveFromCtrl?.enable();
       effectiveFromCtrl?.reset();
@@ -198,7 +207,7 @@ initializeForm() {
 }
   getCurrencyName(code: string): string {
     const currency = this.currencyCodes.find(c => c.code === code);
-    return currency ? `${currency.code} - ${currency.name}` : code;
+    return currency ? `${currency.code} - ${currency.name} (${currency.symbol})` : code;
   }
 
   addMoreRateItems() {
@@ -208,12 +217,22 @@ initializeForm() {
   addRateCardItems() {
     const selectedCurrencies = this.ratecardForm.get('currency')?.value || [];
 
-    while (this.rateItems.length > 0) {
-      this.rateItems.removeAt(0);
-    }
-
-    if (selectedCurrencies.length > 0) {
+    if (this.rateItems.length === 0 && selectedCurrencies.length > 0) {
       this.rateItems.push(this.createRateCardItems());
+    } else {
+      this.rateItems.controls.forEach((rateItem: any) => {
+        const currenciesArray = rateItem.get('currencies') as FormArray;
+        currenciesArray.clear();
+        selectedCurrencies.forEach((currencyCode: string) => {
+          const currency = this.currencyCodes.find(c => c.code === currencyCode);
+          currenciesArray.push(this.fb.group({
+            currencyCode: [currency?.code || '', Validators.required],
+            currencyName: [currency?.name || '', Validators.required],
+            symbol: [currency?.symbol || ''],
+            rate: ['', Validators.required]
+          }));
+        });
+      });
     }
   }
 
@@ -249,7 +268,7 @@ initializeForm() {
     }
   }
   yearsList() {
-    for (let i = this.currentYear - 1; i <= this.currentYear + 1; i++) {
+    for (let i = this.currentYear; i <= this.currentYear + 1; i++) {
       this.years.push(i);
     }
   }
@@ -302,7 +321,8 @@ openModal(content: any) {
               this.modalService.dismissAll();
             }, 5000);
           }
-            this.router.navigate(['/settings/employee-rate-card/rate-card/rate-card-active'])
+            this.router.navigate(['/settings/employee-rate-card/rate-card/rate-card-active']);
+            this.http.setnewcountDetailsforratecard();
           },
           error: (err: any) => {
             this.isloading = false;

@@ -253,9 +253,7 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
     }
   }
 
-  navigateDashboard() {
-    this.router.navigate(['/admin/dashboard']);
-  }
+
 
   navigateMyInfo() {
     if (this.rbac.allowedToAccess('My Info Personal Approval History.view')) {

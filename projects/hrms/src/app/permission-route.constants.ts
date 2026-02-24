@@ -324,9 +324,15 @@ export const PENDING_APPROVALS_EXTRA_HOURS_SUB_TABS = [
 ]
 
 export const ONBOARDING_APPROVALS_TABS = [
+  { route: '/pending-approvals/on-boarding/offer-letter-history', permission: 'Documents History Offer Letter.view' },
+  { route: '/pending-approvals/on-boarding/contractor-offer-letter-history', permission: 'Documents History Contract Offer Letter.view' },
+  { route: '/pending-approvals/on-boarding/intern-offer-letter-history', permission: 'Documents History Trainee Offer Letter.view' },
+  { route: '/pending-approvals/on-boarding/appointment-letter-history', permission: 'Documents History Appointment Letter.view' },
+  { route: '/pending-approvals/on-boarding/nda-letter-history', permission: 'Documents History Non-Disclosure Agreement Letter.view' },
   { route: '/pending-approvals/on-boarding/probation-request', permission: 'Probation Details Tab.view' },
   { route: '/pending-approvals/on-boarding/trainee-approvals', permission: 'Trainee Details Tab.view' },
 ]
+
 
 export const OFFBOARDING_APPROVALS_TABS = [
   { route: '/pending-approvals/off-boarding/separation-request', permission: 'Separation Request Tab.view' },
@@ -507,14 +513,14 @@ export const HOLIDAYS_SUB_TABS = [
 ]
 
 export const DASHBOARD_SUB_TABS = [
-  { route: '/admin/prospective-employees', permission: 'Dashboard Prospective Employees Card.view' },
-  { route: '/admin/active-employees', permission: 'Dashboard Active Employees Card.view' },
-  { route: '/admin/inactive-employees', permission: 'Dashboard Inactive Employees Card.view' },
-  { route: '/admin/prospective-interns', permission: 'Dashboard Prospective Trainee Card.view' },
-  { route: '/admin/active-interns', permission: 'Dashboard Active Trainees Card.view' },
-  { route: '/admin/inactive-interns', permission: 'Dashboard Inactive Trainees Card.view' },
-  { route: '/admin/current-openings', permission: 'Dashboard Current Openings Card.view' },
-  { route: '/admin/probation-employees', permission: 'Dashboard Probation Employees Card.view' },
+  { route: '/dashboard/prospective-employees', permission: 'Dashboard Prospective Employees Card.view' },
+  { route: '/dashboard/active-employees', permission: 'Dashboard Active Employees Card.view' },
+  { route: '/dashboard/inactive-employees', permission: 'Dashboard Inactive Employees Card.view' },
+  { route: '/dashboard/prospective-interns', permission: 'Dashboard Prospective Trainee Card.view' },
+  { route: '/dashboard/active-interns', permission: 'Dashboard Active Trainees Card.view' },
+  { route: '/dashboard/inactive-interns', permission: 'Dashboard Inactive Trainees Card.view' },
+  { route: '/dashboard/current-openings', permission: 'Dashboard Current Openings Card.view' },
+  { route: '/dashboard/probation-employees', permission: 'Dashboard Probation Employees Card.view' },
 ]
 
 export const EMPLOYEE_INFO_PERSONAL_ROUTES = [
@@ -590,8 +596,8 @@ export const EMPLOYEE_INFO_JOB_ROUTES = [
 ];
 
 export const INVITE_NEW_USER_TABS = [
-  { route: '/admin/active-new-user', permission: 'Dashboard Active Invite New User.view' },
-  { route: '/admin/prospective-new-user', permission: 'Dashboard Trainee Active Invite New User.view' },
+  { route: '/dashboard/active-new-user', permission: 'Dashboard Active Invite New User.view' },
+  { route: '/dashboard/prospective-new-user', permission: 'Dashboard Trainee Active Invite New User.view' },
 ];
 
 export const CLIENTS_ROUTES = [

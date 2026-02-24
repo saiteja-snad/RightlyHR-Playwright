@@ -10,8 +10,8 @@ import { MY_INFO_DOCUMENTS_ROUTES, MY_INFO_JOB_ROUTES, MY_INFO_ONBOARD_REQUEST, 
 import { environment } from '../../../environments/environment';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AuthService } from '../../services/auth.service';
-import { TranslateModule } from '@ngx-translate/core';
 import { SignalsService } from '../../services/signals.service';
+import { TranslateModule, TranslatePipe } from '@ngx-translate/core';
 @Component({
   selector: 'app-user-validation',
   imports: [
@@ -42,8 +42,7 @@ export class UserValidationComponent implements OnInit, OnDestroy {
     private rbac: RbacService,
     private modalService: NgbModal,
     private auth: AuthService,
-    public signal: SignalsService,
-    private authService: AuthService
+    public signal: SignalsService
   ) { }
 
   async ngOnInit() {
@@ -82,45 +81,12 @@ export class UserValidationComponent implements OnInit, OnDestroy {
       return;
     }
 
-    // Check for Google SocialAuth token
-    const socialUser = this.authService.getUser();
-    if (socialUser && !storedRes) {
-      const deviceName = this.authService.getDeviceName();
-      const ipAddress = await this.authService.getIpAddress();
-      const payload = {
-        provider: 'Google',
-        accessToken: socialUser.idToken,
-        deviceName,
-        ipAddress,
-        userAgent: navigator.userAgent
-      };
-      this.executeSocialLogin(payload);
-      return;
-    }
-
     if (storedRes) {
       const parsedRes = JSON.parse(storedRes);
       this.getUserDetails(parsedRes.email);
       return;
     }
     this.router.navigate(['/login']);
-  }
-
-    executeSocialLogin(payload: any) {
-    this.authService.postData('v2/Auth/social', payload).subscribe({
-      next: (res: any) => {
-        this.authService.storeAuthResponse(res);
-        console.log('Social Backend login success:', res);
-        this.getUserDetails(res.employeeId); // Note: API might return email or employeeId, adjust based on response structure
-      },
-      error: (err) => {
-        this.http.loginErrorSignal.set(err?.error?.message || 'Social login failed.');
-        this.router.navigate(['/login']);
-      },
-      complete: () => {
-        this.http.loginErrorSignal.set('');
-      }
-    });
   }
 
 
@@ -169,7 +135,7 @@ export class UserValidationComponent implements OnInit, OnDestroy {
 
   navigateBasedOnPermission() {
     const primaryPermissions = [
-      { permission: 'Dashboard.view', route: '/admin' },
+      { permission: 'Dashboard.view', route: '/dashboard' },
       { permission: 'Employees.view', route: '/employee-management/active-employees' }
     ];
 
@@ -212,12 +178,7 @@ export class UserValidationComponent implements OnInit, OnDestroy {
       }
     }
     
-    // Step 2: Check Employee Dashboard
-    if (this.rbac.allowedToAccess('Employee Dashboard.view')) {
-      this.router.navigate(['/employee-dashboard']);
-      return;
-    }
-
+   
     // Step 3: Check My Info permissions
     for (const item of myInfoPermissions) {
       if (this.rbac.allowedToAccess(item.permission)) {

@@ -3,18 +3,12 @@
         <ul class="nav-items-list text-center ps-0">
             <!--Dashboard-->
             @if(this.rbac.allowedToAccess('Dashboard.view')){
-            <li class="nav-item menu-item-clear" (click)="goToAccessibleRoute('/admin');resetDropdown()"
-                [class.active-nav-link]="isActiveRoute('/admin')">
+            <li class="nav-item menu-item-clear" (click)="goToAccessibleRoute('/dashboard');resetDropdown()"
+                [class.active-nav-link]="isActiveRoute('/dashboard')">
                 <img src="main-menu-icons/dashboard-square.png" alt="Icon" class="main-menu-icon">{{ 'Dashboard' | translate }}
             </li>
             }
-            <!--Employee Dashboard-->
-            @if(this.rbac.allowedToAccess('Employee Dashboard.view')){
-            <li class="nav-item menu-item-clear" (click)="goToAccessibleRoute('/employee-dashboard');resetDropdown()"
-                [class.active-nav-link]="isActiveRoute('/employee-dashboard')">
-                <img src="main-menu-icons/dashboard-square.png" alt="Icon" class="main-menu-icon"> {{ 'Dashboard' | translate }}
-            </li>
-            }
+         
             <!--My Info-->
             @if(this.rbac.allowedToAccess('My Info.view')){
             <li class="nav-item menu-item-clear" (click)="goToAccessibleRoute('/myinfo');resetDropdown()"

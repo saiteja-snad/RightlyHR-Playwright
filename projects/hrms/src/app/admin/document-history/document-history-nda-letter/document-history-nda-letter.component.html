@@ -7,16 +7,15 @@
             <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input"
                 placeholder="Search by employee name  " aria-label="Username" aria-describedby="basic-addon1">
         </div>
-        
+
         <div class="custom-year-month-picker">
             <p-datepicker [(ngModel)]="selectedDate" placeholder="Select Month & Year" [selectOtherMonths]="true"
                 (ngModelChange)="onMonthChange($event)" [showIcon]="true" view="month" dateFormat="mm/yy"
-                [readonlyInput]="true" [maxDate]="maxMonth">
-            </p-datepicker>
+                [readonlyInput]="true" [maxDate]="maxMonth" />
         </div>
     </div>
-    
-    <div class="custom-table-content">
+
+    <div class="custom-table-content documnet-history-table-height">
         @if(!dataloader){
         <table class="w-100">
             <thead>
@@ -29,7 +28,7 @@
             <tbody>
                 @if(ndaLetters.length > 0){
                 @for (ndaLetter of ndaLetters| ndaletter : searchValue; ; track
-                ndaLetter.id){
+ndaLetter.id){
                 <tr>
                     <td>{{ndaLetter.ndaSentDate | dateformat }}</td>
                     <td>{{ndaLetter.employeeName ?ndaLetter.employeeName:'-'}}</td>

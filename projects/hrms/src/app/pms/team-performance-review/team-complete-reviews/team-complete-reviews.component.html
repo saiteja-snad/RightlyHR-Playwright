@@ -2,7 +2,7 @@
     <div class="input-group custom-search mb-3">
         <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
         <input type="search" class="form-control custom-search-input"
-            placeholder="Search by review cycle name / employee ID / employee name/ department / team / location / sub location / status"
+            placeholder="Search by Review Cycle Name / Employee ID / Employee Name/ Department / Team / Location / Sub Location / Status"
             [(ngModel)]="searchQuery" (ngModelChange)="fetchReviewCycles()" aria-label="Username"
             aria-describedby="basic-addon1">
     </div>
@@ -21,7 +21,7 @@
                     <th>{{'Due Date' | translate}}</th>
                     <th>{{'Review Template' | translate}}</th>
                     <th>{{'Status' | translate}}</th>
-                    @if(rbac.allowedToAccess('Team Assessment View.view') || rbac.allowedToAccess('Team Promotion Letter Download.view') 
+                    @if(rbac.allowedToAccess('Team Assessment View.view') || rbac.allowedToAccess('Team Promotion Letter Download.view')
                     || rbac.allowedToAccess('Team Appraisal Letter Download.view')){
                     <th class="text-center">{{'Action' | translate}}</th>
                     }
@@ -55,7 +55,7 @@
                         <td class="text-nowrap">{{ item.assessordueDate | date: 'dd MMM yyyy' }}</td>
                         <td>{{ item.formName }}</td>
                         <td>{{ item.rcItemStatus }}</td>
-                        @if(rbac.allowedToAccess('Team Assessment View.view') || rbac.allowedToAccess('Team Promotion Letter Download.view') 
+                        @if(rbac.allowedToAccess('Team Assessment View.view') || rbac.allowedToAccess('Team Promotion Letter Download.view')
                         || rbac.allowedToAccess('Team Appraisal Letter Download.view')){
                         <!-- @if(showTeamActionDropdown(item)){ -->
                         <td class="text-center">
@@ -67,7 +67,7 @@
                                 <ul class="dropdown-menu custom-dropdown-menu">
                                     <ng-container *ngIf="item.assessorType==='HR' ;else elseBlock">
                                         @if(rbac.allowedToAccess('Team Assessment View.view')){
-                                        <li (click)="selfAssessment(item.reviewCycleItemId, item.currentStage,item.assessorType, 
+                                        <li (click)="selfAssessment(item.reviewCycleItemId, item.currentStage,item.assessorType,
                                             item.assessorItemId,item.reviewEmployeeId,item.reviewcycleitemformresponseid,item.formresponseid)">
                                             <a class="dropdown-item">{{item.assessorType}} {{'Assessment View' | translate}}</a>
                                         </li>
@@ -76,7 +76,7 @@
 
                                     <ng-template #elseBlock>
                                         @if(rbac.allowedToAccess('Team Promotion Letter Download.view')){
-                                        <li (click)="selfAssessment(item.reviewCycleItemId, 0,item.assessorType, item.assessorItemId, 
+                                        <li (click)="selfAssessment(item.reviewCycleItemId, 0,item.assessorType, item.assessorItemId,
                                         item.reviewEmployeeId,item.reviewcycleitemformresponseid,item.formresponseid)">
                                             <a class="dropdown-item">{{item.assessorType}} {{'Assessment View' | translate}}</a>
                                         </li>
@@ -124,7 +124,7 @@
                     </option>
                 </select>
                 <span class="pagination-label text-nowrap">
-                    Showing {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize : 
+                    Showing {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize :
                     (+first + +rows) }} of {{ collectionSize }}
                 </span>
             </div>

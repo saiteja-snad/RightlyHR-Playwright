@@ -102,6 +102,7 @@ export class KpiComponent implements OnInit, OnDestroy {
   kraList: any[] = [];
   isEditMode = false;
   currentKpiId: number | null = null;
+  currentKpiStatus: string = 'Created';
 
   totalRecordsFromApi = 0;   // actual backend count
 
@@ -109,6 +110,7 @@ export class KpiComponent implements OnInit, OnDestroy {
   showOnlyInactive = false;
   inactiveButtonLabel = "Inactive KPI's";
   @ViewChild('statusConfirmModal') statusConfirmModal!: any;
+  @ViewChild('cancelConfirmModal') cancelConfirmModal!: any;
 
   pendingKpi: any = null;
   pendingKpiName = '';
@@ -116,15 +118,14 @@ export class KpiComponent implements OnInit, OnDestroy {
 
   // Simplified single KPI form
   kpiForm = this.fb.group({
-    kpiName: ['', [Validators.required, Validators.minLength(5)]],
+    kpiName: ['', [Validators.required, Validators.maxLength(50)]],
     uom: ['', Validators.required],
-    // targetValue: [null as number | null, [Validators.required]],
     description: [
       '',
       [
         Validators.required,
         Validators.minLength(10),
-        Validators.maxLength(1000),
+        Validators.maxLength(500),
       ],
     ],
   });
@@ -229,12 +230,7 @@ toggleInactiveFilter(): void {
     ? this.kpiList.filter(kpi => kpi.status === 'Inactive')
     : this.kpiList.filter(kpi => kpi.status !== 'Inactive');
 
-  // paginator must match table rows
-  this.collectionSize = this.filteredDetails.length;
-
-  // reset pagination safely
-  this.page = 1;
-  this.first = 0;
+  this.collectionSize = this.totalRecordsFromApi;
 }
 
 
@@ -252,7 +248,7 @@ toggleInactiveFilter(): void {
   }
 
   onPageSizeChange(newSize: number) {
-    this.rows = newSize;
+    this.rows = Number(newSize);
     this.page = 1;
     this.first = 0;
     this.loadKpiList();
@@ -261,6 +257,7 @@ toggleInactiveFilter(): void {
   openModal(content: any) {
     this.isEditMode = false;
     this.currentKpiId = null;
+    this.currentKpiStatus = 'Created';
     this.kpiForm.reset();
 
     this.modalService.open(content, {
@@ -279,12 +276,10 @@ toggleInactiveFilter(): void {
 
     const formValue = this.kpiForm.getRawValue();
 
-    // ✅ STEP 1: create SINGLE object
     const kpiPayload: {
       kpiId?: number;
       kpiName: string;
       targetType: string;
-      // targetValue: string;
       description: string;
       status: string;
       createdBy: string;
@@ -292,19 +287,16 @@ toggleInactiveFilter(): void {
     } = {
       kpiName: formValue.kpiName!.trim(),
       targetType: formValue.uom!,
-      // targetValue: String(formValue.targetValue!),
       description: formValue.description!.trim(),
-      status: 'Created',
+      status: this.isEditMode ? this.currentKpiStatus : 'Created',
       createdBy: employeeId,
       updatedBy: employeeId,
     };
 
-    // ✅ STEP 2: add kpiId ONLY in edit mode
     if (this.isEditMode && this.currentKpiId) {
       kpiPayload.kpiId = this.currentKpiId;
     }
 
-    // ✅ STEP 3: API expects ARRAY
     const payload = [kpiPayload];
 
     this.http.postdata('Kpi/upsertkra', payload).subscribe({
@@ -328,6 +320,7 @@ toggleInactiveFilter(): void {
         this.isSubmitting = false;
         this.isEditMode = false;
         this.currentKpiId = null;
+        this.currentKpiStatus = 'Created';
         this.kpiForm.reset();
       },
     });
@@ -340,15 +333,13 @@ toggleInactiveFilter(): void {
   onUpdate(kpi: any, content: any) {
     this.isEditMode = true;
     this.currentKpiId = kpi.kpiId || kpi.id || 0;
+    this.currentKpiStatus = kpi.status || 'Created';
 
     this.kpiForm.patchValue({
       kpiName: kpi.kpiName || '',
       uom: kpi.targetType || '',
-      // targetValue: kpi.targetValue != null ? Number(kpi.targetValue) : null,
       description: kpi.description || '',
     });
-
-    // this.applyTargetValueValidation(kpi.targetType);
 
     this.modalService.open(content, {
       centered: true,
@@ -569,5 +560,34 @@ toggleInactiveFilter(): void {
 
   ngOnDestroy() {
     this.subscription?.unsubscribe();
+  }
+
+  alphaNumericOnly(event: KeyboardEvent): boolean {
+    const charCode = event.key.charCodeAt(0);
+    if (
+      (charCode >= 48 && charCode <= 57) || // 0-9
+      (charCode >= 65 && charCode <= 90) || // A-Z
+      (charCode >= 97 && charCode <= 122) || // a-z
+      charCode === 32 // space
+    ) {
+      return true;
+    }
+    event.preventDefault();
+    return false;
+  }
+
+  openCancelConfirmModal() {
+    this.modalService.open(this.cancelConfirmModal, {
+      centered: true,
+      backdrop: 'static',
+    });
+  }
+
+  confirmCancel() {
+    this.kpiForm.reset();
+    this.isEditMode = false;
+    this.currentKpiId = null;
+    this.currentKpiStatus = 'Created';
+    this.modalService.dismissAll();
   }
 }

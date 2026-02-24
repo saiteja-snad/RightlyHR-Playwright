@@ -2,8 +2,8 @@
   <!-- Header -->
   <div class="component-header-content">
     <div class="heading-content">
-      <div class="commpoment-name cursor">
-        {{'PMS'  | translate }} <span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
+      <div class="commpoment-name">
+        PMS <span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
       </div>
       <div class="component-header">{{ 'KPI' | translate }}</div>
       <div>
@@ -31,7 +31,7 @@
     <span class="input-group-text custom-input-group-search">
       <i class="bi bi-search"></i>
     </span>
-    <input type="search" class="form-control custom-search-input" placeholder="Search here by KPI title, description"
+    <input type="search" class="form-control custom-search-input" placeholder="Search here by KPI Title, Description"
       [(ngModel)]="searchText" (ngModelChange)="onSearchTextChange()" />
   </div>
 
@@ -185,9 +185,9 @@
               {{ 'KPI Title' | translate }} <span class="text-danger">*</span>
             </label>
             <input type="text" class="form-control custom-input" formControlName="kpiName"
-              placeholder="Enter KPI title" (input)="formValidation.validateInput(kpiForm.get('kpiName'))">
+              placeholder="Enter KPI title" maxlength="50" (keypress)="alphaNumericOnly($event)">
             <div class="error-msg" *ngIf="f['kpiName'].touched && f['kpiName'].invalid">
-              KPI Title is required
+              <span *ngIf="f['kpiName'].errors?.['required']">KPI Title is required</span>
             </div>
           </div>
 
@@ -243,18 +243,20 @@
               {{ 'Description' | translate }} <span class="text-danger">*</span>
             </label>
             <textarea class="form-control custom-input" rows="4" formControlName="description"
-              placeholder="Please enter description" (input)="formValidation.validateInput(kpiForm.get('description'))"></textarea>
+              placeholder="Please enter description" maxlength="500" (input)="formValidation.validateInput(kpiForm.get('description'))"></textarea>
             <div class="textarea-count-text text-end">
               {{ f['description'].value?.length || 0 }}/500
             </div>
             <div class="error-msg" *ngIf="f['description'].touched && f['description'].invalid">
-              Description is required
+              <span *ngIf="f['description'].errors?.['required']">Description is required</span>
+              <span *ngIf="f['description'].errors?.['minlength']">Description must be at least 10 characters</span>
+              <span *ngIf="f['description'].errors?.['maxlength']">Description must not exceed 500 characters</span>
             </div>
           </div>
         </div>
 
         <div class="custom-modal-footer mt-4">
-          <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">
+          <button type="button" class="custom-btn btn-secondary" (click)="openCancelConfirmModal()">
             {{ 'Cancel' | translate }}
           </button>
           <button type="submit" class="custom-btn btn-primary" [disabled]="kpiForm.invalid || isSubmitting">
@@ -287,6 +289,27 @@
         No
       </button>
       <button type="button" class="custom-btn btn-primary" (click)="confirmStatusChange()" [disabled]="isSubmitting">
+        Yes
+      </button>
+    </div>
+  </div>
+</ng-template>
+
+<!-- CANCEL CONFIRMATION MODAL -->
+<ng-template #cancelConfirmModal let-modal>
+  <div class="result-popup-content" ngbAutofocus>
+    <div>
+      <img src="icons/reject.png" alt="cancel icon" class="confirmation-delete-icon" />
+      <p class="confirmation-text">
+        Are you sure you want to cancel?
+      </p>
+    </div>
+
+    <div class="custom-modal-footer">
+      <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">
+        No
+      </button>
+      <button type="button" class="custom-btn btn-primary" (click)="confirmCancel()">
         Yes
       </button>
     </div>

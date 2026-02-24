@@ -3,7 +3,7 @@
   <!-- Header with Assign Button + Filters -->
   <div class="component-header-content">
     <div class="heading-content">
-      <div class="commpoment-name cursor">
+      <div class="commpoment-name">
         {{'PMS'  | translate}} <span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
       </div>
       <div class="component-header">{{ 'Assign KRA / KPI' | translate }}</div>
@@ -79,7 +79,7 @@
   <div class="input-group custom-search mb-3">
     <span class="input-group-text custom-input-group-search"><i class="bi bi-search"></i></span>
     <input type="search" [(ngModel)]="searchText" class="form-control custom-search-input"
-      placeholder="{{'Search by employee name' | translate}}" (ngModelChange)="onSearchTextChange()" autocomplete="off">
+      placeholder="{{'Search by Employee Name' | translate}}" (ngModelChange)="onSearchTextChange()" autocomplete="off">
   </div>
   <!-- } -->
 
@@ -140,7 +140,7 @@
             <p-accordion-content>
               <div class="custom-p-multi-select-table custom-accordian-table">
                 @if (emp.assignments && emp.assignments.length > 0) {
-                <p-table [value]="emp.assignments">
+                <p-table [value]="emp.assignments" [scrollable]="true" scrollHeight="380px">
                   <ng-template pTemplate="header">
                     <tr>
                       <th>{{'KRA' | translate}}</th>

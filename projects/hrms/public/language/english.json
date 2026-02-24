@@ -2679,5 +2679,20 @@
   "DAYS": "DAYS",
   "No of days": "No of days",
   "Shift Name is required": "Shift Name is required",
-  "Please select at least one day": "Please select at least one day"
+  "Please select at least one day": "Please select at least one day",
+  "Selected Records": "Selected Records",
+  "Search by employee name / leave type / availed": "Search by employee name / leave type / availed",
+  "Check Balance": "Check Balance",
+  "Leave Balances": "Leave Balances",
+  "Probation Leaves": "Probation Leaves",
+  "Is it a planned leave?": "Is it a planned leave?",
+  "Reason for approval": "Reason for approval",
+  "Please provide approval reason": "Please provide approval reason",
+  "Reason for approval is required": "Reason for approval is required",
+  "Unplanned Leave": "Unplanned Leave",
+  "Reject reason": "Reject reason",
+  "Reject reason is required": "Reject reason is required",
+  "Are you sure you want to proceed with the approval?": "Are you sure you want to proceed with the approval?",
+  "Do you really want to reject selected requests?": "Do you really want to reject selected requests?",
+  "Sandwich Leave Breakdown": "Sandwich Leave Breakdown"
 }

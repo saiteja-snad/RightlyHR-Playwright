@@ -5,7 +5,7 @@
     @if(lineOrder && nodue_Clearance_Details.value.length > 0 && allApproved &&
     empdata?.substatus?.toLowerCase()==='raised no due' && empdata.empstatus?.toLowerCase() != 'inactive'){
     <div class="custom-add-btn">
-      <a class="dropdown-item" [routerLink]="['/admin/nodue-form-details']" routerLinkActive="active"
+      <a class="dropdown-item" [routerLink]="['/dashboard/nodue-form-details']" routerLinkActive="active"
         (click)="onsubmission(empdata.employeeId)">
         <span class="anchor"><i class="bi bi-plus plus-icon px-2 "></i>
           <span type="button" class="plus-text">Submission Of No Due Clearance</span></span>

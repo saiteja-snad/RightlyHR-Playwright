@@ -7,16 +7,15 @@
             <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input"
                 placeholder="Search by employee name  " aria-label="Username" aria-describedby="basic-addon1">
         </div>
-        
+
         <div class="custom-year-month-picker">
             <p-datepicker [(ngModel)]="selectedDate" placeholder="Select Month & Year" [selectOtherMonths]="true"
                 (ngModelChange)="onMonthChange($event)" [showIcon]="true" view="month" dateFormat="mm/yy"
-                [readonlyInput]="true" [maxDate]="maxMonth">
-            </p-datepicker>
+                [readonlyInput]="true" [maxDate]="maxMonth" />
         </div>
     </div>
-    
-    <div class="custom-table-content">
+
+    <div class="custom-table-content documnet-history-table-height">
         @if(!dataloader){
         <table class="w-100">
             <thead>
@@ -38,9 +37,10 @@
                     @if(rbac.allowedToAccess('Appointment Letter Download.view')){
                     <td class="text-center">
                         <span (click)="onSelectDownload(appointmentLetter)">
-                              <app-download-icon />
+                            <app-download-icon />
                         </span>
-                    </td>}
+                    </td>
+                    }
                 </tr>
                 }
                 }

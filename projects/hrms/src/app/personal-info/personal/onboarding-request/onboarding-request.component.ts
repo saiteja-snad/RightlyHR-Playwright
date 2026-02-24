@@ -209,7 +209,7 @@ export class OnboardingRequestComponent implements OnInit, OnDestroy {
     this.subscription = this.http.postdata('OnBoardingDocuments/Update', this.doumentsapprovedata).subscribe({
       next: (data: any) => {
         this.modalService.dismissAll();
-        this.conformationPopup.openSuccessModal('Document approved successfully');
+        this.conformationPopup.openSuccessModal('Document verified successfully');
         setTimeout(() => {
           this.getdocumentdeatilsbyempid();
           this.getEmployeeId();
@@ -241,7 +241,7 @@ isSubmitting = false;
     this.http.postdata('OnBoardingDocuments/Update', this.rejectionData).subscribe({
       next: (updatedData: any) => {
          this.isSubmitting = false;
-        modal.close(); 
+        modal.close();
         setTimeout(() => {
         this.conformationPopup.openSuccessModal('Document rejected successfully');
         this.rejectDocument.reset();

@@ -145,7 +145,7 @@
                             filterBy="value">
                         </p-select>
                     </div>
-                    <div *ngIf="subcategoryForm.get('categoryId')?.touched && subcategoryForm.get('categoryId')?.invalid"
+                    <div *ngIf="updateForm.get('categoryId')?.touched && updateForm.get('categoryId')?.invalid"
                         class="error-msg">
                         {{ 'Category Name is required' | translate }}
                     </div>
@@ -159,16 +159,16 @@
                     <input type="text" class="form-control custom-input" formControlName="subCategoryname"
                         placeholder="Please enter sub category name" maxlength="101" (input)="formValidations.validateInput(updateForm.get('subCategoryname'))"
                         (keydown)="formValidations.restrictInitialSpace($event)" />
-                    <div *ngIf="subcategoryForm.get('subCategoryname')?.touched && subcategoryForm.get('subCategoryname')?.invalid"
+                    <div *ngIf="updateForm.get('subCategoryname')?.touched && updateForm.get('subCategoryname')?.invalid"
                         class="error-msg">
-                        <div *ngIf="subcategoryForm.get('subCategoryname')?.errors?.['required']">
+                        <div *ngIf="updateForm.get('subCategoryname')?.errors?.['required']">
                             {{ 'Sub Category Name is required' | translate }}
                         </div>
                     </div>
-                    <div *ngIf="subcategoryForm.get('subCategoryname')?.errors?.['maxCharacters']" class="error-msg">
+                    <div *ngIf="updateForm.get('subCategoryname')?.errors?.['maxCharacters']" class="error-msg">
                         {{ 'Please limit your input to 100 characters' | translate }}
                     </div>
-                    <div *ngIf="subcategoryForm.get('subCategoryname')?.errors?.['pattern']" class="error-msg">
+                    <div *ngIf="updateForm.get('subCategoryname')?.errors?.['pattern']" class="error-msg">
                         {{ 'Field cannot start with a space' | translate }}
                     </div>
                 </div>

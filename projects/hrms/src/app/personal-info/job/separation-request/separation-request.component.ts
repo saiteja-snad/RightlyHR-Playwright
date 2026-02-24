@@ -126,7 +126,7 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
       this.getExitFeeddBackDetails();
     }
   }
-  
+
  isActive(route: string): boolean {
     return this.router.url.includes(route);
   }
@@ -146,7 +146,7 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
         null,
         [
           Validators.required,
-          Validators.maxLength(250)
+          Validators.maxLength(400)
         ],
       ],
     });
@@ -337,7 +337,7 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
         next: (data: any) => {
           console.log(data);
           this.nodueclearancedetails = data;
-          
+
           // Check if all nodue records are approved
           const validItems = data.filter((ele: any) => ele.subStatus?.toLowerCase() !== 'rerequested');
           const approvedCount = validItems.filter((ele: any) => ele.status?.toLowerCase() === 'approved').length;
@@ -364,7 +364,7 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
           console.log('Raw exit feedback data:', data);
           console.log('Data type:', typeof data);
           console.log('Is array:', Array.isArray(data));
-          
+
           // Handle different response structures
           let feedbackArray = [];
           if (Array.isArray(data)) {
@@ -374,17 +374,17 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
           } else if (data && data.length !== undefined) {
             feedbackArray = [data];
           }
-          
+
           this.exitfeedbackdata = feedbackArray;
           console.log('Processed feedback array:', this.exitfeedbackdata);
           console.log('Array length:', this.exitfeedbackdata.length);
-          
+
           const existingRecords = this.exitfeedbackdata.filter((ele: any) => {
             const status = ele?.status?.toLowerCase();
             console.log('Checking status:', status);
             return status === 'initiated' || status === 'submitted';
           });
-          
+
           console.log('Filtered records:', existingRecords);
           this.exitfeedbacksubmitted = existingRecords.length > 0;
           console.log('Exit feedback submitted:', this.exitfeedbacksubmitted);
@@ -397,7 +397,7 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
       });
   }
 
-  
+
 
   shouldShowButton(date: string): boolean {
     console.log(date);
@@ -582,7 +582,7 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
   }
   //function to recall the request
   postRecallRequest() {
-     
+
     this.isLoading = true;
     let currentDate = new Date();
     let payLoad = {
@@ -628,7 +628,7 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
       });
   }
 
-  
+
   openInitiateModal(item: any): void {
     this.selectedItem = item;
     this.initiateForm.reset();
@@ -659,7 +659,7 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
         moduleId : 33,
         lastWorkingDate : this.selectedItem.lastWorkingDate
       };
-      
+
       this.subscription = this.http.postdata(`ExitFeedbackRequest/initiate`, payload).subscribe({
         next: (response: any) => {
           this.isLoading = false;
@@ -763,7 +763,7 @@ noticedetails(item: any): void {
   this.noticeDetailsData = item;
   this.modalService.open(this.NoticePopup, { centered: true });
 }
-  
+
   ngOnDestroy(): void {
     // Clean up any subscriptions or resources
     if (this.subscription) {

@@ -40,10 +40,10 @@
                 @if(!dataLoad){
                 <table class="w-100">
                     <thead>
-                        <th>FILE NAME</th>
-                        <th>CREATED DATE</th>
+                        <th>File Name</th>
+                        <th>Created Date</th>
                         @if(rbac.allowedToAccess('Document Tab.delete')){
-                        <th>ACTION</th>
+                        <th>Action</th>
                         }
                     </thead>
                     <tbody>
@@ -76,7 +76,7 @@
                     </tbody>
                 </table>
                 }
-                
+
                 @else {
                 <app-data-loader-content />
                 }

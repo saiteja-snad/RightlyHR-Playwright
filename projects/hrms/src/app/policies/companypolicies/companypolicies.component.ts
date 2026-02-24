@@ -38,6 +38,7 @@ export class CompanypoliciesComponent implements OnInit, OnDestroy {
   selectedYear: number = this.currentYear;
   years: { label: string; value: number }[] = [];
   loading = false
+  documentLoading = false
   filteredpolicy: any = []
   orgPolicyItemsArray: any[] = [];
   EduViewURL: any;
@@ -138,6 +139,7 @@ export class CompanypoliciesComponent implements OnInit, OnDestroy {
     this.viewPolicyname = name;
     this.selectedItem = selectedItem;
     this.ackCheckboxChecked = false;
+    this.documentLoading = true;
     const lowerUrl = url?.toLowerCase();
     if (lowerUrl?.endsWith('jpg') || lowerUrl?.endsWith('jpeg') || lowerUrl?.endsWith('png')) {
       this.subscription = this.http.DownloadDataWithQuery('FileSystem/Downloadfile', url).subscribe({
@@ -148,20 +150,29 @@ export class CompanypoliciesComponent implements OnInit, OnDestroy {
           this.ExpenseViewURL = null;
           this.toggleViewModal();
           this.ackForm.reset({ acknowledged: false });
+          this.documentLoading = false;
         },
-        error: (err) => console.error('Error downloading image:', err),
+        error: (err) => {
+          console.error('Error downloading image:', err);
+          this.documentLoading = false;
+        }
       });
     } else if (lowerUrl?.endsWith('pdf')) {
-      this.ExpenseImageUrl = null;
-      this.ExpenseViewURL = `${environment.viewUrl}${url}`; // assumed to be full URL
-      this.toggleViewModal();
-      this.ackForm.reset({ acknowledged: false });
-    } else {
-      // fallback for other types if needed
       this.ExpenseImageUrl = null;
       this.ExpenseViewURL = `${environment.viewUrl}${url}`;
       this.toggleViewModal();
       this.ackForm.reset({ acknowledged: false });
+      setTimeout(() => {
+        this.documentLoading = false;
+      }, 1000);
+    } else {
+      this.ExpenseImageUrl = null;
+      this.ExpenseViewURL = `${environment.viewUrl}${url}`;
+      this.toggleViewModal();
+      this.ackForm.reset({ acknowledged: false });
+      setTimeout(() => {
+        this.documentLoading = false;
+      }, 1000);
     }
   }
 
@@ -231,7 +242,7 @@ export class CompanypoliciesComponent implements OnInit, OnDestroy {
       error: (reason: any) => console.log(reason)
     });
   }
-  
+
   ngOnDestroy(): void {
     if (this.subscription) {
       this.subscription.unsubscribe()

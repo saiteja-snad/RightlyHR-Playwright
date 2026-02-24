@@ -137,8 +137,7 @@ onCommentChange(value: string) {
   }
 
   resetForm(f: NgForm) {
-    f.resetForm(); // resets form state AND ngModel bindings
-    // Clear the selected data structure completely and set defaults
+    f.resetForm();
     this.selectedSpRequestData = {
       spIsAcceptEarlyrelievingcheck: false,
       spMangerEarlyreliveingDate: null,
@@ -149,13 +148,12 @@ onCommentChange(value: string) {
       spRequestLastWorkingDate: null,
       spIsEarlyRelieveing: false,
       spsalaryhold: undefined
-      // Add any other keys your form uses here
     };
-    // Reset condition flags
     this.regular = false;
     this.early = false;
     this.extend = false;
-    // Close the modal
+    this.selectedRadio = '';
+    this.buttondisable = false;
     this.modalService.dismissAll();
   }
 
@@ -235,6 +233,8 @@ onCommentChange(value: string) {
     return true;
   }
 
+  originalEmployeeDate: string = '';
+
   //function to get the requried data
   handleRequest(request: ISeparationRequest) {
     this.regular = false;
@@ -248,6 +248,7 @@ onCommentChange(value: string) {
     this.selectedSpRequestData.spMangerEarlyreliveingDate = this.formatDate(
       this.selectedSpRequestData.spearlyReliveingDate
     );
+    this.originalEmployeeDate = this.selectedSpRequestData.spMangerEarlyreliveingDate;
     this.selectedSpRequestData.spExtendedDate = this.formatDate(
       this.selectedSpRequestData.spExtendedDate
     );
@@ -526,6 +527,7 @@ onCommentChange(value: string) {
       if (this.selectedSpRequestData.spIsEarlyRelieveing == true) {
         this.selectedSpRequestData.spIsAcceptEarlyrelievingcheck = true;
         this.selectedSpRequestData.isAcceptEarlyRequest = 'Yes';
+        this.selectedSpRequestData.spMangerEarlyreliveingDate = this.originalEmployeeDate;
       } else {
         this.selectedSpRequestData.isAcceptEarlyRequest = 'No';
       }
@@ -535,20 +537,20 @@ onCommentChange(value: string) {
       this.early = true;
       this.buttondisable = true;
       this.isCheckBoxEnabledEarly = true;
-      // Clear data related to Extend and Discontinue
       this.clearExtendData();
       this.clearDiscontinueData();
     }
     else {
       if (!this.selectedSpRequestData.spIsAcceptEarlyrelievingcheck) {
+        this.selectedSpRequestData.spMangerEarlyreliveingDate = this.originalEmployeeDate;
         this.early = true;
       }
       else {
         // Toggle off Early Relieving
         this.selectedSpRequestData.spIsAcceptEarlyrelievingcheck = false;
-        this.early = false;
+      this.early = false;
         this.selectedRadio = ''
-        this.buttondisable = false;
+      this.buttondisable = false;
         this.clearEarlyData();
       }
 
@@ -639,9 +641,7 @@ onCommentChange(value: string) {
   }
 
   earlyRelievingValidationCheck() {
-
-    if (this.selectedSpRequestData.spMangerEarlyreliveingDate !=
-      this.selectedSpRequestData.spearlyReliveingDate) {
+    if (this.selectedSpRequestData.spMangerEarlyreliveingDate != this.originalEmployeeDate) {
       this.selectedSpRequestData.spIsAcceptEarlyrelievingcheck = false;
       this.selectedSpRequestData.isAcceptEarlyRequest = 'No';
       this.selectedRadio = 'early';

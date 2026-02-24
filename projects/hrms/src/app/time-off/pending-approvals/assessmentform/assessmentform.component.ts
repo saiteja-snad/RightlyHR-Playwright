@@ -452,8 +452,6 @@ export class AssessmentformComponent {
   }
 
   textArea() {
-    this.displayTextArea = false;
-    this.indexspace = 3
     this.modalService.open(this.formsavepopup, { centered: true });
   }
 
@@ -550,6 +548,8 @@ export class AssessmentformComponent {
 
   //function to submit the formdata
   formSubmit(content: any) {
+    this.displayTextArea = false;
+    this.indexspace = 3;
     this.modalService.dismissAll();
     let loginuserdata = this.authService.getToken();
     this.jsonData = JSON.stringify({

@@ -66,25 +66,22 @@ export class DocumentsCreationComponent implements OnInit, OnDestroy {
     this.subscription = this.documentService.getMainFolders(dirPath).subscribe({
       next: (data: any) => {
         this.folders = data as IFolders[];
-        this.folders.forEach((folder: any) => {
+        const folderPromises = this.folders.map((folder: any) => {
           folder.expanded = false;
-          this.getFolders(folder.name, folder);
+          return this.getFolders(folder.name, folder);
         });
 
-        setTimeout(() => {
+        Promise.all(folderPromises).then(() => {
           if (this.folders.length > 0) {
             let folderToSelect = this.folders.find(f => f.name === previousSelectedFolderName);
             if (!folderToSelect) {
               folderToSelect = this.folders[0];
             }
             this.selectedMainFolder = folderToSelect;
-            this.dataLoad = false;
             this.onFolderSelectded(folderToSelect, folderToSelect.name);
-          } else {
-            this.dataLoad = false;
           }
-        }, 100);
-        this.dataLoad = false;
+          this.dataLoad = false;
+        });
       },
       error: (error) => {
         this.dataLoad = false;
@@ -94,17 +91,12 @@ export class DocumentsCreationComponent implements OnInit, OnDestroy {
   }
 
   onFolderSelectded(folder: IFolders | undefined, mainFolderName: string) {
-    this.dataLoad=true
-    console.log(folder,mainFolderName);
-    
     if (!folder) {
       return;
     }
     if (folder.subfolders && folder.subfolders?.length > 0) {
-      this.dataLoad = false;
       this.selectedFolder = folder.subfolders as IFolders[];
     } else {
-      this.dataLoad = false;
       this.selectedFolder = [] as IFolders[];
     }
     if (folder.isDirectory) {
@@ -114,15 +106,21 @@ export class DocumentsCreationComponent implements OnInit, OnDestroy {
     this.selectedMainFolder = folder;
   }
 
-  getFolders(dirPath: string, folder: IFolders) {
-    this.subscription = this.documentService.getMainFolders(dirPath).subscribe({
-      next: (data: any) => {
-        folder.subfolders = data as IFolders[];
-        folder.subfolders.forEach((subfolder: any) => {
-          subfolder['isCompanyDir'] = subfolder.name.includes('Company Documents');
-        });
-      },
-      error: (reason) => console.log(reason),
+  getFolders(dirPath: string, folder: IFolders): Promise<void> {
+    return new Promise((resolve) => {
+      this.subscription = this.documentService.getMainFolders(dirPath).subscribe({
+        next: (data: any) => {
+          folder.subfolders = data as IFolders[];
+          folder.subfolders.forEach((subfolder: any) => {
+            subfolder['isCompanyDir'] = subfolder.name.includes('Company Documents');
+          });
+          resolve();
+        },
+        error: (reason) => {
+          console.log(reason);
+          resolve();
+        }
+      });
     });
   }
 
@@ -137,13 +135,12 @@ export class DocumentsCreationComponent implements OnInit, OnDestroy {
         this.getMainFolders(undefined, currentSelectedFolder);
         this.modalService.dismissAll();
         this.conformationPopup.openSuccessModal("Sub Folder created sucessfully");
+        f.resetForm();
       },
       error: (reason) => {
-        this.modalService.dismissAll();
         this.conformationPopup.openErrorModal("Sub Folder already exists");
         console.log(reason)
-      },
-      complete: () => f.resetForm()
+      }
     });
   }
 

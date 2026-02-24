@@ -351,7 +351,7 @@
         </div>
         <div class="mb-3">
           <label class="form-label custom-label mb-2">{{'Reason for Early Relieving'|translate}}<span class="error-msg">*</span></label>
-          <textarea class="form-control custom-input" maxlength="250" rows="3"
+          <textarea class="form-control custom-input" maxlength="400" rows="3"
             [placeholder]="'Please provide early relieving reason....'|translate"
             (keydown)="formValidations.restrictInitialSpace($event)" name="Reason"
             formControlName="earlyReleivingReason"></textarea>
@@ -523,12 +523,12 @@
                 <div class="mb-3">
                     <label for="formId" class="form-label custom-label mb-2">{{'Select Form'|translate}}<span class="text-danger">*</span></label>
                     <div class="custom-p-select-content">
-                        <p-select 
-                            [options]="availableForms" 
-                            optionLabel="formName" 
+                        <p-select
+                            [options]="availableForms"
+                            optionLabel="formName"
                             optionValue="formId"
-                            [placeholder]="'Please select a form'|translate" 
-                            class="form-select custom-select" 
+                            [placeholder]="'Please select a form'|translate"
+                            class="form-select custom-select"
                             formControlName="formId">
                         </p-select>
                     </div>
@@ -536,7 +536,7 @@
                         {{'Form selection is required'|translate}}
                     </div>
                 </div>
-                
+
                 <div class="d-flex justify-content-end gap-3">
                     <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">
                         {{'Cancel'|translate}}

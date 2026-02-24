@@ -355,7 +355,7 @@ export class ContractorLetterComponent implements OnInit, OnDestroy{
         this.employeeiddetails = data.map((employee: any) => {
           return {
             ...employee,
-            fullName: `${employee.employeeId ? employee.employeeId + ' - ' : ''}${employee.firstName} 
+            fullName: `${employee.employeeId ? employee.employeeId + ' - ' : ''}${employee.firstName}
             ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`
           };
         });
@@ -919,6 +919,7 @@ export class ContractorLetterComponent implements OnInit, OnDestroy{
       },
       error: (err: any) => {
         console.log(err);
+        this.ApprovalLoader = false;
       },
     });
   }
@@ -1147,6 +1148,7 @@ export class ContractorLetterComponent implements OnInit, OnDestroy{
       },
       error: (err: any) => {
         this.conformationPopup.openErrorModal('Email Sent Failed');
+        this.ApprovalLoader = false;
       },
       complete: () => { },
     });
@@ -1163,8 +1165,8 @@ export class ContractorLetterComponent implements OnInit, OnDestroy{
       isRead: false,
       isDelete: false,
       notificationDate: currentDate,
-      notificationType: `${loggedInUser?.firstName ?? ''} ${loggedInUser?.middleName ?? ''} ${loggedInUser.lastName ?? ''} 
-      requested you for the approval of the offer letter of employee ${this.prospectiveEmpData?.firstName} ${this.prospectiveEmpData?.middleName ?? ''} 
+      notificationType: `${loggedInUser?.firstName ?? ''} ${loggedInUser?.middleName ?? ''} ${loggedInUser.lastName ?? ''}
+      requested you for the approval of the offer letter of employee ${this.prospectiveEmpData?.firstName} ${this.prospectiveEmpData?.middleName ?? ''}
       ${this.prospectiveEmpData?.lastName} Offer Letter`,
       empId: loggedInUser.employeeId,
     };

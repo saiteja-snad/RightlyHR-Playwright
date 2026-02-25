@@ -21,6 +21,8 @@ export class UpdateWeekendsComponent {
   weekendForm!: FormGroup;
   weekendDataLM!: IWeekends;
   showbtn = false;
+  hidePublishCloneButtons: boolean = false;
+  initialWeekendsState: any;
   yearsList: number[] = [];
   locationDetails = [] as ILocation[];
   subLocationDetails = [] as ISubLocation[];
@@ -85,6 +87,7 @@ export class UpdateWeekendsComponent {
   addWeekend() {
     if (this.weekends.length < 3) {
       this.weekends.push(this.createWeekend());
+      this.hidePublishCloneButtons = true;
     } else {
       console.warn('Maximum of 7 weekends can be added.');
     }
@@ -103,12 +106,12 @@ export class UpdateWeekendsComponent {
              weekendGroup.get('week5')?.value;
     });
   }
-  
+
   onWeekChange(event : any,weekend: any) {
     console.log(event);
     console.log(weekend);
-    
-    
+
+
     this.isAtLeastOneWeekendChecked();
   }
   getAvailableDays(index: number): { label: string; value: string; disabled: boolean }[] {
@@ -172,7 +175,7 @@ export class UpdateWeekendsComponent {
       });
     }
   }
-  
+
   getAllYears() {
     for (let i = this.currentYear - 1; i <= this.currentYear + 1; i++) {
       this.yearsList.push(i);
@@ -223,6 +226,14 @@ export class UpdateWeekendsComponent {
         next: (res: any) => {
           this.shiftDetails = res.flatMap((header: any) => header.orgShiftsItems || []);
           this.weekendForm.get('shift')?.enable();
+
+          this.initialWeekendsState = JSON.stringify(this.weekends.getRawValue());
+          this.hidePublishCloneButtons = false;
+
+          this.weekends.valueChanges.subscribe(() => {
+            const currentState = JSON.stringify(this.weekends.getRawValue());
+            this.hidePublishCloneButtons = currentState === this.initialWeekendsState ? false : true;
+          });
         },
         error: err => {
           console.error('Error fetching shifts:', err);
@@ -264,9 +275,9 @@ export class UpdateWeekendsComponent {
   }
 
   updateWeekend(form: FormGroup) {
-     
+
     console.log(form);
-    
+
     if (form.invalid) {
       form.markAsTouched();
       return;

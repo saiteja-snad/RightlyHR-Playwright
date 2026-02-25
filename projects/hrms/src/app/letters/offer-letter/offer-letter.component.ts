@@ -880,6 +880,7 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
         }
       },
       error: (err: any) => {
+        this.conformationPopup.openErrorModal(err.error.Message);
         console.log(err);
       },
     });
@@ -918,6 +919,7 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
           }
         },
         error: (err: any) => {
+          this.conformationPopup.openErrorModal(err.error.Message);
           console.log(err);
         },
       });
@@ -945,6 +947,7 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
             }
           },
           error: (err: any) => {
+            this.conformationPopup.openErrorModal(err.error.Message);
             console.log(err);
           },
         });

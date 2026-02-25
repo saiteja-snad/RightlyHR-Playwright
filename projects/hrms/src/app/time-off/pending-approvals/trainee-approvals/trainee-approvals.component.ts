@@ -198,12 +198,17 @@ onCommentChange(value: string) {
 
   selectedSpRequestDataforheader = {} as any;
   handleRequests(request: Itraineeapproval) {
-    debugger
     this.requesthandler = request;
     this.selectedLeaveData = request.entity;
     this.selectedSpRequestDataforheader = request.approvalHeader;
     const endDate = request.entity?.traineeEndDate;
-    this.minExtendDate = endDate ? this.datePipe.transform(endDate, 'yyyy-MM-dd') : null;
+    if (endDate) {
+      const nextDay = new Date(endDate);
+      nextDay.setDate(nextDay.getDate() + 1);
+      this.minExtendDate = this.datePipe.transform(nextDay, 'yyyy-MM-dd');
+    } else {
+      this.minExtendDate = null;
+    }
     this.getEmployeedatabyid(this.selectedLeaveData);
   }
 

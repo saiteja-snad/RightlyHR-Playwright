@@ -287,7 +287,7 @@ export class TraineeOfferLetterComponent implements OnInit, OnDestroy {
           this.getAllEmployeeInfo = response.map((employee: any) => {
             return {
               ...employee,
-              fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName} 
+              fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName}
               ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
             };
           }).sort((a: any, b: any) => (a.firstName ?? '').localeCompare(b.firstName ?? ''));
@@ -318,7 +318,7 @@ export class TraineeOfferLetterComponent implements OnInit, OnDestroy {
         this.employeeiddetails = data.map((employee: any) => {
           return {
             ...employee,
-            fullName: `${employee.employeeId ? employee.employeeId + ' - ' : ''}${employee.firstName} 
+            fullName: `${employee.employeeId ? employee.employeeId + ' - ' : ''}${employee.firstName}
             ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
           };
         }).sort((a: any, b: any) => (a.firstName ?? '').localeCompare(b.firstName ?? ''));
@@ -786,6 +786,7 @@ export class TraineeOfferLetterComponent implements OnInit, OnDestroy {
         }
       },
       error: (err: any) => {
+        this.conformationPopup.openErrorModal(err.error.Message);
         console.log(err);
       },
     });
@@ -968,6 +969,7 @@ export class TraineeOfferLetterComponent implements OnInit, OnDestroy {
             }
           },
           error: (err: any) => {
+            this.conformationPopup.openErrorModal(err.error.Message);
             console.log(err);
           },
         });
@@ -996,6 +998,7 @@ export class TraineeOfferLetterComponent implements OnInit, OnDestroy {
             }
           },
           error: (err: any) => {
+            this.conformationPopup.openErrorModal(err.error.Message);
             console.log(err);
           },
         });

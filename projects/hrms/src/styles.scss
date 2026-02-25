@@ -358,6 +358,12 @@ body {
     }
 }
 
+
+//placeholder red color error message fix
+::ng-deep .p-select.ng-invalid.ng-dirty .p-select-label.p-placeholder {
+    color: #64748b !important;
+}
+
 //employeeinfotabs
 .employee-info-nav-tabs {
     .nav-link {
@@ -3116,5 +3122,6 @@ input[type=number]::-webkit-outer-spin-button {
         }
 
     }
+
 
 }

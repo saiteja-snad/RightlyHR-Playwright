@@ -59,7 +59,7 @@
                             </ng-template>
                         </td>
                         <td class="text-nowrap">
-                            <div *ngIf="item.status!='Not Submitted'; else showHyphen">
+                            <div *ngIf="item.status!=='Verified'; else showHyphen">
                                 <div
                                     *ngIf="item.status == null || item.status == 'Requested' || item.status =='Not Submitted'">
                                     <button type="button" class="custom-btn btn-primary py-2"

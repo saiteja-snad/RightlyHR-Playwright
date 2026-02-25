@@ -919,6 +919,7 @@ export class ContractorLetterComponent implements OnInit, OnDestroy{
       },
       error: (err: any) => {
         console.log(err);
+        this.conformationPopup.openErrorModal(err.error.Message);
         this.ApprovalLoader = false;
       },
     });
@@ -961,6 +962,7 @@ export class ContractorLetterComponent implements OnInit, OnDestroy{
           }
         },
         error: (err: any) => {
+          this.conformationPopup.openErrorModal(err.error.Message);
           console.log(err);
         },
       });
@@ -982,6 +984,7 @@ export class ContractorLetterComponent implements OnInit, OnDestroy{
           }
         },
         error: (err: any) => {
+          this.conformationPopup.openErrorModal(err.error.Message);
           console.log(err);
         },
       });

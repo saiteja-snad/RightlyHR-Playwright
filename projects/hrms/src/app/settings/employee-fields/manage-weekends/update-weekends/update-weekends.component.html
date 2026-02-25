@@ -156,9 +156,9 @@
         <div class="d-flex justify-content-end gap-3">
             <button type="button" class="custom-btn btn-secondary px-5" (click)="Cancel()">{{"Cancel" |
                 translate}}</button>
-            <button type="button" class="custom-btn clone-btn px-5" (click)="navigateToClone()">{{"Clone" |
+            <button type="button" class="custom-btn clone-btn px-5" (click)="navigateToClone()" *ngIf="!hidePublishCloneButtons">{{"Clone" |
                 translate}}</button>
-            <button type="button" class="custom-btn publish-btn px-5" (click)="publishWeekends()">{{"Publish" |
+            <button type="button" class="custom-btn publish-btn px-5" (click)="publishWeekends()" *ngIf="!hidePublishCloneButtons">{{"Publish" |
                 translate}}</button>
             <button type="submit" class="custom-btn btn-primary px-5"
                 [disabled]="weekendForm.invalid || !isAtLeastOneWeekendChecked()">{{"Update" | translate}}</button>

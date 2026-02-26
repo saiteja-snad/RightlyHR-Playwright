@@ -50,7 +50,7 @@
           <i class="bi bi-search"></i>
         </span>
         <input type="search" #search="ngModel" [(ngModel)]="searchValue" (ngModelChange)="onSearchChange()" class="form-control custom-search-input"
-          [placeholder]="'Search by client name / project name / project type' | translate" aria-label="Search"
+          [placeholder]="'Search by Project Name / Project Code / Project Type / Department' | translate" aria-label="Search"
           aria-describedby="basic-addon1">
       </div>
 
@@ -138,7 +138,7 @@
               <option *ngFor="let option of options" [value]="option.value">{{ option.label }}</option>
             </select>
             <span class="pagination-label text-nowrap">
-              {{ 'Showing' | translate }} {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize : 
+              {{ 'Showing' | translate }} {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize :
               (+first + +rows) }} {{ 'of' | translate }} {{ collectionSize }}
             </span>
           </div>

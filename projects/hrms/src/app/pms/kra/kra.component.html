@@ -240,7 +240,7 @@
               {{ 'KRA Title' | translate }} <span class="text-danger">*</span>
             </label>
             <input type="text" class="form-control custom-input" formControlName="kraName" placeholder="Enter KRA title"
-              maxlength="50" (keypress)="alphaNumericOnly($event)">
+              maxlength="50" (keypress)="alphaNumericOnly($event)" (input)="formValidation.validateInput(kraForm.get('kraName'))">
             <div class="error-msg" *ngIf="f['kraName'].touched && f['kraName'].invalid">
               <span *ngIf="f['kraName'].errors?.['required']">KRA Title is required</span>
             </div>

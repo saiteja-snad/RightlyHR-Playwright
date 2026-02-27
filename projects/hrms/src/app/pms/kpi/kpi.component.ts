@@ -77,6 +77,8 @@ export class KpiComponent implements OnInit, OnDestroy {
   first = 0;
   collectionSize = 0;
 
+  allKpiRecords: any[] = [];
+
   options = [
     { label: 10, value: 10 },
     { label: 15, value: 15 },
@@ -184,14 +186,16 @@ toggleInactiveFilter(): void {
     ? "Active KPI's"
     : "Inactive KPI's";
 
-  this.applyStatusFilter();
+  this.page = 1;
+  this.first = 0;
+  this.loadKpiList();
 }
 
 
   loadKpiList() {
-    const params = {
-      pageNumber: this.page,
-      pageSize: this.rows,
+    const params: any = {
+      pageNumber: 1,
+      pageSize: 1000,
       ...(this.searchText && { search: this.searchText }),
     };
 
@@ -201,14 +205,24 @@ toggleInactiveFilter(): void {
       .subscribe({
         next: (res: any) => {
           if (res.success) {
-            this.kpiList = res.data || [];
-            this.totalRecordsFromApi = res.pagination?.totalRecords || 0;
+            this.allKpiRecords = res.data || [];
 
-          this.applyStatusFilter();
-            this.filteredDetails = this.showOnlyInactive
-              ? this.kpiList.filter((kpi) => kpi.status === 'Inactive')
-              : this.kpiList.filter((kpi) => kpi.status !== 'Inactive');
+            let filtered: any[];
+            if (this.showOnlyInactive) {
+              filtered = this.allKpiRecords.filter((kpi: any) => kpi.status === 'Inactive');
+            } else {
+              filtered = this.allKpiRecords.filter((kpi: any) => kpi.status !== 'Inactive');
+            }
+
+            this.collectionSize = filtered.length;
+
+            const startIndex = (this.page - 1) * this.rows;
+            const endIndex = startIndex + this.rows;
+            this.filteredDetails = filtered.slice(startIndex, endIndex);
+
+            this.kpiList = this.allKpiRecords;
           } else {
+            this.allKpiRecords = [];
             this.kpiList = [];
             this.filteredDetails = [];
             this.collectionSize = 0;
@@ -217,6 +231,7 @@ toggleInactiveFilter(): void {
         },
         error: (err) => {
           console.error(err);
+          this.allKpiRecords = [];
           this.kpiList = [];
           this.filteredDetails = [];
           this.collectionSize = 0;
@@ -224,14 +239,6 @@ toggleInactiveFilter(): void {
         },
       });
   }
-
-  private applyStatusFilter(): void {
-  this.filteredDetails = this.showOnlyInactive
-    ? this.kpiList.filter(kpi => kpi.status === 'Inactive')
-    : this.kpiList.filter(kpi => kpi.status !== 'Inactive');
-
-  this.collectionSize = this.totalRecordsFromApi;
-}
 
 
   onSearchTextChange() {

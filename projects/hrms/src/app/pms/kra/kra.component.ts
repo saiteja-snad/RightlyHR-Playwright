@@ -76,6 +76,9 @@ export class KraComponent implements OnInit, OnDestroy {
   first = 0;
   collectionSize = 0;
 
+  totalRecordsFromApi = 0;
+  allKraRecords: any[] = [];
+
   selectedKraId: number = 0;
 
   options = [
@@ -221,7 +224,6 @@ existingDocumentUrl: string = '';
 
   toggleInactiveKra(): void {
     this.showInactiveFilter = !this.showInactiveFilter;
-
     this.kraFilterApplied = this.showInactiveFilter;
 
     this.page = 1;
@@ -232,8 +234,8 @@ existingDocumentUrl: string = '';
 
   loadKraList() {
     const params: any = {
-      pageNumber: this.page,
-      pageSize: this.rows,
+      pageNumber: 1,
+      pageSize: 1000,
       ...(this.searchText && { search: this.searchText }),
     };
 
@@ -244,15 +246,24 @@ existingDocumentUrl: string = '';
       .subscribe({
         next: (res: any) => {
           if (res.success) {
-            const allData = res.data || [];
+            this.allKraRecords = res.data || [];
 
-            this.kraList = this.showInactiveFilter
-              ? allData.filter((kra: any) => kra.status === 'Inactive')
-              : allData.filter((kra: any) => kra.status !== 'Inactive');
+            let filtered: any[];
+            if (this.showInactiveFilter) {
+              filtered = this.allKraRecords.filter((kra: any) => kra.status === 'Inactive');
+            } else {
+              filtered = this.allKraRecords.filter((kra: any) => kra.status !== 'Inactive');
+            }
 
-            this.filteredDetails = this.kraList;
-            this.collectionSize = this.filteredDetails.length;
+            this.collectionSize = filtered.length;
+
+            const startIndex = (this.page - 1) * this.rows;
+            const endIndex = startIndex + this.rows;
+            this.filteredDetails = filtered.slice(startIndex, endIndex);
+
+            this.kraList = this.allKraRecords;
           } else {
+            this.allKraRecords = [];
             this.kraList = [];
             this.filteredDetails = [];
             this.collectionSize = 0;
@@ -261,6 +272,7 @@ existingDocumentUrl: string = '';
           this.dataload = false;
         },
         error: () => {
+          this.allKraRecords = [];
           this.kraList = [];
           this.filteredDetails = [];
           this.collectionSize = 0;
@@ -303,7 +315,7 @@ existingDocumentUrl: string = '';
   }
 
   onPageSizeChange(newSize: number) {
-    this.rows = newSize;
+    this.rows = Number(newSize);
     this.page = 1;
     this.first = 0;
     this.loadKraList();

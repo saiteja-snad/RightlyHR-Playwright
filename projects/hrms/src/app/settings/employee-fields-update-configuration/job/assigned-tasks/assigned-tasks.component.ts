@@ -124,7 +124,7 @@ export class AssignedTasksComponent {
   }
 
   getAllRoles(): void {
-    this.subscription = this.http.getData('FusionRole').subscribe({
+    this.subscription = this.http.getData('RightlyHrRole').subscribe({
       next: (data: any) => {
         this.roles = data as IRoles[];
       },
@@ -139,8 +139,8 @@ export class AssignedTasksComponent {
     if (this.fieldConfigForm.valid) {
       const formValue = this.isEditMode ? this.fieldConfigForm.getRawValue() : this.fieldConfigForm.value;
       let loggedInUser = this.authService.getToken();
-      let approvalAuthority = formValue.approvalType == 'EMP' ? formValue.selectedEmployee : 
-                              formValue.approvalType == 'ROLE' ? formValue.selectedRole : 
+      let approvalAuthority = formValue.approvalType == 'EMP' ? formValue.selectedEmployee :
+                              formValue.approvalType == 'ROLE' ? formValue.selectedRole :
                               formValue.approvalType == 'MANAGER' ? formValue.selectedManager : '';
 
       if (this.isEditMode) {

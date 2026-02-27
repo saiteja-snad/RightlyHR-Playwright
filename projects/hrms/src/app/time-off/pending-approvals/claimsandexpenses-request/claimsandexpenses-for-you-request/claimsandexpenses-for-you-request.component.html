@@ -29,20 +29,20 @@
           *ngIf="(expenseheaderpending | searchfordesk: searchValue : ['entity.employeeName', 'entity.expenses_Title','entity.totalExpenseAmount','entity.status']).length > 0; else noDataTemplate">
           <tr
             *ngFor="let leave of expenseheaderpending  | searchfordesk: searchValue : ['entity.employeeName', 'entity.expenses_Title','entity.totalExpenseAmount','entity.status']; let i = index">
-            <td>{{ leave.entity.employeeName }}</td>
-            <td>{{ leave.entity.expenses_Title }}</td>
-            <td>{{ leave.entity.applied_date | dateformat }}</td>
-            <td>{{ leave.entity.totalExpenseAmount }}</td>
-            <td>{{ leave.entity.status }}</td>
+            <td>{{ leave?.entity?.employeeName }}</td>
+            <td>{{ leave?.entity?.expenses_Title }}</td>
+            <td>{{ leave?.entity?.applied_date | dateformat }}</td>
+            <td>{{ leave?.entity?.totalExpenseAmount }}</td>
+            <td>{{ leave?.entity?.status }}</td>
              <td class="text-center">
               <div class="dropdown">
-                <a class="dropdown-item" (click)="openModal(viewDetailsModal); viewItem(leave.entity.expenses_ID)">
+                <a class="dropdown-item" (click)="openModal(viewDetailsModal); viewItem(leave?.entity?.expenses_ID)">
                   <i class="bi bi-eye-fill me-2"></i></a>
               </div>
             </td>
             <td class="text-center">
-              <div *ngIf="leave.entity.expenseApproverComments.length > 0; else NA">
-                <a type="button" (click)="comments(leave.entity.expenseApproverComments,commentspopup)">
+              <div *ngIf="leave?.entity?.expenseApproverComments?.length > 0; else NA">
+                <a type="button" (click)="comments(leave?.entity?.expenseApproverComments,commentspopup)">
                   <app-info-icon />
                 </a>
               </div>
@@ -57,14 +57,14 @@
                 </a>
                 <ul class="dropdown-menu py-0">
                   @if(rbac.allowedToAccess('For You (Claims and Expenses).update')) {
-                  @if( leave.approvalHeader.currentapprovalStage != leave.approvalHeader.finalapprovalStage){
+                  @if( leave?.approvalHeader?.currentapprovalStage != leave?.approvalHeader?.finalapprovalStage){
                   <li (click)="openApproveModal(approval, leave)">
                     <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{ "Approve" | translate }}</a>
                   </li>
                   }
                   }
                   @if(rbac.allowedToAccess('For You (Claims and Expenses).update')) {
-                  @if( leave.approvalHeader.currentapprovalStage == leave.approvalHeader.finalapprovalStage){
+                  @if( leave?.approvalHeader?.currentapprovalStage == leave?.approvalHeader?.finalapprovalStage){
                   <li (click)="handleProcess(leave)">
                     <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{ "Process" | translate }}</a>
                   </li>
@@ -267,7 +267,7 @@
                     <!-- @if (rbac.allowedToAccess('For Role (Claims and Expenses).update')) { -->
                     <!-- @if (expenseheaderiteams.approvalHeader?.currentapprovalStage === expenseheaderiteams.approvalHeader?.finalapprovalStage) { -->
                   <!-- @if (!(item?.isVerified === true|| verifiedExpenseIds?.includes(item?.expenseitem_id ?? 0))) {
-                   
+
                     <li>
                       <a class="dropdown-item" (click)="openVerifyModal(item, Verify)">
                         <i class="bi bi-check-circle me-2"></i>{{ 'Verify' | translate }}

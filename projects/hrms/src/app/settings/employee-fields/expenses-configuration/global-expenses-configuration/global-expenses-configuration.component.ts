@@ -144,7 +144,7 @@ export class GlobalExpensesConfigurationComponent implements OnInit, OnDestroy {
         [
           Validators.required,
           Validators.maxLength(50),
-       
+
         ],
       ],
     });
@@ -182,7 +182,7 @@ export class GlobalExpensesConfigurationComponent implements OnInit, OnDestroy {
 
 resetData(){
   this.expenseForm.get('approverValue')?.reset();
-  this.expenseForm.get('approver')?.reset();  
+  this.expenseForm.get('approver')?.reset();
   this.expenseForm.get('frequency')?.reset();
   this.expenseForm.get('budget')?.reset();
   this.expenseForm.get('selectedYear')?.setValue(this.currentYear);
@@ -215,7 +215,7 @@ resetData(){
             // .filter((employee: any) => employee.employeeId !== this.empdata.employeeId)
             .map((employee: any) => ({
               ...employee,
-              fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName ?? ''} 
+              fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName ?? ''}
                 ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`.trim(),
             }));
           this.approverList = this.getAllEmployeeInfo.map((emp: any) => ({
@@ -248,7 +248,7 @@ resetData(){
   }
 
   getRoles(restoreValue?: any) {
-    this.subscription = this.http.getData("FusionRole").subscribe({
+    this.subscription = this.http.getData("RightlyHrRole").subscribe({
       next: (data: any) => {
         this.rolesdetails = data as Iroles[];
         this.approverList = this.rolesdetails.map((role: any) => ({
@@ -389,9 +389,9 @@ onAmountInput(event: Event): void {
       this.globalForm.get('budget')?.setValue(sanitizedValue);
     }
     // Calculate total expenses amount if valid
-   
+
   }
-  
+
   onBudgetInput(event: Event, formType: 'add' | 'update'): void {
     const inputElement = event.target as HTMLInputElement;
     let sanitizedValue = inputElement.value.replace(/[^0-9.]/g, '');
@@ -495,7 +495,7 @@ onAmountInput(event: Event): void {
 
     const selectedYear = this.expenseupdateForm.get('selectedYear')?.value;
     console.log('Selected Year:', selectedYear);
-    
+
     const payload = {
       id: this.selectedExpensesId,
       applicable_Year: selectedYear,
@@ -507,7 +507,7 @@ onAmountInput(event: Event): void {
       is_Deleted: false,
     };
     console.log('Payload:', payload);
-    
+
 
     this.subscription = this.http
       .putData('GlobalExpenseBudgetConfigurations/Update', payload)

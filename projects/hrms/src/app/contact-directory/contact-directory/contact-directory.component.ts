@@ -12,9 +12,10 @@ import { MODULE_INFOS } from '../../shared/modules-info';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
 import { ProfileIconComponent } from "../../icons/profile-icon/profile-icon.component";
+import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
 @Component({
   selector: 'app-contact-directory',
-  imports: [CommonModule, FormsModule, TranslateModule, TabsModule, Skeleton, NgbPopoverModule, ModuleInformationComponent, ProfileIconComponent],
+  imports: [CommonModule, FormsModule, TranslateModule, TabsModule, Skeleton, NgbPopoverModule, ModuleInformationComponent, ProfileIconComponent, ModuleInfoIconComponent],
   templateUrl: './contact-directory.component.html',
   styleUrl: './contact-directory.component.scss'
 })

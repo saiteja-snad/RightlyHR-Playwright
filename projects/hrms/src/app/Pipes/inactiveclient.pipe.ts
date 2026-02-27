@@ -10,7 +10,7 @@ export class InactiveclientPipe implements PipeTransform {
        if ((!active) || !searchValue) {
          return active;
        }
-   
+
        const lowerSearch = searchValue.toLowerCase();
        return active.filter(p =>
          p.clientName?.toLowerCase().includes(lowerSearch) ||
@@ -18,9 +18,14 @@ export class InactiveclientPipe implements PipeTransform {
          p.taxId?.toLowerCase().includes(lowerSearch) ||
          p.industryType?.toString().includes(lowerSearch) ||
          p.createdBy?.name?.toString().includes(lowerSearch) ||
-         p.status?.toLowerCase().includes(lowerSearch)
-       );
+         p.status?.toLowerCase().includes(lowerSearch) ||
+         p.contact?.email?.toLowerCase().includes(lowerSearch) ||
+         p.contact?.role?.toLowerCase().includes(lowerSearch) ||
+         p.contact?.phoneNumber?.toString().includes(lowerSearch) ||
+         p.status?.toLowerCase().includes(lowerSearch) ||
+         p.contact?.name?.toString().includes(lowerSearch)
+      );
      }
-  
+
 
 }

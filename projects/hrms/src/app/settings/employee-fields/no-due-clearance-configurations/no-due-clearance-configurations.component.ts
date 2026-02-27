@@ -108,7 +108,7 @@ export class NoDueClearanceConfigurationsComponent implements OnInit, OnDestroy 
     });
   }
   getAllRoles(): void {
-    this.http.getData('FusionRole').pipe(takeUntil(this.destroy$)).subscribe({
+    this.http.getData('RightlyHrRole').pipe(takeUntil(this.destroy$)).subscribe({
       next: (data: any) => {
         this.roles = data as IRoles[]
       },
@@ -195,41 +195,41 @@ export class NoDueClearanceConfigurationsComponent implements OnInit, OnDestroy 
     const managerControl = this.noDueForm.get('managerType');
     const roleControl = this.noDueForm.get('role');
     const employeeControl = this.noDueForm.get('employee');
-  
+
     this.noDueForm.get('selectedType')?.valueChanges.subscribe(value => {
       if (value === 'DEPT') {
         // Set DEPT-related validators
         deptControl?.setValidators(Validators.required);
         empRoleControl?.setValidators(Validators.required);
-  
+
         // Clear EMPMNGR validators and values
         managerControl?.clearValidators();
         managerControl?.reset();
-  
+
         roleControl?.clearValidators();
         roleControl?.reset();
-  
+
         employeeControl?.clearValidators();
         employeeControl?.reset();
-  
+
       } else if (value === 'EMPMNGR') {
         // Set EMPMNGR-related validators
         managerControl?.setValidators(Validators.required);
-  
+
         // Clear DEPT-related validators and values
         deptControl?.clearValidators();
         deptControl?.reset();
-  
+
         empRoleControl?.clearValidators();
         empRoleControl?.reset();
-  
+
         roleControl?.clearValidators();
         roleControl?.reset();
-  
+
         employeeControl?.clearValidators();
         employeeControl?.reset();
       }
-  
+
       // Ensure all controls update
       deptControl?.updateValueAndValidity();
       empRoleControl?.updateValueAndValidity();
@@ -237,7 +237,7 @@ export class NoDueClearanceConfigurationsComponent implements OnInit, OnDestroy 
       roleControl?.updateValueAndValidity();
       employeeControl?.updateValueAndValidity();
     });
-  
+
     this.noDueForm.get('selectedEmpRole')?.valueChanges.subscribe(value => {
       if (value === 'EMPLOYEE') {
         employeeControl?.setValidators(Validators.required);
@@ -248,7 +248,7 @@ export class NoDueClearanceConfigurationsComponent implements OnInit, OnDestroy 
         employeeControl?.clearValidators();
         employeeControl?.reset();
       }
-  
+
       roleControl?.updateValueAndValidity();
       employeeControl?.updateValueAndValidity();
     });
@@ -260,40 +260,40 @@ export class NoDueClearanceConfigurationsComponent implements OnInit, OnDestroy 
     const roleControl = this.updateDueForm.get('role');
     const employeeControl = this.updateDueForm.get('Updateemployee');
     const empRoleControl = this.updateDueForm.get('UpdateselectedEmpRole');
-  
+
     this.updateDueForm.get('UpdateselectedType')?.valueChanges.subscribe(value => {
       if (value === 'DEPT') {
         deptControl?.setValidators(Validators.required);
         managerControl?.clearValidators();
         managerControl?.reset();
-  
+
         empRoleControl?.enable(); // Enable employee/role selection again
-  
+
       } else if (value === 'EMPMNGR') {
         managerControl?.setValidators(Validators.required);
-  
+
         deptControl?.clearValidators();
         deptControl?.reset();
-  
+
         empRoleControl?.reset();
         empRoleControl?.disable(); // Disable if not needed in manager flow
-  
+
         roleControl?.clearValidators();
         roleControl?.reset();
-  
+
         employeeControl?.clearValidators();
         employeeControl?.reset();
       }
-  
+
       deptControl?.updateValueAndValidity();
       managerControl?.updateValueAndValidity();
       empRoleControl?.updateValueAndValidity();
       roleControl?.updateValueAndValidity();
       employeeControl?.updateValueAndValidity();
-  
+
       this.updateDueForm.updateValueAndValidity(); // <- Critical to trigger form validity refresh
     });
-  
+
     empRoleControl?.valueChanges.subscribe(value => {
       if (value === 'EMPLOYEE') {
         employeeControl?.setValidators(Validators.required);
@@ -304,20 +304,20 @@ export class NoDueClearanceConfigurationsComponent implements OnInit, OnDestroy 
         employeeControl?.clearValidators();
         employeeControl?.reset();
       }
-  
+
       roleControl?.updateValueAndValidity();
       employeeControl?.updateValueAndValidity();
       this.updateDueForm.updateValueAndValidity();
     });
-  
+
     // Optional: log for debugging
     this.updateDueForm.statusChanges.subscribe(status => {
       console.log("Form Status:", status, this.updateDueForm.value);
     });
   }
-  
-  
-  
+
+
+
   addNoDue(form: FormGroup) {
     if (form.invalid) {
       form.markAllAsTouched();
@@ -435,17 +435,17 @@ export class NoDueClearanceConfigurationsComponent implements OnInit, OnDestroy 
 
   patchUpdateDueForm(item: any) {
     const approverEmpRoleValue = item.roleType === 'Employee' ? 'EMPLOYEE' : 'ROLE';
-  
+
     let selectedEmployees: any[] = [];
     if (item.approverType === 'DEPT' && approverEmpRoleValue === 'EMPLOYEE') {
       const employeeIds = (item.authorityEntityValue || '').split(',').map((id: string) => id.trim());
       selectedEmployees = this.usersList.filter(user => employeeIds.includes(String(user.employeeId)));
     }
-  
+
     const selectedDepartment = this.departmentList.find(dept => dept.departmentName === item.departmentName) || null;
     const selectedManager = this.managerOptions.find(opt => opt.value === item.authorityEntityValue) || null;
     const selectedRole = this.roles.find(r => r.name.toLowerCase() === item.roleName?.toLowerCase()) || null;
-  
+
     // Patch initial form values without emitting change events
     this.updateDueForm.patchValue({
       UpdateselectedType: item.approverType,
@@ -455,14 +455,14 @@ export class NoDueClearanceConfigurationsComponent implements OnInit, OnDestroy 
       role: approverEmpRoleValue === 'ROLE' ? selectedRole : '',
       managerType: item.approverType === 'EMPMNGR' ? selectedManager : ''
     }, { emitEvent: false });
-  
+
     // Manually trigger required validators
     const deptControl = this.updateDueForm.get('Updatedepartment');
     const managerControl = this.updateDueForm.get('managerType');
    // const empRoleControl = this.updateDueForm.get('UpdateselectedEmpRole');
     const empControl = this.updateDueForm.get('Updateemployee');
     const roleControl = this.updateDueForm.get('role');
-  
+
     if (item.approverType === 'DEPT') {
       deptControl?.setValidators(Validators.required);
       managerControl?.clearValidators();
@@ -480,16 +480,16 @@ export class NoDueClearanceConfigurationsComponent implements OnInit, OnDestroy 
       empControl?.clearValidators();
       roleControl?.clearValidators();
     }
-  
+
     // Update all controls
     deptControl?.updateValueAndValidity();
     managerControl?.updateValueAndValidity();
     empControl?.updateValueAndValidity();
     roleControl?.updateValueAndValidity();
-  
+
     // Update form status
     this.updateDueForm.updateValueAndValidity();
-  
+
     // Open modal
     this.modalService.open(this.updatenodue, {
       backdrop: 'static',
@@ -497,7 +497,7 @@ export class NoDueClearanceConfigurationsComponent implements OnInit, OnDestroy 
       centered: true
     });
   }
-  
+
   capitalizeFirstLetter(text: string): string {
     if (!text) return '';
     return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();

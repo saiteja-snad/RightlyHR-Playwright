@@ -57,7 +57,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
   }
 
   getAllroles(): void {
-    this.http.getData('FusionRole').pipe(takeUntil(this.destroy$)).subscribe({
+    this.http.getData('RightlyHrRole').pipe(takeUntil(this.destroy$)).subscribe({
       next: (data: any) => {
         this.roles = data as IRoles[];
       },
@@ -103,7 +103,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
   }
 
   getRolepermission(id: string) {
-    this.http.getData(`FusionRoleClaims/getRoleClaimsbyroleId/${id}`).pipe(takeUntil(this.destroy$)).subscribe({
+    this.http.getData(`RightlyHrRoleClaims/getRoleClaimsbyroleId/${id}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data: any) => {
         this.permissionsReset(data);
       },
@@ -230,7 +230,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
   permissionsCreate() {
     this.modalService.open(this.stagingLoadingModal, { centered: true });
     const payload = this.preparePayload(this.roleId);
-    this.http.postdata('FusionRoleClaims/rolePermissions', payload).subscribe({
+    this.http.postdata('RightlyHrRoleClaims/rolePermissions', payload).subscribe({
       next: (data) => {
         this.modalService.dismissAll();
         this.modal.openSuccessModal('Permissions updated successfully');

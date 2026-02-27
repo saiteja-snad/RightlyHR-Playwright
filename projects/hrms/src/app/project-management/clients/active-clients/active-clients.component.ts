@@ -11,7 +11,7 @@ import { DataLoaderContentComponent } from "../../../shared/data-loader-content/
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { environment } from '../../../../environments/environment';
 import { RbacService } from '../../../services/rbac.service';
-import { Client } from '../../../clients.model';
+import { Client } from '../../../Interfaces/clients.model';
 import { TranslateModule } from '@ngx-translate/core';
 import { ConfirmationIconComponent } from "../../../icons/confirmation-icon/confirmation-icon.component";
 import { ActiveclientsPipe } from "../../../Pipes/activeclients.pipe";

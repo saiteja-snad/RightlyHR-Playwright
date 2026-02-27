@@ -375,7 +375,7 @@ export class OnboardingDetailsComponent implements OnInit, OnDestroy{
   }
 
 
-  
+
 
   patchForm(data: any): void {
     const remoteLoginWorkLocation = this.filteredRemoteLoginWorkLocations.find(
@@ -544,7 +544,7 @@ export class OnboardingDetailsComponent implements OnInit, OnDestroy{
   getWorkfromhomeManager() {
     this.subscription = this.http
       .getData(
-        'FusionRole/getbyNormalizedName?Nname=WORK FROM HOME MANAGER&includeAssignee=true'
+        'RightlyHrRole/getbyNormalizedName?Nname=WORK FROM HOME MANAGER&includeAssignee=true'
       )
       .subscribe({
         next: (data: any) => {
@@ -576,7 +576,7 @@ export class OnboardingDetailsComponent implements OnInit, OnDestroy{
   getRemoteLoginManagers() {
     const normalizedName = encodeURIComponent('REMOTE LOGIN MANAGER');
     const includeAssignee = true;
-    const url = `FusionRole/getbyNormalizedName?Nname=${normalizedName}&includeAssignee=${includeAssignee}`;
+    const url = `RightlyHrRole/getbyNormalizedName?Nname=${normalizedName}&includeAssignee=${includeAssignee}`;
     this.subscription = this.http.getData(url).subscribe({
       next: (data: any) => {
         this.remoteLoginManagers = data.getUserWithRoleNames.map(

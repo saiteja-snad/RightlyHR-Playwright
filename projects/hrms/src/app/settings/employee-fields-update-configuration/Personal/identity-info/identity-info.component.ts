@@ -39,7 +39,7 @@ import { DropdownModule } from 'primeng/dropdown';
     ToggleSwitchModule,
     DataLoaderContentComponent,
     NoDataFoundComponent,
-    DropdownModule 
+    DropdownModule
   ],
   templateUrl: './identity-info.component.html',
   styleUrl: './identity-info.component.scss',
@@ -68,7 +68,7 @@ export class IdentityInfoComponent implements OnInit, OnDestroy {
     { label: 'Team Manager', value: 'TM' },
   ];
   roles = [] as any;
-  
+
    actionsOptions = [
     { label: 'Add', value: 'Add' ,optionDisabled: false},
     { label: 'Delete', value: 'Delete',optionDisabled: false },
@@ -195,7 +195,7 @@ get isReadOnlyMode(): boolean {
   }
 
   getAllRoles(): void {
-    this.subscription = this.http.getData('FusionRole').subscribe({
+    this.subscription = this.http.getData('RightlyHrRole').subscribe({
       next: (data: any) => {
         this.roles = data as IRoles[];
       },

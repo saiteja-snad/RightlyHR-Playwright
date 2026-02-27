@@ -1094,6 +1094,11 @@ setinactiveSearchCount(count: any) {
     this.departmentIdsSource.next(ids);
   }
 
+  resetProjectPagination() {
+    const currentValue = this.departmentIdsSource.getValue();
+    this.departmentIdsSource.next(currentValue);
+  }
+
   // update count
 pendingApprovalCount$ = new BehaviorSubject<any[]>([]);
 updatePendingApprovalCounts(counts: any[]) {

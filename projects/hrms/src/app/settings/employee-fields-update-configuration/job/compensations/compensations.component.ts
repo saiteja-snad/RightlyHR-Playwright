@@ -123,7 +123,7 @@ export class CompensationsComponent {
   }
 
   getAllRoles(): void {
-    this.subscription = this.http.getData('FusionRole').subscribe({
+    this.subscription = this.http.getData('RightlyHrRole').subscribe({
       next: (data: any) => {
         this.roles = data as IRoles[];
       },
@@ -137,8 +137,8 @@ export class CompensationsComponent {
     if (this.fieldConfigForm.valid) {
       const formValue = this.isEditMode ? this.fieldConfigForm.getRawValue() : this.fieldConfigForm.value;
       let loggedInUser = this.authService.getToken();
-      let approvalAuthority = formValue.approvalType == 'EMP' ? formValue.selectedEmployee : 
-                              formValue.approvalType == 'ROLE' ? formValue.selectedRole : 
+      let approvalAuthority = formValue.approvalType == 'EMP' ? formValue.selectedEmployee :
+                              formValue.approvalType == 'ROLE' ? formValue.selectedRole :
                               formValue.approvalType == 'MANAGER' ? formValue.selectedManager : '';
 
       if (this.isEditMode) {
@@ -202,7 +202,7 @@ export class CompensationsComponent {
     this.selectedDeleteConfigItem = configItem;
     this.modalService.open(this.deletepopup, { backdrop: 'static', centered: true });
   }
-  
+
   onDelete(modal: any) {
     if (!this.selectedDeleteConfigItem) return;
 
@@ -218,7 +218,7 @@ export class CompensationsComponent {
       }
     });
   }
-  
+
   closeDelete(modal: any) {
     modal.dismiss();
   };
@@ -254,7 +254,7 @@ export class CompensationsComponent {
 
  // Setup form subscriptions for reactive changes
   setupFormSubscriptions() {
-   
+
 
     // Watch for approval type changes
     this.fieldConfigForm.get('approvalType')?.valueChanges.subscribe(value => {

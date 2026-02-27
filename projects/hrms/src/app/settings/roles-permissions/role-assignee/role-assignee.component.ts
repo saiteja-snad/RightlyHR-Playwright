@@ -174,7 +174,7 @@ export class RoleAssigneeComponent implements OnInit, OnDestroy {
       employeeId: this.userId,
       roleId: this.roleId,
     };
-    this.http.postdata('RightlyHrUser/deleteFusionUserRolesByEmployeeId&RoleId', payload).subscribe({
+    this.http.postdata('RightlyHrUser/deleteUserRolesByEmployeeId&RoleId', payload).subscribe({
       next: (res: any) => {
         this.modalService.dismissAll();
         this.modal.openSuccessModal('Assignee removed successfully');

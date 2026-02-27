@@ -34,7 +34,7 @@ import { DropdownModule } from 'primeng/dropdown';
     ToggleSwitchModule,
     DataLoaderContentComponent,
     NoDataFoundComponent,
-    DropdownModule 
+    DropdownModule
   ],
   templateUrl: './bank-info.component.html',
   styleUrl: './bank-info.component.scss',
@@ -248,7 +248,7 @@ get isReadOnlyMode(): boolean {
   }
 
   getAllRoles(): void {
-    this.subscription = this.http.getData('FusionRole').subscribe({
+    this.subscription = this.http.getData('RightlyHrRole').subscribe({
       next: (data: any) => {
         this.roles = data as IRoles[];
       },

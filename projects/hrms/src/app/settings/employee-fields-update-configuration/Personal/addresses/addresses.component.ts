@@ -262,7 +262,7 @@ export class AddressesComponent {
   }
 
   getAllRoles(): void {
-    this.subscription = this.http.getData('FusionRole').subscribe({
+    this.subscription = this.http.getData('RightlyHrRole').subscribe({
       next: (data: any) => {
         this.roles = data as IRoles[];
       },

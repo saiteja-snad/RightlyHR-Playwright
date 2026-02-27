@@ -73,7 +73,7 @@ export class RolesComponent implements OnInit, OnDestroy {
 
   getrole() {
     this.dataLoad= true;
-    this.subscription = this.http.getData("FusionRole").subscribe({
+    this.subscription = this.http.getData("RightlyHrRole").subscribe({
       next: (data: any) => {
         this.rolesdetails = data as Iroles[];
       },
@@ -90,7 +90,7 @@ export class RolesComponent implements OnInit, OnDestroy {
     const request = {
       name: this.roleForm.get('role')?.value.trim()
     };
-    this.subscription = this.http.postdata("FusionRole", request).subscribe({
+    this.subscription = this.http.postdata("RightlyHrRole", request).subscribe({
       next: (data: any) => {
         this.modalService.dismissAll();
         this.conformationPopup.openSuccessModal('Role added successfully');
@@ -109,7 +109,7 @@ export class RolesComponent implements OnInit, OnDestroy {
   updateRole(modal: any): void {
     if (this.updateForm.valid) {
       this.rolesDeletedata.name = this.updateForm.value.firstName.trim(),
-        this.subscription = this.http.postdata(`FusionRole/Update`, this.rolesDeletedata).subscribe({
+        this.subscription = this.http.postdata(`RightlyHrRole/Update`, this.rolesDeletedata).subscribe({
           next: (data: any) => {
             this.modalService.dismissAll();
             this.conformationPopup.openSuccessModal('Role updated successfully');
@@ -160,7 +160,7 @@ export class RolesComponent implements OnInit, OnDestroy {
       this.updateForm.get('firstName')?.setValue(inputElement.value);
     }
   }
-  
+
 
   deleteRole(modal: any): void {
     const deleteRequest = {
@@ -170,7 +170,7 @@ export class RolesComponent implements OnInit, OnDestroy {
       normalizedName: modal.normalizedName
     }
 
-    this.subscription = this.http.postdata('FusionRole/Delete', deleteRequest).subscribe({
+    this.subscription = this.http.postdata('RightlyHrRole/Delete', deleteRequest).subscribe({
       next: () => {
         this.modalService.dismissAll();
         this.conformationPopup.openSuccessModal('Role deleted successfully');
@@ -187,11 +187,11 @@ export class RolesComponent implements OnInit, OnDestroy {
 
   updateModuleInfo() {
     const url = this.router.url;
-  
+
     const routeToInfoMap: { [key: string]: string } = {
       '/settings/roles-permissions/roles': MODULE_INFOS.SETTINGS_ROLES_MODULE_INFO
     };
-  
+
     const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
     this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }

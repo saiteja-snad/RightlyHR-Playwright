@@ -74,7 +74,7 @@ export class RoleAssigneeComponent implements OnInit, OnDestroy {
   }
 
   getAllroles(): void {
-    this.http.getData('FusionRole').pipe(takeUntil(this.destroy$)).subscribe({
+    this.http.getData('RightlyHrRole').pipe(takeUntil(this.destroy$)).subscribe({
       next: (data: any) => {
         this.roles = data as IRoles[];
         if (this.roles.length > 0) {
@@ -125,7 +125,7 @@ export class RoleAssigneeComponent implements OnInit, OnDestroy {
 
   getUsersByRoleId(id: any) {
     this.dataLoad= true;
-    this.http.getData(`FusionRole/roleAssigneeByRoleId/${id}`)
+    this.http.getData(`RightlyHrRole/roleAssigneeByRoleId/${id}`)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response: any) => {
@@ -149,7 +149,7 @@ export class RoleAssigneeComponent implements OnInit, OnDestroy {
       employeeId: form.value.selected_user.employeeId,
       roleId: this.roleId,
     };
-    this.http.postdata('FusionRole/roleAssignees', payload).subscribe({
+    this.http.postdata('RightlyHrRole/roleAssignees', payload).subscribe({
       next: (data: any) => {
         this.modal.openSuccessModal('Assignee added successfully');
       },
@@ -174,7 +174,7 @@ export class RoleAssigneeComponent implements OnInit, OnDestroy {
       employeeId: this.userId,
       roleId: this.roleId,
     };
-    this.http.postdata('FusionUser/deleteFusionUserRolesByEmployeeId&RoleId', payload).subscribe({
+    this.http.postdata('RightlyHrUser/deleteUserRolesByEmployeeId&RoleId', payload).subscribe({
       next: (res: any) => {
         this.modalService.dismissAll();
         this.modal.openSuccessModal('Assignee removed successfully');
@@ -196,11 +196,11 @@ export class RoleAssigneeComponent implements OnInit, OnDestroy {
 
   updateModuleInfo() {
     const url = this.router.url;
-  
+
     const routeToInfoMap: { [key: string]: string } = {
       '/settings/roles-permissions/role-assignee': MODULE_INFOS.SETTINGS_ROLES_ASSIGNEE_MODULE_INFO
     };
-  
+
     const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
     this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }

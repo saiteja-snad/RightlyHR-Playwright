@@ -197,8 +197,9 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
   }
 
   initializeForm(): void {
+    const isMyInfoRoute = this.router.url.startsWith('/myinfo');
     this.separationRequestForm = this.fb.group({
-      appliedDate: [{value: new Date().toISOString().substring(0, 10),disabled:true}, Validators.required],
+      appliedDate: [{value: new Date().toISOString().substring(0, 10), disabled: isMyInfoRoute}, Validators.required],
       jobRole: [{ value: null, disabled: true }],
       departmentName: [{ value: '', disabled: true }],
       team: [{ value: null, disabled: true }],
@@ -222,7 +223,7 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
       contractenddate: [null],
       extendReason: [null, [Validators.required, Validators.maxLength(400)]]
     });
-    
+
   }
 
   //function to send the web notification
@@ -501,7 +502,7 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
     });
   }
 
-  //function to get joblocations in to a dropdown 
+  //function to get joblocations in to a dropdown
   getjobLocationList() {
     this.subscription = this.http.getData(`JobLocation/getAllLocations`).subscribe({
       next: (data: any) => {
@@ -649,7 +650,7 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
     return `${year}-${month}-${day}`;
   }
   openModalupdate(content: any, data: any): void {
-    console.log(data) 
+    console.log(data)
     this.getReportingTo()
     this.getDepartment()
     this.onDepartmentChange(data.departmentId)
@@ -830,7 +831,7 @@ showContractDetailSeperationDots= true;
       this.showContractDetailSeperationDots = false;
     }
   }
-  
+
 
   //function to post the separation request form
   postSeparationRequestForm() {

@@ -52,7 +52,7 @@
     </div>
 
     <!-- Add contact-->
-    @if(rbac.allowedToAccess('Contact Information.create') && this.inactiveClientStatus !== 'Inactive'){
+    @if(rbac.allowedToAccess('Contact Information.create') && this.inactiveClientStatus !== 'inactive'){
     <div *ngIf="isActive('/project-management/clients/details/contact-info')">
       <button type="button" class="custom-btn btn-primary" (click)="opencontactModal(addContactmodal)">
         {{'Add Contact' | translate }}

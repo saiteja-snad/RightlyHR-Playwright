@@ -145,7 +145,7 @@ export class ExpensesLimitComponent implements OnInit {
             .filter((employee: any) => employee.employeeId !== this.empdata.employeeId)
             .map((employee: any) => ({
               ...employee,
-              fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName ?? ''} 
+              fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName ?? ''}
               ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`.trim(),
             }));
           this.approverList = this.getAllEmployeeInfo.map((emp: any) => ({
@@ -178,7 +178,7 @@ export class ExpensesLimitComponent implements OnInit {
   }
 
   getRoles(restoreValue?: any) {
-    this.subscription = this.http.getData("FusionRole").subscribe({
+    this.subscription = this.http.getData("RightlyHrRole").subscribe({
       next: (data: any) => {
         this.rolesdetails = data as Iroles[];
         this.approverList = this.rolesdetails.map((role: any) => ({
@@ -247,7 +247,7 @@ export class ExpensesLimitComponent implements OnInit {
       }
     });
   }
-  
+
   toggleEditing() {
     this.isEditing = !this.isEditing;
     if (this.isEditing) {

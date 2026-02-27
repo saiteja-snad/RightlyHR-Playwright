@@ -38,7 +38,7 @@ export interface Client {
     updatedAt: string;
   };
 
-  
+
 }
 
 export interface Project {

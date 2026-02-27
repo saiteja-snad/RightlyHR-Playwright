@@ -134,7 +134,7 @@ export class HoursAllocationComponent {
   }
   getAllroles(): void {
     this.http
-      .getData('FusionRole')
+      .getData('RightlyHrRole')
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (data: any) => {
@@ -212,7 +212,7 @@ export class HoursAllocationComponent {
 
   getAllEmployees() {
     // if (this.hoursAllocationForm?.get('type')?.value === 'Employee') {
-    const selectedShifts = this.hoursAllocationForm.get('shift')?.value || [];  
+    const selectedShifts = this.hoursAllocationForm.get('shift')?.value || [];
     const shiftIdsString = selectedShifts.map((s: any) => s.id).join(',');
     const payload = {
       locationId: this.hoursAllocationForm.get('location')?.value?.id,

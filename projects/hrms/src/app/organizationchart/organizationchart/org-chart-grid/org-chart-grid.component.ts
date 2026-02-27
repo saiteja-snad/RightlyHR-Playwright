@@ -214,11 +214,11 @@ export class OrgChartGridComponent implements OnInit, AfterViewInit, OnChanges, 
             }
               </div>
             <div>
-         <div  data-employee='${safeData}' 
+         <div  data-employee='${safeData}'
          onclick="window.dispatchEvent(new CustomEvent('orgChartEmployeeClick', { detail: JSON.parse(decodeURIComponent(this.getAttribute('data-employee'))) }))"
          style="font-weight: 600;color: #3C3C3C;line-break: anywhere;text-wrap: wrap;text-transform:capitalize;cursor:pointer;margin-bottom:6px;">
            <u>${data.name || ''}</u>
-          </div>   
+          </div>
                <div style="font-weight: 400;color: #909090;margin-bottom:6px;font-size: 10px;">${data.title || ''}</div>
                <div style="font-weight: 400;color: #909090;text-wrap:nowrap;margin-bottom:6px;font-size: 10px;">DOJ: ${this.formatDate(data.doj) || ''}</div>
               <div style="font-weight: 600;color: ${primarytextColor};text-transform:capitalize;">${data.department || ''}
@@ -311,7 +311,7 @@ export class OrgChartGridComponent implements OnInit, AfterViewInit, OnChanges, 
       case 'linkedin':
         const empName = this.linkedinurl;
         if (empName) {
-          shareUrl = `https://${empName}`;
+          shareUrl = `${empName}`;
         } else {
           console.error('Employee name not available for LinkedIn search.');
           return;

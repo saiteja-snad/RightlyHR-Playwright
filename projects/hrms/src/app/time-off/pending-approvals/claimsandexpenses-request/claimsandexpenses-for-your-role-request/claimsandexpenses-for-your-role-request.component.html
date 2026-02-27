@@ -28,14 +28,14 @@
           *ngIf="(expenseheaderpending | searchfordesk: searchValue : ['entity.employeeName', 'entity.expenses_Title','entity.totalExpenseAmount','entity.status']).length > 0; else noDataTemplate">
           <tr
             *ngFor="let leave of expenseheaderpending  | searchfordesk: searchValue : ['entity.employeeName', 'entity.expenses_Title','entity.totalExpenseAmount','entity.status'];  let i = index">
-            <td>{{ leave.entity.employeeName }}</td>
-            <td>{{ leave.entity.expenses_Title }}</td>
-            <td>{{ leave.entity.applied_date | dateformat }}</td>
-            <td>₹ {{ leave.entity.totalExpenseAmount | number: '1.2-2'}}</td>
-            <td>{{ leave.entity.status }}</td>
+            <td>{{ leave?.entity?.employeeName }}</td>
+            <td>{{ leave?.entity?.expenses_Title }}</td>
+            <td>{{ leave?.entity?.applied_date | dateformat }}</td>
+            <td>₹ {{ leave?.entity?.totalExpenseAmount | number: '1.2-2'}}</td>
+            <td>{{ leave?.entity?.status }}</td>
             <td class="text-center">
               <div class="dropdown">
-                <a class="dropdown-item" (click)="openModal(viewDetailsModal); viewItem(leave.entity.expenses_ID)"><i
+                <a class="dropdown-item" (click)="openModal(viewDetailsModal); viewItem(leave?.entity?.expenses_ID)"><i
                     class="bi bi-eye-fill me-2"></i></a>
                 <!-- <ul class="dropdown-menu custom-dropdown-menu">
                   <li>
@@ -48,8 +48,8 @@
             </td>
             <td class="text-center">
               <div>
-                <span *ngIf="leave.entity.expenseApproverComments.length > 0; else NA">
-                  <a type="button" (click)="comments(leave.entity.expenseApproverComments, commentspopup)">
+                <span *ngIf="leave?.entity?.expenseApproverComments?.length > 0; else NA">
+                  <a type="button" (click)="comments(leave?.entity?.expenseApproverComments, commentspopup)">
                     <app-info-icon />
                   </a>
                 </span>
@@ -67,16 +67,16 @@
                 </a>
                 <ul class="dropdown-menu py-0">
                   @if(rbac.allowedToAccess('For Role (Claims and Expenses).update')) {
-                  @if( leave.approvalHeader.currentapprovalStage !=
-                  leave.approvalHeader.finalapprovalStage){
+                  @if( leave?.approvalHeader?.currentapprovalStage !=
+                  leave?.approvalHeader?.finalapprovalStage){
                   <li (click)="openApproveModal(approval, leave)">
                     <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{ "Approve" | translate }}</a>
                   </li>
                   }
                   }
                   @if(rbac.allowedToAccess('For Role (Claims and Expenses).update')) {
-                  @if( leave.approvalHeader.currentapprovalStage ==
-                  leave.approvalHeader.finalapprovalStage){
+                  @if( leave?.approvalHeader?.currentapprovalStage ==
+                  leave?.approvalHeader?.finalapprovalStage){
                   <li (click)="handleProcess(leave)">
                     <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{ "Process" | translate }}</a>
                   </li>

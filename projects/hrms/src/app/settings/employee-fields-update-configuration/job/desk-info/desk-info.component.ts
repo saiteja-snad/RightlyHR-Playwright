@@ -81,7 +81,7 @@ export class DeskInfoComponent {
     this.http.getDatabyentityvalueForFieldUpdate(`EmployeeInfoApprovalFields/getApprovalFields`, params, param).subscribe({
       next: (data: any) => {
         if (data.data.length > 0) {
-          this.fieldOptions = data.data.filter((field: any) => field.isRequired !== false);          
+          this.fieldOptions = data.data.filter((field: any) => field.isRequired !== false);
         } else {
           console.log('No data found.');
         }
@@ -124,7 +124,7 @@ export class DeskInfoComponent {
   }
 
   getAllRoles(): void {
-    this.subscription = this.http.getData('FusionRole').subscribe({
+    this.subscription = this.http.getData('RightlyHrRole').subscribe({
       next: (data: any) => {
         this.roles = data as IRoles[];
       },
@@ -139,8 +139,8 @@ export class DeskInfoComponent {
     if (this.fieldConfigForm.valid) {
       const formValue = this.isEditMode ? this.fieldConfigForm.getRawValue() : this.fieldConfigForm.value;
       let loggedInUser = this.authService.getToken();
-      let approvalAuthority = formValue.approvalType == 'EMP' ? formValue.selectedEmployee : 
-                              formValue.approvalType == 'ROLE' ? formValue.selectedRole : 
+      let approvalAuthority = formValue.approvalType == 'EMP' ? formValue.selectedEmployee :
+                              formValue.approvalType == 'ROLE' ? formValue.selectedRole :
                               formValue.approvalType == 'MANAGER' ? formValue.selectedManager : '';
 
       if (this.isEditMode) {
@@ -261,7 +261,7 @@ export class DeskInfoComponent {
 
  // Setup form subscriptions for reactive changes
   setupFormSubscriptions() {
-   
+
 
     // Watch for approval type changes
     this.fieldConfigForm.get('approvalType')?.valueChanges.subscribe(value => {

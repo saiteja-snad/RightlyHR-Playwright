@@ -42,7 +42,7 @@
             }
           </button>
           }
-          
+
           @if(rbac.allowedToAccess('Employee Master Data - Generate.view') && rbac.allowedToAccess('Employee Master Data - Export.view') ){
           <button type="button" [disabled]="employeeMasterData.length === 0 || disableBtn"
             (click)="onClickEmpMasterExport()" class="custom-btn btn-primary">

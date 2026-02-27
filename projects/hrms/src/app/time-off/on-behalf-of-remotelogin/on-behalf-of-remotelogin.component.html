@@ -44,7 +44,7 @@
                     </div>
                 </form>
             </div>
-            
+
             @if(rbac.allowedToAccess('Request On Behalf Of RemoteLogin Button.view') ) {
             <button type="button" class="custom-btn btn-primary" (click)="openModal(addwfh)" [disabled]="!selectedOtherEmployee"
                 *ngIf="rbac.allowedToAccess('Request WFH Button.view')">{{'Apply On Behalf Of' | translate}}</button>
@@ -166,7 +166,7 @@
 <ng-template #confirmationpopup let-modal>
     <div class="result-popup-content" ngbAutofocus>
         <div>
-            <img src="icons/conformation.png" alt="failure icon" class="confirmation-icon mb-4">
+            <img src="icons/reject.png" alt="failure icon" class="confirmation-icon mb-4">
             <p class="confirmation-text mb-4">{{'Are you sure you want to cancel?' | translate}}</p>
         </div>
         <div class="custom-modal-footer">

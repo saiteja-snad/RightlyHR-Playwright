@@ -34,6 +34,7 @@ import { OrgHolidayHeader, OrgWeekendHeader } from '../comp-off/compoff.modal';
     NgbPopoverModule,
     DropdownModule,
     Select,
+    ModuleInformationComponent
     // TranslateModule,
   ],
   templateUrl: './remote-login.component.html',
@@ -164,7 +165,7 @@ export class RemoteLoginComponent {
           const myTeam = response.filter((e: any) => e.isAccess);
           this.getEmployeeInfo = myTeam.map((employee: any) => ({
             ...employee,
-            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName} 
+            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName}
             ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
           }));
         }
@@ -435,7 +436,7 @@ export class RemoteLoginComponent {
         element.holidayDate = `${year}-${month}-${day}`;
       });
     }
-    const isDatePresent = this.holidaysData?.orgHolidaysItems?.some((holiday: any) => 
+    const isDatePresent = this.holidaysData?.orgHolidaysItems?.some((holiday: any) =>
       holiday.holidayDate === selectedDate && holiday.isOptional == false);
     this.isHolidaySelected = isDatePresent;
   }
@@ -497,7 +498,7 @@ export class RemoteLoginComponent {
     this.isHolidaySelected = false;
     this.selectedDay = '';
   }
-  
+
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();

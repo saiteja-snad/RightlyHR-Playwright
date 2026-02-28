@@ -19,9 +19,8 @@
                     <i class="bi bi-chevron-double-right"></i></span></div>
             <div class="component-header">{{'Apply Expenses On Behalf Of' | translate}} - {{selectedEmpName}}
                 ({{selectedEmpFusionId}})</div>
-            <div>
-                <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent"
-                    class="module-icon">
+                       <div>
+                <app-module-info-icon placement="bottom" [ngbPopover]="popContent" />
             </div>
         </div>
     </div>
@@ -43,7 +42,7 @@
                         <input type="text" class="form-control custom-input" formControlName="expensesTitle"
                             placeholder="Please enter expense title"
                             (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)" />
-                        <div class="error-msg" *ngIf="newExpenseForm.controls['expensesTitle'].invalid && (newExpenseForm.controls['expensesTitle'].touched || 
+                        <div class="error-msg" *ngIf="newExpenseForm.controls['expensesTitle'].invalid && (newExpenseForm.controls['expensesTitle'].touched ||
                             newExpenseForm.controls['expensesTitle'].dirty)">
                             <div *ngIf="newExpenseForm.controls['expensesTitle'].errors?.['required']">
                                 Expense title is required</div>
@@ -181,8 +180,8 @@
                                 <input type="text" class="form-control custom-input" formControlName="receipt_Number"
                                     placeholder="Please enter receipt number"
                                     (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)" />
-                                <div *ngIf="item.get('receipt_Number')?.invalid && 
-                                            (item.get('receipt_Number')?.touched || 
+                                <div *ngIf="item.get('receipt_Number')?.invalid &&
+                                            (item.get('receipt_Number')?.touched ||
                                              item.get('receipt_Number')?.dirty)" class="error-msg">
                                     <div *ngIf="item.get('receipt_Number')?.hasError('required')">
                                         Receipt number is required
@@ -192,8 +191,8 @@
                                     </div>
 
                                 </div>
-                                <div *ngIf="item.get('receipt_Number')?.hasError('duplicate') && 
-                                        (item.get('receipt_Number')?.touched || 
+                                <div *ngIf="item.get('receipt_Number')?.hasError('duplicate') &&
+                                        (item.get('receipt_Number')?.touched ||
                                          item.get('receipt_Number')?.dirty)" class="error-msg">
                                     <div>
                                         Receipt number should be unique

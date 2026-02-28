@@ -256,8 +256,8 @@ export class ContactDetailsComponent implements OnInit, OnDestroy {
       selfUpdate: this.isMyInfoRoute,
       moduleName: this.isMyInfoRoute ? 'Contact Info' : undefined,
       displayName: this.isMyInfoRoute ? 'Personal' : undefined,
-      workEmail: this.contactForm.get('workMail')?.value || this.employedata.workEmail,
-      linkedinUrl: this.contactForm.get('linkedinurl')?.value || this.employedata.linkedinUrl,
+      workEmail: this.contactForm.get('workMail')?.value || '',
+      linkedinUrl: this.contactForm.get('linkedinurl')?.value || '',
     };
 
     // Only include non-pending fields
@@ -270,21 +270,21 @@ export class ContactDetailsComponent implements OnInit, OnDestroy {
         else if (displayName === 'Phone Number') value = formValue.phoneNumber;
         else if (displayName === 'Work Number') value = formValue.workNumber;
 
-        if (value !== undefined && value !== null && value !== '') {
+        if (value !== undefined) {
           if (displayName.includes('Number')) {
-            updatePayload[apiKey] = String(value).replace(/\D+/g, '');
+            updatePayload[apiKey] = value ? String(value).replace(/\D+/g, '') : null;
           } else {
-            updatePayload[apiKey] = value;
+            updatePayload[apiKey] = value || null;
           }
         }
       }
     });
 
     // Always include country codes/flags if changed
-    updatePayload.mobilePhoneCountryCode = this.selectedDialphoneCode || this.employedata.mobilePhoneCountryCode;
-    updatePayload.workPhoneCountryCode = this.selectedDialCode || this.employedata.workPhoneCountryCode;
-    updatePayload.contactnumbercountryflag = this.selectedCountryCodephoneflag || this.employedata.contactnumbercountryflag;
-    updatePayload.workPhoneCountryFlag = this.selectedCountryCodegflag || this.employedata.workPhoneCountryFlag;
+    updatePayload.mobilePhoneCountryCode = updatePayload.contactnumber ? (this.selectedDialphoneCode || this.employedata.mobilePhoneCountryCode) : null;
+    updatePayload.workPhoneCountryCode = updatePayload.workPhone ? (this.selectedDialCode || this.employedata.workPhoneCountryCode) : null;
+    updatePayload.contactnumbercountryflag = updatePayload.contactnumber ? (this.selectedCountryCodephoneflag || this.employedata.contactnumbercountryflag) : null;
+    updatePayload.workPhoneCountryFlag = updatePayload.workPhone ? (this.selectedCountryCodegflag || this.employedata.workPhoneCountryFlag) : null;
 
     console.log('Contact Payload (excluding pending):', updatePayload);
 
@@ -313,7 +313,7 @@ export class ContactDetailsComponent implements OnInit, OnDestroy {
         },
       });
   }
-  
+
   onPhoneNumberInput(): void {
     const phoneNumberControl = this.contactForm.get('phoneNumber');
     if (phoneNumberControl?.value) {

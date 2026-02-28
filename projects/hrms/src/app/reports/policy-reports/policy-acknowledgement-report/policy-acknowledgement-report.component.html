@@ -4,9 +4,9 @@
             <div class="commpoment-name navigator" (click)="navigation()">{{ 'All Reports' | translate }}<span class="ms-1">
                 <i class="bi bi-chevron-double-right"></i></span></div>
             <div class="component-header">{{ 'Policy Acknowledgement Report' | translate }}</div>
-            <div>
-                <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" class="module-icon">
-            </div>
+              <!-- <div>
+                <app-module-info-icon placement="bottom" [ngbPopover]="popContent" />
+            </div> -->
         </div>
 
         <form autocomplete="off" [formGroup]="policyAcknowledgementReport" (ngSubmit)="generatePolicyAckReport()">

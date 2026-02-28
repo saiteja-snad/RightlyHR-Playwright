@@ -5,8 +5,7 @@
             </div>
             <div class="component-header">{{'WFH'|translate}}</div>
             <div>
-                <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent"
-                    class="module-icon">
+                <app-module-info-icon placement="bottom" [ngbPopover]="popContent" />
             </div>
         </div>
 
@@ -67,7 +66,7 @@
     <ng-template #popContent>
         <app-module-information [moduleInfo]="moduleinfo" />
     </ng-template>
-    
+
   @if(!loadingGraph){
     <div class="graph-grid w-100 mb-3">
         <div class="cards-grid-container">

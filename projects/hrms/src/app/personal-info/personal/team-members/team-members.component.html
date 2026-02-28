@@ -15,7 +15,7 @@
             }
         </div>
     </div>
-    
+
     <div class="main-content">
         <div class="mb-3">
             <!--personal Info tabs-->
@@ -144,7 +144,7 @@
                         <label for="department" class="form-label custom-label mb-2">{{ 'Department' | translate }}<span
                                 class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="departmentDetails" optionLabel="departmentName"
+                            <p-select [options]="departmentDetails" optionLabel="departmentName" [filter]="true"
                                 [placeholder]="'Please select department' | translate" (onChange)="onDepartmentChange($event.value)"
                                 class="form-select custom-select" formControlName="department"></p-select>
                         </div>
@@ -159,7 +159,7 @@
                         <label for="teamSelectedOptions" class="form-label custom-label mb-2">{{ 'Team' | translate }}<span
                                 class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="teamDropdownValues" formControlName="teamSelectedOptions"
+                            <p-select [options]="teamDropdownValues" formControlName="teamSelectedOptions" [filter]="true"
                                 optionLabel="subdepartmentName" (onChange)="onSubDepartmentNameChange($event.value)"
                                 class="form-select custom-select" [placeholder]="'Please select team' | translate">
                             </p-select>

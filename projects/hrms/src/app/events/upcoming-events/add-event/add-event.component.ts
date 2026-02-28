@@ -171,10 +171,11 @@ export class AddEventComponent implements OnInit, OnDestroy {
           this.CustomEmail(); // Send email notification
         }
       },
-      error: () => {
+      error: (err: any) => {
         this.spinnerLoader = false;
         this.modalService.dismissAll();
-        this.conformationPopup.openErrorModal('Insertion of event data failed');
+        console.error(err);
+        this.conformationPopup.openErrorModal(err?.error?.Message || 'An error occurred');
       }
     });
   }

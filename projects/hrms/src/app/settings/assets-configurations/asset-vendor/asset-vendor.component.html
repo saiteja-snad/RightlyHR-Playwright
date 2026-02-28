@@ -9,7 +9,7 @@
 
     <div class="custom-table-content">
         @if(!loading){
-    
+
         <table class="w-100">
             <thead>
                 <tr>
@@ -19,7 +19,7 @@
                     <th>{{ 'Status' | translate }}</th>
                     <th>{{ 'Email Address' | translate }}</th>
                     <th>{{ 'Address' | translate }}</th>
-                    @if(rbac.allowedToAccess('Vendor Details.update') || rbac.allowedToAccess('Vendor Details.update')){
+                    @if(rbac.allowedToAccess('Vendor Details.update') || rbac.allowedToAccess('Vendor Details.delete')){
                     <th class="text-center">{{ 'Action' | translate }}</th>
                     }
                 </tr>
@@ -33,7 +33,7 @@
                         <td>{{ asset.status }}</td>
                         <td>{{ asset.emailaddress }}</td>
                         <td>{{ asset.address }}</td>
-                        @if(rbac.allowedToAccess('Vendor Details.update') || rbac.allowedToAccess('Vendor Details.update')){
+                        @if(rbac.allowedToAccess('Vendor Details.update') || rbac.allowedToAccess('Vendor Details.delete')){
                         <td class="text-center">
                             <div class="dropdown-container">
                                 <div class="dropdown">
@@ -306,7 +306,7 @@
                         <label for="vendordetailes" class="form-label custom-label mb-2">Vendor Name
                             <span class="text-danger">*</span></label>
                         <input id="vendordetailes" type="text" formControlName="vendordetailes"
-                            class="form-control custom-input" placeholder="Please enter vendor details"
+                            class="form-control custom-input" placeholder="Please enter vendor name"
                             (keypress)="formValidation.restrictInputAllowAlphaNumericAndCommonSpecialChars($event)" />
                         <div class="error-msg"
                             *ngIf="assetverderupdataform.get('vendordetailes')?.invalid && assetverderupdataform.get('vendordetailes')?.touched">
@@ -334,9 +334,9 @@
                         <input id="phonenumber" type="text" formControlName="phonenumber" maxlength="15"
                             (keypress)="formValidation.restrictAlphabets($event)"
                             (paste)="formValidation.validatePaste($event)" class="form-control custom-input"
-                            placeholder="Please enter primary contact" />
+                            placeholder="Please enter primary contact no" />
                         <div class="error-msg"
-                            *ngIf="assetverderupdataform.controls['phonenumber'].invalid && 
+                            *ngIf="assetverderupdataform.controls['phonenumber'].invalid &&
                         (assetverderupdataform.controls['phonenumber'].touched || assetverderupdataform.controls['phonenumber'].dirty)">
                             <!-- Required error -->
                             <div *ngIf="assetverderupdataform.controls['phonenumber'].errors?.['required']">
@@ -362,7 +362,7 @@
                         <label for="email" class="form-label custom-label mb-2">Email Address
                             <span class="text-danger">*</span></label>
                         <input id="email" type="email" formControlName="email" class="form-control custom-input" (keypress)="formValidation.checkNoSpaceForEmail($event,assetForm,'email')"
-                            placeholder="Please enter email" />
+                            placeholder="Please enter email address" />
                         <div class="error-msg"
                             *ngIf="assetverderupdataform.get('email')?.invalid && assetverderupdataform.get('email')?.touched">
                             <div *ngIf="assetverderupdataform.get('email')?.errors?.['required']">
@@ -404,8 +404,8 @@
                         </label>
                         <input id="phonenumber" type="text" formControlName="secondaryphonenumber" maxlength="15"  (keypress)="formValidation.restrictAlphabets($event)"
                         (paste)="formValidation.validatePaste($event)"
-                            class="form-control custom-input" placeholder="Please enter secondary contact number " />
-                        <div class="error-msg" *ngIf="assetverderupdataform.controls['secondaryphonenumber'].invalid && (assetverderupdataform.controls['secondaryphonenumber'].touched 
+                            class="form-control custom-input" placeholder="Please enter secondary contact no" />
+                        <div class="error-msg" *ngIf="assetverderupdataform.controls['secondaryphonenumber'].invalid && (assetverderupdataform.controls['secondaryphonenumber'].touched
                             || assetverderupdataform.controls['secondaryphonenumber'].dirty)">
                             <!-- Required error -->
                             <!-- <div *ngIf="assetverderupdataform.controls['secondaryphonenumber'].errors?.['required']">

@@ -36,7 +36,8 @@ import { CommonModule } from '@angular/common';
     SeparationApprovalTabsComponent,
     OnboardingApprovalTabsComponent,
     CommonModule,
-    Select
+    Select,
+    ModuleInformationComponent
   ],
   templateUrl: './pending-approvals.component.html',
   styleUrl: './pending-approvals.component.scss',

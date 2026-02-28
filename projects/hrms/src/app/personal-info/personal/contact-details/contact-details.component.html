@@ -30,7 +30,7 @@
           <label for="location" class="form-label custom-label mb-2">{{ 'Work Number' | translate }}@if(isFieldPendingApproval('Work Number')) {
             <app-info-icon class="info-pending" [ngbPopover]="pendingPopover" triggers="click"
               popoverClass="pending-popover" (click)="setActiveMessage('Work Number')" />
-        
+
             }</label>
           <div class="d-flex custom-input-group position-relative custom-phone-number-content w-100">
             <div *ngIf="!loading; else loadingTemplate">
@@ -63,7 +63,7 @@
               class="text-danger">*</span>@if(isFieldPendingApproval('Phone Number')) {
                 <app-info-icon class="info-pending" [ngbPopover]="pendingPopover" triggers="click"
               popoverClass="pending-popover" (click)="setActiveMessage('Phone Number')" />
-       
+
             }</label>
           <div class="d-flex custom-input-group position-relative custom-phone-number-content w-100">
             <div *ngIf="!loading; else loadingTemplate">

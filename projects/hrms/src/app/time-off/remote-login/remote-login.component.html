@@ -5,9 +5,9 @@
         Time Off<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
       </div>
       <div class="component-header">{{ "Remote Login" | translate }}</div>
-      <div>
-        <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" class="module-icon" />
-      </div>
+                 <div>
+                <app-module-info-icon placement="bottom" [ngbPopover]="popContent" />
+            </div>
     </div>
 
     <div class="d-flex align-items-center gap-3">
@@ -162,7 +162,7 @@
         <div class="custom-modal-footer">
           <button type="button" class="custom-btn btn-secondary" (click)="openModal(confirmationpopup)"
             [disabled]="spinnerLoader">{{'Cancel' | translate}}</button>
-          <button type="submit" class="custom-btn btn-primary" [disabled]="addremoteForm.invalid || 
+          <button type="submit" class="custom-btn btn-primary" [disabled]="addremoteForm.invalid ||
             spinnerLoader || (isHolidaySelected  || isWeekOffSelected)">
             @if(spinnerLoader){
             <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>

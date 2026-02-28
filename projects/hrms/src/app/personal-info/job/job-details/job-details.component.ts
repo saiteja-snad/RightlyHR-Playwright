@@ -334,11 +334,13 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
         } else {
           this.teamDropdownValues = []; // Reset if no teams are found
         }
-        this.jobDetailsForm.patchValue({ team: null }); // Reset the team selection
+        this.jobDetailsForm.patchValue({ team: null, teamManager: null }); // Reset the team selection
+        this.jobDetailsupdateForm.patchValue({ team: null, teamManager: null }); // Reset the team selection in update form
       },
       error: (err: any) => {
         this.teamDropdownValues = []; // Reset on error
-        this.jobDetailsForm.patchValue({ team: null }); // Reset the team selection
+        this.jobDetailsForm.patchValue({ team: null, teamManager: null }); // Reset the team selection
+        this.jobDetailsupdateForm.patchValue({ team: null, teamManager: null }); // Reset the team selection in update form
       }
     });
   }
@@ -653,7 +655,7 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
     console.log(data)
     this.getReportingTo()
     this.getDepartment()
-    this.onDepartmentChange(data.departmentId)
+    // this.onDepartmentChange(data.departmentId)
     console.log(data.departmentId)
     const locationId = data?.locationId; // Get the location ID from the selected job details
     const subLocationId = data?.subLocationId; // Get the sub-location ID from the selected job details

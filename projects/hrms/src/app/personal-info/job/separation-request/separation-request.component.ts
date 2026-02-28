@@ -250,12 +250,13 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
 
   requestNoDue(f: FormGroup) {
     this.isLoading = true;
+    const additionalEmails = this.profileForm.value.noduerequestedemails.join(', ');
     const noduereq = {
       requestedBy: this.empdata.employeeId,
       raisedFor: this.empdata.employeeId,
-      requiredEmails: `${
-        this.profileForm.value.emails
-      }, ${this.profileForm.value.noduerequestedemails.join(', ')}`,
+      requiredEmails: additionalEmails 
+        ? `${this.profileForm.value.emails}, ${additionalEmails}` 
+        : this.profileForm.value.emails,
     };
     this.subscription = this.http
       .postdata('NoDueClearanceForm', noduereq)

@@ -17,7 +17,7 @@ import { AuthService } from '../../services/auth.service';
 import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
 @Component({
   selector: 'app-add-claimsandexpenses',
-  imports: [RouterModule, Select, ReactiveFormsModule, TranslateModule, NgbPopoverModule, CommonModule, TabsModule, ModuleInfoIconComponent, ModuleInformationComponent],
+  imports: [RouterModule, Select, ReactiveFormsModule, TranslateModule, NgbPopoverModule, CommonModule, TabsModule, ModuleInfoIconComponent, ModuleInformationComponent, ModuleInfoIconComponent],
   templateUrl: './add-claimsandexpenses.component.html',
   styleUrl: './add-claimsandexpenses.component.scss',
   encapsulation: ViewEncapsulation.None,

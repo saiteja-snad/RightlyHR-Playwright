@@ -17,6 +17,7 @@ import * as XLSX from 'xlsx';
 import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { MODULE_INFOS } from '../../../shared/modules-info';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { ModuleInfoIconComponent } from '../../../icons/module-info-icon/module-info-icon.component';
 
 @Component({
   selector: 'app-policy-acknowledgement-report',
@@ -28,9 +29,10 @@ import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
     ReactiveFormsModule,
     NoDataFoundComponent,
     DataLoaderContentComponent,
-    ModuleInformationComponent, 
+    ModuleInformationComponent,
     DateformatPipe,
-    NgbPopoverModule
+    NgbPopoverModule,
+    ModuleInfoIconComponent
   ],
   templateUrl: './policy-acknowledgement-report.component.html',
   styleUrl: './policy-acknowledgement-report.component.scss'
@@ -64,7 +66,7 @@ export class PolicyAcknowledgementReportComponent implements OnInit, OnDestroy{
   AcknoeledgementOptions = [
     { label: 'Yes', value: true },
     { label: 'No', value:  false}
-  ]; 
+  ];
 
 
   constructor(
@@ -179,11 +181,11 @@ clearDropdowns(keys: string[]) {
 
   updateModuleInfo() {
     const url = this.router.url;
-  
+
     const routeToInfoMap: { [key: string]: string } = {
       '/reports/policy-reports/policy-acknowledgment-report': MODULE_INFOS.POLICY_REPORTS_POLICY_ACK_REPORT_MODULE_INFO
     };
-  
+
     const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
     this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
@@ -192,16 +194,16 @@ clearDropdowns(keys: string[]) {
       this.subscription = this.http.getData(`JobLocation/getAllLocations`).subscribe({
       next: (locations: any) => {
         this.jobLocationDropDownData = locations;
-  
+
         // Fetch sub-locations for each location
         const subLocationRequests = locations.map((location: { id: any; }) =>
           this.http.getData(`JobLocation/sub-location-by-joblocation/${location.id}`)
         );
-  
-        
+
+
       }
     });
-    
+
     }
 
    getSubLocationByid(selectedLocation: any): void {
@@ -213,7 +215,7 @@ clearDropdowns(keys: string[]) {
           .subscribe({
             next: (data: any) => {
                 this.subLocationsDropdown = data.jobSubLocations;
-                 this.shiftDropdown = []; 
+                 this.shiftDropdown = [];
             },
             error: (error: any) => {
               console.log(error?.error?.Message);
@@ -222,7 +224,7 @@ clearDropdowns(keys: string[]) {
       } else {
         this.subLocationsDropdown = [];
         this.shiftDropdown = [];
-        
+
       }
     }
 
@@ -231,21 +233,21 @@ clearDropdowns(keys: string[]) {
       if (selectedSubLocation && selectedSubLocation) {
         const locationId = formValue.location?.id
         const subLocationId = selectedSubLocation
-  
+
         this.subscription = this.http
           .getData(
             `orgShifts/getshiftlocation?locationId=${locationId}&subLocationId=${subLocationId}`
           )
           .subscribe({
             next: (data: any) => {
-  
+
               if (data.length === 0) {
                 this.shiftDropdown = [];
               } else {
-                 
+
                 this.shiftDropdown = [].concat(
                   ...data.map((element: any) => element.orgShiftsItems)
-                  
+
                 );
               }
             },

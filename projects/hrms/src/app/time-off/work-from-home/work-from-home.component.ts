@@ -22,10 +22,11 @@ import { TimeoffYearFilterService } from '../../services/timeoff-year-filter.ser
 import { ConfirmationIconComponent } from "../../icons/confirmation-icon/confirmation-icon.component";
 import { Skeleton } from "primeng/skeleton";
 import { AuthService } from '../../services/auth.service';
+import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
 @Component({
   selector: 'app-work-from-home',
   imports: [CommonModule, RouterModule, ReactiveFormsModule, WfhApprovaltabsComponent,
-    TranslateModule, DropdownModule, Select, ModuleInformationComponent, NgbPopoverModule, Skeleton, ConfirmationIconComponent],
+    TranslateModule, DropdownModule, Select, ModuleInformationComponent, NgbPopoverModule, Skeleton, ConfirmationIconComponent, ModuleInfoIconComponent],
   templateUrl: './work-from-home.component.html',
   styleUrl: './work-from-home.component.scss',
   encapsulation: ViewEncapsulation.None,
@@ -78,7 +79,7 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
     public formsValidation: FormValidationsService,
     public readonly router: Router,
     private TimeoffYearFilterService: TimeoffYearFilterService
-  ) { 
+  ) {
     effect(() => {
       if (this.http.tirggerCountSignal().wfh || this.http.wfhTriggerSignal()) {
        this.getWFHBal();
@@ -226,7 +227,7 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
   }
 
   getWFHBalance(employeedId: any) {
-    
+
     let empId = employeedId;
     let currentDate = new Date().toISOString().split('T')[0];
     this.subscription = this.http.getData(`WorkFromHomeEligibilityCriteria/getwfhbalance?employeeId=${empId}&workeddate=${currentDate}`).subscribe({
@@ -371,7 +372,7 @@ wfhBalancesdetails=[] as any;
           this.totalbalance = response.totalBalance;
           this.availablebalance = response.availableBalance;
           this.initChart(response);
-         
+
         }
       },
       error: (reason: any) => console.log(reason),
@@ -402,7 +403,7 @@ wfhBalancesdetails=[] as any;
 
   getAvailablewfhs(item: any): number {
     if (item.availableBalance) {
-      return item.availableBalance ; 
+      return item.availableBalance ;
     } else {
       return item.availableBalance;
     }
@@ -507,7 +508,7 @@ wfhBalancesdetails=[] as any;
           //   ...status,
           //   wfh: true,
           // }));
-      
+
           this.getWorkfromhomeRequest(this.empinfo?.employeeId);
         },
         error: (err: any) => {
@@ -531,7 +532,7 @@ getApprovalStatusCounts() {
    //Map counts to tabs
     });
   }
- 
+
   formatDate(date: string | Date): string {
     const d = new Date(date);
     const month = ('0' + (d.getMonth() + 1)).slice(-2);

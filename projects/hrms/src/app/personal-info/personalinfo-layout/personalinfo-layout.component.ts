@@ -993,6 +993,7 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
       '/personalinfo/job/team/team-members': MODULE_INFOS.TEAM_MEMBERS_MODULE_INFO,
       '/personalinfo/job/team/my-team-members': MODULE_INFOS.REPORT_TO,
       '/personalinfo/job/contactor-info': MODULE_INFOS.CONTRACT_EMPLOYEES_MODULE_INFO,
+      '/myinfo/job/contactor-info': MODULE_INFOS.CONTRACT_EMPLOYEES_MODULE_INFO,
       '/personalinfo/job/project-info': MODULE_INFOS.JOB_MODULE_PROJECTS_INFO,
 
       // Personal Info documents

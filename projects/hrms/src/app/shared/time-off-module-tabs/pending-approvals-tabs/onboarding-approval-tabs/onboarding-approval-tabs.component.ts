@@ -40,7 +40,7 @@ export class OnboardingApprovalTabsComponent implements OnInit, OnDestroy {
   nodue_Request_data = [] as any[];
   selectedMonth: number = new Date().getMonth() + 1;
   selectedYear: number = new Date().getFullYear();
-  navLinks: NavLink[] = [
+  navLinks: any[] = [
     {
       label: 'Offer Letter',
       route: '/pending-approvals/on-boarding/offer-letter-history',
@@ -122,26 +122,27 @@ export class OnboardingApprovalTabsComponent implements OnInit, OnDestroy {
     this.filteredNavLinks = this.navLinks;
   }
 
-  getAllPendingApprovalsCount(updateAll: boolean = false) {
+ getAllPendingApprovalsCount(updateAll: boolean = false) {
     this.loading = true;
     const employeeId = Number.parseInt(this.LOGIN.employeeId);
     this.http.getData(`PendingApproval/onboard-requests-count?month=${this.selectedMonth}&year=${this.selectedYear}&EmployeeId=${employeeId}  `).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: any) => {
         if (response.success) {
           const modules = response.data.modules;
+          const moduleMap = new Map(modules.map((m: any) => [m.name, m.count]));
+          
           if (updateAll) {
-            // Update all tabs on initial load
-            this.navLinks = this.navLinks.map((link, index) => ({
+            this.navLinks = this.navLinks.map((link: { label: unknown; }) => ({
               ...link,
-              count: modules[index]?.count || 0,
+              count: moduleMap.get(link.label) ?? 0,
             }));
             this.filteredNavLinks = [...this.navLinks];
           } else {
-            // Update only the active tab when date/year changes
-            const activeTabIndex = this.navLinks.findIndex(link => this.isActiveRoute(link.route));
-            if (activeTabIndex !== -1 && modules[activeTabIndex]) {
-              this.navLinks[activeTabIndex].count = modules[activeTabIndex].count || 0;
-              this.filteredNavLinks[activeTabIndex].count = modules[activeTabIndex].count || 0;
+            const activeLink = this.navLinks.find((link: { route: string; }) => this.isActiveRoute(link.route));
+            if (activeLink) {
+              activeLink.count = moduleMap.get(activeLink.label) ?? 0;
+              const filteredLink = this.filteredNavLinks.find(l => l.label === activeLink.label);
+              if (filteredLink) filteredLink.count = activeLink.count;
             }
           }
         }

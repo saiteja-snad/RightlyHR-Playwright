@@ -42,7 +42,7 @@
                     @if(rbac.allowedToAccess('Inactive Forms.update')){
                     <li>
                       <a class="dropdown-item" (click)="openmodal(activeForm);seletedid=form.formId">
-                         <i class="bi bi-trash3 me-2"></i>{{'Make as Active' |translate}}
+                         <i class="bi bi-check-circle me-2"></i>{{'Make as Active' |translate}}
                       </a>
                     </li>
                     }

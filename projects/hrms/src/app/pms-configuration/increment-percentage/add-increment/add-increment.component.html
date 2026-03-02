@@ -90,14 +90,14 @@
                 <div class="d-flex">
                   <div>
                     <input type="number" class="form-control value-input" [(ngModel)]="detail.minvalue" id="min-{{i}}"
-                      name="min-{{i}}" min="0" placeholder="{{'Min' | translate}}" (input)="validateNumber($event)" required />
+                      name="min-{{i}}" min="0" placeholder="{{'Min Amount' | translate}}" (input)="validateNumber($event)" required />
                   </div>
                   <div class="pt-2">
                     <span class="mx-2">-</span>
                   </div>
                   <div>
                     <input type="number" class="form-control value-input" [(ngModel)]="detail.maxvalue" id="max-{{i}}"
-                      name="max-{{i}}" min="0" (input)="validateNumber($event)" placeholder="{{'Max' | translate}}" required />
+                      name="max-{{i}}" min="0" (input)="validateNumber($event)" placeholder="{{'Max Amount' | translate}}" required />
                   </div>
                 </div>
               </td>
@@ -115,7 +115,7 @@
           </tbody>
         </table>
       </div>
-    
+
       <div class="custom-modal-footer">
         <button type="button" class="custom-btn btn-secondary"
           (click)="openconfirmationModelforcancle(cancel,Postincrementalpercentage)">{{'Cancel'|translate}}</button>

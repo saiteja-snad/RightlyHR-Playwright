@@ -105,6 +105,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
       this.http.putData(`reviewCycleHeader/update/${this.reviewCycleForm.value.id}`, reviewCycleData).subscribe({
         next: (response) => {
           this.modalService.dismissAll();
+          this.http.reviewCycleTriggerSignal.set(true);
           this.conformationPopup.openSuccessModal('Review cycle updated successfully')
         },
         error: (error) => {
@@ -430,7 +431,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
           console.error('Error:', error);
         }
       });
-    } 
+    }
     else {
       this.reviewCycleForm.markAllAsTouched();
     }

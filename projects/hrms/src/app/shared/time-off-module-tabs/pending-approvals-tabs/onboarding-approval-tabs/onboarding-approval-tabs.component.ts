@@ -77,7 +77,7 @@ export class OnboardingApprovalTabsComponent implements OnInit, OnDestroy {
       icon: '/my-info-icons/contractor.png',
     },
     {
-      label: 'Probations',
+      label: 'Probation',
       route: '/pending-approvals/on-boarding/probation-request',
       moduleId: environment.ProbationrequestmoduleId,
       permission: { feature: 'Probation Details Tab', action: 'view' },

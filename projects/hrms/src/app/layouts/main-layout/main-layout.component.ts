@@ -152,4 +152,4 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
       this.subscription.unsubscribe();
     }
   }
-} 
+}

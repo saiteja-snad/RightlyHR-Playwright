@@ -215,9 +215,12 @@ export class AssessmentformComponent {
     }
     // Reset section rating for the current section
     this.sectionRatings[sectionId] = 0;
+    
+    let isChecked = false;
     // Iterate through sections to find the correct section based on sectionId
     section?.forEach((sec: any) => {
       if (sec.id === sectionId) {
+        console.log('Section found:', sec);
         // Iterate through questions in the current section
         questions.forEach((optionsarray: any) => {
           optionsarray.options.forEach((element: any) => {
@@ -226,6 +229,7 @@ export class AssessmentformComponent {
               if (element.checked) {
                 // Checkbox is being unchecked
                 element.checked = false;
+                isChecked = false;
                 this.sectionRatings[sectionId] = Math.max(
                   0,
                   this.sectionRatings[sectionId] - parseInt(rating, 10)
@@ -233,6 +237,7 @@ export class AssessmentformComponent {
               } else {
                 // Checkbox is being checked
                 element.checked = true;
+                isChecked = true;
                 this.sectionRatings[sectionId] += parseInt(rating, 10); // Add rating to section rating
               }
             } else {
@@ -243,9 +248,7 @@ export class AssessmentformComponent {
         });
       }
     });
-    const hasdata = this.selected_questions.filter(
-      (t: any) => t.id === sectionId
-    );
+    
     // Calculate overall rating by summing section ratings
     this.overallRatingcount = 0;
     if (this.overallRatingcount >= 0) {
@@ -255,15 +258,15 @@ export class AssessmentformComponent {
           this.dynamicFormDetails.overAllRating;
       });
     }
-    if (hasdata.length > 0) {
-      this.selected_questions.forEach((ele: any) => {
-        if (ele.id === sectionId && ele.data.optionId) {
-          ele.data.optionId = optionId;
-        }
-      });
-    } else {
+    
+    // Remove items from selected_questions for this section
+    this.selected_questions = this.selected_questions.filter(
+      (t: any) => t.id !== sectionId
+    );
+    
+    // Add back if checkbox is checked
+    if (isChecked) {
       questions.forEach((ele: any) => {
-        if (ele.options.length > 0) {
         this.selected_questions.push({
           id: sectionId,
           data: {
@@ -273,24 +276,11 @@ export class AssessmentformComponent {
             sectionId: sectionId,
           },
         });
-        } else {
-          this.selected_questions.push({
-            id: sectionId,
-            data: {
-              questionId: ele.id,
-              optionId: optionId,
-              meta: meta,
-              sectionId: sectionId,
-            },
-          });
-        }
       });
     }
-    this.selected_questions.forEach((ele: any) => {
-      if (ele.id === sectionId && ele.data.optionId) {
-        ele.data.optionId = optionId;
-      }
-    });
+    
+    console.log(this.selected_questions);
+    console.log(optionId, sectionId, quetsionId);
   }
 
   //function to get the footer values
@@ -325,6 +315,8 @@ export class AssessmentformComponent {
     }
     // Reset section rating for the current section
     this.sectionRatings[sectionId] = 0;
+    
+    let isChecked = false;
     questions.forEach((optionsarray: any) => {
       optionsarray.options.forEach((element: any) => {
         if (element.optionId === optionId) {
@@ -332,6 +324,7 @@ export class AssessmentformComponent {
           if (element.checked) {
             // Checkbox is being unchecked
             element.checked = false;
+            isChecked = false;
             this.sectionRatings[sectionId] = Math.max(
               0,
               this.sectionRatings[sectionId] - parseInt(rating, 10)
@@ -339,6 +332,7 @@ export class AssessmentformComponent {
           } else {
             // Checkbox is being checked
             element.checked = true;
+            isChecked = true;
             this.sectionRatings[sectionId] += parseInt(rating, 10); // Add rating to section rating
           }
         } else {
@@ -347,11 +341,7 @@ export class AssessmentformComponent {
         }
       });
     });
-    // }
-    // });
-    const hasdata = this.selected_questions.filter(
-      (t: any) => t.data.questionId === quetsionId
-    );
+    
     // Calculate overall rating by summing section ratings
     this.overallRatingcount = 0;
     if (this.overallRatingcount >= 0) {
@@ -361,16 +351,14 @@ export class AssessmentformComponent {
           this.dynamicFormDetails.overAllRating;
       });
     }
-    if (hasdata.length > 0) {
-      this.selected_questions.forEach((ele: any) => {
-        if (ele.data.questionId === quetsionId) {
-          ele.data.optionId = optionId;
-          ele.data.questionId = quetsionId;
-          ele.data.meta = meta;
-        }
-      });
-    } else {
-      // questions.forEach((ele:any)=>{
+    
+    // Remove items from selected_questions for this question
+    this.selected_questions = this.selected_questions.filter(
+      (t: any) => t.data.questionId !== quetsionId
+    );
+    
+    // Add back if checkbox is checked
+    if (isChecked) {
       this.selected_questions.push({
         id: sectionId,
         data: {
@@ -380,7 +368,6 @@ export class AssessmentformComponent {
           sectionId: sectionId,
         },
       });
-      // })
     }
   }
 

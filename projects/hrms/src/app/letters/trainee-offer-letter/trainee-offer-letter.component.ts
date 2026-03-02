@@ -403,6 +403,8 @@ export class TraineeOfferLetterComponent implements OnInit, OnDestroy {
   }
 
   onclickDesignation(selectedAuthority: any) {
+    console.log(selectedAuthority);
+    
     if (!selectedAuthority) {
       this.traineeEmpData.authorityName = '';
       this.authorityDesignation = '';
@@ -417,6 +419,7 @@ export class TraineeOfferLetterComponent implements OnInit, OnDestroy {
       this.traineeEmpData.authorityName = signatureAuthorityDetails.middleName
         ? `${signatureAuthorityDetails.firstName} ${signatureAuthorityDetails.middleName ?? ''} ${signatureAuthorityDetails.lastName}`
         : `${signatureAuthorityDetails.firstName} ${signatureAuthorityDetails.lastName}`;
+        console.log(signatureAuthorityDetails);
     } else {
       this.traineeEmpData.authorityName = '';
       this.authorityDesignation = '';
@@ -424,7 +427,8 @@ export class TraineeOfferLetterComponent implements OnInit, OnDestroy {
   }
 
   onclickDesignations(data: any) {
-    this.traineeEmpData.authorityName = data.value.firstName + ' ' + data.value.middleName + ' ' + data.value.lastName;
+    console.log(data);
+    this.traineeEmpData.authorityName = data.value.fullName;
     this.authorityDesignation = data.value.designation;
   }
 

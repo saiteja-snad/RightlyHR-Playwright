@@ -706,7 +706,7 @@
                                 <span class="text-danger">*</span></label>
                             <input type="date" class="form-control custom-input" id="earlyRelievingDate"
                                 [min]="separationRequestForm.get('appliedDate')?.value"
-                                [max]="postSeparationRequest.lastworkingday" onkeypress="return false"
+                                [max]="maxEarlyRelievingDate" onkeypress="return false"
                                 formControlName="earlyRelievingDate" />
                             <div class="error-msg"
                                 *ngIf="separationRequestForm.get('earlyRelievingDate')?.invalid && separationRequestForm.get('earlyRelievingDate')?.touched">

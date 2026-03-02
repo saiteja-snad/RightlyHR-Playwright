@@ -919,7 +919,7 @@ export class ContractorLetterComponent implements OnInit, OnDestroy{
       },
       error: (err: any) => {
         console.log(err);
-        this.conformationPopup.openErrorModal(err.error.Message);
+        this.conformationPopup.openErrorModal(err?.error?.message || err?.error?.Message || 'An error occurred');
         this.ApprovalLoader = false;
       },
     });
@@ -962,7 +962,7 @@ export class ContractorLetterComponent implements OnInit, OnDestroy{
           }
         },
         error: (err: any) => {
-          this.conformationPopup.openErrorModal(err.error.Message);
+          this.conformationPopup.openErrorModal(err?.error?.message || err?.error?.Message || 'An error occurred');
           console.log(err);
         },
       });
@@ -984,7 +984,7 @@ export class ContractorLetterComponent implements OnInit, OnDestroy{
           }
         },
         error: (err: any) => {
-          this.conformationPopup.openErrorModal(err.error.Message);
+          this.conformationPopup.openErrorModal(err?.error?.message || err?.error?.Message || 'An error occurred');
           console.log(err);
         },
       });

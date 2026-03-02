@@ -72,24 +72,43 @@ export class PendingApprovalsTabsComponent {
   getAllPendingApprovalsCount() {
     const employeeId = Number.parseInt(this.empinfo.employeeId);
     const currentDate = new Date();
-    const month = currentDate.getMonth() + 1; // getMonth() is 0-based
+    const month = currentDate.getMonth() + 1;
     const year = currentDate.getFullYear();
     this.http.getData(`PendingApproval/onboard-requests-count?month=${month}&year=${year}&EmployeeId=${employeeId}  `).subscribe({
       next: (response: any) => {
         if (response.success) {
+          const modules = response.data.modules;
+          const allowedLabels = this.getOnboardingAllowedLabels();
+          const totalCount = modules
+            .filter((m: any) => allowedLabels.includes(m.name))
+            .reduce((sum: number, m: any) => sum + m.count, 0);
+          
           const onboardingTab = this.navTabs.find(tab => tab.label === 'Onboarding');
           if (onboardingTab) {
-            onboardingTab.totalCount = response.data.totalCount;
-            console.log("Onboarding Total Count: ", onboardingTab.totalCount);
+            onboardingTab.totalCount = totalCount;
           }
           this.refreshFilteredTabs();
         }
       },
-      error: (err: any) => {
-
-      },
+      error: (err: any) => {},
     });
   }
+
+  private getOnboardingAllowedLabels(): string[] {
+    const onboardingLabels = [
+      { label: 'Offer Letter', permission: 'Documents History Offer Letter.view' },
+      { label: 'Contract Offer Letter', permission: 'Documents History Contract Offer Letter.view' },
+      { label: 'Trainee Offer Letter', permission: 'Documents History Trainee Offer Letter.view' },
+      { label: 'Appointment Letter', permission: 'Documents History Appointment Letter.view' },
+      { label: 'Non-Disclosure Agreement Letter', permission: 'Documents History Non-Disclosure Agreement Letter.view' },
+      { label: 'Probation', permission: 'Probation Details Tab.view' },
+      { label: 'Trainees', permission: 'Trainee Details Tab.view' }
+    ];
+    return onboardingLabels
+      .filter(item => this.rbac.allowedToAccess(item.permission))
+      .map(item => item.label);
+  }
+  
   refreshFilteredTabs(): void {
     this.filteredTabs = this.navTabs
       .filter(tab => {

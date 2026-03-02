@@ -160,9 +160,17 @@ export class UserValidationComponent implements OnInit, OnDestroy {
         if (response.empdatum) {
           this.loginReposne = response;
           this.name = `${response.empdatum.firstName} ${response.empdatum.middleName ?? ''} ${response.empdatum.lastName ?? ''}`;
-          localStorage.setItem('rightlyHrRoleClaims', JSON.stringify(response.claims));
+        
           localStorage.setItem('rightlyHrUser', JSON.stringify(response.empdatum));
           localStorage.setItem('rightlyHrUserRoles', JSON.stringify(response.roles));
+            localStorage.setItem('rightlyHrRoleClaims', JSON.stringify(response.claims));
+            if(response.roles.length === 0){
+              this.router.navigate(['/unauthorized']);
+              
+            }
+            else{
+              this.navigateBasedOnPermission();
+            }
           if (response.enableNewVersion) {
             if (!response.betaConfiguration) {
               this.modalService.open(this.newFeatureValidationPopup, { backdrop: 'static', keyboard: false, centered: true });

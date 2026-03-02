@@ -415,7 +415,7 @@ export class TraineeOfferLetterComponent implements OnInit, OnDestroy {
       this.authorityDesignation = signatureAuthorityDetails.designation;
       // 🔹 Construct full name correctly
       this.traineeEmpData.authorityName = signatureAuthorityDetails.middleName
-        ? `${signatureAuthorityDetails.firstName} ${signatureAuthorityDetails.middleName} ${signatureAuthorityDetails.lastName}`
+        ? `${signatureAuthorityDetails.firstName} ${signatureAuthorityDetails.middleName ?? ''} ${signatureAuthorityDetails.lastName}`
         : `${signatureAuthorityDetails.firstName} ${signatureAuthorityDetails.lastName}`;
     } else {
       this.traineeEmpData.authorityName = '';

@@ -107,7 +107,7 @@ export class OfferLetterComponent implements OnInit {
     this.router.navigate(['/document']);
   }
 
-  //function to get address details 
+  //function to get address details
   getEmployeeAddress() {
     let EmployeeId = this.prosempdata.employeeId;
     this.subscription = this.http.getData(`PreonboardingEmployeedata/${EmployeeId}`).subscribe({
@@ -132,9 +132,9 @@ export class OfferLetterComponent implements OnInit {
     });
   }
 
-  //function to get the offerletter details 
+  //function to get the offerletter details
   address = {} as IAddress;
-  getOfferLetterDetails() {
+getOfferLetterDetails() {
     let EmployeeId = parseInt(this.prosempdata.employeeId)
     this.subscription = this.http.getData(`PreonboardingOfferLetter/getbyEmpidNames/${EmployeeId}`).subscribe({
       next: (data: any) => {
@@ -211,9 +211,9 @@ export class OfferLetterComponent implements OnInit {
         this.modalService.dismissAll();
         this.getOfferLetterDetails();
         this.confiramtionpopups.openSuccess('Offer letter rejected successfully');
-        
-       
-        
+
+
+
       },
       error: (err: any) => {
         console.log(err);
@@ -551,7 +551,7 @@ export class OfferLetterComponent implements OnInit {
       }
     })
   }
-  
+
   ngOnDestroy(): void {
     if (this.subscription) {
       this.subscription.unsubscribe();

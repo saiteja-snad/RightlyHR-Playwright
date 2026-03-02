@@ -50,15 +50,14 @@ export class UserValidationComponent implements OnInit, OnDestroy {
   }
 
   async postLogin() {
-
     const tokens = await this.auth.getTokenResponse();
+    const googleUser = this.auth.getUser();
     const storedRes = localStorage.getItem('currentUser');
 
     // Case 1: Microsoft tokens exist but no stored response → first time login
     if (tokens && !storedRes) {
       const deviceName = this.auth.getDeviceName();
       const ipAddress = await this.auth.getIpAddress();
-
       const payload = {
         provider: 'Microsoft',
         accessToken: tokens.id_token,
@@ -66,7 +65,6 @@ export class UserValidationComponent implements OnInit, OnDestroy {
         ipAddress,
         userAgent: navigator.userAgent
       };
-
       this.auth.postData('v2/Auth/social', payload).subscribe({
         next: (res: any) => {
           this.auth.storeAuthResponse(res);
@@ -77,7 +75,30 @@ export class UserValidationComponent implements OnInit, OnDestroy {
           this.router.navigate(['/unauthorized']);
         }
       });
+      return;
+    }
 
+    // Case 2: Google user exists but no stored response → first time login
+    if (googleUser && !storedRes) {
+      const deviceName = this.auth.getDeviceName();
+      const ipAddress = await this.auth.getIpAddress();
+      const payload = {
+        provider: 'Google',
+        accessToken: googleUser.idToken,
+        deviceName,
+        ipAddress,
+        userAgent: navigator.userAgent
+      };
+      this.auth.postData('v2/Auth/social', payload).subscribe({
+        next: (res: any) => {
+          this.auth.storeAuthResponse(res);
+          this.getUserDetails(res.email);
+        },
+        error: (err) => {
+          this.signal.authSignal.set(err.error?.message || 'Social login failed. Please try again');
+          this.router.navigate(['/unauthorized']);
+        }
+      });
       return;
     }
 
@@ -90,68 +111,7 @@ export class UserValidationComponent implements OnInit, OnDestroy {
   }
 
 
-  // async postLogin() {
-  //   // Check for Microsoft OAuth token first
-  //   const oauthTokens = await this.authService.getTokenResponse();
-  //   const storedRes = localStorage.getItem('currentUser');
 
-  //   if (oauthTokens && !storedRes) {
-  //     const deviceName = this.authService.getDeviceName();
-  //     const ipAddress = await this.authService.getIpAddress();
-  //     const payload = {
-  //       provider: 'Microsoft',
-  //       accessToken: oauthTokens.id_token,
-  //       deviceName,
-  //       ipAddress,
-  //       userAgent: navigator.userAgent
-  //     };
-  //     this.executeSocialLogin(payload);
-  //     return;
-  //   }
-
-  //   // Check for Google SocialAuth token
-  //   const socialUser = this.authService.getUser();
-  //   if (socialUser && !storedRes) {
-  //     const deviceName = this.authService.getDeviceName();
-  //     const ipAddress = await this.authService.getIpAddress();
-  //     const payload = {
-  //       provider: 'Google',
-  //       accessToken: socialUser.idToken,
-  //       deviceName,
-  //       ipAddress,
-  //       userAgent: navigator.userAgent
-  //     };
-  //     this.executeSocialLogin(payload);
-  //     return;
-  //   }
-
-  //   if (storedRes) {
-  //     const parsedRes = JSON.parse(storedRes);
-  //     this.getUserDetails(parsedRes.employeeId);
-  //     return;
-  //   }
-
-  //   localStorage.clear();
-  //   sessionStorage.clear();
-  //   this.router.navigate(['/login']);
-  // }
-
-  // executeSocialLogin(payload: any) {
-  //   this.authService.postData('Auth/social', payload).subscribe({
-  //     next: (res: any) => {
-  //       this.authService.storeAuthResponse(res);
-  //       console.log('Social Backend login success:', res);
-  //       this.getUserDetails(res.employeeId); // Note: API might return email or employeeId, adjust based on response structure
-  //     },
-  //     error: (err) => {
-  //       this.http.loginErrorSignal.set(err?.error?.message || 'Social login failed.');
-  //       this.router.navigate(['/login']);
-  //     },
-  //     complete: () => {
-  //       this.http.loginErrorSignal.set('');
-  //     }
-  //   });
-  // }
 
 
   getUserDetails(email: string) {
@@ -160,17 +120,17 @@ export class UserValidationComponent implements OnInit, OnDestroy {
         if (response.empdatum) {
           this.loginReposne = response;
           this.name = `${response.empdatum.firstName} ${response.empdatum.middleName ?? ''} ${response.empdatum.lastName ?? ''}`;
-        
+
           localStorage.setItem('rightlyHrUser', JSON.stringify(response.empdatum));
           localStorage.setItem('rightlyHrUserRoles', JSON.stringify(response.roles));
-            localStorage.setItem('rightlyHrRoleClaims', JSON.stringify(response.claims));
-            if(response.roles.length === 0){
-              this.router.navigate(['/unauthorized']);
-              
-            }
-            else{
-              this.navigateBasedOnPermission();
-            }
+          localStorage.setItem('rightlyHrRoleClaims', JSON.stringify(response.claims));
+          if (response.roles.length === 0) {
+            this.router.navigate(['/unauthorized']);
+
+          }
+          else {
+            this.navigateBasedOnPermission();
+          }
           if (response.enableNewVersion) {
             if (!response.betaConfiguration) {
               this.modalService.open(this.newFeatureValidationPopup, { backdrop: 'static', keyboard: false, centered: true });

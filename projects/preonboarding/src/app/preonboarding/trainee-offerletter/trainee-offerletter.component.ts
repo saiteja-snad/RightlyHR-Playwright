@@ -229,7 +229,7 @@ convertDaysToMonths(days: number): number {
         if (signatureAuthorityDetails) {
           this.authorityDesignation = signatureAuthorityDetails.designation;
           if (signatureAuthorityDetails.middleName) {
-            this.traineeEmpData.authorityName = `${signatureAuthorityDetails.firstName} ${signatureAuthorityDetails.middleName} ${signatureAuthorityDetails.lastName}`;
+            this.traineeEmpData.authorityName = `${signatureAuthorityDetails.firstName} ${signatureAuthorityDetails.middleName ?? ''} ${signatureAuthorityDetails.lastName}`;
           } else
             this.traineeEmpData.authorityName = `${signatureAuthorityDetails.firstName} ${signatureAuthorityDetails.lastName}`;
         }

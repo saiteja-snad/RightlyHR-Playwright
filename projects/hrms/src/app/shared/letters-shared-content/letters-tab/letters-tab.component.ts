@@ -53,21 +53,21 @@ export class LettersTabComponent {
       link: '/letters/bank-loan-letter',
       icon: '/letters-icon/bank-loan-letter-icon.png',
       subject: MODULE_INFOS.BANK_LOAN_LETTER_MODULE_INFO,
-      permission: { feature: 'Dashboard Generate Documents Offer Letter', action: 'view' }
+      permission: { feature: 'Bank Loan Letter', action: 'view' }
     },
     {
       label: 'Address Proof Letter',
       link: '/letters/address-proof-letter',
       icon: '/letters-icon/address-proof-letter-icon.png',
       subject: MODULE_INFOS.ADDRESS_PROOF_LETTER_MODULE_INFO,
-      permission: { feature: 'Dashboard Generate Documents Appointment Letter', action: 'view' }
+      permission: { feature: 'Address Proof Letter', action: 'view' }
     },
     {
       label: 'Appraisal Letter',
       link: '/letters/apprisal-letter',
       icon: '/letters-icon/appraisal-letter-icon.png',
       subject: MODULE_INFOS.APPRAISAL_LETTER_MODULE_INFO,
-      permission: { feature: 'Dashboard Generate Documents Trainee Offer Letter', action: 'view' }
+      permission: { feature: 'Apprisal Letter', action: 'view' }
     },
     // {
     //   label: 'Promotion Letter',

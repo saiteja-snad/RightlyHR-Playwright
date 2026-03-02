@@ -371,6 +371,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       isBlocked: [{ value: day?.isBlocked || false, disabled: true }],
       rejectReason: [day?.rejectReason || ''],
       blockReason: [blockReason],
+      resourceId: [{ value: day?.resourceId || null}],
     });
   }
 
@@ -531,7 +532,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
 
   getAllEmployeeDetails() {
     const EmployeeId = this.empdata?.employeeId;
-    const satus = ['Active', 'Trainee Active', 'Active Contract'];
+    const satus = ['Active','Trainee Active','Active Contract'];
     this.subscription = this.http.getData(`Employeedata/v3/Getallemployees?statuses=${satus}`).subscribe({
       next: (res: any) => {
         this.activeEmplist = res.filter((emp: any) => emp.employeeId !== EmployeeId).map((employee: any) => ({
@@ -1419,8 +1420,6 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
         this.isModalOpen = false;
       });
       this.dayForm = dayForm; // keep reference
-      console.log(this.dayForm);
-      
       const selectedResource = this.resourcesArrayList.find(
         (res: any) => res.project?.projectId === this.dayForm.get('projectId')?.value &&
           res.client?.clientId === this.dayForm.get('clientId')?.value && res.phase?.phaseId === this.dayForm.get('phaseId')?.value
@@ -1616,11 +1615,12 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       clientId: formValue.clientId || this.selectedclientid || null,
       projectId: formValue.projectId || this.selectedprojectid || null,
       phaseId: formValue.phaseId || this.selectedPhaseId || null,
-      timesheetId: this.timesheetdata?.timesheetId || 0,
+      timesheetId: this.timesheetdata?.timesheetId || null,
       isOverride: formValue.isBlocked || false,
       totalDurationSeconds: this.hhmmToSeconds(formValue.duration) || 0,
       isBillable: formValue.isBillable || false,
       moduleId: 30,
+      resourceId: formValue?.resourceId?.value || null
     };
     // POST request
     this.http.postdata('Timesheet/save-or-update', payload).subscribe({
@@ -1762,7 +1762,7 @@ getApprovalStatusCounts() {
    //Map counts to tabs
     });
   }
- 
+
   canDelete(project?: AbstractControl, index?: number): boolean {
     if (!project) return false;
     const projectId = project.get('projectId')?.value ?? null;

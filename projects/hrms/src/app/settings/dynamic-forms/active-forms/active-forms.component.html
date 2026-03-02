@@ -55,7 +55,7 @@
                     @if(rbac.allowedToAccess('Active Forms.delete')){
                     <li>
                       <a class="dropdown-item" (click)="openmodal(confirmation);setfromid=form.formId">
-                        <i class="bi bi-trash3 me-2"></i>{{'Inactive' | translate}}
+                        <i class="bi bi-slash-circle me-2"></i>{{'Inactive' | translate}}
                       </a>
                     </li>
                     }

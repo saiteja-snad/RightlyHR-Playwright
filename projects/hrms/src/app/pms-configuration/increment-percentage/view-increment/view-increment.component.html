@@ -26,7 +26,7 @@
             {{'Review Cycle Name is required'|translate}}
           </div>
         </div>
-    
+
         <div class="col-md-6 mb-3">
           <label for="ratingscale" class="form-label custom-label">{{'Rating Scale'|translate}}<span class="text-danger">*</span></label>
           <input class="form-control" aria-label="Default select example" id="ratingscale" name="ratingscale"
@@ -37,7 +37,7 @@
             {{'Rating Scale is required'|translate}}
           </div>
         </div>
-    
+
         <div class="col-md-6 mb-3">
           <label for="department" class="form-label custom-label">{{'Department'|translate}}<span class="text-danger">*</span></label>
           <input class="form-control" #deparment="ngModel" [(ngModel)]="UpdateIncrementalpercentage.department"
@@ -47,7 +47,7 @@
             {{'Department is required'|translate}}
           </div>
         </div>
-    
+
         <div class="col-md-6 mb-3">
           <label for="team" class="form-label custom-label">{{'Team'|translate}}<span class="text-danger">*</span></label>
           <input class="form-control" aria-label="Default select example" id="team" name="team" #team="ngModel"
@@ -57,7 +57,7 @@
             {{'Team is required'|translate}}
           </div>
         </div>
-    
+
         <div class="col-md-6 mb-3">
           <label for="location" class="form-label custom-label">{{'Location'|translate}}<span class="text-danger">*</span></label>
           <input class="form-control" aria-label="Default select example" id="location" name="location" #location="ngModel"
@@ -67,7 +67,7 @@
             {{'Location is required'|translate}}
           </div>
         </div>
-    
+
         <div class="col-md-6 mb-3">
           <label for="sublocation" class="form-label custom-label">{{'Sub Location'|translate}}<span class="text-danger">*</span></label>
           <input class="form-control" aria-label="Default select example" id="sublocation" name="sublocation"
@@ -79,7 +79,7 @@
           </div>
         </div>
       </div>
-    
+
       <div class="custom-table-content">
         <table class="w-100">
           <thead>
@@ -96,14 +96,14 @@
                 <div class="d-flex">
                   <div>
                     <input type="number" class="form-control value-input" [(ngModel)]="detail.min" id="min-{{i}}"
-                      name="min-{{i}}" min="0" [placeholder]="'Min'|translate" disabled required />
+                      name="min-{{i}}" min="0" [placeholder]="'Min Amount'|translate" disabled required />
                   </div>
                   <div class="pt-2">
                     <span class="mx-2">-</span>
                   </div>
                   <div>
                     <input type="number" class="form-control value-input" [(ngModel)]="detail.max" id="max-{{i}}"
-                      name="max-{{i}}" min="0" [placeholder]="'Max'|translate" disabled required />
+                      name="max-{{i}}" min="0" [placeholder]="'Max Amount'|translate" disabled required />
                   </div>
                 </div>
               </td>

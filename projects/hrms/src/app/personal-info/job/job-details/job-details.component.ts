@@ -62,6 +62,7 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
     jobRole?: string;
   } = {};
   noticeperiodDuration: any;
+  maxEarlyRelievingDate: string = '';
   selectedEmployeeId: any
   selectedGradeName: string = '';
   getGradename: any
@@ -754,8 +755,10 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
     this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static',keyboard: false });
     console.log('separation', data)
     this.postSeparationRequest = data
+    console.log('last working date', this.postSeparationRequest)
+    const appliedDate = this.formatDate(new Date());
     this.separationRequestForm.patchValue({
-      appliedDate: this.formatDate(new Date()),
+      appliedDate: appliedDate,
       jobRole: data.jobRole,
       departmentName: data.departmentName,
       team: data.subdepartmentName,
@@ -763,6 +766,9 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
       teamManager: `${data?.firstName ?? ''} ${data?.middleName ?? ''} ${data?.lastName ?? ''}`,
       reportingManager: `${data?.fName ?? ''} ${data?.mName ?? ''} ${data?.lName ?? ''}`,
     });
+    if (this.noticeperiodDuration) {
+      this.maxEarlyRelievingDate = this.formatDate(moment(appliedDate).add(this.noticeperiodDuration, 'days'));
+    }
   }
 
 

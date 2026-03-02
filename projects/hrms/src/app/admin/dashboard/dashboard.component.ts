@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import {  Router, RouterModule } from '@angular/router';
-import { DocumentHistoryLayoutComponent } from '../document-history/document-history-layout/document-history-layout.component';
 import { forkJoin, Observable, Subject, takeUntil,  } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import moment from 'moment';

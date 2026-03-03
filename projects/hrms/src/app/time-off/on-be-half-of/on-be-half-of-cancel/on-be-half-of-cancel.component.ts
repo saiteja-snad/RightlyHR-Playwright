@@ -33,7 +33,7 @@ export class OnBeHalfOfCancelComponent implements OnInit, OnDestroy {
   lpdata = [] as Ilpid[];
   loading: boolean = false;
   cadidateEmployeeId!: number;
-  selectedSandwichItem: any = null;
+
   options = [
     { label: 10, value: 10 },
     { label: 15, value: 15 },
@@ -90,10 +90,7 @@ export class OnBeHalfOfCancelComponent implements OnInit, OnDestroy {
     });
   }
 
-  openSandwichBreakdown(item: any, modal: any) {
-    this.selectedSandwichItem = item;
-    this.modalService.open(modal, { centered: true, backdrop: 'static', size: 'lg' });
-  }
+
 
   ngOnDestroy(): void {
     if (this.subscription) {

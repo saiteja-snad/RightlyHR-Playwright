@@ -55,7 +55,7 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
   leaveEntitlementsList = {} as ICategoryDetails;
   employeeLeaveEntitlementsList:ICategoryDetails[] = [] ;
   selectedLeaveData = {} as any;
-  selectedSandwichItem: any = null;
+
   leavesselect!: LeaveApproval[];
   selectedProducts: LeaveApproval[] = [];
   responseSummary!: any;
@@ -705,8 +705,4 @@ getApprovalStatusCounts() {
     this.destroy$.unsubscribe();
   }
 
-  openSandwichBreakdown(item: any, modal: any) {
-    this.selectedSandwichItem = item;
-    this.modalService.open(modal, { centered: true, backdrop: 'static', size: 'lg' });
-  }
 }

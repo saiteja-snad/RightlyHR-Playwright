@@ -50,7 +50,7 @@ export class OnBeHalfOfWaitingForApprovalComponent implements OnInit, OnDestroy{
   ];
   lpdata = [] as Ilpid[];
   waitingforapprovalCount = 0;
-  selectedSandwichItem: any = null;
+
 
   onRowsChange() {
     this.first = 0;
@@ -110,10 +110,7 @@ export class OnBeHalfOfWaitingForApprovalComponent implements OnInit, OnDestroy{
     });
   }
 
-  openSandwichBreakdown(item: any, modal: any) {
-    this.selectedSandwichItem = item;
-    this.modalService.open(modal, { centered: true, backdrop: 'static', size: 'lg' });
-  }
+
 
   ngOnDestroy(): void {
     if (this.subscription) {

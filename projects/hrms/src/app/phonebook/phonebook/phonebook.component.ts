@@ -38,7 +38,7 @@ export class PhonebookComponent {
 
   getPhoneBook() {
     this.loaders = true;
-    this.subscription = this.http.getData(`EmployeeData/TraineeActiveEmployees/Active`).subscribe({
+    this.subscription = this.http.getData(`Employeedata/EmployeesContact/Active`).subscribe({
       next: (data: any) => {
         this.loaders = false;
         // Step 1: Map and prepare employee objects

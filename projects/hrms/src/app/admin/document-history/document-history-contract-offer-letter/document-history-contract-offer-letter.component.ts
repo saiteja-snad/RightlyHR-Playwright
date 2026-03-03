@@ -82,7 +82,7 @@ export class DocumentHistoryContractOfferLetterComponent implements OnInit, OnDe
   getOfferLetters() {
     this.isloading = true;
     // Build the URL with query param if empType is provided
-    let url = 'OfferLetter/getAllNames/approverNames?empType=contract';
+    let url = 'OfferLetter/getAllNames/approverNames?empType=contract offer letter';
     this.subscription = this.http.getData(url).subscribe({
       next: (data: any) => {
         this.isloading = false;
@@ -247,7 +247,7 @@ export class DocumentHistoryContractOfferLetterComponent implements OnInit, OnDe
       employeeId: datas.offerSentBy,
       documentUrl: personValues.documentUrl,
       workLocation: datas.workLocation,
-      senderName: `${loggedInUser.firstName}${loggedInUser.middleName ? ' ' + loggedInUser.middleName : ''} 
+      senderName: `${loggedInUser.firstName}${loggedInUser.middleName ? ' ' + loggedInUser.middleName : ''}
       ${loggedInUser.lastName ?? ''}`,
       senderEmail: loggedInUser.workEmail,
       approvedBy: loggedInUser.employeeId,
@@ -406,7 +406,7 @@ export class DocumentHistoryContractOfferLetterComponent implements OnInit, OnDe
       isDelete: false,
       notificationDate: currentDate,
       notificationType: `${loggedInUser.firstName}${loggedInUser.middleName ? ' ' + loggedInUser.middleName : ''}
-      ${loggedInUser.lastName ? ' ' + loggedInUser.lastName : ''} Rejected ${this.selectedValuesOfOffer.employeeName} 
+      ${loggedInUser.lastName ? ' ' + loggedInUser.lastName : ''} Rejected ${this.selectedValuesOfOffer.employeeName}
       Offer Letter`,
       empId: this.selectedValuesOfOffer.offerSentBy,
     };

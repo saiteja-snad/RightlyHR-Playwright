@@ -76,7 +76,6 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
   page = 1;
   pageSize = 10;
   rows = 10;
-  collectionSize!: number;
   searchQuery = '';
   first = 0;
   totalRecords = 0;
@@ -452,6 +451,8 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
   }
 
   onSearchTextChange(): void {
+    this.page = 1;
+    this.first = 0;
     if (this.searchText) {
       const params: EmployeeQueryParams = {
         reviewcycleid: this.reviewCycleID,
@@ -482,7 +483,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
         this.reportOfAllEmployees = data.items || [];
         this.filteredEmployees = this.listOfAllEmployees;
         console.log(this.filteredEmployees);
-        this.collectionSize = data.totalCount;
+        this.totalRecords = data.totalCount;
       },
       error: (err) => {
         this.dataload = false;
@@ -686,7 +687,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
 
     const id = this.selectedIds.toString();
     if(id === null ||id === ""){
-      this.modal.openErrorModal('Please select at least one employee to assign the review cycle');
+      this.modal.openErrorModal('Please select employee(s) to assign the review cycle');
       this.spinnerLoader = false;
       return;
       
@@ -793,9 +794,10 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
 
   genarateAppraisalletter(itemId: any, form: FormGroup) {
     const formData = form.value;
+    const selectedEmployee = this.filteredEmployees.find(emp => emp.id === itemId);
     const params = new URLSearchParams({
       reviewcycleitemId: itemId,
-      employeeId: this.empinfo.employeeId,
+      employeeId: selectedEmployee?.reviewEmployeeId || this.empinfo.employeeId,
       lettertype: 'performanceappraisal',
       effectivedate: formData.effectiveFromDATE,
       signatureempId: formData.signaturename.employeeId,
@@ -895,7 +897,12 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
   }
 
   SentLetters() {
-    this.http.postletters(`AppraisalLetter/releaseappraisalletter?reviewcycleitemId=${this.selectedIds || this.allSelected}&employeeId=${this.empinfo.employeeId}&lettertype=performanceappraisal&status=${this.status}`)
+    const employeeIds = this.selectedIds.map(id => {
+      const emp = this.filteredEmployees.find(e => e.id === id);
+      return emp?.reviewEmployeeId;
+    }).filter(Boolean).join(',');
+    
+    this.http.postletters(`AppraisalLetter/releaseappraisalletter?reviewcycleitemId=${this.selectedIds || this.allSelected}&employeeId=${employeeIds || this.empinfo.employeeId}&lettertype=performanceappraisal&status=${this.status}`)
       .pipe(takeUntil(this.destroy$)).subscribe({
         next: (data: any) => {
           this.modalService.dismissAll();
@@ -942,9 +949,14 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
       ? reviewCycleItemIds.join(',')
       : reviewCycleItemIds;
 
+    const employeeIds = this.selectedIds.map(id => {
+      const emp = this.filteredEmployees.find(e => e.id === id);
+      return emp?.reviewEmployeeId;
+    }).filter(Boolean).join(',');
+
     const params = new URLSearchParams({
       reviewcycleitemId: reviewcycleitemIdStr,
-      employeeId: this.empinfo.employeeId.toString(),
+      employeeId: employeeIds || this.empinfo.employeeId.toString(),
       lettertype: 'performanceappraisal',
       status: this.status
     });
@@ -996,10 +1008,10 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
 
   genaratePromotionletter(itemId: any, form: FormGroup) {
     const formData = form.value;
-
+    const selectedEmployee = this.filteredEmployees.find(emp => emp.id === itemId);
     const params = new URLSearchParams({
       reviewcycleitemId: itemId,
-      employeeId: this.empinfo.employeeId,
+      employeeId: selectedEmployee?.reviewEmployeeId || this.empinfo.employeeId,
       lettertype: 'PromotionLetter',
       effectivedate: formData.effectiveFromDATE,
       signatureempId: formData.signaturename.employeeId,
@@ -1048,7 +1060,12 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
   }
 
   SentpromationLetters(): void {
-    this.http.postletters(`AppraisalLetter/releaseappraisalletter?reviewcycleitemId=${this.selectedIds || this.allSelected}&employeeId=${this.empinfo.employeeId}&lettertype=PromotionLetter&status=${this.status}`).pipe(takeUntil(this.destroy$)).subscribe({
+    const employeeIds = this.selectedIds.map(id => {
+      const emp = this.filteredEmployees.find(e => e.id === id);
+      return emp?.reviewEmployeeId;
+    }).filter(Boolean).join(',');
+    
+    this.http.postletters(`AppraisalLetter/releaseappraisalletter?reviewcycleitemId=${this.selectedIds || this.allSelected}&employeeId=${employeeIds || this.empinfo.employeeId}&lettertype=PromotionLetter&status=${this.status}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data: any) => {
         this.modalService.dismissAll();
         this.modal.openSuccessModal('Promotion letter sent successfully');
@@ -1276,7 +1293,12 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
       console.log(f);
       return;
     }
-    this.http.getData(`AppraisalLetter/generateappraisalletter/?reviewcycleitemId=${this.selectedIds || this.allSelected}&employeeId=${this.empinfo.employeeId}&lettertype=performanceappraisal&effectivedate=${this.Effectivedatefrom.get('effectiveFromDATE')?.value}&signatureempId=${this.Effectivedatefrom.get('signaturename')?.value.employeeId
+    const employeeIds = this.selectedIds.map(id => {
+      const emp = this.filteredEmployees.find(e => e.id === id);
+      return emp?.reviewEmployeeId;
+    }).filter(Boolean).join(',');
+    
+    this.http.getData(`AppraisalLetter/generateappraisalletter/?reviewcycleitemId=${this.selectedIds || this.allSelected}&employeeId=${employeeIds || this.empinfo.employeeId}&lettertype=performanceappraisal&effectivedate=${this.Effectivedatefrom.get('effectiveFromDATE')?.value}&signatureempId=${this.Effectivedatefrom.get('signaturename')?.value.employeeId
       }&status=${this.status}`)
       .pipe(takeUntil(this.destroy$)).subscribe({
         next: (data: any) => {
@@ -1339,7 +1361,8 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
   }
 
   SentLettersById(id: any): void {
-    this.http.postletters(`AppraisalLetter/releaseappraisalletter?reviewcycleitemId=${id}&employeeId=${this.empinfo.employeeId}&lettertype=performanceappraisal&status=${this.status}`).pipe(takeUntil(this.destroy$)).subscribe({
+    const selectedEmployee = this.filteredEmployees.find(emp => emp.id === id);
+    this.http.postletters(`AppraisalLetter/releaseappraisalletter?reviewcycleitemId=${id}&employeeId=${selectedEmployee?.reviewEmployeeId || this.empinfo.employeeId}&lettertype=performanceappraisal&status=${this.status}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data: any) => {
         this.modalService.dismissAll();
         this.modal.openSuccessModal('Appraisal letter sent successfully');
@@ -1373,7 +1396,8 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
   }
 
   SentpromationLetterById(id: any): void {
-    this.http.postletters(`AppraisalLetter/releaseappraisalletter?reviewcycleitemId=${id}&employeeId=${this.empinfo.employeeId}&lettertype=PromotionLetter&status=${this.status}`).pipe(takeUntil(this.destroy$)).subscribe({
+    const selectedEmployee = this.filteredEmployees.find(emp => emp.id === id);
+    this.http.postletters(`AppraisalLetter/releaseappraisalletter?reviewcycleitemId=${id}&employeeId=${selectedEmployee?.reviewEmployeeId || this.empinfo.employeeId}&lettertype=PromotionLetter&status=${this.status}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data: any) => {
         this.modalService.dismissAll();
         this.modal.openSuccessModal('Promotion letter sent successfully');
@@ -1409,13 +1433,16 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
   generatePromotionLetters(f: FormGroup): void {
     const form = f.value;
     const reviewCycleItemId = this.selectedIds || this.allSelected;
-    const employeeId = this.empinfo.employeeId;
+    const employeeIds = this.selectedIds.map(id => {
+      const emp = this.filteredEmployees.find(e => e.id === id);
+      return emp?.reviewEmployeeId;
+    }).filter(Boolean).join(',');
     const letterType = 'PromotionLetter';
     const effectiveDate = form.effectiveFromDATE;
     const signatureEmpId = form.signaturename.employeeId;
     const status = this.status;
 
-    const url = `AppraisalLetter/generateappraisalletter/?reviewcycleitemId=${reviewCycleItemId}&employeeId=${employeeId}&lettertype=${letterType}&effectivedate=${effectiveDate}&signatureempId=${signatureEmpId}&status=${status}`;
+    const url = `AppraisalLetter/generateappraisalletter/?reviewcycleitemId=${reviewCycleItemId}&employeeId=${employeeIds || this.empinfo.employeeId}&lettertype=${letterType}&effectivedate=${effectiveDate}&signatureempId=${signatureEmpId}&status=${status}`;
 
     this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
       next: () => {
@@ -1496,3 +1523,4 @@ hasAnyEmployeeActionsPermission(): boolean {
     this.destroy$.unsubscribe();
   }
 }
+

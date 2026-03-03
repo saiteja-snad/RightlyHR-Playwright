@@ -89,20 +89,20 @@
               <td>
                 <div class="d-flex">
                   <div>
-                    <input type="number" class="form-control value-input" [(ngModel)]="detail.minvalue" id="min-{{i}}"
+                    <input type="number" class="form-control value-input small-placeholder" [(ngModel)]="detail.minvalue" id="min-{{i}}"
                       name="min-{{i}}" min="0" placeholder="{{'Min Amount' | translate}}" (input)="validateNumber($event)" required />
                   </div>
                   <div class="pt-2">
                     <span class="mx-2">-</span>
                   </div>
                   <div>
-                    <input type="number" class="form-control value-input" [(ngModel)]="detail.maxvalue" id="max-{{i}}"
+                    <input type="number" class="form-control value-input small-placeholder" [(ngModel)]="detail.maxvalue" id="max-{{i}}"
                       name="max-{{i}}" min="0" (input)="validateNumber($event)" placeholder="{{'Max Amount' | translate}}" required />
                   </div>
                 </div>
               </td>
               <td *ngFor="let column of detail.ratingDetails; let j = index" class="text-center text-td">
-                <input type="number" class="form-control number-input" [(ngModel)]="column.percentage"
+                <input type="number" class="form-control number-input small-placeholder" [(ngModel)]="column.percentage"
                   (input)="validateNumber($event)" min="0" id="percentage-{{i}}-{{j}}" name="percentage-{{i}}-{{j}}"
                   placeholder="{{'Percentage' | translate}}" required />
               </td>

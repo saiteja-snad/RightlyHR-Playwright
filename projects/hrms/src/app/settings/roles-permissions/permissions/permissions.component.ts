@@ -1293,21 +1293,21 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Increment Create',
     'Increment Update(Status - Created)',
     'Increment Delete(Status - Created)',
-    'Increment View(Status - Initialted)',
+    'Increment View(Status - Initiated)',
     'Increment Update(Status - Review On Hold)',
   ];
   assessorFields = [
     'Assessor Create',
     'Assessor Update(Status - Created)',
     'Assessor Delete(Status - Created)',
-    'Assessor Update(Status - Initialted)',
+    'Assessor Update(Status - Initiated)',
     'Assessor Update(Status - Review On Hold)',
   ];
     kraFields = [
     'Kra Create',
     'Kra Update(Status - Created)',
     'Kra Delete(Status - Created)',
-    'Kra Update(Status - Initialted)',
+    'Kra Update(Status - Initiated)',
     'Kra Update(Status - Review On Hold)',
   ];
   employeeInfoPersonalSubTabsFields = [

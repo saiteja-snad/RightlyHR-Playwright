@@ -81,7 +81,7 @@ export class DocumentHistoryOfferLetterComponent implements OnInit, OnDestroy {
   //to get all offer Letters
   getOfferLetters() {
     this.isloading = true;
-    this.subscription = this.http.getData('OfferLetter/getAllNames/approverNames').subscribe({
+    this.subscription = this.http.getData('OfferLetter/getAllNames/approverNames?empType=offer letter').subscribe({
       next: (data: any) => {
         this.isloading = false;
         this.allOfferLetters = data;
@@ -402,7 +402,7 @@ export class DocumentHistoryOfferLetterComponent implements OnInit, OnDestroy {
       isDelete: false,
       notificationDate: currentDate,
       notificationType: `${loggedInUser.firstName}${loggedInUser.middleName ? ' ' + loggedInUser.middleName : ''}
-      ${loggedInUser.lastName ? ' ' + loggedInUser.lastName : ''} Rejected 
+      ${loggedInUser.lastName ? ' ' + loggedInUser.lastName : ''} Rejected
       ${this.selectedValuesOfOffer.employeeName} Offer Letter`,
       empId: this.selectedValuesOfOffer.offerSentBy,
     };

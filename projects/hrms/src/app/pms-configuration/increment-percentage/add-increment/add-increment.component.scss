@@ -3,3 +3,16 @@
     height: max-content;
     max-height: 30vh;
 }
+
+.small-placeholder::placeholder {
+  font-size: 0.85rem !important;
+  opacity: 1;
+}
+
+.small-placeholder::-moz-placeholder {
+  font-size: 0.85rem;
+}
+
+.small-placeholder::-ms-input-placeholder {
+  font-size: 0.85rem;
+}

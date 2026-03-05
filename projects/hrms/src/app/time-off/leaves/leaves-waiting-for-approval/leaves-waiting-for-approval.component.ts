@@ -38,7 +38,6 @@ export class LeavesWaitingForApprovalComponent implements OnInit, OnDestroy {
   cancelForm!: FormGroup;
   selectedFields = {} as any;
   loading: boolean = false;
-  selectedSandwichItem: any = null;
   permissionForLoggedInUser: boolean = true;
   options = [
     { label: 10, value: 10 },
@@ -177,11 +176,6 @@ export class LeavesWaitingForApprovalComponent implements OnInit, OnDestroy {
       },
       error: (reason: any) => console.log(reason)
     });
-  }
-
-  openSandwichBreakdown(item: any, modal: any) {
-    this.selectedSandwichItem = item;
-    this.modalService.open(modal, { centered: true, backdrop: 'static', size: 'lg' });
   }
 
   ngOnDestroy(): void {

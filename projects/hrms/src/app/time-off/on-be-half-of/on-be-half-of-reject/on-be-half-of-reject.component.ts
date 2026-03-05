@@ -36,7 +36,7 @@ export class OnBeHalfOfRejectComponent implements OnInit, OnDestroy{
     { label: 25, value: 25 }
   ];
   approverComments = [] as any[];
-  selectedSandwichItem: any = null;
+
 
   onRowsChange() {
     this.first = 0;
@@ -94,10 +94,7 @@ export class OnBeHalfOfRejectComponent implements OnInit, OnDestroy{
     this.approverComments = value;
   }
 
-  openSandwichBreakdown(item: any, modal: any) {
-    this.selectedSandwichItem = item;
-    this.modalService.open(modal, { centered: true, backdrop: 'static', size: 'lg' });
-  }
+
 
   ngOnDestroy(): void {
     if (this.subscription) {

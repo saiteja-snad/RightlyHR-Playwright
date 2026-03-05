@@ -36,7 +36,7 @@ export class OnBeHalfOfProcessComponent implements OnInit, OnDestroy{
     { label: 25, value: 25 }
   ];
   loading: boolean = false;
-  selectedSandwichItem: any = null;
+
   onRowsChange() {
     this.first = 0;
   }
@@ -88,10 +88,7 @@ export class OnBeHalfOfProcessComponent implements OnInit, OnDestroy{
     });
   }
 
-  openSandwichBreakdown(item: any, modal: any) {
-    this.selectedSandwichItem = item;
-    this.modalService.open(modal, { centered: true, backdrop: 'static', size: 'lg' });
-  }
+
 
   ngOnDestroy(): void {
     if (this.subscription) {

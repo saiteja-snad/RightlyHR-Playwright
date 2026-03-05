@@ -32,7 +32,6 @@ export class LeavesProcessedComponent implements OnInit, OnDestroy{
   subscription!: Subscription;
   lpdata = [] as Ilpid[];
   loading: boolean = false;
-  selectedSandwichItem: any = null;
   options = [
     { label: 10, value: 10 },
     { label: 15, value: 15 },
@@ -113,11 +112,6 @@ export class LeavesProcessedComponent implements OnInit, OnDestroy{
         this.loading = false;
       }
     });
-  }
-
-  openSandwichBreakdown(item: any, modal: any) {
-    this.selectedSandwichItem = item;
-    this.modalService.open(modal, { centered: true, backdrop: 'static', size: 'lg' });
   }
 
   ngOnDestroy(): void {

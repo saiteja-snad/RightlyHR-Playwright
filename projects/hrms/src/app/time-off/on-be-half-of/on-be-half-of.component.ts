@@ -157,9 +157,7 @@ export class OnBeHalfOfComponent {
   selectedYear: number = this.currentYear;
   years: number[] = [];
 
-  @ViewChild('sandwichConfirmationModal') sandwichModal: any;
-  sandwichMessage: string = '';
-  sandwichData: any = null;
+
 
   constructor(
     private conformationPopup: OpenModalService,
@@ -903,56 +901,13 @@ export class OnBeHalfOfComponent {
       ).format('YYYY-MM-DD');
       this.leaveFormData.notes = this.leaveForm.get('reason')?.value;
 
-      if (this.selectedleave?.category?.enableSandwichPolicy) {
-        this.checkSandwichPolicy();
-        return;
-      }
-
       this.submitLeaveRequest();
     } else {
       this.conformationPopup.openErrorModal('Maximum leave limit reached for this category');
     }
   }
 
-  checkSandwichPolicy() {
-    const payload = {
-      employeeId: this.leaveFormData.employeeId,
-      categoryId: this.leaveFormData.categoryId,
-      startDate: this.leaveFormData.startdate,
-      endDate: this.leaveFormData.enddate,
-      durationType: this.leaveFormData.durationType,
-      isDaytype: this.leaveFormData.isDaytype,
-      duration: this.leaveFormData.duration
-    };
 
-    this.subscription = this.http.getDataIncludeParams('Timeoff/CalculateLeaveImpact', payload).subscribe({
-      next: (response: any) => {
-        if (response.isSandwichApplied) {
-          this.showSandwichConfirmation(response);
-        } else {
-          this.submitLeaveRequest();
-        }
-      },
-      error: (err: any) => {
-        this.conformationPopup.openErrorModal(err.error?.message || 'Error calculating leave impact');
-        this.isLoading = false;
-      }
-    });
-  }
-
-  showSandwichConfirmation(sandwichData: any) {
-    this.sandwichMessage = sandwichData.errorMessage || 'This leave request falls under the Sandwich Leave Policy.';
-    this.sandwichData = sandwichData;
-    this.modalService.open(this.sandwichModal, { centered: true, backdrop: 'static' }).result.catch(() => {
-      this.isLoading = false;
-    });
-  }
-
-  confirmSandwichPolicy(modal: any) {
-    modal.dismiss();
-    this.leaveFormData.duration = this.sandwichData.totalLeaveDays;
-    this.submitLeaveRequest();
-  }
 
   submitLeaveRequest() {
     let loggedInUser = this.authService.getToken();

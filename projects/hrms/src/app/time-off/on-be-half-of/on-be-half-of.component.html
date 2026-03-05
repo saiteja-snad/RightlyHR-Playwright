@@ -368,19 +368,3 @@
     </div>
 </ng-template>
 
-<ng-template #sandwichConfirmationModal let-modal>
-    <div class="result-popup-content" ngbAutofocus>
-        <div>
-            <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
-            <p class="confirmation-text">{{ sandwichMessage }}</p>
-        </div>
-        <!-- <div>
-            <app-confirmation-icon />
-            <p class="confirmation-text mb-4">{{ sandwichMessage }}</p>
-        </div> -->
-        <div class="custom-modal-footer">
-            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{ 'Cancel' | translate }}</button>
-            <button type="button" class="custom-btn btn-primary" (click)="confirmSandwichPolicy(modal)">{{ 'Proceed' | translate }}</button>
-        </div>
-    </div>
-</ng-template>

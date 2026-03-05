@@ -60,14 +60,12 @@ export class TimeOffForYourRoleRequestComponent implements OnInit, OnDestroy {
   approverComments = [] as LeaveApproverComment[];
   leaveEntitlementsList = {} as ICategoryDetails;
   selectedLeaveData = {} as any;
-  selectedSandwichItem: any = null;
+
   leavesselect!: LeaveApproval[];
   selectedProducts: LeaveApproval[] = [];
   requestBody = {} as any;
   @ViewChild('commentspopup') modalContent: any;
   @ViewChild('leaveSummary') leaveSummary: any;
-  @ViewChild('sandwichRecheckModal') sandwichRecheckModal: any;
-  @ViewChild('sandwichBulkRecheckModal') sandwichBulkRecheckModal: any;
   selectedLeaveStatus: any;
   destroy$: Subject<boolean> = new Subject<boolean>();
   options = [
@@ -77,8 +75,7 @@ export class TimeOffForYourRoleRequestComponent implements OnInit, OnDestroy {
     { label: 25, value: 25 },
   ];
   totalCount: any;
-  sandwichRecheckMessage: string = '';
-  sandwichBulkMessage: string = '';
+
   onRowsChange() {
     this.first = 0;
   }
@@ -514,68 +511,12 @@ export class TimeOffForYourRoleRequestComponent implements OnInit, OnDestroy {
     this.selectedLeaveData = selecteddata;
     let approvedBy = this.LOGIN.employeeId.toString();
     if (this.selectedProducts && this.selectedProducts.length > 0) {
-      const sandwichIds = this.selectedProducts
-        .filter(item => item?.entity?.isSandwichLeave)
-        .map(item => item.entity.leaveId);
-      if (sandwichIds.length > 0) {
-        const checks = sandwichIds.map(id => this.http.getDataIncludeParams('Timeoff/CalculateLeaveImpact', { timeoffId: id }));
-        forkJoin(checks).pipe(takeUntil(this.destroy$)).subscribe({
-          next: (responses: any[]) => {
-            const adj = responses.find(res => res && res.isAdjacentGating === true);
-            if (adj) {
-              this.conformationPopup.openErrorModal(adj?.errorMessage || '');
-              return;
-            }
-            const firstNonSandwich = responses.find(res => res && res.isSandwichApplied === false);
-            this.sandwichBulkMessage = firstNonSandwich?.errorMessage || '';
-            if (this.sandwichBulkMessage) {
-              this.modalService.open(this.sandwichBulkRecheckModal, { centered: true, backdrop: 'static' });
-            } else {
-              this.processBulkItems();
-            }
-          },
-          error: (err: any) => {
-            this.conformationPopup.openErrorModal(err.error?.message || 'Error calculating leave impact');
-          }
-        });
-        return;
-      } else {
-        this.processBulkItems();
-        return;
-      }
+      this.processBulkItems();
+      return;
     }
-    const entity = this.selectedLeaveData?.entity;
-    if (entity?.isSandwichLeave) {
-      const timeoffId = entity.leaveId;
-      this.http.getDataIncludeParams('Timeoff/CalculateLeaveImpact', { timeoffId }).pipe(takeUntil(this.destroy$)).subscribe({
-        next: (response: any) => {
-          if (response?.isAdjacentGating) {
-            this.conformationPopup.openErrorModal(response?.errorMessage || '', 4500);
-            return;
-          }
-          if (response.isSandwichApplied) {
-            this.processSingleItem();
-          } else {
-            this.sandwichRecheckMessage = response?.errorMessage || '';
-            this.modalService.open(this.sandwichRecheckModal, { centered: true, backdrop: 'static' });
-          }
-        },
-        error: (err: any) => {
-          this.conformationPopup.openErrorModal(err.error?.message || 'Error calculating leave impact');
-        }
-      });
-    } else {
-      this.processSingleItem();
-    }
-  }
-  confirmSandwichRecheck(modal: any) {
-    modal.dismiss();
     this.processSingleItem();
   }
-  confirmSandwichBulkRecheck(modal: any) {
-    modal.dismiss();
-    this.processBulkItems();
-  }
+
   processSingleItem() {
     const approvedBy = this.LOGIN.employeeId.toString();
     const message = 'Processing Selected Leave Requests...';
@@ -697,8 +638,4 @@ getApprovalStatusCounts() {
     this.destroy$.unsubscribe();
   }
 
-  openSandwichBreakdown(item: any, modal: any) {
-    this.selectedSandwichItem = item;
-    this.modalService.open(modal, { centered: true, backdrop: 'static', size: 'lg' });
-  }
 }

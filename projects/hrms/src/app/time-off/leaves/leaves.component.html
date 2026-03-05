@@ -91,6 +91,9 @@
                             @if (item.category.isProbationAllowed && item.probationLeaves > 0) {
                             <p class="m-0">{{item.utilizedDays ? item.utilizedDays : '0'}}</p>
                             }
+                            @else if (item.category.isProbationAllowed && (!item.probationLeaves || item.probationLeaves === 0)) {
+                            <p class="m-0">{{item.utilizedDays ? item.utilizedDays : '0'}}</p>
+                            }
                             @else if (!item.category.isProbationAllowed) {
                             <p class="m-0">{{item.utilizedDays ? item.utilizedDays : '0'}}</p>
                             }

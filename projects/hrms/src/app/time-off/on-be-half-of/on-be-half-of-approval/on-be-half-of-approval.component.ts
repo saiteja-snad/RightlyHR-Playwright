@@ -30,7 +30,7 @@ export class OnBeHalfOfApprovalComponent implements OnInit, OnDestroy{
   first: any = 0;
   rows: any = 10;
   loading: boolean = false;
-  selectedSandwichItem: any = null;
+
   options = [
     { label: 10, value: 10 },
     { label: 15, value: 15 },
@@ -90,10 +90,7 @@ export class OnBeHalfOfApprovalComponent implements OnInit, OnDestroy{
     });
   }
 
-  openSandwichBreakdown(item: any, modal: any) {
-    this.selectedSandwichItem = item;
-    this.modalService.open(modal, { centered: true, backdrop: 'static', size: 'lg' });
-  }
+
 
   ngOnDestroy(): void {
     if (this.subscription) {

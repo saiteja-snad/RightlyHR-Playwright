@@ -1,129 +1,197 @@
-<div class="custom-main-component-container">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <div><span class="component-sub-header">{{'Employment History' | translate}}</span></div>
-        @if(canAccess('create','experience')){
-        @if((empinfo?.empstatus?.toLowerCase() !== 'prospective' && empinfo?.empstatus?.toLowerCase() !== 'trainee prospective'
-        && empinfo?.empstatus?.toLowerCase() !== 'inactive' && empinfo?.empstatus?.toLowerCase() !== 'trainee inactive' )){
-        <div class="custom-add-btn" (click)="openModal(addexperincemodal)">
-            <i class="bi bi-plus plus-icon me-1"></i>{{'Add New' | translate}}
+<!-- <div class="cards-grid-container mb-3">
+        <div class="summary-card">
+            <div>
+                <img src="./my-info-icons/total_exp.png" alt="Total Experience" class="icon" />
+            </div>
+            <div>
+                <div class="summary-title mb-1">{{'Total Experience' | translate}}</div>
+                <div class="summary-value">{{getYearsOnly(totalYearsOfExperience) || '0Y'}}</div>
+            </div>
         </div>
-        }
-        }
+
+        <div class="summary-card">
+            <div>
+                <img src="./my-info-icons/current_exp.png" alt="Current Experience" class="icon" />
+            </div>
+            <div>
+                <div class="summary-title mb-1">{{currentCompanyName}} {{'Experience' | translate}}</div>
+                <div class="summary-value">{{getYearsOnly(currentYearsOfExperience) || '0Y'}}</div>
+            </div>
+        </div>
+
+        <div class="summary-card">
+            <div>
+                <img src="./my-info-icons/previous_exp.png" alt="Previous Experience" class="icon" />
+            </div>
+            <div>
+                <div class="summary-title mb-1">{{'Previous Experience' | translate}}</div>
+                <div class="summary-value">{{getYearsOnly(previousYearsOfExperience) || '0Y'}}</div>
+            </div>
+        </div>
+    </div> -->
+
+<div class="experience-card-container mb-3" *ngIf="parseFloat(totalYearsOfExperience) > 0">
+  <div class="experience-card">
+    <div class="circular-progress-wrapper">
+      <div class="circular-progress">
+        <p-chart type="doughnut" [data]="experienceData" [options]="experienceDataOptions" class="doughnut-chart" />
+        <div class="progress-text">
+          <span class="total-years">{{getYearsOnly(totalYearsOfExperience) || '0Y'}}</span>
+          <span class="total-label">Total</span>
+        </div>
+      </div>
     </div>
 
-    <div class="custom-table-content">
-        @if (!loading) {
-        <table class="w-100">
-            <thead>
-                <tr>
-                    <th>{{'Company Name' | translate}}</th>
-                    <th>{{'Employment Type' | translate}}</th>
-                    <th class="text-center">{{'From Date' | translate}}</th>
-                    <th class="text-center">{{'To Date' | translate}}</th>
-                    <th>{{'Job Role' | translate}}</th>
-                    <th>{{'Currently Working' | translate}}</th>
-                    <th class="text-center">{{'Document' | translate}}</th>
-                    @if(canAccess('update','experience') ||
-                    canAccess('delete','experience')){
-                         @if((empinfo?.empstatus?.toLowerCase() !== 'prospective' &&
-                        empinfo?.empstatus?.toLowerCase() !== 'trainee prospective'
-                        && empinfo?.empstatus?.toLowerCase() !== 'inactive' && empinfo?.empstatus?.toLowerCase()
-                        !==
-                        'trainee inactive' )){
-                      <th class="text-center">{{"Action" | translate}}</th>
-                        }
-                    }
-                </tr>
-            </thead>
-            <tbody>
-                <ng-container *ngIf="((getempexpdata | async) ?? []).length > 0; else noDataTemplate">
-                    <tr *ngFor="let empexperimentdata of getempexpdata | async">
-                        <td>{{ empexperimentdata.companyName }}</td>
-                        <td>{{ empexperimentdata.employmentType }}</td>
-                        <td class="text-center text-nowrap">{{ empexperimentdata.fromDate | dateformat }}</td>
-                        <td class="text-center text-nowrap">
-                            <span *ngIf="empexperimentdata.toDate != null; else NoExpiration"></span>
-                            <ng-template #NoExpiration>-</ng-template>{{ empexperimentdata.toDate | dateformat }}
-                        </td>
-                        <td>{{empexperimentdata.jobTitle}}</td>
-                        <td>{{empexperimentdata.isPresent ? ('Yes' | translate) : ('No' | translate)}}</td>
-                        <td class="text-center">
-                            <span *ngIf="empexperimentdata.attachment;else noData" class="download-text"
-                                (click)="onSelectBankProofDownload(empexperimentdata)">
-                                  <app-download-icon /></span>
-                            <ng-template #noData>-</ng-template>
-                        </td>
-                        @if(canAccess('update','experience') ||
-                        canAccess('delete','experience')){
-                        @if((empinfo?.empstatus?.toLowerCase() !== 'prospective' &&
-                        empinfo?.empstatus?.toLowerCase() !== 'trainee prospective'
-                        && empinfo?.empstatus?.toLowerCase() !== 'inactive' && empinfo?.empstatus?.toLowerCase()
-                        !=='trainee inactive' )){
-                        <td class="text-center">
-                            <div class="dropdown">
-                                <span type="button" data-bs-toggle="dropdown">
-                                    <i class="bi bi-three-dots-vertical"></i>
-                                </span>
-                                <ul class="dropdown-menu custom-dropdown-menu">
-                                    @if(canAccess('update','experience')){
-                                    @if((empinfo?.empstatus?.toLowerCase() !== 'prospective' &&
-                                    empinfo?.empstatus?.toLowerCase() !== 'trainee prospective'
-                                    && empinfo?.empstatus?.toLowerCase() !== 'inactive' &&
-                                    empinfo?.empstatus?.toLowerCase() !== 'trainee inactive' )){
-                                    <li (click)="openModalupdate(updateexperincemodal, empexperimentdata)">
-                                        <a class="dropdown-item">
-                                              <i class="bi bi-pencil me-2"></i>{{'Update' | translate}}
-                                        </a>
-                                    </li>
-                                    }
-                                    }
-                                    @if((empinfo?.empstatus?.toLowerCase() !== 'prospective' &&
-                                    empinfo?.empstatus?.toLowerCase() !== 'trainee prospective'
-                                    && empinfo?.empstatus?.toLowerCase() !== 'inactive' &&
-                                    empinfo?.empstatus?.toLowerCase() !== 'trainee inactive' )){
-                                    @if(canAccess('delete','experience')){
-                                    <li (click)="opendeletModal(deleteconformation,empexperimentdata)">
-                                        <a class="dropdown-item">
-                                                <i class="bi bi-trash3 me-2"></i>{{'Delete' | translate}}
-                                        </a>
-                                    </li>
-                                    }
-                                    }
-                                </ul>
-                            </div>
-                        </td>
-                        }
-                        }
-                    </tr>
-                </ng-container>
-                <ng-template #noDataTemplate>
-                    <tr>
-                        <td>
-                            <app-no-data-found />
-                        </td>
-                    </tr>
-                </ng-template>
-            </tbody>
-        </table>
-        }
-        @else {
-        <app-data-loader-content />
-        }
+    <div class="experience-details">
+      <div class="divider current-divider"></div>
+      <div class="experience-item">
+        <div class="experience-label">{{currentCompanyName}} Experience</div>
+        <div class="experience-value current cursor" placement="bottom" triggers="mouseenter:mouseleave" #popover="ngbPopover" [ngbPopover]="currentYearsOfExperience">{{getYearsOnly(currentYearsOfExperience) || '0Y'}}</div>
+      </div>
+      <div class="divider previous-divider"></div>
+      <div class="experience-item">
+        <div class="experience-label">Previous Experience</div>
+        <div class="experience-value previous cursor" placement="bottom" triggers="mouseenter:mouseleave" #popover="ngbPopover" [ngbPopover]="previousYearsOfExperience">{{getYearsOnly(previousYearsOfExperience) || '0Y'}}</div>
+      </div>
+      <div class="divider total-divider"></div>
+      <div class="experience-item">
+        <div class="experience-label">Total Experience</div>
+        <div class="experience-value total cursor" placement="bottom" triggers="mouseenter:mouseleave" #popover="ngbPopover" [ngbPopover]="totalYearsOfExperience">{{getYearsOnly(totalYearsOfExperience) || '0Y'}}</div>
+      </div>
     </div>
+  </div>
+</div>
+
+<div class="custom-main-component-container">
+
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <div><span class="component-sub-header">{{'Employment History' | translate}}</span></div>
+    @if(canAccess('create','experience')){
+    @if((empinfo?.empstatus?.toLowerCase() !== 'prospective' && empinfo?.empstatus?.toLowerCase() !== 'trainee
+    prospective'
+    && empinfo?.empstatus?.toLowerCase() !== 'inactive' && empinfo?.empstatus?.toLowerCase() !== 'trainee inactive' )){
+    <div class="custom-add-btn" (click)="openModal(addexperincemodal)">
+      <i class="bi bi-plus plus-icon me-1"></i>{{'Add New' | translate}}
+    </div>
+    }
+    }
+  </div>
+
+  <div class="custom-table-content">
+    @if (!loading) {
+    <table class="w-100">
+      <thead>
+        <tr>
+          <th>{{'Company Name' | translate}}</th>
+          <th class="text-center">{{'Employment Type' | translate}}</th>
+          <th class="text-center">{{'From Date' | translate}}</th>
+          <th class="text-center">{{'To Date' | translate}}</th>
+          <th class="text-center">{{'Duration' | translate}}</th>
+          <th class="text-center">{{'Job Role' | translate}}</th>
+          <!-- <th class="text-center">{{'Currently Working' | translate}}</th> -->
+          <th class="text-center">{{'Document' | translate}}</th>
+          @if(canAccess('update','experience') ||
+          canAccess('delete','experience')){
+          @if((empinfo?.empstatus?.toLowerCase() !== 'prospective' &&
+          empinfo?.empstatus?.toLowerCase() !== 'trainee prospective'
+          && empinfo?.empstatus?.toLowerCase() !== 'inactive' && empinfo?.empstatus?.toLowerCase()
+          !==
+          'trainee inactive' )){
+          <th class="text-center">{{"Action" | translate}}</th>
+          }
+          }
+        </tr>
+      </thead>
+      <tbody>
+        <ng-container *ngIf="((getempexpdata | async) ?? []).length > 0; else noDataTemplate">
+          <tr *ngFor="let empexperimentdata of getempexpdata | async">
+            <td>{{ empexperimentdata.companyName }}</td>
+            <td class="text-center">{{ empexperimentdata.employmentType }}</td>
+            <td class="text-center text-nowrap">{{ empexperimentdata.fromDate | dateformat }}</td>
+            <td class="text-center text-nowrap">
+              <span *ngIf="empexperimentdata.toDate != null; else NoExpiration"></span>
+              <ng-template #NoExpiration>-</ng-template>{{ empexperimentdata.toDate | dateformat }}
+            </td>
+            <td class="text-center">{{getYearsOnly(empexperimentdata.duration)}}</td>
+            <td class="text-center">{{empexperimentdata.jobTitle}}</td>
+            <!-- <td class="text-center">{{empexperimentdata.isPresent ? ('Yes' | translate) : ('No' | translate)}}</td> -->
+            <td class="text-center">
+              <span *ngIf="empexperimentdata.attachment;else noData" class="download-text"
+                (click)="onSelectBankProofDownload(empexperimentdata)">
+                <app-download-icon /></span>
+              <ng-template #noData>-</ng-template>
+            </td>
+            @if(canAccess('update','experience') ||
+            canAccess('delete','experience')){
+            @if((empinfo?.empstatus?.toLowerCase() !== 'prospective' &&
+            empinfo?.empstatus?.toLowerCase() !== 'trainee prospective'
+            && empinfo?.empstatus?.toLowerCase() !== 'inactive' && empinfo?.empstatus?.toLowerCase()
+            !=='trainee inactive' )){
+            <td class="text-center">
+              <div class="dropdown">
+                <span type="button" data-bs-toggle="dropdown">
+                  <i class="bi bi-three-dots-vertical"></i>
+                </span>
+                <ul class="dropdown-menu custom-dropdown-menu">
+                  @if(canAccess('update','experience')){
+                  @if((empinfo?.empstatus?.toLowerCase() !== 'prospective' &&
+                  empinfo?.empstatus?.toLowerCase() !== 'trainee prospective'
+                  && empinfo?.empstatus?.toLowerCase() !== 'inactive' &&
+                  empinfo?.empstatus?.toLowerCase() !== 'trainee inactive' )){
+                  <li (click)="openModalupdate(updateexperincemodal, empexperimentdata)">
+                    <a class="dropdown-item">
+                      <i class="bi bi-pencil me-2"></i>{{'Update' | translate}}
+                    </a>
+                  </li>
+                  }
+                  }
+                  @if((empinfo?.empstatus?.toLowerCase() !== 'prospective' &&
+                  empinfo?.empstatus?.toLowerCase() !== 'trainee prospective'
+                  && empinfo?.empstatus?.toLowerCase() !== 'inactive' &&
+                  empinfo?.empstatus?.toLowerCase() !== 'trainee inactive' )){
+                  @if(canAccess('delete','experience')){
+                  <li (click)="opendeletModal(deleteconformation,empexperimentdata)">
+                    <a class="dropdown-item">
+                      <i class="bi bi-trash3 me-2"></i>{{'Delete' | translate}}
+                    </a>
+                  </li>
+                  }
+                  }
+                </ul>
+              </div>
+            </td>
+            }
+            }
+          </tr>
+        </ng-container>
+        <ng-template #noDataTemplate>
+          <tr>
+            <td>
+              <app-no-data-found />
+            </td>
+          </tr>
+        </ng-template>
+      </tbody>
+    </table>
+    }
+    @else {
+    <app-data-loader-content />
+    }
+  </div>
 </div>
 
 <!--Add-->
 <ng-template #addexperincemodal let-modal>
-    <div class="custom-main-popup-container" ngbAutofocus>
-        <div class="d-flex justify-content-between popup-header-border p-3">
-            <div class="pt-2">
-                <p class="popup-heading mb-0">{{'Add Employment' | translate}}</p>
-            </div>
-        </div>
-        <div class="custom-main-popup-content p-3">
-            <form autocomplete="off" [formGroup]="employeeExperienceForm" (ngSubmit)="postExperienceDetails()">
-                <div class="card-body pt-0">
-                    <div class="row">
+  <div class="custom-main-popup-container" ngbAutofocus>
+    <div class="d-flex justify-content-between popup-header-border p-3">
+      <div class="pt-2">
+        <p class="popup-heading mb-0">{{'Add Employment' | translate}}</p>
+      </div>
+    </div>
+    <div class="custom-main-popup-content p-3">
+      <form autocomplete="off" [formGroup]="employeeExperienceForm" (ngSubmit)="postExperienceDetails()">
+        <div class="card-body pt-0">
+          <!-- <div class="row">
                         <div class="col-md-6 mb-3">
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" formControlName="isPresent"
@@ -131,183 +199,195 @@
                                 <label class="form-check-label custom-label mb-2" for="flexCheckChecked">{{'Currently Working' | translate}}</label>
                             </div>
                         </div>
-                    </div>
+                    </div> -->
 
-                    <div class="row">
-                        <div class="col-md-6">
-                            <label for="CompanyName" class="form-label custom-label mb-2">{{'Company Name' | translate}}
-                                <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control custom-input" id="CompanyName"
-                                formControlName="companyName" [placeholder]="'Please enter company name' | translate"
-                                (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)" />
-                            <div *ngIf="employeeExperienceForm.get('companyName')?.invalid && employeeExperienceForm.get('companyName')?.touched"
-                                class="error-msg">
-                                <div *ngIf="employeeExperienceForm.get('companyName')?.errors?.['required']">{{'Company Name is required' | translate}}</div>
-                                <div *ngIf="employeeExperienceForm.get('companyName')?.errors?.['pattern']">{{'Company Name must only contain letters and spaces' | translate}}</div>
-                                <div *ngIf="employeeExperienceForm.get('companyName')?.errors?.['maxlength']">{{'Company name cannot exceed 100 characters' | translate}}</div>
-                            </div>
-                        </div>
+          <div class="row">
+            <div class="col-md-6">
+              <label for="CompanyName" class="form-label custom-label mb-2">{{'Company Name' | translate}}
+                <span class="text-danger">*</span></label>
+              <input type="text" class="form-control custom-input" id="CompanyName" formControlName="companyName"
+                [placeholder]="'Please enter company name' | translate"
+                (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)" />
+              <div
+                *ngIf="employeeExperienceForm.get('companyName')?.invalid && employeeExperienceForm.get('companyName')?.touched"
+                class="error-msg">
+                <div *ngIf="employeeExperienceForm.get('companyName')?.errors?.['required']">{{'Company Name is
+                  required' | translate}}</div>
+                <div *ngIf="employeeExperienceForm.get('companyName')?.errors?.['pattern']">{{'Company Name must only
+                  contain letters and spaces' | translate}}</div>
+                <div *ngIf="employeeExperienceForm.get('companyName')?.errors?.['maxlength']">{{'Company name cannot
+                  exceed 100 characters' | translate}}</div>
+              </div>
+            </div>
 
-                        <div class="col-md-6 mb-3">
-                            <label for="jobType" class="form-label custom-label mb-2">{{'Employment Type' | translate}}<span
-                                    class="text-danger">*</span></label>
-                            <div class="custom-p-select-content">
-                                <p-select [options]="JobtypeDetails" optionLabel="jobType1"
-                                    [placeholder]="'Please select employment type' | translate" formControlName="employmentType"
-                                    class="form-select custom-select"></p-select>
-                            </div>
-                            <div *ngIf="employeeExperienceForm.get('employmentType')?.invalid && employeeExperienceForm.get('employmentType')?.touched"
-                                class="error-msg">
-                                {{'Employment Type is required' | translate}}
-                            </div>
-                        </div>
+            <div class="col-md-6 mb-3">
+              <label for="jobType" class="form-label custom-label mb-2">{{'Employment Type' | translate}}<span
+                  class="text-danger">*</span></label>
+              <div class="custom-p-select-content">
+                <p-select [options]="JobtypeDetails" optionLabel="jobType1"
+                  [placeholder]="'Please select employment type' | translate" formControlName="employmentType"
+                  class="form-select custom-select"></p-select>
+              </div>
+              <div
+                *ngIf="employeeExperienceForm.get('employmentType')?.invalid && employeeExperienceForm.get('employmentType')?.touched"
+                class="error-msg">
+                {{'Employment Type is required' | translate}}
+              </div>
+            </div>
 
-                        <div class="col-md-6 mb-3">
-                            <label for="FromDate" class="form-label custom-label mb-2">{{'From Date' | translate}} <span
-                                    class="text-danger">*</span></label>
-                            <input type="date" class="form-control custom-input" id="FromDate"
-                                formControlName="fromDate" onkeypress="return false" [min]="dateofbirth"
-                                [max]="currentDate | date: 'yyyy-MM-dd'" />
-                            <div *ngIf="employeeExperienceForm.get('fromDate')?.invalid && employeeExperienceForm.get('fromDate')?.touched"
-                                class="error-msg">
-                                {{'From Date is required' | translate}}
-                            </div>
-                            <div *ngIf="isCurrentdateDisable" class="error-msg">
-                                {{'From date cannot be set in the future, and it should be on or before the current date' | translate}}
-                            </div>
-                        </div>
+            <div class="col-md-6 mb-3">
+              <label for="FromDate" class="form-label custom-label mb-2">{{'From Date' | translate}} <span
+                  class="text-danger">*</span></label>
+              <input type="date" class="form-control custom-input" id="FromDate" formControlName="fromDate"
+                onkeypress="return false" [min]="dateofbirth" [max]="getMaxToDate()" />
+              <div
+                *ngIf="employeeExperienceForm.get('fromDate')?.invalid && employeeExperienceForm.get('fromDate')?.touched"
+                class="error-msg">
+                {{'From Date is required' | translate}}
+              </div>
+              <div *ngIf="isCurrentdateDisable" class="error-msg">
+                {{'From date cannot be set in the future, and it should be on or before the current date' | translate}}
+              </div>
+            </div>
 
-                        <div class="col-md-6 mb-3">
-                            <label for="ToDate" class="form-label custom-label mb-2">{{'To Date' | translate}} <span
-                                    class="text-danger">*</span></label>
-                            <input type="date" class="form-control custom-input" id="ToDate" formControlName="toDate"
-                                onkeypress="return false" [min]="getMinEndDate()" [max]="currentDate" />
-                            <div *ngIf="employeeExperienceForm.get('toDate')?.invalid && employeeExperienceForm.get('toDate')?.touched"
-                                class="error-msg">
-                                {{'To Date is required' | translate}}
-                            </div>
-                            <div *ngIf="isInvalidToDate" class="error-msg">{{'To Date cannot be less than From Date' | translate}}</div>
-                            <div *ngIf="isFutureDate" class="error-msg">{{'Future dates cannot be selected' | translate}}</div>
-                        </div>
+            <div class="col-md-6 mb-3">
+              <label for="ToDate" class="form-label custom-label mb-2">{{'To Date' | translate}} <span
+                  class="text-danger">*</span></label>
+              <input type="date" class="form-control custom-input" id="ToDate" formControlName="toDate"
+                onkeypress="return false" [min]="getMinEndDate()" [max]="getMaxToDate()" />
+              <div
+                *ngIf="employeeExperienceForm.get('toDate')?.invalid && employeeExperienceForm.get('toDate')?.touched"
+                class="error-msg">
+                {{'To Date is required' | translate}}
+              </div>
+              <div *ngIf="isInvalidToDate" class="error-msg">{{'To Date cannot be less than From Date' | translate}}
+              </div>
+              <div *ngIf="isFutureDate" class="error-msg">{{'Future dates cannot be selected' | translate}}</div>
+            </div>
 
-                        <div class="col-md-6 mb-3">
-                            <label for="jobRole" class="form-label custom-label mb-2">{{'Job Role' | translate}} <span
-                                    class="text-danger">*</span></label>
-                            <input type="text" class="form-control custom-input" id="jobRole" formControlName="jobTitle"
-                                (keypress)="restrictInput($event)" [placeholder]="' Please enter job role' | translate" />
-                            <div *ngIf="employeeExperienceForm.get('jobTitle')?.invalid && employeeExperienceForm.get('jobTitle')?.touched"
-                                class="error-msg">
-                                {{'Job Role is required' | translate}}
-                            </div>
-                            <div *ngIf="employeeExperienceForm.get('jobTitle')?.errors?.['maxlength']"
-                                class="error-msg"> {{'Job Role cannot exceed 50 characters' | translate}}</div>
-                        </div>
-                    </div>
-                </div>
+            <div class="col-md-6 mb-3">
+              <label for="jobRole" class="form-label custom-label mb-2">{{'Job Role' | translate}} <span
+                  class="text-danger">*</span></label>
+              <input type="text" class="form-control custom-input" id="jobRole" formControlName="jobTitle"
+                (keypress)="restrictInput($event)" [placeholder]="' Please enter job role' | translate" />
+              <div
+                *ngIf="employeeExperienceForm.get('jobTitle')?.invalid && employeeExperienceForm.get('jobTitle')?.touched"
+                class="error-msg">
+                {{'Job Role is required' | translate}}
+              </div>
+              <div *ngIf="employeeExperienceForm.get('jobTitle')?.errors?.['maxlength']" class="error-msg"> {{'Job Role
+                cannot exceed 50 characters' | translate}}</div>
+            </div>
+          </div>
+        </div>
 
-                <p class="previous-text mb-3">{{'Previous Employer Details' | translate}}</p>
+        <p class="previous-text mb-3">{{'Previous Employer Details' | translate}}</p>
 
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label for="previousContactName" class="form-label custom-label mb-2">{{'Contact Name' | translate}}</label>
-                        <input type="text" class="form-control custom-input" formControlName="previousContactName"
-                            [placeholder]="'Please enter contact name' | translate" (keypress)="restrictInput($event)" />
-                        <div *ngIf="employeeExperienceForm.get('previousContactName')?.invalid && employeeExperienceForm.get('previousContactName')?.touched"
-                            class="error-msg">
-                            {{'Contact Name is required' | translate}}
-                        </div>
-                        <div *ngIf="employeeExperienceForm.get('previousContactName')?.errors?.['maxlength']"
-                            class="error-msg"> {{'Contact Name cannot exceed 50 characters' | translate}}</div>
-                    </div>
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label for="previousContactName" class="form-label custom-label mb-2">{{'Contact Name' | translate}}</label>
+            <input type="text" class="form-control custom-input" formControlName="previousContactName"
+              [placeholder]="'Please enter contact name' | translate" (keypress)="restrictInput($event)" />
+            <div
+              *ngIf="employeeExperienceForm.get('previousContactName')?.invalid && employeeExperienceForm.get('previousContactName')?.touched"
+              class="error-msg">
+              {{'Contact Name is required' | translate}}
+            </div>
+            <div *ngIf="employeeExperienceForm.get('previousContactName')?.errors?.['maxlength']" class="error-msg">
+              {{'Contact Name cannot exceed 50 characters' | translate}}</div>
+          </div>
 
-                    <div class="col-md-6 mb-3">
-                        <label for="previousContactNumber" class="form-label custom-label mb-2">{{'Contact Number' | translate}}</label>
-                        <input type="text" class="form-control custom-input" formControlName="previousContactNumber"
-                            [maxlength]="10" [minlength]="10" (keypress)="restrictInputaccteponlynumber($event)"
-                            [placeholder]="'Please enter contact number' | translate" />
-                        <div *ngIf="employeeExperienceForm.get('previousContactNumber')?.invalid && employeeExperienceForm.get('previousContactNumber')?.touched"
-                            class="error-msg">
-                            <div *ngIf="employeeExperienceForm.get('previousContactNumber')?.errors?.['required']">
-                                {{'Contact Number is required' | translate}}</div>
-                            <div *ngIf="employeeExperienceForm.get('previousContactNumber')?.errors?.['minlength']">
-                                {{'Contact Number must be 10 digits' | translate}}</div>
-                            <div *ngIf="employeeExperienceForm.get('previousContactNumber')?.errors?.['maxlength']">
-                                {{'Contact Number must be 10 digits' | translate}}</div>
-                            <div *ngIf="employeeExperienceForm.get('previousContactNumber')?.errors?.['pattern']">
-                                {{'Contact Number cannot be all zeroes' | translate}} </div>
-                        </div>
-                    </div>
+          <div class="col-md-6 mb-3">
+            <label for="previousContactNumber" class="form-label custom-label mb-2">{{'Contact Number' |
+              translate}}</label>
+            <input type="text" class="form-control custom-input" formControlName="previousContactNumber"
+              [maxlength]="10" [minlength]="10" (keypress)="restrictInputaccteponlynumber($event)"
+              [placeholder]="'Please enter contact number' | translate" />
+            <div
+              *ngIf="employeeExperienceForm.get('previousContactNumber')?.invalid && employeeExperienceForm.get('previousContactNumber')?.touched"
+              class="error-msg">
+              <div *ngIf="employeeExperienceForm.get('previousContactNumber')?.errors?.['required']">
+                {{'Contact Number is required' | translate}}</div>
+              <div *ngIf="employeeExperienceForm.get('previousContactNumber')?.errors?.['minlength']">
+                {{'Contact Number must be 10 digits' | translate}}</div>
+              <div *ngIf="employeeExperienceForm.get('previousContactNumber')?.errors?.['maxlength']">
+                {{'Contact Number must be 10 digits' | translate}}</div>
+              <div *ngIf="employeeExperienceForm.get('previousContactNumber')?.errors?.['pattern']">
+                {{'Contact Number cannot be all zeroes' | translate}} </div>
+            </div>
+          </div>
 
-                    <div class="col-md-6 mb-3">
-                        <label for="previousContactEmail" class="form-label custom-label mb-2">{{'Contact Email' | translate}}</label>
-                        <input type="text" class="form-control custom-input" formControlName="previousContactEmail"
-                            [placeholder]="'Please enter contact email' | translate" />
-                        <div *ngIf="employeeExperienceForm.get('previousContactEmail')?.invalid && employeeExperienceForm.get('previousContactEmail')?.touched"
-                            class="error-msg">
-                            <div *ngIf="employeeExperienceForm.get('previousContactEmail')?.errors?.['pattern']">
-                                {{'Invalid Email Format' | translate}}</div>
-                        </div>
-                    </div>
+          <div class="col-md-6 mb-3">
+            <label for="previousContactEmail" class="form-label custom-label mb-2">{{'Contact Email' |
+              translate}}</label>
+            <input type="text" class="form-control custom-input" formControlName="previousContactEmail"
+              [placeholder]="'Please enter contact email' | translate" />
+            <div
+              *ngIf="employeeExperienceForm.get('previousContactEmail')?.invalid && employeeExperienceForm.get('previousContactEmail')?.touched"
+              class="error-msg">
+              <div *ngIf="employeeExperienceForm.get('previousContactEmail')?.errors?.['pattern']">
+                {{'Invalid Email Format' | translate}}</div>
+            </div>
+          </div>
 
-                    <div class="col-md-12 mb-3">
-                        <label for="attachment" class="form-label custom-label mb-2">
-                            {{ employeeExperienceForm.get('isPresent')?.value ? ('Appointment/Offer Letter' | translate) :
-                            ('Experience/Relieving Letter' | translate) }}
-                            <span class="text-danger">*</span>
-                        </label>
-                        <input class="form-control custom-input px-0" type="file" id="attachment"
-                            formControlName="attachment" (change)="onChangeExperience($event)"
-                            accept=".pdf,image/*,.png,.jpg" />
-                        <div *ngIf="employeeExperienceForm.get('attachment')?.invalid && employeeExperienceForm.get('attachment')?.touched"
-                            class="error-msg">
-                            {{'File is required' | translate}}
-                        </div>
-                        <!-- <div *ngIf="showError" class="error-msg">Only Pdf and image files are allowed</div>
+          <div class="col-md-12 mb-3">
+            <label for="attachment" class="form-label custom-label mb-2">
+              {{ employeeExperienceForm.get('isPresent')?.value ? ('Appointment/Offer Letter' | translate) :
+              ('Experience/Relieving Letter' | translate) }}
+              <span class="text-danger">*</span>
+            </label>
+            <input class="form-control custom-input px-0" type="file" id="attachment" formControlName="attachment"
+              (change)="onChangeExperience($event)" accept=".pdf,image/*,.png,.jpg" />
+            <div
+              *ngIf="employeeExperienceForm.get('attachment')?.invalid && employeeExperienceForm.get('attachment')?.touched"
+              class="error-msg">
+              {{'File is required' | translate}}
+            </div>
+            <!-- <div *ngIf="showError" class="error-msg">Only Pdf and image files are allowed</div>
                         <div *ngIf="showErrorr" class="error-msg">The file size should be less than 25MB</div> -->
 
-                        <div class="d-flex justify-content-between align-items-center mt-2">
-                            <p class="note-text"><span class="note">{{'Note:' | translate}}</span> {{'Only Pdf/Image files are allowed. The file size should be less than 25MB' | translate}}</p>
-                        </div>
-                    </div>
+            <div class="d-flex justify-content-between align-items-center mt-2">
+              <p class="note-text"><span class="note">{{'Note:' | translate}}</span> {{'Only Pdf/Image files are
+                allowed. The file size should be less than 25MB' | translate}}</p>
+            </div>
+          </div>
 
-                </div>
-
-                <div class="d-flex justify-content-end gap-3">
-                    <button type="reset" class="custom-btn btn-secondary"
-                        (click)="modal.dismiss();resetFrom()">{{'Close' | translate}}</button>
-                    <button type="submit" class="custom-btn btn-primary"
-                        [disabled]="employeeExperienceForm.invalid || spinnerLoader">
-                        @if (spinnerLoader) {
-                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                        <span>{{'Loading' | translate}}...</span>
-                        } @else {
-                        <span>{{'Add'| translate}}</span>
-                        }
-                    </button>
-                </div>
-            </form>
         </div>
+
+        <div class="d-flex justify-content-end gap-3">
+          <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss();resetFrom()">{{'Close' |
+            translate}}</button>
+          <button type="submit" class="custom-btn btn-primary"
+            [disabled]="employeeExperienceForm.invalid || spinnerLoader">
+            @if (spinnerLoader) {
+            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+            <span>{{'Loading' | translate}}...</span>
+            } @else {
+            <span>{{'Add'| translate}}</span>
+            }
+          </button>
+        </div>
+      </form>
     </div>
+  </div>
 </ng-template>
 
 <!--Update-->
 <ng-template #updateexperincemodal let-modal>
-    <div class="custom-main-popup-container" ngbAutofocus>
-        <div class="d-flex justify-content-between popup-header-border p-3">
-            <div class="pt-2">
-                <p class="popup-heading mb-0">{{'Update Employment' | translate}}</p>
-            </div>
-            <div>
-                <a (click)="modal.dismiss();resetFrom()"><img src="icons/close.png" alt="Close Icon"
-                        class="close-icon"></a>
-            </div>
-        </div>
-        <div class="custom-main-popup-content p-4">
-            <form autocomplete="off" [formGroup]="employeeExperienceupdateForm"
-                (ngSubmit)="saveUpdatedExperienceDetails()">
-                <div class="card-body pt-0">
-                    <div class="row">
-                        <div class="col-md-12 mb-3">
+  <div class="custom-main-popup-container" ngbAutofocus>
+    <div class="d-flex justify-content-between popup-header-border p-3">
+      <div class="pt-2">
+        <p class="popup-heading mb-0">{{'Update Employment' | translate}}</p>
+      </div>
+      <div>
+        <a (click)="modal.dismiss();resetFrom()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+      </div>
+    </div>
+    <div class="custom-main-popup-content p-4">
+      <form autocomplete="off" [formGroup]="employeeExperienceupdateForm" (ngSubmit)="saveUpdatedExperienceDetails()">
+        <div class="card-body pt-0">
+          <div class="row">
+            <!-- <div class="col-md-12 mb-3">
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" formControlName="isPresentupdate"
                                     id="flexCheckChecked" />
@@ -315,194 +395,190 @@
                                     {{'Currently Working' | translate}}
                                 </label>
                             </div>
-                        </div>
+                        </div> -->
 
-                        <div class="col-md-6">
-                            <label for="CompanyName" class="form-label custom-label mb-2">
-                                Company Name <span class="text-danger">*</span>
-                            </label>
-                            <input type="text" class="form-control custom-input" id="CompanyName"
-                                formControlName="companyNameupdate" placeholder="Please enter company name"
-                                (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)" />
-                            <div *ngIf="employeeExperienceupdateForm.get('companyNameupdate')?.invalid && employeeExperienceupdateForm.get('companyNameupdate')?.touched"
-                                class="error-msg">
-                                <div
-                                    *ngIf="employeeExperienceupdateForm.get('companyNameupdate')?.errors?.['required']">
-                                    Company
-                                    Name is required</div>
-                                <div class="error-msg"
-                                    *ngIf="employeeExperienceupdateForm.get('companyNameupdate')?.errors?.['maxlength']">
-                                    Company name cannot exceed 100 characters</div>
-                            </div>
-                        </div>
+            <div class="col-md-6">
+              <label for="CompanyName" class="form-label custom-label mb-2">
+                Company Name <span class="text-danger">*</span>
+              </label>
+              <input type="text" class="form-control custom-input" id="CompanyName" formControlName="companyNameupdate"
+                placeholder="Please enter company name"
+                (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)" />
+              <div
+                *ngIf="employeeExperienceupdateForm.get('companyNameupdate')?.invalid && employeeExperienceupdateForm.get('companyNameupdate')?.touched"
+                class="error-msg">
+                <div *ngIf="employeeExperienceupdateForm.get('companyNameupdate')?.errors?.['required']">
+                  Company
+                  Name is required</div>
+                <div class="error-msg"
+                  *ngIf="employeeExperienceupdateForm.get('companyNameupdate')?.errors?.['maxlength']">
+                  Company name cannot exceed 100 characters</div>
+              </div>
+            </div>
 
-                        <div class="col-md-6 mb-3">
-                            <label for="jobType" class="form-label custom-label mb-2">Employment Type <span
-                                    class="text-danger">*</span></label>
-                            <div class="custom-p-select-content">
-                                <p-select [options]="JobtypeDetails" optionLabel="jobType1"
-                                    placeholder="Please select employment type" formControlName="employmentTypeudate"
-                                    class="form-select custom-select"></p-select>
-                            </div>
-                            <div *ngIf="employeeExperienceupdateForm.get('employmentTypeudate')?.invalid && employeeExperienceupdateForm.get('employmentTypeudate')?.touched"
-                                class="error-msg">
-                                Employment Type is required
-                            </div>
-                        </div>
+            <div class="col-md-6 mb-3">
+              <label for="jobType" class="form-label custom-label mb-2">Employment Type <span
+                  class="text-danger">*</span></label>
+              <div class="custom-p-select-content">
+                <p-select [options]="JobtypeDetails" optionLabel="jobType1" placeholder="Please select employment type"
+                  formControlName="employmentTypeudate" class="form-select custom-select"></p-select>
+              </div>
+              <div
+                *ngIf="employeeExperienceupdateForm.get('employmentTypeudate')?.invalid && employeeExperienceupdateForm.get('employmentTypeudate')?.touched"
+                class="error-msg">
+                Employment Type is required
+              </div>
+            </div>
 
-                        <div class="col-md-6 mb-3">
-                            <label for="FromDate" class="form-label custom-label mb-2">From Date <span
-                                    class="text-danger">*</span></label>
-                            <input type="date" class="form-control custom-input" id="FromDate"
-                                formControlName="fromDateupdate" [min]="dateofbirth" [max]="currentDate"
-                                onkeypress="return false" (change)="currentDateValidation()" />
-                            <div *ngIf="employeeExperienceupdateForm.get('fromDateupdate')?.invalid && employeeExperienceupdateForm.get('fromDateupdate')?.touched"
-                                class="error-msg">
-                                From Date is required
-                            </div>
-                            <div *ngIf="isCurrentdateDisable" class="error-msg">
-                                From date cannot be set in the future, and it should be on or before the current date.
-                            </div>
-                        </div>
+            <div class="col-md-6 mb-3">
+              <label for="FromDate" class="form-label custom-label mb-2">From Date <span
+                  class="text-danger">*</span></label>
+              <input type="date" class="form-control custom-input" id="FromDate" formControlName="fromDateupdate"
+                [min]="dateofbirth" [max]="getMaxToDate()" onkeypress="return false"
+                (change)="currentDateValidation()" />
+              <div
+                *ngIf="employeeExperienceupdateForm.get('fromDateupdate')?.invalid && employeeExperienceupdateForm.get('fromDateupdate')?.touched"
+                class="error-msg">
+                From Date is required
+              </div>
+              <div *ngIf="isCurrentdateDisable" class="error-msg">
+                From date cannot be set in the future, and it should be on or before the current date.
+              </div>
+            </div>
 
-                        <div class="col-md-6 mb-3">
-                            <label for="ToDate" class="form-label custom-label mb-2">To Date <span
-                                    class="text-danger">*</span></label>
-                            <input type="date" class="form-control custom-input" id="ToDate" onkeypress="return false"
-                                formControlName="toDateupdate" [min]="getupdateMinEndDate()" [max]="currentDate" />
+            <div class="col-md-6 mb-3">
+              <label for="ToDate" class="form-label custom-label mb-2">To Date <span
+                  class="text-danger">*</span></label>
+              <input type="date" class="form-control custom-input" id="ToDate" onkeypress="return false"
+                formControlName="toDateupdate" [min]="getupdateMinEndDate()" [max]="getMaxToDate()" />
 
-                            <div *ngIf=" employeeExperienceupdateForm.get('toDateupdate')?.invalid &&
+              <div *ngIf=" employeeExperienceupdateForm.get('toDateupdate')?.invalid &&
                                 employeeExperienceupdateForm.get('toDateupdate')?.touched" class="error-msg">
-                                To Date is required
-                            </div>
-                            <div *ngIf="isInvalidToDate" class="error-msg">To Date cannot be less than From Date</div>
-                            <div *ngIf="isFutureDate" class="error-msg">Future dates cannot be selected</div>
-                        </div>
+                To Date is required
+              </div>
+              <div *ngIf="isInvalidToDate" class="error-msg">To Date cannot be less than From Date</div>
+              <div *ngIf="isFutureDate" class="error-msg">Future dates cannot be selected</div>
+            </div>
 
-                        <div class="col-md-6 mb-3">
-                            <label for="jobRole" class="form-label custom-label mb-2">Job Role <span
-                                    class="text-danger">*</span></label>
-                            <input type="text" class="form-control custom-input" id="jobRole"
-                                formControlName="jobTitleupdate" (keypress)="restrictInput($event)"
-                                placeholder="Please enter job role" />
-                            <div *ngIf="employeeExperienceupdateForm.get('jobTitleupdate')?.invalid && employeeExperienceupdateForm.get('jobTitleupdate')?.touched"
-                                class="error-msg">
-                                Job Role is required
-                            </div>
-                            <div class="error-msg"
-                                *ngIf="employeeExperienceupdateForm.get('jobTitleupdate')?.errors?.['maxlength']"> Job
-                                Role cannot exceed 50 characters</div>
-                        </div>
-                    </div>
+            <div class="col-md-6 mb-3">
+              <label for="jobRole" class="form-label custom-label mb-2">Job Role <span
+                  class="text-danger">*</span></label>
+              <input type="text" class="form-control custom-input" id="jobRole" formControlName="jobTitleupdate"
+                (keypress)="restrictInput($event)" placeholder="Please enter job role" />
+              <div
+                *ngIf="employeeExperienceupdateForm.get('jobTitleupdate')?.invalid && employeeExperienceupdateForm.get('jobTitleupdate')?.touched"
+                class="error-msg">
+                Job Role is required
+              </div>
+              <div class="error-msg" *ngIf="employeeExperienceupdateForm.get('jobTitleupdate')?.errors?.['maxlength']">
+                Job
+                Role cannot exceed 50 characters</div>
+            </div>
+          </div>
 
-                    <p class="previous-text mb-3">Previous Employer Details</p>
+          <p class="previous-text mb-3">Previous Employer Details</p>
 
-                    <div class="row mb-3">
-                        <div class="col-md-6 mb-3">
-                            <label for="previousContactName" class="form-label custom-label mb-2">Contact Name </label>
-                            <input type="text" class="form-control custom-input"
-                                formControlName="previousContactNameupdate" placeholder="Please enter contact name"
-                                (keypress)="restrictInput($event)" />
-                            <div *ngIf="employeeExperienceupdateForm.get('previousContactNameupdate')?.invalid && employeeExperienceupdateForm.get('previousContactNameupdate')?.touched"
-                                class="error-msg">
-                                Contact Name is required
-                            </div>
-                            <div *ngIf="employeeExperienceupdateForm.get('previousContactNameupdate')?.errors?.['maxlength']"
-                                class="error-msg"> Contact Name cannot exceed 50 characters</div>
-                        </div>
+          <div class="row mb-3">
+            <div class="col-md-6 mb-3">
+              <label for="previousContactName" class="form-label custom-label mb-2">Contact Name </label>
+              <input type="text" class="form-control custom-input" formControlName="previousContactNameupdate"
+                placeholder="Please enter contact name" (keypress)="restrictInput($event)" />
+              <div
+                *ngIf="employeeExperienceupdateForm.get('previousContactNameupdate')?.invalid && employeeExperienceupdateForm.get('previousContactNameupdate')?.touched"
+                class="error-msg">
+                Contact Name is required
+              </div>
+              <div *ngIf="employeeExperienceupdateForm.get('previousContactNameupdate')?.errors?.['maxlength']"
+                class="error-msg"> Contact Name cannot exceed 50 characters</div>
+            </div>
 
-                        <div class="col-md-6 mb-3">
-                            <label for="previousContactNumber" class="form-label custom-label mb-2">Contact Number
-                            </label>
-                            <input type="text" class="form-control custom-input"
-                                formControlName="previousContactNumberupdate" [maxlength]="10" [minlength]="10"
-                                (keypress)="restrictInputaccteponlynumber($event)"
-                                placeholder="Please enter contact number" />
-                            <div *ngIf="employeeExperienceupdateForm.get('previousContactNumberupdate')?.invalid && employeeExperienceupdateForm.get('previousContactNumber')?.touched"
-                                class="error-msg">
-                                <div
-                                    *ngIf="employeeExperienceupdateForm.get('previousContactNumberupdate')?.errors?.['required']">
-                                    Contact Number is required</div>
-                                <div
-                                    *ngIf="employeeExperienceupdateForm.get('previousContactNumberupdate')?.errors?.['minlength']">
-                                    Contact Number must be 10 digits</div>
-                                <div
-                                    *ngIf="employeeExperienceupdateForm.get('previousContactNumberupdate')?.errors?.['maxlength']">
-                                    Contact Number must be 10 digits</div>
+            <div class="col-md-6 mb-3">
+              <label for="previousContactNumber" class="form-label custom-label mb-2">Contact Number
+              </label>
+              <input type="text" class="form-control custom-input" formControlName="previousContactNumberupdate"
+                [maxlength]="10" [minlength]="10" (keypress)="restrictInputaccteponlynumber($event)"
+                placeholder="Please enter contact number" />
+              <div
+                *ngIf="employeeExperienceupdateForm.get('previousContactNumberupdate')?.invalid && employeeExperienceupdateForm.get('previousContactNumber')?.touched"
+                class="error-msg">
+                <div *ngIf="employeeExperienceupdateForm.get('previousContactNumberupdate')?.errors?.['required']">
+                  Contact Number is required</div>
+                <div *ngIf="employeeExperienceupdateForm.get('previousContactNumberupdate')?.errors?.['minlength']">
+                  Contact Number must be 10 digits</div>
+                <div *ngIf="employeeExperienceupdateForm.get('previousContactNumberupdate')?.errors?.['maxlength']">
+                  Contact Number must be 10 digits</div>
 
-                                <div
-                                    *ngIf="employeeExperienceupdateForm.get('previousContactNumberupdate')?.errors?.['pattern']">
-                                    Contact Number cannot be all zeroes</div>
+                <div *ngIf="employeeExperienceupdateForm.get('previousContactNumberupdate')?.errors?.['pattern']">
+                  Contact Number cannot be all zeroes</div>
 
-                            </div>
-                        </div>
+              </div>
+            </div>
 
-                        <div class="col-md-6 mb-3">
-                            <label for="previousContactEmail" class="form-label custom-label mb-2">Contact Email</label>
-                            <input type="text" class="form-control custom-input"
-                                formControlName="previousContactEmailupdate" placeholder="Contact Email" />
-                            <div *ngIf="employeeExperienceupdateForm.get('previousContactEmailupdate')?.invalid && employeeExperienceupdateForm.get('previousContactEmailupdate')?.touched"
-                                class="error-msg">
-                                <div
-                                    *ngIf="employeeExperienceupdateForm.get('previousContactEmailupdate')?.errors?.['pattern']">
-                                    Invalid Email Format</div>
-                            </div>
-                        </div>
+            <div class="col-md-6 mb-3">
+              <label for="previousContactEmail" class="form-label custom-label mb-2">Contact Email</label>
+              <input type="text" class="form-control custom-input" formControlName="previousContactEmailupdate"
+                placeholder="Contact Email" />
+              <div
+                *ngIf="employeeExperienceupdateForm.get('previousContactEmailupdate')?.invalid && employeeExperienceupdateForm.get('previousContactEmailupdate')?.touched"
+                class="error-msg">
+                <div *ngIf="employeeExperienceupdateForm.get('previousContactEmailupdate')?.errors?.['pattern']">
+                  Invalid Email Format</div>
+              </div>
+            </div>
 
-                        <div class="col-md-12 mb-3">
-                            <label for="attachment" class="form-label custom-label mb-2">{{
-                                employeeExperienceupdateForm.get('isPresent')?.value ?
-                                'Appointment/Offer Letter' : 'Experience/Relieving Letter' }}<span
-                                    class="text-danger">*</span>
-                            </label>
-                            <input class="form-control custom-input px-0" type="file" id="attachment"
-                                formControlName="attachmentupdate" (change)="onChangeExperience($event)"
-                                accept=".pdf,image/*,.png" />
-                            <div *ngIf="employeeExperienceupdateForm.get('attachmentupdate')?.invalid && employeeExperienceupdateForm.get('attachmentupdate')?.touched"
-                                class="error-msg">
-                                File is required
-                            </div>
-                            <div *ngIf="displaypreviousexperincedocument" class="custom-file-name text-wrap mt-2">
-                                {{ displaypreviousexperincedocument?.name || displaypreviousexperincedocument }}
-                            </div>
-                            <div class="d-flex justify-content-between align-items-center mt-2">
-                                <p class="note-text"><span class="note">Note:</span> Only Pdf/Image files are
-                                    allowed.
-                                    The file size should be less than 25MB.</p>
-                            </div>
-                            <div *ngIf="showError" class="error-msg">Only Pdf/Image files are allowed.</div>
-                            <div *ngIf="showErrorr" class="error-msg">The file size should be less than 25MB.</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="d-flex justify-content-end gap-3 mt-4">
-                    <button type="reset" class="custom-btn btn-secondary px-4"
-                        (click)="modal.dismiss();resetFrom()">Close</button>
-                    <button type="submit" class="custom-btn btn-primary"
-                        [disabled]="employeeExperienceupdateForm.invalid || spinnerLoader">
-                        @if (spinnerLoader) {
-                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                        <span>{{'Loading' | translate}}...</span>
-                        } @else {
-                        <span>{{'Update'| translate}}</span>
-                        }
-                    </button>
-                </div>
-            </form>
+            <div class="col-md-12 mb-3">
+              <label for="attachment" class="form-label custom-label mb-2">{{
+                employeeExperienceupdateForm.get('isPresent')?.value ?
+                'Appointment/Offer Letter' : 'Experience/Relieving Letter' }}<span class="text-danger">*</span>
+              </label>
+              <input class="form-control custom-input px-0" type="file" id="attachment"
+                formControlName="attachmentupdate" (change)="onChangeExperience($event)" accept=".pdf,image/*,.png" />
+              <div
+                *ngIf="employeeExperienceupdateForm.get('attachmentupdate')?.invalid && employeeExperienceupdateForm.get('attachmentupdate')?.touched"
+                class="error-msg">
+                File is required
+              </div>
+              <div *ngIf="displaypreviousexperincedocument" class="custom-file-name text-wrap mt-2">
+                {{ displaypreviousexperincedocument?.name || displaypreviousexperincedocument }}
+              </div>
+              <div class="d-flex justify-content-between align-items-center mt-2">
+                <p class="note-text"><span class="note">Note:</span> Only Pdf/Image files are
+                  allowed.
+                  The file size should be less than 25MB.</p>
+              </div>
+              <div *ngIf="showError" class="error-msg">Only Pdf/Image files are allowed.</div>
+              <div *ngIf="showErrorr" class="error-msg">The file size should be less than 25MB.</div>
+            </div>
+          </div>
         </div>
+        <div class="d-flex justify-content-end gap-3 mt-4">
+          <button type="reset" class="custom-btn btn-secondary px-4"
+            (click)="modal.dismiss();resetFrom()">Close</button>
+          <button type="submit" class="custom-btn btn-primary"
+            [disabled]="employeeExperienceupdateForm.invalid || spinnerLoader">
+            @if (spinnerLoader) {
+            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+            <span>{{'Loading' | translate}}...</span>
+            } @else {
+            <span>{{'Update'| translate}}</span>
+            }
+          </button>
+        </div>
+      </form>
     </div>
+  </div>
 </ng-template>
 
 <!--Delete-->
 <ng-template #deleteconformation let-modal>
-    <div class="result-popup-content" ngbAutofocus>
-        <div>
-            <img src="icons\delete-icon.png" alt="failure icon" class="confirmation-delete-icon mb-4">
-            <p class="confirmation-text mb-4">{{'Are you sure you want to delete the Employment?' | translate}}</p>
-        </div>
-        <div class="d-flex justify-content-center gap-3 mt-4">
-            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No' | translate}}</button>
-            <button type="submit" class="custom-btn btn-primary" (click)="experienceDelete()">{{'Yes' | translate}}</button>
-        </div>
+  <div class="result-popup-content" ngbAutofocus>
+    <div>
+      <img src="icons\delete-icon.png" alt="failure icon" class="confirmation-delete-icon mb-4">
+      <p class="confirmation-text mb-4">{{'Are you sure you want to delete the Employment?' | translate}}</p>
     </div>
+    <div class="d-flex justify-content-center gap-3 mt-4">
+      <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No' | translate}}</button>
+      <button type="submit" class="custom-btn btn-primary" (click)="experienceDelete()">{{'Yes' | translate}}</button>
+    </div>
+  </div>
 </ng-template>

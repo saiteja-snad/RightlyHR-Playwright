@@ -4,11 +4,11 @@ export const environment = {
   viewUrl: 'https://sasda001.blob.core.windows.net/fusionplusqa/',
   ApiUrl: 'https://localhost:44374/api/',
   webSocketUrl: 'ws://fusionplusdevapi.onpremise.snadhr.com',
- 
+
   modules: [
     { id: 20, moduleName: 'Probation' },
     { id: 24, moduleName: 'PMS' },
-    { id: 33, moduleName: 'ExitFeedback' }   
+    { id: 33, moduleName: 'ExitFeedback' }
   ],
 
 
@@ -58,6 +58,7 @@ export const environment = {
   contractorModuleId:25,
   contractEmployeeConversionModuleId:26,
   extraHoursModuleId: 31,
+  currentCompanyName: 'RightlyHr',
   oldVersionUrl:'https://snad.rightlyhr.com/uservalidation',
   secretKey:'A8fD@9!sLm#Qz7PpXv3$wK2*R9bT6yN!',
   googleClientId: '976695989594-cbrkrjdsf6phcujl32imv6l6t04plnd2.apps.googleusercontent.com',

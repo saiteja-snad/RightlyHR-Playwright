@@ -45,7 +45,12 @@
     <div class="experience-details">
       <div class="divider current-divider"></div>
       <div class="experience-item">
-        <div class="experience-label">{{currentCompanyName}} Experience</div>
+        <div class="experience-label d-flex align-items-center gap-1">
+          {{currentCompanyName}} Experience
+          <div class="cursor" [ngbPopover]="dojPopup" triggers="click" placement="bottom">
+            <app-info-icon></app-info-icon>
+          </div>
+        </div>
         <div class="experience-value current cursor" placement="bottom" triggers="mouseenter:mouseleave" #popover="ngbPopover" [ngbPopover]="currentYearsOfExperience">{{getYearsOnly(currentYearsOfExperience) || '0Y'}}</div>
       </div>
       <div class="divider previous-divider"></div>
@@ -62,13 +67,19 @@
   </div>
 </div>
 
+<ng-template #dojPopup>
+  <div class="p-2">
+    <strong>DOJ:</strong> {{dateOfJoining | dateformat}}
+  </div>
+</ng-template>
+
 <div class="custom-main-component-container">
 
   <div class="d-flex justify-content-between align-items-center mb-3">
     <div><span class="component-sub-header">{{'Employment History' | translate}}</span></div>
     @if(canAccess('create','experience')){
-    @if((empinfo?.empstatus?.toLowerCase() !== 'prospective' && empinfo?.empstatus?.toLowerCase() !== 'trainee
-    prospective'
+    @if((empinfo?.empstatus?.toLowerCase() !== 'prospective' &&
+          empinfo?.empstatus?.toLowerCase() !== 'trainee prospective'
     && empinfo?.empstatus?.toLowerCase() !== 'inactive' && empinfo?.empstatus?.toLowerCase() !== 'trainee inactive' )){
     <div class="custom-add-btn" (click)="openModal(addexperincemodal)">
       <i class="bi bi-plus plus-icon me-1"></i>{{'Add New' | translate}}
@@ -124,7 +135,7 @@
             @if(canAccess('update','experience') ||
             canAccess('delete','experience')){
             @if((empinfo?.empstatus?.toLowerCase() !== 'prospective' &&
-            empinfo?.empstatus?.toLowerCase() !== 'trainee prospective'
+          empinfo?.empstatus?.toLowerCase() !== 'trainee prospective'
             && empinfo?.empstatus?.toLowerCase() !== 'inactive' && empinfo?.empstatus?.toLowerCase()
             !=='trainee inactive' )){
             <td class="text-center">
@@ -135,7 +146,7 @@
                 <ul class="dropdown-menu custom-dropdown-menu">
                   @if(canAccess('update','experience')){
                   @if((empinfo?.empstatus?.toLowerCase() !== 'prospective' &&
-                  empinfo?.empstatus?.toLowerCase() !== 'trainee prospective'
+          empinfo?.empstatus?.toLowerCase() !== 'trainee prospective'
                   && empinfo?.empstatus?.toLowerCase() !== 'inactive' &&
                   empinfo?.empstatus?.toLowerCase() !== 'trainee inactive' )){
                   <li (click)="openModalupdate(updateexperincemodal, empexperimentdata)">
@@ -146,7 +157,7 @@
                   }
                   }
                   @if((empinfo?.empstatus?.toLowerCase() !== 'prospective' &&
-                  empinfo?.empstatus?.toLowerCase() !== 'trainee prospective'
+          empinfo?.empstatus?.toLowerCase() !== 'trainee prospective'
                   && empinfo?.empstatus?.toLowerCase() !== 'inactive' &&
                   empinfo?.empstatus?.toLowerCase() !== 'trainee inactive' )){
                   @if(canAccess('delete','experience')){

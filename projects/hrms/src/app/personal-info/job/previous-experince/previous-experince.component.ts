@@ -21,10 +21,11 @@ import { SettingsUpdateIconComponent } from "../../../icons/settings-update-icon
 import { DownloadIconComponent } from "../../../icons/download-icon/download-icon.component";
 import { environment } from '../../../../environments/environment';
 import { ChartModule } from 'primeng/chart';
+import { InfoIconComponent } from '../../../icons/info-icon/info-icon.component';
 
 @Component({
   selector: 'app-previous-experince',
-  imports: [CommonModule, ReactiveFormsModule, Select, DateformatPipe, TranslateModule, DataLoaderContentComponent, NoDataFoundComponent, SettingsDeleteIconComponent, SettingsUpdateIconComponent, DownloadIconComponent, NgbPopoverModule, ChartModule],
+  imports: [CommonModule, ReactiveFormsModule, Select, DateformatPipe, TranslateModule, DataLoaderContentComponent, NoDataFoundComponent, SettingsDeleteIconComponent, SettingsUpdateIconComponent, DownloadIconComponent, NgbPopoverModule, ChartModule, InfoIconComponent],
   templateUrl: './previous-experince.component.html',
   styleUrl: './previous-experince.component.scss'
 })
@@ -218,25 +219,25 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
 
   parseFloat(value: string): number {
     if (!value || value === '0') return 0;
-    
+
     const yearMatch = value.match(/(\d+)[yY]/);
     const monthMatch = value.match(/(\d+)[mM]/);
     const dayMatch = value.match(/(\d+)[dD]/);
-    
+
     const years = yearMatch ? parseFloat(yearMatch[1]) : 0;
     const months = monthMatch ? parseFloat(monthMatch[1]) / 12 : 0;
     const days = dayMatch ? parseFloat(dayMatch[1]) / 365 : 0;
-    
+
     return years + months + days;
   }
 
   getYearsOnly(value: string): string {
     if (!value || value === '0') return '0Y';
-    
+
     const yearMatch = value.match(/(\d+)[yY]/);
     const monthMatch = value.match(/(\d+)[mM]/);
     const dayMatch = value.match(/(\d+)[dD]/);
-    
+
     const years = yearMatch ? yearMatch[1] : '0';
     const months = monthMatch ? monthMatch[1] : '0';
     const days = dayMatch ? dayMatch[1] : '0';
@@ -288,6 +289,7 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
           data: [currentYears, previousYears],
           backgroundColor: ['#7C3AED', '#0EA5E9'],
           borderWidth: 0,
+          hoverBackgroundColor: ['#7C3AED', '#0EA5E9'],
         }
       ]
     };
@@ -297,7 +299,13 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
       plugins: {
         tooltip: {
           enabled: false
+        },
+        legend: {
+          display: false
         }
+      },
+      hover: {
+        mode: null
       }
     };
   }

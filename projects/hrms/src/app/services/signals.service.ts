@@ -78,7 +78,7 @@ export class SignalsService {
 
   handleResponse(respone: any, status: string) {
     if (respone.failureRecordsCount != 0) {
-      this.sharedModalService.openErrorModal(respone.failureRecords[0].message)
+      this.sharedModalService.openErrorModal(respone.failureRecords[0].message, 5000)
     } else {
       this.sharedModalService.openSuccessModal(status);
     }

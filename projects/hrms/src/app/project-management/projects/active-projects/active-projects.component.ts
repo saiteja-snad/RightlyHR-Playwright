@@ -105,8 +105,6 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
     .subscribe(([deptIds, projectTypes]) => {
       this.selectedDepartmentIds = deptIds || [];
       this.selectedProjectTypes = projectTypes || [];
-      this.page = 1;
-      this.first = 0;
       this.getProjectsBasedOnRoute();
     });
     this.editProjectForm();
@@ -435,6 +433,46 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
     }
     return null;
   }
+  getClientByIdForUpdate(clientId: number): void {
+    this.http.getData(`Client/${clientId}`).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res: any) => {
+        if (res.success && res.data) {
+          const client = res.data;
+          this.updateClientDependentFieldsForUpdate(client);
+        }
+      },
+      error: (err) => {
+        console.error('Error fetching client:', err);
+      }
+    });
+  }
+
+  private updateClientDependentFieldsForUpdate(client: any): void {
+    if (!client.overtimeEligibile) {
+      this.updateprojectform.get('updateovertimeEligible')?.disable();
+    } else {
+      this.updateprojectform.get('updateovertimeEligible')?.enable();
+    }
+
+    if (!client.billable) {
+      this.updateprojectform.get('updatebillable')?.disable();
+    } else {
+      this.updateprojectform.get('updatebillable')?.enable();
+    }
+
+    if (!client.weekendWorkAllowed) {
+      this.updateprojectform.get('updateallowweekendWork')?.disable();
+    } else {
+      this.updateprojectform.get('updateallowweekendWork')?.enable();
+    }
+  }
+
+  onUpdateClientChange(event: any): void {
+    const clientId = event.value;
+    if (clientId) {
+      this.getClientByIdForUpdate(clientId);
+    }
+  }
 
   openUpdateModal(modal: any, project: Project) {
     // this.getAuthorityList();
@@ -442,6 +480,9 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
     const selectedDepartmentIds =
       project.departments?.map((d: any) => d.departmentId) || [];
     // Patch form values
+       if (project.client?.clientId) {
+      this.getClientByIdForUpdate(project.client.clientId);
+    }
     this.updateprojectform.patchValue({
       updateprojectName: project.projectName,
       updateclientName: project.client?.clientId, // ensure p-select has clientId

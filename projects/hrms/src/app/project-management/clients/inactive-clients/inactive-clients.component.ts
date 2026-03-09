@@ -83,7 +83,7 @@ export class InactiveClientsComponent implements OnInit {
     this.selectedClient = { ...client }; // store client details
   }
 
-  isActive(route: string): boolean {
+    isActive(route: string): boolean {
     return this.router.url.includes(route);
   }
 

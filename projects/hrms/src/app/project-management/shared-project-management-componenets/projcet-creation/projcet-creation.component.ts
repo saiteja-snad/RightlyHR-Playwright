@@ -156,6 +156,7 @@ export class ProjcetCreationComponent implements OnInit, OnDestroy {
             billable: client.billable,
             allowweekendWork: client.weekendWorkAllowed
           });
+            this.updateClientDependentFields(client);
         }
       },
       error: (err) => {
@@ -174,6 +175,13 @@ export class ProjcetCreationComponent implements OnInit, OnDestroy {
         console.error('Error fetching clients:', err);
       }
     });
+  }
+
+    onClientChange(event: any): void {
+    const clientId = event.value;
+    if (clientId) {
+      this.getClientsbyid(clientId);
+    }
   }
 
   saveProject() {
@@ -233,6 +241,26 @@ export class ProjcetCreationComponent implements OnInit, OnDestroy {
 
   close() {
     this.modalService.dismissAll();
+  }
+
+  private updateClientDependentFields(client: any): void {
+    if (!client.overtimeEligibile) {
+      this.addprojectform.get('overtimeEligible')?.disable();
+    } else {
+      this.addprojectform.get('overtimeEligible')?.enable();
+    }
+
+    if (!client.billable) {
+      this.addprojectform.get('billable')?.disable();
+    } else {
+      this.addprojectform.get('billable')?.enable();
+    }
+
+    if (!client.weekendWorkAllowed) {
+      this.addprojectform.get('allowweekendWork')?.disable();
+    } else {
+      this.addprojectform.get('allowweekendWork')?.enable();
+    }
   }
 
   get isFormInvalid(): boolean {

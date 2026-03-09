@@ -10,43 +10,43 @@
       <div class="row">
         <!-- Client Name -->
         <div class="col-md-6 mb-3">
-          <label for="clientName" class="form-label custom-label mb-2">{{'Client Name' | translate}}<span
+          <label for="clientName" class="form-label custom-label mb-2">Client Name<span
               class="text-danger">*</span></label>
           <div class="custom-p-select-content">
             <p-select [options]="clients" optionLabel="clientName" [filter]="true" [resetFilterOnHide]="true"
               filterBy="clientName" optionValue="clientId" formControlName="clientName"
-              [placeholder]="'Please select client name' | translate" class="form-select custom-select"></p-select>
+              placeholder="Please select client name" class="form-select custom-select"  (onChange)="onClientChange($event)"></p-select>
           </div>
           <div class="error-msg"
             *ngIf="addprojectform.get('clientName')?.touched && addprojectform.get('clientName')?.invalid">
-            {{'Client Name is required' | translate}}
+            Client Name is required
           </div>
         </div>
 
         <!-- Project Code -->
         <div class="col-md-6 mb-3">
-          <label for="code" class="form-label custom-label mb-2">{{'Project Code' | translate}}<span class="text-danger">*</span></label>
+          <label for="code" class="form-label custom-label mb-2">Project Code<span class="text-danger">*</span></label>
           <input type="text" class="form-control custom-input" formControlName="code" maxlength="13"
-            [placeholder]="'Please enter project code' | translate" (keydown)="formValidation.restrictInitialSpace($event)">
+            placeholder="Please enter project code" (keydown)="formValidation.restrictInitialSpace($event)">
           <div class="error-msg"
             *ngIf="addprojectform.get('code')?.touched && addprojectform.get('code')?.errors?.['required']">
-            {{'Project Code is required' | translate}}
+            Project Code is required
           </div>
           <div class="error-msg"
             *ngIf="addprojectform.get('code')?.touched && addprojectform.get('code')?.errors?.['maxlength']">
-            {{'Project Code cannot exceed 12 characters' | translate}}
+            Project Code cannot exceed 12 characters
           </div>
         </div>
 
         <!-- Project Name -->
         <div class="col-md-6 mb-3">
-          <label for="projectName" class="form-label custom-label mb-2">{{'Project Name' | translate}}<span
+          <label for="projectName" class="form-label custom-label mb-2">Project Name<span
               class="text-danger">*</span></label>
           <input type="text" class="form-control custom-input" formControlName="projectName" minlength="2"
-            maxlength="101" [placeholder]="'Please enter project name' | translate"
+            maxlength="101" placeholder="Please enter project name"
             (keydown)="formValidation.restrictInputallowspicalcharterswithnumbers($event)">
           <div class="error-msg" *ngIf="addprojectform.get('projectName')?.touched">
-            <div *ngIf="addprojectform.get('projectName')?.errors?.['required']">{{'Project Name is required' | translate}}</div>
+            <div *ngIf="addprojectform.get('projectName')?.errors?.['required']">Project Name is required</div>
             <div *ngIf="addprojectform.get('projectName')?.errors?.['maxCharacters'] || 
               addprojectform.get('projectName')?.errors?.['minCharacters']">
               {{ 'Project Name must be between 2-100 characters' | translate }}
@@ -56,16 +56,16 @@
 
         <!-- Project Type -->
         <div class="col-md-6 mb-3">
-          <label for="projectType" class="form-label custom-label mb-2">{{'Project Type' | translate}}<span
+          <label for="projectType" class="form-label custom-label mb-2">Project Type<span
               class="text-danger">*</span></label>
           <div class="custom-p-select-content">
             <p-select [options]="projecttypes" optionLabel="value" [filter]="true" [resetFilterOnHide]="true"
-              filterBy="value" formControlName="projectType" [placeholder]="'Please select project type' | translate"
+              filterBy="value" formControlName="projectType" placeholder="Please select project type"
               class="form-select custom-select"></p-select>
           </div>
           <div class="error-msg"
             *ngIf="addprojectform.get('projectType')?.touched && addprojectform.get('projectType')?.invalid">
-            {{'Project Type is required' | translate}}
+            Project Type is required
           </div>
         </div>
 
@@ -76,7 +76,7 @@
           </label>
           <div class="custom-p-multiSelect-content">
             <p-multiSelect [options]="departmentlist" optionLabel="departmentName" optionValue="sno" [filter]="true"
-              [defaultLabel]="'Please select department name' | translate" formControlName="department"
+              defaultLabel="Please select department name" formControlName="department"
               class="form-select custom-select"></p-multiSelect>
           </div>
           <div *ngIf="addprojectform.get('department')?.touched && addprojectform.get('department')?.invalid"
@@ -89,27 +89,27 @@
 
         <!-- Start Date -->
         <div class="col-md-6 mb-3">
-          <label for="startDate" class="form-label custom-label mb-2">{{'Start Date' | translate}}<span
+          <label for="startDate" class="form-label custom-label mb-2">Start Date<span
               class="text-danger">*</span></label>
           <input type="date" id="startDate" formControlName="startDate" onkeypress="return false"
             class="form-control custom-input" />
           <div class="error-msg"
             *ngIf="addprojectform.get('startDate')?.touched && addprojectform.get('startDate')?.invalid">
-            {{'Start Date is required' | translate}}
+            Start Date is required
           </div>
-          <div *ngIf="!startndEndDateValid" class="error-msg">{{'Start Date cannot be after End Date' | translate}}</div>
+          <div *ngIf="!startndEndDateValid" class="error-msg">Start Date cannot be after End Date</div>
         </div>
 
         <!-- End Date -->
         <div class="col-md-6 mb-3">
-          <label for="endDate" class="form-label custom-label mb-2">{{'End Date' | translate}} <span class="text-danger">*</span></label>
+          <label for="endDate" class="form-label custom-label mb-2">End Date <span class="text-danger">*</span></label>
           <input type="date" id="endDate" formControlName="endDate" onkeypress="return false" [min]="minEffectiveDate"
             class="form-control custom-input" />
           <div class="error-msg"
             *ngIf="addprojectform.get('endDate')?.touched && addprojectform.get('endDate')?.invalid">
-            {{'End Date is required' | translate}}
+            End Date is required
           </div>
-          <div *ngIf="!startndEndDateValid" class="error-msg">{{'End Date cannot be before start Date' | translate}}</div>
+          <div *ngIf="!startndEndDateValid" class="error-msg">End Date cannot be before start Date</div>
         </div>
 
         <!-- Kickoff Date -->
@@ -193,11 +193,11 @@
 
         <!-- Project Description -->
         <div class="col-md-12 mb-3">
-          <label for="projectDescription" class="form-label custom-label mb-2">{{'Project Description' | translate}}</label>
+          <label for="projectDescription" class="form-label custom-label mb-2">Project Description</label>
           <textarea id="projectDescription"
             (input)="formValidation.validateInput(addprojectform.get('projectDescription'))" maxlength="500"
             formControlName="projectDescription" class="form-control custom-input"
-            [placeholder]="'Please enter project description' | translate"></textarea>
+            placeholder="Please enter project description"></textarea>
           <div class="textarea-count-text">{{ addprojectform.get("projectDescription")?.value?.length || 0}}/500</div>
         </div>
 
@@ -207,16 +207,17 @@
             <div class="form-check form-switch">
               <input id="project-overtime-eligibility" class="form-check-input" type="checkbox"
                 formControlName="overtimeEligible">
-              <label for="project-overtime-eligibility" class="form-label custom-toggle-label">{{'Overtime Eligibility' | translate}}</label>
+              <label for="project-overtime-eligibility" class="form-label custom-toggle-label">Overtime
+                Eligibility</label>
             </div>
 
             <div class="form-check form-switch">
               <input id="project-client-billable" class="form-check-input" type="checkbox" formControlName="billable">
-              <label for="project-client-billable" class="form-label custom-toggle-label">{{'Billable' | translate}}</label>
+              <label for="project-client-billable" class="form-label custom-toggle-label">Billable</label>
             </div>
 
             <div class="form-check form-switch">
-              <label for="project-allow-weekend-works" class="form-label custom-toggle-label">{{'Allow Weekend Work' | translate}}</label>
+              <label for="project-allow-weekend-works" class="form-label custom-toggle-label">Allow Weekend Work</label>
               <input id="project-allow-weekend-works" class="form-check-input" type="checkbox"
                 formControlName="allowweekendWork">
             </div>
@@ -227,7 +228,7 @@
       <!-- Form Buttons -->
       <div class="custom-modal-footer">
         <button type="button" class="custom-btn btn-secondary"
-          (click)="closepopup(confirmationpopupfornodue)">{{'Cancel' | translate}}</button>
+          (click)="closepopup(confirmationpopupfornodue)">Cancel</button>
         <button type="submit" class="custom-btn btn-primary" [disabled]="isFormInvalid || loading">
           @if (loading) {
           <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
@@ -249,8 +250,8 @@
       <p class="confirmation-text">{{'Are you sure you want to cancel?' | translate}}</p>
     </div>
     <div class="custom-modal-footer">
-      <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">{{'No' | translate}}</button>
-      <button type="button" class="custom-btn btn-primary" (click)="close();model.dismiss()">{{'Yes' | translate}}</button>
+      <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">{{'No'}}</button>
+      <button type="button" class="custom-btn btn-primary" (click)="close();model.dismiss()">{{'Yes'}}</button>
     </div>
   </div>
 </ng-template>

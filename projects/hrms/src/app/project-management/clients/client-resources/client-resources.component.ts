@@ -91,7 +91,7 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
   selectedRoleIds: number[] = [];
   selectedPhaseIds: number[] = [];
   selectedAuthorityIds: number[] = [];
-  selectedProjectIds:number[] = [];
+  selectedProjectIds: number[] = [];
 
   ngOnInit() {
     this.initializeForms();
@@ -178,7 +178,7 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
   ExtendDateForm() {
     this.reasonForm = this.fb.group({
       reason: ['', [Validators.required, Validators.maxLength(250), Validators.pattern(/^(?!\s).*$/)]],
-      statusEffectiveDate: ['', ]
+      statusEffectiveDate: ['',]
     });
 
     this.extendForm = this.fb.group({
@@ -335,11 +335,42 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
       this.updateResourceForm.patchValue({
         projectType: selectedProject.projectType
       });
+      this.getProjects(projectId);
       this.getJobrole();
       this.getPhaseDataByProject(projectId);
     }
   }
+  getProjects(projectId: string) {
+    this.http.getData(`Project?projectId=${projectId}`).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res: any) => {
+        this.updateProjectDependentFields(res?.data[0])
+      },
+      error: (err) => {
+        console.error('Error fetching projects data:', err);
+        this.projectsDataDrown = [];
+      },
+    });
+  }
 
+  private updateProjectDependentFields(project: any): void {
+    if (!project.isOvertimeEligibile) {
+      this.updateResourceForm.get('overtimeEligible')?.disable();
+    } else {
+      this.updateResourceForm.get('overtimeEligible')?.enable();
+    }
+
+    if (!project.isBillable) {
+      this.updateResourceForm.get('billable')?.disable();
+    } else {
+      this.updateResourceForm.get('billable')?.enable();
+    }
+
+    if (!project.isWeekendWorkAllowed) {
+      this.updateResourceForm.get('allowweekendWork')?.disable();
+    } else {
+      this.updateResourceForm.get('allowweekendWork')?.enable();
+    }
+  }
   getJobrole() {
     this.loader = true;
     const departmentParam = this.departmentIds?.join(',') || '';
@@ -476,6 +507,9 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
     }
     this.getJobrole();
     this.getPhaseDataByProject(this.projectId);
+    if (data?.project?.projectId) {
+      this.getProjects(data.project.projectId);
+    }
     setTimeout(() => {
       const selectedRole = this.projectRoleDropdown.find(
         (r: any) => r.value.roleId === data.projectRoleId

@@ -89,7 +89,9 @@ export class ProjectViewComponent implements OnInit {
   selectedDepartmentIds: number[] = [];
   selectedRoleIds: number[] = [];
   selectedPhaseIds: number[] = [];
-
+   currentdata = new Date();
+   defaultSummaryStartDate!: Date;
+  defaultSummaryEndDate!: Date;
   constructor(
     private router: Router,
     private fb: FormBuilder,
@@ -109,7 +111,7 @@ export class ProjectViewComponent implements OnInit {
     // this.setDefaultRanges();
     // this.setDefaultWeek();
     this.datepickerFormdata();
-    this.setDefaultmounth();
+    // this.setDefaultmounth();
     this.datepickerforsummaryview();
     this.loadAuthorities();
     this.route.queryParams.subscribe((params) => {
@@ -119,7 +121,7 @@ export class ProjectViewComponent implements OnInit {
         this.getProjects(projectId);
         this.getAllresourcesData();
         this.loadResourceFilters();
-        this.setDefaultmounth();
+        // this.setDefaultmounth();
       }
     });
     this.http.clickingonresource$.subscribe((triggered) => {
@@ -369,19 +371,39 @@ export class ProjectViewComponent implements OnInit {
     });
     // detect when user selects date range
   }
+// setDefaultmounth() {
+//   const startOfMonth = dayjs().startOf('month').toDate();
+//   const endOfMonth = dayjs().endOf('month').toDate();
+//   this.datepickerFormData.patchValue({
+//     dateRange: [startOfMonth, endOfMonth],
+//   });
+//   this.currentdata = new Date();
+//   // Convert project start date properly to Date object
+//   const formattedStartDate = dayjs(this.projectstartdate).toDate();
+//   this.datepickerFormDataforsummary?.patchValue({
+//     dateRange: [formattedStartDate,  this.currentdata],
+//   });
+// }
 
-  setDefaultmounth() {
-    const startOfMonth = dayjs().startOf('month').toDate();
-    const endOfMonth = dayjs().endOf('month').toDate();
-    this.datepickerFormData.patchValue({
-      dateRange: [startOfMonth, endOfMonth],
-    });
-    const startOfMonths = dayjs().startOf('month').toDate();
-    const endOfMonths = dayjs().endOf('month').toDate();
-    this.datepickerFormDataforsummary?.patchValue({
-      dateRange: [startOfMonths, endOfMonths],
-    });
-  }
+setDefaultmounth() {
+  if (!this.projectstartdate) return;
+  //  1. Set current month for Timesheet view
+  const startOfMonth = dayjs().startOf('month').toDate();
+  const endOfMonth = dayjs().endOf('month').toDate();
+  this.datepickerFormData?.patchValue({
+    dateRange: [startOfMonth, endOfMonth],
+  });
+  //  2. Set summary default (projectStartDate → today)
+  this.currentdata = new Date();
+  this.defaultSummaryStartDate = dayjs(this.projectstartdate).startOf('day').toDate();
+  this.defaultSummaryEndDate = dayjs(this.currentdata).startOf('day').toDate();
+  this.datepickerFormDataforsummary?.patchValue({
+    dateRange: [
+      this.defaultSummaryStartDate,
+      this.defaultSummaryEndDate
+    ],
+  });
+}
 
   // Create a single contact form group
   createContactGroup(): FormGroup {
@@ -486,7 +508,7 @@ export class ProjectViewComponent implements OnInit {
         complete: () => {},
       });
   }
-
+projectstartdate : any;
   getProjects(projectId: string) {
     this.http
       .getData(`Project?projectId=${projectId}`)
@@ -514,6 +536,10 @@ export class ProjectViewComponent implements OnInit {
             )
               ? 'inactive'
               : 'active';
+              this.projectstartdate = project.startDate;
+               this.projectstartdate =   dayjs(this.projectstartdate).toDate();
+                  this.setDefaultmounth();
+              console.log("projectstartdate",this.projectstartdate);
           } else {
             this.clientsId = null; // No projects returned
           }
@@ -721,7 +747,19 @@ export class ProjectViewComponent implements OnInit {
       new Date(selectedRange[1]).toDateString() === endOfMonth.toDateString()
     );
   }
+isDefaultSummaryprojectDateRange(dateRange: Date[] | null | undefined): boolean {
 
+  if (!dateRange || dateRange.length !== 2) return true;
+
+  const selectedStart = dayjs(dateRange[0]).startOf('day');
+  const selectedEnd = dayjs(dateRange[1]).startOf('day');
+
+  const defaultStart = dayjs(this.defaultSummaryStartDate).startOf('day');
+  const defaultEnd = dayjs(this.defaultSummaryEndDate).startOf('day');
+
+  return selectedStart.isSame(defaultStart) &&
+         selectedEnd.isSame(defaultEnd);
+}
   // 4. Resource Summary (Detailed Timesheet View) — includes date + resource + dept + role + phase
   isFilterAppliedForDetailedSummary(): boolean {
     const formValue = this.datepickerFormData.value;
@@ -743,7 +781,7 @@ export class ProjectViewComponent implements OnInit {
   isFilterAppliedForResourceSummary(): boolean {
     const formValue = this.datepickerFormDataforsummary?.value;
 
-    const isDefaultDate = this.isDefaultSummaryDateRange(formValue?.dateRange);
+    const isDefaultDate = this.isDefaultSummaryprojectDateRange(formValue?.dateRange);
     const hasDateRange =
       formValue?.dateRange &&
       formValue.dateRange.length === 2 &&

@@ -32,7 +32,7 @@ import { ProjectResourceTabComponent } from "../../../shared/project-management-
 export class ProjectResourcesComponent implements OnInit, OnDestroy {
   searchValue: string = '';
   resourcesData = [] as IResource[];
-  resourcestartdate:any
+  resourcestartdate: any
 
   selectedRoleIds: number[] = [];
   selectedPhaseIds: number[] = [];
@@ -67,11 +67,11 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
   departmentIds: number[] = [];
   phaseData = [] as IPhases[];
   phaseDropdown: any[] = [];
-  selectedPhaseId : any;
-    projectStartDate!: string | null;
+  selectedPhaseId: any;
+  projectStartDate!: string | null;
   projectEndDate!: string | null;
   resoucesDropDownData = [] as any[];
-  defaultPendingAuthorityId : any;
+  defaultPendingAuthorityId: any;
   modalData: { title?: string; data?: any } = {};
   @ViewChild('reasonModal') reasonModal!: any;
   @ViewChild('extendModal') extendModal!: any;
@@ -80,7 +80,7 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
   projectMinStartDate!: string;
   projectMaxEndDate!: string;
   selectedResource: any;
-
+  resourceName: any;
   constructor(private router: Router, private fb: FormBuilder, public rbac: RbacService, private modalService: NgbModal,
     private http: HttpService, private route: ActivatedRoute, private conformationPopup: OpenModalService,
     public formValidation: FormValidationsService,) { }
@@ -196,17 +196,17 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
       overtimeEligible: [false],
       billable: [false],
       allowweekendWork: [false],
-      color : ['', Validators.required],
-      resourceRole: [null,Validators.required],
-      resourcePhase : [null, Validators.required],
-      resourceAuthority : [null]
+      color: ['', Validators.required],
+      resourceRole: [null, Validators.required],
+      resourcePhase: [null, Validators.required],
+      resourceAuthority: [null]
     }, { validators: [this.DateValidator()] },);
   }
 
-    ExtendDateForm() {
+  ExtendDateForm() {
     this.reasonForm = this.fb.group({
       reason: ['', [Validators.required, Validators.maxLength(250), Validators.pattern(/^(?!\s).*$/)]],
-      statusEffectiveDate: ['', ]
+      statusEffectiveDate: ['',]
     });
 
     // Add conditional validator for statusEffectiveDate when modal opens
@@ -243,6 +243,7 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
     this.http.getData(`Project?projectId=${projectId}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.projectsData = res?.data ?? [];
+        this.updateProjectDependentFields(res?.data[0])
         this.departmentIds = this.projectsData[0]?.departments?.map((d: any) => d.departmentId) || [];
         const project = this.projectsData[0];
         // if (project) {
@@ -261,6 +262,25 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
         this.projectsData = [];
       },
     });
+  }
+  private updateProjectDependentFields(project: any): void {
+    if (!project.isOvertimeEligibile) {
+      this.updateResourceForm.get('overtimeEligible')?.disable();
+    } else {
+      this.updateResourceForm.get('overtimeEligible')?.enable();
+    }
+
+    if (!project.isBillable) {
+      this.updateResourceForm.get('billable')?.disable();
+    } else {
+      this.updateResourceForm.get('billable')?.enable();
+    }
+
+    if (!project.isWeekendWorkAllowed) {
+      this.updateResourceForm.get('allowweekendWork')?.disable();
+    } else {
+      this.updateResourceForm.get('allowweekendWork')?.enable();
+    }
   }
   getJobrole() {
     this.loader = true;
@@ -307,7 +327,7 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
     const params: any = {
       entityType: 'project',
       entityRefId: projectId,
-      status:'active,assigned'
+      status: 'active,assigned'
     };
 
     if (phaseId) {
@@ -389,8 +409,8 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
     );
 
     if (selectedPhase) {
-    this.selectedPhaseId = selectedPhase.value;
-    this.getResourceData(this.projectId, this.selectedPhaseId, true);
+      this.selectedPhaseId = selectedPhase.value;
+      this.getResourceData(this.projectId, this.selectedPhaseId, true);
     }
 
     const authorityFromResource = this.resoucesDropDownData.find(
@@ -404,6 +424,7 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
     }
 
     this.ResourceId = data?.resourceId;
+    this.resourceName = ((data?.employee?.fusionEmployeeId) + ' - ' + (data?.employee?.name));
     this.updateResourceForm.patchValue({
       resourceName: data?.employee?.id,
       resourceEmail: data?.employee?.workMail,
@@ -534,27 +555,27 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
   }
 
   updateResourceStatus(payload: any, modal?: any, successMessage?: string) {
-  const resourceId = payload.resourceId || this.ResourceId;
-  if (!resourceId) {
-    console.error('Resource ID missing.');
-    return;
-  }
-
-  this.http.putData(`ProjectResource/${resourceId}`, payload).subscribe({
-    next: (res) => {
-      this.loader = false;
-      this.modalService.dismissAll();
-      this.conformationPopup.openSuccessModal(successMessage || 'Resource updated successfully');
-      this.getResourceData(this.projectId);
-      this.http.setnewcountfornewresourcecount()
-    },
-    error: (err) => {
-      this.loader = false;
-      console.error('Error occurred:', err);
-      this.conformationPopup.openErrorModal(err?.error?.message || 'Failed to update resource');
+    const resourceId = payload.resourceId || this.ResourceId;
+    if (!resourceId) {
+      console.error('Resource ID missing.');
+      return;
     }
-  });
-}
+
+    this.http.putData(`ProjectResource/${resourceId}`, payload).subscribe({
+      next: (res) => {
+        this.loader = false;
+        this.modalService.dismissAll();
+        this.conformationPopup.openSuccessModal(successMessage || 'Resource updated successfully');
+        this.getResourceData(this.projectId);
+        this.http.setnewcountfornewresourcecount()
+      },
+      error: (err) => {
+        this.loader = false;
+        console.error('Error occurred:', err);
+        this.conformationPopup.openErrorModal(err?.error?.message || 'Failed to update resource');
+      }
+    });
+  }
 
 
 
@@ -632,25 +653,25 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
 
   getPhaseData() {
     const params = {
-    projectId: this.projectId
+      projectId: this.projectId
     };
     this.subscription = this.http.getDataIncludeParams('ProjectPhases/list', params).subscribe({
       next: (data: any) => {
         this.loading = false;
-         this.phaseData = (data?.data || []).filter(
-        (p: any) =>
-          p?.status?.toLowerCase() === 'in progress' ||
-          p?.status?.toLowerCase() === 'extended' || p?.status?.toLowerCase() === 'yet to start'
-      );
+        this.phaseData = (data?.data || []).filter(
+          (p: any) =>
+            p?.status?.toLowerCase() === 'in progress' ||
+            p?.status?.toLowerCase() === 'extended' || p?.status?.toLowerCase() === 'yet to start'
+        );
         this.phaseDropdown = this.phaseData.map(p => ({
-        label: p.phaseName,
-        value: p.phaseId,
-        projectId:p?.project?.projectId,
-        clientId:p?.project?.clientId,
-        startDate: p?.startDate,
-        endDate: p?.endDate,
-        pendingApprovalAuthority: p?.pendingApprovalAuthority?.id
-      }));
+          label: p.phaseName,
+          value: p.phaseId,
+          projectId: p?.project?.projectId,
+          clientId: p?.project?.clientId,
+          startDate: p?.startDate,
+          endDate: p?.endDate,
+          pendingApprovalAuthority: p?.pendingApprovalAuthority?.id
+        }));
       },
       error: (reason: any) => {
         this.loading = false;
@@ -717,10 +738,10 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
     return this.statusActionsMap[normalized] ?? [];
   }
 
-formatDateToLocalforresource(dateString: string | null): Date | null {
-  if (!dateString) return null;
-  return new Date(dateString); // Converts ISO string to Date object
-}
+  formatDateToLocalforresource(dateString: string | null): Date | null {
+    if (!dateString) return null;
+    return new Date(dateString); // Converts ISO string to Date object
+  }
   handleAction(action: string, data: any) {
 
     const config = this.confirmationMessages[action];
@@ -731,8 +752,8 @@ formatDateToLocalforresource(dateString: string | null): Date | null {
       this.openModal(this.updateResourcemodal, 'lg', data);
     } else {
       this.openReasonModal(config.title, data);
-        this.resourcestartdate=this.formatDateToLocalforresource(data?.startDate)
-        console.log(this.resourcestartdate);
+      this.resourcestartdate = this.formatDateToLocalforresource(data?.startDate)
+      console.log(this.resourcestartdate);
 
     }
   }

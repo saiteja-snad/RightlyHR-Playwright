@@ -4,11 +4,11 @@
         <table class="w-100">
             <thead>
                 <tr>
-                    <th>{{ 'Resource Name' | translate }}</th>
-                    <th class="text-center">{{ 'Role' | translate }}</th>
-                    <th class="text-center">{{ 'Department' | translate }}</th>
-                    <th class="text-center">{{ 'Phases / Milestones' | translate }}</th>
-                    <th class="text-center">{{ 'Total Logged Hours' | translate }}</th>
+                    <th>Resource Name</th>
+                    <th class="text-center">Role</th>
+                    <th class="text-center">Department</th>
+                    <th class="text-center">Phases / Milestones</th>
+                    <th class="text-center">Total Logged Hours</th>
                 </tr>
             </thead>
             <tbody>
@@ -67,12 +67,12 @@
                     <table class="popup-table">
                         <thead>
                             <tr>
-                                <th>{{ 'Phase / Milestone' | translate }}</th>
-                                <th>{{ 'Role' | translate }}</th>
-                                <th>{{ 'Start Date' | translate }}</th>
-                                <th>{{ 'End Date' | translate }}</th>
-                                <th>{{ 'Hours Spent' | translate }}</th>
-                                <th>{{ 'Status' | translate }}</th>
+                                <th>Phase / Milestone</th>
+                                <th>Role</th>
+                                <th>Start Date</th>
+                                <th>End Date</th>
+                                <th> Hours Spent</th>
+                                <th>Status</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -81,7 +81,7 @@
                                 <td class="resoure-role-text" >{{entry?.resourceRole ?? '-'}}</td>
                                 <td>{{ entry?.resourceStartDate ? (entry?.resourceStartDate | dateformat) : '-' }}</td>
                                 <td>{{ entry?.resourceEndDate ? (entry?.resourceEndDate | dateformat) : '-' }}</td>
-                                <td><b>{{ entry?.loggedHoursHHMM ?? 0}}</b>/{{entry?.allocatedHours ?? 0}} {{ 'Hrs' | translate }}</td>
+                                <td><b>{{ entry?.loggedHoursHHMM ?? 0}}</b>/{{entry?.allocatedHours ?? 0}} Hrs</td>
                                 <td [ngClass]="{
                                     'active': entry?.resourceStatus?.toLowerCase() === 'active',
                                     'released': entry?.resourceStatus?.toLowerCase() === 'released',

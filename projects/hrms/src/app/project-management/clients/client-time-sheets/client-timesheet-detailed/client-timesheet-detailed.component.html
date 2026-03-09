@@ -6,21 +6,22 @@
             <p-accordion>
                 <p-accordion-panel *ngFor="let project of projectDetails; let i = index" [value]="i">
                     <p-accordion-header>
-                        <div class="accordian-header-text text-truncate">{{ project?.project?.projectName }}</div>
-                        <div class="total-hrs-text text-truncate"><span class="total-hrs me-2">{{'Total Logged Hours' | translate}}:</span>
-                            <span class="hrs-text">{{project?.project?.spentHoursHHMM }} {{'Hrs' | translate}}</span>
+                        <div class="accordian-header-text text-truncate" >{{ project?.project?.projectName }}</div>
+                        <div class="total-hrs-text text-truncate"><span class="total-hrs me-2">Total Logged Hours:</span>
+                            <span class="hrs-text">{{project?.project?.spentHoursHHMM }} Hrs</span>
                         </div>
                     </p-accordion-header>
+
                     <p-accordion-content>
                         <div class="custom-p-multi-select-table custom-accordian-table">
                             <p-table [value]="project?.groupedResources">
                                 <ng-template pTemplate="header">
                                     <tr>
-                                        <th>{{'Resource Name' | translate}}</th>
-                                        <th class="text-center">{{'Role' | translate}}</th>
-                                        <th class="text-center">{{'Department' | translate}}</th>
-                                        <th class="text-center">{{'Phases / Milestones' | translate}}</th>
-                                        <th class="text-center">{{'Total Logged Hours' | translate}}</th>
+                                        <th>Resource Name</th>
+                                        <th class="text-center">Role</th>
+                                        <th class="text-center">Department</th>
+                                        <th class="text-center">Phases / Milestones</th>
+                                        <th class="text-center">Total Logged Hours</th>
                                     </tr>
                                 </ng-template>
                                 <ng-template pTemplate="body" let-entry>
@@ -70,14 +71,15 @@
         <ng-template pTemplate="header">
             <tr>
                 <th *ngFor="let h of [1]">
-                    <p-skeleton width="100%" height="1rem" styleClass="mb-2" />
+                    <p-skeleton width="100%" height="1rem" styleClass="mb-2"></p-skeleton>
                 </th>
             </tr>
         </ng-template>
+
         <ng-template pTemplate="body" let-row>
             <tr>
                 <td *ngFor="let col of [1]">
-                    <p-skeleton width="100%" styleClass="mb-2" height="1.2rem" />
+                    <p-skeleton width="100%" styleClass="mb-2" height="1.2rem"></p-skeleton>
                 </td>
             </tr>
         </ng-template>
@@ -101,12 +103,12 @@
                     <table class="popup-table">
                         <thead>
                             <tr>
-                                <th>{{'Phase / Milestone' | translate}}</th>
-                                <th>{{'Role' | translate}}</th>
-                                <th>{{'Start Date' | translate}}</th>
-                                <th>{{'End Date' | translate}}</th>
-                                <th>{{'Hours Spent' | translate}}</th>
-                                <th>{{'Status' | translate}}</th>
+                                <th>Phase / Milestone</th>
+                                <th>Role</th>
+                                <th>Start Date</th>
+                                <th>End Date</th>
+                                <th> Hours Spent</th>
+                                <th>Status</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -115,12 +117,12 @@
                                 <td class="resoure-role-text">{{entry?.resourceRole ?? '-'}}</td>
                                 <td>{{ entry?.resourceStartDate ? (entry.resourceStartDate | dateformat) : '-' }}</td>
                                 <td>{{ entry?.resourceEndDate ? (entry.resourceEndDate | dateformat) : '-' }}</td>
-                                <td><b>{{ entry?.loggedHoursHHMM ?? 0}}</b>/{{entry?.allocatedHours ?? 0}} {{'Hrs' | translate}}</td>
+                                <td><b>{{ entry?.loggedHoursHHMM ?? 0}}</b>/{{entry?.allocatedHours ?? 0}} Hrs</td>
                                 <td [ngClass]="{
                                     'active': entry?.resourceStatus?.toLowerCase() === 'active',
                                     'released': entry?.resourceStatus?.toLowerCase() === 'released',
-                                    'assigned': entry?.resourceStatus?.toLowerCase() === 'assigned' }">
-                                    <b>{{ entry?.resourceStatus ?? '-' }}</b>
+                                    'assigned': entry?.resourceStatus?.toLowerCase() === 'assigned'}">
+                                   <b>{{ entry?.resourceStatus ?? '-' }}</b>
                                 </td>
                             </tr>
                         </tbody>

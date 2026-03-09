@@ -147,6 +147,7 @@ export const MODULE_INFOS = {
     UTILIZATION_REPORTS_MODULE_INFO: "Shows the utilization percentage of each resource, comparing logged hours against available working hours. This helps identify underutilized or overburdened employees.",
     RESOURCE_AVAILABILITY_REPORTS_MODULE_INFO: "Provides a snapshot of each employee’s availability status, scheduled leaves, and working capacity. Useful for planning resource allocation and workload balancing.",
     ATTENDANCE_VS_TIMESHEET_REPORTS_MODULE_INFO: "Compares attendance records with timesheet entries to ensure consistency and detect any mismatches. This supports accurate payroll processing and compliance.",
+    CONSOLIDATED_TIMESHEET_SUMMARY_REPORTS_MODULE_INFO: "The Consolidated Timesheet Summary Report provides an aggregated view of employee timesheet data across selected periods, and resources. This report helps managers and administrators quickly analyze total hours logged, billable vs non-billable hours.",
     //Calendar Module Info
     CALENDAR_MODULE_INFO: "The Calendar page provides a monthly view highlighting key employee events such as birthdays, anniversaries, new joinees, and holidays with respective icons. It helps users stay informed and celebrate milestones by displaying detailed event information on each relevant date.",
 

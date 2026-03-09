@@ -116,5 +116,8 @@ export class ReportsHeaderComponent implements OnInit {
     else if(this.router.url === '/reports/attendence-reports/leave-carryforward-report'){
       this.componentname = 'Leave Carry Forward & Encashment Report'
     }
+    else if (this.router.url === '/reports/timesheet-reports/consolidated-timesheet-summary') {
+      this.componentname = 'Consolidated Timesheet Summary Report';
+    }
   }
 }

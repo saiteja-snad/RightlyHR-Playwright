@@ -1,0 +1,140 @@
+<div class="custom-main-component-container">
+  <div class="component-header-content">
+    <app-reports-header />
+
+    <form autocomplete="off" [formGroup]="WeeklyTimesheetReportForm"
+      (ngSubmit)="generateWeeklyTimesheetReport(page,pageSize,true,true)" *ngIf="WeeklyTimesheetReportForm">
+      <div class="d-flex align-items-center flex-wrap gap-2">
+        @if(rbac.allowedToAccess('Consolidated Timesheet Summary Report - Generate.view')){
+        <button type="button" class="clear-all-btn" [disabled]="!isFilterApplied()" (click)="clearAllFilters()">
+          @if(isFilterApplied()) {
+          Clear All
+          }
+        </button>
+        
+        <!-- Employee Name (Multi Select) -->
+        <div class="custom-p-multiSelect-content">
+          <p-multiSelect [options]="employeeData" optionLabel="name" optionValue="id" [filter]="true" [resetFilterOnHide]="true"
+            [maxSelectedLabels]="1" defaultLabel="Please select employee" formControlName="employeid" filterPlaceholder="Search employee"
+            class="form-select custom-select"></p-multiSelect>
+        </div>
+
+        <!-- Date Range -->
+        <div class="custom-date-range-picker">
+          <p-datepicker formControlName="dateRange" [placeholder]="'Please select date range'" selectionMode="range"
+            [showIcon]="true" [readonlyInput]="true" [maxDate]="today" />
+        </div>
+
+        <!-- Billable / Non-Billable -->
+        <div class="custom-p-multiSelect-content">
+          <p-multiSelect [options]="BillableOptions" optionLabel="key" optionValue="value" [filter]="true" [resetFilterOnHide]="true"
+            formControlName="billable" placeholder="Please select billable" class="form-select custom-select" filterPlaceholder="Search billable">
+          </p-multiSelect>
+        </div>
+
+        <!-- Status (Multi Select) -->
+        <div class="custom-p-multiSelect-content">
+          <p-multiSelect [options]="TimesheetStatus" optionLabel="key" optionValue="value" [filter]="true" [resetFilterOnHide]="true"
+            formControlName="status" placeholder="Please select status" class="form-select custom-select" filterPlaceholder="Search status">
+          </p-multiSelect>
+        </div>
+        }
+
+        <!-- Buttons -->
+        <div class="d-flex gap-2">
+          @if(rbac.allowedToAccess('Consolidated Timesheet Summary Report - Generate.view')){
+          <button type="submit" class="custom-btn btn-secondary" [disabled]="downloadLoader || spinnerLoader1">
+            @if(spinnerLoader1){
+            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+            <span>{{'Loading...'}}</span>
+            }@else {
+            <span>{{'Generate'}}</span>
+            }
+          </button>
+          }
+
+          @if(rbac.allowedToAccess('Consolidated Timesheet Summary Report - Export.view')){
+          <button type="button" class="custom-btn btn-primary" (click)="exportWeeklyTimesheetReport()"
+            [disabled]="filteredWeeklyTimesheetRecord.length == 0 || disableBtn || downloadLoader || spinnerLoader1">
+            @if(downloadLoader){
+            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+            <span>{{'Loading...'}}</span>
+            }@else {
+            <span>{{'Export'}}</span>
+            }
+          </button>
+          }
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div class="custom-table-content">
+    @if (!spinnerLoader1) {
+    <table id="weeklyTimesheetReportTable" class="w-100">
+      <thead>
+        <th>Worked Date</th>
+        <th>Employee ID</th>
+        <th>Employee Name</th>
+        <th>Logged Hours</th>
+        <th>Billable/Non-Billable</th>
+        <th>Status</th>
+        <th>Submitted Date</th>
+        <th>Approved By</th>
+        <th>Approved On</th>
+      </thead>
+      <tbody>
+        @if (!filteredWeeklyTimesheetRecord || filteredWeeklyTimesheetRecord.length === 0) {
+        <tr>
+          <td colspan="9" class="text-center">
+            <app-no-data-found />
+          </td>
+        </tr>
+        }
+        @else {
+        @for (record of filteredWeeklyTimesheetRecord; track $index) {
+        <tr>
+          <td>{{ record.date ? (record.date | date) : '-' }}</td>
+          <td>{{ record.fusionEmpId ?? '-' }}</td>
+          <td>{{ record.employee ?? '-' }}</td>
+          <td>
+            @if(record.isLeave || record.isHoliday || record.isWeekend){
+              <b>{{ record.hoursWorked ?? '-' }}</b>
+            } @else {
+              {{ record.hoursWorked ?? '-' }}
+            }
+          </td>
+          <td>{{ record.billableStatus ?? '-' }}</td>
+          <td>{{ record.approvalStatus === 'Processed' ? 'Approved' : (record.approvalStatus ?? '-') }}</td>
+          <td>{{ record.submittedDate ? (record.submittedDate | date) : '-' }}</td>
+          <td>{{ record.approvedBy ?? '-' }}</td>
+          <td>{{ record.processedOn ? (record.processedOn | date) : '-' }}</td>
+        </tr>
+        }
+        }
+      </tbody>
+    </table>
+    }
+    @else{
+    <app-data-loader-content />
+    }
+  </div>
+  @if(collectionSize > 0){
+  <div class="pagination-content">
+    <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
+      <div class="d-flex align-items-center gap-3 p-2">
+        <select title="text" class="form-select custom-pagination-select" [(ngModel)]="rows"
+          (ngModelChange)="onPageSizeChange($event)">
+          <option *ngFor="let option of options" [value]="option.value">{{ option.label }}</option>
+        </select>
+        <span class="pagination-label text-nowrap">
+          Showing {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize : (+first + +rows)}}
+          of {{collectionSize }}
+        </span>
+      </div>
+      <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"
+        (onPageChange)="onPageChange($event)"></p-paginator>
+    </div>
+  </div>
+  }
+</div>

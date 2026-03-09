@@ -1,0 +1,477 @@
+import { HttpResponse } from '@angular/common/http';
+import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { FormGroup, FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
+import { Subscription, Subject, takeUntil } from 'rxjs';
+import { AuthService } from '../../../services/auth.service';
+import { HttpService } from '../../../services/http.service';
+import { OpenModalService } from '../../../services/open-modal.service';
+import { RbacService } from '../../../services/rbac.service';
+import { IemployeeDetails } from '../../attendence-reports/reports.modal';
+import { CommonModule } from '@angular/common';
+import { TranslateModule } from '@ngx-translate/core';
+import { DatePicker } from 'primeng/datepicker';
+import { DropdownModule } from 'primeng/dropdown';
+import { MultiSelectModule } from 'primeng/multiselect';
+import { PaginatorModule } from 'primeng/paginator';
+import { SelectModule } from 'primeng/select';
+import { DataLoaderContentComponent } from '../../../shared/data-loader-content/data-loader-content.component';
+import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
+import { ReportsHeaderComponent } from '../../../shared/reports-tabs/reports-header/reports-header.component';
+
+@Component({
+  selector: 'app-consolidated-timesheet-summary',
+  imports: [DatePicker, CommonModule, MultiSelectModule, FormsModule, DropdownModule, SelectModule, TranslateModule, ReactiveFormsModule,
+    NoDataFoundComponent, PaginatorModule, DataLoaderContentComponent, ReportsHeaderComponent],
+  templateUrl: './consolidated-timesheet-summary.component.html',
+  styleUrl: './consolidated-timesheet-summary.component.scss',
+  encapsulation: ViewEncapsulation.None
+})
+export class ConsolidatedTimesheetSummaryComponent implements OnInit, OnDestroy {
+  subscription!: Subscription;
+  loggedInUser = {} as IemployeeDetails;
+  filteredWeeklyTimesheetRecord: any[] = [];
+  WeeklyTimesheetReportForm!: FormGroup;
+  spinnerLoader1 = false;
+  downloadLoader = false;
+  disableBtn = false;
+  destroy$ = new Subject<boolean>();
+  empinfo: any;
+  employeeData: any[] = [];
+  employeeiddetails: any[] = [];
+
+  BillableOptions = [
+    { key: 'All', value: 'All' },
+    { key: 'Yes', value: 'true' },
+    { key: 'No', value: 'false' }
+  ];
+
+  TimesheetStatus = [
+    { key: 'All', value: 'All' },
+    { key: 'Waiting for Approval', value: 'Waiting for Approval' },
+    { key: 'Approved', value: 'Processed' }
+  ];
+
+  page = 1;
+  pageSize = 50;
+  rows = 50;
+  collectionSize!: number;
+  first = 0;
+  options = [
+    { label: 50, value: 50 },
+    { label: 100, value: 100 },
+    { label: 150, value: 150 },
+    { label: 200, value: 200 }
+  ];
+  today: Date = new Date();
+
+  constructor(
+    public authService: AuthService,
+    private http: HttpService,
+    private fb: FormBuilder,
+    public rbac: RbacService,
+    public readonly router: Router,
+    private conformationPopup: OpenModalService
+  ) { }
+
+  ngOnInit(): void {
+    this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
+    this.loggedInUser = this.authService.getToken();
+    this.initializeForm();
+    this.handleStatusChanges();
+    this.handleBillableChanges();
+    this.getEmployeeData();
+  }
+
+  handleStatusChanges(): void {
+    this.WeeklyTimesheetReportForm.get('status')?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((selected: string[]) => {
+      if (!selected || selected.length === 0) return;
+
+      const allValue = 'All';
+      // Get all values except 'All'
+      const allOptionValues = this.TimesheetStatus.filter(x => x.value !== allValue).map(x => x.value);
+
+      if (selected.length > 1) {
+        const lastSelected = selected[selected.length - 1];
+
+        if (lastSelected === allValue) {
+          // If 'All' is clicked last, select only 'All'
+          setTimeout(() => this.WeeklyTimesheetReportForm.get('status')?.setValue([allValue], { emitEvent: false }));
+        } else if (selected.includes(allValue)) {
+          // If 'All' was already selected and user clicked something else, remove 'All'
+          const newSelection = selected.filter(s => s !== allValue);
+          setTimeout(() => this.WeeklyTimesheetReportForm.get('status')?.setValue(newSelection, { emitEvent: false }));
+        } else {
+          // 'All' is NOT in selected. Multiple items selected.
+          // Check if all options are selected.
+          const areAllSelected = allOptionValues.every(val => selected.includes(val));
+          if (areAllSelected) {
+            setTimeout(() => this.WeeklyTimesheetReportForm.get('status')?.setValue([allValue], { emitEvent: false }));
+          }
+        }
+      }
+    });
+  }
+
+  handleBillableChanges(): void {
+    this.WeeklyTimesheetReportForm.get('billable')?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((selected: string[]) => {
+      if (!selected || selected.length === 0) return;
+
+      const allValue = 'All';
+      // Get all values except 'All'
+      const allOptionValues = this.BillableOptions.filter(x => x.value !== allValue).map(x => x.value);
+
+      if (selected.length > 1) {
+        const lastSelected = selected[selected.length - 1];
+
+        if (lastSelected === allValue) {
+          // If 'All' is clicked last, select only 'All'
+          setTimeout(() => this.WeeklyTimesheetReportForm.get('billable')?.setValue([allValue], { emitEvent: false }));
+        } else if (selected.includes(allValue)) {
+          // If 'All' was already selected and user clicked something else, remove 'All'
+          const newSelection = selected.filter(s => s !== allValue);
+          setTimeout(() => this.WeeklyTimesheetReportForm.get('billable')?.setValue(newSelection, { emitEvent: false }));
+        } else {
+          // 'All' is NOT in selected. Multiple items selected.
+          // Check if all options are selected.
+          const areAllSelected = allOptionValues.every(val => selected.includes(val));
+          if (areAllSelected) {
+            setTimeout(() => this.WeeklyTimesheetReportForm.get('billable')?.setValue([allValue], { emitEvent: false }));
+          }
+        }
+      }
+    });
+  }
+
+  initializeForm() {
+    this.WeeklyTimesheetReportForm = this.fb.group({
+      employeid: [[]],
+      dateRange: [null],
+      billable: [[]],
+      status: [[]]
+    });
+  }
+
+  isFilterApplied(): boolean {
+    const formValue = this.WeeklyTimesheetReportForm.value;
+    const isEmployeeSelected = Array.isArray(formValue.employeid) ? formValue.employeid.length > 0 : !!formValue.employeid;
+    const isStatusSelected = Array.isArray(formValue.status) && formValue.status.length > 0 && !formValue.status.includes('All');
+    const isDateRangeSelected = Array.isArray(formValue.dateRange) ? formValue.dateRange.length > 0 : !!formValue.dateRange;
+    const isBillableSelected = Array.isArray(formValue.billable) && formValue.billable.length > 0 && !formValue.billable.includes('All');
+    return (isEmployeeSelected || isStatusSelected || isDateRangeSelected || isBillableSelected);
+  }
+
+  clearAllFilters(): void {
+    this.WeeklyTimesheetReportForm.reset({
+      employeid: [],
+      dateRange: null,
+      billable: [],
+      status: []
+    });
+    this.filteredWeeklyTimesheetRecord = [];
+    this.collectionSize = 0;
+    this.disableBtn = false;
+  }
+
+  onStatusChange(selectedValues: any) {
+    if (!Array.isArray(selectedValues)) return;
+
+    const nonAllStatuses = this.TimesheetStatus.filter(s => s.value !== 'All').map(s => s.value);
+    const previousValues = this.WeeklyTimesheetReportForm.get('status')?.value || [];
+
+    if (selectedValues.includes('All') && !previousValues.includes('All')) {
+      this.WeeklyTimesheetReportForm.patchValue({ status: ['All'] }, { emitEvent: false });
+    } else if (selectedValues.includes('All') && previousValues.includes('All') && selectedValues.length > 1) {
+      const withoutAll = selectedValues.filter((v: string) => v !== 'All');
+      this.WeeklyTimesheetReportForm.patchValue({ status: withoutAll }, { emitEvent: false });
+    } else if (!selectedValues.includes('All') && selectedValues.length === nonAllStatuses.length) {
+      this.WeeklyTimesheetReportForm.patchValue({ status: ['All'] }, { emitEvent: false });
+    }
+  }
+
+  onGenerate() {
+    this.generateWeeklyTimesheetReport(this.page, this.pageSize, true, true);
+  }
+
+  onRowsChange() {
+    this.page = 1;
+    this.first = 0;
+    this.generateWeeklyTimesheetReport(this.page, this.pageSize);
+  }
+
+  onPageChange(event: any) {
+    this.page = event.page + 1;
+    this.pageSize = event.rows;
+    this.first = event.first;
+    this.generateWeeklyTimesheetReport(this.page, this.pageSize, true, false);
+  }
+
+  onPageSizeChange(newPageSize: number) {
+    this.pageSize = newPageSize;
+    this.rows = newPageSize;
+    this.page = 1;
+    this.first = 0;
+    this.generateWeeklyTimesheetReport(this.page, this.pageSize, true, true);
+  }
+
+  getEmployeeData() {
+    const status = 'Active,Trainee Active,Active Contract';
+    this.subscription = this.http.getData(`Employeedata/v3/Getallemployees?statuses=${status}`).subscribe({
+      next: (data: any) => {
+        const employeedata = (data || []).map((employee: any) => {
+          const firstName = employee.firstName ? employee.firstName.trim() : '';
+          const middleName = employee.middleName ? employee.middleName.trim() : '';
+          const lastName = employee.lastName ? employee.lastName.trim() : '';
+          return {
+            ...employee,
+            firstName,
+            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${firstName} ${middleName ? middleName + ' ' : ''}${lastName}`.trim()
+          };
+        });
+        this.employeeiddetails = [...employeedata];
+        this.employeeData = this.employeeiddetails.map((e: any) => ({
+          id: e.employeeId,
+          name: e.fullName
+        }));
+      },
+      error: (reason: any) => {
+        console.error('Error fetching employees:', reason);
+        this.employeeData = [];
+      }
+    });
+  }
+
+  get isLeaveGenerateDisabled(): boolean {
+    const { employeid, dateRange, billable, status } = this.WeeklyTimesheetReportForm.value;
+    const hasEmployee = Array.isArray(employeid) && employeid.length > 0;
+    const hasDateRange = Array.isArray(dateRange) && dateRange.length === 2 && dateRange[0] && dateRange[1];
+    const hasBillable = Array.isArray(billable) && billable.length > 0 && !billable.includes('All');
+    const hasStatus = Array.isArray(status) && status.length > 0 && !status.includes('All');
+    return !(hasEmployee || hasDateRange || hasBillable || hasStatus);
+  }
+
+  buildTimesheetReportParams() {
+    const formValue = this.WeeklyTimesheetReportForm.value;
+    const formatDate = (date: Date | null) => {
+      if (!date) return null;
+      const d = new Date(date);
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      const year = d.getFullYear();
+      return `${month}/${day}/${year}`;
+    };
+
+    const startDate = formValue.dateRange?.[0] ? formatDate(formValue.dateRange[0]) : null;
+    const endDate = formValue.dateRange?.[1] ? formatDate(formValue.dateRange[1]) : null;
+
+    const params: any = {
+      ReportType: 'ConsolidatedTimesheetSummary'
+    };
+
+    if (startDate) params.StartDate = startDate;
+    if (endDate) params.EndDate = endDate;
+    if (formValue.employeid && formValue.employeid.length > 0) {
+      params.EmployeeIds = formValue.employeid;
+    }
+    if (formValue.billable && formValue.billable.length > 0 && !formValue.billable.includes('All')) {
+      if (formValue.billable.length === 1) {
+        params.Billable = formValue.billable[0];
+      }
+    }
+    if (formValue.status && formValue.status.length > 0 && !formValue.status.includes('All')) {
+      params.Statuses = formValue.status.join(',');
+    }
+    return params;
+  }
+
+  generateWeeklyTimesheetReport(page: number, pageSize: number, showLoader: boolean = true, resetPagination: boolean = false) {
+    if (this.WeeklyTimesheetReportForm.invalid) return;
+    if (resetPagination) {
+      this.page = 1;
+      this.first = 0;
+    }
+    if (showLoader) this.spinnerLoader1 = true;
+    const params = this.buildTimesheetReportParams();
+    const queryString = new URLSearchParams(params).toString();
+    this.http.getDataIncludeParams(`TimesheetReport/get?${queryString}&page=${this.page}&pageSize=${this.pageSize}`).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res: any) => {
+        this.spinnerLoader1 = false;
+        if (res.success && res.data?.items) {
+          this.filteredWeeklyTimesheetRecord = res.data.items;
+          this.collectionSize = res.data.totalCount || 0;
+          if (this.first >= this.collectionSize) {
+            this.first = 0;
+            this.page = 1;
+          }
+          this.disableBtn = false;
+        } else {
+          this.filteredWeeklyTimesheetRecord = [];
+          this.collectionSize = 0;
+        }
+      },
+      error: (err) => {
+        this.spinnerLoader1 = false;
+        console.error('Error fetching report:', err);
+        this.filteredWeeklyTimesheetRecord = [];
+        this.collectionSize = 0;
+        this.disableBtn = true;
+      }
+    });
+  }
+
+  // exportWeeklyTimesheetReport() {
+  //   this.downloadLoader = true;
+  //   const params = this.buildTimesheetReportParams();
+  //   const queryString = new URLSearchParams(params).toString();
+  //   this.http.downloadTimesheetReport(`TimesheetReport/export-report?${queryString}&page=${this.page}&pageSize=${this.pageSize}`).subscribe({
+  //     next: (response: HttpResponse<Blob>) => {
+  //       this.downloadLoader = false;
+  //       let filename = this.generateFileName();
+  //       const contentDisposition = response.headers.get('content-disposition');
+  //       if (contentDisposition) {
+  //         const utf8FilenameMatch = contentDisposition.match(/filename\*\=UTF\-8''([^;]+)/);
+  //         const asciiFilenameMatch = contentDisposition.match(/filename="?([^"]+)"?/);
+  //         if (utf8FilenameMatch && utf8FilenameMatch[1]) {
+  //           filename = decodeURIComponent(utf8FilenameMatch[1]);
+  //         } else if (asciiFilenameMatch && asciiFilenameMatch[1]) {
+  //           filename = asciiFilenameMatch[1];
+  //         }
+  //       }
+  //       const blob = new Blob([response.body!], {
+  //         type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+  //       });
+  //       const url = window.URL.createObjectURL(blob);
+  //       const link = document.createElement('a');
+  //       link.href = url;
+  //       link.download = filename;
+  //       link.click();
+  //       window.URL.revokeObjectURL(url);
+  //       this.conformationPopup.openSuccessModal("Report Exported Successfully");
+  //     },
+  //     error: (err: any) => {
+  //       this.downloadLoader = false;
+  //       this.conformationPopup.openErrorModal('No records found');
+  //     }
+  //   });
+  // }
+
+  // generateFileName(): string {
+  //   const formValue = this.WeeklyTimesheetReportForm.value;
+  //   let employeeName = 'AllEmployees';
+  //   if (formValue.employeid && formValue.employeid.length === 1) {
+  //     const emp = this.employeeiddetails.find((e: any) => e.employeeId === formValue.employeid[0]);
+  //     if (emp) {
+  //       employeeName = `${emp.firstName}${emp.middleName ? ' ' + emp.middleName : ''}${emp.lastName ? ' ' + emp.lastName : ''}`.trim();
+  //     }
+  //   } else if (formValue.employeid && formValue.employeid.length > 1) {
+  //     employeeName = 'MultipleEmployees';
+  //   }
+
+  //   const formatDateForFilename = (date: Date) => {
+  //     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  //     const day = String(date.getDate()).padStart(2, '0');
+  //     const month = months[date.getMonth()];
+  //     const year = date.getFullYear();
+  //     return `${month} ${day} ${year}`;
+  //   };
+
+  //   let dateRange = '';
+  //   if (formValue.dateRange && formValue.dateRange[0] && formValue.dateRange[1]) {
+  //     const startDate = formatDateForFilename(new Date(formValue.dateRange[0]));
+  //     const endDate = formatDateForFilename(new Date(formValue.dateRange[1]));
+  //     dateRange = `${startDate} - ${endDate}`;
+  //   }
+
+  //   return `${employeeName} V1 ${dateRange}.xlsx`.trim();
+  // }
+
+  exportWeeklyTimesheetReport() {
+    this.downloadLoader = true;
+    const params = this.buildTimesheetReportParams();
+    const queryString = new URLSearchParams(params).toString();
+
+    // Ensure your service method returns Observable<HttpResponse<Blob>> 
+    // by using { observe: 'response', responseType: 'blob' } in the HttpClient call.
+    this.http.downloadTimesheetReport(`TimesheetReport/export-report?${queryString}&page=${this.page}&pageSize=${this.pageSize}`).subscribe({
+      next: (response: HttpResponse<Blob>) => {
+        this.downloadLoader = false;
+
+        // 1. Start with the clean fallback name (no V1)
+        let filename = this.generateFileName();
+
+        // 2. Try to extract the backend filename (which includes the correct version)
+        const contentDisposition = response.headers.get('content-disposition');
+        if (contentDisposition) {
+          const utf8FilenameMatch = contentDisposition.match(/filename\*=UTF-8''([^;]+)/);
+          const asciiFilenameMatch = contentDisposition.match(/filename="?([^"]+)"?/);
+
+          if (utf8FilenameMatch && utf8FilenameMatch[1]) {
+            filename = decodeURIComponent(utf8FilenameMatch[1]);
+          } else if (asciiFilenameMatch && asciiFilenameMatch[1]) {
+            filename = asciiFilenameMatch[1];
+          }
+        }
+
+        const blob = new Blob([response.body!], {
+          type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        });
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = filename;
+        link.click();
+        window.URL.revokeObjectURL(url);
+        this.conformationPopup.openSuccessModal("Report Exported Successfully");
+      },
+      error: (err: any) => {
+        this.downloadLoader = false;
+        this.conformationPopup.openErrorModal('No records found');
+      }
+    });
+  }
+
+  generateFileName(): string {
+    const formValue = this.WeeklyTimesheetReportForm.value;
+    let employeeName = 'AllEmployees';
+    if (formValue.employeid && formValue.employeid.length === 1) {
+      const emp = this.employeeiddetails.find((e: any) => e.employeeId === formValue.employeid[0]);
+      if (emp) {
+        employeeName = `${emp.firstName}${emp.middleName ? ' ' + emp.middleName : ''}${emp.lastName ? ' ' + emp.lastName : ''}`.trim();
+      }
+    } else if (formValue.employeid && formValue.employeid.length > 1) {
+      employeeName = 'MultipleEmployees';
+    }
+
+    const formatDateForFilename = (date: Date) => {
+      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      const day = String(date.getDate()).padStart(2, '0');
+      const month = months[date.getMonth()];
+      const year = date.getFullYear();
+      return `${month} ${day} ${year}`;
+    };
+
+    let dateRange = '';
+    if (formValue.dateRange && formValue.dateRange[0] && formValue.dateRange[1]) {
+      const startDate = formatDateForFilename(new Date(formValue.dateRange[0]));
+      const endDate = formatDateForFilename(new Date(formValue.dateRange[1]));
+      dateRange = `${startDate} - ${endDate}`;
+    }
+
+    // CHANGE: Removed hardcoded "V1" so it's a clean fallback
+    // If backend header works, this won't be used.
+    // If backend header fails, you get "Name DateRange.xlsx" instead of "Name V1..."
+    return `${employeeName} ${dateRange}.xlsx`.trim();
+  }
+
+  navigation() {
+    this.router.navigate(['/reports']);
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next(true);
+    this.destroy$.complete();
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
+  }
+}

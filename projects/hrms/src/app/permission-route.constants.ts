@@ -239,6 +239,7 @@ export const TIMESHEET_REPORTS_TABS = [
   { route: '/reports/timesheet-reports/utilization-report', permission: 'Utilization Report.view' },
   { route: '/reports/timesheet-reports/resource-availability-report', permission: 'Resource Availability Report.view' },
   { route: '/reports/timesheet-reports/attendance-vs-timesheet-report', permission: 'Attendance vs Timesheet Report.view' },
+  { route: '/reports/timesheet-reports/consolidated-timesheet-summary', permission: 'Consolidated Timesheet Summary Report.view' },
 ];
 
 export const POLICY_REPORTS_TABS = [

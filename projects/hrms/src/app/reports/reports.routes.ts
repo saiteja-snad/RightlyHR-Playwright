@@ -57,6 +57,7 @@ export default [
             { path: 'utilization-report', loadComponent: () => import('./timesheet-reports/utilization-report/utilization-report.component').then((m) => m.UtilizationReportComponent), canActivate: [PermissionsGuard], data: { permission: 'Utilization Report.view' } },
             { path: 'resource-availability-report', loadComponent: () => import('./timesheet-reports/resource-availability-report/resource-availability-report.component').then((m) => m.ResourceAvailabilityReportComponent), canActivate: [PermissionsGuard], data: { permission: 'Resource Availability Report.view' } },
             { path: 'attendance-vs-timesheet-report', loadComponent: () => import('./timesheet-reports/attendance-vs-timesheet-report/attendance-vs-timesheet-report.component').then((m) => m.AttendanceVsTimesheetReportComponent), canActivate: [PermissionsGuard], data: { permission: 'Attendance vs Timesheet Report.view' } },
+            { path: 'consolidated-timesheet-summary', loadComponent: () => import('./timesheet-reports/consolidated-timesheet-summary/consolidated-timesheet-summary.component').then((m) => m.ConsolidatedTimesheetSummaryComponent), canActivate: [PermissionsGuard], data: { permission: 'Consolidated Timesheet Summary Report.view' } },
         ]
     },
 

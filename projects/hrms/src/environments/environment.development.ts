@@ -49,7 +49,7 @@ export const environment = {
     expensesModuleId:19,
     remoteLoginModuleId:11,
     globalPermissionsModuleID:21,
-    currentCompanyName: 'RightlyHr',
+    currentCompanyName: 'RIGHTLY HR',
   oldVersionUrl:'https://snad.rightlyhr.com/uservalidation',
   googleClientId: '976695989594-cbrkrjdsf6phcujl32imv6l6t04plnd2.apps.googleusercontent.com',
 

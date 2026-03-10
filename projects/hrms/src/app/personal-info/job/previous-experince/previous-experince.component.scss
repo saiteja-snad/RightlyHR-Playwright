@@ -1,14 +1,159 @@
-.previous-text {
-    font-weight: 700;
-    font-size: 14px;
-    line-height: 100%;
-    letter-spacing: 0%;
-    vertical-align: middle;
-    color: rgba(6, 39, 79, 1);
+// .cards-grid-container {
+//   display: grid;
+//   grid-template-columns: repeat(3, 1fr);
+//   gap: 1.5rem;
+
+//   .summary-card {
+//     display: flex;
+//     align-items: center;
+//     padding: 1rem;
+//     border: 1px solid #DCE3E9;
+//     border-radius: 0.625rem;
+//     background-color: #FFF;
+//     gap: 1.5rem;
+//     box-shadow: 0px 0px 5px 0px #0B3A831A;
+
+//     .icon {
+//       width: 3.5rem;
+//       height: 3.5rem;
+//     }
+
+//     .summary-title {
+//       font-size: 0.9rem;
+//       color: #6b7280;
+//     }
+
+//     .summary-value {
+//       font-size: var(--fontsize18);
+//       font-weight: 700;
+//       color: var(--primary-color);
+//     }
+//   }
+// }
+
+.experience-card-container {
+  .experience-card {
+    display: inline-flex; /* change from flex */
+    align-items: center;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.625rem;
+    background-color: #FFF;
+    gap: 2rem;
+    box-shadow: 1px 1px 2px 2px var(--body-bg-color);
+    width: fit-content; /* important */
+    max-width: 100%;
+  }
+
+  .circular-progress-wrapper {
+    .circular-progress {
+      position: relative;
+      width: 100px;
+      height: 100px;
+
+      .progress-text {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+
+        .total-years {
+          display: block;
+          font-size: 0.75rem;
+          font-weight: 700;
+          color: var(--primary-color);
+          line-height: 1.2;
+          margin-top: 0.5rem;
+        }
+
+        .total-label {
+          display: block;
+          font-size: 0.675rem;
+          color: #656565;
+          margin-top: 0.25rem;
+        }
+      }
+    }
+  }
+
+  .experience-details {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    margin-top: 1rem;
+    flex-wrap: wrap; /* prevents stretching */
+  }
+
+  .experience-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    .experience-label {
+      font-size: 0.875rem;
+      color: #6B7280;
+      font-weight: 400;
+    }
+
+    .experience-value {
+      font-size: 1.125rem;
+      font-weight: 700;
+
+      &.current { color: #7C3AED; }
+      &.previous { color: #0EA5E9; }
+      &.total { color: #0B3A83; }
+    }
+  }
+
+  .divider {
+    width: 5px;
+    height: 60px;
+    border-radius: 10px;
+
+    &.current-divider { background-color: #7C3AED; }
+    &.previous-divider { background-color: #0EA5E9; }
+    &.total-divider { background-color: #0B3A83; }
+  }
 }
 
-.text-wrap {
-    word-wrap: break-word;
-    word-break: break-word; 
-    white-space: normal; 
+.custom-table-content{
+    height: calc(100vh - 22rem) !important;
+    border: 1px solid var(--table-header-bg-color) !important;
+}
+
+@media (max-width: 992px) {
+  .cards-grid-container {
+    grid-template-columns: repeat(2, 1fr);
   }
+}
+
+@media (max-width: 576px) {
+  .cards-grid-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+::ng-deep .employee-label-info {
+  --bs-popover-max-width: max-content !important; /* allow width based on content */
+  --bs-popover-border-color: var(--module-info-bg) !important;
+  background: var(--module-info-bg) !important;
+
+  .popover-body {
+    padding: 0.5rem !important;
+    border-radius: 0.5rem;
+    border: 2px solid #FFF !important;
+    box-shadow: 0px 0px 10px rgba(11, 58, 131, 0.5) !important;
+  }
+
+  .module-info-text {
+    font-weight: 400;
+    font-size: var(--fontsize12);
+    color: #424242;
+    white-space: nowrap;   /* ⭐ keeps text in single line */
+  }
+
+  .popover-arrow::after {
+    border-bottom-color: #FFFFFF !important;
+  }
+}

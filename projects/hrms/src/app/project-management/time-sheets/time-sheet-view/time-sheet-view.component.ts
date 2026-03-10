@@ -1359,7 +1359,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   selectProjectForRow(row: AbstractControl, client: any, project: any, phase: any = null) {
 
     const form = row as FormGroup;
-  
+
 
     const selectedResource = this.resourcesArrayList.find(
       (res: any) =>
@@ -1370,11 +1370,11 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
 
     const selectedProjectResource = selectedResource ? {
       ...selectedResource,
-      
+
       weekendWorkAllowed: project.isWeekendAllowed ?? selectedResource.weekendWorkAllowed,
       project: { ...selectedResource.project, isWeekendAllowed: project.isWeekendAllowed }
     } : null;
-    
+
     // Set component-level variables for modal display
     this.selectedclientid = client.clientId;
     this.selectedprojectid = project.projectId;
@@ -1493,13 +1493,9 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   }
 
   showProjectsLength(projects: any[]): number {
-    return projects.reduce((count, p) => {
-      if (p.phases && p.phases.length > 0) {
-        return count + p.phases.length;
-      }
-      return count + 1;
-    }, 0);
+    return projects.length;
   }
+
   hasAnyDuration(project: AbstractControl): boolean {
     const days = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
     return days.some(day => project.get(day)?.get('duration')?.value && project.get(day)?.get('approvalStatus')?.value?.toLowerCase() !== 'not entered');

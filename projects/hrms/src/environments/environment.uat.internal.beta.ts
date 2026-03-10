@@ -5,11 +5,11 @@ export const environment = {
   viewUrl: 'https://sasda001.blob.core.windows.net/fusionplusqa/',
   modules: [
     { id: 20, moduleName: 'Probation' },
-    { id: 24, moduleName: 'PMS' }  
+    { id: 24, moduleName: 'PMS' }
   ],
-  
 
- 
+
+
   clientId: '9a09dcfb-a22f-4fdf-a014-38990e558d80',
   authority: 'https://login.microsoftonline.com/0cc1bac4-bd4f-4994-8cf9-2d544c09d781/',
   redirectUrl: '/uservalidation',
@@ -42,5 +42,6 @@ export const environment = {
   expensesModuleId:19,
   remoteLoginModuleId:11,
   globalPermissionsModuleID:21,
+  currentCompanyName: 'RightlyHr',
   googleClientId: '976695989594-cbrkrjdsf6phcujl32imv6l6t04plnd2.apps.googleusercontent.com',
 };

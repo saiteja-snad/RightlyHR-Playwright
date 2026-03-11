@@ -17,21 +17,21 @@
                     <i class="bi bi-search"></i>
                 </span>
                 <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input"
-                    [placeholder]="'Search by client name / contact name / email / role' | translate" aria-label="Search"
+                    placeholder="Search by client name / contact name / email / role" aria-label="Search"
                     aria-describedby="basic-addon1">
             </div>
-            
+
             <div class="custom-table-content w-100">
                 @if (!loading) {
                 <table class="w-100">
                     <thead>
-                        <th>{{ 'Logo' | translate }}</th>
-                        <th>{{ 'Client Name' | translate }}</th>
-                        <th>{{ 'Contact name' | translate }}</th>
-                        <th>{{ 'Email' | translate }}</th>
-                        <th>{{ 'Phone Number' | translate }}</th>
-                        <th>{{ 'Role' | translate }}</th>
-                        <th>{{ 'Status' | translate }}</th>
+                        <th>Logo</th>
+                        <th>Client Name</th>
+                        <th>Contact name</th>
+                        <th>Email</th>
+                        <th>Phone Number</th>
+                        <th>Role</th>
+                        <th>Status</th>
                         @if(rbac.allowedToAccess('Client Information.delete')){
                         <th class="text-center">{{"Action" | translate}}</th>
                         }
@@ -44,7 +44,9 @@
                                         <img [src]="getImageUrl(client.logoPath)" alt="Logo" class="client-image" />
                                     </td>
                                     <td>
-                                        <a class="data-nav-btn" (click)="navigateView(client.clientId)">{{ client.clientName }}</a>
+                                        <a class="data-nav-btn" (click)="navigateView(client.clientId)">
+                                            {{ client.clientName }}
+                                        </a>
                                     </td>
                                     <td>{{client?.contact?.name || '-'}}</td>
                                     <td>{{client?.contact?.email || '-'}}</td>
@@ -59,12 +61,12 @@
                                             <ul class="dropdown-menu custom-dropdown-menu">
                                                 <li (click)="openModalstatus(statuschanges, client)">
                                                     <a class="dropdown-item">
-                                                        <i class="bi bi-check-circle me-2"></i> {{ 'Active' | translate }}
+                                                        <i class="bi bi-check-circle me-2"></i> Active
                                                     </a>
                                                 </li>
                                                 <li (click)="openModalstatus(statuschangesInactive, client)">
                                                     <a class="dropdown-item">
-                                                        <i class="bi bi-check-circle me-2"></i> {{ 'Inactive' | translate }}
+                                                        <i class="bi bi-check-circle me-2"></i> Inactive
                                                     </a>
                                                 </li>
                                             </ul>
@@ -93,11 +95,11 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <app-confirmation-icon />
-            <p class="confirmation-text pt-3">{{ 'Are you sure you want to Active this client?' | translate }}</p>
+            <p class="confirmation-text pt-3">{{'Are you sure you want to Active this client?'}}</p>
         </div>
         <div class="custom-modal-footer">
-            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{ 'No' | translate }}</button>
-            <button type="submit" class="custom-btn btn-primary" (click)="confirmStatusChange(modal)">{{ 'Yes' | translate }}</button>
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'}}</button>
+            <button type="submit" class="custom-btn btn-primary" (click)="confirmStatusChange(modal)">{{'Yes'}}</button>
         </div>
     </div>
 </ng-template>
@@ -106,11 +108,11 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <app-confirmation-icon />
-            <p class="confirmation-text pt-3">{{ 'Are you sure you want to Inactive this client?' | translate }}</p>
+            <p class="confirmation-text pt-3">{{'Are you sure you want to Inactive this client?'}}</p>
         </div>
         <div class="custom-modal-footer">
-            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{ 'No' | translate }}</button>
-            <button type="submit" class="custom-btn btn-primary" (click)="confirmStatusChangetoInactive(modal)">{{ 'Yes' | translate }}</button>
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'}}</button>
+            <button type="submit" class="custom-btn btn-primary" (click)="confirmStatusChangetoInactive(modal)">{{'Yes'}}</button>
         </div>
     </div>
 </ng-template>

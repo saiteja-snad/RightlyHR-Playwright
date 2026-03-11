@@ -6,26 +6,28 @@
                 <form [formGroup]="datepickerForm">
                     <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
                         <div class="summary-header d-inline-flex gap-2 mb-2">
-                            <div>{{'Project Summary' | translate}}</div>
+                            <div>Project Summary</div>
                             <div>
-                                <app-module-info-icon placement="bottom" [ngbPopover]="resourceSummaryContent" class="module-icon" />
+                                <app-module-info-icon placement="bottom" [ngbPopover]="resourceSummaryContent"
+                                    class="module-icon" />
                                 <ng-template #resourceSummaryContent>
                                     <div class="module-info-text">{{projectsummaryinfo}}</div>
                                 </ng-template>
                             </div>
                         </div>
 
+
                         <div class="d-flex gap-2 align-items-center">
                             <div class="custom-p-select-content custom-icon">
                                 <p-select [options]="projectsDataDrown" optionLabel="projectName" optionValue="projectId" [filter]="true"
                                     [resetFilterOnHide]="true" filterBy="projectName" formControlName="projectId"
-                                    [showClear]="!!datepickerForm.get('projectId')?.value" [placeholder]="'Please select project' | translate"
+                                    [showClear]="!!datepickerForm.get('projectId')?.value" placeholder="Please select project"
                                     class="form-select custom-select" (onChange)="onProjectChange($event)" />
                             </div>
 
                             <div class="custom-p-select-content custom-icon">
                                 <p-select [options]="statusOptions" optionLabel="label" optionValue="value"
-                                    [filter]="false" formControlName="status" [placeholder]="'Please select status' | translate"
+                                    [filter]="false" formControlName="status" placeholder="Please select status"
                                     [showClear]="!!datepickerForm.get('status')?.value"
                                     class="form-select custom-select" (onChange)="onStatusChange($event)" />
                             </div>
@@ -46,7 +48,7 @@
                             <tr *ngFor="let roles of projectSummeryData">
                                 <td class="project-name">{{roles.project.projectName}}</td>
                                 <td class="text-center">{{ roles.projectColor?.graphData?.code || '-' }}</td>
-                                <td class="text-center"><span class="logged-hrs">{{roles.loggedHoursHHMM}}</span>/{{roles.allocatedHours}}{{'hrs' | translate}}</td>
+                                <td class="text-center"><span class="logged-hrs">{{roles.loggedHoursHHMM}}</span>/{{roles.allocatedHours}}hrs</td>
                                 <td class="text-center">
                                     <span class="status-badge" [ngClass]="getStatusClass(roles.status)">{{ roles.status }}</span>
                                 </td>
@@ -71,7 +73,7 @@
             @if (!ProjectwiseResourceCountLoader) {
             <div class="time-sheet-graph-card">
                 <div class="summary-header d-flex gap-2 mb-2">
-                    <div>{{'Project wise Resource Count' | translate}}</div>
+                    <div>Project wise Resource Count</div>
                     <div>
                         <app-module-info-icon placement="bottom" [ngbPopover]="ProjectwiseResourceContent"
                             class="module-icon" />
@@ -100,7 +102,7 @@
             <div class="time-sheet-graph-card">
                 <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
                     <div class="summary-header d-flex gap-2 mb-2">
-                        <div>{{'Department wise Contribution' | translate}}</div>
+                        <div>Department wise Contribution</div>
                         <div>
                             <app-module-info-icon placement="bottom" [ngbPopover]="departmentwiseContributionContent"
                                 class="module-icon" />
@@ -113,7 +115,7 @@
                     <div class="custom-p-select-content">
                         <p-select [options]="projectsDataDrown" [(ngModel)]="selectedDeptProjectId" optionLabel="projectName"
                             optionValue="projectId" [filter]="true" [resetFilterOnHide]="true" filterBy="projectName"
-                            [showClear]="!!selectedDeptProjectId" [placeholder]="'Please select project' | translate" class="form-select custom-select"
+                            [showClear]="!!selectedDeptProjectId" placeholder="Please select project" class="form-select custom-select"
                             (onChange)="onDeptProjectChange($event)" />
                     </div>
                 </div>
@@ -146,7 +148,7 @@
             @if (!ProjectTypeLoader) {
             <div class="time-sheet-graph-card">
                 <div class="summary-header d-flex gap-2 mb-2">
-                    <div>{{'Project Type' | translate}}</div>
+                    <div>Project Type</div>
                     <div>
                         <app-module-info-icon placement="bottom" [ngbPopover]="projectTypedata" class="module-icon" />
                         <ng-template #projectTypedata>
@@ -184,7 +186,7 @@
             <div class="time-sheet-graph-card">
                 <div class="d-flex flex-wrap justify-content-between align-items-center pb-3">
                     <div class="summary-header d-flex gap-2 mb-2">
-                        <div>{{'Estimated vs Actual Hours' | translate}}</div>
+                        <div>Estimated vs Actual Hours</div>
                         <div>
                             <app-module-info-icon placement="bottom" [ngbPopover]="estimatedActualHoursdata" class="module-icon" />
                             <ng-template #estimatedActualHoursdata>
@@ -196,7 +198,7 @@
                     <div class="d-flex align-items-center gap-2">
                         <div class="d-flex align-items-center gap-1" *ngFor="let item of estimatedlabels">
                             <span class="legend-circle" [ngStyle]="{ 'background-color': item.color }"></span>
-                            <span class="legend-label">{{ item.label | translate }}</span>
+                            <span class="legend-label">{{ item.label }}</span>
                         </div>
                     </div>
                 </div>
@@ -220,7 +222,7 @@
             <div class="time-sheet-graph-card">
                 <div class="d-flex flex-wrap justify-content-between align-items-center pb-3">
                     <div class="summary-header d-flex gap-2 mb-2">
-                        <div>{{'Billable vs Non-Billable Hours' | translate}}</div>
+                        <div>Billable vs Non-Billable Hours</div>
                         <div>
                             <app-module-info-icon placement="bottom" [ngbPopover]="billablevsNonBillableHoursdata" class="module-icon" />
                             <ng-template #billablevsNonBillableHoursdata>
@@ -232,7 +234,7 @@
                     <div class="d-flex align-items-center gap-2">
                         <div class="d-flex align-items-center gap-1" *ngFor="let item of billablelabels">
                             <span class="legend-circle" [ngStyle]="{ 'background-color': item.color }"></span>
-                            <span class="legend-label">{{ item.label | translate }}</span>
+                            <span class="legend-label">{{ item.label }}</span>
                         </div>
                     </div>
                 </div>
@@ -256,7 +258,7 @@
             <div class="time-sheet-graph-card">
                 <div class="d-flex flex-wrap justify-content-between align-items-center pb-3">
                     <div class="summary-header d-flex gap-2 mb-2">
-                        <div>{{'Project Burndown Chart' | translate}}</div>
+                        <div>Project Burndown Chart</div>
                         <div>
                             <app-module-info-icon placement="bottom" [ngbPopover]="projectBurndownChartdata" class="module-icon" />
                             <ng-template #projectBurndownChartdata>

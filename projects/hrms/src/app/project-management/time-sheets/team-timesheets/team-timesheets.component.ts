@@ -45,7 +45,7 @@ export class TeamTimesheetsComponent {
   ranges: any;
   datepickerForm!: FormGroup;
   page = 1;
-  pageSize = 10;
+  pageSize = 100;
   rows = 10;
   collectionSize!: number;
   first = 0;
@@ -342,20 +342,20 @@ export class TeamTimesheetsComponent {
     });
   }
 
-  onPageSizeChange(newPageSize: number) {
-    this.pageSize = newPageSize;
-    this.rows = newPageSize;
-    this.page = 1;
-    this.first = 0;
-    this.getteamsummary();
-  }
+  // onPageSizeChange(newPageSize: number) {
+  //   this.pageSize = newPageSize;
+  //   this.rows = newPageSize;
+  //   this.page = 1;
+  //   this.first = 0;
+  //   this.getteamsummary();
+  // }
 
-  onPageChange(event: any) {
-    this.page = event.page + 1;
-    this.pageSize = event.rows;
-    this.first = event.first;
-    this.getteamsummary();
-  }
+  // onPageChange(event: any) {
+  //   this.page = event.page + 1;
+  //   this.pageSize = event.rows;
+  //   this.first = event.first;
+  //   this.getteamsummary();
+  // }
 
   navigateView(employeeId: any) {
     const formData = {

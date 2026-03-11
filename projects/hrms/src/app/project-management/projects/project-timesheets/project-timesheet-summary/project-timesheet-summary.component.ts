@@ -68,31 +68,18 @@ export class ProjectTimesheetSummaryComponent implements OnInit, OnDestroy {
   billablevsNonBillableHoursLoader = false;
   projectBurndownLoader = false;
   overrunValue: any;
-
+  projectId:any;
+  projectstartdate : any;
+  projectsData:any;
+  currentdata:any
   constructor(private router: Router, public formValidation: FormValidationsService, private http: HttpService, private route: ActivatedRoute) { }
-
-  // ngOnInit() {
-  //   this.http.getDateRangeObservable().pipe(takeUntil(this.destroy$)).subscribe(dateRange => {
-  //     if (dateRange && dateRange.startDate && dateRange.endDate) {
-  //       // Call APIs with date range
-  //       this.projectResourceSummary(dateRange.startDate, dateRange.endDate);
-  //       this.roleWiseHoursGraph(dateRange.startDate, dateRange.endDate);
-  //       this.createGaugeChart();
-  //       this.estimatedActualChart(dateRange.startDate, dateRange.endDate);
-  //       this.billableChart(dateRange.startDate, dateRange.endDate);
-  //       this.burnDownChart(dateRange.startDate, dateRange.endDate);
-  //     } else {
-  //       this.projectResourceSummary();
-  //       this.roleWiseHoursGraph();
-  //       this.createGaugeChart();
-  //       this.estimatedActualChart();
-  //       this.billableChart();
-  //       this.burnDownChart();
-  //     }
-  //   });
-  // }
-
 ngOnInit(): void {
+ this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe(params => {
+    this.projectId = params['id'];
+    if (this.projectId) {
+      this.getProjects(this.projectId);
+    }
+  });
   // 1. Main "Apply" button filter (from form submit)
   this.http.projectTimesheetFilterData$
     .pipe(takeUntil(this.destroy$))
@@ -143,12 +130,17 @@ private triggerLiveFilterRefresh(): void {
   let dateRange = this.http.getCurrentDateRange();
 
   // EXACT FIX: If no date selected → force current month (Dec 1 – Dec 31)
-  if (!dateRange?.startDate || !dateRange?.endDate) {
-    const start = dayjs().startOf('month').format('YYYY-MM-DD');
-    const end = dayjs().endOf('month').format('YYYY-MM-DD');
-    dateRange = { startDate: start, endDate: end };
-  }
-
+  // if (!dateRange?.startDate || !dateRange?.endDate) {
+  //   const start = dayjs().startOf('month').format('YYYY-MM-DD');
+  //   const end = dayjs().endOf('month').format('YYYY-MM-DD');
+  //   dateRange = { startDate: start, endDate: end };
+  // }
+if (!dateRange?.startDate || !dateRange?.endDate) {
+  dateRange = {
+    startDate: this.projectstartdate,
+    endDate: this.currentdata
+  };
+}
   const deptIds = this.http.getCurrentProjectTimesheetDepartmentIds() || [];
   const roleIds = this.http.getCurrentProjectTimesheetRoleIds() || [];
   const phaseIds = this.http.getCurrentProjectTimesheetPhaseIds() || [];
@@ -166,16 +158,45 @@ private triggerLiveFilterRefresh(): void {
   this.refreshAllCharts(request);
 }
 
-  private refreshAllCharts(request: any = {}): void {
-    const startDate = request.dateRange?.startDate;
-    const endDate = request.dateRange?.endDate;
+getProjects(projectId: string) {
+  this.http.getData(`Project?projectId=${projectId}`)
+    .pipe(takeUntil(this.destroy$))
+    .subscribe({
+      next: (res: any) => {
+        this.projectsData = Array.isArray(res?.data) ? res.data : [];
+        if (this.projectsData.length > 0) {
+          const rawStart = this.projectsData[0].startDate;
+          this.projectstartdate = dayjs(rawStart).format('YYYY-MM-DD');
+          this.currentdata = dayjs().format('YYYY-MM-DD');
+          console.log("Project Start:", this.projectstartdate);
+          console.log("Today:", this.currentdata);
 
-    this.projectResourceSummary(startDate, endDate, request.departmentIds, request.roleIds, request.phaseIds);
-    this.roleWiseHoursGraph(startDate, endDate, request.departmentIds, request.roleIds, request.phaseIds);
-    this.estimatedActualChart(startDate, endDate, request.departmentIds, request.roleIds, request.phaseIds);
-    this.billableChart(startDate, endDate, request.departmentIds, request.roleIds, request.phaseIds);
-    this.burnDownChart(startDate, endDate, request.departmentIds, request.roleIds, request.phaseIds);
-    this.createGaugeChart(); // no filters
+          // IMPORTANT
+          this.triggerLiveFilterRefresh();
+        }
+      }
+    });
+}
+
+  private refreshAllCharts(request: any = {}): void {
+    // const startDate = request.dateRange?.startDate;
+    // const endDate = request.dateRange?.endDate;
+    if (!this.projectstartdate || !this.currentdata) {
+    return;
+  }
+
+  // USE FILTER DATE IF EXISTS
+  const startDate = request?.dateRange?.startDate || this.projectstartdate;
+  const endDate = request?.dateRange?.endDate || this.currentdata;
+
+  this.projectResourceSummary(startDate, endDate,request.departmentIds, request.roleIds, request.phaseIds);
+  this.roleWiseHoursGraph(startDate, endDate,request.departmentIds, request.roleIds, request.phaseIds);
+  this.estimatedActualChart(startDate, endDate,request.departmentIds, request.roleIds, request.phaseIds);
+  this.billableChart(startDate, endDate,request.departmentIds, request.roleIds, request.phaseIds);
+  this.burnDownChart(startDate, endDate,request.departmentIds, request.roleIds, request.phaseIds);
+  this.createGaugeChart();
+
+
   }
 
   getProgressColor(utilization: number): string {
@@ -191,7 +212,7 @@ private triggerLiveFilterRefresh(): void {
   departmentIds?: number[],
   roleIds?: number[],
   phaseIds?: number[]
-): void {
+  ): void {
   this.resourceSummaryLoader = true;
 
   // Get project ID once (no need to subscribe multiple times)
@@ -207,10 +228,10 @@ private triggerLiveFilterRefresh(): void {
     const queryParams: string[] = [];
 
     // Use the parameters passed in (from refreshAllCharts) — NOT the old stored ones!
-    // if (startDate && endDate) {
-    //   queryParams.push(`startDate=${startDate}`);
-    //   queryParams.push(`endDate=${endDate}`);
-    // }
+    if (startDate && endDate) {
+      queryParams.push(`startDate=${startDate}`);
+      queryParams.push(`endDate=${endDate}`);
+    }
     if (departmentIds?.length) {
       queryParams.push(`departmentIds=${departmentIds.join(',')}`);
     }
@@ -239,8 +260,9 @@ private triggerLiveFilterRefresh(): void {
     });
   });
 }
-  // Department wise Contribution
-roleWiseHoursGraph(
+
+
+  roleWiseHoursGraph(
   startDate?: string,
   endDate?: string,
   departmentIds?: number[],
@@ -249,15 +271,15 @@ roleWiseHoursGraph(
 ): void {
   this.roleWiseHoursLoader = true;
 
-  this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe(params => {
-    const projectId = params['id'];
-    if (!projectId) {
+  // this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe(params => {
+  //   const projectId = params['id'];
+    if (!this.projectId) {
       this.roleWiseHoursData = [];
       this.roleWiseHoursLoader = false;
       return;
     }
 
-    let url = `ProjectManagementGraph/project/rolewisehours/${projectId}`;
+    let url = `ProjectManagementGraph/project/rolewisehours/${this.projectId}`;
     const queryParams: string[] = [];
 
     // Use the actual parameters passed in — NOT the old stored ones!
@@ -319,7 +341,7 @@ roleWiseHoursGraph(
         this.roleWiseData = [];
       }
     });
-  });
+  // });
 }
 
   // Estimated vs Actual Hours (Grouped Bar)
@@ -444,15 +466,15 @@ estimatedActualChart(
 ): void {
   this.estimatedvsActualHoursLoader = true;
 
-  this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe(params => {
-    const projectId = params['id'];
-    if (!projectId) {
+  // this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe(params => {
+  //   const projectId = params['id'];
+    if (!this.projectId) {
       this.estimatedVsActualData = [];
       this.estimatedvsActualHoursLoader = false;
       return;
     }
 
-    let url = `ProjectManagementGraph/project/allocated-vs-actual/${projectId}?groupBy=role`;
+    let url = `ProjectManagementGraph/project/allocated-vs-actual/${this.projectId}?groupBy=role`;
     const queryParams: string[] = [];
 
     if (startDate && endDate) {
@@ -567,7 +589,7 @@ estimatedActualChart(
         this.estimatedVsActualData = [];
       }
     });
-  });
+  // });
 }
 
 
@@ -688,15 +710,15 @@ billableChart(
 ): void {
   this.billablevsNonBillableHoursLoader = true;
 
-  this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe(params => {
-    const projectId = params['id'];
-    if (!projectId) {
+  // this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe(params => {
+  //   const projectId = params['id'];
+    if (!this.projectId) {
       this.billableData = [];
       this.billablevsNonBillableHoursLoader = false;
       return;
     }
 
-    let url = `ProjectManagementGraph/project/billable-non-billable/${projectId}`;
+    let url = `ProjectManagementGraph/project/billable-non-billable/${this.projectId}`;
     const queryParams: string[] = [];
 
     if (startDate && endDate) {
@@ -820,7 +842,7 @@ billableChart(
         console.error('Error fetching billable vs non-billable chart:', err);
         this.billableData = [];
       }
-    });
+    // });
   });
 }
 
@@ -834,15 +856,15 @@ burnDownChart(
 ): void {
   this.projectBurndownLoader = true;
 
-  this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe(params => {
-    const projectId = params['id'];
-    if (!projectId) {
+  // this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe(params => {
+  //   const projectId = params['id'];
+    if (!this.projectId) {
       this.burndownData = [];
       this.projectBurndownLoader = false;
       return;
     }
 
-    let url = `ProjectManagementGraph/project/burndownchart/${projectId}`;
+    let url = `ProjectManagementGraph/project/burndownchart/${this.projectId}`;
     const queryParams: string[] = [];
 
     // Use the actual passed parameters — NOT the old stored date range!
@@ -972,7 +994,7 @@ burnDownChart(
         this.burndownData = [];
         this.projectName = '';
       }
-    });
+    // });
   });
 }
 

@@ -4,7 +4,7 @@
             @if (!resourceSummaryLoader) {
             <div class="time-sheet-graph-card">
                 <div class="summary-header d-flex flex-nowrap gap-2 mb-2">
-                    <div>{{ 'Resource Summary' | translate }}</div>
+                    <div>Resource Summary</div>
                     <div>
                         <app-module-info-icon placement="bottom" [ngbPopover]="resourceSummaryContent"
                             class="module-icon" />
@@ -59,7 +59,7 @@
         <div class="col-xxl-4 col-xl-6 mb-3">
             <div class="time-sheet-graph-card">
                 <div class="summary-header d-flex gap-2 mb-2">
-                    <div>{{ 'Project Completion Rate' | translate }}</div>
+                    <div>Project Completion Rate</div>
                     <div>
                         <app-module-info-icon placement="bottom" [ngbPopover]="completionRateContent"
                             class="module-icon" />
@@ -91,7 +91,7 @@
             @if (!roleWiseHoursLoader) {
             <div class="time-sheet-graph-card">
                 <div class="summary-header d-flex gap-2 mb-2">
-                    <div>{{ 'Role wise Hours' | translate }}</div>
+                    <div>Role wise Hours</div>
                     <div>
                         <app-module-info-icon placement="bottom" [ngbPopover]="roleWiseContent" class="module-icon" />
 
@@ -120,7 +120,7 @@
                                 </div>
                                 <div class="hrs-display col-md-5">
                                     <span class="actual">{{item.actualHoursHHMM}}</span>/
-                                    <span>{{item.allocateHours}} {{ 'Hrs' | translate }}</span>
+                                    <span>{{item.allocateHours}} Hrs</span>
                                 </div>
                             </div>
                         </div>
@@ -140,7 +140,7 @@
             <div class="time-sheet-graph-card">
                 <div class="d-flex flex-wrap justify-content-between align-items-center pb-3">
                     <div class="summary-header d-flex gap-2 mb-2">
-                        <div>{{ 'Estimated vs Actual Hours' | translate }}</div>
+                        <div>Estimated vs Actual Hours</div>
                         <div>
                             <app-module-info-icon placement="bottom" [ngbPopover]="estimatedContent"
                                 class="module-icon" />
@@ -182,7 +182,7 @@
             <div class="time-sheet-graph-card">
                 <div class="d-flex flex-wrap justify-content-between align-items-center pb-3">
                     <div class="summary-header d-flex gap-2 mb-2">
-                        <div>{{ 'Billable vs Non-Billable Hours' | translate }}</div>
+                        <div>Billable vs Non-Billable Hours</div>
                         <div>
                             <app-module-info-icon placement="bottom" [ngbPopover]="billableContent"
                                 class="module-icon" />
@@ -220,7 +220,7 @@
             <div class="time-sheet-graph-card">
                 <div class="d-flex flex-wrap justify-content-between align-items-center pb-3">
                     <div class="summary-header d-flex gap-2 mb-2">
-                        <div>{{ 'Project Burndown Chart' | translate }}</div>
+                        <div>Project Burndown Chart</div>
                         <div>
                             <app-module-info-icon placement="bottom" [ngbPopover]="burnDownContent"
                                 class="module-icon" />

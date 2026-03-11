@@ -7,10 +7,9 @@ import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Project } from '../../../Interfaces/projects.model';
 import { RbacService } from '../../../services/rbac.service';
 import { Skeleton } from 'primeng/skeleton';
-import { TranslateModule } from '@ngx-translate/core';
 @Component({
   selector: 'app-project-detailes',
-  imports: [CommonModule, ReactiveFormsModule, Skeleton, TranslateModule],
+  imports: [CommonModule, ReactiveFormsModule, Skeleton],
   templateUrl: './project-detailes.component.html',
   styleUrl: './project-detailes.component.scss'
 })

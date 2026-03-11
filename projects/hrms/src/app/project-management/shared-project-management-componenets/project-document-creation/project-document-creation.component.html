@@ -1,7 +1,7 @@
 <div class="custom-main-popup-container" ngbAutofocus>
     <div class="custom-poup-header-content popup-header-border">
         <div>
-            <p class="popup-heading mb-0">{{'Add Document' | translate}}</p>
+            <p class="popup-heading mb-0">{{'Add Documents' | translate}}</p>
         </div>
     </div>
 
@@ -10,15 +10,15 @@
             <div class="row">
                 <!-- Document Type -->
                 <div class="col-md-6 mb-3">
-                    <label for="documentType" class="form-label custom-label mb-2">{{'Document Type' | translate}}
+                    <label for="documentType" class="form-label custom-label mb-2">Document Type
                         <span class="text-danger">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="documentTypes" filterBy="value" [filter]="true" [resetFilterOnHide]="true"
                             optionLabel="value" optionValue="value" formControlName="documentType"
-                            [placeholder]="'Please select document type' | translate" class="form-select custom-select"></p-select>
+                            placeholder="Please select document type" class="form-select custom-select"></p-select>
                     </div>
                     <div class="error-msg" *ngIf="addDocumentForm.get('documentType')?.touched && addDocumentForm.get('documentType')?.invalid">
-                        {{'Document Type is required' | translate}}</div>
+                        Document Type is required</div>
                 </div>
 
                 <!-- File Name -->
@@ -39,21 +39,21 @@
 
                 <!-- Document Attachment -->
                 <div class="col-md-6 mb-3">
-                    <label for="documentAttachment" class="form-label custom-label mb-2">{{'Attachment' | translate}}
+                    <label for="documentAttachment" class="form-label custom-label mb-2">Attachment
                         <span class="text-danger">*</span></label>
                     <input type="file" accept=".png, .jpg, .jpeg, .pdf, .doc, .docx, .xls, .xlsx"
                         (change)="onChangeClientAttachment($event)" id="documentAttachment"
                         formControlName="documentUrl" class="form-control custom-input px-0" />
                     <div class="error-msg" *ngIf="fileErrorMessage">{{ fileErrorMessage }}</div>
                     <div class="error-msg" *ngIf="addDocumentForm.get('documentUrl')?.touched && 
-                    addDocumentForm.get('documentUrl')?.invalid &&!fileErrorMessage">{{'Attachment is required' | translate}}</div>
+                    addDocumentForm.get('documentUrl')?.invalid &&!fileErrorMessage">Attachment is required</div>
                 </div>
             </div>
 
             <!-- Form Buttons -->
             <div class="custom-modal-footer">
                 <button type="button" class="custom-btn btn-secondary"
-                    (click)="closepopup(confirmationpopupfornodue)">{{'Cancel' | translate}}</button> <button type="submit"
+                    (click)="closepopup(confirmationpopupfornodue)">Cancel</button> <button type="submit"
                     class="custom-btn btn-primary" [disabled]="addDocumentForm.invalid || spinnerLoader">
                     @if (spinnerLoader) {
                     <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
@@ -75,8 +75,8 @@
             <p class="confirmation-text">{{'Are you sure you want to cancel?' | translate}}</p>
         </div>
         <div class="custom-modal-footer">
-            <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">{{'No' | translate}}</button>
-            <button type="button" class="custom-btn btn-primary" (click)="close();model.dismiss()">{{'Yes' | translate}}</button>
+            <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">{{'No'}}</button>
+            <button type="button" class="custom-btn btn-primary" (click)="close();model.dismiss()">{{'Yes'}}</button>
         </div>
     </div>
 </ng-template>

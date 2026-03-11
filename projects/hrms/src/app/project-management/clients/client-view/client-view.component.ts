@@ -423,14 +423,13 @@ export class ClientViewComponent implements OnInit, OnDestroy {
   }
 
   onDepartmentChangelist(event: any) {
-    const selectedIds = event.value;
+    const selectedIds = event.value; // This gives an array when multiple departments selected
     this.selectedDepartments = selectedIds;
     if (Array.isArray(selectedIds)) {
       this.http.setDepartmentIds(selectedIds);
     } else {
       this.http.setDepartmentIds([selectedIds]);
     }
-    this.http.resetProjectPagination();
   }
 
   // Load project types
@@ -443,10 +442,9 @@ export class ClientViewComponent implements OnInit, OnDestroy {
   }
 
   onProjectTypeChange(event: any) {
-    const selectedTypes = event.value || [];
+    const selectedTypes = event.value || []; // This will be string[] or null
     this.selectedProjectTypes = selectedTypes;
-    this.http.setProjectTypeFilter(selectedTypes);
-    this.http.resetProjectPagination();
+    this.http.setProjectTypeFilter(selectedTypes); // Now sends array or empty array
   }
 
   // Clear All (enhanced — clears both filters)

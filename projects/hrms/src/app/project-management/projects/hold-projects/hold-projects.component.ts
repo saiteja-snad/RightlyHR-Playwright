@@ -112,8 +112,7 @@ export class HoldProjectsComponent implements OnInit, OnDestroy {
       .subscribe(([deptIds, projectTypes]) => {
         this.selectedDepartmentIds = deptIds || [];
         this.selectedProjectTypes = projectTypes || [];
-        this.page = 1;
-        this.first = 0;
+
         this.getdatabaedonRoute();
       });
   }

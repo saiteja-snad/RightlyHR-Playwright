@@ -11,13 +11,13 @@ import jsPDF from 'jspdf';
 import { DateformatPipe } from "../../../../Pipes/dateformat.pipe";
 import { Select } from 'primeng/select';
 import { CommonModule } from '@angular/common';
+import { LetterFooterComponent } from '../../../../shared/letters-shared-content/letter-footer/letter-footer.component';
 import { TranslateModule } from '@ngx-translate/core';
 import moment from 'moment';
 import { FormValidationsService } from '../../../../services/form-validations.service';
 import { LetterheaderonlyComponent } from "../../../../shared/letters-shared-content/letterheaderonly/letterheaderonly.component";
 import { IFrequency } from '../../../../Interfaces/job-model';
 import { IEAV } from '../../../../Interfaces/timoff-model';
-import { LetterFooterComponent } from '../../../../shared/letters-shared-content/letter-footer/letter-footer.component';
 
 @Component({
   selector: 'app-msa',

@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, effect, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { DateformatPipe } from '../../../../Pipes/dateformat.pipe';
+import { DateformatPipe } from '../../../../pipes/dateformat.pipe';
 import { FormsModule } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Router } from '@angular/router';

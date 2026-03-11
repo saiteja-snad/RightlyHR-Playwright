@@ -9,7 +9,7 @@ import { ChartModule } from 'primeng/chart';
 import { TabsModule } from 'primeng/tabs';
 import { Subject, takeUntil } from 'rxjs';
 import { Icardsdetails } from '../../Interfaces/cardsdetails.model';
-import { DateformatPipe } from '../../Pipes/dateformat.pipe';
+import { DateformatPipe } from '../../pipes/dateformat.pipe';
 import { FormValidationsService } from '../../services/form-validations.service';
 import { HttpService } from '../../services/http.service';
 import { RbacService } from '../../services/rbac.service';

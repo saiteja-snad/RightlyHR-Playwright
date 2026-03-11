@@ -9,7 +9,7 @@ import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { Subject, BehaviorSubject, takeUntil } from 'rxjs';
 import { IJob } from '../../../Interfaces/letters-model';
 import { AttendanceRequest, ICategoryDetails } from '../../../Interfaces/timoff-model';
-import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
+import { DateformatPipe } from '../../../pipes/dateformat.pipe';
 import { HttpService } from '../../../services/http.service';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { RbacService } from '../../../services/rbac.service';

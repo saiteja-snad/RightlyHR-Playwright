@@ -7,7 +7,7 @@ import { Subject, Subscription, takeUntil } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpService } from '../../../services/http.service';
 import { OpenModalService } from '../../../services/open-modal.service';
-import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
+import { DateformatPipe } from "../../../pipes/dateformat.pipe";
 import { Select } from 'primeng/select';
 import { AuthService } from '../../../services/auth.service';
 import { RbacService } from '../../../services/rbac.service';

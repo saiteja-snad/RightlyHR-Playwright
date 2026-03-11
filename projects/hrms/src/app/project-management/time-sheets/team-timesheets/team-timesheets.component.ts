@@ -18,7 +18,7 @@ import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-foun
 import { TimesheetEntry } from '../../../Interfaces/timesheetsummary';
 import { NgbModal, NgbOffcanvas, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { InfoIconComponent } from '../../../icons/info-icon/info-icon.component';
-import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
+import { DateformatPipe } from '../../../pipes/dateformat.pipe';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { EncriptdecriptService } from '../../../services/encriptdecript.service';
 import { TimesheetFilterService } from '../../../services/timesheet-filter.service';

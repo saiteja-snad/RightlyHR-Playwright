@@ -87,7 +87,7 @@ export class HoldProjectsComponent implements OnInit, OnDestroy {
     this.selectedDepartmentIds = [];
     this.selectedProjectTypes = [];
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
-    
+
     this.searchSubject.pipe(
       debounceTime(500),
       distinctUntilChanged(),
@@ -97,7 +97,7 @@ export class HoldProjectsComponent implements OnInit, OnDestroy {
       this.first = 0;
       this.getdatabaedonRoute();
     });
-    
+
     this.getdatabaedonRoute();
     this.DepartmentList();
     this.getprojecttypesData();
@@ -112,7 +112,8 @@ export class HoldProjectsComponent implements OnInit, OnDestroy {
       .subscribe(([deptIds, projectTypes]) => {
         this.selectedDepartmentIds = deptIds || [];
         this.selectedProjectTypes = projectTypes || [];
-
+        this.page = 1;
+        this.first = 0;
         this.getdatabaedonRoute();
       });
   }

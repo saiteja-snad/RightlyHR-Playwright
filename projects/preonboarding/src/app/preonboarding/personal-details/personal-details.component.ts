@@ -132,7 +132,7 @@ export class PersonalDetailsComponent implements OnInit {
     })
   }
 
-  //function to get the gender details in the dropdown 
+  //function to get the gender details in the dropdown
   getGender() {
     this.subscription = this.http.getData("PreonboardingGender").subscribe({
       next: (data: any) => {
@@ -141,7 +141,7 @@ export class PersonalDetailsComponent implements OnInit {
     })
   }
 
-  //function to get the salutaion details in dropdown 
+  //function to get the salutaion details in dropdown
   getTitle() {
     this.subscription = this.http.getData("PreonboardingTitle").subscribe({
       next: (data: any) => {
@@ -195,7 +195,7 @@ export class PersonalDetailsComponent implements OnInit {
   enforceMaxLength(event: KeyboardEvent, maxLength: number): void {
     const input = event.target as HTMLInputElement;
     const allowedKeys = ['Backspace','Tab', 'ArrowLeft', 'ArrowRight', 'Delete'];
-  
+
     if (
       input.value.length >= maxLength &&
       !allowedKeys.includes(event.key)
@@ -204,8 +204,10 @@ export class PersonalDetailsComponent implements OnInit {
     }
   }
   allowOnlyNumbers(event: KeyboardEvent): void {
+    const allowedKeys = ['Backspace', 'Tab', 'ArrowLeft', 'ArrowRight', 'Delete'];
+    if (allowedKeys.includes(event.key)) return;
+
     const charCode = event.key.charCodeAt(0);
-    // Allow only digits (0–9)
     if (charCode < 48 || charCode > 57) {
       event.preventDefault();
     }
@@ -237,7 +239,7 @@ export class PersonalDetailsComponent implements OnInit {
     );
     if (currentAddress && permanentAddress) {
       const fieldsToCompare = ['addressLine1', 'addressLine2', 'city', 'state', 'country', 'zipCode'];
-      const areSame = fieldsToCompare.every(field => 
+      const areSame = fieldsToCompare.every(field =>
         currentAddress[field] === permanentAddress[field]
       );
       this.personalDetailsForm.get('sameAsPermanent')?.setValue(areSame);
@@ -293,7 +295,7 @@ export class PersonalDetailsComponent implements OnInit {
     }
     return true;
   }
-  //function formate the data 
+  //function formate the data
   formatDate(date: Date): string {
     return formatDate(date, 'yyyy-MM-dd', 'en-US');
   }

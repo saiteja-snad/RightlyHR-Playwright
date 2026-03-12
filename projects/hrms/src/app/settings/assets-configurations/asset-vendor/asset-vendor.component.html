@@ -109,7 +109,7 @@
                             *ngIf="assetForm.get('vendordetailes')?.invalid && assetForm.get('vendordetailes')?.touched">
                             <!-- Required error -->
                             <div *ngIf="assetForm.get('vendordetailes')?.errors?.['required']">
-                                {{ 'Vendor Name is required' | translate }}
+                                {{ 'Vendor name is required' | translate }}
                             </div>
                             <div *ngIf="assetForm.get('vendordetailes')?.errors?.['whitespace']">
                                 {{ 'Enter a valid Vendor name' | translate }}

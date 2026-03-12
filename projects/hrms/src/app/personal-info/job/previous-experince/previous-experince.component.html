@@ -47,7 +47,7 @@
       <div class="experience-item">
         <div class="experience-label d-flex align-items-center gap-1">
           {{currentCompanyName}} Experience
-          <div class="cursor" [ngbPopover]="dojPopup" triggers="click" placement="bottom">
+          <div class="cursor" popoverClass="employee-label-info" [ngbPopover]="dojPopup" triggers="click">
             <app-info-icon></app-info-icon>
           </div>
         </div>
@@ -67,10 +67,14 @@
   </div>
 </div>
 
-<ng-template #dojPopup>
+<!-- <ng-template #dojPopup>
   <div class="p-2">
     <strong>DOJ:</strong> {{dateOfJoining | dateformat}}
   </div>
+</ng-template> -->
+
+<ng-template #dojPopup>
+  <div class="module-info-text"><strong>Experience in the {{currentCompanyName}} company calculated from [DOJ]: {{dateOfJoining | dateformat}}</strong></div>
 </ng-template>
 
 <div class="custom-main-component-container">

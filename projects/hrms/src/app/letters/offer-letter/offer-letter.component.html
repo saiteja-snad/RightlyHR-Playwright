@@ -368,21 +368,21 @@
         </div>
 
         <div class="d-flex align-items-center flex-wrap gap-3 pt-4">
-          <button type="submit" class="custom-btn btn-primary" [disabled]="employeeForm.invalid || loading">
+          <button type="button" class="custom-btn btn-primary" (click)="generateDocument()" [disabled]="employeeForm.invalid || loading||ApprovalLoader">
             @if(loading){
             <div class="button-loader-content">
               <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
               <span>{{'Loading...'}}</span>
             </div>
-            }@else { {{buttonValue |translate}} }
+            }@else { {{buttonValue}} }
           </button>
-          <button type="button" class="custom-btn btn-primary"
+          <button type="submit" class="custom-btn btn-primary"
             [disabled]="employeeForm.invalid || ApprovalLoader || disableFieldsForApproval"
-            (click)="emailSendingforApprover()">
+            >
             @if(ApprovalLoader){
             <div class="button-loader-content">
               <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
-              <span>{{'Loading...' }}</span>
+              <span>{{'Loading...'}}</span>
             </div>
             }@else { {{'Request For Approval'|translate}} }
           </button>

@@ -17,12 +17,12 @@ import { NgxCountriesDropdownModule } from 'ngx-countries-dropdown';
 import { TranslateModule } from '@ngx-translate/core';
 import { FormValidationService } from '../../../../../preonboarding/src/app/common-services/form-validation.service';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
-import { ConfirmationIconComponent } from "../../icons/confirmation-icon/confirmation-icon.component";
-import { LetterFooterComponent } from "../../shared/letters-shared-content/letter-footer/letter-footer.component";
-import { LettersheaderComponent } from "../../shared/letters-shared-content/lettersheader/lettersheader.component";
+import { LettersheaderComponent } from '../../shared/letters-shared-content/lettersheader/lettersheader.component';
+import { LetterFooterComponent } from '../../shared/letters-shared-content/letter-footer/letter-footer.component';
+import { ConfirmationIconComponent } from '../../icons/confirmation-icon/confirmation-icon.component';
 @Component({
   selector: 'app-offer-letter',
-  imports: [CommonModule, TranslateModule, Select, NgxCountriesDropdownModule, ReactiveFormsModule, DateformatPipe, NgbPopoverModule, ConfirmationIconComponent, LetterFooterComponent, LettersheaderComponent],
+  imports: [CommonModule, TranslateModule, Select, NgxCountriesDropdownModule, ReactiveFormsModule, DateformatPipe, NgbPopoverModule, LettersheaderComponent, LetterFooterComponent, ConfirmationIconComponent],
   templateUrl: './offer-letter.component.html',
   styleUrl: './offer-letter.component.scss',
 })
@@ -217,7 +217,7 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
       pdf.addImage(lastImageData.imgData, 'PNG', 0, 0, imgWidth, lastImageData.imgHeight, '', 'FAST');
     }
     const fileName = `${data.firstName}_${data.middleName ?? ""}_${data.lastName ?? ""}_${new Date().getTime()}_OfferLetter.pdf`;
-    pdf.save(fileName);
+   // pdf.save(fileName);
     const blob = pdf.output('blob');
     //creating form file to upload into AZure
     let d: Date = new Date();
@@ -228,7 +228,12 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
     this.generatingEmployeeId = this.prospectiveEmpData.empId;
     this.loading = false
     this.disableFieldsForApproval = false;
-    this.conformationPopup.openSuccessModal('Offer letter generated successfully');
+    //this.conformationPopup.openSuccessModal('Offer letter generated successfully');
+    if (this.prospectiveEmpData.isEmployeevalid === true) {
+      this.offerletterUpload(EmpValue?.empId, this.generatedfile);
+    } else {
+      this.offerletterUpload(EmpValue?.empId, this.generatedfile);
+    }
   }
 
   //function to validate the offer expiry date and offer issued date
@@ -360,7 +365,7 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
     if (signatureAuthorityDetails) {
       this.authorityDesignation = signatureAuthorityDetails.designation;
       this.prospectiveEmpData.authorityName = signatureAuthorityDetails.fullName;
-      this.prospectiveEmpData.authorityName = `${signatureAuthorityDetails.firstName} ${signatureAuthorityDetails.middleName ? signatureAuthorityDetails.middleName + ' ' : ''} ${signatureAuthorityDetails.lastName}`;
+      this.prospectiveEmpData.authorityName = `${signatureAuthorityDetails.firstName} ${signatureAuthorityDetails.lastName}`;
     }
   }
 
@@ -837,7 +842,7 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
   updateOfferLetterFieldsDetails(f: NgForm) {
 
     const data = JSON.parse(JSON.stringify(this.prospectiveEmpData));
-    this.loading = true;
+    this.ApprovalLoader = true;
     this.prospectiveEmpData.employeeId = this.prospectiveEmpData.empId,
       this.prospectiveEmpData.empstatus = 'Prospective',
       this.prospectiveEmpData.emailaddress = data.personalEmail,
@@ -854,13 +859,13 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
       this.prospectiveEmpData.dateOfJoining = this.employeeForm.get('dateOfJoining')?.value,
       this.prospectiveEmpData.substatus = 'Offer Letter Generated',
       this.prospectiveEmpData.password = this.employeeaddress.password
-    this.prospectiveEmpData.reportsTo = this.prospectiveEmpData.reportsTo?.toString();
-    this.prospectiveEmpData.note = this.employeeForm?.get('note')?.value ? this.employeeForm?.get('note')?.value : null;
-    this.prospectiveEmpData.offerIssuedDate = this.employeeForm?.get('offerIssuedDate')?.value ? this.employeeForm?.get('offerIssuedDate')?.value : null;
-    this.prospectiveEmpData.offerExpiryDate = this.employeeForm?.get('offerExpiryDate')?.value ? this.employeeForm?.get('offerExpiryDate')?.value : null;
-    this.prospectiveEmpData.empId = this.prospectiveEmpData.empId.toString();
-    this.prospectiveEmpData.workEmail = this.prospectiveEmpData.workEmail;
-    this.prospectiveEmpData.maritalStatus = this.prospectiveEmpData.maritalStatus
+      this.prospectiveEmpData.reportsTo = this.prospectiveEmpData.reportsTo?.toString();
+      this.prospectiveEmpData.note = this.employeeForm?.get('note')?.value ? this.employeeForm?.get('note')?.value : null;
+      this.prospectiveEmpData.offerIssuedDate = this.employeeForm?.get('offerIssuedDate')?.value ? this.employeeForm?.get('offerIssuedDate')?.value : null;
+      this.prospectiveEmpData.offerExpiryDate = this.employeeForm?.get('offerExpiryDate')?.value ? this.employeeForm?.get('offerExpiryDate')?.value : null;
+      this.prospectiveEmpData.empId = this.prospectiveEmpData.empId.toString();
+      this.prospectiveEmpData.workEmail=this.prospectiveEmpData.workEmail;
+      this.prospectiveEmpData.maritalStatus=this.prospectiveEmpData.maritalStatus
     if (this.buttonValue == 'Regenerate Offer Letter' && this.employeeaddress.substatus != 'Offer Letter Rejected By Manager'
     ) {
       this.prospectiveEmpData.substatus = 'Offer Letter Regenerated';
@@ -880,7 +885,6 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
         }
       },
       error: (err: any) => {
-        this.conformationPopup.openErrorModal(err.error.Message);
         console.log(err);
       },
     });
@@ -919,7 +923,6 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
           }
         },
         error: (err: any) => {
-          this.conformationPopup.openErrorModal(err.error.Message);
           console.log(err);
         },
       });
@@ -947,7 +950,6 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
             }
           },
           error: (err: any) => {
-            this.conformationPopup.openErrorModal(err.error.Message);
             console.log(err);
           },
         });
@@ -978,17 +980,17 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
   }
 
   //function to updated details to respective tables
-  jobdetailsupdate!: any;
+  jobdetailsupdate!:any;
   UpdateFieldsToRespectiveTables() {
-    if (this.employeeaddress.empstatus != 'Prospective' && this.buttonValue != 'Regenerate Offer Letter') {
-      this.postjobdetails(this.currentDate);
+    if(this.employeeaddress.empstatus != 'Prospective' && this.buttonValue!='Regenerate Offer Letter'){
+    this.postjobdetails(this.currentDate);
     }
-    else {
-      this.updatejobdetails();
+    else{
+    this.updatejobdetails();
     }
   }
-  //funtion to post the jobdetails
-  postjobdetails(currentDate: any) {
+    //funtion to post the jobdetails
+  postjobdetails(currentDate:any){
     let data = this.prospectiveEmpData;
     const jobdata = {
       employeeId: data.empId,
@@ -1014,15 +1016,15 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
         },
         error: (Reason) => console.log(Reason),
       });
-    if (this.buttonValue == 'Regenerate Offer Letter') {
-      this.regenerateUpdate();
+      if(this.buttonValue=='Regenerate Offer Letter'){
+        this.regenerateUpdate();
+      }
+      else{
+        this.generatepostingtorepectivefields(this.currentDate)
+      }
     }
-    else {
-      this.generatepostingtorepectivefields(this.currentDate)
-    }
-  }
   updatejobdetails() {
-    let data = this.prospectiveEmpData;
+  let data = this.prospectiveEmpData;
     console.log(this.result);
     const jobdata = {
       id: data.jobId,
@@ -1052,16 +1054,16 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
       });
 
 
-    if (this.buttonValue == 'Regenerate Offer Letter') {
-      this.regenerateUpdate();
-    }
-    else {
-      this.generatepostingtorepectivefields(data.dateOfJoining)
-    }
+      if(this.buttonValue=='Regenerate Offer Letter'){
+        this.regenerateUpdate();
+      }
+      else{
+        this.generatepostingtorepectivefields(data.dateOfJoining)
+      }
   }
 
   //function to posting to respective fields data of job,compensation,employment
-  generatepostingtorepectivefields(currentDate: any) {
+  generatepostingtorepectivefields(currentDate:any) {
     let data = this.prospectiveEmpData;
     const Compensationdata = {
       employeeId: data.empId,
@@ -1163,7 +1165,6 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
       },
       error: (err: any) => {
         this.conformationPopup.openErrorModal('Email Sent Failed');
-        this.ApprovalLoader = false;
       },
       complete: () => { },
     });
@@ -1187,12 +1188,60 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
     };
     this.subscription = this.http.postdata(`Notification/Notify/Manager`, senddata).subscribe({
       next: (data: any) => {
-        this.router.navigate(['/letters/lettes-tabs']);
+        this.router.navigate(['/employee-management/active/employees']);
       },
       error: (err: any) => {
         console.log(err);
       },
     });
+  }
+async generateDocument() {
+  this.loading=true;
+  this.disableFieldsForApproval = true;
+    const data = this.prospectiveEmpData;
+    const pdf = new jsPDF('p', 'mm', 'a4');
+    const imgWidth = pdf.internal.pageSize.getWidth();
+    const imgHeight = pdf.internal.pageSize.getHeight();
+    const pdfContents = ['pdfContent1', 'pdfContent2', 'pdfContent3', 'pdfContent4', 'pdfContent5', 'pdfContent6']; // IDs of the content elements to be converted to PDF
+    // Create a single canvas to combine all content elements
+    const combinedCanvas = document.createElement('canvas');
+    combinedCanvas.width = imgWidth;
+    combinedCanvas.height = pdfContents.length * imgHeight;
+    const imagesData = [];
+    // this.isLoading = true;
+    for (const contentId of pdfContents) {
+      const pdfContent = document.getElementById(contentId);
+      if (pdfContent) {
+        const canvas = await html2canvas(pdfContent, { scale: 3 });
+        const imgData = canvas.toDataURL('image/png');
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+        imagesData.push({ imgData, imgHeight });
+      }
+    }
+    // Add all images to the PDF except for the last one
+    for (let i = 0; i < imagesData.length - 1; i++) {
+      const imageData = imagesData[i];
+      pdf.addImage(imageData.imgData, 'PNG', 0, 0, imgWidth, imageData.imgHeight, '', 'FAST');
+      pdf.addPage(); // Add a new page for the next image (except for the last one)
+    }
+    // Add the last image without adding a new page
+    if (imagesData.length > 0) {
+      const lastImageData = imagesData[imagesData.length - 1];
+      pdf.addImage(lastImageData.imgData, 'PNG', 0, 0, imgWidth, lastImageData.imgHeight, '', 'FAST');
+    }
+    const fileName = `${data.firstName}_${data.middleName ?? ""}_${data.lastName ?? ""}_${new Date().getTime()}_OfferLetter.pdf`;
+    pdf.save(fileName);
+    const blob = pdf.output('blob');
+    //creating form file to upload into AZure
+    let d: Date = new Date();
+    const file = new File([blob], fileName, {
+      type: 'application/pdf',
+    });
+    this.generatedfile = file;
+    this.generatingEmployeeId = this.prospectiveEmpData.empId;
+    this.loading = false
+    this.disableFieldsForApproval = false;
+    this.conformationPopup.openSuccessModal('Offer letter generated successfully');
   }
 
   ngOnDestroy(): void {

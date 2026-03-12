@@ -64,6 +64,7 @@ export class TimeOffForYourRoleRequestComponent implements OnInit, OnDestroy {
   leavesselect!: LeaveApproval[];
   selectedProducts: LeaveApproval[] = [];
   requestBody = {} as any;
+  selectedSandwichItem: any = null;
   @ViewChild('commentspopup') modalContent: any;
   @ViewChild('leaveSummary') leaveSummary: any;
   selectedLeaveStatus: any;
@@ -638,4 +639,8 @@ getApprovalStatusCounts() {
     this.destroy$.unsubscribe();
   }
 
+  openSandwichBreakdown(item: any, modal: any) {
+    this.selectedSandwichItem = item;
+    this.modalService.open(modal, { centered: true, backdrop: 'static', size: 'lg' });
+  }
 }

@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { Select } from 'primeng/select';
 import { HttpService } from '../../../services/http.service';
 import { OpenModalService } from '../../../services/open-modal.service';
@@ -19,10 +19,13 @@ import { Router } from '@angular/router';
 import { SettingsDeleteIconComponent } from "../../../icons/settings-delete-icon/settings-delete-icon.component";
 import { SettingsUpdateIconComponent } from "../../../icons/settings-update-icon/settings-update-icon.component";
 import { DownloadIconComponent } from "../../../icons/download-icon/download-icon.component";
+import { environment } from '../../../../environments/environment';
+import { ChartModule } from 'primeng/chart';
+import { InfoIconComponent } from '../../../icons/info-icon/info-icon.component';
 
 @Component({
   selector: 'app-previous-experince',
-  imports: [CommonModule, ReactiveFormsModule, Select, DateformatPipe, TranslateModule, DataLoaderContentComponent, NoDataFoundComponent, SettingsDeleteIconComponent, SettingsUpdateIconComponent, DownloadIconComponent],
+  imports: [CommonModule, ReactiveFormsModule, Select, DateformatPipe, TranslateModule, DataLoaderContentComponent, NoDataFoundComponent, SettingsDeleteIconComponent, SettingsUpdateIconComponent, DownloadIconComponent, NgbPopoverModule, ChartModule, InfoIconComponent],
   templateUrl: './previous-experince.component.html',
   styleUrl: './previous-experince.component.scss'
 })
@@ -49,6 +52,13 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
   displaypreviousexperincedocument: any
   currentDate: string = new Date().toISOString().split('T')[0]; // Current date in 'yyyy-MM-dd' format
   spinnerLoader = false;
+  dateOfJoining: string = '';
+  totalYearsOfExperience: string = '';
+  previousYearsOfExperience: string = '';
+  currentYearsOfExperience: string = '';
+  currentCompanyName: string = environment.currentCompanyName;
+  experienceData: any;
+  experienceDataOptions: any;
 
   constructor(private modalService: NgbModal, private http: HttpService, public formValidation: FormValidationService, private fb: FormBuilder, private conformationPopup: OpenModalService, public rbac: RbacService, public permissionRouteService: AccessForEmployeeinfoService, private router: Router) { }
 
@@ -172,6 +182,18 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
     return null; // Return null if no start date is selected
   }
 
+  getMaxToDate(): string {
+    if (this.dateOfJoining) {
+      const doj = new Date(this.dateOfJoining.split('T')[0]);
+      doj.setDate(doj.getDate() - 1);
+      const year = doj.getFullYear();
+      const month = String(doj.getMonth() + 1).padStart(2, '0');
+      const day = String(doj.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    }
+    return this.currentDate;
+  }
+
   getupdateMinEndDate(): string | null {
     const startDateValue = this.employeeExperienceupdateForm.get('fromDateupdate')?.value;
     if (startDateValue) {
@@ -182,14 +204,110 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
     return null; // Return null if no start date is selected
   }
 
+  getProgress(value: number, total: number): number {
+    if (total === 0) return 0;
+    return (value / total) * 360;
+  }
+
+  getTransparentColor(color: string, opacity: number): string {
+    const hex = color.replace('#', '');
+    const r = parseInt(hex.substring(0, 2), 16);
+    const g = parseInt(hex.substring(2, 4), 16);
+    const b = parseInt(hex.substring(4, 6), 16);
+    return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+  }
+
+  parseFloat(value: string): number {
+    if (!value || value === '0') return 0;
+
+    const yearMatch = value.match(/(\d+)[yY]/);
+    const monthMatch = value.match(/(\d+)[mM]/);
+    const dayMatch = value.match(/(\d+)[dD]/);
+
+    const years = yearMatch ? parseFloat(yearMatch[1]) : 0;
+    const months = monthMatch ? parseFloat(monthMatch[1]) / 12 : 0;
+    const days = dayMatch ? parseFloat(dayMatch[1]) / 365 : 0;
+
+    return years + months + days;
+  }
+
+  getYearsOnly(value: string): string {
+    if (!value || value === '0') return '0Y';
+
+    const yearMatch = value.match(/(\d+)[yY]/);
+    const monthMatch = value.match(/(\d+)[mM]/);
+    const dayMatch = value.match(/(\d+)[dD]/);
+
+    const years = yearMatch ? yearMatch[1] : '0';
+    const months = monthMatch ? monthMatch[1] : '0';
+    const days = dayMatch ? dayMatch[1] : '0';
+
+    if (years !== '0' && months !== '0') return `${years}Y ${months}M`;
+    if (years !== '0') return `${years}Y`;
+    if (months !== '0') return `${months}M`;
+    if (days !== '0') return `${days}D`;
+    return '0Y';
+  }
+
+  getExperienceGradient(): string {
+    const prevYears = this.parseFloat(this.previousYearsOfExperience);
+    const currYears = this.parseFloat(this.currentYearsOfExperience);
+    const totalYears = this.parseFloat(this.totalYearsOfExperience);
+
+    if (totalYears === 0) {
+      return 'conic-gradient(#E5E7EB 360deg)';
+    }
+
+    const prevDeg = (prevYears / totalYears) * 360;
+    const currDeg = (currYears / totalYears) * 360;
+
+    return `conic-gradient(#3B82F6 0deg ${prevDeg}deg, #10B981 ${prevDeg}deg ${prevDeg + currDeg}deg)`;
+  }
+
   getEmployeeId(): void {
     const employeeId = parseInt(this.empinfo.employeeId);
     this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
       next: (data: any) => {
-        this.dateofbirth = this.formatDateToLocal(data.dob)
+        this.dateofbirth = this.formatDateToLocal(data.dob);
+        this.dateOfJoining = data.dateOfJoining;
+        this.totalYearsOfExperience = data.totalYearsOfExperience || '0';
+        this.previousYearsOfExperience = data.previousYearsOfExperience || '0';
+        this.currentYearsOfExperience = data.currentYearsOfExperience || '0';
+        this.initChart();
       },
       error: (reason) => console.error('Error fetching employee data:', reason),
     });
+  }
+
+  initChart(): void {
+    const currentYears = this.parseFloat(this.currentYearsOfExperience);
+    const previousYears = this.parseFloat(this.previousYearsOfExperience);
+
+    this.experienceData = {
+      datasets: [
+        {
+          data: [currentYears, previousYears],
+          backgroundColor: ['#7C3AED', '#0EA5E9'],
+          borderWidth: 0,
+          hoverBackgroundColor: ['#7C3AED', '#0EA5E9'],
+        }
+      ]
+    };
+
+    this.experienceDataOptions = {
+      cutout: '70%',
+      plugins: {
+        tooltip: {
+          enabled: false
+        },
+        legend: {
+          display: false
+        }
+      },
+      hover: {
+        mode: null
+      }
+    };
   }
   openModal(content: any) {
     this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
@@ -309,7 +427,8 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
         this.modalService.dismissAll();
         this.conformationPopup.openSuccessModal('Experience details added successfully');
         console.log('Experience data saved successfully:', payload);
-        this.getexperiencedetailsbyemployeid()
+        this.getexperiencedetailsbyemployeid();
+        this.getEmployeeId();
       },
       error: (err: any) => {
         console.error('Error saving experience data:', err);
@@ -353,7 +472,7 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
     );
   }
 
-  //function to get all experiences 
+  //function to get all experiences
   getexperiencedetailsbyemployeid() {
     this.loading = true
     let EmployeeId = parseInt(this.empinfo.employeeId)
@@ -565,7 +684,8 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
         this.employeeExperienceupdateForm.reset();
         this.modalService.dismissAll();
         this.conformationPopup.openSuccessModal('Experience details updated successfully');
-        this.getexperiencedetailsbyemployeid(); // Refresh the experience details list
+        this.getexperiencedetailsbyemployeid();
+        this.getEmployeeId();
       },
       error: (reason: any) => {
         this.spinnerLoader = false
@@ -592,7 +712,8 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
         next: (data: any) => {
 
           this.modalService.dismissAll()
-          this.getexperiencedetailsbyemployeid()
+          this.getexperiencedetailsbyemployeid();
+          this.getEmployeeId();
           this.conformationPopup.openSuccessModal('Experience details deleted successfully');
         },
         error: (err: any) => {

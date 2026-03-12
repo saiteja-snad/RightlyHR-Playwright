@@ -228,7 +228,7 @@ get isReadOnlyMode(): boolean {
       }
 
       if (this.isEditMode) {
-        debugger;
+        // debugger;
         // Update operation
         const request = {
           columnName: this.selectedFieldConfig.columnName,

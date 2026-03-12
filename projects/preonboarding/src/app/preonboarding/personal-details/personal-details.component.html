@@ -233,7 +233,7 @@
                             <label for="currentzipCode" class="form-label custom-label mb-2">Zip Code<span
                                     class="text-danger">*</span></label>
                             <input type="text" class="form-control custom-input no-arrows" id="currentzipCode"
-                                placeholder="Please enter zip code" (input)="onCurrentAddressChange()" formControlName="zipCode"
+                                placeholder="Please enter zip code" (input)="onCurrentAddressChange()" (keydown)="allowOnlyNumbers($event)" formControlName="zipCode"
                                 autocomplete="off" minlength="2" maxlength="6">
                             <div *ngIf="personalDetailsForm.get('currentAddress.zipCode')?.touched && personalDetailsForm.get('currentAddress.zipCode')?.errors"
                                 class="error-msg">
@@ -322,7 +322,7 @@
                             <label for="permanentzipCode" class="form-label custom-label mb-2">Zip Code<span
                                     class="text-danger">*</span></label>
                             <input type="text" class="form-control custom-input no-arrows" id="permanentzipCode"
-                                placeholder="Please enter zip code" (input)="onCurrentAddressChange()" formControlName="zipCode"
+                                placeholder="Please enter zip code" (input)="onCurrentAddressChange()" (keydown)="allowOnlyNumbers($event)" formControlName="zipCode"
                                 autocomplete="off" minlength="2" maxlength="6">
                             <div *ngIf="personalDetailsForm.get('permanentAddress.zipCode')?.touched && personalDetailsForm.get('permanentAddress.zipCode')?.errors"
                                 class="error-msg">

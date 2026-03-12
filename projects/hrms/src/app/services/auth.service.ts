@@ -23,7 +23,7 @@ export class AuthService {
     private oauthService: OAuthService,
     private socialService: SocialAuthService,
   ) { 
-    this.socialService.authState.subscribe((user) => {
+    this.socialService.authState.subscribe((user:any) => {
       this.socialUser = user;
       this.userSubject.next(user);
       if (user) {

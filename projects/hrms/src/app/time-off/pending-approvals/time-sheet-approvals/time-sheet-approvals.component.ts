@@ -59,7 +59,7 @@ export class TimeSheetApprovalsComponent implements OnInit {
   selectedMap: { [key: number]: any[] } = {};
   //projectsData:any[]=[];
   //employeeData:any[]=[];
-  phaseId!: number;
+  phaseId!: number|null;
   dataload = false;
   //employeeflag:any;
   employeeresource: any;
@@ -79,8 +79,11 @@ export class TimeSheetApprovalsComponent implements OnInit {
   enddate: any;
   globalSelectedEntries: any[] = [];
   selectedLeaveStatus: any;
-  totalCount: any;
-
+   totalCount: any;
+  showBulkSelectionBanner = false;
+  allPagesSelected = false;
+  currentPageItemCount = 0;
+  totalrequestRecordCount=0;
   constructor(private http: HttpService, public formsValidation: FormValidationsService, private modalService: NgbModal,
     private conformationPopup: OpenModalService, public router: Router, private fb: FormBuilder, public rbac: RbacService) { }
 
@@ -91,6 +94,17 @@ export class TimeSheetApprovalsComponent implements OnInit {
     this.http.selectedEmployeeIdTimesheet$
       .pipe(takeUntil(this.destroy$))
       .subscribe(data => {
+        this.phaseId=null;
+        this.employeeresource=null;
+        this.selectedMap = {};
+        this.selectedEntries = [];
+        this.globalSelectedEntries = [];
+        this.allPagesSelected = false;
+        this.showBulkSelectionBanner = false;
+        this.page = 1;
+        this.pageSize = 10;
+        this.first = 0;
+        this.rows = 10;
         if (data && data.request) {
           this.employeeresource = data.request.resourceId;
           this.phaseId = data.request.phaseId;
@@ -154,6 +168,7 @@ onStatusApproveSelect(status: string) {
   }
 
   onPageChange(event: any) {
+    this.globalSelectedEntries = [...this.selectedEntries];
     this.page = event.page + 1;
     this.pageSize = event.rows;
     this.first = event.first;
@@ -162,6 +177,7 @@ onStatusApproveSelect(status: string) {
 
   // Called when first size changes
   onPageSizeChange(newPageSize: number) {
+    this.globalSelectedEntries = [...this.selectedEntries];
     this.pageSize = newPageSize;
     this.rows = newPageSize;
     this.page = 1;
@@ -178,15 +194,17 @@ onStatusApproveSelect(status: string) {
 
   // bulk data reject method
   bulkReject(popup: any) {
-    this.selectedLeavesItems = this.selectedEntries;  // collect selected
+    this.selectedLeavesItems = this.selectedEntries;
     this.conformationstatus = 'Rejected';
     this.openModal(popup, null, this.conformationstatus);
   }
 
   // load timesheet data based on project and employee
-  loadClientsAndProjects(page: number, pageSize: number, startdate:any,enddate:any): void {
+  loadClientsAndProjects(page: number | null, pageSize: number | null, startdate:any,enddate:any): void {
     this.dataload = true;
-    let url = `v2/PendingApproval/employee/${this.empinfo?.employeeId}?moduleId=${environment.timesheetModuleId}&page=${page}&pageSize=${pageSize}`;
+    let url = `v2/PendingApproval/employee/${this.empinfo?.employeeId}?moduleId=${environment.timesheetModuleId}`;
+    if (page !== null) url += `&page=${page}`;
+    if (pageSize !== null) url += `&pageSize=${pageSize}`;
     if (this.employeeresource) url += `&requestedBy=${this.employeeresource}`;
     if (this.phaseId !== undefined && this.phaseId !== null) {
       url += `&phaseId=${this.phaseId}`;
@@ -196,6 +214,7 @@ onStatusApproveSelect(status: string) {
       next: (res: any) => {
         this.dataload = false;
         this.collectionSize = res.data.totalCount;
+        this.totalrequestRecordCount = res?.data?.items[0]?.totalRecords? res.data.items[0].totalRecords : 0;
         if (res.success) {
           // flatten all day entities into one array of entries (optional for counts)
           const allEntries = res.data.items
@@ -223,12 +242,18 @@ onStatusApproveSelect(status: string) {
             );
             this.selectedMap[i] = selectedForDay;
           });
-          //Sync overall selection state
+          if (this.allPagesSelected) {
+            this.timesheetData.forEach((day, i) => {
+              this.selectedMap[i] = [...day.entries];
+            });
+          }
           this.syncGlobalSelectedEntries();
         }
       },
       error: (err) => {
+        this.selectedEntries = [];
          this.collectionSize = 0;
+         this.totalrequestRecordCount=0;
         if (this.employeeresource != null && this.phaseId != 0) {
           // this.conformationPopup.openErrorModal(err.error.message);
           this.collectionSize = 0;
@@ -273,8 +298,44 @@ onStatusApproveSelect(status: string) {
 
   syncGlobalSelectedEntries() {
     this.selectedEntries = Object.values(this.selectedMap).filter(arr => Array.isArray(arr)).flat();
-    // used for checkbox uncheck show approve,reject button indivisually
     this.showhideaction = this.selectedEntries.length === 0;
+    setTimeout(() => this.updateBulkSelectionBanner(), 0);
+  }
+
+  updateBulkSelectionBanner() {
+    this.currentPageItemCount = this.timesheetData.reduce((acc, day) => acc + (day.entries?.length || 0), 0);
+    const allCurrentPageSelected = this.selectedEntries.length > 0 && this.selectedEntries.length === this.currentPageItemCount;
+    this.showBulkSelectionBanner = allCurrentPageSelected && !this.allPagesSelected;
+    // console.log('Banner Debug:', {
+    //   currentPageItemCount: this.currentPageItemCount,
+    //   selectedCount: this.selectedEntries.length,
+    //   collectionSize: this.collectionSize,
+    //   allCurrentPageSelected,
+    //   showBanner: this.showBulkSelectionBanner
+    // });
+  }
+
+  selectAllPages() {
+    this.allPagesSelected = true;
+    this.showBulkSelectionBanner = false;
+    this.pageSize = this.collectionSize;
+    this.rows = this.collectionSize;
+    this.page = 1;
+    this.first = 0;
+    this.loadClientsAndProjects(this.page, this.pageSize, this.startdate, this.enddate);
+  }
+
+  clearAllSelection() {
+    this.selectedMap = {};
+    this.selectedEntries = [];
+    this.allPagesSelected = false;
+    this.showBulkSelectionBanner = false;
+    this.showhideaction = true;
+    this.pageSize = 10;
+    this.rows = 10;
+    this.page = 1;
+    this.first = 0;
+    this.loadClientsAndProjects(this.page, this.pageSize, this.startdate, this.enddate);
   }
 
   // HEADER checkbox helpers (per-day)
@@ -396,6 +457,8 @@ onStatusApproveSelect(status: string) {
           this.selectedLeavesItems = [];
           this.selectedEntries = [];
           this.selectedMap = {};
+          this.allPagesSelected = false;
+          this.showBulkSelectionBanner = false;
           this.showhideaction = true;
           this.timeSheetApproveForm.reset();
           this.timeSheetRejectForm.reset();
@@ -481,6 +544,8 @@ onStatusApproveSelect(status: string) {
           this.selectedLeavesItems = [];
           this.selectedEntries = [];
           this.selectedMap = {};
+          this.allPagesSelected = false;
+          this.showBulkSelectionBanner = false;
           this.showhideaction = true;
           this.timeSheetApproveForm.reset();
           this.timeSheetRejectForm.reset();
@@ -498,7 +563,7 @@ getApprovalStatusCounts() {
    //Map counts to tabs
     });
   }
- 
+
   // select all Check if ALL entries in ALL days are selected
   areAllDaysSelected(): boolean {
     if (!this.timesheetData || this.timesheetData.length === 0) return false;
@@ -535,6 +600,15 @@ getApprovalStatusCounts() {
     } else {
       this.showhideaction = true;
       this.selectedMap = {};
+      if (this.allPagesSelected) {
+        this.allPagesSelected = false;
+        this.pageSize = 10;
+        this.rows = 10;
+        this.page = 1;
+        this.first = 0;
+        this.loadClientsAndProjects(this.page, this.pageSize, this.startdate, this.enddate);
+        return;
+      }
     }
     this.syncGlobalSelectedEntries();
   }

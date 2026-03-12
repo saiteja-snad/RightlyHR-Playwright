@@ -3,7 +3,7 @@
         @if(!dataload){
         @if(timesheetData.length > 0){
         <p-accordion>
-            <div class="d-flex justify-content-between align-items-center mb-3 ms-4">
+     <div class="d-flex justify-content-between align-items-center mb-3 ms-4">
                 <div class="d-flex align-items-center gap-2">
                     <input #globalCheckbox type="checkbox" [checked]="areAllDaysSelected()"
                         [indeterminate]="isGlobalIndeterminate()" (change)="toggleSelectAllDays(globalCheckbox.checked)" />
@@ -17,6 +17,15 @@
                     <button class="custom-btn btn-primary-reject" (click)="bulkReject(rejectPopup)">Reject</button>
                     }
                 </div>
+            </div>  
+            <div *ngIf="showBulkSelectionBanner && (selectedEntries?.length ?? 0) > 0" class="bulk-selection-banner mb-3 ms-4 me-4">
+                <span>All <b>{{currentPageItemCount}}</b> requests across <b>{{timesheetData.length}}</b> records on this page are selected.</span>
+                <a *ngIf="totalrequestRecordCount > currentPageItemCount" (click)="selectAllPages()" class="select-all-link">Select all <b>{{totalrequestRecordCount}}</b> requests across <b>{{collectionSize}}</b> records</a>
+            </div>
+            
+            <div *ngIf="allPagesSelected && (selectedEntries?.length ?? 0) > 0" class="bulk-selection-banner mb-3 ms-4 me-4">
+                <span>All <b>{{selectedEntries.length}}</b> requests across <b>{{collectionSize}}</b> records are selected.</span>
+                <a (click)="clearAllSelection()" class="select-all-link">Clear selection</a>
             </div>
             <p-accordion-panel *ngFor="let day of timesheetData; let i = index" [value]="i">
                 <p-accordion-header>
@@ -119,9 +128,9 @@
         </p-table>
         }
     </div>
-</div>
+    </div>
 
-@if(collectionSize > 0){
+@if(collectionSize > 0 && !allPagesSelected){
 <div class="pagination-content">
     <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
         <div class="d-flex align-items-center gap-3 p-2">

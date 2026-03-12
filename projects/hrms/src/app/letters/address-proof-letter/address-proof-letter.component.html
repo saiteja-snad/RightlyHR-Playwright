@@ -110,8 +110,7 @@
                                             {{ employeeForm.value.lastName }}</b>
                                     </ng-template>
                                     has been working in our Establishment "RightlyHR" as
-                                    <span
-                                        *ngIf="employeeForm.get('jobRole')?.value === 'Fetching...'; else role">Fetching...</span>
+                                    <span *ngIf="!employeeForm.value.jobRole; else role">_______________________</span>
                                     <ng-template #role>
                                         <b>{{ employeeForm.get('jobRole')?.value || '' }}</b>
                                     </ng-template> since

@@ -226,7 +226,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="mb-3">
                     <label class="form-label custom-label mb-2">Frequency<span class="text-danger">*</span></label>
                     <div class="custom-p-select-content">
@@ -272,7 +272,7 @@
                     <input type="text" class="form-control custom-input" formControlName="address" [readonly]="true"
                         autocomplete="off" placeholder="Address">
                 </div> -->
-                
+
                 <div class="mb-3">
                     <label class="form-label custom-label mb-2">Offer Issued Date<span
                             class="error-msg">*</span></label>
@@ -351,7 +351,7 @@
                             (onBlur)="employeeForm.get('rolesAndResponsibilitiesId')?.markAsTouched()">
                         </p-editor>
                     </div>
-                    <div *ngIf="employeeForm.get('rolesAndResponsibilitiesId')?.hasError('required') 
+                    <div *ngIf="employeeForm.get('rolesAndResponsibilitiesId')?.hasError('required')
                           && employeeForm.get('rolesAndResponsibilitiesId')?.touched">
                         <div class="error-msg">Note is required</div>
                     </div>
@@ -419,8 +419,8 @@
                                     <div class="col-md-8">
                                         <ul class="list-style-none  letter-sub-header ps-0">
                                             <!--Name-->
-                                            <li class="mb-3">To,</li>
-                                            <li class="mb-1" *ngIf="!prospectiveEmpData.firstName && !prospectiveEmpData.middleName 
+                                            <li class="mb-3">To</li>
+                                            <li class="mb-1" *ngIf="!prospectiveEmpData.firstName && !prospectiveEmpData.middleName
                                             && !prospectiveEmpData.lastName;else fullname">Name:</li>
                                             <ng-template #fullname>
                                                 <li class="mb-1">{{prospectiveEmpData.firstName}}
@@ -468,7 +468,7 @@
                             <p>RightlyHR is in the business of product development and
                                 deployment and also providing technology and business consultants to various
                                 multinational companies. </p>
-                               
+
                         </div>
                         <div class="letter-footer">
                         <app-letter-footer />

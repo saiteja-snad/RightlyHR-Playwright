@@ -90,7 +90,7 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
     this.selectedDepartmentIds = [];
     this.selectedProjectTypes = [];
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
-    
+
     this.searchSubject.pipe(
       debounceTime(500),
       distinctUntilChanged(),
@@ -100,11 +100,13 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
       this.first = 0;
       this.getProjectsBasedOnRoute();
     });
-    
+
     combineLatest([this.http.selectedDepartmentIds$, this.http.projectTypeFilter$]).pipe(takeUntil(this.destroy$))
     .subscribe(([deptIds, projectTypes]) => {
       this.selectedDepartmentIds = deptIds || [];
       this.selectedProjectTypes = projectTypes || [];
+      this.page = 1;
+      this.first = 0;
       this.getProjectsBasedOnRoute();
     });
     this.editProjectForm();
@@ -159,6 +161,7 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
     }
     this.page = 1;
     this.first = 0;
+    this.getProjectsBasedOnRoute();
   }
 
   onProjectTypeChange() {
@@ -326,11 +329,11 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
   getAllActiveProjects() {
     this.loading = true;
     let url = `Project?status=Active&pageNumber=${this.page}&pageSize=${this.pageSize}`;
-    
+
     if (this.searchValue?.trim()) {
       url += `&searchTerm=${encodeURIComponent(this.searchValue.trim())}`;
     }
-    
+
     if (this.selectedDepartmentIds) {
       url += `&departmentIds=${this.selectedDepartmentIds}`;
     }
@@ -370,11 +373,11 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
   getprojectbyid(clientID: any): void {
     this.loading = true;
     let url = `Project?clientId=${clientID}&status=Active&pageNumber=${this.page}&pageSize=${this.pageSize}`;
-    
+
     if (this.searchValue?.trim()) {
       url += `&searchTerm=${encodeURIComponent(this.searchValue.trim())}`;
     }
-    
+
     if (this.selectedDepartmentIds) {
       url += `&departmentIds=${this.selectedDepartmentIds}`;
     }

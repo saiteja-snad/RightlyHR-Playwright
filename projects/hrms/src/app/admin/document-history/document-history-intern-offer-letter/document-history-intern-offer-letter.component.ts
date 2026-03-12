@@ -298,7 +298,12 @@ export class DocumentHistoryInternOfferLetterComponent {
 
   //post reason to offerletter table
   PostReasonandUpdateTraineeOfferDetails() {
-    let loggedInUser = this.authService.getToken();
+    if (this.rejectDocument.invalid) {
+      this.rejectDocument.markAllAsTouched();
+      return;
+    }
+
+    const comments = (this.rejectDocument.get('comments')?.value ?? '').toString().trim();
     let updateOfferLetterDetails = {
       id: this.selectedValuesOfOffer.id,
       employeeId: this.selectedValuesOfOffer.empId,
@@ -311,7 +316,7 @@ export class DocumentHistoryInternOfferLetterComponent {
       approvedDate: this.selectedValuesOfOffer.approvedDate,
       approvedBy: this.selectedValuesOfOffer.approvedBy,
       approver: this.selectedValuesOfOffer.approver,
-      comments: this.rejectDocument.value.reason,
+      comments,
       requestedDate: null,
       offerExpiryDate: this.selectedValuesOfOffer.offerExpiryDate,
       offerStartDate: this.selectedValuesOfOffer.offerStartDate,
@@ -322,10 +327,10 @@ export class DocumentHistoryInternOfferLetterComponent {
     };
     this.subscription = this.http.postdata('TraineeOfferLetter/UPDATE', updateOfferLetterDetails).subscribe({
       next: (data: any) => {
-        this.rejectDocument.reset();
         this.modalService.dismissAll();
         this.updatetraineeemployeestatus(data);
-        this.rejectTraineeEmail();
+        this.rejectTraineeEmail(comments);
+        this.rejectDocument.reset();
         //this.RejectTraineenotification();
         this.getTraineeOfferLetters();
       },
@@ -348,7 +353,7 @@ export class DocumentHistoryInternOfferLetterComponent {
   }
 
   //Function for Reject Email
-  rejectTraineeEmail() {
+  rejectTraineeEmail(comments: string) {
     let loggedInUser = this.authService.getToken();
     let emaildate = {
       personName: this.selectedValuesOfOffer.offerSentByName,
@@ -364,7 +369,7 @@ export class DocumentHistoryInternOfferLetterComponent {
       approvedByName: this.selectedValuesOfOffer.approvedByName,
       firstName: this.selectedValuesOfOffer.employeeName,
       // lastName: string,
-      comments: this.rejectDocument.value.reason,
+      comments,
     };
     this.subscription = this.http.postdata(`CustomEmail/OfferRejection`, emaildate).subscribe({
       next: (data: any) => {

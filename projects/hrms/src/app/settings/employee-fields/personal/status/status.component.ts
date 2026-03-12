@@ -101,8 +101,11 @@ export class StatusComponent {
 
   updateStatus(): void {
     if (this.updateForm.valid) {
-      this.statusDeletedata.statusname = this.updateForm.get('statusname')?.value.trim();
-      this.subscription = this.http.postdata('Status/UPDATER', this.statusDeletedata).subscribe({
+      const updateRequest = {
+        ...this.statusDeletedata,
+        statusname: this.updateForm.get('statusname')?.value.trim()
+      };
+      this.subscription = this.http.postdata('Status/UPDATER', updateRequest).subscribe({
         next: (data: any) => {
           this.getstatus();
           this.updateForm.reset();

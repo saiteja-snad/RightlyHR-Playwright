@@ -115,10 +115,12 @@ this.degreeFrom = this.fb.group({
 
   updateDegree(): void {
     if (this.updateForm.valid) {
-      this.updateDegreeDetails.degreeName =
-        this.updateForm.get('degreeName')?.value;
+      const updateRequest = {
+        ...this.updateDegreeDetails,
+        degreeName: this.updateForm.get('degreeName')?.value,
+      };
       this.subscription = this.http
-        .postdata(`Degree/UPDATER`, this.updateDegreeDetails)
+        .postdata(`Degree/UPDATER`, updateRequest)
         .subscribe({
           next: (data: any) => {
             this.updateForm.reset();

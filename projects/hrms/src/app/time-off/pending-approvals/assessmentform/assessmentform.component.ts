@@ -60,7 +60,7 @@ export class AssessmentformComponent {
   selectedLeaveStatus: any;
   totalCount: any;
 
-  constructor(private router: Router, private http: HttpService, private authService: AuthService, config: NgbModalConfig,
+  constructor(private router: Router, private http: HttpService, private authService: AuthService, config: NgbModalConfig, 
     private modalService: NgbModal, private openModalService: OpenModalService, public rbac: RbacService,) {
     config.backdrop = 'static';
     config.keyboard = false;
@@ -215,12 +215,9 @@ export class AssessmentformComponent {
     }
     // Reset section rating for the current section
     this.sectionRatings[sectionId] = 0;
-    
-    let isChecked = false;
     // Iterate through sections to find the correct section based on sectionId
     section?.forEach((sec: any) => {
       if (sec.id === sectionId) {
-        console.log('Section found:', sec);
         // Iterate through questions in the current section
         questions.forEach((optionsarray: any) => {
           optionsarray.options.forEach((element: any) => {
@@ -229,7 +226,6 @@ export class AssessmentformComponent {
               if (element.checked) {
                 // Checkbox is being unchecked
                 element.checked = false;
-                isChecked = false;
                 this.sectionRatings[sectionId] = Math.max(
                   0,
                   this.sectionRatings[sectionId] - parseInt(rating, 10)
@@ -237,7 +233,6 @@ export class AssessmentformComponent {
               } else {
                 // Checkbox is being checked
                 element.checked = true;
-                isChecked = true;
                 this.sectionRatings[sectionId] += parseInt(rating, 10); // Add rating to section rating
               }
             } else {
@@ -248,7 +243,9 @@ export class AssessmentformComponent {
         });
       }
     });
-    
+    const hasdata = this.selected_questions.filter(
+      (t: any) => t.id === sectionId
+    );
     // Calculate overall rating by summing section ratings
     this.overallRatingcount = 0;
     if (this.overallRatingcount >= 0) {
@@ -258,29 +255,42 @@ export class AssessmentformComponent {
           this.dynamicFormDetails.overAllRating;
       });
     }
-    
-    // Remove items from selected_questions for this section
-    this.selected_questions = this.selected_questions.filter(
-      (t: any) => t.id !== sectionId
-    );
-    
-    // Add back if checkbox is checked
-    if (isChecked) {
+    if (hasdata.length > 0) {
+      this.selected_questions.forEach((ele: any) => {
+        if (ele.id === sectionId && ele.data.optionId) {
+          ele.data.optionId = optionId;
+        }
+      });
+    } else {
       questions.forEach((ele: any) => {
-        this.selected_questions.push({
-          id: sectionId,
-          data: {
-            questionId: ele.id,
-            optionId: optionId,
-            meta: meta,
-            sectionId: sectionId,
-          },
-        });
+        if (ele.options.length > 0) {
+          this.selected_questions.push({
+            id: sectionId,
+            data: {
+              questionId: ele.id,
+              optionId: optionId,
+              meta: meta,
+              sectionId: sectionId,
+            },
+          });
+        } else {
+          this.selected_questions.push({
+            id: sectionId,
+            data: {
+              questionId: ele.id,
+              optionId: optionId,
+              meta: meta,
+              sectionId: sectionId,
+            },
+          });
+        }
       });
     }
-    
-    console.log(this.selected_questions);
-    console.log(optionId, sectionId, quetsionId);
+    this.selected_questions.forEach((ele: any) => {
+      if (ele.id === sectionId && ele.data.optionId) {
+        ele.data.optionId = optionId;
+      }
+    });
   }
 
   //function to get the footer values
@@ -315,8 +325,6 @@ export class AssessmentformComponent {
     }
     // Reset section rating for the current section
     this.sectionRatings[sectionId] = 0;
-    
-    let isChecked = false;
     questions.forEach((optionsarray: any) => {
       optionsarray.options.forEach((element: any) => {
         if (element.optionId === optionId) {
@@ -324,7 +332,6 @@ export class AssessmentformComponent {
           if (element.checked) {
             // Checkbox is being unchecked
             element.checked = false;
-            isChecked = false;
             this.sectionRatings[sectionId] = Math.max(
               0,
               this.sectionRatings[sectionId] - parseInt(rating, 10)
@@ -332,7 +339,6 @@ export class AssessmentformComponent {
           } else {
             // Checkbox is being checked
             element.checked = true;
-            isChecked = true;
             this.sectionRatings[sectionId] += parseInt(rating, 10); // Add rating to section rating
           }
         } else {
@@ -341,7 +347,11 @@ export class AssessmentformComponent {
         }
       });
     });
-    
+    // }
+    // });
+    const hasdata = this.selected_questions.filter(
+      (t: any) => t.data.questionId === quetsionId
+    );
     // Calculate overall rating by summing section ratings
     this.overallRatingcount = 0;
     if (this.overallRatingcount >= 0) {
@@ -351,14 +361,16 @@ export class AssessmentformComponent {
           this.dynamicFormDetails.overAllRating;
       });
     }
-    
-    // Remove items from selected_questions for this question
-    this.selected_questions = this.selected_questions.filter(
-      (t: any) => t.data.questionId !== quetsionId
-    );
-    
-    // Add back if checkbox is checked
-    if (isChecked) {
+    if (hasdata.length > 0) {
+      this.selected_questions.forEach((ele: any) => {
+        if (ele.data.questionId === quetsionId) {
+          ele.data.optionId = optionId;
+          ele.data.questionId = quetsionId;
+          ele.data.meta = meta;
+        }
+      });
+    } else {
+      // questions.forEach((ele:any)=>{
       this.selected_questions.push({
         id: sectionId,
         data: {
@@ -368,6 +380,7 @@ export class AssessmentformComponent {
           sectionId: sectionId,
         },
       });
+      // })
     }
   }
 
@@ -439,15 +452,58 @@ export class AssessmentformComponent {
   }
 
   textArea() {
+    this.displayTextArea = false;
+    this.indexspace = 3
     this.modalService.open(this.formsavepopup, { centered: true });
+  }
+
+  private removePdfPageSpacers(container: HTMLElement): void {
+    container.querySelectorAll('.pdf-page-spacer').forEach((el) => el.remove());
+  }
+
+  private insertPdfPageSpacers(container: HTMLElement): void {
+    this.removePdfPageSpacers(container);
+    const containerRect = container.getBoundingClientRect();
+    const containerWidth = containerRect.width;
+    if (!containerWidth || !isFinite(containerWidth)) {
+      return;
+    }
+
+    const pageHeightPx = containerWidth * (297 / 210);
+    const candidateRows = Array.from(container.querySelectorAll<HTMLElement>('div.d-flex.align-items-center')).filter(
+      (el) => !!el.querySelector('input[type="checkbox"]')
+    );
+
+    for (const row of candidateRows) {
+      const rect = row.getBoundingClientRect();
+      const top = rect.top - containerRect.top;
+      const height = rect.height;
+      if (!height || height >= pageHeightPx) {
+        continue;
+      }
+
+      const currentPage = Math.floor(top / pageHeightPx);
+      const nextPageStart = (currentPage + 1) * pageHeightPx;
+      if (top + height > nextPageStart) {
+        const spacerHeight = Math.ceil(nextPageStart - top);
+        if (spacerHeight > 0) {
+          const spacer = document.createElement('div');
+          spacer.className = 'pdf-page-spacer';
+          spacer.style.height = `${spacerHeight}px`;
+          row.parentElement?.insertBefore(spacer, row);
+        }
+      }
+    }
   }
 
   FormDownload() {
     localStorage.setItem('assessmentform', 'true');
     const pdfContent = document.getElementById('content');
     if (pdfContent) {
-      html2canvas(pdfContent, { scale: 3, scrollX: 0, scrollY: 0 }).then(
-        (canvas) => {
+      const initialDisplayTextArea = this.displayTextArea;
+      this.insertPdfPageSpacers(pdfContent);
+      html2canvas(pdfContent, { scale: 3, scrollX: 0, scrollY: 0 })
+        .then((canvas) => {
           const imgData = canvas.toDataURL('image/png');
           const pdf = new jsPDF('p', 'mm', 'a4');
           const imgWidth = pdf.internal.pageSize.getWidth();
@@ -479,8 +535,13 @@ export class AssessmentformComponent {
             this.dynamicFormDetails.employeeId,
             this.formFile
           );
-        }
-      );
+        })
+        .finally(() => {
+          this.removePdfPageSpacers(pdfContent);
+          this.displayTextArea = !initialDisplayTextArea;
+          this.indexspace = 25;
+        });
+      return;
     }
     this.displayTextArea = !this.displayTextArea;
     this.indexspace = 25;
@@ -488,7 +549,7 @@ export class AssessmentformComponent {
 
   //to store file to the azure and return to the url
   AssessmentFormUpload(empId: number, file: File) {
-    let filePath = `/FusionDocuments/Employee Documents/Probation Assessment Form/${empId}`;
+    let filePath = `/RightlyHRDocuments/Employee Documents/Probation Assessment Form/${empId}`;
     this.subscription = this.http.uploadFileWithQuery('FileSystem/uploadfiletodirectory', filePath, file).subscribe({
       next: (data: any) => {
         if (data) {
@@ -535,8 +596,6 @@ export class AssessmentformComponent {
 
   //function to submit the formdata
   formSubmit(content: any) {
-    this.displayTextArea = false;
-    this.indexspace = 3;
     this.modalService.dismissAll();
     let loginuserdata = this.authService.getToken();
     this.jsonData = JSON.stringify({
@@ -737,7 +796,7 @@ export class AssessmentformComponent {
                   this.dynamicFormHeader, ele.id, question.quetsionId, question.meta);
               });
             } else {
-              this.defaultaddingforvalues(ele.questions, ele.rating, 0, this.dynamicFormHeader,
+              this.defaultaddingforvalues(ele.questions, ele.rating, 0, this.dynamicFormHeader, 
                 ele.id, question.quetsionId, question.meta);
             }
           });

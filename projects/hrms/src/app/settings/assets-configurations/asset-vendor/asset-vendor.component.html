@@ -48,14 +48,14 @@
                                         </li>
                                         <li *ngIf="asset.status==='Active' && rbac.allowedToAccess('Vendor Details.delete')">
                                             <a class="dropdown-item" (click)="openModal(inactivevendor);viewdata(asset);selectedAsset = asset">
-                                                    <i class="bi bi-trash3 me-2"></i> {{ 'Inactive' | translate }}
+                                                    <i class="bi bi-slash-circle me-2"></i> {{ 'Inactive' | translate }}
                                             </a>
                                         </li>
                                         <li
                                             *ngIf="asset.status==='Inactive' && rbac.allowedToAccess('Vendor Details.update')">
                                             <a class="dropdown-item"
                                                 (click)="openModal(activevendor);viewdata(asset);selectedAsset = asset">
-                                                 <i class="bi bi-trash3 me-2"></i>{{ 'Active' | translate }}
+                                                 <i class="bi bi-check-circle me-2"></i>{{ 'Active' | translate }}
                                             </a>
                                         </li>
                                     </ul>

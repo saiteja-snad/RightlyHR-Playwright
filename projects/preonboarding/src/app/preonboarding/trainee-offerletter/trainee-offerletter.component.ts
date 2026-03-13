@@ -368,13 +368,19 @@ convertDaysToMonths(days: number): number {
   }
 
   submitRejectReason(form: FormGroup) {
+    if (form.invalid) {
+      form.markAllAsTouched();
+      return;
+    }
+
+    const comments = (form.get('rejectReason')?.value ?? '').toString().trim();
     let offerUpdateDetails = JSON.parse(JSON.stringify(this.updatedOfferLetterDetails)) as Iofferletter;
-    offerUpdateDetails.candidateComments = this.rejectionReason.comments;
+    offerUpdateDetails.candidateComments = comments;
     offerUpdateDetails.candidateStatus = "Offer Letter Rejected";
+    this.loadingcircle = true;
     this.updateOfferDetails(offerUpdateDetails);
     this.prosempdata.substatus = "Offer Letter Rejected";
     this.updateEmployeeDetails(this.prosempdata);
-    this.loadingcircle = true;
     form.reset();
   }
 

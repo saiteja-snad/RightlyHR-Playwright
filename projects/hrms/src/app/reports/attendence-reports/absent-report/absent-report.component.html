@@ -1,13 +1,13 @@
 <div class="custom-main-component-container">
   <div class="component-header-content">
     <!-- Header -->
-    <div class="component-header" (click)="navigation()" >{{'Reports'|translate}}</div>
+    <div class="component-header" (click)="navigation()" >Reports</div>
 
     <form autocomplete="off" [formGroup]="absentReportForm" (ngSubmit)="generateAbsentReport()">
       <div class="d-flex align-items-center gap-3 flex-wrap">
         @if(rbac.allowedToAccess('Absent Report - Generate.view')){
         <button type="button" class="clear-all-btn" (click)="clearAllFilters()">
-          {{'Clear All'|translate}}
+          Clear All
         </button>
         }
 
@@ -15,7 +15,7 @@
         <div class="d-flex align-items-center gap-2">
           <div class="custom-p-select-content">
             <p-select [options]="frequencyOptions" optionLabel="label" formControlName="frequency"
-              [placeholder]="'Please select frequency'|translate" class="form-select custom-select" [showClear]="true">
+              placeholder="Please select frequency" class="form-select custom-select" [showClear]="true">
             </p-select>
           </div>
         </div>
@@ -24,7 +24,7 @@
         <div class="d-flex align-items-center gap-2"
           *ngIf="absentReportForm.get('frequency')?.value?.value === 'month'">
           <div class="custom-p-select-content">
-            <p-select [options]="months" optionLabel="name" optionValue="value" [placeholder]="'Please select month'|translate"
+            <p-select [options]="months" optionLabel="name" optionValue="value" placeholder="Please select month"
               formControlName="month" class="form-select custom-select" [showClear]="true">
             </p-select>
           </div>
@@ -42,7 +42,7 @@
           <div>
             <input type="text" class="form-control custom-input w-100" ngxDaterangepickerBootstrap [autoApply]="true"
               [ranges]="ranges" [alwaysShowCalendars]="true" [locale]="localeOptions" [showClearButton]="true"
-              [placeholder]="'Please select date'|translate" formControlName="dateRange" [startKey]="'startDate'" [endKey]="'endDate'"
+              placeholder="Please select date" formControlName="dateRange" [startKey]="'startDate'" [endKey]="'endDate'"
               readonly />
           </div>
         </div>
@@ -53,8 +53,8 @@
         <div class="d-flex align-items-center gap-2">
           <div class="custom-p-select-content">
             <p-select [options]="employeeiddetails" optionLabel="fullName" filterBy="fullName" [filter]="true"
-              [showClear]="true" formControlName="employee" [placeholder]="'Please select employee'|translate"
-              class="form-select custom-select" [filterPlaceholder]="'Search employee'|translate">
+              [showClear]="true" formControlName="employee" placeholder="Please select employee"
+              class="form-select custom-select" filterPlaceholder="Search employee">
               <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
               <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
             </p-select>
@@ -65,8 +65,8 @@
         <div class="d-flex align-items-center gap-2">
           <div class="custom-p-select-content">
             <p-select [options]="teamdetails" optionLabel="fullName" filterBy="fullName" [filter]="true"
-              [showClear]="true" formControlName="manager" [placeholder]="'Please select manager'|translate"
-              class="form-select custom-select" [filterPlaceholder]="'Search manager'|translate">
+              [showClear]="true" formControlName="manager" placeholder="Please select manager"
+              class="form-select custom-select" filterPlaceholder="Search manager">
               <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
               <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
             </p-select>
@@ -79,9 +79,9 @@
           <button type="submit" class="custom-btn btn-secondary" [disabled]="isAbsentGenerateDisabled">
             @if(spinnerLoader1){
             <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-            <span>{{'Loading...'|translate}}</span>
+            <span>{{'Loading...'}}</span>
             }@else {
-            <span>{{'Generate'|translate}}</span>
+            <span>{{'Generate'}}</span>
             }
           </button>
           }
@@ -91,9 +91,9 @@
             [disabled]="filteredAbsentRecord.length == 0 || disableBtn">
             @if(spinnerLoader2){
             <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-            <span>{{'Loading...'|translate}}</span>
+            <span>{{'Loading...'}}</span>
             }@else {
-            <span>{{'Export'|translate}}</span>
+            <span>{{'Export'}}</span>
             }
           </button>
           }
@@ -119,16 +119,16 @@
       <div class="custom-table-content">
         <table class="content w-100">
           <thead>
-            <th>{{'Employee ID'|translate}}</th>
-            <th>{{'Employee Name'|translate}}</th>
-            <th>{{'Department'|translate}}</th>
-            <th>{{'Team Manager'|translate}}</th>
-            <th>{{'Location'|translate}}</th>
-            <th>{{'Sub Location'|translate}}</th>
-            <th>{{'Shift'|translate}}</th>
-            <th>{{'Leave Type'|translate}}</th>
-            <th>{{'Leave Period'|translate}}</th>
-            <th>{{'Days'|translate}}</th>
+            <th>Employee ID</th>
+            <th>Employee Name</th>
+            <th>Department</th>
+            <th>Team Manager</th>
+            <th>Location</th>
+            <th>Sub Location</th>
+            <th>Shift</th>
+            <th>Leave Type</th>
+            <th>Leave Period</th>
+            <th>Days</th>
           </thead>
           <tbody>
             @if (filteredAbsentRecord && filteredAbsentRecord.length > 0) {

@@ -1,24 +1,26 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, TemplateRef, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { from, Subscription } from 'rxjs';
+import { Subject, Subscription, takeUntil } from 'rxjs';
 import { IemployeeDetails } from '../../../Interfaces/letters-model';
 import { AuthService } from '../../../services/auth.service';
 import { HttpService } from '../../../services/http.service';
 import { ReportsService } from '../../../services/reports/reports.service';
-import * as XLSX from 'xlsx';
+import * as XLSX from 'xlsx-js-style';
 import { TranslateModule } from '@ngx-translate/core';
 import { DropdownModule } from 'primeng/dropdown';
 import { SelectModule } from 'primeng/select';
 import { Dayjs } from 'dayjs';
 import dayjs from 'dayjs';
 import { environment } from '../../../../environments/environment';
-import { ILeavesummery } from '../../../Interfaces/reports.model';
+import { IAttendanceDetails, ILeavesummery } from '../../../Interfaces/reports.model';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { RbacService } from '../../../services/rbac.service';
-import { Router } from '@angular/router';
+import {  Router } from '@angular/router';
 import { ReportsHeaderComponent } from "../../../shared/reports-tabs/reports-header/reports-header.component";
+import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
+import { MultiSelectModule } from 'primeng/multiselect';
 
 @Component({
   selector: 'app-leave-summary-report',
@@ -30,31 +32,35 @@ import { ReportsHeaderComponent } from "../../../shared/reports-tabs/reports-hea
     TranslateModule,
     ReactiveFormsModule, NoDataFoundComponent,
     DataLoaderContentComponent,
-    ReportsHeaderComponent
-  ],
+    ReportsHeaderComponent,
+    TranslateModule,
+    MultiSelectModule
+],
   templateUrl: './leave-summary-report.component.html',
-  styleUrl: './leave-summary-report.component.scss'
+  styleUrl: './leave-summary-report.component.scss',
+  encapsulation: ViewEncapsulation.None,
 })
 export class LeaveSummaryReportComponent implements OnInit, OnDestroy {
-  moduleinfo: string = '';
+  moduleinfo : string = '';
   subscription!: Subscription;
+  private readonly destroy$ = new Subject<void>();
   loggedInUser = {} as IemployeeDetails;
   isLoading: boolean = false;
   filterlvsumRecord: any[] = [];
   employeeiddetails: any[] = [];
+  employeeMultiSelectOptions: any[] = [];
   teamdetails = [] as any[];
   selectedEmployeeId: any = null;
   selectedWfhManager: string | null = null;
   selectedMonth: string | null = null;
   selectedLeave: string | null = null;
-  selectedYear: string | null = null;
   uniqueLeaveCategory: any[] = [];
-  years: number[] = [new Date().getFullYear() - 1, new Date().getFullYear(), new Date().getFullYear() + 1];
   lvSummeryReportForm!: FormGroup;
   empMasterDataDOJDateRange!: { startDate: Dayjs; endDate: Dayjs } | null;
   selectedDateRange: any;
   spinnerLoader1 = false;
   spinnerLoader2 = false;
+  isFilterIndicatorActive = false;
   disableBtn = false;
   getEmployeeInfo = [] as any;
   filteredleaveRecords = false;
@@ -73,45 +79,66 @@ export class LeaveSummaryReportComponent implements OnInit, OnDestroy {
   };
   localeOptions: any;
 
-
   constructor(
     private authService: AuthService,
     private reportsService: ReportsService,
     private http: HttpService,
     private fb: FormBuilder,
     public rbac: RbacService,
-    public readonly router: Router
+    public readonly router: Router,
+    private offcanvasService: NgbOffcanvas
   ) { }
 
   ngOnInit(): void {
-    this.localeOptions = {
+      this.localeOptions = {
       applyLabel: 'ok',
       format: this.authService.convertAngularDateFormatToJs(environment.dateformat).toUpperCase(),
       direction: 'ltr',
       clearLabel: 'Clear', // could be rtl
     };
-    this.initializeForm();
     this.loggedInUser = this.authService.getToken();
+    this.initializeForm();
     this.getEmployeeId();
     this.getLeaveSummaryReport();
     this.getTeam();
     this.getMyTeam();
-
   }
 
   clearAllFilters(): void {
-    this.lvSummeryReportForm.reset();
+    this.lvSummeryReportForm.reset({
+      leaveCategory: [],
+      manager: [],
+      employee: [],
+      team: []
+    });
     this.filterlvsumRecord = [];
+    this.isFilterIndicatorActive = false;
+    this.disableBtn = false;
+    this.uniqueLeaveCategory = [];
+    this.employeeMultiSelectOptions = [];
+    this.getEmployeeId();
+    this.getLeaveSummaryReport();
   }
 
   initializeForm() {
     this.lvSummeryReportForm = this.fb.group({
-      employee: [null],
-      manager: [null],
-      year: [''],
-      team: [null],
-      leaveCategory: [null]
+      leaveCategory: [[]],
+      manager: [[]],
+      employee: [[]],
+      team:[[]]
     });
+
+    this.lvSummeryReportForm.get('manager')?.valueChanges
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((managers: any[]) => {
+        if (managers && managers.length > 0) {
+          const managerIds = managers.map(m => m.employeeId).join(',');
+          this.getEmployeeId(managerIds);
+        } else {
+          this.getEmployeeId();
+        }
+        this.lvSummeryReportForm.get('employee')?.setValue([]);
+      });
 
     this.lvSummeryReportForm.valueChanges.subscribe(() => {
       this.disableBtn = true;
@@ -124,8 +151,8 @@ export class LeaveSummaryReportComponent implements OnInit, OnDestroy {
       this.filteredleaveRecords = true;
       this.selectLeaveEmployeeIds = [];
       this.selectedEmployeeId = [];
-      if (employeeIds.value.employeeId == this.loggedInUser.employeeId) {
-        this.selectLeaveEmployeeIds = this.getEmployeeInfo.filter((employee: any) => employee.employeeId !== this.loggedInUser.employeeId).map((employee: any) => employee.employeeId);
+      if (employeeIds.value.employeeId== this.loggedInUser.employeeId) {
+        this.selectLeaveEmployeeIds = this.getEmployeeInfo.filter((employee: any) => employee.employeeId !== this.loggedInUser.employeeId).map((employee: any) => employee.employeeId); 
         this.selectedEmployeeId = this.getEmployeeInfo.filter((employee: any) => employee.employeeId !== this.loggedInUser.employeeId).map((employee: any) => employee.employeeId);
       } else {
         this.selectLeaveEmployeeIds.push(employeeIds.value.employeeId);
@@ -136,101 +163,74 @@ export class LeaveSummaryReportComponent implements OnInit, OnDestroy {
 
 
   getMyTeam() {
-  const EmployeeId = this.loggedInUser?.employeeId;
-  this.subscription = this.http.getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`).subscribe({
-    next: (response: any) => {
-      if (response) {
-        const myTeam = response.filter((e: any) => e.isAccess);
-
-        this.getEmployeeInfo = myTeam
-          .map((employee: any) => {
-            const firstName = employee.firstName ? employee.firstName.trim() : '';
-            const middleName = employee.middleName ? employee.middleName.trim() : '';
-            const lastName = employee.lastName ? employee.lastName.trim() : '';
-
-            return {
+    const EmployeeId = this.loggedInUser?.employeeId;
+    console.log(this.loggedInUser)
+    this.subscription = this.http
+      .getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`)
+      .subscribe({
+        next: (response: any) => {
+          console.log(response);
+          if (response) {
+            const myTeam = response.filter((e: any) => e.isAccess);
+            this.getEmployeeInfo = myTeam.map((employee: any) => ({
               ...employee,
-              firstName, //  trimmed
-              fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${firstName} ${middleName ? middleName + ' ' : ''}${lastName}`.trim(),
-            };
-          })
-          .sort((a: any, b: any) =>
-            a.firstName.toLowerCase().localeCompare(b.firstName.toLowerCase()) //  Alphabetical by first name
-          );
+              fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
+                }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
+                }${employee.lastName}`,
+            }));
 
-        // Insert "All Employees" at the top
-        this.getEmployeeInfo.unshift({
-          fullName: 'All Employees',
-          fusionEmpId: this.loggedInUser.fusionEmpId,
-          employeeId: this.loggedInUser.employeeId,
+            this.getEmployeeInfo.unshift({
+              fullName: 'All Employees',
+              fusionEmpId: this.loggedInUser.fusionEmpId,
+              employeeId: this.loggedInUser.employeeId,
+            });
+          }
+        },
+      });
+  }
+
+
+  getEmployeeId(managerIds?: string) {
+    let url = 'Employeedata/employees/by-managers';
+    if (managerIds) {
+      url += `?managerIds=${managerIds}`;
+    }
+    this.subscription = this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (data: any) => {
+        const employeedata = data.map((employee: any) => {
+          return {
+            ...employee,
+            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
+              }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
+              }${employee.lastName}`,
+          };
         });
-      }
-    },
-    error: (err) => console.log(err),
-  });
-}
+        this.employeeMultiSelectOptions = employeedata;
+      },
+      error: (reason: any) => {
+        console.log(reason);
+      },
+    });
+  }
 
-
-
- getEmployeeId() {
-  const loggedInUser = this.authService.getToken();
-  this.subscription = this.http.getData('Employeedata/ActiveEmployees').subscribe({
-    next: (data: any) => {
-      const employeedata = data
-        .map((employee: any) => {
-          const firstName = employee.firstName ? employee.firstName.trim() : '';
-          const middleName = employee.middleName ? employee.middleName.trim() : '';
-          const lastName = employee.lastName ? employee.lastName.trim() : '';
-
+  getTeam() {
+    this.subscription = this.http.getData('PendingApprovalsAuthority/getAll').subscribe({
+      next: (data: any) => {
+        this.teamdetails = data.map((employee: any) => {
           return {
             ...employee,
-            firstName, //  trimmed
-            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${firstName} ${middleName ? middleName + ' ' : ''}${lastName}`.trim(),
+            fullName: `${employee.fusionEmployeeId ? employee.fusionEmployeeId + ' - ' : ''}${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
           };
-        })
-        .filter((employee: any) => employee.employeeId !== loggedInUser.employeeId)
-        .sort((a: any, b: any) =>
-          a.firstName.toLowerCase().localeCompare(b.firstName.toLowerCase()) //  Alphabetical by first name
-        );
-
-      this.employeeiddetails = [
-        { fullName: 'All Employees', employeeId: 'all' },
-        ...employeedata
-      ];
-    },
-    error: (reason: any) => {
-      console.log(reason);
-    },
-  });
-}
-
-getTeam() {
-  const statuses = 'Active';
-  this.subscription = this.http.getData(`PendingApprovalsAuthority/getAll?statuses=${encodeURIComponent(statuses)}`).subscribe({
-    next: (data: any) => {
-      this.teamdetails = data
-        .map((employee: any) => {
-          const firstName = employee.firstName ? employee.firstName.trim() : '';
-          const middleName = employee.middleName ? employee.middleName.trim() : '';
-          const lastName = employee.lastName ? employee.lastName.trim() : '';
-
-          return {
-            ...employee,
-            firstName, //  trimmed
-            fullName: `${employee.fusionEmployeeId ? employee.fusionEmployeeId + ' - ' : ''}${firstName} ${middleName ? middleName + ' ' : ''}${lastName}`.trim(),
-          };
-        })
-        .sort((a: any, b: any) =>
-          a.firstName.toLowerCase().localeCompare(b.firstName.toLowerCase()) //  Alphabetical by first name
-        );
-    },
-    error: (reason: any) => console.log(reason),
-  });
-}
+        });
+      },
+      error: (reason: any) => console.log(reason),
+    });
+  }
 
   getLeaveSummaryReport() {
-    this.subscription = this.reportsService.getLeaveSummaryReport({}).subscribe({
+    this.subscription = this.reportsService.getLeaveSummaryReportV2({}).subscribe({
       next: (res: any) => {
+        // this.filterlvsumRecord = res ?? [];
         this.extractUniqueYearlyFilters(res);
       },
       error: (err: any) => console.log(err)
@@ -238,12 +238,18 @@ getTeam() {
   }
 
   extractUniqueYearlyFilters(data: any[]): void {
-    const uniqueCategories = Array.from(new Set(data.map((item: any) => item.leaveType))).filter(Boolean);
-
-    this.uniqueLeaveCategory = uniqueCategories.map(category => ({
-      label: category,
-      value: category
-    }));
+    const items = Array.isArray(data) ? data : [];
+    const map = new Map<any, { label: string; value: any }>();
+    items.forEach((item: any) => {
+      const label = item?.leaveCategoryName ?? item?.leaveType;
+      const value = item?.leaveCategoryId ?? item?.categoryId;
+      if (typeof label === 'string' && label.trim().length > 0) {
+        map.set(value, { label, value });
+      }
+    });
+    this.uniqueLeaveCategory = Array.from(map.values()).sort((a, b) =>
+      a.label.toLowerCase().localeCompare(b.label.toLowerCase())
+    );
   }
 
   formatDate(date: Date): string {
@@ -259,221 +265,202 @@ getTeam() {
 
 
   get isLeaveGenerateDisabled(): boolean {
+    return !this.isAnyFilterApplied();
+  }
+
+  isAnyFilterApplied(): boolean {
     const form = this.lvSummeryReportForm;
-    return !(
-      form.get('employee')?.value ||
-      form.get('manager')?.value ||
-      form.get('year')?.value ||
-      form.get('leaveCategory')?.value ||
-      form.get('team')?.value
+    return !!(
+      (form.get('employee')?.value && form.get('employee')?.value.length > 0) ||
+      (form.get('manager')?.value && form.get('manager')?.value.length > 0) ||
+      (form.get('leaveCategory')?.value && form.get('leaveCategory')?.value.length > 0) ||
+      (form.get('team')?.value && form.get('team')?.value.length > 0)
     );
+  }
+
+  toggleFilters(content: TemplateRef<any>) {
+    this.offcanvasService.open(content, {  
+      position: 'end',
+      backdrop: 'static',
+      keyboard: false,
+    });
+  }
+
+  closeCanvas() {
+    this.offcanvasService.dismiss();
+  }
+
+  onGenerate(): void {
+    this.isFilterIndicatorActive = this.isAnyFilterApplied();
+    this.leavesummeryReport();
   }
 
   leavesummeryReport(): void {
     this.spinnerLoader1 = true;
     this.isLoading = true;
+    this.disableBtn = true;
     const formValue = this.lvSummeryReportForm.value;
-    const isAllEmployeesSelected = formValue.employee?.employeeId === 'all';
+    
     // Check if no filter is provided
-    const noFilterProvided =
-      !formValue.employee &&
-      !formValue.manager &&
-      !formValue.leaveCategory &&
-      !formValue.year &&
-      !formValue.team;
-
-    if (noFilterProvided) {
-      this.filterlvsumRecord = [];
+    if (!this.isAnyFilterApplied()) {
       this.filterlvsumRecord = [];
       this.spinnerLoader1 = false;
       this.isLoading = false;
+      this.disableBtn = false;
       return;
     }
 
     const request: ILeavesummery = {};
 
-    if (this.selectLeaveEmployeeIds.length >= 0) {
-      const ids = this.selectLeaveEmployeeIds?.join(',');
-      request.EmployeeId = ids;  // The selected employee IDs are set here
+    if (formValue.leaveCategory && formValue.leaveCategory.length > 0) {
+      request.leaveCategories = formValue.leaveCategory.map((x: any) => x.value).join(',');
     }
 
-    if (formValue.employee?.employeeId) {
-      request.EmployeeId = formValue.employee.employeeId !== 'all';
+    if (formValue.manager && formValue.manager.length > 0) {
+      request.teamManagerID = formValue.manager.map((x: any) => x.employeeId).join(',');
     }
 
-    // Manager full name
-    if (formValue.manager) {
-      request.teamManagerID = formValue.manager.employeeId;
+    if (formValue.team && formValue.team.length > 0) {
+      request.employeeId = formValue.team.join(',');
+    } else if (formValue.employee && formValue.employee.length > 0) {
+      request.employeeId = formValue.employee.map((x: any) => x.employeeId).join(',');
     }
-
-    // Leave category
-    if (formValue.leaveCategory) {
-      request.LeaveName = formValue.leaveCategory.value;
-    }
-    // Year
-    if (formValue.year) {
-      request.Year = formValue.year;
-    }
-    if (!isAllEmployeesSelected && formValue.employee?.employeeId) {
-      request.EmployeeId = formValue.employee.employeeId;
-    }
-
-    // Debug log to verify the request
-    console.log('Generated Request:', request);
-
-    // if (this.selectLeaveEmployeeIds.length >= 0) {
-    //   const ids = this.selectLeaveEmployeeIds?.join(',');
-    //   request.EmployeeId = ids;  // The selected employee IDs are set here
-    // }
-
-    // if (formValue.employee?.employeeId) {
-    //   request.EmployeeId = formValue.employee.employeeId !== 'all';
-    // }
-
-    // // Manager full name
-    // if (formValue.manager) {
-    //   request.teamManagerID = formValue.manager.employeeId;
-    // }
-
-    // // Leave category
-    // if (formValue.leaveCategory) {
-    //   request.LeaveName = formValue.leaveCategory.value;
-    // }
-    // // Year
-    // if (formValue.year) {
-    //   request.Year = formValue.year;
-    // }
-    // if (!isAllEmployeesSelected && formValue.employee?.employeeId) {
-    //   request.EmployeeId = formValue.employee.employeeId;
-    // }
-
 
     // Call service with the constructed request
-    this.reportsService.getLeaveSummaryReport(request).subscribe({
-      next: (data: any) => {
-        // Extract the year from startDate and add it to each record
-        this.filterlvsumRecord = data.map((record: any) => {
-          const startDate = new Date(record.startDate);  // Assuming startDate is in a valid format
-          return {
-            ...record,
-            year: startDate.getFullYear()  // Add the year as a new field
-          };
-        });
-
-        if (this.filterlvsumRecord.length === 0) {
-          // Show modal: no data
-        } else {
-          console.log('Fetched Yearly Record:', this.filterlvsumRecord);
-        }
-      },
-      error: (error: any) => {
+    // Assuming getLeaveSummaryReport needs to be updated to POST or handle this payload structure
+    // For now we assume getLeaveSummaryReport is similar to leave-report's V2 but for summary
+    this.subscription = this.reportsService.getLeaveSummaryReportV2(request).subscribe({
+      next: (res: any) => {
+        this.filterlvsumRecord = res ?? [];
         this.spinnerLoader1 = false;
-        this.disableBtn = true;
         this.isLoading = false;
-      },
-      complete: () => {
-        this.spinnerLoader1 = false;
         this.disableBtn = false;
+        this.closeCanvas();
+      },
+      error: (err: any) => {
+        console.log(err);
+        this.filterlvsumRecord = [];
+        this.spinnerLoader1 = false;
         this.isLoading = false;
-      }
+        this.disableBtn = false;
+        this.closeCanvas();
+      },
     });
   }
 
   exportToExcelYearly(): void {
     // Define header mappings
     this.spinnerLoader2 = true;
-    const HEADER_MAPPINGS: { [key: string]: string } = {
-      fusionEmpId: 'EMPLOYEE ID',
-      employeeName: 'EMPLOYEE NAME',
-      department: 'DEPARTMENT',
-      teamManagerName: 'TEAM MANAGER',
-      location: 'LOCATION',
-      subLocation: 'SUB LOCATION',
-      shift: 'SHIFT',
-      monthName: 'MONTH',
-      leaveType: 'LEAVE TYPE',
-      availed: 'LEAVES AVAILED',
-    };
+    setTimeout(() => {
+      const HEADER_MAPPINGS: { [key: string]: string } = {
+        fusionEmpId: 'EMPLOYEE ID',
+        employeeName: 'EMPLOYEE NAME',
+        department: 'DEPARTMENT',
+        teamManagerName: 'TEAM MANAGER',
+        location: 'LOCATION',
+        subLocation: 'SUB LOCATION',
+        shift: 'SHIFT',
+        monthName: 'MONTH',
+        leaveCategoryName: 'LEAVE CATEGORY',
+        availed: 'LEAVES AVAILED',
+      };
 
-    // Define new sequence
-    const NEW_SEQUENCE: string[] = [
-      'EMPLOYEE ID',
-      'EMPLOYEE NAME',
-      'DEPARTMENT',
-      'TEAM MANAGER',
-      'LOCATION',
-      'SUB LOCATION',
-      'SHIFT',
-      'MONTH',
-      'LEAVE TYPE',
-      'LEAVES AVAILED',
-    ];
+      // Define new sequence
+      const NEW_SEQUENCE: string[] = [
+        'EMPLOYEE ID',
+        'EMPLOYEE NAME',
+        'DEPARTMENT',
+        'TEAM MANAGER',
+        'LOCATION',
+        'SUB LOCATION',
+        'SHIFT',
+        'MONTH',
+        'LEAVE CATEGORY',
+        'LEAVES AVAILED',
+      ];
 
-    // Modify data with renamed headers and new sequence
-    const modifiedData = this.filterlvsumRecord.map(record => {
-      const modifiedRecord: any = {};
-      NEW_SEQUENCE.forEach(columnName => {
-        const originalColumnName = Object.keys(HEADER_MAPPINGS).find(key => HEADER_MAPPINGS[key] === columnName);
-        if (originalColumnName && record.hasOwnProperty(originalColumnName)) {
-          if (originalColumnName === 'startDate') {
-            // Extract the year part from the date
-            const year = new Date(record[originalColumnName]).getFullYear();
-            modifiedRecord[columnName] = year;
+      // Modify data with renamed headers and new sequence
+      const modifiedData = this.filterlvsumRecord.map(record => {
+        const modifiedRecord: any = {};
+        NEW_SEQUENCE.forEach(columnName => {
+          const originalColumnName = Object.keys(HEADER_MAPPINGS).find(key => HEADER_MAPPINGS[key] === columnName);
+          if (originalColumnName && record.hasOwnProperty(originalColumnName)) {
+            if (originalColumnName === 'startDate') {
+              // Extract the year part from the date
+              const year = new Date(record[originalColumnName]).getFullYear();
+              modifiedRecord[columnName] = year;
+            } else {
+              modifiedRecord[columnName] = record[originalColumnName];
+            }
           } else {
-            modifiedRecord[columnName] = record[originalColumnName];
+            modifiedRecord[columnName] = '';
           }
-        } else {
-          modifiedRecord[columnName] = '';
-        }
+        });
+        return modifiedRecord;
       });
-      return modifiedRecord;
-    });
 
-    // Create a new empty worksheet
-    const ws: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet([[]]);
+      // Create a new empty worksheet
+      const ws: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet([[]]);
 
-    // Merge cells for WFH Report row from A1 to I1
-    ws['!merges'] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: NEW_SEQUENCE.length - 1 } }];
+      // Merge cells for WFH Report row from A1 to I1
+      ws['!merges'] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: NEW_SEQUENCE.length - 1 } }];
 
-    // Add WFH Report row
-    XLSX.utils.sheet_add_aoa(ws, [['LEAVE SUMMARY REPORT']], { origin: 'A1' });
+      // Add WFH Report row
+      XLSX.utils.sheet_add_aoa(ws, [['LEAVE SUMMARY REPORT']], { origin: 'A1' });
 
-    // Add header row
-    const headerRow = NEW_SEQUENCE.map(columnName => HEADER_MAPPINGS[columnName]);
-    XLSX.utils.sheet_add_aoa(ws, [headerRow], { origin: 'A2' });
+      // Add header row
+      // Use NEW_SEQUENCE directly for headers as it contains the display names
+      const headerRow = NEW_SEQUENCE.map(columnName => HEADER_MAPPINGS[columnName] || columnName);
+      XLSX.utils.sheet_add_aoa(ws, [headerRow], { origin: 'A2' });
 
-    // Add data rows
-    XLSX.utils.sheet_add_json(ws, modifiedData, { origin: 'A3' });
+      // Add data rows
+      XLSX.utils.sheet_add_json(ws, modifiedData, { origin: 'A3', skipHeader: true });
 
-    // Apply styles to WFH Report row
-    const wfhReportCell = ws['A1'] || { t: '', v: '' }; // Get the cell or create a new one if it doesn't exist
-    wfhReportCell.s = { font: { bold: true }, alignment: { horizontal: 'center' }, fill: { bgColor: { rgb: 'FFFF00' } } };
-    ws['A1'] = wfhReportCell; // Assign the styled cell back to the worksheet
+      // Apply styles to WFH Report row
+      const wfhReportCell = ws['A1'] || { t: '', v: '' }; // Get the cell or create a new one if it doesn't exist
+      wfhReportCell.s = { font: { bold: true, sz: 14 }, alignment: { horizontal: 'center' } };
+      ws['A1'] = wfhReportCell; // Assign the styled cell back to the worksheet
 
-    // Apply styles to column headers
-    NEW_SEQUENCE.forEach((columnName, index) => {
-      const cellAddress = XLSX.utils.encode_cell({ r: 1, c: index });
-      const cell = ws[cellAddress] || { t: '', v: '' }; // Get the cell or create a new one if it doesn't exist
-      cell.s = { font: { bold: true }, alignment: { horizontal: 'center' }, fill: { bgColor: { rgb: '0000FF' } }, fontColor: { rgb: 'FFFFFF' } };
-      ws[cellAddress] = cell; // Assign the styled cell back to the worksheet
-    });
+      // Apply styles to column headers
+      NEW_SEQUENCE.forEach((columnName, index) => {
+        const cellAddress = XLSX.utils.encode_cell({ r: 1, c: index });
+        const cell = ws[cellAddress] || { t: '', v: '' }; // Get the cell or create a new one if it doesn't exist
+        cell.s = { font: { bold: true }, alignment: { horizontal: 'center' } };
+        ws[cellAddress] = cell; // Assign the styled cell back to the worksheet
+      });
 
-    // Adjust column width to fit data
-    NEW_SEQUENCE.forEach((columnName, index) => {
-      let columnWidth = this.getColumnWidth(modifiedData, columnName);
+      // Apply middle alignment to all data cells
+      modifiedData.forEach((_, rowIndex) => {
+        NEW_SEQUENCE.forEach((_, colIndex) => {
+          const cellRef = XLSX.utils.encode_cell({ r: rowIndex + 2, c: colIndex });
+          if (ws[cellRef]) {
+            ws[cellRef].s = {
+              alignment: { horizontal: 'center', vertical: 'center' }
+            };
+          }
+        });
+      });
 
-      if (columnName === 'EMPLOYEE ID' || columnName === 'DEPARTMENT' || columnName === 'APPLIED DATE' || columnName === 'SUB LOCATION') {
-        columnWidth += 5; // Increase width by 5
-      }
-      ws['!cols'] = ws['!cols'] || [];
-      ws['!cols'][index] = { wch: columnWidth };
-    });
+      // Adjust column width to fit data
+      NEW_SEQUENCE.forEach((columnName, index) => {
+        let columnWidth = this.getColumnWidth(modifiedData, columnName);
 
-    // Generate Excel file and trigger download
-    const wb: XLSX.WorkBook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Leave Summary Report');
-    XLSX.writeFile(wb, 'Leave_Summary_Report.xlsx');
-    this.spinnerLoader2 = false;
+        if (columnName === 'EMPLOYEE ID' || columnName === 'DEPARTMENT' || columnName === 'APPLIED DATE' || columnName === 'SUB LOCATION') {
+          columnWidth += 5; // Increase width by 5
+        }
+        ws['!cols'] = ws['!cols'] || [];
+        ws['!cols'][index] = { wch: columnWidth };
+      });
+
+      // Generate Excel file and trigger download
+      const wb: XLSX.WorkBook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'Leave Summary Report');
+      
+      const today = new Date();
+      const filenameDate = today.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).replace(',', '');
+      XLSX.writeFile(wb, `Leave Summary Report - ${filenameDate}.xlsx`);
+      this.spinnerLoader2 = false;
+    }, 100);
   }
 
 
@@ -487,12 +474,14 @@ getTeam() {
     // Set minimum width to 10
     return Math.max(10, maxWidth);
   }
-  navigation() {
+   navigation(){
     this.router.navigate(['/reports']);
   }
 
 
   ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
     if (this.subscription) {
       this.subscription.unsubscribe();
     }

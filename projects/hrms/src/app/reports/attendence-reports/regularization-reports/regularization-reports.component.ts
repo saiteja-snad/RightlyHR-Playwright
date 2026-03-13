@@ -1,28 +1,33 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from '../../../services/auth.service';
 import { HttpService } from '../../../services/http.service';
 import { ReportsService } from '../../../services/reports/reports.service';
 import { Subject, Subscription, takeUntil } from 'rxjs';
 import { Select } from 'primeng/select';
+import { MultiSelectModule } from 'primeng/multiselect';
 import { IemployeeDetails, ITeamManagerEmployees } from '../reports.modal';
 import dayjs, { Dayjs } from 'dayjs';
 import { environment } from '../../../../environments/environment';
 import { IAttendanceDetails } from '../../../Interfaces/reports.model';
-import * as XLSX from 'xlsx';
+import * as XLSX from 'xlsx-js-style';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { RbacService } from '../../../services/rbac.service';
 import { Router } from '@angular/router';
 import { ReportsHeaderComponent } from "../../../shared/reports-tabs/reports-header/reports-header.component";
 import { DatePicker } from 'primeng/datepicker';
+import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
+
 @Component({
   selector: 'app-regularization-reports',
-  imports: [CommonModule, ReactiveFormsModule, Select, DatePicker, DataLoaderContentComponent, NoDataFoundComponent,TranslateModule, ReportsHeaderComponent],
+  imports: [CommonModule, ReactiveFormsModule, Select, MultiSelectModule, DatePicker, DataLoaderContentComponent, 
+    NoDataFoundComponent, ReportsHeaderComponent,TranslateModule],
   templateUrl: './regularization-reports.component.html',
-  styleUrl: './regularization-reports.component.scss'
+  styleUrl: './regularization-reports.component.scss',
+  encapsulation: ViewEncapsulation.None
 })
 
 export class RegularizationReportsComponent implements OnInit, OnDestroy {
@@ -36,6 +41,7 @@ export class RegularizationReportsComponent implements OnInit, OnDestroy {
   destroy$: Subject<boolean> = new Subject<boolean>();
   spinnerLoader1 = false;
   spinnerLoader2 = false;
+  isFilterIndicatorActive = false;
   disableBtn = false;
   isLoading = false;
   getEmployeeInfo = [] as any;
@@ -54,6 +60,7 @@ export class RegularizationReportsComponent implements OnInit, OnDestroy {
     ],
   };
   localeOptions: any;
+  today: Date = new Date();
 
   constructor(
     private authService: AuthService,
@@ -61,8 +68,21 @@ export class RegularizationReportsComponent implements OnInit, OnDestroy {
     private http: HttpService,
     private fb: FormBuilder,
     public rbac: RbacService,
-    public readonly router: Router
+    public readonly router: Router,
+    private offcanvasService: NgbOffcanvas
   ) { }
+
+  toggleFilters(content: any) {
+    this.offcanvasService.open(content, {
+      position: 'end',
+      backdrop: 'static',
+      keyboard: false,
+    });
+  }
+
+  closeCanvas() {
+    this.offcanvasService.dismiss();
+  }
 
   ngOnInit(): void {
     this.localeOptions = {
@@ -86,48 +106,75 @@ export class RegularizationReportsComponent implements OnInit, OnDestroy {
       dateRange: [null],
       team: [null]
     });
+
+    this.regularizationReportForm.get('manager')?.valueChanges.subscribe((managers: any[]) => {
+      if (managers && managers.length > 0) {
+        const managerIds = managers.map(m => m.employeeId).join(',');
+        this.getAllEmployees(managerIds);
+      } else {
+        this.getAllEmployees();
+      }
+      this.regularizationReportForm.get('employee')?.setValue(null);
+    });
+
     this.regularizationReportForm.valueChanges.subscribe(() => {
       this.disableBtn = true;
     })
   }
 
+  isAnyFilterApplied(): boolean {
+    const form = this.regularizationReportForm;
+    const value = form.value;
+    const hasEmployee = !!value.employee;
+    const hasManager = !!value.manager;
+    const hasTeam = !!value.team;
+    const range = value.dateRange;
+    const hasDateRange = !!(range && (range[0] || range[1] || range.startDate || range.endDate));
+    return hasEmployee || hasManager || hasTeam || hasDateRange;
+  }
+
   get isPermissionGenerateDisabled(): boolean {
     const { employee, manager, dateRange, leaveCategory, team } = this.regularizationReportForm.value;
-    // Check if any field has a value
-    return !(employee || manager || (dateRange && (dateRange.startDate || dateRange.endDate)) || leaveCategory || team);
+    return !((employee && employee?.length > 0) || 
+             (manager && manager?.length > 0) || 
+             (dateRange && dateRange?.length === 2 && dateRange[0] && dateRange[1]) || 
+             leaveCategory || 
+             (team && team?.length > 0));
   }
-getAllEmployees() {
-  const loggedInUser = this.authService.getToken();
-  this.http.getData('Employeedata/ActiveEmployees').pipe(takeUntil(this.destroy$))
+getAllEmployees(managerIds?: string) {
+    let url = 'Employeedata/employees/by-managers';
+    if (managerIds) {
+      url += `?managerIds=${managerIds}`;
+    }
+    this.http.getData(url).pipe(takeUntil(this.destroy$))
     .subscribe({
       next: (data: any) => {
-        const employeedata = data
-          .map((employee: any) => {
-            const firstName = employee.firstName ? employee.firstName.trim() : '';
-            const middleName = employee.middleName ? employee.middleName.trim() : '';
-            const lastName = employee.lastName ? employee.lastName.trim() : '';
+        const loggedInEmployee = {
+          ...this.loggedInUser,
+          fullName: `${this.loggedInUser.fusionEmpId ? this.loggedInUser.fusionEmpId + ' - ' : ''}${this.loggedInUser.firstName} ${this.loggedInUser.middleName ? this.loggedInUser.middleName + ' ' : ''}${this.loggedInUser.lastName}`.trim(),
+        };
 
-            return {
-              ...employee,
-              firstName, // trimmed for sorting
-              lastName,  //  trimmed for fallback
-              fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${firstName} ${middleName ? middleName + ' ' : ''}${lastName}`.trim(),
-            };
-          })
-          .sort((a: any, b: any) => {
-            // Primary: firstName (case-insensitive)
-            const firstCompare = a.firstName.toLowerCase().localeCompare(b.firstName.toLowerCase());
-            if (firstCompare !== 0) return firstCompare;
+        const mappedData = data.map((employee: any) => {
+          const firstName = employee.firstName ? employee.firstName.trim() : '';
+          const middleName = employee.middleName ? employee.middleName.trim() : '';
+          const lastName = employee.lastName ? employee.lastName.trim() : '';
 
-            // Secondary: lastName (case-insensitive)
-            return a.lastName.toLowerCase().localeCompare(b.lastName.toLowerCase());
-          });
+          return {
+            ...employee,
+            firstName,
+            lastName,
+            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${firstName} ${middleName ? middleName + ' ' : ''}${lastName}`.trim(),
+          };
+        });
 
-        // Add "All Employees" at the top
-        this.employeeDetails = [
-          { fullName: 'All Employees', employeeId: 'all' },
-          ...employeedata
-        ];
+        const combinedData = [loggedInEmployee, ...mappedData];
+
+        // Filter unique by employeeId and sort by firstName
+        this.employeeDetails = combinedData
+          .filter((employee, index, self) =>
+            index === self.findIndex((e) => e.employeeId === employee.employeeId)
+          )
+          .sort((a: any, b: any) => (a.firstName ?? '').toLowerCase().localeCompare((b.firstName ?? '').toLowerCase()));
       },
       error: (reason: any) => {
         console.log(reason);
@@ -139,21 +186,34 @@ getTeam() {
   const statuses = 'Active';
   this.http.getData(`PendingApprovalsAuthority/getAll?statuses=${encodeURIComponent(statuses)}`).pipe(takeUntil(this.destroy$)).subscribe({
     next: (data: any) => {
-      this.teamManagerDetails = data
-        .map((employee: any) => {
+      if (data) {
+        const loggedInEmployee = {
+          ...this.loggedInUser,
+          fusionEmployeeId: this.loggedInUser.fusionEmpId,
+          fullName: `${this.loggedInUser.fusionEmpId ? this.loggedInUser.fusionEmpId + ' - ' : ''}${this.loggedInUser.firstName} ${this.loggedInUser.middleName ? this.loggedInUser.middleName + ' ' : ''}${this.loggedInUser.lastName}`.trim(),
+        };
+
+        const mappedData = data.map((employee: any) => {
           const firstName = employee.firstName ? employee.firstName.trim() : '';
           const middleName = employee.middleName ? employee.middleName.trim() : '';
           const lastName = employee.lastName ? employee.lastName.trim() : '';
 
           return {
             ...employee,
-            firstName, //  trimmed
+            firstName,
             fullName: `${employee.fusionEmployeeId ? employee.fusionEmployeeId + ' - ' : ''}${firstName} ${middleName ? middleName + ' ' : ''}${lastName}`.trim(),
           };
-        })
-        .sort((a: any, b: any) =>
-          a.firstName.toLowerCase().localeCompare(b.firstName.toLowerCase()) //  Alphabetical by first name
-        );
+        });
+
+        const combinedData = [loggedInEmployee, ...mappedData];
+
+        // Filter unique by employeeId and sort by firstName
+        this.teamManagerDetails = combinedData
+          .filter((employee, index, self) =>
+            index === self.findIndex((e) => e.employeeId === employee.employeeId)
+          )
+          .sort((a: any, b: any) => (a.firstName ?? '').toLowerCase().localeCompare((b.firstName ?? '').toLowerCase()));
+      }
     },
     error: (reason: any) => console.log(reason),
   });
@@ -163,6 +223,7 @@ getTeam() {
   clearAllFilters() {
     this.regularizationReportForm.reset();
     this.filteredRegularizationData = [];
+    this.isFilterIndicatorActive = false;
   }
 
   formatDate(date: Date): string {
@@ -176,16 +237,26 @@ getTeam() {
     return date instanceof Date ? date : new Date(date);
   }
 
+  onGenerate(): void {
+    this.isFilterIndicatorActive = this.isAnyFilterApplied();
+    this.generateRegularizationReport();
+  }
+
   generateRegularizationReport(): void {
     this.spinnerLoader1 = true;
     this.isLoading = true;
     const formValue = this.regularizationReportForm.value;
-    const isAllEmployeesSelected = formValue.employee?.employeeId === 'all';
+    
     const dateRangeArray = formValue.dateRange || [];
     const startDate: Dayjs | null = dateRangeArray[0] ? dayjs(dateRangeArray[0]) : null;
     const endDate: Dayjs | null = dateRangeArray[1] ? dayjs(dateRangeArray[1]) : (startDate ? startDate : null);
+    
     //filter condition
-    const noFilterProvided = !formValue.employee && (!startDate || !endDate) && !formValue.month && !formValue.manager && !formValue.team;
+    const noFilterProvided = (!formValue.employee || formValue.employee.length === 0) && 
+                             (!startDate || !endDate) && 
+                             !formValue.month && 
+                             (!formValue.manager || formValue.manager.length === 0) && 
+                             (!formValue.team || formValue.team.length === 0);
 
     if (noFilterProvided) {
       this.filteredRegularizationData = [];
@@ -196,13 +267,26 @@ getTeam() {
 
     const request: IAttendanceDetails = {};
 
+    // Check if My Team dropdown is visible
+    const isMyTeamVisible = this.rbac.allowedToAccess('My Team Report(Regularization).view') &&
+      !this.rbac.allowedToAccess('Attendance All Employees List(Regularization).view') &&
+      !this.rbac.allowedToAccess('Attendance Team Manager List(Regularization).view');
+
+    if (isMyTeamVisible) {
+      (request as any).ReportingManagerId = this.loggedInUser.employeeId;
+    }
+
     if (this.selectLeaveEmployeeIds.length >= 0) {
       const ids = this.selectLeaveEmployeeIds?.join(',');
       request.employeeId = ids;  // The selected employee IDs are set here
     }
 
-    if (formValue.employee?.employeeId !== 'all' && formValue.employee?.employeeId) {
-      request.employeeId = formValue.employee?.employeeId;
+    // Only include employee filter if not "All Employees"
+    if (formValue.employee && formValue.employee?.length > 0) {
+      const isAllSelected = formValue.employee?.some((e: any) => e.employeeId === 'all');
+      if (!isAllSelected) {
+        request.employeeId = formValue.employee?.map((item: any) => item.employeeId).join(',');
+      }
     }
 
     // Apply leave category if selected
@@ -217,13 +301,29 @@ getTeam() {
     }
 
     // Apply manager name if provided
-    if (formValue.manager) {
-      request.teamManagerId = formValue.manager.employeeId
+    if (formValue.manager && formValue.manager?.length > 0) {
+      request.teamManagerId = formValue.manager?.map((item: any) => item?.employeeId).join(',');
     }
-
-    // Only include employee filter if not "All Employees"
-    if (!isAllEmployeesSelected && formValue.employee?.fusionEmpId) {
-      request.FusionEmpId = formValue.employee.fusionEmpId;
+    
+    //Apply my team
+    if (formValue.team && formValue.team?.length > 0) {
+       // logic for team if needed, but usually team selection populates employeeId via onClick or similar?
+       // In PermissionReportsComponent:
+       // if (formValue.team && formValue.team?.length > 0) {
+       //    request.employeeId = formValue.team?.map((item: any) => item.employeeId).join(',');
+       // }
+       // Wait, let's check how 'team' was handled in the original code.
+       // It wasn't explicitly handled in the original generateRegularizationReport I read.
+       // In the original code: 
+       // if (this.selectLeaveEmployeeIds.length >= 0) { ... request.employeeId = ids ... }
+       // And selectLeaveEmployeeIds is populated by onClick event on the select.
+       // If I switch to multi-select, I might not need onClick if I just bind the value.
+       
+       // However, to keep it simple and consistent with PermissionReports:
+       // If 'team' is selected, we map it to employeeId.
+       if (!request.employeeId && formValue.team) { // If employeeId not already set by 'employee' filter
+          request.employeeId = formValue.team?.map((item: any) => item.employeeId).join(',');
+       }
     }
 
     this.reportsService.getRegularizationReports(request).subscribe({
@@ -235,16 +335,20 @@ getTeam() {
         this.disableBtn = true;
         this.isLoading = false;
         this.filteredRegularizationData = [];
+        this.closeCanvas();
       },
       complete: () => {
         this.spinnerLoader1 = false;
         this.disableBtn = false;
         this.isLoading = false;
+        this.closeCanvas();
       }
     });
   }
 
   exportToExcelAttendanceRegularization(): void {
+    this.spinnerLoader2 = true;
+    setTimeout(() => {
     const HEADER_MAPPINGS: { [key: string]: string } = {
       fusionEmpId: 'EMPLOYEE ID',
       employeeName: 'EMPLOYEE NAME',
@@ -252,8 +356,9 @@ getTeam() {
       teamManager: 'TEAM MANAGER',
       location: 'LOCATION',
       subLocation: 'SUB LOCATION',
-      utilizedCount: 'UTILIZED COUNT',
-      totalDuration: 'Total Duration'
+      shift: 'SHIFT',
+      utilizedCount: 'UTILIZATION COUNT',
+      totalDuration: 'TOTAL DURATION (HH:MM)'
     };
 
     const NEW_SEQUENCE: string[] = [
@@ -263,8 +368,9 @@ getTeam() {
       'TEAM MANAGER',
       'LOCATION',
       'SUB LOCATION',
-      'UTILIZED COUNT',
-      'Total Duration'
+      'SHIFT',
+      'UTILIZATION COUNT',
+      'TOTAL DURATION (HH:MM)'
     ];
 
     const modifiedData = this.filteredRegularizationData.map(record => {
@@ -299,25 +405,32 @@ getTeam() {
     ws['!merges'] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: NEW_SEQUENCE.length - 1 } }];
 
     // Add Leave Report row
-    XLSX.utils.sheet_add_aoa(ws, [['ATTENDANCE REGULARIZATION REPORT']], { origin: 'A1' });
+    XLSX.utils.sheet_add_aoa(ws, [['REGULARIZATION REPORT']], { origin: 'A1' });
 
     // Add header row
-    const headerRow = NEW_SEQUENCE.map(columnName => HEADER_MAPPINGS[columnName]);
-    XLSX.utils.sheet_add_aoa(ws, [headerRow], { origin: 'A2' });
+    XLSX.utils.sheet_add_aoa(ws, [NEW_SEQUENCE], { origin: 'A2' });
 
     // Add data rows
-    XLSX.utils.sheet_add_json(ws, modifiedData, { origin: 'A3' });
+    XLSX.utils.sheet_add_json(ws, modifiedData, { origin: 'A3', skipHeader: true });
 
     // Apply styles to Leave Report row
     const leaveReportCell = ws['A1'] || { t: '', v: '' }; // Get the cell or create a new one if it doesn't exist
-    leaveReportCell.s = { font: { bold: true }, alignment: { horizontal: 'center' }, fill: { bgColor: { rgb: 'FFFF00' } } };
+    leaveReportCell.s = { 
+      font: { bold: true, sz: 14, color: { rgb: "000000" } }, 
+      alignment: { horizontal: 'center', vertical: 'center' } 
+    };
+    
+    // Explicitly set row height
+    if (!ws['!rows']) ws['!rows'] = [];
+    ws['!rows'][0] = { hpt: 25 };
+    
     ws['A1'] = leaveReportCell; // Assign the styled cell back to the worksheet
 
     // Apply styles to column headers
     NEW_SEQUENCE.forEach((columnName, index) => {
       const cellAddress = XLSX.utils.encode_cell({ r: 1, c: index });
       const cell = ws[cellAddress] || { t: '', v: '' }; // Get the cell or create a new one if it doesn't exist
-      cell.s = { font: { bold: true }, alignment: { horizontal: 'center' }, fill: { bgColor: { rgb: '0000FF' } }, fontColor: { rgb: 'FFFFFF' } };
+      cell.s = { font: { bold: true }, alignment: { horizontal: 'center' } };
       ws[cellAddress] = cell; // Assign the styled cell back to the worksheet
     });
 
@@ -326,7 +439,7 @@ getTeam() {
       NEW_SEQUENCE.forEach((columnName, index) => {
         const cellAddress = XLSX.utils.encode_cell({ r: rowIndex, c: index });
         const cell = ws[cellAddress] || { t: '', v: '' }; // Get the cell or create a new one if it doesn't exist
-        cell.s = { alignment: { horizontal: 'center', vertical: 'middle' } };
+        cell.s = { alignment: { horizontal: 'center', vertical: 'center' } };
         ws[cellAddress] = cell; // Assign the styled cell back to the worksheet
       });
     }
@@ -345,7 +458,12 @@ getTeam() {
     // Generate Excel file and trigger download
     const wb: XLSX.WorkBook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Regularization Report');
-    XLSX.writeFile(wb, 'Regularization_Report.xlsx');
+    const date = new Date();
+    // const formattedDate = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    const fileName = `Regularization Report - ${dayjs().format('MMM DD YYYY')}.xlsx`;
+    XLSX.writeFile(wb, fileName);
+    this.spinnerLoader2 = false;
+  }, 100);
   }
 
 
@@ -375,48 +493,38 @@ getTeam() {
     }
   }
 
-getMyTeam() {
-  const EmployeeId = this.loggedInUser?.employeeId;
-  this.subscription = this.http
-    .getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`)
-    .subscribe({
-      next: (response: any) => {
-        if (response) {
-          const myTeam = response.filter((e: any) => e.isAccess);
+  getMyTeam() {
+    const EmployeeId = this.loggedInUser?.employeeId;
+    this.subscription = this.http
+      .getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`)
+      .subscribe({
+        next: (response: any) => {
+          if (response) {
+            const loggedInEmployee = {
+              ...this.loggedInUser,
+              fullName: `${this.loggedInUser.fusionEmpId ? this.loggedInUser.fusionEmpId + ' - ' : ''}${this.loggedInUser.firstName} ${this.loggedInUser.middleName ? this.loggedInUser.middleName + ' ' : ''}${this.loggedInUser.lastName}`.trim(),
+            };
 
-          this.getEmployeeInfo = myTeam
-            .map((employee: any) => {
-              const firstName = employee.firstName ? employee.firstName.trim() : '';
-              const middleName = employee.middleName ? employee.middleName.trim() : '';
-              const lastName = employee.lastName ? employee.lastName.trim() : '';
-
+            const myTeam = response.filter((e: any) => e.isAccess);
+            const mappedData = myTeam.map((employee: any) => {
               return {
                 ...employee,
-                firstName, //  trimmed for sorting
-                lastName,  // trimmed for fallback
-                fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${firstName} ${middleName ? middleName + ' ' : ''}${lastName}`.trim(),
+                fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`.trim(),
               };
-            })
-            .sort((a: any, b: any) => {
-              // Primary: firstName (case-insensitive)
-              const firstCompare = a.firstName.toLowerCase().localeCompare(b.firstName.toLowerCase());
-              if (firstCompare !== 0) return firstCompare;
-
-              // Secondary: lastName (case-insensitive)
-              return a.lastName.toLowerCase().localeCompare(b.lastName.toLowerCase());
             });
 
-          // Add "All Employees" at the top
-          this.getEmployeeInfo.unshift({
-            fullName: 'All Employees',
-            fusionEmpId: this.loggedInUser.fusionEmpId,
-            employeeId: this.loggedInUser.employeeId,
-          });
-        }
-      },
-      error: (err) => console.log(err),
-    });
-}
+            const combinedData = [loggedInEmployee, ...mappedData];
+
+            // Filter unique by employeeId and sort by firstName
+            this.getEmployeeInfo = combinedData
+              .filter((employee, index, self) =>
+                index === self.findIndex((e) => e.employeeId === employee.employeeId)
+              )
+              .sort((a: any, b: any) => (a.firstName ?? '').toLowerCase().localeCompare((b.firstName ?? '').toLowerCase()));
+          }
+        },
+      });
+  }
 
 
   navigation() {

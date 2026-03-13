@@ -1,0 +1,167 @@
+
+<div class="custom-main-component-container">
+  <div class="component-header-content gap-3">
+    <!-- Header -->
+    <app-reports-header />
+
+    <div class="d-flex align-items-center gap-3">
+      @if(rbac.allowedToAccess('Employee Exit Report - Generate.view')){
+      <button type="button" class="custom-btn btn-secondary position-relative" (click)="toggleFilters(filterContent)">
+        <i class="bi bi-funnel me-2"></i>{{'Filters' | translate}}
+        <span *ngIf="isFilterIndicatorActive" class="filter-indicator"></span>
+      </button>
+      }
+
+      @if(rbac.allowedToAccess('Employee Exit Report - Generate.view') && rbac.allowedToAccess('Employee Exit Report - Export.view')){
+      <button type="button" class="custom-btn btn-primary" (click)="exportToExcelExitFeedbackReport()"
+        [disabled]="filteredExitFeedbackData.length == 0 || disableBtn || spinnerLoader1 || spinnerLoader2">
+        @if(spinnerLoader2){
+        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+        <span>{{'Loading...'}}</span>
+        }@else {
+        <span>{{'Export' | translate}}</span>
+        }
+      </button>
+      }
+    </div>
+  </div>
+
+  <div class="custom-table-content">
+    @if(!isLoading){
+    <table id="exitFeedbackReportTable" class="w-100">
+      <thead>
+          <th class="text-center">Employee ID</th>
+          <th>Employee Name</th>
+          <th>Department</th>
+          <th>Team Manager</th>
+          <th>Location</th>
+          <th>Sub Location</th>
+          <th>Exit Type</th>
+          <th>Exit Reason</th>
+          <th>Last Working Day</th>
+          <th class="text-center">Feedback Status</th>
+          <th class="text-center">Rehire Eligible</th>
+      </thead>
+      <tbody>
+        @if (!filteredExitFeedbackData || filteredExitFeedbackData.length === 0) {
+        <tr>
+          <app-no-data-found />
+        </tr>
+        }
+        @else {
+        @for (record of filteredExitFeedbackData; track $index) {
+        <tr>
+          <td class="text-center">{{ record.fusionEmpId ?? '-' }}</td>
+          <td>{{ record.employeeName ?? '-' }}</td>
+          <td>{{ record.department ?? '-' }}</td>
+          <td>{{ record.teamManager ?? '-' }}</td>
+          <td>{{ record.location ?? '-' }}</td>
+          <td>{{ record.subLocation ?? '-' }}</td>
+          <td>{{ record.exitType ?? '-' }}</td>
+          <td>{{ record.exitReason ?? '-' }}</td>
+          <td>{{ (record.lastWorkingDay | date) ?? '-' }}</td>
+          <td class="text-center">{{ record.feedbackSubmitted === 'Yes' ? 'Submitted' : 'No' }}</td>
+          <td class="text-center">{{ record.rehireEligible ?? '-' }}</td>
+        </tr>
+        }
+        }
+      </tbody>
+    </table>
+    }
+    @else {
+    <app-data-loader-content />
+    }
+  </div>
+</div>
+
+<!-- Filter Offcanvas -->
+<ng-template #filterContent let-offcanvas>
+  <div class="custom-filter-container">
+    <div class="offcanvas-filter-header-content offcanvas-filter-header-border">
+      <p class="filter-header m-0">{{'Filters' | translate}}</p>
+      <a (click)="closeCanvas()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+    </div>
+
+    <div class="offcanvas-filter-content">
+      <form [formGroup]="exitFeedbackReportForm" (ngSubmit)="onGenerate()">
+
+        <!-- Date Range -->
+        <div class="mb-3">
+          <label class="form-label custom-label text-nowrap filter-labels mb-3">{{'Select Date Range' | translate}}</label>
+          <div class="custom-date-range-picker">
+            <p-datepicker formControlName="dateRange" [placeholder]="'Please select date'" selectionMode="range"
+             [showIcon]="true" [readonlyInput]="true" styleClass="w-100" />
+          </div>
+        </div>
+
+        <!-- Exit Type -->
+        <div class="mb-3">
+          <label class="form-label custom-label text-nowrap filter-labels mb-3">{{'Select Exit Type' | translate}}</label>
+          <div class="custom-p-multiSelect-content">
+             <p-multiSelect [options]="exitTypeOptions" optionLabel="label" formControlName="exitType"
+              placeholder="Please select exit type" class="form-select custom-select" filterPlaceHolder="Search exit type" resetFilterOnHide="true">
+            </p-multiSelect>
+          </div>
+        </div>
+
+        <!-- Team Manager -->
+        @if(rbac.allowedToAccess('Attendance Team Manager List(Employee Exit).view')){
+        <div class="mb-3">
+          <label class="form-label custom-label text-nowrap filter-labels mb-3">{{'Select Team Manager' | translate}}</label>
+          <div class="custom-p-multiSelect-content">
+             <p-multiSelect [options]="teamManagerDetails" [filter]="true" optionLabel="fullName" filterBy="fullName"
+              formControlName="manager" placeholder="Please select manager"
+              class="form-select custom-select" filterPlaceHolder="Search manager" resetFilterOnHide="true">
+            </p-multiSelect>
+          </div>
+        </div>
+        }
+
+        <!-- Employee -->
+        @if(rbac.allowedToAccess('Attendance All Employees List(Employee Exit).view')){
+        <div class="mb-3">
+          <label class="form-label custom-label text-nowrap filter-labels mb-3">{{'Select Employee' | translate}}</label>
+          <div class="custom-p-multiSelect-content">
+             <p-multiSelect [options]="employeeDetails" optionLabel="fullName" filterBy="fullName" [filter]="true"
+              formControlName="employee" placeholder="Please select employee" class="form-select custom-select"
+              filterPlaceHolder="Search employee" resetFilterOnHide="true">
+            </p-multiSelect>
+          </div>
+        </div>
+        }
+
+        <!-- My Team -->
+        @if(rbac.allowedToAccess('My Team Report(Employee Exit).view') &&!rbac.allowedToAccess('Attendance All Employees List(Employee Exit).view')
+        && !rbac.allowedToAccess('Attendance Team Manager List(Employee Exit).view')){
+        <div class="mb-3">
+          <label class="form-label custom-label text-nowrap filter-labels mb-3">{{'Select Team' | translate}}</label>
+          <div class="custom-p-multiSelect-content">
+             <p-multiSelect [options]="getEmployeeInfo" [filter]="true" optionLabel="fullName" filterBy="fullName"
+              formControlName="team" placeholder="Please select employee" class="form-select custom-select"
+              filterPlaceHolder="Search employee" (onChange)="onClick($event)" resetFilterOnHide="true">
+            </p-multiSelect>
+          </div>
+        </div>
+        }
+
+        <!-- Buttons -->
+        <div class="d-flex offcanvas-footer-content gap-3">
+          <button *ngIf="isAnyFilterApplied()" type="button" class="custom-btn btn-secondary w-100"
+            (click)="clearAllFilters()" [disabled]="spinnerLoader1 || spinnerLoader2">
+            {{'Clear All' | translate}}</button>
+          @if(rbac.allowedToAccess('Employee Exit Report - Generate.view')){
+          <button type="submit" class="custom-btn btn-primary w-100"
+            [disabled]="isExitFeedbackGenerateDisabled || spinnerLoader1">
+            @if(spinnerLoader1){
+            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+            <span>{{'Loading...' | translate}}</span>
+            }@else {
+            <span>{{'Generate' | translate}}</span>
+            }
+          </button>
+          }
+        </div>
+      </form>
+    </div>
+  </div>
+</ng-template>

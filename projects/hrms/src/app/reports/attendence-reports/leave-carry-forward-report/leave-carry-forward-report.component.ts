@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, TemplateRef } from '@angular/core';
+import { Component, OnDestroy, OnInit, TemplateRef, ViewEncapsulation } from '@angular/core';
 import { FormGroup, FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subscription, Subject, takeUntil } from 'rxjs';
@@ -20,13 +20,15 @@ import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-foun
 import { ReportsHeaderComponent } from '../../../shared/reports-tabs/reports-header/reports-header.component';
 import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 import * as XLSX from 'xlsx-js-style';
+import dayjs, { Dayjs } from 'dayjs';
 
 @Component({
   selector: 'app-leave-carry-forward-report',
   imports: [CommonModule, FormsModule, DropdownModule, SelectModule, MultiSelectModule, TranslateModule, ReactiveFormsModule,
     NoDataFoundComponent, DataLoaderContentComponent, ReportsHeaderComponent],
   templateUrl: './leave-carry-forward-report.component.html',
-  styleUrl: './leave-carry-forward-report.component.scss'
+  styleUrl: './leave-carry-forward-report.component.scss',
+  encapsulation: ViewEncapsulation.None,
 })
 export class LeaveCarryForwardReportComponent implements OnInit, OnDestroy {
   moduleinfo: string = '';
@@ -52,11 +54,13 @@ export class LeaveCarryForwardReportComponent implements OnInit, OnDestroy {
   wfhReportForm!: FormGroup;
   spinnerLoader1 = false;
   spinnerLoader2 = false;
+  isFilterIndicatorActive = false;
   disableBtn = false;
   filteredleaveRecords = false;
   selectLeaveEmployeeIds: number[] = [];
   getEmployeeInfo = [] as any;
   localeOptions: any;
+  isYearDropdownTouched = false;
   years = [
     { label: (new Date().getFullYear() - 1).toString(), value: new Date().getFullYear() - 1 },
     { label: new Date().getFullYear().toString(), value: new Date().getFullYear() },
@@ -86,16 +90,17 @@ export class LeaveCarryForwardReportComponent implements OnInit, OnDestroy {
     this.getTeam();
     this.getMyTeam();
     this.getAllLocations();
+    this.getEmployees();
   }
 
   initializeForm() {
     this.LeaveReportForm = this.fb.group({
-      employee: [{ value: null, disabled: true }],
-      year: ['', Validators.required],
-      location: [{ value: '', disabled: true }],
-      subLocation: [{ value: '', disabled: true }],
-      shift: [{ value: '', disabled: true }],
-      categoryName: [{ value: null, disabled: true }]
+      employee: [[]],
+      year: [null, Validators.required],
+      location: [[]],
+      subLocation: [[]],
+      shift: [[]],
+      categoryName: [[]]
     });
     this.LeaveReportForm.valueChanges.subscribe(() => {
       this.disableBtn = true;
@@ -103,23 +108,28 @@ export class LeaveCarryForwardReportComponent implements OnInit, OnDestroy {
   }
 
   clearAllFilters(): void {
-    this.LeaveReportForm.reset();
+    this.LeaveReportForm.reset({
+      employee: [],
+      year: null,
+      location: [],
+      subLocation: [],
+      shift: [],
+      categoryName: []
+    }, { emitEvent: false });
     this.filteredleaveRecord = [];
+    this.isFilterIndicatorActive = false;
     this.disableBtn = false;
     this.subLocationDetails = [];
     this.shiftDetails = [];
     this.categoryDetails = [];
-    this.employeeiddetails = [{ fullName: 'All Employees', employeeId: 'all' }];
-    this.LeaveReportForm.get('employee')?.disable();
-    this.LeaveReportForm.get('location')?.disable();
-    this.LeaveReportForm.get('subLocation')?.disable();
-    this.LeaveReportForm.get('shift')?.disable();
-    this.LeaveReportForm.get('categoryName')?.disable();
+    this.employeeiddetails = [];
+    this.getEmployees();
+    this.isYearDropdownTouched = false;
   }
 
 getEmployeeId() {
   // Initialize with default "All Employees" option
-  this.employeeiddetails = [{ fullName: 'All Employees', employeeId: 'all' }];
+  this.employeeiddetails = [];
 }
 
 
@@ -162,19 +172,32 @@ getTeam() {
   }
 
   get isLeaveGenerateDisabled(): boolean {
-    const { employee,  year, location, subLocation, shift, categoryName } = this.LeaveReportForm.value;
-    // Year is mandatory, at least one other filter must be selected
-    return !year || !(employee ||  location || subLocation || shift || categoryName);
+    const { year } = this.LeaveReportForm.value;
+    return !year || this.spinnerLoader1;
   }
 
   get isClearAllDisabled(): boolean {
     const { employee, year, location, subLocation, shift, categoryName } = this.LeaveReportForm.value;
-    return !(employee || year || location || subLocation || shift || categoryName);
+    return !(
+      (employee && employee.length > 0) ||
+      year ||
+      (location && location.length > 0) ||
+      (subLocation && subLocation.length > 0) ||
+      (shift && shift.length > 0) ||
+      (categoryName && categoryName.length > 0)
+    );
   }
 
   isFilterApplied(): boolean {
     const { employee, year, location, subLocation, shift, categoryName } = this.LeaveReportForm.value;
-    return !!(employee || year || location || subLocation || shift || categoryName);
+    return !!(
+      (employee && employee.length > 0) ||
+      year ||
+      (location && location.length > 0) ||
+      (subLocation && subLocation.length > 0) ||
+      (shift && shift.length > 0) ||
+      (categoryName && categoryName.length > 0)
+    );
   }
 
   toggleFilters(content: TemplateRef<any>) {
@@ -187,29 +210,27 @@ getTeam() {
 
   closeCanvas() {
     this.offcanvasService.dismiss();
+    this.LeaveReportForm.markAsUntouched();
+    this.isYearDropdownTouched = false;
+  }
+
+  onGenerate(): void {
+    this.isFilterIndicatorActive = this.isFilterApplied();
+    this.generateleaveReport();
   }
 
   enableLocation(): void {
-    if (this.LeaveReportForm.get('year')?.value) {
-      this.LeaveReportForm.get('employee')?.enable();
-      this.LeaveReportForm.get('location')?.enable();
-      this.LeaveReportForm.get('location')?.reset();
-      this.LeaveReportForm.get('subLocation')?.reset();
-      this.LeaveReportForm.get('shift')?.reset();
-      this.LeaveReportForm.get('categoryName')?.reset();
-      this.LeaveReportForm.get('subLocation')?.disable();
-      this.LeaveReportForm.get('shift')?.disable();
-      this.LeaveReportForm.get('categoryName')?.disable();
-      this.shiftDetails = [];
-      this.categoryDetails = [];
-      this.subLocationDetails = [];
-    } else {
-      this.LeaveReportForm.get('employee')?.disable();
-      this.LeaveReportForm.get('location')?.disable();
-      this.LeaveReportForm.get('subLocation')?.disable();
-      this.LeaveReportForm.get('shift')?.disable();
-      this.LeaveReportForm.get('categoryName')?.disable();
-    }
+    this.LeaveReportForm.patchValue({
+      // employee: [],
+      location: [],
+      subLocation: [],
+      shift: [],
+      categoryName: []
+    }, { emitEvent: false });
+    this.shiftDetails = [];
+    this.categoryDetails = [];
+    this.subLocationDetails = [];
+    // this.getEmployees();
   }
 
   private getAllLocations(): void {
@@ -223,49 +244,79 @@ getTeam() {
       });
   }
 
-  onLocationChange(location: ILocation): void {
-    if (location?.jobSubLocations?.length) {
-      this.subLocationDetails = location.jobSubLocations;
-      this.LeaveReportForm.get('subLocation')?.enable();
-      this.LeaveReportForm.get('subLocation')?.reset();
-      this.LeaveReportForm.get('shift')?.reset();
-      this.LeaveReportForm.get('categoryName')?.reset();
-      this.LeaveReportForm.get('employee')?.reset();
-      this.employeeiddetails = [];
+  onLocationChange(event: any): void {
+    const selectedLocations = event.value;
+    if (selectedLocations && selectedLocations.length > 0) {
+      // Collect all sub-locations from selected locations
+      let allSubLocations: ISubLocation[] = [];
+      selectedLocations.forEach((location: ILocation) => {
+        if (location.jobSubLocations && location.jobSubLocations.length > 0) {
+          allSubLocations = allSubLocations.concat(location.jobSubLocations);
+        }
+      });
+      this.subLocationDetails = allSubLocations;
+      const locationIds = selectedLocations.map((loc: any) => loc.id).join(',');
+      this.getEmployees(locationIds);
     } else {
       this.subLocationDetails = [];
-      this.LeaveReportForm.get('subLocation')?.enable();
-      this.LeaveReportForm.get('subLocation')?.reset();
+      this.getEmployees();
+    }
+    this.LeaveReportForm.get('subLocation')?.reset();
+    this.LeaveReportForm.get('shift')?.reset();
+    this.LeaveReportForm.get('categoryName')?.reset();
+    this.shiftDetails = [];
+    this.categoryDetails = [];
+
+  }
+
+  getAllShifts(event: any): void {
+    const selectedSubLocations = event.value;
+    const selectedLocations = this.LeaveReportForm.get('location')?.value;
+    const selectedYear = this.LeaveReportForm.get('year')?.value;
+
+    if (selectedSubLocations && selectedSubLocations.length > 0 && selectedLocations && selectedLocations.length > 0 && selectedYear) {
+      this.shiftDetails = [];
+      const locationIds = selectedLocations.map((loc: any) => loc.id).join(',');
+      const subLocationIds = selectedSubLocations.map((sub: any) => sub.id).join(',');
+
+      const params = {
+        locationIds: locationIds,
+        subLocationIds: subLocationIds,
+        year: selectedYear
+      };
+
+      this.http.getDataWithQueryParams(`orgShifts/get-shifts`, params).pipe(takeUntil(this.destroy$)).subscribe({
+        next: (res: any) => {
+          this.shiftDetails = res?.data.flatMap((item: any) => item.orgShiftsItems || []);
+          this.LeaveReportForm.get('shift')?.reset();
+          this.LeaveReportForm.get('categoryName')?.reset();
+          this.categoryDetails = [];
+          this.getEmployees(locationIds, subLocationIds);
+        },
+        error: err => {
+          console.error('Error fetching shifts:', err);
+          this.shiftDetails = [];
+          this.LeaveReportForm.get('shift')?.reset();
+          this.categoryDetails = [];
+        }
+      });
+    } else {
+      this.shiftDetails = [];
+      this.LeaveReportForm.get('shift')?.reset();
+      this.categoryDetails = [];
+      this.LeaveReportForm.get('categoryName')?.reset();
     }
   }
 
-  getAllShifts(subLocation: ISubLocation): void {
-    this.shiftDetails = [];
-    const params = {
-      locationId: subLocation.jobLocationId,
-      subLocationId: subLocation.id
-    };
-    this.http.getDataWithQueryParams(`orgShifts/getshiftlocation`, params).pipe(takeUntil(this.destroy$)).subscribe({
-      next: (res: any) => {
-        this.shiftDetails = res.flatMap((header: any) => header.orgShiftsItems || []);
-        this.LeaveReportForm.get('shift')?.enable();
-        this.LeaveReportForm.get('shift')?.reset();
-        this.LeaveReportForm.get('categoryName')?.reset();
-        this.categoryDetails = [];
-        // Fetch employees based on location and sublocation
-        this.getEmployeesByLocationAndSubLocation(subLocation.jobLocationId, subLocation.id);
-      },
-      error: err => {
-        console.error('Error fetching shifts:', err);
-        this.shiftDetails = [];
-        this.LeaveReportForm.get('shift')?.reset();
-        this.LeaveReportForm.get('shift')?.disable();
-      }
-    });
-  }
-
-  getEmployeesByLocationAndSubLocation(locationId: number, subLocationId: number): void {
-    this.http.getData(`Employeedata/getbylocationandsublocation/${locationId}/${subLocationId}`)
+  getEmployees(locationIds?: string, subLocationIds?: string): void {
+    let params: any = {};
+    if (locationIds) {
+      params.locationIds = locationIds;
+    }
+    if (subLocationIds) {
+      params.subLocationIds = subLocationIds;
+    }
+    this.http.getDataWithQueryParams(`Employeedata/getbylocationandsublocation`, params)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (data: any) => {
@@ -281,100 +332,92 @@ getTeam() {
                 fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${firstName} ${middleName ? middleName + ' ' : ''}${lastName}`.trim(),
               };
             })
-            .sort((a: any, b: any) =>
-              a.firstName.toLowerCase().localeCompare(b.firstName.toLowerCase())
-            );
-
           this.employeeiddetails = [
-            { fullName: 'All Employees', employeeId: 'all' },
+            // { fullName: 'All Employees', employeeId: 'all' },
             ...employeedata
           ];
         },
         error: (reason: any) => {
           console.error('Error fetching employees by location:', reason);
-          this.employeeiddetails = [{ fullName: 'All Employees', employeeId: 'all' }];
+          this.employeeiddetails = [];
         },
       });
   }
 
-  getCategoryDetails(policy: any): void {
-    this.LeaveReportForm.get('categoryName')?.reset();
-    this.LeaveReportForm.get('categoryName')?.enable();
+  getCategoryDetails(event: any): void {
+    const selectedShifts = event.value;
+    const selectedLocations = this.LeaveReportForm.get('location')?.value;
+    const selectedSubLocations = this.LeaveReportForm.get('subLocation')?.value;
+    const selectedYear = this.LeaveReportForm.get('year')?.value;
 
-    let params = {
-      locationId: this.LeaveReportForm.get('location')?.value?.id,
-      subLocationId: this.LeaveReportForm.get('subLocation')?.value?.id,
-      year: this.LeaveReportForm.get('year')?.value,
-      status: 'Published',
-      shiftId: policy.id
-    };
+    if (selectedShifts && selectedShifts.length > 0 && selectedLocations && selectedLocations.length > 0 && selectedSubLocations && selectedSubLocations.length > 0 && selectedYear) {
+      this.LeaveReportForm.get('categoryName')?.reset();
 
-    this.http.getDataWithQueryParams("OrgLeavesCategories", params).pipe(takeUntil(this.destroy$)).subscribe({
-      next: (res: any) => {
-        this.categoryDetails = res;
-      },
-      error: err => {
-        console.error('Error fetching categories:', err);
-        this.categoryDetails = [];
-        this.LeaveReportForm.get('categoryName')?.reset();
-      }
-    });
+      const locationIds = selectedLocations.map((loc: any) => loc.id).join(',');
+      const subLocationIds = selectedSubLocations.map((sub: any) => sub.id).join(',');
+      const shiftIds = selectedShifts.map((shift: any) => shift.id).join(',');
+
+      let params = {
+        locationIds: locationIds,
+        subLocationIds: subLocationIds,
+        year: selectedYear,
+        status: 'Published',
+        shiftIds: shiftIds
+      };
+
+      this.http.getDataWithQueryParams("OrgLeavesCategories/get-categories", params).pipe(takeUntil(this.destroy$)).subscribe({
+        next: (res: any) => {
+          this.categoryDetails = res?.data || [];
+        },
+        error: err => {
+          console.error('Error fetching categories:', err);
+          this.categoryDetails = [];
+          this.LeaveReportForm.get('categoryName')?.reset();
+        }
+      });
+    } else {
+      this.categoryDetails = [];
+      this.LeaveReportForm.get('categoryName')?.reset();
+    }
   }
 
   generateleaveReport(): void {
     if (this.LeaveReportForm.invalid) {
       this.LeaveReportForm.markAllAsTouched();
+      this.isYearDropdownTouched = true;
       return;
     }
-
+    this.offcanvasService.dismiss();
     this.spinnerLoader1 = true;
     this.isLoading = true;
     const formValue = this.LeaveReportForm.value;
-    const isAllEmployeesSelected = formValue.employee?.employeeId === 'all';
+    this.offcanvasService.dismiss();
     
-    const request: IAttendanceDetails = {};
-
-    if (this.selectLeaveEmployeeIds.length >= 0) {
-      const ids = this.selectLeaveEmployeeIds?.join(',');
-      request.employeeId = ids;
-    }
-
+    const request: any = {};
 
     if (formValue.year) {
       request.year = formValue.year;
     }
 
-    if (formValue.location) {
-      request.locationIds = formValue.location.id;
+    if (formValue.location && formValue.location.length > 0) {
+      request.locationIds = formValue.location.map((loc: any) => loc.id).join(',');
     }
 
-    if (formValue.subLocation) {
-      request.subLocationIds = formValue.subLocation.id;
+    if (formValue.subLocation && formValue.subLocation.length > 0) {
+      request.subLocationIds = formValue.subLocation.map((sub: any) => sub.id).join(',');
     }
 
-    if (formValue.shift) {
-      request.shiftIds = formValue.shift.id;
+    if (formValue.shift && formValue.shift.length > 0) {
+      request.shiftIds = formValue.shift.map((shift: any) => shift.id).join(',');
     }
 
-    if (formValue.categoryName) {
-      request.leaveCategoryIds = formValue.categoryName.id;
-    }
-
-
-
-    // Apply manager name if provided
-    // if (formValue.manager) {
-    //   request.teamManagerID = formValue.manager.employeeId;
-    // }
-
-       // Year
-    if (formValue.year) {
-      request.year = formValue.year;
+    if (formValue.categoryName && formValue.categoryName.length > 0) {
+      request.leaveCategoryIds = formValue.categoryName.map((cat: any) => cat.id).join(',');
     }
 
     // Only include employee filter if not "All Employees"
-    if (!isAllEmployeesSelected && formValue.employee?.employeeId) {
-      request.employeeId = formValue.employee.employeeId;
+    if (formValue.employee && formValue.employee.length > 0) {
+      request.employeeId = formValue.employee.map((emp: any) => emp.employeeId).join(',');
     }
 
     this.reportsService.getLeaveCarryForwardReport(request).subscribe({
@@ -408,14 +451,14 @@ getTeam() {
     shift: 'SHIFT',
     location: 'LOCATION',
     subLocation: 'SUB LOCATION',
-    leaveType: 'LEAVE TYPE',
+    leaveType: 'LEAVE CATEGORY',
     entitled: 'ENTITLED',
     availed: 'AVAILED',
     balance: 'BALANCE',
     maxCarryForward: 'MAX CARRY FORWARD',
     actualCarryForward: 'ACTUAL CARRY FORWARD',
     maxEncashment: 'MAX ENCASHMENT',
-    leaveEncashed: 'LEAVES ENCASED',
+    leaveEncashed: 'LEAVES ENCASHED',
     leaveLapsed: 'LEAVES LAPSED'
   };
 
@@ -429,14 +472,14 @@ getTeam() {
     'SHIFT',
     'LOCATION',
     'SUB LOCATION',
-    'LEAVE TYPE',
+    'LEAVE CATEGORY',
     'ENTITLED',
     'AVAILED',
     'BALANCE',
     'MAX CARRY FORWARD',
     'ACTUAL CARRY FORWARD',
     'MAX ENCASHMENT',
-    'LEAVES ENCASED',
+    'LEAVES ENCASHED',
     'LEAVES LAPSED'
   ];
 
@@ -473,10 +516,10 @@ getTeam() {
     e: { r: 0, c: NEW_SEQUENCE.length - 1 }
   }];
 
-  XLSX.utils.sheet_add_aoa(ws, [['LEAVE CARRY FORWARD REPORT']], { origin: 'A1' });
+  XLSX.utils.sheet_add_aoa(ws, [['LEAVE CARRY FORWARD & ENCASHMENT REPORT']], { origin: 'A1' });
 
   ws['A1'].s = {
-    font: { bold: true, sz: 14 },
+    font: { bold: true, sz: 16 },
     alignment: { horizontal: 'center', vertical: 'center' }
   };
 
@@ -507,6 +550,18 @@ getTeam() {
     skipHeader: true
   });
 
+  // Apply middle alignment to all data cells
+  modifiedData.forEach((_, rowIndex) => {
+    NEW_SEQUENCE.forEach((_, colIndex) => {
+      const cellRef = XLSX.utils.encode_cell({ r: rowIndex + 2, c: colIndex });
+      if (ws[cellRef]) {
+        ws[cellRef].s = {
+          alignment: { horizontal: 'center', vertical: 'center' }
+        };
+      }
+    });
+  });
+
   /* =========================
      FILTERS (IMPORTANT)
      ========================= */
@@ -528,15 +583,18 @@ getTeam() {
      WORKBOOK
      ========================= */
   const wb: XLSX.WorkBook = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, 'Leave Carry Forward Report');
-  XLSX.writeFile(wb, 'Leave_Carry_Forward_Report.xlsx');
+  XLSX.utils.book_append_sheet(wb, ws, 'Leave Carry & Encash Report');
+  const today = new Date();
+  const formattedDate = new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }).replace(',', '');
+  XLSX.writeFile(wb, `Leave Carry & Encash Report - ${formattedDate}.xlsx`);
 
   this.spinnerLoader2 = false;
 }
 
 markYearTouched(): void {
-  this.LeaveReportForm.get('year')?.markAsTouched();
-}
+    this.LeaveReportForm.get('year')?.markAsTouched();
+    this.isYearDropdownTouched = true;
+  }
 
 onYearChange(): void {
   const control = this.LeaveReportForm.get('year');
@@ -596,11 +654,11 @@ onYearChange(): void {
           );
 
         // Insert "All Employees" at the top
-        this.getEmployeeInfo.unshift({
-          fullName: 'All Employees',
-          fusionEmpId: this.loggedInUser.fusionEmpId,
-          employeeId: this.loggedInUser.employeeId,
-        });
+        // this.getEmployeeInfo.unshift({
+        //   fullName: 'All Employees',
+        //   fusionEmpId: this.loggedInUser.fusionEmpId,
+        //   employeeId: this.loggedInUser.employeeId,
+        // });
       }
     },
     error: (err) => console.log(err),

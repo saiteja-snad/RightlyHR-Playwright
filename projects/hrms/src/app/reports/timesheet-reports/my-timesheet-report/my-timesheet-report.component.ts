@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, TemplateRef, ViewEncapsulation } from '@angular/core';
 import { ReportsHeaderComponent } from "../../../shared/reports-tabs/reports-header/reports-header.component";
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { AuthService } from '../../../services/auth.service';
@@ -19,16 +19,17 @@ import { ClientData } from '../../../clients.model';
 import { TimesheetReportTabsComponent } from '../../../shared/reports-tabs/timesheet-report-tabs/timesheet-report-tabs.component';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { PaginatorModule } from 'primeng/paginator';
-import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbOffcanvas, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 import { HttpResponse } from '@angular/common/http';
 import { MultiSelectModule } from 'primeng/multiselect';
 @Component({
   selector: 'app-my-timesheet-report',
-   imports: [DatePicker, NgbPopoverModule, MultiSelectModule, CommonModule, FormsModule, DropdownModule, SelectModule, TranslateModule, ReactiveFormsModule,
+  imports: [DatePicker, NgbPopoverModule, MultiSelectModule, CommonModule, FormsModule, DropdownModule, SelectModule, TranslateModule, ReactiveFormsModule,
     NoDataFoundComponent, PaginatorModule, DataLoaderContentComponent, ReportsHeaderComponent, InfoIconComponent],
   templateUrl: './my-timesheet-report.component.html',
-  styleUrl: './my-timesheet-report.component.scss'
+  styleUrl: './my-timesheet-report.component.scss',
+  encapsulation: ViewEncapsulation.None,
 })
 export class MyTimesheetReportComponent implements OnInit, OnDestroy {
   subscription!: Subscription;
@@ -39,6 +40,7 @@ export class MyTimesheetReportComponent implements OnInit, OnDestroy {
   MyTimesheetReportForm!: FormGroup;
   spinnerLoader1 = false;
   spinnerLoader2 = false;
+  isFilterIndicatorActive = false;
   disableBtn = false;
   destroy$ = new Subject<boolean>();
   empinfo: any;
@@ -47,8 +49,8 @@ export class MyTimesheetReportComponent implements OnInit, OnDestroy {
   noclientproject = false;
   phasesData: any[] = [];
   BillableOptions = [
-    { key: 'Yes', value: 'true' },
-    { key: 'No', value: 'false' },
+    { key: 'Billable', value: 'true' },
+    { key: 'Non-Billable', value: 'false' },
   ];
   TimesheetStatus = [
     { key: 'Waiting for Approval', value: 'Waiting for Approval' },
@@ -58,21 +60,23 @@ export class MyTimesheetReportComponent implements OnInit, OnDestroy {
   clientDropdownList: { label: string; value: number }[] = [];
   resourcesArrayList: any;
   page = 1;
-  pageSize = 10;
-  rows = 10;
+  pageSize = 50;
+  rows = 50;
   collectionSize!: number;
   first = 0;
   options = [
-    { label: 10, value: 10 },
-    { label: 15, value: 15 },
-    { label: 20, value: 20 },
-    { label: 25, value: 25 }
+    { label: 50, value: 50 },
+    { label: 100, value: 100 },
+    { label: 150, value: 150 },
+    { label: 200, value: 200 }
   ];
   today: Date = new Date();
   filteredProjects: any[] = [];
   employeeData: any;
   getEmployeeInfo = [] as any;
   isDistinct = true;
+
+
   constructor(
     public authService: AuthService,
     private reportsService: ReportsService,
@@ -81,6 +85,7 @@ export class MyTimesheetReportComponent implements OnInit, OnDestroy {
     public rbac: RbacService,
     public readonly router: Router,
     private conformationPopup: OpenModalService,
+    private offcanvasService: NgbOffcanvas,
   ) { }
 
   ngOnInit(): void {
@@ -122,6 +127,7 @@ export class MyTimesheetReportComponent implements OnInit, OnDestroy {
     this.phasesData = [];
     this.MyTimesheetReportForm.reset();
     this.filteredmytimesheetRecord = [];
+    this.isFilterIndicatorActive = false;
     this.MyTimesheetReportForm.get('project')?.setValue(null);
     this.MyTimesheetReportForm.get('client')?.setValue(null);
     this.MyTimesheetReportForm.get('billable')?.setValue(null);
@@ -132,7 +138,20 @@ export class MyTimesheetReportComponent implements OnInit, OnDestroy {
     this.collectionSize = 0;
   }
 
+  toggleFilters(content: TemplateRef<any>) {
+    this.offcanvasService.open(content, {
+      position: 'end',
+      backdrop: 'static',
+      keyboard: false,
+    });
+  }
+
+  closeCanvas() {
+    this.offcanvasService.dismiss();
+  }
+
   onGenerate() {
+    this.isFilterIndicatorActive = this.isFilterApplied();
     this.generatemytimesheetReport(this.page, this.pageSize, true, true);
   }
   // called for pagination 
@@ -352,6 +371,7 @@ export class MyTimesheetReportComponent implements OnInit, OnDestroy {
 // payload for generate the data
   buildTimesheetReportParams() {
     const formValue = this.MyTimesheetReportForm.value;
+    console.log(formValue);
     const employeeId = this.empinfo?.employeeId || 0;
     // format date as MM/dd/yyyy
     const formatDate = (date: Date | null) => {
@@ -376,8 +396,11 @@ export class MyTimesheetReportComponent implements OnInit, OnDestroy {
     }
     if (startDate) params.StartDate = startDate;
     if (endDate) params.EndDate = endDate;
-    if (formValue.billable?.value) params.Billable = formValue.billable.value;
-    if (formValue.status?.value) params.Statuses = formValue.status.value;
+    if (formValue.billable?.value) params.Billable = formValue.billable?.value;
+    if (formValue.status){
+      console.log(formValue.status);
+       params.Statuses = formValue.status?.map((x: any) => x.value)?.join(',');
+    }
     if (formValue.phases !== null && formValue.phases !== undefined) {
       params.PhaseIds = formValue.phases;
     }
@@ -397,6 +420,7 @@ export class MyTimesheetReportComponent implements OnInit, OnDestroy {
     this.http.getDataIncludeParams(`TimesheetReport/get?${queryString}&page=${this.page}&pageSize=${this.pageSize}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.spinnerLoader1 = false;
+        this.offcanvasService.dismiss();
         if (res.success && res.data?.items) {
           this.filteredmytimesheetRecord = res.data.items;
           this.collectionSize = res.data.totalCount || 0;
@@ -417,17 +441,22 @@ export class MyTimesheetReportComponent implements OnInit, OnDestroy {
         this.filteredmytimesheetRecord = [];
         this.collectionSize = 0;
         this.disableBtn = true;
+        this.offcanvasService.dismiss();
       },
     });
   }
 // export api
   exportmytimesheetreport() {
+    if (this.MyTimesheetReportForm.invalid) return;
+    this.spinnerLoader2 = true;
     const params = this.buildTimesheetReportParams();
     const queryString = new URLSearchParams(params).toString();
     this.http.downloadTimesheetReport(`TimesheetReport/export-report?${queryString}&page=${this.page}&pageSize=${this.pageSize}`).subscribe({
       next: (response: HttpResponse<Blob>) => {
+        this.spinnerLoader2 = false;
         // Extract filename from Content-Disposition
-        let filename = 'mytimesheet.xlsx';
+        let filename = `My Timesheet Report - ${this.http.formattedDate}.xlsx`;
+        
         const contentDisposition = response.headers.get('content-disposition');
         if (contentDisposition) {
           // Handle both regular and UTF-8 encoded filenames
@@ -451,9 +480,10 @@ export class MyTimesheetReportComponent implements OnInit, OnDestroy {
         link.click();
         window.URL.revokeObjectURL(url);
         console.log('Downloaded file:', filename);
-        this.conformationPopup.openSuccessModal("Report Exported Successfully");
+        this.conformationPopup.openSuccessModal("My Timesheet Report exported successfully");
       },
       error: (err: any) => {
+        this.spinnerLoader2 = false;
         this.conformationPopup.openErrorModal('No records found');
       },
       complete: () => { }

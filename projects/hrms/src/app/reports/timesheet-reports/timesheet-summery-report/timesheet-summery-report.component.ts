@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, TemplateRef, ViewEncapsulation } from '@angular/core';
 import { ReportsHeaderComponent } from "../../../shared/reports-tabs/reports-header/reports-header.component";
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { AuthService } from '../../../services/auth.service';
@@ -20,14 +20,16 @@ import { OpenModalService } from '../../../services/open-modal.service';
 import { PaginatorModule } from 'primeng/paginator';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { HttpResponse } from '@angular/common/http';
+import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 @Component({
   selector: 'app-timesheet-summery-report',
   imports: [DatePicker, CommonModule, MultiSelectModule, FormsModule, DropdownModule, SelectModule, TranslateModule, ReactiveFormsModule,
     NoDataFoundComponent, PaginatorModule, DataLoaderContentComponent, ReportsHeaderComponent],
   templateUrl: './timesheet-summery-report.component.html',
-  styleUrl: './timesheet-summery-report.component.scss'
+  styleUrl: './timesheet-summery-report.component.scss',
+  encapsulation: ViewEncapsulation.None,
 })
-export class TimesheetSummeryReportComponent {
+export class TimesheetSummeryReportComponent implements OnInit, OnDestroy {
   subscription!: Subscription;
   loggedInUser = {} as IemployeeDetails;
   isLoading: boolean = false;
@@ -36,6 +38,7 @@ export class TimesheetSummeryReportComponent {
   TimesheetSummeryReportForm!: FormGroup;
   spinnerLoader1 = false;
   spinnerLoader2 = false;
+  isFilterIndicatorActive = false;
   disableBtn = false;
   filteredleaveRecords = false;
   destroy$ = new Subject<boolean>();
@@ -52,8 +55,8 @@ export class TimesheetSummeryReportComponent {
   phasesData: any[] = [];
   getEmployeeInfo = [] as any;
   BillableOptions = [
-    { key: 'Yes', value: 'true' },
-    { key: 'No', value: 'false' },
+    { key: 'Billable', value: 'true' },
+    { key: 'Non-Billable', value: 'false' },
   ];
   TimesheetStatus = [
     { key: 'Waiting for Approval', value: 'Waiting for Approval' },
@@ -61,15 +64,15 @@ export class TimesheetSummeryReportComponent {
     { key: 'Rejected', value: 'Rejected' },
   ];
   page = 1;
-  pageSize = 10;
-  rows = 10;
+  pageSize = 50;
+  rows = 50;
   collectionSize!: number;
   first = 0;
   options = [
-    { label: 10, value: 10 },
-    { label: 15, value: 15 },
-    { label: 20, value: 20 },
-    { label: 25, value: 25 }
+    { label: 50, value: 50 },
+    { label: 100, value: 100 },
+    { label: 150, value: 150 },
+    { label: 200, value: 200 }
   ];
   today: Date = new Date();
   employeeiddetails: any[] | undefined;
@@ -81,6 +84,7 @@ export class TimesheetSummeryReportComponent {
     public rbac: RbacService,
     public readonly router: Router,
     private conformationPopup: OpenModalService,
+     private offcanvasService: NgbOffcanvas,
   ) { }
 
   ngOnInit(): void {
@@ -124,10 +128,16 @@ export class TimesheetSummeryReportComponent {
     this.projectsList = [];
     this.phasesData = [];
     this.employeeData = [];
-    //  Reset form
-    this.TimesheetSummeryReportForm.reset();
-    this.TimesheetSummeryReportForm.reset();
+    this.isFilterIndicatorActive = false;
+    
+    //  Reset pagination and data
     this.filteredtimesheetsummeryRecord = [];
+    this.collectionSize = 0;
+    this.page = 1;
+    this.first = 0;
+    this.pageSize = 50;
+    this.rows = 50;
+
     // reset specific controls properly
     this.TimesheetSummeryReportForm.get('employeid')?.setValue([]);
     this.TimesheetSummeryReportForm.get('projectId')?.setValue(null);
@@ -136,14 +146,15 @@ export class TimesheetSummeryReportComponent {
     this.TimesheetSummeryReportForm.get('status')?.setValue(null);
     this.TimesheetSummeryReportForm.get('dateRange')?.setValue(null);
     this.TimesheetSummeryReportForm.get('phases')?.setValue(null);
+
+    // Reset internal state
+    this.projectId = [];
+
     this.getClientsData();
     this.getProjectsData();
-    this.getAllActiveEmployees();
-    this.getPhaseData();
     this.getEmployeeData();
     this.TimesheetSummeryReportForm.get('phases')?.disable();
     // this.TimesheetSummeryReportForm.get('employeid')?.disable();
-    this.collectionSize = 0;
   }
   // called for pagination 
   onRowsChange() {
@@ -152,6 +163,7 @@ export class TimesheetSummeryReportComponent {
     this.generatetimesheetSummeryReport(this.page, this.pageSize);
   }
   onGenerate() {
+    this.isFilterIndicatorActive = this.isFilterApplied();
     this.generatetimesheetSummeryReport(this.page, this.pageSize, true, true);
   }
   onPageChange(event: any) {
@@ -168,6 +180,20 @@ export class TimesheetSummeryReportComponent {
     this.first = 0;
     this.generatetimesheetSummeryReport(this.page, this.pageSize, false, false);
   }
+
+    toggleFilters(content: TemplateRef<any>) {
+    this.offcanvasService.open(content, {
+      position: 'end',
+      backdrop: 'static',
+      keyboard: false,
+    });
+  }
+
+  closeCanvas() {
+    this.offcanvasService.dismiss();
+  }
+
+
   // get all client data
   getClientsData(): void {
     this.http.getData(`Client/GetAll?status=Active`).pipe(takeUntil(this.destroy$)).subscribe({
@@ -461,10 +487,9 @@ export class TimesheetSummeryReportComponent {
               fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${firstName} ${middleName ? middleName + ' ' : ''}${lastName}`.trim(),
             };
           })
-          .filter((employee: any) => employee.employeeId !== loggedInUser.employeeId).sort((a: any, b: any) =>
-            a.firstName.toLowerCase().localeCompare(b.firstName.toLowerCase())
-          );
-        // Store all employees (including “All Employees” at the top)
+          // .filter((employee: any) => employee.employeeId !== loggedInUser.employeeId).sort((a: any, b: any) =>
+          //   a.firstName.toLowerCase().localeCompare(b.firstName.toLowerCase())
+          // );
         this.employeeiddetails = [
           ...employeedata
         ];
@@ -566,7 +591,7 @@ export class TimesheetSummeryReportComponent {
     if (formValue.projectId !== null && formValue.projectId !== undefined) {
       params.ProjectIds = formValue.projectId;
     }
-    if (formValue.employeid !== null && formValue.employeid !== undefined) {
+    if (formValue.employeid !== null && formValue.employeid !== undefined && !formValue.employeid.includes(0)) {
       params.EmployeeIds = formValue.employeid;
     }
     if (formValue.billable?.value) {
@@ -591,6 +616,7 @@ export class TimesheetSummeryReportComponent {
     this.http.getDataIncludeParams(`TimesheetReport/get?${queryString}&page=${this.page}&pageSize=${this.pageSize}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.spinnerLoader1 = false;
+        this.offcanvasService.dismiss();
         if (res.success && res.data?.items) {
           this.filteredtimesheetsummeryRecord = res.data.items;
           this.collectionSize = res.data.totalCount || 0;
@@ -611,17 +637,21 @@ export class TimesheetSummeryReportComponent {
         this.filteredtimesheetsummeryRecord = [];
         this.collectionSize = 0;
         this.disableBtn = true;
+        this.offcanvasService.dismiss();
       },
     });
   }
   // Export the timesheet summery report
   exportTimesheetSummery() {
+    if (this.TimesheetSummeryReportForm.invalid) return;
+    this.spinnerLoader2 = true;
     const params = this.buildTimesheetReportParams();
     const queryString = new URLSearchParams(params).toString();
     this.http.downloadTimesheetReport(`TimesheetReport/export-report?${queryString}&page=${this.page}&pageSize=${this.pageSize}`).subscribe({
       next: (response: HttpResponse<Blob>) => {
+        this.spinnerLoader2 = false;
         // Extract filename from Content-Disposition
-        let filename = 'TimesheetSummery.xlsx';
+        let filename = `Timesheet Summary Report - ${this.http.formattedDate}.xlsx`;
         const contentDisposition = response.headers.get('content-disposition');
         if (contentDisposition) {
           // Handle both regular and UTF-8 encoded filenames
@@ -645,9 +675,10 @@ export class TimesheetSummeryReportComponent {
         link.click();
         window.URL.revokeObjectURL(url);
         console.log('Downloaded file:', filename);
-        this.conformationPopup.openSuccessModal("Report Exported Successfully");
+        this.conformationPopup.openSuccessModal("Timesheet Summary Report exported successfully");
       },
       error: (err: any) => {
+        this.spinnerLoader2 = false;
         this.conformationPopup.openErrorModal('No records found');
       },
       complete: () => { }

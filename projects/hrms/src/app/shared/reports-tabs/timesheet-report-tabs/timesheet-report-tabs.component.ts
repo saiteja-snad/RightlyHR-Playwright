@@ -63,6 +63,13 @@ export class TimesheetReportTabsComponent {
       icon: '/reports-icons/resource-availability-report.png',
       description: MODULE_INFOS.RESOURCE_AVAILABILITY_REPORTS_MODULE_INFO,
       permission: { feature: 'Resource Availability Report', action: 'view' }
+    },
+     {
+      label: 'Consolidated Timesheet Summary Report',
+      route: '/reports/timesheet-reports/consolidated-timesheet-summary',
+      icon: '/reports-icons/consolidated-timesheet-summary.png',
+      description: MODULE_INFOS.CONSOLIDATED_TIMESHEET_SUMMARY_REPORTS_MODULE_INFO,
+      permission: { feature: 'Consolidated Timesheet Summary Report', action: 'view' }
     }
     // {
     //   label: 'Attendance vs Timesheet Report',

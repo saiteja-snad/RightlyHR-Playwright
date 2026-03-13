@@ -4,48 +4,26 @@
         <app-reports-header/>
 
         <!--right data-->
-        <form autocomplete="off" [formGroup]="reportForm" (ngSubmit)="onSubmit(reportForm)">
-            <div class="d-flex gap-3">
-                @if(rbac.allowedToAccess('Family Members Data - Generate.view')){
-                <div class="d-flex gap-2 align-items-center">
-                    <div class="custom-label filter-labels text-nowrap m-0">{{ 'Employee Status' | translate }}</div>
-                    <div class="custom-p-select-content">
-                        <p-select [options]="empStatusList" optionLabel="empStatusList" [filter]="false"
-                            [showClear]="false" class="form-select custom-select" formControlName="status"
-                            [placeholder]="'Please select status' | translate">
-                            <ng-template #selectedItem let-selectedOption>{{ selectedOption }}</ng-template>
-                            <ng-template let-year #item>{{ year }}</ng-template>
-                        </p-select>
-                    </div>
-                </div>
-                }
+        <div class="d-flex align-items-center gap-3">
+            @if(rbac.allowedToAccess('Family Details Report - Generate.view')){
+            <button type="button" class="custom-btn btn-secondary position-relative" (click)="toggleFilters(filterContent)">
+                <i class="bi bi-funnel me-2"></i>Filters
+                <span *ngIf="isFilterIndicatorActive" class="filter-indicator"></span>
+            </button>
+            }
 
-                <div class="d-flex gap-2">
-                    @if(rbac.allowedToAccess('Family Members Data - Generate.view')){
-                    <button type="submit" class="custom-btn btn-secondary"
-                        [disabled]="reportForm.invalid || spinnerLoader1">
-                        @if(spinnerLoader1){
-                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                        <span>{{ 'Loading...' | translate }}</span>
-                        }@else {
-                        <span>{{ 'Generate' | translate }}</span>
-                        }
-                    </button>
-                    }
-                    @if(rbac.allowedToAccess('Family Members Data - Generate.view') && rbac.allowedToAccess('Family Members Data - Export.view')){
-                    <button type="button" class="custom-btn btn-primary"
-                        [disabled]="familydata.length === 0 || disableBtn" (click)="exportAsExcelFile()">
-                        @if(spinnerLoader2){
-                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                        <span>{{ 'Loading...' | translate }}</span>
-                        }@else {
-                        <span>{{ 'Export' | translate }}</span>
-                        }
-                    </button>
-                    }
-                </div>
-            </div>
-        </form>
+            @if(rbac.allowedToAccess('Family Details Report - Generate.view') && rbac.allowedToAccess('Family Details Report - Export.view')){
+            <button type="button" class="custom-btn btn-primary"
+                [disabled]="familydata.length === 0 || disableBtn" (click)="exportAsExcelFile()">
+                @if(spinnerLoader2){
+                <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                <span>{{'Loading...'}}</span>
+                }@else {
+                <span>{{'Export'}}</span>
+                }
+            </button>
+            }
+        </div>
     </div>
 
     <div class="custom-table-content">
@@ -53,22 +31,22 @@
         <table class="w-100">
             <thead>
                 <tr>
-                    <th>{{ 'Employee ID' | translate }}</th>
-                    <th>{{ 'First Name' | translate }}</th>
-                    <th>{{ 'Middle Name' | translate }}</th>
-                    <th>{{ 'Last Name' | translate }}</th>
-                    <th>{{ 'Work Email' | translate }}</th>
-                    <th>{{ 'Employee Status' | translate }}</th>
-                    <th>{{ 'Name' | translate }}</th>
-                    <th>{{ 'Relation' | translate }}</th>
-                    <th>{{ 'Date of Birth' | translate }}</th>
-                    <th>{{ 'Dependent' | translate }}</th>
+                    <th>{{ "Employee ID" }}</th>
+                    <th>{{ "First Name" }}</th>
+                    <th>{{ "Middle Name" }}</th>
+                    <th>{{ "Last Name" }}</th>
+                    <th>{{ "Work Email" }}</th>
+                    <th>{{ "Employee Status" }}</th>
+                    <th>{{ "Name" }}</th>
+                    <th>{{ "Relation" }}</th>
+                    <th>{{ "Date of Birth" }}</th>
+                    <th>{{ "Dependent" }}</th>
                 </tr>
             </thead>
             <tbody>
                 <ng-container *ngIf="familydata.length > 0; else noData">
                     @for(row of familydata; track row){
-                    <tr>
+                   <tr>
                         <td>{{ row.employeeId || "-" }}</td>
                         <td>{{ row.firstName || "-" }}</td>
                         <td>{{ row.middleName || "-" }}</td>
@@ -115,3 +93,45 @@
         }
     </div>
 </div>
+
+<!-- Filter Offcanvas -->
+<ng-template #filterContent let-offcanvas>
+    <div class="custom-filter-container">
+        <div class="offcanvas-filter-header-content offcanvas-filter-header-border">
+            <p class="filter-header m-0">{{'Filters' | translate}}</p>
+            <a (click)="closeCanvas()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+        </div>
+
+        <div class="offcanvas-filter-content">
+            <form [formGroup]="reportForm" (ngSubmit)="onSubmit(reportForm)">
+                
+                <!-- Employee Status -->
+                <div class="mb-3">
+                    <label class="form-label custom-label text-nowrap filter-labels mb-3">{{'Employee Status' | translate}}</label>
+                    <div class="custom-p-multiSelect-content">
+                        <p-multiSelect [options]="employeeStatusOptions" optionLabel="label" optionValue="value" [filter]="true"
+                            [showClear]="false" class="form-select custom-select" formControlName="status"
+                            placeholder="Please select status" filterPlaceHolder="Search status">
+                        </p-multiSelect>
+                    </div>
+                </div>
+
+                <div class="d-flex offcanvas-footer-content gap-3">
+                    <button *ngIf="isFilterApplied() || familydata.length > 0" type="button" class="custom-btn btn-secondary w-100" (click)="clearAllFilters()" [disabled]="spinnerLoader1">
+                        Clear All</button>
+                    @if(rbac.allowedToAccess('Family Details Report - Generate.view')){
+                    <button type="submit" class="custom-btn btn-primary w-100" 
+                        [disabled]="reportForm.invalid || spinnerLoader1">
+                        @if(spinnerLoader1){
+                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                        <span>{{'Loading...'}}</span>
+                        }@else {
+                        <span>{{'Generate'}}</span>
+                        }
+                    </button>
+                    }
+                </div>
+            </form>
+        </div>
+    </div>
+</ng-template>

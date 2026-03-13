@@ -2647,12 +2647,12 @@
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center"
-                                *ngIf="per.fields === 'Employee Master Data'  || per.fields === 'Employee Master Data - Generate'
-                                || per.fields === 'Employee Master Data - Export' || per.fields === 'Job Location Wise Data'
-                                || per.fields === 'Job Location Wise Data - Generate' || per.fields === 'Job Location Wise Data - Export'
-                                || per.fields === 'Branch Location Wise Data' || per.fields === 'Branch Location Wise Data - Generate'
-                                || per.fields === 'Branch Location Wise Data - Export' || per.fields === 'Family Members Data'
-                                || per.fields === 'Family Members Data - Generate' || per.fields === 'Family Members Data - Export' ">
+                                *ngIf="per.fields === 'Employee Overview Report'  || per.fields === 'Employee Overview Report - Generate'
+                                || per.fields === 'Employee Overview Report - Export' || per.fields === 'Job Location Report'
+                                || per.fields === 'Job Location Report - Generate' || per.fields === 'Job Location Report - Export'
+                                || per.fields === 'Branch-Wise Employee Report' || per.fields === 'Branch-Wise Employee Report - Generate'
+                                || per.fields === 'Branch-Wise Employee Report - Export' || per.fields === 'Family Details Report'
+                                || per.fields === 'Family Details Report - Generate' || per.fields === 'Family Details Report - Export' ">
                                 <td class="text-align-center">{{ per.fields }}</td>
                                 <td scope="row">
                                     <input type="checkbox" [(ngModel)]="per.View" name="{{ per.fields }}.view"
@@ -2726,9 +2726,10 @@
                             || per.fields === 'Leave Summary Report'|| per.fields === 'Leave Summary Report - Generate' || per.fields === 'Leave Summary Report - Export'
                             || per.fields === 'Comp Off Report' || per.fields === 'Comp Off Report - Generate'  || per.fields === 'Comp Off Report - Export'
                             || per.fields === 'WFH Report' || per.fields === 'WFH Report - Generate' || per.fields === 'WFH Report - Export'
-                            || per.fields === 'Inactive Empolyee Report' || per.fields === 'Inactive Empolyee Report - Generate' || per.fields === 'Inactive Empolyee Report - Export'
+                            || per.fields === 'Inactive Employee Leave Summary Report' || per.fields === 'Inactive Employee Leave Summary Report - Generate' || per.fields === 'Inactive Employee Leave Summary Report - Export'
                             || per.fields === 'Yearly Summary Report' || per.fields === 'Yearly Summary Report - Generate' || per.fields === 'Yearly Summary Report - Export'
                             || per.fields === 'Permission Report' || per.fields === 'Permission Report - Generate' || per.fields === 'Permission Report - Export'
+                            || per.fields === 'Employee Exit Report' || per.fields === 'Employee Exit Report - Generate' || per.fields === 'Employee Exit Report - Export'
                             || per.fields === 'Regularization Report' || per.fields === 'Regularization Report - Generate' || per.fields === 'Regularization Report - Export'
                             || per.fields === 'Remote Login Report'|| per.fields === 'Remote Login Report - Generate' || per.fields === 'Remote Login Report - Export'
                              || per.fields === 'Leave Carry Forward & Encashment Report'|| per.fields === 'Leave Carry Forward & Encashment Report - Generate' || per.fields === 'Leave Carry Forward & Encashment Report - Export'
@@ -2827,6 +2828,8 @@
                             per.fields === 'My Team Report(WFH)'||per.fields === 'Attendance All Employees List(RemoteLogin)' || per.fields === 'Attendance Team Manager List(RemoteLogin)' ||
                             per.fields === 'My Team Report(RemoteLogin)' || per.fields === 'Attendance All Employees List(Permission)' ||
                             per.fields === 'Attendance Team Manager List(Permission)' || per.fields === 'My Team Report(Permission)' ||
+                            per.fields === 'Attendance All Employees List(Employee Exit)' || per.fields === 'Attendance Team Manager List(Employee Exit)' ||
+                            per.fields === 'My Team Report(Employee Exit)' ||
                             per.fields === 'Attendance All Employees List(Regularization)' || per.fields === 'Attendance Team Manager List(Regularization)' ||
                             per.fields === 'My Team Report(Regularization)' || per.fields === 'Attendance All Employees List(Leave Carry Forward & Encashment)' ||
                             per.fields === 'Attendance Team Manager List(Leave Carry Forward & Encashment)' || per.fields === 'My Team Report(Leave Carry Forward & Encashment)'">
@@ -2871,6 +2874,7 @@
                             || per.fields === 'Project Effort Report' || per.fields === 'Project Effort Report - Generate' || per.fields === 'Project Effort Report - Export'
                             || per.fields === 'Utilization Report' || per.fields === 'Utilization Report - Generate' || per.fields === 'Utilization Report - Export'
                             || per.fields === 'Resource Availability Report' || per.fields === 'Resource Availability Report - Generate' || per.fields === 'Resource Availability Report - Export'
+                            || per.fields === 'Consolidated Timesheet Summary Report' || per.fields === 'Consolidated Timesheet Summary Report - Generate' || per.fields === 'Consolidated Timesheet Summary Report - Export'
                             || per.fields === 'Attendance vs Timesheet Report' || per.fields === 'Attendance vs Timesheet Report - Generate' || per.fields === 'Attendance vs Timesheet Report - Export' ">
                                 <td class="text-align-center">{{ per.fields }}</td>
                                 <td scope="row">

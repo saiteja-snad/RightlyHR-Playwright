@@ -2,63 +2,26 @@
     <div class="component-header-content">
         <app-reports-header/>
 
-        <!--right data-->
-        <form autocomplete="off" [formGroup]="reportForm" (ngSubmit)="onSubmit(reportForm)">
-            <div class="d-flex align-items-center gap-3">
-                   <div *ngIf="reportForm.get('dateOfJoining')?.value">
-          <button type="button" class="clear-all-btn" (click)="clearAllFilters()" >{{ 'Clear All' | translate }}</button>
-        </div>
-                @if(rbac.allowedToAccess('Branch Location Wise Data - Generate.view')){
-                <div class="d-flex gap-2 align-items-center">
-                    <label class="filter-labels text-nowrap m-0">{{ 'Date Of Joining' | translate }}</label>
-                    <div class="custom-date-range-picker">
-                        <p-datepicker formControlName="dateOfJoining" [placeholder]="'Please Select Date' | translate" selectionMode="range"
-                            [showIcon]="true" [readonlyInput]="true" />
-                    </div>
-                </div>
-
-                <div class="d-flex gap-2 align-items-center">
-                    <label class="filter-labels text-nowrap m-0">{{ 'Branch Location/Code' | translate }}</label>
-                    <div class="custom-p-select-content">
-                        <p-select [options]="branchLocations" optionLabel="branchLocation1" optionValue="branchCode"
-                            [filter]="false" [showClear]="false" class="form-select custom-select"
-                            formControlName="location" [placeholder]="'Please select branch' | translate">
-                            <ng-template let-option pTemplate="item">{{ option.branchLocation1
-                                }}/{{option.branchCode}}</ng-template>
-                            <ng-template let-selectedOption pTemplate="selectedItem">{{ selectedOption.branchLocation1
-                                }}/{{selectedOption.branchCode}}</ng-template>
-                        </p-select>
-                    </div>
-                </div>
+        <div class="d-flex align-items-center gap-3">
+            @if(rbac.allowedToAccess('Branch-Wise Employee Report - Generate.view')){
+            <button type="button" class="custom-btn btn-secondary position-relative" (click)="toggleFilters(filterContent)">
+              <i class="bi bi-funnel me-2"></i>Filters
+              <span *ngIf="isFilterIndicatorActive" class="filter-indicator"></span>
+            </button>
+            }
+    
+            @if(rbac.allowedToAccess('Branch-Wise Employee Report - Generate.view') && rbac.allowedToAccess('Branch-Wise Employee Report - Export.view') ){
+              <button type="button" [disabled]="standardReportData.length === 0 || disableBtn"
+                (click)="onClickBranchLocationExport()" class="custom-btn btn-primary">
+                @if(spinnerLoader){
+                <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                <span>{{'Loading...'}}</span>
+                }@else {
+                <span>{{'Export'}}</span>
                 }
-                <div class="d-flex gap-2">
-                    @if(rbac.allowedToAccess('Branch Location Wise Data - Generate.view')){
-                    <button type="submit" class="custom-btn btn-secondary"
-                        [disabled]="!reportForm.get('location')?.value && !reportForm.get('dateOfJoining')?.value || spinnerLoader1">
-                        @if(spinnerLoader1){
-                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                        <span>{{ 'Loading...' | translate }}</span>
-                        }@else {
-                        <span>{{ 'Generate' | translate }}</span>
-                        }
-                    </button>
-                    }
-                    @if(rbac.allowedToAccess('Branch Location Wise Data - Generate.view') &&
-                    rbac.allowedToAccess('Branch Location Wise Data - Export.view') ){
-                    <button type="button" class="custom-btn btn-primary"
-                        [disabled]="standardReportData.length === 0 || disableBtn"
-                        (click)="onClickBranchLocationExport() ">
-                        @if(spinnerLoader){
-                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                        <span>{{ 'Loading...' | translate }}</span>
-                        }@else {
-                        <span>{{ 'Export' | translate }}</span>
-                        }
-                    </button>
-                    }
-                </div>
-            </div>
-        </form>
+              </button>
+            }
+        </div>
     </div>
 
     <div class="custom-table-content">
@@ -66,36 +29,44 @@
         <table class="w-100" id="branchLocation">
             <thead>
                 <tr>
-                    <th>{{ 'Employee ID' | translate }}</th>
-                    <th>{{ 'Salutation' | translate }}</th>
-                    <th>{{ 'First Name' | translate }}</th>
-                    <th>{{ 'Middle Name' | translate }}</th>
-                    <th>{{ 'Last Name' | translate }}</th>
-                    <th>{{ 'Status' | translate }}</th>
-                    <th>{{ 'Date Of Joining' | translate }}</th>
-                    <th>{{ 'Address Line 1(current)' | translate }}</th>
-                    <th>{{ 'Address Line 2(current)' | translate }}</th>
-                    <th>{{ 'City(current)' | translate }}</th>
-                    <th>{{ 'State(current)' | translate }}</th>
-                    <th>{{ 'Country(current)' | translate }}</th>
-                    <th>{{ 'ZipCode(current)' | translate }}</th>
-                    <th>{{ 'Address Line 1(permanent)' | translate }}</th>
-                    <th>{{ 'Address Line 2(permanent)' | translate }}</th>
-                    <th>{{ 'City(permanent)' | translate }}</th>
-                    <th>{{ 'State(permanent)' | translate }}</th>
-                    <th>{{ 'Country(permanent)' | translate }}</th>
-                    <th>{{ 'ZipCode(permanent)' | translate }}</th>
-                    <th>{{ 'Work Number' | translate }}</th>
-                    <th>{{ 'Work Mail-Id' | translate }}</th>
-                    <th>{{ 'Mobile Phone' | translate }}</th>
-                    <th>{{ 'Branch Location/Code' | translate }}</th>
-                    <th>{{ 'Grade Name' | translate }}</th>
-                    <th>{{ 'Department' | translate }}</th>
-                    <th>{{ 'Location' | translate }}</th>
-                    <th>{{ 'Sub Location' | translate }}</th>
-                    <th>{{ 'Shift' | translate }}</th>
-                    <th>{{ 'Shift Code' | translate }}</th>
-                    <th>{{ 'Job Type' | translate }}</th>
+                    <th>{{ "Employee ID" }}</th>
+                    <th>{{ "Salutation" }}</th>
+                    <th>{{ "First Name" }}</th>
+                    <th>{{ "Middle Name" }}</th>
+                    <th>{{ "Last Name" }}</th>
+                    <th>{{ "Employee Status" }}</th>
+                    <th>{{ "Date Of Joining" }}</th>
+                    <th>{{ "Work Number" }}</th>
+                    <th>{{ "Phone Number" }}</th>
+                    <th>{{ 'Work Mail'}}</th>
+                    <th>{{"Personal Email"}}</th>
+
+                    <th>{{ "Address Line 1(Current)" }}</th>
+                    <th>{{ "Address Line 2(Current)" }}</th>
+                    <th>{{ "City(Current)" }}</th>
+                    <th>{{ "State(Current)" }}</th>
+                    <th>{{ "Country(Current)" }}</th>
+                    <th>{{ "ZipCode(Current)" }}</th>
+                    <th>{{ "Address Line 1(Permanent)" }}</th>
+                    <th>{{ "Address Line 2(Permanent)" }}</th>
+                    <th>{{ "City(Permanent)" }}</th>
+                    <th>{{ "State(Permanent)" }}</th>
+                    <th>{{ "Country(Permanent)" }}</th>
+                    <th>{{ "ZipCode(Permanent)" }}</th>
+                    
+                    <th>{{"Job Effective Date"}}</th>
+                    <th>{{ "Branch Code" }}</th>
+                    <th>{{ "Job Role" }}</th>
+                    <th>{{ "Job Grade" }}</th>
+                    <th>{{ "Department" }}</th>
+                    <th>{{"Team"}}</th>
+                    <th>{{"Team Manager"}}</th>
+                    <th>{{"Reporting Manager"}}</th>
+                    <th>{{ "Location" }}</th>
+                    <th>{{ "Sub Location" }}</th>
+                    <th>{{ "Shift" }}</th>
+                    <th>{{ "Shift Code" }}</th>
+                    <th>{{ "Job Type" }}</th>
                 </tr>
             </thead>
             <tbody>
@@ -108,7 +79,14 @@
                         <td>{{ emp.middleName ? emp.middleName : '-' }}</td>
                         <td>{{ emp.lastName ? emp.lastName : '-' }}</td>
                         <td>{{ emp.empstatus ? emp.empstatus : '-' }}</td>
-                        <td>{{ emp.dateOfJoining ? (emp.dateOfJoining | date:'MM-dd-yyyy') : '-' }}</td>
+                        <td>{{ emp.dateOfJoining ? (emp.dateOfJoining | dateformat) : '-' }}</td>
+
+                        <td>{{ extractPhoneCode(emp.workPhoneCountryCode) + (emp.workPhone ? ' ' + emp.workPhone : ' -') }}</td>
+                        <td>{{ extractPhoneCode(emp.mobilePhoneCountryCode) + (emp.contactnumber ? ' ' + emp.contactnumber : ' -') }}</td>
+                        <td>{{ emp.workEmail ? emp.workEmail : '-'}}</td>
+                        <td>{{ emp.emailaddress ? emp.emailaddress : '-'}}</td>
+
+
                         <td>{{ emp.currentaddressline1 ? emp.currentaddressline1 : '-' }}</td>
                         <td>{{ emp.currentaddressline2 ? emp.currentaddressline2 : '-' }}</td>
                         <td>{{ emp.currentcity ? emp.currentcity : '-' }}</td>
@@ -121,12 +99,15 @@
                         <td>{{ emp.permanentstate ? emp.permanentstate : '-' }}</td>
                         <td>{{ emp.permanentcountry ? emp.permanentcountry : '-' }}</td>
                         <td>{{ emp.permanentzipcode ? emp.permanentzipcode : '-' }}</td>
-                        <td>{{ extractPhoneCode(emp.workPhoneCountryCode) + (emp.workPhone ? ' ' + emp.workPhone : ' -') }}</td>
-                        <td>{{ emp.workEmail ? emp.workEmail : '-'}}</td>
-                        <td>{{ extractPhoneCode(emp.mobilePhoneCountryCode) + (emp.contactnumber ? ' ' + emp.contactnumber : ' -') }}</td>
+                        
+                        <td>{{ emp.jobeffectivedate ? (emp.jobeffectivedate | dateformat) : '-' }}</td>
                         <td>{{ emp.branchcode ? emp.branchcode : '-' }}</td>
+                        <td>{{ emp.jobRole ? emp.jobRole : '-' }}</td>
                         <td>{{ emp.gradeName ? emp.gradeName : '-' }}</td>
                         <td>{{ emp.departmentName ? emp.departmentName : '-' }}</td>
+                        <td>{{ emp.subdepartment_name ? emp.subdepartment_name : '-' }}</td>
+                        <td>{{ emp.teammanager ? emp.teammanager : '-'}}</td>
+                        <td>{{ emp.reportingManager ? emp.reportingManager : '-' }}</td>
                         <td>{{ emp.joblocationname ? emp.joblocationname : '-' }}</td>
                         <td>{{ emp.jobsublocationname ? emp.jobsublocationname : '-' }}</td>
                         <td>{{ emp.shiftname ? emp.shiftname : '-' }}</td>
@@ -148,3 +129,71 @@
         }
     </div>
 </div>
+
+<!-- Filter Offcanvas -->
+<ng-template #filterContent let-offcanvas>
+  <div class="custom-filter-container">
+    <div class="offcanvas-filter-header-content offcanvas-filter-header-border">
+      <p class="filter-header m-0">{{'Filters' | translate}}</p>
+      <a (click)="closeCanvas()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+    </div>
+
+    <div class="offcanvas-filter-content">
+      <form [formGroup]="reportForm" (ngSubmit)="onSubmit(reportForm)">
+        
+        <!-- Date of Joining -->
+        <div class="mb-3">
+           <label class="form-label custom-label text-nowrap filter-labels mb-3">{{'Date Of Joining' | translate}}</label>
+           <div class="custom-date-range-picker">
+            <p-datepicker formControlName="dateOfJoining" [placeholder]="'Please select date range'" selectionMode="range"
+              [showIcon]="true" [readonlyInput]="true"/>
+          </div>
+        </div>
+        
+        <!-- Branch Location/Code -->
+        <div class="mb-3">
+          <label class="form-label custom-label text-nowrap filter-labels mb-3">{{'Branch Location/Code' | translate}}</label>
+          <div class="custom-p-select-content">
+            <p-select [options]="branchLocations" optionLabel="branchLocation1" optionValue="branchCode"
+                [filter]="false" [showClear]="false" class="form-select custom-select" [resetFilterOnHide]="true" 
+                filterPlaceHolder="Search branch location" formControlName="location" placeholder="Please select branch">
+                <ng-template let-option pTemplate="item">
+                    {{ option.branchLocation1 }}<span *ngIf="option.branchCode !== 'All'">/{{option.branchCode}}</span>
+                </ng-template>
+                <ng-template let-selectedOption pTemplate="selectedItem">
+                    {{ selectedOption.branchLocation1 }}<span *ngIf="selectedOption.branchCode !== 'All'">/{{selectedOption.branchCode}}</span>
+                </ng-template>
+            </p-select>
+          </div>
+        </div>
+
+        <!-- Employee Status -->
+        <div class="mb-3">
+          <label class="form-label custom-label text-nowrap filter-labels mb-3">{{'Employee Status' | translate}}</label>
+          <div class="custom-p-multiSelect-content">
+            <p-multiSelect [options]="employeeStatusOptions" optionLabel="label" optionValue="value" [filter]="true"
+              formControlName="empStatus" class="form-select custom-select" placeholder="Please select employee status" [resetFilterOnHide]="true"
+              filterPlaceHolder="Search status">
+            </p-multiSelect>
+          </div>
+        </div>
+
+        <div class="d-flex offcanvas-footer-content gap-3">
+          <button *ngIf="isFilterApplied() || standardReportData.length > 0" type="button" class="custom-btn btn-secondary w-100" (click)="clearAllFilters()" [disabled]="spinnerLoader1">
+            Clear All</button>
+           @if(rbac.allowedToAccess('Branch-Wise Employee Report - Generate.view')){
+          <button type="submit" class="custom-btn btn-primary w-100" 
+            [disabled]="(!reportForm.get('location')?.value && !reportForm.get('dateOfJoining')?.value && !reportForm.get('empStatus')?.value) || spinnerLoader1">
+            @if(spinnerLoader1){
+            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+            <span>{{'Loading...'}}</span>
+            }@else {
+            <span>{{'Generate'}}</span>
+            }
+          </button>
+          }
+        </div>
+      </form>
+    </div>
+  </div>
+</ng-template>

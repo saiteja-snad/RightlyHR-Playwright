@@ -1,6 +1,5 @@
 
-
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, TemplateRef, ViewEncapsulation } from '@angular/core';
 import { ReportsHeaderComponent } from "../../../shared/reports-tabs/reports-header/reports-header.component";
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { AuthService } from '../../../services/auth.service';
@@ -21,19 +20,20 @@ import { ClientData } from '../../../clients.model';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { PaginatorModule } from 'primeng/paginator';
 import { MultiSelectModule } from 'primeng/multiselect';
-import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbOffcanvas, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 import { HttpResponse } from '@angular/common/http';
 import { IResourceDetail } from '../../../timesheetmodel';
 import { ChangeDetectorRef } from '@angular/core';
 @Component({
   selector: 'app-team-timesheet-report',
-   imports: [DatePicker, CommonModule, NgbPopoverModule, MultiSelectModule, FormsModule, DropdownModule, SelectModule, TranslateModule, ReactiveFormsModule,
+  imports: [DatePicker, CommonModule, NgbPopoverModule, MultiSelectModule, FormsModule, DropdownModule, SelectModule, TranslateModule, ReactiveFormsModule,
     NoDataFoundComponent, PaginatorModule, DataLoaderContentComponent, ReportsHeaderComponent, InfoIconComponent],
   templateUrl: './team-timesheet-report.component.html',
-  styleUrl: './team-timesheet-report.component.scss'
+  styleUrl: './team-timesheet-report.component.scss',
+  encapsulation: ViewEncapsulation.None,
 })
-export class TeamTimesheetReportComponent {
+export class TeamTimesheetReportComponent  implements OnInit, OnDestroy {
   subscription!: Subscription;
   loggedInUser = {} as IemployeeDetails;
   isLoading: boolean = false;
@@ -42,6 +42,7 @@ export class TeamTimesheetReportComponent {
   TeamTimesheetReportForm!: FormGroup;
   spinnerLoader1 = false;
   spinnerLoader2 = false;
+  isFilterIndicatorActive = false;
   disableBtn = false;
   filteredleaveRecords = false;
   destroy$ = new Subject<boolean>();
@@ -58,8 +59,8 @@ export class TeamTimesheetReportComponent {
   phasesData: any[] = [];
   getEmployeeInfo = [] as any;
   BillableOptions = [
-    { key: 'Yes', value: 'true' },
-    { key: 'No', value: 'false' },
+    { key: 'Billable', value: 'true' },
+    { key: 'Non-Billable', value: 'false' },
   ];
   TimesheetStatus = [
     { key: 'Waiting for Approval', value: 'Waiting for Approval' },
@@ -67,15 +68,15 @@ export class TeamTimesheetReportComponent {
     { key: 'Rejected', value: 'Rejected' },
   ];
   page = 1;
-  pageSize = 10;
-  rows = 10;
+  pageSize = 50;
+  rows = 50;
   collectionSize!: number;
   first = 0;
   options = [
-    { label: 10, value: 10 },
-    { label: 15, value: 15 },
-    { label: 20, value: 20 },
-    { label: 25, value: 25 }
+    { label: 50, value: 50 },
+    { label: 100, value: 100 },
+    { label: 150, value: 150 },
+    { label: 200, value: 200 }
   ];
   employeeiddetails: any[] = [];
   today: Date = new Date();
@@ -87,6 +88,7 @@ export class TeamTimesheetReportComponent {
     public rbac: RbacService,
     public readonly router: Router,
     private conformationPopup: OpenModalService,
+    private offcanvasService: NgbOffcanvas,
     private cdr: ChangeDetectorRef
   ) { }
 
@@ -124,11 +126,11 @@ export class TeamTimesheetReportComponent {
     const isClientSelected = Array.isArray(formValue.clientId) ? formValue.clientId.length > 0 : !!formValue.clientId;
     const isProjectSelected = Array.isArray(formValue.projectId) ? formValue.projectId.length > 0 : !!formValue.projectId;
     const isEmployeeSelected = Array.isArray(formValue.employeid) ? formValue.employeid.length > 0 : !!formValue.employeid;
-    const isBillableSelected = formValue.billable != null;
-    const isStatusSelected = formValue.status != null;
+    const isBillableSelected = Array.isArray(formValue.billable) ? formValue.billable.length > 0 : !!formValue.billable;
+    const isStatusSelected = Array.isArray(formValue.status) ? formValue.status.length > 0 : !!formValue.status;
     const isDateRangeSelected = Array.isArray(formValue.dateRange) ? formValue.dateRange.length > 0 : !!formValue.dateRange;
-    const isPhaseSelected = formValue.phases != null && formValue.phases.value != null;
-    return (isClientSelected ||isProjectSelected ||isEmployeeSelected ||isBillableSelected ||isStatusSelected ||isDateRangeSelected || isPhaseSelected);
+    const isPhaseSelected = Array.isArray(formValue.phases) ? formValue.phases.length > 0 : (formValue.phases != null && formValue.phases.value != null);
+    return (isClientSelected || isProjectSelected || isEmployeeSelected || isBillableSelected || isStatusSelected || isDateRangeSelected || isPhaseSelected);
   }
 
   filteredProjects: any[] | undefined | null;
@@ -137,6 +139,7 @@ export class TeamTimesheetReportComponent {
     this.phasesData = [];
     this.TeamTimesheetReportForm.reset();
     this.filteredtimesheetsummeryRecord = [];
+    this.isFilterIndicatorActive = false;
     if (this.rbac.allowedToAccess('Team Timesheet Report - Admin-Approval.view')) {
       this.getClientsData();
       this.getProjectsData();
@@ -157,6 +160,18 @@ export class TeamTimesheetReportComponent {
     this.TeamTimesheetReportForm.get('phases')?.disable();
   }
 
+  toggleFilters(content: TemplateRef<any>) {
+    this.offcanvasService.open(content, {
+      position: 'end',
+      backdrop: 'static',
+      keyboard: false,
+    });
+  }
+
+  closeCanvas() {
+    this.offcanvasService.dismiss();
+  }
+
   // called for pagination 
   onRowsChange() {
     this.page = 1;
@@ -164,6 +179,7 @@ export class TeamTimesheetReportComponent {
     this.generateteamTimesheetReport(this.page, this.pageSize);
   }
   onGenerate() {
+    this.isFilterIndicatorActive = this.isFilterApplied();
     this.generateteamTimesheetReport(this.page, this.pageSize, true, true);
   }
   onPageChange(event: any) {
@@ -379,7 +395,6 @@ export class TeamTimesheetReportComponent {
           .filter((employee: any) => employee.employeeId !== loggedInUser.employeeId).sort((a: any, b: any) =>
             a.firstName.toLowerCase().localeCompare(b.firstName.toLowerCase())
           );
-        // Store all employees (including “All Employees” at the top)
         this.employeeiddetails = [
           ...employeedata
         ];
@@ -478,7 +493,35 @@ export class TeamTimesheetReportComponent {
         }
       });
   }
-  
+  // onProjectChange(event: any) {
+  //   const selectedProjectIds = event.value;
+
+  //   // CASE 1: No project is selected
+  //   if (!selectedProjectIds || selectedProjectIds.length === 0) {
+  //      this.projectId = [];
+  //     this.phasesData = [];  
+  //      this.employeeData = [];                                    
+  //     this.TeamTimesheetReportForm.get('phases')?.setValue([]);    
+  //     this.TeamTimesheetReportForm.get('phases')?.disable();   
+  //      this.getTeamManagersDetails();
+  //       this.projectId = 0;   
+  //         // Wait briefly to ensure getTeamManagersDetails() completes (optional)
+  //       setTimeout(() => {
+  //         if (this.getEmployeeInfo?.length) {
+  //           this.employeeData = this.getEmployeeInfo.map((emp: any) => ({
+  //             id: emp.employeeId,
+  //             name: emp.fullName
+  //           }));
+  //         }
+  //       }, 300); 
+  //     return;
+  //   }
+  //   // CASE 2: Project(s) selected
+  //    this.projectId = selectedProjectIds;
+  //   this.TeamTimesheetReportForm.get('phases')?.enable();          
+  //   this.getAllActiveEmployees();                                
+  // }
+
   onProjectChange(event: any) {
     const selectedProjectIds = event.value;
     const selectedProjects: number[] = this.TeamTimesheetReportForm.get('projectId')?.value || [];
@@ -539,7 +582,18 @@ export class TeamTimesheetReportComponent {
           const validEmployeeSelections = this.TeamTimesheetReportForm.get('employeid')?.value?.filter((selectedId: any) =>
             this.employeeData.some((emp: any) => emp.id === selectedId)) || [];
           // update employee selection
-          this.TeamTimesheetReportForm.get('employeid')?.setValue(validEmployeeSelections);        
+          this.TeamTimesheetReportForm.get('employeid')?.setValue(validEmployeeSelections);
+          // PHASE LIST extraction
+          // this.phasesData = res?.data ?.filter((x: any) => x.phase).map((x: any) => ({
+          //       phaseId: x.phase.phaseId,
+          //       phaseName: x.phase.phaseName
+          //     })) ?? [];
+          // Remove duplicate phases
+          // this.phasesData = this.removeDuplicatePhases(this.phasesData);
+          // const validSelections = previousSelected.filter((selectedId: any) =>
+          //   this.phasesData.some((p: any) => p.phaseId === selectedId));
+          // assign valid phases only
+          //this.TeamTimesheetReportForm.get('phases')?.setValue(validSelections);
         },
         error: (err) => {
           console.error("Error fetching employees:", err);
@@ -663,7 +717,7 @@ export class TeamTimesheetReportComponent {
       params.PhaseIds = formValue.phases;
     }
     if (formValue.billable?.value) params.Billable = formValue.billable.value;
-    if (formValue.status?.value) params.Statuses = formValue.status.value;
+    if (formValue.status) params.Statuses = formValue.status.join(',');
     return params;
   }
   // generate the report
@@ -680,6 +734,7 @@ export class TeamTimesheetReportComponent {
     this.http.getDataIncludeParams(`TimesheetReport/get?${queryString}&page=${this.page}&pageSize=${this.pageSize}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.spinnerLoader1 = false;
+        this.offcanvasService.dismiss();
         if (res.success && res.data?.items) {
           this.filteredtimesheetsummeryRecord = res.data.items;
           this.collectionSize = res.data.totalCount || 0;
@@ -700,17 +755,21 @@ export class TeamTimesheetReportComponent {
         this.filteredtimesheetsummeryRecord = [];
         this.collectionSize = 0;
         this.disableBtn = true;
+        this.offcanvasService.dismiss();
       },
     });
   }
   // export the report
   exportTeamTimesheetReport() {
+    if (this.TeamTimesheetReportForm.invalid) return;
+    this.spinnerLoader2 = true;
     const params = this.buildTimesheetReportParams();
     const queryString = new URLSearchParams(params).toString();
     this.http.downloadTimesheetReport(`TimesheetReport/export-report?${queryString}&page=${this.page}&pageSize=${this.pageSize}`).subscribe({
       next: (response: HttpResponse<Blob>) => {
+        this.spinnerLoader2 = false;
         // Extract filename from Content-Disposition
-        let filename = 'TeamTimesheetReport.xlsx';
+        let filename = `Team Timesheet Report - ${this.http.formattedDate}.xlsx`;
         const contentDisposition = response.headers.get('content-disposition');
         if (contentDisposition) {
           // Handle both regular and UTF-8 encoded filenames
@@ -733,9 +792,11 @@ export class TeamTimesheetReportComponent {
         link.click();
         window.URL.revokeObjectURL(url);
         console.log('Downloaded file:', filename);
-        this.conformationPopup.openSuccessModal("Report Exported Successfully");
+        this.conformationPopup.openSuccessModal("Team Timesheet Report exported successfully");
       },
       error: (err: any) => {
+        this.spinnerLoader2 = false;
+        console.error('Error fetching report:', err);
         this.conformationPopup.openErrorModal('No records found');
       },
       complete: () => { }
@@ -752,3 +813,4 @@ export class TeamTimesheetReportComponent {
     }
   }
 }
+

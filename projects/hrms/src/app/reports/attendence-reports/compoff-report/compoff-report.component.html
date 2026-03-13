@@ -3,92 +3,33 @@
     <!-- Header -->
     <app-reports-header/>
   
-    <form autocomplete="off" [formGroup]="compoffReportForm" (ngSubmit)="generateCompoffReport()">
+    <!-- <form autocomplete="off" [formGroup]="compoffReportForm" (ngSubmit)="generateCompoffReport()"> -->
       <div class="d-flex align-items-center gap-3">
         @if(rbac.allowedToAccess('Comp Off Report - Generate.view')){
-        <button type="reset" class="clear-all-btn" *ngIf="
-          compoffReportForm.get('employee')?.value ||
-          compoffReportForm.get('dateRange')?.value ||
-          compoffReportForm.get('manager')?.value " (click)="clearAllFilters()">
-          {{'Clear All'|translate}}
+        <button type="button" class="custom-btn btn-secondary position-relative" (click)="toggleFilters(filterContent)" [disabled]="spinnerLoader2">
+          <i class="bi bi-funnel me-2"></i>Filters
+          <span *ngIf="isFilterIndicatorActive" class="filter-indicator"></span>
         </button>
-  
-        <!-- Date Range -->
-        <div class="d-flex align-items-center gap-2">
-          <div class="custom-date-range-picker">
-            <p-datepicker formControlName="dateRange" [placeholder]="'Please Select Date'|translate" selectionMode="range"
-             [showIcon]="true" [readonlyInput]="true" />
-          </div>
-        </div>
-  
-        <!-- Employee -->
-        @if(rbac.allowedToAccess('Attendance All Employees List(Compoff).view')){
-        <div class="d-flex align-items-center gap-2">
-          <div class="custom-p-select-content">
-            <p-select [options]="employeeiddetails" optionLabel="fullName" filterBy="fullName" [filter]="true"
-              formControlName="employee" [placeholder]="'Please select employee'|translate"
-              class="form-select custom-select" [filterPlaceholder]="'Search employee'|translate">
-              <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
-              <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
-            </p-select>
-          </div>
-        </div>
         }
-        <!-- Team Manager -->
-        @if(rbac.allowedToAccess('Attendance Team Manager List(Compoff).view')){
-        <div class="d-flex align-items-center gap-2">
-          <div class="custom-p-select-content">
-            <p-select [options]="teamdetails" [filter]="true" optionLabel="fullName"
-              filterBy="fullName" formControlName="manager" [placeholder]="'Please select manager'|translate"
-              class="form-select custom-select" [filterPlaceholder]="'Search manager'|translate">
-              <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
-              <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
-            </p-select>
-          </div>
-        </div>
-        }
-        <!--My Team-->
-        @if(rbac.allowedToAccess('My Team Report(Compoff).view') &&!rbac.allowedToAccess('Attendance All Employees List(Compoff).view')
-        && !rbac.allowedToAccess('Attendance Team Manager List(Compoff).view')){
-        <div class="d-flex align-items-center gap-2">
-          <div class="custom-p-select-content">
-            <p-select [options]="getEmployeeInfo" [filter]="true" optionLabel="fullName"
-              filterBy="fullName" formControlName="team" [placeholder]="'Please select employee'|translate"
-              class="form-select custom-select" [filterPlaceholder]="'Search employee'|translate" (onChange)="onClick($event)">
-              <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
-              <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
-            </p-select>
-          </div>
-        </div>
-        }
-        }
+
         <!-- Buttons -->
-        <div class="d-flex gap-2">
-          @if(rbac.allowedToAccess('Comp Off Report - Generate.view')){
-          <button type="submit" class="custom-btn btn-secondary" [disabled]="isCompOffGenerateDisabled">
-            @if(spinnerLoader1){
-            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-            <span>{{'Loading...'|translate}}</span>
-            }@else {
-            <span>{{'Generate'|translate}}</span>
-            }
-          </button>
-          }
+        <!-- <div class="d-flex gap-2"> -->
+          
           @if(rbac.allowedToAccess('Comp Off Report - Generate.view')
            && rbac.allowedToAccess('Comp Off Report - Export.view')){
           <button type="button" class="custom-btn btn-primary" (click)="exportToExcelYearly()"
-            [disabled]="filteredCompoffRecord.length === 0 || disableBtn">
+            [disabled]="filteredCompoffRecord.length === 0 || disableBtn || spinnerLoader2">
             @if(spinnerLoader2){
             <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-            <span>{{'Loading...'|translate}}</span>
+            <span>{{'Loading...'}}</span>
             }@else {
-            <span>{{'Export'|translate}}</span>
+            <span>{{'Export'}}</span>
             }
           </button>
           }
-        </div>
+        <!-- </div> -->
       </div>
-    </form>
+    <!-- </form> -->
   </div>
 
 
@@ -102,16 +43,16 @@
       <div class="custom-table-content">
         <table id="compoffReportTable" class="content w-100">
           <thead>
-              <th>{{'Employee ID'|translate}}</th>
-              <th>{{'Employee Name'|translate}}</th>
-              <th>{{'Department'|translate}}</th>
-              <th>{{'Team Manager'|translate}}</th>
-              <th>{{'Location'|translate}}</th>
-              <th>{{'Sub Location'|translate}}</th>
-              <th>{{'Shift'|translate}}</th>
-              <th>{{'Worked Date'|translate}}</th>
-              <th>{{'Entitled Days'|translate}}</th>
-              <th>{{'Duration'|translate}}</th>
+              <th class="text-center">Employee ID</th>
+              <th>Employee Name</th>
+              <th>Department</th>
+              <th>Team Manager</th>
+              <th>Location</th>
+              <th>Sub Location</th>
+              <th>Shift</th>
+              <th class="text-center">Worked Date</th>
+              <th class="text-center">Entitled Days</th>
+              <th class="text-center">Availed</th>
           </thead>
           <tbody>
             @if (!filteredCompoffRecord || filteredCompoffRecord.length === 0) {
@@ -122,7 +63,7 @@
             @else {
             @for (record of filteredCompoffRecord; track $index) {
             <tr>
-              <td>{{ record.fusionEmpId ?? '-' }}</td>
+              <td class="text-center">{{ record.fusionEmpId ?? '-' }}</td>
               <td>{{ record.employeeName ?? '-' }}</td>
               <td>{{ record.department ?? '-' }}</td>
               <td>{{ record.teamManagerName ?? '-' }}</td>
@@ -130,9 +71,9 @@
               <td>{{ record.subLocation ?? '-' }}</td>
               <td>{{ record.shift ?? '-' }}</td>
               <!-- <td>{{record.leaveType ?? '-' }}</td> -->
-              <td>{{ record.worked_Date | date: 'dd-MMM-yyyy' : '-' }}</td>
-              <td>{{record.entitlementDays ?? '-' }}</td>
-              <td>{{record.duration ?? '-'}}</td>
+              <td class="text-center">{{ record.worked_Date ? (record.worked_Date | date) : '-' }}</td>
+              <td class="text-center">{{record.entitlementDays ?? '-' }}</td>
+              <td class="text-center">{{record.duration ?? '-'}}</td>
             </tr>
             }
             }
@@ -142,3 +83,85 @@
       }
     </div>
   
+    <ng-template #filterContent let-offcanvas>
+      <div class="custom-filter-container">
+        <div class="offcanvas-filter-header-content offcanvas-filter-header-border">
+          <p class="filter-header m-0">{{'Filters' | translate}}</p>
+          <a (click)="closeCanvas()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+        </div>
+    
+        <div class="offcanvas-filter-content">
+          <form [formGroup]="compoffReportForm" (ngSubmit)="onGenerate()">
+            <!-- Date Range -->
+            <div class="mb-3">
+              <label class="form-label custom-label text-nowrap filter-labels mb-3">Date Range</label>
+              <div class="custom-date-range-picker">
+                <p-datepicker formControlName="dateRange" [placeholder]="'Please select date'" selectionMode="range"
+                  [showIcon]="true" [readonlyInput]="true" [maxDate]="today" />
+              </div>
+            </div>
+    
+            <!-- Team Manager -->
+            @if(rbac.allowedToAccess('Attendance Team Manager List(Compoff).view')){
+            <div class="mb-3">
+              <label class="form-label custom-label text-nowrap filter-labels mb-3">Select Manager</label>
+              <div class="custom-p-multiSelect-content">
+                <p-multiSelect [options]="teamdetails" [filter]="true" optionLabel="fullName" filterBy="fullName"
+                  formControlName="manager" placeholder="Please select manager" class="form-select custom-select" [resetFilterOnHide]="true" filterPlaceHolder="Search manager">
+                  <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
+                </p-multiSelect>
+              </div>
+            </div>
+            }
+    
+            <!-- My Team -->
+            @if(rbac.allowedToAccess('My Team Report(Compoff).view') &&!rbac.allowedToAccess('Attendance All Employees List(Compoff).view')
+            && !rbac.allowedToAccess('Attendance Team Manager List(Compoff).view')){
+            <div class="mb-3">
+              <label class="form-label custom-label text-nowrap filter-labels mb-3">Select Team Member</label>
+              <div class="custom-p-multiSelect-content">
+                <p-multiSelect [options]="getEmployeeInfo" [filter]="true" optionLabel="fullName" filterBy="fullName"
+                  formControlName="team" placeholder="Please select employee" class="form-select custom-select" filterPlaceHolder="Search employee" [resetFilterOnHide]="true" >
+                  <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
+                </p-multiSelect>
+              </div>
+            </div>
+            }
+    
+                
+            <!-- Employee -->
+            @if(rbac.allowedToAccess('Attendance All Employees List(Compoff).view')){
+            <div class="mb-3">
+              <label class="form-label custom-label text-nowrap filter-labels mb-3">Select Employee</label>
+              <div class="custom-p-multiSelect-content">
+                <p-multiSelect [options]="employeeiddetails" optionLabel="fullName" filterBy="fullName" [filter]="true"
+                  formControlName="employee" placeholder="Please select employee" class="form-select custom-select" [resetFilterOnHide]="true" filterPlaceHolder="Search employee"
+                  >
+                  <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
+                </p-multiSelect>
+              </div>
+            </div>
+            }
+
+            <div class="d-flex offcanvas-footer-content gap-3">
+              @if(isFilterApplied() || filteredCompoffRecord.length > 0){
+              <button type="button" class="custom-btn btn-secondary w-100" (click)="clearAllFilters()" [disabled]="spinnerLoader1">
+                {{'Clear All' | translate}}
+              </button>
+              }
+              
+              @if(rbac.allowedToAccess('Comp Off Report - Generate.view')){
+              <button type="submit" class="custom-btn btn-primary w-100" [disabled]="isCompOffGenerateDisabled">
+                @if(spinnerLoader1){
+                <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                <span>{{'Loading...'}}</span>
+                }@else {
+                <span>{{'Generate'}}</span>
+                }
+              </button>
+              }
+            </div>
+          </form>
+        </div>
+      </div>
+    </ng-template>

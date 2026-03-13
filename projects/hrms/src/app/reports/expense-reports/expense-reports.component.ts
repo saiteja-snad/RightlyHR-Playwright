@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
 import { ReportsHeaderComponent } from "../../shared/reports-tabs/reports-header/reports-header.component";
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -16,21 +16,21 @@ import { ReportsService } from '../../services/reports/reports.service';
 import { Subscription } from 'rxjs';
 import { IemployeeDetails } from '../attendence-reports/reports.modal';
 import dayjs, { Dayjs } from 'dayjs';
-import { IAttendanceDetails, IExpenseItemDetails, IExpenseReportsDetails, IExpenseReportsRequestDetails } from '../../Interfaces/reports.model';
-import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { IExpenseItemDetails, IExpenseReportsDetails, IExpenseReportsRequestDetails } from '../../Interfaces/reports.model';
+import { NgbModal, NgbOffcanvas, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { InfoIconComponent } from "../../icons/info-icon/info-icon.component";
-import * as XLSX from 'xlsx';
 import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 import { DateformatPipe } from "../../Pipes/dateformat.pipe";
-
 @Component({
   selector: 'app-expense-reports',
   imports: [ReportsHeaderComponent, DatePicker, CommonModule, FormsModule, DropdownModule, SelectModule, TranslateModule, ReactiveFormsModule,
     NoDataFoundComponent, DataLoaderContentComponent, TranslateModule, InfoIconComponent, NgbPopoverModule, DateformatPipe],
   templateUrl: './expense-reports.component.html',
-  styleUrl: './expense-reports.component.scss'
+  styleUrl: './expense-reports.component.scss',
+  encapsulation: ViewEncapsulation.None
 })
+
 export class ExpenseReportsComponent implements OnInit, OnDestroy {
   ExpenseReportForm!: FormGroup;
   subscription!: Subscription;
@@ -42,6 +42,7 @@ export class ExpenseReportsComponent implements OnInit, OnDestroy {
   spinnerLoader1 = false;
   disableBtn = false;
   spinnerLoader2 = false;
+  isFilterIndicatorActive = false;
   isLoading: boolean = false;
   filteredleaveRecord: IExpenseReportsDetails[] = [];
   expenseSummary: any = null;
@@ -60,6 +61,7 @@ export class ExpenseReportsComponent implements OnInit, OnDestroy {
     public rbac: RbacService,
     public readonly router: Router,
     private modal: NgbModal,
+    private offcanvasService: NgbOffcanvas
   ) {
     this.loggedInUser = this.authService.getToken();
   }
@@ -74,23 +76,39 @@ export class ExpenseReportsComponent implements OnInit, OnDestroy {
     this.getdatabyentriy();
   }
 
+  openFilter(content: TemplateRef<any>) {
+    this.offcanvasService.open(content, { 
+      position: 'end',
+      backdrop: 'static',
+      keyboard: false, });
+  }
+
+  closeCanvas() {
+    this.offcanvasService.dismiss();
+  }
+
   initializeForm() {
     this.ExpenseReportForm = this.fb.group({
       employee: [null],
       manager: [null],
-      dateRange: [null, Validators.required],
-      status: [null, Validators.required],
+      dateRange: [null],
+      status: [null],
       team: [null]
       // year: ['']
     });
     this.ExpenseReportForm.valueChanges.subscribe(() => {
       this.disableBtn = true;
+      this.isFilterIndicatorActive = false;
     })
   }
 
   clearAllFilters(): void {
     this.ExpenseReportForm.reset();
     this.filteredleaveRecord = [];
+    this.selectExpenseEmployeeIds = [];
+    this.selectedEmployeeId = null;
+    this.expenseSummary = null;
+    this.isFilterIndicatorActive = false;
   }
 
   onClick(employeeIds: any) {
@@ -170,22 +188,19 @@ export class ExpenseReportsComponent implements OnInit, OnDestroy {
   getdatabyentriy() {
     const params = 'ExpenseReport';
     const param = 'Status';
-
-    this.http
-      .getDatabyentriyvalue(`entityAttributeValues`, params, param).subscribe({
-        next: (data: any) => {
-          if (data && data.length > 0) {
-            this.expenseStatus = data;
-            // this.expenseStatus = statusString.split(',').map((type: any) => ({ value: type }));
-
-          } else {
-            console.log('No data found.');
-          }
-        },
-        error: (err) => {
-          console.error('Error fetching data:', err);
+    this.http.getDatabyentriyvalue(`entityAttributeValues`, params, param).subscribe({
+      next: (data: any) => {
+        if (data && data.length > 0) {
+          this.expenseStatus = data;
+          // this.expenseStatus = statusString.split(',').map((type: any) => ({ value: type }));
+        } else {
+          console.log('No data found.');
         }
-      });
+      },
+      error: (err) => {
+        console.error('Error fetching data:', err);
+      }
+    });
   }
 
   extractUniqueYearlyFilters(data: any[]): void {
@@ -202,10 +217,10 @@ export class ExpenseReportsComponent implements OnInit, OnDestroy {
   //   return !(employee || manager || (dateRange && (dateRange.startDate || dateRange.endDate)) || leaveCategory || team);
   // }
 
-//   get isExpenseGenerateDisabled(): boolean {
-//   const { dateRange, status } = this.ExpenseReportForm.value;
-//   return this.spinnerLoader1 || !(dateRange && status);
-//  }
+  //   get isExpenseGenerateDisabled(): boolean {
+  //   const { dateRange, status } = this.ExpenseReportForm.value;
+  //   return this.spinnerLoader1 || !(dateRange && status);
+  //  }
 
   formatDate(date: Date): string {
     const year = date.getFullYear();
@@ -217,59 +232,58 @@ export class ExpenseReportsComponent implements OnInit, OnDestroy {
   parseDate(date: any): Date {
     return date instanceof Date ? date : new Date(date);
   }
-isAnyFilterSelected(): boolean {
-  if (!this.ExpenseReportForm) return false;
 
-  const {
-    employee,
-    dateRange,
-    manager,
-    leaveCategory,
-    team,
-    status
-  } = this.ExpenseReportForm.value;
+  isAnyFilterSelected(): boolean {
+    if (!this.ExpenseReportForm) return false;
 
-  return !!(
-    employee ||
-    manager ||
-    team ||
-    status ||
-    leaveCategory ||
-    (dateRange && dateRange.length)
-  );
-}
+    const {
+      employee,
+      dateRange,
+      manager,
+      team,
+      status
+    } = this.ExpenseReportForm.value;
 
-get isExpenseGenerateDisabled(): boolean {
-  if (!this.ExpenseReportForm) return true;
-  if (this.spinnerLoader1) return true;
+    return !!(
+      employee ||
+      manager ||
+      team ||
+      status ||
+      (dateRange && dateRange.length)
+    );
+  }
 
-  const {
-    dateRange,
-    employee,
-    manager,
-    team,
-    status,
-    leaveCategory
-  } = this.ExpenseReportForm.value;
+  onGenerate(): void {
+    this.isFilterIndicatorActive = this.isAnyFilterSelected();
+    this.generateExpenseReport();
+  }
 
-  const isAnyFilterSelected =
-    (Array.isArray(dateRange) && dateRange.length > 0) ||
-    !!employee ||
-    !!manager ||
-    !!team ||
-    !!status ||
-    !!leaveCategory;
+  get isExpenseGenerateDisabled(): boolean {
+    if (!this.ExpenseReportForm) return true;
+    if (this.spinnerLoader1) return true;
 
-  return !isAnyFilterSelected; // 👈 key line
-}
+    const {
+      dateRange,
+      employee,
+      manager,
+      team,
+      status
+    } = this.ExpenseReportForm.value;
 
+    const isAnyFilterSelected =
+      (Array.isArray(dateRange) && dateRange.length > 0) ||
+      !!employee ||
+      !!manager ||
+      !!team ||
+      !!status;
+
+    return !isAnyFilterSelected; // 👈 key line
+  }
 
   generateExpenseReport(): void {
     this.spinnerLoader1 = true;
     this.isLoading = true;
-
     const formValue = this.ExpenseReportForm.value;
-
     const isAllEmployeesSelected = formValue.employee?.employeeId === 'all';
     const dateRangeArray = formValue.dateRange || [];
     const startDate: Dayjs | null = dateRangeArray[0] ? dayjs(dateRangeArray[0]) : null;
@@ -324,20 +338,17 @@ get isExpenseGenerateDisabled(): boolean {
     // Call API
     this.reportsService.getExpenseReports(request).subscribe({
       next: (response: any) => {
-         if (
-    !response ||
-    response.length === 0 ||
-    (
-      response.length === 1 &&
-      response[0].totalExpenseCount === 0 &&
-      response[0].totalItemsCount === 0
-    )
-  ) {
-    // Treat as NO DATA
-    this.filteredleaveRecord = [];
-  } else {
-    this.filteredleaveRecord = response;
-  }
+        if (!response ||response.length === 0 ||(
+            response.length === 1 &&
+            response[0].totalExpenseCount === 0 &&
+            response[0].totalItemsCount === 0
+          )
+        ) {
+          // Treat as NO DATA
+          this.filteredleaveRecord = [];
+        } else {
+          this.filteredleaveRecord = response;
+        }
 
       },
       error: () => {
@@ -346,11 +357,13 @@ get isExpenseGenerateDisabled(): boolean {
         this.isLoading = false;
         this.filteredleaveRecord = [];
         this.expenseSummary = null;
+        this.closeCanvas();
       },
       complete: () => {
         this.spinnerLoader1 = false;
         this.disableBtn = false;
         this.isLoading = false;
+        this.closeCanvas();
       },
     });
   }
@@ -366,170 +379,178 @@ get isExpenseGenerateDisabled(): boolean {
   }
 
 
-exportToExcelYearly(): void {
-  this.spinnerLoader2 = true;
+  exportToExcelYearly(): void {
+    this.spinnerLoader2 = true;
 
-  const HEADER_MAPPINGS: { [key: string]: string } = {
-    fusionEmpId: 'EMPLOYEE ID',
-    employeeName: 'EMPLOYEE NAME',
-    department: 'DEPARTMENT',
-    teamManagerName: 'TEAM MANAGER',
-    appliedDate: 'EXPENSE APPLIED DATE',
-    expenseTitle: 'EXPENSE TITLE',
-    totalAmount: 'TOTAL AMOUNT (INR)',
-    expensesStatus: 'STATUS',
-  };
-
-  const CHILD_HEADERS = [
-    'EXPENSE NAME',
-    'DESCRIPTION',
-    'EXPENSE DATE',
-    'AMOUNT (USD)',
-    'EXPENSE ITEM STATUS',
-    'RECEIPT NUMBER',
-  ];
-
-  const workbook = new ExcelJS.Workbook();
-  const worksheet = workbook.addWorksheet('Expense Report');
-
-  // === TITLE (2 rows merged & centered) ===
-  worksheet.mergeCells(1, 1, 2, Object.keys(HEADER_MAPPINGS).length + CHILD_HEADERS.length);
-  const titleCell = worksheet.getCell('A1');
-  titleCell.value = 'EXPENSE REPORT';
-  titleCell.font = { bold: true, size: 16 };
-  titleCell.alignment = { horizontal: 'center', vertical: 'middle' };
-
-  // Add one blank row after the title (for spacing)
-  worksheet.addRow([]);
-
-  // === HEADER ROW ===
-  const headerRow = worksheet.addRow([
-    ...Object.values(HEADER_MAPPINGS),
-    ...CHILD_HEADERS,
-  ]);
-
-  headerRow.eachCell((cell) => {
-    cell.fill = {
-      type: 'pattern',
-      pattern: 'solid',
-      fgColor: { argb: '305496' },
+    const HEADER_MAPPINGS: { [key: string]: string } = {
+      fusionEmpId: 'EMPLOYEE ID',
+      employeeName: 'EMPLOYEE NAME',
+      department: 'DEPARTMENT',
+      teamManagerName: 'TEAM MANAGER',
+      appliedDate: 'EXPENSE APPLIED DATE',
+      expenseTitle: 'EXPENSE TITLE',
+      totalAmount: 'TOTAL AMOUNT (INR)',
+      expensesStatus: 'STATUS',
     };
-    cell.font = { bold: true, color: { argb: 'FFFFFF' } };
-    cell.alignment = { horizontal: 'left', vertical: 'middle', wrapText: true };
-    cell.border = {
-      top: { style: 'thin' },
-      left: { style: 'thin' },
-      bottom: { style: 'thin' },
-      right: { style: 'thin' },
+
+    const CHILD_HEADERS = [
+      'EXPENSE NAME',
+      'DESCRIPTION',
+      'EXPENSE TYPE',
+      'EXPENSE DATE',
+      'AMOUNT (INR)',
+      'EXPENSE ITEM STATUS',
+      'RECEIPT NUMBER',
+    ];
+
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Expense Report');
+
+    // === TITLE (2 rows merged & centered) ===
+    worksheet.mergeCells(1, 1, 2, Object.keys(HEADER_MAPPINGS).length + CHILD_HEADERS.length);
+    const titleCell = worksheet.getCell('A1');
+    titleCell.value = 'EXPENSE REPORT';
+    titleCell.font = { bold: true, size: 16 };
+    titleCell.alignment = { horizontal: 'center', vertical: 'middle' };
+
+    // Add one blank row after the title (for spacing)
+    worksheet.addRow([]);
+
+    // === HEADER ROW ===
+    const headerRow = worksheet.addRow([
+      ...Object.values(HEADER_MAPPINGS),
+      ...CHILD_HEADERS,
+    ]);
+
+    headerRow.eachCell((cell) => {
+      cell.fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: '305496' },
+      };
+      cell.font = { bold: true, color: { argb: 'FFFFFF' } };
+      cell.alignment = { horizontal: 'left', vertical: 'middle', wrapText: true };
+      cell.border = {
+        top: { style: 'thin' },
+        left: { style: 'thin' },
+        bottom: { style: 'thin' },
+        right: { style: 'thin' },
+      };
+    });
+
+    // Apply AutoFilter
+    worksheet.autoFilter = {
+      from: { row: headerRow.number, column: 1 },
+      to: { row: headerRow.number, column: Object.keys(HEADER_MAPPINGS).length + CHILD_HEADERS.length },
     };
-  });
 
-  // Apply AutoFilter
-  worksheet.autoFilter = {
-    from: { row: headerRow.number, column: 1 },
-    to: { row: headerRow.number, column: Object.keys(HEADER_MAPPINGS).length + CHILD_HEADERS.length },
-  };
+    const formatDate = (date: any) => {
+      if (!date) return '-';
+      const d = new Date(date);
+      const day = String(d.getDate()).padStart(2, '0');
+      const month = d.toLocaleString('default', { month: 'short' });
+      const year = d.getFullYear();
+      return `${day}-${month}-${year}`;
+    };
 
-  const formatDate = (date: any) => {
-    if (!date) return '-';
-    const d = new Date(date);
-    const day = String(d.getDate()).padStart(2, '0');
-    const month = d.toLocaleString('default', { month: 'short' });
-    const year = d.getFullYear();
-    return `${day}-${month}-${year}`;
-  };
+    const formatAmount = (val: any) => {
+      const n = Number(val);
+      return isNaN(n) ? '-' : n.toFixed(2);
+    };
 
-  const formatAmount = (val: any) => {
-    const n = Number(val);
-    return isNaN(n) ? '-' : n.toFixed(2);
-  };
+    // === DATA ROWS ===
+    this.filteredleaveRecord.forEach((record) => {
+      const items = record.expensesItems && record.expensesItems.length > 0
+        ? record.expensesItems
+        : [];
 
-  // === DATA ROWS ===
-  this.filteredleaveRecord.forEach((record) => {
-    const startRow = (worksheet.lastRow?.number ?? 0) + 1;
-    const items = record.expensesItems && record.expensesItems.length > 0
-      ? record.expensesItems
-      : [{}];
+      // ✅ SKIP RECORDS WITH NO ITEMS (prevents '-' row)
+      if (!items.length) {
+        return;
+      }
 
-    items.forEach((item: any) => {
-      const row = worksheet.addRow([
-        record.fusionEmpId ?? '-',
-        record.employeeName ?? '-',
-        record.department ?? '-',
-        record.teamManagerName ?? '-',
-        record.appliedDate ? formatDate(record.appliedDate) : '-',
-        record.expenseTitle ?? '-',
-        formatAmount(record.totalAmount),
-        record.expensesStatus ?? '-',
-        item.expenseItemName ?? '-',
-        item.expenseItemsDescription ?? '-',
-        item.expenseDate ? formatDate(item.expenseDate) : '-',
-        formatAmount(item.expenseAmount),
-        item.status ?? '-',
-        item.receiptNumber ?? '-',
-      ]);
+      const startRow = (worksheet.lastRow?.number ?? 0) + 1;
 
-      row.height = 25;
+      items.forEach((item: any) => {
+        const row = worksheet.addRow([
+          record.fusionEmpId ?? '-',
+          record.employeeName ?? '-',
+          record.department ?? '-',
+          record.teamManagerName ?? '-',
+          record.appliedDate ? formatDate(record.appliedDate) : '-',
+          record.expenseTitle ?? '-',
+          formatAmount(record.totalAmount),
+          record.expensesStatus ?? '-',
+          item.expenseItemName ?? '-',
+          item.expenseItemsDescription ?? '-',
+          item.expenseType ?? '-',
+          item.expenseDate ? formatDate(item.expenseDate) : '-',
+          formatAmount(item.expenseAmount),
+          item.status ?? '-',
+          item.receiptNumber ?? '-',
+        ]);
 
-      // Apply border + alignment
+        row.height = 25;
+
+        // Apply border + alignment
+        row.eachCell((cell) => {
+          const isDash = cell.value === '-';
+          cell.border = {
+            top: { style: 'thin' },
+            left: { style: 'thin' },
+            bottom: { style: 'thin' },
+            right: { style: 'thin' },
+          };
+          cell.alignment = {
+            horizontal: isDash ? 'center' : 'left',
+            vertical: 'middle',
+            wrapText: true,
+          };
+        });
+      });
+
+      // === MERGE MAIN CELLS ===
+      if (items.length > 1) {
+        const endRow = worksheet.lastRow?.number ?? startRow;
+        for (let col = 1; col <= 7; col++) {
+          worksheet.mergeCells(startRow, col, endRow, col);
+          const mergedCell = worksheet.getCell(startRow, col);
+          const isDash = mergedCell.value === '-';
+          mergedCell.alignment = {
+            horizontal: isDash ? 'center' : 'left',
+            vertical: 'middle',
+            wrapText: true,
+          };
+        }
+      }
+    });
+
+    // === AUTO WIDTH ===
+    worksheet.columns.forEach((col) => {
+      col.width = 25;
+    });
+
+    // === FINAL GRID BORDER ===
+    worksheet.eachRow((row) => {
       row.eachCell((cell) => {
-        const isDash = cell.value === '-';
         cell.border = {
-          top: { style: 'thin' },
-          left: { style: 'thin' },
-          bottom: { style: 'thin' },
-          right: { style: 'thin' },
-        };
-        cell.alignment = {
-          horizontal: isDash ? 'center' : 'left',
-          vertical: 'middle',
-          wrapText: true,
+          top: { style: 'thin', color: { argb: '000000' } },
+          left: { style: 'thin', color: { argb: '000000' } },
+          bottom: { style: 'thin', color: { argb: '000000' } },
+          right: { style: 'thin', color: { argb: '000000' } },
         };
       });
     });
 
-    // === Merge main cells if multiple items ===
-    if (items.length > 1) {
-      const endRow = worksheet.lastRow?.number ?? startRow;
-      for (let col = 1; col <= 7; col++) {
-        worksheet.mergeCells(startRow, col, endRow, col);
-        const mergedCell = worksheet.getCell(startRow, col);
-        const isDash = mergedCell.value === '-';
-        mergedCell.alignment = {
-          horizontal: isDash ? 'center' : 'left',
-          vertical: 'middle',
-          wrapText: true,
-        };
-      }
-    }
-  });
-
-  // === AUTO WIDTH ===
-  worksheet.columns.forEach((col) => {
-    col.width = 25;
-  });
-
-  // === Final Grid Border (thin) ===
-  worksheet.eachRow((row) => {
-    row.eachCell((cell) => {
-      cell.border = {
-        top: { style: 'thin', color: { argb: '000000' } },
-        left: { style: 'thin', color: { argb: '000000' } },
-        bottom: { style: 'thin', color: { argb: '000000' } },
-        right: { style: 'thin', color: { argb: '000000' } },
-      };
+    // === SAVE FILE ===
+    workbook.xlsx.writeBuffer().then((data: any) => {
+      const blob = new Blob([data], {
+        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      });
+      saveAs(blob, `Expense Report ${dayjs().format('MMM DD YYYY')}.xlsx`);
+      this.spinnerLoader2 = false;
     });
-  });
-
-  // === SAVE FILE ===
-  workbook.xlsx.writeBuffer().then((data: any) => {
-    const blob = new Blob([data], {
-      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    });
-    saveAs(blob, `Expense_Report_${new Date().toISOString().split('T')[0]}.xlsx`);
-    this.spinnerLoader2 = false;
-  });
-}
+  }
 
 
   ngOnDestroy(): void {

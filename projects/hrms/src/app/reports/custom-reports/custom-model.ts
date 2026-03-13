@@ -78,7 +78,7 @@ export interface Ipersonal {
   university: string;
   visatype: string;
   workEmail: string;
-  workPhone: number;
+  workPhone: string;
   subLocation: string;
   branchcode: string;
   joblocationname: string;
@@ -102,6 +102,30 @@ export interface Ipersonal {
   joblocationid: number;
   jobsublocationid: number;
   shiftid: number;
+
+  contractoffersentstatus: string;
+  contractoffersentdate: string;
+  contractoffersentby: string;
+  traineeoffersentstatus: string;
+  traineeoffersentby: string;
+  traineeoffersentdate: string;
+  empType: string;
+  contractStartDate: string;
+  contractEndDate: string;
+  contractDuration:string;
+  contractorLastWorkingDate : string;
+  usPassport: string;
+  driversLicense: string;
+  stateIDCard: string;
+  vstatus: string;
+  nextCompReviewDate: string;
+  isvariablepay: string;
+  variablepayamount: number;
+  termtypeoffboard: string;
+  linkedinurl: string;
+  separationType: string;
+  isVariablePay: boolean;
+  variablePayAmount: number;
 }
 export interface IStatus {
   sno: number;

@@ -93,6 +93,23 @@ export class PreOnBoardingDocumentsComponent {
       },
     });
   }
+  getApplicableText(codes: string): string {
+    if (!codes || codes === '4') return '-';
+    if (codes === '0') return 'All';
+
+    const codeMap: { [key: string]: string } = {
+      '1': 'Fresher',
+      '2': 'Experienced',
+      '3': 'Trainee',
+      '5': 'Contract Employee'
+    };
+
+    return codes.split(',')
+      .map(code => codeMap[code.trim()])
+      .filter(label => label)
+      .join(', ');
+  }
+
   // // Method to open the add modal dialog
   openDialog() {
     this.modalService.open(this.addpopup, {
@@ -151,7 +168,7 @@ export class PreOnBoardingDocumentsComponent {
     if (this.AddForm.value.isApplicableTrainee) applicableCodes.push('3');
     if (this.AddForm.value.isApplicableForContractEmployee) applicableCodes.push('5');
 
-    if (applicableCodes.length === 3) {
+    if (applicableCodes.length === 4) {
       isApplicable = '0'; //if all the check boxes are selected related to the fresher,experince,trinee we nned to send 0(zero)
     } else if (applicableCodes.length > 0) {
       isApplicable = applicableCodes.join(','); //based on the selected value we need send the data

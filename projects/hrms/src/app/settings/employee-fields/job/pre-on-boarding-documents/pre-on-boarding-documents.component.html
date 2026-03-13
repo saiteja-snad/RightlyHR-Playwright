@@ -13,7 +13,7 @@
                 <thead>
                     <tr>
                         <th>Document</th>
-                        <th>Applicable To Experienced/Fresher/Trainee</th>
+                        <th>Applicable To Experienced/Fresher/Trainee/Contract Employee</th>
                         <th>Is Mandatory</th>
                         <th>Is Identity</th>
                         <th class="text-center"  *ngIf="rbac.allowedToAccess('Pre Onboard Documents.update') || rbac.allowedToAccess('Pre Onboard Documents.delete')">Action</th>
@@ -24,22 +24,7 @@
                         <tr>
                             <td>{{ preonboarding.documentName }}</td>
                             <!-- isAppilicable logic -->
-                            <td>
-                                <ng-container [ngSwitch]="preonboarding.isAppilicable">
-                                    <span *ngSwitchCase="'0'">All</span>
-                                    <span *ngSwitchCase="'1'">Fresher</span>
-                                    <span *ngSwitchCase="'2'">Experienced</span>
-                                    <span *ngSwitchCase="'3'">Trainee</span>
-                                    <span *ngSwitchCase="'1,2'">Fresher, Experienced</span>
-                                    <span *ngSwitchCase="'1,3'">Fresher, Trainee</span>
-                                    <span *ngSwitchCase="'2,3'">Trainee, Experienced</span>
-                                    <span *ngSwitchCase="'5'">Contract Employee</span>
-                                    <span *ngSwitchCase="'1,5'">Fresher, Contract Employee</span>
-                                    <span *ngSwitchCase="'2,5'">Experienced, Contract Employee</span>
-
-                                    <span *ngSwitchDefault>-</span>
-                                </ng-container>
-                            </td>
+                            <td>{{ getApplicableText(preonboarding.isAppilicable) }}</td>
                             <!-- isManadatory logic -->
                             <td>{{ preonboarding.isManadatory ? 'Yes' : 'No' }}</td>
                             <!-- isIdentityDocument logic -->
@@ -102,8 +87,7 @@
                         {{ 'Document Name' | translate }} <span class="error-msg">*</span>
                     </label>
                     <input type="text" class="form-control custom-input" formControlName="PreOnboardDocuments"
-                        placeholder="Please enter document name" maxlength="101" (keydown)="formValidations.restrictInput($event); 
-                        formValidations.blockNonAlphabets($event)" />
+                        placeholder="Please enter document name" maxlength="101" (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)" />
                     <!-- <div class="textarea-count-text">{{AddForm.get('PreOnboardDocuments')?.value?.length || 0}}/100 -->
                     <!-- </div> -->
                     <div *ngIf="AddForm.get('PreOnboardDocuments')?.touched && AddForm.get('PreOnboardDocuments')?.invalid"

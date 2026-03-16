@@ -99,10 +99,9 @@ onSubmit() {
   openupdate(sal:any) {
     this.resetForm();
     this.modalService.open(this.updatepopup, { centered: true, backdrop: 'static' });
-    this.updatesalutation=sal;
+    this.updatesalutation = { ...sal };  // copy instead of reference
     this.updateForm?.patchValue({titlename : sal.titlename});
-
-}
+  }
 opendelete(sal:any) {
 this.updatesalutation=sal;
 this.resetForm();
@@ -115,7 +114,8 @@ this.modalService.open(this.deletepopup, { centered: true, backdrop: 'static' })
       this.subscription = this.http.postdata(`Title/UPDATER`, this.updatesalutation).subscribe({
         next: (data: any) => {
           this.updateForm.reset(); 
-          this.modalService.dismissAll(); 
+          this.modalService.dismissAll();
+          this.getsaluation();
           this.conformationPopup.openSuccessModal('Salutation updated successfully');
         },
         error: (err: any) => {

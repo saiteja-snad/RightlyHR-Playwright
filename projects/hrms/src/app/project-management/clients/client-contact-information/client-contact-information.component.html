@@ -16,8 +16,8 @@
                     <th>Email</th>
                     <th>Phone Number</th>
                     <th>Role</th>
-                    <th class="text-center" style="text-transform: none;">Set as Primary Contact</th>
-                    @if((rbac.allowedToAccess('Contact Information.update') || rbac.allowedToAccess('Contact Information.delete')) 
+                    <th class="text-center" style="text-transform: none;" *ngIf="this.inactiveClientStatus !== 'inactive'">Set as Primary Contact</th>
+                    @if((rbac.allowedToAccess('Contact Information.update') || rbac.allowedToAccess('Contact Information.delete'))
                     && this.inactiveClientStatus !== 'inactive'){
                     <th class="text-center">{{"Action" | translate}}</th>
                     }
@@ -29,13 +29,13 @@
                             <td>{{ contact.email }}</td>
                             <td>{{ contact.phoneDialCode }} {{ contact.phoneNumber }}</td>
                             <td>{{ contact.role }}</td>
-                            <td class="text-center">
+                            <td class="text-center" *ngIf="this.inactiveClientStatus !== 'inactive'">
                                 <span (click)="openispermiarayModal(conformation ,contact)">
                                     <input type="checkbox" [checked]="contact.primaryContact === true || contact.primaryContact === 'true'"
                                         [disabled]="contact.primaryContact === true || contact.primaryContact === 'true'" />
                                 </span>
                             </td>
-                            @if((rbac.allowedToAccess('Contact Information.update') || rbac.allowedToAccess('Contact Information.delete')) 
+                            @if((rbac.allowedToAccess('Contact Information.update') || rbac.allowedToAccess('Contact Information.delete'))
                             && this.inactiveClientStatus !== 'inactive'){
                             <td class="text-center">
                                 <div class="dropdown">
@@ -114,7 +114,7 @@
                             <span class="text-danger">*</span></label>
                         <input type="text" id="contactemail" formControlName="contactemail" class="form-control custom-input"
                             placeholder="Please enter email">
-                        <div class="error-msg" *ngIf="updatecontactFrom.get('contactemail')?.touched && 
+                        <div class="error-msg" *ngIf="updatecontactFrom.get('contactemail')?.touched &&
                         updatecontactFrom.get('contactemail')?.invalid">Email is required</div>
                     </div>
 
@@ -128,7 +128,7 @@
                                     (onCountryChange)="onCountryChange($event)">
                                 </lib-country-list>
                             </div>
-                            <input type="text" class="form-control custom-input" formControlName="contactPhone" placeholder="Please enter phone number" 
+                            <input type="text" class="form-control custom-input" formControlName="contactPhone" placeholder="Please enter phone number"
                                 (keypress)="formValidation.restrictAlphabets($event)">
                         </div>
                         <div class="error-msg" *ngIf="updatecontactFrom.get('contactPhone')?.touched && updatecontactFrom.get('contactPhone')?.invalid">

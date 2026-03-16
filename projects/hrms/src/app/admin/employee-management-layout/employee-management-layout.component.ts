@@ -66,6 +66,7 @@ export class EmployeeManagementLayoutComponent {
         this.rbac.allowedToAccess(`${tab.permission.feature}.${tab.permission.action}`)
     );
     this.getEmployeeStatusCount();
+    this.http.activeTabSubject.subscribe(() => this.getEmployeeStatusCount());
   }
 
   //function for to get the Employees count based on the status

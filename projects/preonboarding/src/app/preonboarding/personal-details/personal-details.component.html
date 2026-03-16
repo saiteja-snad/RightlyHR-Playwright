@@ -291,7 +291,7 @@
                                     class="text-danger">*</span></label>
                             <input type="text" class="form-control  custom-input" (input)="onCurrentAddressChange()"
                                 id="permanentCity" formControlName="city" (keydown)="enforceMaxLength($event, 50)"
-                                placeholder="Please enter city" autocomplete="off" (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)"/>
+                                placeholder="Please enter city" autocomplete="off" (keypress)="formValidation.restrictInput($event)"/>
                             <div *ngIf="personalDetailsForm.get('permanentAddress.city')?.invalid && personalDetailsForm.get('permanentAddress.city')?.touched"
                                 class="error-msg">
                                 City is required
@@ -302,7 +302,7 @@
                                     class="text-danger">*</span></label>
                             <input type="text" class="form-control custom-input" id="permanentState"
                                 (keydown)="enforceMaxLength($event, 50)" placeholder="Please enter state"
-                                (input)="onCurrentAddressChange()" formControlName="state" autocomplete="off" (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)"/>
+                                (input)="onCurrentAddressChange()" formControlName="state" autocomplete="off" (keypress)="formValidation.restrictInput($event)"/>
                             <div *ngIf="personalDetailsForm.get('permanentAddress.state')?.invalid && personalDetailsForm.get('permanentAddress.state')?.touched"
                                 class="error-msg">State is required
                             </div>
@@ -312,7 +312,7 @@
                                 <span class="text-danger">*</span></label>
                             <input type="text" class="form-control custom-input" id="permanentCountry"
                                 (keydown)="enforceMaxLength($event, 50)" placeholder="Please enter country"
-                                (input)="onCurrentAddressChange()" formControlName="country" autocomplete="off" (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)"/>
+                                (input)="onCurrentAddressChange()" formControlName="country" autocomplete="off" (keypress)="formValidation.restrictInput($event)"/>
                             <div *ngIf="personalDetailsForm.get('permanentAddress.country')?.invalid && personalDetailsForm.get('permanentAddress.country')?.touched"
                                 class="error-msg">
                                 Country is required

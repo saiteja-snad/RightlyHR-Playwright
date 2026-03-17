@@ -1,27 +1,26 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, ViewEncapsulation } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { Select } from 'primeng/select';
-import { MultiSelect } from 'primeng/multiselect';
 import { Subject, Subscription, takeUntil } from 'rxjs';
 import { HttpService } from '../../../../services/http.service';
 import { OpenModalService } from '../../../../services/open-modal.service';
 import { Router } from '@angular/router';
 import { ShiftData } from '../../../../Interfaces/timoff-model';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { MultiSelectModule } from 'primeng/multiselect';
-import { IJob } from '../../../../Interfaces/letters-model';
-import { ILetterType } from '../../../../Interfaces/leave-type.model';
 import { TranslateModule } from '@ngx-translate/core';
+import { ILetterType } from '../../../../Interfaces/leave-type.model';
+import { IJob } from '../../../../Interfaces/letters-model';
+import { MultiSelectModule } from 'primeng/multiselect';
 @Component({
   selector: 'app-add-leavecategory',
-  imports: [CommonModule, Select, ReactiveFormsModule,MultiSelectModule, TranslateModule],
+  imports: [CommonModule, Select, ReactiveFormsModule,TranslateModule, MultiSelectModule],
   templateUrl: './add-leavecategory.component.html',
   styleUrl: './add-leavecategory.component.scss',
-  encapsulation: ViewEncapsulation.None
+  encapsulation:ViewEncapsulation.None
 })
 
-export class AddLeavecategoryComponent implements OnInit, OnDestroy {
+export class AddLeavecategoryComponent {
   leavePolicyForm!: FormGroup;
   subscription!: Subscription;
   years: { label: string; value: number }[] = [];
@@ -156,6 +155,7 @@ export class AddLeavecategoryComponent implements OnInit, OnDestroy {
       adjacentLeaveTypeRule: [null]
     });
     this.setupDependentFieldListeners();
+    this.syncGapCalculationBasis();
     this.validateAllowedDays();
   }
 
@@ -471,15 +471,8 @@ export class AddLeavecategoryComponent implements OnInit, OnDestroy {
         sandwichApplicabilityConditionControl?.enable();
       }
       });
-    this.leavePolicyForm?.get('minimumGapBetweenSameLeaveType')?.valueChanges.subscribe((value: any) => {
-      const gapCalculationBasisControl = this.leavePolicyForm.get('gapCalculationBasis');
-      if (value && value > 0) {
-        gapCalculationBasisControl?.setValidators([Validators.required]);
-      } else {
-        gapCalculationBasisControl?.clearValidators();
-        gapCalculationBasisControl?.setValue(null);
-      }
-      gapCalculationBasisControl?.updateValueAndValidity();
+    this.leavePolicyForm?.get('minimumGapBetweenSameLeaveType')?.valueChanges.subscribe(() => {
+      this.syncGapCalculationBasis();
     });
 
     this.leavePolicyForm?.get('maxLeaveDurationCalendarDays')?.valueChanges.subscribe((value: any) => {
@@ -504,6 +497,23 @@ export class AddLeavecategoryComponent implements OnInit, OnDestroy {
     this.leavePolicyForm?.get('locationID')?.valueChanges.subscribe(() => this.updatePublishedCategories());
     this.leavePolicyForm?.get('subLocation')?.valueChanges.subscribe(() => this.updatePublishedCategories());
     this.leavePolicyForm?.get('shiftId')?.valueChanges.subscribe(() => this.updatePublishedCategories());
+  }
+
+  private syncGapCalculationBasis() {
+    const minGapRaw = this.leavePolicyForm.get('minimumGapBetweenSameLeaveType')?.value;
+    const minGap = typeof minGapRaw === 'string' ? Number(minGapRaw) : minGapRaw;
+    const gapCalculationBasisControl = this.leavePolicyForm.get('gapCalculationBasis');
+
+    if (!gapCalculationBasisControl) return;
+
+    if (minGap && minGap > 0) {
+      gapCalculationBasisControl.setValidators([Validators.required]);
+    } else {
+      gapCalculationBasisControl.clearValidators();
+      gapCalculationBasisControl.setValue(null, { emitEvent: false });
+    }
+
+    gapCalculationBasisControl.updateValueAndValidity();
   }
 
   updatePublishedCategories() {
@@ -692,5 +702,4 @@ export class AddLeavecategoryComponent implements OnInit, OnDestroy {
       this.subscription.unsubscribe();
     }
   }
-
 }

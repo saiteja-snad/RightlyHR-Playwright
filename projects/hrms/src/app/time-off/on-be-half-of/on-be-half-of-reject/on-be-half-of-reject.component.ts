@@ -25,6 +25,7 @@ export class OnBeHalfOfRejectComponent implements OnInit, OnDestroy{
   cadidateEmployeeId!: number;
   subscription!: Subscription;
   rejectedLeaves: any = [];
+  selectedSandwichItem: any = null;
   loading: boolean = false;
   totalRecords = 100
   first: any = 0;
@@ -92,6 +93,11 @@ export class OnBeHalfOfRejectComponent implements OnInit, OnDestroy{
   comments(value: any, commentspopup: any) {
     this.modalService.open(commentspopup, {centered: true, backdrop: 'static', size: 'lg'});
     this.approverComments = value;
+  }
+
+  openSandwichBreakdown(item: any, modal: any) {
+    this.selectedSandwichItem = item;
+    this.modalService.open(modal, { centered: true, backdrop: 'static', size: 'lg' });
   }
 
 

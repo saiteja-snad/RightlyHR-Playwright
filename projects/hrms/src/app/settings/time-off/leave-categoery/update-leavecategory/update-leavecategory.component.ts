@@ -12,14 +12,15 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { IJob } from '../../../../Interfaces/letters-model';
 import { ILetterType } from '../../../../Interfaces/leave-type.model';
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
   selector: 'app-update-leavecategory',
-  imports: [CommonModule, Select, ReactiveFormsModule, MultiSelectModule],
+  imports: [CommonModule, Select, ReactiveFormsModule, TranslateModule, MultiSelectModule],
   templateUrl: './update-leavecategory.component.html',
   styleUrl: './update-leavecategory.component.scss',
   encapsulation: ViewEncapsulation.None,
 })
-export class UpdateLeavecategoryComponent implements OnInit, OnDestroy {
+export class UpdateLeavecategoryComponent {
   leavePolicyForm!: FormGroup;
   subscription!: Subscription;
   years: { label: string; value: number }[] = [];
@@ -366,15 +367,8 @@ export class UpdateLeavecategoryComponent implements OnInit, OnDestroy {
       sandwichApplicabilityConditionControl?.setValue('leave_on_both_sides_of_holiday/weekend');
       sandwichApplicabilityConditionControl?.disable();
     }
-    this.leavePolicyForm?.get('minimumGapBetweenSameLeaveType')?.valueChanges.subscribe((value: any) => {
-      const gapCalculationBasisControl = this.leavePolicyForm.get('gapCalculationBasis');
-      if (value && value > 0) {
-        gapCalculationBasisControl?.setValidators([Validators.required]);
-      } else {
-        gapCalculationBasisControl?.clearValidators();
-        gapCalculationBasisControl?.setValue(null);
-      }
-      gapCalculationBasisControl?.updateValueAndValidity();
+    this.leavePolicyForm?.get('minimumGapBetweenSameLeaveType')?.valueChanges.subscribe(() => {
+      this.syncGapCalculationBasis();
     });
 
     this.leavePolicyForm?.get('maxLeaveDurationCalendarDays')?.valueChanges.subscribe((value: any) => {
@@ -393,6 +387,23 @@ export class UpdateLeavecategoryComponent implements OnInit, OnDestroy {
       includeWeekendsControl?.updateValueAndValidity();
       includeHolidaysControl?.updateValueAndValidity();
     });
+  }
+
+  private syncGapCalculationBasis() {
+    const minGapRaw = this.leavePolicyForm.get('minimumGapBetweenSameLeaveType')?.value;
+    const minGap = typeof minGapRaw === 'string' ? Number(minGapRaw) : minGapRaw;
+    const gapCalculationBasisControl = this.leavePolicyForm.get('gapCalculationBasis');
+
+    if (!gapCalculationBasisControl) return;
+
+    if (minGap && minGap > 0) {
+      gapCalculationBasisControl.setValidators([Validators.required]);
+    } else {
+      gapCalculationBasisControl.clearValidators();
+      gapCalculationBasisControl.setValue(null, { emitEvent: false });
+    }
+
+    gapCalculationBasisControl.updateValueAndValidity();
   }
 
   updatePublishedCategories() {
@@ -697,6 +708,7 @@ export class UpdateLeavecategoryComponent implements OnInit, OnDestroy {
       sandwichApplicabilityCondition: data.sandwichApplicabilityCondition,
       adjacentLeaveTypeRule: data.adjacentLeaveTypeRule
     });
+    this.syncGapCalculationBasis();
     
     // Force update leaveType after a delay to ensure dropdown is ready
     // setTimeout(() => {

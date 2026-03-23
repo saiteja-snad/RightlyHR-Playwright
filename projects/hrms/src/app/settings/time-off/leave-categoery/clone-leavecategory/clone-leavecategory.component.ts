@@ -1,27 +1,26 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, ViewEncapsulation } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { Select } from 'primeng/select';
-import { MultiSelect } from 'primeng/multiselect';
-import { Subject, Subscription, takeUntil } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import { HttpService } from '../../../../services/http.service';
 import { Router } from '@angular/router';
 import { Iorgcategoryleaves, ShiftData } from '../../../../Interfaces/timoff-model';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { OpenModalService } from '../../../../services/open-modal.service';
+import { TranslateModule } from '@ngx-translate/core';
+import { ILetterType } from '../../../../Interfaces/leave-type.model';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { IJob } from '../../../../Interfaces/letters-model';
-import { ILetterType } from '../../../../Interfaces/leave-type.model';
-import { TranslateModule } from '@ngx-translate/core';
 @Component({
   selector: 'app-clone-leavecategory',
-  imports: [CommonModule, Select, ReactiveFormsModule, MultiSelectModule, TranslateModule],
+  imports: [CommonModule, Select, ReactiveFormsModule, MultiSelectModule,TranslateModule],
   templateUrl: './clone-leavecategory.component.html',
   styleUrl: './clone-leavecategory.component.scss',
-  encapsulation: ViewEncapsulation.None
+  encapsulation:ViewEncapsulation.None
 })
 
-export class CloneLeavecategoryComponent implements OnInit, OnDestroy {
+export class CloneLeavecategoryComponent {
   leavePolicyForm!: FormGroup;
   subscription!: Subscription;
   years: { label: string; value: number }[] = [];
@@ -94,6 +93,7 @@ export class CloneLeavecategoryComponent implements OnInit, OnDestroy {
     this.patchFormValues(this.updatecloneLeaveCategoryData);
     // this.setupDependentFieldListeners();
     this.setupDependentFieldListenerS();
+    this.syncGapCalculationBasis();
     this.validateAllowedDays();
     this.jobLocationList();
     this.getLeaveTypes();
@@ -466,15 +466,8 @@ export class CloneLeavecategoryComponent implements OnInit, OnDestroy {
       sandwichApplicabilityConditionControl?.setValue('leave_on_both_sides_of_holiday/weekend');
       sandwichApplicabilityConditionControl?.disable();
     }
-    this.leavePolicyForm?.get('minimumGapBetweenSameLeaveType')?.valueChanges.subscribe((value: any) => {
-      const gapCalculationBasisControl = this.leavePolicyForm.get('gapCalculationBasis');
-      if (value && value > 0) {
-        gapCalculationBasisControl?.setValidators([Validators.required]);
-      } else {
-        gapCalculationBasisControl?.clearValidators();
-        gapCalculationBasisControl?.setValue(null);
-      }
-      gapCalculationBasisControl?.updateValueAndValidity();
+    this.leavePolicyForm?.get('minimumGapBetweenSameLeaveType')?.valueChanges.subscribe(() => {
+      this.syncGapCalculationBasis();
     });
 
     this.leavePolicyForm?.get('maxLeaveDurationCalendarDays')?.valueChanges.subscribe((value: any) => {
@@ -508,6 +501,23 @@ export class CloneLeavecategoryComponent implements OnInit, OnDestroy {
       dependentControl?.setValue(0);
     }
     dependentControl?.updateValueAndValidity();
+  }
+
+  private syncGapCalculationBasis() {
+    const minGapRaw = this.leavePolicyForm.get('minimumGapBetweenSameLeaveType')?.value;
+    const minGap = typeof minGapRaw === 'string' ? Number(minGapRaw) : minGapRaw;
+    const gapCalculationBasisControl = this.leavePolicyForm.get('gapCalculationBasis');
+
+    if (!gapCalculationBasisControl) return;
+
+    if (minGap && minGap > 0) {
+      gapCalculationBasisControl.setValidators([Validators.required]);
+    } else {
+      gapCalculationBasisControl.clearValidators();
+      gapCalculationBasisControl.setValue(null, { emitEvent: false });
+    }
+
+    gapCalculationBasisControl.updateValueAndValidity();
   }
 
   updatePublishedCategories() {

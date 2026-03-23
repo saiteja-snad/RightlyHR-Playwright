@@ -31,6 +31,7 @@ export class OnBeHalfOfCancelComponent implements OnInit, OnDestroy {
   empdata = {} as any;
   subscription!: Subscription;
   lpdata = [] as Ilpid[];
+  selectedSandwichItem: any = null;
   loading: boolean = false;
   cadidateEmployeeId!: number;
 
@@ -88,6 +89,11 @@ export class OnBeHalfOfCancelComponent implements OnInit, OnDestroy {
         this.loading = false;
       }
     });
+  }
+
+  openSandwichBreakdown(item: any, modal: any) {
+    this.selectedSandwichItem = item;
+    this.modalService.open(modal, { centered: true, backdrop: 'static', size: 'lg' });
   }
 
 

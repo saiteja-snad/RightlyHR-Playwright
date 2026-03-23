@@ -38,6 +38,7 @@ export class OnBeHalfOfWaitingForApprovalComponent implements OnInit, OnDestroy{
   cadidateEmployeeId!: number;
   subscription!: Subscription;
   waitingForApprovalLeaves: any = [];
+  selectedSandwichItem: any = null;
   totalRecords = 100;
   loading: boolean = false;
   first: any = 0;
@@ -108,6 +109,11 @@ export class OnBeHalfOfWaitingForApprovalComponent implements OnInit, OnDestroy{
            this.loading = false;
         }
     });
+  }
+
+  openSandwichBreakdown(item: any, modal: any) {
+    this.selectedSandwichItem = item;
+    this.modalService.open(modal, { centered: true, backdrop: 'static', size: 'lg' });
   }
 
 

@@ -50,6 +50,7 @@ export class TimeOffComponent implements OnInit, OnDestroy {
   dataLoad = false;
   requestBody = {} as any;
   selectedProducts: LeaveApproval[] = [];
+  selectedSandwichItem: any = null;
   @ViewChild('commentspopup') modalContent: any;
   @ViewChild('leaveSummary') leaveSummary: any;
   @ViewChild('dt') table!: Table;
@@ -96,6 +97,11 @@ export class TimeOffComponent implements OnInit, OnDestroy {
         }
       }
     });
+  }
+
+  openSandwichBreakdown(item: LeaveApproval, modal: any) {
+    this.selectedSandwichItem = item?.entity;
+    this.modalService.open(modal, { centered: true, backdrop: 'static', size: 'lg' });
   }
 
   ngOnInit(): void {

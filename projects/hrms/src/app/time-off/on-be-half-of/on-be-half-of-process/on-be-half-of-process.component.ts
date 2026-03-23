@@ -25,6 +25,7 @@ export class OnBeHalfOfProcessComponent implements OnInit, OnDestroy{
   cadidateEmployeeId!: number;
   subscription!: Subscription;
   processedLeaves: any = [];
+  selectedSandwichItem: any = null;
   totalRecords = 100
   first: any = 0;
   rows: any = 10;
@@ -86,6 +87,11 @@ export class OnBeHalfOfProcessComponent implements OnInit, OnDestroy{
       }
 
     });
+  }
+
+  openSandwichBreakdown(item: any, modal: any) {
+    this.selectedSandwichItem = item;
+    this.modalService.open(modal, { centered: true, backdrop: 'static', size: 'lg' });
   }
 
 

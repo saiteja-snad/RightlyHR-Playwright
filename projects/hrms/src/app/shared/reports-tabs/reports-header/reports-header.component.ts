@@ -66,9 +66,6 @@ export class ReportsHeaderComponent implements OnInit {
     else if (this.router.url === '/reports/custom-reports') {
       this.componentname = 'Custom Reports';
     }
-    else if (this.router.url === '/reports/asset-reports') {
-      this.componentname = 'Asset Report';
-    }
     else if (this.router.url === '/reports/monthly-attandance-reports') {
       this.componentname = 'Monthly Attendance Report';
     }

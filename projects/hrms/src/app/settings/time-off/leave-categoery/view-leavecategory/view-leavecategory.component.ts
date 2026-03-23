@@ -211,7 +211,7 @@ export class ViewLeavecategoryComponent implements OnInit, OnDestroy {
       blockLeaveOnWeekends: [{ value: null, disabled: true }],
       blockPreviousDayLeave: [{ value: null, disabled: true }],
       blockNextDayLeave: [{ value: null, disabled: true }],
-      minimumGapBetweenSameLeaveType: [{ value: 30, disabled: true }, Validators.required],
+      minimumGapBetweenSameLeaveType: [{ value: null, disabled: true }, Validators.required],
       gapCalculationBasis: [{ value: null, disabled: true }, Validators.required],
       enableSandwichPolicy: [{ value: false, disabled: true }, Validators.required],
       applySandwichOn: [{ value: null, disabled: true }],

@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { IemployeeDetails } from '../reports.modal';
 import { FormsModule, ReactiveFormsModule, FormGroup, FormBuilder, Validators } from '@angular/forms';
@@ -7,6 +7,7 @@ import { CommonModule } from '@angular/common';
 import { DropdownModule } from 'primeng/dropdown';
 import { DatePicker } from 'primeng/datepicker';
 import { SelectModule } from 'primeng/select';
+import { MultiSelectModule } from 'primeng/multiselect';
 import { TranslateModule } from '@ngx-translate/core';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { DataLoaderContentComponent } from '../../../shared/data-loader-content/data-loader-content.component';
@@ -18,19 +19,21 @@ import { ReportsService } from '../../../services/reports/reports.service';
 import { Router } from '@angular/router';
 import { environment } from '../../../../environments/environment';
 import { IWfhReportRequest } from '../../../Interfaces/reports.model';
-import * as XLSX from 'xlsx';
+import * as XLSX from 'xlsx-js-style';
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
-import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbPopoverModule, NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
+
 @Component({
   selector: 'app-extraloghour-report',
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, DatePicker, DropdownModule, SelectModule, TranslateModule,NgbPopoverModule,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, DatePicker, DropdownModule, SelectModule, MultiSelectModule, TranslateModule, NgbPopoverModule,
     NoDataFoundComponent, DataLoaderContentComponent, ReportsHeaderComponent, InfoIconComponent],
   templateUrl: './extraloghour-report.component.html',
-  styleUrl: './extraloghour-report.component.scss'
+  styleUrl: './extraloghour-report.component.scss',
+  encapsulation: ViewEncapsulation.None
 })
-export class ExtraloghourReportComponent implements OnInit, OnDestroy{
+export class ExtraloghourReportComponent implements OnInit, OnDestroy {
 
-moduleinfo: string = '';
+  moduleinfo: string = '';
   subscription!: Subscription;
   loggedInUser = {} as IemployeeDetails;
   isLoading: boolean = false;
@@ -52,6 +55,7 @@ moduleinfo: string = '';
   extraLogHourReportForm!: FormGroup;
   spinnerLoader1 = false;
   spinnerLoader2 = false;
+  isFilterIndicatorActive = false;
   disableBtn = false;
   getEmployeeInfo = [] as any;
   selectLeaveEmployeeIds: number[] = [];
@@ -68,6 +72,7 @@ moduleinfo: string = '';
     ],
   };
   localeOptions: any;
+  today: Date = new Date();
 
   constructor(
     private authService: AuthService,
@@ -75,8 +80,22 @@ moduleinfo: string = '';
     private http: HttpService,
     private fb: FormBuilder,
     public rbac: RbacService,
-    public readonly router: Router
+    public readonly router: Router,
+    private offcanvasService: NgbOffcanvas
   ) { }
+
+  toggleFilters(content: any) {
+    this.offcanvasService.open(content, { position: 'end',  backdrop: 'static', });
+  }
+
+  closeCanvas() {
+    this.offcanvasService.dismiss();
+  }
+
+  onGenerate(): void {
+    this.isFilterIndicatorActive = this.isAnyFilterApplied();
+    this.getExtraLogHoursReports();
+  }
 
   ngOnInit(): void {
     this.localeOptions = {
@@ -94,37 +113,81 @@ moduleinfo: string = '';
 
   initializeForm() {
     this.extraLogHourReportForm = this.fb.group({
-      employee: [null, Validators.required],
+      employee: [null],
       manager: [null],
       dateRange: [null],
       team: [null]
     });
+
+    this.extraLogHourReportForm.get('manager')?.valueChanges.subscribe((managers: any[]) => {
+      if (managers && managers.length > 0) {
+        const managerIds = managers.map(m => m.employeeId).join(',');
+        this.getEmployeeId(managerIds);
+      } else {
+        this.getEmployeeId();
+      }
+      this.extraLogHourReportForm.get('employee')?.setValue(null);
+    });
+
     this.extraLogHourReportForm.valueChanges.subscribe(() => {
       this.disableBtn = true;
     })
   }
 
+  isAnyFilterApplied(): boolean {
+    const form = this.extraLogHourReportForm;
+    const value = form.value;
+    const hasEmployee = !!value.employee;
+    const hasManager = !!value.manager;
+    const hasTeam = !!value.team;
+    const range = value.dateRange;
+    const hasDateRange = !!(range && (range[0] || range[1] || range.startDate || range.endDate));
+    return hasEmployee || hasManager || hasTeam || hasDateRange;
+  }
+
   get isExtraLogReportGenerateDisabled(): boolean {
     const { employee, manager, dateRange, leaveCategory, team } = this.extraLogHourReportForm.value;
     // Check if any field has a value
-    return !(employee || manager || (dateRange && (dateRange.startDate || dateRange.endDate)) || leaveCategory || team);
+    return !((employee && employee.length > 0) ||
+      (manager && manager.length > 0) ||
+      (dateRange && dateRange.length === 2 && dateRange[0] && dateRange[1]) ||
+      leaveCategory ||
+      (team && team.length > 0));
   }
 
-  getEmployeeId() {
-    const loggedInUser = this.authService.getToken();
-    this.subscription = this.http.getData('Employeedata/ActiveEmployees').subscribe({
+  getEmployeeId(managerIds?: string) {
+    let url = 'Employeedata/employees/by-managers';
+    if (managerIds) {
+      url += `?managerIds=${managerIds}`;
+    }
+
+    this.subscription = this.http.getData(url).subscribe({
       next: (data: any) => {
-        const employeedata = data.map((employee: any) => {
+        const loggedInEmployee = {
+          ...this.loggedInUser,
+          fullName: `${this.loggedInUser.fusionEmpId ? this.loggedInUser.fusionEmpId + ' - ' : ''}${this.loggedInUser.firstName} ${this.loggedInUser.middleName ? this.loggedInUser.middleName + ' ' : ''}${this.loggedInUser.lastName}`.trim(),
+        };
+
+        const mappedData = data.map((employee: any) => {
+          const firstName = employee.firstName ? employee.firstName.trim() : '';
+          const middleName = employee.middleName ? employee.middleName.trim() : '';
+          const lastName = employee.lastName ? employee.lastName.trim() : '';
+
           return {
             ...employee,
-            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : '' }${employee.firstName} 
-            ${employee.middleName ? employee.middleName + ' ' : '' }${employee.lastName}`,
+            firstName,
+            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${firstName} ${middleName ? middleName + ' ' : ''}${lastName}`.trim(),
           };
-        }).sort((a: any, b: any) => (a.firstName ?? '').localeCompare(b.firstName ?? '')); //  Sort by first name
-        this.employeeiddetails = [
-          { fullName: 'All Employees', employeeId: 'all' },
-          ...employeedata
-        ];
+        });
+
+        const combinedData = [loggedInEmployee, ...mappedData];
+
+        // Filter unique by employeeId and sort by firstName
+        this.employeeiddetails = combinedData
+          .filter((employee, index, self) =>
+            index === self.findIndex((e) => e.employeeId === employee.employeeId)
+          )
+          .sort((a: any, b: any) => (a.firstName ?? '').toLowerCase().localeCompare((b.firstName ?? '').toLowerCase()));
       },
       error: (reason: any) => {
         console.log(reason);
@@ -137,13 +200,27 @@ moduleinfo: string = '';
     this.subscription = this.http.getData(`PendingApprovalsAuthority/getAll?statuses=${encodeURIComponent(statuses)}`).subscribe({
       next: (data: any) => {
         if (data) {
-          this.teamdetails = data.map((employee: any) => {
+          const loggedInEmployee = {
+            ...this.loggedInUser,
+            fusionEmployeeId: this.loggedInUser.fusionEmpId,
+            fullName: `${this.loggedInUser.fusionEmpId ? this.loggedInUser.fusionEmpId + ' - ' : ''}${this.loggedInUser.firstName} ${this.loggedInUser.middleName ? this.loggedInUser.middleName + ' ' : ''}${this.loggedInUser.lastName}`.trim(),
+          };
+
+          const mappedData = data.map((employee: any) => {
             return {
               ...employee,
-              fullName: `${employee.fusionEmployeeId ? employee.fusionEmployeeId + ' - ' : ''}${employee.firstName} 
-                ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
+              fullName: `${employee.fusionEmployeeId ? employee.fusionEmployeeId + ' - ' : ''}${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`.trim(),
             };
-          }).sort((a: any, b: any) => (a.firstName ?? '').localeCompare(b.firstName ?? ''));
+          });
+
+          const combinedData = [loggedInEmployee, ...mappedData];
+
+          // Filter unique by employeeId and sort by firstName
+          this.teamdetails = combinedData
+            .filter((employee, index, self) =>
+              index === self.findIndex((e) => e.employeeId === employee.employeeId)
+            )
+            .sort((a: any, b: any) => (a.firstName ?? '').toLowerCase().localeCompare((b.firstName ?? '').toLowerCase()));
         }
       },
       error: (reason: any) => {
@@ -156,12 +233,18 @@ moduleinfo: string = '';
     this.spinnerLoader1 = true;
     this.isLoading = true;
     const formValue = this.extraLogHourReportForm.value;
-    const isAllEmployeesSelected = formValue.employee?.employeeId === 'all';
+
     const dateRangeArray = formValue.dateRange || [];
     const startDate: Dayjs | null = dateRangeArray[0] ? dayjs(dateRangeArray[0]) : null;
     const endDate: Dayjs | null = dateRangeArray[1] ? dayjs(dateRangeArray[1]) : (startDate ? startDate : null);
-    //filter condition
-    const noFilterProvided = !formValue.employee && (!startDate || !endDate) && !formValue.month && !formValue.manager && !formValue.team;
+
+    // Check if any filter is provided
+    const isEmployeeSelected = formValue.employee && formValue.employee.length > 0;
+    const isManagerSelected = formValue.manager && formValue.manager.length > 0;
+    const isTeamSelected = formValue.team && formValue.team.length > 0;
+    const isDateSelected = startDate && endDate;
+
+    const noFilterProvided = !isEmployeeSelected && !isDateSelected && !formValue.month && !isManagerSelected && !isTeamSelected;
 
     if (noFilterProvided) {
       this.spinnerLoader1 = false;
@@ -172,13 +255,28 @@ moduleinfo: string = '';
 
     const request: IWfhReportRequest = {};
 
-    if (this.selectLeaveEmployeeIds.length >= 0) {
-      const ids = this.selectLeaveEmployeeIds?.join(',');
-      request.employeeId = ids;  // The selected employee IDs are set here
+    // Handle Employee Multi-Select
+    if (isEmployeeSelected) {
+      // Check if "All Employees" is selected
+      const isAllEmployeesSelected = formValue.employee.some((emp: any) => emp.employeeId === 'all');
+
+      if (!isAllEmployeesSelected) {
+        const employeeIds = formValue.employee.map((emp: any) => emp.employeeId).join(',');
+        request.employeeId = employeeIds;
+      }
+      // If "All Employees" is selected, we don't send employeeId filter (fetch all)
     }
 
-    if (formValue.employee?.employeeId !== 'all' && formValue.employee?.employeeId) {
-      request.employeeId = formValue.employee.employeeId;
+    // Handle Manager Multi-Select
+    if (isManagerSelected) {
+      const managerIds = formValue.manager.map((mgr: any) => mgr.employeeId).join(',');
+      request.teamManagerID = managerIds;
+    }
+
+    // Handle Team Multi-Select
+    if (isTeamSelected) {
+      const teamMemberIds = formValue.team.map((member: any) => member.employeeId).join(',');
+      request.employeeId = teamMemberIds;
     }
 
     // Apply date range if provided
@@ -187,17 +285,13 @@ moduleinfo: string = '';
       request.EndDate = this.formatDate(this.parseDate(endDate));
     }
 
-    if (formValue.month) {
-      request.Worked_Month = formValue.month;
-    }
+    // Check if My Team dropdown is visible
+    const isMyTeamVisible = this.rbac.allowedToAccess('My Team Report(ExtraLogHour).view') &&
+      !this.rbac.allowedToAccess('Attendance All Employees List(ExtraLogHour).view') &&
+      !this.rbac.allowedToAccess('Attendance Team Manager List(ExtraLogHour).view');
 
-    if (formValue.manager) {
-      request.teamManagerID = formValue.manager.employeeId;
-    }
-
-    // Only include filters if not "All Employees"
-    if (!isAllEmployeesSelected && formValue.employee?.employeeId) {
-      request.employeeId = formValue.employee.employeeId;
+    if (isMyTeamVisible) {
+      request.ReportingManagerId = this.loggedInUser.employeeId;
     }
 
     // Single API call
@@ -210,11 +304,13 @@ moduleinfo: string = '';
         this.disableBtn = true;
         this.isLoading = false;
         this.filteredExtraLogHourRecord = [];
+        this.closeCanvas();
       },
       complete: () => {
         this.spinnerLoader1 = false;
         this.disableBtn = false;
         this.isLoading = false;
+        this.closeCanvas();
       }
     });
   }
@@ -222,6 +318,7 @@ moduleinfo: string = '';
   clearAllFilters(): void {
     this.extraLogHourReportForm.reset();
     this.filteredExtraLogHourRecord = [];
+    this.isFilterIndicatorActive = false;
   }
 
   formatDate(date: Date): string {
@@ -236,131 +333,140 @@ moduleinfo: string = '';
   }
 
   exportToExcelextraLogHours(): void {
-    // Define header mappings
     this.spinnerLoader2 = true;
-    const HEADER_MAPPINGS: { [key: string]: string } = {
-      empId: 'EMPLOYEE ID',
-      employeeName: 'EMPLOYEE NAME',
-      department: 'DEPARTMENT',
-      teamManagerName: 'TEAM MANAGER',
-      location: 'LOCATION',
-      subLocation: 'SUB LOCATION',
-      shift: 'SHIFT',
-      requestedDate: 'DATE',
-      duration: 'DURATION',
-      notes: 'DESCRIPTION',
-
-    };
-
-    // Define new sequence
-    const NEW_SEQUENCE: string[] = [
-      'EMPLOYEE ID',
-      'EMPLOYEE NAME',
-      'DEPARTMENT',
-      'TEAM MANAGER',
-      'LOCATION',
-      'SUB LOCATION',
-      'SHIFT',
-      'DATE',
-      'DURATION',
-      'DESCRIPTION',
-    ];
-
-    // Modify data with renamed headers and new sequence
-    const modifiedData = this.filteredExtraLogHourRecord.map((record) => {
-      const modifiedRecord: any = {};
-      NEW_SEQUENCE.forEach((columnName) => {
-        const originalColumnName = Object.keys(HEADER_MAPPINGS).find(
-          (key) => HEADER_MAPPINGS[key] === columnName
-        );
-        if (originalColumnName && record.hasOwnProperty(originalColumnName)) {
-          if (record[originalColumnName] === null) {
-            modifiedRecord[columnName] = '-';
-          } else if (originalColumnName === 'worked_Date') {
-            const date = new Date(record[originalColumnName]);
-            modifiedRecord[
-              columnName
-            ] = `${date.getDate()}-${date.toLocaleString('default', {
-              month: 'short',
-            })}-${date.getFullYear()}`;
-          } else {
-            modifiedRecord[columnName] = record[originalColumnName];
-          }
-        } else {
-          modifiedRecord[columnName] = '-';
-        }
-      });
-      return modifiedRecord;
-    });
-
-    // Create a new empty worksheet
-    const ws: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet([[]]);
-
-    // Merge cells for extra log hour Report row from A1 to I1
-    ws['!merges'] = [
-      { s: { r: 0, c: 0 }, e: { r: 0, c: NEW_SEQUENCE.length - 1 } },
-    ];
-
-    // Add extra log hour Report row
-    XLSX.utils.sheet_add_aoa(ws, [['EXTRA LOG HOURS REPORT']], { origin: 'A1' });
-
-    // Add header row
-    const headerRow = NEW_SEQUENCE.map(
-      (columnName) => HEADER_MAPPINGS[columnName]
-    );
-    XLSX.utils.sheet_add_aoa(ws, [headerRow], { origin: 'A2' });
-
-    // Add data rows
-    XLSX.utils.sheet_add_json(ws, modifiedData, { origin: 'A3' });
-
-    // Apply styles to extra log hour Report row
-    const remoteReportCell = ws['A1'] || { t: '', v: '' }; // Get the cell or create a new one if it doesn't exist
-    remoteReportCell.s = {
-      font: { bold: true },
-      alignment: { horizontal: 'center' },
-      fill: { bgColor: { rgb: 'FFFF00' } },
-    };
-    ws['A1'] = remoteReportCell; // Assign the styled cell back to the worksheet
-
-    // Apply styles to column headers
-    NEW_SEQUENCE.forEach((columnName, index) => {
-      const cellAddress = XLSX.utils.encode_cell({ r: 1, c: index });
-      const cell = ws[cellAddress] || { t: '', v: '' }; // Get the cell or create a new one if it doesn't exist
-      cell.s = {
-        font: { bold: true },
-        alignment: { horizontal: 'center' },
-        fill: { bgColor: { rgb: '0000FF' } },
-        fontColor: { rgb: 'FFFFFF' },
+    setTimeout(() => {
+      const HEADER_MAPPINGS: { [key: string]: string } = {
+        empId: 'EMPLOYEE ID',
+        employeeName: 'EMPLOYEE NAME',
+        department: 'DEPARTMENT',
+        teamManagerName: 'TEAM MANAGER',
+        location: 'LOCATION',
+        subLocation: 'SUB LOCATION',
+        shift: 'SHIFT',
+        requestedDate: 'WORKED DATE',
+        duration: 'DURATION',
+        // notes: 'DESCRIPTION',
       };
-      ws[cellAddress] = cell; // Assign the styled cell back to the worksheet
-    });
 
-    // Adjust column width to fit data
-    NEW_SEQUENCE.forEach((columnName, index) => {
-      let columnWidth = this.getColumnWidth(modifiedData, columnName);
+      const NEW_SEQUENCE: string[] = [
+        'EMPLOYEE ID',
+        'EMPLOYEE NAME',
+        'DEPARTMENT',
+        'TEAM MANAGER',
+        'LOCATION',
+        'SUB LOCATION',
+        'SHIFT',
+        'WORKED DATE',
+        'DURATION',
+        // 'DESCRIPTION',
+      ];
 
-      if (columnName === 'EMPLOYEE ID' || columnName === 'DEPARTMENT' || columnName === 'WORKED DATE') {
-        columnWidth += 5; // Increase width by 5
+      // Prepare data for Excel (Array of Arrays) to ensure proper cell initialization
+      const excelData: any[][] = [];
+
+      // 1. Add Title Row
+      excelData.push(['EXTRA LOG HOURS REPORT']);
+
+      // 2. Add Header Row
+      excelData.push(NEW_SEQUENCE);
+
+      // 3. Add Data Rows
+      this.filteredExtraLogHourRecord.forEach((record) => {
+        const row: any[] = [];
+        NEW_SEQUENCE.forEach((columnName) => {
+          const originalKey = Object.keys(HEADER_MAPPINGS).find(
+            (key) => HEADER_MAPPINGS[key] === columnName
+          );
+
+          let value = '-';
+          if (originalKey && record.hasOwnProperty(originalKey)) {
+            const rawValue = record[originalKey];
+            if (rawValue !== null && rawValue !== undefined) {
+              if (originalKey === 'requestedDate') {
+                // Format: MMM DD YYYY (e.g. Mar 02 2026)
+                value = dayjs(rawValue).format('MMM D, YYYY');
+              } else {
+                value = rawValue;
+              }
+            }
+          }
+          row.push(value);
+        });
+        excelData.push(row);
+      });
+
+      // Create Worksheet from the complete data array
+      const ws: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(excelData);
+
+      // Merge Title Row (A1 across all columns)
+      ws['!merges'] = [
+        { s: { r: 0, c: 0 }, e: { r: 0, c: NEW_SEQUENCE.length - 1 } },
+      ];
+
+      // Style Title Row (A1)
+      if (!ws['A1']) ws['A1'] = { t: 's', v: 'EXTRA LOG HOURS REPORT' };
+      
+      // Explicitly set type and value to ensure consistency
+      ws['A1'].t = 's';
+      ws['A1'].v = 'EXTRA LOG HOURS REPORT';
+
+      ws['A1'].s = {
+        font: { bold: true, sz: 14, color: { rgb: "000000" } },
+        alignment: { horizontal: 'center', vertical: 'center' },
+      };
+
+      // Set explicit row height for the title row
+      if (!ws['!rows']) ws['!rows'] = [];
+      ws['!rows'][0] = { hpt: 25 }; // Set height for title row
+
+      // Style Header Row (Row 2, Index 1)
+      const headerRowIndex = 1;
+      NEW_SEQUENCE.forEach((_, colIndex) => {
+        const cellRef = XLSX.utils.encode_cell({ r: headerRowIndex, c: colIndex });
+        if (!ws[cellRef]) ws[cellRef] = { t: 's', v: NEW_SEQUENCE[colIndex] };
+        ws[cellRef].s = {
+          font: { bold: true },
+          alignment: { horizontal: 'center', vertical: 'center' },
+        };
+      });
+
+      // Style Data Rows (Row 3 onwards, Index 2+)
+      for (let i = 2; i < excelData.length; i++) {
+        NEW_SEQUENCE.forEach((_, colIndex) => {
+          const cellRef = XLSX.utils.encode_cell({ r: i, c: colIndex });
+          if (ws[cellRef]) {
+            if (!ws[cellRef].s) ws[cellRef].s = {};
+            ws[cellRef].s = {
+              ...ws[cellRef].s,
+              alignment: { horizontal: 'center', vertical: 'center' },
+            };
+          }
+        });
       }
-      ws['!cols'] = ws['!cols'] || [];
-      ws['!cols'][index] = { wch: columnWidth };
-    });
 
-    // Generate Excel file and trigger download
-    const wb: XLSX.WorkBook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Extra Log Hours Report');
-    XLSX.writeFile(wb, 'ExtraLogHours_Report.xlsx');
-    this.spinnerLoader2 = false;
-  }
+      // Calculate and Set Column Widths
+      const colWidths = NEW_SEQUENCE.map((colName, colIndex) => {
+        let maxLength = colName.length;
+        // Check data rows (starting from index 2)
+        for (let i = 2; i < excelData.length; i++) {
+          const cellValue = excelData[i][colIndex] ? String(excelData[i][colIndex]) : '';
+          if (cellValue.length > maxLength) {
+            maxLength = cellValue.length;
+          }
+        }
+        return { wch: maxLength + 5 }; // Add padding
+      });
+      ws['!cols'] = colWidths;
 
-  getColumnWidth(data: any[], columnName: string): number {
-    // Find the maximum width of data in the column
-    const maxWidth = data.reduce((max: number, record: any) => {
-      const value = record[columnName]?.toString().length || 0;
-      return value > max ? value : max;
-    }, 0);
-    // Set minimum width to 10
-    return Math.max(10, maxWidth);
+      // Generate Excel file and trigger download
+      const wb: XLSX.WorkBook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'Extra Log Hours Report');
+      const date = new Date();
+      // const formattedDate = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+      const fileName = `Extra Log Hours Report - ${dayjs().format('MMM DD YYYY')}.xlsx`;
+      XLSX.writeFile(wb, fileName);
+      this.spinnerLoader2 = false;
+    }, 100);
   }
 
   onClick(employeeIds: any) {
@@ -370,9 +476,9 @@ moduleinfo: string = '';
       this.selectedEmployeeId = [];
       // If "All Employees" is selected, set employeeId as an empty array or a special flag
       if (employeeIds.value.employeeId == this.loggedInUser.employeeId) {
-        this.selectLeaveEmployeeIds = this.getEmployeeInfo.filter((employee: any) => 
+        this.selectLeaveEmployeeIds = this.getEmployeeInfo.filter((employee: any) =>
           employee.employeeId !== this.loggedInUser.employeeId).map((employee: any) => employee.employeeId); // Select all employees
-        this.selectedEmployeeId = this.getEmployeeInfo.filter((employee: any) => 
+        this.selectedEmployeeId = this.getEmployeeInfo.filter((employee: any) =>
           employee.employeeId !== this.loggedInUser.employeeId).map((employee: any) => employee.employeeId);
       } else {
         this.selectLeaveEmployeeIds.push(employeeIds.value.employeeId);
@@ -381,27 +487,40 @@ moduleinfo: string = '';
     }
   }
 
-  getMyTeam() {
+getMyTeam() {
     const EmployeeId = this.loggedInUser?.employeeId;
-    this.subscription = this.http.getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`).subscribe({
-      next: (response: any) => {
-        if (response) {
-          const myTeam = response.filter((e: any) => e.isAccess);
-          this.getEmployeeInfo = myTeam.map((employee: any) => {
-            return {
-              ...employee,
-              fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : '' }${employee.firstName} 
-              ${employee.middleName ? employee.middleName + ' ' : '' }${employee.lastName}`,
-            };
-          }).sort((a: any, b: any) => (a.firstName ?? '').localeCompare(b.firstName ?? ''));
-          this.getEmployeeInfo.unshift({
-            fullName: 'All Employees',
-            fusionEmpId: this.loggedInUser.fusionEmpId,
-            employeeId: this.loggedInUser.employeeId,
-          });
-        }
-      },
-    });
+    this.subscription = this.http
+      .getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`)
+      .subscribe({
+        next: (response: any) => {
+          console.log(response);
+          if (response) {
+            const myTeam = response.filter((e: any) => e.isAccess);
+            this.getEmployeeInfo = myTeam.map((employee: any) => {
+              return {
+                ...employee,
+                fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
+                  }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
+                  }${employee.lastName}`,
+              };
+            });
+ 
+            const isUserInList = this.getEmployeeInfo.some((e: any) => e.employeeId === this.loggedInUser.employeeId);
+            if (!isUserInList) {
+              this.getEmployeeInfo.unshift({
+                ...this.loggedInUser,
+                fullName: `${this.loggedInUser.fusionEmpId ? this.loggedInUser.fusionEmpId + ' - ' : ''}
+                ${this.loggedInUser.firstName} ${this.loggedInUser.middleName ? this.loggedInUser.middleName + ' ' : ''}
+                ${this.loggedInUser.lastName}`,
+              });
+            }
+ 
+            this.getEmployeeInfo.sort((a: any, b: any) =>
+              (a.firstName?.toLowerCase() ?? '').localeCompare(b.firstName?.toLowerCase() ?? '')
+            );
+          }
+        },
+      });
   }
 
   navigation() {

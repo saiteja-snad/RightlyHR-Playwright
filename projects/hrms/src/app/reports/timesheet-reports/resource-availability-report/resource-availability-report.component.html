@@ -3,84 +3,28 @@
     <!-- Header -->
     <app-reports-header />
 
-    <form autocomplete="off" [formGroup]="ResourceAvailabilityReportForm"
-      (ngSubmit)="generateResourceAvailabilityReport(page, pageSize,true,true)" *ngIf="ResourceAvailabilityReportForm">
-      <div class="d-flex align-items-center flex-wrap  gap-3">
+     <div class="d-flex align-items-center gap-3">
         @if(rbac.allowedToAccess('Resource Availability Report - Generate.view')){
-        <button type="button" class="clear-all-btn" [disabled]="
-          ResourceAvailabilityReportForm.get('projectId')?.value == null &&
-          ResourceAvailabilityReportForm.get('employeid')?.value == null &&
-          ResourceAvailabilityReportForm.get('dateRange')?.value == null
-        " (click)="clearAllFilters()">
-          @if(isFilterApplied()) {
-          {{ 'Clear All' | translate }}
-          }
+        <button type="button" class="custom-btn btn-secondary position-relative" (click)="toggleFilters(filterContent)" [disabled]="spinnerLoader1 || spinnerLoader2">
+          <i class="bi bi-funnel me-2"></i>Filters
+          <span *ngIf="isFilterIndicatorActive" class="filter-indicator"></span>
         </button>
-
-
-        <!-- Employee-->
-        <div class="d-flex align-items-center gap-2">
-          <div class="custom-p-multiSelect-content">
-            <p-multiSelect [options]="employeeData" optionLabel="name" optionValue="id" [filter]="true"
-              [maxSelectedLabels]="1" [defaultLabel]="'Please select employee' | translate" formControlName="employeid"
-              class="form-select custom-select"></p-multiSelect>
-          </div>
-        </div>
-        <!-- Project-->
-        <div class="d-flex align-items-center gap-2">
-          <div class="custom-p-multiSelect-content">
-            <p-multiSelect [options]="projectsList" optionLabel="label" optionValue="value" [filter]="true" 
-              formControlName="projectId" [maxSelectedLabels]="1" [placeholder]="'Please select project' | translate"
-              class="form-select custom-select" (onChange)="onProjectChange($event)">
-            </p-multiSelect>
-          </div>
-        </div>
-        <!-- Phases Dropdown -->
-        <div class="d-flex align-items-center gap-2">
-          <div class="custom-p-multiSelect-content">
-            <p-multiSelect [options]="phasesData" optionLabel="label" optionValue="phaseId" [filter]="true" [maxSelectedLabels]="1"
-              [resetFilterOnHide]="true" filterBy="phaseName" formControlName="phases"
-              [placeholder]="'Please select phases' | translate" class="form-select custom-select">
-            </p-multiSelect>
-          </div>
-        </div>
-
-        <!-- Date Range -->
-        <div class="d-flex align-items-center gap-2">
-          <div class="custom-date-range-picker">
-            <p-datepicker formControlName="dateRange" [placeholder]="'Please select date range' | translate" selectionMode="range"
-              [showIcon]="true" [readonlyInput]="true" />
-          </div>
-        </div>
         }
-        <!-- Buttons -->
-        <div class="d-flex gap-2">
-          @if(rbac.allowedToAccess('Resource Availability Report - Generate.view')){
-          <button type="submit" class="custom-btn btn-secondary "
-            [disabled]="!isFilterApplied() ||isLeaveGenerateDisabled ">
-            @if(spinnerLoader1){
-            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-            <span>{{ 'Loading...' | translate }}</span>
-            }@else {
-            <span>{{ 'Generate' | translate }}</span>
-            }
-          </button>
-          }
 
-          @if(rbac.allowedToAccess('Resource Availability Report - Generate.view') && rbac.allowedToAccess('Resource Availability Report - Export.view')){
-          <button type="button" class="custom-btn btn-primary" (click)="exportResourceAvailabilityReport()"
-            [disabled]="!isFilterApplied() || filteredResourceAvailabilityRecord.length == 0 || disableBtn">
+          @if(rbac.allowedToAccess('Resource Availability Report - Generate.view') 
+                && rbac.allowedToAccess('Resource Availability Report - Export.view')){
+          <button type="button" class="custom-btn btn-primary" class="custom-btn btn-primary"
+             (click)="exportResourceAvailabilityReport()"
+            [disabled]="!isFilterApplied() || filteredResourceAvailabilityRecord.length == 0 || disableBtn || spinnerLoader2">
             @if(spinnerLoader2){
             <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-            <span>{{ 'Loading...' | translate }}</span>
+            <span>{{'Loading...'}}</span>
             }@else {
-            <span>{{ 'Export' | translate }}</span>
+            <span>{{'Export'}}</span>
             }
           </button>
           }
-        </div>
-      </div>
-    </form>
+    </div>
   </div>
 
   <div class="custom-table-content">
@@ -88,22 +32,22 @@
     <table id="leaveReportTable" class="w-100">
       <thead>
 
-        <!-- <th>Employee ID</th> -->
-        <th>{{ 'Employee Name' | translate }}</th>
-        <th>{{ 'Department' | translate }}</th>
-        <th>{{ 'Role' | translate }}</th>
+        <th>{{'Employee ID' | translate}}</th>
+        <th>{{'Employee Name' | translate}}</th>
+        <th>{{'Department' | translate}}</th>
+        <th>{{'Role' | translate}}</th>
         <!-- <th>Designation</th> -->
-        <th>{{ 'Project Assigned' | translate }}</th>
-        <th>{{ 'Phase/Milestone' | translate }}</th>
-        <th>{{ 'Project Start Date' | translate }}</th>
-        <th>{{ 'Project End Date' | translate }}</th>
+        <th>{{'Project Assigned' | translate}}</th>
+        <th>{{'Phase/Milestone' | translate}}</th>
+        <th class="text-center">{{'Project Start Date' | translate}}</th>
+        <th class="text-center">{{'Project End Date' | translate}}</th>
         <!-- <th>Allocated To</th> -->
-        <th>{{ 'Available From' | translate }}</th>
+        <th class="text-center">{{'Available From' | translate}}</th>
       </thead>
       <tbody>
         @if (!filteredResourceAvailabilityRecord || filteredResourceAvailabilityRecord.length === 0) {
         <tr>
-          <td colspan="8" class="text-center">
+          <td colspan="9" class="text-center">
             <app-no-data-found />
           </td>
         </tr>
@@ -111,15 +55,15 @@
         @else {
         @for (record of filteredResourceAvailabilityRecord; track $index) {
         <tr>
-          <!-- <td>{{ record.fusionEmpId ?? '-' }}</td> -->
+          <td>{{ record.fusionEmpId ?? '-' }}</td>
           <td>{{ record.employeeName ?? '-' }}</td>
           <td>{{ record.department ?? '-' }}</td>
           <td>{{ record.designation ?? '-' }}</td>
           <td>{{ record.projectAssigned ?? '-' }}</td>
           <td>{{ record.phaseName ?? '-' }}</td>
-          <td>{{ record.projectStartDate ? (record.projectStartDate | date) : '-' }}</td>
-          <td>{{ record.projectEndDate ? (record.projectEndDate | date) : '-' }}</td>
-          <td>{{ record.availableFrom ? (record.availableFrom | date) : '-' }}</td>
+          <td class="text-center">{{ record.projectStartDate ? (record.projectStartDate | date) : '-' }}</td>
+          <td class="text-center">{{ record.projectEndDate ? (record.projectEndDate | date) : '-' }}</td>
+          <td class="text-center">{{ record.availableFrom ? (record.availableFrom | date) : '-' }}</td>
         </tr>
         }
         }
@@ -142,8 +86,8 @@
           <option *ngFor="let option of options" [value]="option.value">{{ option.label }}</option>
         </select>
         <span class="pagination-label text-nowrap">
-          {{ 'Showing' | translate }} {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize : (+first + +rows)}}
-          {{ 'of' | translate }} {{collectionSize }}
+          Showing {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize : (+first + +rows)}}
+          of {{collectionSize }}
         </span>
       </div>
       <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"
@@ -152,3 +96,87 @@
   </div>
   }
 </div>
+
+
+<!-- Filter Offcanvas -->
+<ng-template #filterContent let-offcanvas>
+  <div class="custom-filter-container">
+    <div class="offcanvas-filter-header-content offcanvas-filter-header-border">
+      <p class="filter-header m-0">{{'Filters' | translate}}</p>
+      <a (click)="closeCanvas()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+    </div>
+
+    <div class="offcanvas-filter-content">
+      <form autocomplete="off" [formGroup]="ResourceAvailabilityReportForm"
+      (ngSubmit)="onGenerate()" *ngIf="ResourceAvailabilityReportForm">
+
+        <!-- Date Range -->
+        <div class="mb-3">
+          <label class="form-label custom-label text-nowrap filter-labels mb-3">{{'Select Date Range' | translate}}</label>
+          <div class="custom-date-range-picker">
+            <p-datepicker formControlName="dateRange" [placeholder]="'Please select date range'" selectionMode="range"
+              [showIcon]="true" [readonlyInput]="true" [maxDate]="today" />
+          </div>
+        </div>
+
+        <!-- Project-->
+        <div class="mb-3">
+          <label class="form-label custom-label text-nowrap filter-labels mb-3">{{'Select Project' | translate}}</label>
+          <div class="custom-p-multiSelect-content">
+            <p-multiSelect [options]="projectsList" optionLabel="label" optionValue="value" [filter]="true"
+              placeholder="Please select project" formControlName="projectId" class="form-select custom-select"
+              [maxSelectedLabels]="1" (onChange)="onProjectChange($event)" 
+               filterPlaceHolder="Search project" [resetFilterOnHide]="true" >
+            </p-multiSelect>
+          </div>
+        </div>
+
+        <!-- Phases Dropdown -->
+        <div class="mb-3">
+          <label class="form-label custom-label text-nowrap filter-labels mb-3">{{'Select Phase' | translate}}</label>
+          <div class="custom-p-multiSelect-content">
+            <p-multiSelect [options]="phasesData" optionLabel="label" optionValue="phaseId" [filter]="true"
+              [maxSelectedLabels]="1" formControlName="phases" placeholder="Please select phases"
+              class="form-select custom-select"
+               filterPlaceHolder="Search phase" [resetFilterOnHide]="true" >
+            </p-multiSelect>
+          </div>
+        </div>
+
+        
+        <!-- Employee-->
+        <div class="mb-3">
+          <label class="form-label custom-label text-nowrap filter-labels mb-3">{{'Select Employee' |
+            translate}}</label>
+          <div class="custom-p-multiSelect-content">
+            <p-multiSelect [options]="employeeData" optionLabel="name" optionValue="id" [filter]="true"
+              [maxSelectedLabels]="1" placeholder="Please select employee" formControlName="employeid"
+              class="form-select custom-select"
+               filterPlaceHolder="Search employee" [resetFilterOnHide]="true"  >
+            </p-multiSelect>
+          </div>
+        </div>
+        
+        <div class="d-flex offcanvas-footer-content gap-3">
+          @if(isFilterApplied() || filteredResourceAvailabilityRecord.length > 0){
+          <button type="button" class="custom-btn btn-secondary w-100" (click)="clearAllFilters()"
+            [disabled]="spinnerLoader1">
+            {{'Clear All' | translate}}</button>
+          }
+
+          @if(rbac.allowedToAccess('Resource Availability Report - Generate.view')){
+          <button type="button" class="custom-btn btn-primary w-100" (click)="onGenerate()"
+            [disabled]="!isFilterApplied() || isLeaveGenerateDisabled">
+            @if(spinnerLoader1){
+            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+            <span>{{'Loading...'}}</span>
+            }@else {
+            <span>{{'Generate'}}</span>
+            }
+          </button>
+          }
+        </div>
+      </form>
+    </div>
+  </div>
+</ng-template>

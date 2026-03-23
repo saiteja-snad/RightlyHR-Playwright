@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, TemplateRef, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from '../../../services/auth.service';
 import { HttpService } from '../../../services/http.service';
@@ -10,19 +10,21 @@ import { IemployeeDetails, ITeamManagerEmployees } from '../reports.modal';
 import dayjs, { Dayjs } from 'dayjs';
 import { environment } from '../../../../environments/environment';
 import { IAttendanceDetails } from '../../../Interfaces/reports.model';
-import * as XLSX from 'xlsx';
+import * as XLSX from 'xlsx-js-style';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { RbacService } from '../../../services/rbac.service';
 import { Router } from '@angular/router';
 import { ReportsHeaderComponent } from "../../../shared/reports-tabs/reports-header/reports-header.component";
 import { DatePicker } from 'primeng/datepicker';
-import { TranslateModule } from '@ngx-translate/core';
+import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
+import { MultiSelectModule } from 'primeng/multiselect';
 @Component({
   selector: 'app-permission-reports',
-  imports: [CommonModule, ReactiveFormsModule, Select, DatePicker,TranslateModule, DataLoaderContentComponent, NoDataFoundComponent, ReportsHeaderComponent],
+  imports: [CommonModule, ReactiveFormsModule, Select, DatePicker, DataLoaderContentComponent, MultiSelectModule, NoDataFoundComponent, ReportsHeaderComponent],
   templateUrl: './permission-reports.component.html',
-  styleUrl: './permission-reports.component.scss'
+  styleUrl: './permission-reports.component.scss',
+  encapsulation: ViewEncapsulation.None,
 })
 
 export class PermissionReportsComponent implements OnInit, OnDestroy {
@@ -36,6 +38,7 @@ export class PermissionReportsComponent implements OnInit, OnDestroy {
   destroy$: Subject<boolean> = new Subject<boolean>();
   spinnerLoader1 = false;
   spinnerLoader2 = false;
+  isFilterIndicatorActive = false;
   disableBtn = false;
   isLoading = false;
   getEmployeeInfo = [] as any;
@@ -54,6 +57,7 @@ export class PermissionReportsComponent implements OnInit, OnDestroy {
     ],
   };
   localeOptions: any;
+  today: Date = new Date();
 
   constructor(
     private authService: AuthService,
@@ -61,7 +65,8 @@ export class PermissionReportsComponent implements OnInit, OnDestroy {
     private http: HttpService,
     private fb: FormBuilder,
     public rbac: RbacService,
-    public readonly router: Router
+    public readonly router: Router,
+     private offcanvasService: NgbOffcanvas
   ) { }
 
   ngOnInit(): void {
@@ -86,69 +91,117 @@ export class PermissionReportsComponent implements OnInit, OnDestroy {
       dateRange: [null],
       team: [null]
     });
+
+    this.permissionReportForm.get('manager')?.valueChanges.subscribe((managers: any[]) => {
+      if (managers && managers.length > 0) {
+        const managerIds = managers.map(m => m.employeeId).join(',');
+        this.getAllEmployees(managerIds);
+      } else {
+        this.getAllEmployees();
+      }
+      this.permissionReportForm.get('employee')?.setValue(null);
+    });
+
     this.permissionReportForm.valueChanges.subscribe(() => {
       this.disableBtn = true;
     })
   }
 
+  isAnyFilterApplied(): boolean {
+    const form = this.permissionReportForm;
+    const value = form.value;
+    const hasEmployee = !!value.employee;
+    const hasManager = !!value.manager;
+    const hasTeam = !!value.team;
+    const range = value.dateRange;
+    const hasDateRange = !!(range && (range[0] || range[1] || range.startDate || range.endDate));
+    return hasEmployee || hasManager || hasTeam || hasDateRange;
+  }
+
   get isPermissionGenerateDisabled(): boolean {
     const { employee, manager, dateRange, leaveCategory, team } = this.permissionReportForm.value;
     // Check if any field has a value
-    return !(employee || manager || (dateRange && (dateRange.startDate || dateRange.endDate)) || leaveCategory || team);
+    return !((employee && employee?.length > 0) || 
+             (manager && manager?.length > 0) || 
+             (dateRange && dateRange?.length === 2 && dateRange[0] && dateRange[1]) || 
+             leaveCategory || 
+             (team && team?.length > 0));
   }
 
-  getAllEmployees() {
-  const loggedInUser = this.authService.getToken();
-  this.http.getData('Employeedata/ActiveEmployees').pipe(takeUntil(this.destroy$))
-    .subscribe({
-      next: (data: any) => {
-        const employeedata = data
-          .map((employee: any) => {
+  getAllEmployees(managerIds?: string) {
+    let url = 'Employeedata/employees/by-managers';
+    if (managerIds) {
+      url += `?managerIds=${managerIds}`;
+    }
+
+    this.http.getData(url).pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (data: any) => {
+          const loggedInEmployee = {
+            ...this.loggedInUser,
+            fullName: `${this.loggedInUser.fusionEmpId ? this.loggedInUser.fusionEmpId + ' - ' : ''}${this.loggedInUser.firstName} ${this.loggedInUser.middleName ? this.loggedInUser.middleName + ' ' : ''}${this.loggedInUser.lastName}`.trim(),
+          };
+
+          const mappedData = data.map((employee: any) => {
             const firstName = employee.firstName ? employee.firstName.trim() : '';
             const middleName = employee.middleName ? employee.middleName.trim() : '';
             const lastName = employee.lastName ? employee.lastName.trim() : '';
 
             return {
               ...employee,
-              firstName, //  trimmed
+              firstName,
               fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${firstName} ${middleName ? middleName + ' ' : ''}${lastName}`.trim(),
             };
-          })
-          .sort((a: any, b: any) =>
-            a.firstName.toLowerCase().localeCompare(b.firstName.toLowerCase()) //  Alphabetical by first name
-          );
+          });
 
-        this.employeeDetails = [
-          { fullName: 'All Employees', employeeId: 'all' },
-          ...employeedata
-        ];
-      },
-      error: (reason: any) => {
-        console.log(reason);
-      },
-    });
-}
+          const combinedData = [loggedInEmployee, ...mappedData];
+
+          // Filter unique by employeeId and sort by firstName
+          this.employeeDetails = combinedData
+            .filter((employee, index, self) =>
+              index === self.findIndex((e) => e.employeeId === employee.employeeId)
+            )
+            .sort((a: any, b: any) => (a.firstName ?? '').toLowerCase().localeCompare((b.firstName ?? '').toLowerCase()));
+        },
+        error: (reason: any) => {
+          console.log(reason);
+        },
+      });
+  }
 
 
 getTeam() {
   const statuses = 'Active';
   this.http.getData(`PendingApprovalsAuthority/getAll?statuses=${encodeURIComponent(statuses)}`).pipe(takeUntil(this.destroy$)).subscribe({
     next: (data: any) => {
-      this.teamManagerDetails = data
-        .map((employee: any) => {
+      if (data) {
+        const loggedInEmployee = {
+          ...this.loggedInUser,
+          fusionEmployeeId: this.loggedInUser.fusionEmpId,
+          fullName: `${this.loggedInUser.fusionEmpId ? this.loggedInUser.fusionEmpId + ' - ' : ''}${this.loggedInUser.firstName} ${this.loggedInUser.middleName ? this.loggedInUser.middleName + ' ' : ''}${this.loggedInUser.lastName}`.trim(),
+        };
+
+        const mappedData = data.map((employee: any) => {
           const firstName = employee.firstName ? employee.firstName.trim() : '';
           const middleName = employee.middleName ? employee.middleName.trim() : '';
           const lastName = employee.lastName ? employee.lastName.trim() : '';
 
           return {
             ...employee,
-            firstName, //  trimmed
+            firstName,
             fullName: `${employee.fusionEmployeeId ? employee.fusionEmployeeId + ' - ' : ''}${firstName} ${middleName ? middleName + ' ' : ''}${lastName}`.trim(),
           };
-        })
-        .sort((a: any, b: any) =>
-          a.firstName.toLowerCase().localeCompare(b.firstName.toLowerCase()) //  Alphabetical by first name
-        );
+        });
+
+        const combinedData = [loggedInEmployee, ...mappedData];
+
+        // Filter unique by employeeId and sort by firstName
+        this.teamManagerDetails = combinedData
+          .filter((employee, index, self) =>
+            index === self.findIndex((e) => e.employeeId === employee.employeeId)
+          )
+          .sort((a: any, b: any) => (a.firstName ?? '').toLowerCase().localeCompare((b.firstName ?? '').toLowerCase()));
+      }
     },
     error: (reason: any) => console.log(reason),
   });
@@ -157,6 +210,7 @@ getTeam() {
   clearAllFilters() {
     this.permissionReportForm.reset();
     this.filteredPermissionData = [];
+    this.isFilterIndicatorActive = false;
   }
 
   formatDate(date: Date): string {
@@ -170,16 +224,28 @@ getTeam() {
     return date instanceof Date ? date : new Date(date);
   }
 
+  onGenerate(): void {
+    this.isFilterIndicatorActive = this.isAnyFilterApplied();
+    this.generatePermissionReport();
+  }
+
   generatePermissionReport(): void {
+    this.offcanvasService.dismiss();
     this.spinnerLoader1 = true;
     this.isLoading = true;
     const formValue = this.permissionReportForm.value;
-    const isAllEmployeesSelected = formValue.employee?.employeeId !== 'all';
+    
     const dateRangeArray = formValue.dateRange || [];
     const startDate: Dayjs | null = dateRangeArray[0] ? dayjs(dateRangeArray[0]) : null;
     const endDate: Dayjs | null = dateRangeArray[1] ? dayjs(dateRangeArray[1]) : (startDate ? startDate : null);
-    //filter condition
-    const noFilterProvided = !formValue.employee && !formValue.leaveCategory && (!startDate || !endDate) && !formValue.month && !formValue.manager && !formValue.team;
+    
+    // Check if any filter is provided
+    const isEmployeeSelected = formValue.employee && formValue.employee.length > 0;
+    const isManagerSelected = formValue.manager && formValue.manager.length > 0;
+    const isTeamSelected = formValue.team && formValue.team.length > 0;
+    const isDateSelected = startDate && endDate;
+
+    const noFilterProvided = !isEmployeeSelected && !isDateSelected && !formValue.month && !isManagerSelected && !isTeamSelected;
 
     if (noFilterProvided) {
       this.filteredPermissionData = [];
@@ -190,34 +256,37 @@ getTeam() {
 
     const request: IAttendanceDetails = {};
 
-    if (this.selectLeaveEmployeeIds.length >= 0) {
-      const ids = this.selectLeaveEmployeeIds?.join(',');
-      request.employeeId = ids;  // The selected employee IDs are set here
+    // Check if My Team dropdown is visible
+    const isMyTeamVisible = this.rbac.allowedToAccess('My Team Report(Permission).view') &&
+      !this.rbac.allowedToAccess('Attendance All Employees List(Permission).view') &&
+      !this.rbac.allowedToAccess('Attendance Team Manager List(Permission).view');
+
+    if (isMyTeamVisible) {
+      (request as any).ReportingManagerId = this.loggedInUser.employeeId;
     }
 
-    // Apply leave category if selected
-    if (formValue.employee?.employeeId !== 'all' && formValue.employee?.employeeId) {
-      request.employeeId = formValue.employee?.employeeId;
+    // Handle Employee Multi-Select
+    if (isEmployeeSelected) {
+      const employeeIds = formValue.employee.map((emp: any) => emp.employeeId).join(',');
+      request.employeeId = employeeIds;
     }
 
-    if (formValue.leaveCategory) {
-      request.LeaveName = formValue.leaveCategory.value;
+    // Handle Manager Multi-Select
+    if (isManagerSelected) {
+      const managerIds = formValue.manager.map((mgr: any) => mgr.employeeId).join(',');
+      request.teamManagerId = managerIds;
+    }
+
+    // Handle Team Multi-Select
+    if (isTeamSelected) {
+       const teamMemberIds = formValue.team.map((member: any) => member.employeeId).join(',');
+       request.employeeId = teamMemberIds;
     }
 
     // Apply date range if provided
     if (startDate && endDate) {
       request.StartDate = this.formatDate(this.parseDate(startDate));
       request.EndDate = this.formatDate(this.parseDate(endDate));
-    }
-
-    //Apply my team
-    if (formValue.manager) {
-      request.teamManagerId = formValue.manager.employeeId;
-    }
-
-    // Only include employee filter if not "All Employees"
-    if (!isAllEmployeesSelected && formValue.employee?.employeeId) {
-      request.employeeId = formValue.employee.empoyeeId;
     }
 
     this.reportsService.gterPermissionReports(request).subscribe({
@@ -229,16 +298,20 @@ getTeam() {
         this.disableBtn = true;
         this.isLoading = false;
         this.filteredPermissionData = [];
+        this.closeCanvas();
       },
       complete: () => {
         this.spinnerLoader1 = false;
         this.disableBtn = false;
         this.isLoading = false;
+        this.closeCanvas();
       }
     });
   }
 
   exportToExcelPemrissionReport(): void {
+    this.spinnerLoader2 = true;
+    setTimeout(() => {
     const HEADER_MAPPINGS: { [key: string]: string } = {
       fusionEmpId: 'EMPLOYEE ID',
       employeeName: 'EMPLOYEE NAME',
@@ -246,8 +319,9 @@ getTeam() {
       teamManager: 'TEAM MANAGER',
       location: 'LOCATION',
       subLocation: 'SUB LOCATION',
+       shift: 'SHIFT',
       utilizedCount: 'UTILIZED COUNT',
-      totalDuration: 'Total Duration'
+      totalDuration: 'TOTAL DURATION (HH:MM)',
     };
 
     const NEW_SEQUENCE: string[] = [
@@ -257,8 +331,9 @@ getTeam() {
       'TEAM MANAGER',
       'LOCATION',
       'SUB LOCATION',
+      'SHIFT',
       'UTILIZED COUNT',
-      'Total Duration'
+      'TOTAL DURATION (HH:MM)',
     ];
 
     const modifiedData = this.filteredPermissionData.map(record => {
@@ -295,22 +370,27 @@ getTeam() {
     XLSX.utils.sheet_add_aoa(ws, [['PERMISSION REPORT']], { origin: 'A1' });
 
     // Add header row
-    const headerRow = NEW_SEQUENCE.map(columnName => HEADER_MAPPINGS[columnName]);
-    XLSX.utils.sheet_add_aoa(ws, [headerRow], { origin: 'A2' });
+    XLSX.utils.sheet_add_aoa(ws, [NEW_SEQUENCE], { origin: 'A2' });
 
     // Add data rows
-    XLSX.utils.sheet_add_json(ws, modifiedData, { origin: 'A3' });
+    XLSX.utils.sheet_add_json(ws, modifiedData, { origin: 'A3', skipHeader: true });
 
-    // Apply styles to Leave Report row
-    const leaveReportCell = ws['A1'] || { t: '', v: '' }; // Get the cell or create a new one if it doesn't exist
-    leaveReportCell.s = { font: { bold: true }, alignment: { horizontal: 'center' }, fill: { bgColor: { rgb: 'FFFF00' } } };
-    ws['A1'] = leaveReportCell; // Assign the styled cell back to the worksheet
+    // Apply styles to Report Title row to match other reports
+    const leaveReportCell = ws['A1'] || { t: '', v: '' };
+    leaveReportCell.s = { 
+      font: { bold: true, sz: 14, color: { rgb: "000000" } }, 
+      alignment: { horizontal: 'center', vertical: 'center' } 
+    };
+    // Explicitly set row height for title
+    if (!ws['!rows']) ws['!rows'] = [];
+    ws['!rows'][0] = { hpt: 25 };
+    ws['A1'] = leaveReportCell;
 
     // Apply styles to column headers
     NEW_SEQUENCE.forEach((columnName, index) => {
       const cellAddress = XLSX.utils.encode_cell({ r: 1, c: index });
       const cell = ws[cellAddress] || { t: '', v: '' }; // Get the cell or create a new one if it doesn't exist
-      cell.s = { font: { bold: true }, alignment: { horizontal: 'center' }, fill: { bgColor: { rgb: '0000FF' } }, fontColor: { rgb: 'FFFFFF' } };
+      cell.s = { font: { bold: true }, alignment: { horizontal: 'center' } };
       ws[cellAddress] = cell; // Assign the styled cell back to the worksheet
     });
     // Apply styles to data rows
@@ -337,7 +417,10 @@ getTeam() {
     // Generate Excel file and trigger download
     const wb: XLSX.WorkBook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Permission Report');
-    XLSX.writeFile(wb, 'Permission_Report.xlsx');
+    const today = dayjs().format('DD-MMM-YYYY');
+    XLSX.writeFile(wb, `Permission Report - ${dayjs().format('MMM DD YYYY')}.xlsx`);
+    this.spinnerLoader2 = false;
+  }, 100);
   }
 
   getColumnWidth(data: any[], columnName: string): number {
@@ -364,48 +447,55 @@ getTeam() {
     }
   }
 
-getMyTeam() {
-  const EmployeeId = this.loggedInUser?.employeeId;
-  this.subscription = this.http
-    .getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`)
-    .subscribe({
-      next: (response: any) => {
-        if (response) {
-          const myTeam = response.filter((e: any) => e.isAccess);
+  
+  toggleFilters(content: TemplateRef<any>) {
+    this.offcanvasService.open(content, {
+      position: 'end',
+      backdrop: 'static',
+      keyboard: false,
+    });
+  }
 
-          this.getEmployeeInfo = myTeam
-            .map((employee: any) => {
-              const firstName = employee.firstName ? employee.firstName.trim() : '';
-              const middleName = employee.middleName ? employee.middleName.trim() : '';
-              const lastName = employee.lastName ? employee.lastName.trim() : '';
+  closeCanvas() {
+    this.offcanvasService.dismiss();
+  }
 
+  getMyTeam() {
+    const EmployeeId = this.loggedInUser?.employeeId;
+    this.subscription = this.http
+      .getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`)
+      .subscribe({
+        next: (response: any) => {
+          if (response) {
+            const myTeam = response.filter((e: any) => e.isAccess);
+            this.getEmployeeInfo = myTeam.map((employee: any) => {
               return {
                 ...employee,
-                firstName, //  trimmed for sorting
-                lastName,  //  trimmed for fallback
-                fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${firstName} ${middleName ? middleName + ' ' : ''}${lastName}`.trim(),
+                fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
+                  }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
+                  }${employee.lastName}`,
               };
-            })
-            .sort((a: any, b: any) => {
-              // Primary: firstName (case-insensitive)
-              const firstCompare = a.firstName.toLowerCase().localeCompare(b.firstName.toLowerCase());
-              if (firstCompare !== 0) return firstCompare;
-
-              // Secondary: lastName (case-insensitive)
-              return a.lastName.toLowerCase().localeCompare(b.lastName.toLowerCase());
             });
+            // this.getEmployeeInfo.unshift({
+            //   fullName: 'All Employees',
+            //   fusionEmpId: this.loggedInUser.fusionEmpId,
+            //   employeeId: this.loggedInUser.employeeId,
+            // });
+            const isUserInList = this.getEmployeeInfo.some((e: any) => e.employeeId === this.loggedInUser.employeeId);
+          if (!isUserInList) {
+            this.getEmployeeInfo.unshift({
+              ...this.loggedInUser,
+              fullName: `${this.loggedInUser.fusionEmpId ? this.loggedInUser.fusionEmpId + ' - ' : ''}${this.loggedInUser.firstName} ${this.loggedInUser.middleName ? this.loggedInUser.middleName + ' ' : ''}${this.loggedInUser.lastName}`,
+            });
+          }
 
-          // Add "All Employees" at the top
-          this.getEmployeeInfo.unshift({
-            fullName: 'All Employees',
-            fusionEmpId: this.loggedInUser.fusionEmpId,
-            employeeId: this.loggedInUser.employeeId,
-          });
-        }
-      },
-      error: (err) => console.log(err),
-    });
-}
+          this.getEmployeeInfo.sort((a: any, b: any) =>
+            (a.firstName?.toLowerCase() ?? '').localeCompare(b.firstName?.toLowerCase() ?? '')
+          );
+          }
+        },
+      });
+  }
 
 
 

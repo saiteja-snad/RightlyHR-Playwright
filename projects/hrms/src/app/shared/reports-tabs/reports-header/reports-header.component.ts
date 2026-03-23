@@ -25,16 +25,16 @@ export class ReportsHeaderComponent implements OnInit {
 
   ComponentnameDisplay() {
     if (this.router.url === '/reports/standard-reports/employee-data') {
-      this.componentname = 'Employee Master Data';
+      this.componentname = 'Employee Overview Report';
     }
     else if (this.router.url === '/reports/standard-reports/job-data') {
-      this.componentname = 'Job Location Wise Data';
+      this.componentname = 'Job Location Report';
     }
     else if (this.router.url === '/reports/standard-reports/branch-data') {
-      this.componentname = 'Branch Location Wise Data';
+      this.componentname = 'Branch-Wise Employee Report';
     }
     else if (this.router.url === '/reports/standard-reports/family-data') {
-      this.componentname = 'Family Members Data';
+      this.componentname = 'Family Details Report';
     }
     else if (this.router.url === '/reports/attendence-reports/leave-report') {
       this.componentname = 'Leave Report';
@@ -56,6 +56,9 @@ export class ReportsHeaderComponent implements OnInit {
     }
     else if (this.router.url === '/reports/attendence-reports/permission-report') {
       this.componentname = 'Permission Report';
+    }
+    else if (this.router.url === '/reports/attendence-reports/exit-feedback-report' || this.router.url === '/reports/attendence-reports/employee-exit-report') {
+      this.componentname = 'Employee Exit Report';
     }
     else if (this.router.url === '/reports/attendence-reports/regularization-report') {
       this.componentname = 'Regularization Report';

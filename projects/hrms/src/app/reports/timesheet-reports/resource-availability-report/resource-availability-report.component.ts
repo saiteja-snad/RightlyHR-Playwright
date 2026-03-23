@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, TemplateRef, ViewEncapsulation } from '@angular/core';
 import { ReportsHeaderComponent } from "../../../shared/reports-tabs/reports-header/reports-header.component";
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { AuthService } from '../../../services/auth.service';
@@ -20,14 +20,16 @@ import { OpenModalService } from '../../../services/open-modal.service';
 import { PaginatorModule } from 'primeng/paginator';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { HttpResponse } from '@angular/common/http';
+import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 @Component({
   selector: 'app-resource-availability-report',
   imports: [DatePicker, CommonModule, MultiSelectModule, FormsModule, DropdownModule, SelectModule, TranslateModule, ReactiveFormsModule,
     NoDataFoundComponent, PaginatorModule, DataLoaderContentComponent, ReportsHeaderComponent],
   templateUrl: './resource-availability-report.component.html',
-  styleUrl: './resource-availability-report.component.scss'
+  styleUrl: './resource-availability-report.component.scss',
+  encapsulation: ViewEncapsulation.None,
 })
-export class ResourceAvailabilityReportComponent {
+export class ResourceAvailabilityReportComponent implements OnInit, OnDestroy {
   subscription!: Subscription;
   loggedInUser = {} as IemployeeDetails;
   isLoading: boolean = false;
@@ -36,6 +38,7 @@ export class ResourceAvailabilityReportComponent {
   ResourceAvailabilityReportForm!: FormGroup;
   spinnerLoader1 = false;
   spinnerLoader2 = false;
+  isFilterIndicatorActive = false;
   disableBtn = false;
   filteredleaveRecords = false;
   destroy$ = new Subject<boolean>();
@@ -61,17 +64,16 @@ export class ResourceAvailabilityReportComponent {
     { key: 'Rejected', value: 'Rejected' },
   ];
   page = 1;
-  pageSize = 10;
-  rows = 10;
+  pageSize = 50;
+  rows = 50;
   collectionSize!: number;
   first = 0;
   options = [
-    { label: 10, value: 10 },
-    { label: 15, value: 15 },
-    { label: 20, value: 20 },
-    { label: 25, value: 25 }
+    { label: 50, value: 50 },
+    { label: 100, value: 100 },
+    { label: 150, value: 150 },
+    { label: 200, value: 200 }
   ];
-  
   today: Date = new Date();
   employeeiddetails: any[] = [];
   constructor(
@@ -82,6 +84,7 @@ export class ResourceAvailabilityReportComponent {
     public rbac: RbacService,
     public readonly router: Router,
     private conformationPopup: OpenModalService,
+    private offcanvasService: NgbOffcanvas,
   ) { }
 
   ngOnInit(): void {
@@ -101,7 +104,7 @@ export class ResourceAvailabilityReportComponent {
     });
     this.ResourceAvailabilityReportForm.valueChanges.subscribe(() => {
       this.disableBtn = true;
-    })
+    });
   }
   isFilterApplied(): boolean {
     const formValue = this.ResourceAvailabilityReportForm.value;
@@ -117,6 +120,7 @@ export class ResourceAvailabilityReportComponent {
     this.phasesData = [];
     this.ResourceAvailabilityReportForm.reset();
     this.filteredResourceAvailabilityRecord = [];
+    this.isFilterIndicatorActive = false;
     // this.ResourceAvailabilityReportForm.get('employeid')?.disable();
     this.ResourceAvailabilityReportForm.get('phases')?.setValue(null);
     // reset specific controls properly
@@ -128,6 +132,19 @@ export class ResourceAvailabilityReportComponent {
     this.ResourceAvailabilityReportForm.get('phases')?.disable();
     this.getEmployeeData();
   }
+    
+  toggleFilters(content: TemplateRef<any>) {
+    this.offcanvasService.open(content, {
+      position: 'end',
+      backdrop: 'static',
+      keyboard: false,
+    });
+  }
+
+  closeCanvas() {
+    this.offcanvasService.dismiss();
+  }
+
   // called for pagination 
   onRowsChange() {
     this.page = 1;
@@ -135,6 +152,7 @@ export class ResourceAvailabilityReportComponent {
     this.generateResourceAvailabilityReport(this.page, this.pageSize);
   }
   onGenerate() {
+    this.isFilterIndicatorActive = this.isFilterApplied();
     this.generateResourceAvailabilityReport(this.page, this.pageSize, true, true);
   }
 
@@ -160,14 +178,14 @@ export class ResourceAvailabilityReportComponent {
         this.projectsData = res?.data ?? [];
         // Add "No Project" only if not already present
         const noProjectExists = this.projectsData?.some((p: any) => p.projectId === 0);
-        if (!noProjectExists) {
-          this.projectsData.unshift({
-            projectId: 0,
-            projectName: 'No Project',
-            clientId: 0,
-            isNoClientProject: true,
-          });
-        }
+        // if (!noProjectExists) {
+        //   this.projectsData.unshift({
+        //     projectId: 0,
+        //     projectName: 'No Project',
+        //     clientId: 0,
+        //     isNoClientProject: true,
+        //   });
+        // }
         // Map for dropdown
         this.projectsList = this.projectsData.map((project: any) => ({
           label: project.projectName,
@@ -197,21 +215,19 @@ export class ResourceAvailabilityReportComponent {
               ...employee,firstName,
               fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${firstName} ${middleName ? middleName + ' ' : ''}${lastName}`.trim(),
             };
-          }).filter((employee: any) => employee.employeeId !== loggedInUser.employeeId).sort((a: any, b: any) =>
-            a.firstName.toLowerCase().localeCompare(b.firstName.toLowerCase())
-          );
-        // Store all employees (including “All Employees” at the top)
+          })
+          // .filter((employee: any) => employee.employeeId !== loggedInUser.employeeId).sort((a: any, b: any) =>
+          //   a.firstName.toLowerCase().localeCompare(b.firstName.toLowerCase())
+          // );
         this.employeeiddetails = [
           ...employeedata
         ];
         // Step 2: Map for the dropdown component
         this.employeeData = this.employeeiddetails.map((e: any) => ({
-          id: e.employeeId,
-          name: e.fullName
-        }));
-        // (Optional) log to verify
-        console.log('Employee dropdown data:', this.employeeData);
-      },
+                id: e.employeeId,
+                name: e.fullName
+              }));
+            },
       error: (reason: any) => {
         console.error('Error fetching employees:', reason);
         this.employeeData = [];
@@ -219,6 +235,34 @@ export class ResourceAvailabilityReportComponent {
     });
   }
   /** When project selected */
+  //  onProjectChange(event: any) {
+  //   const selectedProjectIds = event.value;
+
+  //   // CASE 1: No project is selected
+  //   if (!selectedProjectIds || selectedProjectIds.length === 0) {
+  //      this.projectId = [];
+  //     this.phasesData = [];  
+  //      this.employeeData = [];                                    
+  //     this.ResourceAvailabilityReportForm.get('phases')?.setValue([]);    
+  //     this.ResourceAvailabilityReportForm.get('phases')?.disable();   
+  //      this.getTeamManagersDetails();
+  //       this.projectId = 0;   
+  //         // Wait briefly to ensure getTeamManagersDetails() completes (optional)
+  //       setTimeout(() => {
+  //         if (this.getEmployeeInfo?.length) {
+  //           this.employeeData = this.getEmployeeInfo.map((emp: any) => ({
+  //             id: emp.employeeId,
+  //             name: emp.fullName
+  //           }));
+  //         }
+  //       }, 300); 
+  //     return;
+  //   }
+  //   // CASE 2: Project(s) selected
+  //    this.projectId = selectedProjectIds;
+  //   this.ResourceAvailabilityReportForm.get('phases')?.enable();          
+  //   this.getAllActiveEmployees();                                
+  // }
   onProjectChange(event: any) {
     const selectedProjectIds = event.value;
     const selectedProjects: number[] = this.ResourceAvailabilityReportForm.get('projectId')?.value || [];
@@ -269,16 +313,30 @@ export class ResourceAvailabilityReportComponent {
       next: (res: any) => {
         // Employee List
         this.employeeData = res?.data?.map((x: any) => ({
-            id: x.employee?.id,
-            name: x.employee?.fusionEmployeeId? `${x.employee.fusionEmployeeId} - ${x.employee.name}`: x.employee?.name || 'Unknown'
-          })) ?? [];
-        // keep only employees that still exist in new employee list
+                  id: x.employee?.id,
+                  name: x.employee?.fusionEmployeeId? `${x.employee.fusionEmployeeId} - ${x.employee.name}`: x.employee?.name || 'Unknown'
+                })) ?? [];
+              // keep only employees that still exist in new employee list
         const validEmployeeSelections = this.ResourceAvailabilityReportForm.get('employeid')?.value?.filter((selectedId: any) =>
           this.employeeData.some((emp: any) => emp.id === selectedId)
         ) || [];
 
         // update employee selection
-        this.ResourceAvailabilityReportForm.get('employeid')?.setValue(validEmployeeSelections);
+        this.ResourceAvailabilityReportForm.get('employeid')?.setValue(validEmployeeSelections, { emitEvent: false });
+        // PHASE LIST extraction
+        // this.phasesData =res?.data ?.filter((x: any) => x.phase).map((x: any) => ({
+        //       phaseId: x.phase.phaseId,
+        //       phaseName: x.phase.phaseName
+        //     })) ?? [];
+
+        // Remove duplicate phases
+        // this.phasesData = this.removeDuplicatePhases(this.phasesData);
+        // const validSelections = previousSelected.filter((selectedId: any) =>
+        //   this.phasesData.some((p: any) => p.phaseId === selectedId)
+        // );
+
+        // assign valid phases only
+        //this.ResourceAvailabilityReportForm.get('phases')?.setValue(validSelections);
       },
       error: (err) => {
         console.error("Error fetching employees:", err);
@@ -339,7 +397,7 @@ export class ResourceAvailabilityReportComponent {
         const validSelections = previousSelected.filter((selectedId: any) =>
           this.phasesData.some((p: any) => p.phaseId === selectedId)
         );
-        this.ResourceAvailabilityReportForm.get('phases')?.setValue(validSelections);
+        this.ResourceAvailabilityReportForm.get('phases')?.setValue(validSelections, { emitEvent: false });
         this.loading = false;
       },
       error: () => {
@@ -354,7 +412,7 @@ export class ResourceAvailabilityReportComponent {
     const { projectId, employeid, dateRange, phases } = this.ResourceAvailabilityReportForm.value;
     const hasProject = projectId !== null && projectId !== undefined;
     // const hasDateRange = dateRange && (dateRange.startDate || dateRange.endDate);
-    const hasDateRange = Array.isArray(dateRange) && dateRange.length === 2 && dateRange[0] && dateRange[1];
+    const hasDateRange = Array.isArray(dateRange) ? dateRange.length > 0 : !!dateRange;
     const hasEmployeid = employeid !== null && employeid !== undefined;
     const hasphase = phases !== null && phases !== undefined;
     return !(hasProject || hasDateRange || hasEmployeid || hasphase);
@@ -388,7 +446,7 @@ export class ResourceAvailabilityReportComponent {
     if (formValue.projectId !== null && formValue.projectId !== undefined) {
       params.ProjectIds = formValue.projectId;
     }
-    if (formValue.employeid !== null && formValue.employeid !== undefined) {
+    if (formValue.employeid !== null && formValue.employeid !== undefined && !formValue.employeid.includes(0)) {
       params.EmployeeIds = formValue.employeid;
     }
     if (formValue.billable?.value) params.billable = formValue.billable.value;
@@ -413,7 +471,8 @@ export class ResourceAvailabilityReportComponent {
     const queryString = new URLSearchParams(params).toString();
     this.http.getDataIncludeParams(`TimesheetReport/get?${queryString}&page=${this.page}&pageSize=${this.pageSize}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
-        this.spinnerLoader1 = false;
+        this.spinnerLoader1 = false;   
+        this.offcanvasService.dismiss();
         if (res.success && res.data?.items) {
           this.filteredResourceAvailabilityRecord = res.data.items;
           this.collectionSize = res.data.totalCount || 0;
@@ -434,17 +493,21 @@ export class ResourceAvailabilityReportComponent {
         this.filteredResourceAvailabilityRecord = [];
         this.collectionSize = 0;
         this.disableBtn = true;
+        this.offcanvasService.dismiss();
       },
     });
   }
   // export the report
   exportResourceAvailabilityReport() {
+    if (this.ResourceAvailabilityReportForm.invalid) return;
+    this.spinnerLoader2 = true;
     const params = this.buildTimesheetReportParams();
     const queryString = new URLSearchParams(params).toString();
     this.http.downloadTimesheetReport(`TimesheetReport/export-report?${queryString}&page=${this.page}&pageSize=${this.pageSize}`).subscribe({
       next: (response: HttpResponse<Blob>) => {
+        this.spinnerLoader2 = false;
         // Extract filename from Content-Disposition
-        let filename = 'ResourceAvailabilityReport.xlsx';
+        let filename = `Resource Availability Report - ${this.http.formattedDate}.xlsx`;
         const contentDisposition = response.headers.get('content-disposition');
         if (contentDisposition) {
           // Handle both regular and UTF-8 encoded filenames
@@ -467,9 +530,10 @@ export class ResourceAvailabilityReportComponent {
         link.click();
         window.URL.revokeObjectURL(url);
         console.log('Downloaded file:', filename);
-        this.conformationPopup.openSuccessModal("Report Exported Successfully");
+        this.conformationPopup.openSuccessModal("Resource Availability Report exported successfully");
       },
       error: (err: any) => {
+        this.spinnerLoader2 = false;
         this.conformationPopup.openErrorModal('No records found');
       },
       complete: () => { }

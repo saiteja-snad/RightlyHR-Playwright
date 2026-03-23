@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpService } from '../http.service';
 import { HttpParams } from '@angular/common/http';
-import { IAbsentReportRequest, IAttendanceDetails, ICompoffDetails, IInactiveReportRequest, ILeavesummery, IPermissionReportRequest, IStandardReportRequest, IWfhReportRequest, IYearlyReportRequest } from '../../Interfaces/reports.model';
+import { IAbsentReportRequest, IAttendanceDetails, ICompoffDetails, IExitFeedbackReportRequest, IInactiveReportRequest, ILeavesummery, IPermissionReportRequest, IStandardReportRequest, IWfhReportRequest, IYearlyReportRequest } from '../../Interfaces/reports.model';
 
 @Injectable({
   providedIn: 'root',
@@ -144,7 +144,13 @@ export class ReportsService {
     }
     return this.http.get('Reports/Inactive_Employee_Reports', { params });
   }
+  getAbsentReportsV2(request: IAbsentReportRequest) {
+    return this.http.postData('v2/Reports/absent-reports', request, {});
+  }
 
+  getInactiveReportsV2(request: IInactiveReportRequest) {
+    return this.http.postData('v2/Reports/inactive-employee-reports', request, {});
+  }
 
   getAbsentReports(request: IAbsentReportRequest) {
     let params = new HttpParams();
@@ -183,6 +189,10 @@ export class ReportsService {
     if (request.LeaveName) params = params.set('LeaveName', request.LeaveName);
 
     return this.http.get('Reports/YearSummaryReports', { params });
+  }
+
+  getYearlySummaryReportV2(request: IYearlyReportRequest) {
+    return this.http.postData('v2/Reports/year-summary-reports', request, {});
   }
 
   postToReportLog(reportName: string, reportType: string, employeeId: number) {
@@ -225,6 +235,9 @@ export class ReportsService {
     return this.http.get('Reports/Leave_Reports', { params });
   }
 
+  getAttendanceReportsV2(request: IAttendanceDetails) {
+    return this.http.postData('v2/Reports/leave-reports', request, {});
+  }
 
   getLeaveCarryForwardReport(request: IAttendanceDetails) {
 
@@ -251,6 +264,10 @@ export class ReportsService {
     // if (request.TeamManagerFusionEmpId) params = params.set('teamManagerID', request.TeamManagerFusionEmpId);
     if (request.LeaveName) params = params.set('LeaveType', request.LeaveName);
     return this.http.get('Reports/LeaveSummaryReports', { params });
+  }
+
+  getLeaveSummaryReportV2(request: ILeavesummery) {
+    return this.http.postData('v2/Reports/leave-summary-reports', request, {});
   }
 
   //comp off
@@ -315,4 +332,18 @@ export class ReportsService {
     return this.http.get('Reports/ExpensesReports', { params });
   }
 
+  getExitFeedbackReports(request: IExitFeedbackReportRequest) {
+    let params = new HttpParams();
+
+    if (request.employeeId) params = params.set('employeeIds', request.employeeId);
+    if (request.teamManagerId) params = params.set('managerIds', request.teamManagerId);
+    if (request.StartDate && request.EndDate) {
+      params = params.set('StartDate', request.StartDate);
+      params = params.set('EndDate', request.EndDate);
+    }
+    if (request.exitReason) params = params.set('exittype', request.exitReason);
+    if (request.feedbackStatus) params = params.set('feedbackStatus', request.feedbackStatus);
+
+    return this.http.get('Reports/ExitFeedbackReport', { params });
+  }
 }

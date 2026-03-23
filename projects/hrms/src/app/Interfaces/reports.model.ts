@@ -26,6 +26,7 @@ export interface IWfhReportRequest {
   teamManagerEmpID?:string;
   employeeId?:string;
   teamManagerID?:any;
+  ReportingManagerId?:number;
 }
 
 export interface IAbsentReportRequest {
@@ -57,6 +58,21 @@ export interface IInactiveReportRequest {
   TeamManagerSnadId?: string;
   employeeId?:string;
   teamManagerID?:any;
+
+   // New fields for V2 API
+  fusionEmpId?: string;
+  employeeName?: string;
+  department?: string;
+  teamManagerName?: string;
+  leaveName?: string;
+  subLocation?: string;
+  entitlementYear?: number;
+  year?: number;
+  reportingManagerId?: any;
+  leaveCategorys?: string;
+  locationIds?: string;
+  subLocationIds?: string;
+  shiftIds?: string;
 }
 
 export interface IYearlyReportRequest {
@@ -71,6 +87,23 @@ export interface IYearlyReportRequest {
   TeamManagerSnadId?: string;
   employeeId?:string;
   teamManagerID?: any;
+  year?: number;
+
+  // New fields for V2 API
+  fusionEmpId?: string;
+  employeeName?: string;
+  department?: string;
+  teamManagerName?: string;
+  leaveName?: string;
+  location?: string;
+  subLocation?: string;
+  shift?: string;
+  entitlementYear?: number;
+  reportingManagerId?: any;
+  leaveCategorys?: string;
+  locationIds?: string;
+  subLocationIds?: string;
+  shiftIds?: string;
 }
 
 export interface IPermissionReportRequest {
@@ -161,6 +194,7 @@ export interface EmployeeDetails {
   appointmentSenyBy: string;
   appointmentSentStatus: string;
   jobEffectiveDate: string;
+  jobeffectivedate: string;
   jobRole: string;
   departmentName: string;
   subdepartment_name: string;
@@ -222,6 +256,23 @@ export interface IAttendanceDetails{
   subLocationIds?: string;
   leaveCategoryIds?: string; 
 
+  // New fields for POST payload
+  fusionEmpId?: string;
+  employeeName?: string;
+  department?: string;
+  teamManagerName?: string;
+  shift?: string;
+  location?: string;
+  subLocation?: string;
+  availed?: string;
+  startdate?: string;
+  enddate?: string;
+  workedDate?: string;
+  workedMonth?: number;
+  leaveName?: string;
+  leaveCategorys?: string;
+  reportingManagerId?: number;
+
 }
 
 //leave summmery
@@ -242,6 +293,18 @@ export interface ILeavesummery{
   employeeId?:string;
   EmployeeId?:any;
   teamManagerID? : any;
+
+  // New fields for V2 API
+  fusionEmpId?: string;
+  employeeName?: string;
+  department?: string;
+  team_Manager?: string;
+  shift?: string;
+  location?: string;
+  subLocation?: string;
+  leaveType?: string;
+  leaveCategories?: string;
+  reportingManagerId?: number;
 }
 
 //comp-off
@@ -329,4 +392,17 @@ export interface IExpenseItemDetails {
   status?: string;
   attachmentURL?: string;
   expanded?: boolean;
+}
+
+export interface IExitFeedbackReportRequest {
+  FusionEmpId?: string;
+  EmployeeName?: string;
+  TeamManagerName?: string;
+  StartDate?: string;
+  EndDate?: string;
+  teamManagerId?:number;
+  employeeId?:string;
+  teamManagerEmpId?: any;
+  exitReason?: string;
+  feedbackStatus?: string;
 }

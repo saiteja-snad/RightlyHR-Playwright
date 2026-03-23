@@ -49,7 +49,7 @@ export class AttandaceReportTabsComponent {
       route: '/reports/attendence-reports/inactive-employee-report',
       icon: '/time-off-icon/Inactive-employee-report-icon.png',
       description: MODULE_INFOS.ATTENDANCE_INACTIVE_EMPLOYEE_REPORTS_MODULE_INFO,
-      permission: { feature: 'Inactive Empolyee Report', action: 'view' }
+      permission: { feature: 'Inactive Employee Leave Summary Report', action: 'view' }
     },
     {
       label: 'Yearly Summary Report',
@@ -64,6 +64,13 @@ export class AttandaceReportTabsComponent {
       icon: '/time-off-icon/permissions-icon.png',
       description: MODULE_INFOS.ATTENDANCE_PERMISSION_REPORTS_MODULE_INFO,
       permission: { feature: 'Permission Report', action: 'view' }
+    },
+    {
+      label: 'Employee Exit Report',
+      route: '/reports/attendence-reports/exit-feedback-report',
+      icon: '/time-off-icon/feedback.png',
+      description: MODULE_INFOS.ATTENDANCE_EMPLOYEE_EXIT_REPORTS_MODULE_INFO,
+      permission: { feature: 'Employee Exit Report', action: 'view' }
     },
     {
       label: 'Regularization Report',

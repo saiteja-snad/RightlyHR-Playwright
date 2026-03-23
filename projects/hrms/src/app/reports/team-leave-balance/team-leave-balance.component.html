@@ -3,11 +3,11 @@
     <app-reports-header/>
 
     <div class="d-flex align-items-center flex-wrap gap-3">
-      <label class="form-label filter-labels m-0">{{ 'Year' | translate }}</label>
+      <label class="form-label filter-labels m-0">Year</label>
       <div class="d-flex align-items-center gap-2">
         <div class="custom-p-select-content">
           <p-select [options]="years" optionLabel="label" optionValue="value" [(ngModel)]="selectedYear"
-            [placeholder]="'Select year' | translate" class="form-select custom-select" (onChange)="onSelectYear($event)">
+            placeholder="Select year" class="form-select custom-select" (onChange)="onSelectYear($event)">
           </p-select>
         </div>
       </div>
@@ -18,7 +18,7 @@
     <span class="input-group-text custom-input-group-search" id="basic-addon1">
       <i class="bi bi-search"></i>
     </span>
-    <input type="search" class="form-control custom-search-input" [placeholder]="'Search by employee name' | translate" [(ngModel)]="searchText"
+    <input type="search" class="form-control custom-search-input" placeholder="Search by employee name" [(ngModel)]="searchText"
       (ngModelChange)="filterTeamLeaveSummary()" aria-label="Search" aria-describedby="basic-addon1" />
   </div>
 
@@ -46,11 +46,11 @@
             <div class="employee-data-table">
               <table class="w-100">
                 <thead>
-                  <th class="text-start">{{ 'Category' | translate }}</th>
-                  <th>{{ 'Allowed Days' | translate }}</th>
-                  <th>{{ 'Utilized Days' | translate }}</th>
-                  <th>{{ 'Booked Days' | translate }}</th>
-                  <th>{{ 'Available Days' | translate }}</th>
+                  <th class="text-start">Category</th>
+                  <th>Allowed Days</th>
+                  <th>Utilized Days</th>
+                  <th>Booked Days</th>
+                  <th>Available Days</th>
                 </thead>
                 <tbody>
                   @for (category of employee.categories; track $index) {
@@ -93,18 +93,18 @@
           <table class="popup-table">
             <thead>
               <tr>
-                <th colspan="4" class="custom-popup-header">{{popupType}}(s) {{ 'Details' | translate }}</th>
+                <th colspan="4" class="custom-popup-header">{{popupType}}(s) Details</th>
               </tr>
               <tr>
-                <th>{{ 'Start Date' | translate }}</th>
-                <th>{{ 'End Date' | translate }}</th>
-                <th>{{ 'Duration (In Days)' | translate }}</th>
-                <th>{{ 'Status' | translate }}</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th>Duration (In Days)</th>
+                <th>Status</th>
               </tr>
             </thead>
             <tbody>
               <tr *ngIf="!popupData || popupData.length === 0">
-                <td colspan="4" class="text-center">{{ 'No data available' | translate }}</td>
+                <td colspan="4" class="text-center">No data available</td>
               </tr>
               <tr *ngFor="let item of popupData">
                 <td class="log-time">{{ item.startdate ? (item.startdate | dateformat) : '-' }}</td>
@@ -117,7 +117,7 @@
         </div>
       </div>
       <div class="custom-modal-footer">
-        <button type="button" class="custom-btn btn-primary" (click)="modal.dismiss()">{{ 'Close' | translate }}</button>
+        <button type="button" class="custom-btn btn-primary" (click)="modal.dismiss()">Close</button>
       </div>
     </div>
   </div>

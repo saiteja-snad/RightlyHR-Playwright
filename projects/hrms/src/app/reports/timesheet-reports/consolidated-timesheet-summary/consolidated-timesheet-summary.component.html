@@ -1,72 +1,29 @@
 <div class="custom-main-component-container">
-  <div class="component-header-content">
+  <div class="component-header-content gap-3">
     <app-reports-header />
 
-    <form autocomplete="off" [formGroup]="WeeklyTimesheetReportForm"
-      (ngSubmit)="generateWeeklyTimesheetReport(page,pageSize,true,true)" *ngIf="WeeklyTimesheetReportForm">
-      <div class="d-flex align-items-center flex-wrap gap-2">
-        @if(rbac.allowedToAccess('Consolidated Timesheet Summary Report - Generate.view')){
-        <button type="button" class="clear-all-btn" [disabled]="!isFilterApplied()" (click)="clearAllFilters()">
-          @if(isFilterApplied()) {
-          Clear All
-          }
-        </button>
-        
-        <!-- Employee Name (Multi Select) -->
-        <div class="custom-p-multiSelect-content">
-          <p-multiSelect [options]="employeeData" optionLabel="name" optionValue="id" [filter]="true" [resetFilterOnHide]="true"
-            [maxSelectedLabels]="1" defaultLabel="Please select employee" formControlName="employeid" filterPlaceholder="Search employee"
-            class="form-select custom-select"></p-multiSelect>
-        </div>
+    <div class="d-flex align-items-center gap-3">
+      @if(rbac.allowedToAccess('Consolidated Timesheet Summary Report - Generate.view')){
+      <button type="button" class="custom-btn btn-secondary position-relative" (click)="toggleFilters(filterContent)" [disabled]="spinnerLoader1 || downloadLoader">
+        <i class="bi bi-funnel me-2"></i>{{'Filters' | translate}}
+        <span *ngIf="isAppliedFilterIndicatorVisible()" class="filter-indicator"></span>
+      </button>
+      }
 
-        <!-- Date Range -->
-        <div class="custom-date-range-picker">
-          <p-datepicker formControlName="dateRange" [placeholder]="'Please select date range'" selectionMode="range"
-            [showIcon]="true" [readonlyInput]="true" [maxDate]="today" />
-        </div>
-
-        <!-- Billable / Non-Billable -->
-        <div class="custom-p-multiSelect-content">
-          <p-multiSelect [options]="BillableOptions" optionLabel="key" optionValue="value" [filter]="true" [resetFilterOnHide]="true"
-            formControlName="billable" placeholder="Please select billable" class="form-select custom-select" filterPlaceholder="Search billable">
-          </p-multiSelect>
-        </div>
-
-        <!-- Status (Multi Select) -->
-        <div class="custom-p-multiSelect-content">
-          <p-multiSelect [options]="TimesheetStatus" optionLabel="key" optionValue="value" [filter]="true" [resetFilterOnHide]="true"
-            formControlName="status" placeholder="Please select status" class="form-select custom-select" filterPlaceholder="Search status">
-          </p-multiSelect>
-        </div>
+      <div class="d-flex gap-2 ms-auto">
+      @if(rbac.allowedToAccess('Consolidated Timesheet Summary Report - Generate.view') && rbac.allowedToAccess('Consolidated Timesheet Summary Report - Export.view')){
+      <button type="button" class="custom-btn btn-primary" (click)="exportWeeklyTimesheetReport()"
+        [disabled]="filteredWeeklyTimesheetRecord.length == 0 || disableBtn || downloadLoader || spinnerLoader1">
+        @if(downloadLoader){
+        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+        <span>{{'Loading...'}}</span>
+        }@else {
+        <span>{{'Export' | translate}}</span>
         }
-
-        <!-- Buttons -->
-        <div class="d-flex gap-2">
-          @if(rbac.allowedToAccess('Consolidated Timesheet Summary Report - Generate.view')){
-          <button type="submit" class="custom-btn btn-secondary" [disabled]="downloadLoader || spinnerLoader1">
-            @if(spinnerLoader1){
-            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-            <span>{{'Loading...'}}</span>
-            }@else {
-            <span>{{'Generate'}}</span>
-            }
-          </button>
-          }
-
-          @if(rbac.allowedToAccess('Consolidated Timesheet Summary Report - Export.view')){
-          <button type="button" class="custom-btn btn-primary" (click)="exportWeeklyTimesheetReport()"
-            [disabled]="filteredWeeklyTimesheetRecord.length == 0 || disableBtn || downloadLoader || spinnerLoader1">
-            @if(downloadLoader){
-            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-            <span>{{'Loading...'}}</span>
-            }@else {
-            <span>{{'Export'}}</span>
-            }
-          </button>
-          }
-        </div>
+      </button>
+      }
       </div>
-    </form>
+    </div>
   </div>
 
   <div class="custom-table-content">
@@ -78,7 +35,7 @@
         <th>Employee Name</th>
         <th>Logged Hours</th>
         <th>Billable/Non-Billable</th>
-        <th>Status</th>
+        <!-- <th>Status</th> -->
         <th>Submitted Date</th>
         <th>Approved By</th>
         <th>Approved On</th>
@@ -105,7 +62,7 @@
             }
           </td>
           <td>{{ record.billableStatus ?? '-' }}</td>
-          <td>{{ record.approvalStatus === 'Processed' ? 'Approved' : (record.approvalStatus ?? '-') }}</td>
+          <!-- <td>{{ record.approvalStatus === 'Processed' ? 'Approved' : (record.approvalStatus ?? '-') }}</td> -->
           <td>{{ record.submittedDate ? (record.submittedDate | date) : '-' }}</td>
           <td>{{ record.approvedBy ?? '-' }}</td>
           <td>{{ record.processedOn ? (record.processedOn | date) : '-' }}</td>
@@ -138,3 +95,77 @@
   </div>
   }
 </div>
+
+<!-- Filter Offcanvas -->
+<ng-template #filterContent let-offcanvas>
+  <div class="custom-filter-container">
+    <div class="offcanvas-filter-header-content offcanvas-filter-header-border">
+      <p class="filter-header m-0">{{'Filters' | translate}}</p>
+      <a (click)="closeCanvas()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+    </div>
+
+    <div class="offcanvas-filter-content">
+      <form autocomplete="off" [formGroup]="WeeklyTimesheetReportForm" (ngSubmit)="onGenerate()">
+        <div class="mb-3">
+          <label class="form-label custom-label text-nowrap filter-labels mb-3">{{'Select Employee' | translate}}</label>
+          <div class="custom-p-multiSelect-content">
+            <p-multiSelect [options]="employeeData" optionLabel="name" optionValue="id" [filter]="true"
+              [resetFilterOnHide]="true" [maxSelectedLabels]="1" defaultLabel="Please select employee"
+              formControlName="employeid" filterPlaceHolder="Search employee" class="form-select custom-select">
+            </p-multiSelect>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label custom-label text-nowrap filter-labels mb-3">{{'Select Date Range' | translate}}</label>
+          <div class="custom-date-range-picker">
+            <p-datepicker formControlName="dateRange" [placeholder]="'Please select date'" selectionMode="range"
+              [showIcon]="true" [readonlyInput]="true" [maxDate]="today" styleClass="w-100" />
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label custom-label text-nowrap filter-labels mb-3">{{'Select Billable/Non-Billable' | translate}}</label>
+          <div class="custom-p-multiSelect-content">
+            <p-multiSelect [options]="BillableOptions" optionLabel="key" optionValue="value" [filter]="true"
+              [resetFilterOnHide]="true" formControlName="billable" placeholder="Please select billable/non-billable"
+              class="form-select custom-select" filterPlaceHolder="Search billable/non-billable">
+            </p-multiSelect>
+          </div>
+        </div>
+
+        <!--
+        <div class="mb-3">
+          <label class="form-label custom-label text-nowrap filter-labels mb-3">{{'Select Status' | translate}}</label>
+          <div class="custom-p-multiSelect-content">
+            <p-multiSelect [options]="TimesheetStatus" optionLabel="key" optionValue="value" [filter]="true"
+              [resetFilterOnHide]="true" formControlName="status" placeholder="Please select status"
+              class="form-select custom-select" filterPlaceHolder="Search status">
+            </p-multiSelect>
+          </div>
+        </div>
+        -->
+
+        <div class="d-flex offcanvas-footer-content gap-3">
+          @if(isFilterApplied() || (filteredWeeklyTimesheetRecord && filteredWeeklyTimesheetRecord.length > 0)){
+          <button type="button" class="custom-btn btn-secondary w-100"
+            (click)="clearAllFilters()" [disabled]="downloadLoader || spinnerLoader1">
+            {{'Clear All' | translate}}
+          </button>
+          }
+
+          @if(rbac.allowedToAccess('Consolidated Timesheet Summary Report - Generate.view')){
+          <button type="submit" class="custom-btn btn-primary w-100" [disabled]="downloadLoader || spinnerLoader1">
+            @if(spinnerLoader1){
+            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+            <span>{{'Loading...' | translate}}</span>
+            }@else {
+            <span>{{'Generate' | translate}}</span>
+            }
+          </button>
+          }
+        </div>
+      </form>
+    </div>
+  </div>
+</ng-template>

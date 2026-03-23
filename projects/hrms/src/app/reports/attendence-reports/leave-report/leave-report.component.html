@@ -1,134 +1,48 @@
 <div class="custom-main-component-container">
-  <div class="component-header-content">
+  <div class="component-header-content gap-3">
     <!-- Header -->
-    <app-reports-header/>
+    <app-reports-header />
 
-    <form autocomplete="off" [formGroup]="LeaveReportForm" (ngSubmit)="generateleaveReport()" *ngIf="LeaveReportForm">
-      <div class="d-flex align-items-center gap-3">
+    <div class="d-flex align-items-center gap-3">
         @if(rbac.allowedToAccess('Leave Report - Generate.view')){
-        <button type="button" class="clear-all-btn" *ngIf="
-          LeaveReportForm.get('employee')?.value ||
-          LeaveReportForm.get('dateRange')?.value ||
-          LeaveReportForm.get('manager')?.value ||
-          LeaveReportForm.get('leaveCategory')?.value ||
-          LeaveReportForm.get('team')?.value
-        " (click)="clearAllFilters()">
-          {{'Clear All'|translate}}
+        <button type="button" class="custom-btn btn-secondary position-relative" (click)="toggleFilters(filterContent)"
+         [disabled]="spinnerLoader2">
+          <i class="bi bi-funnel me-2"></i>{{'Filters' | translate}}
+          <span *ngIf="isFilterIndicatorActive" class="filter-indicator"></span>
         </button>
-
-        <!-- Date Range -->
-        <div class="d-flex align-items-center gap-2">
-          <div class="custom-date-range-picker">
-            <p-datepicker formControlName="dateRange" [placeholder]="'Please Select Date'|translate" selectionMode="range"
-             [showIcon]="true" [readonlyInput]="true" />
-          </div>
-        </div>
-
-        <!-- Employee -->
-        @if(rbac.allowedToAccess('Attendance All Employees List(Leaves).view')){
-        <div class="d-flex align-items-center gap-2">
-          <div class="custom-p-select-content">
-            <p-select [options]="employeeiddetails" optionLabel="fullName" filterBy="fullName" [filter]="true"
-              formControlName="employee" [placeholder]="'Please select employee'|translate" class="form-select custom-select"
-              [filterPlaceholder]="'Search employee'|translate">
-              <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
-              <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
-            </p-select>
-          </div>
-        </div>
         }
 
-        <!-- Team Manager -->
-        @if(rbac.allowedToAccess('Attendance Team Manager List(Leaves).view')){
-        <div class="d-flex align-items-center gap-2">
-          <div class="custom-p-select-content">
-            <p-select [options]="teamdetails" [filter]="true" optionLabel="fullName" filterBy="fullName"
-              formControlName="manager" [placeholder]="'Please select manager'|translate" class="form-select custom-select"
-              [filterPlaceholder]="'Search manager'|translate">
-              <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
-              <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
-            </p-select>
-          </div>
-        </div>
-        }
-
-        <!--My Team-->
-        @if(rbac.allowedToAccess('My Team Report(Leave).view') &&!rbac.allowedToAccess('Attendance All EmployeesList(Leaves).view')
-         && !rbac.allowedToAccess('Attendance Team Manager List(Leaves).view')){
-        <div class="d-flex align-items-center gap-2">
-          <div class="custom-p-select-content">
-            <p-select [options]="getEmployeeInfo" [filter]="true" optionLabel="fullName" filterBy="fullName"
-              formControlName="team" [placeholder]="'Please select employee'|translate" class="form-select custom-select"
-              [filterPlaceholder]="'Search employee'|translate" (onChange)="onClick($event)">
-              <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
-              <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
-            </p-select>
-          </div>
-        </div>
-        }
-        <!-- Leave Category -->
-        <div class="d-flex align-items-center gap-2">
-          <div class="custom-p-select-content">
-            <p-select [options]="uniqueLeaveCategory" [filter]="true" optionLabel="label" filterBy="label"
-              formControlName="leaveCategory" [placeholder]="'Select leave category'|translate" class="form-select custom-select"
-              [filterPlaceholder]="'Search leave type'|translate">
-              <ng-template #selectedItem let-selectedOption>{{ selectedOption.label }}</ng-template>
-              <ng-template let-employee #item>{{ employee.label }}</ng-template>
-            </p-select>
-          </div>
-        </div>
-
-        }
-        <div>
-          
-        </div>
-
-        <!-- Buttons -->
-        <div class="d-flex gap-2">
-          @if(rbac.allowedToAccess('Leave Report - Generate.view')){
-          <button type="submit" class="custom-btn btn-secondary " [disabled]="isLeaveGenerateDisabled ">
-            @if(spinnerLoader1){
-            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-            <span>{{'Loading...'|translate}}</span>
-            }@else {
-            <span>{{'Generate'|translate}}</span>
-            }
-          </button>
-          }
-        
-          @if(rbac.allowedToAccess('Leave Report - Generate.view') && rbac.allowedToAccess('Leave Report - Export.view')){
+        @if(rbac.allowedToAccess('Leave Report - Generate.view') && rbac.allowedToAccess('Leave Report - Export.view')){
           <button type="button" class="custom-btn btn-primary" (click)="exportToExcelYearly()"
-            [disabled]="filteredleaveRecord.length == 0 || disableBtn">
+            [disabled]="filteredleaveRecord.length == 0 || disableBtn || spinnerLoader1 || spinnerLoader2">
             @if(spinnerLoader2){
             <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-            <span>{{'Loading...'|translate}}</span>
+            <span>{{'Loading...' | translate}}</span>
             }@else {
-            <span>{{'Export'|translate}}</span>
+            <span>{{'Export' | translate}}</span>
             }
           </button>
-          }
-        </div>
-      </div>
-    </form>
+        }
+    </div>
   </div>
 
   <div class="custom-table-content">
     @if (!isLoading) {
     <table id="leaveReportTable" class="w-100">
       <thead>
-        <th>{{'Employee ID'|translate}}</th>
-        <th>{{'Employee Name'|translate}}</th>
-        <th>{{'Department'|translate}}</th>
-        <th>{{'Team Manager'|translate}}</th>
-        <th>{{'Location'|translate}}</th>
-        <th>{{'Sub Location'|translate}}</th>
-        <th>{{'Shift'|translate}}</th>
-        <th>{{'Leave Type'|translate}}</th>
-        <th>{{'Leave Start Date'|translate}}</th>
-        <th>{{'Leave End Date'|translate}}</th>
-        <th>{{'Availed'|translate}}</th>
-        <th>{{'Applied Date'|translate}}</th>
-        <th>{{'Days'|translate}}</th>
+        <th>{{ 'Employee ID' | translate }}</th>
+        <th>{{ 'Employee Name' | translate }}</th>
+        <th>{{ 'Department' | translate }}</th>
+        <th>{{ 'Team Manager' | translate }}</th>
+        <th>{{ 'Location' | translate }}</th>
+        <th>{{ 'Sub Location' | translate }}</th>
+        <th>{{ 'Shift' | translate }}</th>
+        <th>{{ 'Leave Category' | translate }}</th>
+        <th>{{ 'Leave Start Date' | translate }}</th>
+        <th>{{ 'Leave End Date' | translate }}</th>
+        <th>{{ 'Availed' | translate }}</th>
+        <th>{{ 'Applied Date' | translate }}</th>
+        <th>{{ 'Days' | translate }}</th>
       </thead>
       <tbody>
         @if (!filteredleaveRecord || filteredleaveRecord.length === 0) {
@@ -144,13 +58,13 @@
           <td>{{ record.department ?? '-' }}</td>
           <td>{{ record.teamManagerName ?? '-' }}</td>
           <td>{{ record.location ?? '-' }}</td>
-          <td>{{ record.sublocation ?? '-' }}</td>
+          <td>{{ record.subLocation ?? '-' }}</td>
           <td>{{ record.shift ?? '-' }}</td>
-          <td>{{ record.leaveType ?? '-' }}</td>
-          <td>{{ record.startdate ? (record.startdate | date: 'dd-MMM-yyyy') : '-' }}</td>
-          <td>{{ record.enddate ? (record.enddate | date: 'dd-MMM-yyyy') : '-' }}</td>
+          <td>{{ record.leaveCategoryName ?? '-' }}</td>
+          <td class="text-nowrap">{{ record.startdate ? (record.startdate | date) : '-' }}</td>
+          <td class="text-nowrap">{{ record.enddate ? (record.enddate | date) : '-' }}</td>
           <td>{{ record.availed ?? '-'}}</td>
-          <td>{{ record.appliedDate| date: 'dd-MMM-yyyy' : '-'}}</td>
+          <td class="text-nowrap">{{ record.appliedDate ? (record.appliedDate | date) : '-' }}</td>
           <td>{{ record.days ?? '-' }}</td>
         </tr>
         }
@@ -163,3 +77,99 @@
     }
   </div>
 </div>
+
+<!-- Filter Offcanvas -->
+<ng-template #filterContent let-offcanvas>
+  <div class="custom-filter-container">
+    <div class="offcanvas-filter-header-content offcanvas-filter-header-border">
+      <p class="filter-header m-0">{{'Filters' | translate}}</p>
+      <a (click)="closeCanvas()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+    </div>
+
+    <div class="offcanvas-filter-content">
+      <form [formGroup]="LeaveReportForm" (ngSubmit)="onGenerate()">
+        
+        <!-- Date Range -->
+        <div class="mb-3">
+           <label class="form-label custom-label text-nowrap filter-labels mb-3">{{'Date Range' | translate}}</label>
+           <div class="custom-date-range-picker">
+            <p-datepicker formControlName="dateRange" [placeholder]="'Please select date'" selectionMode="range"
+              [showIcon]="true" [readonlyInput]="true" [maxDate]="today" />
+          </div>
+        </div>
+        
+        <!-- Leave Category -->
+        <div class="mb-3">
+          <label class="form-label custom-label text-nowrap filter-labels mb-3">{{'Select Leave Category' | translate}}</label>
+          <div class="custom-p-multiSelect-content">
+            <p-multiSelect [options]="uniqueLeaveCategory" [filter]="true" optionLabel="label" filterBy="label"
+              formControlName="leaveCategory" placeholder="Please select leave category" class="form-select custom-select"
+              filterPlaceHolder="Search leave category" resetFilterOnHide="true" >
+              <ng-template let-employee pTemplate="item">{{ employee.label }}</ng-template>
+            </p-multiSelect>
+          </div>
+        </div>
+
+        <!-- Team Manager -->
+        @if(rbac.allowedToAccess('Attendance Team Manager List(Leaves).view')){
+        <div class="mb-3">
+          <label class="form-label custom-label text-nowrap filter-labels mb-3">{{'Select Team Manager' | translate}}</label>
+          <div class="custom-p-multiSelect-content">
+            <p-multiSelect [options]="teamdetails" [filter]="true" optionLabel="fullName" filterBy="fullName"
+              formControlName="manager" placeholder="Please select manager" class="form-select custom-select"
+              filterPlaceHolder="Search manager" resetFilterOnHide="true" >
+              <ng-template let-employee pTemplate="item">{{ employee.fullName }}</ng-template>
+            </p-multiSelect>
+          </div>
+        </div>
+        }
+
+        <!-- Employee -->
+        @if(rbac.allowedToAccess('Attendance All Employees List(Leaves).view')){
+        <div class="mb-3">
+          <label class="form-label custom-label text-nowrap filter-labels mb-3">{{'Select Employee' | translate}}</label>
+          <div class="custom-p-multiSelect-content">
+            <p-multiSelect [options]="employeeMultiSelectOptions" optionLabel="fullName" optionValue="employeeId"
+              filterBy="fullName" [filter]="true" [resetFilterOnHide]="true" formControlName="employeeIds"
+              placeholder="Please select employee" class="form-select custom-select" filterPlaceHolder="Search employee"
+               >
+            </p-multiSelect>
+          </div>
+        </div>
+        }
+
+        <!-- My Team -->
+        @if(rbac.allowedToAccess('My Team Report(Leave).view') &&
+        !rbac.allowedToAccess('Attendance All Employees List(Leaves).view')
+        && !rbac.allowedToAccess('Attendance Team Manager List(Leaves).view')){
+        <div class="mb-3">
+          <label class="form-label custom-label text-nowrap filter-labels mb-3">{{'Select My Team' | translate}}</label>
+          <div class="custom-p-multiSelect-content">
+            <p-multiSelect [options]="getEmployeeInfo" [filter]="true" optionLabel="fullName" optionValue="employeeId" filterBy="fullName"
+              formControlName="team" placeholder="Please select employee" class="form-select custom-select"
+              filterPlaceHolder="Search employee" resetFilterOnHide="true"  >
+              <ng-template let-employee pTemplate="item">{{ employee.fullName }}</ng-template>
+            </p-multiSelect>
+          </div>
+        </div>
+        }
+
+        <div class="d-flex offcanvas-footer-content gap-3">
+          <button *ngIf="isFilterApplied() || filteredleaveRecord.length > 0" type="button" class="custom-btn btn-secondary w-100" (click)="clearAllFilters()" [disabled]="spinnerLoader1 || spinnerLoader2">
+            {{'Clear All' | translate}}</button>
+           @if(rbac.allowedToAccess('Leave Report - Generate.view')){
+          <button type="submit" class="custom-btn btn-primary w-100" 
+            [disabled]="isLeaveGenerateDisabled || spinnerLoader1">
+            @if(spinnerLoader1){
+            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+            <span>{{'Loading...' | translate}}</span>
+            }@else {
+            <span>{{'Generate' | translate}}</span>
+            }
+          </button>
+          }
+        </div>
+      </form>
+    </div>
+  </div>
+</ng-template>

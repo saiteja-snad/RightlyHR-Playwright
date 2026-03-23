@@ -1,12 +1,41 @@
-.custom-p-multiSelect-content {
-    .p-multiselect {
-        width: 200px !important;
-    }
-}
 
 .custom-table-content {
     height: calc(100vh - 12rem) !important;
 }
+
+
+.filter-indicator {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 8px;
+    height: 8px;
+    background-color: #0B3A83;
+    border-radius: 50%;
+    border: 2px solid white;
+    animation: pulse 2s infinite;
+
+    
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 #0B3A83;
+    }
+
+    70% {
+        box-shadow: 0 0 0 6px rgba(255, 68, 68, 0);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(255, 68, 68, 0);
+    }
+}
+
+.p-inputtext{
+        font-size: 0.8rem !important;
+}
+
 
 
 .pagination-content {
@@ -63,4 +92,8 @@
             cursor: not-allowed;
         }
     }
+}
+
+.p-datepicker {
+    width: 100% !important;
 }

@@ -1,62 +1,28 @@
 <div class="custom-main-component-container">
   <div class="component-header-content">
     <!--header-->
-    <app-reports-header/>
+    <app-reports-header />
 
-    <form autocomplete="off" [formGroup]="masterDataForm" (ngSubmit)="onSubmit(masterDataForm)">
-      <!-- DOJ -->
-      <div class="d-flex align-items-center gap-3">
-        <div *ngIf="masterDataForm.get('dateOfJoining')?.value">
-          <button type="button" class="clear-all-btn" (click)="clearAllFilters()" >{{ 'Clear All' | translate }}</button>
-        </div>
-
-        @if(rbac.allowedToAccess('Employee Master Data - Generate.view')){
-        <div class="d-flex align-items-center gap-2">
-          <label class="custom-label filter-labels text-nowrap m-0">{{ 'Date of Joining' | translate }}</label>
-          <div class="custom-date-range-picker">
-            <p-datepicker formControlName="dateOfJoining" [placeholder]="'Please Select Date' | translate" selectionMode="range"
-             [showIcon]="true" [readonlyInput]="true" />
-          </div>
-        </div>
-
-        <!-- Employee Status -->
-        <div class="d-flex align-items-center gap-2">
-          <label class="custom-label filter-labels text-nowrap m-0">{{ 'Employee Status' | translate }}</label>
-          <div class="custom-p-select-content">
-            <p-select [options]="employeeStatusOptions" formControlName="empStatus" optionLabel="label"
-              optionValue="label" [placeholder]="'Select employee status' | translate" class="custom-select w-100">
-            </p-select>
-          </div>
-        </div>
+    <div class="d-flex align-items-center gap-3">
+        @if(rbac.allowedToAccess('Employee Overview Report - Generate.view')){
+        <button type="button" class="custom-btn btn-secondary position-relative" (click)="toggleFilters(filterContent)">
+          <i class="bi bi-funnel me-2"></i>Filters
+          <span *ngIf="isFilterIndicatorActive" class="filter-indicator"></span>
+        </button>
         }
 
-        <div class="d-flex gap-2">
-          @if(rbac.allowedToAccess('Employee Master Data - Generate.view')){
-          <button type="submit" class="custom-btn btn-secondary"
-            [disabled]="!masterDataForm.get('empStatus')?.value && !masterDataForm.get('dateOfJoining')?.value">
-            @if(spinnerLoader1){
-            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-            <span>{{ 'Loading...' | translate }}</span>
-            }@else {
-            <span>{{ 'Generate' | translate }}</span>
-            }
-          </button>
-          }
-
-          @if(rbac.allowedToAccess('Employee Master Data - Generate.view') && rbac.allowedToAccess('Employee Master Data - Export.view') ){
+        @if(rbac.allowedToAccess('Employee Overview Report - Generate.view') && rbac.allowedToAccess('Employee Overview Report - Export.view') ){
           <button type="button" [disabled]="employeeMasterData.length === 0 || disableBtn"
             (click)="onClickEmpMasterExport()" class="custom-btn btn-primary">
             @if(spinnerLoader2){
             <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-            <span>{{ 'Loading...' | translate }}</span>
+            <span>{{'Loading...'}}</span>
             }@else {
-            <span>{{ 'Export' | translate }}</span>
+            <span>{{'Export'}}</span>
             }
           </button>
-          }
-        </div>
-      </div>
-    </form>
+        }
+    </div>
   </div>
 
   <div class="custom-table-content">
@@ -64,101 +30,150 @@
     <table id="employeeMasterData" class="w-100">
       <thead>
         <tr>
-          <!-- <th>ID</th> -->
-          <th>{{'Employee ID'|translate}}</th>
-          <th>{{'Salutation'|translate}}</th>
-          <th>{{'First Name'|translate}}</th>
-          <th>{{'Middle Name'|translate}}</th>
-          <th>{{'Last Name'|translate}}</th>
-          <th>{{'Status'|translate}}</th>
-          <th>{{'Date Of Joining'|translate}}</th>
-          <th>{{'Marital Status'|translate}}</th>
-          <th>{{'Gender'|translate}}</th>
-          <th>{{'Date of Birth'|translate}}</th>
-          <th>{{'Blood Group'|translate}}</th>
-          <!-- <th>Secondary Language</th> -->
-          <th>{{'Address Line 1(current)'|translate}}</th>
-          <th>{{'Address Line 2(current)'|translate}}</th>
-          <th>{{'City(current)'|translate}}</th>
-          <th>{{'State(current)'|translate}}</th>
-          <th>{{'Country(current)'|translate}}</th>
-          <th>{{'Zip Code/Post Code(current)'|translate}}</th>
-          <th>{{'Address Line 1(permanent)'|translate}}</th>
-          <th>{{'Address Line 2(permanent)'|translate}}</th>
-          <th>{{'City(permanent)'|translate}}</th>
-          <th>{{'State(permanent)'|translate}}</th>
-          <th>{{'Country(permanent)'|translate}}</th>
-          <th>{{'Zip Code/Post Code(permanent)'|translate}}</th>
-          <th>{{'Work Number'|translate}}</th>
-          <th>{{'Phone Number'|translate}}</th>
-          <th>{{'Work Mail'|translate}}</th>
-          <th>{{'Personal Email'|translate}}</th>
-          <th>{{'Name (contact1)'|translate}}</th>
-          <th>{{'Email-Id (contact1)'|translate}}</th>
-          <th>{{'Phone Number (contact1)'|translate}}</th>
-          <th>{{'Relationship (contact1)'|translate}}</th>
-          <th>{{'Name (contact2)'|translate}}</th>
-          <th>{{'Email-Id (contact2)'|translate}}</th>
-          <th>{{'Phone Number (contact2)'|translate}}</th>
-          <th>{{'Relationship (contact2)'|translate}}</th>
-          <th>{{'Degree'|translate}}</th>
-          <th>{{'University'|translate}}</th>
-          <th>{{'Specialization'|translate}}</th>
-          <th>{{'GPA'|translate}}</th>
-          <th>{{'Degree Start Date'|translate}}</th>
-          <th>{{'Degree End Date'|translate}}</th>
-          <th>{{'Visa Type'|translate}}</th>
-          <th>{{'Issued Country'|translate}}</th>
-          <th>{{'Issued Date'|translate}}</th>
-          <th>{{'Expiry Date'|translate}}</th>
-          <th>{{'Aadhaar Number'|translate}}</th>
-          <th>{{'PAN Number'|translate}}</th>
-          <th>{{'ESIC Number'|translate}}</th>
-          <th>{{'PF Number'|translate}}</th>
-          <th>{{'UAN Number'|translate}}</th>
-          <th>{{'Bank Name'|translate}}</th>
-          <th>{{'Account Number'|translate}}</th>
-          <th>{{'Account Holder Name'|translate}}</th>
-          <th>{{'IFSC Code'|translate}}</th>
-          <th>{{'Offer Sent Date'|translate}}</th>
-          <th>{{'Offer Sent By'|translate}}</th>
-          <th>{{'Offer Sent Status'|translate}}</th>
-          <th>{{'Appointment Sent Date'|translate}}</th>
-          <th>{{'Appointment Sent By'|translate}}</th>
-          <th>{{'Appointment Sent Status'|translate}}</th>
-          <th>{{'Probation End Date'|translate}}</th>
-          <th>{{'Probation Status'|translate}}</th>
-          <th>{{'Branch Location/Code'|translate}}</th>
-          <th>{{'Notice Period'|translate}}</th>
-          <th>{{'Background Check Status'|translate}}</th>
-          <th>{{'Salary Hold'|translate}}</th>
-          <th>{{'PT'|translate}}</th>
-          <th>{{'ESIC'|translate}}</th>
-          <th>{{'PF'|translate}}</th>
-          <th>{{'Insurance'|translate}}</th>
-          <th>{{'Last Working Day'|translate}}</th>
-          <th>{{'Eligible For Rehire'|translate}}</th>
-          <th>{{'Exit Reason'|translate}}</th>
+          <!-- Basic Info -->
+          <th>Employee ID</th>
+          <th>Salutation</th>
+          <th>First Name</th>
+          <th>Middle Name</th>
+          <th>Last Name</th>
+          <th>Gender</th>
+          <th>Date of Birth</th>
+          <th>Blood Group</th>
+          <th>Marital Status</th>
+
+          <!-- Contact Info -->
+          <th>Work Number</th>
+          <th>Phone Number</th>
+          <th>Work Mail</th>
+          <th>Personal Email</th>
+          <th>LinkedIn Url</th>
+
+          <!-- Address -->
+          <th>Address Line 1(current)</th>
+          <th>Address Line 2(current)</th>
+          <th>Zip Code/Postal Code(current)</th>
+          <th>City(current)</th>
+          <th>State(current)</th>
+          <th>Country(current)</th>
+          <th>Address Line 1(Permanent)</th>
+          <th>Address Line 2(Permanent)</th>
+          <th>Zip Code/Postal Code(Permanent)</th>
+          <th>City(Permanent)</th>
+          <th>State(Permanent)</th>
+          <th>Country(Permanent)</th>
+
+          <!-- Emergency Contacts -->
+          <th>Name (Primary Contact)</th>
+          <th>Email ID (Primary Contact)</th>
+          <th>Phone Number (Primary Contact)</th>
+          <th>Relationship (Primary Contact)</th>
+          <th>Name (Secondary Contact)</th>
+          <th>Email ID (Secondary Contact)</th>
+          <th>Phone Number (Secondary Contact)</th>
+          <th>Relationship (Secondary Contact)</th>
+
+         <!-- Visa Details -->
+          <!-- <th>Visa Type</th>
+          <th>Issued Country</th>
+          <th>Issued Date</th>
+          <th>Expiry Date</th> -->
+
+           <!-- Identity Info -->
+          <th>Aadhaar Number</th>
+          <th>PAN Number</th>
+          <th>ESIC Number</th>
+          <th>PF Number</th>
+          <th>UAN Number</th>
+          
+          <!-- Bank Info -->
+          <th>Bank Name</th>
+          <th>Account Holder's Name</th>
+          <th>Account Number</th>
+          <th>IFSC Code</th>
+
+          <!-- Academics -->
+          <th>Qualification</th>
+          <th>University</th>
+          <th>Specialization</th>
+          <th>GPA/CGPA</th>
+          <th>From Date</th>
+          <th>To Date</th>
+
+          <!-- Appointment Details -->
+          <th>Offer Sent Date</th>
+          <th>Offer Sent By</th>
+          <th>Offer Sent Status</th>
+          <th>Appointment Sent Date</th>
+          <th>Appointment Sent By</th>
+          <th>Appointment Sent Status</th>
+          <th>Trainee Offer Sent Date</th>
+          <th>Trainee Offer Sent By</th>
+          <th>Trainee Offer Sent Status</th>
+          <th>Contract Offer Sent Date</th>
+          <th>Contract Offer Sent By</th>
+          <th>Contract Offer Sent Status</th>
+
+          <!-- Employment Details -->
+          <th>Employee Status</th>
+          <th>Date Of Joining</th>
+          <th>Branch Code</th>
+          
+          <!-- Probation Details -->
+          <th>Probation End Date</th>
+          <th>Probation Status</th>
+          <th>Notice Period Status</th>
+          <th>Background Check Status</th>
+          <th>Salary Hold</th>
+          <th>PF</th>
+          <th>ESIC</th>
+          <th>PT</th>
+
+          <!-- Employment Details -->
+          <th>Total Previous Years Experience</th>
+          <th>Employment Type Status</th>
+          <th>Contract Start Date</th>
+          <th>Duration of Contract</th>
+          <th>Contract End Date</th>
+          <th>Compensation Effective Date</th>
+
+          <!-- Overtime Details -->
+          <th>Overtime Eligibility</th>
+          <th>Reason</th>
+          <th>Frequency</th>
+          <th>Pay Type</th>
+          <th>Annual Salary (in CTC)</th>
+          <th>Variable Pay</th>
+          <th>Variable Pay Amount</th>
+          <th>Next Compensation Review Date</th>
+
+          <!-- Job Details -->
+          <th>Job Effective Date</th>
+          <th>Job Role</th>
+          <th>Job Grade</th>
+          <th>Department</th>
+          <th>Team</th>
+          <th>Team Manager</th>
+          <th>Reporting Manager</th>
+          <th>Location</th>
+          <th>Sub Location</th>
+          <th>Shift</th>
+          <th>Shift Code</th>
+          <th>Job Type</th>
+          <th>Exit Reason</th>
+          <th>Eligible For Rehire</th>
+          <th>Relieving Type</th>
+          <th>Last Working Day</th>
+          <th>Contractor Last Working Day</th>
+
+          
+          
+          
+          <!-- <th>Insurance</th> -->
           <!-- <th>Employment Effective Date</th> -->
-          <th>{{'Job Type'|translate}}</th>
-          <th>{{'Grade Name'|translate}}</th>
-          <!-- <th>Job Grade</th> -->
-          <th>{{'Job Effective Date'|translate}}</th>
-          <th>{{'Job Role'|translate}}</th>
-          <th>{{'Department'|translate}}</th>
-          <th>{{'Team'|translate}}</th>
-          <th>{{'Team Manager'|translate}}</th>
-          <th>{{'Reporting To'|translate}}</th>
-          <th>{{'Location'|translate}}</th>
-          <th>{{'Sub Location'|translate}}</th>
-          <th>{{'Shift'|translate}}</th>
-          <th>{{'Shift Code'|translate}}</th>
-          <th>{{'Compensation Effective Date'|translate}}</th>
-          <th>{{'Overtime Eligibility'|translate}}</th>
-          <th>{{'Reason'|translate}}</th>
-          <th>{{'Frequency'|translate}}</th>
-          <th>{{'Pay Type'|translate}}</th>
-          <th>{{'Yearly CTC'|translate}}</th>
+          <!-- <th>Grade Name</th>
+          <th>Compensation Effective Date</th> -->
+         
+          
         </tr>
       </thead>
       <tbody>
@@ -170,35 +185,40 @@
         @else {
         @for (emp of employeeMasterData; track $index) {
         <tr>
+          <!-- Basic Info -->
           <!-- <td>{{ emp.employeeId || '-' }}</td> -->
-          <td>{{ emp.fusionEmpId || '-' }}</td>
+            <td>{{ emp.fusionEmpId || '-' }}</td>
           <td>{{ emp.title || '-' }}</td>
           <td>{{ emp.firstName || '-' }}</td>
           <td>{{ emp.middleName || '-' }}</td>
           <td>{{ emp.lastName || '-' }}</td>
-          <td>{{ emp.empstatus || '-' }}</td>
-          <td>{{ emp.dateOfJoining ? (emp.dateOfJoining | dateformat) : '-' }}</td>
-          <td>{{ emp.maritalStatus || '-' }}</td>
           <td>{{ emp.gender || '-' }}</td>
           <td>{{ emp.dob ? (emp.dob | dateformat) : '-' }}</td>
           <td>{{ emp.bloodGroup || '-' }}</td>
-          <!-- <td>{{ emp.secondaryLanguage || '-' }}</td> -->
-          <td>{{ emp.currentaddressline1 || '-' }}</td>
-          <td>{{ emp.currentaddressline2 || '-' }}</td>
-          <td>{{ emp.currentcity || '-' }}</td>
-          <td>{{ emp.currentstate || '-' }}</td>
-          <td>{{ emp.currentcountry || '-' }}</td>
-          <td>{{ emp.currentzipcode || '-' }}</td>
-          <td>{{ emp.permanentaddressline1 || '-' }}</td>
-          <td>{{ emp.permanentaddressline2 || '-' }}</td>
-          <td>{{ emp.permanentcity || '-' }}</td>
-          <td>{{ emp.permanentstate || '-' }}</td>
-          <td>{{ emp.permanentcountry || '-' }}</td>
-          <td>{{ emp.permanentzipcode || '-' }}</td>
+          <td>{{ emp.maritalStatus || '-' }}</td>
+
+          <!-- Contact Info -->
           <td>{{ emp.workPhone || '-' }}</td>
           <td>{{ emp.contactnumber || '-' }}</td>
           <td>{{ emp.workEmail || '-' }}</td>
           <td>{{ emp.emailaddress || '-' }}</td>
+          <td>{{ emp.linkedinurl || '-' }}</td>
+
+          <!-- Address -->
+          <td>{{ emp.currentaddressline1 || '-' }}</td>
+          <td>{{ emp.currentaddressline2 || '-' }}</td>
+          <td>{{ emp.currentzipcode || '-' }}</td>
+          <td>{{ emp.currentcity || '-' }}</td>
+          <td>{{ emp.currentstate || '-' }}</td>
+          <td>{{ emp.currentcountry || '-' }}</td>
+          <td>{{ emp.permanentaddressline1 || '-' }}</td>
+          <td>{{ emp.permanentaddressline2 || '-' }}</td>
+          <td>{{ emp.permanentzipcode || '-' }}</td>
+          <td>{{ emp.permanentcity || '-' }}</td>
+          <td>{{ emp.permanentstate || '-' }}</td>
+          <td>{{ emp.permanentcountry || '-' }}</td>
+
+          <!-- Emergency Contacts -->
           <td>{{ emp.emergencyName || '-' }}</td>
           <td>{{ emp.emailId || '-' }}</td>
           <td>{{ emp.emergencynumber || '-' }}</td>
@@ -207,50 +227,89 @@
           <td>{{ emp.emergencyEmail1 || '-' }}</td>
           <td>{{ emp.emergencyNumber1 || '-' }}</td>
           <td>{{ emp.relationship1 || '-' }}</td>
+
+          <!-- Identity Info -->
+          <!-- <td>{{ emp.visatype || '-' }}</td>
+          <td>{{ emp.issuedcountry || '-' }}</td>
+          <td>{{ emp.issueddate ? (emp.issueddate | dateformat) : '-' }}</td>
+          <td>{{ emp.expirydate ? (emp.expirydate | dateformat) : '-' }}</td> -->
+          <td>{{ emp.aadhaar || '-' }}</td>
+          <td>{{ emp.pan || '-' }}</td>
+          <td>{{ emp.esic || '-' }}</td>
+          <td>{{ emp.pf || '-' }}</td>
+          <td>{{ emp.uan || '-' }}</td>
+          
+          <!-- Bank Info -->
+          <td>{{ emp.bankName || '-' }}</td>
+          <td>{{ emp.accountName || '-' }}</td>
+          <td>{{ emp.accountNo || '-' }}</td>
+          <td>{{ emp.ifscCode || '-' }}</td>
+
+          <!-- Academics -->
           <td>{{ emp.degree || '-' }}</td>
           <td>{{ emp.university || '-' }}</td>
           <td>{{ emp.specialization || '-' }}</td>
           <td>{{ emp.gpa || '-' }}</td>
           <td>{{ emp.degreeStartDate ? (emp.degreeStartDate | dateformat) : '-' }}</td>
           <td>{{ emp.degreeEndDate ? (emp.degreeEndDate | dateformat) : '-' }}</td>
-          <td>{{ emp.visatype || '-' }}</td>
-          <td>{{ emp.issuedcountry || '-' }}</td>
-          <td>{{ emp.issueddate ? (emp.issueddate | dateformat) : '-' }}</td>
-          <td>{{ emp.expirydate ? (emp.expirydate | dateformat) : '-' }}</td>
-          <td>{{ emp.aadhaar || '-' }}</td>
-          <td>{{ emp.pan || '-' }}</td>
-          <td>{{ emp.esic || '-' }}</td>
-          <td>{{ emp.pf || '-' }}</td>
-          <td>{{ emp.uan || '-' }}</td>
-          <td>{{ emp.bankName || '-' }}</td>
-          <td>{{ emp.accountName || '-' }}</td>
-          <td>{{ emp.accountNo || '-' }}</td>
-          <td>{{ emp.ifscCode || '-' }}</td>
+
+          <!-- Appointment Details -->
           <td>{{ emp.offerSentDate ? (emp.offerSentDate | dateformat) : '-' }}</td>
           <td>{{ emp.offersentby || '-' }}</td>
           <td>{{ emp.offerSentStatus || '-' }}</td>
           <td>{{ emp.appointmentSentDate ? (emp.appointmentSentDate | dateformat) : '-' }}</td>
           <td>{{ emp.appointmentsentby || '-' }}</td>
           <td>{{ emp.appointmentSentStatus || '-' }}</td>
+          <td>{{ emp.traineeoffersentdate ? (emp.traineeoffersentdate | dateformat) : '-' }}</td>
+          <td>{{ emp.traineeoffersentby || '-' }}</td>
+          <td>{{ emp.traineeoffersentstatus || '-' }}</td>
+          <td>{{ emp.contractoffersentdate ? (emp.contractoffersentdate | dateformat) : '-' }}</td>
+          <td>{{ emp.contractoffersentby || '-' }}</td>
+          <td>{{ emp.contractoffersentstatus || '-' }}</td>
+
+          <!-- Employment Details -->
+          <td>{{ emp.empstatus || '-' }}</td>
+          <td>{{ emp.dateOfJoining ? (emp.dateOfJoining | dateformat) : '-' }}</td>
+          <td>{{ emp.branchcode || '-' }}</td>
+          
+          <!-- Probation Details -->
           <td>{{ emp.probationEndDate ? (emp.probationEndDate | dateformat) : '-' }}</td>
           <td>{{ emp.probationStatus || '-' }}</td>
-          <td>{{ emp.branchcode || '-' }}</td>
           <td>{{ emp.noticePeriod || '-' }}</td>
           <td>{{ emp.backgroundCheckStatus || '-' }}</td>
           <td>{{ emp.salaryhold || '-' }}</td>
-          <td>{{ emp.pt || '-' }}</td>
-          <td>{{ emp.esicapplicable || '-' }}</td>
           <td>{{ emp.pfapplicable || '-' }}</td>
-          <td>{{ emp.healthinsurance || '-' }}</td>
-          <td>{{ emp.lastworkingday ? (emp.lastworkingday | dateformat) : '-' }}</td>
-          <td>{{ emp.eligibleforrehire || '-' }}</td>
-          <td>{{ emp.termreasonoffboard || '-' }}</td>
-          <!-- <td>{{ emp.employmentEffectiveDate ? (emp.employmentEffectiveDate | dateformat) : '-' }}</td> -->
-          <td>{{ emp.jobType || '-' }}</td>
-          <td>{{ emp.gradeName || '-' }}</td>
-          <!-- <td>{{ emp.jobGrade || '-' }}</td> -->
+          <td>{{ emp.esicapplicable || '-' }}</td>
+          <td>{{ emp.pt || '-' }}</td>
+
+          <!-- Employment Details -->
+          <td>{{ emp.totalYearsOfExperience || '-' }}</td>
+          <td>{{ emp.empType || '-' }}</td>
+          <td>{{ emp.contractStartDate ? (emp.contractStartDate | dateformat) : '-' }}</td>
+          <td>{{ emp.contractDuration || '-' }}</td>
+          <td>{{ emp.contractEndDate ? (emp.contractEndDate | dateformat) : '-' }}</td>
+          <td>{{ emp.compeffectivedate ? (emp.compeffectivedate | dateformat) : '-' }}</td>
+          
+          <!-- Overtime Details -->
+          <td>{{ emp.overtimeeligibility || '-' }}</td>
+          <td>{{ emp.reason || '-' }}</td>
+          <td>{{ emp.frequency || '-' }}</td>
+          <td>{{ emp.paytype || '-' }}</td>
+          <td>{{ emp.compensationamount || '-' }}</td>
+          <td>
+            {{
+              emp.isVariablePay === true ? 'Yes' :
+              emp.isVariablePay === false ? 'No' :
+              '-'
+            }}
+          </td>
+          <td>{{ emp.variablePayAmount || '-' }}</td>
+          <td>{{ emp.nextCompReviewDate ? (emp.nextCompReviewDate | dateformat) : '-' }}</td>
+
+          <!-- Job Details -->
           <td>{{ emp.jobeffectivedate ? (emp.jobeffectivedate | dateformat) : '-' }}</td>
           <td>{{ emp.jobRole || '-' }}</td>
+          <td>{{ emp.gradeName || '-' }}</td>
           <td>{{ emp.departmentName || '-' }}</td>
           <td>{{ emp.subdepartment_name || '-' }}</td>
           <td>{{ emp.teammanager}}</td>
@@ -259,12 +318,22 @@
           <td>{{ emp.jobsublocationname || '-' }}</td>
           <td>{{ emp.shiftname || '-' }}</td>
           <td>{{ emp.shiftcode || '-' }}</td>
-          <td>{{ emp.compeffectivedate ? (emp.compeffectivedate | dateformat) : '-' }}</td>
-          <td>{{ emp.overtimeeligibility || '-' }}</td>
-          <td>{{ emp.reason || '-' }}</td>
-          <td>{{ emp.frequency || '-' }}</td>
-          <td>{{ emp.paytype || '-' }}</td>
-          <td>{{ emp.compensationamount || '-' }}</td>
+          <td>{{ emp.jobType || '-' }}</td>
+          <td>{{ emp.termreasonoffboard || '-' }}</td>
+          <td>{{ emp.eligibleforrehire || '-' }}</td>
+          <td>{{ emp.separationType || '-' }}</td>
+          <td>{{ emp.lastworkingday ? (emp.lastworkingday | dateformat) : '-' }}</td>
+          <td>{{ emp.contractorLastWorkingDate ? (emp.contractorLastWorkingDate | dateformat) : '-' }}</td>   
+
+
+
+          
+          
+          
+          <!-- <td>{{ emp.healthInsurance || '-' }}</td> -->
+          <!-- <td>{{ emp.employmentEffectiveDate ? (emp.employmentEffectiveDate | dateformat) : '-' }}</td> -->
+          <!-- <td>{{ emp.gradeName || '-' }}</td> -->
+          <!-- <td>{{ emp.compeffectivedate ? (emp.compeffectivedate | dateformat) : '-' }}</td> -->
         </tr>
         }
         }
@@ -276,3 +345,54 @@
     }
   </div>
 </div>
+
+<!-- Filter Offcanvas -->
+<ng-template #filterContent let-offcanvas>
+  <div class="custom-filter-container">
+    <div class="offcanvas-filter-header-content offcanvas-filter-header-border">
+      <p class="filter-header m-0">{{'Filters' | translate}}</p>
+      <a (click)="closeCanvas()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+    </div>
+
+    <div class="offcanvas-filter-content">
+      <form [formGroup]="masterDataForm" (ngSubmit)="onSubmit(masterDataForm)">
+        
+        <!-- Date of Joining -->
+        <div class="mb-3">
+           <label class="form-label custom-label text-nowrap filter-labels mb-3">{{'Date of Joining' | translate}}</label>
+           <div class="custom-date-range-picker">
+            <p-datepicker formControlName="dateOfJoining" [placeholder]="'Please select date range'" selectionMode="range"
+              [showIcon]="true" [readonlyInput]="true"/>
+          </div>
+        </div>
+        
+        <!-- Employee Status -->
+        <div class="mb-3">
+          <label class="form-label custom-label text-nowrap filter-labels mb-3">{{'Employee Status' | translate}}</label>
+          <div class="custom-p-multiSelect-content">
+            <p-multiSelect [options]="employeeStatusOptions" optionLabel="label" optionValue="value" [filter]="true"
+              formControlName="empStatus" class="form-select custom-select" placeholder="Please select employee status" [resetFilterOnHide]="true"
+              filterPlaceHolder="Search status">
+            </p-multiSelect>
+          </div>
+        </div>
+
+        <div class="d-flex offcanvas-footer-content gap-3">
+          <button *ngIf="isFilterApplied() || employeeMasterData.length > 0" type="button" class="custom-btn btn-secondary w-100" (click)="clearAllFilters()" [disabled]="spinnerLoader1">
+            Clear All</button>
+           @if(rbac.allowedToAccess('Employee Overview Report - Generate.view')){
+          <button type="submit" class="custom-btn btn-primary w-100" 
+            [disabled]="(!masterDataForm.get('empStatus')?.value && !masterDataForm.get('dateOfJoining')?.value) || spinnerLoader1">
+            @if(spinnerLoader1){
+            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+            <span>{{'Loading...'}}</span>
+            }@else {
+            <span>{{'Generate'}}</span>
+            }
+          </button>
+          }
+        </div>
+      </form>
+    </div>
+  </div>
+</ng-template>

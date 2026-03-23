@@ -3,88 +3,41 @@
     <!-- Header -->
     <app-reports-header />
 
-    <form autocomplete="off" [formGroup]="ProjectEffortReportForm"
-      (ngSubmit)="generateProjectEffortReport(page,pageSize,true, true)" *ngIf="ProjectEffortReportForm">
-      <div class="d-flex align-items-center flex-wrap  gap-3">
+    <div class="d-flex align-items-center gap-3">
         @if(rbac.allowedToAccess('Project Effort Report - Generate.view')){
-        <button type="button" class="clear-all-btn" [disabled]="
-          ProjectEffortReportForm.get('clientId')?.value == null &&
-          ProjectEffortReportForm.get('projectId')?.value == null &&
-          ProjectEffortReportForm.get('employeid')?.value == null &&
-          ProjectEffortReportForm.get('billable')?.value == null
-        " (click)="clearAllFilters()">
-          @if(isFilterApplied()) {
-          {{ 'Clear All' | translate }}
-          }
+        <button type="button" class="custom-btn btn-secondary position-relative" (click)="toggleFilters(filterContent)" [disabled]="spinnerLoader1 || spinnerLoader2">
+          <i class="bi bi-funnel me-2"></i>Filters
+          <span *ngIf="isFilterIndicatorActive" class="filter-indicator"></span>
         </button>
-        <!-- Project-->
-        <div class="d-flex align-items-center gap-2">
-          <div class="custom-p-multiSelect-content">
-            <p-multiSelect [options]="projectsList" optionLabel="label" optionValue="value" [filter]="true"
-              [maxSelectedLabels]="1" [placeholder]="'Please select project' | translate" formControlName="projectId"
-              class="form-select custom-select" (onChange)="onProjectChange($event)">
-            </p-multiSelect>
-          </div>
-        </div>
-        <!-- Phases Dropdown -->
-        <div class="d-flex align-items-center gap-2">
-          <div class="custom-p-multiSelect-content">
-            <p-multiSelect [options]="phasesData" optionLabel="label" optionValue="phaseId" [filter]="true" [maxSelectedLabels]="1"
-              formControlName="phases" [placeholder]="'Please select phases' | translate" class="form-select custom-select">
-            </p-multiSelect>
-
-          </div>
-        </div>
-        <!-- Date Range -->
-        <div class="d-flex align-items-center gap-2">
-          <div class="custom-date-range-picker">
-            <p-datepicker formControlName="dateRange" [placeholder]="'Please select date range' | translate" selectionMode="range"
-              [showIcon]="true" [readonlyInput]="true" [maxDate]="today" />
-          </div>
-        </div>
         }
-        <!-- Buttons -->
-        <div class="d-flex gap-2">
-          @if(rbac.allowedToAccess('Project Effort Report - Generate.view')){
-          <button type="submit" class="custom-btn btn-secondary "
-            [disabled]="!isFilterApplied() || isLeaveGenerateDisabled ">
-            @if(spinnerLoader1){
-            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-            <span>{{ 'Loading...' | translate }}</span>
-            }@else {
-            <span>{{ 'Generate' | translate }}</span>
-            }
-          </button>
-          }
 
-          @if(rbac.allowedToAccess('Project Effort Report - Generate.view') && rbac.allowedToAccess('Project Effort Report - Export.view')){
+        @if(rbac.allowedToAccess('Project Effort Report - Generate.view') 
+          && rbac.allowedToAccess('Project Effort Report - Export.view')){
           <button type="button" class="custom-btn btn-primary" (click)="exportProjectEffortReport()"
             [disabled]="!isFilterApplied() || filteredpendingapprovalRecord.length == 0 || disableBtn">
             @if(spinnerLoader2){
             <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-            <span>{{ 'Loading...' | translate }}</span>
+            <span>{{'Loading...'}}</span>
             }@else {
-            <span>{{ 'Export' | translate }}</span>
+            <span>{{'Export'}}</span>
             }
           </button>
           }
-        </div>
-      </div>
-    </form>
+    </div>
+
   </div>
 
   <div class="custom-table-content">
     @if (!isLoading) {
     <table id="leaveReportTable" class="w-100">
       <thead>
-
-        <th>{{ 'Client Name' | translate }}</th>
-        <th>{{ 'Project Name' | translate }}</th>
-        <th>{{ 'Phase/Milestone' | translate }}</th>
-        <th>{{ 'Allocated Hrs' | translate }}</th>
-        <th>{{ 'Billable Hrs' | translate }}</th>
-        <th>{{ 'Non-Billable Hrs' | translate }}</th>
-        <th>{{ 'Total Logged Hrs' | translate }}</th>
+        <th>{{'Client Name'|translate}}</th>
+        <th>{{'Project Name'|translate}}</th>
+        <th>{{'Phase/Milestone'|translate}}</th>
+        <th class="text-center">{{'Allocated Hrs'|translate}}</th>
+        <th class="text-center">{{'Billable Hrs'|translate}}</th>
+        <th class="text-center">{{'Non-Billable Hrs'|translate}}</th>
+        <th class="text-center">{{'Total Logged Hrs'|translate}}</th>
       </thead>
       <tbody>
         @if (!filteredpendingapprovalRecord || filteredpendingapprovalRecord.length === 0) {
@@ -100,10 +53,10 @@
           <td>{{ record.client ?? '-' }}</td>
           <td>{{ record.project ?? '-' }}</td>
           <td>{{ record.phase ?? '-' }}</td>
-          <td>{{ record.projectAllocatedHours ?? '-' }}</td>
-          <td>{{ record.billableHours ?? '-' }}</td>
-          <td>{{ record.nonBillableHours ?? '-' }}</td>
-          <td>{{ record.totalHours ?? '-' }}</td>
+          <td class="text-center">{{ record.projectAllocatedHours ?? '-' }}</td>
+          <td class="text-center">{{ record.billableHours ?? '-' }}</td>
+          <td class="text-center">{{ record.nonBillableHours ?? '-' }}</td>
+          <td class="text-center">{{ record.totalHours ?? '-' }}</td>
         </tr>
         }
         }
@@ -123,8 +76,8 @@
           <option *ngFor="let option of options" [value]="option.value">{{ option.label }}</option>
         </select>
         <span class="pagination-label text-nowrap">
-          {{ 'Showing' | translate }} {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize : (+first + +rows)}}
-          {{ 'of' | translate }} {{collectionSize }}
+          Showing {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize : (+first + +rows)}}
+          of {{collectionSize }}
         </span>
       </div>
       <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"
@@ -133,3 +86,68 @@
   </div>
   }
 </div>
+
+
+
+<!-- Filter Offcanvas -->
+<ng-template #filterContent let-offcanvas>
+  <div class="custom-filter-container">
+    <div class="offcanvas-filter-header-content offcanvas-filter-header-border">
+      <p class="filter-header m-0">{{'Filters' | translate}}</p>
+      <a (click)="closeCanvas()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+    </div>
+
+    <div class="offcanvas-filter-content">
+      <form autocomplete="off" [formGroup]="ProjectEffortReportForm"
+      (ngSubmit)="onGenerate()" *ngIf="ProjectEffortReportForm">
+
+        <div class="mb-3">
+          <label class="form-label custom-label text-nowrap filter-labels mb-3">{{'Select Date Range' | translate}}</label>
+          <div class="custom-date-range-picker">
+            <p-datepicker formControlName="dateRange" [placeholder]="'Please select date range'" selectionMode="range"
+              [showIcon]="true" [readonlyInput]="true" [maxDate]="today" />
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label custom-label text-nowrap filter-labels mb-3">{{'Select Project' | translate}}</label>
+          <div class="custom-p-multiSelect-content">
+            <p-multiSelect [options]="projectsList" optionLabel="label" optionValue="value" [filter]="true"
+              placeholder="Please select project" formControlName="projectId" class="form-select custom-select"
+              [maxSelectedLabels]="1" (onChange)="onProjectChange($event)"
+              filterPlaceHolder="Search project" resetFilterOnHide="true">
+            </p-multiSelect>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label custom-label text-nowrap filter-labels mb-3">{{'Select Phases' | translate}}</label>
+          <div class="custom-p-multiSelect-content">
+             <p-multiSelect [options]="phasesData" optionLabel="label" optionValue="phaseId" formControlName="phases" 
+             [maxSelectedLabels]="1" placeholder="Please select phases" [filter]="true"
+              class="form-select custom-select"
+               filterPlaceHolder="Search phase" [resetFilterOnHide]="true" >
+             </p-multiSelect>
+          </div>
+        </div>
+
+        <div class="d-flex offcanvas-footer-content gap-3">
+          @if(isFilterApplied() || filteredpendingapprovalRecord.length > 0){
+          <button type="button" class="custom-btn btn-secondary w-100" (click)="clearAllFilters()" [disabled]="spinnerLoader1">
+            {{'Clear All' | translate}}</button>
+          }
+          @if(rbac.allowedToAccess('Project Effort Report - Generate.view')){
+          <button type="submit" class="custom-btn btn-primary w-100" [disabled]="!isFilterApplied() || isLeaveGenerateDisabled">
+            @if(spinnerLoader1){
+            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+            <span>{{'Loading...'}}</span>
+            }@else {
+            <span>{{'Generate'}}</span>
+            }
+          </button>
+          }
+        </div>
+      </form>
+    </div>
+  </div>
+</ng-template>

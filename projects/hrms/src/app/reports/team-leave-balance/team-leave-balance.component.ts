@@ -12,10 +12,9 @@ import { HttpService } from '../../services/http.service';
 import { Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 import { ReportsHeaderComponent } from "../../shared/reports-tabs/reports-header/reports-header.component";
-import { TranslatePipe } from '@ngx-translate/core';
 @Component({
   selector: 'app-team-leave-balance',
-  imports: [CommonModule, Select, AccordionModule, NoDataFoundComponent, DataLoaderContentComponent, FormsModule, DateformatPipe, NgbPopoverModule, ReportsHeaderComponent, TranslatePipe],
+  imports: [CommonModule, Select, AccordionModule, NoDataFoundComponent, DataLoaderContentComponent, FormsModule, DateformatPipe, NgbPopoverModule, ReportsHeaderComponent],
   templateUrl: './team-leave-balance.component.html',
   styleUrl: './team-leave-balance.component.scss',
   encapsulation: ViewEncapsulation.None

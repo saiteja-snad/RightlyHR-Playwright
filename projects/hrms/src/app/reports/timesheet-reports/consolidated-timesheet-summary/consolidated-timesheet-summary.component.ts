@@ -1,5 +1,5 @@
 import { HttpResponse } from '@angular/common/http';
-import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnDestroy, OnInit, TemplateRef, ViewEncapsulation } from '@angular/core';
 import { FormGroup, FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subscription, Subject, takeUntil } from 'rxjs';
@@ -18,6 +18,7 @@ import { SelectModule } from 'primeng/select';
 import { DataLoaderContentComponent } from '../../../shared/data-loader-content/data-loader-content.component';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { ReportsHeaderComponent } from '../../../shared/reports-tabs/reports-header/reports-header.component';
+import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-consolidated-timesheet-summary',
@@ -32,6 +33,7 @@ export class ConsolidatedTimesheetSummaryComponent implements OnInit, OnDestroy 
   loggedInUser = {} as IemployeeDetails;
   filteredWeeklyTimesheetRecord: any[] = [];
   WeeklyTimesheetReportForm!: FormGroup;
+  appliedFilters: any = null;
   spinnerLoader1 = false;
   downloadLoader = false;
   disableBtn = false;
@@ -41,13 +43,11 @@ export class ConsolidatedTimesheetSummaryComponent implements OnInit, OnDestroy 
   employeeiddetails: any[] = [];
 
   BillableOptions = [
-    { key: 'All', value: 'All' },
-    { key: 'Yes', value: 'true' },
-    { key: 'No', value: 'false' }
+    { key: 'Billable', value: 'Billable' },
+    { key: 'Non-Billable', value: 'Non-Billable' }
   ];
 
   TimesheetStatus = [
-    { key: 'All', value: 'All' },
     { key: 'Waiting for Approval', value: 'Waiting for Approval' },
     { key: 'Approved', value: 'Processed' }
   ];
@@ -63,7 +63,18 @@ export class ConsolidatedTimesheetSummaryComponent implements OnInit, OnDestroy 
     { label: 150, value: 150 },
     { label: 200, value: 200 }
   ];
-  today: Date = new Date();
+  
+  today: Date = (() => {
+    const d = new Date();
+    d.setHours(23, 59, 59, 999);
+    return d;
+  })();
+
+  getDefaultDateRange(): [Date, Date] {
+    const today = new Date(this.today);
+    const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+    return [startOfMonth, today];
+  }
 
   constructor(
     public authService: AuthService,
@@ -71,126 +82,83 @@ export class ConsolidatedTimesheetSummaryComponent implements OnInit, OnDestroy 
     private fb: FormBuilder,
     public rbac: RbacService,
     public readonly router: Router,
-    private conformationPopup: OpenModalService
+    private conformationPopup: OpenModalService,
+    private offcanvasService: NgbOffcanvas
   ) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.loggedInUser = this.authService.getToken();
     this.initializeForm();
-    this.handleStatusChanges();
-    this.handleBillableChanges();
     this.getEmployeeData();
-  }
-
-  handleStatusChanges(): void {
-    this.WeeklyTimesheetReportForm.get('status')?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((selected: string[]) => {
-      if (!selected || selected.length === 0) return;
-
-      const allValue = 'All';
-      // Get all values except 'All'
-      const allOptionValues = this.TimesheetStatus.filter(x => x.value !== allValue).map(x => x.value);
-
-      if (selected.length > 1) {
-        const lastSelected = selected[selected.length - 1];
-
-        if (lastSelected === allValue) {
-          // If 'All' is clicked last, select only 'All'
-          setTimeout(() => this.WeeklyTimesheetReportForm.get('status')?.setValue([allValue], { emitEvent: false }));
-        } else if (selected.includes(allValue)) {
-          // If 'All' was already selected and user clicked something else, remove 'All'
-          const newSelection = selected.filter(s => s !== allValue);
-          setTimeout(() => this.WeeklyTimesheetReportForm.get('status')?.setValue(newSelection, { emitEvent: false }));
-        } else {
-          // 'All' is NOT in selected. Multiple items selected.
-          // Check if all options are selected.
-          const areAllSelected = allOptionValues.every(val => selected.includes(val));
-          if (areAllSelected) {
-            setTimeout(() => this.WeeklyTimesheetReportForm.get('status')?.setValue([allValue], { emitEvent: false }));
-          }
-        }
-      }
-    });
-  }
-
-  handleBillableChanges(): void {
-    this.WeeklyTimesheetReportForm.get('billable')?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((selected: string[]) => {
-      if (!selected || selected.length === 0) return;
-
-      const allValue = 'All';
-      // Get all values except 'All'
-      const allOptionValues = this.BillableOptions.filter(x => x.value !== allValue).map(x => x.value);
-
-      if (selected.length > 1) {
-        const lastSelected = selected[selected.length - 1];
-
-        if (lastSelected === allValue) {
-          // If 'All' is clicked last, select only 'All'
-          setTimeout(() => this.WeeklyTimesheetReportForm.get('billable')?.setValue([allValue], { emitEvent: false }));
-        } else if (selected.includes(allValue)) {
-          // If 'All' was already selected and user clicked something else, remove 'All'
-          const newSelection = selected.filter(s => s !== allValue);
-          setTimeout(() => this.WeeklyTimesheetReportForm.get('billable')?.setValue(newSelection, { emitEvent: false }));
-        } else {
-          // 'All' is NOT in selected. Multiple items selected.
-          // Check if all options are selected.
-          const areAllSelected = allOptionValues.every(val => selected.includes(val));
-          if (areAllSelected) {
-            setTimeout(() => this.WeeklyTimesheetReportForm.get('billable')?.setValue([allValue], { emitEvent: false }));
-          }
-        }
-      }
-    });
   }
 
   initializeForm() {
     this.WeeklyTimesheetReportForm = this.fb.group({
       employeid: [[]],
-      dateRange: [null],
+      dateRange: [this.getDefaultDateRange()],
       billable: [[]],
       status: [[]]
     });
   }
 
+  captureAppliedFilters(): any {
+    const v = this.WeeklyTimesheetReportForm.value;
+    return {
+      employeid: Array.isArray(v.employeid) ? [...v.employeid] : [],
+      dateRange: Array.isArray(v.dateRange) ? [v.dateRange[0] ?? null, v.dateRange[1] ?? null] : null,
+      billable: Array.isArray(v.billable) ? [...v.billable] : [],
+      status: Array.isArray(v.status) ? [...v.status] : []
+    };
+  }
+
+  isAppliedFilterIndicatorVisible(): boolean {
+    if (!this.appliedFilters) return false;
+    const formValue = this.appliedFilters;
+    const isEmployeeSelected = Array.isArray(formValue.employeid) ? formValue.employeid.length > 0 : !!formValue.employeid;
+    const statusSelectedValues = Array.isArray(formValue.status)
+      ? formValue.status.filter((v: string) => this.TimesheetStatus.some(s => s.value === v))
+      : [];
+    const billableSelectedValues = Array.isArray(formValue.billable)
+      ? formValue.billable.filter((v: string) => this.BillableOptions.some(b => b.value === v))
+      : [];
+    const isStatusSelected = statusSelectedValues.length > 0;
+    const isDateRangeSelected = Array.isArray(formValue.dateRange) ? !!formValue.dateRange[0] : !!formValue.dateRange;
+    const isBillableSelected = billableSelectedValues.length > 0;
+    return (isEmployeeSelected || isStatusSelected || isDateRangeSelected || isBillableSelected);
+  }
+
   isFilterApplied(): boolean {
     const formValue = this.WeeklyTimesheetReportForm.value;
     const isEmployeeSelected = Array.isArray(formValue.employeid) ? formValue.employeid.length > 0 : !!formValue.employeid;
-    const isStatusSelected = Array.isArray(formValue.status) && formValue.status.length > 0 && !formValue.status.includes('All');
-    const isDateRangeSelected = Array.isArray(formValue.dateRange) ? formValue.dateRange.length > 0 : !!formValue.dateRange;
-    const isBillableSelected = Array.isArray(formValue.billable) && formValue.billable.length > 0 && !formValue.billable.includes('All');
+    const statusSelectedValues = Array.isArray(formValue.status)
+      ? formValue.status.filter((v: string) => this.TimesheetStatus.some(s => s.value === v))
+      : [];
+    const billableSelectedValues = Array.isArray(formValue.billable)
+      ? formValue.billable.filter((v: string) => this.BillableOptions.some(b => b.value === v))
+      : [];
+    const isStatusSelected = statusSelectedValues.length > 0;
+    const isDateRangeSelected = Array.isArray(formValue.dateRange) ? !!formValue.dateRange[0] : !!formValue.dateRange;
+    const isBillableSelected = billableSelectedValues.length > 0;
     return (isEmployeeSelected || isStatusSelected || isDateRangeSelected || isBillableSelected);
   }
 
   clearAllFilters(): void {
     this.WeeklyTimesheetReportForm.reset({
       employeid: [],
-      dateRange: null,
+      dateRange: this.getDefaultDateRange(),
       billable: [],
       status: []
     });
+    this.appliedFilters = null;
     this.filteredWeeklyTimesheetRecord = [];
     this.collectionSize = 0;
     this.disableBtn = false;
   }
 
-  onStatusChange(selectedValues: any) {
-    if (!Array.isArray(selectedValues)) return;
-
-    const nonAllStatuses = this.TimesheetStatus.filter(s => s.value !== 'All').map(s => s.value);
-    const previousValues = this.WeeklyTimesheetReportForm.get('status')?.value || [];
-
-    if (selectedValues.includes('All') && !previousValues.includes('All')) {
-      this.WeeklyTimesheetReportForm.patchValue({ status: ['All'] }, { emitEvent: false });
-    } else if (selectedValues.includes('All') && previousValues.includes('All') && selectedValues.length > 1) {
-      const withoutAll = selectedValues.filter((v: string) => v !== 'All');
-      this.WeeklyTimesheetReportForm.patchValue({ status: withoutAll }, { emitEvent: false });
-    } else if (!selectedValues.includes('All') && selectedValues.length === nonAllStatuses.length) {
-      this.WeeklyTimesheetReportForm.patchValue({ status: ['All'] }, { emitEvent: false });
-    }
-  }
-
   onGenerate() {
-    this.generateWeeklyTimesheetReport(this.page, this.pageSize, true, true);
+    this.appliedFilters = this.captureAppliedFilters();
+    this.generateWeeklyTimesheetReport(this.page, this.pageSize, true, true, true);
   }
 
   onRowsChange() {
@@ -244,14 +212,13 @@ export class ConsolidatedTimesheetSummaryComponent implements OnInit, OnDestroy 
   get isLeaveGenerateDisabled(): boolean {
     const { employeid, dateRange, billable, status } = this.WeeklyTimesheetReportForm.value;
     const hasEmployee = Array.isArray(employeid) && employeid.length > 0;
-    const hasDateRange = Array.isArray(dateRange) && dateRange.length === 2 && dateRange[0] && dateRange[1];
-    const hasBillable = Array.isArray(billable) && billable.length > 0 && !billable.includes('All');
-    const hasStatus = Array.isArray(status) && status.length > 0 && !status.includes('All');
+    const hasDateRange = Array.isArray(dateRange) && !!dateRange[0];
+    const hasBillable = Array.isArray(billable) && billable.some((v: string) => this.BillableOptions.some(b => b.value === v));
+    const hasStatus = Array.isArray(status) && status.some((v: string) => this.TimesheetStatus.some(s => s.value === v));
     return !(hasEmployee || hasDateRange || hasBillable || hasStatus);
   }
 
-  buildTimesheetReportParams() {
-    const formValue = this.WeeklyTimesheetReportForm.value;
+  buildTimesheetReportParams(formValue: any = this.WeeklyTimesheetReportForm.value) {
     const formatDate = (date: Date | null) => {
       if (!date) return null;
       const d = new Date(date);
@@ -261,8 +228,17 @@ export class ConsolidatedTimesheetSummaryComponent implements OnInit, OnDestroy 
       return `${month}/${day}/${year}`;
     };
 
-    const startDate = formValue.dateRange?.[0] ? formatDate(formValue.dateRange[0]) : null;
-    const endDate = formValue.dateRange?.[1] ? formatDate(formValue.dateRange[1]) : null;
+    const startDateRaw = formValue.dateRange?.[0] ?? null;
+    const endDateRaw = formValue.dateRange?.[1] ?? null;
+    const startDate = startDateRaw ? formatDate(startDateRaw) : null;
+    const endDate = (endDateRaw || startDateRaw) ? formatDate((endDateRaw || startDateRaw) as Date) : null;
+
+    const statusSelections = Array.isArray(formValue.status)
+      ? formValue.status.filter((v: string) => this.TimesheetStatus.some(s => s.value === v))
+      : [];
+    const billableSelections = Array.isArray(formValue.billable)
+      ? formValue.billable.filter((v: string) => this.BillableOptions.some(b => b.value === v))
+      : [];
 
     const params: any = {
       ReportType: 'ConsolidatedTimesheetSummary'
@@ -273,25 +249,35 @@ export class ConsolidatedTimesheetSummaryComponent implements OnInit, OnDestroy 
     if (formValue.employeid && formValue.employeid.length > 0) {
       params.EmployeeIds = formValue.employeid;
     }
-    if (formValue.billable && formValue.billable.length > 0 && !formValue.billable.includes('All')) {
-      if (formValue.billable.length === 1) {
-        params.Billable = formValue.billable[0];
-      }
+    if (billableSelections.length > 0) {
+      params.BillableTypes = billableSelections.join(',');
     }
-    if (formValue.status && formValue.status.length > 0 && !formValue.status.includes('All')) {
-      params.Statuses = formValue.status.join(',');
+    if (statusSelections.length > 0) {
+      params.Statuses = statusSelections.join(',');
     }
     return params;
   }
 
-  generateWeeklyTimesheetReport(page: number, pageSize: number, showLoader: boolean = true, resetPagination: boolean = false) {
+  toggleFilters(content: TemplateRef<any>) {
+    this.offcanvasService.open(content, {
+      position: 'end',
+      backdrop: 'static',
+      keyboard: false,
+    });
+  }
+
+  closeCanvas() {
+    this.offcanvasService.dismiss();
+  }
+
+  generateWeeklyTimesheetReport(page: number, pageSize: number, showLoader: boolean = true, resetPagination: boolean = false, closeAfterGenerate: boolean = false) {
     if (this.WeeklyTimesheetReportForm.invalid) return;
     if (resetPagination) {
       this.page = 1;
       this.first = 0;
     }
     if (showLoader) this.spinnerLoader1 = true;
-    const params = this.buildTimesheetReportParams();
+    const params = this.buildTimesheetReportParams(this.appliedFilters ?? this.WeeklyTimesheetReportForm.value);
     const queryString = new URLSearchParams(params).toString();
     this.http.getDataIncludeParams(`TimesheetReport/get?${queryString}&page=${this.page}&pageSize=${this.pageSize}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
@@ -304,6 +290,7 @@ export class ConsolidatedTimesheetSummaryComponent implements OnInit, OnDestroy 
             this.page = 1;
           }
           this.disableBtn = false;
+          if (closeAfterGenerate) this.closeCanvas();
         } else {
           this.filteredWeeklyTimesheetRecord = [];
           this.collectionSize = 0;
@@ -312,6 +299,7 @@ export class ConsolidatedTimesheetSummaryComponent implements OnInit, OnDestroy 
       error: (err) => {
         this.spinnerLoader1 = false;
         console.error('Error fetching report:', err);
+        this.appliedFilters = null;
         this.filteredWeeklyTimesheetRecord = [];
         this.collectionSize = 0;
         this.disableBtn = true;
@@ -319,75 +307,9 @@ export class ConsolidatedTimesheetSummaryComponent implements OnInit, OnDestroy 
     });
   }
 
-  // exportWeeklyTimesheetReport() {
-  //   this.downloadLoader = true;
-  //   const params = this.buildTimesheetReportParams();
-  //   const queryString = new URLSearchParams(params).toString();
-  //   this.http.downloadTimesheetReport(`TimesheetReport/export-report?${queryString}&page=${this.page}&pageSize=${this.pageSize}`).subscribe({
-  //     next: (response: HttpResponse<Blob>) => {
-  //       this.downloadLoader = false;
-  //       let filename = this.generateFileName();
-  //       const contentDisposition = response.headers.get('content-disposition');
-  //       if (contentDisposition) {
-  //         const utf8FilenameMatch = contentDisposition.match(/filename\*\=UTF\-8''([^;]+)/);
-  //         const asciiFilenameMatch = contentDisposition.match(/filename="?([^"]+)"?/);
-  //         if (utf8FilenameMatch && utf8FilenameMatch[1]) {
-  //           filename = decodeURIComponent(utf8FilenameMatch[1]);
-  //         } else if (asciiFilenameMatch && asciiFilenameMatch[1]) {
-  //           filename = asciiFilenameMatch[1];
-  //         }
-  //       }
-  //       const blob = new Blob([response.body!], {
-  //         type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-  //       });
-  //       const url = window.URL.createObjectURL(blob);
-  //       const link = document.createElement('a');
-  //       link.href = url;
-  //       link.download = filename;
-  //       link.click();
-  //       window.URL.revokeObjectURL(url);
-  //       this.conformationPopup.openSuccessModal("Report Exported Successfully");
-  //     },
-  //     error: (err: any) => {
-  //       this.downloadLoader = false;
-  //       this.conformationPopup.openErrorModal('No records found');
-  //     }
-  //   });
-  // }
-
-  // generateFileName(): string {
-  //   const formValue = this.WeeklyTimesheetReportForm.value;
-  //   let employeeName = 'AllEmployees';
-  //   if (formValue.employeid && formValue.employeid.length === 1) {
-  //     const emp = this.employeeiddetails.find((e: any) => e.employeeId === formValue.employeid[0]);
-  //     if (emp) {
-  //       employeeName = `${emp.firstName}${emp.middleName ? ' ' + emp.middleName : ''}${emp.lastName ? ' ' + emp.lastName : ''}`.trim();
-  //     }
-  //   } else if (formValue.employeid && formValue.employeid.length > 1) {
-  //     employeeName = 'MultipleEmployees';
-  //   }
-
-  //   const formatDateForFilename = (date: Date) => {
-  //     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-  //     const day = String(date.getDate()).padStart(2, '0');
-  //     const month = months[date.getMonth()];
-  //     const year = date.getFullYear();
-  //     return `${month} ${day} ${year}`;
-  //   };
-
-  //   let dateRange = '';
-  //   if (formValue.dateRange && formValue.dateRange[0] && formValue.dateRange[1]) {
-  //     const startDate = formatDateForFilename(new Date(formValue.dateRange[0]));
-  //     const endDate = formatDateForFilename(new Date(formValue.dateRange[1]));
-  //     dateRange = `${startDate} - ${endDate}`;
-  //   }
-
-  //   return `${employeeName} V1 ${dateRange}.xlsx`.trim();
-  // }
-
   exportWeeklyTimesheetReport() {
     this.downloadLoader = true;
-    const params = this.buildTimesheetReportParams();
+    const params = this.buildTimesheetReportParams(this.appliedFilters ?? this.WeeklyTimesheetReportForm.value);
     const queryString = new URLSearchParams(params).toString();
 
     // Ensure your service method returns Observable<HttpResponse<Blob>> 
@@ -421,7 +343,7 @@ export class ConsolidatedTimesheetSummaryComponent implements OnInit, OnDestroy 
         link.download = filename;
         link.click();
         window.URL.revokeObjectURL(url);
-        this.conformationPopup.openSuccessModal("Report Exported Successfully");
+        this.conformationPopup.openSuccessModal("Consolidated Timesheet Summary Report Exported Successfully");
       },
       error: (err: any) => {
         this.downloadLoader = false;

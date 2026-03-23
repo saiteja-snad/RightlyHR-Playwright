@@ -3,107 +3,46 @@
     <!-- Header -->
     <app-reports-header />
 
-      <form autocomplete="off" [formGroup]="regularizationReportForm" (ngSubmit)="generateRegularizationReport()">
-        <div class="d-flex align-items-center gap-3">
-          @if(rbac.allowedToAccess('Regularization Report - Generate.view')){
-          <button type="reset" class="clear-all-btn"  *ngIf="
-            regularizationReportForm.get('dateRange')?.value ||
-            regularizationReportForm.get('employee')?.value ||
-            regularizationReportForm.get('manager')?.value ||
-            regularizationReportForm.get('team')?.value" (click)="clearAllFilters()">
-            {{'Clear All'|translate}}
-          </button>
+      <div class="d-flex align-items-center gap-3">
+        @if(rbac.allowedToAccess('Regularization Report - Generate.view')){
 
-          <!-- Date Range -->
-          <div class="d-flex align-items-center gap-2">
-            <div class="custom-date-range-picker">
-            <p-datepicker formControlName="dateRange" [placeholder]="'Please Select Date'|translate" selectionMode="range"
-             [showIcon]="true" [readonlyInput]="true" />
-          </div>
-          </div>
+        <button type="button" class="custom-btn btn-secondary position-relative" (click)="toggleFilters(filterContent)" [disabled]="spinnerLoader2">
+          <i class="bi bi-funnel me-2"></i>Filters
+          <span *ngIf="isFilterIndicatorActive" class="filter-indicator"></span>
+        </button>
 
-          <!-- Employee -->
-           @if(rbac.allowedToAccess('Attendance All Employees List(Regularization).view')){
-          <div class="d-flex align-items-center gap-2">
-            <div class="custom-p-select-content">
-              <p-select [options]="employeeDetails" optionLabel="fullName" filterBy="fullName" [filter]="true"
-               formControlName="employee" [placeholder]="'Please select employee'|translate"
-                class="form-select custom-select" [filterPlaceholder]="'Search employee'|translate">
-                <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
-                <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
-              </p-select>
-            </div>
-          </div>
-        }
-          <!-- Team Manager -->
-           @if(rbac.allowedToAccess('Attendance Team Manager List(Regularization).view')){
-          <div class="d-flex align-items-center gap-2">
-            <div class="custom-p-select-content">
-              <p-select [options]="teamManagerDetails" [filter]="true" optionLabel="fullName"
-                filterBy="fullName" filterBy="fullName" formControlName="manager" [placeholder]="'Please select manager'|translate"
-                class="form-select custom-select" [filterPlaceholder]="'Search manager'|translate">
-                <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
-                <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
-              </p-select>
-            </div>
-          </div>
-        }
-          <!--My Team  -->
-          @if(rbac.allowedToAccess('My Team Report(Regularization).view') &&!rbac.allowedToAccess('Attendance All Employees List(Regularization).view') 
-         && !rbac.allowedToAccess('Attendance Team Manager List(Regularization).view')){
-          <div class="d-flex align-items-center gap-2">
-            <div class="custom-p-select-content">
-              <p-select [options]="getEmployeeInfo" [filter]="true" optionLabel="fullName" filterBy="fullName"
-                formControlName="team" [placeholder]="'Please select employee'|translate" class="form-select custom-select"
-                [filterPlaceholder]="'Search employee'|translate" (onChange)="onClick($event)">
-                <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
-                <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
-              </p-select>
-            </div>
-          </div>
-          }
-        }
-          <!-- Buttons -->
-          <div class="d-flex gap-2">
-            @if(rbac.allowedToAccess('Regularization Report - Generate.view')){
-            <button type="submit" class="custom-btn btn-secondary" [disabled]="isPermissionGenerateDisabled">
-              @if(spinnerLoader1){
-              <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-              <span>{{'Loading...'|translate}}</span>
-              }@else {
-              <span>{{'Generate'|translate}}</span>
-              }
-            </button>
+        <!-- Buttons -->
+        <div class="d-flex gap-2">
+          @if(rbac.allowedToAccess('Regularization Report - Generate.view')
+           && rbac.allowedToAccess('Regularization Report - Export.view')){
+          <button type="button" class="custom-btn btn-primary" (click)="exportToExcelAttendanceRegularization()"
+            [disabled]="filteredRegularizationData.length == 0 || disableBtn || spinnerLoader2">
+            @if(spinnerLoader2){
+            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+            <span>{{'Loading...'}}</span>
+            }@else {
+            <span>{{'Export'}}</span>
             }
-            @if(rbac.allowedToAccess('Regularization Report - Generate.view')
-             && rbac.allowedToAccess('Regularization Report - Export.view')){
-            <button type="button" class="custom-btn btn-primary" (click)="exportToExcelAttendanceRegularization()"
-              [disabled]="filteredRegularizationData.length == 0 || disableBtn">
-              @if(spinnerLoader2){
-              <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-              <span>{{'Loading...'|translate}}</span>
-              }@else {
-              <span>{{'Export'|translate}}</span>
-              }
-            </button>
-          }
-          </div>
+          </button>
+        }
         </div>
-      </form>
+        }
+      </div>
   </div>
 
       <div class="custom-table-content">
         @if(!isLoading){
         <table id="leaveReportTable" class="content w-100">
           <thead>
-              <th>{{'Employee ID'|translate}}</th>
-              <th>{{'Employee Name'|translate}}</th>
-              <th>{{'Department'|translate}}</th>
-              <th>{{'Team Manager'|translate}}</th>
-              <th>{{'Location'|translate}}</th>
-              <th>{{'Sub Location'|translate}}</th>
-              <th>{{'Utilization Count'|translate}}</th>
-              <th>{{'Total Duration'|translate}}</th>
+              <th class="text-center">{{'Employee ID' | translate}}</th>
+              <th>{{'Employee Name' | translate}}</th>
+              <th>{{'Department' | translate}}</th>
+              <th>{{'Team Manager' | translate}}</th>
+              <th>{{'Location' | translate}}</th>
+              <th>{{'Sub Location' | translate}}</th>
+              <th>{{'Shift' | translate}}</th>
+              <th class="text-center">{{'Utilization Count' | translate}}</th>
+              <th class="text-center">{{'Total Duration' | translate}} (HH:MM)</th>
           </thead>
           <tbody>
             @if (!filteredRegularizationData || filteredRegularizationData.length === 0) {
@@ -114,14 +53,15 @@
             @else {
             @for (record of filteredRegularizationData; track $index) {
             <tr>
-              <td>{{ record.fusionEmpId ?? '-' }}</td>
+              <td class="text-center">{{ record.fusionEmpId ?? '-' }}</td>
               <td>{{ record.employeeName ?? '-' }}</td>
               <td>{{ record.department ?? '-' }}</td>
               <td>{{ record.teamManager ?? '-' }}</td>
               <td>{{ record.location ?? '-' }}</td>
               <td>{{ record.subLocation ?? '-' }}</td>
-              <td>{{ record.utilizedCount ?? '-' }}</td>
-              <td>{{record.totalDuration ?? '-' }}</td>
+              <td>{{ record.shift ?? '-' }}</td>
+              <td class="text-center">{{ record.utilizedCount ?? '-' }}</td>
+              <td class="text-center">{{record.totalDuration ?? '-' }}</td>
             </tr>
             }
             }
@@ -134,3 +74,88 @@
       </div>
       
     </div>
+
+<!-- Filter Offcanvas -->
+<ng-template #filterContent let-offcanvas>
+  <div class="custom-filter-container">
+    <div class="offcanvas-filter-header-content offcanvas-filter-header-border">
+      <p class="filter-header m-0">{{'Filters'}}</p>
+      <a (click)="closeCanvas()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+    </div>
+
+    <div class="offcanvas-filter-content">
+      <form [formGroup]="regularizationReportForm" (ngSubmit)="onGenerate()" >
+
+        <!-- Date Range -->
+        <div class="mb-3">
+          <label class="form-label custom-label text-nowrap filter-labels mb-3">Select Date Range</label>
+           <div class="custom-date-range-picker">
+            <p-datepicker formControlName="dateRange" [placeholder]="'Please select date'" selectionMode="range"
+             [showIcon]="true" [readonlyInput]="true" [maxDate]="today" />
+            </div>
+        </div>
+
+         <!-- Team Manager -->
+        @if(rbac.allowedToAccess('Attendance Team Manager List(Regularization).view')){
+        <div class="mb-3">
+          <label class="form-label custom-label text-nowrap filter-labels mb-3">Select Manager</label>
+          <div class="custom-p-multiSelect-content">
+            <p-multiSelect [options]="teamManagerDetails" [filter]="true" optionLabel="fullName" filterBy="fullName"
+              formControlName="manager" placeholder="Please select manager" class="form-select custom-select"
+              filterPlaceHolder="Search manager" [resetFilterOnHide]="true">
+              <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
+            </p-multiSelect>
+          </div>
+        </div>
+        }
+
+        <!--My Team  -->
+        @if(rbac.allowedToAccess('My Team Report(Regularization).view') &&!rbac.allowedToAccess('Attendance All Employees List(Regularization).view') 
+         && !rbac.allowedToAccess('Attendance Team Manager List(Regularization).view')){
+        <div class="mb-3">
+          <label class="form-label custom-label text-nowrap filter-labels mb-3">Select Team Member</label>
+          <div class="custom-p-multiSelect-content ">
+            <p-multiSelect [options]="getEmployeeInfo" [filter]="true" optionLabel="fullName" filterBy="fullName"
+              formControlName="team" placeholder="Please select employee" class="form-select custom-select"
+              filterPlaceHolder="Search employee" [resetFilterOnHide]="true">
+              <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
+            </p-multiSelect>
+          </div>
+        </div>
+        }
+
+        <!-- Employee -->
+        @if(rbac.allowedToAccess('Attendance All Employees List(Regularization).view')){
+        <div class="mb-3">
+           <label class="form-label custom-label text-nowrap filter-labels mb-3">Select Employee</label>
+            <div class="custom-p-multiSelect-content">
+            <p-multiSelect [options]="employeeDetails" optionLabel="fullName" filterBy="fullName" [filter]="true"
+              formControlName="employee" placeholder="Please select employee" class="form-select custom-select"
+              filterPlaceHolder="Search employee" [resetFilterOnHide]="true">
+              <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
+            </p-multiSelect>
+          </div>
+        </div>
+        }
+
+      <div class="d-flex offcanvas-footer-content gap-3">
+        @if(!isPermissionGenerateDisabled){
+          <button type="button" class="custom-btn btn-secondary w-100" (click)="clearAllFilters()" [disabled]="spinnerLoader1">
+          {{'Clear All'}}</button>
+        }
+        
+           @if(rbac.allowedToAccess('Regularization Report - Generate.view')){
+          <button type="submit" class="custom-btn btn-primary w-100" [disabled]="isPermissionGenerateDisabled || spinnerLoader1">
+            @if(spinnerLoader1){
+            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+            <span>{{'Loading...'}}</span>
+            }@else {
+            <span>{{'Generate'}}</span>
+            }
+          </button>
+          }
+      </div>
+      </form>
+    </div>
+  </div>
+</ng-template>

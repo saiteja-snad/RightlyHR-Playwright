@@ -14,6 +14,17 @@ import moment from 'moment';
 })
 export class HttpService {
   communicationService!: BehaviorSubject<any>;
+  currentDate: Date = new Date();
+  dateOptions: Intl.DateTimeFormatOptions = {
+    month: 'short',
+    day: '2-digit',
+    year: 'numeric'
+  };
+
+  formattedDate = this.currentDate
+  .toLocaleDateString('en-US', this.dateOptions)
+  .replace(',', '');
+  
   tirggerCountSignal = signal<{
     compOff: boolean;
     wfh: boolean;

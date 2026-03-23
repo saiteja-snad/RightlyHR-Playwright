@@ -206,10 +206,10 @@ export const EXTRA_HOURS_SUB_TABS = [
 ]
 
 export const STANDARD_REPORTS_TABS = [
-  { route: '/reports/standard-reports/employee-data', permission: 'Employee Master Data.view' },
-  { route: '/reports/standard-reports/job-data', permission: 'Job Location Wise Data.view' },
-  { route: '/reports/standard-reports/branch-data', permission: 'Branch Location Wise Data.view' },
-  { route: '/reports/standard-reports/family-data', permission: 'Family Members Data.view' },
+  { route: '/reports/standard-reports/employee-data', permission: 'Employee Overview Report.view' },
+  { route: '/reports/standard-reports/job-data', permission: 'Job Location Report.view' },
+  { route: '/reports/standard-reports/branch-data', permission: 'Branch-Wise Employee Report.view' },
+  { route: '/reports/standard-reports/family-data', permission: 'Family Details Report.view' },
 ]
 
 export const SETTINGS_RATECARD_TABS = [
@@ -223,9 +223,10 @@ export const ATTENDANCE_REPORTS_TABS = [
   { route: '/reports/attendence-reports/compoff-report', permission: 'Comp Off Report.view' },
   { route: '/reports/attendence-reports/wfh-report', permission: 'WFH Report.view' },
   { route: '/reports/attendence-reports/absent-report', permission: 'Absent Report.view' },
-  { route: '/reports/attendence-reports/inactive-employee-report', permission: 'Inactive Empolyee Report.view' },
+  { route: '/reports/attendence-reports/inactive-employee-report', permission: 'Inactive Employee Leave Summary Report.view' },
   { route: '/reports/attendence-reports/yearly-summary-report', permission: 'Yearly Summary Report.view' },
   { route: '/reports/attendence-reports/permission-report', permission: 'Permission Report.view' },
+  { route: '/reports/attendence-reports/exit-feedback-report', permission: 'Employee Exit Report.view' },
   { route: '/reports/attendence-reports/regularization-report', permission: 'Regularization Report.view' },
   { route: '/reports/attendence-reports/extraloghour-report', permission: 'Extra Log Hours Report.view' },
 ];

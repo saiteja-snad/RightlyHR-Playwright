@@ -181,7 +181,7 @@ export class UpdateLeavecategoryComponent {
       blockLeaveOnWeekends: [null],
       blockPreviousDayLeave: [null],
       blockNextDayLeave: [null],
-      minimumGapBetweenSameLeaveType: [30, [Validators.min(1), Validators.max(366)]],
+      minimumGapBetweenSameLeaveType: [null, [Validators.min(1), Validators.max(366)]],
       gapCalculationBasis: [null],
       enableSandwichPolicy: [false],
       applySandwichOn: [null,],

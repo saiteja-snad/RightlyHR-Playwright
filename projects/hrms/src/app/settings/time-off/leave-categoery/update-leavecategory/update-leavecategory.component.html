@@ -402,7 +402,7 @@
         <div class="col-md-3 mb-3">
           <label class="form-label custom-label mb-2" for="minimumGapBetweenSameLeaveType">{{'Minimum Gap Between Same Leave Type (Days)' | translate}}</label>
           <input type="number" formControlName="minimumGapBetweenSameLeaveType" class="form-control custom-input"
-            id="minimumGapBetweenSameLeaveType" placeholder="Default: 30 days" autocomplete="off" min="0" (input)="onNumberInput($event, 'minimumGapBetweenSameLeaveType')">
+            id="minimumGapBetweenSameLeaveType" placeholder="Enter minimum gap (in days)" autocomplete="off" min="0" (input)="onNumberInput($event, 'minimumGapBetweenSameLeaveType')">
            <div class="error-msg"
               *ngIf="leavePolicyForm.get('minimumGapBetweenSameLeaveType')?.hasError('required') && leavePolicyForm.get('minimumGapBetweenSameLeaveType')?.touched">
               Minimum Gap Between Same Leave Type is required

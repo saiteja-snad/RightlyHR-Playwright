@@ -6,7 +6,7 @@ import { filter } from 'rxjs';
 
 @Component({
   selector: 'app-reports-header',
-  imports: [CommonModule, RouterModule,TranslatePipe],
+  imports: [CommonModule, RouterModule, TranslatePipe],
   templateUrl: './reports-header.component.html',
   styleUrl: './reports-header.component.scss'
 })
@@ -43,13 +43,13 @@ export class ReportsHeaderComponent implements OnInit {
       this.componentname = 'Leave Summary Report';
     }
     else if (this.router.url === '/reports/attendence-reports/compoff-report') {
-      this.componentname = 'Compoff Report';
+      this.componentname = 'Comp Off Report';
     }
     else if (this.router.url === '/reports/attendence-reports/wfh-report') {
       this.componentname = 'WFH Report';
     }
     else if (this.router.url === '/reports/attendence-reports/inactive-employee-report') {
-      this.componentname = 'Inactive Employee Report';
+      this.componentname = 'Inactive Employee Leave Summary Report';
     }
     else if (this.router.url === '/reports/attendence-reports/yearly-summary-report') {
       this.componentname = 'Yearly Summary Report';
@@ -80,28 +80,28 @@ export class ReportsHeaderComponent implements OnInit {
     }
 
     else if (this.router.url === '/reports/timesheet-reports/my-timesheet-report') {
-      this.componentname = 'My Timesheet';
+      this.componentname = 'My Timesheet Report';
     }
      else if (this.router.url === '/reports/timesheet-reports/timesheet-summary-monthly-report') {
-      this.componentname = 'Timesheet Summary';
+      this.componentname = 'Timesheet Summary Report';
     }
      else if (this.router.url === '/reports/timesheet-reports/team-timesheet-report') {
-      this.componentname = 'Team Timesheet';
+      this.componentname = 'Team Timesheet Report';
     }
      else if (this.router.url === '/reports/timesheet-reports/pending-approval-status-report') {
-      this.componentname = 'Pending Approval Status';
+      this.componentname = 'Pending Approval Status Report';
     }
      else if (this.router.url === '/reports/timesheet-reports/project-effort-report') {
-      this.componentname = 'Project Effort';
+      this.componentname = 'Project Effort Report';
     }
      else if (this.router.url === '/reports/timesheet-reports/utilization-report') {
-      this.componentname = 'Utilization';
+      this.componentname = 'Utilization Report';
     }
      else if (this.router.url === '/reports/timesheet-reports/resource-availability-report') {
-      this.componentname = 'Resource Availability';
+      this.componentname = 'Resource Availability Report';
     }
      else if (this.router.url === '/reports/timesheet-reports/attendance-vs-timesheet-report') {
-      this.componentname = 'Attendance vs Timesheet';
+      this.componentname = 'Attendance vs Timesheet Report';
      }
     else if (this.router.url === '/reports/attendence-reports/remotelogin-report') {
       this.componentname = 'Remote Login Report';

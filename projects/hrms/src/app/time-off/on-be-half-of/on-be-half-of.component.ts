@@ -3,7 +3,7 @@ import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { Select } from 'primeng/select';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AuthService } from '../../services/auth.service';
-import { filter, Subscription } from 'rxjs';
+import { filter, forkJoin, Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import moment from 'moment';
 import { ICategoryDetails, ILeaves, Ileavesdatas, ILeavesTaken, Ilpid, Iorgcategoryleaves, } from '../../Interfaces/timoff-model';
@@ -87,6 +87,9 @@ export class OnBeHalfOfComponent {
   maxDate!: string;
   @ViewChild('updateModal') updateModal!: ElementRef;
   @ViewChild('cardWrapper', { read: ElementRef }) cardWrapper!: ElementRef;
+  @ViewChild('sandwichConfirmationModal') sandwichConfirmationModal: any;
+  sandwichMessage: string = '';
+  sandwichData: any = null;
   newBoxes: string[] = [];
   minStartDate!: string;
   maxStartDate!: string;
@@ -477,13 +480,7 @@ export class OnBeHalfOfComponent {
     this.categoryDetails = [];
     this.cadidateEmployeeId = 0;
     localStorage.removeItem('onbehalfof');
-
-    // Navigate first, then reload if necessary
-    this.router
-      .navigate(['/time-off/on-behalf-of/waiting-for-approval'])
-      .then(() => {
-        window.location.reload(); // Reload after navigation is complete
-      });
+    this.http.onBehalfOfTriggerSignal.set(true);
   }
 
   onleaveSelect(categoryId: number) {
@@ -901,15 +898,60 @@ export class OnBeHalfOfComponent {
       ).format('YYYY-MM-DD');
       this.leaveFormData.notes = this.leaveForm.get('reason')?.value;
 
+      if (this.selectedleave?.category?.enableSandwichPolicy) {
+        this.checkSandwichPolicy();
+        return;
+      }
+
       this.submitLeaveRequest();
     } else {
       this.conformationPopup.openErrorModal('Maximum leave limit reached for this category');
     }
   }
 
+  checkSandwichPolicy() {
+    const payload = {
+      employeeId: this.leaveFormData.employeeId,
+      categoryId: this.leaveFormData.categoryId,
+      startDate: this.leaveFormData.startdate,
+      endDate: this.leaveFormData.enddate,
+      durationType: this.leaveFormData.durationType,
+      isDaytype: this.leaveFormData.isDaytype,
+      duration: this.leaveFormData.duration
+    };
+
+    this.subscription = this.http.getDataIncludeParams('Timeoff/CalculateLeaveImpact', payload).subscribe({
+      next: (response: any) => {
+        if (response.isSandwichApplied) {
+          this.showSandwichConfirmation(response);
+        } else {
+          this.submitLeaveRequest();
+        }
+      },
+      error: (err: any) => {
+        this.conformationPopup.openErrorModal(err.error?.message || 'Error calculating leave impact');
+        this.isLoading = false;
+      }
+    });
+  }
+
+  showSandwichConfirmation(sandwichData: any) {
+    this.sandwichMessage = sandwichData?.errorMessage || '';
+    this.sandwichData = sandwichData;
+    this.modalService.open(this.sandwichConfirmationModal, { centered: true, backdrop: 'static' }).result.catch(() => {
+      this.isLoading = false;
+    });
+  }
+
+  confirmSandwichPolicy(modal: any) {
+    modal.dismiss();
+    this.leaveFormData.duration = this.sandwichData.totalLeaveDays;
+    this.submitLeaveRequest(this.sandwichData);
+  }
 
 
-  submitLeaveRequest() {
+
+  submitLeaveRequest(sandwichData?: any) {
     // if (this.leaveForm.valid) {
     //   this.dateDiff = this.leaveFormData.isDaytype
     //     ? this.dateDifference / 2
@@ -1071,7 +1113,8 @@ export class OnBeHalfOfComponent {
             console.log(data);
             // localStorage.setItem('onbehalfof', JSON.stringify(data));
             if (data) {
-              this.leaveBalance(data);
+              // this.leaveBalance(data); // LeaveBalance POST moved to backend
+              this.getCategoryDetails(data.employeeId);
               this.resetRadioButtons();
               this.modalService.dismissAll();
               this.conformationPopup.openSuccessModal(
@@ -1155,20 +1198,20 @@ export class OnBeHalfOfComponent {
     });
   }
 
-  leaveBalance(Values: any) {
-    let data = {
-      empId: Values.employeeId,
-      isdeleted: 'Active',
-      leavesTaken: this.leaveFormData.duration,
-      categoryId: this.leaveFormData.categoryId,
-    };
-    this.leaveFormData.employeeId = this.leaveapplication.employeeId;
-    this.subscription = this.http.postdata(`LeaveBalance`, data).subscribe({
-      next: (data: any) => {
-        this.getCategoryDetails(data.empId);
-      },
-    });
-  }
+  // leaveBalance(Values: any) {
+  //   let data = {
+  //     empId: Values.employeeId,
+  //     isdeleted: 'Active',
+  //     leavesTaken: this.leaveFormData.duration,
+  //     categoryId: this.leaveFormData.categoryId,
+  //   };
+  //   this.leaveFormData.employeeId = this.leaveapplication.employeeId;
+  //   this.subscription = this.http.postdata(`LeaveBalance`, data).subscribe({
+  //     next: (data: any) => {
+  //       this.getCategoryDetails(data.empId);
+  //     },
+  //   });
+  // }
 
   monthsArray: { month: string; startDate: Date; endDate: Date }[] = [];
   getMonthsArray(startDate: Date, endDate: Date) {

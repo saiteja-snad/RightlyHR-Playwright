@@ -429,6 +429,7 @@ export class OnBeHalfOfComponent {
     this.cadidateEmployeeId = fusionemployeeId.value;
     this.getOrgHolidaysByEmpId(fusionemployeeId.value);
     this.getholidaybyempid(fusionemployeeId.value);
+    this.getweekendbyempid(fusionemployeeId.value);
     this.getcustompolicybyempid(fusionemployeeId.value);
     this.getLeavesData(fusionemployeeId.value);
     localStorage.setItem('onbehalfof', fusionemployeeId.value);
@@ -463,6 +464,7 @@ export class OnBeHalfOfComponent {
     this.cadidateEmployeeId = fusionemployeeId.value;
     this.getOrgHolidaysByEmpId(fusionemployeeId.value);
     this.getholidaybyempid(fusionemployeeId.value);
+    this.getweekendbyempid(fusionemployeeId.value);
     this.getcustompolicybyempid(fusionemployeeId.value);
     this.getLeavesData(fusionemployeeId.value);
     localStorage.setItem('onbehalfof', fusionemployeeId.value);
@@ -1320,7 +1322,7 @@ export class OnBeHalfOfComponent {
     let current = start.clone();
     while (current.isSameOrBefore(end, 'day')) {
       let isWeekend = false;
-      if (this.selectedleave?.category.excludeWeekends) {
+      if (this.selectedleave?.category?.excludeWeekends) {
         const dayName = current.format('dddd');
         const weekendItem = this.orgweekend?.orgWeekendItems?.find((item: any) => item.weekday === dayName);
         if (weekendItem) {
@@ -1334,7 +1336,7 @@ export class OnBeHalfOfComponent {
         }
       }
 
-      const isNonOptionalHoliday = this.selectedleave?.category.excludeHolidays &&
+      const isNonOptionalHoliday = this.selectedleave?.category?.excludeHolidays &&
         nonOptionalHolidays?.some((holiday: { holidayDate: moment.MomentInput; }) => moment(holiday.holidayDate).isSame(current, 'day'));
 
       if (!isWeekend && !isNonOptionalHoliday) {
@@ -1345,7 +1347,7 @@ export class OnBeHalfOfComponent {
     }
 
     // Optional holiday handling
-    if (this.selectedleave?.category.isOptionalHoliday) {
+    if (this.selectedleave?.category?.isOptionalHoliday) {
       let dateRange: string[] = [];
       for (let m = start.clone(); m.diff(end, 'days') <= 0; m.add(1, 'days')) {
         dateRange.push(m.format('YYYY-MM-DD'));

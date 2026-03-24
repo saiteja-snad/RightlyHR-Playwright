@@ -53,8 +53,10 @@ export class OnBeHalfOfRejectComponent implements OnInit, OnDestroy{
         this.cadidateEmployeeId = parseInt(
           localStorage.getItem('onbehalfof') as string
         );
-        if (this.cadidateEmployeeId != null) {
+        if (!isNaN(this.cadidateEmployeeId)) {
           this.getDataByLPID();
+        } else {
+          this.rejectedLeaves = [];
         }
         this.http.onBehalfOfTriggerSignal.set(false);
       }

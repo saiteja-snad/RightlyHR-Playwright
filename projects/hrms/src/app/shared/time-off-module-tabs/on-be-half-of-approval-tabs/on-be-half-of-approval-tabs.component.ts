@@ -49,8 +49,11 @@ export class OnBeHalfOfApprovalTabsComponent implements OnInit{
     effect(() => {
       if (this.http.onBehalfOfTriggerSignal()) {
         this.cadidateEmployeeId = parseInt(localStorage.getItem('onbehalfof') as string);
-        if (this.cadidateEmployeeId && !isNaN(this.cadidateEmployeeId)) {
+        if (!isNaN(this.cadidateEmployeeId)) {
           this.getDataByLPID();
+        } else {
+          this.navLinks = this.navLinks.map(tab => ({ ...tab, count: 0 }));
+          this.filterTabsByRbac();
         }
       }
     });

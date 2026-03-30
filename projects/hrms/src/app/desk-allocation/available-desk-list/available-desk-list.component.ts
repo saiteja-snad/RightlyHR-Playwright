@@ -1,5 +1,14 @@
 import { Component, OnDestroy, OnInit, TemplateRef } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  ValidationErrors,
+  ValidatorFn,
+  Validators,
+} from '@angular/forms';
 import { BehaviorSubject, Subject, Subscription, takeUntil } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
@@ -7,20 +16,29 @@ import { OpenModalService } from '../../services/open-modal.service';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { Select } from 'primeng/select';
-import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
+import { NoDataFoundComponent } from '../../shared/no-data-found/no-data-found.component';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { DropdownModule } from 'primeng/dropdown';
-import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
+import { DataLoaderContentComponent } from '../../shared/data-loader-content/data-loader-content.component';
 import { RbacService } from '../../services/rbac.service';
 import { FormValidationService } from '../../../../../preonboarding/src/app/common-services/form-validation.service';
 import { TranslateModule } from '@ngx-translate/core';
 @Component({
   selector: 'app-available-desk-list',
-  imports: [CommonModule, ReactiveFormsModule, FormsModule, PaginatorModule, TranslateModule, DropdownModule, Select, NoDataFoundComponent, DataLoaderContentComponent],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    FormsModule,
+    PaginatorModule,
+    TranslateModule,
+    DropdownModule,
+    Select,
+    NoDataFoundComponent,
+    DataLoaderContentComponent,
+  ],
   templateUrl: './available-desk-list.component.html',
-  styleUrl: './available-desk-list.component.scss'
+  styleUrl: './available-desk-list.component.scss',
 })
-
 export class AvailableDeskListComponent implements OnInit, OnDestroy {
   subscription!: Subscription;
   datesShouldNotBeEqual = false;
@@ -48,7 +66,7 @@ export class AvailableDeskListComponent implements OnInit, OnDestroy {
   Status = 'Available';
   inactiveForm!: FormGroup;
   assignemployename: any;
-  undermaintancedata!: FormGroup;;
+  undermaintancedata!: FormGroup;
   locationfromdata!: FormGroup;
   selectedtranferLocationId: any;
   deskid: any;
@@ -64,16 +82,16 @@ export class AvailableDeskListComponent implements OnInit, OnDestroy {
     { label: 10, value: 10 },
     { label: 15, value: 15 },
     { label: 20, value: 20 },
-    { label: 25, value: 25 }
+    { label: 25, value: 25 },
   ];
-  desktype = new BehaviorSubject<any[]>([])
+  desktype = new BehaviorSubject<any[]>([]);
   destroy$: Subject<boolean> = new Subject<boolean>();
   loading = false;
   searchQuery = '';
   commedate: any;
   loactionid: any;
   sublocation: any;
-  displayTemplate!: TemplateRef<any>
+  displayTemplate!: TemplateRef<any>;
   selectedEmployeeId: any;
   employeeiddetailsdata = [] as any[];
   approvalid: any;
@@ -89,18 +107,23 @@ export class AvailableDeskListComponent implements OnInit, OnDestroy {
     public conformationPopup: OpenModalService,
     public rbac: RbacService,
     public formValidation: FormValidationService,
-    config: NgbModalConfig) {
+    config: NgbModalConfig,
+  ) {
     config.backdrop = 'static';
     config.keyboard = false;
   }
 
   ngOnInit() {
-    this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") ?? '{}');
-    this.selectedLocationId = JSON.parse(localStorage.getItem('locationId') ?? 'null');
-    this.selectedSubLocationId = JSON.parse(localStorage.getItem('sublocationId') ?? 'null');
+    this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
+    this.selectedLocationId = JSON.parse(
+      localStorage.getItem('locationId') ?? 'null',
+    );
+    this.selectedSubLocationId = JSON.parse(
+      localStorage.getItem('sublocationId') ?? 'null',
+    );
     this.http.deskUpdateLocationId(this.selectedLocationId);
-    this.getdatabyentriyinactive()
-    this.intialassigindesk()
+    this.getdatabyentriyinactive();
+    this.intialassigindesk();
     this.getAllLocations();
     this.getapproval();
     this.initialinactiveform();
@@ -117,37 +140,47 @@ export class AvailableDeskListComponent implements OnInit, OnDestroy {
       this.getFilteredData();
     });
     this.assiginForm.get('shifts')?.valueChanges.subscribe((seletshift) => {
-      this.shift = seletshift
-      this.selectedEmployee = null
+      this.shift = seletshift;
+      this.selectedEmployee = null;
       this.assiginForm.get('employeeid')?.reset();
-      this.getEmployeedata()
+      this.getEmployeedata();
     });
   }
 
   getFilteredData() {
     this.subscription = this.http.desklocationId$.subscribe({
       next: (Value: any) => {
-        this.selectedLocationId = JSON.parse(localStorage.getItem('locationId') ?? 'null');
-        this.selectedSubLocationId = JSON.parse(localStorage.getItem('sublocationId') ?? 'null');
-        this.getAllDesks(this.page, this.pageSize, Value, this.selectedSubLocationId, this.Status);
+        this.selectedLocationId = JSON.parse(
+          localStorage.getItem('locationId') ?? 'null',
+        );
+        this.selectedSubLocationId = JSON.parse(
+          localStorage.getItem('sublocationId') ?? 'null',
+        );
+        this.getAllDesks(
+          this.page,
+          this.pageSize,
+          Value,
+          this.selectedSubLocationId,
+          this.Status,
+        );
         this.getcount(Value, this.selectedSubLocationId, this.Status);
-      }
-    })
+      },
+    });
   }
 
   intialassigindesk() {
     this.assiginForm = this.fb.group({
       employeeid: [null, Validators.required],
       approvid: [null, Validators.required],
-      shifts: [null, Validators.required]
-    })
+      shifts: [null, Validators.required],
+    });
   }
 
   initialinactiveform() {
     this.inactiveForm = this.fb.group({
       assetinactive: [null, Validators.required],
-      reason: [null]
-    })
+      reason: [null],
+    });
   }
 
   intialundermaintancedata() {
@@ -156,20 +189,25 @@ export class AvailableDeskListComponent implements OnInit, OnDestroy {
         assetundermatince: [null, Validators.required],
         startdate: [null],
         enddate: [null],
-        reason: [null]
-      }, { validators: this.startDateEndDateValidator() }
-    )
+        reason: [null],
+      },
+      { validators: this.startDateEndDateValidator() },
+    );
   }
 
   updateSubLocations(selectedLocationId: number) {
     // Find the selected location and set the sub-locations
-    const selectedLocation = this.locations.find(location => location.id == selectedLocationId);
+    const selectedLocation = this.locations.find(
+      (location) => location.id == selectedLocationId,
+    );
     // If a location is selected, set its sub-locations, otherwise, reset the sub-locations
-    this.subLocations = selectedLocation ? selectedLocation.jobSubLocations : [];
+    this.subLocations = selectedLocation
+      ? selectedLocation.jobSubLocations
+      : [];
   }
 
   getToday(): string {
-    return new Date().toISOString().split('T')[0]
+    return new Date().toISOString().split('T')[0];
   }
 
   openModal(content: any) {
@@ -183,32 +221,49 @@ export class AvailableDeskListComponent implements OnInit, OnDestroy {
   }
 
   getAllLocations() {
-    this.http.getData("JobLocation").pipe(takeUntil(this.destroy$)).subscribe({
-      next: (data: any) => {
-        // Map the response to the Location interface structure
-        this.locations = data.jobLocations.map((location: any) => ({
-          id: location.id,
-          jobLocationName: location.jobLocationName,
-          jobSubLocations: location.jobSubLocations.filter((subLocation: any) => subLocation.jobSubLocationName)
-        }));
-      },
-      error: (error: any) => {
-        console.error('Error fetching locations', error);
-      }
-    });
+    this.http
+      .getData('JobLocation')
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (data: any) => {
+          // Map the response to the Location interface structure
+          this.locations = data.jobLocations.map((location: any) => ({
+            id: location.id,
+            jobLocationName: location.jobLocationName,
+            jobSubLocations: location.jobSubLocations.filter(
+              (subLocation: any) => subLocation.jobSubLocationName,
+            ),
+          }));
+        },
+        error: (error: any) => {
+          console.error('Error fetching locations', error);
+        },
+      });
   }
 
   onRowsChange() {
     this.page = 1;
     this.first = 0;
-    this.getAllDesks(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId, this.Status);
+    this.getAllDesks(
+      this.page,
+      this.pageSize,
+      this.selectedLocationId,
+      this.selectedSubLocationId,
+      this.Status,
+    );
   }
 
   onPageChange(event: any) {
     this.page = event.page + 1;
     this.pageSize = event.rows;
     this.first = event.first;
-    this.getAllDesks(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId, this.Status);
+    this.getAllDesks(
+      this.page,
+      this.pageSize,
+      this.selectedLocationId,
+      this.selectedSubLocationId,
+      this.Status,
+    );
   }
 
   // Called when first size changes
@@ -217,30 +272,62 @@ export class AvailableDeskListComponent implements OnInit, OnDestroy {
     this.rows = newPageSize;
     this.page = 1;
     this.first = 0;
-    this.getAllDesks(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId, this.Status);
+    this.getAllDesks(
+      this.page,
+      this.pageSize,
+      this.selectedLocationId,
+      this.selectedSubLocationId,
+      this.Status,
+    );
   }
-
 
   onSearchChange(event: any) {
     if (event !== '' && event.length >= 1) {
-      this.getAllDesks(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId, this.Status);
+      this.getAllDesks(
+        this.page,
+        this.pageSize,
+        this.selectedLocationId,
+        this.selectedSubLocationId,
+        this.Status,
+      );
     }
     if (event === '') {
-      this.getAllDesks(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId, this.Status);
+      this.getAllDesks(
+        this.page,
+        this.pageSize,
+        this.selectedLocationId,
+        this.selectedSubLocationId,
+        this.Status,
+      );
     }
   }
 
-  getAllDesks(pagenum: number, pagesize: number, locationid: any, sublocationid: any, Deskstatus: any) {
+  getAllDesks(
+    pagenum: number,
+    pagesize: number,
+    locationid: any,
+    sublocationid: any,
+    Deskstatus: any,
+  ) {
     const params = {
       first: pagenum,
       rows: pagesize,
       locationid: locationid,
       sublocationid: sublocationid,
       status: Deskstatus,
-      searchQuery: this.searchQuery
+      searchQuery: this.searchQuery,
     };
-    this.loading = true
-    this.subscription = this.http.getstatusdesk("DeskAllocationHeader", params.locationid, params.sublocationid, params.status, params.first, params.rows, params.searchQuery)
+    this.loading = true;
+    this.subscription = this.http
+      .getstatusdesk(
+        'DeskAllocationHeader',
+        params.locationid,
+        params.sublocationid,
+        params.status,
+        params.first,
+        params.rows,
+        params.searchQuery,
+      )
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (data: any) => {
@@ -253,11 +340,11 @@ export class AvailableDeskListComponent implements OnInit, OnDestroy {
         },
         error: (error: any) => {
           console.error('Error fetching desk data', error);
-          this.loading = false
+          this.loading = false;
         },
         complete: () => {
           this.loading = false;
-        }
+        },
       });
   }
 
@@ -268,19 +355,23 @@ export class AvailableDeskListComponent implements OnInit, OnDestroy {
   getdatabyentriyrealse() {
     const params = 'Assets';
     const param = 'release';
-    this.http.getDatabyentriyvalue(`entityAttributeValues`, params, param).subscribe({
-      next: (data: any) => {
-        if (data && data.length > 0) {
-          const statusString = data[0].value;
-          this.deskrealse = statusString.split(',').map((type: any) => ({ value: type })); // Split string into an array
-        } else {
-          console.log('No data found.');
-        }
-      },
-      error: (err) => {
-        console.error('Error fetching data:', err);
-      }
-    });
+    this.http
+      .getDatabyentriyvalue(`entityAttributeValues`, params, param)
+      .subscribe({
+        next: (data: any) => {
+          if (data && data.length > 0) {
+            const statusString = data[0].value;
+            this.deskrealse = statusString
+              .split(',')
+              .map((type: any) => ({ value: type })); // Split string into an array
+          } else {
+            console.log('No data found.');
+          }
+        },
+        error: (err) => {
+          console.error('Error fetching data:', err);
+        },
+      });
   }
 
   resetassiginform() {
@@ -292,21 +383,24 @@ export class AvailableDeskListComponent implements OnInit, OnDestroy {
   }
 
   viewdata(data: any) {
-    this.deskid = data.deskId
-    this.http.getData(`DeskAllocationHeader/ById?id=${this.deskid}`).pipe(takeUntil(this.destroy$)).subscribe({
-      next: (response: any) => {
-        const lastItem = response.items[response.items.length - 1];
-        if (lastItem) {
-          this.employeid = lastItem.deskAllocatedTo
-          this.deskiteamid = lastItem.deskAllocationItemId;
-        } else {
-          console.error("No items found in response.");
-        }
-      },
-      error: (reason: any) => {
-        console.log(reason.message);
-      },
-    });
+    this.deskid = data.deskId;
+    this.http
+      .getData(`DeskAllocationHeader/ById?id=${this.deskid}`)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response: any) => {
+          const lastItem = response.items[response.items.length - 1];
+          if (lastItem) {
+            this.employeid = lastItem.deskAllocatedTo;
+            this.deskiteamid = lastItem.deskAllocationItemId;
+          } else {
+            console.error('No items found in response.');
+          }
+        },
+        error: (reason: any) => {
+          console.log(reason.message);
+        },
+      });
   }
 
   postAllocateAssets(assignForm: FormGroup) {
@@ -314,7 +408,7 @@ export class AvailableDeskListComponent implements OnInit, OnDestroy {
       // Create the payload for asset assignment
       const payload: any = {
         deskAllocationHeaderId: this.deskid,
-        status: "Allocated",
+        status: 'Allocated',
         deskAllocatedTo: this.assignEmployeeId,
         allocatedBy: this.empinfo.employeeId,
         allocatedDate: new Date(),
@@ -325,24 +419,30 @@ export class AvailableDeskListComponent implements OnInit, OnDestroy {
         approverId: this.approvalid,
       };
       // Send the HTTP POST request
-      this.http.postdata('DeskAllocationItem', payload).pipe(takeUntil(this.destroy$)).subscribe({
-        next: (res) => {
-          this.modalService.dismissAll();
-          this.conformationPopup.openSuccessModal('Desk has been successfully allocated');
-          this.getAllDesks(this.page, this.pageSize, null, null, this.Status);
-          this.getcount(null, null, this.Status);
-          this.assiginForm.reset();
-          this.assiginForm.get('employeeName')?.reset()
-          this.assiginForm.get('approvid')?.reset()
-          this.selectedEmployee = null;
-          this.selectedmanerEmployee = null;
-          this.selectedEmployee = null;
-        },
-        error: (error) => {
-          const errormessage = error?.error?.Message
-          this.conformationPopup.openErrorModal(errormessage || 'Employee already has a desk allocated')
-        }
-      });
+      this.http
+        .postdata('DeskAllocationItem', payload)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (res) => {
+            this.modalService.dismissAll();
+            this.conformationPopup.openSuccessModal(
+              'Desk has been successfully allocated',
+            );
+            this.getAllDesks(this.page, this.pageSize, null, null, this.Status);
+            this.getcount(null, null, this.Status);
+            this.assiginForm.reset();
+            this.assiginForm.get('employeeName')?.reset();
+            this.assiginForm.get('approvid')?.reset();
+            this.selectedEmployee = null;
+            this.selectedmanerEmployee = null;
+            this.selectedEmployee = null;
+          },
+          error: (error) => {
+            console.log(error);
+            const errormessage = error?.error?.message;
+            this.conformationPopup.openErrorModal(errormessage);
+          },
+        });
     } else {
       console.log('Form is invalid');
     }
@@ -351,30 +451,35 @@ export class AvailableDeskListComponent implements OnInit, OnDestroy {
   getdatabyentriy() {
     const params = 'Desk';
     const param = 'desktype';
-    this.http.getDatabyentriyvalue(`entityAttributeValues`, params, param).subscribe({
-      next: (data: any) => {
-        if (data && data.length > 0) {
-          const statusString = data[0].value;
-          this.desktype.next(statusString.split(',')); // Split string into an array
-        } else {
-          console.log('No data found.');
-        }
-      },
-      error: (err) => {
-        console.error('Error fetching data:', err);
-      }
-    });
+    this.http
+      .getDatabyentriyvalue(`entityAttributeValues`, params, param)
+      .subscribe({
+        next: (data: any) => {
+          if (data && data.length > 0) {
+            const statusString = data[0].value;
+            this.desktype.next(statusString.split(',')); // Split string into an array
+          } else {
+            console.log('No data found.');
+          }
+        },
+        error: (err) => {
+          console.error('Error fetching data:', err);
+        },
+      });
   }
 
   startDateEndDateValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       const startDate = control.get('startdate')?.value;
       const endDate = control.get('enddate')?.value;
-      if (startDate && endDate && startDate === endDate || startDate && endDate && startDate > endDate) {
-        this.datesShouldNotBeEqual = true
+      if (
+        (startDate && endDate && startDate === endDate) ||
+        (startDate && endDate && startDate > endDate)
+      ) {
+        this.datesShouldNotBeEqual = true;
         return { datesShouldNotBeEqual: true };
       } else {
-        this.datesShouldNotBeEqual = false
+        this.datesShouldNotBeEqual = false;
       }
       return null;
     };
@@ -383,66 +488,81 @@ export class AvailableDeskListComponent implements OnInit, OnDestroy {
   getdatabyentriyinactive() {
     const params = 'Assest';
     const param = 'inactive';
-    this.http.getDatabyentriyvalue(`entityAttributeValues`, params, param).subscribe({
-      next: (data: any) => {
-        if (data && data.length > 0) {
-          const statusString = data[0].value;
-          this.deskinactive = statusString.split(',').map((type: any) => ({ value: type })); // Split string into an array
-        } else {
-          console.log('No data found.');
-        }
-      },
-      error: (err) => {
-        console.error('Error fetching data:', err);
-      }
-    });
+    this.http
+      .getDatabyentriyvalue(`entityAttributeValues`, params, param)
+      .subscribe({
+        next: (data: any) => {
+          if (data && data.length > 0) {
+            const statusString = data[0].value;
+            this.deskinactive = statusString
+              .split(',')
+              .map((type: any) => ({ value: type })); // Split string into an array
+          } else {
+            console.log('No data found.');
+          }
+        },
+        error: (err) => {
+          console.error('Error fetching data:', err);
+        },
+      });
   }
 
   getdatabyentriyundermaintance() {
     const params = 'Assests';
     const param = 'statuses';
-    this.http.getDatabyentriyvalue(`entityAttributeValues`, params, param).subscribe({
-      next: (data: any) => {
-        if (data && data.length > 0) {
-          const statusString = data[0].value;
-          this.deskundermaintence = statusString.split(',').map((type: any) => ({ value: type })); // Split string into an array
-        } else {
-          console.log('No data found.');
-        }
-      },
-      error: (err) => {
-        console.error('Error fetching data:', err);
-      }
-    });
+    this.http
+      .getDatabyentriyvalue(`entityAttributeValues`, params, param)
+      .subscribe({
+        next: (data: any) => {
+          if (data && data.length > 0) {
+            const statusString = data[0].value;
+            this.deskundermaintence = statusString
+              .split(',')
+              .map((type: any) => ({ value: type })); // Split string into an array
+          } else {
+            console.log('No data found.');
+          }
+        },
+        error: (err) => {
+          console.error('Error fetching data:', err);
+        },
+      });
   }
 
   inactivedesk(inactiveForm: FormGroup) {
     if (inactiveForm.valid) {
       const payload: any = {
         //deskName: this.selectedAsset.deskName,
-        reason: this.inactiveForm.get("assetinactive")?.value?.value,
-        deskStatus: "Inactive",
+        reason: this.inactiveForm.get('assetinactive')?.value?.value,
+        deskStatus: 'Inactive',
         createdBy: this.empinfo.employeeId,
         updatedOn: new Date().toISOString(),
-        additionalComments: this.inactiveForm.get('reason')?.value
-      }
+        additionalComments: this.inactiveForm.get('reason')?.value,
+      };
       // Send the HTTP POST request
-      this.http.putData(`DeskAllocationHeader/${this.deskid}`, payload).pipe(takeUntil(this.destroy$)).subscribe({
-        next: (res) => {
-          this.modalService.dismissAll();
-          this.conformationPopup.openSuccessModal('Desk inactivated successfully')
-          setTimeout(() => {
-            location.reload();
-          }, 2000);
-          this.getAllDesks(this.page, this.pageSize, null, null, this.Status);
-          this.getcount(null, null, this.Status);
-          this.inactiveForm.reset();
-        },
-        error: (error) => {
-          this.modalService.dismissAll();
-          this.conformationPopup.openSuccessModal(error.error?.Message || 'Error occurred during assignment.');
-        }
-      });
+      this.http
+        .putData(`DeskAllocationHeader/${this.deskid}`, payload)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (res) => {
+            this.modalService.dismissAll();
+            this.conformationPopup.openSuccessModal(
+              'Desk inactivated successfully',
+            );
+            setTimeout(() => {
+              location.reload();
+            }, 2000);
+            this.getAllDesks(this.page, this.pageSize, null, null, this.Status);
+            this.getcount(null, null, this.Status);
+            this.inactiveForm.reset();
+          },
+          error: (error) => {
+            this.modalService.dismissAll();
+            this.conformationPopup.openSuccessModal(
+              error.error?.Message || 'Error occurred during assignment.',
+            );
+          },
+        });
     } else {
       console.log('Form is invalid');
     }
@@ -454,28 +574,37 @@ export class AvailableDeskListComponent implements OnInit, OnDestroy {
     this.getEmployeedata();
     if (this.loactionid && this.sublocation) {
       this.getbasedonlocationshits(); // Fetch shifts or other location-based data
-      this.getdeskid()
+      this.getdeskid();
     } else {
       console.error('Location or Sub-location data is missing.');
     }
   }
 
   getdeskid() {
-    this.http.getData(`desksData/getdeskslocnsub?locationId=${this.loactionid}&subLocationId=${this.sublocation}`).pipe(takeUntil(this.destroy$)).subscribe({
-      next: (res: any) => {
-        // Filter only assets that are active and not deleted
-        const filteredAssets = res.filter((asset: any) => asset.status === 'Available' && !asset.isDeleted);
-        this.deskdataid.next(filteredAssets);
-      },
-      error: (errormessage) => {
-        console.log(errormessage);
-      }
-    });
+    this.http
+      .getData(
+        `desksData/getdeskslocnsub?locationId=${this.loactionid}&subLocationId=${this.sublocation}`,
+      )
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res: any) => {
+          // Filter only assets that are active and not deleted
+          const filteredAssets = res.filter(
+            (asset: any) => asset.status === 'Available' && !asset.isDeleted,
+          );
+          this.deskdataid.next(filteredAssets);
+        },
+        error: (errormessage) => {
+          console.log(errormessage);
+        },
+      });
   }
 
   getbasedonlocationshits() {
     this.http
-      .getData(`orgShifts/getshiftlocation?locationId=${this.loactionid}&subLocationId=${this.sublocation}`)
+      .getData(
+        `orgShifts/getshiftlocation?locationId=${this.loactionid}&subLocationId=${this.sublocation}`,
+      )
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (data: any) => {
@@ -483,42 +612,46 @@ export class AvailableDeskListComponent implements OnInit, OnDestroy {
             this.shiftDropdown = []; // Reset if no shifts are found
           } else {
             this.shiftDropdown = [].concat(
-              ...data.map((element: any) => element.orgShiftsItems)
+              ...data.map((element: any) => element.orgShiftsItems),
             ); // Flatten the shift data
           }
-        }
+        },
       });
   }
 
   getEmployeedata() {
     if (!this.loactionid || !this.sublocation || !this.shift) {
-      console.error("Location ID or Sub-location ID is missing.");
+      console.error('Location ID or Sub-location ID is missing.');
       return;
     }
     this.http
-      .getData(`JobDetails/getAllJobdetails?locationId=${this.loactionid}&sublocationId=${this.sublocation}&shiftId=${this.shift}`)
+      .getData(
+        `JobDetails/getAllJobdetails?locationId=${this.loactionid}&sublocationId=${this.sublocation}&shiftId=${this.shift}`,
+      )
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (data: any) => {
           // Transform the data to add `employeeName` and a combined property
-          this.employeeiddetails = data.map((employee: any) => ({
-            ...employee,
-            employeeName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''} ${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
-
-          })).sort((a: any, b: any) =>
-            a.firstName.toLowerCase().localeCompare(b.firstName.toLowerCase())
-          );
-
+          this.employeeiddetails = data
+            .map((employee: any) => ({
+              ...employee,
+              employeeName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''} ${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
+            }))
+            .sort((a: any, b: any) =>
+              a.firstName
+                .toLowerCase()
+                .localeCompare(b.firstName.toLowerCase()),
+            );
         },
         error: (reason: any) => {
           console.error(reason);
-        }
+        },
       });
   }
 
-  selectedEmployee: any
+  selectedEmployee: any;
   onEmployeeSelect(event: any) {
-    this.selectedEmployee = event
+    this.selectedEmployee = event;
     this.assignEmployeeId = event?.value?.employeeId;
     this.assignemployename = event?.value?.employeeName;
   }
@@ -527,49 +660,61 @@ export class AvailableDeskListComponent implements OnInit, OnDestroy {
     if (undermaintancedata.valid) {
       const payload: any = {
         //deskName: this.selectedAsset.deskName,
-        reason: this.undermaintancedata.get("assetundermatince")?.value?.value,
-        deskStatus: "Under Maintenance",
+        reason: this.undermaintancedata.get('assetundermatince')?.value?.value,
+        deskStatus: 'Under Maintenance',
         createdBy: this.empinfo.employeeId,
         updatedOn: new Date().toISOString(),
         comments: this.undermaintancedata.get('reason')?.value,
         toDate: this.undermaintancedata.get('enddate')?.value,
-        fromDate: this.undermaintancedata.get('startdate')?.value
-      }
+        fromDate: this.undermaintancedata.get('startdate')?.value,
+      };
       // Send the HTTP POST request
-      this.http.putData(`DeskAllocationHeader/${this.deskid}`, payload).pipe(takeUntil(this.destroy$)).subscribe({
-        next: (res) => {
-          this.modalService.dismissAll();
-          this.conformationPopup.openSuccessModal('Desk set under maintenance successfully')
-          this.getAllDesks(this.page, this.pageSize, null, null, this.Status);
-          this.getcount(null, null, this.Status);
-          this.undermaintancedata.reset();
-        },
-        error: (error) => {
-          this.modalService.dismissAll();
-          this.conformationPopup.openSuccessModal(error.error?.Message || 'Error occurred during assignment.');
-        }
-      });
+      this.http
+        .putData(`DeskAllocationHeader/${this.deskid}`, payload)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (res) => {
+            this.modalService.dismissAll();
+            this.conformationPopup.openSuccessModal(
+              'Desk set under maintenance successfully',
+            );
+            this.getAllDesks(this.page, this.pageSize, null, null, this.Status);
+            this.getcount(null, null, this.Status);
+            this.undermaintancedata.reset();
+          },
+          error: (error) => {
+            this.modalService.dismissAll();
+            this.conformationPopup.openSuccessModal(
+              error.error?.Message || 'Error occurred during assignment.',
+            );
+          },
+        });
     } else {
       console.log('Form is invalid');
     }
   }
 
   getapproval() {
-    this.http.getData('JobDetails/getAllReportingnTeamManagers')
+    this.http
+      .getData('JobDetails/getAllReportingnTeamManagers')
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res: any) => {
           // Transform data to include `employeeName`
-          this.approvalname = res.map((employee: any) => ({
-            ...employee,
-            employeeName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
-          })).sort((a: any, b: any) =>
-            a.firstName.toLowerCase().localeCompare(b.firstName.toLowerCase())
-          );
+          this.approvalname = res
+            .map((employee: any) => ({
+              ...employee,
+              employeeName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
+            }))
+            .sort((a: any, b: any) =>
+              a.firstName
+                .toLowerCase()
+                .localeCompare(b.firstName.toLowerCase()),
+            );
         },
         error: (errormessage) => {
           console.log(errormessage);
-        }
+        },
       });
   }
 
@@ -579,36 +724,54 @@ export class AvailableDeskListComponent implements OnInit, OnDestroy {
     this.approvalid = event?.value?.employeeId;
   }
 
-  getcount(locationId: string | null, subLocationId: string | null, status: string) {
+  getcount(
+    locationId: string | null,
+    subLocationId: string | null,
+    status: string,
+  ) {
     const params = new URLSearchParams();
     if (locationId) params.append('locationid', locationId);
     if (subLocationId) params.append('sublocationid', subLocationId);
     params.append('status', status);
-    this.http.getData(`DeskAllocationHeader/v1/statuscount?${params.toString()}`).subscribe({
-      next: (data: any) => {
-        const totalCount = data.totalCount || 0;
-        const statusCounts = Array.isArray(data.statusCounts) ? data.statusCounts : [];
-        const availableData = statusCounts.find((item: any) => item.status === "Available");
-        const allocateData = statusCounts.find((item: any) => item.status === "Allocated");
-        const inactivedata = statusCounts.find((item: any) => item.status === "Inactive");
-        const undermaintence = statusCounts.find((item: any) => item.status === "Under Maintenance");
-        const waitingForApprovalData = statusCounts.find((item: any) => item.status === "Waiting for Approval");
-        const availableCount = availableData?.count || 0;
-        const allocateCount = allocateData?.count || 0;
-        const inactiveCount = inactivedata?.count || 0;
-        const undermaintenceCount = undermaintence?.count || 0;
-        const waitingForApprovalCount = waitingForApprovalData?.count || 0;
-        this.http.setTotalDeskCount(totalCount);
-        this.http.setAvailableDeskCount(availableCount);
-        this.http.setAllocatedDeskCount(allocateCount);
-        this.http.setundermatinaceDeskCount(undermaintenceCount);
-        this.http.setinactiveSubjectDeskCount(inactiveCount);
-        this.http.setWFASubjectDeskCount(waitingForApprovalCount);
-      },
-      error: (error) => {
-        console.error('Error fetching count:', error);
-      }
-    });
+    this.http
+      .getData(`DeskAllocationHeader/v1/statuscount?${params.toString()}`)
+      .subscribe({
+        next: (data: any) => {
+          const totalCount = data.totalCount || 0;
+          const statusCounts = Array.isArray(data.statusCounts)
+            ? data.statusCounts
+            : [];
+          const availableData = statusCounts.find(
+            (item: any) => item.status === 'Available',
+          );
+          const allocateData = statusCounts.find(
+            (item: any) => item.status === 'Allocated',
+          );
+          const inactivedata = statusCounts.find(
+            (item: any) => item.status === 'Inactive',
+          );
+          const undermaintence = statusCounts.find(
+            (item: any) => item.status === 'Under Maintenance',
+          );
+          const waitingForApprovalData = statusCounts.find(
+            (item: any) => item.status === 'Waiting for Approval',
+          );
+          const availableCount = availableData?.count || 0;
+          const allocateCount = allocateData?.count || 0;
+          const inactiveCount = inactivedata?.count || 0;
+          const undermaintenceCount = undermaintence?.count || 0;
+          const waitingForApprovalCount = waitingForApprovalData?.count || 0;
+          this.http.setTotalDeskCount(totalCount);
+          this.http.setAvailableDeskCount(availableCount);
+          this.http.setAllocatedDeskCount(allocateCount);
+          this.http.setundermatinaceDeskCount(undermaintenceCount);
+          this.http.setinactiveSubjectDeskCount(inactiveCount);
+          this.http.setWFASubjectDeskCount(waitingForApprovalCount);
+        },
+        error: (error) => {
+          console.error('Error fetching count:', error);
+        },
+      });
   }
 
   //close dailog open
@@ -625,7 +788,7 @@ export class AvailableDeskListComponent implements OnInit, OnDestroy {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();
     if (this.subscription) {
-      this.subscription.unsubscribe()
+      this.subscription.unsubscribe();
     }
   }
 }

@@ -41,6 +41,7 @@ export class SettingsOverviewComponent {
   settingItConfigurationModule = MODULE_INFOS.SETTINGS_IT_CONFIGURATION_MODULE_INFO
   settingLockingsystemnModule = MODULE_INFOS.SETTINGS_LOCKINGSYSTEM_MODULE_INFO;
   settingrateCardModule=MODULE_INFOS.SETTINGS_RATE_CARD_MODULE_INFO;
+  settinghelpdeskConfigurationModule = MODULE_INFOS.SETTINGS_HELPDESK_CONFIGURATION_MODULE_INFO;
   constructor(
     public rbac: RbacService,
     private router: Router,

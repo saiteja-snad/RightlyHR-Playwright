@@ -1,0 +1,35 @@
+<div class="custom-main-component-container">
+    <!-- <div class="component-header-content pt-2">
+        <app-settings-header />
+    </div> -->
+      <div class="component-header-content pt-2">
+        <div class="heading-content">
+            <div class="commpoment-name navigator" (click)="navigateToSettings()">Settings</div>
+            <div class="commpoment-name">
+                <i class="bi bi-chevron-double-right"></i>
+            </div>
+            <div class="commpoment-name">{{'Help Desk Configuration' | translate}}</div>
+            <div class="commpoment-name">
+                <i class="bi bi-chevron-double-right"></i>
+            </div>
+            <div class="component-header">{{componentName}}</div>
+                <div>
+                <app-module-info-icon placement="bottom" [ngbPopover]="popContent" />
+            </div>
+        </div>
+    </div>
+       <!--Module Information-->
+    <ng-template #popContent>
+        <app-module-information [moduleInfo]="moduleinfo" />
+    </ng-template>
+    <!--Content-->
+    <div class="employee-fields-main-container d-flex gap-3 w-100">
+        <div class="custom-component-left-content">
+            <app-helpdesk-management-config-tabs />
+        </div>
+
+        <div class="custom-setting-right-content">
+            <router-outlet />
+        </div>
+    </div>
+</div>

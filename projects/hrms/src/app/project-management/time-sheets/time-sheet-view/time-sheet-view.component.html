@@ -57,7 +57,16 @@
                 </div>
             </div>
             } -->
-            <button type="button" class="custom-btn btn-primary px-4" (click)="navigation()">My Summary</button>
+            <!-- <button type="button" class="custom-btn btn-primary px-4" (click)="navigation()">My Summary</button> -->
+
+                   @if(rbac.allowedToAccess('Timesheet Bulk Export.view') 
+              || rbac.allowedToAccess('Timesheet Bulk Import.view')
+              || rbac.allowedToAccess('Timesheet History Log.view')) {
+            <div class="position-relative menu-dropdown-content">
+                <button class="custom-btn btn-primary" type="button" (click)="bulkMenu.toggle($event)">{{'Actions'}}</button>
+                <p-menu #bulkMenu [popup]="true" [model]="bulkOperationMenuItems" />
+            </div>
+            }
 
             <div *ngIf="employeeSelected">
                 <button type="button" class="custom-btn btn-primary px-4" (click)="mytimesheet()">

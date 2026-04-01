@@ -25,11 +25,14 @@ import { environment } from '../../../../environments/environment';
 import { WeekMatrix, RowModel, DayModel, transformV2ResponseToWeekMatrix, isCellLocked, recalculateTotals, ApprovalStatus } from './timesheet-matrix.model';
 import { DayValidationService, ValidationContext } from './day-validation.service';
 import { Ilpid } from '../../../Interfaces/timoff-model';
+import { MenuModule } from 'primeng/menu';
+import { MenuItem } from 'primeng/api';
+import { BulkUploadStore } from '../bulk-upload/models/bulk-upload.store';
 @Component({
   selector: 'app-time-sheet-view',
   imports: [ProjectManagementModuleInfoComponent, NgbDatepickerModule, FormsModule, ReactiveFormsModule,
     NgbPopover, CommonModule, DatePicker, DateformatPipe, AccordionModule, InfoIconComponent, ConfirmationIconComponent,
-    TranslateModule, DataLoaderContentComponent, TimesheetsTabsComponent],
+    TranslateModule, DataLoaderContentComponent, TimesheetsTabsComponent, MenuModule],
   templateUrl: './time-sheet-view.component.html',
   styleUrl: './time-sheet-view.component.scss',
 })
@@ -97,8 +100,22 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   @ViewChild('employeeDropdown') employeeDropdown: any;
   @ViewChild('errormodal') errormodal!: TemplateRef<any>;
   @ViewChild('addtask') addtask!: TemplateRef<any>;
-  constructor(private fb: FormBuilder, private modalService: NgbModal, private http: HttpService, public formValidation: FormValidationsService, public dayValidationService: DayValidationService,
-    public authService: AuthService, public rbac: RbacService, private conformationPopup: OpenModalService, private router: Router, private encryptionService: EncriptdecriptService) { }
+  canBulkImport = false;
+  canBulkExport = false;
+  canViewHistoryLog = false;
+  bulkMenuItems: MenuItem[] = [];
+  private readonly baseMenuItems = [
+    { key: 'import', label: 'Import', icon: 'file-import-icon',command: () => this.navigateToImport()  },
+    { key: 'export', label: 'Export', icon: 'file-export-icon', command: () => this.navigateToExport()  },
+    { key: 'viewHistoryLog', label: 'View History Log', icon: 'bi bi-clock-history me-2',command: () => this.navigateToHistoryLog()  },
+  ];
+  bulkOperationMenuItems: MenuItem[] = [];
+  constructor(private fb: FormBuilder, private modalService: NgbModal, 
+              private http: HttpService, public formValidation: FormValidationsService, 
+              public dayValidationService: DayValidationService,public authService: AuthService, 
+              public rbac: RbacService, private conformationPopup: OpenModalService, 
+              private router: Router, private encryptionService: EncriptdecriptService,
+              private bulkStore: BulkUploadStore) { }
 
   ngOnInit(): void {
     this.loggedinuser = this.authService.getToken();
@@ -119,6 +136,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     // this.getAllEmployeeDetails();
     this.formattedweakendStart = moment(this.start).format('YYYY-MM-DD');
     this.getTimeSheetEntriesbyEmployeeId(this.employeeId, this.formattedweakendStart);
+    this.buildBulkOperationMenuItems();
   }
 
   get projects(): FormArray {
@@ -225,6 +243,50 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
 
     console.log(this.lockMessages);
   }
+navigateToImport() {
+    localStorage.setItem('timesheetImportStep', '1');
+    //clear the batch id from the local storage
+    localStorage.removeItem('bulkImportBatchId');
+    this.bulkStore.reset();
+    this.router.navigate(['/project-management/timesheet/bulk-upload']);
+  }
+  navigateToExport() {
+    localStorage.setItem('timesheetExportStep', '1');
+    localStorage.removeItem('timesheetExportFilters');
+    this.router.navigate(['/project-management/timesheet/bulk-export']);
+  }
+  navigateToHistoryLog() {
+    if(this.rbac.allowedToAccess('View History Import Tab.view')){
+      this.router.navigate(['/project-management/timesheet/historylog']);
+    }else if(this.rbac.allowedToAccess('View History Export Tab.view')){
+      this.router.navigate(['/project-management/timesheet/export-history']);
+    }else{
+      this.router.navigate(['/unauthorized']);
+    }
+    
+  }
+
+  private buildBulkOperationMenuItems(): void {
+    this.canBulkImport = this.rbac.allowedToAccess('Timesheet Bulk Import.view');
+    this.canBulkExport = this.rbac.allowedToAccess('Timesheet Bulk Export.view');
+    this.canViewHistoryLog = this.rbac.allowedToAccess('View History Import Tab.view') || this.rbac.allowedToAccess('View History Export Tab.view') ;
+
+    const items = this.baseMenuItems.filter((item: any) => {
+      if (item.key === 'import') {
+        return this.canBulkImport;
+      }
+      if (item.key === 'export') {
+        return this.canBulkExport;
+      }
+      if (item.key === 'viewHistoryLog') {
+        return this.canViewHistoryLog;
+      }
+      return true;
+    });
+    this.bulkOperationMenuItems = items;
+  }
+
+
   checkTimesheetLockByMonth(selectedStart: Date, selectedEnd: Date) {
     const lockedItems = this.TimesheetLockData || [];
     this.lockMessages = []; //  reset array each time

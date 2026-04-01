@@ -1,0 +1,277 @@
+<div class="custom-main-component-container">
+    <div class="component-header-content align-items-baseline">
+        <div class="heading-content d-flex ">
+            <div class="commpoment-name">Project Management
+                <span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
+            </div>
+            <div class="commpoment-name">
+                <a (click)="navigatetomy()"><u>My Timesheet</u></a>
+                <span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
+            </div>
+            <div class="component-header">{{'Timesheet Export' }}</div>
+            <div>
+                <app-module-info-icon placement="bottom" [ngbPopover]="popContent" />
+            </div>
+        </div>
+
+        <div class="d-flex align-items-center gap-3">
+            <button type="button" class="custom-btn btn-secondary position-relative"
+                (click)="toggleFilters(filterContent)" [disabled]="spinnerLoader2">
+                <i class="bi bi-funnel me-2"></i>Filters<span *ngIf="isFilterIndicatorActive"
+                    class="filter-indicator"></span></button>
+            <button type="button" class="custom-btn btn-primary" (click)="confirmUpload(confirmModal, $event)"
+                [disabled]="filteredRows().length === 0 || spinnerLoader2">
+                @if(spinnerLoader2){
+                <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                <span>{{'Loading...'}}</span>
+                }@else {
+                <span>{{'Export'}}</span>
+                }
+            </button>
+        </div>
+    </div>
+
+    <div class="main-content d-flex w-100 gap-3">
+        <div class="component-left-tabs-container">
+            <app-timesheets-tabs />
+        </div>
+
+        <div class="timesheet-right-content">
+            <div class="step-content p-3">
+                <!-- STEP 1 -->
+                <div *ngIf="progress === 1">
+                    <div
+                        class="initial-state-content text-center d-flex flex-column align-items-center justify-content-center">
+                        <img src="/images/Layer_2.png" alt="Timesheet Export" class="initial-state-image mb-4">
+                        <div class="context mb-4">
+                            <!-- Please Select <span class="field-btn" (click)="toggleFilters(filterContent)">Fields</span>
+                            To Proceed Further -->
+                            Select the required <span class="field-btn cursor"
+                                (click)="toggleFilters(filterContent)"><u>Filters</u></span> and click <span
+                                class="field-btn">{{'Generate'}}</span> {{' to export the data'}}
+                        </div>
+                        <div class="info-section mb-4 p-4">
+                            <div class="info-header">
+                                <img src="icons/info-icon.png" alt="alert Icon" class="alert-icon">
+                                <span>Note:</span>
+                            </div>
+                            <ul class="info-list">
+                                <li>{{'Only timesheets approved by the Timesheet Approval Authority will be included in
+                                    the export.'}}</li>
+                                <li>{{'Ensure that all required filters'}} <b>{{'(Date Range, Projects, and
+                                        Phases)'}}</b> {{'selected before proceeding with the export.'}}</li>
+                                <li>{{'Timesheet entries in'}} <b>{{'Draft, Rejected, or Waiting for Approval'}}</b> {{'
+                                    status will not be included.'}}</li>
+                                <li>{{'Verify the selected date range, projects and phases to ensure accurate data
+                                    export.'}}</li>
+                                <li>{{'Any recent approvals will be reflected only after the latest data refresh.'}}
+                                </li>
+                                <!-- <li>{{'Exported data will include only the selected fields and visible records based on applied filters.'}}</li> -->
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- STEP 2 -->
+                <div *ngIf="progress === 2">
+                    <div class="validate-section">
+                        <div class="d-flex flex-column">
+                            <div class="mb-2">
+                                <span class="total-hrs">Selected Date Range : </span>
+                                <span class="file-name"> {{ exportForm.get('dateRange')?.value?.[0]
+                                    | dateformat }}
+                                    -
+                                    {{ exportForm.get('dateRange')?.value?.[1] | dateformat }}</span>
+                            </div>
+                            <!--Input search-->
+                            <div class="input-group custom-search mb-3">
+                                <span class="input-group-text custom-input-group-search" id="basic-addon1"><i
+                                        class="bi bi-search"></i></span>
+                                <input type="search" #search="ngModel" [(ngModel)]="searchValue"
+                                    (ngModelChange)="onSearchChange()" class="form-control custom-search-input"
+                                    placeholder="Search by client / project / project code / phase / billable"
+                                    aria-label="Search" aria-describedby="basic-addon1">
+                            </div>
+
+                            <div class="custom-table-content border-table">
+                                @if (exportStore.loading()) {
+                                <app-data-loader-content />
+                                }@else {
+                                <table class="w-100 ">
+                                    <thead>
+                                        <tr>
+                                            <th >{{'Date' | translate}}</th>
+                                            <th class="text-center">{{"Client" | translate}}</th>
+                                            <th  class="text-center">{{"Project" | translate}}</th>
+                                            <th  class="text-center">{{'Project Code' | translate}}</th>
+                                            <th  class="text-center">{{'Phase' | translate}}</th>
+                                            <th class="text-center">{{'Duration (HH:MM)' | translate}}</th>
+                                            <th class="text-center">{{'Billable (Yes/No)' | translate}}</th>
+                                            <th class="text-center">{{'Description' | translate}}</th>
+                                            <th  class="text-center">{{'Status' | translate}}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (filteredRows().length > 0) {
+                                        @for (row of filteredRows(); track row.timesheetEntryId) {
+                                        <tr>
+                                            <td>{{ row.entryDate | dateformat }}</td>
+                                            <td class="text-center">
+                                                <div class="d-flex align-items-center justify-content-center timesheet-chip mx-auto"
+                                                    [style.background-color]="getLighterColor(row.clientMeta?.graphData?.color || '')"
+                                                    [style.color]="row.clientMeta?.graphData?.color"
+                                                    [style.border-color]="row.clientMeta?.graphData?.color">
+                                                    {{ row.clientName || '-' }}
+                                                </div>
+                                            </td>
+                                            <td class="text-center">
+                                                <div class="d-flex align-items-center justify-content-center timesheet-chip mx-auto"
+                                                    [style.background-color]="getLighterColor(row.projectMeta?.graphData?.color || '')"
+                                                    [style.color]="row.projectMeta?.graphData?.color"
+                                                    [style.border-color]="row.projectMeta?.graphData?.color">
+                                                    {{ row.projectName && row.projectName.trim() ? row.projectName : '-'
+                                                    }}
+                                                </div>
+                                            </td>
+                                            <td class="text-center">{{ row.projectCode || '-' }}</td>
+                                            <td class="text-center">
+                                                <div *ngIf="row.phaseName" class="d-flex align-items-center justify-content-center timesheet-chip mx-auto"
+                                                    [style.background-color]="getLighterColor(row.phaseMeta?.graphData?.color || '')"
+                                                    [style.color]="row.phaseMeta?.graphData?.color"
+                                                    [style.border-color]="row.phaseMeta?.graphData?.color">
+                                                    {{ row.phaseName || '-' }}
+                                                </div>
+                                                <span *ngIf="!row.phaseName">-</span>
+                                            </td>
+
+
+                                            <td class="text-center">{{ row.duration }}</td>
+                                            <td class="text-center">
+                                                @if (row.billable) {
+                                                {{row.billable}}
+                                                } @else {
+                                                {{"-"}}
+                                                }
+                                            </td>
+                                            <td class="text-center">
+                                                <div>
+                                                    <div *ngIf="row.description; else noReason" type="button"
+                                                        [ngbPopover]="description">
+                                                        <app-info-icon />
+                                                    </div>
+                                                    <ng-template #description>
+                                                        <p class="mb-0">{{ row.description }}</p>
+                                                    </ng-template>
+                                                    <ng-template #noReason>
+                                                        <span>-</span>
+                                                    </ng-template>
+                                                </div>
+                                            </td>
+                                            <td  class="text-center"><span *ngIf="row.status==='Processed'">{{'Approved'}}</span> </td>
+                                        </tr>
+                                        }
+                                        } @else {
+                                        <tr>
+                                            <app-no-data-found />
+                                        </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                                }
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<ng-template #confirmModal let-modal>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+        <img src="/project-mangement-icons/export-icon.svg" alt="failure icon" class="confirmation-delete-icon">
+            <p class="confirmation-text mb-4 mt-1">{{'Are you sure you want to export ?'}}</p>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss();"
+                [disabled]="exportStore.loading() || exporting">No</button>
+            <button type="submit" class="custom-btn btn-primary" [disabled]="exportStore.loading() || exporting"
+                (click)="exportEntries()">
+                @if (exportStore.loading() || exporting) {
+                Exporting...
+                } @else {
+                Yes
+                }
+            </button>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #popContent>
+    <app-module-information [moduleInfo]="moduleinfo" />
+</ng-template>
+
+<ng-template #filterContent let-offcanvas>
+    <div class="custom-filter-container">
+        <div class="offcanvas-filter-header-content offcanvas-filter-header-border">
+            <p class="filter-header m-0">{{'Filters' | translate}}</p>
+            <a (click)="closeCanvas()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+        </div>
+
+        <div class="offcanvas-filter-content">
+            <form [formGroup]="exportForm" (ngSubmit)="nextStep()">
+                <div class="mb-3">
+                    <label class="form-label custom-label text-nowrap filter-labels mb-3">{{'Select Date Range'}}<span
+                            class="text-danger">*</span></label>
+                    <div class="custom-date-range-picker">
+                        <p-datepicker formControlName="dateRange" selectionMode="range" [showIcon]="true"
+                            [readonlyInput]="true" [placeholder]="'Select date range'" />
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label custom-label text-nowrap filter-labels mb-3">{{'Select Projects'}}</label>
+                    <div class="custom-p-multiSelect-content custom-select-width">
+                        <p-multiSelect formControlName="projectIds" [options]="exportProjectOptions" optionLabel="label"
+                            optionValue="value" [filter]="true" [resetFilterOnHide]="true"
+                            defaultLabel="Select projects" class="form-select custom-select" appendTo="body"
+                            [autoZIndex]="true" [baseZIndex]="1100" panelStyleClass="custom-phase-multiselect-panel"
+                            filterPlaceHolder="Search projects" [showToggleAll]="false" [showClear]="true"
+                            (onChange)="onProjectSelectionChange($event)" [selectedItemsLabel]="selectedProjectsLabel"
+                            [maxSelectedLabels]="maxSelectedProjectsLabels" />
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label custom-label text-nowrap filter-labels mb-3">{{'Select Phases'}}</label>
+                    <div class="custom-p-multiSelect-content custom-select-width">
+                        <p-multiSelect formControlName="phaseIds" [options]="exportPhaseOptions" optionLabel="label"
+                            optionValue="value" [filter]="true" [resetFilterOnHide]="true" defaultLabel="Select phases"
+                            class="form-select custom-select" appendTo="body" [autoZIndex]="true" [baseZIndex]="1100"
+                            filterPlaceHolder="Search phases" panelStyleClass="custom-phase-multiselect-panel"
+                            [showToggleAll]="false" [showClear]="true" (onChange)="onPhaseSelectionChange($event)"
+                            [selectedItemsLabel]="selectedPhasesLabel" [maxSelectedLabels]="maxSelectedPhasesLabels" />
+                    </div>
+                </div>
+                <div class="d-flex offcanvas-footer-content gap-3">
+                    @if(isFilterApplied() || filteredRows().length > 0){
+                    <button type="button" class="custom-btn btn-secondary w-100" (click)="clearAllFilters()"
+                        [disabled]="spinnerLoader1">
+                        {{'Clear All' | translate}}
+                    </button>
+                    }
+                    <!-- @if(rbac.allowedToAccess('Comp Off Report - Generate.view')){ -->
+                    <button type="submit" class="custom-btn btn-primary w-100" [disabled]="isGenerateDisabled">
+                        @if(spinnerLoader1){
+                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                        <span>{{'Loading...'}}</span>
+                        }@else {
+                        <span>{{'Generate'}}</span>
+                        }
+                    </button>
+                    <!-- } -->
+                </div>
+            </form>
+        </div>
+    </div>
+</ng-template>

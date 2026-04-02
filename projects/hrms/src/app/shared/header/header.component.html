@@ -24,6 +24,16 @@
 
             <div class="break-line-content"></div>
             }
+            @if(this.rbac.allowedToAccess('Help Desk.view')){
+            <div (click)="goToAccessibleRoute('/help-desk');" class="cursor">
+                <div class="icon-wrapper">
+                    <i class="bi bi-question"></i>
+                </div>
+
+            </div>
+
+            <div class="break-line-content"></div>
+            }
 
             <!--Calendar-->
             @if(this.rbac.allowedToAccess('Calendar.view')){
@@ -169,7 +179,7 @@
                             <i [ngClass]="showPassword2 ? 'bi bi-eye' : 'bi bi-eye-slash'"></i>
                         </span>
                     </div>
-                    <div *ngIf="changePasswordForm.get('newPassword')?.errors?.['required'] && 
+                    <div *ngIf="changePasswordForm.get('newPassword')?.errors?.['required'] &&
                     changePasswordForm.get('newPassword')?.touched" class="error-msg">{{'New Password is required'|translate}}</div>
                     <div *ngIf="changePasswordForm.controls['newPassword'].errors?.['pattern']" class="error-msg">
                         {{'Your password must be at least 8 characters long and include at least one uppercase letter, one number, and one special character'|translate}}

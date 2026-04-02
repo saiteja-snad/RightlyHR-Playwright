@@ -104,6 +104,13 @@ export const MODULE_INFOS = {
     //Organizational Hierarchy Module Info
     ORGANIZATIONAL_HIERARCHY_MODULE_INFO: "The Organizational Hierarchy view displays detailed reporting structure and compensation info for the selected employee. Options are available to download the data as PDF, JPG, or Excel.",
 
+    // HELP DESK MODULE INFO
+    HELP_DESK_MY_QUERIES: "The My Queries tab allows employees to view and manage all the support queries they have raised.It provides visibility into ticket status, priority, responses from the support team, and resolution progress. Employees can track updates, provide additional information when requested, and review closed or rejected tickets.",
+    HELP_DESK_TEAM_QUERIES: "The Team Queries tab enables support teams to view and manage tickets assigned to their department.It helps teams review incoming requests, update ticket status, communicate with employees, prioritize issues based on severity, and ensure timely resolution.",
+    SETTINGS_HELPDESK_CONFIGURATION_MODULE_INFO: "The Help Desk Configuration module enables admins to create and manage categories and subcategories used by employees when raising support tickets, ensuring proper routing and efficient issue resolution.",
+    CATEGEORY_MODULE_INFO: "The Category section is used to define the primary classification of support requests raised by users. It helps group queries based on issue type, enabling proper routing to the relevant support team, improved tracking, and better visibility into common request patterns.",
+    SUBCATEGORY_MODULE_INFO: "The Subcategory section is used to define detailed issue types within each category. It allows more precise classification of queries, ensuring accurate assignment, faster resolution, and improved reporting on specific support concerns.",
+
     //Holidays Module Info
     HOLIDAYS_MODULE_INFO: "The Holidays page displays public and optional holidays for the selected year, with the ability to change the year using a dropdown. Each holiday is shown with its name, date, and an event for easy reference.",
 
@@ -181,7 +188,7 @@ export const MODULE_INFOS = {
     PENDING_APPROVALS_EMPLOYEEINFO_MODULE_INFO: "The Employee Info section in Pending Approvals displays all requests submitted by employees to update their personal or job-related information. Managers can review each request, verify the details, and take appropriate action by approving or rejecting the update. Once approved, the system automatically updates the employee’s information, ensuring accurate and controlled data maintenance.",
     PENDING_APPROVALS_KRA_KPI_MODULE_INFO: "The Pending Approvals – KRA/KPI module allows the designated approval authority to review, approve, or reject KRA and KPI submissions raised by employees. It ensures timely validation, accountability, and accurate tracking of performance and goal-related data.",
     TIME_OFF_GLOBAL_WFH_MODULE_INFO: "Global WFH enables HR or managers to apply Work From Home for employees on specific dates or periods, allowing remote work and attendance marking as per company policy.",
-    
+
     //on behalf of module info
     ON_BEHALF_OF_WFH_MODULE_INFO : "The Work From Home (WFH) module enables HR or managers to apply and manage WFH requests on behalf of employees efficiently. It streamlines approval workflows, ensuring accurate tracking of remote work days. The module enhances transparency and flexibility in managing employee work arrangements.",
     ON_BEHALF_OF_REMOTELOGIN_MODULE_INFO : "The Remote Login module enables HR or managers to apply and manage Remote login requests on behalf of employees efficiently. It streamlines approval workflows, ensuring accurate tracking of remote work days. The module enhances transparency and flexibility in managing employee work arrangements.",

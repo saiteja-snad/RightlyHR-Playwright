@@ -13,6 +13,7 @@ import { TimesheetLockLayoutComponent } from "../../settings/timesheet-locking-c
 import { EmployeeFieldsUpdateConfigurationsLayoutComponentComponent } from "../../settings/employee-fields-update-configuration/employee-fields-update-configurations-layout-component/employee-fields-update-configurations-layout-component.component";
 import { RateCardComponent } from "../../settings/employee-rate-card-configuration/rate-card/rate-card.component";
 import { RateCardLayoutComponent } from "../../settings/employee-rate-card-configuration/rate-card-layout/rate-card-layout.component";
+import { HelpdeskManagementConfigLayoutComponent } from "../../settings/help-desk-configurations/helpdesk-management-config-layout/helpdesk-management-config-layout.component";
 
 export default [
     { path: '', redirectTo: '/settings/overview', pathMatch: 'full' },
@@ -28,4 +29,5 @@ export default [
     { path: 'timesheet-locking-configuration', component: TimesheetLockLayoutComponent, canActivate: [authGuard], loadChildren: () => import('../../settings/timesheet-locking-configuration/timesheet-lock-configuration.route')   },
     { path: 'employee-fields-update-configurations', component: EmployeeFieldsUpdateConfigurationsLayoutComponentComponent, canActivate: [authGuard], loadChildren: () => import('../../settings/employee-fields-update-configuration/employee-fields-update-configurations.route') },
     { path: 'employee-rate-card', compenent:RateCardLayoutComponent , canActivate: [authGuard], loadChildren: () => import('../../settings/employee-rate-card-configuration/rate-card.route') },
+    { path: 'helpdesk-management-config', component: HelpdeskManagementConfigLayoutComponent, canActivate: [authGuard], loadChildren: () => import('../../settings/help-desk-configurations/helpdesk-management.route')},
 ] as Route[];

@@ -108,6 +108,8 @@ export const MODULE_INFOS = {
     HELP_DESK_MY_QUERIES: "The My Queries tab allows employees to view and manage all the support queries they have raised.It provides visibility into ticket status, priority, responses from the support team, and resolution progress. Employees can track updates, provide additional information when requested, and review closed or rejected tickets.",
     HELP_DESK_TEAM_QUERIES: "The Team Queries tab enables support teams to view and manage tickets assigned to their department.It helps teams review incoming requests, update ticket status, communicate with employees, prioritize issues based on severity, and ensure timely resolution.",
     SETTINGS_HELPDESK_CONFIGURATION_MODULE_INFO: "The Help Desk Configuration module enables admins to create and manage categories and subcategories used by employees when raising support tickets, ensuring proper routing and efficient issue resolution.",
+    CATEGEORY_MODULE_INFO: "The Category section is used to define the primary classification of support requests raised by users. It helps group queries based on issue type, enabling proper routing to the relevant support team, improved tracking, and better visibility into common request patterns.",
+    SUBCATEGORY_MODULE_INFO: "The Subcategory section is used to define detailed issue types within each category. It allows more precise classification of queries, ensuring accurate assignment, faster resolution, and improved reporting on specific support concerns.",
 
     //Holidays Module Info
     HOLIDAYS_MODULE_INFO: "The Holidays page displays public and optional holidays for the selected year, with the ability to change the year using a dropdown. Each holiday is shown with its name, date, and an event for easy reference.",

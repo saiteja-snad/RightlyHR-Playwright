@@ -97,9 +97,9 @@ getActiveRateCardDetails$ = new BehaviorSubject<IRateCardActiveViewModel[]>([]);
     this.getAllLocations();
     this.getAllEmployeeDetails();
     this.getAllRateCardDetails();
-    
+
   }
-  
+
   getAllLocations() {
      this.http
       .getData(`JobLocation/getAllLocations`)
@@ -243,7 +243,7 @@ getActiveRateCardDetails$ = new BehaviorSubject<IRateCardActiveViewModel[]>([]);
       });
   }
   onPageSizeChange(pageSize: any) {
-    this.pageNumber = 1; 
+    this.pageNumber = 1;
     this.first = 0;
     this.pageSize = pageSize;
     this.getAllRateCardDetails();
@@ -252,7 +252,7 @@ getActiveRateCardDetails$ = new BehaviorSubject<IRateCardActiveViewModel[]>([]);
   onPageChange(event: any) {
     this.first = event.first;
     this.rows = event.rows;
-    this.pageNumber = event.page + 1; 
+    this.pageNumber = event.page + 1;
     this.getAllRateCardDetails();
   }
 //get wfh allocation history

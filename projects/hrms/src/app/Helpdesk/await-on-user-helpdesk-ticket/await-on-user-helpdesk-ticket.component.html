@@ -1,0 +1,253 @@
+<div class="custom-main-component-container">
+    <!--Input search-->
+    <div class="input-group custom-search mb-3">
+        <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
+        <input type="search" #search="ngModel" [(ngModel)]="searchValue" (ngModelChange)="onSearchChange()"
+            class="form-control custom-search-input"
+            placeholder="Search by query id / requested by / category / subcategory / status / priority  "
+            aria-label="Username" aria-describedby="basic-addon1">
+    </div>
+    <!-- table code -->
+    <div class="custom-table-content">
+        @if (!dataloader) {
+        <table class="w-100">
+            <thead>
+                <th>{{'Query ID' | translate}}</th>
+                <th>{{'Requested By' | translate}}</th>
+                <th class="text-center">{{'Requested Date' | translate}}</th>
+                <th class="text-center">{{'Category' | translate}}</th>
+                <th class="text-center">{{'Subcategory' | translate}}</th>
+                <!-- <th class="text-center">{{'Department' | translate}}</th> -->
+                <!-- <th class="text-center">{{'Subject' | translate}}</th> -->
+                <th class="text-center">{{'Description' | translate}}</th>
+                <th class="text-center">{{'Requested Date' | translate}}</th>
+                <th class="text-center">{{'Status' | translate}}</th>
+                <th class="text-center">{{'Priority' | translate}}</th>
+            </thead>
+            <tbody>
+                <ng-container *ngIf="tickets?.length > 0; else noDataTemplate">
+                    <tr *ngFor="let ticket of tickets">
+
+                        <td>
+                            <a [class.project-name]="rbac.allowedToAccess('Support Helpdesk Queries Tab.update')"
+                               [class.cursor]="rbac.allowedToAccess('Support Helpdesk Queries Tab.update')"
+                               (click)="openEnd(ticket)">
+                                {{'TKT - ' + ticket.id }}
+                            </a>
+                        </td>
+                        <td>{{ ticket.employeeName || '-' }}</td>
+                        <td class="text-center">{{ ticket.createdDate | date }}</td>
+                        <!-- Category -->
+                        <td class="text-center">{{ ticket.category || '-' }}</td>
+
+                        <!-- Sub Category -->
+                        <td class="text-center">{{ ticket.subcategory || '-' }}</td>
+
+                        <!-- Department (Not in API, so show '-') -->
+                        <!-- <td class="text-center">{{ ticket.department || '-' }}</td> -->
+
+                        <!-- Subject -->
+                        <!-- Subject -->
+                        <!-- <td class="text-center">
+                             <div class="cursor">
+                                <div [ngbPopover]="popContent">
+                                    <app-info-icon />
+                                </div>
+                            </div>
+                            <ng-template #popContent>
+                                 <div>
+                                    {{ ticket.subject || '-' }}
+                                </div>
+                            </ng-template>
+                        </td> -->
+
+                        <!-- Description -->
+                        <td class="text-center">
+                            <div>
+                                <div [ngbPopover]="popContent">
+                                    <app-info-icon />
+                                </div>
+                            </div>
+                            <ng-template #popContent>
+                                <div>
+                                    {{ ticket.description || '-' }}
+                                </div>
+                            </ng-template>
+                        </td>
+
+
+                        <!-- Requested Date -->
+                        <td class="text-center">{{ ticket.createdDate | date }}</td>
+                        <td class="text-center">
+                            <span class="ticket-status" [ngClass]="{
+                          'status-open': ticket.status?.toLowerCase() === 'open',
+                          'status-closed': ticket.status?.toLowerCase() === 'closed',
+                          'status-await-on-user': ticket.status?.toLowerCase() === 'await on user',
+                          'status-rejected': ticket.status?.toLowerCase() === 'rejected'
+                        }">
+                                {{ (ticket.status | titlecase) || '-' }}
+                            </span>
+                        </td>
+
+                        <!-- Priority -->
+                        <td class="text-center">
+                            <span class="ticket-priority" [ngClass]="{
+                                            'priority-high': ticket.priority?.toLowerCase() === 'high',
+                                            'priority-medium': ticket.priority?.toLowerCase() === 'medium',
+                                            'priority-low': ticket.priority?.toLowerCase() === 'low',
+                                            'priority-urgent': ticket.priority?.toLowerCase() === 'urgent'
+                                          }">
+                                {{ ticket.priority === 'N/A' ? 'N/A' : (ticket.priority | titlecase) || '-' }}
+                            </span>
+                        </td>
+
+                    </tr>
+                </ng-container>
+                <ng-template #noDataTemplate>
+                    <tr>
+                        <app-no-data-found />
+                    </tr>
+                </ng-template>
+
+            </tbody>
+        </table>
+        }
+        @else {
+
+        <app-data-loader-content></app-data-loader-content>
+        }
+    </div>
+    @if(tickets?.length > 0) {
+    <div class="pagination-content">
+        <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
+            <div class="d-flex align-items-center gap-3 p-2">
+                <select title="text" class="form-select custom-pagination-select" [(ngModel)]="rows"
+                    (ngModelChange)="onPageSizeChange($event)">
+                    <option *ngFor="let option of options" [value]="option.value">{{ option.label }}
+                    </option>
+                </select>
+                <span class="pagination-label text-nowrap">
+                    Showing {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize : (+first + +rows)
+                    }} of {{collectionSize }}
+                </span>
+            </div>
+            <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"
+                (onPageChange)="onPageChange($event)"></p-paginator>
+        </div>
+    </div>
+    }
+</div>
+
+<ng-template #content let-offcanvas ngbAutofocus>
+    <form [formGroup]="queriesdetailsForm">
+        <div class="custom-main-popup-container resources-list-model">
+            <div class="custom-offcanvas-header p-3 d-flex justify-content-between align-items-center">
+                <div class="custom-offcanvas-title">Query Details</div>
+
+                <a (click)="offcanvas.dismiss()">
+                    <img src="icons/close.png" alt="Close Icon" class="close-icon">
+                </a>
+            </div>
+
+            <div class="query-details-content p-3">
+                <div class="ticket-badge-container mb-2">
+                    <div class="row-item">
+                        <span class="label-header">Status:</span>
+                        <span class="ticket-status" [ngClass]="{
+                        'status-open': editableStatus?.toLowerCase() === 'open',
+                        'status-closed': editableStatus?.toLowerCase() === 'closed',
+                        'status-rejected': editableStatus?.toLowerCase() === 'rejected',
+                        'status-await-on-user': editableStatus?.toLowerCase() === 'await on user',
+                        'status-inprogress': editableStatus?.toLowerCase() === 'in progress'
+                    }">
+                            {{ (editableStatus| titlecase) }}
+                        </span>
+                    </div>
+
+                    <div class="row-item">
+                        <span class="label-header">Priority:</span>
+                        <span class="ticket-priority" [ngClass]="{
+                        'priority-high': selectedTicket?.priority === 'HIGH',
+                        'priority-medium': selectedTicket?.priority === 'MEDIUM',
+                        'priority-urgent': selectedTicket?.priority === 'URGENT',
+                        'priority-low': selectedTicket?.priority === 'LOW'
+                    }">
+                            {{ selectedTicket?.priority | titlecase }}
+                        </span>
+                    </div>
+                </div>
+                <div class="ticket-content mb-3">
+                    <div>
+                        <div class="row-item mb-3">
+                            <span class="label-ticket">Ticket ID:</span>
+                            <span class="ticket-color">TKT - {{ selectedTicket?.id }}</span>
+                        </div>
+
+                        <div class="row-item mb-3">
+                            <span class="label-ticket">Category Type:</span>
+                            <span class="ticket-color">{{ selectedTicket?.category }}</span>
+                        </div>
+
+                        <div class="row-item">
+                            <span class="label-ticket">Department:</span>
+                            <span class="ticket-color">{{ selectedTicket?.department|| 'N/A' }}</span>
+                        </div>
+
+                    </div>
+                    <div class="border-line mb-2"></div>
+                    <label for="assetSubCategorys" class="label-ticket mb-2">Raised By</label>
+                    <div class="profile-content mb-3">
+                        <div>
+                            <ng-container
+                                *ngIf="getImageUrl(selectedTicket?.employeeProfilePic) as profileUrl; else showIcon">
+
+                                <img *ngIf="profileUrl" [src]="profileUrl" width="32" height="32"
+                                    class="rounded-circle object-fit-cover" />
+
+                            </ng-container>
+
+                            <ng-template #showIcon>
+                                <app-profile-icon [iconWidth]="'32'" [iconHeight]="'32'">
+                                </app-profile-icon>
+                            </ng-template>
+                        </div>
+
+                        <div class="profile-info w-100">
+                            <div class="name cursor">
+                                {{selectedTicket?.employeeName || 'N/A'}}
+                            </div>
+                            <div class="d-flex justify-content-between flex-wrap w-100">
+                                <div class="designation">
+                                    {{selectedTicket?.employeeDesignation || 'N/A'}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="border-line mb-2"></div>
+
+                    <label for="assetSubCategorys" class="label-ticket mb-2">Detailed Query</label>
+                    <div class="detailed-query">
+                        {{selectedTicket.subject || 'N/A'}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</ng-template>
+<ng-template #confirmationpopup let-model>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
+            <p class="confirmation-text"> Are you sure you want to cancel?</p>
+        </div>
+
+        <div class="custom-modal-footer">
+            <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">
+                No
+            </button>
+            <button type="submit" class="custom-btn btn-primary" (click)="cleardata();model.dismiss()">
+                Yes
+            </button>
+        </div>
+    </div>
+</ng-template>

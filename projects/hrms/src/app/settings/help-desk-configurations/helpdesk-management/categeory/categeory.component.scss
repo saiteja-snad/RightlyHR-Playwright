@@ -1,0 +1,17 @@
+.custom-component-left-content {
+    height: calc(100dvh - 8.5rem);
+}
+
+.custom-table-content {
+    height: calc(100dvh - 22rem);
+    border: 1px solid var(--table-header-bg-color);
+}
+
+.custom-btn {
+    padding: 0.4rem 1rem !important;
+}
+.pagination-content {
+    width: 100%;
+    background-color: var(--white-color);
+    margin-top: 2rem;
+}

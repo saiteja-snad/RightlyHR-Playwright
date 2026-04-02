@@ -30,7 +30,7 @@
             object-fit: cover;
         }
     }
-    
+
     .dropdown-menu {
         width: 16rem;
         height: max-content;
@@ -132,4 +132,21 @@
 
 .calender-menu-icon {
     width: 2.25rem;
+}
+
+
+.icon-wrapper {
+  width: 30px;
+  height: 30px;
+  background-color: var(--body-bg-color); /* light background */
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-wrapper i {
+  color: var(--primary-color); /* primary color */
+  font-size: 20px;
+  -webkit-text-stroke: 0.5px var(--primary-color);
 }

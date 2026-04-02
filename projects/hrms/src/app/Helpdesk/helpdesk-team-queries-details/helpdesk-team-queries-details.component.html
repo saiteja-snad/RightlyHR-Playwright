@@ -1,0 +1,365 @@
+<div class="custom-main-component-container">
+    <div class="component-header-content">
+        <div class="heading-content">
+            <div class="commpoment-name">{{'Help Desk' | translate}}
+                <span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
+            </div>
+            <div class="commpoment-name navigator" (click)="goToMyQueries()">{{'Team Queries' | translate}}
+                <span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
+            </div>
+            <div class="component-header">{{'Query Details' | translate}}</div>
+        </div>
+    </div>
+    <!--Input search-->
+    <div class="query-details-page">
+       <div class="card-container mb-3">
+            <div class="d-flex justify-content-between">
+                <div class="d-flex gap-2">
+                    <div>
+                        <ng-container *ngIf="getImageUrl(selectdata?.employeeProfilePic) as profileUrl; else showIcon">
+                            <img *ngIf="profileUrl" [src]="profileUrl" width="48" height="48" class="profile-img " />
+                        </ng-container>
+                        <ng-template #showIcon>
+                            <app-profile-icon [iconWidth]="'48'" [iconHeight]="'48'"></app-profile-icon>
+                        </ng-template>
+                    </div>
+                    <div>
+                        <div class="name">
+                            {{selectdata?.employeeName || 'N/A'}}
+                            <span class="emp-id">({{selectdata?.fusionEmpId}})</span>
+                        </div>
+                        <div class="text-nowrap designation">{{selectdata?.employeeDesignation}}</div>
+                    </div>
+                </div>
+                <!-- <div class="info-item">
+                    <span class="label">Concerned Department:</span>
+                    <span class="value">{{selectdata?.department}}</span>
+                </div> -->
+            </div>
+
+            <div class="doted-line"></div>
+
+            <div class="ticket-info">
+                <div class="flex-grid ticket-badge">
+                    <div class="label">Query ID :</div>
+                    <div class="value">{{'TKT-' + selectdata?.id}}</div>
+                </div>
+                <div class="seperator-line"></div>
+                <div class="flex-grid">
+                    <div><img src="\help-desk-logos\dashboard-square.png" class="img-logo" /></div>
+                    <div class="label">Category:</div>
+                    <div class="value">{{selectdata?.category}}</div>
+                </div>
+                <div class="seperator-line"></div>
+                <div class="flex-grid">
+                    <div><img src="\help-desk-logos\calendar.png" class="img-logo" /></div>
+                    <div class="label">Raised Date:</div>
+                    <div class="value">{{selectdata?.createdDate | date:'MMM dd, yyyy'}}</div>
+                </div>
+                <div class="seperator-line"></div>
+                <div class="flex-grid">
+                    <div><img src="\help-desk-logos\task.png" class="img-logo" /></div>
+                    <div class="label">Issue Description:</div>
+                    <div class="cursor">
+                        <div [ngbPopover]="popContent">
+                            <app-info-icon />
+                        </div>
+                    </div>
+                    <ng-template #popContent>
+                        <div>
+                            <div><b>Description: </b> {{ selectdata.description || '-' }}</div>
+                        </div>
+                    </ng-template>
+                </div>
+                <div class="seperator-line"></div>
+                <div class="flex-grid">
+                    <div><img src="\help-desk-logos\checkmark-circle.png" class="img-logo" /></div>
+                    <div class="label">Status:</div>
+                    <div class="status-badge" style="padding: 0" [ngClass]="getStatusClass(selectdata?.status)">{{ selectdata?.status }}</div>
+                </div>
+                <div class="seperator-line"></div>
+                <div class="flex-grid">
+                    <div> <img src="\help-desk-logos\label-important.jpg" class="img-logo" /></div>
+                    <div class="label">Priority:</div>
+                    <div class="priority-badge" [ngClass]="selectdata?.priority?.toLowerCase()">{{ selectdata?.priority === 'N/A' ? 'N/A' : (selectdata?.priority | titlecase) || '-'}}</div>
+                </div>
+                <div class="seperator-line"></div>
+                <div class="flex-grid">
+                    <div class="label">Attachment:</div>
+                    <ng-container *ngIf="selectdata?.attachmentUrl; else noAttachment">
+                        <div>
+                            <!-- 👁 VIEW ICON (Image / Video) -->
+                            <a *ngIf="isViewableFile(selectdata?.attachmentUrl)" type="button" class="view-btn text-nowrap"
+                                (click)="onViewAttachement(selectdata.attachmentUrl, selectdata?.id, selectdata)">
+                                <img src="/my-info-icons/View-Policy-icon.png" alt="View" class="view-icon">
+                            </a>
+                            <!-- ⬇ DOWNLOAD ICON (PDF / Excel / Other) -->
+                            <a *ngIf="!isViewableFile(selectdata?.attachmentUrl)" type="button" class="view-btn text-nowrap"
+                                (click)="downloadFile(selectdata.attachmentUrl, selectdata?.id)">
+                                <app-download-icon />
+                            </a>
+                        </div>
+                    </ng-container>
+                    <ng-template #noAttachment>
+                        <div style="font-size: 0.75rem;">N/A</div>
+                    </ng-template>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="main-content">
+        <div class="left-section">
+            <div class="conversation-section mb-3">
+
+                <!-- Show Start Conversation ONLY if no replies AND no description -->
+                <ng-container
+                    *ngIf="conversationHistory?.length === 0 && !selectdata?.description; else showConversation">
+
+                    <div class="start-conversation-container">
+                        <div class="start-conversation-box">
+
+                            <p class="title">Start a Conversation</p>
+
+                            <div class="sub-text mb-3">
+                                <p class="m-0">Have an update or need assistance regarding this ticket?</p>
+                                <p>Send a message to connect with the concerned team and move your request forward.</p>
+                            </div>
+
+                            <form [formGroup]="myqueriesdetails" (ngSubmit)="sendMessage()">
+                                <div class="message-input-wrapper">
+                                    <input type="text" class="custom-input-message" placeholder="Type a message"
+                                        formControlName="messageBody" [attr.disabled]="!isChatEnabled() ? true : null" />
+
+                                    <button class="send-button" type="submit"
+                                        [disabled]="isSending || myqueriesdetails.invalid || !isChatEnabled()">
+                                        <i class="bi bi-send-fill"></i>
+                                    </button>
+                                </div>
+                            </form>
+
+                            <div class="error-msg text-start"
+                                *ngIf="myqueriesdetails.get('messageBody')?.touched && myqueriesdetails.get('messageBody')?.invalid">
+                                Message is required
+                            </div>
+                            <div class="error-msg text-start" *ngIf="!isChatEnabled() && !isStatusClosed()">
+                                Chat is available only for the assigned user.
+                            </div>
+
+                        </div>
+                    </div>
+
+                </ng-container>
+
+                <!-- ===== CONVERSATION HISTORY SCREEN ===== -->
+                <ng-template #showConversation>
+
+                    <div class="conversation-header mb-2">Conversation</div>
+
+                    <div class="conversation-list">
+
+                        <!--  IMPORTANT CHANGE HERE -->
+                        <div *ngFor="let msg of fullConversation()" class="mb-4">
+
+                            <div class="message-wrapper mb-3" [ngClass]="msg.isMine ? 'sent' : 'received'">
+
+                                <div class="message-bubble" [ngClass]="msg.isMine ? 'sent-bubble' : 'received-bubble'">
+
+                                    <div class="message-header mb-2" [ngClass]="msg.isMine ? 'text-end' : ''">
+
+                                        <span class="sender-name">{{ msg.sender }}</span>
+                                        <span class="message-time ms-2">{{ msg.time }}</span>
+
+                                    </div>
+
+                                    <p class="message-text mb-0">{{ msg.text }}</p>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- Message Input -->
+                    <form [formGroup]="myqueriesdetails" (ngSubmit)="sendMessage()">
+                        <div class="message-input-wrapper">
+                            <input type="text" class="custom-input-message" placeholder="Type a message"
+                                formControlName="messageBody" [attr.disabled]="!isChatEnabled() ? true : null" />
+
+                            <button class="send-button" type="submit"
+                                [disabled]="isSending || myqueriesdetails.invalid || !isChatEnabled()">
+                                <i class="bi bi-send-fill"></i>
+                            </button>
+                        </div>
+                    </form>
+
+                    <div class="error-msg"
+                        *ngIf="myqueriesdetails.get('messageBody')?.touched && myqueriesdetails.get('messageBody')?.invalid">
+                        Message is required
+                    </div>
+                    <div class="error-msg" *ngIf="!isChatEnabled() && !isStatusClosed()">
+                        Chat is available only for the assigned user.
+                    </div>
+
+                </ng-template>
+
+            </div>
+            <div class="update-section">
+
+                <form [formGroup]="queriesdetailsForm">
+
+                    <div class="update-card mb-3">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label class="form-label custom-label">Assign To<span class="text-danger">*</span></label>
+                                <div class="custom-p-select-content">
+                                    <p-select [options]="allAssigneeEmployees" optionLabel="fullName" [filter]="true"
+                                        optionValue="assigneeId" formControlName="assigneeId" name="assign"
+                                        placeholder="Please select assign to" class="form-select custom-select">
+                                    </p-select>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label custom-label mb-2">Priority<span
+                                        class="text-danger">*</span></label>
+                                <div class="custom-p-select-content">
+                                    <p-select [options]="priorityDetails" optionLabel="label" optionValue="value"
+                                        formControlName="priority" name="ticketPriority" required
+                                        placeholder="Please select priority" class="form-select custom-select">
+                                    </p-select>
+
+                                </div>
+
+                            </div>
+
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label custom-label mb-2">Status<span
+                                        class="text-danger">*</span></label>
+                                <div class="custom-p-select-content">
+
+                                    <p-select [options]="status" optionLabel="label" optionValue="value"
+                                        formControlName="status" name="ticketStatus" required
+                                        placeholder="Please select status" class="form-select custom-select">
+                                    </p-select>
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <label class="form-label custom-label mb-2">{{'Additional Comments'| translate}}<span
+                                        class="text-danger">*</span></label>
+                                <textarea class="form-control custom-input" formControlName="comment"
+                                    [maxlength]="250" placeholder="Please enter additional comments"></textarea>
+                                <div class="textarea-count-text">{{ queriesdetailsForm.get('comment')?.value?.length ??
+                                    0 }}/250
+                                </div>
+                                <div *ngIf="queriesdetailsForm.get('comment')?.touched && queriesdetailsForm.get('comment')?.invalid">
+                                    <div class="error-msg" *ngIf="queriesdetailsForm.get('comment')?.hasError('required')">{{'Additional comments are required' | translate}}</div>
+                                    <div class="error-msg" *ngIf="queriesdetailsForm.get('comment')?.hasError('pattern')">{{'Please enter valid additional comments. The field cannot be empty or contain only spaces' | translate}}</div>
+                                </div>
+                            </div>
+
+
+
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-end gap-3 " *ngIf="!isStatusClosed()">
+                        <button type="button" class="custom-btn btn-secondary"
+                            (click)="cancelAssignment()">Cancel</button>
+                        <button class="custom-btn btn-primary" [disabled]="!isFormValid()" (click)="submitmess()">
+                            {{'Submit' | translate}}
+                        </button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+        <!-- ================= AUDIT LOG SECTION ================= -->
+        <div class="audit-log-section">
+            <div class="conversation-header mb-4">History</div>
+            <div *ngIf="!auditLog?.length">
+                <app-no-data-found />
+            </div>
+            <div *ngFor="let log of auditLog" class="mb-3">
+                <div class="log-card">
+                    <!-- Left Blue Dot -->
+                    <div class="circular-dot" [ngClass]="log.activityType"></div>
+                    <!-- Log Content -->
+                    <div class="log-content">
+                        <div class="log-text mb-1">
+                            <!-- CREATED -->
+                            <ng-container *ngIf="log.activityType === 'CREATED'">
+                                Query<span class="status-badge" [ngClass]="getStatusClass(log.activityType)">Created
+                                </span>
+                            </ng-container>
+                            <!-- STATUS CHANGE -->
+                            <ng-container *ngIf="log.activityType === 'STATUS_CHANGE'">
+                                Status changed from
+                                <span class="status-badge" [ngClass]="getStatusClass(log.previousStatus)">
+                                    {{ log.previousStatus }}
+                                </span>
+                                to
+                                <span class="status-badge" [ngClass]="getStatusClass(log.currentStatus)">
+                                    {{ log.currentStatus }}
+                                </span>
+                            </ng-container>
+                            <!-- ASSIGN CHANGE -->
+                            <ng-container *ngIf="log.activityType === 'ASSIGN_CHANGE'">
+                                Assigned to user
+                                <span class="status-badge user-badge">
+                                    {{ log.currentStatus }}
+                                </span>
+                            </ng-container>
+                        </div>
+                        <!-- Date Section -->
+                        <div class="log-date">
+                            {{ log.date | date:'MMM dd, yyyy' }}
+                            <span class="me-2 ms-2"> | </span>
+                            {{ log.date | date:'hh:mm a' }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+    </div>
+
+<!--View Popup-->
+<ng-template #viewattamchment let-modal>
+    <div class="custom-main-popup-container">
+        <div class="custom-poup-header-content popup-header-border">
+            <div class="pt-2">
+                <p class="popup-heading mb-0">{{viewPolicyname}}</p>
+            </div>
+            <div>
+                <a (click)="modal.dismiss(); ExpenseViewURL = null; ExpenseImageUrl = null"><img src="icons/close.png"
+                        alt="Close Icon" class="close-icon"></a>
+            </div>
+        </div>
+        <div class="custom-main-popup-content text-center">
+
+            <!--IMAGE -->
+            <div *ngIf="ExpenseImageUrl">
+                <img [src]="ExpenseImageUrl" class="modal-image" />
+            </div>
+
+            <!--  VIDEO -->
+            <div *ngIf="videoUrl">
+                <video width="100%" height="500" controls>
+                    <source [src]="videoUrl">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+
+            <!--  PDF / DOC / EXCEL -->
+            <div *ngIf="ExpenseViewURL && !videoUrl && !ExpenseImageUrl">
+                <iframe [src]="ExpenseViewURL" width="100%" height="600" frameborder="0" style="border: none;">
+                </iframe>
+            </div>
+
+        </div>
+    </div>
+</ng-template>

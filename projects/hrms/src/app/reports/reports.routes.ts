@@ -64,5 +64,14 @@ export default [
 
         { path: 'expense-reports', loadComponent: () => import('./expense-reports/expense-reports.component').then((m) => m.ExpenseReportsComponent), canActivate: [PermissionsGuard], data: { permission: 'Expense Reports.view' } },
 
+                {
+        path: 'helpdesk-reports', children: [
+            //    { path: '',redirectTo: 'leave-report', pathMatch: 'full' },
+            { path: 'detailed-queries-report', loadComponent: () => import('./help-desk-reports/detailed-queries-report/detailed-queries-report.component').then((m) => m.DetailedQueriesReportComponent), canActivate: [PermissionsGuard], data: { permission: 'Help Desk Query Detailed Report.view' } },
+            { path: 'queries-summary-report', loadComponent: () => import('./help-desk-reports/queries-summary-report/queries-summary-report.component').then((m) => m.QueriesSummaryReportComponent), canActivate: [PermissionsGuard], data: { permission: 'Help Desk Query Summary Report.view' } },
+
+        ]
+    },
+
 
 ] as Route[];

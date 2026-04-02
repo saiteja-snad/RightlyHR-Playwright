@@ -1,6 +1,6 @@
 import { Component, TemplateRef } from '@angular/core';
-import { TimesheetsTabsComponent } from "../../../shared/project-management-tabs/timesheets-tabs/timesheets-tabs.component";
-import { ProjectManagementModuleInfoComponent } from "../../../shared/project-management-tabs/project-management-module-info/project-management-module-info.component";
+import { TimesheetsTabsComponent } from '../../../shared/project-management-tabs/timesheets-tabs/timesheets-tabs.component';
+import { ProjectManagementModuleInfoComponent } from '../../../shared/project-management-tabs/project-management-module-info/project-management-module-info.component';
 import { Subscription } from 'rxjs/internal/Subscription';
 import { IResourceDetail } from '../../../timesheetmodel';
 import { RbacService } from '../../../services/rbac.service';
@@ -8,7 +8,13 @@ import { HttpService } from '../../../services/http.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { CommonModule } from '@angular/common';
 import { DatePicker } from 'primeng/datepicker';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import dayjs from 'dayjs';
 import { PaginatorModule } from 'primeng/paginator';
 import { TimeTrackingData } from '../../../Interfaces/team-summary-time-sheet.model';
@@ -16,7 +22,11 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { DataLoaderContentComponent } from '../../../shared/data-loader-content/data-loader-content.component';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { TimesheetEntry } from '../../../Interfaces/timesheetsummary';
-import { NgbModal, NgbOffcanvas, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import {
+  NgbModal,
+  NgbOffcanvas,
+  NgbPopoverModule,
+} from '@ng-bootstrap/ng-bootstrap';
 import { InfoIconComponent } from '../../../icons/info-icon/info-icon.component';
 import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { MultiSelectModule } from 'primeng/multiselect';
@@ -24,14 +34,36 @@ import { EncriptdecriptService } from '../../../services/encriptdecript.service'
 import { TimesheetFilterService } from '../../../services/timesheet-filter.service';
 import { TimesheetSharedDataService } from '../../../services/timesheet-shared-data.service';
 import { Chip } from 'primeng/chip';
+import { ConfirmationIconComponent } from '../../../icons/confirmation-icon/confirmation-icon.component';
+import { FormValidationsService } from '../../../services/form-validations.service';
+import { noWhitespaceValidator } from '../../../shared/nowhitespace/nowhitespace.component';
+import { Subject, takeUntil } from 'rxjs';
+import { environment } from '../../../../environments/environment';
+import { OpenModalService } from '../../../services/open-modal.service';
 @Component({
   selector: 'app-team-timesheets',
-  imports: [TimesheetsTabsComponent, NgbPopoverModule, FormsModule, ReactiveFormsModule, PaginatorModule, DatePicker, TranslateModule,
-    CommonModule, ProjectManagementModuleInfoComponent, DataLoaderContentComponent, NoDataFoundComponent, InfoIconComponent,
-    DateformatPipe, MultiSelectModule, Chip],
+  imports: [
+    TimesheetsTabsComponent,
+    NgbPopoverModule,
+    FormsModule,
+    ReactiveFormsModule,
+    PaginatorModule,
+    DatePicker,
+    TranslateModule,
+    CommonModule,
+    ProjectManagementModuleInfoComponent,
+    DataLoaderContentComponent,
+    NoDataFoundComponent,
+    InfoIconComponent,
+    DateformatPipe,
+    MultiSelectModule,
+    Chip,
+    ConfirmationIconComponent,
+  ],
   templateUrl: './team-timesheets.component.html',
   styleUrl: './team-timesheets.component.scss',
 })
+
 
 export class TeamTimesheetsComponent {
   empdata = {} as any;
@@ -45,7 +77,7 @@ export class TeamTimesheetsComponent {
   ranges: any;
   datepickerForm!: FormGroup;
   page = 1;
-  pageSize = 100;
+  pageSize = 10;
   rows = 10;
   collectionSize!: number;
   first = 0;
@@ -62,15 +94,30 @@ export class TeamTimesheetsComponent {
   departmentDetails = [] as any;
   tmandRmDetails = [] as any;
   previousEmployeeSelection: string[] = [];
-
-  constructor(private fb: FormBuilder, private http: HttpService, public rbac: RbacService, private router: Router,
-    private modalService: NgbModal, private encryptionService: EncriptdecriptService, private offcanvasService: NgbOffcanvas,
-    private filterService: TimesheetFilterService, private sharedDataService: TimesheetSharedDataService, private route: ActivatedRoute) { }
+  timeSheetApproveForm!: FormGroup;
+  timeSheetRejectForm!: FormGroup;
+  selectedStatus: any;
+  spinnerLoader = false;
+  destroy$: Subject<boolean> = new Subject<boolean>();
+  constructor(
+    private fb: FormBuilder,
+    private http: HttpService,
+    public rbac: RbacService,
+    private router: Router,
+    private modalService: NgbModal,
+    private encryptionService: EncriptdecriptService,
+    private offcanvasService: NgbOffcanvas,
+    private filterService: TimesheetFilterService,
+    private sharedDataService: TimesheetSharedDataService,
+    private route: ActivatedRoute,
+    public formsValidation: FormValidationsService,
+    private conformationPopup: OpenModalService,
+  ) {}
 
   ngOnInit() {
     this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.createDatepickerForm();
-    this.route.queryParams.subscribe(params => {
+    this.route.queryParams.subscribe((params) => {
       if (!params['data']) {
         this.filterService.clearFilters();
       }
@@ -83,8 +130,33 @@ export class TeamTimesheetsComponent {
     this.getclientData();
     this.getdepartmentData();
     this.getTmandRMData();
+    this.intializeForm();
   }
-
+  intializeForm() {
+    this.timeSheetApproveForm = this.fb.group({
+      comments: [null, [Validators.required, Validators.maxLength(250)]],
+    });
+    this.timeSheetApproveForm
+      .get('comments')
+      ?.valueChanges.subscribe((value: string) => {
+        if (!value || value.trim() === '') {
+          this.selectedStatus = null; // remove chip highlight if cleared
+        }
+      });
+    this.timeSheetRejectForm = this.fb.group({
+      comments: [
+        null,
+        [Validators.required, Validators.maxLength(250), noWhitespaceValidator],
+      ],
+    });
+    this.timeSheetRejectForm
+      .get('comments')
+      ?.valueChanges.subscribe((value: string) => {
+        if (!value || value.trim() === '') {
+          this.selectedStatus = null; // remove chip highlight if cleared
+        }
+      });
+  }
   //get all projects list
   getprojectData(): void {
     this.subscription = this.sharedDataService.getProjectData().subscribe({
@@ -145,7 +217,11 @@ export class TeamTimesheetsComponent {
   }
 
   toggleFilters(content: TemplateRef<any>) {
-    this.offcanvasService.open(content, { position: 'end', backdrop: 'static', keyboard: false });
+    this.offcanvasService.open(content, {
+      position: 'end',
+      backdrop: 'static',
+      keyboard: false,
+    });
   }
 
   closeCanvas() {
@@ -163,7 +239,7 @@ export class TeamTimesheetsComponent {
       projectId: null,
       clientId: null,
       departmentId: null,
-      tmorrmId: null
+      tmorrmId: null,
     });
     // Clear filter service
     this.filterService.clearFilters();
@@ -201,33 +277,64 @@ export class TeamTimesheetsComponent {
   selectedEmployeeName!: string;
   openModal(entries: any, content?: any, empName?: string) {
     this.selectedEmployeeName = empName || '';
-    this.selectedEntries = entries?.filter((ele: any) => ele?.status !== 'Not Entered');;
-    this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
+    this.selectedEntries = entries?.filter(
+      (ele: any) => ele?.status !== 'Not Entered',
+    );
+    this.modalService.open(content, {
+      centered: true,
+      size: 'lg',
+      backdrop: 'static',
+    });
   }
-
+  // open approva and reject popup
+  selectedData: any;
+  conformationstatus!: any;
+  openModalapprovals(modal: any, request: any, conformationstatus: string) {
+    this.modalService.open(modal, { centered: true, backdrop: 'static' });
+    console.log('Selected Request:', request);
+    if (request) {
+      // single row case
+      this.selectedData = request;
+    }
+    this.conformationstatus = conformationstatus;
+    this.timeSheetApproveForm.get('comments')?.reset();
+    this.timeSheetRejectForm.get('comments')?.reset();
+  }
   getResourceDetailsByManagerId() {
     const EmployeeId = this.empdata?.employeeId;
-    this.subscription = this.http.getData(`Timesheet/get-resources?employeeId=${EmployeeId}`).subscribe({
-      next: (res: any) => {
-        if (res?.success) {
-          const employeeList = res.data.filter((emp: IResourceDetail) =>
-            emp.id !== EmployeeId && emp.isReportee == true).map((emp: IResourceDetail) => ({
-              ...emp,
-              fullName: emp.fusionEmpId ? `${emp.fusionEmpId} - ${emp.name}` : emp.name,
-              key: 'team',
-            }));
-          if (employeeList.length > 0) {
-            const allEmployeesOption = { id: 'ALL_EMPLOYEES', fullName: 'All Employees', key: 'team' };
-            this.resourcesList = [allEmployeesOption, ...employeeList];
-            this.datepickerForm.patchValue({ resourceId: ['ALL_EMPLOYEES'] });
-          } else {
-            this.resourcesList = [];
-            this.datepickerForm.patchValue({ resourceId: [] });
+    this.subscription = this.http
+      .getData(`Timesheet/get-resources?employeeId=${EmployeeId}`)
+      .subscribe({
+        next: (res: any) => {
+          if (res?.success) {
+            const employeeList = res.data
+              .filter(
+                (emp: IResourceDetail) =>
+                  emp.id !== EmployeeId && emp.isReportee == true,
+              )
+              .map((emp: IResourceDetail) => ({
+                ...emp,
+                fullName: emp.fusionEmpId
+                  ? `${emp.fusionEmpId} - ${emp.name}`
+                  : emp.name,
+                key: 'team',
+              }));
+            if (employeeList.length > 0) {
+              const allEmployeesOption = {
+                id: 'ALL_EMPLOYEES',
+                fullName: 'All Employees',
+                key: 'team',
+              };
+              this.resourcesList = [allEmployeesOption, ...employeeList];
+              this.datepickerForm.patchValue({ resourceId: ['ALL_EMPLOYEES'] });
+            } else {
+              this.resourcesList = [];
+              this.datepickerForm.patchValue({ resourceId: [] });
+            }
           }
-        }
-      },
-      error: (err: any) => console.error(err),
-    });
+        },
+        error: (err: any) => console.error(err),
+      });
   }
 
   // getAllEmployeeDetails() {
@@ -250,37 +357,47 @@ export class TeamTimesheetsComponent {
       clientId: formdata.clientId,
       projectId: formdata.projectId,
       departmentId: formdata.departmentId,
-      reportingId: formdata.tmorrmId
+      reportingId: formdata.tmorrmId,
     };
-    this.subscription = this.sharedDataService.getAllEmployeeDetails(this.http, EmployeeId, filters).subscribe({
-      next: (res: any) => {
-        if (Array.isArray(res.data)) {
-          const employeeList = this.sharedDataService.formatEmployeeList(res.data, EmployeeId).map((emp: any) => ({
-            ...emp,
-            key: 'all',
-          }));
-          if (employeeList.length > 0) {
-            const allEmployeesOption = { label: 'All Employees', value: 'ALL_EMPLOYEES', key: 'all' };
-            this.activeEmplist = [allEmployeesOption, ...employeeList];
-            const savedFilters = this.filterService.getCurrentFilters();
-            if (!savedFilters || !savedFilters.resourceId) {
-              this.datepickerForm.patchValue({ resourceId: ['ALL_EMPLOYEES'] });
+    this.subscription = this.sharedDataService
+      .getAllEmployeeDetails(this.http, EmployeeId, filters)
+      .subscribe({
+        next: (res: any) => {
+          if (Array.isArray(res.data)) {
+            const employeeList = this.sharedDataService
+              .formatEmployeeList(res.data, EmployeeId)
+              .map((emp: any) => ({
+                ...emp,
+                key: 'all',
+              }));
+            if (employeeList.length > 0) {
+              const allEmployeesOption = {
+                label: 'All Employees',
+                value: 'ALL_EMPLOYEES',
+                key: 'all',
+              };
+              this.activeEmplist = [allEmployeesOption, ...employeeList];
+              const savedFilters = this.filterService.getCurrentFilters();
+              if (!savedFilters || !savedFilters.resourceId) {
+                this.datepickerForm.patchValue({
+                  resourceId: ['ALL_EMPLOYEES'],
+                });
+              }
+            } else {
+              this.activeEmplist = [];
+              this.datepickerForm.patchValue({ resourceId: [] });
             }
           } else {
             this.activeEmplist = [];
             this.datepickerForm.patchValue({ resourceId: [] });
           }
-        } else {
+        },
+        error: (err) => {
+          console.error('Error fetching employees:', err);
           this.activeEmplist = [];
           this.datepickerForm.patchValue({ resourceId: [] });
-        }
-      },
-      error: (err) => {
-        console.error('Error fetching employees:', err);
-        this.activeEmplist = [];
-        this.datepickerForm.patchValue({ resourceId: [] });
-      },
-    });
+        },
+      });
   }
 
   onSubmit() {
@@ -292,8 +409,14 @@ export class TeamTimesheetsComponent {
     const selectedIds = formValue.resourceId || [];
     let employeeIds: string | null = null;
     if (selectedIds.includes('ALL_EMPLOYEES')) {
-      const currentList = this.rbac.allowedToAccess('All Employees (Timesheet).view') ? this.activeEmplist : this.resourcesList;
-      const allIds = currentList.filter((emp: any) => (emp.value || emp.id) !== 'ALL_EMPLOYEES').map((emp: any) => emp.value || emp.id);
+      const currentList = this.rbac.allowedToAccess(
+        'All Employees (Timesheet).view',
+      )
+        ? this.activeEmplist
+        : this.resourcesList;
+      const allIds = currentList
+        .filter((emp: any) => (emp.value || emp.id) !== 'ALL_EMPLOYEES')
+        .map((emp: any) => emp.value || emp.id);
       employeeIds = allIds.length > 0 ? allIds.join(',') : null;
     } else if (selectedIds.length > 0) {
       employeeIds = selectedIds.join(',');
@@ -307,11 +430,17 @@ export class TeamTimesheetsComponent {
   getteamsummary(employeeIds?: string | null) {
     const formValue = this.datepickerForm.value;
     const [startDate, endDate] = formValue.dateRange || [];
-    const start = startDate ? dayjs(startDate).format('YYYY-MM-DD') : dayjs().startOf('month').format('YYYY-MM-DD');
-    const end = endDate ? dayjs(endDate).format('YYYY-MM-DD') : dayjs().endOf('month').format('YYYY-MM-DD');
+    const start = startDate
+      ? dayjs(startDate).format('YYYY-MM-DD')
+      : dayjs().startOf('month').format('YYYY-MM-DD');
+    const end = endDate
+      ? dayjs(endDate).format('YYYY-MM-DD')
+      : dayjs().endOf('month').format('YYYY-MM-DD');
     let url = `Timesheet/teamsummary?startDate=${start}&endDate=${end}&pageNumber=${this.page}&pageSize=${this.pageSize}`;
     const hasMyTeam = this.rbac.allowedToAccess('My Team (Timesheet).view');
-    const hasAllEmployees = this.rbac.allowedToAccess('All Employees (Timesheet).view');
+    const hasAllEmployees = this.rbac.allowedToAccess(
+      'All Employees (Timesheet).view',
+    );
     // OLD LOGIC
     // Case 1: Only "My Team" — include manager resourceId
     if (hasMyTeam && !hasAllEmployees) {
@@ -327,11 +456,12 @@ export class TeamTimesheetsComponent {
         this.loading = false;
         if (res?.success) {
           this.teamSummaryData = res.data;
-          this.totalhrs = res?.pagination?.meta?.totalLoggedHHMMAllEmployees || '00:00';
+          this.totalhrs =
+            res?.pagination?.meta?.totalLoggedHHMMAllEmployees || '00:00';
           this.collectionSize = res.pagination.totalRecords;
           if (this.teamSummaryData.length > 0) {
             this.dateHeaders = this.teamSummaryData[0].dailyData.map((d) =>
-              dayjs(d.date).format('D MMM<br>ddd')
+              dayjs(d.date).format('D MMM<br>ddd'),
             );
           }
         }
@@ -342,25 +472,51 @@ export class TeamTimesheetsComponent {
     });
   }
 
-  // onPageSizeChange(newPageSize: number) {
-  //   this.pageSize = newPageSize;
-  //   this.rows = newPageSize;
-  //   this.page = 1;
-  //   this.first = 0;
-  //   this.getteamsummary();
-  // }
+  onPageSizeChange(newPageSize: number) {
+    this.pageSize = newPageSize;
+    this.rows = newPageSize;
+    this.page = 1;
+    this.first = 0;
+    this.getteamsummaryWithCurrentFilters();
+  }
 
-  // onPageChange(event: any) {
-  //   this.page = event.page + 1;
-  //   this.pageSize = event.rows;
-  //   this.first = event.first;
-  //   this.getteamsummary();
-  // }
+  onPageChange(event: any) {
+    this.page = event.page + 1;
+    this.pageSize = event.rows;
+    this.first = event.first;
+    this.getteamsummaryWithCurrentFilters();
+  }
+
+  private getteamsummaryWithCurrentFilters() {
+    if (this.isFilterApplied()) {
+      const formValue = this.datepickerForm.value;
+      const selectedIds = formValue.resourceId || [];
+      let employeeIds: string | null = null;
+
+      if (selectedIds.includes('ALL_EMPLOYEES')) {
+        const currentList = this.rbac.allowedToAccess(
+          'All Employees (Timesheet).view',
+        )
+          ? this.activeEmplist
+          : this.resourcesList;
+        const allIds = currentList
+          .filter((emp: any) => (emp.value || emp.id) !== 'ALL_EMPLOYEES')
+          .map((emp: any) => emp.value || emp.id);
+        employeeIds = allIds.length > 0 ? allIds.join(',') : null;
+      } else if (selectedIds.length > 0) {
+        employeeIds = selectedIds.join(',');
+      }
+
+      this.getteamsummary(employeeIds);
+    } else {
+      this.getteamsummary();
+    }
+  }
 
   navigateView(employeeId: any) {
     const formData = {
       ...this.datepickerForm.value,
-      resourceId: employeeId // Pass selected employee as single value
+      resourceId: employeeId, // Pass selected employee as single value
     };
     const encryptedData = this.encryptionService.encrypt(formData);
     this.filterService.clearFilters();
@@ -379,17 +535,26 @@ export class TeamTimesheetsComponent {
     const selectedIds = event.value || [];
     // If both "All Employees" and individual employees are selected
     if (selectedIds.includes('ALL_EMPLOYEES') && selectedIds.length > 1) {
-      const wasAllEmployeesSelected = this.previousEmployeeSelection.includes('ALL_EMPLOYEES');
+      const wasAllEmployeesSelected =
+        this.previousEmployeeSelection.includes('ALL_EMPLOYEES');
       if (wasAllEmployeesSelected) {
         // User added individual employee(s) while "All Employees" was selected
         // Remove "All Employees", keep individual selections
-        const filteredIds = selectedIds.filter((id: string) => id !== 'ALL_EMPLOYEES');
-        this.datepickerForm.patchValue({ resourceId: filteredIds }, { emitEvent: false });
+        const filteredIds = selectedIds.filter(
+          (id: string) => id !== 'ALL_EMPLOYEES',
+        );
+        this.datepickerForm.patchValue(
+          { resourceId: filteredIds },
+          { emitEvent: false },
+        );
         this.previousEmployeeSelection = filteredIds;
       } else {
         // User selected "All Employees" while individual employees were selected
         // Keep only "All Employees"
-        this.datepickerForm.patchValue({ resourceId: ['ALL_EMPLOYEES'] }, { emitEvent: false });
+        this.datepickerForm.patchValue(
+          { resourceId: ['ALL_EMPLOYEES'] },
+          { emitEvent: false },
+        );
         this.previousEmployeeSelection = ['ALL_EMPLOYEES'];
       }
     } else {
@@ -397,14 +562,21 @@ export class TeamTimesheetsComponent {
     }
   }
 
+
   getSelectedFilters(): any[] {
     const filters: any[] = [];
     const formValue = this.datepickerForm.value;
     if (formValue.projectId && formValue.projectId.length > 0) {
       formValue.projectId.forEach((id: any) => {
-        const project = this.projectDetails.find((p: any) => p.projectId === id);
+        const project = this.projectDetails.find(
+          (p: any) => p.projectId === id,
+        );
         if (project) {
-          filters.push({ type: 'projectId', label: project.projectName, value: id });
+          filters.push({
+            type: 'projectId',
+            label: project.projectName,
+            value: id,
+          });
         }
       });
     }
@@ -412,7 +584,11 @@ export class TeamTimesheetsComponent {
       formValue.clientId.forEach((id: any) => {
         const client = this.clientDetails.find((c: any) => c.clientId === id);
         if (client) {
-          filters.push({ type: 'clientId', label: client.clientName, value: id });
+          filters.push({
+            type: 'clientId',
+            label: client.clientName,
+            value: id,
+          });
         }
       });
     }
@@ -420,7 +596,11 @@ export class TeamTimesheetsComponent {
       formValue.departmentId.forEach((id: any) => {
         const dept = this.departmentDetails.find((d: any) => d.sno === id);
         if (dept) {
-          filters.push({ type: 'departmentId', label: dept.departmentName, value: id });
+          filters.push({
+            type: 'departmentId',
+            label: dept.departmentName,
+            value: id,
+          });
         }
       });
     }
@@ -469,6 +649,158 @@ export class TeamTimesheetsComponent {
   }
 
   openMoreFiltersModal(content?: any) {
-    this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
+    this.modalService.open(content, {
+      centered: true,
+      size: 'lg',
+      backdrop: 'static',
+    });
+  }
+  // approve submit post method
+  handleAccept(timeSheetApproveForm: FormGroup): void {
+    this.spinnerLoader = true;
+    let payload: any;
+    if (timeSheetApproveForm.valid) {
+      const formData = timeSheetApproveForm.value;
+      const approvedBy = this.empdata.employeeId.toString();
+      const comments = formData.comments;
+
+      // Single selection
+      payload = {
+        requestProcessedBy: approvedBy,
+        status: this.conformationstatus,
+        comments: comments,
+        onBehalfOfApproval: true,
+        moduleId: environment.timesheetModuleId,
+        headerRequests: [
+          {
+            headerID: this.selectedData.headerID,
+            currentStage: '1', // Assuming stage 1 for rejection, adjust as needed
+          },
+        ],
+      };
+    }
+
+    // Same API call
+    this.http
+      .putData(`v2/PendingApproval/multiapprovals`, payload)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response: any) => {
+          this.modalService.dismissAll();
+          if (response) {
+            if (response.data.failureRecordsCount >= 1) {
+              this.conformationPopup.openErrorModal(
+                response.data.failureRecords[0].message,
+              );
+            } else {
+              this.conformationPopup.openSuccessModal(
+                this.conformationstatus === 'Processed'
+                  ? 'Timesheet request approved successfully'
+                  : 'Timesheet request rejected successfully',
+              );
+            }
+          }
+          // if (response) {
+          //   // Single
+          //   this.conformationPopup.openSuccessModal(
+          //     this.conformationstatus === 'Processed'
+          //       ? 'Timesheet request approved successfully'
+          //       : 'Timesheet request rejected successfully'
+          //   );
+          // }
+        },
+        error: (reason: any) => {
+          this.spinnerLoader = false;
+          this.timeSheetApproveForm.reset();
+          this.timeSheetRejectForm.reset();
+          this.modalService.dismissAll();
+          this.conformationPopup.openErrorModal(reason.error.message);
+        },
+        complete: () => {
+          this.spinnerLoader = false;
+          this.selectedEntries = [];
+          this.timeSheetApproveForm.reset();
+          this.timeSheetRejectForm.reset();
+          this.onSubmit();
+        },
+      });
+  }
+
+  // reject submit post method
+  handlereject(timeSheetRejectForm: FormGroup): void {
+    this.spinnerLoader = true;
+    let payload: any;
+    if (timeSheetRejectForm.valid) {
+      const formData = timeSheetRejectForm.value;
+      const approvedBy = this.empdata.employeeId.toString();
+      const comments = formData.comments;
+
+      // Single selection
+      payload = {
+        requestProcessedBy: approvedBy,
+        status: this.conformationstatus,
+        comments: comments,
+        onBehalfOfApproval: true,
+        moduleId: environment.timesheetModuleId,
+        headerRequests: [
+          {
+            headerID: this.selectedData.headerID,
+            currentStage: '1', // Assuming stage 1 for rejection, adjust as needed
+          },
+        ],
+      };
+
+      // Same API call
+      this.http
+        .putData(`v2/PendingApproval/multiapprovals`, payload)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (response: any) => {
+            this.modalService.dismissAll();
+            if (response) {
+              if (response.data.failureRecordsCount >= 1) {
+                this.conformationPopup.openErrorModal(
+                  response.data.failureRecords[0].message,
+                );
+              } else {
+                this.conformationPopup.openSuccessModal(
+                  this.conformationstatus === 'Processed'
+                    ? 'Timesheet request approved successfully'
+                    : 'Timesheet request rejected successfully',
+                );
+              }
+            }
+            // if (response) {
+            //   // Single
+            //   this.conformationPopup.openSuccessModal(
+            //     this.conformationstatus === 'Processed'
+            //       ? 'Timesheet request approved successfully'
+            //       : 'Timesheet request rejected successfully'
+            //   );
+            // }
+          },
+          error: (reason: any) => {
+            this.spinnerLoader = false;
+            this.timeSheetApproveForm.reset();
+            this.timeSheetRejectForm.reset();
+            this.modalService.dismissAll();
+            this.conformationPopup.openErrorModal(reason.error.message);
+          },
+          complete: () => {
+            this.spinnerLoader = false;
+            this.selectedEntries = [];
+            this.timeSheetApproveForm.reset();
+            this.timeSheetRejectForm.reset();
+            this.onSubmit();
+          },
+        });
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
+    this.subscription?.unsubscribe();
+    this.http.setEmployeeIdTimesheet({}, 0, null);
   }
 }

@@ -92,6 +92,9 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   holidaysData: any[] = [];
   weekendsData: any[] = [];
   leavesData: any[] = [];
+  currentRowIndex: number = -1;
+  currentDay: string = '';
+
   @ViewChild('datePicker') datePicker: any;
   @ViewChild('deleteconformation', { static: true }) deleteconformation!: TemplateRef<any>;
   @ViewChild('employeeDropdown') employeeDropdown: any;
@@ -529,7 +532,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       selectedProject: [selectedProject],
       isNoClientProject: [row.isNoClientProject],
       searchTerm: [''],
-      resourceId: [null],
+      resourceId: [row.resourceId],
       selectedProjectResource: [null],
       mon: this.createDayEntryFromCell(row, this.weekMatrix.days[0], isProjectSelected),
       tue: this.createDayEntryFromCell(row, this.weekMatrix.days[1], isProjectSelected),
@@ -623,7 +626,8 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       isBlocked: [{ value: cell.isBlocked, disabled: true }],
       rejectReason: [cell.rejectReason || ''],
       blockReason: [cell.blockReason || ''],
-      resourceId: [{ value: row.resourceId || null }]
+      resourceId: [row.resourceId || null]
+
     });
   }
 
@@ -1067,6 +1071,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     }
   }
 
+
   //TIME ENTERIY FOR TABLE
   formatTime(event: any, dayName: string, rowIndex: number, duration: string, dayFormNew: AbstractControl | null) {
     // project.get('sun')
@@ -1085,13 +1090,18 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     }
     // Auto-save only on blur to prevent duplicate calls
     if (formatted && (event.type === 'blur' || event.type === 'keyup') && !this.isDeleteModalOpen && !this.userClickedNo && !this.isModalOpen) {
+
+
       const timeoutKey = `${rowIndex}-${dayName}`;
       // Clear any existing timeout for this specific field
       if (this.autoSaveTimeouts.has(timeoutKey)) {
         clearTimeout(this.autoSaveTimeouts.get(timeoutKey));
       }
       // Don't auto-save if already processed or waiting for approval
-      if (approvalStatus !== 'Processed' && approvalStatus !== 'Waiting for Approval') {
+      if (approvalStatus !== 'Processed' && approvalStatus !== 'Waiting for Approval' &&
+        !((approvalStatus?.toLowerCase() === 'draft' || approvalStatus?.toLowerCase() === 'rejected') && event.type === 'blur')
+      ) {
+
         // Add small delay to prevent rapid successive calls
         const timeout = setTimeout(() => {
           this.openModal(this.addtask, dayFormNew, rowIndex, dayName);
@@ -1371,8 +1381,8 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     const selectedProjectResource = selectedResource ? {
       ...selectedResource,
 
-      weekendWorkAllowed: project.isWeekendAllowed ?? selectedResource.weekendWorkAllowed,
-      project: { ...selectedResource.project, isWeekendAllowed: project.isWeekendAllowed }
+      weekendWorkAllowed: selectedResource.weekendWorkAllowed,
+      project: { ...selectedResource.project }
     } : null;
 
     // Set component-level variables for modal display
@@ -1419,6 +1429,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       };
 
       const dayStatus = this.dayValidationService.checkDayStatus(entryDate, validationContext);
+      
 
       dayForm.patchValue({
         clientId: client.clientId,
@@ -1427,6 +1438,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
         projectName: project.projectName,
         phaseId: phase ? phase.phaseId : null,
         phaseName: phase ? phase.phaseName : null,
+        entryDate: entryDate,
         resourceId: selectedResource?.resourceId,
         isBlocked: dayStatus.blocked,
         blockReason: dayStatus.blockReason,
@@ -1452,6 +1464,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       dropdownBtn.classList.remove('show');
       dropdownBtn.setAttribute('aria-expanded', 'false');
     }
+
   }
 
   getClientColor(clientId: number): string {
@@ -1512,7 +1525,8 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   //OPEN TIME ENTERIY
   openModal(content: any, dayForm: AbstractControl | null, index: number, dayKey: string) {
     if (dayForm instanceof FormGroup) {
-
+      this.currentRowIndex = index;
+      this.currentDay = dayKey;
       this.isModalOpen = true;
       const modalRef = this.modalService.open(content, { centered: true, backdrop: 'static' });
       modalRef.result.finally(() => {
@@ -1633,7 +1647,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       totalDurationSeconds: this.hhmmToSeconds(formValue.duration) || 0,
       isBillable: formValue.isBillable || false,
       moduleId: 30,
-      resourceId: this.dayForm.get('resourceId')?.value?.value || formValue.resourceId || null,
+      resourceId: formValue.resourceId || null,
     };
     // POST request
     this.http.postdata('v2/Timesheet/save-or-update', payload).subscribe({
@@ -1676,11 +1690,45 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   }
 
   cleardata() {
-    this.timesheetForm.reset()
+    const status = this.dayForm.get('approvalStatus')?.value;
+
+    if (status !== 'Processed' &&
+      status !== 'Waiting for Approval' &&
+      status !== 'draft' && status !== 'Rejected'
+    ) {
+
+      this.dayForm.patchValue({
+        duration: null,
+        description: null,
+        startTime: null,
+        endTime: null,
+        approvalStatus: 'Not Entered'
+      }, { emitEvent: true });
+
+      this.timesheetForm.get('duration')?.patchValue(null);
+
+      // Hide icon using existing showDots structure
+      if (this.currentRowIndex >= 0 && this.currentDay) {
+        this.showDots[this.currentRowIndex][this.currentDay] = false;
+      }
+    }
+
     this.modalService.dismissAll();
     this.formattedweakendStart = moment(this.start).format('YYYY-MM-DD');
-    this.getTimeSheetEntriesbyEmployeeId(this.employeeId, this.formattedweakendStart);
   }
+
+  // Add this new helper method
+  shouldShowIcon(project: AbstractControl, day: string, rowIndex: number): boolean {
+    const dayControl = project.get(day);
+    if (!dayControl) return false;
+
+    const duration = dayControl.get('duration')?.value;
+    const approvalStatus = dayControl.get('approvalStatus')?.value;
+    const showDot = this.showDots[rowIndex]?.[day];
+
+    return !!(showDot || duration || (approvalStatus && approvalStatus.toLowerCase() !== 'not entered'));
+  }
+
 
   //payload for submit-for-approval
   buildPayload(): any {
@@ -1934,7 +1982,8 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
             )
             .map(item => ({
               startDate: item.startdate,
-              endDate: item.enddate
+              endDate: item.enddate,
+              durationType: item.durationType
             }));
         }
         this.updateValidationContext();

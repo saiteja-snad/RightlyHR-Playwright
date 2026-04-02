@@ -24,7 +24,7 @@ import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-foun
 import { PaginatorModule } from 'primeng/paginator';
 import { Router } from '@angular/router';
 import { Skeleton } from 'primeng/skeleton';
-import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
+import { DateformatPipe } from '../../../pipes/dateformat.pipe';
 @Component({
   selector: 'app-time-sheet-approvals',
   imports: [
@@ -39,9 +39,8 @@ import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
     ConfirmationIconComponent,
     FormsModule,
     NoDataFoundComponent,
-    Skeleton,
-    DateformatPipe,
-  ],
+    Skeleton
+],
   templateUrl: './time-sheet-approvals.component.html',
   styleUrl: './time-sheet-approvals.component.scss',
   // encapsulation: ViewEncapsulation.None,

@@ -113,7 +113,7 @@
                         'compensatory off leaves',
                         'comp off leave',
                         'compoff leave'
-                        ].includes((item.category?.name || '').toLowerCase())
+                        ].includes((item.category.name || '').toLowerCase())
                         ) {
                         <div class="separator"></div>
                         <div class="leave-category-text">
@@ -284,7 +284,7 @@
                         <label class="form-label custom-label mb-2">{{'Reason For Leave'| translate}}<span class="text-danger">*</span></label>
                         <textarea class="form-control custom-input" [maxlength]="250" [minlength]="10" formControlName="reason"
                             placeholder="Please enter reason" (input)="formsValidation.validateInput(leaveForm.get('reason'))"></textarea>
-                        <div class="textarea-count-text">{{ leaveForm.get('reason')?.value?.length || 0 }}/250</div>
+                        <div class="textarea-count-text">{{ (leaveForm.get('reason')?.value || '').length }}/250</div>
                         <div class="error-msg">
                             <div *ngIf="(leaveForm.get('reason')?.touched && leaveForm.get('reason')?.errors?.['required'])">Reason is required</div>
                             <div *ngIf="leaveForm.get('reason')?.invalid && leaveForm.get('reason')?.errors?.['minlength']">

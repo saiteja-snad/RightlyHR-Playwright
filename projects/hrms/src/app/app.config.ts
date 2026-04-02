@@ -13,7 +13,7 @@ import { provideDaterangepickerLocale } from "ngx-daterangepicker-bootstrap";
 import { OAuthService, provideOAuthClient } from 'angular-oauth2-oidc';
 import { microsoftAuthConfig } from './auth/auth.config';
 import { TokeninterceptorsInterceptor } from './auth/interceptor/tokeninterceptor.interceptor';
-import { GoogleLoginProvider, SocialAuthServiceConfig, SocialAuthService } from '@abacritt/angularx-social-login';
+import { GoogleLoginProvider, SocialAuthServiceConfig, SOCIAL_AUTH_CONFIG } from '@abacritt/angularx-social-login';
 import { environment } from '../environments/environment';
 
 export function createTranslateLoader(http: HttpClient) {
@@ -58,9 +58,8 @@ export const appConfig: ApplicationConfig = {
     provideNoopAnimations(),
     provideOAuthClient(),
     provideAppInitializer(() => initializeAuth()),
-    SocialAuthService,
     {
-      provide: 'SocialAuthServiceConfig',
+      provide: SOCIAL_AUTH_CONFIG,
       useValue: {
         autoLogin: false,
         providers: [

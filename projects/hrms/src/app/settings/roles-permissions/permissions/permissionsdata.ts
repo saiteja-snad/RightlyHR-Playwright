@@ -1169,6 +1169,15 @@ export const permissionsData = [
     //Calender Tabs Sections
   { fields: 'Employee Helpdesk Queries Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Support Helpdesk Queries Tab', View: false, Update: false, Create: false, Delete: false },
+
+   //help desk reports Actions
+ { fields: 'Help Desk Query Detailed Report', View: false, Update: false, Create: false, Delete: false },
+ { fields: 'Help Desk Query Detailed Report - Generate', View: false, Update: false, Create: false, Delete: false },
+ { fields: 'Help Desk Query Detailed Report - Export', View: false, Update: false, Create: false, Delete: false },
+ { fields: 'Help Desk Query Summary Report', View: false, Update: false, Create: false, Delete: false },
+ { fields: 'Help Desk Query Summary Report - Generate', View: false, Update: false, Create: false, Delete: false },
+ { fields: 'Help Desk Query Summary Report - Export', View: false, Update: false, Create: false, Delete: false },
+ { fields: 'Help Desk Reports', View: false, Update: false, Create: false, Delete: false },
 ];
 
 

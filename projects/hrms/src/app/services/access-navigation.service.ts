@@ -1778,7 +1778,8 @@ export class AccessNavigationService {
         }
         break;
 
-   case '/pending-approvals/on-boarding':
+
+      case '/pending-approvals/on-boarding':
         if (this.rbac.allowedToAccess('Onboarding main Tab.view')) {
           for (const item of ONBOARDING_APPROVALS_TABS) {
             if (this.rbac.allowedToAccess(item.permission) && item.permission === 'Probation Details Tab.view') {

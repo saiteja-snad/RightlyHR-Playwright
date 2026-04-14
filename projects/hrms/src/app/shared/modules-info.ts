@@ -335,4 +335,9 @@ export const MODULE_INFOS = {
      HELP_DESK_REPORTS_MODULE_INFO: "The Help Desk Report provides insights into employee support queries raised within the organization. It helps administrators and support teams monitor ticket activities, track issue resolution, and analyze support performance.",
     HELP_DESK_DETAILED_REPORTS_MODULE_INFO:"The Help Desk Detailed Report displays complete information about each help desk ticket, including employee details, issue category, priority, and status. It helps support teams track and manage individual queries effectively.",
     HELP_DESK_SUMMARY_REPORTS_MODULE_INFO:"The Help Desk Summary Report provides an aggregated overview of help desk tickets based on category, and assigned personnel. It helps management quickly analyze ticket distribution and overall support performance.",
+
+    //IT Support Reports
+    ITSUPPORT_REPORTS_MODULE_INFO: "The IT Support Report provides insights into IT-related support tickets raised by employees across the organization. It helps IT teams monitor issue resolution, track ticket progress, and analyze overall support performance.",
+    IT_SUPPORT_SUMMARY_REPORTS_MODULE_INFO: "The IT Support Detailed Report displays complete information for each IT support ticket, including employee details, issue category, priority, assigned support member, and ticket status. It helps IT teams track and manage individual technical issues efficiently.",
+    IT_SUPPORT_DETAILED_REPORTS_MODULE_INFO: "The IT Support Summary Report provides an overview of IT tickets based on the assigned support personnel and their current status. It helps management quickly understand workload distribution and the overall resolution status of IT support requests.",
 }

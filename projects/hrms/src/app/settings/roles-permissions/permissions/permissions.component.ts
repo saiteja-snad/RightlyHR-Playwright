@@ -1408,6 +1408,15 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'IT Support Sub-Category',
 
   ];
+itSupportReportsTabsFields=[
+  'IT Support Summary Report',
+  'IT Support Detailed Report - Generate',
+  'IT Support Detailed Report - Export',
+  'IT Support Detailed Report',
+  'IT Support Summary Report - Generate',
+  'IT Support Summary Report - Export'
+];
+
 
   helpDeskReportsTabsFields=[
   'Help Desk Query Detailed Report',

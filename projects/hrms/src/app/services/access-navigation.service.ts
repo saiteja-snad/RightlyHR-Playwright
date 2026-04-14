@@ -1731,7 +1731,8 @@ export class AccessNavigationService {
         }
         break;
 
-   case '/pending-approvals/on-boarding':
+
+      case '/pending-approvals/on-boarding':
         if (this.rbac.allowedToAccess('Onboarding main Tab.view')) {
           for (const item of ONBOARDING_APPROVALS_TABS) {
             if (this.rbac.allowedToAccess(item.permission) && item.permission === 'Probation Details Tab.view') {
@@ -1814,14 +1815,14 @@ export class AccessNavigationService {
           return (route = '/pending-approvals/on-boarding/appointment-letter-history');
         }
         break;
-      
+
       case '/pending-approvals/on-boarding/nda-letter-history':
         if (this.rbac.allowedToAccess('Documents History Non-Disclosure Agreement Letter.view')) {
           return (route = '/pending-approvals/on-boarding/nda-letter-history');
         }
         break;
 
-     
+
 
       case '/pending-approvals/off-boarding':
         if (this.rbac.allowedToAccess('Offboarding main Tab.view')) {

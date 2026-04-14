@@ -1153,4 +1153,15 @@ export const permissionsData = [
   { fields: 'Attendance Overview', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Quick Links', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Sun View', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Headcount by Gender Select Department', View: false, Update: false, Create: false, Delete: false },
+
+
+    //It support reports
+  { fields: 'IT Support Reports', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'IT Support Detailed Report', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'IT Support Detailed Report - Generate', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'IT Support Detailed Report - Export', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'IT Support Summary Report', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'IT Support Summary Report - Generate', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'IT Support Summary Report - Export', View: false, Update: false, Create: false, Delete: false },
 ];

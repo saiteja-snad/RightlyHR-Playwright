@@ -122,5 +122,12 @@ export class ReportsHeaderComponent implements OnInit {
     else if (this.router.url === '/reports/timesheet-reports/consolidated-timesheet-summary') {
       this.componentname = 'Consolidated Timesheet Summary Report';
     }
+
+    else if (this.router.url === '/reports/itsupport-reports/itsupport-detailed-report') {
+      this.componentname = 'IT Support Detailed Report';
+    }
+    else if (this.router.url === '/reports/itsupport-reports/itsupport-summary-report') {
+      this.componentname = 'IT Support Summary Report';
+    }
   }
 }

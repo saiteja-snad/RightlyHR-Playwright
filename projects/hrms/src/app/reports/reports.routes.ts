@@ -64,5 +64,14 @@ export default [
 
         { path: 'expense-reports', loadComponent: () => import('./expense-reports/expense-reports.component').then((m) => m.ExpenseReportsComponent), canActivate: [PermissionsGuard], data: { permission: 'Expense Reports.view' } },
 
+                {
+        path: 'itsupport-reports', children: [
+            //    { path: '',redirectTo: 'leave-report', pathMatch: 'full' },
+            { path: 'itsupport-detailed-report', loadComponent: () => import('./it-support-reports/it-support-detailed-report/it-support-detailed-report.component').then((m) => m.ItSupportDetailedReportComponent), canActivate: [PermissionsGuard], data: { permission: 'IT Support Detailed Report.view' } },
+            { path: 'itsupport-summary-report', loadComponent: () => import('./it-support-reports/it-support-summary-report/it-support-summary-report.component').then((m) => m.ItSupportSummaryReportComponent), canActivate: [PermissionsGuard], data: { permission: 'IT Support Summary Report.view' } },
+
+        ]
+    },
+
 
 ] as Route[];

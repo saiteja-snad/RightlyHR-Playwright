@@ -181,7 +181,7 @@ export const MODULE_INFOS = {
     PENDING_APPROVALS_EMPLOYEEINFO_MODULE_INFO: "The Employee Info section in Pending Approvals displays all requests submitted by employees to update their personal or job-related information. Managers can review each request, verify the details, and take appropriate action by approving or rejecting the update. Once approved, the system automatically updates the employee’s information, ensuring accurate and controlled data maintenance.",
     PENDING_APPROVALS_KRA_KPI_MODULE_INFO: "The Pending Approvals – KRA/KPI module allows the designated approval authority to review, approve, or reject KRA and KPI submissions raised by employees. It ensures timely validation, accountability, and accurate tracking of performance and goal-related data.",
     TIME_OFF_GLOBAL_WFH_MODULE_INFO: "Global WFH enables HR or managers to apply Work From Home for employees on specific dates or periods, allowing remote work and attendance marking as per company policy.",
-    
+
     //on behalf of module info
     ON_BEHALF_OF_WFH_MODULE_INFO : "The Work From Home (WFH) module enables HR or managers to apply and manage WFH requests on behalf of employees efficiently. It streamlines approval workflows, ensuring accurate tracking of remote work days. The module enhances transparency and flexibility in managing employee work arrangements.",
     ON_BEHALF_OF_REMOTELOGIN_MODULE_INFO : "The Remote Login module enables HR or managers to apply and manage Remote login requests on behalf of employees efficiently. It streamlines approval workflows, ensuring accurate tracking of remote work days. The module enhances transparency and flexibility in managing employee work arrangements.",
@@ -324,5 +324,10 @@ export const MODULE_INFOS = {
     CARRY_FORWORD_LEAVES: 'This module helps to initiate the Leave Carry Forward workflow by defining the processing scope, reviewing the eligible employee leave balances, mapping the previous year’s leave categories to the new fiscal year, and executing carry-forward job updates seamlessly.',
     Initial_Leave_Entitlements: 'Start a new leave entitlement load job. Define the entitlement scope, review eligible employees, validate rules, and process leave entitlements through a guided three-step workflow.',
     Create_Initial_Leave_Entitlements: 'Use this section to bulk allocate leave entitlements for employees by selecting location, sub-location, shift, and leave category. The system validates applicable leave rules and processes entitlements for eligible employees.',
-    CARRY_FORWORD_LEAVES_CREATE: "This module helps to initiate the Leave Carry Forward workflow by allowing you to define the processing scope, review eligible employee leave balances, map the previous year’s leave categories to the new fiscal year, and execute the carry-forward job updates seamlessly."
+    CARRY_FORWORD_LEAVES_CREATE: "This module helps to initiate the Leave Carry Forward workflow by allowing you to define the processing scope, review eligible employee leave balances, map the previous year’s leave categories to the new fiscal year, and execute the carry-forward job updates seamlessly.",
+
+    //IT Support Reports
+    ITSUPPORT_REPORTS_MODULE_INFO: "The IT Support Report provides insights into IT-related support tickets raised by employees across the organization. It helps IT teams monitor issue resolution, track ticket progress, and analyze overall support performance.",
+    IT_SUPPORT_SUMMARY_REPORTS_MODULE_INFO: "The IT Support Detailed Report displays complete information for each IT support ticket, including employee details, issue category, priority, assigned support member, and ticket status. It helps IT teams track and manage individual technical issues efficiently.",
+    IT_SUPPORT_DETAILED_REPORTS_MODULE_INFO: "The IT Support Summary Report provides an overview of IT tickets based on the assigned support personnel and their current status. It helps management quickly understand workload distribution and the overall resolution status of IT support requests.",
 }

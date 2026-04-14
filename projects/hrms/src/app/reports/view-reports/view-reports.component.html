@@ -197,6 +197,24 @@
                         </div>
                     </li>
                     }
+          @if(rbac.allowedToAccess('IT Support Reports.view')){
+          <li class="accordian-list-item">
+            <p-accordion-panel value="5">
+              <p-accordion-header>
+                <div>
+                  <div class="d-flex align-items-center gap-2 mb-2">
+                    <img src="/reports-icons/It support.png" alt="Icon" class="list-icon">
+                    <div class="list-label-name">{{'IT Support Reports'|translate}}</div>
+                  </div>
+                  <p class="list-description m-0">{{itsupportReports}}</p>
+                </div>
+              </p-accordion-header>
+              <p-accordion-content>
+                <app-it-support-reports-tabs />
+              </p-accordion-content>
+            </p-accordion-panel>
+          </li>
+          }
                 </p-accordion>
             </ul>
         </div>

@@ -7,9 +7,11 @@ import { PolicyReportsTabsComponent } from "../../shared/reports-tabs/policy-rep
 import { RbacService } from '../../services/rbac.service';
 import { AccordionModule } from 'primeng/accordion';
 import { TimesheetReportTabsComponent } from '../../shared/reports-tabs/timesheet-report-tabs/timesheet-report-tabs.component';
+import { ItSupportReportsTabsComponent } from '../../shared/reports-tabs/it-support-reports-tabs/it-support-reports-tabs.component';
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
   selector: 'app-view-reports',
-  imports: [RouterModule, StandardReportTabsComponent, AttandaceReportTabsComponent, PolicyReportsTabsComponent, AccordionModule,TimesheetReportTabsComponent],
+  imports: [RouterModule, StandardReportTabsComponent, AttandaceReportTabsComponent, PolicyReportsTabsComponent, AccordionModule,TimesheetReportTabsComponent, ItSupportReportsTabsComponent, TranslateModule],
   templateUrl: './view-reports.component.html',
   styleUrl: './view-reports.component.scss',
   encapsulation:ViewEncapsulation.None
@@ -26,6 +28,8 @@ export class ViewReportsComponent {
   teamLeaveSummaryModuleInfo = MODULE_INFOS.TIME_OFF_LEAVES_ORG_LEAVE_BALANCE_MODULE_INFO;
   timesheetReports = MODULE_INFOS.SETTINGS_TIMESHEET_REPORT_MODULE_INFO;
   expenseReportsModuleInfo = MODULE_INFOS.EXPENSE_REPORTS_MODULE_INFO;
+   itsupportReports= MODULE_INFOS.ITSUPPORT_REPORTS_MODULE_INFO;
+
 
 
   constructor(public rbac: RbacService) { }

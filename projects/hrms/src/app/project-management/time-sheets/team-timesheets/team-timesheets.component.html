@@ -1,68 +1,70 @@
 <div class="custom-main-component-container">
-    <div class="component-header-content">
-        <div>
-            <app-project-management-module-info />
+    <div class="component-header-content align-items-baseline flex-column">
+        <div class="d-flex justify-content-between flex-wrap align-items-center mb-2 w-100">
+            <div>
+                <app-project-management-module-info />
+            </div>
+    
+            <form [formGroup]="datepickerForm">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="total-hrs">{{"Total Logged Hours" }} :<span class="total-duration ms-1">
+                        {{ totalhrs}} Hrs</span></div>
+                    <!-- Date Picker Outside Offcanvas -->
+                    <div class="d-flex gap-2 align-items-center">
+                        <div class="custom-date-range-picker">
+                            <p-datepicker formControlName="dateRange" [placeholder]="'Select Date Range'"
+                                selectionMode="range" [showIcon]="true" [readonlyInput]="true" />
+                        </div>
+                    </div>
+                    <!-- Employee Dropdown Outside Offcanvas -->
+                    @if(rbac.allowedToAccess('All Employees (Timesheet).view')) {
+                    <div class="d-flex gap-2 align-items-center">
+                        <label class="form-label filter-labels mt-2">{{'Select Employee' | translate}}</label>
+                        <div class="custom-p-multiSelect-content" style="min-width: 250px;">
+                            <p-multiSelect [options]="activeEmplist" [filter]="true" filterBy="label" [resetFilterOnHide]="true"
+                                optionLabel="label" optionValue="value" formControlName="resourceId" (onChange)="onEmployeeChange($event)"
+                                [placeholder]="activeEmplist.length === 0 ? 'No results found' : 'Select employee'"
+                                class="form-select custom-select" />
+                        </div>
+                    </div>
+                    }
+                    @else if(rbac.allowedToAccess('My Team (Timesheet).view')) {
+                    <div class="d-flex gap-2 align-items-center">
+                        <label class="form-label filter-labels mt-2">{{'My Team' | translate}}</label>
+                        <div class="custom-p-multiSelect-content" style="min-width: 250px;">
+                            <p-multiSelect [options]="resourcesList" [filter]="true" filterBy="fullName" [resetFilterOnHide]="true"
+                                optionLabel="fullName" optionValue="id" formControlName="resourceId" (onChange)="onEmployeeChange($event)"
+                                [placeholder]="resourcesList.length === 0 ? 'No results found' : 'Select employee'"
+                                class="form-select custom-select" />
+                        </div>
+                    </div>
+                    }
+                    <button type="button" class="custom-btn btn-primary" [disabled]="datepickerForm.invalid ||
+                            (rbac.allowedToAccess('All Employees (Timesheet).view') && (activeEmplist.length === 0 || 
+                            !datepickerForm.get('resourceId')?.value?.length)) || (rbac.allowedToAccess('My Team (Timesheet).view') && 
+                            !rbac.allowedToAccess('All Employees (Timesheet).view') && (resourcesList.length === 0 || 
+                            !datepickerForm.get('resourceId')?.value?.length))" (click)="onSubmit()">{{'Apply' | translate}}</button>
+    
+                    <div *ngIf="rbac.allowedToAccess('Team Time Sheet Filters Tab.view')">
+                        <button type="button" class="custom-btn btn-secondary position-relative" (click)="toggleFilters(filterContent)">
+                            <i class="bi bi-funnel me-2"></i>Filters
+                            <span *ngIf="isFilterApplied()" class="filter-indicator"></span>
+                        </button>
+                    </div>
+                </div>
+            </form>
         </div>
 
-        <form [formGroup]="datepickerForm">
-            <div class="d-flex align-items-center gap-3">
-                <div class="total-hrs">{{"Total Logged Hours" }} :<span class="total-duration ms-1">{{ totalhrs}} Hrs</span></div>
-                <!-- Date Picker Outside Offcanvas -->
-                <div class="d-flex gap-2 align-items-center">
-                    <div class="custom-date-range-picker">
-                        <p-datepicker formControlName="dateRange" [placeholder]="'Select Date Range'"
-                            selectionMode="range" [showIcon]="true" [readonlyInput]="true" />
-                    </div>
-                </div>
-                <!-- Employee Dropdown Outside Offcanvas -->
-                @if(rbac.allowedToAccess('All Employees (Timesheet).view')) {
-                <div class="d-flex gap-2 align-items-center">
-                    <label class="form-label filter-labels mt-2">{{'Select Employee' | translate}}</label>
-                    <div class="custom-p-multiSelect-content" style="min-width: 250px;">
-                        <p-multiSelect [options]="activeEmplist" [filter]="true" filterBy="label" [resetFilterOnHide]="true"
-                            optionLabel="label" optionValue="value" formControlName="resourceId" (onChange)="onEmployeeChange($event)"
-                            [placeholder]="activeEmplist.length === 0 ? 'No results found' : 'Select employee'"
-                            class="form-select custom-select" />
-                    </div>
-                </div>
-                }
-                @else if(rbac.allowedToAccess('My Team (Timesheet).view')) {
-                <div class="d-flex gap-2 align-items-center">
-                    <label class="form-label filter-labels mt-2">{{'My Team' | translate}}</label>
-                    <div class="custom-p-multiSelect-content" style="min-width: 250px;">
-                        <p-multiSelect [options]="resourcesList" [filter]="true" filterBy="fullName" [resetFilterOnHide]="true"
-                            optionLabel="fullName" optionValue="id" formControlName="resourceId" (onChange)="onEmployeeChange($event)"
-                            [placeholder]="resourcesList.length === 0 ? 'No results found' : 'Select employee'"
-                            class="form-select custom-select" />
-                    </div>
-                </div>
-                }
-
-                <button type="button" class="custom-btn btn-primary" [disabled]="datepickerForm.invalid ||
-                    (rbac.allowedToAccess('All Employees (Timesheet).view') && (activeEmplist.length === 0 || 
-                    !datepickerForm.get('resourceId')?.value?.length)) || (rbac.allowedToAccess('My Team (Timesheet).view') && 
-                    !rbac.allowedToAccess('All Employees (Timesheet).view') && (resourcesList.length === 0 || 
-                    !datepickerForm.get('resourceId')?.value?.length))" (click)="onSubmit()">{{'Apply' | translate}}</button>
-                
-                <div *ngIf="rbac.allowedToAccess('Team Time Sheet Filters Tab.view')">
-                    <button type="button" class="custom-btn btn-secondary position-relative" (click)="toggleFilters(filterContent)">
-                        <i class="bi bi-funnel me-2"></i>Filters
-                        <span *ngIf="isFilterApplied()" class="filter-indicator"></span>
-                    </button>
-                </div>
+        <!-- Filter Chips Display -->
+        <div class="fliter-chip-content mb-2" *ngIf="getSelectedFilters().length > 0">
+            <div class="d-flex align-items-center gap-2 flex-wrap">
+                <p-chip *ngFor="let filter of getSelectedFilters() | slice:0:3" [label]="filter.label" [removable]="true"
+                    (onRemove)="removeFilter(filter)" />
+                <!-- Show “X more” chip if filters > 3 -->
+                <p-chip *ngIf="getSelectedFilters().length > 3" class="more-chip" [removable]="false"
+                    label="+{{getSelectedFilters().length - 3}} More" (click)="toggleFilters(filterContent)" />
+                <button type="button" class="clear-all-btn" (click)="resetForm()">{{ 'Clear All' | translate }}</button>
             </div>
-        </form>
-    </div>
-
-    <!-- Filter Chips Display -->
-    <div class="fliter-chip-content mb-2" *ngIf="getSelectedFilters().length > 0">
-        <div class="d-flex align-items-center gap-2 flex-wrap">
-            <p-chip *ngFor="let filter of getSelectedFilters() | slice:0:3" [label]="filter.label" [removable]="true"
-                (onRemove)="removeFilter(filter)" />
-            <!-- Show “X more” chip if filters > 3 -->
-            <p-chip *ngIf="getSelectedFilters().length > 3" class="more-chip" [removable]="false"
-                label="+{{getSelectedFilters().length - 3}} More" (click)="toggleFilters(filterContent)" />
-            <button type="button" class="clear-all-btn" (click)="resetForm()">{{ 'Clear All' | translate }}</button>
         </div>
     </div>
 
@@ -160,9 +162,13 @@
                         <div class="circular-dot circle-green"></div>
                         <div class="status-text">Approved</div>
                     </div>
+                    <div class="d-flex align-items-center gap-1">
+                        <div class="circular-dot circle-rejected"></div>
+                        <div class="status-text">Rejected</div>
+                    </div>
                 </div>
             </div>
-<!-- 
+
             <div class="pagination-content" *ngIf="teamSummaryData.length > 0">
                 <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
                     <div class="d-flex align-items-center gap-3 p-2">
@@ -178,7 +184,7 @@
                     <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"
                         (onPageChange)="onPageChange($event)"></p-paginator>
                 </div>
-            </div> -->
+            </div>
         </div>
     </div>
 </div>
@@ -201,11 +207,12 @@
                     <table class="popup-table">
                         <thead>
                             <tr>
-                                <th>Project Details</th>
-                                <th>Logged Hours</th>
-                                <th>Approver</th>
-                                <th>Description</th>
-                                <th>Status</th>
+                                <th>{{'Project Details'|translate}}</th>
+                                <th>{{'Logged Hours'|translate}}</th>
+                                <th>{{'Approver'|translate}}</th>
+                                <th>{{'Description'|translate}}</th>
+                                <th>{{'Status'|translate}}</th>
+                                <th>{{'Action'|translate}}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -269,6 +276,22 @@
                                 <td [ngClass]="{'approved': entry.status === 'Processed', 'rejected': entry.status === 'Rejected',
                                  'waiting': entry.status === 'Waiting for Approval', 'draft': entry.status === 'draft'}">
                                     {{ entry.status.toLowerCase() == "processed" ? "Approved" : entry.status }}</td>
+                                    <td>
+                                        @if(entry.status?.toLowerCase() === 'waiting for approval' && entry.finalApproverId===this.empdata.employeeId) {
+                                        <div class="d-flex justify-content-center gap-3">
+                                            <a (click)="openModalapprovals(approverPopup, entry, 'Processed')">
+                                                <img src="/icons/check-approve-icon.png" class="action-img"
+                                                    alt="Approve" />
+                                            </a>
+                                            <a (click)="openModalapprovals(rejectPopup, entry, 'Rejected')">
+                                                <img src="/icons/cancel-circle.png" class="action-img" alt="Reject" />
+                                            </a>
+                                        </div>
+                                    }
+                                    @else{
+                                        <span class="text-muted">{{'N/A'|translate}}</span>
+                                    }
+                                    </td>
                             </tr>
                         </tbody>
                     </table>
@@ -354,5 +377,121 @@
                 <p-chip [label]="filter.label" [removable]="true" (onRemove)="removeFilter(filter)" class="custom-chip-red" />
             </div>
         </div>
+    </div>
+</ng-template>
+
+<!-- Approverpopup -->
+<ng-template #approverPopup let-modal>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <app-confirmation-icon />
+            <p class="confirmation-text pt-3">
+                {{ 'Are you sure you want to proceed with the approval?' | translate }}
+            </p>
+        </div>
+        <form [formGroup]="timeSheetApproveForm" (ngSubmit)="handleAccept(timeSheetApproveForm)">
+            <div class="custom-main-popup-content">
+                <div class="mb-3">
+                    <label for="comments" class="form-label custom-label">
+                        {{ 'Approve reason' | translate }}
+                        <span class="error-msg">*</span>
+                    </label>
+                    <textarea class="form-control custom-input" id="comments"
+                        placeholder="Please provide approve reason" formControlName="comments" maxlength="250" rows="3"
+                        (keydown)="formsValidation.restrictInitialSpace($event)"></textarea>
+                    <div class="textarea-count-text">{{ timeSheetApproveForm.get('comments')?.value?.length || 0 }}/250
+                    </div>
+                    <div class="error-msg"
+                        *ngIf="timeSheetApproveForm.get('comments')?.touched && timeSheetApproveForm.get('comments')?.invalid">
+                        <div *ngIf="timeSheetApproveForm.get('comments')?.errors?.['required']">Approver Comments is
+                            required</div>
+                        <div *ngIf="timeSheetApproveForm.get('comments')?.errors?.['maxlength']">
+                            Approver Comments exceed 250 characters
+                        </div>
+                    </div>
+                </div>
+            </div>
+              <!-- <div class="d-flex align-items-center flex-wrap gap-2 mb-3">
+                <button type="button" class="custom-btn btn-secondary chip-btn" [class.active]="selectedLeaveStatus === 'approved'"
+                    (click)="onStatusApproveSelect('approved')">
+                    Approved
+                </button>
+            </div> -->
+            <div class="custom-modal-footer">
+                <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()"
+                    [disabled]="spinnerLoader">
+                    {{'Cancel' | translate }}</button>
+                <button type="submit" class="custom-btn btn-primary"
+                    [disabled]="timeSheetApproveForm.invalid || spinnerLoader">
+                    <ng-container *ngIf="spinnerLoader; else approveText">
+                        <div class="button-loader-content">
+                            <span class="spinner-border button-spinner text-light" role="status"
+                                aria-hidden="true"></span>
+                            <span>{{ 'Loading...' }}</span>
+                        </div>
+                    </ng-container>
+                    <ng-template #approveText>
+                        <span>{{ 'Approve' | translate }}</span>
+                    </ng-template>
+                </button>
+            </div>
+        </form>
+    </div>
+</ng-template>
+
+<!-- Rejectpopup -->
+<ng-template #rejectPopup let-modal>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon" />
+            <p class="confirmation-text">
+                {{ 'Do you really want to reject selected requests?' | translate }}
+            </p>
+        </div>
+        <form [formGroup]="timeSheetRejectForm" (ngSubmit)="handlereject(timeSheetRejectForm)">
+            <div class="custom-main-popup-content">
+                <div class="mb-3">
+                    <label for="rejectComments" class="form-label custom-label">
+                        {{ 'Reject reason' | translate }} <span class="error-msg">*</span>
+                    </label>
+                    <textarea class="form-control custom-input" id="comments" placeholder="Please provide reject reason"
+                        formControlName="comments" maxlength="250" rows="3"
+                        (keydown)="formsValidation.restrictInitialSpace($event)"></textarea>
+                    <div class="textarea-count-text">{{ timeSheetRejectForm.get('comments')?.value?.length || 0 }}/250
+                    </div>
+                    <div class="error-msg"
+                        *ngIf="timeSheetRejectForm.get('comments')?.touched && timeSheetRejectForm.get('comments')?.invalid">
+                        <div *ngIf="timeSheetRejectForm.get('comments')?.errors?.['required']">Reject Comments is
+                            required</div>
+                        <div *ngIf="timeSheetRejectForm.get('comments')?.errors?.['maxlength']">
+                            Reject Comments exceed 250 characters
+                        </div>
+                    </div>
+                </div>
+            </div>
+                <!-- <div class="d-flex align-items-center flex-wrap gap-2 mb-3">
+                <button type="button" class="custom-btn btn-secondary chip-btn" [class.active]="selectedLeaveStatus === 'reject'"
+                    (click)="onStatusRejectSelect('reject')">
+                    Rejected
+                </button>
+            </div> -->
+            <div class="custom-modal-footer">
+                <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()"
+                    [disabled]="spinnerLoader">
+                    {{ 'Cancel' | translate }}
+                </button>
+                <button type="submit" class="custom-btn btn-primary"
+                    [disabled]="timeSheetRejectForm.invalid || spinnerLoader">
+                    <ng-container *ngIf="spinnerLoader; else rejectText">
+                        <div class="button-loader-content">
+                            <span class="spinner-border button-spinner text-light" role="status"
+                                aria-hidden="true"></span>
+                            <span>{{ 'Loading...' }}</span>
+                        </div>
+                    </ng-container>
+                    <ng-template #rejectText>{{ 'Reject' | translate }}</ng-template>
+                </button>
+            </div>
+        </form>
     </div>
 </ng-template>

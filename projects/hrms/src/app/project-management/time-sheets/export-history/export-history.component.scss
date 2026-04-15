@@ -10,7 +10,7 @@
 
 .border-table {
     border: 1px solid var(--border-color);
-    height: calc(100dvh - 8.25rem) !important;
+    height: calc(100dvh - 14.5rem) !important;
 }
 
 .table-with-pagination {
@@ -55,8 +55,9 @@
     background-color: rgba(148, 163, 184, 0.18);
     border-color: rgba(148, 163, 184, 0.35);
 }
-.image-icon{
-    width:2rem;
+
+.image-icon {
+    width: 2rem;
     height: 2.5rem;
     cursor: pointer;
 }

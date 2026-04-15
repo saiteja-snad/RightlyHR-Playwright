@@ -27,9 +27,8 @@
                         <p-tablist>
                             <ng-container *ngFor="let tab of filteredTabs;">
                                 <p-tab [value]="tab.link">
-                                    <a [routerLink]="[tab.link]" class="nav-link"
-                                        [class.active-nav-link]="isActiveRoute(tab.link)">{{ tab.label | translate
-                                        }}</a>
+                                    <a [routerLink]="[tab.link]" class="nav-link" [class.active-nav-link]="isActiveRoute(tab.link)">
+                                        {{ tab.label | translate }}</a>
                                 </p-tab>
                             </ng-container>
                         </p-tablist>
@@ -44,8 +43,7 @@
                     class="form-control custom-search-input" placeholder="Search by job ID / imported by" aria-label="Search"
                     aria-describedby="basic-addon1">
             </div>
-            <div class="custom-table-content border-table"
-                [ngClass]="{'table-with-pagination': historylog.length > 0 && collectionSize > 0}">
+            <div class="custom-table-content border-table" [ngClass]="{'table-with-pagination': historylog.length > 0 && collectionSize > 0}">
                 @if(!dataload){
                 <table class="w-100">
                     <thead>
@@ -62,48 +60,33 @@
                         <ng-container *ngIf="historylog.length > 0; else noDataTemplate">
                             <tr *ngFor="let item of historylog">
                                 <td class="text-center">{{item.jobReference || '-'}}</td>
-
-
-                                  <td class="text-center">
+                                <td class="text-center">
                                     <span *ngIf="item.filePath; else noData" (click)="downloadFile(item.filePath!)">
                                         <img *ngIf="item.filePath.endsWith('.xlsx') || item.filePath.endsWith('.xls')"
                                             src="/project-mangement-icons/excel-icon.png" alt="Excel" class="image-icon">
-                                        <img *ngIf="item.filePath.endsWith('.csv')"
-                                            src="/project-mangement-icons/csv-icon.png" alt="CSV" class="image-icon">
+                                        <img *ngIf="item.filePath.endsWith('.csv')" src="/project-mangement-icons/csv-icon.png" alt="CSV"
+                                            class="image-icon">
                                     </span>
                                     <ng-template #noData>-</ng-template>
                                 </td>
-
+                                <td class="text-center">{{item.totalRows || '-'}}</td>
+                                <td class="text-center">{{item.successRows || '-'}}</td>
                                 <td class="text-center">
-                                    {{item.totalRows || '-'}}
+                                    <div class="d-flex align-items-center justify-content-center">
+                                        <!-- Fixed width number -->
+                                        <span class="failure-count ">{{ item.failureRows || '-' }}</span>
+                                        @if (item.failureRows > 0) {
+                                        <span class="cursor-pointer" (click)="downloadErrorFile(item)">
+                                            <app-download-icon />
+                                        </span>
+                                        }
+                                    </div>
                                 </td>
-                                <td class="text-center">
-                                    {{item.successRows || '-'}}
-                                </td>
-                            <td class="text-center">
-                                <div class="d-flex align-items-center justify-content-center">
-                            
-                                    <!-- Fixed width number -->
-                                    <span class="failure-count ">
-                                        {{ item.failureRows || '-' }}
-                                    </span>
-                            
-                                    @if (item.failureRows > 0) {
-                                    <span class="cursor-pointer" (click)="downloadErrorFile(item)">
-                                        <app-download-icon></app-download-icon>
-                                    </span>
-                                    }
-                            
-                                </div>
-                            </td>
-                            <td class="text-center">{{item.createdOn ? (item.createdOn | dateformat) : '-'}}</td>
-                            <td class="text-center">{{item.createdBy?.name ?? '-'}}</td>
-                                <td class="text-center">
-                                    {{ toTitleCase(item.status) }}
-                                </td>
+                                <td class="text-center">{{item.createdOn ? (item.createdOn | dateformat) : '-'}}</td>
+                                <td class="text-center">{{item.createdBy?.name ?? '-'}}</td>
+                                <td class="text-center">{{ toTitleCase(item.status) }}</td>
                             </tr>
                         </ng-container>
-
                         <ng-template #noDataTemplate>
                             <tr>
                                 <app-no-data-found />
@@ -121,36 +104,17 @@
                             <option *ngFor="let option of options" [value]="option.value">{{ option.label }}</option>
                         </select>
                         <span class="pagination-label text-nowrap">
-                            Showing {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize : (+first +
-                            +rows) }} of {{ collectionSize }}
+                            Showing {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize : 
+                            (+first + +rows) }} of {{ collectionSize }}
                         </span>
                     </div>
-                    <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"
-                        (onPageChange)="onPageChange($event)" />
+                    <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize" (onPageChange)="onPageChange($event)" />
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-
-
-<ng-template #confirmationpopup let-modal>
-    <div class="result-popup-content" ngbAutofocus>
-        <div>
-            <!-- <app-confirmation-icon />
-            <p class="confirmation-text mb-4"> {{'Are you sure you want to cancel?' | translate }}</p> -->
-        </div>
-
-        <div class="custom-modal-footer">
-            <!-- <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss();">{{'No' | translate}}</button>
-            <button type="submit" class="custom-btn btn-primary" (click)="cleardata()">{{'Yes' | translate}}</button> -->
-        </div>
-    </div>
-</ng-template>
-
-
 <ng-template #popContent>
     <app-module-information [moduleInfo]="moduleinfo" />
 </ng-template>
-

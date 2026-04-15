@@ -171,11 +171,15 @@ export class WfhAllocationComponent implements OnInit, OnDestroy {
   }
 
   getAllEmployees() {
-    const payload = {
-      locationId: this.wfhAllocationForm.get('location')?.value?.id,
-      subLocationId: this.wfhAllocationForm.get('subLocation')?.value?.id,
-      shiftId: this.wfhAllocationForm.get('shift')?.value?.id,
-    };
+    const locationId = this.wfhAllocationForm.get('location')?.value?.id;
+    const subLocationId = this.wfhAllocationForm.get('subLocation')?.value?.id;
+    const shiftId = this.wfhAllocationForm.get('shift')?.value?.id;
+
+    if (!locationId || !subLocationId || !shiftId) {
+      return;
+    }
+
+    const payload = { locationId, subLocationId, shiftId };
     this.http
       .getDataWithQueryParams('Employeedata/getAll', payload)
       .pipe(takeUntil(this.destroy$))
@@ -433,11 +437,21 @@ validateEffectiveDate(control: any) {
       });
 
     form
-      .get('categoryName')
+      .get('shift')
       ?.valueChanges.pipe(takeUntil(this.destroy$))
       .subscribe(() => {
+        resetAndDisable(['categoryName', 'employeeName']);
+      });
+
+    form
+      .get('categoryName')
+      ?.valueChanges.pipe(takeUntil(this.destroy$))
+      .subscribe((value) => {
         resetOnly(['employeeName', 'employees']);
         (this.wfhAllocationForm.get('employees') as FormArray).clear();
+        if (value) {
+          this.getAllEmployees();
+        }
       });
 
     form

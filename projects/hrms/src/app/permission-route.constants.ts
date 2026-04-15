@@ -149,6 +149,9 @@ export const TIME_OFF_TABS = [
 export const FLEXIBLE_WFH_ALLOCATION_TABS = [
   { route: '/settings/timeoff-configurations/flexible-wfh-allocation/wfh-allocation', permission: 'Active Allocations Tab.view' },
   { route: '/settings/timeoff-configurations/flexible-wfh-allocation/wfh-allocation-view', permission: 'Allocation History Tab.view' },
+  { route: '/settings/timeoff-configurations/flexible-wfh-allocation/wfh-allow-multi-date-range', permission: 'Allow Multi Date Range Tab.view' },
+  { route: '/settings/timeoff-configurations/flexible-wfh-allocation/wfh-allocation-view/multi-date-range-history', permission: 'Allow Multi Date Range History Tab.view' },
+  { route: '/settings/timeoff-configurations/flexible-wfh-allocation/wfh-allocation-view/wfh-history', permission: 'WFH Allocation History Tab.view' },
 ]
 
 export const FLEXIBLE_WORKHOURS_ALLOCATION_TABS = [

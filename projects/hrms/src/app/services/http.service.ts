@@ -752,6 +752,14 @@ setAvaillableSearchCount(count: number) {
     });
   }
 
+    downloadTimesheetReportPost(url: string, body: any): Observable<HttpResponse<Blob>> {
+    const apiurl = `${this.ApiUrl}${url}`;
+    return this.http.post(apiurl, body, {
+      responseType: 'blob',
+      observe: 'response'
+    });
+  }
+
   // PMS Form Submission
   // getReviewCycles(url:string, searchQuery: string, page: number, pageSize: number): Observable<any> {
   //   let params = new HttpParams()

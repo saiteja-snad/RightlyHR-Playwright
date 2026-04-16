@@ -274,7 +274,8 @@ export const permissionsData = [
   { fields: 'Clients', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Projects', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Time Sheet', View: false, Update: false, Create: false, Delete: false },
-  { fields: 'Team Time Sheet', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Team Time Sheet', View: false, Update: false, Create: false, Delete: false },  
+  { fields: 'My Summary', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Pending Approvals Module', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Team Time Sheet Detailed Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Team Time Sheet Summary Tab', View: false, Update: false, Create: false, Delete: false },
@@ -1067,6 +1068,10 @@ export const permissionsData = [
 
   { fields: 'My Team (Timesheet)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'All Employees (Timesheet)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Timesheet Bulk Import', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Timesheet Bulk Export', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'View History Export Tab', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'View History Import Tab', View: false, Update: false, Create: false, Delete: false },
 
   { fields: 'On Behalf Of', View: false, Update: false, Create: false, Delete: false },
   { fields: 'On Behalf Of WFH', View: false, Update: false, Create: false, Delete: false },

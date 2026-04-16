@@ -289,3 +289,78 @@
     border: 1px solid var(--primary-color);
     background: #FFF;
 }
+
+::ng-deep .p-menu {
+    background: var(--p-menu-background);
+    color: var(--p-menu-color);
+    border: 1px solid var(--p-menu-border-color);
+    border-radius: var(--p-menu-border-radius);
+    min-width: 8rem !important;
+    z-index: 0 !important;
+    top: 2.5rem !important;
+    left: -90px !important;
+    transform-origin: center top;
+    margin-top: 2px;
+}
+
+
+
+::ng-deep .menu-dropdown-content {
+    .p-menu-item-link {
+        font-weight: 400 !important;
+        font-size: var(--fontsize14) !important;
+        color: #4D4D4D !important;
+        gap: 0rem !important;
+        text-wrap: nowrap !important;
+
+        .p-menu-item-icon {
+            color: #4D4D4D !important;
+        }
+    }
+}
+
+::ng-deep .p-menu-item-icon.file-import-icon,
+::ng-deep .p-menu-item-icon.file-export-icon {
+    display: inline-block;
+    width: 1rem;
+    height: 1rem;
+    margin-right: 0.5rem;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+}
+
+::ng-deep .p-menu-item-icon.file-import-icon {
+    background-image: url('/main-menu-icons/file-import.png');
+}
+
+::ng-deep .p-menu-item-icon.file-export-icon {
+    background-image: url('/main-menu-icons/file-export.png');
+}
+
+
+.info-section {
+    background: #FCF3E8;
+    border-radius: 0.5rem;
+    padding: 0.325rem 0.75rem;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    font-size: var(--fontsize13);
+
+    i {
+        color: #cf7d01;
+        font-size: 1.125rem;
+        font-weight: 700;
+    }
+
+    .note {
+        font-weight: 600;
+        color: #333;
+    }
+}
+
+.alert-icon{
+    width: 1.5rem;
+    height: 1.5rem;
+}

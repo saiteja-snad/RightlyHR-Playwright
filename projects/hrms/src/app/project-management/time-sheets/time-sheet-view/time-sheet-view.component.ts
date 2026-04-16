@@ -8,7 +8,6 @@ import { DatePicker } from 'primeng/datepicker';
 import { AuthService } from '../../../services/auth.service';
 import { HttpService } from '../../../services/http.service';
 import { AccordionModule } from 'primeng/accordion';
-import { DateformatPipe } from '../../../pipes/dateformat.pipe';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { Subject, Subscription, takeUntil } from 'rxjs';
 import { IResourceDetail, TimesheetResponse } from '../../../timesheetmodel';
@@ -25,11 +24,16 @@ import { environment } from '../../../../environments/environment';
 import { WeekMatrix, RowModel, DayModel, transformV2ResponseToWeekMatrix, isCellLocked, recalculateTotals, ApprovalStatus } from './timesheet-matrix.model';
 import { DayValidationService, ValidationContext } from './day-validation.service';
 import { Ilpid } from '../../../Interfaces/timoff-model';
+import { MenuModule } from 'primeng/menu';
+import { MenuItem } from 'primeng/api';
+import { MultiSelectModule } from 'primeng/multiselect';
+import { BulkUploadStore } from '../bulk-upload/models/bulk-upload.store';
+import { DateformatPipe } from '../../../pipes/dateformat.pipe';
 @Component({
   selector: 'app-time-sheet-view',
   imports: [ProjectManagementModuleInfoComponent, NgbDatepickerModule, FormsModule, ReactiveFormsModule,
     NgbPopover, CommonModule, DatePicker, DateformatPipe, AccordionModule, InfoIconComponent, ConfirmationIconComponent,
-    TranslateModule, DataLoaderContentComponent, TimesheetsTabsComponent],
+    TranslateModule, DataLoaderContentComponent, TimesheetsTabsComponent, MenuModule, MultiSelectModule],
   templateUrl: './time-sheet-view.component.html',
   styleUrl: './time-sheet-view.component.scss',
 })
@@ -100,8 +104,20 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   @ViewChild('employeeDropdown') employeeDropdown: any;
   @ViewChild('errormodal') errormodal!: TemplateRef<any>;
   @ViewChild('addtask') addtask!: TemplateRef<any>;
-  constructor(private fb: FormBuilder, private modalService: NgbModal, private http: HttpService, public formValidation: FormValidationsService, public dayValidationService: DayValidationService,
-    public authService: AuthService, public rbac: RbacService, private conformationPopup: OpenModalService, private router: Router, private encryptionService: EncriptdecriptService) { }
+  private readonly baseMenuItems = [
+    { key: 'import', label: 'Import', icon: 'file-import-icon', command: () => this.navigateToImport() },
+    { key: 'export', label: 'Export', icon: 'file-export-icon', command: () => this.navigateToExport() },
+    { key: 'viewHistoryLog', label: 'View History Log', icon: 'bi bi-clock-history me-2', command: () => this.navigateToHistoryLog() },
+  ];
+  bulkOperationMenuItems: MenuItem[] = [];
+  canBulkImport = false;
+  canBulkExport = false;
+  canViewHistoryLog = false;
+  constructor(private fb: FormBuilder, private modalService: NgbModal,
+    private http: HttpService, public formValidation: FormValidationsService,
+    public dayValidationService: DayValidationService, public authService: AuthService,
+    public rbac: RbacService, private conformationPopup: OpenModalService,
+    private router: Router, private encryptionService: EncriptdecriptService, private bulkStore: BulkUploadStore) { }
 
   ngOnInit(): void {
     this.loggedinuser = this.authService.getToken();
@@ -122,6 +138,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     // this.getAllEmployeeDetails();
     this.formattedweakendStart = moment(this.start).format('YYYY-MM-DD');
     this.getTimeSheetEntriesbyEmployeeId(this.employeeId, this.formattedweakendStart);
+    this.buildBulkOperationMenuItems();
   }
 
   get projects(): FormArray {
@@ -133,6 +150,48 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     const m = Math.floor((seconds % 3600) / 60);
     return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
   }
+  navigateToImport() {
+    localStorage.setItem('timesheetImportStep', '1');
+    //clear the batch id from the local storage
+    localStorage.removeItem('bulkImportBatchId');
+    this.bulkStore.reset();
+    this.router.navigate(['/project-management/timesheet/bulk-upload']);
+  }
+  navigateToExport() {
+    localStorage.setItem('timesheetExportStep', '1');
+    localStorage.removeItem('timesheetExportFilters');
+    this.router.navigate(['/project-management/timesheet/bulk-export']);
+  }
+  navigateToHistoryLog() {
+    if (this.rbac.allowedToAccess('View History Import Tab.view')) {
+      this.router.navigate(['/project-management/timesheet/historylog']);
+    } else if (this.rbac.allowedToAccess('View History Export Tab.view')) {
+      this.router.navigate(['/project-management/timesheet/export-history']);
+    } else {
+      this.router.navigate(['/unauthorized']);
+    }
+
+  }
+  private buildBulkOperationMenuItems(): void {
+    this.canBulkImport = this.rbac.allowedToAccess('Timesheet Bulk Import.view');
+    this.canBulkExport = this.rbac.allowedToAccess('Timesheet Bulk Export.view');
+    this.canViewHistoryLog = this.rbac.allowedToAccess('View History Import Tab.view') || this.rbac.allowedToAccess('View History Export Tab.view');
+
+    const items = this.baseMenuItems.filter((item: any) => {
+      if (item.key === 'import') {
+        return this.canBulkImport;
+      }
+      if (item.key === 'export') {
+        return this.canBulkExport;
+      }
+      if (item.key === 'viewHistoryLog') {
+        return this.canViewHistoryLog;
+      }
+      return true;
+    });
+    this.bulkOperationMenuItems = items;
+  }
+
   TimesheetLockData: any;
   getTimesheetLocks() {
     const categoryIds = '30';
@@ -559,27 +618,77 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       return this.createDayEntry({}, day.dateObj, isProjectSelected);
     }
 
-    const matchedResource = this.resourcesArrayList?.find((r: any) =>
+    const matchedResources = this.resourcesArrayList?.filter((r: any) =>
       r?.project?.projectId === row.projectId &&
       r.client?.clientId === row.clientId &&
       r?.phase?.phaseId === row.phaseId
     );
 
-    const resourceDateRange = matchedResource ? {
-      startDate: matchedResource.startDate ? new Date(matchedResource.startDate) : null,
-      endDate: matchedResource.endDate ? new Date(matchedResource.endDate) : null
+    const mergedResource = matchedResources?.length
+      ? {
+        ...matchedResources[0],
+        startDate: matchedResources.reduce((min, r) =>
+          new Date(r.startDate) < new Date(min) ? r.startDate : min,
+          matchedResources[0].startDate
+        ),
+        endDate: matchedResources.reduce((max, r) =>
+          new Date(r.endDate) > new Date(max) ? r.endDate : max,
+          matchedResources[0].endDate
+        ),
+        weekendWorkAllowed: matchedResources.some(r => r.weekendWorkAllowed),
+        billable: matchedResources.some(r => r.billable),
+        allocations: matchedResources
+      }
+      : null;
+
+    const resourceDateRange = mergedResource ? {
+      startDate: mergedResource.startDate ? new Date(mergedResource.startDate) : null,
+      endDate: mergedResource.endDate ? new Date(mergedResource.endDate) : null
     } : undefined;
 
-    const phaseDateRange = matchedResource?.phase ? {
-      startDate: matchedResource.phase.startDate ? new Date(matchedResource.phase.startDate) : null,
-      endDate: matchedResource.phase.endDate ? new Date(matchedResource.phase.endDate) : null
+    const phaseDateRange = mergedResource?.phase ? {
+      startDate: mergedResource.phase.startDate ? new Date(mergedResource.phase.startDate) : null,
+      endDate: mergedResource.phase.endDate ? new Date(mergedResource.phase.endDate) : null
     } : undefined;
+
+    // ✅ 🔥 ADD HERE (before isBlocked logic)
+
+    // Normalize date
+    const normalizeDate = (date: any) => {
+      const d = new Date(date);
+      d.setHours(0, 0, 0, 0);
+      return d;
+    };
+
+    const entryDate = normalizeDate(day.dateObj);
+
+    // ✅ Find allocation for THIS DAY
+    const matchedAllocation = matchedResources?.find((r: any) => {
+      const start = normalizeDate(r.startDate);
+      const end = normalizeDate(r.endDate);
+      return entryDate >= start && entryDate <= end;
+    });
+
+    // ✅ Weekend allowed per allocation
+    const weekendAllowed = matchedAllocation?.weekendWorkAllowed ?? false;
+
+    // ✅ Validation context
+    const validationContext: ValidationContext = {
+      selectedResource: mergedResource,
+      holidays: this.holidaysData,
+      weekends: this.weekendsData,
+      leaves: this.leavesData
+    };
+
+    // ✅ Call validation
+    const dayStatus = this.dayValidationService.checkDayStatus(entryDate, validationContext);
+
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const isFutureDate = day.dateObj > today;
     const isCurrentEmployee = this.employeeId === this.empdata?.employeeId;
-    const isBlocked = cell.isBlocked || false;
+    const isBlocked = dayStatus.blocked;
     const isLocked = isCellLocked(
       cell, day, row,
       resourceDateRange,
@@ -595,7 +704,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     const isNotEntered = cell.approvalStatus === ApprovalStatus.NotEntered;
     const shouldEnable = isProjectSelected && !isLocked;
 
-    const billablecheck = !!(matchedResource?.billable || this.selectedProjectResource?.billable);
+    const billablecheck = !!(mergedResource?.billable || this.selectedProjectResource?.billable);
 
     const durationControl = this.fb.control(
       isNotEntered ? '' : cell.durationSeconds ? this.secondsToHHMM(cell.durationSeconds) : '',
@@ -1370,22 +1479,35 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
 
     const form = row as FormGroup;
 
-
-    const selectedResource = this.resourcesArrayList.find(
+    // ✅ Get ALL matching resources
+    const selectedResources = this.resourcesArrayList.filter(
       (res: any) =>
         res.project?.projectId === project.projectId &&
         res?.phase?.phaseId === (phase ? phase.phaseId : null) &&
         res.client?.clientId === client.clientId
     );
 
-    const selectedProjectResource = selectedResource ? {
-      ...selectedResource,
+    // ✅ Merge ONLY for date range (NOT billable/weekend logic)
+    const selectedProjectResource = selectedResources.length
+      ? {
+        ...selectedResources[0],
 
-      weekendWorkAllowed: selectedResource.weekendWorkAllowed,
-      project: { ...selectedResource.project }
-    } : null;
+        startDate: selectedResources.reduce((min, r) =>
+          new Date(r.startDate) < new Date(min) ? r.startDate : min,
+          selectedResources[0].startDate
+        ),
 
-    // Set component-level variables for modal display
+        endDate: selectedResources.reduce((max, r) =>
+          new Date(r.endDate) > new Date(max) ? r.endDate : max,
+          selectedResources[0].endDate
+        ),
+
+        // ❗ Keep allocations for per-day logic
+        allocations: selectedResources
+      }
+      : null;
+
+    // ✅ Set component-level variables
     this.selectedclientid = client.clientId;
     this.selectedprojectid = project.projectId;
     this.selectedClientname = client.clientName;
@@ -1393,8 +1515,9 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     this.selectedPhaseId = phase ? phase.phaseId : null;
     this.selectedPhaseName = phase ? phase.phaseName : null;
     this.selectedProjectResource = selectedProjectResource;
-    this.resourceId = selectedResource?.resourceId;
+    this.resourceId = selectedResources[0]?.resourceId;
 
+    // ✅ Patch main form
     form.patchValue({
       clientId: client.clientId,
       projectId: project.projectId,
@@ -1402,7 +1525,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       projectName: project.projectName,
       phaseId: phase ? phase.phaseId : null,
       phaseName: phase ? phase.phaseName : null,
-      resourceId: selectedResource?.resourceId,
+      resourceId: selectedResources[0]?.resourceId,
       selectedProjectResource: selectedProjectResource,
       selectedProject: {
         clientId: client.clientId,
@@ -1414,12 +1537,20 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       }
     });
 
-    const billableCheck = selectedResource?.billable || false;
-
     const days = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
+
     days.forEach((dayKey, index) => {
       const dayForm = form.get(dayKey) as FormGroup;
       const entryDate = this.weekDates[index];
+
+      // ✅ Find correct allocation for THIS DAY
+      const matchedAllocation = selectedResources.find(r => {
+        const start = new Date(r.startDate);
+        const end = new Date(r.endDate);
+        return entryDate >= start && entryDate <= end;
+      });
+
+      const isBillableForDay = matchedAllocation?.billable || false;
 
       const validationContext: ValidationContext = {
         selectedResource: selectedProjectResource,
@@ -1431,6 +1562,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       const dayStatus = this.dayValidationService.checkDayStatus(entryDate, validationContext);
       
 
+      // ✅ Patch each day
       dayForm.patchValue({
         clientId: client.clientId,
         projectId: project.projectId,
@@ -1439,14 +1571,16 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
         phaseId: phase ? phase.phaseId : null,
         phaseName: phase ? phase.phaseName : null,
         entryDate: entryDate,
-        resourceId: selectedResource?.resourceId,
+        resourceId: matchedAllocation?.resourceId || null,
         isBlocked: dayStatus.blocked,
         blockReason: dayStatus.blockReason,
         isLeave: dayStatus.blockReason === 'Leave'
       });
 
+      // ✅ Enable / Disable fields
       const today = new Date();
       today.setHours(0, 0, 0, 0);
+
       const isFutureDate = entryDate > today;
       const shouldEnable = !dayStatus.blocked && !isFutureDate;
 
@@ -1454,11 +1588,16 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
         shouldEnable ? dayForm.get(ctrl)?.enable() : dayForm.get(ctrl)?.disable();
       });
 
-      billableCheck ? dayForm.get('isBillable')?.enable() : dayForm.get('isBillable')?.disable();
+      // ✅ Billable control (PER DAY FIX)
+      isBillableForDay
+        ? dayForm.get('isBillable')?.enable()
+        : dayForm.get('isBillable')?.disable();
     });
 
+    // ✅ Close dropdown
     const dropdownMenu = document.querySelector('.dropdown-menu.show');
     if (dropdownMenu) dropdownMenu.classList.remove('show');
+
     const dropdownBtn = document.getElementById('dropdownMenuButton');
     if (dropdownBtn) {
       dropdownBtn.classList.remove('show');
@@ -1523,46 +1662,95 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   }
 
   //OPEN TIME ENTERIY
-  openModal(content: any, dayForm: AbstractControl | null, index: number, dayKey: string) {
-    if (dayForm instanceof FormGroup) {
-      this.currentRowIndex = index;
-      this.currentDay = dayKey;
-      this.isModalOpen = true;
-      const modalRef = this.modalService.open(content, { centered: true, backdrop: 'static' });
-      modalRef.result.finally(() => {
-        this.isModalOpen = false;
-      });
-      this.dayForm = dayForm;
-      console.log(dayForm);
+openModal(content: any, dayForm: AbstractControl | null, index: number, dayKey: string) {
 
-      const projectForm = this.projects.at(index);
-      const selectedProjectResource = projectForm?.get('selectedProjectResource')?.value;
+  if (dayForm instanceof FormGroup) {
 
-      const selectedResource = this.resourcesArrayList.find(
-        (res: any) => res.project?.projectId === this.dayForm.get('projectId')?.value &&
-          res.client?.clientId === this.dayForm.get('clientId')?.value &&
-          res.phase?.phaseId === this.dayForm.get('phaseId')?.value
-      );
+    this.currentRowIndex = index;
+    this.currentDay = dayKey;
+    this.isModalOpen = true;
 
-      if ((this.dayForm.get('approvalStatus')?.value === 'Processed' ||
-        this.dayForm.get('approvalStatus')?.value === 'Waiting for Approval') ||
-        this.employeeSelected) {
-        this.dayForm.disable();
+    const modalRef = this.modalService.open(content, {
+      centered: true,
+      backdrop: 'static'
+    });
+
+    modalRef.result.finally(() => {
+      this.isModalOpen = false;
+    });
+
+    this.dayForm = dayForm;
+
+    // ✅ Normalize date (fix timezone issue)
+    const normalizeDate = (date: any) => {
+      const d = new Date(date);
+      d.setHours(0, 0, 0, 0);
+      return d;
+    };
+
+    const entryDate = normalizeDate(this.dayForm.get('entryDate')?.value);
+
+    // ✅ 🔥 Get correct resource based on project/client/phase + DATE RANGE
+    const matchedResource = this.resourcesArrayList
+      .filter((res: any) =>
+        res.project?.projectId === this.dayForm.get('projectId')?.value &&
+        res.client?.clientId === this.dayForm.get('clientId')?.value &&
+        res.phase?.phaseId === this.dayForm.get('phaseId')?.value
+      )
+      .filter((res: any) => {
+        const start = normalizeDate(res.startDate);
+        const end = normalizeDate(res.endDate);
+        return entryDate >= start && entryDate <= end;
+      })
+      // ✅ If multiple matches → pick latest (optional but safe)
+      .sort((a: any, b: any) =>
+        new Date(b.startDate).getTime() - new Date(a.startDate).getTime()
+      )[0];
+
+    console.log('Matched Resource (by date):', matchedResource);
+
+    let isBillableForDay = false;
+
+    if (matchedResource) {
+      isBillableForDay = matchedResource.billable === true;
+    }
+
+    console.log('Final Billable:', isBillableForDay);
+
+    // ✅ Disable form for processed حالات
+    if (
+      this.dayForm.get('approvalStatus')?.value === 'Processed' ||
+      this.dayForm.get('approvalStatus')?.value === 'Waiting for Approval' ||
+      this.employeeSelected
+    ) {
+      this.dayForm.disable();
+    } else {
+
+      this.dayForm.enable();
+
+      // ✅ Enable / Disable billable checkbox
+      if (isBillableForDay) {
+        this.dayForm.get('isBillable')?.enable();
       } else {
-        const billablecheck = !!(selectedResource?.billable || selectedProjectResource?.billable || this.dayForm.get('isBillable')?.value);
-
-        this.dayForm.enable();
-        billablecheck ? this.dayForm.get('isBillable')?.enable() : this.dayForm.get('isBillable')?.disable();
-      }
-
-      const approvalStatus = this.dayForm.get('approvalStatus')?.value;
-      if (approvalStatus === 'Not Entered' || approvalStatus === '' || approvalStatus === null || approvalStatus === undefined) {
-        this.dayForm.patchValue({
-          isBillable: selectedProjectResource?.billable ?? selectedResource?.billable
-        });
+        this.dayForm.get('isBillable')?.disable();
       }
     }
+
+    // ✅ Set default billable only if not entered
+    const approvalStatus = this.dayForm.get('approvalStatus')?.value;
+
+    if (
+      approvalStatus === 'Not Entered' ||
+      approvalStatus === '' ||
+      approvalStatus === null ||
+      approvalStatus === undefined
+    ) {
+      this.dayForm.patchValue({
+        isBillable: isBillableForDay
+      });
+    }
   }
+}
 
   recalculateTimes(dayKey: string, startIndex: number) {
     for (let i = 0; i < this.projects.length; i++) {

@@ -340,4 +340,8 @@ export const MODULE_INFOS = {
     ITSUPPORT_REPORTS_MODULE_INFO: "The IT Support Report provides insights into IT-related support tickets raised by employees across the organization. It helps IT teams monitor issue resolution, track ticket progress, and analyze overall support performance.",
     IT_SUPPORT_SUMMARY_REPORTS_MODULE_INFO: "The IT Support Detailed Report displays complete information for each IT support ticket, including employee details, issue category, priority, assigned support member, and ticket status. It helps IT teams track and manage individual technical issues efficiently.",
     IT_SUPPORT_DETAILED_REPORTS_MODULE_INFO: "The IT Support Summary Report provides an overview of IT tickets based on the assigned support personnel and their current status. It helps management quickly understand workload distribution and the overall resolution status of IT support requests.",
+    TIMESHEET_BULK_UPLOAD: "The Timesheet Import feature allows users to upload bulk timesheet entries using a predefined Excel/CSV template. It validates the data and highlights errors to ensure accurate and successful submission.",
+    TIMESHEET_HISTORY_LOG: "View History module displays the record of all timesheet import and export activities. It allows you to track status, view processed records, and download files.",
+    TIMESHEET_BULK_EXPORT: "The Timesheet Export feature enables users to download timesheet data based on selected filters such as date range, employee, or project. It helps in reporting, analysis, and sharing timesheet records in Excel format.",
+
 }

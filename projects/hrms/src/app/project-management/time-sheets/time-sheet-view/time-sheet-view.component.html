@@ -5,6 +5,7 @@
         </div>
 
         <div class="d-flex align-items-center gap-3">
+        
             <div class="d-flex week-picker-content">
                 <div class="custom-date-range-picker me-2">
                     <p-datepicker #datePicker [(ngModel)]="date" selectionMode="range" [showIcon]="true"
@@ -57,12 +58,18 @@
                 </div>
             </div>
             } -->
-            <button type="button" class="custom-btn btn-primary px-4" (click)="navigation()">My Summary</button>
+            <!-- <button type="button" class="custom-btn btn-primary px-4" (click)="navigation()">My Summary</button> -->
+             @if(rbac.allowedToAccess('Timesheet Bulk Export.view') 
+              || rbac.allowedToAccess('Timesheet Bulk Import.view')
+              || rbac.allowedToAccess('Timesheet History Log.view')) {
+            <div class="position-relative menu-dropdown-content">
+                <button class="custom-btn btn-primary" type="button" (click)="bulkMenu.toggle($event)">{{'Actions'}}</button>
+                <p-menu #bulkMenu [popup]="true" [model]="bulkOperationMenuItems" />
+            </div>
+            }
 
             <div *ngIf="employeeSelected">
-                <button type="button" class="custom-btn btn-primary px-4" (click)="mytimesheet()">
-                    My Timesheet
-                </button>
+                <button type="button" class="custom-btn btn-primary px-4" (click)="mytimesheet()">My Timesheet</button>
             </div>
         </div>
     </div>
@@ -667,3 +674,6 @@
         </div>
     </div>
 </ng-template>
+
+
+

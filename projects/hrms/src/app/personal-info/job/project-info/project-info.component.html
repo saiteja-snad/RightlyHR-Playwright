@@ -2,12 +2,12 @@
   <!-- Header -->
   <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
     <div>
-      <span class="component-sub-header">{{'Assigned Projects' | translate}}</span>
+      <span class="component-sub-header">Assigned Projects</span>
     </div>
 
     <!-- Year Dropdown using PrimeNG p-select -->
     <div class="custom-p-select-content">
-      <p-dropdown [options]="availableYears" [(ngModel)]="selectedYear" [placeholder]="'Select Year' | translate" optionLabel="label"
+      <p-dropdown [options]="availableYears" [(ngModel)]="selectedYear" placeholder="Select Year" optionLabel="label"
         optionValue="value" (onChange)="onYearChange()" class="form-select custom-select custom-year-dropdown">
       </p-dropdown>
     </div>
@@ -19,11 +19,12 @@
     <table class="w-100">
       <thead>
         <tr>
-          <th>{{'Project Name' | translate}}</th>
-          <th class="text-center">{{'Project Code' | translate}}</th>
-          <th class="text-center">{{'Project Type' | translate}}</th>
-          <th class="text-center">{{'Phases' | translate}}</th>
-          <th>{{'Hours Spent' | translate}}</th>
+          <th>Client Name</th>
+          <th>Project Name</th>
+          <th class="text-center">Project Code</th>
+          <th class="text-center">Project Type</th>
+          <th class="text-center">Phases</th>
+          <th>Hours Spent</th>
         </tr>
       </thead>
 
@@ -31,13 +32,15 @@
         @if (projectData.length > 0) { @for (project of projectData; track
         $index) {
         <tr>
-          <td>
-            <span #projectNameEl class="tooltip-text"
-              [pTooltip]="shouldShowTooltip(projectNameEl) ? project.projectName : null"  tooltipPosition="top">
-              {{ project.projectName || '-' }}
-            </span>
-          </td>
+          <td>{{ project.clientName || '-' }}</td>
 
+          <td>
+            <!-- <span #projectNameEl class="tooltip-text"
+              [pTooltip]="shouldShowTooltip(projectNameEl) ? project.projectName : null"  tooltipPosition="top"> -->
+              {{ project.projectName || '-' }}
+            <!-- </span> -->
+          </td>
+          
           <td class="text-center">{{ project.meta?.graphData?.code || "-" }}</td>
           <td class="text-center">{{ project.projectType || "-" }}</td>
           <td class="text-center">
@@ -52,7 +55,7 @@
 
           <td>
             <span class="spent-hours">{{ convertDecimalToHours(project.spentHours) }}</span> /
-            {{ convertDecimalToHours(project.allocatedHours) }} {{'Hrs' | translate}}
+            {{ convertDecimalToHours(project.allocatedHours) }} Hrs
           </td>
 
         </tr>
@@ -86,11 +89,11 @@
           <table class="popup-table">
             <thead>
               <tr>
-                <th>{{'Phase Name' | translate}}</th>
-                <th>{{'Start Date' | translate}}</th>
-                <th>{{'End Date' | translate}}</th>
-                <th>{{'Hours Spent' | translate}}</th>
-                <th class="text-center">{{'Status' | translate}}</th>
+                <th>Phase Name</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th>Hours Spent</th>
+                <th class="text-center">Status</th>
               </tr>
             </thead>
             <tbody>
@@ -101,7 +104,7 @@
                 <td>{{ phase.endDate | date : "MMM d, y" }}</td>
                 <td>
                   <span class="spent-hours">{{ convertDecimalToHours(phase.spentHours) }}</span> /
-                  {{ convertDecimalToHours(phase.allocatedHours) }} {{'Hrs' | translate}}
+                  {{ convertDecimalToHours(phase.allocatedHours) }} Hrs
                 </td>
 
                 <td class="text-center">
@@ -117,9 +120,9 @@
 
         <div class="popup-table-footer">
           <div>
-            {{'Total Logged Hours' | translate}} -
+            Total Logged Hours -
             <span class="total-logged-hours">{{ convertDecimalToHours(selectedProject.totalPhaseSpentHours) }}
-              {{'Hrs' | translate}}</span>
+              Hrs</span>
           </div>
 
         </div>

@@ -21,6 +21,10 @@ export class TimesheetsTabsComponent {
       permission: { feature: 'Time Sheet', action: 'view' }
     },
     {
+      label: 'My Summary', link: '/project-management/timesheet/mysummary', icon: '/project-mangement-icons/timesheet-my-summary.svg',
+      permission: { feature: 'My Summary', action: 'view' }
+    },
+    {
       label: 'Team Timesheets', link: '/project-management/timesheet/teamtimesheet', icon: '/icons/team-timesheet-icon.png',
       permission: { feature: 'Team Time Sheet', action: 'view' }
     },
@@ -54,7 +58,12 @@ export class TimesheetsTabsComponent {
 
     // For My Timesheets tab, include mysummary page
     if (link === '/project-management/timesheet/mytimesheet') {
-      return currentUrl === link || currentUrl === '/project-management/timesheet/mysummary';
+      return currentUrl === link 
+       || currentUrl === '/project-management/timesheet/bulk-upload'
+        || currentUrl === '/project-management/timesheet/historylog'
+        || currentUrl === '/project-management/timesheet/export-history'
+        || currentUrl === '/project-management/timesheet/bulk-export';
+      // return currentUrl === link;
     }
 
     // For Team Timesheets tab, include summary page

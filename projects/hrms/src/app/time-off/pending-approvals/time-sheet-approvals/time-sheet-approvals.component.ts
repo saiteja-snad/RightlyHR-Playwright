@@ -570,6 +570,9 @@ onStatusApproveSelect(status: string) {
     }
   }
 
+
+
+
   // select all Check if ALL entries in ALL days are selected
   areAllDaysSelected(): boolean {
     if (!this.timesheetData || this.timesheetData.length === 0) return false;

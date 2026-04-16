@@ -404,7 +404,7 @@ export class BulkImportComponent implements OnInit, OnDestroy {
           this.store.setLoading(false);
           this.modalService.dismissAll();
           if (importRes?.success !== false) {
-            this.conformationPopup.openSuccessModal("Timesheet entiries submitted successfully")
+            this.conformationPopup.openSuccessModal("Timesheet entries submitted successfully")
             this.totalSuccessCount = importRes.data?.successCount || 0;
             this.failureCount = importRes.data?.failureCount || 0;
             this.totalCount = importRes.data?.totalRows || 0;

@@ -73,9 +73,13 @@ export class TeamTimesheetsComponent {
   selectedStatus:any;
   spinnerLoader=false;
   destroy$: Subject<boolean> = new Subject<boolean>();
-  constructor(private fb: FormBuilder, private http: HttpService, public rbac: RbacService, private router: Router,
-    private modalService: NgbModal, private encryptionService: EncriptdecriptService, private offcanvasService: NgbOffcanvas,
-    private filterService: TimesheetFilterService, private sharedDataService: TimesheetSharedDataService, private route: ActivatedRoute,public formsValidation: FormValidationsService,private conformationPopup: OpenModalService) { }
+  selectedLeaveStatus: any;
+  constructor(private fb: FormBuilder, private http: HttpService, 
+              public rbac: RbacService, private router: Router,
+              private modalService: NgbModal, private encryptionService: EncriptdecriptService, 
+              private offcanvasService: NgbOffcanvas, private filterService: TimesheetFilterService, 
+              private sharedDataService: TimesheetSharedDataService, private route: ActivatedRoute,
+              public formsValidation: FormValidationsService,private conformationPopup: OpenModalService) { }
 
   ngOnInit() {
     this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
@@ -239,6 +243,7 @@ export class TeamTimesheetsComponent {
  selectedData:any;
 conformationstatus!:any;
   openModalapprovals(modal: any, request: any, conformationstatus: string) {
+    this.selectedLeaveStatus = null
     this.modalService.open(modal, { centered: true, backdrop: 'static' });
     console.log('Selected Request:', request);
     if (request) {
@@ -248,6 +253,7 @@ conformationstatus!:any;
     this.conformationstatus = conformationstatus;
     this.timeSheetApproveForm.get('comments')?.reset();
     this.timeSheetRejectForm.get('comments')?.reset();
+    this.selectedLeaveStatus = conformationstatus; // Reset chip highlight
   }
   getResourceDetailsByManagerId() {
     const EmployeeId = this.empdata?.employeeId;
@@ -523,6 +529,21 @@ conformationstatus!:any;
     return `#${newR.toString(16).padStart(2, '0')}${newG.toString(16).padStart(2, '0')}${newB.toString(16).padStart(2, '0')}`;
   }
 
+ 
+  onStatusApproveSelect(status: string) {
+    this.selectedLeaveStatus = status;
+
+    if (status === 'approved') {
+      this.timeSheetApproveForm.get('comments')?.setValue('Approved');
+    }
+  }
+
+   onStatusRejectSelect(status: string) {
+    this.selectedLeaveStatus = status;
+    if (status === 'reject') {
+      this.timeSheetRejectForm.get('comments')?.setValue('Rejected');
+    }
+  }
   loadSavedFilters() {
     const savedFilters = this.filterService.getCurrentFilters();
     if (savedFilters) {

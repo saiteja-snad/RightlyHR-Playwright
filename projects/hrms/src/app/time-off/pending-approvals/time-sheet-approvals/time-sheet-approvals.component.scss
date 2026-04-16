@@ -140,3 +140,14 @@
 .popup-table th{
   background:var(--popup-accordian-th-color);;
 }
+
+.chip-btn {
+    width: max-content !important;
+    padding: 0.325rem 1.5rem !important;
+    font-size: var(--fontsize12) !important;
+    border-radius: 0.75rem !important;
+}
+
+.chip-btn.active {
+    border: 2px solid var(--primary-color) !important;
+}

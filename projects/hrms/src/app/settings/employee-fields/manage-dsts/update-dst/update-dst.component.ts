@@ -27,7 +27,7 @@ import moment from 'moment';
 
 @Component({
   selector: 'app-update-dst',
-  imports: [SelectModule, CommonModule, ReactiveFormsModule,TranslateModule],
+  imports: [SelectModule, CommonModule, ReactiveFormsModule, TranslateModule],
   templateUrl: './update-dst.component.html',
   styleUrl: './update-dst.component.scss',
 })
@@ -44,7 +44,7 @@ export class UpdateDstComponent implements OnInit, OnDestroy {
   pendingDST: ManageDST | null = null;
   hidePublishCloneButtons: boolean = false;
   isdisabled = true;
-   initialPoliciesState: any;
+  initialPoliciesState: any;
   @ViewChild('cancelpopup') cancelpopup!: TemplateRef<any>;
   constructor(
     private fb: FormBuilder,
@@ -52,7 +52,7 @@ export class UpdateDstComponent implements OnInit, OnDestroy {
     private sharedModalService: OpenModalService,
     private modalService: NgbModal,
     private router: Router
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.yearsList = this.getYears();
@@ -73,19 +73,19 @@ export class UpdateDstComponent implements OnInit, OnDestroy {
 
     this.getAllLocations();
 
-     this.momentRows.valueChanges.subscribe(() => {
-    const currentState = JSON.stringify(this.momentRows.getRawValue());
-    this.hidePublishCloneButtons = currentState === this.initialPoliciesState ? false : true;
-  });
+    this.momentRows.valueChanges.subscribe(() => {
+      const currentState = JSON.stringify(this.momentRows.getRawValue());
+      this.hidePublishCloneButtons = currentState === this.initialPoliciesState ? false : true;
+    });
   }
 
   inititializeForm() {
     this.dstForm = this.fb.group({
-      year: [ { value: '', disabled: true }, Validators.required],
-      location: [{ value: '', disabled: true } , Validators.required],
-      subLocation: [ { value: '', disabled: true } , Validators.required],
-      shift: [ { value: '', disabled: true } , Validators.required],
-      momentRows: this.fb.array([]),
+      year: [{ value: '', disabled: true }, Validators.required],
+      location: [{ value: '', disabled: true }, Validators.required],
+      subLocation: [{ value: '', disabled: true }, Validators.required],
+      shift: [{ value: '', disabled: true }, Validators.required],
+      momentRows: this.fb.array([this.createMomentRow()]),
     });
 
     if (!this.pendingDST?.dayLight?.length) {
@@ -111,6 +111,92 @@ export class UpdateDstComponent implements OnInit, OnDestroy {
       this.momentRows.push(this.createMomentRow());
     }
   }
+  blockedDates: any[] = [];
+  minDate!: string;
+  maxDate!: string;
+
+  getInputValue(event: Event): string {
+    return (event.target as HTMLInputElement).value;
+  }
+  private isUpdating = false;
+  isBlocked(date: any, currentIndex: number): boolean {
+    if (!date) return false;
+    for (let i = 0; i < this.blockedDates.length; i++) {
+      if (i === currentIndex) continue;
+      const range = this.blockedDates[i];
+      if (!range?.startDate || !range?.endDate) continue;
+      // Only block if EXACT same start or end date exists in another row
+      if (date === range.startDate || date === range.endDate) return true;
+    }
+    return false;
+  }
+  initBlockedDates() {
+    this.blockedDates = this.momentRows.controls.map((row: any) => ({
+      startDate: row.get('startDate')?.value || '',
+      endDate: row.get('endDate')?.value || ''
+    }));
+  }
+
+  onStartDateChange(event: any, row: any, index: number) {
+    if (this.isUpdating) return;
+
+    if (this.isBlocked(event, index)) {
+      this.isUpdating = true;
+      row.get('startDate')?.setValue('', { emitEvent: false });
+      this.isUpdating = false;
+      setTimeout(() => this.sharedModalService.openErrorModal('The selected start date is within a range that has already been selected. Please choose a different date.'), 300);
+      return;
+    }
+
+    const endDate = row.get('endDate')?.value;
+    if (endDate && event > endDate) {
+      this.isUpdating = true;
+      row.get('endDate')?.setValue('', { emitEvent: false });
+      this.isUpdating = false;
+      setTimeout(() => this.sharedModalService.openErrorModal('Start date must be less than or equal to the end date.'), 300);
+    }
+
+    this.blockedDates[index] = {
+      startDate: row.get('startDate')?.value,
+      endDate: row.get('endDate')?.value
+    };
+  }
+
+  onEndDateChange(event: any, row: any, index: number) {
+    if (this.isUpdating) return;
+
+    const startDate = row.get('startDate')?.value;
+    if (startDate && event < startDate) {
+      this.isUpdating = true;
+      row.get('endDate')?.setValue('', { emitEvent: false });
+      this.isUpdating = false;
+      setTimeout(() => this.sharedModalService.openErrorModal('End date must be greater than or equal to the start date.'), 300);
+      return;
+    }
+
+    if (this.isBlocked(event, index)) {
+      this.isUpdating = true;
+      row.get('endDate')?.setValue('', { emitEvent: false });
+      this.isUpdating = false;
+      setTimeout(() => this.sharedModalService.openErrorModal('The selected end date is within a range that has already been selected. Please choose a different date.'), 300);
+      return;
+    }
+
+    this.blockedDates[index] = {
+      startDate: row.get('startDate')?.value,
+      endDate: row.get('endDate')?.value
+    };
+  }
+
+  updateRowValidators(): void {
+    this.momentRows.controls.forEach(control => {
+      control.get('startDate')?.setValidators([Validators.required]);
+      control.get('startDate')?.updateValueAndValidity();
+      control.get('endDate')?.setValidators([Validators.required]);
+      control.get('endDate')?.updateValueAndValidity();
+    });
+  }
+
   //min date selected
   getMinDateForHoliday(): string {
     const selectedYear = this.dstForm.get('year')?.value;
@@ -129,12 +215,12 @@ export class UpdateDstComponent implements OnInit, OnDestroy {
   }
 
 
- //this method used for delete icon click
- removeMomentRow(index: number): void {
-  if (this.momentRows.length > 1) {
-    this.momentRows.removeAt(index);
+  //this method used for delete icon click
+  removeMomentRow(index: number): void {
+    if (this.momentRows.length > 1) {
+      this.momentRows.removeAt(index);
+    }
   }
-}
 
   private getYears(): number[] {
     const currentYear = new Date().getFullYear();
@@ -161,7 +247,7 @@ export class UpdateDstComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (res: any) => {
           this.dstForm.get('shift')?.markAsTouched();
-        
+
           this.shiftDetails = res.flatMap(
             (header: any) => header.orgShiftsItems ?? []
           );
@@ -169,7 +255,7 @@ export class UpdateDstComponent implements OnInit, OnDestroy {
             (s) => s.id === this.pendingDST?.shiftId
           );
           this.dstForm.patchValue({ shift: matchedShift ?? null });
-           this.initialPoliciesState = JSON.stringify(this.momentRows.getRawValue());
+          this.initialPoliciesState = JSON.stringify(this.momentRows.getRawValue());
           this.hidePublishCloneButtons = false;
         },
         error: (err) => {
@@ -219,6 +305,11 @@ export class UpdateDstComponent implements OnInit, OnDestroy {
                 })
               );
             });
+            const year = this.pendingDST.applicableYear;
+            this.minDate = `${year}-01-01`;
+            this.maxDate = `${year}-12-31`;
+            this.updateRowValidators();
+            this.initBlockedDates();
           }
         },
         error: (err) => console.error('Error fetching locations:', err),
@@ -231,7 +322,7 @@ export class UpdateDstComponent implements OnInit, OnDestroy {
     const resetAndDisable = (controls: string[]) => {
       controls.forEach(control => {
         form.get(control)?.reset();
-       // form.get(control)?.disable();
+        // form.get(control)?.disable();
       });
     };
 
@@ -256,13 +347,13 @@ export class UpdateDstComponent implements OnInit, OnDestroy {
       });
   }
 
-  openConfirmation(){
-    this.modalService.open(this.cancelpopup, {centered: true, backdrop: 'static'})
+  openConfirmation() {
+    this.modalService.open(this.cancelpopup, { centered: true, backdrop: 'static' })
   }
-  closeUpdateDST(){
+  closeUpdateDST() {
     this.modalService.dismissAll();
     this.navigate();
-   }
+  }
 
   formatToDateInput(dateStr: string): string {
     const date = new Date(dateStr);

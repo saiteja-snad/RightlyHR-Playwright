@@ -528,6 +528,16 @@
                         {{dayForm.get('phaseName')?.value || selectedPhaseName}} }</p>
                 </div>
                 <div class="row">
+                      <div class="col-md-12 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Task Type'|translate}}<span
+                            class="error-msg"></span></label>
+                    <div class="custom-p-select-content">
+                        <p-select [options]="taskType" optionLabel="taskTypeName" optionValue="id"
+                            [filter]="true" filterBy="taskTypeName" filterPlaceholder="Search task type"
+                            placeholder="Please select task type" formControlName="taskId" class="custom-select w-100">
+                        </p-select>
+                    </div>
+                </div>
                     <div class="col-md-12 mb-3">
                         <label class="form-label custom-label mb-2">Description<span
                                 class="text-danger">*</span></label>

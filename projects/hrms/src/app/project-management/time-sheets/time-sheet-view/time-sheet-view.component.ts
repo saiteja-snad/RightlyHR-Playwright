@@ -97,6 +97,8 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   @ViewChild('employeeDropdown') employeeDropdown: any;
   @ViewChild('errormodal') errormodal!: TemplateRef<any>;
   @ViewChild('addtask') addtask!: TemplateRef<any>;
+  taskType:any;
+  alltaskTypes=[] as any;
   constructor(private fb: FormBuilder, private modalService: NgbModal, private http: HttpService, public formValidation: FormValidationsService, public dayValidationService: DayValidationService,
     public authService: AuthService, public rbac: RbacService, private conformationPopup: OpenModalService, private router: Router, private encryptionService: EncriptdecriptService) { }
 
@@ -119,8 +121,20 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     // this.getAllEmployeeDetails();
     this.formattedweakendStart = moment(this.start).format('YYYY-MM-DD');
     this.getTimeSheetEntriesbyEmployeeId(this.employeeId, this.formattedweakendStart);
+    this.getTaskType();
   }
-
+getTaskType() {
+  this.loading = true;
+  this.subscription = this.http.getData('TaskType').subscribe({
+    next: (res: any) => {
+      this.loading = false;
+      this.alltaskTypes = res;
+      this.taskType = res?.filter((ele:any)=>ele?.status?.toLowerCase()==='active');
+    },
+    error: () => (this.loading = false),
+    complete: () => (this.loading = false)
+  });
+}
   get projects(): FormArray {
     return this.timesheetForm.get('projects') as FormArray<FormGroup>;
   }
@@ -1512,15 +1526,25 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   //OPEN TIME ENTERIY
   openModal(content: any, dayForm: AbstractControl | null, index: number, dayKey: string) {
     if (dayForm instanceof FormGroup) {
-
       this.isModalOpen = true;
       const modalRef = this.modalService.open(content, { centered: true, backdrop: 'static' });
       modalRef.result.finally(() => {
         this.isModalOpen = false;
       });
       this.dayForm = dayForm;
-      console.log(dayForm);
-
+      //start//code for the task type 
+      let taskId = this.dayForm.get('taskId')?.value;
+      let taskdata = this.alltaskTypes?.find((ele: any) => ele?.id == taskId && ele?.status?.toLowerCase() == 'inactive');
+      if (taskdata) {
+        const alreadyExists = this.taskType?.some((ele: any) => ele.id == taskdata.id);
+        if (!alreadyExists) {
+          this.taskType.push(taskdata);
+        }
+      } else {
+        this.taskType = this.alltaskTypes?.filter((ele: any) => ele?.status?.toLowerCase() == 'active'
+        );
+      }
+      //end//code for the task type
       const projectForm = this.projects.at(index);
       const selectedProjectResource = projectForm?.get('selectedProjectResource')?.value;
 

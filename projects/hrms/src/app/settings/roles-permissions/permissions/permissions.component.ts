@@ -1356,6 +1356,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Project Management Authority',
     'Project Role',
     'Task',
+    'Task Type',
     'Letter Frequency Configurations'
   ];
   selectAllLettersTabs = [

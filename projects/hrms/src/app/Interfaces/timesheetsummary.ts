@@ -65,6 +65,7 @@ export interface TimesheetEntry {
   clientMeta?: any;
   meta?: any;
   phaseMeta?: any;
+  finalApproverId?: any;
 
 }
 

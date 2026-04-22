@@ -1,120 +1,126 @@
 <div class="custom-main-component-container">
-    <div class="component-header-content">
-        <div class="heading-content">
-            <div class="commpoment-name">Project Management
-                <span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
-            </div>
-            @if(isShowtimesheetforteamRoute()){
-            <div class="commpoment-name">
-                <a (click)="navigatetoteam()"><u>Team Timesheet</u></a>
-                <span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
-            </div>
-            }
-            @if(isShowtimesheetformyRoute()){
-            <div class="commpoment-name">
-                <a (click)="navigatetomy()"><u>My Timesheet</u></a>
-                <span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
-            </div>
-            }
-            <div class="component-header">{{employename?.firstName}} {{employename?.middleName || ''}} {{employename?.lastName}}</div>
-            <div>
-                <app-module-info-icon placement="bottom" [ngbPopover]="popContent" />
-            </div>
-        </div>
-
-        <form [formGroup]="datepickerForm">
-            <div class="d-flex align-items-center gap-3">
-                <div class="total-hrs">{{"Total Logged Hours" }}:<span class="total-duration ms-1">{{ totalhrs}} Hrs</span></div>
-                <!-- Clear All button for mysummary route -->
-                @if(isShowtimesheetformyRoute()) {
-                <button type="button" class="clear-all-btn" (click)="resetForm()">{{'Clear All' | translate}}</button>
+    <div class="component-header-content align-items-baseline flex-column">
+        <div class="d-flex justify-content-between flex-wrap align-items-center mb-2 w-100">
+            <div class="heading-content">
+                <div class="commpoment-name">Project Management
+                    <span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
+                </div>
+                @if(isShowtimesheetforteamRoute()){
+                <div class="commpoment-name">
+                    <a (click)="navigatetoteam()"><u>Team Timesheet</u></a>
+                    <span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
+                </div>
                 }
-                <!-- Date Picker Outside Offcanvas -->
-                <div class="d-flex gap-2 align-items-center">
-                    <div class="custom-date-range-picker">
-                        <p-datepicker formControlName="dateRange" [placeholder]="'Select Date Range'"
-                            selectionMode="range" [showIcon]="true" [readonlyInput]="true" />
-                    </div>
+                @if(isShowtimesheetformyRoute()){
+                <div class="component-header">
+                   My Summary
                 </div>
-                <div *ngIf="this.employeeId !== this.empdata?.employeeId">
-                    <!-- @if(rbac.allowedToAccess('All Employees (Timesheet).view') && rbac.allowedToAccess('My Team (Timesheet).view')) {
-                    <div class="d-flex align-items-center gap-2">
-                        <label for="education" class="form-label custom-label text-nowrap filter-labels m-0">
-                            {{'Select Employee'| translate}}</label>
-                        <div class="custom-p-select-content">
-                            <p-select [options]="activeEmplist" [filter]="true" filterBy="label" optionLabel="label"
-                                formControlName="resourceId" [resetFilterOnHide]="true" optionValue="value" [resetFilterOnHide]="true"
-                                placeholder="Please select employee" class="form-select custom-select"></p-select>
-                        </div>
-                    </div>
-                    } -->
-                    @if(!isShowtimesheetformyRoute() && rbac.allowedToAccess('All Employees (Timesheet).view')) {
-                    <div class="d-flex align-items-center gap-2">
-                        <label for="education" class="form-label custom-label text-nowrap filter-labels m-0">
-                            {{'Select Employee'| translate}}</label>
-                        <div class="custom-p-select-content">
-                            <p-select [options]="activeEmplist" [filter]="true" filterBy="label" optionLabel="label" optionValue="value"
-                                formControlName="resourceId" [resetFilterOnHide]="true"
-                                [placeholder]="activeEmplist.length === 0 ? 'No results found' : 'Please select employee'"
-                                class="form-select custom-select" required></p-select>
-                        </div>
-                    </div>
-                    }
-                    @else if(!isShowtimesheetformyRoute() && rbac.allowedToAccess('My Team (Timesheet).view')) {
-                    <div class="d-flex align-items-center gap-2">
-                        <label class="form-label filter-labels m-0">{{'My Team'| translate}}</label>
-                        <div class="custom-p-select-content">
-                            <p-select [options]="resourcesList" optionLabel="fullName" [showClear]="false" name="myteamemployees"
-                                optionValue="id" [placeholder]="resourcesList.length === 0 ? 'No results found' : 'Please select employee'"
-                                formControlName="resourceId" [filter]="true" [resetFilterOnHide]="true" class="form-select custom-select"
-                                [autoDisplayFirst]="false" required>
-                            </p-select>
-                        </div>
-                    </div>
-                    }
-                </div>
+                }
+                <!-- <div class="component-header">{{employename?.firstName}} {{employename?.middleName || ''}}
+                    {{employename?.lastName}}</div> -->
                 <div>
-                    <button type="button" class="custom-btn btn-primary" (click)="onSubmit()" [disabled]="isApplyDisabled()">
-                        {{'Apply' | translate}}
-                    </button>
-                </div>
-                <!-- Hide Filters button for mysummary route -->
-                <div *ngIf="!isShowtimesheetformyRoute() && rbac.allowedToAccess('Team Time Sheet Filters Tab.view')">
-                    <button type="button" class="custom-btn btn-secondary position-relative" (click)="toggleFilters(filterContent)">
-                        <i class="bi bi-funnel me-2"></i>Filters
-                        <span *ngIf="isFilterApplied()" class="filter-indicator"></span>
-                    </button>
+                    <app-module-info-icon placement="bottom" [ngbPopover]="popContent" />
                 </div>
             </div>
-
-            <!-- @else if(!isShowtimesheetformyRoute() && rbac.allowedToAccess('My Team (Timesheet).view')) {
-            <div class="d-flex gap-2 align-items-center">
-                <label class="form-label filter-labels mt-2">{{'My Team' | translate}}</label>
-                <div class="custom-p-select-content">
-                    <p-select [options]="resourcesList" [filter]="true" filterBy="fullName" [resetFilterOnHide]="true"
-                        optionLabel="fullName" optionValue="id" formControlName="resourceId"
-                        [placeholder]="resourcesList.length === 0 ? 'No results found' : 'Select employee'"
-                        class="form-select custom-select" />
+    
+            <form [formGroup]="datepickerForm">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="total-hrs">{{"Total Logged Hours" }}:<span class="total-duration ms-1">{{ totalhrs}}
+                            Hrs</span></div>
+                    <!-- Clear All button for mysummary route -->
+                    @if(isShowtimesheetformyRoute()) {
+                    <button type="button" class="clear-all-btn" (click)="resetForm()">{{'Clear All' | translate}}</button>
+                    }
+                    <!-- Date Picker Outside Offcanvas -->
+                    <div class="d-flex gap-2 align-items-center">
+                        <div class="custom-date-range-picker">
+                            <p-datepicker formControlName="dateRange" [placeholder]="'Select Date Range'"
+                                selectionMode="range" [showIcon]="true" [readonlyInput]="true" />
+                        </div>
+                    </div>
+                    <div *ngIf="this.employeeId !== this.empdata?.employeeId">
+                        <!-- @if(rbac.allowedToAccess('All Employees (Timesheet).view') && rbac.allowedToAccess('My Team (Timesheet).view')) {
+                        <div class="d-flex align-items-center gap-2">
+                            <label for="education" class="form-label custom-label text-nowrap filter-labels m-0">
+                                {{'Select Employee'| translate}}</label>
+                            <div class="custom-p-select-content">
+                                <p-select [options]="activeEmplist" [filter]="true" filterBy="label" optionLabel="label"
+                                    formControlName="resourceId" [resetFilterOnHide]="true" optionValue="value" [resetFilterOnHide]="true"
+                                    placeholder="Please select employee" class="form-select custom-select"></p-select>
+                            </div>
+                        </div>
+                        } -->
+                        @if(!isShowtimesheetformyRoute() && rbac.allowedToAccess('All Employees (Timesheet).view')) {
+                        <div class="d-flex align-items-center gap-2">
+                            <label for="education" class="form-label custom-label text-nowrap filter-labels m-0">
+                                {{'Select Employee'| translate}}</label>
+                            <div class="custom-p-select-content">
+                                <p-select [options]="activeEmplist" [filter]="true" filterBy="label" optionLabel="label"
+                                    optionValue="value" formControlName="resourceId" [resetFilterOnHide]="true"
+                                    [placeholder]="activeEmplist.length === 0 ? 'No results found' : 'Please select employee'"
+                                    class="form-select custom-select" required></p-select>
+                            </div>
+                        </div>
+                        }
+                        @else if(!isShowtimesheetformyRoute() && rbac.allowedToAccess('My Team (Timesheet).view')) {
+                        <div class="d-flex align-items-center gap-2">
+                            <label class="form-label filter-labels m-0">{{'My Team'| translate}}</label>
+                            <div class="custom-p-select-content">
+                                <p-select [options]="resourcesList" optionLabel="fullName" [showClear]="false"
+                                    name="myteamemployees" optionValue="id"
+                                    [placeholder]="resourcesList.length === 0 ? 'No results found' : 'Please select employee'"
+                                    formControlName="resourceId" [filter]="true" [resetFilterOnHide]="true"
+                                    class="form-select custom-select" [autoDisplayFirst]="false" required>
+                                </p-select>
+                            </div>
+                        </div>
+                        }
+                    </div>
+                    <div>
+                        <button type="button" class="custom-btn btn-primary" (click)="onSubmit()"
+                            [disabled]="isApplyDisabled()">
+                            {{'Apply' | translate}}
+                        </button>
+                    </div>
+                    <!-- Hide Filters button for mysummary route -->
+                    <div *ngIf="!isShowtimesheetformyRoute() && rbac.allowedToAccess('Team Time Sheet Filters Tab.view')">
+                        <button type="button" class="custom-btn btn-secondary position-relative"
+                            (click)="toggleFilters(filterContent)">
+                            <i class="bi bi-funnel me-2"></i>Filters
+                            <span *ngIf="isFilterApplied()" class="filter-indicator"></span>
+                        </button>
+                    </div>
                 </div>
+    
+                <!-- @else if(!isShowtimesheetformyRoute() && rbac.allowedToAccess('My Team (Timesheet).view')) {
+                <div class="d-flex gap-2 align-items-center">
+                    <label class="form-label filter-labels mt-2">{{'My Team' | translate}}</label>
+                    <div class="custom-p-select-content">
+                        <p-select [options]="resourcesList" [filter]="true" filterBy="fullName" [resetFilterOnHide]="true"
+                            optionLabel="fullName" optionValue="id" formControlName="resourceId"
+                            [placeholder]="resourcesList.length === 0 ? 'No results found' : 'Select employee'"
+                            class="form-select custom-select" />
+                    </div>
+                </div>
+                } -->
+    
+                <!-- <button type="button" class="custom-btn btn-primary" (click)="onSubmit()" [disabled]="isApplyDisabled()">
+                    {{'Apply' | translate}}
+                </button> -->
+                <!-- </div> -->
+            </form>
+        </div>
+    
+        <!-- Filter Chips Display -->
+        <div class="fliter-chip-content mb-2" *ngIf="getSelectedFilters().length > 0">
+            <div class="d-flex align-items-center gap-2 flex-wrap">
+                <p-chip *ngFor="let filter of getSelectedFilters() | slice:0:3" [label]="filter.label" [removable]="true"
+                    (onRemove)="removeFilter(filter)" />
+                <!-- Show “X more” chip if filters > 3 -->
+                <p-chip *ngIf="getSelectedFilters().length > 3" class="more-chip" [removable]="false"
+                    label="+{{getSelectedFilters().length - 3}} More" (click)="toggleFilters(filterContent)" />
+                <button type="button" class="clear-all-btn" (click)="resetForm()">{{ 'Clear All' | translate }}</button>
             </div>
-            } -->
-
-            <!-- <button type="button" class="custom-btn btn-primary" (click)="onSubmit()" [disabled]="isApplyDisabled()">
-                {{'Apply' | translate}}
-            </button> -->
-            <!-- </div> -->
-        </form>
-    </div>
-
-    <!-- Filter Chips Display -->
-    <div class="fliter-chip-content mb-2" *ngIf="getSelectedFilters().length > 0">
-        <div class="d-flex align-items-center gap-2 flex-wrap">
-            <p-chip *ngFor="let filter of getSelectedFilters() | slice:0:3" [label]="filter.label" [removable]="true"
-                (onRemove)="removeFilter(filter)" />
-            <!-- Show “X more” chip if filters > 3 -->
-            <p-chip *ngIf="getSelectedFilters().length > 3" class="more-chip" [removable]="false"
-                label="+{{getSelectedFilters().length - 3}} More" (click)="toggleFilters(filterContent)" />
-            <button type="button" class="clear-all-btn" (click)="resetForm()">{{ 'Clear All' | translate }}</button>
         </div>
     </div>
 

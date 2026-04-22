@@ -2,49 +2,32 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { AccordionModule } from 'primeng/accordion';
-import { InfoIconComponent } from '../../../icons/info-icon/info-icon.component';
+import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 import { NgbModal, NgbPopover } from '@ng-bootstrap/ng-bootstrap';
 import { HttpService } from '../../../services/http.service';
 import { Subject, Subscription, takeUntil } from 'rxjs';
 import { TimesheetDay } from '../../../Interfaces/timoff-model';
-import { ConfirmationIconComponent } from '../../../icons/confirmation-icon/confirmation-icon.component';
-import {
-  FormBuilder,
-  FormGroup,
-  FormsModule,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { ConfirmationIconComponent } from "../../../icons/confirmation-icon/confirmation-icon.component";
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FormValidationsService } from '../../../services/form-validations.service';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { environment } from '../../../../environments/environment';
 import { noWhitespaceValidator } from '../../../shared/nowhitespace/nowhitespace.component';
-import { Table, TableModule } from 'primeng/table';
-import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
+import { Table, TableModule } from "primeng/table";
+import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { PaginatorModule } from 'primeng/paginator';
 import { Router } from '@angular/router';
-import { Skeleton } from 'primeng/skeleton';
-import { RbacService } from '../../../services/rbac.service';
+import { Skeleton } from "primeng/skeleton";
+import { DateformatPipe } from '../../../pipes/dateformat.pipe';
 @Component({
   selector: 'app-time-sheet-approvals',
-  imports: [
-    AccordionModule,
-    CommonModule,
-    PaginatorModule,
-    ReactiveFormsModule,
-    TableModule,
-    TranslateModule,
-    InfoIconComponent,
-    NgbPopover,
-    ConfirmationIconComponent,
-    FormsModule,
-    NoDataFoundComponent,
-    Skeleton,
-  ],
+  imports: [AccordionModule, CommonModule, PaginatorModule, ReactiveFormsModule, TableModule, TranslateModule, InfoIconComponent, NgbPopover,
+    ConfirmationIconComponent, FormsModule, NoDataFoundComponent, Skeleton, DateformatPipe],
   templateUrl: './time-sheet-approvals.component.html',
   styleUrl: './time-sheet-approvals.component.scss',
   // encapsulation: ViewEncapsulation.None,
 })
+
 export class TimeSheetApprovalsComponent implements OnInit {
   timesheetData: TimesheetDay[] = [];
   subscription!: Subscription;
@@ -76,7 +59,7 @@ export class TimeSheetApprovalsComponent implements OnInit {
   selectedMap: { [key: number]: any[] } = {};
   //projectsData:any[]=[];
   //employeeData:any[]=[];
-  phaseId!: number | null;
+  phaseId!: number|null;
   dataload = false;
   //employeeflag:any;
   employeeresource: any;
@@ -90,41 +73,30 @@ export class TimeSheetApprovalsComponent implements OnInit {
     { label: 10, value: 10 },
     { label: 15, value: 15 },
     { label: 20, value: 20 },
-    { label: 25, value: 25 },
+    { label: 25, value: 25 }
   ];
   startdate: any;
   enddate: any;
   globalSelectedEntries: any[] = [];
   selectedLeaveStatus: any;
-  totalCount: any;
   showBulkSelectionBanner = false;
   allPagesSelected = false;
   currentPageItemCount = 0;
-  totalrequestRecordCount = 0;
-  constructor(
-    private http: HttpService,
-    public formsValidation: FormValidationsService,
-    private modalService: NgbModal,
-    private conformationPopup: OpenModalService,
-    public router: Router,
-    private fb: FormBuilder,
-    public rbac: RbacService,
-  ) {}
+  totalrequestRecordCount=0;
+  selectedSummaryEntries: any[] = [];
+  requestType!:string;
+  constructor(private http: HttpService, public formsValidation: FormValidationsService, private modalService: NgbModal,
+    private conformationPopup: OpenModalService, public router: Router, private fb: FormBuilder) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.employeeid = parseInt(this.empinfo.employeeId);
-    this.loadClientsAndProjects(
-      this.page,
-      this.pageSize,
-      this.startdate,
-      this.enddate,
-    );
+    this.loadClientsAndProjects(this.page, this.pageSize,  this.startdate, this.enddate );
     this.http.selectedEmployeeIdTimesheet$
       .pipe(takeUntil(this.destroy$))
-      .subscribe((data) => {
-        this.phaseId = null;
-        this.employeeresource = null;
+      .subscribe(data => {
+        this.phaseId=null;
+        this.employeeresource=null;
         this.selectedMap = {};
         this.selectedEntries = [];
         this.globalSelectedEntries = [];
@@ -137,39 +109,27 @@ export class TimeSheetApprovalsComponent implements OnInit {
         if (data && data.request) {
           this.employeeresource = data.request.resourceId;
           this.phaseId = data.request.phaseId;
-
           if (data.request && data.request.dateRange) {
             this.startdate = data.request.dateRange.startDate;
             this.enddate = data.request.dateRange.endDate;
           }
-
-          this.loadClientsAndProjects(
-            this.page,
-            this.pageSize,
-            this.startdate,
-            this.enddate,
-          );
+          this.loadClientsAndProjects(this.page, this.pageSize, this.startdate, this.enddate);
         } else {
           this.startdate = null;
           this.enddate = null;
-          this.loadClientsAndProjects(
-            this.page,
-            this.pageSize,
-            this.startdate,
-            this.enddate,
-          );
+          this.loadClientsAndProjects(this.page, this.pageSize, this.startdate, this.enddate);
         }
       });
 
     this.intializeApproveForm();
   }
-  onStatusApproveSelect(status: string) {
-    this.selectedLeaveStatus = status;
+onStatusApproveSelect(status: string) {
+  this.selectedLeaveStatus = status;
 
-    if (status === 'approved') {
-      this.timeSheetApproveForm.get('comments')?.setValue('Approved');
-    }
+  if (status === 'approved') {
+    this.timeSheetApproveForm.get('comments')?.setValue('Approved');
   }
+}
 
   onStatusRejectSelect(status: string) {
     this.selectedLeaveStatus = status;
@@ -179,40 +139,31 @@ export class TimeSheetApprovalsComponent implements OnInit {
   }
   intializeApproveForm() {
     this.timeSheetApproveForm = this.fb.group({
-      comments: [null, [Validators.required, Validators.maxLength(250)]],
+      comments: [null, [Validators.required, Validators.maxLength(250)]]
     });
-    this.timeSheetApproveForm
-      .get('comments')
-      ?.valueChanges.subscribe((value: string) => {
-        if (!value || value.trim() === '') {
-          this.selectedLeaveStatus = null; // remove chip highlight if cleared
-        }
-      });
+     this.timeSheetApproveForm.get('comments')?.valueChanges.subscribe((value: string) => {
+    if (!value || value.trim() === '') {
+      this.selectedLeaveStatus = null; // remove chip highlight if cleared
+    }
+  });
     this.timeSheetRejectForm = this.fb.group({
       comments: [
         null,
         [Validators.required, Validators.maxLength(250), noWhitespaceValidator],
       ],
     });
-    this.timeSheetRejectForm
-      .get('comments')
-      ?.valueChanges.subscribe((value: string) => {
-        if (!value || value.trim() === '') {
-          this.selectedLeaveStatus = null; // remove chip highlight if cleared
-        }
-      });
+      this.timeSheetRejectForm.get('comments')?.valueChanges.subscribe((value: string) => {
+    if (!value || value.trim() === '') {
+      this.selectedLeaveStatus = null; // remove chip highlight if cleared
+    }
+     });
   }
 
-  // called for pagination
+  // called for pagination 
   onRowsChange() {
     this.page = 1;
     this.first = 0;
-    this.loadClientsAndProjects(
-      this.page,
-      this.pageSize,
-      this.startdate,
-      this.enddate,
-    );
+    this.loadClientsAndProjects(this.page, this.pageSize, this.startdate, this.enddate);
   }
 
   onPageChange(event: any) {
@@ -220,12 +171,7 @@ export class TimeSheetApprovalsComponent implements OnInit {
     this.page = event.page + 1;
     this.pageSize = event.rows;
     this.first = event.first;
-    this.loadClientsAndProjects(
-      this.page,
-      this.pageSize,
-      this.startdate,
-      this.enddate,
-    );
+    this.loadClientsAndProjects(this.page, this.pageSize, this.startdate, this.enddate);
   }
 
   // Called when first size changes
@@ -235,35 +181,25 @@ export class TimeSheetApprovalsComponent implements OnInit {
     this.rows = newPageSize;
     this.page = 1;
     this.first = 0;
-    this.loadClientsAndProjects(
-      this.page,
-      this.pageSize,
-      this.startdate,
-      this.enddate,
-    );
+    this.loadClientsAndProjects(this.page, this.pageSize, this.startdate, this.enddate);
   }
 
   // bulk data approve method
   bulkApprove(popup: any) {
-    this.selectedLeavesItems = this.selectedEntries;
+    this.selectedLeavesItems = this.selectedEntries as TimesheetDay[];
     this.conformationstatus = 'Processed';
     this.openModal(popup, null, this.conformationstatus);
   }
 
   // bulk data reject method
   bulkReject(popup: any) {
-    this.selectedLeavesItems = this.selectedEntries;
+    this.selectedLeavesItems = this.selectedEntries as TimesheetDay[];
     this.conformationstatus = 'Rejected';
     this.openModal(popup, null, this.conformationstatus);
   }
 
   // load timesheet data based on project and employee
-  loadClientsAndProjects(
-    page: number | null,
-    pageSize: number | null,
-    startdate: any,
-    enddate: any,
-  ): void {
+  loadClientsAndProjects(page: number | null, pageSize: number | null, startdate:any,enddate:any): void {
     this.dataload = true;
     let url = `v2/PendingApproval/employee/${this.empinfo?.employeeId}?moduleId=${environment.timesheetModuleId}`;
     if (page !== null) url += `&page=${page}`;
@@ -272,16 +208,12 @@ export class TimeSheetApprovalsComponent implements OnInit {
     if (this.phaseId !== undefined && this.phaseId !== null) {
       url += `&phaseId=${this.phaseId}`;
     }
-    if (this.startdate && this.enddate)
-      url += `&startDate=${this.startdate}&endDate=${this.enddate}`;
+    if (this.startdate && this.enddate) url += `&startDate=${this.startdate}&endDate=${this.enddate}`;
     this.http.getData(url).subscribe({
       next: (res: any) => {
         this.dataload = false;
         this.collectionSize = res.data.totalCount;
-        // this.totalrequestRecordCount = res?.data?.items[0]?.totalRecords
-        //   ? res.data.items[0].totalRecords
-        //   : 0;
-        this.totalrequestRecordCount = res.data.totalCount;
+        this.totalrequestRecordCount = res?.data?.items[0]?.totalRecords? res.data.items[0].totalRecords : 0;
         if (res.success) {
           // flatten all day entities into one array of entries (optional for counts)
           const allEntries = res.data.items
@@ -289,12 +221,10 @@ export class TimeSheetApprovalsComponent implements OnInit {
             .flatMap((entity: any) => entity.entries);
           this.totalRecordCountitem = allEntries.length;
           // assign timesheetData for UI
-          this.timesheetData = res.data.items.flatMap(
-            (item: any) => item.entity,
-          ) as TimesheetDay[];
+          this.timesheetData = res.data.items.flatMap((item: any) => item.entity) as TimesheetDay[];
           this.timesheetrecord = res.data.items;
           // Add unique `id` for each entry (important for PrimeNG selection)
-          this.timesheetData.forEach((day) => {
+          this.timesheetData.forEach(day => {
             if (Array.isArray(day.entries)) {
               day.entries.forEach((entry: any) => {
                 if (entry && typeof entry === 'object') {
@@ -306,8 +236,8 @@ export class TimeSheetApprovalsComponent implements OnInit {
           // Restore selection from globalSelectedEntries
           this.selectedMap = {};
           this.timesheetData.forEach((day, i) => {
-            const selectedForDay = day.entries.filter((entry) =>
-              this.globalSelectedEntries.some((sel) => sel.id === entry.id),
+            const selectedForDay = day.entries.filter(entry =>
+              this.globalSelectedEntries.some(sel => sel.id === entry.id)
             );
             this.selectedMap[i] = selectedForDay;
           });
@@ -321,8 +251,8 @@ export class TimeSheetApprovalsComponent implements OnInit {
       },
       error: (err) => {
         this.selectedEntries = [];
-        this.collectionSize = 0;
-        this.totalrequestRecordCount = 0;
+         this.collectionSize = 0;
+         this.totalrequestRecordCount=0;
         if (this.employeeresource != null && this.phaseId != 0) {
           // this.conformationPopup.openErrorModal(err.error.message);
           this.collectionSize = 0;
@@ -330,7 +260,7 @@ export class TimeSheetApprovalsComponent implements OnInit {
         if (this.employeeresource == null && this.phaseId != 0) {
           this.collectionSize = 0;
         }
-        if (this.enddate == 'Invalid Date') {
+        if (this.enddate == "Invalid Date") {
           this.conformationPopup.openErrorModal(err.error.errors.endDate[0]);
           this.collectionSize = 0;
         }
@@ -341,7 +271,7 @@ export class TimeSheetApprovalsComponent implements OnInit {
       },
       complete: () => {
         this.dataload = false;
-      },
+      }
     });
   }
 
@@ -351,7 +281,7 @@ export class TimeSheetApprovalsComponent implements OnInit {
     const row = event.data;
     if (!this.selectedMap[dayIndex]) this.selectedMap[dayIndex] = [];
     // add row if not already selected
-    if (!this.selectedMap[dayIndex].some((s) => s.id === row.id)) {
+    if (!this.selectedMap[dayIndex].some(s => s.id === row.id)) {
       this.selectedMap[dayIndex].push(row);
     }
     this.syncGlobalSelectedEntries();
@@ -361,30 +291,20 @@ export class TimeSheetApprovalsComponent implements OnInit {
   onRowUnselect(dayIndex: number, event: any) {
     this.showhideaction = false;
     const row = event.data;
-    this.selectedMap[dayIndex] = (this.selectedMap[dayIndex] || []).filter(
-      (s) => s.id !== row.id,
-    );
+    this.selectedMap[dayIndex] = (this.selectedMap[dayIndex] || []).filter(s => s.id !== row.id);
     this.syncGlobalSelectedEntries();
   }
 
   syncGlobalSelectedEntries() {
-    this.selectedEntries = Object.values(this.selectedMap)
-      .filter((arr) => Array.isArray(arr))
-      .flat();
+    this.selectedEntries = Object.values(this.selectedMap).filter(arr => Array.isArray(arr)).flat();
     this.showhideaction = this.selectedEntries.length === 0;
     setTimeout(() => this.updateBulkSelectionBanner(), 0);
   }
 
   updateBulkSelectionBanner() {
-    this.currentPageItemCount = this.timesheetData.reduce(
-      (acc, day) => acc + (day.entries?.length || 0),
-      0,
-    );
-    const allCurrentPageSelected =
-      this.selectedEntries.length > 0 &&
-      this.selectedEntries.length === this.currentPageItemCount;
-    this.showBulkSelectionBanner =
-      allCurrentPageSelected && !this.allPagesSelected;
+    this.currentPageItemCount = this.timesheetData.reduce((acc, day) => acc + (day.entries?.length || 0), 0);
+    const allCurrentPageSelected = this.selectedEntries.length > 0 && this.selectedEntries.length === this.currentPageItemCount;
+    this.showBulkSelectionBanner = allCurrentPageSelected && !this.allPagesSelected;
     // console.log('Banner Debug:', {
     //   currentPageItemCount: this.currentPageItemCount,
     //   selectedCount: this.selectedEntries.length,
@@ -401,12 +321,7 @@ export class TimeSheetApprovalsComponent implements OnInit {
     this.rows = this.collectionSize;
     this.page = 1;
     this.first = 0;
-    this.loadClientsAndProjects(
-      this.page,
-      this.pageSize,
-      this.startdate,
-      this.enddate,
-    );
+    this.loadClientsAndProjects(this.page, this.pageSize, this.startdate, this.enddate);
   }
 
   clearAllSelection() {
@@ -419,12 +334,7 @@ export class TimeSheetApprovalsComponent implements OnInit {
     this.rows = 10;
     this.page = 1;
     this.first = 0;
-    this.loadClientsAndProjects(
-      this.page,
-      this.pageSize,
-      this.startdate,
-      this.enddate,
-    );
+    this.loadClientsAndProjects(this.page, this.pageSize, this.startdate, this.enddate);
   }
 
   // HEADER checkbox helpers (per-day)
@@ -432,7 +342,7 @@ export class TimeSheetApprovalsComponent implements OnInit {
     const day = this.timesheetData?.[dayIndex];
     const sel = this.selectedMap[dayIndex] || [];
     if (!day || !day.entries) return false;
-    return day.entries.every((e) => sel.some((s) => s.id === e.id));
+    return day.entries.every(e => sel.some(s => s.id === e.id));
   }
 
   // used for check box show indeterminate state
@@ -465,11 +375,24 @@ export class TimeSheetApprovalsComponent implements OnInit {
     if (request) {
       // single row case
       this.selectedLeaveData = request;
+      console.log('Selected Data for Modal:', this.selectedLeaveData);
+      console.log('selected entries:', this.selectedSummaryEntries);
       this.selectedLeavesItems = [];
     }
     this.conformationstatus = conformationstatus;
     this.timeSheetApproveForm.get('comments')?.reset();
     this.timeSheetRejectForm.get('comments')?.reset();
+    const filterEntries =this.selectedSummaryEntries?.filter((ele:any) => ele.exclude === false);
+    console.log('Filtered Entries with Exclude false:', filterEntries);
+    const allowedEntryIds = new Set(
+      filterEntries.flatMap((item: any) => item.entryIds)
+    );
+     let filteredSelectedEntries=[] as any[];
+     filteredSelectedEntries = this.selectedEntries.filter((entry: any) =>
+      allowedEntryIds.has(entry.timesheetEntryId)
+    );
+    console.log('Selected Entries Filter:', filteredSelectedEntries);
+     this.selectedLeavesItems=filteredSelectedEntries;
   }
 
   // approve submit post method
@@ -477,19 +400,18 @@ export class TimeSheetApprovalsComponent implements OnInit {
     this.spinnerLoader = true;
     if (timeSheetApproveForm.valid) {
       const formData = timeSheetApproveForm.value;
-      const approvedBy = this.empinfo.employeeId.toString();
+      const approvedBy = this.empinfo?.employeeId?.toString();
       const comments = formData.comments;
-      if (this.selectedLeavesItems && this.selectedLeavesItems.length > 0) {
+      if (this.selectedLeavesItems && this.selectedLeavesItems?.length > 0) {
         // Bulk selection
         this.requestBody = {
           requestProcessedBy: approvedBy,
           status: this.conformationstatus,
           comments: comments,
           moduleId: environment.timesheetModuleId,
-          onBehalfOfApproval: true,
-          headerRequests: this.selectedLeavesItems.map((item) => ({
-            headerID: item.approvalHeader.id,
-            currentStage: item.approvalHeader.currentapprovalStage,
+          headerRequests: this.selectedLeavesItems?.map((item) => ({
+            headerID: item?.approvalHeader?.id,
+            currentStage: item?.approvalHeader?.currentapprovalStage,
           })),
         };
       } else if (this.selectedLeaveData) {
@@ -502,72 +424,62 @@ export class TimeSheetApprovalsComponent implements OnInit {
           moduleId: environment.timesheetModuleId,
           headerRequests: [
             {
-              headerID: this.selectedLeaveData.approvalHeader.id,
-              currentStage:
-                this.selectedLeaveData.approvalHeader.currentapprovalStage,
+              headerID: this.selectedLeaveData?.approvalHeader?.id,
+              currentStage: this.selectedLeaveData?.approvalHeader?.currentapprovalStage,
             },
           ],
         };
       }
 
       // Same API call
-      this.http
-        .putData(`v2/PendingApproval/multiapprovals`, this.requestBody)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (response: any) => {
-            this.modalService.dismissAll();
-            this.responseSummary = response.data;
-            this.totalRecordCount = this.responseSummary.totalRecordCount;
-            this.successRecordsCount = this.responseSummary.successRecordsCount;
-            this.failureRecordsCount = this.responseSummary.failureRecordsCount;
-            if (
-              !this.selectedLeavesItems ||
-              this.selectedLeavesItems.length === 0
-            ) {
-              // Single
-              this.conformationPopup.openSuccessModal(
-                this.conformationstatus === 'Processed'
-                  ? 'Timesheet request approved successfully'
-                  : 'Timesheet request rejected successfully',
-              );
-            } else {
-              // this.openModal(this.leaveSummary, null, this.conformationstatus);
-              const modalRef = this.modalService.open(this.leaveSummary, {
-                centered: true,
-                size: 'lg',
-                beforeDismiss: () => false, // prevents manual close by ESC/backdrop
-              });
-              setTimeout(() => modalRef.close(), 3000);
-            }
-          },
-          error: (reason: any) => {
-            this.spinnerLoader = false;
-            this.timeSheetApproveForm.reset();
-            this.timeSheetRejectForm.reset();
-            this.modalService.dismissAll();
-            this.conformationPopup.openErrorModal(reason.error.message);
-          },
-          complete: () => {
-            this.spinnerLoader = false;
-            this.loadClientsAndProjects(
-              this.page,
-              this.pageSize,
-              this.startdate,
-              this.enddate,
+      this.http.putData(`v2/PendingApproval/multiapprovals`, this.requestBody).pipe(takeUntil(this.destroy$)).subscribe({
+        next: (response: any) => {
+          this.modalService.dismissAll();
+          this.responseSummary = response.data;
+          this.totalRecordCount = this.responseSummary.totalRecordCount;
+          this.successRecordsCount = this.responseSummary.successRecordsCount;
+          this.failureRecordsCount = this.responseSummary.failureRecordsCount;
+          if (!this.selectedLeavesItems || this.selectedLeavesItems.length === 0) {
+            // Single
+            this.conformationPopup.openSuccessModal(
+              this.conformationstatus === 'Processed'
+                ? 'Timesheet request approved successfully'
+                : 'Timesheet request rejected successfully'
             );
-            this.selectedLeavesItems = [];
-            this.selectedEntries = [];
-            this.selectedMap = {};
-            this.allPagesSelected = false;
-            this.showBulkSelectionBanner = false;
-            this.showhideaction = true;
-            this.timeSheetApproveForm.reset();
-            this.timeSheetRejectForm.reset();
-            this.getApprovalStatusCounts();
-            this.http.triggerActionSignal();
-          },
-        });
+          } else {
+            // this.openModal(this.leaveSummary, null, this.conformationstatus);
+            const modalRef = this.modalService.open(this.leaveSummary, {
+              centered: true, size: 'lg',
+              beforeDismiss: () => false // prevents manual close by ESC/backdrop
+            });
+            setTimeout(() => modalRef.close(), 3000);
+          }
+        },
+        error: (reason: any) => {
+          this.spinnerLoader = false;
+          this.timeSheetApproveForm.reset();
+          this.timeSheetRejectForm.reset();
+          this.modalService.dismissAll();
+          this.conformationPopup.openErrorModal(reason.error.message);
+        },
+        complete: () => {
+          this.spinnerLoader = false;
+          this.allPagesSelected = false;
+          this.showBulkSelectionBanner = false;
+          this.rows = 10;
+          this.first = 0;
+          this.loadClientsAndProjects(this.page, this.pageSize, this.startdate, this.enddate);
+          this.selectedLeavesItems = [];
+          this.selectedEntries = [];
+          this.selectedMap = {};
+          this.allPagesSelected = false;
+          this.showBulkSelectionBanner = false;
+          this.showhideaction = true;
+          this.timeSheetApproveForm.reset();
+          this.timeSheetRejectForm.reset();
+          this.http.triggerActionSignal();
+        },
+      });
     }
   }
 
@@ -578,17 +490,16 @@ export class TimeSheetApprovalsComponent implements OnInit {
       const formData = timeSheetRejectForm.value;
       const approvedBy = this.empinfo.employeeId.toString();
       const comments = formData.comments;
-      if (this.selectedLeavesItems && this.selectedLeavesItems.length > 0) {
+      if (this.selectedLeavesItems && this?.selectedLeavesItems?.length > 0) {
         // Bulk selection
         this.requestBody = {
           requestProcessedBy: approvedBy,
           status: this.conformationstatus,
           comments: comments,
           moduleId: environment.timesheetModuleId,
-          onBehalfOfApproval: true,
-          headerRequests: this.selectedLeavesItems.map((item) => ({
-            headerID: item.approvalHeader.id,
-            currentStage: item.approvalHeader.currentapprovalStage,
+          headerRequests: this.selectedLeavesItems?.map((item) => ({
+            headerID: item?.approvalHeader?.id,
+            currentStage: item?.approvalHeader?.currentapprovalStage,
           })),
         };
       } else if (this.selectedLeaveData) {
@@ -597,92 +508,70 @@ export class TimeSheetApprovalsComponent implements OnInit {
           requestProcessedBy: approvedBy,
           status: this.conformationstatus,
           comments: comments,
-          onBehalfOfApproval: true,
-          moduleId: environment.timesheetModuleId,
+          moduleId: environment?.timesheetModuleId,
           headerRequests: [
             {
-              headerID: this.selectedLeaveData.approvalHeader.id,
-              currentStage:
-                this.selectedLeaveData.approvalHeader.currentapprovalStage,
+              headerID: this.selectedLeaveData?.approvalHeader?.id,
+              currentStage: this.selectedLeaveData?.approvalHeader?.currentapprovalStage,
             },
           ],
         };
       }
 
       // Same API call
-      this.http
-        .putData(`v2/PendingApproval/multiapprovals`, this.requestBody)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (response: any) => {
-            this.modalService.dismissAll();
-            this.responseSummary = response.data;
-            this.totalRecordCount = this.responseSummary.totalRecordCount;
-            this.successRecordsCount = this.responseSummary.successRecordsCount;
-            this.failureRecordsCount = this.responseSummary.failureRecordsCount;
-            if (
-              !this.selectedLeavesItems ||
-              this.selectedLeavesItems.length === 0
-            ) {
-              // Single
-              this.conformationPopup.openSuccessModal(
-                this.conformationstatus === 'Processed'
-                  ? 'Timesheet request approved successfully'
-                  : 'Timesheet request rejected successfully',
-              );
-            } else {
-              // this.openModal(this.leaveSummary, null, this.conformationstatus);
-              const modalRef = this.modalService.open(this.leaveSummary, {
-                centered: true,
-                size: 'lg',
-                beforeDismiss: () => false, // prevents manual close by ESC/backdrop
-              });
-              setTimeout(() => modalRef.close(), 3000);
-            }
-          },
-          error: (reason: any) => {
-            this.spinnerLoader = false;
-            this.timeSheetApproveForm.reset();
-            this.timeSheetRejectForm.reset();
-            this.modalService.dismissAll();
-            this.conformationPopup.openErrorModal(reason.error.message);
-          },
-          complete: () => {
-            this.spinnerLoader = false;
-            this.loadClientsAndProjects(
-              this.page,
-              this.pageSize,
-              this.startdate,
-              this.enddate,
+      this.http.putData(`v2/PendingApproval/multiapprovals`, this.requestBody).pipe(takeUntil(this.destroy$)).subscribe({
+        next: (response: any) => {
+          this.modalService.dismissAll();
+          this.responseSummary = response.data;
+          this.totalRecordCount = this.responseSummary.totalRecordCount;
+          this.successRecordsCount = this.responseSummary.successRecordsCount;
+          this.failureRecordsCount = this.responseSummary.failureRecordsCount;
+          if (!this.selectedLeavesItems || this.selectedLeavesItems.length === 0) {
+            // Single
+            this.conformationPopup.openSuccessModal(
+              this.conformationstatus === 'Processed'
+                ? 'Timesheet request approved successfully'
+                : 'Timesheet request rejected successfully'
             );
-            this.selectedLeavesItems = [];
-            this.selectedEntries = [];
-            this.selectedMap = {};
-            this.allPagesSelected = false;
-            this.showBulkSelectionBanner = false;
-            this.showhideaction = true;
-            this.timeSheetApproveForm.reset();
-            this.timeSheetRejectForm.reset();
-            this.getApprovalStatusCounts();
-            this.http.triggerActionSignal();
-          },
-        });
+          } else {
+            // this.openModal(this.leaveSummary, null, this.conformationstatus);
+            const modalRef = this.modalService.open(this.leaveSummary, {
+              centered: true, size: 'lg',
+              beforeDismiss: () => false // prevents manual close by ESC/backdrop
+            });
+            setTimeout(() => modalRef.close(), 3000);
+          }
+        },
+        error: (reason: any) => {
+          this.spinnerLoader = false;
+          this.timeSheetApproveForm.reset();
+          this.timeSheetRejectForm.reset();
+          this.modalService.dismissAll();
+          this.conformationPopup.openErrorModal(reason.error.message);
+        },
+        complete: () => {
+          this.spinnerLoader = false;
+          this.allPagesSelected = false;
+          this.showBulkSelectionBanner = false;
+          this.rows = 10;
+          this.first = 0;
+          this.loadClientsAndProjects(this.page, this.pageSize, this.startdate, this.enddate);
+          this.selectedLeavesItems = [];
+          this.selectedEntries = [];
+          this.selectedMap = {};
+          this.allPagesSelected = false;
+          this.showBulkSelectionBanner = false;
+          this.showhideaction = true;
+          this.timeSheetApproveForm.reset();
+          this.timeSheetRejectForm.reset();
+          this.http.triggerActionSignal();
+        },
+      });
     }
   }
-  getApprovalStatusCounts() {
-    this.http
-      .get(
-        `PendingApproval/getApprovalStatusCounts?moduleId=${environment.timesheetModuleId}&EmployeeId=${this.empinfo.employeeId}`,
-      )
-      .subscribe((res: any) => {
-        this.totalCount = res.reduce(
-          (acc: number, curr: any) => acc + curr.totalCount,
-          0,
-        );
-        this.http.updatePendingApprovalCounts(this.totalCount);
-        //Map counts to tabs
-      });
-  }
+
+
+
 
   // select all Check if ALL entries in ALL days are selected
   areAllDaysSelected(): boolean {
@@ -691,7 +580,7 @@ export class TimeSheetApprovalsComponent implements OnInit {
       (day, i) =>
         day.entries &&
         this.selectedMap[i] &&
-        day.entries.length === this.selectedMap[i].length,
+        day.entries.length === this.selectedMap[i].length
     );
   }
 
@@ -700,7 +589,7 @@ export class TimeSheetApprovalsComponent implements OnInit {
     if (!this.timesheetData || this.timesheetData.length === 0) return false;
     const totalEntries = this.timesheetData.reduce(
       (acc, day) => acc + (day.entries?.length || 0),
-      0,
+      0
     );
     const selectedCount = Object.values(this.selectedMap)
       .filter(Array.isArray)
@@ -726,18 +615,89 @@ export class TimeSheetApprovalsComponent implements OnInit {
         this.rows = 10;
         this.page = 1;
         this.first = 0;
-        this.loadClientsAndProjects(
-          this.page,
-          this.pageSize,
-          this.startdate,
-          this.enddate,
-        );
+        this.loadClientsAndProjects(this.page, this.pageSize, this.startdate, this.enddate);
         return;
       }
     }
     this.syncGlobalSelectedEntries();
   }
+  getLighterColor(color: string, amount: number = 0.9): string {
+    if (!color) return color || '#d8d8daff'; // Default color if none provided;
+    // Remove # if present
+    const hex = color.replace('#', '');
+    // Parse RGB values
+    const r = parseInt(hex.substr(0, 2), 16);
+    const g = parseInt(hex.substr(2, 2), 16);
+    const b = parseInt(hex.substr(4, 2), 16);
+    // Calculate lighter values
+    const newR = Math.min(255, Math.floor(r + (255 - r) * amount));
+    const newG = Math.min(255, Math.floor(g + (255 - g) * amount));
+    const newB = Math.min(255, Math.floor(b + (255 - b) * amount));
+    // Convert back to hex
+    return `#${newR.toString(16).padStart(2, '0')}${newG.toString(16).padStart(2, '0')}${newB.toString(16).padStart(2, '0')}`;
+  }
+    openModalforsummary(entries: any, content?: any,requestType?:string) {
+     this.filteresdata=false;
+    this.requestType=requestType || '';
+    this.selectedSummaryEntries=[];
+    this.selectedLeavesItems = this.selectedEntries;
+    console.log('Selected Entries for Summary:', this.selectedEntries);
+    this.getSummaryData(entries);
+    this.conformationstatus = 'Processed';
+    this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
+  }
+  getSummaryData(entired:any){
+    const Ids=[...new Set(entired.map((item: any) => item.timesheetEntryId))];
+    const payload = {
+      entryIds:Ids
+    };
+    console.log('Payload for Summary API:', payload);
+    this.http.postdata(`v2/Timesheet/approval-summary`, payload).pipe(takeUntil(this.destroy$)).subscribe({
+      next:(response:any)=>{
+        console.log(response);
+         const rows: any[] = [];
 
+        response.data.forEach((project: any) => {
+
+          project.phase?.forEach((phase: any) => {
+
+            phase.employees?.forEach((emp: any, empIndex: number) => {
+
+              rows.push({
+                projectName: project.projectName,
+                phaseName: phase.phaseName,
+                employeeName: `${emp.name} (${emp.fusionEmpId})`,
+                numberOfDays: emp.noOfDays,
+                hours: emp.hoursHHMMFormat,
+                exclude: false,
+                showProject: empIndex === 0,
+                showPhase: empIndex === 0,
+                projectRowSpan: phase.employees.length,
+                phaseRowSpan: phase.employees.length,
+                entryIds:emp.entryIds
+              });
+
+            });
+
+          });
+  
+        });
+
+        this.selectedSummaryEntries = rows;
+        console.log(this.selectedSummaryEntries);
+      },
+      error:(reason:any)=>{
+        this.conformationPopup.openErrorModal(reason.error.message);}
+    });
+  }
+  filteresdata: boolean = false;
+  toggleExclude(entry: any, event: any) {
+  entry.exclude = event.target.checked;
+  if(this.selectedSummaryEntries){
+    this.filteresdata = this.selectedSummaryEntries.every((ele:any) => ele.exclude === true);
+    console.log('All entries excluded:', this.filteresdata);
+  }
+}
   // destroy the component
   ngOnDestroy(): void {
     this.destroy$.next(true);

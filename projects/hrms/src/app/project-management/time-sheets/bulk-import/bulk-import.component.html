@@ -1,0 +1,418 @@
+<div class="custom-main-component-container">
+    <div class="component-header-content  d-flex justify-content-between">
+        <div class="heading-content">
+            <div class="commpoment-name">Project Management
+                <span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
+            </div>
+            <div class="commpoment-name">
+                <a (click)="openModal(backnavigation)"><u>My Timesheet</u></a>
+                <span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
+            </div>
+            <div class="component-header">{{'Timesheet Import' }}</div>
+            <div>
+                <app-module-info-icon placement="bottom" [ngbPopover]="popContent" />
+            </div>
+        </div>
+        <div>
+            @if(progress === 1){
+            <button class="custom-btn btn-secondary d-flex align-items-center gap-1" (click)="downloadTemplate()">
+                @if (isDownloadingTemplate) {
+                Downloading...
+                } @else {
+                <app-download-icon /> {{'Download Template'}}
+                }
+            </button>
+            }
+            @if(progress === 2){
+            @if (store.response()) {
+            <div>
+                <button class="float-end custom-btn btn-secondary" (click)="reUploadInput.click()">
+                    <i class="bi bi-arrow-clockwise me-2"></i>{{'Re-Upload Timesheet'}}</button>
+                <input #reUploadInput type="file" hidden accept=".xlsx, .xls, .csv"
+                    (change)="onModalFileSelected($event, true)">
+            </div>
+            }
+            }
+        </div>
+    </div>
+
+    <div class="main-content d-flex w-100 gap-3">
+        <div class="component-left-tabs-container">
+            <app-timesheets-tabs />
+        </div>
+
+        <div class="timesheet-right-content">
+            <div class="d-flex justify-content-center py-3">
+                <div class="client-progress-bar-container w-75">
+                    <div class="progress" role="progress" [ngClass]="{'active': progress}" aria-valuenow="33"
+                        aria-valuemin="0" aria-valuemax="100" [style.width.%]="progress * 50"></div>
+                    <div class="progress" role="progress" [ngClass]="{'inactive': progress}" aria-valuemin="0"
+                        aria-valuemax="100" [style.width.%]="100"></div>
+                    <!-- Steps -->
+                    <div class="progress-content d-flex justify-content-between">
+                        <div *ngFor="let step of steps" class="d-flex gap-2 step"
+                            [ngClass]="{ 'inactive-step': progress < step.id }">
+                            <div class="progress-number" [ngClass]="{ 'active-circle': progress >= step.id }">{{ step.id
+                                }}</div>
+                            <div class="progress-name">{{ step.name }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            @if(progress === 2){
+            @if (store.response()) {
+            <div class="d-flex align-items-center justify-content-between px-4">
+                <div>
+                    <span class="total-hrs border-0 px-0">{{'Uploaded File Name:'}}</span>
+                    <span class="file-name"> {{store.fileName() ?? '-'}}</span>
+                </div>
+                <div class="d-flex align-items-center gap-3">
+                    <div class="total-hrs cursor-pointer badge-total"
+                        [class.active-filter-badge]="store.activeFilter() === 'ALL'" (click)="store.setFilter('ALL')">
+                        {{"Total" }} : <span class="total-duration ms-1">{{formatCount(store.stats().total)}}</span>
+                    </div>
+                    <div class="total-hrs cursor-pointer badge-valid"
+                        [class.active-filter-badge]="store.activeFilter() === 'VALID'"
+                        (click)="store.setFilter('VALID')">
+                        <i class="bi bi-check-circle me-1"></i>{{"Valid" }} :
+                        <span class="total-duration ms-1">{{formatCount(store.stats().valid)}}</span>
+                    </div>
+                    <div class="total-hrs cursor-pointer badge-invalid"
+                        [class.active-filter-badge]="store.activeFilter() === 'INVALID'"
+                        (click)="store.setFilter('INVALID')">
+                        <i class="bi bi-x-circle me-1"></i>{{"Invalid" }} :
+                        <span class="total-duration ms-1">{{formatCount(store.stats().invalid)}}</span>
+                    </div>
+                </div>
+            </div>
+            }
+            }
+
+            <div class="step-content p-3">
+                <!-- STEP 1 -->
+                <div *ngIf="progress === 1">
+                    <div class="upload-section">
+                        <div class="file-upload-container py-4">
+                            <div class="info-section mb-4 w-75 p-4">
+                                <div class="info-header">
+                                    <img src="icons/info-icon.png" alt="alert Icon" class="alert-icon">
+                                    <span>Note:</span>
+                                </div>
+                                <ul class="info-list">
+                                    <li>{{'Use the provided template to ensure correct column headers and format'}}</li>
+                                    <li>{{'Upload your timesheet file to import entries and save them as drafts'}}</li>
+                                    <li>{{'Enter all date fields in '}} <b>{{'MM-DD-YYYY'}}</b> {{'format'}}</li>
+                                    <li>{{'Ensure all mandatory fields are filled with valid data'}}</li>
+                                    <li>{{'Invalid or unmapped project codes and duplicate records will be flagged
+                                        during validation'}}</li>
+                                    <li>{{'If errors are found, the system will display them, and the file must be
+                                        corrected and re-uploaded'}}</li>
+                                    <li>{{'When the fields'}} <b>{{'Client Name, Project Name, Project Code, and Phase
+                                            Name'}}</b> {{' are not filled in the Excel sheet, the corresponding records
+                                        will automatically be categorized under'}} <b>{{'“No Client / No
+                                            Project.”'}}</b> {{' '}}</li>
+                                </ul>
+                            </div>
+                            <div class="drop-zone shadow-sm w-75 py-4" (dragover)="onDragOver($event)"
+                                (dragleave)="onDragLeave($event)" (drop)="onDrop($event)" [class.dragging]="isDragging"
+                                (click)="fileInput.click()">
+                                <div class="upload-content py-4">
+                                    <img src="icons/file-upload-icon.png" alt="file upload Icon"
+                                        class="file-upload-icon">
+                                    <p class="popup-heading mb-3"> <b> {{'Click to upload or drag and drop your file
+                                            here'}}</b></p>
+                                    <p class="small mb-0">{{'Supported formats: '}} <b>{{'Excel or CSV files (.xlsx,
+                                            .xls, .csv) up to 5 MB'}}</b></p>
+                                </div>
+                                <input #fileInput type="file" hidden accept=".xlsx, .xls, .csv"
+                                    (change)="onModalFileSelected($event)">
+                            </div>
+                            @if (store.response()) {
+                            <div class="my-3">
+                                <span class="total-hrs">{{'Uploaded File Name:'}}</span>
+                                <span class="total-duration ms-1"> {{store.fileName() ?? '-'}}</span>
+                            </div>
+                            }
+                        </div>
+                        <div class="footer-content">
+                            <button class="custom-btn btn-primary px-5" (click)="nextStep()"
+                                [disabled]="!store.response()">Next</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- STEP 2 -->
+                <div *ngIf="progress === 2">
+                    <div class="validate-section">
+                        <div class="d-flex flex-column">
+                            <!--Input search-->
+                            @if(store.response()){
+                            <div class="input-group custom-search mb-3">
+                                <span class="input-group-text custom-input-group-search" id="basic-addon1"><i
+                                        class="bi bi-search"></i></span>
+                                <input type="search" #search="ngModel" [(ngModel)]="searchValue"
+                                    (ngModelChange)="onSearchChange()" class="form-control custom-search-input"
+                                    placeholder="Search by row # / client / project / project code / phase / billable"
+                                    aria-label="Search" aria-describedby="basic-addon1">
+                            </div>
+                            }
+                            <div class="custom-table-content border-table"
+                                [ngClass]="{ 'preview-table-height': progress === 2}">
+                                @if (store.loading()) {
+                                <app-data-loader-content />
+                                }@else {
+                                <table class="w-100 ">
+                                    <thead>
+                                        <tr>
+                                            <th>{{'Row #'}}</th>
+                                            <!-- <th>Action</th> -->
+                                            <!-- <th>{{'Employee ID'}}</th> -->
+                                            <th class="text-center">{{'Entry Date'}}</th>
+                                            <th>{{"Client"}}</th>
+                                            <th>{{"Project"}}</th>
+                                            <th>{{'Project Code'}}</th>
+                                            <th>{{'Phase'}}</th>
+                                            <th class="text-center">{{'Duration (HH:MM)'}}</th>
+                                            <th class="text-center">{{'Billable (Yes/No)'}}</th>
+                                            <th class="text-center">{{'Description'}}</th>
+                                            <th class="text-center">{{'Status'}}</th>
+                                            <th class="text-center">{{'Error / Warning'}}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (filteredRows().length > 0) {
+                                        @for (row of filteredRows(); track row.rowNumber) {
+                                        <tr>
+                                            <td>{{ row.rowNumber }}</td>
+                                            <td class="text-center">{{ row.entryDate | dateformat }}</td>
+                                            <td>
+                                                {{ row.clientName || '-' }}
+                                            </td>
+                                            <td>
+                                                {{ row.projectName && row.projectName.trim() ? row.projectName : '-'}}
+                                            </td>
+                                            <td>{{ row.projectCode || '-' }}</td>
+                                            <td>
+                                                {{ row.phaseName || '-' }}
+
+
+                                            </td>
+
+                                            <td class="text-center">{{ row.duration }}</td>
+                                            <td class="text-center">
+                                                @if (row.billable) {
+                                                <!-- <i class="bi bi-check-circle-fill text-success"></i> -->
+                                                {{row.billable}}
+                                                } @else {
+                                                <!-- <i class="bi bi-x-circle text-secondary"></i> -->
+                                                {{"-"}}
+                                                }
+                                            </td>
+                                            <td class="text-center">
+                                                <div>
+                                                    <div *ngIf="row.description; else noReason" type="button"
+                                                        [ngbPopover]="description">
+                                                        <app-info-icon />
+                                                    </div>
+                                                    <ng-template #description>
+                                                        <p class="mb-0">{{ row.description }}</p>
+                                                    </ng-template>
+                                                    <ng-template #noReason>-</ng-template>
+                                                </div>
+                                            </td>
+                                            <td class="text-center">
+                                                @if (row.isValid) {
+                                                <!-- {{'Valid'}} -->
+                                                <img src="/icons/check-approve-icon.png" class="action-img"
+                                                    alt="Valid" />
+                                                } @else {
+                                                <!-- {{'Invalid'}} -->
+                                                <img src="/icons/cancel-circle.png" class="action-img" alt="Invalid" />
+                                                }
+                                            </td>
+                                            <td class="text-center">
+                                                <div *ngIf="row.errorMessage; else noReason" type="button"
+                                                    [ngbPopover]="errorMessage">
+                                                    <app-info-icon />
+                                                </div>
+                                                <ng-template #errorMessage>
+                                                    <p class="mb-0">{{ row.errorMessage }}</p>
+                                                </ng-template>
+                                                <ng-template #noReason>-</ng-template>
+                                            </td>
+                                        </tr>
+                                        }
+                                        } @else {
+                                        <tr>
+                                            <app-no-data-found />
+                                        </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                                }
+                            </div>
+                        </div>
+                        <div class="footer-content">
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="custom-btn btn-primary" [disabled]="isSubmitDisabled()"
+                                    (click)="confirmUpload(confirmModal, $event)">
+                                    @if (store.loading()) {
+                                    Loading...
+                                    } @else {
+                                    {{'Submit'}}
+                                    }
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- STEP 3 -->
+                <div *ngIf="progress === 3">
+                    <div class="success-alert-card mb-3">
+                      
+                      <img src="/icons/check-approve-icon.png" class="success-img" alt="Valid" />
+                    
+                        <span class="success-message">
+                            Timesheet data validation successful. Reviewing {{submissionTotalCount }} successful records.
+                        </span>
+                    </div>
+                    <div class="submission-records-section">
+                        <div class="input-group custom-search mb-3">
+                            <span class="input-group-text custom-input-group-search" id="submission-search"><i
+                                    class="bi bi-search"></i></span>
+                            <input type="search" [(ngModel)]="submissionSearchValue"
+                                (ngModelChange)="onSubmissionSearchChange()" class="form-control custom-search-input"
+                                placeholder="Search by client / project / project code / phase" aria-label="Search"
+                                aria-describedby="submission-search">
+                        </div>
+                        <div class="custom-table-content border-table"
+                            [ngClass]="{'preview-table-height':  progress === 3}">
+                            @if (store.loading()) {
+                            <app-data-loader-content />
+                            }@else {
+                            <table class="w-100 ">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center">{{'Entry Date'}}</th>
+                                        <th>{{"Client"}}</th>
+                                        <th>{{"Project"}}</th>
+                                        <th>{{'Project Code'}}</th>
+                                        <th>{{'Phase'}}</th>
+                                        <th class="text-center">{{'Duration (HH:MM)'}}</th>
+                                        <th class="text-center">{{'Billable (Yes/No)'}}</th>
+                                        <th class="text-center">{{'Description'}}</th>
+                                        <th class="text-center">{{'Submitted Date'}}</th>
+                                        <th>{{'Status'}}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (submissionRows().length > 0) {
+                                    @for (row of submissionRows(); track row.timesheetEntryId) {
+                                    <tr>
+                                        <td class="text-center">{{ row.entryDate | dateformat }}</td>
+                                        <td>{{ row.clientName || '-' }}</td>
+                                        <td>{{ row.projectName && row.projectName.trim() ? row.projectName : '-' }}</td>
+                                        <td>{{ row?.projectMeta?.graphData?.code || '-' }}</td>
+                                        <td>{{ row.phaseName || '-'}}</td>
+                                        <td class="text-center">{{ row.duration }}</td>
+                                        <td class="text-center">{{ row.isBillable ? 'Yes' : 'No' }}</td>
+                                        <td class="text-center">
+                                            <div *ngIf="row.description; else noReason" type="button"
+                                                [ngbPopover]="description">
+                                                <app-info-icon />
+                                            </div>
+                                            <ng-template #description>{{ row.description }}</ng-template>
+                                            <ng-template #noReason><span>-</span></ng-template>
+                                        </td>
+                                        <td class="text-center">{{ row.createdAt ? (row.createdAt | dateformat) : '-' }}
+                                        </td>
+                                        <td>{{ 'Draft' }}</td>
+
+                                    </tr>
+                                    }
+                                    } @else {
+                                    <tr>
+                                        <app-no-data-found />
+                                    </tr>
+                                    }
+                                </tbody>
+                            </table>
+                            }
+                        </div>
+                        <div class="pagination-content" *ngIf="submissionRows().length > 0 && collectionSize > 0">
+                            <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
+                                <div class="d-flex align-items-center gap-3 p-2">
+                                    <select title="text" class="form-select custom-pagination-select" [(ngModel)]="rows"
+                                        (ngModelChange)="onPageSizeChange($event)">
+                                        <option *ngFor="let option of options" [value]="option.value">{{ option.label }}
+                                        </option>
+                                    </select>
+                                    <span class="pagination-label text-nowrap">
+                                        Showing {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize
+                                        : (+first + +rows) }} of {{ collectionSize }}
+                                    </span>
+                                </div>
+                                <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"
+                                    (onPageChange)="onPageChange($event)" />
+                            </div>
+                        </div>
+
+                        <div class="footer-content">
+                            <button type="submit" class="custom-btn btn-primary"
+                                (click)="navigateToHistoryView()">{{'Close'}}</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<ng-template #confirmModal let-modal>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <app-confirmation-icon/>
+            <p class="confirmation-text mb-4 mt-1">{{'Are you sure you want to submit timesheet entries?'}}</p>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss();">No</button>
+            <button type="submit" class="custom-btn btn-primary" [disabled]="store.loading()"
+                (click)="onConfirmUpload()">
+                @if (store.loading()) {
+                Submitting...
+                } @else {
+                Yes
+                }
+            </button>
+        </div>
+    </div>
+</ng-template>
+<ng-template #backnavigation let-modal>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="/project-mangement-icons/alert.png" alt="failure icon" class="confirmation-delete-icon">
+            <p class="confirmation-text mb-4 mt-1">{{'Are you sure you want to exit?'}}</p>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss();">No</button>
+            <button type="submit" class="custom-btn btn-primary" (click)="navigatetomy()">
+                Yes
+            </button>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #stagingLoadingModal let-modal>
+    <div class="result-popup-content" ngbAutofocus>
+        <div class="loading-content">
+            <img src="/gifs/dot-loader.gif" alt="" class="loading-gif">
+        </div>
+        <p class="confirmation-text pt-4">{{'Submitting your timesheet entries. Please wait…'}}</p>
+    </div>
+</ng-template>
+
+<ng-template #popContent>
+    <app-module-information [moduleInfo]="moduleinfo" />
+</ng-template>

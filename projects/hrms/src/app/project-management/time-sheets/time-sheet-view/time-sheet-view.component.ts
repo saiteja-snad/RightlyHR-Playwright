@@ -29,11 +29,12 @@ import { MenuItem } from 'primeng/api';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { BulkUploadStore } from '../bulk-upload/models/bulk-upload.store';
 import { DateformatPipe } from '../../../pipes/dateformat.pipe';
+import { Select } from 'primeng/select';
 @Component({
   selector: 'app-time-sheet-view',
   imports: [ProjectManagementModuleInfoComponent, NgbDatepickerModule, FormsModule, ReactiveFormsModule,
     NgbPopover, CommonModule, DatePicker, DateformatPipe, AccordionModule, InfoIconComponent, ConfirmationIconComponent,
-    TranslateModule, DataLoaderContentComponent, TimesheetsTabsComponent, MenuModule, MultiSelectModule],
+    TranslateModule, DataLoaderContentComponent, TimesheetsTabsComponent, MenuModule, MultiSelectModule,Select],
   templateUrl: './time-sheet-view.component.html',
   styleUrl: './time-sheet-view.component.scss',
 })
@@ -140,8 +141,8 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     // this.getAllEmployeeDetails();
     this.formattedweakendStart = moment(this.start).format('YYYY-MM-DD');
     this.getTimeSheetEntriesbyEmployeeId(this.employeeId, this.formattedweakendStart);
-    this.getTaskType();
     this.buildBulkOperationMenuItems();
+    this.getTaskType();
   }
 getTaskType() {
   this.loading = true;
@@ -465,6 +466,8 @@ getTaskType() {
       rejectReason: [day?.rejectReason || ''],
       blockReason: [blockReason],
       resourceId: [{ value: day?.resourceId || null }],
+      taskId:[{ value: day?.taskId || null, disabled: !shouldEnable }]
+
     });
   }
 
@@ -749,8 +752,8 @@ getTaskType() {
       isBlocked: [{ value: cell.isBlocked, disabled: true }],
       rejectReason: [cell.rejectReason || ''],
       blockReason: [cell.blockReason || ''],
-      resourceId: [row.resourceId || null]
-
+      resourceId: [row.resourceId || null],
+      taskId:[{value:cell.taskId || null, disabled: !shouldEnable },]
     });
   }
 
@@ -1679,16 +1682,13 @@ getTaskType() {
 openModal(content: any, dayForm: AbstractControl | null, index: number, dayKey: string) {
 
   if (dayForm instanceof FormGroup) {
-
     this.currentRowIndex = index;
     this.currentDay = dayKey;
     this.isModalOpen = true;
-
     const modalRef = this.modalService.open(content, {
       centered: true,
       backdrop: 'static'
     });
-
     modalRef.result.finally(() => {
       this.isModalOpen = false;
     });
@@ -1862,6 +1862,7 @@ openModal(content: any, dayForm: AbstractControl | null, index: number, dayKey: 
       isBillable: formValue.isBillable || false,
       moduleId: 30,
       resourceId: formValue.resourceId || null,
+      taskId:formValue.taskId
     };
     // POST request
     this.http.postdata('v2/Timesheet/save-or-update', payload).subscribe({
@@ -1916,7 +1917,8 @@ openModal(content: any, dayForm: AbstractControl | null, index: number, dayKey: 
         description: null,
         startTime: null,
         endTime: null,
-        approvalStatus: 'Not Entered'
+        approvalStatus: 'Not Entered',
+        taskId:null,
       }, { emitEvent: true });
 
       this.timesheetForm.get('duration')?.patchValue(null);
@@ -1967,6 +1969,7 @@ openModal(content: any, dayForm: AbstractControl | null, index: number, dayKey: 
           projectName: project.selectedProject?.projectName || '',
           clientName: project.selectedProject?.clientName || '',
           approvalStatus: day.approvalStatus, // include approvalStatus
+          taskId:day.taskId,
         };
       })
     )

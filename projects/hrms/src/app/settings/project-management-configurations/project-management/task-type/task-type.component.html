@@ -98,7 +98,7 @@
                         <span class="error-msg">*</span></label>
                     <input type="text" class="form-control custom-input" formControlName="taskType"
                         placeholder="Please enter task type"
-                        (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)"
+                        (keydown)="formValidations.restrictInitialSpace($event)"
                         minlength="2" maxlength="51">
                     <div *ngIf="addForm.get('taskType')?.touched && addForm.get('taskType')?.invalid"
                         class="error-msg">
@@ -169,7 +169,7 @@
                         <span class="error-msg">*</span></label>
                     <input type="text" class="form-control custom-input" formControlName="taskType"
                         placeholder="Please enter task type"
-                        (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)"
+                        (keydown)="formValidations.restrictInitialSpace($event)"
                         minlength="2" maxlength="51">
                     <div *ngIf="updateForm.get('taskType')?.touched && updateForm.get('taskType')?.invalid"
                         class="error-msg">

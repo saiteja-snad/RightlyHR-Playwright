@@ -1,13 +1,15 @@
-import { Component, computed, OnDestroy, OnInit, signal, TemplateRef, ViewChild } from '@angular/core';
+import { Component, computed, inject, OnDestroy, OnInit, signal, TemplateRef, ViewChild } from '@angular/core';
 import { TimesheetsTabsComponent } from "../../../shared/project-management-tabs/timesheets-tabs/timesheets-tabs.component";
 import { CommonModule } from '@angular/common';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { debounceTime, distinctUntilChanged, Subject, switchMap, takeUntil } from 'rxjs';
-import {  HttpResponse } from '@angular/common/http';
+import { HttpEventType, HttpResponse } from '@angular/common/http';
+import { BulkUploadService } from '../../../services/bulk-upload.service';
 import { BulkUploadStore } from '../bulk-upload/models/bulk-upload.store';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
+import { DateformatPipe } from '../../../pipes/dateformat.pipe';
 import { FormsModule } from '@angular/forms';
 import { ConfirmationIconComponent } from "../../../icons/confirmation-icon/confirmation-icon.component";
 import { Router } from '@angular/router';
@@ -19,8 +21,6 @@ import { PaginatorModule } from 'primeng/paginator';
 import { HttpService } from '../../../services/http.service';
 import { DownloadIconComponent } from "../../../icons/download-icon/download-icon.component";
 import { environment } from '../../../../environments/environment';
-import { DateformatPipe } from '../../../pipes/dateformat.pipe';
-import { BulkUploadService } from '../../../services/bulk-upload.service';
 @Component({
   selector: 'app-bulk-import',
   imports: [TimesheetsTabsComponent, CommonModule,
@@ -67,6 +67,7 @@ export class BulkImportComponent implements OnInit, OnDestroy {
       parts.push(row.projectName || '');
       parts.push(row.projectCode || '');
       parts.push(row.phaseName || '');
+      parts.push(row.taskName || '');
 
       const billableRaw = row.billable;
       let billableText = '';
@@ -404,7 +405,7 @@ export class BulkImportComponent implements OnInit, OnDestroy {
           this.store.setLoading(false);
           this.modalService.dismissAll();
           if (importRes?.success !== false) {
-            this.conformationPopup.openSuccessModal("Timesheet entries submitted successfully")
+            this.conformationPopup.openSuccessModal("Timesheet entiries submitted successfully")
             this.totalSuccessCount = importRes.data?.successCount || 0;
             this.failureCount = importRes.data?.failureCount || 0;
             this.totalCount = importRes.data?.totalRows || 0;

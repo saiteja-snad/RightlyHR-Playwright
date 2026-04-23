@@ -107,6 +107,7 @@
                                             <th  class="text-center">{{'Phase' | translate}}</th>
                                             <th class="text-center">{{'Duration (HH:MM)' | translate}}</th>
                                             <th class="text-center">{{'Billable (Yes/No)' | translate}}</th>
+                                            <th class="text-center">{{'Task Type' | translate}}</th>
                                             <th class="text-center">{{'Description' | translate}}</th>
                                             <th  class="text-center">{{'Status' | translate}}</th>
                                         </tr>
@@ -153,6 +154,7 @@
                                                 {{"-"}}
                                                 }
                                             </td>
+                                            <td class="text-center">{{ row.taskName || '-'  }}</td>
                                             <td class="text-center">
                                                 <div>
                                                     <div *ngIf="row.description; else noReason" type="button"
@@ -251,6 +253,22 @@
                             filterPlaceHolder="Search phases" panelStyleClass="custom-phase-multiselect-panel"
                             [showToggleAll]="false" [showClear]="true" (onChange)="onPhaseSelectionChange($event)"
                             [selectedItemsLabel]="selectedPhasesLabel" [maxSelectedLabels]="maxSelectedPhasesLabels" />
+                    </div>
+                </div>
+                <!-- Task Type -->
+                <div class="mb-3">
+                    <label class="form-label custom-label text-nowrap filter-labels mb-3">{{'Select Task Types'}}</label>
+                    <div class="custom-p-multiSelect-content custom-select-width">
+                        <p-multiSelect formControlName="taskIds" [options]="exportTaskOptions" optionLabel="label"
+                            optionValue="value" [filter]="true" [resetFilterOnHide]="true"
+                            defaultLabel="Select task types" class="form-select custom-select" appendTo="body"
+                            [autoZIndex]="true" [baseZIndex]="1100"
+                            filterPlaceHolder="Search task types" panelStyleClass="custom-phase-multiselect-panel"
+                            [showToggleAll]="false" [showClear]="true"
+                            (onChange)="onTaskSelectionChange($event)"
+                            [selectedItemsLabel]="selectedTasksLabel"
+                            [maxSelectedLabels]="maxSelectedTasksLabels">
+                        </p-multiSelect>
                     </div>
                 </div>
                 <div class="d-flex offcanvas-footer-content gap-3">

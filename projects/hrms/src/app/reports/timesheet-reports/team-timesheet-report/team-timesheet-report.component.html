@@ -39,6 +39,7 @@
         <th>{{'Phase/Milestone' | translate}}</th>
         <th>{{'Employee ID' | translate}}</th>
         <th>{{'Employee Name' | translate}}</th>
+        <th class="text-center">{{'Task Type' | translate}}</th>
         <th class="text-center">{{'Description' | translate}}</th>
         <th class="text-center">{{'Logged Hrs' | translate}}</th>
         <th class="text-center">{{'Billable/Non-Billable' | translate}}</th>
@@ -64,6 +65,7 @@
           <td>{{ record.phase ?? '-' }}</td>
           <td>{{ record.fusionEmpId ?? '-' }}</td>
           <td>{{ record.employee ?? '-' }}</td>
+          <td class="text-center">{{ record.taskType || '-' }}</td>
           <td class="text-center">
             <div>
               <!-- Show info icon if description is present -->
@@ -174,6 +176,14 @@
               [maxSelectedLabels]="1" formControlName="phases" placeholder="Please select phases"
               class="form-select custom-select"
                filterPlaceHolder="Search phase" [resetFilterOnHide]="true" >
+            </p-multiSelect>
+          </div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label custom-label text-nowrap filter-labels mb-3">{{'Select Task Type' | translate}}</label>
+          <div class="custom-p-multiSelect-content">
+            <p-multiSelect [options]="tastType" optionLabel="taskTypeName" filterBy="taskTypeName" formControlName="taskId"
+              placeholder="Please select task type" filterPlaceHolder="Search task type" class="form-select custom-select"  >
             </p-multiSelect>
           </div>
         </div>

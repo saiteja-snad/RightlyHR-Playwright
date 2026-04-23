@@ -1,0 +1,487 @@
+<div class="custom-accordians">
+   <!-- HEADER SELECT ALL -->
+      <div class="d-flex justify-content-between align-items-center mb-3 ms-4" *ngIf="empinfodata.length > 0">
+        <div class="d-flex align-items-center gap-2">
+          <input #globalCheckbox type="checkbox" [checked]="areAllDaysSelected()"
+            [indeterminate]="isGlobalIndeterminate()" (change)="toggleSelectAllDays(globalCheckbox.checked)" />
+          <label class="form-label custom-label m-0">
+            <b>Select All</b>
+          </label>
+        </div>
+
+        <div *ngIf="(selectedEntries?.length ?? 0) > 0 && !showhideaction">
+          <button class="custom-btn btn-primary-approve me-2" (click)="bulkApprove(approverPopup)">Approve</button>
+
+          <button class="custom-btn btn-primary-reject" (click)="bulkReject(rejectPopup)">Reject</button>
+        </div>
+      </div>
+  <div class="custom-accordian-data-content">
+
+    @if (!dataload) {
+    @if (empinfodata.length > 0) {
+
+    <p-accordion>
+      <!-- ACCORDION PANELS -->
+      <p-accordion-panel *ngFor="let day of empinfodata; let i = index" [value]="i">
+
+        <p-accordion-header>
+          <div class="d-flex align-items-center gap-3">
+            <input #headerCheckbox type="checkbox" [checked]="areAllSelected(i)" [indeterminate]="isIndeterminate(i)"
+              (change)="toggleSelectAll(i, headerCheckbox.checked)" />
+            <span>{{ day.employeeName }}</span>
+          </div>
+        </p-accordion-header>
+
+        <p-accordion-content>
+          <div class="custom-p-multi-select-table custom-accordian-table">
+
+            <p-table [value]="day.entries" dataKey="id" [(selection)]="selectedMap[i]" [scrollable]="true"
+              scrollHeight="300px" (onRowSelect)="onRowSelect(i, $event)" (onRowUnselect)="onRowUnselect(i, $event)"
+              [tableStyle]="{ 'min-width': '50rem' }">
+
+              <!-- TABLE HEADER -->
+              <ng-template pTemplate="header">
+                  <tr>
+                  <th style="width: 4rem"></th>
+                  <th>{{'Tab Name'|translate}}</th>
+                  <th>{{'Module Name'|translate}}</th>
+                  <th>{{'Field/Action Name'|translate}}</th>
+                  <th>{{'Requested Date'|translate}}</th>
+                  <th>{{'Current Data'|translate}}</th>
+                  <th>{{'Requested Data'|translate}}</th>
+                  <!-- <th>Description</th> -->
+                  @if (showhideaction) {
+                  <th class="text-center">{{'Actions'|translate}}</th>
+                  }
+                </tr>
+              </ng-template>
+
+              <!-- TABLE BODY -->
+              <ng-template pTemplate="body" let-entry>
+                <tr>
+                  <td>
+                    <p-tableCheckbox [value]="entry"></p-tableCheckbox>
+                  </td>
+                  <td>{{entry.displayName ? entry.displayName:'-'}}</td>
+                  <td>{{entry.moduleName ? entry.moduleName:'-'}}</td>
+                  <td>{{ entry.fieldName }}</td>
+                  <td>{{ entry.requestedDate | dateformat }}</td>
+                  <td>
+                    @if(showdate(entry)){
+                    {{ entry?.oldValue ? (entry?.oldValue | dateformat) : "-" }}
+                    }
+                    @else{
+                    @if(entry?.approvalScope?.toLowerCase()==='action'&&entry.oldValue){
+                    <div class="d-inline-flex cursor" (click)="openModalforaction(popupforcurrentaction,entry)">
+                      <app-info-icon />
+                    </div>
+                    }@else{{{ entry.oldValue ? entry.oldValue : "-" }}
+                    }
+
+
+                    <!-- <ng-template #desprictionContent>
+                      <p class="mb-0 p-2">
+                        {{entry.comments ? entry.comments:'-'}}
+                     </p>
+                    </ng-template> -->
+                    }
+                  </td>
+                  <td>
+                    @if(showdatefornew(entry)){
+                    {{ entry?.newValue ? (entry?.newValue | dateformat) : "-" }}
+                    }
+                    @else{
+                    @if(entry?.approvalScope?.toLowerCase()==='action' && entry.newValue){
+                    <div class="d-inline-flex cursor" (click)="openModalfornewvalueAction(popupforaction,entry)">
+                      <app-info-icon />
+                    </div>
+                    }@else{{{ entry.newValue ? entry.newValue : "-" }}}
+                    }
+                  </td>
+                  @if (showhideaction) {
+                  <td>
+                    <div class="d-flex justify-content-center gap-3">
+                      <a (click)="openModal(approverPopup, entry, 'Processed')">
+                        <img src="/icons/check-approve-icon.png" class="action-img" alt="Approve">
+                      </a>
+
+                      <a (click)="openModal(rejectPopup, entry, 'Rejected')">
+                        <img src="/icons/cancel-circle.png" class="action-img" alt="Reject">
+                      </a>
+                    </div>
+                  </td>
+                  }
+                </tr>
+              </ng-template>
+
+            </p-table>
+
+          </div>
+        </p-accordion-content>
+      </p-accordion-panel>
+    </p-accordion>
+
+    } @else {
+    <app-no-data-found />
+    }
+    } @else {
+
+    <!-- LOADER -->
+    <p-table [value]="[1,2,3,4,5,6,7]" [tableStyle]="{ 'min-width': '50rem' }">
+      <ng-template pTemplate="header">
+        <tr>
+          <th *ngFor="let h of [1]">
+            <p-skeleton width="100%" height="1rem" styleClass="mb-2"></p-skeleton>
+          </th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-row>
+        <tr>
+          <td *ngFor="let col of [1]">
+            <p-skeleton width="100%" height="1.2rem" styleClass="mb-2"></p-skeleton>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+    }
+
+  </div>
+</div>
+
+@if(empinfodata.length>0 &&collectionSize > 0){
+<div class="pagination-content">
+  <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
+    <div class="d-flex align-items-center gap-3 p-2">
+      <select title="text" class="form-select custom-pagination-select" [(ngModel)]="rows"
+        (ngModelChange)="onPageSizeChange($event)">
+        <option *ngFor="let option of options" [value]="option.value">{{ option.label }}</option>
+      </select>
+      <span class="pagination-label text-nowrap">
+        Showing {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize : (+first + +rows)}}
+        of {{collectionSize }}
+      </span>
+    </div>
+    <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"
+      (onPageChange)="onPageChange($event)"></p-paginator>
+  </div>
+</div>
+}
+
+<!-- Approverpopup -->
+<ng-template #approverPopup let-modal>
+  <div class="result-popup-content" ngbAutofocus>
+    <div>
+      <app-confirmation-icon />
+      <p class="confirmation-text pt-3">
+        {{ 'Are you sure you want to proceed with the approval?' | translate }}
+      </p>
+    </div>
+    <form [formGroup]="timeSheetApproveForm" (ngSubmit)="handleAccept(timeSheetApproveForm)">
+      <div class="custom-main-popup-content">
+        <div class="mb-3">
+          <label for="comments" class="form-label custom-label">
+            {{ 'Approve reason' | translate }}
+            <span class="error-msg">*</span>
+          </label>
+          <textarea class="form-control custom-input" id="comments" placeholder="Please provide approve reason"
+            formControlName="comments" maxlength="250" rows="3"
+            (keydown)="formsValidation.restrictInitialSpace($event)"></textarea>
+          <div class="textarea-count-text">{{ timeSheetApproveForm.get('comments')?.value?.length || 0 }}/250
+          </div>
+          <div class="error-msg"
+            *ngIf="timeSheetApproveForm.get('comments')?.touched && timeSheetApproveForm.get('comments')?.invalid">
+            <div *ngIf="timeSheetApproveForm.get('comments')?.errors?.['required']">Approver Comments is
+              required</div>
+            <div *ngIf="timeSheetApproveForm.get('comments')?.errors?.['maxlength']">
+              Approver Comments exceed 250 characters
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="d-flex align-items-start mb-3">
+        <button type="button" class="btn-secondary chip-btn"
+          [class.active]="selectedLeaveStatus === 'approved'" (click)="onStatusApproveSelect('approved')">
+          Approved
+        </button>
+      </div>
+      <div class="custom-modal-footer">
+        <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()" [disabled]="spinnerLoader">
+          {{'Cancel' | translate }}</button>
+        <button type="submit" class="custom-btn btn-primary" [disabled]="timeSheetApproveForm.invalid || spinnerLoader">
+          <ng-container *ngIf="spinnerLoader; else approveText">
+            <div class="button-loader-content">
+              <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
+              <span>{{ 'Loading...' }}</span>
+            </div>
+          </ng-container>
+          <ng-template #approveText>
+            <span>{{ 'Approve' | translate }}</span>
+          </ng-template>
+        </button>
+      </div>
+    </form>
+  </div>
+</ng-template>
+
+<!-- Rejectpopup -->
+<ng-template #rejectPopup let-modal>
+  <div class="result-popup-content" ngbAutofocus>
+    <div>
+      <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon" />
+      <p class="confirmation-text">
+        {{ 'Do you really want to reject selected requests?' | translate }}
+      </p>
+    </div>
+    <form [formGroup]="timeSheetRejectForm" (ngSubmit)="handlereject(timeSheetRejectForm)">
+      <div class="custom-main-popup-content">
+        <div class="mb-3">
+          <label for="rejectComments" class="form-label custom-label">
+            {{ 'Reject reason' | translate }} <span class="error-msg">*</span>
+          </label>
+          <textarea class="form-control custom-input" id="comments" placeholder="Please provide reject reason"
+            formControlName="comments" maxlength="250" rows="3"
+            (keydown)="formsValidation.restrictInitialSpace($event)"></textarea>
+          <div class="textarea-count-text">{{ timeSheetRejectForm.get('comments')?.value?.length || 0 }}/250
+          </div>
+          <div class="error-msg"
+            *ngIf="timeSheetRejectForm.get('comments')?.touched && timeSheetRejectForm.get('comments')?.invalid">
+            <div *ngIf="timeSheetRejectForm.get('comments')?.errors?.['required']">Reject Comments is
+              required</div>
+            <div *ngIf="timeSheetRejectForm.get('comments')?.errors?.['maxlength']">
+              Reject Comments exceed 250 characters
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="d-flex align-items-start mb-3">
+        <button type="button" class="btn-secondary chip-btn"
+          [class.active]="selectedLeaveStatus === 'reject'" (click)="onStatusRejectSelect('reject')">
+          Rejected
+        </button>
+      </div>
+      <div class="custom-modal-footer">
+        <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()" [disabled]="spinnerLoader">
+          {{ 'Cancel' | translate }}
+        </button>
+        <button type="submit" class="custom-btn btn-primary" [disabled]="timeSheetRejectForm.invalid || spinnerLoader">
+          <ng-container *ngIf="spinnerLoader; else rejectText">
+            <div class="button-loader-content">
+              <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
+              <span>{{ 'Loading...' }}</span>
+            </div>
+          </ng-container>
+          <ng-template #rejectText>{{ 'Reject' | translate }}</ng-template>
+        </button>
+      </div>
+    </form>
+  </div>
+</ng-template>
+
+<!--Leave Summary-->
+<ng-template #leaveSummary let-modal>
+  <div class="custom-main-popup-container" ngbAutofocus>
+    <div class="custom-poup-header-content popup-header-border">
+      <div>
+        <p class="popup-heading mb-0">{{"Summary" | translate}}</p>
+      </div>
+      <div>
+        <a>
+          <img src="icons/close.png" alt="Close Icon" class="close-icon" (click)="modal.dismiss()">
+        </a>
+      </div>
+    </div>
+    <div class="custom-main-popup-content custom-accordians">
+      <div class="popup-table-wrapper">
+        <div class="popup-table-scroll-container">
+          <table class="popup-table">
+            <thead>
+              <tr>
+                <th>{{'Total Records' | translate}}</th>
+                <th>{{'Success Records'|translate}}</th>
+                <th>{{'Failed Records' | translate}}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="log-time">{{ totalRecordCount }}</td>
+                <td class="log-time">{{ successRecordsCount }}</td>
+                <td class="log-time">{{ failureRecordsCount }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+<ng-template #popupforaction let-modal>
+  <div class="custom-main-popup-container" ngbAutofocus>
+    <div class="custom-poup-header-content popup-header-border">
+      <div>
+        <p class="popup-heading mb-0">{{actionsDetails.fieldName}} ({{actionsDetails.moduleName}})</p>
+      </div>
+      <div>
+        <a (click)="modal.dismiss('Cross click')">
+          <img src="icons/close.png" alt="Close Icon" class="close-icon">
+        </a>
+      </div>
+    </div>
+    <div class="custom-main-popup-content">
+      <div class="popup-table-wrapper">
+        <div class="popup-table-scroll-container">
+          <table class="popup-table">
+            <thead>
+              <tr>
+                <th>Field Requested</th>
+                <th>Current Data</th>
+                <th>Requested Data</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let row of mergedValues">
+                <td>{{ row.key }}</td>
+                <!-- Old Value -->
+                <td>
+                  @if (row.key === 'Document' && row.oldValue) {
+                  <a class="view-btn" (click)="onViewAttachement(row.oldValue,viewattamchment)"
+                    [ngClass]="{ 'back-ground': row.isChanged }">
+                    <img src="/my-info-icons/View-Policy-icon.png" class="view-icon">
+                  </a>
+                  } @else {
+                  <span [ngClass]="{ 'font-highlight': row.isChanged }">{{ row.oldValue ? row.oldValue:'-' }}</span>
+                  }
+                </td>
+                <!-- New Value -->
+                <td>
+                  @if (row.key === 'Document' && row.newValue) {
+                  <a class="view-btn" (click)="onViewAttachement(row.newValue,viewattamchment)"
+                    [ngClass]="{ 'back-ground': row.isChanged }">
+                    <img src="/my-info-icons/View-Policy-icon.png" class="view-icon">
+                  </a>
+                  } @else {
+                  <span [ngClass]="{ 'font-highlight': row.isChanged }"> {{ row.newValue ? row.newValue :'-' }}</span>
+                  }
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <!-- <div class="custom-main-popup-content" >
+            <div class="p-1">
+                    <div class="mb-0" *ngFor="let item of actionsDetails.oldValue | keyvalue">
+                         <p><span class="heading-name">{{ item.key }}:</span> <span class="sub-name"> 
+                          @if(item.key==='Document'){
+                            <a type="button" class="view-btn text-nowrap me-2" (click)="onViewAttachement(item.value)">
+                              <img src="/my-info-icons/View-Policy-icon.png" alt="Icon" class="view-icon">
+                            </a>
+                          }@else{
+                      {{ item.value }}
+                          }
+                          </span></p>
+                    </div>
+            </div>
+        </div> -->
+  </div>
+</ng-template>
+
+<!--View Popup-->
+<ng-template #viewattamchment let-modal>
+  <div class="custom-main-popup-container">
+    <div class="custom-poup-header-content popup-header-border">
+      <div class="pt-2">
+        <p class="popup-heading mb-0">{{actionsDetails.moduleName}} Document</p>
+      </div>
+      <div>
+        <a (click)="closeonlyattemchment(); ImageUrl = null; ImageUrl = null"><img src="icons/close.png"
+            alt="Close Icon" class="close-icon"></a>
+      </div>
+    </div>
+
+    <div class="custom-main-popup-content text-center">
+      <div class="Image-content-view">
+        <div *ngIf="!ImageUrl; else imageView">
+          <div class="popup-view-image-content">
+            <ngx-doc-viewer [url]="ViewURL" viewer="google" style="width: 100%; height: 100vh"></ngx-doc-viewer>
+          </div>
+        </div>
+        <ng-template #imageView>
+          <img [src]="ImageUrl" alt="My Image" class="modal-image" />
+        </ng-template>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #popupforcurrentaction let-modal>
+  <div class="custom-main-popup-container" ngbAutofocus>
+    <div class="custom-poup-header-content popup-header-border">
+      <div>
+        <p class="popup-heading mb-0">{{actionsDetails.fieldName}} ({{actionsDetails.moduleName}})</p>
+      </div>
+      <div>
+        <a (click)="modal.dismiss('Cross click')">
+          <img src="icons/close.png" alt="Close Icon" class="close-icon">
+        </a>
+      </div>
+    </div>
+    <div class="custom-main-popup-content">
+      <div class="popup-table-wrapper">
+        <div class="popup-table-scroll-container">
+          <table class="popup-table">
+            <thead>
+              <tr>
+                <th>Field Requested</th>
+                <th>Current Data</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of actionsDetails.oldValue | keyvalue">
+                <td>{{ item.key }}</td>
+                <!-- Old Value -->
+                <td>
+                  @if(item.key==='Document'){
+                  <a type="button" class="view-btn text-nowrap me-2"
+                    (click)="onViewAttachement(item.value,viewattamchmentforcurrent)">
+                    <img src="/my-info-icons/View-Policy-icon.png" alt="Icon" class="view-icon">
+                  </a>
+                  }@else{
+                  {{ item.value ? item.value:'-' }}
+                  }
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+<ng-template #viewattamchmentforcurrent let-modal>
+  <div class="custom-main-popup-container">
+    <div class="custom-poup-header-content popup-header-border">
+      <div class="pt-2">
+        <p class="popup-heading mb-0">{{actionsDetails.moduleName}} Document</p>
+      </div>
+      <div>
+        <a (click)="closeonlyattemchmentforcurrent(); ImageUrl = null; ImageUrl = null"><img src="icons/close.png"
+            alt="Close Icon" class="close-icon"></a>
+      </div>
+    </div>
+
+    <div class="custom-main-popup-content text-center">
+      <div class="Image-content-view">
+        <div *ngIf="!ImageUrl; else imageView">
+          <div class="popup-view-image-content">
+            <ngx-doc-viewer [url]="ViewURL" viewer="google" style="width: 100%; height: 100vh"></ngx-doc-viewer>
+          </div>
+        </div>
+        <ng-template #imageView>
+          <img [src]="ImageUrl" alt="My Image" class="modal-image" />
+        </ng-template>
+      </div>
+    </div>
+  </div>
+</ng-template>

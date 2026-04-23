@@ -1,0 +1,181 @@
+.section-title-row {
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 0;
+}
+
+.section-title {
+  font-weight: 600;
+  font-size: var(--fontsize16);
+  color: var(--primary-color);
+  margin-bottom: 0;
+}
+
+.assign-manager-section {
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background-color: var(--body-bg-color);
+  border-radius: 0.5rem;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr) auto;
+  gap: 1.5rem;
+  align-items: end;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+
+  .custom-p-multiSelect-content,
+  .custom-p-select-content,
+  p-multiSelect,
+  p-select,
+  input.form-control {
+    width: 100%;
+  }
+
+  .custom-label {
+    font-weight: 400;
+    font-size: var(--fontsize14);
+    color: var(--input-label-color);
+  }
+}
+
+.assign-btn-group {
+  align-self: end;
+}
+
+.custom-date-picker {
+  .p-inputtext {
+    border: 1px solid var(--input-border-color);
+    background-color: var(--input-bg-color);
+    border-radius: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    font-size: var(--fontsize12);
+    color: var(--input-color);
+  }
+
+  .p-datepicker-input-icon {
+    color: var(--primary-color);
+  }
+}
+
+.review-assignments-section {
+  margin-bottom: 1rem;
+}
+
+.no-data-wrapper {
+  position: relative;
+  height: 36dvh;
+
+  .no-data-image {
+    --no-data-icon-width: 7rem !important;
+    --no-data-icon-height: 7rem !important;
+  }
+}
+
+.records-scroll-container {
+  max-height: calc(270px);
+  overflow-y: auto;
+  padding-right: 0.25rem;
+
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: var(--body-bg-color);
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 4px;
+  }
+}
+
+// .action-buttons {
+//   position: fixed;
+//   bottom: 1.5rem;
+//   right: 2rem;
+//   z-index: 100;
+//   display: flex;
+//   gap:1rem;
+// }
+
+.action-buttons {
+  position: sticky;
+  display: flow;
+  padding: 0.5rem 0rem;
+  bottom: -0.75rem;
+  background: #FFF;
+  /* right: 2rem; */
+  z-index: 10;
+  display: flex;
+  gap: 1rem;
+  display: flex;
+  justify-content: end;
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .assignment-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .assignment-info {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .new-assignment {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .new-assignment-label {
+    min-width: auto;
+  }
+
+  .new-assignment-select {
+    width: 100%;
+    max-width: none;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+  }
+}
+
+.next-width {
+  width: 150% !important;
+  max-width: none;
+}
+
+.custom-table-content {
+  height: calc(100vh - 35rem) !important;
+  border: 1px solid var(--table-header-bg-color) !important;
+}
+
+// multiselect
+::ng-deep .custom-p-multiSelect-content {
+  .p-multiselect-option {
+    width: 100% !important;
+  }
+}
+
+// .wrapper{
+//   height: 40dvh !important;
+// }

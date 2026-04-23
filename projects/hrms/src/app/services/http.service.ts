@@ -24,7 +24,7 @@ export class HttpService {
   formattedDate = this.currentDate
   .toLocaleDateString('en-US', this.dateOptions)
   .replace(',', '');
-  
+
   tirggerCountSignal = signal<{
     compOff: boolean;
     wfh: boolean;
@@ -392,7 +392,7 @@ setOnBehalfExpensesUpdated(empId: number | null) {
 setAvaillableSearchCount(count: number) {
   //this.availlableSearchCount.next(count);
      this.avilableassetCountSubject.next(count);
-  
+
 }
   //to get the employee id
   employeeIdSubject = new BehaviorSubject<number>(0);
@@ -538,6 +538,11 @@ setAvaillableSearchCount(count: number) {
   postdata(url: string, data: any) {
     return this.http.post(`${this.ApiUrl}${url}`, data);
   }
+
+  postText(url: string, data: any) {
+    return this.http.post(`${this.ApiUrl}${url}`, data, { responseType: 'text' });
+  }
+
 
 
 

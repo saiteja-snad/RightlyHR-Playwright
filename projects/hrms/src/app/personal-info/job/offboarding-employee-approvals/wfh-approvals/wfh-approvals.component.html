@@ -1,0 +1,223 @@
+<div class="custom-main-component-container">
+    @if (selectedProducts && selectedProducts.length > 0 &&multiSelect) {
+    <div class="component-header-content">
+        <div class="component-sub-header">{{'Selected Records:'|translate}} {{selectedProducts.length}}</div>
+        <div class="d-flex gap-3">
+            <!-- @if (canBulkApprove()) {
+            @if(rbac.allowedToAccess('For You (Time Off).update')){
+            <button class="custom-btn btn-primary-approve" (click)="bulkapprove(approverPopup)">Approve</button>
+            }
+            @if(rbac.allowedToAccess('For You (Time Off).delete')){
+            <button class="custom-btn btn-primary-reject" (click)="bulkReject(rejectPopup)">Reject</button>
+            }
+            } -->
+            <!-- @if (canBulkProcess()) { -->
+            @if(rbac.allowedToAccess('For You (WFH).update')){
+            <button class="custom-btn btn-primary-approve" (click)="processpopup(confirmationpopup,this.wfhs)">{{'Process'|translate}}</button>
+            }
+            @if(rbac.allowedToAccess('For You (WFH).delete')){
+            <button class="custom-btn btn-primary-reject" (click)="bulkReject(rejectPopup)">{{'Reject'|translate}}</button>
+            }
+            <!-- } -->
+        </div>
+    </div>
+    }
+    <!--Input search-->
+    <div class="input-group custom-search mb-3">
+        <span class="input-group-text custom-input-group-search" id="basic-addon1">
+            <i class="bi bi-search"></i></span>
+        <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input"
+            (ngModelChange)="onSearchChange()"
+            [placeholder]="isActive('/approval-requests') ? 'Search by Employee ID / Employee Name / Availed' : 'Search by Availed'"
+            aria-label="Username" aria-describedby="basic-addon1" autocomplete="off">
+    </div>
+
+    <div class="custom-p-multi-select-table p-datatable-table-container ">
+        @if(!dataLoad){
+        <p-table #dt [value]="getFilteredAndSortedwfhs()" (selectionChange)="selectCheck($event)"
+            [(selection)]="selectedProducts" dataKey="pendindApprovalsHeader.id" [tableStyle]="{'min-width': '50rem'}">
+            <ng-template #header>
+                <tr>
+                    <th style="width: 4rem">
+                        <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                    </th>
+                   <th *ngIf="isActive('/approval-requests')" class="text-center"><strong>{{'Employee ID'|translate}}</strong></th>
+                    <th *ngIf="isActive('/approval-requests')" class="text-center"><strong>{{'Employee Name'|translate}}</strong></th>
+                    <th><strong>{{'Worked Date' | translate}}</strong></th>
+                    <th class="text-center"><strong>{{'Availed' | translate}}</strong></th>
+                    <th class="text-center"><strong>{{'Reason' | translate}}</strong></th>
+                    <th><strong>{{'Applied Date' | translate}}</strong></th>
+                    @if(!multiSelect && (rbac.allowedToAccess('For You (WFH).update') ||
+                    rbac.allowedToAccess('For You (WFH).delete'))){
+                    <th class="text-center"><strong>{{'Action' | translate}}</strong></th>
+                    }
+                </tr>
+            </ng-template>
+            <ng-template #body let-item appendTo="body">
+                <!-- Main wfh record -->
+                <tr>
+                    <td>
+                        <p-tableCheckbox [value]="item" (selectionChange)="selectCheck($event)" />
+                    </td>
+                    <td *ngIf="isActive('/approval-requests')" class="text-center">{{item?.fusionEmpId}}</td>
+                    <td *ngIf="isActive('/approval-requests')" class="text-center">{{item?.employeeName}}</td>
+                    <td class="text-nowrap">{{item?.startTime | dateformat}}</td>
+                    <td class="text-center">{{item?.availed ??'-'}}</td>
+                    <td class="text-center">
+                        <div>
+                            <a type="button" [ngbPopover]="reason">
+                                <app-info-icon />
+                            </a>
+                            <ng-template #reason>
+                                <p class="mb-0">{{item?.requestedComments ?? '-'}}</p>
+                            </ng-template>
+                        </div>
+                    </td>
+                     <td class="text-nowrap">{{item?.requestedDate | dateformat}}</td>
+                    @if(!multiSelect &&(rbac.allowedToAccess('For You (WFH).update') ||rbac.allowedToAccess('For You (WFH).delete'))){
+                    <td class="text-center">
+                        <div class="dropdown">
+                            <span type="button" data-bs-toggle="dropdown">
+                                <i class="bi bi-three-dots-vertical"></i>
+                            </span>
+                            <ul class="dropdown-menu custom-dropdown-menu">
+                                @if(rbac.allowedToAccess('For You (WFH).update') ) {
+                                <li>
+                                    <a class="dropdown-item" (click)="processpopup(confirmationpopup,item)">
+                                        <i class="bi bi-check-circle me-2"></i>{{'Process'|translate}}</a>
+                                </li>
+                             }
+                                @if(rbac.allowedToAccess('For You (WFH).delete') ) {
+                                <li>
+                                    <a class="dropdown-item" (click)="rejectwfh(rejectPopup,item)"
+                                        >
+                                        <i class="bi bi-x-circle me-2"></i>{{'Reject'|translate}}</a>
+                                </li>
+                                }
+                            </ul>
+                        </div>
+                    </td>
+                    }
+                </tr>
+
+            </ng-template>
+            <ng-template #emptymessage>
+                <tr>
+                    <app-no-data-found />
+                </tr>
+            </ng-template>
+        </p-table>
+        }@else {
+        <app-data-loader-content />
+        }
+    </div>
+</div>
+<!-- rejectpopup -->
+<ng-template #rejectPopup let-modal>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons\reject.png" alt="failure icon" class="confirmation-delete-icon">
+            <p class="confirmation-text">{{'Do you really want to reject selected request?' | translate}}</p>
+        </div>
+
+        <form autocomplete="off" name="wfhapprovee" #wfhapprovee="ngForm" (ngSubmit)="wfhapprovee.valid">
+            <div class="custom-main-popup-content">
+                <div class="mb-3">
+                    <label for="exampleFormControlTextarea1" class="form-label custom-label">Reject reason<span
+                            class="text-danger">*</span></label>
+                    <textarea class="form-control custom-input" id="Reasons" placeholder="Please provide reject reason"
+                        name="Reasons" #Reasons="ngModel" maxlength="250" [(ngModel)]="selectedwfhData.comments"
+                        (ngModelChange)="ifreasonnull(selectedwfhData.comments)" rows="3"
+                        (keydown)="formsValidation.restrictInitialSpace($event)" required></textarea>
+                    <div class="textarea-count-text">
+                        {{selectedwfhData.comments?.length?selectedwfhData.comments?.length:0}}/250</div>
+                    <div class="error-msg"
+                        *ngIf="(Reasons.touched && Reasons.invalid) || (wfhapprovee.submitted && Reasons.invalid)">
+                        Reject reason is required
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex align-items-start mb-3">
+                <button type="button" class="btn-secondary chip-btn"
+                    [class.active]="selectedwfhStatus === 'reject'" (click)="onStatusRejectSelect('reject')">
+                    Rejected
+                </button>
+            </div>
+
+            <div class="custom-modal-footer">
+                <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()"
+                    [disabled]="spinnerLoader">{{'Cancel'|
+                    translate}}</button>
+                <button type="submit" class="custom-btn btn-primary" (click)="handleReject(wfhapprovee)"
+                    [disabled]="wfhapprovee.invalid || !selectedwfhData.comments || spinnerLoader">
+                    @if(spinnerLoader){
+                    <div class="button-loader-content">
+                        <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
+                        <span>{{'Loading...'}}</span>
+                    </div>
+                    }@else {
+                    <span>{{'Reject'| translate}}</span>
+                    }
+                </button>
+            </div>
+        </form>
+    </div>
+</ng-template>
+
+<!-- wfh Summary -->
+<ng-template #wfhSummary let-modal>
+    <div class="custom-main-popup-container" ngbAutofocus>
+        <div class="custom-poup-header-content popup-header-border">
+            <div>
+                <p class="popup-heading mb-0">{{"Summary" | translate}}</p>
+            </div>
+        </div>
+        <div class="custom-main-popup-content custom-accordians">
+            <div class="popup-table-wrapper">
+                <div class="popup-table-scroll-container">
+                    <table class="popup-table">
+                        <thead>
+                            <tr>
+                                <th>{{'Total Records' | translate}}</th>
+                                <th>{{'Success Records'|translate}}</th>
+                                <th>{{'Failed Records' | translate}}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="log-time">{{ responseSummary?.totalRecordCount }}</td>
+                                <td class="log-time">{{ responseSummary?.successRecordsCount }}</td>
+                                <td class="log-time">{{ responseSummary?.failureRecordsCount }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+<!-- Confirmation Popup -->
+<ng-template #confirmationpopup let-modal>
+    <div class="result-popup-content" ngbAutofocus>
+      <div>
+      <app-confirmation-icon />
+        <p class="confirmation-text mb-4">{{'Are you sure you want to proceed?' | translate}}</p>
+      </div>
+
+      <div class="d-flex justify-content-center gap-3 mt-4">
+        <button type="button" class="custom-btn btn-secondary" [disabled]="spinnerLoader" (click)="modal.dismiss()">{{'No'|translate}}</button>
+        <button type="button" class="custom-btn btn-primary" [disabled]="spinnerLoader" (click)="handleProcess(dataforprocess)">
+            @if(!spinnerLoader){
+            {{'Yes'|translate}}
+            }
+            @else {
+            <div class="button-loader-content" *ngIf="spinnerLoader">
+                <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
+                <span>{{'Submitting...'}}</span>
+            </div>
+            }
+        </button>
+      </div>
+    </div>
+</ng-template>

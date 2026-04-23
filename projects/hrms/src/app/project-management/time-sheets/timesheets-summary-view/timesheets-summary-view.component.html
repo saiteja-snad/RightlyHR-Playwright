@@ -361,12 +361,12 @@
                     <table class="popup-table">
                         <thead>
                             <tr>
-                                <th>Project Details</th>
-
-                                <th>Logged Hours</th>
-                                <th>Approver</th>
-                                <th>Description</th>
-                                <th>Status</th>
+                                <th>{{'Project Details'|translate}}</th>
+                                <th>{{'Logged Hours'|translate}}</th>
+                                <th>{{'Approver'|translate}}</th>
+                                <th>{{'Task Type'|translate}}</th>
+                                <th>{{'Description'|translate}}</th>
+                                <th>{{'Status'|translate}}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -414,6 +414,7 @@
                                     </ng-container>
                                     <ng-template #noValue>-</ng-template>
                                 </td>
+                                <td class="text-center">{{entry.taskName||'-'}}</td>
                                 <td class="text-center">
                                     <div *ngIf="entry.summary; else noRequestedComments" type="button" [ngbPopover]="requestedComments">
                                         <app-info-icon />

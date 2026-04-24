@@ -601,6 +601,7 @@ onStatusApproveSelect(status: string) {
         comments: comments,
         moduleId: environment.leavesModuleId,
         onBehalfOfApproval : true,
+        approvedPersonaType: 'onBehalfOf',
         isPlannedLeave: this.selectedLeaveData.isPlannedLeave,
         headerRequests: this.selectedProducts.map((item) => ({
           headerID: item.approvalHeader.id,
@@ -614,6 +615,7 @@ onStatusApproveSelect(status: string) {
         comments: comments,
         moduleId: environment.leavesModuleId,
         onBehalfOfApproval : true,
+        approvedPersonaType: 'onBehalfOf',
         isPlannedLeave: this.selectedLeaveData.isPlannedLeave,
         headerRequests: [
           {
@@ -676,6 +678,7 @@ onStatusApproveSelect(status: string) {
         isPlannedLeave: false,
         moduleId: environment.leavesModuleId,
         onBehalfOfApproval : true,
+        approvedPersonaType: 'onBehalfOf',
         headerRequests: this.selectedProducts.map((item) => ({
           headerID: item.approvalHeader.id,
           currentStage: item.approvalHeader.currentapprovalStage
@@ -689,6 +692,7 @@ onStatusApproveSelect(status: string) {
         isPlannedLeave: false,
         moduleId: environment.leavesModuleId,
         onBehalfOfApproval : true,
+        approvedPersonaType: 'onBehalfOf',
         headerRequests: [
           {
             headerID: this.selectedLeaveData.approvalHeader?.id,
@@ -749,6 +753,7 @@ onStatusApproveSelect(status: string) {
         status: 'Processed',
         moduleId: environment.leavesModuleId,
         onBehalfOfApproval : true,
+        approvedPersonaType: 'onBehalfOf',
         headerRequests: this.selectedProducts.map((item) => ({
           headerID: item.approvalHeader.id,
           currentStage: item.approvalHeader.currentapprovalStage
@@ -761,6 +766,7 @@ onStatusApproveSelect(status: string) {
         status: 'Processed',
         moduleId: environment.leavesModuleId,
         onBehalfOfApproval : true,
+        approvedPersonaType: 'onBehalfOf',
         headerRequests: [
           {
             headerID: this.selectedLeaveData.approvalHeader?.id,

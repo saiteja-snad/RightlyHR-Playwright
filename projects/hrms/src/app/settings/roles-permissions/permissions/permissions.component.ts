@@ -835,14 +835,21 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'For You (Desk Requests)',
     'For Role (Desk Requests)',
   ];
-  onBehalfOfApprovalsSubTabs = [
+   onBehalfOfApprovalsSubTabs = [
     'Time Off (On Behalf Of Approvals)',
     'WFH (On Behalf Of Approvals)',
+    'Remote Login (On Behalf Of Approvals)',
+    'Extra Hours (On Behalf Of Approvals)',
+    'Employee Info (On Behalf Of Approvals)',
+    'Timesheet (On Behalf Of Approvals)',
     'Comp Off (On Behalf Of Approvals)',
+    'Recalls (On Behalf Of Approvals)',
     'Permission (On Behalf Of Approvals)',
     'Expenses (On Behalf Of Approvals)',
+    'Separations (On Behalf Of Approvals)',
     'Regularization (On Behalf Of Approvals)',
     'Trainee Requests (On Behalf Of Approvals)',
+    'Probation (On Behalf Of Approvals)',
     'My Team On Behalf Of Approvals',
     'On Behalf Of Approvals All Employees',
   ];

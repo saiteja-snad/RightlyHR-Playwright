@@ -159,7 +159,7 @@ export class CloneLeavecategoryComponent {
       blockLeaveOnWeekends: [null],
       blockPreviousDayLeave: [null],
       blockNextDayLeave: [null],
-      minimumGapBetweenSameLeaveType: [null, [Validators.min(1), Validators.max(366)]],
+      minimumGapBetweenSameLeaveType: [null,[Validators.min(1), Validators.max(366)]],
       gapCalculationBasis: [null],
       enableSandwichPolicy: [false],
       applySandwichOn: [null,],
@@ -181,6 +181,7 @@ export class CloneLeavecategoryComponent {
     this.setupMaxValidation('noticePeriodAllowedValue', 'validity');
     this.setupMaxValidation('noticePeriodAllowedValue', 'validity');
     this.setupMaxValidation('probationDays', 'validity');
+    this.setupMaxValidation('extendLastWorkingDay', 'validity');
   }
 
 
@@ -352,11 +353,14 @@ export class CloneLeavecategoryComponent {
     this.leavePolicyForm?.get('noticeperiodAllowedType')?.valueChanges.subscribe((value: any) => {
       const daysControl = this.leavePolicyForm.get('noticePeriodAllowedValue');
       const typeControl = this.leavePolicyForm.get('noticePeriodFrequencyType');
+      const extendControl = this.leavePolicyForm.get('extendLastWorkingDay');
       if (value) {
         daysControl?.enable();
         daysControl?.setValidators([Validators.required, Validators.min(1)]);
         typeControl?.enable();
         typeControl?.setValidators([Validators.required]);
+        extendControl?.enable();
+        extendControl?.setValidators([Validators.required]);
       } else {
         daysControl?.disable();
         daysControl?.clearValidators();
@@ -364,9 +368,12 @@ export class CloneLeavecategoryComponent {
         typeControl?.disable();
         typeControl?.clearValidators();
         typeControl?.setValue(null);
+        extendControl?.clearValidators();
+        extendControl?.setValue(null);
       }
       daysControl?.updateValueAndValidity();
       typeControl?.updateValueAndValidity();
+      extendControl?.updateValueAndValidity();
     });
 
     this.leavePolicyForm?.get('isProbationAllowed')?.valueChanges.subscribe((value: any) => {
@@ -727,7 +734,8 @@ export class CloneLeavecategoryComponent {
       applySandwichOn: data.applySandwichOn,
       sandwichCalculationBasis: data.sandwichCalculationBasis,
       sandwichApplicabilityCondition: data.sandwichApplicabilityCondition,
-      adjacentLeaveTypeRule: data.adjacentLeaveTypeRule
+      adjacentLeaveTypeRule: data.adjacentLeaveTypeRule,
+      extendLastWorkingDay:data.isNoticePeriodExtended
     });
     // Manually trigger value changes for dependent fields
   this.updateDependentFieldState('futureDatesAllowed', 'futureDatesAllowedDays');
@@ -801,7 +809,8 @@ export class CloneLeavecategoryComponent {
       lastModifiedBy: this.empinfo.employeeId,
       status: "Pending for submission",
       addedDate: new Date(),
-      lastModifiedDate: new Date()
+      lastModifiedDate: new Date(),
+      isNoticePeriodExtended:this.leavePolicyForm.value.extendLastWorkingDay
     };
     this.http.postdata('OrgLeavesCategories', payload).subscribe({
       next: (data: any) => {

@@ -187,7 +187,8 @@ export class UpdateLeavecategoryComponent {
       applySandwichOn: [null,],
       sandwichCalculationBasis: [null],
       sandwichApplicabilityCondition: [null],
-      adjacentLeaveTypeRule: [null]
+      adjacentLeaveTypeRule: [null],
+      extendLastWorkingDay:[null]
     });
   }
 
@@ -253,11 +254,14 @@ export class UpdateLeavecategoryComponent {
     this.leavePolicyForm?.get('noticeperiodAllowedType')?.valueChanges.subscribe((value: any) => {
       const daysControl = this.leavePolicyForm.get('noticePeriodAllowedValue');
       const typeControl = this.leavePolicyForm.get('noticePeriodFrequencyType');
+      const extendControl = this.leavePolicyForm.get('extendLastWorkingDay');
       if (value) {
         daysControl?.enable();
         daysControl?.setValidators([Validators.required, Validators.min(1)]);
         typeControl?.enable();
         typeControl?.setValidators([Validators.required]);
+        extendControl?.enable();
+        extendControl?.setValidators([Validators.required]);
       } else {
         daysControl?.disable();
         daysControl?.clearValidators();
@@ -265,9 +269,12 @@ export class UpdateLeavecategoryComponent {
         typeControl?.disable();
         typeControl?.clearValidators();
         typeControl?.setValue(null);
+        extendControl?.clearValidators();
+        extendControl?.setValue(null);
       }
       daysControl?.updateValueAndValidity();
       typeControl?.updateValueAndValidity();
+      extendControl?.updateValueAndValidity();
     });
 
     this.leavePolicyForm?.get('isProbationAllowed')?.valueChanges.subscribe((value: any) => {
@@ -706,7 +713,8 @@ export class UpdateLeavecategoryComponent {
       applySandwichOn: data.applySandwichOn,
       sandwichCalculationBasis: data.sandwichCalculationBasis,
       sandwichApplicabilityCondition: data.sandwichApplicabilityCondition,
-      adjacentLeaveTypeRule: data.adjacentLeaveTypeRule
+      adjacentLeaveTypeRule: data.adjacentLeaveTypeRule,
+      extendLastWorkingDay:data.isNoticePeriodExtended
     });
     this.syncGapCalculationBasis();
     
@@ -738,6 +746,7 @@ export class UpdateLeavecategoryComponent {
     this.setupMaxValidation('noticePeriodAllowedValue', 'validity');
     this.setupMaxValidation('noticePeriodAllowedValue', 'validity');
     this.setupMaxValidation('probationDays', 'validity');
+     this.setupMaxValidation('extendLastWorkingDay', 'validity');
   }
 
 
@@ -895,6 +904,7 @@ export class UpdateLeavecategoryComponent {
       status: this.updateLeaveCategoryData.status,
       addedDate: this.updateLeaveCategoryData.addedDate,
       lastModifiedDate: new Date(),
+      isNoticePeriodExtended:formData.extendLastWorkingDay
     };
     this.subscription = this.http
       .postdata('OrgLeavesCategories/UPDATER', payload)

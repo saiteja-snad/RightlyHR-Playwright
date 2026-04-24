@@ -639,6 +639,7 @@
             </span>
           </div>
         </div>
+       
 
         <div class="component-sub-header mb-3">Notice Period</div>
 
@@ -686,6 +687,22 @@
             <span *ngIf="leavePolicyForm.get('noticePeriodAllowedValue')?.errors?.['min']">
               Leaves Allowed must be at least 1
             </span>
+          </div>
+        </div>
+          <!-- Extend Last Working Day Based on Leave -->
+         <div class="col-md-3 mb-3" *ngIf="leavePolicyForm.get('noticeperiodAllowedType')?.value === true">
+          <label class="form-label custom-label mb-2" for="extendLastWorkingDay">
+            Extend Last Working Day Based on Leave<span class="text-danger">*</span>
+          </label>
+          <div class="custom-p-select-content">
+            <p-select [options]="global" optionLabel="label" optionValue="value"
+              placeholder="Select" formControlName="extendLastWorkingDay" class="custom-select w-100"
+              appendTo="body">
+            </p-select>
+          </div>
+          <div class="error-msg"
+            *ngIf="leavePolicyForm.get('extendLastWorkingDay')?.invalid && leavePolicyForm.get('extendLastWorkingDay')?.touched">
+            Extend Last Working Day Based on Leave is required
           </div>
         </div>
       </div>

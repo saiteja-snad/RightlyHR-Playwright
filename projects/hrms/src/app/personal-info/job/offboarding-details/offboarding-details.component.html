@@ -49,7 +49,7 @@
           </div>
         </div>
 
-        <div class="col-lg-4 col-md-6 mb-3">
+        <div class="col-lg-4 col-md-6 mb-3" *ngIf="empdata?.empstatus !=='Inactive Contract'">
           <label for="lastWorkingDay" class="form-label custom-label mb-2">Last Working Day</label>
           <input type="date" class="form-control custom-input" id="lastWorkingDay" formControlName="lastWorkingDay" />
           <div class="error-msg"
@@ -58,7 +58,7 @@
           </div>
         </div>
 
-        <div class="col-lg-4 col-md-6 mb-3">
+        <div class="col-lg-4 col-md-6 mb-3" *ngIf="empdata?.empstatus =='Inactive Contract'">
           <label for="contractorLastWorkingDay" class="form-label custom-label mb-2">Contractor Last Working Day</label>
           <input type="date" class="form-control custom-input" id="contractorLastWorkingDay" formControlName="contractorLastWorkingDay" />
           <div class="error-msg"

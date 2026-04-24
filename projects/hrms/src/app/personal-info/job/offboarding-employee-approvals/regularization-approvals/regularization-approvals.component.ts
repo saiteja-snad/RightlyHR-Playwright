@@ -353,7 +353,7 @@ this.modalService.open(approverPopup, { centered: true, backdrop: 'static' });
             if(this.selectedProducts.length > 1){
             this.signalService.handleResponse(this.responseSummary, 'Selected regularization requests rejected successfully');
             } else{
-            this.signalService.handleResponse(this.responseSummary, 'regularization request rejected successfully');
+            this.signalService.handleResponse(this.responseSummary, 'Regularization request rejected successfully');
             }
           } else {
             this.openModal(this.regularizationSummary);
@@ -431,7 +431,7 @@ this.modalService.open(approverPopup, { centered: true, backdrop: 'static' });
             if(this.selectedProducts.length > 1){
             this.signalService.handleResponse(this.responseSummary, 'Selected regularization requests processed successfully');
             }else{
-            this.signalService.handleResponse(this.responseSummary, 'regularization request processed successfully');
+            this.signalService.handleResponse(this.responseSummary, 'Regularization request processed successfully');
             }
           } else {
             this.openModal(this.regularizationSummary);

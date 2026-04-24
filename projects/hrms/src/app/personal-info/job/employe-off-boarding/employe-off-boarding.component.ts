@@ -195,7 +195,7 @@ export class EmployeOffBoardingComponent {
         }
       const formdata=this.offBoardingForm.value
       if(formdata.status.statusname === 'Inactive Contract'){
-        this.offBoardingEmp.contractorLastWorkingDay=formdata.lastdate;
+        this.offBoardingEmp.contractorLastWorkingDate=formdata.lastdate;
       }
       else{
         this.offBoardingEmp.lastworkingday=formdata.lastdate;

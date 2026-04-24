@@ -259,7 +259,8 @@ export class ReportingmangerchangeComponent implements OnInit, OnDestroy {
       lastName: emp.lastName ?? '',
       jobRole: emp.jobRole ?? '',
       workEmail: emp.workEmail ?? '',
-      contactnumber: emp.contactnumber ?? emp.contactNumber ?? 0
+      contactnumber: emp.contactnumber ?? emp.contactNumber ?? 0,
+      effectiveDate:effectiveDate
     }));
     this.subscription = this.http.postText(`JobDetails/joblist/updater?ManagerId=${ManagerId}`, requestBody).subscribe({
       next: () => {
@@ -459,7 +460,8 @@ export class ReportingmangerchangeComponent implements OnInit, OnDestroy {
         lastName: jobData.lName ?? '',
         jobRole: jobData.jobRole ?? '',
         workEmail: record.workEmail ?? '',
-        contactnumber: record.contactnumber ?? 0
+        contactnumber: record.contactnumber ?? 0,
+        effectiveDate:effectiveDate
       }];
       this.http.postText(`JobDetails/joblist/updater?ManagerId=${manager.employeeId}`, requestBody).subscribe({
         next: () => {

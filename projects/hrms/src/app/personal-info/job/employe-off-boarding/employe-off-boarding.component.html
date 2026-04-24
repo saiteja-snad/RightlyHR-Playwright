@@ -59,7 +59,7 @@
         </div>
         <!-- Last Working Day -->
         <div class="col-lg-4 col-md-6 mb-3">
-          <label for="lastWorkingDay" class="form-label custom-label mb-2">Last Working Day<span class="text-danger">*</span></label>
+          <label for="lastWorkingDay" class="form-label custom-label mb-2"><span *ngIf="offBoardingEmp?.empstatus =='Active Contract'">Contractor</span> Last Working Day<span class="text-danger">*</span></label>
           <input type="date" [min]="dateOfJoining" formControlName="lastdate"
               class="form-control custom-input" [max]="currentDate" placeholder="March 10, 2026">
           <div class="error-msg" *ngIf="offBoardingForm.get('lastdate')?.touched && offBoardingForm.get('lastdate')?.invalid">
@@ -69,11 +69,11 @@
         </div>
 
         <!-- Contractor Last Working Day -->
-        <div class="col-lg-4 col-md-6 mb-3" *ngIf="offBoardingEmp?.empstatus =='Active Contract'">
+        <!-- <div class="col-lg-4 col-md-6 mb-3" *ngIf="offBoardingEmp?.empstatus =='Active Contract'">
           <label for="contractorLastWorkingDay" class="form-label custom-label mb-2">Contractor Last Working Day<span class="text-danger">*</span></label>
           <input type="date" [min]="dateOfJoining" formControlName="contractorLastDate"
               class="form-control custom-input" [max]="currentDate" placeholder="March 10, 2026">
-        </div>
+        </div> -->
       </div>
 
 

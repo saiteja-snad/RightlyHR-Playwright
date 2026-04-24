@@ -35,7 +35,7 @@
     <div class="custom-p-multi-select-table p-datatable-table-container ">
         @if(!dataLoad){
         <p-table #dt [value]="getFilteredAndSortedwfhs()" (selectionChange)="selectCheck($event)"
-            [(selection)]="selectedProducts" dataKey="pendindApprovalsHeader.id" [tableStyle]="{'min-width': '50rem'}">
+            [(selection)]="selectedProducts" dataKey="pendingApprovalsHeader.id" [tableStyle]="{'min-width': '50rem'}">
             <ng-template #header>
                 <tr>
                     <th style="width: 4rem">
@@ -171,6 +171,11 @@
             <div>
                 <p class="popup-heading mb-0">{{"Summary" | translate}}</p>
             </div>
+                  <div>
+        <a>
+          <img src="icons/close.png" alt="Close Icon" class="close-icon" (click)="modal.dismiss()">
+        </a>
+      </div>
         </div>
         <div class="custom-main-popup-content custom-accordians">
             <div class="popup-table-wrapper">

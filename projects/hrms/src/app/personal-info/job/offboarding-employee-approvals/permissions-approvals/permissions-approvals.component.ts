@@ -353,7 +353,7 @@ this.modalService.open(approverPopup, { centered: true, backdrop: 'static' });
             if(this.selectedProducts.length > 1){
             this.signalService.handleResponse(this.responseSummary, 'Selected permission requests rejected successfully');
             } else{
-            this.signalService.handleResponse(this.responseSummary, 'permission request rejected successfully');
+            this.signalService.handleResponse(this.responseSummary, 'Permission request rejected successfully');
             }
           } else {
             this.openModal(this.permissionSummary);

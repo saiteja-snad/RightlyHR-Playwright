@@ -27,7 +27,7 @@ import { OffboardingReloadService } from "../../../../services/offboarding-reloa
 
 @Component({
   selector: 'app-employee-info-approvals',
-  imports: [AccordionModule, CommonModule, PaginatorModule, ReactiveFormsModule, TableModule, TranslateModule, InfoIconComponent, NgbPopover,
+  imports: [AccordionModule, CommonModule, ReactiveFormsModule, TableModule, TranslateModule, InfoIconComponent, NgbPopover,
       ConfirmationIconComponent, FormsModule, NoDataFoundComponent, Skeleton, DateformatPipe,NgxDocViewerModule
   ],
   templateUrl: './employee-info-approvals.component.html',
@@ -65,12 +65,6 @@ export class EmployeeInfoApprovalsComponent implements OnInit, OnDestroy {
   rows = 10;
   collectionSize!: number;
   first = 0;
-  options = [
-    { label: 10, value: 10 },
-    { label: 15, value: 15 },
-    { label: 20, value: 20 },
-    { label: 25, value: 25 }
-  ];
   startdate: any;
   enddate: any;
   globalSelectedEntries: any[] = [];
@@ -144,27 +138,9 @@ ImageUrl: any;
     }
   }
   // called for pagination
-  onRowsChange() {
-    this.page = 1;
-    this.first = 0;
-    this.getemployeeinfoapprovals();
-  }
-
-  onPageChange(event: any) {
-    this.page = event.page + 1;
-    this.pageSize = event.rows;
-    this.first = event.first;
-    this.getemployeeinfoapprovals();
-  }
-
-  // Called when first size changes
-  onPageSizeChange(newPageSize: number) {
-    this.pageSize = newPageSize;
-    this.rows = newPageSize;
-    this.page = 1;
-    this.first = 0;
-    this.getemployeeinfoapprovals();
-  }
+  onRowsChange() {}
+  onPageChange(event: any) {}
+  onPageSizeChange(newPageSize: number) {}
 
   // bulk data approve method
   bulkApprove(popup: any) {

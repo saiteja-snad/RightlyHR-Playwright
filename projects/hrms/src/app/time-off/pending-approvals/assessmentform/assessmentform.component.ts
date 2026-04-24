@@ -60,7 +60,7 @@ export class AssessmentformComponent {
   selectedLeaveStatus: any;
   totalCount: any;
 
-  constructor(private router: Router, private http: HttpService, private authService: AuthService, config: NgbModalConfig, 
+  constructor(private router: Router, private http: HttpService, private authService: AuthService, config: NgbModalConfig,
     private modalService: NgbModal, private openModalService: OpenModalService, public rbac: RbacService,) {
     config.backdrop = 'static';
     config.keyboard = false;
@@ -568,9 +568,18 @@ export class AssessmentformComponent {
 
   close() {
     this.closeModal()
-    this.router.navigate(['/pending-approvals/on-boarding/probation-request']);
+    this.navigate();
   }
 
+
+  navigate() {
+    if (this.http.getIsFromOnBehalfOfProbation()) {
+      this.router.navigate(['/on-behalf-of/on-behalf-of-approvals/time-off']);
+    } else {
+      this.router.navigate(['/pending-approvals/on-boarding/probation-request']);
+    }
+
+  }
   reset(content: any) {
     this.modalService.open(content, { centered: true })
     this.clearApproveData();
@@ -621,7 +630,7 @@ export class AssessmentformComponent {
       next: (data: any) => {
         if (data) {
           this.responseId = data.responseId;
-             this.getApprovalStatusCounts();
+          this.getApprovalStatusCounts();
           this.FormDownload();
           this.closeModal();
           this.modalService.open(content, { centered: true })
@@ -659,7 +668,7 @@ export class AssessmentformComponent {
       });
       successMessage = 'Probation request extended successfully';
     }
-    let requestBody = {
+    let requestBody:any = {
       status: 'Approved',
       approvedBy: this.loggedindata.employeeId.toString(),
       comments: this.selected_approve.comments,
@@ -668,6 +677,10 @@ export class AssessmentformComponent {
       responseId: this.responseId,
       currentStage: parseInt(this.formemployeedetails.approvalHeader?.currentapprovalStage)
     };
+       if (this.http.getIsFromOnBehalfOfProbation()) {
+      requestBody.onBehalfOfApproval = true;
+      requestBody.approvedPersonaType = 'onBehalfOf';
+    }
     if (this.selected_approve.requestSelectedType == 'Approve') {
       requestBody.status = 'Approved';
     }
@@ -686,15 +699,15 @@ export class AssessmentformComponent {
         this.openModalService.openSuccessModal(successMessage);
         setTimeout(() => {
           this.modalService.dismissAll();
-          this.router.navigate(['/pending-approvals/on-boarding/probation-request']);
+          this.navigate();
         }, 2000);
       },
       error: (reason: any) => {
         this.openModalService.openErrorModal(reason.error.message);
       },
       complete: () => {
-           this.getApprovalStatusCounts();
         setTimeout(() => {
+           this.navigate();
           window.location.reload();
         }, 2000);
       },
@@ -722,7 +735,7 @@ export class AssessmentformComponent {
         status: 'Extended',
       });
     }
-    let requestBody = {
+    let requestBody:any = {
       status: 'Processed',
       comments: this.selected_approve.comments,
       extendedDate: this.selected_approve.extenddate,
@@ -730,6 +743,11 @@ export class AssessmentformComponent {
       responseId: this.responseId,
       currentStage: parseInt(this.formemployeedetails.approvalHeader?.currentapprovalStage)
     };
+
+     if (this.http.getIsFromOnBehalfOfProbation()) {
+      requestBody.onBehalfOfApproval = true;
+      requestBody.approvedPersonaType = 'onBehalfOf';
+    }
     if (this.selected_approve.requestSelectedType == 'Approve') {
       requestBody.status = 'Processed';
     }
@@ -796,7 +814,7 @@ export class AssessmentformComponent {
                   this.dynamicFormHeader, ele.id, question.quetsionId, question.meta);
               });
             } else {
-              this.defaultaddingforvalues(ele.questions, ele.rating, 0, this.dynamicFormHeader, 
+              this.defaultaddingforvalues(ele.questions, ele.rating, 0, this.dynamicFormHeader,
                 ele.id, question.quetsionId, question.meta);
             }
           });
@@ -807,13 +825,13 @@ export class AssessmentformComponent {
       },
     });
   }
-getApprovalStatusCounts() {
+  getApprovalStatusCounts() {
     let loggedInUser = this.authService.getToken();
     let EmployeeId = loggedInUser.employeeId;
     this.http.get(`PendingApproval/getApprovalStatusCounts?moduleId=${environment.traineeoffboardingModuleId}&EmployeeId=${EmployeeId}`).subscribe((res: any) => {
       this.totalCount = res.reduce((acc: number, curr: any) => acc + curr.totalCount, 0);
-       this.http.updatePendingApprovalCounts(this.totalCount);
-   //Map counts to tabs
+      this.http.updatePendingApprovalCounts(this.totalCount);
+      //Map counts to tabs
     });
   }
   // Function to handle toggling Early Relieving option
@@ -909,4 +927,5 @@ getApprovalStatusCounts() {
     }
     return true;
   }
+
 }

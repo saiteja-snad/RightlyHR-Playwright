@@ -69,7 +69,7 @@ export class PendingApprovalsComponent implements OnInit {
   constructor(
     public router: Router,
     private fb: FormBuilder,
-    private http: HttpService,
+    public http: HttpService,
     public rbac: RbacService,
     private cdr: ChangeDetectorRef
   ) {}
@@ -136,10 +136,14 @@ export class PendingApprovalsComponent implements OnInit {
     this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
 
-  navigate() {
-    this.router.navigate(['/pending-approvals/on-boarding/probation-request']);
+ navigate() {
+    if (this.http.getIsFromOnBehalfOfProbation()) {
+      this.router.navigate(['/time-off/on-behalf-of-approvals/time-off']);
+    }else{
+      this.router.navigate(['/time-off/pending-approvals/probation-request']);
+    }
+    
   }
-
   /** Create form and keep Phase & Resource disabled initially */
   createDatepickerForm() {
     this.datepickerForm = this.fb.group({

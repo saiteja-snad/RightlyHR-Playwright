@@ -1390,4 +1390,23 @@ updatePendingApprovalCounts(counts: any[]) {
   setnewcountDetailsforratecard() {
     this.ratecardcount.next();
   }
+
+    getIsFromOnBehalfOfProbation(): boolean {
+    try {
+      const value = localStorage.getItem('IsFromOnBehalfOfProbation');
+
+      if (value === null || value === undefined) {
+        return false; // default fallback
+      }
+
+      // Handle both JSON-stored and plain string cases
+      if (value === 'true' || value === 'false') {
+        return value === 'true';
+      }
+
+      return JSON.parse(value) === true;
+    } catch {
+      return false; // safe fallback on parse error
+    }
+  }
 }

@@ -21,6 +21,7 @@ import { Select } from 'primeng/select';
 
 
 import { CommonModule } from '@angular/common';
+import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
 @Component({
   selector: 'app-pending-approvals',
   imports: [
@@ -38,7 +39,7 @@ import { CommonModule } from '@angular/common';
     OnboardingApprovalTabsComponent,
     CommonModule,
     Select,
-    ModuleInformationComponent
+    ModuleInfoIconComponent
   ],
   templateUrl: './pending-approvals.component.html',
   styleUrl: './pending-approvals.component.scss',

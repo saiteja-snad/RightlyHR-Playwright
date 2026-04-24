@@ -60,6 +60,7 @@ export class TimeSheetApprovalsComponent implements OnInit {
   //projectsData:any[]=[];
   //employeeData:any[]=[];
   phaseId!: number|null;
+  taskId!:any;
   dataload = false;
   //employeeflag:any;
   employeeresource: any;
@@ -109,6 +110,7 @@ export class TimeSheetApprovalsComponent implements OnInit {
         if (data && data.request) {
           this.employeeresource = data.request.resourceId;
           this.phaseId = data.request.phaseId;
+          this.taskId=data.request.taskId;
           if (data.request && data.request.dateRange) {
             this.startdate = data.request.dateRange.startDate;
             this.enddate = data.request.dateRange.endDate;
@@ -117,6 +119,7 @@ export class TimeSheetApprovalsComponent implements OnInit {
         } else {
           this.startdate = null;
           this.enddate = null;
+          this.taskId=null;
           this.loadClientsAndProjects(this.page, this.pageSize, this.startdate, this.enddate);
         }
       });
@@ -207,6 +210,9 @@ onStatusApproveSelect(status: string) {
     if (this.employeeresource) url += `&requestedBy=${this.employeeresource}`;
     if (this.phaseId !== undefined && this.phaseId !== null) {
       url += `&phaseId=${this.phaseId}`;
+    }
+    if(this.taskId!==undefined && this.taskId !=null && this.taskId !=''){
+      url+=`&taskId=${this.taskId}`
     }
     if (this.startdate && this.enddate) url += `&startDate=${this.startdate}&endDate=${this.enddate}`;
     this.http.getData(url).subscribe({

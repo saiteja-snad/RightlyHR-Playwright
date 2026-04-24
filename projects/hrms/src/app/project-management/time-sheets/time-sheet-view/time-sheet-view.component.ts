@@ -29,11 +29,12 @@ import { MenuItem } from 'primeng/api';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { BulkUploadStore } from '../bulk-upload/models/bulk-upload.store';
 import { DateformatPipe } from '../../../pipes/dateformat.pipe';
+import { Select } from 'primeng/select';
 @Component({
   selector: 'app-time-sheet-view',
   imports: [ProjectManagementModuleInfoComponent, NgbDatepickerModule, FormsModule, ReactiveFormsModule,
     NgbPopover, CommonModule, DatePicker, DateformatPipe, AccordionModule, InfoIconComponent, ConfirmationIconComponent,
-    TranslateModule, DataLoaderContentComponent, TimesheetsTabsComponent, MenuModule, MultiSelectModule],
+    TranslateModule, DataLoaderContentComponent, TimesheetsTabsComponent, MenuModule, MultiSelectModule,Select],
   templateUrl: './time-sheet-view.component.html',
   styleUrl: './time-sheet-view.component.scss',
 })
@@ -113,6 +114,8 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   canBulkImport = false;
   canBulkExport = false;
   canViewHistoryLog = false;
+  taskType:any;
+  alltaskTypes=[] as any;
   constructor(private fb: FormBuilder, private modalService: NgbModal,
     private http: HttpService, public formValidation: FormValidationsService,
     public dayValidationService: DayValidationService, public authService: AuthService,
@@ -139,8 +142,20 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     this.formattedweakendStart = moment(this.start).format('YYYY-MM-DD');
     this.getTimeSheetEntriesbyEmployeeId(this.employeeId, this.formattedweakendStart);
     this.buildBulkOperationMenuItems();
+    this.getTaskType();
   }
-
+getTaskType() {
+  this.loading = true;
+  this.subscription = this.http.getData('TaskType').subscribe({
+    next: (res: any) => {
+      this.loading = false;
+      this.alltaskTypes = res;
+      this.taskType = res?.filter((ele:any)=>ele?.status?.toLowerCase()==='active');
+    },
+    error: () => (this.loading = false),
+    complete: () => (this.loading = false)
+  });
+}
   get projects(): FormArray {
     return this.timesheetForm.get('projects') as FormArray<FormGroup>;
   }
@@ -451,6 +466,8 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       rejectReason: [day?.rejectReason || ''],
       blockReason: [blockReason],
       resourceId: [{ value: day?.resourceId || null }],
+      taskId:[{ value: day?.taskId || null, disabled: !shouldEnable }]
+
     });
   }
 
@@ -735,8 +752,8 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       isBlocked: [{ value: cell.isBlocked, disabled: true }],
       rejectReason: [cell.rejectReason || ''],
       blockReason: [cell.blockReason || ''],
-      resourceId: [row.resourceId || null]
-
+      resourceId: [row.resourceId || null],
+      taskId:[{value:cell.taskId || null, disabled: !shouldEnable },]
     });
   }
 
@@ -1665,22 +1682,31 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
 openModal(content: any, dayForm: AbstractControl | null, index: number, dayKey: string) {
 
   if (dayForm instanceof FormGroup) {
-
     this.currentRowIndex = index;
     this.currentDay = dayKey;
     this.isModalOpen = true;
-
     const modalRef = this.modalService.open(content, {
       centered: true,
       backdrop: 'static'
     });
-
     modalRef.result.finally(() => {
       this.isModalOpen = false;
     });
 
     this.dayForm = dayForm;
-
+    //start//code for the task type 
+    let taskId = this.dayForm.get('taskId')?.value;
+    let taskdata = this.alltaskTypes?.find((ele: any) => ele?.id == taskId && ele?.status?.toLowerCase() == 'inactive');
+    if (taskdata) {
+      const alreadyExists = this.taskType?.some((ele: any) => ele.id == taskdata.id);
+      if (!alreadyExists) {
+        this.taskType.push(taskdata);
+      }
+    } else {
+      this.taskType = this.alltaskTypes?.filter((ele: any) => ele?.status?.toLowerCase() == 'active'
+      );
+    }
+    //end//code for the task type
     // ✅ Normalize date (fix timezone issue)
     const normalizeDate = (date: any) => {
       const d = new Date(date);
@@ -1836,6 +1862,7 @@ openModal(content: any, dayForm: AbstractControl | null, index: number, dayKey: 
       isBillable: formValue.isBillable || false,
       moduleId: 30,
       resourceId: formValue.resourceId || null,
+      taskId:formValue.taskId
     };
     // POST request
     this.http.postdata('v2/Timesheet/save-or-update', payload).subscribe({
@@ -1890,7 +1917,8 @@ openModal(content: any, dayForm: AbstractControl | null, index: number, dayKey: 
         description: null,
         startTime: null,
         endTime: null,
-        approvalStatus: 'Not Entered'
+        approvalStatus: 'Not Entered',
+        taskId:null,
       }, { emitEvent: true });
 
       this.timesheetForm.get('duration')?.patchValue(null);
@@ -1941,6 +1969,7 @@ openModal(content: any, dayForm: AbstractControl | null, index: number, dayKey: 
           projectName: project.selectedProject?.projectName || '',
           clientName: project.selectedProject?.clientName || '',
           approvalStatus: day.approvalStatus, // include approvalStatus
+          taskId:day.taskId,
         };
       })
     )

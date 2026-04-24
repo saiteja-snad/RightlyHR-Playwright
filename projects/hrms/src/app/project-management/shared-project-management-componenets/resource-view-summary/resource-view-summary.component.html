@@ -9,6 +9,7 @@
                         <th class="text-center">{{'Phase/Milestone' | translate }}</th>
                         <th class="text-center">{{'Logged Hours' | translate }}</th>
                         <th class="text-center">{{'Approver' | translate }}</th>
+                        <th class="text-center">{{'Task Type' | translate }}</th>
                         <th class="text-center">{{'Description' | translate}}</th>
                         <th>{{'Status' | translate }}</th>
                     </thead>
@@ -25,6 +26,7 @@
                                 </ng-container>
                                 <ng-template #noValue>-</ng-template>
                                 </td>
+                                <td class="text-center">{{row.entries?.taskName||'-'}}</td>
                                 <td class="text-center">
                                     <ng-container *ngIf="row.entries?.summary; else noEntries">
                                         <a type="button" [ngbPopover]="description">

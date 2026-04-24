@@ -3,6 +3,7 @@ import { Component, computed, OnDestroy, OnInit, signal, TemplateRef, ViewChild,
 import { Router } from '@angular/router';
 import { NgbModal, NgbOffcanvas, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { Subject, debounceTime, distinctUntilChanged, takeUntil } from 'rxjs';
+import { BulkUploadService } from '../../../services/bulk-upload.service';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { MODULE_INFOS } from '../../../shared/modules-info';
 import { CommonModule } from '@angular/common';
@@ -10,6 +11,7 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 import { ConfirmationIconComponent } from '../../../icons/confirmation-icon/confirmation-icon.component';
 import { InfoIconComponent } from '../../../icons/info-icon/info-icon.component';
 import { ModuleInfoIconComponent } from '../../../icons/module-info-icon/module-info-icon.component';
+import { DateformatPipe } from '../../../pipes/dateformat.pipe';
 import { DataLoaderContentComponent } from '../../../shared/data-loader-content/data-loader-content.component';
 import { ModuleInformationComponent } from '../../../shared/module-information/module-information.component';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
@@ -19,8 +21,6 @@ import { MultiSelectModule } from 'primeng/multiselect';
 import { HttpService } from '../../../services/http.service';
 import moment from 'moment';
 import { TranslateModule } from '@ngx-translate/core';
-import { DateformatPipe } from '../../../pipes/dateformat.pipe';
-import { BulkUploadService } from '../../../services/bulk-upload.service';
 
 interface TimesheetDetailItem {
   employeeId: number;
@@ -43,7 +43,7 @@ interface TimesheetDetailItem {
   projectMeta?: any;
   clientMeta?: any;
   phaseMeta?: any;
-
+  taskName:string;
 }
 
 interface TimesheetExportPreviewRow {
@@ -73,6 +73,7 @@ interface TimesheetExportPreviewRow {
       color: string;
     }
   } | null;
+  taskName:string;
 }
 
 interface TimesheetExportState {
@@ -121,16 +122,21 @@ export class BulkExportComponent implements OnInit, OnDestroy {
   exportPhaseOptions: any[] = [];
   selectedPhasesLabel = 'All Phases';
   selectedProjectsLabel = 'All Projects';
+  selectedTasksLabel = 'All Tasks';
   maxSelectedProjectsLabels = 0;
   maxSelectedPhasesLabels = 0;
+  maxSelectedTasksLabels = 0;
   @ViewChild('stagingLoadingModal') stagingLoadingModal!: TemplateRef<any>;
   private searchSubject = new Subject<string>();
   exportForm!: FormGroup;
   monthRange: Date[] = [];
   ALL_PROJECTS_ID = -1;
   ALL_PHASES_ID = -1;
+  ALL_TASKS_ID = -1;
   previousProjectSelection: number[] = [];
   previousPhaseSelection: number[] = [];
+  previousTaskSelection: number[] = [];
+  exportTaskOptions: any[] = [];
   exporting = false;
   isFilteredExport = false;
   exportClients: any[] = [];
@@ -156,6 +162,7 @@ export class BulkExportComponent implements OnInit, OnDestroy {
   isFilterIndicatorActive = false;
   spinnerLoader2 = false;
   spinnerLoader1 = false;
+  taskType: any[] = [];
 
   constructor(private conformationPopup: OpenModalService,
     private modalService: NgbModal,
@@ -178,6 +185,7 @@ export class BulkExportComponent implements OnInit, OnDestroy {
     const endOfMonth = moment().endOf('month');
     this.setMonthRange(startOfMonth.toDate(), endOfMonth.toDate());
     this.initExportForm();
+    this.getTaskType();
 
 
     const range = this.monthRange;
@@ -226,17 +234,18 @@ export class BulkExportComponent implements OnInit, OnDestroy {
   }
 
   get isGenerateDisabled(): boolean {
-    const { phaseIds, projectIds, dateRange } = this.exportForm.value;
-    // Check if any field has a value
+    const { phaseIds, projectIds, taskIds, dateRange } = this.exportForm.value;
     return !(phaseIds && phaseIds.length > 0 ||
       projectIds && projectIds.length > 0 ||
+      taskIds && taskIds.length > 0 ||
       dateRange && (dateRange[0] || dateRange[1]));
   }
 
   isFilterApplied(): boolean {
-    const { phaseIds, projectIds, dateRange } = this.exportForm.value;
+    const { phaseIds, projectIds, taskIds, dateRange } = this.exportForm.value;
     return (phaseIds && phaseIds.length > 0) ||
       (projectIds && projectIds.length > 0) ||
+      (taskIds && taskIds.length > 0) ||
       (dateRange && (dateRange[0] || dateRange[1]));
   }
 
@@ -246,7 +255,7 @@ export class BulkExportComponent implements OnInit, OnDestroy {
     this.monthRange = [start, end];
     this.isRestoringFilters = true;
     this.exportForm.patchValue(
-      { dateRange: [start, end], projectIds: [], phaseIds: [] },
+      { dateRange: [start, end], projectIds: [], phaseIds: [] ,taskIds: []},
       { emitEvent: false }
     );
     this.isRestoringFilters = false;
@@ -260,6 +269,7 @@ export class BulkExportComponent implements OnInit, OnDestroy {
     const startStr = moment(start).format('YYYY-MM-DD');
     const endStr = moment(end).format('YYYY-MM-DD');
     this.fetchExportResources(startStr, endStr);
+    this.buildTaskOptions();
   }
 
   setMonthRange(start: Date, end: Date) {
@@ -299,6 +309,7 @@ export class BulkExportComponent implements OnInit, OnDestroy {
       dateRange: [[], [Validators.required]],
       projectIds: [[]],
       phaseIds: [[]],
+      taskIds : [[]]
     });
   }
 
@@ -691,10 +702,13 @@ export class BulkExportComponent implements OnInit, OnDestroy {
     const range = value.dateRange || [];
     const projectIds: number[] = value.projectIds || [];
     const phaseIds: number[] = value.phaseIds || [];
+    const taskIds: number[] = value.taskIds || [];
 
     const filteredProjectIds = projectIds.filter((id) => id !== this.ALL_PROJECTS_ID);
     const filteredPhaseIds = phaseIds.filter((id) => id !== this.ALL_PHASES_ID);
+    const filteredTaskIds = taskIds.filter((id) => id !== this.ALL_TASKS_ID);
     const clientIds = this.getClientIdsForProjects(filteredProjectIds);
+
 
     const trimmedSearch = (searchQuery ?? '').trim();
 
@@ -704,6 +718,7 @@ export class BulkExportComponent implements OnInit, OnDestroy {
       clientIds: clientIds.length > 0 ? clientIds.join(',') : '',
       projectIds: filteredProjectIds.length > 0 ? filteredProjectIds.join(',') : '',
       phaseIds: filteredPhaseIds.length > 0 ? filteredPhaseIds.join(',') : '',
+      taskIds: filteredTaskIds.length > 0 ? filteredTaskIds.join(',') : '',
       startDate: this.toUtcStartOfDayIso(range[0]),
       endDate: this.toUtcEndOfDayIso(range[1]),
       searchQuery: trimmedSearch,
@@ -770,7 +785,7 @@ export class BulkExportComponent implements OnInit, OnDestroy {
         projectMeta: { graphData: { color: item.projectMeta?.graphData?.color || '', code: item.projectMeta?.graphData?.code || '' } },
         clientMeta: { graphData: { color: item.clientMeta?.graphData?.color || '' } },
         phaseMeta: { graphData: { color: item.phaseMeta?.graphData?.color || '' } },
-
+        taskName:item.taskName
       };
     });
   }
@@ -789,7 +804,7 @@ export class BulkExportComponent implements OnInit, OnDestroy {
   exportEntries() {
     this.exporting = true;
     const payload = this.buildDetailsPayload(this.searchTerm());
-    this.http.downloadTimesheetReportPost(`Timesheet/details/export`, payload).subscribe({
+    this.http.downloadTimesheetReportPost(`Timesheet/details/export`, payload).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: HttpResponse<Blob>) => {
         this.exporting = false;
         let filename = this.getExportFileName();
@@ -880,10 +895,7 @@ export class BulkExportComponent implements OnInit, OnDestroy {
     }
   }
 
-  ngOnDestroy(): void {
-    this.destroy$.next(true);
-    this.destroy$.complete();
-  }
+  
 
   private saveFiltersToStorage() {
     if (this.isRestoringFilters) return;
@@ -923,6 +935,92 @@ export class BulkExportComponent implements OnInit, OnDestroy {
 
   private clearFiltersStorage() {
     localStorage.removeItem(this.exportFiltersStorageKey);
+  }
+  getTaskType() {
+    this.http.getData('TaskType').pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res: any) => {
+        this.taskType = res;
+        this.buildTaskOptions();
+      },
+      error: (error: any) => {
+        console.log(error);
+      }
+    });
+  }
+
+  buildTaskOptions() {
+    this.exportTaskOptions = (this.taskType || []).map((t: any) => ({
+      label: t.taskTypeName,
+      value: t.id
+    }));
+    if (this.exportTaskOptions.length > 0) {
+      this.exportTaskOptions.unshift({ label: 'All Tasks', value: this.ALL_TASKS_ID });
+    }
+    const allTaskIds = this.exportTaskOptions.map(o => o.value);
+    this.exportForm.patchValue({ taskIds: allTaskIds }, { emitEvent: false });
+    this.previousTaskSelection = allTaskIds;
+    this.selectedTasksLabel = 'All Tasks';
+    this.maxSelectedTasksLabels = 0;
+  }
+
+  onTaskSelectionChange(event: any) {
+    const currentSelection = event.value as number[];
+    const allTasksId = this.ALL_TASKS_ID;
+    const allOptionSelected = currentSelection.includes(allTasksId);
+    const wasAllSelected = this.previousTaskSelection.includes(allTasksId);
+
+    let newSelection = [...currentSelection];
+    const allOptionValues = this.exportTaskOptions.map(o => o.value);
+
+    if (allOptionSelected && !wasAllSelected) {
+      newSelection = allOptionValues;
+    } else if (!allOptionSelected && wasAllSelected) {
+      const removed = this.previousTaskSelection.filter(x => !currentSelection.includes(x));
+      if (removed.includes(allTasksId) && removed.length === 1) {
+        newSelection = [];
+      } else if (allOptionSelected) {
+        newSelection = newSelection.filter(id => id !== allTasksId);
+      }
+    } else {
+      const realItems = allOptionValues.filter(v => v !== allTasksId);
+      const selectedRealItems = newSelection.filter(v => v !== allTasksId);
+      if (selectedRealItems.length === realItems.length) {
+        if (!newSelection.includes(allTasksId)) newSelection.push(allTasksId);
+      } else {
+        newSelection = newSelection.filter(id => id !== allTasksId);
+      }
+    }
+
+    if (JSON.stringify(newSelection.sort()) !== JSON.stringify(currentSelection.sort())) {
+      this.exportForm.get('taskIds')?.patchValue(newSelection, { emitEvent: false });
+      this.previousTaskSelection = newSelection;
+    } else {
+      this.previousTaskSelection = currentSelection;
+    }
+
+    this.updateTasksLabel(newSelection);
+  }
+
+  private updateTasksLabel(selection: number[]) {
+    const allId = this.ALL_TASKS_ID;
+    const allOptionValues = this.exportTaskOptions.map(o => o.value);
+    const normalized = this.normalizeAllSelection(selection, allOptionValues, allId);
+    const selectedRealItems = normalized.filter(v => v !== allId);
+    const realItems = allOptionValues.filter(v => v !== allId);
+    const isAllSelected = realItems.length > 0 && selectedRealItems.length === realItems.length;
+
+    if (isAllSelected) {
+      this.selectedTasksLabel = 'All Tasks';
+      this.maxSelectedTasksLabels = 0;
+    } else {
+      this.selectedTasksLabel = '{0} items selected';
+      this.maxSelectedTasksLabels = 2;
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next(true);
+    this.destroy$.complete();
   }
 }
 

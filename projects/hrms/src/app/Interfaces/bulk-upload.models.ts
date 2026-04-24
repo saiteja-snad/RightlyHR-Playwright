@@ -53,6 +53,7 @@ export interface BulkUploadRow {
   errorCode?: string;
   errorMessage?: string;
   existingEntryStatus?: string;
+  taskName?:string
 }
 
 export interface BulkUploadSummary {

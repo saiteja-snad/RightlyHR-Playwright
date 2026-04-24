@@ -572,13 +572,13 @@ export class AssessmentformComponent {
   }
 
 
-  navigate() {
+ navigate() {
     if (this.http.getIsFromOnBehalfOfProbation()) {
       this.router.navigate(['/on-behalf-of/on-behalf-of-approvals/time-off']);
-    } else {
+    }else{
       this.router.navigate(['/pending-approvals/on-boarding/probation-request']);
     }
-
+    
   }
   reset(content: any) {
     this.modalService.open(content, { centered: true })

@@ -135,12 +135,11 @@ export class PendingApprovalsComponent implements OnInit {
     );
     this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
-
- navigate() {
+  navigate() {
     if (this.http.getIsFromOnBehalfOfProbation()) {
-      this.router.navigate(['/time-off/on-behalf-of-approvals/time-off']);
+      this.router.navigate(['/on-behalf-of/on-behalf-of-approvals/time-off']);
     }else{
-      this.router.navigate(['/time-off/pending-approvals/probation-request']);
+      this.router.navigate(['/pending-approvals/on-boarding/probation-request']);
     }
     
   }

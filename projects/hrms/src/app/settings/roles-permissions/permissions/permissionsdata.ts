@@ -487,12 +487,20 @@ export const permissionsData = [
   { fields: 'Time Off (On Behalf Of Approvals)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Comp Off (On Behalf Of Approvals)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'WFH (On Behalf Of Approvals)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Remote Login (On Behalf Of Approvals)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Employee Info (On Behalf Of Approvals)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Extra Hours (On Behalf Of Approvals)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Timesheet (On Behalf Of Approvals)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Permission (On Behalf Of Approvals)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Separations (On Behalf Of Approvals)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Recalls (On Behalf Of Approvals)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Regularization (On Behalf Of Approvals)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Trainee Requests (On Behalf Of Approvals)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Expenses (On Behalf Of Approvals)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Probation (On Behalf Of Approvals)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'My Team On Behalf Of Approvals', View: false, Update: false, Create: false, Delete: false },
   { fields: 'On Behalf Of Approvals All Employees', View: false, Update: false, Create: false, Delete: false },
+
 
   //Reports Tabs Section
   { fields: 'Standard Reports', View: false, Update: false, Create: false, Delete: false },

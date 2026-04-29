@@ -12,7 +12,7 @@ import { environment } from '../../../../../environments/environment';
 import { InfoIconComponent } from '../../../../icons/info-icon/info-icon.component';
 import { LeaveApproval, LeaveApproverComment } from '../../../../Interfaces/pendingapprovalsmodel';
 import { ICategoryDetails } from '../../../../Interfaces/timoff-model';
-import { DateformatPipe } from '../../../../Pipes/dateformat.pipe';
+import { DateformatPipe } from '../../../../pipes/dateformat.pipe';
 import { FormValidationsService } from '../../../../services/form-validations.service';
 import { HttpService } from '../../../../services/http.service';
 import { OpenModalService } from '../../../../services/open-modal.service';

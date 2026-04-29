@@ -1,0 +1,410 @@
+<div class="custom-main-component-container">
+    @if (selectedProducts && selectedProducts.length > 0 &&multiSelect) {
+    <div class="component-header-content">
+        <div class="component-sub-header">{{'Selected Records:'|translate}} {{selectedProducts.length}}</div>
+        <div class="d-flex gap-3">
+            <!-- @if (canBulkApprove()) {
+            @if(rbac.allowedToAccess('For You (Time Off).update')){
+            <button class="custom-btn btn-primary-approve" (click)="bulkapprove(approverPopup)">Approve</button>
+            }
+            @if(rbac.allowedToAccess('For You (Time Off).delete')){
+            <button class="custom-btn btn-primary-reject" (click)="bulkReject(rejectPopup)">Reject</button>
+            }
+            } -->
+            <!-- @if (canBulkProcess()) { -->
+            @if(rbac.allowedToAccess('For You (Claims and Expenses).update')){
+            <button class="custom-btn btn-primary-approve" (click)="processpopup(confirmationpopup,this.expensess)">{{'Process'|translate}}</button>
+            }
+            @if(rbac.allowedToAccess('For You (Claims and Expenses).delete')){
+            <button class="custom-btn btn-primary-reject" (click)="bulkReject(rejectPopup)">{{'Reject'|translate}}</button>
+            }
+            <!-- } -->
+        </div>
+    </div>
+    }
+    <!--Input search-->
+    <div class="input-group custom-search mb-3">
+        <span class="input-group-text custom-input-group-search" id="basic-addon1">
+            <i class="bi bi-search"></i></span>
+        <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input"
+            (ngModelChange)="onSearchChange()"
+            placeholder="Search by employee name / expenses title / applied date "
+            [placeholder]="isActive('/approval-requests') ? 'Search by Employee ID / Employee Name / Expenses Title / Total Amount' : 'Search by Expenses Title / Total Amount'"
+            aria-label="Username" aria-describedby="basic-addon1" autocomplete="off">
+    </div>
+
+    <div class="custom-p-multi-select-table p-datatable-table-container ">
+        @if(!dataLoad){
+        <p-table #dt [value]="getFilteredAndSortedexpensess()" (selectionChange)="selectCheck($event)"
+            [(selection)]="selectedProducts" dataKey="pendingApprovalsHeader.id" [tableStyle]="{'min-width': '50rem'}">
+            <ng-template #header>
+                <tr>
+                    <th style="width: 4rem">
+                        <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                    </th>
+                    <th *ngIf="this.isActive('/approval-requests')"><strong>{{'Employee ID' | translate}} </strong></th>
+                    <th *ngIf="this.isActive('/approval-requests')"><strong>{{'Employee Name' | translate}}</strong></th>
+                    <th><strong>{{'Expense Title' | translate}}</strong></th>
+                    <th><strong>{{'Applied Date' | translate}}</strong></th>
+                    <th><strong>{{'Total Amount' | translate}}</strong></th>
+                    <th><strong>{{'Status' | translate}}</strong></th>
+                    <th class="text-center"><strong>{{'View Expense' | translate}}</strong></th>
+                    @if(!multiSelect && (rbac.allowedToAccess('For You (Claims and Expenses).update') ||
+                    rbac.allowedToAccess('For You (Claims and Expenses).delete'))){
+                    <th class="text-center"><strong>{{'Action' | translate}}</strong></th>
+                    }
+                </tr>
+            </ng-template>
+            <ng-template #body let-item appendTo="body">
+                <!-- Main expenses record -->
+                <tr>
+                    <td>
+                        <p-tableCheckbox [value]="item" (selectionChange)="selectCheck($event)" />
+                    </td>
+                   <td *ngIf="isActive('/approval-requests')" class="text-center">{{item?.empId}}</td>
+                    <td *ngIf="isActive('/approval-requests')" class="text-center">{{item?.employeeName}}</td>
+                    <td>{{item?.expenses_Title}}</td>
+                    <td class="text-nowrap">{{item?.applied_date | dateformat}}</td>
+                    <td>{{item?.totalExpenseAmount}}</td>
+                    <td>{{item?.status}}</td>
+                    <td class="text-center">
+                        <div class="dropdown">
+                            <a class="dropdown-item" (click)="openModal(viewDetailsModal); viewItem(item.expenses_ID)">
+                                <i class="bi bi-eye-fill me-2"></i></a>
+                        </div>
+                    </td>
+                    @if(!multiSelect &&(rbac.allowedToAccess('For You (Claims and Expenses).update') ||rbac.allowedToAccess('For You (Claims and Expenses).delete'))){
+                    <td class="text-center">
+                        <div class="dropdown">
+                            <span type="button" data-bs-toggle="dropdown">
+                                <i class="bi bi-three-dots-vertical"></i>
+                            </span>
+                            <ul class="dropdown-menu custom-dropdown-menu">
+                                @if(rbac.allowedToAccess('For You (Claims and Expenses).update') ) {
+                                <li>
+                                    <a class="dropdown-item" (click)="processpopup(confirmationpopup,item)">
+                                        <i class="bi bi-check-circle me-2"></i>{{'Process'|translate}}</a>
+                                </li>
+                             }
+                                @if(rbac.allowedToAccess('For You (Claims and Expenses).delete') ) {
+                                <li>
+                                    <a class="dropdown-item" (click)="rejectexpenses(rejectPopup,item)"
+                                        >
+                                        <i class="bi bi-x-circle me-2"></i>{{'Reject'|translate}}</a>
+                                </li>
+                                }
+                            </ul>
+                        </div>
+                    </td>
+                    }
+                </tr>
+
+            </ng-template>
+            <ng-template #emptymessage>
+                <tr>
+                    <app-no-data-found />
+                </tr>
+            </ng-template>
+        </p-table>
+        }@else {
+        <app-data-loader-content />
+        }
+    </div>
+</div>
+<!-- rejectpopup -->
+<ng-template #rejectPopup let-modal>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons\reject.png" alt="failure icon" class="confirmation-delete-icon">
+            <p class="confirmation-text">{{'Do you really want to reject selected request?' | translate}}</p>
+        </div>
+
+        <form autocomplete="off" name="expensesapprovee" #expensesapprovee="ngForm" (ngSubmit)="expensesapprovee.valid">
+            <div class="custom-main-popup-content">
+                <div class="mb-3">
+                    <label for="exampleFormControlTextarea1" class="form-label custom-label">Reject reason<span
+                            class="text-danger">*</span></label>
+                    <textarea class="form-control custom-input" id="Reasons" placeholder="Please provide reject reason"
+                        name="Reasons" #Reasons="ngModel" maxlength="250" [(ngModel)]="selectedexpensesData.comments"
+                        (ngModelChange)="ifreasonnull(selectedexpensesData.comments)" rows="3"
+                        (keydown)="formsValidation.restrictInitialSpace($event)" required></textarea>
+                    <div class="textarea-count-text">
+                        {{selectedexpensesData.comments?.length?selectedexpensesData.comments?.length:0}}/250</div>
+                    <div class="error-msg"
+                        *ngIf="(Reasons.touched && Reasons.invalid) || (expensesapprovee.submitted && Reasons.invalid)">
+                        Reject reason is required
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex align-items-start mb-3">
+                <button type="button" class="btn-secondary chip-btn"
+                    [class.active]="selectedexpensesStatus === 'reject'" (click)="onStatusRejectSelect('reject')">
+                    Rejected
+                </button>
+            </div>
+
+            <div class="custom-modal-footer">
+                <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()"
+                    [disabled]="spinnerLoader">{{'Cancel'|
+                    translate}}</button>
+                <button type="submit" class="custom-btn btn-primary" (click)="handleReject(expensesapprovee)"
+                    [disabled]="expensesapprovee.invalid || !selectedexpensesData.comments || spinnerLoader">
+                    @if(spinnerLoader){
+                    <div class="button-loader-content">
+                        <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
+                        <span>{{'Loading...'}}</span>
+                    </div>
+                    }@else {
+                    <span>{{'Reject'| translate}}</span>
+                    }
+                </button>
+            </div>
+        </form>
+    </div>
+</ng-template>
+
+<!-- expenses Summary -->
+<ng-template #expensesSummary let-modal>
+    <div class="custom-main-popup-container" ngbAutofocus>
+        <div class="custom-poup-header-content popup-header-border">
+            <div>
+                <p class="popup-heading mb-0">{{"Summary" | translate}}</p>
+            </div>
+                  <div>
+        <a>
+          <img src="icons/close.png" alt="Close Icon" class="close-icon" (click)="modal.dismiss()">
+        </a>
+      </div>
+        </div>
+        <div class="custom-main-popup-content custom-accordians">
+            <div class="popup-table-wrapper">
+                <div class="popup-table-scroll-container">
+                    <table class="popup-table">
+                        <thead>
+                            <tr>
+                                <th>{{'Total Records' | translate}}</th>
+                                <th>{{'Success Records'|translate}}</th>
+                                <th>{{'Failed Records' | translate}}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="log-time">{{ responseSummary?.totalRecordCount }}</td>
+                                <td class="log-time">{{ responseSummary?.successRecordsCount }}</td>
+                                <td class="log-time">{{ responseSummary?.failureRecordsCount }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+<!-- Confirmation Popup -->
+<ng-template #confirmationpopup let-modal>
+    <div class="result-popup-content" ngbAutofocus>
+      <div>
+      <app-confirmation-icon />
+        <p class="confirmation-text mb-4">{{'Are you sure you want to proceed?' | translate}}</p>
+      </div>
+
+      <div class="d-flex justify-content-center gap-3 mt-4">
+        <button type="button" class="custom-btn btn-secondary" [disabled]="spinnerLoader" (click)="modal.dismiss()">{{'No'|translate}}</button>
+        <button type="button" class="custom-btn btn-primary" [disabled]="spinnerLoader" (click)="handleProcess(dataforprocess)">
+            @if(!spinnerLoader){
+            {{'Yes'|translate}}
+            }
+            @else {
+            <div class="button-loader-content" *ngIf="spinnerLoader">
+                <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
+                <span>{{'Submitting...'}}</span>
+            </div>
+            }
+        </button>
+      </div>
+    </div>
+</ng-template>
+<ng-template #viewDetailsModal let-modal>
+  <div class="custom-main-popup-container">
+    <div class="d-flex justify-content-between popup-header-border p-3">
+      <div class="pt-2">
+        <p class="popup-heading mb-0">Expenses Details</p>
+      </div>
+      <div>
+        <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+      </div>
+    </div>
+
+    <div class="custom-main-popup-content">
+      <div class="mb-3 d-flex gap-3">
+        <b class="expenses-title-text">Expense Title : {{ expenseheaderiteams?.expenses_Title }}</b>
+        <!-- <b class="expenses-title-text">Approval Email : {{ expenseheaderiteams.approverEmail }}</b> -->
+      </div>
+
+      <div class="custom-table">
+        <table class="w-100">
+          <thead>
+            <tr>
+              <th>Expense Type</th>
+              <th>Expense Name</th>
+              <th>Expense Date</th>
+              <th>Expense Amount</th>
+              <th>Status</th>
+              <th>Receipt Number</th>
+              <th>Attachment</th>
+              <!-- <th class="text-center">Action</th> -->
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of expenseheaderiteams?.expenseitem">
+              <td>{{ item?.expenseType }}</td>
+              <td>{{ item?.item_Name }}</td>
+              <td>{{ item?.expense_Date | dateformat}}</td>
+              <td> ₹ {{ item?.expense_Amount | number: '1.2-2' }}</td>
+              <td>{{ item?.status }}</td>
+              <td>{{ item?.receipt_Number }}</td>
+                 <td class="text-center justify-content-between">
+                <a type="button" class="view-btn text-nowrap" (click)="onViewAttachement(item?.attachment_url)">
+                  <img src="/my-info-icons/View-Policy-icon.png" alt="Icon" class="view-icon">
+                </a>
+              </td>
+              <!-- <td class="text-center">
+                <div class="dropdown">
+                  <a data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-three-dots-vertical"></i>
+                  </a>
+                  <ul class="dropdown-menu custom-dropdown-menu">
+                    <li>
+                      <a type="button" class="me-2 dropdown-item text-nowrap"
+                        (click)="onSelectDownload(item?.attachment_url)">
+                        <i class="bi bi-download me-2"></i>Download
+                      </a>
+                    </li>
+                    @if (rbac.allowedToAccess('For Role (Claims and Expenses).update')) {
+
+                  @if (!(item?.isVerified === true|| verifiedExpenseIds?.includes(item?.expenseitem_id ?? 0))) {
+
+                    <li>
+                      <a class="dropdown-item" (click)="openVerifyModal(item, Verify)">
+                        <i class="bi bi-check-circle me-2"></i>{{ 'Verify' | translate }}
+                      </a>
+                    </li>
+                    }
+
+                    }
+                    @if (rbac.allowedToAccess('For Role (Claims and Expenses).delete')) {
+                    @if (!(item?.isVerified === true|| verifiedExpenseIds?.includes(item?.expenseitem_id ?? 0))) {
+                    <li>
+                      <a class="dropdown-item" (click)="openRejectModal(rejectmodal, expenseheaderiteams)">
+                        <i class="bi bi-x-circle me-2"></i>{{ 'Reject' | translate }}
+                      </a>
+                    </li>
+                    }
+                    }
+
+                  </ul>
+                </div>
+              </td> -->
+            </tr>
+          </tbody>
+        </table>
+        <div class="text-center mt-3">
+          <b>Total Amount : ₹ {{expenseheaderiteams?.expense_Amount | number: '1.2-2'}}</b>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+<ng-template #Verify let-modal>
+  <div class="result-popup-content" ngbAutofocus>
+    <div>
+      <app-confirmation-icon />
+      <p class="confirmation-text pt-3">{{'Are you sure you want to Verify?' | translate}}</p>
+    </div>
+    <form autocomplete="off" [formGroup]="verifyForm" (ngSubmit)="handleVerify(verifyForm)">
+      <div class="custom-main-popup-content">
+        <label for="comments" class="form-label custom-label mb-2">{{'Comments' | translate}}<span
+            class="text-danger">*</span></label>
+        <textarea class="form-control custom-input" id="comments" placeholder="Please provide comments"
+          formControlName="comments" maxlength="250"
+          (keydown)="formsValidation.restrictInitialSpace($event)"></textarea>
+        <!-- Character counter -->
+        <div class="error-msg" *ngIf="verifyForm.get('comments')?.touched && verifyForm.get('comments')?.invalid">
+          <div *ngIf="verifyForm.get('comments')?.errors?.['required']">Comment is required.</div>
+          <div *ngIf="verifyForm.get('comments')?.errors?.['maxlength']">Comment cannot exceed 250 characters.</div>
+        </div>
+        <div class="textarea-count-text">{{ verifyForm.get('comments')?.value?.length || 0 }}/250
+        </div>
+      </div>
+       <div class="d-flex align-items-center flex-wrap gap-2 mb-3">
+        <button type="button" class="custom-btn btn-secondary chip-btn"
+          [class.active]="selectedexpensesStatus === 'verified'" (click)="onStatusVerifySelect('verified')">
+          Verified
+        </button>
+      </div>
+      <div class="custom-modal-footer">
+        <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss();">{{'Cancel'|translate}}</button>
+        <button type="submit" class="custom-btn btn-primary" [disabled]="verifyForm.invalid">{{'Verify'| translate}}</button>
+      </div>
+    </form>
+  </div>
+</ng-template>
+<ng-template #rejectmodal let-modal>
+  <div class="result-popup-content" ngbAutofocus>
+    <div>
+      <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
+      <p class="confirmation-text">{{'Are you sure you want to Reject?' | translate}}</p>
+    </div>
+    <form autocomplete="off" [formGroup]="rejectForm" (ngSubmit)="handleReject(rejectForm)">
+      <div class="custom-main-popup-content">
+        <label for="comments" class="form-label custom-label mb-2">{{"Comments" | translate}}
+          <span class="text-danger">*</span></label>
+        <textarea class="form-control custom-input" id="comments" placeholder="Please provide comments"
+          formControlName="comments" maxlength="250"
+          (keydown)="formsValidation.restrictInitialSpace($event)"></textarea>
+        <div class="error-msg" *ngIf="rejectForm.get('comments')?.touched && rejectForm.get('comments')?.invalid">
+          <div *ngIf="rejectForm.get('comments')?.errors?.['required']">Comments is required.</div>
+          <div *ngIf="rejectForm.get('comments')?.errors?.['maxlength']">Comments cannot exceed 250 characters.</div>
+        </div>
+        <div class="textarea-count-text">{{ rejectForm.get('comments')?.value?.length || 0 }}/250</div>
+
+      </div>
+      <div class="d-flex align-items-start mb-3">
+        <button type="button" class="btn-secondary chip-btn"
+          [class.active]="selectedexpensesStatus === 'reject'" (click)="onStatusRejectSelect2('reject')">
+          Rejected
+        </button>
+      </div>
+      <div class="custom-modal-footer">
+        <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'Cancel'| translate}}</button>
+        <button type="submit" class="custom-btn btn-primary" [disabled]="rejectForm.invalid">{{'Reject' |
+          translate}}</button>
+      </div>
+    </form>
+  </div>
+</ng-template>
+<!-- Attachment View Modal -->
+<ng-template #viewattamchment let-modal>
+  <div class="custom-main-popup-container">
+    <div class="custom-poup-header-content popup-header-border">
+      <div class="pt-2">
+        <p class="popup-heading mb-0">Expenses Details</p>
+      </div>
+      <div>
+        <a (click)="modal.dismiss();openModal(viewDetailsModal); expenseViewURL = null; expenseImageUrl = null"><img
+            src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+      </div>
+    </div>
+    <div class="custom-main-popup-content">
+      <p *ngIf="!expenseImageUrl; else imageView">
+        <ngx-doc-viewer [url]="expenseViewURL" viewer="google" style="width: 100%; height: 100vh"></ngx-doc-viewer>
+      </p>
+      <ng-template #imageView>
+        <div class="popup-view-image-content">
+          <img [src]="expenseImageUrl" alt="My Image" class="image" />
+        </div>
+      </ng-template>
+    </div>
+  </div>
+</ng-template>

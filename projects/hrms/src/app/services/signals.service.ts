@@ -73,7 +73,10 @@ export class SignalsService {
   contractConversionForYouTriggerSignal = signal<boolean>(false);
   contractConversionForYouRoleTriggerSignal = signal<boolean>(false);
 
-  
+  // Offboarding reload signal
+  offboardingReloadTriggerSignal = signal<boolean>(false);
+
+
   constructor(
     private sharedModalService: OpenModalService,
   ) { }

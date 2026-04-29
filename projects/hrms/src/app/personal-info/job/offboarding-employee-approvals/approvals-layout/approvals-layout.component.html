@@ -1,0 +1,51 @@
+<div class="position-relative">
+<!-- Progress Bar -->
+<div class="client-progress-bar-container">
+    <div class="progress-track-wrapper" [style.width]="getProgressWidth()">
+        <div class="track-bg"></div>
+        <div class="track-fill" [style.width]="getCompletedLineWidth()"></div>
+        <div class="progress-content">
+            <div class="steps-row">
+                <div class="step" *ngFor="let step of steps; let i = index"
+                    [ngClass]="getStepState(i)">
+                    <div class="progress-number">{{ step.id }}</div>
+                    <div class="progress-name">{{ step.name }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Tabs -->
+<div class="d-flex gap-3 w-100 mt-4">
+    @if(isActive('/initate-offboarding')&&!isActive('/personalinfo/job/employmentType/initate-offboarding/employee-off-boarding')&&!isActive('/personalinfo/job/employmentType/initate-offboarding/team-reporting-manager-change')){
+    <div class="component-left-tabs-container-approavals">
+        <app-offboarding-employeeapprovals-tabs />
+    </div>
+    }
+    @if(isActive('/approval-requests')){
+    <div class="component-left-tabs-container-approavals">
+        <app-offboarding-reportessapprovals-tabs />
+    </div>
+    }
+    <div class="right-content-style">
+        <router-outlet />
+    </div>
+</div>
+
+@if(!isActive('/personalinfo/job/employmentType/initate-offboarding/employee-off-boarding')&&!isActive('/personalinfo/job/employmentType/initate-offboarding/team-reporting-manager-change')){
+<div class="bottom-action d-flex justify-content-end gap-3 mt-3">
+    <button *ngIf="isActive('/approval-requests')" type="button" class="custom-btn btn-secondary" (click)="navigationtoPrevious()">{{'Previous'|translate}}</button>
+    <button type="button" class="custom-btn btn-primary next-width" [disabled]="stagestatus" (click)="navigation()">
+        @if(!spinnerLoader){
+        {{'Next' | translate}}
+        } @else {
+        <div class="button-loader-content">
+            <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
+            <span>{{'Submitting...'}}</span>
+        </div>
+        }
+    </button>
+</div>
+}
+</div>

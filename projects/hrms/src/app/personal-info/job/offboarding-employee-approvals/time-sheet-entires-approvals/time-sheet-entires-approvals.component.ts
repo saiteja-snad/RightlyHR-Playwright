@@ -22,6 +22,8 @@ import { InfoIconComponent } from '../../../../icons/info-icon/info-icon.compone
 import { NoDataFoundComponent } from '../../../../shared/no-data-found/no-data-found.component';
 import { OffboardingReloadService } from '../../../../services/offboarding-reload.service';
 import { SignalsService } from '../../../../services/signals.service';
+import moment from 'moment';
+import { AuthService } from '../../../../services/auth.service';
 
 @Component({
   selector: 'app-time-sheet-entires-approvals',
@@ -84,7 +86,7 @@ timesheetData: TimesheetDay[] = [];
   totalCount: any;
  checklistdata:any;
   constructor(private http: HttpService, public formsValidation: FormValidationsService, private modalService: NgbModal,
-    private conformationPopup: OpenModalService, public router: Router, private fb: FormBuilder, public rbac: RbacService,private reloadService: OffboardingReloadService,private signalService: SignalsService,) { }
+    private conformationPopup: OpenModalService, public router: Router, private fb: FormBuilder, public rbac: RbacService,private reloadService: OffboardingReloadService,private signalService: SignalsService, private auth:AuthService) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('personaldata') || '{}');
@@ -592,13 +594,16 @@ timesheetData: TimesheetDay[] = [];
   }
   //funtion to update the stage status of the leave request
   updateStageStatus() {
+    let loggedInUserId = this.auth.getToken();
     let data= this.checklistdata;
     let id = data.find((item: any) => item.moduleId === environment.timesheetModuleId).id;
     let paylod={
       id:id,
       employeeId: this.empinfo.employeeId,
       moduleId: environment.timesheetModuleId,
-      reportingManagerId:this.empinfo.employeeId
+      reportingManagerId:this.empinfo.employeeId,
+      completedBy:loggedInUserId.employeeId,
+      completedAt:moment().format('YYYY-MM-DD'),
     }
     this.http.putData(`OffboardingTracker/${id}`, paylod).pipe(takeUntil(this.destroy$))
       .subscribe({

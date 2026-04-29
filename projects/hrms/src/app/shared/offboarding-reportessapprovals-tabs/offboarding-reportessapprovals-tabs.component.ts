@@ -130,26 +130,25 @@ LOGIN: any;
       }
 
     this.reloadService.reloadTrigger$.subscribe(() => {
+      if (this.router.url.includes('/approval-requests')) {
       this.getAllPendingApprovalsCount();
+      }
     });
   }
 
   ngOnInit(): void {
     this.LOGIN = JSON.parse(localStorage.getItem('personaldata') || '{}');
 
-    // Subscribe to checklist items from service
-    this.offboardingChecklistService.checklistItems$.subscribe(items => {
-      if (items.length > 0) {
-        this.checklistItems = items;
-      }
-    });
-
-    // If no items in service, initialize with default items
-    if (!this.offboardingChecklistService.hasChecklistItems()) {
-      this.storeChecklistItems();
+    // Initialize with default items if empty
+    if (this.checklistItems.length === 0) {
+      this.checklistItems = this.offboardingChecklistService.getDefaultChecklistItems();
     }
 
-    this.getAllPendingApprovalsCount();
+    // Only load data if we're on the manager/approval-requests route
+    if (this.router.url.includes('/approval-requests')) {
+      this.getAllPendingApprovalsCount();
+    }
+    
     this.navLinks = this.navLinks.filter(
       (tab) =>
         tab.permission &&
@@ -192,7 +191,6 @@ LOGIN: any;
     const employeeId = parseInt(this.LOGIN.employeeId);
     this.http.getData(`Timeoff/GetEmployeeDataByModule?employeeId=${employeeId}&reportingManagerId=${employeeId}`).subscribe({
       next: (data: any) => {
-        console.log('Pending approvals count data:', data.modules);
         const countMap = new Map<number, number>();
         data.modules.forEach((item:any) => countMap.set(item?.moduleId, item.totalCount));
 
@@ -202,21 +200,20 @@ LOGIN: any;
           count: countMap.get(link.moduleId) || 0,
         }));
 
-        // Update checklistItems with counts
+        // Update checklistItems with counts - use map to create new array
         this.checklistItems = this.checklistItems.map((item) => ({
           ...item,
           count: item.moduleId != null ? countMap.get(item.moduleId) || 0 : 0,
         }));
 
-        // Update the service with the updated checklist items
-        this.offboardingChecklistService.setChecklistItems(this.checklistItems);
-
         this.loading = false;
+        // Fetch offboarding data after counts are updated
         this.getinitateoffboardingdata();
       },
       error: (err) => {
         console.error('Error fetching approvals:', err);
         this.loading = false;
+        // Still fetch offboarding data even if count fetch fails
         this.getinitateoffboardingdata();
       },
     });
@@ -239,7 +236,6 @@ LOGIN: any;
     const empinfo = JSON.parse(localStorage.getItem('personaldata') || '{}');
     this.subscription = this.http.getData(`OffboardingTracker/employee/${empinfo.employeeId}?stageType=Manager`).subscribe({
       next: (data: any) => {
-        console.log('Offboarding data:', data);
         const checklistItems = data.data || [];
         this.updateChecklistStatus(checklistItems);
         this.stagestatus = checklistItems.length > 0 &&
@@ -250,19 +246,29 @@ LOGIN: any;
   }
 
   updateChecklistStatus(apiData: any[]) {
-    // Update checklist items based on API data
-    this.checklistItems.forEach((item, index) => {
+    
+    // Update checklist items based on API data - create completely new array
+    this.checklistItems = this.checklistItems.map((item) => {
       const apiItem = apiData.find(data => data.moduleId === item.moduleId);
-      if (apiItem && apiItem.status === 'Completed') {
-        item.completed = true;
-      }
-      else{
-        item.completed = false;
+      
+      if (apiItem) {
+        // Mark as completed only if status is 'Completed' or 'Skipped'
+        const isCompleted = apiItem.status === 'Completed' || apiItem.status === 'Skipped';
+        return {
+          ...item,
+          completed: isCompleted,
+          status: apiItem.status
+        };
+      } else {
+        // If no API item found, mark as not completed
+        return {
+          ...item,
+          completed: false
+        };
       }
     });
-
-    // Update the service with the updated checklist items
-    this.offboardingChecklistService.setChecklistItems(this.checklistItems);
+    // DO NOT update the shared service - keep local state only
+    // this.offboardingChecklistService.setChecklistItems(this.checklistItems);
 
     // Find first incomplete item and set as current step
     const firstIncompleteIndex = this.checklistItems.findIndex(item => !item.completed);

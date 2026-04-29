@@ -10,16 +10,21 @@ import { OffboardingReportessapprovalsTabsComponent } from "../../../../shared/o
 import { OffboardingReloadService } from '../../../../services/offboarding-reload.service';
 import { SignalsService } from '../../../../services/signals.service';
 import { ModuleNavigationService } from '../../../../services/module-navigation.service';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ConfirmationIconComponent } from "../../../../icons/confirmation-icon/confirmation-icon.component";
+import { OpenModalService } from '../../../../services/open-modal.service';
+import { AuthService } from '../../../../services/auth.service';
 
 @Component({
   selector: 'app-approvals-layout',
-  imports: [CommonModule, RouterModule, RouterOutlet, OffboardingEmployeeapprovalsTabsComponent, TranslateModule, OffboardingReportessapprovalsTabsComponent],
+  imports: [CommonModule, RouterModule, RouterOutlet, OffboardingEmployeeapprovalsTabsComponent, TranslateModule, OffboardingReportessapprovalsTabsComponent, ConfirmationIconComponent],
   templateUrl: './approvals-layout.component.html',
   styleUrl: './approvals-layout.component.scss'
 })
 export class ApprovalsLayoutComponent {
   progress = 0;
   spinnerLoader=false;
+  spinnerLoaderskip=false;
  subscription!: Subscription;
  empinfo={} as any;
  stagestatus!:boolean;
@@ -27,7 +32,8 @@ export class ApprovalsLayoutComponent {
 showFullSteps = false;
 checklistItems: any[] = [];
 isreportes=[] as any;
-  constructor(private http: HttpService, public router: Router, private reloadService: OffboardingReloadService, private signalsService: SignalsService, private moduleNavService: ModuleNavigationService) {
+isSkip:boolean=false;
+  constructor(private http: HttpService, public router: Router, private reloadService: OffboardingReloadService, private signalsService: SignalsService, private moduleNavService: ModuleNavigationService,private modalService: NgbModal,private conformationPopup: OpenModalService,private authservice:AuthService) {
     // Listen for reload triggers
     this.reloadService.reloadTrigger$.subscribe(() => {
       this.reloadAndNavigate();
@@ -137,6 +143,7 @@ setSteps() {
   }
   // Auto-navigation logic to determine where to navigate based on in-progress items
   autonavigation() {
+    if(!this.isSkip){
     if(!this.isActive('/personalinfo/job/employmentType/initate-offboarding/team-reporting-manager-change')){
     if (this.isreportes && this.isreportes.length > 0 && this.isActive('/approval-requests')) {
       let filterItemsforManager = this.checklistItems.filter((item: any) => item.stageType === 'Manager');
@@ -169,11 +176,87 @@ setSteps() {
       }
     }
   }
+}
   }
   navigationtoPrevious(){
     this.router.navigate(['/personalinfo/job/employmentType/initate-offboarding/no-approvals-screen']);
   }
+navigationforSkip(){
+  this.isSkip=true;
+  
+  // Get moduleId based on current route
+  const moduleId = this.getModuleIdFromCurrentRoute();
+  if (moduleId) {
+    this.updateStageStatus(moduleId);
+  }
+}
 
+// Get moduleId based on current route
+getModuleIdFromCurrentRoute(): number | null {
+  const currentUrl = this.router.url;
+  const routeModuleMap: { [key: string]: number } = {
+    'leave-approvals': environment.leavesModuleId,
+    'wfh-approvals': environment.wfhModuleId,
+    'compoff-approvals': environment.compoffModuleId,
+    'remote-login-approvals': environment.remoteLoginModuleId,
+    'permissions-approvals': environment.permissionsModuleId,
+    'extrahours-approvals': environment.extraHoursModuleId,
+    'regularization-approvals': environment.attendanceRegularizationModuleId,
+    'expenses-approvals': environment.expensesModuleId,
+    'timesheet-approvals': environment.timesheetModuleId,
+    'employee-info-approvals': environment.pendingapprovalemployeid,
+  };
+  
+  for (const [route, moduleId] of Object.entries(routeModuleMap)) {
+    if (currentUrl.includes(route)) {
+      return moduleId;
+    }
+  }
+  return null;
+}
+modelpopup(content: any) {
+    this.modalService.open(content, { centered: true, backdrop: 'static' })
+  }
+//funtion to update the stage status of the leave request
+  updateStageStatus(moduleId: number): void {
+    let loggedInUserId = this.authservice.getToken();
+    this.spinnerLoaderskip=true;
+    let data=this.checklistItems;
+    const itemToUpdate = data.find((item: any) => (item.moduleId === moduleId && item.status === 'InProgress'));
+    
+    if (!itemToUpdate) {
+      this.spinnerLoaderskip=false;
+      this.isSkip=false;
+      return;
+    }
+    
+    let id = itemToUpdate.id;
+    let paylod={
+      id:id,
+      status:'Skipped',
+      skippedBy: loggedInUserId.employeeId,
+    }
+  this.subscription=this.http.putData(`OffboardingTracker/update/${id}`, paylod).subscribe({
+        next: (response: any) => {
+           if(response){
+           this.modalService.dismissAll();
+           this.conformationPopup.openSuccessModal("This step has been skipped successfully");
+           this.spinnerLoaderskip=false;
+           
+           setTimeout(() => {
+             this.isSkip=false;
+             this.reloadService.triggerReload();
+             this.signalsService.offboardingReloadTriggerSignal.set(true);
+           }, 300);
+           }
+        },
+        error: (reason: any) => { 
+          console.error('Error updating stage status:', reason);
+          this.spinnerLoaderskip=false;
+          this.isSkip=false;
+        },
+      });
+  }
   setProgress(url: string) {
     if (url.includes('/initate-offboarding/team-reporting-manager-change')) {
       this.progress = 3;

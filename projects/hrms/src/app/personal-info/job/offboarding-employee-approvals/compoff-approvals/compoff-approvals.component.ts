@@ -16,11 +16,12 @@ import { TranslateModule } from '@ngx-translate/core';
 import { DropdownModule } from 'primeng/dropdown';
 import { ConfirmationIconComponent } from '../../../../icons/confirmation-icon/confirmation-icon.component';
 import { InfoIconComponent } from '../../../../icons/info-icon/info-icon.component';
-import { DateformatPipe } from '../../../../pipes/dateformat.pipe';
+import { DateformatPipe } from '../../../../Pipes/dateformat.pipe';
 import { DataLoaderContentComponent } from '../../../../shared/data-loader-content/data-loader-content.component';
 import { NoDataFoundComponent } from '../../../../shared/no-data-found/no-data-found.component';
 import { OffboardingReloadService } from '../../../../services/offboarding-reload.service';
 import { Router } from '@angular/router';
+import moment from 'moment';
 
 @Component({
   selector: 'app-compoff-approvals',
@@ -466,13 +467,16 @@ this.modalService.open(approverPopup, { centered: true, backdrop: 'static' });
   }
 //funtion to update the stage status of the leave request
   updateStageStatus() {
+    let loggedInUserId = this.auth.getToken();
     let data= this.checklistdata;
     let id = data.find((item: any) => item.moduleId === environment.compoffModuleId).id;
     let paylod={
       id:id,
       employeeId: this.LOGIN.employeeId,
       moduleId: environment.compoffModuleId,
-      reportingManagerId:this.LOGIN.employeeId
+      reportingManagerId:this.LOGIN.employeeId,
+      completedBy:loggedInUserId.employeeId,
+      completedAt:moment().format('YYYY-MM-DD'),
     }
     this.http.putData(`OffboardingTracker/${id}`, paylod).pipe(takeUntil(this.destroy$))
       .subscribe({

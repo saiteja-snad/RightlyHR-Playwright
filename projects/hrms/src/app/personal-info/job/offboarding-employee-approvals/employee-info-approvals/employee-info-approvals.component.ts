@@ -15,7 +15,7 @@ import { environment } from "../../../../../environments/environment";
 import { ConfirmationIconComponent } from "../../../../icons/confirmation-icon/confirmation-icon.component";
 import { InfoIconComponent } from "../../../../icons/info-icon/info-icon.component";
 import { EMPLOYEEINFO } from "../../../../Interfaces/timoff-model";
-import { DateformatPipe } from "../../../../pipes/dateformat.pipe";
+import { DateformatPipe } from "../../../../Pipes/dateformat.pipe";
 import { FormValidationsService } from "../../../../services/form-validations.service";
 import { HttpService } from "../../../../services/http.service";
 import { OpenModalService } from "../../../../services/open-modal.service";
@@ -23,6 +23,8 @@ import { SignalsService } from "../../../../services/signals.service";
 import { NoDataFoundComponent } from "../../../../shared/no-data-found/no-data-found.component";
 import { noWhitespaceValidator } from "../../../../shared/nowhitespace/nowhitespace.component";
 import { OffboardingReloadService } from "../../../../services/offboarding-reload.service";
+import moment from "moment";
+import { AuthService } from "../../../../services/auth.service";
 
 
 @Component({
@@ -78,12 +80,11 @@ export class EmployeeInfoApprovalsComponent implements OnInit, OnDestroy {
   //emp: any;
 ImageUrl: any;
  ViewURL:any;
-  @ViewChild('viewattamchment') private viewattamchment!: NgbModal;
   @ViewChild('popupforaction') private popupforaction!: NgbModal;
   @ViewChild('popupforcurrentaction') private popupforcurrentaction!: NgbModal;
   checklistdata:any;
   constructor(private http: HttpService, public formsValidation: FormValidationsService, private modalService: NgbModal,
-   private sanitizer: DomSanitizer, private conformationPopup: OpenModalService, public router: Router, private fb: FormBuilder,private reloadService: OffboardingReloadService,private signalService: SignalsService) { }
+   private sanitizer: DomSanitizer, private conformationPopup: OpenModalService, public router: Router, private fb: FormBuilder,private reloadService: OffboardingReloadService,private signalService: SignalsService, private auth:AuthService) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('personaldata') || '{}');
@@ -663,13 +664,16 @@ isFieldChanged(objectKey: string, changedFields: any): boolean {
   }
     //funtion to update the stage status of the leave request
   updateStageStatus() {
+    let loggedInUserId = this.auth.getToken();
     let data= this.checklistdata;
     let id = data.find((item: any) => item.moduleId === environment.pendingapprovalemployeid).id;
     let paylod={
       id:id,
       employeeId: this.empinfo.employeeId,
       moduleId: environment.pendingapprovalemployeid,
-      reportingManagerId:this.empinfo.employeeId
+      reportingManagerId:this.empinfo.employeeId,
+      completedBy:loggedInUserId.employeeId,
+      completedAt:moment().format('YYYY-MM-DD'),
     }
     this.http.putData(`OffboardingTracker/${id}`, paylod).pipe(takeUntil(this.destroy$))
       .subscribe({

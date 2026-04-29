@@ -10,7 +10,7 @@ import { BehaviorSubject, Subject, Subscription, takeUntil } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
 import { ConfirmationIconComponent } from '../../../../icons/confirmation-icon/confirmation-icon.component';
 import { InfoIconComponent } from '../../../../icons/info-icon/info-icon.component';
-import { DateformatPipe } from '../../../../pipes/dateformat.pipe';
+import { DateformatPipe } from '../../../../Pipes/dateformat.pipe';
 import { AuthService } from '../../../../services/auth.service';
 import { FormValidationsService } from '../../../../services/form-validations.service';
 import { HttpService } from '../../../../services/http.service';
@@ -24,6 +24,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { NgxDocViewerModule } from "ngx-doc-viewer";
 import { Router } from '@angular/router';
 import { OffboardingReloadService } from '../../../../services/offboarding-reload.service';
+import moment from 'moment';
 
 @Component({
   selector: 'app-expenses-approvals',
@@ -497,13 +498,16 @@ this.modalService.open(approverPopup, { centered: true, backdrop: 'static' });
   }
 //funtion to update the stage status of the leave request
   updateStageStatus() {
+    let loggedInUserId = this.auth.getToken();
     let data= this.checklistdata;
     let id = data.find((item: any) => item.moduleId === environment.expensesModuleId).id;
     let paylod={
       id:id,
       employeeId: this.LOGIN.employeeId,
       moduleId: environment.expensesModuleId,
-      reportingManagerId:this.LOGIN.employeeId
+      reportingManagerId:this.LOGIN.employeeId,
+      completedBy:loggedInUserId.employeeId,
+      completedAt:moment().format('YYYY-MM-DD'),
     }
     this.http.putData(`OffboardingTracker/${id}`, paylod).pipe(takeUntil(this.destroy$))
       .subscribe({

@@ -244,7 +244,7 @@
   </div>
 
   <!-- Action Buttons: fixed to bottom-right -->
-  <div class="action-buttons">
+  <div class="action-buttons d-flex justify-content-between">
     <button type="button" class="custom-btn btn-secondary px-4" (click)="navigationtoPrevious()">{{'Previous'|translate}}</button>
     <button class="custom-btn btn-primary px-5" (click)="onNext()" [disabled]="activeRecordsCount < 1">
       {{ 'Next' | translate }}

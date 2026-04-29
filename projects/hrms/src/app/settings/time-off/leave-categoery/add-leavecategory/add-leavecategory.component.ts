@@ -146,13 +146,14 @@ export class AddLeavecategoryComponent {
       blockLeaveOnWeekends: [null],
       blockPreviousDayLeave: [null],
       blockNextDayLeave: [null],
-      minimumGapBetweenSameLeaveType: [null, [Validators.min(1), Validators.max(366)]],
+      minimumGapBetweenSameLeaveType: [null,[Validators.min(1), Validators.max(366)]],
       gapCalculationBasis: [null],
       enableSandwichPolicy: [false],
       applySandwichOn: [null,],
       sandwichCalculationBasis: [null],
       sandwichApplicabilityCondition: [null],
-      adjacentLeaveTypeRule: [null]
+      adjacentLeaveTypeRule: [null],
+      extendLastWorkingDay:[null]
     });
     this.setupDependentFieldListeners();
     this.syncGapCalculationBasis();
@@ -168,6 +169,7 @@ export class AddLeavecategoryComponent {
     this.setupMaxValidation('noticePeriodAllowedValue', 'validity');
     this.setupMaxValidation('noticePeriodAllowedValue', 'validity');
     this.setupMaxValidation('probationDays', 'validity');
+    this.setupMaxValidation('extendLastWorkingDay', 'validity');
   }
 
 
@@ -667,7 +669,8 @@ export class AddLeavecategoryComponent {
       lastModifiedBy: this.empinfo.employeeId,
       status: "Pending for submission",
       addedDate: new Date(),
-      lastModifiedDate: new Date()
+      lastModifiedDate: new Date(),
+      isNoticePeriodExtended:this.leavePolicyForm.value.extendLastWorkingDay
     };
     this.http.postdata('OrgLeavesCategories', payload).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data: any) => {

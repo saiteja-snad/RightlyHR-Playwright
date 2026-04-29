@@ -217,7 +217,8 @@ export class ViewLeavecategoryComponent implements OnInit, OnDestroy {
       applySandwichOn: [{ value: null, disabled: true }],
       sandwichCalculationBasis: [{ value: null, disabled: true }],
       sandwichApplicabilityCondition: [{ value: null, disabled: true }],
-      adjacentLeaveTypeRule: [{ value: null, disabled: true }]
+      adjacentLeaveTypeRule: [{ value: null, disabled: true }],
+      extendLastWorkingDay:[null]
     });
   }
 
@@ -563,6 +564,7 @@ export class ViewLeavecategoryComponent implements OnInit, OnDestroy {
 
   // Patch form values (for edit mode)
   patchFormValues(data: any) {
+    console.log(data);
     // if (!this.jobLocationDropDownData.length || !this.leaveTypes.length) return;
     // debugger
     const leaveTypeValue = this.leaveTypes.find(lt => lt.id === data.leaveTypeId)?.id || '';
@@ -638,7 +640,8 @@ export class ViewLeavecategoryComponent implements OnInit, OnDestroy {
       applySandwichOn: data.applySandwichOn,
       sandwichCalculationBasis: data.sandwichCalculationBasis,
       sandwichApplicabilityCondition: resolvedSandwichApplicabilityCondition,
-      adjacentLeaveTypeRule
+      adjacentLeaveTypeRule: data.adjacentLeaveTypeRule,
+      extendLastWorkingDay:data.isNoticePeriodExtended
     });
 
     // Manually trigger value changes for dependent fields

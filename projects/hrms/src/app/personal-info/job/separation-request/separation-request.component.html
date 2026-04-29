@@ -568,7 +568,7 @@
   <div class="custom-main-popup-container" ngbAutofocus>
     <div class="custom-poup-header-content popup-header-border">
       <div class="pt-2">
-        <p class="popup-heading mb-0">Extension Notice Period Summary</p>
+        <p class="popup-heading mb-0">Notice Period Extension Summary</p>
       </div>
       <div>
         <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
@@ -580,8 +580,9 @@
         <table class="w-100">
           <thead>
             <tr>
-              <th class="text-center">{{'Category'|translate}}</th>
+              <th>{{'Category'|translate}}</th>
               <th class="text-center">{{'Applied Date'|translate}}</th>
+              <th class="text-center">{{'Duration'|translate}}</th>
               <th class="text-center">{{'Reason For Extension'|translate}}</th>
               <th class="text-center">{{'Extended Days'|translate}}</th>
             </tr>
@@ -589,7 +590,7 @@
           <tbody>
             @if(noticePeriodHistory.length>0){
             <tr *ngFor="let item of noticePeriodHistory">
-              <td>
+              <td >
                 <div class="leave-name mb-2">Leave</div>
                 <div class="category-chip" [style.color]="item?.orgLeavesCategories.categoryColor"
                   [style.background]="getLighterColor(item?.orgLeavesCategories.categoryColor)">
@@ -597,9 +598,10 @@
                 </div>
               </td>
               <td class="text-center">{{(item.extendedDate | dateformat)||'-'}}</td>
+              <td class="text-center">{{item.duration||'-'}}</td>
               <td class="text-center">{{item.reasonForExtension||'-'}}</td>
               <td class="text-center">
-                @if (item.status === 'Active') {
+                @if (item.status === 'Active' || item.status === 'Completed') {
                 <span style="color: #DC3545; font-weight: 600;">+{{item.extendedDays}}</span>
                 }
                 @if(item.status === 'Reverted'){
@@ -620,10 +622,10 @@
       </div>
       <div class="d-flex align-items-center justify-content-between">
         <div>
-          <div class="popup-context">Actual Working Day : <span>{{initallastworkingday | dateformat}}</span></div>
+          <div class="popup-context">Actual Last Working Day : <span>{{initallastworkingday | dateformat}}</span></div>
           <div class="popup-context">Extended Last Working Day : <span>{{finallastworkingday | dateformat}}</span></div>
         </div>
-        <div class="popup-context">TOTAL EXTENDED DAYS : <span>+{{totalextendeddays||'0'}}</span></div>
+        <div class="popup-context">Total Extended Days : <span>+{{totalextendeddays||'0'}}</span></div>
       </div>
       <div class="d-flex justify-content-end mt-4">
         <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">Close</button>

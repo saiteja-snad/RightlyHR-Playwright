@@ -317,6 +317,10 @@
                     </div>
                     }
                 </div>
+                <div class="alert alert-info custom-alert-info py-2" *ngIf="selectedleave?.category?.isNoticePeriodExtended === true 
+                && selectedleave?.category?.noticePeriodAllowedValue >= 0 && (this.employeeiddetails.separationType === 'Separation' || this.employeeiddetails.separationType === 'Early Relieving' || this.employeeiddetails.separationType === 'Extended')"  >
+                    <small>Note: Applying this leave will extend your last working day</small>
+                </div>
                 <div class="custom-modal-footer">
                     <button type="button" class="custom-btn btn-secondary" (click)="openModal(confirmationpopup)">{{'Cancel'| translate}}</button>
                     <button type="submit" class="custom-btn btn-primary" [disabled]="(leaveForm.invalid || isWeekOffSelected ||

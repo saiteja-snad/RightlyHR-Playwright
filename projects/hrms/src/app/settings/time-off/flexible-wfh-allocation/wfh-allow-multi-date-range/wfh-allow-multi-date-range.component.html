@@ -1,0 +1,228 @@
+<div class="custom-main-component-container">
+    <form autocomplete="off" [formGroup]="wfhAllocationForm" (ngSubmit)="publishWFHAllocation(wfhAllocationForm)">
+        <div class="card custom-background-card p-3 mb-3">
+            <div class="row">
+                <!-- Year -->
+                <div class="col-md-4 mb-3">
+                    <label for="year" class="form-label custom-label mb-2">{{ "Year" | translate }}<span
+                            class="text-danger">*</span></label>
+                    <div class="custom-p-select-content">
+                        <p-select [options]="yearsList" optionLabel="year" [filter]="false" [showClear]="false"
+                            class="form-select custom-select" formControlName="year" placeholder="Please select year"
+                            (onChange)="enableLocation()">
+                            <ng-template #selectedItem let-selectedOption>{{ selectedOption }}</ng-template>
+                            <ng-template let-year #item>{{ year }}</ng-template>
+                        </p-select>
+                    </div>
+                    <div *ngIf="wfhAllocationForm.get('year')?.touched && wfhAllocationForm.get('year')?.invalid"
+                        class="error-msg">
+                        <div *ngIf="wfhAllocationForm.get('year')?.errors?.['required']">Please select year</div>
+                    </div>
+                </div>
+
+                <!-- Location -->
+                <div class="col-md-4 mb-3">
+                    <label for="location" class="form-label custom-label mb-2">{{ "Location" | translate }}
+                        <span class="text-danger">*</span></label>
+                    <div class="custom-p-select-content">
+                        <p-select [options]="locationDetails" optionLabel="jobLocationName" [filter]="true"
+                            class="form-select custom-select" filterBy="jobLocationName" [showClear]="false"
+                            formControlName="location" placeholder="Please select location" resetFilterOnHide="true"
+                            (onChange)="onLocationChange($event.value)">
+                            <ng-template #selectedItem let-selectedOption>{{ selectedOption.jobLocationName
+                                }}</ng-template>
+                            <ng-template let-location #item>{{ location.jobLocationName }}</ng-template>
+                        </p-select>
+                    </div>
+                    <div *ngIf="wfhAllocationForm.get('location')?.touched && wfhAllocationForm.get('location')?.invalid"
+                        class="error-msg">
+                        <div *ngIf="wfhAllocationForm.get('location')?.errors?.['required']">Please select location
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sub Location -->
+                <div class="col-md-4 mb-3">
+                    <label for="subLocation" class="form-label custom-label mb-2">
+                        {{ "Sub Location" | translate }}<span class="text-danger">*</span>
+                    </label>
+                    <div class="custom-p-select-content">
+                        <p-select [options]="subLocationDetails" optionLabel="jobSubLocationName" [filter]="true"
+                            class="form-select custom-select" filterBy="jobSubLocationName" [showClear]="false"
+                            formControlName="subLocation" placeholder="Please select sub location" resetFilterOnHide="true"
+                            (onChange)="getAllShifts($event.value)">
+                            <ng-template #selectedItem let-selectedOption>{{ selectedOption.jobSubLocationName
+                                }}</ng-template>
+                            <ng-template let-location #item>{{ location.jobSubLocationName }}</ng-template>
+                        </p-select>
+                    </div>
+
+                    <div *ngIf="wfhAllocationForm.get('subLocation')?.touched && wfhAllocationForm.get('subLocation')?.invalid"
+                        class="error-msg">
+                        <div *ngIf="wfhAllocationForm.get('subLocation')?.errors?.['required']">Please select sub
+                            location</div>
+                    </div>
+                </div>
+
+                <!-- Shifts -->
+                <div class="col-md-4">
+                    <label for="shift" class="form-label custom-label mb-2">
+                        {{ "Shift" | translate }}<span class="text-danger">*</span>
+                    </label>
+                    <div class="custom-p-select-content">
+                        <p-select [options]="shiftDetails" optionLabel="shiftName" [filter]="true" filterBy="shiftName"
+                            [showClear]="false" formControlName="shift" placeholder="Please select shift" resetFilterOnHide="true"
+                            class="form-select custom-select" (onChange)="categoryenable()">
+                            <ng-template #selectedItem let-selectedOption>{{ selectedOption.shiftName }}</ng-template>
+                            <ng-template let-location #item>{{ location.shiftName }}</ng-template>
+                        </p-select>
+                    </div>
+                    <div *ngIf="wfhAllocationForm.get('shift')?.touched && wfhAllocationForm.get('shift')?.invalid"
+                        class="error-msg">
+                        <div *ngIf="wfhAllocationForm.get('shift')?.errors?.['required']">Please select shift</div>
+                    </div>
+                </div>
+
+                <!-- Category Name -->
+                <div class="col-md-4">
+                    <label for="categoryName" class="form-label custom-label mb-2">
+                        {{ "Category Name" | translate }}<span class="text-danger">*</span>
+                    </label>
+                    <div class="custom-p-select-content">
+                        <p-select [options]="categoryDetails" optionLabel="name" [filter]="true" filterBy="name"
+                            [showClear]="false" formControlName="categoryName" class="form-select custom-select" resetFilterOnHide="true"
+                            placeholder="Please select category name" (onChange)="getAllEmployees()">
+                            <ng-template #selectedItem let-selectedOption>{{ selectedOption.name }}</ng-template>
+                            <ng-template let-location #item>{{ location.name }}</ng-template>
+                        </p-select>
+                    </div>
+                    <div *ngIf="wfhAllocationForm.get('categoryName')?.touched && wfhAllocationForm.get('categoryName')?.invalid"
+                        class="error-msg">
+                        <div *ngIf="wfhAllocationForm.get('categoryName')?.errors?.['required']">Please select category
+                            name</div>
+                    </div>
+                </div>
+
+                <!-- Employee Name -->
+                <div class="col-md-4">
+                    <label for="employeeName" class="form-label custom-label mb-2">
+                        {{ "Employee Name" | translate }}<span class="text-danger">*</span>
+                    </label>
+                    <div class="custom-p-multiSelect-content">
+                        <p-multiSelect [options]="employeeDetails" optionLabel="fullName" [filter]="true"
+                            filterBy="fullName" [showClear]="false" class="form-select custom-select"
+                            formControlName="employeeName" placeholder="Select Employee(s)" resetFilterOnHide="true"
+                            (onChange)="onSelectedEmployee($event.value, wfhAllocationForm)">
+                            <ng-template let-selectedOption #selectedItem>
+                                {{ selectedOption.firstName }} {{ selectedOption.middleName }} {{
+                                selectedOption.lastName }}
+                            </ng-template>
+                            <ng-template let-user #item>{{ user.firstName }} {{ user.middleName }} {{ user.lastName
+                                }}</ng-template>
+                        </p-multiSelect>
+                    </div>
+                    <div *ngIf="wfhAllocationForm.get('employeeName')?.touched && wfhAllocationForm.get('employeeName')?.invalid"
+                        class="error-msg">
+                        <div *ngIf="wfhAllocationForm.get('employeeName')?.errors?.['required']">Please select at least one employee
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="custom-table-content mt-2">
+            <table class="w-100">
+                <thead>
+                    <tr>
+                        <th>Employee Name</th>
+                        <th>Effective From</th>
+                        <th>Effective To</th>
+                        <!-- <th>Max Days Range</th> -->
+                        <th>Allocated By</th>
+                        <th>Allocated On</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody formArrayName="employees">
+                    <tr *ngFor="let emp of employeeFormArray.controls; let i = index" [formGroupName]="i">
+                        <td>{{ emp.get('fullName')?.value }}</td>
+                        <td>
+                            <input type="date" formControlName="effectivedate" class="form-control custom-input mt-2"
+                                placeholder="Please enter date" [min]="minYearDate"[max]="maxYearDate" />
+                            <div *ngIf="emp.get('effectivedate')?.touched && emp.get('effectivedate')?.invalid"
+                                class="error-msg">
+                                <div *ngIf="emp.get('effectivedate')?.errors?.['required']">Effective From date is required
+                                </div>
+                                <div *ngIf="emp.get('effectivedate')?.errors?.['invalidDate']">
+                                    Date must be from the current month and year
+                                </div>
+                            </div>
+                        </td>
+                         <td>
+                            <input type="date" formControlName="effectiveto" class="form-control custom-input mt-2"
+                                placeholder="Please enter date" [min]="minYearDate"[max]="maxYearDate" />
+                            <div *ngIf="emp.get('effectiveto')?.touched && (emp.get('effectiveto')?.invalid || emp.errors?.['invalidEffectiveToDate'])"
+                                class="error-msg">
+                                <div *ngIf="emp.get('effectiveto')?.errors?.['required']">Effective To date is required
+                                </div>
+                                <div *ngIf="emp.errors?.['invalidEffectiveToDate']">
+                                    Effective To date must be later than Effective From
+                                </div>
+                            </div>
+                        </td>
+                        <!-- <td>
+                            <input type="number" formControlName="maxDaysRange" class="form-control custom-input mt-2"
+                                placeholder="Enter max days range" min="0" max="365" (keypress)="validateInput($event)" />
+                            <div *ngIf="emp.get('maxDaysRange')?.touched && (emp.get('maxDaysRange')?.invalid|| emp.errors?.['invalidDaysRange'])" class="error-msg">
+                                <div *ngIf="emp.get('maxDaysRange')?.errors?.['required']">Please enter max days range</div>
+                                <div *ngIf="emp.errors?.['invalidDaysRange']" class="error-msg">
+                                    Max days range cannot exceed date range
+                                </div>
+                            </div>
+                        </td> -->
+
+                        <td>{{ emp.get('createdBy')?.value ?emp.get('createdBy')?.value:'-' }}</td>
+                        <td>{{ emp.get('createdOn')?.value ?(emp.get('createdOn')?.value | dateformat) :'-' }}</td>
+                        <td class="text-center"><a class="custom-action-btn"
+                                (click)="removeEmployee(i, emp.get('employeeId')?.value)">
+                                <i class="bi bi-trash3 text-danger custom-action-btn-icon"></i></a>
+                        </td>
+                    </tr>
+                    <tr *ngIf="employeeFormArray.length === 0">
+                        <td colspan="7"><app-no-data-found /></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="d-flex justify-content-end gap-3 p-3" *ngIf="rbac.allowedToAccess('Active Allocations Tab.create')">
+            <button type="button" class="custom-btn btn-secondary px-5" (click)="resetForm(confirmationpopup)"
+                >{{'Cancel'|translate}}</button>
+                <button type="submit" class="custom-btn btn-primary px-5"
+                [disabled]="wfhAllocationForm.invalid ||isloading">
+            @if(isloading){
+            <div class="button-loader-content">
+              <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
+              <span>{{'Loading...'}}</span>
+            </div>
+            }@else { {{'Submit'|translate}} }
+          </button>
+        </div>
+    </form>
+</div>
+<ng-template #confirmationpopup let-model>
+  <div class="result-popup-content" ngbAutofocus>
+    <div>
+      <img src="/icons/reject.png" alt="failure icon" class="confirmation-icon mb-4">
+      <p class="confirmation-text mb-4"> Are you sure you want to cancel?</p>
+    </div>
+
+    <div class="d-flex justify-content-center gap-3 mt-4">
+      <button type="button" class="custom-btn btn-secondary" (click)="model.dismiss()">
+        No
+      </button>
+      <button type="submit" class="custom-btn btn-primary" (click)="cancle();model.dismiss()">
+        Yes
+      </button>
+    </div>
+  </div>
+</ng-template>

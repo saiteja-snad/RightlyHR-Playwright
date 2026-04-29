@@ -518,7 +518,10 @@ export class PermissionsComponent implements OnInit, OnDestroy {
   ];
   flexibleWFHTabsFields = [
     'Active Allocations Tab',
-    'Allocation History Tab'
+    'Allocation History Tab',
+    'Allow Multi Date Range Tab',
+    'Allow Multi Date Range History Tab',
+    'WFH Allocation History Tab'
   ]
   flexibleWorkHoursTabsFields = [
     'Work Hours Allocation History Tab',

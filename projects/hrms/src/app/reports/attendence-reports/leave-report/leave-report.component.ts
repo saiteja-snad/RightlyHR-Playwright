@@ -36,12 +36,14 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
   moduleinfo: string = '';
   subscription!: Subscription;
   private readonly destroy$ = new Subject<void>();
+  private readonly currentYear = new Date().getFullYear();
   loggedInUser = {} as IemployeeDetails;
   isLoading: boolean = false;
   filteredleaveRecord: any[] = [];
   employeeiddetails: any[] = [];
   employeeMultiSelectOptions: any[] = [];
   teamdetails = [] as any[];
+  years: { label: string; value: number }[] = [];
   selectedWfhManager: string | null = null;
   selectedMonth: string | null = null;
   selectedLeave: string | null = null;
@@ -56,6 +58,8 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
   disableBtn = false;
   getEmployeeInfo = [] as any;
   today: Date = new Date();
+  yearMinDate: Date | null = null;
+  yearMaxDate: Date | null = null;
   ranges: any = {
     Today: [dayjs(), dayjs()],
     Yesterday: [dayjs().subtract(1, 'days'), dayjs().subtract(1, 'days')],
@@ -87,6 +91,7 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
       clearLabel: 'Clear', // could be rtl
     };
     this.loggedInUser = this.authService.getToken();
+    this.initializeYears();
     this.initializeForm();
     this.getEmployeeId();
     this.getAttendanceReports();
@@ -96,12 +101,20 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
 
   initializeForm() {
     this.LeaveReportForm = this.fb.group({
+      year: [null],
       dateRange: [null],
       leaveCategory: [[]],
       manager: [[]],
       employeeIds: [[]],
       team: [[]]
     });
+
+    this.LeaveReportForm.get('year')?.valueChanges
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((year: number | null) => {
+        this.updateDateBounds(year);
+        this.resetDateRangeIfOutOfBounds();
+      });
 
     this.LeaveReportForm.get('manager')?.valueChanges
       .pipe(takeUntil(this.destroy$))
@@ -120,8 +133,60 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
     })
   }
 
+  private updateDateBounds(year: number | null): void {
+    if (year === null || year === undefined || year === ('' as any)) {
+      this.yearMinDate = null;
+      this.yearMaxDate = null;
+      return;
+    }
+
+    const normalizedYear = Number(year);
+    this.yearMinDate = new Date(normalizedYear, 0, 1);
+
+    if (normalizedYear < this.currentYear) {
+      this.yearMaxDate = new Date(normalizedYear, 11, 31);
+    } else if (normalizedYear === this.currentYear) {
+      this.yearMaxDate = new Date(this.today);
+    } else {
+      this.yearMaxDate = new Date(normalizedYear, 11, 31);
+    }
+  }
+
+  private resetDateRangeIfOutOfBounds(): void {
+    const currentRange = this.LeaveReportForm.get('dateRange')?.value as
+      | [Date | string | null, Date | string | null]
+      | null;
+
+    if (!currentRange || (!currentRange[0] && !currentRange[1])) {
+      return;
+    }
+
+    if (!this.yearMinDate && !this.yearMaxDate) {
+      return;
+    }
+
+    const start = currentRange[0] ? new Date(currentRange[0]) : null;
+    const end = currentRange[1] ? new Date(currentRange[1]) : start;
+
+    if ((start && isNaN(start.getTime())) || (end && isNaN(end.getTime()))) {
+      this.LeaveReportForm.patchValue({ dateRange: null }, { emitEvent: false });
+      return;
+    }
+
+    const min = this.yearMinDate;
+    const max = this.yearMaxDate;
+    const outOfBounds =
+      (min && ((start && start < min) || (end && end < min))) ||
+      (max && ((start && start > max) || (end && end > max)));
+
+    if (outOfBounds) {
+      this.LeaveReportForm.patchValue({ dateRange: null }, { emitEvent: false });
+    }
+  }
+
   clearAllFilters(): void {
     this.LeaveReportForm.reset({ 
+      year: null,
       dateRange: null,
       employeeIds: [],
       leaveCategory: [],
@@ -139,10 +204,12 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
   }
 
   isFilterApplied(): boolean {
-    const { employeeIds, manager, dateRange, leaveCategory, team } = this.LeaveReportForm.value;
+    const { year, employeeIds, manager, dateRange, leaveCategory, team } = this.LeaveReportForm.value;
     const dateRangeArray = dateRange || [];
     const hasDates = !!(dateRangeArray?.[0] || dateRangeArray?.[1]);
+    const hasYearFilter = year !== null && year !== undefined && year !== '';
     return !!(
+      hasYearFilter ||
       (employeeIds && employeeIds.length > 0) ||
       (manager && manager.length > 0) ||
       hasDates ||
@@ -249,28 +316,23 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
     this.isLoading = true;
     this.disableBtn = true;
     const formValue = this.LeaveReportForm.value;
-    const dateRangeArray = formValue.dateRange || [];
-    const startDate: Dayjs | null = dateRangeArray[0] ? dayjs(dateRangeArray[0]) : null;
-    const endDate: Dayjs | null = dateRangeArray[1] ? dayjs(dateRangeArray[1]) : (startDate ? startDate : null);
-    //filter condition
-    const employeeIds: any[] = formValue.employeeIds || [];
-    const noFilterProvided =
-      employeeIds.length === 0 &&
-      (!formValue.manager || formValue.manager.length === 0) &&
-      (!formValue.team || formValue.team.length === 0) &&
-      (!formValue.leaveCategory || formValue.leaveCategory.length === 0) &&
-      !startDate &&
-      !endDate;
-
-    if (noFilterProvided) {
+    if (!this.isFilterApplied()) {
       this.filteredleaveRecord = [];
       this.spinnerLoader1 = false;
       this.isLoading = false;
       this.disableBtn = false;
       return;
     }
+    const dateRangeArray = formValue.dateRange || [];
+    const startDate: Dayjs | null = dateRangeArray[0] ? dayjs(dateRangeArray[0]) : null;
+    const endDate: Dayjs | null = dateRangeArray[1] ? dayjs(dateRangeArray[1]) : (startDate ? startDate : null);
+    const employeeIds: any[] = formValue.employeeIds || [];
 
     const request: IAttendanceDetails = {};
+
+    if (formValue.year) {
+      request.year = Number(formValue.year);
+    }
 
     // Apply leave category if selected
     if (formValue.leaveCategory && formValue.leaveCategory.length > 0) {
@@ -312,6 +374,14 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
         this.closeCanvas();
       }
     });
+  }
+
+  private initializeYears(): void {
+    this.years = [
+      { label: `${this.currentYear - 1}`, value: this.currentYear - 1 },
+      { label: `${this.currentYear}`, value: this.currentYear },
+      { label: `${this.currentYear + 1}`, value: this.currentYear + 1 },
+    ];
   }
 
   exportToExcelYearly(): void {

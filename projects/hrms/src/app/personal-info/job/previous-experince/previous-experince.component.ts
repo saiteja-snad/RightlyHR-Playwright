@@ -7,7 +7,7 @@ import { HttpService } from '../../../services/http.service';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { BehaviorSubject, Observable, Subscription, tap } from 'rxjs';
 import { IJobtype } from '../../../Interfaces/job-model';
-import { DateformatPipe } from "../../../pipes/dateformat.pipe";
+
 import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { TranslateModule } from '@ngx-translate/core';
@@ -22,6 +22,7 @@ import { DownloadIconComponent } from "../../../icons/download-icon/download-ico
 import { environment } from '../../../../environments/environment';
 import { ChartModule } from 'primeng/chart';
 import { InfoIconComponent } from '../../../icons/info-icon/info-icon.component';
+import { DateformatPipe } from '../../../pipes/dateformat.pipe';
 
 @Component({
   selector: 'app-previous-experince',
@@ -184,7 +185,8 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
 
   getMaxToDate(): string {
     if (this.dateOfJoining) {
-      const doj = new Date(this.dateOfJoining.split('T')[0]);
+      const parts = this.dateOfJoining.split('T')[0].split('-');
+      const doj = new Date(+parts[0], +parts[1] - 1, +parts[2]);
       doj.setDate(doj.getDate() - 1);
       const year = doj.getFullYear();
       const month = String(doj.getMonth() + 1).padStart(2, '0');

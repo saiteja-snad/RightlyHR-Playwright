@@ -2128,9 +2128,14 @@ input[type=number]::-webkit-outer-spin-button {
 }
 
 .modal-image {
-    width: inherit !important;
+    display: block;
+    margin: 0 auto;
+    max-width: 100%;
+    height: auto;
     max-height: 60vh;
+    object-fit: contain;
 }
+
 
 // IT Support Status Colors
 .urgent {

@@ -808,6 +808,7 @@ export const permissionsData = [
   { fields: 'Employee Info Change RM Button', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Employee Info Team Managers Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Employee Info Change TM Button', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Employee Info Location Change Tab', View: false, Update: false, Create: false, Delete: false },
 
 
   //Employee Info Onboard Request Sub Tabs Section

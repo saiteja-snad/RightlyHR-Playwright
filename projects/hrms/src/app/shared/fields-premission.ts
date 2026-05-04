@@ -140,6 +140,7 @@ export const EMPLOYEE_INFO_CLAIMS = [
 
   { permission: 'changesrm', claim: 'Employee Info Change RM Button' },
   { permission: 'chtm', claim: 'Employee Info Change TM Button' },
+  { permission: 'location-change', claim: 'Employee Info Location Change Tab' },
 
 
 

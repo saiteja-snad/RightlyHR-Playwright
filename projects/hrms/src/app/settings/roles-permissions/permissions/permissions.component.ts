@@ -1231,6 +1231,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Employee Info Change RM Button',
     'Employee Info Team Managers Tab',
     'Employee Info Change TM Button',
+    'Employee Info Location Change Tab',
   ];
   pmsModuleFields = [
     'Review Cycle List',

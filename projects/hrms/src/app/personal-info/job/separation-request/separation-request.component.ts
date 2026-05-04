@@ -469,7 +469,6 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
               'waiting for approval',
               'approved',
               'processed',
-              'recalled processed',
               'early relieving processed',
               'extended',
             ];

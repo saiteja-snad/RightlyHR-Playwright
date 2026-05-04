@@ -265,7 +265,7 @@ export const MODULE_INFOS = {
     JOB_MODULE_ONBOARDING_DOCUMENTS_MODULE_INFO: "The Onboarding Verification section displays documents uploaded by prospective employees, including Aadhaar, PAN, and others. HR can view each document and take actions such as verifying or rejecting them to ensure compliance before onboarding.",
     JOB_MODULE_PROJECTS_INFO: "The Project Info section displays the list of projects associated with the employee, including project type, total phases, and hours spent. It allows viewing all assigned projects on a single page, helping track employee involvement, phase progress, and overall performance across multiple projects efficiently.",
     JOB_MODULE_EXIT_FEEDBACK_MODULE_INFO: "The Exit Feedback enables employees to share their experience during the separation process. The feedback collected helps the organization improve policies, culture, and overall employee experience",
-
+    LOCATION_CHANGE_MODULE_INFO: 'The Bulk Location Change feature allows users to update the location, sub-location, and shift details for multiple employees simultaneously. It helps streamline administrative tasks by enabling quick and efficient bulk updates in a single action.',
     //My Info Documents Module Info
     DOCUMENTS_MODULE_INFO: "The Document section provides categorized storage for important organizational files, including employee documents, appraisal/promotion letters, and policy documents. Users can navigate through folders and subfolders to view file details.",
 

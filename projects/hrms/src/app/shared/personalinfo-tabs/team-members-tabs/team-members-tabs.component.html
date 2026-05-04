@@ -4,7 +4,8 @@
             <ng-container *ngFor="let tab of navTabs">
                 <p-tab [value]="tab.link">
                     <a [routerLink]="tab.link" routerLinkActive="nav-tab-active" class="nav-link">
-                        {{ tab.label }} ({{tab.count}})
+                     {{ tab.label }} <span *ngIf="tab.label !== 'Bulk Location Change'">({{tab.count}})</span>
+
                     </a>
                 </p-tab>
             </ng-container>

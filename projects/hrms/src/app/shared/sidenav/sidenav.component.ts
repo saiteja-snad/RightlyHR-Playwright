@@ -11,6 +11,8 @@ import { ProjectManagementMainTabsComponent } from "../project-management-tabs/p
 import { OnbehalfofMainTabsComponent } from "../time-off-module-tabs/onbehalfof-main-tabs/onbehalfof-main-tabs.component";
 import { PendingApprovalsTabsComponent } from "../time-off-module-tabs/pending-approvals-tabs/pending-approvals-tabs.component";
 import { PmsMainTabsComponent } from "../pms-module-tabs/pms-main-tabs/pms-main-tabs.component";
+import { MENU_ORDER_LS_KEY, MenuOrder } from '../../theme-customization/theme-action.service';
+
 @Component({
   selector: 'app-sidenav',
   imports: [CommonModule, RouterModule, TranslateModule, TimeOffTabsComponent, ProjectManagementMainTabsComponent,
@@ -18,72 +20,26 @@ import { PmsMainTabsComponent } from "../pms-module-tabs/pms-main-tabs/pms-main-
   templateUrl: './sidenav.component.html',
   styleUrl: './sidenav.component.scss'
 })
-
 export class SidenavComponent implements OnInit {
-  // Main Modules
   modules = [
-    //Holidays
-    {
-      label: 'Holidays', icon: '/main-menu-icons/holiday-icon.png', activeIcon: '/main-menu-icons/holidays.png',
-      route: '/holidays', permission: { feature: 'Holidays', action: 'view' }
-    },
-    //Policies
-    {
-      label: 'Policies', icon: '/main-menu-icons/policies-icon.png', activeIcon: '/main-menu-icons/policies.png',
-      route: '/policies', permission: { feature: 'Policies', action: 'view' }
-    },
-    //Event/
-    {
-      label: 'Events', icon: '/main-menu-icons/events-colored-icon.png', activeIcon: '/main-menu-icons/calendar-favorite.png',
-      route: '/events', permission: { feature: 'Events', action: 'view' }
-    },
-    //expenses
-    {
-      label: 'Expenses', icon: '/main-menu-icons/expenses-icon.png', activeIcon: '/main-menu-icons/expenses.png',
-      route: '/claimsandexpenses', permission: { feature: 'Expenses', action: 'view' }
-    },
-    //org Hierarcy
-    {
-      label: 'Org Hierarchy', icon: '/main-menu-icons/org.png', activeIcon: '/main-menu-icons/org-hierarchy-square.png',
-      route: '/organization-chart', permission: { feature: 'Org Hierarchy', action: 'view' }
-    },
-       {
-      label: 'Personalization', icon: '/main-menu-icons/themes-color-icon.png', activeIcon: '/main-menu-icons/themes-icon.png',
-      route: '/theme', permission: { feature: 'Themes', action: 'view' },
-    },
-    //Blood Bank
-    {
-      label: 'Blood Bank', icon: '/main-menu-icons/blood-bank-color-icon.png', activeIcon: '/main-menu-icons/blood-bank-icon.png',
-      route: '/blood-bank', permission: { feature: 'Blood Bank', action: 'view' }
-    },
-    //Contacts Directory
-    {
-      label: 'Contacts Directory', icon: '/main-menu-icons/contact-directory-color-icon.png', activeIcon: '/main-menu-icons/contact-directory-icon.png',
-      route: '/contacts-directory', permission: { feature: 'Contacts Directory', action: 'view' }
-    },
-    //Phone Book
-    {
-      label: 'Phone Book', icon: '/main-menu-icons/phonebook-color-icon.png', activeIcon: '/main-menu-icons/phonebook-icon.png',
-      route: '/phonebook', permission: { feature: 'Phone Book', action: 'view' }
-    },
-    //Assets
-    {
-      label: 'Assets', icon: '/main-menu-icons/assets-icon.png', activeIcon: '/main-menu-icons/assets.png',
-      route: '/assets-management', permission: { feature: 'Asset Management', action: 'view' }
-    },
-    //Desk
-    {
-      label: 'Desk', icon: '/main-menu-icons/desk-icon.png', activeIcon: '/main-menu-icons/computer-desk.png',
-      route: '/desk', permission: { feature: 'Desk Allocation', action: 'view' }
-    },
-    //Card Management
-    {
-      label: 'Cards Management', icon: '/main-menu-icons/card-management-icon.png', activeIcon: '/main-menu-icons/card-management-active.png',
-      route: '/card-management', permission: { feature: 'Desk Allocation', action: 'view' }
-    },
+    { label: 'Holidays', icon: '/main-menu-icons/holiday-icon.png', activeIcon: '/main-menu-icons/holidays.png', route: '/holidays', permission: { feature: 'Holidays', action: 'view' } },
+    { label: 'Policies', icon: '/main-menu-icons/policies-icon.png', activeIcon: '/main-menu-icons/policies.png', route: '/policies', permission: { feature: 'Policies', action: 'view' } },
+    { label: 'Events', icon: '/main-menu-icons/events-colored-icon.png', activeIcon: '/main-menu-icons/calendar-favorite.png', route: '/events', permission: { feature: 'Events', action: 'view' } },
+    { label: 'Expenses', icon: '/main-menu-icons/expenses-icon.png', activeIcon: '/main-menu-icons/expenses.png', route: '/claimsandexpenses', permission: { feature: 'Expenses', action: 'view' } },
+    { label: 'Org Hierarchy', icon: '/main-menu-icons/org.png', activeIcon: '/main-menu-icons/org-hierarchy-square.png', route: '/organization-chart', permission: { feature: 'Org Hierarchy', action: 'view' } },
+    { label: 'Personalization', icon: '/main-menu-icons/themes-color-icon.png', activeIcon: '/main-menu-icons/themes-icon.png', route: '/theme', permission: { feature: 'Themes', action: 'view' } },
+    { label: 'Blood Bank', icon: '/main-menu-icons/blood-bank-color-icon.png', activeIcon: '/main-menu-icons/blood-bank-icon.png', route: '/blood-bank', permission: { feature: 'Blood Bank', action: 'view' } },
+    { label: 'Contacts Directory', icon: '/main-menu-icons/contact-directory-color-icon.png', activeIcon: '/main-menu-icons/contact-directory-icon.png', route: '/contacts-directory', permission: { feature: 'Contacts Directory', action: 'view' } },
+    { label: 'Phone Book', icon: '/main-menu-icons/phonebook-color-icon.png', activeIcon: '/main-menu-icons/phonebook-icon.png', route: '/phonebook', permission: { feature: 'Phone Book', action: 'view' } },
+    { label: 'Assets', icon: '/main-menu-icons/assets-icon.png', activeIcon: '/main-menu-icons/assets.png', route: '/assets-management', permission: { feature: 'Asset Management', action: 'view' } },
+    { label: 'Cards Management', icon: '/main-menu-icons/card-management-icon.png', activeIcon: '/main-menu-icons/card-management-active.png', route: '/card-management', permission: { feature: 'Desk Allocation', action: 'view' } },
   ];
+
+  // CSS order map for main menu items — key: route, value: CSS order number
+  mainMenuOrderMap: { [route: string]: number } = {};
+
   columnsPerRow = 3;
-  dropdownOpen = false; // controls the icon
+  dropdownOpen = false;
   selectedDropdownModule: any = null;
   filteredModules: any[] = [];
   spinnerLoader = false;
@@ -96,7 +52,40 @@ export class SidenavComponent implements OnInit {
     this.modules = this.modules.filter((tab) => tab.permission && tab.permission.feature && tab.permission.action &&
       this.rbac.allowedToAccess(`${tab.permission.feature}.${tab.permission.action}`)
     );
+    this.applyMenuOrder();
     this.setSelectedModuleFromRoute();
+  }
+
+  applyMenuOrder(): void {
+    const saved = localStorage.getItem(MENU_ORDER_LS_KEY);
+    if (!saved) return;
+    const order: MenuOrder = JSON.parse(saved);
+
+    // Main menu: apply CSS order map (keeps HTML structure intact, just reorders visually)
+    if (order.mainMenuRoutes?.length) {
+      this.mainMenuOrderMap = {};
+      order.mainMenuRoutes.forEach((route, index) => {
+        this.mainMenuOrderMap[route] = index + 1;
+      });
+    }
+
+    // Three-dot: reorder modules array
+    if (order.threeDotRoutes?.length) {
+      const reordered: any[] = [];
+      order.threeDotRoutes.forEach(route => {
+        const found = this.modules.find(m => m.route === route);
+        if (found) reordered.push(found);
+      });
+      // Append any items not in saved order
+      this.modules.forEach(m => {
+        if (!reordered.find((r: any) => r.route === m.route)) reordered.push(m);
+      });
+      this.modules = reordered;
+    }
+  }
+
+  getMainMenuOrder(route: string): number {
+    return this.mainMenuOrderMap[route] ?? 0;
   }
 
   onLogout() {
@@ -124,7 +113,9 @@ export class SidenavComponent implements OnInit {
 
   isActiveRoute(link: string): boolean {
     const currentUrl = this.router.url;
-    return currentUrl === link || currentUrl.startsWith(link + '/');
+    if (currentUrl === link || currentUrl.startsWith(link + '/')) return true;
+    if (link === '/theme' && currentUrl.startsWith('/menus/')) return true;
+    return false;
   }
 
   isActiveRoutePms(): boolean {
@@ -139,13 +130,11 @@ export class SidenavComponent implements OnInit {
 
   isActiveprojectManagement(): boolean {
     const currentUrl = this.router.url;
-    // Active for pending-approvals and its subroutes
     return currentUrl === '/project-management' || currentUrl.startsWith('/project-management');
   }
 
   isActiveskillsetManagement(): boolean {
     const currentUrl = this.router.url;
-    // Active for pending-approvals and its subroutes
     return currentUrl === '/skill-management' || currentUrl.startsWith('/skill-management');
   }
 
@@ -154,34 +143,28 @@ export class SidenavComponent implements OnInit {
     this.updateFilteredModules();
   }
 
-  // Check if item is in the first row
   isInTopRow(index: number): boolean {
     return Math.floor(index / this.columnsPerRow) === 0;
   }
 
-  // Check if item is in the last row
   isInLastRow(index: number): boolean {
     const totalRows = Math.ceil(this.modules.length / this.columnsPerRow);
     const currentRow = Math.floor(index / this.columnsPerRow) + 1;
     return currentRow === totalRows;
   }
 
-  // Check if item is in a middle row
   isInMiddleRow(index: number): boolean {
     return !this.isInTopRow(index) && !this.isInLastRow(index);
   }
 
-  // Check if item is in the first column
   isFirstColumn(index: number): boolean {
     return index % this.columnsPerRow === 0;
   }
 
-  // Check if item is in the last column
   isLastColumn(index: number): boolean {
     return (index + 1) % this.columnsPerRow === 0;
   }
 
-  // Check if item is in a middle column
   isMiddleColumn(index: number): boolean {
     return !this.isFirstColumn(index) && !this.isLastColumn(index);
   }
@@ -196,20 +179,18 @@ export class SidenavComponent implements OnInit {
     const clickedInsideSelected = selectedItem?.contains(target);
     const clickedInsideMenuItem = Array.from(menuItems).some(item => item.contains(target));
     const shouldIgnore = clickedInsideDropdown || clickedInsideSelected || clickedInsideMenuItem;
-    // Don't clear here — let router do its job
     if (!shouldIgnore) {
-      // Optional: Only clear if route doesn't match a known module
-      setTimeout(() => this.setSelectedModuleFromRoute(), 100); // Let routing settle
+      setTimeout(() => this.setSelectedModuleFromRoute(), 100);
     }
   }
 
   setSelectedModuleFromRoute(): void {
     const currentRoute = this.router.url;
-    // Find all matches
-    const matchedModules = this.modules.filter(mod =>
-      currentRoute === mod.route || currentRoute.startsWith(mod.route + '/')
-    );
-    // Pick the one with the longest matching route (most specific)
+    const matchedModules = this.modules.filter(mod => {
+      if (currentRoute === mod.route || currentRoute.startsWith(mod.route + '/')) return true;
+      if (mod.route === '/theme' && currentRoute.startsWith('/menus/')) return true;
+      return false;
+    });
     this.selectedDropdownModule = matchedModules.sort((a, b) => b.route.length - a.route.length)[0];
     this.updateFilteredModules();
   }
@@ -222,9 +203,7 @@ export class SidenavComponent implements OnInit {
         this.router.navigate(['/organization-chart']);
       } else if (module.route === '/theme') {
         this.router.navigate(['/theme']);
-      }
-      
-      else {
+      } else {
         this.goToAccessibleRoute(module.route);
       }
     }

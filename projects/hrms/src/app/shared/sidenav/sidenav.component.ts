@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, HostListener, OnInit, ViewChild } from '@angular/core';
+import { Component, effect, HostListener, OnInit, ViewChild } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -11,7 +11,7 @@ import { ProjectManagementMainTabsComponent } from "../project-management-tabs/p
 import { OnbehalfofMainTabsComponent } from "../time-off-module-tabs/onbehalfof-main-tabs/onbehalfof-main-tabs.component";
 import { PendingApprovalsTabsComponent } from "../time-off-module-tabs/pending-approvals-tabs/pending-approvals-tabs.component";
 import { PmsMainTabsComponent } from "../pms-module-tabs/pms-main-tabs/pms-main-tabs.component";
-import { MENU_ORDER_LS_KEY, MenuOrder } from '../../theme-customization/theme-action.service';
+import { MenuOrderService } from '../../services/theme-service/menu-order.service';
 
 @Component({
   selector: 'app-sidenav',
@@ -35,7 +35,8 @@ export class SidenavComponent implements OnInit {
     { label: 'Cards Management', icon: '/main-menu-icons/card-management-icon.png', activeIcon: '/main-menu-icons/card-management-active.png', route: '/card-management', permission: { feature: 'Desk Allocation', action: 'view' } },
   ];
 
-  // CSS order map for main menu items — key: route, value: CSS order number
+  // Store original RBAC-filtered modules for reordering
+  private originalModules: any[] = [];
   mainMenuOrderMap: { [route: string]: number } = {};
 
   columnsPerRow = 3;
@@ -46,22 +47,31 @@ export class SidenavComponent implements OnInit {
   @ViewChild('logoutpopup') logoutpopup: any;
 
   constructor(private authService: AuthService, private modalservie: NgbModal, public rbac: RbacService,
-    private router: Router, private accessNav: AccessNavigationService) { }
+    private router: Router, private accessNav: AccessNavigationService, private menuOrderService: MenuOrderService) {
+    effect(() => {
+      // React whenever menuOrder signal changes (e.g. after Apply Changes)
+      const order = this.menuOrderService.menuOrder();
+      if (order) {
+        this.applyMenuOrder();
+        this.updateFilteredModules();
+      }
+    });
+  }
 
   ngOnInit(): void {
     this.modules = this.modules.filter((tab) => tab.permission && tab.permission.feature && tab.permission.action &&
       this.rbac.allowedToAccess(`${tab.permission.feature}.${tab.permission.action}`)
     );
+    this.originalModules = [...this.modules];
     this.applyMenuOrder();
     this.setSelectedModuleFromRoute();
   }
 
   applyMenuOrder(): void {
-    const saved = localStorage.getItem(MENU_ORDER_LS_KEY);
-    if (!saved) return;
-    const order: MenuOrder = JSON.parse(saved);
+    const order = this.menuOrderService.menuOrder();
+    if (!order) return;
 
-    // Main menu: apply CSS order map (keeps HTML structure intact, just reorders visually)
+    // Main menu: apply CSS order map
     if (order.mainMenuRoutes?.length) {
       this.mainMenuOrderMap = {};
       order.mainMenuRoutes.forEach((route, index) => {
@@ -69,15 +79,15 @@ export class SidenavComponent implements OnInit {
       });
     }
 
-    // Three-dot: reorder modules array
+    // Three-dot: reorder from originalModules (not already-reordered modules)
     if (order.threeDotRoutes?.length) {
+      const source = this.originalModules.length ? this.originalModules : this.modules;
       const reordered: any[] = [];
       order.threeDotRoutes.forEach(route => {
-        const found = this.modules.find(m => m.route === route);
+        const found = source.find(m => m.route === route);
         if (found) reordered.push(found);
       });
-      // Append any items not in saved order
-      this.modules.forEach(m => {
+      source.forEach(m => {
         if (!reordered.find((r: any) => r.route === m.route)) reordered.push(m);
       });
       this.modules = reordered;

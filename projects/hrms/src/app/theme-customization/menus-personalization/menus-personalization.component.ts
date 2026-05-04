@@ -3,11 +3,13 @@ import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { DragDropModule, CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { RbacService } from '../../services/rbac.service';
-import { ThemeActionService, MENU_ORDER_LS_KEY, MenuOrder } from '../theme-action.service';
+import { ThemeActionService, MenuOrder } from '../theme-action.service';
 import { Subscription } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { OpenModalService } from '../../services/open-modal.service';
 import { ConfirmationIconComponent } from '../../icons/confirmation-icon/confirmation-icon.component';
+import { HttpService } from '../../services/http.service';
+import { MenuOrderService, MENU_PREF_KEY } from '../../services/theme-service/menu-order.service';
 
 interface MenuItem {
   label: string;
@@ -55,17 +57,18 @@ export class MenusPersonalizationComponent implements OnInit, OnDestroy {
     { label: 'Contacts Directory', icon: '/main-menu-icons/contact-directory-color-icon.png', route: '/contacts-directory', permission: { feature: 'Contacts Directory', action: 'view' } },
     { label: 'Phone Book', icon: '/main-menu-icons/phonebook-color-icon.png', route: '/phonebook', permission: { feature: 'Phone Book', action: 'view' } },
     { label: 'Assets', icon: '/main-menu-icons/assets-icon.png', route: '/assets-management', permission: { feature: 'Asset Management', action: 'view' } },
-    // { label: 'Desk', icon: '/main-menu-icons/computer-desk.png', route: '/desk', permission: { feature: 'Desk Allocation', action: 'view' } },
     { label: 'Cards Management', icon: '/main-menu-icons/card-management-icon.png', route: '/card-management', permission: { feature: 'Desk Allocation', action: 'view' } },
   ];
 
   private allItemsPool: MenuItem[] = [];
   private defaultMain: MenuItem[] = [];
   private defaultThree: MenuItem[] = [];
+  private empinfo: any;
 
   mainMenuItems: MenuItem[] = [];
   threeDotItems: MenuItem[] = [];
   activeDropList: string | null = null;
+  dataLoad = false;
 
   private savedOrder: MenuOrder | null = null;
   private subs: Subscription[] = [];
@@ -74,10 +77,14 @@ export class MenusPersonalizationComponent implements OnInit, OnDestroy {
     private rbac: RbacService,
     private themeAction: ThemeActionService,
     private modalService: NgbModal,
-    private openModalService: OpenModalService
+    private openModalService: OpenModalService,
+    private http: HttpService,
+    private menuOrderService: MenuOrderService
   ) {}
 
   ngOnInit(): void {
+    this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
+
     const allowedMain = this.allMainMenuItems.filter(i =>
       this.rbac.allowedToAccess(`${i.permission.feature}.${i.permission.action}`)
     );
@@ -89,24 +96,41 @@ export class MenusPersonalizationComponent implements OnInit, OnDestroy {
     this.defaultMain = [...allowedMain];
     this.defaultThree = [...allowedThree];
 
-    const saved = localStorage.getItem(MENU_ORDER_LS_KEY);
-    if (saved) {
-      const order: MenuOrder = JSON.parse(saved);
-      const mainRoutes = order.mainMenuRoutes.filter(r => r !== '/dashboard');
-      this.mainMenuItems = this.buildListFromRoutes(mainRoutes, allowedMain, allowedThree);
-      this.threeDotItems = this.buildListFromRoutes(order.threeDotRoutes, allowedThree, allowedMain);
-    } else {
-      this.mainMenuItems = [...allowedMain];
-      this.threeDotItems = [...allowedThree];
-    }
+    this.mainMenuItems = [...allowedMain];
+    this.threeDotItems = [...allowedThree];
 
-    this.savedOrder = this.getCurrentOrder();
-    this.themeAction.canApplyMenuChanges.set(false);
+    this.loadMenuOrder();
 
     this.subs.push(
       this.themeAction.applyMenuChanges$.subscribe(() => this.applyChanges()),
       this.themeAction.resetMenuToDefault$.subscribe(() => this.openResetConfirm())
     );
+  }
+
+  loadMenuOrder(): void {
+    this.dataLoad = true;
+    this.http.getData(`Employeedata/get-user-preference/${this.empinfo?.employeeId}`).subscribe({
+      next: (data: any) => {
+        this.dataLoad = false;
+        const savedValue = data?.data?.[MENU_PREF_KEY];
+        if (savedValue) {
+          const order: MenuOrder = JSON.parse(savedValue);
+          this.menuOrderService.setMenuOrder(order);
+          const mainRoutes = order.mainMenuRoutes.filter(r => r !== '/dashboard');
+          this.mainMenuItems = this.buildListFromRoutes(mainRoutes, this.defaultMain, this.defaultThree);
+          this.threeDotItems = this.buildListFromRoutes(order.threeDotRoutes, this.defaultThree, this.defaultMain);
+        } else {
+          this.menuOrderService.setMenuOrder(null);
+        }
+        this.savedOrder = this.getCurrentOrder();
+        this.themeAction.canApplyMenuChanges.set(false);
+      },
+      error: () => {
+        this.dataLoad = false;
+        this.savedOrder = this.getCurrentOrder();
+        this.themeAction.canApplyMenuChanges.set(false);
+      }
+    });
   }
 
   private buildListFromRoutes(routes: string[], primaryItems: MenuItem[], secondaryItems: MenuItem[]): MenuItem[] {
@@ -151,10 +175,18 @@ export class MenusPersonalizationComponent implements OnInit, OnDestroy {
       mainMenuRoutes: ['/dashboard', ...current.mainMenuRoutes],
       threeDotRoutes: current.threeDotRoutes
     };
-    localStorage.setItem(MENU_ORDER_LS_KEY, JSON.stringify(order));
-    this.savedOrder = current;
-    this.themeAction.canApplyMenuChanges.set(false);
-    this.openModalService.openSuccessModal('Menu order saved successfully');
+    const payload = {
+      employeeId: this.empinfo?.employeeId || 0,
+      key: MENU_PREF_KEY,
+      value: JSON.stringify(order)
+    };
+    this.http.postdata('Employeedata/save-user-preference', payload).subscribe({
+      next: () => {
+        this.openModalService.openSuccessModal('Menu order saved successfully');
+        this.loadMenuOrder();
+      },
+      error: () => this.openModalService.openErrorModal('Failed to save menu order')
+    });
   }
 
   openResetConfirm(): void {
@@ -163,12 +195,18 @@ export class MenusPersonalizationComponent implements OnInit, OnDestroy {
 
   confirmReset(): void {
     this.modalService.dismissAll();
-    localStorage.removeItem(MENU_ORDER_LS_KEY);
-    this.mainMenuItems = [...this.defaultMain];
-    this.threeDotItems = [...this.defaultThree];
-    this.savedOrder = this.getCurrentOrder();
-    this.themeAction.canApplyMenuChanges.set(false);
-    this.openModalService.openSuccessModal('Menu order reset to default successfully');
+    const payload = {
+      employeeId: this.empinfo?.employeeId || 0,
+      key: MENU_PREF_KEY,
+      value: ''
+    };
+    this.http.postdata('Employeedata/save-user-preference', payload).subscribe({
+      next: () => {
+        this.openModalService.openSuccessModal('Menu order reset to default successfully');
+        this.loadMenuOrder();
+      },
+      error: () => this.openModalService.openErrorModal('Failed to reset menu order')
+    });
   }
 
   ngOnDestroy(): void {

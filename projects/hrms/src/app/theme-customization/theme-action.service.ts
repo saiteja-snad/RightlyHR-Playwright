@@ -1,8 +1,6 @@
 import { Injectable, signal } from '@angular/core';
 import { Subject } from 'rxjs';
 
-export const MENU_ORDER_LS_KEY = 'RHR_MENU_ORDER';
-
 export interface MenuOrder {
   mainMenuRoutes: string[];
   threeDotRoutes: string[];

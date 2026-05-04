@@ -705,7 +705,7 @@ getinitateoffboardingdata(){
 
   onBackSubmit() {
     if (this.headerName === 'Team member info') {
-      this.router.navigate(['/myinfo/job/team-members']);
+      this.router.navigate(['/myinfo/job/team/my-team-members']);
       return;
     }
     let routestatus = JSON.parse(localStorage.getItem('personaldata') || '{}');

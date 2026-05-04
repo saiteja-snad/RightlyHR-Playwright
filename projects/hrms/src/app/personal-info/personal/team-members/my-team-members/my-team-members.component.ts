@@ -76,6 +76,10 @@ export class MyTeamMembersComponent {
     return this.router.url.includes(route);
   }
 
+  isMyTeamRoute(): boolean {
+    return this.router.url === '/personalinfo/job/team/my-team-members';
+  }
+
   mapToTreeNodes(data: any[]): any[] {
     return data.map(item => ({
       data: {

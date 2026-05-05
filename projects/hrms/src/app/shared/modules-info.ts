@@ -132,6 +132,11 @@ export const MODULE_INFOS = {
     ATTENDANCE_REMOTE_LOGIN_REPORTS_MODULE_INFO: "The Remote Login Report enables HR to generate and review detailed records of employees who have applied for remote login. It provides complete visibility of application dates and durations for accurate tracking purposes.",
     ATTENDANCE_EXTRA_HOURS_MODULE_INFO:"This section allows employees to submit requests for extra hours worked beyond their regular shift. Employees can provide the required details for the additional time spent. Once submitted, the request is sent to the approver for review and necessary action.",
     LEAVE_CARRYFORWARD_ENCASHMENT_REPORTS_MODULE_INFO: "Provides a consolidated view of employee leave balances after year-end processing, including carry-forwarded leaves, encashment details, and lapsed balances across leave categories. It helps HR teams validate year-end leave processing, ensure policy compliance, and track accurate leave balance transitions between fiscal years.",
+    ATTENDANCE_LATE_LOGIN_MODULE_INFO:
+    'Displays details of employees who logged in after their scheduled start time, including login timestamps, delay duration, department, and reporting manager. Helps HR monitor punctuality trends and identify frequent late logins.',
+  ATTENDANCE_EXCEEDED_BREAK_HOURS_MODULE_INFO:
+    'Provides information on employees who exceeded their allocated break time, including break duration and excess time. Helps HR ensure adherence to work schedules and monitor break-time compliance.',
+    
     //Monthly Attendance Report Module Info
     MONTHLY_ATTENDANCE_REPORT_MODULE_INFO: "The Monthly Attendance Report allows users to generate a consolidated view of employee attendance, including leaves, work-from-home, permissions, and regularizations. This report supports accurate payroll processing, compliance checks, and performance tracking.",
 

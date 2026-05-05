@@ -913,6 +913,12 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Leave Carry Forward & Encashment Report',
     'Leave Carry Forward & Encashment Report - Generate',
     'Leave Carry Forward & Encashment Report - Export',
+    'Late Login Report',
+    'Late Login Report - Generate',
+    'Late Login Report - Export',
+    'Exceeded Break Hours Report',
+    'Exceeded Break Hours Report - Generate',
+    'Exceeded Break Hours Report - Export',
   ];
   attendanceReportsEmployeeTeamTabsFields = [
     'Attendance All Employees List(Leaves)',

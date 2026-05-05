@@ -35,7 +35,25 @@ export default [
             { path: 'leave-carryforward-report', loadComponent: () => import('./attendence-reports/leave-carry-forward-report/leave-carry-forward-report.component').then((m) => m.LeaveCarryForwardReportComponent), canActivate: [PermissionsGuard], data: { permission: 'Leave Carry Forward & Encashment Report.view' } },
             { path: 'remotelogin-report', loadComponent: () => import('./attendence-reports/remote-login-report/remote-login-report.component').then((m) => m.RemoteLoginReportComponent), canActivate: [PermissionsGuard], data: { permission: 'Remote Login Report.view' } },
             { path: 'extraloghour-report', loadComponent: () => import('./attendence-reports/extraloghour-report/extraloghour-report.component').then((m) => m.ExtraloghourReportComponent), canActivate: [PermissionsGuard], data: { permission: 'Extra Log Hours Report.view' } },
-        ]
+             {
+        path: 'late-login-report',
+        loadComponent: () =>
+          import('./attendence-reports/late-login-report/late-login-report.component').then(
+            (m) => m.LateLoginReportComponent,
+          ),
+        canActivate: [PermissionsGuard],
+        data: { permission: 'Late Login Report.view' },
+      },
+      {
+        path: 'exceeded-break-hours-report',
+        loadComponent: () =>
+          import('./attendence-reports/exceeded-break-hours-report/exceeded-break-hours-report.component').then(
+            (m) => m.ExceededBreakHoursReportComponent,
+          ),
+        canActivate: [PermissionsGuard],
+        data: { permission: 'Exceeded Break Hours Report.view' },
+      },
+        ],
     },
     { path: 'monthly-attandance-reports', loadComponent: () => import('./monthly-attandance-report/monthly-attandance-report.component').then((m) => m.MonthlyAttandanceReportComponent), canActivate: [PermissionsGuard], data: { permission: 'Monthly Attendance Reports.view' } },
     {

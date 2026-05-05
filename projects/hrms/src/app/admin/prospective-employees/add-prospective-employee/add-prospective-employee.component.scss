@@ -13,3 +13,18 @@ input:focus{
   border: 1px solid #ccc;
   border-radius: 4px;
 }
+
+.popup-table-wrapper .popup-table th,
+.popup-table-wrapper .popup-table td {
+  text-align: center;
+  padding: 0.5rem;
+  border: 2px solid var(--accordian-table-border-color);
+  font-size: var(--fontsize12);
+}
+
+.popup-table-wrapper .popup-table-scroll-container {
+    max-height: 30vh;
+    overflow-y: auto;
+    /* border: 1px solid var(--accordian-table-border-color); */
+    border-bottom: 0rem !important;
+}

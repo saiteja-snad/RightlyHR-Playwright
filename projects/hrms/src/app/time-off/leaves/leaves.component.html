@@ -88,7 +88,7 @@
                         <div class="separator"></div>
                         <div class="leave-category-text">
                             <p class="m-0">Processed</p>
-                            @if (item.category.isProbationAllowed && item.probationLeaves > 0) {
+                            @if (item.category.isProbationAllowed && item.probationLeaves >= 0) {
                             <p class="m-0">{{item.utilizedDays ? item.utilizedDays : '0'}}</p>
                             }
                             @else if (item.category.isProbationAllowed && (!item.probationLeaves || item.probationLeaves === 0)) {
@@ -101,6 +101,18 @@
                             <p class="m-0">0</p>
                             }
                         </div>
+                        
+                        @if(this.employeeiddetails.empType === 'Probation' && (item.category.isProbationAllowed && item.probationLeaves >= 0)){
+                        <div class="separator"></div>
+                        <div class="leave-category-text">
+                            <p class="m-0">Probation</p>
+                            @if (item.category.isProbationAllowed && item.probationLeaves >= 0) {
+                            <p class="m-0">{{item.availableProbationLeaves ? item.availableProbationLeaves : '0'}}</p>
+                            }
+                        </div>
+                        }
+                        
+                        
                         @if (
                         ['comp off',
                         'compoff',
@@ -128,7 +140,12 @@
                  getProgress(item) + 'deg, ' + getTransparentColor(item.category.categoryColor, 0.3) + ' 0deg)'">
                         <span class="progress-value">
                             <span class="avaliable-leaves-text">{{ getAvailableLeaves(item) }}</span>
+                            @if(this.employeeiddetails.empType === 'Probation' && (item.category.isProbationAllowed && item.probationLeaves >= 0)){
+                            <span class="total-leaves-text">/{{item.probationLeaves}}</span>
+                            }
+                            @else {
                             <span class="total-leaves-text">/{{item.allowedDays}}</span>
+                            }
                         </span>
                     </div>
                 </div>

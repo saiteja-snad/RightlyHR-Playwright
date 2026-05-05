@@ -372,10 +372,26 @@ export class OnBeHalfOfComponent {
   }
 
   getAvailableLeaves(item: any): number {
-    if (item.category?.isProbationAllowed && item.probationLeaves > 0) {
-      return item.probationLeaves - item.utilizedDays - item.booked - (item.expiryDaysLeaves ? item.expiryDaysLeaves : 0);
+   const isCompOff = [
+      'comp off',
+      'compoff',
+      'compensatory off',
+      'compensatory leaves',
+      'compensatory leave',
+      'compensatory off leave',
+      'compensatoryoff leaves',
+      'compensatoryoff leave',
+      'compensatory off leaves',
+      'comp off leave',
+      'compoff leave'
+    ].includes((item.category?.name ?? '').toLowerCase());
+    
+    const expiryDeduction = isCompOff ? (item.expiryDaysLeaves ? item.expiryDaysLeaves : 0) : 0;
+    
+    if ((this.employeeiddetails.empType === 'Probation' && (item.category?.isProbationAllowed && item.probationLeaves > 0 && this.employeeiddetails?.probationEndDate)) || (new Date(this.employeeiddetails.probationEndDate).toDateString() > new Date().toDateString())) {
+      return item.availableProbationLeaves; 
     } else {
-      return item.allowedDays - item.utilizedDays - item.booked - (item.expiryDaysLeaves ? item.expiryDaysLeaves : 0);
+      return item.allowedDays - item.utilizedDays - item.booked - expiryDeduction;
     }
   }
 
@@ -397,10 +413,18 @@ export class OnBeHalfOfComponent {
   }
 
   getProgress(item: any): number {
-    const available = this.getAvailableLeaves(item);
-    const total = item.allowedDays || 1; // Avoid division by zero
-    const percentage = Math.max(0, Math.min(available / total, 1)); // Clamp between 0 and 1
-    return percentage * 360;
+    if (this.employeeiddetails.empType === 'Probation' && (item.category.isProbationAllowed && item.probationLeaves >= 0)) {
+      const available = this.getAvailableLeaves(item);
+      const total = item.probationLeaves || 1; // Avoid division by zero
+      const percentage = Math.max(0, Math.min(available / total, 1)); // Clamp between 0 and 1
+      return percentage * 360;
+    }
+    else {
+      const available = this.getAvailableLeaves(item);
+      const total = item.allowedDays || 1; // Avoid division by zero
+      const percentage = Math.max(0, Math.min(available / total, 1)); // Clamp between 0 and 1
+      return percentage * 360;
+    }
   }
   OnclickMyTeam(fusionemployeeId: any): void {
     this.selectedEmployeeId = fusionemployeeId?.value || null;
@@ -464,7 +488,6 @@ export class OnBeHalfOfComponent {
     this.cadidateEmployeeId = fusionemployeeId.value;
     this.getOrgHolidaysByEmpId(fusionemployeeId.value);
     this.getholidaybyempid(fusionemployeeId.value);
-    this.getweekendbyempid(fusionemployeeId.value);
     this.getcustompolicybyempid(fusionemployeeId.value);
     this.getLeavesData(fusionemployeeId.value);
     localStorage.setItem('onbehalfof', fusionemployeeId.value);
@@ -483,6 +506,13 @@ export class OnBeHalfOfComponent {
     this.cadidateEmployeeId = 0;
     localStorage.removeItem('onbehalfof');
     this.http.onBehalfOfTriggerSignal.set(true);
+
+    // Navigate first, then reload if necessary
+    this.router
+      .navigate(['/on-behalf-of/on-behalf-of/waiting-for-approval'])
+      .then(() => {
+        window.location.reload(); // Reload after navigation is complete
+      });
   }
 
   onleaveSelect(categoryId: number) {
@@ -526,8 +556,8 @@ export class OnBeHalfOfComponent {
     const leavesTaken = this.selectedleave?.utilizedDays;
     const booked = this.selectedleave?.booked;
     this.remainingLeaves = maxDays - (leavesTaken ? leavesTaken : 0) - booked;
-    if (this.selectedleave && this.selectedleave.category && this.selectedleave.category.isProbationAllowed) {
-      const probationLeavesTaken = this.selectedleave.probationLeaves - (leavesTaken !== undefined ? leavesTaken : 0) - booked;
+    if (this.selectedleave && this.selectedleave.category && this.selectedleave.category.isProbationAllowed && this.employeeiddetails.empType === 'Probation') {
+      const probationLeavesTaken = this.selectedleave.availableProbationLeaves;
       if (probationLeavesTaken >= 0) {
         this.remainingLeaves = probationLeavesTaken;
       } else {
@@ -651,9 +681,9 @@ export class OnBeHalfOfComponent {
         next: (response: any) => {
           if (response.success) {
             this.categoryDetails = response.data as ICategoryDetails[];
-
-            this.calculateProbationLeavs(this.categoryDetails);
-            this.logOptionalLeaveDays(this.categoryDetails);
+            
+            // this.calculateProbationLeavs(this.categoryDetails);
+             this.logOptionalLeaveDays(this.categoryDetails);
             this.initChart(this.categoryDetails);
             this.updateOptionalLeaveUsageFromHistory();
           }

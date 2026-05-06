@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, effect } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
-import { DragDropModule, CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
+import { DragDropModule, CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { RbacService } from '../../services/rbac.service';
 import { ThemeActionService, MenuOrder } from '../theme-action.service';
 import { Subscription } from 'rxjs';
@@ -34,16 +34,16 @@ export class MenusPersonalizationComponent implements OnInit, OnDestroy {
   };
 
   allMainMenuItems: MenuItem[] = [
-    { label: 'My Info', icon: '/main-menu-icons/my-Info-icon.png', route: '/myinfo', permission: { feature: 'My Info', action: 'view' } },
-    { label: 'Employees', icon: '/main-menu-icons/employee-management-icon.png', route: '/employee-management', permission: { feature: 'Employees', action: 'view' } },
-    { label: 'Time-Off', icon: '/main-menu-icons/clock.png', route: '/time-off', permission: { feature: 'Time-Off', action: 'view' } },
-    { label: 'Attendance', icon: '/main-menu-icons/finger-print.png', route: '/attendance', permission: { feature: 'Attendance', action: 'view' } },
-    { label: 'Reports', icon: '/main-menu-icons/reports.png', route: '/reports', permission: { feature: 'Reports', action: 'view' } },
-    { label: 'Project Management', icon: '/main-menu-icons/project-management-icon.png', route: '/project-management', permission: { feature: 'Project Management', action: 'view' } },
-    { label: 'Skill Set', icon: '/main-menu-icons/skill-management.png', route: '/skill-management', permission: { feature: 'Skill Set Management', action: 'view' } },
-    { label: 'On Behalf Of', icon: '/main-menu-icons/clock.png', route: '/on-behalf-of', permission: { feature: 'On Behalf Of', action: 'view' } },
-    { label: 'Pending Approvals', icon: '/main-menu-icons/pending-approvals.png', route: '/pending-approvals', permission: { feature: 'Pending Approvals Module', action: 'view' } },
-    { label: 'PMS', icon: '/main-menu-icons/pms.png', route: '/pms', permission: { feature: 'PMS', action: 'view' } },
+    { label: 'My Info', icon: '/personalization/My info.jpg', route: '/myinfo', permission: { feature: 'My Info', action: 'view' } },
+    { label: 'Employees', icon: '/personalization/Employees.png', route: '/employee-management', permission: { feature: 'Employees', action: 'view' } },
+    { label: 'Time Off', icon: '/personalization/Time Off.png', route: '/time-off', permission: { feature: 'Time-Off', action: 'view' } },
+    { label: 'Attendance', icon: '/personalization/Attendance.png', route: '/attendance', permission: { feature: 'Attendance', action: 'view' } },
+    { label: 'Reports', icon: '/personalization/Reports.png', route: '/reports', permission: { feature: 'Reports', action: 'view' } },
+    { label: 'Project Management', icon: '/personalization/Project Management.png', route: '/project-management', permission: { feature: 'Project Management', action: 'view' } },
+    { label: 'Skill Set', icon: '/personalization/Skill Set.png', route: '/skill-management', permission: { feature: 'Skill Set Management', action: 'view' } },
+    { label: 'On Behalf Of', icon: '/personalization/On Behalf Of.png', route: '/on-behalf-of', permission: { feature: 'On Behalf Of', action: 'view' } },
+    { label: 'Pending Approvals', icon: '/personalization/Pending Approvals.png', route: '/pending-approvals', permission: { feature: 'Pending Approvals Module', action: 'view' } },
+    { label: 'PMS', icon: '/personalization/PMS.png', route: '/pms', permission: { feature: 'PMS', action: 'view' } },
   ];
 
   allThreeDotItems: MenuItem[] = [
@@ -60,7 +60,6 @@ export class MenusPersonalizationComponent implements OnInit, OnDestroy {
     { label: 'Cards Management', icon: '/main-menu-icons/card-management-icon.png', route: '/card-management', permission: { feature: 'Desk Allocation', action: 'view' } },
   ];
 
-  private allItemsPool: MenuItem[] = [];
   private defaultMain: MenuItem[] = [];
   private defaultThree: MenuItem[] = [];
   private empinfo: any;
@@ -80,7 +79,20 @@ export class MenusPersonalizationComponent implements OnInit, OnDestroy {
     private openModalService: OpenModalService,
     private http: HttpService,
     private menuOrderService: MenuOrderService
-  ) {}
+  ) {
+    let previousOrderJson: string | null = null;
+    effect(() => {
+      const order = this.menuOrderService.menuOrder();
+      const currentJson = order ? JSON.stringify(order) : null;
+      // Only reload if signal changed AND component is already initialized
+      if (currentJson && currentJson !== previousOrderJson && this.savedOrder !== null) {
+        previousOrderJson = currentJson;
+        this.loadMenuOrder();
+      } else {
+        previousOrderJson = currentJson;
+      }
+    });
+  }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
@@ -92,7 +104,6 @@ export class MenusPersonalizationComponent implements OnInit, OnDestroy {
       this.rbac.allowedToAccess(`${i.permission.feature}.${i.permission.action}`)
     );
 
-    this.allItemsPool = [...allowedMain, ...allowedThree];
     this.defaultMain = [...allowedMain];
     this.defaultThree = [...allowedThree];
 
@@ -117,8 +128,8 @@ export class MenusPersonalizationComponent implements OnInit, OnDestroy {
           const order: MenuOrder = JSON.parse(savedValue);
           this.menuOrderService.setMenuOrder(order);
           const mainRoutes = order.mainMenuRoutes.filter(r => r !== '/dashboard');
-          this.mainMenuItems = this.buildListFromRoutes(mainRoutes, this.defaultMain, this.defaultThree);
-          this.threeDotItems = this.buildListFromRoutes(order.threeDotRoutes, this.defaultThree, this.defaultMain);
+          this.mainMenuItems = this.buildListFromRoutes(mainRoutes, this.defaultMain);
+          this.threeDotItems = this.buildListFromRoutes(order.threeDotRoutes, this.defaultThree);
         } else {
           this.menuOrderService.setMenuOrder(null);
         }
@@ -133,16 +144,15 @@ export class MenusPersonalizationComponent implements OnInit, OnDestroy {
     });
   }
 
-  private buildListFromRoutes(routes: string[], primaryItems: MenuItem[], secondaryItems: MenuItem[]): MenuItem[] {
+  private buildListFromRoutes(routes: string[], items: MenuItem[]): MenuItem[] {
     const result: MenuItem[] = [];
     routes.forEach(route => {
-      const found = this.allItemsPool.find(i => i.route === route);
+      const found = items.find(i => i.route === route);
       if (found) result.push(found);
     });
-    primaryItems.forEach(i => {
-      if (!result.find(r => r.route === i.route) && !routes.includes(i.route)) {
-        result.push(i);
-      }
+    // Append any allowed items not in saved order
+    items.forEach(i => {
+      if (!result.find(r => r.route === i.route)) result.push(i);
     });
     return result;
   }
@@ -160,12 +170,7 @@ export class MenusPersonalizationComponent implements OnInit, OnDestroy {
   }
 
   onDrop(event: CdkDragDrop<MenuItem[]>) {
-    this.activeDropList = null;
-    if (event.previousContainer === event.container) {
-      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
-    } else {
-      transferArrayItem(event.previousContainer.data, event.container.data, event.previousIndex, event.currentIndex);
-    }
+    moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
     this.themeAction.canApplyMenuChanges.set(this.hasChanges());
   }
 
@@ -182,7 +187,7 @@ export class MenusPersonalizationComponent implements OnInit, OnDestroy {
     };
     this.http.postdata('Employeedata/save-user-preference', payload).subscribe({
       next: () => {
-        this.openModalService.openSuccessModal('Menu order saved successfully');
+        this.openModalService.openSuccessModal('Menu order has been saved successfully.');
         this.loadMenuOrder();
       },
       error: () => this.openModalService.openErrorModal('Failed to save menu order')
@@ -195,14 +200,18 @@ export class MenusPersonalizationComponent implements OnInit, OnDestroy {
 
   confirmReset(): void {
     this.modalService.dismissAll();
+    const defaultOrder: MenuOrder = {
+      mainMenuRoutes: ['/dashboard', ...this.defaultMain.map(i => i.route)],
+      threeDotRoutes: this.defaultThree.map(i => i.route)
+    };
     const payload = {
       employeeId: this.empinfo?.employeeId || 0,
       key: MENU_PREF_KEY,
-      value: ''
+      value: JSON.stringify(defaultOrder)
     };
     this.http.postdata('Employeedata/save-user-preference', payload).subscribe({
       next: () => {
-        this.openModalService.openSuccessModal('Menu order reset to default successfully');
+        this.openModalService.openSuccessModal('Menu order has been reset to default successfully.');
         this.loadMenuOrder();
       },
       error: () => this.openModalService.openErrorModal('Failed to reset menu order')

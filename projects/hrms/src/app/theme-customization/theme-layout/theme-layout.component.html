@@ -1,7 +1,11 @@
 <div class="custom-main-component-container">
   <div class="component-header-content">
     <div class="heading-content">
-      <div class="component-header">Personalization</div>
+      <div class="commpoment-name">Personalization <span><i class="bi bi-chevron-double-right"></i></span></div>
+      <div class="component-header">{{ getActiveTabLabel() }}</div>
+      <div>
+        <app-module-info-icon placement="bottom" [ngbPopover]="popContent" class="cursor" />
+      </div>
     </div>
     <div class="d-flex align-items-center gap-3" *ngIf="isColorThemesActive()">
       <button class="custom-btn btn-primary px-5"
@@ -38,3 +42,7 @@
     </div>
   </div>
 </div>
+
+<ng-template #popContent>
+  <app-module-information [moduleInfo]="getModuleInfo()" />
+</ng-template>

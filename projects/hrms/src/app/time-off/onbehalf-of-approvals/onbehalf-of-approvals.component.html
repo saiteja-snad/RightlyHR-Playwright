@@ -252,6 +252,9 @@
       <div *ngIf="activeTab === 'timesheets'">
         <app-timesheet-requests (dataEvent)="timesheetRequestsOff($event)"></app-timesheet-requests>
       </div>
+      <div *ngIf="activeTab === 'expenses'">
+        <app-expenses (dataEvent)="expensesoff($event)"></app-expenses>
+      </div>
     </div>
   </div>
 </div>

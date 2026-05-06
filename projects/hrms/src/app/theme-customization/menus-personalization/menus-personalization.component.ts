@@ -73,7 +73,7 @@ export class MenusPersonalizationComponent implements OnInit, OnDestroy {
   private subs: Subscription[] = [];
 
   constructor(
-    private rbac: RbacService,
+    public rbac: RbacService,
     private themeAction: ThemeActionService,
     private modalService: NgbModal,
     private openModalService: OpenModalService,

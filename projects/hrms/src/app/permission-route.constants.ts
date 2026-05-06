@@ -232,6 +232,14 @@ export const ATTENDANCE_REPORTS_TABS = [
   { route: '/reports/attendence-reports/exit-feedback-report', permission: 'Employee Exit Report.view' },
   { route: '/reports/attendence-reports/regularization-report', permission: 'Regularization Report.view' },
   { route: '/reports/attendence-reports/extraloghour-report', permission: 'Extra Log Hours Report.view' },
+  {
+    route: '/reports/attendence-reports/late-login-report',
+    permission: 'Late Login Report.view',
+  },
+  {
+    route: '/reports/attendence-reports/exceeded-break-hours-report',
+    permission: 'Exceeded Break Hours Report.view',
+  },
 ];
 
 export const TIMESHEET_REPORTS_TABS = [

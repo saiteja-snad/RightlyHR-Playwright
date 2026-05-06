@@ -108,7 +108,7 @@ export class AddClaimsandexpensesComponent implements OnInit, OnDestroy {
   initiateForm() {
     this.newExpenseForm = this.fb.group({
       expensesTitle: [null, [Validators.required, Validators.maxLength(50), Validators.pattern(/.*\S.*/)]],
-      // approvalemail: [null, Validators.required],
+      approvalemail: [null, Validators.required],
       expenseItems: this.fb.array([], this.duplicateReceiptValidator),
       additional_details: [null]
     });
@@ -386,7 +386,7 @@ export class AddClaimsandexpensesComponent implements OnInit, OnDestroy {
         applied_date: new Date().toISOString(),
         expenses_Title: form.value.expensesTitle,
         expenseId: this.selectedexpensesid,
-        // approverEmail: form.value.approvalemail.value,
+        approverEmail: form.value.approvalemail.value,
         additional_details: form.value.additional_details,
         status: 'Waiting for Approval',
         employeeId: this.empinfo.employeeId,
@@ -473,7 +473,7 @@ export class AddClaimsandexpensesComponent implements OnInit, OnDestroy {
         applied_date: new Date().toISOString(),
         expenses_Title: form.value.expensesTitle,
         expenseId: this.selectedexpensesid,
-        // approverEmail: form.value.approvalemail.value,
+        approverEmail: form.value.approvalemail.value,
         additional_details: form.value.additional_details,
         status: 'Draft',
         employeeId: this.empinfo.employeeId,

@@ -11,6 +11,7 @@ import { FormValidationsService } from '../../services/form-validations.service'
 import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { PredefinedThemesService } from '../../services/theme-service/predefined-themes.service';
+import { MenuOrderService } from '../../services/theme-service/menu-order.service';
 @Component({
   selector: 'app-main-layout',
   imports: [SidenavComponent, HeaderComponent, RouterOutlet, CommonModule, ReactiveFormsModule,],
@@ -32,7 +33,8 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
 
   constructor(private fb: FormBuilder, public readonly router: Router, private http: HttpService,
     private modalService: NgbModal, private conformationPopup: OpenModalService, public formsValidation: FormValidationsService,
-    private predefinedThemesService: PredefinedThemesService) { }
+    private predefinedThemesService: PredefinedThemesService,
+    private menuOrderService: MenuOrderService) { }
 
   async ngOnInit() {
     this.intilaizeChangePasswordForm();
@@ -42,6 +44,7 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
     this.getUserPreference(this.empinfo.employeeId);
     await this.predefinedThemesService.initTheme();
     await this.predefinedThemesService.initFont();
+    await this.menuOrderService.initMenuOrder();
   }
 
   getUserPreference(employeeId: number) {

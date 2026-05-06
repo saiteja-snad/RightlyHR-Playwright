@@ -36,6 +36,7 @@
         <th>{{ 'Location' | translate }}</th>
         <th>{{ 'Sub Location' | translate }}</th>
         <th>{{ 'Shift' | translate }}</th>
+        <th class="text-center">{{ 'Year' | translate }}</th>
         <th>{{ 'Month' | translate }}</th>
         <th>{{ 'Leave Category' | translate }}</th>
         <th class="text-center">{{ 'Leaves Availed' | translate }}</th>
@@ -56,6 +57,7 @@
           <td>{{ record.location ?? '-' }}</td>
           <td>{{ record.subLocation ?? '-' }}</td>
           <td>{{ record.shift ?? '-' }}</td>
+          <td class="text-center">{{ record.year ?? '-' }}</td>
           <td>{{ record.monthName ?? '-' }}</td>
           <td>{{ record.leaveCategoryName ?? '-' }}</td>
           <td class="text-center">{{ record.availed ?? '-' }}</td>
@@ -81,6 +83,16 @@
 
     <div class="offcanvas-filter-content">
       <form [formGroup]="lvSummeryReportForm" (ngSubmit)="onGenerate()">
+
+        <!-- Year -->
+        <div class="mb-3">
+          <label class="form-label custom-label text-nowrap filter-labels mb-3">{{'Select Year' | translate}}</label>
+          <div class="custom-p-select-content">
+            <p-select [options]="years" optionLabel="label" optionValue="value" formControlName="year"
+              placeholder="Please select year" class="form-select custom-select">
+            </p-select>
+          </div>
+        </div>
 
         <!-- Leave Category -->
         <div class="mb-3">

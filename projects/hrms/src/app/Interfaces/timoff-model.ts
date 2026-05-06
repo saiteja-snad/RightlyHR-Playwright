@@ -63,7 +63,9 @@ export interface ICategoryDetails {
   duration: number;
   probationLeaves: number;
   noticePeriodLeaves: number;
-  expiryDaysLeaves: number
+  expiryDaysLeaves: number;
+  sourceUtilizedDays : number;
+  availableProbationLeaves : number;
 }
 export interface Ileavesdatas {
   requestedBy: any;

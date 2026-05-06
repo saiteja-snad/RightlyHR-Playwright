@@ -232,6 +232,14 @@ export const ATTENDANCE_REPORTS_TABS = [
   { route: '/reports/attendence-reports/exit-feedback-report', permission: 'Employee Exit Report.view' },
   { route: '/reports/attendence-reports/regularization-report', permission: 'Regularization Report.view' },
   { route: '/reports/attendence-reports/extraloghour-report', permission: 'Extra Log Hours Report.view' },
+  {
+    route: '/reports/attendence-reports/late-login-report',
+    permission: 'Late Login Report.view',
+  },
+  {
+    route: '/reports/attendence-reports/exceeded-break-hours-report',
+    permission: 'Exceeded Break Hours Report.view',
+  },
 ];
 
 export const TIMESHEET_REPORTS_TABS = [
@@ -563,6 +571,7 @@ export const EMPLOYEE_INFO_DOCUMENTS_ROUTES = [
 export const Employee_TEAM_NUMBERS = [
   { permission: 'Employee Info My Team Members Tab.view', route: '/personalinfo/job/team/my-team-members' },
   { permission: 'Employee Info Team Members Tab.view', route: '/personalinfo/job/team/team-members' },
+  { permission: 'Employee Info Location Change Tab.view', route: '/personalinfo/job/team/location-change' }
 ]
 export const MY_INFO_TEAM_MEMBERS = [
   { permission: 'My Info Team Members Tab.view', route: '/myinfo/team-members' }

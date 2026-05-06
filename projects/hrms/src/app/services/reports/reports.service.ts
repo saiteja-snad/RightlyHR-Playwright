@@ -124,6 +124,61 @@ export class ReportsService {
     return this.http.get('Reports/ExtraLogHoursReports', { params });
   }
 
+   getLateLoginReport(request: any) {
+    let params = new HttpParams();
+
+    if (request.employeeId) {
+      params = params.set('employeeId', request.employeeId);
+    }
+
+    if (request.managerId) {
+      params = params.set('managerId', request.managerId);
+    }
+
+    if (request.locationId) {
+      params = params.set('locationId', request.locationId);
+    }
+
+    if (request.sublocationId) {
+      params = params.set('sublocationId', request.sublocationId);
+    }
+
+    if (request.fromDate && request.toDate) {
+      params = params.set('fromDate', request.fromDate);
+      params = params.set('toDate', request.toDate);
+    }
+
+    return this.http.get('Reports/late-login-report', { params });
+  }
+
+  getExceededBreakHoursReport(request: any) {
+    let params = new HttpParams();
+
+    if (request.employeeId) {
+      params = params.set('employeeId', request.employeeId);
+    }
+
+    if (request.managerId) {
+      params = params.set('managerId', request.managerId);
+    }
+
+    if (request.locationId) {
+      params = params.set('locationId', request.locationId);
+    }
+
+    if (request.sublocationId) {
+      params = params.set('sublocationId', request.sublocationId);
+    }
+
+    if (request.fromDate && request.toDate) {
+      params = params.set('fromDate', request.fromDate);
+      params = params.set('toDate', request.toDate);
+    }
+
+    return this.http.get('Reports/exceeded-break-report', { params });
+  }
+
+
   getInactiveReports(request: IInactiveReportRequest) {
     let params = new HttpParams();
 

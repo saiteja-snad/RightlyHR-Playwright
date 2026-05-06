@@ -238,6 +238,62 @@ export default [
     canActivate: [PermissionsGuard],
     data: { permission: 'Org Leave Balance.view' },
   },
+    {
+        path: 'standard-reports', children: [
+            // { path: '', redirectTo: 'employee-data', pathMatch: 'full' },
+            { path: 'employee-data', loadComponent: () => import('./standard-reports/employee-master-data/employee-master-data.component').then(m => m.EmployeeMasterDataComponent), canActivate: [PermissionsGuard], data: { permission: 'Employee Overview Report.view' } },
+            { path: 'job-data', loadComponent: () => import('./standard-reports/job-location-wise-data/job-location-wise-data.component').then(m => m.JobLocationWiseDataComponent), canActivate: [PermissionsGuard], data: { permission: 'Job Location Report.view' } },
+            { path: 'branch-data', loadComponent: () => import('./standard-reports/branch-location-wise-data/branch-location-wise-data.component').then(m => m.BranchLocationWiseDataComponent), canActivate: [PermissionsGuard], data: { permission: 'Branch-Wise Employee Report.view' } },
+            { path: 'family-data', loadComponent: () => import('./standard-reports/family-members-data/family-members-data.component').then(m => m.FamilyMembersDataComponent), canActivate: [PermissionsGuard], data: { permission: 'Family Details Report.view' } },
+        ]
+    },
+    { path: 'custom-reports', loadComponent: () => import('./custom-reports/custom-reports.component').then((m) => m.CustomReportsComponent), canActivate: [PermissionsGuard], data: { permission: 'Custom Reports.view' } },
+    {
+        path: 'attendence-reports', children: [
+            //    { path: '',redirectTo: 'leave-report', pathMatch: 'full' },
+            { path: 'leave-report', loadComponent: () => import('./attendence-reports/leave-report/leave-report.component').then((m) => m.LeaveReportComponent), canActivate: [PermissionsGuard], data: { permission: 'Leave Report.view' } },
+            { path: 'leave-summary-report', loadComponent: () => import('./attendence-reports/leave-summary-report/leave-summary-report.component').then((m) => m.LeaveSummaryReportComponent), canActivate: [PermissionsGuard], data: { permission: 'Leave Summary Report.view' } },
+            { path: 'compoff-report', loadComponent: () => import('./attendence-reports/compoff-report/compoff-report.component').then((m) => m.CompoffReportComponent), canActivate: [PermissionsGuard], data: { permission: 'Comp Off Report.view' } },
+            { path: 'wfh-report', loadComponent: () => import('./attendence-reports/wfh-report/wfh-report.component').then((m) => m.WfhReportComponent), canActivate: [PermissionsGuard], data: { permission: 'WFH Report.view' } },
+            { path: 'absent-report', loadComponent: () => import('./attendence-reports/absent-report/absent-report.component').then((m) => m.AbsentReportComponent), canActivate: [PermissionsGuard], data: { permission: 'Absent Report.view' } },
+            { path: 'inactive-employee-report', loadComponent: () => import('./attendence-reports/inactive-employee-report/inactive-employee-report.component').then((m) => m.InactiveEmployeeReportComponent), canActivate: [PermissionsGuard], data: { permission: 'Inactive Employee Leave Summary Report.view' } },
+            { path: 'yearly-summary-report', loadComponent: () => import('./attendence-reports/yearly-summary-report/yearly-summary-report.component').then((m) => m.YearlySummaryReportComponent), canActivate: [PermissionsGuard], data: { permission: 'Yearly Summary Report.view' } },
+            { path: 'permission-report', loadComponent: () => import('./attendence-reports/permission-reports/permission-reports.component').then((m) => m.PermissionReportsComponent), canActivate: [PermissionsGuard], data: { permission: 'Permission Report.view' } },
+            { path: 'exit-feedback-report', loadComponent: () => import('./attendence-reports/exit-feedback-reports/exit-feedback-reports.component').then((m) => m.ExitFeedbackReportsComponent), canActivate: [PermissionsGuard], data: { permission: 'Employee Exit Report.view' } },
+            { path: 'regularization-report', loadComponent: () => import('./attendence-reports/regularization-reports/regularization-reports.component').then((m) => m.RegularizationReportsComponent), canActivate: [PermissionsGuard], data: { permission: 'Regularization Report.view' } },
+            { path: 'remotelogin-report', loadComponent: () => import('./attendence-reports/remote-login-report/remote-login-report.component').then((m) => m.RemoteLoginReportComponent), canActivate: [PermissionsGuard], data: { permission: 'Remote Login Report.view' } },
+            { path: 'leave-carryforward-report', loadComponent: () => import('./attendence-reports/leave-carry-forward-report/leave-carry-forward-report.component').then((m) => m.LeaveCarryForwardReportComponent), canActivate: [PermissionsGuard], data: { permission: 'Leave Carry Forward & Encashment Report.view' } },
+            { path: 'remotelogin-report', loadComponent: () => import('./attendence-reports/remote-login-report/remote-login-report.component').then((m) => m.RemoteLoginReportComponent), canActivate: [PermissionsGuard], data: { permission: 'Remote Login Report.view' } },
+            { path: 'extraloghour-report', loadComponent: () => import('./attendence-reports/extraloghour-report/extraloghour-report.component').then((m) => m.ExtraloghourReportComponent), canActivate: [PermissionsGuard], data: { permission: 'Extra Log Hours Report.view' } },
+             {
+        path: 'late-login-report',
+        loadComponent: () =>
+          import('./attendence-reports/late-login-report/late-login-report.component').then(
+            (m) => m.LateLoginReportComponent,
+          ),
+        canActivate: [PermissionsGuard],
+        data: { permission: 'Late Login Report.view' },
+      },
+      {
+        path: 'exceeded-break-hours-report',
+        loadComponent: () =>
+          import('./attendence-reports/exceeded-break-hours-report/exceeded-break-hours-report.component').then(
+            (m) => m.ExceededBreakHoursReportComponent,
+          ),
+        canActivate: [PermissionsGuard],
+        data: { permission: 'Exceeded Break Hours Report.view' },
+      },
+        ],
+    },
+    { path: 'monthly-attandance-reports', loadComponent: () => import('./monthly-attandance-report/monthly-attandance-report.component').then((m) => m.MonthlyAttandanceReportComponent), canActivate: [PermissionsGuard], data: { permission: 'Monthly Attendance Reports.view' } },
+    {
+        path: 'policy-reports', children:[
+            {path: 'policy-acknowledgment-report', component : PolicyAcknowledgementReportComponent}
+        ]
+    },
+    { path: 'team-leave-balance', loadComponent: () => import('./team-leave-balance/team-leave-balance.component').then((m) => m.TeamLeaveBalanceComponent), canActivate: [PermissionsGuard], data: { permission: 'Team Leave Balance.view' } },
+    { path: 'team-leave-summary', loadComponent: () => import('./team-leave-summary/team-leave-summary.component').then((m) => m.TeamLeaveSummaryComponent), canActivate: [PermissionsGuard], data: { permission: 'Team Leave Balance Summary.view' } },
+    { path: 'org-leave-balance', loadComponent: () => import('./org-leave-balance//org-leave-balance.component').then((m) => m.OrgLeaveBalanceComponent), canActivate: [PermissionsGuard], data: { permission: 'Org Leave Balance.view' } },
 
   {
     path: 'timesheet-reports',

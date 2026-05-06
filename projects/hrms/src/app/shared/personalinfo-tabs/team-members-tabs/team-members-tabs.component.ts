@@ -20,6 +20,7 @@ export class TeamMembersTabsComponent {
  navTabs: any[] = [
     { label: 'Reports to you', link: '/personalinfo/job/team/my-team-members', icon: '/my-info-icons/Team-icon.png', permission: { feature: 'Employee Info My Team Members Tab', action: 'view' }, count: 0 },
     { label: 'Works with you', link: '/personalinfo/job/team/team-members', icon: '/my-info-icons/Team-icon.png', permission: { feature: 'Employee Info Team Members Tab', action: 'view' }, count: 0 },
+    { label: 'Bulk Location Change', link: '/personalinfo/job/team/location-change', icon: '/my-info-icons/Team-icon.png', permission: { feature: 'Employee Info Location Change Tab', action: 'view' }, count: 0 },
   ];
   constructor(public rbac: RbacService, private router: Router, private accessNav: AccessNavigationService, private http: HttpService) { }
 

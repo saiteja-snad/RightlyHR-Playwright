@@ -606,7 +606,49 @@ export const permissionsData = [
   { fields: 'Leave Carry Forward & Encashment Report', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Leave Carry Forward & Encashment Report - Generate', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Leave Carry Forward & Encashment Report - Export', View: false, Update: false, Create: false, Delete: false },
+   {
+    fields: 'Late Login Report',
+    View: false,
+    Update: false,
+    Create: false,
+    Delete: false,
+  },
+  {
+    fields: 'Late Login Report - Generate',
+    View: false,
+    Update: false,
+    Create: false,
+    Delete: false,
+  },
+  {
+    fields: 'Late Login Report - Export',
+    View: false,
+    Update: false,
+    Create: false,
+    Delete: false,
+  },
 
+  {
+    fields: 'Exceeded Break Hours Report',
+    View: false,
+    Update: false,
+    Create: false,
+    Delete: false,
+  },
+  {
+    fields: 'Exceeded Break Hours Report - Generate',
+    View: false,
+    Update: false,
+    Create: false,
+    Delete: false,
+  },
+  {
+    fields: 'Exceeded Break Hours Report - Export',
+    View: false,
+    Update: false,
+    Create: false,
+    Delete: false,
+  },
   // Timesheet Reports Section
   { fields: 'My Timesheet Report', View: false, Update: false, Create: false, Delete: false },
   { fields: 'My Timesheet Report - Generate', View: false, Update: false, Create: false, Delete: false },
@@ -820,6 +862,7 @@ export const permissionsData = [
   { fields: 'Employee Info Change RM Button', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Employee Info Team Managers Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Employee Info Change TM Button', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Employee Info Location Change Tab', View: false, Update: false, Create: false, Delete: false },
 
 
   //Employee Info Onboard Request Sub Tabs Section

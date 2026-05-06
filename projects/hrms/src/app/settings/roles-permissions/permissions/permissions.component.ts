@@ -935,6 +935,12 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Leave Carry Forward & Encashment Report',
     'Leave Carry Forward & Encashment Report - Generate',
     'Leave Carry Forward & Encashment Report - Export',
+    'Late Login Report',
+    'Late Login Report - Generate',
+    'Late Login Report - Export',
+    'Exceeded Break Hours Report',
+    'Exceeded Break Hours Report - Generate',
+    'Exceeded Break Hours Report - Export',
   ];
   attendanceReportsEmployeeTeamTabsFields = [
     'Attendance All Employees List(Leaves)',
@@ -1253,6 +1259,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Employee Info Change RM Button',
     'Employee Info Team Managers Tab',
     'Employee Info Change TM Button',
+    'Employee Info Location Change Tab',
   ];
   pmsModuleFields = [
     'Review Cycle List',

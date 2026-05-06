@@ -1,0 +1,47 @@
+::ng-deep .custom-phase-multiselect-panel {
+    font-size: var(--fontsize12) !important;
+
+    .p-multiselect-option.p-multiselect-option-selected.p-focus {
+        background: var(--body-bg-color) !important;
+        color: var(--primary-color) !important;
+    }
+
+
+    .p-multiselect-option.p-multiselect-option-selected {
+        background: var(--body-bg-color) !important;
+        color: var(--primary-color) !important;
+    }
+
+    .p-checkbox-checked .p-checkbox-box {
+        border-color: var(--primary-color) !important;
+        background: var(--primary-color) !important;
+    }
+}
+
+::ng-deep .p-select.ng-invalid.ng-dirty .p-select-label.p-placeholder {
+    color: #64748b !important;
+}
+
+::ng-deep .p-multiSelect.ng-invalid.ng-dirty .p-select-label.p-placeholder {
+    color: #64748b !important;
+}
+
+::ng-deep .p-multiselect-option {
+    span {
+        line-break: anywhere !important;
+        white-space: normal !important;
+        max-width: 250px !important;
+    }
+}
+
+::ng-deep .p-multiselect-option .p-checkbox {
+    align-self: flex-start; // aligns checkbox properly when text wraps
+}
+
+.p-inputtext {
+    font-size: 0.8rem !important;
+}
+
+::ng-deep .p-multiselect-list-container {
+    max-height: 150px !important;
+}

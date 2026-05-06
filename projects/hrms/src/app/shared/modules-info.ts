@@ -142,6 +142,11 @@ export const MODULE_INFOS = {
     ATTENDANCE_REMOTE_LOGIN_REPORTS_MODULE_INFO: "The Remote Login Report enables HR to generate and review detailed records of employees who have applied for remote login. It provides complete visibility of application dates and durations for accurate tracking purposes.",
     ATTENDANCE_EXTRA_HOURS_MODULE_INFO:"This section allows employees to submit requests for extra hours worked beyond their regular shift. Employees can provide the required details for the additional time spent. Once submitted, the request is sent to the approver for review and necessary action.",
     LEAVE_CARRYFORWARD_ENCASHMENT_REPORTS_MODULE_INFO: "Provides a consolidated view of employee leave balances after year-end processing, including carry-forwarded leaves, encashment details, and lapsed balances across leave categories. It helps HR teams validate year-end leave processing, ensure policy compliance, and track accurate leave balance transitions between fiscal years.",
+    ATTENDANCE_LATE_LOGIN_MODULE_INFO:
+    'Displays details of employees who logged in after their scheduled start time, including login timestamps, delay duration, department, and reporting manager. Helps HR monitor punctuality trends and identify frequent late logins.',
+  ATTENDANCE_EXCEEDED_BREAK_HOURS_MODULE_INFO:
+    'Provides information on employees who exceeded their allocated break time, including break duration and excess time. Helps HR ensure adherence to work schedules and monitor break-time compliance.',
+
     //Monthly Attendance Report Module Info
     MONTHLY_ATTENDANCE_REPORT_MODULE_INFO: "The Monthly Attendance Report allows users to generate a consolidated view of employee attendance, including leaves, work-from-home, permissions, and regularizations. This report supports accurate payroll processing, compliance checks, and performance tracking.",
 
@@ -265,7 +270,7 @@ export const MODULE_INFOS = {
     JOB_MODULE_ONBOARDING_DOCUMENTS_MODULE_INFO: "The Onboarding Verification section displays documents uploaded by prospective employees, including Aadhaar, PAN, and others. HR can view each document and take actions such as verifying or rejecting them to ensure compliance before onboarding.",
     JOB_MODULE_PROJECTS_INFO: "The Project Info section displays the list of projects associated with the employee, including project type, total phases, and hours spent. It allows viewing all assigned projects on a single page, helping track employee involvement, phase progress, and overall performance across multiple projects efficiently.",
     JOB_MODULE_EXIT_FEEDBACK_MODULE_INFO: "The Exit Feedback enables employees to share their experience during the separation process. The feedback collected helps the organization improve policies, culture, and overall employee experience",
-
+    LOCATION_CHANGE_MODULE_INFO: 'The Bulk Location Change feature allows users to update the location, sub-location, and shift details for multiple employees simultaneously. It helps streamline administrative tasks by enabling quick and efficient bulk updates in a single action.',
     //My Info Documents Module Info
     DOCUMENTS_MODULE_INFO: "The Document section provides categorized storage for important organizational files, including employee documents, appraisal/promotion letters, and policy documents. Users can navigate through folders and subfolders to view file details.",
 
@@ -364,5 +369,8 @@ export const MODULE_INFOS = {
     ONBEHALFHALF_APPROVALS_EXTRA_HOURS_MODULE_INFO: "The Extra Hours module page displays requests submitted by employees for working additional hours beyond their regular schedule. It enables authorized users to review and approve or reject these requests on behalf of the Reporting Manager to ensure accurate recording of extra work hours.",
     ONBEHALFHALF_APPROVALS_EMPLOYEE_INFO_MODULE_INFO: "The Employee Info module page displays employee profile details and requested changes. It enables authorized users to review and approve or reject profile update requests on behalf of the designated approver, ensuring accurate and up-to-date employee information.",
     ONBEHALFHALF_APPROVALS_TIMESHEET_MODULE_INFO: "The Timesheets module page displays employee work entries submitted against assigned projects and clients. It allows authorized users to review and approve or reject timesheets on behalf of the Reporting Manager, ensuring timely validation of work hours.",
+
+    THEME_PERSONALIZATION_MODULE_INFO: "This module allows users to customize the application appearance by selecting preferred theme colors and font styles. It helps enhance the visual experience and align the interface with user preferences.",
+    MENU_PERSONALIZATION_MODULE_INFO: "This module allows users to customize and organize the application menu based on their preferences, improving accessibility and navigation. Users can manage primary and additional menu items by rearranging, enabling, or configuring them as needed."
 
 }

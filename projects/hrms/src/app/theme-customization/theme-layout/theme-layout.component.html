@@ -1,1 +1,48 @@
-<router-outlet/>
+<div class="custom-main-component-container">
+  <div class="component-header-content">
+    <div class="heading-content">
+      <div class="commpoment-name">Personalization <span><i class="bi bi-chevron-double-right"></i></span></div>
+      <div class="component-header">{{ getActiveTabLabel() }}</div>
+      <div>
+        <app-module-info-icon placement="bottom" [ngbPopover]="popContent" class="cursor" />
+      </div>
+    </div>
+    <div class="d-flex align-items-center gap-3" *ngIf="isColorThemesActive()">
+      <button class="custom-btn btn-primary px-5"
+        [disabled]="!themeAction.canApplyTheme()"
+        (click)="themeAction.applyTheme$.next()">Apply Theme</button>
+      <button class="custom-btn btn-primary px-5"
+        [disabled]="!themeAction.canApplyFont()"
+        (click)="themeAction.applyFont$.next()">Apply Font</button>
+    </div>
+    <div class="d-flex align-items-center gap-3" *ngIf="isMenusActive()">
+      <button class="custom-btn btn-secondary px-4"
+        (click)="themeAction.resetMenuToDefault$.next()">Reset to Default</button>
+      <button class="custom-btn btn-primary px-5"
+        [disabled]="!themeAction.canApplyMenuChanges()"
+        (click)="themeAction.applyMenuChanges$.next()">Apply Changes</button>
+    </div>
+  </div>
+  <div class="d-flex gap-3 w-100">
+    <div class="component-left-tabs-container">
+      <div class="custom-sub-tabs-container">
+        <ul class="nav flex-column">
+          <li class="nav-item" *ngFor="let tab of navLinks">
+            <div class="nav-link" [routerLink]="[tab.route]" routerLinkActive="active-nav-link">
+              <img [src]="tab.icon" alt="Icon" class="icon mb-2">
+              <div>{{ tab.label }}</div>
+            </div>
+            <div class="tabs-border-bottom"></div>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="component-right-content">
+      <router-outlet />
+    </div>
+  </div>
+</div>
+
+<ng-template #popContent>
+  <app-module-information [moduleInfo]="getModuleInfo()" />
+</ng-template>

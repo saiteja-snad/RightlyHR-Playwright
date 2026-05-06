@@ -256,6 +256,7 @@ export class ExpensesComponent implements OnInit, OnDestroy {
         status: 'Approved',
         comments: formData.comments,
         onBehalfOfApproval: true,
+        approvedPersonaType: 'onBehalfOf',
         approvedBy: this.empinfo.employeeId.toString(),
         currentStage: parseInt(
           this.selectedLeaveData.approvalHeader.currentapprovalStage
@@ -303,6 +304,7 @@ export class ExpensesComponent implements OnInit, OnDestroy {
         status: 'Rejected',
         comments: formData.comments,
         onBehalfOfApproval: true,
+        approvedPersonaType: 'onBehalfOf',
         approvedBy: this.empinfo.employeeId.toString(),
         currentStage: parseInt(
           this.selectedLeaveData.approvalHeader.currentapprovalStage
@@ -348,6 +350,7 @@ export class ExpensesComponent implements OnInit, OnDestroy {
       status: 'Processed',
       approvedBy: this.empinfo.employeeId.toString(),
       onBehalfOfApproval: true,
+      approvedPersonaType: 'onBehalfOf',
       currentStage: parseInt(
         this.selectedLeaveData?.approvalHeader?.currentapprovalStage
       ),

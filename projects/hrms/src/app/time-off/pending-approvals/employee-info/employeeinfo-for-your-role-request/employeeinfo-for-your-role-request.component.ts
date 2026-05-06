@@ -404,7 +404,7 @@ isFieldChanged(objectKey: string, changedFields: any): boolean {
           status: this.conformationstatus,
           comments: comments,
           moduleId: environment.pendingapprovalemployeid,
-          onBehalfOfApproval: true,
+          // onBehalfOfApproval: true,
           headerRequests: this.selectedLeavesItems.map((item) => ({
             headerID: item.pendingApprovalHeader.id,
             currentStage: item.pendingApprovalHeader.currentapprovalStage,
@@ -416,7 +416,7 @@ isFieldChanged(objectKey: string, changedFields: any): boolean {
           requestProcessedBy: approvedBy,
           status: this.conformationstatus,
           comments: comments,
-          onBehalfOfApproval: true,
+          // onBehalfOfApproval: true,
           moduleId: environment.pendingapprovalemployeid,
           headerRequests: [
             {
@@ -500,7 +500,7 @@ isFieldChanged(objectKey: string, changedFields: any): boolean {
           status: this.conformationstatus,
           comments: comments,
           moduleId: environment.pendingapprovalemployeid,
-          onBehalfOfApproval: true,
+          // onBehalfOfApproval: true,
           headerRequests: this.selectedLeavesItems.map((item) => ({
             headerID: item.pendingApprovalHeader.id,
             currentStage: item.pendingApprovalHeader.currentapprovalStage,
@@ -512,7 +512,7 @@ isFieldChanged(objectKey: string, changedFields: any): boolean {
           requestProcessedBy: approvedBy,
           status: this.conformationstatus,
           comments: comments,
-          onBehalfOfApproval: true,
+          // onBehalfOfApproval: true,
           moduleId: environment.pendingapprovalemployeid,
           headerRequests: [
             {

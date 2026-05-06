@@ -146,7 +146,7 @@ export const MODULE_INFOS = {
     'Displays details of employees who logged in after their scheduled start time, including login timestamps, delay duration, department, and reporting manager. Helps HR monitor punctuality trends and identify frequent late logins.',
   ATTENDANCE_EXCEEDED_BREAK_HOURS_MODULE_INFO:
     'Provides information on employees who exceeded their allocated break time, including break duration and excess time. Helps HR ensure adherence to work schedules and monitor break-time compliance.',
-    
+
     //Monthly Attendance Report Module Info
     MONTHLY_ATTENDANCE_REPORT_MODULE_INFO: "The Monthly Attendance Report allows users to generate a consolidated view of employee attendance, including leaves, work-from-home, permissions, and regularizations. This report supports accurate payroll processing, compliance checks, and performance tracking.",
 
@@ -369,5 +369,8 @@ export const MODULE_INFOS = {
     ONBEHALFHALF_APPROVALS_EXTRA_HOURS_MODULE_INFO: "The Extra Hours module page displays requests submitted by employees for working additional hours beyond their regular schedule. It enables authorized users to review and approve or reject these requests on behalf of the Reporting Manager to ensure accurate recording of extra work hours.",
     ONBEHALFHALF_APPROVALS_EMPLOYEE_INFO_MODULE_INFO: "The Employee Info module page displays employee profile details and requested changes. It enables authorized users to review and approve or reject profile update requests on behalf of the designated approver, ensuring accurate and up-to-date employee information.",
     ONBEHALFHALF_APPROVALS_TIMESHEET_MODULE_INFO: "The Timesheets module page displays employee work entries submitted against assigned projects and clients. It allows authorized users to review and approve or reject timesheets on behalf of the Reporting Manager, ensuring timely validation of work hours.",
+
+    THEME_PERSONALIZATION_MODULE_INFO: "This module allows users to customize the application appearance by selecting preferred theme colors and font styles. It helps enhance the visual experience and align the interface with user preferences.",
+    MENU_PERSONALIZATION_MODULE_INFO: "This module allows users to customize and organize the application menu based on their preferences, improving accessibility and navigation. Users can manage primary and additional menu items by rearranging, enabling, or configuring them as needed."
 
 }

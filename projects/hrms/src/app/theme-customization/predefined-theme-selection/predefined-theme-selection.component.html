@@ -1,38 +1,25 @@
-<div class="custom-main-component-container">
-    <div class="component-header-content">
-        <div class="heading-content">
-            <div class="component-header">{{'Personalization' | translate}}</div>
-        </div>
-
-        <div class="d-flex align-items-center gap-3">
-            <button class="custom-btn btn-primary px-5" [disabled]="!confirmedTheme || selectedTheme === confirmedTheme" (click)="onThemeChange()">Apply Theme</button>
-            <button class="custom-btn btn-primary px-5" [disabled]="!confirmedFont || selectedFont === confirmedFont" (click)="applyFont()">Apply Font</button>
+<div class="themes-container">
+    <!-- Colors -->
+    <div class="component-header mb-3">{{'Theme Colors' | translate}}</div>
+    <div class="themes-grid mb-4">
+        <div class="theme-content" [class.confirmedTheme]="confirmedTheme === theme.value"
+            *ngFor="let theme of themes" [class.selected]="selectedTheme === theme.value"
+            (click)="selectedThemeColor(theme.value)">
+            <div class="check-icon" *ngIf="selectedTheme === theme.value">
+                <i class="bi bi-check-circle"></i>
+            </div>
+            <div class="theme-preview" [ngClass]="theme.class"></div>
+            <div class="theme-name">{{ theme.name }}</div>
         </div>
     </div>
 
-    <div class="themes-container">
-        <!-- Colors -->
-        <div class="component-header mb-3">{{'Theme Colors' | translate}}</div>
-        <div class="themes-grid mb-4">
-            <div class="theme-content" [class.confirmedTheme]="confirmedTheme === theme.value"
-                *ngFor="let theme of themes" [class.selected]="selectedTheme === theme.value"
-                (click)="selectedThemeColor(theme.value)">
-                <div class="check-icon" *ngIf="selectedTheme === theme.value">
-                    <i class="bi bi-check-circle"></i>
-                </div>
-                <div class="theme-preview" [ngClass]="theme.class"></div>
-                <div class="theme-name">{{ theme.name }}</div>
-            </div>
-        </div>
-
-        <!-- Fonts -->
-        <div class="component-header mb-3">{{'Font Styles' | translate}}</div>
-        <div class="themes-grid">
-            <div class="theme-content font-content" [class.confirmedFont]="confirmedFont === font.value" *ngFor="let font of fonts"
-                [class.selected]="selectedFont === font.value" (click)="selectedFontFamily(font.value)">
-                <div class="check-icon" *ngIf="selectedFont === font.value"></div>
-                <div class="theme-name">{{ font.name }}</div>
-            </div>
+    <!-- Fonts -->
+    <div class="component-header mb-3">{{'Font Styles' | translate}}</div>
+    <div class="themes-grid">
+        <div class="theme-content font-content" [class.confirmedFont]="confirmedFont === font.value" *ngFor="let font of fonts"
+            [class.selected]="selectedFont === font.value" (click)="selectedFontFamily(font.value)">
+            <div class="check-icon" *ngIf="selectedFont === font.value"></div>
+            <div class="theme-name">{{ font.name }}</div>
         </div>
     </div>
 </div>

@@ -1,174 +1,115 @@
 <div class="sidenav-main-container">
     <div class="sidnav-main-content">
         <ul class="nav-items-list text-center ps-0">
-            <!--Dashboard-->
+
+            <!--Dashboard — always fixed first, not draggable-->
             @if(this.rbac.allowedToAccess('Dashboard.view')){
             <li class="nav-item menu-item-clear" (click)="goToAccessibleRoute('/dashboard');resetDropdown()"
                 [class.active-nav-link]="isActiveRoute('/dashboard')">
                 <img src="main-menu-icons/dashboard-square.png" alt="Icon" class="main-menu-icon">{{ 'Dashboard' | translate }}
             </li>
             }
-         
-            <!--My Info-->
-            @if(this.rbac.allowedToAccess('My Info.view')){
-            <li class="nav-item menu-item-clear" (click)="goToAccessibleRoute('/myinfo');resetDropdown()"
-                [class.active-nav-link]="isActiveRoute('/myinfo')">
-                <img src="/main-menu-icons/my-Info-icon.png" alt="Icon" class="main-menu-icon">{{ 'My Info' | translate }}
-            </li>
-            }
-            <!--Employee Management-->
-            @if(this.rbac.allowedToAccess('Employees.view')){
-            <li class="nav-item menu-item-clear" (click)="resetDropdown()" routerLink="/employee-management"
-                [ngClass]="{ 'active': ActiveRoute() }">
-                <img src="main-menu-icons/employee-management-icon.png" alt="Icon" class="main-menu-icon">{{ 'Employees' | translate }}
-            </li>
-            }
-            <!--Time Off-->
-            @if(this.rbac.allowedToAccess('Time-Off.view')){
-            <li class="nav-item menu-item-clear" [class.active-nav-link]="isActiveRoute('/time-off')">
-                <div class="btn-group dropend custom-main-menu-dropdown">
-                    <div class="d-flex flex-column align-items-center" data-bs-toggle="dropdown" aria-expanded="false">
-                        <img src="main-menu-icons/clock.png" alt="Icon" class="main-menu-icon">{{ 'Time-Off' | translate }}
-                    </div>
-                    <ul class="dropdown-menu">
-                        <app-time-off-tabs />
-                    </ul>
-                </div>
-            </li>
-            }
-            <!--Attendance-->
-            @if(this.rbac.allowedToAccess('Attendance.view')){
-            <li class="nav-item menu-item-clear" (click)="goToAccessibleRoute('/attendance');resetDropdown()"
-                [class.active-nav-link]="isActiveRoute('/attendance')">
-                <img src="main-menu-icons/finger-print.png" alt="Icon" class="main-menu-icon">{{ 'Attendance' | translate }}
-            </li>
-            }
-            <!--Reports-->
-            @if(this.rbac.allowedToAccess('Reports.view')){
-            <li class="nav-item menu-item-clear" (click)="goToAccessibleRoute('/reports');resetDropdown()"
-                [class.active-nav-link]="isActiveRoute('/reports')">
-                <img src="main-menu-icons/reports.png" alt="Icon" class="main-menu-icon">{{ 'Reports' | translate }}
-            </li>
-            }
-            <!--Project Management-->
-            @if(this.rbac.allowedToAccess('Project Management.view')){
-            <li class="nav-item menu-item-clear" [class.active-nav-link]="isActiveprojectManagement()">
-                <div class="btn-group dropend custom-main-menu-dropdown">
-                    <div class="d-flex flex-column align-items-center" data-bs-toggle="dropdown" aria-expanded="false">
-                        <img src="main-menu-icons/project-management-icon.png" alt="Icon" class="main-menu-icon">
-                        {{ 'Project Management' | translate }}
-                    </div>
-                    <ul class="dropdown-menu">
-                        <app-project-management-main-tabs />
-                    </ul>
-                </div>
-            </li>
-            }
-            <!--Skill Set Management-->
-            @if(this.rbac.allowedToAccess('Skill Set Management.view')){
-            <li class="nav-item menu-item-clear" (click)="goToAccessibleRoute('/skill-management');resetDropdown()"
-                [class.active-nav-link]="isActiveRoute('/skill-management')">
-                <img src="main-menu-icons/skill-management.png" alt="Icon" class="main-menu-icon">{{ 'Skill Set' | translate }}
-            </li>
-            }
 
+            <!-- Main menu items — draggable list -->
+            <li style="list-style:none;padding:0;margin:0;display:contents">
+            <div cdkDropList [cdkDropListData]="mainMenuItems" (cdkDropListDropped)="onMainMenuDrop($event)" class="main-menu-drop-list">
+                <div class="nav-item menu-item-clear draggable-nav-item"
+                    *ngFor="let item of mainMenuItems"
+                    cdkDrag
+                    [class.active-nav-link]="isActiveItem(item)"
+                    (cdkDragStarted)="closeOpenDropdowns()"
+                    (click)="item.type === 'direct' ? onDirectItemClick(item) : null">
 
+                    <!-- Direct navigation items -->
+                    <ng-container *ngIf="item.type === 'direct'">
+                        <img [src]="item.icon" alt="Icon" class="main-menu-icon">
+                        {{ item.label | translate }}
+                    </ng-container>
 
-            <!-- @if(this.rbac.allowedToAccess('On Behalf Of.view')){
-            <li class="nav-item menu-item-clear" [class.active-nav-link]="isActiveRoute('/on-behalf-of')">
-                <div class="btn-group dropend custom-main-menu-dropdown">
-                    <div class="d-flex flex-column align-items-center" data-bs-toggle="dropdown" aria-expanded="false">
-                        <img src="main-menu-icons/clock.png" alt="Icon" class="main-menu-icon">Pending Approvals
-                    </div>
-                    <ul class="dropdown-menu">
-                        <app-onbehalfof-main-tabs />
-                    </ul>
-                </div>
-            </li>
-            } -->
+                    <!-- Dropdown items -->
+                    <ng-container *ngIf="item.type === 'dropdown'">
+                        <div class="btn-group dropend custom-main-menu-dropdown">
+                            <div class="d-flex flex-column align-items-center" data-bs-toggle="dropdown" aria-expanded="false">
+                                <img [src]="item.icon" alt="Icon" class="main-menu-icon">
+                                {{ item.label | translate }}
+                            </div>
+                            <ul class="dropdown-menu">
+                                <app-time-off-tabs *ngIf="item.dropdownComponent === 'time-off'" />
+                                <app-project-management-main-tabs *ngIf="item.dropdownComponent === 'project-management'" />
+                                <app-onbehalfof-main-tabs *ngIf="item.dropdownComponent === 'on-behalf-of'" />
+                                <app-pending-approvals-tabs *ngIf="item.dropdownComponent === 'pending-approvals'" />
+                                <app-pms-main-tabs *ngIf="item.dropdownComponent === 'pms'" />
+                            </ul>
+                        </div>
+                    </ng-container>
 
-             @if(this.rbac.allowedToAccess('On Behalf Of.view')){
-            <li class="nav-item menu-item-clear" [class.active-nav-link]="isActiveRoute('/on-behalf-of')">
-                <div class="btn-group dropend custom-main-menu-dropdown">
-                    <div class="d-flex flex-column align-items-center" data-bs-toggle="dropdown" aria-expanded="false">
-                        <img src="main-menu-icons/clock.png" alt="Icon" class="main-menu-icon">{{ 'On Behalf Of' | translate }}
-                    </div>
-                    <ul class="dropdown-menu">
-                        <app-onbehalfof-main-tabs />
-                    </ul>
+                    <!-- Drag preview -->
+                    <ng-template cdkDragPreview>
+                        <div class="sidenav-drag-preview">
+                            <div class="preview-icon-wrap">
+                                <img [src]="item.icon" alt="" class="preview-icon">
+                            </div>
+                            <span class="preview-label">{{ item.label | translate }}</span>
+                        </div>
+                    </ng-template>
+                    <ng-template cdkDragPlaceholder>
+                        <div class="sidenav-drag-placeholder"></div>
+                    </ng-template>
                 </div>
+            </div>
             </li>
-            }
-            <!--pending Approvals-->
-            @if(this.rbac.allowedToAccess('Pending Approvals Module.view')){
-            <li class="nav-item menu-item-clear" [class.active-nav-link]="isActiveRoute('/pending-approvals')">
-                <div class="btn-group dropend custom-main-menu-dropdown">
-                    <div class="d-flex flex-column align-items-center" data-bs-toggle="dropdown" aria-expanded="false">
-                        <img src="main-menu-icons/pending-approvals.png" alt="Icon" class="main-menu-icon">{{ 'Pending' | translate }}
-                        {{ 'Approvals' | translate }}
-                    </div>
-                    <ul class="dropdown-menu">
-                        <app-pending-approvals-tabs />
-                    </ul>
-                </div>
-            </li>
-            }
-            <!--pending Approvals-->
-            @if(this.rbac.allowedToAccess('PMS.view')){
-            <li class="nav-item menu-item-clear" [class.active-nav-link]="isActiveRoute('/pms')">
-                <div class="btn-group dropend custom-main-menu-dropdown">
-                    <div class="d-flex flex-column align-items-center" data-bs-toggle="dropdown" aria-expanded="false">
-                        <img src="/main-menu-icons/pms.png" alt="Icon" class="main-menu-icon">{{ 'PMS' | translate }}
-                    </div>
-                    <ul class="dropdown-menu">
-                        <app-pms-main-tabs />
-                    </ul>
-                </div>
-            </li>
-            }
-            <!--Selected Item form the dropdown-->
+
+            <!--Selected Item from the dropdown-->
             <li class="nav-item selected-module-item" *ngIf="selectedDropdownModule"
                 (click)="goToAccessibleRoute(selectedDropdownModule.route)"
                 [class.active-nav-link]="isActiveRoute(selectedDropdownModule.route)">
                 <img [src]="selectedDropdownModule.activeIcon" alt="Icon" class="main-menu-icon">
                 {{ selectedDropdownModule.label | translate }}
             </li>
-            <!--Drop Menu Items-->
+
+            <!--Drop Menu Items — three-dot with draggable grid-->
             <li class="nav-item text-wrap align-items-center">
                 <div class="btn-group dropend custom-main-menu-dropdown">
                     <a data-bs-toggle="dropdown" aria-expanded="false" class="custom-main-menu-toggle">
                         <img src="main-menu-icons/white-dots.png" alt="Icons" class="more-menu-icon">
                     </a>
                     <ul class="dropdown-menu">
-                        <div class="grid-container">
-                            <div class="grid-item" *ngFor="let module of filteredModules; let i = index"
-                                (click)="selectDropdownModule(module)" [ngClass]="{'border-right-top': isInTopRow(i) && !isLastColumn(i),
-                            'border-right-middle': isInMiddleRow(i) && !isLastColumn(i),'border-right-bottom': isInLastRow(i) && !isLastColumn(i),
-                            'border-bottom-left': isFirstColumn(i) && !isInLastRow(i),'border-bottom-middle': isMiddleColumn(i) && !isInLastRow(i),
-                            'border-bottom-right': isLastColumn(i) && !isInLastRow(i)}">
+                        <div class="grid-container"
+                            cdkDropList
+                            cdkDropListOrientation="mixed"
+                            [cdkDropListData]="modules"
+                            (cdkDropListDropped)="onThreeDotDrop($event)">
+                            <div class="grid-item" *ngFor="let module of modules; let i = index"
+                                cdkDrag
+                                [style.display]="module.route === selectedDropdownModule?.route ? 'none' : ''"
+                                (click)="selectDropdownModule(module)"
+                                [ngClass]="getGridItemClasses(module)">
                                 <img [src]="module.icon" alt="{{ module.label }}" class="dropdown-menu-icon" />
                                 <p class="dropdown-menu-text m-0 pt-2">{{ module.label }}</p>
+                                <ng-template cdkDragPreview>
+                                    <div class="sidenav-drag-preview">
+                                        <div class="preview-icon-wrap">
+                                            <img [src]="module.icon" alt="" class="preview-icon">
+                                        </div>
+                                        <span class="preview-label">{{ module.label }}</span>
+                                    </div>
+                                </ng-template>
+                                <ng-template cdkDragPlaceholder>
+                                    <div class="sidenav-grid-placeholder"></div>
+                                </ng-template>
                             </div>
                         </div>
                     </ul>
                 </div>
             </li>
 
-
-            <!-- @if(this.rbac.allowedToAccess('Settings Icon.view')){ -->
-            <!-- <li class="nav-item menu-item-clear" (click)="resetDropdown()" routerLink="/settings"
-                routerLinkActive="active-nav-link">
-                <i class="bi bi-gear gear-icon"></i>Settings
-            </li> -->
-            <!-- } -->
         </ul>
     </div>
 
-    <!--Settings content-->
+    <!--Footer-->
     <div class="sidenav-footer-content">
         <div class="d-flex justify-content-center w-100">
-            <!-- <img src="/logos/logo-for-main-menu-footer-latest.png" alt="Powered By logo" class="powered-by-image"> -->
-             <img src="logos/powered-by.png" alt="Powered By logo" class="powered-by-image">
+            <img src="logos/powered-by.png" alt="Powered By logo" class="powered-by-image">
         </div>
     </div>
 </div>

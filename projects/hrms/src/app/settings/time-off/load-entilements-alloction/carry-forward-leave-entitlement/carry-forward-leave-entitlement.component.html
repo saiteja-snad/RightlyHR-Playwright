@@ -3,26 +3,29 @@
     <div class="input-group custom-search">
       <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
       <input type="search" class="form-control custom-search-input"
-        [placeholder]="'Search by job id / year / status / created by' | translate" aria-label="Username"
-        [(ngModel)]="searchQuery" (ngModelChange)="onSearchChange($event)" aria-describedby="basic-addon1">
+        placeholder="Search by job id / year / status / created by" aria-label="Username" [(ngModel)]="searchQuery"
+        (ngModelChange)="onSearchChange($event)" aria-describedby="basic-addon1">
     </div>
-  
-    <button type="button" class="custom-btn btn-secondary position-relative text-nowrap" (click)="toggleFilters(filterContent)">
-      <i class="bi bi-funnel me-2"></i>{{ 'Filters' | translate }}
-      <span *ngIf="isFilterApplied()" class="filter-indicator"></span>
-    </button>
+      <button type="button" class="custom-btn btn-secondary position-relative text-nowrap"
+        (click)="toggleFilters(filterContent)">
+        <i class="bi bi-funnel me-2"></i>Filters
+        <span *ngIf="isFilterApplied()" class="filter-indicator"></span>
+      </button>
   </div>
 
   <div class="custom-table-content">
     @if(!loading){
     <table class="w-100">
       <thead>
-        <th>{{ 'Job Id' | translate }}</th>
-        <th>{{ 'Year' | translate }}</th>
-        <th class="text-center">{{ 'Leave Carry Forward Count' | translate }}</th>
-        <th>{{ 'Created by' | translate }}</th>
-        <th>{{ 'Status' | translate }} </th>
-        <th class="text-center">{{ 'Action' | translate }}</th>
+        <th>Entitlement Id</th>
+        <th>Year</th>
+        <th>Location</th>
+        <th>Sub Location</th>
+        <th>Shift</th>
+        <th class="text-center">Emp Processed</th>
+        <th>Created by</th>
+        <th>Status</th>
+        <!-- <th class="text-center">Action</th> -->
       </thead>
       <tbody>
         <ng-container *ngIf="jobData.length > 0; else noDataTemplate">
@@ -31,6 +34,9 @@
               <a class="data-nav-btn" (click)="navigateView(item?.jobId)">{{ item?.jobSequenceId ?? '_' }}</a>
             </td>
             <td>{{ item?.year ?? '_' }}</td>
+            <td>{{ item?.location?.name ?? '-' }}</td>
+            <td>{{ item?.subLocation?.name ?? '-' }}</td>
+            <td>{{ item?.shift?.name ?? '-' }}</td>
             <td class="text-center">{{ item?.successCount }}/{{ item?.totalEmployees }}</td>
             <td>{{ item?.initiatedBy?.name ?? '-' }}</td>
             <td [ngClass]="{'status-success': item.status === 'Success',
@@ -38,7 +44,7 @@
             'status-failed': item.status === 'Failed','status-partial': item.status === 'Partially Completed',
             'status-processing': item.status === 'Processing','status-completed': item.status === 'Completed',
             'status-pending': item?.status === 'Pending'}" class="text-capitalize">{{ item?.status ?? '-'}}</td>
-            <td class="text-center">
+            <!-- <td class="text-center">
               <div class="dropdown" *ngIf="item.requiresRetry">
                 <span type="button" data-bs-toggle="dropdown">
                   <i class="bi bi-three-dots-vertical"></i>
@@ -46,13 +52,13 @@
                 <ul class="dropdown-menu custom-dropdown-menu">
                   <li (click)="postretryrecoder(item?.jobId)">
                     <a class="dropdown-item">
-                      <i class="bi bi-pencil me-2"></i>{{ 'Retry' | translate }}
+                      <i class="bi bi-pencil me-2"></i>Retry
                     </a>
                   </li>
                 </ul>
               </div>
               <span *ngIf="!item.requiresRetry"></span>
-            </td>
+            </td> -->
           </tr>
         </ng-container>
         <ng-template #noDataTemplate>
@@ -73,14 +79,16 @@
       <div class="d-flex align-items-center gap-3 p-2">
         <select title="text" class="form-select custom-pagination-select" [(ngModel)]="rows"
           (ngModelChange)="onPageSizeChange($event)">
-          <option *ngFor="let option of options" [value]="option.value">{{ option.label }}</option>
+          <option *ngFor="let option of options" [value]="option.value">{{ option.label }}
+          </option>
         </select>
         <span class="pagination-label text-nowrap">
-          {{ 'Showing' | translate }} {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize : 
-          (+first + +rows) }} {{ 'of' | translate }} {{ collectionSize }}
+          Showing {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize : (+first + +rows) }} of {{
+          collectionSize }}
         </span>
       </div>
-      <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize" (onPageChange)="onPageChange($event)" />
+      <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"
+        (onPageChange)="onPageChange($event)"></p-paginator>
     </div>
   </div>
 </div>
@@ -96,76 +104,90 @@
     <div class="offcanvas-filter-content">
       <form autocomplete="off" [formGroup]="leaveAllocationForm">
         <div class="mb-3">
-          <label for="year" class="form-label custom-label filter-labels mb-3">{{ "Year" | translate }}</label>
+          <label for="year" class="form-label custom-label filter-labels mb-3">
+            {{ "Year" | translate }}
+          </label>
           <div class="custom-p-select-content">
             <p-select [options]="yearsList" optionLabel="year" [filter]="false" [showClear]="false"
-              class="form-select custom-select" formControlName="year" [placeholder]="'Please select year' | translate">
+              class="form-select custom-select" formControlName="year" placeholder="Please select year">
               <ng-template #selectedItem let-selectedOption>{{ selectedOption }}</ng-template>
               <ng-template let-year #item>{{ year }}</ng-template>
             </p-select>
           </div>
-          <div *ngIf="leaveAllocationForm.get('year')?.touched && leaveAllocationForm.get('year')?.invalid" class="error-msg">
-            <div *ngIf="leaveAllocationForm.get('year')?.errors?.['required']">{{ 'Year is required' | translate }}</div>
+          <div *ngIf="leaveAllocationForm.get('year')?.touched && leaveAllocationForm.get('year')?.invalid"
+            class="error-msg">
+            <div *ngIf="leaveAllocationForm.get('year')?.errors?.['required']">Year is required</div>
           </div>
         </div>
 
         <!-- Location -->
         <div class="mb-3">
-          <label for="location" class="form-label custom-label filter-labels mb-3">{{ "Location" | translate }}</label>
+          <label for="location" class="form-label custom-label filter-labels mb-3">{{ "Location" | translate }}
+          </label>
           <div class="custom-p-select-content">
             <p-select [options]="locationDetails" optionLabel="jobLocationName" [filter]="true"
               class="form-select custom-select" filterBy="jobLocationName" [showClear]="false"
-              [resetFilterOnHide]="true" formControlName="location" [placeholder]="'Please select location' | translate"
-              [filterPlaceholder]="'Search location' | translate" (onChange)="onLocationChange($event.value)">
+              [resetFilterOnHide]="true" formControlName="location" placeholder="Please select location"
+              filterPlaceholder="Search location" (onChange)="onLocationChange($event.value)">
               <ng-template #selectedItem let-selectedOption>{{ selectedOption.jobLocationName }}</ng-template>
               <ng-template let-location #item>{{ location.jobLocationName }}</ng-template>
             </p-select>
           </div>
-          <div *ngIf="leaveAllocationForm.get('location')?.touched && leaveAllocationForm.get('location')?.invalid" class="error-msg">
-            <div *ngIf="leaveAllocationForm.get('location')?.errors?.['required']">{{ 'Location is required' | translate }}</div>
+          <div *ngIf="leaveAllocationForm.get('location')?.touched && leaveAllocationForm.get('location')?.invalid"
+            class="error-msg">
+            <div *ngIf="leaveAllocationForm.get('location')?.errors?.['required']">Location is required
+            </div>
           </div>
         </div>
 
         <!-- Sub Location -->
         <div class="mb-3">
-          <label for="subLocation" class="form-label custom-label filter-labels mb-3">{{ "Sub Location" | translate }}</label>
+          <label for="subLocation" class="form-label custom-label filter-labels mb-3">{{ "Sub Location" | translate }}
+          </label>
           <div class="custom-p-select-content">
             <p-select [options]="subLocationDetails" optionLabel="jobSubLocationName" [filter]="true"
               class="form-select custom-select" filterBy="jobSubLocationName" [showClear]="false"
-              [resetFilterOnHide]="true" formControlName="subLocation" [placeholder]="'Please select sub location' | translate"
-              [filterPlaceholder]="'Search Sub location' | translate" (onChange)="getAllShifts($event.value)">
+              [resetFilterOnHide]="true" formControlName="subLocation" placeholder="Please select sub location"
+              filterPlaceholder="Search Sub location" (onChange)="getAllShifts($event.value)">
               <ng-template #selectedItem let-selectedOption>{{ selectedOption.jobSubLocationName }}</ng-template>
               <ng-template let-location #item>{{ location.jobSubLocationName }}</ng-template>
             </p-select>
           </div>
-          <div *ngIf="leaveAllocationForm.get('subLocation')?.touched && leaveAllocationForm.get('subLocation')?.invalid" class="error-msg">
-            <div *ngIf="leaveAllocationForm.get('subLocation')?.errors?.['required']">{{ 'Sub location is required' | translate }}</div>
+          <div
+            *ngIf="leaveAllocationForm.get('subLocation')?.touched && leaveAllocationForm.get('subLocation')?.invalid"
+            class="error-msg">
+            <div *ngIf="leaveAllocationForm.get('subLocation')?.errors?.['required']">Sub location is required</div>
           </div>
         </div>
 
         <!-- Shifts -->
         <div class="mb-3">
-          <label for="shift" class="form-label custom-label filter-labels mb-3">{{ "Shift" | translate }}</label>
+          <label for="shift" class="form-label custom-label filter-labels mb-3">{{ "Shift" | translate }}
+          </label>
           <div class="custom-p-select-content">
             <p-select [options]="shiftDetails" optionLabel="shiftName" [filter]="true" [resetFilterOnHide]="true"
-              filterBy="shiftName" [showClear]="false" formControlName="shift" [placeholder]="'Please select shift' | translate"
-              [filterPlaceholder]="'Search shift' | translate" class="form-select custom-select">
+              filterBy="shiftName" [showClear]="false" formControlName="shift" placeholder="Please select shift"
+              filterPlaceholder="Search shift" class="form-select custom-select">
               <ng-template #selectedItem let-selectedOption>{{ selectedOption.shiftName }}</ng-template>
               <ng-template let-location #item>{{ location.shiftName }}</ng-template>
             </p-select>
           </div>
-          <div *ngIf="leaveAllocationForm.get('shift')?.touched && leaveAllocationForm.get('shift')?.invalid" class="error-msg">
-            <div *ngIf="leaveAllocationForm.get('shift')?.errors?.['required']">{{ 'Shift is required' | translate }}</div>
+          <div *ngIf="leaveAllocationForm.get('shift')?.touched && leaveAllocationForm.get('shift')?.invalid"
+            class="error-msg">
+            <div *ngIf="leaveAllocationForm.get('shift')?.errors?.['required']">Shift is required</div>
           </div>
         </div>
 
         <!-- Submit -->
         <div class="d-flex offcanvas-footer-content gap-3">
-          <button type="button" *ngIf="isApplyDisabledFlag" class="custom-btn btn-secondary w-100" (click)="closeCanvas()">
+          <button type="button" *ngIf="isApplyDisabledFlag" class="custom-btn btn-secondary w-100"
+            (click)="closeCanvas()">
             {{'Close' | translate}}</button>
-          <button type="button" *ngIf="!isApplyDisabledFlag" class="custom-btn btn-secondary w-100" (click)="resetForm()">
+          <button type="button" *ngIf="!isApplyDisabledFlag" class="custom-btn btn-secondary w-100"
+            (click)="resetForm()">
             {{'Clear All' | translate}}</button>
-          <button type="button" class="custom-btn btn-primary w-100" [disabled]="isApplyDisabledFlag" (click)="applydata()">
+          <button type="button" class="custom-btn btn-primary w-100" [disabled]="isApplyDisabledFlag"
+            (click)="applydata()">
             {{'Apply' | translate}}</button>
         </div>
       </form>

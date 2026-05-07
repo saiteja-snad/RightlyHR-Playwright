@@ -3,7 +3,11 @@
     height: calc(100dvh - 17rem);
 
     .footer-content {
+        width: 100%;
         position: absolute;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
         bottom: 0;
         right: 0;
     }
@@ -13,8 +17,6 @@
     .p-datatable-table-container {
         height: 45dvh !important;
     }
-
- 
 }
 
 .code-box {
@@ -142,18 +144,17 @@
     }
 }
 
-
 .circular-dot {
     width: 12px;
     height: 12px;
     border-radius: 50%;
 }
+
 .status-text {
     font-weight: 400;
     font-size: var(--fontsize14);
     color: #747474;
 }
-
 
 .circle-holiday {
     background-color: #00A912;
@@ -161,4 +162,36 @@
 
 .circle-leave {
     background-color: #F29000;
+}
+
+.table-value {
+    color: var(--primary-color);
+    font-weight: 600;
+    text-decoration: underline;
+}
+
+.p-accordionpanel-active {
+    .p-accordioncontent {
+        border: 2px solid var(--accordian-table-border-color) !important;
+        border-bottom-left-radius: 0.5rem !important;
+        border-bottom-right-radius: 0.5rem !important;
+    }
+}
+
+.custom-modal-height {
+    max-height: 45dvh;
+    overflow-y: auto;
+}
+
+.p-accordioncontent{
+  padding: 0.75rem !important;
+}
+
+.custom-accordian-table{
+  border: 1px solid var(--accordian-table-border-color) !important;
+  border-radius: 0.5rem;
+}
+
+.custom-p-multi-select-table .p-datatable-thead > tr > th {
+  font-weight: 600 !important;
 }

@@ -1433,4 +1433,11 @@ notifyMessageUpdate() {
   setnewcountDetailsforratecard() {
     this.ratecardcount.next();
   }
+
+  getEmployeesWithBreakdown(payload: any) {
+    return this.http.post(
+      `${this.ApiUrl}Employeedata/employees/with-leave-categories/v3`,
+      payload
+    );
+  }
 }

@@ -62,7 +62,7 @@
                         </p-select>
                         <div *ngIf="dstForm.get('subLocation')?.touched && dstForm.get('subLocation')?.hasError('required')"
                             class="error-msg">
-                            {{'Sub Location is required'|translate}}
+                            {{'Sub location is required'|translate}}
                         </div>
                     </div>
                 </div>
@@ -106,23 +106,24 @@
                     <tbody formArrayName="momentRows">
                         <tr *ngFor="let row of momentRows.controls; let i = index" [formGroupName]="i">
                             <td><input type="date" class="form-control custom-input" formControlName="startDate"
-                                    [min]="minHolidayDate" [max]="maxHolidayDate"
-                                    (ngModelChange)="onStartDateChange($event, row)" [min]="minHolidayDate"
-                                    [max]="maxHolidayDate" onkeydown="return false" />
+                                    [min]="minHolidayDate"
+                                    (change)="onStartDateChange(getInputValue($event), row, i)"
+                                    onkeydown="return false" />
                                 <div *ngIf="row.get('startDate')?.invalid && (row.get('startDate')?.dirty || row.get('startDate')?.touched)"
                                     class="error-msg">
                                     <span *ngIf="row.get('startDate')?.errors?.['required']">
-                                        {{ 'Start Date is required' | translate }}
+                                        {{ 'Start date is required' | translate }}
                                     </span>
                                 </div>
                             </td>
                             <td><input type="date" class="form-control custom-input" formControlName="endDate"
-                                    [min]="minHolidayDate" [max]="maxHolidayDate" (ngModelChange)="onEndDateChange($event, row)"
+                                [min]="minHolidayDate"
+                                    (change)="onEndDateChange(getInputValue($event), row, i)"
                                     onkeydown="return false" />
                                 <div *ngIf="row.get('endDate')?.invalid && (row.get('endDate')?.dirty || row.get('endDate')?.touched)"
                                     class="error-msg">
                                     <span *ngIf="row.get('endDate')?.errors?.['required']">
-                                        {{ 'End Date is required' | translate }}
+                                        {{ 'End date is required' | translate }}
                                     </span>
                                 </div>
                             </td>

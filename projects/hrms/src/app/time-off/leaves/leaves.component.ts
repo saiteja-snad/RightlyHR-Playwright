@@ -524,7 +524,11 @@ getTeamManagersDetails() {
     
     const expiryDeduction = isCompOff ? (item.expiryDaysLeaves ? item.expiryDaysLeaves : 0) : 0;
     
-    if ((this.employeeiddetails.empType === 'Probation' && (item.category?.isProbationAllowed && item.probationLeaves > 0 && this.employeeiddetails?.probationEndDate)) || (new Date(this.employeeiddetails.probationEndDate).toDateString() > new Date().toDateString())) {
+    const isProbationActive = this.employeeiddetails.empType === 'Probation' && 
+      this.employeeiddetails?.probationEndDate && 
+      new Date(this.employeeiddetails.probationEndDate) > new Date();
+    
+    if (isProbationActive && item.category?.isProbationAllowed && item.probationLeaves > 0) {
       return item.availableProbationLeaves; 
     } else {
       return item.allowedDays - item.utilizedDays - item.booked - expiryDeduction;

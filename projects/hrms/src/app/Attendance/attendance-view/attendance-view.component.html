@@ -144,7 +144,7 @@
                 }
                 @if(rbac.allowedToAccess('Request Regularization.view')){
                 @if(item.duration.totalDuration >= '00:00:00' &&isPastOrToday(item.date) &&
-                                (item.duration.totalDuration|tohours) < shiftDetails.fullDayMinHrs && item.isRegularizationApplicable
+                                (item.duration.totalDuration|tohours) < (shiftDetails?.fullDayMinHrs ?? 0) && item.isRegularizationApplicable
                                 && isWithinPastDaysAllowed(item.date) && item.employeeId==empdata.employeeId){
                 <a class="application-btn" (click)="openModal(raiseregularization); onclickRegularization(item.date)">
                   <u>{{'Regularization'|translate}}</u>

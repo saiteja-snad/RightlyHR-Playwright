@@ -6,14 +6,16 @@ export interface MenuItemDef {
   icon: string;
   activeIcon: string;
   personalizationIcon: string;
+  /** White icon — used when item is in the Main Sidebar */
+  sidebarIcon: string;
+  /** Colored icon — used when item is in the Ellipses Menu */
+  ellipsesIcon: string;
   permission: { feature: string; action: string };
   /** 'direct' = navigate on click, 'dropdown' = opens a sub-tabs flyout */
   type: 'direct' | 'dropdown';
   dropdownComponent?: string;
   /** Items that start in the main sidebar by default */
   defaultLocation: 'main' | 'ellipses';
-  /** Sub-items for dropdown menus */
-  subItems?: { label: string; route: string; icon: string; permission: { feature: string; action: string } }[];
 }
 
 @Injectable({ providedIn: 'root' })
@@ -26,69 +28,80 @@ export class MenuRegistryService {
       label: 'My Info', route: '/myinfo', defaultLocation: 'main', type: 'direct',
       icon: '/main-menu-icons/my-Info-icon.png', activeIcon: '/main-menu-icons/my-Info-icon.png',
       personalizationIcon: '/personalization/My info.jpg',
+      sidebarIcon: '/main-menu-icons/my-Info-icon.png',
+      ellipsesIcon: '/personalization/Ellipses_My info.jpg',
       permission: { feature: 'My Info', action: 'view' }
     },
     {
       label: 'Employees', route: '/employee-management', defaultLocation: 'main', type: 'direct',
       icon: '/main-menu-icons/employee-management-icon.png', activeIcon: '/main-menu-icons/employee-management-icon.png',
       personalizationIcon: '/personalization/Employees.png',
+      sidebarIcon: '/main-menu-icons/employee-management-icon.png',
+      ellipsesIcon: '/personalization/Ellipses_Employees.png',
       permission: { feature: 'Employees', action: 'view' }
     },
     {
       label: 'Time Off', route: '/time-off', defaultLocation: 'main', type: 'dropdown', dropdownComponent: 'time-off',
       icon: '/main-menu-icons/clock.png', activeIcon: '/main-menu-icons/clock.png',
       personalizationIcon: '/personalization/Time Off.png',
-      permission: { feature: 'Time-Off', action: 'view' },
-      subItems: [
-        { label: 'Leaves', route: '/time-off/leaves', icon: '/time-off-icon/leaves-icon.png', permission: { feature: 'Time Off Module', action: 'view' } },
-        { label: 'WFH', route: '/time-off/wfh', icon: '/time-off-icon/WFH-icon.png', permission: { feature: 'WFH/On Duty Module', action: 'view' } },
-        { label: 'Remote Login', route: '/time-off/remote', icon: '/time-off-icon/remote-login-icon.png', permission: { feature: 'Remote Login Module', action: 'view' } },
-        { label: 'Comp-Off', route: '/time-off/comp-off', icon: '/time-off-icon/comp-off.png', permission: { feature: 'Comp Off Module', action: 'view' } },
-        { label: 'Permissions', route: '/time-off/premissions', icon: '/time-off-icon/permissions-icon.png', permission: { feature: 'Permissions Module', action: 'view' } },
-        { label: 'Regularization', route: '/time-off/regularization', icon: '/time-off-icon/regularization-icon.png', permission: { feature: 'Regularization Module', action: 'view' } },
-        { label: 'Extra Hours', route: '/time-off/extra-hours', icon: '/time-off-icon/extra-logs.png', permission: { feature: 'Extra Hours Module', action: 'view' } }
-      ]
+      sidebarIcon: '/main-menu-icons/clock.png',
+      ellipsesIcon: '/personalization/Ellipses_Time Off.png',
+      permission: { feature: 'Time-Off', action: 'view' }
     },
     {
       label: 'Attendance', route: '/attendance', defaultLocation: 'main', type: 'direct',
       icon: '/main-menu-icons/finger-print.png', activeIcon: '/main-menu-icons/finger-print.png',
       personalizationIcon: '/personalization/Attendance.png',
+      sidebarIcon: '/main-menu-icons/finger-print.png',
+      ellipsesIcon: '/personalization/Ellipses_Attendance.png',
       permission: { feature: 'Attendance', action: 'view' }
     },
     {
       label: 'Reports', route: '/reports', defaultLocation: 'main', type: 'direct',
       icon: '/main-menu-icons/reports.png', activeIcon: '/main-menu-icons/reports.png',
       personalizationIcon: '/personalization/Reports.png',
+      sidebarIcon: '/main-menu-icons/reports.png',
+      ellipsesIcon: '/personalization/Ellipses_Reports.png',
       permission: { feature: 'Reports', action: 'view' }
     },
     {
       label: 'Project Management', route: '/project-management', defaultLocation: 'main', type: 'dropdown', dropdownComponent: 'project-management',
       icon: '/main-menu-icons/project-management-icon.png', activeIcon: '/main-menu-icons/project-management-icon.png',
       personalizationIcon: '/personalization/Project Management.png',
+      sidebarIcon: '/main-menu-icons/project-management-icon.png',
+      ellipsesIcon: '/personalization/Ellipses_Project Management.png',
       permission: { feature: 'Project Management', action: 'view' }
     },
     {
       label: 'Skill Set', route: '/skill-management', defaultLocation: 'main', type: 'direct',
       icon: '/main-menu-icons/skill-management.png', activeIcon: '/main-menu-icons/skill-management.png',
       personalizationIcon: '/personalization/Skill Set.png',
+      sidebarIcon: '/main-menu-icons/skill-management.png',
+      ellipsesIcon: '/personalization/Ellipses_Skill Set.png',
       permission: { feature: 'Skill Set Management', action: 'view' }
     },
     {
       label: 'On Behalf Of', route: '/on-behalf-of', defaultLocation: 'main', type: 'dropdown', dropdownComponent: 'on-behalf-of',
       icon: '/main-menu-icons/clock.png', activeIcon: '/main-menu-icons/clock.png',
       personalizationIcon: '/personalization/On Behalf Of.png',
+      sidebarIcon: '/main-menu-icons/clock.png',
+      ellipsesIcon: '/personalization/Ellipses_On Behalf Of.png',
       permission: { feature: 'On Behalf Of', action: 'view' }
     },
     {
       label: 'Pending Approvals', route: '/pending-approvals', defaultLocation: 'main', type: 'dropdown', dropdownComponent: 'pending-approvals',
       icon: '/main-menu-icons/pending-approvals.png', activeIcon: '/main-menu-icons/pending-approvals.png',
       personalizationIcon: '/personalization/Pending Approvals.png',
+      sidebarIcon: '/main-menu-icons/pending-approvals.png',
+      ellipsesIcon: '/personalization/Ellipses_Pending Approvals.png',
       permission: { feature: 'Pending Approvals Module', action: 'view' }
     },
     {
       label: 'PMS', route: '/pms', defaultLocation: 'main', type: 'dropdown', dropdownComponent: 'pms',
       icon: '/main-menu-icons/pms.png', activeIcon: '/main-menu-icons/pms.png',
       personalizationIcon: '/personalization/PMS.png',
+      sidebarIcon: '/main-menu-icons/pms.png',
+      ellipsesIcon: '/personalization/Ellipses_PMS.png',
       permission: { feature: 'PMS', action: 'view' }
     },
     // ── Default ELLIPSES items ───────────────────────────────────────────────
@@ -96,66 +109,88 @@ export class MenuRegistryService {
       label: 'Holidays', route: '/holidays', defaultLocation: 'ellipses', type: 'direct',
       icon: '/main-menu-icons/holiday-icon.png', activeIcon: '/main-menu-icons/holidays.png',
       personalizationIcon: '/main-menu-icons/holiday-icon.png',
+      sidebarIcon: '/personalization/Mainmenu_Holidays2.png',
+      ellipsesIcon: '/main-menu-icons/holiday-icon.png',
       permission: { feature: 'Holidays', action: 'view' }
     },
     {
       label: 'Policies', route: '/policies', defaultLocation: 'ellipses', type: 'direct',
       icon: '/main-menu-icons/policies-icon.png', activeIcon: '/main-menu-icons/policies.png',
       personalizationIcon: '/main-menu-icons/policies-icon.png',
+      sidebarIcon: '/personalization/Mainmenu_Policies2.png',
+      ellipsesIcon: '/main-menu-icons/policies-icon.png',
       permission: { feature: 'Policies', action: 'view' }
     },
     {
       label: 'Events', route: '/events', defaultLocation: 'ellipses', type: 'direct',
       icon: '/main-menu-icons/events-colored-icon.png', activeIcon: '/main-menu-icons/calendar-favorite.png',
       personalizationIcon: '/main-menu-icons/events-colored-icon.png',
+      sidebarIcon: '/personalization/Mainmenu_Events3.png',
+      ellipsesIcon: '/main-menu-icons/events-colored-icon.png',
       permission: { feature: 'Events', action: 'view' }
     },
     {
       label: 'Expenses', route: '/claimsandexpenses', defaultLocation: 'ellipses', type: 'direct',
       icon: '/main-menu-icons/expenses-icon.png', activeIcon: '/main-menu-icons/expenses.png',
       personalizationIcon: '/main-menu-icons/expenses-icon.png',
+      sidebarIcon: '/personalization/Mainmenu_Expenses2.png',
+      ellipsesIcon: '/main-menu-icons/expenses-icon.png',
       permission: { feature: 'Expenses', action: 'view' }
     },
     {
       label: 'Org Hierarchy', route: '/organization-chart', defaultLocation: 'ellipses', type: 'direct',
       icon: '/main-menu-icons/org.png', activeIcon: '/main-menu-icons/org-hierarchy-square.png',
       personalizationIcon: '/main-menu-icons/org.png',
+      sidebarIcon: '/personalization/Mainmenu_Org Hierarchy2.png',
+      ellipsesIcon: '/main-menu-icons/org.png',
       permission: { feature: 'Org Hierarchy', action: 'view' }
     },
     {
       label: 'Personalization', route: '/theme', defaultLocation: 'ellipses', type: 'direct',
       icon: '/main-menu-icons/themes-color-icon.png', activeIcon: '/main-menu-icons/themes-icon.png',
       personalizationIcon: '/main-menu-icons/themes-color-icon.png',
+      sidebarIcon: '/personalization/Mainmenu_Personalization2.png',
+      ellipsesIcon: '/main-menu-icons/themes-color-icon.png',
       permission: { feature: 'Themes', action: 'view' }
     },
     {
       label: 'Blood Bank', route: '/blood-bank', defaultLocation: 'ellipses', type: 'direct',
       icon: '/main-menu-icons/blood-bank-color-icon.png', activeIcon: '/main-menu-icons/blood-bank-icon.png',
       personalizationIcon: '/main-menu-icons/blood-bank-color-icon.png',
+      sidebarIcon: '/personalization/Mainmenu_Blood Bank2.png',
+      ellipsesIcon: '/main-menu-icons/blood-bank-color-icon.png',
       permission: { feature: 'Blood Bank', action: 'view' }
     },
     {
       label: 'Contacts Directory', route: '/contacts-directory', defaultLocation: 'ellipses', type: 'direct',
       icon: '/main-menu-icons/contact-directory-color-icon.png', activeIcon: '/main-menu-icons/contact-directory-icon.png',
       personalizationIcon: '/main-menu-icons/contact-directory-color-icon.png',
+      sidebarIcon: '/personalization/Mainmenu_Contacts Directory2.png',
+      ellipsesIcon: '/main-menu-icons/contact-directory-color-icon.png',
       permission: { feature: 'Contacts Directory', action: 'view' }
     },
     {
       label: 'Phone Book', route: '/phonebook', defaultLocation: 'ellipses', type: 'direct',
       icon: '/main-menu-icons/phonebook-color-icon.png', activeIcon: '/main-menu-icons/phonebook-icon.png',
       personalizationIcon: '/main-menu-icons/phonebook-color-icon.png',
+      sidebarIcon: '/personalization/Mainmenu_Phone Book2.png',
+      ellipsesIcon: '/main-menu-icons/phonebook-color-icon.png',
       permission: { feature: 'Phone Book', action: 'view' }
     },
     {
       label: 'Assets', route: '/assets-management', defaultLocation: 'ellipses', type: 'direct',
       icon: '/main-menu-icons/assets-icon.png', activeIcon: '/main-menu-icons/assets.png',
       personalizationIcon: '/main-menu-icons/assets-icon.png',
+      sidebarIcon: '/personalization/Mainmenu_Assets2.png',
+      ellipsesIcon: '/main-menu-icons/assets-icon.png',
       permission: { feature: 'Asset Management', action: 'view' }
     },
     {
       label: 'Cards Management', route: '/card-management', defaultLocation: 'ellipses', type: 'direct',
       icon: '/main-menu-icons/card-management-icon.png', activeIcon: '/main-menu-icons/card-management-active.png',
       personalizationIcon: '/main-menu-icons/card-management-icon.png',
+      sidebarIcon: '/personalization/Mainmenu_Cards Management2.png',
+      ellipsesIcon: '/main-menu-icons/card-management-icon.png',
       permission: { feature: 'Desk Allocation', action: 'view' }
     },
   ];

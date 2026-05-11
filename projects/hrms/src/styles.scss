@@ -3146,3 +3146,75 @@ input[type=number]::-webkit-outer-spin-button {
 
 
 }
+
+// Sidenav pinned overlay — body-level dropdown panel for ellipses dropdown-type items
+// Mirrors .custom-main-menu-dropdown .dropdown-menu styles exactly
+.sidenav-pinned-overlay {
+    text-align: center;
+
+    .grid-container {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        border: 1px solid transparent;
+        background: var(--white-color);
+    }
+
+    .grid-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        min-width: 6.25rem;
+        min-height: 6.25rem;
+        cursor: pointer;
+    }
+
+    .dropdown-menu-icon {
+        width: 1.5rem;
+        height: 1.5rem;
+    }
+
+    .dropdown-menu-text {
+        font-weight: 500;
+        font-size: 12px;
+        color: #222222;
+    }
+
+    .active-nav-link {
+        background: linear-gradient(360deg, #FFFFFF 0%, var(--custom-component-tabs-bg-color, #D8E2F2) 100%);
+    }
+
+    // Border styles matching the existing grid card
+    .border-right-top::after,
+    .border-right-middle::after,
+    .border-right-bottom::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 1px;
+        height: 100%;
+        z-index: 1;
+    }
+
+    .border-right-top::after { background: linear-gradient(to top, var(--grid-border-color, #BCD4F0), white); }
+    .border-right-middle::after { background: linear-gradient(to bottom, var(--grid-border-color, #BCD4F0), var(--grid-border-color, #BCD4F0)); }
+    .border-right-bottom::after { background: linear-gradient(to bottom, var(--grid-border-color, #BCD4F0), white); }
+
+    .border-bottom-left::before,
+    .border-bottom-middle::before,
+    .border-bottom-right::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        height: 1px;
+        width: 100%;
+        z-index: 1;
+    }
+
+    .border-bottom-left::before { background: linear-gradient(to left, var(--grid-border-color, #BCD4F0), white); }
+    .border-bottom-middle::before { background: linear-gradient(to right, var(--grid-border-color, #BCD4F0), var(--grid-border-color, #BCD4F0)); }
+    .border-bottom-right::before { background: linear-gradient(to right, var(--grid-border-color, #BCD4F0), white); }
+}

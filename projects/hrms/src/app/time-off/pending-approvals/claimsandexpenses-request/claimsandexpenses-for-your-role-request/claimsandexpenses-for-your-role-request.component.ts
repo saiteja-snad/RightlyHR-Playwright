@@ -205,8 +205,12 @@ export class ClaimsandexpensesForYourRoleRequestComponent
     this.intializeApproveForm();
     this.selectedLeaveData = request;
   }
-
-  openRejectModal(content: any, request: ExpenseApprovalResponse | IExpenseHeaders ) {
+ openRequiredCalrificationModal(content: any, request: ExpenseApprovalResponse) {
+    this.modalService.open(content, { centered: true, backdrop: 'static' });
+    this.intializeApproveForm();
+    this.selectedLeaveData = request;
+  }
+  openRejectModal(content: any, request: ExpenseApprovalResponse) {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
     this.intializeRejectForm();
     this.selectedLeaveData = request as any;
@@ -545,5 +549,50 @@ export class ClaimsandexpensesForYourRoleRequestComponent
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();
+  }
+   handleClarification(approveForm: FormGroup): void {
+    if (approveForm.valid) {
+      const formData = approveForm.value;
+      const requestBody = {
+        status: 'Required Clarification',
+        comments: formData.comments,
+        approvedBy: this.empinfo.employeeId.toString(),
+        currentStage: parseInt(
+          this.selectedLeaveData.approvalHeader.currentapprovalStage
+        ),
+      };
+      this.sharedModalService.openLoaderModal(
+        'Sending for Clarification, Please wait...'
+      );
+      this.http
+        .putData(
+          `PendingApproval/${this.selectedLeaveData.approvalHeader.id}`,
+          requestBody
+        )
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (response: any) => {
+            this.modalService.dismissAll();
+            this.signalService.claimsandexpensesForRoleTriggerSignal.set(true);
+            this.sharedModalService.openSuccessModal(
+              'Expense request sent for clarification successfully'
+            );
+            this.approveForm.reset();
+            this.http.setnewcountDetails();
+            this.selectedLeaveData = {} as ExpenseApprovalResponse;
+            this.http.tirggerPendingApprovalCountSignal.update((status) => ({
+              ...status,
+              expenses: true,
+            }));
+          },
+          error: (reason: any) => {
+            this.modalService.dismissAll();
+            this.sharedModalService.openErrorModal(reason.error.Message);
+          },
+          complete: () => {
+            this.getAllPendingApprovals();
+          },
+        });
+    }
   }
 }

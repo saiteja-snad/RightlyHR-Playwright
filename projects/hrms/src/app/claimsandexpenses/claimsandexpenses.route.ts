@@ -7,6 +7,7 @@ import { ApprovedExpensesComponent } from "./claimsandexpenses/approved-expenses
 import { ProcessedExpensesComponent } from "./claimsandexpenses/processed-expenses/processed-expenses.component";
 import { RejectedExpensesComponent } from "./claimsandexpenses/rejected-expenses/rejected-expenses.component";
 import { PermissionsGuard } from "../guards/permissions.guard";
+import { RequiredClarificationComponent } from "./claimsandexpenses/required-clarification/required-clarification.component";
 
 export default [
     { path: 'addexpense', component: AddClaimsandexpensesComponent, canActivate: [PermissionsGuard], data: { permission: 'Expenses Module.create' } },
@@ -19,6 +20,7 @@ export default [
             { path: 'pending', component: PendingExpensesComponent, canActivate: [PermissionsGuard], data: { permission: 'Pending Tab.view' } },
             { path: 'processed', component: ProcessedExpensesComponent, canActivate: [PermissionsGuard], data: { permission: 'Processed Tab.view' } },
             { path: 'rejected', component: RejectedExpensesComponent, canActivate: [PermissionsGuard], data: { permission: 'Rejected Tab.view' } },
+            { path: 'required-clarification', component: RequiredClarificationComponent, canActivate: [PermissionsGuard], data: { permission: 'Required Clarification Tab.view' } },
             // { path: '', redirectTo: 'draft', pathMatch: 'full' },
         ]
     }

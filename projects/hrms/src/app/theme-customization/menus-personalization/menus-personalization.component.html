@@ -12,6 +12,7 @@
         cdkDropList
         #mainList="cdkDropList"
         [cdkDropListData]="mainMenuItems"
+        [cdkDropListConnectedTo]="[threeDotList]"
         class="drag-list"
         (cdkDropListDropped)="onDrop($event)">
 
@@ -25,15 +26,15 @@
         <!-- Remaining main menu items -->
         <div
           class="drag-item"
-          *ngFor="let item of mainMenuItems"
+          *ngFor="let item of mainMenuItems; trackBy: trackByRoute"
           cdkDrag
           [cdkDragData]="item">
            <span class="grip-handle">⠿</span>
-          <img [src]="item.icon" alt="" class="item-icon">
+          <img [src]="item.personalizationIcon" alt="" class="item-icon">
           <span class="menu-label">{{ item.label | translate }}</span>
           <ng-template cdkDragPreview>
             <div class="drag-preview">
-              <img [src]="item.icon" alt="" class="item-icon">
+              <img [src]="item.personalizationIcon" alt="" class="item-icon">
               {{ item.label | translate }}
             </div>
           </ng-template>
@@ -59,19 +60,20 @@
         cdkDropList
         #threeDotList="cdkDropList"
         [cdkDropListData]="threeDotItems"
+        [cdkDropListConnectedTo]="[mainList]"
         class="drag-list"
         (cdkDropListDropped)="onDrop($event)">
         <div
           class="drag-item"
-          *ngFor="let item of threeDotItems"
+          *ngFor="let item of threeDotItems; trackBy: trackByRoute"
           cdkDrag
           [cdkDragData]="item">
           <span class="grip-handle">⠿</span>
-          <img [src]="item.icon" alt="" class="item-icon">
+          <img [src]="item.personalizationIcon" alt="" class="item-icon">
           <span class="menu-label">{{ item.label | translate }}</span>
           <ng-template cdkDragPreview>
             <div class="drag-preview">
-              <img [src]="item.icon" alt="" class="item-icon">
+              <img [src]="item.personalizationIcon" alt="" class="item-icon">
               {{ item.label | translate }}
             </div>
           </ng-template>

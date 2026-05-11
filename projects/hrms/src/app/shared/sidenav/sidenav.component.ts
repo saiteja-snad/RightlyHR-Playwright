@@ -1,6 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component, effect, HostListener, OnInit, ViewChild } from '@angular/core';
-import { Router, RouterModule } from '@angular/router';
+import { Component, effect, HostListener, OnInit, OnDestroy, ViewChild, ChangeDetectorRef } from '@angular/core';
+import { Router, RouterModule, NavigationEnd } from '@angular/router';
+import { Subscription } from 'rxjs';
+import { filter } from 'rxjs/operators';
 import { AuthService } from '../../services/auth.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { RbacService } from '../../services/rbac.service';
@@ -12,8 +14,11 @@ import { OnbehalfofMainTabsComponent } from "../time-off-module-tabs/onbehalfof-
 import { PendingApprovalsTabsComponent } from "../time-off-module-tabs/pending-approvals-tabs/pending-approvals-tabs.component";
 import { PmsMainTabsComponent } from "../pms-module-tabs/pms-main-tabs/pms-main-tabs.component";
 import { MenuOrderService } from '../../services/theme-service/menu-order.service';
-import { DragDropModule, CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
+import { MenuRegistryService, MenuItemDef } from '../../services/theme-service/menu-registry.service';
+import { DragDropModule, CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { MenuOrder } from '../../theme-customization/theme-action.service';
+
+declare var bootstrap: any;
 
 @Component({
   selector: 'app-sidenav',
@@ -23,54 +28,35 @@ import { MenuOrder } from '../../theme-customization/theme-action.service';
   templateUrl: './sidenav.component.html',
   styleUrl: './sidenav.component.scss'
 })
-export class SidenavComponent implements OnInit {
+export class SidenavComponent implements OnInit, OnDestroy {
 
-  // Three-dot modules
-  modules = [
-    { label: 'Holidays', icon: '/main-menu-icons/holiday-icon.png', activeIcon: '/main-menu-icons/holidays.png', route: '/holidays', permission: { feature: 'Holidays', action: 'view' } },
-    { label: 'Policies', icon: '/main-menu-icons/policies-icon.png', activeIcon: '/main-menu-icons/policies.png', route: '/policies', permission: { feature: 'Policies', action: 'view' } },
-    { label: 'Events', icon: '/main-menu-icons/events-colored-icon.png', activeIcon: '/main-menu-icons/calendar-favorite.png', route: '/events', permission: { feature: 'Events', action: 'view' } },
-    { label: 'Expenses', icon: '/main-menu-icons/expenses-icon.png', activeIcon: '/main-menu-icons/expenses.png', route: '/claimsandexpenses', permission: { feature: 'Expenses', action: 'view' } },
-    { label: 'Org Hierarchy', icon: '/main-menu-icons/org.png', activeIcon: '/main-menu-icons/org-hierarchy-square.png', route: '/organization-chart', permission: { feature: 'Org Hierarchy', action: 'view' } },
-    { label: 'Personalization', icon: '/main-menu-icons/themes-color-icon.png', activeIcon: '/main-menu-icons/themes-icon.png', route: '/theme', permission: { feature: 'Themes', action: 'view' } },
-    { label: 'Blood Bank', icon: '/main-menu-icons/blood-bank-color-icon.png', activeIcon: '/main-menu-icons/blood-bank-icon.png', route: '/blood-bank', permission: { feature: 'Blood Bank', action: 'view' } },
-    { label: 'Contacts Directory', icon: '/main-menu-icons/contact-directory-color-icon.png', activeIcon: '/main-menu-icons/contact-directory-icon.png', route: '/contacts-directory', permission: { feature: 'Contacts Directory', action: 'view' } },
-    { label: 'Phone Book', icon: '/main-menu-icons/phonebook-color-icon.png', activeIcon: '/main-menu-icons/phonebook-icon.png', route: '/phonebook', permission: { feature: 'Phone Book', action: 'view' } },
-    { label: 'Assets', icon: '/main-menu-icons/assets-icon.png', activeIcon: '/main-menu-icons/assets.png', route: '/assets-management', permission: { feature: 'Asset Management', action: 'view' } },
-    { label: 'Cards Management', icon: '/main-menu-icons/card-management-icon.png', activeIcon: '/main-menu-icons/card-management-active.png', route: '/card-management', permission: { feature: 'Desk Allocation', action: 'view' } },
-  ];
+  mainMenuItems: MenuItemDef[] = [];
+  modules: MenuItemDef[] = [];
 
-  // Main menu items as a draggable array (Dashboard always first, excluded from drag)
-  mainMenuItems: any[] = [
-    { label: 'My Info', icon: '/main-menu-icons/my-Info-icon.png', route: '/myinfo', permission: { feature: 'My Info', action: 'view' }, type: 'direct' },
-    { label: 'Employees', icon: '/main-menu-icons/employee-management-icon.png', route: '/employee-management', permission: { feature: 'Employees', action: 'view' }, type: 'direct' },
-    { label: 'Time Off', icon: '/main-menu-icons/clock.png', route: '/time-off', permission: { feature: 'Time-Off', action: 'view' }, type: 'dropdown', dropdownComponent: 'time-off' },
-    { label: 'Attendance', icon: '/main-menu-icons/finger-print.png', route: '/attendance', permission: { feature: 'Attendance', action: 'view' }, type: 'direct' },
-    { label: 'Reports', icon: '/main-menu-icons/reports.png', route: '/reports', permission: { feature: 'Reports', action: 'view' }, type: 'direct' },
-    { label: 'Project Management', icon: '/main-menu-icons/project-management-icon.png', route: '/project-management', permission: { feature: 'Project Management', action: 'view' }, type: 'dropdown', dropdownComponent: 'project-management' },
-    { label: 'Skill Set', icon: '/main-menu-icons/skill-management.png', route: '/skill-management', permission: { feature: 'Skill Set Management', action: 'view' }, type: 'direct' },
-    { label: 'On Behalf Of', icon: '/main-menu-icons/clock.png', route: '/on-behalf-of', permission: { feature: 'On Behalf Of', action: 'view' }, type: 'dropdown', dropdownComponent: 'on-behalf-of' },
-    { label: 'Pending Approvals', icon: '/main-menu-icons/pending-approvals.png', route: '/pending-approvals', permission: { feature: 'Pending Approvals Module', action: 'view' }, type: 'dropdown', dropdownComponent: 'pending-approvals' },
-    { label: 'PMS', icon: '/main-menu-icons/pms.png', route: '/pms', permission: { feature: 'PMS', action: 'view' }, type: 'dropdown', dropdownComponent: 'pms' },
-  ];
-
-  private originalModules: any[] = [];
-  private originalMainMenuItems: any[] = [];
+  private allowedRoutes = new Set<string>();
   private empinfo: any;
+  private routerSub!: Subscription;
 
   columnsPerRow = 3;
-  dropdownOpen = false;
-  selectedDropdownModule: any = null;
-  filteredModules: any[] = [];
+  selectedDropdownModule: MenuItemDef | null = null;
+  filteredModules: MenuItemDef[] = [];
   spinnerLoader = false;
   @ViewChild('logoutpopup') logoutpopup: any;
 
-  constructor(private authService: AuthService, private modalservie: NgbModal, public rbac: RbacService,
-    private router: Router, private accessNav: AccessNavigationService, private menuOrderService: MenuOrderService) {
+  constructor(
+    private authService: AuthService,
+    private modalservie: NgbModal,
+    public rbac: RbacService,
+    private router: Router,
+    private accessNav: AccessNavigationService,
+    private menuOrderService: MenuOrderService,
+    private menuRegistry: MenuRegistryService,
+    private cdr: ChangeDetectorRef
+  ) {
     effect(() => {
       const order = this.menuOrderService.menuOrder();
-      if (order) {
-        this.applyMenuOrder();
+      if (order && this.allowedRoutes.size > 0) {
+        this.applyMenuOrder(order);
         this.updateFilteredModules();
       }
     });
@@ -79,54 +65,47 @@ export class SidenavComponent implements OnInit {
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
 
-    this.modules = this.modules.filter(tab =>
-      this.rbac.allowedToAccess(`${tab.permission.feature}.${tab.permission.action}`)
+    // Build allowed routes set from RBAC
+    this.allowedRoutes = new Set(
+      this.menuRegistry.ALL_ITEMS
+        .filter(i => this.rbac.allowedToAccess(`${i.permission.feature}.${i.permission.action}`))
+        .map(i => i.route)
     );
-    this.mainMenuItems = this.mainMenuItems.filter(tab =>
-      this.rbac.allowedToAccess(`${tab.permission.feature}.${tab.permission.action}`)
-    );
 
-    this.originalModules = [...this.modules];
-    this.originalMainMenuItems = [...this.mainMenuItems];
-
-    this.applyMenuOrder();
-    this.setSelectedModuleFromRoute();
-  }
-
-  applyMenuOrder(): void {
     const order = this.menuOrderService.menuOrder();
-    if (!order) return;
-
-    if (order.mainMenuRoutes?.length) {
-      const mainRoutes = order.mainMenuRoutes.filter(r => r !== '/dashboard');
-      const reordered: any[] = [];
-      mainRoutes.forEach(route => {
-        const found = this.originalMainMenuItems.find(m => m.route === route);
-        if (found) reordered.push(found);
-      });
-      this.originalMainMenuItems.forEach(m => {
-        if (!reordered.find(r => r.route === m.route)) reordered.push(m);
-      });
-      this.mainMenuItems = reordered;
+    if (order) {
+      this.applyMenuOrder(order);
+    } else {
+      // No saved order — use defaults
+      const { main, ellipses } = this.menuRegistry.resolveMenus([], [], this.allowedRoutes);
+      this.mainMenuItems = main;
+      this.modules = ellipses;
     }
 
-    if (order.threeDotRoutes?.length) {
-      const source = this.originalModules;
-      const reordered: any[] = [];
-      order.threeDotRoutes.forEach(route => {
-        const found = source.find(m => m.route === route);
-        if (found) reordered.push(found);
-      });
-      source.forEach(m => {
-        if (!reordered.find((r: any) => r.route === m.route)) reordered.push(m);
-      });
-      this.modules = reordered;
-    }
+    this.updateFilteredModules();
+    this.setSelectedModuleFromRoute();
+
+    // Re-evaluate pinned selection on every navigation (back button, child routes, etc.)
+    this.routerSub = this.router.events
+      .pipe(filter(e => e instanceof NavigationEnd))
+      .subscribe(() => this.setSelectedModuleFromRoute());
   }
 
-  onDirectItemClick(item: any): void {
-    // Some routes use direct navigation (not through accessNav)
-    // directRoutes = routes NOT handled by navigateToAccessedHeaderRoute (no sub-route resolution needed)
+  ngOnDestroy(): void {
+    this.routerSub?.unsubscribe();
+  }
+
+  private applyMenuOrder(order: MenuOrder): void {
+    const { main, ellipses } = this.menuRegistry.resolveMenus(
+      order.mainMenuRoutes,
+      order.threeDotRoutes,
+      this.allowedRoutes
+    );
+    this.mainMenuItems = main;
+    this.modules = ellipses;
+  }
+
+  onDirectItemClick(item: MenuItemDef): void {
     const directRoutes = ['/employee-management', '/attendance'];
     if (directRoutes.includes(item.route)) {
       this.router.navigate([item.route]);
@@ -136,22 +115,59 @@ export class SidenavComponent implements OnInit {
     this.resetDropdown();
   }
 
-  closeOpenDropdowns(): void {
-    // Close any open Bootstrap dropdowns
-    document.querySelectorAll('.dropdown-menu.show').forEach(el => el.classList.remove('show'));
-    document.querySelectorAll('[data-bs-toggle="dropdown"].show').forEach(el => el.classList.remove('show'));
-    document.querySelectorAll('.btn-group.show').forEach(el => el.classList.remove('show'));
-  }
-
-  onMainMenuDrop(event: CdkDragDrop<any[]>): void {
-    moveItemInArray(this.mainMenuItems, event.previousIndex, event.currentIndex);
+  onMainMenuDrop(event: CdkDragDrop<MenuItemDef[]>): void {
+    if (event.previousContainer === event.container) {
+      moveItemInArray(this.mainMenuItems, event.previousIndex, event.currentIndex);
+    } else {
+      // Item dragged from filteredModules into main menu
+      const item = this.filteredModules[event.previousIndex];
+      this.filteredModules.splice(event.previousIndex, 1);
+      this.mainMenuItems.splice(event.currentIndex, 0, item);
+      this.syncModulesFromFiltered();
+      this.mainMenuItems = [...this.mainMenuItems];
+      this.updateFilteredModules();
+    }
     this.saveCurrentOrder();
   }
 
-  onThreeDotDrop(event: CdkDragDrop<any[]>): void {
-    moveItemInArray(this.modules, event.previousIndex, event.currentIndex);
+  onThreeDotDrop(event: CdkDragDrop<MenuItemDef[]>): void {
+    if (event.previousContainer === event.container) {
+      // Reorder within filteredModules, then rebuild modules preserving the selected item's position
+      moveItemInArray(this.filteredModules, event.previousIndex, event.currentIndex);
+      this.syncModulesFromFiltered();
+    } else {
+      // Item dragged from main menu into ellipses — insert into filteredModules at drop index
+      const item = event.previousContainer.data[event.previousIndex];
+      this.mainMenuItems.splice(event.previousIndex, 1);
+      this.filteredModules.splice(event.currentIndex, 0, item);
+      this.syncModulesFromFiltered();
+      this.mainMenuItems = [...this.mainMenuItems];
+    }
     this.updateFilteredModules();
     this.saveCurrentOrder();
+  }
+
+  /**
+   * Rebuild the full modules array from filteredModules, re-inserting the
+   * selectedDropdownModule at its original position (or appending if not found).
+   */
+  private syncModulesFromFiltered(): void {
+    if (!this.selectedDropdownModule) {
+      this.modules = [...this.filteredModules];
+      return;
+    }
+    // Find where the selected item was in the old modules array
+    const selectedRoute = this.selectedDropdownModule.route;
+    const oldIndex = this.modules.findIndex(m => m.route === selectedRoute);
+    const rebuilt = [...this.filteredModules];
+    if (oldIndex >= 0) {
+      // Re-insert at the same position, clamped to array bounds
+      const insertAt = Math.min(oldIndex, rebuilt.length);
+      rebuilt.splice(insertAt, 0, this.selectedDropdownModule);
+    } else {
+      rebuilt.push(this.selectedDropdownModule);
+    }
+    this.modules = rebuilt;
   }
 
   private saveCurrentOrder(): void {
@@ -162,9 +178,7 @@ export class SidenavComponent implements OnInit {
     this.menuOrderService.saveOrder(this.empinfo?.employeeId || 0, order);
   }
 
-  getMainMenuOrder(route: string): number { return 0; }
-
-  isActiveItem(item: any): boolean {
+  isActiveItem(item: MenuItemDef): boolean {
     if (item.type === 'dropdown') {
       if (item.dropdownComponent === 'project-management') return this.isActiveprojectManagement();
       return this.isActiveRoute(item.route);
@@ -195,13 +209,6 @@ export class SidenavComponent implements OnInit {
     return false;
   }
 
-  isActiveRoutePms(): boolean {
-    const currentUrl = this.router.url;
-    return currentUrl === '/pms/review-cycle' || currentUrl === '/pms/apprisal' ||
-      currentUrl.startsWith('/pms/myPerformance') || currentUrl.startsWith('/pms/team-performance') ||
-      currentUrl === '/pms/assessment-form';
-  }
-
   isActiveprojectManagement(): boolean {
     return this.router.url.startsWith('/project-management');
   }
@@ -215,11 +222,51 @@ export class SidenavComponent implements OnInit {
     this.updateFilteredModules();
   }
 
-  getGridItemClasses(module: any): any {
-    const visibleModules = this.modules.filter(m => m.route !== this.selectedDropdownModule?.route);
-    const i = visibleModules.indexOf(module);
+  /**
+   * Called when a grid item inside the ellipses panel is clicked.
+   * Both direct and dropdown items are pinned as selectedDropdownModule (shown in sidenav list).
+   * Dropdown items additionally open their submenu flyout from the pinned position.
+   */
+  selectDropdownModule(module: MenuItemDef): void {
+    const isSame = this.selectedDropdownModule?.route === module.route;
+    this.selectedDropdownModule = isSame ? null : module;
+    this.updateFilteredModules();
+    this.cdr.detectChanges();
+
+    if (isSame) return;
+
+    // Close the ellipses Bootstrap dropdown
+    const ellipsesToggle = document.querySelector('.ellipses-dropdown-toggle') as HTMLElement | null;
+    if (ellipsesToggle) {
+      ellipsesToggle.click();
+    }
+
+    if (module.type === 'dropdown') {
+      // After ellipses closes and DOM updates, open the pinned item's flyout
+      setTimeout(() => {
+        setTimeout(() => {
+          const pinnedToggle = document.querySelector('.selected-module-item [data-bs-toggle="dropdown"]') as HTMLElement | null;
+          if (pinnedToggle) {
+            const dropdown = new bootstrap.Dropdown(pinnedToggle);
+            dropdown.show();
+          }
+        }, 100);
+      }, 0);
+    } else {
+      if (module.route === '/organization-chart') { this.router.navigate(['/organization-chart']); }
+      else if (module.route === '/theme') { this.router.navigate(['/theme']); }
+      else { this.goToAccessibleRoute(module.route); }
+    }
+  }
+
+  updateFilteredModules(): void {
+    this.filteredModules = this.modules.filter(m => m.route !== this.selectedDropdownModule?.route);
+  }
+
+  getGridItemClasses(module: MenuItemDef): any {
+    const i = this.filteredModules.indexOf(module);
     if (i === -1) return {};
-    const total = visibleModules.length;
+    const total = this.filteredModules.length;
     const totalRows = Math.ceil(total / this.columnsPerRow);
     const currentRow = Math.floor(i / this.columnsPerRow);
     const col = i % this.columnsPerRow;
@@ -261,28 +308,31 @@ export class SidenavComponent implements OnInit {
 
   setSelectedModuleFromRoute(): void {
     const currentRoute = this.router.url;
+
+    // If current route matches a main menu item, clear the pinned ellipses selection
+    const isMainMenuRoute = this.mainMenuItems.some(item =>
+      currentRoute === item.route || currentRoute.startsWith(item.route + '/')
+    );
+    if (isMainMenuRoute || currentRoute === '/dashboard' || currentRoute.startsWith('/dashboard/')) {
+      this.selectedDropdownModule = null;
+      this.updateFilteredModules();
+      return;
+    }
+
+    // Check if current route matches an ellipses module
     const matchedModules = this.modules.filter(mod => {
       if (currentRoute === mod.route || currentRoute.startsWith(mod.route + '/')) return true;
       if (mod.route === '/theme' && currentRoute.startsWith('/menus/')) return true;
       return false;
     });
-    this.selectedDropdownModule = matchedModules.sort((a, b) => b.route.length - a.route.length)[0];
+    const matched = matchedModules.sort((a, b) => b.route.length - a.route.length)[0] ?? null;
+
+    // If no ellipses module matches the current route, clear the selection
+    this.selectedDropdownModule = matched;
     this.updateFilteredModules();
   }
 
-  selectDropdownModule(module: any): void {
-    if (this.selectedDropdownModule?.route !== module.route) {
-      this.selectedDropdownModule = module;
-      this.updateFilteredModules();
-      if (module.route === '/organization-chart') { this.router.navigate(['/organization-chart']); }
-      else if (module.route === '/theme') { this.router.navigate(['/theme']); }
-      else { this.goToAccessibleRoute(module.route); }
-    }
-  }
-
-  updateFilteredModules(): void {
-    this.filteredModules = this.modules.filter(m => m.route !== this.selectedDropdownModule?.route);
-  }
+  trackByRoute(_: number, item: MenuItemDef): string { return item.route; }
 
   ActiveRoute(): boolean {
     return ['/employee-management', '/letters', '/invite-user'].some(r => this.router.url.startsWith(r));

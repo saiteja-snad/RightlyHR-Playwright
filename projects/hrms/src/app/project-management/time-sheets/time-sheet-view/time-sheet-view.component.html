@@ -239,7 +239,7 @@
                         <p class="mb-0">{{ project.get('tue.rejectReason')?.value}}</p>
                     </ng-template>
                 </div>
-                 <div *ngIf="project.get('tue.blockReason')?.value === 'Phase Date Restriction'" class="ms-2">
+                <div *ngIf="project.get('tue.blockReason')?.value === 'Phase Date Restriction'" class="ms-2">
                     <a type="button" [ngbPopover]="phaseRestriction">
                         <app-info-icon></app-info-icon>
                     </a>
@@ -273,7 +273,7 @@
                         <p class="mb-0">{{ project.get('wed.rejectReason')?.value}}</p>
                     </ng-template>
                 </div>
-                 <div *ngIf="project.get('wed.blockReason')?.value === 'Phase Date Restriction'" class="ms-2">
+                <div *ngIf="project.get('wed.blockReason')?.value === 'Phase Date Restriction'" class="ms-2">
                     <a type="button" [ngbPopover]="phaseRestriction">
                         <app-info-icon></app-info-icon>
                     </a>
@@ -307,7 +307,7 @@
                         <p class="mb-0">{{ project.get('thu.rejectReason')?.value}}</p>
                     </ng-template>
                 </div>
-                 <div *ngIf="project.get('thu.blockReason')?.value === 'Phase Date Restriction'" class="ms-2">
+                <div *ngIf="project.get('thu.blockReason')?.value === 'Phase Date Restriction'" class="ms-2">
                     <a type="button" [ngbPopover]="phaseRestriction">
                         <app-info-icon></app-info-icon>
                     </a>
@@ -340,7 +340,7 @@
                         <p class="mb-0">{{ project.get('fri.rejectReason')?.value}}</p>
                     </ng-template>
                 </div>
-                 <div *ngIf="project.get('fri.blockReason')?.value === 'Phase Date Restriction'" class="ms-2">
+                <div *ngIf="project.get('fri.blockReason')?.value === 'Phase Date Restriction'" class="ms-2">
                     <a type="button" [ngbPopover]="phaseRestriction">
                         <app-info-icon></app-info-icon>
                     </a>
@@ -373,7 +373,7 @@
                         <p class="mb-0">{{ project.get('sat.rejectReason')?.value}}</p>
                     </ng-template>
                 </div>
-                 <div *ngIf="project.get('sat.blockReason')?.value === 'Phase Date Restriction'" class="ms-2">
+                <div *ngIf="project.get('sat.blockReason')?.value === 'Phase Date Restriction'" class="ms-2">
                     <a type="button" [ngbPopover]="phaseRestriction">
                         <app-info-icon></app-info-icon>
                     </a>
@@ -406,7 +406,7 @@
                         <p class="mb-0">{{ project.get('sun.rejectReason')?.value}}</p>
                     </ng-template>
                 </div>
-                 <div *ngIf="project.get('sun.blockReason')?.value === 'Phase Date Restriction'" class="ms-2">
+                <div *ngIf="project.get('sun.blockReason')?.value === 'Phase Date Restriction'" class="ms-2">
                     <a type="button" [ngbPopover]="phaseRestriction">
                         <app-info-icon></app-info-icon>
                     </a>
@@ -424,7 +424,7 @@
         </td>
         </tr>
         </tbody>
-        <tfoot >
+        <tfoot>
             <tr>
                 <td>Total Hours :<span class="total-duration ms-1">{{ totalDuration}} Hrs</span></td>
                 <td>{{ getTotalPerDay('mon') }}</td>
@@ -520,8 +520,7 @@
             <form [formGroup]="dayForm" *ngIf="dayForm" (ngSubmit)="saveDayEntry()">
                 <div class="mb-4">
                     <p class="day mb-2">{{dayForm.get('entryDate')?.value | dateformat}} </p>
-                    <p class="project-name">{{dayForm.get('clientName')?.value || selectedClientname || 'No
-                        Client'}}@if((dayForm.get('projectName')?.value || selectedProjectName)) { -
+                    <p class="project-name">{{dayForm.get('clientName')?.value || selectedClientname || 'No Client'}}@if((dayForm.get('projectName')?.value || selectedProjectName)) { -
                         {{dayForm.get('projectName')?.value || selectedProjectName}}
                         }@if(!(dayForm.get('projectName')?.value || selectedProjectName)) { - No Project
                         }@if((dayForm.get('phaseName')?.value || selectedPhaseName)) { -
@@ -538,8 +537,6 @@
                             *ngIf="dayForm.get('description')?.touched && dayForm.get('description')?.hasError('required')">
                             Description is required
                         </div>
-
-
                         <div class="textarea-count-text">{{ dayForm.get("description")?.value?.length || 0 }}/500</div>
 
                     </div>
@@ -580,7 +577,7 @@
                     </div>
                 </div>
                 <div class="d-flex align-items-center gap-3 pt-4"
-                 *ngIf="dayForm.get('approvalStatus')?.value !=='Waiting for Approval' && dayForm.get('approvalStatus')?.value !== 'Processed'"  >
+                    *ngIf="dayForm.get('approvalStatus')?.value !=='Waiting for Approval' && dayForm.get('approvalStatus')?.value !== 'Processed'">
                     <span type="button" class="text-danger"
                         *ngIf="dayForm.get('approvalStatus')?.value && dayForm.get('approvalStatus')?.value !== 'Not Entered'"
                         (click)="opendeleteModal(deleteconformation,dayForm.get('entryId')?.value)"><u>Delete</u></span>

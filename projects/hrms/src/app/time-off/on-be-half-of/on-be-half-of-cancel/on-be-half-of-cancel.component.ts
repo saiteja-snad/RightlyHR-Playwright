@@ -60,7 +60,6 @@ export class OnBeHalfOfCancelComponent implements OnInit, OnDestroy {
         } else {
           this.lpdata = [];
         }
-        this.http.onBehalfOfTriggerSignal.set(false);
       }
     });
   }

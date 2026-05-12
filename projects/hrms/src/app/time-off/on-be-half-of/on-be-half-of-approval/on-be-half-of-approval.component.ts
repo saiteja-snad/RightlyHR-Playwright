@@ -57,7 +57,6 @@ export class OnBeHalfOfApprovalComponent implements OnInit, OnDestroy{
         } else {
           this.approvedLeaves = [];
         }
-        this.http.onBehalfOfTriggerSignal.set(false);
       }
     });
   }

@@ -463,6 +463,7 @@ export class OnBeHalfOfComponent {
     localStorage.setItem('onbehalfof', fusionemployeeId.value);
     this.http.triggerActionSignal();
     this.http.onBehalfOfTriggerSignal.set(true);
+    setTimeout(() => this.http.onBehalfOfTriggerSignal.set(false));
   }
 
   Onclick(fusionemployeeId: any): void {
@@ -497,6 +498,7 @@ export class OnBeHalfOfComponent {
     localStorage.setItem('onbehalfof', fusionemployeeId.value);
     this.http.triggerActionSignal();
     this.http.onBehalfOfTriggerSignal.set(true);
+    setTimeout(() => this.http.onBehalfOfTriggerSignal.set(false));
   }
 
   resetOnBehalfOfData(): void {
@@ -510,6 +512,7 @@ export class OnBeHalfOfComponent {
     this.cadidateEmployeeId = 0;
     localStorage.removeItem('onbehalfof');
     this.http.onBehalfOfTriggerSignal.set(true);
+    setTimeout(() => this.http.onBehalfOfTriggerSignal.set(false));
 
     // Navigate first, then reload if necessary
     this.router
@@ -2043,6 +2046,7 @@ export class OnBeHalfOfComponent {
       this.getCategoryDetails(parseInt(employeeId));
       // Trigger refresh for child components only when employee is selected
       this.http.onBehalfOfTriggerSignal.set(true);
+      setTimeout(() => this.http.onBehalfOfTriggerSignal.set(false));
     }
   }
 }

@@ -109,7 +109,7 @@ export class MenuRegistryService {
       label: 'Holidays', route: '/holidays', defaultLocation: 'ellipses', type: 'direct',
       icon: '/main-menu-icons/holiday-icon.png', activeIcon: '/main-menu-icons/holidays.png',
       personalizationIcon: '/main-menu-icons/holiday-icon.png',
-      sidebarIcon: '/personalization/Mainmenu_Holidays2.png',
+      sidebarIcon: '/personalization/Mainmenu_Holidays.png',
       ellipsesIcon: '/main-menu-icons/holiday-icon.png',
       permission: { feature: 'Holidays', action: 'view' }
     },
@@ -117,7 +117,7 @@ export class MenuRegistryService {
       label: 'Policies', route: '/policies', defaultLocation: 'ellipses', type: 'direct',
       icon: '/main-menu-icons/policies-icon.png', activeIcon: '/main-menu-icons/policies.png',
       personalizationIcon: '/main-menu-icons/policies-icon.png',
-      sidebarIcon: '/personalization/Mainmenu_Policies2.png',
+      sidebarIcon: '/personalization/Mainmenu_Policies.png',
       ellipsesIcon: '/main-menu-icons/policies-icon.png',
       permission: { feature: 'Policies', action: 'view' }
     },
@@ -125,7 +125,7 @@ export class MenuRegistryService {
       label: 'Events', route: '/events', defaultLocation: 'ellipses', type: 'direct',
       icon: '/main-menu-icons/events-colored-icon.png', activeIcon: '/main-menu-icons/calendar-favorite.png',
       personalizationIcon: '/main-menu-icons/events-colored-icon.png',
-      sidebarIcon: '/personalization/Mainmenu_Events3.png',
+      sidebarIcon: '/personalization/Mainmenu_Events.png',
       ellipsesIcon: '/main-menu-icons/events-colored-icon.png',
       permission: { feature: 'Events', action: 'view' }
     },
@@ -133,7 +133,7 @@ export class MenuRegistryService {
       label: 'Expenses', route: '/claimsandexpenses', defaultLocation: 'ellipses', type: 'direct',
       icon: '/main-menu-icons/expenses-icon.png', activeIcon: '/main-menu-icons/expenses.png',
       personalizationIcon: '/main-menu-icons/expenses-icon.png',
-      sidebarIcon: '/personalization/Mainmenu_Expenses2.png',
+      sidebarIcon: '/personalization/Mainmenu_Expenses.png',
       ellipsesIcon: '/main-menu-icons/expenses-icon.png',
       permission: { feature: 'Expenses', action: 'view' }
     },
@@ -141,7 +141,7 @@ export class MenuRegistryService {
       label: 'Org Hierarchy', route: '/organization-chart', defaultLocation: 'ellipses', type: 'direct',
       icon: '/main-menu-icons/org.png', activeIcon: '/main-menu-icons/org-hierarchy-square.png',
       personalizationIcon: '/main-menu-icons/org.png',
-      sidebarIcon: '/personalization/Mainmenu_Org Hierarchy2.png',
+      sidebarIcon: '/personalization/Mainmenu_Org Hierarchy.png',
       ellipsesIcon: '/main-menu-icons/org.png',
       permission: { feature: 'Org Hierarchy', action: 'view' }
     },
@@ -149,7 +149,7 @@ export class MenuRegistryService {
       label: 'Personalization', route: '/theme', defaultLocation: 'ellipses', type: 'direct',
       icon: '/main-menu-icons/themes-color-icon.png', activeIcon: '/main-menu-icons/themes-icon.png',
       personalizationIcon: '/main-menu-icons/themes-color-icon.png',
-      sidebarIcon: '/personalization/Mainmenu_Personalization2.png',
+      sidebarIcon: '/personalization/Mainmenu_Personalization.png',
       ellipsesIcon: '/main-menu-icons/themes-color-icon.png',
       permission: { feature: 'Themes', action: 'view' }
     },
@@ -157,7 +157,7 @@ export class MenuRegistryService {
       label: 'Blood Bank', route: '/blood-bank', defaultLocation: 'ellipses', type: 'direct',
       icon: '/main-menu-icons/blood-bank-color-icon.png', activeIcon: '/main-menu-icons/blood-bank-icon.png',
       personalizationIcon: '/main-menu-icons/blood-bank-color-icon.png',
-      sidebarIcon: '/personalization/Mainmenu_Blood Bank2.png',
+      sidebarIcon: '/personalization/Mainmenu_Blood Bank.png',
       ellipsesIcon: '/main-menu-icons/blood-bank-color-icon.png',
       permission: { feature: 'Blood Bank', action: 'view' }
     },
@@ -165,7 +165,7 @@ export class MenuRegistryService {
       label: 'Contacts Directory', route: '/contacts-directory', defaultLocation: 'ellipses', type: 'direct',
       icon: '/main-menu-icons/contact-directory-color-icon.png', activeIcon: '/main-menu-icons/contact-directory-icon.png',
       personalizationIcon: '/main-menu-icons/contact-directory-color-icon.png',
-      sidebarIcon: '/personalization/Mainmenu_Contacts Directory2.png',
+      sidebarIcon: '/personalization/Mainmenu_Contacts Directory.png',
       ellipsesIcon: '/main-menu-icons/contact-directory-color-icon.png',
       permission: { feature: 'Contacts Directory', action: 'view' }
     },
@@ -173,7 +173,7 @@ export class MenuRegistryService {
       label: 'Phone Book', route: '/phonebook', defaultLocation: 'ellipses', type: 'direct',
       icon: '/main-menu-icons/phonebook-color-icon.png', activeIcon: '/main-menu-icons/phonebook-icon.png',
       personalizationIcon: '/main-menu-icons/phonebook-color-icon.png',
-      sidebarIcon: '/personalization/Mainmenu_Phone Book2.png',
+      sidebarIcon: '/personalization/Mainmenu_Phone Book.png',
       ellipsesIcon: '/main-menu-icons/phonebook-color-icon.png',
       permission: { feature: 'Phone Book', action: 'view' }
     },
@@ -181,7 +181,7 @@ export class MenuRegistryService {
       label: 'Assets', route: '/assets-management', defaultLocation: 'ellipses', type: 'direct',
       icon: '/main-menu-icons/assets-icon.png', activeIcon: '/main-menu-icons/assets.png',
       personalizationIcon: '/main-menu-icons/assets-icon.png',
-      sidebarIcon: '/personalization/Mainmenu_Assets2.png',
+      sidebarIcon: '/personalization/Mainmenu_Assets.png',
       ellipsesIcon: '/main-menu-icons/assets-icon.png',
       permission: { feature: 'Asset Management', action: 'view' }
     },
@@ -189,7 +189,7 @@ export class MenuRegistryService {
       label: 'Cards Management', route: '/card-management', defaultLocation: 'ellipses', type: 'direct',
       icon: '/main-menu-icons/card-management-icon.png', activeIcon: '/main-menu-icons/card-management-active.png',
       personalizationIcon: '/main-menu-icons/card-management-icon.png',
-      sidebarIcon: '/personalization/Mainmenu_Cards Management2.png',
+      sidebarIcon: '/personalization/Mainmenu_Cards Management.png',
       ellipsesIcon: '/main-menu-icons/card-management-icon.png',
       permission: { feature: 'Desk Allocation', action: 'view' }
     },

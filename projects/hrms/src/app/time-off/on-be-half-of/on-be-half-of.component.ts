@@ -388,9 +388,9 @@ export class OnBeHalfOfComponent {
     
     const expiryDeduction = isCompOff ? (item.expiryDaysLeaves ? item.expiryDaysLeaves : 0) : 0;
     
-    const isProbationActive = this.employeeiddetails.empType === 'Probation' && 
-      this.employeeiddetails?.probationEndDate && 
-      new Date(this.employeeiddetails.probationEndDate) > new Date();
+    const isProbationActive = this.leaveapplication.empType === 'Probation' && 
+      this.leaveapplication?.probationEndDate && 
+      new Date(this.leaveapplication.probationEndDate) > new Date();
     
     if (isProbationActive && item.category?.isProbationAllowed && item.probationLeaves > 0) {
       return item.availableProbationLeaves; 
@@ -417,7 +417,7 @@ export class OnBeHalfOfComponent {
   }
 
   getProgress(item: any): number {
-    if (this.employeeiddetails.empType === 'Probation' && (item.category.isProbationAllowed && item.probationLeaves >= 0)) {
+    if (this.leaveapplication.empType === 'Probation' && (item.category.isProbationAllowed && item.probationLeaves >= 0)) {
       const available = this.getAvailableLeaves(item);
       const total = item.probationLeaves || 1; // Avoid division by zero
       const percentage = Math.max(0, Math.min(available / total, 1)); // Clamp between 0 and 1
@@ -560,7 +560,7 @@ export class OnBeHalfOfComponent {
     const leavesTaken = this.selectedleave?.utilizedDays;
     const booked = this.selectedleave?.booked;
     this.remainingLeaves = maxDays - (leavesTaken ? leavesTaken : 0) - booked;
-    if (this.selectedleave && this.selectedleave.category && this.selectedleave.category.isProbationAllowed && this.employeeiddetails.empType === 'Probation') {
+    if (this.selectedleave && this.selectedleave.category && this.selectedleave.category.isProbationAllowed && this.leaveapplication.empType === 'Probation') {
       const probationLeavesTaken = this.selectedleave.availableProbationLeaves;
       if (probationLeavesTaken >= 0) {
         this.remainingLeaves = probationLeavesTaken;
@@ -630,7 +630,6 @@ export class OnBeHalfOfComponent {
       .subscribe({
         next: (data: any) => {
           this.employeeiddetails = data
-            .filter((emp: any) => emp.employeeId != loggedInUser.employeeId)
             .map((emp: any) => {
               const fusionPart = emp.fusionEmpId ? `${emp.fusionEmpId} - ` : '';
               const fullName = `${fusionPart}${emp.firstName ?? ''} ${emp.middleName ? emp.middleName + ' ' : ''}${emp.lastName ?? ''}`.trim();

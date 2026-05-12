@@ -172,3 +172,26 @@
     background: rgba(255, 255, 255, 0.12);
     border-radius: 0.25rem;
 }
+
+.empty-ellipses-drop-zone {
+
+    width: 100%;
+
+    min-width: 220px;
+
+    min-height: 220px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border: 2px dashed rgba(255, 255, 255, 0.25);
+
+    border-radius: 0.5rem;
+
+    background: rgba(255, 255, 255, 0.03);
+
+    transition: all 0.2s ease;
+}

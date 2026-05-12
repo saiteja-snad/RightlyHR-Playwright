@@ -129,6 +129,9 @@
                                     <div class="sidenav-grid-placeholder"></div>
                                 </ng-template>
                             </div>
+
+                            <div *ngIf="filteredModules.length === 0" class="empty-ellipses-drop-zone">
+                            </div>
                         </div>
                     </ul>
                 </div>

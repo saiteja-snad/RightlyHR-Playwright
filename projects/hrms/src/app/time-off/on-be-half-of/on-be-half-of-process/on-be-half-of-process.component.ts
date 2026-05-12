@@ -57,7 +57,6 @@ export class OnBeHalfOfProcessComponent implements OnInit, OnDestroy{
         } else {
           this.processedLeaves = [];
         }
-        this.http.onBehalfOfTriggerSignal.set(false);
       }
     });
   }

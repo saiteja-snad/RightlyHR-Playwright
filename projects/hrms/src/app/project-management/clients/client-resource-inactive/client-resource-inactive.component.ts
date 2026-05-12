@@ -16,14 +16,16 @@ import { TranslateModule } from '@ngx-translate/core';
 import { Select } from 'primeng/select';
 import { ConfirmationIconComponent } from '../../../icons/confirmation-icon/confirmation-icon.component';
 import { InfoIconComponent } from '../../../icons/info-icon/info-icon.component';
-import { DateformatPipe } from '../../../pipes/dateformat.pipe';
 import { DataLoaderContentComponent } from '../../../shared/data-loader-content/data-loader-content.component';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { ClientResourceTabComponent } from '../../../shared/project-management-tabs/client-resource-tab/client-resource-tab.component';
+import { ProfileIconComponent } from "../../../icons/profile-icon/profile-icon.component";
+import { environment } from '../../../../environments/environment';
+import { DateformatPipe } from '../../../pipes/dateformat.pipe';
 @Component({
   selector: 'app-client-resource-inactive',
-  imports: [CommonModule, ReactiveFormsModule, FormsModule, ClientResourceTabComponent, TranslateModule,NgbPopover, DataLoaderContentComponent,
-     Select, DateformatPipe, NoDataFoundComponent, ConfirmationIconComponent, InfoIconComponent],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, ClientResourceTabComponent, TranslateModule, NgbPopover, DataLoaderContentComponent,
+    Select, DateformatPipe, NoDataFoundComponent, ConfirmationIconComponent, InfoIconComponent, ProfileIconComponent],
   templateUrl: './client-resource-inactive.component.html',
   styleUrl: './client-resource-inactive.component.scss'
 })
@@ -193,7 +195,14 @@ export class ClientResourceInactiveComponent {
     this.subscription = this.http.getDataIncludeParams(url).subscribe({
       next: (data: any) => {
         if (data?.data?.length > 0) {
-          this.resourcesData = data.data;
+          this.resourcesData = Array.isArray(data?.data) ? data.data : [];
+            this.resourcesData = this.resourcesData.map((item: any) => ({
+              ...item,
+              employee: {
+                ...item.employee,
+                profileUrl: this.getImageUrl(item.employee?.profileUrl)
+              }
+            }));
         } else {
           this.resourcesData = [];
         }
@@ -205,6 +214,18 @@ export class ClientResourceInactiveComponent {
     });
   }
 
+  
+  getImageUrl(imagePath: string): string | null {
+    if (!imagePath) return null;
+    // If it's already a full URL
+    if (imagePath.startsWith('http')) return imagePath;
+    // If logoPath is from FusionDocuments
+    if (imagePath.startsWith('Profilepics/')) {
+      return `${environment.viewUrl}${imagePath}`;
+    }
+    // Fallback
+    return `${environment.viewUrl}${imagePath}`;
+  }
 getResourceDataByPhaseId(projectId: number, phaseId: number, isPopupCall: boolean = false) {
   const params: any = {
     entityType: 'project',

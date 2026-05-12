@@ -20,10 +20,12 @@ import { DateformatPipe } from '../../../pipes/dateformat.pipe';
 import { DataLoaderContentComponent } from '../../../shared/data-loader-content/data-loader-content.component';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { ProjectResourceTabComponent } from "../../../shared/project-management-tabs/project-resource-tab/project-resource-tab.component";
+import { environment } from '../../../../environments/environment';
+import { ProfileIconComponent } from "../../../icons/profile-icon/profile-icon.component";
 @Component({
   selector: 'app-project-inactive-resources',
   imports: [CommonModule, ConfirmationIconComponent, TranslateModule, ReactiveFormsModule, FormsModule, DateformatPipe,
-    Select, DataLoaderContentComponent, NoDataFoundComponent, NgbPopover, InfoIconComponent, ProjectResourceTabComponent],
+    Select, DataLoaderContentComponent, NoDataFoundComponent, NgbPopover, InfoIconComponent, ProjectResourceTabComponent, ProfileIconComponent],
   templateUrl: './project-inactive-resources.component.html',
   styleUrl: './project-inactive-resources.component.scss'
 })
@@ -303,7 +305,14 @@ export class ProjectInactiveResourcesComponent {
           this.defaultPendingAuthorityId = popupData[0]?.pendingApprovalAuthority?.id ?? null;
         } else {
           // NORMAL CALL - UPDATE TABLE DATA
-          this.resourcesData = data.data ?? [];
+          this.resourcesData = Array.isArray(data?.data) ? data.data : [];
+            this.resourcesData = this.resourcesData.map((item: any) => ({
+              ...item,
+              employee: {
+                ...item.employee,
+                profileUrl: this.getImageUrl(item.employee?.profileUrl)
+              }
+            }));
           this.resoucesDropDownData = this.resourcesData.filter(r => r.employee).map(r => ({
             label: `${r.employee.fusionEmployeeId} - ${r.employee.name}`,
             value: r.employee.id
@@ -332,6 +341,18 @@ export class ProjectInactiveResourcesComponent {
     });
   }
 
+
+  getImageUrl(imagePath: string): string | null {
+    if (!imagePath) return null;
+    // If it's already a full URL
+    if (imagePath.startsWith('http')) return imagePath;
+    // If logoPath is from FusionDocuments
+    if (imagePath.startsWith('Profilepics/')) {
+      return `${environment.viewUrl}${imagePath}`;
+    }
+    // Fallback
+    return `${environment.viewUrl}${imagePath}`;
+  }
   openModal(content: any, size: any, data: any) {
     this.selectedResource = data;
     this.modalService.open(content, { centered: true, size: size, backdrop: 'static' });

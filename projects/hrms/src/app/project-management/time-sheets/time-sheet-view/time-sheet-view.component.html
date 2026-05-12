@@ -553,6 +553,8 @@
                             *ngIf="dayForm.get('description')?.touched && dayForm.get('description')?.hasError('required')">
                             Description is required
                         </div>
+
+
                         <div class="textarea-count-text">{{ dayForm.get("description")?.value?.length || 0 }}/500</div>
 
                     </div>

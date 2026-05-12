@@ -26,6 +26,7 @@ export interface IResource {
     workPhoneNumber: any;
     mobilePhoneNumber: any;
     mobilePhoneCountryCode: any;
+    profileUrl: any;
   };
   projectRoleName: any;
   startDate: any;

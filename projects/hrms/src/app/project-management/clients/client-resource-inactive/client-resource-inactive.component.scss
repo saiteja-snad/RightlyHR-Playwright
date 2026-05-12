@@ -10,3 +10,10 @@
   text-align: left !important;
 
 }
+
+.client-image {
+    width: 2.5rem !important;
+    height: 2.5rem !important;
+    object-fit: cover;
+    border-radius: 50%;
+}

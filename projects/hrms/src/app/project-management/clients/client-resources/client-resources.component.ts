@@ -691,6 +691,11 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
     const config = this.confirmationMessages[action];
     if (!config) return;
     if (action === 'Update') {
+      const phaseDate = data?.phase;
+      if(phaseDate){
+        this.projectStartDate = phaseDate.startDate ?? null;
+        this.projectEndDate = phaseDate.endDate ?? null;
+      }
       this.openModal(this.updateResourcemodal, 'lg', data);
     } else {
       this.openReasonModal(config.title, data);

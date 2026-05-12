@@ -23,6 +23,7 @@ export class ProjectManagementConfigTabsComponent {
     { label: 'Project Management Authority', route: '/settings/project-management-config/signature-authority', permission: { feature: 'Project Management Authority', action: 'view' }},
     { label: 'Project Role', route: '/settings/project-management-config/project-role', permission: { feature: 'Project Role', action: 'view' }},
     { label: 'Task', route: '/settings/project-management-config/task', permission: { feature: 'Task', action: 'view' }},
+    { label: 'Task Type', route: '/settings/project-management-config/task-type', permission: { feature: 'Task Type', action: 'view' }},
 
   ];
 

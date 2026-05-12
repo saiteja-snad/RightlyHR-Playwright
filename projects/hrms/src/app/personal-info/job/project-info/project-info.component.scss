@@ -50,10 +50,11 @@
 
 table td:first-child,
 table th:first-child {
-  max-width: 80px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  // max-width: 80px;
+  // white-space: nowrap;
+  overflow: auto;
+  // text-overflow: ellipsis;
+overflow-wrap: break-word;  /* breaks long words if needed */;
 }
 
 .custom-table-content{

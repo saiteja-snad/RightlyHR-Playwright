@@ -19,7 +19,7 @@
                 <tr *ngFor="let item of lpdata">
                     <td>{{item.date| dateformat}}</td>
                     <td>{{item.categoryName}}</td>
-                    <td>
+                    <td class="text-center">
                         @if(item.isSandwichLeave) {
                             <a type="button" class="text-primary text-decoration-underline" (click)="openSandwichBreakdown(item, sandwichBreakdownModal)">{{item?.duration}}</a>
                         } @else {

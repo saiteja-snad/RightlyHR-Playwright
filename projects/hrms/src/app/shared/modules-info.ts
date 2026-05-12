@@ -324,5 +324,9 @@ export const MODULE_INFOS = {
     CARRY_FORWORD_LEAVES: 'This module helps to initiate the Leave Carry Forward workflow by defining the processing scope, reviewing the eligible employee leave balances, mapping the previous year’s leave categories to the new fiscal year, and executing carry-forward job updates seamlessly.',
     Initial_Leave_Entitlements: 'Start a new leave entitlement load job. Define the entitlement scope, review eligible employees, validate rules, and process leave entitlements through a guided three-step workflow.',
     Create_Initial_Leave_Entitlements: 'Use this section to bulk allocate leave entitlements for employees by selecting location, sub-location, shift, and leave category. The system validates applicable leave rules and processes entitlements for eligible employees.',
-    CARRY_FORWORD_LEAVES_CREATE: "This module helps to initiate the Leave Carry Forward workflow by allowing you to define the processing scope, review eligible employee leave balances, map the previous year’s leave categories to the new fiscal year, and execute the carry-forward job updates seamlessly."
+    CARRY_FORWORD_LEAVES_CREATE: "This module helps to initiate the Leave Carry Forward workflow by allowing you to define the processing scope, review eligible employee leave balances, map the previous year’s leave categories to the new fiscal year, and execute the carry-forward job updates seamlessly.",
+    TIMESHEET_BULK_UPLOAD: "The Timesheet Import feature allows users to upload bulk timesheet entries using a predefined Excel/CSV template. It validates the data and highlights errors to ensure accurate and successful submission.",
+    TIMESHEET_HISTORY_LOG: "View History module displays the record of all timesheet import and export activities. It allows you to track status, view processed records, and download files.",
+    TIMESHEET_BULK_EXPORT: "The Timesheet Export feature enables users to download timesheet data based on selected filters such as date range, employee, or project. It helps in reporting, analysis, and sharing timesheet records in Excel format.",
+
 }

@@ -748,7 +748,12 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
 
     if (!config) return;
 
-    if (action === 'Update') {
+      if (action === 'Update') {
+      const phaseDate = data?.phase;
+      if(phaseDate){
+        this.projectStartDate = phaseDate.startDate ?? null;
+        this.projectEndDate = phaseDate.endDate ?? null;
+      }
       this.openModal(this.updateResourcemodal, 'lg', data);
     } else {
       this.openReasonModal(config.title, data);

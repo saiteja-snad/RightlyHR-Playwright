@@ -28,5 +28,8 @@ export default [
     },
      {
         path: 'task', loadComponent: () => import('./project-management/task/task.component').then(m => m.TaskComponent), canActivate: [PermissionsGuard], data: { permission: 'Task.view' },
+    },
+    {
+        path: 'task-type', loadComponent: () => import('./project-management/task-type/task-type.component').then(m => m.TaskTypeComponent), canActivate: [PermissionsGuard], data: { permission: 'Task Type.view' },
     }
 ]

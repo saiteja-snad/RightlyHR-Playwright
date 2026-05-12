@@ -4,7 +4,20 @@
     <div class="heading-content">
       <div class="commpoment-name">Pending Approvals<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
       </div>
+      <!-- <div class="commpoment-name">
+        @if (isTimeOffRoute()) {Time Off}
+
+      </div> -->
+      <ng-container *ngIf="componentName">
+        <div class="commpoment-name" *ngIf="componentName">
+          <span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
+        </div>
+        <div class="component-header">{{componentName}}</div>
+      </ng-container>
+
+
       <div class="component-header">
+        <!-- {{componentName}} -->
         @if (isTimeOffRoute()) {Time Off}
         @else if (isOnboardingRoute()) {Onboarding}
         @else if (isContractRoute()) {Contractors}
@@ -22,6 +35,7 @@
         <app-module-information [moduleInfo]="moduleinfo" />
       </ng-template>
     </div>
+
     }
     @else {
     <div class="heading-content">
@@ -29,52 +43,64 @@
         <span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
       </div>
       <div class="component-header">Assessment Form</div>
-                 <div>
+      <div>
                 <app-module-info-icon placement="bottom" [ngbPopover]="popContent" />
-            </div>
+      </div>
       <ng-template #popContent>
         <app-module-information [moduleInfo]="moduleinfo" />
       </ng-template>
     </div>
     }
     @if (router.url == '/pending-approvals/time-sheets') {
+    <div class="d-flex gap-2 align-items-center">
+      <div>
+        <button type="button" class="custom-btn btn-secondary position-relative" (click)="toggleFilters(filterContent)">
+          <i class="bi bi-funnel me-2"></i>Filters
+          <span *ngIf="isFilterApplied()" class="filter-indicator"></span>
+        </button>
+      </div>
+      <div class="ms-auto">
+        <ng-container *ngTemplateOutlet="headerRightTemplate"></ng-container>
+      </div>
+    </div>
+    }
+    <!-- @if (router.url == '/pending-approvals/time-sheets') {
     <form [formGroup]="datepickerForm" (ngSubmit)="onSubmit()">
       <div class="d-flex gap-3 align-items-center">
         @if(isFilterApplied()) {
         <button type="button" class="clear-all-btn" (click)="resetForm()">{{'Clear All' | translate}}</button>
         }
-
         <div class="custom-date-range-picker">
           <p-datepicker formControlName="dateRange" [placeholder]="'Please select date range'" selectionMode="range"
             [showIcon]="true" [readonlyInput]="true" [maxDate]="today" />
         </div>
-
         <div class="custom-p-multiSelect-content">
           <p-multiSelect [options]="projectsData" optionLabel="displayName" optionValue="phaseId" [filter]="true"
             [resetFilterOnHide]="true" filterBy="displayName" formControlName="phaseId"
-            defaultLabel="Please select project/phase" class="form-select custom-select"
-            (onChange)="onProjectChange($event)" />
+            defaultLabel="Please select project/phase" class="form-select custom-select" (onChange)="onProjectChange($event)" />
         </div>
-
-        <!-- Resource MultiSelect Dropdown -->
+       
         <div class="custom-p-multiSelect-content">
           <p-multiSelect [options]="resourcesList" optionLabel="fullName" optionValue="id" [filter]="true"
             defaultLabel="Please select resource" [resetFilterOnHide]="true" formControlName="resourceId"
             class="form-select custom-select " (onChange)="onresourceChange($event)" />
         </div>
-
+        
+        <div class="custom-p-multiSelect-content">
+          <p-multiSelect [options]="tastType" optionLabel="taskTypeName" filterBy="taskTypeName" optionValue="id" formControlName="taskId"
+            defaultLabel="Please select task type" filterPlaceHolder="Search task type" [resetFilterOnHide]="true" class="form-select custom-select">
+          </p-multiSelect>
+        </div>
         <div>
-          <button class="custom-btn btn-primary" type="submit" [disabled]="!isAnyFieldSelected()">{{'Apply' |
-            translate}}</button>
+          <button class="custom-btn btn-primary" type="submit" [disabled]="!isAnyFieldSelected()">{{'Apply' | translate}}</button>
         </div>
       </div>
     </form>
-    }
+    } -->
+
+
 
     <!-- dropdown for kpi kra -->
-    <div class="ms-auto">
-      <ng-container *ngTemplateOutlet="headerRightTemplate"></ng-container>
-    </div>
 
   </div>
 
@@ -102,3 +128,74 @@
     </div>
   </div>
 </div>
+
+<!-- Filter Offcanvas -->
+<ng-template #filterContent let-offcanvas>
+  <div class="custom-filter-container">
+    <div class="offcanvas-filter-header-content offcanvas-filter-header-border">
+      <p class="filter-header m-0">{{'Filters' | translate}}</p>
+      <a (click)="closeCanvas()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+    </div>
+
+    <div class="offcanvas-filter-content">
+      <form [formGroup]="datepickerForm" (ngSubmit)="onSubmit()">
+        <div class="mb-3">
+          <label class="form-label custom-label text-nowrap filter-labels mb-3">{{'Select Date Range' |
+            translate}}</label>
+          <div class="custom-date-range-picker">
+            <p-datepicker formControlName="dateRange" [placeholder]="'Please select date range'" selectionMode="range"
+              [showIcon]="true" [readonlyInput]="true" [maxDate]="today" />
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label custom-label text-nowrap filter-labels mb-3">{{'Select Project/Phase' |
+            translate}}</label>
+          <div class="custom-p-multiSelect-content">
+            <p-multiSelect [options]="projectsData" optionLabel="displayName" optionValue="phaseId" [filter]="true"
+              [resetFilterOnHide]="true" filterBy="displayName" formControlName="phaseId"
+              defaultLabel="Please select project/phase" class="form-select custom-select" filterPlaceHolder="Search project/phase"
+              (onChange)="onProjectChange($event)" />
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label custom-label text-nowrap filter-labels mb-3">{{'Select Resource' |
+            translate}}</label>
+          <div class="custom-p-multiSelect-content">
+            <p-multiSelect [options]="resourcesList" optionLabel="fullName" optionValue="id" [filter]="true"
+              defaultLabel="Please select resource" [resetFilterOnHide]="true" formControlName="resourceId" filterPlaceHolder="Search resource"
+              class="form-select custom-select " (onChange)="onresourceChange($event)" />
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label custom-label text-nowrap filter-labels mb-3">{{'Select Task Type' |
+            translate}}</label>
+          <div class="custom-p-multiSelect-content">
+            <p-multiSelect [options]="tastType" optionLabel="taskTypeName" filterBy="taskTypeName" optionValue="id"
+              formControlName="taskId" defaultLabel="Please select task type" filterPlaceHolder="Search task type"
+              [resetFilterOnHide]="true" class="form-select custom-select">
+            </p-multiSelect>
+          </div>
+        </div>
+
+        <div class="d-flex offcanvas-footer-content gap-3">
+          @if(isFilterApplied()) {
+          <button type="button" class="custom-btn btn-secondary w-100" (click)="resetForm()">
+            {{'Clear All' | translate}}</button>
+          }
+
+          <button type="submit" class="custom-btn btn-primary w-100" [disabled]="!isAnyFieldSelected()">
+            @if(spinnerLoader1) {
+            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+            <span>{{'Loading...'}}</span>
+            } @else {
+            <span>{{'Apply' | translate}}</span>
+            }
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</ng-template>

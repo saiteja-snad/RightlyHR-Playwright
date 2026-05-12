@@ -71,6 +71,8 @@ export class PendingApprovalStatusReportComponent implements OnInit, OnDestroy {
   rows = 50;
   collectionSize!: number;
   first = 0;
+    tastType: any[] = [];
+
   options = [
     { label: 50, value: 50 },
     { label: 100, value: 100 },
@@ -96,7 +98,20 @@ export class PendingApprovalStatusReportComponent implements OnInit, OnDestroy {
     this.getClientsData();
      this.getEmployeeData();
     this.getProjectsData();
+        this.getTaskType();
+
   }
+
+   getTaskType() {
+  this.subscription = this.http.getData('TaskType').subscribe({
+    next: (res: any) => {
+      this.tastType =res
+    },
+    error: (error:any) => {
+      console.log(error);
+    }
+  });
+}
 
  
   initializeForm() {
@@ -107,7 +122,8 @@ export class PendingApprovalStatusReportComponent implements OnInit, OnDestroy {
       dateRange: [null],
         phases: [{ value: null, disabled: true }],
       status: [null],
-      billable: [null]
+      billable: [null],
+      taskId:[null]
     });
     this.PendingApprovalReportForm.valueChanges.subscribe(() => {
       this.disableBtn = true;
@@ -123,7 +139,9 @@ export class PendingApprovalStatusReportComponent implements OnInit, OnDestroy {
     const isStatusSelected = Array.isArray(formValue.status) ? formValue.status.length > 0 : !!formValue.status;
     const isDateRangeSelected = Array.isArray(formValue.dateRange) ? formValue.dateRange.length > 0 : !!formValue.dateRange;
     const isPhaseSelected = Array.isArray(formValue.phases) ? formValue.phases.length > 0 : (formValue.phases != null && formValue.phases.value != null);
-    return (isClientSelected || isProjectSelected || isEmployeeSelected || isDateRangeSelected || isPhaseSelected || isStatusSelected || isBillableSelected);
+        const isTaskSelected = formValue.taskId != null && formValue.taskId != '';
+
+    return (isClientSelected || isProjectSelected || isEmployeeSelected || isDateRangeSelected || isPhaseSelected || isStatusSelected || isBillableSelected ||isTaskSelected);
   }
   
   toggleFilters(content: TemplateRef<any>) {
@@ -150,7 +168,8 @@ export class PendingApprovalStatusReportComponent implements OnInit, OnDestroy {
     dateRange: null,
     phases: null,
     status: null,
-    billable: null
+    billable: null,
+    taskId:null,
   }, { emitEvent: false });
 
   this.PendingApprovalReportForm.get('phases')?.disable({ emitEvent: false });
@@ -663,7 +682,7 @@ removeDuplicatePhases(list: any[]) {
   }
   // generate,export button show,hide
   get isLeaveGenerateDisabled(): boolean {
-    const { clientId, projectId, employeid, dateRange, status, phases, billable } = this.PendingApprovalReportForm.value;
+    const { clientId, projectId, employeid, dateRange, status, phases, billable, taskId } = this.PendingApprovalReportForm.value;
     const hasClient = clientId !== null && clientId !== undefined;
     const hasProject = projectId !== null && projectId !== undefined;
     const hasDateRange = dateRange && (dateRange.startDate || dateRange.endDate);
@@ -671,7 +690,9 @@ removeDuplicatePhases(list: any[]) {
     const hasEmployeid = employeid !== null && employeid !== undefined;
     const hasPhase = phases !== null && phases !== undefined;
     const hasBillable = billable !== null && billable !== undefined;
-    return !(hasClient || hasProject || hasDateRange || hasStatus || hasEmployeid || hasPhase || hasBillable);
+        const isTaskSelected = taskId != null && taskId != '';
+
+    return !(hasClient || hasProject || hasDateRange || hasStatus || hasEmployeid || hasPhase || hasBillable || isTaskSelected);
   }
   // payload for pending approval
   buildTimesheetReportParams() {
@@ -708,6 +729,10 @@ removeDuplicatePhases(list: any[]) {
     }
     if (formValue.status) params.Statuses = formValue.status.join(',');
     if (formValue.billable?.value) params.Billable = formValue.billable.value;
+    if(formValue.taskId!= null && formValue.taskId !== undefined && formValue.taskId !== ''  )
+    {
+      params.TaskIds = formValue.taskId?.map((x: any) => x.id)?.join(',');;
+    }
     return params;
   }
   // generate the report

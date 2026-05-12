@@ -12,25 +12,31 @@
 
             <!-- Main menu items — draggable list -->
             <li style="list-style:none;padding:0;margin:0;display:contents">
-            <div cdkDropList [cdkDropListData]="mainMenuItems" (cdkDropListDropped)="onMainMenuDrop($event)" class="main-menu-drop-list">
+            <div cdkDropList
+                #mainMenuList="cdkDropList"
+                [cdkDropListData]="mainMenuItems"
+                [cdkDropListConnectedTo]="[threeDotList]"
+                (cdkDropListDropped)="onMainMenuDrop($event)"
+                class="main-menu-drop-list"
+                >
                 <div class="nav-item menu-item-clear draggable-nav-item"
-                    *ngFor="let item of mainMenuItems"
+                    *ngFor="let item of mainMenuItems; trackBy: trackByRoute"
                     cdkDrag
                     [class.active-nav-link]="isActiveItem(item)"
-                    (cdkDragStarted)="closeOpenDropdowns()"
                     (click)="item.type === 'direct' ? onDirectItemClick(item) : null">
 
                     <!-- Direct navigation items -->
                     <ng-container *ngIf="item.type === 'direct'">
-                        <img [src]="item.icon" alt="Icon" class="main-menu-icon">
+                        <img [src]="item.sidebarIcon" alt="Icon" class="main-menu-icon">
                         {{ item.label | translate }}
                     </ng-container>
 
                     <!-- Dropdown items -->
                     <ng-container *ngIf="item.type === 'dropdown'">
                         <div class="btn-group dropend custom-main-menu-dropdown">
-                            <div class="d-flex flex-column align-items-center" data-bs-toggle="dropdown" aria-expanded="false">
-                                <img [src]="item.icon" alt="Icon" class="main-menu-icon">
+                            <div class="d-flex flex-column align-items-center" data-bs-toggle="dropdown" aria-expanded="false"
+                                 (click)="closePinnedOverlay()">
+                                <img [src]="item.sidebarIcon" alt="Icon" class="main-menu-icon">
                                 {{ item.label | translate }}
                             </div>
                             <ul class="dropdown-menu">
@@ -47,7 +53,7 @@
                     <ng-template cdkDragPreview>
                         <div class="sidenav-drag-preview">
                             <div class="preview-icon-wrap">
-                                <img [src]="item.icon" alt="" class="preview-icon">
+                                <img [src]="item.sidebarIcon" alt="" class="preview-icon">
                             </div>
                             <span class="preview-label">{{ item.label | translate }}</span>
                         </div>
@@ -56,40 +62,65 @@
                         <div class="sidenav-drag-placeholder"></div>
                     </ng-template>
                 </div>
+                 <!-- Invisible drop zone -->
+    <div
+        *ngIf="mainMenuItems.length === 0"
+        class="invisible-sidebar-drop-zone">
+    </div>
             </div>
             </li>
 
-            <!--Selected Item from the dropdown-->
-            <li class="nav-item selected-module-item" *ngIf="selectedDropdownModule"
-                (click)="goToAccessibleRoute(selectedDropdownModule.route)"
-                [class.active-nav-link]="isActiveRoute(selectedDropdownModule.route)">
-                <img [src]="selectedDropdownModule.activeIcon" alt="Icon" class="main-menu-icon">
-                {{ selectedDropdownModule.label | translate }}
+            <!--Selected Item pinned from ellipses-->
+            <li class="nav-item selected-module-item"
+                *ngIf="selectedDropdownModule"
+                [class.active-nav-link]="true"
+                (click)="selectedDropdownModule.type !== 'dropdown' && goToAccessibleRoute(selectedDropdownModule.route)">
+
+                <!-- Dropdown-type: click toggles the external panel -->
+                <ng-container *ngIf="selectedDropdownModule.type === 'dropdown'; else directPinned">
+                    <div class="d-flex flex-column align-items-center w-100" (click)="togglePinnedDropdown()">
+                        <img [src]="selectedDropdownModule.sidebarIcon" alt="Icon" class="main-menu-icon">
+                        {{ selectedDropdownModule.label | translate }}
+                    </div>
+                </ng-container>
+
+                <!-- Direct-type: click to navigate -->
+                <ng-template #directPinned>
+                    <img [src]="selectedDropdownModule.sidebarIcon" alt="Icon" class="main-menu-icon">
+                    {{ selectedDropdownModule.label | translate }}
+                </ng-template>
             </li>
 
-            <!--Drop Menu Items — three-dot with draggable grid-->
+            <!--Ellipses (three-dot) menu-->
             <li class="nav-item text-wrap align-items-center">
                 <div class="btn-group dropend custom-main-menu-dropdown">
-                    <a data-bs-toggle="dropdown" aria-expanded="false" class="custom-main-menu-toggle">
+                    <a data-bs-toggle="dropdown" aria-expanded="false"
+                       class="custom-main-menu-toggle ellipses-dropdown-toggle"
+                       (click)="onEllipsesToggleClick()">
                         <img src="main-menu-icons/white-dots.png" alt="Icons" class="more-menu-icon">
                     </a>
-                    <ul class="dropdown-menu">
+                    <ul class="dropdown-menu ellipses-dropdown-menu">
                         <div class="grid-container"
                             cdkDropList
+                            #threeDotList="cdkDropList"
                             cdkDropListOrientation="mixed"
-                            [cdkDropListData]="modules"
+                            [cdkDropListData]="filteredModules"
+                            [cdkDropListConnectedTo]="[mainMenuList]"
                             (cdkDropListDropped)="onThreeDotDrop($event)">
-                            <div class="grid-item" *ngFor="let module of modules; let i = index"
+
+                            <div class="grid-item"
+                                *ngFor="let module of filteredModules; trackBy: trackByRoute"
                                 cdkDrag
-                                [style.display]="module.route === selectedDropdownModule?.route ? 'none' : ''"
+                                (mousedown)="$event.stopPropagation()"
                                 (click)="selectDropdownModule(module)"
+                                [class.ellipses-item-active]="isActiveRoute(module.route)"
                                 [ngClass]="getGridItemClasses(module)">
-                                <img [src]="module.icon" alt="{{ module.label }}" class="dropdown-menu-icon" />
+                                <img [src]="module.ellipsesIcon" alt="{{ module.label }}" class="dropdown-menu-icon" />
                                 <p class="dropdown-menu-text m-0 pt-2">{{ module.label }}</p>
                                 <ng-template cdkDragPreview>
                                     <div class="sidenav-drag-preview">
                                         <div class="preview-icon-wrap">
-                                            <img [src]="module.icon" alt="" class="preview-icon">
+                                            <img [src]="module.ellipsesIcon" alt="" class="preview-icon">
                                         </div>
                                         <span class="preview-label">{{ module.label }}</span>
                                     </div>
@@ -113,3 +144,9 @@
         </div>
     </div>
 </div>
+
+<!--
+  The pinned submenu panel for dropdown-type ellipses items is created dynamically
+  via ApplicationRef.createComponent and appended directly to document.body.
+  This ensures position:fixed works relative to the viewport with no ancestor interference.
+-->

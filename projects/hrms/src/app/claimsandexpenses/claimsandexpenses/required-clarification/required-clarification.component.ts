@@ -357,7 +357,7 @@ empinfo: any;
             }
           });
           // Now post the updated payload
-          return this.http.putData(`Expenses_Header/${this.updataid}`, payload);
+          return this.http.putData(`Expenses_Header/updateexpenses?id=${this.updataid}`, payload);
         })
       ).subscribe({
         next: (data: any) => {
@@ -378,7 +378,7 @@ empinfo: any;
       });
     } else {
       // No file to upload, directly post the payload
-      this.http.putData(`Expenses_Header/${this.updataid}`, payload).subscribe({
+      this.http.putData(`Expenses_Header/updateexpenses?id=${this.updataid}`, payload).subscribe({
         next: (data: any) => {
           this.modalService.dismissAll()
           this.http.setnewcountDetails();

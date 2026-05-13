@@ -219,7 +219,7 @@ export class HttpService {
   }
 
   // OnBehalf Of
-  onBehalfOfTriggerSignal = signal<number>(0);
+  onBehalfOfTriggerSignal = signal<boolean>(false);
   desklocationId$ = this.desklocationIdSubject.asObservable();
   desksublocationId$ = this.desksublocationIdSubject.asObservable();
 

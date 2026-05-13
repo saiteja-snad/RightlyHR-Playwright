@@ -48,7 +48,7 @@ export class OnBeHalfOfProcessComponent implements OnInit, OnDestroy{
 
   constructor(private http: HttpService, private authService: AuthService, private timeoffYearFilterService: TimeoffYearFilterService, private modalService: NgbModal) {
     effect(() => {
-      if (this.http.onBehalfOfTriggerSignal() > 0) {
+      if (this.http.onBehalfOfTriggerSignal()) {
         this.cadidateEmployeeId = parseInt(
           localStorage.getItem('onbehalfof') as string
         );
@@ -57,6 +57,7 @@ export class OnBeHalfOfProcessComponent implements OnInit, OnDestroy{
         } else {
           this.processedLeaves = [];
         }
+        this.http.onBehalfOfTriggerSignal.set(false);
       }
     });
   }

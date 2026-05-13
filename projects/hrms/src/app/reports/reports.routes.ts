@@ -62,13 +62,20 @@ export default [
         ]
     },
 
-        { path: 'expense-reports', loadComponent: () => import('./expense-reports/expense-reports.component').then((m) => m.ExpenseReportsComponent), canActivate: [PermissionsGuard], data: { permission: 'Expense Reports.view' } },
+    { path: 'expense-reports', loadComponent: () => import('./expense-reports/expense-reports.component').then((m) => m.ExpenseReportsComponent), canActivate: [PermissionsGuard], data: { permission: 'Expense Reports.view' } },
 
-                {
+    {
         path: 'helpdesk-reports', children: [
             //    { path: '',redirectTo: 'leave-report', pathMatch: 'full' },
             { path: 'detailed-queries-report', loadComponent: () => import('./help-desk-reports/detailed-queries-report/detailed-queries-report.component').then((m) => m.DetailedQueriesReportComponent), canActivate: [PermissionsGuard], data: { permission: 'Help Desk Query Detailed Report.view' } },
             { path: 'queries-summary-report', loadComponent: () => import('./help-desk-reports/queries-summary-report/queries-summary-report.component').then((m) => m.QueriesSummaryReportComponent), canActivate: [PermissionsGuard], data: { permission: 'Help Desk Query Summary Report.view' } },
+        ]
+    },
+    {
+            path: 'itsupport-reports', children: [
+            //    { path: '',redirectTo: 'leave-report', pathMatch: 'full' },
+            { path: 'itsupport-detailed-report', loadComponent: () => import('./it-support-reports/it-support-detailed-report/it-support-detailed-report.component').then((m) => m.ItSupportDetailedReportComponent), canActivate: [PermissionsGuard], data: { permission: 'IT Support Detailed Report.view' } },
+            { path: 'itsupport-summary-report', loadComponent: () => import('./it-support-reports/it-support-summary-report/it-support-summary-report.component').then((m) => m.ItSupportSummaryReportComponent), canActivate: [PermissionsGuard], data: { permission: 'IT Support Summary Report.view' } },
 
         ]
     },

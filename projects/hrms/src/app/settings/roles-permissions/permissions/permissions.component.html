@@ -984,6 +984,7 @@
                                 </td>
                             </tr>
                         </ng-container>
+
                         <!-- Expenses Module -->
                         <tr>
                             <th colspan="5" class="custom-header">Expenses Module</th>
@@ -2689,7 +2690,8 @@
                                 *ngIf="per.fields === 'Standard Reports' || per.fields === 'Custom Reports' ||
                             per.fields === 'Attendance reports' || per.fields === 'Monthly Attendance Reports' ||
                             per.fields === 'Org Leave Balance' || per.fields === 'Team Leave Balance Summary' ||
-                            per.fields === 'Team Leave Balance' || per.fields === 'Policy Reports' || per.fields === 'Timesheet Reports'|| per.fields === 'Expense Reports' || per.fields === 'Help Desk Reports'">
+                            per.fields === 'Team Leave Balance' || per.fields === 'Policy Reports' || per.fields === 'Timesheet Reports'|| per.fields === 'Expense Reports' || per.fields === 'Help Desk Reports' ||
+                            per.fields==='IT Support Reports'">
                                 <td class="text-align-center">{{ per.fields }}</td>
                                 <td scope="row">
                                     <input type="checkbox" [(ngModel)]="per.View" name="{{ per.fields }}.view"
@@ -5469,7 +5471,7 @@
                         </ng-container>
 
 
-                           <!-- Help Desk Reports -->
+                        <!-- Help Desk Reports -->
                         <tr>
                             <th colspan="5" class="custom-header">
                                 <div class="d-flex gap-2 align-items-center">
@@ -5485,6 +5487,42 @@
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center"
                                 *ngIf="per.fields === 'Help Desk Query Detailed Report'  || per.fields === 'Help Desk Query Summary Report' || per.fields === 'Help Desk Query Detailed Report - Generate'|| per.fields === 'Help Desk Query Detailed Report - Export'|| per.fields === 'Help Desk Query Summary Report - Generate'|| per.fields === 'Help Desk Query Summary Report - Export' ">
+                                <td class="text-align-center">{{ per.fields }}</td>
+                                <td scope="row">
+                                    <input type="checkbox" [(ngModel)]="per.View" name="{{ per.fields }}.view"
+                                        (change)="onCheckboxChange(per, 'View')" [disabled]="!roleToFilter?.id">
+                                </td>
+                                <td scope="row">
+                                    <input type="checkbox" [(ngModel)]="per.Update" name="{{ per.fields }}.update"
+                                        [disabled]="true">
+                                </td>
+                                <td scope="row">
+                                    <input type="checkbox" [(ngModel)]="per.Create" name="{{ per.fields }}.create"
+                                        [disabled]="true">
+                                </td>
+                                <td scope="row">
+                                    <input type="checkbox" [(ngModel)]="per.Delete" name="{{ per.fields }}.delete"
+                                        [disabled]="true">
+                                </td>
+                            </tr>
+                        </ng-container>
+                        <!-- IT Support Reports -->
+                        <tr>
+                            <th colspan="5" class="custom-header">
+                                <div class="d-flex gap-2 align-items-center">
+                                    <input type="checkbox" #selectallforitsupportreports (change)="toggleSelectAll(itSupportReportsTabsFields,
+                                     selectallforitsupportreports?.checked, isonlyviewfunction.bind(this))"
+                                        [checked]="isAllSelected(itSupportReportsTabsFields)"
+                                        [indeterminate]="isSomeSelected(itSupportReportsTabsFields)"
+                                        [disabled]="!roleToFilter?.id">
+                                    <div>IT Support Reports</div>
+                                </div>
+                            </th>
+                        </tr>
+                        <ng-container *ngFor="let per of permissions">
+                            <tr class="text-align-center"
+                                *ngIf="per.fields === 'IT Support Detailed Report' || per.fields === 'IT Support Detailed Report - Generate'|| per.fields === 'IT Support Detailed Report - Export' || per.fields === 'IT Support Summary Report' || per.fields === 'IT Support Summary Report - Generate'|| per.fields === 'IT Support Summary Report - Export' ">
+
                                 <td class="text-align-center">{{ per.fields }}</td>
                                 <td scope="row">
                                     <input type="checkbox" [(ngModel)]="per.View" name="{{ per.fields }}.view"

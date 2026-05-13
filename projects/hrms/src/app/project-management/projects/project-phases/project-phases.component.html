@@ -159,7 +159,7 @@
               <label for="startDate" class="form-label custom-label mb-2">Start Date<span
                   class="text-danger">*</span></label>
               <input type="date" id="startDate" formControlName="startDate" onkeypress="return false"
-                class="form-control custom-input" [min]="projectMinStartDate" />
+                class="form-control custom-input" [min]="projectMinStartDate"  [max]="projectMaxEndDate"  />
               <div class="error-msg"
                 *ngIf="updatePhaseForm.get('startDate')?.touched && updatePhaseForm.get('startDate')?.invalid">
                 Start Date is required

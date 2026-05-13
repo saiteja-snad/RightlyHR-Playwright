@@ -62,6 +62,7 @@ export interface CellModel {
   rejectReason?: string;
   resourceId?: number;
   isLocked: boolean;
+  taskId?:any;
 }
 
 export interface MatrixMetadata {
@@ -222,7 +223,8 @@ export function transformV2ResponseToWeekMatrix(response: any): WeekMatrix {
                 approverId: entry.approverId,
                 rejectReason: entry.rejectReason,
                 resourceId: entry.resourceId || row.resourceId,
-                isLocked: false
+                isLocked: false,
+                taskId:entry.taskId
               });
             } else {
               cellMap.set(cellKey, {

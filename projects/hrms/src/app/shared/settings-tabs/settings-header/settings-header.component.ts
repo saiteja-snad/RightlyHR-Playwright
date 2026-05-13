@@ -288,6 +288,10 @@ export class SettingsHeaderComponent implements OnInit, OnDestroy {
       this.moduleName = 'Project Management Configurations';
       this.componentName = 'Project Role';
     }
+    else if (url.startsWith('/settings/project-management-config/task-type')) {
+      this.moduleName = 'Project Management Configurations';
+      this.componentName = 'Task Type';
+    }
     else if (url.startsWith('/settings/project-management-config/task')) {
       this.moduleName = 'Project Management Configurations';
       this.componentName = 'Task';

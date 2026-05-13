@@ -335,6 +335,7 @@ export const MODULE_INFOS = {
     Initial_Leave_Entitlements: 'Start a new leave entitlement load job. Define the entitlement scope, review eligible employees, validate rules, and process leave entitlements through a guided three-step workflow.',
     Create_Initial_Leave_Entitlements: 'Use this section to bulk allocate leave entitlements for employees by selecting location, sub-location, shift, and leave category. The system validates applicable leave rules and processes entitlements for eligible employees.',
     CARRY_FORWORD_LEAVES_CREATE: "This module helps to initiate the Leave Carry Forward workflow by allowing you to define the processing scope, review eligible employee leave balances, map the previous year’s leave categories to the new fiscal year, and execute the carry-forward job updates seamlessly.",
+
     HELP_DESK_REPORTS_MODULE_INFO: "The Help Desk Report provides insights into employee support queries raised within the organization. It helps administrators and support teams monitor ticket activities, track issue resolution, and analyze support performance.",
     HELP_DESK_DETAILED_REPORTS_MODULE_INFO:"The Help Desk Detailed Report displays complete information about each help desk ticket, including employee details, issue category, priority, and status. It helps support teams track and manage individual queries effectively.",
     HELP_DESK_SUMMARY_REPORTS_MODULE_INFO:"The Help Desk Summary Report provides an aggregated overview of help desk tickets based on category, and assigned personnel. It helps management quickly analyze ticket distribution and overall support performance.",
@@ -343,4 +344,10 @@ export const MODULE_INFOS = {
     ITSUPPORT_REPORTS_MODULE_INFO: "The IT Support Report provides insights into IT-related support tickets raised by employees across the organization. It helps IT teams monitor issue resolution, track ticket progress, and analyze overall support performance.",
     IT_SUPPORT_SUMMARY_REPORTS_MODULE_INFO: "The IT Support Detailed Report displays complete information for each IT support ticket, including employee details, issue category, priority, assigned support member, and ticket status. It helps IT teams track and manage individual technical issues efficiently.",
     IT_SUPPORT_DETAILED_REPORTS_MODULE_INFO: "The IT Support Summary Report provides an overview of IT tickets based on the assigned support personnel and their current status. It helps management quickly understand workload distribution and the overall resolution status of IT support requests.",
+
+    TIMESHEET_BULK_UPLOAD: "The Timesheet Import feature allows users to upload bulk timesheet entries using a predefined Excel/CSV template. It validates the data and highlights errors to ensure accurate and successful submission.",
+    TIMESHEET_HISTORY_LOG: "View History module displays the record of all timesheet import and export activities. It allows you to track status, view processed records, and download files.",
+    TIMESHEET_BULK_EXPORT: "The Timesheet Export feature enables users to download timesheet data based on selected filters such as date range, employee, or project. It helps in reporting, analysis, and sharing timesheet records in Excel format.",
+
+
 }

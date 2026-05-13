@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { HttpService } from '../../http-services/http.service';
 import { Subscription } from 'rxjs';
-import { DateFormatPipe } from "../../pipes/date-format.pipe";
+import { DateFormatPipe } from "../../Pipes/date-format.pipe";
 @Component({
   selector: 'app-job-details',
   imports: [CommonModule, RouterModule, DateFormatPipe],

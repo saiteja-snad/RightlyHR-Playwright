@@ -17,7 +17,7 @@ import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-foun
 import { DailyData, MonthlySummaryItem, TimesheetEntry, TimesheetSummaryResponse } from '../../../Interfaces/timesheetsummary';
 import { Subject } from 'rxjs/internal/Subject';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { DateformatPipe } from "../../../pipes/dateformat.pipe";
+import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { ChartModule } from 'primeng/chart';
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";

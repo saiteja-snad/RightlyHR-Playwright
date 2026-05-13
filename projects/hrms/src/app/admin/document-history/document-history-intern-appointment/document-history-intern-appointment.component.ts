@@ -5,7 +5,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { IAppointmentLetterDetails } from '../../../Interfaces/documentsHistory';
 import { AppointmentletterpipePipe } from '../../../Pipes/appointmentletterpipe.pipe';
-import { DateformatPipe } from '../../../pipes/dateformat.pipe';
+import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { HttpService } from '../../../services/http.service';
 import { RbacService } from '../../../services/rbac.service';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";

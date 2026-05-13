@@ -16,7 +16,7 @@ import { MODULE_INFOS } from '../../../shared/modules-info';
 import { DownloadIconComponent } from "../../../icons/download-icon/download-icon.component";
 import { TabsModule } from 'primeng/tabs';
 import { RbacService } from '../../../services/rbac.service';
-import { DateformatPipe } from '../../../pipes/dateformat.pipe';
+import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 
 interface HistoryBatchItem {
   jobId: number;

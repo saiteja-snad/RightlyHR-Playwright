@@ -9,7 +9,7 @@ import { BulkUploadService } from '../../../services/bulk-upload.service';
 import { BulkUploadStore } from '../bulk-upload/models/bulk-upload.store';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
-import { DateformatPipe } from '../../../pipes/dateformat.pipe';
+import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { FormsModule } from '@angular/forms';
 import { ConfirmationIconComponent } from "../../../icons/confirmation-icon/confirmation-icon.component";
 import { Router } from '@angular/router';

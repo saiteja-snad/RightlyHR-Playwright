@@ -5,7 +5,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { TabsModule } from 'primeng/tabs';
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';
-import { DateformatPipe } from "../../pipes/dateformat.pipe";
+import { DateformatPipe } from "../../Pipes/dateformat.pipe";
 import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
 import { InfoIconComponent } from "../../icons/info-icon/info-icon.component";
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';

@@ -22,7 +22,7 @@ import { DownloadIconComponent } from "../../../icons/download-icon/download-ico
 import { environment } from '../../../../environments/environment';
 import { ChartModule } from 'primeng/chart';
 import { InfoIconComponent } from '../../../icons/info-icon/info-icon.component';
-import { DateformatPipe } from '../../../pipes/dateformat.pipe';
+import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 
 @Component({
   selector: 'app-previous-experince',

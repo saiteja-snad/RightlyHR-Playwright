@@ -19,7 +19,7 @@ import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.c
 import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
 import { FormValidationsService } from '../../services/form-validations.service';
 import moment from 'moment';
-import { DateformatPipe } from "../../pipes/dateformat.pipe";
+import { DateformatPipe } from "../../Pipes/dateformat.pipe";
 import { Paginator } from "primeng/paginator";
 import { Ibank } from '../../Interfaces/personal-modal';
 import { InfoIconComponent } from "../../icons/info-icon/info-icon.component";

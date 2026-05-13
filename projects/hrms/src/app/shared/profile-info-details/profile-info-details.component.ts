@@ -17,6 +17,7 @@ import { ProfileIconComponent } from "../../icons/profile-icon/profile-icon.comp
 import { MyInfoDocTabsComponent } from "../myinfo-tabs/my-info-doc-tabs/my-info-doc-tabs.component";
 import { PersonalDocumentsTabsComponent } from "../personalinfo-tabs/personal-documents-tabs/personal-documents-tabs.component";
 import { FormatcontactnumberPipe } from "../../Pipes/formatcontactnumber.pipe";
+import moment from 'moment';
 @Component({
   selector: 'app-profile-info-details',
   imports: [CommonModule, MyinfoHeaderTabsComponent, PersonalinfoHeaderTabsComponent, Skeleton, PersonalPersonalTabsComponent,
@@ -106,6 +107,7 @@ getEmployeeId() {
         this.isloading = false;
         let jobdetails = data;
         this.jobdata = jobdetails[0]
+           this.getdst(this.jobdata.shiftId);
         this.jobRole = jobdetails[0]?.jobRole
         this.shift = jobdetails[0]?.shiftName
         this.reportesto.fistname = jobdetails[0]?.firstName
@@ -131,6 +133,58 @@ getEmployeeId() {
     })
   }
 
+    getdst(shiftId: number) {
+    this.subscription = this.http.getData(`OrgDayLight/getAll`).subscribe({
+      next: (data: any) => {
+        console.log(data);
+        
+        const dst = data.find((ele: any) => ele.shiftId == shiftId);
+        console.log(this.jobdata);
+        
+        if (dst) {
+          const dstValue = dst.dayLight;
+          const adjusted = this.adjustShiftForDSTMoment(
+            this.jobdata?.shiftStartTime,
+            this.jobdata?.shiftEndTime,
+            dstValue
+          
+            
+          );
+       console.log(adjusted);
+       
+          this.jobdata.shiftStartTime = adjusted.start;
+          this.jobdata.shiftEndTime = adjusted.end;
+        } else {
+          this.jobdata.dst = "No DST assigned for this shift";
+        }
+      }
+    })
+  }
+
+   adjustShiftForDSTMoment(start: string, end: string, dstRules: any[]) {
+    let startMoment = moment(start, "HH:mm");
+    let endMoment = moment(end, "HH:mm");
+    const today = moment().format("YYYY-MM-DD");
+    const rule = dstRules.find((x: any) =>
+      today >= moment(x.startDate).format("YYYY-MM-DD") &&
+      today <= moment(x.endDate).format("YYYY-MM-DD")
+    );
+    if (rule) {
+      if (rule.momentType === "Forward") {
+        startMoment = startMoment.add(rule.duration, "hours");
+        endMoment = endMoment.add(rule.duration, "hours");
+      }
+      if (rule.momentType === "Backward") {
+        startMoment = startMoment.subtract(rule.duration, "hours");
+        endMoment = endMoment.subtract(rule.duration, "hours");
+      }
+
+    }
+    return {
+      start: startMoment.format("HH:mm"),
+      end: endMoment.format("HH:mm")
+    };
+  }
   chooseNewProfile(event: any) {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {

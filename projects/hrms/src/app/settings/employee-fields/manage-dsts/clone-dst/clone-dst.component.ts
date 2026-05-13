@@ -29,7 +29,7 @@ import moment from 'moment';
 
 @Component({
   selector: 'app-clone-dst',
-  imports: [SelectModule, CommonModule, ReactiveFormsModule,TranslateModule],
+  imports: [SelectModule, CommonModule, ReactiveFormsModule, TranslateModule],
   templateUrl: './clone-dst.component.html',
   styleUrl: './clone-dst.component.scss',
 })
@@ -56,116 +56,116 @@ export class CloneDstComponent implements OnInit, OnDestroy {
     private sharedModalService: OpenModalService,
     private modalService: NgbModal,
     private router: Router
-  ) {}
+  ) { }
 
   ngOnInit(): void {
-     this.yearsList = this.getYears();
-  this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
-  this.updateHolidaysData = JSON.parse(localStorage.getItem('cloneDST') ?? '{}');
-  this.inititializeForm();
+    this.yearsList = this.getYears();
+    this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
+    this.updateHolidaysData = JSON.parse(localStorage.getItem('cloneDST') ?? '{}');
+    this.inititializeForm();
 
-  const localStorageData = localStorage.getItem('cloneDST');
-  if (localStorageData) {
-    this.clonedDST = JSON.parse(localStorageData);
-  }
+    const localStorageData = localStorage.getItem('cloneDST');
+    if (localStorageData) {
+      this.clonedDST = JSON.parse(localStorageData);
+    }
 
-  if (this.clonedDST) {
-    this.dstForm.patchValue({
-      year: this.clonedDST.applicableYear,
-    });
-  }
+    if (this.clonedDST) {
+      this.dstForm.patchValue({
+        year: this.clonedDST.applicableYear,
+      });
+    }
 
-  this.getAllLocations();
-  const selectedYear = this.updateHolidaysData.applicableYear || new Date().getFullYear();
-  this.setDateLimits(selectedYear);
+    this.getAllLocations();
+    const selectedYear = this.updateHolidaysData.applicableYear || new Date().getFullYear();
+    this.setDateLimits(selectedYear);
 
     // year changes method is triggering
     this.dstForm.get('year')?.valueChanges.subscribe((yearVal: any) => {
       const year = +yearVal;
       if (year) {
         this.setDateLimits(year);
-    this.momentRows.controls.forEach((group: AbstractControl) => {
-      ['startDate', 'endDate'].forEach(field => {
-        const currentVal = group.get(field)?.value;
-        if (currentVal) {
-          const oldDate = new Date(currentVal);
-          const newDate = new Date( year, oldDate.getMonth(), oldDate.getDate());
-          const formattedDate = this.formatDate(newDate);
+        this.momentRows.controls.forEach((group: AbstractControl) => {
+          ['startDate', 'endDate'].forEach(field => {
+            const currentVal = group.get(field)?.value;
+            if (currentVal) {
+              const oldDate = new Date(currentVal);
+              const newDate = new Date(year, oldDate.getMonth(), oldDate.getDate());
+              const formattedDate = this.formatDate(newDate);
 
-          if (formattedDate >= this.minHolidayDate && formattedDate <= this.maxHolidayDate) {
-            group.get(field)?.setValue(formattedDate, { emitEvent: false });
-          } else {
-            group.get(field)?.setValue('', { emitEvent: false }); // Clear if out of range
-          }
-        }
-      
-      });
-    });
-      
+              if (formattedDate >= this.minHolidayDate && formattedDate <= this.maxHolidayDate) {
+                group.get(field)?.setValue(formattedDate, { emitEvent: false });
+              } else {
+                group.get(field)?.setValue('', { emitEvent: false }); // Clear if out of range
+              }
+            }
 
-  }
-}); 
-    
+          });
+        });
 
-  }
-// this method used for year change selected yr month show in manage holiday date
-formatDate(date: Date): string {
-  const year = date.getFullYear();
-  const month = ('0' + (date.getMonth() + 1)).slice(-2);
-  const day = ('0' + date.getDate()).slice(-2);
-  return `${year}-${month}-${day}`;
-}
 
-setDateLimits(year: number): void {
-  this.minHolidayDate = `${year}-01-01`;
-  this.maxHolidayDate = `${year}-12-31`;
-
-  this.momentRows.controls.forEach(control => {
-    ['startDate', 'endDate'].forEach(field => {
-      const dateControl = control.get(field);
-      if (dateControl) {
-        dateControl.setValidators([
-          Validators.required,
-          this.yearRangeValidator(this.minHolidayDate, this.maxHolidayDate)
-        ]);
-        dateControl.updateValueAndValidity();
       }
     });
-  });
-}
 
-yearRangeValidator(min: string, max: string): ValidatorFn {
-  return (control: AbstractControl) => {
-    const value = control.value;
-    if (!value) return null;
-    return value >= min && value <= max ? null : { outOfRange: true };
-  };
-}
 
-inititializeForm() {
-  this.dstForm = this.fb.group({
-    year: ['', Validators.required],
-    location: ['', Validators.required],
-    subLocation: [{ value: null, disabled: true }, Validators.required],
-    shift: [{ value: null, disabled: true }, Validators.required],
-    momentRows: this.fb.array([]),
-  });
-
-  if (!this.clonedDST?.dayLight?.length) {
-    this.addMomentRow(); // Add first row if form is fresh
   }
-}
+  // this method used for year change selected yr month show in manage holiday date
+  formatDate(date: Date): string {
+    const year = date.getFullYear();
+    const month = ('0' + (date.getMonth() + 1)).slice(-2);
+    const day = ('0' + date.getDate()).slice(-2);
+    return `${year}-${month}-${day}`;
+  }
 
-createMomentRow(): FormGroup {
-  return this.fb.group({
-    startDate: ['', [Validators.required, this.yearRangeValidator(this.minHolidayDate, this.maxHolidayDate)]],
-    endDate: ['', [Validators.required, this.yearRangeValidator(this.minHolidayDate, this.maxHolidayDate)]],
-    momentType: [null, Validators.required],
-    duration: [null, Validators.required],
-  });
-}
+  setDateLimits(year: number): void {
+    this.minHolidayDate = `${year}-01-01`;
+    this.maxHolidayDate = `${year}-12-31`;
 
-  
+    this.momentRows.controls.forEach(control => {
+      ['startDate', 'endDate'].forEach(field => {
+        const dateControl = control.get(field);
+        if (dateControl) {
+          dateControl.setValidators([
+            Validators.required,
+            this.yearRangeValidator(this.minHolidayDate, this.maxHolidayDate)
+          ]);
+          dateControl.updateValueAndValidity();
+        }
+      });
+    });
+  }
+
+  yearRangeValidator(min: string, max: string): ValidatorFn {
+    return (control: AbstractControl) => {
+      const value = control.value;
+      if (!value) return null;
+      return value >= min && value <= max ? null : { outOfRange: true };
+    };
+  }
+
+  inititializeForm() {
+    this.dstForm = this.fb.group({
+      year: ['', Validators.required],
+      location: ['', Validators.required],
+      subLocation: [{ value: null, disabled: true }, Validators.required],
+      shift: [{ value: null, disabled: true }, Validators.required],
+      momentRows: this.fb.array([]),
+    });
+
+    if (!this.clonedDST?.dayLight?.length) {
+      this.addMomentRow(); // Add first row if form is fresh
+    }
+  }
+
+  createMomentRow(): FormGroup {
+    return this.fb.group({
+      startDate: ['', [Validators.required, this.yearRangeValidator(this.minHolidayDate, this.maxHolidayDate)]],
+      endDate: ['', [Validators.required, this.yearRangeValidator(this.minHolidayDate, this.maxHolidayDate)]],
+      momentType: [null, Validators.required],
+      duration: [null, Validators.required],
+    });
+  }
+
+
   get momentRows(): FormArray {
     return this.dstForm.get('momentRows') as FormArray;
   }
@@ -188,39 +188,77 @@ createMomentRow(): FormGroup {
     const currentYear = new Date().getFullYear();
     return Array.from({ length: 12 }, (_, i) => currentYear - 1 + i);
   }
-  isBlocked(date: any) {
-    for (let range of this.blockedDates) {
-      if (date >= range.startDate && date <= range.endDate) {
-        return true;
-      }
+  getInputValue(event: Event): string {
+    return (event.target as HTMLInputElement).value;
+  }
+  private isUpdating = false;
+  isBlocked(date: any, currentIndex: number): boolean {
+    if (!date) return false;
+    for (let i = 0; i < this.blockedDates.length; i++) {
+      if (i === currentIndex) continue;
+      const range = this.blockedDates[i];
+      if (!range?.startDate || !range?.endDate) continue;
+      // Only block if EXACT same start or end date exists in another row
+      if (date === range.startDate || date === range.endDate) return true;
     }
     return false;
   }
-  onStartDateChange(event: any, row: any) {
-    this.minHolidayDate = event;
-    if (this.isBlocked(event)) {
-     
-      row.startDate = '';
-      this.sharedModalService.openErrorModal('The selected start date is within a range that has already been selected. Please choose a different date.');
-    } else {
-      if (row.endDate) {
-        this.blockedDates.push({ startDate: row.startDate, endDate: row.endDate });
-      } else {
-        this.blockedDates.push({ startDate: row.startDate, endDate: row.startDate });
-      }
-    }
+  initBlockedDates() {
+    this.blockedDates = this.momentRows.controls.map((row: any) => ({
+      startDate: row.get('startDate')?.value || '',
+      endDate: row.get('endDate')?.value || ''
+    }));
   }
-  onEndDateChange(event: any, row: any) {
-    if (this.isBlocked(event)) {
-      row.endDate = '';
-      this.sharedModalService.openErrorModal('The selected end date is within a range that has already been selected. Please choose a different date.');
-    } else {
-      if (row.startDate) {
-        this.blockedDates.push({ startDate: row.startDate, endDate: row.endDate });
-      } else {
-        this.blockedDates.push({ startDate: row.endDate, endDate: row.endDate });
-      }
+
+  onStartDateChange(event: any, row: any, index: number) {
+    if (this.isUpdating) return;
+
+    if (this.isBlocked(event, index)) {
+      this.isUpdating = true;
+      row.get('startDate')?.setValue('', { emitEvent: false });
+      this.isUpdating = false;
+      setTimeout(() => this.sharedModalService.openErrorModal('The selected start date is within a range that has already been selected. Please choose a different date.'), 300);
+      return;
     }
+
+    const endDate = row.get('endDate')?.value;
+    if (endDate && event > endDate) {
+      this.isUpdating = true;
+      row.get('endDate')?.setValue('', { emitEvent: false });
+      this.isUpdating = false;
+      setTimeout(() => this.sharedModalService.openErrorModal('Start date must be less than or equal to the end date.'), 300);
+    }
+
+    this.blockedDates[index] = {
+      startDate: row.get('startDate')?.value,
+      endDate: row.get('endDate')?.value
+    };
+  }
+
+  onEndDateChange(event: any, row: any, index: number) {
+    if (this.isUpdating) return;
+
+    const startDate = row.get('startDate')?.value;
+    if (startDate && event < startDate) {
+      this.isUpdating = true;
+      row.get('endDate')?.setValue('', { emitEvent: false });
+      this.isUpdating = false;
+      setTimeout(() => this.sharedModalService.openErrorModal('End date must be greater than or equal to the start date.'), 300);
+      return;
+    }
+
+    if (this.isBlocked(event, index)) {
+      this.isUpdating = true;
+      row.get('endDate')?.setValue('', { emitEvent: false });
+      this.isUpdating = false;
+      setTimeout(() => this.sharedModalService.openErrorModal('The selected end date is within a range that has already been selected. Please choose a different date.'), 300);
+      return;
+    }
+
+    this.blockedDates[index] = {
+      startDate: row.get('startDate')?.value,
+      endDate: row.get('endDate')?.value
+    };
   }
   onLocationChange(location: ILocation): void {
     this.subLocationDetails = location.jobSubLocations ?? [];
@@ -231,38 +269,38 @@ createMomentRow(): FormGroup {
     this.dstForm.get('subLocation')?.markAsTouched();
   }
 
-getAllShifts(subLocation: ISubLocation): void {
-  const params = {
-    locationId: subLocation.jobLocationId,
-    subLocationId: subLocation.id,
-  };
+  getAllShifts(subLocation: ISubLocation): void {
+    const params = {
+      locationId: subLocation.jobLocationId,
+      subLocationId: subLocation.id,
+    };
 
-  // Reset and disable shift field before fetching new shifts
-  const shiftControl = this.dstForm.get('shift');
-  shiftControl?.reset();      
-  shiftControl?.disable();      
-  shiftControl?.markAsTouched(); 
-  this.http
-    .getDataWithQueryParams('orgShifts/getshiftlocation', params)
-    .pipe(takeUntil(this.destroy$))
-    .subscribe({
-      next: (res: any) => {
-        this.shiftDetails = res.flatMap(
-          (header: any) => header.orgShiftsItems || []
-        );
-        shiftControl?.enable(); 
-        // Re-validate now that new options are loaded
-        shiftControl?.setValidators([Validators.required]);
-        shiftControl?.updateValueAndValidity();
-      },
-      error: (err) => {
-        console.error('Error fetching shifts:', err);
-        this.shiftDetails = [];
-        shiftControl?.reset();
-        shiftControl?.disable();
-      },
-    });
-}
+    // Reset and disable shift field before fetching new shifts
+    const shiftControl = this.dstForm.get('shift');
+    shiftControl?.reset();
+    shiftControl?.disable();
+    shiftControl?.markAsTouched();
+    this.http
+      .getDataWithQueryParams('orgShifts/getshiftlocation', params)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res: any) => {
+          this.shiftDetails = res.flatMap(
+            (header: any) => header.orgShiftsItems || []
+          );
+          shiftControl?.enable();
+          // Re-validate now that new options are loaded
+          shiftControl?.setValidators([Validators.required]);
+          shiftControl?.updateValueAndValidity();
+        },
+        error: (err) => {
+          console.error('Error fetching shifts:', err);
+          this.shiftDetails = [];
+          shiftControl?.reset();
+          shiftControl?.disable();
+        },
+      });
+  }
 
   private getAllLocations(): void {
     this.http
@@ -361,7 +399,7 @@ getAllShifts(subLocation: ISubLocation): void {
             'DST already exists with the year , location and sub location'
           );
         },
-        complete: () => {},
+        complete: () => { },
       });
   }
 
@@ -419,12 +457,12 @@ getAllShifts(subLocation: ISubLocation): void {
     }
   }
 
-  closeCloneDST(){
+  closeCloneDST() {
     this.modalService.dismissAll();
     this.navigate();
-   }
-   openConfirmation(){
-    this.modalService.open(this.confirmation, {centered: true, backdrop: 'static'})
+  }
+  openConfirmation() {
+    this.modalService.open(this.confirmation, { centered: true, backdrop: 'static' })
   }
 
   publishDST() {

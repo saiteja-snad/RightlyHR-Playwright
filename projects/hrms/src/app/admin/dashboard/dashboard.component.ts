@@ -1100,7 +1100,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   nagvition() {
-    this.router.navigate(['/myinfo/job/team-members']);
+    this.router.navigate(['/myinfo/job/team/team-members']);
   }
 
   myattendance() {

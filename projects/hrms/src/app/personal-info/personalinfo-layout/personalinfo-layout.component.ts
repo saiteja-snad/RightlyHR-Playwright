@@ -723,7 +723,7 @@ getinitateoffboardingdata(){
 
   onBackSubmit() {
     if (this.headerName === 'Team member info') {
-      this.router.navigate(['/myinfo/job/team-members']);
+      this.router.navigate(['/myinfo/job/team/my-team-members']);
       return;
     }
     let routestatus = JSON.parse(localStorage.getItem('personaldata') || '{}');
@@ -1031,7 +1031,7 @@ getinitateoffboardingdata(){
       '/myinfo/job/team/my-team-members': MODULE_INFOS.REPORT_TO,
       '/myinfo/job/cards': MODULE_INFOS.JOB_MODULE_EMPlOYEE_CARD_MODULE_INFO,
       '/myinfo/job/project-info': MODULE_INFOS.JOB_MODULE_PROJECTS_INFO,
-       '/personalinfo/job/team/location-change': MODULE_INFOS.LOCATION_CHANGE_MODULE_INFO,
+      '/personalinfo/job/team/location-change': MODULE_INFOS.LOCATION_CHANGE_MODULE_INFO,
       // My Info Documents
       '/myinfo/documents': MODULE_INFOS.DOCUMENTS_MODULE_INFO,
 

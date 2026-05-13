@@ -222,6 +222,7 @@ export class LeavesComponent implements OnInit, OnDestroy{
       this.getDataByLPID(employeedId);
       this.getLeavesData(employeedId);
       this.getCategoryempDetails(employeedId);
+      this.getEmployeeidV2(employeedId);
     } else {
       this.http.setEmployeeIdTimeoff(null);
       // Update new service
@@ -231,6 +232,7 @@ export class LeavesComponent implements OnInit, OnDestroy{
       this.getLeavesData(this.empdata.employeeId);
       this.getDataByLPID(this.empdata.employeeId);
       this.getCategoryempDetails(this.empdata.employeeId);
+      this.getEmployeeid();
     }
   }
 
@@ -505,13 +507,34 @@ getTeamManagersDetails() {
     };
   }
 
-getAvailableLeaves(item: any): number {
-  const value = item.category?.isProbationAllowed && item.probationLeaves > 0
-    ? item.probationLeaves - item.utilizedDays - item.booked - (item.expiryDaysLeaves || 0)
-    : item.allowedDays - item.utilizedDays - item.booked - (item.expiryDaysLeaves || 0);
+  getAvailableLeaves(item: any): number {
+    const isCompOff = [
+      'comp off',
+      'compoff',
+      'compensatory off',
+      'compensatory leaves',
+      'compensatory leave',
+      'compensatory off leave',
+      'compensatoryoff leaves',
+      'compensatoryoff leave',
+      'compensatory off leaves',
+      'comp off leave',
+      'compoff leave'
+    ].includes((item.category?.name ?? '').toLowerCase());
+    
+    const expiryDeduction = isCompOff ? (item.expiryDaysLeaves ? item.expiryDaysLeaves : 0) : 0;
+    
+    const isProbationActive = this.employeeiddetails.empType === 'Probation' && 
+      this.employeeiddetails?.probationEndDate && 
+      new Date(this.employeeiddetails.probationEndDate) > new Date();
+    
+    if (isProbationActive && item.category?.isProbationAllowed && item.probationLeaves > 0) {
+      return item.availableProbationLeaves; 
+    } else {
+      return item.allowedDays - item.utilizedDays - item.booked - expiryDeduction;
+    }
+  }
 
-  return Math.abs(value);
-}
   getTransparentColor(hex: string, opacity: number): string {
     // Remove leading # if present
     hex = hex.replace('#', '');
@@ -526,16 +549,38 @@ getAvailableLeaves(item: any): number {
   }
 
   getProgress(item: any): number {
-    const available = this.getAvailableLeaves(item);
-    const total = item.allowedDays || 1; // Avoid division by zero
-    const percentage = Math.max(0, Math.min(available / total, 1)); // Clamp between 0 and 1
-    return percentage * 360;
+    if (this.employeeiddetails.empType === 'Probation' && (item.category.isProbationAllowed && item.probationLeaves >= 0)) {
+      const available = this.getAvailableLeaves(item);
+      const total = item.probationLeaves || 1; // Avoid division by zero
+      const percentage = Math.max(0, Math.min(available / total, 1)); // Clamp between 0 and 1
+      return percentage * 360;
+    }
+    else {
+      const available = this.getAvailableLeaves(item);
+      const total = item.allowedDays || 1; // Avoid division by zero
+      const percentage = Math.max(0, Math.min(available / total, 1)); // Clamp between 0 and 1
+      return percentage * 360;
+    }
+
   }
 
   getEmployeeid() {
     this.subscription = this.http.getData(`Employeedata/${this.empdata.employeeId}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data: any) => {
         this.employeeiddetails = data;
+        console.log(this.employeeiddetails);
+        
+        // this.calculateProbationLeavs(this.categoryDetails);
+      },
+    });
+  }
+
+  getEmployeeidV2(employeeId: string) {
+    this.subscription = this.http.getData(`Employeedata/${employeeId}`).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (data: any) => {
+        this.employeeiddetails = data;
+        console.log(this.employeeiddetails);
+        
         // this.calculateProbationLeavs(this.categoryDetails);
       },
     });
@@ -643,8 +688,8 @@ getAvailableLeaves(item: any): number {
     const booked = this.selectedleave?.booked;
     const expired = this.selectedleave.expiryDaysLeaves;
     this.remainingLeaves = maxDays - (leavesTaken ? leavesTaken : 0) - booked - expired;
-    if (this.selectedleave && this.selectedleave.category && this.selectedleave.category.isProbationAllowed) {
-      const probationLeavesTaken = this.selectedleave.probationLeaves - (leavesTaken !== undefined ? leavesTaken : 0) - booked;
+    if (this.selectedleave && this.selectedleave.category && this.selectedleave.category.isProbationAllowed && this.employeeiddetails.empType === 'Probation') {
+      const probationLeavesTaken = this.selectedleave.availableProbationLeaves;
       if (probationLeavesTaken >= 0) {
         this.remainingLeaves = probationLeavesTaken;
       } else {

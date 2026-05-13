@@ -89,12 +89,22 @@
     <div class="offcanvas-filter-content">
       <form [formGroup]="LeaveReportForm" (ngSubmit)="onGenerate()">
         
+        <!-- Year -->
+        <div class="mb-3">
+          <label class="form-label custom-label text-nowrap filter-labels mb-3">{{'Select Year' | translate}}</label>
+          <div class="custom-p-select-content">
+            <p-select [options]="years" optionLabel="label" optionValue="value" formControlName="year"
+              placeholder="Please select year" class="form-select custom-select">
+            </p-select>
+          </div>
+        </div>
+        
         <!-- Date Range -->
         <div class="mb-3">
            <label class="form-label custom-label text-nowrap filter-labels mb-3">{{'Date Range' | translate}}</label>
            <div class="custom-date-range-picker">
             <p-datepicker formControlName="dateRange" [placeholder]="'Please select date'" selectionMode="range"
-              [showIcon]="true" [readonlyInput]="true" [maxDate]="today" />
+              [showIcon]="true" [readonlyInput]="true" [minDate]="yearMinDate" [maxDate]="yearMaxDate ?? today" />
           </div>
         </div>
         

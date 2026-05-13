@@ -304,6 +304,7 @@ export interface ILeavesummery{
   subLocation?: string;
   leaveType?: string;
   leaveCategories?: string;
+  year?: number;
   reportingManagerId?: number;
 }
 

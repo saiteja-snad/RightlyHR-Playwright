@@ -539,6 +539,11 @@ setAvaillableSearchCount(count: number) {
     return this.http.post(`${this.ApiUrl}${url}`, data);
   }
 
+  postText(url: string, data: any) {
+    return this.http.post(`${this.ApiUrl}${url}`, data, { responseType: 'text' });
+  }
+
+
 
 
   postbyId(url: string) {

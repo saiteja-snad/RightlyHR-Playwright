@@ -47,7 +47,7 @@ export class OnBeHalfOfApprovalTabsComponent implements OnInit{
   ) {
     // Signal reaction for employee switch or year change
     effect(() => {
-      if (this.http.onBehalfOfTriggerSignal()) {
+      if (this.http.onBehalfOfTriggerSignal() > 0) {
         this.cadidateEmployeeId = parseInt(localStorage.getItem('onbehalfof') as string);
         if (!isNaN(this.cadidateEmployeeId)) {
           this.getDataByLPID();
@@ -71,7 +71,7 @@ export class OnBeHalfOfApprovalTabsComponent implements OnInit{
 
   getDataByLPID() {
     this.loading=true
-    const selectedYear = this.timeoffYearFilterService.getSelectedYear();
+    const selectedYear = this.timeoffYearFilterService.getSelectedYear() ?? new Date().getFullYear();
     this.subscription = this.http.getData(`Timeoff/${this.cadidateEmployeeId}?year=${selectedYear}`).subscribe({
       next: (response: any) => {
         this.loading=false

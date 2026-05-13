@@ -107,7 +107,8 @@ export class ProcessedExpensesComponent implements OnInit, OnDestroy {
   }
 
   comments_Function(comments: any) {
-    this.commentsrecivced = comments
+    let filteredComments = comments?.filter((ele: any) => ele?.action !== 'Required Clarification');
+    this.commentsrecivced = filteredComments;
   }
 
   viewItem(expid: number,) {

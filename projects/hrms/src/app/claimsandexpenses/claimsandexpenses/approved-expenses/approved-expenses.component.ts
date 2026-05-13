@@ -77,7 +77,8 @@ export class ApprovedExpensesComponent implements OnInit, OnDestroy {
   }
 
   comments_Function(comments: any) {
-    this.commentsrecivced = comments
+    let filteredComments = comments?.filter((ele: any) => ele?.action !== 'Required Clarification');
+    this.commentsrecivced = filteredComments;
   }
   //download expenses popup open function
   openpopupforDownload(content: any, expenseDetails: any) {

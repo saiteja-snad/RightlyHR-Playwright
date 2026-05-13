@@ -61,6 +61,7 @@ empinfo: any;
   expense: IExpenses[] = [];
   selectedData = {} as any;
   @Input() downloadData: any;
+  appover_comments = {} as any;
   constructor(public router: Router, private fb: FormBuilder, private datepipe: DatePipe,
     private http: HttpService, private conformationPopup: OpenModalService, private modalService: NgbModal, private sanitizer: DomSanitizer,
     public formValidation: FormValidationService, public rbac: RbacService, private cdRef: ChangeDetectorRef, private SelectedyeartimeOffService: SelectedyeartimeOffService) { }
@@ -342,6 +343,7 @@ empinfo: any;
         receipt_Number: item.receipt_Number,
         status: 'Waiting for Approval',
         attachment_url: item.attachment_url,
+        expenseitem_id: item.expenseitem_id
       })),
     };
     console.log("payload", payload)
@@ -420,6 +422,8 @@ empinfo: any;
         receipt_Number: item.receipt_Number,
         status: 'Draft',
         attachment_url: item.attachment_url,
+        expenseitem_id: item.expenseitem_id
+
       })),
     };
     const filepath = `/Expenses/${this.empinfo.employeeId}`;
@@ -571,7 +575,8 @@ empinfo: any;
       expense_Date: [this.datepipe.transform(item.expense_Date, 'yyyy-MM-dd'), Validators.required],
       expense_Amount: [item.expense_Amount, [Validators.required, Validators.pattern(/^\d+(\.\d{1,2})?$/), this.noAlphabetsOrZeroValidator()]],
       receipt_Number: [item.receipt_Number, [Validators.required, Validators.maxLength(18)]],
-      attachment_url: [item.attachment_url, Validators.required]
+      attachment_url: [item.attachment_url, Validators.required],
+      expenseitem_id: [item.expenseitem_id]
     }));
   }
 
@@ -653,6 +658,36 @@ empinfo: any;
   closemodel() {
     this.modalService.dismissAll();
 
+  }
+  //function to open the modal for the comments
+  approverCommentsFunction(Value: any, content: any) {
+    this.modalService.open(content, {
+      centered: true,
+      size: 'xl',
+      backdrop: 'static',
+      keyboard: false
+    });
+
+    const roleOrder: { [key: string]: number } = {
+      RM: 1,
+      TM: 2,
+      EM: 3, // 'EM' is displayed as HR in the UI
+    };
+   let filteredComments = Value?.filter((ele: any) => ele?.action === 'Required Clarification');
+    this.appover_comments = filteredComments?.map((ele: any) => {
+      const parsedMetaData = JSON.parse(ele.metaData || '{}');
+      return {
+        ...ele,
+        metadata: parsedMetaData,
+      };
+    }).sort((a: any, b: any) => {
+      const roleA = a.approverRole?.toUpperCase() || '';
+      const roleB = b.approverRole?.toUpperCase() || '';
+      return (roleOrder[roleA] || 99) - (roleOrder[roleB] || 99);
+    });
+  }
+   closeModel() {
+    this.modalService.dismissAll();
   }
   ngOnDestroy(): void {
     if (this.subscription) {

@@ -2,6 +2,7 @@ export const environment = {
   production: false,
   ApiUrl: 'https://rightlyhrnewversiondevapi.rightlyhr.com/api/',
 
+  webSocketUrl: 'ws://fusionplusdevapi.onpremise.snadhr.com',
   viewUrl: 'https://sasda001.blob.core.windows.net/fusionplusqa/',
   modules: [
     { id: 20, moduleName: 'Probation' },
@@ -15,6 +16,24 @@ export const environment = {
   redirectUrl: '/uservalidation',
   baseUrl: "https://rightlyhrnewversiondevapi.rightlyhr.com/api/",
   scopeUri: ["api://f9ad74b1-d17f-4175-9097-f543691f6bec/api-access"],
+
+
+   auth: {
+    google: {
+      clientId: 'your-google-client-id.apps.googleusercontent.com',
+      redirectUri: window.location.origin + '/auth/callback',
+      scope: 'openid profile email',
+      issuer: 'https://accounts.google.com',
+    },
+    microsoft: {
+      clientId: '9a09dcfb-a22f-4fdf-a014-38990e558d80',
+      tenant: '0cc1bac4-bd4f-4994-8cf9-2d544c09d781',
+      redirectUri: window.location.origin + '/uservalidation',
+      postLogoutRedirectUri: window.location.origin + '/login',
+      authority: 'https://login.microsoftonline.com',
+      scope: 'openid profile email',
+    }
+  },
 
 
   dateformat: 'MMM d, y',
@@ -40,6 +59,9 @@ export const environment = {
   ProbationExtendPeriodTimes: 3,
   PMSrequestmoduleId:24,
   deskAllocationModuleId:23,
+  contractorModuleId:25,
+  contractEmployeeConversionModuleId:26,
+  extraHoursModuleId: 31,
   expensesModuleId:19,
   remoteLoginModuleId:11,
   globalPermissionsModuleID:21,

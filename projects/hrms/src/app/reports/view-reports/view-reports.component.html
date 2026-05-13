@@ -197,6 +197,25 @@
                         </div>
                     </li>
                     }
+
+                    @if(rbac.allowedToAccess('Help Desk Reports.view')){
+          <li class="accordian-list-item">
+            <p-accordion-panel value="4">
+              <p-accordion-header>
+                <div>
+                  <div class="d-flex align-items-center gap-2 mb-2">
+                    <img src="/reports-icons/Help desk report.png" alt="Icon" class="list-icon">
+                    <div class="list-label-name">Help Desk Reports</div>
+                  </div>
+                  <p class="list-description m-0">{{helpDeskReports}}</p>
+                </div>
+              </p-accordion-header>
+              <p-accordion-content>
+                <app-help-desk-report-tabs />
+              </p-accordion-content>
+            </p-accordion-panel>
+          </li>
+          }
                 </p-accordion>
             </ul>
         </div>

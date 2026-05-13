@@ -7,9 +7,10 @@ import { PolicyReportsTabsComponent } from "../../shared/reports-tabs/policy-rep
 import { RbacService } from '../../services/rbac.service';
 import { AccordionModule } from 'primeng/accordion';
 import { TimesheetReportTabsComponent } from '../../shared/reports-tabs/timesheet-report-tabs/timesheet-report-tabs.component';
+import { HelpDeskReportTabsComponent } from '../../shared/reports-tabs/help-desk-report-tabs/help-desk-report-tabs.component';
 @Component({
   selector: 'app-view-reports',
-  imports: [RouterModule, StandardReportTabsComponent, AttandaceReportTabsComponent, PolicyReportsTabsComponent, AccordionModule,TimesheetReportTabsComponent],
+  imports: [RouterModule, StandardReportTabsComponent, AttandaceReportTabsComponent, PolicyReportsTabsComponent, AccordionModule,TimesheetReportTabsComponent, HelpDeskReportTabsComponent],
   templateUrl: './view-reports.component.html',
   styleUrl: './view-reports.component.scss',
   encapsulation:ViewEncapsulation.None
@@ -26,6 +27,7 @@ export class ViewReportsComponent {
   teamLeaveSummaryModuleInfo = MODULE_INFOS.TIME_OFF_LEAVES_ORG_LEAVE_BALANCE_MODULE_INFO;
   timesheetReports = MODULE_INFOS.SETTINGS_TIMESHEET_REPORT_MODULE_INFO;
   expenseReportsModuleInfo = MODULE_INFOS.EXPENSE_REPORTS_MODULE_INFO;
+  helpDeskReports = MODULE_INFOS.HELP_DESK_REPORTS_MODULE_INFO;
 
 
   constructor(public rbac: RbacService) { }

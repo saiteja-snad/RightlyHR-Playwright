@@ -284,6 +284,14 @@ export const IT_SUPPORT_TEAM_TICKETS_TABS = [
   { route: '/it-support/team-tickets/rejected-tickets', permission: 'Rejected Tickets Tab.view' }
 ]
 
+export const HELPDESK_SUPPORT_TICKETS_TABS = [
+  { route: '/help-desk/support-desk/all-tickets', permission: 'Helpdesk All Queries Tab.view' },
+  { route: '/help-desk/support-desk/open-tickets', permission: 'Helpdesk Open Queries Tab.view' },
+  { route: '/help-desk/support-desk/await-on-user-tickets', permission: 'Helpdesk Await On User Queries Tab.view' },
+  { route: '/help-desk/support-desk/solved-tickets', permission: 'Helpdesk Solved Queries Tab.view' },
+  { route: '/help-desk/support-desk/rejected-tickets', permission: 'Helpdesk Rejected Queries Tab.view' }
+]
+
 export const TIMEOFF_APPROVALS_TABS = [
   { route: '/pending-approvals/time-off/leaves', permission: 'Time Off Tab.view' },
   { route: '/pending-approvals/time-off/wfh', permission: 'WFH Tab.view' },
@@ -420,6 +428,11 @@ export const SETTINGS_PROJECT_MANAGEMENT_TABS = [
   { route: '/settings/project-management-config/letter-frequency', permission: 'Letter Frequency Configurations.view' },
   { route: '/settings/project-management-config/project-role', permission: 'Project Role.view' },
   { route: '/settings/project-management-config/task', permission: 'Task.view' },
+]
+
+export const SETTINGS_HELPDESK_MANAGEMENT_TABS = [
+  { route: '/settings/helpdesk-management-config/categeory', permission: 'Category.view' },
+  { route: '/settings/helpdesk-management-config/subcategeory', permission: 'Subcategory.view' },
 ]
 
 export const SETTINGS_EMPLOYEE_FIELDS_JOB_TABS = [

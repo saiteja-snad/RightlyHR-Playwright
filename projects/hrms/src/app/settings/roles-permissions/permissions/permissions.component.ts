@@ -585,6 +585,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Phone Book',
     'Contacts Directory',
     'Cards Management',
+    'Help Desk'
   ];
 
     dashboardTabsFields = [
@@ -618,6 +619,17 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'All Tickets Tab',
     'Open Tickets Tab',
   ];
+
+  helpdeskModule = ['Support Helpdesk Queries Tab', 'Employee Helpdesk Queries Tab'];
+  HelpdeskTicketsTabs = [
+    'Helpdesk Rejected Queries Tab',
+    'Helpdesk Await On User Queries Tab',
+    'Helpdesk Solved Queries Tab',
+    'Helpdesk Rejected Queries Tab',
+    'Helpdesk All Queries Tab',
+    'Helpdesk Open Queries Tab',
+  ];
+
   HolidaysModule = ['Public Holidays Tab', 'Optional Holidays Tab'];
   OrgHierarchyModule = [
     'Organization Hierarchy - HR',
@@ -1361,6 +1373,12 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Task',
     'Letter Frequency Configurations'
   ];
+
+  settingHelpdeskManagementConfigFields = [
+    'Category',
+    'Subcategory'
+  ];
+
   selectAllLettersTabs = [
     'NDA Document', 'MSA Document'
   ]
@@ -1393,6 +1411,15 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'IT Support Sub-Category',
 
   ];
+
+  helpDeskReportsTabsFields=[
+  'Help Desk Query Detailed Report',
+  'Help Desk Query Summary Report',
+  'Help Desk Query Detailed Report - Generate',
+  'Help Desk Query Detailed Report - Export',
+  'Help Desk Query Summary Report - Generate',
+  'Help Desk Query Summary Report - Export',
+];
 
   // Generic toggle function for checkboxes
   toggleSelectAll(

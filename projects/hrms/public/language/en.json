@@ -2412,7 +2412,7 @@
   "Comment is required": "Comment is required",
   "Comments cannot exceed 250 characters": "Comments cannot exceed 250 characters",
   "Success Records": "Success Records",
-  "Failed Records": "Failed Records"
-
-
+  "Failed Records": "Failed Records",
+  "Help Desk" : "Help Desk",
+  "Help Desk Configuration" : "Help Desk Configuration"
 }

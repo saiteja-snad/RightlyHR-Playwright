@@ -13,6 +13,8 @@ export const permissionsData = [
   { fields: 'Rate Card Configuration Module', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Rate Card Active Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Rate Card Inactive Tab', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Helpdesk Configuration Module', View: false, Update: false, Create: false, Delete: false },
+
   //Employee Field Config Update Tabs Sections
   { fields: 'Personal Config Update Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Job Config Update Tab', View: false, Update: false, Create: false, Delete: false },
@@ -279,6 +281,7 @@ export const permissionsData = [
   { fields: 'Team Time Sheet Filters Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Team Time Sheet Department Filter', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Team Time Sheet RM/TM Filter', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Help Desk', View: false, Update: false, Create: false, Delete: false },
 
   //Time Off Tabs Section
   { fields: 'Time Off Module', View: false, Update: false, Create: false, Delete: false },
@@ -1155,5 +1158,27 @@ export const permissionsData = [
   { fields: 'Today Events', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Attendance Overview', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Quick Links', View: false, Update: false, Create: false, Delete: false },
-    { fields: 'Sun View', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Sun View', View: false, Update: false, Create: false, Delete: false },
+
+//Helpdesk
+  { fields: 'Category', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Subcategory', View: false, Update: false, Create: false, Delete: false },
+    //help desk support  Tickets Tabs Sections
+  { fields: 'Helpdesk All Queries Tab', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Helpdesk Open Queries Tab', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Helpdesk Await On User Queries Tab', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Helpdesk Solved Queries Tab', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Helpdesk Rejected Queries Tab', View: false, Update: false, Create: false, Delete: false },
+    //Calender Tabs Sections
+  { fields: 'Employee Helpdesk Queries Tab', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Support Helpdesk Queries Tab', View: false, Update: false, Create: false, Delete: false },
+
+   //help desk reports Actions
+ { fields: 'Help Desk Query Detailed Report', View: false, Update: false, Create: false, Delete: false },
+ { fields: 'Help Desk Query Detailed Report - Generate', View: false, Update: false, Create: false, Delete: false },
+ { fields: 'Help Desk Query Detailed Report - Export', View: false, Update: false, Create: false, Delete: false },
+ { fields: 'Help Desk Query Summary Report', View: false, Update: false, Create: false, Delete: false },
+ { fields: 'Help Desk Query Summary Report - Generate', View: false, Update: false, Create: false, Delete: false },
+ { fields: 'Help Desk Query Summary Report - Export', View: false, Update: false, Create: false, Delete: false },
+ { fields: 'Help Desk Reports', View: false, Update: false, Create: false, Delete: false },
 ];

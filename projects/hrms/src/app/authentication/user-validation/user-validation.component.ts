@@ -188,7 +188,8 @@ export class UserValidationComponent implements OnInit, OnDestroy {
       { permission: 'Contacts Directory.view', route: '/contacts-directory' },
       { permission: 'Blood Bank.view', route: '/blood-bank' },
       { permission: 'Phone Book.view', route: '/phonebook' },
-      { permission: 'Settings Icon.view', route: '/settings' }
+      { permission: 'Settings Icon.view', route: '/settings' },
+      { permission: 'Help Desk.view', route: '/help-desk' }
     ];
 
     const myInfoPermissions = [

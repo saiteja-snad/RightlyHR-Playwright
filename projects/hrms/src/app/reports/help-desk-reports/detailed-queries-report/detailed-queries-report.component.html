@@ -1,0 +1,204 @@
+<div class="custom-main-component-container">
+  <div class="component-header-content">
+    <!-- Header -->
+    <app-reports-header />
+
+    <form autocomplete="off" [formGroup]="helpdeskdetailedReportForm" (ngSubmit)="onGenerate()" *ngIf="helpdeskdetailedReportForm">
+      <div class="d-flex align-items-center gap-3">
+        @if(rbac.allowedToAccess('Help Desk Query Detailed Report - Generate.view')){
+        <button type="button" class="custom-btn btn-secondary position-relative" (click)="toggleFilters(filterContent)" [disabled]="spinnerLoader1 || spinnerLoader2">
+          <i class="bi bi-funnel me-2"></i>{{'Filters' | translate}}
+          <span *ngIf="isFilterIndicatorActive" class="filter-indicator"></span>
+        </button>
+        }
+
+        <div class="d-flex gap-2 ms-auto">
+          @if(rbac.allowedToAccess('Help Desk Query Detailed Report - Generate.view') && rbac.allowedToAccess('Help Desk Query Detailed Report - Export.view')){
+          <button type="button" class="custom-btn btn-primary" (click)="exporthelpdeskdetailedreport()"
+            [disabled]="!isFilterApplied() || filteredhelpdeskdetailedRecord.length == 0 || disableBtn || spinnerLoader2">
+            @if(spinnerLoader2){
+            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+            <span>{{'Loading...'}}</span>
+            }@else {
+            <span>{{'Export'}}</span>
+            }
+          </button>
+          }
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div class="custom-table-content">
+    @if (!isLoading) {
+    <table id="helpdeskReportTable" class="w-100">
+      <thead>
+        <th>{{'Query ID' | translate}}</th>
+        <th class="text-center">{{'Raised Date' | translate}}</th>
+        <th class="text-center">{{'Employee ID' | translate}}</th>
+        <th>{{'Employee Name' | translate}}</th>
+        <th>{{'Location' | translate}}</th>
+        <th>{{'Sub Location' | translate}}</th>
+        <th>{{'Category' | translate}}</th>
+        <th>{{'Subcategory' | translate}}</th>
+        <th>{{'Assigned To' | translate}}</th>
+        <th class="text-center">{{'Priority' | translate}}</th>
+        <th class="text-center">{{'Status' | translate}}</th>
+      </thead>
+      <tbody>
+        @if (!filteredhelpdeskdetailedRecord || filteredhelpdeskdetailedRecord.length === 0) {
+        <tr>
+          <td colspan="9"><app-no-data-found /></td>
+        </tr>
+        }
+        @else {
+        @for (record of filteredhelpdeskdetailedRecord; track $index) {
+        <tr>
+          <td>{{ record.queryId ? record.queryId : '-' }}</td>
+          <td class="text-center">{{ record.createdDate ? (record.createdDate | date) : '-' }}</td>
+          <td class="text-center">{{ record.employeeId || '-' }}</td>
+          <td>{{ record.employeeName || '-' }}</td>
+          <td>{{ record.location || '-' }}</td>
+          <!-- <td>{{ record.description ?? '-' }}</td> -->
+          <td>{{ record.subLocation || '-' }}</td>
+          <td>{{ record.category || '-' }}</td>
+          <td>{{ record.subCategory || '-' }}</td>
+          <td>{{ record.assignedToName || '-' }}</td>
+          <td class="text-center">{{ record.priority || '-' }}</td>
+          <td class="text-center">{{ record.status || '-' }}</td>
+        </tr>
+        }
+        }
+      </tbody>
+    </table>
+    }
+    @else{
+    <app-data-loader-content />
+    }
+  </div>
+  @if(collectionSize > 0){
+  <div class="pagination-content">
+    <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
+      <div class="d-flex align-items-center gap-3 p-2">
+        <select title="text" class="form-select custom-pagination-select" [(ngModel)]="rows"
+          (ngModelChange)="onPageSizeChange($event)">
+          <option *ngFor="let option of options" [value]="option.value">{{ option.label }}</option>
+        </select>
+        <span class="pagination-label text-nowrap">
+          Showing {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize : (+first + +rows)}}
+          of {{collectionSize }}
+        </span>
+      </div>
+      <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"
+        (onPageChange)="onPageChange($event)"></p-paginator>
+    </div>
+  </div>
+  }
+</div>
+
+<!-- Filter Offcanvas -->
+<ng-template #filterContent let-offcanvas>
+  <div class="custom-filter-container">
+    <div class="offcanvas-filter-header-content offcanvas-filter-header-border">
+      <p class="filter-header m-0">{{'Filters' | translate}}</p>
+      <a (click)="closeCanvas()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+    </div>
+
+    <div class="offcanvas-filter-content">
+      <form autocomplete="off" [formGroup]="helpdeskdetailedReportForm"
+        (ngSubmit)="onGenerate()" *ngIf="helpdeskdetailedReportForm">
+
+        <div class="mb-3">
+          <label class="form-label custom-label text-nowrap filter-labels mb-3">{{'Select Date Range' | translate}}</label>
+          <div class="custom-date-range-picker">
+            <p-datepicker formControlName="dateRange" [placeholder]="'Please select date range'" selectionMode="range"
+              [showIcon]="true" [readonlyInput]="true" [maxDate]="today" />
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label custom-label text-nowrap filter-labels mb-3">{{'Select Employee' | translate}}</label>
+          <div class="custom-p-multiSelect-content">
+            <p-multiSelect [options]="getAllEmployeeInfo" optionLabel="fullName" optionValue="employeeId" [filter]="true"
+              formControlName="employeeId" class="form-select custom-select" filterBy="fullName" placeholder="Please select employee"
+               filterPlaceHolder="Search employee" [resetFilterOnHide]="true"
+              [maxSelectedLabels]="1">
+            </p-multiSelect>
+          </div>
+        </div>
+
+        <!-- <div class="mb-3">
+          <label class="form-label custom-label text-nowrap filter-labels mb-3">{{'Select Department' | translate}}</label>
+          <div class="custom-p-multiSelect-content">
+            <p-multiSelect [options]="departmentDetails"
+              optionLabel="departmentName" [maxSelectedLabels]="1" optionValue="departmentId" [filter]="true"
+              formControlName="department" placeholder="Please select department" class="form-select custom-select"
+              filterPlaceHolder="Search department" [resetFilterOnHide]="true" (onChange)="getCategory($event.value)">
+            </p-multiSelect>
+          </div>
+        </div> -->
+
+        <div class="mb-3">
+          <label class="form-label custom-label text-nowrap filter-labels mb-3">{{'Select Category' | translate}}</label>
+          <div class="custom-p-multiSelect-content">
+            <p-multiSelect [options]="categoryList" optionLabel="categoryName" optionValue="categoryId" [filter]="true"
+              [maxSelectedLabels]="1" [resetFilterOnHide]="true" filterBy="phaseName" formControlName="category"
+              filterPlaceHolder="Search category" (onChange)="getSubcategory($event.value)"
+              placeholder="Please select category" class="form-select custom-select">
+            </p-multiSelect>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label custom-label text-nowrap filter-labels mb-3">{{'Select Subcategory' | translate}}</label>
+          <div class="custom-p-multiSelect-content">
+            <p-multiSelect [options]="subcategoryList" optionLabel="subCategoryName" optionValue="subCategoryId" [filter]="true"
+              [maxSelectedLabels]="1" [resetFilterOnHide]="true" filterBy="subCategoryName" formControlName="subcategory"
+              filterPlaceHolder="Search subcategory"
+              placeholder="Please select subcategory" class="form-select custom-select">
+            </p-multiSelect>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label custom-label text-nowrap filter-labels mb-3">{{'Select Assigned To ' | translate}}</label>
+          <div class="custom-p-multiSelect-content">
+            <p-multiSelect [options]="teamdetails" optionLabel="fullName" optionValue="employeeId" [filter]="true"
+              [maxSelectedLabels]="1" [resetFilterOnHide]="true" filterBy="fullName" formControlName="assignedto"
+              filterPlaceHolder="Search assigned to"
+              placeholder="Please select assigned to" class="form-select custom-select">
+            </p-multiSelect>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label custom-label text-nowrap filter-labels mb-3">{{'Select Status' | translate}}</label>
+          <div class="custom-p-multiSelect-content">
+            <p-multiSelect [options]="helpDeskStatus" [filter]="true" optionLabel="key" filterBy="key"
+              filterPlaceHolder="Search status" [resetFilterOnHide]="true"
+              formControlName="status" placeholder="Please select status" class="form-select custom-select">
+            </p-multiSelect>
+          </div>
+        </div>
+
+        <div class="d-flex offcanvas-footer-content gap-3">
+          @if(isFilterApplied() || filteredhelpdeskdetailedRecord.length > 0){
+          <button type="button" class="custom-btn btn-secondary w-100" (click)="clearAllFilters()" [disabled]="spinnerLoader1">
+            {{'Clear All' | translate}}</button>
+          }
+
+          @if(rbac.allowedToAccess('Help Desk Query Detailed Report - Generate.view')){
+          <button type="submit" class="custom-btn btn-primary w-100" [disabled]="!isFilterApplied() || isLeaveGenerateDisabled">
+            @if(spinnerLoader1){
+            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+            <span>{{'Loading...'}}</span>
+            }@else {
+            <span>{{'Generate'}}</span>
+            }
+          </button>
+          }
+        </div>
+      </form>
+    </div>
+  </div>
+</ng-template>

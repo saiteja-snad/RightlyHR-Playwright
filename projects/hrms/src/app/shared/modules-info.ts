@@ -107,6 +107,13 @@ export const MODULE_INFOS = {
     //Organizational Hierarchy Module Info
     ORGANIZATIONAL_HIERARCHY_MODULE_INFO: "The Organizational Hierarchy view displays detailed reporting structure and compensation info for the selected employee. Options are available to download the data as PDF, JPG, or Excel.",
 
+    // HELP DESK MODULE INFO
+    HELP_DESK_MY_QUERIES: "The My Queries tab allows employees to view and manage all the support queries they have raised.It provides visibility into ticket status, priority, responses from the support team, and resolution progress. Employees can track updates, provide additional information when requested, and review closed or rejected tickets.",
+    HELP_DESK_TEAM_QUERIES: "The Team Queries tab enables support teams to view and manage tickets assigned to their department.It helps teams review incoming requests, update ticket status, communicate with employees, prioritize issues based on severity, and ensure timely resolution.",
+    SETTINGS_HELPDESK_CONFIGURATION_MODULE_INFO: "The Help Desk Configuration module enables admins to create and manage categories and subcategories used by employees when raising support tickets, ensuring proper routing and efficient issue resolution.",
+    CATEGEORY_MODULE_INFO: "The Category section is used to define the primary classification of support requests raised by users. It helps group queries based on issue type, enabling proper routing to the relevant support team, improved tracking, and better visibility into common request patterns.",
+    SUBCATEGORY_MODULE_INFO: "The Subcategory section is used to define detailed issue types within each category. It allows more precise classification of queries, ensuring accurate assignment, faster resolution, and improved reporting on specific support concerns.",
+
     //Holidays Module Info
     HOLIDAYS_MODULE_INFO: "The Holidays page displays public and optional holidays for the selected year, with the ability to change the year using a dropdown. Each holiday is shown with its name, date, and an event for easy reference.",
 
@@ -327,5 +334,8 @@ export const MODULE_INFOS = {
     CARRY_FORWORD_LEAVES: 'This module helps to initiate the Leave Carry Forward workflow by defining the processing scope, reviewing the eligible employee leave balances, mapping the previous year’s leave categories to the new fiscal year, and executing carry-forward job updates seamlessly.',
     Initial_Leave_Entitlements: 'Start a new leave entitlement load job. Define the entitlement scope, review eligible employees, validate rules, and process leave entitlements through a guided three-step workflow.',
     Create_Initial_Leave_Entitlements: 'Use this section to bulk allocate leave entitlements for employees by selecting location, sub-location, shift, and leave category. The system validates applicable leave rules and processes entitlements for eligible employees.',
-    CARRY_FORWORD_LEAVES_CREATE: "This module helps to initiate the Leave Carry Forward workflow by allowing you to define the processing scope, review eligible employee leave balances, map the previous year’s leave categories to the new fiscal year, and execute the carry-forward job updates seamlessly."
+    CARRY_FORWORD_LEAVES_CREATE: "This module helps to initiate the Leave Carry Forward workflow by allowing you to define the processing scope, review eligible employee leave balances, map the previous year’s leave categories to the new fiscal year, and execute the carry-forward job updates seamlessly.",
+     HELP_DESK_REPORTS_MODULE_INFO: "The Help Desk Report provides insights into employee support queries raised within the organization. It helps administrators and support teams monitor ticket activities, track issue resolution, and analyze support performance.",
+    HELP_DESK_DETAILED_REPORTS_MODULE_INFO:"The Help Desk Detailed Report displays complete information about each help desk ticket, including employee details, issue category, priority, and status. It helps support teams track and manage individual queries effectively.",
+    HELP_DESK_SUMMARY_REPORTS_MODULE_INFO:"The Help Desk Summary Report provides an aggregated overview of help desk tickets based on category, and assigned personnel. It helps management quickly analyze ticket distribution and overall support performance.",
 }

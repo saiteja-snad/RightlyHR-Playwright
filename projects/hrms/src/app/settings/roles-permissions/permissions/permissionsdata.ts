@@ -1076,9 +1076,12 @@ export const permissionsData = [
   { fields: 'On Behalf Of WFH Team', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Request On Behalf Of WFH Button', View: false, Update: false, Create: false, Delete: false },
 
-  //Settings Time Off flexible wfh allocation Tabs Section
+   //Settings Time Off flexible wfh allocation Tabs Section
   { fields: 'Allocation History Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Active Allocations Tab', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Allow Multi Date Range Tab', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'WFH Allocation History Tab', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Allow Multi Date Range History Tab', View: false, Update: false, Create: false, Delete: false },
 
   { fields: 'On Behalf Of RemoteLogin', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Waiting For Approval (On Behalf Of RemoteLogin)', View: false, Update: false, Create: false, Delete: false },

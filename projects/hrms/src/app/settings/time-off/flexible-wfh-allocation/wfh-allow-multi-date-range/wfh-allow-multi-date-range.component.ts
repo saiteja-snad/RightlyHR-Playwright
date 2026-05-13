@@ -1,0 +1,470 @@
+import { CommonModule } from '@angular/common';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import {
+  ReactiveFormsModule,
+  FormGroup,
+  FormBuilder,
+  Validators,
+  FormArray,
+  ValidatorFn,
+  AbstractControl,
+  ValidationErrors,
+} from '@angular/forms';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { TranslateModule } from '@ngx-translate/core';
+import { SelectModule } from 'primeng/select';
+import { Subject, takeUntil } from 'rxjs';
+import { HttpService } from '../../../../services/http.service';
+import { OpenModalService } from '../../../../services/open-modal.service';
+import { RbacService } from '../../../../services/rbac.service';
+import { NoDataFoundComponent } from '../../../../shared/no-data-found/no-data-found.component';
+import {
+  ILocation,
+  ISubLocation,
+  IShiftHeader,
+  IEmployees,
+} from '../../flexible-leave-allocation/leave-allocation.model';
+import { MultiSelectModule } from 'primeng/multiselect';
+import { DateformatPipe } from '../../../../pipes/dateformat.pipe';
+import { AuthService } from '../../../../services/auth.service';
+import moment from 'moment';
+
+@Component({
+  selector: 'app-wfh-allow-multi-date-range',
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    TranslateModule,
+    SelectModule,
+    MultiSelectModule,
+    NoDataFoundComponent,
+    DateformatPipe,
+  ],
+  templateUrl: './wfh-allow-multi-date-range.component.html',
+  styleUrl: './wfh-allow-multi-date-range.component.scss',
+})
+export class WfhAllowMultiDateRangeComponent implements OnInit, OnDestroy {
+  wfhAllocationForm!: FormGroup;
+  selectedEmployees: any[] = [];
+  isSubmitting = false;
+  yearsList: number[] = [];
+  locationDetails = [] as ILocation[];
+  subLocationDetails = [] as ISubLocation[];
+  shiftDetails = [] as IShiftHeader[];
+  categoryDetails = [{ name: 'WFH', value: 'WFH' }];
+  employeeDetails = [] as IEmployees[];
+  destroy$: Subject<boolean> = new Subject<boolean>();
+  isloading = false;
+  minEffectiveDate!: string;
+  maxEffectiveDate!: string;
+  selectedYear: number | null = null;
+  minYearDate!: string;
+  maxYearDate!: string;
+  constructor(
+    private fb: FormBuilder,
+    private http: HttpService,
+    private modal: OpenModalService,
+    private modalService: NgbModal,
+    public rbac: RbacService,
+    public auth: AuthService
+  ) {}
+
+  ngOnInit(): void {
+    this.yearsList = this.getYears();
+    this.minEffectiveDate = moment().startOf('month').format('YYYY-MM-DD');
+    this.maxEffectiveDate = moment().endOf('month').format('YYYY-MM-DD');
+    this.inititializeForm();
+    this.getAllLocations();
+    this.handleFormValueChanges();
+  }
+
+  inititializeForm() {
+    this.wfhAllocationForm = this.fb.group({
+      year: ['', Validators.required],
+      location: [{ value: '', disabled: true }, Validators.required],
+      subLocation: [{ value: '', disabled: true }, Validators.required],
+      shift: [{ value: '', disabled: true }, Validators.required],
+      categoryName: [{ value: '', disabled: true }, Validators.required],
+      employeeName: [{ value: '', disabled: true }, Validators.required],
+      employees: this.fb.array([]) as FormArray,
+    });
+  }
+
+  private getYears(): number[] {
+    const currentYear = new Date().getFullYear();
+    let yearsList: number[] = [];
+    for (let i = -1; i < 11; i++) {
+      yearsList.push(currentYear + i);
+    }
+    return yearsList;
+  }
+
+  enableLocation(): void {
+    if (this.wfhAllocationForm.get('year')?.value) {
+      this.wfhAllocationForm.get('location')?.enable();
+      const selectedYear = this.wfhAllocationForm.get('year')?.value;
+      if (selectedYear) {
+        this.minYearDate = `${selectedYear}-01-01`;
+        this.maxYearDate = `${selectedYear}-12-31`;
+
+        const employees = this.wfhAllocationForm.get('employees') as FormArray;
+        employees.controls.forEach((emp) => {
+          emp.get('effectivedate')?.updateValueAndValidity();
+          emp.get('effectiveto')?.updateValueAndValidity();
+        });
+      }
+    }
+  }
+
+  categoryenable() {
+    if (this.wfhAllocationForm.get('shift')?.value) {
+      this.wfhAllocationForm.get('categoryName')?.enable();
+    }
+  }
+
+  private getAllLocations(): void {
+    this.http
+      .getData('JobLocation')
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res: any) => (this.locationDetails = res.jobLocations || []),
+        error: (err) => console.error('Error fetching locations:', err),
+      });
+  }
+
+  onLocationChange(location: ILocation): void {
+    if (location?.jobSubLocations?.length) {
+      this.subLocationDetails = location.jobSubLocations;
+      this.wfhAllocationForm.get('subLocation')?.enable();
+    } else {
+      this.subLocationDetails = [];
+      this.wfhAllocationForm.get('subLocation')?.enable();
+      this.wfhAllocationForm.get('subLocation')?.reset();
+    }
+  }
+
+  getAllShifts(subLocation: ISubLocation): void {
+    const params = {
+      locationId: subLocation.jobLocationId,
+      subLocationId: subLocation.id,
+    };
+
+    this.http
+      .getDataWithQueryParams(`orgShifts/getshiftlocation`, params)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res: any) => {
+          this.shiftDetails = res.flatMap(
+            (header: any) => header.orgShiftsItems || []
+          );
+          this.wfhAllocationForm.get('shift')?.enable();
+        },
+        error: (err) => {
+          console.error('Error fetching shifts:', err);
+          this.shiftDetails = [];
+          this.wfhAllocationForm.get('shift')?.reset();
+          this.wfhAllocationForm.get('shift')?.disable();
+        },
+      });
+  }
+
+  getAllEmployees() {
+    const locationId = this.wfhAllocationForm.get('location')?.value?.id;
+    const subLocationId = this.wfhAllocationForm.get('subLocation')?.value?.id;
+    const shiftId = this.wfhAllocationForm.get('shift')?.value?.id;
+
+    if (!locationId || !subLocationId || !shiftId) {
+      return;
+    }
+
+    const payload = { locationId, subLocationId, shiftId };
+    this.http
+      .getDataWithQueryParams('Employeedata/getEmployeesForWFH', payload)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res: any) => {
+          this.employeeDetails = res.map((employee: any) => ({
+            ...employee,
+            fullName: `${employee.firstName} ${
+              employee.middleName ? employee.middleName + ' ' : ''
+            }${employee.lastName}`,
+          }));
+          this.wfhAllocationForm.get('employeeName')?.enable();
+        },
+        error: (err) => {
+          console.error('Error fetching employees:', err);
+          this.wfhAllocationForm.get('employeeName')?.reset();
+          this.wfhAllocationForm.get('employeeName')?.disable();
+        },
+      });
+  }
+
+  get employeeFormArray(): FormArray {
+    return this.wfhAllocationForm.get('employees') as FormArray;
+  }
+
+  getByEmployeewfhallocations(employeeIds: any, form: FormGroup): void {
+    this.isloading = false;
+    const loggedInUserId = this.auth.getToken();
+    const loggedInUserName = `${loggedInUserId.firstName ?? ''} ${
+      loggedInUserId.middleName ?? ''
+    } ${loggedInUserId.lastName}`;
+    const employeeArray = this.fb.array<FormGroup>([]);
+    employeeIds.forEach((selectedEmp: any) => {
+      employeeArray?.push(
+        this.fb.group(
+          {
+            employeeId: [selectedEmp?.employeeId],
+            fullName: [selectedEmp?.name || selectedEmp?.fullName || '-'],
+            effectivedate: [
+             { value: '', disabled: !this.wfhAllocationForm.get('year')?.value },
+              [Validators.required, this.validateEffectiveDate?.bind(this)],
+            ],
+            effectiveto: [{ value: '', disabled: !this.wfhAllocationForm.get('year')?.value }, [Validators.required]],
+            createdBy: [loggedInUserName],
+            createdOn: [moment()?.format('YYYY-MM-DD') || ''],
+          },
+          {
+            validators: [
+              this.validateEffectiveToDate,
+              this.validateDaysWithinRange(),
+            ],
+          }
+        )
+      );
+    });
+
+    form.setControl('employees', employeeArray);
+  }
+
+  validateEffectiveDate(control: any) {
+    if (!control.value) return null;
+    const selectedDate = moment(control.value, 'YYYY-MM-DD');
+    const startOfCurrentMonth = moment().startOf('month');
+    if (selectedDate.isBefore(startOfCurrentMonth, 'day')) {
+      return { invalidDate: true };
+    }
+    return null;
+  }
+
+  validateEffectiveToDate(formGroup: FormGroup) {
+    const fromDate = formGroup.get('effectivedate')?.value;
+    const toDate = formGroup.get('effectiveto')?.value;
+
+    if (!fromDate || !toDate) return null;
+
+    const from = moment(fromDate, 'YYYY-MM-DD');
+    const to = moment(toDate, 'YYYY-MM-DD');
+
+    if (to.isBefore(from, 'day')) {
+      return { invalidEffectiveToDate: true };
+    }
+
+    return null;
+  }
+
+  validateDaysWithinRange(): ValidatorFn {
+    return (group: AbstractControl): ValidationErrors | null => {
+      const fromDate = group.get('effectivedate')?.value;
+      const toDate = group.get('effectiveto')?.value;
+      const maxDaysRange = group.get('maxDaysRange')?.value;
+
+      if (!fromDate || !toDate || !maxDaysRange) {
+        return null;
+      }
+
+      const start = new Date(fromDate);
+      const end = new Date(toDate);
+
+      if (end < start) {
+        return { invalidEffectiveToDate: true };
+      }
+
+      const diffInMs = end.getTime() - start.getTime();
+      const diffInDays = Math.ceil(diffInMs / (1000 * 60 * 60 * 24)) + 1;
+
+      if (maxDaysRange > diffInDays) {
+        return { invalidDaysRange: true };
+      }
+
+      return null;
+    };
+  }
+
+  onSelectedEmployee(selectedList: any[], form: FormGroup) {
+    this.selectedEmployees = selectedList || [];
+    this.getByEmployeewfhallocations(this.selectedEmployees, form);
+  }
+
+  removeEmployee(index: number, employeeId: number) {
+    const employeeArray = this.employeeFormArray;
+    employeeArray.removeAt(index);
+    this.selectedEmployees = this.selectedEmployees.filter(
+      (emp) => emp.employeeId !== employeeId
+    );
+    this.wfhAllocationForm
+      .get('employeeName')
+      ?.setValue(this.selectedEmployees);
+  }
+
+  validateInput(event: KeyboardEvent) {
+    const input = event.key;
+    const numericInput = /^[0-9]$/;
+    if (!numericInput.test(input)) {
+      event.preventDefault();
+    }
+    const currentValue = (event.target as HTMLInputElement).value;
+    const newValue = currentValue + input;
+    if (newValue.length > 3 || +newValue > 365) {
+      event.preventDefault();
+    }
+  }
+
+  private handleFormValueChanges(): void {
+    const form = this.wfhAllocationForm;
+
+    const resetAndDisable = (controls: string[]) => {
+      controls.forEach((control) => {
+        form.get(control)?.reset();
+        form.get(control)?.disable();
+      });
+    };
+
+    const resetOnly = (controls: string[]) => {
+      controls.forEach((control) => {
+        form.get(control)?.reset();
+      });
+    };
+
+    form
+      .get('year')
+      ?.valueChanges.pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        form.get('location')?.reset();
+        resetAndDisable([
+          'subLocation',
+          'shift',
+          'categoryName',
+          'employeeName',
+        ]);
+      });
+
+    form
+      .get('location')
+      ?.valueChanges.pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        resetAndDisable([
+          'subLocation',
+          'shift',
+          'categoryName',
+          'employeeName',
+        ]);
+      });
+
+    form
+      .get('subLocation')
+      ?.valueChanges.pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        resetAndDisable(['shift', 'categoryName', 'employeeName']);
+      });
+
+    form
+      .get('shift')
+      ?.valueChanges.pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        resetAndDisable(['categoryName', 'employeeName']);
+      });
+
+    form
+      .get('categoryName')
+      ?.valueChanges.pipe(takeUntil(this.destroy$))
+      .subscribe((value) => {
+        resetOnly(['employeeName', 'employees']);
+        (this.wfhAllocationForm.get('employees') as FormArray).clear();
+        if (value) {
+          this.getAllEmployees();
+        }
+      });
+
+    form
+      .get('employeeName')
+      ?.valueChanges.pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        resetOnly(['maxDaysRange']);
+      });
+  }
+
+  publishWFHAllocation(form: FormGroup): void {
+    this.isloading = true;
+    const loggedInUserId = this.auth.getToken();
+    if (form.invalid) return;
+    const formData = form.value;
+    const employees = formData.employees || [];
+    const payload = employees.map((emp: any) => ({
+      employeeId: emp.employeeId,
+      // maxDaysRange: Number(emp.maxDaysRange) || 0,
+      effectiveFromDate: emp.effectivedate
+        ? moment(emp.effectivedate).format('YYYY-MM-DD')
+        : null,
+      effectiveToDate: emp.effectiveto
+        ? moment(emp.effectiveto).format('YYYY-MM-DD')
+        : null,
+      createdBy: loggedInUserId.employeeId,
+      frequency: 'Monthly',
+      updatedBy: loggedInUserId.employeeId,
+      status: 'Active',
+    }));
+    if (!payload.length) {
+      this.modal.openErrorModal('No employees to allocate.');
+      return;
+    }
+    this.http
+      .postdata('WfhDateRangeAllocation/create', payload)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res: any) => {
+          this.isloading = false;
+          this.selectedEmployees = [];
+          this.wfhAllocationForm.reset();
+          (this.wfhAllocationForm.get('employees') as FormArray).clear();
+          this.wfhAllocationForm.get('location')?.disable();
+          this.wfhAllocationForm.get('subLocation')?.disable();
+          this.wfhAllocationForm.get('shiftName')?.disable();
+          this.wfhAllocationForm.get('categoryName')?.disable();
+          this.wfhAllocationForm.get('shift')?.disable();
+          this.modal.openSuccessModal('Multi-date range created successfully');
+        },
+        error: (err: any) => {
+          this.isloading = false;
+          this.modalService.dismissAll();
+          this.modal.openErrorModal(
+            err.error.message
+              ? err.error.message
+              : 'Failed to allocate WFH. Please try again later'
+          );
+        },
+        complete: () => {
+          form.reset();
+        },
+      });
+  }
+
+  cancle() {
+    this.wfhAllocationForm.reset();
+    (this.wfhAllocationForm.get('employees') as FormArray).clear();
+    this.wfhAllocationForm.get('subLocation')?.disable();
+    this.wfhAllocationForm.get('location')?.disable();
+    this.wfhAllocationForm.get('shiftName')?.disable();
+    this.wfhAllocationForm.get('categoryName')?.disable();
+    this.wfhAllocationForm.get('shift')?.disable();
+  }
+
+  resetForm(content: any) {
+    this.modalService.open(content, { centered: true, backdrop: 'static' });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
+  }
+}

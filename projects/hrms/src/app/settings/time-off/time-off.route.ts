@@ -7,6 +7,8 @@ import { LoadEntitlementsCarryForwardComponent } from "./load-entilements-alloct
 import { IntialLoadEntitlementComponent } from "./load-entilements-alloction/intial-load-entitlement/intial-load-entitlement.component";
 import { CarryForwardLeaveEntitlementComponent } from "./load-entilements-alloction/carry-forward-leave-entitlement/carry-forward-leave-entitlement.component";
 import { IntialLoadEntitlementLayoutComponent } from "./load-entilements-alloction/intial-load-entitlement/intial-load-entitlement-layout/intial-load-entitlement-layout.component";
+import { WfhAllowMultiDateRangeComponent } from "./flexible-wfh-allocation/wfh-allow-multi-date-range/wfh-allow-multi-date-range.component";
+
 
 export default [
     // { path: '', redirectTo: '/settings/timeoff-configurations/leave-categoery', pathMatch: 'full' },
@@ -67,7 +69,15 @@ export default [
         path: 'flexible-wfh-allocation', children: [
             { path: '', redirectTo: 'wfh-allocation', pathMatch: 'full' },
             { path: 'wfh-allocation', loadComponent: () => import('./flexible-wfh-allocation/wfh-allocation/wfh-allocation.component').then((m) => m.WfhAllocationComponent) },
-            { path: 'wfh-allocation-view', loadComponent: () => import('./flexible-wfh-allocation/wfh-allocation-view/wfh-allocation-view.component').then((m) => m.WfhAllocationViewComponent) },
+            {
+                path: 'wfh-allocation-view',
+                loadComponent: () => import('./flexible-wfh-allocation/wfh-allocation-view/wfh-allocation-view.component').then((m) => m.WfhAllocationViewComponent),
+                children: [
+                    { path: 'wfh-history', loadComponent: () => import('./flexible-wfh-allocation/wfh-history-content/wfh-history-content.component').then((m) => m.WfhHistoryContentComponent) },
+                    { path: 'multi-date-range-history', loadComponent: () => import('./flexible-wfh-allocation/wfh-multi-date-range-view/wfh-multi-date-range-view.component').then((m) => m.WfhMultiDateRangeViewComponent) },
+                ]
+            },
+            { path: 'wfh-allow-multi-date-range', loadComponent: () => import('./flexible-wfh-allocation/wfh-allow-multi-date-range/wfh-allow-multi-date-range.component').then((m) => m.WfhAllowMultiDateRangeComponent) },
         ]
     },
     {

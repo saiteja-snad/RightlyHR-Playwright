@@ -21,9 +21,16 @@ export class WfhAllocationTabsComponent implements OnInit {
         '/settings/timeoff-configurations/flexible-wfh-allocation/wfh-allocation',
       permission: { feature: 'Active Allocations Tab', action: 'view' },
     },
-    {
-      label: 'Allocation History',
+        {
+      label: 'Allow Multi Date Range',
       icon: '/settings-icon/allocation-history.png',
+      route:
+        '/settings/timeoff-configurations/flexible-wfh-allocation/wfh-allow-multi-date-range',
+      permission: { feature: 'Allow Multi Date Range Tab', action: 'view' },
+    },
+        {
+      label: 'Allocation History',
+      icon: '/settings-icon/allow-date-range.png',
       route:
         '/settings/timeoff-configurations/flexible-wfh-allocation/wfh-allocation-view',
       permission: { feature: 'Allocation History Tab', action: 'view' },

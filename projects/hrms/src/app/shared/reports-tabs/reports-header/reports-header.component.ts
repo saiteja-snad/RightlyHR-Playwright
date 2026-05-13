@@ -119,10 +119,19 @@ export class ReportsHeaderComponent implements OnInit {
     else if(this.router.url === '/reports/attendence-reports/leave-carryforward-report'){
       this.componentname = 'Leave Carry Forward & Encashment Report'
     }
+    else if (
+      this.router.url === '/reports/attendence-reports/late-login-report'
+    ) {
+      this.componentname = 'Late Login Report';
+    } else if (
+      this.router.url ===
+      '/reports/attendence-reports/exceeded-break-hours-report'
+    ) {
+      this.componentname = 'Exceeded Break Hours Report';
+    }
     else if (this.router.url === '/reports/timesheet-reports/consolidated-timesheet-summary') {
       this.componentname = 'Consolidated Timesheet Summary Report';
     }
-
     else if (this.router.url === '/reports/helpdesk-reports/detailed-queries-report') {
       this.componentname = 'Help Desk Query Detailed Report';
     }
@@ -135,5 +144,6 @@ export class ReportsHeaderComponent implements OnInit {
     else if (this.router.url === '/reports/itsupport-reports/itsupport-summary-report') {
       this.componentname = 'IT Support Summary Report';
     }
+
   }
 }

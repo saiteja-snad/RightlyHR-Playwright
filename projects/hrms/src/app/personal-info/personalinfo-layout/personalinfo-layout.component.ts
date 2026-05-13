@@ -21,6 +21,7 @@ import { AccessNavigationService } from '../../services/access-navigation.servic
 import { OffboardingChecklistService } from '../../services/offboarding-checklist.service';
 import { OffboardingEmployeeapprovalsTabsComponent } from '../../shared/offboarding-employeeapprovals-tabs/offboarding-employeeapprovals-tabs.component';
 import { environment } from '../../../environments/environment';
+import { FormValidationsService } from '../../services/form-validations.service';
 @Component({
   selector: 'app-personalinfo-layout',
   imports: [CommonModule, RouterOutlet, ProfileInfoDetailsComponent, FormsModule, ReactiveFormsModule,
@@ -45,6 +46,7 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
   emppersonalinfo = {} as Ipersonal;
   employeeForm!: FormGroup;
   revokeForm!: FormGroup;
+  archiveForm!: FormGroup;
   postIsApplicable!: any;
   postreason!: any;
   empdata = {} as any;
@@ -99,10 +101,11 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
     this.loginEmployee = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.initializeForm();
     this.initialzerevoke();
+    this.initialzearchive();
     this.getEmployeeId();
     this.getAllTeammembersList();
     this.getEmployee();
-    this.emppersonalinfo = JSON.parse(localStorage.getItem('personaldata') || '{}');
+    this.emppersonalinfo = JSON.parse(localStorage.getItem('personaldata') || '{}');    
     this.getTraineeofferdetails();
     this.assignHeading();
     this.updateModuleInfo();
@@ -254,6 +257,7 @@ getinitateoffboardingdata(){
     this.subscription = this.http.postdata(`CustomEmail/RequestDocuments`, pdata).subscribe({
       next: (data: any) => {
         this.conformationPopup.openSuccessModal('Email has been sent successfully');
+        this.getEmployeeId();
         this.isLoading = false;
       },
       error: (err: any) => {
@@ -272,7 +276,9 @@ getinitateoffboardingdata(){
     }
   }
 
-
+  navigateDashboard() {
+    this.router.navigate(['/admin/dashboard']);
+  }
 
   navigateMyInfo() {
     if (this.rbac.allowedToAccess('My Info Personal Approval History.view')) {
@@ -417,6 +423,7 @@ getinitateoffboardingdata(){
     this.modalService.dismissAll();
     this.employeeForm.reset();
     this.revokeForm.reset();
+    this.archiveForm.reset();
   }
 
   reRequestEmail(f: FormGroup) {
@@ -447,6 +454,7 @@ getinitateoffboardingdata(){
   submitArchive() {
     (this.empdata.empstatus = 'Archived'),
     (this.empdata.substatus = 'Employee Created'),
+    (this.empdata.revokeComments = this.archiveForm.get('archiveComments')?.value),
       (this.subscription = this.http.postdata(`Employeedata/UPDATER`, this.empdata).subscribe({
         next: (data: any) => {
           this.getEmployeeId();
@@ -454,7 +462,8 @@ getinitateoffboardingdata(){
           this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal('Employee archived successfully');
           setTimeout(() => {
-            this.router.navigate(['/admin/dashboard']);
+            this.modalService.dismissAll();
+            this.router.navigate(['/employee-management/prospective/employees']);
           }, 1000);
         },
         error: (err: any) => {
@@ -564,7 +573,7 @@ getinitateoffboardingdata(){
             this.updateJobapplicantdata();
           }
           setTimeout(() => {
-            this.router.navigate(['/employee-management/all-employees']);
+            this.router.navigate(['/employee-management/prospective/employees']);
           }, 2000);
         }
       },
@@ -690,12 +699,20 @@ getinitateoffboardingdata(){
     });
   }
 
+  initialzearchive() {
+    this.archiveForm = this.fb.group({
+      archiveComments: ['', [Validators.required, Validators.maxLength(250)]],
+    });
+  }
+
   getTraineeOfferDetails = {} as any;
   getTraineeofferdetails() {
     let EmpId = this.empinfo.employeeId;
     this.subscription = this.http.getData(`TraineeOfferLetter/${EmpId}`).subscribe({
       next: (data: any) => {
         this.getTraineeOfferDetails = data;
+        console.log(data);
+        
       },
       error: (err: any) => {
         console.log(err);
@@ -834,6 +851,7 @@ getinitateoffboardingdata(){
     'emergency-contact-details': 'Emergency Contacts',
     'team-members': 'Works With You',
     'my-team-members': 'Reports To You',
+    'location-change':'Bulk Location Change',
     'my-skills': 'My Skills',
     // Job Info
     'pre-onboarding-details': 'Pre-Onboarding Info',
@@ -1012,7 +1030,7 @@ getinitateoffboardingdata(){
       '/myinfo/job/team/my-team-members': MODULE_INFOS.REPORT_TO,
       '/myinfo/job/cards': MODULE_INFOS.JOB_MODULE_EMPlOYEE_CARD_MODULE_INFO,
       '/myinfo/job/project-info': MODULE_INFOS.JOB_MODULE_PROJECTS_INFO,
-
+       '/personalinfo/job/team/location-change': MODULE_INFOS.LOCATION_CHANGE_MODULE_INFO,
       // My Info Documents
       '/myinfo/documents': MODULE_INFOS.DOCUMENTS_MODULE_INFO,
 

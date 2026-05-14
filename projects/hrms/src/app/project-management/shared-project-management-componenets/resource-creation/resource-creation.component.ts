@@ -119,15 +119,42 @@ export class ResourceCreationComponent implements OnInit, OnDestroy {
     return item.get('id')?.value; // ✅ stable identity
   }
 
-  openEmployeePopover(popover: NgbPopover): void {
-    this.cancelEmployeePopoverClose();
-    if (this.currentEmployeePopover && this.currentEmployeePopover !== popover) {
-      this.currentEmployeePopover.close();
-    }
-    this.currentEmployeePopover = popover;
-    popover.open();
+popoverPlacement: 'top' | 'bottom' = 'bottom';
+
+openEmployeePopover(popover: NgbPopover, event?: MouseEvent): void {
+
+  this.cancelEmployeePopoverClose();
+
+  // Close previous popover
+  if (this.currentEmployeePopover && this.currentEmployeePopover !== popover) {
+    this.currentEmployeePopover.close();
   }
 
+  // Dynamic placement check
+  if (event) {
+
+    const element = event.currentTarget as HTMLElement;
+    const rect = element.getBoundingClientRect();
+
+    const estimatedPopoverHeight = 260;
+
+    const spaceBelow = window.innerHeight - rect.bottom;
+    const spaceAbove = rect.top;
+
+    if (
+      spaceBelow < estimatedPopoverHeight &&
+      spaceAbove > estimatedPopoverHeight
+    ) {
+      this.popoverPlacement = 'top';
+    } else {
+      this.popoverPlacement = 'bottom';
+    }
+  }
+
+  this.currentEmployeePopover = popover;
+
+  popover.open();
+}
   closeEmployeePopoverWithDelay(popover?: NgbPopover): void {
     this.cancelEmployeePopoverClose();
     const targetPopover = popover || this.currentEmployeePopover;

@@ -39,7 +39,7 @@
         <div *ngIf="idx < maxVisibleAvatars" class="avatar-wrapper"
           [class.avatar-editing]="editingEmployeeId === emp.employeeId"
           [class.avatar-saved]="highlightedEmployeeId === emp.employeeId && editingEmployeeId !== emp.employeeId"
-          (click)="onAvatarClick($any(emp))" (mouseenter)="openEmployeePopover(employeePopoverRef)"
+          (click)="onAvatarClick($any(emp))" (mouseenter)="openEmployeePopover(employeePopoverRef, $event)"
           (mouseleave)="closeEmployeePopoverWithDelay(employeePopoverRef)" placement="bottom" container="body"
           triggers="manual" [ngbPopover]="employeePopover" #employeePopoverRef="ngbPopover"
           [popoverContext]="{ employee: emp }">
@@ -78,23 +78,7 @@
     </ng-template>
   </div>
 
-  <!-- ✅ ADD RESOURCES TITLE (CORRECT POSITION) -->
-  <!-- <div class="d-flex align-items-center gap-2 px-3 mt-2 mb-2"> -->
-  <!-- <p class="popup-heading mb-0">{{ "Add Resources" | translate }}</p> -->
-  <!-- <ng-container *ngIf="isClientFlow; else projectView"></ng-container>
-    <ng-template #projectView>
-      <span class="project-badge">
-        Project Name :
-        <span class="project-name" [style.color]="projectsDataDrown[0]?.meta?.graphData?.color">
-          {{ projectsDataDrown[0]?.projectName || "N/A" }}
-        </span>
-      </span>
 
-      <span class="project-badge">
-        Project Type : <span class="project-name">{{ projectsDataDrown[0]?.projectType || "N/A" }}</span>
-      </span>
-    </ng-template>
-  </div> -->
 
   <div class="custom-main-popup-content">
     <div class="project-info-card-new">
@@ -383,8 +367,8 @@
       </form>
     </div>
     <div class="d-flex gap-3 justify-content-end">
-      <button type="button" class="custom-btn btn-secondary px-5"  [disabled]="spinnerLoader"
-        (click)="closepopup(confirmationpopupfornodue)">Cancel</button>
+      <button type="button" class="custom-btn btn-secondary px-5"
+        (click)="closepopup(confirmationpopupfornodue)" [disabled]="spinnerLoader">Cancel</button>
       <button type="button" class="custom-btn btn-primary px-5" (click)="addResources()"
         [disabled]="savedPayloadRows.length === 0 || spinnerLoader">
         <ng-container *ngIf="spinnerLoader; else addText">
@@ -469,8 +453,8 @@
     <div *ngFor="let emp of filteredOffcanvasEmployees"
       class="profile-content  mb-3 d-flex align-items-center justify-content-between">
       <div class="d-flex align-items-center flex-grow-1">
-        <div class="rc-avatar-wrap cursor" (mouseenter)="openEmployeePopover(employeePopoverRef)"
-          (mouseleave)="closeEmployeePopoverWithDelay(employeePopoverRef)" placement="bottom" container="body"
+        <div class="rc-avatar-wrap cursor" (mouseenter)="openEmployeePopover(employeePopoverRef,  $event)"
+          (mouseleave)="closeEmployeePopoverWithDelay(employeePopoverRef)" [placement]="popoverPlacement" container="body"
           triggers="manual" [ngbPopover]="offcanvasEmployeePopover" #employeePopoverRef="ngbPopover"
           [popoverContext]="{ employee: emp }">
           <ng-container *ngIf="emp?.profileUrl; else offcanvasDefaultIcon">

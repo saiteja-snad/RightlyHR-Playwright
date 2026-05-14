@@ -45,7 +45,7 @@
 
         <div *ngIf="mainMenuItems.length === 0" class="empty-state">
           <i class="bi bi-inbox"></i>
-          <span>Drop items here</span>
+          <span>Drag menu items here</span>
         </div>
       </div>
     </div>
@@ -83,7 +83,7 @@
         </div>
         <div *ngIf="threeDotItems.length === 0" class="empty-state">
           <i class="bi bi-inbox"></i>
-          <span>Drop items here</span>
+          <span>Drag menu items here</span>
         </div>
       </div>
     </div>
@@ -96,7 +96,7 @@
   <div class="result-popup-content" ngbAutofocus>
     <div>
       <app-confirmation-icon />
-      <p class="confirmation-text mb-4">Are you sure you want to reset the menu order to its default settings?</p>
+      <p class="confirmation-text mb-4">Are you sure you want to reset the menu order?</p>
     </div>
     <div class="custom-modal-footer">
       <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>

@@ -82,9 +82,9 @@ export class MenuRegistryService {
     },
     {
       label: 'On Behalf Of', route: '/on-behalf-of', defaultLocation: 'main', type: 'dropdown', dropdownComponent: 'on-behalf-of',
-      icon: '/main-menu-icons/clock.png', activeIcon: '/main-menu-icons/clock.png',
+      icon: '/main-menu-icons/on-behalf-of.png', activeIcon: '/main-menu-icons/on-behalf-of.png',
       personalizationIcon: '/personalization/On Behalf Of.png',
-      sidebarIcon: '/main-menu-icons/clock.png',
+      sidebarIcon: '/main-menu-icons/on-behalf-of.png',
       ellipsesIcon: '/personalization/Ellipses_On Behalf Of.png',
       permission: { feature: 'On Behalf Of', action: 'view' }
     },

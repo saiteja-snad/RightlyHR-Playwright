@@ -179,7 +179,7 @@ export class MenusPersonalizationComponent implements OnInit, OnDestroy {
     };
     this.http.postdata('Employeedata/save-user-preference', payload).subscribe({
       next: () => {
-        this.openModalService.openSuccessModal('Menu order has been reset to default successfully.');
+        this.openModalService.openSuccessModal('Menu order has been reset successfully.');
         this.loadMenuOrder();
       },
       error: () => this.openModalService.openErrorModal('Failed to reset menu order')

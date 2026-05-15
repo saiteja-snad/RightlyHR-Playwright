@@ -26,7 +26,8 @@
         <!-- Remaining main menu items -->
         <div
           class="drag-item"
-          *ngFor="let item of mainMenuItems; trackBy: trackByRoute"
+          *ngFor="let item of mainMenuItems; let first = first; trackBy: trackByRoute"
+          [id]="first ? 'draggable-menu-item-tour' : null"
           cdkDrag
           [cdkDragData]="item">
            <span class="grip-handle">⠿</span>

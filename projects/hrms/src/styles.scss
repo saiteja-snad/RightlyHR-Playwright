@@ -2,6 +2,7 @@
 // Font styles
 @import './new-theme-style-sheets/new-themes.scss';
 @import './new-theme-style-sheets/font-styles.scss';
+@import 'driver.js/dist/driver.css';
 
 @font-face {
     font-family: "autographsignatureFont";
@@ -182,7 +183,7 @@ body {
 .sidenav-main-container {
     position: relative;
     width: 100%;
-    height: 100dvh;
+    height: calc(100dvh - 3.25rem);
     overflow: hidden;
     border: 1px solid var(--side-nav-background-color);
     background-color: var(--side-nav-background-color);
@@ -3217,4 +3218,111 @@ input[type=number]::-webkit-outer-spin-button {
     .border-bottom-left::before { background: linear-gradient(to left, var(--grid-border-color, #BCD4F0), white); }
     .border-bottom-middle::before { background: linear-gradient(to right, var(--grid-border-color, #BCD4F0), var(--grid-border-color, #BCD4F0)); }
     .border-bottom-right::before { background: linear-gradient(to right, var(--grid-border-color, #BCD4F0), white); }
+}
+
+// User Tour Popover Styles
+.rhr-tour-popover {
+    background-color: var(--primary-color) !important;
+    border-radius: 12px !important;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    padding: 20px !important;
+    max-width: 350px !important;
+
+    .driver-popover-title {
+        font-family: 'LEXEND', sans-serif !important;
+        font-size: 20px !important;
+        font-weight: 700 !important;
+        color: #ffffff !important;
+        margin-bottom: 10px !important;
+    }
+
+    .driver-popover-description {
+        font-family: 'Roboto-flex', sans-serif !important;
+        font-size: 15px !important;
+        line-height: 1.6 !important;
+        color: rgba(255, 255, 255, 0.9) !important;
+    }
+
+    .driver-popover-footer {
+        margin-top: 20px !important;
+        display: flex !important;
+        justify-content: flex-end !important;
+        align-items: center !important;
+        gap: 12px !important;
+    }
+
+    .driver-popover-btn {
+        background-color: rgba(255, 255, 255, 0.1) !important;
+        color: #ffffff !important;
+        border: 1px solid rgba(255, 255, 255, 0.3) !important;
+        border-radius: 8px !important;
+        font-size: 13px !important;
+        font-weight: 600 !important;
+        padding: 8px 16px !important;
+        text-shadow: none !important;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+
+        &:hover {
+            background-color: #ffffff !important;
+            color: var(--primary-color) !important;
+            transform: translateY(-1px) !important;
+        }
+
+        &:active {
+            transform: translateY(0) !important;
+        }
+    }
+
+    .driver-popover-next-btn {
+        background-color: #ffffff !important;
+        color: var(--primary-color) !important;
+        border: none !important;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+        text-shadow: none !important;
+
+        &:hover {
+            background-color: #f8f9fa !important;
+            transform: translateY(-2px) !important;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2) !important;
+            color: var(--primary-color) !important;
+        }
+
+        &:active {
+            transform: translateY(0) !important;
+        }
+    }
+
+    .driver-popover-prev-btn {
+        background-color: rgba(255, 255, 255, 0.1) !important;
+        border: 1px solid rgba(255, 255, 255, 0.4) !important;
+        color: #ffffff !important;
+        text-shadow: none !important;
+
+        &:hover {
+            background-color: rgba(255, 255, 255, 0.2) !important;
+            color: #ffffff !important;
+            border-color: #ffffff !important;
+        }
+    }
+
+    .driver-popover-close-btn {
+        display: none !important;
+    }
+
+    .driver-popover-progress-text {
+        font-size: 12px !important;
+        color: rgba(255, 255, 255, 0.6) !important;
+        margin-right: auto !important;
+        font-weight: 500 !important;
+    }
+
+    .driver-popover-arrow {
+        border-color: var(--primary-color) !important;
+    }
+}
+
+// Highlight styling removed per user request to avoid redundant borders
+.driver-active-element {
+    box-shadow: none !important;
 }

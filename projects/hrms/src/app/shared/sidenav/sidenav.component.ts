@@ -17,6 +17,7 @@ import { MenuOrderService } from '../../services/theme-service/menu-order.servic
 import { MenuRegistryService, MenuItemDef } from '../../services/theme-service/menu-registry.service';
 import { DragDropModule, CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { MenuOrder } from '../../theme-customization/theme-action.service';
+import { UserTourService } from '../user-tour/user-tour.service';
 
 /** Maps dropdownComponent key → the tab component class */
 const DROPDOWN_COMPONENT_MAP: Record<string, any> = {
@@ -64,7 +65,8 @@ export class SidenavComponent implements OnInit, OnDestroy {
     private menuOrderService: MenuOrderService,
     private menuRegistry: MenuRegistryService,
     private appRef: ApplicationRef,
-    private injector: EnvironmentInjector
+    private injector: EnvironmentInjector,
+    private userTourService: UserTourService
   ) {
     effect(() => {
       const order = this.menuOrderService.menuOrder();
@@ -99,6 +101,18 @@ export class SidenavComponent implements OnInit, OnDestroy {
     this.routerSub = this.router.events
       .pipe(filter(e => e instanceof NavigationEnd))
       .subscribe(() => this.onNavigationEnd());
+
+    // User Tour integration
+    this.userTourService.openEllipsesTrigger.subscribe(() => {
+      this.openEllipses();
+    });
+    this.userTourService.closeEllipsesTrigger.subscribe(() => {
+      this.closeEllipses();
+    });
+
+    setTimeout(() => {
+      this.userTourService.checkAndStartTour();
+    }, 2000); // Give some time for initial load
   }
 
   ngOnDestroy(): void {
@@ -493,6 +507,24 @@ private positionOverlay(): void {
       this.pinnedDropdownOpen = false;
       this.destroyOverlay();
     }
+  }
+
+  /** Programmatically open the ellipses menu for the user tour */
+  public openEllipses(): void {
+    const ellipsesToggle = document.getElementById('ellipses-menu-toggle') as HTMLElement | null;
+    if (ellipsesToggle) {
+      ellipsesToggle.click();
+    }
+  }
+
+  /** Programmatically close the ellipses menu for the user tour */
+  public closeEllipses(): void {
+    const ellipsesMenu = document.querySelector('.ellipses-dropdown-menu') as HTMLElement | null;
+    const ellipsesToggle = document.querySelector('.ellipses-dropdown-toggle') as HTMLElement | null;
+    const btnGroup = ellipsesToggle?.closest('.btn-group') as HTMLElement | null;
+    if (ellipsesMenu) ellipsesMenu.classList.remove('show');
+    if (ellipsesToggle) ellipsesToggle.classList.remove('show');
+    if (btnGroup) btnGroup.classList.remove('show');
   }
 
   @HostListener('document:click', ['$event'])

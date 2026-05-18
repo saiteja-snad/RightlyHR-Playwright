@@ -18,8 +18,7 @@
         <th>{{'Status' | translate}}</th>
         <th class="text-center">{{'View Expense' | translate}}</th>
         <th class="text-center">{{'Approver Comments' | translate}}</th>
-        @if(rbac.allowedToAccess('For Role (Claims and Expenses).update') || rbac.allowedToAccess('For Role (Claims and
-        Expenses).delete')) {
+        @if(rbac.allowedToAccess('For Role (Claims and Expenses).update') || rbac.allowedToAccess('For Role (Claims and Expenses).delete')) {
         <th class="text-center">{{"Action" | translate}}</th>
         }
       </thead>
@@ -58,8 +57,7 @@
                 </ng-template>
               </div>
             </td>
-            @if(rbac.allowedToAccess('For Role (Claims and Expenses).update') || rbac.allowedToAccess('For Role (Claims
-            and Expenses).delete')) {
+            @if(rbac.allowedToAccess('For Role (Claims and Expenses).update') || rbac.allowedToAccess('For Role (Claims and Expenses).delete')) {
             <td class="text-center">
               <div class="dropdown">
                 <a type="button" data-bs-toggle="dropdown">
@@ -78,7 +76,7 @@
 
                   @if( leave.approvalHeader.currentapprovalStage ==
                   leave.approvalHeader.finalapprovalStage){
-                  <li (click)="expensesCheckList(leave)">
+                  <li (click)="handleProcess(leave);expensesCheckList(leave)">
                     <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{ "Process" | translate }}</a>
                   </li>
                   }

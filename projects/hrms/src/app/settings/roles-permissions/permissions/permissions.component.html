@@ -666,7 +666,6 @@
                                 </td>
                             </tr>
                         </ng-container>
-
                          <tr>
                             <th colspan="5" class="custom-header">
                                 <div class="d-flex gap-2 align-items-center">
@@ -787,6 +786,7 @@
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center"
                                 *ngIf="per.fields === 'Comp Off Entitlement Tab' || per.fields === 'WFH Entitlement Tab' ||
+
                             per.fields === 'Attendance Eligibility Permissions Tab' || per.fields === 'Permission Elgibility Tab' ||
                             per.fields === 'Attendance Regularization Tab' || per.fields === 'Attendance Regularization Eligibility Tab' || per.fields === 'Extra Hours Configuration Tab'
                             || per.fields === 'Eligibility Global Permissions Tab' || per.fields === 'Remote Login Eligibility Tab' ||per.fields === 'Late Login Alert Configuration Tab' || per.fields === 'Flexible Work Hours Configuration Tab'">

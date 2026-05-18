@@ -12,7 +12,7 @@ import { CommonModule } from '@angular/common';
 import { DropdownModule } from 'primeng/dropdown';
 import { ExpenseApprovalResponse } from '../../../../Interfaces/timoff-model';
 import { TranslateModule } from '@ngx-translate/core';
-import { IExpenseHeaders } from '../../../../Interfaces/claimsandexpenses.model';
+import { IExpenseHeaders, IExpensePolicy } from '../../../../Interfaces/claimsandexpenses.model';
 import { DomSanitizer } from '@angular/platform-browser';
 import { environment } from '../../../../../environments/environment';
 import { NgxDocViewerModule } from 'ngx-doc-viewer';
@@ -45,7 +45,6 @@ import { DocumentViewIconComponent } from "../../../../icons/document-view-icon/
     ConfirmationIconComponent,
     DocumentViewIconComponent
 ],
-
   templateUrl: './claimsandexpenses-for-your-role-request.component.html',
   styleUrl: './claimsandexpenses-for-your-role-request.component.scss',
 })
@@ -69,14 +68,16 @@ export class ClaimsandexpensesForYourRoleRequestComponent
   selectedLeaveData = {} as ExpenseApprovalResponse;
   approveForm!: FormGroup;
   rejectForm!: FormGroup;
-
+  checklistdata: IExpensePolicy[] = [];
   expenseImageUrl: any;
   expenseViewURL: any;
+  storeapprovalRequest!: ExpenseApprovalResponse;
   expenseheaderiteams!: IExpenseHeaders;
   updataid!: number;
   @ViewChild('viewattamchment') private viewattamchment!: NgbModal;
   // approverComments = [] as AttendanceRequestC[];
   @ViewChild('commentspopup') modalContent: any;
+  @ViewChild('checklistconfirmationmodal') checklistconfirmationmodal: any;
   subscription!: Subscription;
 
   verifiedExpenseIds: number[] = [];
@@ -205,7 +206,7 @@ export class ClaimsandexpensesForYourRoleRequestComponent
     this.intializeApproveForm();
     this.selectedLeaveData = request;
   }
- openRequiredCalrificationModal(content: any, request: ExpenseApprovalResponse) {
+  openRequiredCalrificationModal(content: any, request: ExpenseApprovalResponse) {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
     this.intializeApproveForm();
     this.selectedLeaveData = request;
@@ -314,6 +315,69 @@ export class ClaimsandexpensesForYourRoleRequestComponent
           },
         });
     }
+  }
+
+
+  expensesCheckList(request: ExpenseApprovalResponse): void {
+    console.log(request);
+
+    if (request.approvalHeader.status === 'Approved') {
+      this.storeapprovalRequest = request;
+      this.http
+        .getData(`ExpensesCheckListConfiguration/getall`)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (response: any) => {
+
+            this.checklistdata = response.data.map((x: any) => ({
+              ...x,
+              checked: false
+            }));
+
+            this.modalService.open(this.checklistconfirmationmodal, {
+              centered: true,
+              backdrop: 'static'
+            });
+          },
+          error: () => {
+            this.loading = false;
+          },
+          complete: () => {
+            this.loading = false;
+          }
+        });
+    }
+  }
+
+  isAllChecked(): boolean {
+    return this.checklistdata.some(x => x.checked);
+  }
+
+  confirmApproval(modal: any) {
+
+    const payload = this.checklistdata.map((item: any) => ({
+      expenseHeaderId: this.storeapprovalRequest.approvalHeader.id,
+      employeeId: this.storeapprovalRequest.entity.employeeId,            // current employee id
+      checklistConfigurationId: item.id,          // checklist item id
+      isChecked: item.checked || false,
+      checkedBy: this.empinfo.employeeId,
+      checkedAt: new Date(),
+      comments: item.comments || '',
+      createdAt: new Date()
+    }));
+
+    console.log(payload);
+
+    this.http.postdata('ExpensesCheckListTracking', payload).subscribe({
+      next: (res) => {
+        this.sharedModalService.openSuccessModal('Checklist items saved successfully');
+        this.storeapprovalRequest = {} as ExpenseApprovalResponse;
+        modal.close();
+      },
+      error: (err) => {
+        console.error(err);
+      }
+    });
   }
 
   handleProcess(request: ExpenseApprovalResponse) {
@@ -550,7 +614,7 @@ export class ClaimsandexpensesForYourRoleRequestComponent
     this.destroy$.next(true);
     this.destroy$.unsubscribe();
   }
-   handleClarification(approveForm: FormGroup): void {
+  handleClarification(approveForm: FormGroup): void {
     if (approveForm.valid) {
       const formData = approveForm.value;
       const requestBody = {

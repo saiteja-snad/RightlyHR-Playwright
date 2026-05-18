@@ -493,7 +493,8 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Expenes Configuartion',
     'Expense Allowed Days',
     'Expense Threshold Validation',
-    'Global Expense Configuration'
+    'Global Expense Configuration',
+    'Budget Verification'
   ]
 
   settingsAttendanceLockingTab = [

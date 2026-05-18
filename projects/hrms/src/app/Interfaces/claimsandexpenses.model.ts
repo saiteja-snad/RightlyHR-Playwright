@@ -348,5 +348,17 @@ export interface AttributeItem {
 export interface MetaData {
   Amount: string;
   Frequency: string;
+
+  
 }
 
+export interface IExpensePolicy {
+  id: number;
+  policyType: string;
+  applicableFor: string;
+  description: string;
+  isDeleted: boolean;
+  createdBy: number;
+  createdAt: string;
+  checked?: boolean; // Add this line to track the checked state
+}

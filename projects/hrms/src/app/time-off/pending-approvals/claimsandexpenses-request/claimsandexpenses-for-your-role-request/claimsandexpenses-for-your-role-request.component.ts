@@ -321,7 +321,7 @@ export class ClaimsandexpensesForYourRoleRequestComponent
   expensesCheckList(request: ExpenseApprovalResponse): void {
     console.log(request);
 
-    if (request.approvalHeader.status === 'Approved') {
+
       this.storeapprovalRequest = request;
       this.http
         .getData(`ExpensesCheckListConfiguration/getall`)
@@ -346,7 +346,7 @@ export class ClaimsandexpensesForYourRoleRequestComponent
             this.loading = false;
           }
         });
-    }
+    
   }
 
   isAllChecked(): boolean {
@@ -356,7 +356,7 @@ export class ClaimsandexpensesForYourRoleRequestComponent
   confirmApproval(modal: any) {
 
     const payload = this.checklistdata.map((item: any) => ({
-      expenseHeaderId: this.storeapprovalRequest.approvalHeader.id,
+      expenseHeaderId: this.storeapprovalRequest.approvalHeader.referenceEntityId,   // expense header id
       employeeId: this.storeapprovalRequest.entity.employeeId,            // current employee id
       checklistConfigurationId: item.id,          // checklist item id
       isChecked: item.checked || false,
@@ -370,7 +370,9 @@ export class ClaimsandexpensesForYourRoleRequestComponent
 
     this.http.postdata('ExpensesCheckListTracking', payload).subscribe({
       next: (res) => {
-        this.sharedModalService.openSuccessModal('Checklist items saved successfully');
+      if (res) {
+          this.handleProcess(this.storeapprovalRequest);
+      }
         this.storeapprovalRequest = {} as ExpenseApprovalResponse;
         modal.close();
       },
@@ -388,9 +390,9 @@ export class ClaimsandexpensesForYourRoleRequestComponent
         this.selectedLeaveData?.approvalHeader?.currentapprovalStage
       ),
     };
-    this.sharedModalService.openLoaderModal(
-      'Processing Request, Please wait...'
-    );
+    // this.sharedModalService.openLoaderModal(
+    //   'Processing Request, Please wait...'
+    // );
     this.http
       .putData(
         `PendingApproval/process/${request?.approvalHeader?.id}`,

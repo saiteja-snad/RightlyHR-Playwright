@@ -76,7 +76,7 @@
 
                   @if( leave.approvalHeader.currentapprovalStage ==
                   leave.approvalHeader.finalapprovalStage){
-                  <li (click)="handleProcess(leave);expensesCheckList(leave)">
+                  <li (click)="expensesCheckList(leave)">
                     <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{ "Process" | translate }}</a>
                   </li>
                   }
@@ -390,7 +390,7 @@
 
         <button type="button" class="custom-btn btn-primary " [disabled]="!isAllChecked()"
           (click)="confirmApproval(modal)">
-         Confirm & Approve
+         Confirm & Process
         </button>
       </div>
     </div>

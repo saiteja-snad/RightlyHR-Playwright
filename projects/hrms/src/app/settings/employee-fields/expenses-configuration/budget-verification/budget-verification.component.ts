@@ -75,9 +75,9 @@ export class BudgetVerificationComponent {
     if (f.invalid) return;
 
     const payload = {
-      policyType: f.value.policyType.trim(),
-      applicableFor: f.value.applicableFor.trim(),
-      description: f.value.description.trim(),
+      policyType: f.value.policyType,
+      applicableFor: f.value.applicableFor,
+      description: f.value.description,
       isDeleted: false,
       createdBy: parseInt(this.empinfo.employeeId),
       createdAt: new Date(),
@@ -133,9 +133,9 @@ export class BudgetVerificationComponent {
 
     const payload = {
       id: this.selectedExpensesId,
-      policyType: this.expensebudgetUpdateForm.value.policyTypeupdate.trim(),
-      applicableFor: this.expensebudgetUpdateForm.value.applicableForupdate.trim(),
-      description: this.expensebudgetUpdateForm.value.descriptionupdate.trim(),
+      policyType: this.expensebudgetUpdateForm.value.policyTypeupdate,
+      applicableFor: this.expensebudgetUpdateForm.value.applicableForupdate,
+      description: this.expensebudgetUpdateForm.value.descriptionupdate,
       isDeleted: false,
       createdBy: parseInt(this.empinfo.employeeId),
       createdAt: new Date(),

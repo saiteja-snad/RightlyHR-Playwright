@@ -27,6 +27,7 @@ import { ConfirmationIconComponent } from "../../../../icons/confirmation-icon/c
 import { Router, RouterOutlet } from '@angular/router';
 import { DocumentViewIconComponent } from "../../../../icons/document-view-icon/document-view-icon.component";
 import moment from 'moment';
+import { SelectModule } from 'primeng/select';
 @Component({
   selector: 'app-claimsandexpenses-for-your-role-request',
   imports: [
@@ -44,8 +45,10 @@ import moment from 'moment';
     InfoIconComponent,
     DataLoaderContentComponent,
     ConfirmationIconComponent,
-    DocumentViewIconComponent
+    DocumentViewIconComponent,
+    SelectModule
 ],
+
   templateUrl: './claimsandexpenses-for-your-role-request.component.html',
   styleUrl: './claimsandexpenses-for-your-role-request.component.scss',
 })
@@ -69,6 +72,7 @@ export class ClaimsandexpensesForYourRoleRequestComponent
   selectedLeaveData = {} as ExpenseApprovalResponse;
   approveForm!: FormGroup;
   rejectForm!: FormGroup;
+  markAsPaidForm!: FormGroup;
   checklistdata: IExpensePolicy[] = [];
   expenseImageUrl: any;
   expenseViewURL: any;
@@ -86,8 +90,7 @@ export class ClaimsandexpensesForYourRoleRequestComponent
   verifyForm!: FormGroup;
   selectedLeaveStatus: any;
   totalCount: any;
-
-
+  paymentmodedata= [] as any[];
   constructor(
     private modalService: NgbModal,
     private signalService: SignalsService,
@@ -104,6 +107,20 @@ export class ClaimsandexpensesForYourRoleRequestComponent
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.getAllPendingApprovals();
     this.getCheckListData();
+    this.getpaymentmode();
+  }
+   getpaymentmode() {
+    this.subscription = this.http.getData("entityAttributeValues?entity=ExpensesPaymentModeConfiguration&attribute=PaymentMode").subscribe({
+      next: (data: any) => {
+        this.paymentmodedata = data as any[];
+      },
+      error: () => {
+ 
+      },
+      complete: () => {
+ 
+      },
+    })
   }
  getCheckListData() {
     this.http
@@ -170,7 +187,13 @@ export class ClaimsandexpensesForYourRoleRequestComponent
       }
     });
   }
-
+ intializeMarkAsPaidForm() {
+    this.markAsPaidForm = this.fb.group({
+      paymentDate: ['',[Validators.required,]],
+      paymentMode:['', [Validators.required]],
+      transactionId:['', [Validators.required, Validators.maxLength(50), Validators.pattern(/^[^\s].*$/)]],
+    });
+  }
   getAllPendingApprovals() {
     this.loading = true;
     let EmployeeId = parseInt(this.empinfo.employeeId);
@@ -218,6 +241,11 @@ export class ClaimsandexpensesForYourRoleRequestComponent
   openApproveModal(content: any, request: ExpenseApprovalResponse) {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
     this.intializeApproveForm();
+    this.selectedLeaveData = request;
+  }
+  openMarkAsPaidModal(content: any, request: ExpenseApprovalResponse) {
+    this.modalService.open(content, { centered: true, backdrop: 'static' });
+    this.intializeMarkAsPaidForm();
     this.selectedLeaveData = request;
   }
   openRequiredCalrificationModal(content: any, request: ExpenseApprovalResponse) {
@@ -347,34 +375,6 @@ export class ClaimsandexpensesForYourRoleRequestComponent
     return this.checklistdata.some(x => x.checked);
   }
 
-  confirmApproval(modal: any) {
-
-    const payload = this.checklistdata.map((item: any) => ({
-      expenseHeaderId: this.storeapprovalRequest.approvalHeader.referenceEntityId,   // expense header id
-      employeeId: this.storeapprovalRequest.entity.employeeId,            // current employee id
-      checklistConfigurationId: item.id,          // checklist item id
-      isChecked: item.checked || false,
-      checkedBy: this.empinfo.employeeId,
-      checkedAt: moment().format('YYYY-MM-DD'),
-      comments: item.comments || '',
-      createdAt: moment().format('YYYY-MM-DD'),
-    }));
-
-    console.log(payload);
-
-    this.http.postdata('ExpensesCheckListTracking', payload).subscribe({
-      next: (res) => {
-      if (res) {
-          this.handleProcess(this.storeapprovalRequest);
-      }
-        this.storeapprovalRequest = {} as ExpenseApprovalResponse;
-        modal.close();
-      },
-      error: (err) => {
-        console.error(err);
-      }
-    });
-  }
 
   handleProcess(request: ExpenseApprovalResponse) {
     let requestBody = {
@@ -714,5 +714,64 @@ export class ClaimsandexpensesForYourRoleRequestComponent
         }
       });
   }
+confirmApproval(modal: any) {
+
+    const payload = this.checklistdata.map((item: any) => ({
+      expenseHeaderId: this.storeapprovalRequest.approvalHeader.referenceEntityId,   // expense header id
+      employeeId: this.storeapprovalRequest.entity.employeeId,            // current employee id
+      checklistConfigurationId: item.id,          // checklist item id
+      isChecked: item.checked || false,
+      checkedBy: this.empinfo.employeeId,
+      checkedAt: moment().format('YYYY-MM-DD'),
+      comments: item.comments || '',
+      createdAt: moment().format('YYYY-MM-DD'),
+    }));
+    this.http.postdata('ExpensesCheckListTracking', payload).subscribe({
+      next: (res) => {
+      if (res) {
+        if(this.storeapprovalRequest.action === 'Approve') {
+          this.handleAccept(this.approveForm);
+        }
+        else{
+          this.handleProcess(this.storeapprovalRequest);
+        }
+      }
+        this.storeapprovalRequest = {} as ExpenseApprovalResponse;
+        modal.close();
+      },
+      error: (err) => {
+        console.error(err);
+      }
+    });
+  }
+   markasPaid(modal: any) {
+ 
+     if (!this.markAsPaidForm.valid || !this.selectedLeaveData) return;
+     console.log(this.selectedLeaveData);
+    const formData = this.markAsPaidForm.value;
+    const verifiedItem = this.selectedLeaveData;
+
+    const requestBody = {
+      isVerified: true,
+      verifiedBy: this.empinfo.employeeId?.toString(),
+      verifiedByName: `${this.empinfo.firstName || ''} ${this.empinfo.lastName || ''}`.trim(),
+      comments: formData.comments
+    };
+
+    this.http.putData(`Expenses_Header/updateexpenses?id=${this.selectedLeaveData.entity.expenses_ID}`, requestBody)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res: any) => {
+       if (res) {
+        this.handleProcess(this.selectedLeaveData);
+       }
+         this.storeapprovalRequest = {} as ExpenseApprovalResponse;
+         modal.close();
+       },
+       error: (err) => {
+         console.error(err);
+       }
+     });
+   }
 
 }

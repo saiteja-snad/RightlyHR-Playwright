@@ -189,9 +189,10 @@ export class ClaimsandexpensesForYourRoleRequestComponent
   }
  intializeMarkAsPaidForm() {
     this.markAsPaidForm = this.fb.group({
-      paymentDate: ['',[Validators.required,]],
-      paymentMode:['', [Validators.required]],
-      transactionId:['', [Validators.required, Validators.maxLength(50), Validators.pattern(/^[^\s].*$/)]],
+      paymentDate: ['', [Validators.required]],
+      paymentMode: ['', [Validators.required]],
+      transactionId: ['', [Validators.required, Validators.maxLength(50), Validators.pattern(/^[^\s].*$/)]],
+      comments: ['', [Validators.maxLength(500)]]
     });
   }
   getAllPendingApprovals() {
@@ -745,33 +746,50 @@ confirmApproval(modal: any) {
     });
   }
    markasPaid(modal: any) {
- 
-     if (!this.markAsPaidForm.valid || !this.selectedLeaveData) return;
-     console.log(this.selectedLeaveData);
+    if (!this.markAsPaidForm.valid || !this.selectedLeaveData) return;
+    console.log(this.selectedLeaveData);
+    
     const formData = this.markAsPaidForm.value;
     const verifiedItem = this.selectedLeaveData;
 
     const requestBody = {
-      isVerified: true,
-      verifiedBy: this.empinfo.employeeId?.toString(),
-      verifiedByName: `${this.empinfo.firstName || ''} ${this.empinfo.lastName || ''}`.trim(),
-      comments: formData.comments
+      expenses_ID: this.selectedLeaveData.entity.expenses_ID,
+      applied_date: this.selectedLeaveData.entity.applied_date || new Date().toISOString(),
+      expenses_Title: this.selectedLeaveData.entity.expenses_Title || '',
+      additional_details: '',
+      status: 'Paid',
+      expenseName: this.selectedLeaveData.entity.expenseType || '',
+      currentRole: '',
+      totalamount: this.selectedLeaveData.entity.totalExpenseAmount || 0,
+      employeeId: this.selectedLeaveData.entity.employeeId,
+      submissionDate: new Date().toISOString(),
+      expense_Amount: this.selectedLeaveData.entity.totalExpenseAmount || 0,
+      attachment_url: '',
+      currentApprover: this.selectedLeaveData.currentApprover || '',
+      nextApprover: '',
+      approverEmail: '',
+      comments: formData.comments || 'Marked as paid',
+      isCheckListRequired: false,
+      paymentDate: formData.paymentDate || new Date().toISOString(),
+      paymentMode: formData.paymentMode || '',
+      refTransactionId: formData.transactionId || '',
+      expenseitem: []
     };
 
     this.http.putData(`Expenses_Header/updateexpenses?id=${this.selectedLeaveData.entity.expenses_ID}`, requestBody)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res: any) => {
-       if (res) {
-        this.handleProcess(this.selectedLeaveData);
-       }
-         this.storeapprovalRequest = {} as ExpenseApprovalResponse;
-         modal.close();
-       },
-       error: (err) => {
-         console.error(err);
-       }
-     });
-   }
+          if (res) {
+            this.handleProcess(this.selectedLeaveData);
+          }
+          this.storeapprovalRequest = {} as ExpenseApprovalResponse;
+          modal.close();
+        },
+        error: (err) => {
+          console.error(err);
+        }
+      });
+  }
 
 }

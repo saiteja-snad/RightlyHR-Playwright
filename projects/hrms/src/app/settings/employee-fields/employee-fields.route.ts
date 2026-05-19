@@ -63,7 +63,7 @@ export default [
             { path: 'allowed-days', loadComponent: () => import('./expenses-configuration/expenses-allowed-days/expenses-allowed-days.component').then((m) => m.ExpensesAllowedDaysComponent), canActivate: [PermissionsGuard], data: { permission: 'Expense Allowed Days.view' } },
             { path: 'expenses-limit', loadComponent: () => import('./expenses-configuration/expenses-limit/expenses-limit.component').then((m) => m.ExpensesLimitComponent), canActivate: [PermissionsGuard], data: { permission: 'Expense Threshold Validation.view' } },
             { path: 'global-expenses-configuration', loadComponent: () => import('./expenses-configuration/global-expenses-configuration/global-expenses-configuration.component').then((m) => m.GlobalExpensesConfigurationComponent), canActivate: [PermissionsGuard], data: { permission: 'Global Expense Configuration.view' } },
-            { path: 'budget-verification', loadComponent: () => import('./expenses-configuration/budget-verification/budget-verification.component').then((m) => m.BudgetVerificationComponent), canActivate: [PermissionsGuard], data: { permission: 'Budget Verification.view' } }
+            { path: 'budget-verification', loadComponent: () => import('./expenses-configuration/budget-verification/budget-verification.component').then((m) => m.BudgetVerificationComponent), canActivate: [PermissionsGuard], data: { permission: 'Expense Checklist Configuration.view' } }
         ]
     },
     {

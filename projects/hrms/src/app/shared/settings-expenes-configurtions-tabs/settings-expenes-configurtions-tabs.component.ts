@@ -18,7 +18,8 @@ export class SettingsExpenesConfigurtionsTabsComponent implements OnInit {
     { label: 'Expense Allowed Days', route: '/settings/employee-fields/expenes/allowed-days', permission: { feature: 'Expense Allowed Days', action: 'view' } },
     {label: 'Expense Limit Configuration', route: '/settings/employee-fields/expenes/expenses-limit', permission: { feature: 'Expense Threshold Validation', action: 'view'}},
     { label: 'Budget Configurations', route: '/settings/employee-fields/expenes/global-expenses-configuration', permission: { feature: 'Global Expense Configuration', action: 'view' } },
-    { label: 'Budget Verification', route: '/settings/employee-fields/expenes/budget-verification', permission: { feature: 'Budget Verification', action: 'view' } }
+    { label: 'Expense Checklist Configuration', route: '/settings/employee-fields/expenes/budget-verification', permission: { feature: 'Expense Checklist Configuration', action: 'view' } }
+
   ];
 
   constructor(

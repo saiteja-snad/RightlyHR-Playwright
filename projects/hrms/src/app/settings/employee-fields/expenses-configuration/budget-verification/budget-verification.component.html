@@ -3,7 +3,7 @@
         <div class="d-flex justify-content-between align-items-center mb-3">
             <div><span class="component-sub-header">{{'Expenses CheckList Configuration'|translate}}</span></div>
             <div class="custom-add-btn" (click)="openModal(addExpensesmodal)"
-                *ngIf="rbac.allowedToAccess('Budget Verification.create')">
+                *ngIf="rbac.allowedToAccess('Expense Checklist Configuration.create')">
                 <i class="bi bi-plus plus-icon me-1"></i>{{'Add New'|translate}}
             </div>
         </div>
@@ -13,28 +13,28 @@
                 <thead>
                     <th>{{'Policy Type' |translate}}</th>
                     <th>{{'ApplicableFor' |translate}}</th>
-                    <th class="text-center" *ngIf="rbac.allowedToAccess('Budget Verification.update') || 
-                    rbac.allowedToAccess('Budget Verification.delete')">{{'Action' | translate}}</th>
+                    <th class="text-center" *ngIf="rbac.allowedToAccess('Expense Checklist Configuration.update') || 
+                    rbac.allowedToAccess('Expense Checklist Configuration.delete')">{{'Action' | translate}}</th>
                 </thead>
                 <tbody>
                     <tr *ngFor="let exp of budgetchecklist">
                         <td>{{exp.policyType}}</td>
                         <td>{{exp.applicableFor}}</td>
                           <td class="text-center"
-                            *ngIf="rbac.allowedToAccess('Budget Verification.update') || rbac.allowedToAccess('Budget Verification.delete')">
+                            *ngIf="rbac.allowedToAccess('Expense Checklist Configuration.update') || rbac.allowedToAccess('Expense Checklist Configuration.delete')">
                             <div class="dropdown">
                                 <span type="button" data-bs-toggle="dropdown">
                                     <i class="bi bi-three-dots-vertical"></i>
                                 </span>
                                 <ul class="dropdown-menu custom-dropdown-menu">
                                     <li (click)="openupdate(updateexpeses, exp)"
-                                        *ngIf="rbac.allowedToAccess('Budget Verification.update')">
+                                        *ngIf="rbac.allowedToAccess('Expense Checklist Configuration.update')">
                                         <a class="dropdown-item">
                                             <i class="bi bi-pencil me-2"></i>{{'Update' | translate}}
                                         </a>
                                     </li>
                                     <li (click)="opendelete(deleteconformation,exp)"
-                                        *ngIf="rbac.allowedToAccess('Budget Verification.delete')">
+                                        *ngIf="rbac.allowedToAccess('Expense Checklist Configuration.delete')">
                                         <a class="dropdown-item">
                                             <i class="bi bi-trash3 me-2"></i>{{'Delete' | translate}}
                                         </a>

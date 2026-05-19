@@ -14,7 +14,7 @@ import { OnbehalfofMainTabsComponent } from "../time-off-module-tabs/onbehalfof-
 import { PendingApprovalsTabsComponent } from "../time-off-module-tabs/pending-approvals-tabs/pending-approvals-tabs.component";
 import { PmsMainTabsComponent } from "../pms-module-tabs/pms-main-tabs/pms-main-tabs.component";
 import { MenuOrderService } from '../../services/theme-service/menu-order.service';
-import { MenuRegistryService, MenuItemDef } from '../../services/theme-service/menu-registry.service';
+import { MenuRegistryService, MenuItemDef } from './menu-registry.service';
 import { DragDropModule, CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { MenuOrder } from '../../theme-customization/theme-action.service';
 

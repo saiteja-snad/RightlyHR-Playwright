@@ -114,6 +114,7 @@ export const permissionsData = [
   { fields: 'Expense Threshold Validation', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Global Expense Configuration', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Expense Checklist Configuration', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Payment Mode Configurations', View: false, Update: false, Create: false, Delete: false },
 
   //Manage DST tab
   { fields: 'DST Pending Tab', View: false, Update: false, Create: false, Delete: false },

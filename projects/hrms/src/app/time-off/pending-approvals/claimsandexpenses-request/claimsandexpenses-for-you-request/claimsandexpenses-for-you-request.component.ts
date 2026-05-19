@@ -17,7 +17,7 @@ import { environment } from '../../../../../environments/environment';
 import { NgxDocViewerModule } from 'ngx-doc-viewer';
 import { RbacService } from '../../../../services/rbac.service';
 import { noWhitespaceValidator } from '../../../../shared/nowhitespace/nowhitespace.component';
-import { IExpenseHeaders } from '../../../../Interfaces/claimsandexpenses.model';
+import { IExpenseHeaders, IExpensePolicy } from '../../../../Interfaces/claimsandexpenses.model';
 import { SignalsService } from '../../../../services/signals.service';
 import { SearchfordeskPipe } from "../../../../Pipes/searchfordesk.pipe";
 import { InfoIconComponent } from "../../../../icons/info-icon/info-icon.component";
@@ -25,6 +25,8 @@ import { DataLoaderContentComponent } from "../../../../shared/data-loader-conte
 import { FormValidationsService } from '../../../../services/form-validations.service';
 import { ConfirmationIconComponent } from "../../../../icons/confirmation-icon/confirmation-icon.component";
 import { DocumentViewIconComponent } from "../../../../icons/document-view-icon/document-view-icon.component";
+import moment from 'moment';
+import { ɵɵDir } from "@angular/cdk/scrolling";
 @Component({
   selector: 'app-claimsandexpenses-for-you-request',
   imports: [
@@ -42,7 +44,8 @@ import { DocumentViewIconComponent } from "../../../../icons/document-view-icon/
     InfoIconComponent,
     DataLoaderContentComponent,
     ConfirmationIconComponent,
-    DocumentViewIconComponent
+    DocumentViewIconComponent,
+    ɵɵDir
 ],
   templateUrl: './claimsandexpenses-for-you-request.component.html',
   styleUrl: './claimsandexpenses-for-you-request.component.scss',
@@ -73,19 +76,18 @@ export class ClaimsandexpensesForYouRequestComponent
   expenseViewURL: any;
   expenseheaderiteams!: IExpenseHeaders;
   updataid!: number;
+  checklistdata: IExpensePolicy[] = [];
+  storeapprovalRequest!: ExpenseApprovalResponse;
   @ViewChild('viewattamchment') private viewattamchment!: NgbModal;
   // approverComments = [] as AttendanceRequestC[];
   @ViewChild('commentspopup') modalContent: any;
-
+  @ViewChild('checklistconfirmationmodal') checklistconfirmationmodal: any;
   verifiedExpenseIds: number[] = [];
-    verifyModalRef: NgbModalRef | null = null;
-    isVerified: boolean = false;
-    verifyForm!: FormGroup;
-
-  selectedLeaveStatus: any;
+  verifyModalRef: NgbModalRef | null = null;
+  isVerified: boolean = false;
+  verifyForm!: FormGroup;
+   selectedLeaveStatus: any;
   totalCount: any;
-
-
   constructor(
     private modalService: NgbModal,
     private fb: FormBuilder,
@@ -100,6 +102,23 @@ export class ClaimsandexpensesForYouRequestComponent
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.getAllPendingApprovals();
+    this.getCheckListData();
+  }
+  getCheckListData() {
+    this.http
+      .getData(`ExpensesCheckListConfiguration/getall`)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response: any) => {
+          this.checklistdata = response.data
+        },
+        error: () => {
+          this.loading = false;
+        },
+        complete: () => {
+          this.loading = false;
+        }
+      });
   }
  onStatusApproveSelect(status: string) {
   this.selectedLeaveStatus = status;
@@ -204,7 +223,11 @@ export class ClaimsandexpensesForYouRequestComponent
     this.intializeApproveForm();
     this.selectedLeaveData = request;
   }
-
+ openRequiredCalrificationModal(content: any, request: ExpenseApprovalResponse) {
+    this.modalService.open(content, { centered: true, backdrop: 'static' });
+    this.intializeApproveForm();
+    this.selectedLeaveData = request;
+  }
   openRejectModal(content: any, request: ExpenseApprovalResponse | IExpenseHeaders) {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
     this.intializeRejectForm();
@@ -464,7 +487,51 @@ export class ClaimsandexpensesForYouRequestComponent
       lowerUrl.endsWith('.png')
     );
   }
-     selectedItem: any = null;
+   expensesCheckList(request: ExpenseApprovalResponse, action?: string): void {
+     this.storeapprovalRequest = request;
+     this.storeapprovalRequest.action=action || '';
+     this.intializeApproveForm();
+     this.selectedLeaveData = request;
+     this.modalService.open(this.checklistconfirmationmodal, {
+       centered: true,
+       backdrop: 'static'
+     });
+  }
+  isAllChecked(): boolean {
+    return this.checklistdata.some(x => x.checked);
+  }
+
+  confirmApproval(modal: any) {
+
+    const payload = this.checklistdata.map((item: any) => ({
+      expenseHeaderId: this.storeapprovalRequest.approvalHeader.referenceEntityId,   // expense header id
+      employeeId: this.storeapprovalRequest.entity.employeeId,            // current employee id
+      checklistConfigurationId: item.id,          // checklist item id
+      isChecked: item.checked || false,
+      checkedBy: this.empinfo.employeeId,
+      checkedAt: moment().format('YYYY-MM-DD'),
+      comments: item.comments || '',
+      createdAt: moment().format('YYYY-MM-DD'),
+    }));
+    this.http.postdata('ExpensesCheckListTracking', payload).subscribe({
+      next: (res) => {
+      if (res) {
+        if(this.storeapprovalRequest.action === 'Approve') {
+          this.handleAccept(this.approveForm);
+        }
+        else{
+          this.handleProcess(this.storeapprovalRequest);
+        }
+      }
+        this.storeapprovalRequest = {} as ExpenseApprovalResponse;
+        modal.close();
+      },
+      error: (err) => {
+        console.error(err);
+      }
+    });
+  }
+   selectedItem: any = null;
   openVerifyModal(item: any, content: any) {
     this.verifyModalRef = this.modalService.open(content, { centered: true, backdrop: 'static' });
     this.intializeVerifyForm();
@@ -478,7 +545,8 @@ export class ClaimsandexpensesForYouRequestComponent
       ],
     });
   }
- handleVerify(verifyForm: FormGroup): void {
+
+  handleVerify(verifyForm: FormGroup): void {
   if (!verifyForm.valid || !this.selectedItem) return;
 
   const formData = verifyForm.value;
@@ -525,8 +593,6 @@ export class ClaimsandexpensesForYouRequestComponent
       }
     });
 }
-
-
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();

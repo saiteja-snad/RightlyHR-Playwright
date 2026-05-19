@@ -244,6 +244,7 @@ export interface IExpenseHeaders {
   approverEmail: string;
   expenseitem: IExpenseItems[];
   approvalHeader?: IApprovalHeader;
+  isVerified?: any; // Add this line to track verification status
 }
 
 export interface Event {

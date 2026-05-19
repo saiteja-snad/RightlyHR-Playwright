@@ -26,6 +26,7 @@ import { FormValidationsService } from '../../../../services/form-validations.se
 import { ConfirmationIconComponent } from "../../../../icons/confirmation-icon/confirmation-icon.component";
 import { Router, RouterOutlet } from '@angular/router';
 import { DocumentViewIconComponent } from "../../../../icons/document-view-icon/document-view-icon.component";
+import moment from 'moment';
 @Component({
   selector: 'app-claimsandexpenses-for-your-role-request',
   imports: [
@@ -79,12 +80,10 @@ export class ClaimsandexpensesForYourRoleRequestComponent
   @ViewChild('commentspopup') modalContent: any;
   @ViewChild('checklistconfirmationmodal') checklistconfirmationmodal: any;
   subscription!: Subscription;
-
   verifiedExpenseIds: number[] = [];
   verifyModalRef: NgbModalRef | null = null;
   isVerified: boolean = false;
   verifyForm!: FormGroup;
-
   selectedLeaveStatus: any;
   totalCount: any;
 
@@ -104,6 +103,23 @@ export class ClaimsandexpensesForYourRoleRequestComponent
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.getAllPendingApprovals();
+    this.getCheckListData();
+  }
+ getCheckListData() {
+    this.http
+      .getData(`ExpensesCheckListConfiguration/getall`)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response: any) => {
+          this.checklistdata = response.data
+        },
+        error: () => {
+          this.loading = false;
+        },
+        complete: () => {
+          this.loading = false;
+        }
+      });
   }
   onStatusApproveSelect(status: string) {
     this.selectedLeaveStatus = status;
@@ -112,9 +128,6 @@ export class ClaimsandexpensesForYourRoleRequestComponent
       this.approveForm.get('comments')?.setValue('Approved');
     }
   }
-
-
-
   onStatusRejectSelect(status: string) {
     this.selectedLeaveStatus = status;
     if (status === 'reject') {
@@ -128,6 +141,7 @@ export class ClaimsandexpensesForYourRoleRequestComponent
       this.verifyForm.get('comments')?.setValue('Verified');
     }
   }
+
 
   intializeApproveForm() {
     this.approveForm = this.fb.group({
@@ -211,7 +225,7 @@ export class ClaimsandexpensesForYourRoleRequestComponent
     this.intializeApproveForm();
     this.selectedLeaveData = request;
   }
-  openRejectModal(content: any, request: ExpenseApprovalResponse) {
+  openRejectModal(content: any, request: ExpenseApprovalResponse | IExpenseHeaders) {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
     this.intializeRejectForm();
     this.selectedLeaveData = request as any;
@@ -318,35 +332,15 @@ export class ClaimsandexpensesForYourRoleRequestComponent
   }
 
 
-  expensesCheckList(request: ExpenseApprovalResponse): void {
-    console.log(request);
-
-
-      this.storeapprovalRequest = request;
-      this.http
-        .getData(`ExpensesCheckListConfiguration/getall`)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (response: any) => {
-
-            this.checklistdata = response.data.map((x: any) => ({
-              ...x,
-              checked: false
-            }));
-
-            this.modalService.open(this.checklistconfirmationmodal, {
-              centered: true,
-              backdrop: 'static'
-            });
-          },
-          error: () => {
-            this.loading = false;
-          },
-          complete: () => {
-            this.loading = false;
-          }
-        });
-    
+  expensesCheckList(request: ExpenseApprovalResponse,action?: string): void {
+    this.storeapprovalRequest = request;
+     this.storeapprovalRequest.action=action || '';
+     this.intializeApproveForm();
+     this.selectedLeaveData = request;
+     this.modalService.open(this.checklistconfirmationmodal, {
+       centered: true,
+       backdrop: 'static'
+     });
   }
 
   isAllChecked(): boolean {
@@ -361,9 +355,9 @@ export class ClaimsandexpensesForYourRoleRequestComponent
       checklistConfigurationId: item.id,          // checklist item id
       isChecked: item.checked || false,
       checkedBy: this.empinfo.employeeId,
-      checkedAt: new Date(),
+      checkedAt: moment().format('YYYY-MM-DD'),
       comments: item.comments || '',
-      createdAt: new Date()
+      createdAt: moment().format('YYYY-MM-DD'),
     }));
 
     console.log(payload);
@@ -661,4 +655,64 @@ export class ClaimsandexpensesForYourRoleRequestComponent
         });
     }
   }
+  selectedItem: any = null;
+  openVerifyModal(item: any, content: any) {
+    this.verifyModalRef = this.modalService.open(content, { centered: true, backdrop: 'static' });
+    this.intializeVerifyForm();
+    this.selectedItem = item; // store clicked item
+  }
+  intializeVerifyForm() {
+    this.verifyForm = this.fb.group({
+      comments: ['', [Validators.required, Validators.maxLength(250)]],
+    });
+  }
+
+  handleVerify(verifyForm: FormGroup): void {
+    if (!verifyForm.valid || !this.selectedItem) return;
+
+    const formData = verifyForm.value;
+    const verifiedItem = this.selectedItem;
+
+    const requestBody = {
+      isVerified: true,
+      verifiedBy: this.empinfo.employeeId?.toString(),
+      verifiedByName: `${this.empinfo.firstName || ''} ${this.empinfo.lastName || ''}`.trim(),
+      comments: formData.comments
+    };
+
+    this.http.putData(`Expenses_Header/ExpensesItemUpdate/${verifiedItem.expenseitem_id}`, requestBody)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          // Close only the Verify modal
+          this.verifyModalRef?.close();
+
+          // Show success popup
+          this.sharedModalService.openSuccessModal('Expense item verified successfully');
+
+          // Update local UI immediately
+          if (this.expenseheaderiteams?.expenseitem?.length) {
+            const idx = this.expenseheaderiteams.expenseitem.findIndex(
+              it => it.expenseitem_id === verifiedItem.expenseitem_id
+            );
+            if (idx > -1) {
+              this.expenseheaderiteams.expenseitem[idx].isVerified = true;
+            }
+          }
+
+          this.selectedItem = null;
+
+          // Update verified IDs for template checks
+          this.verifiedExpenseIds.push(verifiedItem.expenseitem_id);
+
+          // Refresh headers in background, but the modal stays open
+          this.getAllPendingApprovals();
+        },
+        error: (err: any) => {
+          this.verifyModalRef?.close();
+          this.sharedModalService.openErrorModal(err?.error?.Message || 'Verification failed');
+        }
+      });
+  }
+
 }

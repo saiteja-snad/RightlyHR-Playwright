@@ -92,6 +92,7 @@ export class ClaimsandexpensesForYouRequestComponent
   totalCount: any;
   markAsPaidForm!:FormGroup;
   paymentmodedata= [] as any[];
+  allverified: boolean = false;
   constructor(
     private modalService: NgbModal,
     private fb: FormBuilder,
@@ -185,7 +186,7 @@ export class ClaimsandexpensesForYouRequestComponent
     this.markAsPaidForm = this.fb.group({
       paymentDate: ['', [Validators.required]],
       paymentMode: ['', [Validators.required]],
-      transactionId: ['', [Validators.required, Validators.maxLength(50), Validators.pattern(/^[^\s].*$/)]],
+      transactionId: ['', [ Validators.maxLength(50), Validators.pattern(/^[^\s].*$/)]],
       comments: ['', [Validators.maxLength(500)]]
     });
   }

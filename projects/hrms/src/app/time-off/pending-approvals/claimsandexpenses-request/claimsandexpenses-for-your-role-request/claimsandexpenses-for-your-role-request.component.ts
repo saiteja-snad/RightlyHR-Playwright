@@ -91,6 +91,7 @@ export class ClaimsandexpensesForYourRoleRequestComponent
   selectedLeaveStatus: any;
   totalCount: any;
   paymentmodedata= [] as any[];
+  allverified: boolean = false;
   constructor(
     private modalService: NgbModal,
     private signalService: SignalsService,
@@ -191,7 +192,7 @@ export class ClaimsandexpensesForYourRoleRequestComponent
     this.markAsPaidForm = this.fb.group({
       paymentDate: ['', [Validators.required]],
       paymentMode: ['', [Validators.required]],
-      transactionId: ['', [Validators.required, Validators.maxLength(50), Validators.pattern(/^[^\s].*$/)]],
+      transactionId: ['', [ Validators.maxLength(50), Validators.pattern(/^[^\s].*$/)]],
       comments: ['', [Validators.maxLength(500)]]
     });
   }
@@ -213,6 +214,7 @@ export class ClaimsandexpensesForYourRoleRequestComponent
               item.approvalHeader.status != 'Processed' &&
               item.approvalHeader.status != 'Rejected'
           );
+          this.viewItem(this.expenseheaderpending[0]?.entity.expenses_ID);
         },
         error: (reason) => {
           this.loading = false;
@@ -444,6 +446,10 @@ export class ClaimsandexpensesForYourRoleRequestComponent
       .subscribe({
         next: (data: any) => {
           this.expenseheaderiteams = data;
+          this.allverified = !this.expenseheaderiteams.expenseitem.some(
+            (item: any) => item.isVerified === false
+          );
+          console.log('allverified', this.allverified);
         },
         error(err) {
           console.log('expensesheadererror', err);

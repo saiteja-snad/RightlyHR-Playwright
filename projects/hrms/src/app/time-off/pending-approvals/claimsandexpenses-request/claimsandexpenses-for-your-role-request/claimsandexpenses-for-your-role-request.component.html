@@ -33,17 +33,23 @@
             <td>₹ {{ leave?.entity?.totalExpenseAmount | number: '1.2-2'}}</td>
             <td>{{ leave?.entity?.status }}</td>
             <td class="text-center">
-              <div class="dropdown">
-                <a class="dropdown-item" (click)="openModal(viewDetailsModal); viewItem(leave?.entity?.expenses_ID)"><i
-                    class="bi bi-eye-fill me-2"></i></a>
-                <!-- <ul class="dropdown-menu custom-dropdown-menu">
+
+              <a class="dropdown-item"
+                      (click)="openModal(viewDetailsModal); viewItem(leave?.entity?.expenses_ID)"><i
+                        class="bi bi-eye-fill me-2"></i>{{'View' | translate}}</a>
+              <!-- <div class="dropdown">
+                <a data-bs-toggle="dropdown" aria-expanded="false">
+                  <i class="bi bi-three-dots-vertical"></i>
+                </a>
+                <ul class="dropdown-menu custom-dropdown-menu">
                   <li>
                     <a class="dropdown-item"
                       (click)="openModal(viewDetailsModal); viewItem(leave.entity.expenses_ID)"><i
                         class="bi bi-eye-fill me-2"></i>View</a>
                   </li>
-                </ul> -->
-              </div>
+
+                </ul>
+              </div> -->
             </td>
             <td class="text-center">
               <div>
@@ -67,13 +73,23 @@
                   @if(rbac.allowedToAccess('For Role (Claims and Expenses).update')) {
                   @if( leave.approvalHeader.currentapprovalStage !=
                   leave.approvalHeader.finalapprovalStage){
-                  @if(leave.entity.isCheckListRequired){
+                   @if(leave.approvalHeader.currentapprovalStage == "2"){
                   <li (click)="expensesCheckList(leave,'Approve')">
-                    <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{ "Approve" | translate }}</a>
+                    <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{ "Verify" | translate }}</a>
                   </li>
                   }
-                  @else{
+                  @else if (leave.approvalHeader.currentapprovalStage != leave.approvalHeader.finalapprovalStage && leave.approvalHeader.currentapprovalStage == 3 &&!allverified){
+                   <li (click)="openModal(verificationofModal); viewItem(leave.entity.expenses_ID)">
+                    <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{ "Verify" | translate }}</a>
+                  </li>
+                  }
+                  @else if (allverified){
                   <li (click)="openApproveModal(approval, leave)">
+                    <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{ "Approve for Payment" | translate }}</a>
+                  </li>
+                  }
+                  @else {
+                    <li (click)="openApproveModal(approval, leave)">
                     <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{ "Approve" | translate }}</a>
                   </li>
                   }
@@ -101,7 +117,7 @@
                     <a class="dropdown-item"><i class="bi bi-x-circle me-2"></i>{{ "Reject" | translate }}</a>
                   </li>
                   }
-                  @if(rbac.allowedToAccess('For Role (Claims and Expenses).update')) {
+                  <!-- @if(rbac.allowedToAccess('For Role (Claims and Expenses).update')) {
                   @if( leave.approvalHeader.currentapprovalStage !=
                   leave.approvalHeader.finalapprovalStage){
                   <li (click)="openRequiredCalrificationModal(requiredClarification, leave)">
@@ -109,7 +125,7 @@
                       translate }}</a>
                   </li>
                   }
-                  }
+                  } -->
                 </ul>
               </div>
             </td>
@@ -257,7 +273,7 @@
               <td> ₹ {{ item?.expense_Amount | number: '1.2-2' }}</td>
               <td>{{ item?.status }}</td>
               <td>{{ item?.receipt_Number }}</td>
-              <!-- <td class="text-center">
+              <td class="text-center">
                 <div class="d-flex gap-2">
                   <a type="button" class="me-2 download-text text-nowrap"
                     (click)="onSelectDownload(item?.attachment_url)">
@@ -267,46 +283,6 @@
                     (click)="onViewAttachement(item?.attachment_url)">
                     <i class="bi bi-eye-fill me-2"></i>{{'View' | translate}}
                   </a>
-                </div>
-              </td> -->
-              <td class="text-center">
-                <div class="dropdown">
-                  <a data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="bi bi-three-dots-vertical"></i>
-                  </a>
-                  <ul class="dropdown-menu custom-dropdown-menu">
-                    <li>
-                      <a type="button" class="me-2 dropdown-item text-nowrap"
-                        (click)="onSelectDownload(item?.attachment_url)">
-                        <i class="bi bi-download me-2"></i>Download
-                      </a>
-                    </li>
-                    @if (rbac.allowedToAccess('For Role (Claims and Expenses).update')) {
-                    <!-- @if (expenseheaderiteams.approvalHeader?.currentapprovalStage === -->
-                    <!-- expenseheaderiteams.approvalHeader?.finalapprovalStage) { -->
-                    <!-- Show Verify only if not yet verified -->
-                    <!-- @if (!(item?.isVerified || verifiedExpenseIds?.includes(item?.expenseitem_id ?? 0))) { -->
-                     @if (!(item?.isVerified == true || verifiedExpenseIds?.includes(item?.expenseitem_id ?? 0))) {
-                    <li>
-                      <a class="dropdown-item" (click)="openVerifyModal(item, Verify)">
-                        <i class="bi bi-check-circle me-2"></i>{{ 'Verify' | translate }}
-                      </a>
-                    </li>
-                    }
-                    }
-                    <!-- } -->
-
-                    @if(rbac.allowedToAccess('For Role (Claims and Expenses).delete')) {
-                    @if( expenseheaderiteams.approvalHeader?.currentapprovalStage ===
-                    expenseheaderiteams.approvalHeader?.finalapprovalStage){
-                    <!-- Only show Reject if not verified (hide after verification) -->
-                    <li *ngIf="!(item?.isVerified || verifiedExpenseIds?.includes(item?.expenseitem_id ?? 0))">
-                      <a class="dropdown-item" (click)="openRejectModal(rejectmodal, expenseheaderiteams)">
-                        <i class="bi bi-x-circle me-2"></i>{{ 'Reject' | translate }}
-                      </a>
-                    </li>
-                    }}
-                  </ul>
                 </div>
               </td>
               <!-- <td class="text-center">
@@ -527,13 +503,13 @@
         </div>
         <div class="mb-3">
           <label for="comments" class="custom-label mb-2">{{'Transaction Reference Id' | translate}}<span
-              class="text-danger">*</span></label>
+              class="text-danger"></span></label>
           <input type="text" class="form-control custom-input mb-3" id="transactionId" placeholder="Enter Transaction Reference Id"
             formControlName="transactionId" type="text">
-          <div class="error-msg"
+          <!-- <div class="error-msg"
             *ngIf="markAsPaidForm.get('transactionId')?.touched && markAsPaidForm.get('transactionId')?.invalid">
             <div *ngIf="markAsPaidForm.get('transactionId')?.errors?.['required']">Transaction Reference Id is required.</div>
-          </div>
+          </div> -->
         </div>
       </div>
       <div class="custom-modal-footer">
@@ -541,5 +517,75 @@
         <button type="submit" class="custom-btn btn-primary" [disabled]="markAsPaidForm.invalid">{{'Proceed'| translate}}</button>
       </div>
     </form>
+  </div>
+</ng-template>
+
+<ng-template #verificationofModal let-modal>
+  <div class="custom-main-popup-container">
+    <div class="d-flex justify-content-between popup-header-border p-3">
+      <div class="pt-2">
+        <p class="popup-heading mb-0">{{'Expense Details' | translate}}</p>
+      </div>
+      <div>
+        <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+      </div>
+    </div>
+    <div class="custom-main-popup-content">
+      <div class="mb-3 d-flex gap-3">
+        <b class="expenses-title-text">{{'Expense Title' | translate}} : {{ expenseheaderiteams.expenses_Title }}</b>
+        <!-- <b class="expenses-title-text">Approval Email : {{ expenseheaderiteams.approverEmail }}</b> -->
+      </div>
+      <div class="custom-table">
+        <table class="w-100">
+          <thead>
+            <tr>
+              <th>{{ 'Expense Type' | translate }}</th>
+              <th>{{ 'Expense Name' | translate }}</th>
+              <th>{{ 'Expense Date' | translate }}</th>
+              <th>{{ 'Expense Amount' | translate }}</th>
+              <th>{{ 'Status' | translate }}</th>
+              <th>{{ 'Receipt Number' | translate }}</th>
+              <th class="text-center">{{ 'View' | translate }}</th>
+              <th class="text-center">{{ 'Action' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of expenseheaderiteams?.expenseitem">
+              <td>{{ item?.expenseType }}</td>
+              <td>{{ item?.item_Name }}</td>
+              <td>{{ item?.expense_Date | date: 'dd-MM-yyyy' }}</td>
+              <td>{{ item?.expense_Amount | number: '1.2-2' }}</td>
+              <td>{{ item?.status }}</td>
+              <td>{{ item?.receipt_Number }}</td>
+              <td class="text-center">
+                <div class="d-flex gap-2">
+                  <a type="button" class="me-2 download-text text-nowrap"
+                    (click)="onSelectDownload(item?.attachment_url)">
+                    <i class="bi bi-download me-2"></i>{{'Download' | translate}}
+                  </a>
+                  <a type="button" class="download-text text-nowrap" *ngIf="isImageFile(item?.attachment_url)"
+                    (click)="onViewAttachement(item?.attachment_url)">
+                    <i class="bi bi-eye-fill me-2"></i>{{'View' | translate}}
+                  </a>
+                </div>
+              </td>
+              <td class="text-center">
+                <div class="d-flex justify-content-center gap-3">
+                  <a (click)="openVerifyModal(item, Verify)" *ngIf="!(item?.isVerified === true|| verifiedExpenseIds?.includes(item?.expenseitem_id ?? 0))">
+                    <img src="/icons/check-approve-icon.png" class="action-img" alt="Approve" />
+                  </a>
+                  <a (click)="openRejectModal(rejectmodal, expenseheaderiteams)" *ngIf="!(item?.isVerified === true|| verifiedExpenseIds?.includes(item?.expenseitem_id ?? 0))">
+                    <img src="/icons/cancel-circle.png" class="action-img" alt="Reject" />
+                  </a>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="text-center mt-3">
+          <b>Total Amount : {{expenseheaderiteams?.expense_Amount | number: '1.2-2'}}</b>
+        </div>
+      </div>
+    </div>
   </div>
 </ng-template>

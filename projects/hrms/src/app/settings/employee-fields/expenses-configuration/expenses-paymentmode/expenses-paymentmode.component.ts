@@ -78,6 +78,9 @@ paymentmodedata = [] as any[];
         f.reset();
       },
       error: (reason: any) => {
+        if (reason.error.message.includes('PaymentMode')) {
+          reason.error.message = reason.error.message.replace(/PaymentMode/g, 'Payment Mode');
+        }
         this.conformationPopup.openErrorModal(reason.error.message);
       },
     });
@@ -128,6 +131,9 @@ paymentmodedata = [] as any[];
         this.paymentmodeupdateForm.reset();
       },
       error: (reason: any) => {
+         if (reason.error.message.includes('PaymentMode')) {
+          reason.error.message = reason.error.message.replace(/PaymentMode/g, 'Payment Mode');
+        }
         this.conformationPopup.openErrorModal(reason.error.message);
       },
     });

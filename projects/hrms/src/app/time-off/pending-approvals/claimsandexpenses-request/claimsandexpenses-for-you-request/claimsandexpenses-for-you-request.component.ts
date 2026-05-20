@@ -27,6 +27,7 @@ import { ConfirmationIconComponent } from "../../../../icons/confirmation-icon/c
 import { DocumentViewIconComponent } from "../../../../icons/document-view-icon/document-view-icon.component";
 import moment from 'moment';
 import { ɵɵDir } from "@angular/cdk/scrolling";
+import { SelectModule } from 'primeng/select';
 @Component({
   selector: 'app-claimsandexpenses-for-you-request',
   imports: [
@@ -45,7 +46,8 @@ import { ɵɵDir } from "@angular/cdk/scrolling";
     DataLoaderContentComponent,
     ConfirmationIconComponent,
     DocumentViewIconComponent,
-    ɵɵDir
+    ɵɵDir,
+    SelectModule
 ],
   templateUrl: './claimsandexpenses-for-you-request.component.html',
   styleUrl: './claimsandexpenses-for-you-request.component.scss',
@@ -86,8 +88,10 @@ export class ClaimsandexpensesForYouRequestComponent
   verifyModalRef: NgbModalRef | null = null;
   isVerified: boolean = false;
   verifyForm!: FormGroup;
-   selectedLeaveStatus: any;
+  selectedLeaveStatus: any;
   totalCount: any;
+  markAsPaidForm!:FormGroup;
+  paymentmodedata= [] as any[];
   constructor(
     private modalService: NgbModal,
     private fb: FormBuilder,
@@ -103,6 +107,20 @@ export class ClaimsandexpensesForYouRequestComponent
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.getAllPendingApprovals();
     this.getCheckListData();
+    this.getpaymentmode();
+  }
+  getpaymentmode() {
+    this.subscription = this.http.getData("entityAttributeValues?entity=ExpensesPaymentModeConfiguration&attribute=PaymentMode").subscribe({
+      next: (data: any) => {
+        this.paymentmodedata = data as any[];
+      },
+      error: () => {
+
+      },
+      complete: () => {
+
+      },
+    })
   }
   getCheckListData() {
     this.http
@@ -161,6 +179,15 @@ export class ClaimsandexpensesForYouRequestComponent
       this.selectedLeaveStatus = null; // remove chip highlight if cleared
     }
   });
+  }
+
+   intializeMarkAsPaidForm() {
+    this.markAsPaidForm = this.fb.group({
+      paymentDate: ['', [Validators.required]],
+      paymentMode: ['', [Validators.required]],
+      transactionId: ['', [Validators.required, Validators.maxLength(50), Validators.pattern(/^[^\s].*$/)]],
+      comments: ['', [Validators.maxLength(500)]]
+    });
   }
 
   getAllPendingApprovals() {
@@ -593,6 +620,57 @@ export class ClaimsandexpensesForYouRequestComponent
       }
     });
 }
+openMarkAsPaidModal(content: any, request: ExpenseApprovalResponse) {
+    this.modalService.open(content, { centered: true, backdrop: 'static' });
+    this.intializeMarkAsPaidForm();
+    this.selectedLeaveData = request;
+  }
+    markasPaid(modal: any) {
+    if (!this.markAsPaidForm.valid || !this.selectedLeaveData) return;
+    console.log(this.selectedLeaveData);
+    
+    const formData = this.markAsPaidForm.value;
+    const verifiedItem = this.selectedLeaveData;
+
+    const requestBody = {
+      expenses_ID: this.selectedLeaveData.entity.expenses_ID,
+      applied_date: this.selectedLeaveData.entity.applied_date || new Date().toISOString(),
+      expenses_Title: this.selectedLeaveData.entity.expenses_Title || '',
+      additional_details: '',
+      status: 'Paid',
+      expenseName: this.selectedLeaveData.entity.expenseType || '',
+      currentRole: '',
+      totalamount: this.selectedLeaveData.entity.totalExpenseAmount || 0,
+      employeeId: this.selectedLeaveData.entity.employeeId,
+      submissionDate: new Date().toISOString(),
+      expense_Amount: this.selectedLeaveData.entity.totalExpenseAmount || 0,
+      attachment_url: '',
+      currentApprover: this.selectedLeaveData.currentApprover || '',
+      nextApprover: '',
+      approverEmail: '',
+      comments: formData.comments || 'Marked as paid',
+      isCheckListRequired: false,
+      paymentDate: formData.paymentDate || new Date().toISOString(),
+      paymentMode: formData.paymentMode || '',
+      refTransactionId: formData.transactionId || '',
+      expenseitem: []
+    };
+
+    this.http.putData(`Expenses_Header/updateexpenses?id=${this.selectedLeaveData.entity.expenses_ID}`, requestBody)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res: any) => {
+          if (res) {
+            this.handleProcess(this.selectedLeaveData);
+          }
+          this.storeapprovalRequest = {} as ExpenseApprovalResponse;
+          modal.close();
+        },
+        error: (err) => {
+          console.error(err);
+        }
+      });
+  }
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();

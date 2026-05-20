@@ -78,8 +78,12 @@
                   </li>
                   }
                   @else{
-                  <li (click)="handleProcess(leave)">
+                  <!-- <li (click)="handleProcess(leave)">
                     <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{ "Process" | translate }}</a>
+                  </li> -->
+                  <li (click)="openMarkAsPaidModal(markAsPaid, leave)">
+                    <!-- <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{ "Process" | translate }}</a> -->
+                     <a class="dropdown-item" ><i class="bi bi-check-circle me-2"></i>{{ "Mark as Paid" | translate }}</a>
                   </li>
                   }
                   }
@@ -501,6 +505,55 @@
       <div class="custom-modal-footer">
         <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss();">{{'Cancel'|translate}}</button>
         <button type="submit" class="custom-btn btn-primary" [disabled]="verifyForm.invalid">{{'Verify'| translate}}</button>
+      </div>
+    </form>
+  </div>
+</ng-template>
+<ng-template #markAsPaid let-modal>
+  <div class="result-popup-content" ngbAutofocus>
+    <div>
+      <app-confirmation-icon />
+      <p class="confirmation-text pt-3">{{'Are you sure you want to Mark as Paid?' | translate}}</p>
+    </div>
+    <form autocomplete="off" [formGroup]="markAsPaidForm" (ngSubmit)="markasPaid(markAsPaidForm)">
+      <div class="custom-main-popup-content">
+        <div class="mb-3">
+          <label for="comments" class="custom-label mb-2">{{'Payment Date' | translate}}<span
+              class="text-danger">*</span></label>
+          <input class="form-control custom-input mb-3" id="paymentDate" placeholder="Select Payment Date"
+            formControlName="paymentDate" type="date">
+          <div class="error-msg"
+            *ngIf="markAsPaidForm.get('paymentDate')?.touched && markAsPaidForm.get('paymentDate')?.invalid">
+            <div *ngIf="markAsPaidForm.get('paymentDate')?.errors?.['required']">Payment Date is required.</div>
+          </div>
+        </div>
+        <div class="mb-3">
+          <label for="exampleFormControlInput1" class="custom-label mb-2">{{'PaymentMode'|translate}}<span
+              class="error-msg">*</span></label>
+          <div class="custom-p-select-content">
+            <p-select [options]="paymentmodedata" optionLabel="value" [filter]="true" filterBy="value" optionValue="value"
+              resetFilterOnHide="true" placeholder="Please select payment mode"
+              formControlName="paymentMode" class="custom-select w-100">
+            </p-select>
+          </div>
+          <div *ngIf="markAsPaidForm.get('paymentMode')?.invalid && markAsPaidForm.get('paymentMode')?.touched" class="error-msg">
+            {{'Payment Mode is required'|translate}}.
+          </div>
+        </div>
+        <div class="mb-3">
+          <label for="comments" class="custom-label mb-2">{{'Transaction Reference Id' | translate}}<span
+              class="text-danger">*</span></label>
+          <input type="text" class="form-control custom-input mb-3" id="transactionId" placeholder="Enter Transaction Reference Id"
+            formControlName="transactionId" type="text">
+          <div class="error-msg"
+            *ngIf="markAsPaidForm.get('transactionId')?.touched && markAsPaidForm.get('transactionId')?.invalid">
+            <div *ngIf="markAsPaidForm.get('transactionId')?.errors?.['required']">Transaction Reference Id is required.</div>
+          </div>
+        </div>
+      </div>
+      <div class="custom-modal-footer">
+        <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss();">{{'Cancel'|translate}}</button>
+        <button type="submit" class="custom-btn btn-primary" [disabled]="markAsPaidForm.invalid">{{'Proceed'| translate}}</button>
       </div>
     </form>
   </div>

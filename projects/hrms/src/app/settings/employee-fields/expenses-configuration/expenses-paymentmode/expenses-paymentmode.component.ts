@@ -33,9 +33,7 @@ paymentmodedata = [] as any[];
     public formValidation: FormValidationService,
     public rbac: RbacService,
   ) { }
-  ngOnDestroy(): void {
-    throw new Error('Method not implemented.');
-  }
+  
   ngOnInit(): void {
     this.getpaymentmode();
     this.intiationalfrom();
@@ -80,7 +78,7 @@ paymentmodedata = [] as any[];
         f.reset();
       },
       error: (reason: any) => {
-        this.conformationPopup.openErrorModal(reason.error.Message);
+        this.conformationPopup.openErrorModal(reason.error.message);
       },
     });
   }
@@ -130,7 +128,7 @@ paymentmodedata = [] as any[];
         this.paymentmodeupdateForm.reset();
       },
       error: (reason: any) => {
-        this.conformationPopup.openErrorModal(reason.error.Message);
+        this.conformationPopup.openErrorModal(reason.error.message);
       },
     });
   }
@@ -155,6 +153,11 @@ paymentmodedata = [] as any[];
           this.selectedExpensesId = null;
         }
       });
+    }
+  }
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
     }
   }
 }

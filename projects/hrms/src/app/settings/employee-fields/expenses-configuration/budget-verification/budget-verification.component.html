@@ -11,8 +11,8 @@
         <div class="custom-table-content mt-2">
             <table class="w-100">
                 <thead>
-                    <th>{{'Policy Type' |translate}}</th>
-                    <th>{{'ApplicableFor' |translate}}</th>
+                    <th>{{'Type' |translate}}</th>
+                    <th>{{'Applicable For' |translate}}</th>
                     <th class="text-center" *ngIf="rbac.allowedToAccess('Expense Checklist Configuration.update') || 
                     rbac.allowedToAccess('Expense Checklist Configuration.delete')">{{'Action' | translate}}</th>
                 </thead>
@@ -51,7 +51,7 @@
             <div class="custom-main-popup-container" ngbAutofocus>
                 <div class="custom-poup-header-content popup-header-border">
                     <div>
-                        <p class="popup-heading mb-0">{{'Add Policy Type' | translate}}</p>
+                        <p class="popup-heading mb-0">{{'Add Type' | translate}}</p>
                     </div>
                     <div>
                         <a (click)="modal.dismiss();expensebudgetForm.reset()"><img src="icons/close.png"
@@ -63,38 +63,36 @@
                         (ngSubmit)="postExpenses(expensebudgetForm)">
                         <div class="mb-3">
                             <label for="policyType" class="form-label custom-label mb-2">
-                                {{'Policy Type' | translate}} <span class="text-danger">*</span>
+                                {{'Type' | translate}} <span class="text-danger">*</span>
                             </label>
                             <input type="text" class="form-control custom-input" id="policyType"
-                                formControlName="policyType" autocomplete="off" placeholder="Please enter policy type"
+                                formControlName="policyType" autocomplete="off" placeholder="Please enter type"
                                 maxlength="50"
                                 (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)" />
                             <div class="error-msg"
                                 *ngIf="expensebudgetForm.get('policyType')?.hasError('required') && (expensebudgetForm.get('policyType')?.touched )">
-                                Policy Type is required
+                                Type is required
                             </div>
                             <div *ngIf="expensebudgetForm.get('policyType')?.errors?.['pattern']" class="error-msg">
                                 {{ 'Field cannot start with a space' | translate }}
                             </div>
                             <div class="error-msg"
                                 *ngIf="expensebudgetForm.get('policyType')?.hasError('maxlength') && expensebudgetForm.get('policyType')?.touched">
-                                Policy Type cannot exceed 50 characters
+                                Type cannot exceed 50 characters
                             </div>
                         </div>
                         <div class="mb-3">
                             <label for="applicableFor" class="form-label custom-label mb-2">
-                                {{'ApplicableFor' | translate}} <span class="text-danger">*</span>
+                                {{'Applicable For' | translate}} <span class="text-danger">*</span>
                             </label>
-                            <input type="text" class="form-control custom-input" id="applicableFor"
-                                formControlName="applicableFor" autocomplete="off"
-                                placeholder="Please enter applicableFor" maxlength="50"
-                                (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)" />
-                            <div class="error-msg"
-                                *ngIf="expensebudgetForm.get('applicableFor')?.invalid && (expensebudgetForm.get('applicableFor')?.touched)">
-                                ApplicableFor is required
+                            <div class="custom-p-select-content">
+                                <p-select [options]="applicableforoption" optionLabel="label" [filter]="true" resetFilterOnHide="true"
+                                    filterBy="label" optionValue="value" placeholder="Please select applicable for"
+                                    formControlName="applicableFor" class="custom-select w-100">
+                                </p-select>
                             </div>
-                            <div *ngIf="expensebudgetForm.get('applicableFor')?.errors?.['pattern']" class="error-msg">
-                                {{ 'Field cannot start with a space' | translate }}
+                            <div *ngIf="expensebudgetForm.get('applicableFor')?.invalid && expensebudgetForm.get('applicableFor')?.touched" class="error-msg">
+                                {{'Applicable For is required'|translate}}
                             </div>
                         </div>
                         <div class=" mb-3">
@@ -134,7 +132,7 @@
             <div class="custom-main-popup-container" ngbAutofocus>
                 <div class="custom-poup-header-content popup-header-border">
                     <div>
-                        <p class="popup-heading mb-0">{{'Update Policy Type' | translate}}</p>
+                        <p class="popup-heading mb-0">{{'Update Type' | translate}}</p>
                     </div>
                     <div>
                         <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
@@ -144,15 +142,15 @@
                     <form autocomplete="off" [formGroup]="expensebudgetUpdateForm"  (ngSubmit)="onUpdateSubmit()">
                         <div class="mb-3">
                             <label for="policyType" class="form-label custom-label mb-2">
-                                {{'Policy Type' | translate}} <span class="text-danger">*</span>
+                                {{'Type' | translate}} <span class="text-danger">*</span>
                             </label>
                             <input type="text" class="form-control custom-input" id="policyType"
                                 formControlName="policyTypeupdate" autocomplete="off"
-                                placeholder="Please enter policy type" maxlength="50"
+                                placeholder="Please enter type" maxlength="50"
                                 (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)" />
                             <div class="error-msg"
                                 *ngIf="expensebudgetUpdateForm.get('policyTypeupdate')?.hasError('required') && (expensebudgetUpdateForm.get('policyTypeupdate')?.touched)">
-                                Policy Type is required
+                                Type is required
                             </div>
                             <div *ngIf="expensebudgetUpdateForm.get('policyTypeupdate')?.errors?.['pattern']"
                                 class="error-msg">
@@ -160,24 +158,20 @@
                             </div>
                             <div class="error-msg"
                                 *ngIf="expensebudgetUpdateForm.get('policyTypeupdate')?.hasError('maxlength') && expensebudgetUpdateForm.get('policyTypeupdate')?.touched">
-                                Policy Type cannot exceed 50 characters
+                                Type cannot exceed 50 characters
                             </div>
                         </div>
                         <div class="mb-3">
-                            <label for="applicableForupdate" class="form-label custom-label mb-2">{{'ApplicableFor' | translate}}
+                            <label for="applicableForupdate" class="form-label custom-label mb-2">{{'Applicable For' | translate}}
                                 <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control custom-input" id="applicableForupdate"
-                                formControlName="applicableForupdate" autocomplete="off"
-                                placeholder="Please enter applicableFor" maxlength="50"
-                                (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)"
-                               />
-                            <div class="error-msg"
-                                *ngIf="expensebudgetUpdateForm.get('applicableForupdate')?.invalid && (expensebudgetUpdateForm.get('applicableForupdate')?.touched)">
-                                ApplicableFor is required
+                                 <div class="custom-p-select-content">
+                                <p-select [options]="applicableforoption" optionLabel="label" [filter]="true" resetFilterOnHide="true"
+                                    filterBy="label" optionValue="value" placeholder="Please select applicable for"
+                                    formControlName="applicableForupdate" class="custom-select w-100">
+                                </p-select>
                             </div>
-                            <div *ngIf="expensebudgetUpdateForm.get('applicableForupdate')?.errors?.['pattern']"
-                                class="error-msg">
-                                {{ 'Field cannot start with a space' | translate }}
+                            <div *ngIf="expensebudgetUpdateForm.get('applicableForupdate')?.invalid && expensebudgetUpdateForm.get('applicableForupdate')?.touched" class="error-msg">
+                                {{'Applicable For is required'|translate}}
                             </div>
                         </div>
                            <div class=" mb-3">
@@ -185,19 +179,19 @@
                             <textarea type="text" class="form-control custom-input" rows="3"
                                 formControlName="descriptionupdate" [minlength]="5" maxlength="250"
                                 placeholder="Please enter description"></textarea>
-                            <div class="textarea-count-text">{{ expensebudgetForm.get("descriptionupdate")?.value?.length ||
+                            <div class="textarea-count-text">{{ expensebudgetUpdateForm.get("descriptionupdate")?.value?.length ||
                                 0
                                 }}/250</div>
                             <div class="error-msg"
-                                *ngIf="expensebudgetForm.get('descriptionupdate')?.touched && expensebudgetForm.get('descriptionupdate')?.invalid">
-                                <div *ngIf="expensebudgetForm.get('descriptionupdate')?.errors?.['required']"> {{
+                                *ngIf="expensebudgetUpdateForm.get('descriptionupdate')?.touched && expensebudgetUpdateForm.get('descriptionupdate')?.invalid">
+                                <div *ngIf="expensebudgetUpdateForm.get('descriptionupdate')?.errors?.['required']"> {{
                                     'Description is required' | translate }}</div>
                             </div>
-                            <div *ngIf="expensebudgetForm.get('descriptionupdate')?.errors?.['maxCharacters']"
+                            <div *ngIf="expensebudgetUpdateForm.get('descriptionupdate')?.errors?.['maxCharacters']"
                                 class="error-msg">
                                 {{ 'Description must be between 5-250 characters' | translate}}
                             </div>
-                            <div *ngIf="expensebudgetForm.get('descriptionupdate')?.errors?.['minCharacters']"
+                            <div *ngIf="expensebudgetUpdateForm.get('descriptionupdate')?.errors?.['minCharacters']"
                                 class="error-msg">
                                 {{ 'Description must be between 5-250 characters' | translate}}
                             </div>

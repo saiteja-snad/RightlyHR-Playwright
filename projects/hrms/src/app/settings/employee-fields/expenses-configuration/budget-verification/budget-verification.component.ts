@@ -10,10 +10,11 @@ import { OpenModalService } from '../../../../services/open-modal.service';
 import { RbacService } from '../../../../services/rbac.service';
 import { Subject, Subscription, takeUntil } from 'rxjs';
 import { IExpensePolicy } from '../../../../Interfaces/claimsandexpenses.model';
+import { SelectModule } from 'primeng/select';
 
 @Component({
   selector: 'app-budget-verification',
-  imports: [ReactiveFormsModule, TranslateModule, CommonModule],
+  imports: [ReactiveFormsModule, TranslateModule, CommonModule,SelectModule],
   templateUrl: './budget-verification.component.html',
   styleUrl: './budget-verification.component.scss'
 })
@@ -26,6 +27,12 @@ export class BudgetVerificationComponent {
   dataload = false;
   selectedExpensesId: any;
   subscription!: Subscription;
+  applicableforoption = [
+    { label: 'TM', value: 'TM' },
+    { label: 'RM', value: 'RM' },
+    { label: 'HR', value: 'HR' },
+    { label: 'Role', value: 'ROLE' }
+  ];
   constructor(
     public router: Router,
     private modalService: NgbModal,
@@ -92,7 +99,7 @@ export class BudgetVerificationComponent {
         this.getExpenses();
       },
       error: (reason: any) => {
-        this.conformationPopup.openErrorModal(reason.error.Message);
+        this.conformationPopup.openErrorModal(reason.error.message);
       },
     });
   }
@@ -155,7 +162,7 @@ export class BudgetVerificationComponent {
       },
       error: (err) => {
         console.error('Update failed', err);
-        this.conformationPopup.openErrorModal(err.error.Message)
+        this.conformationPopup.openErrorModal(err.error.message)
       }
     });
   }

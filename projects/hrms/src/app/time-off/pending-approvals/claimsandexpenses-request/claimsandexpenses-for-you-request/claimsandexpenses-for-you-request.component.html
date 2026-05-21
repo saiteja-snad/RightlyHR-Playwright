@@ -67,21 +67,23 @@
                 </a>
                 <ul class="dropdown-menu py-0">
                   @if(rbac.allowedToAccess('For You (Claims and Expenses).update')) {
-                  @if( leave.approvalHeader.currentapprovalStage != leave.approvalHeader.finalapprovalStage){
-                  @if(leave.approvalHeader.currentapprovalStage == "2"){
+                   @if( leave.approvalHeader.currentapprovalStage !=leave.approvalHeader.finalapprovalStage){
+                   @if(+leave.approvalHeader.currentapprovalStage === (+leave.approvalHeader.finalapprovalStage - 2)){
                   <li (click)="expensesCheckList(leave,'Approve')">
                     <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{ "Verify" | translate }}</a>
                   </li>
                   }
-                  @else if (leave.approvalHeader.currentapprovalStage != leave.approvalHeader.finalapprovalStage && leave.approvalHeader.currentapprovalStage == 3){
-                  <li (click)="openApproveModal(approval, leave)">
+                  @else if ((+leave.approvalHeader.currentapprovalStage == (+leave.approvalHeader.finalapprovalStage - 1))){
+                    @if(!allverified){
+                   <li (click)="openModal(verificationofModal); viewItem(leave.entity.expenses_ID)">
                     <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{ "Verify" | translate }}</a>
                   </li>
                   }
-                  @else if (allverified){
-                    <li (click)="openModal(verificationofModal); viewItem(leave.entity.expenses_ID)">
+                  @if(allverified){
+                  <li (click)="openApproveModal(approval, leave)">
                     <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{ "Approve for Payment" | translate }}</a>
                   </li>
+                  }
                   }
                   @else {
                     <li (click)="openApproveModal(approval, leave)">
@@ -438,7 +440,7 @@
         <div class="textarea-count-text">{{ approveForm.get('comments')?.value?.length || 0 }}/250</div>
       </div>
       <div class="custom-modal-footer">
-        <button type="button" class="custom-btn btn-secondary " (click)="modal.dismiss()">
+        <button type="button" class="custom-btn btn-secondary " (click)="onCancel(modal)">
           {{'Cancel' | translate}}
         </button>
         <button type="button" class="custom-btn btn-primary " [disabled]="!isAllChecked() ||(storeapprovalRequest.action === 'Approve' && approveForm.invalid)"

@@ -720,6 +720,14 @@ openMarkAsPaidModal(content: any, request: ExpenseApprovalResponse) {
       }
     });
 }
+onCancel(modal: any) {
+  // 1. Reset form
+  this.approveForm.reset();
+  // 2. Reset checklist selection
+  this.checklistdata.forEach(item => item.checked = false);
+  // 4. Close modal
+  modal.dismiss();
+}
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();

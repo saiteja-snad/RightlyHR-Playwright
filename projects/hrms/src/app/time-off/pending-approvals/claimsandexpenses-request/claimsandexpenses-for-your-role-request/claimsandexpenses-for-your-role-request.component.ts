@@ -860,4 +860,12 @@ confirmApproval(modal: any) {
       }
     });
 }
+onCancel(modal: any) {
+  // 1. Reset form
+  this.approveForm.reset();
+  // 2. Reset checklist selection
+  this.checklistdata.forEach(item => item.checked = false);
+  // 4. Close modal
+  modal.dismiss();
+}
 }

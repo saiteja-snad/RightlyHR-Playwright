@@ -482,8 +482,7 @@
 <ng-template #markAsPaid let-modal>
   <div class="result-popup-content" ngbAutofocus>
     <div>
-      <app-confirmation-icon />
-      <p class="confirmation-text pt-3">{{'Are you sure you want to Mark as Paid?' | translate}}</p>
+      <p class="confirmation-text text-start pt-3">{{'Confirm Payment Details' | translate}}</p>
     </div>
     <form autocomplete="off" [formGroup]="markAsPaidForm" (ngSubmit)="markasPaid(markAsPaidForm)">
       <div class="custom-main-popup-content">
@@ -523,7 +522,7 @@
       </div>
       <div class="custom-modal-footer">
         <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss();">{{'Cancel'|translate}}</button>
-        <button type="submit" class="custom-btn btn-primary" [disabled]="markAsPaidForm.invalid">{{'Proceed'| translate}}</button>
+        <button type="submit" class="custom-btn btn-primary text-nowrap " [disabled]="markAsPaidForm.invalid">{{'Mark as Paid'| translate}}</button>
       </div>
     </form>
   </div>

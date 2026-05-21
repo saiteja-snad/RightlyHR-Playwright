@@ -683,9 +683,12 @@ export class ClaimsandexpensesForYourRoleRequestComponent
     const requestBody = {
       isVerified: true,
       verifiedBy: this.empinfo.employeeId?.toString(),
-      verifiedByName: `${this.empinfo.firstName || ''} ${this.empinfo.lastName || ''}`.trim(),
-      comments: formData.comments,
-      status: 'Verified'
+      status: 'Verified',
+      meta: JSON.stringify({
+        verifiedBy: this.empinfo.employeeId?.toString(),
+        verifiedComments: formData.comments,
+        verifiedOn: moment().format('YYYY-MM-DD')
+      })
     };
 
     this.http.putData(`Expenses_Header/ExpensesItemUpdate/${verifiedItem.expenseitem_id}`, requestBody)
@@ -806,10 +809,12 @@ confirmApproval(modal: any) {
 
   const requestBody = {
     isVerified: true,
-    verifiedBy: this.empinfo.employeeId?.toString(),
-    verifiedByName: `${this.empinfo.firstName || ''} ${this.empinfo.lastName || ''}`.trim(),
-    comments: formData.comments,
-    status: 'Rejected'
+    status: 'Rejected',
+    meta: JSON.stringify({
+    rejectedBy: this.empinfo.employeeId?.toString(),
+    rejectedComments: formData.comments,
+    rejectedOn: moment().format('YYYY-MM-DD')
+  })
   };
 
   this.http.putData(`Expenses_Header/ExpensesItemUpdate/${verifiedItem.expenseitem_id}`, requestBody)

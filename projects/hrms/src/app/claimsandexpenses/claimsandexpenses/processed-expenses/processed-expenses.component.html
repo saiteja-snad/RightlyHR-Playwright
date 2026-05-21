@@ -173,10 +173,10 @@
       <div >
         <div *ngFor="let comment of commentsrecivced" class="card p-3 mb-3">
           <div class="mb-0">
-            <p><b>{{ 'Processed by' | translate }}:</b> {{ comment.addedName }} </p>
-            <p><b>{{ 'Processed by ID' | translate }}:</b> {{ comment.addedByFusionEmpId }} </p>
-            <p><b>{{ 'Date' | translate }}:</b> {{ comment.addedDate | date: 'short' }} </p>
-            <p><b>{{ 'Status' | translate }}:</b>{{ 'Processed' | translate }}</p>
+            <p><b>{{ 'Processed by' | translate }}:</b> {{ comment?.addedName }}</p>
+            <p><b>{{ 'Processed by ID' | translate }}:</b> {{ comment?.addedByFusionEmpId }}</p>
+            <p><b>{{ 'Date' | translate }}:</b> {{ comment?.addedDate | dateformat }}</p>
+            <p><b>{{ 'Status' | translate }}:</b> {{ comment.action }}</p>
             <!-- <p> <b>Comments:</b> {{ comment.comments }} </p> -->
           </div>
         </div>

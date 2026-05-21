@@ -466,16 +466,15 @@
 <ng-template #markAsPaid let-modal>
   <div class="result-popup-content" ngbAutofocus>
     <div>
-      <app-confirmation-icon />
-      <p class="confirmation-text pt-3">{{'Are you sure you want to Mark as Paid?' | translate}}</p>
+      <p class="confirmation-text pt-3">{{'Confirm Payment Details' | translate}}</p>
     </div>
     <form autocomplete="off" [formGroup]="markAsPaidForm" (ngSubmit)="markasPaid(markAsPaidForm)">
       <div class="custom-main-popup-content">
         <div class="mb-3">
           <label for="comments" class="custom-label mb-2">{{'Payment Date' | translate}}<span
               class="text-danger">*</span></label>
-          <input class="form-control custom-input mb-3" id="paymentDate" placeholder="Select Payment Date"
-            formControlName="paymentDate" type="date">
+          <input class="form-control custom-input mb-3" id="paymentDate"  placeholder="Select Payment Date"
+            formControlName="paymentDate" type="date" [min]="minPaymentDate">
           <div class="error-msg"
             *ngIf="markAsPaidForm.get('paymentDate')?.touched && markAsPaidForm.get('paymentDate')?.invalid">
             <div *ngIf="markAsPaidForm.get('paymentDate')?.errors?.['required']">Payment Date is required.</div>

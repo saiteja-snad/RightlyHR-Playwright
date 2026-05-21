@@ -246,10 +246,16 @@ export class ClaimsandexpensesForYourRoleRequestComponent
     this.intializeApproveForm();
     this.selectedLeaveData = request;
   }
+  minPaymentDate!: string;
   openMarkAsPaidModal(content: any, request: ExpenseApprovalResponse) {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
     this.intializeMarkAsPaidForm();
     this.selectedLeaveData = request;
+    const appliedDate = moment(request.entity.applied_date);
+    const today = moment();
+  // Get latest date between applied date and today
+  this.minPaymentDate = moment.max(appliedDate, today).format('YYYY-MM-DD');
+    console.log("selectedLeaveDatagvhcvbn",this.selectedLeaveData)
   }
   openRequiredCalrificationModal(content: any, request: ExpenseApprovalResponse) {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
@@ -411,6 +417,9 @@ export class ClaimsandexpensesForYourRoleRequestComponent
         },
         error: (reason: any) => {
           this.modalService.dismissAll();
+          reason.error.Message = reason.error.Message
+            .replace(/^One or more errors occurred\.\s*/i, '')
+            .replace(/[()]/g, '');
           this.sharedModalService.openErrorModal(reason.error.Message);
         },
         complete: () => {

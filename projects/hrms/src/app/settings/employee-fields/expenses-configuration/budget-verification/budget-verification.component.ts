@@ -87,7 +87,7 @@ export class BudgetVerificationComponent {
     this.subscription = this.http.postdata("ExpensesCheckListConfiguration", payload).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data: any) => {
         this.modalService.dismissAll()
-        this.conformationPopup.openSuccessModal("Expense CheckList added successfully");
+        this.conformationPopup.openSuccessModal("Expense Checklist added successfully");
         f.reset();
         this.getExpenses();
       },
@@ -150,7 +150,7 @@ export class BudgetVerificationComponent {
           this.selectedExpensesId = null
           this.modalService.dismissAll()
           this.getExpenses()
-          this.conformationPopup.openSuccessModal('Expense CheckList updated successfully')
+          this.conformationPopup.openSuccessModal('Expense Checklist updated successfully')
         }
       },
       error: (err) => {
@@ -169,7 +169,7 @@ export class BudgetVerificationComponent {
     this.subscription = this.http.deleteData(`ExpensesCheckListConfiguration/${this.selectedExpensesId}`).subscribe({
       next: (data: any) => {
         this.modalService.dismissAll()
-        this.conformationPopup.openSuccessModal("Expense CheckList deleted successfully")
+        this.conformationPopup.openSuccessModal("Expense Checklist deleted successfully")
         this.getExpenses();
       },
       error: (reason: any) => {

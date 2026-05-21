@@ -116,19 +116,19 @@
                             <textarea type="text" class="form-control custom-input" rows="3"
                                 formControlName="description" [minlength]="5" maxlength="250"
                                 placeholder="Please enter description"></textarea>
-                            <div class="textarea-count-text">{{ expensebudgetForm.get(" description")?.value?.length ||
+                            <div class="textarea-count-text">{{ expensebudgetForm.get('description')?.value?.length ||
                                 0
                                 }}/250</div>
                             <div class="error-msg"
-                                *ngIf="expensebudgetForm.get(' description')?.touched && expensebudgetForm.get(' description')?.invalid">
-                                <div *ngIf="expensebudgetForm.get(' description')?.errors?.['required']"> {{
+                                *ngIf="expensebudgetForm.get('description')?.touched && expensebudgetForm.get('description')?.invalid">
+                                <div *ngIf="expensebudgetForm.get('description')?.errors?.['required']"> {{
                                     'Description is required' | translate }}</div>
                             </div>
-                            <div *ngIf="expensebudgetForm.get(' description')?.errors?.['maxCharacters']"
+                            <div *ngIf="expensebudgetForm.get('description')?.errors?.['maxCharacters']"
                                 class="error-msg">
                                 {{ 'Description must be between 5-250 characters' | translate}}
                             </div>
-                            <div *ngIf="expensebudgetForm.get(' description')?.errors?.['minCharacters']"
+                            <div *ngIf="expensebudgetForm.get('description')?.errors?.['minCharacters']"
                                 class="error-msg">
                                 {{ 'Description must be between 5-250 characters' | translate}}
                             </div>
@@ -201,7 +201,7 @@
                             <textarea type="text" class="form-control custom-input" rows="3"
                                 formControlName="descriptionupdate" [minlength]="5" maxlength="250"
                                 placeholder="Please enter description"></textarea>
-                            <div class="textarea-count-text">{{ expensebudgetUpdateForm.get("descriptionupdate")?.value?.length ||
+                            <div class="textarea-count-text">{{ expensebudgetUpdateForm.get('descriptionupdate')?.value?.length ||
                                 0
                                 }}/250</div>
                             <div class="error-msg"

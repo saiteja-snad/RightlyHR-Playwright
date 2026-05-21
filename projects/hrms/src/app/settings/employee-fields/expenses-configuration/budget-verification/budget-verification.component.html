@@ -13,6 +13,8 @@
                 <thead>
                     <th>{{'Type' |translate}}</th>
                     <th>{{'Applicable For' |translate}}</th>
+                    <th class="text-center">{{'isMandatory' |translate}}</th>
+                    <th class="text-center">{{'Description' |translate}}</th>
                     <th class="text-center" *ngIf="rbac.allowedToAccess('Expense Checklist Configuration.update') || 
                     rbac.allowedToAccess('Expense Checklist Configuration.delete')">{{'Action' | translate}}</th>
                 </thead>
@@ -20,6 +22,14 @@
                     <tr *ngFor="let exp of budgetchecklist">
                         <td>{{exp.policyType}}</td>
                         <td>{{exp.applicableFor}}</td>
+                        <td class="text-center">{{exp.isMandatory ? 'Yes' : 'No'}}</td>
+                        <td class="text-center">
+                            <div *ngIf="exp.description; else noDescription">
+                                <app-info-icon class="cursor" ngbPopover="{{ exp?.description}}" container="body">
+                                </app-info-icon>
+                            </div>
+                            <ng-template #noDescription>NA</ng-template>
+                        </td>
                           <td class="text-center"
                             *ngIf="rbac.allowedToAccess('Expense Checklist Configuration.update') || rbac.allowedToAccess('Expense Checklist Configuration.delete')">
                             <div class="dropdown">
@@ -79,6 +89,13 @@
                             <div class="error-msg"
                                 *ngIf="expensebudgetForm.get('policyType')?.hasError('maxlength') && expensebudgetForm.get('policyType')?.touched">
                                 Type cannot exceed 50 characters
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="form-check form-switch py-3">
+                                <input id="ismandatory-value" class="form-check-input" type="checkbox" formControlName="isMandatory"
+                                      />
+                                <label for="ismandatory-value" class="form-label custom-toggle-label">{{'isMandatory' | translate}}</label>
                             </div>
                         </div>
                         <div class="mb-3">
@@ -159,6 +176,13 @@
                             <div class="error-msg"
                                 *ngIf="expensebudgetUpdateForm.get('policyTypeupdate')?.hasError('maxlength') && expensebudgetUpdateForm.get('policyTypeupdate')?.touched">
                                 Type cannot exceed 50 characters
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="form-check form-switch py-3">
+                                <input id="ismandatory-value" class="form-check-input" type="checkbox" formControlName="isMandatoryupdate"
+                                      />
+                                <label for="ismandatory-value" class="form-label custom-toggle-label">{{'isMandatory' | translate}}</label>
                             </div>
                         </div>
                         <div class="mb-3">

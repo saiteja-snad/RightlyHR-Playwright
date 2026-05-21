@@ -363,4 +363,5 @@ export interface IExpensePolicy {
   createdBy: number;
   createdAt: string;
   checked?: boolean; // Add this line to track the checked state
+  isMandatory: boolean;
 }

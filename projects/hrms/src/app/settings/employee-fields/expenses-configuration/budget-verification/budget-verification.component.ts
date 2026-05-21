@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { FormValidationService } from '../../../../../../../preonboarding/src/app/common-services/form-validation.service';
 import { HttpService } from '../../../../services/http.service';
@@ -11,10 +11,11 @@ import { RbacService } from '../../../../services/rbac.service';
 import { Subject, Subscription, takeUntil } from 'rxjs';
 import { IExpensePolicy } from '../../../../Interfaces/claimsandexpenses.model';
 import { SelectModule } from 'primeng/select';
+import moment from 'moment';
 
 @Component({
   selector: 'app-budget-verification',
-  imports: [ReactiveFormsModule, TranslateModule, CommonModule,SelectModule],
+  imports: [ReactiveFormsModule, TranslateModule, CommonModule,SelectModule,NgbPopoverModule],
   templateUrl: './budget-verification.component.html',
   styleUrl: './budget-verification.component.scss'
 })
@@ -53,12 +54,8 @@ export class BudgetVerificationComponent {
     this.expensebudgetForm = this.fb.group({
       policyType: ['', [Validators.required, Validators.maxLength(50), Validators.pattern(/^[^\s].*$/)]],
       applicableFor: ['', [Validators.required, Validators.maxLength(50), Validators.pattern(/^[^\s].*$/)]],
-      description: [
-        '',
-        [
-          Validators.maxLength(250)
-        ]
-      ],
+      description: ['',[Validators.maxLength(250)]],
+      isMandatory: [false]
     });
   }
 
@@ -66,12 +63,8 @@ export class BudgetVerificationComponent {
     this.expensebudgetUpdateForm = this.fb.group({
       policyTypeupdate: ['', [Validators.required, Validators.maxLength(50), Validators.pattern(/^[^\s].*$/)]],
       applicableForupdate: ['', [Validators.required, Validators.maxLength(50), Validators.pattern(/^[^\s].*$/)]],
-      descriptionupdate: [
-        '',
-        [
-          Validators.maxLength(250)
-        ]
-      ],
+      descriptionupdate: [ '',[Validators.maxLength(250)],],
+      isMandatoryupdate: [false]
     });
   }
 
@@ -87,8 +80,8 @@ export class BudgetVerificationComponent {
       description: f.value.description,
       isDeleted: false,
       createdBy: parseInt(this.empinfo.employeeId),
-      createdAt: new Date(),
-
+      createdAt: moment().format('YYYY-MM-DD'),
+      isMandatory: f.value.isMandatory ? f.value.isMandatory : false,
     };
 
     this.subscription = this.http.postdata("ExpensesCheckListConfiguration", payload).pipe(takeUntil(this.destroy$)).subscribe({
@@ -147,8 +140,8 @@ export class BudgetVerificationComponent {
       createdBy: parseInt(this.empinfo.employeeId),
       createdAt: new Date(),
       updatedBy: parseInt(this.empinfo.employeeId),
-      updatedAt: new Date()
-
+      updatedAt: new Date(), 
+      isMandatory: this.expensebudgetUpdateForm.value.isMandatoryupdate ? this.expensebudgetUpdateForm.value.isMandatoryupdate : false
     };
 
     this.subscription = this.http.putData(`ExpensesCheckListConfiguration/${this.selectedExpensesId}`, payload).subscribe({

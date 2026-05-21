@@ -99,17 +99,10 @@
 
                   @if( leave.approvalHeader.currentapprovalStage ==
                   leave.approvalHeader.finalapprovalStage){
-                   @if(leave.entity.isCheckListRequired){
-                  <li (click)="expensesCheckList(leave,'Process')">
-                    <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{ "Process" | translate }}</a>
-                  </li>
-                  }
-                  @else{
                   <li (click)="openMarkAsPaidModal(markAsPaid, leave)">
                     <!-- <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{ "Process" | translate }}</a> -->
                      <a class="dropdown-item" ><i class="bi bi-check-circle me-2"></i>{{ "Mark as Paid" | translate }}</a>
                   </li>
-                  }
                   }
                   }
                   @if(rbac.allowedToAccess('For Role (Claims and Expenses).delete')) {

@@ -232,6 +232,7 @@ export interface IExpenseItems {
   finalapprovalStage: string;
   approvedType: string;
   requestedBy: number;
+  meta?:any;
 }
 export interface IExpenseHeaders {
   expenses_ID: number;

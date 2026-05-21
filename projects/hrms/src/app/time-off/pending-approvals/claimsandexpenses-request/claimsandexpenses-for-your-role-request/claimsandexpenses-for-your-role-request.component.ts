@@ -685,9 +685,9 @@ export class ClaimsandexpensesForYourRoleRequestComponent
       verifiedBy: this.empinfo.employeeId?.toString(),
       status: 'Verified',
       meta: JSON.stringify({
-        verifiedBy: this.empinfo.employeeId?.toString(),
-        verifiedComments: formData.comments,
-        verifiedOn: moment().format('YYYY-MM-DD')
+        addedBy: this.empinfo.employeeId?.toString(),
+        addedComments: formData.comments,
+        addedOn: moment().format('YYYY-MM-DD')
       })
     };
 
@@ -811,9 +811,9 @@ confirmApproval(modal: any) {
     isVerified: true,
     status: 'Rejected',
     meta: JSON.stringify({
-    rejectedBy: this.empinfo.employeeId?.toString(),
-    rejectedComments: formData.comments,
-    rejectedOn: moment().format('YYYY-MM-DD')
+    addedBy: this.empinfo.employeeId?.toString(),
+    addedComments: formData.comments,
+    addedOn: moment().format('YYYY-MM-DD')
   })
   };
 

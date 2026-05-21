@@ -92,6 +92,7 @@
               <th>{{ 'Expense Date' | translate }}</th>
               <th>{{ 'Expense Amount' | translate }}</th>
               <th>{{ 'Status' | translate }}</th>
+              <th>{{ 'Comments' | translate }}</th>
               <th>{{ 'Receipt Number' | translate }}</th>
               <th class="text-center">{{ 'Action' | translate }}</th>   
             </tr>
@@ -103,6 +104,13 @@
               <td>{{ item?.expense_Date | date: 'dd-MM-yyyy' }}</td>
               <td>{{ item?.expense_Amount | number: '1.2-2' }}</td>
               <td>{{ item?.status }}</td>
+              <td class="text-center">
+             <div *ngIf="item.meta; else noDescription">
+              <app-info-icon class="cursor" ngbPopover="{{ item?.meta?.addedComments }}" container="body">
+              </app-info-icon>
+            </div>
+            <ng-template #noDescription>NA</ng-template>
+            </td>
               <td>{{ item?.receipt_Number }}</td>
               <td class="text-center">
                 <div class="d-flex gap-2">

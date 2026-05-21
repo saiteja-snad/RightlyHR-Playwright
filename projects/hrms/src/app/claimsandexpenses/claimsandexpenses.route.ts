@@ -20,7 +20,7 @@ export default [
             { path: 'pending', component: PendingExpensesComponent, canActivate: [PermissionsGuard], data: { permission: 'Pending Tab.view' } },
             { path: 'processed', component: ProcessedExpensesComponent, canActivate: [PermissionsGuard], data: { permission: 'Processed Tab.view' } },
             { path: 'rejected', component: RejectedExpensesComponent, canActivate: [PermissionsGuard], data: { permission: 'Rejected Tab.view' } },
-            { path: 'required-clarification', component: RequiredClarificationComponent, canActivate: [PermissionsGuard], data: { permission: 'Required Clarification Tab.view' } },
+            { path: 'required-clarification', component: RequiredClarificationComponent, canActivate: [PermissionsGuard], data: { permission: 'Expense Clarifications Tab.view' } },
             // { path: '', redirectTo: 'draft', pathMatch: 'full' },
         ]
     }

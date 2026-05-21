@@ -197,7 +197,7 @@ export const permissionsData = [
   { fields: 'Pending Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Processed Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Rejected Tab', View: false, Update: false, Create: false, Delete: false },
-  { fields: 'Required Clarification Tab', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Expense Clarifications Tab', View: false, Update: false, Create: false, Delete: false },
 
 
   //Org Hirarchy Tabs Section

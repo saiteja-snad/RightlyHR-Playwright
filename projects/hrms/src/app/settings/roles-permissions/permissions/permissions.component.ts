@@ -611,7 +611,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Pending Tab',
     'Processed Tab',
     'Rejected Tab',
-    "Required Clarification Tab"
+    "Expense Clarifications Tab"
   ];
   itSupportModule = ['Team Tickets Tab', 'My Tickets Tab'];
   TeamTicketsTabs = [

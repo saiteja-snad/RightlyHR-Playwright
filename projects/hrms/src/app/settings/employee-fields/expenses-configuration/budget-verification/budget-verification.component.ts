@@ -28,10 +28,10 @@ export class BudgetVerificationComponent {
   selectedExpensesId: any;
   subscription!: Subscription;
   applicableforoption = [
-    { label: 'TM', value: 'TM' },
-    { label: 'RM', value: 'RM' },
+    // { label: 'TM', value: 'TM' },
+    // { label: 'RM', value: 'RM' },
     { label: 'HR', value: 'HR' },
-    { label: 'Role', value: 'ROLE' }
+    // { label: 'Role', value: 'ROLE' }
   ];
   constructor(
     public router: Router,

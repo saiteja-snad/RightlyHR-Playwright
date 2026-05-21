@@ -672,6 +672,54 @@ openMarkAsPaidModal(content: any, request: ExpenseApprovalResponse) {
         }
       });
   }
+  handleVerifyReject(verifyForm: FormGroup): void {
+  if (!verifyForm.valid || !this.selectedItem) return;
+
+  const formData = verifyForm.value;
+  const verifiedItem = this.selectedItem;
+
+  const requestBody = {
+    isVerified: true,
+    verifiedBy: this.empinfo.employeeId?.toString(),
+    verifiedByName: `${this.empinfo.firstName || ''} ${this.empinfo.lastName || ''}`.trim(),
+    comments: formData.comments,
+    status: 'Rejected'
+  };
+
+  this.http.putData(`Expenses_Header/ExpensesItemUpdate/${verifiedItem.expenseitem_id}`, requestBody)
+    .pipe(takeUntil(this.destroy$))
+    .subscribe({
+      next: () => {
+        // Close only the Verify modal
+        this.verifyModalRef?.close();
+
+        // Show success popup
+        this.sharedModalService.openSuccessModal('Expense item rejected successfully');
+
+        // Update local UI immediately
+        if (this.expenseheaderiteams?.expenseitem?.length) {
+          const idx = this.expenseheaderiteams.expenseitem.findIndex(
+            it => it.expenseitem_id === verifiedItem.expenseitem_id
+          );
+          if (idx > -1) {
+            this.expenseheaderiteams.expenseitem[idx].isVerified = true;
+          }
+        }
+
+        this.selectedItem = null;
+
+        // Update verified IDs for template checks
+        this.verifiedExpenseIds.push(verifiedItem.expenseitem_id);
+
+        // Refresh headers in background, but the modal stays open
+        this.getAllPendingApprovals();
+      },
+      error: (err: any) => {
+        this.verifyModalRef?.close();
+        this.sharedModalService.openErrorModal(err?.error?.Message || 'Verification failed');
+      }
+    });
+}
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();

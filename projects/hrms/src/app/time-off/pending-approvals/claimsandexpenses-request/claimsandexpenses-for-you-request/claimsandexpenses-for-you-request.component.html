@@ -609,7 +609,7 @@
                     @if (!(item?.isVerified === true|| verifiedExpenseIds?.includes(item?.expenseitem_id ?? 0))) {
                       <!-- @if ((item?.isVerified === false)) { -->
                     <li>
-                      <a class="dropdown-item" (click)="openRejectModal(rejectmodal, expenseheaderiteams)">
+                      <a class="dropdown-item" (click)="openVerifyModal(item,Verificationreject)">
                         <i class="bi bi-x-circle me-2"></i>{{ 'Reject' | translate }}
                       </a>
                     </li>
@@ -629,5 +629,35 @@
         </div>
       </div>
     </div>
+  </div>
+</ng-template>
+
+
+<ng-template #Verificationreject let-modal>
+  <div class="result-popup-content" ngbAutofocus>
+    <div>
+      <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
+      <p class="confirmation-text pt-3">{{'Are you sure you want to Reject?' | translate}}</p>
+    </div>
+    <form autocomplete="off" [formGroup]="verifyForm" (ngSubmit)="handleVerifyReject(verifyForm)">
+      <div class="custom-main-popup-content">
+        <label for="comments" class="form-label custom-label mb-2">{{'Comments' | translate}}<span
+            class="text-danger">*</span></label>
+        <textarea class="form-control custom-input" id="comments" placeholder="Please provide comments"
+          formControlName="comments" maxlength="250"
+          (keydown)="formsValidation.restrictInitialSpace($event)"></textarea>
+        <!-- Character counter -->
+        <div class="error-msg" *ngIf="verifyForm.get('comments')?.touched && verifyForm.get('comments')?.invalid">
+          <div *ngIf="verifyForm.get('comments')?.errors?.['required']">Comment is required.</div>
+          <div *ngIf="verifyForm.get('comments')?.errors?.['maxlength']">Comment cannot exceed 250 characters.</div>
+        </div>
+        <div class="textarea-count-text">{{ verifyForm.get('comments')?.value?.length || 0 }}/250
+        </div>
+      </div>
+      <div class="custom-modal-footer">
+        <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss();">{{'Cancel'|translate}}</button>
+        <button type="submit" class="custom-btn btn-primary" [disabled]="verifyForm.invalid">{{'Reject'| translate}}</button>
+      </div>
+    </form>
   </div>
 </ng-template>

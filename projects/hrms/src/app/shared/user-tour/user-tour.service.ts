@@ -26,10 +26,51 @@ export class UserTourService implements OnDestroy {
     this.initDriver();
   }
 
-  // Arrow function preserves 'this' — used for add/removeEventListener
   private onSkipClickDelegate = (event: MouseEvent) => {
-    // No-op — skip is handled directly via skipButton.onclick in onPopoverRender
+    const target =
+      event.target instanceof Element
+        ? event.target
+        : (event.target as Node | null)?.parentElement;
+    const skipButton = target?.closest('.rhr-tour-skip-btn') as HTMLElement | null;
+    if (!skipButton) return;
+
+    event.stopImmediatePropagation();
+    event.stopPropagation();
+    event.preventDefault();
+    void this.handleSkip();
   };
+
+  private async handleSkip(): Promise<void> {
+    try {
+      this.isTourCompletedManually = true;
+      this.tourInProgress = false;
+      this.clearPersistedStep();
+      await this.completeTour('true');
+      try {
+        this.driverObj.destroy();
+      } catch (e) {
+        console.error('[Tour] Destroy after skip error:', e);
+      }
+    } catch (err) {
+      console.error('[Tour] Skip error:', err);
+    }
+  }
+
+  private async waitForElement(selector: string, timeoutMs = 1500): Promise<Element | null> {
+    const startedAt = Date.now();
+    while (Date.now() - startedAt < timeoutMs) {
+      const el = document.querySelector(selector);
+      if (el) return el;
+      await new Promise<void>(resolve => setTimeout(resolve, 50));
+    }
+    return null;
+  }
+
+  private setPopoverVisible(visible: boolean): void {
+    const popover = document.getElementById('driver-popover-content') as HTMLElement | null;
+    if (!popover) return;
+    popover.style.visibility = visible ? 'visible' : 'hidden';
+  }
 
   private initDriver() {
     this.driverObj = driver({
@@ -72,13 +113,15 @@ export class UserTourService implements OnDestroy {
         }
 
         if (currentStepIndex === 1) {
+          this.setPopoverVisible(false);
           this.closeEllipsesTrigger.next();
-          this.router.navigate(['/menus/personalization']).then(() => {
-            setTimeout(() => {
-              this.persistStep(2);
-              this.driverObj.moveNext();
-            }, 800);
-          });
+          try {
+            await this.router.navigate(['/menus/personalization']);
+            await this.waitForElement('#menus-personalization-tab', 2000);
+          } finally {
+            this.persistStep(2);
+            this.driverObj.moveNext();
+          }
           return;
         }
 
@@ -88,6 +131,9 @@ export class UserTourService implements OnDestroy {
       },
 
       onPopoverRender: (popover: any) => {
+        if (popover?.wrapper) {
+          popover.wrapper.style.visibility = 'visible';
+        }
         const footerButtons: HTMLElement = popover.footerButtons;
         if (!footerButtons) return;
 
@@ -99,22 +145,6 @@ export class UserTourService implements OnDestroy {
         skipButton.innerText = 'Skip';
         skipButton.className = 'driver-popover-btn rhr-tour-skip-btn';
         skipButton.style.marginRight = 'auto';
-
-        // Use capture phase — fires before driver.js wrapper stopImmediatePropagation
-        skipButton.addEventListener('click', async (e) => {
-          e.stopImmediatePropagation();
-          e.stopPropagation();
-          e.preventDefault();
-          try {
-            this.isTourCompletedManually = true;
-            this.tourInProgress = false;
-            this.clearPersistedStep();
-            await this.completeTour('true');
-            this.driverObj.destroy();
-          } catch (err) {
-            console.error('[Tour] Skip error:', err);
-          }
-        }, true);
 
         footerButtons.insertBefore(skipButton, footerButtons.firstChild);
       },
@@ -132,7 +162,7 @@ export class UserTourService implements OnDestroy {
       },
 
       onDestroyed: async () => {
-        document.removeEventListener('click', this.onSkipClickDelegate);
+        document.removeEventListener('click', this.onSkipClickDelegate, true);
 
         if (this.tourInProgress && !this.isTourCompletedManually) {
           this.clearPersistedStep();
@@ -224,8 +254,8 @@ export class UserTourService implements OnDestroy {
   // ── Public API ────────────────────────────────────────────────────────────
 
   public async startTour(fromStep = 0): Promise<void> {
-    document.removeEventListener('click', this.onSkipClickDelegate);
-    document.addEventListener('click', this.onSkipClickDelegate);
+    document.removeEventListener('click', this.onSkipClickDelegate, true);
+    document.addEventListener('click', this.onSkipClickDelegate, true);
 
     this.driverObj.setSteps(this.STEPS);
     this.tourInProgress = true;
@@ -296,6 +326,6 @@ export class UserTourService implements OnDestroy {
   }
 
   ngOnDestroy() {
-    document.removeEventListener('click', this.onSkipClickDelegate);
+    document.removeEventListener('click', this.onSkipClickDelegate, true);
   }
 }

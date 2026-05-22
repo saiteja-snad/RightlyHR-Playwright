@@ -10,7 +10,7 @@ import { OpenModalService } from '../../services/open-modal.service';
 import { ConfirmationIconComponent } from '../../icons/confirmation-icon/confirmation-icon.component';
 import { HttpService } from '../../services/http.service';
 import { MenuOrderService, MENU_PREF_KEY } from '../../services/theme-service/menu-order.service';
-import { MenuRegistryService, MenuItemDef } from '../../services/theme-service/menu-registry.service';
+import { MenuRegistryService, MenuItemDef } from '../../shared/sidenav/menu-registry.service';
 import { UserPreferenceService } from '../../services/user-preference.service';
 
 @Component({

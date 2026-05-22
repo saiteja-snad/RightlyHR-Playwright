@@ -66,7 +66,7 @@ export class SidenavComponent implements OnInit, OnDestroy {
     private menuRegistry: MenuRegistryService,
     private appRef: ApplicationRef,
     private injector: EnvironmentInjector,
-    private userTourService: UserTourService
+    public userTourService: UserTourService
   ) {
     effect(() => {
       const order = this.menuOrderService.menuOrder();

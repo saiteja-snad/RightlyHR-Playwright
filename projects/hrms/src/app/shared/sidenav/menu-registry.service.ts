@@ -191,6 +191,14 @@ export class MenuRegistryService {
       personalizationIcon: '/main-menu-icons/card-management-icon.png',
       sidebarIcon: '/personalization/Mainmenu_Cards Management.png',
       ellipsesIcon: '/main-menu-icons/card-management-icon.png',
+      permission: { feature: 'Cards Management', action: 'view' }
+    },
+    {
+      label: 'Desk Allocation', route: '/desk', defaultLocation: 'ellipses', type: 'direct',
+      icon: '/main-menu-icons/desk-icon.png', activeIcon: '/main-menu-icons/computer-desk.png',
+      personalizationIcon: '/main-menu-icons/desk-icon.png',
+      sidebarIcon: '/personalization/Mainmenu_Desk.png',
+      ellipsesIcon: '/main-menu-icons/desk-icon.png',
       permission: { feature: 'Desk Allocation', action: 'view' }
     },
   ];

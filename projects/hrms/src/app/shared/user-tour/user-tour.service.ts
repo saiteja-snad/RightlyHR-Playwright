@@ -4,18 +4,19 @@ import { driver, Driver } from 'driver.js';
 import { HttpService } from '../../services/http.service';
 import { firstValueFrom, Subject } from 'rxjs';
 import { UserPreferenceService } from '../../services/user-preference.service';
-
-const TOUR_STEP_KEY = 'rhr_tour_active_step';
+import { TOUR_CONFIGS, TourConfig, TourActionContext } from './tour.config';
 
 @Injectable({ providedIn: 'root' })
 export class UserTourService implements OnDestroy {
-  private driverObj!: Driver;
 
-  public tourInProgress = false;
-
+  // ── Subjects consumed by the sidenav component ────────────────────────────
   public openEllipsesTrigger = new Subject<void>();
   public closeEllipsesTrigger = new Subject<void>();
 
+  // ── Engine state ──────────────────────────────────────────────────────────
+  public tourInProgress = false;
+  private driverObj!: Driver;
+  private activeTourConfig: TourConfig | null = null;
   private isTourCompletedManually = false;
 
   constructor(
@@ -26,356 +27,275 @@ export class UserTourService implements OnDestroy {
     this.initDriver();
   }
 
-  private onTourPointerDownDelegate = (event: PointerEvent) => {
-    if (!this.tourInProgress) return;
+  // ── Driver.js initialisation ──────────────────────────────────────────────
 
-    const target =
-      event.target instanceof Element
-        ? event.target
-        : (event.target as Node | null)?.parentElement;
-
-    const isInsidePopover = !!target?.closest('#driver-popover-content');
-    if (isInsidePopover) return;
-
-    event.stopImmediatePropagation();
-    event.stopPropagation();
-    event.preventDefault();
-  };
-
-  private onTourDblClickDelegate = (event: MouseEvent) => {
-    if (!this.tourInProgress) return;
-
-    const target =
-      event.target instanceof Element
-        ? event.target
-        : (event.target as Node | null)?.parentElement;
-
-    const isInsidePopover = !!target?.closest('#driver-popover-content');
-    if (isInsidePopover) return;
-
-    event.stopImmediatePropagation();
-    event.stopPropagation();
-    event.preventDefault();
-  };
-
-  private onSkipClickDelegate = (event: MouseEvent) => {
-    if (!this.tourInProgress) return;
-
-    const target =
-      event.target instanceof Element
-        ? event.target
-        : (event.target as Node | null)?.parentElement;
-
-    const isInsidePopover = !!target?.closest('#driver-popover-content');
-    if (!isInsidePopover) {
-      event.stopImmediatePropagation();
-      event.stopPropagation();
-      event.preventDefault();
-      return;
-    }
-
-    const skipButton = target?.closest('.rhr-tour-skip-btn') as HTMLElement | null;
-    if (!skipButton) return;
-
-    event.stopImmediatePropagation();
-    event.stopPropagation();
-    event.preventDefault();
-    void this.handleSkip();
-  };
-
-  private async handleSkip(): Promise<void> {
-    try {
-      this.isTourCompletedManually = true;
-      this.tourInProgress = false;
-      this.clearPersistedStep();
-      await this.completeTour('true');
-      try {
-        this.driverObj.destroy();
-      } catch (e) {
-        console.error('[Tour] Destroy after skip error:', e);
-      }
-    } catch (err) {
-      console.error('[Tour] Skip error:', err);
-    }
-  }
-
-  private async waitForElement(selector: string, timeoutMs = 1500): Promise<Element | null> {
-    const startedAt = Date.now();
-    while (Date.now() - startedAt < timeoutMs) {
-      const el = document.querySelector(selector);
-      if (el) return el;
-      await new Promise<void>(resolve => setTimeout(resolve, 50));
-    }
-    return null;
-  }
-
-  private setPopoverVisible(visible: boolean): void {
-    const popover = document.getElementById('driver-popover-content') as HTMLElement | null;
-    if (!popover) return;
-    popover.style.visibility = visible ? 'visible' : 'hidden';
-  }
-
-  private initDriver() {
+  private initDriver(): void {
     this.driverObj = driver({
       showProgress: true,
       animate: true,
       allowClose: false,
       overlayClickBehavior: () => {},
       smoothScroll: true,
-
       doneBtnText: 'Finish',
       nextBtnText: 'Next',
-
       showButtons: ['next', 'close'],
-
       popoverClass: 'rhr-tour-popover',
 
       onNextClick: async () => {
-        const currentStepIndex = this.driverObj.getActiveIndex()!;
-        const totalSteps = this.driverObj.getConfig().steps?.length || 0;
+        const idx = this.driverObj.getActiveIndex()!;
+        const total = this.driverObj.getConfig().steps?.length || 0;
 
-        if (currentStepIndex === totalSteps - 1) {
-          try {
-            this.isTourCompletedManually = true;
-            this.tourInProgress = false;
-            this.clearPersistedStep();
-            await this.completeTour('true');
-            this.driverObj.destroy();
-          } catch (e) {
-            console.error('[Tour] Finish error:', e);
-          }
+        if (idx === total - 1) {
+          await this.finishTour();
           return;
         }
 
-        if (currentStepIndex === 0) {
-          this.openEllipsesTrigger.next();
-          setTimeout(() => {
-            this.persistStep(1);
-            this.driverObj.moveNext();
-          }, 300);
-          return;
-        }
-
-        if (currentStepIndex === 1) {
+        // Run the current step's beforeNext hook if defined
+        const stepConfig = this.activeTourConfig?.steps[idx];
+        if (stepConfig?.beforeNext) {
           this.setPopoverVisible(false);
-          this.closeEllipsesTrigger.next();
           try {
-            await this.router.navigate(['/menus/personalization']);
-            await this.waitForElement('#menus-personalization-tab', 2000);
+            await stepConfig.beforeNext(this.buildActionContext());
           } finally {
-            this.persistStep(2);
-            this.driverObj.moveNext();
+            this.setPopoverVisible(true);
           }
-          return;
         }
 
-        const nextIndex = currentStepIndex + 1;
-        this.persistStep(nextIndex);
+        this.persistStep(idx + 1);
         this.driverObj.moveNext();
       },
 
       onPopoverRender: (popover: any) => {
-        if (popover?.wrapper) {
-          popover.wrapper.style.visibility = 'visible';
-        }
-        if (popover?.nextButton && !popover.nextButton.classList.contains('driver-popover-btn')) {
-          popover.nextButton.classList.add('driver-popover-btn');
-        }
+        if (popover?.wrapper) popover.wrapper.style.visibility = 'visible';
+
         const footerButtons: HTMLElement = popover.footerButtons;
         if (!footerButtons) return;
 
         const existing = footerButtons.querySelector('.rhr-tour-skip-btn');
         if (existing) existing.remove();
 
-        const skipButton = document.createElement('button');
-        skipButton.type = 'button';
-        skipButton.innerText = 'Skip';
-        skipButton.className = 'driver-popover-btn rhr-tour-skip-btn';
-        skipButton.style.marginRight = 'auto';
-
-        footerButtons.insertBefore(skipButton, footerButtons.firstChild);
+        const skipBtn = document.createElement('button');
+        skipBtn.type = 'button';
+        skipBtn.innerText = 'Skip';
+        skipBtn.className = 'driver-popover-btn rhr-tour-skip-btn';
+        skipBtn.style.marginRight = 'auto';
+        // Click handled by onSkipClick capture listener on document
+        footerButtons.insertBefore(skipBtn, footerButtons.firstChild);
       },
 
       onCloseClick: async () => {
-        try {
-          this.isTourCompletedManually = true;
-          this.tourInProgress = false;
-          this.clearPersistedStep();
-          await this.completeTour('true');
-          this.driverObj.destroy();
-        } catch (e) {
-          console.error('[Tour] Close error:', e);
-        }
+        await this.skipTour();
       },
 
-      onDestroyed: async () => {
-        document.removeEventListener('pointerdown', this.onTourPointerDownDelegate, true);
-        document.removeEventListener('dblclick', this.onTourDblClickDelegate, true);
-        document.removeEventListener('click', this.onSkipClickDelegate, true);
-
+      onDestroyed: () => {
+        this.removeEventListeners();
         this.isTourCompletedManually = false;
         this.tourInProgress = false;
       }
     });
   }
 
+  // ── Action context passed to step hooks ───────────────────────────────────
+
+  private buildActionContext(): TourActionContext {
+    return {
+      navigate: (route) => this.router.navigate([route]),
+      openEllipses: () => this.openEllipsesTrigger.next(),
+      closeEllipses: () => this.closeEllipsesTrigger.next(),
+      waitForElement: (selector, timeoutMs) => this.waitForElement(selector, timeoutMs)
+    };
+  }
+
+  // ── Tour lifecycle ────────────────────────────────────────────────────────
+
+  private async finishTour(): Promise<void> {
+    try {
+      this.isTourCompletedManually = true;
+      this.tourInProgress = false;
+      this.clearPersistedStep();
+      await this.saveTourCompletion();
+      this.driverObj.destroy();
+    } catch (e) {
+      console.error('[Tour] Finish error:', e);
+    }
+  }
+
+  private async skipTour(): Promise<void> {
+    try {
+      this.isTourCompletedManually = true;
+      this.tourInProgress = false;
+      this.clearPersistedStep();
+      await this.saveTourCompletion();
+      this.driverObj.destroy();
+    } catch (e) {
+      console.error('[Tour] Skip error:', e);
+    }
+  }
+
+  private async saveTourCompletion(): Promise<void> {
+    if (!this.activeTourConfig) return;
+    try {
+      const empInfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
+      const employeeId = empInfo?.employeeId;
+      if (!employeeId) return;
+      const payload = { employeeId, key: this.activeTourConfig.completionKey, value: 'true' };
+      await firstValueFrom(this.http.postdata('Employeedata/save-user-preference', payload));
+    } catch (error) {
+      console.error('[Tour] Failed to save tour completion:', error);
+    }
+  }
+
+  // ── Public API ────────────────────────────────────────────────────────────
+
+  /**
+   * Entry point called after login.
+   * Fetches all user preferences once, then checks each tour config.
+   * Shows the first incomplete tour found.
+   */
+  public async checkAndStartTours(): Promise<void> {
+    try {
+      const prefs = await this.userPrefService.getPreferences();
+
+      for (const config of TOUR_CONFIGS) {
+        const isCompleted = prefs?.[config.completionKey];
+        if (isCompleted === 'true' || isCompleted === true) continue;
+
+        // Found an incomplete tour — resume or start it
+        await this.resumeOrStart(config);
+        return; // Show one tour at a time
+      }
+    } catch (error) {
+      console.error('[Tour] checkAndStartTours error:', error);
+    }
+  }
+
+  /**
+   * Resumes from the persisted step or starts from step 0.
+   * Handles any required navigation/side-effects before driving.
+   */
+  private async resumeOrStart(config: TourConfig): Promise<void> {
+    this.activeTourConfig = config;
+    const savedStep = this.getPersistedStep(config.sessionKey);
+    const fromStep = savedStep ?? 0;
+
+    if (fromStep === 0) {
+      await this.startTour(config, 0);
+      return;
+    }
+
+    // Restore required state for the saved step
+    const stepConfig = config.steps[fromStep];
+    if (stepConfig?.requiredRoute) {
+      const currentUrl = this.router.url;
+      if (!currentUrl.startsWith(stepConfig.requiredRoute)) {
+        await this.router.navigate([stepConfig.requiredRoute]);
+        await this.waitForElement(stepConfig.element, 1500);
+      }
+    }
+
+    await this.startTour(config, fromStep);
+  }
+
+  private async startTour(config: TourConfig, fromStep: number): Promise<void> {
+    this.activeTourConfig = config;
+    this.addEventListeners();
+
+    // Map TourStepConfig → driver.js step format
+    const driverSteps = config.steps.map(s => ({
+      element: s.element,
+      popover: s.popover
+    }));
+
+    this.driverObj.setSteps(driverSteps as any);
+    this.tourInProgress = true;
+    this.isTourCompletedManually = false;
+    this.persistStep(fromStep, config.sessionKey);
+    this.driverObj.drive(fromStep);
+  }
+
   // ── Step persistence ──────────────────────────────────────────────────────
 
-  private persistStep(index: number): void {
-    sessionStorage.setItem(TOUR_STEP_KEY, String(index));
+  private persistStep(index: number, key?: string): void {
+    const storageKey = key ?? this.activeTourConfig?.sessionKey;
+    if (storageKey) sessionStorage.setItem(storageKey, String(index));
   }
 
   private clearPersistedStep(): void {
-    sessionStorage.removeItem(TOUR_STEP_KEY);
+    if (this.activeTourConfig?.sessionKey) {
+      sessionStorage.removeItem(this.activeTourConfig.sessionKey);
+    }
   }
 
-  private getPersistedStep(): number | null {
-    const val = sessionStorage.getItem(TOUR_STEP_KEY);
+  private getPersistedStep(sessionKey: string): number | null {
+    const val = sessionStorage.getItem(sessionKey);
     if (val === null) return null;
     const parsed = parseInt(val, 10);
     return isNaN(parsed) ? null : parsed;
   }
 
-  // ── Tour steps definition ─────────────────────────────────────────────────
+  // ── DOM helpers ───────────────────────────────────────────────────────────
 
-  private readonly STEPS: any[] = [
-    {
-      element: '#ellipses-menu-toggle',
-      popover: {
-        title: 'Access Additional Modules',
-        description: 'Click the Ellipsis (...) option in the RightlyHR sidebar to access additional modules and personalization settings.',
-        side: 'right',
-        align: 'start'
-      }
-    },
-    {
-      element: '#menu-item-Personalization',
-      popover: {
-        title: 'Open Personalization',
-        description: 'Select the Personalization menu to customize the appearance and navigation layout of your RightlyHR portal.',
-        side: 'right',
-        align: 'start'
-      }
-    },
-    {
-      element: '#menus-personalization-tab',
-      popover: {
-        title: 'Navigate to Menu Personalization',
-        description: 'Click on the Menu Personalization tab to manage the menus displayed in the application sidebar.',
-        side: 'right',
-        align: 'start'
-      }
-    },
-    {
-      element: '#draggable-menu-item-tour',
-      popover: {
-        title: 'Rearrange Menu Items',
-        description: 'Drag and drop menu items between the Primary Menu and Ellipses Menu to organize modules based on your daily usage and preference.',
-        side: 'bottom',
-        align: 'start'
-      }
-    },
-    {
-      element: '#apply-menu-changes-btn',
-      popover: {
-        title: 'Apply Menu Changes',
-        description: 'After updating the menu arrangement, click on the Apply Changes button to save and reflect the changes in the application sidebar.',
-        side: 'bottom',
-        align: 'start'
-      }
-    },
-    {
-      element: '#reset-menu-default-btn',
-      popover: {
-        title: 'Reset Default Layout',
-        description: 'Click on the Reset to Default button to restore the original RightlyHR menu configuration and layout.',
-        side: 'bottom',
-        align: 'start'
-      }
-    }
-  ];
-
-  // ── Public API ────────────────────────────────────────────────────────────
-
-  public async startTour(fromStep = 0): Promise<void> {
-    document.removeEventListener('pointerdown', this.onTourPointerDownDelegate, true);
-    document.removeEventListener('dblclick', this.onTourDblClickDelegate, true);
-    document.removeEventListener('click', this.onSkipClickDelegate, true);
-    document.addEventListener('pointerdown', this.onTourPointerDownDelegate, true);
-    document.addEventListener('dblclick', this.onTourDblClickDelegate, true);
-    document.addEventListener('click', this.onSkipClickDelegate, true);
-
-    this.driverObj.setSteps(this.STEPS);
-    this.tourInProgress = true;
-    this.isTourCompletedManually = false;
-
-    this.persistStep(fromStep);
-    this.driverObj.drive(fromStep);
+  private setPopoverVisible(visible: boolean): void {
+    const el = document.getElementById('driver-popover-content') as HTMLElement | null;
+    if (el) el.style.visibility = visible ? 'visible' : 'hidden';
   }
 
-  /**
-   * Checks tour completion status and either resumes from the persisted step
-   * or starts fresh. Handles navigation side-effects for steps that require
-   * the user to be on a specific route (e.g. step 1 needs ellipses open,
-   * steps 2+ need /menus/personalization).
-   */
-  public async checkAndStartTour(): Promise<void> {
-    try {
-      const data = await this.userPrefService.getPreferences();
-      if (!data || data.isTourCompleted === 'true' || data.isTourCompleted === true) {
-        return;
-      }
-
-      const savedStep = this.getPersistedStep();
-
-      if (savedStep === null || savedStep === 0) {
-        // Fresh start or reload on step 0
-        await this.startTour(0);
-        return;
-      }
-
-      // Resume from saved step — handle required side-effects per step
-      if (savedStep === 1) {
-        // Step 1 needs ellipses open
-        this.openEllipsesTrigger.next();
-        setTimeout(() => this.startTour(1), 300);
-        return;
-      }
-
-      if (savedStep >= 2) {
-        // Steps 2–5 require being on /menus/personalization
-        const currentUrl = this.router.url;
-        if (!currentUrl.startsWith('/menus/')) {
-          await this.router.navigate(['/menus/personalization']);
-          setTimeout(() => this.startTour(savedStep), 800);
-        } else {
-          await this.startTour(savedStep);
-        }
-        return;
-      }
-
-      await this.startTour(savedStep);
-    } catch (error) {
-      console.error('[Tour] checkAndStartTour error:', error);
+  public async waitForElement(selector: string, timeoutMs = 1500): Promise<Element | null> {
+    const deadline = Date.now() + timeoutMs;
+    while (Date.now() < deadline) {
+      const el = document.querySelector(selector);
+      if (el) return el;
+      await new Promise<void>(r => setTimeout(r, 50));
     }
+    return null;
   }
 
-  private async completeTour(value: string = 'true'): Promise<void> {
-    this.tourInProgress = false;
-    try {
-      const empInfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
-      const employeeId = empInfo?.employeeId;
-      if (!employeeId) return;
-      const payload = { employeeId, key: 'isTourCompleted', value };
-      await firstValueFrom(this.http.postdata('Employeedata/save-user-preference', payload));
-    } catch (error) {
-      console.error('[Tour] Failed to save tour status', error);
+  // ── Event listeners ───────────────────────────────────────────────────────
+
+  private onPointerDown = (e: PointerEvent) => {
+    if (!this.tourInProgress) return;
+    const target = (e.target instanceof Element ? e.target : (e.target as any)?.parentElement) as Element | null;
+    if (!target?.closest('#driver-popover-content')) {
+      e.stopImmediatePropagation(); e.stopPropagation(); e.preventDefault();
     }
+  };
+
+  private onDblClick = (e: MouseEvent) => {
+    if (!this.tourInProgress) return;
+    const target = (e.target instanceof Element ? e.target : (e.target as any)?.parentElement) as Element | null;
+    if (!target?.closest('#driver-popover-content')) {
+      e.stopImmediatePropagation(); e.stopPropagation(); e.preventDefault();
+    }
+  };
+
+  private onSkipClick = (e: MouseEvent) => {
+    if (!this.tourInProgress) return;
+    const target = (e.target instanceof Element ? e.target : (e.target as any)?.parentElement) as Element | null;
+    const isInsidePopover = !!target?.closest('#driver-popover-content');
+    if (!isInsidePopover) {
+      e.stopImmediatePropagation(); e.stopPropagation(); e.preventDefault();
+      return;
+    }
+    const skipBtn = target?.closest('.rhr-tour-skip-btn') as HTMLElement | null;
+    if (!skipBtn) return;
+    e.stopImmediatePropagation(); e.stopPropagation(); e.preventDefault();
+    void this.skipTour();
+  };
+
+  private addEventListeners(): void {
+    this.removeEventListeners();
+    document.addEventListener('pointerdown', this.onPointerDown, true);
+    document.addEventListener('dblclick', this.onDblClick, true);
+    document.addEventListener('click', this.onSkipClick, true);
   }
 
-  ngOnDestroy() {
-    document.removeEventListener('pointerdown', this.onTourPointerDownDelegate, true);
-    document.removeEventListener('dblclick', this.onTourDblClickDelegate, true);
-    document.removeEventListener('click', this.onSkipClickDelegate, true);
+  private removeEventListeners(): void {
+    document.removeEventListener('pointerdown', this.onPointerDown, true);
+    document.removeEventListener('dblclick', this.onDblClick, true);
+    document.removeEventListener('click', this.onSkipClick, true);
+  }
+
+  ngOnDestroy(): void {
+    this.removeEventListeners();
   }
 }

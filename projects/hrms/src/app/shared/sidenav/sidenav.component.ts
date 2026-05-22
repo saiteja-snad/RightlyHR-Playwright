@@ -111,7 +111,7 @@ export class SidenavComponent implements OnInit, OnDestroy {
     });
 
     setTimeout(() => {
-      this.userTourService.checkAndStartTour();
+      this.userTourService.checkAndStartTours();
     }, 2000); // Give some time for initial load
   }
 

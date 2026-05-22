@@ -242,8 +242,8 @@ export class UserTourService implements OnDestroy {
     {
       element: '#ellipses-menu-toggle',
       popover: {
-        title: 'Ellipses Menu',
-        description: 'Click here to find more modules and personalization options.',
+        title: 'Access Additional Modules',
+        description: 'Click the Ellipsis (...) option in the RightlyHR sidebar to access additional modules and personalization settings.',
         side: 'right',
         align: 'start'
       }
@@ -251,8 +251,8 @@ export class UserTourService implements OnDestroy {
     {
       element: '#menu-item-Personalization',
       popover: {
-        title: 'Personalization',
-        description: 'You can customize your menu layout here. Click Next to explore!',
+        title: 'Open Personalization',
+        description: 'Select the Personalization menu to customize the appearance and navigation layout of your RightlyHR portal.',
         side: 'right',
         align: 'start'
       }
@@ -260,8 +260,8 @@ export class UserTourService implements OnDestroy {
     {
       element: '#menus-personalization-tab',
       popover: {
-        title: 'Menu Personalization',
-        description: 'This is the Menu Personalization section where you can rearrange your sidebar and ellipses menu items.',
+        title: 'Navigate to Menu Personalization',
+        description: 'Click on the Menu Personalization tab to manage the menus displayed in the application sidebar.',
         side: 'right',
         align: 'start'
       }
@@ -269,8 +269,8 @@ export class UserTourService implements OnDestroy {
     {
       element: '#draggable-menu-item-tour',
       popover: {
-        title: 'Customizable Menus',
-        description: 'You can drag and drop items to change their position in the sidebar or move them to the ellipses menu.',
+        title: 'Rearrange Menu Items',
+        description: 'Drag and drop menu items between the Primary Menu and Ellipses Menu to organize modules based on your daily usage and preference.',
         side: 'bottom',
         align: 'start'
       }
@@ -278,8 +278,8 @@ export class UserTourService implements OnDestroy {
     {
       element: '#apply-menu-changes-btn',
       popover: {
-        title: 'Apply Changes',
-        description: 'Once you are happy with your custom layout, click here to save it.',
+        title: 'Apply Menu Changes',
+        description: 'After updating the menu arrangement, click on the Apply Changes button to save and reflect the changes in the application sidebar.',
         side: 'bottom',
         align: 'start'
       }
@@ -287,8 +287,8 @@ export class UserTourService implements OnDestroy {
     {
       element: '#reset-menu-default-btn',
       popover: {
-        title: 'Reset to Default',
-        description: 'Changed your mind? You can always reset your menu layout to the original default state.',
+        title: 'Reset Default Layout',
+        description: 'Click on the Reset to Default button to restore the original RightlyHR menu configuration and layout.',
         side: 'bottom',
         align: 'start'
       }

@@ -30,7 +30,9 @@
       <div class="custom-sub-tabs-container">
         <ul class="nav flex-column">
           <li class="nav-item" *ngFor="let tab of navLinks">
-            <div class="nav-link" [routerLink]="[tab.route]" routerLinkActive="active-nav-link">
+            <div class="nav-link"
+                 [id]="tab.route === '/menus/personalization' ? 'menus-personalization-tab' : ''"
+                 [routerLink]="[tab.route]" routerLinkActive="active-nav-link">
               <img [src]="tab.icon" alt="Icon" class="icon mb-2">
               <div>{{ tab.label }}</div>
             </div>

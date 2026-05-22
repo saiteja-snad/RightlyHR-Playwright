@@ -76,7 +76,8 @@ export class UserTourService implements OnDestroy {
     this.driverObj = driver({
       showProgress: true,
       animate: true,
-      allowClose: true,
+      allowClose: false,
+      overlayClickBehavior: () => {},
       smoothScroll: true,
 
       doneBtnText: 'Finish',
@@ -163,11 +164,6 @@ export class UserTourService implements OnDestroy {
 
       onDestroyed: async () => {
         document.removeEventListener('click', this.onSkipClickDelegate, true);
-
-        if (this.tourInProgress && !this.isTourCompletedManually) {
-          this.clearPersistedStep();
-          await this.completeTour('true');
-        }
 
         this.isTourCompletedManually = false;
         this.tourInProgress = false;

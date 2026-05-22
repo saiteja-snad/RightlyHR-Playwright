@@ -1,4 +1,4 @@
-<div class="sidenav-main-container">
+<div class="sidenav-main-container" id="main-sidebar">
     <div class="sidnav-main-content">
         <ul class="nav-items-list text-center ps-0">
 
@@ -96,6 +96,7 @@
                 <div class="btn-group dropend custom-main-menu-dropdown">
                     <a data-bs-toggle="dropdown" aria-expanded="false"
                        class="custom-main-menu-toggle ellipses-dropdown-toggle"
+                       id="ellipses-menu-toggle"
                        (click)="onEllipsesToggleClick()">
                         <img src="main-menu-icons/white-dots.png" alt="Icons" class="more-menu-icon">
                     </a>
@@ -110,6 +111,7 @@
 
                             <div class="grid-item"
                                 *ngFor="let module of filteredModules; trackBy: trackByRoute"
+                                [id]="'menu-item-' + module.label.replace(' ', '-')"
                                 cdkDrag
                                 (mousedown)="$event.stopPropagation()"
                                 (click)="selectDropdownModule(module)"

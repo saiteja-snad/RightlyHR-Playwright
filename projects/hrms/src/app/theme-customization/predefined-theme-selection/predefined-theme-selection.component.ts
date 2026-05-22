@@ -7,6 +7,7 @@ import { HttpService } from '../../services/http.service';
 import { Subscription } from 'rxjs';
 import { TranslateModule } from '@ngx-translate/core';
 import { ThemeActionService } from '../theme-action.service';
+import { UserPreferenceService } from '../../services/user-preference.service';
 
 @Component({
   selector: 'app-predefined-theme-selection',
@@ -47,7 +48,8 @@ export class PredefinedThemeSelectionComponent implements OnInit, OnDestroy {
     private predefinedThemesService: PredefinedThemesService,
     private openModalService: OpenModalService,
     private http: HttpService,
-    private themeAction: ThemeActionService
+    private themeAction: ThemeActionService,
+    private userPrefService: UserPreferenceService
   ) {}
 
   ngOnInit(): void {
@@ -59,19 +61,19 @@ export class PredefinedThemeSelectionComponent implements OnInit, OnDestroy {
     );
   }
 
-  getThemeData() {
-    this.subscription = this.http.getData(`Employeedata/get-user-preference/${this.empinfo?.employeeId}`).subscribe({
-      next: (data: any) => {
-        this.selectedTheme = data?.data?.['RHR_WEB_Theme'] || 'default-theme';
-        this.selectedFont = data?.data?.['RHR_WEB_Font'] || 'Roboto-flex';
+  async getThemeData(forceRefresh = false) {
+    try {
+      const data = await this.userPrefService.getPreferences(forceRefresh);
+      if (data) {
+        this.selectedTheme = data['RHR_WEB_Theme'] || 'default-theme';
+        this.selectedFont = data['RHR_WEB_Font'] || 'Roboto-flex';
         this.predefinedThemesService.setTheme(this.selectedTheme);
         this.predefinedThemesService.setFont(this.selectedFont);
-      },
-      error: () => {
-        this.predefinedThemesService.setTheme('default-theme');
-        this.predefinedThemesService.setFont('Roboto-flex');
-      },
-    });
+      }
+    } catch (error) {
+      this.predefinedThemesService.setTheme('default-theme');
+      this.predefinedThemesService.setFont('Roboto-flex');
+    }
   }
 
   selectedThemeColor(theme: string) {
@@ -88,6 +90,7 @@ export class PredefinedThemeSelectionComponent implements OnInit, OnDestroy {
         this.predefinedThemesService.setTheme(this.selectedTheme);
         this.themeAction.canApplyTheme.set(false);
         this.openModalService.openSuccessModal('Theme Applied Successfully');
+        this.getThemeData(true);
       },
       error: (err) => {
         console.error('Error saving theme preference:', err);
@@ -110,6 +113,7 @@ export class PredefinedThemeSelectionComponent implements OnInit, OnDestroy {
         this.predefinedThemesService.setFont(this.selectedFont);
         this.themeAction.canApplyFont.set(false);
         this.openModalService.openSuccessModal('Font Applied Successfully');
+        this.getThemeData(true);
       },
       error: (err) => {
         console.error('Error saving font preference:', err);

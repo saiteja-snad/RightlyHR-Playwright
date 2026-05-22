@@ -2,6 +2,7 @@
 // Font styles
 @import './new-theme-style-sheets/new-themes.scss';
 @import './new-theme-style-sheets/font-styles.scss';
+@import 'driver.js/dist/driver.css';
 
 @font-face {
     font-family: "autographsignatureFont";
@@ -182,7 +183,7 @@ body {
 .sidenav-main-container {
     position: relative;
     width: 100%;
-    height: 100dvh;
+    height: calc(100dvh - 3.25rem);
     overflow: hidden;
     border: 1px solid var(--side-nav-background-color);
     background-color: var(--side-nav-background-color);
@@ -3217,4 +3218,148 @@ input[type=number]::-webkit-outer-spin-button {
     .border-bottom-left::before { background: linear-gradient(to left, var(--grid-border-color, #BCD4F0), white); }
     .border-bottom-middle::before { background: linear-gradient(to right, var(--grid-border-color, #BCD4F0), var(--grid-border-color, #BCD4F0)); }
     .border-bottom-right::before { background: linear-gradient(to right, var(--grid-border-color, #BCD4F0), white); }
+}
+
+.rhr-tour-popover {
+    background-color: var(--primary-color) !important;
+    border-radius: 12px !important;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    padding: 20px !important;
+    max-width: 350px !important;
+
+    // TITLE
+    .driver-popover-title {
+        font-family: 'LEXEND', sans-serif !important;
+        font-size: 20px !important;
+        font-weight: 700 !important;
+        color: #ffffff !important;
+        margin-bottom: 10px !important;
+    }
+
+    // DESCRIPTION
+    .driver-popover-description {
+        font-family: 'Roboto-flex', sans-serif !important;
+        font-size: 15px !important;
+        line-height: 1.6 !important;
+        color: rgba(255, 255, 255, 0.9) !important;
+    }
+
+    // FOOTER
+    .driver-popover-footer {
+        margin-top: 20px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: flex-end !important;
+        gap: 12px !important;
+        width: 100% !important;
+    }
+
+    .driver-popover-navigation-btns {
+        display: flex !important;
+        justify-content: flex-end !important;
+        gap: 12px !important;
+        flex-grow: 1 !important;
+    }
+
+    .driver-popover-navigation-btns button + button {
+        margin-left: 0 !important;
+    }
+
+    // COMMON BUTTON STYLE
+    .driver-popover-btn {
+        border-radius: 10px !important;
+        font-size: 13px !important;
+        font-weight: 600 !important;
+        padding: 8px 16px !important;
+        transition: all 0.25s ease !important;
+        text-shadow: none !important;
+        outline: none !important;
+        cursor: pointer !important;
+    }
+
+    // NEXT BUTTON
+    .driver-popover-next-btn {
+        background-color: #ffffff !important;
+        color: #111111 !important;
+        border: none !important;
+        margin-left: 0 !important;
+        border-radius: 5px !important;
+
+        &:hover {
+            background-color: #f4f4f4 !important;
+            transform: translateY(-1px) !important;
+        }
+    }
+
+    // SKIP BUTTON
+    .rhr-tour-skip-btn {
+        background-color: rgba(255, 255, 255, 0.1) !important;
+        color: #ffffff !important;
+        border: 1px solid rgba(255, 255, 255, 0.35) !important;
+        border-radius: 5px !important;
+
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+
+        visibility: visible !important;
+        opacity: 1 !important;
+
+        margin-right: 0 !important;
+
+        &:hover {
+            background-color: rgba(255, 255, 255, 0.2) !important;
+            border-color: #ffffff !important;
+            color: #ffffff !important;
+            transform: translateY(-1px) !important;
+        }
+    }
+
+    // HIDE DRIVER CLOSE BUTTON
+    .driver-popover-close-btn {
+        display: none !important;
+    }
+
+    // PROGRESS TEXT
+    .driver-popover-progress-text {
+        font-size: 12px !important;
+        color: rgba(255, 255, 255, 0.7) !important;
+        font-weight: 500 !important;
+        margin-right: auto !important;
+    }
+
+    // ARROW
+    .driver-popover-arrow {
+        border: 6px solid var(--primary-color) !important;
+    }
+
+    .driver-popover-arrow-side-left {
+        border-right-color: transparent !important;
+        border-bottom-color: transparent !important;
+        border-top-color: transparent !important;
+    }
+
+    .driver-popover-arrow-side-right {
+        border-left-color: transparent !important;
+        border-bottom-color: transparent !important;
+        border-top-color: transparent !important;
+    }
+
+    .driver-popover-arrow-side-top {
+        border-right-color: transparent !important;
+        border-bottom-color: transparent !important;
+        border-left-color: transparent !important;
+    }
+
+    .driver-popover-arrow-side-bottom {
+        border-left-color: transparent !important;
+        border-top-color: transparent !important;
+        border-right-color: transparent !important;
+    }
+}
+
+// REMOVE DRIVER HIGHLIGHT GLOW
+.driver-active-element {
+    box-shadow: none !important;
 }

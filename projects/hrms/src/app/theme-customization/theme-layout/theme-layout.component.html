@@ -17,8 +17,10 @@
     </div>
     <div class="d-flex align-items-center gap-3" *ngIf="isMenusActive()">
       <button class="custom-btn btn-secondary px-4"
+        id="reset-menu-default-btn"
         (click)="themeAction.resetMenuToDefault$.next()">Reset to Default</button>
       <button class="custom-btn btn-primary px-5"
+        id="apply-menu-changes-btn"
         [disabled]="!themeAction.canApplyMenuChanges()"
         (click)="themeAction.applyMenuChanges$.next()">Apply Changes</button>
     </div>
@@ -28,7 +30,9 @@
       <div class="custom-sub-tabs-container">
         <ul class="nav flex-column">
           <li class="nav-item" *ngFor="let tab of navLinks">
-            <div class="nav-link" [routerLink]="[tab.route]" routerLinkActive="active-nav-link">
+            <div class="nav-link"
+                 [id]="tab.route === '/menus/personalization' ? 'menus-personalization-tab' : ''"
+                 [routerLink]="[tab.route]" routerLinkActive="active-nav-link">
               <img [src]="tab.icon" alt="Icon" class="icon mb-2">
               <div>{{ tab.label }}</div>
             </div>

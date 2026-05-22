@@ -97,6 +97,7 @@
                     <a data-bs-toggle="dropdown" aria-expanded="false"
                        class="custom-main-menu-toggle ellipses-dropdown-toggle"
                        id="ellipses-menu-toggle"
+                       [attr.data-bs-auto-close]="userTourService.tourInProgress ? 'false' : null"
                        (click)="onEllipsesToggleClick()">
                         <img src="main-menu-icons/white-dots.png" alt="Icons" class="more-menu-icon">
                     </a>

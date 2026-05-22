@@ -369,6 +369,10 @@ private positionOverlay(): void {
   }
 
   selectDropdownModule(module: MenuItemDef): void {
+    if (this.userTourService.tourInProgress) {
+      return;
+    }
+
     const isSame = this.selectedDropdownModule?.route === module.route;
 
     if (isSame) {

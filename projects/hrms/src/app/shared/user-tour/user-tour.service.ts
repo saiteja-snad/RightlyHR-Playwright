@@ -26,11 +26,54 @@ export class UserTourService implements OnDestroy {
     this.initDriver();
   }
 
-  private onSkipClickDelegate = (event: MouseEvent) => {
+  private onTourPointerDownDelegate = (event: PointerEvent) => {
+    if (!this.tourInProgress) return;
+
     const target =
       event.target instanceof Element
         ? event.target
         : (event.target as Node | null)?.parentElement;
+
+    const isInsidePopover = !!target?.closest('#driver-popover-content');
+    if (isInsidePopover) return;
+
+    event.stopImmediatePropagation();
+    event.stopPropagation();
+    event.preventDefault();
+  };
+
+  private onTourDblClickDelegate = (event: MouseEvent) => {
+    if (!this.tourInProgress) return;
+
+    const target =
+      event.target instanceof Element
+        ? event.target
+        : (event.target as Node | null)?.parentElement;
+
+    const isInsidePopover = !!target?.closest('#driver-popover-content');
+    if (isInsidePopover) return;
+
+    event.stopImmediatePropagation();
+    event.stopPropagation();
+    event.preventDefault();
+  };
+
+  private onSkipClickDelegate = (event: MouseEvent) => {
+    if (!this.tourInProgress) return;
+
+    const target =
+      event.target instanceof Element
+        ? event.target
+        : (event.target as Node | null)?.parentElement;
+
+    const isInsidePopover = !!target?.closest('#driver-popover-content');
+    if (!isInsidePopover) {
+      event.stopImmediatePropagation();
+      event.stopPropagation();
+      event.preventDefault();
+      return;
+    }
+
     const skipButton = target?.closest('.rhr-tour-skip-btn') as HTMLElement | null;
     if (!skipButton) return;
 
@@ -135,6 +178,9 @@ export class UserTourService implements OnDestroy {
         if (popover?.wrapper) {
           popover.wrapper.style.visibility = 'visible';
         }
+        if (popover?.nextButton && !popover.nextButton.classList.contains('driver-popover-btn')) {
+          popover.nextButton.classList.add('driver-popover-btn');
+        }
         const footerButtons: HTMLElement = popover.footerButtons;
         if (!footerButtons) return;
 
@@ -163,6 +209,8 @@ export class UserTourService implements OnDestroy {
       },
 
       onDestroyed: async () => {
+        document.removeEventListener('pointerdown', this.onTourPointerDownDelegate, true);
+        document.removeEventListener('dblclick', this.onTourDblClickDelegate, true);
         document.removeEventListener('click', this.onSkipClickDelegate, true);
 
         this.isTourCompletedManually = false;
@@ -250,7 +298,11 @@ export class UserTourService implements OnDestroy {
   // ── Public API ────────────────────────────────────────────────────────────
 
   public async startTour(fromStep = 0): Promise<void> {
+    document.removeEventListener('pointerdown', this.onTourPointerDownDelegate, true);
+    document.removeEventListener('dblclick', this.onTourDblClickDelegate, true);
     document.removeEventListener('click', this.onSkipClickDelegate, true);
+    document.addEventListener('pointerdown', this.onTourPointerDownDelegate, true);
+    document.addEventListener('dblclick', this.onTourDblClickDelegate, true);
     document.addEventListener('click', this.onSkipClickDelegate, true);
 
     this.driverObj.setSteps(this.STEPS);
@@ -322,6 +374,8 @@ export class UserTourService implements OnDestroy {
   }
 
   ngOnDestroy() {
+    document.removeEventListener('pointerdown', this.onTourPointerDownDelegate, true);
+    document.removeEventListener('dblclick', this.onTourDblClickDelegate, true);
     document.removeEventListener('click', this.onSkipClickDelegate, true);
   }
 }

@@ -67,23 +67,23 @@
                 </a>
                 <ul class="dropdown-menu py-0">
                   @if(rbac.allowedToAccess('For You (Claims and Expenses).update')) {
-                   @if( leave.approvalHeader.currentapprovalStage !=leave.approvalHeader.finalapprovalStage){
-                   @if(+leave.approvalHeader.currentapprovalStage === (+leave.approvalHeader.finalapprovalStage - 2)){
-                  <li (click)="expensesCheckList(leave,'Approve')">
-                    <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{ "Verify" | translate }}</a>
-                  </li>
-                  }
-                  @else if ((+leave.approvalHeader.currentapprovalStage == (+leave.approvalHeader.finalapprovalStage - 1))){
-                    @if(!allverified){
+                   @if( leave.approvalHeader.currentapprovalStage != leave.approvalHeader.finalapprovalStage){
+                   @if(+leave.approvalHeader.currentapprovalStage === (+leave.approvalHeader.finalapprovalStage - 1)){
+                    @if(!isAllVerifiedForRecord(leave.entity.expenses_ID)){
                    <li (click)="openModal(verificationofModal); viewItem(leave.entity.expenses_ID)">
                     <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{ "Verify" | translate }}</a>
                   </li>
                   }
-                  @if(allverified){
+                  @if(isAllVerifiedForRecord(leave.entity.expenses_ID)){
                   <li (click)="openApproveModal(approval, leave)">
                     <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{ "Approve for Payment" | translate }}</a>
                   </li>
                   }
+                  }
+                  @else if(+leave.approvalHeader.currentapprovalStage === (+leave.approvalHeader.finalapprovalStage - 2)){
+                  <li (click)="expensesCheckList(leave,'Approve')">
+                    <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{ "Verify" | translate }}</a>
+                  </li>
                   }
                   @else {
                     <li (click)="openApproveModal(approval, leave)">
@@ -103,7 +103,7 @@
                   </li>
                   }
                   }
-                  @if(rbac.allowedToAccess('For You (Claims and Expenses).delete')) {
+                  @if(rbac.allowedToAccess('For You (Claims and Expenses).delete')&&leave.approvalHeader.currentapprovalStage !==leave.approvalHeader.finalapprovalStage) {
                   <li (click)="openRejectModal(rejectmodal, leave)">
                     <a class="dropdown-item"><i class="bi bi-x-circle me-2"></i>{{ "Reject" | translate }}</a>
                   </li>
@@ -443,9 +443,17 @@
         <button type="button" class="custom-btn btn-secondary " (click)="onCancel(modal)">
           {{'Cancel' | translate}}
         </button>
-        <button type="button" class="custom-btn btn-primary " [disabled]="!isAllChecked() ||(storeapprovalRequest.action === 'Approve' && approveForm.invalid)"
+        <button type="button" class="custom-btn btn-primary " [disabled]="!isAllChecked() ||(storeapprovalRequest.action === 'Approve' && approveForm.invalid)||isloading"
           (click)="confirmApproval(modal)">
-          {{storeapprovalRequest.action}}
+          @if(isloading){
+          <div class="button-loader-content">
+            <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
+            <span>{{'Loading...' | translate}}</span>
+          </div>
+          }@else {
+          <span>{{storeapprovalRequest.action}}</span>
+          }
+          
         </button>
       </div>
       </form>
@@ -476,7 +484,16 @@
       </div>
       <div class="custom-modal-footer">
         <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss();">{{'Cancel'|translate}}</button>
-        <button type="submit" class="custom-btn btn-primary" [disabled]="verifyForm.invalid">{{'Verify'| translate}}</button>
+        <button type="submit" class="custom-btn btn-primary" [disabled]="verifyForm.invalid || isloading">
+          @if(isloading){
+          <div class="button-loader-content">
+            <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
+            <span>{{'Loading...' | translate}}</span>
+          </div>
+          }@else {
+          <span>{{'Verify'| translate}}</span>
+          }
+        </button>
       </div>
     </form>
   </div>
@@ -524,7 +541,16 @@
       </div>
       <div class="custom-modal-footer">
         <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss();">{{'Cancel'|translate}}</button>
-        <button type="submit" class="custom-btn btn-primary text-nowrap " [disabled]="markAsPaidForm.invalid">{{'Mark as Paid'| translate}}</button>
+        <button type="submit" class="custom-btn btn-primary text-nowrap " [disabled]="markAsPaidForm.invalid || isloading">
+          @if(isloading){
+          <div class="button-loader-content">
+            <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
+            <span>{{'Loading...' | translate}}</span>
+          </div>
+          }@else {
+          <span>{{'Mark as Paid'| translate}}</span>
+          }
+        </button>
       </div>
     </form>
   </div>
@@ -651,7 +677,16 @@
       </div>
       <div class="custom-modal-footer">
         <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss();">{{'Cancel'|translate}}</button>
-        <button type="submit" class="custom-btn btn-primary" [disabled]="verifyForm.invalid">{{'Reject'| translate}}</button>
+        <button type="submit" class="custom-btn btn-primary" [disabled]="verifyForm.invalid || isloading">
+          @if(isloading){
+          <div class="button-loader-content">
+            <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
+            <span>{{'Loading...' | translate}}</span>
+          </div>
+          }@else {
+          <span>{{'Reject'| translate}}</span>
+          }
+        </button>
       </div>
     </form>
   </div>

@@ -92,7 +92,8 @@ export class ClaimsandexpensesForYouRequestComponent
   totalCount: any;
   markAsPaidForm!:FormGroup;
   paymentmodedata= [] as any[];
-  allverified: boolean = false;
+  allVerifiedMap: Map<number, boolean> = new Map<number, boolean>();
+  isloading:boolean=false;
   constructor(
     private modalService: NgbModal,
     private fb: FormBuilder,
@@ -263,6 +264,7 @@ export class ClaimsandexpensesForYouRequestComponent
   }
 
   handleAccept(approveForm: FormGroup): void {
+    this.isloading=true;
     if (approveForm.valid) {
       const formData = approveForm.value;
       const requestBody = {
@@ -284,6 +286,7 @@ export class ClaimsandexpensesForYouRequestComponent
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response: any) => {
+            this.isloading=false;
             this.modalService.dismissAll();
             this.http.setnewcountDetails();
             this.signalService.clamisandexpensesForYouTriggerSignal.set(true);
@@ -298,21 +301,26 @@ export class ClaimsandexpensesForYouRequestComponent
             }));
           },
           error: (reason: any) => {
+            this.isloading = false;
             this.modalService.dismissAll();
             this.sharedModalService.openErrorModal(reason.error.Message);
           },
           complete: () => {
+            this.isloading=false;
              this.http.triggerActionSignal();
           this.signalService.claimsandexpensesForRoleTriggerSignal.set(true);
           this.signalService.clamisandexpensesForYouTriggerSignal.set(true);
             this.getAllPendingApprovals();
             this.getApprovalStatusCounts();
+             this.checklistdata.forEach(item => item.checked = false);
+
           },
         });
     }
   }
 
   handleReject(rejectForm: FormGroup): void {
+    this.isloading=true;
     if (rejectForm.valid) {
       const formData = rejectForm.value;
       const requestBody = {
@@ -334,6 +342,7 @@ export class ClaimsandexpensesForYouRequestComponent
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response: any) => {
+            this.isloading=false;
             this.modalService.dismissAll();
             this.http.setnewcountDetails();
             this.signalService.clamisandexpensesForYouTriggerSignal.set(true);
@@ -355,6 +364,7 @@ export class ClaimsandexpensesForYouRequestComponent
             this.http.triggerActionSignal();
           this.signalService.claimsandexpensesForRoleTriggerSignal.set(true);
           this.signalService.clamisandexpensesForYouTriggerSignal.set(true);
+            this.isloading=false;
             this.getAllPendingApprovals();
             this.getApprovalStatusCounts();
           },
@@ -363,6 +373,7 @@ export class ClaimsandexpensesForYouRequestComponent
   }
 
   handleProcess(request: ExpenseApprovalResponse) {
+    this.isloading=true;
     let requestBody = {
       status: 'Processed',
       approvedBy: this.empinfo.employeeId.toString(),
@@ -381,6 +392,7 @@ export class ClaimsandexpensesForYouRequestComponent
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (respone: any) => {
+          this.isloading=false;
           this.modalService.dismissAll();
           this.http.setnewcountDetails();
           this.signalService.clamisandexpensesForYouTriggerSignal.set(true);
@@ -393,6 +405,7 @@ export class ClaimsandexpensesForYouRequestComponent
           }));
         },
         error: (reason: any) => {
+          this.isloading=false;
           this.modalService.dismissAll();
           this.sharedModalService.openErrorModal(reason.error.Message);
         },
@@ -402,6 +415,7 @@ export class ClaimsandexpensesForYouRequestComponent
           this.signalService.clamisandexpensesForYouTriggerSignal.set(true);
             this.getAllPendingApprovals();
             this.getApprovalStatusCounts();
+          this.isloading=false;
         },
       });
   }
@@ -515,6 +529,55 @@ export class ClaimsandexpensesForYouRequestComponent
       lowerUrl.endsWith('.png')
     );
   }
+ handleClarification(approveForm: FormGroup): void {
+    this.isloading = true;
+    if (approveForm.valid) {
+      const formData = approveForm.value;
+      const requestBody = {
+        status: 'Required Clarification',
+        comments: formData.comments,
+        approvedBy: this.empinfo.employeeId.toString(),
+        currentStage: parseInt(
+          this.selectedLeaveData.approvalHeader.currentapprovalStage
+        ),
+      };
+      this.sharedModalService.openLoaderModal(
+        'Sending for Clarification, Please wait...'
+      );
+      this.http
+        .putData(
+          `PendingApproval/${this.selectedLeaveData.approvalHeader.id}`,
+          requestBody
+        )
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (response: any) => {
+            this.isloading=false;
+            this.modalService.dismissAll();
+            this.signalService.claimsandexpensesForRoleTriggerSignal.set(true);
+            this.sharedModalService.openSuccessModal(
+              'Expense request sent for clarification successfully'
+            );
+            this.approveForm.reset();
+            this.http.setnewcountDetails();
+            this.selectedLeaveData = {} as ExpenseApprovalResponse;
+            this.http.tirggerPendingApprovalCountSignal.update((status) => ({
+              ...status,
+              expenses: true,
+            }));
+          },
+          error: (reason: any) => {
+            this.isloading=false;
+            this.modalService.dismissAll();
+            this.sharedModalService.openErrorModal(reason.error.Message);
+          },
+          complete: () => {
+            this.isloading = false;
+            this.getAllPendingApprovals();
+          },
+        });
+    }
+  }
    expensesCheckList(request: ExpenseApprovalResponse, action?: string): void {
      this.storeapprovalRequest = request;
      this.storeapprovalRequest.action=action || '';
@@ -530,7 +593,7 @@ export class ClaimsandexpensesForYouRequestComponent
   }
 
   confirmApproval(modal: any) {
-
+    this.isloading = true;
     const payload = this.checklistdata.map((item: any) => ({
       expenseHeaderId: this.storeapprovalRequest.approvalHeader.referenceEntityId,   // expense header id
       employeeId: this.storeapprovalRequest.entity.employeeId,            // current employee id
@@ -555,15 +618,20 @@ export class ClaimsandexpensesForYouRequestComponent
         modal.close();
       },
       error: (err) => {
+        this.isloading = false;
         console.error(err);
       }
     });
   }
    selectedItem: any = null;
+  isAllVerifiedForRecord(approvalHeaderId: number): boolean {
+    return this.allVerifiedMap.get(approvalHeaderId) === true;
+  }
+
   openVerifyModal(item: any, content: any) {
     this.verifyModalRef = this.modalService.open(content, { centered: true, backdrop: 'static' });
     this.intializeVerifyForm();
-    this.selectedItem = item; // store clicked item
+    this.selectedItem = item;
   }
     intializeVerifyForm() {
     this.verifyForm = this.fb.group({
@@ -612,7 +680,16 @@ export class ClaimsandexpensesForYouRequestComponent
         // Update verified IDs for template checks
         this.verifiedExpenseIds.push(verifiedItem.expenseitem_id);
 
-        // Refresh headers in background, but the modal stays open
+        // Check if all items for this record's header are now verified
+        if (this.expenseheaderiteams?.expenseitem?.length) {
+          const allDone = this.expenseheaderiteams.expenseitem.every(
+            it => it.isVerified === true || this.verifiedExpenseIds.includes(it.expenseitem_id)
+          );
+          if (allDone) {
+            this.allVerifiedMap.set(this.expenseheaderiteams.expenses_ID, true);
+          }
+        }
+
         this.getAllPendingApprovals();
       },
       error: (err: any) => {

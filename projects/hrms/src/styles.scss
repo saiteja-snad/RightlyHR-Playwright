@@ -3371,6 +3371,11 @@ input[type=number]::-webkit-outer-spin-button {
     .driver-popover-next-btn,
     .driver-popover-done-btn,
     .rhr-tour-skip-btn {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        padding: 8px 16px !important;
+        min-height: 34px !important;
 
         font-family: 'Roboto-flex', sans-serif !important;
         font-weight: 500 !important;
@@ -3389,6 +3394,11 @@ input[type=number]::-webkit-outer-spin-button {
 // REMOVE DRIVER HIGHLIGHT GLOW
 .driver-active-element {
     box-shadow: none !important;
+}
+
+#ellipses-menu-toggle.driver-active-element,
+#ellipses-menu-toggle.driver-active-element * {
+    pointer-events: none !important;
 }
 
 .rhr-tour-transitioning .driver-popover,

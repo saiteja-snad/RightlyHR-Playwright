@@ -302,6 +302,17 @@ export class UserTourService implements OnDestroy {
     }
   };
 
+  private onWheel = (e: WheelEvent) => {
+    if (!this.tourInProgress) return;
+    const idx = this.driverObj.getActiveIndex();
+    if (idx !== 1) return;
+
+    const target = (e.target instanceof Element ? e.target : (e.target as any)?.parentElement) as Element | null;
+    if (target?.closest('.ellipses-dropdown-menu')) {
+      e.stopImmediatePropagation(); e.stopPropagation(); e.preventDefault();
+    }
+  };
+
   private onSkipClick = (e: MouseEvent) => {
     if (!this.tourInProgress) return;
     const target = (e.target instanceof Element ? e.target : (e.target as any)?.parentElement) as Element | null;
@@ -320,12 +331,14 @@ export class UserTourService implements OnDestroy {
     this.removeEventListeners();
     document.addEventListener('pointerdown', this.onPointerDown, true);
     document.addEventListener('dblclick', this.onDblClick, true);
+    document.addEventListener('wheel', this.onWheel, { capture: true, passive: false });
     document.addEventListener('click', this.onSkipClick, true);
   }
 
   private removeEventListeners(): void {
     document.removeEventListener('pointerdown', this.onPointerDown, true);
     document.removeEventListener('dblclick', this.onDblClick, true);
+    document.removeEventListener('wheel', this.onWheel, { capture: true } as any);
     document.removeEventListener('click', this.onSkipClick, true);
   }
 

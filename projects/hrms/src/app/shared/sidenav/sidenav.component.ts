@@ -111,7 +111,7 @@ export class SidenavComponent implements OnInit, OnDestroy {
     });
 
     setTimeout(() => {
-      this.userTourService.checkAndStartTour();
+      this.userTourService.checkAndStartTours();
     }, 2000); // Give some time for initial load
   }
 
@@ -515,8 +515,10 @@ private positionOverlay(): void {
 
   /** Programmatically open the ellipses menu for the user tour */
   public openEllipses(): void {
+    const ellipsesMenu = document.querySelector('.ellipses-dropdown-menu') as HTMLElement | null;
     const ellipsesToggle = document.getElementById('ellipses-menu-toggle') as HTMLElement | null;
-    if (ellipsesToggle) {
+    const isOpen = !!ellipsesMenu?.classList.contains('show') || !!ellipsesToggle?.classList.contains('show');
+    if (ellipsesToggle && !isOpen) {
       ellipsesToggle.click();
     }
   }

@@ -50,23 +50,37 @@ export class UserTourService implements OnDestroy {
           return;
         }
 
-        // Run the current step's beforeNext hook if defined
-        const stepConfig = this.activeTourConfig?.steps[idx];
-        if (stepConfig?.beforeNext) {
-          this.setPopoverVisible(false);
-          try {
-            await stepConfig.beforeNext(this.buildActionContext());
-          } finally {
-            this.setPopoverVisible(true);
-          }
-        }
+        const activeConfig = this.activeTourConfig;
+        if (!activeConfig) return;
 
-        this.persistStep(idx + 1);
-        this.driverObj.moveNext();
+        const stepConfig = activeConfig.steps[idx];
+        this.setTransitioning(true);
+        this.setPopoverVisible(false);
+        try {
+          if (stepConfig?.beforeNext) {
+            await stepConfig.beforeNext(this.buildActionContext());
+          }
+
+          const nextIndex = idx + 1;
+          const ok = await this.prepareStep(activeConfig, nextIndex);
+          if (!ok) {
+            this.setTransitioning(false);
+            this.setPopoverVisible(true);
+            return;
+          }
+
+          this.persistStep(nextIndex, activeConfig.sessionKey);
+          this.driverObj.moveNext();
+        } catch {
+          this.setTransitioning(false);
+          this.setPopoverVisible(true);
+        }
       },
 
       onPopoverRender: (popover: any) => {
         if (popover?.wrapper) popover.wrapper.style.visibility = 'visible';
+        this.setTransitioning(false);
+        this.setPopoverVisible(true);
 
         const footerButtons: HTMLElement = popover.footerButtons;
         if (!footerButtons) return;
@@ -91,6 +105,7 @@ export class UserTourService implements OnDestroy {
         this.removeEventListeners();
         this.isTourCompletedManually = false;
         this.tourInProgress = false;
+        this.setTransitioning(false);
       }
     });
   }
@@ -106,6 +121,25 @@ export class UserTourService implements OnDestroy {
     };
   }
 
+  private async prepareStep(config: TourConfig, stepIndex: number): Promise<boolean> {
+    const stepConfig = config.steps[stepIndex];
+    if (!stepConfig) return true;
+
+    if (stepConfig.requiredRoute) {
+      const currentUrl = this.router.url;
+      if (!currentUrl.startsWith(stepConfig.requiredRoute)) {
+        await this.router.navigate([stepConfig.requiredRoute]);
+      }
+    }
+
+    if (stepConfig.beforeShow) {
+      await stepConfig.beforeShow(this.buildActionContext());
+    }
+
+    const el = await this.waitForElement(stepConfig.element, 2000);
+    return !!el;
+  }
+
   // ── Tour lifecycle ────────────────────────────────────────────────────────
 
   private async finishTour(): Promise<void> {
@@ -113,6 +147,7 @@ export class UserTourService implements OnDestroy {
       this.isTourCompletedManually = true;
       this.tourInProgress = false;
       this.clearPersistedStep();
+      this.setTransitioning(false);
       await this.saveTourCompletion();
       this.driverObj.destroy();
     } catch (e) {
@@ -125,6 +160,7 @@ export class UserTourService implements OnDestroy {
       this.isTourCompletedManually = true;
       this.tourInProgress = false;
       this.clearPersistedStep();
+      this.setTransitioning(false);
       await this.saveTourCompletion();
       this.driverObj.destroy();
     } catch (e) {
@@ -177,22 +213,7 @@ export class UserTourService implements OnDestroy {
     this.activeTourConfig = config;
     const savedStep = this.getPersistedStep(config.sessionKey);
     const fromStep = savedStep ?? 0;
-
-    if (fromStep === 0) {
-      await this.startTour(config, 0);
-      return;
-    }
-
-    // Restore required state for the saved step
-    const stepConfig = config.steps[fromStep];
-    if (stepConfig?.requiredRoute) {
-      const currentUrl = this.router.url;
-      if (!currentUrl.startsWith(stepConfig.requiredRoute)) {
-        await this.router.navigate([stepConfig.requiredRoute]);
-        await this.waitForElement(stepConfig.element, 1500);
-      }
-    }
-
+    await this.prepareStep(config, fromStep);
     await this.startTour(config, fromStep);
   }
 
@@ -209,6 +230,7 @@ export class UserTourService implements OnDestroy {
     this.driverObj.setSteps(driverSteps as any);
     this.tourInProgress = true;
     this.isTourCompletedManually = false;
+    this.setTransitioning(false);
     this.persistStep(fromStep, config.sessionKey);
     this.driverObj.drive(fromStep);
   }
@@ -235,16 +257,28 @@ export class UserTourService implements OnDestroy {
 
   // ── DOM helpers ───────────────────────────────────────────────────────────
 
+  private setTransitioning(transitioning: boolean): void {
+    document.body.classList.toggle('rhr-tour-transitioning', transitioning);
+  }
+
   private setPopoverVisible(visible: boolean): void {
     const el = document.getElementById('driver-popover-content') as HTMLElement | null;
     if (el) el.style.visibility = visible ? 'visible' : 'hidden';
+  }
+
+  private isElementVisible(el: Element): boolean {
+    const htmlEl = el as HTMLElement;
+    if (htmlEl.offsetParent === null && getComputedStyle(htmlEl).position !== 'fixed') return false;
+    const style = getComputedStyle(htmlEl);
+    if (style.visibility === 'hidden' || style.display === 'none' || style.opacity === '0') return false;
+    return el.getClientRects().length > 0;
   }
 
   public async waitForElement(selector: string, timeoutMs = 1500): Promise<Element | null> {
     const deadline = Date.now() + timeoutMs;
     while (Date.now() < deadline) {
       const el = document.querySelector(selector);
-      if (el) return el;
+      if (el && this.isElementVisible(el)) return el;
       await new Promise<void>(r => setTimeout(r, 50));
     }
     return null;

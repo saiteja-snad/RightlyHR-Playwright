@@ -3227,6 +3227,7 @@ input[type=number]::-webkit-outer-spin-button {
     border: 1px solid rgba(255, 255, 255, 0.1) !important;
     padding: 20px !important;
     max-width: 350px !important;
+    font-family: 'Roboto-flex', sans-serif !important;
 
     // TITLE
     .driver-popover-title {
@@ -3276,6 +3277,7 @@ input[type=number]::-webkit-outer-spin-button {
         text-shadow: none !important;
         outline: none !important;
         cursor: pointer !important;
+        font-family: inherit !important;
     }
 
     // NEXT BUTTON
@@ -3285,6 +3287,7 @@ input[type=number]::-webkit-outer-spin-button {
         border: 1px solid rgba(255, 255, 255, 0.35) !important;
         margin-left: 0 !important;
         border-radius: 10px !important;
+        font-weight: 500 !important;
 
         &:hover {
             background-color: rgba(255, 255, 255, 0.2) !important;
@@ -3292,6 +3295,11 @@ input[type=number]::-webkit-outer-spin-button {
             color: #ffffff !important;
             transform: translateY(-1px) !important;
         }
+    }
+
+    .driver-popover-done-btn {
+        font-weight: 500 !important;
+        font-family: inherit !important;
     }
 
     // SKIP BUTTON
@@ -3359,10 +3367,38 @@ input[type=number]::-webkit-outer-spin-button {
         border-top-color: transparent !important;
         border-right-color: transparent !important;
     }
+
+    .driver-popover-next-btn,
+    .driver-popover-done-btn,
+    .rhr-tour-skip-btn {
+
+        font-family: 'Roboto-flex', sans-serif !important;
+        font-weight: 500 !important;
+        font-style: normal !important;
+
+        text-shadow: none !important;
+        box-shadow: none !important;
+
+        -webkit-font-smoothing: antialiased !important;
+        -moz-osx-font-smoothing: grayscale !important;
+
+        letter-spacing: 0 !important;
+    }
 }
 
 // REMOVE DRIVER HIGHLIGHT GLOW
 .driver-active-element {
+    box-shadow: none !important;
+}
+
+.rhr-tour-transitioning .driver-popover,
+.rhr-tour-transitioning #driver-popover-content {
+    visibility: hidden !important;
+    opacity: 0 !important;
+}
+
+.rhr-tour-transitioning .driver-active-element {
+    outline: none !important;
     box-shadow: none !important;
 }
 
@@ -3379,16 +3415,6 @@ input[type=number]::-webkit-outer-spin-button {
 .driver-active #driver-popover-content button.driver-popover-next-btn,
 .driver-active #driver-popover-content button.rhr-tour-skip-btn {
     cursor: pointer !important;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-}
-
-.rhr-tour-popover .driver-popover-next-btn,
-.rhr-tour-popover .rhr-tour-skip-btn {
-    font-size: 13px !important;
-    font-weight: 600 !important;
-    line-height: 1.2 !important;
-    color: rgba(255, 255, 255, 0.92) !important;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }

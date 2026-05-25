@@ -156,6 +156,7 @@
     --popup-accordian-th-color: #EEF3FB;
 
     --grid-border-color: #BCD4F0;
+    --tour-guide-color:#5b7294;
 }
 
 * {
@@ -3221,7 +3222,7 @@ input[type=number]::-webkit-outer-spin-button {
 }
 
 .rhr-tour-popover {
-    background-color: var(--primary-color) !important;
+    background-color: var(--tour-guide-color) !important;
     border-radius: 12px !important;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3) !important;
     border: 1px solid rgba(255, 255, 255, 0.1) !important;
@@ -3341,7 +3342,7 @@ input[type=number]::-webkit-outer-spin-button {
 
     // ARROW
     .driver-popover-arrow {
-        border: 6px solid var(--primary-color) !important;
+        border: 6px solid var(--tour-guide-color) !important;
     }
 
     .driver-popover-arrow-side-left {

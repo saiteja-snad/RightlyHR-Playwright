@@ -100,7 +100,21 @@ export class AttandaceReportTabsComponent {
       icon: '/time-off-icon/WFH-icon.png',
       description: MODULE_INFOS.ATTENDANCE_EXTRA_HOURS_MODULE_INFO,
       permission: { feature: 'Extra Log Hours Report', action: 'view' }
-    }
+    },
+    {
+      label: 'Late Login Report',
+      route: '/reports/attendence-reports/late-login-report',
+      icon: '/time-off-icon/WFH-icon.png',
+      description: MODULE_INFOS.ATTENDANCE_LATE_LOGIN_MODULE_INFO,
+      permission: { feature: 'Late Login Report', action: 'view' },
+    },
+    {
+      label: 'Exceeded Break Hours Report',
+      route: '/reports/attendence-reports/exceeded-break-hours-report',
+      icon: '/time-off-icon/WFH-icon.png',
+      description: MODULE_INFOS.ATTENDANCE_EXCEEDED_BREAK_HOURS_MODULE_INFO,
+      permission: { feature: 'Exceeded Break Hours Report', action: 'view' },
+    },
   ];
 
   constructor(public rbac: RbacService) { }

@@ -55,6 +55,7 @@ export class OnBeHalfOfApprovalTabsComponent implements OnInit{
           this.navLinks = this.navLinks.map(tab => ({ ...tab, count: 0 }));
           this.filterTabsByRbac();
         }
+        this.http.onBehalfOfTriggerSignal.set(false);
       }
     });
   }
@@ -71,7 +72,7 @@ export class OnBeHalfOfApprovalTabsComponent implements OnInit{
 
   getDataByLPID() {
     this.loading=true
-    const selectedYear = this.timeoffYearFilterService.getSelectedYear();
+    const selectedYear = this.timeoffYearFilterService.getSelectedYear() ?? new Date().getFullYear();
     this.subscription = this.http.getData(`Timeoff/${this.cadidateEmployeeId}?year=${selectedYear}`).subscribe({
       next: (response: any) => {
         this.loading=false

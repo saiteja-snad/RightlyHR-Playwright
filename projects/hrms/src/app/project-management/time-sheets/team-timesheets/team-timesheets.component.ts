@@ -18,17 +18,23 @@ import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-foun
 import { TimesheetEntry } from '../../../Interfaces/timesheetsummary';
 import { NgbModal, NgbOffcanvas, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { InfoIconComponent } from '../../../icons/info-icon/info-icon.component';
-import { DateformatPipe } from '../../../pipes/dateformat.pipe';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { EncriptdecriptService } from '../../../services/encriptdecript.service';
 import { TimesheetFilterService } from '../../../services/timesheet-filter.service';
 import { TimesheetSharedDataService } from '../../../services/timesheet-shared-data.service';
 import { Chip } from 'primeng/chip';
+import { ConfirmationIconComponent } from "../../../icons/confirmation-icon/confirmation-icon.component";
+import { FormValidationsService } from '../../../services/form-validations.service';
+import { noWhitespaceValidator } from '../../../shared/nowhitespace/nowhitespace.component';
+import { Subject, takeUntil } from 'rxjs';
+import { environment } from '../../../../environments/environment';
+import { OpenModalService } from '../../../services/open-modal.service';
+import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 @Component({
   selector: 'app-team-timesheets',
   imports: [TimesheetsTabsComponent, NgbPopoverModule, FormsModule, ReactiveFormsModule, PaginatorModule, DatePicker, TranslateModule,
     CommonModule, ProjectManagementModuleInfoComponent, DataLoaderContentComponent, NoDataFoundComponent, InfoIconComponent,
-    DateformatPipe, MultiSelectModule, Chip],
+    DateformatPipe, MultiSelectModule, Chip, ConfirmationIconComponent],
   templateUrl: './team-timesheets.component.html',
   styleUrl: './team-timesheets.component.scss',
 })
@@ -45,7 +51,7 @@ export class TeamTimesheetsComponent {
   ranges: any;
   datepickerForm!: FormGroup;
   page = 1;
-  pageSize = 100;
+  pageSize = 10;
   rows = 10;
   collectionSize!: number;
   first = 0;
@@ -62,10 +68,18 @@ export class TeamTimesheetsComponent {
   departmentDetails = [] as any;
   tmandRmDetails = [] as any;
   previousEmployeeSelection: string[] = [];
-
-  constructor(private fb: FormBuilder, private http: HttpService, public rbac: RbacService, private router: Router,
-    private modalService: NgbModal, private encryptionService: EncriptdecriptService, private offcanvasService: NgbOffcanvas,
-    private filterService: TimesheetFilterService, private sharedDataService: TimesheetSharedDataService, private route: ActivatedRoute) { }
+  timeSheetApproveForm!: FormGroup;
+  timeSheetRejectForm!: FormGroup;
+  selectedStatus:any;
+  spinnerLoader=false;
+  destroy$: Subject<boolean> = new Subject<boolean>();
+  selectedLeaveStatus: any;
+  constructor(private fb: FormBuilder, private http: HttpService, 
+              public rbac: RbacService, private router: Router,
+              private modalService: NgbModal, private encryptionService: EncriptdecriptService, 
+              private offcanvasService: NgbOffcanvas, private filterService: TimesheetFilterService, 
+              private sharedDataService: TimesheetSharedDataService, private route: ActivatedRoute,
+              public formsValidation: FormValidationsService,private conformationPopup: OpenModalService) { }
 
   ngOnInit() {
     this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
@@ -83,8 +97,29 @@ export class TeamTimesheetsComponent {
     this.getclientData();
     this.getdepartmentData();
     this.getTmandRMData();
+    this.intializeForm();
   }
-
+  intializeForm() {
+    this.timeSheetApproveForm = this.fb.group({
+      comments: [null, [Validators.required, Validators.maxLength(250)]]
+    });
+     this.timeSheetApproveForm.get('comments')?.valueChanges.subscribe((value: string) => {
+    if (!value || value.trim() === '') {
+      this.selectedStatus = null; // remove chip highlight if cleared
+    }
+  });
+    this.timeSheetRejectForm = this.fb.group({
+      comments: [
+        null,
+        [Validators.required, Validators.maxLength(250), noWhitespaceValidator],
+      ],
+    });
+      this.timeSheetRejectForm.get('comments')?.valueChanges.subscribe((value: string) => {
+    if (!value || value.trim() === '') {
+      this.selectedStatus = null; // remove chip highlight if cleared
+    }
+     });
+  }
   //get all projects list
   getprojectData(): void {
     this.subscription = this.sharedDataService.getProjectData().subscribe({
@@ -201,10 +236,25 @@ export class TeamTimesheetsComponent {
   selectedEmployeeName!: string;
   openModal(entries: any, content?: any, empName?: string) {
     this.selectedEmployeeName = empName || '';
-    this.selectedEntries = entries?.filter((ele: any) => ele?.status !== 'Not Entered');;
-    this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
+    this.selectedEntries = entries?.filter((ele: any) => ele?.status !== 'Not Entered');
+    this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' }); 
   }
-
+ // open approva and reject popup
+ selectedData:any;
+conformationstatus!:any;
+  openModalapprovals(modal: any, request: any, conformationstatus: string) {
+    this.selectedLeaveStatus = null
+    this.modalService.open(modal, { centered: true, backdrop: 'static' });
+    console.log('Selected Request:', request);
+    if (request) {
+      // single row case
+      this.selectedData = request;
+    }
+    this.conformationstatus = conformationstatus;
+    this.timeSheetApproveForm.get('comments')?.reset();
+    this.timeSheetRejectForm.get('comments')?.reset();
+    this.selectedLeaveStatus = conformationstatus; // Reset chip highlight
+  }
   getResourceDetailsByManagerId() {
     const EmployeeId = this.empdata?.employeeId;
     this.subscription = this.http.getData(`Timesheet/get-resources?employeeId=${EmployeeId}`).subscribe({
@@ -342,20 +392,40 @@ export class TeamTimesheetsComponent {
     });
   }
 
-  // onPageSizeChange(newPageSize: number) {
-  //   this.pageSize = newPageSize;
-  //   this.rows = newPageSize;
-  //   this.page = 1;
-  //   this.first = 0;
-  //   this.getteamsummary();
-  // }
+  onPageSizeChange(newPageSize: number) {
+    this.pageSize = newPageSize;
+    this.rows = newPageSize;
+    this.page = 1;
+    this.first = 0;
+    this.getteamsummaryWithCurrentFilters();
+  }
 
-  // onPageChange(event: any) {
-  //   this.page = event.page + 1;
-  //   this.pageSize = event.rows;
-  //   this.first = event.first;
-  //   this.getteamsummary();
-  // }
+  onPageChange(event: any) {
+    this.page = event.page + 1;
+    this.pageSize = event.rows;
+    this.first = event.first;
+    this.getteamsummaryWithCurrentFilters();
+  }
+
+  private getteamsummaryWithCurrentFilters() {
+    if (this.isFilterApplied()) {
+      const formValue = this.datepickerForm.value;
+      const selectedIds = formValue.resourceId || [];
+      let employeeIds: string | null = null;
+      
+      if (selectedIds.includes('ALL_EMPLOYEES')) {
+        const currentList = this.rbac.allowedToAccess('All Employees (Timesheet).view') ? this.activeEmplist : this.resourcesList;
+        const allIds = currentList.filter((emp: any) => (emp.value || emp.id) !== 'ALL_EMPLOYEES').map((emp: any) => emp.value || emp.id);
+        employeeIds = allIds.length > 0 ? allIds.join(',') : null;
+      } else if (selectedIds.length > 0) {
+        employeeIds = selectedIds.join(',');
+      }
+      
+      this.getteamsummary(employeeIds);
+    } else {
+      this.getteamsummary();
+    }
+  }
 
   navigateView(employeeId: any) {
     const formData = {
@@ -459,6 +529,21 @@ export class TeamTimesheetsComponent {
     return `#${newR.toString(16).padStart(2, '0')}${newG.toString(16).padStart(2, '0')}${newB.toString(16).padStart(2, '0')}`;
   }
 
+ 
+  onStatusApproveSelect(status: string) {
+    this.selectedLeaveStatus = status;
+
+    if (status === 'approved') {
+      this.timeSheetApproveForm.get('comments')?.setValue('Approved');
+    }
+  }
+
+   onStatusRejectSelect(status: string) {
+    this.selectedLeaveStatus = status;
+    if (status === 'reject') {
+      this.timeSheetRejectForm.get('comments')?.setValue('Rejected');
+    }
+  }
   loadSavedFilters() {
     const savedFilters = this.filterService.getCurrentFilters();
     if (savedFilters) {
@@ -470,5 +555,143 @@ export class TeamTimesheetsComponent {
 
   openMoreFiltersModal(content?: any) {
     this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
+  }
+    // approve submit post method
+    handleAccept(timeSheetApproveForm: FormGroup): void {
+      this.spinnerLoader = true;
+      let payload: any;
+      if (timeSheetApproveForm.valid) {
+        const formData = timeSheetApproveForm.value;
+        const approvedBy = this.empdata.employeeId.toString();
+        const comments = formData.comments;
+    
+          // Single selection
+           payload = {
+            requestProcessedBy: approvedBy,
+            status: this.conformationstatus,
+            comments: comments,
+            onBehalfOfApproval: true,
+            moduleId: environment.timesheetModuleId,
+            headerRequests: [
+              {
+                headerID: this.selectedData.headerID,
+                currentStage: '1', // Assuming stage 1 for rejection, adjust as needed
+              },
+            ],
+          };
+        }
+  
+        // Same API call
+        this.http.putData(`v2/PendingApproval/multiapprovals`, payload).pipe(takeUntil(this.destroy$)).subscribe({
+          next: (response: any) => {
+            this.modalService.dismissAll();
+             if (response) {
+             if(response.data.failureRecordsCount>=1){
+              this.conformationPopup.openErrorModal(response.data.failureRecords[0].message);
+            }else{
+              this.conformationPopup.openSuccessModal(
+                this.conformationstatus === 'Processed'
+                  ? 'Timesheet request approved successfully'
+                  : 'Timesheet request rejected successfully'
+              );
+            }
+            }
+            // if (response) {
+            //   // Single
+            //   this.conformationPopup.openSuccessModal(
+            //     this.conformationstatus === 'Processed'
+            //       ? 'Timesheet request approved successfully'
+            //       : 'Timesheet request rejected successfully'
+            //   );
+            // } 
+          },
+          error: (reason: any) => {
+            this.spinnerLoader = false;
+            this.timeSheetApproveForm.reset();
+            this.timeSheetRejectForm.reset();
+            this.modalService.dismissAll();
+              this.conformationPopup.openErrorModal(reason.error.message);
+          },
+          complete: () => {
+            this.spinnerLoader = false;
+            this.selectedEntries = [];
+            this.timeSheetApproveForm.reset();
+            this.timeSheetRejectForm.reset();
+            this.onSubmit();
+          },
+        });
+      }
+    
+    // reject submit post method
+    handlereject(timeSheetRejectForm: FormGroup): void {
+      this.spinnerLoader = true;
+      let payload: any;
+      if (timeSheetRejectForm.valid) {
+        const formData = timeSheetRejectForm.value;
+        const approvedBy = this.empdata.employeeId.toString();
+        const comments = formData.comments;
+      
+          // Single selection
+          payload = {
+            requestProcessedBy: approvedBy,
+            status: this.conformationstatus,
+            comments: comments,
+            onBehalfOfApproval: true,
+            moduleId: environment.timesheetModuleId,
+            headerRequests: [
+              {
+                 headerID: this.selectedData.headerID,
+                currentStage: '1', // Assuming stage 1 for rejection, adjust as needed
+              },
+            ],
+          };
+  
+        // Same API call
+        this.http.putData(`v2/PendingApproval/multiapprovals`, payload).pipe(takeUntil(this.destroy$)).subscribe({
+          next: (response: any) => {
+            this.modalService.dismissAll();
+            if (response) {
+             if(response.data.failureRecordsCount>=1){
+              this.conformationPopup.openErrorModal(response.data.failureRecords[0].message);
+            }else{
+              this.conformationPopup.openSuccessModal(
+                this.conformationstatus === 'Processed'
+                  ? 'Timesheet request approved successfully'
+                  : 'Timesheet request rejected successfully'
+              );
+            }
+            }
+            // if (response) {
+            //   // Single
+            //   this.conformationPopup.openSuccessModal(
+            //     this.conformationstatus === 'Processed'
+            //       ? 'Timesheet request approved successfully'
+            //       : 'Timesheet request rejected successfully'
+            //   );
+            // }
+          },
+          error: (reason: any) => {
+            this.spinnerLoader = false;
+            this.timeSheetApproveForm.reset();
+            this.timeSheetRejectForm.reset();
+            this.modalService.dismissAll();
+              this.conformationPopup.openErrorModal(reason.error.message);
+          },
+          complete: () => {
+            this.spinnerLoader = false;
+            this.selectedEntries = [];
+            this.timeSheetApproveForm.reset();
+            this.timeSheetRejectForm.reset();
+            this.onSubmit();
+          },
+        });
+      }
+    }
+
+  ngOnDestroy(): void {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
+    this.subscription?.unsubscribe();
+    this.http.setEmployeeIdTimesheet({}, 0, null);
   }
 }

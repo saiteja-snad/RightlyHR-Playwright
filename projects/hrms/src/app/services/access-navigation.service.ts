@@ -88,7 +88,9 @@ import {
   MY_KRA_KPI_TABS,
   PERFORMANCE_REVIEW_TABS,
   MY_INFO_SEPARATION_REQUEST_ROUTES,
-  Employee_INFO_Separation_Request
+  Employee_INFO_Separation_Request,
+  SETTINGS_HELPDESK_MANAGEMENT_TABS,
+  HELPDESK_SUPPORT_TICKETS_TABS
 } from '../permission-route.constants';
 @Injectable({
   providedIn: 'root',
@@ -160,7 +162,13 @@ export class AccessNavigationService {
                 }
               }
             }
-
+            if (this.rbac.allowedToAccess('Helpdesk Configuration Module.view')) {
+              for (const item of SETTINGS_HELPDESK_MANAGEMENT_TABS) {
+                if (this.rbac.allowedToAccess(item.permission)) {
+                  return item.route;
+                }
+              }
+            }
             if (this.rbac.allowedToAccess('Document Tab.view')) {
               return (route = '/settings/employee-fields/documents');
             }
@@ -554,6 +562,19 @@ export class AccessNavigationService {
           }
         }
 
+        break;
+
+        case '/help-desk':
+        if (this.rbac.allowedToAccess('Employee Helpdesk Queries Tab.view')) {
+          return (route = '/help-desk/employee-desk');
+        }
+        if (this.rbac.allowedToAccess('Support Helpdesk Queries Tab.view')) {
+          for (const item of HELPDESK_SUPPORT_TICKETS_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+        }
         break;
 
       case '/pms':
@@ -999,6 +1020,22 @@ export class AccessNavigationService {
         }
         break;
 
+      case '/help-desk/employee-desk':
+        if (this.rbac.allowedToAccess('Employee Helpdesk Queries Tab.view')) {
+          return (route = '/help-desk/employee-desk');
+        }
+        break;
+
+      case '/help-desk/support-desk':
+        if (this.rbac.allowedToAccess('Support Helpdesk Queries Tab.view')) {
+          for (const item of HELPDESK_SUPPORT_TICKETS_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+        }
+        break;
+
       case '/holidays':
         if (this.rbac.allowedToAccess('Holidays.view')) {
           for (const item of HOLIDAYS_SUB_TABS) {
@@ -1268,6 +1305,16 @@ export class AccessNavigationService {
       case '/settings/project-management-config':
         if (this.rbac.allowedToAccess('Project Management Configuration Module.view')) {
           for (const item of SETTINGS_PROJECT_MANAGEMENT_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+        }
+        break;
+
+      case '/settings/helpdesk-management-config':
+        if (this.rbac.allowedToAccess('Helpdesk Configuration Module.view')) {
+          for (const item of SETTINGS_HELPDESK_MANAGEMENT_TABS) {
             if (this.rbac.allowedToAccess(item.permission)) {
               return item.route;
             }
@@ -1731,7 +1778,8 @@ export class AccessNavigationService {
         }
         break;
 
-   case '/pending-approvals/on-boarding':
+
+      case '/pending-approvals/on-boarding':
         if (this.rbac.allowedToAccess('Onboarding main Tab.view')) {
           for (const item of ONBOARDING_APPROVALS_TABS) {
             if (this.rbac.allowedToAccess(item.permission) && item.permission === 'Probation Details Tab.view') {
@@ -1814,14 +1862,14 @@ export class AccessNavigationService {
           return (route = '/pending-approvals/on-boarding/appointment-letter-history');
         }
         break;
-      
+
       case '/pending-approvals/on-boarding/nda-letter-history':
         if (this.rbac.allowedToAccess('Documents History Non-Disclosure Agreement Letter.view')) {
           return (route = '/pending-approvals/on-boarding/nda-letter-history');
         }
         break;
 
-     
+
 
       case '/pending-approvals/off-boarding':
         if (this.rbac.allowedToAccess('Offboarding main Tab.view')) {

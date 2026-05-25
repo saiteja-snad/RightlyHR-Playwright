@@ -110,9 +110,7 @@
 
       @if((getOfferDetails.status == 'Released' || getTraineeOfferDetails.status=='Released' ||
       getOfferDetails.candidateStatus == 'Offer Letter Accepted'
-      || getTraineeOfferDetails.candidateStatus=='Offer Letter Accepted' || emppersonalinfo.empstatus=='Offer Letter
-      Released') && getOfferDetails?.letterType?.toLowerCase() === 'contract offer letter' && emppersonalinfo.empType
-      ==='Contract')
+      || getTraineeOfferDetails.candidateStatus=='Offer Letter Accepted' || emppersonalinfo.empstatus=='Offer Letter Released') && getOfferDetails?.letterType?.toLowerCase() === 'contract offer letter' && emppersonalinfo.empType ==='Contract')
       {
       <button class="custom-btn btn-secondary"
         *ngIf="isActive('personalinfo/personal/basic-info') && (emppersonalinfo.empstatus=='Prospective' || emppersonalinfo.empstatus=='Prospective Contract' || emppersonalinfo.empstatus =='Trainee Prospective')  && (emppersonalinfo?.substatus!='Employee Created') && (getOfferDetails?.letterType?.toLowerCase() === 'contract offer letter')"
@@ -189,7 +187,8 @@
           <label for="comments" class="form-label custom-label mb-2">{{'Revoke Reason'|translate}}
             <span class="error-msg">*</span></label>
           <textarea class="form-control custom-input" formControlName="revokeComments" maxlength="250"
-            placeholder="Please provide reason"></textarea>
+            placeholder="Please provide reason"
+              (input)="formsValidation.validateInput(revokeForm.get('revokeComments'))"></textarea>
           <div class="mt-2 textarea-count-text">
             <span class="color">{{ revokeForm.get('revokeComments')?.value?.length || 0 }}/250</span>
           </div>
@@ -209,7 +208,7 @@
 </ng-template>
 
 <ng-template #archivedbtn let-modal>
-  <div class="result-popup-content" ngbAutofocus>
+  <!-- <div class="result-popup-content" ngbAutofocus>
     <div>
       <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
       <p class="confirmation-text">Are you sure you want to Archive?</p>
@@ -217,6 +216,39 @@
     <div class="custom-modal-footer">
       <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'|translate}}</button>
       <button type="submit" class="custom-btn btn-primary" (click)="submitArchive()">{{'Yes'|translate}}</button>
+    </div>
+  </div> -->
+  <div class="custom-main-popup-container" ngbAutofocus>
+    <div class="custom-poup-header-content popup-header-border">
+      <div class="pt-2">
+        <p class="popup-heading mb-0">{{'Archive Reason'|translate}}</p>
+      </div>
+      <div>
+        <a (click)="onclose();this.archiveForm.reset()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+      </div>
+    </div>
+
+    <div class="custom-main-popup-content">
+      <form autocomplete="off" [formGroup]="archiveForm" (ngSubmit)="submitArchive()" class="w-100">
+        <div class="mb-3">
+          <label for="comments" class="form-label custom-label mb-2">{{'Reason'|translate}}
+            <span class="error-msg">*</span></label>
+          <textarea class="form-control custom-input" formControlName="archiveComments" maxlength="250"
+          (input)="formsValidation.validateInput(archiveForm.get('archiveComments'))"  placeholder="Please provide reason"></textarea>
+          <div class="mt-2 textarea-count-text">
+            <span class="color">{{ archiveForm.get('archiveComments')?.value?.length || 0 }}/250</span>
+          </div>
+          <div *ngIf="archiveForm.get('archiveComments')?.invalid && archiveForm.get('archiveComments')?.touched">
+            <div class="error-msg">{{'Archive Reason is required'|translate}}</div>
+          </div>
+        </div>
+        <div class="custom-modal-footer">
+          <button type="reset" class="custom-btn btn-secondary px-4"
+            (click)="close();this.archiveForm.reset()">{{'Close'|translate}}</button>
+          <button type="submit" class="custom-btn btn-primary px-4"
+            [disabled]="!archiveForm.valid">{{'Submit'|translate}}</button>
+        </div>
+      </form>
     </div>
   </div>
 </ng-template>

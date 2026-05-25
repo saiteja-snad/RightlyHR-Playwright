@@ -34,6 +34,9 @@ export const MODULE_INFOS = {
     SETTINGS_TIMESHEET_REPORT_MODULE_INFO: "The Timesheet Report provides a comprehensive view of employee work logs, approvals, and utilization. It consolidates individual and team-level data to help managers, HR, and finance teams track productivity, project efforts, and pending actions. Each tab offers focused insights, ensuring accurate reporting and efficient decision-making.",
     SETTINGS_FLEXIBLE_WFH_ALLOCATION_MODULE_INFO: "The Flexible WFH Allocation module enables Admins or HR to assign work-from-home entitlements to employees by configuring specific allocation criteria. Once entitle, the entitled WFHs are automatically reflected in the WFH module, allowing employees to utilize them as per policy.",
     SETTINGS_FLEXIBLE_WORKHOURS_ALLOCATION_MODULE_INFO: "The Flexible Work Hours Allocation module allows HR/Admin users to define and assign flexible working hours within the organization. Using this feature, HR/Admin can allocate working hours based on specific roles or individual employees, ensuring that work schedules align with organizational policies and employee needs.",
+    SETTINGS_WFH_ALLOCATION_HISTORY_MODULE_INFO: "The WFH Allocation History tab displays all single-date or continuous-date WFH allocations assigned to employees. It includes details such as effective dates, duration, allocation status, and the allocator's information, helping maintain accurate records and audit tracking.",
+    SETTINGS_MULTI_DATE_RANGE_HISTORY_MODULE_INFO: "The Multi-Date WFH History tab displays WFH allocations assigned across multiple non-continuous dates within a selected period. It provides clear visibility into multi-date approvals, allocation patterns, and historical tracking for better workforce management and compliance.",
+    SETTINGS_ALLOW_MULTI_DATE_RANGE_MODULE_INFO: "The Allow Multi-Date Range tab enables administrators to configure and allocate Work From Home privileges for employees across multiple non-consecutive dates. This feature provides flexibility in scheduling while ensuring proper attendance and policy monitoring.",
 
     SETTINGS_LOAD_Entitlements: "This module allows efficient management of leave entitlements through automated bulk operations. It enables uploading yearly leave entitlements for multiple employees at once and automatically carries forward eligible leave balances to the new fiscal year, ensuring accuracy and compliance with company policies.",
     //Settings Asset Configuration Module Info
@@ -104,6 +107,13 @@ export const MODULE_INFOS = {
     //Organizational Hierarchy Module Info
     ORGANIZATIONAL_HIERARCHY_MODULE_INFO: "The Organizational Hierarchy view displays detailed reporting structure and compensation info for the selected employee. Options are available to download the data as PDF, JPG, or Excel.",
 
+    // HELP DESK MODULE INFO
+    HELP_DESK_MY_QUERIES: "The My Queries tab allows employees to view and manage all the support queries they have raised.It provides visibility into ticket status, priority, responses from the support team, and resolution progress. Employees can track updates, provide additional information when requested, and review closed or rejected tickets.",
+    HELP_DESK_TEAM_QUERIES: "The Team Queries tab enables support teams to view and manage tickets assigned to their department.It helps teams review incoming requests, update ticket status, communicate with employees, prioritize issues based on severity, and ensure timely resolution.",
+    SETTINGS_HELPDESK_CONFIGURATION_MODULE_INFO: "The Help Desk Configuration module enables admins to create and manage categories and subcategories used by employees when raising support tickets, ensuring proper routing and efficient issue resolution.",
+    CATEGEORY_MODULE_INFO: "The Category section is used to define the primary classification of support requests raised by users. It helps group queries based on issue type, enabling proper routing to the relevant support team, improved tracking, and better visibility into common request patterns.",
+    SUBCATEGORY_MODULE_INFO: "The Subcategory section is used to define detailed issue types within each category. It allows more precise classification of queries, ensuring accurate assignment, faster resolution, and improved reporting on specific support concerns.",
+
     //Holidays Module Info
     HOLIDAYS_MODULE_INFO: "The Holidays page displays public and optional holidays for the selected year, with the ability to change the year using a dropdown. Each holiday is shown with its name, date, and an event for easy reference.",
 
@@ -132,6 +142,11 @@ export const MODULE_INFOS = {
     ATTENDANCE_REMOTE_LOGIN_REPORTS_MODULE_INFO: "The Remote Login Report enables HR to generate and review detailed records of employees who have applied for remote login. It provides complete visibility of application dates and durations for accurate tracking purposes.",
     ATTENDANCE_EXTRA_HOURS_MODULE_INFO:"This section allows employees to submit requests for extra hours worked beyond their regular shift. Employees can provide the required details for the additional time spent. Once submitted, the request is sent to the approver for review and necessary action.",
     LEAVE_CARRYFORWARD_ENCASHMENT_REPORTS_MODULE_INFO: "Provides a consolidated view of employee leave balances after year-end processing, including carry-forwarded leaves, encashment details, and lapsed balances across leave categories. It helps HR teams validate year-end leave processing, ensure policy compliance, and track accurate leave balance transitions between fiscal years.",
+    ATTENDANCE_LATE_LOGIN_MODULE_INFO:
+    'Displays details of employees who logged in after their scheduled start time, including login timestamps, delay duration, department, and reporting manager. Helps HR monitor punctuality trends and identify frequent late logins.',
+  ATTENDANCE_EXCEEDED_BREAK_HOURS_MODULE_INFO:
+    'Provides information on employees who exceeded their allocated break time, including break duration and excess time. Helps HR ensure adherence to work schedules and monitor break-time compliance.',
+    
     //Monthly Attendance Report Module Info
     MONTHLY_ATTENDANCE_REPORT_MODULE_INFO: "The Monthly Attendance Report allows users to generate a consolidated view of employee attendance, including leaves, work-from-home, permissions, and regularizations. This report supports accurate payroll processing, compliance checks, and performance tracking.",
 
@@ -181,7 +196,7 @@ export const MODULE_INFOS = {
     PENDING_APPROVALS_EMPLOYEEINFO_MODULE_INFO: "The Employee Info section in Pending Approvals displays all requests submitted by employees to update their personal or job-related information. Managers can review each request, verify the details, and take appropriate action by approving or rejecting the update. Once approved, the system automatically updates the employee’s information, ensuring accurate and controlled data maintenance.",
     PENDING_APPROVALS_KRA_KPI_MODULE_INFO: "The Pending Approvals – KRA/KPI module allows the designated approval authority to review, approve, or reject KRA and KPI submissions raised by employees. It ensures timely validation, accountability, and accurate tracking of performance and goal-related data.",
     TIME_OFF_GLOBAL_WFH_MODULE_INFO: "Global WFH enables HR or managers to apply Work From Home for employees on specific dates or periods, allowing remote work and attendance marking as per company policy.",
-    
+
     //on behalf of module info
     ON_BEHALF_OF_WFH_MODULE_INFO : "The Work From Home (WFH) module enables HR or managers to apply and manage WFH requests on behalf of employees efficiently. It streamlines approval workflows, ensuring accurate tracking of remote work days. The module enhances transparency and flexibility in managing employee work arrangements.",
     ON_BEHALF_OF_REMOTELOGIN_MODULE_INFO : "The Remote Login module enables HR or managers to apply and manage Remote login requests on behalf of employees efficiently. It streamlines approval workflows, ensuring accurate tracking of remote work days. The module enhances transparency and flexibility in managing employee work arrangements.",
@@ -255,7 +270,7 @@ export const MODULE_INFOS = {
     JOB_MODULE_ONBOARDING_DOCUMENTS_MODULE_INFO: "The Onboarding Verification section displays documents uploaded by prospective employees, including Aadhaar, PAN, and others. HR can view each document and take actions such as verifying or rejecting them to ensure compliance before onboarding.",
     JOB_MODULE_PROJECTS_INFO: "The Project Info section displays the list of projects associated with the employee, including project type, total phases, and hours spent. It allows viewing all assigned projects on a single page, helping track employee involvement, phase progress, and overall performance across multiple projects efficiently.",
     JOB_MODULE_EXIT_FEEDBACK_MODULE_INFO: "The Exit Feedback enables employees to share their experience during the separation process. The feedback collected helps the organization improve policies, culture, and overall employee experience",
-
+    LOCATION_CHANGE_MODULE_INFO: 'The Bulk Location Change feature allows users to update the location, sub-location, and shift details for multiple employees simultaneously. It helps streamline administrative tasks by enabling quick and efficient bulk updates in a single action.',
     //My Info Documents Module Info
     DOCUMENTS_MODULE_INFO: "The Document section provides categorized storage for important organizational files, including employee documents, appraisal/promotion letters, and policy documents. Users can navigate through folders and subfolders to view file details.",
 
@@ -324,5 +339,20 @@ export const MODULE_INFOS = {
     CARRY_FORWORD_LEAVES: 'This module helps to initiate the Leave Carry Forward workflow by defining the processing scope, reviewing the eligible employee leave balances, mapping the previous year’s leave categories to the new fiscal year, and executing carry-forward job updates seamlessly.',
     Initial_Leave_Entitlements: 'Start a new leave entitlement load job. Define the entitlement scope, review eligible employees, validate rules, and process leave entitlements through a guided three-step workflow.',
     Create_Initial_Leave_Entitlements: 'Use this section to bulk allocate leave entitlements for employees by selecting location, sub-location, shift, and leave category. The system validates applicable leave rules and processes entitlements for eligible employees.',
-    CARRY_FORWORD_LEAVES_CREATE: "This module helps to initiate the Leave Carry Forward workflow by allowing you to define the processing scope, review eligible employee leave balances, map the previous year’s leave categories to the new fiscal year, and execute the carry-forward job updates seamlessly."
+    CARRY_FORWORD_LEAVES_CREATE: "This module helps to initiate the Leave Carry Forward workflow by allowing you to define the processing scope, review eligible employee leave balances, map the previous year’s leave categories to the new fiscal year, and execute the carry-forward job updates seamlessly.",
+
+    HELP_DESK_REPORTS_MODULE_INFO: "The Help Desk Report provides insights into employee support queries raised within the organization. It helps administrators and support teams monitor ticket activities, track issue resolution, and analyze support performance.",
+    HELP_DESK_DETAILED_REPORTS_MODULE_INFO:"The Help Desk Detailed Report displays complete information about each help desk ticket, including employee details, issue category, priority, and status. It helps support teams track and manage individual queries effectively.",
+    HELP_DESK_SUMMARY_REPORTS_MODULE_INFO:"The Help Desk Summary Report provides an aggregated overview of help desk tickets based on category, and assigned personnel. It helps management quickly analyze ticket distribution and overall support performance.",
+
+    //IT Support Reports
+    ITSUPPORT_REPORTS_MODULE_INFO: "The IT Support Report provides insights into IT-related support tickets raised by employees across the organization. It helps IT teams monitor issue resolution, track ticket progress, and analyze overall support performance.",
+    IT_SUPPORT_SUMMARY_REPORTS_MODULE_INFO: "The IT Support Detailed Report displays complete information for each IT support ticket, including employee details, issue category, priority, assigned support member, and ticket status. It helps IT teams track and manage individual technical issues efficiently.",
+    IT_SUPPORT_DETAILED_REPORTS_MODULE_INFO: "The IT Support Summary Report provides an overview of IT tickets based on the assigned support personnel and their current status. It helps management quickly understand workload distribution and the overall resolution status of IT support requests.",
+
+    TIMESHEET_BULK_UPLOAD: "The Timesheet Import feature allows users to upload bulk timesheet entries using a predefined Excel/CSV template. It validates the data and highlights errors to ensure accurate and successful submission.",
+    TIMESHEET_HISTORY_LOG: "View History module displays the record of all timesheet import and export activities. It allows you to track status, view processed records, and download files.",
+    TIMESHEET_BULK_EXPORT: "The Timesheet Export feature enables users to download timesheet data based on selected filters such as date range, employee, or project. It helps in reporting, analysis, and sharing timesheet records in Excel format.",
+
+
 }

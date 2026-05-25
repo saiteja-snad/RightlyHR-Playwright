@@ -27,6 +27,7 @@ import { ProjectManagementLayoutComponent } from "../../project-management/proje
 import { CardsManagementLayoutComponent } from "../../cards-management/cards-management-layout/cards-management-layout.component";
 import { SkillsetManagementLayoutComponent } from "../../skill-set-management/skillset-management-layout/skillset-management-layout.component";
 import { PendingApprovalsComponent } from "../../time-off/pending-approvals/pending-approvals.component";
+import { HelpdeskLayOutComponent } from "../../Helpdesk/helpdesk-lay-out/helpdesk-lay-out.component";
 
 
 export default [
@@ -61,4 +62,5 @@ export default [
     { path: 'skill-management', component: SkillsetManagementLayoutComponent, canActivate: [authGuard], loadChildren: () => import('../../skill-set-management/skillset-management.route') },
     { path: 'card-management', component: CardsManagementLayoutComponent, loadChildren: () => import('../../cards-management/cards-management.route') },
     { path: 'pending-approvals', component: PendingApprovalsComponent, loadChildren: () => import('../../time-off/pending-approvals.route') },
+    { path: 'help-desk', component: HelpdeskLayOutComponent, canActivate: [authGuard], loadChildren: () => import('../../Helpdesk/helpdesk.route') },
 ] as Route[];

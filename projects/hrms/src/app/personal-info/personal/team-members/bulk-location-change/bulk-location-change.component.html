@@ -1,0 +1,517 @@
+<div class="custom-main-component-container">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <span class="component-sub-header"></span>
+        </div>
+        <div class="d-flex gap-3 align-items-center justify-content-end">
+            @if(canAccess('view','location-change')) {
+            <div>
+                <button class="custom-btn btn-primary" (click)="openModel(raiserequest)">Location Change</button>
+            </div>}
+
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="mb-3">
+            <!--personal Info tabs-->
+            <div *ngIf="isActive('/personalinfo')">
+                <app-team-members-tabs />
+            </div>
+            <!--My Info tabs-->
+            <div *ngIf="isActive('/myinfo')">
+                <app-my-info-team-numbers-tab />
+            </div>
+        </div>
+
+        <!--Input search-->
+        <div class="w-100">
+            <div class="input-group custom-search mb-3">
+                <span class="input-group-text custom-input-group-search" id="basic-addon1"><i
+                        class="bi bi-search"></i></span>
+                <input type="search" class="form-control custom-search-input"
+                    placeholder="Search by employee id / employee name / location / sub location / shift"
+                    aria-label="Username" #search="ngModel" [(ngModel)]="searchValue" autocomplete="off"
+                    aria-describedby="basic-addon1">
+            </div>
+
+
+            <div class="custom-table-content ">
+                @if (!loading) {
+                <table class="w-100">
+                    <thead>
+                        <tr>
+                            <th>Employee ID</th>
+                            <th>Employee Name</th>
+                            <th>Location</th>
+                            <th>Sub Location</th>
+                            <th>Shift</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let details of  getAllEmployeesDetails | activeEmployee : searchValue ">
+                            <td class="center">
+                                <span *ngIf="details.fusionEmpId;else fusionId">
+                                    {{details.fusionEmpId}}
+                                </span>
+                                <ng-template #fusionId>NA</ng-template>
+                            </td>
+                            <td class="center">
+                                <span *ngIf="details.firstName;else empname">
+                                    {{details.firstName}} {{details.middleName}} {{details.lastName}}
+                                </span>
+                                <ng-template #empname>NA</ng-template>
+                            </td>
+                            <td class="center">
+                                {{ details?.jobDetails?.[0]?.lopcation ?? 'NA' }}
+                            </td>
+                            <td class="center">
+                                {{ details?.jobDetails?.[0]?.subLocation ?? "NA" }}
+                            </td>
+                            <td class="center">
+                                {{ details?.jobDetails?.[0]?.shiftName ?? 'NA' }}
+                            </td>
+                        </tr>
+                        @if ((getAllEmployeesDetails | activeEmployee : searchValue).length === 0) {
+                        <tr>
+                            <app-no-data-found />
+                        </tr>
+                        }
+                    </tbody>
+                    <ng-template #noData>
+                        <tr>
+                            <app-no-data-found />
+                        </tr>
+                    </ng-template>
+                </table>
+                }
+                @else {
+                <app-data-loader-content />
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<ng-template #raiserequest let-modal>
+    <div class="custom-main-popup-container" ngbAutofocus>
+        <div class="d-flex justify-content-between popup-header-border p-3">
+            <div class="pt-2">
+                <p class="popup-heading mb-0"> {{'Bulk Location Change'}}</p>
+            </div>
+        </div>
+        <div class="custom-main-popup-content p-4">
+            <form [formGroup]="requestForm" (ngSubmit)="changelocation()">
+                <div class="row">
+
+                    <div class="col-6  mb-3">
+                        <label for="selectType" class="form-label custom-label mb-2">Selection Type <span
+                                class="error-msg">*</span></label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="selectTypes" optionLabel="item_text" optionValue="Value"
+                                appendTo="body" [autoZIndex]="true" [baseZIndex]="1100"
+                                panelStyleClass="custom-phase-multiselect-panel" formControlName="selectType"
+                                placeholder="Selection Type" (onChange)="validationCheck()"
+                                class="form-select custom-select w-100">
+                            </p-select>
+                        </div>
+                        <div class="error-msg"
+                            *ngIf="requestForm.get('selectType')?.touched && requestForm.get('selectType')?.invalid">
+                            Select type is required
+                        </div>
+                    </div>
+                    <ng-container *ngIf="requestForm.get('selectType')?.value==='Location/Sublocation'">
+                        <div class="col-6 mb-3">
+                            <label for="location" class="form-label custom-label mb-2">Current Location <span
+                                    class="error-msg">*</span></label>
+                            <div class="custom-p-multiSelect-content">
+                                <p-multiSelect [options]="jobLocationDropDownData" optionValue="id" appendTo="body"
+                                    [autoZIndex]="true" [baseZIndex]="1100"
+                                    panelStyleClass="custom-phase-multiselect-panel" optionLabel="jobLocationName"
+                                    formControlName="location" [filter]="true" filterBy="jobLocationName"
+                                    [resetFilterOnHide]="true" (onChange)="getSubLocationByid()"
+                                    filterPlaceHolder="Search location"
+                                    placeholder="Please select a location" class="w-100">
+                                </p-multiSelect>
+                            </div>
+                            <div class="error-msg"
+                                *ngIf="requestForm.get('location')?.touched && requestForm.get('location')?.invalid">
+                                Location is required
+                            </div>
+                        </div>
+
+                        <div class="col-6 mb-3">
+                            <label for="sublocation" class="form-label custom-label mb-2">Current Sub Location <span
+                                    class="error-msg">*</span></label>
+                            <div class="custom-p-multiSelect-content">
+                                <p-multiSelect [options]="subLocationsDropdown" optionValue="id"
+                                    optionLabel="jobSubLocationName" formControlName="sublocation" [filter]="true"
+                                    appendTo="body" [autoZIndex]="true" [baseZIndex]="1100"
+                                    panelStyleClass="custom-phase-multiselect-panel" filterBy="jobSubLocationName"
+                                    [resetFilterOnHide]="true" closeOnSelect="false"
+                                    (onChange)="getEmployeesLocationwise()"
+                                    filterPlaceHolder="Search sub location"
+                                    placeholder="Please select a sub location"
+                                    class="form-select custom-select">
+                                </p-multiSelect>
+                            </div>
+                            <div class="error-msg"
+                                *ngIf="requestForm.get('sublocation')?.touched && requestForm.get('sublocation')?.invalid">
+                                Sub Location is required
+                            </div>
+                        </div>
+                        <div class="col-6 mb-3">
+                            <label for="employees" class="form-label custom-label mb-2">Select Employees <span
+                                    class="error-msg">*</span></label>
+                            <div class="custom-p-multiSelect-content">
+                                <p-multiSelect [options]="locationWiseEmployeesDetails" optionValue="employeeId"
+                                    optionLabel="fullName" formControlName="selectedOptions" [filter]="true"
+                                    filterBy="fullName" [resetFilterOnHide]="true" closeOnSelect="false"
+                                    filterPlaceHolder="Search employee" maxHeight="145px"
+                                    placeholder="Please select at least one employee" class="form-select custom-select">
+                                </p-multiSelect>
+                            </div>
+                            <div class="error-msg"
+                                *ngIf="requestForm.get('selectedOptions')?.touched && requestForm.get('selectedOptions')?.invalid">
+                                Employees are required
+                            </div>
+                        </div>
+                        <div class="col-6 mb-3">
+                            <label for="location" class="form-label custom-label mb-2"> New Location <span
+                                    class="error-msg">*</span></label>
+                            <div class="custom-p-select-content">
+                                <p-select [options]="locationList" optionLabel="jobLocationName" optionValue="id"
+                                    appendTo="body" [autoZIndex]="true" [baseZIndex]="1100"
+                                    panelStyleClass="custom-phase-multiselect-panel" formControlName="locationId"
+                                    placeholder="Please select a new location" [filter]="true"
+                                    filterBy="jobLocationName" (onChange)="onLocationChange($event)"
+                                    filterPlaceholder="Search location"
+                                    [resetFilterOnHide]="true"
+                                    class="form-select custom-select location-dropdown">
+                                </p-select>
+                            </div>
+                            <div class="error-msg"
+                                *ngIf="requestForm.get('locationId')?.touched && requestForm.get('locationId')?.invalid">
+                                Location is required
+                            </div>
+                        </div>
+
+                        <div class="col-6 mb-3">
+                            <label for="team" class="form-label custom-label mb-2">New Sub Location <span
+                                    class="error-msg">*</span></label>
+                            <div class="custom-p-select-content">
+                                <p-select [options]="subLocationList" optionLabel="jobSubLocationName" optionValue="id"
+                                    appendTo="body" [autoZIndex]="true" [baseZIndex]="1100"
+                                    panelStyleClass="custom-phase-multiselect-panel" formControlName="subLocationId"
+                                    placeholder="Please select a new sub location" [filter]="true"
+                                    filterBy="jobSubLocationName" (onChange)="onSubLocationChange($event)"
+                                    filterPlaceholder="Search sub location"
+                                    [resetFilterOnHide]="true"
+                                    [disabled]="!requestForm.get('locationId')?.value"
+                                    class="form-select custom-select">
+                                </p-select>
+                            </div>
+
+                            <div class="error-msg"
+                                *ngIf="requestForm.get('subLocationId')?.touched && requestForm.get('subLocationId')?.invalid">
+                                Sub location is required
+                            </div>
+                        </div>
+
+                        <div class="col-6 mb-3">
+                            <label for="team" class="form-label custom-label mb-2">New Shift <span
+                                    class="error-msg">*</span></label>
+                            <div class="custom-p-select-content">
+                                <p-select [options]="shiftsAvailable" optionLabel="shiftName" optionValue="id"
+                                    formControlName="shiftId" placeholder="Please select a new shift" [filter]="true"
+                                    appendTo="body" [autoZIndex]="true" [baseZIndex]="1100"
+                                    panelStyleClass="custom-phase-multiselect-panel" filterBy="shiftName"
+                                    filterPlaceholder="Search shift"
+                                    [resetFilterOnHide]="true"
+                                    [disabled]="!requestForm.get('subLocationId')?.value"
+                                    class="form-select custom-select">
+                                </p-select>
+                            </div>
+
+                            <div class="error-msg"
+                                *ngIf="requestForm.get('shiftId')?.touched && requestForm.get('shiftId')?.invalid">
+                                Shift is required
+                            </div>
+                        </div>
+
+
+                        <div class="col-6 mb-3">
+                            <label for="effectivedate" class="form-label custom-label mb-2">Effective Date <span
+                                    class="error-msg">*</span></label>
+                            <input class="form-control custom-input" type="date" formControlName="effectiveDate"
+                                autocomplete="off" id="effectiveDate" [min]="minDate" [max]="maxDate" />
+                            <div class="error-msg"
+                                *ngIf="requestForm.get('effectiveDate')?.touched && requestForm.get('effectiveDate')?.invalid">
+                                Effective Date is required
+                            </div>
+                        </div>
+                    </ng-container>
+
+                    <ng-container *ngIf="requestForm.get('selectType')?.value==='Department/Team'">
+                        <div class="col-6 mb-3">
+                            <label for="department" class="form-label custom-label mb-2">Department <span
+                                    class="error-msg">*</span></label>
+                            <div class="custom-p-multiSelect-content">
+                                <p-multiSelect [options]="departmentDetails" optionValue="sno" appendTo="body"
+                                    [autoZIndex]="true" [baseZIndex]="1100"
+                                    panelStyleClass="custom-phase-multiselect-panel" optionLabel="departmentName"
+                                    formControlName="department" [filter]="true" filterBy="departmentName"
+                                    [resetFilterOnHide]="true" closeOnSelect="false" (onChange)="getTeamData()"
+                                    filterPlaceHolder="Search department"
+                                    placeholder="Please Select Department" class="form-select custom-select">
+                                </p-multiSelect>
+                            </div>
+                            <div class="error-msg"
+                                *ngIf="requestForm.get('department')?.touched && requestForm.get('department')?.invalid">
+                                Department is required
+                            </div>
+                        </div>
+
+                        <div class="col-6 mb-3">
+                            <label for="team" class="form-label custom-label mb-2">Team <span
+                                    class="error-msg">*</span></label>
+                            <div class="custom-p-multiSelect-content">
+                                <p-multiSelect [options]="teamDetails" optionValue="subdepartmentId" appendTo="body"
+                                    [autoZIndex]="true" [baseZIndex]="1100"
+                                    panelStyleClass="custom-phase-multiselect-panel" optionLabel="subdepartmentName"
+                                    formControlName="teamSelectedOptions" [filter]="true" filterBy="subdepartmentName"
+                                    [resetFilterOnHide]="true" closeOnSelect="false" (onChange)="getEmployeesTeamwise()"
+                                    filterPlaceHolder="Search team" maxHeight="145px"
+                                    placeholder="Please Select team" class="form-select custom-select">
+                                </p-multiSelect>
+                            </div>
+                            <div class="error-msg"
+                                *ngIf="requestForm.get('teamSelectedOptions')?.touched && requestForm.get('teamSelectedOptions')?.invalid">
+                                Team is required
+                            </div>
+                        </div>
+
+                        <div class="col-6 mb-3">
+                            <label for="teamemployee" class="form-label custom-label mb-2">Employees <span
+                                    class="error-msg">*</span></label>
+                            <div class="custom-p-multiSelect-content">
+                                <p-multiSelect [options]="teamWiseEmployeesDetails" bindValue="employeeId"
+                                    optionValue="employeeId" optionLabel="fullName" appendTo="body" [autoZIndex]="true"
+                                    [baseZIndex]="1100" panelStyleClass="custom-phase-multiselect-panel"
+                                    formControlName="teamEmpselectedOptions" [filter]="true" filterBy="fullName"
+                                    [resetFilterOnHide]="true" closeOnSelect="false"
+                                    filterPlaceHolder="Search employee"
+                                    placeholder="Please select at least one employee" class="form-select custom-select">
+                                </p-multiSelect>
+                            </div>
+                            <div class="error-msg"
+                                *ngIf="requestForm.get('teamEmpselectedOptions')?.touched && requestForm.get('teamEmpselectedOptions')?.invalid">
+                                Employees are required
+                            </div>
+                        </div>
+
+                        <div class="col-6 mb-3">
+                            <label for="location" class="form-label custom-label mb-2">New Location <span
+                                    class="error-msg">*</span></label>
+                            <div class="custom-p-select-content">
+                                <p-select [options]="locationList" optionLabel="jobLocationName" optionValue="id"
+                                    appendTo="body" [autoZIndex]="true" [baseZIndex]="1100"
+                                    panelStyleClass="custom-phase-multiselect-panel" formControlName="locationId"
+                                    placeholder="Please select a new location" [filter]="true"
+                                    filterBy="jobLocationName" (onChange)="onLocationChange($event)"
+                                    filterPlaceholder="Search location"
+                                    [resetFilterOnHide]="true"
+                                    class="form-select custom-select location-dropdown">
+                                </p-select>
+                            </div>
+                            <div class="error-msg"
+                                *ngIf="requestForm.get('locationId')?.touched && requestForm.get('locationId')?.invalid">
+                                Location is required
+                            </div>
+                        </div>
+
+                        <div class="col-6 mb-3">
+                            <label for="team" class="form-label custom-label mb-2">New Sub Location <span
+                                    class="error-msg">*</span></label>
+                            <div class="custom-p-select-content">
+                                <p-select [options]="subLocationList" optionLabel="jobSubLocationName" optionValue="id"
+                                    appendTo="body" [autoZIndex]="true" [baseZIndex]="1100"
+                                    panelStyleClass="custom-phase-multiselect-panel" formControlName="subLocationId"
+                                    placeholder="Please select a new sub location" [filter]="true"
+                                    filterBy="jobSubLocationName" (onChange)="onSubLocationChange($event)"
+                                    filterPlaceholder="Search sub location"
+                                    [resetFilterOnHide]="true"
+                                    [disabled]="!requestForm.get('locationId')?.value"
+                                    class="form-select custom-select">
+                                </p-select>
+
+                            </div>
+                            <div class="error-msg"
+                                *ngIf="requestForm.get('subLocationId')?.touched && requestForm.get('subLocationId')?.invalid">
+                                Sub location is required
+                            </div>
+                        </div>
+
+                        <div class="col-6 mb-3">
+                            <label for="team" class="form-label custom-label mb-2">New Shift <span
+                                    class="error-msg">*</span></label>
+                            <div class="custom-p-select-content">
+                                <p-select [options]="shiftsAvailable" optionLabel="shiftName" optionValue="id"
+                                    formControlName="shiftId" placeholder="Please select a new shift" [filter]="true"
+                                    appendTo="body" [autoZIndex]="true" [baseZIndex]="1100"
+                                    panelStyleClass="custom-phase-multiselect-panel" filterBy="shiftName"
+                                    filterPlaceholder="Search shift"
+                                    [resetFilterOnHide]="true"
+                                    [disabled]="!requestForm.get('subLocationId')?.value"
+                                    class="form-select custom-select">
+                                </p-select>
+                            </div>
+                            <div class="error-msg"
+                                *ngIf="requestForm.get('shiftId')?.touched && requestForm.get('shiftId')?.invalid">
+                                Shift is required
+                            </div>
+                        </div>
+                        <div class="col-6 mb-3">
+                            <label for="effectivedate" class="form-label custom-label mb-2">Effective Date <span
+                                    class="error-msg">*</span></label>
+                            <input class="form-control custom-input" type="date" formControlName="effectiveDate"
+                                autocomplete="off" id="effectiveDate" [min]="minDate" [max]="maxDate" />
+                            <div class="error-msg"
+                                *ngIf="requestForm.get('effectiveDate')?.touched && requestForm.get('effectiveDate')?.invalid">
+                                Effective Date is required
+                            </div>
+                        </div>
+                    </ng-container>
+
+                    <ng-container *ngIf="requestForm.get('selectType')?.value==='Employees'">
+                        <div class="col-6 mb-3">
+                            <label for="employees" class="form-label custom-label mb-2">Employees <span
+                                    class="error-msg">*</span></label>
+                            <div class="custom-p-multiSelect-content">
+                                <p-multiSelect [options]="getAllEmployeesDetails" optionValue="employeeId"
+                                    appendTo="body" [autoZIndex]="true" [baseZIndex]="1100"
+                                    panelStyleClass="custom-phase-multiselect-panel" optionLabel="fullName"
+                                    formControlName="selectedOptions" [filter]="true" filterBy="fullName"
+                                    [resetFilterOnHide]="true" filterPlaceHolder="Search employee"
+                                    placeholder="Please select at least one employee"
+                                    class="form-select custom-select">
+                                </p-multiSelect>
+                            </div>
+                            <div class="error-msg"
+                                *ngIf="requestForm.get('selectedOptions')?.touched && requestForm.get('selectedOptions')?.invalid">
+                                Employees are required
+                            </div>
+                        </div>
+                        <div class="col-6 mb-3">
+                            <label for="location" class="form-label custom-label mb-2">New Location <span
+                                    class="error-msg">*</span></label>
+                            <div class="custom-p-select-content">
+                                <p-select [options]="locationList" optionLabel="jobLocationName" optionValue="id"
+                                    appendTo="body" [autoZIndex]="true" [baseZIndex]="1100"
+                                    panelStyleClass="custom-phase-multiselect-panel" formControlName="locationId"
+                                    placeholder="Please select a new location" [filter]="true"
+                                    filterBy="jobLocationName" (onChange)="onLocationChange($event)"
+                                    filterPlaceholder="Search location"
+                                    [resetFilterOnHide]="true"
+                                    class="form-select custom-select location-dropdown">
+                                </p-select>
+                            </div>
+                            <div class="error-msg"
+                                *ngIf="requestForm.get('locationId')?.touched && requestForm.get('locationId')?.invalid">
+                                Location is required
+                            </div>
+                        </div>
+
+                        <div class="col-6 mb-3">
+                            <label for="team" class="form-label custom-label mb-2">New Sub Location <span
+                                    class="error-msg">*</span></label>
+                            <div class="custom-p-select-content">
+                                <p-select [options]="subLocationList" optionLabel="jobSubLocationName" optionValue="id"
+                                    appendTo="body" [autoZIndex]="true" [baseZIndex]="1100"
+                                    panelStyleClass="custom-phase-multiselect-panel" formControlName="subLocationId"
+                                    placeholder="Please select a new sub location" [filter]="true"
+                                    filterBy="jobSubLocationName" (onChange)="onSubLocationChange($event)"
+                                    filterPlaceholder="Search sub location"
+                                    [resetFilterOnHide]="true"
+                                    [disabled]="!requestForm.get('locationId')?.value"
+                                    class="form-select custom-select">
+                                </p-select>
+                            </div>
+
+                            <div class="error-msg"
+                                *ngIf="requestForm.get('subLocationId')?.touched && requestForm.get('subLocationId')?.invalid">
+                                Sub location is required
+                            </div>
+                        </div>
+
+                        <div class="col-6 mb-3">
+                            <label for="team" class="form-label custom-label mb-2">New Shift <span
+                                    class="error-msg">*</span></label>
+                            <div class="custom-p-select-content">
+                                <p-select [options]="shiftsAvailable" optionLabel="shiftName" optionValue="id"
+                                    formControlName="shiftId" placeholder="Please select a new shift"
+                                    [filter]="true" appendTo="body" [autoZIndex]="true" [baseZIndex]="1100"
+                                    panelStyleClass="custom-phase-multiselect-panel" filterBy="shiftName"
+                                    filterPlaceholder="Search shift"
+                                    [resetFilterOnHide]="true"
+                                    [disabled]="!requestForm.get('subLocationId')?.value"
+                                    class="form-select custom-select">
+                                </p-select>
+                            </div>
+
+                            <div class="error-msg"
+                                *ngIf="requestForm.get('shiftId')?.touched && requestForm.get('shiftId')?.invalid">
+                                Shift is required
+                            </div>
+                        </div>
+                        <div class="col-6 mb-3">
+                            <label for="effectivedate" class="form-label custom-label mb-2">Effective Date <span
+                                    class="error-msg">*</span></label>
+                            <input class="form-control custom-input" type="date" formControlName="effectiveDate"
+                                autocomplete="off" id="effectiveDate" [min]="minDate" [max]="maxDate" />
+                            <div class="error-msg"
+                                *ngIf="requestForm.get('effectiveDate')?.touched && requestForm.get('effectiveDate')?.invalid">
+                                Effective Date is required
+                            </div>
+                        </div>
+                    </ng-container>
+
+
+                </div>
+                <div class="d-flex justify-content-end gap-3">
+                    <button type="button" class="custom-btn btn-secondary px-4"
+                        (click)="openConfirmationModal(confirmationpopup)">Cancel</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="requestForm.invalid">
+                        @if(spinnerLoader){
+                        <div class="button-loader-content">
+                            <span class="spinner-border button-spinner text-light" role="status"
+                                aria-hidden="true"></span>
+                            <span>{{'Loading...'}}</span>
+                        </div>
+                        }@else {
+                        <span>{{'Submit'| translate}}</span>
+                        }
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #confirmationpopup let-model>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
+            <p class="confirmation-text"> Are you sure you want to cancel?</p>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">
+                No
+            </button>
+            <button type="submit" class="custom-btn btn-primary" (click)="close()">
+                Yes
+            </button>
+        </div>
+    </div>
+</ng-template>

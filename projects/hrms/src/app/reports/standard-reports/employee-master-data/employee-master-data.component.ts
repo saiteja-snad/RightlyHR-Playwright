@@ -8,7 +8,7 @@ import { AuthService } from '../../../services/auth.service';
 import { IemployeeDetails } from '../../../Interfaces/job-model';
 import { ReportsService } from '../../../services/reports/reports.service';
 import { IStandardReportRequest } from '../../../Interfaces/reports.model';
-import { DateformatPipe } from '../../../pipes/dateformat.pipe';
+import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { HttpService } from '../../../services/http.service';
 import * as XLSX from 'xlsx-js-style';
 import { CommonModule } from '@angular/common';

@@ -518,7 +518,10 @@ export class PermissionsComponent implements OnInit, OnDestroy {
   ];
   flexibleWFHTabsFields = [
     'Active Allocations Tab',
-    'Allocation History Tab'
+    'Allocation History Tab',
+    'Allow Multi Date Range Tab',
+    'Allow Multi Date Range History Tab',
+    'WFH Allocation History Tab'
   ]
   flexibleWorkHoursTabsFields = [
     'Work Hours Allocation History Tab',
@@ -582,6 +585,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Phone Book',
     'Contacts Directory',
     'Cards Management',
+    'Help Desk'
   ];
 
     dashboardTabsFields = [
@@ -615,6 +619,17 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'All Tickets Tab',
     'Open Tickets Tab',
   ];
+
+  helpdeskModule = ['Support Helpdesk Queries Tab', 'Employee Helpdesk Queries Tab'];
+  HelpdeskTicketsTabs = [
+    'Helpdesk Rejected Queries Tab',
+    'Helpdesk Await On User Queries Tab',
+    'Helpdesk Solved Queries Tab',
+    'Helpdesk Rejected Queries Tab',
+    'Helpdesk All Queries Tab',
+    'Helpdesk Open Queries Tab',
+  ];
+
   HolidaysModule = ['Public Holidays Tab', 'Optional Holidays Tab'];
   OrgHierarchyModule = [
     'Organization Hierarchy - HR',
@@ -913,6 +928,12 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Leave Carry Forward & Encashment Report',
     'Leave Carry Forward & Encashment Report - Generate',
     'Leave Carry Forward & Encashment Report - Export',
+    'Late Login Report',
+    'Late Login Report - Generate',
+    'Late Login Report - Export',
+    'Exceeded Break Hours Report',
+    'Exceeded Break Hours Report - Generate',
+    'Exceeded Break Hours Report - Export',
   ];
   attendanceReportsEmployeeTeamTabsFields = [
     'Attendance All Employees List(Leaves)',
@@ -1231,6 +1252,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Employee Info Change RM Button',
     'Employee Info Team Managers Tab',
     'Employee Info Change TM Button',
+    'Employee Info Location Change Tab',
   ];
   pmsModuleFields = [
     'Review Cycle List',
@@ -1356,8 +1378,15 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Project Management Authority',
     'Project Role',
     'Task',
+    'Task Type',
     'Letter Frequency Configurations'
   ];
+
+  settingHelpdeskManagementConfigFields = [
+    'Category',
+    'Subcategory'
+  ];
+
   selectAllLettersTabs = [
     'NDA Document', 'MSA Document'
   ]
@@ -1390,6 +1419,24 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'IT Support Sub-Category',
 
   ];
+itSupportReportsTabsFields=[
+  'IT Support Summary Report',
+  'IT Support Detailed Report - Generate',
+  'IT Support Detailed Report - Export',
+  'IT Support Detailed Report',
+  'IT Support Summary Report - Generate',
+  'IT Support Summary Report - Export'
+];
+
+
+  helpDeskReportsTabsFields=[
+  'Help Desk Query Detailed Report',
+  'Help Desk Query Summary Report',
+  'Help Desk Query Detailed Report - Generate',
+  'Help Desk Query Detailed Report - Export',
+  'Help Desk Query Summary Report - Generate',
+  'Help Desk Query Summary Report - Export',
+];
 
   // Generic toggle function for checkboxes
   toggleSelectAll(

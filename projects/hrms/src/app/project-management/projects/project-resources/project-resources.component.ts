@@ -6,7 +6,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { combineLatest, Subject, Subscription, takeUntil, debounceTime, distinctUntilChanged } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
 import { IResource } from '../../../Interfaces/project-management/resources.model';
-import { DateformatPipe } from "../../../pipes/dateformat.pipe";
+import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { OpenModalService } from '../../../services/open-modal.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Project } from '../../../Interfaces/projects.model';
@@ -748,7 +748,12 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
 
     if (!config) return;
 
-    if (action === 'Update') {
+      if (action === 'Update') {
+      const phaseDate = data?.phase;
+      if(phaseDate){
+        this.projectStartDate = phaseDate.startDate ?? null;
+        this.projectEndDate = phaseDate.endDate ?? null;
+      }
       this.openModal(this.updateResourcemodal, 'lg', data);
     } else {
       this.openReasonModal(config.title, data);

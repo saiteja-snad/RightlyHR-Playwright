@@ -10,11 +10,10 @@ import { Ipersonal } from '../../../Interfaces/personal-modal';
 import moment from 'moment';
 import { Router } from '@angular/router';
 import { Skeleton } from 'primeng/skeleton';
-import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-offboarding-details',
-  imports: [CommonModule, ReactiveFormsModule,Skeleton,TranslateModule],
+  imports: [CommonModule, ReactiveFormsModule,Skeleton],
   templateUrl: './offboarding-details.component.html',
   styleUrl: './offboarding-details.component.scss'
 })
@@ -31,7 +30,7 @@ export class OffboardingDetailsComponent implements OnInit, OnDestroy{
   terminationDetails: ITermination[] = [];
   showButtons() {
     this.buttons = !this.buttons
-  } 
+  }
 
 
   constructor(private modalService: NgbModal, private router: Router, private http: HttpService, private fb: FormBuilder, private conformationPopup: OpenModalService) { }
@@ -100,7 +99,7 @@ export class OffboardingDetailsComponent implements OnInit, OnDestroy{
   getEmployeeId(): void {
     this.loading= true;
     const employeeId = parseInt(this.empinfo.employeeId);
-  
+
     this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
       next: (data: any) => {
         this.loading = false;
@@ -118,7 +117,7 @@ export class OffboardingDetailsComponent implements OnInit, OnDestroy{
         console.log(this.empdata);
 
         // Patch the form with the fetched data
-        this.offboardingForm.patchValue({         
+        this.offboardingForm.patchValue({
           exitType: this.empdata.termtypeoffboard || '', // Replace with the correct property if different
           exitReason: this.empdata.termreasonoffboard || '', // Replace with the correct property if different
           eligibleForRehire: this.empdata.eligibleforrehire || '', // Replace with the correct property if different
@@ -127,7 +126,7 @@ export class OffboardingDetailsComponent implements OnInit, OnDestroy{
           contractorLastWorkingDay: this.empdata.contractorLastWorkingDate || ''
         });
 
-        
+
       },
       error: (err: any) => {
         console.log(err);

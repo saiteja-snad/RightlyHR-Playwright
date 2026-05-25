@@ -1,0 +1,156 @@
+<div class="custom-main-component-container">
+    <div class="component-header-content d-flex justify-content-between">
+        <div class="heading-content">
+            <div class="commpoment-name">Project Management
+                <span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
+            </div>
+            <div class="commpoment-name">
+                <a (click)="navigatetomy()"><u>My Timesheet</u></a>
+                <span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
+            </div>
+            <div class="component-header">{{'View History Log' }}</div>
+            <div>
+                <app-module-info-icon placement="bottom" [ngbPopover]="popContent" />
+            </div>
+        </div>
+    </div>
+
+    <div class="main-content d-flex w-100 gap-3">
+        <div class="component-left-tabs-container">
+            <app-timesheets-tabs />
+        </div>
+
+        <div class="timesheet-right-content">
+            <div class="mb-3">
+                <div class="component-nav-tabs-container card ">
+                    <p-tabs value="0" scrollable>
+                        <p-tablist>
+                            <ng-container *ngFor="let tab of filteredTabs;">
+                                <p-tab [value]="tab.link">
+                                    <a [routerLink]="[tab.link]" class="nav-link" [class.active-nav-link]="isActiveRoute(tab.link)">
+                                        {{ tab.label | translate }}</a>
+                                </p-tab>
+                            </ng-container>
+                        </p-tablist>
+                    </p-tabs>
+                </div>
+            </div>
+            <div class="input-group custom-search mb-3">
+                <span class="input-group-text custom-input-group-search" id="basic-addon1">
+                    <i class="bi bi-search"></i>
+                </span>
+                <input type="search" #search="ngModel" [(ngModel)]="searchValue" (ngModelChange)="onSearchChange()"
+                    class="form-control custom-search-input" placeholder="Search by job ID / exported by" aria-label="Search"
+                    aria-describedby="basic-addon1">
+            </div>
+            <div class="custom-table-content border-table" [ngClass]="{'table-with-pagination': historylog.length > 0 && collectionSize > 0}">
+                @if(!dataload){
+                <table class="w-100">
+                    <thead>
+                        <th class="text-center">{{'Job ID' | translate }}</th>
+                        <th class="text-center">{{'Exported File' | translate}}</th>
+                        <th class="text-center">{{'Date Range' | translate}}</th>
+                        <th class="text-center">{{'Filters Criteria' | translate}}</th>
+                        <th class="text-center">{{'Exported On' | translate }}</th>
+                        <th class="text-center">{{'Exported By' | translate }}</th>
+                    </thead>
+                    <tbody>
+                        <ng-container *ngIf="historylog.length > 0; else noDataTemplate">
+                            <tr *ngFor="let item of historylog">
+                                <td class="text-center">{{item.jobReference || '-'}}</td>
+                                <td class="text-center">
+                                    <span *ngIf="item.filePath; else noData" (click)="downloadFile(item.filePath!)">
+                                        <img *ngIf="item.filePath.endsWith('.xlsx') || item.filePath.endsWith('.xls')"
+                                            src="/project-mangement-icons/excel-icon.png" alt="Excel" class="image-icon">
+                                        <img *ngIf="item.filePath.endsWith('.csv')" src="/project-mangement-icons/csv-icon.png" alt="CSV"
+                                            class="image-icon">
+                                    </span>
+                                    <ng-template #noData>-</ng-template>
+                                </td>
+                                <td class="text-center">
+                                    {{ getMetaFilters(item.meta)?.StartDate | dateformat }}
+                                    -
+                                    {{ getMetaFilters(item.meta)?.EndDate | dateformat }}
+                                </td>
+                                <td class="text-center">
+                                    <span *ngIf="item.meta; else noMeta" (click)="openSummaryModal(summaryforrecords, item.meta)">
+                                        <app-info-icon class="cursor" />
+                                    </span>
+                                    <ng-template #noMeta>-</ng-template>
+                                </td>
+                                <td class="text-center">{{item.createdOn ? (item.createdOn | dateformat) : '-'}}</td>
+                                <td class="text-center">{{item.createdBy?.name ?? '-'}}</td>
+                            </tr>
+                        </ng-container>
+                        <ng-template #noDataTemplate>
+                            <tr>
+                                <app-no-data-found />
+                            </tr>
+                        </ng-template>
+                    </tbody>
+                </table>
+                }@else{<app-data-loader-content />}
+            </div>
+            <div class="pagination-content" *ngIf="historylog.length > 0 && collectionSize > 0">
+                <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
+                    <div class="d-flex align-items-center gap-3 p-2">
+                        <select title="text" class="form-select custom-pagination-select" [(ngModel)]="rows"
+                            (ngModelChange)="onPageSizeChange($event)">
+                            <option *ngFor="let option of options" [value]="option.value">{{ option.label }}</option>
+                        </select>
+                        <span class="pagination-label text-nowrap">
+                            Showing {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize : 
+                            (+first + +rows) }} of {{ collectionSize }}
+                        </span>
+                    </div>
+                    <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize" (onPageChange)="onPageChange($event)" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<ng-template #popContent>
+    <app-module-information [moduleInfo]="moduleinfo" />
+</ng-template>
+
+<!--Summary-->
+<ng-template #summaryforrecords let-modal>
+    <div class="custom-main-popup-container" ngbAutofocus>
+        <div class="custom-poup-header-content popup-header-border">
+            <div>
+                <p class="popup-heading mb-0">{{'Filters Criteria ' | translate}} - 
+                    ({{ selectedMeta?.Filters?.StartDate | dateformat }} - {{ selectedMeta?.Filters?.EndDate | dateformat }})</p>
+            </div>
+            <div>
+                <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+            </div>
+        </div>
+        <div class="custom-main-popup-content">
+            <div class="popup-table-wrapper">
+                <div class="popup-table-scroll-container">
+                    <table class="popup-table">
+                        <thead>
+                            <tr>
+                                <th>{{ 'Project Name' | translate }}</th>
+                                <th>{{ 'Phase Name' | translate }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let project of selectedMeta?.ResolvedData?.Projects; let i = index">
+                                <td class="text-start text-break">{{ getClientName(project.ParentId) || '-' }} - {{ project.Name || '-' }} 
+                                    <span *ngIf="project.Name!=='No Project'">({{getProjectCode(project.Meta)}})</span>
+                                </td>
+                                <td class="text-start text-break">
+                                    <span *ngFor="let phase of getPhasesByProject(project.Id); let last = last">
+                                        {{ phase.Name }}{{ !last ? ', ' : '' }}</span>
+                                    <span *ngIf="getPhasesByProject(project.Id).length === 0">-</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>

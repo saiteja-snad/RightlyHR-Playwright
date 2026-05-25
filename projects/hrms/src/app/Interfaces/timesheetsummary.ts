@@ -45,6 +45,7 @@ export interface DailyDataV2 {
   dailySummary: DailySummary;
   monthlySummary?: MonthlySummary;
   resourceName?: string;
+ 
 }
 
 export interface TimesheetEntry {
@@ -65,7 +66,8 @@ export interface TimesheetEntry {
   clientMeta?: any;
   meta?: any;
   phaseMeta?: any;
-
+  finalApproverId?: any;
+  taskName?:string
 }
 
 export interface DailySummary {

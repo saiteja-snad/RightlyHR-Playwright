@@ -9,7 +9,7 @@ import { HttpService } from '../../../services/http.service';
 import { Subject, Subscription, takeUntil } from 'rxjs';
 import { RbacService } from '../../../services/rbac.service';
 import { TranslateModule } from '@ngx-translate/core';
-import { DateformatPipe } from '../../../pipes/dateformat.pipe';
+import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../../services/auth.service';
 import { ConfirmationIconComponent } from "../../../icons/confirmation-icon/confirmation-icon.component";

@@ -35,7 +35,25 @@ export default [
             { path: 'leave-carryforward-report', loadComponent: () => import('./attendence-reports/leave-carry-forward-report/leave-carry-forward-report.component').then((m) => m.LeaveCarryForwardReportComponent), canActivate: [PermissionsGuard], data: { permission: 'Leave Carry Forward & Encashment Report.view' } },
             { path: 'remotelogin-report', loadComponent: () => import('./attendence-reports/remote-login-report/remote-login-report.component').then((m) => m.RemoteLoginReportComponent), canActivate: [PermissionsGuard], data: { permission: 'Remote Login Report.view' } },
             { path: 'extraloghour-report', loadComponent: () => import('./attendence-reports/extraloghour-report/extraloghour-report.component').then((m) => m.ExtraloghourReportComponent), canActivate: [PermissionsGuard], data: { permission: 'Extra Log Hours Report.view' } },
-        ]
+             {
+        path: 'late-login-report',
+        loadComponent: () =>
+          import('./attendence-reports/late-login-report/late-login-report.component').then(
+            (m) => m.LateLoginReportComponent,
+          ),
+        canActivate: [PermissionsGuard],
+        data: { permission: 'Late Login Report.view' },
+      },
+      {
+        path: 'exceeded-break-hours-report',
+        loadComponent: () =>
+          import('./attendence-reports/exceeded-break-hours-report/exceeded-break-hours-report.component').then(
+            (m) => m.ExceededBreakHoursReportComponent,
+          ),
+        canActivate: [PermissionsGuard],
+        data: { permission: 'Exceeded Break Hours Report.view' },
+      },
+        ],
     },
     { path: 'monthly-attandance-reports', loadComponent: () => import('./monthly-attandance-report/monthly-attandance-report.component').then((m) => m.MonthlyAttandanceReportComponent), canActivate: [PermissionsGuard], data: { permission: 'Monthly Attendance Reports.view' } },
     {
@@ -62,7 +80,23 @@ export default [
         ]
     },
 
-        { path: 'expense-reports', loadComponent: () => import('./expense-reports/expense-reports.component').then((m) => m.ExpenseReportsComponent), canActivate: [PermissionsGuard], data: { permission: 'Expense Reports.view' } },
+    { path: 'expense-reports', loadComponent: () => import('./expense-reports/expense-reports.component').then((m) => m.ExpenseReportsComponent), canActivate: [PermissionsGuard], data: { permission: 'Expense Reports.view' } },
+
+    {
+        path: 'helpdesk-reports', children: [
+            //    { path: '',redirectTo: 'leave-report', pathMatch: 'full' },
+            { path: 'detailed-queries-report', loadComponent: () => import('./help-desk-reports/detailed-queries-report/detailed-queries-report.component').then((m) => m.DetailedQueriesReportComponent), canActivate: [PermissionsGuard], data: { permission: 'Help Desk Query Detailed Report.view' } },
+            { path: 'queries-summary-report', loadComponent: () => import('./help-desk-reports/queries-summary-report/queries-summary-report.component').then((m) => m.QueriesSummaryReportComponent), canActivate: [PermissionsGuard], data: { permission: 'Help Desk Query Summary Report.view' } },
+        ]
+    },
+    {
+            path: 'itsupport-reports', children: [
+            //    { path: '',redirectTo: 'leave-report', pathMatch: 'full' },
+            { path: 'itsupport-detailed-report', loadComponent: () => import('./it-support-reports/it-support-detailed-report/it-support-detailed-report.component').then((m) => m.ItSupportDetailedReportComponent), canActivate: [PermissionsGuard], data: { permission: 'IT Support Detailed Report.view' } },
+            { path: 'itsupport-summary-report', loadComponent: () => import('./it-support-reports/it-support-summary-report/it-support-summary-report.component').then((m) => m.ItSupportSummaryReportComponent), canActivate: [PermissionsGuard], data: { permission: 'IT Support Summary Report.view' } },
+
+        ]
+    },
 
 
 ] as Route[];

@@ -1,0 +1,110 @@
+.action-img {
+    width: 1.5rem;
+    height: 1.5rem;
+}
+
+input[type=checkbox] {
+  accent-color: var(--primary-color) !important;
+}
+
+.custom-accordian-table {
+    width: 100%;
+
+    th:first-child {
+        border-top-left-radius: 0rem !important;
+    }
+
+    th:last-child {
+        border-top-right-radius: 0rem !important;
+    }
+
+    th {
+        background-color: var(--body-bg-color) !important;
+    }
+
+    th, td {
+        text-align: center !important;
+    }
+}
+
+.popup-table-wrapper .popup-table-scroll-container {
+    max-height: 30vh;
+    overflow: hidden;
+    border-radius: 0.5rem;
+    border: 2px solid var(--accordian-table-border-color);
+    border-bottom: 2px solid var(--accordian-table-border-color) !important;
+}
+
+::ng-deep .custom-p-multi-select-table {
+    .p-checkbox-box {
+        transform: rotate(180deg) !important;
+    }
+}
+
+::ng-deep .popover {
+    max-width: 500px !important;
+}
+
+.pagination-content {
+    width: 100%;
+    background-color: var(--white-color);
+
+    .custom-pagination-select {
+        font-size: var(--fontsize14);
+    }
+
+    .custom-pagination-select:focus {
+        outline: none;
+        box-shadow: none;
+        border: 1px solid #C0C0C0;
+    }
+
+    .p-paginator {
+        .p-paginator-pages {
+            .p-paginator-page {
+                border-radius: 50%;
+                margin: 0rem;
+                color: #333;
+                font-weight: 500;
+                transition: all 0.3s ease;
+                font-size: var(--fontsize12);
+            }
+
+            .p-paginator-page:hover {
+                color: var(--white-color);
+                background-color: var(--primary-color) !important;
+            }
+
+            .p-paginator-page-selected {
+                color: var(--white-color);
+                background-color: var(--primary-color) !important;
+            }
+        }
+
+        .p-paginator-first,.p-paginator-prev,
+        .p-paginator-next,.p-paginator-last {
+            border-radius: 50%;
+            margin: 0rem;
+            background-color: #f8f8f8;
+            color: #333;
+        }
+
+        .p-paginator-first.p-disabled,.p-paginator-prev.p-disabled,
+        .p-paginator-next.p-disabled,.p-paginator-last.p-disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+    }
+}
+.chip-btn {
+    width: max-content !important;
+    padding: 0.325rem 1.5rem !important;
+    font-size: var(--fontsize12) !important;
+    border-radius: 0.75rem !important;
+}
+.custom-accordian-data-content {
+    width: 100% !important;
+    height: calc(100dvh - 23.5rem) !important;
+    overflow-y: auto !important;
+    position: relative !important;
+}

@@ -7,7 +7,7 @@ import { DataLoaderContentComponent } from '../../shared/data-loader-content/dat
 import { FormControl, FormsModule } from '@angular/forms';
 import { filter, Subject, Subscription, takeUntil } from 'rxjs';
 import { IEmployeeLeaveData } from '../../time-off/leaves/leaves.model';
-import { DateformatPipe } from '../../pipes/dateformat.pipe';
+import { DateformatPipe } from '../../Pipes/dateformat.pipe';
 import { ModuleInformationComponent } from '../../shared/module-information/module-information.component';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { AuthService } from '../../services/auth.service';

@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit, TemplateRef, ViewEncapsulation } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Subject, Subscription, takeUntil } from 'rxjs';
 import { IemployeeDetails } from '../../../Interfaces/letters-model';
 import { AuthService } from '../../../services/auth.service';
@@ -44,6 +44,7 @@ export class LeaveSummaryReportComponent implements OnInit, OnDestroy {
   moduleinfo : string = '';
   subscription!: Subscription;
   private readonly destroy$ = new Subject<void>();
+  private readonly currentYear = new Date().getFullYear();
   loggedInUser = {} as IemployeeDetails;
   isLoading: boolean = false;
   filterlvsumRecord: any[] = [];
@@ -56,6 +57,7 @@ export class LeaveSummaryReportComponent implements OnInit, OnDestroy {
   selectedLeave: string | null = null;
   uniqueLeaveCategory: any[] = [];
   lvSummeryReportForm!: FormGroup;
+  years: { label: string; value: number }[] = [];
   empMasterDataDOJDateRange!: { startDate: Dayjs; endDate: Dayjs } | null;
   selectedDateRange: any;
   spinnerLoader1 = false;
@@ -97,6 +99,7 @@ export class LeaveSummaryReportComponent implements OnInit, OnDestroy {
       clearLabel: 'Clear', // could be rtl
     };
     this.loggedInUser = this.authService.getToken();
+    this.initializeYears();
     this.initializeForm();
     this.getEmployeeId();
     this.getLeaveSummaryReport();
@@ -109,7 +112,8 @@ export class LeaveSummaryReportComponent implements OnInit, OnDestroy {
       leaveCategory: [],
       manager: [],
       employee: [],
-      team: []
+      team: [],
+      year: null
     });
     this.filterlvsumRecord = [];
     this.isFilterIndicatorActive = false;
@@ -125,7 +129,8 @@ export class LeaveSummaryReportComponent implements OnInit, OnDestroy {
       leaveCategory: [[]],
       manager: [[]],
       employee: [[]],
-      team:[[]]
+      team:[[]],
+      year: [null]
     });
 
     this.lvSummeryReportForm.get('manager')?.valueChanges
@@ -270,12 +275,15 @@ export class LeaveSummaryReportComponent implements OnInit, OnDestroy {
 
   isAnyFilterApplied(): boolean {
     const form = this.lvSummeryReportForm;
-    return !!(
+    const year = form.get('year')?.value;
+    const hasYearFilter = year !== null && year !== undefined && year !== '';
+    const hasOtherFilters = !!(
       (form.get('employee')?.value && form.get('employee')?.value.length > 0) ||
       (form.get('manager')?.value && form.get('manager')?.value.length > 0) ||
       (form.get('leaveCategory')?.value && form.get('leaveCategory')?.value.length > 0) ||
       (form.get('team')?.value && form.get('team')?.value.length > 0)
     );
+    return hasYearFilter || hasOtherFilters;
   }
 
   toggleFilters(content: TemplateRef<any>) {
@@ -300,8 +308,7 @@ export class LeaveSummaryReportComponent implements OnInit, OnDestroy {
     this.isLoading = true;
     this.disableBtn = true;
     const formValue = this.lvSummeryReportForm.value;
-    
-    // Check if no filter is provided
+
     if (!this.isAnyFilterApplied()) {
       this.filterlvsumRecord = [];
       this.spinnerLoader1 = false;
@@ -311,6 +318,10 @@ export class LeaveSummaryReportComponent implements OnInit, OnDestroy {
     }
 
     const request: ILeavesummery = {};
+
+    if (formValue.year) {
+      request.year = Number(formValue.year);
+    }
 
     if (formValue.leaveCategory && formValue.leaveCategory.length > 0) {
       request.leaveCategories = formValue.leaveCategory.map((x: any) => x.value).join(',');
@@ -346,6 +357,14 @@ export class LeaveSummaryReportComponent implements OnInit, OnDestroy {
         this.closeCanvas();
       },
     });
+  }
+
+  private initializeYears(): void {
+    this.years = [
+      { label: `${this.currentYear - 1}`, value: this.currentYear - 1 },
+      { label: `${this.currentYear}`, value: this.currentYear },
+      { label: `${this.currentYear + 1}`, value: this.currentYear + 1 },
+    ];
   }
 
   exportToExcelYearly(): void {

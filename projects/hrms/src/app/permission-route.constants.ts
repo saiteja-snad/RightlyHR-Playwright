@@ -149,6 +149,9 @@ export const TIME_OFF_TABS = [
 export const FLEXIBLE_WFH_ALLOCATION_TABS = [
   { route: '/settings/timeoff-configurations/flexible-wfh-allocation/wfh-allocation', permission: 'Active Allocations Tab.view' },
   { route: '/settings/timeoff-configurations/flexible-wfh-allocation/wfh-allocation-view', permission: 'Allocation History Tab.view' },
+  { route: '/settings/timeoff-configurations/flexible-wfh-allocation/wfh-allow-multi-date-range', permission: 'Allow Multi Date Range Tab.view' },
+  { route: '/settings/timeoff-configurations/flexible-wfh-allocation/wfh-allocation-view/multi-date-range-history', permission: 'Allow Multi Date Range History Tab.view' },
+  { route: '/settings/timeoff-configurations/flexible-wfh-allocation/wfh-allocation-view/wfh-history', permission: 'WFH Allocation History Tab.view' },
 ]
 
 export const FLEXIBLE_WORKHOURS_ALLOCATION_TABS = [
@@ -229,6 +232,14 @@ export const ATTENDANCE_REPORTS_TABS = [
   { route: '/reports/attendence-reports/exit-feedback-report', permission: 'Employee Exit Report.view' },
   { route: '/reports/attendence-reports/regularization-report', permission: 'Regularization Report.view' },
   { route: '/reports/attendence-reports/extraloghour-report', permission: 'Extra Log Hours Report.view' },
+  {
+    route: '/reports/attendence-reports/late-login-report',
+    permission: 'Late Login Report.view',
+  },
+  {
+    route: '/reports/attendence-reports/exceeded-break-hours-report',
+    permission: 'Exceeded Break Hours Report.view',
+  },
 ];
 
 export const TIMESHEET_REPORTS_TABS = [
@@ -279,6 +290,14 @@ export const IT_SUPPORT_TEAM_TICKETS_TABS = [
   { route: '/it-support/team-tickets/await-on-user-tickets', permission: 'Await On User Tickets Tab.view' },
   { route: '/it-support/team-tickets/solved-tickets', permission: 'Solved Tickets Tab.view' },
   { route: '/it-support/team-tickets/rejected-tickets', permission: 'Rejected Tickets Tab.view' }
+]
+
+export const HELPDESK_SUPPORT_TICKETS_TABS = [
+  { route: '/help-desk/support-desk/all-tickets', permission: 'Helpdesk All Queries Tab.view' },
+  { route: '/help-desk/support-desk/open-tickets', permission: 'Helpdesk Open Queries Tab.view' },
+  { route: '/help-desk/support-desk/await-on-user-tickets', permission: 'Helpdesk Await On User Queries Tab.view' },
+  { route: '/help-desk/support-desk/solved-tickets', permission: 'Helpdesk Solved Queries Tab.view' },
+  { route: '/help-desk/support-desk/rejected-tickets', permission: 'Helpdesk Rejected Queries Tab.view' }
 ]
 
 export const TIMEOFF_APPROVALS_TABS = [
@@ -419,6 +438,11 @@ export const SETTINGS_PROJECT_MANAGEMENT_TABS = [
   { route: '/settings/project-management-config/task', permission: 'Task.view' },
 ]
 
+export const SETTINGS_HELPDESK_MANAGEMENT_TABS = [
+  { route: '/settings/helpdesk-management-config/categeory', permission: 'Category.view' },
+  { route: '/settings/helpdesk-management-config/subcategeory', permission: 'Subcategory.view' },
+]
+
 export const SETTINGS_EMPLOYEE_FIELDS_JOB_TABS = [
   { route: '/settings/employee-fields/job/jobrole', permission: 'Job Role.view' },
   { route: '/settings/employee-fields/job/jobtype', permission: 'Job Type.view' },
@@ -547,6 +571,7 @@ export const EMPLOYEE_INFO_DOCUMENTS_ROUTES = [
 export const Employee_TEAM_NUMBERS = [
   { permission: 'Employee Info My Team Members Tab.view', route: '/personalinfo/job/team/my-team-members' },
   { permission: 'Employee Info Team Members Tab.view', route: '/personalinfo/job/team/team-members' },
+  { permission: 'Employee Info Location Change Tab.view', route: '/personalinfo/job/team/location-change' }
 ]
 export const MY_INFO_TEAM_MEMBERS = [
   { permission: 'My Info Team Members Tab.view', route: '/myinfo/team-members' }

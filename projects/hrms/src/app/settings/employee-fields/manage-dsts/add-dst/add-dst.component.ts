@@ -25,7 +25,7 @@ import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-add-dst',
-  imports: [SelectModule, CommonModule, ReactiveFormsModule,TranslateModule],
+  imports: [SelectModule, CommonModule, ReactiveFormsModule, TranslateModule],
   templateUrl: './add-dst.component.html',
   styleUrl: './add-dst.component.scss',
 })
@@ -51,7 +51,7 @@ export class AddDstComponent implements OnInit, OnDestroy {
     private sharedModalService: OpenModalService,
     private modalService: NgbModal,
     private router: Router
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.yearsList = this.getYears();
@@ -61,8 +61,8 @@ export class AddDstComponent implements OnInit, OnDestroy {
     this.inititializeForm();
     this.getAllLocations();
     this.handleFormValueChanges();
-     // year onchange method 
-     this.dstForm.get('year')?.valueChanges.subscribe((selectedYear: any) => {
+    // year onchange method 
+    this.dstForm.get('year')?.valueChanges.subscribe((selectedYear: any) => {
       if (selectedYear) {
         this.setDateLimitsForYear(selectedYear);
       }
@@ -77,8 +77,8 @@ export class AddDstComponent implements OnInit, OnDestroy {
     this.maxDate = `${year}-12-31`;
 
     this.momentRows.controls.forEach(control => {
-      const startDateControl  = control.get('startDate');
-      const endDateControl  = control.get('endDate');
+      const startDateControl = control.get('startDate');
+      const endDateControl = control.get('endDate');
       //start date
       if (startDateControl && startDateControl.value) {
         const oldDate = startDateControl.value;
@@ -122,7 +122,7 @@ export class AddDstComponent implements OnInit, OnDestroy {
     };
   }
 
-  
+
 
   navigate() {
     this.router.navigate(['/settings/employee-fields/manage-dsts']);
@@ -130,9 +130,9 @@ export class AddDstComponent implements OnInit, OnDestroy {
   inititializeForm() {
     const currentYear = new Date().getFullYear();
     this.dstForm = this.fb.group({
-      year: [currentYear,Validators.required],
+      year: [currentYear, Validators.required],
       location: [null, Validators.required],
-      subLocation: [{value: '', disabled: true}, Validators.required],
+      subLocation: [{ value: '', disabled: true }, Validators.required],
       shift: [{ value: '', disabled: true }, Validators.required],
       momentRows: this.fb.array([this.createMomentRow()]), // initialize with one row
     });
@@ -169,12 +169,12 @@ export class AddDstComponent implements OnInit, OnDestroy {
   }
 
 
- //this method used for delete icon click
- removeMomentRow(index: number): void {
-  if (this.momentRows.length > 1) {
-    this.momentRows.removeAt(index);
+  //this method used for delete icon click
+  removeMomentRow(index: number): void {
+    if (this.momentRows.length > 1) {
+      this.momentRows.removeAt(index);
+    }
   }
-}
 
   private getYears(): number[] {
     const currentYear = new Date().getFullYear();
@@ -198,8 +198,8 @@ export class AddDstComponent implements OnInit, OnDestroy {
     }
   }
 
-  openConfirmation(){
-    this.modalService.open(this.confirmation, {centered: true, backdrop: 'static'})
+  openConfirmation() {
+    this.modalService.open(this.confirmation, { centered: true, backdrop: 'static' })
   }
 
   private handleFormValueChanges(): void {
@@ -233,41 +233,81 @@ export class AddDstComponent implements OnInit, OnDestroy {
   }
 
 
-  isBlocked(date: any) {
-    for (let range of this.blockedDates) {
-      if (date >= range.startDate && date <= range.endDate) {
-        return true;
-      }
-    }
-    return false;
+  getInputValue(event: Event): string {
+    return (event.target as HTMLInputElement).value;
   }
-  onStartDateChange(event: any, row: any) {
-    this.minDate = event;
-    if (this.isBlocked(event)) {
-     
-      row.startDate = '';
-      this.sharedModalService.openErrorModal('The selected start date is within a range that has already been selected. Please choose a different date.');
-    } else {
-      if (row.endDate) {
-        this.blockedDates.push({ startDate: row.startDate, endDate: row.endDate });
-      } else {
-        this.blockedDates.push({ startDate: row.startDate, endDate: row.startDate });
-      }
-    }
+ private isUpdating = false;
+
+isBlocked(date: any, currentIndex: number): boolean {
+  if (!date) return false;
+  for (let i = 0; i < this.blockedDates.length; i++) {
+    if (i === currentIndex) continue;
+    const range = this.blockedDates[i];
+    if (!range?.startDate || !range?.endDate) continue;
+    // Only block if EXACT same start or end date exists in another row
+    if (date === range.startDate || date === range.endDate) return true;
+  }
+  return false;
+}
+initBlockedDates() {
+  this.blockedDates = this.momentRows.controls.map((row: any) => ({
+    startDate: row.get('startDate')?.value || '',
+    endDate: row.get('endDate')?.value || ''
+  }));
+}
+
+  onStartDateChange(event: any, row: any, index: number) {
+  if (this.isUpdating) return;
+
+  if (this.isBlocked(event, index)) {
+    this.isUpdating = true;
+    row.get('startDate')?.setValue('', { emitEvent: false });
+    this.isUpdating = false;
+    setTimeout(() => this.sharedModalService.openErrorModal('The selected start date is within a range that has already been selected. Please choose a different date.'), 300);
+    return;
   }
 
-  onEndDateChange(event: any, row: any) {
-    if (this.isBlocked(event)) {
-      row.endDate = '';
-      this.sharedModalService.openErrorModal('The selected end date is within a range that has already been selected. Please choose a different date.');
-    } else {
-      if (row.startDate) {
-        this.blockedDates.push({ startDate: row.startDate, endDate: row.endDate });
-      } else {
-        this.blockedDates.push({ startDate: row.endDate, endDate: row.endDate });
-      }
-    }
+  const endDate = row.get('endDate')?.value;
+  if (endDate && event > endDate) {
+    this.isUpdating = true;
+    row.get('endDate')?.setValue('', { emitEvent: false });
+    this.isUpdating = false;
+    setTimeout(() => this.sharedModalService.openErrorModal('Start date must be less than or equal to the end date.'), 300);
   }
+
+  this.blockedDates[index] = {
+    startDate: row.get('startDate')?.value,
+    endDate: row.get('endDate')?.value
+  };
+}
+
+onEndDateChange(event: any, row: any, index: number) {
+  if (this.isUpdating) return;
+
+  const startDate = row.get('startDate')?.value;
+  if (startDate && event < startDate) {
+    this.isUpdating = true;
+    row.get('endDate')?.setValue('', { emitEvent: false });
+    this.isUpdating = false;
+    setTimeout(() => this.sharedModalService.openErrorModal('End date must be greater than or equal to the start date.'), 300);
+    return;
+  }
+
+  if (this.isBlocked(event, index)) {
+    this.isUpdating = true;
+    row.get('endDate')?.setValue('', { emitEvent: false });
+    this.isUpdating = false;
+    setTimeout(() => this.sharedModalService.openErrorModal('The selected end date is within a range that has already been selected. Please choose a different date.'), 300);
+    return;
+  }
+
+  this.blockedDates[index] = {
+    startDate: row.get('startDate')?.value,
+    endDate: row.get('endDate')?.value
+  };
+}
+
+
 
   getAllShifts(subLocation: ISubLocation): void {
     const params = {
@@ -330,18 +370,21 @@ export class AddDstComponent implements OnInit, OnDestroy {
           );
           this.navigate();
         },
-        error: (err) => {
+        error: (err:any) => {
+          console.log(err.error.message);
+          
+          
           this.sharedModalService.openErrorModal(
-            'DST already exists with the year , location and sub location'
+            err.error?.message || 'An error occurred while adding DST. Please try again.'
           );
         },
-        complete: () => {},
+        complete: () => { },
       });
   }
- closeAddDST(){
-  this.modalService.dismissAll();
-  this.navigate();
- }
+  closeAddDST() {
+    this.modalService.dismissAll();
+    this.navigate();
+  }
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();

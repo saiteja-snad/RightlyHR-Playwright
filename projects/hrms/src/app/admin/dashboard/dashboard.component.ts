@@ -13,7 +13,7 @@ import { ChartModule } from 'primeng/chart';
 import { AttendanceResponse, EmployeeStatusCount, IAnniversariesData, IBirthDaysData,
    IMarriageAnniversary, INewJoinee, Permission } from '../../Interfaces/dashboard.modal';
 import { IdayLogs } from '../../Attendance/attendance-view/attendance-modal';
-import { DateformatPipe } from "../../pipes/dateformat.pipe";
+import { DateformatPipe } from "../../Pipes/dateformat.pipe";
 import { Skeleton } from 'primeng/skeleton';
 import { AccordionModule } from 'primeng/accordion';
 import { DashAttIconComponent } from "../../icons/dash-att-icon/dash-att-icon.component";
@@ -1100,7 +1100,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   nagvition() {
-    this.router.navigate(['/myinfo/job/team-members']);
+    this.router.navigate(['/myinfo/job/team/team-members']);
   }
 
   myattendance() {

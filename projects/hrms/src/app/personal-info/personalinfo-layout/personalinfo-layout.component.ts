@@ -18,6 +18,10 @@ import { RbacService } from '../../services/rbac.service';
 import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
 import { ConfirmationIconComponent } from "../../icons/confirmation-icon/confirmation-icon.component";
 import { AccessNavigationService } from '../../services/access-navigation.service';
+import { OffboardingChecklistService } from '../../services/offboarding-checklist.service';
+import { OffboardingEmployeeapprovalsTabsComponent } from '../../shared/offboarding-employeeapprovals-tabs/offboarding-employeeapprovals-tabs.component';
+import { environment } from '../../../environments/environment';
+import { FormValidationsService } from '../../services/form-validations.service';
 @Component({
   selector: 'app-personalinfo-layout',
   imports: [CommonModule, RouterOutlet, ProfileInfoDetailsComponent, FormsModule, ReactiveFormsModule,
@@ -42,6 +46,7 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
   emppersonalinfo = {} as Ipersonal;
   employeeForm!: FormGroup;
   revokeForm!: FormGroup;
+  archiveForm!: FormGroup;
   postIsApplicable!: any;
   postreason!: any;
   empdata = {} as any;
@@ -71,11 +76,15 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
   };
   navTabs: any[] = [];
   approvalHistoryData: any = null;
+  offboardingData!:any;
+  iniateoffboardingDetails=[]as any;
 
   constructor(private http: HttpService, private authService: AuthService, private router: Router,
     public rbac: RbacService, private modalService: NgbModal, private fb: FormBuilder,
     private conformationPopup: OpenModalService, private route: ActivatedRoute,
-    public fieldpremission: AccessForEmployeeinfoService, private accessNav: AccessNavigationService) { }
+    public fieldpremission: AccessForEmployeeinfoService, private accessNav: AccessNavigationService,
+    private offboardingChecklistService: OffboardingChecklistService,
+    public formsValidation: FormValidationsService) { }
 
   ngOnInit(): void {
     this.router.events.subscribe(() => {
@@ -93,10 +102,11 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
     this.loginEmployee = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.initializeForm();
     this.initialzerevoke();
+    this.initialzearchive();
     this.getEmployeeId();
     this.getAllTeammembersList();
     this.getEmployee();
-    this.emppersonalinfo = JSON.parse(localStorage.getItem('personaldata') || '{}');
+    this.emppersonalinfo = JSON.parse(localStorage.getItem('personaldata') || '{}');    
     this.getTraineeofferdetails();
     this.assignHeading();
     this.updateModuleInfo();
@@ -110,7 +120,20 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
     this.http.basicDetailesadded$.subscribe(() => {
       this.fetchApprovalHistory();
     });
+    this.getinitateoffboardingdata();
   }
+
+  //function to get the initate data
+getinitateoffboardingdata(){
+  this.subscription=this.http.getData(`OffboardingTracker/employee/${this.emppersonalinfo.employeeId}`).subscribe({
+    next:(data:any)=>{
+    console.log('Offboarding data:', data);
+    this.iniateoffboardingDetails=data?.data;
+    },
+    error:(err:any)=>{console.log(err)}
+  });
+
+}
 
   fetchApprovalHistory() {
     this.http.getData(`EmployeeInfoFieldUpdate/employeeInfoFieldsHistory/${this.empinfo.employeeId}`).subscribe({
@@ -235,6 +258,7 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
     this.subscription = this.http.postdata(`CustomEmail/RequestDocuments`, pdata).subscribe({
       next: (data: any) => {
         this.conformationPopup.openSuccessModal('Email has been sent successfully');
+        this.getEmployeeId();
         this.isLoading = false;
       },
       error: (err: any) => {
@@ -253,7 +277,9 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
     }
   }
 
-
+  navigateDashboard() {
+    this.router.navigate(['/admin/dashboard']);
+  }
 
   navigateMyInfo() {
     if (this.rbac.allowedToAccess('My Info Personal Approval History.view')) {
@@ -398,6 +424,7 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
     this.modalService.dismissAll();
     this.employeeForm.reset();
     this.revokeForm.reset();
+    this.archiveForm.reset();
   }
 
   reRequestEmail(f: FormGroup) {
@@ -428,6 +455,7 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
   submitArchive() {
     (this.empdata.empstatus = 'Archived'),
     (this.empdata.substatus = 'Employee Created'),
+    (this.empdata.revokeComments = this.archiveForm.get('archiveComments')?.value),
       (this.subscription = this.http.postdata(`Employeedata/UPDATER`, this.empdata).subscribe({
         next: (data: any) => {
           this.getEmployeeId();
@@ -435,7 +463,8 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
           this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal('Employee archived successfully');
           setTimeout(() => {
-            this.router.navigate(['/admin/dashboard']);
+            this.modalService.dismissAll();
+            this.router.navigate(['/employee-management/prospective/employees']);
           }, 1000);
         },
         error: (err: any) => {
@@ -545,7 +574,7 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
             this.updateJobapplicantdata();
           }
           setTimeout(() => {
-            this.router.navigate(['/employee-management/all-employees']);
+            this.router.navigate(['/employee-management/prospective/employees']);
           }, 2000);
         }
       },
@@ -671,12 +700,20 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
     });
   }
 
+  initialzearchive() {
+    this.archiveForm = this.fb.group({
+      archiveComments: ['', [Validators.required, Validators.maxLength(250)]],
+    });
+  }
+
   getTraineeOfferDetails = {} as any;
   getTraineeofferdetails() {
     let EmpId = this.empinfo.employeeId;
     this.subscription = this.http.getData(`TraineeOfferLetter/${EmpId}`).subscribe({
       next: (data: any) => {
         this.getTraineeOfferDetails = data;
+        console.log(data);
+        
       },
       error: (err: any) => {
         console.log(err);
@@ -686,7 +723,7 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
 
   onBackSubmit() {
     if (this.headerName === 'Team member info') {
-      this.router.navigate(['/myinfo/job/team-members']);
+      this.router.navigate(['/myinfo/job/team/my-team-members']);
       return;
     }
     let routestatus = JSON.parse(localStorage.getItem('personaldata') || '{}');
@@ -815,6 +852,7 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
     'emergency-contact-details': 'Emergency Contacts',
     'team-members': 'Works With You',
     'my-team-members': 'Reports To You',
+    'location-change':'Bulk Location Change',
     'my-skills': 'My Skills',
     // Job Info
     'pre-onboarding-details': 'Pre-Onboarding Info',
@@ -831,7 +869,21 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
     'separation-details': 'Separation Request',
     'separation-requests': 'Separation Request',
     'exit-feedback-details': 'Exit Feedback Details',
-    'employee-off-boarding': 'Employee Offboarding',
+    'employee-off-boarding': 'Offboarding Info',
+    'team-reporting-manager-change': 'Offboarding Info',
+    'leave-approvals': 'Offboarding Info',
+    'expenses-approvals': 'Offboarding Info',
+    'no-approvals-screen': 'Offboarding Info',
+    'initate-offboarding-landingscreen': 'Offboarding Info',
+    'offboarding-details': 'Offboarding Info',
+    'wfh-approvals': 'Offboarding Info',
+    'remote-login-approvals':'Offboarding Info',
+    'compoff-approvals':'Offboarding Info',
+    'permissions-approvals':'Offboarding Info',
+    'extrahours-approvals':'Offboarding Info',
+    'regularization-approvals':'Offboarding Info',
+    'employee-info-approvals':'Offboarding Info',
+    'timesheet-approvals': 'Offboarding Info',
     'trainee-onboarding-requests': 'Trainee Onboarding Verification',
     'contactor-info': 'Contractor Info',
     'project-info': 'Assigned Projects',
@@ -854,7 +906,61 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
 
   navigation() {
     localStorage.setItem('offBoardingemplist', JSON.stringify(this.emppersonalinfo));
-    this.router.navigate(['/personalinfo/job/employee-off-boarding']);
+    this.router.navigate(['/personalinfo/job/employmentType/employee-off-boarding']);
+  }
+  navigationtoinitate(){
+    this.spinnerLoader=true;
+    let payload = [];
+    this.offboardingData = this.offboardingChecklistService.getChecklistItemsFromStorage();
+    if (this.offboardingData && this.offboardingData.length > 0) {
+      // Use checklist items
+      payload = this.offboardingData.map((item: any, index: number) => ({
+        employeeId: parseInt(this.emppersonalinfo.employeeId),
+        startedBy: parseInt(this.loginEmployee.employeeId),
+        moduleId: item.moduleId || null,
+      }));
+    } else {
+      // Final fallback to default payload
+      payload = [{
+        employeeId: parseInt(this.emppersonalinfo.employeeId),
+        startedBy: parseInt(this.loginEmployee.employeeId),
+        moduleId: null,
+      }];
+    }
+
+    console.log('Final payload:', payload);
+
+    this.subscription = this.http.postdata(`OffboardingTracker/start-offboarding`, payload).subscribe({
+      next: (data: any) => {
+        if(data){
+          this.spinnerLoader=false;
+          this.conformationPopup.openSuccessModal('Offboarding process initiated successfully');
+          this.modalService.dismissAll();
+          // Clear the stored checklist items after successful initiation
+          this.offboardingChecklistService.clearChecklistItems();
+          this.router.navigate(['/personalinfo/job/employmentType/initate-offboarding/leave-approvals']);
+        }
+      },
+      error: (err: any) => {
+        this.spinnerLoader=false;
+        console.log(err);
+      },
+    });
+  }
+
+  getDefaultChecklistItems(): any[] {
+    // Return default checklist items without instantiating the component
+    return [
+      { label: 'Leave Requests', route: '/personalinfo/job/employmentType/initate-offboarding/leave-approvals', completed: false, moduleId: environment.leavesModuleId },
+      { label: 'WFH Requests', route: '/personalinfo/job/employmentType/initate-offboarding/wfh-approvals', completed: false, moduleId: environment.wfhModuleId },
+      { label: 'Remote Login Requests', route: '/personalinfo/job/employmentType/initate-offboarding/remote-login-approvals', completed: false, moduleId: environment.remoteLoginModuleId },
+      { label: 'Comp-Off Requests', route: '/personalinfo/job/employmentType/initate-offboarding/compoff-approvals', completed: false, moduleId: environment.compoffModuleId },
+      { label: 'Permissions Requests', route: '/personalinfo/job/employmentType/initate-offboarding/permissions-approvals', completed: false, moduleId: environment.permissionsModuleId },
+      { label: 'Extra Hours Requests', route: '/personalinfo/job/employmentType/initate-offboarding/extrahours-approvals', completed: false, moduleId: environment.extraHoursModuleId },
+      { label: 'Regularizations Requests', route: '/personalinfo/job/employmentType/initate-offboarding/regularization-approvals', completed: false, moduleId: environment.attendanceRegularizationModuleId },
+      { label: 'Expense Requests', route: '/personalinfo/job/employmentType/initate-offboarding/expenses-approvals', completed: false, moduleId: environment.expensesModuleId },
+      { label: 'Employee Info', route: '/personalinfo/job/employmentType/initate-offboarding/employee-info-approvals', completed: false, moduleId: environment.pendingapprovalemployeid },
+    ];
   }
 
   resetAndClose(modal: any): void {
@@ -925,7 +1031,7 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
       '/myinfo/job/team/my-team-members': MODULE_INFOS.REPORT_TO,
       '/myinfo/job/cards': MODULE_INFOS.JOB_MODULE_EMPlOYEE_CARD_MODULE_INFO,
       '/myinfo/job/project-info': MODULE_INFOS.JOB_MODULE_PROJECTS_INFO,
-
+      '/personalinfo/job/team/location-change': MODULE_INFOS.LOCATION_CHANGE_MODULE_INFO,
       // My Info Documents
       '/myinfo/documents': MODULE_INFOS.DOCUMENTS_MODULE_INFO,
 
@@ -1158,6 +1264,12 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
       this.router.navigate(['/unauthorized']);
     }
   }
+
+  modalOpen(content:any){
+   // Get checklist items from the offboarding service or use default items
+   this.offboardingData = this.getDefaultChecklistItems();
+  this.modalService.open(content, { centered: true, backdrop: 'static' });
+}
 
   ngOnDestroy(): void {
     if (this.subscription) {

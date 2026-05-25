@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { NgbModal, NgbNavModule, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { DropdownModule } from 'primeng/dropdown';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
-import { DateformatPipe } from '../../../pipes/dateformat.pipe';
+import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
@@ -91,7 +91,7 @@ export class OnBeHalfOfWaitingForApprovalComponent implements OnInit, OnDestroy{
 
   getDataByLPID() {
     this.loading = true;
-    const selectedYear = this.timeoffYearFilterService.getSelectedYear();
+    const selectedYear = this.timeoffYearFilterService.getSelectedYear() ?? new Date().getFullYear();
     this.subscription = this.http.getData(`Timeoff/${this.cadidateEmployeeId}?year=${selectedYear}`).subscribe({
       next: (response: any) => {
           this.loading = false;

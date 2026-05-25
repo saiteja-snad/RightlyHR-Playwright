@@ -16,11 +16,11 @@ import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { IAddress, IGender, ITitle } from '../../models/personal-details.model';
 import { HttpService } from '../../http-services/http.service';
 import { DetailedStepProgressbarComponent } from "../../shared/detailed-step-progressbar/detailed-step-progressbar.component";
-import { DateFormatPipe } from '../../pipes/date-format.pipe';
+import { DateFormatPipe } from '../../Pipes/date-format.pipe';
 import { PopupService } from '../../common-services/popup.service';
 import { Iofferletter, IJobDetails } from '../../models/offer-letter.model';
 import { LettersheaderComponent } from "../../../../../hrms/src/app/shared/letters-shared-content/lettersheader/lettersheader.component";
-import { DateformatPipe } from '../../../../../hrms/src/app/pipes/dateformat.pipe';
+import { DateformatPipe } from '../../../../../hrms/src/app/Pipes/dateformat.pipe';
 @Component({
   selector: 'app-nda-contractor-letter',
   imports: [CommonModule, TranslateModule, Select, NgxCountriesDropdownModule, ReactiveFormsModule, DateformatPipe, NgbPopoverModule, DetailedStepProgressbarComponent, DateFormatPipe, LettersheaderComponent],

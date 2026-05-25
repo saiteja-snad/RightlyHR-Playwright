@@ -8,7 +8,7 @@ import { OpenModalService } from '../../../../services/open-modal.service';
 import { Router } from '@angular/router';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
-import { DateformatPipe } from "../../../../pipes/dateformat.pipe";
+import { DateformatPipe } from "../../../../Pipes/dateformat.pipe";
 import { Select } from 'primeng/select';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';

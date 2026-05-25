@@ -75,6 +75,7 @@ export class MyTimesheetReportComponent implements OnInit, OnDestroy {
   employeeData: any;
   getEmployeeInfo = [] as any;
   isDistinct = true;
+  tastType: any[] = [];
 
 
   constructor(
@@ -93,7 +94,19 @@ export class MyTimesheetReportComponent implements OnInit, OnDestroy {
     this.loggedInUser = this.authService.getToken();
     this.initializeForm();
     this.getResourceData();
+    this.getTaskType();
   }
+
+  getTaskType() {
+  this.subscription = this.http.getData('TaskType').subscribe({
+    next: (res: any) => {
+      this.tastType =res
+    },
+    error: (error:any) => {
+      console.log(error);
+    }
+  });
+}
 
   initializeForm() {
     this.MyTimesheetReportForm = this.fb.group({
@@ -103,6 +116,7 @@ export class MyTimesheetReportComponent implements OnInit, OnDestroy {
       status: [null],
       billable: [null],
       phases: [{ value: null, disabled: true }],
+      taskId:[null]
     });
     this.MyTimesheetReportForm.addControl('projects', this.fb.array([]));
     this.MyTimesheetReportForm.valueChanges.subscribe(() => {
@@ -118,7 +132,8 @@ export class MyTimesheetReportComponent implements OnInit, OnDestroy {
     const isStatusSelected = formValue.status != null;
     const isDateRangeSelected = Array.isArray(formValue.dateRange) ? formValue.dateRange.length > 0 : !!formValue.dateRange;
     const isPhaseSelected = formValue.phases != null && formValue.phases.value != null;
-    return (isClientSelected ||isProjectSelected ||isStatusSelected ||isBillableSelected ||isDateRangeSelected ||isPhaseSelected);
+    const isTaskSelected = formValue.taskId != null && formValue.taskId != '';
+    return (isClientSelected ||isProjectSelected ||isStatusSelected ||isBillableSelected ||isDateRangeSelected ||isPhaseSelected|| isTaskSelected);
   }
   phasesList: any[] = [];
   clearAllFilters(): void {
@@ -135,6 +150,7 @@ export class MyTimesheetReportComponent implements OnInit, OnDestroy {
     this.MyTimesheetReportForm.get('dateRange')?.setValue(null);
     this.MyTimesheetReportForm.get('phases')?.setValue(null);
     this.MyTimesheetReportForm.get('phases')?.disable();
+    this.MyTimesheetReportForm.get('taskId')?.setValue(null);
     this.collectionSize = 0;
   }
 
@@ -359,14 +375,15 @@ export class MyTimesheetReportComponent implements OnInit, OnDestroy {
     });
 }
   get isLeaveGenerateDisabled(): boolean {
-    const { client, project, dateRange, billable, status, phases } = this.MyTimesheetReportForm.value;
+    const { client, project, dateRange, billable, status, phases, taskId } = this.MyTimesheetReportForm.value;
     const hasClient = client !== null && client !== undefined;
     const hasProject = project !== null && project !== undefined;
     const hasDateRange = Array.isArray(dateRange) && dateRange.length === 2 && dateRange[0] && dateRange[1];
     const hasBillable = billable !== null && billable !== undefined;
     const hasStatus = status !== null && status !== undefined;
     const hasphase = phases !== null && phases !== undefined;
-    return !(hasClient || hasProject || hasDateRange || hasBillable || hasStatus || hasphase);
+    const isTaskSelected = taskId != null && taskId != '';
+    return !(hasClient || hasProject || hasDateRange || hasBillable || hasStatus || hasphase || isTaskSelected);
   }
 // payload for generate the data
   buildTimesheetReportParams() {
@@ -403,6 +420,10 @@ export class MyTimesheetReportComponent implements OnInit, OnDestroy {
     }
     if (formValue.phases !== null && formValue.phases !== undefined) {
       params.PhaseIds = formValue.phases;
+    }
+    if(formValue.taskId!= null && formValue.taskId !== undefined && formValue.taskId !== ''  )
+    {
+      params.TaskIds = formValue.taskId?.map((x: any) => x.id)?.join(',');;
     }
     return params;
   }

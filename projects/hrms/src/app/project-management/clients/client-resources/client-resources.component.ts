@@ -13,7 +13,7 @@ import { IResource } from '../../../Interfaces/project-management/resources.mode
 import { FormValidationsService } from '../../../services/form-validations.service';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
-import { DateformatPipe } from "../../../pipes/dateformat.pipe";
+import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { Select } from 'primeng/select';
 import { ConfirmationIconComponent } from '../../../icons/confirmation-icon/confirmation-icon.component';
@@ -691,6 +691,11 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
     const config = this.confirmationMessages[action];
     if (!config) return;
     if (action === 'Update') {
+      const phaseDate = data?.phase;
+      if(phaseDate){
+        this.projectStartDate = phaseDate.startDate ?? null;
+        this.projectEndDate = phaseDate.endDate ?? null;
+      }
       this.openModal(this.updateResourcemodal, 'lg', data);
     } else {
       this.openReasonModal(config.title, data);

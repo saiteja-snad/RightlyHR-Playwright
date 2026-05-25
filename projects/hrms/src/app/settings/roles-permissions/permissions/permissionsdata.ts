@@ -13,6 +13,8 @@ export const permissionsData = [
   { fields: 'Rate Card Configuration Module', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Rate Card Active Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Rate Card Inactive Tab', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Helpdesk Configuration Module', View: false, Update: false, Create: false, Delete: false },
+
   //Employee Field Config Update Tabs Sections
   { fields: 'Personal Config Update Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Job Config Update Tab', View: false, Update: false, Create: false, Delete: false },
@@ -272,13 +274,15 @@ export const permissionsData = [
   { fields: 'Clients', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Projects', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Time Sheet', View: false, Update: false, Create: false, Delete: false },
-  { fields: 'Team Time Sheet', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Team Time Sheet', View: false, Update: false, Create: false, Delete: false },  
+  { fields: 'My Summary', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Pending Approvals Module', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Team Time Sheet Detailed Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Team Time Sheet Summary Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Team Time Sheet Filters Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Team Time Sheet Department Filter', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Team Time Sheet RM/TM Filter', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Help Desk', View: false, Update: false, Create: false, Delete: false },
 
   //Time Off Tabs Section
   { fields: 'Time Off Module', View: false, Update: false, Create: false, Delete: false },
@@ -594,7 +598,49 @@ export const permissionsData = [
   { fields: 'Leave Carry Forward & Encashment Report', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Leave Carry Forward & Encashment Report - Generate', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Leave Carry Forward & Encashment Report - Export', View: false, Update: false, Create: false, Delete: false },
+   {
+    fields: 'Late Login Report',
+    View: false,
+    Update: false,
+    Create: false,
+    Delete: false,
+  },
+  {
+    fields: 'Late Login Report - Generate',
+    View: false,
+    Update: false,
+    Create: false,
+    Delete: false,
+  },
+  {
+    fields: 'Late Login Report - Export',
+    View: false,
+    Update: false,
+    Create: false,
+    Delete: false,
+  },
 
+  {
+    fields: 'Exceeded Break Hours Report',
+    View: false,
+    Update: false,
+    Create: false,
+    Delete: false,
+  },
+  {
+    fields: 'Exceeded Break Hours Report - Generate',
+    View: false,
+    Update: false,
+    Create: false,
+    Delete: false,
+  },
+  {
+    fields: 'Exceeded Break Hours Report - Export',
+    View: false,
+    Update: false,
+    Create: false,
+    Delete: false,
+  },
   // Timesheet Reports Section
   { fields: 'My Timesheet Report', View: false, Update: false, Create: false, Delete: false },
   { fields: 'My Timesheet Report - Generate', View: false, Update: false, Create: false, Delete: false },
@@ -808,6 +854,7 @@ export const permissionsData = [
   { fields: 'Employee Info Change RM Button', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Employee Info Team Managers Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Employee Info Change TM Button', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Employee Info Location Change Tab', View: false, Update: false, Create: false, Delete: false },
 
 
   //Employee Info Onboard Request Sub Tabs Section
@@ -1061,9 +1108,14 @@ export const permissionsData = [
   { fields: 'Letter Frequency Configurations', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Project Role', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Task', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Task Type', View: false, Update: false, Create: false, Delete: false },
 
   { fields: 'My Team (Timesheet)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'All Employees (Timesheet)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Timesheet Bulk Import', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Timesheet Bulk Export', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'View History Export Tab', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'View History Import Tab', View: false, Update: false, Create: false, Delete: false },
 
   { fields: 'On Behalf Of', View: false, Update: false, Create: false, Delete: false },
   { fields: 'On Behalf Of WFH', View: false, Update: false, Create: false, Delete: false },
@@ -1076,9 +1128,12 @@ export const permissionsData = [
   { fields: 'On Behalf Of WFH Team', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Request On Behalf Of WFH Button', View: false, Update: false, Create: false, Delete: false },
 
-  //Settings Time Off flexible wfh allocation Tabs Section
+   //Settings Time Off flexible wfh allocation Tabs Section
   { fields: 'Allocation History Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Active Allocations Tab', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Allow Multi Date Range Tab', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'WFH Allocation History Tab', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Allow Multi Date Range History Tab', View: false, Update: false, Create: false, Delete: false },
 
   { fields: 'On Behalf Of RemoteLogin', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Waiting For Approval (On Behalf Of RemoteLogin)', View: false, Update: false, Create: false, Delete: false },
@@ -1152,5 +1207,43 @@ export const permissionsData = [
   { fields: 'Today Events', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Attendance Overview', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Quick Links', View: false, Update: false, Create: false, Delete: false },
-    { fields: 'Sun View', View: false, Update: false, Create: false, Delete: false },
+
+  { fields: 'Sun View', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Headcount by Gender Select Department', View: false, Update: false, Create: false, Delete: false },
+
+  //Helpdesk
+  { fields: 'Category', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Subcategory', View: false, Update: false, Create: false, Delete: false },
+  //help desk support  Tickets Tabs Sections
+  { fields: 'Helpdesk All Queries Tab', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Helpdesk Open Queries Tab', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Helpdesk Await On User Queries Tab', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Helpdesk Solved Queries Tab', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Helpdesk Rejected Queries Tab', View: false, Update: false, Create: false, Delete: false },
+  //Calender Tabs Sections
+  { fields: 'Employee Helpdesk Queries Tab', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Support Helpdesk Queries Tab', View: false, Update: false, Create: false, Delete: false },
+
+  //help desk reports Actions
+  { fields: 'Help Desk Query Detailed Report', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Help Desk Query Detailed Report - Generate', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Help Desk Query Detailed Report - Export', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Help Desk Query Summary Report', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Help Desk Query Summary Report - Generate', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Help Desk Query Summary Report - Export', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Help Desk Reports', View: false, Update: false, Create: false, Delete: false },
+
+
+
+
+
+  //It support reports
+  { fields: 'IT Support Reports', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'IT Support Detailed Report', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'IT Support Detailed Report - Generate', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'IT Support Detailed Report - Export', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'IT Support Summary Report', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'IT Support Summary Report - Generate', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'IT Support Summary Report - Export', View: false, Update: false, Create: false, Delete: false },
+
 ];

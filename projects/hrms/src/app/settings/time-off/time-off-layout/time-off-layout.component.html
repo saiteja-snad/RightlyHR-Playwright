@@ -32,8 +32,11 @@
             }
         </div>
         }
-        @if(isActive('/settings/timeoff-configurations/flexible-wfh-allocation/wfh-allocation') ||
-        isActive('/settings/timeoff-configurations/flexible-wfh-allocation/wfh-allocation-view')) {
+         @if(isActive('/settings/timeoff-configurations/flexible-wfh-allocation/wfh-allocation') ||
+        isActive('/settings/timeoff-configurations/flexible-wfh-allocation/wfh-allocation-view') ||
+        isActive('/settings/timeoff-configurations/flexible-wfh-allocation/wfh-allocation-view/wfh-history') ||
+        isActive('/settings/timeoff-configurations/flexible-wfh-allocation/wfh-allocation-view/multi-date-range-history') ||
+        isActive('/settings/timeoff-configurations/flexible-wfh-allocation/wfh-allow-multi-date-range')) {
         <div class="component-left-tabs-container">
             <app-wfh-allocation-tabs />
         </div>

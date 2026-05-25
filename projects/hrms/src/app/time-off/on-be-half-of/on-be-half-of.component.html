@@ -79,7 +79,8 @@
                 }
             </ul>
         </div> -->
-         <div class="cards-grid-container">
+
+        <div class="cards-grid-container">
             @for (item of categoryDetails; track $index) {
             <div class="leaves-category-card">
                 <div>
@@ -106,7 +107,19 @@
                             <p class="m-0">0</p>
                             }
                         </div>
-                          @if (
+
+                        @if(this.leaveapplication.empType === 'Probation' && (item.category.isProbationAllowed && item.probationLeaves >= 0)){
+                        <div class="separator"></div>
+                        <div class="leave-category-text">
+                            <p class="m-0">Probation</p>
+                            @if (item.category.isProbationAllowed && item.probationLeaves >= 0) {
+                            <p class="m-0">{{item.availableProbationLeaves ? item.availableProbationLeaves : '0'}}</p>
+                            }
+                        </div>
+                        }
+                        
+                        
+                        @if (
                         ['comp off',
                         'compoff',
                         'compensatory off',
@@ -133,7 +146,12 @@
                  getProgress(item) + 'deg, ' + getTransparentColor(item.category.categoryColor, 0.3) + ' 0deg)'">
                         <span class="progress-value">
                             <span class="avaliable-leaves-text">{{ getAvailableLeaves(item) }}</span>
+                            @if(this.leaveapplication.empType === 'Probation' && (item.category.isProbationAllowed && item.probationLeaves >= 0)){
+                            <span class="total-leaves-text">/{{item.probationLeaves}}</span>
+                            }
+                            @else {
                             <span class="total-leaves-text">/{{item.allowedDays}}</span>
+                            }
                         </span>
                     </div>
                 </div>
@@ -386,4 +404,3 @@
         </div>
     </div>
 </ng-template>
-

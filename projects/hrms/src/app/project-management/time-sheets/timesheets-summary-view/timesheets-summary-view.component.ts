@@ -17,7 +17,7 @@ import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-foun
 import { DailyData, MonthlySummaryItem, TimesheetEntry, TimesheetSummaryResponse } from '../../../Interfaces/timesheetsummary';
 import { Subject } from 'rxjs/internal/Subject';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { DateformatPipe } from "../../../pipes/dateformat.pipe";
+import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { ChartModule } from 'primeng/chart';
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
@@ -110,6 +110,7 @@ export class TimesheetsSummaryViewComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
+    this.employeeId = this.empdata?.employeeId || null;
     this.getprojectData();
     this.getclientData();
     this.getdepartmentData();
@@ -121,6 +122,9 @@ export class TimesheetsSummaryViewComponent implements OnInit, OnDestroy {
     this.getResourceDetailsByManagerId();
     this.projectWiseChart();
     this.estimatedActualChart();
+    this.setDefaultmounth();
+    this.getProjectSummary(this.employeeId);
+    this.getEmployeeId(this.employeeId);
   }
 
   loadFiltersFromNavigation() {
@@ -506,6 +510,7 @@ export class TimesheetsSummaryViewComponent implements OnInit, OnDestroy {
   }
 
   getProjectSummary(resoureID: any) {
+    this.loading = true;
     const formValue = this.datepickerForm.value;
     // const [startDate, endDate] = formValue.dateRange || [];
     // const resourceId = formValue.resourceId ? `&resourceId=${formValue.resourceId}` : '';
@@ -576,6 +581,7 @@ export class TimesheetsSummaryViewComponent implements OnInit, OnDestroy {
 
   // Project Type (Pie)
   projectWiseChart() {
+    
     if (!this.projectTypeData || this.projectTypeData.length === 0) return;
     // Labels
     const labels = this.projectTypeData.map((item: any) =>
@@ -627,6 +633,7 @@ export class TimesheetsSummaryViewComponent implements OnInit, OnDestroy {
         },
       },
     };
+    
   }
 
   // Estimated vs Actual Hours (Grouped Bar)

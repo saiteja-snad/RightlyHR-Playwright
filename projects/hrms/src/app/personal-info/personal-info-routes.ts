@@ -3,6 +3,21 @@ import { Route, } from '@angular/router';
 import { BasicInfoComponent } from './personal/basic-info/basic-info.component';
 import { DocumentsComponent } from './documents/documents.component';
 import { ViewHistoryApprovalsLayoutComponent } from './approvals-view-history/view-history-approvals-layout/view-history-approvals-layout.component';
+import { ApprovalsLayoutComponent } from './job/offboarding-employee-approvals/approvals-layout/approvals-layout.component';
+import { LeaveApprovalsComponent } from './job/offboarding-employee-approvals/leave-approvals/leave-approvals.component';
+import { WfhApprovalsComponent } from './job/offboarding-employee-approvals/wfh-approvals/wfh-approvals.component';
+import { PermissionsApprovalsComponent } from './job/offboarding-employee-approvals/permissions-approvals/permissions-approvals.component';
+import { EmployeOffBoardingComponent } from './job/employe-off-boarding/employe-off-boarding.component';
+import { RemoteloginApprovalsComponent } from './job/offboarding-employee-approvals/remotelogin-approvals/remotelogin-approvals.component';
+import { CompoffApprovalsComponent } from './job/offboarding-employee-approvals/compoff-approvals/compoff-approvals.component';
+import { ExtrahoursApprovalsComponent } from './job/offboarding-employee-approvals/extrahours-approvals/extrahours-approvals.component';
+import { RegularizationApprovalsComponent } from './job/offboarding-employee-approvals/regularization-approvals/regularization-approvals.component';
+import { InitateOffboardingComponent } from './job/offboarding-employee-approvals/initate-offboarding/initate-offboarding.component';
+import { ExpensesApprovalsComponent } from './job/offboarding-employee-approvals/expenses-approvals/expenses-approvals.component';
+import { TimeSheetEntiresApprovalsComponent } from './job/offboarding-employee-approvals/time-sheet-entires-approvals/time-sheet-entires-approvals.component';
+import { ReportingmangerchangeComponent } from './job/offboarding-employee-approvals/reportingmangerchange/reportingmangerchange.component';
+import { NoApprovalsScreenComponent } from './job/offboarding-employee-approvals/no-approvals-screen/no-approvals-screen.component';
+import { EmployeeInfoApprovalsComponent } from './job/offboarding-employee-approvals/employee-info-approvals/employee-info-approvals.component';
 
 export default [
   // { path: '', redirectTo: '/personalinfo/personal/basic-info', pathMatch: 'full' },
@@ -26,8 +41,47 @@ export default [
       // { path: '', redirectTo: 'pre-onboarding-details', pathMatch: 'full' },
       { path: 'pre-onboarding-details', loadComponent: () => import('./job/pre-onboaring-details/pre-onboaring-details.component').then((m) => m.PreOnboaringDetailsComponent), data: { permission: 'Employee Info Pre-Onboarding Details.view' } },
       { path: 'onboarding-details', loadComponent: () => import('./job/onboarding-details/onboarding-details.component').then((m) => m.OnboardingDetailsComponent), data: { permission: 'Employee Info Onboarding Details.view' } },
-      { path: 'employmentType', loadComponent: () => import('./job/offboarding-details/offboarding-details.component').then((m) => m.OffboardingDetailsComponent), data: { permission: 'Employee Info Offboarding Details.view' } },
-      { path: 'desk-details', loadComponent: () => import('./job/desk/desk.component').then((m) => m.DeskComponent), data: { permission: 'Employee Info Desk Details.view' } },
+ {
+        path: 'employmentType', children: [
+          { path: '', redirectTo: 'employmentType', pathMatch: 'full' },
+          {path: 'initate-offboarding-landingscreen', component:InitateOffboardingComponent, data: { permission: 'Employee Info Onboarding Request Details.view' } },
+          { path: 'offboarding-details', loadComponent: () => import('./job/offboarding-details/offboarding-details.component').then((m) => m.OffboardingDetailsComponent), data: { permission: 'Employee Info Offboarding Details.view' } },
+          {
+            path: 'initate-offboarding', component: ApprovalsLayoutComponent, children: [
+              { path: 'leave-approvals', component: LeaveApprovalsComponent, data: { permission: 'Employee Info Offboarding Details.view' } },
+              { path: 'wfh-approvals', component: WfhApprovalsComponent, data: { permission: 'Employee Info Offboarding Details.view' } },
+              { path: 'permissions-approvals', component: PermissionsApprovalsComponent, data: { permission: 'Employee Info Offboarding Details.view' } },
+              { path:'employee-off-boarding',component:EmployeOffBoardingComponent, data: { permission: 'Employee Info Offboarding Details.view' } },
+              { path:'remote-login-approvals',component:RemoteloginApprovalsComponent, data: { permission: 'Employee Info Offboarding Details.view' } },
+              { path:'compoff-approvals',component:CompoffApprovalsComponent, data: { permission: 'Employee Info Offboarding Details.view' } },
+              { path:'extrahours-approvals',component:ExtrahoursApprovalsComponent, data: { permission: 'Employee Info Offboarding Details.view' } },
+              { path:'regularization-approvals',component:RegularizationApprovalsComponent, data: { permission: 'Employee Info Offboarding Details.view' } },
+              { path:'expenses-approvals',component:ExpensesApprovalsComponent, data: { permission: 'Employee Info Offboarding Details.view' } },
+              { path:'timesheet-approvals',component:TimeSheetEntiresApprovalsComponent, data: { permission: 'Employee Info Offboarding Details.view' } },
+              { path:'team-reporting-manager-change',component:ReportingmangerchangeComponent, data: { permission: 'Employee Info Offboarding Details.view' } },
+              { path:'no-approvals-screen',component:NoApprovalsScreenComponent, data: { permission: 'Employee Info Offboarding Details.view' } },
+              { path:'employee-info-approvals',component:EmployeeInfoApprovalsComponent, data: { permission: 'Employee Info Offboarding Details.view' } },
+
+            ]
+          },
+          {
+            path: 'approval-requests', component: ApprovalsLayoutComponent, children: [
+              { path: 'leave-approvals', component: LeaveApprovalsComponent, data: { permission: 'Employee Info Offboarding Details.view' } },
+              { path: 'wfh-approvals', component: WfhApprovalsComponent, data: { permission: 'Employee Info Offboarding Details.view' } },
+              { path: 'permissions-approvals', component: PermissionsApprovalsComponent, data: { permission: 'Employee Info Offboarding Details.view' } },
+              { path:'employee-off-boarding',component:EmployeOffBoardingComponent, data: { permission: 'Employee Info Offboarding Details.view' } },
+              { path:'remote-login-approvals',component:RemoteloginApprovalsComponent, data: { permission: 'Employee Info Offboarding Details.view' } },
+              { path:'compoff-approvals',component:CompoffApprovalsComponent, data: { permission: 'Employee Info Offboarding Details.view' } },
+              { path:'extrahours-approvals',component:ExtrahoursApprovalsComponent, data: { permission: 'Employee Info Offboarding Details.view' } },
+              { path:'regularization-approvals',component:RegularizationApprovalsComponent, data: { permission: 'Employee Info Offboarding Details.view' } },
+              { path:'expenses-approvals',component:ExpensesApprovalsComponent, data: { permission: 'Employee Info Offboarding Details.view' } },
+              { path:'timesheet-approvals',component:TimeSheetEntiresApprovalsComponent, data: { permission: 'Employee Info Offboarding Details.view' } },
+              { path:'employee-info-approvals',component:EmployeeInfoApprovalsComponent, data: { permission: 'Employee Info Offboarding Details.view' } },
+              { path:'no-approvals-screen',component:NoApprovalsScreenComponent, data: { permission: 'Employee Info Offboarding Details.view' } },
+            ]
+          },
+        ]
+      },      { path: 'desk-details', loadComponent: () => import('./job/desk/desk.component').then((m) => m.DeskComponent), data: { permission: 'Employee Info Desk Details.view' } },
       { path: 'assets-details', loadComponent: () => import('./job/assets/assets.component').then((m) => m.AssetsComponent), data: { permission: 'Employee Info Asset Details.view' } },
       { path: 'past-experiences', loadComponent: () => import('./job/previous-experince/previous-experince.component').then((m) => m.PreviousExperinceComponent), data: { permission: 'Employee Info Previous Experience Details.view' } },
       { path: 'certifications', loadComponent: () => import('./job/certification/certification.component').then((m) => m.CertificationComponent), data: { permission: 'Employee Info Certification Details.view' } },
@@ -41,7 +95,7 @@ export default [
           { path: '', redirectTo: 'separation-requests', pathMatch: 'full' },
           { path: 'separation-requests', loadComponent: () => import('./job/separation-request/separation-request.component').then(m => m.SeparationRequestComponent), data: { permission: 'Employee Info Separation Request Details.view' } },
           { path: 'exit-feedback-details', loadComponent: () => import('./job/separation-request/employee-exit-feedback/employee-exit-feedback.component').then(m => m.EmployeeExitFeedbackComponent), data: { permission: 'Employee Info Separation Request Details.view' } },
-        
+
         ]
       },
       { path: 'separation-request/exit-feedback-form', loadComponent: () => import('./job/separation-request/exit-feedback-form/exit-feedback-form.component').then(m => m.ExitFeedbackFormComponent), data: { permission: 'Employee Info Separation Request Details.view' } },
@@ -54,9 +108,10 @@ export default [
       { path: 'cards', loadComponent: () => import('./job/card-details/card-details.component').then(m => m.CardDetailsComponent) },
       {
         path: 'team', children: [
-            { path: 'my-team-members', loadComponent: () => import('./personal/team-members/my-team-members/my-team-members.component').then(m => m.MyTeamMembersComponent), data: { permission: 'Employee Info My Team Members Tab.view' } },
+          { path: 'my-team-members', loadComponent: () => import('./personal/team-members/my-team-members/my-team-members.component').then(m => m.MyTeamMembersComponent), data: { permission: 'Employee Info My Team Members Tab.view' } },
           { path: 'team-members', loadComponent: () => import('./personal/team-members/team-members.component').then(m => m.TeamMembersComponent), data: { permission: 'Employee Info Team Members Tab.view' } },
-        
+          { path: 'location-change', loadComponent: () => import('./personal/team-members/bulk-location-change/bulk-location-change.component').then(m => m.BulkLocationChangeComponent), data: { permission: 'Employee Info Location Change Tab.view' } },
+
         ]
       }
 

@@ -238,6 +238,25 @@
                         </p-accordion-panel>
                     </li>
                     }
+                    @if(rbac.allowedToAccess('Helpdesk Configuration Module.view')){
+                    <!--Help Desk Configuration-->
+                    <li class="accordian-list-item"
+                        (click)="navigateToAccessedRoute('/settings/helpdesk-management-config')">
+                        <p-accordion-panel value="6">
+                            <p-accordion-header>
+                                <div>
+                                    <div class="d-flex align-items-center gap-2 mb-2">
+                                        <img src="/main-menu-icons/help desk.png" alt="Icon"
+                                            class="list-icon">
+                                        <div class="list-label-name">Help Desk Configuration</div>
+                                    </div>
+                                    <p class="list-description m-0">{{settinghelpdeskConfigurationModule}}</p>
+                                </div>
+                            </p-accordion-header>
+                        </p-accordion-panel>
+                    </li>
+                    }
+
                 </p-accordion>
             </ul>
         </div>

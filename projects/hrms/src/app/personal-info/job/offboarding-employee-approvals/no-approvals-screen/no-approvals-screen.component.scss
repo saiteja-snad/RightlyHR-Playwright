@@ -1,0 +1,19 @@
+.initial-state-content {
+   width: 100%;
+   height: 70dvh;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+
+   .initial-state-image {
+      width: 10rem;
+      height: 8rem;
+   }
+}
+.main-component-container-no-approvals{
+   border: 1px solid var(--content-border-color);
+  border-radius: 0.5rem;
+  background: var(--white-color);
+  max-height: calc(100dvh - 20rem) !important;
+  padding: 0.5rem;
+}

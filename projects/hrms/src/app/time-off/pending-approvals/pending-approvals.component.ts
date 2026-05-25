@@ -4,7 +4,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { ModuleInformationComponent } from '../../shared/module-information/module-information.component';
 import { filter, Subject, Subscription, takeUntil } from 'rxjs';
 import { MODULE_INFOS } from '../../shared/modules-info';
-import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbOffcanvas, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { DatePicker } from 'primeng/datepicker';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MultiSelectModule } from 'primeng/multiselect';
@@ -19,7 +19,9 @@ import { RbacService } from '../../services/rbac.service';
 import { Select } from 'primeng/select';
 
 
+
 import { CommonModule } from '@angular/common';
+import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
 @Component({
   selector: 'app-pending-approvals',
   imports: [
@@ -37,7 +39,7 @@ import { CommonModule } from '@angular/common';
     OnboardingApprovalTabsComponent,
     CommonModule,
     Select,
-    ModuleInformationComponent
+    ModuleInfoIconComponent
   ],
   templateUrl: './pending-approvals.component.html',
   styleUrl: './pending-approvals.component.scss',
@@ -48,6 +50,7 @@ export class PendingApprovalsComponent implements OnInit {
   employeeData: any[] = [];
   dataload = false;
   subscription!: Subscription;
+  componentName: any
   datepickerForm!: FormGroup;
   destroy$ = new Subject<boolean>();
   resourcesList: any[] = [];
@@ -65,14 +68,16 @@ export class PendingApprovalsComponent implements OnInit {
   selectedEmployeeId: number | null = null;
 
   headerRightTemplate: TemplateRef<any> | null = null;
-
+  tastType: any[] = [];
+  spinnerLoader1 = false;
   constructor(
     public router: Router,
     private fb: FormBuilder,
     private http: HttpService,
     public rbac: RbacService,
-    private cdr: ChangeDetectorRef
-  ) {}
+    private cdr: ChangeDetectorRef,
+    private offcanvasService: NgbOffcanvas
+  ) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
@@ -83,27 +88,34 @@ export class PendingApprovalsComponent implements OnInit {
     this.initiateUpdateModuleInfo();
     this.getResourceDetailsByManagerId();
     this.getAllActiveProjects();
+
     this.datepickerForm.valueChanges.subscribe(() => {
       this.isSubmitEnabled = this.isAnyFieldSelected();
     });
-
     if (this.isKraKpiRoute()) {
       if (this.rbac.allowedToAccess('All Employees (Expenses).view')) {
         this.loadAllActiveEmployees();
       }
-
       if (this.rbac.allowedToAccess('My Team (Expenses).view')) {
         this.loadMyTeamEmployees();
       }
     }
+  this.getTaskType();
   }
-
+getTaskType() {
+  this.subscription = this.http.getData('TaskType').subscribe({
+    next: (res: any) => {
+      this.tastType =res
+    },
+    error: (error:any) => {
+      console.log(error);
+    }
+  });
+}
   initiateUpdateModuleInfo() {
-    this.router.events
-      .pipe(filter((event) => event instanceof NavigationEnd))
-      .subscribe(() => {
-        this.updateModuleInfo();
-      });
+    this.router.events.pipe(filter((event) => event instanceof NavigationEnd)).subscribe(() => {
+      this.updateModuleInfo();
+    });
   }
 
   updateModuleInfo() {
@@ -144,29 +156,31 @@ export class PendingApprovalsComponent implements OnInit {
   createDatepickerForm() {
     this.datepickerForm = this.fb.group({
       dateRange: [null],
-      phaseId: [''],
-      resourceId: [''],
+      phaseId: [[]],
+      resourceId: [[]],
+      taskId: [[]]
     });
   }
 
   isFilterApplied(): boolean {
     const formValue = this.datepickerForm?.value;
-    // Check if any field has value
     return (
       (formValue?.dateRange && formValue?.dateRange?.length > 0) ||
-      (formValue?.phaseId !== null && formValue?.phaseId !== undefined) ||
-      (formValue?.resourceId && formValue?.resourceId?.length > 0)
+      (Array.isArray(formValue?.phaseId) && formValue.phaseId.length > 0) ||
+      (Array.isArray(formValue?.resourceId) && formValue.resourceId.length > 0) ||
+      (Array.isArray(formValue?.taskId) && formValue.taskId.length > 0)
     );
   }
 
   isAnyFieldSelected(): boolean {
     const formValue = this.datepickerForm?.value;
     return (
-      (formValue?.dateRange && formValue?.dateRange?.length > 0) || // date selected
-      (formValue?.phaseId !== null && formValue?.phaseId !== undefined) || // phase selected (including 0)
-      (formValue?.resourceId && formValue?.resourceId?.length > 0) // at least one resource selected
+      (formValue?.dateRange && formValue?.dateRange?.length > 0) ||
+      (Array.isArray(formValue?.phaseId) && formValue.phaseId.length > 0) ||
+      (Array.isArray(formValue?.resourceId) && formValue.resourceId.length > 0) ||
+      (Array.isArray(formValue?.taskId) && formValue.taskId.length > 0)
     );
-  }
+  }  
 
   onresourceChange(event: any) {
     const selectedResourceIds = event?.value ?? [];
@@ -185,31 +199,31 @@ export class PendingApprovalsComponent implements OnInit {
       .getData(url)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (res: any) => {
-          const projects = res?.data || [];
-          this.projectsData = projects.map((p: any) => ({
-            ...p,
-            displayName: `${p.clientName} - ${p.projectName} - ${p.phaseName}`,
-          }));
-          this.projectsData.unshift({
-            phaseId: 0,
-            displayName: 'No Client - No Project',
-          });
-          // FIX: Prevent null values from appearing in dropdown
-          let selectedPhases = this.datepickerForm.get('phaseId')?.value;
-          if (Array.isArray(selectedPhases)) {
-            // Remove nulls
-            selectedPhases = selectedPhases.filter((x: any) => x !== null);
-            // Keep only valid phaseIds
-            selectedPhases = selectedPhases.filter((id: number) =>
-              this.projectsData.some((p) => p.phaseId === id)
-            );
-            // Set cleaned value back
-            this.datepickerForm.get('phaseId')?.setValue(selectedPhases);
-          }
-        },
-        error: () => (this.projectsData = []),
-      });
+      next: (res: any) => {
+        const projects = res?.data || [];
+        this.projectsData = projects.map((p: any) => ({
+          ...p,
+          displayName: `${p.clientName} - ${p.projectName} - ${p.phaseName}`,
+        }));
+        this.projectsData.unshift({
+          phaseId: 0,
+          displayName: 'No Client - No Project',
+        });
+        // FIX: Prevent null values from appearing in dropdown
+        let selectedPhases = this.datepickerForm.get('phaseId')?.value;
+        if (Array.isArray(selectedPhases)) {
+          // Remove nulls
+          selectedPhases = selectedPhases.filter((x: any) => x !== null);
+          // Keep only valid phaseIds
+          selectedPhases = selectedPhases.filter((id: number) =>
+            this.projectsData.some((p) => p.phaseId === id)
+          );
+          // Set cleaned value back
+          this.datepickerForm.get('phaseId')?.setValue(selectedPhases);
+        }
+      },
+      error: () => (this.projectsData = []),
+    });
   }
 
   /** When phase selected */
@@ -271,23 +285,27 @@ export class PendingApprovalsComponent implements OnInit {
     this.router.events
       .pipe(filter((e) => e instanceof NavigationEnd))
       .subscribe(() => {
-        if (!this.router.url.includes('/pending-approvals/time-sheets')) {
-          this.resetForm();
-        }
-      });
+      if (!this.router.url.includes('/pending-approvals/time-sheets')) {
+        this.resetForm();
+      }
+    });
   }
 
   /** On form submit */
   onSubmit() {
+    this.spinnerLoader1 = true;
     const formValue = this.datepickerForm.value;
     const dateRange = formValue.dateRange;
     const phaseIds = formValue.phaseId || [];
     const resourceIds = formValue.resourceId || [];
     const phaseId = phaseIds.length > 0 ? phaseIds.join(',') : null;
     const resourceId = resourceIds.length > 0 ? resourceIds.join(',') : null;
+    const taskIds = formValue.taskId || [];
+    const taskId = taskIds.length > 0 ? formValue.taskId.join(', ') : null;
     const request: any = {
       phaseId,
       resourceId,
+      taskId
     };
     // Add dateRange only if selected
     if (dateRange && dateRange.length === 2) {
@@ -298,6 +316,10 @@ export class PendingApprovalsComponent implements OnInit {
     }
     // Pass the request data to the timesheet component
     this.http.setEmployeeIdTimesheet(this.employeeid, phaseId || 0, request);
+    this.spinnerLoader1 = false;
+    if (this.isTimeOffRoute()) {
+      this.closeCanvas();
+    }
   }
 
   /** Reset dependent fields */
@@ -306,6 +328,8 @@ export class PendingApprovalsComponent implements OnInit {
     this.datepickerForm.get('phaseId')?.disable();
     this.datepickerForm.get('resourceId')?.reset();
     this.datepickerForm.get('resourceId')?.disable();
+     this.datepickerForm.get('taskId')?.reset();
+    this.datepickerForm.get('taskId')?.disable();
     this.projectsData = [];
     this.employeeData = [];
     this.isSubmitEnabled = false;
@@ -313,19 +337,17 @@ export class PendingApprovalsComponent implements OnInit {
 
   /** Clear everything */
   resetForm() {
-    this.datepickerForm.reset();
     this.datepickerForm.reset({
       dateRange: null,
-      phaseId: '',
-      resourceId: '',
+      phaseId: [],
+      resourceId: [],
+      taskId: []
     });
     this.phaseIds = [];
     this.selectedResourceIds = [];
     this.employeeData = [];
-    // this.projectId = [];
     this.employeeid = null;
-    this.selectedResourceIds = [];
-    this.isSubmitEnabled = true;
+    this.isSubmitEnabled = false;
     this.http.setEmployeeIdTimesheet(null, 0, null);
     this.getResourceDetailsByManagerId();
     this.getAllActiveProjects();
@@ -388,7 +410,7 @@ export class PendingApprovalsComponent implements OnInit {
             const fusion = emp.fusionEmpId ? `${emp.fusionEmpId} - ` : '';
             const fullName = `${fusion}${emp.firstName ?? ''} ${
               emp.middleName ? emp.middleName + ' ' : ''
-            }${emp.lastName ?? ''}`.trim();
+              }${emp.lastName ?? ''}`.trim();
             return { ...emp, fullName };
           })
           .sort((a: any, b: any) =>
@@ -412,7 +434,7 @@ export class PendingApprovalsComponent implements OnInit {
           .map((emp: any) => ({
             label: `${emp.fusionEmpId ?? ''} - ${emp.firstName ?? ''} ${
               emp.middleName ?? ''
-            } ${emp.lastName ?? ''}`.trim(),
+              } ${emp.lastName ?? ''}`.trim(),
             value: emp.employeeId,
           }));
       });
@@ -426,10 +448,22 @@ export class PendingApprovalsComponent implements OnInit {
     // this.loadPendingKraKpi(this.selectedEmployeeId);
   }
 
-setHeaderTemplate(template: TemplateRef<any>) {
-  this.headerRightTemplate = template;
-  this.cdr.detectChanges();
-}
+  setHeaderTemplate(template: TemplateRef<any>) {
+    this.headerRightTemplate = template;
+    this.cdr.detectChanges();
+  }
+
+  toggleFilters(content: TemplateRef<any>) {
+    this.offcanvasService.open(content, {
+      position: 'end',
+      backdrop: 'static',
+      keyboard: false,
+    });
+  }
+
+  closeCanvas() {
+    this.offcanvasService.dismiss();
+  }
 
 
 

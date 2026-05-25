@@ -41,7 +41,7 @@ export class AddProspectiveEmployeeComponent {
   designation: any;
   RevokeComments = [] as any;
   formvalue!: NgForm;
-
+spinnerLoader=false
   @ViewChild('success') success: any;
   @ViewChild('Confirmation') Confirmation!: NgbModal;
   constructor(private router: Router, private authService: AuthService, private conformationPopup: OpenModalService,
@@ -182,6 +182,7 @@ export class AddProspectiveEmployeeComponent {
   }
 
   postEmpData(f: NgForm) {
+    this.spinnerLoader=true
     let loggedInUser = this.authService.getToken();
     let postdata = {
       firstName: this.employeeForm.get('firstName')?.value,
@@ -198,7 +199,7 @@ export class AddProspectiveEmployeeComponent {
         //alert('employee created')
         if (res.statusCode == 201) {
           this.result = res.employeeData;
-          this.modalService.dismissAll();
+          this.modalService.dismissAll('success');
           this.conformationPopup.openSuccessModal('Prospective employee created successfully');
           this.http.activeTabSubject.next(this.result.employeeId);
           if (this.result.employeeId != null) {
@@ -213,20 +214,26 @@ export class AddProspectiveEmployeeComponent {
               next: (data: any) => {
                 this.select(this.result);
               },
-              error: (Reason) => console.log(Reason),
+              error: (Reason) => {console.log(Reason)
+                this.spinnerLoader=false;
+              },
             });
           }
         }
         else if (res.statusCode == 409) {
+               this.spinnerLoader=false;
           this.conformationPopup.openErrorModal(res.message);
         } else if (res.statusCode == 403) {
+           this.spinnerLoader=false
           this.formvalue = f;
           this.Status = res.message;
           this.RevokeComments = res.revokedComments;
+          this.spinnerLoader=false;
           this.openmodelforConfirm(this.Confirmation);
 
         }
         else {
+               this.spinnerLoader=false;
           this.conformationPopup.openErrorModal(res.message);
           setTimeout(() => {
             this.modalService.dismissAll();
@@ -234,6 +241,7 @@ export class AddProspectiveEmployeeComponent {
         }
       },
       error: (err: any) => {
+             this.spinnerLoader=false;
         this.conformationPopup.openErrorModal(err.error.Message);
       },
     });
@@ -255,7 +263,7 @@ export class AddProspectiveEmployeeComponent {
         //alert('employee created')
         if (res.statusCode == 201) {
           this.result = res.employeeData;
-          this.modalService.dismissAll();
+          this.modalService.dismissAll('success');
           this.conformationPopup.openSuccessModal('Prospective employee created successfully');
           this.http.activeTabSubject.next(this.result.employeeId);
           if (this.result.employeeId != null) {

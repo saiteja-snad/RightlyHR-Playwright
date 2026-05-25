@@ -24,7 +24,7 @@ export class HttpService {
   formattedDate = this.currentDate
   .toLocaleDateString('en-US', this.dateOptions)
   .replace(',', '');
-  
+
   tirggerCountSignal = signal<{
     compOff: boolean;
     wfh: boolean;
@@ -392,7 +392,7 @@ setOnBehalfExpensesUpdated(empId: number | null) {
 setAvaillableSearchCount(count: number) {
   //this.availlableSearchCount.next(count);
      this.avilableassetCountSubject.next(count);
-  
+
 }
   //to get the employee id
   employeeIdSubject = new BehaviorSubject<number>(0);
@@ -538,6 +538,11 @@ setAvaillableSearchCount(count: number) {
   postdata(url: string, data: any) {
     return this.http.post(`${this.ApiUrl}${url}`, data);
   }
+
+  postText(url: string, data: any) {
+    return this.http.post(`${this.ApiUrl}${url}`, data, { responseType: 'text' });
+  }
+
 
 
 
@@ -749,6 +754,14 @@ setAvaillableSearchCount(count: number) {
     return this.http.get(apiurl, {
       responseType: 'blob',
       observe: 'response', // 👈 allows access to headers
+    });
+  }
+
+    downloadTimesheetReportPost(url: string, body: any): Observable<HttpResponse<Blob>> {
+    const apiurl = `${this.ApiUrl}${url}`;
+    return this.http.post(apiurl, body, {
+      responseType: 'blob',
+      observe: 'response'
     });
   }
 
@@ -1280,6 +1293,36 @@ updatePendingApprovalCounts(counts: any[]) {
 
   private projectTimesheetFilterData = new BehaviorSubject<any>(null);
   projectTimesheetFilterData$ = this.projectTimesheetFilterData.asObservable();
+
+  // help desk
+ // ✅ 1. Create BehaviorSubject
+  private ticketCountSubject = new BehaviorSubject<any>(null);
+
+  // ✅ 2. Expose as observable
+  ticketCount$ = this.ticketCountSubject.asObservable();
+ empinfo = JSON.parse(localStorage.getItem('currentUser') || '{}');
+  // ✅ 3. Function to call count API and update subject
+  refreshTicketCounts(empId?: number) {
+    let url = `HelpDeskQueries/count?empId=${this.empinfo.employeeId}`;
+    if (empId !== undefined && empId !== null) {
+      url += `&empId=${empId}`;
+    }
+    this.getData(url).subscribe({
+      next: (res: any) => {
+        this.ticketCountSubject.next(res);
+      },
+      error: (err) => {
+        console.error('Count API Error:', err);
+      }
+    });
+  }
+  private messageUpdateSource = new BehaviorSubject<boolean>(false);
+messageUpdate$ = this.messageUpdateSource.asObservable();
+
+notifyMessageUpdate() {
+  this.messageUpdateSource.next(true);
+}
+
 
   // Setters
   setProjectTimesheetDepartmentIds(ids: number[]) {

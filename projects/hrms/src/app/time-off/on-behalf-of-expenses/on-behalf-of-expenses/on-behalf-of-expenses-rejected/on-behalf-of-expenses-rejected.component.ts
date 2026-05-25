@@ -1,5 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
-import { DateformatPipe } from '../../../../pipes/dateformat.pipe';
+import { DateformatPipe } from '../../../../Pipes/dateformat.pipe';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';

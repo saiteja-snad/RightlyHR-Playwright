@@ -36,11 +36,14 @@ import { ProjectPhasesComponent } from './projects/project-phases/project-phases
 import { HoldClientsComponent } from './clients/hold-clients/hold-clients.component';
 import { HoldProjectsComponent } from './projects/hold-projects/hold-projects.component';
 import { TimesheetsResourceSummaryComponent } from './time-sheets/timesheets-resource-summary/timesheets-resource-summary.component';
-import { TimesheetsResourceTabsComponent } from './time-sheets/timesheets-resource-tabs/timesheets-resource-tabs.component';
 import { PhasesHoldComponent } from './projects/phases-hold/phases-hold.component';
 import { InactivePhasesProjectComponent } from './projects/inactive-phases-project/inactive-phases-project.component';
 import { ProjectInactiveResourcesComponent } from './projects/project-inactive-resources/project-inactive-resources.component';
 import { ClientResourceInactiveComponent } from './clients/client-resource-inactive/client-resource-inactive.component';
+import { BulkExportComponent } from './time-sheets/bulk-export/bulk-export.component';
+import { BulkImportComponent } from './time-sheets/bulk-import/bulk-import.component';
+import { ExportHistoryComponent } from './time-sheets/export-history/export-history.component';
+import { HistoryLogComponent } from './time-sheets/history-log/history-log.component';
 
 export default [
     { path: '', redirectTo: '/project-management/clients', pathMatch: 'full' },
@@ -130,6 +133,10 @@ export default [
             { path: 'summary', component: TimesheetsSummaryViewComponent },
             { path: 'mysummary', component: TimesheetsSummaryViewComponent },
             {path:'resourcesummary',component:TimesheetsResourceSummaryComponent},
+            { path: 'bulk-upload', component: BulkImportComponent },
+            { path: 'bulk-export', component: BulkExportComponent },
+            { path: 'historylog', component: HistoryLogComponent },
+            { path: 'export-history', component: ExportHistoryComponent },
         ],
     },
 ] as Route[];

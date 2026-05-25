@@ -17,7 +17,7 @@
                 <tr *ngFor="let lev of processedLeaves">
                     <td>{{lev.date | dateformat}}</td>
                     <td>{{lev.categoryName}}</td>
-                    <td>
+                    <td class="text-center">
                         @if(lev.isSandwichLeave) {
                             <a type="button" class="text-primary text-decoration-underline" (click)="openSandwichBreakdown(lev, sandwichBreakdownModal)">{{lev?.duration}}</a>
                         } @else {

@@ -1,0 +1,32 @@
+@if(!loading){
+  <div class="clearance-header">
+    <h3 class="clearance-title">{{'Requests Overview' | translate}}</h3>
+  </div>
+  <div class="clearance-box">
+    <div class="checklist-items">
+      <ng-container *ngFor="let item of checklistItems; let i = index">
+        <div class="checklist-item" [class.completed]="item.completed">
+          <div class="step-number"
+               [class.active]="i === currentStep"
+               [class.completed]="item.completed">
+            <span class="step-text">{{ i + 1 }}</span>
+          </div>
+          <div class="item-content">
+            <span class="item-label"
+                  [class.active]="i === currentStep"
+                  [class.completed]="item.completed">{{ item.label }}</span>
+            <span class="item-count" *ngIf="item.count !== undefined">
+              ({{ item.count }})
+            </span>
+          </div>
+        </div>
+        <div class="connecting-line"
+             *ngIf="i < (checklistItems?.length || 0) - 1"
+             [class.completed]="item.completed"></div>
+      </ng-container>
+    </div>
+  </div>
+}
+@else {
+<app-sidetabsloaders/>
+}

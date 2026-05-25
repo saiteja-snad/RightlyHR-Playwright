@@ -2,7 +2,7 @@ import { Component, effect, OnDestroy, OnInit } from '@angular/core';
 import { HttpService } from '../../../services/http.service';
 import { AuthService } from '../../../services/auth.service';
 import { Subscription } from 'rxjs';
-import { DateformatPipe } from '../../../pipes/dateformat.pipe';
+import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { DropdownModule } from 'primeng/dropdown';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
@@ -72,7 +72,7 @@ export class OnBeHalfOfApprovalComponent implements OnInit, OnDestroy{
 
   getDataByLPID() {
     this.loading = true;
-    const selectedYear = this.timeoffYearFilterService.getSelectedYear();
+    const selectedYear = this.timeoffYearFilterService.getSelectedYear() ?? new Date().getFullYear();
     this.subscription = this.http.getData(`Timeoff/${this.cadidateEmployeeId}?year=${selectedYear}`).subscribe({
       next: (response: any) => {
         this.loading = false;

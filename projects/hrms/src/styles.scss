@@ -3401,6 +3401,14 @@ input[type=number]::-webkit-outer-spin-button {
     pointer-events: none !important;
 }
 
+#main-sidebar.driver-active-element {
+    pointer-events: auto !important;
+}
+
+#main-sidebar.driver-active-element * {
+    pointer-events: none !important;
+}
+
 .rhr-tour-transitioning .driver-popover,
 .rhr-tour-transitioning #driver-popover-content {
     visibility: hidden !important;
@@ -3410,6 +3418,8 @@ input[type=number]::-webkit-outer-spin-button {
 .rhr-tour-transitioning .driver-active-element {
     outline: none !important;
     box-shadow: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
 }
 
 .driver-active * {

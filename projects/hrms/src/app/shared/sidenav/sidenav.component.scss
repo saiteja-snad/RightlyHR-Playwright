@@ -195,3 +195,10 @@
 
     transition: all 0.2s ease;
 }
+
+.ellipses-nav-item {
+    position: sticky;
+    bottom: 0;
+    z-index: 3;
+    background-color: var(--side-nav-background-color);
+}

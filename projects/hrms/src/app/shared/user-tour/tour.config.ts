@@ -62,7 +62,7 @@ export const TOUR_CONFIGS: TourConfig[] = [
         element: '#ellipses-menu-toggle',
         popover: {
           title: 'Access Additional Modules',
-          description: 'Click the Ellipsis (...) option in the RightlyHR sidebar to access additional modules and personalization settings.',
+          description: 'Click the Ellipses (...) option in the RightlyHR sidebar to access additional modules and personalization settings.',
           side: 'right',
           align: 'start'
         },

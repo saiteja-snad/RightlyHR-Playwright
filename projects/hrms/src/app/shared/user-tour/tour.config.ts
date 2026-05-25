@@ -38,6 +38,8 @@ export interface TourConfig {
   sessionKey: string;
   /** All steps for this tour */
   steps: TourStepConfig[];
+
+  requiredPermission?: string;
 }
 
 /** Context passed to step beforeNext hooks so they can trigger app-level actions */
@@ -54,6 +56,7 @@ export const TOUR_CONFIGS: TourConfig[] = [
   {
     completionKey: 'menu_personalization_tour_completed',
     sessionKey: 'rhr_tour_menu_personalization_step',
+    requiredPermission: 'Themes.view',
     steps: [
       {
         element: '#ellipses-menu-toggle',
@@ -124,6 +127,16 @@ export const TOUR_CONFIGS: TourConfig[] = [
           description: 'Click on the Reset to Default button to restore the original RightlyHR menu configuration and layout.',
           side: 'bottom',
           align: 'start'
+        }
+      },
+      {
+        element: '#main-sidebar',
+        requiredRoute: '/menus/personalization',
+        popover: {
+          title: 'Rearrange Menu Items',
+          description: 'Drag and drop menu items between the Primary Menu and Ellipses Menu to organize modules based on your daily usage and preference.',
+          side: 'right',
+          align: 'center'
         }
       }
     ]

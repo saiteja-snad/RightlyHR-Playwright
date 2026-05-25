@@ -5,6 +5,7 @@ import { HttpService } from '../../services/http.service';
 import { firstValueFrom, Subject } from 'rxjs';
 import { UserPreferenceService } from '../../services/user-preference.service';
 import { TOUR_CONFIGS, TourConfig, TourActionContext } from './tour.config';
+import { RbacService } from '../../services/rbac.service';
 
 @Injectable({ providedIn: 'root' })
 export class UserTourService implements OnDestroy {
@@ -22,7 +23,9 @@ export class UserTourService implements OnDestroy {
   constructor(
     private router: Router,
     private http: HttpService,
-    private userPrefService: UserPreferenceService
+    private userPrefService: UserPreferenceService,
+    private rbac: RbacService
+
   ) {
     this.initDriver();
   }
@@ -193,6 +196,12 @@ export class UserTourService implements OnDestroy {
       const prefs = await this.userPrefService.getPreferences();
 
       for (const config of TOUR_CONFIGS) {
+          if (
+            config.requiredPermission &&
+            !this.rbac.allowedToAccess(config.requiredPermission)
+          ) {
+            continue;
+          }
         const isCompleted = prefs?.[config.completionKey];
         if (isCompleted === 'true' || isCompleted === true) continue;
 

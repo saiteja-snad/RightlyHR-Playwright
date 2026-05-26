@@ -133,8 +133,8 @@ export const TOUR_CONFIGS: TourConfig[] = [
         element: '#main-sidebar',
         requiredRoute: '/menus/personalization',
         popover: {
-          title: 'Rearrange Menu Items',
-          description: 'Drag and drop menu items between the Primary Menu and Ellipses Menu to organize modules based on your daily usage and preference.',
+          title: 'Customize Side Navigation Menu',
+          description: 'Users can customize both the Side Navigation Menu and the Ellipses Menu (...) by organizing and managing the menu items based on their preference and frequently used modules.',
           side: 'right',
           align: 'center'
         }

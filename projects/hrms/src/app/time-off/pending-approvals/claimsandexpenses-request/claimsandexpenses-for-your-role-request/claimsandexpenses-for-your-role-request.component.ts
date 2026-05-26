@@ -587,59 +587,6 @@ isloading: boolean = false;
     });
   }
 
-  handleVerify(verifyForm: FormGroup): void {
-    if (!verifyForm.valid || !this.selectedItem) return;
-
-    const formData = verifyForm.value;
-    const verifiedItem = this.selectedItem;
-
-    const requestBody = {
-      isVerified: true,
-      verifiedBy: this.empinfo.employeeId?.toString(),
-      verifiedByName: `${this.empinfo.firstName || ''} ${this.empinfo.lastName || ''}`.trim(),
-      comments: formData.comments
-    };
-
-    this.http.putData(`Expenses_Header/ExpensesItemUpdate/${verifiedItem.expenseitem_id}`, requestBody)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: () => {
-          // Close only the Verify modal
-          this.verifyModalRef?.close();
-
-          // Show success popup
-          this.sharedModalService.openSuccessModal('Expense item verified successfully');
-
-          // Update local UI immediately
-          if (this.expenseheaderiteams?.expenseitem?.length) {
-            const idx = this.expenseheaderiteams.expenseitem.findIndex(
-              it => it.expenseitem_id === verifiedItem.expenseitem_id
-            );
-            if (idx > -1) {
-              this.expenseheaderiteams.expenseitem[idx].isVerified = true;
-            }
-          }
-
-          this.selectedItem = null;
-
-          // Update verified IDs for template checks
-          this.verifiedExpenseIds.push(verifiedItem.expenseitem_id);
-
-          // Refresh headers in background, but the modal stays open
-          this.getAllPendingApprovals();
-        },
-        error: (err: any) => {
-          this.verifyModalRef?.close();
-          this.sharedModalService.openErrorModal(err?.error?.Message || 'Verification failed');
-        }
-      });
-  }
-
-
-  ngOnDestroy(): void {
-    this.destroy$.next(true);
-    this.destroy$.unsubscribe();
-  }
   handleClarification(approveForm: FormGroup): void {
     this.isloading= true;
     if (approveForm.valid) {
@@ -688,8 +635,6 @@ isloading: boolean = false;
         });
     }
   }
-  selectedItem: any = null;
-
   refreshAllVerifiedStates(): void {
     this.expenseheaderpending.forEach(record => {
       const expId = record.entity.expenses_ID;
@@ -711,17 +656,6 @@ isloading: boolean = false;
 
   isAllVerifiedForRecord(expensesId: number): boolean {
     return this.allVerifiedMap.get(expensesId) === true;
-  }
-
-  openVerifyModal(item: any, content: any) {
-    this.verifyModalRef = this.modalService.open(content, { centered: true, backdrop: 'static' });
-    this.intializeVerifyForm();
-    this.selectedItem = item;
-  }
-  intializeVerifyForm() {
-    this.verifyForm = this.fb.group({
-      comments: ['', [Validators.required, Validators.maxLength(250)]],
-    });
   }
 
   handleVerify(verifyForm: FormGroup): void {
@@ -863,7 +797,16 @@ this.isloading = true;
         }
       });
   }
- handleVerifyReject(verifyForm: FormGroup): void {
+onCancel(modal: any) {
+  // 1. Reset form
+  this.approveForm.reset();
+  // 2. Reset checklist selection
+  this.checklistdata.forEach(item => item.checked = false);
+  // 4. Close modal
+  modal.dismiss();
+}
+
+handleVerifyReject(verifyForm: FormGroup): void {
   if (!verifyForm.valid || !this.selectedItem) return;
 
   const formData = verifyForm.value;
@@ -913,12 +856,8 @@ this.isloading = true;
       }
     });
 }
-onCancel(modal: any) {
-  // 1. Reset form
-  this.approveForm.reset();
-  // 2. Reset checklist selection
-  this.checklistdata.forEach(item => item.checked = false);
-  // 4. Close modal
-  modal.dismiss();
-}
+  ngOnDestroy(): void {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
+  }
 }

@@ -1,9 +1,9 @@
 import { CommonModule, DatePipe } from '@angular/common';
-import { ChangeDetectorRef, Component, Input, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ReactiveFormsModule, FormsModule, FormGroup, FormBuilder, Validators, FormArray, AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Router } from '@angular/router';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxDocViewerModule } from 'ngx-doc-viewer';
 import { Select } from 'primeng/select';
@@ -18,15 +18,16 @@ import { RbacService } from '../../../services/rbac.service';
 import { DataLoaderContentComponent } from '../../../shared/data-loader-content/data-loader-content.component';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { DownloadExpenseComponent } from '../../download-expense/download-expense.component';
-import { SelectedyeartimeOffService } from '../../../services/selectedyeartime-off.service';
+import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.service';
+import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 @Component({
   selector: 'app-required-clarification',
-  imports: [CommonModule, DateformatPipe, NgxDocViewerModule, TranslateModule, ReactiveFormsModule, FormsModule, NoDataFoundComponent, DataLoaderContentComponent, Select, DownloadExpenseComponent],
+  imports: [CommonModule, DateformatPipe, NgxDocViewerModule, TranslateModule, ReactiveFormsModule, FormsModule, NoDataFoundComponent, DataLoaderContentComponent, Select, DownloadExpenseComponent, NgbPopoverModule, InfoIconComponent],
   templateUrl: './required-clarification.component.html',
   styleUrl: './required-clarification.component.scss',
   providers: [DatePipe],
 })
-export class RequiredClarificationComponent {
+export class RequiredClarificationComponent implements OnInit, OnDestroy {
 empinfo: any;
   Myexpense: any;
   removeindex: any;
@@ -64,7 +65,7 @@ empinfo: any;
   appover_comments = {} as any;
   constructor(public router: Router, private fb: FormBuilder, private datepipe: DatePipe,
     private http: HttpService, private conformationPopup: OpenModalService, private modalService: NgbModal, private sanitizer: DomSanitizer,
-    public formValidation: FormValidationService, public rbac: RbacService, private cdRef: ChangeDetectorRef, private SelectedyeartimeOffService: SelectedyeartimeOffService) { }
+    public formValidation: FormValidationService, public rbac: RbacService, private cdRef: ChangeDetectorRef, private SelectedyeartimeOffService: TimeoffYearFilterService) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');

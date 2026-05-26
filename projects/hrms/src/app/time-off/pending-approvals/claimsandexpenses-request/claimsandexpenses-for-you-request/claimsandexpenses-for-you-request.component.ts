@@ -24,9 +24,7 @@ import { InfoIconComponent } from "../../../../icons/info-icon/info-icon.compone
 import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
 import { FormValidationsService } from '../../../../services/form-validations.service';
 import { ConfirmationIconComponent } from "../../../../icons/confirmation-icon/confirmation-icon.component";
-import { DocumentViewIconComponent } from "../../../../icons/document-view-icon/document-view-icon.component";
 import moment from 'moment';
-import { ɵɵDir } from "@angular/cdk/scrolling";
 import { SelectModule } from 'primeng/select';
 @Component({
   selector: 'app-claimsandexpenses-for-you-request',
@@ -45,8 +43,6 @@ import { SelectModule } from 'primeng/select';
     InfoIconComponent,
     DataLoaderContentComponent,
     ConfirmationIconComponent,
-    DocumentViewIconComponent,
-    ɵɵDir,
     SelectModule
 ],
   templateUrl: './claimsandexpenses-for-you-request.component.html',
@@ -146,6 +142,9 @@ export class ClaimsandexpensesForYouRequestComponent
   if (status === 'approved') {
     this.approveForm.get('comments')?.setValue('Approved');
   }
+  if (status === 'requested clarification') {
+      this.approveForm.get('comments')?.setValue('Requested Clarification');
+    }
 }
 
   onStatusRejectSelect(status: string) {
@@ -160,6 +159,10 @@ export class ClaimsandexpensesForYouRequestComponent
     if (status === 'verified') {
       this.verifyForm.get('comments')?.setValue('Verified');
     }
+    if (status === 'reject') {
+      this.verifyForm.get('comments')?.setValue('Rejected');
+    }
+    
   }
   intializeApproveForm() {
     this.approveForm = this.fb.group({

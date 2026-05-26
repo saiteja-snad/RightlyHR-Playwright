@@ -17,7 +17,6 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { environment } from '../../../../../environments/environment';
 import { NgxDocViewerModule } from 'ngx-doc-viewer';
 import { RbacService } from '../../../../services/rbac.service';
-import { noWhitespaceValidator } from '../../../../shared/nowhitespace/nowhitespace.component';
 import { SignalsService } from '../../../../services/signals.service';
 import { SearchfordeskPipe } from "../../../../Pipes/searchfordesk.pipe";
 import { InfoIconComponent } from "../../../../icons/info-icon/info-icon.component";
@@ -25,7 +24,6 @@ import { DataLoaderContentComponent } from "../../../../shared/data-loader-conte
 import { FormValidationsService } from '../../../../services/form-validations.service';
 import { ConfirmationIconComponent } from "../../../../icons/confirmation-icon/confirmation-icon.component";
 import { Router, RouterOutlet } from '@angular/router';
-import { DocumentViewIconComponent } from "../../../../icons/document-view-icon/document-view-icon.component";
 import moment from 'moment';
 import { SelectModule } from 'primeng/select';
 @Component({
@@ -45,7 +43,6 @@ import { SelectModule } from 'primeng/select';
     InfoIconComponent,
     DataLoaderContentComponent,
     ConfirmationIconComponent,
-    DocumentViewIconComponent,
     SelectModule
 ],
 

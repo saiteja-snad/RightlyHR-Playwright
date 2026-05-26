@@ -415,7 +415,7 @@
             <input class=" custom-checkbox me-3" type="checkbox" [id]="'check'+item.id"
               [(ngModel)]="item.checked" [ngModelOptions]="{standalone: true}">
             <label class="form-check-label checklist-label" [for]="'check'+item.id">
-              {{ item.policyType }}
+              {{ item.policyType }} <span *ngIf="item.isMandatory" class="text-danger">*</span>
             </label>
           </label>
         </div>

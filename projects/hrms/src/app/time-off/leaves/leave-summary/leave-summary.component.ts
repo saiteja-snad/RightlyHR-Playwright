@@ -18,7 +18,7 @@ import { NgbPopoverModule, NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { DropdownModule } from 'primeng/dropdown';
 import { InfoIconComponent } from '../../../icons/info-icon/info-icon.component';
-import { DateformatPipe } from '../../../pipes/dateformat.pipe';
+import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { EmployeeLeaveLedger } from '../leaves.model';
 import { Select } from 'primeng/select';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';

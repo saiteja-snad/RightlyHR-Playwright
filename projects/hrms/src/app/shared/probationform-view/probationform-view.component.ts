@@ -5,7 +5,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpService } from '../../services/http.service';
 import { IFormDetails, ISection } from '../../time-off/pending-approvals/assessmentform/assessmentform';
-import { DateformatPipe } from "../../pipes/dateformat.pipe";
+import { DateformatPipe } from "../../Pipes/dateformat.pipe";
 
 
 @Component({

@@ -14,7 +14,7 @@ import { environment } from '../../../../environments/environment';
 import { InfoIconComponent } from '../../../icons/info-icon/info-icon.component';
 import { ModuleInfoIconComponent } from '../../../icons/module-info-icon/module-info-icon.component';
 import { IDepartment } from '../../../Interfaces/letters-model';
-import { DateformatPipe } from '../../../pipes/dateformat.pipe';
+import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { GlobalpermissionsPipe } from '../../../Pipes/globalpermissions.pipe';
 import { HttpService } from '../../../services/http.service';
 import { RbacService } from '../../../services/rbac.service';

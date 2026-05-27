@@ -26,15 +26,15 @@ export class IntialLoadEntitlementComponent implements OnInit, OnDestroy {
   searchQuery = '';
   private searchSubject = new Subject<string>();
   page = 1;
-  pageSize = 10;
-  rows = 10;
+  pageSize = 25;
+  rows = 25;
   collectionSize!: number;
   first = 0;
   options = [
-    { label: 10, value: 10 },
-    { label: 15, value: 15 },
-    { label: 20, value: 20 },
     { label: 25, value: 25 },
+    { label: 50, value: 50 },
+    { label: 100, value: 100 },
+    { label: 200, value: 200 },
   ];
   subscription!: Subscription;
   jobData: any[] = [];
@@ -116,7 +116,7 @@ export class IntialLoadEntitlementComponent implements OnInit, OnDestroy {
   resetForm() {
     this.leaveAllocationForm.reset();
     this.isApplyDisabledFlag = true;
- 
+
     // 3. Remove active filters
     this.subLocationDetails = [];
     this.shiftDetails = [];
@@ -244,7 +244,7 @@ export class IntialLoadEntitlementComponent implements OnInit, OnDestroy {
     this.http.postbyId(`LeaveEntitlementJobs/${jobid}/retry`)
       .subscribe({
         next: (res: any) => {
-          this.conformationPopup.openSuccessModal("Initial Leave Entitlements Retryed Successfully");
+          this.conformationPopup.openSuccessModal("Leave Entitlements added Successfully");
            this.getdatacarryforword();
         },
         error: (err) => {

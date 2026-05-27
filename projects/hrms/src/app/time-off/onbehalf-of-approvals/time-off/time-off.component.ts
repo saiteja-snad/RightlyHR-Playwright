@@ -8,7 +8,7 @@ import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { BehaviorSubject, Subject, Subscription, takeUntil } from 'rxjs';
 import { LeaveApproval, LeaveApproverComment } from '../../../Interfaces/pendingapprovalsmodel';
 import { ICategoryDetails } from '../../../Interfaces/timoff-model';
-import { DateformatPipe } from '../../../pipes/dateformat.pipe';
+import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { HttpService } from '../../../services/http.service';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { RbacService } from '../../../services/rbac.service';

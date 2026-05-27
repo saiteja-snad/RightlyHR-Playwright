@@ -21,7 +21,7 @@ import { Select } from 'primeng/select';
 import { TranslateModule } from '@ngx-translate/core';
 import { Iactive } from '../../../../admin/active-employees/active-model';
 import { ActiveEmployeePipe } from "../../../../Pipes/active-employee.pipe";
-import { SearchfilterPipe } from '../../../../pipes/searchfilter.pipe';
+import { SearchfilterPipe } from '../../../../Pipes/searchfilter.pipe';
 
 @Component({
   selector: 'app-bulk-location-change',

@@ -7,7 +7,7 @@ import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 import { HttpService } from '../../services/http.service';
 import { Subscription } from 'rxjs';
-import { DateformatPipe } from '../../pipes/dateformat.pipe';
+import { DateformatPipe } from '../../Pipes/dateformat.pipe';
 import { Select } from 'primeng/select';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
@@ -247,7 +247,7 @@ export class PromotionLetterComponent implements OnInit, OnDestroy {
     // let EmployeeId = this.promotiondata.employeeId
     this.subscription = this.http.getData(`Compensationdata/${Employee.employeeId}`).subscribe({
       next: (data: any) => {
-        let res = data.reverse()[0];
+        let res = data[0];
         this.employeeCompensationDetails = res;
         Employee.salary = res.compensationamount
 

@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../http-services/http.service';
 import { AddExperienceDetailtsComponent } from './add-experience-detailts/add-experience-detailts.component';
-import { DateFormatPipe } from "../../pipes/date-format.pipe";
+import { DateFormatPipe } from "../../Pipes/date-format.pipe";
 import { PopupService } from '../../common-services/popup.service';
 import { DataService } from '../../common-services/data.service';
 import { UpdateExperienceDetailsComponent } from './update-experience-details/update-experience-details.component';

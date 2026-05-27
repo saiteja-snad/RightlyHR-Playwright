@@ -11,7 +11,7 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 import { ConfirmationIconComponent } from '../../../icons/confirmation-icon/confirmation-icon.component';
 import { InfoIconComponent } from '../../../icons/info-icon/info-icon.component';
 import { ModuleInfoIconComponent } from '../../../icons/module-info-icon/module-info-icon.component';
-import { DateformatPipe } from '../../../pipes/dateformat.pipe';
+import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { DataLoaderContentComponent } from '../../../shared/data-loader-content/data-loader-content.component';
 import { ModuleInformationComponent } from '../../../shared/module-information/module-information.component';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';

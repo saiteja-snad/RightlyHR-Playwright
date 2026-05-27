@@ -95,7 +95,8 @@
                         <div class="d-flex justify-content-between gap-2 align-items-center">
                             <div>
                                 <div class="d-flex align-items-center gap-2 mb-2">
-                                    <img src="/reports-icons/Monthly-Attendance-Report-icon.png" alt="Icon" class="list-icon">
+                                    <img src="/reports-icons/Monthly-Attendance-Report-icon.png" alt="Icon"
+                                        class="list-icon">
                                     <div class="list-label-name">Monthly Attendance Report</div>
                                 </div>
                                 <p class="list-description m-0">{{monthlyAttendanceReports}}</p>
@@ -160,27 +161,26 @@
                         </div>
                     </li>
                     }
-                     @if(rbac.allowedToAccess('Timesheet Reports.view')){
+                    @if(rbac.allowedToAccess('Timesheet Reports.view')){
                     <li class="accordian-list-item">
                         <p-accordion-panel value="3">
                             <p-accordion-header>
                                 <div>
                                     <div class="d-flex align-items-center gap-2 mb-2">
-                                        <img src="/reports-icons/timesheet-Report.png" alt="Icon"
-                                            class="list-icon">
+                                        <img src="/reports-icons/timesheet-Report.png" alt="Icon" class="list-icon">
                                         <div class="list-label-name">Timesheet Reports</div>
                                     </div>
                                     <p class="list-description m-0">{{timesheetReports}}</p>
                                 </div>
                             </p-accordion-header>
                             <p-accordion-content>
-                                <app-timesheet-report-tabs/>
+                                <app-timesheet-report-tabs />
                             </p-accordion-content>
                         </p-accordion-panel>
-                        </li>
+                    </li>
                     }
 
-                          <!-- Expense Reports -->
+                    <!-- Expense Reports -->
                     @if(rbac.allowedToAccess('Expense Reports.view')){
                     <li class="accordian-list-item" [routerLink]="['/reports/expense-reports']">
                         <div class="d-flex justify-content-between gap-2 align-items-center">
@@ -234,7 +234,7 @@
             </p-accordion-panel>
           </li>
           }
-                </p-accordion>
+            </p-accordion>
             </ul>
         </div>
     </div>

@@ -219,7 +219,7 @@ export class HttpService {
   }
 
   // OnBehalf Of
-  onBehalfOfTriggerSignal = signal<number>(0);
+  onBehalfOfTriggerSignal = signal<boolean>(false);
   desklocationId$ = this.desklocationIdSubject.asObservable();
   desksublocationId$ = this.desksublocationIdSubject.asObservable();
 
@@ -1451,5 +1451,12 @@ notifyMessageUpdate() {
     } catch {
       return false; // safe fallback on parse error
     }
+  }
+
+  getEmployeesWithBreakdown(payload: any) {
+    return this.http.post(
+      `${this.ApiUrl}Employeedata/employees/with-leave-categories/v3`,
+      payload
+    );
   }
 }

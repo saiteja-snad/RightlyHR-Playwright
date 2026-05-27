@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { NgbModal, NgbNavModule, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { DropdownModule } from 'primeng/dropdown';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
-import { DateformatPipe } from '../../../pipes/dateformat.pipe';
+import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { Subscription } from 'rxjs';
 import { Ilpid } from '../../../Interfaces/onbehalfof.model';
@@ -51,7 +51,7 @@ export class OnBeHalfOfCancelComponent implements OnInit, OnDestroy {
 
   constructor(private http: HttpService, private authService: AuthService, public rbac: RbacService, private timeoffYearFilterService: TimeoffYearFilterService, private modalService: NgbModal) {
     effect(() => {
-      if (this.http.onBehalfOfTriggerSignal() > 0) {
+      if (this.http.onBehalfOfTriggerSignal()) {
         this.cadidateEmployeeId = parseInt(
           localStorage.getItem('onbehalfof') as string
         );
@@ -60,6 +60,7 @@ export class OnBeHalfOfCancelComponent implements OnInit, OnDestroy {
         } else {
           this.lpdata = [];
         }
+        this.http.onBehalfOfTriggerSignal.set(false);
       }
     });
   }

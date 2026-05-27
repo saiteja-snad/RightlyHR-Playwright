@@ -4,7 +4,7 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { TabsModule } from 'primeng/tabs';
 import { HttpService } from '../../services/http.service';
 import { BehaviorSubject, Subscription } from 'rxjs';
-import { DateformatPipe } from "../../pipes/dateformat.pipe";
+import { DateformatPipe } from "../../Pipes/dateformat.pipe";
 import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
 import { TranslateModule } from '@ngx-translate/core';
 import { InfoIconComponent } from "../../icons/info-icon/info-icon.component";

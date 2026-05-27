@@ -7,7 +7,7 @@ import { OpenModalService } from '../../../services/open-modal.service';
 import { CommonModule } from '@angular/common';
 import { Branch, EmployeeDetails, IFamilyDetails, IStandardReportRequest } from '../../../Interfaces/reports.model';
 import { Subject, takeUntil } from 'rxjs';
-import { DateformatPipe } from '../../../pipes/dateformat.pipe';
+import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import * as XLSX from 'xlsx-js-style';
 import { NgxDaterangepickerBootstrapDirective } from 'ngx-daterangepicker-bootstrap';

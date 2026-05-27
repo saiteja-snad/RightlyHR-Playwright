@@ -69,13 +69,13 @@ export class LettersTabComponent {
       subject: MODULE_INFOS.APPRAISAL_LETTER_MODULE_INFO,
       permission: { feature: 'Apprisal Letter', action: 'view' }
     },
-    // {
-    //   label: 'Promotion Letter',
-    //   link: '/letters/promotion-letter',
-    //   icon: '/letters-icon/promotion-letter.png',
-    //   subject: MODULE_INFOS.PROMOTION_LETTER_MODULE_INFO,
-    //   permission: { feature: 'Dashboard Generate Documents Trainee Appointment Letter', action: 'view' }
-    // },
+    {
+      label: 'Promotion Letter',
+      link: '/letters/promotion-letter',
+      icon: '/letters-icon/promotion-letter.png',
+      subject: MODULE_INFOS.PROMOTION_LETTER_MODULE_INFO,
+      permission: { feature: 'Promotion Letter', action: 'view' }
+    },
     {
       label: 'Salary Revision Letter',
       link: '/letters/salary-revision-letter',

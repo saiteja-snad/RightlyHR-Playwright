@@ -18,7 +18,7 @@ import { AuthService } from '../../../services/auth.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { Select } from 'primeng/select';
 import { OpenModalService } from '../../../services/open-modal.service';
-import { DateformatPipe } from "../../../pipes/dateformat.pipe";
+import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { environment } from '../../../../environments/environment';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";

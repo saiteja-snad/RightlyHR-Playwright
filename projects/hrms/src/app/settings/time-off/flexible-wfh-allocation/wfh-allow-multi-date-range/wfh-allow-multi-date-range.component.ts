@@ -25,7 +25,7 @@ import {
   IEmployees,
 } from '../../flexible-leave-allocation/leave-allocation.model';
 import { MultiSelectModule } from 'primeng/multiselect';
-import { DateformatPipe } from '../../../../pipes/dateformat.pipe';
+import { DateformatPipe } from '../../../../Pipes/dateformat.pipe';
 import { AuthService } from '../../../../services/auth.service';
 import moment from 'moment';
 

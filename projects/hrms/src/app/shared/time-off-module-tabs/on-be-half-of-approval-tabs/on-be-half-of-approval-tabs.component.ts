@@ -47,7 +47,7 @@ export class OnBeHalfOfApprovalTabsComponent implements OnInit{
   ) {
     // Signal reaction for employee switch or year change
     effect(() => {
-      if (this.http.onBehalfOfTriggerSignal()) {
+      if (this.http.onBehalfOfTriggerSignal() > 0) {
         this.cadidateEmployeeId = parseInt(localStorage.getItem('onbehalfof') as string);
         if (!isNaN(this.cadidateEmployeeId)) {
           this.getDataByLPID();
@@ -55,7 +55,6 @@ export class OnBeHalfOfApprovalTabsComponent implements OnInit{
           this.navLinks = this.navLinks.map(tab => ({ ...tab, count: 0 }));
           this.filterTabsByRbac();
         }
-        this.http.onBehalfOfTriggerSignal.set(false);
       }
     });
   }

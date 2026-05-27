@@ -6,7 +6,7 @@ import { HttpService } from '../../../services/http.service';
 import { CommonModule } from '@angular/common';
 import { IFamilyDetails } from '../../../Interfaces/reports.model';
 import { Subject, takeUntil } from 'rxjs';
-import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
+import { DateformatPipe } from '../../../pipes/dateformat.pipe';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import * as XLSX from 'xlsx-js-style';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";

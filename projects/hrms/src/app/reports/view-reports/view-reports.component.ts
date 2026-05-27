@@ -10,7 +10,6 @@ import { TimesheetReportTabsComponent } from '../../shared/reports-tabs/timeshee
 import { HelpDeskReportTabsComponent } from '../../shared/reports-tabs/help-desk-report-tabs/help-desk-report-tabs.component';
 import { ItSupportReportsTabsComponent } from '../../shared/reports-tabs/it-support-reports-tabs/it-support-reports-tabs.component';
 import { TranslateModule } from '@ngx-translate/core';
-
 @Component({
   selector: 'app-view-reports',
   imports: [RouterModule, StandardReportTabsComponent, AttandaceReportTabsComponent, PolicyReportsTabsComponent, AccordionModule,TimesheetReportTabsComponent, HelpDeskReportTabsComponent, ItSupportReportsTabsComponent, TranslateModule],
@@ -31,7 +30,7 @@ export class ViewReportsComponent {
   timesheetReports = MODULE_INFOS.SETTINGS_TIMESHEET_REPORT_MODULE_INFO;
   expenseReportsModuleInfo = MODULE_INFOS.EXPENSE_REPORTS_MODULE_INFO;
   helpDeskReports = MODULE_INFOS.HELP_DESK_REPORTS_MODULE_INFO;
-  itsupportReports= MODULE_INFOS.ITSUPPORT_REPORTS_MODULE_INFO
+   itsupportReports= MODULE_INFOS.ITSUPPORT_REPORTS_MODULE_INFO;
 
 
 

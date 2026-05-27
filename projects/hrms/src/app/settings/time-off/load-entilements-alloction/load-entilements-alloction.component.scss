@@ -1,118 +1,47 @@
-.custom-main-component-container{
-    position: relative;
+.card {
+    border: 1px solid rgb(204, 218, 236) !important;
+    box-shadow: 0px 0px 6px 1px rgba(34, 34, 34, 0.1019607843);
 }
 
-.job-details-grid {
+.custom-table-content {
+    height: 50vh !important;
+    overflow: auto !important;
+}
+
+.custom-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 0.5rem;
-    font-size: var(--fontsize13);
-    border-left: 4px solid var(--primary-color);
-    border-radius: 0.5rem;
-    padding: 0.75rem 1rem;
-    box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 5px 0px, rgba(0, 0, 0, 0.1) 0px 0px 1px 0px;
-
-    label {
-        color: #888;
-    }
-
-    span {
-        display: block;
-        font-weight: 600;
-        color: var(--primary-color);
-    }
+    grid-template-columns: 5fr 5fr 2fr;
+    align-items: center;
+    gap: 1rem;
 }
 
-// STATS grid
-.stats-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 12px;
-    margin-bottom: 16px;
-
-    .stat-card {
-        background: #f4f6f8;
-        padding: 7px;
-        border-radius: 10px;
-        text-align: center;
-        font-weight: bold;
-
-        span {
-            display: block;
-            font-size: 12px;
-            color: #3a3a3a;
-        }
-    }
-
-    .card-success {
-        background: #e6f6ee;
-        color: #0a8f5a;
-    }
-
-    .card-red {
-        background: #fcbcb7;
-        color: #8f130a;
-    }
-
-
-    .card-orange {
-        background: #fcc39b;
-        color: #f56905;
-    }
-
-    .card-blue {
-        background: #a7d3f7;
-        color: #0a5a8f;
-    }
-
-    .card-failed {
-        background: #fdeaea;
-        color: #d32f2f;
-    }
-
-    .card-executed {
-        background: #1f8a7a;
-        color: #fff;
-
-        span {
-            color: #d1e7dd;
-        }
-    }
-}
-
-// status colors
 .status-success {
-    color: #00A912 !important;
+    color: #00A912;
     font-weight: 600;
 }
 
 .status-failed {
-    color: #EA362C !important;
+    color: #EA362C;
     font-weight: 600;
 }
 
 .status-partial {
-    color: #FF5722 !important;
+    color: #FF5722;
     font-weight: 600;
 }
 
 .status-processing {
-    color: #3397E8 !important;
+    color: #3397E8;
     font-weight: 600;
 }
 
 .status-completed {
-    color: #6f42c1 !important;
+    color: #6f42c1;
     font-weight: 600;
 }
 
 .status-pending {
-    color: #EE8B30 !important;
-    font-weight: 600;
-}
-
-.status-skipped {
-    color: #607D8B !important;
+    color: #EE8B30;
     font-weight: 600;
 }
 
@@ -130,75 +59,9 @@
     outline: none;
 }
 
-.three-dots-btn {
-    font-size: 1.2rem;
-    font-weight: 700;
-    cursor: pointer;
-    color: #555;
-    padding: 0 6px;
-    border-radius: 4px;
-    user-select: none;
-
-    &:hover {
-        background: #f0f0f0;
-        color: #000;
-    }
-}
-
-.popover-action-item {
-    padding: 4px 12px;
-    cursor: pointer;
-    font-size: 0.85rem;
-    white-space: nowrap;
-    color: #EA362C;
-
-    &:hover {
-        background: #f8f9fa;
-    }
-}
-
-/* RESPONSIVENESS */
-/* Tablet */
-@media (max-width: 992px) {
-    .info-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
-    .stats-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-
-/* Mobile */
-@media (max-width: 576px) {
-    .info-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .stats-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-
 .custom-table-content {
-    height: max-content !important;
-    min-height: 45dvh !important;
-    max-height: 50dvh !important;
-}
-
-.custom-p-multiSelect-content {
-    .p-iconfield .p-inputtext:not(:last-child) {
-        font-size: var(--fontsize12) !important;
+    .no-data-image {
+        width: 166px !important;
+        height: 138px !important;
     }
-}
-
-.custom-select-position {
-    .p-overlay {
-        position: absolute;
-        left: -180px !important;
-    }
-}
-
-.no-data-placeholder-container{
-    top: 30px !important;
 }

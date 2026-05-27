@@ -19,7 +19,7 @@ import { EMPLOYEEINFO } from '../../../../Interfaces/timoff-model';
 import { HttpService } from '../../../../services/http.service';
 import { InfoIconComponent } from '../../../../icons/info-icon/info-icon.component';
 import { SignalsService } from '../../../../services/signals.service';
-import { DateformatPipe } from "../../../../Pipes/dateformat.pipe";
+import { DateformatPipe } from "../../../../pipes/dateformat.pipe";
 import { NgxDocViewerModule } from 'ngx-doc-viewer';
 import { DomSanitizer } from '@angular/platform-browser';
 

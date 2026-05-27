@@ -1217,19 +1217,16 @@ export const permissionsData = [
   { fields: 'Quick Links', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Sun View', View: false, Update: false, Create: false, Delete: false },
 
-  { fields: 'Sun View', View: false, Update: false, Create: false, Delete: false },
-  { fields: 'Headcount by Gender Select Department', View: false, Update: false, Create: false, Delete: false },
-
-  //Helpdesk
+      //Helpdesk
   { fields: 'Category', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Subcategory', View: false, Update: false, Create: false, Delete: false },
-  //help desk support  Tickets Tabs Sections
+    //help desk support  Tickets Tabs Sections
   { fields: 'Helpdesk All Queries Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Helpdesk Open Queries Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Helpdesk Await On User Queries Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Helpdesk Solved Queries Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Helpdesk Rejected Queries Tab', View: false, Update: false, Create: false, Delete: false },
-  //Calender Tabs Sections
+    //Calender Tabs Sections
   { fields: 'Employee Helpdesk Queries Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Support Helpdesk Queries Tab', View: false, Update: false, Create: false, Delete: false },
 
@@ -1245,8 +1242,7 @@ export const permissionsData = [
 
  { fields: 'Headcount by Gender Select Department', View: false, Update: false, Create: false, Delete: false },
 
-
-  //It support reports
+    //It support reports
   { fields: 'IT Support Reports', View: false, Update: false, Create: false, Delete: false },
   { fields: 'IT Support Detailed Report', View: false, Update: false, Create: false, Delete: false },
   { fields: 'IT Support Detailed Report - Generate', View: false, Update: false, Create: false, Delete: false },
@@ -1254,5 +1250,4 @@ export const permissionsData = [
   { fields: 'IT Support Summary Report', View: false, Update: false, Create: false, Delete: false },
   { fields: 'IT Support Summary Report - Generate', View: false, Update: false, Create: false, Delete: false },
   { fields: 'IT Support Summary Report - Export', View: false, Update: false, Create: false, Delete: false },
-
 ];

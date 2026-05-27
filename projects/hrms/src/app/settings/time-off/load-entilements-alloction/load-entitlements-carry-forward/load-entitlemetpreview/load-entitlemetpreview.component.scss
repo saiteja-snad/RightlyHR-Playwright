@@ -1,8 +1,3 @@
-.custom-p-multi-select-table {
-    border: 1px solid var(--border-color);
-    border-radius: 0.5rem;
-}
-
 .leave-icon {
     width: 1.2rem;
 }
@@ -18,11 +13,7 @@
     height: calc(100dvh - 17rem);
 
     .footer-content {
-        width: 100%;
         position: absolute;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
         bottom: 0;
         right: 0;
     }

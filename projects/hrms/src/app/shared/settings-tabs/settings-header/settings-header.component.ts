@@ -1,10 +1,10 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { RbacService } from '../../../services/rbac.service';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { CommonModule, Location } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { ModuleInfoIconComponent } from "../../../icons/module-info-icon/module-info-icon.component";
-import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { ModuleInformationComponent } from "../../module-information/module-information.component";
 import { filter, Subject, Subscription, takeUntil } from 'rxjs';
 import { MODULE_INFOS } from '../../modules-info';
@@ -28,9 +28,7 @@ export class SettingsHeaderComponent implements OnInit, OnDestroy {
   jobSequenceId!: string;
   destroy$ = new Subject<void>();
   routeToInfoMap!: { [key: string]: string };
-  @ViewChild('discardConfirmModal') discardConfirmModal: any;
-
-  constructor(public router: Router, public rbac: RbacService, private route: ActivatedRoute, private http: HttpService, private location: Location, private modalService: NgbModal) { }
+  constructor(public router: Router, public rbac: RbacService, private route: ActivatedRoute, private http: HttpService, private location: Location) { }
 
   ngOnInit(): void {
 
@@ -73,7 +71,6 @@ export class SettingsHeaderComponent implements OnInit, OnDestroy {
       '/settings/timeoff-configurations/load-entitlement/carry-forward': MODULE_INFOS.CARRY_FORWORD_LEAVES,
       '/settings/timeoff-configurations/load-entitlement/initial-load-entitlements': MODULE_INFOS.Create_Initial_Leave_Entitlements,
       '/settings/timeoff-configurations/intial-leave-entitlements/intial-load-entitlement-create': MODULE_INFOS.Initial_Leave_Entitlements,
-      '/settings/timeoff-configurations/intial-leave-entitlements/intial-load-entitlement-breakdown': MODULE_INFOS.Initial_Leave_Entitlements,
       '/settings/timeoff-configurations/intial-leave-entitlements/intial-load-entitlement-preview': MODULE_INFOS.Initial_Leave_Entitlements
 
     };
@@ -326,30 +323,30 @@ export class SettingsHeaderComponent implements OnInit, OnDestroy {
 
     else if (url.startsWith('/settings/timeoff-configurations/load-entitlement/initial-load-entitlements')) {
       this.moduleName = 'Time Off';
-      this.navigationname = 'Entitlements'
-      this.componentName = 'Leave Entitlements';
+      this.navigationname = 'Bulk Entitlements'
+      this.componentName = 'Initial Leave Entitlements';
     }
     else if (url.startsWith('/settings/timeoff-configurations/load-entitlement/carry-forward')) {
       this.moduleName = 'Time Off';
-      this.navigationname = 'Entitlements'
+      this.navigationname = 'Bulk Entitlements'
       this.componentName = 'Leave Carry Forward';
     }
     else if (url.startsWith('/settings/timeoff-configurations/jobview')) {
       this.moduleName = 'Time Off';
-      this.navigationname = 'Entitlements'
+      this.navigationname = 'Bulk Entitlements'
       this.componentName = this.jobSequenceId;
     }
 
     else if (url.startsWith('/settings/timeoff-configurations/leave-entitlements')) {
       this.moduleName = 'Time Off';
-      this.navigationname = 'Entitlements'
+      this.navigationname = 'Bulk Entitlements'
       this.componentName = 'Leave Carry Forward';
     }
 
     else if (url.startsWith('/settings/timeoff-configurations/intial-leave-entitlements')) {
       this.moduleName = 'Time Off';
-      this.navigationname = 'Entitlements'
-      this.componentName = 'Leave Entitlements';
+      this.navigationname = 'Bulk Entitlements'
+      this.componentName = 'Initial Leave Entitlements';
     }
     else if (url.startsWith('/settings/employee-rate-card/rate-card')) {
       this.moduleName = 'Rate Card Configuration';
@@ -376,7 +373,6 @@ export class SettingsHeaderComponent implements OnInit, OnDestroy {
     const hidePaths = [
       '/settings/timeoff-configurations/jobview',
       '/settings/timeoff-configurations/intial-leave-entitlements/intial-load-entitlement-create',
-      '/settings/timeoff-configurations/intial-leave-entitlements/intial-load-entitlement-breakdown',
       '/settings/timeoff-configurations/intial-leave-entitlements/intial-load-entitlement-preview',
       '/settings/timeoff-configurations/leave-entitlements/load-entitlement-create',
       '/settings/timeoff-configurations/leave-entitlements/load-entitlement-preview',
@@ -410,30 +406,12 @@ export class SettingsHeaderComponent implements OnInit, OnDestroy {
   isshowsettingsforcarryforword() {
     const showPaths = [
       '/settings/timeoff-configurations/leave-entitlements',
-
+   
     ];
     return showPaths.some(path => this.router.url.startsWith(path));
   }
 
-  confirmNavigateToEntitlements(): void {
-    const ref = this.modalService.open(this.discardConfirmModal, { centered: true, backdrop: 'static' });
-    ref.closed.subscribe(result => {
-      if (result === 'yes') {
-        this.navigateTointialloadentiments();
-      }
-    });
-  }
-
-  confirmNavigateToCarryForward(): void {
-    const ref = this.modalService.open(this.discardConfirmModal, { centered: true, backdrop: 'static' });
-    ref.closed.subscribe(result => {
-      if (result === 'yes') {
-        this.navigateTocarryforword();
-      }
-    });
-  }
-
-  navigateTocarryforword(){
+navigateTocarryforword(){
     this.router.navigate(['/settings/timeoff-configurations/load-entitlement/carry-forward'])
     localStorage.removeItem('carryForwardJobId'),
     localStorage.removeItem('loadEntitlement')
@@ -450,27 +428,7 @@ export class SettingsHeaderComponent implements OnInit, OnDestroy {
     localStorage.removeItem('carryForwardJobId'),
       localStorage.removeItem('intialloadEntitlement')
   }
-
-  onSettingsClick(): void {
-    const confirmRoutes = [
-      '/settings/timeoff-configurations/intial-leave-entitlements/intial-load-entitlement-create',
-      '/settings/timeoff-configurations/intial-leave-entitlements/intial-load-entitlement-breakdown',
-      '/settings/timeoff-configurations/intial-leave-entitlements/intial-load-entitlement-preview',
-      '/settings/timeoff-configurations/leave-entitlements/load-entitlement-create',
-      '/settings/timeoff-configurations/leave-entitlements/load-entitlement-map-categoery',
-      '/settings/timeoff-configurations/leave-entitlements/load-entitlement-breakdown',
-      '/settings/timeoff-configurations/leave-entitlements/load-entitlement-preview',
-    ];
-    if (confirmRoutes.some(path => this.router.url.startsWith(path))) {
-      const ref = this.modalService.open(this.discardConfirmModal, { centered: true, backdrop: 'static' });
-      ref.closed.subscribe(result => {
-        if (result === 'yes') this.navigateToSettings();
-      });
-    } else {
-      this.navigateToSettings();
-    }
-  }
-
+ 
   navigateToSettings() {
     this.router.navigate(['/settings'])
 

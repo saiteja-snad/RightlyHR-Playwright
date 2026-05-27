@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import moment from 'moment';
 import { BehaviorSubject, Subscription } from 'rxjs';
-import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
+import { DateformatPipe } from "../../../pipes/dateformat.pipe";
 import { AuthService } from '../../../services/auth.service';
 import { HttpService } from '../../../services/http.service';
 import { OpenModalService } from '../../../services/open-modal.service';

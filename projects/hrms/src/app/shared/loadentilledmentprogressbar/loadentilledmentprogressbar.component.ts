@@ -25,16 +25,16 @@ export class LoadentilledmentprogressbarComponent {
   }
 
   setProgress(url: string) {
-    if (url.includes('load-entitlement-create')) {
-      this.progress = 1;
-    } else if (url.includes('load-entitlement-map-categoery')) {
-      this.progress = 2;
-    } else if (url.includes('load-entitlement-breakdown')) {
-      this.progress = 3;
-    } else if (url.includes('load-entitlement-preview')) {
-      this.progress = 4;
+    if (url.includes('/settings/timeoff-configurations/leave-entitlements/load-entitlement-create')) {
+      this.progress = 1;   // 25%
+    } else if (url.includes('/settings/timeoff-configurations/leave-entitlements/load-entitlement-preview')) {
+      this.progress = 2;   // 50%
+    } else if (url.includes('/settings/timeoff-configurations/leave-entitlements/load-entitlement-map-categoery')) {
+      this.progress = 3;   // 75%
+    } else if (url.includes('/settings/timeoff-configurations/leave-entitlements/load-entitlement-execution')) {
+      this.progress = 4;   // 100%
     } else {
-      this.progress = 0;
+      this.progress = 0;   // default
     }
   }
 

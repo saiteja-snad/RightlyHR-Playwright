@@ -25,15 +25,15 @@ export class CarryForwardLeaveEntitlementComponent {
   searchQuery = '';
   private searchSubject = new Subject<string>();
   page = 1;
-  pageSize = 25;
-  rows = 25;
+  pageSize = 10;
+  rows = 10;
   collectionSize!: number;
   first = 0;
   options = [
+    { label: 10, value: 10 },
+    { label: 15, value: 15 },
+    { label: 20, value: 20 },
     { label: 25, value: 25 },
-    { label: 50, value: 50 },
-    { label: 100, value: 100 },
-    { label: 200, value: 200 },
   ];
   subscription!: Subscription;
   jobData: any[] = [];
@@ -45,7 +45,7 @@ export class CarryForwardLeaveEntitlementComponent {
   shiftDetails = [] as IShiftHeader[];
   isApplyDisabledFlag = true;
   destroy$: Subject<boolean> = new Subject<boolean>();
-  constructor(private http: HttpService, private fb: FormBuilder, public router: Router, private offcanvasService: NgbOffcanvas, private conformationPopup: OpenModalService) { }
+  constructor(private http: HttpService, private fb: FormBuilder, private router: Router, private offcanvasService: NgbOffcanvas,private conformationPopup: OpenModalService) { }
 
   ngOnInit(): void {
     this.getdatacarryforword();
@@ -53,13 +53,13 @@ export class CarryForwardLeaveEntitlementComponent {
     this.getAllLocations();
     this.searchSubject
       .pipe(
-        debounceTime(500),
-        distinctUntilChanged()
+        debounceTime(500),          
+        distinctUntilChanged()      
       )
       .subscribe(value => {
-        this.page = 1;
+        this.page = 1;             
         this.searchQuery = value;
-        this.getdatacarryforword();
+        this.getdatacarryforword(); 
       });
   }
   initializefilter() {
@@ -151,12 +151,10 @@ export class CarryForwardLeaveEntitlementComponent {
     const query = new URLSearchParams(params).toString();
     let url = `LeaveEntitlementJobs?${query}`;
 
-    this.loading = true;
     this.subscription = this.http.get(url).subscribe({
       next: (res: any) => {
-        this.loading = false;
-        this.jobData = Array.isArray(res?.data) ? res.data : [];
-        this.collectionSize = res?.pagination?.totalRecords ?? 0;
+        this.jobData = res?.data;
+        this.collectionSize = res.pagination.totalRecords;
       },
       error: (err) => {
         console.error('Error:', err);
@@ -253,8 +251,8 @@ export class CarryForwardLeaveEntitlementComponent {
       .subscribe({
         next: (res: any) => {
               this.getdatacarryforword();
-          this.conformationPopup.openSuccessModal("Leave Entitlements added Successfully");
-
+          this.conformationPopup.openSuccessModal("Initial Leave Entitlements Retryed Successfully");
+      
         },
         error: (err) => {
           console.error(err);

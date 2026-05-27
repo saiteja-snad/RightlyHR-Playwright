@@ -1,22 +1,22 @@
 <div class="heading-content">
 
-    <div class="commpoment-name navigator" (click)="onSettingsClick()">Settings</div>
+    <div class="commpoment-name navigator" (click)="navigateToSettings()">Settings</div>
 
 
     <div class="commpoment-name">
         <i class="bi bi-chevron-double-right"></i>
     </div>
     <div class="commpoment-name">{{moduleName | translate}}</div>
-    @if(navigationname && (isshowsettingsforcarryforword() || isShowsettingsjobRouteforintial() || isShowsettingsjobRoute())){
+    @if(navigationname){
     <div class="commpoment-name">
         <i class="bi bi-chevron-double-right"></i>
     </div>
       @if(isshowsettingsforcarryforword()){
-    <div class="commpoment-name navigator" (click)="confirmNavigateToCarryForward()">{{navigationname | translate}}
+    <div class="commpoment-name navigator" (click)="navigateTocarryforword()">{{navigationname | translate}}
     </div>
     }
     @if(isShowsettingsjobRouteforintial()){
-    <div class="commpoment-name navigator" (click)="confirmNavigateToEntitlements()">{{navigationname | translate}}
+    <div class="commpoment-name navigator" (click)="navigateTointialloadentiments()">{{navigationname | translate}}
     </div>
     }
     @if(isShowsettingsjobRoute()){
@@ -38,18 +38,4 @@
 
 <ng-template #popContent>
     <app-module-information [moduleInfo]="moduleinfo" />
-</ng-template>
-
-<!-- Discard confirmation modal -->
-<ng-template #discardConfirmModal let-modal>
-    <div class="result-popup-content" ngbAutofocus>
-        <div>
-            <img src="/icons/reject.png" alt="warning" class="confirmation-delete-icon mb-3">
-            <p class="confirmation-text">Are you sure you want to discard changes?</p>
-        </div>
-        <div class="custom-modal-footer">
-            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
-            <button type="button" class="custom-btn btn-primary" (click)="modal.close('yes')">Yes</button>
-        </div>
-    </div>
 </ng-template>

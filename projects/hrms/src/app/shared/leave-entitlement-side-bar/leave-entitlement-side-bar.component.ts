@@ -20,7 +20,7 @@ export class LeaveEntitlementSideBarComponent {
   destroy$: Subject<boolean> = new Subject<boolean>();
   navTabs: any[] = [
     {
-      label: 'Leave Entitlements ', link: '/settings/timeoff-configurations/load-entitlement/initial-load-entitlements',
+      label: 'Initial Leave Entitlements ', link: '/settings/timeoff-configurations/load-entitlement/initial-load-entitlements',
       icon: '/settings-icon/load-entitlement-icon.png', statusKey: 'active',
       permission: { feature: 'Initial Load Entitlements', action: 'view' }
     },

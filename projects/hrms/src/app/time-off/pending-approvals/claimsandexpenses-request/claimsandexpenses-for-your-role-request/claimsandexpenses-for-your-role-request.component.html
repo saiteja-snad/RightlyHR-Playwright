@@ -69,7 +69,7 @@
                 <a type="button" data-bs-toggle="dropdown">
                   <i class="bi bi-three-dots-vertical"></i>
                 </a>
-                <ul class="dropdown-menu py-0">
+                <ul class="dropdown-menu custom-dropdown-menu py-0">
                   @if(rbac.allowedToAccess('For Role (Claims and Expenses).update')) {
                   @if( leave.approvalHeader.currentapprovalStage !=leave.approvalHeader.finalapprovalStage){
                    @if(+leave.approvalHeader.currentapprovalStage === (+leave.approvalHeader.finalapprovalStage - 1)){

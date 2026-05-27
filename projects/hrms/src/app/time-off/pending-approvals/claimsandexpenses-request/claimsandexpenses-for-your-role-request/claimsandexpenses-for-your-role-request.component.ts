@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { Subject, Subscription, takeUntil } from 'rxjs';
 import { IJob } from '../../../../Interfaces/letters-model';
@@ -48,6 +48,7 @@ import { SelectModule } from 'primeng/select';
 
   templateUrl: './claimsandexpenses-for-your-role-request.component.html',
   styleUrl: './claimsandexpenses-for-your-role-request.component.scss',
+  encapsulation: ViewEncapsulation.None,
 })
 export class ClaimsandexpensesForYourRoleRequestComponent
   implements OnInit, OnDestroy {

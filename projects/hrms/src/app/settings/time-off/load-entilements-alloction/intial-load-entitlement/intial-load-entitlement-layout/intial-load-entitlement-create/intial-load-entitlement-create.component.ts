@@ -1,49 +1,51 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { Subscription, Subject, takeUntil } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import { FormValidationsService } from '../../../../../../services/form-validations.service';
 import { HttpService } from '../../../../../../services/http.service';
 import { OpenModalService } from '../../../../../../services/open-modal.service';
-import { ILocation, ISubLocation, IShiftHeader, ICategoryDetails } from '../../../../flexible-leave-allocation/leave-allocation.model';
+import { ILocation, ISubLocation, IShiftHeader } from '../../../../flexible-leave-allocation/leave-allocation.model';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { Select } from 'primeng/select';
-import { MultiSelectModule } from 'primeng/multiselect';
 
 @Component({
   selector: 'app-intial-load-entitlement-create',
-  imports: [CommonModule, ReactiveFormsModule, TranslateModule, MultiSelectModule, Select],
+  imports: [CommonModule, ReactiveFormsModule, TranslateModule, Select],
   templateUrl: './intial-load-entitlement-create.component.html',
-  styleUrl: './intial-load-entitlement-create.component.scss'
+  styleUrl: './intial-load-entitlement-create.component.scss',
+  encapsulation: ViewEncapsulation.None
 })
-export class IntialLoadEntitlementCreateComponent {
+export class IntialLoadEntitlementCreateComponent implements OnInit, OnDestroy {
   empinfo: any = {};
   leaveAllocationForm!: FormGroup;
-  carryforwarddata: any = {}
-  spinnerLoader: boolean = false;
-  subscription!: Subscription;
+  carryforwarddata: any = {};
   yearsList: number[] = [];
   locationDetails = [] as ILocation[];
   subLocationDetails = [] as ISubLocation[];
   shiftDetails = [] as IShiftHeader[];
   destroy$: Subject<boolean> = new Subject<boolean>();
-  categoryDetails = [] as ICategoryDetails[];
-  constructor(private fb: FormBuilder, public formValidations: FormValidationsService, private modalService: NgbModal,
-    private route: Router, private http: HttpService, public formValidation: FormValidationsService,
-    private conformationPopup: OpenModalService) { }
+
+  constructor(
+    private fb: FormBuilder,
+    public formValidations: FormValidationsService,
+    private modalService: NgbModal,
+    private route: Router,
+    private http: HttpService,
+    private conformationPopup: OpenModalService
+  ) {}
 
   ngOnInit(): void {
-    this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
-    this.carryforwarddata = JSON.parse(localStorage.getItem('intialloadEntitlement') ?? '{}')
+    this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
+    this.carryforwarddata = JSON.parse(localStorage.getItem('intialloadEntitlement') ?? '{}');
     this.yearsList = this.getYears();
     this.leaveAllocationForm = this.fb.group({
       year: ['', Validators.required],
       location: [{ value: '', disabled: true }, Validators.required],
       subLocation: [{ value: '', disabled: true }, Validators.required],
       shift: [{ value: '', disabled: true }, Validators.required],
-      categoryName: [{ value: null, disabled: true }, Validators.required],
     });
     this.getAllLocations();
 
@@ -54,104 +56,89 @@ export class IntialLoadEntitlementCreateComponent {
         location: this.carryforwarddata.location,
       });
     }
-
   }
 
   private getYears(): number[] {
     const currentYear = new Date().getFullYear();
-    let yearsList: number[] = []
-    for (let i = -1; i < 11; i++) {
-      yearsList.push(currentYear + i);
-    }
+    const yearsList: number[] = [];
+    for (let i = 0; i < 2; i++) yearsList.push(currentYear + i);
     return yearsList;
   }
 
-  enableLocation(): void {
+  private clearBreakdownCache(): void {
+    const raw = localStorage.getItem('intialloadEntitlement');
+    const stored = raw ? JSON.parse(raw) : {};
+    delete stored.originalBreakdownData;
+    delete stored.breakdownData;
+    localStorage.setItem('intialloadEntitlement', JSON.stringify(stored));
+    this.carryforwarddata = stored;
+  }
 
+  enableLocation(): void {
     if (this.leaveAllocationForm.get('year')?.value) {
       this.leaveAllocationForm.get('location')?.reset();
       this.leaveAllocationForm.get('subLocation')?.reset();
       this.leaveAllocationForm.get('shift')?.reset();
-      this.leaveAllocationForm.get('categoryName')?.reset();
       this.leaveAllocationForm.get('location')?.enable();
-         this.leaveAllocationForm.get('subLocation')?.disable();
+      this.leaveAllocationForm.get('subLocation')?.disable();
       this.leaveAllocationForm.get('shift')?.disable();
-      this.leaveAllocationForm.get('categoryName')?.disable();
       this.shiftDetails = [];
-      this.categoryDetails = [];
       this.subLocationDetails = [];
+      this.clearBreakdownCache();
     }
   }
 
   private getAllLocations(): void {
-    this.http.getData('JobLocation')
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (res: any) => {
-          this.locationDetails = res.jobLocations || [];
-          // Auto-load subLocations & shifts if saved data exists
-          if (this.carryforwarddata?.location?.jobLocationName) {
-            const selectedLocation = this.locationDetails.find(
-              (loc: any) => loc.jobLocationName === this.carryforwarddata.location.jobLocationName
-            );
-            if (selectedLocation) {
-              this.onLocationChange(selectedLocation);
-              this.leaveAllocationForm.patchValue({
-                location: selectedLocation
-              });
-            }
+    this.http.getData('JobLocation').pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res: any) => {
+        this.locationDetails = res.jobLocations || [];
+        if (this.carryforwarddata?.location?.jobLocationName) {
+          const selectedLocation = this.locationDetails.find(
+            (loc: any) => loc.jobLocationName === this.carryforwarddata.location.jobLocationName
+          );
+          if (selectedLocation) {
+            this.onLocationChange(selectedLocation);
+            this.leaveAllocationForm.patchValue({ location: selectedLocation });
           }
-        },
-        error: err => console.error('Error fetching locations:', err)
-      });
+        }
+      },
+      error: err => console.error('Error fetching locations:', err)
+    });
   }
 
-
   onLocationChange(location: ILocation): void {
-    if (location?.jobSubLocations?.length) {
-      this.subLocationDetails = location.jobSubLocations;
-      this.leaveAllocationForm.get('subLocation')?.enable();
-      this.leaveAllocationForm.get('subLocation')?.reset();
-      this.leaveAllocationForm.get('shift')?.reset();
-      this.leaveAllocationForm.get('categoryName')?.reset();
-      //Auto-populate subLocation if stored
-      if (this.carryforwarddata?.subLocation) {
-        const selectedSub = this.subLocationDetails.find((item: any) =>
-          item.jobSubLocationName === this.carryforwarddata.subLocation.jobSubLocationName
-        );
-        if (selectedSub) {
-          this.leaveAllocationForm.patchValue({ subLocation: selectedSub });
-          this.getAllShifts(selectedSub);
-        }
-      }
+    this.subLocationDetails = location?.jobSubLocations?.length ? location.jobSubLocations : [];
+    this.leaveAllocationForm.get('subLocation')?.enable();
+    this.leaveAllocationForm.get('subLocation')?.reset();
+    this.leaveAllocationForm.get('shift')?.reset();
+    this.leaveAllocationForm.get('shift')?.disable();
+    this.shiftDetails = [];
+    this.clearBreakdownCache();
 
-    } else {
-      this.subLocationDetails = [];
-      this.leaveAllocationForm.get('subLocation')?.enable();
-      this.leaveAllocationForm.get('subLocation')?.reset();
+    if (this.carryforwarddata?.subLocation) {
+      const selectedSub = this.subLocationDetails.find(
+        (item: any) => item.jobSubLocationName === this.carryforwarddata.subLocation.jobSubLocationName
+      );
+      if (selectedSub) {
+        this.leaveAllocationForm.patchValue({ subLocation: selectedSub });
+        this.getAllShifts(selectedSub);
+      }
     }
   }
 
   getAllShifts(subLocation: ISubLocation): void {
     this.shiftDetails = [];
-    const params = {
-      locationId: subLocation.jobLocationId,
-      subLocationId: subLocation.id
-    };
-    this.http.getDataWithQueryParams(`orgShifts/getshiftlocation`, params).pipe(takeUntil(this.destroy$)).subscribe({
+    const params = { locationId: subLocation.jobLocationId, subLocationId: subLocation.id };
+    this.http.getDataWithQueryParams('orgShifts/getshiftlocation', params).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.shiftDetails = res.flatMap((header: any) => header.orgShiftsItems || []);
         this.leaveAllocationForm.get('shift')?.enable();
         this.leaveAllocationForm.get('shift')?.reset();
-        this.leaveAllocationForm.get('categoryName')?.reset();
-        this.categoryDetails = [];
-
-        // Auto-select saved shift
+        this.clearBreakdownCache();
         if (this.carryforwarddata?.shift) {
           const selectedShift = this.shiftDetails.find((sh: any) => sh.shiftName === this.carryforwarddata.shift.shiftName);
           if (selectedShift) {
             this.leaveAllocationForm.patchValue({ shift: selectedShift });
-            this.getCategoryDetails(selectedShift);
           }
         }
       },
@@ -164,84 +151,44 @@ export class IntialLoadEntitlementCreateComponent {
     });
   }
 
-
-  getCategoryDetails(policy: any): void {
-    this.leaveAllocationForm.get('categoryName')?.reset();
-    this.leaveAllocationForm.get('categoryName')?.enable();
-
-    let params = {
-      locationId: this.leaveAllocationForm.get('location')?.value?.id,
-      subLocationId: this.leaveAllocationForm.get('subLocation')?.value?.id,
-      year: this.leaveAllocationForm.get('year')?.value,
-      status: 'Published',
-      shiftId: policy.id
-    };
-    console.log(params);
-
-    this.http.getDataWithQueryParams("OrgLeavesCategories", params).pipe(takeUntil(this.destroy$)).subscribe({
-      next: (res: any) => {
-        this.categoryDetails = res;
-
-        // Pre-select categories from localStorage
-        // if (this.carryforwarddata?.categoryIds?.length) {
-        // Only auto-patch on BACK navigation, NOT on manual shift change
-        if (this.carryforwarddata?.categoryIds?.length) {
-          const validCategoryIds = this.categoryDetails.map((c: any) => c.id).filter((id: any) =>
-            this.carryforwarddata.categoryIds.includes(id)
-          );
-
-          this.leaveAllocationForm.patchValue({
-            categoryName: validCategoryIds
-          });
-        }
-      },
-      error: err => {
-        console.error('Error fetching categories:', err);
-        this.categoryDetails = [];
-        this.leaveAllocationForm.get('categoryName')?.reset();
-      }
-    });
-  }
-
   closepopup(content: any) {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
 
   sumbitdata() {
-    const formValue = this.leaveAllocationForm.value;
+    const formValue = this.leaveAllocationForm.getRawValue();
+    const existing = JSON.parse(localStorage.getItem('intialloadEntitlement') ?? '{}');
+    const prevShiftId = existing?.shift?.id;
+    const newShiftId = formValue.shift?.id;
+    const scopeChanged = existing?.year !== formValue.year
+      || existing?.location?.id !== formValue.location?.id
+      || existing?.subLocation?.id !== formValue.subLocation?.id
+      || prevShiftId !== newShiftId;
 
-    const payload = {
+    const payload: any = {
       year: formValue.year,
       location: formValue.location,
       subLocation: formValue.subLocation,
       shift: formValue.shift,
-      categoryIds: Array.isArray(formValue.categoryName)
-        ? formValue.categoryName
-        : Object.values(formValue.categoryName || [])
     };
-
-    localStorage.setItem(
-      'intialloadEntitlement',
-      JSON.stringify(payload)
-    );
-
-    this.route.navigate(['/settings/timeoff-configurations/intial-leave-entitlements/intial-load-entitlement-preview']);
+    // preserve breakdown cache only if scope unchanged
+    if (!scopeChanged) {
+      payload.originalBreakdownData = existing.originalBreakdownData;
+      payload.breakdownData = existing.breakdownData;
+    }
+    localStorage.setItem('intialloadEntitlement', JSON.stringify(payload));
+    this.route.navigate(['/settings/timeoff-configurations/intial-leave-entitlements/intial-load-entitlement-breakdown']);
   }
 
   resetdata() {
     this.leaveAllocationForm.reset();
     this.modalService.dismissAll();
-    localStorage.removeItem('intialloadEntitlement')
-    this.route.navigate([
-      '/settings/timeoff-configurations/load-entitlement/initial-load-entitlements'
-    ]);
-
+    localStorage.removeItem('intialloadEntitlement');
+    this.route.navigate(['/settings/timeoff-configurations/load-entitlement/initial-load-entitlements']);
   }
 
-
   ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
+    this.destroy$.next(true);
+    this.destroy$.complete();
   }
 }

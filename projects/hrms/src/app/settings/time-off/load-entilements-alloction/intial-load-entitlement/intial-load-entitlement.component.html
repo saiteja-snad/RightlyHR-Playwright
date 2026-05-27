@@ -23,7 +23,7 @@
         <th class="text-center">Emp Processed</th>
         <th>Created by</th>
         <th>Status </th>
-        <!-- <th class="text-center">Action</th> -->
+        <th class="text-center" *ngIf="showActionColumn">Action</th>
 
       </thead>
       <tbody>
@@ -41,7 +41,7 @@
             'status-processing': item.status === 'Processing','status-completed': item.status === 'Completed',
             'status-pending': item?.status === 'Pending'}">{{ item?.status ? (item.status | titlecase) : '-'}}</td>
 
-            <!-- <td class="text-center">
+            <td class="text-center" *ngIf="showActionColumn">
               <div class="dropdown" *ngIf="item.requiresRetry">
                 <span type="button" data-bs-toggle="dropdown">
                   <i class="bi bi-three-dots-vertical"></i>
@@ -56,7 +56,7 @@
                 </ul>
               </div>
               <span *ngIf="!item.requiresRetry"></span>
-            </td> -->
+            </td>
 
 
           </tr>

@@ -142,15 +142,23 @@
             <td class="text-center">{{ e?.frequencyType ? e.frequencyType : '-' }}</td>
             <td class="text-center">{{ e?.carryForwardCount || '-' }}</td>
             <td class="fw-bold" [ngClass]="{
-  'status-success': e.status?.trim().toUpperCase() === 'EXECUTED' || e.status?.trim().toUpperCase() === 'SUCCESS',
-  'status-failed': e.status?.trim().toUpperCase() === 'FAILED',
-  'status-pending': e.status?.trim().toUpperCase() === 'PENDING',
-  'status-processing': e.status?.trim().toUpperCase() === 'PROCESSING',
-  'status-partial': e.status?.trim().toUpperCase() === 'PARTIAL',
-  'status-skipped': e.status?.trim().toUpperCase() === 'SKIPPED'
-}">
-  {{ e?.status ? (e.status | titlecase) : '-' }}
-</td>
+        'status-success': e.status?.trim().toUpperCase() === 'EXECUTED' || e.status?.trim().toUpperCase() === 'SUCCESS',
+        'status-failed': e.status?.trim().toUpperCase() === 'FAILED',
+        'status-pending': e.status?.trim().toUpperCase() === 'PENDING',
+        'status-processing': e.status?.trim().toUpperCase() === 'PROCESSING',
+        'status-partial': e.status?.trim().toUpperCase() === 'PARTIAL',
+        'status-skipped': e.status?.trim().toUpperCase() === 'SKIPPED'
+      }">
+              {{ e?.status ? (e.status | titlecase) : '-' }}
+              <span *ngIf="e?.statusReason" class="ms-2">
+                <a type="button" [ngbPopover]="reason">
+                  <app-info-icon />
+                </a>
+                <ng-template #reason>
+                  <p class="mb-0">{{ e.statusReason }}</p>
+                </ng-template>
+              </span>
+            </td>
             <td class="text-center">
               <div class="dropdown">
                 <a data-bs-toggle="dropdown" aria-expanded="false">
@@ -286,15 +294,25 @@
                   'status-processing': c.status?.toUpperCase() === 'PROCESSING',
                   'status-partial': c.status?.toUpperCase() === 'PARTIAL',
                   'status-skipped': c.status?.toUpperCase() === 'SKIPPED'
-                }">{{ c.status | titlecase }}</td>
+                }">
+                  {{ c.status | titlecase }}
+                  <span *ngIf="c?.statusReason" class="ms-2">
+                    <a type="button" [ngbPopover]="cycleReason">
+                      <app-info-icon />
+                    </a>
+                    <ng-template #cycleReason>
+                      <p class="mb-0">{{ c.statusReason }}</p>
+                    </ng-template>
+                  </span>
+                </td>
                 <td>
-                  @if(isCyclePastOrCurrent(c)) {
+                  @if(c?.requiresRetry) {
                   <div class="dropdown">
                     <a data-bs-toggle="dropdown" aria-expanded="false">
                       <i class="bi bi-three-dots-vertical"></i>
                     </a>
                     <ul class="dropdown-menu custom-dropdown-menu">
-                      <li (click)="retryCycle(jobid, c)">
+                      <li (click)="retryCyclePlan(jobid, c)">
                         <a class="dropdown-item"><i class="bi bi-arrow-clockwise me-2"></i>Retry</a>
                       </li>
                     </ul>

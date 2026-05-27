@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, TemplateRef } from '@angular/core';
 import { PaginatorModule } from 'primeng/paginator';
-import { debounceTime, distinctUntilChanged, Subject, Subscription, takeUntil } from 'rxjs';
+import { EMPTY, Subject, Subscription, debounceTime, distinctUntilChanged, expand, map, reduce, takeUntil } from 'rxjs';
 import { HttpService } from '../../../../services/http.service';
 import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
 import { NoDataFoundComponent } from "../../../../shared/no-data-found/no-data-found.component";
@@ -22,6 +22,7 @@ import { OpenModalService } from '../../../../services/open-modal.service';
 })
 export class CarryForwardLeaveEntitlementComponent {
   loading = false;
+  retryingJobId: number | null = null;
   searchQuery = '';
   private searchSubject = new Subject<string>();
   page = 1;
@@ -248,18 +249,115 @@ export class CarryForwardLeaveEntitlementComponent {
     this.offcanvasService.open(content, { position: 'end', backdrop: 'static', keyboard: false });
   }
 
-    postretryrecoder(jobid: any) {
-    this.http.postbyId(`LeaveEntitlementJobs/${jobid}/retry`)
-      .subscribe({
-        next: (res: any) => {
-              this.getdatacarryforword();
-          this.conformationPopup.openSuccessModal("Leave Entitlements added Successfully");
+  private getPlanId(row: any): number | null {
+    const raw = row?.planId;
+    const num = typeof raw === 'string' ? Number(raw) : raw;
+    return Number.isFinite(num) && num > 0 ? num : null;
+  }
 
-        },
-        error: (err) => {
-          console.error(err);
+  private getRetryPlanIdsFromRow(row: any): number[] {
+    const cycles = Array.isArray(row?.cycles) ? row.cycles : [];
+    const retryCycles = cycles.filter((c: any) => c?.requiresRetry === true);
+
+    const ids = new Set<number>();
+    const addId = (value: any) => {
+      const num = typeof value === 'string' ? Number(value) : value;
+      if (Number.isFinite(num) && num > 0) ids.add(num);
+    };
+
+    if (retryCycles.length) {
+      for (const c of retryCycles) addId(this.getPlanId(c));
+      return Array.from(ids);
+    }
+
+    if (row?.requiresRetry === true && cycles.length) {
+      for (const c of cycles) addId(this.getPlanId(c));
+      return Array.from(ids);
+    }
+
+    if (row?.requiresRetry === true) {
+      addId(this.getPlanId(row));
+      return Array.from(ids);
+    }
+
+    return [];
+  }
+
+  private extractRetryPlanIds(employees: any[]): number[] {
+    if (!Array.isArray(employees)) return [];
+    const ids = new Set<number>();
+    for (const row of employees) {
+      const needsRetry =
+        row?.requiresRetry === true ||
+        (Array.isArray(row?.cycles) && row.cycles.some((c: any) => c?.requiresRetry === true));
+      if (!needsRetry) continue;
+
+      const planIds = this.getRetryPlanIdsFromRow(row);
+      for (const id of planIds) ids.add(id);
+    }
+    return Array.from(ids);
+  }
+
+  private collectRetryPlanIdsForJob(jobId: number) {
+    const pageSize = 500;
+    const urlForPage = (pageNumber: number) =>
+      `LeaveEntitlementJobs/${jobId}/details?pageNumber=${pageNumber}&pageSize=${pageSize}`;
+
+    return this.http.get(urlForPage(1)).pipe(
+      expand((res: any) => {
+        const pagination = res?.pagination;
+        const hasNext =
+          pagination?.hasNextPage === true ||
+          (Number.isFinite(pagination?.currentPage) &&
+            Number.isFinite(pagination?.totalPages) &&
+            pagination.currentPage < pagination.totalPages);
+        if (!hasNext) return EMPTY;
+        const nextPage =
+          Number.isFinite(pagination?.nextPage) && pagination.nextPage > 0
+            ? pagination.nextPage
+            : (pagination?.currentPage ?? 1) + 1;
+        return this.http.get(urlForPage(nextPage));
+      }),
+      map((res: any) => this.extractRetryPlanIds(res?.data?.employees)),
+      reduce((acc: Set<number>, ids: number[]) => {
+        for (const id of ids) acc.add(id);
+        return acc;
+      }, new Set<number>()),
+      map((set: Set<number>) => Array.from(set))
+    );
+  }
+
+  postretryrecoder(jobid: any) {
+    const jobId = Number(jobid);
+    if (!Number.isFinite(jobId) || jobId <= 0) return;
+
+    this.retryingJobId = jobId;
+    this.collectRetryPlanIdsForJob(jobId).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (planIds: number[]) => {
+        if (!planIds.length) {
+          this.retryingJobId = null;
+          this.conformationPopup.openErrorModal('No records available to retry.');
+          return;
         }
-      });
+
+        const payload = { jobId, planIds };
+        this.http.postdata('LeaveEntitlementJobs/retry', payload).pipe(takeUntil(this.destroy$)).subscribe({
+          next: () => {
+            this.retryingJobId = null;
+            this.getdatacarryforword();
+            this.conformationPopup.openSuccessModal('Retry initiated successfully.');
+          },
+          error: (err) => {
+            this.retryingJobId = null;
+            this.conformationPopup.openErrorModal(err?.error?.message || 'Retry failed.');
+          }
+        });
+      },
+      error: (err) => {
+        this.retryingJobId = null;
+        this.conformationPopup.openErrorModal(err?.error?.message || 'Failed to prepare retry payload.');
+      }
+    });
   }
 
 

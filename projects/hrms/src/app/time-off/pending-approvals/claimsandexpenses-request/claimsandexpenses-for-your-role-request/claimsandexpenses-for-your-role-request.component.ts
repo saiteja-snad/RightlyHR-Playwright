@@ -144,6 +144,9 @@ isloading: boolean = false;
     if (status === 'approved') {
       this.approveForm.get('comments')?.setValue('Approved');
     }
+     if (status === 'requested clarification') {
+      this.approveForm.get('comments')?.setValue('Requested Clarification');
+    }
   }
   onStatusRejectSelect(status: string) {
     this.selectedLeaveStatus = status;
@@ -151,12 +154,16 @@ isloading: boolean = false;
       this.rejectForm.get('comments')?.setValue('Rejected');
     }
   }
-  onStatusVerifySelect(status: string) {
+    onStatusVerifySelect(status: string) {
     this.selectedLeaveStatus = status;
 
     if (status === 'verified') {
       this.verifyForm.get('comments')?.setValue('Verified');
     }
+    if (status === 'reject') {
+      this.verifyForm.get('comments')?.setValue('Rejected');
+    }
+    
   }
 
 

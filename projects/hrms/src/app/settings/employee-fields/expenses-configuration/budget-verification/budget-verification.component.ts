@@ -121,7 +121,8 @@ export class BudgetVerificationComponent {
     this.expensebudgetUpdateForm.patchValue({
       applicableForupdate: expenses.applicableFor,
       policyTypeupdate: expenses.policyType,
-      descriptionupdate: expenses.description
+      descriptionupdate: expenses.description,
+      isMandatoryupdate: expenses.isMandatory
     });
 
     this.modalService.open(content, { centered: true, backdrop: 'static' });

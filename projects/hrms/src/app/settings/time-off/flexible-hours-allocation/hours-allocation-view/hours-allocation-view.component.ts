@@ -7,7 +7,7 @@ import { Paginator } from 'primeng/paginator';
 import { SelectModule } from 'primeng/select';
 import { BehaviorSubject, Subject, takeUntil } from 'rxjs';
 import { InfoIconComponent } from '../../../../icons/info-icon/info-icon.component';
-import { DateformatPipe } from '../../../../Pipes/dateformat.pipe';
+import { DateformatPipe } from '../../../../pipes/dateformat.pipe';
 import { HttpService } from '../../../../services/http.service';
 import { OpenModalService } from '../../../../services/open-modal.service';
 import { RbacService } from '../../../../services/rbac.service';

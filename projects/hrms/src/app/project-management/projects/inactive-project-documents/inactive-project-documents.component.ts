@@ -9,7 +9,7 @@ import { AuthService } from '../../../services/auth.service';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { DownloadIconComponent } from "../../../icons/download-icon/download-icon.component";
-import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
+import { DateformatPipe } from "../../../pipes/dateformat.pipe";
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { ConfirmationIconComponent } from '../../../icons/confirmation-icon/confirmation-icon.component';

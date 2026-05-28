@@ -23,7 +23,7 @@ import { AddGlobalPermissionsComponent } from '../global-permissions/add-global-
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
-import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
+import { DateformatPipe } from "../../../pipes/dateformat.pipe";
 import { GlobalpermissionsPipe } from "../../../Pipes/globalpermissions.pipe";
 import { TranslateModule } from '@ngx-translate/core';
 @Component({

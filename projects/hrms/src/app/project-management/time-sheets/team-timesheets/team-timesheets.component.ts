@@ -29,7 +29,7 @@ import { noWhitespaceValidator } from '../../../shared/nowhitespace/nowhitespace
 import { Subject, takeUntil } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { OpenModalService } from '../../../services/open-modal.service';
-import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
+import { DateformatPipe } from '../../../pipes/dateformat.pipe';
 @Component({
   selector: 'app-team-timesheets',
   imports: [TimesheetsTabsComponent, NgbPopoverModule, FormsModule, ReactiveFormsModule, PaginatorModule, DatePicker, TranslateModule,

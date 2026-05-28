@@ -490,7 +490,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
   ];
   settingsManageDSTTab = ['DST Pending Tab', 'DST Published Tab'];
   settingsManageExpenseTab = [
-    'Expenes Configuartion',
+    'Expense Type Configuration',
     'Expense Allowed Days',
     'Expense Threshold Validation',
     'Global Expense Configuration',

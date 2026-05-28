@@ -78,6 +78,7 @@ export class ClaimsandexpensesForYouRequestComponent
   checklistdata: IExpensePolicy[] = [];
   storeapprovalRequest!: ExpenseApprovalResponse;
   @ViewChild('viewattamchment') private viewattamchment!: NgbModal;
+  @ViewChild('verificationViewattamchment') private verificationViewattamchment!: NgbModal;
   // approverComments = [] as AttendanceRequestC[];
   @ViewChild('commentspopup') modalContent: any;
   @ViewChild('checklistconfirmationmodal') checklistconfirmationmodal: any;
@@ -809,6 +810,42 @@ onCancel(modal: any) {
   // 4. Close modal
   modal.dismiss();
 }
+onViewAttachementverification(url: any) {
+    const lowerUrl = url?.toLowerCase();
+
+    if (
+      lowerUrl?.endsWith('jpg') ||
+      lowerUrl?.endsWith('jpeg') ||
+      lowerUrl?.endsWith('png')
+    ) {
+      this.subscription = this.http
+        .DownloadDataWithQuery('FileSystem/Downloadfile', url)
+        .subscribe({
+          next: (res: any) => {
+            const blob = new Blob([res['body']], { type: 'image/png' });
+            const objectURL = URL.createObjectURL(blob);
+            this.expenseImageUrl =
+              this.sanitizer.bypassSecurityTrustUrl(objectURL);
+            this.expenseViewURL = null;
+            this.toggleViewModalforverification();
+          },
+          error: (err) => console.error('Error downloading image:', err),
+        });
+    } else if (lowerUrl?.endsWith('pdf')) {
+      this.expenseImageUrl = null;
+      this.expenseViewURL = `${environment.viewUrl}${url}`; // assumed to be full URL
+      this.toggleViewModalforverification();
+    } else {
+      // fallback for other types if needed
+      this.expenseImageUrl = null;
+      this.expenseViewURL = `${environment.viewUrl}${url}`;
+      this.toggleViewModalforverification();
+    }
+  }
+   toggleViewModalforverification() {
+    this.modalService.dismissAll();
+    this.openModal(this.verificationViewattamchment);
+  }
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();

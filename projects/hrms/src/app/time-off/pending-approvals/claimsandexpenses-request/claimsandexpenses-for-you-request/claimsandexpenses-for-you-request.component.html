@@ -601,9 +601,29 @@
     </div>
   </div>
 </ng-template>
+<!-- Attachment View Modal -->
+<ng-template #verificationViewattamchment let-modal>
+  <div class="custom-main-popup-container">
+    <div class="custom-poup-header-content popup-header-border">
+      <div class="pt-2">
+        <p class="popup-heading mb-0">{{'Expense Details' | translate}}</p>
+      </div>
+      <div>
+        <a (click)="modal.dismiss();openModal(verificationofModal); expenseViewURL = null; expenseImageUrl = null"><img
+            src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+      </div>
+    </div>
 
-
-
+    <div class="custom-main-popup-content">
+      <p *ngIf="!expenseImageUrl; else imageView">
+        <ngx-doc-viewer [url]="expenseViewURL" viewer="google" style="width: 100%; height: 100vh"></ngx-doc-viewer>
+      </p>
+      <ng-template #imageView>
+        <img [src]="expenseImageUrl" alt="My Image" class="modal-image" />
+      </ng-template>
+    </div>
+  </div>
+</ng-template>
 <ng-template #Verificationreject let-modal>
   <div class="result-popup-content" ngbAutofocus>
     <div>

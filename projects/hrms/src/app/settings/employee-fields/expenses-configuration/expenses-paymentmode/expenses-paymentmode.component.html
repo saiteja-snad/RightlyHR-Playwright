@@ -1,0 +1,162 @@
+<div class="custom-main-component-container">
+    <div>
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div><span class="component-sub-header">{{'Payment Mode Configurations'|translate}}</span></div>
+            <div class="custom-add-btn" (click)="openModal(addExpensesmodal)"
+                *ngIf="rbac.allowedToAccess('Payment Mode Configurations.create')">
+                <i class="bi bi-plus plus-icon me-1"></i>{{'Add New'|translate}}
+            </div>
+        </div>
+
+        <div class="custom-table-content mt-2">
+            <table class="w-100">
+                <thead>
+                    <th>{{'Payment Mode' |translate}}</th>
+                    <th class="text-center" *ngIf="rbac.allowedToAccess('Payment Mode Configurations.update') || 
+                    rbac.allowedToAccess('Payment Mode Configurations.delete')">{{'Action' | translate}}</th>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let exp of paymentmodedata">
+                        <td>{{exp?.value}}</td>
+                        <td class="text-center"
+                            *ngIf="rbac.allowedToAccess('Payment Mode Configurations.update') || rbac.allowedToAccess('Payment Mode Configurations.delete')">
+                            <!-- <div class="d-flex gap-4 justify-content-center">
+                                    <div>
+                                        <a type="button" (click)="openupdate(updateexpeses, exp)" *ngIf="rbac.allowedToAccess('Payment Mode Configurations.update')">
+                                            <app-settings-update-icon />
+                                        </a>
+                                    </div>
+                                    <div>
+                                        <a (click)="opendelete(deleteconformation,exp)" *ngIf="rbac.allowedToAccess('Payment Mode Configurations.delete')">
+                                            <app-settings-delete-icon />
+                                        </a>
+                                    </div>
+                                </div> -->
+                            <div class="dropdown">
+                                <span type="button" data-bs-toggle="dropdown">
+                                    <i class="bi bi-three-dots-vertical"></i>
+                                </span>
+                                <ul class="dropdown-menu custom-dropdown-menu">
+                                    <li (click)="openupdate(updateexpeses, exp)"
+                                        *ngIf="rbac.allowedToAccess('Payment Mode Configurations.update')">
+                                        <a class="dropdown-item">
+                                            <i class="bi bi-pencil me-2"></i>{{'Update' | translate}}
+                                        </a>
+                                    </li>
+                                    <li (click)="opendelete(deleteconformation,exp)"
+                                        *ngIf="rbac.allowedToAccess('Payment Mode Configurations.delete')">
+                                        <a class="dropdown-item">
+                                            <i class="bi bi-trash3 me-2"></i>{{'Delete' | translate}}
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <ng-template #addExpensesmodal let-modal>
+            <div class="custom-main-popup-container" ngbAutofocus>
+                <div class="custom-poup-header-content popup-header-border">
+                    <div>
+                        <p class="popup-heading mb-0">{{'Add Payment Mode' | translate}}</p>
+                    </div>
+                    <div>
+                        <a (click)="modal.dismiss();expenseForm.reset()"><img src="icons/close.png" alt="Close Icon"
+                                class="close-icon"></a>
+                    </div>
+                </div>
+                <div class="custom-main-popup-content">
+                    <form autocomplete="off" [formGroup]="expenseForm" (ngSubmit)="postExpenses(expenseForm)">
+                        <div class="mb-3">
+                            <label for="paymentMode" class="form-label custom-label mb-2">
+                                {{'Payment Mode' | translate}} <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" class="form-control custom-input" id="paymentMode"
+                                formControlName="paymentMode" autocomplete="off" placeholder="Please enter payment mode"
+                                maxlength="50"
+                                (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)" />
+                            <div class="error-msg"
+                                *ngIf="expenseForm.get('paymentMode')?.hasError('required') && (expenseForm.get('paymentMode')?.touched )">
+                                Payment Mode is required
+                            </div>
+                            <div *ngIf="expenseForm.get('paymentMode')?.errors?.['pattern']" class="error-msg">
+                                {{ 'Field cannot start with a space' | translate }}
+                            </div>
+                            <div class="error-msg"
+                                *ngIf="expenseForm.get('paymentMode')?.hasError('maxlength') && expenseForm.get('paymentMode')?.touched">
+                                Payment Mode cannot exceed 50 characters
+                            </div>
+                        </div>
+                        <div class="custom-modal-footer">
+                            <button type="button" class="custom-btn btn-secondary "
+                                (click)="expenseForm.reset();modal.dismiss()">{{'Cancel' | translate}}</button>
+                            <button type="submit" class="custom-btn btn-primary "
+                                [disabled]="expenseForm.invalid">{{'Submit' | translate}}</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </ng-template>
+
+        <ng-template #updateexpeses let-modal>
+            <div class="custom-main-popup-container" ngbAutofocus>
+                <div class="custom-poup-header-content popup-header-border">
+                    <div>
+                        <p class="popup-heading mb-0">{{'Update Payment Mode' | translate}}</p>
+                    </div>
+                    <div>
+                        <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+                    </div>
+                </div>
+                <div class="custom-main-popup-content">
+                    <form autocomplete="off" [formGroup]="paymentmodeupdateForm" (ngSubmit)="onUpdateSubmit()">
+                        <div class="mb-3">
+                            <label for="paymentMode" class="form-label custom-label mb-2">
+                                {{'Payment Mode' | translate}} <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" class="form-control custom-input" id="paymentMode"
+                                formControlName="paymentmodeupdate" autocomplete="off"
+                                placeholder="Please enter payment mode" maxlength="50"
+                                (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)" />
+                            <div class="error-msg"
+                                *ngIf="paymentmodeupdateForm.get('paymentmodeupdate')?.hasError('required') && (paymentmodeupdateForm.get('paymentmodeupdate')?.touched)">
+                                Payment Mode is required
+                            </div>
+                            <div *ngIf="paymentmodeupdateForm.get('paymentmodeupdate')?.errors?.['pattern']"
+                                class="error-msg">
+                                {{ 'Field cannot start with a space' | translate }}
+                            </div>
+                            <div class="error-msg"
+                                *ngIf="paymentmodeupdateForm.get('paymentmodeupdate')?.hasError('maxlength') && paymentmodeupdateForm.get('paymentmodeupdate')?.touched">
+                                Payment Mode cannot exceed 50 characters
+                            </div>
+                        </div>
+                        <div class="custom-modal-footer">
+                            <button type="button" class="custom-btn btn-secondary "
+                                (click)="paymentmodeupdateForm.reset();modal.dismiss()">{{'Cancel' | translate}}</button>
+                            <button type="submit" class="custom-btn btn-primary "
+                                [disabled]="paymentmodeupdateForm.invalid">
+                                {{'Update' | translate}}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </ng-template>
+
+        <ng-template #deleteconformation let-modal>
+            <div class="result-popup-content" ngbAutofocus>
+                <div>
+                    <img src="icons\delete-icon.png" alt="failure icon" class="confirmation-delete-icon">
+                    <p class="confirmation-text mb-4">{{'Are you sure you want to delete the Payment Mode?' |
+                        translate}}</p>
+                </div>
+                <div class="custom-modal-footer">
+                    <button type="button" class="custom-btn btn-secondary " (click)="modal.dismiss()">{{'No'|translate}}</button>
+                    <button type="submit" class="custom-btn btn-primary" (click)="deleteEAV()">{{'Yes' | translate}}</button>
+                </div>
+            </div>
+        </ng-template>

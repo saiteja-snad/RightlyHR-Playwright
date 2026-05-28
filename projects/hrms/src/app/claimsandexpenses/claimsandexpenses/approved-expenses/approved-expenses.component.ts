@@ -1,7 +1,7 @@
 import { Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { environment } from '../../../../environments/environment';
 import { ExpenseEntity, IExpense, IExpenseHeaders, } from '../../../Interfaces/claimsandexpenses.model';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { HttpService } from '../../../services/http.service';
@@ -19,7 +19,7 @@ import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.
 import { DocumentViewIconComponent } from "../../../icons/document-view-icon/document-view-icon.component";
 @Component({
   selector: 'app-approved-expenses',
-  imports: [CommonModule, DateformatPipe, NgxDocViewerModule, FormsModule, NoDataFoundComponent, TranslateModule, DataLoaderContentComponent, InfoIconComponent, DownloadExpenseComponent, DocumentViewIconComponent],
+  imports: [CommonModule, DateformatPipe, NgxDocViewerModule, FormsModule, NoDataFoundComponent, TranslateModule, DataLoaderContentComponent, InfoIconComponent, DownloadExpenseComponent, DocumentViewIconComponent,NgbPopoverModule],
   templateUrl: './approved-expenses.component.html',
   styleUrl: './approved-expenses.component.scss'
 })
@@ -73,11 +73,13 @@ export class ApprovedExpensesComponent implements OnInit, OnDestroy {
   }
 
   openupdateModal(content: any) {
+
     this.modalService.open(content, { centered: true, size: 'xl', backdrop: 'static' });
   }
 
   comments_Function(comments: any) {
-    this.commentsrecivced = comments
+    let filteredComments = comments?.filter((ele: any) => ele?.action !== 'Required Clarification');
+    this.commentsrecivced = filteredComments;
   }
   //download expenses popup open function
   openpopupforDownload(content: any, expenseDetails: any) {
@@ -106,7 +108,15 @@ export class ApprovedExpensesComponent implements OnInit, OnDestroy {
     this.subscription = this.http
       .getitembyid(`Expenses_Header/getby_Expense_ID`, expid).subscribe({
         next: (data: any) => {
-          this.expenseheaderiteams = data;
+         // this.expenseheaderiteams = data;
+          this.expenseheaderiteams = {
+            ...data,
+            expenseitem: data.expenseitem?.map((item: any) => ({
+              ...item,
+              meta: item.meta ? JSON.parse(item.meta) : null
+            }))
+          };
+
         }, error(err) {
           console.log("expensesheadererror", err)
         },

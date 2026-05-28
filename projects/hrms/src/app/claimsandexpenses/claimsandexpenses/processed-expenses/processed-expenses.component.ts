@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { HttpService } from '../../../services/http.service';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { DomSanitizer } from '@angular/platform-browser';
 import { IExpense, IExpenseHeaders, INewExpense } from '../../../Interfaces/claimsandexpenses.model';
 import { BehaviorSubject, Subscription } from 'rxjs';
@@ -20,7 +20,7 @@ import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.
 
 @Component({
   selector: 'app-processed-expenses',
-  imports: [CommonModule, DateformatPipe, NgxDocViewerModule, FormsModule, NoDataFoundComponent, DataLoaderContentComponent, InfoIconComponent, DocumentViewIconComponent, DownloadExpenseComponent, TranslateModule],
+  imports: [CommonModule, DateformatPipe, NgxDocViewerModule, FormsModule, NoDataFoundComponent, DataLoaderContentComponent, InfoIconComponent, DocumentViewIconComponent, DownloadExpenseComponent, TranslateModule,NgbPopoverModule],
   templateUrl: './processed-expenses.component.html',
   styleUrl: './processed-expenses.component.scss'
 })
@@ -107,7 +107,8 @@ export class ProcessedExpensesComponent implements OnInit, OnDestroy {
   }
 
   comments_Function(comments: any) {
-    this.commentsrecivced = comments
+    let filteredComments = comments?.filter((ele: any) => ele?.action !== 'Required Clarification');
+    this.commentsrecivced = filteredComments;
   }
 
   viewItem(expid: number,) {
@@ -116,8 +117,14 @@ export class ProcessedExpensesComponent implements OnInit, OnDestroy {
     this.subscription = this.http
       .getitembyid(`Expenses_Header/getby_Expense_ID`, expid).subscribe({
         next: (data: any) => {
-          this.expenseheaderiteams = data
-
+         // this.expenseheaderiteams = data
+          this.expenseheaderiteams = {
+            ...data,
+            expenseitem: data.expenseitem?.map((item: any) => ({
+              ...item,
+              meta: item.meta ? JSON.parse(item.meta) : null
+            }))
+          };
         }, error(err) {
           console.log("expensesheadererror", err)
         },

@@ -493,7 +493,9 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Expenes Configuartion',
     'Expense Allowed Days',
     'Expense Threshold Validation',
-    'Global Expense Configuration'
+    'Global Expense Configuration',
+    'Expense Checklist Configuration',
+    'Payment Mode Configurations'
   ]
 
   settingsAttendanceLockingTab = [
@@ -609,6 +611,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Pending Tab',
     'Processed Tab',
     'Rejected Tab',
+    "Expense Clarifications Tab"
   ];
   itSupportModule = ['Team Tickets Tab', 'My Tickets Tab'];
   TeamTicketsTabs = [

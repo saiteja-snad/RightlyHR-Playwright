@@ -71,6 +71,17 @@ export class UpdateLeavecategoryComponent {
     { label: 'From Leave Start Date', value: 'start_date' },
     { label: 'From Leave End Date', value: 'end_date' },
   ];
+  frequencyTypes = [
+    { label: 'Monthly', value: 'MONTHLY' },
+    { label: 'Quarterly', value: 'QUARTERLY' },
+    { label: 'Half Yearly', value: 'HALF_YEARLY' },
+    { label: 'Yearly', value: 'YEARLY' },
+  ];
+  cycleHandlingOptions = [
+    { label: 'Frozen', value: 'FROZEN' },
+    { label: 'Carry Forward', value: 'CARRY_FORWARD' },
+    { label: 'Lapsed', value: 'LAPSED' },
+  ];
   leaveTypeOptions = [
     { label: 'Fixed Number of Leaves', value: 'Fixed Number of Leaves' },
     { label: 'Monthly Incremental Leaves', value: 'Monthly Incremental Leaves' }
@@ -187,7 +198,11 @@ export class UpdateLeavecategoryComponent {
       applySandwichOn: [null,],
       sandwichCalculationBasis: [null],
       sandwichApplicabilityCondition: [null],
-      adjacentLeaveTypeRule: [null]
+      adjacentLeaveTypeRule: [null],
+      extendLastWorkingDay:[null],
+      entitlementFrequency: [null, Validators.required],
+      entitlementCycleHandling: [null, Validators.required],
+      allowPastCycleApplication: [null, Validators.required],
     });
   }
 
@@ -253,11 +268,14 @@ export class UpdateLeavecategoryComponent {
     this.leavePolicyForm?.get('noticeperiodAllowedType')?.valueChanges.subscribe((value: any) => {
       const daysControl = this.leavePolicyForm.get('noticePeriodAllowedValue');
       const typeControl = this.leavePolicyForm.get('noticePeriodFrequencyType');
+      const extendControl = this.leavePolicyForm.get('extendLastWorkingDay');
       if (value) {
         daysControl?.enable();
-        daysControl?.setValidators([Validators.required, Validators.min(1)]);
+        daysControl?.setValidators([Validators.required, Validators.min(0.5)]);
         typeControl?.enable();
         typeControl?.setValidators([Validators.required]);
+        extendControl?.enable();
+        extendControl?.setValidators([Validators.required]);
       } else {
         daysControl?.disable();
         daysControl?.clearValidators();
@@ -265,9 +283,12 @@ export class UpdateLeavecategoryComponent {
         typeControl?.disable();
         typeControl?.clearValidators();
         typeControl?.setValue(null);
+        extendControl?.clearValidators();
+        extendControl?.setValue(null);
       }
       daysControl?.updateValueAndValidity();
       typeControl?.updateValueAndValidity();
+      extendControl?.updateValueAndValidity();
     });
 
     this.leavePolicyForm?.get('isProbationAllowed')?.valueChanges.subscribe((value: any) => {
@@ -275,7 +296,7 @@ export class UpdateLeavecategoryComponent {
       const typeControl = this.leavePolicyForm.get('probationFrequencyType');
       if (value) {
         daysControl?.enable();
-        daysControl?.setValidators([Validators.required, Validators.min(1)]);
+        daysControl?.setValidators([Validators.required, Validators.min(0.5)]);
         typeControl?.enable();
         typeControl?.setValidators([Validators.required]);
       } else {
@@ -314,6 +335,22 @@ export class UpdateLeavecategoryComponent {
       blockPreviousControl?.updateValueAndValidity();
       blockNextControl?.updateValueAndValidity();
     });
+    this.leavePolicyForm?.get('entitlementFrequency')?.valueChanges.subscribe((value: any) => {
+      const cycleCtrl = this.leavePolicyForm.get('entitlementCycleHandling');
+      const pastCycleCtrl = this.leavePolicyForm.get('allowPastCycleApplication');
+      if (value === 'YEARLY') {
+        cycleCtrl?.clearValidators();
+        cycleCtrl?.setValue(null);
+        pastCycleCtrl?.clearValidators();
+        pastCycleCtrl?.setValue(null);
+      } else {
+        cycleCtrl?.setValidators([Validators.required]);
+        pastCycleCtrl?.setValidators([Validators.required]);
+      }
+      cycleCtrl?.updateValueAndValidity();
+      pastCycleCtrl?.updateValueAndValidity();
+    });
+
     // Update published categories when location/sublocation/year/shift changes
     this.leavePolicyForm?.get('applicableYear')?.valueChanges.subscribe(() => this.updatePublishedCategories());
     this.leavePolicyForm?.get('locationID')?.valueChanges.subscribe(() => this.updatePublishedCategories());
@@ -600,7 +637,7 @@ export class UpdateLeavecategoryComponent {
         const typeControl = this.leavePolicyForm.get('noticePeriodFrequencyType');
         if (value) {
           daysControl?.enable();
-          daysControl?.setValidators([Validators.required, Validators.min(1)]);
+          daysControl?.setValidators([Validators.required, Validators.min(0.5)]);
           typeControl?.enable();
           typeControl?.setValidators([Validators.required]);
         } else {
@@ -622,7 +659,7 @@ export class UpdateLeavecategoryComponent {
         const typeControl = this.leavePolicyForm.get('probationFrequencyType');
         if (value) {
           daysControl?.enable();
-          daysControl?.setValidators([Validators.required, Validators.min(1)]);
+          daysControl?.setValidators([Validators.required, Validators.min(0.5)]);
           typeControl?.enable();
           typeControl?.setValidators([Validators.required]);
         } else {
@@ -706,7 +743,11 @@ export class UpdateLeavecategoryComponent {
       applySandwichOn: data.applySandwichOn,
       sandwichCalculationBasis: data.sandwichCalculationBasis,
       sandwichApplicabilityCondition: data.sandwichApplicabilityCondition,
-      adjacentLeaveTypeRule: data.adjacentLeaveTypeRule
+      adjacentLeaveTypeRule: data.adjacentLeaveTypeRule,
+      extendLastWorkingDay:data.isNoticePeriodExtended,
+      entitlementFrequency: data.entitlementFrequency,
+      entitlementCycleHandling: data.entitlementCycleHandling,
+      allowPastCycleApplication: data.allowPastCycleApplication,
     });
     this.syncGapCalculationBasis();
     
@@ -725,8 +766,8 @@ export class UpdateLeavecategoryComponent {
 
     this.setupDependentFieldListenerS();
     this.setupDependentFieldListeners();
-    this.validateAllowedDays()
-
+    this.validateAllowedDays();
+    this.leavePolicyForm.markAsPristine();
   }
 
 
@@ -738,6 +779,7 @@ export class UpdateLeavecategoryComponent {
     this.setupMaxValidation('noticePeriodAllowedValue', 'validity');
     this.setupMaxValidation('noticePeriodAllowedValue', 'validity');
     this.setupMaxValidation('probationDays', 'validity');
+     this.setupMaxValidation('extendLastWorkingDay', 'validity');
   }
 
 
@@ -890,11 +932,15 @@ export class UpdateLeavecategoryComponent {
       sandwichCalculationBasis: formData.sandwichCalculationBasis,
       sandwichApplicabilityCondition: formData.sandwichApplicabilityCondition,
       adjacentLeaveTypeRule: formData.adjacentLeaveTypeRule,
+      entitlementFrequency: formData.entitlementFrequency,
+      entitlementCycleHandling: formData.entitlementCycleHandling,
+      allowPastCycleApplication: formData.allowPastCycleApplication,
       // addedBy: this.empinfo.employeeId,
       lastModifiedBy: this.empinfo.employeeId,
       status: this.updateLeaveCategoryData.status,
       addedDate: this.updateLeaveCategoryData.addedDate,
       lastModifiedDate: new Date(),
+      isNoticePeriodExtended:formData.extendLastWorkingDay
     };
     this.subscription = this.http
       .postdata('OrgLeavesCategories/UPDATER', payload)
@@ -907,6 +953,7 @@ export class UpdateLeavecategoryComponent {
             '/settings/timeoff-configurations/leave-categoery/pendingleavecategory',
           ]);
           this.leavePolicyForm.reset();
+          this.leavePolicyForm.markAsPristine();
         },
         error: (err: any) => {
           this.confirmation.openErrorModal(err.error.message);
@@ -1019,6 +1066,9 @@ export class UpdateLeavecategoryComponent {
       sandwichCalculationBasis: formData.sandwichCalculationBasis,
       sandwichApplicabilityCondition: formData.sandwichApplicabilityCondition,
       adjacentLeaveTypeRule: formData.adjacentLeaveTypeRule,
+      entitlementFrequency: formData.entitlementFrequency,
+      entitlementCycleHandling: formData.entitlementCycleHandling,
+      allowPastCycleApplication: formData.allowPastCycleApplication,
       // addedBy: this.empinfo.employeeId,
       lastModifiedBy: this.empinfo.employeeId,
       status: 'Published',

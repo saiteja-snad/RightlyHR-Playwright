@@ -593,8 +593,10 @@ export class ClaimsandexpensesForYouRequestComponent
        backdrop: 'static'
      });
   }
-  isAllChecked(): boolean {
-    return this.checklistdata.some(x => x.checked);
+    isAllChecked(): boolean {
+    return this.checklistdata
+      .filter(x => x.isMandatory)
+      .every(x => x.checked);
   }
 
   confirmApproval(modal: any) {

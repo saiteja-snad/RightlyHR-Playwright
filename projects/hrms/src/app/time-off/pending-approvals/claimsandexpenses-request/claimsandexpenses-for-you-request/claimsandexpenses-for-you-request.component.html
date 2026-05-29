@@ -81,9 +81,16 @@
                   }
                   }
                   @else if(+leave.approvalHeader.currentapprovalStage === (+leave.approvalHeader.finalapprovalStage - 2)){
-                  <li (click)="expensesCheckList(leave,'Approve')">
-                    <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{ "Verify" | translate }}</a>
-                  </li>
+                    @if(checklistdata.length > 0){
+                    <li (click)="expensesCheckList(leave,'Approve')">
+                      <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{ "Verify" | translate }}</a>
+                    </li>
+                    }
+                    @else {
+                    <li (click)="openApproveModal(approval, leave)">
+                      <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{ "Approve" | translate }}</a>
+                    </li>
+                    }
                   }
                   @else {
                     <li (click)="openApproveModal(approval, leave)">

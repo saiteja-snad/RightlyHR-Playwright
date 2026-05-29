@@ -100,8 +100,8 @@
               @for (phase of selectedProject?.phases; track $index) {
               <tr>
                 <td>{{ phase.phaseName }}</td>
-                <td>{{ phase.startDate | date : "MMM d, y" }}</td>
-                <td>{{ phase.endDate | date : "MMM d, y" }}</td>
+                <td>{{ phase.resourceStartDate | date : "MMM d, y" }}</td>
+                <td>{{ phase.resourceEndDate | date : "MMM d, y" }}</td>
                 <td>
                   <span class="spent-hours">{{ convertDecimalToHours(phase.spentHours) }}</span> /
                   {{ convertDecimalToHours(phase.allocatedHours) }} Hrs

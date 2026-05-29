@@ -10,9 +10,9 @@
                 <span class="input-group-text custom-input-group-search" id="basic-addon1">
                     <i class="bi bi-search"></i>
                 </span>
-                <input type="search" [(ngModel)]="searchValue" (ngModelChange)="onSearchChange()" class="form-control custom-search-input"
-                    placeholder="Search by employee name / phase name / role" aria-label="Search"
-                    aria-describedby="basic-addon1">
+                <input type="search" [(ngModel)]="searchValue" (ngModelChange)="onSearchChange()"
+                    class="form-control custom-search-input" placeholder="Search by employee name / phase name / role"
+                    aria-label="Search" aria-describedby="basic-addon1">
             </div>
 
             <div class="custom-table-content">
@@ -20,6 +20,7 @@
                 <table class="w-100">
                     <thead>
                         <!-- <th>Employee ID</th> -->
+                         <th class="text-center">Profile</th>
                         <th>Name</th>
                         <th>Phases / Milestones</th>
                         <th class="text-center">Role</th>
@@ -38,6 +39,14 @@
                         <ng-container *ngIf="(resourcesData?.length ?? 0) > 0; else noDataTemplate">
                             <tr *ngFor="let data of resourcesData">
                                 <!-- <td>{{ data?.employee?.fusionEmployeeId || '-'}}</td> -->
+                                <td class="text-center">
+                                    <img *ngIf="data.employee?.profileUrl; else defaultProfile"
+                                        [src]="getImageUrl(data.employee.profileUrl)" alt="Profile"
+                                        class="client-image" />
+                                    <ng-template #defaultProfile>
+                                        <app-profile-icon [iconWidth]="'35'" [iconHeight]="'35'"></app-profile-icon>
+                                    </ng-template>
+                                </td>
                                 <td>{{ data?.employee?.name || '-' }}</td>
                                 <td>{{ data?.phase?.phaseName || '-'}}</td>
                                 <td class="text-center">{{ data?.role || '-' }}</td>
@@ -60,7 +69,8 @@
                                         <p class="mb-0">{{ data.reason }}</p>
                                     </ng-template>
                                 </td>
-                                <td class="text-center">{{ data?.statusEffectiveDate ? (data.statusEffectiveDate | dateformat) : '-' }}</td>
+                                <td class="text-center">{{ data?.statusEffectiveDate ? (data.statusEffectiveDate |
+                                    dateformat) : '-' }}</td>
                                 <!-- @if((rbac.allowedToAccess('Resources Tab.update'))
                                 && inactiveStatus !== 'inactive'){
                                 <td class="text-center"
@@ -400,9 +410,12 @@
             </div>
 
             <div class="mb-3 mt-3" *ngIf="modalData?.title?.includes('release')">
-                <label for="statusEffectiveDate" class="form-label custom-label mb-2">Effective Date<span class="error-msg">*</span></label>
-                <input type="date" id="statusEffectiveDate" formControlName="statusEffectiveDate" class="form-control custom-input" />
-                <div class="error-msg" *ngIf="reasonForm.get('statusEffectiveDate')?.touched && reasonForm.get('statusEffectiveDate')?.invalid">
+                <label for="statusEffectiveDate" class="form-label custom-label mb-2">Effective Date<span
+                        class="error-msg">*</span></label>
+                <input type="date" id="statusEffectiveDate" formControlName="statusEffectiveDate"
+                    class="form-control custom-input" />
+                <div class="error-msg"
+                    *ngIf="reasonForm.get('statusEffectiveDate')?.touched && reasonForm.get('statusEffectiveDate')?.invalid">
                     Effective Date is required
                 </div>
             </div>

@@ -14,11 +14,13 @@
         <i class="bi bi-funnel me-2"></i>Filters
         <span *ngIf="isFilterAppliedForResources()" class="filter-indicator"></span>
       </button>
-
-      @if(rbac.allowedToAccess('Client Resources.create') && this.inactiveClientStatus !== 'inactive'){
-      <div *ngIf="isActive('/project-management/clients/details/resources')" (click)="openModal(addResourcemodal)">
-        <button type="button" class="custom-btn btn-primary">{{'Add Resources'}}</button>
-      </div>
+      
+     @if (rbac.allowedToAccess("Client Resources.create") && inactiveClientStatus !== "inactive") {
+        <div *ngIf="isActive('/project-management/clients/details/resources')">
+          <button type="button"class="custom-btn btn-primary" (click)="openAddResource()">
+            Add Resources
+          </button>
+        </div>
       }
     </div>
 

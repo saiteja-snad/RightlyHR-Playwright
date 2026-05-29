@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject, catchError, debounceTime, distinctUntilChanged, finalize, map, of, switchMap, takeUntil } from 'rxjs';
 import { FormValidationsService } from '../../../../../../services/form-validations.service';
 import { HttpService } from '../../../../../../services/http.service';
 import { OpenModalService } from '../../../../../../services/open-modal.service';
@@ -26,6 +26,7 @@ export class IntialLoadEntitlementCreateComponent implements OnInit, OnDestroy {
   locationDetails = [] as ILocation[];
   subLocationDetails = [] as ISubLocation[];
   shiftDetails = [] as IShiftHeader[];
+  isCheckingDuplicateJob = false;
   destroy$: Subject<boolean> = new Subject<boolean>();
 
   constructor(
@@ -48,6 +49,7 @@ export class IntialLoadEntitlementCreateComponent implements OnInit, OnDestroy {
       shift: [{ value: '', disabled: true }, Validators.required],
     });
     this.getAllLocations();
+    this.setupDuplicateJobValidation();
 
     if (this.carryforwarddata && Object.keys(this.carryforwarddata).length > 0) {
       this.leaveAllocationForm.enable();
@@ -79,6 +81,7 @@ export class IntialLoadEntitlementCreateComponent implements OnInit, OnDestroy {
       this.leaveAllocationForm.get('location')?.reset();
       this.leaveAllocationForm.get('subLocation')?.reset();
       this.leaveAllocationForm.get('shift')?.reset();
+      this.clearShiftError('duplicateJob');
       this.leaveAllocationForm.get('location')?.enable();
       this.leaveAllocationForm.get('subLocation')?.disable();
       this.leaveAllocationForm.get('shift')?.disable();
@@ -111,6 +114,7 @@ export class IntialLoadEntitlementCreateComponent implements OnInit, OnDestroy {
     this.leaveAllocationForm.get('subLocation')?.enable();
     this.leaveAllocationForm.get('subLocation')?.reset();
     this.leaveAllocationForm.get('shift')?.reset();
+    this.clearShiftError('duplicateJob');
     this.leaveAllocationForm.get('shift')?.disable();
     this.shiftDetails = [];
     this.clearBreakdownCache();
@@ -134,6 +138,7 @@ export class IntialLoadEntitlementCreateComponent implements OnInit, OnDestroy {
         this.shiftDetails = res.flatMap((header: any) => header.orgShiftsItems || []);
         this.leaveAllocationForm.get('shift')?.enable();
         this.leaveAllocationForm.get('shift')?.reset();
+        this.clearShiftError('duplicateJob');
         this.clearBreakdownCache();
         if (this.carryforwarddata?.shift) {
           const selectedShift = this.shiftDetails.find((sh: any) => sh.shiftName === this.carryforwarddata.shift.shiftName);
@@ -146,9 +151,76 @@ export class IntialLoadEntitlementCreateComponent implements OnInit, OnDestroy {
         console.error('Error fetching shifts:', err);
         this.shiftDetails = [];
         this.leaveAllocationForm.get('shift')?.reset();
+        this.clearShiftError('duplicateJob');
         this.leaveAllocationForm.get('shift')?.disable();
       }
     });
+  }
+
+  private setupDuplicateJobValidation(): void {
+    const shiftControl = this.leaveAllocationForm.get('shift');
+    if (!shiftControl) return;
+
+    shiftControl.valueChanges
+      .pipe(
+        takeUntil(this.destroy$),
+        debounceTime(300),
+        distinctUntilChanged((a: any, b: any) => (a?.id ?? a) === (b?.id ?? b)),
+        switchMap((shift: any) => {
+          this.clearShiftError('duplicateJob');
+          if (!shift?.id) return of({ found: false });
+
+          const formValue = this.leaveAllocationForm.getRawValue();
+          const yearValue = formValue?.year?.year ?? formValue?.year;
+          const locationId = formValue?.location?.id;
+          const subLocationId = formValue?.subLocation?.id;
+          if (!yearValue || !locationId || !subLocationId) return of({ found: false });
+
+          const params: any = {
+            pageNumber: 1,
+            pageSize: 1,
+            jobType: 'Initial Load',
+            shiftIds: shift.id,
+            years: yearValue,
+            locationIds: locationId,
+            subLocationIds: subLocationId,
+          };
+
+          const query = new URLSearchParams(params).toString();
+          this.isCheckingDuplicateJob = true;
+          return this.http.get(`LeaveEntitlementJobs?${query}`).pipe(
+            map((res: any) => {
+              const total = Number(res?.pagination?.totalRecords ?? 0);
+              const listLen = Array.isArray(res?.data) ? res.data.length : 0;
+              return { found: (total > 0) || (total === 0 && listLen > 0) };
+            }),
+            catchError(() => of({ found: false, apiError: true })),
+            finalize(() => (this.isCheckingDuplicateJob = false))
+          );
+        })
+      )
+      .subscribe((result: any) => {
+        if (result?.found === true) {
+          this.setShiftError('duplicateJob');
+        }
+      });
+  }
+
+  private setShiftError(key: string): void {
+    const ctrl = this.leaveAllocationForm.get('shift');
+    if (!ctrl) return;
+    const errors = ctrl.errors ?? {};
+    if (errors[key]) return;
+    ctrl.setErrors({ ...errors, [key]: true });
+    ctrl.markAsTouched();
+  }
+
+  private clearShiftError(key: string): void {
+    const ctrl = this.leaveAllocationForm.get('shift');
+    if (!ctrl?.errors) return;
+    const errors = { ...ctrl.errors };
+    delete errors[key];
+    ctrl.setErrors(Object.keys(errors).length ? errors : null);
   }
 
   closepopup(content: any) {

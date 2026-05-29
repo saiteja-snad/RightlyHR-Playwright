@@ -57,11 +57,14 @@ export class LoadEntilementsAlloctionComponent implements OnInit, OnDestroy {
 
   newEmployees: any[] = [];
   selectedNewEmployees: any[] = [];
+  newCategories: any[] = [];
+  selectedNewCategories: any[] = [];
   loadingNewEmployees = false;
   submittingLoad = false;
+  submittingLoadCategories = false;
 
   constructor(private route: ActivatedRoute, private http: HttpService, private fb: FormBuilder,
-    private modalService: NgbModal, private conformationPopup: OpenModalService) { }
+    private modalService: NgbModal, private conformationPopup: OpenModalService, private router: Router) { }
 
   ngOnInit() {
     this.initilaiztionFrom();
@@ -333,13 +336,25 @@ export class LoadEntilementsAlloctionComponent implements OnInit, OnDestroy {
           ...emp,
           fullName: `${emp.fusionEmpId} - ${emp.name ?? ''}`.trim()
         })) : [];
+        this.newCategories = Array.isArray(res?.data?.categories)
+          ? res.data.categories.map((c: any) => ({
+            ...c,
+            categoryId: c?.categoryId,
+            categoryName: c?.categoryName ?? '',
+          })).filter((c: any) => c?.categoryId)
+          : [];
       },
-      error: () => { this.loadingNewEmployees = false; this.newEmployees = []; }
+      error: () => { this.loadingNewEmployees = false; this.newEmployees = []; this.newCategories = []; }
     });
   }
 
   openLoadEmployeesModal(content: any): void {
     this.selectedNewEmployees = [];
+    this.modalService.open(content, { size: 'lg', centered: true, backdrop: 'static' });
+  }
+
+  openLoadCategoriesModal(content: any): void {
+    this.selectedNewCategories = [];
     this.modalService.open(content, { size: 'lg', centered: true, backdrop: 'static' });
   }
 
@@ -359,6 +374,38 @@ export class LoadEntilementsAlloctionComponent implements OnInit, OnDestroy {
         this.conformationPopup.openErrorModal(err?.error?.message || 'Failed to load employees.');
       }
     });
+  }
+
+  loadCategories(modal: any): void {
+    if (!this.selectedNewCategories.length) return;
+    this.submittingLoadCategories = true;
+
+    const categoryIds = this.selectedNewCategories
+      .map((c: any) => c?.categoryId)
+      .filter((id: any) => Number.isFinite(Number(id)))
+      .map((id: any) => Number(id));
+
+    if (!categoryIds.length) {
+      this.submittingLoadCategories = false;
+      return;
+    }
+
+    const payload: any = {
+      flow: 'jobview',
+      jobId: Number(this.jobid),
+      year: this.jobSummary?.processingYear,
+      location: { id: this.jobSummary?.locationId, jobLocationName: this.jobSummary?.location },
+      subLocation: { id: this.jobSummary?.subLocationId, jobSubLocationName: this.jobSummary?.subLocation },
+      shift: { id: this.jobSummary?.shiftId, shiftName: this.jobSummary?.shiftName },
+      category_ids: categoryIds,
+      originalBreakdownData: [],
+      breakdownData: []
+    };
+
+    localStorage.setItem('intialloadEntitlement', JSON.stringify(payload));
+    modal.dismiss();
+    this.router.navigate(['/settings/timeoff-configurations/intial-leave-entitlements/intial-load-entitlement-breakdown']);
+    this.submittingLoadCategories = false;
   }
 
    formatLabel(value: string): string {

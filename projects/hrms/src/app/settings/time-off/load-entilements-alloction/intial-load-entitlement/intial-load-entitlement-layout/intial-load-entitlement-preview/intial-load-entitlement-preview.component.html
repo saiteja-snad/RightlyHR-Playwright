@@ -155,7 +155,8 @@
                 <span>{{'Loading..'}}...</span>
             </div>
             }@else {
-            <span>{{'Entitle'|translate}}</span>
+            <span *ngIf="!carryforwarddata?.jobId">{{'Entitle'|translate}}</span>
+            <span *ngIf="carryforwarddata?.jobId">Load ({{ loadCategoriesCount }}) Categories</span>
             }
         </button>
     </div>

@@ -34,6 +34,12 @@ export class IntialLoadEntitlementPreviewComponent implements OnInit, OnDestroy 
   failedGradeEmployees: any[] = [];
   selectedEmployees: any[] = [];
   spinnerLoader= false;
+  get loadCategoriesCount(): number {
+    const breakdownData = Array.isArray(this.carryforwarddata?.breakdownData) ? this.carryforwarddata.breakdownData : [];
+    return breakdownData
+      .map((c: any) => c?.category_id ?? c?.categoryId ?? c?.id)
+      .filter((id: any) => !!id).length;
+  }
   constructor(private modalService: NgbModal, private conformationPopup: OpenModalService,
     private route: Router, private http: HttpService, private offcanvasService: NgbOffcanvas) { }
 
@@ -491,16 +497,22 @@ export class IntialLoadEntitlementPreviewComponent implements OnInit, OnDestroy 
       return;
     }
     this.spinnerLoader= true;
-    const body = this.buildCarryForwardPayload();
+    const body: any = this.buildCarryForwardPayload();
+    if (this.carryforwarddata?.jobId) body.jobId = this.carryforwarddata.jobId;
+    const isExistingJob = !!this.carryforwarddata?.jobId;
     this.http.postdata('LeaveEntitlementJobs/create-entitlement', body).subscribe({
       next: (res: any) => {
         this.modalService.dismissAll();
         // localStorage.setItem('carryForwardJobId', res?.data?.jobId.toString());
         // this.route.navigate(['/settings/timeoff-configurations/intial-leave-entitlements/intial-load-entitlement-execution']);
         this.spinnerLoader= false;
-        this.conformationPopup.openSuccessModal('Initial load entitlement job created successfully.');
+        this.conformationPopup.openSuccessModal(isExistingJob ? 'Categories loaded successfully.' : 'Initial load entitlement job created successfully.');
         setTimeout(() => {
-          this.route.navigate(['/settings/timeoff-configurations/load-entitlement/initial-load-entitlements']);
+          if (isExistingJob) {
+            this.route.navigate(['/settings/timeoff-configurations/jobview'], { queryParams: { id: this.carryforwarddata.jobId } });
+          } else {
+            this.route.navigate(['/settings/timeoff-configurations/load-entitlement/initial-load-entitlements']);
+          }
           localStorage.removeItem('intialloadEntitlement');
         }, 2000);
       
@@ -513,13 +525,19 @@ export class IntialLoadEntitlementPreviewComponent implements OnInit, OnDestroy 
   }
 
   skipped() {
-    const body = this.buildCarryForwardPayload();
+    const body: any = this.buildCarryForwardPayload();
+    if (this.carryforwarddata?.jobId) body.jobId = this.carryforwarddata.jobId;
+    const isExistingJob = !!this.carryforwarddata?.jobId;
     this.http.postdata('LeaveEntitlementJobs/create-entitlement', body).subscribe({
       next: (res: any) => {
         this.modalService.dismissAll();
-        this.conformationPopup.openSuccessModal('Initial load entitlement job created successfully.');
+        this.conformationPopup.openSuccessModal(isExistingJob ? 'Categories loaded successfully.' : 'Initial load entitlement job created successfully.');
         setTimeout(() => {
-          this.route.navigate(['/settings/timeoff-configurations/load-entitlement/initial-load-entitlements']);
+          if (isExistingJob) {
+            this.route.navigate(['/settings/timeoff-configurations/jobview'], { queryParams: { id: this.carryforwarddata.jobId } });
+          } else {
+            this.route.navigate(['/settings/timeoff-configurations/load-entitlement/initial-load-entitlements']);
+          }
           localStorage.removeItem('intialloadEntitlement');
         }, 2000);
         // localStorage.setItem('carryForwardJobId', res?.data?.jobId.toString());
@@ -546,6 +564,10 @@ export class IntialLoadEntitlementPreviewComponent implements OnInit, OnDestroy 
   }
 
   back() {
+    if (this.carryforwarddata?.flow === 'jobview' && this.carryforwarddata?.jobId) {
+      this.route.navigate(['/settings/timeoff-configurations/jobview'], { queryParams: { id: this.carryforwarddata.jobId } });
+      return;
+    }
     this.route.navigate(['/settings/timeoff-configurations/intial-leave-entitlements/intial-load-entitlement-breakdown'])
   }
 

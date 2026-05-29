@@ -1,13 +1,19 @@
 <div class="custom-main-component-container">
-  <!-- Header with Load Employees button -->
+  <!-- Header with Load Employees / Categories buttons -->
   <div class="d-flex justify-content-between align-items-center mb-3">
     <p class="component-header mb-0">Entitlement Details</p>
-    <button type="button" class="custom-btn btn-primary text-nowrap"
-      *ngIf="jobSummary?.jobType === 'Initial Load'"
-      [disabled]="newEmployees.length === 0"
-      (click)="openLoadEmployeesModal(loadEmployeesModal)">
-      <i class="bi bi-person-plus me-1"></i> Load Employees ({{ newEmployees.length }})
-    </button>
+    <div class="d-flex align-items-center gap-2" *ngIf="jobSummary?.jobType === 'Initial Load'">
+      <button type="button" class="custom-btn btn-primary text-nowrap"
+        [disabled]="newCategories.length === 0"
+        (click)="openLoadCategoriesModal(loadCategoriesModal)">
+        <i class="bi bi-plus-circle me-1"></i> Load Categories ({{ newCategories.length }})
+      </button>
+      <button type="button" class="custom-btn btn-primary text-nowrap"
+        [disabled]="newEmployees.length === 0"
+        (click)="openLoadEmployeesModal(loadEmployeesModal)">
+        <i class="bi bi-person-plus me-1"></i> Load Employees ({{ newEmployees.length }})
+      </button>
+    </div>
   </div>
   <!-- Top Info Card -->
   <div class="job-details-grid mb-4">
@@ -247,6 +253,56 @@
             </div>
           } @else {
             Load {{ selectedNewEmployees.length || '' }} Employee(s)
+          }
+        </button>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<!-- Load Categories Modal -->
+<ng-template #loadCategoriesModal let-modal>
+  <div class="custom-main-popup-container" ngbAutofocus>
+    <div class="custom-poup-header-content popup-header-border">
+      <div>
+        <p class="popup-heading mb-0">Load New Categories ({{ newCategories.length }} available)</p>
+      </div>
+      <div>
+        <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+      </div>
+    </div>
+    <div class="custom-main-popup-content">
+      <div class="mb-3">
+        <div class="custom-p-multiSelect-content">
+          <p-multiSelect
+            [options]="newCategories"
+            optionLabel="categoryName"
+            [(ngModel)]="selectedNewCategories"
+            [filter]="true"
+            filterBy="categoryName"
+            [showClear]="true"
+            [resetFilterOnHide]="true"
+            placeholder="Select categories to load"
+            filterPlaceHolder="Search category"
+            class="form-select custom-select w-100">
+            <ng-template let-cat pTemplate="item">
+              {{ cat.categoryName }}
+            </ng-template>
+          </p-multiSelect>
+        </div>
+      </div>
+      <div class="custom-modal-footer">
+        <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">Cancel</button>
+        <button type="submit" class="custom-btn btn-primary"
+          [disabled]="!selectedNewCategories.length || submittingLoadCategories"
+          (click)="loadCategories(modal)"> 
+          @if(submittingLoadCategories) {
+            <div class="button-loader-content">
+              <div class="spinner-border button-spinner text-light" role="status"></div>
+              <span>Loading...</span>
+            </div>
+          } @else {
+            Next
           }
         </button>
       </div>

@@ -134,7 +134,7 @@ export class SettingsHeaderComponent implements OnInit, OnDestroy {
     }
     else if (url.startsWith('/settings/employee-fields/expenes')) {
       this.moduleName = 'Employee Fields';
-      this.componentName = 'Expense Configurations';
+      this.componentName = 'Expense Type Configurations';
     }
     else if (url.startsWith('/settings/employee-fields/manage-dsts')) {
       this.moduleName = 'Employee Fields';

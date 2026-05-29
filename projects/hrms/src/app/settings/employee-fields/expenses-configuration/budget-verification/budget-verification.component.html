@@ -24,7 +24,7 @@
                         <td>{{exp.applicableFor}}</td>
                         <td class="text-center">{{exp.isMandatory ? 'Yes' : 'No'}}</td>
                         <td class="text-center">
-                            <div *ngIf="exp.description; else noDescription">
+                            <div *ngIf="exp.description && exp.description.trim() !== ''; else noDescription">
                                 <app-info-icon class="cursor" ngbPopover="{{ exp?.description}}" container="body">
                                 </app-info-icon>
                             </div>

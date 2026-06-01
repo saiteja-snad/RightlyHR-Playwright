@@ -20,10 +20,11 @@ import { ConfirmationIconComponent } from '../../../icons/confirmation-icon/conf
 import { IPhases } from '../../../Interfaces/project-management/phases.model';
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 import { ClientResourceTabComponent } from '../../../shared/project-management-tabs/client-resource-tab/client-resource-tab.component';
+import { PaginatorModule } from 'primeng/paginator';
 
 @Component({
   selector: 'app-client-resources',
-  imports: [CommonModule, ReactiveFormsModule, FormsModule, ClientResourceTabComponent, TranslateModule, NgbPopover,
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, ClientResourceTabComponent, TranslateModule, NgbPopover,PaginatorModule,
     DataLoaderContentComponent, Select, DateformatPipe, NoDataFoundComponent, ConfirmationIconComponent, InfoIconComponent],
   templateUrl: './client-resources.component.html',
   styleUrl: './client-resources.component.scss'
@@ -81,7 +82,18 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
   selectedResource: any;
   selectedRoleId: number = 0;
   selectedEntityRefId: number = 0;
-
+  // Pagination
+  page = 1;
+  pageSize = 10;
+  rows = 10;
+  collectionSize = 0;
+  first = 0;
+  options = [
+    { label: 10, value: 10 },
+    { label: 15, value: 15 },
+    { label: 20, value: 20 },
+    { label: 25, value: 25 }
+  ];
 
 
   constructor(private fb: FormBuilder, private modalService: NgbModal, public formValidation: FormValidationsService,
@@ -197,11 +209,24 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
     }
     statusEffectiveDateControl?.updateValueAndValidity();
   }
+   onPageSizeChange(newPageSize: number) {
+    this.pageSize = newPageSize;
+    this.rows = newPageSize;
+    this.page = 1;
+    this.first = 0;
+    this.getResourceData(this.clientID, this.searchValue);
+  }
 
+  onPageChange(event: any) {
+    this.page = event.page + 1;
+    this.pageSize = event.rows;
+    this.first = event.first;
+    this.getResourceData(this.clientID, this.searchValue);
+  }
 
 
   getResourceData(id: any, searchTerm?: string) {
-    let url = `ProjectResource?status=Active,assigned&entityType=Client&entityRefId=${id}&isProjectRequired=true&isGroupedByProject=true`;
+    let url = `ProjectResource?status=Active,assigned&entityType=Client&entityRefId=${id}&isProjectRequired=true&isGroupedByProject=true&pageNumber=${this.page}&pageSize=${this.pageSize}`;
     if (searchTerm) {
       url += `&searchTerm=${encodeURIComponent(searchTerm)}`;
     }
@@ -221,6 +246,7 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
       next: (data: any) => {
         if (data?.data?.length > 0) {
           this.resourcesData = data.data;
+          this.collectionSize = data.pagination.totalRecords || 0;
           this.filteredResourcesData = data.data;
         } else {
           this.resourcesData = [];

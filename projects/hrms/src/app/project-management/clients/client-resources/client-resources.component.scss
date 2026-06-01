@@ -1,10 +1,13 @@
-
 .custom-color {
   width: 60px !important;
 }
 
 .custom-table-content {
   height: calc(100vh - 12rem) !important;
+
+  &.has-data {
+    height: calc(100dvh - 18.25rem) !important;
+  }
 }
 
 .resource-right-content {

@@ -17,9 +17,10 @@ import { ConfirmationIconComponent } from "../../../icons/confirmation-icon/conf
 import { ActiveclientsPipe } from "../../../Pipes/activeclients.pipe";
 import { FormsModule } from '@angular/forms';
 import { ClientSideTabsComponent } from "../../../shared/project-management-tabs/client-side-tabs/client-side-tabs.component";
+import { PaginatorModule } from 'primeng/paginator';
 @Component({
   selector: 'app-active-clients',
-  imports: [CommonModule, FormsModule, ProjectManagementModuleInfoComponent, NoDataFoundComponent,
+  imports: [CommonModule, FormsModule, ProjectManagementModuleInfoComponent, NoDataFoundComponent,PaginatorModule,
     DataLoaderContentComponent, TranslateModule, ConfirmationIconComponent, ActiveclientsPipe, ClientSideTabsComponent],
   templateUrl: './active-clients.component.html',
   styleUrl: './active-clients.component.scss'
@@ -33,7 +34,18 @@ export class ActiveClientsComponent implements OnInit, OnDestroy {
   selectedClient: any;
   destroy$: Subject<boolean> = new Subject<boolean>();
   subscription!: Subscription;
-
+  // Pagination
+  page = 1;
+  pageSize = 10;
+  rows = 10;
+  collectionSize = 0;
+  first = 0;
+  options = [
+    { label: 10, value: 10 },
+    { label: 15, value: 15 },
+    { label: 20, value: 20 },
+    { label: 25, value: 25 }
+  ];
   constructor(private modalService: NgbModal, public rbac: RbacService, private http: HttpService, 
     public formValidation: FormValidationsService, private conformationPopup: OpenModalService, private router: Router) { }
 
@@ -43,10 +55,11 @@ export class ActiveClientsComponent implements OnInit, OnDestroy {
   }
 
   getClientsData(): void {
-    this.http.getData(`Client/GetAll?status=Active`).pipe(takeUntil(this.destroy$)).subscribe({
+    this.http.getData(`Client/GetAll?status=Active&pageNumber=${this.page}&pageSize=${this.pageSize}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.loading = false;
-        this.clients = Array.isArray(res?.data) ? res.data : [];
+        this.clients = Array.isArray(res?.data?.items) ? res.data?.items : [];
+        this.collectionSize = res?.data?.totalCount || 0;
         this.clients = this.clients.map((client: any) => ({
           ...client,
           logoUrl: this.getImageUrl(client.logoPath)
@@ -58,6 +71,21 @@ export class ActiveClientsComponent implements OnInit, OnDestroy {
         console.error('Error fetching clients:', err);
       }
     });
+  }
+
+   onPageSizeChange(newPageSize: number) {
+    this.pageSize = newPageSize;
+    this.rows = newPageSize;
+    this.page = 1;
+    this.first = 0;
+    this.getClientsData();
+  }
+
+  onPageChange(event: any) {
+    this.page = event.page + 1;
+    this.pageSize = event.rows;
+    this.first = event.first;
+    this.getClientsData();
   }
 
   getImageUrl(imagePath: string): string | null {

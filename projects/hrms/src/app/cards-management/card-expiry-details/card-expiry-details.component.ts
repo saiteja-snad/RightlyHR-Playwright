@@ -28,18 +28,19 @@ import { InfoIconComponent } from "../../icons/info-icon/info-icon.component";
 export class CardExpiryDetailsComponent implements OnInit, OnDestroy {
   hasPreviousPage!: Boolean;
   hasNextPage!: Boolean;
-  pageSize = 10;
-  pageNum = 1;
-  rows = 10;
-  collectionSize!: number;
-  searchQuery = '';
-  first = 0;
   totalRecords = 0;
+  // Pagination
+  pageNum = 1;
+  pageSize = 25;
+  rows = 25;
+  collectionSize = 0;
+  first = 0;
   options = [
-    { label: 10, value: 10 },
-    { label: 15, value: 15 },
-    { label: 20, value: 20 },
     { label: 25, value: 25 },
+    { label: 50, value: 50 },
+    { label: 75, value: 75 },
+    { label: 100, value: 100 },
+
   ];
   searchValue: any;
   loader: boolean = false;
@@ -54,8 +55,8 @@ export class CardExpiryDetailsComponent implements OnInit, OnDestroy {
   ];
   cardId!: number;
   destroy$: Subject<boolean> = new Subject<boolean>();
-  allocated_history=[] as any;
-  constructor(public http: HttpService,private readonly router: Router, private modalService: NgbModal, public rbac: RbacService, public formValidations: FormValidationsService) { }
+  allocated_history = [] as any;
+  constructor(public http: HttpService, private readonly router: Router, private modalService: NgbModal, public rbac: RbacService, public formValidations: FormValidationsService) { }
 
   ngOnInit(): void {
     this.getCardDetails();
@@ -118,7 +119,7 @@ export class CardExpiryDetailsComponent implements OnInit, OnDestroy {
         this.collectionSize = res.data.totalCount;
         this.hasNextPage = res.data.hasNextPage;
         this.hasPreviousPage = res.data.hasPreviousPage;
-        this.http.updateCount( res.data.status);
+        this.http.updateCount(res.data.status);
         this.loader = false;
       },
       error: (errormessage) => {
@@ -128,23 +129,23 @@ export class CardExpiryDetailsComponent implements OnInit, OnDestroy {
     });
   }
 
-   approverHistoryFunction(historydata:any,content:any){
+  approverHistoryFunction(historydata: any, content: any) {
     console.log(historydata)
     this.getallocatedhistory(historydata.cardId);
     this.modalService.open(content, { centered: true, size: 'xl', backdrop: 'static', keyboard: false });
-    
+
   }
-   navigateToAsset(deskid: any) {
+  navigateToAsset(deskid: any) {
     this.router.navigate(['/card-management/card-history'], { queryParams: { id: deskid } });
   }
-  getallocatedhistory(cardId:number) {
+  getallocatedhistory(cardId: number) {
     // CardAllocation?searchTerm=t&pageNumber=1&pageSize=100
     this.http.getData(`CardAllocation?cardId=${cardId}`)
       .pipe(takeUntil(this.destroy$)).subscribe({
         next: (res: any) => {
           // Transform data to include `employeeName`
-              this.allocated_history=res.data;
-              console.log(res)
+          this.allocated_history = res.data;
+          console.log(res)
         },
         error: (errormessage) => {
           console.log(errormessage);

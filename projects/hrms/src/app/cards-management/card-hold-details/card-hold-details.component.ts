@@ -30,19 +30,21 @@ import { InfoIconComponent } from "../../icons/info-icon/info-icon.component";
 export class CardHoldDetailsComponent implements OnInit, OnDestroy {
   hasPreviousPage!: Boolean;
   hasNextPage!: Boolean;
-  pageSize = 10;
+  // Pagination
   pageNum = 1;
-  rows = 10;
-  collectionSize!: number;
-  searchQuery = '';
+  pageSize = 25;
+  rows = 25;
+  collectionSize = 0;
   first = 0;
-  totalRecords = 0;
   options = [
-    { label: 10, value: 10 },
-    { label: 15, value: 15 },
-    { label: 20, value: 20 },
     { label: 25, value: 25 },
+    { label: 50, value: 50 },
+    { label: 75, value: 75 },
+    { label: 100, value: 100 },
+
   ];
+  searchQuery = '';
+
   searchValue: any;
   loader: boolean = false;
   cardDetails = [] as Icardsdetails[];

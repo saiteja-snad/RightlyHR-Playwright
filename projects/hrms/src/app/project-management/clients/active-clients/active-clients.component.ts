@@ -20,7 +20,7 @@ import { ClientSideTabsComponent } from "../../../shared/project-management-tabs
 import { PaginatorModule } from 'primeng/paginator';
 @Component({
   selector: 'app-active-clients',
-  imports: [CommonModule, FormsModule, ProjectManagementModuleInfoComponent, NoDataFoundComponent,PaginatorModule,
+  imports: [CommonModule, FormsModule, ProjectManagementModuleInfoComponent, NoDataFoundComponent, PaginatorModule,
     DataLoaderContentComponent, TranslateModule, ConfirmationIconComponent, ActiveclientsPipe, ClientSideTabsComponent],
   templateUrl: './active-clients.component.html',
   styleUrl: './active-clients.component.scss'
@@ -36,17 +36,18 @@ export class ActiveClientsComponent implements OnInit, OnDestroy {
   subscription!: Subscription;
   // Pagination
   page = 1;
-  pageSize = 10;
-  rows = 10;
+  pageSize = 25;
+  rows = 25;
   collectionSize = 0;
   first = 0;
   options = [
-    { label: 10, value: 10 },
-    { label: 15, value: 15 },
-    { label: 20, value: 20 },
-    { label: 25, value: 25 }
+    { label: 25, value: 25 },
+    { label: 50, value: 50 },
+    { label: 75, value: 75 },
+    { label: 100, value: 100 },
+
   ];
-  constructor(private modalService: NgbModal, public rbac: RbacService, private http: HttpService, 
+  constructor(private modalService: NgbModal, public rbac: RbacService, private http: HttpService,
     public formValidation: FormValidationsService, private conformationPopup: OpenModalService, private router: Router) { }
 
   ngOnInit(): void {
@@ -73,7 +74,7 @@ export class ActiveClientsComponent implements OnInit, OnDestroy {
     });
   }
 
-   onPageSizeChange(newPageSize: number) {
+  onPageSizeChange(newPageSize: number) {
     this.pageSize = newPageSize;
     this.rows = newPageSize;
     this.page = 1;

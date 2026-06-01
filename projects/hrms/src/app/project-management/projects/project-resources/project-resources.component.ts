@@ -20,10 +20,12 @@ import { FormValidationsService } from '../../../services/form-validations.servi
 import { IPhases } from '../../../Interfaces/project-management/phases.model';
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 import { ProjectResourceTabComponent } from "../../../shared/project-management-tabs/project-resource-tab/project-resource-tab.component";
+import { PaginatorModule } from 'primeng/paginator';
 
 @Component({
   selector: 'app-project-resources',
   imports: [CommonModule, ConfirmationIconComponent, TranslateModule, ReactiveFormsModule, FormsModule, DateformatPipe,
+    PaginatorModule,
     Select, DataLoaderContentComponent, NoDataFoundComponent, InfoIconComponent, NgbPopover, ProjectResourceTabComponent],
   templateUrl: './project-resources.component.html',
   styleUrl: './project-resources.component.scss'
@@ -81,6 +83,17 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
   projectMaxEndDate!: string;
   selectedResource: any;
   resourceName: any;
+  page = 1;
+  pageSize = 50;
+  rows = 50;
+  collectionSize = 0;
+  first = 0;
+  options = [
+    { label: 50, value: 50 },
+    { label: 100, value: 100 },
+    { label: 150, value: 150 },
+    { label: 200, value: 200 }
+  ];
   constructor(private router: Router, private fb: FormBuilder, public rbac: RbacService, private modalService: NgbModal,
     private http: HttpService, private route: ActivatedRoute, private conformationPopup: OpenModalService,
     public formValidation: FormValidationsService,) { }
@@ -94,7 +107,7 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
       if (projectId) {
         this.projectId = parseInt(projectId);
         this.getProjects(this.projectId)
-        this.getResourceData(this.projectId, undefined, false, this.searchValue);
+        this.getResourceData(this.projectId, undefined, false, this.searchValue, this.page, this.pageSize);
       }
     });
     this.getPhaseData();
@@ -322,12 +335,29 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
     return workingDays;
   }
 
-  getResourceData(projectId: number, phaseId?: number, isPopupCall: boolean = false, searchTerm?: string) {
+  onPageSizeChange(newPageSize: number) {
+    this.pageSize = newPageSize;
+    this.rows = newPageSize;
+    this.page = 1;
+    this.first = 0;
+    this.getResourceData(this.projectId, undefined, false, this.searchValue, this.page, this.pageSize);
+  }
+
+  onPageChange(event: any) {
+    this.page = event.page + 1;
+    this.pageSize = event.rows;
+    this.first = event.first;
+    this.getResourceData(this.projectId, undefined, false, this.searchValue, this.page, this.pageSize);
+  }
+
+  getResourceData(projectId: number, phaseId?: number, isPopupCall: boolean = false, searchTerm?: string, pageNumber?: number, pageSize?: number) {
 
     const params: any = {
       entityType: 'project',
       entityRefId: projectId,
-      status: 'active,assigned'
+      status: 'active,assigned',
+      pageNumber: pageNumber || this.page,
+      pageSize: pageSize || this.pageSize
     };
 
     if (phaseId) {
@@ -351,6 +381,7 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
     this.subscription = this.http.getDataIncludeParams('ProjectResource', params).subscribe({
       next: (data: any) => {
         this.loading = false;
+        this.collectionSize = data?.pagination?.totalRecords || 0;
         if (isPopupCall) {
           // DO NOT TOUCH TABLE DATA
           const popupData = data.data ?? [];
@@ -748,9 +779,9 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
 
     if (!config) return;
 
-      if (action === 'Update') {
+    if (action === 'Update') {
       const phaseDate = data?.phase;
-      if(phaseDate){
+      if (phaseDate) {
         this.projectStartDate = phaseDate.startDate ?? null;
         this.projectEndDate = phaseDate.endDate ?? null;
       }

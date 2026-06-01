@@ -60,18 +60,19 @@ export class HoldProjectsComponent implements OnInit, OnDestroy {
   clientDetails: any[] = [];
 
   // Pagination
+  // Pagination
   page = 1;
-  pageSize = 10;
-  rows = 10;
+  pageSize = 25;
+  rows = 25;
   collectionSize = 0;
   first = 0;
   options = [
-    { label: 10, value: 10 },
-    { label: 15, value: 15 },
-    { label: 20, value: 20 },
-    { label: 25, value: 25 }
-  ];
+    { label: 25, value: 25 },
+    { label: 50, value: 50 },
+    { label: 75, value: 75 },
+    { label: 100, value: 100 },
 
+  ];
   constructor(
     private router: Router,
     private http: HttpService,

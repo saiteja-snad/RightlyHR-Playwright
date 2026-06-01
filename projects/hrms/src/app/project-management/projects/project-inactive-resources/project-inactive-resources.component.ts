@@ -20,10 +20,11 @@ import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { DataLoaderContentComponent } from '../../../shared/data-loader-content/data-loader-content.component';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { ProjectResourceTabComponent } from "../../../shared/project-management-tabs/project-resource-tab/project-resource-tab.component";
+import { PaginatorModule } from 'primeng/paginator';
 @Component({
   selector: 'app-project-inactive-resources',
   imports: [CommonModule, ConfirmationIconComponent, TranslateModule, ReactiveFormsModule, FormsModule, DateformatPipe,
-    Select, DataLoaderContentComponent, NoDataFoundComponent, NgbPopover, InfoIconComponent, ProjectResourceTabComponent],
+    PaginatorModule, Select, DataLoaderContentComponent, NoDataFoundComponent, NgbPopover, InfoIconComponent, ProjectResourceTabComponent],
   templateUrl: './project-inactive-resources.component.html',
   styleUrl: './project-inactive-resources.component.scss'
 })
@@ -73,7 +74,17 @@ export class ProjectInactiveResourcesComponent {
   projectMinStartDate!: string;
   projectMaxEndDate!: string;
   selectedResource: any;
-
+  page = 1;
+  pageSize = 50;
+  rows = 50;
+  collectionSize = 0;
+  first = 0;
+  options = [
+    { label: 50, value: 50 },
+    { label: 100, value: 100 },
+    { label: 150, value: 150 },
+    { label: 200, value: 200 }
+  ];
   constructor(private router: Router, private fb: FormBuilder, public rbac: RbacService, private modalService: NgbModal,
     private http: HttpService, private route: ActivatedRoute, private conformationPopup: OpenModalService,
     public formValidation: FormValidationsService,) { }
@@ -87,7 +98,7 @@ export class ProjectInactiveResourcesComponent {
       if (projectId) {
         this.projectId = parseInt(projectId);
         this.getProjects(this.projectId)
-        this.getResourceData(this.projectId, undefined, false, this.searchValue);
+        this.getResourceData(this.projectId, undefined, false, this.searchValue, this.page, this.pageSize);
       }
     });
     this.getPhaseData();
@@ -268,11 +279,13 @@ export class ProjectInactiveResourcesComponent {
     return workingDays;
   }
 
-  getResourceData(projectId: number, phaseId?: number, isPopupCall: boolean = false, searchTerm?: string) {
+  getResourceData(projectId: number, phaseId?: number, isPopupCall: boolean = false, searchTerm?: string, pageNumber?: number, pageSize?: number) {
     const params: any = {
       entityType: 'project',
       entityRefId: projectId,
-      status: 'Released'
+      status: 'Released',
+      pageNumber: pageNumber || this.page,
+      pageSize: pageSize || this.pageSize
     };
     if (phaseId) {
       params.phaseId = phaseId;
@@ -293,6 +306,7 @@ export class ProjectInactiveResourcesComponent {
     this.subscription = this.http.getDataIncludeParams('ProjectResource', params).subscribe({
       next: (data: any) => {
         this.loading = false;
+                this.collectionSize = data?.pagination?.totalRecords || 0
         if (isPopupCall) {
           // DO NOT TOUCH TABLE DATA
           const popupData = data.data ?? [];
@@ -569,6 +583,20 @@ export class ProjectInactiveResourcesComponent {
     // this.router.navigate(['/project-management/clients/active'])
   }
 
+  onPageSizeChange(newPageSize: number) {
+    this.pageSize = newPageSize;
+    this.rows = newPageSize;
+    this.page = 1;
+    this.first = 0;
+    this.getResourceData(this.projectId, undefined, false, this.searchValue, this.page, this.pageSize);
+  }
+
+  onPageChange(event: any) {
+    this.page = event.page + 1;
+    this.pageSize = event.rows;
+    this.first = event.first;
+    this.getResourceData(this.projectId, undefined, false, this.searchValue, this.page, this.pageSize);
+  }
   getPhaseData() {
     const params = {
       projectId: this.projectId

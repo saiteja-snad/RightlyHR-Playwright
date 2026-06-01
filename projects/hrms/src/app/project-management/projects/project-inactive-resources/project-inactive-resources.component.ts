@@ -22,9 +22,10 @@ import { ProjectResourceTabComponent } from "../../../shared/project-management-
 import { environment } from '../../../../environments/environment';
 import { ProfileIconComponent } from "../../../icons/profile-icon/profile-icon.component";
 import { DateformatPipe } from '../../../pipes/dateformat.pipe';
+import { PaginatorModule } from 'primeng/paginator';
 @Component({
   selector: 'app-project-inactive-resources',
-  imports: [CommonModule, ConfirmationIconComponent, TranslateModule, ReactiveFormsModule, FormsModule, DateformatPipe,
+  imports: [CommonModule, ConfirmationIconComponent, TranslateModule, ReactiveFormsModule, FormsModule, DateformatPipe,PaginatorModule,
     Select, DataLoaderContentComponent, NoDataFoundComponent, NgbPopover, InfoIconComponent, ProjectResourceTabComponent, ProfileIconComponent],
   templateUrl: './project-inactive-resources.component.html',
   styleUrl: './project-inactive-resources.component.scss'
@@ -316,6 +317,7 @@ export class ProjectInactiveResourcesComponent {
     }
     this.subscription = this.http.getDataIncludeParams('ProjectResource', params).subscribe({
       next: (data: any) => {
+
         this.loading = false;
                 this.collectionSize = data?.pagination?.totalRecords || 0
         if (isPopupCall) {

@@ -38,12 +38,26 @@ import { InfoIconComponent } from '../../../icons/info-icon/info-icon.component'
 import { ProjectResourceTabComponent } from '../../../shared/project-management-tabs/project-resource-tab/project-resource-tab.component';
 import { environment } from '../../../../environments/environment';
 import { ProfileIconComponent } from "../../../icons/profile-icon/profile-icon.component";
+import { PaginatorModule } from 'primeng/paginator';
 
 @Component({
   selector: 'app-project-resources',
-  imports: [CommonModule, ConfirmationIconComponent, TranslateModule, ReactiveFormsModule, FormsModule, DateformatPipe,
-    PaginatorModule,
-    Select, DataLoaderContentComponent, NoDataFoundComponent, InfoIconComponent, NgbPopover, ProjectResourceTabComponent],
+  imports: [
+    CommonModule,
+    ConfirmationIconComponent,
+    TranslateModule,
+    ReactiveFormsModule,
+    FormsModule,
+    DateformatPipe,
+    Select,
+    DataLoaderContentComponent,
+    NoDataFoundComponent,
+    InfoIconComponent,
+    NgbPopover,
+    ProjectResourceTabComponent,
+    ProfileIconComponent,
+    PaginatorModule
+  ],
   templateUrl: './project-resources.component.html',
   styleUrl: './project-resources.component.scss',
 })
@@ -99,6 +113,8 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
   projectMaxEndDate!: string;
   selectedResource: any;
   resourceName: any;
+  spinnerLoader = false;
+  // Pagination
   page = 1;
   pageSize = 50;
   rows = 50;
@@ -109,10 +125,18 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
     { label: 100, value: 100 },
     { label: 150, value: 150 },
     { label: 200, value: 200 }
+
   ];
-  constructor(private router: Router, private fb: FormBuilder, public rbac: RbacService, private modalService: NgbModal,
-    private http: HttpService, private route: ActivatedRoute, private conformationPopup: OpenModalService,
-    public formValidation: FormValidationsService,) { }
+  constructor(
+    private router: Router,
+    private fb: FormBuilder,
+    public rbac: RbacService,
+    private modalService: NgbModal,
+    private http: HttpService,
+    private route: ActivatedRoute,
+    private conformationPopup: OpenModalService,
+    public formValidation: FormValidationsService,
+  ) { }
 
   ngOnInit() {
     this.initializeForms();
@@ -122,8 +146,9 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
       const projectId = params['id'];
       if (projectId) {
         this.projectId = parseInt(projectId);
-        this.getProjects(this.projectId)
+        this.getProjects(this.projectId);
         this.getResourceData(this.projectId, undefined, false, this.searchValue, this.page, this.pageSize);
+
       }
     });
     this.getPhaseData();
@@ -150,6 +175,8 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
             undefined,
             false,
             this.searchValue,
+            this.page,
+            this.pageSize
           );
         }
       });
@@ -497,7 +524,6 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
     }
     return workingDays;
   }
-
   onPageSizeChange(newPageSize: number) {
     this.pageSize = newPageSize;
     this.rows = newPageSize;
@@ -513,12 +539,19 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
     this.getResourceData(this.projectId, undefined, false, this.searchValue, this.page, this.pageSize);
   }
 
-  getResourceData(projectId: number, phaseId?: number, isPopupCall: boolean = false, searchTerm?: string, pageNumber?: number, pageSize?: number) {
-
+  getResourceData(
+    projectId: number,
+    phaseId?: number,
+    isPopupCall: boolean = false,
+    searchTerm?: string,
+    pageNumber?: number, pageSize?: number
+  ) {
     const params: any = {
       entityType: 'project',
       entityRefId: projectId,
-      status: 'active,assigned',
+      // status: 'active,assigned',
+      status:
+        this.inactiveStatus === 'inactive' ? 'released' : 'active,assigned',
       pageNumber: pageNumber || this.page,
       pageSize: pageSize || this.pageSize
     };
@@ -542,13 +575,18 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
         this.selectedAuthorityIds.join(',');
     }
 
-    this.subscription = this.http.getDataIncludeParams('ProjectResource', params).subscribe({
-      next: (data: any) => {
-        this.loading = false;
-        this.collectionSize = data?.pagination?.totalRecords || 0;
-        if (isPopupCall) {
-          // DO NOT TOUCH TABLE DATA
-          const popupData = data.data ?? [];
+    this.subscription = this.http
+      .getDataIncludeParams('ProjectResource', params)
+      .subscribe({
+        next: (data: any) => {
+          this.collectionSize = data?.pagination?.totalRecords || 0;
+          this.loading = false;
+          if (isPopupCall) {
+            // DO NOT TOUCH TABLE DATA
+            const popupData = data.data ?? [];
+            const uniqueEmployees = Array.from(
+              new Map(popupData.map((r: any) => [r.employee.id, r])).values(),
+            );
 
             this.resoucesDropDownData = uniqueEmployees.map((r: any) => ({
               label: `${r.employee.fusionEmployeeId} - ${r.employee.name}`,

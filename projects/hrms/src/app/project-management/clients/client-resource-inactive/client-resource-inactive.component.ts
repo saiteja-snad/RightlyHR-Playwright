@@ -22,9 +22,10 @@ import { ClientResourceTabComponent } from '../../../shared/project-management-t
 import { ProfileIconComponent } from "../../../icons/profile-icon/profile-icon.component";
 import { environment } from '../../../../environments/environment';
 import { DateformatPipe } from '../../../pipes/dateformat.pipe';
+import { PaginatorModule } from 'primeng/paginator';
 @Component({
   selector: 'app-client-resource-inactive',
-  imports: [CommonModule, ReactiveFormsModule, FormsModule, ClientResourceTabComponent, TranslateModule, NgbPopover, DataLoaderContentComponent,
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, ClientResourceTabComponent, TranslateModule, NgbPopover, DataLoaderContentComponent,PaginatorModule,
     Select, DateformatPipe, NoDataFoundComponent, ConfirmationIconComponent, InfoIconComponent, ProfileIconComponent],
   templateUrl: './client-resource-inactive.component.html',
   styleUrl: './client-resource-inactive.component.scss'

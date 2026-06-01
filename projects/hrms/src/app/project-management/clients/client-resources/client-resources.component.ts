@@ -38,6 +38,7 @@ import { InfoIconComponent } from '../../../icons/info-icon/info-icon.component'
 import { ClientResourceTabComponent } from '../../../shared/project-management-tabs/client-resource-tab/client-resource-tab.component';
 import { ProfileIconComponent } from "../../../icons/profile-icon/profile-icon.component";
 import { environment } from '../../../../environments/environment';
+import { PaginatorModule } from 'primeng/paginator';
 
 @Component({
   selector: 'app-client-resources',
@@ -54,7 +55,8 @@ import { environment } from '../../../../environments/environment';
     NoDataFoundComponent,
     ConfirmationIconComponent,
     InfoIconComponent,
-    ProfileIconComponent
+    ProfileIconComponent,
+    PaginatorModule
   ],
   templateUrl: './client-resources.component.html',
   styleUrl: './client-resources.component.scss',

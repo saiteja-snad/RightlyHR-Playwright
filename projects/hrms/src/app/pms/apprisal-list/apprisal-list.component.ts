@@ -73,12 +73,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
   allSubLocations: any[] = [];
   selectedEmployee: any;
 
-  page = 1;
-  pageSize = 10;
-  rows = 10;
-  searchQuery = '';
-  first = 0;
-  totalRecords = 0;
+
 
   modalRef!: NgbModalRef;
 
@@ -89,11 +84,17 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
     { label: 'No', value: false }
   ];
 
+  totalRecords = 0;
+  page = 1;
+  pageSize = 50;
+  rows = 50;
+  collectionSize = 0;
+  first = 0;
   options = [
-    { label: 10, value: 10 },
-    { label: 15, value: 15 },
-    { label: 20, value: 20 },
-    { label: 25, value: 25 }
+    { label: 50, value: 50 },
+    { label: 100, value: 100 },
+    { label: 150, value: 150 },
+    { label: 200, value: 200 }
   ];
 
   @ViewChild('loading') loading: any;

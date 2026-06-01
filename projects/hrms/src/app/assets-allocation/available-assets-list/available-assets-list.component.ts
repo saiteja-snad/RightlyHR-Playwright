@@ -29,11 +29,7 @@ export class AvailableAssetsListComponent {
   subscription!: Subscription;
   selectedLocationId: any;
   selectedSubLocationId: any;
-  page = 1;
-  pageSize = 10;
-  rows = 10;
-  collectionSize!: number;
-  first = 0;
+
   totalRecords = 0;
   loading = false;
   storeassetid: any
@@ -79,11 +75,16 @@ export class AvailableAssetsListComponent {
   formdate: any;
   selectedSubcategeoryname: any;
   selectedcatageoryname: any;
+   page = 1;
+  pageSize = 50;
+  rows = 50;
+  collectionSize = 0;
+  first = 0;
   options = [
-    { label: 10, value: 10 },
-    { label: 15, value: 15 },
-    { label: 20, value: 20 },
-    { label: 25, value: 25 }
+    { label: 50, value: 50 },
+    { label: 100, value: 100 },
+    { label: 150, value: 150 },
+    { label: 200, value: 200 }
   ];
 
   transitionsid: any;

@@ -51,15 +51,17 @@ export class MyKraKpiComponent implements OnInit, OnDestroy {
 
   searchText = '';
 
+  totalRecords = 0;
   page = 1;
-  rows = 10;
-  first = 0;
+  pageSize = 50;
+  rows = 50;
   collectionSize = 0;
-
+  first = 0;
   options = [
-    { label: '10', value: 10 },
-    { label: '20', value: 20 },
-    { label: '50', value: 50 },
+    { label: 50, value: 50 },
+    { label: 100, value: 100 },
+    { label: 150, value: 150 },
+    { label: 200, value: 200 }
   ];
 
   myKpiList: any[] = [];

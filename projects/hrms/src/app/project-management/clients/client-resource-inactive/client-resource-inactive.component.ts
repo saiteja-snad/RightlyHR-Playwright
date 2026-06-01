@@ -2,7 +2,7 @@ import { Component, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, ValidatorFn, AbstractControl, ValidationErrors, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { NgbModal, NgbPopover } from '@ng-bootstrap/ng-bootstrap';
-import {combineLatest,debounceTime, distinctUntilChanged ,Subscription, Subject, takeUntil } from 'rxjs';
+import { combineLatest, debounceTime, distinctUntilChanged, Subscription, Subject, takeUntil } from 'rxjs';
 import { IPhases } from '../../../Interfaces/project-management/phases.model';
 import { IResource } from '../../../Interfaces/project-management/resources.model';
 import { IEmployeeDetails } from '../../../letters/letters.modal';
@@ -37,7 +37,7 @@ export class ClientResourceInactiveComponent {
   selectedRoleIds: number[] = [];
   selectedPhaseIds: number[] = [];
   selectedAuthorityIds: number[] = [];
-  selectedProjectIds:number[] = [];
+  selectedProjectIds: number[] = [];
   resourcesDataByPhase = [] as IResource[];
   subscription!: Subscription;
   updateResourceForm!: FormGroup;
@@ -81,6 +81,18 @@ export class ClientResourceInactiveComponent {
   selectedResource: any;
   selectedRoleId: number = 0;
   selectedEntityRefId: number = 0;
+  // Pagination
+  page = 1;
+  pageSize = 50;
+  rows = 50;
+  collectionSize = 0;
+  first = 0;
+  options = [
+    { label: 50, value: 50 },
+    { label: 100, value: 100 },
+    { label: 150, value: 150 },
+    { label: 200, value: 200 }
+  ];
   constructor(private fb: FormBuilder, private modalService: NgbModal, public formValidation: FormValidationsService,
     private http: HttpService, public rbac: RbacService, private router: Router, private route: ActivatedRoute,
     private conformationPopup: OpenModalService) { }
@@ -175,8 +187,23 @@ export class ClientResourceInactiveComponent {
     });
   }
 
+
+  onPageSizeChange(newPageSize: number) {
+    this.pageSize = newPageSize;
+    this.rows = newPageSize;
+    this.page = 1;
+    this.first = 0;
+    this.getResourceData(this.clientID, this.searchValue);
+  }
+
+  onPageChange(event: any) {
+    this.page = event.page + 1;
+    this.pageSize = event.rows;
+    this.first = event.first;
+    this.getResourceData(this.clientID, this.searchValue);
+  }
   getResourceData(id: any, searchTerm?: string) {
-    let url = `ProjectResource?status=Released&entityType=Client&entityRefId=${id}&isProjectRequired=true&isGroupedByProject=true`;
+    let url = `ProjectResource?status=Released&entityType=Client&entityRefId=${id}&isProjectRequired=true&isGroupedByProject=true&pageNumber=${this.page}&pageSize=${this.pageSize}`;
     if (searchTerm) {
       url += `&searchTerm=${encodeURIComponent(searchTerm)}`;
     }
@@ -186,7 +213,7 @@ export class ClientResourceInactiveComponent {
     if (this.selectedPhaseIds.length > 0) {
       url += `&phaseId=${this.selectedPhaseIds.join(',')}`;
     }
-        if (this.selectedProjectIds.length > 0) {
+    if (this.selectedProjectIds.length > 0) {
       url += `&projectIds=${this.selectedProjectIds.join(',')}`;
     }
     if (this.selectedAuthorityIds.length > 0) {
@@ -232,50 +259,50 @@ getResourceDataByPhaseId(projectId: number, phaseId: number, isPopupCall: boolea
     entityRefId: projectId
   };
 
-  if (phaseId) {
-    params.phaseId = phaseId;
-  }
-
-  this.subscription = this.http.getDataIncludeParams('ProjectResource', params).subscribe({
-    next: (data: any) => {
-      if (isPopupCall) {
-        const popupData = data.data ?? [];
-        this.resoucesDropDownData = popupData
-          .filter((r: any) => r.employee)
-          .map((r: any) => ({
-            label: `${r.employee.fusionEmployeeId} - ${r.employee.name}`,
-            value: r.employee.id
-          }));
-        this.defaultPendingAuthorityId = popupData[0]?.pendingApprovalAuthority?.id ?? null;
-      } else {
-        this.resourcesDataByPhase = data.data ?? [];
-        this.resoucesDropDownData = this.resourcesDataByPhase
-          .filter(r => r.employee)
-          .map(r => ({
-            label: `${r.employee.fusionEmployeeId} - ${r.employee.name}`,
-            value: r.employee.id
-          }));
-        this.defaultPendingAuthorityId = this.resourcesDataByPhase[0]?.pendingApprovalAuthority?.id ?? null;
-      }
-
-      const authorityControl = this.updateResourceForm.get('resourceAuthority');
-      if (this.resoucesDropDownData.length === 0) {
-        authorityControl?.disable();
-        authorityControl?.reset();
-      } else {
-        authorityControl?.enable();
-        const hasExistingValue = authorityControl?.value;
-        if (!hasExistingValue && this.defaultPendingAuthorityId) {
-          authorityControl?.patchValue(this.defaultPendingAuthorityId);
-        }
-      }
-    },
-    error: (reason: any) => {
-      console.error(reason);
-      this.updateResourceForm.get('resourceAuthority')?.disable();
+    if (phaseId) {
+      params.phaseId = phaseId;
     }
-  });
-}
+
+    this.subscription = this.http.getDataIncludeParams('ProjectResource', params).subscribe({
+      next: (data: any) => {
+        if (isPopupCall) {
+          const popupData = data.data ?? [];
+          this.resoucesDropDownData = popupData
+            .filter((r: any) => r.employee)
+            .map((r: any) => ({
+              label: `${r.employee.fusionEmployeeId} - ${r.employee.name}`,
+              value: r.employee.id
+            }));
+          this.defaultPendingAuthorityId = popupData[0]?.pendingApprovalAuthority?.id ?? null;
+        } else {
+          this.resourcesDataByPhase = data.data ?? [];
+          this.resoucesDropDownData = this.resourcesDataByPhase
+            .filter(r => r.employee)
+            .map(r => ({
+              label: `${r.employee.fusionEmployeeId} - ${r.employee.name}`,
+              value: r.employee.id
+            }));
+          this.defaultPendingAuthorityId = this.resourcesDataByPhase[0]?.pendingApprovalAuthority?.id ?? null;
+        }
+
+        const authorityControl = this.updateResourceForm.get('resourceAuthority');
+        if (this.resoucesDropDownData.length === 0) {
+          authorityControl?.disable();
+          authorityControl?.reset();
+        } else {
+          authorityControl?.enable();
+          const hasExistingValue = authorityControl?.value;
+          if (!hasExistingValue && this.defaultPendingAuthorityId) {
+            authorityControl?.patchValue(this.defaultPendingAuthorityId);
+          }
+        }
+      },
+      error: (reason: any) => {
+        console.error(reason);
+        this.updateResourceForm.get('resourceAuthority')?.disable();
+      }
+    });
+  }
 
   projectStartDate!: string | null;
   projectEndDate!: string | null;
@@ -292,34 +319,34 @@ getResourceDataByPhaseId(projectId: number, phaseId: number, isPopupCall: boolea
     });
   }
 
-onPhaseChange(event: any) {
-  if (!event?.value) return;
+  onPhaseChange(event: any) {
+    if (!event?.value) return;
 
-  const selectedPhaseId = event.value;
-  const selectedPhase = this.phaseDropdown.find(p => p.value === selectedPhaseId);
+    const selectedPhaseId = event.value;
+    const selectedPhase = this.phaseDropdown.find(p => p.value === selectedPhaseId);
 
-  if (selectedPhase) {
-    this.selectedPhaseId = selectedPhase.value;
-    this.projectStartDate = selectedPhase.startDate ?? null;
-    this.projectEndDate = selectedPhase.endDate ?? null;
+    if (selectedPhase) {
+      this.selectedPhaseId = selectedPhase.value;
+      this.projectStartDate = selectedPhase.startDate ?? null;
+      this.projectEndDate = selectedPhase.endDate ?? null;
 
-    const phaseAuthority = selectedPhase?.pendingApprovalAuthority ?? null;
-    const authorityControl = this.updateResourceForm.get('resourceAuthority');
-    if (authorityControl) {
-      authorityControl.patchValue(phaseAuthority);
-      if (phaseAuthority) {
-        authorityControl.disable();
-      } else {
-        authorityControl.enable();
+      const phaseAuthority = selectedPhase?.pendingApprovalAuthority ?? null;
+      const authorityControl = this.updateResourceForm.get('resourceAuthority');
+      if (authorityControl) {
+        authorityControl.patchValue(phaseAuthority);
+        if (phaseAuthority) {
+          authorityControl.disable();
+        } else {
+          authorityControl.enable();
+        }
       }
+
+      this.updateResourceForm.get('startDate')?.updateValueAndValidity();
+      this.updateResourceForm.get('endDate')?.updateValueAndValidity();
+
+      this.getResourceDataByPhaseId(this.projectId, this.selectedPhaseId, true);
     }
-
-    this.updateResourceForm.get('startDate')?.updateValueAndValidity();
-    this.updateResourceForm.get('endDate')?.updateValueAndValidity();
-
-    this.getResourceDataByPhaseId(this.projectId, this.selectedPhaseId, true);
   }
-}
 
   onRoleChange(selectedValue: any) {
     if (selectedValue) {

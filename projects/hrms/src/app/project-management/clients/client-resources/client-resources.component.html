@@ -24,31 +24,17 @@
       />
     </div>
 
-    <div class="custom-table-content">
-      @if (!loading) {
-        <table class="w-100">
-          <thead>
-            <tr>
-              <th style="width: 50px; text-align: center">
-                <input
-                  type="checkbox"
-                  [checked]="
-                    resourcesData.length > 0 &&
-                    selectedResources.length > 0 &&
-                    selectedResources.length === resourcesData.length
-                  "
-                  [disabled]="resourcesData.length === 0"
-                  (change)="toggleAll($event)"
-                />
-              </th>
-              <!-- <th>Employee ID</th> -->
-              <th class="text-center">Profile</th>
-              <th>Name</th>
-              <th class="text-center">Phases / Milestones</th>
-              <th class="text-center">Project Code</th>
-              <!-- <th>Designation</th> -->
-              <th class="text-center">Role</th>
-              <!-- <th>Email</th>
+        <div class="custom-table-content" [ngClass]="{'has-data': resourcesData.length > 0}">
+            @if (!loading) {
+            <table class="w-100">
+                <thead>
+                    <!-- <th>Employee ID</th> -->
+                    <th>Name</th>
+                    <th class="text-center">Phases / Milestones</th>
+                    <th class="text-center">Project Code</th>
+                    <!-- <th>Designation</th> -->
+                    <th class="text-center">Role</th>
+                    <!-- <th>Email</th>
                     <th>Phone Number</th> -->
               <th>Project Assigned</th>
               <th class="text-center">Start Date</th>

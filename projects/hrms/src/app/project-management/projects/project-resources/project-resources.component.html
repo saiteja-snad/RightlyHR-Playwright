@@ -4,110 +4,58 @@
       <app-project-resource-tab />
     </div>
 
-    <div class="resource-right-content">
-      <ng-container *ngIf="loading; else maincontent">
-        <ng-template #loadingSpinner>
-          <div>
-            <app-data-loader-content />
-          </div>
-        </ng-template>
-        <ng-container *ngTemplateOutlet="loadingSpinner"></ng-container>
-      </ng-container>
+        <div class="resource-right-content">
 
-      <ng-template #maincontent>
-        <!--Input search-->
-        @if (selectedResources && selectedResources.length > 0) {
-        <div class="component-header-content">
-          <div class="component-sub-header">
-            Selected Records: {{ selectedResources.length }}
-          </div>
+            <!--Input search-->
+            <div class="input-group custom-search mb-3">
+                <span class="input-group-text custom-input-group-search" id="basic-addon1">
+                    <i class="bi bi-search"></i>
+                </span>
+                <input type="search" [(ngModel)]="searchValue" (ngModelChange)="onSearchChange()"
+                    class="form-control custom-search-input" placeholder="Search by employee name / phase name / role"
+                    aria-label="Search" aria-describedby="basic-addon1">
+            </div>
 
-          <div class="d-flex gap-3">
-            <button class="custom-btn btn-primary-approve" (click)="
-                  openReasonModal(
-                    'Are you sure you want to release the selected resources?',
-                    null
-                  )
-                ">
-              Release Resources
-            </button>
-          </div>
-        </div>
-        }
-        <div class="input-group custom-search mb-3">
-          <span class="input-group-text custom-input-group-search" id="basic-addon1">
-            <i class="bi bi-search"></i>
-          </span>
-          <input type="search" [(ngModel)]="searchValue" (ngModelChange)="onSearchChange()"
-            class="form-control custom-search-input" placeholder="Search by employee name / phase name / role"
-            aria-label="Search" aria-describedby="basic-addon1" />
-        </div>
+            <div class="custom-table-content" [ngClass]="{'has-data': resourcesData.length > 0}">
+                @if (!loading) {
+                <table class="w-100">
+                    <thead>
+                        <!-- <th>Employee ID</th> -->
+                        <th>Name</th>
+                        <th class="text-center">Phases / Milestones</th>
+                        <th class="text-center">Role</th>
+                        <th class="text-center">Start Date</th>
+                        <th class="text-center">End Date</th>
+                        <th class="text-center">Allocated Hours</th>
+                        <th>Timesheet Approval Authority</th>
+                        <th class="text-center">Status</th>
+                        @if((rbac.allowedToAccess('Resources Tab.update') || rbac.allowedToAccess('Resources Tab.delete'))
+                        && inactiveStatus !== 'inactive'){
+                        <th class="text-center">{{"Action" | translate}}</th>
+                        }
+                    </thead>
+                    <tbody>
+                        <ng-container *ngIf="(resourcesData?.length ?? 0) > 0; else noDataTemplate">
+                            <tr *ngFor="let data of resourcesData">
+                                <!-- <td>{{ data?.employee?.fusionEmployeeId || '-'}}</td> -->
+                                <td>{{ data?.employee?.name || '-' }}</td>
+                                <td class="text-center">{{ data?.phase?.phaseName || '-'}}</td>
+                                <td class="text-center">{{ data?.role || '-' }}</td>
+                                <td class="text-center">{{ data?.startDate ? (data.startDate | dateformat) : '-' }}
+                                </td>
+                                <td class="text-center">{{ data?.endDate ? (data.endDate | dateformat) : '-' }}</td>
+                                <td class="text-center">{{ data?.allocatedHours || '-' }}</td>
+                                <td>{{ data?.pendingApprovalAuthority?.name || '-' }}</td>
+                                <td class="text-center">
+                                    <div>
+                                        <span>{{ (data?.status | titlecase) || '-' }}</span>
 
-        <div class="custom-table-content">
-          @if (!loading) {
-          <table class="w-100">
-            <thead>
-              <tr>
-                <th style="width: 50px; text-align: center">
-                  <input type="checkbox" [checked]="
-                      resourcesData.length > 0 &&
-                      selectedResources.length > 0 &&
-                      selectedResources.length === resourcesData.length
-                    " [disabled]="resourcesData.length === 0" (change)="toggleAll($event)" />
-                </th>
-                <th class="text-center">Profile</th>
-                <th>Name</th>
-                <th class="text-center">Phases / Milestones</th>
-                <th class="text-center">Role</th>
-                <th class="text-center">Start Date</th>
-                <th class="text-center">End Date</th>
-                <th class="text-center">Allocated Hours</th>
-                <th>Timesheet Approval Authority</th>
-                <th class="text-center">Status</th>
-
-                @if (
-                !selectedResources.length &&
-                (rbac.allowedToAccess("Resources Tab.update") ||
-                rbac.allowedToAccess("Resources Tab.delete")) &&
-                inactiveStatus !== "inactive"
-                ) {
-                <th class="text-center">Action</th>
-                }
-              </tr>
-            </thead>
-            <tbody>
-              <ng-container *ngIf="(resourcesData?.length ?? 0) > 0; else noDataTemplate">
-                <tr *ngFor="let data of resourcesData">
-                  <!-- <td>{{ data?.employee?.fusionEmployeeId || '-'}}</td> -->
-                  <td style="text-align: center">
-                    <input type="checkbox" [checked]="selectedResources.includes(data)"
-                      (change)="onRowSelect(data, $event)" />
-                  </td>
-                  <td class="text-center">
-                    <img *ngIf="data.employee?.profileUrl; else defaultProfile"
-                      [src]="getImageUrl(data.employee.profileUrl)" alt="Profile" class="client-image" />
-                    <ng-template #defaultProfile>
-                      <app-profile-icon [iconWidth]="'35'" [iconHeight]="'35'"></app-profile-icon>
-                    </ng-template>
-                  </td>
-
-                  <td>{{ data?.employee?.name || "-" }}</td>
-                  <td class="text-center">
-                    {{ data?.phase?.phaseName || "-" }}
-                  </td>
-                  <td class="text-center">{{ data?.role || "-" }}</td>
-                  <td class="text-center">
-                    {{ data?.startDate ? (data.startDate | dateformat) : "-" }}
-                  </td>
-                  <td class="text-center">
-                    {{ data?.endDate ? (data.endDate | dateformat) : "-" }}
-                  </td>
-                  <td class="text-center">{{ data?.allocatedHours || "-" }}</td>
-                  <td>{{ data?.pendingApprovalAuthority?.name || "-" }}</td>
-                  <td class="text-center">
-                    <div>
-                      <span>{{ (data?.status | titlecase) || "-" }}</span>
-
+                                        <ng-container
+                                            *ngIf="data?.reason && data.status?.toLowerCase() !== 'active'; else noStatusReason">
+                                            <span type="button" [ngbPopover]="statusReasonPopover">
+                                                <app-info-icon />
+                                            </span>
+                                        </ng-container>
                       <ng-container *ngIf="
                           data?.reason &&
                             data.status?.toLowerCase() !== 'active';
@@ -121,24 +69,19 @@
                       <ng-template #noStatusReason></ng-template>
                     </div>
 
-                    <ng-template #statusReasonPopover>
-                      <p class="mb-0">{{ data.reason }}</p>
-                    </ng-template>
-                  </td>
-                  @if (
-                  rbac.allowedToAccess("Resources Tab.update") &&
-                  inactiveStatus !== "inactive"
-                  ) {
-                  <td class="text-center" *ngIf="
-                        !selectedResources.length &&
-                          data.status.toLowerCase() !== 'released';
-                        else noActions
-                      ">
-                    <div class="dropdown">
-                      <a data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="bi bi-three-dots-vertical"></i>
-                      </a>
-                      <!-- <ul class="dropdown-menu custom-dropdown-menu">
+                                    <ng-template #statusReasonPopover>
+                                        <p class="mb-0">{{ data.reason }}</p>
+                                    </ng-template>
+                                </td>
+                                @if((rbac.allowedToAccess('Resources Tab.update'))
+                                && inactiveStatus !== 'inactive'){
+                                <td class="text-center"
+                                    *ngIf="data.status.toLowerCase() !== 'released'; else noActions">
+                                    <div class="dropdown">
+                                        <a data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="bi bi-three-dots-vertical"></i>
+                                        </a>
+                                        <!-- <ul class="dropdown-menu custom-dropdown-menu">
                                                 @if(rbac.allowedToAccess('Resources Tab.update')){
                                                 <li>
                                                     <a class="dropdown-item" (click)="openModal(updateResourcemodal,'lg',data)">
@@ -152,37 +95,54 @@
                                                 </li>
                                                 }
                                             </ul> -->
-                      <ul class="dropdown-menu custom-dropdown-menu">
-                        <li *ngFor="
-                              let action of getActionsByStatus(data.status)
-                            ">
-                          <a class="dropdown-item" (click)="handleAction(action, data)">
-                            <i class="bi me-2" [ngClass]="getActionIcon(action)"></i>
-                            {{ action }}
-                          </a>
-                        </li>
-                      </ul>
+                                        <ul class="dropdown-menu custom-dropdown-menu">
+                                            <li *ngFor="let action of getActionsByStatus(data.status)">
+                                                <a class="dropdown-item" (click)="handleAction(action, data)">
+                                                    <i class="bi me-2" [ngClass]="getActionIcon(action)"></i>
+                                                    {{ action }}
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </td>
+                                <ng-template #noActions>
+                                    <td class="text-center text-muted">-</td>
+                                </ng-template>
+                                }
+                            </tr>
+                        </ng-container>
+                        <ng-template #noDataTemplate>
+                            <tr>
+                                <app-no-data-found />
+                            </tr>
+                        </ng-template>
+                    </tbody>
+                </table>
+                }
+                @else {
+                <app-data-loader-content />
+                }
+            </div>
+            <!-- Pagination -->
+            <div class="pagination-content" *ngIf="resourcesData.length > 0">
+                <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
+                    <div class="d-flex align-items-center gap-3 p-2">
+                        <select title="text" class="form-select custom-pagination-select" [(ngModel)]="rows"
+                            (ngModelChange)="onPageSizeChange($event)">
+                            <option *ngFor="let option of options" [value]="option.value">{{ option.label }}
+                            </option>
+                        </select>
+                        <span class="pagination-label text-nowrap">
+                            Showing {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize :
+                            (+first + +rows) }} of {{ collectionSize }}
+                        </span>
                     </div>
-                  </td>
-                  <ng-template #noActions></ng-template>
-                  }
-                </tr>
-              </ng-container>
-              <ng-template #noDataTemplate>
-                <tr>
-                  <app-no-data-found />
-                </tr>
-              </ng-template>
-            </tbody>
-          </table>
-          }
-          @else {
-          <app-data-loader-content />
-          }
+                    <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"
+                        (onPageChange)="onPageChange($event)"></p-paginator>
+                </div>
+            </div>
         </div>
-      </ng-template>
     </div>
-  </div>
 </div>
 
 <!--Update Popup-->
@@ -506,18 +466,16 @@
         <p class="confirmation-text">{{ modalData?.title }}</p>
       </div>
 
-      <div class="mb-3 mt-3" *ngIf="modalData?.title?.includes('release')">
-        <label for="statusEffectiveDate" class="form-label custom-label mb-2">Effective Date<span
-            class="error-msg">*</span></label>
-        <input type="date" id="statusEffectiveDate" [min]="resourcestartdate | date: 'yyyy-MM-dd'"
-          formControlName="statusEffectiveDate" class="form-control custom-input" [disabled]="spinnerLoader" />
-        <div class="error-msg" *ngIf="
-            reasonForm.get('statusEffectiveDate')?.touched &&
-            reasonForm.get('statusEffectiveDate')?.invalid
-          ">
-          Effective Date is required
-        </div>
-      </div>
+            <div class="mb-3 mt-3" *ngIf="modalData?.title?.includes('release')">
+                <label for="statusEffectiveDate" class="form-label custom-label mb-2">Effective Date<span
+                        class="error-msg">*</span></label>
+                <input type="date" id="statusEffectiveDate" [min]="resourcestartdate | date:'yyyy-MM-dd'"
+                    formControlName="statusEffectiveDate" class="form-control custom-input" />
+                <div class="error-msg"
+                    *ngIf="reasonForm.get('statusEffectiveDate')?.touched && reasonForm.get('statusEffectiveDate')?.invalid">
+                    Effective Date is required
+                </div>
+            </div>
 
       <div class="mb-3" [ngClass]="{ 'mt-3': !modalData?.title?.includes('release') }">
         <label class="form-label custom-label mb-2">Reason<span class="error-msg">*</span></label>

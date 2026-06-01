@@ -72,18 +72,19 @@ export class KpiComponent implements OnInit, OnDestroy {
   dataload = false;
   isSubmitting = false;
 
-  page = 1;
-  rows = 10;
-  first = 0;
-  collectionSize = 0;
 
   allKpiRecords: any[] = [];
-
+  totalRecords = 0;
+  page = 1;
+  pageSize = 50;
+  rows = 50;
+  collectionSize = 0;
+  first = 0;
   options = [
-    { label: 10, value: 10 },
-    { label: 15, value: 15 },
-    { label: 20, value: 20 },
-    { label: 25, value: 25 },
+    { label: 50, value: 50 },
+    { label: 100, value: 100 },
+    { label: 150, value: 150 },
+    { label: 200, value: 200 }
   ];
 
   // Dropdown options

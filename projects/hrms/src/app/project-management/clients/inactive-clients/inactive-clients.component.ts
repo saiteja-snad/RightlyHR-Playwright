@@ -34,15 +34,16 @@ export class InactiveClientsComponent implements OnInit {
   destroy$: Subject<boolean> = new Subject<boolean>();
   // Pagination
   page = 1;
-  pageSize = 10;
-  rows = 10;
+  pageSize = 25;
+  rows = 25;
   collectionSize = 0;
   first = 0;
   options = [
-    { label: 10, value: 10 },
-    { label: 15, value: 15 },
-    { label: 20, value: 20 },
-    { label: 25, value: 25 }
+    { label: 25, value: 25 },
+    { label: 50, value: 50 },
+    { label: 75, value: 75 },
+    { label: 100, value: 100 },
+
   ];
   constructor(private modalService: NgbModal, private route: ActivatedRoute, private http: HttpService,
     public formValidation: FormValidationsService, private conformationPopup: OpenModalService, private router: Router) { }

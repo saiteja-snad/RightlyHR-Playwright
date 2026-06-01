@@ -31,5 +31,8 @@ export default [
     },
     {
         path: 'task-type', loadComponent: () => import('./project-management/task-type/task-type.component').then(m => m.TaskTypeComponent), canActivate: [PermissionsGuard], data: { permission: 'Task Type.view' },
+    },
+    {
+        path: 'timesheet-configurations', loadComponent: () => import('./project-management/timesheet-configurations/timesheet-configurations.component').then(m => m.TimesheetConfigurationsComponent), canActivate: [PermissionsGuard], data: { permission: 'Timesheet Configurations.view' },
     }
 ]

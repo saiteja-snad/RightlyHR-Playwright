@@ -14,7 +14,7 @@ import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-foun
 import { filter, Subscription } from 'rxjs';
 import { IPolicyAcknowledgementReports } from './policy-acknowledgement-report';
 import * as XLSX from 'xlsx-js-style';
-import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
+import { DateformatPipe } from "../../../pipes/dateformat.pipe";
 import { MODULE_INFOS } from '../../../shared/modules-info';
 import { NgbOffcanvas, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import dayjs from 'dayjs';

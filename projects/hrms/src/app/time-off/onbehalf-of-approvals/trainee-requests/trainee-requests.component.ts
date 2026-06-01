@@ -8,7 +8,7 @@ import { OpenModalService } from '../../../services/open-modal.service';
 import { RbacService } from '../../../services/rbac.service';
 import { AuthService } from '../../../services/auth.service';
 import { FormValidationsService } from '../../../services/form-validations.service';
-import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
+import { DateformatPipe } from '../../../pipes/dateformat.pipe';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { DataLoaderContentComponent } from '../../../shared/data-loader-content/data-loader-content.component';
 import { InfoIconComponent } from '../../../icons/info-icon/info-icon.component';

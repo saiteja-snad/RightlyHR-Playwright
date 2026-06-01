@@ -14,7 +14,7 @@ import { LettersheaderComponent } from "../../../shared/letters-shared-content/l
 import { LetterFooterComponent } from "../../../shared/letters-shared-content/letter-footer/letter-footer.component";
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
-import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
+import { DateformatPipe } from "../../../pipes/dateformat.pipe";
 import { ConfirmationIconComponent } from "../../../icons/confirmation-icon/confirmation-icon.component";
 import { IEmployeeIdentity } from '../../../letters/appointment-letter/appointment-letter-model';
 

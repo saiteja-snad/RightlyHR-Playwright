@@ -7,7 +7,7 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 import { OpenModalService } from '../../../../services/open-modal.service';
 import { HttpService } from '../../../../services/http.service';
 import { NoDataFoundComponent } from "../../../../shared/no-data-found/no-data-found.component";
-import { DateformatPipe } from "../../../../Pipes/dateformat.pipe";
+import { DateformatPipe } from "../../../../pipes/dateformat.pipe";
 import { CommonModule } from '@angular/common';
 import { DropdownModule } from 'primeng/dropdown';
 import { ExpenseApprovalResponse } from '../../../../Interfaces/timoff-model';
@@ -19,7 +19,7 @@ import { RbacService } from '../../../../services/rbac.service';
 import { noWhitespaceValidator } from '../../../../shared/nowhitespace/nowhitespace.component';
 import { IExpenseHeaders } from '../../../../Interfaces/claimsandexpenses.model';
 import { SignalsService } from '../../../../services/signals.service';
-import { SearchfordeskPipe } from "../../../../Pipes/searchfordesk.pipe";
+import { SearchfordeskPipe } from "../../../../pipes/searchfordesk.pipe";
 import { InfoIconComponent } from "../../../../icons/info-icon/info-icon.component";
 import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
 import { FormValidationsService } from '../../../../services/form-validations.service';

@@ -10,7 +10,7 @@ import { Router } from '@angular/router';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { FormBuilder } from '@angular/forms';
 import { AuthService } from '../../../services/auth.service';
-import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
+import { DateformatPipe } from "../../../pipes/dateformat.pipe";
 import { LastValuePipe } from "../../../Pipes/last-value/last-value.pipe";
 import { PromotionLetterAcknowedgementComponent } from "../promotion-letter-acknowedgement/promotion-letter-acknowedgement.component";
 import { AppointmentLetterAcknowledgementComponent } from "../appointment-letter-acknowledgement/appointment-letter-acknowledgement.component";

@@ -10,7 +10,7 @@ import { RbacService } from '../../../../services/rbac.service';
 import { NoDataFoundComponent } from '../../../../shared/no-data-found/no-data-found.component';
 import { BehaviorSubject, Subject, takeUntil } from 'rxjs';
 import { IWfhAllocationViewModel } from '../wfh-allocation-view/wfh-allocation-view-model';
-import { DateformatPipe } from '../../../../Pipes/dateformat.pipe';
+import { DateformatPipe } from '../../../../pipes/dateformat.pipe';
 import { DataLoaderContentComponent } from '../../../../shared/data-loader-content/data-loader-content.component';
 import { Paginator } from 'primeng/paginator';
 import { InfoIconComponent } from "../../../../icons/info-icon/info-icon.component";

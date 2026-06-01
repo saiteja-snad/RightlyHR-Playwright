@@ -19,7 +19,7 @@ import { DropdownModule } from 'primeng/dropdown';
 import { InfoIconComponent } from '../../../../icons/info-icon/info-icon.component';
 import { DataLoaderContentComponent } from '../../../../shared/data-loader-content/data-loader-content.component';
 import { NoDataFoundComponent } from '../../../../shared/no-data-found/no-data-found.component';
-import { DateformatPipe } from '../../../../Pipes/dateformat.pipe';
+import { DateformatPipe } from '../../../../pipes/dateformat.pipe';
 
 @Component({
   selector: 'app-remote-login-for-you-request',

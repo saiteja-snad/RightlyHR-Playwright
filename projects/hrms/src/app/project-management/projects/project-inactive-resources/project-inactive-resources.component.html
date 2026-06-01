@@ -71,44 +71,7 @@
                                 </td>
                                 <td class="text-center">{{ data?.statusEffectiveDate ? (data.statusEffectiveDate |
                                     dateformat) : '-' }}</td>
-                                <!-- @if((rbac.allowedToAccess('Resources Tab.update'))
-                                && inactiveStatus !== 'inactive'){
-                                <td class="text-center"
-                                    *ngIf="data.status.toLowerCase() !== 'released'; else noActions">
-                                    <div class="dropdown">
-                                        <a data-bs-toggle="dropdown" aria-expanded="false">
-                                            <i class="bi bi-three-dots-vertical"></i>
-                                        </a>
-                                        <ul class="dropdown-menu custom-dropdown-menu">
-                                        @if(rbac.allowedToAccess('Resources Tab.update')){
-                                        <li>
-                                            <a class="dropdown-item" (click)="openModal(updateResourcemodal,'lg',data)">
-                                                <i class="bi bi-pencil me-2"></i>Update
-                                            </a>
-                                        </li>
-                                        }
-                                        @if(rbac.allowedToAccess('Resources Tab.delete')){
-                                        <li (click)="openModal(deleteconformation,'m',data)">
-                                            <a class="dropdown-item">
-                                                <i class="bi bi-trash me-2"></i>Delete
-                                            </a>
-                                        </li>
-                                        }
-                                    </ul>
-                                        <ul class="dropdown-menu custom-dropdown-menu">
-                                            <li *ngFor="let action of getActionsByStatus(data.status)">
-                                                <a class="dropdown-item" (click)="handleAction(action, data)">
-                                                    <i class="bi me-2" [ngClass]="getActionIcon(action)"></i> {{ action
-                                                    }}
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </td>
-                                <ng-template #noActions>
-                                    <td class="text-center text-muted">-</td>
-                                </ng-template>
-                                } -->
+                               
                             </tr>
                         </ng-container>
                         <ng-template #noDataTemplate>

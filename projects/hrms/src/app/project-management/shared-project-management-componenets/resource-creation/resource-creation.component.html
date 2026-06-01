@@ -352,10 +352,10 @@
 
                 <div class=" d-flex gap-3 align-items-end justify-content-end">
                   <button type="button" class="custom-btn btn-primary" (click)="onRowSave(i); $event.stopPropagation()"
-                    [disabled]="row.get('saved')?.value || (row.invalid && editingEmployeeId === null)">
+                    [disabled]="row.get('saved')?.value || (row.invalid && editingEmployeeId === null) || spinnerLoader">
                     {{ editingEmployeeId !== null ? 'Update' : 'Add' }}
                   </button>
-                  <app-circular-delete *ngIf="editingEmployeeId !== null" class="cursor"
+                  <app-circular-delete *ngIf="editingEmployeeId !== null || spinnerLoader" class="cursor"
                     (click)="removeResource(i); $event.stopPropagation()"></app-circular-delete>
                 </div>
               </div>

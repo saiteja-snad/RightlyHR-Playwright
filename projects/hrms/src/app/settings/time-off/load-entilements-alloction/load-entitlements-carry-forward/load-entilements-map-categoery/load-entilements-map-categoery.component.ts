@@ -41,7 +41,7 @@ export class LoadEntilementsMapCategoeryComponent implements OnInit, OnDestroy {
     this.nextYear = this.currentYear + 1;
     this.http.getData(`OrgLeavesCategories?locationId=${carryforwarddata.location.id}&subLocationId=${carryforwarddata.subLocation.id}&year=${this.nextYear}&status=Published&shiftId=${carryforwarddata.shift.id}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
-        this.nextYearData = res.filter((x: any) => x.encashAllowedType || x.carryForwardAllowed);
+        this.nextYearData = res;
       }
     });
   }

@@ -48,6 +48,10 @@ export class CarryForwardLeaveEntitlementComponent {
   destroy$: Subject<boolean> = new Subject<boolean>();
   constructor(private http: HttpService, private fb: FormBuilder, public router: Router, private offcanvasService: NgbOffcanvas, private conformationPopup: OpenModalService) { }
 
+  get showActionColumn(): boolean {
+    return Array.isArray(this.jobData) && this.jobData.some((x: any) => x?.requiresRetry === true);
+  }
+
   ngOnInit(): void {
     this.getdatacarryforword();
     this.initializefilter();

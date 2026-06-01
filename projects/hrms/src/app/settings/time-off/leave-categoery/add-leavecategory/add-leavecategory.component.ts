@@ -75,6 +75,17 @@ export class AddLeavecategoryComponent {
     { label: 'Different Category', value: 'different_category' },
     { label: 'Both', value: 'both' }
   ];
+  frequencyTypes = [
+    { label: 'Monthly', value: 'MONTHLY' },
+    { label: 'Quarterly', value: 'QUARTERLY' },
+    { label: 'Half Yearly', value: 'HALF_YEARLY' },
+    { label: 'Yearly', value: 'YEARLY' },
+  ];
+  cycleHandlingOptions = [
+    { label: 'Frozen', value: 'FROZEN' },
+    { label: 'Carry Forward', value: 'CARRY_FORWARD' },
+    { label: 'Lapsed', value: 'LAPSED' },
+  ];
   shiftsArray = [] as any[];
   leaveTypes : ILetterType[] = [];
   destroy$: Subject<boolean> = new Subject<boolean>();
@@ -130,7 +141,7 @@ export class AddLeavecategoryComponent {
       encashAllowedValue: [{ value: null, disabled: true }, [this.dependentRequiredValidator('encashAllowedType'),]],
       // Notice Period
       noticeperiodAllowedType: [undefined, Validators.required],
-      noticePeriodAllowedValue: [{ value: null, disabled: true }, [this.dependentRequiredValidator('noticeperiodAllowedType'),]],
+      noticePeriodAllowedValue: [{ value: null, disabled: true }, [this.dependentRequiredValidator('noticeperiodAllowedType')]],
       noticePeriodFrequencyType: [{ value: null, disabled: true }],
       // Probation Period
       isProbationAllowed: [undefined, Validators.required],
@@ -153,7 +164,11 @@ export class AddLeavecategoryComponent {
       sandwichCalculationBasis: [null],
       sandwichApplicabilityCondition: [null],
       adjacentLeaveTypeRule: [null],
-      extendLastWorkingDay:[null]
+      extendLastWorkingDay:[null],
+      // Entitlement Frequency
+      entitlementFrequency: [null, Validators.required],
+      entitlementCycleHandling: [null, Validators.required],
+      allowPastCycleApplication: [null, Validators.required],
     });
     this.setupDependentFieldListeners();
     this.syncGapCalculationBasis();
@@ -375,7 +390,7 @@ export class AddLeavecategoryComponent {
       const typeControl = this.leavePolicyForm.get('noticePeriodFrequencyType');
       if (value) {
         daysControl?.enable();
-        daysControl?.setValidators([Validators.required, Validators.min(1)]);
+        daysControl?.setValidators([Validators.required, Validators.min(0.5)]);
         typeControl?.enable();
         typeControl?.setValidators([Validators.required]);
       } else {
@@ -394,7 +409,7 @@ export class AddLeavecategoryComponent {
       const typeControl = this.leavePolicyForm.get('probationFrequencyType');
       if (value) {
         daysControl?.enable();
-        daysControl?.setValidators([Validators.required, Validators.min(1)]);
+        daysControl?.setValidators([Validators.required, Validators.min(0.5)]);
         typeControl?.enable();
         typeControl?.setValidators([Validators.required]);
       } else {
@@ -494,6 +509,22 @@ export class AddLeavecategoryComponent {
       includeHolidaysControl?.updateValueAndValidity();
     });
        
+    this.leavePolicyForm?.get('entitlementFrequency')?.valueChanges.subscribe((value: any) => {
+      const cycleCtrl = this.leavePolicyForm.get('entitlementCycleHandling');
+      const pastCycleCtrl = this.leavePolicyForm.get('allowPastCycleApplication');
+      if (value === 'YEARLY') {
+        cycleCtrl?.clearValidators();
+        cycleCtrl?.setValue(null);
+        pastCycleCtrl?.clearValidators();
+        pastCycleCtrl?.setValue(null);
+      } else {
+        cycleCtrl?.setValidators([Validators.required]);
+        pastCycleCtrl?.setValidators([Validators.required]);
+      }
+      cycleCtrl?.updateValueAndValidity();
+      pastCycleCtrl?.updateValueAndValidity();
+    });
+
     // Update published categories when location/sublocation/year/shift changes
     this.leavePolicyForm?.get('applicableYear')?.valueChanges.subscribe(() => this.updatePublishedCategories());
     this.leavePolicyForm?.get('locationID')?.valueChanges.subscribe(() => this.updatePublishedCategories());
@@ -665,6 +696,9 @@ export class AddLeavecategoryComponent {
       sandwichCalculationBasis: this.leavePolicyForm.value.sandwichCalculationBasis,
       sandwichApplicabilityCondition: this.leavePolicyForm.get('sandwichApplicabilityCondition')?.value,
       adjacentLeaveTypeRule: this.leavePolicyForm.value.adjacentLeaveTypeRule,
+      entitlementFrequency: this.leavePolicyForm.value.entitlementFrequency,
+      entitlementCycleHandling: this.leavePolicyForm.value.entitlementCycleHandling,
+      allowPastCycleApplication: this.leavePolicyForm.value.allowPastCycleApplication,
       addedBy: this.empinfo.employeeId,
       lastModifiedBy: this.empinfo.employeeId,
       status: "Pending for submission",

@@ -46,6 +46,9 @@ export class IntialLoadEntitlementBreakdownComponent implements OnInit, OnDestro
 
   private loadBreakdown(): void {
     const { location, subLocation, shift, year } = this.carryforwarddata;
+    const categoryIds: number[] = Array.isArray(this.carryforwarddata?.category_ids)
+      ? this.carryforwarddata.category_ids.map((x: any) => Number(x)).filter((x: any) => Number.isFinite(x))
+      : [];
     if (!shift?.id || !location?.id || !subLocation?.id || !year) return;
 
     // restore from cache only if scope matches
@@ -63,12 +66,13 @@ export class IntialLoadEntitlementBreakdownComponent implements OnInit, OnDestro
     }
 
     // no cache — call API fresh
-    const payload = {
+    const payload: any = {
       year,
       location_id: location.id,
       sub_location_id: subLocation.id,
       shift_id: shift.id
     };
+    if (categoryIds.length) payload.category_ids = categoryIds;
     this.breakdownLoader = true;
     this.http.postdata('OrgLeavesCategories/leave-entitlement-breakdown', payload).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
@@ -488,6 +492,10 @@ export class IntialLoadEntitlementBreakdownComponent implements OnInit, OnDestro
   }
 
   back(): void {
+    if (this.carryforwarddata?.flow === 'jobview' && this.carryforwarddata?.jobId) {
+      this.route.navigate(['/settings/timeoff-configurations/jobview'], { queryParams: { id: this.carryforwarddata.jobId } });
+      return;
+    }
     this.route.navigate(['/settings/timeoff-configurations/intial-leave-entitlements/intial-load-entitlement-create']);
   }
 

@@ -71,6 +71,17 @@ export class CloneLeavecategoryComponent {
     { label: 'From Leave Start Date', value: 'start_date' },
        { label: 'From Leave End Date', value: 'end_date' },
   ];
+  frequencyTypes = [
+    { label: 'Monthly', value: 'MONTHLY' },
+    { label: 'Quarterly', value: 'QUARTERLY' },
+    { label: 'Half Yearly', value: 'HALF_YEARLY' },
+    { label: 'Yearly', value: 'YEARLY' },
+  ];
+  cycleHandlingOptions = [
+    { label: 'Frozen', value: 'FROZEN' },
+    { label: 'Carry Forward', value: 'CARRY_FORWARD' },
+    { label: 'Lapsed', value: 'LAPSED' },
+  ];
   leaveTypeOptions = [
     { label: 'Fixed Number of Leaves', value: 'Fixed Number of Leaves' },
     { label: 'Monthly Incremental Leaves', value: 'Monthly Incremental Leaves' }
@@ -165,7 +176,11 @@ export class CloneLeavecategoryComponent {
       applySandwichOn: [null,],
       sandwichCalculationBasis: [null],
       sandwichApplicabilityCondition: [null],
-      adjacentLeaveTypeRule: [null]
+      adjacentLeaveTypeRule: [null],
+      entitlementFrequency: [null, Validators.required],
+      extendLastWorkingDay: [null],
+      entitlementCycleHandling: [null, Validators.required],
+      allowPastCycleApplication: [null, Validators.required],
     });
     this.validateAllowedDays()
   }
@@ -356,7 +371,7 @@ export class CloneLeavecategoryComponent {
       const extendControl = this.leavePolicyForm.get('extendLastWorkingDay');
       if (value) {
         daysControl?.enable();
-        daysControl?.setValidators([Validators.required, Validators.min(1)]);
+        daysControl?.setValidators([Validators.required, Validators.min(0.5)]);
         typeControl?.enable();
         typeControl?.setValidators([Validators.required]);
         extendControl?.enable();
@@ -381,7 +396,7 @@ export class CloneLeavecategoryComponent {
       const typeControl = this.leavePolicyForm.get('probationFrequencyType');
       if (value) {
         daysControl?.enable();
-        daysControl?.setValidators([Validators.required, Validators.min(1)]);
+        daysControl?.setValidators([Validators.required, Validators.min(0.5)]);
         typeControl?.enable();
         typeControl?.setValidators([Validators.required]);
       } else {
@@ -421,6 +436,22 @@ export class CloneLeavecategoryComponent {
       blockNextControl?.updateValueAndValidity();
     });
     // Update published categories when location/sublocation/year/shift changes
+    this.leavePolicyForm?.get('entitlementFrequency')?.valueChanges.subscribe((value: any) => {
+      const cycleCtrl = this.leavePolicyForm.get('entitlementCycleHandling');
+      const pastCycleCtrl = this.leavePolicyForm.get('allowPastCycleApplication');
+      if (value === 'YEARLY') {
+        cycleCtrl?.clearValidators();
+        cycleCtrl?.setValue(null);
+        pastCycleCtrl?.clearValidators();
+        pastCycleCtrl?.setValue(null);
+      } else {
+        cycleCtrl?.setValidators([Validators.required]);
+        pastCycleCtrl?.setValidators([Validators.required]);
+      }
+      cycleCtrl?.updateValueAndValidity();
+      pastCycleCtrl?.updateValueAndValidity();
+    });
+
     this.leavePolicyForm?.get('applicableYear')?.valueChanges.subscribe(() => this.updatePublishedCategories());
     this.leavePolicyForm?.get('locationID')?.valueChanges.subscribe(() => this.updatePublishedCategories());
     this.leavePolicyForm?.get('subLocation')?.valueChanges.subscribe(() => this.updatePublishedCategories());
@@ -606,7 +637,7 @@ export class CloneLeavecategoryComponent {
       const typeControl = this.leavePolicyForm.get('noticePeriodFrequencyType');
       if (value) {
         daysControl?.enable();
-        daysControl?.setValidators([Validators.required, Validators.min(1)]);
+        daysControl?.setValidators([Validators.required, Validators.min(0.5)]);
         typeControl?.enable();
         typeControl?.setValidators([Validators.required]);
       } else {
@@ -626,7 +657,7 @@ export class CloneLeavecategoryComponent {
       const typeControl = this.leavePolicyForm.get('probationFrequencyType');
       if (value) {
         daysControl?.enable();
-        daysControl?.setValidators([Validators.required, Validators.min(1)]);
+        daysControl?.setValidators([Validators.required, Validators.min(0.5)]);
         typeControl?.enable();
         typeControl?.setValidators([Validators.required]);
       } else {
@@ -735,7 +766,10 @@ export class CloneLeavecategoryComponent {
       sandwichCalculationBasis: data.sandwichCalculationBasis,
       sandwichApplicabilityCondition: data.sandwichApplicabilityCondition,
       adjacentLeaveTypeRule: data.adjacentLeaveTypeRule,
-      extendLastWorkingDay:data.isNoticePeriodExtended
+      extendLastWorkingDay:data.isNoticePeriodExtended,
+      entitlementFrequency: data.entitlementFrequency,
+      entitlementCycleHandling: data.entitlementCycleHandling,
+      allowPastCycleApplication: data.allowPastCycleApplication,
     });
     // Manually trigger value changes for dependent fields
   this.updateDependentFieldState('futureDatesAllowed', 'futureDatesAllowedDays');
@@ -805,6 +839,9 @@ export class CloneLeavecategoryComponent {
       sandwichCalculationBasis: this.leavePolicyForm.value.sandwichCalculationBasis,
       sandwichApplicabilityCondition: this.leavePolicyForm.get('sandwichApplicabilityCondition')?.value,
       adjacentLeaveTypeRule: this.leavePolicyForm.value.adjacentLeaveTypeRule,
+      entitlementFrequency: this.leavePolicyForm.value.entitlementFrequency,
+      entitlementCycleHandling: this.leavePolicyForm.value.entitlementCycleHandling,
+      allowPastCycleApplication: this.leavePolicyForm.value.allowPastCycleApplication,
       addedBy: this.empinfo.employeeId,
       lastModifiedBy: this.empinfo.employeeId,
       status: "Pending for submission",

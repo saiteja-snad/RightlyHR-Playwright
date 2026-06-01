@@ -67,6 +67,7 @@
                     </div>
                     <div *ngIf="leaveAllocationForm.get('shift')?.touched && leaveAllocationForm.get('shift')?.invalid" class="error-msg">
                         <div *ngIf="leaveAllocationForm.get('shift')?.errors?.['required']">Shift is required</div>
+                        <div *ngIf="leaveAllocationForm.get('shift')?.errors?.['duplicateJob']">Job already exists for selected shift</div>
                     </div>
                 </div>
             </div>
@@ -75,7 +76,7 @@
         <!-- Footer -->
         <div class="footer-content mb-4">
             <button type="button" class="custom-btn btn-secondary px-5" (click)="closepopup(confirmationpopupfornodue)">Cancel</button>
-            <button type="submit" class="custom-btn btn-primary px-5" [disabled]="leaveAllocationForm.invalid">Next</button>
+            <button type="submit" class="custom-btn btn-primary px-5" [disabled]="leaveAllocationForm.invalid || isCheckingDuplicateJob">Next</button>
         </div>
     </form>
 </div>

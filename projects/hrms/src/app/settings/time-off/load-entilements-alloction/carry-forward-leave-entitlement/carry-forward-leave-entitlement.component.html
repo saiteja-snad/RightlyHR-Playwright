@@ -25,7 +25,7 @@
         <th class="text-center">Emp Processed</th>
         <th>Created by</th>
         <th>Status</th>
-        <!-- <th class="text-center">Action</th> -->
+        <th class="text-center" *ngIf="showActionColumn">Action</th>
       </thead>
       <tbody>
         <ng-container *ngIf="jobData.length > 0; else noDataTemplate">
@@ -44,7 +44,7 @@
             'status-failed': item.status === 'Failed','status-partial': item.status === 'Partially Completed',
             'status-processing': item.status === 'Processing','status-completed': item.status === 'Completed',
             'status-pending': item?.status === 'Pending'}" class="text-capitalize">{{ item?.status ?? '-'}}</td>
-            <!-- <td class="text-center">
+            <td class="text-center" *ngIf="showActionColumn">
               <div class="dropdown" *ngIf="item.requiresRetry">
                 <span type="button" data-bs-toggle="dropdown">
                   <i class="bi bi-three-dots-vertical"></i>
@@ -58,7 +58,7 @@
                 </ul>
               </div>
               <span *ngIf="!item.requiresRetry"></span>
-            </td> -->
+            </td>
           </tr>
         </ng-container>
         <ng-template #noDataTemplate>

@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from "@angular/router";
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { HttpService } from '../../../services/http.service';
 import { Subject, Subscription, takeUntil } from 'rxjs';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
@@ -13,10 +13,11 @@ import { TranslateModule } from '@ngx-translate/core';
 import { Select, SelectModule } from 'primeng/select';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { OpenModalService } from '../../../services/open-modal.service';
+import { InfoIconComponent } from '../../../icons/info-icon/info-icon.component';
 @Component({
   selector: 'app-load-entilements-alloction',
   imports: [RouterModule, CommonModule, TranslateModule, Select, SelectModule, MultiSelectModule, PaginatorModule, FormsModule,
-    DataLoaderContentComponent, NoDataFoundComponent, ReactiveFormsModule],
+    DataLoaderContentComponent, NoDataFoundComponent, ReactiveFormsModule, NgbPopoverModule, InfoIconComponent],
   templateUrl: './load-entilements-alloction.component.html',
   styleUrl: './load-entilements-alloction.component.scss',
   encapsulation: ViewEncapsulation.None,
@@ -56,11 +57,14 @@ export class LoadEntilementsAlloctionComponent implements OnInit, OnDestroy {
 
   newEmployees: any[] = [];
   selectedNewEmployees: any[] = [];
+  newCategories: any[] = [];
+  selectedNewCategories: any[] = [];
   loadingNewEmployees = false;
   submittingLoad = false;
+  submittingLoadCategories = false;
 
   constructor(private route: ActivatedRoute, private http: HttpService, private fb: FormBuilder,
-    private modalService: NgbModal, private conformationPopup: OpenModalService) { }
+    private modalService: NgbModal, private conformationPopup: OpenModalService, private router: Router) { }
 
   ngOnInit() {
     this.initilaiztionFrom();
@@ -179,19 +183,89 @@ export class LoadEntilementsAlloctionComponent implements OnInit, OnDestroy {
     this.modalService.open(content, { size: 'lg', centered: true, backdrop: 'static' });
   }
 
-  isCyclePastOrCurrent(cycle: any): boolean {
-    return new Date(cycle.cycleStart) <= new Date() && cycle.status === 'PENDING';
+  hasRetry(row: any): boolean {
+    return (
+      row?.requiresRetry === true ||
+      (Array.isArray(row?.cycles) && row.cycles.some((c: any) => c?.requiresRetry === true))
+    );
   }
 
-  retryCycle(jobid: any, cycle: any) {
-    this.http.postbyId(`LeaveEntitlementJobs/${jobid}/retry`).subscribe({
-      next: (res: any) => {
+  private getPlanId(row: any): number | null {
+    const raw = row?.planId;
+    const num = typeof raw === 'string' ? Number(raw) : raw;
+    return Number.isFinite(num) && num > 0 ? num : null;
+  }
+
+  private getRetryPlanIdsFromRow(row: any): number[] {
+    const cycles = Array.isArray(row?.cycles) ? row.cycles : [];
+    const retryCycles = cycles.filter((c: any) => c?.requiresRetry === true);
+
+    const ids = new Set<number>();
+    const addId = (value: any) => {
+      const num = typeof value === 'string' ? Number(value) : value;
+      if (Number.isFinite(num) && num > 0) ids.add(num);
+    };
+
+    if (retryCycles.length) {
+      for (const c of retryCycles) addId(this.getPlanId(c));
+      return Array.from(ids);
+    }
+
+    if (row?.requiresRetry === true && cycles.length) {
+      for (const c of cycles) addId(this.getPlanId(c));
+      return Array.from(ids);
+    }
+
+    if (row?.requiresRetry === true) {
+      addId(this.getPlanId(row));
+      return Array.from(ids);
+    }
+
+    return [];
+  }
+
+  retryPlan(jobid: any, row: any) {
+    const jobId = Number(jobid);
+    if (!Number.isFinite(jobId) || jobId <= 0) return;
+
+    const planIds = this.getRetryPlanIdsFromRow(row);
+    if (!planIds.length) {
+      this.conformationPopup.openErrorModal('Unable to retry: missing plan id.');
+      return;
+    }
+
+    const payload = { jobId, planIds };
+    this.http.postdata('LeaveEntitlementJobs/retry', payload).pipe(takeUntil(this.destroy$)).subscribe({
+      next: () => {
         this.modalService.dismissAll();
-        this.conformationPopup.openSuccessModal("Leave Entitlements added Successfully");
+        this.conformationPopup.openSuccessModal('Retry initiated successfully.');
         this.getdatacarryforword();
       },
       error: (err) => {
-        console.error(err);
+        this.conformationPopup.openErrorModal(err?.error?.message || 'Retry failed.');
+      }
+    });
+  }
+
+  retryCyclePlan(jobid: any, cycle: any) {
+    const jobId = Number(jobid);
+    if (!Number.isFinite(jobId) || jobId <= 0) return;
+
+    const planId = this.getPlanId(cycle);
+    if (!planId) {
+      this.conformationPopup.openErrorModal('Unable to retry missing plan id.');
+      return;
+    }
+
+    const payload = { jobId, planIds: [planId] };
+    this.http.postdata('LeaveEntitlementJobs/retry', payload).pipe(takeUntil(this.destroy$)).subscribe({
+      next: () => {
+        this.modalService.dismissAll();
+        this.conformationPopup.openSuccessModal('Retry initiated successfully.');
+        this.getdatacarryforword();
+      },
+      error: (err) => {
+        this.conformationPopup.openErrorModal(err?.error?.message || 'Retry failed.');
       }
     });
   }
@@ -262,13 +336,25 @@ export class LoadEntilementsAlloctionComponent implements OnInit, OnDestroy {
           ...emp,
           fullName: `${emp.fusionEmpId} - ${emp.name ?? ''}`.trim()
         })) : [];
+        this.newCategories = Array.isArray(res?.data?.categories)
+          ? res.data.categories.map((c: any) => ({
+            ...c,
+            categoryId: c?.categoryId,
+            categoryName: c?.categoryName ?? '',
+          })).filter((c: any) => c?.categoryId)
+          : [];
       },
-      error: () => { this.loadingNewEmployees = false; this.newEmployees = []; }
+      error: () => { this.loadingNewEmployees = false; this.newEmployees = []; this.newCategories = []; }
     });
   }
 
   openLoadEmployeesModal(content: any): void {
     this.selectedNewEmployees = [];
+    this.modalService.open(content, { size: 'lg', centered: true, backdrop: 'static' });
+  }
+
+  openLoadCategoriesModal(content: any): void {
+    this.selectedNewCategories = [];
     this.modalService.open(content, { size: 'lg', centered: true, backdrop: 'static' });
   }
 
@@ -290,6 +376,38 @@ export class LoadEntilementsAlloctionComponent implements OnInit, OnDestroy {
     });
   }
 
+  loadCategories(modal: any): void {
+    if (!this.selectedNewCategories.length) return;
+    this.submittingLoadCategories = true;
+
+    const categoryIds = this.selectedNewCategories
+      .map((c: any) => c?.categoryId)
+      .filter((id: any) => Number.isFinite(Number(id)))
+      .map((id: any) => Number(id));
+
+    if (!categoryIds.length) {
+      this.submittingLoadCategories = false;
+      return;
+    }
+
+    const payload: any = {
+      flow: 'jobview',
+      jobId: Number(this.jobid),
+      year: this.jobSummary?.processingYear,
+      location: { id: this.jobSummary?.locationId, jobLocationName: this.jobSummary?.location },
+      subLocation: { id: this.jobSummary?.subLocationId, jobSubLocationName: this.jobSummary?.subLocation },
+      shift: { id: this.jobSummary?.shiftId, shiftName: this.jobSummary?.shiftName },
+      category_ids: categoryIds,
+      originalBreakdownData: [],
+      breakdownData: []
+    };
+
+    localStorage.setItem('intialloadEntitlement', JSON.stringify(payload));
+    modal.dismiss();
+    this.router.navigate(['/settings/timeoff-configurations/intial-leave-entitlements/intial-load-entitlement-breakdown']);
+    this.submittingLoadCategories = false;
+  }
+
    formatLabel(value: string): string {
     return value
       .split('_')
@@ -301,5 +419,7 @@ export class LoadEntilementsAlloctionComponent implements OnInit, OnDestroy {
     if (this.subscription) {
       this.subscription.unsubscribe();
     }
+    this.destroy$.next(true);
+    this.destroy$.complete();
   }
 }

@@ -1800,9 +1800,55 @@ openModal(content: any, dayForm: AbstractControl | null, index: number, dayKey: 
         isBillable: isBillableForDay
       });
     }
+   this.getTimesheetMadatorydata(this.dayForm.get('projectId')?.value,this.dayForm.get('phaseId')?.value)
   }
+  
 }
+ getTimesheetMadatorydata(projectId: number, phaseId: number) {
+  console.log('Fetching timesheet configuration for projectId:', projectId, 'phaseId:', phaseId);
+    this.http.getData(`TimesheetConfiguration?projectId=${projectId}&phaseId=${phaseId}`).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res: any) => {
+        console.log('Timesheet Configuration:', res);
+        const items = res?.items || [];
+        const fieldMap: any = {
+          'Start Time': 'startTime',
+          'End Time': 'endTime',
+          'Task Type': 'taskId',
+          'Description': 'description'
+        };
 
+        // Get all fields returned by API
+        const apiFields = items.map((x: any) => x.fieldName);
+
+        items.forEach((item: any) => {
+          const controlName = fieldMap[item.fieldName];
+
+          if (controlName && this.dayForm?.get(controlName)) {
+            const control = this.dayForm.get(controlName);
+
+            if (item.isMandatory) {
+              control?.addValidators(Validators.required);
+            } else {
+              control?.removeValidators(Validators.required);
+            }
+
+            control?.updateValueAndValidity();
+          }
+        });
+      },
+      error: () => {
+      },
+      complete: () => {
+      },
+    })
+  }
+  isRequired(controlName: string): boolean {
+  const control = this.dayForm?.get(controlName);
+
+  return control
+    ? control.hasValidator(Validators.required)
+    : false;
+}
   recalculateTimes(dayKey: string, startIndex: number) {
     for (let i = 0; i < this.projects.length; i++) {
       const projectForm = this.projects.at(i).get(dayKey) as FormGroup;
@@ -2106,8 +2152,26 @@ openModal(content: any, dayForm: AbstractControl | null, index: number, dayKey: 
 
   // Check if any of the fields in the day form are filled
   isDayFormDirtyOrFilled(form: FormGroup): boolean {
-    const { description, duration, } = form.value;
-    return !!(description && duration);
+    const fieldsToCheck = ['description', 'duration', 'startTime', 'endTime', 'taskId'];
+
+  for (const field of fieldsToCheck) {
+    const control = form.get(field);
+
+    // Check only if the field has Validators.required
+    if (control?.hasValidator(Validators.required)) {
+      const value = control.value;
+
+      if (
+        value === null ||
+        value === undefined ||
+        value === ''
+      ) {
+        return false;
+      }
+    }
+  }
+
+  return true;
   }
   //based status colour
   getApprovalClass(control: AbstractControl | null): any {

@@ -211,7 +211,31 @@ timesheetconfigForm!: FormGroup;
       }
     });
   }
-
+  toggleupdateismandatory(event: any,items?:any){ {
+    const isChecked = event.target.checked;
+    this.timesheetconfigUpdateForm.patchValue({ isMandatoryupdate: isChecked });
+    const payload = {
+      isMandatory: isChecked,
+      phaseId: items.phaseId,
+      fieldName: items.fieldName
+    };
+    this.http.putData(`TimesheetConfiguration/${items.id}`, payload).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res:any) => {
+        if (res) {
+          this.selecteddata = null
+          this.modalService.dismissAll()
+          this.getTimesheet(this.page, this.pageSize,this.searchQuery);
+          this.conformationPopup.openSuccessModal('Timesheet Configuration updated successfully')
+        }
+      },
+      error: (err:any) => {
+        console.error('Update failed', err);
+        console.log('Error Body:', err.error);
+        this.conformationPopup.openErrorModal(err.error.message?err.error.message:err)
+      }
+    });
+  }
+}
   opendelete(content: any, expenses: any) {
     this.selecteddata = expenses.id
     this.modalService.open(content, { centered: true, backdrop: 'static' });

@@ -20,7 +20,6 @@
                     <th>{{'Phase' |translate}}</th>
                     <th class="text-center">{{'Field Name' |translate}}</th>
                     <th class="text-center">{{'isMandatory' |translate}}</th>
-                    
                     <th class="text-center" *ngIf="rbac.allowedToAccess('Timesheet Configurations.update') || 
                     rbac.allowedToAccess('Timesheet Configurations.delete')">{{'Action' | translate}}</th>
                 </thead>
@@ -30,7 +29,12 @@
                         <td>{{exp.projectName}}</td>
                         <td>{{exp.phaseName}}</td>
                         <td class="text-center">{{exp.fieldName}}</td>
-                        <td class="text-center">{{exp.isMandatory ? 'Yes' : 'No'}}</td>
+                        <td class="justify-content-center d-flex" >
+                            <!-- {{exp.isMandatory ? 'Yes' : 'No'}} -->
+                            <div class="form-check form-switch ">
+                                <input id="ismandatory-value" class="form-check-input" [checked]="exp.isMandatory" type="checkbox" (change)="toggleupdateismandatory($event, exp)"  />
+                            </div>
+                        </td>
                           <td class="text-center"
                             *ngIf="rbac.allowedToAccess('Timesheet Configurations.update') || rbac.allowedToAccess('Timesheet Configurations.delete')">
                             <div class="dropdown">

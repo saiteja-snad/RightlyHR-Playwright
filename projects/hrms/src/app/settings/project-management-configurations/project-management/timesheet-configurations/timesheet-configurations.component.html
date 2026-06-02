@@ -1,0 +1,256 @@
+<div class="custom-main-component-container">
+    <div>
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div><span class="component-sub-header">{{'Timesheet Configurations'|translate}}</span></div>
+            <div class="custom-add-btn" (click)="openModal(addExpensesmodal)"
+                *ngIf="rbac.allowedToAccess('Timesheet Configurations.create')">
+                <i class="bi bi-plus plus-icon me-1"></i>{{'Add New'|translate}}
+            </div>
+        </div>
+        <div class="input-group custom-search mb-3">
+            <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
+            <input type="search" class="form-control custom-search-input" placeholder="Search here" aria-label="Username"
+                [(ngModel)]="searchQuery" (ngModelChange)="getTimesheet(this.page, this.pageSize, searchQuery)" aria-describedby="basic-addon1">
+        </div>
+        <div class="custom-table-content mt-2">
+            @if(!dataload){
+            <table class="w-100">
+                <thead>
+                    <th>{{'Project' |translate}}</th>
+                    <th>{{'Phase' |translate}}</th>
+                    <th class="text-center">{{'Field Name' |translate}}</th>
+                    <th class="text-center">{{'isMandatory' |translate}}</th>
+                    <th class="text-center" *ngIf="rbac.allowedToAccess('Timesheet Configurations.update') || 
+                    rbac.allowedToAccess('Timesheet Configurations.delete')">{{'Action' | translate}}</th>
+                </thead>
+                <tbody>
+                     @if(timesheetconfigdata.length > 0){
+                    <tr *ngFor="let exp of timesheetconfigdata">
+                        <td>{{exp.projectName}}</td>
+                        <td>{{exp.phaseName}}</td>
+                        <td class="text-center">{{exp.fieldName}}</td>
+                        <td class="justify-content-center d-flex" >
+                            <!-- {{exp.isMandatory ? 'Yes' : 'No'}} -->
+                            <div class="form-check form-switch ">
+                                <input id="ismandatory-value" class="form-check-input" [checked]="exp.isMandatory" type="checkbox" (change)="toggleupdateismandatory($event, exp)"  />
+                            </div>
+                        </td>
+                          <td class="text-center"
+                            *ngIf="rbac.allowedToAccess('Timesheet Configurations.update') || rbac.allowedToAccess('Timesheet Configurations.delete')">
+                            <div class="dropdown">
+                                <span type="button" data-bs-toggle="dropdown">
+                                    <i class="bi bi-three-dots-vertical"></i>
+                                </span>
+                                <ul class="dropdown-menu custom-dropdown-menu">
+                                    <li (click)="openupdate(updateexpeses, exp)"
+                                        *ngIf="rbac.allowedToAccess('Timesheet Configurations.update')">
+                                        <a class="dropdown-item">
+                                            <i class="bi bi-pencil me-2"></i>{{'Update' | translate}}
+                                        </a>
+                                    </li>
+                                    <li (click)="opendelete(deleteconformation,exp)"
+                                        *ngIf="rbac.allowedToAccess('Timesheet Configurations.delete')">
+                                        <a class="dropdown-item">
+                                            <i class="bi bi-trash3 me-2"></i>{{'Delete' | translate}}
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                     }
+                    @else {
+                    <tr>
+                        <td colspan="2">
+                            <app-no-data-found />
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+             }
+            @else {
+            <app-data-loader-content />
+            }
+        </div>
+        <div class="pagination-content" *ngIf="timesheetconfigdata.length > 0">
+      <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
+        <div class="d-flex align-items-center gap-3 p-2">
+          <select title="text" class="form-select custom-pagination-select" [(ngModel)]="rows"
+            (ngModelChange)="onPageSizeChange($event)">
+            <option *ngFor="let option of options" [value]="option.value">{{ option.label }}
+            </option>
+          </select>
+          <span class="pagination-label text-nowrap">
+            Showing {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize : (+first + +rows) }} of {{
+            collectionSize }}
+          </span>
+        </div>
+        <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"
+          (onPageChange)="onPageChange($event)"></p-paginator>
+      </div>
+    </div>
+
+        <ng-template #addExpensesmodal let-modal>
+            <div class="custom-main-popup-container" ngbAutofocus>
+                <div class="custom-poup-header-content popup-header-border">
+                    <div>
+                        <p class="popup-heading mb-0">{{'Add Timesheet Configuration' | translate}}</p>
+                    </div>
+                    <div>
+                        <a (click)="modal.dismiss();timesheetconfigForm.reset()"><img src="icons/close.png"
+                                alt="Close Icon" class="close-icon"></a>
+                    </div>
+                </div>
+                <div class="custom-main-popup-content">
+                    <form autocomplete="off" [formGroup]="timesheetconfigForm"
+                        (ngSubmit)="posttimesheetconfig(timesheetconfigForm)">
+                        <div class="mb-3">
+                            <label for="policyType" class="form-label custom-label mb-2">
+                                {{'Project' | translate}} <span class="text-danger">*</span>
+                            </label>
+                            <div class="custom-p-multiSelect-content">
+                                <p-multiSelect [options]="projectsoption" optionLabel="projectName" optionValue="projectId"
+                                    class="form-select custom-select" formControlName="projects" placeholder="Please select project"
+                                    filterBy="projectName" [resetFilterOnHide]="true" [showClear]="false" [filter]="true" display="chip"
+                                    (onChange)="getphases()">
+                                </p-multiSelect>
+                            </div>
+                            <div *ngIf="timesheetconfigForm.get('projects')?.invalid && timesheetconfigForm.get('projects')?.touched" class="error-msg">
+                                {{'Project is required'|translate}}
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="policyType" class="form-label custom-label mb-2">
+                                {{'Phase' | translate}} <span class="text-danger">*</span>
+                            </label>
+                            <div class="custom-p-multiSelect-content">
+                                <p-multiSelect [options]="phasesoption" optionLabel="phaseName" optionValue="phaseId"
+                                    class="form-select custom-select" formControlName="phases" placeholder="Please select phase"
+                                    filterBy="phaseName" [resetFilterOnHide]="true" [showClear]="false" [filter]="true" display="chip">
+                                </p-multiSelect>
+                            </div>
+                            <div *ngIf="timesheetconfigForm.get('phases')?.invalid && timesheetconfigForm.get('phases')?.touched" class="error-msg">
+                                {{'Phase is required'|translate}}
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="fields" class="form-label custom-label mb-2">
+                                {{'Field Name' | translate}} <span class="text-danger">*</span>
+                            </label>
+                            <div class="custom-p-multiSelect-content">
+                                <p-multiSelect [options]="fieldsoptions" optionLabel="label" optionValue="value"
+                                    class="form-select custom-select" formControlName="fields" placeholder="Please select field name"
+                                    filterBy="label" [resetFilterOnHide]="true" [showClear]="false" [filter]="true" display="chip">
+                                </p-multiSelect>
+                            </div>
+                            <div *ngIf="timesheetconfigForm.get('fields')?.invalid && timesheetconfigForm.get('fields')?.touched" class="error-msg">
+                                {{'Field Name is required'|translate}}
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="form-check form-switch py-3">
+                                <input id="ismandatory-value" class="form-check-input" type="checkbox" formControlName="isMandatory"/>
+                                <label for="ismandatory-value" class="form-label custom-toggle-label">{{'isMandatory' | translate}}</label>
+                            </div>
+                        </div>
+                        <div class="custom-modal-footer">
+                            <button type="button" class="custom-btn btn-secondary "
+                                (click)="timesheetconfigForm.reset();modal.dismiss()">{{'Cancel' | translate}}</button>
+                            <button type="submit" class="custom-btn btn-primary "
+                                [disabled]="timesheetconfigForm.invalid">{{'Submit' | translate}}</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </ng-template>
+
+       <ng-template #updateexpeses let-modal>
+            <div class="custom-main-popup-container" ngbAutofocus>
+                <div class="custom-poup-header-content popup-header-border">
+                    <div>
+                        <p class="popup-heading mb-0">{{'Update Timesheet Configuration' | translate}}</p>
+                    </div>
+                    <div>
+                        <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+                    </div>
+                </div>
+                <div class="custom-main-popup-content">
+                    <form autocomplete="off" [formGroup]="timesheetconfigUpdateForm"  (ngSubmit)="onUpdateSubmit()">
+                        <div class="mb-3">
+                            <label for="policyType" class="form-label custom-label mb-2">
+                                {{'Project' | translate}} <span class="text-danger">*</span>
+                            </label>
+                            <div class="custom-p-select-content">
+                                <p-select [options]="projectsoption" optionLabel="projectName" [filter]="true" resetFilterOnHide="true"
+                                    filterBy="projectName" optionValue="projectId" placeholder="Please select project" 
+                                    formControlName="updateprojects" class="custom-select w-100">
+                                </p-select>
+                            </div>
+                            <div class="error-msg"
+                                *ngIf="timesheetconfigUpdateForm.get('updateprojects')?.hasError('required') && (timesheetconfigUpdateForm.get('updateprojects')?.touched)">
+                                Project is required
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="policyType" class="form-label custom-label mb-2">
+                                {{'Phase' | translate}} <span class="text-danger">*</span>
+                            </label>
+                            <div class="custom-p-select-content">
+                                <p-select [options]="phasesoption" optionLabel="phaseName" [filter]="true" resetFilterOnHide="true"
+                                    filterBy="phaseName" optionValue="phaseId" placeholder="Please select phase" 
+                                    formControlName="updatephases" class="custom-select w-100">
+                                </p-select>
+                            </div>
+                            <div class="error-msg"
+                                *ngIf="timesheetconfigUpdateForm.get('updatephases')?.hasError('required') && (timesheetconfigUpdateForm.get('updatephases')?.touched)">
+                                Phase is required
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="updatefields" class="form-label custom-label mb-2">{{'Field Name' | translate}}
+                                <span class="text-danger">*</span></label>
+                                 <div class="custom-p-select-content">
+                                <p-select [options]="fieldsoptions" optionLabel="label" [filter]="true" resetFilterOnHide="true"
+                                    filterBy="label" optionValue="value" placeholder="Please select field name"
+                                    formControlName="updatefields" class="custom-select w-100">
+                                </p-select>
+                            </div>
+                            <div *ngIf="timesheetconfigUpdateForm.get('updatefields')?.invalid && timesheetconfigUpdateForm.get('updatefields')?.touched" class="error-msg">
+                                {{'Field Name is required'|translate}}
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="form-check form-switch py-3">
+                                <input id="ismandatory-value" class="form-check-input" type="checkbox" formControlName="isMandatoryupdate" />
+                                <label for="ismandatory-value" class="form-label custom-toggle-label">{{'isMandatory' | translate}}</label>
+                            </div>
+                        </div>
+                        <div class="custom-modal-footer">
+                            <button type="button" class="custom-btn btn-secondary "
+                                (click)="timesheetconfigUpdateForm.reset();modal.dismiss()">{{'Cancel' | translate}}</button>
+                            <button type="submit" class="custom-btn btn-primary "
+                                [disabled]="timesheetconfigUpdateForm.invalid">
+                                {{'Update' | translate}}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </ng-template>
+
+        <ng-template #deleteconformation let-modal>
+            <div class="result-popup-content" ngbAutofocus>
+                <div>
+                    <img src="icons\delete-icon.png" alt="failure icon" class="confirmation-delete-icon">
+                    <p class="confirmation-text mb-4">{{'Are you sure you want to delete ?' |
+                        translate}}</p>
+                </div>
+                <div class="custom-modal-footer">
+                    <button type="button" class="custom-btn btn-secondary " (click)="modal.dismiss()">{{'No'
+                        |translate}}</button>
+                    <button type="submit" class="custom-btn btn-primary" (click)="deletedata()">{{'Yes' |
+                        translate}}</button>
+                </div>
+            </div>
+        </ng-template>

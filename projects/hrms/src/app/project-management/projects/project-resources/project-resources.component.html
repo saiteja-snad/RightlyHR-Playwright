@@ -43,7 +43,10 @@
             aria-label="Search" aria-describedby="basic-addon1" />
         </div>
 
-        <div class="custom-table-content" [ngClass]="{'has-data': resourcesData.length > 0}">
+        <div class="custom-table-content" [ngClass]="{
+          'has-data': resourcesData.length > 0,
+          'has-selection': selectedResources.length > 0
+        }">
           @if (!loading) {
           <table class="w-100">
             <thead>

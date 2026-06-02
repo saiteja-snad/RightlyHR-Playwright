@@ -1,12 +1,15 @@
 .custom-color {
   width: 60px !important;
 }
-
 .custom-table-content {
   height: calc(100vh - 15rem) !important;
 
   &.has-data {
     height: calc(100dvh - 18.25rem) !important;
+  }
+
+  &.has-selection {
+    height: calc(100dvh - 21rem) !important; // adjust as needed
   }
 }
 

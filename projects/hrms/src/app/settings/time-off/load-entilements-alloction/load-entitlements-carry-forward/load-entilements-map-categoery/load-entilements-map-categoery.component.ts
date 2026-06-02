@@ -7,9 +7,10 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { Select } from 'primeng/select';
+import { NoDataFoundComponent } from "../../../../../shared/no-data-found/no-data-found.component";
 @Component({
   selector: 'app-load-entilements-map-categoery',
-  imports: [CommonModule, Select, FormsModule],
+  imports: [CommonModule, Select, FormsModule, NoDataFoundComponent],
   templateUrl: './load-entilements-map-categoery.component.html',
   styleUrl: './load-entilements-map-categoery.component.scss',
   encapsulation: ViewEncapsulation.None

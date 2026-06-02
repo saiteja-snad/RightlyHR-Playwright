@@ -25,7 +25,7 @@ import { DateformatPipe } from '../../../pipes/dateformat.pipe';
 import { PaginatorModule } from 'primeng/paginator';
 @Component({
   selector: 'app-client-resource-inactive',
-  imports: [CommonModule, ReactiveFormsModule, FormsModule, ClientResourceTabComponent, TranslateModule, NgbPopover, DataLoaderContentComponent,PaginatorModule,
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, ClientResourceTabComponent, TranslateModule, NgbPopover, DataLoaderContentComponent, PaginatorModule,
     Select, DateformatPipe, NoDataFoundComponent, ConfirmationIconComponent, InfoIconComponent, ProfileIconComponent],
   templateUrl: './client-resource-inactive.component.html',
   styleUrl: './client-resource-inactive.component.scss'
@@ -224,18 +224,19 @@ export class ClientResourceInactiveComponent {
       next: (data: any) => {
         this.collectionSize = data?.pagination?.totalRecords || 0;
         if (data?.data?.length > 0) {
+          this.loading = false;
+
           this.resourcesData = Array.isArray(data?.data) ? data.data : [];
-            this.resourcesData = this.resourcesData.map((item: any) => ({
-              ...item,
-              employee: {
-                ...item.employee,
-                profileUrl: this.getImageUrl(item.employee?.profileUrl)
-              }
-            }));
+          this.resourcesData = this.resourcesData.map((item: any) => ({
+            ...item,
+            employee: {
+              ...item.employee,
+              profileUrl: this.getImageUrl(item.employee?.profileUrl)
+            }
+          }));
         } else {
           this.resourcesData = [];
         }
-        this.loading = false;
       },
       error: (reason: any) => {
         this.loading = false;
@@ -243,7 +244,7 @@ export class ClientResourceInactiveComponent {
     });
   }
 
-  
+
   getImageUrl(imagePath: string): string | null {
     if (!imagePath) return null;
     // If it's already a full URL
@@ -255,11 +256,11 @@ export class ClientResourceInactiveComponent {
     // Fallback
     return `${environment.viewUrl}${imagePath}`;
   }
-getResourceDataByPhaseId(projectId: number, phaseId: number, isPopupCall: boolean = false) {
-  const params: any = {
-    entityType: 'project',
-    entityRefId: projectId
-  };
+  getResourceDataByPhaseId(projectId: number, phaseId: number, isPopupCall: boolean = false) {
+    const params: any = {
+      entityType: 'project',
+      entityRefId: projectId
+    };
 
     if (phaseId) {
       params.phaseId = phaseId;

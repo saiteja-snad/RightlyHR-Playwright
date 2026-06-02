@@ -311,6 +311,8 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
     this.subscription = this.http.getDataIncludeParams(url).subscribe({
       next: (data: any) => {
         if (data?.data?.length > 0) {
+                  this.loading = false;
+
           this.resourcesData = data.data;
           this.collectionSize = data.pagination.totalRecords || 0;
           this.filteredResourcesData = data.data;
@@ -318,7 +320,6 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
           this.resourcesData = [];
           this.filteredResourcesData = [];
         }
-        this.loading = false;
       },
       error: (reason: any) => {
         this.loading = false;
@@ -355,7 +356,6 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
       .getDataIncludeParams('ProjectResource', params)
       .subscribe({
         next: (data: any) => {
-          this.loading = false;
           if (isPopupCall) {
             // DO NOT TOUCH TABLE DATA
             const popupData = data.data ?? [];

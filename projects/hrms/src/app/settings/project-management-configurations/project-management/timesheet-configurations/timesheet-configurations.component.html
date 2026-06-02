@@ -21,16 +21,10 @@
                 </thead>
                 <tbody>
                     <tr *ngFor="let exp of timesheetconfigdata">
-                        <td>{{exp.policyType}}</td>
-                        <td>{{exp.applicableFor}}</td>
+                        <td>{{exp.projectName}}</td>
+                        <td>{{exp.phaseName}}</td>
+                         <td>{{exp.fieldName}}</td>
                         <td class="text-center">{{exp.isMandatory ? 'Yes' : 'No'}}</td>
-                        <td class="text-center">
-                            <div *ngIf="exp.description && exp.description.trim() !== ''; else noDescription">
-                                <app-info-icon class="cursor" ngbPopover="{{ exp?.description}}" container="body">
-                                </app-info-icon>
-                            </div>
-                            <ng-template #noDescription>NA</ng-template>
-                        </td>
                           <td class="text-center"
                             *ngIf="rbac.allowedToAccess('Timesheet Configurations.update') || rbac.allowedToAccess('Timesheet Configurations.delete')">
                             <div class="dropdown">
@@ -71,67 +65,54 @@
                 </div>
                 <div class="custom-main-popup-content">
                     <form autocomplete="off" [formGroup]="timesheetconfigForm"
-                        (ngSubmit)="postExpenses(timesheetconfigForm)">
+                        (ngSubmit)="posttimesheetconfig(timesheetconfigForm)">
                         <div class="mb-3">
                             <label for="policyType" class="form-label custom-label mb-2">
                                 {{'Project' | translate}} <span class="text-danger">*</span>
                             </label>
-                            <input type="text" class="form-control custom-input" id="policyType"
-                                formControlName="policyType" autocomplete="off" placeholder="Please enter type"
-                                maxlength="50"
-                                (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)" />
-                            <div class="error-msg"
-                                *ngIf="timesheetconfigForm.get('policyType')?.hasError('required') && (timesheetconfigForm.get('policyType')?.touched )">
-                                Name is required
+                            <div class="custom-p-multiSelect-content">
+                                <p-multiSelect [options]="projectsoption" optionLabel="projectName" optionValue="projectId"
+                                    class="form-select custom-select" formControlName="projects" placeholder="Please select project"
+                                    filterBy="projectName" [resetFilterOnHide]="true" [showClear]="false" [filter]="true" display="chip"
+                                    (onChange)="getphases()">
+                                </p-multiSelect>
                             </div>
-                            <div *ngIf="timesheetconfigForm.get('policyType')?.errors?.['pattern']" class="error-msg">
-                                {{ 'Field cannot start with a space' | translate }}
+                            <div *ngIf="timesheetconfigForm.get('projects')?.invalid && timesheetconfigForm.get('projects')?.touched" class="error-msg">
+                                {{'Project is required'|translate}}
                             </div>
-                            <div class="error-msg"
-                                *ngIf="timesheetconfigForm.get('policyType')?.hasError('maxlength') && timesheetconfigForm.get('policyType')?.touched">
-                                Name cannot exceed 50 characters
+                        </div>
+                        <div class="mb-3">
+                            <label for="policyType" class="form-label custom-label mb-2">
+                                {{'Phase' | translate}} <span class="text-danger">*</span>
+                            </label>
+                            <div class="custom-p-multiSelect-content">
+                                <p-multiSelect [options]="phasesoption" optionLabel="phaseName" optionValue="phaseId"
+                                    class="form-select custom-select" formControlName="phases" placeholder="Please select phase"
+                                    filterBy="phaseName" [resetFilterOnHide]="true" [showClear]="false" [filter]="true" display="chip">
+                                </p-multiSelect>
+                            </div>
+                            <div *ngIf="timesheetconfigForm.get('phases')?.invalid && timesheetconfigForm.get('phases')?.touched" class="error-msg">
+                                {{'Phase is required'|translate}}
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="fields" class="form-label custom-label mb-2">
+                                {{'Field Name' | translate}} <span class="text-danger">*</span>
+                            </label>
+                            <div class="custom-p-multiSelect-content">
+                                <p-multiSelect [options]="fieldsoptions" optionLabel="label" optionValue="value"
+                                    class="form-select custom-select" formControlName="fields" placeholder="Please select field name"
+                                    filterBy="label" [resetFilterOnHide]="true" [showClear]="false" [filter]="true" display="chip">
+                                </p-multiSelect>
+                            </div>
+                            <div *ngIf="timesheetconfigForm.get('fields')?.invalid && timesheetconfigForm.get('fields')?.touched" class="error-msg">
+                                {{'Field Name is required'|translate}}
                             </div>
                         </div>
                         <div class="mb-3">
                             <div class="form-check form-switch py-3">
                                 <input id="ismandatory-value" class="form-check-input" type="checkbox" formControlName="isMandatory"/>
                                 <label for="ismandatory-value" class="form-label custom-toggle-label">{{'isMandatory' | translate}}</label>
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="applicableFor" class="form-label custom-label mb-2">
-                                {{'Field Name' | translate}} <span class="text-danger">*</span>
-                            </label>
-                            <div class="custom-p-select-content">
-                                <p-select [options]="applicableforoption" optionLabel="label" [filter]="true" resetFilterOnHide="true"
-                                    filterBy="label" optionValue="value" placeholder="Please select applicable for"
-                                    formControlName="applicableFor" class="custom-select w-100">
-                                </p-select>
-                            </div>
-                            <div *ngIf="timesheetconfigForm.get('applicableFor')?.invalid && timesheetconfigForm.get('applicableFor')?.touched" class="error-msg">
-                                {{'Field Name is required'|translate}}
-                            </div>
-                        </div>
-                        <div class=" mb-3">
-                            <label class="form-label custom-label mb-2">Description</label>
-                            <textarea type="text" class="form-control custom-input" rows="3"
-                                formControlName="description" [minlength]="5" maxlength="250"
-                                placeholder="Please enter description"></textarea>
-                            <div class="textarea-count-text">{{ timesheetconfigForm.get('description')?.value?.length ||
-                                0
-                                }}/250</div>
-                            <div class="error-msg"
-                                *ngIf="timesheetconfigForm.get('description')?.touched && timesheetconfigForm.get('description')?.invalid">
-                                <div *ngIf="timesheetconfigForm.get('description')?.errors?.['required']"> {{
-                                    'Description is required' | translate }}</div>
-                            </div>
-                            <div *ngIf="timesheetconfigForm.get('description')?.errors?.['maxCharacters']"
-                                class="error-msg">
-                                {{ 'Description must be between 5-250 characters' | translate}}
-                            </div>
-                            <div *ngIf="timesheetconfigForm.get('description')?.errors?.['minCharacters']"
-                                class="error-msg">
-                                {{ 'Description must be between 5-250 characters' | translate}}
                             </div>
                         </div>
                         <div class="custom-modal-footer">
@@ -188,7 +169,7 @@
                             <label for="applicableForupdate" class="form-label custom-label mb-2">{{'Field Name' | translate}}
                                 <span class="text-danger">*</span></label>
                                  <div class="custom-p-select-content">
-                                <p-select [options]="applicableforoption" optionLabel="label" [filter]="true" resetFilterOnHide="true"
+                                <p-select [options]="fieldsoptions" optionLabel="label" [filter]="true" resetFilterOnHide="true"
                                     filterBy="label" optionValue="value" placeholder="Please select field name"
                                     formControlName="applicableForupdate" class="custom-select w-100">
                                 </p-select>

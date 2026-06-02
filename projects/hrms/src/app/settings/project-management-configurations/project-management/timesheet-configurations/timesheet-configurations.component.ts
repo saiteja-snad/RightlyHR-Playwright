@@ -11,10 +11,11 @@ import { RbacService } from '../../../../services/rbac.service';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { SelectModule } from 'primeng/select';
+import { MultiSelectModule } from 'primeng/multiselect';
 
 @Component({
   selector: 'app-timesheet-configurations',
-  imports: [ReactiveFormsModule, TranslateModule, CommonModule,SelectModule,NgbPopoverModule],
+  imports: [ReactiveFormsModule, TranslateModule, CommonModule,SelectModule,NgbPopoverModule,MultiSelectModule],
   templateUrl: './timesheet-configurations.component.html',
   styleUrl: './timesheet-configurations.component.scss'
 })
@@ -27,12 +28,14 @@ timesheetconfigForm!: FormGroup;
   dataload = false;
   selectedExpensesId: any;
   subscription!: Subscription;
-  applicableforoption = [
-    // { label: 'TM', value: 'TM' },
-    // { label: 'RM', value: 'RM' },
-    { label: 'HR', value: 'HR' },
-    // { label: 'Role', value: 'ROLE' }
+  fieldsoptions = [
+    { label: 'Task Type', value: 'task_type' },
+    { label: 'Description', value: 'description' },
+    { label: 'Start Time', value: 'start_time' },
+    { label: 'End Time', value: 'end_time' },
   ];
+  projectsoption = [] as any;
+  phasesoption = [] as any;
   constructor(
     public router: Router,
     private modalService: NgbModal,
@@ -47,22 +50,54 @@ timesheetconfigForm!: FormGroup;
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.intiationalfrom();
     this.intiationalupdatefrom();
-    this.getExpenses();
+    this.getTimesheet();
+    this.getprojects();
+  }
+  getprojects(){
+    this.subscription=this.http.getData(`Project`).subscribe({
+      next:(res:any)=>{
+        console.log(res);
+        this.projectsoption = res.data;
+        
+      },
+      error:(err)=>{
+        this.projectsoption = [];
+        console.log(err); 
+      }
+    })
+  }
+  getphases() {
+    const selectedProjects = this.timesheetconfigForm.get('projects')?.value;
+    console.log(selectedProjects);
+    if (selectedProjects && selectedProjects.length > 0) {
+      const projectIds = selectedProjects.join(',');
+
+      this.subscription = this.http
+        .getData(`ProjectPhases/list?projectId=${projectIds}`)
+        .subscribe({
+          next: (response:any) => {
+            this.phasesoption = response.data;
+          }
+        });
+    } else {
+      this.phasesoption = []; // Clear phases data
+      this.timesheetconfigForm.get('phases')?.setValue(null); // Optional: reset selected phase
+    }
   }
   intiationalfrom() {
     this.timesheetconfigForm = this.fb.group({
-      policyType: ['', [Validators.required, Validators.maxLength(50), Validators.pattern(/^[^\s].*$/)]],
-      applicableFor: ['', [Validators.required, Validators.maxLength(50), Validators.pattern(/^[^\s].*$/)]],
-      description: ['',[Validators.maxLength(250)]],
+      projects: ['', [Validators.required ]],
+      phases: ['', [Validators.required]],
+      fields: ['', [Validators.required]],
       isMandatory: [false]
     });
   }
 
   intiationalupdatefrom() {
     this.timesheetconfigUpdateForm = this.fb.group({
-      policyTypeupdate: ['', [Validators.required, Validators.maxLength(50), Validators.pattern(/^[^\s].*$/)]],
-      applicableForupdate: ['', [Validators.required, Validators.maxLength(50), Validators.pattern(/^[^\s].*$/)]],
-      descriptionupdate: [ '',[Validators.maxLength(250)],],
+      updateprojects: ['', [Validators.required ]],
+      updatephases: ['', [Validators.required]],
+      updatefields: ['', [Validators.required]],
       isMandatoryupdate: [false]
     });
   }
@@ -70,25 +105,22 @@ timesheetconfigForm!: FormGroup;
   openModal(content: any) {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
-  postExpenses(f: FormGroup) {
+  posttimesheetconfig(f: FormGroup) {
     if (f.invalid) return;
 
     const payload = {
-      policyType: f.value.policyType,
-      applicableFor: f.value.applicableFor,
-      description: f.value.description,
-      isDeleted: false,
-      createdBy: parseInt(this.empinfo.employeeId),
-      createdAt: moment().format('YYYY-MM-DD'),
-      isMandatory: f.value.isMandatory ? f.value.isMandatory : false,
+      projectId: f.value.projects?.join(','),
+      isMandatory: f.value.isMandatory,
+      phaseIds: f.value.phases,
+      fields: f.value.fields
     };
 
-    this.subscription = this.http.postdata("ExpensesCheckListConfiguration", payload).pipe(takeUntil(this.destroy$)).subscribe({
+    this.subscription = this.http.postdata("TimesheetConfiguration", payload).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data: any) => {
         this.modalService.dismissAll()
-        this.conformationPopup.openSuccessModal("Expense Checklist added successfully");
+        this.conformationPopup.openSuccessModal("Timesheet Configuration added successfully");
         f.reset();
-        this.getExpenses();
+        this.getTimesheet();
       },
       error: (reason: any) => {
         this.conformationPopup.openErrorModal(reason.error.message);
@@ -96,9 +128,9 @@ timesheetconfigForm!: FormGroup;
     });
   }
 
-  getExpenses() {
+  getTimesheet() {
     this.dataload = true
-    this.http.getData("ExpensesCheckListConfiguration/getall").pipe(takeUntil(this.destroy$)).subscribe({
+    this.http.getData("TimesheetConfiguration").pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.timesheetconfigdata = res.data as any[];
         this.dataload = false
@@ -149,8 +181,8 @@ timesheetconfigForm!: FormGroup;
         if (res) {
           this.selectedExpensesId = null
           this.modalService.dismissAll()
-          this.getExpenses()
-          this.conformationPopup.openSuccessModal('Expense Checklist updated successfully')
+          this.getTimesheet()
+          this.conformationPopup.openSuccessModal('Timesheet Configuration updated successfully')
         }
       },
       error: (err) => {
@@ -169,8 +201,8 @@ timesheetconfigForm!: FormGroup;
     this.subscription = this.http.deleteData(`ExpensesCheckListConfiguration/${this.selectedExpensesId}`).subscribe({
       next: (data: any) => {
         this.modalService.dismissAll()
-        this.conformationPopup.openSuccessModal("Expense Checklist deleted successfully")
-        this.getExpenses();
+        this.conformationPopup.openSuccessModal("Timesheet Configuration deleted successfully")
+        this.getTimesheet();
       },
       error: (reason: any) => {
         console.log(reason);

@@ -8,7 +8,7 @@ import { DropdownModule } from 'primeng/dropdown';
 import { NgbModalRef, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxDocViewerModule } from 'ngx-doc-viewer';
-import { SearchfordeskPipe } from '../../../pipes/searchfordesk.pipe';
+import { SearchfordeskPipe } from '../../../Pipes/searchfordesk.pipe';
 import { InfoIconComponent } from '../../../icons/info-icon/info-icon.component';
 import { DataLoaderContentComponent } from '../../../shared/data-loader-content/data-loader-content.component';
 import { CommonModule } from '@angular/common';

@@ -542,6 +542,10 @@
                             placeholder="Please select task type" formControlName="taskId" class="custom-select w-100">
                         </p-select>
                     </div>
+                    <div class="error-msg"
+                            *ngIf="dayForm.get('taskId')?.touched && dayForm.get('taskId')?.hasError('required')">
+                            Task Type is required
+                        </div>
                 </div>
                     <div class="col-md-12 mb-3">
                         <label class="form-label custom-label mb-2">Description<span

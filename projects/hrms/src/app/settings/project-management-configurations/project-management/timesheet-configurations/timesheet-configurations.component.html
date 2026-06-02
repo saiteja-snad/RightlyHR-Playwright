@@ -29,7 +29,7 @@
                     <tr *ngFor="let exp of timesheetconfigdata">
                         <td>{{exp.projectName}}</td>
                         <td>{{exp.phaseName}}</td>
-                         <td>{{exp.fieldName}}</td>
+                        <td class="text-center">{{exp.fieldName}}</td>
                         <td class="text-center">{{exp.isMandatory ? 'Yes' : 'No'}}</td>
                           <td class="text-center"
                             *ngIf="rbac.allowedToAccess('Timesheet Configurations.update') || rbac.allowedToAccess('Timesheet Configurations.delete')">

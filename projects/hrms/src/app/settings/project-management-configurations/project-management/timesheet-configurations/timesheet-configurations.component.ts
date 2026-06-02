@@ -160,6 +160,7 @@ timesheetconfigForm!: FormGroup;
     this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.timesheetconfigdata = res?.items as any[];
+        this.collectionSize = res?.totalCount || 0;
         this.dataload = false
       },
       error: () => {

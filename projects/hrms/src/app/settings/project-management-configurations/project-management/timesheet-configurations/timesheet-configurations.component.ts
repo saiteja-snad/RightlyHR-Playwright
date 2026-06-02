@@ -46,7 +46,7 @@ timesheetconfigForm!: FormGroup;
   collectionSize!: number;
   first = 0;
   totalRecords = 0;
-
+  searchQuery = '';
   options = [
     { label: 50, value: 50 },
     { label: 100, value: 100 },
@@ -67,7 +67,7 @@ timesheetconfigForm!: FormGroup;
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.intiationalfrom();
     this.intiationalupdatefrom();
-    this.getTimesheet(this.page, this.pageSize);
+    this.getTimesheet(this.page, this.pageSize,this.searchQuery);
     this.getprojects();
   }
   getprojects(){
@@ -132,7 +132,7 @@ timesheetconfigForm!: FormGroup;
     if (f.invalid) return;
 
     const payload = {
-      projectId: f.value.projects?.join(','),
+      projectIds: f.value.projects,
       isMandatory: f.value.isMandatory,
       phaseIds: f.value.phases,
       fields: f.value.fields
@@ -143,7 +143,7 @@ timesheetconfigForm!: FormGroup;
         this.modalService.dismissAll()
         this.conformationPopup.openSuccessModal("Timesheet Configuration added successfully");
         f.reset();
-        this.getTimesheet(this.page, this.pageSize);
+        this.getTimesheet(this.page, this.pageSize, this.searchQuery);
       },
       error: (reason: any) => {
         this.conformationPopup.openErrorModal(reason.error.message);
@@ -151,9 +151,13 @@ timesheetconfigForm!: FormGroup;
     });
   }
 
-  getTimesheet(page?: number, pageSize?: number) {
+  getTimesheet(page?: number, pageSize?: number,searchQuery?:string) {
     this.dataload = true
-    this.http.getData(`TimesheetConfiguration?pageNumber=${page}&pageSize=${pageSize}`).pipe(takeUntil(this.destroy$)).subscribe({
+    let url = `TimesheetConfiguration?pageNumber=${page}&pageSize=${pageSize}`;
+    if (searchQuery) {
+      url += `&search=${searchQuery}`;
+    }
+    this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.timesheetconfigdata = res?.items as any[];
         this.dataload = false
@@ -187,7 +191,7 @@ timesheetconfigForm!: FormGroup;
     const payload = {
       isMandatory: this.timesheetconfigUpdateForm.value.isMandatoryupdate,
       phaseId: this.timesheetconfigUpdateForm.value.updatephases,
-      fields: this.timesheetconfigUpdateForm.value.updatefields
+      fieldName: this.timesheetconfigUpdateForm.value.updatefields
     };
 
     this.http.putData(`TimesheetConfiguration/${this.selecteddata.id}`, payload).pipe(takeUntil(this.destroy$)).subscribe({
@@ -195,7 +199,7 @@ timesheetconfigForm!: FormGroup;
         if (res) {
           this.selecteddata = null
           this.modalService.dismissAll()
-          this.getTimesheet(this.page, this.pageSize);
+          this.getTimesheet(this.page, this.pageSize,this.searchQuery);
           this.conformationPopup.openSuccessModal('Timesheet Configuration updated successfully')
         }
       },
@@ -217,7 +221,7 @@ timesheetconfigForm!: FormGroup;
       next: (data: any) => {
         this.modalService.dismissAll()
         this.conformationPopup.openSuccessModal("Timesheet Configuration deleted successfully")
-        this.getTimesheet(this.page, this.pageSize);
+        this.getTimesheet(this.page, this.pageSize,this.searchQuery);
       },
       error: (reason: any) => {
         console.log(reason);
@@ -228,14 +232,14 @@ timesheetconfigForm!: FormGroup;
    onRowsChange() {
     this.page = 1;
     this.first = 0;
-    this.getTimesheet(this.page, this.pageSize);
+    this.getTimesheet(this.page, this.pageSize,this.searchQuery);
   }
 
   onPageChange(event: any) {
     this.page = event.page + 1;
     this.pageSize = event.rows;
     this.first = event.first;
-   this.getTimesheet(this.page, this.pageSize);
+   this.getTimesheet(this.page, this.pageSize,this.searchQuery);
   }
 
   // Called when first size changes
@@ -244,7 +248,7 @@ timesheetconfigForm!: FormGroup;
     this.rows = newPageSize;
     this.page = 1;
     this.first = 0;
-    this.getTimesheet(this.page, this.pageSize);
+    this.getTimesheet(this.page, this.pageSize,this.searchQuery);
   }
   ngOnDestroy() {
     this.destroy$.next(true);

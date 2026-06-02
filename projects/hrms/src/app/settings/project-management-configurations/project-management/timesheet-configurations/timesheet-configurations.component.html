@@ -7,7 +7,11 @@
                 <i class="bi bi-plus plus-icon me-1"></i>{{'Add New'|translate}}
             </div>
         </div>
-
+        <div class="input-group custom-search mb-3">
+            <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
+            <input type="search" class="form-control custom-search-input" placeholder="Search here" aria-label="Username"
+                [(ngModel)]="searchQuery" (ngModelChange)="getTimesheet(this.page, this.pageSize, searchQuery)" aria-describedby="basic-addon1">
+        </div>
         <div class="custom-table-content mt-2">
             @if(!dataload){
             <table class="w-100">

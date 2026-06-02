@@ -534,8 +534,8 @@
                 </div>
                 <div class="row">
                       <div class="col-md-12 mb-3">
-                    <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Task Type'|translate}}<span
-                            class="error-msg"></span></label>
+                    <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Task Type'|translate}}<span *ngIf="isRequired('taskId')"
+                            class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="taskType" optionLabel="taskTypeName" optionValue="id"
                             [filter]="true" filterBy="taskTypeName" filterPlaceholder="Search task type"
@@ -545,7 +545,7 @@
                 </div>
                     <div class="col-md-12 mb-3">
                         <label class="form-label custom-label mb-2">Description<span
-                                class="text-danger">*</span></label>
+                               *ngIf="isRequired('description')" class="error-msg">*</span></label>
                         <textarea formControlName="description" [maxlength]="500"
                             (keydown)="formValidation.restrictInitialSpace($event)" class="form-control custom-input"
                             placeholder="Please enter description" rows="5"></textarea>
@@ -559,18 +559,18 @@
 
                     </div>
                     <div class="col-md-6 mb-3">
-                        <label class="form-label custom-label mb-2">Start Time</label>
+                        <label class="form-label custom-label mb-2">Start Time <span  *ngIf="isRequired('startTime')" class="error-msg">*</span></label>
                         <input type="time" formControlName="startTime" class="form-control custom-input"
                             placeholder="HH:MM" (change)="onTimeChange()">
                     </div>
                     <div class="col-md-6 mb-3">
-                        <label class="form-label custom-label mb-2">End Time</label>
+                        <label class="form-label custom-label mb-2">End Time <span  *ngIf="isRequired('endTime')" class="error-msg">*</span></label>
                         <input type="time" formControlName="endTime" class="form-control custom-input"
                             placeholder="HH:MM" (change)="onTimeChange()">
                     </div>
-                </div>
+                </div> 
                 <div class="col-md-12 mb-3">
-                    <label class="form-label custom-label mb-2">Duration<span class="text-danger">*</span></label>
+                    <label class="form-label custom-label mb-2">Duration<span class="error-msg">*</span></label>
                     <div class="input-group custom-input-group">
                         <input type="text" formControlName="duration" class="form-control custom-input border-none"
                             placeholder="HH:MM" maxlength="4" (keypress)="allowNumbersOnly($event)"
@@ -596,7 +596,7 @@
                 </div>
                 <div class="d-flex align-items-center gap-3 pt-4"
                     *ngIf="dayForm.get('approvalStatus')?.value !=='Waiting for Approval' && dayForm.get('approvalStatus')?.value !== 'Processed'">
-                    <span type="button" class="text-danger"
+                    <span type="button" class="error-msg"
                         *ngIf="dayForm.get('approvalStatus')?.value && dayForm.get('approvalStatus')?.value !== 'Not Entered'"
                         (click)="opendeleteModal(deleteconformation,dayForm.get('entryId')?.value)"><u>Delete</u></span>
                     <button type="button" class="custom-btn btn-secondary w-100"

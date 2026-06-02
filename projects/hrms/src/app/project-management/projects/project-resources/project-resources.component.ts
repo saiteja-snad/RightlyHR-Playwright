@@ -634,7 +634,6 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
           }
         },
         error: (reason: any) => {
-          this.loading = false;
           console.error(reason);
         },
       });
@@ -934,7 +933,6 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
       .getDataIncludeParams('ProjectPhases/list', params)
       .subscribe({
         next: (data: any) => {
-          this.loading = false;
           this.phaseData = (data?.data || []).filter(
             (p: any) =>
               p?.status?.toLowerCase() === 'in progress' ||

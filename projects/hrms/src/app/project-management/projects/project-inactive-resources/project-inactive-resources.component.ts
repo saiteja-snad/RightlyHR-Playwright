@@ -319,7 +319,6 @@ export class ProjectInactiveResourcesComponent {
       next: (data: any) => {
         this.collectionSize = data?.pagination?.totalRecords || 0
 
-        this.loading = false;
         if (isPopupCall) {
           // DO NOT TOUCH TABLE DATA
           const popupData = data.data ?? [];
@@ -331,6 +330,8 @@ export class ProjectInactiveResourcesComponent {
         } else {
           // NORMAL CALL - UPDATE TABLE DATA
           this.resourcesData = Array.isArray(data?.data) ? data.data : [];
+                  this.loading = false;
+
           this.resourcesData = this.resourcesData.map((item: any) => ({
             ...item,
             employee: {
@@ -635,7 +636,6 @@ export class ProjectInactiveResourcesComponent {
     };
     this.subscription = this.http.getDataIncludeParams('ProjectPhases/list', params).subscribe({
       next: (data: any) => {
-        this.loading = false;
         this.phaseData = (data?.data || []).filter(
           (p: any) =>
             p?.status?.toLowerCase() === 'in progress' ||
@@ -652,7 +652,6 @@ export class ProjectInactiveResourcesComponent {
         }));
       },
       error: (reason: any) => {
-        this.loading = false;
       }
     });
   }

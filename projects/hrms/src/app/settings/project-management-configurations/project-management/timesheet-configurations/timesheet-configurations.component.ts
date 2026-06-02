@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import moment from 'moment';
@@ -12,10 +12,14 @@ import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { SelectModule } from 'primeng/select';
 import { MultiSelectModule } from 'primeng/multiselect';
+import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
+import { NoDataFoundComponent } from "../../../../shared/no-data-found/no-data-found.component";
+import { DropdownModule } from 'primeng/dropdown';
+import { PaginatorModule } from 'primeng/paginator';
 
 @Component({
   selector: 'app-timesheet-configurations',
-  imports: [ReactiveFormsModule, TranslateModule, CommonModule,SelectModule,NgbPopoverModule,MultiSelectModule],
+  imports: [ReactiveFormsModule, TranslateModule, CommonModule,FormsModule, PaginatorModule, DropdownModule, SelectModule, NgbPopoverModule, MultiSelectModule, DataLoaderContentComponent, NoDataFoundComponent],
   templateUrl: './timesheet-configurations.component.html',
   styleUrl: './timesheet-configurations.component.scss'
 })
@@ -26,16 +30,29 @@ timesheetconfigForm!: FormGroup;
   destroy$: Subject<boolean> = new Subject<boolean>();
   timesheetconfigdata: any[] = [];
   dataload = false;
-  selectedExpensesId: any;
+  selecteddata: any;
   subscription!: Subscription;
   fieldsoptions = [
-    { label: 'Task Type', value: 'task_type' },
-    { label: 'Description', value: 'description' },
-    { label: 'Start Time', value: 'start_time' },
-    { label: 'End Time', value: 'end_time' },
+    { label: 'Task Type', value: 'Task Type' },
+    { label: 'Description', value: 'Description' },
+    { label: 'Start Time', value: 'Start Time' },
+    { label: 'End Time', value: 'End Time' },
   ];
   projectsoption = [] as any;
   phasesoption = [] as any;
+  page = 1;
+  pageSize = 50;
+  rows = 50;
+  collectionSize!: number;
+  first = 0;
+  totalRecords = 0;
+
+  options = [
+    { label: 50, value: 50 },
+    { label: 100, value: 100 },
+    { label: 150, value: 150 },
+    { label: 200, value: 200 }
+  ];
   constructor(
     public router: Router,
     private modalService: NgbModal,
@@ -50,15 +67,13 @@ timesheetconfigForm!: FormGroup;
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.intiationalfrom();
     this.intiationalupdatefrom();
-    this.getTimesheet();
+    this.getTimesheet(this.page, this.pageSize);
     this.getprojects();
   }
   getprojects(){
-    this.subscription=this.http.getData(`Project`).subscribe({
+    this.http.getData(`Project`).pipe(takeUntil(this.destroy$)).subscribe({
       next:(res:any)=>{
-        console.log(res);
         this.projectsoption = res.data;
-        
       },
       error:(err)=>{
         this.projectsoption = [];
@@ -67,21 +82,29 @@ timesheetconfigForm!: FormGroup;
     })
   }
   getphases() {
-    const selectedProjects = this.timesheetconfigForm.get('projects')?.value;
-    console.log(selectedProjects);
-    if (selectedProjects && selectedProjects.length > 0) {
-      const projectIds = selectedProjects.join(',');
+    let selectedProjects =
+      this.timesheetconfigForm.get('projects')?.value ? this.timesheetconfigForm.get('projects')?.value:this.selecteddata?.projectId;
 
-      this.subscription = this.http
-        .getData(`ProjectPhases/list?projectId=${projectIds}`)
-        .subscribe({
-          next: (response:any) => {
+    // normalize to array (handles both number and array cases)
+    const projectArray = Array.isArray(selectedProjects)
+      ? selectedProjects
+      : selectedProjects
+        ? [selectedProjects]
+        : [];
+
+    if (projectArray.length > 0) {
+      const projectIds = projectArray.join(',');
+      this.http.getData(`ProjectPhases/list?projectId=${projectIds}`).pipe(takeUntil(this.destroy$)).subscribe({
+          next: (response: any) => {
             this.phasesoption = response.data;
           }
         });
     } else {
-      this.phasesoption = []; // Clear phases data
-      this.timesheetconfigForm.get('phases')?.setValue(null); // Optional: reset selected phase
+      this.phasesoption = [];
+
+      // reset form safely (works for both forms if needed)
+      this.timesheetconfigForm.get('phases')?.reset();
+      this.timesheetconfigUpdateForm.get('phases')?.reset();
     }
   }
   intiationalfrom() {
@@ -95,7 +118,7 @@ timesheetconfigForm!: FormGroup;
 
   intiationalupdatefrom() {
     this.timesheetconfigUpdateForm = this.fb.group({
-      updateprojects: ['', [Validators.required ]],
+      updateprojects: [{ value: '', disabled: true }, [Validators.required ]],
       updatephases: ['', [Validators.required]],
       updatefields: ['', [Validators.required]],
       isMandatoryupdate: [false]
@@ -120,7 +143,7 @@ timesheetconfigForm!: FormGroup;
         this.modalService.dismissAll()
         this.conformationPopup.openSuccessModal("Timesheet Configuration added successfully");
         f.reset();
-        this.getTimesheet();
+        this.getTimesheet(this.page, this.pageSize);
       },
       error: (reason: any) => {
         this.conformationPopup.openErrorModal(reason.error.message);
@@ -128,11 +151,11 @@ timesheetconfigForm!: FormGroup;
     });
   }
 
-  getTimesheet() {
+  getTimesheet(page?: number, pageSize?: number) {
     this.dataload = true
-    this.http.getData("TimesheetConfiguration").pipe(takeUntil(this.destroy$)).subscribe({
+    this.http.getData(`TimesheetConfiguration?pageNumber=${page}&pageSize=${pageSize}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
-        this.timesheetconfigdata = res.data as any[];
+        this.timesheetconfigdata = res?.items as any[];
         this.dataload = false
       },
       error: () => {
@@ -147,68 +170,81 @@ timesheetconfigForm!: FormGroup;
 
   openupdate(content: any, expenses: any): void {
     console.log(expenses)
-    this.selectedExpensesId = expenses.id
-
+    this.selecteddata = expenses;
+    this.getphases();
     this.timesheetconfigUpdateForm.patchValue({
-      applicableForupdate: expenses.applicableFor,
-      policyTypeupdate: expenses.policyType,
-      descriptionupdate: expenses.description,
+      updateprojects: expenses.projectId,
+      updatephases: expenses.phaseId,
+      updatefields: expenses.fieldName,
       isMandatoryupdate: expenses.isMandatory
     });
-
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
 
 
   onUpdateSubmit() {
     if (this.timesheetconfigUpdateForm.invalid) return;
-
     const payload = {
-      id: this.selectedExpensesId,
-      policyType: this.timesheetconfigUpdateForm.value.policyTypeupdate,
-      applicableFor: this.timesheetconfigUpdateForm.value.applicableForupdate,
-      description: this.timesheetconfigUpdateForm.value.descriptionupdate,
-      isDeleted: false,
-      createdBy: parseInt(this.empinfo.employeeId),
-      createdAt: new Date(),
-      updatedBy: parseInt(this.empinfo.employeeId),
-      updatedAt: new Date(), 
-      isMandatory: this.timesheetconfigUpdateForm.value.isMandatoryupdate ? this.timesheetconfigUpdateForm.value.isMandatoryupdate : false
+      isMandatory: this.timesheetconfigUpdateForm.value.isMandatoryupdate,
+      phaseId: this.timesheetconfigUpdateForm.value.updatephases,
+      fields: this.timesheetconfigUpdateForm.value.updatefields
     };
 
-    this.subscription = this.http.putData(`ExpensesCheckListConfiguration/${this.selectedExpensesId}`, payload).subscribe({
-      next: (res) => {
+    this.http.putData(`TimesheetConfiguration/${this.selecteddata.id}`, payload).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res:any) => {
         if (res) {
-          this.selectedExpensesId = null
+          this.selecteddata = null
           this.modalService.dismissAll()
-          this.getTimesheet()
+          this.getTimesheet(this.page, this.pageSize);
           this.conformationPopup.openSuccessModal('Timesheet Configuration updated successfully')
         }
       },
-      error: (err) => {
+      error: (err:any) => {
         console.error('Update failed', err);
-        this.conformationPopup.openErrorModal(err.error.message)
+        console.log('Error Body:', err.error);
+        this.conformationPopup.openErrorModal(err.error.message?err.error.message:err)
       }
     });
   }
 
   opendelete(content: any, expenses: any) {
-    this.selectedExpensesId = expenses.id
+    this.selecteddata = expenses.id
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
 
-  expemsesDelete() {
-    this.subscription = this.http.deleteData(`ExpensesCheckListConfiguration/${this.selectedExpensesId}`).subscribe({
+  deletedata() {
+    this.http.deleteData(`TimesheetConfiguration/${this.selecteddata}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data: any) => {
         this.modalService.dismissAll()
         this.conformationPopup.openSuccessModal("Timesheet Configuration deleted successfully")
-        this.getTimesheet();
+        this.getTimesheet(this.page, this.pageSize);
       },
       error: (reason: any) => {
         console.log(reason);
 
       }
     });
+  }
+   onRowsChange() {
+    this.page = 1;
+    this.first = 0;
+    this.getTimesheet(this.page, this.pageSize);
+  }
+
+  onPageChange(event: any) {
+    this.page = event.page + 1;
+    this.pageSize = event.rows;
+    this.first = event.first;
+   this.getTimesheet(this.page, this.pageSize);
+  }
+
+  // Called when first size changes
+  onPageSizeChange(newPageSize: number) {
+    this.pageSize = newPageSize;
+    this.rows = newPageSize;
+    this.page = 1;
+    this.first = 0;
+    this.getTimesheet(this.page, this.pageSize);
   }
   ngOnDestroy() {
     this.destroy$.next(true);

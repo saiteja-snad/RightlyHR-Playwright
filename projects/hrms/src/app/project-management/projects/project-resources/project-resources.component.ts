@@ -529,6 +529,7 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
     this.rows = newPageSize;
     this.page = 1;
     this.first = 0;
+    this.selectedResources = [];
     this.getResourceData(this.projectId, undefined, false, this.searchValue, this.page, this.pageSize);
   }
 
@@ -536,6 +537,7 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
     this.page = event.page + 1;
     this.pageSize = event.rows;
     this.first = event.first;
+        this.selectedResources = [];
     this.getResourceData(this.projectId, undefined, false, this.searchValue, this.page, this.pageSize);
   }
   getResourceData(
@@ -579,7 +581,7 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
       .getDataIncludeParams('ProjectResource', params)
       .subscribe({
         next: (data: any) => {
-          this.loading = false;
+        
           this.collectionSize = data?.pagination?.totalRecords || 0;
 
           if (isPopupCall) {
@@ -597,6 +599,7 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
               popupData[0]?.pendingApprovalAuthority?.id ?? null;
           } else {
             // NORMAL CALL - UPDATE TABLE DATA
+              this.loading = false;
             this.resourcesData = Array.isArray(data?.data) ? data.data : [];
             this.resourcesData = this.resourcesData.map((item: any) => ({
               ...item,

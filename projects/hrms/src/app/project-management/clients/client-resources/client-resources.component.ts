@@ -278,6 +278,7 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
     this.rows = newPageSize;
     this.page = 1;
     this.first = 0;
+    this.selectedResources = [];
     this.getResourceData(this.clientID, this.searchValue);
   }
 
@@ -285,6 +286,7 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
     this.page = event.page + 1;
     this.pageSize = event.rows;
     this.first = event.first;
+    this.selectedResources = [];
     this.getResourceData(this.clientID, this.searchValue);
   }
 

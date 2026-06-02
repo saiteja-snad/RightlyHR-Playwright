@@ -114,7 +114,6 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
   selectedResource: any;
   resourceName: any;
   spinnerLoader = false;
-  // Pagination
   page = 1;
   pageSize = 50;
   rows = 50;
@@ -125,7 +124,6 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
     { label: 100, value: 100 },
     { label: 150, value: 150 },
     { label: 200, value: 200 }
-
   ];
   constructor(
     private router: Router,
@@ -147,7 +145,7 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
       if (projectId) {
         this.projectId = parseInt(projectId);
         this.getProjects(this.projectId);
-        this.getResourceData(this.projectId, undefined, false, this.searchValue, this.page, this.pageSize);
+          //  this.getResourceData(this.projectId, undefined, false, this.searchValue, this.page, this.pageSize);
 
       }
     });
@@ -524,7 +522,9 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
     }
     return workingDays;
   }
-  onPageSizeChange(newPageSize: number) {
+
+
+    onPageSizeChange(newPageSize: number) {
     this.pageSize = newPageSize;
     this.rows = newPageSize;
     this.page = 1;
@@ -538,21 +538,21 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
     this.first = event.first;
     this.getResourceData(this.projectId, undefined, false, this.searchValue, this.page, this.pageSize);
   }
-
   getResourceData(
     projectId: number,
     phaseId?: number,
     isPopupCall: boolean = false,
     searchTerm?: string,
-    pageNumber?: number, pageSize?: number
+    pageNumber?: any,
+    pageSize?: any 
   ) {
     const params: any = {
       entityType: 'project',
       entityRefId: projectId,
-      // status: 'active,assigned',
-      status:
-        this.inactiveStatus === 'inactive' ? 'released' : 'active,assigned',
-      pageNumber: pageNumber || this.page,
+      status: 'active,assigned',
+      // status:
+      //   this.inactiveStatus === 'inactive' ? 'released' : 'active,assigned',
+       pageNumber: pageNumber || this.page,
       pageSize: pageSize || this.pageSize
     };
 
@@ -579,8 +579,9 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
       .getDataIncludeParams('ProjectResource', params)
       .subscribe({
         next: (data: any) => {
-          this.collectionSize = data?.pagination?.totalRecords || 0;
           this.loading = false;
+          this.collectionSize = data?.pagination?.totalRecords || 0;
+
           if (isPopupCall) {
             // DO NOT TOUCH TABLE DATA
             const popupData = data.data ?? [];

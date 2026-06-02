@@ -106,7 +106,7 @@ export class ClientResourceInactiveComponent {
       const clientID = params['id'];
       if (clientID) {
         this.clientID = parseInt(clientID);
-        this.getResourceData(this.clientID);
+        // this.getResourceData(this.clientID);
         this.getclientProjects(this.clientID);
         this.getClientsData(clientID);
       }
@@ -222,6 +222,7 @@ export class ClientResourceInactiveComponent {
     }
     this.subscription = this.http.getDataIncludeParams(url).subscribe({
       next: (data: any) => {
+        this.collectionSize = data?.pagination?.totalRecords || 0;
         if (data?.data?.length > 0) {
           this.resourcesData = Array.isArray(data?.data) ? data.data : [];
             this.resourcesData = this.resourcesData.map((item: any) => ({

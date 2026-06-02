@@ -4,10 +4,10 @@
 
 .custom-table-content {
   height: calc(100vh - 15.25rem) !important;
-  
-    &.has-data {
-        height: calc(100dvh - 19rem) !important;
-    }
+
+  &.has-data {
+    height: calc(100dvh - 19rem) !important;
+  }
 }
 
 .resource-right-content {
@@ -45,8 +45,8 @@ input[type="checkbox"] {
 }
 
 .client-image {
-    width: 2.5rem !important;
-    height: 2.5rem !important;
-    object-fit: cover;
-    border-radius: 50%;
+  width: 2.5rem !important;
+  height: 2.5rem !important;
+  object-fit: cover;
+  border-radius: 50%;
 }

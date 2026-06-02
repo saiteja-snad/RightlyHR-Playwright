@@ -25,7 +25,7 @@ import { DateformatPipe } from '../../../pipes/dateformat.pipe';
 import { PaginatorModule } from 'primeng/paginator';
 @Component({
   selector: 'app-project-inactive-resources',
-  imports: [CommonModule, ConfirmationIconComponent, TranslateModule, ReactiveFormsModule, FormsModule, DateformatPipe,PaginatorModule,
+  imports: [CommonModule, ConfirmationIconComponent, TranslateModule, ReactiveFormsModule, FormsModule, DateformatPipe, PaginatorModule,
     Select, DataLoaderContentComponent, NoDataFoundComponent, NgbPopover, InfoIconComponent, ProjectResourceTabComponent, ProfileIconComponent],
   templateUrl: './project-inactive-resources.component.html',
   styleUrl: './project-inactive-resources.component.scss'
@@ -317,9 +317,9 @@ export class ProjectInactiveResourcesComponent {
     }
     this.subscription = this.http.getDataIncludeParams('ProjectResource', params).subscribe({
       next: (data: any) => {
+        this.collectionSize = data?.pagination?.totalRecords || 0
 
         this.loading = false;
-                this.collectionSize = data?.pagination?.totalRecords || 0
         if (isPopupCall) {
           // DO NOT TOUCH TABLE DATA
           const popupData = data.data ?? [];
@@ -331,13 +331,13 @@ export class ProjectInactiveResourcesComponent {
         } else {
           // NORMAL CALL - UPDATE TABLE DATA
           this.resourcesData = Array.isArray(data?.data) ? data.data : [];
-            this.resourcesData = this.resourcesData.map((item: any) => ({
-              ...item,
-              employee: {
-                ...item.employee,
-                profileUrl: this.getImageUrl(item.employee?.profileUrl)
-              }
-            }));
+          this.resourcesData = this.resourcesData.map((item: any) => ({
+            ...item,
+            employee: {
+              ...item.employee,
+              profileUrl: this.getImageUrl(item.employee?.profileUrl)
+            }
+          }));
           this.resoucesDropDownData = this.resourcesData.filter(r => r.employee).map(r => ({
             label: `${r.employee.fusionEmployeeId} - ${r.employee.name}`,
             value: r.employee.id

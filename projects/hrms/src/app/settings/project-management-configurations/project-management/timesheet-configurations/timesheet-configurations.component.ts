@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
@@ -54,6 +54,12 @@ timesheetconfigForm!: FormGroup;
     { label: 200, value: 200 }
   ];
   requiredValidator = Validators.required;
+   responseSummary = {
+    failresreason: 0,
+    successRecordsCount: 0,
+    failureRecordsCount: 0,
+  };
+   @ViewChild('releaseSummary') releaseSummaryModal!: any;
   constructor(
     public router: Router,
     private modalService: NgbModal,
@@ -170,9 +176,28 @@ timesheetconfigForm!: FormGroup;
       fields: formvalue.fields
     };
     this.subscription = this.http.postdata("TimesheetConfiguration", payload).pipe(takeUntil(this.destroy$)).subscribe({
-      next: (data: any) => {
-        this.modalService.dismissAll()
-        this.conformationPopup.openSuccessModal("Timesheet Configuration added successfully");
+      next: (res: any) => {
+        // this.modalService.dismissAll()
+        // this.conformationPopup.openSuccessModal("Timesheet Configuration added successfully");
+        const successCount = res?.data?.successCount;
+        const failureCount = res.data.failedCount.successCount;
+
+        this.responseSummary = {
+          failresreason: res?.data?.failed,
+          successRecordsCount: successCount,
+          failureRecordsCount: failureCount,
+        };
+
+        this.modalService.dismissAll();
+
+        const modalRef = this.modalService.open(this.releaseSummaryModal, {
+          centered: true,
+          size: 'lg',
+        });
+
+        setTimeout(() => {
+          modalRef.close();
+        }, 3000);
         f.reset();
         this.getTimesheet(this.page, this.pageSize, this.searchQuery);
       },

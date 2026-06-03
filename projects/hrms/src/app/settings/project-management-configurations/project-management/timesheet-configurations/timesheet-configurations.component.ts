@@ -76,7 +76,6 @@ timesheetconfigForm!: FormGroup;
       next:(res:any)=>{
         this.projectsoption = res.data;
         this.projectsoption.unshift({
-          projectId: null,
           projectName: 'No Client - No Project'
         });
       },
@@ -130,10 +129,10 @@ timesheetconfigForm!: FormGroup;
       this.phasesoption = [];
       const formControls = [
         this.timesheetconfigForm.get('phases'),
-        this.timesheetconfigUpdateForm.get('phases')
+        this.timesheetconfigUpdateForm.get('updatephases')
       ];
       formControls.forEach(control => {
-        control?.reset();
+        control?.reset([]);
         control?.clearValidators();
         control?.disable();
         control?.updateValueAndValidity();
@@ -163,14 +162,13 @@ timesheetconfigForm!: FormGroup;
   }
   posttimesheetconfig(f: FormGroup) {
     if (f.invalid) return;
-
+    const formvalue= this.timesheetconfigForm.getRawValue();
     const payload = {
-      projectIds: f.value.projects,
-      isMandatory: f.value.isMandatory?f.value.isMandatory:false,
-      phaseIds: f.value.phases,
-      fields: f.value.fields
+      projectIds: (formvalue.projects || []).filter((id: any) => id !== null && id !== undefined),
+      isMandatory: formvalue.isMandatory?formvalue.isMandatory:false,
+      phaseIds: formvalue.phases,
+      fields: formvalue.fields
     };
-
     this.subscription = this.http.postdata("TimesheetConfiguration", payload).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data: any) => {
         this.modalService.dismissAll()
@@ -197,6 +195,7 @@ timesheetconfigForm!: FormGroup;
         this.dataload = false
       },
       error: () => {
+        this.timesheetconfigdata=[];
         this.dataload = false
       },
       complete: () => {

@@ -122,7 +122,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="policyType" class="form-label custom-label mb-2">
-                                {{'Phase' | translate}} <span class="text-danger">*</span>
+                                {{'Phase' | translate}} <span class="text-danger" *ngIf="timesheetconfigForm.get('phases')?.hasValidator(requiredValidator)">*</span>
                             </label>
                             <div class="custom-p-multiSelect-content">
                                 <p-multiSelect [options]="phasesoption" optionLabel="displayName" optionValue="phaseId"
@@ -194,7 +194,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="policyType" class="form-label custom-label mb-2">
-                                {{'Phase' | translate}} <span class="text-danger">*</span>
+                                {{'Phase' | translate}} <span class="text-danger" *ngIf="timesheetconfigForm.get('updatephases')?.hasValidator(requiredValidator)">*</span>
                             </label>
                             <div class="custom-p-select-content">
                                 <p-select [options]="phasesoption" optionLabel="phaseName" [filter]="true" resetFilterOnHide="true"

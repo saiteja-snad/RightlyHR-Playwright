@@ -53,6 +53,7 @@ timesheetconfigForm!: FormGroup;
     { label: 150, value: 150 },
     { label: 200, value: 200 }
   ];
+  requiredValidator = Validators.required;
   constructor(
     public router: Router,
     private modalService: NgbModal,
@@ -71,9 +72,13 @@ timesheetconfigForm!: FormGroup;
     this.getprojects();
   }
   getprojects(){
-    this.http.getData(`Project`).pipe(takeUntil(this.destroy$)).subscribe({
+    this.http.getData(`Project?status=active`).pipe(takeUntil(this.destroy$)).subscribe({
       next:(res:any)=>{
         this.projectsoption = res.data;
+        this.projectsoption.unshift({
+          projectId: null,
+          projectName: 'No Client - No Project'
+        });
       },
       error:(err)=>{
         this.projectsoption = [];
@@ -91,24 +96,48 @@ timesheetconfigForm!: FormGroup;
       : selectedProjects
         ? [selectedProjects]
         : [];
-
-    if (projectArray.length > 0) {
-      const projectIds = projectArray.join(',');
-      this.http.getData(`ProjectPhases/list?projectId=${projectIds}`).pipe(takeUntil(this.destroy$)).subscribe({
+       const validProjectIds = projectArray.filter(
+        id => id !== null && id !== undefined && id !== ''
+      );
+    if (projectArray.length > 0 && validProjectIds.length > 0) {
+      const params: any = {};
+      if (validProjectIds.length > 0) {
+        params.projectId = validProjectIds.join(',');
+        params.status = 'yet to start,in progress,extended';
+      }
+      this.http.getDataIncludeParams('ProjectPhases/list', params).pipe(takeUntil(this.destroy$)).subscribe({
           next: (response: any) => {
             //this.phasesoption = response.data;
           this.phasesoption = response.data.map((phase: any) => ({
             ...phase,
             displayName: `${phase.project?.projectName} - ${phase.phaseName}`
           }));
+          const formControls = [
+            this.timesheetconfigForm.get('phases'),
+            this.timesheetconfigUpdateForm.get('phases')
+          ];
+          if (this.phasesoption.length > 0) {
+            // Enable and make required
+            formControls.forEach(control => {
+              control?.enable();
+              control?.setValidators([Validators.required]);
+              control?.updateValueAndValidity();
+            });
+          } 
           }
         });
     } else {
       this.phasesoption = [];
-
-      // reset form safely (works for both forms if needed)
-      this.timesheetconfigForm.get('phases')?.reset();
-      this.timesheetconfigUpdateForm.get('phases')?.reset();
+      const formControls = [
+        this.timesheetconfigForm.get('phases'),
+        this.timesheetconfigUpdateForm.get('phases')
+      ];
+      formControls.forEach(control => {
+        control?.reset();
+        control?.clearValidators();
+        control?.disable();
+        control?.updateValueAndValidity();
+      });
     }
   }
   intiationalfrom() {

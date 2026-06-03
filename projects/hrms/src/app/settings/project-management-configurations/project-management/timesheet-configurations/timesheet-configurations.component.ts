@@ -96,7 +96,11 @@ timesheetconfigForm!: FormGroup;
       const projectIds = projectArray.join(',');
       this.http.getData(`ProjectPhases/list?projectId=${projectIds}`).pipe(takeUntil(this.destroy$)).subscribe({
           next: (response: any) => {
-            this.phasesoption = response.data;
+            //this.phasesoption = response.data;
+          this.phasesoption = response.data.map((phase: any) => ({
+            ...phase,
+            displayName: `${phase.project?.projectName} - ${phase.phaseName}`
+          }));
           }
         });
     } else {

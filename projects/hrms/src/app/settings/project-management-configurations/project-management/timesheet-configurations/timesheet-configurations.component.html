@@ -125,9 +125,9 @@
                                 {{'Phase' | translate}} <span class="text-danger">*</span>
                             </label>
                             <div class="custom-p-multiSelect-content">
-                                <p-multiSelect [options]="phasesoption" optionLabel="phaseName" optionValue="phaseId"
+                                <p-multiSelect [options]="phasesoption" optionLabel="displayName" optionValue="phaseId"
                                     class="form-select custom-select" formControlName="phases" placeholder="Please select phase"
-                                    filterBy="phaseName" [resetFilterOnHide]="true" [showClear]="false" [filter]="true" display="chip">
+                                    filterBy="displayName" [resetFilterOnHide]="true" [showClear]="false" [filter]="true" display="chip">
                                 </p-multiSelect>
                             </div>
                             <div *ngIf="timesheetconfigForm.get('phases')?.invalid && timesheetconfigForm.get('phases')?.touched" class="error-msg">

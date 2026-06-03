@@ -63,7 +63,7 @@ export class IntialLoadEntitlementCreateComponent implements OnInit, OnDestroy {
   private getYears(): number[] {
     const currentYear = new Date().getFullYear();
     const yearsList: number[] = [];
-    for (let i = 0; i < 2; i++) yearsList.push(currentYear + i);
+    for (let i = -1; i < 2; i++) yearsList.push(currentYear + i);
     return yearsList;
   }
 

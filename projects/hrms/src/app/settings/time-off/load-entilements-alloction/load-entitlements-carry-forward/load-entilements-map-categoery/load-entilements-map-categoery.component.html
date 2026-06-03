@@ -9,41 +9,52 @@
                 </tr>
             </thead>
             <tbody>
-                <ng-container *ngFor="let shift of shiftwisedata">
-                    <tr class="shift-header-row">
-                        <td colspan="3">
-                            <div class="d-flex gap-3">
-                                <span><span class="header-name">Location Name</span> : <b>{{ shift?.locationName }}</b></span>
-                                <span><span class="header-name">Sub Location Name</span> : <b>{{ shift?.subLocationName }}</b></span>
-                                <span>
-                                    <span class="header-name">Shift Name</span> :
-                                    <b [style.color]="shift?.color">{{ shift?.shiftName }} ({{ shift?.shiftStartTime }} - {{ shift?.shiftEndTime }})</b>
-                                </span>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr *ngFor="let category of shift?.categories">
-                        <td>
-                            <div class="d-flex justify-content-center align-items-center gap-3">
-                                <div class="code-box" [style.background]="hexToRgba(category.categoryColor, 0.1)"
-                                    [style.color]="category?.categoryColor">{{ category?.categoryCode }}</div>
-                                <div class="text-start">
-                                    <div class="categoryname" [style.color]="category?.categoryColor">{{ category?.name }}</div>
-                                    <div *ngIf="category?.carryForwardAllowed || category?.encashAllowedType" class="eligible-text">
-                                        Eligible for {{ category?.carryForwardAllowed ? ' Carry Forward' : '' }}
+                <ng-container *ngIf="!loading">
+                    <ng-container *ngIf="(shiftwisedata?.length ?? 0) > 0; else noDataTemplate">
+                        <ng-container *ngFor="let shift of shiftwisedata">
+                            <tr class="shift-header-row">
+                                <td colspan="3">
+                                    <div class="d-flex gap-3">
+                                        <span><span class="header-name">Location Name</span> : <b>{{ shift?.locationName }}</b></span>
+                                        <span><span class="header-name">Sub Location Name</span> : <b>{{ shift?.subLocationName }}</b></span>
+                                        <span>
+                                            <span class="header-name">Shift Name</span> :
+                                            <b [style.color]="shift?.color">{{ shift?.shiftName }} ({{ shift?.shiftStartTime }} - {{ shift?.shiftEndTime }})</b>
+                                        </span>
                                     </div>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="text-center"><i class="bi bi-arrow-right"></i></td>
-                        <td>
-                            <div class="custom-p-select-content d-flex justify-content-center" >
-                                <p-select [options]="nextYearData" class="form-select custom-select" placeholder="Please select target category"
-                                    optionLabel="name" optionValue="id" appendTo="body" filterPlaceholder="Search category"
-                                    [(ngModel)]="category.selectedDestinationId" panelStyleClass="custom-table-select" />
-                            </div>
-                        </td>
-                    </tr>
+                                </td>
+                            </tr>
+                            <tr *ngFor="let category of shift?.categories">
+                                <td>
+                                    <div class="d-flex justify-content-center align-items-center gap-3">
+                                        <div class="code-box" [style.background]="hexToRgba(category.categoryColor, 0.1)"
+                                            [style.color]="category?.categoryColor">{{ category?.categoryCode }}</div>
+                                        <div class="text-start">
+                                            <div class="categoryname" [style.color]="category?.categoryColor">{{ category?.name }}</div>
+                                            <div *ngIf="category?.carryForwardAllowed || category?.encashAllowedType" class="eligible-text">
+                                                Eligible for {{ category?.carryForwardAllowed ? ' Carry Forward' : '' }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="text-center"><i class="bi bi-arrow-right"></i></td>
+                                <td>
+                                    <div class="custom-p-select-content d-flex justify-content-center" >
+                                        <p-select [options]="nextYearData" class="form-select custom-select" placeholder="Please select target category"
+                                            optionLabel="name" optionValue="id" appendTo="body" filterPlaceholder="Search category"
+                                            [(ngModel)]="category.selectedDestinationId" panelStyleClass="custom-table-select" />
+                                    </div>
+                                </td>
+                            </tr>
+                        </ng-container>
+                    </ng-container>
+                    <ng-template #noDataTemplate>
+                        <tr>
+                            <td colspan="3">
+                                <app-no-data-found />
+                            </td>
+                        </tr>
+                    </ng-template>
                 </ng-container>
             </tbody>
         </table>

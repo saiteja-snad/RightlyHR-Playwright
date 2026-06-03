@@ -768,8 +768,8 @@ getTaskType() {
       isBlocked: [{ value: cell.isBlocked, disabled: true }],
       rejectReason: [cell.rejectReason || ''],
       blockReason: [cell.blockReason || ''],
-      resourceId: [row.resourceId || null]
-
+      resourceId: [row.resourceId || null],
+      taskId:[cell.taskId || null,]
     });
   }
 
@@ -1721,6 +1721,7 @@ openModal(content: any, dayForm: AbstractControl | null, index: number, dayKey: 
     this.dayForm = dayForm;
     //start//code for the task type 
     let taskId = this.dayForm.get('taskId')?.value;
+    console.log('Selected Task ID:', taskId);
     let taskdata = this.alltaskTypes?.find((ele: any) => ele?.id == taskId && ele?.status?.toLowerCase() == 'inactive');
     if (taskdata) {
       const alreadyExists = this.taskType?.some((ele: any) => ele.id == taskdata.id);
@@ -1731,6 +1732,7 @@ openModal(content: any, dayForm: AbstractControl | null, index: number, dayKey: 
       this.taskType = this.alltaskTypes?.filter((ele: any) => ele?.status?.toLowerCase() == 'active'
       );
     }
+   this.getTimesheetMadatorydata(this.dayForm.get('projectId')?.value,this.dayForm.get('phaseId')?.value)
     //end//code for the task type
     // ✅ Normalize date (fix timezone issue)
     const normalizeDate = (date: any) => {
@@ -1800,15 +1802,13 @@ openModal(content: any, dayForm: AbstractControl | null, index: number, dayKey: 
         isBillable: isBillableForDay
       });
     }
-   this.getTimesheetMadatorydata(this.dayForm.get('projectId')?.value,this.dayForm.get('phaseId')?.value)
   }
   
 }
  getTimesheetMadatorydata(projectId: number, phaseId: number) {
-  console.log('Fetching timesheet configuration for projectId:', projectId, 'phaseId:', phaseId);
-    this.http.getData(`TimesheetConfiguration?projectId=${projectId}&phaseId=${phaseId}`).pipe(takeUntil(this.destroy$)).subscribe({
+  const url = `TimesheetConfiguration?projectId=${projectId ?? 0}&phaseId=${phaseId ?? 0}`;
+    this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
-        console.log('Timesheet Configuration:', res);
         const items = res?.items || [];
         const fieldMap: any = {
           'Start Time': 'startTime',
@@ -1816,24 +1816,18 @@ openModal(content: any, dayForm: AbstractControl | null, index: number, dayKey: 
           'Task Type': 'taskId',
           'Description': 'description'
         };
-
-        // Get all fields returned by API
-        const apiFields = items.map((x: any) => x.fieldName);
-
         items.forEach((item: any) => {
           const controlName = fieldMap[item.fieldName];
-
-          if (controlName && this.dayForm?.get(controlName)) {
-            const control = this.dayForm.get(controlName);
-
-            if (item.isMandatory) {
-              control?.addValidators(Validators.required);
-            } else {
-              control?.removeValidators(Validators.required);
-            }
-
-            control?.updateValueAndValidity();
+          if (!controlName) return;
+          const control = this.dayForm.get(controlName);
+          if (!control) return;
+          // ALWAYS reset validators first
+          control.clearValidators();
+          // Apply validator if mandatory
+          if (item.isMandatory === true) {
+            control.setValidators([Validators.required]);
           }
+          control.updateValueAndValidity({ emitEvent: false });
         });
       },
       error: () => {

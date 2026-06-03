@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
@@ -53,6 +53,13 @@ timesheetconfigForm!: FormGroup;
     { label: 150, value: 150 },
     { label: 200, value: 200 }
   ];
+  requiredValidator = Validators.required;
+   responseSummary = {
+    failedreason: '',
+    successRecordsCount: 0,
+    failureRecordsCount: 0,
+  };
+   @ViewChild('releaseSummary') releaseSummaryModal!: any;
   constructor(
     public router: Router,
     private modalService: NgbModal,
@@ -71,9 +78,14 @@ timesheetconfigForm!: FormGroup;
     this.getprojects();
   }
   getprojects(){
-    this.http.getData(`Project`).pipe(takeUntil(this.destroy$)).subscribe({
+    this.http.getData(`Project?status=active`).pipe(takeUntil(this.destroy$)).subscribe({
       next:(res:any)=>{
         this.projectsoption = res.data;
+        this.projectsoption.unshift({
+          projectId: 0,
+          phaseId:0,
+          projectName: 'No Client - No Project'
+        });
       },
       error:(err)=>{
         this.projectsoption = [];
@@ -91,24 +103,48 @@ timesheetconfigForm!: FormGroup;
       : selectedProjects
         ? [selectedProjects]
         : [];
-
-    if (projectArray.length > 0) {
-      const projectIds = projectArray.join(',');
-      this.http.getData(`ProjectPhases/list?projectId=${projectIds}`).pipe(takeUntil(this.destroy$)).subscribe({
+       const validProjectIds = projectArray.filter(
+        id => id !== null && id !== undefined && id !== ''
+      );
+    if (projectArray.length > 0 && validProjectIds.length > 0) {
+      const params: any = {};
+      if (validProjectIds.length > 0) {
+        params.projectId = validProjectIds.join(',');
+        params.status = 'yet to start,in progress,extended';
+      }
+      this.http.getDataIncludeParams('ProjectPhases/list', params).pipe(takeUntil(this.destroy$)).subscribe({
           next: (response: any) => {
             //this.phasesoption = response.data;
           this.phasesoption = response.data.map((phase: any) => ({
             ...phase,
             displayName: `${phase.project?.projectName} - ${phase.phaseName}`
           }));
+          if (this.phasesoption.length > 0) {
+            const formControls = [
+            this.timesheetconfigForm.get('phases'),
+            this.timesheetconfigUpdateForm.get('updatephases')
+          ];
+            // Enable and make required
+            formControls.forEach(control => {
+              control?.enable();
+              control?.setValidators([Validators.required]);
+              control?.updateValueAndValidity();
+            });
+          } 
           }
         });
     } else {
       this.phasesoption = [];
-
-      // reset form safely (works for both forms if needed)
-      this.timesheetconfigForm.get('phases')?.reset();
-      this.timesheetconfigUpdateForm.get('phases')?.reset();
+      const formControls = [
+        this.timesheetconfigForm.get('phases'),
+        this.timesheetconfigUpdateForm.get('updatephases')
+      ];
+      formControls.forEach(control => {
+        control?.reset([0]);
+        control?.clearValidators();
+        control?.disable();
+        control?.updateValueAndValidity();
+      });
     }
   }
   intiationalfrom() {
@@ -134,18 +170,33 @@ timesheetconfigForm!: FormGroup;
   }
   posttimesheetconfig(f: FormGroup) {
     if (f.invalid) return;
-
+    const formvalue= this.timesheetconfigForm.getRawValue();
     const payload = {
-      projectIds: f.value.projects,
-      isMandatory: f.value.isMandatory?f.value.isMandatory:false,
-      phaseIds: f.value.phases,
-      fields: f.value.fields
+      projectIds: (formvalue.projects || []).filter((id: any) => id !== null && id !== undefined),
+      isMandatory: formvalue.isMandatory?formvalue.isMandatory:false,
+      phaseIds: formvalue.phases||[0],
+      fields: formvalue.fields
     };
-
     this.subscription = this.http.postdata("TimesheetConfiguration", payload).pipe(takeUntil(this.destroy$)).subscribe({
-      next: (data: any) => {
-        this.modalService.dismissAll()
-        this.conformationPopup.openSuccessModal("Timesheet Configuration added successfully");
+      next: (res: any) => {
+        // this.modalService.dismissAll()
+        // this.conformationPopup.openSuccessModal("Timesheet Configuration added successfully");
+        const successCount = res?.data?.successCount;
+        const failureCount = res.data.failedCount;
+        this.responseSummary = {
+          failedreason: res?.data?.failed ||'NA',
+          successRecordsCount: successCount,
+          failureRecordsCount: failureCount,
+        };
+        this.modalService.dismissAll();
+        const modalRef = this.modalService.open(this.releaseSummaryModal, {
+          centered: true,
+          size: 'lg',
+        });
+        setTimeout(() => {
+          modalRef.close();
+        }, 3000);
+
         f.reset();
         this.getTimesheet(this.page, this.pageSize, this.searchQuery);
       },
@@ -168,6 +219,7 @@ timesheetconfigForm!: FormGroup;
         this.dataload = false
       },
       error: () => {
+        this.timesheetconfigdata=[];
         this.dataload = false
       },
       complete: () => {
@@ -205,7 +257,7 @@ timesheetconfigForm!: FormGroup;
           this.selecteddata = null
           this.modalService.dismissAll()
           this.getTimesheet(this.page, this.pageSize,this.searchQuery);
-          this.conformationPopup.openSuccessModal('Timesheet Configuration updated successfully')
+          this.conformationPopup.openSuccessModal('Timesheet Configurations updated successfully')
         }
       },
       error: (err:any) => {
@@ -229,7 +281,7 @@ timesheetconfigForm!: FormGroup;
           this.selecteddata = null
           this.modalService.dismissAll()
           this.getTimesheet(this.page, this.pageSize,this.searchQuery);
-          this.conformationPopup.openSuccessModal('Timesheet Configuration updated successfully')
+          this.conformationPopup.openSuccessModal('Timesheet Configurations updated successfully')
         }
       },
       error: (err:any) => {

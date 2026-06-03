@@ -55,7 +55,7 @@ timesheetconfigForm!: FormGroup;
   ];
   requiredValidator = Validators.required;
    responseSummary = {
-    failresreason: 0,
+    failedreason: '',
     successRecordsCount: 0,
     failureRecordsCount: 0,
   };
@@ -82,6 +82,8 @@ timesheetconfigForm!: FormGroup;
       next:(res:any)=>{
         this.projectsoption = res.data;
         this.projectsoption.unshift({
+          projectId: 0,
+          phaseId:0,
           projectName: 'No Client - No Project'
         });
       },
@@ -138,7 +140,7 @@ timesheetconfigForm!: FormGroup;
         this.timesheetconfigUpdateForm.get('updatephases')
       ];
       formControls.forEach(control => {
-        control?.reset([]);
+        control?.reset([0]);
         control?.clearValidators();
         control?.disable();
         control?.updateValueAndValidity();
@@ -172,7 +174,7 @@ timesheetconfigForm!: FormGroup;
     const payload = {
       projectIds: (formvalue.projects || []).filter((id: any) => id !== null && id !== undefined),
       isMandatory: formvalue.isMandatory?formvalue.isMandatory:false,
-      phaseIds: formvalue.phases,
+      phaseIds: formvalue.phases||[0],
       fields: formvalue.fields
     };
     this.subscription = this.http.postdata("TimesheetConfiguration", payload).pipe(takeUntil(this.destroy$)).subscribe({
@@ -182,7 +184,7 @@ timesheetconfigForm!: FormGroup;
         const successCount = res?.data?.successCount;
         const failureCount = res.data.failedCount;
         this.responseSummary = {
-          failresreason: res?.data?.failed,
+          failedreason: res?.data?.failed ||'NA',
           successRecordsCount: successCount,
           failureRecordsCount: failureCount,
         };
@@ -255,7 +257,7 @@ timesheetconfigForm!: FormGroup;
           this.selecteddata = null
           this.modalService.dismissAll()
           this.getTimesheet(this.page, this.pageSize,this.searchQuery);
-          this.conformationPopup.openSuccessModal('Timesheet Configuration updated successfully')
+          this.conformationPopup.openSuccessModal('Timesheet Configurations updated successfully')
         }
       },
       error: (err:any) => {
@@ -279,7 +281,7 @@ timesheetconfigForm!: FormGroup;
           this.selecteddata = null
           this.modalService.dismissAll()
           this.getTimesheet(this.page, this.pageSize,this.searchQuery);
-          this.conformationPopup.openSuccessModal('Timesheet Configuration updated successfully')
+          this.conformationPopup.openSuccessModal('Timesheet Configurations updated successfully')
         }
       },
       error: (err:any) => {

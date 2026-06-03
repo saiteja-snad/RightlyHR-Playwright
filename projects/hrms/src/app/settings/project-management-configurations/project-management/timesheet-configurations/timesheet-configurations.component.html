@@ -95,7 +95,7 @@
             <div class="custom-main-popup-container" ngbAutofocus>
                 <div class="custom-poup-header-content popup-header-border">
                     <div>
-                        <p class="popup-heading mb-0">{{'Add Timesheet Configuration' | translate}}</p>
+                        <p class="popup-heading mb-0">{{'Add Timesheet Configurations' | translate}}</p>
                     </div>
                     <div>
                         <a (click)="modal.dismiss();timesheetconfigForm.reset()"><img src="icons/close.png"
@@ -169,7 +169,7 @@
             <div class="custom-main-popup-container" ngbAutofocus>
                 <div class="custom-poup-header-content popup-header-border">
                     <div>
-                        <p class="popup-heading mb-0">{{'Update Timesheet Configuration' | translate}}</p>
+                        <p class="popup-heading mb-0">{{'Update Timesheet Configurations' | translate}}</p>
                     </div>
                     <div>
                         <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
@@ -276,7 +276,7 @@
               <tr>
                 <td>{{ responseSummary?.successRecordsCount }}</td>
                 <td>{{ responseSummary?.failureRecordsCount }}</td>
-                <td>{{ responseSummary?.failresreason ||'NA' }}</td>
+                <td>{{ responseSummary?.failedreason ||'NA' }}</td>
               </tr>
             </tbody>
           </table>

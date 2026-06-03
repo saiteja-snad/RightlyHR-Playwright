@@ -144,7 +144,7 @@ export class KraKpiApprovalsComponent implements OnInit {
 
     const params: any = {
       pageNumber: this.page,
-      pageSize: this.rows,
+      pageSize: this.pageSize,
 
       managerEmployeeId: this.empinfo?.employeeId,
     };

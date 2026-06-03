@@ -236,7 +236,7 @@ existingDocumentUrl: string = '';
   loadKraList() {
     const params: any = {
       pageNumber: 1,
-      pageSize: this.pageSize,
+      pageSize:1000 ,
       ...(this.searchText && { search: this.searchText }),
     };
 

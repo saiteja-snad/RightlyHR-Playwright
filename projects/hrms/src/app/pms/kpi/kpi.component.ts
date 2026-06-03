@@ -196,7 +196,7 @@ toggleInactiveFilter(): void {
   loadKpiList() {
     const params: any = {
       pageNumber: 1,
-      pageSize: 1000,
+      pageSize: this.pageSize,
       ...(this.searchText && { search: this.searchText }),
     };
 

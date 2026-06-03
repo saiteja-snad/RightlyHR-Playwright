@@ -137,7 +137,7 @@ timesheetconfigForm!: FormGroup;
 
     const payload = {
       projectIds: f.value.projects,
-      isMandatory: f.value.isMandatory,
+      isMandatory: f.value.isMandatory?f.value.isMandatory:false,
       phaseIds: f.value.phases,
       fields: f.value.fields
     };

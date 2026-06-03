@@ -1,10 +1,16 @@
-
 .custom-color {
   width: 60px !important;
 }
-
 .custom-table-content {
-  height: calc(100vh - 12rem) !important;
+  height: calc(100vh - 15rem) !important;
+
+  &.has-data {
+    height: calc(100dvh - 18.25rem) !important;
+  }
+
+  &.has-selection {
+    height: calc(100dvh - 21rem) !important; // adjust as needed
+  }
 }
 
 .resource-right-content {
@@ -13,4 +19,33 @@
 
 .result-popup-content .mb-3 {
   text-align: left !important;
+}
+
+th:first-child,
+td:first-child {
+  width: 50px;
+  text-align: center;
+}
+
+input[type="checkbox"] {
+  transform: scale(1.2);
+  cursor: pointer;
+  accent-color: var(--primary-color);
+}
+
+.btn-primary-approve {
+  background-color: var(--primary-color) !important;
+  border-color: var(--primary-color) !important;
+  color: #fff !important;
+}
+
+.btn-primary-approve:hover {
+  opacity: 0.9;
+}
+
+.client-image {
+    width: 2.5rem !important;
+    height: 2.5rem !important;
+    object-fit: cover;
+    border-radius: 50%;
 }

@@ -82,21 +82,23 @@ export class KraKpiDashboardComponent implements OnInit, OnDestroy {
   // Data from API
   summaryCards: any[] = [];
   teamKpiData: any[] = [];
-  collectionSize = 0;
+  totalRecords = 0;
   page = 1;
-  rows = 10;
+  pageSize = 50;
+  rows = 50;
+  collectionSize = 0;
   first = 0;
+  options = [
+    { label: 50, value: 50 },
+    { label: 100, value: 100 },
+    { label: 150, value: 150 },
+    { label: 200, value: 200 }
+  ];
 
   searchText = '';
   reviewCycleOptions: { label: string; value: string }[] = [];
 
-  // Pagination options
-  options = [
-    { label: 10, value: 10 },
-    { label: 15, value: 15 },
-    { label: 20, value: 20 },
-    { label: 25, value: 25 },
-  ];
+
 
   // Charts
   attendanceSummaryData: any;

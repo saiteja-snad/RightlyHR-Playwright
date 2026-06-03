@@ -1,11 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, effect, ViewEncapsulation } from '@angular/core';
+import { Component, effect, TemplateRef, ViewEncapsulation } from '@angular/core';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
-import { filter, Subscription } from 'rxjs';
+import { filter, Subject, Subscription, takeUntil } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { AuthService } from '../../services/auth.service';
-import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RbacService } from '../../services/rbac.service';
 import { DropdownModule } from 'primeng/dropdown';
 import { WfhComponent } from './wfh/wfh.component';
@@ -16,11 +16,25 @@ import { Select } from 'primeng/select';
 import { environment } from '../../../environments/environment';
 import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
 import { MODULE_INFOS } from '../../shared/modules-info';
-import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbOffcanvas, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { ExpensesComponent } from './expenses/expenses.component';
 import { RegularizationComponent } from './regularization/regularization.component';
 import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
 import { TraineeRequestsComponent } from './trainee-requests/trainee-requests.component';
+import { SeperationRequestsComponent } from "./seperation-requests/seperation-requests.component";
+import { SeperationRecallRequestsComponent } from "./seperation-recall-requests/seperation-recall-requests.component";
+import { NodueRequestsComponent } from "./nodue-requests/nodue-requests.component";
+import { ProbationRequestsComponent } from "./probation-requests/probation-requests.component";
+
+import { RemoteLoginRequestsComponent } from "./remote-login-requests/remote-login-requests.component";
+import { ExtraLogHoursComponent } from './extra-log-hours/extra-log-hours.component';
+import { EmployeeInfoRequestsComponent } from './employee-info-requests/employee-info-requests.component';
+import { TimesheetRequestsComponent } from "./timesheet-requests/timesheet-requests.component";
+import { SignalsService } from '../../services/signals.service';
+import { IResourceDetail } from '../../timesheetmodel';
+import dayjs, { Dayjs } from 'dayjs';
+import { MultiSelectModule } from 'primeng/multiselect';
+import { DatePicker } from 'primeng/datepicker';
 @Component({
   selector: 'app-onbehalf-of-approvals',
   imports: [
@@ -40,9 +54,18 @@ import { TraineeRequestsComponent } from './trainee-requests/trainee-requests.co
     FormsModule,
     ExpensesComponent,
     ModuleInfoIconComponent,
-    TraineeRequestsComponent
-
-],
+    TraineeRequestsComponent,
+    SeperationRequestsComponent,
+    SeperationRecallRequestsComponent,
+    NodueRequestsComponent,
+    ProbationRequestsComponent,
+    RemoteLoginRequestsComponent,
+    ExtraLogHoursComponent,
+    EmployeeInfoRequestsComponent,
+    TimesheetRequestsComponent,
+    MultiSelectModule,
+    DatePicker
+  ],
 
   templateUrl: './onbehalf-of-approvals.component.html',
   styleUrl: './onbehalf-of-approvals.component.scss',
@@ -57,12 +80,19 @@ export class OnbehalfOfApprovalsComponent {
   compOff = [] as any;
   wfh = [] as any;
   permissions = [] as any;
-
+  datepickerForm!: FormGroup;
   expenses = [] as any;
 
   regularization = [] as any;
 
   traineeRequests = [] as any;
+  seperationRequests = [] as any;
+  recalls = [] as any;
+  probationRequests = [] as any;
+
+  remoteLogin = [] as any;
+  extraHours = [] as any;
+  timesheetRequests = [] as any;
 
 
   teamManagerControl = new FormControl(null);
@@ -70,10 +100,18 @@ export class OnbehalfOfApprovalsComponent {
   compOffCount = 0;
   expensesCount = 0;
   wfhCount = 0;
+  recallsCount = 0;
+  nodueCount = 0;
+  separationsCount = 0;
+  employeeInfoCount = 0;
+  remoteLoginCount = 0;
+  extraHoursCount = 0;
   traineeRequestsCount = 0;
   activeTab: string = 'timeOff';
   permissionsCount = 0;
   regularizationCount = 0;
+  probationRequestsCount = 0;
+  timesheetRequestsCount = 0;
   employeeiddetails = [] as any;
   getEmployeeInfo = [] as any;
   disaplyapplybutton = true;
@@ -81,11 +119,28 @@ export class OnbehalfOfApprovalsComponent {
   selectedMyTeamEmployee: any = null;
   selectedOtherEmployee: any = null;
   empdata = {} as any;
-
-  constructor(private http: HttpService, private authService: AuthService, public rbac: RbacService, public readonly router: Router) {
+  destroy$ = new Subject<boolean>();
+  resourcesList: any[] = [];
+  projectsData: any[] = [];
+  empinfo: any;
+  phaseIds: any[] = [];
+  employeeid: any;
+  selectedResourceIds: any[] = [];
+  isSubmitEnabled = false;
+  isDistinct = true;
+  employeeData: any[] = [];
+  today: Date = new Date();
+  tastType: any[] = [];
+  constructor(private http: HttpService,
+    private authService: AuthService,
+    public rbac: RbacService,
+    public readonly router: Router,
+    private signalService: SignalsService,
+    private offcanvasService: NgbOffcanvas,
+    private fb: FormBuilder,) {
     // Signal reaction for employee switch
     effect(() => {
-      if (this.http.trigger()) {
+      if (this.http.trigger() || this.signalService.onBhehalfOfApprovalSignal() || this.signalService.separationForYouTriggerSignal()) {
         const data = JSON.parse(localStorage.getItem('onbehalfofaproverData') || '{}');
         if (data?.employeeId) {
           this.employeedata = data;
@@ -95,8 +150,26 @@ export class OnbehalfOfApprovalsComponent {
           this.getPermissionsoff(this.employeedata.employeeId);
           this.getExpensesoff(this.employeedata.employeeId)
           this.getRegularizationoff(this.employeedata.employeeId);
-          this.getTraineeRequestsOff(this.employeedata.employeeId)
 
+
+          this.getTraineeRequestsOff(this.employeedata.employeeId);
+          this.getProbationRequestCount(this.employeedata.employeeId);
+          this.remoteLoginoff(this.employeedata.employeeId);
+          this.getExtraHoursoff(this.employeedata.employeeId);
+          this.getEmployeeInfoRequests(this.employeedata.employeeId);
+          this.getTimesheetRequests(this.employeedata.employeeId);
+          this.getResourceDetailsByManagerId();
+          this.getAllActiveProjects();
+          this.getSeparations(this.employeedata.employeeId);
+          this.getRecalls(this.employeedata.employeeId);
+          if (this.signalService.separationForYouTriggerSignal()) {
+            this.signalService.separationForYouTriggerSignal.set(false);
+          }
+
+        }
+
+        if (this.signalService.onBhehalfOfApprovalSignal()) {
+          this.signalService.onBhehalfOfApprovalSignal.set(false);
         }
         // this.http.resetTriggerSignal();
       }
@@ -104,15 +177,28 @@ export class OnbehalfOfApprovalsComponent {
   }
 
   ngOnInit(): void {
-    
+
     this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     localStorage.removeItem("onbehalfofaproverData");
+    this.createDatepickerForm();
     this.getEmployeeId();
     this.updateModuleInfo();
-    this.initiateUpdateModuleInfo();
     this.getMyTeamData();
+    this.datepickerForm.valueChanges.subscribe(() => {
+      this.isSubmitEnabled = this.isAnyFieldSelected();
+    });
+    this.getTaskType();
   }
-
+  getTaskType() {
+    this.subscription = this.http.getData('TaskType').subscribe({
+      next: (res: any) => {
+        this.tastType = res
+      },
+      error: (error: any) => {
+        console.log(error);
+      }
+    });
+  }
   initiateUpdateModuleInfo() {
     this.router.events
       .pipe(filter(event => event instanceof NavigationEnd))
@@ -132,14 +218,23 @@ export class OnbehalfOfApprovalsComponent {
   }
 
   updateModuleInfo() {
-    const url = this.router.url;
-
-    const routeToInfoMap: { [key: string]: string } = {
-      '/on-behalf-of/on-behalf-of-approvals': MODULE_INFOS.TIME_OFF_ON_BEHALF_OF_APPROVALS_MODULE_INFO
+    const tabToInfoMap: { [key: string]: string } = {
+      'timeOff': MODULE_INFOS.ONBEHALFHALF_APPROVALS_TIME_OFF_MODULE_INFO,
+      'compOff': MODULE_INFOS.ONBEHALFHALF_APPROVALS_COMPOFF_MODULE_INFO,
+      'wfh': MODULE_INFOS.ONBEHALFHALF_APPROVALS_WFH_MODULE_INFO,
+      'permissions': MODULE_INFOS.ONBEHALFHALF_APPROVALS_PERMISSIONS_MODULE_INFO,
+      'regularization': MODULE_INFOS.ONBEHALFHALF_APPROVALS_REGULARIZATION_MODULE_INFO,
+      'expenses': MODULE_INFOS.ONBEHALFHALF_APPROVALS_EXPENSES_MODULE_INFO,
+      'traineeRequests': MODULE_INFOS.ONBEHALFHALF_APPROVALS_TRAINEE_REQUESTS_MODULE_INFO,
+      'separations': MODULE_INFOS.ONBEHALFHALF_APPROVALS_SEPARATIONS_MODULE_INFO,
+      'recalls': MODULE_INFOS.ONBEHALFHALF_APPROVALS_RECALLS_MODULE_INFO,
+      'probation': MODULE_INFOS.ONBEHALFHALF_APPROVALS_PROBATION_REQUESTS_MODULE_INFO,
+      'remoteLogin': MODULE_INFOS.ONBEHALFHALF_APPROVALS_REMOTE_LOGIN_MODULE_INFO,
+      'extraHours': MODULE_INFOS.ONBEHALFHALF_APPROVALS_EXTRA_HOURS_MODULE_INFO,
+      'employeeInfo': MODULE_INFOS.ONBEHALFHALF_APPROVALS_EMPLOYEE_INFO_MODULE_INFO,
+      'timesheets': MODULE_INFOS.ONBEHALFHALF_APPROVALS_TIMESHEET_MODULE_INFO
     };
-
-    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
-    this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
+    this.moduleinfo = tabToInfoMap[this.activeTab] ?? '';
   }
 
   getEmployeeId() {
@@ -196,14 +291,28 @@ export class OnbehalfOfApprovalsComponent {
       this.leaves = [];
       this.compOff = [];
       this.wfh = [];
+      this.recalls = [];
+      this.seperationRequests = [];
+      this.probationRequests = [];
+      this.remoteLogin = [];
+      this.extraHours = [];
       this.permissions = [];
       this.regularization = [];
       this.traineeRequests = [];
+      this.timesheetRequests = [];
 
       this.timeOffCount = 0;
       this.compOffCount = 0;
       this.wfhCount = 0;
+      this.nodueCount = 0;
+      this.recallsCount = 0;
+      this.separationsCount = 0;
+      this.employeeInfoCount = 0;
+      this.timesheetRequestsCount = 0;
+      this.remoteLoginCount = 0;
+      this.extraHoursCount = 0;
       this.permissionsCount = 0;
+      this.probationRequestsCount = 0;
 
       this.expensesCount = 0;
 
@@ -227,15 +336,27 @@ export class OnbehalfOfApprovalsComponent {
       this.leaves = [];
       this.compOff = [];
       this.wfh = [];
+      this.recalls = [];
+      this.seperationRequests = [];
+      this.probationRequests = [];
+      this.timesheetRequests = [];
+      this.remoteLogin = [];
+      this.extraHours = [];
       this.permissions = [];
       this.regularization = [];
-
       this.traineeRequests = [];
-
       this.timeOffCount = 0;
       this.compOffCount = 0;
       this.expensesCount = 0;
       this.wfhCount = 0;
+      this.nodueCount = 0;
+      this.recallsCount = 0;
+      this.separationsCount = 0;
+      this.probationRequestsCount = 0;
+      this.employeeInfoCount = 0;
+      this.timesheetRequestsCount = 0;
+      this.remoteLoginCount = 0;
+      this.extraHoursCount = 0;
       this.permissionsCount = 0;
       this.regularizationCount = 0;
       this.traineeRequestsCount = 0;
@@ -252,6 +373,7 @@ export class OnbehalfOfApprovalsComponent {
 
   setActiveTab(tabName: string): void {
     this.activeTab = tabName;
+    this.updateModuleInfo();
   }
 
   gettimeoffcount(employeeId: any) {
@@ -290,6 +412,77 @@ export class OnbehalfOfApprovalsComponent {
     });
   }
 
+  getSeparations(employeeId: any) {
+    this.subscription = this.http.getData(`PendingApproval/employee/${employeeId}?moduleId=${environment.SeparationrequestmoduleId}`).subscribe({
+      next: (data: any) => {
+        this.seperationRequests = data.data.filter((item: any) => item.approvalHeader.status != 'Processed' && item.approvalHeader.status != 'Rejected');
+        this.separationsCount = this.seperationRequests.length;
+      },
+      error: (reason) => {
+        this.seperationRequests = [];
+        this.separationsCount = 0;
+      }
+    });
+  }
+
+  getRecalls(employeeId: any) {
+    this.subscription = this.http.getData(`PendingApproval/employee/${employeeId}?moduleId=${environment.RecallrequestmoduleId}`).subscribe({
+      next: (data: any) => {
+        this.recalls = data.data.filter((item: any) => item.approvalHeader.status != 'Processed' && item.approvalHeader.status != 'Rejected');
+        this.recallsCount = this.recalls.length;
+      },
+      error: (reason) => {
+        this.recalls = [];
+        this.recallsCount = 0;
+      }
+    });
+  }
+
+
+  getProbationRequestCount(employeeId: any) {
+    this.subscription = this.http.getData(`PendingApproval/employee/${employeeId}?moduleId=${environment.ProbationrequestmoduleId}`).subscribe({
+      next: (data: any) => {
+        this.probationRequests = data.data.filter((item: any) => item.approvalHeader.status != 'Processed' && item.approvalHeader.status != 'Rejected');
+        this.probationRequestsCount = this.probationRequests.length;
+      },
+      error: (reason) => {
+        this.probationRequests = [];
+        this.probationRequestsCount = 0;
+      }
+    });
+  }
+
+
+  getTimesheetRequests(employeeId: any) {
+    this.subscription = this.http
+      .getData(`PendingApproval/getApprovalStatusCounts?EmployeeId=${employeeId}&moduleId=${environment.timesheetModuleId}`)
+      .subscribe({
+        next: (data: any) => {
+          const moduleData = (data as any[])?.find(
+            x => x.moduleId === environment.timesheetModuleId
+          );
+
+          this.timesheetRequestsCount = moduleData?.totalCount ?? 0;
+        },
+        error: () => {
+          this.timesheetRequestsCount = 0;
+        }
+      });
+  }
+
+
+  getRemoteLoginoff(employeeId: any) {
+    this.subscription = this.http.getData(`PendingApproval/employee/${employeeId}?moduleId=${environment.remoteLoginModuleId}`).subscribe({
+      next: (data: any) => {
+        this.remoteLogin = data.data.filter((item: any) => item.approvalHeader.status != 'Processed' && item.approvalHeader.status != 'Rejected');
+        this.remoteLoginCount = this.remoteLogin.length;
+      },
+      error: (reason) => {
+        this.remoteLogin = [];
+      }
+    });
+  }
+
   getPermissionsoff(employeeId: any) {
     this.subscription = this.http.getData(`PendingApproval/employee/${employeeId}?moduleId=${environment.permissionsModuleId}`).subscribe({
       next: (data: any) => {
@@ -301,6 +494,23 @@ export class OnbehalfOfApprovalsComponent {
         this.permissions = [];
       }
     });
+  }
+
+  getEmployeeInfoRequests(employeeId: any) {
+    this.subscription = this.http
+      .getData(`PendingApproval/getApprovalStatusCounts?EmployeeId=${employeeId}&moduleId=${environment.pendingapprovalemployeid}`)
+      .subscribe({
+        next: (data: any) => {
+          const moduleData = (data as any[])?.find(
+            x => x.moduleId === environment.pendingapprovalemployeid
+          );
+
+          this.employeeInfoCount = moduleData?.totalCount ?? 0;
+        },
+        error: () => {
+          this.employeeInfoCount = 0;
+        }
+      });
   }
   getExpensesoff(employeeId: any) {
     this.subscription = this.http.getData(`PendingApproval/employee/${employeeId}?moduleId=${environment.expensesModuleId}`).subscribe({
@@ -314,33 +524,59 @@ export class OnbehalfOfApprovalsComponent {
       }
     });
   }
-  
+
 
   getRegularizationoff(employeeId: any) {
-  this.subscription = this.http.getData(`PendingApproval/employee/${employeeId}?moduleId=${environment.attendanceRegularizationModuleId}`).subscribe({
-    next: (data: any) => {
-      this.regularization = data.data.filter((item: any) => item.approvalHeader.status !== 'Processed' && item.approvalHeader.status !== 'Rejected');
-      this.regularizationCount = this.regularization.length;
-    },
-    error: (reason) => {
-      this.regularization = [];
-      this.regularizationCount = 0;
-          }
-  });
-}
-  getTraineeRequestsOff(employeeId: any) {
-  this.subscription = this.http.getData(`PendingApproval/employee/${employeeId}?moduleId=${environment.traineeoffboardingModuleId}`).subscribe({
-    next: (data: any) => {
-      this.traineeRequests = data.data.filter((item: any) => item.approvalHeader.status != 'Processed' && item.approvalHeader.status != 'Rejected');
-      this.traineeRequestsCount = this.traineeRequests.length;
-    },
-    error: (reason) => {
-      this.traineeRequests = [];
-      this.traineeRequestsCount = 0;
+    this.subscription = this.http.getData(`PendingApproval/employee/${employeeId}?moduleId=${environment.attendanceRegularizationModuleId}`).subscribe({
+      next: (data: any) => {
+        this.regularization = data.data.filter((item: any) => item.approvalHeader.status !== 'Processed' && item.approvalHeader.status !== 'Rejected');
+        this.regularizationCount = this.regularization.length;
+      },
+      error: (reason) => {
+        this.regularization = [];
+        this.regularizationCount = 0;
+      }
+    });
+  }
 
-    }
-  });
-}
+  getExtraHoursoff(employeeId: any) {
+    this.subscription = this.http.getData(`PendingApproval/employee/${employeeId}?moduleId=${environment.extraHoursModuleId}`).subscribe({
+      next: (data: any) => {
+        this.extraHours = data.data.filter((item: any) => item.approvalHeader.status !== 'Processed' && item.approvalHeader.status !== 'Rejected');
+        this.extraHoursCount = this.extraHours.length;
+      },
+      error: (reason) => {
+        this.extraHours = [];
+        this.extraHoursCount = 0;
+      }
+    });
+  }
+
+  getTraineeRequestsOff(employeeId: any) {
+    this.subscription = this.http.getData(`PendingApproval/employee/${employeeId}?moduleId=${environment.traineeoffboardingModuleId}`).subscribe({
+      next: (data: any) => {
+        this.traineeRequests = data.data.filter((item: any) => item.approvalHeader.status != 'Processed' && item.approvalHeader.status != 'Rejected');
+        this.traineeRequestsCount = this.traineeRequests.length;
+      },
+      error: (reason) => {
+        this.traineeRequests = [];
+        this.traineeRequestsCount = 0;
+
+      }
+    });
+  }
+
+  getAllPendingApprovalsNoDue(EmployeeId: any) {
+    this.subscription = this.http
+      .getData(
+        `NoDueClearanceForm/getByApproverIdPendingApprovals/${EmployeeId}`
+      )
+      .subscribe({
+        next: (data: any) => {
+          this.nodueCount = data.length;
+        },
+      });
+  }
 
   timeoff(Value: any) {
     this.gettimeoffcount(this.employeedata.employeeId);
@@ -353,6 +589,17 @@ export class OnbehalfOfApprovalsComponent {
   wfhoff(Value: any) {
     this.getWfhoff(this.employeedata.employeeId)
   }
+  timesheetRequestsOff(Value: any) {
+    this.getTimesheetRequests(this.employeedata.employeeId)
+  }
+
+  remoteLoginoff(Value: any) {
+    this.getRemoteLoginoff(this.employeedata.employeeId)
+  }
+
+  extraHoursOff(value: any) {
+    this.getExtraHoursoff(this.employeedata.employeeId);
+  }
 
   permissionsoff(value: any) {
     this.getPermissionsoff(this.employeedata.employeeId)
@@ -361,18 +608,219 @@ export class OnbehalfOfApprovalsComponent {
     this.getExpensesoff(this.employeedata.employeeId)
   }
 
+  separationsOff(value: any) {
+    this.getSeparations(this.employeedata.employeeId)
+  }
+
+  recallOff(value: any) {
+    this.getRecalls(this.employeedata.employeeId)
+  }
+
+  noDueOff(value: any) {
+    this.getAllPendingApprovalsNoDue(this.employeedata.employeeId);
+  }
+
+
+  employeeInfoOff(value: any) {
+    this.getEmployeeInfoRequests(this.employeedata.employeeId);
+  }
+
+
 
   regularizationoff(value: any) {
-  this.getRegularizationoff(this.employeedata.employeeId);
+    this.getRegularizationoff(this.employeedata.employeeId);
   }
 
   traineeRequestsOff(value: any) {
-  this.getTraineeRequestsOff(this.employeedata.employeeId);
-}
+    this.getTraineeRequestsOff(this.employeedata.employeeId);
+  }
+  /** Create form and keep Phase & Resource disabled initially */
+  createDatepickerForm() {
+    this.datepickerForm = this.fb.group({
+      dateRange: [null],
+      phaseId: [[]],
+      resourceId: [[]],
+      taskId: [[]]
+    });
+  }
+  toggleFilters(content: TemplateRef<any>) {
+    this.offcanvasService.open(content, {
+      position: 'end',
+      backdrop: 'static',
+      keyboard: false,
+    });
+  }
+
+  onresourceChange(event: any) {
+    const selectedResourceIds = event?.value ?? [];
+    this.selectedResourceIds = selectedResourceIds;
+    this.getAllActiveProjects();
+  }
+
+  isAnyFieldSelected(): boolean {
+    const formValue = this.datepickerForm?.value;
+    return (
+      (formValue?.dateRange && formValue?.dateRange?.length > 0) ||
+      (Array.isArray(formValue?.phaseId) && formValue.phaseId.length > 0) ||
+      (Array.isArray(formValue?.resourceId) && formValue.resourceId.length > 0) ||
+      (Array.isArray(formValue?.taskId) && formValue.taskId.length > 0)
+
+    );
+  }
+  closeCanvas() {
+    this.offcanvasService.dismiss();
+  }
+
+  /** Get all phases for the current employee */
+  getAllActiveProjects() {
+    let url = `Project/authorities/${this.employeedata?.employeeId}/projects`;
+    if (this.selectedResourceIds?.length > 0) {
+      const resourceIds = this.selectedResourceIds.join(',');
+      url += `?resourceIds=${resourceIds}`;
+    }
+    this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res: any) => {
+        const projects = res?.data || [];
+        this.projectsData = projects.map((p: any) => ({
+          ...p,
+          displayName: `${p.clientName} - ${p.projectName} - ${p.phaseName}`,
+        }));
+        this.projectsData.unshift({
+          phaseId: 0,
+          displayName: 'No Client - No Project',
+        });
+        // FIX: Prevent null values from appearing in dropdown
+        let selectedPhases = this.datepickerForm.get('phaseId')?.value;
+        if (Array.isArray(selectedPhases)) {
+          // Remove nulls
+          selectedPhases = selectedPhases.filter((x: any) => x !== null);
+          // Keep only valid phaseIds
+          selectedPhases = selectedPhases.filter((id: number) =>
+            this.projectsData.some((p) => p.phaseId === id)
+          );
+          // Set cleaned value back
+          this.datepickerForm.get('phaseId')?.setValue(selectedPhases);
+        }
+      },
+      error: () => (this.projectsData = []),
+    });
+  }
+
+  /** When phase selected */
+  onProjectChange(event: any) {
+    const selectedPhaseIds = event?.value ?? [];
+    this.phaseIds = selectedPhaseIds;
+    this.getResourceDetailsByManagerId();
+  }
+
+  getResourceDetailsByManagerId() {
+    const EmployeeId = this.employeedata?.employeeId;
+    let url = `Timesheet/authority/${EmployeeId}/employees`;
+    if (this.phaseIds?.length > 0) {
+      const phaseIds = this.phaseIds.join(',');
+      url += `?phaseIds=${phaseIds}`;
+    }
+    this.subscription = this.http.getData(url).subscribe({
+      next: (res: any) => {
+        if (res?.success) {
+          this.resourcesList = res.data.map((emp: IResourceDetail) => ({
+            ...emp,
+            fullName: emp?.fusionEmpId ? `${emp.fusionEmpId} - ${emp.name}` : emp?.name,
+          }));
+          // Check if selected resource is still valid and remove nulls
+          let selectedResources = this.datepickerForm.get('resourceId')?.value || [];
+          if (Array.isArray(selectedResources)) {
+            // Remove nulls
+            selectedResources = selectedResources.filter((x: any) => x !== null);
+            // Keep only valid resource IDs
+            selectedResources = selectedResources.filter((id: number) =>
+              this.resourcesList.some((r) => r.id === id)
+            );
+            // Set cleaned value back
+            this.datepickerForm.get('resourceId')?.setValue(selectedResources);
+            // Update component property to match form
+            this.selectedResourceIds = selectedResources;
+          }
+        } else {
+          this.resourcesList = [];
+          this.datepickerForm.get('resourceId')?.setValue([]);
+          this.selectedResourceIds = [];
+        }
+      },
+      error: () => {
+        this.resourcesList = [];
+        this.datepickerForm.get('resourceId')?.setValue([]);
+        this.selectedResourceIds = [];
+      },
+    });
+  }
+  spinnerLoader1 = false;
+  /** On form submit */
+  onSubmit() {
+    this.spinnerLoader1 = true;
+    const formValue = this.datepickerForm.value;
+    const dateRange = formValue.dateRange;
+    const phaseIds = formValue.phaseId || [];
+    const resourceIds = formValue.resourceId || [];
+    const phaseId = phaseIds.length > 0 ? phaseIds.join(',') : null;
+    const resourceId = resourceIds.length > 0 ? resourceIds.join(',') : null;
+    const taskIds = formValue.taskId || [];
+    const taskId = taskIds.length > 0 ? formValue.taskId.join(', ') : null;
+    const request: any = {
+      phaseId,
+      resourceId,
+      taskId
+    };
+    // Add dateRange only if selected
+    if (dateRange && dateRange.length === 2) {
+      request.dateRange = {
+        startDate: dayjs(dateRange[0]).format('YYYY-MM-DDTHH:mm:ss'),
+        endDate: dayjs(dateRange[1]).format('YYYY-MM-DDTHH:mm:ss'),
+      };
+    }
+    // Pass the request data to the timesheet component
+    this.http.setEmployeeIdTimesheet(this.employeedata?.employeeId, phaseId || 0, request);
+    this.spinnerLoader1 = false;
+    this.closeCanvas();
+  }
+
+  isFilterApplied(): boolean {
+    const formValue = this.datepickerForm?.value;
+    return (
+      (formValue?.dateRange && formValue?.dateRange?.length > 0) ||
+      (Array.isArray(formValue?.phaseId) && formValue.phaseId.length > 0) ||
+      (Array.isArray(formValue?.resourceId) && formValue.resourceId.length > 0) ||
+      (Array.isArray(formValue?.taskId) && formValue.taskId.length > 0)
+    );
+  }
+
+  resetForm() {
+    this.datepickerForm.reset({
+      dateRange: null,
+      phaseId: [],
+      resourceId: [],
+      taskId: []
+    });
+    this.phaseIds = [];
+    this.selectedResourceIds = [];
+    this.employeeData = [];
+    this.isSubmitEnabled = false;
+    this.http.setEmployeeIdTimesheet(this.employeedata?.employeeId, 0, null);
+    this.getResourceDetailsByManagerId();
+    this.getAllActiveProjects();
+  }
+
+
+  probationRequest(value: any) {
+    this.getProbationRequestCount(this.employeedata.employeeId);
+  }
 
   ngOnDestroy(): void {
     if (this.subscription) {
       this.subscription.unsubscribe();
     }
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
+    this.http.setEmployeeIdTimesheet({}, 0, null);
   }
 }

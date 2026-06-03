@@ -114,7 +114,7 @@ export class ClientViewComponent implements OnInit, OnDestroy {
     private conformationPopup: OpenModalService,
     public rbac: RbacService,
     private offcanvasService: NgbOffcanvas
-  ) {}
+  ) { }
 
   ngOnInit() {
     const now = new Date();
@@ -551,12 +551,10 @@ export class ClientViewComponent implements OnInit, OnDestroy {
             return {
               ...employee,
               id: employee.employeeId,
-              fullName: `${
-                employee.employeeId ? employee.employeeId + ' - ' : ''
-              }${employee.firstName}
-            ${employee.middleName ? employee.middleName + ' ' : ''}${
-                employee.lastName
-              }`,
+              fullName: `${employee.employeeId ? employee.employeeId + ' - ' : ''
+                }${employee.firstName}
+            ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName
+                }`,
             };
           });
         },
@@ -999,7 +997,7 @@ export class ClientViewComponent implements OnInit, OnDestroy {
 
     return (
       new Date(selectedRange[0]).toDateString() ===
-        startOfMonth.toDateString() &&
+      startOfMonth.toDateString() &&
       new Date(selectedRange[1]).toDateString() === endOfMonth.toDateString()
     );
   }
@@ -1048,6 +1046,13 @@ export class ClientViewComponent implements OnInit, OnDestroy {
     return hasDateRange || hasDept || hasRole || hasPhase || hasProject;
   }
 
+
+  openAddResource() {
+    this.router.navigate(
+      ['/project-management/clients/add-resources'],
+      { queryParams: { id: this.clientid } },
+    );
+  }
   ngOnDestroy(): void {
     if (this.subscription) {
       this.subscription.unsubscribe();

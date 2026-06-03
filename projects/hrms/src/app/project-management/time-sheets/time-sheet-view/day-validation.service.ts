@@ -11,6 +11,7 @@ export interface ValidationContext {
   holidays: any[];
   weekends: any[];
   leaves: any[];
+   matchedAllocation?: any;
 }
 
 @Injectable({
@@ -18,7 +19,7 @@ export interface ValidationContext {
 })
 export class DayValidationService {
   private holidaySet: Set<string> = new Set();
-  private leaveRanges: Array<{ start: number; end: number }> = [];
+  private leaveRanges: Array<{ start: number; end: number; durationType: string }> = [];
   private weekendConfig: Map<string, Set<number>> = new Map();
 
   /**
@@ -33,112 +34,99 @@ export class DayValidationService {
   /**
    * Main validation function
    */
-  checkDayStatus(date: Date, context: ValidationContext): DayStatusResult {
-    const normalizedDate = this.normalizeDate(date);
-    const resource = context.selectedResource;
-    console.log(resource);
-    
-    // Priority 1: Resource allocation range
-    if (resource?.startDate || resource?.endDate) {
-      const resourceStart = resource.startDate ? this.normalizeDate(new Date(resource.startDate)) : null;
-      const resourceEnd = resource.endDate ? this.normalizeDate(new Date(resource.endDate)) : null;
+checkDayStatus(date: Date, context: ValidationContext): DayStatusResult {
+  const normalizedDate = this.normalizeDate(date);
+  const resource = context.selectedResource;
 
-      if (resourceStart && normalizedDate < resourceStart) {
-        console.log('Day is outside resource allocation period (before start)');
-        return { blocked: true, blockReason: 'Outside Resource Allocation Period' };
-      }
-      if (resourceEnd && normalizedDate > resourceEnd) {
-        console.log('Day is outside resource allocation period (after end)');
-        return { blocked: true, blockReason: 'Outside Resource Allocation Period' };
-      }
+  // ✅ Resource allocation range
+  if (resource?.startDate || resource?.endDate) {
+    const resourceStart = resource.startDate ? this.normalizeDate(new Date(resource.startDate)) : null;
+    const resourceEnd = resource.endDate ? this.normalizeDate(new Date(resource.endDate)) : null;
+
+    if (resourceStart && normalizedDate < resourceStart) {
+      return { blocked: true, blockReason: 'Outside Resource Allocation Period' };
     }
 
-    // Priority 2: Phase range
-    if (resource?.phase?.startDate || resource?.phase?.endDate) {
-      const phaseStart = resource.phase.startDate ? this.normalizeDate(new Date(resource.phase.startDate)) : null;
-      const phaseEnd = resource.phase.endDate ? this.normalizeDate(new Date(resource.phase.endDate)) : null;
-
-      if (phaseStart && normalizedDate < phaseStart) {
-        console.log('Day is blocked by phase date restriction (before start)');
-        return { blocked: true, blockReason: 'Phase Date Restriction' };
-      }
-      if (phaseEnd && normalizedDate > phaseEnd) {
-        console.log('Day is blocked by phase date restriction (after end)');
-        return { blocked: true, blockReason: 'Phase Date Restriction' };
-      }
+    if (resourceEnd && normalizedDate > resourceEnd) {
+      return { blocked: true, blockReason: 'Outside Resource Allocation Period' };
     }
-
-    // Priority 3: Project range
-    if (resource?.project?.startDate || resource?.project?.endDate) {
-      const projectStart = resource.project.startDate ? this.normalizeDate(new Date(resource.project.startDate)) : null;
-      const projectEnd = resource.project.endDate ? this.normalizeDate(new Date(resource.project.endDate)) : null;
-
-      if (projectStart && normalizedDate < projectStart) {
-        console.log('Day is outside project period (before start)');
-        return { blocked: true, blockReason: 'Outside Project Period' };
-      }
-      if (projectEnd && normalizedDate > projectEnd) {
-        console.log('Day is outside project period (after end)');
-        return { blocked: true, blockReason: 'Outside Project Period' };
-      }
-    }
-
-    // Priority 4: Holiday check (fast Set lookup)
-    const dateKey = this.getDateKey(normalizedDate);
-    if (this.holidaySet.has(dateKey)) {
-      console.log('Day is blocked due to holiday');
-      return { blocked: true, blockReason: 'Holiday' };
-    }
-
-    // Priority 5: Leave check
-    const dateTime = normalizedDate.getTime();
-    for (const leave of this.leaveRanges) {
-      if (dateTime >= leave.start && dateTime <= leave.end) {
-        console.log('Day is blocked due to leave');
-        return { blocked: true, blockReason: 'Leave' };
-      }
-    }
-
-    // Priority 6: Weekend check
-    const isWeekend = this.isConfiguredWeekend(normalizedDate);
-    if (isWeekend) {
-      const projectAllowsWeekend = resource?.project?.isWeekendAllowed ?? false;
-      const resourceAllowsWeekend = resource?.weekendWorkAllowed ?? false;
-
-      if (!projectAllowsWeekend && !resourceAllowsWeekend) {
-        console.log('Day is blocked due to weekend');
-        return { blocked: true, blockReason: 'Weekend' };
-      }
-    }
-
-    return { blocked: false, blockReason: null };
   }
+
+  // ✅ Phase range
+  if (resource?.phase?.startDate || resource?.phase?.endDate) {
+    const phaseStart = resource.phase.startDate ? this.normalizeDate(new Date(resource.phase.startDate)) : null;
+    const phaseEnd = resource.phase.endDate ? this.normalizeDate(new Date(resource.phase.endDate)) : null;
+
+    if (phaseStart && normalizedDate < phaseStart) {
+      return { blocked: true, blockReason: 'Phase Date Restriction' };
+    }
+
+    if (phaseEnd && normalizedDate > phaseEnd) {
+      return { blocked: true, blockReason: 'Phase Date Restriction' };
+    }
+  }
+
+  // ✅ Holiday
+  const dateKey = this.getDateKey(normalizedDate);
+  if (this.holidaySet.has(dateKey)) {
+    return { blocked: true, blockReason: 'Holiday' };
+  }
+
+  // ✅ Leave
+  const dateTime = normalizedDate.getTime();
+  for (const leave of this.leaveRanges) {
+    if (dateTime >= leave.start && dateTime <= leave.end) {
+      return { blocked: true, blockReason: 'Leave' };
+    }
+  }
+
+  // ✅ Weekend
+  if (this.isConfiguredWeekend(normalizedDate)) {
+    let resourceAllowsWeekend = false;
+
+    if (resource?.allocations?.length) {
+      const matchedAllocation = resource.allocations.find((r: any) => {
+        const start = this.normalizeDate(new Date(r.startDate));
+        const end = this.normalizeDate(new Date(r.endDate));
+        return normalizedDate >= start && normalizedDate <= end;
+      });
+
+      resourceAllowsWeekend = matchedAllocation?.weekendWorkAllowed ?? false;
+    }
+
+    if (!resourceAllowsWeekend) {
+      return { blocked: true, blockReason: 'Weekend' };
+    }
+  }
+
+  return { blocked: false, blockReason: null };
+}
 
   /**
    * Normalize date to midnight UTC to avoid timezone issues
    */
- /**
- * Normalize date safely without timezone shifting
- * Works for both ISO string and Date object
- */
-private normalizeDate(dateInput: string | Date): Date {
-  if (!dateInput) return null as any;
+  /**
+  * Normalize date safely without timezone shifting
+  * Works for both ISO string and Date object
+  */
+  private normalizeDate(dateInput: string | Date): Date {
+    if (!dateInput) return null as any;
 
-  // If already Date object
-  if (dateInput instanceof Date) {
-    return new Date(
-      dateInput.getFullYear(),
-      dateInput.getMonth(),
-      dateInput.getDate()
-    );
+    // If already Date object
+    if (dateInput instanceof Date) {
+      return new Date(
+        dateInput.getFullYear(),
+        dateInput.getMonth(),
+        dateInput.getDate()
+      );
+    }
+
+    // If ISO string (2026-02-01T00:00:00)
+    const datePart = dateInput.split('T')[0];
+    const [year, month, day] = datePart.split('-').map(Number);
+
+    return new Date(year, month - 1, day);
   }
-
-  // If ISO string (2026-02-01T00:00:00)
-  const datePart = dateInput.split('T')[0];
-  const [year, month, day] = datePart.split('-').map(Number);
-
-  return new Date(year, month - 1, day);
-}
   /**
    * Build holiday Set for O(1) lookup
    */
@@ -147,11 +135,12 @@ private normalizeDate(dateInput: string | Date): Date {
     if (!holidays || !Array.isArray(holidays)) return;
 
     holidays.forEach(holiday => {
-      if (holiday.status === 'Published' && holiday.holidayDate) {
+
+      if (holiday.status === 'Published' && holiday.holidayDate && holiday.isOptional === false) {
         const date = this.normalizeDate(new Date(holiday.holidayDate));
         this.holidaySet.add(this.getDateKey(date));
-      
-        
+
+
       }
     });
   }
@@ -159,29 +148,65 @@ private normalizeDate(dateInput: string | Date): Date {
   /**
    * Build leave ranges for efficient range checking
    */
+  // private buildLeaveRanges(leaves: any[]): void {
+  //   this.leaveRanges = [];
+
+  //   if (!leaves || !Array.isArray(leaves)) return;
+
+  //   leaves.forEach(leave => {
+  //     if (leave.startDate && leave.endDate && leave.durationType === '2') {
+  //       const start = this.normalizeDate(leave.startDate);
+  //       const end = this.normalizeDate(leave.endDate);
+  //       this.leaveRanges.push({
+  //         start: start.getTime(),
+  //         end: end.getTime(),
+  //         durationType: leave.durationType
+  //       });
+  //     }
+  //   });
+  // }
+
   private buildLeaveRanges(leaves: any[]): void {
     this.leaveRanges = [];
+
     if (!leaves || !Array.isArray(leaves)) return;
 
+    // Group durationType values by date key
+    const dateTypeMap = new Map<string, Set<string>>();
     leaves.forEach(leave => {
-      if (leave.startDate && leave.endDate) {
-        const start = this.normalizeDate(new Date(leave.startDate));
-        const end = this.normalizeDate(new Date(leave.endDate));
+      if (!leave.startDate) return;
+      const key = this.getDateKey(this.normalizeDate(leave.startDate));
+      if (!dateTypeMap.has(key)) dateTypeMap.set(key, new Set());
+      dateTypeMap.get(key)!.add(String(leave.durationType));
+    });
+    const addedKeys = new Set<string>();
+    leaves.forEach(leave => {
+      if (!leave.startDate || !leave.endDate) return;
+      const start = this.normalizeDate(leave.startDate);
+      const end = this.normalizeDate(leave.endDate);
+      const dateKey = this.getDateKey(start);
+      const typesOnDate = dateTypeMap.get(dateKey)!;
+
+      const isFullDay = typesOnDate.has('2');
+      const isBothHalves = typesOnDate.has('1') && typesOnDate.has('3');
+
+      if ((isFullDay || isBothHalves) && !addedKeys.has(dateKey)) {
+        addedKeys.add(dateKey);
         this.leaveRanges.push({
           start: start.getTime(),
-          end: end.getTime()
+          end: end.getTime(),
+          durationType: leave.durationType
         });
       }
     });
   }
-
   /**
    * Build weekend configuration map
    * Key: weekday name (e.g., "Sunday")
    * Value: Set of week numbers (1-5)
    */
   private buildWeekendConfig(weekends: any[]): void {
-  
+
     this.weekendConfig.clear();
     if (!weekends || !Array.isArray(weekends)) return;
 

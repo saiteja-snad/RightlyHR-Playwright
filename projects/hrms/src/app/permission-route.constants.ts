@@ -489,10 +489,12 @@ export const SETTINGS_EMPLOYEE_FIELDS_MANAGE_WEEKENDS_TABS = [
 ]
 
 export const SETTINGS_EMPLOYEE_FIELDS_EXPENSES_TABS = [
-  { route: '/settings/employee-fields/expenes/configuartion', permission: 'Expenes Configuartion.view' },
+  { route: '/settings/employee-fields/expenes/configuartion', permission: 'Expense Type Configuration.view' },
   { route: '/settings/employee-fields/expenes/allowed-days', permission: 'Expense Allowed Days.view' },
   { route: '/settings/employee-fields/expenes/expenses-limit', permission: 'Expense Threshold Validation.view' },
   { route: '/settings/employee-fields/expenes/global-expenses-configuration', permission: 'Global Expense Configuration.view' },
+  { route: '/settings/employee-fields/expenes/budget-verification', permission: 'Expense Checklist Configuration.view' },
+  { route: '/settings/employee-fields/expenes/payment-modes', permission: 'Payment Mode Configurations.view' },
 ]
 
 export const SETTINGS_EMPLOYEE_FIELDS_MANAGE_DST_TABS = [

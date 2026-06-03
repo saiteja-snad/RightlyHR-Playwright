@@ -167,7 +167,7 @@
 
             <p><b>{{ 'Commented by' | translate }}:</b> {{ comment.addedName }}</p>
             <p><b>{{ 'Commented by ID' | translate }}:</b> {{ comment.addedByFusionEmpId }}</p>
-            <p><b>{{ 'Date' | translate }}:</b> {{ comment.addedDate | date:'short' }}</p>
+            <p><b>{{ 'Date' | translate }}:</b> {{ comment.addedDate | dateformat }}</p>
             <p><b>{{ 'Status' | translate }}:</b> {{ comment.action }}</p>
             <p><b>{{ 'Comments' | translate }}:</b> {{ comment.comments }}</p>
 

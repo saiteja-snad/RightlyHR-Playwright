@@ -66,7 +66,7 @@ export class SettingsEmployeeFieldsModuleTabsComponent implements OnInit {
       subjectText: MODULE_INFOS.SETTINGS_MANAGE_WEEKENDS_INFO_MODULE_INFO,
     },
     {
-      label: 'Expense Configurations',
+      label: 'Expense Type Configurations',
       link: '/settings/employee-fields/expenes',
       icon: '/main-menu-icons/expenses-icon.png',
       permission: { feature: 'Expense Tab', action: 'view' },

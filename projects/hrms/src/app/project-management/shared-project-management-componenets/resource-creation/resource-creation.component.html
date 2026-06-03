@@ -1,272 +1,500 @@
-<div class="custom-main-popup-container" ngbAutofocus>
-    <div class="custom-poup-header-content popup-header-border">
-        <div>
-            <p class="popup-heading mb-0">{{'Add Resource' | translate}}</p>
+<div class="custom-main-component-container">
+  <!-- HEADER (ONLY AVATAR) -->
+  <div class="component-header-content">
+    <div class="heading-content">
+      <div class="commpoment-name">
+        Project Management<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
+      </div>
+      @if (isShowClientRoute()) {
+      <div class="commpoment-name">
+        <a (click)="navigationtoclients()"><u> Resources</u></a>
+        <span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
+      </div>
+      }
+      @if (isShowClientRoute()) {
+      <div class="commpoment-name" [style.color]="clientColor">
+        <b>{{ this.clientName }}</b>
+        <span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
+      </div>
+      }
+      @if (isShowProjectRoute()) {
+      <div class="commpoment-name">
+        <a (click)="navigationtoproject()"><u> Resources</u></a>
+        <span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
+      </div>
+      }
+      @if (isShowProjectRoute()) {
+      <div class="commpoment-name" [style.color]="projectColor">
+        <b>{{ this.projectname }}</b>
+        <span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
+      </div>
+      }
+      <div class="component-header">Add Resources</div>
+    </div>
+  </div>
+
+  <div class="resource-header-wrapper" *ngIf="selectedEmployees.length > 0">
+    <p-avatar-group>
+      <ng-container *ngFor="let emp of selectedEmployees; let idx = index">
+        <div *ngIf="idx < maxVisibleAvatars" class="avatar-wrapper"
+          [class.avatar-editing]="editingEmployeeId === emp.employeeId"
+          [class.avatar-saved]="highlightedEmployeeId === emp.employeeId && editingEmployeeId !== emp.employeeId"
+          (click)="onAvatarClick($any(emp))" (mouseenter)="openEmployeePopover(employeePopoverRef, $event)"
+          (mouseleave)="closeEmployeePopoverWithDelay(employeePopoverRef)" placement="bottom" container="body"
+          triggers="manual" [ngbPopover]="employeePopover" #employeePopoverRef="ngbPopover"
+          [popoverContext]="{ employee: emp }">
+          <p-avatar *ngIf="emp?.profileUrl; else defaultAvatarIcon" [image]="getImageUrl(emp.profileUrl) || undefined"
+            size="xlarge" shape="circle" />
+          <ng-template #defaultAvatarIcon>
+            <app-profile-icon [iconWidth]="'48'" [iconHeight]="'48'" />
+          </ng-template>
+          <span *ngIf="emp.count > 1" class="avatar-badge">{{ emp.count }}</span>
         </div>
-    </div>
+      </ng-container>
+      <p-avatar *ngIf="selectedEmployees.length > maxVisibleAvatars"
+        [label]="'+' + (selectedEmployees.length - maxVisibleAvatars)" size="xlarge" shape="circle"
+        [style.cursor]="'pointer'" (click)="openAvatarOffcanvas(avatarOffcanvas)" />
+    </p-avatar-group>
 
-    <div class="custom-main-popup-content">
-        <form [formGroup]="addResourceForm" autocomplete="off" (ngSubmit)="addResources()">
-            <div class="row">
-
-                <!-- Project Name -->
-                <div class="col-md-6 mb-3">
-                    <label for="projectName" class="form-label custom-label mb-2">Project Name<span
-                            class="text-danger">*</span></label>
-                    <div class="custom-p-select-content">
-                        <p-select [options]="projectsDataDrown" optionLabel="projectName" [filter]="true"
-                            [resetFilterOnHide]="true" filterBy="projectName" optionValue="projectId"
-                            formControlName="projectName" placeholder="Please select project name"
-                            class="form-select custom-select" (onChange)="selectproject($event.value)"></p-select>
-                    </div>
-                    <div class="error-msg"
-                        *ngIf="addResourceForm.get('projectName')?.touched && addResourceForm.get('projectName')?.invalid">
-                        Project Name is required
-                    </div>
-                </div>
-
-                <!-- Project Type -->
-                <div class="col-md-6 mb-3">
-                    <label for="projectType" class="form-label custom-label mb-2">Project Type<span
-                            class="text-danger">*</span></label>
-                    <input type="text" id="projectType" formControlName="projectType" class="form-control custom-input"
-                        placeholder="Project type" readonly />
-                    <!-- <div class="error-msg"
-                        *ngIf="addResourceForm.get('projectType')?.touched && addResourceForm.get('projectType')?.invalid">
-                        Project Type is required
-                    </div> -->
-                </div>
-                <!--Phase/Milestone Name-->
-                <div class="col-md-6 mb-3">
-                    <label for="resourceRole" class="form-label custom-label mb-2">Phase / Milestone Name <span
-                            class="text-danger">*</span></label>
-                    <div class="custom-p-select-content">
-                        <p-select [options]="phaseDropdown" optionLabel="label" [filter]="true"
-                            [resetFilterOnHide]="true" filterBy="label" formControlName="resourcePhase"
-                            placeholder="Please select phase / milestone" class="form-select custom-select"
-                            (onChange)="onPhaseChange($event)">
-                        </p-select>
-                    </div>
-                    <div class="error-msg">
-                        <div
-                            *ngIf=" addResourceForm.get('resourcePhase')?.touched && addResourceForm.get('resourcePhase')?.errors?.['required'] ">
-                            Phase / Milestone Name is required
-                        </div>
-                    </div>
-                </div>
-                <!-- Resource Name -->
-                <div class="col-md-6 mb-3">
-                    <label for="resourceName" class="form-label custom-label mb-2">Resource Name<span
-                            class="text-danger">*</span></label>
-                    <div class="custom-p-select-content">
-                        <p-select [options]="employeeDetails" optionLabel="fullName" [filter]="true" filterBy="fullName"
-                            [showClear]="false" placeholder="Please select resource name" formControlName="resourceName"
-                            class="custom-select w-100" (onChange)="onClickEmployee($event)" resetFilterOnHide="true">
-                        </p-select>
-                    </div>
-                    <div class="error-msg" *ngIf="addResourceForm.get('resourceName')?.touched && 
-                    addResourceForm.get('resourceName')?.invalid">Resource Name is required</div>
-                </div>
-                <!-- Designation -->
-                <div class="col-md-6 mb-3">
-                    <label for="designation" class="form-label custom-label mb-2">Designation<span
-                            class="text-danger">*</span></label>
-                    <input type="text" formControlName="designation" class="form-control custom-input"
-                        placeholder="Designation" readonly />
-                    <!-- <div class="error-msg" *ngIf="addResourceForm.get('designation')?.touched && 
-                        addResourceForm.get('designation')?.invalid">Designation is required</div> -->
-                </div>
-                <!-- Resource Email -->
-                <div class="col-md-6 mb-3">
-                    <label for="resourceEmail" class="form-label custom-label mb-2">Email<span
-                            class="text-danger">*</span></label>
-                    <input type="email" id="resourceEmail" formControlName="resourceEmail"
-                        class="form-control custom-input" placeholder="Email address" readonly />
-                    <!-- <div class="error-msg" *ngIf="addResourceForm.get('resourceEmail')?.touched && 
-                    addResourceForm.get('resourceEmail')?.invalid">Email is required</div> -->
-                </div>
-
-                <!-- Phone Number -->
-                <div class="col-md-6 mb-3">
-                    <label for="resourcePhone" class="form-label custom-label mb-2">Phone Number</label>
-                    <input type="text" id="resourcePhone" formControlName="resourcePhone"
-                        class="form-control custom-input" placeholder="Phone number" readonly />
-                    <!-- <div class="error-msg" *ngIf="addResourceForm.get('resourcePhone')?.touched && 
-                        addResourceForm.get('resourcePhone')?.invalid">Phone Number is required</div> -->
-                </div>
-                <div class="col-md-6 mb-3">
-                    <label for="resourceRole" class="form-label custom-label mb-2">Role <span
-                            class="text-danger">*</span></label>
-                    <div class="custom-p-select-content">
-                        <p-select [options]="projectRoleDropdown" optionLabel="label" [filter]="true"
-                            [resetFilterOnHide]="true" filterBy="label" formControlName="resourceRole"
-                            placeholder="Please select role" class="form-select custom-select"
-                            (onChange)="onRoleChange($event.value)">
-                        </p-select>
-                    </div>
-                    <div class="error-msg">
-                        <div
-                            *ngIf=" addResourceForm.get('resourceRole')?.touched && addResourceForm.get('resourceRole')?.errors?.['required'] ">
-                            Role is required
-                        </div>
-                    </div>
-                </div>
-
-                
-                <!-- Start Date -->
-                <div class="col-md-6 mb-3">
-                    <label for="startDate" class="form-label custom-label mb-2">Start Date<span
-                            class="text-danger">*</span></label>
-                    <input type="date" id="startDate" formControlName="startDate"
-                        [min]="projectStartDate ? (projectStartDate | date:'yyyy-MM-dd') : null"
-                        [max]="projectEndDate ? (projectEndDate | date:'yyyy-MM-dd') : null " onkeypress="return false"
-                        (change)="oncheckdates(addResourceForm.get('startDate')?.value)"
-                        class="form-control custom-input" />
-                    <div class="error-msg" *ngIf="addResourceForm.get('startDate')?.touched && 
-                    addResourceForm.get('startDate')?.invalid">Start Date is required</div>
-                    <div class="error-msg" *ngIf="addResourceForm.hasError('endBeforeStart')">Start Date cannot be after
-                        End Date</div>
-                </div>
-
-                <!-- End Date -->
-                <div class="col-md-6 mb-3">
-                    <label for="endDate" class="form-label custom-label mb-2">End Date<span
-                            class="text-danger">*</span></label>
-                    <input type="date" id="endDate" formControlName="endDate"
-                        [min]="projectStartDate ? (projectStartDate | date:'yyyy-MM-dd') : null"
-                        [max]="projectEndDate ? (projectEndDate | date:'yyyy-MM-dd') : null " onkeypress="return false"
-                        class="form-control custom-input" />
-                    <div class="error-msg" *ngIf="addResourceForm.get('endDate')?.touched && 
-                    addResourceForm.get('endDate')?.invalid">End Date is required</div>
-                </div>
-                <!-- Authority Name -->
-                <div class="col-md-6 mb-3">
-                    <div class="d-flex gap-2">
-                        <label for="resourceName" class="form-label custom-label mb-2">{{'Timesheet Approval Authority'
-                            | translate}}
-                        </label>
-                        @if(this.resoucesDropDownData && this.resoucesDropDownData!.length == 0){
-                        <div>
-                            <a type="button" [ngbPopover]="description">
-                                <app-info-icon />
-                            </a>
-                        </div>
-                        <ng-template #description>
-                            <p class="mb-0">{{ 'This field will be enabled after allocating resources to this phase'}}
-                            </p>
-                        </ng-template>
-                        }
-                    </div>
-                    <div class="custom-p-select-content">
-                        <p-select [options]="resoucesDropDownData" optionLabel="label" [filter]="true" filterBy="label"
-                            optionValue="value" [showClear]="false" placeholder="Please select timesheet approval authority"
-                            formControlName="resourceAuthority" class="custom-select w-100" resetFilterOnHide="true"
-                            (onChange)="onAuthorityChange($event.value)">
-                        </p-select>
-                    </div>
-                    <div class="error-msg" *ngIf="addResourceForm.get('resourceAuthority')?.touched && 
-                                    addResourceForm.get('resourceAuthority')?.invalid">Timesheet approval authority is required</div>
-                </div>
-                <!-- Resource Allocation Hours -->
-                <div class="col-md-6 mb-3">
-                    <label for="resourceAllocationhrs" class="form-label custom-label mb-2">
-                        Allocation Hours<span class="text-danger">*</span></label>
-
-                    <input type="text" id="resourceAllocationhrs" formControlName="resourceAllocationhrs"
-                        class="form-control custom-input " [maxlength]="5"
-                        (keypress)="formValidation.restrictAlphabets($event)" placeholder="Please enter hours" />
-                    <div class="error-msg" *ngIf="addResourceForm.get('resourceAllocationhrs')?.touched && 
-                    addResourceForm.get('resourceAllocationhrs')?.invalid">Allocation Hours is required</div>
-                </div>
-
-                <!--Color Picker-->
-                <div class="col-md-6 mb-3">
-                    <label for="color" class="form-label custom-label mb-2">{{'Resource Color' | translate}} <span
-                            class="text-danger">*</span></label>
-                    <input type="color" id="color" class="form-control custom-color" formControlName="color" />
-                </div>
-                <!-- <div class="custom-p-select-content w-50">
-                            <p-select [options]="frequencyTypes" optionLabel="label" [filter]="false"
-                                [showClear]="false" placeholder="Please select frequency"
-                                formControlName="allocatedFrequencyType" class="custom-select w-100">
-                            </p-select>
-                        </div> -->
-
-
-                <!-- <div class="error-msg" *ngIf="addResourceForm.get('resourceAllocationhrs')?.touched && addResourceForm.get('resourceAllocationhrs')?.invalid">
-                        <div *ngIf="addResourceForm.get('resourceAllocationhrs')?.errors?.['required']">Allocation Hours is required</div>
-                        <div *ngIf="addResourceForm.get('resourceAllocationhrs')?.errors?.['maxHoursWeek']">Maximum 168 hours allowed per week</div>
-                        <div *ngIf="addResourceForm.get('resourceAllocationhrs')?.errors?.['maxHoursMonth']">Maximum 744 hours allowed per month</div>
-                        <div *ngIf="addResourceForm.get('resourceAllocationhrs')?.errors?.['maxHoursProject']">Maximum 99999 hours allowed per project</div>
-                    </div>
-
-                    <div class="error-msg" *ngIf="addResourceForm.get('allocatedFrequencyType')?.touched && addResourceForm.get('allocatedFrequencyType')?.invalid">
-                        <div *ngIf="addResourceForm.get('allocatedFrequencyType')?.errors?.['required']">
-                            Please select a frequency type
-                        </div>
-                    </div> -->
-
-
-                <!-- Switches -->
-                <div class="col-md-12 mb-3">
-                    <div class="d-flex gap-4 align-itmes-center">
-                        <div class="form-check form-switch">
-                            <input id="project-overtime-eligibility" class="form-check-input" type="checkbox"
-                                role="switch" formControlName="overtimeEligible">
-                            <label for="project-overtime-eligibility"
-                                class="form-check-label custom-toggle-label">Overtime Eligibility</label>
-                        </div>
-
-                        <div class="form-check form-switch">
-                            <input id="client-billable" class="form-check-input" type="checkbox" role="switch"
-                                formControlName="billable">
-                            <label class="form-check-label custom-toggle-label" for="client-billable">Billable</label>
-                        </div>
-
-                        <div class="form-check form-switch">
-                            <input id="client-allow-weekend-work" class="form-check-input" type="checkbox" role="switch"
-                                formControlName="allowweekendWork">
-                            <label for="client-allow-weekend-work" class="form-check-label custom-toggle-label">Allow
-                                Weekend Work</label>
-                        </div>
-                    </div>
-                </div>
+    <ng-template #employeePopover let-emp="employee">
+      <div class="popover-employee-details p-2" (mouseenter)="onPopoverMouseEnter()"
+        (mouseleave)="onPopoverMouseLeave()">
+        <div class="employee-name mb-3">{{ emp.fullName }}</div>
+        <!-- <div class="small text-muted mb-3">Assignments: {{ emp.count || 0 }}</div> -->
+        <div class="projects-container">
+          <div class="project-card" *ngFor="let assignment of emp.assignments; let ai = index">
+            <div class="project-name">{{ assignment.phase?.label || assignment.phase || 'Phase' }}</div>
+            <div class="project-role">{{ assignment.role?.label || assignment.role?.value?.label || 'Role' }}</div>
+            <div class="project-dates">
+              {{ assignment.startDate | date:'MMM d, y' }} - {{ assignment.endDate | date:'MMM d, y' }}
             </div>
+          </div>
+          <div class="project-card" *ngIf="!emp.assignments?.length">
+            <div class="project-name">No assignments found</div>
+          </div>
+        </div>
+        <!-- <div class="mt-2 small text-muted">Click to edit this resource</div> -->
+      </div>
+    </ng-template>
+  </div>
 
-            <!-- Form Buttons -->
-            <div class="custom-modal-footer">
-                <button type="button" class="custom-btn btn-secondary"
-                    (click)="closepopup(confirmationpopupfornodue)">Cancel</button>
-                <button type="submit" class="custom-btn btn-primary"
-                    [disabled]="addResourceForm.invalid || spinnerLoader">
 
-                    <ng-container *ngIf="spinnerLoader; else addText">
-                        <div class="button-loader-content">
-                            <span class="spinner-border button-spinner text-light" role="status"
-                                aria-hidden="true"></span>
-                            <span>Loading...</span>
-                        </div>
-                    </ng-container>
 
-                    <ng-template #addText>
-                        <span>Add</span>
+  <div class="custom-main-popup-content">
+    <div class="project-info-card-new">
+      <!-- FORM ARRAY -->
+      <form [formGroup]="addResourceForm">
+        <div formArrayName="resources" class="mb-3">
+          <ng-container *ngFor="let row of resources.controls; let i = index; trackBy: trackByIndex">
+            <div [formGroupName]="i" class="resource-row w-100 mb-3" [ngClass]="{ 'client-layout': isClientFlow }"
+              (click)="selectedRow = i" [class.active]="selectedRow === i">
+              <!-- Project Name -->
+              <div class="custom-p-select-content select-custom-width" *ngIf="isClientFlow">
+                <label class="form-label custom-label mb-2">Project<span class="text-danger">*</span></label>
+                <p-select [options]="projectsDataDrown" optionLabel="projectName" formControlName="projectName"
+                  placeholder="Select Project" class="form-select custom-select"
+                  (onChange)="onProjectChange($event.value, i)" appendTo="body" [autoZIndex]="true" [baseZIndex]="1100"
+                  panelStyleClass="custom-phase-multiselect-panel" resetFilterOnHide="true">
+                  <ng-template let-emp pTemplate="item">
+                    <div style="white-space: normal;word-break: break-word;max-width: 220px;">{{ emp.projectName }}
+                    </div>
+                  </ng-template>
+                </p-select>
+                <div class="error-msg"
+                  *ngIf="(row.get('projectName')?.touched || isAddAttempted) && row.get('projectName')?.invalid">
+                  Project is required
+                </div>
+              </div>
+
+
+
+              <!-- Project Type -->
+              <div class="custom-p-select-content" *ngIf="isClientFlow">
+                <label class="form-label custom-label mb-2"> Project Type </label>
+                <input type="text" class="form-control custom-input" [value]="row.get('projectType')?.value || ''"
+                  placeholder="Project type" disabled />
+              </div>
+
+              <!-- Project Flow -->
+              <div class="custom-p-select-content select-custom-width" *ngIf="!isClientFlow">
+                <label class="form-label custom-label mb-2">
+                  Project Name
+                </label>
+
+                <input type="text" class="form-control custom-input" [value]="projectsDataDrown[0]?.projectName || ''"
+                  disabled />
+              </div>
+
+              <div class="custom-p-select-content" *ngIf="!isClientFlow">
+                <label class="form-label custom-label mb-2">
+                  Project Type
+                </label>
+
+                <input type="text" class="form-control custom-input" [value]="projectsDataDrown[0]?.projectType || ''"
+                  disabled />
+              </div>
+
+              <div class="custom-p-select-content select-custom-width">
+                <label class="form-label custom-label mb-2">Phase / Milestone<span class="text-danger">*</span></label>
+                <p-select [options]="
+                  isClientFlow ? row.get('phaseDropdown')?.value : phaseDropdown
+                " optionLabel="label" formControlName="resourcePhase" placeholder="Please select phase"
+                  class="form-select custom-select" (onChange)="onPhaseChange($event, i)" [filter]="true"
+                  filterBy="label" filterPlaceholder="Search phases" appendTo="body" [autoZIndex]="true"
+                  [baseZIndex]="1100" panelStyleClass="custom-phase-multiselect-panel" resetFilterOnHide="true">
+                  <ng-template let-emp pTemplate="item">
+                    <div style="
+                      white-space: normal;
+                      word-break: break-word;
+                      max-width: 220px;
+                    ">
+                      {{ emp.label }}
+                    </div>
+                  </ng-template>
+                </p-select>
+
+                <div class="error-msg" *ngIf="
+                  (row.get('resourcePhase')?.touched || isAddAttempted) &&
+                  row.get('resourcePhase')?.invalid
+                ">
+                  Phase is required
+                </div>
+              </div>
+
+              <!-- Resource -->
+              <div class="custom-p-multiSelect-content select-custom-width w-100">
+                <label class="form-label custom-label mb-2">Resource<span class="text-danger">*</span></label>
+                <!-- Read-only display when editing an existing avatar -->
+                <ng-container *ngIf="editingEmployeeId !== null; else editableMultiSelect">
+                  <input type="text" class="form-control custom-input"
+                    [value]="row.get('resourceName')?.value?.[0]?.fullName || ''" disabled />
+                </ng-container>
+                <ng-template #editableMultiSelect>
+                  <p-multiSelect [options]="employeeDetails" optionLabel="fullName" formControlName="resourceName"
+                    (onChange)="onResourceChange($event)" placeholder="Please select resources"
+                    class="form-select custom-select" scrollHeight="150px" appendTo="body" [resetFilterOnHide]="true"
+                    [autoZIndex]="true" filterPlaceHolder="Search resources" [baseZIndex]="1100" [maxSelectedLabels]="1"
+                    selectedItemsLabel="{0} items selected" panelStyleClass="custom-phase-multiselect-panel"
+                    resetFilterOnHide="true">
+                    <ng-template let-emp pTemplate="item">
+                      <div style="
+                        white-space: normal;
+                        word-break: break-word;
+                        max-width: 220px;
+                      ">
+                        {{ emp.fullName }}
+                      </div>
                     </ng-template>
-                </button>
-            </div>
-        </form>
-    </div>
-</div>
+                  </p-multiSelect>
+                </ng-template>
+                <div class="error-msg" *ngIf="
+                  editingEmployeeId === null &&
+                  (row.get('resourceName')?.touched || isAddAttempted) &&
+                  row.get('resourceName')?.invalid
+                ">
+                  Resource is required
+                </div>
+              </div>
 
+              <!-- Role -->
+              <div class="custom-p-select-content select-custom-width">
+                <label class="form-label custom-label mb-2">Role<span class="text-danger">*</span></label>
+                <p-select [options]="projectRoleDropdown" optionLabel="label" formControlName="resourceRole"
+                  placeholder="Please select role" class="form-select custom-select"
+                  (onChange)="onRoleChange($event.value)" [filter]="true" filterBy="label"
+                  filterPlaceholder="Search role" appendTo="body" [autoZIndex]="true" [baseZIndex]="1100"
+                  panelStyleClass="custom-phase-multiselect-panel" resetFilterOnHide="true">
+                  <ng-template let-emp pTemplate="item">
+                    <div style="
+                      white-space: normal;
+                      word-break: break-word;
+                      max-width: 220px;
+                    ">
+                      {{ emp.label }}
+                    </div>
+                  </ng-template>
+                </p-select>
+
+                <div class="error-msg" *ngIf="
+                  (row.get('resourceRole')?.touched || isAddAttempted) &&
+                  row.get('resourceRole')?.invalid
+                ">
+                  Role is required
+                </div>
+              </div>
+
+              <!-- START DATE -->
+              <div class="custom-p-select-content">
+                <label class="form-label custom-label mb-2">Start Date<span class="text-danger">*</span></label>
+                <input type="date" formControlName="startDate" class="form-control custom-input" [min]="
+                  projectStartDate
+                    ? (projectStartDate | date: 'yyyy-MM-dd')
+                    : null
+                " [max]="
+                  projectEndDate ? (projectEndDate | date: 'yyyy-MM-dd') : null
+                " (change)="oncheckdates(addResourceForm.get('startDate')?.value)" />
+                <!-- Required Error -->
+                <div class="error-msg" *ngIf="addResourceForm.get('startDate')?.touched && 
+                    addResourceForm.get('startDate')?.invalid">Start Date is required</div>
+                <div class="error-msg" *ngIf="addResourceForm.hasError('endBeforeStart')">Start Date cannot be after
+                  End Date</div>
+              </div>
+
+              <!-- END DATE -->
+              <div class="custom-p-select-content w-100">
+                <label class="form-label custom-label mb-2">End Date<span class="text-danger">*</span></label>
+                <input type="date" formControlName="endDate" class="form-control custom-input"
+                  [min]="row.get('startDate')?.value"
+                  [max]="projectEndDate ? (projectEndDate | date: 'yyyy-MM-dd') : null" />
+                <!-- Required Error -->
+                <div class="error-msg" *ngIf="
+                  row.get('endDate')?.touched &&
+                  row.get('endDate')?.errors?.['required']
+                ">
+                  End Date is required
+                </div>
+                <div class="error-msg" *ngIf="
+                  row.get('endDate')?.touched &&
+                  !row.get('endDate')?.errors?.['required'] &&
+                  row.get('dateError')?.value
+                ">
+                  End Date must be after Start Date
+                </div>
+              </div>
+
+              <!-- Authority -->
+              <div class="custom-p-select-content select-custom-width">
+                <label class="form-label custom-label mb-2">Approval Authority</label>
+                <p-select [options]="resoucesDropDownData" optionLabel="label" optionValue="value"
+                  formControlName="resourceAuthority" placeholder="Please select authority"
+                  class="form-select custom-select" (onChange)="onAuthorityChange($event)" [filter]="true"
+                  filterBy="label" filterPlaceholder="Search approval authority" appendTo="body" [autoZIndex]="true"
+                  [baseZIndex]="1100" panelStyleClass="custom-phase-multiselect-panel" resetFilterOnHide="true">
+                  <ng-template let-emp pTemplate="item">
+                    <div style="
+                      white-space: normal;
+                      word-break: break-word;
+                      max-width: 220px;
+                    ">
+                      {{ emp.label }}
+                    </div>
+                  </ng-template>
+                </p-select>
+              </div>
+
+              <!-- Hours -->
+              <div class="custom-p-select-content w-100">
+                <label class="form-label custom-label mb-2">Hours<span class="text-danger">*</span></label>
+                <input type="number" formControlName="resourceAllocationhrs" placeholder="Please enter hours"
+                  class="form-control custom-input" />
+                <div class="error-msg" *ngIf="
+                  row.get('resourceAllocationhrs')?.touched &&
+                  row.get('resourceAllocationhrs')?.invalid
+                ">
+                  Hours are required
+                </div>
+              </div>
+
+              <!-- CONFIG -->
+              <!-- ================= CLIENT FLOW ================= -->
+              <div class="toggle-row" *ngIf="isClientFlow">
+                <!-- LEFT: Toggles -->
+                <div class="toggle-block">
+                  <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="b{{ i }}" formControlName="billable" />
+                    <label class="custom-label" for="b{{ i }}">Billable</label>
+                  </div>
+                  <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="o{{ i }}" formControlName="overtimeEligible" />
+                    <label class="custom-label">Overtime Eligibility</label>
+                  </div>
+                  <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="w{{ i }}" formControlName="allowweekendWork" />
+                    <label class="custom-label">Allow Weekend Work</label>
+                  </div>
+                </div>
+
+
+                <div class="action-block d-flex align-items-end justify-content-end">
+                  <app-circular-delete *ngIf="editingEmployeeId !== null && !spinnerLoader"
+                    (click)="removeResource(i); $event.stopPropagation()"></app-circular-delete>
+                  <button type="button" class="custom-btn btn-primary" (click)="onRowSave(i); $event.stopPropagation()"
+                    [disabled]="row.get('saved')?.value || (row.invalid && editingEmployeeId === null)">
+                    {{ editingEmployeeId !== null ? 'Update' : 'Add' }}
+                  </button>
+
+                </div>
+              </div>
+
+              <!-- ================= PROJECT FLOW (UNCHANGED) ================= -->
+              <div *ngIf="!isClientFlow" class="project-toggle-row">
+                <!-- TOGGLES -->
+                <div>
+                  <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="b{{ i }}" formControlName="billable" />
+                    <label class="custom-label" for="b{{ i }}">Billable</label>
+                  </div>
+                  <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="o{{ i }}" formControlName="overtimeEligible" />
+                    <label class="custom-label" for="o{{ i }}">Overtime Eligibility</label>
+                  </div>
+                  <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="w{{ i }}" formControlName="allowweekendWork" />
+                    <label class="custom-label" for="w{{ i }}">Allow Weekend Work</label>
+                  </div>
+                </div>
+
+                <div class=" d-flex gap-3 align-items-end justify-content-end">
+                  <button type="button" class="custom-btn btn-primary" (click)="onRowSave(i); $event.stopPropagation()"
+                    [disabled]="row.get('saved')?.value || (row.invalid && editingEmployeeId === null) || spinnerLoader">
+                    {{ editingEmployeeId !== null ? 'Update' : 'Add' }}
+                  </button>
+                  <app-circular-delete *ngIf="editingEmployeeId !== null && !spinnerLoader" class="cursor"
+                    type="button" (click)="removeResource(i); $event.stopPropagation()"></app-circular-delete>
+                </div>
+              </div>
+            </div>
+          </ng-container>
+        </div>
+
+
+      </form>
+    </div>
+    <div class="d-flex gap-3 justify-content-end">
+      <button type="button" class="custom-btn btn-secondary px-5"
+        (click)="closepopup(confirmationpopupfornodue)" [disabled]="spinnerLoader">Cancel</button>
+      <button type="button" class="custom-btn btn-primary px-5" (click)="addResources()"
+        [disabled]="savedPayloadRows.length === 0 || spinnerLoader">
+        <ng-container *ngIf="spinnerLoader; else addText">
+          <span class="spinner-border text-light"></span>
+        </ng-container>
+        <ng-template #addText> Save </ng-template>
+      </button>
+    </div>
+  </div>
+</div>
 <!--Confirmation-->
 <ng-template #confirmationpopupfornodue let-model>
-    <div class="result-popup-content" ngbAutofocus>
-        <div>
-            <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
-            <p class="confirmation-text">{{'Are you sure you want to cancel?' | translate}}</p>
-        </div>
-        <div class="custom-modal-footer">
-            <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">{{'No'}}</button>
-            <button type="button" class="custom-btn btn-primary" (click)="close();model.dismiss()">{{'Yes'}}</button>
-        </div>
+  <div class="result-popup-content" ngbAutofocus>
+    <div>
+      <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon" />
+      <p class="confirmation-text">
+        {{ "Are you sure you want to cancel?" | translate }}
+      </p>
     </div>
+    <div class="custom-modal-footer">
+      <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">
+        {{ "No" }}
+      </button>
+      <button type="button" class="custom-btn btn-primary" (click)="onCancel($event); model.dismiss()">
+        {{ "Yes" }}
+      </button>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #releaseSummary let-modal>
+  <div class="custom-main-popup-container">
+    <div class="custom-poup-header-content popup-header-border">
+      <p class="popup-heading mb-0">Summary</p>
+      <img src="icons/close.png" class="close-icon" (click)="modal.dismiss()" />
+    </div>
+
+    <div class="custom-main-popup-content custom-accordians">
+      <div class="popup-table-wrapper">
+        <div class="popup-table-scroll-container">
+          <table class="popup-table">
+            <thead>
+              <tr>
+                <th>{{ "Total Records" | translate }}</th>
+                <th>{{ "Success Records" | translate }}</th>
+                <th>{{ "Failed Records" | translate }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>{{ responseSummary?.totalRecordCount }}</td>
+                <td>{{ responseSummary?.successRecordsCount }}</td>
+                <td>{{ responseSummary?.failureRecordsCount }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<!-- Avatar Offcanvas -->
+<ng-template #avatarOffcanvas let-offcanvas>
+  <div class="custom-offcanvas-header p-2">
+    <div class="custom-offcanvas-title text-capitalize">Selected Resources
+      <span class="ms-2">({{ selectedEmployees.length }})</span>
+    </div>
+    <a (click)="offcanvas.close()">
+      <img src="icons/close.png" alt="Close Icon" class="close-icon">
+    </a>
+  </div>
+  <div class="custom-offcanvas-body p-3">
+    <div class="input-group custom-search mb-3">
+      <span class="input-group-text custom-input-group-search" id="rc-search-addon">
+        <i class="bi bi-search"></i>
+      </span>
+      <input type="search" class="form-control custom-search-input" placeholder="Search by name / employee ID"
+        [(ngModel)]="offcanvasSearchQuery" />
+    </div>
+
+    <div *ngFor="let emp of filteredOffcanvasEmployees"
+      class="profile-content  mb-3 d-flex align-items-center justify-content-between">
+      <div class="d-flex align-items-center flex-grow-1">
+        <div class="rc-avatar-wrap cursor" (mouseenter)="openEmployeePopover(employeePopoverRef,  $event)"
+          (mouseleave)="closeEmployeePopoverWithDelay(employeePopoverRef)" [placement]="popoverPlacement" container="body"
+          triggers="manual" [ngbPopover]="offcanvasEmployeePopover" #employeePopoverRef="ngbPopover"
+          [popoverContext]="{ employee: emp }">
+          <ng-container *ngIf="emp?.profileUrl; else offcanvasDefaultIcon">
+            <img [src]="getImageUrl(emp.profileUrl)" alt="Profile" class="profile-image" />
+          </ng-container>
+          <ng-template #offcanvasDefaultIcon>
+            <app-profile-icon [iconWidth]="'32'" [iconHeight]="'32'"></app-profile-icon>
+          </ng-template>
+          <span *ngIf="emp.count > 1" class="rc-avatar-count-badge">{{ emp.count }}</span>
+        </div>
+        <div class="profile-info w-100 ms-2">
+          <div class="name">{{ emp.fullName }}</div>
+        </div>
+      </div>
+      <div class="action-icons d-flex gap-3 ms-2">
+        <span type="button" (click)="onOffcanvasAvatarClick(emp, offcanvas); $event.stopPropagation()" title="Edit">
+          <i class="bi bi-pencil-square"></i>
+        </span>
+        <span type="button" class="text-danger" (click)="deleteOffcanvasEmployee(emp); $event.stopPropagation()"
+          title="Delete" *ngIf="!spinnerLoader">
+          <i class="bi bi-trash"></i>
+        </span>
+      </div>
+    </div>
+    <ng-template #offcanvasEmployeePopover let-emp="employee">
+      <div class="popover-employee-details p-2" (mouseenter)="onPopoverMouseEnter()"
+        (mouseleave)="onPopoverMouseLeave()">
+        <div class="employee-name mb-3">{{ emp.fullName }}</div>
+        <!-- <div class="small text-muted mb-3">Assignments: {{ emp.count || 0 }}</div> -->
+        <div class="projects-container">
+          <div class="project-card" *ngFor="let assignment of emp.assignments; let ai = index">
+            <div class="project-name">{{ assignment.phase?.label || assignment.phase || 'Phase' }}</div>
+            <div class="project-role">{{ assignment.role?.label || assignment.role?.value?.label || 'Role' }}</div>
+            <div class="project-dates">
+              {{ assignment.startDate | date:'MMM d, y' }} - {{ assignment.endDate | date:'MMM d, y' }}
+            </div>
+          </div>
+          <div class="project-card" *ngIf="!emp.assignments?.length">
+            <div class="project-name">No assignments found</div>
+          </div>
+        </div>
+        <!-- <div class="mt-2 small text-muted">Click on edit/delete to manage</div> -->
+      </div>
+    </ng-template>
+    <div *ngIf="filteredOffcanvasEmployees.length === 0" class="text-center custom-no-data-found text-muted py-3">
+      <app-no-data-found />
+    </div>
+  </div>
 </ng-template>

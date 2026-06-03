@@ -12,6 +12,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { MultiSelect } from 'primeng/multiselect';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { ILetterType } from '../../../../Interfaces/leave-type.model';
+import { RbacService } from '../../../../services/rbac.service';
 
 @Component({
   selector: 'app-view-leavecategory',
@@ -70,6 +71,17 @@ export class ViewLeavecategoryComponent implements OnInit, OnDestroy {
     { label: 'From Leave End Date', value: 'end_date' },
     { label: 'From Leave Start Date', value: 'start_date' }
   ];
+  frequencyTypes = [
+    { label: 'Monthly', value: 'MONTHLY' },
+    { label: 'Quarterly', value: 'QUARTERLY' },
+    { label: 'Half Yearly', value: 'HALF_YEARLY' },
+    { label: 'Yearly', value: 'YEARLY' },
+  ];
+  cycleHandlingOptions = [
+    { label: 'Frozen', value: 'FROZEN' },
+    { label: 'Carry Forward', value: 'CARRY_FORWARD' },
+    { label: 'Lapsed', value: 'LAPSED' },
+  ];
   leaveTypeOptions = [
     { label: 'Fixed Number of Leaves', value: 'Fixed Number of Leaves' },
     { label: 'Monthly Incremental Leaves', value: 'Monthly Incremental Leaves' }
@@ -85,7 +97,8 @@ export class ViewLeavecategoryComponent implements OnInit, OnDestroy {
     private http: HttpService,
     private confirmation: OpenModalService,
     private router: Router,
-    private modalService: NgbModal
+    private modalService: NgbModal,
+    public rbac: RbacService
   ) {
     this.leavePolicyForm = this.fb.group({
       // Location/Shift Section
@@ -211,13 +224,17 @@ export class ViewLeavecategoryComponent implements OnInit, OnDestroy {
       blockLeaveOnWeekends: [{ value: null, disabled: true }],
       blockPreviousDayLeave: [{ value: null, disabled: true }],
       blockNextDayLeave: [{ value: null, disabled: true }],
-      minimumGapBetweenSameLeaveType: [{ value: null, disabled: true }, Validators.required],
+      minimumGapBetweenSameLeaveType: [{ value: 30, disabled: true }, Validators.required],
       gapCalculationBasis: [{ value: null, disabled: true }, Validators.required],
       enableSandwichPolicy: [{ value: false, disabled: true }, Validators.required],
       applySandwichOn: [{ value: null, disabled: true }],
       sandwichCalculationBasis: [{ value: null, disabled: true }],
       sandwichApplicabilityCondition: [{ value: null, disabled: true }],
-      adjacentLeaveTypeRule: [{ value: null, disabled: true }]
+      adjacentLeaveTypeRule: [{ value: null, disabled: true }],
+      extendLastWorkingDay: [{ value: null, disabled: true }],
+      entitlementFrequency: [{ value: null, disabled: true }],
+      entitlementCycleHandling: [{ value: null, disabled: true }],
+      allowPastCycleApplication: [{ value: null, disabled: true }],
     });
   }
 
@@ -228,7 +245,7 @@ export class ViewLeavecategoryComponent implements OnInit, OnDestroy {
     );
     this.setupDependentFieldListeners();
     this.jobLocationList();
-    
+
     this.getOrgLeavesCategories();
     this.getparentIdLC(
       this.updatecloneLeaveCategoryData.parentId,
@@ -433,7 +450,7 @@ export class ViewLeavecategoryComponent implements OnInit, OnDestroy {
       const sandwichCalculationBasisControl = this.leavePolicyForm.get('sandwichCalculationBasis');
       const sandwichApplicabilityConditionControl = this.leavePolicyForm.get('sandwichApplicabilityCondition');
       const adjacentLeaveTypeRuleControl = this.leavePolicyForm.get('adjacentLeaveTypeRule');
-      
+
       if (value === true) {
         applySandwichOnControl?.setValidators([Validators.required]);
         sandwichCalculationBasisControl?.setValidators([Validators.required]);
@@ -563,6 +580,7 @@ export class ViewLeavecategoryComponent implements OnInit, OnDestroy {
 
   // Patch form values (for edit mode)
   patchFormValues(data: any) {
+    console.log(data);
     // if (!this.jobLocationDropDownData.length || !this.leaveTypes.length) return;
     // debugger
     const leaveTypeValue = this.leaveTypes.find(lt => lt.id === data.leaveTypeId)?.id || '';
@@ -638,7 +656,11 @@ export class ViewLeavecategoryComponent implements OnInit, OnDestroy {
       applySandwichOn: data.applySandwichOn,
       sandwichCalculationBasis: data.sandwichCalculationBasis,
       sandwichApplicabilityCondition: resolvedSandwichApplicabilityCondition,
-      adjacentLeaveTypeRule
+      adjacentLeaveTypeRule,
+      extendLastWorkingDay:data.isNoticePeriodExtended,
+      entitlementFrequency: data.entitlementFrequency,
+      entitlementCycleHandling: data.entitlementCycleHandling,
+      allowPastCycleApplication: data.allowPastCycleApplication,
     });
 
     // Manually trigger value changes for dependent fields

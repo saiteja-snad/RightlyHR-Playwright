@@ -9,10 +9,13 @@ export const permissionsData = [
   { fields: 'Project Management Configuration Module', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Ats Configuration Module', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Helpdesk Configuration Module', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Employee Fields Config Update Module', View: false, Update: false, Create: false, Delete: false },
+
   { fields: 'Locking System Configuration Module', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Rate Card Configuration Module', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Rate Card In-active Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Rate Card Active Tab', View: false, Update: false, Create: false, Delete: false },
+
   // { fields: 'Recruitment Configuration Module', View: false, Update: false, Create: false, Delete: false },
 
   //Employee Field Config Update Tabs Sections

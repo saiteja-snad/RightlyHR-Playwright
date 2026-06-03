@@ -30,7 +30,7 @@ import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-inf
 @Component({
   selector: 'app-leaves',
   imports: [CommonModule, NgbNavModule, ModuleInfoIconComponent,NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, Select, Skeleton,
-    RouterModule, ReactiveFormsModule, TranslateModule, LeavesApprovaltabsComponent, TabsModule, ChartModule, ModuleInformationComponent, ConfirmationIconComponent],
+    RouterModule, ReactiveFormsModule, TranslateModule, LeavesApprovaltabsComponent, TabsModule, ChartModule, ModuleInformationComponent],
   templateUrl: './leaves.component.html',
   styleUrl: './leaves.component.scss',
   encapsulation: ViewEncapsulation.None,

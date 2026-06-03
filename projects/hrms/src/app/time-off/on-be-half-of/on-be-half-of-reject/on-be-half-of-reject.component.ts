@@ -49,7 +49,7 @@ export class OnBeHalfOfRejectComponent implements OnInit, OnDestroy{
 
   constructor(private http: HttpService, private authService: AuthService, private modalService: NgbModal, private timeoffYearFilterService: TimeoffYearFilterService) { 
     effect(() => {
-      if (this.http.onBehalfOfTriggerSignal()) {
+      if (this.http.onBehalfOfTriggerSignal() > 0) {
         this.cadidateEmployeeId = parseInt(
           localStorage.getItem('onbehalfof') as string
         );
@@ -58,7 +58,6 @@ export class OnBeHalfOfRejectComponent implements OnInit, OnDestroy{
         } else {
           this.rejectedLeaves = [];
         }
-        this.http.onBehalfOfTriggerSignal.set(false);
       }
     });
   }

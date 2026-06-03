@@ -1,0 +1,206 @@
+<div class="custom-main-component-container">
+    <!--Input search-->
+    <div class="input-group custom-search mb-3">
+        <span class="input-group-text custom-input-group-search" id="basic-addon1">
+            <i class="bi bi-search"></i></span>
+        <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input"
+            placeholder="Search by employee name / department / status / employee emails " aria-label="Username" aria-describedby="basic-addon1">
+    </div>
+
+    <div class="custom-table-content">
+
+        @if(!loading){
+        <table class="w-100">
+            <thead>
+                <th>{{'Employee ID'|translate}}</th>
+                <th>{{'Employee Name' | translate}}</th>
+                <th>{{'Requested Date' |translate}}</th>
+                <th>{{'Department' |translate}}</th>
+                <th>{{'Status' |translate}}</th>
+                <th class="text-center">{{'Employee Emails' |translate}}</th>
+                @if(rbac.allowedToAccess('No Due (On Behalf Of Approvals).update') || rbac.allowedToAccess('No Due (On Behalf Of Approvals).delete')) {
+                <th class="text-center">Action</th>
+                }
+            </thead>
+            <tbody>
+                @if (((nodue_Request_data | async) ?? []).length > 0) {
+                @for (item of ((nodue_Request_data | async) ?? []) | nodueDetails : searchValue; track item.id){
+                <tr>
+                    <td>{{item?.employeeFusionEmpId ?? '-'}}</td>
+                    <td>{{item?.employeeName ?? '-'}}</td>
+                    <td>{{item?.requestedDate | dateformat}}</td>
+                    <td>{{item?.departmentName ?? '-'}}</td>
+                    <td>{{item?.status ?? '-'}}</td>
+                    <td class="text-center">
+                        <div>
+                            <div *ngIf="item.requiredEmails; else popupcomments">
+                                <app-info-icon ngbPopover="{{ item.requiredEmails }}" container="body" />
+                            </div>
+                        </div>
+                        <ng-template #popupcomments>NA</ng-template>
+                    </td>
+                    
+                    @if(rbac.allowedToAccess('No Due (On Behalf Of Approvals).update') || rbac.allowedToAccess('No Due (On Behalf Of Approvals).delete')) {
+                    <td class="text-center">
+                        <div class="dropdown">
+                            <a type="button" data-bs-toggle="dropdown">
+                                <i class="bi bi-three-dots-vertical"></i>
+                            </a>
+                            <ul class="dropdown-menu custom-dropdown-menu">
+                                @if( rbac.allowedToAccess('No Due (On Behalf Of Approvals).update')) {
+                                <li>
+                                    <a class="dropdown-item" (click)="openModal(item,approval)">
+                                        <i class="bi bi-check-circle me-2"></i>{{'Approve' |translate}}</a>
+                                </li>
+                                }
+                                @if( rbac.allowedToAccess('No Due (On Behalf Of Approvals).delete')) {
+                                <li>
+                                    <a class="dropdown-item" (click)="openModal(item,rejectmodal)">
+                                        <i class="bi bi-x-circle me-2"></i>{{'Reject' |translate}}</a>
+                                </li>
+                                }
+                            </ul>
+                        </div>
+                    </td>
+                    }
+                </tr>
+                }
+                }
+                @else{
+                <tr>
+                    <app-no-data-found />
+                </tr>
+                }
+            </tbody>
+        </table>
+        }
+        @else {
+        <app-data-loader-content />
+        }
+    </div>
+</div>
+
+<ng-template #approval let-modal>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
+            <p class="confirmation-text">{{'Are you sure you want to approve this request?' | translate}}</p>
+        </div>
+        <form autocomplete="off" [formGroup]="AcceptForm" (ngSubmit)="handleAccept()">
+            <div class="custom-main-popup-content">
+                <label for="comments" class="form-label custom-label mb-2">{{'Comments' | translate}}
+                    <span class="text-danger">*</span></label>
+                <textarea id="exampleFormControlTextarea1" class="form-control custom-input"
+                    formControlName="AcceptReason" maxlength="250" placeholder="Please enter comments"
+                    rows="3" (keydown)="formsValidation.restrictInitialSpace($event)"></textarea>
+                <!-- Character counter -->
+                <div class="textarea-count-text">{{ AcceptForm.get('AcceptReason')?.value?.length || 0 }} /250
+                </div>
+                <div class="error-msg"
+                    *ngIf="AcceptForm.get('AcceptReason')?.touched && AcceptForm.get('AcceptReason')?.invalid">
+                    <ng-container *ngIf="AcceptForm.get('AcceptReason')?.errors?.['required']">Comments is
+                        required</ng-container>
+                    <ng-container *ngIf="AcceptForm.get('AcceptReason')?.errors?.['maxlength']">
+                        Maximum 250 characters allowed
+                    </ng-container>
+                    <ng-container *ngIf="AcceptForm.get('AcceptReason')?.errors?.['pattern']">
+                        Leading spaces are not allowed
+                    </ng-container>
+                </div>
+            </div>
+              <div class="d-flex align-items-center flex-wrap gap-2 mb-3">
+                <button type="button" class="custom-btn btn-secondary chip-btn" [class.active]="selectedLeaveStatus === 'approved'"
+                    (click)="onStatusApproveSelect('approved')">
+                    Approved
+                </button>
+            </div>
+            <div class="custom-modal-footer">
+                <button type="button" class="custom-btn btn-secondary"
+                    (click)="openModals(confirmationpopup)">{{'Cancel'| translate}}</button>
+                <button type="submit" class="custom-btn btn-primary" [disabled]="AcceptForm.invalid || isLoading"> @if
+                    (!isLoading) { {{ 'Approve' | translate }} } @else {
+                    <div class="button-loader-content">
+                        <div *ngIf="isLoading" class="spinner-border button-spinner text-light" role="status"></div>
+                        <div>{{'Loading...'|translate}}</div>
+                    </div>
+                    }
+                </button>
+            </div>
+        </form>
+    </div>
+</ng-template>
+
+<ng-template #rejectmodal let-modal>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
+            <p class="confirmation-text">{{'Are you sure you want to reject this request?' |translate}}</p>
+        </div>
+        <form autocomplete="off" [formGroup]="rejectForm" (ngSubmit)="rejectNodue()">
+            <div class="custom-main-popup-content">
+                <label for="comments" class="form-label custom-label mb-2">{{"Comments" | translate}}
+                    <span class="text-danger">*</span></label>
+                <textarea class="form-control custom-input" id="exampleFormControlTextarea1"
+                    placeholder="Please enter comments" formControlName="notes" rows="3" maxlength="250"></textarea>
+                <div class="textarea-count-text">{{ rejectForm.get('notes')?.value?.length || 0 }}/250
+                </div>
+                <div class="error-msg" *ngIf="rejectForm.get('notes')?.touched && rejectForm.get('notes')?.invalid">
+                    <ng-container *ngIf="rejectForm.get('notes')?.errors?.['required']">Comments are
+                        required</ng-container>
+                    <ng-container *ngIf="rejectForm.get('notes')?.errors?.['maxlength']">Maximum 250 characters
+                        allowed</ng-container>
+                    <ng-container *ngIf="rejectForm.get('notes')?.errors?.['pattern']">Leading spaces are not
+                        allowed</ng-container>
+                </div>
+            </div>
+                 <div class="d-flex align-items-center flex-wrap gap-2 mb-3">
+                <button type="button" class="custom-btn btn-secondary chip-btn" [class.active]="selectedLeaveStatus === 'reject'"
+                    (click)="onStatusRejectSelect('reject')">
+                    Rejected
+                </button>
+            </div>
+            <div class="custom-modal-footer">
+                <button type="button" class="custom-btn btn-secondary"
+                    (click)="openModals(rejectconfirmationpopup)">{{'Cancel' | translate}}</button>
+                <button type="submit" class="custom-btn btn-primary" [disabled]="rejectForm.invalid || isLoading">@if
+                    (!isLoading) {
+                    {{ 'Reject' | translate }}
+                    } @else {
+                    <div class="button-loader-content">
+                        <div *ngIf="isLoading" class="spinner-border button-spinner text-light" role="status"></div>
+                        <div>{{'Loading...'|translate}}</div>
+                    </div>
+                    }
+                </button>
+            </div>
+        </form>
+    </div>
+</ng-template>
+
+<!--confirmation Model-->
+<ng-template #confirmationpopup let-model>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons\reject.png" alt="failure icon" class="confirmation-delete-icon">
+            <p class="confirmation-text">Are you sure you want to cancel?</p>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">No</button>
+            <button type="submit" class="custom-btn btn-primary" (click)="resetForm()">Yes</button>
+        </div>
+    </div>
+</ng-template>
+
+<!--reject confirmation Model-->
+<ng-template #rejectconfirmationpopup let-model>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons\reject.png" alt="failure icon" class="confirmation-delete-icon">
+            <p class="confirmation-text">Are you sure you want to cancel?</p>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">No</button>
+            <button type="button" class="custom-btn btn-primary" (click)="close()">Yes</button>
+        </div>
+    </div>
+</ng-template>

@@ -50,6 +50,7 @@ export default [
     { path: 'organization-chart', component: OrganizationchartComponent, canActivate: [authGuard] },
     { path: 'holidays', component: HolidaysLayoutComponent, canActivate: [authGuard], loadChildren: () => import('../../holidays/holidays.route') },
     { path: 'theme', component: ThemeLayoutComponent, loadChildren: () => import('../../theme-customization/theme.route') },
+    { path: 'menus', component: ThemeLayoutComponent, loadChildren: () => import('../../theme-customization/menus.route') },
     { path: 'attendance', component: AttendanceViewComponent, canActivate: [authGuard] },
     { path: 'employee-management', component: EmployeeManagementLayoutComponent, canActivate: [authGuard], loadChildren: () => import('../../admin/employee-management.route') },
     { path: 'invite-user', component: InviteUserLayoutComponent, canActivate: [authGuard], loadChildren: () => import('../../invite-new-user/invite-user.route') },

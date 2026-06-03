@@ -470,5 +470,18 @@ onApproveChipSelect(): void {
   this.actionForm.get('comments')?.setValue('Approved');
   this.actionForm.get('comments')?.markAsTouched();
 }
+  onPageChange(event: any) {
+    this.page = event.page + 1;
+    this.rows = event.rows;
+    this.first = event.first;
+    this.loadKraKpiData();
+  }
+
+  onPageSizeChange(newSize: number) {
+    this.rows = Number(newSize);
+    this.page = 1;
+    this.first = 0;
+    this.loadKraKpiData();
+  }
 
 }

@@ -117,11 +117,11 @@ timesheetconfigForm!: FormGroup;
             ...phase,
             displayName: `${phase.project?.projectName} - ${phase.phaseName}`
           }));
-          const formControls = [
-            this.timesheetconfigForm.get('phases'),
-            this.timesheetconfigUpdateForm.get('phases')
-          ];
           if (this.phasesoption.length > 0) {
+            const formControls = [
+            this.timesheetconfigForm.get('phases'),
+            this.timesheetconfigUpdateForm.get('updatephases')
+          ];
             // Enable and make required
             formControls.forEach(control => {
               control?.enable();
@@ -180,24 +180,21 @@ timesheetconfigForm!: FormGroup;
         // this.modalService.dismissAll()
         // this.conformationPopup.openSuccessModal("Timesheet Configuration added successfully");
         const successCount = res?.data?.successCount;
-        const failureCount = res.data.failedCount.successCount;
-
+        const failureCount = res.data.failedCount;
         this.responseSummary = {
           failresreason: res?.data?.failed,
           successRecordsCount: successCount,
           failureRecordsCount: failureCount,
         };
-
         this.modalService.dismissAll();
-
         const modalRef = this.modalService.open(this.releaseSummaryModal, {
           centered: true,
           size: 'lg',
         });
-
         setTimeout(() => {
           modalRef.close();
         }, 3000);
+
         f.reset();
         this.getTimesheet(this.page, this.pageSize, this.searchQuery);
       },

@@ -26,9 +26,9 @@
                 <tbody>
                      @if(timesheetconfigdata.length > 0){
                     <tr *ngFor="let exp of timesheetconfigdata">
-                        <td>{{exp.projectName}}</td>
-                        <td>{{exp.phaseName}}</td>
-                        <td class="text-center">{{exp.fieldName}}</td>
+                        <td>{{exp.projectName||'No Client - No Project '}}</td>
+                        <td>{{exp.phaseName||'NA'}}</td>
+                        <td class="text-center">{{exp.fieldName||'NA'}}</td>
                         <td class="justify-content-center d-flex" >
                             <!-- {{exp.isMandatory ? 'Yes' : 'No'}} -->
                             <div class="form-check form-switch ">
@@ -194,7 +194,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="policyType" class="form-label custom-label mb-2">
-                                {{'Phase' | translate}} <span class="text-danger" *ngIf="timesheetconfigForm.get('updatephases')?.hasValidator(requiredValidator)">*</span>
+                                {{'Phase' | translate}} <span class="text-danger" *ngIf="timesheetconfigUpdateForm.get('updatephases')?.hasValidator(requiredValidator)">*</span>
                             </label>
                             <div class="custom-p-select-content">
                                 <p-select [options]="phasesoption" optionLabel="phaseName" [filter]="true" resetFilterOnHide="true"
@@ -276,7 +276,7 @@
               <tr>
                 <td>{{ responseSummary?.successRecordsCount }}</td>
                 <td>{{ responseSummary?.failureRecordsCount }}</td>
-                <td>{{ responseSummary?.failresreason }}</td>
+                <td>{{ responseSummary?.failresreason ||'NA' }}</td>
               </tr>
             </tbody>
           </table>

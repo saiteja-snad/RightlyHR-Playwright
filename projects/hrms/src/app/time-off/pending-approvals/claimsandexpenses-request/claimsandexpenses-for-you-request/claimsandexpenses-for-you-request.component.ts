@@ -19,7 +19,7 @@ import { RbacService } from '../../../../services/rbac.service';
 import { noWhitespaceValidator } from '../../../../shared/nowhitespace/nowhitespace.component';
 import { IExpenseHeaders, IExpensePolicy } from '../../../../Interfaces/claimsandexpenses.model';
 import { SignalsService } from '../../../../services/signals.service';
-import { SearchfordeskPipe } from "../../../../Pipes/searchfordesk.pipe";
+import { SearchfordeskPipe } from "../../../../pipes/searchfordesk.pipe";
 import { InfoIconComponent } from "../../../../icons/info-icon/info-icon.component";
 import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
 import { FormValidationsService } from '../../../../services/form-validations.service';

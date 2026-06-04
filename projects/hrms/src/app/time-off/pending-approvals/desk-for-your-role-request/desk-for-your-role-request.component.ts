@@ -12,7 +12,7 @@ import { RbacService } from '../../../services/rbac.service';
 import { SearchfilterPipe } from "../../../Pipes/searchfilter.pipe";
 import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
 import { SignalsService } from '../../../services/signals.service';
-import { SearchfordeskPipe } from "../../../pipes/searchfordesk.pipe";
+import { SearchfordeskPipe } from "../../../Pipes/searchfordesk.pipe";
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { environment } from '../../../../environments/environment';
 import { DocumentViewIconComponent } from "../../../icons/document-view-icon/document-view-icon.component";

@@ -18,7 +18,7 @@ import { environment } from '../../../../../environments/environment';
 import { NgxDocViewerModule } from 'ngx-doc-viewer';
 import { RbacService } from '../../../../services/rbac.service';
 import { SignalsService } from '../../../../services/signals.service';
-import { SearchfordeskPipe } from "../../../../pipes/searchfordesk.pipe";
+import { SearchfordeskPipe } from "../../../../Pipes/searchfordesk.pipe";
 import { InfoIconComponent } from "../../../../icons/info-icon/info-icon.component";
 import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
 import { FormValidationsService } from '../../../../services/form-validations.service';

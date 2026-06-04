@@ -217,13 +217,27 @@
                     </div> -->
 
           <div class="row">
-            <div class="col-md-6">
+           <div class="col-md-6 mb-2">
               <label for="CompanyName" class="form-label custom-label mb-2">{{'Company Name' | translate}}
                 <span class="text-danger">*</span></label>
-              <input type="text" class="form-control custom-input" id="CompanyName" formControlName="companyName"
+              <!-- <input type="text" class="form-control custom-input" id="CompanyName" formControlName="companyName"
                 [placeholder]="'Please enter company name' | translate"
-                (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)" />
-              <div
+                (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)" /> -->
+                <div class="custom-p-select-content w-100">
+<p-autoComplete
+    formControlName="companyName"
+    [suggestions]="companySuggestions"
+    (completeMethod)="searchCompanies($event)"
+    [dropdown]="true"
+    [minLength]="0"
+    [forceSelection]="false"
+     styleClass="w-100"
+     [panelStyle]="{'width':'100%'}"
+    [placeholder]="'Please enter company name' | translate">
+</p-autoComplete>
+</div>
+              
+                <div
                 *ngIf="employeeExperienceForm.get('companyName')?.invalid && employeeExperienceForm.get('companyName')?.touched"
                 class="error-msg">
                 <div *ngIf="employeeExperienceForm.get('companyName')?.errors?.['required']">{{'Company Name is

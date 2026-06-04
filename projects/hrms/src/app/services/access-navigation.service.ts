@@ -1077,6 +1077,57 @@ export class AccessNavigationService {
         }
         break;
 
+        case '/project-management/projects':
+        if (this.rbac.allowedToAccess('Projects.view')) {
+          const preferred = this.getPreferredRouteFromPermissionTabs(
+            'project-management-projects-side-tabs',
+            [
+              { route: '/project-management/projects/active', permission: 'Project Details Tab.view' },
+              { route: '/project-management/projects/inactive', permission: 'Project Details Tab.view' },
+              { route: '/project-management/projects/hold', permission: 'Project Details Tab.view' },
+            ]
+          );
+          if (preferred) return preferred;
+          if (this.rbac.allowedToAccess('Project Details Tab.view')) {
+            return '/project-management/projects/active';
+          }
+        }
+        break;
+
+      case '/project-management/projects/details/phases':
+        if (this.rbac.allowedToAccess('Project Phases Tab.view')) {
+          const preferred = this.getPreferredRouteFromPermissionTabs(
+            'project-management-phases-side-tabs',
+            [
+              { route: '/project-management/projects/details/phases', permission: 'Project Phases Tab.view' },
+              { route: '/project-management/projects/details/inactive-phases', permission: 'Project Phases Tab.view' },
+              { route: '/project-management/projects/details/hold-phases', permission: 'Project Phases Tab.view' },
+            ]
+          );
+          if (preferred) return preferred;
+          return '/project-management/projects/details/phases';
+        }
+        break;
+
+              case '/project-management/timesheet':
+        if (this.rbac.allowedToAccess('Time Sheet.view') || this.rbac.allowedToAccess('Team Time Sheet.view') || this.rbac.allowedToAccess('My Summary.view')) {
+          const preferred = this.getPreferredRouteFromPermissionTabs(
+            'project-management-timesheets-tabs',
+            [
+              { route: '/project-management/timesheet/mytimesheet', permission: 'Time Sheet.view' },
+              { route: '/project-management/timesheet/mysummary', permission: 'My Summary.view' },
+              { route: '/project-management/timesheet/teamtimesheet', permission: 'Team Time Sheet.view' },
+            ]
+          );
+          if (preferred) return preferred;
+
+          if (this.rbac.allowedToAccess('Time Sheet.view')) return '/project-management/timesheet/mytimesheet';
+          if (this.rbac.allowedToAccess('My Summary.view')) return '/project-management/timesheet/mysummary';
+          if (this.rbac.allowedToAccess('Team Time Sheet.view')) return '/project-management/timesheet/teamtimesheet';
+        }
+        break;
+
+
       case '/project-management/timesheet/mytimesheet':
         if (this.rbac.allowedToAccess('Time Sheet.view')) {
           for (const item of TIME_SHEETS_TABS) {
@@ -2097,7 +2148,16 @@ export class AccessNavigationService {
         break;
 
       case '/pms/kpi-kra':
-        if (this.rbac.allowedToAccess('My KRA KPI.view')) {
+        if (
+          this.rbac.allowedToAccess('Dashboard KRA KPI.view') ||
+          this.rbac.allowedToAccess('My KRA KPI.view') ||
+          this.rbac.allowedToAccess('Team KRA KPI.view')
+        ) {
+          const preferred = this.getPreferredRouteFromPermissionTabs(
+            'krakpi-management-layout-tabs',
+            MY_KRA_KPI_TABS
+          );
+          if (preferred) return preferred;
           for (const item of MY_KRA_KPI_TABS) {
             if (this.rbac.allowedToAccess(item.permission)) {
               return item.route;

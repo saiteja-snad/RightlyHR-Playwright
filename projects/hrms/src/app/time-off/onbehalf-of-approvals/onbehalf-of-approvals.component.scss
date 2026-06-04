@@ -1,6 +1,6 @@
-.nav-link.active {
-   background: linear-gradient(180deg, #FFFFFF 0%, var(--custom-component-tabs-bg-color) 100%);
-}
+// .nav-link.active {
+//    background: linear-gradient(180deg, #FFFFFF 0%, var(--custom-component-tabs-bg-color) 100%);
+// }
 
 .custom-tab-content {
    width: calc(100% - 8.625rem) !important;
@@ -29,7 +29,7 @@
     border: 2px solid white;
     animation: pulse 2s infinite;
 
-    
+
 }
 
 @keyframes pulse {

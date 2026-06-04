@@ -35,7 +35,15 @@ export class ProjectManagementMainTabsComponent implements OnInit {
 
   Route(link: string): void {
     if (link) {
-      this.router.navigate([link]);
+      if (link === '/project-management/projects') {
+        const actual = this.accessNav.navigateToAccessedRoute(link);
+        this.router.navigate([actual || link]);
+      } else if (link === '/project-management/timesheet/mytimesheet') {
+        const actual = this.accessNav.navigateToAccessedRoute('/project-management/timesheet');
+        this.router.navigate([actual || link]);
+      } else {
+        this.router.navigate([link]);
+      }
       localStorage.removeItem('clientProjectId');
       localStorage.removeItem('projectProjectId');
     }

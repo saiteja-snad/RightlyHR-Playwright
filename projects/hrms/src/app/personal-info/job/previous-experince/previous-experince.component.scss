@@ -218,3 +218,13 @@
 ::ng-deep .p-autocomplete-list {
     padding: 4px 0 !important;
 }
+
+.custom-input::placeholder {
+  color: #6c757d !important;
+  opacity: 1 !important;
+}
+
+.custom-input.ng-invalid::placeholder,
+.custom-input.is-invalid::placeholder {
+  color: #6c757d !important;
+}

@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { RbacService } from './rbac.service';
+import { MenuOrderService } from './theme-service/menu-order.service';
+
 import {
   ASSEST_ALLOCATION_TABS,
   ATTENDANCE_REPORTS_TABS,
@@ -98,7 +100,7 @@ import {
 
 export class AccessNavigationService {
 
-  constructor(private rbac: RbacService) { }
+  constructor(private rbac: RbacService, private menuOrderService: MenuOrderService) { }
 
   navigateToAccessedHeaderRoute(actualRoute: string): string {
     let route = '';
@@ -427,6 +429,8 @@ export class AccessNavigationService {
         break;
 
       case '/claimsandexpenses':
+        const preferredExpenses = this.getExpensesPreferredRoute();
+        if (preferredExpenses) return preferredExpenses;
         for (const item of EXPENSE_TABS) {
           if (this.rbac.allowedToAccess(item.permission)) {
             return item.route;
@@ -555,6 +559,8 @@ export class AccessNavigationService {
         }
 
         if (this.rbac.allowedToAccess('Team Tickets Tab.view')) {
+          const preferred = this.getPreferredRouteFromPermissionTabs('itsupport-compoment-tabs', IT_SUPPORT_TEAM_TICKETS_TABS);
+          if (preferred) return preferred;
           for (const item of IT_SUPPORT_TEAM_TICKETS_TABS) {
             if (this.rbac.allowedToAccess(item.permission)) {
               return item.route;
@@ -1012,6 +1018,11 @@ export class AccessNavigationService {
 
       case '/it-support/team-tickets':
         if (this.rbac.allowedToAccess('Team Tickets Tab.view')) {
+          const preferred = this.getPreferredRouteFromPermissionTabs(
+            'itsupport-compoment-tabs',
+            IT_SUPPORT_TEAM_TICKETS_TABS
+          );
+          if (preferred) return preferred;
           for (const item of IT_SUPPORT_TEAM_TICKETS_TABS) {
             if (this.rbac.allowedToAccess(item.permission)) {
               return item.route;
@@ -2120,5 +2131,67 @@ export class AccessNavigationService {
         break;
     }
     return route;
+  }
+
+  private getPreferredOrderedRoutes(moduleKey: string): string[] {
+    const pref = this.menuOrderService.preferenceV2();
+    const modules = pref?.tabs?.modules ?? [];
+    const mod = modules.find(m => m.moduleKey === moduleKey);
+    const items = mod?.items ?? [];
+    if (items.length === 0) return [];
+
+    return items
+      .slice()
+      .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+      .map(i => i.route)
+      .filter((r): r is string => typeof r === 'string' && r.length > 0);
+  }
+
+  private getPreferredRouteFromPermissionTabs(
+    moduleKey: string,
+    tabs: Array<{ route: string; permission: string }>
+  ): string {
+    const orderedRoutes = this.getPreferredOrderedRoutes(moduleKey);
+    if (orderedRoutes.length === 0) return '';
+
+    for (const tabRoute of orderedRoutes) {
+      const match = tabs.find(t => t.route === tabRoute);
+      if (match && this.rbac.allowedToAccess(match.permission)) {
+        return match.route;
+      }
+    }
+
+    return '';
+  }
+
+  private getPreferredRouteFromResolver(moduleKey: string, resolve: (route: string) => string): string {
+    const orderedRoutes = this.getPreferredOrderedRoutes(moduleKey);
+    if (orderedRoutes.length === 0) return '';
+
+    for (const tabRoute of orderedRoutes) {
+      const resolved = resolve(tabRoute);
+      if (resolved) return resolved;
+    }
+
+    return '';
+  }
+
+  private getPendingApprovalsPreferredRoute(): string {
+    return this.getPreferredRouteFromResolver(
+      'pending-approvals',
+      (route) => this.navigateToAccessedRoute(route)
+    );
+  }
+
+  private getLeavesPreferredRoute(): string {
+    return this.getPreferredRouteFromPermissionTabs('leaves-approval-tabs', TIME_OFF_SUB_TABS);
+  }
+
+  private getCardsManagementPreferredRoute(): string {
+    return this.getPreferredRouteFromPermissionTabs('cardsmanagement-tabs', CARDS_SUB_TABS);
+  }
+
+  private getExpensesPreferredRoute(): string {
+    return this.getPreferredRouteFromPermissionTabs('claimsandexpenses-tabs', EXPENSE_TABS);
   }
 }

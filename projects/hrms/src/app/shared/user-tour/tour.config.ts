@@ -17,6 +17,7 @@ export interface TourStepConfig {
     side?: 'top' | 'right' | 'bottom' | 'left' | 'over';
     align?: 'start' | 'center' | 'end';
   };
+  waitTimeoutMs?: number;
   beforeShow?: (ctx: TourActionContext) => Promise<void>;
   /**
    * Optional side-effect to run BEFORE moving to the NEXT step.
@@ -40,6 +41,11 @@ export interface TourConfig {
   steps: TourStepConfig[];
 
   requiredPermission?: string;
+  moduleTourKey?: string;
+  requiredRoute?: string;
+  disableSkip?: boolean;
+  finishOnly?: boolean;
+  lockScroll?: boolean;
 }
 
 /** Context passed to step beforeNext hooks so they can trigger app-level actions */
@@ -137,6 +143,29 @@ export const TOUR_CONFIGS: TourConfig[] = [
           description: 'Users can customize both the Side Navigation Menu and the Ellipses Menu (...) by organizing and managing the menu items based on their preference and frequently used modules.',
           side: 'right',
           align: 'center'
+        }
+      }
+    ]
+  }
+];
+
+export const SUB_TABS_TOUR_CONFIGS: TourConfig[] = [
+  {
+    completionKey: 'subtabs_tour_completed',
+    sessionKey: 'rhr_tour_subtabs_cards_management_step',
+    moduleTourKey: 'cardsmanagement-tabs',
+    requiredPermission: 'Cards Management.view',
+    requiredRoute: '/card-management',
+    disableSkip: true,
+    finishOnly: true,
+    steps: [
+      {
+        element: '[data-tour="subtabs-dropzone"][data-tour-module="cardsmanagement-tabs"]',
+        popover: {
+          title: 'Customize Sub Menu Order',
+          description: 'Drag and drop sub-menu tabs to arrange them in your preferred order for quicker access.',
+          side: 'right',
+          align: 'start'
         }
       }
     ]

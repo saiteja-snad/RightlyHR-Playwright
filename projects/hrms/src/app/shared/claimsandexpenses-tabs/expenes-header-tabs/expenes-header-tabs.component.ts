@@ -8,15 +8,28 @@ import { BehaviorSubject, Subscription } from 'rxjs';
 import { RbacService } from '../../../services/rbac.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.service';
+import { DragDropModule } from '@angular/cdk/drag-drop';
+import { TabsDndDirective } from '../../tabs-dnd/tabs-dnd.directive';
+import { MenuOrderService } from '../../../services/theme-service/menu-order.service';
+
+interface StatusTab {
+  tabId: string;
+  label: string;
+  link: string;
+  count?: number;
+  permission?: { feature: string; action: string };
+  icon: string;
+}
 
 @Component({
   selector: 'app-expenes-header-tabs',
-  imports: [CommonModule, RouterModule, TabsModule,TranslateModule],
+  imports: [CommonModule, RouterModule, TabsModule,TranslateModule,DragDropModule,TabsDndDirective],
   templateUrl: './expenes-header-tabs.component.html',
   styleUrl: './expenes-header-tabs.component.scss'
 })
 
 export class ExpenesHeaderTabsComponent implements OnInit, OnDestroy {
+  readonly tabsKey = 'claimsandexpenses-tabs';
   subscription!: Subscription;
   empinfo: any;
   expenesEmplyeedata = new BehaviorSubject<IExpense[]>([]);
@@ -35,48 +48,30 @@ export class ExpenesHeaderTabsComponent implements OnInit, OnDestroy {
    selectemp: any;
  selectedYear: any;
   seletedMouthly: any;
-  public navTabs: any[] = [];
+  public navTabs: StatusTab[] = [];
   public defaultRoute: string = '';
-  private allTabs = [
-    { label: 'Draft', link: '/claimsandexpenses/expenses/draft', icon: '/time-off-icon/waiting-for-approval-icon.png', permission: { feature: 'Draft Tab', action: 'view' }, count: this.draftsCount },
-    { label: 'Approved', link: '/claimsandexpenses/expenses/approved', icon: '/time-off-icon/approved-icon.png', permission: { feature: 'Approved Tab', action: 'view' }, count: this.ApprovedCount },
-    { label: 'Waiting For Approval', link: '/claimsandexpenses/expenses/pending', icon: '/time-off-icon/waiting-for-approval-icon.png', permission: { feature: 'Pending Tab', action: 'view' }, count: this.pendingCount },
-    { label: 'Processed', link: '/claimsandexpenses/expenses/processed', icon: '/time-off-icon/processed-icon.png', permission: { feature: 'Processed Tab', action: 'view' }, count: this.processedCount },
-    { label: 'Rejected', link: '/claimsandexpenses/expenses/rejected', icon: '/time-off-icon/rejected-icon.png', permission: { feature: 'Rejected Tab', action: 'view' }, count: this.rejectedCount },
-    { label: 'Expense Clarifications', link: '/claimsandexpenses/expenses/required-clarification', icon: '/time-off-icon/clarification.png', permission: { feature: 'Expense Clarifications Tab', action: 'view' }, count: this.requiredClarificationCount },
-  
+  private allTabs: StatusTab[] = [
+    { tabId: '/claimsandexpenses/expenses/draft',  label: 'Draft', link: '/claimsandexpenses/expenses/draft', icon: '/time-off-icon/waiting-for-approval-icon.png', permission: { feature: 'Draft Tab', action: 'view' }, count: this.draftsCount },
+    { tabId: '/claimsandexpenses/expenses/approved',  label: 'Approved', link: '/claimsandexpenses/expenses/approved', icon: '/time-off-icon/approved-icon.png', permission: { feature: 'Approved Tab', action: 'view' }, count: this.ApprovedCount },
+    { tabId: '/claimsandexpenses/expenses/pending',  label: 'Waiting For Approval', link: '/claimsandexpenses/expenses/pending', icon: '/time-off-icon/waiting-for-approval-icon.png', permission: { feature: 'Pending Tab', action: 'view' }, count: this.pendingCount },
+    { tabId: '/claimsandexpenses/expenses/processed',  label: 'Processed', link: '/claimsandexpenses/expenses/processed', icon: '/time-off-icon/processed-icon.png', permission: { feature: 'Processed Tab', action: 'view' }, count: this.processedCount },
+    { tabId: '/claimsandexpenses/expenses/rejected',  label: 'Rejected', link: '/claimsandexpenses/expenses/rejected', icon: '/time-off-icon/rejected-icon.png', permission: { feature: 'Rejected Tab', action: 'view' }, count: this.rejectedCount },
+    { tabId: '/claimsandexpenses/expenses/required-clarification',  label: 'Expense Clarifications', link: '/claimsandexpenses/expenses/required-clarification', icon: '/time-off-icon/clarification.png', permission: { feature: 'Expense Clarifications Tab', action: 'view' }, count: this.requiredClarificationCount },
+
   ];
 
-  constructor(private http: HttpService, private rbac: RbacService, private router: Router,private SelectedyeartimeOffService:TimeoffYearFilterService ) { }
+  constructor(private http: HttpService, private rbac: RbacService, private router: Router,private SelectedyeartimeOffService:TimeoffYearFilterService, private menuOrderService: MenuOrderService ) { }
 
   ngOnInit(): void {
-  
-    this.navTabs = this.allTabs.filter(tab =>
-      tab.permission &&
-      tab.permission.feature &&
-      tab.permission.action &&
-      this.rbac.allowedToAccess(`${tab.permission.feature}.${tab.permission.action}`)
-    );
-    if (this.navTabs.length > 0) {
-      this.defaultRoute = this.navTabs[0].link;
-    }
-    const currentUrl = this.router.url;
-    const baseUrl = '/claimsandexpenses/expenses';
-    if (currentUrl === baseUrl && this.defaultRoute) {
-      this.router.navigateByUrl(this.defaultRoute);
-      return;
-    }
-    const isAllowed = this.navTabs.some(tab => tab.link === currentUrl);
-    if (!isAllowed && this.defaultRoute) {
-      this.router.navigateByUrl(this.defaultRoute);
-    }
+
+    void this.initTabsAndRedirect();
     this.SelectedyeartimeOffService.selectedYear$.subscribe(year => {
       if (year !== null) {
         this.selectedYear = year;
            this.SelectedyeartimeOffService.selectedMounthly$.subscribe(mounthly => {
           if (mounthly !== null) {
             this.seletedMouthly = mounthly;
-          
+
           }
         })
         this.http.selectedEmployeeIdExpenses$.subscribe((id) => {
@@ -95,6 +90,37 @@ export class ExpenesHeaderTabsComponent implements OnInit, OnDestroy {
     this.http.expensesprocesscount$.subscribe(() => {
       this.getexpensesheaderbyemployeeid();
     });
+  }
+
+  private async initTabsAndRedirect(): Promise<void> {
+    try {
+      await this.menuOrderService.ensureLoaded();
+    } catch {
+    }
+
+    this.navTabs = this.allTabs.filter(tab =>
+      tab.permission &&
+      tab.permission.feature &&
+      tab.permission.action &&
+      this.rbac.allowedToAccess(`${tab.permission.feature}.${tab.permission.action}`)
+    );
+    this.navTabs = this.menuOrderService.applySavedTabsOrder(
+      this.tabsKey,
+      this.navTabs,
+      tab => tab.tabId
+    );
+    this.defaultRoute = this.navTabs[0]?.link ?? '';
+
+    const currentUrl = this.router.url;
+    const baseUrl = '/claimsandexpenses/expenses';
+    if (currentUrl === baseUrl && this.defaultRoute) {
+      this.router.navigateByUrl(this.defaultRoute);
+      return;
+    }
+    const isAllowed = this.navTabs.some(tab => tab.link === currentUrl);
+    if (!isAllowed && this.defaultRoute) {
+      this.router.navigateByUrl(this.defaultRoute);
+    }
   }
 
   getexpensesheaderbyemployeeid(): void {
@@ -123,6 +149,11 @@ export class ExpenesHeaderTabsComponent implements OnInit, OnDestroy {
       tab.permission.action &&
       this.rbac.allowedToAccess(`${tab.permission.feature}.${tab.permission.action}`)
     );
+    this.navTabs = this.menuOrderService.applySavedTabsOrder(
+      this.tabsKey,
+      this.navTabs,
+      tab => tab.tabId
+    );
   }
 
   updateAllFilteredExpenses() {
@@ -145,8 +176,12 @@ export class ExpenesHeaderTabsComponent implements OnInit, OnDestroy {
     this.pendingCount = pending.length;
     this.processedCount = processed.length;
     this.rejectedCount = rejected.length;
-    
+
     this.updateNavTabs();
+  }
+
+  trackByTabId(_: number, tab: StatusTab): string {
+    return tab.tabId;
   }
 
   ngOnDestroy(): void {

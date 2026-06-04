@@ -8,10 +8,8 @@ import { Subscription } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { OpenModalService } from '../../services/open-modal.service';
 import { ConfirmationIconComponent } from '../../icons/confirmation-icon/confirmation-icon.component';
-import { HttpService } from '../../services/http.service';
-import { MenuOrderService, MENU_PREF_KEY } from '../../services/theme-service/menu-order.service';
+import { MenuOrderService } from '../../services/theme-service/menu-order.service';
 import { MenuRegistryService, MenuItemDef } from '../../shared/sidenav/menu-registry.service';
-import { UserPreferenceService } from '../../services/user-preference.service';
 
 @Component({
   selector: 'app-menus-personalization',
@@ -50,10 +48,8 @@ export class MenusPersonalizationComponent implements OnInit, OnDestroy {
     private themeAction: ThemeActionService,
     private modalService: NgbModal,
     private openModalService: OpenModalService,
-    private http: HttpService,
     private menuOrderService: MenuOrderService,
-    private menuRegistry: MenuRegistryService,
-    private userPrefService: UserPreferenceService
+    private menuRegistry: MenuRegistryService
   ) {
     let previousOrderJson: string | null = null;
     effect(() => {
@@ -86,28 +82,22 @@ export class MenusPersonalizationComponent implements OnInit, OnDestroy {
     );
   }
 
-  async loadMenuOrder(forceRefresh = false): Promise<void> {
+  loadMenuOrder(): void {
     this.dataLoad = true;
-    try {
-      const data = await this.userPrefService.getPreferences(forceRefresh);
-      this.dataLoad = false;
-      const savedValue = data?.[MENU_PREF_KEY];
-      if (savedValue) {
-        const order: MenuOrder = JSON.parse(savedValue);
-        this.menuOrderService.setMenuOrder(order);
+    this.menuOrderService.initMenuOrder()
+      .then(() => {
+        this.dataLoad = false;
+        const order = this.menuOrderService.menuOrder();
         this.applyOrder(order);
-      } else {
-        this.menuOrderService.setMenuOrder(null);
+        this.savedOrder = this.getCurrentOrder();
+        this.themeAction.canApplyMenuChanges.set(false);
+      })
+      .catch(() => {
+        this.dataLoad = false;
         this.applyOrder(null);
-      }
-      this.savedOrder = this.getCurrentOrder();
-      this.themeAction.canApplyMenuChanges.set(false);
-    } catch (error) {
-      this.dataLoad = false;
-      this.applyOrder(null);
-      this.savedOrder = this.getCurrentOrder();
-      this.themeAction.canApplyMenuChanges.set(false);
-    }
+        this.savedOrder = this.getCurrentOrder();
+        this.themeAction.canApplyMenuChanges.set(false);
+      });
   }
 
   private applyOrder(order: MenuOrder | null): void {
@@ -147,17 +137,12 @@ export class MenusPersonalizationComponent implements OnInit, OnDestroy {
       mainMenuRoutes: ['/dashboard', ...current.mainMenuRoutes],
       threeDotRoutes: current.threeDotRoutes
     };
-    const payload = {
-      employeeId: this.empinfo?.employeeId || 0,
-      key: MENU_PREF_KEY,
-      value: JSON.stringify(order)
-    };
-    this.http.postdata('Employeedata/save-user-preference', payload).subscribe({
-      next: () => {
+    this.menuOrderService.saveOrder(this.empinfo?.employeeId || 0, order, {
+      onSuccess: () => {
         this.openModalService.openSuccessModal('Menu order has been saved successfully.');
-        this.loadMenuOrder(true);
+        this.loadMenuOrder();
       },
-      error: () => this.openModalService.openErrorModal('Failed to save menu order')
+      onError: () => this.openModalService.openErrorModal('Failed to save menu order')
     });
   }
 
@@ -172,17 +157,12 @@ export class MenusPersonalizationComponent implements OnInit, OnDestroy {
       mainMenuRoutes: ['/dashboard', ...main.map(i => i.route)],
       threeDotRoutes: ellipses.map(i => i.route)
     };
-    const payload = {
-      employeeId: this.empinfo?.employeeId || 0,
-      key: MENU_PREF_KEY,
-      value: JSON.stringify(defaultOrder)
-    };
-    this.http.postdata('Employeedata/save-user-preference', payload).subscribe({
-      next: () => {
+    this.menuOrderService.saveOrder(this.empinfo?.employeeId || 0, defaultOrder, {
+      onSuccess: () => {
         this.openModalService.openSuccessModal('Menu order has been reset successfully.');
-        this.loadMenuOrder(true);
+        this.loadMenuOrder();
       },
-      error: () => this.openModalService.openErrorModal('Failed to reset menu order')
+      onError: () => this.openModalService.openErrorModal('Failed to reset menu order')
     });
   }
 

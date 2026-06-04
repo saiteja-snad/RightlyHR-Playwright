@@ -157,3 +157,74 @@
     border-bottom-color: #FFFFFF !important;
   }
 }
+
+::ng-deep .p-autocomplete-input:focus {
+    border-color: #ced4da !important;
+    box-shadow: none !important;
+    outline: none !important;
+}
+
+::ng-deep .p-autocomplete,
+::ng-deep .p-autocomplete-input {
+    width: 100% !important;
+}
+
+::ng-deep .p-autocomplete,
+::ng-deep .p-autocomplete-dropdown {
+    height: 36px !important;
+}
+
+::ng-deep .p-autocomplete-input {
+    height: 36px !important;
+    line-height: 36px !important;
+    padding: 0 12px !important;
+    background: #f8f9fa !important;
+}
+
+::ng-deep .p-autocomplete-input::placeholder {
+    font-size: 12px !important;
+}
+
+::ng-deep .p-autocomplete-input {
+    background: #f8f9fa !important;
+}
+
+::ng-deep .p-autocomplete-dropdown {
+    background: #f8f9fa !important;
+    border-left: 1px solid #ced4da !important;
+}
+::ng-deep .p-autocomplete:hover .p-autocomplete-input,
+::ng-deep .p-autocomplete:hover .p-autocomplete-dropdown {
+    border-color: #ced4da !important;
+    box-shadow: none !important;
+}
+::ng-deep .p-autocomplete-input {
+    font-size: 14px !important;
+    font-weight: 400 !important;
+}
+
+::ng-deep .p-autocomplete-item.p-focus {
+    background: #e9edf5 !important;
+    color: #495057 !important;
+}
+
+::ng-deep .p-autocomplete-option {
+    padding: 6px 12px !important;
+    min-height: 32px !important;
+    line-height: 20px !important;
+    font-size: 13px !important;
+}
+
+::ng-deep .p-autocomplete-list {
+    padding: 4px 0 !important;
+}
+
+.custom-input::placeholder {
+  color: #6c757d !important;
+  opacity: 1 !important;
+}
+
+.custom-input.ng-invalid::placeholder,
+.custom-input.is-invalid::placeholder {
+  color: #6c757d !important;
+}

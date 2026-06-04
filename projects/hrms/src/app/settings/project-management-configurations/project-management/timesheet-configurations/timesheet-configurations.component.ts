@@ -95,56 +95,91 @@ timesheetconfigForm!: FormGroup;
   }
   getphases() {
     let selectedProjects =
-      this.timesheetconfigForm.get('projects')?.value ? this.timesheetconfigForm.get('projects')?.value:this.selecteddata?.projectId;
+      this.timesheetconfigForm.get('projects')?.value
+        ? this.timesheetconfigForm.get('projects')?.value
+        : this.selecteddata?.projectId;
 
-    // normalize to array (handles both number and array cases)
     const projectArray = Array.isArray(selectedProjects)
       ? selectedProjects
       : selectedProjects
         ? [selectedProjects]
         : [];
-       const validProjectIds = projectArray.filter(
-        id => id !== null && id !== undefined && id !== ''
-      );
-    if (projectArray.length > 0 && validProjectIds.length > 0) {
-      const params: any = {};
-      if (validProjectIds.length > 0) {
-        params.projectId = validProjectIds.join(',');
-        params.status = 'yet to start,in progress,extended';
-      }
-      this.http.getDataIncludeParams('ProjectPhases/list', params).pipe(takeUntil(this.destroy$)).subscribe({
+
+    // Only No Client - No Project selected
+    if ((projectArray.length === 1) && projectArray.includes(0)) {
+      this.phasesoption = [
+        {
+          phaseId: 0,
+          displayName: 'No Phase'
+        }
+      ];
+
+      this.timesheetconfigForm.get('phases')?.setValue([0]);
+       this.timesheetconfigUpdateForm.get('updatephases')?.setValue(0);
+
+      this.timesheetconfigForm.get('phases')?.disable();
+      this.timesheetconfigUpdateForm.get('updatephases')?.disable();
+
+      return;
+    }
+    const validProjectIds = projectArray.filter(
+      id => id !== null && id !== undefined && id !== '' && id !== 0
+    );
+
+    if (validProjectIds.length > 0) {
+      const params: any = {
+        projectId: validProjectIds.join(','),
+        status: 'yet to start,in progress,extended'
+      };
+
+      this.http
+        .getDataIncludeParams('ProjectPhases/list', params)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
           next: (response: any) => {
-            //this.phasesoption = response.data;
-          this.phasesoption = response.data.map((phase: any) => ({
-            ...phase,
-            displayName: `${phase.project?.projectName} - ${phase.phaseName}`
-          }));
-          if (this.phasesoption.length > 0) {
+            this.phasesoption = response.data.map((phase: any) => ({
+              ...phase,
+              displayName: `${phase.project?.projectName} - ${phase.phaseName}`
+            }));
+
+            // Always add No Phase on top
+            this.phasesoption.unshift({
+              phaseId: 0,
+              displayName: 'No Phase'
+            });
+
             const formControls = [
-            this.timesheetconfigForm.get('phases'),
-            this.timesheetconfigUpdateForm.get('updatephases')
-          ];
-            // Enable and make required
+              this.timesheetconfigForm.get('phases'),
+              this.timesheetconfigUpdateForm.get('updatephases')
+            ];
+
             formControls.forEach(control => {
               control?.enable();
               control?.setValidators([Validators.required]);
+              const currentValue = control?.value;
+              if (Array.isArray(currentValue)) {
+                control?.setValue(currentValue.includes(0)? currentValue: [0, ...currentValue],{ emitEvent: false });
+              } else {
+                control?.setValue(currentValue ?? 0, { emitEvent: false });
+              }
               control?.updateValueAndValidity();
             });
-          } 
+          },
+          error: () => {
+            this.phasesoption = [];
           }
         });
     } else {
-      this.phasesoption = [];
-      const formControls = [
-        this.timesheetconfigForm.get('phases'),
-        this.timesheetconfigUpdateForm.get('updatephases')
-      ];
-      formControls.forEach(control => {
-        control?.reset([0]);
-        control?.clearValidators();
-        control?.disable();
-        control?.updateValueAndValidity();
-      });
+     this.phasesoption = [];
+      this.phasesoption.unshift({
+              phaseId: 0,
+              phaseName: 'No Phase'
+            });
+      this.timesheetconfigForm.get('phases')?.setValue([0]);
+      this.timesheetconfigUpdateForm.get('updatephases')?.setValue(0);
+
+      this.timesheetconfigForm.get('phases')?.disable();
+      this.timesheetconfigUpdateForm.get('updatephases')?.disable();
     }
   }
   intiationalfrom() {
@@ -184,10 +219,11 @@ timesheetconfigForm!: FormGroup;
         const successCount = res?.data?.successCount;
         const failureCount = res.data.failedCount;
         this.responseSummary = {
-          failedreason: res?.data?.failed ||'NA',
+          failedreason:Array.isArray(res?.data?.failed) && res.data.failed.length > 0? res.data.failed: 'NA',
           successRecordsCount: successCount,
           failureRecordsCount: failureCount,
         };
+        console.log(this.responseSummary);
         this.modalService.dismissAll();
         const modalRef = this.modalService.open(this.releaseSummaryModal, {
           centered: true,
@@ -234,8 +270,8 @@ timesheetconfigForm!: FormGroup;
     this.selecteddata = expenses;
     this.getphases();
     this.timesheetconfigUpdateForm.patchValue({
-      updateprojects: expenses.projectId,
-      updatephases: expenses.phaseId,
+      updateprojects: expenses.projectId||0,
+      updatephases: expenses.phaseId||0,
       updatefields: expenses.fieldName,
       isMandatoryupdate: expenses.isMandatory
     });

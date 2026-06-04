@@ -733,28 +733,27 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
     this.isFutureDate = false
   }
 
+
 searchCompanies(event: any) {
   const query = (event.query || '').trim();
 
   this.http
     .getData(`ExperienceDetail/company-suggestions?search=${query}`)
     .subscribe({
-      next: (data: any) => {
+      
+next: (data: any) => {
 
-        this.companySuggestions = data || [];
+  this.companySuggestions = (data || []).filter(
+    (x: string) => x && x.trim() !== ''
+  );
 
-        // If no exact match exists, add typed text itself
-        if (
-          query &&
-          !this.companySuggestions.some(
-            (x: string) => x.toLowerCase() === query.toLowerCase()
-          )
-        ) {
-          this.companySuggestions.unshift(query);
-        }
-      }
+  if (query && this.companySuggestions.length === 0) {
+    this.companySuggestions = [query];
+  }
+}
     });
 }
+
 
 
   ngOnDestroy(): void {

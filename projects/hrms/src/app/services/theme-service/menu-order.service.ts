@@ -57,10 +57,7 @@ export class MenuOrderService {
   readonly preferenceV2 = signal<MenuPreferenceV2 | null>(null);
   private initPromise: Promise<void> | null = null;
 
-  constructor(
-    private http: HttpService,
-    private menuRegistry: MenuRegistryService
-  ) {}
+  constructor(private http: HttpService, private menuRegistry: MenuRegistryService) {}
 
   setMenuOrder(order: MenuOrder | null): void {
     this.menuOrder.set(order);
@@ -104,7 +101,7 @@ export class MenuOrderService {
     });
   }
 
-  async initMenuOrder(): Promise<void> {
+async initMenuOrder(): Promise<void> {
     try {
       const empInfo = this.getEmployeeInfoFromStorage();
       const employeeId = empInfo?.employeeId;

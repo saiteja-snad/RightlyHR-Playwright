@@ -49,7 +49,7 @@ export class KraKpiManagementLayoutComponent {
      this.rebuildTabs();
   }
 
-  private rebuildTabs(): void {
+ private rebuildTabs(): void {
     const filtered = this.navTabs.filter(tab => {
       if (!tab.permission) return true;
       const { feature, action } = tab.permission;

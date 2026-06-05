@@ -21,7 +21,7 @@ interface StatusTab {
 }
 @Component({
   selector: 'app-itsupport-compoment-tabs',
-  imports: [CommonModule, TabsModule, RouterModule, SidetabsloadersComponent,DragDropModule,TabsDndDirective],
+  imports: [CommonModule, TabsModule, RouterModule, SidetabsloadersComponent, DragDropModule, TabsDndDirective],
   templateUrl: './itsupport-compoment-tabs.component.html',
   styleUrl: './itsupport-compoment-tabs.component.scss'
 })

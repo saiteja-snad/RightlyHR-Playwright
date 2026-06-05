@@ -36,7 +36,7 @@ export class DocumentAcknowledgementTabsComponent implements OnInit, OnDestroy {
   Documents: LetterAcknowledgementDoc[] = [];
   @Input() document: any;
 
-  constructor(private http: HttpService, config: NgbModalConfig, private menuOrderService: MenuOrderService,) {
+  constructor(private http: HttpService, config: NgbModalConfig, private menuOrderService: MenuOrderService) {
     config.backdrop = 'static';
     config.keyboard = false;
   }
@@ -51,7 +51,7 @@ export class DocumentAcknowledgementTabsComponent implements OnInit, OnDestroy {
     this.active = folder.id;
   }
 
-  getAllLettersAcknowledgement() {
+getAllLettersAcknowledgement() {
     this.subscription = this.http.getData('LetterAcknowledgment/getall').subscribe({
       next: (data: any) => {
         const mapped: LetterAcknowledgementDoc[] = (Array.isArray(data) ? data : []).map((doc: any) => ({
@@ -72,7 +72,6 @@ export class DocumentAcknowledgementTabsComponent implements OnInit, OnDestroy {
           this.Documents = ordered;
           this.active = this.Documents[0]?.id ?? null;
         });
-        // this.getAllSignatureLetterType();
       },
       error: (reason: any) => {
         console.log(reason);
@@ -84,7 +83,7 @@ export class DocumentAcknowledgementTabsComponent implements OnInit, OnDestroy {
     return doc.id;
   }
 
-  private ensureActiveIsValid(): void {
+    private ensureActiveIsValid(): void {
     if (!Array.isArray(this.Documents) || this.Documents.length === 0) {
       this.active = null;
       return;

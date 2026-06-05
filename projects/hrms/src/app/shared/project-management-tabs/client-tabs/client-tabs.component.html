@@ -1,8 +1,18 @@
 
 @if(!loading){
 <div class="custom-sub-tabs-container">
-  <ul class="nav flex-column">
-    <li class="nav-item" *ngFor="let tab of filteredTabs">
+  <ul
+    class="nav flex-column"
+    cdkDropList
+    [cdkDropListData]="filteredTabs"
+    cdkDropListOrientation="vertical"
+    appTabsDnd
+    [tabsDndKey]="tabsKey"
+    [tabsDndItems]="filteredTabs"
+    tabsDndIdProp="tabId"
+    tabsDndRouteProp="link"
+  >
+    <li class="nav-item" *ngFor="let tab of filteredTabs; trackBy: trackByTabId" cdkDrag cdkDragLockAxis="y" cdkDragBoundary=".component-left-tabs-container">
       <div class="nav-link" [routerLink]="[tab.link]" [queryParamsHandling]="'preserve'" [class.active-nav-link]="isDocumentTabActive(tab.link)" >
         <img [src]="tab.icon" alt="Icon" class="icon mb-2">
         <div class="d-flex">{{ tab.label | translate}}</div>

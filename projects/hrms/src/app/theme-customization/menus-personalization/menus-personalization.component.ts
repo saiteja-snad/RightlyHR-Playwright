@@ -131,7 +131,7 @@ export class MenusPersonalizationComponent implements OnInit, OnDestroy {
     this.themeAction.canApplyMenuChanges.set(this.hasChanges());
   }
 
-  applyChanges(): void {
+   applyChanges(): void {
     const current = this.getCurrentOrder();
     const order: MenuOrder = {
       mainMenuRoutes: ['/dashboard', ...current.mainMenuRoutes],

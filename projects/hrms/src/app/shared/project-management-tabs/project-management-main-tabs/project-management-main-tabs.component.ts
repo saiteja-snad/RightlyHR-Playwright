@@ -45,7 +45,7 @@ export class ProjectManagementMainTabsComponent implements OnInit {
         this.router.navigate([link]);
       }
       localStorage.removeItem('clientProjectId');
-      localStorage.removeItem('projectProjectId');
+        localStorage.removeItem('projectProjectId');
     }
   }
 

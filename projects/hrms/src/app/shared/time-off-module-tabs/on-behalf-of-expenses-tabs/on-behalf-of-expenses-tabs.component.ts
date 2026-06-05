@@ -8,14 +8,18 @@ import { BehaviorSubject, Subject, Subscription, takeUntil } from 'rxjs';
 import { RbacService } from '../../../services/rbac.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.service';
+import { DragDropModule } from '@angular/cdk/drag-drop';
+import { TabsDndDirective } from '../../tabs-dnd/tabs-dnd.directive';
+import { MenuOrderService } from '../../../services/theme-service/menu-order.service';
 
 @Component({
   selector: 'app-on-behalf-of-expenses-tabs',
-  imports: [RouterModule, CommonModule, TabsModule, TranslateModule],
+  imports: [RouterModule, CommonModule, TabsModule, TranslateModule, DragDropModule, TabsDndDirective],
   templateUrl: './on-behalf-of-expenses-tabs.component.html',
   styleUrl: './on-behalf-of-expenses-tabs.component.scss'
 })
 export class OnBehalfOfExpensesTabsComponent {
+  readonly tabsKey = 'on-behalf-of-expenses-tabs';
   filteredTabs: any[] = [];
   loading = false
   empdata = {} as any;
@@ -48,6 +52,7 @@ export class OnBehalfOfExpensesTabsComponent {
   public navTabs: any[] = [];
   private allTabs = [
     {
+      tabId: '/on-behalf-of/on-behalf-of-expenses/waiting-for-approval',
       label: 'Waiting For Approval',
       link: 'waiting-for-approval',
       icon: '/time-off-icon/waiting-for-approval-icon.png',
@@ -55,6 +60,7 @@ export class OnBehalfOfExpensesTabsComponent {
       count: this.pendingCount
     },
     {
+      tabId: '/on-behalf-of/on-behalf-of-expenses/approved',
       label: 'Approved',
       link: 'approved',
       icon: '/time-off-icon/approved-icon.png',
@@ -62,6 +68,7 @@ export class OnBehalfOfExpensesTabsComponent {
       count: this.ApprovedCount
     },
     {
+      tabId: '/on-behalf-of/on-behalf-of-expenses/processed',
       label: 'Processed',
       link: 'processed',
       icon: '/time-off-icon/processed-icon.png',
@@ -69,6 +76,7 @@ export class OnBehalfOfExpensesTabsComponent {
       count: this.processedCount
     },
     {
+      tabId: '/on-behalf-of/on-behalf-of-expenses/rejected',
       label: 'Rejected',
       link: 'rejected',
       icon: '/time-off-icon/rejected-icon.png',
@@ -77,7 +85,7 @@ export class OnBehalfOfExpensesTabsComponent {
     },
   ];
 
-  constructor(private http: HttpService, private rbac: RbacService, private router: Router, private SelectedyeartimeOffService: TimeoffYearFilterService) {
+  constructor(private http: HttpService, private rbac: RbacService, private router: Router, private SelectedyeartimeOffService: TimeoffYearFilterService, private menuOrderService: MenuOrderService) {
   }
   
   ngOnInit(): void {
@@ -95,8 +103,11 @@ export class OnBehalfOfExpensesTabsComponent {
       this.rbac.allowedToAccess(`${tab.permission.feature}.${tab.permission.action}`)
     );
 
-    if (this.navTabs.length > 0) {
-      this.defaultRoute = this.navTabs[0].link;
+    // Apply saved order
+    this.filteredTabs = this.menuOrderService.applySavedTabsOrder(this.tabsKey, this.navTabs, (t) => t.tabId || t.link);
+
+    if (this.filteredTabs.length > 0) {
+      this.defaultRoute = this.filteredTabs[0].link;
     }
 
     const currentUrl = this.router.url;
@@ -105,7 +116,7 @@ export class OnBehalfOfExpensesTabsComponent {
       this.router.navigateByUrl(this.defaultRoute);
       return;
     }
-    const isAllowed = this.navTabs.some(tab => tab.link === currentUrl);
+    const isAllowed = this.filteredTabs.some(tab => tab.link === currentUrl || tab.tabId === currentUrl || currentUrl.endsWith(`/${tab.link}`));
     if (!isAllowed && this.defaultRoute) {
       this.router.navigateByUrl(this.defaultRoute);
     }
@@ -189,6 +200,12 @@ export class OnBehalfOfExpensesTabsComponent {
       tab.permission &&
       this.rbac.allowedToAccess(`${tab.permission.feature}.${tab.permission.action}`)
     );
+
+    this.filteredTabs = this.menuOrderService.applySavedTabsOrder(this.tabsKey, this.navTabs, (t) => t.tabId || t.link);
+  }
+
+  trackByTabId(_: number, tab: any): string {
+    return tab.tabId || tab.link;
   }
 
   updateAllFilteredExpenses() {

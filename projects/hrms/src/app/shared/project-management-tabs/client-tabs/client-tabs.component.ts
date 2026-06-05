@@ -5,58 +5,96 @@ import { TranslateModule } from '@ngx-translate/core';
 import { TabsModule } from 'primeng/tabs';
 import { RbacService } from '../../../services/rbac.service';
 import { SidetabsloadersComponent } from "../../sidetabsloaders/sidetabsloaders.component";
+import { DragDropModule } from '@angular/cdk/drag-drop';
+import { TabsDndDirective } from '../../tabs-dnd/tabs-dnd.directive';
+import { MenuOrderService } from '../../../services/theme-service/menu-order.service';
+
+interface ClientTab {
+  tabId: string;
+  label: string;
+  link: string;
+  icon: string;
+  permission?: { feature: string; action: string };
+}
 @Component({
   selector: 'app-client-tabs',
-  imports: [RouterModule, CommonModule, TabsModule, TranslateModule, SidetabsloadersComponent],
+  imports: [RouterModule, CommonModule, TabsModule, TranslateModule, SidetabsloadersComponent, DragDropModule, TabsDndDirective],
   templateUrl: './client-tabs.component.html',
   styleUrl: './client-tabs.component.scss'
 })
 
 export class ClientTabsComponent {
-  filteredTabs: any[] = [];
-  loading=false
-  navTabs: any[] = [
+  readonly tabsKey = 'project-management-client-details-tabs';
+  filteredTabs: ClientTab[] = [];
+  loading = false
+ navTabs: ClientTab[] = [
     {
+      tabId: '/project-management/clients/details/info',
       label: 'Client Information', link: '/project-management/clients/details/info', icon: '/my-info-icons/basic-info-icon.png',
       permission: { feature: 'Client Information', action: 'view' }
     },
     {
+      tabId: '/project-management/clients/details/contact-info',
       label: 'Contact Information', link: '/project-management/clients/details/contact-info', icon: '/my-info-icons/contact-icon.png',
       permission: { feature: 'Contact Information', action: 'view' }
     },
     {
+      tabId: '/project-management/clients/details/projects',
       label: 'Projects', link: '/project-management/clients/details/projects', icon: 'main-menu-icons/project-management-project.png',
       permission: { feature: 'Client Projects', action: 'view' },
     },
     {
+      tabId: '/project-management/clients/details/resources',
       label: 'Resources', link: '/project-management/clients/details/resources', icon: 'main-menu-icons/project-management-resources.png',
       permission: { feature: 'Client Resources', action: 'view' }
     },
     {
+      tabId: '/project-management/clients/details/timesheet/summary',
       label: 'Timesheets', link: '/project-management/clients/details/timesheet/summary', icon: 'main-menu-icons/project-management-timesheet.png',
       permission: { feature: 'Client Timesheets', action: 'view' }
     },
     {
+      tabId: '/project-management/clients/details/documents',
       label: 'Documents', link: '/project-management/clients/details/documents', icon: 'main-menu-icons/project-management-documents.png',
       permission: { feature: 'Client Documents', action: 'view' }
     },
   ];
 
-  constructor(public rbac: RbacService, private router: Router) { }
+  constructor(public rbac: RbacService, private router: Router, private menuOrderService: MenuOrderService) { }
 
   ngOnInit(): void {
     this.filterTabsByRbac();
+    void this.menuOrderService.ensureLoaded().then(() => {
+      this.filterTabsByRbac();
+      this.redirectIfOnBaseRoute();
+    });
+    this.redirectIfOnBaseRoute();
   }
 
-  filterTabsByRbac(): void {
+filterTabsByRbac(): void {
     this.loading=true
-    this.filteredTabs = this.navTabs.filter(tab => {
+    const filtered = this.navTabs.filter(tab => {
       if (!tab.permission) return true;
       const { feature, action } = tab.permission;
       const permissionString = `${feature}.${action}`;
       return this.rbac.allowedToAccess(permissionString);
     });
+    this.filteredTabs = this.menuOrderService.applySavedTabsOrder(
+      this.tabsKey,
+      filtered,
+      (t) => t.tabId
+    );
     this.loading=false
+  }
+
+    private redirectIfOnBaseRoute(): void {
+    const currentPath = this.router.url.split('?')[0];
+    if (currentPath !== '/project-management/clients/details') return;
+    if (this.filteredTabs.length === 0) {
+      this.router.navigate(['/unauthorized']);
+      return;
+    }
+    this.router.navigate([this.filteredTabs[0].link], { queryParamsHandling: 'preserve' });
   }
 
   isDocumentTabActive(link: string): boolean {
@@ -78,7 +116,7 @@ export class ClientTabsComponent {
       if (link === '/project-management/clients/details/timesheet/summary') {
       return currentUrl.includes('/project-management/clients/details/timesheet/detailed') ||
         currentUrl.includes('/project-management/clients/details/timesheet/summary') ||
-        currentUrl.includes('/project-management/clients/details/timesheet/resource-summary'); 
+        currentUrl.includes('/project-management/clients/details/timesheet/resource-summary');
     }
 
     if (link === '/project-management/clients/details/resources') {
@@ -88,5 +126,9 @@ export class ClientTabsComponent {
 
     // For other tabs, use exact match
     return currentUrl === link || currentUrl.startsWith(link + '/');
+  }
+
+    trackByTabId(_: number, tab: ClientTab): string {
+    return tab.tabId;
   }
 }

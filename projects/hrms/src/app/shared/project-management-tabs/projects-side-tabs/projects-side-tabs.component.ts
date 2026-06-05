@@ -54,7 +54,7 @@ export class ProjectsSideTabsComponent {
 
   ngOnInit(): void {
     this.getcountData();
-    this.rebuildTabs();
+     this.rebuildTabs();
     this.http.projectcountfuntion$.subscribe(() => {
       this.getcountData();
     });

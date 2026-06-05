@@ -5,29 +5,45 @@ import { RbacService } from '../../../services/rbac.service';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { SidetabsloadersComponent } from "../../sidetabsloaders/sidetabsloaders.component";
+import { DragDropModule } from '@angular/cdk/drag-drop';
+import { TabsDndDirective } from '../../tabs-dnd/tabs-dnd.directive';
+import { MenuOrderService } from '../../../services/theme-service/menu-order.service';
+
+interface PhaseTab {
+  tabId: string;
+  label: string;
+  link: string;
+  icon: string;
+  statusKey: 'active' | 'inactive' | 'hold';
+  permission?: { feature: string; action: string };
+}
 
 @Component({
   selector: 'app-projects-side-tabsfor-phases',
-  imports: [CommonModule, RouterModule, SidetabsloadersComponent],
+  imports: [CommonModule, RouterModule, SidetabsloadersComponent, DragDropModule, TabsDndDirective],
   templateUrl: './projects-side-tabsfor-phases.component.html',
   styleUrl: './projects-side-tabsfor-phases.component.scss'
 })
 export class ProjectsSideTabsforPhasesComponent {
-  filteredTabs: any[] = [];
+  readonly tabsKey = 'project-management-phases-side-tabs';
+  filteredTabs: PhaseTab[] = [];
   statusCounts: any = {};
   projectId: any;
   loading=false
   destroy$: Subject<boolean> = new Subject<boolean>();
-  navTabs: any[] = [
+  navTabs: PhaseTab[] = [
     {
+      tabId: '/project-management/projects/details/phases',
       label: 'Active', link: '/project-management/projects/details/phases', icon: 'project-mangement-icons/activePhases.png', statusKey: 'active',
       permission: { feature: 'Project Phases Tab', action: 'view' }
     },
     {
+      tabId: '/project-management/projects/details/inactive-phases',
       label: 'Inactive', link: '/project-management/projects/details/inactive-phases', icon: 'project-mangement-icons/inactivePhases.png', statusKey: 'inactive',
       permission: { feature: 'Project Phases Tab', action: 'view' },
     },
     {
+      tabId: '/project-management/projects/details/hold-phases',
       label: 'On Hold', link: '/project-management/projects/details/hold-phases', icon: 'project-mangement-icons/holdPhases.png', statusKey: 'hold',
       permission: { feature: 'Project Phases Tab', action: 'view' },
     },
@@ -35,7 +51,7 @@ export class ProjectsSideTabsforPhasesComponent {
 
   ];
 
-  constructor(public rbac: RbacService, private http: HttpService, private route: ActivatedRoute, private router: Router) { }
+  constructor(public rbac: RbacService, private http: HttpService, private route: ActivatedRoute, private router: Router,private menuOrderService: MenuOrderService) { }
 
   ngOnInit(): void {
 
@@ -54,12 +70,18 @@ export class ProjectsSideTabsforPhasesComponent {
   }
 
   filterTabsByRbac(): void {
-    this.filteredTabs = this.navTabs.filter(tab => {
+    const filtered = this.navTabs.filter(tab => {
       if (!tab.permission) return true;
       const { feature, action } = tab.permission;
       const permissionString = `${feature}.${action}`;
       return this.rbac.allowedToAccess(permissionString);
     });
+
+    this.filteredTabs = this.menuOrderService.applySavedTabsOrder(
+      this.tabsKey,
+      filtered,
+      (t) => t.tabId
+    );
   }
 
   statusGroups: any = {
@@ -105,4 +127,9 @@ getcountData(projectId: any): void {
   isActive(route: string): boolean {
     return this.router.url.includes(route);
   }
+
+  trackByTabId(_: number, tab: PhaseTab): string {
+    return tab.tabId;
+  }
+
 }

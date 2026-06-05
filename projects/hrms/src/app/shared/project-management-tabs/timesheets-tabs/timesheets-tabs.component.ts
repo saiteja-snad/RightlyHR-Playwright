@@ -87,7 +87,7 @@ export class TimesheetsTabsComponent {
     const currentUrl = this.router.url.split('?')[0]; // Remove query params
 
     // For My Timesheets tab, include mysummary page
-    if (link === '/project-management/timesheet/mytimesheet') {
+        if (link === '/project-management/timesheet/mytimesheet') {
       return currentUrl === link
        || currentUrl === '/project-management/timesheet/bulk-upload'
         || currentUrl === '/project-management/timesheet/historylog'

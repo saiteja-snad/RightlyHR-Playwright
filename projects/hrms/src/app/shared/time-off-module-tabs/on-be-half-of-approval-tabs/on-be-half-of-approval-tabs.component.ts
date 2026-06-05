@@ -35,8 +35,9 @@ interface StatusTab {
   templateUrl: './on-be-half-of-approval-tabs.component.html',
   styleUrl: './on-be-half-of-approval-tabs.component.scss',
 })
-export class OnBeHalfOfApprovalTabsComponent implements OnInit {
-  readonly tabsKey = 'on-behalf-of-approval-tabs';
+
+export class OnBeHalfOfApprovalTabsComponent implements OnInit{
+  readonly tabsKey = 'on-behalf-of-approval-timeoff-tabs';
   loggedinuser = {} as any;
   empdata = {} as any;
   subscription!: Subscription;
@@ -180,50 +181,39 @@ export class OnBeHalfOfApprovalTabsComponent implements OnInit {
     }
   }
 
+
   getDataByLPID() {
-    this.loading = true;
-    const selectedYear =
-      this.timeoffYearFilterService.getSelectedYear() ??
-      new Date().getFullYear();
-    this.subscription = this.http
-      .getData(`Timeoff/${this.cadidateEmployeeId}?year=${selectedYear}`)
-      .subscribe({
-        next: (response: any) => {
-          this.loading = false;
-          if (Array.isArray(response)) {
-            // Count based on status
-            const waiting = response.filter(
-              (item) => item.status === 'Waiting for Approval',
-            );
-            const approved = response.filter(
-              (item) => item.status === 'Approved',
-            );
-            const rejected = response.filter(
-              (item) => item.status === 'Rejected',
-            );
-            const processed = response.filter(
-              (item) => item.status === 'Processed',
-            );
-            const Cancelled = response.filter(
-              (item) => item.status === 'Cancelled',
-            );
-            // Set counts
-            this.rebuildTabs({
+    this.loading=true
+    const selectedYear = this.timeoffYearFilterService.getSelectedYear();
+    this.subscription = this.http.getData(`Timeoff/${this.cadidateEmployeeId}?year=${selectedYear}`).subscribe({
+      next: (response: any) => {
+        this.loading=false
+        if (Array.isArray(response)) {
+          // Count based on status
+          const waiting = response.filter(item => item.status === 'Waiting for Approval');
+          const approved = response.filter(item => item.status === 'Approved');
+          const rejected = response.filter(item => item.status === 'Rejected');
+          const processed = response.filter(item => item.status === 'Processed');
+          const Cancelled = response.filter(item => item.status === 'Cancelled');
+          const entitlement = response.filter(item => item.status === 'Entitlement Summary');
+          // Set counts
+          this.rebuildTabs({
               waiting: waiting.length,
               approved: approved.length,
               processed: processed.length,
               rejected: rejected.length,
               cancelled: Cancelled.length,
+              entitlement: entitlement.length,
             });
-          } else {
-            console.error('Invalid response format');
-          }
-        },
-        error: (reason: any) => {
-          console.log(reason);
-          this.loading = false;
-        },
-      });
+        } else {
+          console.error("Invalid response format");
+        }
+      },
+      error: (reason: any) =>{
+         console.log(reason)
+         this.loading=false
+      }
+    });
   }
 
   trackByTabId(_: number, tab: StatusTab): string {

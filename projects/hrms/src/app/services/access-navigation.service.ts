@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { RbacService } from './rbac.service';
 import { MenuOrderService } from './theme-service/menu-order.service';
-
 import {
   ASSEST_ALLOCATION_TABS,
   ATTENDANCE_REPORTS_TABS,
@@ -659,6 +658,8 @@ export class AccessNavigationService {
 
       case '/card-management':
         if (this.rbac.allowedToAccess('Cards Management.view')) {
+          const preferred = this.getCardsManagementPreferredRoute();
+          if (preferred) return preferred;
           for (const item of CARDS_SUB_TABS) {
             if (this.rbac.allowedToAccess(item.permission)) {
               return item.route;
@@ -695,6 +696,24 @@ export class AccessNavigationService {
               return item.route;
             }
           }
+        }
+        break;
+
+         case '/project-management/timesheet':
+        if (this.rbac.allowedToAccess('Time Sheet.view') || this.rbac.allowedToAccess('Team Time Sheet.view') || this.rbac.allowedToAccess('My Summary.view')) {
+          const preferred = this.getPreferredRouteFromPermissionTabs(
+            'project-management-timesheets-tabs',
+            [
+              { route: '/project-management/timesheet/mytimesheet', permission: 'Time Sheet.view' },
+              { route: '/project-management/timesheet/mysummary', permission: 'My Summary.view' },
+              { route: '/project-management/timesheet/teamtimesheet', permission: 'Team Time Sheet.view' },
+            ]
+          );
+          if (preferred) return preferred;
+
+          if (this.rbac.allowedToAccess('Time Sheet.view')) return '/project-management/timesheet/mytimesheet';
+          if (this.rbac.allowedToAccess('My Summary.view')) return '/project-management/timesheet/mysummary';
+          if (this.rbac.allowedToAccess('Team Time Sheet.view')) return '/project-management/timesheet/teamtimesheet';
         }
         break;
 
@@ -2193,7 +2212,7 @@ export class AccessNavigationService {
     return route;
   }
 
-  private getPreferredOrderedRoutes(moduleKey: string): string[] {
+   private getPreferredOrderedRoutes(moduleKey: string): string[] {
     const pref = this.menuOrderService.preferenceV2();
     const modules = pref?.tabs?.modules ?? [];
     const mod = modules.find(m => m.moduleKey === moduleKey);

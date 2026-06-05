@@ -50,7 +50,7 @@ export class ExpenesHeaderTabsComponent implements OnInit, OnDestroy {
   seletedMouthly: any;
   public navTabs: StatusTab[] = [];
   public defaultRoute: string = '';
-  private allTabs: StatusTab[] = [
+    private allTabs: StatusTab[] = [
     { tabId: '/claimsandexpenses/expenses/draft',  label: 'Draft', link: '/claimsandexpenses/expenses/draft', icon: '/time-off-icon/waiting-for-approval-icon.png', permission: { feature: 'Draft Tab', action: 'view' }, count: this.draftsCount },
     { tabId: '/claimsandexpenses/expenses/approved',  label: 'Approved', link: '/claimsandexpenses/expenses/approved', icon: '/time-off-icon/approved-icon.png', permission: { feature: 'Approved Tab', action: 'view' }, count: this.ApprovedCount },
     { tabId: '/claimsandexpenses/expenses/pending',  label: 'Waiting For Approval', link: '/claimsandexpenses/expenses/pending', icon: '/time-off-icon/waiting-for-approval-icon.png', permission: { feature: 'Pending Tab', action: 'view' }, count: this.pendingCount },
@@ -63,7 +63,6 @@ export class ExpenesHeaderTabsComponent implements OnInit, OnDestroy {
   constructor(private http: HttpService, private rbac: RbacService, private router: Router,private SelectedyeartimeOffService:TimeoffYearFilterService, private menuOrderService: MenuOrderService ) { }
 
   ngOnInit(): void {
-
     void this.initTabsAndRedirect();
     this.SelectedyeartimeOffService.selectedYear$.subscribe(year => {
       if (year !== null) {
@@ -92,7 +91,7 @@ export class ExpenesHeaderTabsComponent implements OnInit, OnDestroy {
     });
   }
 
-  private async initTabsAndRedirect(): Promise<void> {
+   private async initTabsAndRedirect(): Promise<void> {
     try {
       await this.menuOrderService.ensureLoaded();
     } catch {
@@ -149,7 +148,7 @@ export class ExpenesHeaderTabsComponent implements OnInit, OnDestroy {
       tab.permission.action &&
       this.rbac.allowedToAccess(`${tab.permission.feature}.${tab.permission.action}`)
     );
-    this.navTabs = this.menuOrderService.applySavedTabsOrder(
+     this.navTabs = this.menuOrderService.applySavedTabsOrder(
       this.tabsKey,
       this.navTabs,
       tab => tab.tabId

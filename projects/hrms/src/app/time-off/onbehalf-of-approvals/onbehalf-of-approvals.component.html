@@ -40,7 +40,7 @@
           <span *ngIf="isFilterApplied()" class="filter-indicator"></span>
         </button>
         }
-        
+
         <!-- } -->
       <!-- <label class="form-label component-sub-header m-0" for="teamManager">Select Employee</label>
       <div class="custom-p-select-content">
@@ -59,148 +59,32 @@
 
 
   <div class="d-flex gap-3 w-100" *ngIf="employeedata">
-    <div class="component-left-tabs-container">
+      <div class="component-left-tabs-container" cdkScrollable>
       <div class="custom-sub-tabs-container">
-        <ul class="nav flex-column">
-          @if(rbac.allowedToAccess('Time Off (On Behalf Of Approvals).view') ) {
-          <li class="nav-item">
-            <div class="nav-link" [class.active]="activeTab === 'timeOff'" (click)="setActiveTab('timeOff')">
-              <img src="/time-off-icon/leaves-icon.png" alt="Icon" class="icon mb-2">
-              <div>Time Off ({{ timeOffCount }})</div>
+        <ul
+          class="nav flex-column"
+          cdkDropList
+          [cdkDropListData]="filteredNavItems"
+          cdkDropListOrientation="vertical"
+          appTabsDnd
+          [tabsDndKey]="tabsKey"
+          [tabsDndItems]="filteredNavItems"
+          tabsDndIdProp="tabId"
+          tabsDndRouteProp="key"
+        >
+          <li class="nav-item" *ngFor="let item of filteredNavItems; trackBy: trackByNavId" cdkDrag cdkDragLockAxis="y" cdkDragBoundary=".component-left-tabs-container">
+            <div class="nav-link" [class.active]="activeTab === item.key" (click)="setActiveTab(item.key)">
+              <img [src]="item.icon" alt="Icon" class="icon mb-2">
+              <div>{{ item.label }} ({{ getNavItemCount(item.countProp) }})</div>
             </div>
             <div class="tabs-border-bottom"></div>
+            <ng-template cdkDragPlaceholder>
+              <li class="nav-item tabs-dnd-placeholder-item">
+                <div class="nav-link tabs-dnd-placeholder"></div>
+                <div class="tabs-border-bottom"></div>
+              </li>
+            </ng-template>
           </li>
-          }
-          @if(rbac.allowedToAccess('Comp Off (On Behalf Of Approvals).view') ) {
-          <li class="nav-item">
-            <div class="nav-link" [class.active]="activeTab === 'compOff'" (click)="setActiveTab('compOff')">
-              <img src="/time-off-icon/comp-off.png" alt="Icon" class="icon mb-2">
-              <div>Comp Off ({{ compOffCount }})</div>
-            </div>
-            <div class="tabs-border-bottom"></div>
-          </li>
-          }
-          @if(rbac.allowedToAccess('WFH (On Behalf Of Approvals).view') ) {
-          <li class="nav-item">
-            <div class="nav-link" [class.active]="activeTab === 'wfh'" (click)="setActiveTab('wfh')">
-              <img src="/time-off-icon/WFH-icon.png" alt="Icon" class="icon mb-2">
-              <div>WFH ({{ wfhCount }})</div>
-            </div>
-            <div class="tabs-border-bottom"></div>
-          </li>
-          }
-          @if(rbac.allowedToAccess('Permission (On Behalf Of Approvals).view') ) {
-          <li class="nav-item">
-            <div class="nav-link" [class.active]="activeTab === 'permissions'" (click)="setActiveTab('permissions')">
-              <img src="/time-off-icon/permissions-icon.png" alt="Icon" class="icon mb-2">
-              <div>Permissions ({{ permissionsCount }})</div>
-            </div>
-            <div class="tabs-border-bottom"></div>
-          </li>
-          }
-          @if(rbac.allowedToAccess('Trainee Requests (On Behalf Of Approvals).view') ) {
-          <li class="nav-item">
-            <div class="nav-link" [class.active]="activeTab === 'traineeRequests'" (click)="setActiveTab('traineeRequests')">
-              <img src="/time-off-icon/trainee-icon.png" alt="Icon" class="icon mb-2">
-              <div>Trainee Requests ({{ traineeRequestsCount }})</div>
-            </div>
-            <div class="tabs-border-bottom"></div>
-          </li>
-          }
-          @if(rbac.allowedToAccess('Regularization (On Behalf Of Approvals).view') ) {
-          <li class="nav-item">
-            <div class="nav-link" [class.active]="activeTab === 'regularization'" (click)="setActiveTab('regularization')">
-              <img src="/time-off-icon/regularization-icon.png" alt="Icon" class="icon mb-2">
-              <div>Regularization ({{ regularizationCount }})</div>
-            </div>
-            <div class="tabs-border-bottom"></div>
-          </li>
-          }
-          @if(rbac.allowedToAccess('Expenses (On Behalf Of Approvals).view') ) {
-          <li class="nav-item">
-            <div class="nav-link" [class.active]="activeTab === 'expenses'" (click)="setActiveTab('expenses')">
-              <img src="/main-menu-icons/expenses-icon.png" alt="Icon" class="icon mb-2">
-              <div>Expenses ({{ expensesCount }})</div>
-            </div>
-            <div class="tabs-border-bottom"></div>
-          </li>
-        }
-        @if(rbac.allowedToAccess('Remote Login (On Behalf Of Approvals).view') ) {
-          <li class="nav-item">
-            <div class="nav-link" [class.active]="activeTab === 'remoteLogin'" (click)="setActiveTab('remoteLogin')">
-              <img src="/time-off-icon/remote-login-icon.png" alt="Icon" class="icon mb-2">
-              <div>Remote Login ({{ remoteLoginCount }})</div>
-            </div>
-            <div class="tabs-border-bottom"></div>
-          </li>
-          }
-      
-        @if(rbac.allowedToAccess('Extra Hours (On Behalf Of Approvals).view') ) {
-          <li class="nav-item">
-            <div class="nav-link" [class.active]="activeTab === 'extraHours'" (click)="setActiveTab('extraHours')">
-              <img src="/time-off-icon/extra-logs.png" alt="Icon" class="icon mb-2">
-              <div>Extra Hours ({{ extraHoursCount }})</div>
-            </div>
-            <div class="tabs-border-bottom"></div>
-          </li>
-        }
-
-        @if(rbac.allowedToAccess('Timesheet (On Behalf Of Approvals).view') ) {
-          <li class="nav-item">
-            <div class="nav-link" [class.active]="activeTab === 'timesheets'" (click)="setActiveTab('timesheets');resetForm()">
-              <img src="/time-off-icon/calender-activity.png" alt="Icon" class="icon mb-2">
-              <div>Timesheets ({{ timesheetRequestsCount }})</div>
-            </div>
-            <div class="tabs-border-bottom"></div>
-          </li>
-        }
-
-         @if(rbac.allowedToAccess('Employee Info (On Behalf Of Approvals).view') ) {
-          <li class="nav-item">
-            <div class="nav-link" [class.active]="activeTab === 'employeeInfo'" (click)="setActiveTab('employeeInfo')">
-              <img src="/time-off-icon/employee-info-approvals.png" alt="Icon" class="icon mb-2">
-              <div>Employee Info ({{ employeeInfoCount }})</div>
-            </div>
-            <div class="tabs-border-bottom"></div>
-          </li>
-        }
-        @if(rbac.allowedToAccess('Probation (On Behalf Of Approvals).view') ) {
-          <li class="nav-item">
-            <div class="nav-link" [class.active]="activeTab === 'probation'" (click)="setActiveTab('probation')">
-              <img src="/time-off-icon/Probation-icon.png" alt="Icon" class="icon mb-2">
-              <div>Probation ({{ probationRequestsCount }})</div>
-            </div>
-            <div class="tabs-border-bottom"></div>
-          </li>
-        }
-        @if(rbac.allowedToAccess('Separations (On Behalf Of Approvals).view') ) {
-          <li class="nav-item">
-            <div class="nav-link" [class.active]="activeTab === 'separations'" (click)="setActiveTab('separations')">
-              <img src="/time-off-icon/seperation-icon.png" alt="Icon" class="icon mb-2">
-              <div>Separations ({{ separationsCount }})</div>
-            </div>
-            <div class="tabs-border-bottom"></div>
-          </li>
-        }
-
-        @if(rbac.allowedToAccess('Recalls (On Behalf Of Approvals).view') ) {
-          <li class="nav-item">
-            <div class="nav-link" [class.active]="activeTab === 'recalls'" (click)="setActiveTab('recalls')">
-              <img src="/time-off-icon/recall-icon.png" alt="Icon" class="icon mb-2">
-              <div>Recalls ({{ recallsCount }})</div>
-            </div>
-          </li>
-        }
-
-         @if(rbac.allowedToAccess('No Due (On Behalf Of Approvals).view') ) {
-          <li class="nav-item">
-            <div class="nav-link" [class.active]="activeTab === 'nodue'" (click)="setActiveTab('nodue')">
-              <img src="/time-off-icon/nodue-icon.png" alt="Icon" class="icon mb-2">
-              <div>No Due Clearances ({{ nodueCount }})</div>
-            </div>
-          </li>
-        }
-
         </ul>
       </div>
     </div>
@@ -241,7 +125,7 @@
       </div>
       <div *ngIf="activeTab === 'probation'">
         <app-probation-requests (dataEvent)="probationRequest($event)"></app-probation-requests>
-        </div>  
+        </div>
       <div *ngIf="activeTab === 'extraHours'">
         <app-extra-log-hours (dataEvent)="extraHoursOff($event)"></app-extra-log-hours>
       </div>
@@ -260,7 +144,7 @@
 </div>
 
 
- 
+
 
 
     <!-- Filter Offcanvas -->
@@ -273,7 +157,7 @@
 
     <div class="offcanvas-filter-content">
       <form [formGroup]="datepickerForm" (ngSubmit)="onSubmit()">
-     
+
         <!-- @if(isFilterApplied()) {
         <button type="button" class="clear-all-btn" (click)="resetForm()">{{'Clear All' | translate}}</button>
         } -->
@@ -332,7 +216,7 @@
           </button>
           }
         </div>
-   
+
     </form>
     </div>
   </div>

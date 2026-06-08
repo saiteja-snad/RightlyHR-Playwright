@@ -34,7 +34,7 @@ import { Select } from 'primeng/select';
   selector: 'app-time-sheet-view',
   imports: [ProjectManagementModuleInfoComponent, NgbDatepickerModule, FormsModule, ReactiveFormsModule,
     NgbPopover, CommonModule, DatePicker, DateformatPipe, AccordionModule, InfoIconComponent, ConfirmationIconComponent,
-    TranslateModule, DataLoaderContentComponent, TimesheetsTabsComponent, MenuModule, MultiSelectModule,Select],
+    TranslateModule, DataLoaderContentComponent, TimesheetsTabsComponent, MenuModule, MultiSelectModule, Select],
   templateUrl: './time-sheet-view.component.html',
   styleUrl: './time-sheet-view.component.scss',
 })
@@ -114,15 +114,15 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   canBulkImport = false;
   canBulkExport = false;
   canViewHistoryLog = false;
-  taskType:any;
-  alltaskTypes=[] as any;
-    responseSummary = {
+  taskType: any;
+  alltaskTypes = [] as any;
+  responseSummary = {
     failedreason: '',
     successRecordsCount: 0,
     failureRecordsCount: 0,
     totalRecordsCount: 0
   };
-   @ViewChild('releaseSummary') releaseSummaryModal!: any;
+  @ViewChild('releaseSummary') releaseSummaryModal!: any;
   constructor(private fb: FormBuilder, private modalService: NgbModal,
     private http: HttpService, public formValidation: FormValidationsService,
     public dayValidationService: DayValidationService, public authService: AuthService,
@@ -151,18 +151,18 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     this.buildBulkOperationMenuItems();
     this.getTaskType();
   }
-getTaskType() {
-  this.loading = true;
-  this.subscription = this.http.getData('TaskType').subscribe({
-    next: (res: any) => {
-      this.loading = false;
-      this.alltaskTypes = res;
-      this.taskType = res?.filter((ele:any)=>ele?.status?.toLowerCase()==='active');
-    },
-    error: () => (this.loading = false),
-    complete: () => (this.loading = false)
-  });
-}
+  getTaskType() {
+    this.loading = true;
+    this.subscription = this.http.getData('TaskType').subscribe({
+      next: (res: any) => {
+        this.loading = false;
+        this.alltaskTypes = res;
+        this.taskType = res?.filter((ele: any) => ele?.status?.toLowerCase() === 'active');
+      },
+      error: () => (this.loading = false),
+      complete: () => (this.loading = false)
+    });
+  }
   get projects(): FormArray {
     return this.timesheetForm.get('projects') as FormArray<FormGroup>;
   }
@@ -473,7 +473,9 @@ getTaskType() {
       rejectReason: [day?.rejectReason || ''],
       blockReason: [blockReason],
       resourceId: [{ value: day?.resourceId || null }],
-      taskId:[{ value: day?.taskId || null, disabled: !shouldEnable }]
+      taskId: [{ value: day?.taskId || null, disabled: !shouldEnable }],
+      pendingApprovalDetails: [day?.pendingApprovalDetails || null],
+      taskName: [day?.taskName || null],
 
     });
   }
@@ -634,7 +636,7 @@ getTaskType() {
     };
   }
 
- private createDayEntryFromCell(row: RowModel, day: DayModel, isProjectSelected: boolean = false): FormGroup {
+  private createDayEntryFromCell(row: RowModel, day: DayModel, isProjectSelected: boolean = false): FormGroup {
     const cellKey = `${row.rowId}_${day.date}`;
     const cell = this.weekMatrix.cellMap.get(cellKey);
 
@@ -664,14 +666,14 @@ getTaskType() {
         allocations: matchedResources
       }
       : null;
-      console.log(matchedResources);
-      
+    console.log(matchedResources);
+
 
     const resourceDateRange = mergedResource ? {
       startDate: mergedResource.startDate ? new Date(mergedResource.startDate) : null,
       endDate: mergedResource.endDate ? new Date(mergedResource.endDate) : null
     } : undefined;
-       console.log(resourceDateRange);
+    console.log(resourceDateRange);
 
     const phaseDateRange = mergedResource?.phase ? {
       startDate: mergedResource.phase.startDate ? new Date(mergedResource.phase.startDate) : null,
@@ -776,7 +778,9 @@ getTaskType() {
       rejectReason: [cell.rejectReason || ''],
       blockReason: [cell.blockReason || ''],
       resourceId: [row.resourceId || null],
-      taskId:[cell.taskId || null,]
+      taskId: [cell.taskId || null,],
+      pendingApprovalDetails: [cell.pendingApprovalDetails || null],
+      taskName: [cell.taskName || null]
     });
   }
 
@@ -1516,7 +1520,7 @@ getTaskType() {
     this.dayValidationService.initialize(context);
   }
 
-   selectProjectForRow(row: AbstractControl, client: any, project: any, phase: any = null) {
+  selectProjectForRow(row: AbstractControl, client: any, project: any, phase: any = null) {
 
     const form = row as FormGroup;
 
@@ -1711,149 +1715,149 @@ getTaskType() {
   }
 
   //OPEN TIME ENTERIY
-openModal(content: any, dayForm: AbstractControl | null, index: number, dayKey: string) {
+  openModal(content: any, dayForm: AbstractControl | null, index: number, dayKey: string) {
 
-  if (dayForm instanceof FormGroup) {
-    this.currentRowIndex = index;
-    this.currentDay = dayKey;
-    this.isModalOpen = true;
-    const modalRef = this.modalService.open(content, {
-      centered: true,
-      backdrop: 'static'
-    });
-    modalRef.result.finally(() => {
-      this.isModalOpen = false;
-    });
-
-    this.dayForm = dayForm;
-    //start//code for the task type 
-    let taskId = this.dayForm.get('taskId')?.value;
-    console.log('Selected Task ID:', taskId);
-    let taskdata = this.alltaskTypes?.find((ele: any) => ele?.id == taskId && ele?.status?.toLowerCase() == 'inactive');
-    if (taskdata) {
-      const alreadyExists = this.taskType?.some((ele: any) => ele.id == taskdata.id);
-      if (!alreadyExists) {
-        this.taskType.push(taskdata);
-      }
-    } else {
-      this.taskType = this.alltaskTypes?.filter((ele: any) => ele?.status?.toLowerCase() == 'active'
-      );
-    }
-   this.getTimesheetMadatorydata(this.dayForm.get('projectId')?.value,this.dayForm.get('phaseId')?.value)
-    //end//code for the task type
-    // ✅ Normalize date (fix timezone issue)
-    const normalizeDate = (date: any) => {
-      const d = new Date(date);
-      d.setHours(0, 0, 0, 0);
-      return d;
-    };
-
-    const entryDate = normalizeDate(this.dayForm.get('entryDate')?.value);
-
-    // ✅ 🔥 Get correct resource based on project/client/phase + DATE RANGE
-    const matchedResource = this.resourcesArrayList
-      .filter((res: any) =>
-        res.project?.projectId === this.dayForm.get('projectId')?.value &&
-        res.client?.clientId === this.dayForm.get('clientId')?.value &&
-        res.phase?.phaseId === this.dayForm.get('phaseId')?.value
-      )
-      .filter((res: any) => {
-        const start = normalizeDate(res.startDate);
-        const end = normalizeDate(res.endDate);
-        return entryDate >= start && entryDate <= end;
-      })
-      // ✅ If multiple matches → pick latest (optional but safe)
-      .sort((a: any, b: any) =>
-        new Date(b.startDate).getTime() - new Date(a.startDate).getTime()
-      )[0];
-
-    console.log('Matched Resource (by date):', matchedResource);
-
-    let isBillableForDay = false;
-
-    if (matchedResource) {
-      isBillableForDay = matchedResource.billable === true;
-    }
-
-    console.log('Final Billable:', isBillableForDay);
-
-    // ✅ Disable form for processed حالات
-    if (
-      this.dayForm.get('approvalStatus')?.value === 'Processed' ||
-      this.dayForm.get('approvalStatus')?.value === 'Waiting for Approval' ||
-      this.employeeSelected
-    ) {
-      this.dayForm.disable();
-    } else {
-
-      this.dayForm.enable();
-
-      // ✅ Enable / Disable billable checkbox
-      if (isBillableForDay) {
-        this.dayForm.get('isBillable')?.enable();
-      } else {
-        this.dayForm.get('isBillable')?.disable();
-      }
-    }
-
-    // ✅ Set default billable only if not entered
-    const approvalStatus = this.dayForm.get('approvalStatus')?.value;
-
-    if (
-      approvalStatus === 'Not Entered' ||
-      approvalStatus === '' ||
-      approvalStatus === null ||
-      approvalStatus === undefined
-    ) {
-      this.dayForm.patchValue({
-        isBillable: isBillableForDay
+    if (dayForm instanceof FormGroup) {
+      this.currentRowIndex = index;
+      this.currentDay = dayKey;
+      this.isModalOpen = true;
+      const modalRef = this.modalService.open(content, {
+        centered: true,
+        backdrop: 'static'
       });
-    }
-  }
-  
-}
- getTimesheetMadatorydata(projectId: number, phaseId: number) {
-  const url = `TimesheetConfiguration?projectId=${projectId ?? 0}&phaseId=${phaseId ?? 0}`;
+      modalRef.result.finally(() => {
+        this.isModalOpen = false;
+      });
 
-  this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
-    next: (res: any) => {
-
-      const items = res?.items || [];
-
-      const fieldMap: any = {
-        'Start Time': 'startTime',
-        'End Time': 'endTime',
-        'Task Type': 'taskId',
-        'Description': 'description'
-      };
-      const selectedDate = moment(this.dayForm.get('entryDate')?.value).format('YYYY-MM-DD');
-      console.log('Selected Date for Validation:', selectedDate);
-      items.forEach((item: any) => {
-        const controlName = fieldMap[item.fieldName];
-        if (!controlName) return;
-        const control = this.dayForm.get(controlName);
-        if (!control) return;
-        control.clearValidators();
-        const effectiveDate = moment(item.effectiveDate).format('YYYY-MM-DD');
-        console.log(effectiveDate)
-        const isEffective = moment(selectedDate).isSameOrAfter(moment(effectiveDate),'day');
-        const approvalstatus = this.dayForm.get('approvalStatus')?.value;
-        console.log('Approval Status:', approvalstatus);
-        if (isEffective && item.isMandatory &&(approvalstatus?.toLowerCase() === 'draft' || approvalstatus?.toLowerCase() === 'rejected'|| approvalstatus?.toLowerCase() === 'not entered')) {
-          control.setValidators([Validators.required]);
+      this.dayForm = dayForm;
+      //start//code for the task type 
+      let taskId = this.dayForm.get('taskId')?.value;
+      console.log('Selected Task ID:', taskId);
+      let taskdata = this.alltaskTypes?.find((ele: any) => ele?.id == taskId && ele?.status?.toLowerCase() == 'inactive');
+      if (taskdata) {
+        const alreadyExists = this.taskType?.some((ele: any) => ele.id == taskdata.id);
+        if (!alreadyExists) {
+          this.taskType.push(taskdata);
         }
-        control.updateValueAndValidity({ emitEvent: false });
-      });
-    }
-  });
-}
-  isRequired(controlName: string): boolean {
-  const control = this.dayForm?.get(controlName);
+      } else {
+        this.taskType = this.alltaskTypes?.filter((ele: any) => ele?.status?.toLowerCase() == 'active'
+        );
+      }
+      this.getTimesheetMadatorydata(this.dayForm.get('projectId')?.value, this.dayForm.get('phaseId')?.value)
+      //end//code for the task type
+      // ✅ Normalize date (fix timezone issue)
+      const normalizeDate = (date: any) => {
+        const d = new Date(date);
+        d.setHours(0, 0, 0, 0);
+        return d;
+      };
 
-  return control
-    ? control.hasValidator(Validators.required)
-    : false;
-}
+      const entryDate = normalizeDate(this.dayForm.get('entryDate')?.value);
+
+      // ✅ 🔥 Get correct resource based on project/client/phase + DATE RANGE
+      const matchedResource = this.resourcesArrayList
+        .filter((res: any) =>
+          res.project?.projectId === this.dayForm.get('projectId')?.value &&
+          res.client?.clientId === this.dayForm.get('clientId')?.value &&
+          res.phase?.phaseId === this.dayForm.get('phaseId')?.value
+        )
+        .filter((res: any) => {
+          const start = normalizeDate(res.startDate);
+          const end = normalizeDate(res.endDate);
+          return entryDate >= start && entryDate <= end;
+        })
+        // ✅ If multiple matches → pick latest (optional but safe)
+        .sort((a: any, b: any) =>
+          new Date(b.startDate).getTime() - new Date(a.startDate).getTime()
+        )[0];
+
+      console.log('Matched Resource (by date):', matchedResource);
+
+      let isBillableForDay = false;
+
+      if (matchedResource) {
+        isBillableForDay = matchedResource.billable === true;
+      }
+
+      console.log('Final Billable:', isBillableForDay);
+
+      // ✅ Disable form for processed حالات
+      if (
+        this.dayForm.get('approvalStatus')?.value === 'Processed' ||
+        this.dayForm.get('approvalStatus')?.value === 'Waiting for Approval' ||
+        this.employeeSelected
+      ) {
+        this.dayForm.disable();
+      } else {
+
+        this.dayForm.enable();
+
+        // ✅ Enable / Disable billable checkbox
+        if (isBillableForDay) {
+          this.dayForm.get('isBillable')?.enable();
+        } else {
+          this.dayForm.get('isBillable')?.disable();
+        }
+      }
+
+      // ✅ Set default billable only if not entered
+      const approvalStatus = this.dayForm.get('approvalStatus')?.value;
+
+      if (
+        approvalStatus === 'Not Entered' ||
+        approvalStatus === '' ||
+        approvalStatus === null ||
+        approvalStatus === undefined
+      ) {
+        this.dayForm.patchValue({
+          isBillable: isBillableForDay
+        });
+      }
+    }
+
+  }
+  getTimesheetMadatorydata(projectId: number, phaseId: number) {
+    const url = `TimesheetConfiguration?projectId=${projectId ?? 0}&phaseId=${phaseId ?? 0}`;
+
+    this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res: any) => {
+
+        const items = res?.items || [];
+
+        const fieldMap: any = {
+          'Start Time': 'startTime',
+          'End Time': 'endTime',
+          'Task Type': 'taskId',
+          'Description': 'description'
+        };
+        const selectedDate = moment(this.dayForm.get('entryDate')?.value).format('YYYY-MM-DD');
+        console.log('Selected Date for Validation:', selectedDate);
+        items.forEach((item: any) => {
+          const controlName = fieldMap[item.fieldName];
+          if (!controlName) return;
+          const control = this.dayForm.get(controlName);
+          if (!control) return;
+          control.clearValidators();
+          const effectiveDate = moment(item.effectiveDate).format('YYYY-MM-DD');
+          console.log(effectiveDate)
+          const isEffective = moment(selectedDate).isSameOrAfter(moment(effectiveDate), 'day');
+          const approvalstatus = this.dayForm.get('approvalStatus')?.value;
+          console.log('Approval Status:', approvalstatus);
+          if (isEffective && item.isMandatory && (!approvalstatus || approvalstatus?.toLowerCase() === 'draft' || approvalstatus?.toLowerCase() === 'rejected' || approvalstatus?.toLowerCase() === 'not entered')) {
+            control.setValidators([Validators.required]);
+          }
+          control.updateValueAndValidity({ emitEvent: false });
+        });
+      }
+    });
+  }
+  isRequired(controlName: string): boolean {
+    const control = this.dayForm?.get(controlName);
+
+    return control
+      ? control.hasValidator(Validators.required)
+      : false;
+  }
   recalculateTimes(dayKey: string, startIndex: number) {
     for (let i = 0; i < this.projects.length; i++) {
       const projectForm = this.projects.at(i).get(dayKey) as FormGroup;
@@ -1938,7 +1942,7 @@ openModal(content: any, dayForm: AbstractControl | null, index: number, dayKey: 
       isBillable: formValue.isBillable || false,
       moduleId: 30,
       resourceId: formValue.resourceId || null,
-      taskId:formValue.taskId
+      taskId: formValue.taskId
     };
     // POST request
     this.http.postdata('v2/Timesheet/save-or-update', payload).subscribe({
@@ -1994,7 +1998,7 @@ openModal(content: any, dayForm: AbstractControl | null, index: number, dayKey: 
         startTime: null,
         endTime: null,
         approvalStatus: 'Not Entered',
-        taskId:null,
+        taskId: null,
       }, { emitEvent: true });
 
       this.timesheetForm.get('duration')?.patchValue(null);
@@ -2045,7 +2049,7 @@ openModal(content: any, dayForm: AbstractControl | null, index: number, dayKey: 
           projectName: project.selectedProject?.projectName || '',
           clientName: project.selectedProject?.clientName || '',
           approvalStatus: day.approvalStatus, // include approvalStatus
-          taskId:day.taskId,
+          taskId: day.taskId,
         };
       })
     )
@@ -2064,14 +2068,14 @@ openModal(content: any, dayForm: AbstractControl | null, index: number, dayKey: 
     this.spinnerLoaderforallrecoders = true
     const payload = this.buildPayload();
     this.http.postdata('Timesheet/submit-for-approval', payload).subscribe({
-      next: (res:any) => {
+      next: (res: any) => {
         this.spinnerLoaderforallrecoders = false
         //this.modalService.dismissAll();
         //this.conformationPopup.openSuccessModal('Timesheet submitted successfully');
         const successCount = res?.data?.successCount;
         const failureCount = res.data.failedCount;
         this.responseSummary = {
-          failedreason:Array.isArray(res?.data?.errors) && res.data.errors.length > 0? res.data.errors: 'NA',
+          failedreason: Array.isArray(res?.data?.errors) && res.data.errors.length > 0 ? res.data.errors : 'NA',
           successRecordsCount: successCount,
           failureRecordsCount: failureCount,
           totalRecordsCount: res?.data?.totalCount,
@@ -2176,24 +2180,24 @@ openModal(content: any, dayForm: AbstractControl | null, index: number, dayKey: 
   isDayFormDirtyOrFilled(form: FormGroup): boolean {
     const fieldsToCheck = ['description', 'duration', 'startTime', 'endTime', 'taskId'];
 
-  for (const field of fieldsToCheck) {
-    const control = form.get(field);
+    for (const field of fieldsToCheck) {
+      const control = form.get(field);
 
-    // Check only if the field has Validators.required
-    if (control?.hasValidator(Validators.required)) {
-      const value = control.value;
+      // Check only if the field has Validators.required
+      if (control?.hasValidator(Validators.required)) {
+        const value = control.value;
 
-      if (
-        value === null ||
-        value === undefined ||
-        value === ''
-      ) {
-        return false;
+        if (
+          value === null ||
+          value === undefined ||
+          value === ''
+        ) {
+          return false;
+        }
       }
     }
-  }
 
-  return true;
+    return true;
   }
   //based status colour
   getApprovalClass(control: AbstractControl | null): any {
@@ -2318,6 +2322,36 @@ openModal(content: any, dayForm: AbstractControl | null, index: number, dayKey: 
       },
       error: (err) => console.error('Failed to load leaves', err)
     });
+  }
+  approvardetails = {} as any;
+
+  getStatusBadgeClass(status: string): string {
+    if (!status) return 'badge-default';
+    const s = status.toLowerCase();
+    if (s.includes('waiting') || s.includes('pending')) return 'badge-waiting';
+    if (s.includes('approved') || s.includes('processed')) return 'badge-approved';
+    if (s.includes('rejected')) return 'badge-rejected';
+    if (s.includes('draft')) return 'badge-draft';
+    return 'badge-default';
+  }
+
+  getHeaderClass(status: string): string {
+    if (!status) return 'header-default';
+    const s = status.toLowerCase();
+    if (s.includes('waiting') || s.includes('pending')) return 'header-waiting';
+    if (s.includes('approved') || s.includes('processed')) return 'header-approved';
+    if (s.includes('rejected')) return 'header-rejected';
+    if (s.includes('draft')) return 'header-draft';
+    return 'header-default';
+  }
+
+  onclickinfo(day?: any) {
+    console.log(day.value.pendingApprovalDetails);
+    console.log(day);
+    console.log(day.get('description')?.value)
+    console.log(day.get('taskName')?.value)
+    this.approvardetails = day.value.pendingApprovalDetails;
+    this.approvardetails.description = day.get('description')?.value
   }
   ngOnDestroy() {
     this.destroy$.next(true);

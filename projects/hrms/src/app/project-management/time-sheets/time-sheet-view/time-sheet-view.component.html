@@ -196,12 +196,28 @@
                         (keydown)="checkClearDuration($event, 'mon', i)"
                         (keyup.enter)="formatTime($event, 'mon', i, 'duration',project.get('mon'))"
                         (blur)="formatTime($event, 'mon', i, 'duration',project.get('mon'))">
-                    <span
+                        <span  class="input-group-text border-none" *ngIf="project.get('mon.duration')?.value && (project.get('mon.approvalStatus')?.value === 'Rejected'||project.get('mon.approvalStatus')?.value === 'Waiting for Approval'
+                        ||project.get('mon.approvalStatus')?.value === 'Processed')" (mousedown)="$event.preventDefault()" >
+                            <a [ngbPopover]="approvalInfo"
+                            triggers="click" 
+                            popoverClass="approval-info-popover"
+                            container="body"
+                            class="cursor" (click)="onclickinfo(project.get('mon'))"> <i class="bi bi-info-circle"></i></a>
+                        </span>
+                    <!-- <div *ngIf="project.get('mon.duration')?.value" class="timesheet-input-info" (mousedown)="$event.preventDefault()">
+                        <a [ngbPopover]="approvalInfo"
+                            triggers="click"
+                            popoverClass="approval-info-popover"
+                            container="body"
+                            class="cursor"> <i class="bi bi-info-circle"></i></a>
+                    </div> -->
+                    <div
                         *ngIf="shouldShowIcon(project, 'mon', i)"
                         class="input-group-text border-none" (mousedown)="$event.preventDefault()">
                         <i class="bi bi-three-dots-vertical cursor"
                             (click)="openModal(addtask, project.get('mon'),i,'mon')"></i>
-                    </span>
+                    </div>
+                    
                 </div>
                 <div *ngIf="project.get('mon.approvalStatus')?.value === 'Rejected'" class="ms-2">
                     <a type="button" [ngbPopover]="description">
@@ -229,6 +245,14 @@
                         (keydown)="checkClearDuration($event, 'tue', i)"
                         (keyup.enter)="formatTime($event, 'tue', i, 'duration',project.get('tue'))"
                         (blur)="formatTime($event, 'tue', i, 'duration',project.get('tue'))">
+                    <span *ngIf="project.get('tue.duration')?.value && (project.get('tue.approvalStatus')?.value === 'Rejected'||project.get('tue.approvalStatus')?.value === 'Waiting for Approval'
+                        ||project.get('tue.approvalStatus')?.value === 'Processed')" class="timesheet-input-info" (mousedown)="$event.preventDefault()">
+                         <a [ngbPopover]="approvalInfo"
+                            triggers="click"
+                            popoverClass="approval-info-popover"
+                            container="body"
+                            class="cursor" (click)="onclickinfo(project.get('tue'))"> <i class="bi bi-info-circle"></i></a>
+                    </span>
                     <span
                        *ngIf="shouldShowIcon(project, 'tue', i)"
                         class="input-group-text border-none" (mousedown)="$event.preventDefault()">
@@ -262,6 +286,14 @@
                         (keydown)="checkClearDuration($event, 'wed', i)"
                         (keyup.enter)="formatTime($event, 'wed', i, 'duration',project.get('wed'))"
                         (blur)="formatTime($event, 'wed', i, 'duration',project.get('wed'))">
+                    <span *ngIf="project.get('wed.duration')?.value && (project.get('wed.approvalStatus')?.value === 'Rejected'||project.get('wed.approvalStatus')?.value === 'Waiting for Approval'
+                        ||project.get('wed.approvalStatus')?.value === 'Processed')" class="timesheet-input-info" (mousedown)="$event.preventDefault()">
+                         <a [ngbPopover]="approvalInfo"
+                            triggers="click"
+                            popoverClass="approval-info-popover"
+                            container="body"
+                            class="cursor" (click)="onclickinfo(project.get('wed'))"> <i class="bi bi-info-circle"></i></a>
+                    </span>
                     <span
                          *ngIf="shouldShowIcon(project, 'wed', i)"
                         class="input-group-text border-none" (mousedown)="$event.preventDefault()">
@@ -295,6 +327,14 @@
                         (keydown)="checkClearDuration($event, 'thu', i)"
                         (keyup.enter)="formatTime($event, 'thu', i, 'duration',project.get('thu'))"
                         (blur)="formatTime($event, 'thu', i, 'duration',project.get('thu'))">
+                    <span *ngIf="project.get('thu.duration')?.value && (project.get('thu.approvalStatus')?.value === 'Rejected'||project.get('thu.approvalStatus')?.value === 'Waiting for Approval'
+                        ||project.get('thu.approvalStatus')?.value === 'Processed')" class="timesheet-input-info" (mousedown)="$event.preventDefault()">
+                         <a [ngbPopover]="approvalInfo"
+                            triggers="click"
+                            popoverClass="approval-info-popover"
+                            container="body"
+                            class="cursor" (click)="onclickinfo(project.get('thu'))"> <i class="bi bi-info-circle"></i></a>
+                    </span>
                     <span
                          *ngIf="shouldShowIcon(project, 'thu', i)"
                         class="input-group-text border-none " (mousedown)="$event.preventDefault()">
@@ -328,6 +368,14 @@
                         (keydown)="checkClearDuration($event, 'fri', i)"
                         (keyup.enter)="formatTime($event, 'fri', i, 'duration',project.get('fri'))"
                         (blur)="formatTime($event, 'fri', i, 'duration',project.get('fri'))">
+                    <span *ngIf="project.get('fri.duration')?.value && (project.get('fri.approvalStatus')?.value === 'Rejected'||project.get('fri.approvalStatus')?.value === 'Waiting for Approval'
+                        ||project.get('fri.approvalStatus')?.value === 'Processed')" class="timesheet-input-info" (mousedown)="$event.preventDefault()">
+                         <a [ngbPopover]="approvalInfo"
+                            triggers="click"
+                            popoverClass="approval-info-popover"
+                            container="body"
+                            class="cursor" (click)="onclickinfo(project.get('fri'))"> <i class="bi bi-info-circle"></i></a>
+                    </span>
                     <span    *ngIf="shouldShowIcon(project, 'fri', i)"
                         class="input-group-text border-none" (mousedown)="$event.preventDefault()">
                         <i class="bi bi-three-dots-vertical cursor"
@@ -360,6 +408,14 @@
                         (keydown)="checkClearDuration($event, 'sat', i)"
                         (keyup.enter)="formatTime($event, 'sat', i, 'duration',project.get('sat'))"
                         (blur)="formatTime($event, 'sat', i, 'duration',project.get('sat'))">
+                    <span *ngIf="project.get('sat.duration')?.value && (project.get('sat.approvalStatus')?.value === 'Rejected'||project.get('sat.approvalStatus')?.value === 'Waiting for Approval'
+                        ||project.get('sat.approvalStatus')?.value === 'Processed')" class="timesheet-input-info" (mousedown)="$event.preventDefault()">
+                         <a [ngbPopover]="approvalInfo"
+                            triggers="click"
+                            popoverClass="approval-info-popover"
+                            container="body"
+                            class="cursor" (click)="onclickinfo(project.get('sat'))"> <i class="bi bi-info-circle"></i></a>
+                    </span>
                     <span    *ngIf="shouldShowIcon(project, 'sat', i)"
                         class="input-group-text border-none" (mousedown)="$event.preventDefault()">
                         <i class="bi bi-three-dots-vertical cursor"
@@ -392,6 +448,14 @@
                         (keydown)="checkClearDuration($event, 'sun', i)"
                         (keyup.enter)="formatTime($event, 'sun', i, 'duration',project.get('sun'))"
                         (blur)="formatTime($event, 'sun', i, 'duration',project.get('sun'))">
+                    <span *ngIf="project.get('sun.duration')?.value && (project.get('sun.approvalStatus')?.value === 'Rejected'||project.get('sun.approvalStatus')?.value === 'Waiting for Approval'
+                        ||project.get('sun.approvalStatus')?.value === 'Processed')" class="timesheet-input-info" (mousedown)="$event.preventDefault()">
+                        <a [ngbPopover]="approvalInfo"
+                            triggers="click"
+                            popoverClass="approval-info-popover"
+                            container="body"
+                            class="cursor" (click)="onclickinfo(project.get('sun'))"> <i class="bi bi-info-circle"></i></a>
+                    </span>
                     <span    *ngIf="shouldShowIcon(project, 'sun', i)"
                         class="input-group-text border-none" (mousedown)="$event.preventDefault()">
                         <i class="bi bi-three-dots-vertical cursor"
@@ -437,7 +501,7 @@
                 <td></td>
             </tr>
         </tfoot>
-        </table>
+                    </table>
         <div class="d-flex justify-content-between flex-wrap align-items-center gap-2 p-3">
             <div class="d-flex align-items-center flex-wrap gap-3">
                 <div [style.visibility]="!employeeSelected ? 'visible' : 'hidden'">
@@ -508,7 +572,7 @@
         <div class="custom-poup-header-content popup-header-border">
             <div class="pt-2">
                 <p class="popup-heading mb-0">{{'Time Entry'}}</p>
-            </div>
+                            </div>
             <div>
                 <a (click)="openModalforconformation(confirmationpopup)" (mousedown)="$event.preventDefault()">
                     <img src="icons/close.png" alt="Close Icon" class="close-icon">
@@ -722,4 +786,54 @@
       </div>
     </div>
   </div>
+</ng-template>
+
+<!-- Approval info popover template -->
+<ng-template #approvalInfo>
+    <div class="approval-popup">
+        <div class="approval-header" [ngClass]="getHeaderClass(approvardetails?.status)">
+            <i class="me-2" [ngClass]="{
+                'bi bi-check-circle-fill': getHeaderClass(approvardetails?.status) === 'header-approved',
+                'bi bi-x-circle-fill':    getHeaderClass(approvardetails?.status) === 'header-rejected',
+                'bi bi-clock-history':    getHeaderClass(approvardetails?.status) !== 'header-approved' && 
+                getHeaderClass(approvardetails?.status) !== 'header-rejected'}"></i>Approval pending request info
+        </div>
+        <div class="approval-body">
+            <div class="approval-row">
+                <span class="ap-label">Approver Name</span>
+                <span class="ap-colon">:</span>
+                <span class="ap-value fw-semibold">{{approvardetails?.approver_Name || '-'}}</span>
+            </div>
+            <div class="approval-row">
+                <span class="ap-label">Approver Role</span>
+                <span class="ap-colon">:</span>
+                <span class="ap-value">{{approvardetails?.designation || '-'}}</span>
+            </div>
+            <div class="approval-row">
+                <span class="ap-label">Status</span>
+                <span class="ap-colon">:</span>
+                <span class="ap-value">
+                    <span class="status-badge" [ngClass]="getStatusBadgeClass(approvardetails?.status)">
+                        <!-- <span class="status-dot"></span> -->
+                        {{approvardetails?.status || '-'}}
+                    </span>
+                </span>
+            </div>
+
+            <div class="approval-row mb-2">
+                <span class="ap-label">Task Type</span>
+                <span class="ap-colon">:</span>
+                <span class="ap-value">{{approvardetails?.taskName}}</span>
+            </div>
+
+            <div class="approval-description" *ngIf="approvardetails?.description">
+                <div class="desc-title">DESCRIPTION:</div>
+                <div class="desc-box"><i>{{approvardetails.description}}</i></div>
+            </div>
+            <div class="approval-description mt-2" *ngIf="approvardetails?.comment">
+                <div class="desc-title">Approver Comments:</div>
+                <div class="desc-box"><i>{{approvardetails.comment}}</i></div>
+            </div>
+        </div>
+    </div>
 </ng-template>

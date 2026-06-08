@@ -213,6 +213,10 @@
     width: 1rem;
 }
 
+.timesheet-input-info {
+    background-color: var(--input-bg-color) !important;
+}
+
 .component-left-tabs-container {
     height: calc(100dvh - 8rem) !important;
 }
@@ -261,7 +265,8 @@
             }
         }
 
-        td:first-child, td:last-child {
+        td:first-child,
+        td:last-child {
             background-color: #FFFF !important;
         }
     }
@@ -360,10 +365,211 @@
     }
 }
 
-.alert-icon{
+.alert-icon {
     width: 1.5rem;
     height: 1.5rem;
 }
+
 ::ng-deep .p-select.ng-invalid.ng-dirty .p-select-label.p-placeholder {
     color: #64748b !important;
+}
+
+// ── Approval Info Popover ──────────────────────────────────────────
+::ng-deep .approval-info-popover {
+    --bs-popover-max-width: 400px !important;
+    width: 400px !important;
+    border: none !important;
+    background: transparent !important;
+    border-radius: 0.5rem !important;
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px !important;
+
+    .popover {
+        min-width: 300px;
+        max-width: 340px;
+        border: none;
+        border-radius: 0.75rem;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.14);
+        padding: 0;
+        overflow: hidden;
+    }
+
+    .popover-body {
+        padding: 0;
+    }
+}
+
+.approval-popup {
+    font-size: var(--fontsize12);
+
+    .approval-header {
+        background: linear-gradient(90deg, #F59E0B);
+        color: #fff;
+        font-weight: 600;
+        font-size: var(--fontsize12);
+        padding: 0.6rem 1rem;
+        display: flex;
+        align-items: center;
+        border-radius: 0.75rem 0.75rem 0 0;
+
+        // Dynamic header colors matching input borders
+        &.header-waiting {
+            background: linear-gradient(90deg, #F59E0B);
+        }
+
+        &.header-approved {
+            background: linear-gradient(90deg, #00A912);
+        }
+
+        &.header-rejected {
+            background: linear-gradient(90deg, #c7390e);
+        }
+
+        &.header-draft {
+            background: linear-gradient(90deg, #3397E8);
+        }
+
+        &.header-default {
+            background: linear-gradient(90deg, #F59E0B);
+        }
+    }
+
+    .approval-body {
+        padding: 0.75rem 1rem;
+        background: #fff;
+        display: flex;
+        flex-direction: column;
+        gap: 0.45rem;
+        width: 400px;
+        border-bottom-left-radius: 0.5rem !important;
+        border-bottom-right-radius: 0.5rem !important;
+    }
+
+    .approval-row {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+
+        .ap-label {
+            min-width: 90px;
+            color: #9CA3AF;
+            font-weight: 600;
+            font-size: var(--fontsize12);
+        }
+
+        .ap-colon {
+            color: #9CA3AF;
+            margin-right: 0.25rem;
+        }
+
+        .ap-value {
+            color: #111827;
+            font-size: var(--fontsize12);
+        }
+    }
+
+    // Status badge — color driven by status class
+    .status-badge {
+        display: inline-flex;
+        text-align: center;
+        border-radius: 0.5rem;
+        padding: 0.125rem 0.75rem;
+        font-weight: 600;
+        font-size: var(--fontsize10);
+        border: 1px solid;
+
+        .status-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+
+        &.badge-waiting {
+            color: #D97706;
+            border-color: #D97706;
+            background: #FEF3C7;
+
+            .status-dot {
+                background: #D97706;
+            }
+        }
+
+        &.badge-approved {
+            color: #059669;
+            border-color: #059669;
+            background: #D1FAE5;
+
+            .status-dot {
+                background: #059669;
+            }
+        }
+
+        &.badge-rejected {
+            color: #DC2626;
+            border-color: #DC2626;
+            background: #FEE2E2;
+
+            .status-dot {
+                background: #DC2626;
+            }
+        }
+
+        &.badge-draft {
+            color: #2563EB;
+            border-color: #2563EB;
+            background: #DBEAFE;
+
+            .status-dot {
+                background: #2563EB;
+            }
+        }
+
+        &.badge-default {
+            color: #6B7280;
+            border-color: #6B7280;
+            background: #F3F4F6;
+
+            .status-dot {
+                background: #6B7280;
+            }
+        }
+    }
+
+    .approval-description {
+        border: 1px solid #E5E7EB;
+        border-radius: 0.5rem;
+        padding: 0.5rem 0.75rem;
+        background: #F9FAFB;
+
+        .desc-title {
+            font-size: var(--fontsize10);
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            color: #6B7280;
+            text-transform: uppercase;
+            margin-bottom: 0.3rem;
+        }
+
+        .desc-box {
+            color: #374151;
+            font-size: var(--fontsize12);
+            font-style: italic;
+        }
+    }
+
+    .approval-footer {
+        margin-top: 0.5rem;
+        background: #FFFBEB;
+        border: 1px solid #FDE68A;
+        border-radius: 0.5rem;
+        padding: 0.45rem 0.75rem;
+        color: #92400E;
+        font-size: var(--fontsize12);
+        display: flex;
+        align-items: center;
+    }
+}
+
+::ng-deep.approval-info-popover {
+    
 }

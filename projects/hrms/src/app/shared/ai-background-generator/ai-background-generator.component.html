@@ -1,0 +1,114 @@
+<!-- Modal Template -->
+<ng-template #aiModal>
+  <div class="ai-modal-header">
+    <div class="header-left">
+      <span class="modal-title-text">Background Customization Studio</span>
+    </div>
+    <button class="close-btn" (click)="close()"><i class="pi pi-times"></i></button>
+  </div>
+
+  <div class="modal-body p-0">
+    <div class="ai-bg-container">
+
+      <!-- LEFT PANEL -->
+      <div class="left-panel">
+        <div class="preview-section">
+          <p class="preview-label">INTERACTIVE LIVE CANVAS PREVIEW</p>
+
+          <div class="main-preview-wrap">
+            <ng-container *ngIf="previewUrl; else uploadArea">
+              <img [src]="previewUrl" alt="Preview" class="preview-img" />
+              <div *ngIf="selectedVariation" class="preview-badge">{{ selectedVariation.label }}</div>
+            </ng-container>
+            <ng-template #uploadArea>
+              <label for="ai-upload-input" class="upload-area">
+                <i class="pi pi-cloud-upload upload-icon"></i>
+                <span class="upload-text">Click to upload profile photo</span>
+                <span class="upload-sub">PNG, JPG up to 5MB</span>
+              </label>
+            </ng-template>
+            <input id="ai-upload-input" type="file" accept="image/png,image/jpeg,image/jpg"
+              class="hidden-input" (change)="onFileChange($event)" />
+          </div>
+
+          <div class="preview-footer">
+            <ng-container *ngIf="uploadedImageUrl">
+              <label for="ai-upload-change" class="original-shot-label">Original Shot</label>
+              <input id="ai-upload-change" type="file" accept="image/png,image/jpeg,image/jpg"
+                class="hidden-input" (change)="onFileChange($event)" />
+            </ng-container>
+            <span *ngIf="!uploadedImageUrl" class="original-shot-label">Original Shot</span>
+          </div>
+        </div>
+
+        <!-- Spinner -->
+        <div *ngIf="isGenerating" class="spinner-wrap">
+          <p-progressSpinner strokeWidth="3" animationDuration=".8s" styleClass="ai-spinner" />
+          <p class="spinner-text">Generating backgrounds...</p>
+        </div>
+
+        <!-- Variations -->
+        <div *ngIf="variations.length > 0 && !isGenerating" class="variations-section">
+          <p class="variations-title">SELECT YOUR PREFERRED BACKGROUND VARIATION:</p>
+          <div class="variations-row">
+            <div *ngFor="let v of variations" class="variation-thumb"
+              [class.active]="v.selected" (click)="selectVariation(v)">
+              <div class="thumb-img-wrap">
+                <img [src]="v.url" [alt]="v.label" class="thumb-img" />
+                <div *ngIf="v.selected" class="thumb-check"><i class="pi pi-check"></i></div>
+              </div>
+              <span class="thumb-label">{{ v.label }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT PANEL -->
+      <div class="right-panel">
+        <p class="section-heading">1. SELECT BACKGROUND TEMPLATE</p>
+        <div class="templates-grid">
+          <div *ngFor="let t of templates" class="template-card"
+            [class.selected]="selectedTemplate?.id === t.id" (click)="selectTemplate(t)">
+            <div class="template-icon" [style.background]="t.gradient">{{ t.icon }}</div>
+            <div class="template-info">
+              <span class="t-title">{{ t.title }}</span>
+              <span class="t-desc">{{ t.description }}</span>
+            </div>
+            <i *ngIf="selectedTemplate?.id === t.id" class="pi pi-check-circle t-check"></i>
+          </div>
+        </div>
+
+        <div class="section-heading-row">
+          <p class="section-heading mb-0">2. REFINE CUSTOM AI PROMPT</p>
+          <span class="ready-badge" *ngIf="uploadedImageUrl">Ready</span>
+        </div>
+
+        <form [formGroup]="form">
+          <textarea pTextarea formControlName="prompt" rows="4" class="prompt-textarea"
+            placeholder="Describe the background scene you want to generate behind the profile subject">
+          </textarea>
+          <div class="prompt-options">
+            <span class="reset-prompt" (click)="resetPrompt()">Reset Prompt</span>
+          </div>
+        </form>
+
+        <div class="action-buttons">
+          <button class="generate-btn" [disabled]="!uploadedImageUrl || isGenerating" (click)="generate()">
+            <p-progressSpinner *ngIf="isGenerating" strokeWidth="4" animationDuration=".8s" styleClass="btn-spinner" />
+            <i *ngIf="!isGenerating" class="pi pi-sparkles me-2"></i>
+            {{ generatingLabel }}
+          </button>
+          <div class="bottom-btns">
+            <button class="apply-btn" [disabled]="!selectedVariation || isApplying" (click)="applyVariation()">
+              <p-progressSpinner *ngIf="isApplying" strokeWidth="4" animationDuration=".8s" styleClass="btn-spinner" />
+              <i *ngIf="!isApplying" class="pi pi-check me-2"></i>
+              {{ isApplying ? 'Applying...' : 'Apply As Profile' }}
+            </button>
+            <button class="cancel-btn" (click)="close()">Cancel</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</ng-template>

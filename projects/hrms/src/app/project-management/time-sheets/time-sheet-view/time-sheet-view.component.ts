@@ -120,9 +120,16 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   canBulkImport = false;
   canBulkExport = false;
   canViewHistoryLog = false;
-  taskType: any;
-  alltaskTypes = [] as any;
-  constructor(private fb: FormBuilder, private modalService: NgbModal, private offcanvasService: NgbOffcanvas,
+  taskType:any;
+  alltaskTypes=[] as any;
+    responseSummary = {
+    failedreason: '',
+    successRecordsCount: 0,
+    failureRecordsCount: 0,
+    totalRecordsCount: 0
+  };
+   @ViewChild('releaseSummary') releaseSummaryModal!: any;
+  constructor(private fb: FormBuilder, private modalService: NgbModal,private offcanvasService: NgbOffcanvas,
     private http: HttpService, public formValidation: FormValidationsService,
     public dayValidationService: DayValidationService, public authService: AuthService,
     public rbac: RbacService, private conformationPopup: OpenModalService,
@@ -2137,7 +2144,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
         d.setHours(0, 0, 0, 0);
         return d;
       };
-
+ this.getTimesheetMadatorydata(this.dayForm.get('projectId')?.value, this.dayForm.get('phaseId')?.value)
       const entryDate = normalizeDate(this.dayForm.get('entryDate')?.value);
 
       // ✅ 🔥 Get correct resource based on project/client/phase + DATE RANGE
@@ -2201,6 +2208,52 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       }
     }
   }
+ getTimesheetMadatorydata(projectId: number, phaseId: number) {
+  const url = `TimesheetConfiguration?projectId=${projectId ?? 0}&phaseId=${phaseId ?? 0}`;
+
+  this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
+    next: (res: any) => {
+
+      const items = res?.items || [];
+      
+      const fieldMap: any = {
+        'Start Time': 'startTime',
+        'End Time': 'endTime',
+        'Task Type': 'taskId',
+        'Description': 'description'
+      };
+      const selectedDate = moment(this.dayForm.get('entryDate')?.value).format('YYYY-MM-DD');
+      console.log('Selected Date for Validation:', selectedDate);
+      items.forEach((item: any) => {
+        const controlName = fieldMap[item.fieldName];
+        const effectiveDate = moment(item.effectiveDate).format('YYYY-MM-DD');
+        const isEffective = moment(selectedDate).isSameOrAfter(moment(effectiveDate),'day');
+        if(isEffective){
+        if (!controlName) return;
+        const control = this.dayForm.get(controlName);
+        if (!control) return;
+        control.clearValidators();
+        const approvalstatus = this.dayForm.get('approvalStatus')?.value;
+        console.log('Approval Status:', approvalstatus);
+        // if (isEffective && item.isMandatory &&(!approvalstatus || approvalstatus?.toLowerCase() === 'draft' || approvalstatus?.toLowerCase() === 'rejected'|| approvalstatus?.toLowerCase() === 'not entered')) {
+          //control.setValidators([Validators.required]);
+        // }
+        if (item.isMandatory) {
+           control.setValidators([Validators.required]);
+         }
+        control.updateValueAndValidity({ emitEvent: false });
+      }
+      });
+    }
+  });
+}
+  isRequired(controlName: string): boolean {
+  const control = this.dayForm?.get(controlName);
+
+  return control
+    ? control.hasValidator(Validators.required)
+    : false;
+}
 
   recalculateTimes(dayKey: string, startIndex: number) {
     for (let i = 0; i < this.projects.length; i++) {
@@ -2412,10 +2465,27 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     this.spinnerLoaderforallrecoders = true
     const payload = this.buildPayload();
     this.http.postdata('Timesheet/submit-for-approval', payload).subscribe({
-      next: (res) => {
+      next: (res:any) => {
         this.spinnerLoaderforallrecoders = false
+        //this.modalService.dismissAll();
+        //this.conformationPopup.openSuccessModal('Timesheet submitted successfully');
+        const successCount = res?.data?.successCount;
+        const failureCount = res.data.failedCount;
+        this.responseSummary = {
+          failedreason:Array.isArray(res?.data?.errors) && res.data.errors.length > 0? res.data.errors: 'NA',
+          successRecordsCount: successCount,
+          failureRecordsCount: failureCount,
+          totalRecordsCount: res?.data?.totalCount,
+        };
+        console.log(this.responseSummary);
         this.modalService.dismissAll();
-        this.conformationPopup.openSuccessModal('Timesheet submitted successfully');
+        const modalRef = this.modalService.open(this.releaseSummaryModal, {
+          centered: true,
+          size: 'lg',
+        });
+        setTimeout(() => {
+          modalRef.close();
+        }, 3000);
         this.selectedclientid = null;
         this.selectedprojectid = null;
         this.selectedProjectName = null;

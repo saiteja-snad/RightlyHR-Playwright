@@ -461,7 +461,6 @@ export class TimesheetConfigurationsComponent implements OnInit, OnDestroy {
   }
   resetForm() {
     this.timesheetconfigForm.reset();
-
     this.timesheetconfigForm.patchValue({
       effectivefrom: moment().format('YYYY-MM-DD'),
       isMandatory: false

@@ -120,9 +120,9 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   canBulkImport = false;
   canBulkExport = false;
   canViewHistoryLog = false;
-  taskType:any;
-  alltaskTypes=[] as any;
-    responseSummary = {
+  taskType: any;
+  alltaskTypes = [] as any;
+  responseSummary = {
     failedreason: '',
     successRecordsCount: 0,
     failureRecordsCount: 0,
@@ -479,7 +479,9 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       rejectReason: [day?.rejectReason || ''],
       blockReason: [blockReason],
       resourceId: [{ value: day?.resourceId || null }],
-      taskId: [{ value: day?.taskId || null, disabled: !shouldEnable }]
+      taskId: [{ value: day?.taskId || null, disabled: !shouldEnable }],
+      pendingApprovalDetails: [day?.pendingApprovalDetails || null],
+      taskName: [day?.taskName || null],
 
     });
   }
@@ -1173,8 +1175,9 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       rejectReason: [cell.rejectReason || ''],
       blockReason: [cell.blockReason || ''],
       resourceId: [row.resourceId || null],
-      taskId: [{ value: cell.taskId || null, disabled: !billablecheck }]
-
+      taskId: [cell.taskId || null,disabled: !billablecheck],
+      pendingApprovalDetails: [cell.pendingApprovalDetails || null],
+      taskName: [cell.taskName || null]
     });
   }
 
@@ -2127,6 +2130,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       this.dayForm = dayForm;
       //start//code for the task type 
       let taskId = this.dayForm.get('taskId')?.value;
+      console.log('Selected Task ID:', taskId);
       let taskdata = this.alltaskTypes?.find((ele: any) => ele?.id == taskId && ele?.status?.toLowerCase() == 'inactive');
       if (taskdata) {
         const alreadyExists = this.taskType?.some((ele: any) => ele.id == taskdata.id);
@@ -2137,6 +2141,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
         this.taskType = this.alltaskTypes?.filter((ele: any) => ele?.status?.toLowerCase() == 'active'
         );
       }
+      this.getTimesheetMadatorydata(this.dayForm.get('projectId')?.value, this.dayForm.get('phaseId')?.value)
       //end//code for the task type
       // ✅ Normalize date (fix timezone issue)
       const normalizeDate = (date: any) => {
@@ -2144,7 +2149,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
         d.setHours(0, 0, 0, 0);
         return d;
       };
- this.getTimesheetMadatorydata(this.dayForm.get('projectId')?.value, this.dayForm.get('phaseId')?.value)
+
       const entryDate = normalizeDate(this.dayForm.get('entryDate')?.value);
 
       // ✅ 🔥 Get correct resource based on project/client/phase + DATE RANGE
@@ -2207,54 +2212,50 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
         });
       }
     }
+
   }
- getTimesheetMadatorydata(projectId: number, phaseId: number) {
-  const url = `TimesheetConfiguration?projectId=${projectId ?? 0}&phaseId=${phaseId ?? 0}`;
+  getTimesheetMadatorydata(projectId: number, phaseId: number) {
+    const url = `TimesheetConfiguration?projectId=${projectId ?? 0}&phaseId=${phaseId ?? 0}`;
 
-  this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
-    next: (res: any) => {
+    this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res: any) => {
 
-      const items = res?.items || [];
-      
-      const fieldMap: any = {
-        'Start Time': 'startTime',
-        'End Time': 'endTime',
-        'Task Type': 'taskId',
-        'Description': 'description'
-      };
-      const selectedDate = moment(this.dayForm.get('entryDate')?.value).format('YYYY-MM-DD');
-      console.log('Selected Date for Validation:', selectedDate);
-      items.forEach((item: any) => {
-        const controlName = fieldMap[item.fieldName];
-        const effectiveDate = moment(item.effectiveDate).format('YYYY-MM-DD');
-        const isEffective = moment(selectedDate).isSameOrAfter(moment(effectiveDate),'day');
-        if(isEffective){
-        if (!controlName) return;
-        const control = this.dayForm.get(controlName);
-        if (!control) return;
-        control.clearValidators();
-        const approvalstatus = this.dayForm.get('approvalStatus')?.value;
-        console.log('Approval Status:', approvalstatus);
-        // if (isEffective && item.isMandatory &&(!approvalstatus || approvalstatus?.toLowerCase() === 'draft' || approvalstatus?.toLowerCase() === 'rejected'|| approvalstatus?.toLowerCase() === 'not entered')) {
-          //control.setValidators([Validators.required]);
-        // }
-        if (item.isMandatory) {
-           control.setValidators([Validators.required]);
-         }
-        control.updateValueAndValidity({ emitEvent: false });
+        const items = res?.items || [];
+
+        const fieldMap: any = {
+          'Start Time': 'startTime',
+          'End Time': 'endTime',
+          'Task Type': 'taskId',
+          'Description': 'description'
+        };
+        const selectedDate = moment(this.dayForm.get('entryDate')?.value).format('YYYY-MM-DD');
+        console.log('Selected Date for Validation:', selectedDate);
+        items.forEach((item: any) => {
+          const controlName = fieldMap[item.fieldName];
+          if (!controlName) return;
+          const control = this.dayForm.get(controlName);
+          if (!control) return;
+          control.clearValidators();
+          const effectiveDate = moment(item.effectiveDate).format('YYYY-MM-DD');
+          console.log(effectiveDate)
+          const isEffective = moment(selectedDate).isSameOrAfter(moment(effectiveDate), 'day');
+          const approvalstatus = this.dayForm.get('approvalStatus')?.value;
+          console.log('Approval Status:', approvalstatus);
+          if (isEffective && item.isMandatory && (!approvalstatus || approvalstatus?.toLowerCase() === 'draft' || approvalstatus?.toLowerCase() === 'rejected' || approvalstatus?.toLowerCase() === 'not entered')) {
+            control.setValidators([Validators.required]);
+          }
+          control.updateValueAndValidity({ emitEvent: false });
+        });
       }
-      });
-    }
-  });
-}
+    });
+  }
   isRequired(controlName: string): boolean {
-  const control = this.dayForm?.get(controlName);
+    const control = this.dayForm?.get(controlName);
 
-  return control
-    ? control.hasValidator(Validators.required)
-    : false;
-}
-
+    return control
+      ? control.hasValidator(Validators.required)
+      : false;
+  }
   recalculateTimes(dayKey: string, startIndex: number) {
     for (let i = 0; i < this.projects.length; i++) {
       const projectForm = this.projects.at(i).get(dayKey) as FormGroup;
@@ -2465,14 +2466,14 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     this.spinnerLoaderforallrecoders = true
     const payload = this.buildPayload();
     this.http.postdata('Timesheet/submit-for-approval', payload).subscribe({
-      next: (res:any) => {
+      next: (res: any) => {
         this.spinnerLoaderforallrecoders = false
         //this.modalService.dismissAll();
         //this.conformationPopup.openSuccessModal('Timesheet submitted successfully');
         const successCount = res?.data?.successCount;
         const failureCount = res.data.failedCount;
         this.responseSummary = {
-          failedreason:Array.isArray(res?.data?.errors) && res.data.errors.length > 0? res.data.errors: 'NA',
+          failedreason: Array.isArray(res?.data?.errors) && res.data.errors.length > 0 ? res.data.errors : 'NA',
           successRecordsCount: successCount,
           failureRecordsCount: failureCount,
           totalRecordsCount: res?.data?.totalCount,
@@ -2575,8 +2576,26 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
 
   // Check if any of the fields in the day form are filled
   isDayFormDirtyOrFilled(form: FormGroup): boolean {
-    const { description, duration, } = form.value;
-    return !!(description && duration);
+    const fieldsToCheck = ['description', 'duration', 'startTime', 'endTime', 'taskId'];
+
+    for (const field of fieldsToCheck) {
+      const control = form.get(field);
+
+      // Check only if the field has Validators.required
+      if (control?.hasValidator(Validators.required)) {
+        const value = control.value;
+
+        if (
+          value === null ||
+          value === undefined ||
+          value === ''
+        ) {
+          return false;
+        }
+      }
+    }
+
+    return true;
   }
   //based status colour
   getApprovalClass(control: AbstractControl | null): any {
@@ -2727,6 +2746,36 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     menu.show(event);
   }
 
+  approvardetails = {} as any;
+
+  getStatusBadgeClass(status: string): string {
+    if (!status) return 'badge-default';
+    const s = status.toLowerCase();
+    if (s.includes('waiting') || s.includes('pending')) return 'badge-waiting';
+    if (s.includes('approved') || s.includes('processed')) return 'badge-approved';
+    if (s.includes('rejected')) return 'badge-rejected';
+    if (s.includes('draft')) return 'badge-draft';
+    return 'badge-default';
+  }
+
+  getHeaderClass(status: string): string {
+    if (!status) return 'header-default';
+    const s = status.toLowerCase();
+    if (s.includes('waiting') || s.includes('pending')) return 'header-waiting';
+    if (s.includes('approved') || s.includes('processed')) return 'header-approved';
+    if (s.includes('rejected')) return 'header-rejected';
+    if (s.includes('draft')) return 'header-draft';
+    return 'header-default';
+  }
+
+  onclickinfo(day?: any) {
+    console.log(day.value.pendingApprovalDetails);
+    console.log(day);
+    console.log(day.get('description')?.value)
+    console.log(day.get('taskName')?.value)
+    this.approvardetails = day.value.pendingApprovalDetails;
+    this.approvardetails.description = day.get('description')?.value
+  }
   ngOnDestroy() {
     this.destroy$.next(true);
     this.destroy$.complete();

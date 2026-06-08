@@ -28,6 +28,7 @@ interface StatusTab {
 export class TimesheetsTabsComponent {
   readonly tabsKey = 'project-management-timesheets-tabs';
   tabs: StatusTab[] = [];
+  private userInteracted = false;
   navTabs: StatusTab[] = [
     {
       tabId: '/project-management/timesheet/mytimesheet',
@@ -50,6 +51,9 @@ export class TimesheetsTabsComponent {
 
   ngOnInit(): void {
     this.rebuildTabs();
+    void this.menuOrderService.ensureLoaded().then(() => {
+      this.rebuildTabs();
+    });
   }
 
   private rebuildTabs(): void {
@@ -65,14 +69,35 @@ export class TimesheetsTabsComponent {
       (t) => t.tabId
     );
 
-    const baseUrl = '/project-management/timesheet';
-    if (this.router.url === baseUrl && this.tabs.length > 0) {
-      this.router.navigateByUrl(this.tabs[0].link);
+    this.redirectIfNeeded();
+  }
+
+  navigate(link: string): void {
+    this.userInteracted = true;
+    this.router.navigate([link], { queryParamsHandling: 'preserve' });
+  }
+
+  private redirectIfNeeded(): void {
+    if (this.userInteracted) return;
+    const currentPath = this.router.url.split('?')[0];
+
+    const entryPaths = new Set([
+      '/project-management/timesheet',
+      '/project-management/timesheet/mytimesheet',
+      '/project-management/timesheet/mysummary',
+      '/project-management/timesheet/teamtimesheet',
+    ]);
+
+    if (!entryPaths.has(currentPath)) return;
+
+    if (this.tabs.length === 0) {
+      this.router.navigate(['/unauthorized']);
+      return;
     }
-    const isAllowed = this.tabs.some(t => t.link === this.router.url);
-    if (!isAllowed && this.router.url.startsWith(baseUrl) && this.tabs.length > 0) {
-      this.router.navigateByUrl(this.tabs[0].link);
-    }
+
+    const preferred = this.tabs[0]?.link ?? '';
+    if (!preferred || preferred === currentPath) return;
+    this.router.navigate([preferred], { queryParamsHandling: 'preserve' });
   }
     navigateToAccessedRoute(route: string) {
     const actualRoute = this.accessNav.navigateToAccessedRoute(route);

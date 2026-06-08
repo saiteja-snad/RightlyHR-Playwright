@@ -73,7 +73,7 @@
           tabsDndRouteProp="key"
         >
           <li class="nav-item" *ngFor="let item of filteredNavItems; trackBy: trackByNavId" cdkDrag cdkDragLockAxis="y" cdkDragBoundary=".component-left-tabs-container">
-            <div class="nav-link" [class.active]="activeTab === item.key" (click)="setActiveTab(item.key)">
+            <div class="nav-link" [class.active-nav-link]="activeTab === item.key" (click)="setActiveTab(item.key)">
               <img [src]="item.icon" alt="Icon" class="icon mb-2">
               <div>{{ item.label }} ({{ getNavItemCount(item.countProp) }})</div>
             </div>

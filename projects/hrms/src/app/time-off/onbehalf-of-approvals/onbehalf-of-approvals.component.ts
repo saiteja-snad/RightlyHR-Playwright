@@ -195,7 +195,9 @@ tastType: any[] = [];
       this.isSubmitEnabled = this.isAnyFieldSelected();
     });
     this.getTaskType();
-    this.buildNavItems();
+    void this.menuOrderService.ensureLoaded().then(() => {
+      this.buildNavItems();
+    });
   }
 
   private buildNavItems(): void {
@@ -221,6 +223,10 @@ tastType: any[] = [];
     const visible = items.filter(i => this.rbac.allowedToAccess(i.permission));
     this.filteredNavItems = this.menuOrderService.applySavedTabsOrder(this.tabsKey, visible, (t) => t.tabId);
     this.navItems = visible;
+    if (this.filteredNavItems.length > 0) {
+      this.activeTab = this.filteredNavItems[0].key;
+      this.updateModuleInfo();
+    }
   }
 
   trackByNavId(_: number, item: any): string {

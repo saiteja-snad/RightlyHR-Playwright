@@ -13,7 +13,7 @@
       tabsDndRouteProp="link"
     >
         <li class="nav-item" *ngFor="let tab of filteredTabs; trackBy: trackByTabId" cdkDrag cdkDragLockAxis="y" cdkDragBoundary=".component-left-tabs-container">
-            <div class="nav-link" [routerLink]="[tab.link]" routerLinkActive="active-nav-link"  [queryParamsHandling]="'preserve'">
+            <div class="nav-link" (click)="navigate(tab.link)" [class.active-nav-link]="isActive(tab.link)">
                 <img [src]="tab.icon" alt="Icon" class="icon mb-2">
                 <div class="d-flex">{{ tab.label }}</div>
                 <div class="count">

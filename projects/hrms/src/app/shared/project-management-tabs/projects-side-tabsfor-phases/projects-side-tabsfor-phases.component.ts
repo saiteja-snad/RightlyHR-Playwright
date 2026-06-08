@@ -54,8 +54,11 @@ export class ProjectsSideTabsforPhasesComponent {
   constructor(public rbac: RbacService, private http: HttpService, private route: ActivatedRoute, private router: Router,private menuOrderService: MenuOrderService) { }
 
   ngOnInit(): void {
-
     this.filterTabsByRbac();
+    void this.menuOrderService.ensureLoaded().then(() => {
+      this.filterTabsByRbac();
+      this.redirectIfNeeded();
+    });
     this.route.queryParams.subscribe(params => {
       const projectId = params['id'];
       if (projectId) {
@@ -82,6 +85,31 @@ export class ProjectsSideTabsforPhasesComponent {
       filtered,
       (t) => t.tabId
     );
+  }
+
+  navigate(link: string): void {
+    this.router.navigate([link], {
+      queryParamsHandling: 'preserve',
+      state: { skipPhasesAutoRedirect: true }
+    });
+  }
+
+  private redirectIfNeeded(): void {
+    const currentPath = this.router.url.split('?')[0];
+    const basePath = '/project-management/projects/details/phases';
+    if (currentPath !== basePath) return;
+
+    const skip = !!this.router.getCurrentNavigation()?.extras?.state?.['skipPhasesAutoRedirect'];
+    if (skip) return;
+
+    if (this.filteredTabs.length === 0) {
+      this.router.navigate(['/unauthorized']);
+      return;
+    }
+
+    const preferred = this.filteredTabs[0]?.link ?? '';
+    if (!preferred || preferred === currentPath) return;
+    this.router.navigate([preferred], { queryParamsHandling: 'preserve' });
   }
 
   statusGroups: any = {

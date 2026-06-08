@@ -38,6 +38,7 @@ interface StatusTab {
 
 export class OnBeHalfOfApprovalTabsComponent implements OnInit{
   readonly tabsKey = 'on-behalf-of-approval-timeoff-tabs';
+  private readonly baseUrl = '/on-behalf-of/on-behalf-of';
   loggedinuser = {} as any;
   empdata = {} as any;
   subscription!: Subscription;
@@ -53,9 +54,9 @@ export class OnBeHalfOfApprovalTabsComponent implements OnInit{
     Omit<StatusTab, 'count'> & { countKey: string }
   > = [
     {
-      tabId: '/time-off/on-behalf-of/waiting-for-approval',
+      tabId: '/on-behalf-of/on-behalf-of/waiting-for-approval',
       label: 'Waiting For Approval',
-      link: '/time-off/on-behalf-of/waiting-for-approval',
+      link: '/on-behalf-of/on-behalf-of/waiting-for-approval',
       icon: '/time-off-icon/waiting-for-approval-icon.png',
       permission: {
         feature: 'Waiting For Approval (On Behalf Of)',
@@ -64,33 +65,33 @@ export class OnBeHalfOfApprovalTabsComponent implements OnInit{
       countKey: 'waiting',
     },
     {
-      tabId: '/time-off/on-behalf-of/approved',
+      tabId: '/on-behalf-of/on-behalf-of/approved',
       label: 'Approved',
-      link: '/time-off/on-behalf-of/approved',
+      link: '/on-behalf-of/on-behalf-of/approved',
       icon: '/time-off-icon/approved-icon.png',
       permission: { feature: 'Approved (On Behalf Of)', action: 'view' },
       countKey: 'approved',
     },
     {
-      tabId: '/time-off/on-behalf-of/processed',
+      tabId: '/on-behalf-of/on-behalf-of/processed',
       label: 'Processed',
-      link: '/time-off/on-behalf-of/processed',
+      link: '/on-behalf-of/on-behalf-of/processed',
       icon: '/time-off-icon/processed-icon.png',
       permission: { feature: 'Processed (On Behalf Of)', action: 'view' },
       countKey: 'processed',
     },
     {
-      tabId: '/time-off/on-behalf-of/rejected',
+      tabId: '/on-behalf-of/on-behalf-of/rejected',
       label: 'Rejected',
-      link: '/time-off/on-behalf-of/rejected',
+      link: '/on-behalf-of/on-behalf-of/rejected',
       icon: '/time-off-icon/rejected-icon.png',
       permission: { feature: 'Rejected (On Behalf Of)', action: 'view' },
       countKey: 'rejected',
     },
     {
-      tabId: '/time-off/on-behalf-of/cancel',
+      tabId: '/on-behalf-of/on-behalf-of/cancel',
       label: 'Cancelled',
-      link: '/time-off/on-behalf-of/cancel',
+      link: '/on-behalf-of/on-behalf-of/cancel',
       icon: '/time-off-icon/cancelled-icon.png',
       permission: { feature: 'Cancelled (On Behalf Of)', action: 'view' },
       countKey: 'cancelled',
@@ -131,15 +132,16 @@ export class OnBeHalfOfApprovalTabsComponent implements OnInit{
     return this.router.isActive(route, true);
   }
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     this.loggedinuser = this.authService.getToken();
-    // this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
+    await this.menuOrderService.ensureLoaded();
     this.rebuildTabs({
       waiting: 0,
       approved: 0,
       processed: 0,
       rejected: 0,
       cancelled: 0,
+      entitlement: 0,
     });
   }
 
@@ -167,15 +169,16 @@ export class OnBeHalfOfApprovalTabsComponent implements OnInit{
     );
     this.loading = false;
 
-    const baseUrl = '/time-off/on-behalf-of';
-    if (this.router.url === baseUrl && this.tabs.length > 0) {
+    const currentUrl = this.router.url.split('?')[0];
+    const baseUrl = this.baseUrl;
+    if (currentUrl === baseUrl && this.tabs.length > 0) {
       this.router.navigateByUrl(this.tabs[0].link);
     }
-    const isAllowed = this.tabs.some((tab) => tab.link === this.router.url);
+    const isAllowed = this.tabs.some((tab) => tab.link === currentUrl);
     if (
       !isAllowed &&
       this.tabs.length > 0 &&
-      this.router.url.startsWith(baseUrl)
+      currentUrl.startsWith(baseUrl)
     ) {
       this.router.navigateByUrl(this.tabs[0].link);
     }

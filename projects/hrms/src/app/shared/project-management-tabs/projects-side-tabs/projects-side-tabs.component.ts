@@ -32,6 +32,7 @@ export class ProjectsSideTabsComponent {
   statusCounts: any = {};
   loading: boolean = false;
   destroy$: Subject<boolean> = new Subject<boolean>();
+  private userInteracted = false;
   navTabs: any[] = [
     {
       tabId: '/project-management/projects/active',
@@ -53,10 +54,12 @@ export class ProjectsSideTabsComponent {
   constructor(public rbac: RbacService, private http: HttpService, private router: Router, private menuOrderService: MenuOrderService) { }
 
   ngOnInit(): void {
-    this.getcountData();
-     this.rebuildTabs();
-    this.http.projectcountfuntion$.subscribe(() => {
+    void this.menuOrderService.ensureLoaded().then(() => {
       this.getcountData();
+      this.rebuildTabs();
+      this.http.projectcountfuntion$.subscribe(() => {
+        this.getcountData();
+      });
     });
   }
 
@@ -73,10 +76,35 @@ export class ProjectsSideTabsComponent {
       (t) => t.tabId
     );
 
-    const baseUrl = '/project-management/projects';
-    if (this.router.url === baseUrl && this.tabs.length > 0) {
-      this.router.navigateByUrl(this.tabs[0].link);
+    this.redirectIfNeeded();
+  }
+
+  navigate(link: string): void {
+    this.userInteracted = true;
+    this.router.navigate([link], { queryParamsHandling: 'preserve' });
+  }
+
+  private redirectIfNeeded(): void {
+    if (this.userInteracted) return;
+    const currentPath = this.router.url.split('?')[0];
+
+    const entryPaths = new Set([
+      '/project-management/projects',
+      '/project-management/projects/active',
+      '/project-management/projects/inactive',
+      '/project-management/projects/hold',
+    ]);
+
+    if (!entryPaths.has(currentPath)) return;
+
+    if (this.tabs.length === 0) {
+      this.router.navigate(['/unauthorized']);
+      return;
     }
+
+    const preferred = this.tabs[0]?.link ?? '';
+    if (!preferred || preferred === currentPath) return;
+    this.router.navigate([preferred], { queryParamsHandling: 'preserve' });
   }
 
   getcountData(): void {
@@ -97,7 +125,8 @@ export class ProjectsSideTabsComponent {
   }
 
   isActive(route: string): boolean {
-    return this.router.url.includes(route);
+    const currentPath = this.router.url.split('?')[0];
+    return currentPath === route || currentPath.startsWith(route + '/');
   }
 
   trackByTabId(_: number, tab: StatusTab): string {

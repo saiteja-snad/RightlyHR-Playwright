@@ -19,6 +19,7 @@ import { MenuOrderService } from '../../../services/theme-service/menu-order.ser
 })
 export class OnBehalfOfRemoteloginTabsComponent implements OnInit, OnDestroy{
   readonly tabsKey = 'on-behalf-of-remotelogin-tabs';
+  private readonly baseUrl = '/on-behalf-of/on-behalf-of-remotelogin';
   filteredTabs: any[] = [];
   loading = false
   rejectedRemoteLoginRequestsCount = 0;
@@ -30,30 +31,35 @@ export class OnBehalfOfRemoteloginTabsComponent implements OnInit, OnDestroy{
 
   navTabs: any[] = [
     {
+      tabId: '/on-behalf-of/on-behalf-of-remotelogin/waiting-for-approval',
       label: 'Waiting For Approval',
       link: 'waiting-for-approval',
       icon: '/time-off-icon/waiting-for-approval-icon.png',
       permission: { feature: 'Waiting For Approval (On Behalf Of RemoteLogin)', action: 'view' },
     },
     {
+      tabId: '/on-behalf-of/on-behalf-of-remotelogin/approved',
       label: 'Approved',
       link: 'approved',
       icon: '/time-off-icon/approved-icon.png',
       permission: { feature: 'Approved (On Behalf Of RemoteLogin)', action: 'view' },
     },
     {
+      tabId: '/on-behalf-of/on-behalf-of-remotelogin/processed',
       label: 'Processed',
       link: 'processed',
       icon: '/time-off-icon/processed-icon.png',
       permission: { feature: 'Processed (On Behalf Of RemoteLogin)', action: 'view' },
     },
     {
+      tabId: '/on-behalf-of/on-behalf-of-remotelogin/rejected',
       label: 'Rejected',
       link: 'rejected',
       icon: '/time-off-icon/rejected-icon.png',
       permission: { feature: 'Rejected (On Behalf Of RemoteLogin)', action: 'view' },
     },
     {
+      tabId: '/on-behalf-of/on-behalf-of-remotelogin/cancelled',
       label: 'Cancelled',
       link: 'cancelled',
       icon: '/time-off-icon/cancelled-icon.png',
@@ -82,8 +88,9 @@ export class OnBehalfOfRemoteloginTabsComponent implements OnInit, OnDestroy{
   }
 
   ngOnInit(): void {
-    this.filterTabsByRbac();
-    this.updateNavigation();
+    void this.menuOrderService.ensureLoaded().then(() => {
+      this.filterTabsByRbac();
+    });
     
     this.http.onBehalfOfRemoteLoginSelectedEmp$.pipe(takeUntil(this.destroy$)).subscribe((emp: number) => {
       if (emp) {
@@ -154,7 +161,7 @@ export class OnBehalfOfRemoteloginTabsComponent implements OnInit, OnDestroy{
   updateNavTabs() {
     this.navTabs = [
       {
-        tabId: '/on-be-half-of-remotelogin/waiting-for-approval',
+        tabId: '/on-behalf-of/on-behalf-of-remotelogin/waiting-for-approval',
         label: 'Waiting For Approval',
         link: 'waiting-for-approval',
         icon: '/time-off-icon/waiting-for-approval-icon.png',
@@ -162,7 +169,7 @@ export class OnBehalfOfRemoteloginTabsComponent implements OnInit, OnDestroy{
         permission: { feature: 'Waiting For Approval (On Behalf Of RemoteLogin)', action: 'view' },
       },
       {
-        tabId: '/on-be-half-of-remotelogin/approved',
+        tabId: '/on-behalf-of/on-behalf-of-remotelogin/approved',
         label: 'Approved',
         link: 'approved',
         icon: '/time-off-icon/approved-icon.png',
@@ -170,7 +177,7 @@ export class OnBehalfOfRemoteloginTabsComponent implements OnInit, OnDestroy{
         permission: { feature: 'Approved (On Behalf Of RemoteLogin)', action: 'view' },
       },
       {
-        tabId: '/on-be-half-of-remotelogin/processed',
+        tabId: '/on-behalf-of/on-behalf-of-remotelogin/processed',
         label: 'Processed',
         link: 'processed',
         icon: '/time-off-icon/processed-icon.png',
@@ -178,7 +185,7 @@ export class OnBehalfOfRemoteloginTabsComponent implements OnInit, OnDestroy{
         permission: { feature: 'Processed (On Behalf Of RemoteLogin)', action: 'view' },
       },
       {
-        tabId: '/on-be-half-of-remotelogin/rejected',
+        tabId: '/on-behalf-of/on-behalf-of-remotelogin/rejected',
         label: 'Rejected',
         link: 'rejected',
         icon: '/time-off-icon/rejected-icon.png',
@@ -186,7 +193,7 @@ export class OnBehalfOfRemoteloginTabsComponent implements OnInit, OnDestroy{
         permission: { feature: 'Rejected (On Behalf Of RemoteLogin)', action: 'view' },
       },
       {
-        tabId: '/on-be-half-of-remotelogin/cancelled',
+        tabId: '/on-behalf-of/on-behalf-of-remotelogin/cancelled',
         label: 'Cancelled',
         link: 'cancelled',
         icon: '/time-off-icon/cancelled-icon.png',
@@ -212,9 +219,9 @@ export class OnBehalfOfRemoteloginTabsComponent implements OnInit, OnDestroy{
   }
 
   private updateNavigation(): void {
-    const baseUrl = '/on-be-half-of-remotelogin';
-    const currentUrl = this.router.url;
-    const defaultRoute = this.filteredTabs.length > 0 ? `/on-be-half-of-remotelogin/${this.filteredTabs[0].link}` : '';
+    const baseUrl = this.baseUrl;
+    const currentUrl = this.router.url.split('?')[0];
+    const defaultRoute = this.filteredTabs.length > 0 ? `${this.baseUrl}/${this.filteredTabs[0].link}` : '';
 
     if ((currentUrl === baseUrl || currentUrl === `${baseUrl}/`) && defaultRoute) {
       this.router.navigateByUrl(defaultRoute);

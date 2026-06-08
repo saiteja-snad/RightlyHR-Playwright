@@ -9,7 +9,7 @@
     [tabsDndKey]="tabsKey"
     [tabsDndItems]="filteredTabs"
     tabsDndIdProp="tabId"
-    tabsDndRouteProp="link"
+    tabsDndRouteProp="tabId"
   >
     <li class="nav-item" *ngFor="let tab of filteredTabs; trackBy: trackByTabId" cdkDrag cdkDragLockAxis="y" cdkDragBoundary=".component-left-tabs-container">
       <div class="nav-link" [routerLink]="[tab.link]" routerLinkActive="active-nav-link">

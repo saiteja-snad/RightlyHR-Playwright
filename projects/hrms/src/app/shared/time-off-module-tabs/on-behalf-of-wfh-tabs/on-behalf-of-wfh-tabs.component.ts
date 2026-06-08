@@ -29,6 +29,7 @@ interface StatusTab {
 
 export class OnBehalfOfWfhTabsComponent implements OnInit, OnDestroy {
   readonly tabsKey = 'on-behalf-of-approval-wfh-tabs';
+  private readonly baseUrl = '/on-behalf-of/on-behalf-of-wfh';
   filteredTabs: any[] = [];
   public defaultRoute = '';
   loading = false
@@ -44,35 +45,35 @@ export class OnBehalfOfWfhTabsComponent implements OnInit, OnDestroy {
 
   navTabs: any[] = [
     {
-      tabId: '/on-be-half-of-wfh/waiting-for-approval',
+      tabId: '/on-behalf-of/on-behalf-of-wfh/waiting-for-approval',
       label: 'Waiting For Approval',
       link: 'waiting-for-approval',
       icon: '/time-off-icon/waiting-for-approval-icon.png',
       permission: { feature: 'Waiting For Approval (On Behalf Of WFH)', action: 'view' },
     },
     {
-      tabId: '/on-be-half-of-wfh/approved',
+      tabId: '/on-behalf-of/on-behalf-of-wfh/approved',
       label: 'Approved',
       link: 'approved',
       icon: '/time-off-icon/approved-icon.png',
       permission: { feature: 'Approved (On Behalf Of WFH)', action: 'view' },
     },
     {
-      tabId: '/on-be-half-of-wfh/processed',
+      tabId: '/on-behalf-of/on-behalf-of-wfh/processed',
       label: 'Processed',
       link: 'processed',
       icon: '/time-off-icon/processed-icon.png',
       permission: { feature: 'Processed (On Behalf Of WFH)', action: 'view' },
     },
     {
-      tabId: '/on-be-half-of-wfh/rejected',
+      tabId: '/on-behalf-of/on-behalf-of-wfh/rejected',
       label: 'Rejected',
       link: 'rejected',
       icon: '/time-off-icon/rejected-icon.png',
       permission: { feature: 'Rejected (On Behalf Of WFH)', action: 'view' },
     },
     {
-      tabId: '/on-be-half-of-wfh/cancelled',
+      tabId: '/on-behalf-of/on-behalf-of-wfh/cancelled',
       label: 'Cancelled',
       link: 'cancelled',
       icon: '/time-off-icon/cancelled-icon.png',
@@ -101,8 +102,9 @@ export class OnBehalfOfWfhTabsComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.filterTabsByRbac();
-    this.updateNavigation();
+    void this.menuOrderService.ensureLoaded().then(() => {
+      this.filterTabsByRbac();
+    });
 
     this.http.onBehalfOfWFHSelectedEmp$.pipe(takeUntil(this.destroy$)).subscribe((emp: number) => {
       if (emp) {
@@ -173,7 +175,7 @@ export class OnBehalfOfWfhTabsComponent implements OnInit, OnDestroy {
   updateNavTabs() {
     this.navTabs = [
       {
-        tabId: '/on-be-half-of-wfh/waiting-for-approval',
+        tabId: '/on-behalf-of/on-behalf-of-wfh/waiting-for-approval',
         label: 'Waiting For Approval',
         link: 'waiting-for-approval',
         icon: '/time-off-icon/waiting-for-approval-icon.png',
@@ -181,7 +183,7 @@ export class OnBehalfOfWfhTabsComponent implements OnInit, OnDestroy {
         permission: { feature: 'Waiting For Approval (On Behalf Of WFH)', action: 'view' },
       },
       {
-        tabId: '/on-be-half-of-wfh/approved',
+        tabId: '/on-behalf-of/on-behalf-of-wfh/approved',
         label: 'Approved',
         link: 'approved',
         icon: '/time-off-icon/approved-icon.png',
@@ -189,7 +191,7 @@ export class OnBehalfOfWfhTabsComponent implements OnInit, OnDestroy {
         permission: { feature: 'Approved (On Behalf Of WFH)', action: 'view' },
       },
       {
-        tabId: '/on-be-half-of-wfh/processed',
+        tabId: '/on-behalf-of/on-behalf-of-wfh/processed',
         label: 'Processed',
         link: 'processed',
         icon: '/time-off-icon/processed-icon.png',
@@ -197,7 +199,7 @@ export class OnBehalfOfWfhTabsComponent implements OnInit, OnDestroy {
         permission: { feature: 'Processed (On Behalf Of WFH)', action: 'view' },
       },
       {
-        tabId: '/on-be-half-of-wfh/rejected',
+        tabId: '/on-behalf-of/on-behalf-of-wfh/rejected',
         label: 'Rejected',
         link: 'rejected',
         icon: '/time-off-icon/rejected-icon.png',
@@ -205,7 +207,7 @@ export class OnBehalfOfWfhTabsComponent implements OnInit, OnDestroy {
         permission: { feature: 'Rejected (On Behalf Of WFH)', action: 'view' },
       },
       {
-        tabId: '/on-be-half-of-wfh/cancelled',
+        tabId: '/on-behalf-of/on-behalf-of-wfh/cancelled',
         label: 'Cancelled',
         link: 'cancelled',
         icon: '/time-off-icon/cancelled-icon.png',
@@ -231,9 +233,9 @@ export class OnBehalfOfWfhTabsComponent implements OnInit, OnDestroy {
   }
 
   private updateNavigation(): void {
-    this.defaultRoute = this.filteredTabs.length > 0 ? `/on-be-half-of-wfh/${this.filteredTabs[0].link}` : '';
-    const currentUrl = this.router.url;
-    const baseUrl = '/on-be-half-of-wfh';
+    this.defaultRoute = this.filteredTabs.length > 0 ? `${this.baseUrl}/${this.filteredTabs[0].link}` : '';
+    const currentUrl = this.router.url.split('?')[0];
+    const baseUrl = this.baseUrl;
 
     if ((currentUrl === baseUrl || currentUrl === `${baseUrl}/`) && this.defaultRoute) {
       this.router.navigateByUrl(this.defaultRoute);

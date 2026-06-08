@@ -10,7 +10,7 @@
   tabsDndIdProp="tabId"
   tabsDndRouteProp="link">
     <li class="nav-item" *ngFor="let tab of tabs; trackBy: trackByTabId" cdkDrag cdkDragLockAxis="y" cdkDragBoundary=".component-left-tabs-container">
-      <div class="nav-link" [routerLink]="[tab.link]"  [class.active-nav-link]="isTabActive(tab.link)"  >
+      <div class="nav-link" (click)="navigate(tab.link)" [class.active-nav-link]="isTabActive(tab.link)"  >
         <img [src]="tab.icon" alt="Icon" class="icon mb-2">
         <div class="d-flex">{{ tab.label | translate}}</div>
       </div>

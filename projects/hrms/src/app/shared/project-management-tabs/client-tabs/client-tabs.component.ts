@@ -68,7 +68,6 @@ export class ClientTabsComponent {
       this.filterTabsByRbac();
       this.redirectIfOnBaseRoute();
     });
-    this.redirectIfOnBaseRoute();
   }
 
 filterTabsByRbac(): void {

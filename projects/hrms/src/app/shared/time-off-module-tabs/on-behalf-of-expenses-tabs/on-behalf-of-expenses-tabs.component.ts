@@ -18,8 +18,9 @@ import { MenuOrderService } from '../../../services/theme-service/menu-order.ser
   templateUrl: './on-behalf-of-expenses-tabs.component.html',
   styleUrl: './on-behalf-of-expenses-tabs.component.scss'
 })
-export class OnBehalfOfExpensesTabsComponent {
+export class OnBehalfOfExpensesTabsComponent implements OnInit, OnDestroy {
   readonly tabsKey = 'on-behalf-of-expenses-tabs';
+  private readonly baseUrl = '/on-behalf-of/on-behalf-of-expenses';
   filteredTabs: any[] = [];
   loading = false
   empdata = {} as any;
@@ -88,7 +89,8 @@ export class OnBehalfOfExpensesTabsComponent {
   constructor(private http: HttpService, private rbac: RbacService, private router: Router, private SelectedyeartimeOffService: TimeoffYearFilterService, private menuOrderService: MenuOrderService) {
   }
   
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
+    await this.menuOrderService.ensureLoaded();
     this.selectemp = null;
     this.expenesEmplyeedata.next([]);
     this.flitredapproved.next([]);
@@ -105,21 +107,7 @@ export class OnBehalfOfExpensesTabsComponent {
 
     // Apply saved order
     this.filteredTabs = this.menuOrderService.applySavedTabsOrder(this.tabsKey, this.navTabs, (t) => t.tabId || t.link);
-
-    if (this.filteredTabs.length > 0) {
-      this.defaultRoute = this.filteredTabs[0].link;
-    }
-
-    const currentUrl = this.router.url;
-    const baseUrl = '/on-behalf-of/on-behalf-of-expenses';
-    if (currentUrl === baseUrl && this.defaultRoute) {
-      this.router.navigateByUrl(this.defaultRoute);
-      return;
-    }
-    const isAllowed = this.filteredTabs.some(tab => tab.link === currentUrl || tab.tabId === currentUrl || currentUrl.endsWith(`/${tab.link}`));
-    if (!isAllowed && this.defaultRoute) {
-      this.router.navigateByUrl(this.defaultRoute);
-    }
+    this.updateNavigation();
 
     // Subscribe with takeUntil for cleanup
     this.http.selectedEmployeeIdExpensesforonbehalf$
@@ -202,10 +190,28 @@ export class OnBehalfOfExpensesTabsComponent {
     );
 
     this.filteredTabs = this.menuOrderService.applySavedTabsOrder(this.tabsKey, this.navTabs, (t) => t.tabId || t.link);
+    this.updateNavigation();
   }
 
   trackByTabId(_: number, tab: any): string {
     return tab.tabId || tab.link;
+  }
+
+  private updateNavigation(): void {
+    const currentUrl = this.router.url.split('?')[0];
+    this.defaultRoute = this.filteredTabs.length > 0 ? `${this.baseUrl}/${this.filteredTabs[0].link}` : '';
+
+    if ((currentUrl === this.baseUrl || currentUrl === `${this.baseUrl}/`) && this.defaultRoute) {
+      this.router.navigateByUrl(this.defaultRoute);
+      return;
+    }
+
+    const isAllowed = this.filteredTabs.some(tab =>
+      currentUrl === tab.tabId || currentUrl.endsWith(`/${tab.link}`)
+    );
+    if (!isAllowed && currentUrl.startsWith(this.baseUrl) && this.defaultRoute) {
+      this.router.navigateByUrl(this.defaultRoute);
+    }
   }
 
   updateAllFilteredExpenses() {
@@ -225,7 +231,7 @@ export class OnBehalfOfExpensesTabsComponent {
     this.updateNavTabs();
   }
   get isOnBehalfAddPage(): boolean {
-    return this.router.url.includes('/on-behalf-of/on-behalf-of-expenses/add');
+    return this.router.url.includes(`${this.baseUrl}/add`);
   }
 ngOnDestroy(): void {
   this.destroy$.next(true);

@@ -2345,14 +2345,11 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     return 'header-default';
   }
 
-  onclickinfo(day?: any) {
-    console.log(day.value.pendingApprovalDetails);
-    console.log(day);
-    console.log(day.get('description')?.value)
-    console.log(day.get('taskName')?.value)
-    this.approvardetails = day.value.pendingApprovalDetails;
-    this.approvardetails.description = day.get('description')?.value
-  }
+  onclickinfo(day?: any) { 
+    this.approvardetails = { ...(day.value.pendingApprovalDetails || {}) }; 
+    this.approvardetails.description = day.get('description')?.value;
+    this.approvardetails.taskName = day.get('taskName')?.value;  
+   }
   ngOnDestroy() {
     this.destroy$.next(true);
     this.destroy$.complete();

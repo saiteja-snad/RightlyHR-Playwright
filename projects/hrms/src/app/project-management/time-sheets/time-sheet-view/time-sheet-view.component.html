@@ -246,7 +246,7 @@
                         (keyup.enter)="formatTime($event, 'tue', i, 'duration',project.get('tue'))"
                         (blur)="formatTime($event, 'tue', i, 'duration',project.get('tue'))">
                     <span *ngIf="project.get('tue.duration')?.value && (project.get('tue.approvalStatus')?.value === 'Rejected'||project.get('tue.approvalStatus')?.value === 'Waiting for Approval'
-                        ||project.get('tue.approvalStatus')?.value === 'Processed')" class="timesheet-input-info" (mousedown)="$event.preventDefault()">
+                        ||project.get('tue.approvalStatus')?.value === 'Processed')" class="input-group-text border-none" (mousedown)="$event.preventDefault()">
                          <a [ngbPopover]="approvalInfo"
                             triggers="click"
                             popoverClass="approval-info-popover"
@@ -287,7 +287,7 @@
                         (keyup.enter)="formatTime($event, 'wed', i, 'duration',project.get('wed'))"
                         (blur)="formatTime($event, 'wed', i, 'duration',project.get('wed'))">
                     <span *ngIf="project.get('wed.duration')?.value && (project.get('wed.approvalStatus')?.value === 'Rejected'||project.get('wed.approvalStatus')?.value === 'Waiting for Approval'
-                        ||project.get('wed.approvalStatus')?.value === 'Processed')" class="timesheet-input-info" (mousedown)="$event.preventDefault()">
+                        ||project.get('wed.approvalStatus')?.value === 'Processed')" class="input-group-text border-none" (mousedown)="$event.preventDefault()">
                          <a [ngbPopover]="approvalInfo"
                             triggers="click"
                             popoverClass="approval-info-popover"
@@ -328,7 +328,7 @@
                         (keyup.enter)="formatTime($event, 'thu', i, 'duration',project.get('thu'))"
                         (blur)="formatTime($event, 'thu', i, 'duration',project.get('thu'))">
                     <span *ngIf="project.get('thu.duration')?.value && (project.get('thu.approvalStatus')?.value === 'Rejected'||project.get('thu.approvalStatus')?.value === 'Waiting for Approval'
-                        ||project.get('thu.approvalStatus')?.value === 'Processed')" class="timesheet-input-info" (mousedown)="$event.preventDefault()">
+                        ||project.get('thu.approvalStatus')?.value === 'Processed')" class="input-group-text border-none" (mousedown)="$event.preventDefault()">
                          <a [ngbPopover]="approvalInfo"
                             triggers="click"
                             popoverClass="approval-info-popover"
@@ -369,7 +369,7 @@
                         (keyup.enter)="formatTime($event, 'fri', i, 'duration',project.get('fri'))"
                         (blur)="formatTime($event, 'fri', i, 'duration',project.get('fri'))">
                     <span *ngIf="project.get('fri.duration')?.value && (project.get('fri.approvalStatus')?.value === 'Rejected'||project.get('fri.approvalStatus')?.value === 'Waiting for Approval'
-                        ||project.get('fri.approvalStatus')?.value === 'Processed')" class="timesheet-input-info" (mousedown)="$event.preventDefault()">
+                        ||project.get('fri.approvalStatus')?.value === 'Processed')" class="input-group-text border-none" (mousedown)="$event.preventDefault()">
                          <a [ngbPopover]="approvalInfo"
                             triggers="click"
                             popoverClass="approval-info-popover"
@@ -409,7 +409,7 @@
                         (keyup.enter)="formatTime($event, 'sat', i, 'duration',project.get('sat'))"
                         (blur)="formatTime($event, 'sat', i, 'duration',project.get('sat'))">
                     <span *ngIf="project.get('sat.duration')?.value && (project.get('sat.approvalStatus')?.value === 'Rejected'||project.get('sat.approvalStatus')?.value === 'Waiting for Approval'
-                        ||project.get('sat.approvalStatus')?.value === 'Processed')" class="timesheet-input-info" (mousedown)="$event.preventDefault()">
+                        ||project.get('sat.approvalStatus')?.value === 'Processed')" class="input-group-text border-none" (mousedown)="$event.preventDefault()">
                          <a [ngbPopover]="approvalInfo"
                             triggers="click"
                             popoverClass="approval-info-popover"
@@ -449,7 +449,7 @@
                         (keyup.enter)="formatTime($event, 'sun', i, 'duration',project.get('sun'))"
                         (blur)="formatTime($event, 'sun', i, 'duration',project.get('sun'))">
                     <span *ngIf="project.get('sun.duration')?.value && (project.get('sun.approvalStatus')?.value === 'Rejected'||project.get('sun.approvalStatus')?.value === 'Waiting for Approval'
-                        ||project.get('sun.approvalStatus')?.value === 'Processed')" class="timesheet-input-info" (mousedown)="$event.preventDefault()">
+                        ||project.get('sun.approvalStatus')?.value === 'Processed')" class="input-group-text border-none" (mousedown)="$event.preventDefault()">
                         <a [ngbPopover]="approvalInfo"
                             triggers="click"
                             popoverClass="approval-info-popover"
@@ -796,7 +796,10 @@
                 'bi bi-check-circle-fill': getHeaderClass(approvardetails?.status) === 'header-approved',
                 'bi bi-x-circle-fill':    getHeaderClass(approvardetails?.status) === 'header-rejected',
                 'bi bi-clock-history':    getHeaderClass(approvardetails?.status) !== 'header-approved' && 
-                getHeaderClass(approvardetails?.status) !== 'header-rejected'}"></i>Approval pending request info
+                getHeaderClass(approvardetails?.status) !== 'header-rejected'}"></i> 
+                <span *ngIf="approvardetails?.status === 'Processed'">Approved request info</span>
+                <span *ngIf="approvardetails?.status === 'Rejected'">Rejected request info</span>
+                <span *ngIf="approvardetails?.status === 'Waiting for Approval'">Approval pending request info</span>
         </div>
         <div class="approval-body">
             <div class="approval-row">

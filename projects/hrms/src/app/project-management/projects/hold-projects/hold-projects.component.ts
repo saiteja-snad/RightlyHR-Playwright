@@ -220,16 +220,34 @@ export class HoldProjectsComponent implements OnInit, OnDestroy {
   getAllHoldProjects() {
     this.loading = true;
     let url = `Project?status=hold&pageNumber=${this.page}&pageSize=${this.pageSize}`;
+ 
+    if(this.rbac.allowedToAccess('View Assigned Projects.view')) {
+       url = `Project?status=hold&employeeId=${this.empinfo.employeeId}&pageNumber=${this.page}&pageSize=${this.pageSize}`;
 
-    if (this.searchValue?.trim()) {
-      url += `&searchTerm=${encodeURIComponent(this.searchValue.trim())}`;
-    }
+      if (this.searchValue?.trim()) {
+        url += `&searchTerm=${encodeURIComponent(this.searchValue.trim())}`;
+      }
 
-    if (this.selectedDepartmentIds.length > 0) {
-      url += `&departmentIds=${this.selectedDepartmentIds.join(',')}`;
+      if (this.selectedDepartmentIds.length > 0) {
+        url += `&departmentIds=${this.selectedDepartmentIds.join(',')}`;
+      }
+      if (this.selectedProjectTypes.length > 0) {
+        url += `&projectTypes=${this.selectedProjectTypes.join(',')}`;
+      }
     }
-    if (this.selectedProjectTypes.length > 0) {
-      url += `&projectTypes=${this.selectedProjectTypes.join(',')}`;
+    else {
+       url = `Project?status=hold&pageNumber=${this.page}&pageSize=${this.pageSize}`;
+
+      if (this.searchValue?.trim()) {
+        url += `&searchTerm=${encodeURIComponent(this.searchValue.trim())}`;
+      }
+
+      if (this.selectedDepartmentIds.length > 0) {
+        url += `&departmentIds=${this.selectedDepartmentIds.join(',')}`;
+      }
+      if (this.selectedProjectTypes.length > 0) {
+        url += `&projectTypes=${this.selectedProjectTypes.join(',')}`;
+      }
     }
     const clientIds = this.selectedClients
       .map((c: any) => c?.clientId)

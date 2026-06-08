@@ -43,7 +43,14 @@ export class ActiveClientsComponent implements OnInit, OnDestroy {
   }
 
   getClientsData(): void {
-    this.http.getData(`Client/GetAll?status=Active`).pipe(takeUntil(this.destroy$)).subscribe({
+    let url = 'Client/GetAll?status=Active';
+    if(this.rbac.allowedToAccess('View Assigned Clients.view')){
+      url = `Client/GetAll?status=Active&employeeId=${this.empinfo.employeeId}`;
+    }
+    else{
+      url = `Client/GetAll?status=Active`;
+    }
+    this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.loading = false;
         this.clients = Array.isArray(res?.data) ? res.data : [];

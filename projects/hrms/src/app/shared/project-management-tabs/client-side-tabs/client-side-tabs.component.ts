@@ -12,6 +12,7 @@ import { HttpService } from '../../../services/http.service';
 })
 
 export class ClientSideTabsComponent {
+  empinfo = {} as any;
   statusCounts: any = {};
   destroy$: Subject<boolean> = new Subject<boolean>();
   filteredTabs: any[] = [];
@@ -33,6 +34,7 @@ export class ClientSideTabsComponent {
   constructor(public rbac: RbacService, private router: Router, private http: HttpService) { }
 
   ngOnInit(): void {
+    this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
     this.getcountData();
     this.filterTabsByRbac();
     this.http.clientcountfuntion$.subscribe(() => {
@@ -50,14 +52,31 @@ export class ClientSideTabsComponent {
   }
 
   getcountData(): void {
-    this.http.getData(`StatusCount?moduleName=Client`).pipe(takeUntil(this.destroy$)).subscribe({
-      next: (res: any) => {
-        this.statusCounts = {};
-        res.data.forEach((item: any) => {
-          this.statusCounts[item.status.toLowerCase()] = item.count || 0;
-        })
-      },
-      error: (err) => { }
-    });
+    // this.http.getData(`StatusCount?moduleName=Client`).pipe(takeUntil(this.destroy$)).subscribe({
+    //   next: (res: any) => {
+    //     this.statusCounts = {};
+    //     res.data.forEach((item: any) => {
+    //       this.statusCounts[item.status.toLowerCase()] = item.count || 0;
+    //     })
+    //   },
+    //   error: (err) => { }
+    // });
+    let url = `StatusCount?moduleName=Client`;
+
+    if (this.rbac.allowedToAccess('View Assigned Clients.view')) {
+      url += `&employeeId=${this.empinfo.employeeId}`;
+    }
+
+    this.http.getData(url)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res: any) => {
+          this.statusCounts = {};
+          res.data.forEach((item: any) => {
+            this.statusCounts[item.status.toLowerCase()] = item.count || 0;
+          });
+        },
+        error: (err) => { }
+      });
   }
 }

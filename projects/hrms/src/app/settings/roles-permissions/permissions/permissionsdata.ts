@@ -1144,6 +1144,9 @@ export const permissionsData = [
   { fields: 'Project Detailed Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Project Timesheets Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Project Phases Tab', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'View All Projects', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'View Assigned Projects', View: false, Update: false, Create: false, Delete: false },
+
 
   //Documents
   { fields: 'NDA Document', View: false, Update: false, Create: false, Delete: false },
@@ -1157,6 +1160,9 @@ export const permissionsData = [
   { fields: 'Client Resources', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Client Timesheets', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Client Detailed Tab', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'View All Clients', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'View Assigned Clients', View: false, Update: false, Create: false, Delete: false },
+
 
   { fields: 'Project Type', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Industry Type', View: false, Update: false, Create: false, Delete: false },

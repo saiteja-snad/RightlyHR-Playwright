@@ -329,18 +329,38 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
   getAllActiveProjects() {
     this.loading = true;
     let url = `Project?status=Active&pageNumber=${this.page}&pageSize=${this.pageSize}`;
+    if(this.rbac.allowedToAccess('View Assigned Projects.view')) {
+       url = `Project?status=Active&employeeId=${this.empinfo.employeeId}&pageNumber=${this.page}&pageSize=${this.pageSize}`;
 
-    if (this.searchValue?.trim()) {
-      url += `&searchTerm=${encodeURIComponent(this.searchValue.trim())}`;
+      if (this.searchValue?.trim()) {
+        url += `&searchTerm=${encodeURIComponent(this.searchValue.trim())}`;
+      }
+
+      if (this.selectedDepartmentIds) {
+        url += `&departmentIds=${this.selectedDepartmentIds}`;
+      }
+
+      if (this.selectedProjectTypes && this.selectedProjectTypes.length > 0) {
+        url += `&projectTypes=${this.selectedProjectTypes.join(',')}`;
+      }
     }
 
-    if (this.selectedDepartmentIds) {
-      url += `&departmentIds=${this.selectedDepartmentIds}`;
-    }
+    else {
+       url = `Project?status=Active&pageNumber=${this.page}&pageSize=${this.pageSize}`;
 
-    if (this.selectedProjectTypes && this.selectedProjectTypes.length > 0) {
-      url += `&projectTypes=${this.selectedProjectTypes.join(',')}`;
+      if (this.searchValue?.trim()) {
+        url += `&searchTerm=${encodeURIComponent(this.searchValue.trim())}`;
+      }
+
+      if (this.selectedDepartmentIds) {
+        url += `&departmentIds=${this.selectedDepartmentIds}`;
+      }
+
+      if (this.selectedProjectTypes && this.selectedProjectTypes.length > 0) {
+        url += `&projectTypes=${this.selectedProjectTypes.join(',')}`;
+      }
     }
+    
 
     const clientIds = this.selectedClients
       .map((c: any) => c?.clientId)

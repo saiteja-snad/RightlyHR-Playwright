@@ -164,6 +164,7 @@ export const TIME_OFF_SUB_TABS = [
   { route: '/time-off/leaves/approved', permission: 'Approved (Time Off).view' },
   { route: '/time-off/leaves/processed', permission: 'Processed (Time Off).view' },
   { route: '/time-off/leaves/rejected', permission: 'Rejected (Time Off).view', },
+  { route: '/time-off/leaves/entitlement-frequency', permission: 'Entitlement Summary (Time Off).view', }
 ]
 
 export const REMOTE_LOGIN_SUB_TABS = [

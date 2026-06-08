@@ -34,7 +34,8 @@ export class OnBeHalfOfApprovalTabsComponent implements OnInit{
     { label: 'Approved', route: 'approved', icon: '/time-off-icon/approved-icon.png', permission: { feature: 'Approved (On Behalf Of)', action: 'view' } },
     { label: 'Processed', route: 'processed', icon: '/time-off-icon/processed-icon.png', permission: { feature: 'Processed (On Behalf Of)', action: 'view' } },
     { label: 'Rejected', route: 'rejected', icon: '/time-off-icon/rejected-icon.png', permission: { feature: 'Rejected (On Behalf Of)', action: 'view' } },
-    { label: 'Cancelled', route: 'cancel', icon: '/time-off-icon/cancelled-icon.png', permission: { feature: 'Cancelled (On Behalf Of)', action: 'view' } }
+    { label: 'Cancelled', route: 'cancel', icon: '/time-off-icon/cancelled-icon.png', permission: { feature: 'Cancelled (On Behalf Of)', action: 'view' } },
+    { label: 'Entitlement Summary', route: 'entitlement-summary', icon: '/time-off-icon/Entitlement Summary.png', permission: { feature: 'Entitlement Summary (On Behalf Of)', action: 'view' } },
   ];
   filteredTabs: any[] = [];
 
@@ -90,6 +91,7 @@ export class OnBeHalfOfApprovalTabsComponent implements OnInit{
             { label: 'Processed', route: 'processed', count: processed.length, icon: '/time-off-icon/processed-icon.png', permission: { feature: 'Processed (On Behalf Of)', action: 'view' } },
             { label: 'Rejected', route: 'rejected', count: rejected.length, icon: '/time-off-icon/rejected-icon.png', permission: { feature: 'Rejected (On Behalf Of)', action: 'view' } },
             { label: 'Cancelled', route: 'cancel', count: Cancelled.length, icon: '/time-off-icon/cancelled-icon.png', permission: { feature: 'Cancelled (On Behalf Of)', action: 'view' } },
+            { label: 'Entitlement Summary', route: 'entitlement-summary', icon: '/time-off-icon/Entitlement Summary.png', permission: { feature: 'Entitlement Summary (On Behalf Of)', action: 'view' } }
 
           ];
           this.filterTabsByRbac();

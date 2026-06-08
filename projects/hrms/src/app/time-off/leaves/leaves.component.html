@@ -9,14 +9,28 @@
         </div>
 
         <div class="d-flex align-items-center gap-3">
+             @if(isEntitlementFrequencyRoute) {
+            <div class="d-flex gap-2 align-items-center">
+                <label class="form-label custom-label filter-labels m-0" for="">{{ 'Frequency' | translate }}</label>
+                <div class="custom-p-multiSelect-content">
+                    <p-multiselect [options]="frequencyOptions" [(ngModel)]="selectedFrequencies" 
+                        optionLabel="label" optionValue="value" 
+                        placeholder="Select Frequency" [showClear]="true"
+                        class="form-select custom-select" (onChange)="onFrequencyChange()"
+                        (onClear)="onFrequencyChange()" filterPlaceHolder="Search frequency" [resetFilterOnHide]="true">
+                    </p-multiselect>
+                </div>
+            </div>
+            }
             @if(rbac.allowedToAccess('All Employees (Time Off).view') && rbac.allowedToAccess('My Team (Time Off).view')) {
             <div class="d-flex align-items-center gap-2">
                 <label for="education" class="form-label custom-label text-nowrap filter-labels m-0">
                     {{'Select Employee' | translate}}</label>
                 <div class="custom-p-select-content">
-                    <p-select [options]="activeEmplist" [filter]="true" filterBy="label" resetFilterOnHide="true"
+                    <p-select [options]="activeEmplist" [filter]="true" filterBy="label"
                      optionLabel="label" optionValue="value" showClear="true" placeholder="Select employee name"
-                     (onChange)="onCheckemployee($event.value)" class="form-select custom-select"></p-select>
+                     (onChange)="onCheckemployee($event.value)" class="form-select custom-select" filterPlaceHolder="Search employee name" [resetFilterOnHide]="true"
+                    ></p-select>
                 </div>
             </div>
             }
@@ -24,9 +38,9 @@
             <div class="d-flex align-items-center gap-2">
                 <label for="education" class="form-label custom-label text-nowrap filter-labels m-0">{{'Select Employee' | translate}}</label>
                 <div class="custom-p-select-content">
-                    <p-select [options]="activeEmplist" [filter]="true" filterBy="label" resetFilterOnHide="true" optionLabel="label"
+                    <p-select [options]="activeEmplist" [filter]="true" filterBy="label" optionLabel="label"
                     optionValue="value" showClear="true" placeholder="Select employee name" (onChange)="onCheckemployee($event.value)"
-                    class="form-select custom-select"></p-select>
+                    class="form-select custom-select" filterPlaceHolder="Search employee name" [resetFilterOnHide]="true"></p-select>
                 </div>
             </div>
             }
@@ -35,9 +49,10 @@
                 <label class="form-label filter-labels m-0">{{'My Team'| translate}}</label>
                 <div class="custom-p-select-content">
                     <p-select [options]="getEmployeeInfo" optionLabel="fullName" showClear="true" optionValue="employeeId"
-                        name="myteamemployees" placeholder="Select employee name" [filter]="true" resetFilterOnHide="true"
+                        name="myteamemployees" placeholder="Select employee name" [filter]="true"
                         class="form-select custom-select" [autoDisplayFirst]="false" required
-                        (onChange)="onCheckemployee($event.value)">
+                        (onChange)="onCheckemployee($event.value)" [resetFilterOnHide]="true"
+                        filterPlaceHolder="Search employee name">
                     </p-select>
                 </div>
             </div>
@@ -77,9 +92,8 @@
         <div class="cards-grid-container">
             @for (item of categoryDetails; track $index) {
             <div class="leaves-category-card">
-                <div>
-                    <p class="leave-content-text text-wrap m-0 mb-2" [style.color]="item.category.categoryColor">{{
-                        item.category.name }}</p>
+                <p class="leave-content-text text-wrap m-0" [style.color]="item.category.categoryColor">{{ item.category.name }}</p>
+                <div class="d-flex justify-content-between align-items-center">
                     <div class="d-flex gap-2">
                         <div class="leave-category-text">
                             <p class="m-0">Booked</p>
@@ -88,7 +102,7 @@
                         <div class="separator"></div>
                         <div class="leave-category-text">
                             <p class="m-0">Processed</p>
-                            @if (item.category.isProbationAllowed && item.probationLeaves >= 0) {
+                            @if (item.category.isProbationAllowed && item.probationLeaves > 0) {
                             <p class="m-0">{{item.utilizedDays ? item.utilizedDays : '0'}}</p>
                             }
                             @else if (item.category.isProbationAllowed && (!item.probationLeaves || item.probationLeaves === 0)) {
@@ -134,20 +148,18 @@
                         </div>
                         }
                     </div>
-                </div>
-                <div class="progress-content">
-                    <div class="circular-progress" [style.background]="'conic-gradient(' + item.category.categoryColor + ' '  +
-                 getProgress(item) + 'deg, ' + getTransparentColor(item.category.categoryColor, 0.3) + ' 0deg)'">
-                        <span class="progress-value">
-                            <span class="avaliable-leaves-text">{{ getAvailableLeaves(item) }}</span>
-                            @if(this.employeeiddetails.empType === 'Probation' && (item.category.isProbationAllowed && item.probationLeaves >= 0)){
-                            <span class="total-leaves-text">/{{item.probationLeaves}}</span>
-                            }
-                            @else {
-                            <span class="total-leaves-text">/{{item.allowedDays}}</span>
-                            }
-                        </span>
+                    <div class="progress-content">
+                        <div class="circular-progress" [style.background]="'conic-gradient(' + item.category.categoryColor + ' '  
+                        + getProgress(item) + 'deg, ' + getTransparentColor(item.category.categoryColor, 0.3) + ' 0deg)'">
+                            <span class="progress-value">
+                                <span class="avaliable-leaves-text">{{ getAvailableLeaves(item) }}</span>
+                                <span class="total-leaves-text">/{{item.allowedDays}}</span>
+                            </span>
+                        </div>
                     </div>
+                </div>
+                <div class="frequency-chip">
+                    <p-chip [label]="formatFrequency(item.category.entitlementFrequency)" styleClass="chip-frequency" />
                 </div>
             </div>
             }
@@ -333,6 +345,10 @@
                     <p>Balance {{ selectedleave.category?.name }} : {{ remainingLeaves }} {{ remainingLeaves === 1 || remainingLeaves === 0.5 ? 'Day' : 'Days' }}</p>
                     </div>
                     }
+                </div>
+                <div class="alert alert-info custom-alert-info py-2" *ngIf="selectedleave?.category?.isNoticePeriodExtended === true 
+                && selectedleave?.category?.noticePeriodAllowedValue >= 0 && (this.employeeiddetails.separationType === 'Separation' || this.employeeiddetails.separationType === 'Early Relieving' || this.employeeiddetails.separationType === 'Extended')"  >
+                    <small>Note: Applying this leave will extend your last working day</small>
                 </div>
                 <div class="custom-modal-footer">
                     <button type="button" class="custom-btn btn-secondary" (click)="openModal(confirmationpopup)">{{'Cancel'| translate}}</button>

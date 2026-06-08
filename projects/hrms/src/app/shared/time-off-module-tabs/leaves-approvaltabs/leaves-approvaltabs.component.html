@@ -5,7 +5,7 @@
       <div class="nav-link" [routerLink]="[tab.link]" routerLinkActive="active-nav-link">
         <img [src]="tab.icon" alt="Icon" class="icon mb-2">
         <div class="d-flex gap-1">{{ tab.label }}
-          <ng-container *ngIf="tab.label !== 'Org Leave Balance'">
+          <ng-container *ngIf="tab.label !== 'Org Leave Balance' && tab.label !== 'Entitlement Summary'">
             ({{ tab.count ?? 0 }})
           </ng-container>
         </div>

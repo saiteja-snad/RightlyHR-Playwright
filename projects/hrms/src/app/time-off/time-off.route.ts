@@ -41,6 +41,7 @@ import { ExtraHoursWaitingForApprovalComponent } from './extra-hours/extra-hours
 import { ExtraHoursProcessComponent } from './extra-hours/extra-hours-process/extra-hours-process.component';
 import { ExtraHoursRejectComponent } from './extra-hours/extra-hours-reject/extra-hours-reject.component';
 import { LeaveSummaryComponent } from './leaves/leave-summary/leave-summary.component';
+import { EntitlementFrequencyComponent } from './leaves/entitlement-frequency/entitlement-frequency.component';
 
 export default [
   { path: '', redirectTo: '/time-off/leaves', pathMatch: 'full' },
@@ -53,6 +54,7 @@ export default [
       { path: 'rejected', component: LeavesRejectedComponent, data: { permission: 'Rejected (Time Off).view' } },
       { path: 'cancelled', component: CancelledComponent, data: { permission: 'Cancelled(Time Off).view' } },
       // { path: 'leave-summary', component: LeaveSummaryComponent, data: { permission: 'Cancelled(Time Off).view' } },
+      { path: 'entitlement-frequency', component: EntitlementFrequencyComponent, data: { permission: 'Entitlement Summary (Time Off).view', auditModule:'Time Off >> Leaves', auditPage: 'Entitlement Summary' } },
     ],
   },
   {

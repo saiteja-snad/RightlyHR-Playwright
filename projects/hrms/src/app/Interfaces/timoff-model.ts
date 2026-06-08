@@ -52,6 +52,8 @@ export interface Iorgcategoryleaves {
   minimumGapBetweenSameLeaveType?: number | null;
   gapCalculationBasis?: string | null;
   leaveType: string;
+  entitlementFrequency: string;
+  entitlementCycleHandling: string;
 }
 export interface ICategoryDetails {
   category: Iorgcategoryleaves;

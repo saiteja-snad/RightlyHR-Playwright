@@ -30,6 +30,7 @@ import { WfhComponent } from './onbehalf-of-approvals/wfh/wfh.component';
 import { PermissionsComponent } from './onbehalf-of-approvals/permissions/permissions.component';
 import { GlobalPermissionsComponent } from './global-actions/global-permissions/global-permissions.component';
 import { GlobalWfhComponent } from './global-actions/global-wfh/global-wfh.component';
+import { OnBeHalfOfEntitlementSummaryComponent } from './on-be-half-of/on-be-half-of-entitlement-summary/on-be-half-of-entitlement-summary.component';
 
 export default [
     { path: '', redirectTo: '/on-behalf-of/on-behalf-of', pathMatch: 'full' },
@@ -41,6 +42,7 @@ export default [
             { path: 'processed', component: OnBeHalfOfProcessComponent },
             { path: 'rejected', component: OnBeHalfOfRejectComponent },
             { path: 'cancel', component: OnBeHalfOfCancelComponent },
+            { path: 'entitlement-summary', component: OnBeHalfOfEntitlementSummaryComponent, data: { auditModule: 'On Behalf Of', auditPage: 'Entitlement Summary' } },
         ],
     },
     {

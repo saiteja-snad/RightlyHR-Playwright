@@ -1608,7 +1608,7 @@
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center" *ngIf="per.fields === 'Waiting For Approval (Time Off)' ||
                             per.fields === 'Approved (Time Off)' || per.fields === 'Processed (Time Off)' ||
-                            per.fields === 'Rejected (Time Off)' || per.fields === 'Request Leave Button' ||
+                            per.fields === 'Rejected (Time Off)' || per.fields === 'Request Leave Button' || per.fields === 'Entitlement Summary (Time Off)' ||
                             per.fields === 'Cancelled (Time Off)' || per.fields === 'My Team (Regularization)' || per.fields === 'Leave Summary (Time Off)' ||
                             per.fields === 'All Employees (Time Off)'|| per.fields === 'My Team (Time Off)' ||
                              per.fields === 'All Employees (Time Off Leave Summary)'|| per.fields === 'My Team (Time Off Leave Summary)' || per.fields === 'Leave Summary (Time Off) - Export'  ||
@@ -1875,7 +1875,7 @@
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center" *ngIf="per.fields === 'Waiting For Approval (On Behalf Of)' || per.fields === 'Approved (On Behalf Of)' ||
                                 per.fields === 'Request On Behalf Button' || per.fields === 'Rejected (On Behalf Of)' ||
-                                per.fields === 'Processed (On Behalf Of)' || per.fields === 'Cancelled (On Behalf Of)' ||
+                                per.fields === 'Processed (On Behalf Of)' || per.fields === 'Cancelled (On Behalf Of)' || per.fields === 'Entitlement Summary (On Behalf Of)' ||
                                 per.fields === 'My Team On Behalf Of' || per.fields === 'On Behalf Of All Employees' ">
                                 <td class="text-align-center">{{ per.fields }}</td>
                                 <td scope="row">

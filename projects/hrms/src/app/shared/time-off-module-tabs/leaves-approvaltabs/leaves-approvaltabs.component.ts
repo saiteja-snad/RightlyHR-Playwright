@@ -203,6 +203,12 @@ export class LeavesApprovaltabsComponent implements OnInit, OnDestroy{
         permission: { feature: 'Cancelled (Time Off)', action: 'view' },
         icon: '/time-off-icon/cancelled-icon.png'
       },
+      {
+        label: 'Entitlement Summary',
+        link: '/time-off/leaves/entitlement-frequency',
+        permission: { feature: 'Entitlement Summary (Time Off)', action: 'view' },
+        icon: '/time-off-icon/Entitlement Summary.png'
+      },
     ];
     this.statusTabs = this.statusTabs.filter(
       (tab) =>

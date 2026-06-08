@@ -5,6 +5,7 @@ import { FormBuilder, FormControl, FormGroup, FormsModule, NgForm, ReactiveForms
 import { PaginatorModule } from 'primeng/paginator';
 import { DropdownModule } from 'primeng/dropdown';
 import { Select } from 'primeng/select';
+import { MultiSelect } from 'primeng/multiselect';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { ICategoryDetails, ILeaves, Ileavesdatas, ILeavesTaken, Ilpid } from '../../Interfaces/timoff-model';
 import { AuthService } from '../../services/auth.service';
@@ -27,10 +28,12 @@ import { TimeoffYearFilterService } from '../../services/timeoff-year-filter.ser
 import { TimeoffSelectionService } from '../../services/timeoff-selection.service';
 import { ConfirmationIconComponent } from "../../icons/confirmation-icon/confirmation-icon.component";
 import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
+import { ChipModule } from 'primeng/chip';
+import { FrequencyFilterService } from '../../services/frequency-filter.service';
 @Component({
   selector: 'app-leaves',
   imports: [CommonModule, NgbNavModule, ModuleInfoIconComponent,NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, Select, Skeleton,
-    RouterModule, ReactiveFormsModule, TranslateModule, LeavesApprovaltabsComponent, TabsModule, ChartModule, ModuleInformationComponent, ConfirmationIconComponent],
+    RouterModule, ReactiveFormsModule, TranslateModule, LeavesApprovaltabsComponent, TabsModule, ChartModule, ModuleInformationComponent, ConfirmationIconComponent, ChipModule, MultiSelect],
   templateUrl: './leaves.component.html',
   styleUrl: './leaves.component.scss',
   encapsulation: ViewEncapsulation.None,
@@ -106,6 +109,14 @@ export class LeavesComponent implements OnInit, OnDestroy{
   destroy$: Subject<boolean> = new Subject<boolean>();
   sandwichMessage: string = '';
   sandwichData: any = null;
+  frequencyOptions = [
+    { label: 'Monthly', value: 'MONTHLY' },
+    { label: 'Quarterly', value: 'QUARTERLY' },
+    { label: 'Half Yearly', value: 'HALF_YEARLY' },
+    { label: 'Yearly', value: 'YEARLY' }
+  ];
+  selectedFrequencies: string[] = [];
+  isEntitlementFrequencyRoute: boolean = false;
 
   constructor(
     private http: HttpService,
@@ -118,7 +129,8 @@ export class LeavesComponent implements OnInit, OnDestroy{
     public formsValidation: FormValidationsService,
     private signalService: SignalsService, 
     private TimeoffYearFilterService: TimeoffYearFilterService,
-    private timeoffSelectionService: TimeoffSelectionService
+    private timeoffSelectionService: TimeoffSelectionService,
+    private frequencyFilterService: FrequencyFilterService
   ) {
     effect(() => {
       if (this.signalService.timecountTriggerSignal()) {
@@ -135,6 +147,7 @@ export class LeavesComponent implements OnInit, OnDestroy{
   ngOnInit(): void {
     this.loggedinuser = this.authService.getToken();
     this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
+    this.checkRoute();
     this.getCategoryDetails();
     this.initializeForm();
     this.getEmployeeid();
@@ -222,7 +235,6 @@ export class LeavesComponent implements OnInit, OnDestroy{
       this.getDataByLPID(employeedId);
       this.getLeavesData(employeedId);
       this.getCategoryempDetails(employeedId);
-      this.getEmployeeidV2(employeedId);
     } else {
       this.http.setEmployeeIdTimeoff(null);
       // Update new service
@@ -232,14 +244,24 @@ export class LeavesComponent implements OnInit, OnDestroy{
       this.getLeavesData(this.empdata.employeeId);
       this.getDataByLPID(this.empdata.employeeId);
       this.getCategoryempDetails(this.empdata.employeeId);
-      this.getEmployeeid();
     }
   }
 
   initiateUpdateModuleInfo() {
     this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe(() => {
       this.updateModuleInfo();
+      this.checkRoute();
     });
+  }
+
+  checkRoute() {
+    const url = this.router.url;
+    this.isEntitlementFrequencyRoute = url.includes('/time-off/leaves/entitlement-frequency');
+  }
+
+  onFrequencyChange() {
+    // Handle both selection and clear (when selectedFrequencies becomes empty array)
+    this.frequencyFilterService.setSelectedFrequencies(this.selectedFrequencies || []);
   }
 
   updateModuleInfo() {
@@ -434,7 +456,9 @@ getTeamManagersDetails() {
 
   getCategoryDetails() {
     this.loadingGraph = true;
-    this.subscription = this.http.getData(`LeaveEntitlements/v2/employee/${this.empdata.employeeId}?year=${this.selectedYear}`).pipe(takeUntil(this.destroy$)).subscribe({
+    let apiUrl = `LeaveEntitlements/v2/employee/${this.empdata.employeeId}?year=${this.selectedYear}`;
+    
+    this.subscription = this.http.getData(apiUrl).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: any) => {
         if (response.success) {
           this.loadingGraph = false;
@@ -456,7 +480,9 @@ getTeamManagersDetails() {
 
   getCategoryempDetails(employeedId: any) {
     const empdata = employeedId;
-    this.subscription = this.http.getData(`LeaveEntitlements/v2/employee/${empdata}?year=${this.selectedYear}`).pipe(takeUntil(this.destroy$)).subscribe({
+    let apiUrl = `LeaveEntitlements/v2/employee/${empdata}?year=${this.selectedYear}`;
+    
+    this.subscription = this.http.getData(apiUrl).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: any) => {
         if (response.success) {
           this.categoryDetails = response.data as ICategoryDetails[];
@@ -508,30 +534,10 @@ getTeamManagersDetails() {
   }
 
   getAvailableLeaves(item: any): number {
-    const isCompOff = [
-      'comp off',
-      'compoff',
-      'compensatory off',
-      'compensatory leaves',
-      'compensatory leave',
-      'compensatory off leave',
-      'compensatoryoff leaves',
-      'compensatoryoff leave',
-      'compensatory off leaves',
-      'comp off leave',
-      'compoff leave'
-    ].includes((item.category?.name ?? '').toLowerCase());
-    
-    const expiryDeduction = isCompOff ? (item.expiryDaysLeaves ? item.expiryDaysLeaves : 0) : 0;
-    
-    const isProbationActive = this.employeeiddetails.empType === 'Probation' && 
-      this.employeeiddetails?.probationEndDate && 
-      new Date(this.employeeiddetails.probationEndDate) > new Date();
-    
-    if (isProbationActive && item.category?.isProbationAllowed && item.probationLeaves > 0) {
-      return item.availableProbationLeaves; 
+    if (item.category?.isProbationAllowed && item.probationLeaves > 0) {
+      return item.probationLeaves - item.utilizedDays - item.booked - (item.expiryDaysLeaves ? item.expiryDaysLeaves : 0); 
     } else {
-      return item.allowedDays - item.utilizedDays - item.booked - expiryDeduction;
+      return item.allowedDays - item.utilizedDays - item.booked - (item.expiryDaysLeaves ? item.expiryDaysLeaves : 0);
     }
   }
 
@@ -549,38 +555,16 @@ getTeamManagersDetails() {
   }
 
   getProgress(item: any): number {
-    if (this.employeeiddetails.empType === 'Probation' && (item.category.isProbationAllowed && item.probationLeaves >= 0)) {
-      const available = this.getAvailableLeaves(item);
-      const total = item.probationLeaves || 1; // Avoid division by zero
-      const percentage = Math.max(0, Math.min(available / total, 1)); // Clamp between 0 and 1
-      return percentage * 360;
-    }
-    else {
-      const available = this.getAvailableLeaves(item);
-      const total = item.allowedDays || 1; // Avoid division by zero
-      const percentage = Math.max(0, Math.min(available / total, 1)); // Clamp between 0 and 1
-      return percentage * 360;
-    }
-
+    const available = this.getAvailableLeaves(item);
+    const total = item.allowedDays || 1; // Avoid division by zero
+    const percentage = Math.max(0, Math.min(available / total, 1)); // Clamp between 0 and 1
+    return percentage * 360;
   }
 
   getEmployeeid() {
     this.subscription = this.http.getData(`Employeedata/${this.empdata.employeeId}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data: any) => {
         this.employeeiddetails = data;
-        console.log(this.employeeiddetails);
-        
-        // this.calculateProbationLeavs(this.categoryDetails);
-      },
-    });
-  }
-
-  getEmployeeidV2(employeeId: string) {
-    this.subscription = this.http.getData(`Employeedata/${employeeId}`).pipe(takeUntil(this.destroy$)).subscribe({
-      next: (data: any) => {
-        this.employeeiddetails = data;
-        console.log(this.employeeiddetails);
-        
         // this.calculateProbationLeavs(this.categoryDetails);
       },
     });
@@ -688,8 +672,8 @@ getTeamManagersDetails() {
     const booked = this.selectedleave?.booked;
     const expired = this.selectedleave.expiryDaysLeaves;
     this.remainingLeaves = maxDays - (leavesTaken ? leavesTaken : 0) - booked - expired;
-    if (this.selectedleave && this.selectedleave.category && this.selectedleave.category.isProbationAllowed && this.employeeiddetails.empType === 'Probation') {
-      const probationLeavesTaken = this.selectedleave.availableProbationLeaves;
+    if (this.selectedleave && this.selectedleave.category && this.selectedleave.category.isProbationAllowed) {
+      const probationLeavesTaken = this.selectedleave.probationLeaves - (leavesTaken !== undefined ? leavesTaken : 0) - booked;
       if (probationLeavesTaken >= 0) {
         this.remainingLeaves = probationLeavesTaken;
       } else {
@@ -1540,6 +1524,14 @@ getTeamManagersDetails() {
     this.modalService.dismissAll();
     this.enableButton = false;
     this.selectedleave = null;
+  }
+
+  formatFrequency(value: string): string {
+    if (!value || !value.trim()) return 'Yearly';
+    return value
+      .split('_')
+      .map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+      .join(' ');
   }
 
   ngOnDestroy(): void {

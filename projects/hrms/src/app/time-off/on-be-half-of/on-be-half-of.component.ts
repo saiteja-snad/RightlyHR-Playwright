@@ -1,6 +1,7 @@
 import { Component, ElementRef, ViewChild, ViewEncapsulation } from '@angular/core';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { Select } from 'primeng/select';
+import { MultiSelect } from 'primeng/multiselect';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AuthService } from '../../services/auth.service';
 import { filter, forkJoin, Subscription } from 'rxjs';
@@ -25,6 +26,8 @@ import { FormValidationsService } from '../../services/form-validations.service'
 import { ConfirmationIconComponent } from "../../icons/confirmation-icon/confirmation-icon.component";
 import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
 import { TimeoffYearFilterService } from '../../services/timeoff-year-filter.service';
+import { FrequencyFilterService } from '../../services/frequency-filter.service';
+import { ChipModule } from 'primeng/chip';
 
 @Component({
   selector: 'app-on-be-half-of',
@@ -33,6 +36,7 @@ import { TimeoffYearFilterService } from '../../services/timeoff-year-filter.ser
     RouterModule,
     TranslateModule,
     Select,
+    MultiSelect,
     TabsModule,
     ChartModule,
     ReactiveFormsModule,
@@ -42,6 +46,7 @@ import { TimeoffYearFilterService } from '../../services/timeoff-year-filter.ser
     FormsModule,
     ConfirmationIconComponent,
     ModuleInfoIconComponent,
+    ChipModule
   ],
   templateUrl: './on-be-half-of.component.html',
   styleUrl: './on-be-half-of.component.scss',
@@ -164,6 +169,14 @@ export class OnBeHalfOfComponent {
   currentYear: number = new Date().getFullYear();
   selectedYear: number = this.currentYear;
   years: number[] = [];
+  frequencyOptions = [
+    { label: 'Monthly', value: 'MONTHLY' },
+    { label: 'Quarterly', value: 'QUARTERLY' },
+    { label: 'Half Yearly', value: 'HALF_YEARLY' },
+    { label: 'Yearly', value: 'YEARLY' }
+  ];
+  selectedFrequencies: string[] = [];
+  isEntitlementFrequencyRoute: boolean = false;
 
 
 
@@ -176,7 +189,8 @@ export class OnBeHalfOfComponent {
     private http: HttpService,
     public rbac: RbacService,
     public formsValidation: FormValidationsService,
-    private timeoffYearFilterService: TimeoffYearFilterService
+    private timeoffYearFilterService: TimeoffYearFilterService,
+    private frequencyFilterService: FrequencyFilterService
   ) {
     const today = new Date();
     this.minStartDate = today.toISOString().split('T')[0];
@@ -198,6 +212,7 @@ export class OnBeHalfOfComponent {
     this.updateModuleInfo();
     this.getMyTeamData();
     this.initiateUpdateModuleInfo();
+    this.checkRoute();
     this.currentYear = new Date().getFullYear();
     this.selectedYear = this.currentYear; // Move this up
     // Populate years list
@@ -233,12 +248,20 @@ export class OnBeHalfOfComponent {
   }
 
   onMyTeamChange(event: any): void {
-    this.selectedOtherEmployee = null; // Clear the other dropdown
+    this.selectedOtherEmployee = null;
+    if (!event?.value) {
+      this.resetOnBehalfOfData();
+      return;
+    }
     this.OnclickMyTeam(event);
   }
 
   onEmployeeChange(event: any): void {
-    this.selectedMyTeamEmployee = null; // Clear the My Team dropdown
+    this.selectedMyTeamEmployee = null;
+    if (!event?.value) {
+      this.resetOnBehalfOfData();
+      return;
+    }
     this.Onclick(event);
   }
 
@@ -247,7 +270,18 @@ export class OnBeHalfOfComponent {
       .pipe(filter((event) => event instanceof NavigationEnd))
       .subscribe(() => {
         this.updateModuleInfo();
+        this.checkRoute();
       });
+  }
+
+  checkRoute() {
+    const url = this.router.url;
+    this.isEntitlementFrequencyRoute = url.includes('/on-behalf-of/on-behalf-of/entitlement-summary');
+  }
+
+  onFrequencyChange() {
+    // Handle both selection and clear (when selectedFrequencies becomes empty array)
+    this.frequencyFilterService.setSelectedFrequencies(this.selectedFrequencies || []);
   }
 
   getMyTeamData() {
@@ -284,7 +318,7 @@ export class OnBeHalfOfComponent {
     const url = this.router.url;
 
     const routeToInfoMap: { [key: string]: string } = {
-      '/time-off/on-behalf-of': MODULE_INFOS.TIME_OFF_ON_BEHALF_OF_MODULE_INFO,
+      '/on-behalf-of/on-behalf-of': MODULE_INFOS.TIME_OFF_ON_BEHALF_OF_MODULE_INFO,
     };
 
     const matchedEntry = Object.entries(routeToInfoMap).find(([route]) =>
@@ -372,30 +406,10 @@ export class OnBeHalfOfComponent {
   }
 
   getAvailableLeaves(item: any): number {
-   const isCompOff = [
-      'comp off',
-      'compoff',
-      'compensatory off',
-      'compensatory leaves',
-      'compensatory leave',
-      'compensatory off leave',
-      'compensatoryoff leaves',
-      'compensatoryoff leave',
-      'compensatory off leaves',
-      'comp off leave',
-      'compoff leave'
-    ].includes((item.category?.name ?? '').toLowerCase());
-    
-    const expiryDeduction = isCompOff ? (item.expiryDaysLeaves ? item.expiryDaysLeaves : 0) : 0;
-    
-    const isProbationActive = this.leaveapplication.empType === 'Probation' && 
-      this.leaveapplication?.probationEndDate && 
-      new Date(this.leaveapplication.probationEndDate) > new Date();
-    
-    if (isProbationActive && item.category?.isProbationAllowed && item.probationLeaves > 0) {
-      return item.availableProbationLeaves; 
+    if (item.category?.isProbationAllowed && item.probationLeaves > 0) {
+      return item.probationLeaves - item.utilizedDays - item.booked - (item.expiryDaysLeaves ? item.expiryDaysLeaves : 0);
     } else {
-      return item.allowedDays - item.utilizedDays - item.booked - expiryDeduction;
+      return item.allowedDays - item.utilizedDays - item.booked - (item.expiryDaysLeaves ? item.expiryDaysLeaves : 0);
     }
   }
 
@@ -417,18 +431,10 @@ export class OnBeHalfOfComponent {
   }
 
   getProgress(item: any): number {
-    if (this.leaveapplication.empType === 'Probation' && (item.category.isProbationAllowed && item.probationLeaves >= 0)) {
-      const available = this.getAvailableLeaves(item);
-      const total = item.probationLeaves || 1; // Avoid division by zero
-      const percentage = Math.max(0, Math.min(available / total, 1)); // Clamp between 0 and 1
-      return percentage * 360;
-    }
-    else {
-      const available = this.getAvailableLeaves(item);
-      const total = item.allowedDays || 1; // Avoid division by zero
-      const percentage = Math.max(0, Math.min(available / total, 1)); // Clamp between 0 and 1
-      return percentage * 360;
-    }
+    const available = this.getAvailableLeaves(item);
+    const total = item.allowedDays || 1; // Avoid division by zero
+    const percentage = Math.max(0, Math.min(available / total, 1)); // Clamp between 0 and 1
+    return percentage * 360;
   }
   OnclickMyTeam(fusionemployeeId: any): void {
     this.selectedEmployeeId = fusionemployeeId?.value || null;
@@ -462,7 +468,7 @@ export class OnBeHalfOfComponent {
     this.getLeavesData(fusionemployeeId.value);
     localStorage.setItem('onbehalfof', fusionemployeeId.value);
     this.http.triggerActionSignal();
-    this.http.onBehalfOfTriggerSignal.update((value) => true);
+    this.http.onBehalfOfTriggerSignal.set(true);
   }
 
   Onclick(fusionemployeeId: any): void {
@@ -496,7 +502,7 @@ export class OnBeHalfOfComponent {
     this.getLeavesData(fusionemployeeId.value);
     localStorage.setItem('onbehalfof', fusionemployeeId.value);
     this.http.triggerActionSignal();
-    this.http.onBehalfOfTriggerSignal.update((value) => true);
+    this.http.onBehalfOfTriggerSignal.set(true);
   }
 
   resetOnBehalfOfData(): void {
@@ -508,15 +514,12 @@ export class OnBeHalfOfComponent {
     this.disablebuttonforemployeeid = false;
     this.categoryDetails = [];
     this.cadidateEmployeeId = 0;
+    this.selectedEmployeeId = null;
+    this.selectedEmployeeName = '';
+    this.selectedMyTeamEmployee = null;
+    this.selectedOtherEmployee = null;
     localStorage.removeItem('onbehalfof');
-    this.http.onBehalfOfTriggerSignal.update((value) => true);
-
-    // Navigate first, then reload if necessary
-    this.router
-      .navigate(['/on-behalf-of/on-behalf-of/waiting-for-approval'])
-      .then(() => {
-        window.location.reload(); // Reload after navigation is complete
-      });
+    this.http.onBehalfOfTriggerSignal.set(true);
   }
 
   onleaveSelect(categoryId: number) {
@@ -560,8 +563,8 @@ export class OnBeHalfOfComponent {
     const leavesTaken = this.selectedleave?.utilizedDays;
     const booked = this.selectedleave?.booked;
     this.remainingLeaves = maxDays - (leavesTaken ? leavesTaken : 0) - booked;
-    if (this.selectedleave && this.selectedleave.category && this.selectedleave.category.isProbationAllowed && this.leaveapplication.empType === 'Probation') {
-      const probationLeavesTaken = this.selectedleave.availableProbationLeaves;
+    if (this.selectedleave && this.selectedleave.category && this.selectedleave.category.isProbationAllowed) {
+      const probationLeavesTaken = this.selectedleave.probationLeaves - (leavesTaken !== undefined ? leavesTaken : 0) - booked;
       if (probationLeavesTaken >= 0) {
         this.remainingLeaves = probationLeavesTaken;
       } else {
@@ -630,6 +633,7 @@ export class OnBeHalfOfComponent {
       .subscribe({
         next: (data: any) => {
           this.employeeiddetails = data
+            .filter((emp: any) => emp.employeeId != loggedInUser.employeeId)
             .map((emp: any) => {
               const fusionPart = emp.fusionEmpId ? `${emp.fusionEmpId} - ` : '';
               const fullName = `${fusionPart}${emp.firstName ?? ''} ${emp.middleName ? emp.middleName + ' ' : ''}${emp.lastName ?? ''}`.trim();
@@ -678,15 +682,17 @@ export class OnBeHalfOfComponent {
 
   getCategoryDetails(employeeId: number) {
     console.log(employeeId);
+    let apiUrl = `LeaveEntitlements/v2/employee/${employeeId}?year=${this.selectedYear}`;
+    
     this.subscription = this.http
-      .getData(`LeaveEntitlements/v2/employee/${employeeId}?year=${this.selectedYear}`)
+      .getData(apiUrl)
       .subscribe({
         next: (response: any) => {
           if (response.success) {
             this.categoryDetails = response.data as ICategoryDetails[];
-            
-            // this.calculateProbationLeavs(this.categoryDetails);
-             this.logOptionalLeaveDays(this.categoryDetails);
+
+            this.calculateProbationLeavs(this.categoryDetails);
+            this.logOptionalLeaveDays(this.categoryDetails);
             this.initChart(this.categoryDetails);
             this.updateOptionalLeaveUsageFromHistory();
           }
@@ -1176,7 +1182,7 @@ export class OnBeHalfOfComponent {
           complete: () => {
             this.isLoading = false;
             this.leaveForm.reset();
-            this.http.onBehalfOfTriggerSignal.update((value) => true);
+            this.http.onBehalfOfTriggerSignal.set(true);
           },
         });
     } else {
@@ -1389,7 +1395,7 @@ export class OnBeHalfOfComponent {
       const hasNonOptional = dateRange.some(date =>
         !optionalHolidays?.some((holiday: { holidayDate: moment.MomentInput; }) => moment(holiday.holidayDate).isSame(date, 'day'))
       );
-
+  
       const isStartOptional = optionalHolidays?.some((holiday: { holidayDate: moment.MomentInput; }) =>
         moment(holiday.holidayDate).isSame(startDate, 'day')
       );
@@ -2042,7 +2048,15 @@ export class OnBeHalfOfComponent {
       this.getLeavesData(parseInt(employeeId));
       this.getCategoryDetails(parseInt(employeeId));
       // Trigger refresh for child components only when employee is selected
-      this.http.onBehalfOfTriggerSignal.update((value : any) => true);
+      this.http.onBehalfOfTriggerSignal.set(true);
     }
+  }
+
+  formatFrequency(value: string): string {
+    if (!value || !value.trim()) return 'Yearly';
+    return value
+      .split('_')
+      .map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+      .join(' ');
   }
 }

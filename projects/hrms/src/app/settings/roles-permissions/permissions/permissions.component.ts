@@ -710,6 +710,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Rejected (Time Off)',
     'Request Leave Button',
     'Cancelled (Time Off)',
+    'Entitlement Summary (Time Off)',
     'My Team (Time Off)',
     'My Team (Regularization)',
     'Leave Summary (Time Off)',
@@ -774,6 +775,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Rejected (On Behalf Of)',
     'Processed (On Behalf Of)',
     'Cancelled (On Behalf Of)',
+    'Entitlement Summary (On Behalf Of)',
     'My Team On Behalf Of',
     'On Behalf Of All Employees',
   ];

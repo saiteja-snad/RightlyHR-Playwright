@@ -43,7 +43,7 @@ export class InactiveClientsComponent implements OnInit {
 
   getClientsData(): void {
     let url = 'Client/GetAll?status=Inactive';
-    if(this.rbac.allowedToAccess('View Assigned Clients.view')){
+    if(this.rbac.allowedToAccess('View Assigned Clients.view') && !this.rbac.allowedToAccess('View All Clients.view')){
       url = `Client/GetAll?status=Inactive&employeeId=${this.empinfo.employeeId}`;
     }
     else{

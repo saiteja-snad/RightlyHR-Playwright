@@ -221,7 +221,7 @@ export class HoldProjectsComponent implements OnInit, OnDestroy {
     this.loading = true;
     let url = `Project?status=hold&pageNumber=${this.page}&pageSize=${this.pageSize}`;
  
-    if(this.rbac.allowedToAccess('View Assigned Projects.view')) {
+    if(this.rbac.allowedToAccess('View Assigned Projects.view') && !this.rbac.allowedToAccess('View All Projects.view')) {
        url = `Project?status=hold&employeeId=${this.empinfo.employeeId}&pageNumber=${this.page}&pageSize=${this.pageSize}`;
 
       if (this.searchValue?.trim()) {

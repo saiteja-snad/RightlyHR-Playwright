@@ -63,7 +63,7 @@ export class ClientSideTabsComponent {
     // });
     let url = `StatusCount?moduleName=Client`;
 
-    if (this.rbac.allowedToAccess('View Assigned Clients.view')) {
+    if (this.rbac.allowedToAccess('View Assigned Clients.view') && !this.rbac.allowedToAccess('View All Clients.view')) {
       url += `&employeeId=${this.empinfo.employeeId}`;
     }
 

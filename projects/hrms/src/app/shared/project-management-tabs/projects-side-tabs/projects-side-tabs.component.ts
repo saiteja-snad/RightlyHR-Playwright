@@ -74,7 +74,7 @@ export class ProjectsSideTabsComponent {
 
     let url = `StatusCount?moduleName=Project`;
 
-  if (this.rbac.allowedToAccess('View Assigned Projects.view')) {
+  if (this.rbac.allowedToAccess('View Assigned Projects.view') && !this.rbac.allowedToAccess('View All Projects.view')) {
     url += `&employeeId=${this.empinfo.employeeId}`;
   }
 

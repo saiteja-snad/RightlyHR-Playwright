@@ -827,8 +827,43 @@ export class PermissionsComponent implements OnInit, OnDestroy {
  
   isSettingsEmployeeJobCheckboxDisabled = (_: PermissionRow, __: any) => !this.roleToFilter?.id;
   isSettingsProjectManagementConfig = (_: PermissionRow, __: any) => !this.roleToFilter?.id;
-  isProjectManagementTabsCheckboxDisabled = (_: PermissionRow, __: any) => !this.roleToFilter?.id;
-  isProjectManagementClientsTabsCheckboxDisabled = (_: PermissionRow, __: any) => !this.roleToFilter?.id;
+ isProjectManagementTabsCheckboxDisabled = (
+  per: PermissionRow,
+  action: 'View' | 'Update' | 'Create' | 'Delete'
+) => {
+
+  if (!this.roleToFilter?.id) return true;
+
+  const viewOnlyFields = [
+    'View Assigned Projects',
+    'View All Projects'
+  ];
+
+  if (viewOnlyFields.includes(per.fields)) {
+    return action !== 'View'; // Disable Update, Create, Delete
+  }
+
+  return false;
+};
+
+isProjectManagementClientsTabsCheckboxDisabled = (
+  per: PermissionRow,
+  action: 'View' | 'Update' | 'Create' | 'Delete'
+) => {
+
+  if (!this.roleToFilter?.id) return true;
+
+  const viewOnlyFields = [
+    'View Assigned Clients',
+    'View All Clients'
+  ];
+
+  if (viewOnlyFields.includes(per.fields)) {
+    return action !== 'View'; // Disable Update, Create, Delete
+  }
+
+  return false;
+};
   isAttendanceLockingCheckboxDisabled = (_: PermissionRow, __: any) => !this.roleToFilter?.id;
 
   isSettingsManageShiftsCheckboxDisabled = (

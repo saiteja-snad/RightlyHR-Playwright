@@ -59,7 +59,6 @@ export default [
             {
                 path: 'details', component: ClientViewComponent,
                 children: [
-                    { path: '', redirectTo: 'info', pathMatch: 'full' },
                     { path: 'info', component: ClientInformationComponent },
                     { path: 'contact-info', component: ClientContactInformationComponent },
                     { path: 'projects', component: ActiveProjectsComponent },
@@ -70,7 +69,7 @@ export default [
                     {
                         path: 'timesheet', component: ClientTimeSheetsComponent,
                         children: [
-                            { path: '', redirectTo: 'timesheet/summary', pathMatch: 'full' },
+                            { path: '', redirectTo: 'summary', pathMatch: 'full' },
                             { path: 'summary', component: ClientTimesheetSummaryComponent },
                             { path: 'detailed', component: ClientTimesheetDetailedComponent },
                             { path: 'resource-summary', component: ResourceViewSummaryComponent },
@@ -130,7 +129,7 @@ export default [
     {
         path: 'timesheet', component: TimesheetsLayoutComponent,
         children: [
-            { path: '', redirectTo: '/timesheet/mytimesheet', pathMatch: 'full' },
+            { path: '', component: TimeSheetViewComponent },
             { path: 'mytimesheet', component: TimeSheetViewComponent },
             { path: 'teamtimesheet', component: TeamTimesheetsComponent },
             { path: 'summary', component: TimesheetsSummaryViewComponent },

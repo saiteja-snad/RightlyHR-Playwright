@@ -1,11 +1,12 @@
 import { Injectable, OnDestroy } from '@angular/core';
-import { Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
 import { driver, Driver } from 'driver.js';
 import { HttpService } from '../../services/http.service';
-import { firstValueFrom, Subject } from 'rxjs';
+import { firstValueFrom, Subject, Subscription } from 'rxjs';
 import { UserPreferenceService } from '../../services/user-preference.service';
-import { TOUR_CONFIGS, TourConfig, TourActionContext } from './tour.config';
+import { SUB_TABS_TOUR_CONFIGS, TOUR_CONFIGS, TourConfig, TourActionContext } from './tour.config';
 import { RbacService } from '../../services/rbac.service';
+import { filter } from 'rxjs/operators';
 
 @Injectable({ providedIn: 'root' })
 export class UserTourService implements OnDestroy {
@@ -19,6 +20,11 @@ export class UserTourService implements OnDestroy {
   private driverObj!: Driver;
   private activeTourConfig: TourConfig | null = null;
   private isTourCompletedManually = false;
+  private subTabsTourRouteSub: Subscription | null = null;
+  private checkAndStartToursInProgress = false;
+  private subTabsStartInProgress = false;
+  private scrollLockCleanup: (() => void) | null = null;
+  private pendingSubTabsCheck = false;
 
   constructor(
     private router: Router,
@@ -72,6 +78,7 @@ export class UserTourService implements OnDestroy {
             return;
           }
 
+          this.applyScrollLockForStep(activeConfig, nextIndex);
           this.persistStep(nextIndex, activeConfig.sessionKey);
           this.driverObj.moveNext();
         } catch {
@@ -88,16 +95,27 @@ export class UserTourService implements OnDestroy {
         const footerButtons: HTMLElement = popover.footerButtons;
         if (!footerButtons) return;
 
+        const config = this.activeTourConfig;
+        const shouldDisableSkip = !!config?.disableSkip;
+        const finishOnly = !!config?.finishOnly;
+
         const existing = footerButtons.querySelector('.rhr-tour-skip-btn');
         if (existing) existing.remove();
 
-        const skipBtn = document.createElement('button');
-        skipBtn.type = 'button';
-        skipBtn.innerText = 'Skip';
-        skipBtn.className = 'driver-popover-btn rhr-tour-skip-btn';
-        skipBtn.style.marginRight = 'auto';
-        // Click handled by onSkipClick capture listener on document
-        footerButtons.insertBefore(skipBtn, footerButtons.firstChild);
+        const closeBtn = footerButtons.querySelector('.driver-popover-close-btn') as HTMLElement | null;
+        if (closeBtn) closeBtn.style.display = shouldDisableSkip ? 'none' : '';
+
+        const navBtn = footerButtons.querySelector('.driver-popover-next-btn') as HTMLElement | null;
+        if (finishOnly && navBtn) navBtn.innerText = 'Finish';
+
+        if (!shouldDisableSkip) {
+          const skipBtn = document.createElement('button');
+          skipBtn.type = 'button';
+          skipBtn.innerText = 'Skip';
+          skipBtn.className = 'driver-popover-btn rhr-tour-skip-btn';
+          skipBtn.style.marginRight = 'auto';
+          footerButtons.insertBefore(skipBtn, footerButtons.firstChild);
+        }
       },
 
       onCloseClick: async () => {
@@ -106,9 +124,13 @@ export class UserTourService implements OnDestroy {
 
       onDestroyed: () => {
         this.removeEventListeners();
+        this.clearScrollLock();
         this.isTourCompletedManually = false;
         this.tourInProgress = false;
         this.setTransitioning(false);
+        setTimeout(() => {
+          void this.handlePostTourFlow();
+        }, 0);
       }
     });
   }
@@ -139,7 +161,8 @@ export class UserTourService implements OnDestroy {
       await stepConfig.beforeShow(this.buildActionContext());
     }
 
-    const el = await this.waitForElement(stepConfig.element, 2000);
+    const defaultTimeoutMs = config.moduleTourKey ? 8000 : 2000;
+    const el = await this.waitForElement(stepConfig.element, stepConfig.waitTimeoutMs ?? defaultTimeoutMs);
     return !!el;
   }
 
@@ -177,8 +200,25 @@ export class UserTourService implements OnDestroy {
       const empInfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
       const employeeId = empInfo?.employeeId;
       if (!employeeId) return;
+      if (this.activeTourConfig.moduleTourKey) {
+        const prefs = await this.userPrefService.getPreferences();
+        const existing = this.parseBooleanMap(prefs?.[this.activeTourConfig.completionKey]);
+        const next = { ...existing, [this.activeTourConfig.moduleTourKey]: true };
+        const payload = { employeeId, key: this.activeTourConfig.completionKey, value: JSON.stringify(next) };
+        await firstValueFrom(this.http.postdata('Employeedata/save-user-preference', payload));
+
+        const cached = this.userPrefService.currentPreferences;
+        if (cached) {
+          cached[this.activeTourConfig.completionKey] = JSON.stringify(next);
+        }
+        return;
+      }
       const payload = { employeeId, key: this.activeTourConfig.completionKey, value: 'true' };
       await firstValueFrom(this.http.postdata('Employeedata/save-user-preference', payload));
+      const cached = this.userPrefService.currentPreferences;
+      if (cached) {
+        cached[this.activeTourConfig.completionKey] = 'true';
+      }
     } catch (error) {
       console.error('[Tour] Failed to save tour completion:', error);
     }
@@ -192,25 +232,116 @@ export class UserTourService implements OnDestroy {
    * Shows the first incomplete tour found.
    */
   public async checkAndStartTours(): Promise<void> {
+    if (this.checkAndStartToursInProgress) return;
+    this.checkAndStartToursInProgress = true;
     try {
-      const prefs = await this.userPrefService.getPreferences();
-
-      for (const config of TOUR_CONFIGS) {
-          if (
-            config.requiredPermission &&
-            !this.rbac.allowedToAccess(config.requiredPermission)
-          ) {
-            continue;
-          }
-        const isCompleted = prefs?.[config.completionKey];
-        if (isCompleted === 'true' || isCompleted === true) continue;
-
-        // Found an incomplete tour — resume or start it
-        await this.resumeOrStart(config);
-        return; // Show one tour at a time
-      }
+      this.ensureSubTabsTourRouteWatcher();
+      await this.startNextGlobalTour();
     } catch (error) {
       console.error('[Tour] checkAndStartTours error:', error);
+    } finally {
+      this.checkAndStartToursInProgress = false;
+    }
+  }
+
+  private async startNextGlobalTour(): Promise<boolean> {
+    const prefs = await this.userPrefService.getPreferences();
+    for (const config of TOUR_CONFIGS) {
+      if (config.requiredPermission && !this.rbac.allowedToAccess(config.requiredPermission)) {
+        continue;
+      }
+      if (this.isTourCompleted(config, prefs)) continue;
+
+      await this.resumeOrStart(config);
+      return true;
+    }
+    return false;
+  }
+
+  private async handlePostTourFlow(): Promise<void> {
+    if (this.tourInProgress) return;
+    if (this.checkAndStartToursInProgress) return;
+
+    try {
+      this.ensureSubTabsTourRouteWatcher();
+      const startedGlobal = await this.startNextGlobalTour();
+      if (!startedGlobal) {
+        await this.checkAndStartSubTabsTourForCurrentRoute();
+      }
+    } catch (error) {
+      console.error('[Tour] handlePostTourFlow error:', error);
+    }
+  }
+
+
+  private ensureSubTabsTourRouteWatcher(): void {
+    if (this.subTabsTourRouteSub) return;
+    this.subTabsTourRouteSub = this.router.events
+      .pipe(filter(e => e instanceof NavigationEnd))
+      .subscribe(() => {
+        void this.checkAndStartSubTabsTourForCurrentRoute();
+      });
+    void this.checkAndStartSubTabsTourForCurrentRoute();
+  }
+
+
+
+  private parseBooleanMap(raw: any): Record<string, boolean> {
+    if (!raw) return {};
+    if (typeof raw === 'object') return raw as Record<string, boolean>;
+    if (typeof raw !== 'string') return {};
+    try {
+      const parsed = JSON.parse(raw);
+      if (parsed && typeof parsed === 'object') return parsed as Record<string, boolean>;
+      return {};
+    } catch {
+      return {};
+    }
+  }
+  
+  private isTourCompleted(config: TourConfig, prefs: any): boolean {
+    const raw = prefs?.[config.completionKey];
+    if (config.moduleTourKey) {
+      const map = this.parseBooleanMap(raw);
+      return map?.[config.moduleTourKey] === true;
+    }
+    return raw === 'true' || raw === true;
+  }
+
+  private async checkAndStartSubTabsTourForCurrentRoute(): Promise<void> {
+        if (this.tourInProgress || this.subTabsStartInProgress) return;
+    if (this.checkAndStartToursInProgress) {
+      if (!this.pendingSubTabsCheck) {
+        this.pendingSubTabsCheck = true;
+        setTimeout(() => {
+          this.pendingSubTabsCheck = false;
+          void this.checkAndStartSubTabsTourForCurrentRoute();
+        }, 0);
+      }
+      return;
+    }
+    this.subTabsStartInProgress = true;
+    try {
+      const prefs = await this.userPrefService.getPreferences();
+      const currentUrl = this.router.url;
+      const match = SUB_TABS_TOUR_CONFIGS
+        .filter(config => {
+          if (config.requiredPermission && !this.rbac.allowedToAccess(config.requiredPermission)) return false;
+          if (!config.requiredRoute) return false;
+          if (!currentUrl.startsWith(config.requiredRoute)) return false;
+          if (!config.moduleTourKey) return false;
+          return true;
+        })
+        .sort((a, b) => (b.requiredRoute?.length ?? 0) - (a.requiredRoute?.length ?? 0))[0];
+      if (!match) return;
+      const moduleKey = match.moduleTourKey;
+      if (!moduleKey) return;
+
+       if (this.isTourCompleted(match, prefs)) return;
+
+      await this.resumeOrStart(match);
+    } finally {
+      this.subTabsStartInProgress = false;
     }
   }
 
@@ -222,7 +353,8 @@ export class UserTourService implements OnDestroy {
     this.activeTourConfig = config;
     const savedStep = this.getPersistedStep(config.sessionKey);
     const fromStep = savedStep ?? 0;
-    await this.prepareStep(config, fromStep);
+    const ok = await this.prepareStep(config, fromStep);
+    if (!ok) return;
     await this.startTour(config, fromStep);
   }
 
@@ -241,7 +373,66 @@ export class UserTourService implements OnDestroy {
     this.isTourCompletedManually = false;
     this.setTransitioning(false);
     this.persistStep(fromStep, config.sessionKey);
+    this.applyScrollLockForStep(config, fromStep);
     this.driverObj.drive(fromStep);
+  }
+
+  private clearScrollLock(): void {
+    try {
+      this.scrollLockCleanup?.();
+    } finally {
+      this.scrollLockCleanup = null;
+    }
+  }
+
+  private applyScrollLockForStep(config: TourConfig, stepIndex: number): void {
+    this.clearScrollLock();
+    if (!config.lockScroll) return;
+    const step = config.steps?.[stepIndex];
+    const selector = step?.element;
+    if (!selector) return;
+    const el = document.querySelector(selector) as HTMLElement | null;
+    if (!el) return;
+
+    const htmlEl = document.documentElement;
+    const bodyEl = document.body;
+    const prevHtmlOverflow = htmlEl.style.overflow;
+    const prevBodyOverflow = bodyEl.style.overflow;
+
+    const scrollHost = el.closest('[cdkScrollable], .cdk-scrollable') as HTMLElement | null;
+    const prevScrollHostOverflowY = scrollHost?.style.overflowY;
+    const prevScrollHostOverflowX = scrollHost?.style.overflowX;
+
+    const prevOverflowY = el.style.overflowY;
+    const prevOverflowX = el.style.overflowX;
+    const prevScrollbarWidth = (el.style as any).scrollbarWidth;
+    const prevMsOverflowStyle = (el.style as any).msOverflowStyle;
+
+    htmlEl.style.overflow = 'hidden';
+    bodyEl.style.overflow = 'hidden';
+
+    if (scrollHost) {
+      scrollHost.style.overflowY = 'hidden';
+      scrollHost.style.overflowX = 'hidden';
+    }
+
+    el.style.overflowY = 'hidden';
+    el.style.overflowX = 'hidden';
+    (el.style as any).scrollbarWidth = 'none';
+    (el.style as any).msOverflowStyle = 'none';
+
+    this.scrollLockCleanup = () => {
+      htmlEl.style.overflow = prevHtmlOverflow;
+      bodyEl.style.overflow = prevBodyOverflow;
+      if (scrollHost) {
+        scrollHost.style.overflowY = prevScrollHostOverflowY ?? '';
+        scrollHost.style.overflowX = prevScrollHostOverflowX ?? '';
+      }
+      el.style.overflowY = prevOverflowY;
+      el.style.overflowX = prevOverflowX;
+      (el.style as any).scrollbarWidth = prevScrollbarWidth;
+      (el.style as any).msOverflowStyle = prevMsOverflowStyle;
+    };
   }
 
   // ── Step persistence ──────────────────────────────────────────────────────
@@ -313,17 +504,56 @@ export class UserTourService implements OnDestroy {
 
   private onWheel = (e: WheelEvent) => {
     if (!this.tourInProgress) return;
+    const target = (e.target instanceof Element ? e.target : (e.target as any)?.parentElement) as Element | null;
+    const isInsidePopover = !!target?.closest('#driver-popover-content');
+    if (isInsidePopover) return;
+
+    if (this.activeTourConfig?.lockScroll) {
+      e.stopImmediatePropagation(); e.stopPropagation(); e.preventDefault();
+      return;
+    }
+
     const idx = this.driverObj.getActiveIndex();
     if (idx !== 1) return;
 
-    const target = (e.target instanceof Element ? e.target : (e.target as any)?.parentElement) as Element | null;
     if (target?.closest('.ellipses-dropdown-menu')) {
       e.stopImmediatePropagation(); e.stopPropagation(); e.preventDefault();
     }
   };
 
+  private onTouchMove = (e: TouchEvent) => {
+    if (!this.tourInProgress) return;
+    if (!this.activeTourConfig?.lockScroll) return;
+    const target = (e.target instanceof Element ? e.target : (e.target as any)?.parentElement) as Element | null;
+    const isInsidePopover = !!target?.closest('#driver-popover-content');
+    if (isInsidePopover) return;
+    e.stopImmediatePropagation(); e.stopPropagation(); e.preventDefault();
+  };
+
+  private onKeyDown = (e: KeyboardEvent) => {
+    if (!this.tourInProgress) return;
+    if (!this.activeTourConfig?.lockScroll) return;
+    const target = (e.target instanceof Element ? e.target : null) as Element | null;
+    const isInsidePopover = !!target?.closest('#driver-popover-content');
+    if (isInsidePopover) return;
+
+    const key = e.key;
+    const isScrollKey =
+      key === 'ArrowUp' ||
+      key === 'ArrowDown' ||
+      key === 'PageUp' ||
+      key === 'PageDown' ||
+      key === 'Home' ||
+      key === 'End' ||
+      key === ' ' ||
+      key === 'Spacebar';
+    if (!isScrollKey) return;
+    e.stopImmediatePropagation(); e.stopPropagation(); e.preventDefault();
+  };
+
   private onSkipClick = (e: MouseEvent) => {
     if (!this.tourInProgress) return;
+    if (!e.isTrusted) return;
     const target = (e.target instanceof Element ? e.target : (e.target as any)?.parentElement) as Element | null;
     const isInsidePopover = !!target?.closest('#driver-popover-content');
     if (!isInsidePopover) {
@@ -341,6 +571,8 @@ export class UserTourService implements OnDestroy {
     document.addEventListener('pointerdown', this.onPointerDown, true);
     document.addEventListener('dblclick', this.onDblClick, true);
     document.addEventListener('wheel', this.onWheel, { capture: true, passive: false });
+    document.addEventListener('touchmove', this.onTouchMove, { capture: true, passive: false });
+    document.addEventListener('keydown', this.onKeyDown, true);
     document.addEventListener('click', this.onSkipClick, true);
   }
 
@@ -348,6 +580,8 @@ export class UserTourService implements OnDestroy {
     document.removeEventListener('pointerdown', this.onPointerDown, true);
     document.removeEventListener('dblclick', this.onDblClick, true);
     document.removeEventListener('wheel', this.onWheel, { capture: true } as any);
+    document.removeEventListener('touchmove', this.onTouchMove, { capture: true } as any);
+    document.removeEventListener('keydown', this.onKeyDown, true);
     document.removeEventListener('click', this.onSkipClick, true);
   }
 

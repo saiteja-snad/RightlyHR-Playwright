@@ -164,7 +164,8 @@ export const TIME_OFF_SUB_TABS = [
   { route: '/time-off/leaves/approved', permission: 'Approved (Time Off).view' },
   { route: '/time-off/leaves/processed', permission: 'Processed (Time Off).view' },
   { route: '/time-off/leaves/rejected', permission: 'Rejected (Time Off).view', },
-  { route: '/time-off/leaves/entitlement-frequency', permission: 'Entitlement Summary (Time Off).view', }
+  { route: '/time-off/leaves/entitlement-frequency', permission: 'Entitlement Summary (Time Off).view', },
+  { route: '/time-off/leaves/cancelled', permission: 'Cancelled (Time Off).view' },
 ]
 
 export const REMOTE_LOGIN_SUB_TABS = [
@@ -186,19 +187,20 @@ export const WFH_ONDUTY_SUB_TABS = [
   { route: '/time-off/wfh/approved', permission: 'Approved (WFH).view' },
   { route: '/time-off/wfh/processed', permission: 'Processed (WFH).view' },
   { route: '/time-off/wfh/rejected', permission: 'Rejected (WFH).view', },
+  { route: '/time-off/wfh/cancelled', permission: 'Cancel (WFH).view', },
 ]
 
 export const PERMISSIONS_SUB_TABS = [
   { route: '/time-off/premissions/waiting-for-approval', permission: 'Waiting For Approval (Permissions).view' },
   // { route: '/time-off/permissions/approved', permission: 'Approved (Permissions).view' },
-  { route: '/time-off/permissions/processed', permission: 'Processed (Permissions).view' },
-  { route: '/time-off/permissions/rejected', permission: 'Rejected (Permissions).view', },
+  { route: '/time-off/premissions/processed', permission: 'Processed (Permissions).view' },
+  { route: '/time-off/premissions/rejected', permission: 'Rejected (Permissions).view', },
+  { route: '/time-off/premissions/cancelled', permission: 'Cancel (Permissions).view', },
 ]
 
 export const REGULARIZATION_SUB_TABS = [
   { route: '/time-off/regularization/waiting-for-approval', permission: 'Waiting For Approval (Regularization).view' },
-  { route: '/time-off/regularization/approved', permission: 'Approved (Regularization).view' },
-  { route: '/time-off/regularization/processed', permission: 'Processed (Regularization).view' },
+  { route: '/time-off/regularization/process', permission: 'Processed (Regularization).view' },
   { route: '/time-off/regularization/rejected', permission: 'Rejected (Regularization).view', },
 ]
 
@@ -304,6 +306,7 @@ export const HELPDESK_SUPPORT_TICKETS_TABS = [
 export const TIMEOFF_APPROVALS_TABS = [
   { route: '/pending-approvals/time-off/leaves', permission: 'Time Off Tab.view' },
   { route: '/pending-approvals/time-off/wfh', permission: 'WFH Tab.view' },
+  { route: '/pending-approvals/time-off/remote', permission: 'Remote Login Tab.view' },
   { route: '/pending-approvals/time-off/comp-off', permission: 'Comp Off Tab.view' },
   { route: '/pending-approvals/time-off/permissions', permission: 'Permissions Tab.view' },
   { route: '/pending-approvals/time-off/regularization-request', permission: 'Regularization Tab.view' },
@@ -728,12 +731,13 @@ export const PROJECTS_ROUTES = [
   },
   {
     route: '/project-management/projects/details/phases',
-    permission: 'Documents Tab.view'
+    permission: 'Project Phases Tab.view'
   }
 ];
 
 export const TIME_SHEETS_TABS = [
   { route: '/project-management/timesheet/mytimesheet', permission: 'Time Sheet.view' },
+  { route: '/project-management/timesheet/mysummary', permission: 'My Summary.view' },
   { route: '/project-management/timesheet/teamtimesheet', permission: 'Team Time Sheet.view' },
 ]
 
@@ -747,6 +751,8 @@ export const ON_BEHALF_OF_TABS = [
   { route: '/on-behalf-of/on-behalf-of/approved', permission: 'Approved (On Behalf Of).view' },
   { route: '/on-behalf-of/on-behalf-of/processed', permission: 'Processed (On Behalf Of).view' },
   { route: '/on-behalf-of/on-behalf-of/rejected', permission: 'Rejected (On Behalf Of).view', },
+  { route: '/on-behalf-of/on-behalf-of/cancel', permission: 'Cancelled (On Behalf Of).view', },
+  { route: '/on-behalf-of/on-behalf-of/entitlement-summary', permission: 'Entitlement Summary (On Behalf Of).view', },
 ]
 
 export const ON_BEHALF_OF_WFH_TABS = [
@@ -770,7 +776,6 @@ export const ON_BEHALF_OF_EXPENSES_TABS = [
   { route: '/on-behalf-of/on-behalf-of-expenses/approved', permission: 'Approved (On Behalf Of Expenses).view' },
   { route: '/on-behalf-of/on-behalf-of-expenses/processed', permission: 'Processed (On Behalf Of Expenses).view' },
   { route: '/on-behalf-of/on-behalf-of-expenses/rejected', permission: 'Rejected (On Behalf Of Expenses).view', },
-  { route: '/on-behalf-of/on-behalf-of-expenses/cancelled', permission: 'Cancelled (On Behalf Of Expenses).view', },
 ]
 
 export const SKILL_MANAGEMENT_TABS = [

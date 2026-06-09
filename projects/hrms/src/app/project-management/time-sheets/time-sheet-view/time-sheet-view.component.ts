@@ -627,7 +627,7 @@ getTaskType() {
     };
   }
 
-  private createDayEntryFromCell(row: RowModel, day: DayModel, isProjectSelected: boolean = false): FormGroup {
+ private createDayEntryFromCell(row: RowModel, day: DayModel, isProjectSelected: boolean = false): FormGroup {
     const cellKey = `${row.rowId}_${day.date}`;
     const cell = this.weekMatrix.cellMap.get(cellKey);
 
@@ -657,18 +657,19 @@ getTaskType() {
         allocations: matchedResources
       }
       : null;
+      console.log(matchedResources);
+      
 
     const resourceDateRange = mergedResource ? {
       startDate: mergedResource.startDate ? new Date(mergedResource.startDate) : null,
       endDate: mergedResource.endDate ? new Date(mergedResource.endDate) : null
     } : undefined;
+       console.log(resourceDateRange);
 
     const phaseDateRange = mergedResource?.phase ? {
       startDate: mergedResource.phase.startDate ? new Date(mergedResource.phase.startDate) : null,
       endDate: mergedResource.phase.endDate ? new Date(mergedResource.phase.endDate) : null
     } : undefined;
-
-    // ✅ 🔥 ADD HERE (before isBlocked logic)
 
     // Normalize date
     const normalizeDate = (date: any) => {
@@ -686,12 +687,17 @@ getTaskType() {
       return entryDate >= start && entryDate <= end;
     });
 
-    // ✅ Weekend allowed per allocation
-    const weekendAllowed = matchedAllocation?.weekendWorkAllowed ?? false;
+    // ✅ Weekend allowed per allocation or row-level resource
+    const weekendAllowed = matchedAllocation?.weekendWorkAllowed ?? mergedResource?.weekendWorkAllowed ??
+      (row.isWeekendAllowedProject || row.isWeekendAllowedClient);
+
+    // ✅ Use day-specific allocation for validation when available
+    const selectedResourceForDay = matchedAllocation || mergedResource;
 
     // ✅ Validation context
     const validationContext: ValidationContext = {
-      selectedResource: mergedResource,
+      selectedResource: selectedResourceForDay,
+      matchedAllocation,
       holidays: this.holidaysData,
       weekends: this.weekendsData,
       leaves: this.leavesData
@@ -700,13 +706,17 @@ getTaskType() {
     // ✅ Call validation
     const dayStatus = this.dayValidationService.checkDayStatus(entryDate, validationContext);
 
+    // ✅ Check if there's an allocation for this specific day
+    const hasAllocation = !!matchedAllocation;
+    const allocationBlocked = !hasAllocation && mergedResource; // Block if no allocation but resource exists
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const isFutureDate = day.dateObj > today;
     const isCurrentEmployee = this.employeeId === this.empdata?.employeeId;
-    const isBlocked = dayStatus.blocked;
-    const isLocked = isCellLocked(
+    const isBlocked = dayStatus.blocked || allocationBlocked;
+    const blockReason = allocationBlocked ? 'No Allocation for This Day' : dayStatus.blockReason;
+    const baseLocked = isCellLocked(
       cell, day, row,
       resourceDateRange,
       phaseDateRange,
@@ -714,9 +724,15 @@ getTaskType() {
       isCurrentEmployee,
       isBlocked
     );
-    console.log('Cell lock status for', cellKey, ':', isBlocked);
+
+    const isWeekend = dayStatus.blockReason === 'Weekend' || day.blockReason === 'Weekend' || cell.blockReason === 'Weekend';
+    const isLocked = baseLocked && !(isWeekend && weekendAllowed);
 
     cell.isLocked = isLocked;
+    if (allocationBlocked && !dayStatus.blocked) {
+      cell.blockReason = 'No Allocation for This Day';
+      cell.isBlocked = true;
+    }
 
     const isNotEntered = cell.approvalStatus === ApprovalStatus.NotEntered;
     const shouldEnable = isProjectSelected && !isLocked;
@@ -752,10 +768,11 @@ getTaskType() {
       isBlocked: [{ value: cell.isBlocked, disabled: true }],
       rejectReason: [cell.rejectReason || ''],
       blockReason: [cell.blockReason || ''],
-      resourceId: [row.resourceId || null],
-      taskId:[{value:cell.taskId || null, disabled: !shouldEnable },]
+      resourceId: [row.resourceId || null]
+
     });
   }
+
 
   isReportee = false;
   onCheckemployee(employeed: any, dropdownType?: string) {
@@ -1492,7 +1509,7 @@ getTaskType() {
     this.dayValidationService.initialize(context);
   }
 
-  selectProjectForRow(row: AbstractControl, client: any, project: any, phase: any = null) {
+   selectProjectForRow(row: AbstractControl, client: any, project: any, phase: any = null) {
 
     const form = row as FormGroup;
 
@@ -1518,6 +1535,10 @@ getTaskType() {
           new Date(r.endDate) > new Date(max) ? r.endDate : max,
           selectedResources[0].endDate
         ),
+
+        // ✅ Preserve weekend permission across rows
+        weekendWorkAllowed: selectedResources.some(r => r.weekendWorkAllowed),
+        billable: selectedResources.some(r => r.billable),
 
         // ❗ Keep allocations for per-day logic
         allocations: selectedResources
@@ -1568,15 +1589,20 @@ getTaskType() {
       });
 
       const isBillableForDay = matchedAllocation?.billable || false;
+      const allocationBlocked = !matchedAllocation && selectedResources.length > 0;
+      const weekendAllowed = matchedAllocation?.weekendWorkAllowed ?? selectedProjectResource?.weekendWorkAllowed ?? false;
 
       const validationContext: ValidationContext = {
-        selectedResource: selectedProjectResource,
+        selectedResource: matchedAllocation || selectedProjectResource,
+        matchedAllocation,
         holidays: this.holidaysData,
         weekends: this.weekendsData,
         leaves: this.leavesData
       };
 
       const dayStatus = this.dayValidationService.checkDayStatus(entryDate, validationContext);
+      const isWeekend = dayStatus.blockReason === 'Weekend' || dayStatus.blockReason?.toLowerCase() === 'weekend';
+      const dayBlocked = dayStatus.blocked && !(isWeekend && weekendAllowed);
 
       // ✅ Patch each day
       dayForm.patchValue({
@@ -1588,8 +1614,8 @@ getTaskType() {
         phaseName: phase ? phase.phaseName : null,
         entryDate: entryDate,
         resourceId: matchedAllocation?.resourceId || null,
-        isBlocked: dayStatus.blocked,
-        blockReason: dayStatus.blockReason,
+        isBlocked: dayBlocked || allocationBlocked,
+        blockReason: allocationBlocked ? 'No Allocation for This Day' : dayStatus.blockReason,
         isLeave: dayStatus.blockReason === 'Leave'
       });
 
@@ -1598,7 +1624,7 @@ getTaskType() {
       today.setHours(0, 0, 0, 0);
 
       const isFutureDate = entryDate > today;
-      const shouldEnable = !dayStatus.blocked && !isFutureDate;
+      const shouldEnable = (!dayStatus.blocked || (isWeekend && weekendAllowed)) && !allocationBlocked && !isFutureDate;
 
       ['duration', 'description', 'startTime', 'endTime'].forEach((ctrl) => {
         shouldEnable ? dayForm.get(ctrl)?.enable() : dayForm.get(ctrl)?.disable();

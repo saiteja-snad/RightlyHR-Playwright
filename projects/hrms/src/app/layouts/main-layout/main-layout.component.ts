@@ -11,6 +11,8 @@ import { FormValidationsService } from '../../services/form-validations.service'
 import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { PredefinedThemesService } from '../../services/theme-service/predefined-themes.service';
+import { MenuOrderService } from '../../services/theme-service/menu-order.service';
+import { UserPreferenceService } from '../../services/user-preference.service';
 @Component({
   selector: 'app-main-layout',
   imports: [SidenavComponent, HeaderComponent, RouterOutlet, CommonModule, ReactiveFormsModule,],
@@ -32,30 +34,32 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
 
   constructor(private fb: FormBuilder, public readonly router: Router, private http: HttpService,
     private modalService: NgbModal, private conformationPopup: OpenModalService, public formsValidation: FormValidationsService,
-    private predefinedThemesService: PredefinedThemesService) { }
+    private predefinedThemesService: PredefinedThemesService,
+    private menuOrderService: MenuOrderService,
+    private userPrefService: UserPreferenceService) { }
 
   async ngOnInit() {
     this.intilaizeChangePasswordForm();
     this.intializeGetStartedForm();
     this.empinfo = JSON.parse(localStorage.getItem('currentUser') || '{}');
     this.employeeName = this.empinfo.name;
-    this.getUserPreference(this.empinfo.employeeId);
+    this.getUserPreference();
     await this.predefinedThemesService.initTheme();
     await this.predefinedThemesService.initFont();
+    await this.menuOrderService.initMenuOrder();
   }
 
-  getUserPreference(employeeId: number) {
-    this.http.getData(`Employeedata/get-user-preference/${employeeId}`).subscribe({
-      next: (res: any) => {
-        if (!res.data.isUserRegistred) {
-          this.openModal(this.getstarted);
-        }
-        else if (this.empinfo?.loginType?.toLowerCase() === 'classic login' && !res.data.isPasswordChanged) {
-          // Open change password modal
-          this.modalService.open(this.changepasswordModal, {centered: true, backdrop: 'static', keyboard: false, size: 'xl'});
-        }
+  async getUserPreference() {
+    const data = await this.userPrefService.getPreferences();
+    if (data) {
+      if (!data.isUserRegistred) {
+        this.openModal(this.getstarted);
       }
-    })
+      else if (this.empinfo?.loginType?.toLowerCase() === 'classic login' && !data.isPasswordChanged) {
+        // Open change password modal
+        this.modalService.open(this.changepasswordModal, { centered: true, backdrop: 'static', keyboard: false, size: 'xl' });
+      }
+    }
   }
 
   openModal(modal: any) {
@@ -72,7 +76,7 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
     this.subscription = this.http.postbyId(`Employeedata/update-registration/${employeeId}`).subscribe({
       next: (res: any) => {
         this.modalService.dismissAll();
-        this.getUserPreference(this.empinfo.employeeId);
+        this.getUserPreference();
       },
       error: (err) => {
         console.error('Error updating registration status:', err);

@@ -1,6 +1,7 @@
 import { Injectable, Renderer2, RendererFactory2 } from '@angular/core';
 import { HttpService } from '../http.service';
 import { firstValueFrom } from 'rxjs';
+import { UserPreferenceService } from '../user-preference.service';
 @Injectable({
   providedIn: 'root'
 })
@@ -10,7 +11,7 @@ export class PredefinedThemesService {
   private currentTheme = 'default-theme';
   private currentFont = 'Roboto-flex';
 
-  constructor(rendererFactory: RendererFactory2, private http: HttpService) {
+  constructor(rendererFactory: RendererFactory2, private http: HttpService, private userPrefService: UserPreferenceService) {
     this.renderer = rendererFactory.createRenderer(null, null);
   }
 
@@ -23,16 +24,8 @@ export class PredefinedThemesService {
 
   async initTheme(): Promise<void> {
     try {
-      const empInfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
-      const employeeId = empInfo?.employeeId;
-      if (!employeeId) {
-        this.setTheme('default-theme');
-        return;
-      }
-      const response: any = await firstValueFrom(
-        this.http.getData(`Employeedata/get-user-preference/${employeeId}`)
-      );
-      const theme = response?.data?.['RHR_WEB_Theme'] || 'default-theme';
+      const data = await this.userPrefService.getPreferences();
+      const theme = data?.['RHR_WEB_Theme'] || 'default-theme';
       this.setTheme(theme);
     } catch (error) {
       console.error('Error loading theme:', error);
@@ -50,16 +43,8 @@ export class PredefinedThemesService {
 
   async initFont(): Promise<void> {
     try {
-      const empInfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
-      const employeeId = empInfo?.employeeId;
-      if (!employeeId) {
-        this.setFont('Roboto-flex');
-        return;
-      }
-      const response: any = await firstValueFrom(
-        this.http.getData(`Employeedata/get-user-preference/${employeeId}`)
-      );
-      const font = response?.data?.['RHR_WEB_Font'] || 'Roboto-flex';
+      const data = await this.userPrefService.getPreferences();
+      const font = data?.['RHR_WEB_Font'] || 'Roboto-flex';
       this.setFont(font);
     } catch (error) {
       console.error('Error loading font:', error);

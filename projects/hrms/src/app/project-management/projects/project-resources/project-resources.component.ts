@@ -610,23 +610,17 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
     projectId: number,
     phaseId?: number,
     isPopupCall: boolean = false,
-
   ) {
     const params: any = {
       entityType: 'project',
       entityRefId: projectId,
-      status: 'active,assigned',
-      // status:
-      //   this.inactiveStatus === 'inactive' ? 'released' : 'active,assigned',
+      status: 'active,assigned'
 
     };
 
     if (phaseId) {
       params.phaseId = phaseId;
     }
-
-  
-
     if (this.selectedRoleIds?.length > 0 && !isPopupCall) {
       params.roleIds = this.selectedRoleIds.join(',');
     }

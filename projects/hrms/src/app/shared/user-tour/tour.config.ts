@@ -153,7 +153,7 @@ export const SUB_TABS_TOUR_CONFIGS: TourConfig[] = [
   //Employee Management
   {
     completionKey: 'subtabs_tour_completed',
-    sessionKey: 'dimcon_tour_subtabs_employee_management_step',
+    sessionKey: 'rhr_tour_subtabs_employee_management_step',
     moduleTourKey: 'employee-management',
     requiredPermission: 'Employees.view',
     requiredRoute: '/employee-management',
@@ -174,7 +174,7 @@ export const SUB_TABS_TOUR_CONFIGS: TourConfig[] = [
   //Cards Management
   {
     completionKey: 'subtabs_tour_completed',
-    sessionKey: 'dimcon_tour_subtabs_cards_management_step',
+    sessionKey: 'rhr_tour_subtabs_cards_management_step',
     moduleTourKey: 'cardsmanagement-tabs',
     requiredPermission: 'Cards Management.view',
     requiredRoute: '/card-management',
@@ -195,7 +195,7 @@ export const SUB_TABS_TOUR_CONFIGS: TourConfig[] = [
   //Claims and Expenses Management
   {
     completionKey: 'subtabs_tour_completed',
-    sessionKey: 'dimcon_tour_subtabs_claimsandexpenses-tabs_step',
+    sessionKey: 'rhr_tour_subtabs_claimsandexpenses-tabs_step',
     moduleTourKey: 'claimsandexpenses-tabs',
     requiredPermission: 'Expenses.view',
     requiredRoute: '/claimsandexpenses',
@@ -216,7 +216,7 @@ export const SUB_TABS_TOUR_CONFIGS: TourConfig[] = [
   //IT Support Management
   {
     completionKey: 'subtabs_tour_completed',
-    sessionKey: 'dimcon_tour_subtabs_itsupport-compoment-tabs_step',
+    sessionKey: 'rhr_tour_subtabs_itsupport-compoment-tabs_step',
     moduleTourKey: 'itsupport-compoment-tabs',
     requiredPermission: 'IT Support.view',
     requiredRoute: '/it-support/team-tickets',
@@ -237,7 +237,7 @@ export const SUB_TABS_TOUR_CONFIGS: TourConfig[] = [
   //Help Desk Management
   {
     completionKey: 'subtabs_tour_completed',
-    sessionKey: 'dimcon_tour_subtabs_helpdesk-tabs_step',
+    sessionKey: 'rhr_tour_subtabs_helpdesk-tabs_step',
     moduleTourKey: 'helpdesk-component-tabs',
     requiredPermission: 'Support Helpdesk Queries Tab.view',
     requiredRoute: '/help-desk/support-desk',
@@ -258,7 +258,7 @@ export const SUB_TABS_TOUR_CONFIGS: TourConfig[] = [
   //PMS
   {
     completionKey: 'subtabs_tour_completed',
-    sessionKey: 'dimcon_tour_subtabs_pms-tabs_step',
+    sessionKey: 'rhr_tour_subtabs_pms-tabs_step',
     moduleTourKey: 'krakpi-management-layout-tabs',
     requiredPermission: 'PMS.view',
     requiredRoute: '/pms',
@@ -279,7 +279,7 @@ export const SUB_TABS_TOUR_CONFIGS: TourConfig[] = [
   //Project Management - Projects
   {
     completionKey: 'subtabs_tour_completed',
-    sessionKey: 'dimcon_tour_subtabs_projects-tabs_step',
+    sessionKey: 'rhr_tour_subtabs_projects-tabs_step',
     moduleTourKey: 'project-management-projects-side-tabs',
     requiredPermission: 'Projects.view',
     requiredRoute: '/project-management/projects',
@@ -300,7 +300,7 @@ export const SUB_TABS_TOUR_CONFIGS: TourConfig[] = [
   //Project Management - Phases
   {
     completionKey: 'subtabs_tour_completed',
-    sessionKey: 'dimcon_tour_subtabs_phases-tabs_step',
+    sessionKey: 'rhr_tour_subtabs_phases-tabs_step',
     moduleTourKey: 'project-management-phases-side-tabs',
     requiredPermission: 'Project Phases Tab.view',
     requiredRoute: '/project-management/projects/details',
@@ -321,7 +321,7 @@ export const SUB_TABS_TOUR_CONFIGS: TourConfig[] = [
   //Project Management - Client Details
   {
     completionKey: 'subtabs_tour_completed',
-    sessionKey: 'dimcon_tour_subtabs_client-details-tabs_step',
+    sessionKey: 'rhr_tour_subtabs_client-details-tabs_step',
     moduleTourKey: 'project-management-client-details-tabs',
     requiredPermission: 'Client Projects.view',
     requiredRoute: '/project-management/clients/details',
@@ -342,7 +342,7 @@ export const SUB_TABS_TOUR_CONFIGS: TourConfig[] = [
   //Project Management - Timesheets
   {
     completionKey: 'subtabs_tour_completed',
-    sessionKey: 'dimcon_tour_subtabs_timesheets-tabs_step',
+    sessionKey: 'rhr_tour_subtabs_timesheets-tabs_step',
     moduleTourKey: 'project-management-timesheets-tabs',
     requiredPermission: 'Time Sheet.view',
     requiredRoute: '/project-management/timesheet',
@@ -363,7 +363,7 @@ export const SUB_TABS_TOUR_CONFIGS: TourConfig[] = [
   //Letters
   {
     completionKey: 'subtabs_tour_completed',
-    sessionKey: 'dimcon_tour_subtabs_letters-tabs_step',
+    sessionKey: 'rhr_tour_subtabs_letters-tabs_step',
     moduleTourKey: 'letter-acknowledgement-documents-tabs',
     requiredPermission: 'Employee Info Documents Tab.view',
     requiredRoute: '/myinfo/documents/letter-acknowledge-documents',
@@ -384,7 +384,7 @@ export const SUB_TABS_TOUR_CONFIGS: TourConfig[] = [
   //Time Off Leaves
   {
     completionKey: 'subtabs_tour_completed',
-    sessionKey: 'dimcon_tour_subtabs_leaves-approval-tabs_step',
+    sessionKey: 'rhr_tour_subtabs_leaves-approval-tabs_step',
     moduleTourKey: 'timeoff-leaves-approval-tabs',
     requiredPermission: 'Time Off Module.view',
     requiredRoute: '/time-off/leaves',
@@ -405,7 +405,7 @@ export const SUB_TABS_TOUR_CONFIGS: TourConfig[] = [
   //Time Off WFH
   {
     completionKey: 'subtabs_tour_completed',
-    sessionKey: 'dimcon_tour_subtabs_wfh-approval-tabs_step',
+    sessionKey: 'rhr_tour_subtabs_wfh-approval-tabs_step',
     moduleTourKey: 'timeoff-wfh-approval-tabs',
     requiredPermission: 'WFH/On Duty Module.view',
     requiredRoute: '/time-off/wfh',
@@ -426,7 +426,7 @@ export const SUB_TABS_TOUR_CONFIGS: TourConfig[] = [
   //Time Off Comp Off
   {
     completionKey: 'subtabs_tour_completed',
-    sessionKey: 'dimcon_tour_subtabs_comp-off-approval-tabs_step',
+    sessionKey: 'rhr_tour_subtabs_comp-off-approval-tabs_step',
     moduleTourKey: 'timeoff-compoff-approval-tabs',
     requiredPermission: 'Comp Off Module.view',
     requiredRoute: '/time-off/comp-off',
@@ -447,7 +447,7 @@ export const SUB_TABS_TOUR_CONFIGS: TourConfig[] = [
   //Time Off Permissions
   {
     completionKey: 'subtabs_tour_completed',
-    sessionKey: 'dimcon_tour_subtabs_permissions-tabs_step',
+    sessionKey: 'rhr_tour_subtabs_permissions-tabs_step',
     moduleTourKey: 'timeoff-permissions-approval-tabs',
     requiredPermission: 'Permissions Module.view',
     requiredRoute: '/time-off/premissions',
@@ -468,7 +468,7 @@ export const SUB_TABS_TOUR_CONFIGS: TourConfig[] = [
   //Time Off Regularizations
   {
     completionKey: 'subtabs_tour_completed',
-    sessionKey: 'dimcon_tour_subtabs_regularizations-tabs_step',
+    sessionKey: 'rhr_tour_subtabs_regularizations-tabs_step',
     moduleTourKey: 'timeoff-regularization-approval-tabs',
     requiredPermission: 'Regularization Module.view',
     requiredRoute: '/time-off/regularization',
@@ -489,7 +489,7 @@ export const SUB_TABS_TOUR_CONFIGS: TourConfig[] = [
   //Time Off Extra Hours
   {
     completionKey: 'subtabs_tour_completed',
-    sessionKey: 'dimcon_tour_subtabs_extra-hours-tabs_step',
+    sessionKey: 'rhr_tour_subtabs_extra-hours-tabs_step',
     moduleTourKey: 'timeoff-extra-hours-approval-tabs',
     requiredPermission: 'Extra Hours Module.view',
     requiredRoute: '/time-off/extra-hours',
@@ -510,7 +510,7 @@ export const SUB_TABS_TOUR_CONFIGS: TourConfig[] = [
   //Pending Approvals Time Off
   {
     completionKey: 'subtabs_tour_completed',
-    sessionKey: 'dimcon_tour_subtabs_pending-approvals-timeoff-tabs_step',
+    sessionKey: 'rhr_tour_subtabs_pending-approvals-timeoff-tabs_step',
     moduleTourKey: 'pending-approvals-timeoff-tabs',
     requiredPermission: 'Time Off main Tab.view',
     requiredRoute: '/pending-approvals/time-off',
@@ -531,7 +531,7 @@ export const SUB_TABS_TOUR_CONFIGS: TourConfig[] = [
   //Pending Approvals Onboarding
   {
     completionKey: 'subtabs_tour_completed',
-    sessionKey: 'dimcon_tour_subtabs_pending-approvals-onboarding-tabs_step',
+    sessionKey: 'rhr_tour_subtabs_pending-approvals-onboarding-tabs_step',
     moduleTourKey: 'pending-approvals-onboarding-tabs',
     requiredPermission: 'Onboarding main Tab.view',
     requiredRoute: '/pending-approvals/on-boarding',
@@ -552,7 +552,7 @@ export const SUB_TABS_TOUR_CONFIGS: TourConfig[] = [
   //Pending Approvals Offboarding
   {
     completionKey: 'subtabs_tour_completed',
-    sessionKey: 'dimcon_tour_subtabs_pending-approvals-offboarding-tabs_step',
+    sessionKey: 'rhr_tour_subtabs_pending-approvals-offboarding-tabs_step',
     moduleTourKey: 'pending-approvals-offboarding-tabs',
     requiredPermission: 'Offboarding main Tab.view',
     requiredRoute: '/pending-approvals/off-boarding',
@@ -574,7 +574,7 @@ export const SUB_TABS_TOUR_CONFIGS: TourConfig[] = [
 
   {
     completionKey: 'subtabs_tour_completed',
-    sessionKey: 'dimcon_tour_subtabs_on-behalf-of-approval-timeoff-tabs_step',
+    sessionKey: 'rhr_tour_subtabs_on-behalf-of-approval-timeoff-tabs_step',
     moduleTourKey: 'on-behalf-of-approval-timeoff-tabs',
     requiredPermission: 'On Behalf Of Module.view',
     requiredRoute: '/on-behalf-of/on-behalf-of',
@@ -595,7 +595,7 @@ export const SUB_TABS_TOUR_CONFIGS: TourConfig[] = [
   //on behalf of WFH
   {
     completionKey: 'subtabs_tour_completed',
-    sessionKey: 'dimcon_tour_subtabs_on-behalf-of-approval-wfh-tabs_step',
+    sessionKey: 'rhr_tour_subtabs_on-behalf-of-approval-wfh-tabs_step',
     moduleTourKey: 'on-behalf-of-approval-wfh-tabs',
     requiredPermission: 'On Behalf Of WFH.view',
     requiredRoute: '/on-behalf-of/on-behalf-of-wfh',
@@ -616,7 +616,7 @@ export const SUB_TABS_TOUR_CONFIGS: TourConfig[] = [
   //on behalf of remote login
   {
     completionKey: 'subtabs_tour_completed',
-    sessionKey: 'dimcon_tour_subtabs_on-behalf-of-approval-remotelogin-tabs_step',
+    sessionKey: 'rhr_tour_subtabs_on-behalf-of-approval-remotelogin-tabs_step',
     moduleTourKey: 'on-behalf-of-remotelogin-tabs',
     requiredPermission: 'On Behalf Of RemoteLogin.view',
     requiredRoute: '/on-behalf-of/on-behalf-of-remotelogin',
@@ -637,7 +637,7 @@ export const SUB_TABS_TOUR_CONFIGS: TourConfig[] = [
   //on behalf of expenses
   {
     completionKey: 'subtabs_tour_completed',
-    sessionKey: 'dimcon_tour_subtabs_on-behalf-of-approval-remotelogin-tabs_step',
+    sessionKey: 'rhr_tour_subtabs_on-behalf-of-approval-remotelogin-tabs_step',
     moduleTourKey: 'on-behalf-of-expenses-tabs',
     requiredPermission: 'On Behalf Of Expenses.view',
     requiredRoute: '/on-behalf-of/on-behalf-of-expenses',
@@ -655,15 +655,16 @@ export const SUB_TABS_TOUR_CONFIGS: TourConfig[] = [
       }
     ]
   },
-
+  //on behalf of approvals main tabs
    {
     completionKey: 'subtabs_tour_completed',
-    sessionKey: 'dimcon_tour_subtabs_on-behalf-of-approval-tabs_step',
+    sessionKey: 'rhr_tour_subtabs_on-behalf-of-approval-tabs_step',
     moduleTourKey: 'onbehalf-of-approvals-main-tabs',
     requiredPermission: 'On Behalf Of Approvals Module.view',
     requiredRoute: '/on-behalf-of/on-behalf-of-approvals',
     disableSkip: true,
     finishOnly: true,
+    lockScroll: true,
     steps: [
       {
         element: '[data-tour="subtabs-dropzone"][data-tour-module="onbehalf-of-approvals-main-tabs"]',

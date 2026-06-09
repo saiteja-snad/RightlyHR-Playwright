@@ -59,7 +59,7 @@
 
 
   <div class="d-flex gap-3 w-100" *ngIf="employeedata">
-      <div class="component-left-tabs-container" cdkScrollable>
+      <div class="component-left-tabs-container" cdkScrollable data-tour="subtabs-dropzone" [attr.data-tour-module]="tabsKey">
       <div class="custom-sub-tabs-container">
         <ul
           class="nav flex-column"

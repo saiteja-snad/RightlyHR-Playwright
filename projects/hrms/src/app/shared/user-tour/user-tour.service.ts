@@ -394,10 +394,27 @@ export class UserTourService implements OnDestroy {
     const el = document.querySelector(selector) as HTMLElement | null;
     if (!el) return;
 
+    const htmlEl = document.documentElement;
+    const bodyEl = document.body;
+    const prevHtmlOverflow = htmlEl.style.overflow;
+    const prevBodyOverflow = bodyEl.style.overflow;
+
+    const scrollHost = el.closest('[cdkScrollable], .cdk-scrollable') as HTMLElement | null;
+    const prevScrollHostOverflowY = scrollHost?.style.overflowY;
+    const prevScrollHostOverflowX = scrollHost?.style.overflowX;
+
     const prevOverflowY = el.style.overflowY;
     const prevOverflowX = el.style.overflowX;
     const prevScrollbarWidth = (el.style as any).scrollbarWidth;
     const prevMsOverflowStyle = (el.style as any).msOverflowStyle;
+
+    htmlEl.style.overflow = 'hidden';
+    bodyEl.style.overflow = 'hidden';
+
+    if (scrollHost) {
+      scrollHost.style.overflowY = 'hidden';
+      scrollHost.style.overflowX = 'hidden';
+    }
 
     el.style.overflowY = 'hidden';
     el.style.overflowX = 'hidden';
@@ -405,6 +422,12 @@ export class UserTourService implements OnDestroy {
     (el.style as any).msOverflowStyle = 'none';
 
     this.scrollLockCleanup = () => {
+      htmlEl.style.overflow = prevHtmlOverflow;
+      bodyEl.style.overflow = prevBodyOverflow;
+      if (scrollHost) {
+        scrollHost.style.overflowY = prevScrollHostOverflowY ?? '';
+        scrollHost.style.overflowX = prevScrollHostOverflowX ?? '';
+      }
       el.style.overflowY = prevOverflowY;
       el.style.overflowX = prevOverflowX;
       (el.style as any).scrollbarWidth = prevScrollbarWidth;

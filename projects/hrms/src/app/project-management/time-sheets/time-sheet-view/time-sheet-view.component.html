@@ -200,6 +200,7 @@
                         ||project.get('mon.approvalStatus')?.value === 'Processed')" (mousedown)="$event.preventDefault()" >
                             <a [ngbPopover]="approvalInfo"
                             triggers="click" 
+                            autoClose="outside"
                             popoverClass="approval-info-popover"
                             container="body"
                             class="cursor" (click)="onclickinfo(project.get('mon'))"> <i class="bi bi-info-circle"></i></a>
@@ -249,6 +250,7 @@
                         ||project.get('tue.approvalStatus')?.value === 'Processed')" class="input-group-text border-none" (mousedown)="$event.preventDefault()">
                          <a [ngbPopover]="approvalInfo"
                             triggers="click"
+                            autoClose="outside"
                             popoverClass="approval-info-popover"
                             container="body"
                             class="cursor" (click)="onclickinfo(project.get('tue'))"> <i class="bi bi-info-circle"></i></a>
@@ -290,6 +292,7 @@
                         ||project.get('wed.approvalStatus')?.value === 'Processed')" class="input-group-text border-none" (mousedown)="$event.preventDefault()">
                          <a [ngbPopover]="approvalInfo"
                             triggers="click"
+                            autoClose="outside"
                             popoverClass="approval-info-popover"
                             container="body"
                             class="cursor" (click)="onclickinfo(project.get('wed'))"> <i class="bi bi-info-circle"></i></a>
@@ -331,6 +334,7 @@
                         ||project.get('thu.approvalStatus')?.value === 'Processed')" class="input-group-text border-none" (mousedown)="$event.preventDefault()">
                          <a [ngbPopover]="approvalInfo"
                             triggers="click"
+                            autoClose="outside"
                             popoverClass="approval-info-popover"
                             container="body"
                             class="cursor" (click)="onclickinfo(project.get('thu'))"> <i class="bi bi-info-circle"></i></a>
@@ -371,6 +375,7 @@
                     <span *ngIf="project.get('fri.duration')?.value && (project.get('fri.approvalStatus')?.value === 'Rejected'||project.get('fri.approvalStatus')?.value === 'Waiting for Approval'
                         ||project.get('fri.approvalStatus')?.value === 'Processed')" class="input-group-text border-none" (mousedown)="$event.preventDefault()">
                          <a [ngbPopover]="approvalInfo"
+                            autoClose="outside"
                             triggers="click"
                             popoverClass="approval-info-popover"
                             container="body"
@@ -412,6 +417,7 @@
                         ||project.get('sat.approvalStatus')?.value === 'Processed')" class="input-group-text border-none" (mousedown)="$event.preventDefault()">
                          <a [ngbPopover]="approvalInfo"
                             triggers="click"
+                            autoClose="outside"
                             popoverClass="approval-info-popover"
                             container="body"
                             class="cursor" (click)="onclickinfo(project.get('sat'))"> <i class="bi bi-info-circle"></i></a>
@@ -452,6 +458,7 @@
                         ||project.get('sun.approvalStatus')?.value === 'Processed')" class="input-group-text border-none" (mousedown)="$event.preventDefault()">
                         <a [ngbPopover]="approvalInfo"
                             triggers="click"
+                            autoClose="outside"
                             popoverClass="approval-info-popover"
                             container="body"
                             class="cursor" (click)="onclickinfo(project.get('sun'))"> <i class="bi bi-info-circle"></i></a>
@@ -791,15 +798,15 @@
 <!-- Approval info popover template -->
 <ng-template #approvalInfo>
     <div class="approval-popup">
-        <div class="approval-header" [ngClass]="getHeaderClass(approvardetails?.status)">
+        <div class="approval-header" [ngClass]="getHeaderClass(approvardetails?.approvalStatus)">
             <i class="me-2" [ngClass]="{
-                'bi bi-check-circle-fill': getHeaderClass(approvardetails?.status) === 'header-approved',
-                'bi bi-x-circle-fill':    getHeaderClass(approvardetails?.status) === 'header-rejected',
-                'bi bi-clock-history':    getHeaderClass(approvardetails?.status) !== 'header-approved' && 
-                getHeaderClass(approvardetails?.status) !== 'header-rejected'}"></i> 
-                <span *ngIf="approvardetails?.status === 'Processed'">Approved request info</span>
-                <span *ngIf="approvardetails?.status === 'Rejected'">Rejected request info</span>
-                <span *ngIf="approvardetails?.status === 'Waiting for Approval'">Approval pending request info</span>
+                'bi bi-check-circle': getHeaderClass(approvardetails?.approvalStatus) === 'header-approved',
+                'bi bi-x-circle':    getHeaderClass(approvardetails?.approvalStatus) === 'header-rejected',
+                'bi bi-clock-history':    getHeaderClass(approvardetails?.approvalStatus) !== 'header-approved' && 
+                getHeaderClass(approvardetails?.approvalStatus) !== 'header-rejected'}"></i> 
+                <span *ngIf="approvardetails?.approvalStatus === 'Processed'">Approved request info</span>
+                <span *ngIf="approvardetails?.approvalStatus === 'Rejected'">Rejected request info</span>
+                <span *ngIf="approvardetails?.approvalStatus === 'Waiting for Approval'">Approval pending request info</span>
         </div>
         <div class="approval-body">
             <div class="approval-row">
@@ -816,9 +823,9 @@
                 <span class="ap-label">Status</span>
                 <span class="ap-colon">:</span>
                 <span class="ap-value">
-                    <span class="status-badge" [ngClass]="getStatusBadgeClass(approvardetails?.status)">
+                    <span class="status-badge" [ngClass]="getStatusBadgeClass(approvardetails?.approvalStatus)">
                         <span class="status-dot"></span>
-                        {{approvardetails?.status || '-'}}
+                        {{approvardetails?.approvalStatus || '-'}}
                     </span>
                 </span>
             </div>
@@ -829,14 +836,44 @@
                 <span class="ap-value">{{approvardetails?.taskName}}</span>
             </div>
 
-            <div class="approval-description" *ngIf="approvardetails?.description">
+            <!-- <div class="approval-description" *ngIf="approvardetails?.description">
                 <div class="desc-title">DESCRIPTION:</div>
-                <div class="desc-box"><i>{{approvardetails.description}}</i></div>
+                <div class="desc-box"><i></i></div>
+            </div> -->
+            <div class="custom-main-popup-content custom-accordians popover-accordian mb-0" *ngIf="approvardetails?.description">
+            <p-accordion value="0">
+                <p-accordion-panel value="1">
+                    <p-accordion-header>
+                        <div>
+                            <i class="bi bi-blockquote-right me-2"></i>{{'Description'|translate}}
+                        </div>
+                    </p-accordion-header>
+                    <p-accordion-content>
+                        <div class="accord-border p-2">{{approvardetails.description}}</div>
+                    </p-accordion-content>
+                </p-accordion-panel>
+            </p-accordion>
             </div>
-            <div class="approval-description mt-2" *ngIf="approvardetails?.comment">
+            <div class="custom-main-popup-content custom-accordians popover-accordian mb-0" 
+            *ngIf="approvardetails?.comment && approvardetails?.approvalStatus!=='Waiting for Approval'" 
+            [ngClass]="getStatusBadgeClass(approvardetails?.approvalStatus)">
+            <p-accordion value="0"> 
+                <p-accordion-panel value="1">
+                    <p-accordion-header>
+                        <div>
+                            <i class="bi bi-chat-left me-2"></i>{{'Approver Comments'|translate}}
+                        </div>
+                    </p-accordion-header>
+                    <p-accordion-content>
+                        <div class="accord-border p-2">{{approvardetails.comment}}</div>
+                    </p-accordion-content>
+                </p-accordion-panel>
+            </p-accordion>
+            </div>
+            <!-- <div class="approval-description mt-2" *ngIf="approvardetails?.comment">
                 <div class="desc-title">Approver Comments:</div>
-                <div class="desc-box"><i>{{approvardetails.comment}}tyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyhggggggggggggggggggggffffffffffffhgjgfhjghjffhfgjghjffgjhfghjffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff</i></div>
-            </div>
+                <div class="desc-box"><i>{{approvardetails.comment}}</i></div>
+            </div> -->
         </div>
     </div>
 </ng-template>

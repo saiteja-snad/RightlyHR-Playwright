@@ -1982,6 +1982,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
 
   openModalforconformation(content: any) {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
+    this.getTimeSheetEntriesbyEmployeeId(this.employeeId, this.formattedweakendStart);
   }
 
   cleardata() {
@@ -2348,8 +2349,10 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   onclickinfo(day?: any) { 
     this.approvardetails = { ...(day.value.pendingApprovalDetails || {}) }; 
     console.log('this.approvardetails', this.approvardetails);
+    console.log(day.get('approvalStatus')?.value)
     this.approvardetails.description = day.get('description')?.value;
-    this.approvardetails.taskName = day.get('taskName')?.value;  
+    this.approvardetails.taskName = day.get('taskName')?.value; 
+    this.approvardetails.approvalStatus=day.get('approvalStatus')?.value
     
    }
   ngOnDestroy() {

@@ -1839,7 +1839,7 @@ openModal(content: any, dayForm: AbstractControl | null, index: number, dayKey: 
         const isEffective = moment(selectedDate).isSameOrAfter(moment(effectiveDate),'day');
         const approvalstatus = this.dayForm.get('approvalStatus')?.value;
         console.log('Approval Status:', approvalstatus);
-        if (isEffective && item.isMandatory &&(approvalstatus?.toLowerCase() === 'draft' || approvalstatus?.toLowerCase() === 'rejected'|| approvalstatus?.toLowerCase() === 'not entered')) {
+        if (isEffective && item.isMandatory &&(!approvalstatus || approvalstatus?.toLowerCase() === 'draft' || approvalstatus?.toLowerCase() === 'rejected'|| approvalstatus?.toLowerCase() === 'not entered')) {
           control.setValidators([Validators.required]);
         }
         control.updateValueAndValidity({ emitEvent: false });

@@ -44,6 +44,7 @@ import { BulkExportComponent } from './time-sheets/bulk-export/bulk-export.compo
 import { BulkImportComponent } from './time-sheets/bulk-import/bulk-import.component';
 import { ExportHistoryComponent } from './time-sheets/export-history/export-history.component';
 import { HistoryLogComponent } from './time-sheets/history-log/history-log.component';
+import { ResourceCreationComponent } from './shared-project-management-componenets/resource-creation/resource-creation.component';
 
 export default [
     { path: '', redirectTo: '/project-management/clients', pathMatch: 'full' },
@@ -54,6 +55,7 @@ export default [
             { path: 'active', component: ActiveClientsComponent },
             { path: 'inactive', component: InactiveClientsComponent },
             { path: 'hold', component: HoldClientsComponent },
+            { path: 'add-resources', component: ResourceCreationComponent },
             {
                 path: 'details', component: ClientViewComponent,
                 children: [
@@ -64,7 +66,7 @@ export default [
                     { path: 'inactiveprojects', component: InacitveProjectsComponent },
                     { path: 'hold', component: HoldProjectsComponent },
                     { path: 'resources', component: ClientResourcesComponent },
-                       { path: 'inactive-resources', component: ClientResourceInactiveComponent },
+                    { path: 'inactive-resources', component: ClientResourceInactiveComponent },
                     {
                         path: 'timesheet', component: ClientTimeSheetsComponent,
                         children: [
@@ -98,6 +100,7 @@ export default [
             { path: 'active', component: ActiveProjectsComponent },
             { path: 'inactive', component: InacitveProjectsComponent },
             { path: 'hold', component: HoldProjectsComponent },
+            { path: 'add-resources', component: ResourceCreationComponent },
             {
                 path: 'details', component: ProjectViewComponent,
                 children: [
@@ -119,7 +122,7 @@ export default [
                     { path: 'inactivedocuments', component: InactiveProjectDocumentsComponent },
                     { path: 'phases', component: ProjectPhasesComponent },
                     { path: 'inactive-phases', component: InactivePhasesProjectComponent },
-                    { path: 'hold-phases', component:PhasesHoldComponent  }
+                    { path: 'hold-phases', component: PhasesHoldComponent }
                 ],
             }
         ],
@@ -132,7 +135,7 @@ export default [
             { path: 'teamtimesheet', component: TeamTimesheetsComponent },
             { path: 'summary', component: TimesheetsSummaryViewComponent },
             { path: 'mysummary', component: TimesheetsSummaryViewComponent },
-            {path:'resourcesummary',component:TimesheetsResourceSummaryComponent},
+            { path: 'resourcesummary', component: TimesheetsResourceSummaryComponent },
             { path: 'bulk-upload', component: BulkImportComponent },
             { path: 'bulk-export', component: BulkExportComponent },
             { path: 'historylog', component: HistoryLogComponent },

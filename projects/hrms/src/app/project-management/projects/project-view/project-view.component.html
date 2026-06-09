@@ -77,10 +77,12 @@
         <i class="bi bi-funnel me-2"></i>Filters
         <span *ngIf="isFilterAppliedForProjectResources()" class="filter-indicator"></span>
       </button>
-
-      @if(rbac.allowedToAccess('Resources Tab.create') && inactiveStatus !== 'inactive' &&
-      isActive('/project-management/projects/details/resources')){
-      <button type="button" class="custom-btn btn-primary" (click)="openResourceModal()">{{ "Add Resources" }}</button>
+   @if ( rbac.allowedToAccess("Resources Tab.create") &&
+      inactiveStatus !== "inactive" &&
+      isActive("/project-management/projects/details/resources")) {
+      <button type="button" class="custom-btn btn-primary" (click)="openAddResource()">
+        Add Resources
+      </button>
       }
     </div>
 

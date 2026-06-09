@@ -793,6 +793,12 @@ isDefaultSummaryprojectDateRange(dateRange: Date[] | null | undefined): boolean 
     return hasDateRange || hasDepartment || hasRole || hasPhase;
   }
 
+    openAddResource() {
+    this.router.navigate(
+      ['/project-management/projects/add-resources'],
+      { queryParams: { id: this.projectId } },
+      );
+  }
   ngOnDestroy() {
     this.destroy$.next(true);
     this.destroy$.complete();

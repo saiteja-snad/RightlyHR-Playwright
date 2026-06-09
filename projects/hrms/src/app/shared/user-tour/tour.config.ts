@@ -655,4 +655,25 @@ export const SUB_TABS_TOUR_CONFIGS: TourConfig[] = [
       }
     ]
   },
+
+   {
+    completionKey: 'subtabs_tour_completed',
+    sessionKey: 'dimcon_tour_subtabs_on-behalf-of-approval-tabs_step',
+    moduleTourKey: 'onbehalf-of-approvals-main-tabs',
+    requiredPermission: 'On Behalf Of Approvals Module.view',
+    requiredRoute: '/on-behalf-of/on-behalf-of-approvals',
+    disableSkip: true,
+    finishOnly: true,
+    steps: [
+      {
+        element: '[data-tour="subtabs-dropzone"][data-tour-module="onbehalf-of-approvals-main-tabs"]',
+        popover: {
+          title: 'Customize Sub Menu Order',
+          description: 'Drag and drop sub-menu tabs to arrange them in your preferred order for quicker access.',
+          side: 'right',
+          align: 'start'
+        }
+      }
+    ]
+  },
 ];

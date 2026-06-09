@@ -79,7 +79,7 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
   employeeDetails: IEmployeeDetails[] = [];
   selectedEmployee: any;
   employeeFullname!: string;
-  loading: boolean = true;
+  loading: boolean = false;
   projectRoleDropdown: any[] = [];
   frequencyTypes = [
     { label: 'Per month', value: 'Per month' },
@@ -145,7 +145,8 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
       if (projectId) {
         this.projectId = parseInt(projectId);
         this.getProjects(this.projectId);
-          //  this.getResourceData(this.projectId, undefined, false, this.searchValue, this.page, this.pageSize);
+        //  this.getResourceData(this.projectId, undefined, false, this.searchValue, this.page, this.pageSize);
+          this.gettimesheetapprovalData(this.projectId, undefined, true);
 
       }
     });
@@ -524,7 +525,7 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
   }
 
 
-    onPageSizeChange(newPageSize: number) {
+  onPageSizeChange(newPageSize: number) {
     this.pageSize = newPageSize;
     this.rows = newPageSize;
     this.page = 1;
@@ -537,16 +538,17 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
     this.page = event.page + 1;
     this.pageSize = event.rows;
     this.first = event.first;
-        this.selectedResources = [];
+    this.selectedResources = [];
     this.getResourceData(this.projectId, undefined, false, this.searchValue, this.page, this.pageSize);
   }
+
   getResourceData(
     projectId: number,
     phaseId?: number,
     isPopupCall: boolean = false,
     searchTerm?: string,
     pageNumber?: any,
-    pageSize?: any 
+    pageSize?: any
   ) {
     const params: any = {
       entityType: 'project',
@@ -554,7 +556,7 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
       status: 'active,assigned',
       // status:
       //   this.inactiveStatus === 'inactive' ? 'released' : 'active,assigned',
-       pageNumber: pageNumber || this.page,
+      pageNumber: pageNumber || this.page,
       pageSize: pageSize || this.pageSize
     };
 
@@ -576,14 +578,70 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
       params.timesheetApprovalAuthorityIds =
         this.selectedAuthorityIds.join(',');
     }
+      this.loader = true;
+    this.subscription = this.http
+      .getDataIncludeParams('ProjectResource', params)
+      .subscribe({
+        next: (data: any) => {
+          this.loader = false;
+          this.collectionSize = data?.pagination?.totalRecords || 0;
+            // NORMAL CALL - UPDATE TABLE DATA
+            this.loading = false;
+            this.resourcesData = Array.isArray(data?.data) ? data.data : [];
+            this.resourcesData = this.resourcesData.map((item: any) => ({
+              ...item,
+              employee: {
+                ...item.employee,
+                profileUrl: this.getImageUrl(item.employee?.profileUrl)
+              }
+            }));
+
+      
+        },
+        error: (reason: any) => {
+          this.loader = false;  
+          console.error(reason);
+        },
+      });
+  }
+
+
+  gettimesheetapprovalData(
+    projectId: number,
+    phaseId?: number,
+    isPopupCall: boolean = false,
+
+  ) {
+    const params: any = {
+      entityType: 'project',
+      entityRefId: projectId,
+      status: 'active,assigned',
+      // status:
+      //   this.inactiveStatus === 'inactive' ? 'released' : 'active,assigned',
+
+    };
+
+    if (phaseId) {
+      params.phaseId = phaseId;
+    }
+
+  
+
+    if (this.selectedRoleIds?.length > 0 && !isPopupCall) {
+      params.roleIds = this.selectedRoleIds.join(',');
+    }
+    if (this.selectedPhaseIds?.length > 0 && !isPopupCall) {
+      params.phaseId = this.selectedPhaseIds.join(',');
+    }
+    if (this.selectedAuthorityIds?.length > 0 && !isPopupCall) {
+      params.timesheetApprovalAuthorityIds =
+        this.selectedAuthorityIds.join(',');
+    }
 
     this.subscription = this.http
       .getDataIncludeParams('ProjectResource', params)
       .subscribe({
         next: (data: any) => {
-        
-          this.collectionSize = data?.pagination?.totalRecords || 0;
-
           if (isPopupCall) {
             // DO NOT TOUCH TABLE DATA
             const popupData = data.data ?? [];
@@ -599,16 +657,6 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
               popupData[0]?.pendingApprovalAuthority?.id ?? null;
           } else {
             // NORMAL CALL - UPDATE TABLE DATA
-              this.loading = false;
-            this.resourcesData = Array.isArray(data?.data) ? data.data : [];
-            this.resourcesData = this.resourcesData.map((item: any) => ({
-              ...item,
-              employee: {
-                ...item.employee,
-                profileUrl: this.getImageUrl(item.employee?.profileUrl)
-              }
-            }));
-
             this.resoucesDropDownData = this.resourcesData
               .filter((r) => r.employee.id)
               .map((r) => ({
@@ -638,7 +686,6 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
         },
       });
   }
-
 
   getImageUrl(imagePath: string): string | null {
     if (!imagePath) return null;
@@ -1021,6 +1068,7 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
     if (!dateString) return null;
     return new Date(dateString); // Converts ISO string to Date object
   }
+
   handleAction(action: string, data: any) {
     const config = this.confirmationMessages[action];
 
@@ -1028,6 +1076,7 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
 
     if (action === 'Update') {
       this.openModal(this.updateResourcemodal, 'lg', data);
+    
       const phaseDate = data?.phase;
       if (phaseDate) {
         this.projectStartDate = phaseDate.startDate ?? null;
@@ -1038,7 +1087,6 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
       this.resourcestartdate = this.formatDateToLocalforresource(
         data?.startDate,
       );
-      console.log(this.resourcestartdate);
     }
   }
 

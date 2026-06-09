@@ -46,7 +46,7 @@ export class ProjectInactiveResourcesComponent {
   employeeDetails: IEmployeeDetails[] = [];
   selectedEmployee: any;
   employeeFullname!: string;
-  loading: boolean = true;
+  loading: boolean = false;
   projectRoleDropdown: any[] = [];
   frequencyTypes = [
     { label: 'Per month', value: 'Per month' },
@@ -315,9 +315,11 @@ export class ProjectInactiveResourcesComponent {
     if (this.selectedAuthorityIds.length > 0 && !isPopupCall) {
       params.timesheetApprovalAuthorityIds = this.selectedAuthorityIds.join(',');
     }
+    this.loading = true;
     this.subscription = this.http.getDataIncludeParams('ProjectResource', params).subscribe({
       next: (data: any) => {
         this.collectionSize = data?.pagination?.totalRecords || 0
+        this.loading = false;
 
         if (isPopupCall) {
           // DO NOT TOUCH TABLE DATA

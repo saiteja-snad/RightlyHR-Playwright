@@ -234,7 +234,7 @@ export const SUB_TABS_TOUR_CONFIGS: TourConfig[] = [
       }
     ]
   },
-    //Help Desk Management
+  //Help Desk Management
   {
     completionKey: 'subtabs_tour_completed',
     sessionKey: 'dimcon_tour_subtabs_helpdesk-tabs_step',
@@ -570,5 +570,89 @@ export const SUB_TABS_TOUR_CONFIGS: TourConfig[] = [
       }
     ]
   },
+  //on behalf of approval time off
 
+  {
+    completionKey: 'subtabs_tour_completed',
+    sessionKey: 'dimcon_tour_subtabs_on-behalf-of-approval-timeoff-tabs_step',
+    moduleTourKey: 'on-behalf-of-approval-timeoff-tabs',
+    requiredPermission: 'On Behalf Of Module.view',
+    requiredRoute: '/on-behalf-of/on-behalf-of',
+    disableSkip: true,
+    finishOnly: true,
+    steps: [
+      {
+        element: '[data-tour="subtabs-dropzone"][data-tour-module="on-behalf-of-approval-timeoff-tabs"]',
+        popover: {
+          title: 'Customize Sub Menu Order',
+          description: 'Drag and drop sub-menu tabs to arrange them in your preferred order for quicker access.',
+          side: 'right',
+          align: 'start'
+        }
+      }
+    ]
+  },
+  //on behalf of WFH
+  {
+    completionKey: 'subtabs_tour_completed',
+    sessionKey: 'dimcon_tour_subtabs_on-behalf-of-approval-wfh-tabs_step',
+    moduleTourKey: 'on-behalf-of-approval-wfh-tabs',
+    requiredPermission: 'On Behalf Of WFH.view',
+    requiredRoute: '/on-behalf-of/on-behalf-of-wfh',
+    disableSkip: true,
+    finishOnly: true,
+    steps: [
+      {
+        element: '[data-tour="subtabs-dropzone"][data-tour-module="on-behalf-of-approval-wfh-tabs"]',
+        popover: {
+          title: 'Customize Sub Menu Order',
+          description: 'Drag and drop sub-menu tabs to arrange them in your preferred order for quicker access.',
+          side: 'right',
+          align: 'start'
+        }
+      }
+    ]
+  },
+  //on behalf of remote login
+  {
+    completionKey: 'subtabs_tour_completed',
+    sessionKey: 'dimcon_tour_subtabs_on-behalf-of-approval-remotelogin-tabs_step',
+    moduleTourKey: 'on-behalf-of-remotelogin-tabs',
+    requiredPermission: 'On Behalf Of RemoteLogin.view',
+    requiredRoute: '/on-behalf-of/on-behalf-of-remotelogin',
+    disableSkip: true,
+    finishOnly: true,
+    steps: [
+      {
+        element: '[data-tour="subtabs-dropzone"][data-tour-module="on-behalf-of-remotelogin-tabs"]',
+        popover: {
+          title: 'Customize Sub Menu Order',
+          description: 'Drag and drop sub-menu tabs to arrange them in your preferred order for quicker access.',
+          side: 'right',
+          align: 'start'
+        }
+      }
+    ]
+  },
+  //on behalf of expenses
+  {
+    completionKey: 'subtabs_tour_completed',
+    sessionKey: 'dimcon_tour_subtabs_on-behalf-of-approval-remotelogin-tabs_step',
+    moduleTourKey: 'on-behalf-of-expenses-tabs',
+    requiredPermission: 'On Behalf Of Expenses.view',
+    requiredRoute: '/on-behalf-of/on-behalf-of-expenses',
+    disableSkip: true,
+    finishOnly: true,
+    steps: [
+      {
+        element: '[data-tour="subtabs-dropzone"][data-tour-module="on-behalf-of-expenses-tabs"]',
+        popover: {
+          title: 'Customize Sub Menu Order',
+          description: 'Drag and drop sub-menu tabs to arrange them in your preferred order for quicker access.',
+          side: 'right',
+          align: 'start'
+        }
+      }
+    ]
+  },
 ];

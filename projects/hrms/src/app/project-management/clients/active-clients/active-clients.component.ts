@@ -44,7 +44,7 @@ export class ActiveClientsComponent implements OnInit, OnDestroy {
 
   getClientsData(): void {
     let url = 'Client/GetAll?status=Active';
-    if(this.rbac.allowedToAccess('View Assigned Clients.view') && !this.rbac.allowedToAccess('View All Clients.view') && !this.rbac.allowedToAccess('View All Clients.view')){
+    if(this.rbac.allowedToAccess('View Assigned Clients.view') && !this.rbac.allowedToAccess('View All Clients.view')){
       url = `Client/GetAll?status=Active&employeeId=${this.empinfo.employeeId}`;
     }
     else{

@@ -40,7 +40,9 @@
                             <th>Phone Number</th>
                             <th>Role</th>
                             <th>Status</th>
-                            <th class="text-center">{{"Action" | translate}}</th>
+                            @if(rbac.allowedToAccess('Client Information.update')){
+                        <th class="text-center">{{"Action" | translate}}</th>
+                        }
                         </thead>
                         <tbody>
                             <ng-container *ngIf="(clients | inactiveclient : searchValue) as filteredClients">
@@ -57,6 +59,7 @@
                                         <td>{{client?.contact?.phoneDialCode || '-'}} {{client?.contact?.phoneNumber || '-'}}</td>
                                         <td>{{client?.contact?.role || '-'}}</td>
                                         <td>{{client.status}}</td>
+                                        @if(rbac.allowedToAccess('Client Information.update')){
                                         <td class="text-center">
                                             <div class="dropdown">
                                                 <a data-bs-toggle="dropdown" aria-expanded="false">
@@ -71,6 +74,8 @@
                                                 </ul>
                                             </div>
                                         </td>
+}
+                                        
                                     </tr>
                                 </ng-container>
                             </ng-container>

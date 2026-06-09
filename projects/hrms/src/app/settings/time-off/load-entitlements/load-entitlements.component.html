@@ -102,205 +102,152 @@
 
         <!-- Normal Load Flow (not yet entitled) -->
         <ng-container *ngIf="!alreadyEntitled">
-            <div class="mb-3 w-100" *ngIf="selectedEmployeeDetails">
-                <ng-container *ngIf="!showAddForm">
-                    <button type="button" class="custom-btn btn-primary" (click)="refreshAvailableCategoryOptions(); showAddForm = true"
-                        [disabled]="allCategoryOptions.length === 0 || availableCategoryOptions.length === 0">
-                        <i class="bi bi-plus me-1"></i> Add New
-                    </button>
-                </ng-container>
-                <ng-container *ngIf="showAddForm">
-                    <div class="row w-100 g-3 align-items-start">
-                        <div class="col-md-3 col-12">
-                            <label class="form-label custom-label">Frequency <span class="text-danger">*</span></label>
-                            <div class="custom-p-select-content">
-                                <p-select [options]="frequencyTypes" optionLabel="label" optionValue="value"
-                                    [(ngModel)]="addForm.frequency" class="form-select custom-select"
-                                    placeholder="Please select frequency"
-                                    (onBlur)="addFormTouched.frequency = true"
-                                    (onChange)="addForm.categories = []; addForm.cycleHandling = ''">
-                                </p-select>
-                            </div>
-                <div class="error-msg" *ngIf="addFormTouched.frequency && !addForm.frequency">Frequency is required</div>
-
-                        </div>
-                        <div class="col-md-3 col-12">
-                            <label class="form-label custom-label">Category <span class="text-danger">*</span></label>
-                            <div class="custom-p-multiSelect-content">
-                                <p-multiselect [options]="availableCategoryOptions"
-                                    optionLabel="label" optionValue="value" [(ngModel)]="addForm.categories"
-                                    class="form-select custom-select" placeholder="Please select categories" [filter]="true" filterBy="label"
-                                    [disabled]="!addForm.frequency" filterPlaceHolder="Search category"  multiple="true"
-                                    (onBlur)="addFormTouched.categories = true">
-                                </p-multiselect>
-                            </div>
-
-                            <!-- <div class="custom-p-multiSelect-content">
-                        <p-multiSelect [options]="categoryDetails" optionLabel="name" optionValue="id" [filter]="true" filterBy="name"
-                            [showClear]="false" formControlName="categoryName" placeholder="Please select leave category"
-                            [resetFilterOnHide]="true" class="form-select custom-select" filterPlaceHolder="Search category"
-                            multiple="true" (onChange)="onCategoriesChange($event.value)" />
-                    </div> -->
-                                                    <div class="error-msg" *ngIf="addFormTouched.categories && !addForm.categories.length">Category is required</div>
-
-                                                    </div>
-                        <div class="col-md-3 col-12">
-                            <label class="form-label custom-label">Previous Cycle Handling <span
-                                    class="text-danger">*</span></label>
-                            <div class="custom-p-select-content">
-                                <p-select [options]="cycleHandlingOptions" optionLabel="label" optionValue="value"
-                                    [(ngModel)]="addForm.cycleHandling" class="form-select custom-select"
-                                    placeholder="Please select cycle handling"
-                                    (onBlur)="addFormTouched.cycleHandling = true">
-                                </p-select>
-                            </div>
-                            <div class="error-msg" *ngIf="addFormTouched.cycleHandling && !addForm.cycleHandling">Cycle Handling is required</div>
-
-                        </div>
-                        <div class="col-md-3 col-12 d-flex gap-2 justify-content-end mt-5">
-                            <button type="button" class="custom-btn btn-primary"
-                                [disabled]="!addForm.frequency || !addForm.categories.length || !addForm.cycleHandling"
-                                (click)="openAddConfirmPopup()">
-                                Confirm
-                            </button>
-                            <button type="button" class="custom-btn btn-secondary"
-                                (click)="openCancelConfirmPopup()">
-                                Cancel
-                            </button>
-                        </div>
-                    </div>
-                </ng-container>
+            <div class="py-4 text-center" *ngIf="selectedEmployeeDetails && breakdownLoader">
+                Loading entitlement breakdown...
             </div>
 
-            <!-- Frequency Cards -->
-            <ng-container *ngFor="let card of frequencyCards; let cardIdx = index">
-                <div class="frequency-card p-3 mt-3">
-                    <div class="frequency-card-header d-flex justify-content-between align-items-center mb-3">
-                        <div class="d-flex align-items-center gap-2">
-                            <span class="frequency-badge">{{ formatLabel(card.frequencyType) }}</span>
-                            <span class="cycle-handling-badge">{{ formatLabel(card.cycleHandling) }}</span>
+            <div *ngIf="selectedEmployeeDetails && !breakdownLoader && frequencyCards.length === 0">
+                <app-no-data-found></app-no-data-found>
+            </div>
+
+            <div class="frequency-card p-3 mt-3" *ngIf="combinedBreakdownCard as combinedCard">
+                <div class="d-flex justify-content-end align-items-center mb-3">
+                    <button type="button" class="custom-btn btn-secondary"
+                        [disabled]="!isAnyCategoryModified(combinedCard)"
+                        (click)="resetAllEntries(combinedCard)">
+                        <i class="bi bi-arrow-counterclockwise me-1"></i> Reset All
+                    </button>
+                </div>
+                <div class="breakdown-layout">
+                    <div class="breakdown-left-nav">
+                        <div class="component-side-nav-tabs-container">
+                            <ul class="nav flex-column">
+                                <li class="nav-item" *ngFor="let entry of combinedCard.categories; let catIdx = index">
+                                    <a *ngIf="!entry.deleted"
+                                        class="nav-link"
+                                        [class.active-nav-link]="combinedCard.selectedCategoryIdx === catIdx"
+                                        (click)="combinedCard.selectedCategoryIdx = catIdx">
+                                        {{ entry.categoryName }}
+                                    </a>
+                                </li>
+                            </ul>
                         </div>
-                        <button type="button" class="custom-btn btn-secondary"
-                            [disabled]="!isAnyCategoryModified(card)"
-                            (click)="resetAllEntries(card)">
-                            <i class="bi bi-arrow-counterclockwise me-1"></i> Reset All
-                        </button>
                     </div>
-                    <div class="custom-accordians">
-                        <div class="custom-accordian-data-content">
-                            <p-accordion [multiple]="true">
-                                <ng-container *ngFor="let entry of card.categories; let catIdx = index">
-                                    <p-accordion-panel *ngIf="!entry.deleted" [value]="catIdx">
-                                        <p-accordion-header>
-                                            <div class="d-flex justify-content-between align-items-center w-100 pe-3">
-                                                <div class="accordian-header-text text-truncate">{{ entry.categoryName
-                                                    }}</div>
-                                                <div class="d-flex gap-2">
-                                                    <button type="button"
-                                                        class="custom-btn btn-secondary btn-sm reset-category-btn"
-                                                        [disabled]="!entry.isModified"
-                                                        (click)="$event.stopPropagation(); resetEntry(entry)">
-                                                        <i class="bi bi-arrow-counterclockwise me-1"></i> Reset
-                                                    </button>
-                                                    <!-- <button type="button" class="custom-btn btn-danger btn-sm reset-category-btn"
-                                                (click)="$event.stopPropagation(); softDeleteCategory(cardIdx, catIdx)">
-                                                <i class="bi bi-trash me-1"></i> Remove
-                                            </button> -->
-                                                    <button type="button" class="custom-icon btn p-0"
-                                                        (click)="$event.stopPropagation(); confirmDeleteCategory(cardIdx, catIdx)">
-                                                        <i class="bi bi-trash text-danger"></i>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </p-accordion-header>
-                                        <p-accordion-content>
-                                            <div class="p-3">
-                                                <div *ngIf="entry.isExcluded" class="text-danger small">
-                                                    <i class="bi bi-exclamation-circle me-1"></i>{{ entry.exclusionReason }}
-                                                </div>
-                                                <div *ngIf="entry.breakdownLoader">Loading...</div>
-                                                <div *ngIf="!entry.breakdownLoader && entry.tableData"
-                                                    class="custom-table-content" [ngClass]="'table-height-30'">
-                                                    <ng-container [formGroup]="entry.formGroup">
-                                                        <table class="w-100">
-                                                            <thead>
-                                                                <tr>
-                                                                    <th class="fw-bold">Cycle</th>
-                                                                    <th class="text-center"
-                                                                        *ngFor="let c of entry.tableData.columns">
-                                                                        <div class="fw-bold">Entitlement Days ({{ c.gradeLabel }})</div>
-                                                                        <div class="text-muted small mt-2">Required: {{
-                                                                            c.allowedDays }}</div>
-                                                                    </th>
-                                                                    <th class="text-center fw-bold"
-                                                                        *ngIf="entry.tableData.isProRata && isDojCurrentYear">Pro Rate</th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody formArrayName="cycles">
-                                                                <tr *ngFor="let cycle of entry.tableData.cycles; let cycleIdx = index"
-                                                                    [formGroupName]="cycleIdx">
-                                                                    <td class="fw-semibold">{{ cycle.label }}</td>
-                                                                    <td class="text-center"
-                                                                        *ngFor="let col of entry.tableData.columns; let colIdx = index">
-                                                                        <div class="entitlement-cell-wrap">
-                                                                            <input type="number"
-                                                                                class="form-control custom-input text-center entitlement-input"
-                                                                                [min]="0" [max]="col.allowedDays" [step]="0.5"
-                                                                                [formControlName]="'col_' + colIdx"
-                                                                                (keydown)="blockInvalidEntitlementKeys($event)"
-                                                                                (input)="clampEntitlementInput($event, entry, cycleIdx, colIdx, col.allowedDays)"
-                                                                                (blur)="clampEntitlementInput($event, entry, cycleIdx, colIdx, col.allowedDays)" />
-                                                                            <div class="error-msg mt-1"
-                                                                                *ngIf="getEntryCellError(entry, cycleIdx, 'col_' + colIdx) as err">
-                                                                                {{ err }}
-                                                                            </div>
-                                                                        </div>
-                                                                    </td>
-                                                                    <td class="text-center pro-rata-cell"
-                                                                        *ngIf="entry.tableData.isProRata && isDojCurrentYear">
-                                                                        <div class="input-error-wrap">
-                                                                            <input type="number"
-                                                                                class="form-control custom-input text-center entitlement-input"
-                                                                                [min]="0" [step]="0.5"
-                                                                                [formControlName]="'proRata_col_0'"
-                                                                                [class.bg-light]="!cycle.isProRataCycle" />
-                                                                            <div class="error-msg text-start mt-1"
-                                                                                *ngIf="getEntryProRataError(entry, cycleIdx, 0) as err">
-                                                                                {{ err }}</div>
-                                                                        </div>
-                                                                    </td>
-                                                                </tr>
-                                                            </tbody>
-                                                            <tfoot>
-                                                                <tr class="total-row">
-                                                                    <td class="total-label fw-bold">Total</td>
-                                                                    <td class="text-center"
-                                                                        *ngFor="let col of entry.tableData.columns; let colIdx = index">
-                                                                        <span class="total-badge"
-                                                                            [ngClass]="isEntryColumnValid(entry, colIdx) ? 'total-valid' : 'total-invalid'">
-                                                                            {{ getEntryColumnTotal(entry, colIdx) }} /
-                                                                            {{ col.allowedDays }}
-                                                                        </span>
-                                                                        <div class="error-msg mt-1"
-                                                                            *ngIf="!isEntryColumnValid(entry, colIdx)">
-                                                                            Ensure total entitlement equals {{ col.allowedDays }} days.<ng-container *ngIf="getEntryColumnTotal(entry, colIdx) < col.allowedDays"> Remaining: {{ col.allowedDays - getEntryColumnTotal(entry, colIdx) }}</ng-container>
-                                                                        </div>
-                                                                    </td>
-                                                                    <td *ngIf="entry.tableData.isProRata && isDojCurrentYear"></td>
-                                                                </tr>
-                                                            </tfoot>
-                                                        </table>
-                                                    </ng-container>
-                                                </div>
-                                            </div>
-                                        </p-accordion-content>
-                                    </p-accordion-panel>
-                                </ng-container>
-                            </p-accordion>
+
+                    <div class="breakdown-right-content" *ngIf="getSelectedCardEntry(combinedCard) as selectedEntry">
+                        <div class="custom-accordians">
+                            <div class="custom-accordian-data-content">
+                                <div class="d-flex justify-content-between align-items-end gap-3 flex-wrap w-100 pe-3 mb-3">
+                                    <div class="breakdown-badges">
+                                        <div class="info-badge">
+                                            <span style="color: rgb(105, 105, 105);">Frequency Type:</span>
+                                                <span class="fw-bolder ms-1">{{ formatLabel(selectedEntry.frequencyType) }}</span>
+                                        </div>
+                                        <div class="info-badge" *ngIf="selectedEntry.cycleHandling">
+                                            <span style="color: rgb(105, 105, 105);">Leave Balance Handling:</span>
+                                            <span class="fw-bolder ms-1">{{ formatLabel(selectedEntry.cycleHandling) }}</span>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex gap-2">
+                                        <button type="button"
+                                            class="custom-btn btn-secondary btn-sm reset-category-btn"
+                                            [disabled]="!selectedEntry.isModified"
+                                            (click)="resetEntry(selectedEntry)">
+                                            <i class="bi bi-arrow-counterclockwise me-1"></i> Reset
+                                        </button>
+                                        <button type="button"
+                                            class="custom-icon btn p-0"
+                                            (click)="confirmDeleteCategory(0, combinedCard.selectedCategoryIdx)">
+                                            <i class="bi bi-trash text-danger"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div *ngIf="selectedEntry.isExcluded" class="text-danger small">
+                                    <i class="bi bi-exclamation-circle me-1"></i>{{ selectedEntry.exclusionReason }}
+                                </div>
+                                <div *ngIf="selectedEntry.breakdownLoader">Loading...</div>
+                                <div *ngIf="!selectedEntry.breakdownLoader && selectedEntry.tableData"
+                                    class="custom-table-content"
+                                    [ngClass]="'table-height-30'">
+                                    <ng-container [formGroup]="selectedEntry.formGroup">
+                                        <table class="w-100">
+                                            <thead>
+                                                <tr>
+                                                    <th class="fw-bold">Cycle</th>
+                                                    <th class="text-center"
+                                                        *ngFor="let c of selectedEntry.tableData.columns">
+                                                        <div class="fw-bold">Entitlement Days ({{ c.gradeLabel }})</div>
+                                                        <div class="text-muted small mt-2">Required: {{ c.allowedDays }}</div>
+                                                    </th>
+                                                    <th class="text-center fw-bold"
+                                                        *ngIf="selectedEntry.tableData.isProRata && isDojCurrentYear">Pro Rate</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody formArrayName="cycles">
+                                                <tr *ngFor="let cycle of selectedEntry.tableData.cycles; let cycleIdx = index"
+                                                    [formGroupName]="cycleIdx">
+                                                    <td class="fw-semibold">{{ cycle.label }}</td>
+                                                    <td class="text-center"
+                                                        *ngFor="let col of selectedEntry.tableData.columns; let colIdx = index">
+                                                        <div class="entitlement-cell-wrap">
+                                                            <input type="number"
+                                                                class="form-control custom-input text-center entitlement-input"
+                                                                [min]="0" [max]="col.allowedDays" [step]="0.5"
+                                                                [formControlName]="'col_' + colIdx"
+                                                                (keydown)="blockInvalidEntitlementKeys($event)"
+                                                                (input)="clampEntitlementInput($event, selectedEntry, cycleIdx, colIdx, col.allowedDays)"
+                                                                (blur)="clampEntitlementInput($event, selectedEntry, cycleIdx, colIdx, col.allowedDays)" />
+                                                            <div class="error-msg mt-1"
+                                                                *ngIf="getEntryCellError(selectedEntry, cycleIdx, 'col_' + colIdx) as err">
+                                                                {{ err }}
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td class="text-center pro-rata-cell"
+                                                        *ngIf="selectedEntry.tableData.isProRata && isDojCurrentYear">
+                                                        <div class="input-error-wrap">
+                                                            <input type="number"
+                                                                class="form-control custom-input text-center entitlement-input"
+                                                                [min]="0" [step]="0.5"
+                                                                [formControlName]="'proRata_col_0'"
+                                                                [class.bg-light]="!cycle.isProRataCycle" />
+                                                            <div class="error-msg text-start mt-1"
+                                                                *ngIf="getEntryProRataError(selectedEntry, cycleIdx, 0) as err">
+                                                                {{ err }}
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                            <tfoot>
+                                                <tr class="total-row">
+                                                    <td class="total-label fw-bold">Total</td>
+                                                    <td class="text-center"
+                                                        *ngFor="let col of selectedEntry.tableData.columns; let colIdx = index">
+                                                        <span class="total-badge"
+                                                            [ngClass]="isEntryColumnValid(selectedEntry, colIdx) ? 'total-valid' : 'total-invalid'">
+                                                            {{ getEntryColumnTotal(selectedEntry, colIdx) }} / {{ col.allowedDays }}
+                                                        </span>
+                                                        <div class="error-msg mt-1"
+                                                            *ngIf="!isEntryColumnValid(selectedEntry, colIdx)">
+                                                            Ensure total entitlement equals {{ col.allowedDays }} days.
+                                                            <ng-container *ngIf="getEntryColumnTotal(selectedEntry, colIdx) < col.allowedDays">
+                                                                Remaining: {{ col.allowedDays - getEntryColumnTotal(selectedEntry, colIdx) }}
+                                                            </ng-container>
+                                                        </div>
+                                                    </td>
+                                                    <td *ngIf="selectedEntry.tableData.isProRata && isDojCurrentYear"></td>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                    </ng-container>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </ng-container>
+            </div>
         </ng-container><!-- end !alreadyEntitled -->
     </div><!-- end load-entitlements-content -->
 
@@ -378,34 +325,6 @@
         </button>
     </div>
 </div><!-- end load-entitlements-page -->
-
-<!-- Add Form Confirm Modal -->
-<ng-template #addConfirmTpl let-modal>
-    <div class="result-popup-content" ngbAutofocus>
-        <div>
-            <img src="icons/conformation.png" alt="confirm icon" class="confirmation-delete-icon">
-            <p class="confirmation-text">Are you sure you want to confirm?</p>
-        </div>
-        <div class="custom-modal-footer">
-            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
-            <button type="button" class="custom-btn btn-primary" (click)="executeAddConfirm()">Yes</button>
-        </div>
-    </div>
-</ng-template>
-
-<!-- Add Form Cancel Modal -->
-<ng-template #cancelConfirmTpl let-modal>
-    <div class="result-popup-content" ngbAutofocus>
-        <div>
-            <img src="icons/reject.png" alt="cancel icon" class="confirmation-delete-icon">
-            <p class="confirmation-text">Are you sure you want to cancel?</p>
-        </div>
-        <div class="custom-modal-footer">
-            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
-            <button type="button" class="custom-btn btn-primary" (click)="executeCancel()">Yes</button>
-        </div>
-    </div>
-</ng-template>
 
 <!-- Delete Confirmation Modal -->
 <ng-template #deleteConfirmTpl let-modal>

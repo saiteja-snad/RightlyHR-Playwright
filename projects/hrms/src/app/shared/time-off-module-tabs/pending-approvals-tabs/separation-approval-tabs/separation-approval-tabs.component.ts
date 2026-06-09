@@ -42,7 +42,7 @@ export class SeparationApprovalTabsComponent {
   countRole: any;
   loading = false;
   nodue_Request_data = [] as any[];
-  tabsKey = 'pending-approvals-separation-tabs';
+  tabsKey = 'pending-approvals-offboarding-tabs';
   filteredNavLinks: NavLink[] = [];
   private userInteracted = false;
   navLinks: NavLink[] = [

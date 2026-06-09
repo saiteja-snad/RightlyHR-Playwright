@@ -7,6 +7,8 @@
     [cdkDropListData]="filteredTabs"
     cdkDropListOrientation="vertical"
     (cdkDropListDropped)="onDrop($event)"
+    data-tour="subtabs-dropzone"
+    [attr.data-tour-module]="tabsKey"
   >
     <li class="nav-item" *ngFor="let tab of filteredTabs; trackBy: trackByNavLink" cdkDrag cdkDragLockAxis="y" cdkDragBoundary=".component-left-tabs-container">
       <div class="nav-link" (click)="navigate(tab.link)" [class.active-nav-link]="isActive(tab.link)">

@@ -4,6 +4,8 @@
   <ul
     class="nav flex-column"
     cdkDropList
+    data-tour="subtabs-dropzone"
+    [attr.data-tour-module]="tabsKey"
     [cdkDropListData]="filteredTabs"
     cdkDropListOrientation="vertical"
     (cdkDropListDropped)="onDrop($event)"

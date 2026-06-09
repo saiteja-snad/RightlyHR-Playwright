@@ -22,6 +22,8 @@ import { MenuOrderService } from '../../../services/theme-service/menu-order.ser
 })
 
 export class LeavesApprovaltabsComponent implements OnInit, OnDestroy{
+  // Key for persisting order via MenuOrderService (must match AccessNavigationService)
+  tabsKey = 'timeoff-leaves-approval-tabs';
   loggedinuser = {} as any;
   empdata = {} as any;
   subscription!: Subscription;
@@ -235,8 +237,6 @@ export class LeavesApprovaltabsComponent implements OnInit, OnDestroy{
     this.redirectIfNeeded();
   }
 
-  // Key for persisting order via MenuOrderService (must match AccessNavigationService)
-  tabsKey = 'timeoff-leaves-approval-tabs';
 
   navigate(link: string): void {
     this.userInteracted = true;

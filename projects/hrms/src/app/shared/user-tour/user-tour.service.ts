@@ -24,6 +24,7 @@ export class UserTourService implements OnDestroy {
   private checkAndStartToursInProgress = false;
   private subTabsStartInProgress = false;
   private scrollLockCleanup: (() => void) | null = null;
+  private pendingSubTabsCheck = false;
 
   constructor(
     private router: Router,
@@ -127,6 +128,9 @@ export class UserTourService implements OnDestroy {
         this.isTourCompletedManually = false;
         this.tourInProgress = false;
         this.setTransitioning(false);
+        setTimeout(() => {
+          void this.handlePostTourFlow();
+        }, 0);
       }
     });
   }
@@ -211,6 +215,10 @@ export class UserTourService implements OnDestroy {
       }
       const payload = { employeeId, key: this.activeTourConfig.completionKey, value: 'true' };
       await firstValueFrom(this.http.postdata('Employeedata/save-user-preference', payload));
+      const cached = this.userPrefService.currentPreferences;
+      if (cached) {
+        cached[this.activeTourConfig.completionKey] = 'true';
+      }
     } catch (error) {
       console.error('[Tour] Failed to save tour completion:', error);
     }
@@ -228,30 +236,43 @@ export class UserTourService implements OnDestroy {
     this.checkAndStartToursInProgress = true;
     try {
       this.ensureSubTabsTourRouteWatcher();
-      const prefs = await this.userPrefService.getPreferences();
-
-      for (const config of TOUR_CONFIGS) {
-          if (
-            config.requiredPermission &&
-            !this.rbac.allowedToAccess(config.requiredPermission)
-          ) {
-            continue;
-          }
-        const isCompleted = prefs?.[config.completionKey];
-        if (isCompleted === 'true' || isCompleted === true) continue;
-
-        // Found an incomplete tour — resume or start it
-        await this.resumeOrStart(config);
-        return; // Show one tour at a time
-      }
-
-      await this.checkAndStartSubTabsTourForCurrentRoute();
+      await this.startNextGlobalTour();
     } catch (error) {
       console.error('[Tour] checkAndStartTours error:', error);
     } finally {
       this.checkAndStartToursInProgress = false;
     }
   }
+
+  private async startNextGlobalTour(): Promise<boolean> {
+    const prefs = await this.userPrefService.getPreferences();
+    for (const config of TOUR_CONFIGS) {
+      if (config.requiredPermission && !this.rbac.allowedToAccess(config.requiredPermission)) {
+        continue;
+      }
+      if (this.isTourCompleted(config, prefs)) continue;
+
+      await this.resumeOrStart(config);
+      return true;
+    }
+    return false;
+  }
+
+  private async handlePostTourFlow(): Promise<void> {
+    if (this.tourInProgress) return;
+    if (this.checkAndStartToursInProgress) return;
+
+    try {
+      this.ensureSubTabsTourRouteWatcher();
+      const startedGlobal = await this.startNextGlobalTour();
+      if (!startedGlobal) {
+        await this.checkAndStartSubTabsTourForCurrentRoute();
+      }
+    } catch (error) {
+      console.error('[Tour] handlePostTourFlow error:', error);
+    }
+  }
+
 
   private ensureSubTabsTourRouteWatcher(): void {
     if (this.subTabsTourRouteSub) return;
@@ -262,6 +283,8 @@ export class UserTourService implements OnDestroy {
       });
     void this.checkAndStartSubTabsTourForCurrentRoute();
   }
+
+
 
   private parseBooleanMap(raw: any): Record<string, boolean> {
     if (!raw) return {};
@@ -275,11 +298,31 @@ export class UserTourService implements OnDestroy {
       return {};
     }
   }
+  
+  private isTourCompleted(config: TourConfig, prefs: any): boolean {
+    const raw = prefs?.[config.completionKey];
+    if (config.moduleTourKey) {
+      const map = this.parseBooleanMap(raw);
+      return map?.[config.moduleTourKey] === true;
+    }
+    return raw === 'true' || raw === true;
+  }
 
   private async checkAndStartSubTabsTourForCurrentRoute(): Promise<void> {
-    if (this.tourInProgress || this.subTabsStartInProgress) return;
+        if (this.tourInProgress || this.subTabsStartInProgress) return;
+    if (this.checkAndStartToursInProgress) {
+      if (!this.pendingSubTabsCheck) {
+        this.pendingSubTabsCheck = true;
+        setTimeout(() => {
+          this.pendingSubTabsCheck = false;
+          void this.checkAndStartSubTabsTourForCurrentRoute();
+        }, 0);
+      }
+      return;
+    }
     this.subTabsStartInProgress = true;
     try {
+      const prefs = await this.userPrefService.getPreferences();
       const currentUrl = this.router.url;
       const match = SUB_TABS_TOUR_CONFIGS
         .filter(config => {
@@ -294,9 +337,7 @@ export class UserTourService implements OnDestroy {
       const moduleKey = match.moduleTourKey;
       if (!moduleKey) return;
 
-      const prefs = await this.userPrefService.getPreferences();
-      const map = this.parseBooleanMap(prefs?.[match.completionKey]);
-      if (map?.[moduleKey] === true) return;
+       if (this.isTourCompleted(match, prefs)) return;
 
       await this.resumeOrStart(match);
     } finally {

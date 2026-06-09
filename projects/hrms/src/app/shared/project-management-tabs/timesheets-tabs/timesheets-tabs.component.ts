@@ -80,15 +80,7 @@ export class TimesheetsTabsComponent {
   private redirectIfNeeded(): void {
     if (this.userInteracted) return;
     const currentPath = this.router.url.split('?')[0];
-
-    const entryPaths = new Set([
-      '/project-management/timesheet',
-      '/project-management/timesheet/mytimesheet',
-      '/project-management/timesheet/mysummary',
-      '/project-management/timesheet/teamtimesheet',
-    ]);
-
-    if (!entryPaths.has(currentPath)) return;
+    if (currentPath !== '/project-management/timesheet') return;
 
     if (this.tabs.length === 0) {
       this.router.navigate(['/unauthorized']);

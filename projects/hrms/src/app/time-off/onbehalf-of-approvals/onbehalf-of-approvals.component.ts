@@ -37,6 +37,7 @@ import { DatePicker } from 'primeng/datepicker';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { TabsDndDirective } from '../../shared/tabs-dnd/tabs-dnd.directive';
 import { MenuOrderService } from '../../services/theme-service/menu-order.service';
+import { ExpensesComponent } from './expenses/expenses.component';
 @Component({
   selector: 'app-onbehalf-of-approvals',
   imports: [
@@ -67,7 +68,8 @@ import { MenuOrderService } from '../../services/theme-service/menu-order.servic
     MultiSelectModule,
     DatePicker,
     DragDropModule,
-    TabsDndDirective
+    TabsDndDirective,
+    ExpensesComponent
 ],
 
   templateUrl: './onbehalf-of-approvals.component.html',

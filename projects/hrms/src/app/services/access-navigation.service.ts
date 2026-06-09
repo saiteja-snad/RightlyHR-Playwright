@@ -2353,7 +2353,7 @@ export class AccessNavigationService {
   }
 
   private getPendingApprovalsOffboardingPreferredRoute(): string {
-    const orderedRoutes = this.getPreferredOrderedRoutes('pending-approvals-separation-tabs');
+    const orderedRoutes = this.getPreferredOrderedRoutes('pending-approvals-offboarding-tabs');
     if (orderedRoutes.length === 0) return '';
 
     for (const mainRoute of orderedRoutes) {

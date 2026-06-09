@@ -230,6 +230,7 @@ export function transformV2ResponseToWeekMatrix(response: any): WeekMatrix {
                 resourceId: entry.resourceId || row.resourceId,
                 isLocked: false,
                 taskId: entry.taskId,
+                taskName: entry.taskName,
                 pendingApprovalDetails: entry.pendingApprovalDetails || null
               });
             } else {

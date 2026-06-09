@@ -122,8 +122,8 @@ export class SidenavComponent implements OnInit, OnDestroy {
 
   private applyMenuOrder(order: MenuOrder): void {
     const { main, ellipses } = this.menuRegistry.resolveMenus(
-      order.mainMenuRoutes,
-      order.threeDotRoutes,
+      order.mainMenuRoutes ?? [],
+      order.threeDotRoutes ?? [],
       this.allowedRoutes
     );
     this.mainMenuItems = main;

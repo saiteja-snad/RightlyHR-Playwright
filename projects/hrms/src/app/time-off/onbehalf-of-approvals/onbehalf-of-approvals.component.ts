@@ -17,7 +17,6 @@ import { environment } from '../../../environments/environment';
 import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
 import { MODULE_INFOS } from '../../shared/modules-info';
 import { NgbOffcanvas, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
-import { ExpensesComponent } from './expenses/expenses.component';
 import { RegularizationComponent } from './regularization/regularization.component';
 import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
 import { TraineeRequestsComponent } from './trainee-requests/trainee-requests.component';
@@ -35,6 +34,10 @@ import { IResourceDetail } from '../../timesheetmodel';
 import dayjs, { Dayjs } from 'dayjs';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { DatePicker } from 'primeng/datepicker';
+import { DragDropModule } from '@angular/cdk/drag-drop';
+import { TabsDndDirective } from '../../shared/tabs-dnd/tabs-dnd.directive';
+import { MenuOrderService } from '../../services/theme-service/menu-order.service';
+import { ExpensesComponent } from './expenses/expenses.component';
 @Component({
   selector: 'app-onbehalf-of-approvals',
   imports: [
@@ -52,7 +55,6 @@ import { DatePicker } from 'primeng/datepicker';
     ModuleInformationComponent,
     NgbPopoverModule,
     FormsModule,
-    ExpensesComponent,
     ModuleInfoIconComponent,
     TraineeRequestsComponent,
     SeperationRequestsComponent,
@@ -64,8 +66,11 @@ import { DatePicker } from 'primeng/datepicker';
     EmployeeInfoRequestsComponent,
     TimesheetRequestsComponent,
     MultiSelectModule,
-    DatePicker
-  ],
+    DatePicker,
+    DragDropModule,
+    TabsDndDirective,
+    ExpensesComponent
+],
 
   templateUrl: './onbehalf-of-approvals.component.html',
   styleUrl: './onbehalf-of-approvals.component.scss',
@@ -130,14 +135,18 @@ export class OnbehalfOfApprovalsComponent {
   isDistinct = true;
   employeeData: any[] = [];
   today: Date = new Date();
-  tastType: any[] = [];
+tastType: any[] = [];
+  readonly tabsKey = 'onbehalf-of-approvals-main-tabs';
+  navItems: any[] = [];
+  filteredNavItems: any[] = [];
   constructor(private http: HttpService,
-    private authService: AuthService,
-    public rbac: RbacService,
-    public readonly router: Router,
-    private signalService: SignalsService,
-    private offcanvasService: NgbOffcanvas,
-    private fb: FormBuilder,) {
+              private authService: AuthService,
+              public rbac: RbacService,
+              public readonly router: Router,
+              private signalService: SignalsService,
+             private offcanvasService: NgbOffcanvas,
+            private fb: FormBuilder,
+            private menuOrderService: MenuOrderService) {
     // Signal reaction for employee switch
     effect(() => {
       if (this.http.trigger() || this.signalService.onBhehalfOfApprovalSignal() || this.signalService.separationForYouTriggerSignal()) {
@@ -188,17 +197,75 @@ export class OnbehalfOfApprovalsComponent {
       this.isSubmitEnabled = this.isAnyFieldSelected();
     });
     this.getTaskType();
-  }
-  getTaskType() {
-    this.subscription = this.http.getData('TaskType').subscribe({
-      next: (res: any) => {
-        this.tastType = res
-      },
-      error: (error: any) => {
-        console.log(error);
-      }
+    void this.menuOrderService.ensureLoaded().then(() => {
+      this.buildNavItems();
     });
   }
+
+  private buildNavItems(): void {
+    const items = [
+      { key: 'timeOff', tabId: '/onbehalf-of-approvals/timeOff', label: 'Time Off', icon: '/time-off-icon/leaves-icon.png', countProp: 'timeOffCount', permission: 'Time Off (On Behalf Of Approvals).view' },
+      { key: 'compOff', tabId: '/onbehalf-of-approvals/compOff', label: 'Comp Off', icon: '/time-off-icon/comp-off.png', countProp: 'compOffCount', permission: 'Comp Off (On Behalf Of Approvals).view' },
+      { key: 'wfh', tabId: '/onbehalf-of-approvals/wfh', label: 'WFH', icon: '/time-off-icon/WFH-icon.png', countProp: 'wfhCount', permission: 'WFH (On Behalf Of Approvals).view' },
+      { key: 'permissions', tabId: '/onbehalf-of-approvals/permissions', label: 'Permissions', icon: '/time-off-icon/permissions-icon.png', countProp: 'permissionsCount', permission: 'Permission (On Behalf Of Approvals).view' },
+      { key: 'traineeRequests', tabId: '/onbehalf-of-approvals/traineeRequests', label: 'Trainee Requests', icon: '/time-off-icon/trainee-icon.png', countProp: 'traineeRequestsCount', permission: 'Trainee Requests (On Behalf Of Approvals).view' },
+      { key: 'regularization', tabId: '/onbehalf-of-approvals/regularization', label: 'Regularization', icon: '/time-off-icon/regularization-icon.png', countProp: 'regularizationCount', permission: 'Regularization (On Behalf Of Approvals).view' },
+      { key: 'expenses', tabId: '/onbehalf-of-approvals/expenses', label: 'Expenses', icon: '/main-menu-icons/expenses-icon.png', countProp: 'expensesCount', permission: 'Expenses (On Behalf Of Approvals).view' },
+      { key: 'remoteLogin', tabId: '/onbehalf-of-approvals/remoteLogin', label: 'Remote Login', icon: '/time-off-icon/remote-login-icon.png', countProp: 'remoteLoginCount', permission: 'Remote Login (On Behalf Of Approvals).view' },
+      { key: 'extraHours', tabId: '/onbehalf-of-approvals/extraHours', label: 'Extra Hours', icon: '/time-off-icon/extra-logs.png', countProp: 'extraHoursCount', permission: 'Extra Hours (On Behalf Of Approvals).view' },
+      { key: 'timesheets', tabId: '/onbehalf-of-approvals/timesheets', label: 'Timesheets', icon: '/time-off-icon/calender-activity.png', countProp: 'timesheetRequestsCount', permission: 'Timesheet (On Behalf Of Approvals).view' },
+      { key: 'employeeInfo', tabId: '/onbehalf-of-approvals/employeeInfo', label: 'Employee Info', icon: '/time-off-icon/employee-info-approvals.png', countProp: 'employeeInfoCount', permission: 'Employee Info (On Behalf Of Approvals).view' },
+      { key: 'probation', tabId: '/onbehalf-of-approvals/probation', label: 'Probation', icon: '/time-off-icon/Probation-icon.png', countProp: 'probationRequestsCount', permission: 'Probation (On Behalf Of Approvals).view' },
+      { key: 'separations', tabId: '/onbehalf-of-approvals/separations', label: 'Separations', icon: '/time-off-icon/seperation-icon.png', countProp: 'separationsCount', permission: 'Separations (On Behalf Of Approvals).view' },
+      { key: 'recalls', tabId: '/onbehalf-of-approvals/recalls', label: 'Recalls', icon: '/time-off-icon/recall-icon.png', countProp: 'recallsCount', permission: 'Recalls (On Behalf Of Approvals).view' },
+      { key: 'nodue', tabId: '/onbehalf-of-approvals/nodue', label: 'No Due', icon: '/time-off-icon/nodue-icon.png', countProp: 'nodueCount', permission: 'No Due (On Behalf Of Approvals).view' }
+    ];
+
+    // compute visible tabs by RBAC
+    const visible = items.filter(i => this.rbac.allowedToAccess(i.permission));
+    this.filteredNavItems = this.menuOrderService.applySavedTabsOrder(this.tabsKey, visible, (t) => t.tabId);
+    this.navItems = visible;
+    if (this.filteredNavItems.length > 0) {
+      this.activeTab = this.filteredNavItems[0].key;
+      this.updateModuleInfo();
+    }
+  }
+
+  trackByNavId(_: number, item: any): string {
+    return item.tabId || item.key;
+  }
+
+  getNavItemCount(countProp: string): number {
+    switch (countProp) {
+      case 'timeOffCount': return this.timeOffCount;
+      case 'compOffCount': return this.compOffCount;
+      case 'expensesCount': return this.expensesCount;
+      case 'wfhCount': return this.wfhCount;
+      case 'recallsCount': return this.recallsCount;
+      case 'nodueCount': return this.nodueCount;
+      case 'separationsCount': return this.separationsCount;
+      case 'employeeInfoCount': return this.employeeInfoCount;
+      case 'remoteLoginCount': return this.remoteLoginCount;
+      case 'extraHoursCount': return this.extraHoursCount;
+      case 'traineeRequestsCount': return this.traineeRequestsCount;
+      case 'permissionsCount': return this.permissionsCount;
+      case 'regularizationCount': return this.regularizationCount;
+      case 'probationRequestsCount': return this.probationRequestsCount;
+      case 'timesheetRequestsCount': return this.timesheetRequestsCount;
+      default: return 0;
+    }
+  }
+
+getTaskType() {
+  this.subscription = this.http.getData('TaskType').subscribe({
+    next: (res: any) => {
+      this.tastType =res
+    },
+    error: (error:any) => {
+      console.log(error);
+    }
+  });
+}
   initiateUpdateModuleInfo() {
     this.router.events
       .pipe(filter(event => event instanceof NavigationEnd))

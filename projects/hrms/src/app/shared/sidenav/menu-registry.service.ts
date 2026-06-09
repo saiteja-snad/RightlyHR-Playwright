@@ -212,8 +212,8 @@ export class MenuRegistryService {
    * returns { main, ellipses } with strict mutual exclusion — no item appears in both.
    */
   resolveMenus(
-    savedMainRoutes: string[],
-    savedEllipsesRoutes: string[],
+    savedMainRoutes: string[] | null | undefined,
+    savedEllipsesRoutes: string[] | null | undefined,
     allowedRoutes: Set<string>
   ): { main: MenuItemDef[]; ellipses: MenuItemDef[] } {
     const allAllowed = this.ALL_ITEMS.filter(i => allowedRoutes.has(i.route));
@@ -223,13 +223,13 @@ export class MenuRegistryService {
     const placed = new Set<string>();
 
     // 1. Place saved main routes first (skip dashboard, it's fixed)
-    savedMainRoutes.filter(r => r !== '/dashboard').forEach(route => {
+    (savedMainRoutes ?? []).filter(r => r !== '/dashboard').forEach(route => {
       const item = allAllowed.find(i => i.route === route);
       if (item && !placed.has(route)) { main.push(item); placed.add(route); }
     });
 
     // 2. Place saved ellipses routes
-    savedEllipsesRoutes.forEach(route => {
+    (savedEllipsesRoutes ?? []).forEach(route => {
       const item = allAllowed.find(i => i.route === route);
       if (item && !placed.has(route)) { ellipses.push(item); placed.add(route); }
     });

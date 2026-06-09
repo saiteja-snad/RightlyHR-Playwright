@@ -1,20 +1,33 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { TabsModule } from 'primeng/tabs';
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import { Ipersonal } from '../../Interfaces/members-model';
 import { RbacService } from '../../services/rbac.service';
 import { SidetabsloadersComponent } from "../sidetabsloaders/sidetabsloaders.component";
+import { DragDropModule } from '@angular/cdk/drag-drop';
+import { TabsDndDirective } from '../tabs-dnd/tabs-dnd.directive';
+import { MenuOrderService } from '../../services/theme-service/menu-order.service';
+
+interface StatusTab {
+  tabId: string;
+  label: string;
+  link: string;
+  count?: number;
+  permission?: { feature: string; action: string };
+  icon: string;
+}
 @Component({
   selector: 'app-itsupport-compoment-tabs',
-  imports: [CommonModule, TabsModule, RouterModule, SidetabsloadersComponent],
+  imports: [CommonModule, TabsModule, RouterModule, SidetabsloadersComponent, DragDropModule, TabsDndDirective],
   templateUrl: './itsupport-compoment-tabs.component.html',
   styleUrl: './itsupport-compoment-tabs.component.scss'
 })
 
 export class ItsupportCompomentTabsComponent implements OnInit, OnDestroy {
+  readonly tabsKey = 'itsupport-compoment-tabs';
   closedTicketCount: number = 0;
   AllCount: number = 0;
   openTicketCount: number = 0;
@@ -31,16 +44,18 @@ export class ItsupportCompomentTabsComponent implements OnInit, OnDestroy {
   defaultRoute: string = '';
   // Original unfiltered tab structure with permissions
   private allTabs = [
-    { label: 'All Tickets', link: '/it-support/team-tickets/all-tickets', countKey: 'AllCount', icon: '/desk-icon/all-icon.png', permission: { feature: 'All Tickets Tab', action: 'view' } },
-    { label: 'Open Tickets', link: '/it-support/team-tickets/open-tickets', countKey: 'openTicketCount', icon: '/it-support-icons/open-icon.png', permission: { feature: 'Open Tickets Tab', action: 'view' } },
-    { label: 'Await On User Tickets', link: '/it-support/team-tickets/await-on-user-tickets', countKey: 'awaitingOnUserTicketCount', icon: '/it-support-icons/Await-icon.png', permission: { feature: 'Await On User Tickets Tab', action: 'view' } },
-    { label: 'Closed Tickets', link: '/it-support/team-tickets/solved-tickets', countKey: 'closedTicketCount', icon: '/it-support-icons/solved-icon.png', permission: { feature: 'Solved Tickets Tab', action: 'view' } },
-    { label: 'Rejected Tickets', link: '/it-support/team-tickets/rejected-tickets', countKey: 'rejectedTicketCount', icon: '/time-off-icon/rejected-icon.png', permission: { feature: 'Rejected Tickets Tab', action: 'view' } }
+    { tabId: '/it-support/team-tickets/all-tickets', label: 'All Tickets', link: '/it-support/team-tickets/all-tickets', countKey: 'AllCount', icon: '/desk-icon/all-icon.png', permission: { feature: 'All Tickets Tab', action: 'view' } },
+    { tabId: '/it-support/team-tickets/open-tickets', label: 'Open Tickets', link: '/it-support/team-tickets/open-tickets', countKey: 'openTicketCount', icon: '/it-support-icons/open-icon.png', permission: { feature: 'Open Tickets Tab', action: 'view' } },
+    { tabId: '/it-support/team-tickets/await-on-user-tickets', label: 'Await On User Tickets', link: '/it-support/team-tickets/await-on-user-tickets', countKey: 'awaitingOnUserTicketCount', icon: '/it-support-icons/Await-icon.png', permission: { feature: 'Await On User Tickets Tab', action: 'view' } },
+    { tabId: '/it-support/team-tickets/solved-tickets', label: 'Closed Tickets', link: '/it-support/team-tickets/solved-tickets', countKey: 'closedTicketCount', icon: '/it-support-icons/solved-icon.png', permission: { feature: 'Solved Tickets Tab', action: 'view' } },
+    { tabId: '/it-support/team-tickets/rejected-tickets', label: 'Rejected Tickets', link: '/it-support/team-tickets/rejected-tickets', countKey: 'rejectedTicketCount', icon: '/time-off-icon/rejected-icon.png', permission: { feature: 'Rejected Tickets Tab', action: 'view' } }
   ];
 
   constructor(
     private readonly http: HttpService,
     private rbac: RbacService,
+    private router: Router,
+    private menuOrderService: MenuOrderService
   ) { }
 
   ngOnInit() {
@@ -77,27 +92,38 @@ export class ItsupportCompomentTabsComponent implements OnInit, OnDestroy {
             count: this[tab.countKey as keyof this]
           }));
 
+          this.navTabs = this.menuOrderService.applySavedTabsOrder(
+          this.tabsKey,
+          this.navTabs,
+          (t) => t.tabId
+        );
+
         if (this.navTabs.length > 0) {
           this.defaultRoute = this.navTabs[0].link;
         }
-      
-        // const currentUrl = this.router.url;
-        // const baseUrl = '/it-support/team-tickets';
-        // if (currentUrl === baseUrl && this.defaultRoute) {
-        //   this.router.navigateByUrl(this.defaultRoute);
-        // }
-        // const isAllowed = this.navTabs.some(tab => tab.link === currentUrl);
-        // if (!isAllowed && this.defaultRoute) {
-        //   this.router.navigateByUrl(this.defaultRoute);
-        // }
+
+        const currentUrl = this.router.url;
+        const baseUrl = '/it-support/team-tickets';
+        if (currentUrl === baseUrl && this.defaultRoute) {
+          this.router.navigateByUrl(this.defaultRoute);
+        }
+        const isAllowed = this.navTabs.some(tab => tab.link === currentUrl);
+        if (!isAllowed && this.defaultRoute) {
+          this.router.navigateByUrl(this.defaultRoute);
+        }
       },
-      
+
       error: (err: any) => {
         console.error(err);
         this.loading=false
       }
     });
   }
+
+  trackByTabId(_: number, tab: StatusTab): string {
+    return tab.tabId;
+  }
+
   ngOnDestroy() {
     if (this.subscription) {
       this.subscription.unsubscribe();

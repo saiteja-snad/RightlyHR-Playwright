@@ -10,14 +10,20 @@ import { RbacService } from '../../../services/rbac.service';
 import { SignalsService } from '../../../services/signals.service';
 import { SidetabsloadersComponent } from "../../sidetabsloaders/sidetabsloaders.component";
 import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.service';
+import { DragDropModule } from '@angular/cdk/drag-drop';
+import { TabsDndDirective } from '../../tabs-dnd/tabs-dnd.directive';
+import { MenuOrderService } from '../../../services/theme-service/menu-order.service';
 @Component({
   selector: 'app-leaves-approvaltabs',
-  imports: [RouterModule, CommonModule, TabsModule, SidetabsloadersComponent],
+  standalone: true,
+  imports: [CommonModule, RouterModule, DragDropModule, TabsDndDirective, SidetabsloadersComponent],
   templateUrl: './leaves-approvaltabs.component.html',
   styleUrl: './leaves-approvaltabs.component.scss',
 })
 
 export class LeavesApprovaltabsComponent implements OnInit, OnDestroy{
+  // Key for persisting order via MenuOrderService (must match AccessNavigationService)
+  tabsKey = 'timeoff-leaves-approval-tabs';
   loggedinuser = {} as any;
   empdata = {} as any;
   subscription!: Subscription;
@@ -34,9 +40,17 @@ export class LeavesApprovaltabsComponent implements OnInit, OnDestroy{
   statusTabs: any[] = [];
   selectedYear: any;
   destroy$: Subject<boolean> = new Subject<boolean>();
+  private userInteracted = false;
 
-  constructor(public readonly router: Router, private http: HttpService, private authService: AuthService,
-    private signalService: SignalsService, private rbac: RbacService, private TimeoffYearFilterService: TimeoffYearFilterService) {
+  constructor(
+    public readonly router: Router,
+    private http: HttpService,
+    private authService: AuthService,
+    private signalService: SignalsService,
+    private rbac: RbacService,
+    private TimeoffYearFilterService: TimeoffYearFilterService,
+    private readonly menuOrderService: MenuOrderService
+  ) {
     effect(() => {
       if (this.signalService.timecountTriggerSignal()) {
         // Call the function to fetch the pending approvals count
@@ -52,6 +66,9 @@ export class LeavesApprovaltabsComponent implements OnInit, OnDestroy{
   }
 
   ngOnInit(): void {
+    void this.menuOrderService.ensureLoaded().then(() => {
+      this.redirectIfNeeded();
+    });
     this.TimeoffYearFilterService.selectedYear$.pipe(takeUntil(this.destroy$)).subscribe(year => {
       if (year !== null) {
         this.selectedYear = year;
@@ -203,6 +220,12 @@ export class LeavesApprovaltabsComponent implements OnInit, OnDestroy{
         permission: { feature: 'Cancelled (Time Off)', action: 'view' },
         icon: '/time-off-icon/cancelled-icon.png'
       },
+      {
+        label: 'Entitlement Summary',
+        link: '/time-off/leaves/entitlement-frequency',
+        permission: { feature: 'Entitlement Summary (Time Off)', action: 'view' },
+        icon: '/time-off-icon/Entitlement Summary.png'
+      },
     ];
     this.statusTabs = this.statusTabs.filter(
       (tab) =>
@@ -211,6 +234,49 @@ export class LeavesApprovaltabsComponent implements OnInit, OnDestroy{
         tab.permission.action &&
         this.rbac.allowedToAccess(`${tab.permission.feature}.${tab.permission.action}`)
     );
+
+    this.statusTabs = this.menuOrderService.applySavedTabsOrder(
+      this.tabsKey,
+      this.statusTabs,
+      (t) => String(t?.link ?? '')
+    );
+    this.redirectIfNeeded();
+  }
+
+
+  navigate(link: string): void {
+    this.userInteracted = true;
+    this.router.navigate([link], { queryParamsHandling: 'preserve' });
+  }
+
+  private redirectIfNeeded(): void {
+    if (this.userInteracted) return;
+    if (!this.statusTabs || this.statusTabs.length === 0) return;
+
+    const currentPath = this.router.url.split('?')[0];
+    const entryPaths = new Set([
+      '/time-off/leaves',
+      '/time-off/leaves/waiting-for-approval',
+      '/time-off/leaves/approved',
+      '/time-off/leaves/processed',
+      '/time-off/leaves/rejected',
+      '/time-off/leaves/cancelled',
+      '/time-off/leaves/entitlement-frequency',
+    ]);
+    if (!entryPaths.has(currentPath)) return;
+
+    const preferred = String(this.statusTabs[0]?.link ?? '');
+    if (!preferred || preferred === currentPath) return;
+    this.router.navigate([preferred], { queryParamsHandling: 'preserve' });
+  }
+
+  isActive(link: string): boolean {
+    const currentPath = this.router.url.split('?')[0];
+    return currentPath === link || currentPath.startsWith(link + '/');
+  }
+
+  trackByNavLink(index: number, tab: any): string {
+    return tab.link;
   }
 
   ngOnDestroy() {

@@ -5,6 +5,7 @@ import { TabsModule } from 'primeng/tabs';
 import { RbacService } from '../../../services/rbac.service';
 import { AccessNavigationService } from '../../../services/access-navigation.service';
 import { TranslateModule } from '@ngx-translate/core';
+import { MenuOrderService } from '../../../services/theme-service/menu-order.service';
 @Component({
   selector: 'app-project-management-main-tabs',
   imports: [CommonModule, RouterModule, TabsModule, TranslateModule],
@@ -26,18 +27,32 @@ export class ProjectManagementMainTabsComponent implements OnInit {
     { label: 'Timesheets', link: '/project-management/timesheet/mytimesheet', icon: 'main-menu-icons/project-management-timesheet.png', permission: { feature: 'Time Sheet', action: 'view' } },
   ];
 
-  constructor(public readonly router: Router, private rbac: RbacService, private accessNav: AccessNavigationService) { }
+  constructor(
+    public readonly router: Router,
+    private rbac: RbacService,
+    private accessNav: AccessNavigationService,
+    private menuOrderService: MenuOrderService
+  ) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.filterTabsByRbac();
   }
 
-  Route(link: string): void {
+  async Route(link: string): Promise<void> {
     if (link) {
-      this.router.navigate([link]);
+      await this.menuOrderService.ensureLoaded();
+      if (link === '/project-management/projects') {
+        const actual = this.accessNav.navigateToAccessedRoute(link);
+        this.router.navigate([actual || link]);
+      } else if (link === '/project-management/timesheet/mytimesheet') {
+        const actual = this.accessNav.navigateToAccessedRoute('/project-management/timesheet');
+        this.router.navigate([actual || link]);
+      } else {
+        this.router.navigate([link]);
+      }
       localStorage.removeItem('clientProjectId');
-      localStorage.removeItem('projectProjectId');
+        localStorage.removeItem('projectProjectId');
     }
   }
 

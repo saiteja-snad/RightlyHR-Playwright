@@ -440,6 +440,7 @@ export const permissionsData = [
   { fields: 'Processed (On Behalf Of)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Rejected (On Behalf Of)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Cancelled (On Behalf Of)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Entitlement Summary (On Behalf Of)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Request On Behalf Button', View: false, Update: false, Create: false, Delete: false },
   { fields: 'My Team On Behalf Of', View: false, Update: false, Create: false, Delete: false },
   { fields: 'On Behalf Of All Employees', View: false, Update: false, Create: false, Delete: false },

@@ -4,6 +4,7 @@ import { Skeleton } from 'primeng/skeleton';
 
 @Component({
   selector: 'app-sidetabsloaders',
+  standalone: true,
   imports: [CommonModule,Skeleton],
   templateUrl: './sidetabsloaders.component.html',
   styleUrl: './sidetabsloaders.component.scss'

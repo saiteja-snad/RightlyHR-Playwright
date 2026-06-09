@@ -1,16 +1,33 @@
 @if(!loading){
 <div class="custom-sub-tabs-container">
-  <ul class="nav flex-column">
-    <li class="nav-item" *ngFor="let tab of statusTabs">
-      <div class="nav-link" [routerLink]="[tab.link]" routerLinkActive="active-nav-link">
+  <ul
+    class="nav flex-column"
+    cdkDropList
+    [cdkDropListData]="statusTabs"
+    cdkDropListOrientation="vertical"
+    appTabsDnd
+    [tabsDndKey]="tabsKey"
+    [tabsDndItems]="statusTabs"
+    tabsDndIdProp="link"
+    tabsDndRouteProp="link"
+    tabsDndLabelProp="label"
+  >
+    <li class="nav-item" *ngFor="let tab of statusTabs; trackBy: trackByNavLink" cdkDrag cdkDragLockAxis="y" cdkDragBoundary=".component-left-tabs-container">
+      <div class="nav-link" (click)="navigate(tab.link)" [class.active-nav-link]="isActive(tab.link)">
         <img [src]="tab.icon" alt="Icon" class="icon mb-2">
         <div class="d-flex gap-1">{{ tab.label }}
-          <ng-container *ngIf="tab.label !== 'Org Leave Balance'">
+          <ng-container *ngIf="tab.label !== 'Org Leave Balance' && tab.label !== 'Entitlement Summary'">
             ({{ tab.count ?? 0 }})
           </ng-container>
         </div>
       </div>
       <div class="tabs-border-bottom"></div>
+      <ng-template cdkDragPlaceholder>
+        <li class="nav-item tabs-dnd-placeholder-item">
+          <div class="nav-link tabs-dnd-placeholder"></div>
+          <div class="tabs-border-bottom"></div>
+        </li>
+      </ng-template>
     </li>
   </ul>
 </div>

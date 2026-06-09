@@ -355,4 +355,6 @@ export const MODULE_INFOS = {
     TIMESHEET_BULK_EXPORT: "The Timesheet Export feature enables users to download timesheet data based on selected filters such as date range, employee, or project. It helps in reporting, analysis, and sharing timesheet records in Excel format.",
 
 
+    THEME_PERSONALIZATION_MODULE_INFO: "This module allows users to customize the application appearance by selecting preferred theme colors and font styles. It helps enhance the visual experience and align the interface with user preferences.",
+    MENU_PERSONALIZATION_MODULE_INFO: "This module allows users to customize and organize the application menu based on their preferences, improving accessibility and navigation. Users can manage primary and additional menu items by rearranging, enabling, or configuring them as needed."
 }

@@ -1,0 +1,107 @@
+<div class="menus-personalization-wrapper">
+
+  <div class="sections-grid">
+
+    <!-- Main Menu Items -->
+    <div class="section-card">
+      <div class="section-header">
+        <span class="section-title">{{ 'Primary Menu' | translate }}</span>
+        <!-- <span class="section-count">{{ mainMenuItems.length }}</span> -->
+      </div>
+      <div
+        cdkDropList
+        #mainList="cdkDropList"
+        [cdkDropListData]="mainMenuItems"
+        [cdkDropListConnectedTo]="[threeDotList]"
+        class="drag-list"
+        (cdkDropListDropped)="onDrop($event)">
+
+        <!-- Dashboard — fixed, not draggable -->
+        <div class="drag-item pinned-item" *ngIf="dashboardItem && rbac.allowedToAccess('Dashboard.view')">
+          <span class="pin-badge">{{ 'Fixed' | translate }}</span>
+          <img src="/personalization/Dashboard.png" alt="" class="item-icon">
+          <span class="menu-label">{{ dashboardItem.label | translate }}</span>
+        </div>
+
+        <!-- Remaining main menu items -->
+        <div
+          class="drag-item"
+          *ngFor="let item of mainMenuItems; let first = first; trackBy: trackByRoute"
+          [id]="first ? 'draggable-menu-item-tour' : null"
+          cdkDrag
+          [cdkDragData]="item">
+           <span class="grip-handle">⠿</span>
+          <img [src]="item.personalizationIcon" alt="" class="item-icon">
+          <span class="menu-label">{{ item.label | translate }}</span>
+          <ng-template cdkDragPreview>
+            <div class="drag-preview">
+              <img [src]="item.personalizationIcon" alt="" class="item-icon">
+              {{ item.label | translate }}
+            </div>
+          </ng-template>
+          <ng-template cdkDragPlaceholder>
+            <div class="drag-placeholder"></div>
+          </ng-template>
+        </div>
+
+        <div *ngIf="mainMenuItems.length === 0" class="empty-state">
+          <i class="bi bi-inbox"></i>
+          <span>Drag menu items here</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Three Dot Items -->
+    <div class="section-card">
+      <div class="section-header">
+        <span class="section-title">{{ 'Ellipses Menu' | translate }}</span>
+        <!-- <span class="section-count">{{ threeDotItems.length }}</span> -->
+      </div>
+      <div
+        cdkDropList
+        #threeDotList="cdkDropList"
+        [cdkDropListData]="threeDotItems"
+        [cdkDropListConnectedTo]="[mainList]"
+        class="drag-list"
+        (cdkDropListDropped)="onDrop($event)">
+        <div
+          class="drag-item"
+          *ngFor="let item of threeDotItems; trackBy: trackByRoute"
+          cdkDrag
+          [cdkDragData]="item">
+          <span class="grip-handle">⠿</span>
+          <img [src]="item.personalizationIcon" alt="" class="item-icon">
+          <span class="menu-label">{{ item.label | translate }}</span>
+          <ng-template cdkDragPreview>
+            <div class="drag-preview">
+              <img [src]="item.personalizationIcon" alt="" class="item-icon">
+              {{ item.label | translate }}
+            </div>
+          </ng-template>
+          <ng-template cdkDragPlaceholder>
+            <div class="drag-placeholder"></div>
+          </ng-template>
+        </div>
+        <div *ngIf="threeDotItems.length === 0" class="empty-state">
+          <i class="bi bi-inbox"></i>
+          <span>Drag menu items here</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Reset Confirmation Popup -->
+<ng-template #resetConfirmPopup let-modal>
+  <div class="result-popup-content" ngbAutofocus>
+    <div>
+      <app-confirmation-icon />
+      <p class="confirmation-text mb-4">Are you sure you want to reset the menu order?</p>
+    </div>
+    <div class="custom-modal-footer">
+      <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
+      <button type="button" class="custom-btn btn-primary" (click)="confirmReset()">Yes</button>
+    </div>
+  </div>
+</ng-template>

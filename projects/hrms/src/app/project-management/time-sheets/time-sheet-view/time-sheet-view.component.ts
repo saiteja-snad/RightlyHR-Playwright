@@ -475,7 +475,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       resourceId: [{ value: day?.resourceId || null }],
       taskId: [{ value: day?.taskId || null, disabled: !shouldEnable }],
       pendingApprovalDetails: [day?.pendingApprovalDetails || null],
-      taskName: [day?.taskName || null],
+      taskName: [{ value: day?.taskName || null,}],
 
     });
   }
@@ -1982,6 +1982,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
 
   openModalforconformation(content: any) {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
+    this.getTimeSheetEntriesbyEmployeeId(this.employeeId, this.formattedweakendStart);
   }
 
   cleardata() {
@@ -2073,7 +2074,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
         //this.modalService.dismissAll();
         //this.conformationPopup.openSuccessModal('Timesheet submitted successfully');
         const successCount = res?.data?.successCount;
-        const failureCount = res.data.failedCount;
+        const failureCount = res?.data?.failedCount;
         this.responseSummary = {
           failedreason: Array.isArray(res?.data?.errors) && res.data.errors.length > 0 ? res.data.errors : 'NA',
           successRecordsCount: successCount,
@@ -2347,8 +2348,12 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
 
   onclickinfo(day?: any) { 
     this.approvardetails = { ...(day.value.pendingApprovalDetails || {}) }; 
+    console.log('this.approvardetails', this.approvardetails);
+    console.log(day.get('approvalStatus')?.value)
     this.approvardetails.description = day.get('description')?.value;
-    this.approvardetails.taskName = day.get('taskName')?.value;  
+    this.approvardetails.taskName = day.get('taskName')?.value; 
+    this.approvardetails.approvalStatus=day.get('approvalStatus')?.value
+    
    }
   ngOnDestroy() {
     this.destroy$.next(true);

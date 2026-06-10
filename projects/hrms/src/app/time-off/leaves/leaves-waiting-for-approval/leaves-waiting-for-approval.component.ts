@@ -19,6 +19,7 @@ import { FormValidationsService } from '../../../services/form-validations.servi
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.service';
+import { environment } from '../../../../environments/environment';
 @Component({
   selector: 'app-leaves-waiting-for-approval',
   imports: [CommonModule, TranslateModule, ReactiveFormsModule, NgbNavModule, NgbPopoverModule, FormsModule,
@@ -57,6 +58,16 @@ export class LeavesWaitingForApprovalComponent implements OnInit, OnDestroy {
   isLoading = false;
   selectedYear: any;
   destroy$: Subject<boolean> = new Subject<boolean>();
+  selectedLeaveData: any;
+  spinnerLoader = false;
+  selectedLeaveStatus: any;
+  responseSummary: any;
+  requestBody: any = {};
+
+  leaveEntitlementsList: any = {};
+  employeeLeaveEntitlementsList: any[] = [];
+
+  LOGIN: any = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
 
   constructor(private http: HttpService, public formsValidation: FormValidationsService, private signalService: SignalsService,
     private modalService: NgbModal, private conformationPopup: OpenModalService, private authService: AuthService, public rbac: RbacService, private fb: FormBuilder,
@@ -182,6 +193,229 @@ export class LeavesWaitingForApprovalComponent implements OnInit, OnDestroy {
   openSandwichBreakdown(item: any, modal: any) {
     this.selectedSandwichItem = item;
     this.modalService.open(modal, { centered: true, backdrop: 'static', size: 'lg' });
+  }
+
+  checkLeaveBalance(item: any, checkbalancepopup: any) {
+    this.modalService.open(checkbalancepopup, {
+      centered: true,
+      backdrop: 'static',
+      size: 'lg'
+    });
+
+    let employeeId = item.employeeId || item.leaveempId;
+
+    this.http
+      .getData(`LeaveEntitlements/employee/${employeeId}`)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res: any) => {
+
+          this.leaveEntitlementsList = res.data.find(
+            (ele: any) => ele.category.id === item.leaveCategoryId
+          );
+
+          this.employeeLeaveEntitlementsList = res.data;
+
+          const isProbationAllowed =
+            this.leaveEntitlementsList?.category?.isProbationAllowed;
+
+          if (isProbationAllowed) {
+            this.calculateProbationLeaves();
+          }
+        },
+        error: (err: any) => {
+          this.leaveEntitlementsList = {};
+          this.employeeLeaveEntitlementsList = [];
+          console.log(err);
+        }
+      });
+  }
+
+  calculateProbationLeaves() {
+
+    if (this.LOGIN.probationEndDate) {
+
+      let currentDate = moment();
+      let probationEndDate = moment(this.LOGIN.probationEndDate);
+
+      if (
+        currentDate.startOf('day')
+          .isSameOrBefore(probationEndDate.startOf('day'))
+      ) {
+
+        let dateOfJoining = moment(this.LOGIN.dateOfJoining);
+
+        let probationDays = currentDate.diff(dateOfJoining, 'days');
+
+        let months = Math.floor(probationDays / 30);
+
+        this.leaveEntitlementsList.probationLeaves =
+          months * this.leaveEntitlementsList.category.probationDays;
+
+        if (
+          this.leaveEntitlementsList.probationLeaves >=
+          this.leaveEntitlementsList.allowedDays
+        ) {
+          this.leaveEntitlementsList.probationLeaves =
+            this.leaveEntitlementsList.allowedDays;
+        }
+      }
+    }
+  }
+  approveleave(approverPopup: any, item: any) {
+    console.log('selectedLeaveData', item);
+    this.selectedLeaveData = item;
+
+    this.modalService.open(approverPopup, {
+      centered: true,
+      backdrop: 'static'
+    });
+  }
+
+  rejectleave(rejectPopup: any, item: any) {
+    console.log('REJECT ITEM =>', item);
+    this.selectedLeaveData = item;
+
+    this.modalService.open(rejectPopup, {
+      centered: true,
+      backdrop: 'static'
+    });
+  }
+
+  ifreasonnull(value: any) {
+    if (!value || !value.trim()) {
+      this.selectedLeaveStatus = null;
+    }
+  }
+
+  onStatusApproveSelect(status: string) {
+    this.selectedLeaveStatus = status;
+
+    if (status === 'approved') {
+      this.selectedLeaveData.comments = 'Approved';
+    } else if (status === 'planned') {
+      this.selectedLeaveData.comments = 'Planned Leave';
+    } else if (status === 'unplanned') {
+      this.selectedLeaveData.comments = 'Unplanned Leave';
+    }
+  }
+
+  onStatusRejectSelect(status: string) {
+    this.selectedLeaveStatus = status;
+
+    if (status === 'reject') {
+      this.selectedLeaveData.comments = 'Rejected';
+    } else if (status === 'planned') {
+      this.selectedLeaveData.comments = 'Planned Leave';
+    } else if (status === 'unplanned') {
+      this.selectedLeaveData.comments = 'Unplanned Leave';
+    }
+  }
+
+  handleAccept(form: any) {
+
+    this.spinnerLoader = true;
+
+    const payload = {
+      requestProcessedBy: this.LOGIN.employeeId.toString(),
+      status: 'Approved',
+      comments: this.selectedLeaveData?.comments || '',
+      moduleId: 1,
+      isPlannedLeave: false,
+      headerRequests: [
+        {
+          headerID: this.selectedLeaveData.pendingApprovalsHeader?.id,
+          currentStage: this.selectedLeaveData.pendingApprovalsHeader?.currentapprovalStage
+        }
+      ]
+    };
+
+
+
+    this.http.putData(`v2/PendingApproval/multiapprovals`, payload)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response: any) => {
+
+          this.modalService.dismissAll();
+
+          this.conformationPopup.openSuccessModal(
+            'Leave request approved successfully'
+          );
+
+          this.getDataByLPEMPID();
+          this.signalService.timeOffsidenavCountSignal.set(true);
+          this.signalService.timeoffForYouTriggerSignal.set(true);
+          this.signalService.timeoffForRoleTriggerSignal.set(true);
+        },
+
+        error: (err: any) => {
+
+          this.modalService.dismissAll();
+
+          this.conformationPopup.openErrorModal(
+            err?.error?.message || 'Leave Request Approval Failed'
+          );
+        },
+
+        complete: () => {
+          this.spinnerLoader = false;
+          form?.resetForm?.();
+        }
+      });
+  }
+
+  handleReject(form: any) {
+
+    this.spinnerLoader = true;
+
+    const payload = {
+      requestProcessedBy: this.LOGIN.employeeId.toString(),
+      status: 'Rejected',
+      comments: this.selectedLeaveData?.comments || '',
+      moduleId: 1,
+      isPlannedLeave: false,
+      headerRequests: [
+        {
+          headerID: this.selectedLeaveData.pendingApprovalsHeader?.id,
+          currentStage: this.selectedLeaveData.pendingApprovalsHeader?.currentapprovalStage
+        }
+      ]
+    };
+
+    console.log('Payload =>', payload);
+
+    this.http.putData(`v2/PendingApproval/multiapprovals`, payload)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response: any) => {
+
+          this.modalService.dismissAll();
+
+          this.conformationPopup.openSuccessModal(
+            'Leave request rejected successfully'
+          );
+
+          this.getDataByLPEMPID();
+          this.signalService.timeOffsidenavCountSignal.set(true);
+          this.signalService.timeoffForYouTriggerSignal.set(true);
+          this.signalService.timeoffForRoleTriggerSignal.set(true);
+        },
+
+        error: (err: any) => {
+
+          this.modalService.dismissAll();
+
+          this.conformationPopup.openErrorModal(
+            err?.error?.message || 'Leave Request Rejected Failed'
+          );
+        },
+
+        complete: () => {
+          this.spinnerLoader = false;
+          form?.resetForm?.();
+        }
+      });
   }
 
   ngOnDestroy(): void {

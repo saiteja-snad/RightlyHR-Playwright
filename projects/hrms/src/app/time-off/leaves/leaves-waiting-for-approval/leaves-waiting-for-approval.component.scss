@@ -2,3 +2,28 @@ th,
 td {
     text-align: center !important;
 }
+
+.custom-height {
+    height: max-content !important;
+    min-height: max-content !important;
+}
+
+.popup-table-wrapper .popup-table-scroll-container {
+    max-height: 30vh;
+    overflow-y: auto;
+    border: 2px solid #D1D8E3 !important;
+    border-bottom: 2px solid #D1D8E3 !important;
+    border-radius: 0.5rem;
+}
+
+.chip-btn {
+    min-width: 130px !important;
+    width: 130px !important;
+    height: 36px !important;
+    padding: 0 8px !important;
+    white-space: nowrap !important;
+}
+
+.d-flex.align-items-center.justify-content-center.gap-2.mb-3 {
+    gap: 10px !important;
+}

@@ -1,9 +1,9 @@
 <div class="custom-main-component-container">
     <div>
         <div class="d-flex justify-content-between align-items-center mb-3">
-            <div><span class="component-sub-header">{{'Expense Configurations'|translate}}</span></div>
+            <div><span class="component-sub-header">{{'Expense Type Configurations'|translate}}</span></div>
             <div class="custom-add-btn" (click)="openModal(addExpensesmodal)"
-                *ngIf="rbac.allowedToAccess('Expenes Configuartion.create')">
+                *ngIf="rbac.allowedToAccess('Expense Type Configuration.create')">
                 <i class="bi bi-plus plus-icon me-1"></i>{{'Add New'|translate}}
             </div>
         </div>
@@ -11,11 +11,9 @@
         <div class="custom-table-content mt-2">
             <table class="w-100">
                 <thead>
-                    <th>Expense Type</th>
-
-                    <th class="text-center"
-                        *ngIf="rbac.allowedToAccess('Expenes Configuartion.update') || rbac.allowedToAccess('Expenes Configuartion.delete')">
-                        Action</th>
+                    <th>{{'Expense Type' |translate}}</th>
+                    <th class="text-center" *ngIf="rbac.allowedToAccess('Expense Type Configuration.update') || 
+                    rbac.allowedToAccess('Expense Type Configuration.delete')">{{'Action' | translate}}</th>
                 </thead>
                 <tbody>
 
@@ -24,7 +22,7 @@
                         <td>{{exp?.expenseType}}</td>
 
                         <td class="text-center"
-                            *ngIf="rbac.allowedToAccess('Expenes Configuartion.update') || rbac.allowedToAccess('Expenes Configuartion.delete')">
+                            *ngIf="rbac.allowedToAccess('Expense Type Configuration.update') || rbac.allowedToAccess('Expense Type Configuration.delete')">
                             <!-- <div class="d-flex gap-4 justify-content-center">
                                    
                                     <div>
@@ -33,8 +31,9 @@
                                     </div>
                                     
                                     <div>
-                                        <a (click)="opendelete(deleteconformation,exp)" *ngIf="rbac.allowedToAccess('Expenes Configuartion.delete')"><img src="/settings-icon/trash-2.png"
-                                                alt="edit icon" class="settings-common-icon"></a>
+                                        <a (click)="opendelete(deleteconformation,exp)" *ngIf="rbac.allowedToAccess('Expense Type Configuration.delete')">
+                                            <app-settings-delete-icon />
+                                        </a>
                                     </div>
                                 </div> -->
                             <div class="dropdown">
@@ -43,13 +42,13 @@
                                 </span>
                                 <ul class="dropdown-menu custom-dropdown-menu">
                                     <li (click)="openupdate(updateexpeses, exp)"
-                                        *ngIf="rbac.allowedToAccess('Expenes Configuartion.update')">
+                                        *ngIf="rbac.allowedToAccess('Expense Type Configuration.update')">
                                         <a class="dropdown-item">
                                             <i class="bi bi-pencil me-2"></i>Update
                                         </a>
                                     </li>
                                     <li (click)="opendelete(deleteconformation,exp)"
-                                        *ngIf="rbac.allowedToAccess('Expenes Configuartion.delete')">
+                                        *ngIf="rbac.allowedToAccess('Expense Type Configuration.delete')">
                                         <a class="dropdown-item">
                                               <i class="bi bi-trash3 me-2"></i>Delete
                                         </a>
@@ -77,7 +76,7 @@
                     <form autocomplete="off" [formGroup]="expenseForm" (ngSubmit)="postExpenses(expenseForm)">
                         <div class="mb-3">
                             <label for="expenseType" class="form-label custom-label mb-2">
-                                Expense Type <span class="text-danger">*</span>
+                                {{'Expense Type' | translate}} <span class="text-danger">*</span>
                             </label>
                             <input type="text" class="form-control custom-input" id="expenseType"
                                 formControlName="expenseType" autocomplete="off" placeholder="Please enter expense type"
@@ -147,7 +146,8 @@
                                 *ngIf="expenseupdateForm.get('expenseTypeupdate')?.hasError('required') && (expenseupdateForm.get('expenseTypeupdate')?.touched)">
                                 Expense Type is required
                             </div>
-                            <div *ngIf="expenseupdateForm.get('expenseTypeupdate')?.errors?.['pattern']" class="error-msg">
+                            <div *ngIf="expenseupdateForm.get('expenseTypeupdate')?.errors?.['pattern']"
+                                class="error-msg">
                                 {{ 'Field cannot start with a space' | translate }}
                             </div>
                             <div class="error-msg"
@@ -156,8 +156,8 @@
                             </div>
                         </div>
                         <div class="mb-3">
-                            <label for="expensecode" class="form-label custom-label mb-2">Expense Code <span
-                                    class="text-danger">*</span></label>
+                            <label for="expensecode" class="form-label custom-label mb-2">{{'Expense Code' | translate}}
+                                <span class="text-danger">*</span></label>
                             <input type="text" class="form-control custom-input" id="expensecode"
                                 formControlName="expensesCodeupade" autocomplete="off"
                                 placeholder="Please enter expense code" maxlength="50"
@@ -167,7 +167,8 @@
                                 *ngIf="expenseupdateForm.get('expensesCodeupade')?.invalid && (expenseupdateForm.get('expensesCodeupade')?.touched)">
                                 Expense Code is required
                             </div>
-                            <div *ngIf="expenseupdateForm.get('expensesCodeupade')?.errors?.['pattern']" class="error-msg">
+                            <div *ngIf="expenseupdateForm.get('expensesCodeupade')?.errors?.['pattern']"
+                                class="error-msg">
                                 {{ 'Field cannot start with a space' | translate }}
                             </div>
                         </div>
@@ -176,7 +177,7 @@
                                 (click)="expenseupdateForm.reset();modal.dismiss()">{{'Cancel' | translate}}</button>
                             <button type="submit" class="custom-btn btn-primary "
                                 [disabled]="expenseupdateForm.invalid">
-                                Update
+                                {{'Update' | translate}}
                             </button>
                         </div>
                     </form>
@@ -188,11 +189,14 @@
             <div class="result-popup-content" ngbAutofocus>
                 <div>
                     <img src="icons\delete-icon.png" alt="failure icon" class="confirmation-delete-icon">
-                    <p class="confirmation-text mb-4">Are you sure you want to delete the expense type?</p>
+                    <p class="confirmation-text mb-4">{{'Are you sure you want to delete the expense type?' |
+                        translate}}</p>
                 </div>
                 <div class="custom-modal-footer">
-                    <button type="button" class="custom-btn btn-secondary " (click)="modal.dismiss()">No</button>
-                    <button type="submit" class="custom-btn btn-primary" (click)="expemsesDelete()">Yes</button>
+                    <button type="button" class="custom-btn btn-secondary " (click)="modal.dismiss()">{{'No'
+                        |translate}}</button>
+                    <button type="submit" class="custom-btn btn-primary" (click)="expemsesDelete()">{{'Yes' |
+                        translate}}</button>
                 </div>
             </div>
         </ng-template>

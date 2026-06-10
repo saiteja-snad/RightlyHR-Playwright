@@ -82,7 +82,7 @@
 
     <div class="custom-main-popup-content">
       <div class="mb-3">
-        <b class="expenses-title-text">{{'Expense Title' | translate}} : {{ expenseheaderiteams.expenses_Title }}</b>
+        <b class="expenses-title-text">{{'Expense Title' | translate}} : {{ expenseheaderiteams?.expenses_Title }}</b>
         <!-- <b class="expenses-title-text">Approval Email : {{ expenseheaderiteams.approverEmail }}</b> -->
       </div>
 
@@ -94,6 +94,7 @@
             <th>{{ 'Expense Date' | translate }}</th>
             <th>{{ 'Expense Amount' | translate }}</th>
             <th>{{ 'Status' | translate }}</th>
+            <th>{{ 'Comments' | translate }}</th>
             <th>{{ 'Receipt Number' | translate }}</th>
             <th class="text-center">{{ 'Action' | translate }}</th>
           </thead>
@@ -101,9 +102,16 @@
             <tr *ngFor="let item of expenseheaderiteams?.expenseitem">
               <td>{{ item?.expenseType }}</td>
               <td>{{ item?.item_Name }}</td>
-              <td>{{ item?.expense_Date | date: 'dd-MM-yyyy' }}</td>
+              <td>{{ item?.expense_Date | dateformat }}</td>
               <td>{{ item?.expense_Amount | number: '1.2-2' }}</td>
               <td>{{ item?.status }}</td>
+              <td class="text-center">
+            <div *ngIf="item.meta; else noDescription">
+              <app-info-icon class="cursor" ngbPopover="{{ item?.meta?.addedComments }}" container="body">
+              </app-info-icon>
+            </div>
+            <ng-template #noDescription>NA</ng-template>
+          </td>
               <td>{{ item?.receipt_Number }}</td>
               <td class="text-center">
                 <div class="d-flex gap-2">
@@ -168,7 +176,7 @@
           <div class="mb-0">
             <p><b>{{ 'Commented by' | translate }}:</b> {{ comment?.addedName }}</p>
             <p><b>{{ 'Commented by ID' | translate }}:</b> {{ comment?.addedByFusionEmpId }}</p>
-            <p><b>{{ 'Date' | translate }}:</b> {{ comment?.addedDate | date: 'short' }}</p>
+            <p><b>{{ 'Date' | translate }}:</b> {{ comment?.addedDate | dateformat }}</p>
             <p><b>{{ 'Status' | translate }}:</b> {{ comment?.action }}</p>
             <p><b>{{ 'Comments' | translate }}:</b> {{ comment.comments }}</p>
 

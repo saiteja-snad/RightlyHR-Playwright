@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { Select } from 'primeng/select';
 import { Subscription } from 'rxjs';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { DateformatPipe } from '../../Pipes/dateformat.pipe';
+import { DateformatPipe } from '../../pipes/dateformat.pipe';
 import { HttpService } from '../../services/http.service';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../../services/auth.service';

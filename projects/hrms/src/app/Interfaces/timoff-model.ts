@@ -294,6 +294,7 @@ export interface ExpenseApprovalResponse {
   approvalHeader: ApprovalHeader;
   module: Module;
   currentApprover: string;
+  action?: string;
 }
 export interface ExpenseEntity {
   expenses_ID: number;

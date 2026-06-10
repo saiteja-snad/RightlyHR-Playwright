@@ -19,7 +19,7 @@ import { DetailedStepProgressbarComponent } from '../../shared/detailed-step-pro
 import { DateFormatPipe } from "../../Pipes/date-format.pipe";
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { LettersheaderComponent } from "../../../../../hrms/src/app/shared/letters-shared-content/lettersheader/lettersheader.component";
-import { DateformatPipe } from '../../../../../hrms/src/app/Pipes/dateformat.pipe';
+import { DateformatPipe } from '../../../../../hrms/src/app/pipes/dateformat.pipe';
 
 @Component({
   selector: 'app-contractor-letter',

@@ -7,7 +7,7 @@ import { DropdownModule } from 'primeng/dropdown';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { Subject, takeUntil } from 'rxjs';
 import { RegularizationRequest } from '../../../Interfaces/timoff-model';
-import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
+import { DateformatPipe } from '../../../pipes/dateformat.pipe';
 import { HttpService } from '../../../services/http.service';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { RbacService } from '../../../services/rbac.service';

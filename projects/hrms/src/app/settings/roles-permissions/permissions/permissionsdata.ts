@@ -124,13 +124,16 @@ export const permissionsData = [
   { fields: 'Weekends Published Tab', View: false, Update: false, Create: false, Delete: false },
 
   //Manage Expense tab
-  { fields: 'Expenes Configuartion', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Expense Type Configuration', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Expense Allowed Days', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Expense Threshold Validation', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Global Expense Configuration', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Expense Checklist Configuration', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Payment Mode Configurations', View: false, Update: false, Create: false, Delete: false },
+<<<<<<< HEAD
 
+=======
+>>>>>>> 1c6e9ae9e509ca4aceab68ff4b311b7d2b3c91b1
 
   //Manage DST tab
   { fields: 'DST Pending Tab', View: false, Update: false, Create: false, Delete: false },

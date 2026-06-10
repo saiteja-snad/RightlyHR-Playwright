@@ -16,7 +16,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { Select } from 'primeng/select';
 import { ConfirmationIconComponent } from '../../../icons/confirmation-icon/confirmation-icon.component';
 import { InfoIconComponent } from '../../../icons/info-icon/info-icon.component';
-import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
+import { DateformatPipe } from '../../../pipes/dateformat.pipe';
 import { DataLoaderContentComponent } from '../../../shared/data-loader-content/data-loader-content.component';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { ClientResourceTabComponent } from '../../../shared/project-management-tabs/client-resource-tab/client-resource-tab.component';

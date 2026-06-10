@@ -59,10 +59,13 @@ export default [
         path: 'expenes',
         children: [
             // { path: '', redirectTo: 'configuartion', pathMatch: 'full' },
-            { path: 'configuartion', loadComponent: () => import('./expenses-configuration/expenses-configuration.component').then((m) => m.ExpensesConfigurationComponent), canActivate: [PermissionsGuard], data: { permission: 'Expenes Configuartion.view' } },
+            { path: 'configuartion', loadComponent: () => import('./expenses-configuration/expenses-configuration.component').then((m) => m.ExpensesConfigurationComponent), canActivate: [PermissionsGuard], data: { permission: 'Expense Type Configuration.view' } },
             { path: 'allowed-days', loadComponent: () => import('./expenses-configuration/expenses-allowed-days/expenses-allowed-days.component').then((m) => m.ExpensesAllowedDaysComponent), canActivate: [PermissionsGuard], data: { permission: 'Expense Allowed Days.view' } },
             { path: 'expenses-limit', loadComponent: () => import('./expenses-configuration/expenses-limit/expenses-limit.component').then((m) => m.ExpensesLimitComponent), canActivate: [PermissionsGuard], data: { permission: 'Expense Threshold Validation.view' } },
-            { path: 'global-expenses-configuration', loadComponent: () => import('./expenses-configuration/global-expenses-configuration/global-expenses-configuration.component').then((m) => m.GlobalExpensesConfigurationComponent), canActivate: [PermissionsGuard], data: { permission: 'Global Expense Configuration.view' } }
+            { path: 'global-expenses-configuration', loadComponent: () => import('./expenses-configuration/global-expenses-configuration/global-expenses-configuration.component').then((m) => m.GlobalExpensesConfigurationComponent), canActivate: [PermissionsGuard], data: { permission: 'Global Expense Configuration.view' } },
+            { path: 'budget-verification', loadComponent: () => import('./expenses-configuration/budget-verification/budget-verification.component').then((m) => m.BudgetVerificationComponent), canActivate: [PermissionsGuard], data: { permission: 'Expense Checklist Configuration.view' } },
+            { path: 'payment-modes', loadComponent: () => import('./expenses-configuration/expenses-paymentmode/expenses-paymentmode.component').then((m) => m.ExpensesPaymentmodeComponent), canActivate: [PermissionsGuard], data: { permission: 'Payment Mode Configurations.view' } }
+
         ]
     },
     {

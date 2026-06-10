@@ -21,7 +21,7 @@ import {  Router } from '@angular/router';
 import { ReportsHeaderComponent } from "../../../shared/reports-tabs/reports-header/reports-header.component";
 import { DatePicker } from 'primeng/datepicker';
 import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
-import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
+import { DateformatPipe } from "../../../pipes/dateformat.pipe";
 @Component({
   selector: 'app-job-location-wise-data',
   imports: [CommonModule, FormsModule, ReactiveFormsModule, DatePicker, SelectModule, MultiSelectModule, TranslateModule, NoDataFoundComponent, DataLoaderContentComponent, ReportsHeaderComponent, DateformatPipe],

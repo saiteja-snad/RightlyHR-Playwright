@@ -10,7 +10,7 @@ import { BehaviorSubject, Subject, Subscription, takeUntil } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
 import { ConfirmationIconComponent } from '../../../../icons/confirmation-icon/confirmation-icon.component';
 import { InfoIconComponent } from '../../../../icons/info-icon/info-icon.component';
-import { DateformatPipe } from '../../../../Pipes/dateformat.pipe';
+import { DateformatPipe } from '../../../../pipes/dateformat.pipe';
 import { AuthService } from '../../../../services/auth.service';
 import { FormValidationsService } from '../../../../services/form-validations.service';
 import { HttpService } from '../../../../services/http.service';

@@ -78,8 +78,10 @@
       <div class="mb-3" *ngFor="let comment of approverComments">
         <!-- Hide the card if comment.comments is exactly "string" -->
         <ng-container *ngIf="comment.comments !== 'string'">
-          <div class="card p-3">
-             <p><b>{{ 'Commented by' | translate }}:</b> {{ comment.addedName }}</p>
+          <div>
+            <p><b>{{ 'Comments' | translate }}:</b> {{ comment.comments }}</p>
+            <p><b>{{ 'Commented by' | translate }}:</b> {{ comment.addedName }}</p>
+            <p><b>{{ 'Date' | translate }}:</b> {{ comment.addedDate | dateformat }}</p>
             <p><b>{{ 'Commented by ID' | translate }}:</b> {{ comment.addedByFusionEmpId }}</p>
             <p><b>{{ 'Date' | translate }}:</b> {{ comment.addedDate | date:'short' }}</p>
             <p><b>{{ 'Status' | translate }}:</b> {{ comment.action }}</p>

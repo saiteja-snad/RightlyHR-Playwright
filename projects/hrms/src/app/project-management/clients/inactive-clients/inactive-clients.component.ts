@@ -17,6 +17,7 @@ import { FormsModule } from '@angular/forms';
 import { InactiveclientPipe } from "../../../Pipes/inactiveclient.pipe";
 import { ClientSideTabsComponent } from "../../../shared/project-management-tabs/client-side-tabs/client-side-tabs.component";
 import { PaginatorModule } from 'primeng/paginator';
+import { RbacService } from '../../../services/rbac.service';
 @Component({
   selector: 'app-inactive-clients',
   imports: [CommonModule, ProjectManagementModuleInfoComponent, FormsModule, NoDataFoundComponent, PaginatorModule,
@@ -46,7 +47,7 @@ export class InactiveClientsComponent implements OnInit {
 
   ];
   constructor(private modalService: NgbModal, private route: ActivatedRoute, private http: HttpService,
-    public formValidation: FormValidationsService, private conformationPopup: OpenModalService, private router: Router) { }
+    public formValidation: FormValidationsService, private conformationPopup: OpenModalService, private router: Router, public rbac: RbacService) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
@@ -54,7 +55,14 @@ export class InactiveClientsComponent implements OnInit {
   }
 
   getClientsData(): void {
-    this.http.getData(`Client/GetAll?status=Inactive&pageNumber=${this.page}&pageSize=${this.pageSize}`).pipe(takeUntil(this.destroy$)).subscribe({
+    let url = `Client/GetAll?status=Inactive&pageNumber=${this.page}&pageSize=${this.pageSize}`;
+    if(this.rbac.allowedToAccess('View Assigned Clients.view') && !this.rbac.allowedToAccess('View All Clients.view')){
+      url = `Client/GetAll?status=Inactive&employeeId=${this.empinfo.employeeId}&pageNumber=${this.page}&pageSize=${this.pageSize}`;
+    }
+    else{
+      url = `Client/GetAll?status=Inactive&pageNumber=${this.page}&pageSize=${this.pageSize}`;
+    }
+    this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.loading = false;
         this.clients = Array.isArray(res?.data?.items) ? res.data?.items : [];

@@ -10,6 +10,8 @@ import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { InfoIconComponent } from "../../../../icons/info-icon/info-icon.component";
+import { MultiSelectModule } from 'primeng/multiselect';
+import { POLICY_VISIBILITY_MODULES } from '../../../../shared/policies/policy-visibility.catalog';
 
 @Component({
   selector: 'app-view-policies',
@@ -20,7 +22,8 @@ import { InfoIconComponent } from "../../../../icons/info-icon/info-icon.compone
     TranslateModule,
     NgbPopoverModule,
     ToggleSwitchModule,
-    InfoIconComponent
+    InfoIconComponent,
+    MultiSelectModule
 ],
   templateUrl: './view-policies.component.html',
   styleUrl: './view-policies.component.scss',
@@ -43,6 +46,7 @@ export class ViewPoliciesComponent implements OnInit, OnDestroy {
     { name: '2027', value: 2027 },
     { name: '2028', value: 2028 },
   ];
+  policyVisibilityModules = POLICY_VISIBILITY_MODULES;
 
   constructor(
     private fb: FormBuilder,
@@ -85,6 +89,7 @@ export class ViewPoliciesComponent implements OnInit, OnDestroy {
             ],
             acknowledged: [{ value: row.requiresAcknowledgment, disabled: true }],
             notification : [{ value: row.sendNotification, disabled: true }],
+            visibilityMappings: this.fb.array(this.getInitialVisibilityMappings(row)),
           })
         );
         const fileName = this.getFileName(row.policyAttachment);
@@ -116,6 +121,55 @@ export class ViewPoliciesComponent implements OnInit, OnDestroy {
 
   get policies(): FormArray {
     return this.policyForm.get('policies') as FormArray;
+  }
+
+  private createVisibilityMappingRow(value?: any): FormGroup {
+    const group = this.fb.group({
+      moduleKey: [value?.moduleKey ?? null],
+      subModuleKeys: [value?.subModuleKeys ?? []],
+      displayEnabled: [value?.displayEnabled ?? false]
+    });
+    group.disable({ emitEvent: false });
+    return group;
+  }
+
+  private getInitialVisibilityMappings(item: any): FormGroup[] {
+    const targets = item?.visibilityTargets;
+    if (!Array.isArray(targets) || targets.length === 0) {
+      return [this.createVisibilityMappingRow()];
+    }
+    const byModule = new Map<string, { moduleKey: string; subModuleKeys: string[]; displayEnabled: boolean }>();
+    targets.forEach((t: any) => {
+      const moduleKey = String(t?.moduleKey ?? '');
+      const subModuleKey = String(t?.subModuleKey ?? '');
+      if (!moduleKey || !subModuleKey) return;
+      const existing = byModule.get(moduleKey);
+      const enabled = t?.enabled === true || t?.displayEnabled === true;
+      if (!existing) {
+        byModule.set(moduleKey, { moduleKey, subModuleKeys: [subModuleKey], displayEnabled: enabled });
+      } else {
+        if (!existing.subModuleKeys.includes(subModuleKey)) existing.subModuleKeys.push(subModuleKey);
+        existing.displayEnabled = existing.displayEnabled || enabled;
+      }
+    });
+    const rows = [...byModule.values()];
+    if (rows.length === 0) return [this.createVisibilityMappingRow()];
+    return rows.map(r => this.createVisibilityMappingRow(r));
+  }
+
+  getVisibilityMappings(policyIndex: number): FormArray {
+    return this.policies.at(policyIndex)?.get('visibilityMappings') as FormArray;
+  }
+
+  isDisplayToggleVisible(policyIndex: number, mappingIndex: number): boolean {
+    const row = this.getVisibilityMappings(policyIndex).at(mappingIndex) as FormGroup;
+    const selected = row.get('subModuleKeys')?.value as string[] | null;
+    return (selected?.length ?? 0) > 0;
+  }
+
+  getSubModuleOptions(moduleKey: string | null): Array<{ label: string; value: string }> {
+    const mod = this.policyVisibilityModules.find(m => m.key === moduleKey);
+    return (mod?.subModules ?? []).map(s => ({ label: s.label, value: s.key }));
   }
 
   addPolicyRow() {

@@ -82,7 +82,7 @@
                 {{'Policy Name is required'|translate}}
               </div>
             </div>
-          
+
             <!-- Description moved here -->
             <div class="w-100">
               <label class="form-label custom-label">{{'Description' | translate}}<span
@@ -96,7 +96,7 @@
                 {{'Policy Description is required'|translate}}
               </div>
             </div>
-          
+
               <div class="w-100">
               <label class="form-label custom-label">
                 {{'Policy Attachment (Image and PDF only)' | translate}}<span class="text-danger">*</span>
@@ -134,6 +134,90 @@
               <div class="small-blue-toggle mt-2">
                 <p-toggleswitch formControlName="notification" (onChange)="onClickedEmail($event, i)" />
               </div>
+            </div>
+          </div>
+
+          <div class="mt-3 policy-mapping-section" formArrayName="visibilityMappings">
+            <div class="d-flex justify-content-between align-items-start gap-3 mb-2">
+              <div>
+                <div class="policy-mapping-title">Module Configuration Table</div>
+                <div class="policy-mapping-subtitle">Map policy scope, visibility switches, and targeted functional modules.</div>
+              </div>
+              <button type="button" class="custom-btn btn-secondary px-3 text-nowrap" (click)="addVisibilityMapping(i)">
+                <i class="bi bi-plus me-2"></i>Add Module Configuration
+              </button>
+            </div>
+
+            <div class="policy-mapping-table">
+              <table class="w-100">
+                <thead>
+                  <tr>
+                    <th>Module <span class="text-danger">*</span></th>
+                    <th>Sub Modules <span class="text-danger">*</span></th>
+                    <th class="text-center">Visibility Toggle</th>
+                    <th class="text-center">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let mapping of getVisibilityMappings(i).controls; let m = index" [formGroupName]="m">
+                    <td>
+                      <div class="custom-p-select-content m-0">
+                        <p-select
+                          [options]="policyVisibilityModules"
+                          optionLabel="label"
+                          optionValue="key"
+                          formControlName="moduleKey"
+                          class="form-select custom-select w-100"
+                          appendTo="body"
+                          [autoZIndex]="true"
+                          [baseZIndex]="2000"
+                          placeholder="Please select a module"
+                          (onChange)="onModuleKeyChange(i, m, $event.value)">
+                        </p-select>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="custom-p-multiSelect-content m-0">
+                        <p-multiselect
+                          [options]="getSubModuleOptions(getVisibilityMappings(i).at(m).get('moduleKey')?.value)"
+                          optionLabel="label"
+                          optionValue="value"
+                          formControlName="subModuleKeys"
+                          class="form-select custom-select w-100"
+                          appendTo="body"
+                          [autoZIndex]="true"
+                          [baseZIndex]="2000"
+                          panelStyleClass="custom-phase-multiselect-panel"
+                          [disabled]="!(getVisibilityMappings(i).at(m).get('moduleKey')?.value)"
+                          [showClear]="true"
+                          [placeholder]="(getVisibilityMappings(i).at(m).get('moduleKey')?.value) ? 'Please select sub modules' : 'Select main module first'"
+                          (onChange)="onSubModuleKeysChange(i, m, $event.value)"
+                          selectedItemsLabel="{2} items selected"
+                          [maxSelectedLabels]="2"
+                          resetFilterOnHide="true">
+                        </p-multiselect>
+                      </div>
+                    </td>
+                    <td class="text-center">
+                      <div class="d-flex justify-content-center">
+                        <div class="small-blue-toggle">
+                          <p-toggleswitch formControlName="displayEnabled" [disabled]="!isDisplayToggleVisible(i, m)" class="custom-toggle" />
+                        </div>
+                      </div>
+                    </td>
+                    <td class="text-center">
+                      <button
+                        title="Delete"
+                        type="button"
+                        class="btn p-0 border-0 bg-transparent"
+                        (click)="removeVisibilityMapping(i, m)"
+                        [disabled]="getVisibilityMappings(i).length <= 1">
+                        <img src="/icons/red-trash-icon.png" alt="trash-icon" class="red-trash-icon" />
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
         </div>

@@ -11,10 +11,12 @@ import { TranslateModule } from '@ngx-translate/core';
 import { FormValidationsService } from '../../../../services/form-validations.service';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { InfoIconComponent } from "../../../../icons/info-icon/info-icon.component";
+import { MultiSelectModule } from 'primeng/multiselect';
+import { POLICY_VISIBILITY_MODULES } from '../../../../shared/policies/policy-visibility.catalog';
 
 @Component({
   selector: 'app-clone-policies',
-  imports: [CommonModule, Select, ReactiveFormsModule, TranslateModule, NgbPopoverModule, ToggleSwitchModule, InfoIconComponent],
+  imports: [CommonModule, Select, ReactiveFormsModule, TranslateModule, NgbPopoverModule, ToggleSwitchModule, InfoIconComponent, MultiSelectModule],
   templateUrl: './clone-policies.component.html',
   styleUrl: './clone-policies.component.scss'
 })
@@ -34,6 +36,7 @@ export class ClonePoliciesComponent implements OnInit, OnDestroy {
     { name: '2027', value: 2027 },
     { name: '2028', value: 2028 },
   ]
+  policyVisibilityModules = POLICY_VISIBILITY_MODULES;
 
 
   constructor(private fb: FormBuilder, public router: Router, private http: HttpService,
@@ -68,6 +71,7 @@ export class ClonePoliciesComponent implements OnInit, OnDestroy {
           policyNewFile: [''],
           acknowledged: [row.requiresAcknowledgment],
           notification: [row.sendEmailNotification],
+          visibilityMappings: this.fb.array(this.getInitialVisibilityMappings(row)),
         },
           {
             validator: this.acknowledgementNotificationValidator
@@ -168,6 +172,7 @@ restrictPolicyNamedescription(event: KeyboardEvent) {
       policyNewFile: ['', Validators.required],
       acknowledged: [false],
       notification: [false],
+      visibilityMappings: this.fb.array([this.createVisibilityMappingRow()]),
     },
       {
         validator: this.acknowledgementNotificationValidator
@@ -191,6 +196,75 @@ restrictPolicyNamedescription(event: KeyboardEvent) {
     }
 
     return null;
+  }
+
+  private createVisibilityMappingRow(value?: any): FormGroup {
+    return this.fb.group({
+      moduleKey: [value?.moduleKey ?? null],
+      subModuleKeys: [value?.subModuleKeys ?? []],
+      displayEnabled: [value?.displayEnabled ?? false]
+    });
+  }
+
+  private getInitialVisibilityMappings(item: any): FormGroup[] {
+    const targets = item?.visibilityTargets;
+    if (!Array.isArray(targets) || targets.length === 0) {
+      return [this.createVisibilityMappingRow()];
+    }
+    const byModule = new Map<string, { moduleKey: string; subModuleKeys: string[]; displayEnabled: boolean }>();
+    targets.forEach((t: any) => {
+      const moduleKey = String(t?.moduleKey ?? '');
+      const subModuleKey = String(t?.subModuleKey ?? '');
+      if (!moduleKey || !subModuleKey) return;
+      const existing = byModule.get(moduleKey);
+      const enabled = t?.enabled === true || t?.displayEnabled === true;
+      if (!existing) {
+        byModule.set(moduleKey, { moduleKey, subModuleKeys: [subModuleKey], displayEnabled: enabled });
+      } else {
+        if (!existing.subModuleKeys.includes(subModuleKey)) existing.subModuleKeys.push(subModuleKey);
+        existing.displayEnabled = existing.displayEnabled || enabled;
+      }
+    });
+    const rows = [...byModule.values()];
+    if (rows.length === 0) return [this.createVisibilityMappingRow()];
+    return rows.map(r => this.createVisibilityMappingRow(r));
+  }
+
+  getVisibilityMappings(policyIndex: number): FormArray {
+    return this.policies.at(policyIndex)?.get('visibilityMappings') as FormArray;
+  }
+
+  addVisibilityMapping(policyIndex: number): void {
+    this.getVisibilityMappings(policyIndex).push(this.createVisibilityMappingRow());
+  }
+
+  removeVisibilityMapping(policyIndex: number, mappingIndex: number): void {
+    const mappings = this.getVisibilityMappings(policyIndex);
+    if (mappings.length <= 1) return;
+    mappings.removeAt(mappingIndex);
+  }
+
+  onModuleKeyChange(policyIndex: number, mappingIndex: number, moduleKey: string | null): void {
+    const row = this.getVisibilityMappings(policyIndex).at(mappingIndex) as FormGroup;
+    row.patchValue({ moduleKey, subModuleKeys: [], displayEnabled: false });
+  }
+
+  onSubModuleKeysChange(policyIndex: number, mappingIndex: number, subModuleKeys: string[] | null): void {
+    const row = this.getVisibilityMappings(policyIndex).at(mappingIndex) as FormGroup;
+    const next = subModuleKeys ?? [];
+    row.get('subModuleKeys')?.setValue(next);
+    if (next.length === 0) row.get('displayEnabled')?.setValue(false);
+  }
+
+  isDisplayToggleVisible(policyIndex: number, mappingIndex: number): boolean {
+    const row = this.getVisibilityMappings(policyIndex).at(mappingIndex) as FormGroup;
+    const selected = row.get('subModuleKeys')?.value as string[] | null;
+    return (selected?.length ?? 0) > 0;
+  }
+
+  getSubModuleOptions(moduleKey: string | null): Array<{ label: string; value: string }> {
+    const mod = this.policyVisibilityModules.find(m => m.key === moduleKey);
+    return (mod?.subModules ?? []).map(s => ({ label: s.label, value: s.key }));
   }
 
   hidePublishCloneButtons: boolean = false
@@ -223,7 +297,7 @@ restrictPolicyNamedescription(event: KeyboardEvent) {
   }
 
   renameFile(file: File, newName: string): File {
-    const sanitizedFileName = newName.replace(/\s+/g, '_').replace(/[^a-zA-Z0-9._-]/g, '');   
+    const sanitizedFileName = newName.replace(/\s+/g, '_').replace(/[^a-zA-Z0-9._-]/g, '');
     return new File([file], sanitizedFileName, { type: file.type });
   }
 

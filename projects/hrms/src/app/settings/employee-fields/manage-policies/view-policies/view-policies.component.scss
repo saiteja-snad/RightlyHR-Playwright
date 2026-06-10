@@ -1,0 +1,61 @@
+.small-blue-toggle {
+  --p-toggleswitch-width: 2.5rem;
+  --p-toggleswitch-height: 1.2rem;
+  --p-toggleswitch-handle-size: 1rem;
+  --p-toggleswitch-handle-checked-background: white;
+}
+
+.policy-mapping-title {
+  font-weight: 700;
+  font-size: var(--fontsize12);
+  letter-spacing: 0.02em;
+  color: var(--table-header-color);
+}
+
+.policy-mapping-table {
+  border: 1px solid var(--table-data-border-color);
+  border-radius: 0.5rem;
+  background-color: var(--white-color);
+  overflow: hidden;
+}
+
+.policy-mapping-table th,
+.policy-mapping-table td {
+  vertical-align: middle;
+  padding: 0.75rem 1rem;
+}
+
+.policy-mapping-table th {
+  background-color: var(--table-header-bg-color);
+  color: var(--table-header-color);
+  font-weight: 600;
+  font-size: var(--fontsize12);
+  text-wrap: nowrap;
+}
+
+.policy-mapping-table tr {
+  border-bottom: 1px solid var(--table-data-border-color);
+}
+
+.policy-mapping-table tr:last-child {
+  border-bottom: none;
+}
+
+::ng-deep .custom-phase-multiselect-panel {
+    font-size: var(--fontsize12) !important;
+
+    .p-multiselect-option.p-multiselect-option-selected.p-focus {
+        background: var(--body-bg-color) !important;
+        color: var(--primary-color) !important;
+    }
+
+    .p-multiselect-option.p-multiselect-option-selected {
+        background: var(--body-bg-color) !important;
+        color: var(--primary-color) !important;
+    }
+
+    .p-checkbox-checked .p-checkbox-box {
+        border-color: var(--primary-color) !important;
+        background: var(--primary-color) !important;
+    }
+}

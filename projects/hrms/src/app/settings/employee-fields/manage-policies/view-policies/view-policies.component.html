@@ -104,6 +104,67 @@
                             <p-toggleswitch formControlName="notification" />
                         </div>
                     </div>
+
+                    <div class="mt-3" formArrayName="visibilityMappings">
+                        <div class="policy-mapping-title mb-2">Module Configuration Table</div>
+                        <div class="policy-mapping-table">
+                            <table class="w-100">
+                                <thead>
+                                    <tr>
+                                        <th>Module</th>
+                                        <th>Sub Modules</th>
+                                        <th class="text-center">Visibility Toggle</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let mapping of getVisibilityMappings(i).controls; let m = index" [formGroupName]="m">
+                                        <td>
+                                            <div class="custom-p-select-content m-0">
+                                                <p-select
+                                                    [options]="policyVisibilityModules"
+                                                    optionLabel="label"
+                                                    optionValue="key"
+                                                    formControlName="moduleKey"
+                                                    class="form-select custom-select w-100"
+                                                    appendTo="body"
+                                                    [autoZIndex]="true"
+                                                    [baseZIndex]="2000"
+                                                    [disabled]="true">
+                                                </p-select>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="custom-p-multiSelect-content m-0">
+                                                <p-multiselect
+                                                    [options]="getSubModuleOptions(getVisibilityMappings(i).at(m).get('moduleKey')?.value)"
+                                                    optionLabel="label"
+                                                    optionValue="value"
+                                                    formControlName="subModuleKeys"
+                                                    class="form-select custom-select w-100"
+                                                    appendTo="body"
+                                                    [autoZIndex]="true"
+                                                    [baseZIndex]="2000"
+                                                    panelStyleClass="custom-phase-multiselect-panel"
+                                                    [disabled]="true"
+                                                    [showClear]="false"
+                                                    selectedItemsLabel="{2} items selected"
+                                                    [maxSelectedLabels]="2"
+                                                    resetFilterOnHide="true">
+                                                </p-multiselect>
+                                            </div>
+                                        </td>
+                                        <td class="text-center">
+                                            <div class="d-flex justify-content-center">
+                                                <div class="small-blue-toggle">
+                                                    <p-toggleswitch formControlName="displayEnabled" [disabled]="true" class="custom-toggle" />
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

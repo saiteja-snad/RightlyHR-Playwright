@@ -8,6 +8,7 @@ import { IPolicies } from '../../../../Interfaces/policies.model';
 import { Subject, takeUntil } from 'rxjs';
 import { ILocation, IShiftHeader, ISubLocation } from '../../../time-off/flexible-leave-allocation/leave-allocation.model';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
+import { MultiSelectModule } from 'primeng/multiselect';
 
 
 import { TabsModule } from 'primeng/tabs';
@@ -17,12 +18,13 @@ import { OpenModalService } from '../../../../services/open-modal.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { FormValidationsService } from '../../../../services/form-validations.service';
+import { POLICY_VISIBILITY_MODULES } from '../../../../shared/policies/policy-visibility.catalog';
 @Component({
   selector: 'app-add-policies',
   imports: [RouterModule,
     Select,
     CommonModule,
-    ReactiveFormsModule, TabsModule, TranslateModule, ToggleSwitchModule],
+    ReactiveFormsModule, TabsModule, TranslateModule, ToggleSwitchModule, MultiSelectModule],
   templateUrl: './add-policies.component.html',
   styleUrl: './add-policies.component.scss'
 })
@@ -36,6 +38,7 @@ export class AddPoliciesComponent implements OnInit, OnDestroy {
   yearDetails: number[] = [];
   currentYear: number = new Date().getFullYear();
   isShiftAvailable: boolean = true;
+  policyVisibilityModules = POLICY_VISIBILITY_MODULES;
 
   constructor(private fb: FormBuilder, public router: Router, private http: HttpService,
     private confirmation: OpenModalService, private modalService: NgbModal,
@@ -65,11 +68,57 @@ export class AddPoliciesComponent implements OnInit, OnDestroy {
       policyDescription: ['', [Validators.required, Validators.maxLength(50)]],
       acknowledged: [false],
       notification: [false],
+      visibilityMappings: this.fb.array([this.createVisibilityMappingRow()]),
     },
       {
         validator: this.acknowledgementNotificationValidator
       }
     );
+  }
+
+  private createVisibilityMappingRow(value?: any): FormGroup {
+    return this.fb.group({
+      moduleKey: [value?.moduleKey ?? null],
+      subModuleKeys: [value?.subModuleKeys ?? []],
+      displayEnabled: [value?.displayEnabled ?? false]
+    });
+  }
+
+  getVisibilityMappings(policyIndex: number): FormArray {
+    return this.policies.at(policyIndex)?.get('visibilityMappings') as FormArray;
+  }
+
+  addVisibilityMapping(policyIndex: number): void {
+    this.getVisibilityMappings(policyIndex).push(this.createVisibilityMappingRow());
+  }
+
+  removeVisibilityMapping(policyIndex: number, mappingIndex: number): void {
+    const mappings = this.getVisibilityMappings(policyIndex);
+    if (mappings.length <= 1) return;
+    mappings.removeAt(mappingIndex);
+  }
+
+  onModuleKeyChange(policyIndex: number, mappingIndex: number, moduleKey: string | null): void {
+    const row = this.getVisibilityMappings(policyIndex).at(mappingIndex) as FormGroup;
+    row.patchValue({ moduleKey, subModuleKeys: [], displayEnabled: false });
+  }
+
+  onSubModuleKeysChange(policyIndex: number, mappingIndex: number, subModuleKeys: string[] | null): void {
+    const row = this.getVisibilityMappings(policyIndex).at(mappingIndex) as FormGroup;
+    const next = subModuleKeys ?? [];
+    row.get('subModuleKeys')?.setValue(next);
+    if (next.length === 0) row.get('displayEnabled')?.setValue(false);
+  }
+
+  isDisplayToggleVisible(policyIndex: number, mappingIndex: number): boolean {
+    const row = this.getVisibilityMappings(policyIndex).at(mappingIndex) as FormGroup;
+    const selected = row.get('subModuleKeys')?.value as string[] | null;
+    return (selected?.length ?? 0) > 0;
+  }
+
+  getSubModuleOptions(moduleKey: string | null): Array<{ label: string; value: string }> {
+    const mod = this.policyVisibilityModules.find(m => m.key === moduleKey);
+    return (mod?.subModules ?? []).map(s => ({ label: s.label, value: s.key }));
   }
 
 
@@ -184,7 +233,7 @@ restrictPolicyNamedescription(event: KeyboardEvent) {
   }
 
   renameFile(file: File, newName: string): File {
-    const sanitizedFileName = newName.replace(/\s+/g, '_').replace(/[^a-zA-Z0-9._-]/g, '');   
+    const sanitizedFileName = newName.replace(/\s+/g, '_').replace(/[^a-zA-Z0-9._-]/g, '');
     return new File([file], sanitizedFileName, { type: file.type });
   }
 

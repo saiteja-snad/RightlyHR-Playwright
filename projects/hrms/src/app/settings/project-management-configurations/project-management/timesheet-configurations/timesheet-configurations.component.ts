@@ -381,21 +381,35 @@ timesheetconfigForm!: FormGroup;
     });
   }
   opendelete(content: any, expenses: any) {
-    this.selecteddata = expenses.id
+    this.selecteddata = expenses;
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
 
   deletedata() {
-    this.http.deleteData(`TimesheetConfiguration/${this.selecteddata}`).pipe(takeUntil(this.destroy$)).subscribe({
-      next: (data: any) => {
-        this.modalService.dismissAll()
-        this.conformationPopup.openSuccessModal("Timesheet Configuration deleted successfully")
-        this.getTimesheet(this.page, this.pageSize,this.searchQuery);
-      },
-      error: (reason: any) => {
-        console.log(reason);
+    const item = this.selecteddata;
+    const pairedField = item.fieldName === 'Start Time' ? 'End Time' : item.fieldName === 'End Time' ? 'Start Time' : null;
+    const pairedRecord = pairedField
+      ? this.timesheetconfigdata.find(d => d.fieldName === pairedField && d.phaseId === item.phaseId)
+      : null;
 
-      }
+    this.http.deleteData(`TimesheetConfiguration/${item.id}`).pipe(takeUntil(this.destroy$)).subscribe({
+      next: () => {
+        if (pairedRecord) {
+          this.http.deleteData(`TimesheetConfiguration/${pairedRecord.id}`).pipe(takeUntil(this.destroy$)).subscribe({
+            next: () => {
+              this.modalService.dismissAll();
+              this.conformationPopup.openSuccessModal('Timesheet Configuration deleted successfully');
+              this.getTimesheet(this.page, this.pageSize, this.searchQuery);
+            },
+            error: (err: any) => console.log(err)
+          });
+        } else {
+          this.modalService.dismissAll();
+          this.conformationPopup.openSuccessModal('Timesheet Configuration deleted successfully');
+          this.getTimesheet(this.page, this.pageSize, this.searchQuery);
+        }
+      },
+      error: (reason: any) => console.log(reason)
     });
   }
    onRowsChange() {

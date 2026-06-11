@@ -295,6 +295,10 @@ export class SettingsHeaderComponent implements OnInit, OnDestroy {
       this.moduleName = 'Project Management Configurations';
       this.componentName = 'Task Type';
     }
+     else if (url.startsWith('/settings/project-management-config/timesheet-configurations')) {
+      this.moduleName = 'Project Management Configurations';
+      this.componentName = 'Timesheet Configurations';
+    }
     else if (url.startsWith('/settings/project-management-config/timesheet-configurations')) {
       this.moduleName = 'Project Management Configurations';
       this.componentName = 'Project Management Configurations';

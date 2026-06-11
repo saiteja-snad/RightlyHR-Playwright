@@ -144,7 +144,7 @@
                             </label>
                             <div class="custom-p-multiSelect-content">
                                 <p-multiselect [options]="fieldsoptions" optionLabel="label" optionValue="value"
-                                    class="form-select custom-select" formControlName="fields" placeholder="Please select field name"
+                                    class="form-select custom-select" formControlName="fields" placeholder="Please select field name" (onChange)="onFieldsChange($event.value)"
                                     filterBy="label" [resetFilterOnHide]="true" [showClear]="false" [filter]="true" display="chip" [maxSelectedLabels]="3" selectedItemsLabel="{0} items selected">
                                 </p-multiselect>
                             </div>

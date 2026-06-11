@@ -1826,24 +1826,27 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
           'Task Type': 'taskId',
           'Description': 'description'
         };
-        const selectedDate = moment(this.dayForm.get('entryDate')?.value).format('YYYY-MM-DD');
-        console.log('Selected Date for Validation:', selectedDate);
-        items.forEach((item: any) => {
-          const controlName = fieldMap[item.fieldName];
-          if (!controlName) return;
-          const control = this.dayForm.get(controlName);
-          if (!control) return;
-          control.clearValidators();
-          const effectiveDate = moment(item.effectiveDate).format('YYYY-MM-DD');
-          console.log(effectiveDate)
-          const isEffective = moment(selectedDate).isSameOrAfter(moment(effectiveDate), 'day');
-          const approvalstatus = this.dayForm.get('approvalStatus')?.value;
-          console.log('Approval Status:', approvalstatus);
-          control.setValidators([Validators.required]);
-
-          //if (isEffective && item.isMandatory &&(!approvalstatus || approvalstatus?.toLowerCase() === 'draft' || approvalstatus?.toLowerCase() === 'rejected'|| approvalstatus?.toLowerCase() === 'not entered')) {
-          // }
-          control.updateValueAndValidity({ emitEvent: false });
+         const selectedDate = moment(this.dayForm.get('entryDate')?.value).format('YYYY-MM-DD');
+      console.log('Selected Date for Validation:', selectedDate);
+      items.forEach((item: any) => {
+        const controlName = fieldMap[item.fieldName];
+        const effectiveDate = moment(item.effectiveDate).format('YYYY-MM-DD');
+        const isEffective = moment(selectedDate).isSameOrAfter(moment(effectiveDate),'day');
+        if(isEffective){
+        if (!controlName) return;
+        const control = this.dayForm.get(controlName);
+        if (!control) return;
+        control.clearValidators();
+        const approvalstatus = this.dayForm.get('approvalStatus')?.value;
+        console.log('Approval Status:', approvalstatus);
+        // // if (isEffective && item.isMandatory &&(!approvalstatus || approvalstatus?.toLowerCase() === 'draft' || approvalstatus?.toLowerCase() === 'rejected'|| approvalstatus?.toLowerCase() === 'not entered')) {
+        //   control.setValidators([Validators.required]);
+        // // }
+         if (item.isMandatory) {
+           control.setValidators([Validators.required]);
+         }
+        control.updateValueAndValidity({ emitEvent: false });
+      }
         });
       }
     });

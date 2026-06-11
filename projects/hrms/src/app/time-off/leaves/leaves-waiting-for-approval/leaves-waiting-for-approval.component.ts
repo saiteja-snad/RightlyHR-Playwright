@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbModal, NgbNavModule, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { DropdownModule } from 'primeng/dropdown';
@@ -63,6 +63,9 @@ export class LeavesWaitingForApprovalComponent implements OnInit, OnDestroy {
   selectedLeaveStatus: any;
   responseSummary: any;
   requestBody: any = {};
+  @ViewChild('leaveSummary') leaveSummary: any;
+
+
 
   leaveEntitlementsList: any = {};
   employeeLeaveEntitlementsList: any[] = [];
@@ -339,9 +342,17 @@ export class LeavesWaitingForApprovalComponent implements OnInit, OnDestroy {
 
           this.modalService.dismissAll();
 
-          this.conformationPopup.openSuccessModal(
-            'Leave request approved successfully'
-          );
+          this.responseSummary = response.data;
+
+          this.modalService.open(this.leaveSummary, {
+            centered: true,
+            backdrop: 'static',
+            size: 'lg'
+          });
+
+          setTimeout(() => {
+            this.modalService.dismissAll();
+          }, 3000);
 
           this.getDataByLPEMPID();
           this.signalService.timeOffsidenavCountSignal.set(true);
@@ -392,9 +403,17 @@ export class LeavesWaitingForApprovalComponent implements OnInit, OnDestroy {
 
           this.modalService.dismissAll();
 
-          this.conformationPopup.openSuccessModal(
-            'Leave request rejected successfully'
-          );
+          this.responseSummary = response.data;
+
+          this.modalService.open(this.leaveSummary, {
+            centered: true,
+            backdrop: 'static',
+            size: 'lg'
+          });
+
+          setTimeout(() => {
+            this.modalService.dismissAll();
+          }, 3000);
 
           this.getDataByLPEMPID();
           this.signalService.timeOffsidenavCountSignal.set(true);

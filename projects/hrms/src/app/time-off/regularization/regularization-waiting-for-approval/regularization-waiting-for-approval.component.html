@@ -10,7 +10,7 @@
                 <!-- <th>Rejected Reason</th> -->
                 <th>{{'Regularization Type'|translate}}</th>
                 <th>{{'Status'|translate}}</th>
-                <th class="text-center">Action</th>
+                <th *ngIf="showActions" class="text-center">Action</th>
             </thead>
             <tbody>
                 <ng-container *ngIf="waitingForApprovalPerimisions!.length > 0; else noDataTemplate">
@@ -33,7 +33,7 @@
 
                        
 
-                        <td class="text-center">
+                        <td *ngIf="showActions" class="text-center">
                             <div class="dropdown">
                                 <a type="button" data-bs-toggle="dropdown">
                                     <i class="bi bi-three-dots-vertical"></i>

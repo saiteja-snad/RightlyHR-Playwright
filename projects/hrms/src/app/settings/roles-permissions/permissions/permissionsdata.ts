@@ -358,6 +358,7 @@ export const permissionsData = [
   { fields: 'Comp Off Module', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Permissions Module', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Regularization Module', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Extra Hours Module', View: false, Update: false, Create: false, Delete: false },
   { fields: 'On Behalf Of Module', View: false, Update: false, Create: false, Delete: false },
   { fields: 'On Behalf Of Approvals Module', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Global Permissions Module', View: false, Update: false, Create: false, Delete: false },

@@ -60,6 +60,7 @@ export class ExtraHoursWaitingForApprovalComponent {
   responseSummary: any;
   requestBody: any = {};
   approverComments: any[] = [];
+  permissionForLoggedInUser = true;
 
   @ViewChild('leaveSummary') leaveSummary: any;
 
@@ -84,11 +85,20 @@ export class ExtraHoursWaitingForApprovalComponent {
         this.selectedYear = year;
         this.http.selectedEmployeeIdRegularization$.subscribe((id) => {
           if (id) {
-            // Use the new employee ID here
             this.selectempid = id;
+
+            // Manager selected an employee
+            this.permissionForLoggedInUser = false;
+
             this.getDataEMPPermissions();
           } else {
-            this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
+            this.empinfo = JSON.parse(
+              localStorage.getItem('rightlyHrUser') ?? '{}'
+            );
+
+            // Logged-in employee view
+            this.permissionForLoggedInUser = true;
+
             this.getDataPermissions();
           }
         });
@@ -154,164 +164,164 @@ export class ExtraHoursWaitingForApprovalComponent {
   }
 
   approveExtraHours(approvalPopup: any, item: any) {
-  this.selectedExtraHourData = item;
+    this.selectedExtraHourData = item;
 
-  this.modalService.open(approvalPopup, {
-    centered: true,
-    backdrop: 'static'
-  });
-}
-
-rejectExtraHours(rejectPopup: any, item: any) {
-  this.selectedExtraHourData = item;
-
-  this.modalService.open(rejectPopup, {
-    centered: true,
-    backdrop: 'static'
-  });
-}
-
-onStatusApproveSelect(status: string) {
-  this.selectedLeaveStatus = status;
-
-  if (status === 'approved') {
-    this.approveForm.get('comments')?.setValue('Approved');
+    this.modalService.open(approvalPopup, {
+      centered: true,
+      backdrop: 'static'
+    });
   }
-}
 
+  rejectExtraHours(rejectPopup: any, item: any) {
+    this.selectedExtraHourData = item;
 
-onStatusRejectSelect(status: string) {
-  this.selectedLeaveStatus = status;
-
-  if (status === 'reject') {
-    this.rejectForm.get('comments')?.setValue('Rejected');
+    this.modalService.open(rejectPopup, {
+      centered: true,
+      backdrop: 'static'
+    });
   }
-}
 
-openModal(content: any) {
-  this.modalService.open(content, {
-    centered: true,
-    backdrop: 'static',
-    size: 'lg'
-  });
-}
+  onStatusApproveSelect(status: string) {
+    this.selectedLeaveStatus = status;
 
-handleAccept(form: FormGroup): void {
-
-  this.spinnerLoader = true;
-
-  if (form.valid) {
-
-    let approvedBy = this.empinfo.employeeId.toString();
-
-    this.requestBody = {
-      requestProcessedBy: approvedBy,
-      status: 'Approved',
-      comments: form.value.comments,
-      moduleId: environment.extraHoursModuleId,
-      headerRequests: [
-        {
-          headerID: this.selectedExtraHourData.pendingApprovalsHeader.id,
-          currentStage: this.selectedExtraHourData.pendingApprovalsHeader.currentapprovalStage
-        }
-      ]
-    };
-
-    this.http.putData(
-      `v2/PendingApproval/multiapprovals`,
-      this.requestBody
-    ).subscribe({
-      next: (response: any) => {
-
-        this.modalService.dismissAll();
-
-        this.waitingForApprovalPerimisions =
-          this.waitingForApprovalPerimisions.filter(
-            x => x.id !== this.selectedExtraHourData.id
-          );
-
-        this.responseSummary = response.data;
+    if (status === 'approved') {
+      this.approveForm.get('comments')?.setValue('Approved');
+    }
+  }
 
 
-        this.openModal(this.leaveSummary);
+  onStatusRejectSelect(status: string) {
+    this.selectedLeaveStatus = status;
 
-        setTimeout(() => {
+    if (status === 'reject') {
+      this.rejectForm.get('comments')?.setValue('Rejected');
+    }
+  }
+
+  openModal(content: any) {
+    this.modalService.open(content, {
+      centered: true,
+      backdrop: 'static',
+      size: 'lg'
+    });
+  }
+
+  handleAccept(form: FormGroup): void {
+
+    this.spinnerLoader = true;
+
+    if (form.valid) {
+
+      let approvedBy = this.empinfo.employeeId.toString();
+
+      this.requestBody = {
+        requestProcessedBy: approvedBy,
+        status: 'Approved',
+        comments: form.value.comments,
+        moduleId: environment.extraHoursModuleId,
+        headerRequests: [
+          {
+            headerID: this.selectedExtraHourData.pendingApprovalsHeader.id,
+            currentStage: this.selectedExtraHourData.pendingApprovalsHeader.currentapprovalStage
+          }
+        ]
+      };
+
+      this.http.putData(
+        `v2/PendingApproval/multiapprovals`,
+        this.requestBody
+      ).subscribe({
+        next: (response: any) => {
+
           this.modalService.dismissAll();
-        }, 3000);
-      },
-      complete: () => {
-        this.spinnerLoader = false;
-      }
-    });
-  }
-}
 
-handleReject(form: FormGroup): void {
+          this.waitingForApprovalPerimisions =
+            this.waitingForApprovalPerimisions.filter(
+              x => x.id !== this.selectedExtraHourData.id
+            );
 
-  this.spinnerLoader = true;
+          this.responseSummary = response.data;
 
-  if (form.valid) {
 
-    let approvedBy = this.empinfo.employeeId.toString();
+          this.openModal(this.leaveSummary);
 
-    this.requestBody = {
-      requestProcessedBy: approvedBy,
-      status: 'Rejected',
-      comments: form.value.comments,
-      moduleId: environment.extraHoursModuleId,
-      headerRequests: [
-        {
-          headerID: this.selectedExtraHourData.pendingApprovalsHeader.id,
-          currentStage: this.selectedExtraHourData.pendingApprovalsHeader.currentapprovalStage
+          setTimeout(() => {
+            this.modalService.dismissAll();
+          }, 3000);
+        },
+        complete: () => {
+          this.spinnerLoader = false;
         }
-      ]
-    };
+      });
+    }
+  }
 
-    this.http.putData(
-      `v2/PendingApproval/multiapprovals`,
-      this.requestBody
-    ).subscribe({
-      next: (response: any) => {
+  handleReject(form: FormGroup): void {
 
-        this.modalService.dismissAll();
+    this.spinnerLoader = true;
 
-        // Remove from waiting list immediately
-        this.waitingForApprovalPerimisions =
-          this.waitingForApprovalPerimisions.filter(
-            x => x.id !== this.selectedExtraHourData.id
-          );
+    if (form.valid) {
 
-        this.responseSummary = response.data;
+      let approvedBy = this.empinfo.employeeId.toString();
 
-        this.openModal(this.leaveSummary);
+      this.requestBody = {
+        requestProcessedBy: approvedBy,
+        status: 'Rejected',
+        comments: form.value.comments,
+        moduleId: environment.extraHoursModuleId,
+        headerRequests: [
+          {
+            headerID: this.selectedExtraHourData.pendingApprovalsHeader.id,
+            currentStage: this.selectedExtraHourData.pendingApprovalsHeader.currentapprovalStage
+          }
+        ]
+      };
 
-        setTimeout(() => {
+      this.http.putData(
+        `v2/PendingApproval/multiapprovals`,
+        this.requestBody
+      ).subscribe({
+        next: (response: any) => {
+
           this.modalService.dismissAll();
-        }, 3000);
 
-        this.rejectForm.reset();
-      },
+          // Remove from waiting list immediately
+          this.waitingForApprovalPerimisions =
+            this.waitingForApprovalPerimisions.filter(
+              x => x.id !== this.selectedExtraHourData.id
+            );
 
-      error: (err: any) => {
-        console.error(err);
-        this.spinnerLoader = false;
-      },
+          this.responseSummary = response.data;
 
-      complete: () => {
-        this.spinnerLoader = false;
-      }
-    });
+          this.openModal(this.leaveSummary);
+
+          setTimeout(() => {
+            this.modalService.dismissAll();
+          }, 3000);
+
+          this.rejectForm.reset();
+        },
+
+        error: (err: any) => {
+          console.error(err);
+          this.spinnerLoader = false;
+        },
+
+        complete: () => {
+          this.spinnerLoader = false;
+        }
+      });
+    }
   }
-}
 
-removeLeadingWhitespace(control: any): void {
-  if (control) {
-    const value = control.value || '';
-    control.setValue(value.replace(/^\s+/, ''), {
-      emitEvent: false
-    });
+  removeLeadingWhitespace(control: any): void {
+    if (control) {
+      const value = control.value || '';
+      control.setValue(value.replace(/^\s+/, ''), {
+        emitEvent: false
+      });
+    }
   }
-}
 
   ngOnDestroy(): void {
     this.destroy$.next(true);

@@ -299,8 +299,8 @@ export class PremissionsWaitingForApprovalComponent implements OnInit, OnDestroy
         moduleId: environment.permissionsModuleId,
         headerRequests: [
           {
-            headerID: this.selectedPermissionData.approvalHeader.id,
-            currentStage: this.selectedPermissionData.approvalHeader.currentapprovalStage
+            headerID: this.selectedPermissionData.pendingApprovalsHeader.id,
+            currentStage: this.selectedPermissionData.pendingApprovalsHeader.currentapprovalStage
           }
         ]
       };
@@ -320,7 +320,11 @@ export class PremissionsWaitingForApprovalComponent implements OnInit, OnDestroy
 
           this.requestSummary = response.data;
 
-          this.openModal(this.leaveSummary);
+          this.modalService.open(this.leaveSummary, {
+            centered: true,
+            backdrop: 'static',
+            size: 'lg'
+          });
         },
         error: (err: any) => {
           console.error(err);
@@ -330,7 +334,7 @@ export class PremissionsWaitingForApprovalComponent implements OnInit, OnDestroy
   }
 
   handleReject(form: FormGroup): void {
-
+    console.log('Selected Permission Data:', this.selectedPermissionData);
     this.spinnerLoader = true;
 
     if (form.valid) {
@@ -344,17 +348,18 @@ export class PremissionsWaitingForApprovalComponent implements OnInit, OnDestroy
         moduleId: environment.permissionsModuleId,
         headerRequests: [
           {
-            headerID: this.selectedPermissionData.approvalHeader.id,
-            currentStage: this.selectedPermissionData.approvalHeader.currentapprovalStage
+            headerID: this.selectedPermissionData.pendingApprovalsHeader.id,
+            currentStage: this.selectedPermissionData.pendingApprovalsHeader.currentapprovalStage
           }
         ]
       };
-
+      console.log('Reject Payload:', this.requestBody);
       this.http.putData(
         `v2/PendingApproval/multiapprovals`,
         this.requestBody
       ).subscribe({
         next: (response: any) => {
+          console.log('SUCCESS', response);
 
           this.modalService.dismissAll();
 
@@ -365,9 +370,14 @@ export class PremissionsWaitingForApprovalComponent implements OnInit, OnDestroy
 
           this.requestSummary = response.data;
 
-          this.openModal(this.leaveSummary);
+          this.modalService.open(this.leaveSummary, {
+            centered: true,
+            backdrop: 'static',
+            size: 'lg'
+          });
         },
         error: (err: any) => {
+          this.spinnerLoader = false;
           console.error(err);
         }
       });

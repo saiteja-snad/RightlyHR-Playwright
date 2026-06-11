@@ -133,12 +133,24 @@ export class RemoteWaitingForApprovalComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response: any) => {
+          console.log('API Response:', response);
+
           this.remoteLogin = response;
+          console.log('remoteLogin length:', this.remoteLogin.length);
           this.dataLoad = false;
+
+          console.log(
+            this.remoteLogin.map((x: any) => ({
+              id: x.id,
+              status: x.status
+            }))
+          );
           this.approvedRemotes = this.remoteLogin?.filter(
             (element: { status: string }) =>
               element.status === 'Waiting for Approval'
           );
+          console.log('approvedRemotes:', this.approvedRemotes);
+          console.log('approvedRemotes length:', this.approvedRemotes.length);
           this.approvedRemotesCount = this.approvedRemotes.length;
         },
         error: (error) => {
@@ -160,6 +172,13 @@ export class RemoteWaitingForApprovalComponent implements OnInit, OnDestroy {
         next: (response: any) => {
           console.log(response);
           this.remoteLogin = response;
+
+          console.log(
+            this.remoteLogin.map((x: any) => ({
+              id: x.id,
+              status: x.status
+            }))
+          );
           this.approvedRemotes = this.remoteLogin.filter(
             (element: { status: string }) => element.status === 'Waiting for Approval'
           );
@@ -235,14 +254,18 @@ export class RemoteWaitingForApprovalComponent implements OnInit, OnDestroy {
 
           this.modalService.dismissAll();
 
+          console.log('Before approve:', this.approvedRemotes.length);
+
           // Remove approved/rejected record immediately
           this.approvedRemotes = this.approvedRemotes.filter(
             x => x.id !== this.selectedRemoteData.id
           );
 
+          console.log('After approve:', this.approvedRemotes.length);
+
           // Update count immediately
           this.approvedRemotesCount = this.approvedRemotes.length;
-
+         
           this.requestSummary = response.data;
 
           // Open summary popup
@@ -258,7 +281,12 @@ export class RemoteWaitingForApprovalComponent implements OnInit, OnDestroy {
         },
         complete: () => {
           this.spinnerLoader = false;
-          this.getRemoteRequests();
+
+          if (this.selectempid) {
+            this.getRemoteLoginEMPRequests();
+          } else {
+            this.getRemoteRequests();
+          }
         }
       });
     }
@@ -301,7 +329,7 @@ export class RemoteWaitingForApprovalComponent implements OnInit, OnDestroy {
 
           // Update count immediately
           this.approvedRemotesCount = this.approvedRemotes.length;
-
+          console.log('Updated waiting count:', this.approvedRemotesCount);
           this.requestSummary = response.data;
 
           // Open summary popup
@@ -318,8 +346,15 @@ export class RemoteWaitingForApprovalComponent implements OnInit, OnDestroy {
           console.error(err);
         },
         complete: () => {
+           console.log('Reject Complete');
+           console.log('selectempid', this.selectempid);
           this.spinnerLoader = false;
-          this.getRemoteRequests();
+
+          if (this.selectempid) {
+            this.getRemoteLoginEMPRequests();
+          } else {
+            this.getRemoteRequests();
+          }
         }
       });
     }

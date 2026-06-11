@@ -202,14 +202,7 @@ export class CompOffWaitingForApprovalComponent implements OnInit, OnDestroy {
         ]
       };
 
-      console.log('Approve Payload =>', this.requestBody); this.requestBody = {
-        requestProcessedBy: approvedBy,
-        status: 'Approved',
-        comments: form.value.comments,
-        moduleId: 3, // CompOff module id
-        headerID: this.selectedCompOffData.pendingApprovalsHeader.id,
-        currentStage: this.selectedCompOffData.pendingApprovalsHeader.currentapprovalStage
-      };
+      
 
 
       this.http.putData(`v2/PendingApproval/multiapprovals`, this.requestBody)

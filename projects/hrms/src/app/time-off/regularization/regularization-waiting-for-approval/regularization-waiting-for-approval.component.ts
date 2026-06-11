@@ -55,6 +55,7 @@ export class RegularizationWaitingForApprovalComponent implements OnInit, OnDest
   selectedRegularizationData: any;
   approveForm!: FormGroup;
   rejectForm!: FormGroup;
+  showActions = false;
 
   spinnerLoader = false;
   selectedLeaveStatus: any;
@@ -65,7 +66,7 @@ export class RegularizationWaitingForApprovalComponent implements OnInit, OnDest
   @ViewChild('leaveSummary') leaveSummary: any;
 
   constructor(private http: HttpService, public rbac: RbacService, private TimeoffYearFilterService: TimeoffYearFilterService, private modalService: NgbModal,
-private fb: FormBuilder) {
+    private fb: FormBuilder) {
     effect(() => {
       if (this.http.tirggerCountSignal().permission) {
         this.getDataPermissions();
@@ -78,17 +79,20 @@ private fb: FormBuilder) {
   }
 
   ngOnInit(): void {
+
+
     this.initializeApproveForm();
-this.initializeRejectForm();
+    this.initializeRejectForm();
     this.TimeoffYearFilterService.selectedYear$.subscribe(year => {
       if (year !== null) {
         this.selectedYear = year;
         this.http.selectedEmployeeIdRegularization$.subscribe((id) => {
           if (id) {
-            // Use the new employee ID here
             this.selectempid = id;
+            this.showActions = true;
             this.getDataEMPPermissions();
           } else {
+            this.showActions = false;
             this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
             this.getDataPermissions();
           }
@@ -98,58 +102,58 @@ this.initializeRejectForm();
   }
 
   initializeApproveForm() {
-  this.approveForm = this.fb.group({
-    comments: ['', [Validators.required, Validators.maxLength(250)]]
-  });
-}
-
-initializeRejectForm() {
-  this.rejectForm = this.fb.group({
-    comments: ['', [Validators.required, Validators.maxLength(250)]]
-  });
-}
-
-approveRegularization(approvalPopup: any, item: any) {
-  this.selectedRegularizationData = item;
-
-  this.modalService.open(approvalPopup, {
-    centered: true,
-    backdrop: 'static'
-  });
-}
-
-rejectRegularization(rejectPopup: any, item: any) {
-  this.selectedRegularizationData = item;
-
-  this.modalService.open(rejectPopup, {
-    centered: true,
-    backdrop: 'static'
-  });
-}
-
-onStatusApproveSelect(status: string) {
-  this.selectedLeaveStatus = status;
-
-  if (status === 'approved') {
-    this.approveForm.get('comments')?.setValue('Approved');
+    this.approveForm = this.fb.group({
+      comments: ['', [Validators.required, Validators.maxLength(250)]]
+    });
   }
-}
 
-onStatusRejectSelect(status: string) {
-  this.selectedLeaveStatus = status;
-
-  if (status === 'reject') {
-    this.rejectForm.get('comments')?.setValue('Rejected');
+  initializeRejectForm() {
+    this.rejectForm = this.fb.group({
+      comments: ['', [Validators.required, Validators.maxLength(250)]]
+    });
   }
-}
 
-openModal(content: any) {
-  this.modalService.open(content, {
-    centered: true,
-    backdrop: 'static',
-    size: 'lg'
-  });
-}
+  approveRegularization(approvalPopup: any, item: any) {
+    this.selectedRegularizationData = item;
+
+    this.modalService.open(approvalPopup, {
+      centered: true,
+      backdrop: 'static'
+    });
+  }
+
+  rejectRegularization(rejectPopup: any, item: any) {
+    this.selectedRegularizationData = item;
+
+    this.modalService.open(rejectPopup, {
+      centered: true,
+      backdrop: 'static'
+    });
+  }
+
+  onStatusApproveSelect(status: string) {
+    this.selectedLeaveStatus = status;
+
+    if (status === 'approved') {
+      this.approveForm.get('comments')?.setValue('Approved');
+    }
+  }
+
+  onStatusRejectSelect(status: string) {
+    this.selectedLeaveStatus = status;
+
+    if (status === 'reject') {
+      this.rejectForm.get('comments')?.setValue('Rejected');
+    }
+  }
+
+  openModal(content: any) {
+    this.modalService.open(content, {
+      centered: true,
+      backdrop: 'static',
+      size: 'lg'
+    });
+  }
 
   onRowsChange() {
     this.first = 0;
@@ -198,119 +202,126 @@ openModal(content: any) {
 
   handleAccept(form: FormGroup): void {
 
-  this.spinnerLoader = true;
+    this.spinnerLoader = true;
 
-  if (form.valid) {
+    if (form.valid) {
 
-    let approvedBy = this.empinfo.employeeId.toString();
+      let approvedBy = this.empinfo.employeeId.toString();
 
-    this.requestBody = {
-      requestProcessedBy: approvedBy,
-      status: 'Approved',
-      comments: form.value.comments,
-      moduleId: environment.attendanceRegularizationModuleId,
-      headerRequests: [
-        {
-          headerID: this.selectedRegularizationData.approvalHeader.id,
-          currentStage: this.selectedRegularizationData.approvalHeader.currentapprovalStage
-        }
-      ]
-    };
+      this.requestBody = {
+        requestProcessedBy: approvedBy,
+        status: 'Approved',
+        comments: form.value.comments,
+        moduleId: environment.attendanceRegularizationModuleId,
+        headerRequests: [
+          {
+            headerID: this.selectedRegularizationData.pendingApprovalsHeader.id,
+            currentStage: this.selectedRegularizationData.pendingApprovalsHeader.currentapprovalStage
+          }
+        ]
+      };
 
-    this.http.putData(
-      `v2/PendingApproval/multiapprovals`,
-      this.requestBody
-    ).subscribe({
-      next: (response: any) => {
+      this.http.putData(
+        `v2/PendingApproval/multiapprovals`,
+        this.requestBody
+      ).subscribe({
+        next: (response: any) => {
 
-        this.modalService.dismissAll();
-
-        this.waitingForApprovalPerimisions =
-          this.waitingForApprovalPerimisions.filter(
-            x => x.id !== this.selectedRegularizationData.id
-          );
-
-        this.responseSummary = response.data;
-
-        this.openModal(this.leaveSummary);
-
-        setTimeout(() => {
           this.modalService.dismissAll();
-        }, 3000);
 
-        this.approveForm.reset();
-      },
-      error: (err: any) => {
-        console.error(err);
-      },
-      complete: () => {
-        this.spinnerLoader = false;
-      }
-    });
-  }
-}
+          this.waitingForApprovalPerimisions =
+            this.waitingForApprovalPerimisions.filter(
+              x => x.id !== this.selectedRegularizationData.id
+            );
 
-handleReject(form: FormGroup): void {
+          this.responseSummary = response.data;
 
-  this.spinnerLoader = true;
+          this.openModal(this.leaveSummary);
 
-  if (form.valid) {
+          setTimeout(() => {
+            this.modalService.dismissAll();
+          }, 3000);
 
-    let approvedBy = this.empinfo.employeeId.toString();
-
-    this.requestBody = {
-      requestProcessedBy: approvedBy,
-      status: 'Rejected',
-      comments: form.value.comments,
-      moduleId: environment.attendanceRegularizationModuleId,
-      headerRequests: [
-        {
-          headerID: this.selectedRegularizationData.approvalHeader.id,
-          currentStage: this.selectedRegularizationData.approvalHeader.currentapprovalStage
+          this.approveForm.reset();
+        },
+        error: (err: any) => {
+          console.error(err);
+        },
+        complete: () => {
+          this.spinnerLoader = false;
         }
-      ]
-    };
+      });
+    }
+  }
 
-    this.http.putData(
-      `v2/PendingApproval/multiapprovals`,
-      this.requestBody
-    ).subscribe({
-      next: (response: any) => {
+  handleReject(form: FormGroup): void {
 
-        this.modalService.dismissAll();
+    console.log('Form Valid:', form.valid);
+    console.log('Selected Data:', this.selectedRegularizationData);
+    this.spinnerLoader = true;
 
-        this.waitingForApprovalPerimisions =
-          this.waitingForApprovalPerimisions.filter(
-            x => x.id !== this.selectedRegularizationData.id
-          );
+    if (form.valid) {
 
-        this.responseSummary = response.data;
+      console.log('Approval Header:', this.selectedRegularizationData?.approvalHeader);
 
-        this.openModal(this.leaveSummary);
 
-        setTimeout(() => {
+      let approvedBy = this.empinfo.employeeId.toString();
+
+      this.requestBody = {
+        requestProcessedBy: approvedBy,
+        status: 'Rejected',
+        comments: form.value.comments,
+        moduleId: environment.attendanceRegularizationModuleId,
+        headerRequests: [
+          {
+            headerID: this.selectedRegularizationData.pendingApprovalsHeader.id,
+            currentStage: this.selectedRegularizationData.pendingApprovalsHeader.currentapprovalStage
+          }
+        ]
+      };
+
+      console.log('Reject Payload:', this.requestBody);
+
+      this.http.putData(
+        `v2/PendingApproval/multiapprovals`,
+        this.requestBody
+      ).subscribe({
+        next: (response: any) => {
+
           this.modalService.dismissAll();
-        }, 3000);
 
-        this.rejectForm.reset();
-      },
-      error: (err: any) => {
-        console.error(err);
-      },
-      complete: () => {
-        this.spinnerLoader = false;
-      }
-    });
-  }
-}
+          this.waitingForApprovalPerimisions =
+            this.waitingForApprovalPerimisions.filter(
+              x => x.id !== this.selectedRegularizationData.id
+            );
 
-removeLeadingWhitespace(control: any) {
-  if (control?.value) {
-    control.setValue(control.value.replace(/^\s+/, ''), {
-      emitEvent: false
-    });
+          this.responseSummary = response.data;
+
+          this.openModal(this.leaveSummary);
+
+          setTimeout(() => {
+            this.modalService.dismissAll();
+          }, 3000);
+
+          this.rejectForm.reset();
+        },
+        error: (err: any) => {
+          console.error(err);
+        },
+        complete: () => {
+          this.spinnerLoader = false;
+        }
+      });
+    }
   }
-}
+
+  removeLeadingWhitespace(control: any) {
+    if (control?.value) {
+      control.setValue(control.value.replace(/^\s+/, ''), {
+        emitEvent: false
+      });
+    }
+  }
 
   ngOnDestroy(): void {
     this.destroy$.next(true);

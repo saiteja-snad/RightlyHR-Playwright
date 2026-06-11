@@ -13,7 +13,7 @@
           Selected Records: {{ selectedResources.length }}
         </div>
 
-        <div class="d-flex gap-3">
+          <div class="d-flex gap-3" *ngIf="rbac.allowedToAccess('Resources Tab.update')">
           <button class="custom-btn btn-primary-approve" (click)="
                   openReasonModal(
                     'Are you sure you want to release the selected resources?',
@@ -22,9 +22,18 @@
                 ">
             Release Resources
           </button>
+          
         </div>
-      </div>
-      }
+        </div>
+        }
+        <div class="input-group custom-search mb-3">
+          <span class="input-group-text custom-input-group-search" id="basic-addon1">
+            <i class="bi bi-search"></i>
+          </span>
+          <input type="search" [(ngModel)]="searchValue" (ngModelChange)="onSearchChange()"
+            class="form-control custom-search-input" placeholder="Search by employee name / phase name / role"
+            aria-label="Search" aria-describedby="basic-addon1" />
+        
       <div class="input-group custom-search mb-3">
         <span class="input-group-text custom-input-group-search" id="basic-addon1">
           <i class="bi bi-search"></i>

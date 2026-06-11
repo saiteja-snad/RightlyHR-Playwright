@@ -29,7 +29,8 @@ export class ProjectsSideTabsforPhasesComponent {
   filteredTabs: PhaseTab[] = [];
   statusCounts: any = {};
   projectId: any;
-  loading=false
+  loading=false;
+  empinfo = {} as any;
   destroy$: Subject<boolean> = new Subject<boolean>();
   private userInteracted = false;
   navTabs: PhaseTab[] = [
@@ -55,6 +56,7 @@ export class ProjectsSideTabsforPhasesComponent {
   constructor(public rbac: RbacService, private http: HttpService, private route: ActivatedRoute, private router: Router,private menuOrderService: MenuOrderService) { }
 
   ngOnInit(): void {
+    this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.filterTabsByRbac();
     void this.menuOrderService.ensureLoaded().then(() => {
       this.filterTabsByRbac();
@@ -125,7 +127,14 @@ export class ProjectsSideTabsforPhasesComponent {
 getcountData(projectId: any): void {
   this.loading=true
   const statuses = 'yet to start,in progress,extended,hold,completed,closed';
-  this.http.getData(`StatusCount?moduleName=Phase&entityId=${projectId}&statuses=${statuses}`)
+  let url = `StatusCount?moduleName=Phase&entityId=${projectId}&statuses=${statuses}`
+  if(this.rbac.allowedToAccess('View Assigned Projects.view') && !this.rbac.allowedToAccess('View All Projects.view')){
+     url += `&employeeId=${this.empinfo.employeeId}`
+  }
+  else{
+    url = `StatusCount?moduleName=Phase&entityId=${projectId}&statuses=${statuses}`
+  }
+  this.http.getData(url)
     .pipe(takeUntil(this.destroy$))
     .subscribe({
       next: (res: any) => {

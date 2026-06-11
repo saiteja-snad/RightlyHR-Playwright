@@ -134,7 +134,6 @@ export const permissionsData = [
   { fields: 'Expense Checklist Configuration', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Payment Mode Configurations', View: false, Update: false, Create: false, Delete: false },
 
-
   //Manage DST tab
   { fields: 'DST Pending Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'DST Published Tab', View: false, Update: false, Create: false, Delete: false },

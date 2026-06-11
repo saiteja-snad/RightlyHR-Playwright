@@ -278,7 +278,7 @@ export class TimesheetConfigurationsComponent implements OnInit, OnDestroy {
       },
       error: (reason: any) => {
         this.loading = false;
-        this.conformationPopup.openErrorModal(reason.error.message);
+        this.conformationPopup.openErrorModal(reason?.error?.message);
       },
     });
   }
@@ -354,7 +354,7 @@ export class TimesheetConfigurationsComponent implements OnInit, OnDestroy {
             },
             error: (err: any) => {
               this.loading = false;
-              this.conformationPopup.openErrorModal(err.error?.message ?? err);
+              this.conformationPopup.openErrorModal(err?.error?.message ?? err);
             }
           });
         } else {
@@ -396,14 +396,14 @@ export class TimesheetConfigurationsComponent implements OnInit, OnDestroy {
               this.getTimesheet(this.page, this.pageSize, this.searchQuery);
               this.conformationPopup.openSuccessModal('Timesheet Configurations updated successfully');
             },
-            error: (err: any) => this.conformationPopup.openErrorModal(err.error?.message ?? err)
+            error: (err: any) => this.conformationPopup.openErrorModal(err?.error?.message ?? err)
           });
         } else {
           this.getTimesheet(this.page, this.pageSize, this.searchQuery);
           this.conformationPopup.openSuccessModal('Timesheet Configurations updated successfully');
         }
       },
-      error: (err: any) => this.conformationPopup.openErrorModal(err.error?.message ?? err)
+      error: (err: any) => this.conformationPopup.openErrorModal(err?.error?.message ?? err)
     });
   }
   opendelete(content: any, expenses: any) {

@@ -1,3 +1,11 @@
+.leave-grid-list-content {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    overflow: hidden;
+    padding: 0.5rem 0;
+}
+
 .graph-grid {
 
     // total leave summary
@@ -111,7 +119,82 @@
     height: calc(100dvh - 20.5rem);
     min-height: 50vh !important;
 }
-th,
-td {
-    text-align: center !important;
+
+.custom-alert-info {
+    background: #fff7ec !important;
+    border: 1px solid #ff8000 !important;
+    color: #ff8000 !important;
+}
+
+.frequency-chip {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+
+    .p-chip {
+        padding: 0.365rem 1rem 0.125rem 0.75rem !important;
+        border-radius: 0.5rem;
+    }
+
+    .p-chip-label {
+        font-size: var(--fontsize12) !important;
+        font-weight: 500 !important;
+    }
+}
+
+.custom-p-multiSelect-content .p-multiselect-option {
+    width: 150px !important;
+}
+
+.p-inputtext {
+    font-size: 0.8rem !important;
+}
+
+.leave-list-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    max-height: 25dvh;
+    gap: 0.75rem;
+    overflow-y: auto;
+
+    .leave-card {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: var(--fontsize12);
+        background-color: #FFF;
+        padding: 0.5rem 0.75rem;
+        border-radius: 0.5rem;
+        box-shadow: 0px 0px 57.64px 0px #0000000D;
+
+        .leave-name {
+            font-weight: 500;
+        }
+
+        .leaves-used-count {
+            color: #353434;
+        }
+
+        .leaves-allowed-count {
+            color: #5C5C5C;
+        }
+    }
+}
+
+/* Apply only when there is ONE item */
+.leave-list-content>*:only-child {
+    min-width: 300px;
+    max-width: max-content;
+}
+
+.grid-content-expanded {
+    margin-top: 1.25rem;
+    
+    .component-left-tabs-container {
+        height: calc(100dvh - 14rem) !important;
+    }
+
+    .custom-table-content {
+        height: calc(100dvh - 14rem) !important;
+    }
 }

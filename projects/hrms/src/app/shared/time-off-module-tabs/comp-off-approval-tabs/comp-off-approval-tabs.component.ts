@@ -5,6 +5,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { IJob } from '../../../Interfaces/letters-model';
 import { HttpService } from '../../../services/http.service';
 import { RbacService } from '../../../services/rbac.service';
+import { SignalsService } from '../../../services/signals.service';
 import { SidetabsloadersComponent } from "../../sidetabsloaders/sidetabsloaders.component";
 import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.service';
 import { CdkDragDrop, DragDropModule, moveItemInArray } from '@angular/cdk/drag-drop';
@@ -12,7 +13,7 @@ import { MenuOrderService } from '../../../services/theme-service/menu-order.ser
 @Component({
   selector: 'app-comp-off-approval-tabs',
   standalone: true,
-  imports: [CommonModule, RouterModule, SidetabsloadersComponent, DragDropModule],
+  imports: [CommonModule, RouterModule, SidetabsloadersComponent,DragDropModule],
   templateUrl: './comp-off-approval-tabs.component.html',
   styleUrl: './comp-off-approval-tabs.component.scss',
 })
@@ -41,7 +42,8 @@ export class CompOffApprovalTabsComponent implements OnInit, OnDestroy {
     private http: HttpService,
     public rbac: RbacService,
     private TimeoffYearFilterService: TimeoffYearFilterService,
-    private readonly menuOrderService: MenuOrderService
+    private readonly menuOrderService: MenuOrderService,
+    private signalService: SignalsService
   ) {
     void this.menuOrderService.ensureLoaded();
     effect(() => {
@@ -51,6 +53,13 @@ export class CompOffApprovalTabsComponent implements OnInit, OnDestroy {
           ...status,
           compOff: false,
         }));
+      }
+      if (this.signalService.compOffSidNavCountTriggerSignal()) {
+        if (this.selectempid) {
+          this.getCompOffEMPRequest();
+        } else {
+          this.getCompOffRequest();
+        }
       }
     })
   }

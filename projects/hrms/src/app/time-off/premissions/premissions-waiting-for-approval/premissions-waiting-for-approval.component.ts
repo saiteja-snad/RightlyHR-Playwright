@@ -85,8 +85,17 @@ export class PremissionsWaitingForApprovalComponent implements OnInit, OnDestroy
     private TimeoffYearFilterService: TimeoffYearFilterService
   ) {
     effect(() => {
+      console.log('permissionTriggerSignal fired');
+      console.log('permissionForLoggedInUser:', this.permissionForLoggedInUser);
+      console.log('selectempid:', this.selectempid);
       if (this.http.permissionTriggerSignal()) {
-        this.getDataPermissions();
+
+        if (this.permissionForLoggedInUser) {
+          this.getDataPermissions();
+        } else {
+          this.getDataEMPPermissions();
+        }
+
         this.http.permissionTriggerSignal.set(false);
       }
     });
@@ -99,12 +108,20 @@ export class PremissionsWaitingForApprovalComponent implements OnInit, OnDestroy
       if (year !== null) {
         this.selectedYear = year;
         this.http.selectedEmployeeIdPermission$.subscribe((id) => {
+ 
+          console.log('Selected Employee Id:', id);
+          console.log('Current selectempid:', this.selectempid);
+
           if (id) {
-            // Use the new employee ID here
             this.selectempid = id;
             this.getDataEMPPermissions();
           } else {
-            this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
+            console.log('Loading logged in employee');
+
+            this.empinfo = JSON.parse(
+              localStorage.getItem('rightlyHrUser') ?? '{}'
+            );
+
             this.getDataPermissions();
           }
         });
@@ -212,7 +229,7 @@ export class PremissionsWaitingForApprovalComponent implements OnInit, OnDestroy
           this.http.permissionTriggerSignal.set(true);
           this.getDataPermissions();
         }
-        this.signalService.timecountTriggerSignal.set(true);
+        this.signalService.timecountTriggerSignal.update(count => count + 1);
       },
       error: (err: any) => {
         this.isLoading = false;
@@ -320,6 +337,17 @@ export class PremissionsWaitingForApprovalComponent implements OnInit, OnDestroy
 
           this.requestSummary = response.data;
 
+          this.http.permissionTriggerSignal.set(true);
+
+          this.http.tirggerCountSignal.update((status) => ({
+            ...status,
+            permission: true,
+          }));
+
+          this.signalService.timecountTriggerSignal.update(
+            count => count + 1
+          );
+
           this.modalService.open(this.leaveSummary, {
             centered: true,
             backdrop: 'static',
@@ -369,6 +397,18 @@ export class PremissionsWaitingForApprovalComponent implements OnInit, OnDestroy
             );
 
           this.requestSummary = response.data;
+          console.log('Before signal:', this.selectempid);
+
+          this.http.permissionTriggerSignal.set(true);
+
+          this.http.tirggerCountSignal.update((status) => ({
+            ...status,
+            permission: true,
+          }));
+
+          this.signalService.timecountTriggerSignal.update(
+            count => count + 1
+          );
 
           this.modalService.open(this.leaveSummary, {
             centered: true,

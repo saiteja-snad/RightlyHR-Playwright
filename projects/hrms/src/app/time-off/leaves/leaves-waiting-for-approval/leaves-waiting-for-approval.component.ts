@@ -134,14 +134,14 @@ export class LeavesWaitingForApprovalComponent implements OnInit, OnDestroy {
             window.location.reload();
           }, 2000);
         }
-        this.signalService.timecountTriggerSignal.set(true);
+        this.signalService.timecountTriggerSignal.update(count => count + 1);
       },
       error: (err: any) => {
         this.isLoading = false;
         this.cancelForm.reset();
         this.modalService.dismissAll();
         this.getDataByLPID();
-        this.signalService.timecountTriggerSignal.set(true);
+        this.signalService.timecountTriggerSignal.update(count => count + 1);
         this.conformationPopup.openErrorModal(err.error.message);
         setTimeout(() => {
           window.location.reload();
@@ -355,6 +355,7 @@ export class LeavesWaitingForApprovalComponent implements OnInit, OnDestroy {
           }, 3000);
 
           this.getDataByLPEMPID();
+          this.signalService.timecountTriggerSignal.update(count => count + 1);
           this.signalService.timeOffsidenavCountSignal.set(true);
           this.signalService.timeoffForYouTriggerSignal.set(true);
           this.signalService.timeoffForRoleTriggerSignal.set(true);
@@ -416,6 +417,7 @@ export class LeavesWaitingForApprovalComponent implements OnInit, OnDestroy {
           }, 3000);
 
           this.getDataByLPEMPID();
+          this.signalService.timecountTriggerSignal.update(count => count + 1);
           this.signalService.timeOffsidenavCountSignal.set(true);
           this.signalService.timeoffForYouTriggerSignal.set(true);
           this.signalService.timeoffForRoleTriggerSignal.set(true);

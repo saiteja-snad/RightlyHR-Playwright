@@ -11,6 +11,7 @@ import { ICompOff } from '../../../Interfaces/compoff.modal';
 import { DateformatPipe } from "../../../pipes/dateformat.pipe";
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { RbacService } from '../../../services/rbac.service';
+import { SignalsService } from '../../../services/signals.service';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { TranslateModule } from '@ngx-translate/core';
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
@@ -57,6 +58,7 @@ export class CompOffWaitingForApprovalComponent implements OnInit, OnDestroy {
   selectedCompOffData: any;
   approveForm!: FormGroup;
   rejectForm!: FormGroup;
+  showActions = false;
 
   spinnerLoader = false;
   selectedLeaveStatus: any;
@@ -67,12 +69,11 @@ export class CompOffWaitingForApprovalComponent implements OnInit, OnDestroy {
   requestBody: any = {};
 
 
-  constructor(private http: HttpService, public rbac: RbacService, private TimeoffYearFilterService: TimeoffYearFilterService, private modalService: NgbModal,
+  constructor(private http: HttpService, public rbac: RbacService, private signalService: SignalsService, private TimeoffYearFilterService: TimeoffYearFilterService, private modalService: NgbModal,
     private fb: FormBuilder) {
     effect(() => {
       if (this.http.compOffTriggerSignal()) {
         this.getCompOffRequest();
-        this.http.compOffTriggerSignal.set(false);
       }
     });
   }
@@ -86,9 +87,11 @@ export class CompOffWaitingForApprovalComponent implements OnInit, OnDestroy {
         this.http.selectedEmployeeIdCompOff$.subscribe((id) => {
           if (id) {
             this.selectemp = id;
+            this.showActions = true; // Manager view
             this.getCompOffRequest();
           } else {
             this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
+            this.showActions = false; // Employee view
             this.getCompOffRequest();
           }
         });
@@ -202,7 +205,7 @@ export class CompOffWaitingForApprovalComponent implements OnInit, OnDestroy {
         ]
       };
 
-      
+
 
 
       this.http.putData(`v2/PendingApproval/multiapprovals`, this.requestBody)
@@ -211,6 +214,13 @@ export class CompOffWaitingForApprovalComponent implements OnInit, OnDestroy {
           next: (response: any) => {
 
             this.modalService.dismissAll();
+            this.waitingForApprovalCompOff =
+              this.waitingForApprovalCompOff.filter(
+                x => x.id !== this.selectedCompOffData.id
+              );
+
+            this.waitingForApprovalCompOffCount =
+              this.waitingForApprovalCompOff.length;
 
             this.requestSummary = response.data;
 
@@ -231,6 +241,10 @@ export class CompOffWaitingForApprovalComponent implements OnInit, OnDestroy {
           complete: () => {
             this.spinnerLoader = false;
             this.getCompOffRequest();
+            this.http.tirggerCountSignal.update((status) => ({
+              ...status,
+              compOff: true,
+            }));
           }
         });
     }
@@ -275,6 +289,14 @@ export class CompOffWaitingForApprovalComponent implements OnInit, OnDestroy {
 
             this.modalService.dismissAll();
 
+            this.waitingForApprovalCompOff =
+              this.waitingForApprovalCompOff.filter(
+                x => x.id !== this.selectedCompOffData.id
+              );
+
+            this.waitingForApprovalCompOffCount =
+              this.waitingForApprovalCompOff.length;
+
             this.requestSummary = response.data;
 
             this.openModal(this.leaveSummary);
@@ -294,6 +316,10 @@ export class CompOffWaitingForApprovalComponent implements OnInit, OnDestroy {
           complete: () => {
             this.spinnerLoader = false;
             this.getCompOffRequest();
+            this.http.tirggerCountSignal.update((status) => ({
+              ...status,
+              compOff: true,
+            }));
           }
         });
     }

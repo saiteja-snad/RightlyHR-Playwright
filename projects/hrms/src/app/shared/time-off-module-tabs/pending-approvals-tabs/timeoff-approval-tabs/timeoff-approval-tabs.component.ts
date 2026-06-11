@@ -119,7 +119,6 @@ export class TimeoffApprovalTabsComponent {
       }
       if (this.signalService.compOffSidNavCountTriggerSignal()) {
         this.getAllPendingApprovalsCount();
-        this.signalService.compOffSidNavCountTriggerSignal.set(false);
       }
       if (this.signalService.regularizationSidNavCountTriggerSignal()) {
         this.getAllPendingApprovalsCount();

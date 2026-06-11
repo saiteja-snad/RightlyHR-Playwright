@@ -99,11 +99,6 @@ export class AddLeaveComponent implements OnInit, OnDestroy {
       if (this.signalService.timecountTriggerSignal()) {
         // Call the function to fetch the pending approvals count
         this.getCategoryDetails();
-
-        // Conditionally reset the signals based on their current state
-        if (this.signalService.timecountTriggerSignal()) {
-          this.signalService.timecountTriggerSignal.set(false);
-        }
       }
     });
   }

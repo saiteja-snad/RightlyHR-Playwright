@@ -317,6 +317,7 @@ export class PremissionsComponent implements OnInit, OnDestroy {
 
   disaplyapplybutton = true;
   onCheckemployee(employeedId: any) {
+    console.log('Employee Selected:', employeedId);
     this.http.setEmployeeIdPermission(employeedId);
     this.ProcessedCount = 0;
     this.rejectedCount = 0;

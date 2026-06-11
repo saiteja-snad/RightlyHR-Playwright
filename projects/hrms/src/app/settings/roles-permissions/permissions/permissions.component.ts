@@ -1402,7 +1402,7 @@ export const SECTION_DEFINITIONS: SectionDef[] = [
   { title: 'Desk Allocation Under Maintenance Tab Actions', disableFn: 'isdeskundermaintanceDisabled', fieldNames: ['Under Maintenance Mark as Available', 'Under Maintenance View Desk Details'] },
   { title: 'Desk Allocation Inactive Tabs Actions', disableFn: 'isdeskinactiveDisabled', fieldNames: ['Inactive Mark as Available', 'Inactive View Desk Details'] },
   { title: 'Desk Allocation Waiting For Approval Tab Actions', disableFn: 'isonlyviewfunction', fieldNames: ['Waiting For Approval View Desk Details'] },
-  { title: 'Time Off Tabs', disableFn: 'isonlyviewfunction', fieldNames: ['Time Off Module', 'WFH/On Duty Module', 'Remote Login Module', 'Comp Off Module', 'Permissions Module', 'Regularization Module', 'On Behalf Of Module', 'On Behalf Of Approvals Module', 'Global Permissions Module', 'Pending Approvals Module'] },
+  { title: 'Time Off Tabs', disableFn: 'isonlyviewfunction', fieldNames: ['Time Off Module', 'WFH/On Duty Module', 'Remote Login Module', 'Comp Off Module', 'Permissions Module', 'Regularization Module', 'Extra Hours Module', 'On Behalf Of Module', 'On Behalf Of Approvals Module', 'Global Permissions Module', 'Pending Approvals Module'] },
   {
     title: 'Time Off Module Sub Tabs',
     disableFn: 'isonlyviewfunction',

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, effect, OnDestroy, OnInit } from '@angular/core';
+import { Component, effect, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { DropdownModule } from 'primeng/dropdown';
@@ -35,7 +35,7 @@ import { ConfirmationIconComponent } from "../../../icons/confirmation-icon/conf
     DataLoaderContentComponent,
     InfoIconComponent,
     ConfirmationIconComponent
-],
+  ],
   templateUrl: './wfh-waiting-for-approval.component.html',
   styleUrl: './wfh-waiting-for-approval.component.scss',
 })
@@ -62,6 +62,20 @@ export class WfhWaitingForApprovalComponent implements OnInit, OnDestroy {
   cancelForm!: FormGroup;
   isLoading = false;
   selectedYear: any;
+  selectedWFHData: any;
+  approveForm!: FormGroup;
+  rejectForm!: FormGroup;
+
+
+
+  @ViewChild('leaveSummary') leaveSummary: any;
+
+  spinnerLoader = false;
+  selectedLeaveStatus: any;
+  requestSummary: any;
+  approverComments: any[] = [];
+
+  LOGIN: any = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
 
   constructor(private http: HttpService, private signalService: SignalsService, private modalService: NgbModal,
     private conformationPopup: OpenModalService, public rbac: RbacService, private fb: FormBuilder,
@@ -82,6 +96,9 @@ export class WfhWaitingForApprovalComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+
+    this.initializeApproveForm();
+    this.initializeRejectForm();
     this.TimeoffYearFilterService.selectedYear$.subscribe(year => {
       if (year !== null) {
         this.selectedYear = year;
@@ -98,6 +115,18 @@ export class WfhWaitingForApprovalComponent implements OnInit, OnDestroy {
       }
     });
     this.formInializer();
+  }
+
+  initializeApproveForm() {
+    this.approveForm = this.fb.group({
+      comments: ['', [Validators.required, Validators.maxLength(250)]]
+    });
+  }
+
+  initializeRejectForm() {
+    this.rejectForm = this.fb.group({
+      comments: ['', [Validators.required, Validators.maxLength(250)]]
+    });
   }
 
   formInializer() {
@@ -222,6 +251,136 @@ export class WfhWaitingForApprovalComponent implements OnInit, OnDestroy {
         this.dataload = false;
       },
     });
+  }
+
+  approveWFH(approvalPopup: any, item: any) {
+    this.selectedWFHData = item;
+    this.initializeApproveForm();
+
+    this.modalService.open(approvalPopup, {
+      centered: true,
+      backdrop: 'static'
+    });
+  }
+
+  rejectWFH(rejectPopup: any, item: any) {
+    this.selectedWFHData = item;
+    this.initializeRejectForm();
+
+    this.modalService.open(rejectPopup, {
+      centered: true,
+      backdrop: 'static'
+    });
+  }
+
+  onStatusApproveSelect(status: string) {
+    this.selectedLeaveStatus = status;
+
+    if (status === 'approved') {
+      this.approveForm.get('comments')?.setValue('Approved');
+    } else if (status === 'planned') {
+      this.approveForm.get('comments')?.setValue('Planned Wfh');
+    } else if (status === 'unplanned') {
+      this.approveForm.get('comments')?.setValue('Unplanned Wfh');
+    }
+  }
+
+  onStatusRejectSelect(status: string) {
+    this.selectedLeaveStatus = status;
+
+    if (status === 'reject') {
+      this.rejectForm.get('comments')?.setValue('Rejected');
+    } else if (status === 'planned') {
+      this.rejectForm.get('comments')?.setValue('Planned Wfh');
+    } else if (status === 'unplanned') {
+      this.rejectForm.get('comments')?.setValue('Unplanned Wfh');
+    }
+  }
+
+  handleAccept(form: FormGroup) {
+    const payload = {
+      requestProcessedBy: this.LOGIN.employeeId.toString(),
+      status: 'Approved',
+      comments: this.approveForm.get('comments')?.value,
+      moduleId: 2,
+      headerRequests: [
+        {
+          headerID: this.selectedWFHData.pendingApprovalsHeader?.id,
+          currentStage:
+            this.selectedWFHData.pendingApprovalsHeader?.currentapprovalStage
+        }
+      ]
+    };
+
+    this.http.putData('v2/PendingApproval/multiapprovals', payload)
+      .subscribe({
+        next: (response: any) => {
+          this.modalService.dismissAll();
+
+          this.requestSummary = response.data;
+
+          this.modalService.open(this.leaveSummary, {
+            centered: true,
+            backdrop: 'static',
+            size: 'lg'
+          });
+
+          setTimeout(() => {
+            this.modalService.dismissAll();
+          }, 5000);
+
+          this.waitingForApprovalWFHs =
+            this.waitingForApprovalWFHs.filter(
+              x => x.id !== this.selectedWFHData.id
+            );
+
+          this.waitingForApprovalWFHCount =
+            this.waitingForApprovalWFHs.length;
+        }
+      });
+  }
+
+  handleReject(form: FormGroup) {
+    const payload = {
+      requestProcessedBy: this.LOGIN.employeeId.toString(),
+      status: 'Rejected',
+      comments: this.rejectForm.get('comments')?.value,
+      moduleId: 2,
+      headerRequests: [
+        {
+          headerID: this.selectedWFHData.pendingApprovalsHeader?.id,
+          currentStage:
+            this.selectedWFHData.pendingApprovalsHeader?.currentapprovalStage
+        }
+      ]
+    };
+
+    this.http.putData('v2/PendingApproval/multiapprovals', payload)
+      .subscribe({
+        next: (response: any) => {
+          this.modalService.dismissAll();
+
+          this.requestSummary = response.data;
+
+          this.modalService.open(this.leaveSummary, {
+            centered: true,
+            backdrop: 'static',
+            size: 'lg'
+          });
+
+          setTimeout(() => {
+            this.modalService.dismissAll();
+          }, 5000);
+
+          this.waitingForApprovalWFHs =
+            this.waitingForApprovalWFHs.filter(
+              x => x.id !== this.selectedWFHData.id
+            );
+
+          this.waitingForApprovalWFHCount =
+            this.waitingForApprovalWFHs.length;
+        }
+      });
   }
 
   ngOnDestroy(): void {

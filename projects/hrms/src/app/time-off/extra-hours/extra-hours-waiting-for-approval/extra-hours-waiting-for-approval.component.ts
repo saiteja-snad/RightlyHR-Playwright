@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, effect } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { Component, effect, ViewChild } from '@angular/core';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { DropdownModule } from 'primeng/dropdown';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
@@ -15,6 +15,7 @@ import { RbacService } from '../../../services/rbac.service';
 import { DataLoaderContentComponent } from '../../../shared/data-loader-content/data-loader-content.component';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.service';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-extra-hours-waiting-for-approval',
@@ -28,7 +29,8 @@ import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.
     DateformatPipe,
     DataLoaderContentComponent,
     TranslateModule,
-    InfoIconComponent
+    InfoIconComponent,
+    ReactiveFormsModule
   ],
   templateUrl: './extra-hours-waiting-for-approval.component.html',
   styleUrl: './extra-hours-waiting-for-approval.component.scss'
@@ -50,8 +52,20 @@ export class ExtraHoursWaitingForApprovalComponent {
   ];
   dataLoad = false;
   selectedYear: any;
+  selectedExtraHourData: any;
+  approveForm!: FormGroup;
+  rejectForm!: FormGroup;
+  spinnerLoader = false;
+  selectedLeaveStatus: any;
+  responseSummary: any;
+  requestBody: any = {};
+  approverComments: any[] = [];
+  permissionForLoggedInUser = true;
 
-  constructor(private http: HttpService, public rbac: RbacService, private TimeoffYearFilterService: TimeoffYearFilterService) {
+  @ViewChild('leaveSummary') leaveSummary: any;
+
+  constructor(private http: HttpService, public rbac: RbacService, private TimeoffYearFilterService: TimeoffYearFilterService, private modalService: NgbModal,
+    private fb: FormBuilder) {
     effect(() => {
       if (this.http.tirggerCountSignal().permission) {
         this.getDataPermissions();
@@ -64,20 +78,43 @@ export class ExtraHoursWaitingForApprovalComponent {
   }
 
   ngOnInit(): void {
+    this.initializeApproveForm();
+    this.initializeRejectForm();
     this.TimeoffYearFilterService.selectedYear$.subscribe(year => {
       if (year !== null) {
         this.selectedYear = year;
         this.http.selectedEmployeeIdRegularization$.subscribe((id) => {
           if (id) {
-            // Use the new employee ID here
             this.selectempid = id;
+
+            // Manager selected an employee
+            this.permissionForLoggedInUser = false;
+
             this.getDataEMPPermissions();
           } else {
-            this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
+            this.empinfo = JSON.parse(
+              localStorage.getItem('rightlyHrUser') ?? '{}'
+            );
+
+            // Logged-in employee view
+            this.permissionForLoggedInUser = true;
+
             this.getDataPermissions();
           }
         });
       }
+    });
+  }
+
+  initializeApproveForm() {
+    this.approveForm = this.fb.group({
+      comments: ['', [Validators.required, Validators.maxLength(250)]]
+    });
+  }
+
+  initializeRejectForm() {
+    this.rejectForm = this.fb.group({
+      comments: ['', [Validators.required, Validators.maxLength(250)]]
     });
   }
 
@@ -91,7 +128,7 @@ export class ExtraHoursWaitingForApprovalComponent {
   }
 
   getDataPermissions() {
-   let empId = this.empinfo.employeeId;
+    let empId = this.empinfo.employeeId;
     this.dataLoad = true;
     this.http.getFilterExtraHoursDataByID(empId, this.selectedYear).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: any) => {
@@ -124,6 +161,166 @@ export class ExtraHoursWaitingForApprovalComponent {
         this.waitingForApprovalPerimisions = []; // Set to empty array on error
       },
     });
+  }
+
+  approveExtraHours(approvalPopup: any, item: any) {
+    this.selectedExtraHourData = item;
+
+    this.modalService.open(approvalPopup, {
+      centered: true,
+      backdrop: 'static'
+    });
+  }
+
+  rejectExtraHours(rejectPopup: any, item: any) {
+    this.selectedExtraHourData = item;
+
+    this.modalService.open(rejectPopup, {
+      centered: true,
+      backdrop: 'static'
+    });
+  }
+
+  onStatusApproveSelect(status: string) {
+    this.selectedLeaveStatus = status;
+
+    if (status === 'approved') {
+      this.approveForm.get('comments')?.setValue('Approved');
+    }
+  }
+
+
+  onStatusRejectSelect(status: string) {
+    this.selectedLeaveStatus = status;
+
+    if (status === 'reject') {
+      this.rejectForm.get('comments')?.setValue('Rejected');
+    }
+  }
+
+  openModal(content: any) {
+    this.modalService.open(content, {
+      centered: true,
+      backdrop: 'static',
+      size: 'lg'
+    });
+  }
+
+  handleAccept(form: FormGroup): void {
+
+    this.spinnerLoader = true;
+
+    if (form.valid) {
+
+      let approvedBy = this.empinfo.employeeId.toString();
+
+      this.requestBody = {
+        requestProcessedBy: approvedBy,
+        status: 'Approved',
+        comments: form.value.comments,
+        moduleId: environment.extraHoursModuleId,
+        headerRequests: [
+          {
+            headerID: this.selectedExtraHourData.pendingApprovalsHeader.id,
+            currentStage: this.selectedExtraHourData.pendingApprovalsHeader.currentapprovalStage
+          }
+        ]
+      };
+
+      this.http.putData(
+        `v2/PendingApproval/multiapprovals`,
+        this.requestBody
+      ).subscribe({
+        next: (response: any) => {
+
+          this.modalService.dismissAll();
+
+          this.waitingForApprovalPerimisions =
+            this.waitingForApprovalPerimisions.filter(
+              x => x.id !== this.selectedExtraHourData.id
+            );
+
+          this.responseSummary = response.data;
+
+
+          this.openModal(this.leaveSummary);
+
+          setTimeout(() => {
+            this.modalService.dismissAll();
+          }, 3000);
+        },
+        complete: () => {
+          this.spinnerLoader = false;
+        }
+      });
+    }
+  }
+
+  handleReject(form: FormGroup): void {
+
+    this.spinnerLoader = true;
+
+    if (form.valid) {
+
+      let approvedBy = this.empinfo.employeeId.toString();
+
+      this.requestBody = {
+        requestProcessedBy: approvedBy,
+        status: 'Rejected',
+        comments: form.value.comments,
+        moduleId: environment.extraHoursModuleId,
+        headerRequests: [
+          {
+            headerID: this.selectedExtraHourData.pendingApprovalsHeader.id,
+            currentStage: this.selectedExtraHourData.pendingApprovalsHeader.currentapprovalStage
+          }
+        ]
+      };
+
+      this.http.putData(
+        `v2/PendingApproval/multiapprovals`,
+        this.requestBody
+      ).subscribe({
+        next: (response: any) => {
+
+          this.modalService.dismissAll();
+
+          // Remove from waiting list immediately
+          this.waitingForApprovalPerimisions =
+            this.waitingForApprovalPerimisions.filter(
+              x => x.id !== this.selectedExtraHourData.id
+            );
+
+          this.responseSummary = response.data;
+
+          this.openModal(this.leaveSummary);
+
+          setTimeout(() => {
+            this.modalService.dismissAll();
+          }, 3000);
+
+          this.rejectForm.reset();
+        },
+
+        error: (err: any) => {
+          console.error(err);
+          this.spinnerLoader = false;
+        },
+
+        complete: () => {
+          this.spinnerLoader = false;
+        }
+      });
+    }
+  }
+
+  removeLeadingWhitespace(control: any): void {
+    if (control) {
+      const value = control.value || '';
+      control.setValue(value.replace(/^\s+/, ''), {
+        emitEvent: false
+      });
+    }
   }
 
   ngOnDestroy(): void {

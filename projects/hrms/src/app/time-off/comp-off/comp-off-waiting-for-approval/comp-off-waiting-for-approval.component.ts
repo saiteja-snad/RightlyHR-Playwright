@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, effect, OnDestroy, OnInit } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, effect, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { DropdownModule } from 'primeng/dropdown';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
@@ -15,6 +15,8 @@ import { DataLoaderContentComponent } from "../../../shared/data-loader-content/
 import { TranslateModule } from '@ngx-translate/core';
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.service';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { Validators } from '@angular/forms';
 @Component({
   selector: 'app-comp-off-waiting-for-approval',
   imports: [
@@ -27,7 +29,8 @@ import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.
     NoDataFoundComponent,
     DataLoaderContentComponent,
     TranslateModule,
-    InfoIconComponent
+    InfoIconComponent,
+    ReactiveFormsModule,
   ],
   templateUrl: './comp-off-waiting-for-approval.component.html',
   styleUrl: './comp-off-waiting-for-approval.component.scss',
@@ -51,8 +54,21 @@ export class CompOffWaitingForApprovalComponent implements OnInit, OnDestroy {
     { label: 25, value: 25 },
   ];
   selectedYear: any;
-  
-  constructor(private http: HttpService, public rbac: RbacService, private TimeoffYearFilterService: TimeoffYearFilterService) {
+  selectedCompOffData: any;
+  approveForm!: FormGroup;
+  rejectForm!: FormGroup;
+
+  spinnerLoader = false;
+  selectedLeaveStatus: any;
+  requestSummary: any;
+  approverComments: any[] = [];
+
+  @ViewChild('leaveSummary') leaveSummary: any;
+  requestBody: any = {};
+
+
+  constructor(private http: HttpService, public rbac: RbacService, private TimeoffYearFilterService: TimeoffYearFilterService, private modalService: NgbModal,
+    private fb: FormBuilder) {
     effect(() => {
       if (this.http.compOffTriggerSignal()) {
         this.getCompOffRequest();
@@ -62,6 +78,8 @@ export class CompOffWaitingForApprovalComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.initializeApproveForm();
+    this.initializeRejectForm();
     this.TimeoffYearFilterService.selectedYear$.subscribe(year => {
       if (year !== null) {
         this.selectedYear = year;
@@ -75,6 +93,18 @@ export class CompOffWaitingForApprovalComponent implements OnInit, OnDestroy {
           }
         });
       }
+    });
+  }
+
+  initializeApproveForm() {
+    this.approveForm = this.fb.group({
+      comments: ['', [Validators.required, Validators.maxLength(250)]]
+    });
+  }
+
+  initializeRejectForm() {
+    this.rejectForm = this.fb.group({
+      comments: ['', [Validators.required, Validators.maxLength(250)]]
     });
   }
 
@@ -107,6 +137,169 @@ export class CompOffWaitingForApprovalComponent implements OnInit, OnDestroy {
       },
     });
   }
+
+  approveCompOff(approvalPopup: any, item: any) {
+    this.selectedCompOffData = item;
+
+    this.modalService.open(approvalPopup, {
+      centered: true,
+      backdrop: 'static'
+    });
+  }
+
+  rejectCompOff(rejectPopup: any, item: any) {
+    console.log('Reject Clicked', item);
+    this.selectedCompOffData = item;
+
+    this.modalService.open(rejectPopup, {
+      centered: true,
+      backdrop: 'static'
+    });
+  }
+
+  onStatusApproveSelect(status: string) {
+    this.selectedLeaveStatus = status;
+
+    if (status === 'approved') {
+      this.approveForm.get('comments')?.setValue('Approved');
+    }
+  }
+
+  onStatusRejectSelect(status: string) {
+    this.selectedLeaveStatus = status;
+
+    if (status === 'reject') {
+      this.rejectForm.get('comments')?.setValue('Rejected');
+    }
+  }
+
+  openModal(content: any) {
+    this.modalService.open(content, {
+      centered: true,
+      backdrop: 'static',
+      size: 'lg'
+    });
+  }
+
+  handleAccept(form: FormGroup): void {
+    this.spinnerLoader = true;
+
+    if (form.valid) {
+
+      let approvedBy = this.empinfo.employeeId.toString();
+
+      this.requestBody = {
+        requestProcessedBy: approvedBy,
+        status: 'Approved',
+        comments: form.value.comments,
+        moduleId: 3,
+        headerRequests: [
+          {
+            headerID: this.selectedCompOffData.pendingApprovalsHeader.id,
+            currentStage:
+              this.selectedCompOffData.pendingApprovalsHeader.currentapprovalStage
+          }
+        ]
+      };
+
+      
+
+
+      this.http.putData(`v2/PendingApproval/multiapprovals`, this.requestBody)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (response: any) => {
+
+            this.modalService.dismissAll();
+
+            this.requestSummary = response.data;
+
+            this.openModal(this.leaveSummary);
+
+            setTimeout(() => {
+              this.modalService.dismissAll();
+            }, 5000);
+
+            this.approveForm.reset();
+          },
+
+          error: (err: any) => {
+            this.modalService.dismissAll();
+            console.error(err);
+          },
+
+          complete: () => {
+            this.spinnerLoader = false;
+            this.getCompOffRequest();
+          }
+        });
+    }
+  }
+
+  handleReject(form: FormGroup): void {
+
+    console.log('Step 1');
+
+    this.spinnerLoader = true;
+
+    if (form.valid) {
+
+      console.log('Step 2');
+
+      let approvedBy = this.empinfo.employeeId.toString();
+      console.log('Step 3');
+      this.requestBody = {
+        requestProcessedBy: approvedBy,
+        status: 'Rejected',
+        comments: form.value.comments,
+        moduleId: 3,
+        headerRequests: [
+          {
+            headerID: this.selectedCompOffData.pendingApprovalsHeader.id,
+            currentStage:
+              this.selectedCompOffData.pendingApprovalsHeader.currentapprovalStage
+          }
+        ]
+      };
+
+      console.log('Step 4', this.requestBody);
+
+
+      console.log(JSON.stringify(this.requestBody, null, 2));
+
+      this.http.putData(`v2/PendingApproval/multiapprovals`, this.requestBody)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (response: any) => {
+            console.log('SUCCESS', response);
+
+            this.modalService.dismissAll();
+
+            this.requestSummary = response.data;
+
+            this.openModal(this.leaveSummary);
+
+            setTimeout(() => {
+              this.modalService.dismissAll();
+            }, 5000);
+
+            this.rejectForm.reset();
+          },
+
+          error: (err: any) => {
+            this.modalService.dismissAll();
+            console.error(err);
+          },
+
+          complete: () => {
+            this.spinnerLoader = false;
+            this.getCompOffRequest();
+          }
+        });
+    }
+  }
+
+
 
   ngOnDestroy(): void {
     this.destroy$.next(true);

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, effect, OnDestroy, OnInit } from '@angular/core';
+import { Component, effect, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { DropdownModule } from 'primeng/dropdown';
@@ -36,7 +36,7 @@ import { ConfirmationIconComponent } from "../../../icons/confirmation-icon/conf
     DataLoaderContentComponent,
     InfoIconComponent,
     ConfirmationIconComponent
-],
+  ],
   templateUrl: './premissions-waiting-for-approval.component.html',
   styleUrl: './premissions-waiting-for-approval.component.scss',
 })
@@ -62,6 +62,17 @@ export class PremissionsWaitingForApprovalComponent implements OnInit, OnDestroy
   isLoading = false;
   permissionForLoggedInUser: boolean = true;
   selectedYear: any;
+  selectedPermissionData: any;
+  approveForm!: FormGroup;
+  rejectForm!: FormGroup;
+
+  spinnerLoader = false;
+  selectedLeaveStatus: any;
+  requestSummary: any;
+  requestBody: any = {};
+  approverComments: any[] = [];
+
+  @ViewChild('leaveSummary') leaveSummary: any;
 
   constructor(
     private http: HttpService,
@@ -82,6 +93,8 @@ export class PremissionsWaitingForApprovalComponent implements OnInit, OnDestroy
   }
 
   ngOnInit(): void {
+    this.initializeApproveForm();
+    this.initializeRejectForm();
     this.TimeoffYearFilterService.selectedYear$.subscribe(year => {
       if (year !== null) {
         this.selectedYear = year;
@@ -98,6 +111,18 @@ export class PremissionsWaitingForApprovalComponent implements OnInit, OnDestroy
       }
     });
     this.formInializer();
+  }
+
+  initializeApproveForm() {
+    this.approveForm = this.fb.group({
+      comments: ['', [Validators.required, Validators.maxLength(250)]]
+    });
+  }
+
+  initializeRejectForm() {
+    this.rejectForm = this.fb.group({
+      comments: ['', [Validators.required, Validators.maxLength(250)]]
+    });
   }
 
   formInializer() {
@@ -222,6 +247,141 @@ export class PremissionsWaitingForApprovalComponent implements OnInit, OnDestroy
         this.dataload = false; // Set to empty array on error
       },
     });
+  }
+
+  approvePermission(approvalPopup: any, item: any) {
+    this.selectedPermissionData = item;
+
+    this.modalService.open(approvalPopup, {
+      centered: true,
+      backdrop: 'static'
+    });
+  }
+
+  rejectPermission(rejectPopup: any, item: any) {
+    this.selectedPermissionData = item;
+
+    this.modalService.open(rejectPopup, {
+      centered: true,
+      backdrop: 'static'
+    });
+  }
+
+  onStatusApproveSelect(status: string) {
+    this.selectedLeaveStatus = status;
+
+    if (status === 'approved') {
+      this.approveForm.get('comments')?.setValue('Approved');
+    }
+  }
+
+  onStatusRejectSelect(status: string) {
+    this.selectedLeaveStatus = status;
+
+    if (status === 'reject') {
+      this.rejectForm.get('comments')?.setValue('Rejected');
+    }
+  }
+
+
+  handleAccept(form: FormGroup): void {
+
+    this.spinnerLoader = true;
+
+    if (form.valid) {
+
+      let approvedBy = this.empinfo.employeeId.toString();
+
+      this.requestBody = {
+        requestProcessedBy: approvedBy,
+        status: 'Processed',
+        comments: form.value.comments,
+        moduleId: environment.permissionsModuleId,
+        headerRequests: [
+          {
+            headerID: this.selectedPermissionData.pendingApprovalsHeader.id,
+            currentStage: this.selectedPermissionData.pendingApprovalsHeader.currentapprovalStage
+          }
+        ]
+      };
+
+      this.http.putData(
+        `v2/PendingApproval/multiapprovals`,
+        this.requestBody
+      ).subscribe({
+        next: (response: any) => {
+
+          this.modalService.dismissAll();
+
+          this.waitingForApprovalPerimisions =
+            this.waitingForApprovalPerimisions.filter(
+              x => x.id !== this.selectedPermissionData.id
+            );
+
+          this.requestSummary = response.data;
+
+          this.modalService.open(this.leaveSummary, {
+            centered: true,
+            backdrop: 'static',
+            size: 'lg'
+          });
+        },
+        error: (err: any) => {
+          console.error(err);
+        }
+      });
+    }
+  }
+
+  handleReject(form: FormGroup): void {
+    console.log('Selected Permission Data:', this.selectedPermissionData);
+    this.spinnerLoader = true;
+
+    if (form.valid) {
+
+      let approvedBy = this.empinfo.employeeId.toString();
+
+      this.requestBody = {
+        requestProcessedBy: approvedBy,
+        status: 'Rejected',
+        comments: form.value.comments,
+        moduleId: environment.permissionsModuleId,
+        headerRequests: [
+          {
+            headerID: this.selectedPermissionData.pendingApprovalsHeader.id,
+            currentStage: this.selectedPermissionData.pendingApprovalsHeader.currentapprovalStage
+          }
+        ]
+      };
+      console.log('Reject Payload:', this.requestBody);
+      this.http.putData(
+        `v2/PendingApproval/multiapprovals`,
+        this.requestBody
+      ).subscribe({
+        next: (response: any) => {
+          console.log('SUCCESS', response);
+
+          this.modalService.dismissAll();
+
+          this.waitingForApprovalPerimisions =
+            this.waitingForApprovalPerimisions.filter(
+              x => x.id !== this.selectedPermissionData.id
+            );
+
+          this.requestSummary = response.data;
+
+          this.modalService.open(this.leaveSummary, {
+            centered: true,
+            backdrop: 'static',
+            size: 'lg'
+          });
+        },
+        error: (err: any) => {
+          this.spinnerLoader = false;
+          console.error(err);
+        }
+      });
+    }
   }
 
   ngOnDestroy(): void {

@@ -26,11 +26,13 @@ import { ConfirmationIconComponent } from "../../icons/confirmation-icon/confirm
 import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
 @Component({
   selector: 'app-comp-off',
+  standalone: true,
   imports: [
     RouterModule,
     ReactiveFormsModule,
     CommonModule,
-    CompOffApprovalTabsComponent, DropdownModule, Select, TranslateModule,
+    CompOffApprovalTabsComponent,
+    DropdownModule, Select, TranslateModule,
     ModuleInformationComponent,
         NgbPopoverModule,
     ConfirmationIconComponent,
@@ -364,7 +366,7 @@ export class CompOffComponent implements OnInit, OnDestroy {
             ...status,
             compOff: true,
           }));
-          this.http.compOffTriggerSignal.set(true);
+          this.http.compOffTriggerSignal.update((count) => count + 1);
           this.addCompOffForm.reset();
         },
         error: (err: any) => {

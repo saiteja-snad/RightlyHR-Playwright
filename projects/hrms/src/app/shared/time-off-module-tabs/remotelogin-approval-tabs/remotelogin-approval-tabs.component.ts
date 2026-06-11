@@ -39,8 +39,11 @@ export class RemoteloginApprovalTabsComponent implements OnInit, OnDestroy {
   ) {
     effect(() => {
       if (this.signalsService.remoteLoginSidNavCountTriggerSignal()) {
-        this.getRemoteLoginRequest();
-        this.signalsService.remoteLoginSidNavCountTriggerSignal.set(false)
+        if (this.selectempid) {
+          this.getRemoteLoginEMPRequest();
+        } else {
+          this.getRemoteLoginRequest();
+        }
       }
     });
   }

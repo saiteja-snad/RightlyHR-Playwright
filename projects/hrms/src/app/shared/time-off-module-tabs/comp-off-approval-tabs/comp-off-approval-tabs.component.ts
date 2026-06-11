@@ -5,10 +5,12 @@ import { Subject, takeUntil } from 'rxjs';
 import { IJob } from '../../../Interfaces/letters-model';
 import { HttpService } from '../../../services/http.service';
 import { RbacService } from '../../../services/rbac.service';
+import { SignalsService } from '../../../services/signals.service';
 import { SidetabsloadersComponent } from "../../sidetabsloaders/sidetabsloaders.component";
 import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.service';
 @Component({
   selector: 'app-comp-off-approval-tabs',
+  standalone: true,
   imports: [CommonModule, RouterModule, SidetabsloadersComponent],
   templateUrl: './comp-off-approval-tabs.component.html',
   styleUrl: './comp-off-approval-tabs.component.scss',
@@ -26,7 +28,7 @@ export class CompOffApprovalTabsComponent implements OnInit, OnDestroy {
   destroy$: Subject<boolean> = new Subject<boolean>();
   selectedYear: any;
 
-  constructor(public readonly router: Router, private http: HttpService, public rbac: RbacService, private TimeoffYearFilterService: TimeoffYearFilterService) {
+  constructor(public readonly router: Router, private http: HttpService, public rbac: RbacService, private TimeoffYearFilterService: TimeoffYearFilterService, private signalService: SignalsService) {
     effect(() => {
       if (this.http.tirggerCountSignal().compOff) {
         this.getCompOffRequest();
@@ -34,6 +36,13 @@ export class CompOffApprovalTabsComponent implements OnInit, OnDestroy {
           ...status,
           compOff: false,
         }));
+      }
+      if (this.signalService.compOffSidNavCountTriggerSignal()) {
+        if (this.selectempid) {
+          this.getCompOffEMPRequest();
+        } else {
+          this.getCompOffRequest();
+        }
       }
     })
   }

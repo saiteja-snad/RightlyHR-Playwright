@@ -40,13 +40,13 @@ export class LeavesApprovaltabsComponent implements OnInit, OnDestroy{
     effect(() => {
       if (this.signalService.timecountTriggerSignal()) {
         // Call the function to fetch the pending approvals count
-        this.getDataByLPID();
+        if (this.id) {
+          this.getDataByLPempID();
+        } else {
+          this.getDataByLPID();
+        }
         this.getAllTeamLeaveBalance();
         this.getAllTeamLeaveSummary();
-        // Conditionally reset the signals based on their current state
-        if (this.signalService.timecountTriggerSignal()) {
-          this.signalService.timecountTriggerSignal.set(false);
-        }
       }
     });
   }

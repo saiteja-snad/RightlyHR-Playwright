@@ -387,7 +387,7 @@ onStatusApproveSelect(status: string) {
           this.selectedLeavesItems = [];
           this.multiSelect = false;
           this.signalService.compOffForYouTriggerSignal.set(true);
-          this.signalService.compOffSidNavCountTriggerSignal.set(true);
+          this.signalService.compOffSidNavCountTriggerSignal.update(count => count + 1);
           this.getAllPendingApprovals();
            this.getApprovalStatusCounts();
           this.searchValue = null;
@@ -458,7 +458,7 @@ onStatusApproveSelect(status: string) {
             this.approveForm.reset();
             this.multiSelect = false;
             this.signalService.compOffForYouTriggerSignal.set(true);
-            this.signalService.compOffSidNavCountTriggerSignal.set(true);
+            this.signalService.compOffSidNavCountTriggerSignal.update(count => count + 1);
             this.getAllPendingApprovals();
              this.getApprovalStatusCounts();
             this.spinnerLoader = false;
@@ -535,7 +535,7 @@ onStatusApproveSelect(status: string) {
             this.rejectForm.reset();
             this.selectedLeaveData = {} as AttendanceRequest;
             this.signalService.compOffForYouTriggerSignal.set(true);
-            this.signalService.compOffSidNavCountTriggerSignal.set(true);
+            this.signalService.compOffSidNavCountTriggerSignal.update(count => count + 1);
             this.getAllPendingApprovals();
             this.getApprovalStatusCounts();
             this.spinnerLoader = false;

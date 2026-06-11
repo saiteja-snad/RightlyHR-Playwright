@@ -11,6 +11,7 @@ import { ICompOff } from '../../../Interfaces/compoff.modal';
 import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { RbacService } from '../../../services/rbac.service';
+import { SignalsService } from '../../../services/signals.service';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { TranslateModule } from '@ngx-translate/core';
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
@@ -67,12 +68,11 @@ export class CompOffWaitingForApprovalComponent implements OnInit, OnDestroy {
   requestBody: any = {};
 
 
-  constructor(private http: HttpService, public rbac: RbacService, private TimeoffYearFilterService: TimeoffYearFilterService, private modalService: NgbModal,
+  constructor(private http: HttpService, public rbac: RbacService, private signalService: SignalsService, private TimeoffYearFilterService: TimeoffYearFilterService, private modalService: NgbModal,
     private fb: FormBuilder) {
     effect(() => {
       if (this.http.compOffTriggerSignal()) {
         this.getCompOffRequest();
-        this.http.compOffTriggerSignal.set(false);
       }
     });
   }
@@ -231,6 +231,7 @@ export class CompOffWaitingForApprovalComponent implements OnInit, OnDestroy {
           complete: () => {
             this.spinnerLoader = false;
             this.getCompOffRequest();
+            this.http.compOffTriggerSignal.update((count) => count + 1);
           }
         });
     }
@@ -294,6 +295,7 @@ export class CompOffWaitingForApprovalComponent implements OnInit, OnDestroy {
           complete: () => {
             this.spinnerLoader = false;
             this.getCompOffRequest();
+            this.http.compOffTriggerSignal.update((count) => count + 1);
           }
         });
     }

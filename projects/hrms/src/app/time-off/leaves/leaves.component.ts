@@ -122,12 +122,12 @@ export class LeavesComponent implements OnInit, OnDestroy{
   ) {
     effect(() => {
       if (this.signalService.timecountTriggerSignal()) {
-        // Call the function to fetch the pending approvals count
-        this.getCategoryDetails();
-        // Conditionally reset the signals based on their current state
-        if (this.signalService.timecountTriggerSignal()) {
-          this.signalService.timecountTriggerSignal.set(false);
+        // Refresh both category details and leave data to update counts
+        const empId = this.http.getCurrentEmployeeIdTimeoff() ?? this.empdata?.employeeId;
+        if (empId) {
+          this.getDataByLPID(empId);
         }
+        this.getCategoryDetails();
       }
     });
   }

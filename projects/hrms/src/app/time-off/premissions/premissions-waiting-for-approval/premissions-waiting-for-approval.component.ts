@@ -212,7 +212,7 @@ export class PremissionsWaitingForApprovalComponent implements OnInit, OnDestroy
           this.http.permissionTriggerSignal.set(true);
           this.getDataPermissions();
         }
-        this.signalService.timecountTriggerSignal.set(true);
+        this.signalService.timecountTriggerSignal.update(count => count + 1);
       },
       error: (err: any) => {
         this.isLoading = false;

@@ -391,25 +391,67 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
   }
 
   getprojectbyid(clientID: any): void {
+    // this.loading = true;
+    // let url = `Project?clientId=${clientID}&status=Active&pageNumber=${this.page}&pageSize=${this.pageSize}`;
+
+    // if (this.searchValue?.trim()) {
+    //   url += `&searchTerm=${encodeURIComponent(this.searchValue.trim())}`;
+    // }
+
+    // if (this.selectedDepartmentIds) {
+    //   url += `&departmentIds=${this.selectedDepartmentIds}`;
+    // }
+    // if (this.selectedProjectTypes && this.selectedProjectTypes.length > 0) {
+    //   url += `&projectTypes=${this.selectedProjectTypes.join(',')}`;
+    // }
+    // const clientIds = this.selectedClients
+    //   .map((c: any) => c?.clientId)
+    //   .filter((id): id is number => id != null);
+
+    // if (clientIds.length > 0) {
+    //   url += `&clientId=${clientIds.join(',')}`;
+    // }
     this.loading = true;
     let url = `Project?clientId=${clientID}&status=Active&pageNumber=${this.page}&pageSize=${this.pageSize}`;
+    if (this.rbac.allowedToAccess('View Assigned Projects.view') && !this.rbac.allowedToAccess('View All Projects.view')) {
+      url = `Project?clientId=${clientID}&employeeId=${this.empinfo.employeeId}&status=Active&pageNumber=${this.page}&pageSize=${this.pageSize}`;
+      if (this.searchValue?.trim()) {
+        url += `&searchTerm=${encodeURIComponent(this.searchValue.trim())}`;
+      }
 
-    if (this.searchValue?.trim()) {
-      url += `&searchTerm=${encodeURIComponent(this.searchValue.trim())}`;
-    }
+      if (this.selectedDepartmentIds) {
+        url += `&departmentIds=${this.selectedDepartmentIds}`;
+      }
+      if (this.selectedProjectTypes && this.selectedProjectTypes.length > 0) {
+        url += `&projectTypes=${this.selectedProjectTypes.join(',')}`;
+      }
+      const clientIds = this.selectedClients
+        .map((c: any) => c?.clientId)
+        .filter((id): id is number => id != null);
 
-    if (this.selectedDepartmentIds) {
-      url += `&departmentIds=${this.selectedDepartmentIds}`;
+      if (clientIds.length > 0) {
+        url += `&clientId=${clientIds.join(',')}`;
+      }
     }
-    if (this.selectedProjectTypes && this.selectedProjectTypes.length > 0) {
-      url += `&projectTypes=${this.selectedProjectTypes.join(',')}`;
-    }
-    const clientIds = this.selectedClients
-      .map((c: any) => c?.clientId)
-      .filter((id): id is number => id != null);
+    else {
+      url = `Project?clientId=${clientID}&status=Active&pageNumber=${this.page}&pageSize=${this.pageSize}`;
+      if (this.searchValue?.trim()) {
+        url += `&searchTerm=${encodeURIComponent(this.searchValue.trim())}`;
+      }
 
-    if (clientIds.length > 0) {
-      url += `&clientId=${clientIds.join(',')}`;
+      if (this.selectedDepartmentIds) {
+        url += `&departmentIds=${this.selectedDepartmentIds}`;
+      }
+      if (this.selectedProjectTypes && this.selectedProjectTypes.length > 0) {
+        url += `&projectTypes=${this.selectedProjectTypes.join(',')}`;
+      }
+      const clientIds = this.selectedClients
+        .map((c: any) => c?.clientId)
+        .filter((id): id is number => id != null);
+
+      if (clientIds.length > 0) {
+        url += `&clientId=${clientIds.join(',')}`;
+      }
     }
     this.http
       .getData(url)

@@ -49,6 +49,7 @@ export class LoadEntitlementsComponent {
   employeeiddetails: any[] = [];
   currentDate: Date = new Date();
   loggedinuser = {} as any;
+  private employeeSelectionRequestVersion = 0;
   frequencyTypes: { label: string; value: string }[] = [
     { label: 'Monthly', value: 'MONTHLY' },
     { label: 'Quarterly', value: 'QUARTERLY' },
@@ -151,10 +152,44 @@ export class LoadEntitlementsComponent {
     });
   }
 
+  private nextEmployeeSelectionRequestVersion(): number {
+    this.employeeSelectionRequestVersion += 1;
+    return this.employeeSelectionRequestVersion;
+  }
+
+  private isActiveEmployeeSelection(employeeId: string, requestVersion: number): boolean {
+    return (
+      this.employeeSelectionRequestVersion === requestVersion &&
+      String(this.selectedEmployeeId ?? '') === String(employeeId)
+    );
+  }
+
+  private clearEmployeeFormFields(): void {
+    const fields = ['dateOfJoining', 'WorkEmail', 'location', 'sublocation', 'shift'];
+    fields.forEach(id => {
+      const el = document.getElementById(id) as HTMLInputElement;
+      if (el) el.value = '';
+    });
+  }
+
+  clearSelectedEmployee(markTouched: boolean = false): void {
+    this.nextEmployeeSelectionRequestVersion();
+    this.employeeTouched = markTouched ? true : this.employeeTouched;
+    this.resetPage();
+  }
+
   onEmployeeClear(): void {
+    this.clearSelectedEmployee();
+  }
+
+  private resetEmployeeDataState(): void {
     this.selectedEmployeeDetails = null;
     this.selectedEmployeeId = null;
+    this.selectedFrequencyType = '';
+    this.selectedCycleHandling = '';
     this.frequencyCards = [];
+    this.breakdownLoader = false;
+    this.loading = false;
     this.showAddForm = false;
     this.addForm = { frequency: '', categories: [], cycleHandling: '' };
     this.addFormTouched = { frequency: false, categories: false, cycleHandling: false };
@@ -170,20 +205,25 @@ export class LoadEntitlementsComponent {
     this.categoryFrequencyMap = new Map();
     this.categoryCycleHandlingMap = new Map();
     this.collectedCategoryIds = [];
-    const fields = ['dateOfJoining', 'WorkEmail', 'location', 'sublocation', 'shift'];
-    fields.forEach(id => {
-      const el = document.getElementById(id) as HTMLInputElement;
-      if (el) el.value = '';
-    });
+    this.categoryTablesOrdered = [];
+    this.breakdownForm = this.fb.group({ categories: this.fb.array([]) });
+    this.clearEmployeeFormFields();
   }
 
   onOptionClick(employeeId: string) {
+    if (!employeeId) {
+      this.clearSelectedEmployee();
+      return;
+    }
+
+    const requestVersion = this.nextEmployeeSelectionRequestVersion();
+
     try {
       // Find corresponding details in Employeedata/ActiveEmployees
       this.selectedEmployeeDetails = this.employeeiddetails.find(
         (detail) => detail.employeeId === employeeId
       );
-      this.fetchEmployeeDetails(employeeId);
+      this.fetchEmployeeDetails(employeeId, requestVersion);
       // Check if details are found for the selected employee
       if (this.selectedEmployeeDetails) {
         // Update HTML input boxes with retrieved employee details
@@ -550,16 +590,18 @@ export class LoadEntitlementsComponent {
   //   }
   // }
 
-  fetchEmployeeDetails(employeeId: string) {
+  fetchEmployeeDetails(employeeId: string, requestVersion: number) {
     if (employeeId) {
-      this.sendAPIRequest(employeeId);
+      this.sendAPIRequest(employeeId, requestVersion);
     } else {
       console.log('EmployeeId not provided.');
     }
   }
 
 
-  sendAPIRequest(employeeId: string) {
+  sendAPIRequest(employeeId: string, requestVersion: number) {
+    if (!this.isActiveEmployeeSelection(employeeId, requestVersion)) return;
+
     // Clear the tableData array
     this.tableData = [];
     this.employeePolicyMap = new Map();
@@ -585,6 +627,15 @@ export class LoadEntitlementsComponent {
     const employeeDetails = this.jobDetails.find(
       (detail: any) => detail.employeeId === employeeId
     );
+    if (!employeeDetails) {
+      if (!this.isActiveEmployeeSelection(employeeId, requestVersion)) return;
+      this.collectedCategoryIds = [];
+      this.collectedLocationId = 0;
+      this.collectedSubLocationId = 0;
+      this.collectedShiftId = 0;
+      this.breakdownLoader = false;
+      return;
+    }
     const { locationId, subLocationId, shiftId, gradeId } = employeeDetails;
     // Step 7: Prepare the request body
     const requestBody = {
@@ -599,7 +650,9 @@ export class LoadEntitlementsComponent {
     };
     // Step 7: Call the API endpoint to get leave policy details
     this.http.postdata('LeavePolicy/getgeneralpolicies', requestBody)
-      .subscribe((response: any) => {
+      .subscribe({
+        next: (response: any) => {
+        if (!this.isActiveEmployeeSelection(employeeId, requestVersion)) return;
         // Collect categoryIds and job details from response
         if (Array.isArray(response) && response.length > 0) {
           this.collectedCategoryIds = response.map((item: any) => item.categoryId);
@@ -630,22 +683,45 @@ export class LoadEntitlementsComponent {
             value: item.categoryId
           }));
           this.refreshAvailableCategoryOptions();
-          this.loadEntitlementBreakdown(employeeId, locationId, subLocationId, shiftId);
+          this.loadEntitlementBreakdown(employeeId, locationId, subLocationId, shiftId, requestVersion);
           // Validate before load
           this.validateBeforeLoad(
-            this.selectedEmployeeDetails.employeeId,
+            employeeId,
             this.collectedCategoryIds,
             this.collectedLocationId,
             this.collectedSubLocationId,
-            this.collectedShiftId
+            this.collectedShiftId,
+            requestVersion
           );
+        } else {
+          this.collectedCategoryIds = [];
+          this.collectedLocationId = 0;
+          this.collectedSubLocationId = 0;
+          this.collectedShiftId = 0;
+          this.frequencyCards = [];
+          this.entitledData = [];
+          this.alreadyEntitled = false;
+          this.breakdownLoader = false;
         }
-      });
+      },
+      error: (err: any) => {
+        if (!this.isActiveEmployeeSelection(employeeId, requestVersion)) return;
+        console.error('Error fetching leave policies:', err);
+        this.collectedCategoryIds = [];
+        this.collectedLocationId = 0;
+        this.collectedSubLocationId = 0;
+        this.collectedShiftId = 0;
+        this.frequencyCards = [];
+        this.entitledData = [];
+        this.alreadyEntitled = false;
+        this.breakdownLoader = false;
+      }
+    });
     // Step 9: Call the API endpoint to fetch entitlements
     // (validateBeforeLoad is now called inside the policy response handler above)
   }
 
-  validateBeforeLoad(employeeId: string, categoryIds: number[], locationId: number, subLocationId: number, shiftId: number): void {
+  validateBeforeLoad(employeeId: string, categoryIds: number[], locationId: number, subLocationId: number, shiftId: number, requestVersion: number = this.employeeSelectionRequestVersion): void {
     const payload = {
       employeeIds: [Number(employeeId)],
       categoryIds,
@@ -656,6 +732,7 @@ export class LoadEntitlementsComponent {
     };
     this.http.postdata('LoadEntitlementValidator/validate-before-load', payload).subscribe({
       next: (res: any) => {
+        if (!this.isActiveEmployeeSelection(employeeId, requestVersion)) return;
         const data = res?.data;
         if (data?.alreadyEntitled === true) {
           this.alreadyEntitled = true;
@@ -666,6 +743,7 @@ export class LoadEntitlementsComponent {
         }
       },
       error: () => {
+        if (!this.isActiveEmployeeSelection(employeeId, requestVersion)) return;
         this.alreadyEntitled = false;
         this.entitledData = [];
       }
@@ -695,7 +773,7 @@ export class LoadEntitlementsComponent {
     this.leavePolicyRecords = this.tableData;
   }
 
-  private loadEntitlementBreakdown(employeeId: string, locationId: number, subLocationId: number, shiftId: number): void {
+  private loadEntitlementBreakdown(employeeId: string, locationId: number, subLocationId: number, shiftId: number, requestVersion: number = this.employeeSelectionRequestVersion): void {
     const payload = {
       employeeId: Number(employeeId),
       location_id: locationId,
@@ -711,12 +789,14 @@ export class LoadEntitlementsComponent {
 
     this.http.postdata('OrgLeavesCategories/leave-entitlement-breakdown', payload).subscribe({
       next: (response: any) => {
+        if (!this.isActiveEmployeeSelection(employeeId, requestVersion)) return;
         this.entitlementBreakdownData = response;
         this.originalBreakdownData = JSON.parse(JSON.stringify(Array.isArray(response?.categories) ? response.categories : []));
         this.buildFrequencyCardsFromBreakdown(response);
         this.breakdownLoader = false;
       },
       error: (err: any) => {
+        if (!this.isActiveEmployeeSelection(employeeId, requestVersion)) return;
         console.error('Error fetching entitlement breakdown:', err);
         this.breakdownLoader = false;
         this.entitlementBreakdownData = [];
@@ -1422,6 +1502,9 @@ export class LoadEntitlementsComponent {
   onAddNewConfirm(): void {
     const { frequency, categories, cycleHandling } = this.addForm;
     if (!frequency || !categories.length || !cycleHandling) return;
+    const activeEmployeeId = this.selectedEmployeeDetails?.employeeId;
+    if (!activeEmployeeId) return;
+    const requestVersion = this.employeeSelectionRequestVersion;
 
     // Card is keyed by frequency + cycleHandling combination
     let card = this.frequencyCards.find(c => c.frequencyType === frequency && c.cycleHandling === cycleHandling);
@@ -1460,11 +1543,12 @@ export class LoadEntitlementsComponent {
       sub_location_id: this.collectedSubLocationId,
       shift_id: this.collectedShiftId,
       year: new Date().getFullYear(),
-      employeeId: this.selectedEmployeeDetails.employeeId,
+      employeeId: activeEmployeeId,
     };
 
     this.http.postdata('OrgLeavesCategories/leave-entitlement-breakdown', payload).subscribe({
       next: (response: any) => {
+        if (!this.isActiveEmployeeSelection(activeEmployeeId, requestVersion)) return;
         const cats = Array.isArray(response?.categories) ? response.categories : [];
         for (const catData of cats) {
           const entry = entryMap.get(catData.category_id);
@@ -1489,38 +1573,17 @@ export class LoadEntitlementsComponent {
         // Mark any unmatched entries as done loading
         entryMap.forEach(entry => { entry.breakdownLoader = false; });
       },
-      error: () => { entryMap.forEach(entry => { entry.breakdownLoader = false; }); }
+      error: () => {
+        if (!this.isActiveEmployeeSelection(activeEmployeeId, requestVersion)) return;
+        entryMap.forEach(entry => { entry.breakdownLoader = false; });
+      }
     });
 
     this.refreshAvailableCategoryOptions();
   }
 
   private resetPage(): void {
-    this.selectedEmployeeId = null;
-    this.selectedEmployeeDetails = null;
-    this.frequencyCards = [];
-    this.showAddForm = false;
-    this.addForm = { frequency: '', categories: [], cycleHandling: '' };
-    this.addFormTouched = { frequency: false, categories: false, cycleHandling: false };
-    this.allCategoryOptions = [];
-    this.availableCategoryOptions = [];
-    this.alreadyEntitled = false;
-    this.entitledData = [];
-    this.viewCyclesEntry = null;
-    this.showCyclesModal = false;
-    this.employeePolicyMap = new Map();
-    this.categoryProRataMap = new Map();
-    this.categoryGradeMap = new Map();
-    this.categoryFrequencyMap = new Map();
-    this.categoryCycleHandlingMap = new Map();
-    this.collectedCategoryIds = [];
-    this.categoryTablesOrdered = [];
-    this.breakdownForm = this.fb.group({ categories: this.fb.array([]) });
-    const fields = ['dateOfJoining', 'WorkEmail', 'location', 'sublocation', 'shift'];
-    fields.forEach(id => {
-      const el = document.getElementById(id) as HTMLInputElement;
-      if (el) el.value = '';
-    });
+    this.resetEmployeeDataState();
   }
 
   blockInvalidEntitlementKeys(event: KeyboardEvent): void {

@@ -5,13 +5,18 @@
         <div class="row">
             <div class="col-md-4 mb-3">
                 <label class="form-label custom-label">Select Employee <span class="text-danger">*</span></label>
-                <div class="custom-p-select-content">
+                <div class="custom-p-select-content employee-select-wrapper">
                     <p-select [options]="employeeOptions" optionLabel="label" optionValue="value"
-                        [(ngModel)]="selectedEmployeeId" [filter]="true" filterBy="label" showClear="true"
+                        [(ngModel)]="selectedEmployeeId" [filter]="true" filterBy="label" [showClear]="false"
                         filterPlaceholder="Search by Employee Id or Name" placeholder="Please select Employee "
                         class="form-select custom-select w-100" (onChange)="onOptionClick($event.value)"
-                        (onClear)="onEmployeeClear(); employeeTouched = true" (onBlur)="employeeTouched = true">
+                        (onBlur)="employeeTouched = true">
                     </p-select>
+                    <button *ngIf="selectedEmployeeId" type="button" class="employee-clear-btn"
+                        aria-label="Clear selected employee"
+                        (click)="clearSelectedEmployee(true); $event.stopPropagation()">
+                        <i class="bi bi-x-circle"></i>
+                    </button>
                 </div>
                 <div class="error-msg" *ngIf="employeeTouched && !selectedEmployeeId">
                   Employee Selection is required

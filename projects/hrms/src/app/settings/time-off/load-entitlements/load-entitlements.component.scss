@@ -19,6 +19,28 @@
     cursor: pointer;
 }
 
+.employee-select-wrapper {
+    position: relative;
+
+    .employee-clear-btn {
+        position: absolute;
+        top: 50%;
+        right: 2.5rem;
+        transform: translateY(-50%);
+        border: 0;
+        background: transparent;
+        padding: 0;
+        color: #6c757d;
+        line-height: 1;
+        z-index: 2;
+        cursor: pointer;
+    }
+
+    .employee-clear-btn:hover {
+        color: #343a40;
+    }
+}
+
 .input-field[contenteditable="false"] {
     background-color: #eee;
     color: #999;

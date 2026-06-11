@@ -58,6 +58,7 @@ export class CompOffWaitingForApprovalComponent implements OnInit, OnDestroy {
   selectedCompOffData: any;
   approveForm!: FormGroup;
   rejectForm!: FormGroup;
+  showActions = false;
 
   spinnerLoader = false;
   selectedLeaveStatus: any;
@@ -86,9 +87,11 @@ export class CompOffWaitingForApprovalComponent implements OnInit, OnDestroy {
         this.http.selectedEmployeeIdCompOff$.subscribe((id) => {
           if (id) {
             this.selectemp = id;
+            this.showActions = true; // Manager view
             this.getCompOffRequest();
           } else {
             this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
+            this.showActions = false; // Employee view
             this.getCompOffRequest();
           }
         });
@@ -202,7 +205,7 @@ export class CompOffWaitingForApprovalComponent implements OnInit, OnDestroy {
         ]
       };
 
-      
+
 
 
       this.http.putData(`v2/PendingApproval/multiapprovals`, this.requestBody)
@@ -211,6 +214,13 @@ export class CompOffWaitingForApprovalComponent implements OnInit, OnDestroy {
           next: (response: any) => {
 
             this.modalService.dismissAll();
+            this.waitingForApprovalCompOff =
+              this.waitingForApprovalCompOff.filter(
+                x => x.id !== this.selectedCompOffData.id
+              );
+
+            this.waitingForApprovalCompOffCount =
+              this.waitingForApprovalCompOff.length;
 
             this.requestSummary = response.data;
 
@@ -231,7 +241,10 @@ export class CompOffWaitingForApprovalComponent implements OnInit, OnDestroy {
           complete: () => {
             this.spinnerLoader = false;
             this.getCompOffRequest();
-            this.http.compOffTriggerSignal.update((count) => count + 1);
+            this.http.tirggerCountSignal.update((status) => ({
+              ...status,
+              compOff: true,
+            }));
           }
         });
     }
@@ -276,6 +289,14 @@ export class CompOffWaitingForApprovalComponent implements OnInit, OnDestroy {
 
             this.modalService.dismissAll();
 
+            this.waitingForApprovalCompOff =
+              this.waitingForApprovalCompOff.filter(
+                x => x.id !== this.selectedCompOffData.id
+              );
+
+            this.waitingForApprovalCompOffCount =
+              this.waitingForApprovalCompOff.length;
+
             this.requestSummary = response.data;
 
             this.openModal(this.leaveSummary);
@@ -295,7 +316,10 @@ export class CompOffWaitingForApprovalComponent implements OnInit, OnDestroy {
           complete: () => {
             this.spinnerLoader = false;
             this.getCompOffRequest();
-            this.http.compOffTriggerSignal.update((count) => count + 1);
+            this.http.tirggerCountSignal.update((status) => ({
+              ...status,
+              compOff: true,
+            }));
           }
         });
     }

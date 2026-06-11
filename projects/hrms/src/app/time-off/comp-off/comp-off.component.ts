@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, effect, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { AbstractControl, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -34,10 +34,10 @@ import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-inf
     CompOffApprovalTabsComponent,
     DropdownModule, Select, TranslateModule,
     ModuleInformationComponent,
-        NgbPopoverModule,
+    NgbPopoverModule,
     ConfirmationIconComponent,
     ModuleInfoIconComponent
-    
+
   ],
   templateUrl: './comp-off.component.html',
   styleUrl: './comp-off.component.scss',
@@ -79,7 +79,7 @@ export class CompOffComponent implements OnInit, OnDestroy {
 
   constructor(
     private modalService: NgbModal,
-     private authService:AuthService,
+    private authService: AuthService,
     private fb: FormBuilder,
     private http: HttpService,
     private sharedModalService: OpenModalService,
@@ -87,7 +87,20 @@ export class CompOffComponent implements OnInit, OnDestroy {
     public formsValidation: FormValidationsService,
     public readonly router: Router,
     private TimeoffYearFilterService: TimeoffYearFilterService
-  ) { }
+  ) {
+
+
+effect(() => {
+  this.http.compOffTriggerSignal();
+
+  const empId = this.empinfo?.employeeId;
+
+  if (empId) {
+    console.log('CompOff Trigger Fired');
+    this.getCompOffRequest(empId);
+  }
+});
+  }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
@@ -116,7 +129,7 @@ export class CompOffComponent implements OnInit, OnDestroy {
   }
 
   getAllEmployeeDetails() {
-     const status = ['Active', 'Trainee Active', 'Active Contract'];
+    const status = ['Active', 'Trainee Active', 'Active Contract'];
     this.subscription = this.http.getData(`Employeedata/v3/Getallemployees?statuses=${status}`).subscribe({
       next: (res: any) => {
         this.activeEmplist = res.map((employee: any) => ({
@@ -180,7 +193,7 @@ export class CompOffComponent implements OnInit, OnDestroy {
   openModal(content: any) {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
-  
+
   intializeCompOffForm() {
     this.addCompOffForm = this.fb.group({
       workedDate: ['', [Validators.required, this.afterJoiningDateValidator.bind(this)]],
@@ -385,16 +398,16 @@ export class CompOffComponent implements OnInit, OnDestroy {
       });
     }
   }
-getApprovalStatusCounts() {
+  getApprovalStatusCounts() {
     let loggedInUser = this.authService.getToken();
     let EmployeeId = loggedInUser.employeeId;
     this.http.get(`PendingApproval/getApprovalStatusCounts?moduleId=${environment.compoffModuleId}&EmployeeId=${EmployeeId}`).subscribe((res: any) => {
       this.totalCount = res.reduce((acc: number, curr: any) => acc + curr.totalCount, 0);
-       this.http.updatePendingApprovalCounts(this.totalCount);
-   //Map counts to tabs
+      this.http.updatePendingApprovalCounts(this.totalCount);
+      //Map counts to tabs
     });
   }
- 
+
   updateDuration() {
     if (this.compoffdata.startTimeProp && this.compoffdata.endTimeProp) {
       const formattedStartTime = moment(this.compoffdata.startTimeProp).format('HH:mm');

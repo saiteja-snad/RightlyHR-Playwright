@@ -382,7 +382,7 @@ export class CompoffForYourRoleRequestComponent implements OnInit, OnDestroy {
           this.selectedLeavesItems = [];
           this.multiSelect = false;
           this.signalService.compOffForYouTriggerSignal.set(true);
-          this.signalService.compOffSidNavCountTriggerSignal.set(true);
+          this.signalService.compOffSidNavCountTriggerSignal.update(count => count + 1);
         },
         error: (reason: any) => {
           console.error(reason);
@@ -455,7 +455,7 @@ export class CompoffForYourRoleRequestComponent implements OnInit, OnDestroy {
             this.approveForm.reset();
             this.multiSelect = false;
             this.signalService.compOffForYouTriggerSignal.set(true);
-            this.signalService.compOffSidNavCountTriggerSignal.set(true);
+            this.signalService.compOffSidNavCountTriggerSignal.update(count => count + 1);
           },
           error: (reason: any) => {
             console.error(reason);
@@ -532,7 +532,7 @@ export class CompoffForYourRoleRequestComponent implements OnInit, OnDestroy {
             this.rejectForm.reset();
             this.selectedLeaveData = {} as AttendanceRequest;
             this.signalService.compOffForYouTriggerSignal.set(true);
-            this.signalService.compOffSidNavCountTriggerSignal.set(true);
+            this.signalService.compOffSidNavCountTriggerSignal.update(count => count + 1);
           },
           error: (reason: any) => {
             console.error(reason);

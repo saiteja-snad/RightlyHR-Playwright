@@ -76,7 +76,6 @@ export class RemoteWaitingForApprovalComponent implements OnInit, OnDestroy {
     effect(() => {
       if (this.signalService.remoteLoginRequestTriggerSignal()) {
         this.getRemoteRequests();
-        this.signalService.remoteLoginRequestTriggerSignal.set(false);
       }
 
     })
@@ -272,10 +271,13 @@ export class RemoteWaitingForApprovalComponent implements OnInit, OnDestroy {
           // Open summary popup
           this.openModal(this.leaveSummary);
 
-          // Auto close summary popup after 3 sec
+          // Auto close summary popup
           setTimeout(() => {
             this.modalService.dismissAll();
           }, 3000);
+
+          // Refresh sidebar counts immediately
+          this.signalService.remoteLoginSidNavCountTriggerSignal.update(count => count + 1);
         },
         error: (err: any) => {
           console.error(err);
@@ -342,6 +344,9 @@ export class RemoteWaitingForApprovalComponent implements OnInit, OnDestroy {
           }, 3000);
 
           this.rejectForm.reset();
+
+          // Refresh sidebar counts immediately
+          this.signalService.remoteLoginSidNavCountTriggerSignal.update(count => count + 1);
         },
         error: (err: any) => {
           console.error(err);

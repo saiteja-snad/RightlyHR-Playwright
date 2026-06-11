@@ -46,10 +46,18 @@ export class PremissionsTabsComponent implements OnInit, OnDestroy {
   ) {
     void this.menuOrderService.ensureLoaded();
     effect(() => {
-      if (this.http.permissionTriggerSignal()) {
-        this.getPermissionRequest();
-      }
-    })
+  if (this.http.permissionTriggerSignal()) {
+
+    console.log('Tabs Signal Fired');
+    console.log('selectempid:', this.selectempid);
+
+    if (this.selectempid) {
+      this.getPermissionEMPRequest();
+    } else {
+      this.getPermissionRequest();
+    }
+  }
+});
   }
 
   ngOnInit(): void {
@@ -105,6 +113,8 @@ export class PremissionsTabsComponent implements OnInit, OnDestroy {
   }
 
   getPermissionEMPRequest() {
+    console.log('Loading employee permissions for:', this.selectempid);
+
     let empId = this.selectempid;
     this.http.getFilterPermissionDataByID(empId, this.selectedYear).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: any) => {

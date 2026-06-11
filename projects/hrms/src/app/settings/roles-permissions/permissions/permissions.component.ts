@@ -1430,7 +1430,7 @@ export const SECTION_DEFINITIONS: SectionDef[] = [
     disableFn: 'isonlyviewfunction',
     fieldNames: ['Request Remote Login Button','Waiting For Approval (Remote Login)','Approved (Remote Login)','Processed (Remote Login)','Rejected (Remote Login)','My Team (Remote Login)','All Employees (Remote Login)']
   }, { title: 'Comp Off Module Sub Tabs', disableFn: 'isonlyviewfunction', fieldNames: ['Waiting For Approval (Comp Off)', 'Approved (Comp Off)', 'Processed (Comp Off)', 'Rejected (Comp Off)', 'Request Comp Off Button', 'My Team (Comp Off)', 'All Employees (Comp Off)'] },
-  { title: 'Permissions Module Sub Tabs', disableFn: 'isonlyviewfunction', fieldNames: ['Waiting For Approval (Permissions)', 'Approved (Permissions)', 'Cancel (Permissions)', 'Rejected (Permissions)', 'Request Permission Button', 'My Team (Permissions)', 'All Employees (Permissions)'] },
+  { title: 'Permissions Module Sub Tabs', disableFn: 'isonlyviewfunction', fieldNames: ['Waiting For Approval (Permissions)', 'Processed (Permissions)', 'Cancel (Permissions)', 'Rejected (Permissions)', 'Request Permission Button', 'My Team (Permissions)', 'All Employees (Permissions)'] },
   { title: 'Regularization Module Sub Tabs', disableFn: 'isonlyviewfunction', fieldNames: ['Waiting For Approval (Regularization)', 'Approved (Regularization)', 'Processed (Regularization)', 'Rejected (Regularization)', 'My Team (Regularization)', 'All Employees (Regularization)'] },
   {title: 'Extra Hours Module Sub Tabs',disableFn: 'isonlyviewfunction',fieldNames: [  'Waiting For Approval (Extra Hours)',  'Processed (Extra Hours)',  'Rejected (Extra Hours)',  'My Team (Extra Hours)',  'All Employees (Extra Hours)']
   },

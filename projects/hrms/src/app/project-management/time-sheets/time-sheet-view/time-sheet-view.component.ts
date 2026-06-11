@@ -8,7 +8,6 @@ import { DatePicker } from 'primeng/datepicker';
 import { AuthService } from '../../../services/auth.service';
 import { HttpService } from '../../../services/http.service';
 import { AccordionModule } from 'primeng/accordion';
-import { DateformatPipe } from '../../../pipes/dateformat.pipe';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { Subject, Subscription, takeUntil } from 'rxjs';
 import { IResourceDetail, TimesheetResponse } from '../../../timesheetmodel';
@@ -30,6 +29,7 @@ import { MenuItem } from 'primeng/api';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { BulkUploadStore } from '../bulk-upload/models/bulk-upload.store';
 import { Select } from 'primeng/select';
+import { DateformatPipe } from '../../../pipes/dateformat.pipe';
 @Component({
   selector: 'app-time-sheet-view',
   imports: [ProjectManagementModuleInfoComponent, NgbDatepickerModule, FormsModule, ReactiveFormsModule,

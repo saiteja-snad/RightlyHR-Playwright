@@ -2,6 +2,7 @@ import { Directive, EffectRef, HostBinding, Input, OnDestroy, effect } from '@an
 import { CdkDragDrop, CdkDropList, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Subscription } from 'rxjs';
 import { MenuOrderService } from '../../services/theme-service/menu-order.service';
+import { UserTourService } from '../user-tour/user-tour.service';
 
 @Directive({
   selector: '[appTabsDnd]',
@@ -17,6 +18,13 @@ export class TabsDndDirective<T extends Record<string, any>> implements OnDestro
   @HostBinding('attr.data-tour-module') get tourModule(): string | null {
     return this.tabsDndKey || null;
   }
+  @HostBinding('class.tabs-dnd-locked') isDndLocked = false;
+  @HostBinding('style.pointer-events') get pointerEvents(): string | null {
+    return this.isDndLocked ? 'none' : null;
+  }
+  @HostBinding('attr.aria-disabled') get ariaDisabled(): string | null {
+    return this.isDndLocked ? 'true' : null;
+  }
 
   private items: T[] = [];
   @Input() set tabsDndItems(value: T[]) {
@@ -29,13 +37,17 @@ export class TabsDndDirective<T extends Record<string, any>> implements OnDestro
 
   constructor(
     private readonly dropList: CdkDropList<T[]>,
-    private readonly menuOrderService: MenuOrderService
+    private readonly menuOrderService: MenuOrderService,
+    private readonly userTourService: UserTourService
   ) {
     void this.menuOrderService.ensureLoaded();
 
     this.droppedSub = this.dropList.dropped.subscribe(event => this.onDrop(event));
     this.effectRef = effect(() => {
       const pref = this.menuOrderService.preferenceV2();
+      const dndLocked = this.userTourService.tabsDndLocked();
+      this.isDndLocked = dndLocked;
+      this.dropList.disabled = dndLocked;
       if (pref) this.applyOrderIfPossible();
     });
   }
@@ -59,6 +71,7 @@ export class TabsDndDirective<T extends Record<string, any>> implements OnDestro
   }
 
   private onDrop(event: CdkDragDrop<T[]>): void {
+    if (this.userTourService.tabsDndLocked()) return;
     if (!this.items || this.items.length === 0) return;
     if (event.previousIndex === event.currentIndex) return;
 

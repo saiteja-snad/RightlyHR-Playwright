@@ -370,7 +370,7 @@ export const MODULE_INFOS = {
     ONBEHALFHALF_APPROVALS_EMPLOYEE_INFO_MODULE_INFO: "The Employee Info module page displays employee profile details and requested changes. It enables authorized users to review and approve or reject profile update requests on behalf of the designated approver, ensuring accurate and up-to-date employee information.",
     ONBEHALFHALF_APPROVALS_TIMESHEET_MODULE_INFO: "The Timesheets module page displays employee work entries submitted against assigned projects and clients. It allows authorized users to review and approve or reject timesheets on behalf of the Reporting Manager, ensuring timely validation of work hours.",
 
+    
     THEME_PERSONALIZATION_MODULE_INFO: "This module allows users to customize the application appearance by selecting preferred theme colors and font styles. It helps enhance the visual experience and align the interface with user preferences.",
     MENU_PERSONALIZATION_MODULE_INFO: "This module allows users to customize and organize the application menu based on their preferences, improving accessibility and navigation. Users can manage primary and additional menu items by rearranging, enabling, or configuring them as needed."
-
 }

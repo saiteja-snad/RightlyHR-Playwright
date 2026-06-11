@@ -827,8 +827,43 @@ export class PermissionsComponent implements OnInit, OnDestroy {
  
   isSettingsEmployeeJobCheckboxDisabled = (_: PermissionRow, __: any) => !this.roleToFilter?.id;
   isSettingsProjectManagementConfig = (_: PermissionRow, __: any) => !this.roleToFilter?.id;
-  isProjectManagementTabsCheckboxDisabled = (_: PermissionRow, __: any) => !this.roleToFilter?.id;
-  isProjectManagementClientsTabsCheckboxDisabled = (_: PermissionRow, __: any) => !this.roleToFilter?.id;
+ isProjectManagementTabsCheckboxDisabled = (
+  per: PermissionRow,
+  action: 'View' | 'Update' | 'Create' | 'Delete'
+) => {
+
+  if (!this.roleToFilter?.id) return true;
+
+  const viewOnlyFields = [
+    'View Assigned Projects',
+    'View All Projects'
+  ];
+
+  if (viewOnlyFields.includes(per.fields)) {
+    return action !== 'View'; // Disable Update, Create, Delete
+  }
+
+  return false;
+};
+
+isProjectManagementClientsTabsCheckboxDisabled = (
+  per: PermissionRow,
+  action: 'View' | 'Update' | 'Create' | 'Delete'
+) => {
+
+  if (!this.roleToFilter?.id) return true;
+
+  const viewOnlyFields = [
+    'View Assigned Clients',
+    'View All Clients'
+  ];
+
+  if (viewOnlyFields.includes(per.fields)) {
+    return action !== 'View'; // Disable Update, Create, Delete
+  }
+
+  return false;
+};
   isAttendanceLockingCheckboxDisabled = (_: PermissionRow, __: any) => !this.roleToFilter?.id;
 
   isSettingsManageShiftsCheckboxDisabled = (
@@ -1578,7 +1613,7 @@ export const SECTION_DEFINITIONS: SectionDef[] = [
   { title: 'Settings Header Icon', disableFn: 'isonlyviewfunction', fieldNames: ['Settings Icon'] },
   { title: 'Project Management Configuration Fields', disableFn: 'isSettingsProjectManagementConfig', fieldNames: ['Project Type', 'Industry Type', 'Project Document Type', 'Client Document Type', 'Letter Configurations', 'Project Management Authority', 'Letter Frequency Configurations', 'Project Role','Task', 'Task Type','Timesheet Configurations'] },
   { title: 'Helpdesk Configuration Fields', disableFn: 'isSettingsProjectManagementConfig', fieldNames: ['Category', 'Subcategory'] },
-  { title: 'Project Management Projects Tabs', disableFn: 'isProjectManagementTabsCheckboxDisabled', fieldNames: ['Project Details Tab', 'Contact Info Tab', 'Documents Tab', 'Resources Tab', 'Project Timesheets Tab', 'Project Phases Tab', 'Project Detailed Tab'] }, { title: 'Project Management Clients Tabs', disableFn: 'isProjectManagementClientsTabsCheckboxDisabled', fieldNames: ['Client Information', 'Contact Information', 'Client Projects', 'Client Resources', 'Client Timesheets', 'Client Documents', 'Client Detailed Tab'] },
+  { title: 'Project Management Projects Tabs', disableFn: 'isProjectManagementTabsCheckboxDisabled', fieldNames: ['Project Details Tab', 'Contact Info Tab', 'Documents Tab', 'Resources Tab', 'Project Timesheets Tab', 'Project Phases Tab', 'Project Detailed Tab','View All Projects', 'View Assigned Projects'] }, { title: 'Project Management Clients Tabs', disableFn: 'isProjectManagementClientsTabsCheckboxDisabled', fieldNames: ['Client Information', 'Contact Information', 'Client Projects', 'Client Resources', 'Client Timesheets', 'Client Documents', 'Client Detailed Tab','View All Clients', 'View Assigned Clients'] },
   { title: 'Project Management Documents', disableFn: 'isonlyviewfunction', fieldNames: ['MSA Document', 'NDA Document'] },
   {title: 'Recruitment Jobs',disableFn: 'isapplicationscreeningfunction',fieldNames: ['Active Jobs','Inactive Jobs','Closed Jobs']},
    {title: 'Job View Permissions',disableFn: 'isapplicationscreeningfunction',fieldNames: ['Job Shortlisted','Job Interview Review','Job Rejected','Job On Hold','Job Request Onboarding','Job Onboarded','Job Archive','Job Revoke']},

@@ -1118,16 +1118,6 @@ export class AccessNavigationService {
 
       case '/project-management/projects':
         if (this.rbac.allowedToAccess('Projects.view')) {
-          for (const item of PROJECTS_ROUTES) {
-            if (this.rbac.allowedToAccess(item.permission)) {
-              return item.route;
-            }
-          }
-        }
-        break;
-
-        case '/project-management/projects':
-        if (this.rbac.allowedToAccess('Projects.view')) {
           const preferred = this.getPreferredRouteFromPermissionTabs(
             'project-management-projects-side-tabs',
             [
@@ -1137,8 +1127,11 @@ export class AccessNavigationService {
             ]
           );
           if (preferred) return preferred;
-          if (this.rbac.allowedToAccess('Project Details Tab.view')) {
-            return '/project-management/projects/active';
+
+          for (const item of PROJECTS_ROUTES) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
           }
         }
         break;

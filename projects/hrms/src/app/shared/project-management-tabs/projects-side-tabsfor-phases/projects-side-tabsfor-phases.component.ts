@@ -31,6 +31,7 @@ export class ProjectsSideTabsforPhasesComponent {
   projectId: any;
   loading=false
   destroy$: Subject<boolean> = new Subject<boolean>();
+  private userInteracted = false;
   navTabs: PhaseTab[] = [
     {
       tabId: '/project-management/projects/details/phases',
@@ -88,6 +89,7 @@ export class ProjectsSideTabsforPhasesComponent {
   }
 
   navigate(link: string): void {
+    this.userInteracted = true;
     this.router.navigate([link], {
       queryParamsHandling: 'preserve',
       state: { skipPhasesAutoRedirect: true }
@@ -95,11 +97,13 @@ export class ProjectsSideTabsforPhasesComponent {
   }
 
   private redirectIfNeeded(): void {
+    if (this.userInteracted) return;
     const currentPath = this.router.url.split('?')[0];
     const basePath = '/project-management/projects/details/phases';
     if (currentPath !== basePath) return;
 
-    const skip = !!this.router.getCurrentNavigation()?.extras?.state?.['skipPhasesAutoRedirect'];
+    const navigationState = this.router.getCurrentNavigation()?.extras?.state ?? history.state;
+    const skip = !!navigationState?.['skipPhasesAutoRedirect'];
     if (skip) return;
 
     if (this.filteredTabs.length === 0) {

@@ -45,6 +45,7 @@ import { BulkImportComponent } from './time-sheets/bulk-import/bulk-import.compo
 import { ExportHistoryComponent } from './time-sheets/export-history/export-history.component';
 import { HistoryLogComponent } from './time-sheets/history-log/history-log.component';
 import { ResourceCreationComponent } from './shared-project-management-componenets/resource-creation/resource-creation.component';
+import { ProjectsLayoutComponent } from './projects/projects-layout/projects-layout.component';
 
 export default [
     { path: '', redirectTo: '/project-management/clients', pathMatch: 'full' },
@@ -93,9 +94,8 @@ export default [
         ],
     },
     {
-        path: 'projects',
+        path: 'projects', component: ProjectsLayoutComponent,
         children: [
-            { path: '', redirectTo: 'active', pathMatch: 'full' },
             { path: 'active', component: ActiveProjectsComponent },
             { path: 'inactive', component: InacitveProjectsComponent },
             { path: 'hold', component: HoldProjectsComponent },

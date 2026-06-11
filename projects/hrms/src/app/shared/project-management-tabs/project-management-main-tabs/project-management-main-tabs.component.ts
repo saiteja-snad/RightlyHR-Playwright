@@ -24,7 +24,7 @@ export class ProjectManagementMainTabsComponent implements OnInit {
   navTabs = [
     { label: 'Clients', link: '/project-management/clients', icon: 'main-menu-icons/project-management-client.png', permission: { feature: 'Clients', action: 'view' } },
     { label: 'Projects', link: '/project-management/projects', icon: 'main-menu-icons/project-management-project.png', permission: { feature: 'Projects', action: 'view' } },
-    { label: 'Timesheets', link: '/project-management/timesheet/mytimesheet', icon: 'main-menu-icons/project-management-timesheet.png', permission: { feature: 'Time Sheet', action: 'view' } },
+    { label: 'Timesheets', link: '/project-management/timesheet', icon: 'main-menu-icons/project-management-timesheet.png', permission: { feature: 'Time Sheet', action: 'view' } },
   ];
 
   constructor(
@@ -45,8 +45,8 @@ export class ProjectManagementMainTabsComponent implements OnInit {
       if (link === '/project-management/projects') {
         const actual = this.accessNav.navigateToAccessedRoute(link);
         this.router.navigate([actual || link]);
-      } else if (link === '/project-management/timesheet/mytimesheet') {
-        const actual = this.accessNav.navigateToAccessedRoute('/project-management/timesheet');
+      } else if (link === '/project-management/timesheet') {
+        const actual = this.accessNav.navigateToAccessedRoute(link);
         this.router.navigate([actual || link]);
       } else {
         this.router.navigate([link]);

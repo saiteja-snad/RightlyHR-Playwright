@@ -1,4 +1,4 @@
-import { Injectable, OnDestroy } from '@angular/core';
+import { Injectable, OnDestroy, signal } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { driver, Driver } from 'driver.js';
 import { HttpService } from '../../services/http.service';
@@ -14,6 +14,7 @@ export class UserTourService implements OnDestroy {
   // ── Subjects consumed by the sidenav component ────────────────────────────
   public openEllipsesTrigger = new Subject<void>();
   public closeEllipsesTrigger = new Subject<void>();
+  public readonly tabsDndLocked = signal(false);
 
   // ── Engine state ──────────────────────────────────────────────────────────
   public tourInProgress = false;
@@ -33,6 +34,7 @@ export class UserTourService implements OnDestroy {
     private rbac: RbacService
 
   ) {
+    this.initializeTabsDndLockFromSession();
     this.initDriver();
   }
 
@@ -127,6 +129,7 @@ export class UserTourService implements OnDestroy {
         this.clearScrollLock();
         this.isTourCompletedManually = false;
         this.tourInProgress = false;
+        this.tabsDndLocked.set(false);
         this.setTransitioning(false);
         setTimeout(() => {
           void this.handlePostTourFlow();
@@ -279,9 +282,27 @@ export class UserTourService implements OnDestroy {
     this.subTabsTourRouteSub = this.router.events
       .pipe(filter(e => e instanceof NavigationEnd))
       .subscribe(() => {
-        void this.checkAndStartSubTabsTourForCurrentRoute();
+        void this.handleRouteChange();
       });
-    void this.checkAndStartSubTabsTourForCurrentRoute();
+    void this.handleRouteChange();
+  }
+
+  private async handleRouteChange(): Promise<void> {
+    if (this.tourInProgress) {
+      if (this.activeTourConfig?.moduleTourKey) {
+        this.dismissActiveTourOnRouteChange();
+      }
+      return;
+    }
+
+    await this.checkAndStartSubTabsTourForCurrentRoute();
+  }
+
+  private dismissActiveTourOnRouteChange(): void {
+    this.tourInProgress = false;
+    this.setTransitioning(false);
+    this.activeTourConfig = null;
+    this.driverObj.destroy();
   }
 
 
@@ -308,6 +329,29 @@ export class UserTourService implements OnDestroy {
     return raw === 'true' || raw === true;
   }
 
+  private getMatchingSubTabsConfigForUrl(currentUrl: string): TourConfig | null {
+    return SUB_TABS_TOUR_CONFIGS
+      .filter(config => {
+        if (config.requiredPermission && !this.rbac.allowedToAccess(config.requiredPermission)) return false;
+        if (!config.requiredRoute) return false;
+        if (!currentUrl.startsWith(config.requiredRoute)) return false;
+        if (!config.moduleTourKey) return false;
+        return true;
+      })
+      .sort((a, b) => (b.requiredRoute?.length ?? 0) - (a.requiredRoute?.length ?? 0))[0] ?? null;
+  }
+
+  private getMatchingSubTabsConfigForCurrentRoute(): TourConfig | null {
+    return this.getMatchingSubTabsConfigForUrl(this.router.url);
+  }
+
+  private initializeTabsDndLockFromSession(): void {
+    const match = this.getMatchingSubTabsConfigForCurrentRoute();
+    if (!match?.sessionKey) return;
+    if (this.getPersistedStep(match.sessionKey) === null) return;
+    this.tabsDndLocked.set(true);
+  }
+
   private async checkAndStartSubTabsTourForCurrentRoute(): Promise<void> {
         if (this.tourInProgress || this.subTabsStartInProgress) return;
     if (this.checkAndStartToursInProgress) {
@@ -320,20 +364,15 @@ export class UserTourService implements OnDestroy {
       }
       return;
     }
+    const match = this.getMatchingSubTabsConfigForCurrentRoute();
+    if (!match) {
+      this.tabsDndLocked.set(false);
+      return;
+    }
     this.subTabsStartInProgress = true;
+    this.tabsDndLocked.set(true);
     try {
       const prefs = await this.userPrefService.getPreferences();
-      const currentUrl = this.router.url;
-      const match = SUB_TABS_TOUR_CONFIGS
-        .filter(config => {
-          if (config.requiredPermission && !this.rbac.allowedToAccess(config.requiredPermission)) return false;
-          if (!config.requiredRoute) return false;
-          if (!currentUrl.startsWith(config.requiredRoute)) return false;
-          if (!config.moduleTourKey) return false;
-          return true;
-        })
-        .sort((a, b) => (b.requiredRoute?.length ?? 0) - (a.requiredRoute?.length ?? 0))[0];
-      if (!match) return;
       const moduleKey = match.moduleTourKey;
       if (!moduleKey) return;
 
@@ -342,6 +381,9 @@ export class UserTourService implements OnDestroy {
       await this.resumeOrStart(match);
     } finally {
       this.subTabsStartInProgress = false;
+      if (!this.tourInProgress) {
+        this.tabsDndLocked.set(false);
+      }
     }
   }
 
@@ -370,6 +412,7 @@ export class UserTourService implements OnDestroy {
 
     this.driverObj.setSteps(driverSteps as any);
     this.tourInProgress = true;
+    this.tabsDndLocked.set(true);
     this.isTourCompletedManually = false;
     this.setTransitioning(false);
     this.persistStep(fromStep, config.sessionKey);

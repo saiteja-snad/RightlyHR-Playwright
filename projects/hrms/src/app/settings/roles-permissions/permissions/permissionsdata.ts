@@ -411,7 +411,7 @@ export const permissionsData = [
 
   //Permissions Sub Tabs Section
   { fields: 'Waiting For Approval (Permissions)', View: false, Update: false, Create: false, Delete: false },
-  { fields: 'Approved (Permissions)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Processed (Permissions)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Rejected (Permissions)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Cancel (Permissions)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Request Permission Button', View: false, Update: false, Create: false, Delete: false },

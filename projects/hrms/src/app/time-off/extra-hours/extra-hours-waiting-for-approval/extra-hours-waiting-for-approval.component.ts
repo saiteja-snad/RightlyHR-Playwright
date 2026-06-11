@@ -242,6 +242,11 @@ export class ExtraHoursWaitingForApprovalComponent {
 
           this.responseSummary = response.data;
 
+          this.http.tirggerCountSignal.update((status) => ({
+            ...status,
+            compOff: true,
+          }));
+
 
           this.openModal(this.leaveSummary);
 
@@ -292,6 +297,11 @@ export class ExtraHoursWaitingForApprovalComponent {
             );
 
           this.responseSummary = response.data;
+
+          this.http.tirggerCountSignal.update((status) => ({
+            ...status,
+            compOff: true,
+          }));
 
           this.openModal(this.leaveSummary);
 

@@ -9,11 +9,19 @@
             </div>
         </div>
 
+        <div class="d-flex align-items-center gap-3">
         @if(rbac.allowedToAccess('My Tickets Tab.create')){
         <div>
             <button type="button" class="custom-btn btn-primary" (click)="openModal(addtickets)">{{'Add New Ticket' | translate}}</button>
         </div>
         }
+        <div>
+            <app-applicable-policies-trigger
+                [moduleKey]="applicablePolicies.moduleKey"
+                [subModuleKey]="applicablePolicies.subModuleKey">
+            </app-applicable-policies-trigger>
+        </div>
+        </div>
     </div>
 
     <!--Module Information-->
@@ -113,7 +121,7 @@
                                 filterBy="fullName" optionLabel="fullName" optionValue="employeeId"
                                 (onChange)="colleagueDetails($event.value)" placeholder="Please select employee"
                                 formControlName="colleaguename" class="custom-select w-100" [dataKey]="'fusionEmpId'">
-                                <ng-template let-emp pTemplate="item">{{ emp.firstName }} {{ emp.middleName }} 
+                                <ng-template let-emp pTemplate="item">{{ emp.firstName }} {{ emp.middleName }}
                                     {{ emp.lastName }}</ng-template>
                                 <ng-template let-emp pTemplate="selectedItem">{{ emp?.firstName }} {{ emp?.middleName }}
                                     {{ emp?.lastName }}</ng-template>
@@ -224,7 +232,7 @@
                             <div class="error-msg">{{'Sub Category is required' | translate}}</div>
                         </div>
                     </div>
-<!-- 
+<!--
                     <div class="col-md-6 mb-3">
                         <label class="form-label custom-label mb-2">{{'Type' | translate}}<span
                                 class="text-danger">*</span></label>

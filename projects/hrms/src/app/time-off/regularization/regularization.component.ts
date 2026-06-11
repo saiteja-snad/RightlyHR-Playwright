@@ -15,15 +15,19 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 import { TimeoffYearFilterService } from '../../services/timeoff-year-filter.service';
 import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
+import { ApplicablePoliciesTriggerComponent } from '../../shared/policies/applicable-policies-trigger/applicable-policies-trigger.component';
+import { APPLICABLE_POLICIES_KEYS } from '../../shared/policies/policy-visibility.catalog';
+
 @Component({
   selector: 'app-regularization',
-  imports: [RouterModule, ReactiveFormsModule, RegularizationTabsComponent, TranslateModule, CommonModule, Select, ModuleInformationComponent, NgbPopoverModule,ModuleInfoIconComponent],
+  imports: [RouterModule, ReactiveFormsModule, RegularizationTabsComponent, TranslateModule, CommonModule, Select, ModuleInformationComponent, NgbPopoverModule,ModuleInfoIconComponent, ApplicablePoliciesTriggerComponent],
   templateUrl: './regularization.component.html',
   styleUrl: './regularization.component.scss',
   encapsulation: ViewEncapsulation.None,
 })
 
 export class RegularizationComponent {
+  applicablePolicies = APPLICABLE_POLICIES_KEYS.TIME_OFF_REGULARIZATION;
   moduleinfo: string = '';
   subscription!: Subscription;
   ApprovedCount = 0;
@@ -96,7 +100,7 @@ export class RegularizationComponent {
     const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
     this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
-  
+
   // function to get the data of employees by hierarchy
 getTeamManagersDetails() {
   const EmployeeId = this.emp.employeeId;

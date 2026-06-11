@@ -9,14 +9,18 @@ import { HelpdeskHeaderTabsComponent } from '../../shared/helpdesk-header-tabs/h
 import { HelpdeskComponentTabsComponent } from '../../shared/helpdesk-component-tabs/helpdesk-component-tabs.component';
 import { TranslateModule } from '@ngx-translate/core';
 import { CommonModule } from '@angular/common';
+import { ApplicablePoliciesTriggerComponent } from '../../shared/policies/applicable-policies-trigger/applicable-policies-trigger.component';
+import { APPLICABLE_POLICIES_KEYS } from '../../shared/policies/policy-visibility.catalog';
+
 @Component({
   selector: 'app-support-helpdesk',
-imports: [RouterModule, NgbPopoverModule,TranslateModule,CommonModule, ModuleInformationComponent,ModuleInfoIconComponent,HelpdeskHeaderTabsComponent,HelpdeskComponentTabsComponent],
+imports: [RouterModule, NgbPopoverModule,TranslateModule,CommonModule, ModuleInformationComponent,ModuleInfoIconComponent,HelpdeskHeaderTabsComponent,HelpdeskComponentTabsComponent,ApplicablePoliciesTriggerComponent],
   templateUrl: './support-helpdesk.component.html',
   styleUrl: './support-helpdesk.component.scss'
 })
 export class SupportHelpdeskComponent {
- moduleinfo: string = '';
+  applicablePolicies = APPLICABLE_POLICIES_KEYS.HELP_DESK_TICKETS;
+  moduleinfo: string = '';
   hideTabs: any;
   showLeftTabs: any;
   constructor(public readonly router: Router, private route: ActivatedRoute ) { }

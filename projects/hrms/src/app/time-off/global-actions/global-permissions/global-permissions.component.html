@@ -8,7 +8,7 @@
         <app-module-info-icon placement="bottom" [ngbPopover]="popContent" class="cursor" />
       </div>
     </div>
-  
+
     <div class="d-flex gap-2">
       <div class="d-flex gap-2 align-items-center">
         <label class="form-label custom-label filter-labels m-0" for="">{{'Select Year' | translate}}</label>
@@ -24,6 +24,12 @@
         @if(rbac.allowedToAccess('Request Global Permission Button.view')){
         <button type="button" class="custom-btn btn-primary" (click)="openAdd()">{{'Raise Request' | translate}}</button>
         }
+      </div>
+      <div>
+        <app-applicable-policies-trigger
+        [moduleKey]="applicablePolicies.moduleKey"
+        [subModuleKey]="applicablePolicies.subModuleKey">
+      </app-applicable-policies-trigger>
       </div>
     </div>
   </div>
@@ -66,7 +72,7 @@
             </div>
       <div>
         <button type="button" class="custom-btn btn-primary" (click)="getAllGlobalPermissions()" >Generate</button>
-      </div> 
+      </div>
     </div> -->
 
   <!--Module Information-->
@@ -78,7 +84,7 @@
     <div class="component-left-tabs-container">
       <app-global-actions-tabs [selectedYear]="selectedYear" (tabChanged)="onTabChanged($event)" />
     </div>
-  
+
     <div class="component-right-content">
       <div class="custom-table-content">
         @if(!loading){

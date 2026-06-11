@@ -6,6 +6,13 @@
                 <app-module-info-icon  placement="bottom" [ngbPopover]="popContent" />
             </div>
     </div>
+        <div class="d-flex gap-3 align-items-center">
+
+    <app-applicable-policies-trigger
+        [moduleKey]="applicablePolicies.moduleKey"
+        [subModuleKey]="applicablePolicies.subModuleKey">
+      </app-applicable-policies-trigger>
+      </div>
   </div>
 
   <!--Module Information-->
@@ -26,7 +33,7 @@
           translate}}
         </label>
       </div>
-    
+
       <div class="form-check">
         <input type="checkbox" class="form-check-input me-2" id="showAnniversaries" [(ngModel)]="showAnniversaries"
           (change)="filterEventsByTitle()">
@@ -34,7 +41,7 @@
         <label class="form-check-label" for="showAnniversaries"><img src="calendar/milestone.png" alt="Mile Stone Icon"
             class="custom-event-icon me-1">{{ 'Anniversaries' | translate}}</label>
       </div>
-    
+
       <div class="form-check">
         <input type="checkbox" class="form-check-input me-2" id="showJoinees" [(ngModel)]="showJoinees"
           (change)="filterEventsByTitle()">
@@ -42,7 +49,7 @@
         <label class="form-check-label" for="showJoinees"><img src="calendar/new-joinees.png" alt="New Joinee icon"
             class="custom-event-icon me-1">{{ 'New Joinees' | translate }}</label>
       </div>
-    
+
       <div class="form-check">
         <input type="checkbox" class="form-check-input me-2" id="showHolidays" [(ngModel)]="showHolidays"
           (change)="filterEventsByTitle()">

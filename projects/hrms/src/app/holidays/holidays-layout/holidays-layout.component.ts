@@ -10,9 +10,11 @@ import { MODULE_INFOS } from '../../shared/modules-info';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
 import { TranslateModule } from '@ngx-translate/core';
+import { ApplicablePoliciesTriggerComponent } from '../../shared/policies/applicable-policies-trigger/applicable-policies-trigger.component';
+import { APPLICABLE_POLICIES_KEYS } from '../../shared/policies/policy-visibility.catalog';
 @Component({
   selector: 'app-holidays-layout',
-  imports: [RouterModule, CommonModule,ModuleInfoIconComponent, ReactiveFormsModule, Select, NgbPopoverModule, ModuleInformationComponent,TranslateModule],
+  imports: [RouterModule, CommonModule, ModuleInfoIconComponent, ReactiveFormsModule, Select, NgbPopoverModule, ModuleInformationComponent, TranslateModule, ApplicablePoliciesTriggerComponent],
   templateUrl: './holidays-layout.component.html',
   styleUrl: './holidays-layout.component.scss',
   encapsulation: ViewEncapsulation.None
@@ -31,6 +33,8 @@ export class HolidaysLayoutComponent implements OnInit, OnDestroy {
   subscription: any;
   Policies: any = [];
   jobshiftdetails: any;
+  applicablePoliciesModuleKey = '';
+  applicablePoliciesSubModuleKey = '';
 
   constructor(public router: Router, private http: HttpService) { }
 
@@ -65,6 +69,17 @@ export class HolidaysLayoutComponent implements OnInit, OnDestroy {
     };
     const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
     this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
+
+    if (url.includes('/holidays/optional-holidays')) {
+      this.applicablePoliciesModuleKey = APPLICABLE_POLICIES_KEYS.HOLIDAYS_OPTIONAL.moduleKey;
+      this.applicablePoliciesSubModuleKey = APPLICABLE_POLICIES_KEYS.HOLIDAYS_OPTIONAL.subModuleKey;
+    } else if (url.includes('/holidays/public-holidays')) {
+      this.applicablePoliciesModuleKey = APPLICABLE_POLICIES_KEYS.HOLIDAYS_PUBLIC.moduleKey;
+      this.applicablePoliciesSubModuleKey = APPLICABLE_POLICIES_KEYS.HOLIDAYS_PUBLIC.subModuleKey;
+    } else {
+      this.applicablePoliciesModuleKey = 'holidays';
+      this.applicablePoliciesSubModuleKey = '';
+    }
   }
 
   onYearChange() {

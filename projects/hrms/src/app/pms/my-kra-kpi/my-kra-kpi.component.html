@@ -18,6 +18,9 @@
             (onChange)="onReviewCycleChange($event.value)" (onClear)="onReviewCycleChange(null)" [filter]="true" showClear="true" />
         </div>
       </div>
+      <app-applicable-policies-trigger [moduleKey]="applicablePolicies.moduleKey"
+        [subModuleKey]="applicablePolicies.subModuleKey">
+      </app-applicable-policies-trigger>
     </div>
   </div>
   <ng-template #popContent>

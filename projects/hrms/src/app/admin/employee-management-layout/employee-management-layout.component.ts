@@ -14,9 +14,11 @@ import { AddProspectiveInternComponent } from '../prospective-interns/add-prospe
 import { EmployeeStatusCount } from '../../Interfaces/dashboard.modal';
 import { Skeleton } from 'primeng/skeleton';
 import { AddContractEmployeeComponent } from '../contract-employee/add-contract-employee/add-contract-employee.component';
+import { ApplicablePoliciesTriggerComponent } from "../../shared/policies/applicable-policies-trigger/applicable-policies-trigger.component";
+import { APPLICABLE_POLICIES_KEYS } from '../../shared/policies/policy-visibility.catalog';
 @Component({
   selector: 'app-employee-management-layout',
-  imports: [CommonModule, RouterModule, TranslateModule, TabsModule, ChartModule, AllEmployeesHeaderComponent, Skeleton],
+  imports: [CommonModule, RouterModule, TranslateModule, TabsModule, ChartModule, AllEmployeesHeaderComponent, Skeleton, ApplicablePoliciesTriggerComponent],
   templateUrl: './employee-management-layout.component.html',
   styleUrl: './employee-management-layout.component.scss',
   encapsulation: ViewEncapsulation.None
@@ -54,6 +56,7 @@ export class EmployeeManagementLayoutComponent {
   navTabsProspective: any[] = [];
   navTabsInactive: any[] = [];
   navTabsProbation: any[] = [];
+  readonly applicablePoliciesKeys = APPLICABLE_POLICIES_KEYS;
 
   constructor(private http: HttpService, public rbac: RbacService, private modalService: NgbModal, public router: Router) { }
 
@@ -332,5 +335,29 @@ export class EmployeeManagementLayoutComponent {
 
   get isInActiveEmployeeManagement(): boolean {
     return this.router.url.startsWith('/employee-management/inactive');
+  }
+
+  get applicablePoliciesModuleKey(): string {
+    return this.applicablePoliciesKeys.EMPLOYEES_ACTIVE.moduleKey;
+  }
+
+  get applicablePoliciesSubModuleKey(): string {
+    if (this.isActiveEmployeeManagement) {
+      return this.applicablePoliciesKeys.EMPLOYEES_ACTIVE.subModuleKey ?? '';
+    }
+
+    if (this.isProspectiveEmployeeManagement) {
+      return this.applicablePoliciesKeys.EMPLOYEES_PROSPECTIVE.subModuleKey ?? '';
+    }
+
+    if (this.isProbationEmployeeManagement) {
+      return this.applicablePoliciesKeys.EMPLOYEES_PROBATION.subModuleKey ?? '';
+    }
+
+    if (this.isInActiveEmployeeManagement) {
+      return this.applicablePoliciesKeys.EMPLOYEES_INACTIVE.subModuleKey ?? '';
+    }
+
+    return '';
   }
 }

@@ -22,9 +22,11 @@ import { TimeoffYearFilterService } from '../../services/timeoff-year-filter.ser
 import { ConfirmationIconComponent } from "../../icons/confirmation-icon/confirmation-icon.component";
 import { Skeleton } from "primeng/skeleton";
 import { AuthService } from '../../services/auth.service';
+import { ApplicablePoliciesTriggerComponent } from '../../shared/policies/applicable-policies-trigger/applicable-policies-trigger.component';
+import { APPLICABLE_POLICIES_KEYS } from '../../shared/policies/policy-visibility.catalog';
 @Component({
   selector: 'app-work-from-home',
-  imports: [CommonModule, RouterModule, ReactiveFormsModule, WfhApprovaltabsComponent,
+  imports: [CommonModule, RouterModule, ReactiveFormsModule, WfhApprovaltabsComponent, ApplicablePoliciesTriggerComponent,
     TranslateModule, DropdownModule, Select, ModuleInformationComponent, NgbPopoverModule, Skeleton, ConfirmationIconComponent],
   templateUrl: './work-from-home.component.html',
   styleUrl: './work-from-home.component.scss',
@@ -32,6 +34,7 @@ import { AuthService } from '../../services/auth.service';
 })
 
 export class WorkFromHomeComponent implements OnInit, OnDestroy {
+  applicablePolicies = APPLICABLE_POLICIES_KEYS.TIME_OFF_WFH;
    moduleinfo: string = '';
   subscription!: Subscription;
   empinfo = {} as IJob;

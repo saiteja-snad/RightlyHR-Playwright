@@ -13,13 +13,17 @@ import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
 import { ProfileIconComponent } from "../../icons/profile-icon/profile-icon.component";
 import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
+import { ApplicablePoliciesTriggerComponent } from '../../shared/policies/applicable-policies-trigger/applicable-policies-trigger.component';
+import { APPLICABLE_POLICIES_KEYS } from '../../shared/policies/policy-visibility.catalog';
+
 @Component({
   selector: 'app-contact-directory',
-  imports: [CommonModule, FormsModule, TranslateModule, TabsModule, Skeleton, NgbPopoverModule, ModuleInformationComponent, ProfileIconComponent, ModuleInfoIconComponent],
+  imports: [CommonModule, FormsModule, TranslateModule, TabsModule, Skeleton, NgbPopoverModule, ModuleInformationComponent, ProfileIconComponent, ModuleInfoIconComponent, ApplicablePoliciesTriggerComponent,ApplicablePoliciesTriggerComponent],
   templateUrl: './contact-directory.component.html',
   styleUrl: './contact-directory.component.scss'
 })
 export class ContactDirectoryComponent implements OnInit, OnDestroy {
+  applicablePolicies = APPLICABLE_POLICIES_KEYS.CONTACT_DIRECTORY;
   subscription!: Subscription
   contactData: any;
   moduleinfo: any

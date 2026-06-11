@@ -25,6 +25,8 @@ import { FormValidationsService } from '../../services/form-validations.service'
 import { ConfirmationIconComponent } from "../../icons/confirmation-icon/confirmation-icon.component";
 import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
 import { TimeoffYearFilterService } from '../../services/timeoff-year-filter.service';
+import { ApplicablePoliciesTriggerComponent } from '../../shared/policies/applicable-policies-trigger/applicable-policies-trigger.component';
+import { APPLICABLE_POLICIES_KEYS } from '../../shared/policies/policy-visibility.catalog';
 
 @Component({
   selector: 'app-on-be-half-of',
@@ -42,12 +44,14 @@ import { TimeoffYearFilterService } from '../../services/timeoff-year-filter.ser
     FormsModule,
     ConfirmationIconComponent,
     ModuleInfoIconComponent,
+    ApplicablePoliciesTriggerComponent,
   ],
   templateUrl: './on-be-half-of.component.html',
   styleUrl: './on-be-half-of.component.scss',
   encapsulation: ViewEncapsulation.None,
 })
 export class OnBeHalfOfComponent {
+  applicablePolicies = APPLICABLE_POLICIES_KEYS.ON_BE_HALF_OF_LEAVES;
   moduleinfo: string = '';
   @ViewChild('halfDayRadio') halfDayRadio: any;
   @ViewChild('fullDayRadio') fullDayRadio: any;
@@ -385,15 +389,15 @@ export class OnBeHalfOfComponent {
       'comp off leave',
       'compoff leave'
     ].includes((item.category?.name ?? '').toLowerCase());
-    
+
     const expiryDeduction = isCompOff ? (item.expiryDaysLeaves ? item.expiryDaysLeaves : 0) : 0;
-    
-    const isProbationActive = this.leaveapplication.empType === 'Probation' && 
-      this.leaveapplication?.probationEndDate && 
+
+    const isProbationActive = this.leaveapplication.empType === 'Probation' &&
+      this.leaveapplication?.probationEndDate &&
       new Date(this.leaveapplication.probationEndDate) > new Date();
-    
+
     if (isProbationActive && item.category?.isProbationAllowed && item.probationLeaves > 0) {
-      return item.availableProbationLeaves; 
+      return item.availableProbationLeaves;
     } else {
       return item.allowedDays - item.utilizedDays - item.booked - expiryDeduction;
     }
@@ -684,7 +688,7 @@ export class OnBeHalfOfComponent {
         next: (response: any) => {
           if (response.success) {
             this.categoryDetails = response.data as ICategoryDetails[];
-            
+
             // this.calculateProbationLeavs(this.categoryDetails);
              this.logOptionalLeaveDays(this.categoryDetails);
             this.initChart(this.categoryDetails);

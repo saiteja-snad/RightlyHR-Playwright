@@ -30,16 +30,20 @@ import { MultiSelectModule } from 'primeng/multiselect';
 import { BulkUploadStore } from '../bulk-upload/models/bulk-upload.store';
 import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { Select } from 'primeng/select';
+import { ApplicablePoliciesTriggerComponent } from '../../../shared/policies/applicable-policies-trigger/applicable-policies-trigger.component';
+import { APPLICABLE_POLICIES_KEYS } from '../../../shared/policies/policy-visibility.catalog';
 @Component({
   selector: 'app-time-sheet-view',
   imports: [ProjectManagementModuleInfoComponent, NgbDatepickerModule, FormsModule, ReactiveFormsModule,
     NgbPopover, CommonModule, DatePicker, DateformatPipe, AccordionModule, InfoIconComponent, ConfirmationIconComponent,
-    TranslateModule, DataLoaderContentComponent, TimesheetsTabsComponent, MenuModule, MultiSelectModule,Select],
+    TranslateModule, DataLoaderContentComponent, TimesheetsTabsComponent, MenuModule, MultiSelectModule,Select, ApplicablePoliciesTriggerComponent],
   templateUrl: './time-sheet-view.component.html',
   styleUrl: './time-sheet-view.component.scss',
 })
 
 export class TimeSheetViewComponent implements OnInit, OnDestroy {
+  applicablePolicies = APPLICABLE_POLICIES_KEYS.PROJECT_MANAGEMENT_TIMESHEETS;
+
   timesheetForm!: FormGroup;
   orgholidays: any;
   orgweekend: any;
@@ -658,7 +662,7 @@ getTaskType() {
       }
       : null;
       console.log(matchedResources);
-      
+
 
     const resourceDateRange = mergedResource ? {
       startDate: mergedResource.startDate ? new Date(mergedResource.startDate) : null,
@@ -1720,7 +1724,7 @@ openModal(content: any, dayForm: AbstractControl | null, index: number, dayKey: 
     });
 
     this.dayForm = dayForm;
-    //start//code for the task type 
+    //start//code for the task type
     let taskId = this.dayForm.get('taskId')?.value;
     let taskdata = this.alltaskTypes?.find((ele: any) => ele?.id == taskId && ele?.status?.toLowerCase() == 'inactive');
     if (taskdata) {

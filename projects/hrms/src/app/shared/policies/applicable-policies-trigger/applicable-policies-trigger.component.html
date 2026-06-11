@@ -1,0 +1,37 @@
+<ng-container *ngIf="!hideWhenEmpty || shouldRender">
+  <div ngbDropdown class="applicable-policies-dropdown" [autoClose]="'outside'">
+    <button
+      ngbDropdownToggle
+      type="button"
+      class="custom-btn btn-primary applicable-policies-btn"
+      [disabled]="isDisabled || loading"
+      (click)="loadPolicies()">
+      <i class="bi bi-file-earmark-text me-2"></i>{{ buttonLabel | translate }}
+    </button>
+
+    <div ngbDropdownMenu class="applicable-policies-menu">
+      <div *ngIf="loading" class="applicable-policies-loading">
+        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+        <span>{{ 'Loading...' | translate }}</span>
+      </div>
+
+      <button
+        type="button"
+        ngbDropdownItem
+        class="policy-menu-item"
+        *ngFor="let policy of policies"
+        (click)="openPolicy(policy)">
+        <span class="policy-menu-title">{{ policy.policyName }}</span>
+        <small class="policy-menu-description">{{ policy.policyDescription || ('View policy details' | translate) }}</small>
+      </button>
+
+      <div *ngIf="!loading && hasLoaded && policies.length === 0" class="policy-empty-state">
+        {{ 'No applicable policies available' | translate }}
+      </div>
+    </div>
+  </div>
+
+  <app-applicable-policy-viewer
+    (policyAcknowledged)="onPolicyAcknowledged($event)">
+  </app-applicable-policy-viewer>
+</ng-container>

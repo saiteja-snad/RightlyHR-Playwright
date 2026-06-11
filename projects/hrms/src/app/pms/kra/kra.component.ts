@@ -39,6 +39,9 @@ import { DomSanitizer, SafeResourceUrl, SafeUrl } from '@angular/platform-browse
 import { environment } from '../../../environments/environment';
 import { DocumentViewIconComponent } from '../../icons/document-view-icon/document-view-icon.component';
 import { FormValidationsService } from '../../services/form-validations.service';
+import { ApplicablePoliciesTriggerComponent } from '../../shared/policies/applicable-policies-trigger/applicable-policies-trigger.component';
+import { APPLICABLE_POLICIES_KEYS } from '../../shared/policies/policy-visibility.catalog';
+
 
 
 @Component({
@@ -58,12 +61,14 @@ import { FormValidationsService } from '../../services/form-validations.service'
     SelectModule,
     InfoIconComponent,
     DocumentViewIconComponent,
+    ApplicablePoliciesTriggerComponent,
   ],
   templateUrl: './kra.component.html',
   styleUrl: './kra.component.scss',
   encapsulation: ViewEncapsulation.None,
 })
 export class KraComponent implements OnInit, OnDestroy {
+  applicablePolicies = APPLICABLE_POLICIES_KEYS.PMS_KRA;
   moduleinfo = '';
   searchText = '';
   kraList: any[] = [];

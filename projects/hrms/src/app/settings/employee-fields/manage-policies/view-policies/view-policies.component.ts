@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Select } from 'primeng/select';
-import { Subscription } from 'rxjs';
+import { Subject, Subscription, takeUntil } from 'rxjs';
 import { HttpService } from '../../../../services/http.service';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -11,7 +11,12 @@ import { TranslateModule } from '@ngx-translate/core';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { InfoIconComponent } from "../../../../icons/info-icon/info-icon.component";
 import { MultiSelectModule } from 'primeng/multiselect';
-import { POLICY_VISIBILITY_MODULES } from '../../../../shared/policies/policy-visibility.catalog';
+import {
+  PolicyVisibilityModuleOption,
+  PolicyVisibilitySubModuleOption,
+  normalizePolicyVisibilityKey
+} from '../../../../shared/policies/policy-visibility.catalog';
+import { PolicyVisibilityOptionsService } from '../../../../shared/policies/policy-visibility-options.service';
 
 @Component({
   selector: 'app-view-policies',
@@ -31,6 +36,7 @@ import { POLICY_VISIBILITY_MODULES } from '../../../../shared/policies/policy-vi
 export class ViewPoliciesComponent implements OnInit, OnDestroy {
   @ViewChild('deletepopup') deletepopup: any;
   subscription!: Subscription;
+  private destroy$ = new Subject<void>();
   policyForm!: FormGroup;
   jobLocationDropDownData: any = [];
   updatePoliciesData: any;
@@ -46,7 +52,8 @@ export class ViewPoliciesComponent implements OnInit, OnDestroy {
     { name: '2027', value: 2027 },
     { name: '2028', value: 2028 },
   ];
-  policyVisibilityModules = POLICY_VISIBILITY_MODULES;
+  policyVisibilityModules: PolicyVisibilityModuleOption[] = [];
+  policyVisibilitySubModules: Record<string, Array<{ label: string; value: string }>> = {};
 
   constructor(
     private fb: FormBuilder,
@@ -54,7 +61,8 @@ export class ViewPoliciesComponent implements OnInit, OnDestroy {
     private http: HttpService,
     private confirmation: OpenModalService,
     private modalService: NgbModal,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private policyVisibilityOptionsService: PolicyVisibilityOptionsService
   ) {}
 
   ngOnInit(): void {
@@ -96,6 +104,7 @@ export class ViewPoliciesComponent implements OnInit, OnDestroy {
         this.policyFileNames[index] = fileName;
       }
     );
+    this.loadPolicyVisibilityModules();
 
     this.policyForm.patchValue({
       location: { jobLocationName: this.updatePoliciesData.locationName },
@@ -125,8 +134,8 @@ export class ViewPoliciesComponent implements OnInit, OnDestroy {
 
   private createVisibilityMappingRow(value?: any): FormGroup {
     const group = this.fb.group({
-      moduleKey: [value?.moduleKey ?? null],
-      subModuleKeys: [value?.subModuleKeys ?? []],
+      moduleKey: [normalizePolicyVisibilityKey(value?.moduleKey)],
+      subModuleKeys: [Array.isArray(value?.subModuleKeys) ? value.subModuleKeys.map((item: string) => normalizePolicyVisibilityKey(item)) : []],
       displayEnabled: [value?.displayEnabled ?? false]
     });
     group.disable({ emitEvent: false });
@@ -134,24 +143,40 @@ export class ViewPoliciesComponent implements OnInit, OnDestroy {
   }
 
   private getInitialVisibilityMappings(item: any): FormGroup[] {
-    const targets = item?.visibilityTargets;
-    if (!Array.isArray(targets) || targets.length === 0) {
-      return [this.createVisibilityMappingRow()];
-    }
     const byModule = new Map<string, { moduleKey: string; subModuleKeys: string[]; displayEnabled: boolean }>();
-    targets.forEach((t: any) => {
-      const moduleKey = String(t?.moduleKey ?? '');
-      const subModuleKey = String(t?.subModuleKey ?? '');
-      if (!moduleKey || !subModuleKey) return;
-      const existing = byModule.get(moduleKey);
-      const enabled = t?.enabled === true || t?.displayEnabled === true;
-      if (!existing) {
-        byModule.set(moduleKey, { moduleKey, subModuleKeys: [subModuleKey], displayEnabled: enabled });
-      } else {
-        if (!existing.subModuleKeys.includes(subModuleKey)) existing.subModuleKeys.push(subModuleKey);
-        existing.displayEnabled = existing.displayEnabled || enabled;
+    const moduleMappings = item?.moduleMappings;
+    if (Array.isArray(moduleMappings) && moduleMappings.length > 0) {
+      moduleMappings.forEach((m: any) => {
+        const moduleKey = normalizePolicyVisibilityKey(m?.moduleName);
+        const subModuleKey = normalizePolicyVisibilityKey(m?.subModuleName);
+        if (!moduleKey) return;
+        const existing = byModule.get(moduleKey);
+        const enabled = m?.isVisible === true;
+        if (!existing) {
+          byModule.set(moduleKey, { moduleKey, subModuleKeys: subModuleKey ? [subModuleKey] : [], displayEnabled: enabled });
+        } else {
+          if (subModuleKey && !existing.subModuleKeys.includes(subModuleKey)) existing.subModuleKeys.push(subModuleKey);
+          existing.displayEnabled = existing.displayEnabled || enabled;
+        }
+      });
+    } else {
+      const targets = item?.visibilityTargets;
+      if (Array.isArray(targets) && targets.length > 0) {
+        targets.forEach((t: any) => {
+          const moduleKey = normalizePolicyVisibilityKey(t?.moduleKey);
+          const subModuleKey = normalizePolicyVisibilityKey(t?.subModuleKey);
+          if (!moduleKey) return;
+          const existing = byModule.get(moduleKey);
+          const enabled = t?.enabled === true || t?.displayEnabled === true;
+          if (!existing) {
+            byModule.set(moduleKey, { moduleKey, subModuleKeys: subModuleKey ? [subModuleKey] : [], displayEnabled: enabled });
+          } else {
+            if (subModuleKey && !existing.subModuleKeys.includes(subModuleKey)) existing.subModuleKeys.push(subModuleKey);
+            existing.displayEnabled = existing.displayEnabled || enabled;
+          }
+        });
       }
-    });
+    }
     const rows = [...byModule.values()];
     if (rows.length === 0) return [this.createVisibilityMappingRow()];
     return rows.map(r => this.createVisibilityMappingRow(r));
@@ -163,13 +188,56 @@ export class ViewPoliciesComponent implements OnInit, OnDestroy {
 
   isDisplayToggleVisible(policyIndex: number, mappingIndex: number): boolean {
     const row = this.getVisibilityMappings(policyIndex).at(mappingIndex) as FormGroup;
+    const moduleKey = normalizePolicyVisibilityKey(row.get('moduleKey')?.value);
     const selected = row.get('subModuleKeys')?.value as string[] | null;
+    if (!moduleKey) {
+      return false;
+    }
+
+    if (this.getSubModuleOptions(moduleKey).length === 0) {
+      return true;
+    }
+
     return (selected?.length ?? 0) > 0;
   }
 
   getSubModuleOptions(moduleKey: string | null): Array<{ label: string; value: string }> {
-    const mod = this.policyVisibilityModules.find(m => m.key === moduleKey);
-    return (mod?.subModules ?? []).map(s => ({ label: s.label, value: s.key }));
+    return this.policyVisibilitySubModules[normalizePolicyVisibilityKey(moduleKey)] ?? [];
+  }
+
+  private loadPolicyVisibilityModules(): void {
+    this.policyVisibilityOptionsService.getModules()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((modules) => {
+        this.policyVisibilityModules = modules;
+        this.preloadExistingSubModuleOptions();
+      });
+  }
+
+  private preloadExistingSubModuleOptions(): void {
+    this.policies.controls.forEach((policyControl) => {
+      const mappings = policyControl.get('visibilityMappings') as FormArray | null;
+      mappings?.controls.forEach((mappingControl) => {
+        const moduleKey = normalizePolicyVisibilityKey(mappingControl.get('moduleKey')?.value);
+        this.loadSubModuleOptions(moduleKey);
+      });
+    });
+  }
+
+  private loadSubModuleOptions(moduleKey: string | null | undefined): void {
+    const normalizedModuleKey = normalizePolicyVisibilityKey(moduleKey);
+    if (!normalizedModuleKey || this.policyVisibilitySubModules[normalizedModuleKey]) {
+      return;
+    }
+
+    this.policyVisibilityOptionsService.getSubModules(normalizedModuleKey)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((subModules: PolicyVisibilitySubModuleOption[]) => {
+        this.policyVisibilitySubModules[normalizedModuleKey] = subModules.map((item) => ({
+          label: item.label,
+          value: item.key
+        }));
+      });
   }
 
   addPolicyRow() {
@@ -413,6 +481,8 @@ export class ViewPoliciesComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
     if (this.subscription) {
       this.subscription.unsubscribe();
     }

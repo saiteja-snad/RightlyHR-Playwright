@@ -62,6 +62,12 @@
                 <button type="button" (click)="navigateToLeaveSummary()" class="custom-btn btn-primary">View Leave Summary</button>
                 }
             </div>
+            <div *ngIf="disaplyapplybutton">
+                <app-applicable-policies-trigger
+                    [moduleKey]="applicablePolicies.moduleKey"
+                    [subModuleKey]="applicablePolicies.subModuleKey">
+                </app-applicable-policies-trigger>
+            </div>
         </div>
     </div>
 
@@ -101,7 +107,7 @@
                             <p class="m-0">0</p>
                             }
                         </div>
-                        
+
                         @if(this.employeeiddetails.empType === 'Probation' && (item.category.isProbationAllowed && item.probationLeaves >= 0)){
                         <div class="separator"></div>
                         <div class="leave-category-text">
@@ -111,8 +117,8 @@
                             }
                         </div>
                         }
-                        
-                        
+
+
                         @if (
                         ['comp off',
                         'compoff',

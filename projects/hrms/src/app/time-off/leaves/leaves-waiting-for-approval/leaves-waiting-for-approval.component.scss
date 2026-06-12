@@ -33,3 +33,12 @@ td {
     background: white !important;
     color: #2F3E8F !important;
 }
+
+.no-data-row td {
+    border: none !important;
+}
+
+.no-data-cell {
+    border: none !important;
+    padding-top: 0 !important;
+}

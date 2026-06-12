@@ -34,3 +34,12 @@
 .chip-btn {
     cursor: pointer !important;
 }
+
+.no-data-row td {
+    border: none !important;
+}
+
+.no-data-cell {
+    border: none !important;
+    padding-top: 0 !important;
+}

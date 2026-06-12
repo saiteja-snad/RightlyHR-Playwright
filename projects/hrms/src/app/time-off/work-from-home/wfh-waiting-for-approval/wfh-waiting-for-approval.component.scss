@@ -17,3 +17,12 @@
 .d-flex.align-items-center.justify-content-center.gap-2.mb-3 {
     gap: 10px !important;
 }
+
+.no-data-row td {
+    border: none !important;
+}
+
+.no-data-cell {
+    border: none !important;
+    padding-top: 0 !important;
+}

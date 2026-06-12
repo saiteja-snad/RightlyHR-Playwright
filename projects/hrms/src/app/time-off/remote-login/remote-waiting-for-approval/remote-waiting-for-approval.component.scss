@@ -30,3 +30,17 @@
 .p-datatable .p-datatable-tbody > tr > td {
     border: none !important;
 }
+
+:host ::ng-deep .remote-no-data-cell {
+    height: 200px !important;
+    position: relative !important;
+}
+
+.no-data-row td {
+    border: none !important;
+}
+
+.no-data-cell {
+    border: none !important;
+    padding-top: 0 !important;
+}

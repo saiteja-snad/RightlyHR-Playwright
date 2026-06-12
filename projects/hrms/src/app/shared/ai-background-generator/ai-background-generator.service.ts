@@ -1,10 +1,17 @@
 import { Injectable } from '@angular/core';
-import { Observable, from } from 'rxjs';
-import { BackgroundTemplate, GeneratedVariation } from './ai-background-generator.model';
 import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
+import {
+  AiGenerateBackgroundRequest,
+  AiGenerateBackgroundResponse,
+  BackgroundTemplate,
+} from './ai-background-generator.model';
 
 @Injectable({ providedIn: 'root' })
 export class AiBackgroundService {
+
+  private readonly apiUrl = environment.ApiUrl;
 
   constructor(private http: HttpClient) {}
 
@@ -19,41 +26,27 @@ export class AiBackgroundService {
     ];
   }
 
-  /**
-   * Step 1: Remove background via backend API
-   * Replace 'YOUR_API_ENDPOINT/remove-background' with your actual backend URL
-   * Expected response: { url: string } or blob
-   */
-  removeBackground(imageFile: File): Observable<Blob> {
-    const formData = new FormData();
-    formData.append('image', imageFile);
-    return this.http.post('YOUR_API_ENDPOINT/remove-background', formData, { responseType: 'blob' });
+  fileToBase64(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve((reader.result as string).split(',')[1]);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
   }
 
-  /**
-   * Step 2: Generate background variations via backend API
-   * Replace 'YOUR_API_ENDPOINT/generate-variations' with your actual backend URL
-   * Expected response: { variations: [{ url: string, label: string }] }
-   */
-  generateVariations(imageFile: File, templateId: string, prompt: string): Observable<any> {
-    const formData = new FormData();
-    formData.append('image', imageFile);
-    formData.append('templateId', templateId);
-    formData.append('prompt', prompt);
-    return this.http.post('YOUR_API_ENDPOINT/generate-variations', formData);
+  generateBackgrounds(payload: AiGenerateBackgroundRequest): Observable<AiGenerateBackgroundResponse> {
+    return this.http.post<AiGenerateBackgroundResponse>(
+      `${this.apiUrl}v2/Ai/generate-image-backgrounds`,
+      payload
+    );
   }
 
-  /**
-   * Converts a blob to object URL for preview
-   */
-  blobToObjectUrl(blob: Blob): string {
-    return URL.createObjectURL(blob);
-  }
-
-  /**
-   * Converts a blob to File for upload
-   */
-  blobToFile(blob: Blob, fileName: string): File {
-    return new File([blob], fileName, { type: blob.type || 'image/png' });
+  base64ToFile(base64: string, fileName: string, mimeType: string = 'image/png'): File {
+    const byteString = atob(base64);
+    const ab = new ArrayBuffer(byteString.length);
+    const ia = new Uint8Array(ab);
+    for (let i = 0; i < byteString.length; i++) ia[i] = byteString.charCodeAt(i);
+    return new File([ab], fileName, { type: mimeType });
   }
 }

@@ -30,6 +30,7 @@ export class ClonePoliciesComponent implements OnInit, OnDestroy {
   subscription!: Subscription;
   private destroy$ = new Subject<void>();
   isFormEdited: boolean = false;
+  submitAttempted = false;
   policyForm!: FormGroup;
   jobLocationDropDownData: any = [];
   updatePoliciesData: any;
@@ -87,6 +88,7 @@ export class ClonePoliciesComponent implements OnInit, OnDestroy {
         )
       );
     });
+    this.policies.controls.forEach((_, policyIndex) => this.validateDuplicateModules(policyIndex));
     this.loadPolicyVisibilityModules();
 
 
@@ -209,7 +211,7 @@ restrictPolicyNamedescription(event: KeyboardEvent) {
 
   private createVisibilityMappingRow(value?: any): FormGroup {
     return this.fb.group({
-      moduleKey: [normalizePolicyVisibilityKey(value?.moduleKey)],
+      moduleKey: [normalizePolicyVisibilityKey(value?.moduleKey), Validators.required],
       subModuleKeys: [Array.isArray(value?.subModuleKeys) ? value.subModuleKeys.map((item: string) => normalizePolicyVisibilityKey(item)) : []],
       displayEnabled: [value?.displayEnabled ?? false]
     });
@@ -261,12 +263,14 @@ restrictPolicyNamedescription(event: KeyboardEvent) {
 
   addVisibilityMapping(policyIndex: number): void {
     this.getVisibilityMappings(policyIndex).push(this.createVisibilityMappingRow());
+    this.validateDuplicateModules(policyIndex);
   }
 
   removeVisibilityMapping(policyIndex: number, mappingIndex: number): void {
     const mappings = this.getVisibilityMappings(policyIndex);
     if (mappings.length <= 1) return;
     mappings.removeAt(mappingIndex);
+    this.validateDuplicateModules(policyIndex);
   }
 
   onModuleKeyChange(policyIndex: number, mappingIndex: number, moduleKey: string | null): void {
@@ -274,6 +278,7 @@ restrictPolicyNamedescription(event: KeyboardEvent) {
     const normalizedModuleKey = normalizePolicyVisibilityKey(moduleKey);
     row.patchValue({ moduleKey: normalizedModuleKey, subModuleKeys: [], displayEnabled: false });
     this.loadSubModuleOptions(normalizedModuleKey);
+    this.validateDuplicateModules(policyIndex);
   }
 
   onSubModuleKeysChange(policyIndex: number, mappingIndex: number, subModuleKeys: string[] | null): void {
@@ -300,6 +305,53 @@ restrictPolicyNamedescription(event: KeyboardEvent) {
 
   getSubModuleOptions(moduleKey: string | null): Array<{ label: string; value: string }> {
     return this.policyVisibilitySubModules[normalizePolicyVisibilityKey(moduleKey)] ?? [];
+  }
+
+  getModuleOptionsForRow(policyIndex: number, mappingIndex: number): Array<PolicyVisibilityModuleOption & { disabled?: boolean }> {
+    const selectedModules = this.getVisibilityMappings(policyIndex).controls
+      .map((control, index) => index === mappingIndex ? null : normalizePolicyVisibilityKey(control.get('moduleKey')?.value))
+      .filter((value): value is string => !!value);
+    const currentValue = normalizePolicyVisibilityKey(this.getVisibilityMappings(policyIndex).at(mappingIndex)?.get('moduleKey')?.value);
+
+    return this.policyVisibilityModules.map((module) => ({
+      ...module,
+      disabled: module.key !== currentValue && selectedModules.includes(module.key)
+    }));
+  }
+
+  shouldShowMappingError(policyIndex: number, mappingIndex: number, controlName: 'moduleKey' | 'subModuleKeys', errorKey: string): boolean {
+    const control = this.getVisibilityMappings(policyIndex).at(mappingIndex)?.get(controlName);
+    return !!control && control.hasError(errorKey) && (control.touched || this.submitAttempted);
+  }
+
+  private validateDuplicateModules(policyIndex: number): void {
+    const mappings = this.getVisibilityMappings(policyIndex);
+    const counts = new Map<string, number>();
+
+    mappings.controls.forEach((control) => {
+      const moduleKey = normalizePolicyVisibilityKey(control.get('moduleKey')?.value);
+      if (!moduleKey) {
+        return;
+      }
+      counts.set(moduleKey, (counts.get(moduleKey) ?? 0) + 1);
+    });
+
+    mappings.controls.forEach((control) => {
+      const moduleControl = control.get('moduleKey');
+      const moduleKey = normalizePolicyVisibilityKey(moduleControl?.value);
+      if (!moduleControl) {
+        return;
+      }
+
+      const errors = { ...(moduleControl.errors ?? {}) };
+      if (moduleKey && (counts.get(moduleKey) ?? 0) > 1) {
+        errors['duplicateModule'] = true;
+      } else {
+        delete errors['duplicateModule'];
+      }
+
+      moduleControl.setErrors(Object.keys(errors).length ? errors : null);
+    });
   }
 
   private loadPolicyVisibilityModules(): void {
@@ -392,6 +444,10 @@ restrictPolicyNamedescription(event: KeyboardEvent) {
 
 
   submit() {
+    this.submitAttempted = true;
+    this.policyForm.markAllAsTouched();
+    this.policies.controls.forEach((_, policyIndex) => this.validateDuplicateModules(policyIndex));
+    if (this.policyForm.invalid) return;
 
     const formValue = this.policyForm.value;
 

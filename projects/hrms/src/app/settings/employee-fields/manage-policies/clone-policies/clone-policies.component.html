@@ -162,9 +162,10 @@
                     <td>
                       <div class="custom-p-select-content m-0">
                         <p-select
-                          [options]="policyVisibilityModules"
+                          [options]="getModuleOptionsForRow(i, m)"
                           optionLabel="label"
                           optionValue="key"
+                          optionDisabled="disabled"
                           formControlName="moduleKey"
                           class="form-select custom-select w-100"
                           appendTo="body"
@@ -173,6 +174,12 @@
                           placeholder="Please select a module"
                           (onChange)="onModuleKeyChange(i, m, $event.value)">
                         </p-select>
+                      </div>
+                      <div *ngIf="shouldShowMappingError(i, m, 'moduleKey', 'required')" class="error-msg text-start">
+                        {{'Module is required' | translate}}
+                      </div>
+                      <div *ngIf="shouldShowMappingError(i, m, 'moduleKey', 'duplicateModule')" class="error-msg text-start">
+                        {{'Module already selected' | translate}}
                       </div>
                     </td>
                     <td>

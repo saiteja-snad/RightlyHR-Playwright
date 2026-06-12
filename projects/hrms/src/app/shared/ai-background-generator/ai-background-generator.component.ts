@@ -1,6 +1,6 @@
 import { Component, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbModal, NgbModalRef, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { TextareaModule } from 'primeng/textarea';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
@@ -61,7 +61,7 @@ export class AiBackgroundGeneratorComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.form = this.fb.group({ prompt: [''] });
+    this.form = this.fb.group({ prompt: ['',Validators.required] });
     this.templates = this.aiService.getTemplates();
   }
 

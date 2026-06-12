@@ -112,7 +112,7 @@
 
         <!-- Action buttons -->
         <div class="action-buttons">
-          <button class="generate-btn" [disabled]="!uploadedBase64 || isGenerating" (click)="generate()">
+          <button class="generate-btn" [disabled]="form.invalid" (click)="generate()">
             <p-progressSpinner *ngIf="isGenerating" strokeWidth="4" animationDuration=".8s" styleClass="btn-spinner" />
             <i *ngIf="!isGenerating" class="pi pi-sparkles me-2"></i>
             {{ generatingLabel }}

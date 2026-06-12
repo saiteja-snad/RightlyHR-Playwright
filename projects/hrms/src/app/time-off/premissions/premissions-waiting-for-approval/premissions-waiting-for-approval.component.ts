@@ -21,6 +21,7 @@ import { FormValidationsService } from '../../../services/form-validations.servi
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.service';
 import { ConfirmationIconComponent } from "../../../icons/confirmation-icon/confirmation-icon.component";
+import { TableModule } from 'primeng/table';
 @Component({
   selector: 'app-premissions-waiting-for-approval',
   imports: [
@@ -35,7 +36,8 @@ import { ConfirmationIconComponent } from "../../../icons/confirmation-icon/conf
     DateformatPipe,
     DataLoaderContentComponent,
     InfoIconComponent,
-    ConfirmationIconComponent
+    ConfirmationIconComponent,
+    TableModule
   ],
   templateUrl: './premissions-waiting-for-approval.component.html',
   styleUrl: './premissions-waiting-for-approval.component.scss',
@@ -65,6 +67,9 @@ export class PremissionsWaitingForApprovalComponent implements OnInit, OnDestroy
   selectedPermissionData: any;
   approveForm!: FormGroup;
   rejectForm!: FormGroup;
+  selectedProducts: any[] = [];
+  searchText: string = '';
+  multiSelect = false;
 
   spinnerLoader = false;
   selectedLeaveStatus: any;
@@ -249,9 +254,9 @@ export class PremissionsWaitingForApprovalComponent implements OnInit, OnDestroy
 
   getDataEMPPermissions() {
     console.log(
-  'permissionForLoggedInUser:',
-  this.permissionForLoggedInUser
-);
+      'permissionForLoggedInUser:',
+      this.permissionForLoggedInUser
+    );
     let empId = this.selectempid;
     this.dataload = true;
     this.permissionForLoggedInUser = false;
@@ -353,11 +358,26 @@ export class PremissionsWaitingForApprovalComponent implements OnInit, OnDestroy
             count => count + 1
           );
 
-          this.modalService.open(this.leaveSummary, {
-            centered: true,
-            backdrop: 'static',
-            size: 'lg'
-          });
+          if (this.selectedProducts && this.selectedProducts.length > 0) {
+
+            this.modalService.open(this.leaveSummary, {
+              centered: true,
+              backdrop: 'static',
+              size: 'lg'
+            });
+
+            setTimeout(() => {
+              this.modalService.dismissAll();
+            }, 5000);
+
+          } else {
+
+            this.signalService.handleResponse(
+              this.requestSummary,
+              'Permission request approved successfully'
+            );
+
+          }
         },
         error: (err: any) => {
           console.error(err);
@@ -414,12 +434,26 @@ export class PremissionsWaitingForApprovalComponent implements OnInit, OnDestroy
           this.signalService.timecountTriggerSignal.update(
             count => count + 1
           );
+          if (this.selectedProducts && this.selectedProducts.length > 0) {
 
-          this.modalService.open(this.leaveSummary, {
-            centered: true,
-            backdrop: 'static',
-            size: 'lg'
-          });
+            this.modalService.open(this.leaveSummary, {
+              centered: true,
+              backdrop: 'static',
+              size: 'lg'
+            });
+
+            setTimeout(() => {
+              this.modalService.dismissAll();
+            }, 5000);
+
+          } else {
+
+            this.signalService.handleResponse(
+              this.requestSummary,
+              'Permission request rejected successfully'
+            );
+
+          }
         },
         error: (err: any) => {
           this.spinnerLoader = false;
@@ -430,7 +464,7 @@ export class PremissionsWaitingForApprovalComponent implements OnInit, OnDestroy
   }
 
   canApprove(item: any): boolean {
-     console.log('canApprove called');
+    console.log('canApprove called');
 
     const currentApproverId =
       item?.pendingApprovalsHeader?.currentApproverId?.toString();
@@ -438,9 +472,20 @@ export class PremissionsWaitingForApprovalComponent implements OnInit, OnDestroy
     const loginId =
       this.LOGIN.employeeId?.toString();
 
-   
+
 
     return currentApproverId === loginId;
+  }
+
+  selectCheck(value: any) {
+    this.multiSelect = Array.isArray(value) && value.length > 0;
+
+    if (!value || value.length === 0) {
+      this.selectedProducts = [];
+      return;
+    }
+
+    this.selectedProducts = [...value];
   }
 
   ngOnDestroy(): void {

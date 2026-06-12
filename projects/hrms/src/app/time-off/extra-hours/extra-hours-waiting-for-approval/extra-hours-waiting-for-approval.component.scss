@@ -11,3 +11,26 @@
     line-height: normal !important;
     font-size: 14px !important;
 }
+
+.approval-status-buttons {
+    display: flex;
+    justify-content: flex-start;
+    margin-bottom: 1rem;
+}
+
+.approval-status-buttons .chip-btn {
+    width: 100px !important;
+    min-width: 100px !important;
+    height: 32px !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    padding: 0 !important;
+    text-align: center !important;
+}
+
+.chip-btn {
+    cursor: pointer !important;
+}

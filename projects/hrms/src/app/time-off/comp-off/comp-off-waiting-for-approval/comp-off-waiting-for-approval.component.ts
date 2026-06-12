@@ -18,6 +18,7 @@ import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component"
 import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Validators } from '@angular/forms';
+import { TableModule } from 'primeng/table';
 @Component({
   selector: 'app-comp-off-waiting-for-approval',
   imports: [
@@ -32,6 +33,7 @@ import { Validators } from '@angular/forms';
     TranslateModule,
     InfoIconComponent,
     ReactiveFormsModule,
+    TableModule,
   ],
   templateUrl: './comp-off-waiting-for-approval.component.html',
   styleUrl: './comp-off-waiting-for-approval.component.scss',
@@ -56,6 +58,8 @@ export class CompOffWaitingForApprovalComponent implements OnInit, OnDestroy {
   ];
   selectedYear: any;
   selectedCompOffData: any;
+  selectedProducts: any[] = [];
+  searchText: string = '';
   approveForm!: FormGroup;
   rejectForm!: FormGroup;
   showActions = false;
@@ -116,10 +120,10 @@ export class CompOffWaitingForApprovalComponent implements OnInit, OnDestroy {
     const currentApproverId =
       item?.pendingApprovalsHeader?.currentApproverId?.toString();
 
-   
+
     const loginId =
       this.LOGIN.employeeId?.toString();
-       console.log('currentApproverId:', currentApproverId);
+    console.log('currentApproverId:', currentApproverId);
     console.log('loginId:', loginId);
     console.log('item:', item);
 
@@ -142,10 +146,16 @@ export class CompOffWaitingForApprovalComponent implements OnInit, OnDestroy {
     this.http.getFilterCompoffDataByID(empId, this.selectedYear).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: any) => {
         this.compOff = response;
+
         this.waitingForApprovalCompOff = this.compOff.filter(
-          (element: { status: string }) => element.status === 'Waiting for Approval'
+          (element: { status: string }) =>
+            element.status === 'Waiting for Approval'
         );
-        this.waitingForApprovalCompOffCount = this.waitingForApprovalCompOff.length;
+
+        this.waitingForApprovalCompOffCount =
+          this.waitingForApprovalCompOff.length;
+
+        this.selectedProducts = []; // ADD THIS
       },
       error: (error) => {
         console.error('Error fetching data:', error);
@@ -160,6 +170,9 @@ export class CompOffWaitingForApprovalComponent implements OnInit, OnDestroy {
   approveCompOff(approvalPopup: any, item: any) {
     this.selectedCompOffData = item;
 
+    this.selectedLeaveStatus = '';   // add this
+    this.approveForm.reset();        // add this
+
     this.modalService.open(approvalPopup, {
       centered: true,
       backdrop: 'static'
@@ -167,8 +180,10 @@ export class CompOffWaitingForApprovalComponent implements OnInit, OnDestroy {
   }
 
   rejectCompOff(rejectPopup: any, item: any) {
-    console.log('Reject Clicked', item);
     this.selectedCompOffData = item;
+
+    this.selectedLeaveStatus = '';   // add this
+    this.rejectForm.reset();         // add this
 
     this.modalService.open(rejectPopup, {
       centered: true,
@@ -237,15 +252,26 @@ export class CompOffWaitingForApprovalComponent implements OnInit, OnDestroy {
 
             this.waitingForApprovalCompOffCount =
               this.waitingForApprovalCompOff.length;
+            this.selectedProducts = [];
 
             this.requestSummary = response.data;
 
-            this.openModal(this.leaveSummary);
+            if (this.selectedProducts && this.selectedProducts.length > 0) {
 
-            setTimeout(() => {
-              this.modalService.dismissAll();
-            }, 5000);
+              this.openModal(this.leaveSummary);
 
+              setTimeout(() => {
+                this.modalService.dismissAll();
+              }, 5000);
+
+            } else {
+
+              this.signalService.handleResponse(
+                this.requestSummary,
+                'Comp Off request approved successfully'
+              );
+
+            }
             this.approveForm.reset();
           },
 
@@ -313,13 +339,25 @@ export class CompOffWaitingForApprovalComponent implements OnInit, OnDestroy {
             this.waitingForApprovalCompOffCount =
               this.waitingForApprovalCompOff.length;
 
+            this.selectedProducts = [];
             this.requestSummary = response.data;
 
-            this.openModal(this.leaveSummary);
+            if (this.selectedProducts && this.selectedProducts.length > 0) {
 
-            setTimeout(() => {
-              this.modalService.dismissAll();
-            }, 5000);
+              this.openModal(this.leaveSummary);
+
+              setTimeout(() => {
+                this.modalService.dismissAll();
+              }, 5000);
+
+            } else {
+
+              this.signalService.handleResponse(
+                this.requestSummary,
+                'Comp Off request rejected successfully'
+              );
+
+            }
 
             this.rejectForm.reset();
           },
@@ -341,7 +379,9 @@ export class CompOffWaitingForApprovalComponent implements OnInit, OnDestroy {
     }
   }
 
-
+  selectCheck(event: any) {
+    this.selectedProducts = event;
+  }
 
   ngOnDestroy(): void {
     this.destroy$.next(true);

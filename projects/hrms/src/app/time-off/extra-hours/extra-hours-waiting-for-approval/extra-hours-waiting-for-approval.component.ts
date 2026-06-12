@@ -16,6 +16,8 @@ import { DataLoaderContentComponent } from '../../../shared/data-loader-content/
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.service';
 import { environment } from '../../../../environments/environment';
+import { TableModule } from 'primeng/table';
+import { OpenModalService } from '../../../services/open-modal.service';
 
 @Component({
   selector: 'app-extra-hours-waiting-for-approval',
@@ -30,7 +32,8 @@ import { environment } from '../../../../environments/environment';
     DataLoaderContentComponent,
     TranslateModule,
     InfoIconComponent,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    TableModule
   ],
   templateUrl: './extra-hours-waiting-for-approval.component.html',
   styleUrl: './extra-hours-waiting-for-approval.component.scss'
@@ -61,12 +64,13 @@ export class ExtraHoursWaitingForApprovalComponent {
   requestBody: any = {};
   approverComments: any[] = [];
   permissionForLoggedInUser = true;
-
+  selectedProducts: any[] = [];
+  searchText: string = '';
   @ViewChild('leaveSummary') leaveSummary: any;
   LOGIN: any = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
 
   constructor(private http: HttpService, public rbac: RbacService, private TimeoffYearFilterService: TimeoffYearFilterService, private modalService: NgbModal,
-    private fb: FormBuilder) {
+    private fb: FormBuilder,private sharedModalService: OpenModalService) {
     effect(() => {
       if (this.http.tirggerCountSignal().permission) {
         this.getDataPermissions();
@@ -240,20 +244,28 @@ export class ExtraHoursWaitingForApprovalComponent {
             this.waitingForApprovalPerimisions.filter(
               x => x.id !== this.selectedExtraHourData.id
             );
+          this.selectedProducts =
+            this.selectedProducts.filter(
+              x => x.id !== this.selectedExtraHourData.id
+            );
 
           this.responseSummary = response.data;
 
-          this.http.tirggerCountSignal.update((status) => ({
-            ...status,
-            compOff: true,
-          }));
+          if (this.selectedProducts && this.selectedProducts.length > 0) {
 
+            this.openModal(this.leaveSummary);
 
-          this.openModal(this.leaveSummary);
+            setTimeout(() => {
+              this.modalService.dismissAll();
+            }, 3000);
 
-          setTimeout(() => {
-            this.modalService.dismissAll();
-          }, 3000);
+          } else {
+
+            this.sharedModalService.openSuccessModal(
+              'Extra Hour request approved successfully'
+            );
+
+          }
         },
         complete: () => {
           this.spinnerLoader = false;
@@ -297,19 +309,28 @@ export class ExtraHoursWaitingForApprovalComponent {
               x => x.id !== this.selectedExtraHourData.id
             );
 
+          this.selectedProducts =
+            this.selectedProducts.filter(
+              x => x.id !== this.selectedExtraHourData.id
+            );
+
           this.responseSummary = response.data;
 
-          this.http.tirggerCountSignal.update((status) => ({
-            ...status,
-            compOff: true,
-          }));
+          if (this.selectedProducts && this.selectedProducts.length > 0) {
 
-          this.openModal(this.leaveSummary);
+            this.openModal(this.leaveSummary);
 
-          setTimeout(() => {
-            this.modalService.dismissAll();
-          }, 3000);
+            setTimeout(() => {
+              this.modalService.dismissAll();
+            }, 3000);
 
+          } else {
+
+            this.sharedModalService.openSuccessModal(
+              'Extra Hour request rejected successfully'
+            );
+
+          }
           this.rejectForm.reset();
         },
 
@@ -335,14 +356,18 @@ export class ExtraHoursWaitingForApprovalComponent {
   }
 
   canApprove(item: any): boolean {
-  const currentApproverId =
-    item?.pendingApprovalsHeader?.currentApproverId?.toString();
+    const currentApproverId =
+      item?.pendingApprovalsHeader?.currentApproverId?.toString();
 
-  const loginId =
-    this.LOGIN.employeeId?.toString();
+    const loginId =
+      this.LOGIN.employeeId?.toString();
 
-  return currentApproverId === loginId;
-}
+    return currentApproverId === loginId;
+  }
+
+  selectCheck(event: any) {
+    this.selectedProducts = event;
+  }
 
   ngOnDestroy(): void {
     this.destroy$.next(true);

@@ -1,40 +1,91 @@
 <div class="custom-main-component-container">
     <div class="custom-table-content">
-        @if(!dataLoad){
-        <table class="w-100">
-            <thead>
-                <th>{{'Requested Date' | translate}}</th>
-                <th>{{'Worked Date' |translate}}</th>
-                <th>{{'Duration(In Hrs)' | translate}}</th>
-                <th class="text-center">{{'Description'|translate}}</th>
-                <th class="text-center">{{'Status'|translate}}</th>
-                @if(!permissionForLoggedInUser){
-                <th class="text-center">Action</th>
-                }
-            </thead>
-            <tbody>
-                <ng-container *ngIf="waitingForApprovalPerimisions!.length > 0; else noDataTemplate">
-                    <tr *ngFor="let permissionRequest of waitingForApprovalPerimisions; let i = index">
+        @if(selectedProducts.length > 0 && !permissionForLoggedInUser){
+
+        <div class="component-header-content">
+
+            <div class="component-sub-header">
+                Selected Records: {{ selectedProducts.length }}
+            </div>
+
+            <div class="d-flex gap-3">
+
+                <button class="custom-btn btn-primary-approve"
+                    (click)="approveExtraHours(approval, selectedProducts[0])">
+                    Approve
+                </button>
+
+                <button class="custom-btn btn-primary-reject"
+                    (click)="rejectExtraHours(rejectmodal, selectedProducts[0])">
+                    Reject
+                </button>
+
+            </div>
+
+        </div>
+
+        }
+        <div class="custom-p-multi-select-table">
+
+            <div class="input-group custom-search mb-3">
+                <span class="input-group-text custom-input-group-search">
+                    <i class="bi bi-search"></i>
+                </span>
+
+                <input type="search" [(ngModel)]="searchText" class="form-control custom-search-input"
+                    placeholder="Search">
+            </div>
+
+            @if(!dataLoad){
+
+            <p-table [value]="waitingForApprovalPerimisions" [(selection)]="selectedProducts"
+                (selectionChange)="selectCheck($event)" dataKey="id">
+
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th style="width:4rem">
+                            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                        </th>
+
+                        <th>{{'Requested Date' | translate}}</th>
+                        <th>{{'Worked Date' | translate}}</th>
+                        <th>{{'Duration(In Hrs)' | translate}}</th>
+                        <th class="text-center">{{'Description' | translate}}</th>
+                        <th class="text-center">{{'Status' | translate}}</th>
+
+                        @if(selectedProducts.length == 0 && !permissionForLoggedInUser){
+                        <th class="text-center">Action</th>
+                        }
+                    </tr>
+                </ng-template>
+
+                <ng-template pTemplate="body" let-permissionRequest>
+                    <tr>
+
+                        <td>
+                            <p-tableCheckbox [value]="permissionRequest"></p-tableCheckbox>
+                        </td>
+
                         <td>{{permissionRequest.createdDate | dateformat}}</td>
                         <td>{{permissionRequest.requestedDate | dateformat}}</td>
                         <td>{{(+permissionRequest.duration) * 60 * 60 * 1000 | date:'HH:mm':'UTC'}}</td>
+
                         <td class="text-center">
-                            <div>
-                                <a type="button" [ngbPopover]="reason">
-                                    <app-info-icon />
-                                </a>
-                                <ng-template #reason>
-                                    <p class="mb-0">{{permissionRequest.notes}} </p>
-                                </ng-template>
-                            </div>
+                            <a type="button" [ngbPopover]="reason">
+                                <app-info-icon />
+                            </a>
+
+                            <ng-template #reason>
+                                <p class="mb-0">{{permissionRequest.notes}}</p>
+                            </ng-template>
                         </td>
+
                         <td class="text-center">{{permissionRequest.status}}</td>
 
-                        @if(!permissionForLoggedInUser){
+                        @if(selectedProducts.length == 0 && !permissionForLoggedInUser){
                         <td class="text-center">
 
                             @if(canApprove(permissionRequest)){
-
                             <div class="dropdown">
                                 <a type="button" data-bs-toggle="dropdown">
                                     <i class="bi bi-three-dots-vertical"></i>
@@ -56,23 +107,26 @@
                                     </li>
                                 </ul>
                             </div>
-
                             } @else {
                             -
                             }
 
                         </td>
                         }
-                    </tr>
-                </ng-container>
 
-                <ng-template #noDataTemplate>
-                    <tr class="table-placeholder">
-                        <app-no-data-found></app-no-data-found>
                     </tr>
                 </ng-template>
-            </tbody>
-        </table>
+
+                <ng-template pTemplate="emptymessage">
+                    <tr class="no-data-row">
+                        <td colspan="10" class="no-data-cell">
+                            <app-no-data-found></app-no-data-found>
+                        </td>
+                    </tr>
+                </ng-template>
+
+            </p-table>
+        
         }@else{
         <app-data-loader-content />
         }
@@ -96,8 +150,10 @@
                 <div class="textarea-count-text">{{ approveForm.get('comments')?.value?.length || 0 }}/250</div>
                 <div class="error-msg"
                     *ngIf="approveForm.get('comments')?.touched && approveForm.get('comments')?.invalid">
-                    <div *ngIf="approveForm.get('comments')?.errors?.['required']">Approver Comments is required</div>
-                    <div *ngIf="approveForm.get('comments')?.errors?.['maxlength']">Approver Comments cannot exceed 250
+                    <div *ngIf="approveForm.get('comments')?.errors?.['required']">Approver Comments is required
+                    </div>
+                    <div *ngIf="approveForm.get('comments')?.errors?.['maxlength']">Approver Comments cannot exceed
+                        250
                         characters</div>
                 </div>
             </div>

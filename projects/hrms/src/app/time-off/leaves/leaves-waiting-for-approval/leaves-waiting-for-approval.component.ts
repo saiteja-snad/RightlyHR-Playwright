@@ -20,10 +20,11 @@ import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component"
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.service';
 import { environment } from '../../../../environments/environment';
+import { TableModule } from 'primeng/table';
 @Component({
   selector: 'app-leaves-waiting-for-approval',
   imports: [CommonModule, TranslateModule, ReactiveFormsModule, NgbNavModule, NgbPopoverModule, FormsModule,
-    PaginatorModule, DropdownModule, DateformatPipe, NoDataFoundComponent, InfoIconComponent, DataLoaderContentComponent],
+    PaginatorModule, DropdownModule, DateformatPipe, NoDataFoundComponent, InfoIconComponent, DataLoaderContentComponent, TableModule],
   templateUrl: './leaves-waiting-for-approval.component.html',
   styleUrl: './leaves-waiting-for-approval.component.scss'
 })
@@ -36,6 +37,9 @@ export class LeavesWaitingForApprovalComponent implements OnInit, OnDestroy {
   empdata = {} as any;
   subscription!: Subscription;
   lpdata = [] as Ilpid[];
+  multiSelect = false;
+  selectedProducts: any[] = [];
+  searchText: string = '';
   cancelForm!: FormGroup;
   selectedFields = {} as any;
   loading: boolean = false;
@@ -64,6 +68,7 @@ export class LeavesWaitingForApprovalComponent implements OnInit, OnDestroy {
   responseSummary: any;
   requestBody: any = {};
   @ViewChild('leaveSummary') leaveSummary: any;
+
 
 
 
@@ -119,8 +124,18 @@ export class LeavesWaitingForApprovalComponent implements OnInit, OnDestroy {
   }
 
   onClick(data: any, content: any) {
-    this.selectedFields = data
-    this.modalService.open(content, { centered: true, backdrop: 'static' });
+    console.log('Opening cancel popup');
+    console.log('Received data =>', data);
+    console.log('selectedFields before =>', this.selectedFields);
+
+    this.selectedFields = data;
+
+    console.log('selectedFields after =>', this.selectedFields);
+
+    this.modalService.open(content, {
+      centered: true,
+      backdrop: 'static'
+    });
   }
 
   //function to cancle the leave
@@ -132,35 +147,63 @@ export class LeavesWaitingForApprovalComponent implements OnInit, OnDestroy {
       "rejectedReason": this.cancelForm.get('cancelReason')?.value,
       "cancelledBy": this.empdata.employeeId
     }
-    this.subscription = this.http.putData(`Timeoff/cancel?id=${this.selectedFields.id}`, payload).pipe(takeUntil(this.destroy$)).subscribe({
-      next: (res: any) => {
-        if (res) {
+    this.subscription = this.http.putData(`Timeoff/cancel?id=${this.selectedFields.id}`, payload)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res: any) => {
+          if (res) {
+
+            this.cancelForm.reset();
+            this.modalService.dismissAll();
+
+            this.conformationPopup.openSuccessModal('Leave cancelled successfully');
+
+            this.selectedProducts = [];
+
+            if (this.selectempid) {
+              this.getDataByLPEMPID();   // Manager View
+            } else {
+              this.getDataByLPID();      // Employee View
+            }
+          }
+
+          this.signalService.timecountTriggerSignal.update(count => count + 1);
+          this.signalService.timeOffsidenavCountSignal.set(true);
+          this.signalService.timeoffForYouTriggerSignal.set(true);
+          this.signalService.timeoffForRoleTriggerSignal.set(true);
+        },
+
+        error: (err: any) => {
+
+          this.isLoading = false;
+
           this.cancelForm.reset();
           this.modalService.dismissAll();
-          this.conformationPopup.openSuccessModal('Leave cancelled successfully');
-          this.getDataByLPID();
-          setTimeout(() => {
-            window.location.reload();
-          }, 2000);
+
+          if (this.selectempid) {
+            this.getDataByLPEMPID();
+          } else {
+            this.getDataByLPID();
+          }
+
+          this.signalService.timecountTriggerSignal.update(count => count + 1);
+
+          this.conformationPopup.openErrorModal(
+            err?.error?.message || 'Leave cancellation failed'
+          );
+        },
+
+        complete: () => {
+
+          this.isLoading = false;
+
+          if (this.selectempid) {
+            this.getDataByLPEMPID();
+          } else {
+            this.getDataByLPID();
+          }
         }
-        this.signalService.timecountTriggerSignal.update(count => count + 1);
-      },
-      error: (err: any) => {
-        this.isLoading = false;
-        this.cancelForm.reset();
-        this.modalService.dismissAll();
-        this.getDataByLPID();
-        this.signalService.timecountTriggerSignal.update(count => count + 1);
-        this.conformationPopup.openErrorModal(err.error.message);
-        setTimeout(() => {
-          window.location.reload();
-        }, 2000);
-      },
-      complete: () => {
-        this.isLoading = false;
-        this.getDataByLPID();
-      },
-    })
+      });
   }
 
   getDataByLPID() {
@@ -261,7 +304,7 @@ export class LeavesWaitingForApprovalComponent implements OnInit, OnDestroy {
     const currentApproverId = item?.pendingApprovalsHeader?.currentApproverId;
     const loginId = this.LOGIN.employeeId?.toString();
     const canApproveResult = currentApproverId?.toString() === loginId;
-    
+
     console.log('canApprove Debug:', {
       itemId: item?.id,
       currentApproverId: currentApproverId,
@@ -272,7 +315,7 @@ export class LeavesWaitingForApprovalComponent implements OnInit, OnDestroy {
       pendingApprovalsHeader: item?.pendingApprovalsHeader,
       fullItem: JSON.stringify(item, null, 2)
     });
-    
+
     return canApproveResult;
   }
 
@@ -367,12 +410,18 @@ export class LeavesWaitingForApprovalComponent implements OnInit, OnDestroy {
       comments: this.selectedLeaveData?.comments || '',
       moduleId: 1,
       isPlannedLeave: false,
-      headerRequests: [
-        {
-          headerID: this.selectedLeaveData.pendingApprovalsHeader?.id,
-          currentStage: this.selectedLeaveData.pendingApprovalsHeader?.currentapprovalStage
-        }
-      ]
+      headerRequests:
+        this.selectedProducts.length > 0
+          ? this.selectedProducts.map(item => ({
+            headerID: item.pendingApprovalsHeader?.id,
+            currentStage: item.pendingApprovalsHeader?.currentapprovalStage
+          }))
+          : [
+            {
+              headerID: this.selectedLeaveData.pendingApprovalsHeader?.id,
+              currentStage: this.selectedLeaveData.pendingApprovalsHeader?.currentapprovalStage
+            }
+          ]
     };
 
 
@@ -382,21 +431,39 @@ export class LeavesWaitingForApprovalComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (response: any) => {
 
+          const selectedCount = this.selectedProducts.length;
+
+          this.selectedProducts = [];
           this.modalService.dismissAll();
 
           this.responseSummary = response.data;
 
-          this.modalService.open(this.leaveSummary, {
-            centered: true,
-            backdrop: 'static',
-            size: 'lg'
-          });
+          if (selectedCount > 1) {
 
-          setTimeout(() => {
-            this.modalService.dismissAll();
-          }, 3000);
+            this.modalService.open(this.leaveSummary, {
+              centered: true,
+              backdrop: 'static',
+              size: 'lg'
+            });
 
-          this.getDataByLPEMPID();
+            setTimeout(() => {
+              this.modalService.dismissAll();
+            }, 3000);
+
+          } else {
+
+            this.conformationPopup.openSuccessModal(
+              'Leave request approved successfully'
+            );
+
+          }
+
+
+          if (this.selectempid) {
+            this.getDataByLPEMPID();
+          } else {
+            this.getDataByLPID();
+          }
           this.signalService.timecountTriggerSignal.update(count => count + 1);
           this.signalService.timeOffsidenavCountSignal.set(true);
           this.signalService.timeoffForYouTriggerSignal.set(true);
@@ -429,12 +496,18 @@ export class LeavesWaitingForApprovalComponent implements OnInit, OnDestroy {
       comments: this.selectedLeaveData?.comments || '',
       moduleId: 1,
       isPlannedLeave: false,
-      headerRequests: [
-        {
-          headerID: this.selectedLeaveData.pendingApprovalsHeader?.id,
-          currentStage: this.selectedLeaveData.pendingApprovalsHeader?.currentapprovalStage
-        }
-      ]
+      headerRequests:
+        this.selectedProducts.length > 0
+          ? this.selectedProducts.map(item => ({
+            headerID: item.pendingApprovalsHeader?.id,
+            currentStage: item.pendingApprovalsHeader?.currentapprovalStage
+          }))
+          : [
+            {
+              headerID: this.selectedLeaveData.pendingApprovalsHeader?.id,
+              currentStage: this.selectedLeaveData.pendingApprovalsHeader?.currentapprovalStage
+            }
+          ]
     };
 
     console.log('Payload =>', payload);
@@ -444,21 +517,40 @@ export class LeavesWaitingForApprovalComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (response: any) => {
 
+          const selectedCount = this.selectedProducts.length;
+
+          this.selectedProducts = [];
           this.modalService.dismissAll();
 
           this.responseSummary = response.data;
 
-          this.modalService.open(this.leaveSummary, {
-            centered: true,
-            backdrop: 'static',
-            size: 'lg'
-          });
+          if (selectedCount > 1) {
 
-          setTimeout(() => {
-            this.modalService.dismissAll();
-          }, 3000);
+            this.modalService.open(this.leaveSummary, {
+              centered: true,
+              backdrop: 'static',
+              size: 'lg'
+            });
 
-          this.getDataByLPEMPID();
+            setTimeout(() => {
+              this.modalService.dismissAll();
+            }, 3000);
+
+          } else {
+
+            this.conformationPopup.openSuccessModal(
+              'Leave request rejected successfully'
+            );
+
+          }
+
+
+
+          if (this.selectempid) {
+            this.getDataByLPEMPID();
+          } else {
+            this.getDataByLPID();
+          }
           this.signalService.timecountTriggerSignal.update(count => count + 1);
           this.signalService.timeOffsidenavCountSignal.set(true);
           this.signalService.timeoffForYouTriggerSignal.set(true);
@@ -481,7 +573,16 @@ export class LeavesWaitingForApprovalComponent implements OnInit, OnDestroy {
       });
   }
 
+  selectCheck(value: any) {
+    this.multiSelect = Array.isArray(value) && value.length > 0;
 
+    if (!value || value.length === 0) {
+      this.selectedProducts = [];
+      return;
+    }
+
+    this.selectedProducts = [...value];
+  }
 
   ngOnDestroy(): void {
     if (this.subscription) {

@@ -16,6 +16,8 @@ import { TranslateModule } from '@ngx-translate/core';
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.service';
 import { environment } from '../../../../environments/environment';
+import { TableModule } from 'primeng/table';
+import { OpenModalService } from '../../../services/open-modal.service';
 @Component({
   selector: 'app-regularization-waiting-for-approval',
   imports: [
@@ -29,7 +31,8 @@ import { environment } from '../../../../environments/environment';
     DataLoaderContentComponent,
     TranslateModule,
     InfoIconComponent,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    TableModule,
   ],
   templateUrl: './regularization-waiting-for-approval.component.html',
   styleUrl: './regularization-waiting-for-approval.component.scss',
@@ -56,18 +59,20 @@ export class RegularizationWaitingForApprovalComponent implements OnInit, OnDest
   approveForm!: FormGroup;
   rejectForm!: FormGroup;
   showActions = false;
-
+  selectedProducts: any[] = [];
+  searchText: string = '';
   spinnerLoader = false;
   selectedLeaveStatus: any;
   responseSummary: any;
   requestBody: any = {};
   approverComments: any[] = [];
 
+
   @ViewChild('leaveSummary') leaveSummary: any;
   LOGIN: any = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
 
   constructor(private http: HttpService, public rbac: RbacService, private TimeoffYearFilterService: TimeoffYearFilterService, private modalService: NgbModal,
-    private fb: FormBuilder) {
+    private fb: FormBuilder, private sharedModalService: OpenModalService) {
     effect(() => {
       if (this.http.tirggerCountSignal().permission) {
         this.getDataPermissions();
@@ -235,13 +240,28 @@ export class RegularizationWaitingForApprovalComponent implements OnInit, OnDest
               x => x.id !== this.selectedRegularizationData.id
             );
 
+          this.selectedProducts =
+            this.selectedProducts.filter(
+              x => x.id !== this.selectedRegularizationData.id
+            );
+
           this.responseSummary = response.data;
 
-          this.openModal(this.leaveSummary);
+          if (this.selectedProducts && this.selectedProducts.length > 0) {
 
-          setTimeout(() => {
-            this.modalService.dismissAll();
-          }, 3000);
+            this.openModal(this.leaveSummary);
+
+            setTimeout(() => {
+              this.modalService.dismissAll();
+            }, 3000);
+
+          } else {
+
+            this.sharedModalService.openSuccessModal(
+              'Regularization request approved successfully'
+            );
+
+          }
 
           this.approveForm.reset();
         },
@@ -296,14 +316,28 @@ export class RegularizationWaitingForApprovalComponent implements OnInit, OnDest
               x => x.id !== this.selectedRegularizationData.id
             );
 
+          this.selectedProducts =
+            this.selectedProducts.filter(
+              x => x.id !== this.selectedRegularizationData.id
+            );
+
           this.responseSummary = response.data;
 
-          this.openModal(this.leaveSummary);
+          if (this.selectedProducts && this.selectedProducts.length > 0) {
 
-          setTimeout(() => {
-            this.modalService.dismissAll();
-          }, 3000);
+            this.openModal(this.leaveSummary);
 
+            setTimeout(() => {
+              this.modalService.dismissAll();
+            }, 3000);
+
+          } else {
+
+            this.sharedModalService.openSuccessModal(
+              'Regularization request approved successfully'
+            );
+
+          }
           this.rejectForm.reset();
         },
         error: (err: any) => {
@@ -332,6 +366,10 @@ export class RegularizationWaitingForApprovalComponent implements OnInit, OnDest
       this.LOGIN.employeeId?.toString();
 
     return currentApproverId === loginId;
+  }
+
+  selectCheck(event: any) {
+    this.selectedProducts = event;
   }
 
   ngOnDestroy(): void {

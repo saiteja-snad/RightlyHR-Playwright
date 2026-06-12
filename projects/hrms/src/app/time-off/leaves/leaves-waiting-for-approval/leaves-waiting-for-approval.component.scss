@@ -27,3 +27,9 @@ td {
 .d-flex.align-items-center.justify-content-center.gap-2.mb-3 {
     gap: 8px !important;
 }
+
+.chip-btn.active {
+    border: 2px solid #2F3E8F !important;
+    background: white !important;
+    color: #2F3E8F !important;
+}

@@ -18,6 +18,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.service';
 import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { FormValidationsService } from '../../../services/form-validations.service';
+import { TableModule } from 'primeng/table';
 
 @Component({
   selector: 'app-remote-waiting-for-approval',
@@ -29,6 +30,7 @@ import { FormValidationsService } from '../../../services/form-validations.servi
     DateformatPipe,
     TranslateModule,
     ReactiveFormsModule,
+    TableModule,
     NoDataFoundComponent, DataLoaderContentComponent, InfoIconComponent],
   templateUrl: './remote-waiting-for-approval.component.html',
   styleUrl: './remote-waiting-for-approval.component.scss'
@@ -62,6 +64,9 @@ export class RemoteWaitingForApprovalComponent implements OnInit, OnDestroy {
   approverComments: any[] = [];
   permissionForLoggedInUser = true;
   showActions = false;
+  multiSelect = false;
+  selectedProducts: any[] = [];
+  searchText: string = '';
 
   @ViewChild('leaveSummary') leaveSummary: any;
   LOGIN: any = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
@@ -220,6 +225,9 @@ export class RemoteWaitingForApprovalComponent implements OnInit, OnDestroy {
   approveRemote(approvalPopup: any, item: any) {
     this.selectedRemoteData = item;
 
+    this.selectedLeaveStatus = '';
+    this.approveForm.reset();
+
     this.modalService.open(approvalPopup, {
       centered: true,
       backdrop: 'static'
@@ -228,6 +236,9 @@ export class RemoteWaitingForApprovalComponent implements OnInit, OnDestroy {
 
   rejectRemote(rejectPopup: any, item: any) {
     this.selectedRemoteData = item;
+
+    this.selectedLeaveStatus = '';
+    this.rejectForm.reset();
 
     this.modalService.open(rejectPopup, {
       centered: true,
@@ -289,18 +300,29 @@ export class RemoteWaitingForApprovalComponent implements OnInit, OnDestroy {
 
           console.log('After approve:', this.approvedRemotes.length);
 
+          this.selectedProducts = [];
+          this.multiSelect = false;
           // Update count immediately
           this.approvedRemotesCount = this.approvedRemotes.length;
 
           this.requestSummary = response.data;
 
-          // Open summary popup
-          this.openModal(this.leaveSummary);
+          if (this.selectedProducts && this.selectedProducts.length > 0) {
 
-          // Auto close summary popup
-          setTimeout(() => {
-            this.modalService.dismissAll();
-          }, 3000);
+            this.openModal(this.leaveSummary);
+
+            setTimeout(() => {
+              this.modalService.dismissAll();
+            }, 3000);
+
+          } else {
+
+            this.signalService.handleResponse(
+              this.requestSummary,
+              'Remote Login request approved successfully'
+            );
+
+          }
 
           // Refresh sidebar counts immediately
           this.signalService.remoteLoginSidNavCountTriggerSignal.update(count => count + 1);
@@ -361,13 +383,22 @@ export class RemoteWaitingForApprovalComponent implements OnInit, OnDestroy {
           console.log('Updated waiting count:', this.approvedRemotesCount);
           this.requestSummary = response.data;
 
-          // Open summary popup
-          this.openModal(this.leaveSummary);
+          if (this.selectedProducts && this.selectedProducts.length > 0) {
 
-          // Auto close summary popup after 3 seconds
-          setTimeout(() => {
-            this.modalService.dismissAll();
-          }, 3000);
+            this.openModal(this.leaveSummary);
+
+            setTimeout(() => {
+              this.modalService.dismissAll();
+            }, 3000);
+
+          } else {
+
+            this.signalService.handleResponse(
+              this.requestSummary,
+              'Remote Login request rejected successfully'
+            );
+
+          }
 
           this.rejectForm.reset();
 
@@ -399,6 +430,18 @@ export class RemoteWaitingForApprovalComponent implements OnInit, OnDestroy {
       size: 'lg'
     });
   }
+
+  selectCheck(value: any) {
+    this.multiSelect = Array.isArray(value) && value.length > 0;
+
+    if (!value || value.length === 0) {
+      this.selectedProducts = [];
+      return;
+    }
+
+    this.selectedProducts = [...value];
+  }
+
 
   ngOnDestroy(): void {
     this.destroy$.next(true);

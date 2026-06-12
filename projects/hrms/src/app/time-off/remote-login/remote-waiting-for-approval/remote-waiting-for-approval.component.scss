@@ -16,3 +16,17 @@
     padding: 0 !important;
     text-align: center !important;
 }
+
+.chip-btn {
+    cursor: pointer !important;
+}
+
+.chip-btn.active {
+    border: 2px solid #2F3E8F !important;
+    background: white !important;
+    color: #2F3E8F !important;
+}
+
+.p-datatable .p-datatable-tbody > tr > td {
+    border: none !important;
+}

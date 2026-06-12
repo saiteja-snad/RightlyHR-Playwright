@@ -1,22 +1,65 @@
 <div class="custom-main-component-container">
   <div class="custom-table-content">
+    @if(selectedProducts.length > 0 && showActions){
+
+    <div class="component-header-content">
+
+      <div class="component-sub-header">
+        Selected Records: {{ selectedProducts.length }}
+      </div>
+
+      <div class="d-flex gap-3">
+
+        <button class="custom-btn btn-primary-approve" (click)="approveCompOff(approval, selectedProducts[0])">
+          Approve
+        </button>
+
+        <button class="custom-btn btn-primary-reject" (click)="rejectCompOff(rejectmodal, selectedProducts[0])">
+          Reject
+        </button>
+
+      </div>
+
+    </div>
+
+    }
+    <div class="custom-p-multi-select-table">
+      <div class="input-group custom-search mb-3">
+        <span class="input-group-text custom-input-group-search">
+          <i class="bi bi-search"></i>
+        </span>
+
+        <input type="search" [(ngModel)]="searchText" class="form-control custom-search-input" placeholder="Search">
+      </div>
+    </div>
     @if(!dataload){
-    <table class="w-100">
-      <thead>
-        <th>{{'Worked Date' | translate}}</th>
-        <th>{{'Availed' | translate}}</th>
-        <th class="text-center">{{'Reason' | translate}}</th>
-        <th>{{'Applied Date' | translate}}</th>
-        <th>{{'Status' | translate}}</th>
-        <th class="text-center" *ngIf="showActions">
-          {{'Action' | translate}}
-        </th>
+    <div class="custom-p-multi-select-table">
+
+      <p-table [value]="waitingForApprovalCompOff" [(selection)]="selectedProducts"
+        (selectionChange)="selectCheck($event)" dataKey="id">
+        <ng-template pTemplate="header">
+          <tr>
+            <th style="width:4rem">
+              <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+            </th>
+            <th>{{'Worked Date' | translate}}</th>
+            <th>{{'Availed' | translate}}</th>
+            <th class="text-center">{{'Reason' | translate}}</th>
+            <th>{{'Applied Date' | translate}}</th>
+            <th>{{'Status' | translate}}</th>
+            <th class="text-center" *ngIf="showActions">
+              {{'Action' | translate}}
+            </th>
+          </tr>
+        </ng-template>
 
 
-      </thead>
-      <tbody>
-        <ng-container *ngIf="waitingForApprovalCompOff!.length > 0; else noDataTemplate">
-          <tr *ngFor="let compOffRequest of waitingForApprovalCompOff; let i = index">
+        <ng-template pTemplate="body" let-compOffRequest>
+          <tr>
+
+            <td>
+              <p-tableCheckbox [value]="compOffRequest"></p-tableCheckbox>
+            </td>
             <td>{{ compOffRequest.startTime ? (compOffRequest.startTime | dateformat) : ' -' }}</td>
             <td [ngSwitch]="compOffRequest.durationType">
               <span *ngSwitchCase="1">First Half</span>
@@ -42,6 +85,8 @@
             <td>{{ compOffRequest.status }}</td>
 
             <td class="text-center" *ngIf="showActions">
+
+              @if(canApprove(compOffRequest)){
               <div class="dropdown">
                 <a type="button" data-bs-toggle="dropdown">
                   <i class="bi bi-three-dots-vertical"></i>
@@ -63,17 +108,21 @@
 
                 </ul>
               </div>
+              }
+
             </td>
           </tr>
-        </ng-container>
-
-        <ng-template #noDataTemplate>
-          <tr class="table-placeholder">
-            <app-no-data-found></app-no-data-found>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr class="no-data-row">
+            <td colspan="10" class="no-data-cell">
+              <app-no-data-found></app-no-data-found>
+            </td>
           </tr>
         </ng-template>
-      </tbody>
-    </table>
+
+      </p-table>
+    </div>
     }@else{
     <app-data-loader-content />
     }

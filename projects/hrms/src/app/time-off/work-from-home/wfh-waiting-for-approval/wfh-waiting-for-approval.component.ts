@@ -20,6 +20,7 @@ import { FormValidationsService } from '../../../services/form-validations.servi
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.service';
 import { ConfirmationIconComponent } from "../../../icons/confirmation-icon/confirmation-icon.component";
+import { TableModule } from 'primeng/table';
 @Component({
   selector: 'app-wfh-waiting-for-approval',
   imports: [
@@ -34,7 +35,8 @@ import { ConfirmationIconComponent } from "../../../icons/confirmation-icon/conf
     NoDataFoundComponent,
     DataLoaderContentComponent,
     InfoIconComponent,
-    ConfirmationIconComponent
+    ConfirmationIconComponent,
+    TableModule
   ],
   templateUrl: './wfh-waiting-for-approval.component.html',
   styleUrl: './wfh-waiting-for-approval.component.scss',
@@ -65,10 +67,13 @@ export class WfhWaitingForApprovalComponent implements OnInit, OnDestroy {
   selectedWFHData: any;
   approveForm!: FormGroup;
   rejectForm!: FormGroup;
-
+  selectedProducts: any[] = [];
+  multiSelect = false;
+  searchText: string = '';
 
 
   @ViewChild('leaveSummary') leaveSummary: any;
+
 
   spinnerLoader = false;
   selectedLeaveStatus: any;
@@ -319,15 +324,25 @@ export class WfhWaitingForApprovalComponent implements OnInit, OnDestroy {
 
           this.requestSummary = response.data;
 
-          this.modalService.open(this.leaveSummary, {
-            centered: true,
-            backdrop: 'static',
-            size: 'lg'
-          });
+          if (this.selectedProducts && this.selectedProducts.length > 0) {
 
-          setTimeout(() => {
-            this.modalService.dismissAll();
-          }, 5000);
+            this.modalService.open(this.leaveSummary, {
+              centered: true,
+              backdrop: 'static',
+              size: 'lg'
+            });
+
+            setTimeout(() => {
+              this.modalService.dismissAll();
+            }, 5000);
+
+          } else {
+
+            this.conformationPopup.openSuccessModal(
+              'WFH request approved successfully'
+            );
+
+          }
 
           this.waitingForApprovalWFHs =
             this.waitingForApprovalWFHs.filter(
@@ -362,16 +377,25 @@ export class WfhWaitingForApprovalComponent implements OnInit, OnDestroy {
 
           this.requestSummary = response.data;
 
-          this.modalService.open(this.leaveSummary, {
-            centered: true,
-            backdrop: 'static',
-            size: 'lg'
-          });
+          if (this.selectedProducts && this.selectedProducts.length > 0) {
 
-          setTimeout(() => {
-            this.modalService.dismissAll();
-          }, 5000);
+            this.modalService.open(this.leaveSummary, {
+              centered: true,
+              backdrop: 'static',
+              size: 'lg'
+            });
 
+            setTimeout(() => {
+              this.modalService.dismissAll();
+            }, 5000);
+
+          } else {
+
+            this.conformationPopup.openSuccessModal(
+              'WFH request rejected successfully'
+            );
+
+          }
           this.waitingForApprovalWFHs =
             this.waitingForApprovalWFHs.filter(
               x => x.id !== this.selectedWFHData.id
@@ -381,6 +405,59 @@ export class WfhWaitingForApprovalComponent implements OnInit, OnDestroy {
             this.waitingForApprovalWFHs.length;
         }
       });
+  }
+
+  canApprove(item: any): boolean {
+    const currentApproverId =
+      item?.pendingApprovalsHeader?.currentApproverId?.toString();
+
+    const loginId =
+      this.LOGIN.employeeId?.toString();
+
+    return currentApproverId === loginId;
+  }
+
+  selectCheck(value: any) {
+    this.multiSelect = Array.isArray(value) && value.length > 0;
+
+    if (!value || value.length === 0) {
+      this.selectedProducts = [];
+      return;
+    }
+
+    this.selectedProducts = [...value];
+  }
+
+  get filteredWFHRequests() {
+    if (!this.searchText) {
+      return this.waitingForApprovalWFHs;
+    }
+
+    const search = this.searchText.toLowerCase();
+
+    return this.waitingForApprovalWFHs.filter((item: any) =>
+      item.status?.toLowerCase().includes(search) ||
+      item.requestedComments?.toLowerCase().includes(search) ||
+      item.requestedDate?.toString().toLowerCase().includes(search)
+    );
+  }
+
+  bulkApprove(approvalPopup: any) {
+    this.initializeApproveForm();
+
+    this.modalService.open(approvalPopup, {
+      centered: true,
+      backdrop: 'static'
+    });
+  }
+
+  bulkReject(rejectPopup: any) {
+    this.initializeRejectForm();
+
+    this.modalService.open(rejectPopup, {
+      centered: true,
+      backdrop: 'static'
+    });
   }
 
   ngOnDestroy(): void {

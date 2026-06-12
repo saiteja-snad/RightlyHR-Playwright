@@ -118,6 +118,7 @@ export interface Ilpid {
   durationType: any;
   isSandwichLeave: boolean
   categoryBreakdown: IcategoryBreakdown[];
+  pendingApprovalsHeader?: any;
 }
 
 export interface IcategoryBreakdown {

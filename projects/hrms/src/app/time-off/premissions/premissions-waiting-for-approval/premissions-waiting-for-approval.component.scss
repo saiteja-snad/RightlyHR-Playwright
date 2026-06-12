@@ -16,3 +16,15 @@
     padding: 0 !important;
     text-align: center !important;
 }
+
+:host ::ng-deep .custom-p-multi-select-table .p-datatable-table-container {
+    height: auto !important;
+}
+.no-data-row td {
+    border: none !important;
+}
+
+.no-data-cell {
+    border: none !important;
+    padding-top: 0 !important;
+}

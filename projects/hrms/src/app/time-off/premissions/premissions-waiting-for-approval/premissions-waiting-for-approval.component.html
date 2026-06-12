@@ -1,38 +1,103 @@
 <div class="custom-main-component-container">
   <div class="custom-table-content">
+
+    @if (selectedProducts.length > 0) {
+    <div class="component-header-content">
+
+      <div class="component-sub-header">
+        Selected Records: {{ selectedProducts.length }}
+      </div>
+
+      <div class="d-flex gap-3">
+
+        @if(permissionForLoggedInUser){
+
+        <button type="button" class="custom-btn btn-primary-reject" (click)="onClick(selectedProducts[0], cancelModal)">
+          Cancel Permission
+        </button>
+
+        }
+
+        @else {
+
+        <button class="custom-btn btn-primary-approve" (click)="approvePermission(approval, selectedProducts[0])">
+          Approve
+        </button>
+
+        <button class="custom-btn btn-primary-reject" (click)="rejectPermission(rejectmodal, selectedProducts[0])">
+          Reject
+        </button>
+
+        }
+
+      </div>
+    </div>
+    }
+    <div class="input-group custom-search mb-3">
+    <span class="input-group-text custom-input-group-search">
+        <i class="bi bi-search"></i>
+    </span>
+
+    <input type="search"
+           [(ngModel)]="searchText"
+           class="form-control custom-search-input"
+           placeholder="Search">
+</div>
     @if(!dataload){
-    <table class="w-100">
-      <thead>
-        <th>{{'Requested Date' | translate}}</th>
-        <th>{{'Permission Date'| translate}}</th>
-        <th>Duration(In<span class="text-lowercase"> hrs)</span></th>
-        <th class="text-center">{{'Reason'| translate}}</th>
-        <!-- <th>Rejected Reason</th> -->
-        <th>{{'Permission Type'| translate}}</th>
-        <th>{{'Status'| translate}}</th>
-        <th class="text-center">{{'Action'| translate}}</th>
-      </thead>
-      <tbody>
-        <ng-container *ngIf="waitingForApprovalPerimisions!.length > 0; else noDataTemplate">
-          <tr *ngFor="let permissionRequest of waitingForApprovalPerimisions; let i = index">
-            <td>{{permissionRequest.createdDate | dateformat}}</td>
-            <td>{{permissionRequest.requestedDate | dateformat}}</td>
-            <td>{{(+permissionRequest.duration) * 60 * 60 * 1000 | date:'HH:mm':'UTC'}}</td>
-            <td class="text-center">
-              <div>
-                <a type="button" [ngbPopover]="reason">
-                  <app-info-icon />
-                </a>
-                <ng-template #reason>
-                  <p class="mb-0">{{permissionRequest.notes}}</p>
-                </ng-template>
-              </div>
-            </td>
-            <td>{{permissionRequest.type}}</td>
-            <td>{{permissionRequest.status}}</td>
-            <td class="text-center">
-              <!-- @if(isBeforeToday(permissionRequest.requestedDate)){ -->
-              @if(isBeforeToday(permissionRequest.requestedDate)){
+     <div class="custom-p-multi-select-table">
+    <p-table
+    [value]="waitingForApprovalPerimisions"
+    [(selection)]="selectedProducts"
+    (selectionChange)="selectCheck($event)"
+    dataKey="id"
+    [tableStyle]="{'min-width':'50rem'}">
+
+      <ng-template pTemplate="header">
+        <tr>
+
+          <th style="width:4rem">
+            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+          </th>
+          <th>{{'Requested Date' | translate}}</th>
+          <th>{{'Permission Date'| translate}}</th>
+          <th>Duration(In<span class="text-lowercase"> hrs)</span></th>
+          <th class="text-center">{{'Reason'| translate}}</th>
+          <!-- <th>Rejected Reason</th> -->
+          <th>{{'Permission Type'| translate}}</th>
+          <th>{{'Status'| translate}}</th>
+          <th class="text-center" *ngIf="selectedProducts.length == 0">
+            {{'Action'| translate}}
+          </th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-permissionRequest>
+        <tr>
+
+          <td>
+            <p-tableCheckbox [value]="permissionRequest"></p-tableCheckbox>
+          </td>
+          <td>{{permissionRequest.createdDate | dateformat}}</td>
+          <td>{{permissionRequest.requestedDate | dateformat}}</td>
+          <td>{{(+permissionRequest.duration) * 60 * 60 * 1000 | date:'HH:mm':'UTC'}}</td>
+          <td class="text-center">
+            <div>
+              <a type="button" [ngbPopover]="reason">
+                <app-info-icon />
+              </a>
+              <ng-template #reason>
+                <p class="mb-0">{{permissionRequest.notes}}</p>
+              </ng-template>
+            </div>
+          </td>
+          <td>{{permissionRequest.type}}</td>
+          <td>{{permissionRequest.status}}</td>
+          <td class="text-center">
+
+            <ng-container *ngIf="selectedProducts.length == 0">
+
+              @if(isBeforeToday(permissionRequest.requestedDate) &&
+              (permissionForLoggedInUser || canApprove(permissionRequest))) {
+
               <div class="dropdown">
                 <a type="button" data-bs-toggle="dropdown">
                   <i class="bi bi-three-dots-vertical"></i>
@@ -40,11 +105,14 @@
 
                 <ul class="dropdown-menu custom-dropdown-menu">
 
-                  @if(permissionForLoggedInUser){
+                  @if(permissionForLoggedInUser) {
+
                   <li (click)="onClick(permissionRequest,cancelModal)">
                     <a class="dropdown-item">Cancel Permission</a>
                   </li>
-                  }@else{
+
+                  } @else if(canApprove(permissionRequest)) {
+
                   <li (click)="approvePermission(approval, permissionRequest)">
                     <a class="dropdown-item">
                       <i class="bi bi-check-circle me-2"></i>
@@ -58,22 +126,33 @@
                       Reject
                     </a>
                   </li>
+
                   }
 
                 </ul>
               </div>
-              }@else {
-              -
-              }
-            </td>
-          </tr>
-        </ng-container>
 
-        <ng-template #noDataTemplate>
-          <app-no-data-found />
-        </ng-template>
-      </tbody>
-    </table>
+              } @else {
+              <span>-</span>
+              }
+
+            </ng-container>
+
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+            <tr class="no-data-row">
+              <td colspan="10" class="no-data-cell">
+                <app-no-data-found></app-no-data-found>
+              </td>
+            </tr>
+          </ng-template>
+
+    </p-table>
+      </div>
+
     }@else{
     <app-data-loader-content />
     }

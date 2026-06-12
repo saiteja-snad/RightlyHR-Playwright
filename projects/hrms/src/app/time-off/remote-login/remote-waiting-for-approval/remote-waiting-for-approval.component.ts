@@ -19,6 +19,7 @@ import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.
 
 import { FormValidationsService } from '../../../services/form-validations.service';
 import { DateformatPipe } from '../../../pipes/dateformat.pipe';
+import { TableModule } from 'primeng/table';
 
 @Component({
   selector: 'app-remote-waiting-for-approval',
@@ -30,6 +31,7 @@ import { DateformatPipe } from '../../../pipes/dateformat.pipe';
     DateformatPipe,
     TranslateModule,
     ReactiveFormsModule,
+    TableModule,
     NoDataFoundComponent, DataLoaderContentComponent, InfoIconComponent],
   templateUrl: './remote-waiting-for-approval.component.html',
   styleUrl: './remote-waiting-for-approval.component.scss'
@@ -61,8 +63,15 @@ export class RemoteWaitingForApprovalComponent implements OnInit, OnDestroy {
   requestSummary: any;
   requestBody: any = {};
   approverComments: any[] = [];
+  permissionForLoggedInUser = true;
+  showActions = false;
+  multiSelect = false;
+  selectedProducts: any[] = [];
+  searchText: string = '';
 
   @ViewChild('leaveSummary') leaveSummary: any;
+  LOGIN: any = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
+
 
   constructor(
     private http: HttpService,
@@ -90,11 +99,23 @@ export class RemoteWaitingForApprovalComponent implements OnInit, OnDestroy {
         this.selectedYear = year;
         this.http.selectedEmployeeIdRemoteLogin$.subscribe((id) => {
           if (id) {
-            // Use the new employee ID here
+
             this.selectempid = id;
+
+            // Manager View
+            this.permissionForLoggedInUser = false;
+            this.showActions = true;
+
             this.getRemoteLoginEMPRequests();
+
           } else {
+
             this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
+
+            // Employee View
+            this.permissionForLoggedInUser = true;
+            this.showActions = false;
+
             this.getRemoteRequests();
           }
         });
@@ -112,6 +133,17 @@ export class RemoteWaitingForApprovalComponent implements OnInit, OnDestroy {
     this.rejectForm = this.fb.group({
       comments: ['', [Validators.required, Validators.maxLength(250)]]
     });
+  }
+
+  canApprove(item: any): boolean {
+
+    const currentApproverId =
+      item?.pendingApprovalsHeader?.currentApproverId?.toString();
+
+    const loginId =
+      this.LOGIN.employeeId?.toString();
+
+    return currentApproverId === loginId;
   }
 
   onRowsChange() {
@@ -194,6 +226,9 @@ export class RemoteWaitingForApprovalComponent implements OnInit, OnDestroy {
   approveRemote(approvalPopup: any, item: any) {
     this.selectedRemoteData = item;
 
+    this.selectedLeaveStatus = '';
+    this.approveForm.reset();
+
     this.modalService.open(approvalPopup, {
       centered: true,
       backdrop: 'static'
@@ -202,6 +237,9 @@ export class RemoteWaitingForApprovalComponent implements OnInit, OnDestroy {
 
   rejectRemote(rejectPopup: any, item: any) {
     this.selectedRemoteData = item;
+
+    this.selectedLeaveStatus = '';
+    this.rejectForm.reset();
 
     this.modalService.open(rejectPopup, {
       centered: true,
@@ -263,18 +301,29 @@ export class RemoteWaitingForApprovalComponent implements OnInit, OnDestroy {
 
           console.log('After approve:', this.approvedRemotes.length);
 
+          this.selectedProducts = [];
+          this.multiSelect = false;
           // Update count immediately
           this.approvedRemotesCount = this.approvedRemotes.length;
-         
+
           this.requestSummary = response.data;
 
-          // Open summary popup
-          this.openModal(this.leaveSummary);
+          if (this.selectedProducts && this.selectedProducts.length > 0) {
 
-          // Auto close summary popup
-          setTimeout(() => {
-            this.modalService.dismissAll();
-          }, 3000);
+            this.openModal(this.leaveSummary);
+
+            setTimeout(() => {
+              this.modalService.dismissAll();
+            }, 3000);
+
+          } else {
+
+            this.signalService.handleResponse(
+              this.requestSummary,
+              'Remote Login request approved successfully'
+            );
+
+          }
 
           // Refresh sidebar counts immediately
           this.signalService.remoteLoginSidNavCountTriggerSignal.update(count => count + 1);
@@ -335,13 +384,22 @@ export class RemoteWaitingForApprovalComponent implements OnInit, OnDestroy {
           console.log('Updated waiting count:', this.approvedRemotesCount);
           this.requestSummary = response.data;
 
-          // Open summary popup
-          this.openModal(this.leaveSummary);
+          if (this.selectedProducts && this.selectedProducts.length > 0) {
 
-          // Auto close summary popup after 3 seconds
-          setTimeout(() => {
-            this.modalService.dismissAll();
-          }, 3000);
+            this.openModal(this.leaveSummary);
+
+            setTimeout(() => {
+              this.modalService.dismissAll();
+            }, 3000);
+
+          } else {
+
+            this.signalService.handleResponse(
+              this.requestSummary,
+              'Remote Login request rejected successfully'
+            );
+
+          }
 
           this.rejectForm.reset();
 
@@ -352,8 +410,8 @@ export class RemoteWaitingForApprovalComponent implements OnInit, OnDestroy {
           console.error(err);
         },
         complete: () => {
-           console.log('Reject Complete');
-           console.log('selectempid', this.selectempid);
+          console.log('Reject Complete');
+          console.log('selectempid', this.selectempid);
           this.spinnerLoader = false;
 
           if (this.selectempid) {
@@ -373,6 +431,18 @@ export class RemoteWaitingForApprovalComponent implements OnInit, OnDestroy {
       size: 'lg'
     });
   }
+
+  selectCheck(value: any) {
+    this.multiSelect = Array.isArray(value) && value.length > 0;
+
+    if (!value || value.length === 0) {
+      this.selectedProducts = [];
+      return;
+    }
+
+    this.selectedProducts = [...value];
+  }
+
 
   ngOnDestroy(): void {
     this.destroy$.next(true);

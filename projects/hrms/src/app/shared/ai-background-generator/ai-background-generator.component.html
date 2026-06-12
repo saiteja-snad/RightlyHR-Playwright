@@ -127,7 +127,7 @@
             </button>
 
 
-            <button class="custom-btn btn-secondary px-4 w-100" (click)="close()">Cancel</button>
+            <button class="custom-btn btn-secondary px-4 w-100" [disabled]="isGenerating" (click)="close()">Cancel</button>
           </div>
         </div>
 

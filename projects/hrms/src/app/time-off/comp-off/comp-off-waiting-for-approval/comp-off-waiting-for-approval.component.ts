@@ -67,6 +67,7 @@ export class CompOffWaitingForApprovalComponent implements OnInit, OnDestroy {
 
   @ViewChild('leaveSummary') leaveSummary: any;
   requestBody: any = {};
+  LOGIN: any = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
 
 
   constructor(private http: HttpService, public rbac: RbacService, private signalService: SignalsService, private TimeoffYearFilterService: TimeoffYearFilterService, private modalService: NgbModal,
@@ -87,11 +88,11 @@ export class CompOffWaitingForApprovalComponent implements OnInit, OnDestroy {
         this.http.selectedEmployeeIdCompOff$.subscribe((id) => {
           if (id) {
             this.selectemp = id;
-            this.showActions = true; // Manager view
+            this.showActions = true; // Manager View
             this.getCompOffRequest();
           } else {
             this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
-            this.showActions = false; // Employee view
+            this.showActions = false; // Employee View
             this.getCompOffRequest();
           }
         });
@@ -109,6 +110,21 @@ export class CompOffWaitingForApprovalComponent implements OnInit, OnDestroy {
     this.rejectForm = this.fb.group({
       comments: ['', [Validators.required, Validators.maxLength(250)]]
     });
+  }
+
+  canApprove(item: any): boolean {
+    const currentApproverId =
+      item?.pendingApprovalsHeader?.currentApproverId?.toString();
+
+   
+    const loginId =
+      this.LOGIN.employeeId?.toString();
+       console.log('currentApproverId:', currentApproverId);
+    console.log('loginId:', loginId);
+    console.log('item:', item);
+
+
+    return currentApproverId === loginId;
   }
 
   onRowsChange() {

@@ -64,6 +64,7 @@ export class RegularizationWaitingForApprovalComponent implements OnInit, OnDest
   approverComments: any[] = [];
 
   @ViewChild('leaveSummary') leaveSummary: any;
+  LOGIN: any = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
 
   constructor(private http: HttpService, public rbac: RbacService, private TimeoffYearFilterService: TimeoffYearFilterService, private modalService: NgbModal,
     private fb: FormBuilder) {
@@ -321,6 +322,16 @@ export class RegularizationWaitingForApprovalComponent implements OnInit, OnDest
         emitEvent: false
       });
     }
+  }
+
+  canApprove(item: any): boolean {
+    const currentApproverId =
+      item?.pendingApprovalsHeader?.currentApproverId?.toString();
+
+    const loginId =
+      this.LOGIN.employeeId?.toString();
+
+    return currentApproverId === loginId;
   }
 
   ngOnDestroy(): void {

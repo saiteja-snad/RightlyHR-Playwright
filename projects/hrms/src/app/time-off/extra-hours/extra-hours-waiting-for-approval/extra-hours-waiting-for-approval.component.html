@@ -32,6 +32,9 @@
 
                         @if(!permissionForLoggedInUser){
                         <td class="text-center">
+
+                            @if(canApprove(permissionRequest)){
+
                             <div class="dropdown">
                                 <a type="button" data-bs-toggle="dropdown">
                                     <i class="bi bi-three-dots-vertical"></i>
@@ -53,6 +56,11 @@
                                     </li>
                                 </ul>
                             </div>
+
+                            } @else {
+                            -
+                            }
+
                         </td>
                         }
                     </tr>

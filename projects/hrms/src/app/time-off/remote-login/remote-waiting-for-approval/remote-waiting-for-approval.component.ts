@@ -60,8 +60,12 @@ export class RemoteWaitingForApprovalComponent implements OnInit, OnDestroy {
   requestSummary: any;
   requestBody: any = {};
   approverComments: any[] = [];
+  permissionForLoggedInUser = true;
+  showActions = false;
 
   @ViewChild('leaveSummary') leaveSummary: any;
+  LOGIN: any = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
+
 
   constructor(
     private http: HttpService,
@@ -89,11 +93,23 @@ export class RemoteWaitingForApprovalComponent implements OnInit, OnDestroy {
         this.selectedYear = year;
         this.http.selectedEmployeeIdRemoteLogin$.subscribe((id) => {
           if (id) {
-            // Use the new employee ID here
+
             this.selectempid = id;
+
+            // Manager View
+            this.permissionForLoggedInUser = false;
+            this.showActions = true;
+
             this.getRemoteLoginEMPRequests();
+
           } else {
+
             this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
+
+            // Employee View
+            this.permissionForLoggedInUser = true;
+            this.showActions = false;
+
             this.getRemoteRequests();
           }
         });
@@ -111,6 +127,17 @@ export class RemoteWaitingForApprovalComponent implements OnInit, OnDestroy {
     this.rejectForm = this.fb.group({
       comments: ['', [Validators.required, Validators.maxLength(250)]]
     });
+  }
+
+  canApprove(item: any): boolean {
+
+    const currentApproverId =
+      item?.pendingApprovalsHeader?.currentApproverId?.toString();
+
+    const loginId =
+      this.LOGIN.employeeId?.toString();
+
+    return currentApproverId === loginId;
   }
 
   onRowsChange() {
@@ -264,7 +291,7 @@ export class RemoteWaitingForApprovalComponent implements OnInit, OnDestroy {
 
           // Update count immediately
           this.approvedRemotesCount = this.approvedRemotes.length;
-         
+
           this.requestSummary = response.data;
 
           // Open summary popup
@@ -351,8 +378,8 @@ export class RemoteWaitingForApprovalComponent implements OnInit, OnDestroy {
           console.error(err);
         },
         complete: () => {
-           console.log('Reject Complete');
-           console.log('selectempid', this.selectempid);
+          console.log('Reject Complete');
+          console.log('selectempid', this.selectempid);
           this.spinnerLoader = false;
 
           if (this.selectempid) {

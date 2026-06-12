@@ -31,8 +31,9 @@
             <td>{{permissionRequest.type}}</td>
             <td>{{permissionRequest.status}}</td>
             <td class="text-center">
-              <!-- @if(isBeforeToday(permissionRequest.requestedDate)){ -->
-              @if(isBeforeToday(permissionRequest.requestedDate)){
+             <!-- @if(isBeforeToday(permissionRequest.requestedDate)){ -->
+              @if(isBeforeToday(permissionRequest.requestedDate) &&
+              (permissionForLoggedInUser || canApprove(permissionRequest))){
               <div class="dropdown">
                 <a type="button" data-bs-toggle="dropdown">
                   <i class="bi bi-three-dots-vertical"></i>
@@ -41,10 +42,13 @@
                 <ul class="dropdown-menu custom-dropdown-menu">
 
                   @if(permissionForLoggedInUser){
+
                   <li (click)="onClick(permissionRequest,cancelModal)">
                     <a class="dropdown-item">Cancel Permission</a>
                   </li>
-                  }@else{
+
+                  } @else if(canApprove(permissionRequest)) {
+
                   <li (click)="approvePermission(approval, permissionRequest)">
                     <a class="dropdown-item">
                       <i class="bi bi-check-circle me-2"></i>
@@ -58,6 +62,7 @@
                       Reject
                     </a>
                   </li>
+
                   }
 
                 </ul>

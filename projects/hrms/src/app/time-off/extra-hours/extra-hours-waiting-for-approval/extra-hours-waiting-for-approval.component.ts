@@ -63,6 +63,7 @@ export class ExtraHoursWaitingForApprovalComponent {
   permissionForLoggedInUser = true;
 
   @ViewChild('leaveSummary') leaveSummary: any;
+  LOGIN: any = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
 
   constructor(private http: HttpService, public rbac: RbacService, private TimeoffYearFilterService: TimeoffYearFilterService, private modalService: NgbModal,
     private fb: FormBuilder) {
@@ -332,6 +333,16 @@ export class ExtraHoursWaitingForApprovalComponent {
       });
     }
   }
+
+  canApprove(item: any): boolean {
+  const currentApproverId =
+    item?.pendingApprovalsHeader?.currentApproverId?.toString();
+
+  const loginId =
+    this.LOGIN.employeeId?.toString();
+
+  return currentApproverId === loginId;
+}
 
   ngOnDestroy(): void {
     this.destroy$.next(true);

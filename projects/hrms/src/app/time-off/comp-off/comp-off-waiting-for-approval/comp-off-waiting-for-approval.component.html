@@ -42,6 +42,8 @@
             <td>{{ compOffRequest.status }}</td>
 
             <td class="text-center" *ngIf="showActions">
+
+              @if(canApprove(compOffRequest)){
               <div class="dropdown">
                 <a type="button" data-bs-toggle="dropdown">
                   <i class="bi bi-three-dots-vertical"></i>
@@ -63,6 +65,8 @@
 
                 </ul>
               </div>
+              }
+
             </td>
           </tr>
         </ng-container>

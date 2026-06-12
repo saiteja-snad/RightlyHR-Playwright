@@ -56,7 +56,7 @@
               }
 
               <!-- Manager -->
-              @else if(!permissionForLoggedInUser) {
+              @else if(!permissionForLoggedInUser && canApprove(wfhRequest)) {
 
               <div class="dropdown">
                 <a type="button" data-bs-toggle="dropdown">

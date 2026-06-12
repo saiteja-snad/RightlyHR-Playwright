@@ -73,6 +73,7 @@ export class PremissionsWaitingForApprovalComponent implements OnInit, OnDestroy
   approverComments: any[] = [];
 
   @ViewChild('leaveSummary') leaveSummary: any;
+  LOGIN: any = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
 
   constructor(
     private http: HttpService,
@@ -108,7 +109,7 @@ export class PremissionsWaitingForApprovalComponent implements OnInit, OnDestroy
       if (year !== null) {
         this.selectedYear = year;
         this.http.selectedEmployeeIdPermission$.subscribe((id) => {
- 
+
           console.log('Selected Employee Id:', id);
           console.log('Current selectempid:', this.selectempid);
 
@@ -247,6 +248,10 @@ export class PremissionsWaitingForApprovalComponent implements OnInit, OnDestroy
   }
 
   getDataEMPPermissions() {
+    console.log(
+  'permissionForLoggedInUser:',
+  this.permissionForLoggedInUser
+);
     let empId = this.selectempid;
     this.dataload = true;
     this.permissionForLoggedInUser = false;
@@ -422,6 +427,20 @@ export class PremissionsWaitingForApprovalComponent implements OnInit, OnDestroy
         }
       });
     }
+  }
+
+  canApprove(item: any): boolean {
+     console.log('canApprove called');
+
+    const currentApproverId =
+      item?.pendingApprovalsHeader?.currentApproverId?.toString();
+
+    const loginId =
+      this.LOGIN.employeeId?.toString();
+
+   
+
+    return currentApproverId === loginId;
   }
 
   ngOnDestroy(): void {

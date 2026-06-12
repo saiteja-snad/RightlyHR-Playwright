@@ -9,9 +9,12 @@
           <th class="text-center">{{'Reason' | translate}}</th>
           <th>{{'Applied Date '|translate}}</th>
           <th>{{'Status'|translate}}</th>
-          <th class="text-center">Action</th>
+          @if(!permissionForLoggedInUser){
+          <th class="text-center" *ngIf="showActions">
+            Action
+          </th>
 
-
+          }
         </tr>
       </thead>
 
@@ -42,7 +45,10 @@
               {{ remoteRequest.status }}
             </td>
 
-            <td class="text-center">
+            @if(!permissionForLoggedInUser){
+            <td class="text-center" *ngIf="showActions">
+
+              @if(canApprove(remoteRequest)){
               <div class="dropdown">
                 <a type="button" data-bs-toggle="dropdown">
                   <i class="bi bi-three-dots-vertical"></i>
@@ -62,7 +68,10 @@
                   </li>
                 </ul>
               </div>
+              }
+
             </td>
+            }
           </tr>
         </ng-container>
 

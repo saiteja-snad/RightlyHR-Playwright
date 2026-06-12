@@ -69,6 +69,7 @@ export class WfhWaitingForApprovalComponent implements OnInit, OnDestroy {
 
 
   @ViewChild('leaveSummary') leaveSummary: any;
+  
 
   spinnerLoader = false;
   selectedLeaveStatus: any;
@@ -382,6 +383,16 @@ export class WfhWaitingForApprovalComponent implements OnInit, OnDestroy {
         }
       });
   }
+
+  canApprove(item: any): boolean {
+  const currentApproverId =
+    item?.pendingApprovalsHeader?.currentApproverId?.toString();
+
+  const loginId =
+    this.LOGIN.employeeId?.toString();
+
+  return currentApproverId === loginId;
+}
 
   ngOnDestroy(): void {
     this.destroy$.next(true);

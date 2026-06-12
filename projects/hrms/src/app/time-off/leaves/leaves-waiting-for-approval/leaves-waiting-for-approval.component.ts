@@ -6,7 +6,7 @@ import { DropdownModule } from 'primeng/dropdown';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { HttpService } from '../../../services/http.service';
 import { AuthService } from '../../../services/auth.service';
-import { Subject, Subscription, takeUntil } from 'rxjs';
+import { Subject, Subscription, combineLatest, takeUntil } from 'rxjs';
 import { Ilpid } from '../../../Interfaces/timoff-model';
 import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
@@ -77,22 +77,31 @@ export class LeavesWaitingForApprovalComponent implements OnInit, OnDestroy {
     private TimeoffYearFilterService: TimeoffYearFilterService) { }
 
   ngOnInit(): void {
+    this.selectedYear = this.TimeoffYearFilterService.getSelectedYear() ?? new Date().getFullYear();
+    this.formInializer();
+
     this.TimeoffYearFilterService.selectedYear$.pipe(takeUntil(this.destroy$)).subscribe(year => {
       if (year !== null) {
         this.selectedYear = year;
-        this.http.selectedEmployeeIdTimeoff$.pipe(takeUntil(this.destroy$)).subscribe((id) => {
-          if (id) {
-            // Use the new employee ID here
-            this.selectempid = id;
-            this.getDataByLPEMPID();
-          }
-          else {
-            this.loggedinuser = this.authService.getToken();
-            this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
-            this.getDataByLPID();
-            this.formInializer();
-          }
-        });
+        if (this.selectempid) {
+          this.getDataByLPEMPID();
+        } else {
+          this.getDataByLPID();
+        }
+      }
+    });
+
+    this.http.selectedEmployeeIdTimeoff$.pipe(takeUntil(this.destroy$)).subscribe((id) => {
+      if (id) {
+        this.selectempid = id;
+        this.permissionForLoggedInUser = false;
+        this.getDataByLPEMPID();
+      } else {
+        this.selectempid = null;
+        this.permissionForLoggedInUser = true;
+        this.loggedinuser = this.authService.getToken();
+        this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
+        this.getDataByLPID();
       }
     });
   }
@@ -163,13 +172,18 @@ export class LeavesWaitingForApprovalComponent implements OnInit, OnDestroy {
         this.loading = false;
         if (Array.isArray(response)) {
           this.lpdata = response.filter(item => item.status === 'Waiting for Approval');
-          console.error("Invalid response this lpdata ", this.lpdata);
+          console.log('Logged in user leaves:', this.lpdata);
+          if (this.lpdata.length > 0) {
+            console.log('Sample leave item structure:', this.lpdata[0]);
+          }
         } else {
           console.error("Invalid response format");
+          this.lpdata = [];
         }
       },
       error: (reason: any) => {
         this.loading = false;
+        this.lpdata = [];
       },
       complete: () => {
         this.loading = false;
@@ -179,17 +193,33 @@ export class LeavesWaitingForApprovalComponent implements OnInit, OnDestroy {
 
   getDataByLPEMPID() {
     let empid = this.selectempid;
+    if (!empid) {
+      return;
+    }
+
     this.permissionForLoggedInUser = false;
+    this.loading = true;
     this.subscription = this.http.getFilteredleavesDataByID(empid, this.selectedYear).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: any) => {
+        this.loading = false;
         if (Array.isArray(response)) {
           this.lpdata = response.filter(item => item.status === 'Waiting for Approval');
-          console.error("Invalid response this lpdata ", this.lpdata);
+          console.log('Selected employee leaves:', this.lpdata);
+          console.log('Current login user:', this.LOGIN);
+          if (this.lpdata.length > 0) {
+            console.log('Sample leave item structure:', this.lpdata[0]);
+            console.log('PendingApprovalsHeader:', this.lpdata[0]?.pendingApprovalsHeader);
+          }
         } else {
           console.error("Invalid response format");
+          this.lpdata = [];
         }
       },
-      error: (reason: any) => console.log(reason)
+      error: (reason: any) => {
+        console.log(reason);
+        this.loading = false;
+        this.lpdata = [];
+      }
     });
   }
 
@@ -199,39 +229,51 @@ export class LeavesWaitingForApprovalComponent implements OnInit, OnDestroy {
   }
 
   checkLeaveBalance(item: any, checkbalancepopup: any) {
-    this.modalService.open(checkbalancepopup, {
-      centered: true,
-      backdrop: 'static',
-      size: 'lg'
-    });
 
     let employeeId = item.employeeId || item.leaveempId;
 
-    this.http
-      .getData(`LeaveEntitlements/employee/${employeeId}`)
+    this.http.getData(`LeaveEntitlements/employee/${employeeId}`)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res: any) => {
 
-          this.leaveEntitlementsList = res.data.find(
-            (ele: any) => ele.category.id === item.leaveCategoryId
-          );
 
-          this.employeeLeaveEntitlementsList = res.data;
+          console.log('Leave Balance API Response', res.data);
 
-          const isProbationAllowed =
-            this.leaveEntitlementsList?.category?.isProbationAllowed;
+          this.employeeLeaveEntitlementsList = [...res.data];
 
-          if (isProbationAllowed) {
-            this.calculateProbationLeaves();
-          }
+          console.log('employeeLeaveEntitlementsList',
+            this.employeeLeaveEntitlementsList);
+
+          this.modalService.open(checkbalancepopup, {
+            centered: true,
+            backdrop: 'static',
+            size: 'lg'
+          });
         },
         error: (err: any) => {
-          this.leaveEntitlementsList = {};
-          this.employeeLeaveEntitlementsList = [];
           console.log(err);
         }
       });
+  }
+
+  canApprove(item: any): boolean {
+    const currentApproverId = item?.pendingApprovalsHeader?.currentApproverId;
+    const loginId = this.LOGIN.employeeId?.toString();
+    const canApproveResult = currentApproverId?.toString() === loginId;
+    
+    console.log('canApprove Debug:', {
+      itemId: item?.id,
+      currentApproverId: currentApproverId,
+      currentApproverIdType: typeof currentApproverId,
+      loginId: loginId,
+      loginIdType: typeof loginId,
+      canApproveResult: canApproveResult,
+      pendingApprovalsHeader: item?.pendingApprovalsHeader,
+      fullItem: JSON.stringify(item, null, 2)
+    });
+    
+    return canApproveResult;
   }
 
   calculateProbationLeaves() {
@@ -438,6 +480,8 @@ export class LeavesWaitingForApprovalComponent implements OnInit, OnDestroy {
         }
       });
   }
+
+
 
   ngOnDestroy(): void {
     if (this.subscription) {

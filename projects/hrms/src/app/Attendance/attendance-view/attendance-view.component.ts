@@ -36,6 +36,8 @@ import { InfoIconComponent } from '../../icons/info-icon/info-icon.component';
 import { AccordionModule } from 'primeng/accordion';
 import { ChartModule } from 'primeng/chart';
 import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
+import { ApplicablePoliciesTriggerComponent } from '../../shared/policies/applicable-policies-trigger/applicable-policies-trigger.component';
+import { APPLICABLE_POLICIES_KEYS } from '../../shared/policies/policy-visibility.catalog';
 
 @Component({
   selector: 'app-attendance-view',
@@ -59,12 +61,14 @@ import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-inf
     InfoIconComponent,
     AccordionModule,
     ChartModule,
+    ApplicablePoliciesTriggerComponent,
   ],
   templateUrl: './attendance-view.component.html',
   styleUrl: './attendance-view.component.scss',
   encapsulation: ViewEncapsulation.None,
 })
 export class AttendanceViewComponent implements OnInit, OnDestroy {
+  applicablePolicies = APPLICABLE_POLICIES_KEYS.ATTENDANCE;
   moduleinfo: string = '';
   dataLoader = false;
   subscription!: Subscription;
@@ -424,11 +428,11 @@ getApprovalStatusCounts() {
         this.empName = `${employee.fusionEmpId ?? ''} - ${employee.firstName}${
       employee.middleName ? ' ' + employee.middleName : ''
     }${employee.lastName ? ' ' + employee.lastName : ''}`;;
-    
+
     // Calculate start and end dates for the selected month
     const startDate = moment().year(this.selectedYear).month(this.selectedMonth - 1).startOf('month').format('YYYY-MM-DD');
     const endDate = moment().year(this.selectedYear).month(this.selectedMonth - 1).endOf('month').format('YYYY-MM-DD');
-    
+
     this.subscription = this.http
       .getData(
         `v2/AttendanceData/employee/${employeeId}?fromdate=${startDate}&todate=${endDate}`

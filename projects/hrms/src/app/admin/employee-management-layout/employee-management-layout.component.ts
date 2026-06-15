@@ -19,6 +19,8 @@ import { TabsDndDirective } from '../../shared/tabs-dnd/tabs-dnd.directive';
 import { CanActivateFn } from '@angular/router';
 import { MenuOrderService } from '../../services/theme-service/menu-order.service';
 import { inject } from '@angular/core';
+import { ApplicablePoliciesTriggerComponent } from "../../shared/policies/applicable-policies-trigger/applicable-policies-trigger.component";
+import { APPLICABLE_POLICIES_KEYS } from '../../shared/policies/policy-visibility.catalog';
 
 @Component({
   selector: 'app-employee-management-home-redirect',
@@ -60,7 +62,7 @@ export const employeeManagementHomeActivate: CanActivateFn = async () => {
 
 @Component({
   selector: 'app-employee-management-layout',
-  imports: [CommonModule, RouterModule, TranslateModule, TabsModule, ChartModule, AllEmployeesHeaderComponent, Skeleton, DragDropModule, TabsDndDirective],
+  imports: [CommonModule, RouterModule, TranslateModule, TabsModule, ChartModule, AllEmployeesHeaderComponent, Skeleton, DragDropModule, TabsDndDirective,ApplicablePoliciesTriggerComponent],
   templateUrl: './employee-management-layout.component.html',
   styleUrl: './employee-management-layout.component.scss',
   encapsulation: ViewEncapsulation.None
@@ -99,6 +101,7 @@ export class EmployeeManagementLayoutComponent {
   navTabsProspective: any[] = [];
   navTabsInactive: any[] = [];
   navTabsProbation: any[] = [];
+  readonly applicablePoliciesKeys = APPLICABLE_POLICIES_KEYS;
 
   constructor(private http: HttpService, public rbac: RbacService, private modalService: NgbModal, public router: Router) { }
 
@@ -386,5 +389,29 @@ export class EmployeeManagementLayoutComponent {
 
   get isInActiveEmployeeManagement(): boolean {
     return this.router.url.startsWith('/employee-management/inactive');
+  }
+
+  get applicablePoliciesModuleKey(): string {
+    return this.applicablePoliciesKeys.EMPLOYEES_ACTIVE.moduleKey;
+  }
+
+  get applicablePoliciesSubModuleKey(): string {
+    if (this.isActiveEmployeeManagement) {
+      return this.applicablePoliciesKeys.EMPLOYEES_ACTIVE.subModuleKey ?? '';
+    }
+
+    if (this.isProspectiveEmployeeManagement) {
+      return this.applicablePoliciesKeys.EMPLOYEES_PROSPECTIVE.subModuleKey ?? '';
+    }
+
+    if (this.isProbationEmployeeManagement) {
+      return this.applicablePoliciesKeys.EMPLOYEES_PROBATION.subModuleKey ?? '';
+    }
+
+    if (this.isInActiveEmployeeManagement) {
+      return this.applicablePoliciesKeys.EMPLOYEES_INACTIVE.subModuleKey ?? '';
+    }
+
+    return '';
   }
 }

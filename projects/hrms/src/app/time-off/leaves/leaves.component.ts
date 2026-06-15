@@ -30,11 +30,13 @@ import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-inf
 import { ChipModule } from 'primeng/chip';
 import { FrequencyFilterService } from '../../services/frequency-filter.service';
 import { ConfirmationIconComponent } from '../../icons/confirmation-icon/confirmation-icon.component';
+import { ApplicablePoliciesTriggerComponent } from '../../shared/policies/applicable-policies-trigger/applicable-policies-trigger.component';
+import { APPLICABLE_POLICIES_KEYS, ApplicablePoliciesKeys } from '../../shared/policies/policy-visibility.catalog';
 @Component({
   selector: 'app-leaves',
   imports: [CommonModule, NgbNavModule, ModuleInfoIconComponent,NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, Select, Skeleton,
-    RouterModule, ReactiveFormsModule, TranslateModule, LeavesApprovaltabsComponent, TabsModule, ChartModule, ModuleInformationComponent, 
-    ConfirmationIconComponent, ChipModule, MultiSelect],
+    RouterModule, ReactiveFormsModule, TranslateModule, LeavesApprovaltabsComponent, TabsModule, ChartModule, ModuleInformationComponent,
+    ConfirmationIconComponent, ChipModule, MultiSelect, ApplicablePoliciesTriggerComponent],
   templateUrl: './leaves.component.html',
   styleUrl: './leaves.component.scss',
   encapsulation: ViewEncapsulation.None,
@@ -42,6 +44,7 @@ import { ConfirmationIconComponent } from '../../icons/confirmation-icon/confirm
 
 export class LeavesComponent implements OnInit, AfterViewInit, OnDestroy{
   moduleinfo: string = '';
+  applicablePolicies: ApplicablePoliciesKeys = APPLICABLE_POLICIES_KEYS.TIME_OFF_LEAVES;
   subscription!: Subscription;
   categoryDetails = [] as ICategoryDetails[];
   leaveFormData = {} as Ileavesdatas;
@@ -128,7 +131,7 @@ export class LeavesComponent implements OnInit, AfterViewInit, OnDestroy{
     public rbac: RbacService,
     public router: Router,
     public formsValidation: FormValidationsService,
-    private signalService: SignalsService, 
+    private signalService: SignalsService,
     private TimeoffYearFilterService: TimeoffYearFilterService,
     private timeoffSelectionService: TimeoffSelectionService,
     private frequencyFilterService: FrequencyFilterService,
@@ -183,7 +186,7 @@ export class LeavesComponent implements OnInit, AfterViewInit, OnDestroy{
     });
     // Send initial year to the service so other component can pick it up
     this.TimeoffYearFilterService.setSelectedYear(this.selectedYear);
-    
+
     // Initialize new selection service
     const currentEmpId = this.http.getCurrentEmployeeIdTimeoff() ?? this.empdata.employeeId;
     this.timeoffSelectionService.updateSelection(currentEmpId, this.selectedYear);
@@ -206,7 +209,7 @@ export class LeavesComponent implements OnInit, AfterViewInit, OnDestroy{
     this.selectedYear = selectedYear;  // Update the local variable so template sees the change
     this.TimeoffYearFilterService.setSelectedYear(selectedYear);
     const employeeId = this.http.getCurrentEmployeeIdTimeoff();
-    
+
     // Update new service with the new year (and existing employee if any)
     this.timeoffSelectionService.updateSelection(employeeId, selectedYear);
 
@@ -459,7 +462,7 @@ getTeamManagersDetails() {
   getCategoryDetails() {
     this.loadingGraph = true;
     let apiUrl = `LeaveEntitlements/v2/employee/${this.empdata.employeeId}?year=${this.selectedYear}`;
-    
+
     this.subscription = this.http.getData(apiUrl).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: any) => {
         if (response.success) {
@@ -483,7 +486,7 @@ getTeamManagersDetails() {
   getCategoryempDetails(employeedId: any) {
     const empdata = employeedId;
     let apiUrl = `LeaveEntitlements/v2/employee/${empdata}?year=${this.selectedYear}`;
-    
+
     this.subscription = this.http.getData(apiUrl).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: any) => {
         if (response.success) {
@@ -537,7 +540,7 @@ getTeamManagersDetails() {
 
   getAvailableLeaves(item: any): number {
     if (item.category?.isProbationAllowed && item.probationLeaves > 0) {
-      return item.probationLeaves - item.utilizedDays - item.booked - (item.expiryDaysLeaves ? item.expiryDaysLeaves : 0); 
+      return item.probationLeaves - item.utilizedDays - item.booked - (item.expiryDaysLeaves ? item.expiryDaysLeaves : 0);
     } else {
       return item.allowedDays - item.utilizedDays - item.booked - (item.expiryDaysLeaves ? item.expiryDaysLeaves : 0);
     }
@@ -1405,12 +1408,12 @@ getTeamManagersDetails() {
       this.leaveFormData.startdate = moment(this.leaveForm.get('startdate')?.value).format('YYYY-MM-DD');
       this.leaveFormData.enddate = moment(this.leaveForm.get('enddate')?.value).format('YYYY-MM-DD');
       this.leaveFormData.notes = this.leaveForm.get('reason')?.value
-      
+
       if (this.selectedleave?.category?.enableSandwichPolicy) {
         this.checkSandwichPolicy();
         return;
       }
-      
+
       this.submitLeaveRequest();
     } else {
       this.conformationPopup.openErrorModal('Maximum leave limit reached for this category');
@@ -1473,7 +1476,7 @@ getTeamManagersDetails() {
       }
     }
     const category = this.categoryDetails.find(c => c.category.id === this.selectedleave?.category.id);
-    
+
     if (category?.category.isOptionalHoliday) {
       const isOptHoliday = this.isOptionalHoliday(this.leaveFormData);
       if (this.mustUseOptLevs) {
@@ -1517,7 +1520,7 @@ getTeamManagersDetails() {
         }
       }
     }
-    
+
     this.subscription = this.http.postdata("Timeoff", this.leaveFormData).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data: any) => {
         if (data) {

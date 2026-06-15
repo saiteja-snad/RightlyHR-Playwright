@@ -38,6 +38,9 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
 import { TabsDndDirective } from '../../shared/tabs-dnd/tabs-dnd.directive';
 import { MenuOrderService } from '../../services/theme-service/menu-order.service';
 import { ExpensesComponent } from './expenses/expenses.component';
+import { ApplicablePoliciesTriggerComponent } from '../../shared/policies/applicable-policies-trigger/applicable-policies-trigger.component';
+import { APPLICABLE_POLICIES_KEYS } from '../../shared/policies/policy-visibility.catalog';
+
 @Component({
   selector: 'app-onbehalf-of-approvals',
   imports: [
@@ -69,7 +72,8 @@ import { ExpensesComponent } from './expenses/expenses.component';
     DatePicker,
     DragDropModule,
     TabsDndDirective,
-    ExpensesComponent
+    ExpensesComponent,
+    ApplicablePoliciesTriggerComponent
 ],
 
   templateUrl: './onbehalf-of-approvals.component.html',
@@ -78,6 +82,7 @@ import { ExpensesComponent } from './expenses/expenses.component';
 })
 
 export class OnbehalfOfApprovalsComponent {
+  applicablePolicies = APPLICABLE_POLICIES_KEYS.ON_BE_HALF_OF_APPROVALS;
   moduleinfo: string = '';
   subscription!: Subscription;
   employeedata = {} as any;

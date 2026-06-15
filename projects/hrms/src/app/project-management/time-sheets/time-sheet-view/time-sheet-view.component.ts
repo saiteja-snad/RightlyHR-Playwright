@@ -30,16 +30,20 @@ import { MultiSelectModule } from 'primeng/multiselect';
 import { BulkUploadStore } from '../bulk-upload/models/bulk-upload.store';
 import { Select } from 'primeng/select';
 import { DateformatPipe } from '../../../pipes/dateformat.pipe';
+import { ApplicablePoliciesTriggerComponent } from '../../../shared/policies/applicable-policies-trigger/applicable-policies-trigger.component';
+import { APPLICABLE_POLICIES_KEYS } from '../../../shared/policies/policy-visibility.catalog';
 @Component({
   selector: 'app-time-sheet-view',
   imports: [ProjectManagementModuleInfoComponent, NgbDatepickerModule, FormsModule, ReactiveFormsModule,
     NgbPopover, CommonModule, DatePicker, DateformatPipe, AccordionModule, InfoIconComponent, ConfirmationIconComponent,
-    TranslateModule, DataLoaderContentComponent, TimesheetsTabsComponent, MenuModule, MultiSelectModule, Select],
+    TranslateModule, DataLoaderContentComponent, TimesheetsTabsComponent, MenuModule, MultiSelectModule,Select, ApplicablePoliciesTriggerComponent],
   templateUrl: './time-sheet-view.component.html',
   styleUrl: './time-sheet-view.component.scss',
 })
 
 export class TimeSheetViewComponent implements OnInit, OnDestroy {
+  applicablePolicies = APPLICABLE_POLICIES_KEYS.PROJECT_MANAGEMENT_TIMESHEETS;
+
   timesheetForm!: FormGroup;
   orgholidays: any;
   orgweekend: any;
@@ -1730,7 +1734,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       });
 
       this.dayForm = dayForm;
-      //start//code for the task type 
+      //start//code for the task type
       let taskId = this.dayForm.get('taskId')?.value;
       console.log('Selected Task ID:', taskId);
       let taskdata = this.alltaskTypes?.find((ele: any) => ele?.id == taskId && ele?.status?.toLowerCase() == 'inactive');
@@ -1823,7 +1827,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     next: (res: any) => {
 
       const items = res?.items || [];
-      
+
       const fieldMap: any = {
         'Start Time': 'startTime',
         'End Time': 'endTime',
@@ -2350,14 +2354,14 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     return 'header-default';
   }
 
-  onclickinfo(day?: any) { 
-    this.approvardetails = { ...(day.value.pendingApprovalDetails || {}) }; 
+  onclickinfo(day?: any) {
+    this.approvardetails = { ...(day.value.pendingApprovalDetails || {}) };
     console.log('this.approvardetails', this.approvardetails);
     console.log(day.get('approvalStatus')?.value)
     this.approvardetails.description = day.get('description')?.value;
-    this.approvardetails.taskName = day.get('taskName')?.value; 
+    this.approvardetails.taskName = day.get('taskName')?.value;
     this.approvardetails.approvalStatus=day.get('approvalStatus')?.value
-    
+
    }
   ngOnDestroy() {
     this.destroy$.next(true);

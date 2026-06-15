@@ -7,7 +7,7 @@
                 <app-module-info-icon placement="bottom" [ngbPopover]="popContent" class="cursor" />
             </div>
         </div>
-        
+
         <div class="d-flex align-items-center gap-3">
             @if(rbac.allowedToAccess('All Employees (Regularization).view') && rbac.allowedToAccess('My Team (Regularization).view')) {
             <div class="d-flex align-items-center gap-2">
@@ -25,7 +25,7 @@
                 <label for="education" class="form-label custom-label text-nowrap filter-labels m-0">{{'Select Employee' | translate}}</label>
                 <div class="custom-p-select-content">
                     <p-select [options]="activeEmplist" [filter]="true" filterBy="label" resetFilterOnHide="true" optionLabel="label"
-                    optionValue="value" showClear="true" placeholder="Select employee name" (onChange)="onCheckemployee($event.value)" 
+                    optionValue="value" showClear="true" placeholder="Select employee name" (onChange)="onCheckemployee($event.value)"
                     class="form-select custom-select"></p-select>
                 </div>
             </div>
@@ -50,6 +50,9 @@
                     </div>
                 </form>
             </div>
+            <app-applicable-policies-trigger [moduleKey]="applicablePolicies.moduleKey"
+                [subModuleKey]="applicablePolicies.subModuleKey">
+            </app-applicable-policies-trigger>
         </div>
     </div>
 

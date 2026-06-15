@@ -25,11 +25,12 @@ import { ProjectsSideTabsForClientsComponent } from '../../../shared/project-man
 import { combineLatest } from 'rxjs';
 import { Chip } from 'primeng/chip';
 import { PaginatorModule } from 'primeng/paginator';
+import { ApplicablePoliciesTriggerComponent } from '../../../shared/policies/applicable-policies-trigger/applicable-policies-trigger.component';
 @Component({
   selector: 'app-active-projects',
   imports: [NoDataFoundComponent, MultiSelectModule, CommonModule, FormsModule, DataLoaderContentComponent,
     TranslateModule, RouterModule, ConfirmationIconComponent, ReactiveFormsModule, Select, ProjectManagementModuleInfoComponent,
-    ProjcetCreationComponent, ActiveprojectsPipe, ProjectsSideTabsForClientsComponent, ProjectsSideTabsComponent, Chip, PaginatorModule],
+    ProjcetCreationComponent, ActiveprojectsPipe, ProjectsSideTabsForClientsComponent, ProjectsSideTabsComponent, Chip, PaginatorModule, ApplicablePoliciesTriggerComponent],
   templateUrl: './active-projects.component.html',
   styleUrl: './active-projects.component.scss',
 })

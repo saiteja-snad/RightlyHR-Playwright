@@ -17,6 +17,8 @@ import { SeparationApprovalTabsComponent } from '../../shared/time-off-module-ta
 import { OnboardingApprovalTabsComponent } from '../../shared/time-off-module-tabs/pending-approvals-tabs/onboarding-approval-tabs/onboarding-approval-tabs.component';
 import { RbacService } from '../../services/rbac.service';
 import { Select } from 'primeng/select';
+import { ApplicablePoliciesTriggerComponent } from '../../shared/policies/applicable-policies-trigger/applicable-policies-trigger.component';
+import { APPLICABLE_POLICIES_KEYS } from '../../shared/policies/policy-visibility.catalog';
 
 
 
@@ -39,13 +41,15 @@ import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-inf
     OnboardingApprovalTabsComponent,
     CommonModule,
     Select,
-    ModuleInfoIconComponent
+    ModuleInfoIconComponent,
+    ApplicablePoliciesTriggerComponent
   ],
   templateUrl: './pending-approvals.component.html',
   styleUrl: './pending-approvals.component.scss',
   encapsulation: ViewEncapsulation.None,
 })
 export class PendingApprovalsComponent implements OnInit {
+  readonly applicablePoliciesKeys = APPLICABLE_POLICIES_KEYS;
   moduleinfo = '';
   employeeData: any[] = [];
   dataload = false;
@@ -398,6 +402,51 @@ getTaskType() {
     const currentUrl = this.router.url;
     return currentUrl.startsWith('/pending-approvals/kra-kpi');
   }
+
+  get applicablePoliciesModuleKey(): string {
+    return this.applicablePoliciesKeys.PENDING_APPROVALS_TIME_OFF.moduleKey;
+  }
+
+  get applicablePoliciesSubModuleKey(): string {
+    if (this.isTimeOffRoute()) {
+      return this.applicablePoliciesKeys.PENDING_APPROVALS_TIME_OFF.subModuleKey;
+    }
+
+    if (this.isOnboardingRoute()) {
+      return this.applicablePoliciesKeys.PENDING_APPROVALS_ONBOARDING.subModuleKey;
+    }
+
+    if (this.isContractRoute()) {
+      return this.applicablePoliciesKeys.PENDING_APPROVALS_CONTRACTORS.subModuleKey;
+    }
+
+    if (this.isOffboardingRoute()) {
+      return this.applicablePoliciesKeys.PENDING_APPROVALS_OFFBOARDING.subModuleKey;
+    }
+
+    if (this.isDeskRoute()) {
+      return this.applicablePoliciesKeys.PENDING_APPROVALS_DESKS.subModuleKey;
+    }
+
+    if (this.isExpensesRoute()) {
+      return this.applicablePoliciesKeys.PENDING_APPROVALS_EXPENSES.subModuleKey;
+    }
+
+    if (this.router.url === '/pending-approvals/time-sheets') {
+      return this.applicablePoliciesKeys.PENDING_APPROVALS_TIMESHEETS.subModuleKey;
+    }
+
+    if (this.isEmployeeInfoRoute()) {
+      return this.applicablePoliciesKeys.PENDING_APPROVALS_EMPLOYEE_INFO.subModuleKey;
+    }
+
+    if (this.isKraKpiRoute()) {
+      return this.applicablePoliciesKeys.PENDING_APPROVALS_KRA_KPI.subModuleKey;
+    }
+
+    return '';
+  }
+
 
   loadMyTeamEmployees(): void {
     const employeeId = this.empinfo?.employeeId;

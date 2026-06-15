@@ -28,6 +28,8 @@ import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-inf
 import { TimeoffYearFilterService } from '../../services/timeoff-year-filter.service';
 import { FrequencyFilterService } from '../../services/frequency-filter.service';
 import { ChipModule } from 'primeng/chip';
+import { ApplicablePoliciesTriggerComponent } from '../../shared/policies/applicable-policies-trigger/applicable-policies-trigger.component';
+import { APPLICABLE_POLICIES_KEYS } from '../../shared/policies/policy-visibility.catalog';
 
 @Component({
   selector: 'app-on-be-half-of',
@@ -46,13 +48,15 @@ import { ChipModule } from 'primeng/chip';
     FormsModule,
     ConfirmationIconComponent,
     ModuleInfoIconComponent,
-    ChipModule
+    ChipModule,
+    ApplicablePoliciesTriggerComponent,
   ],
   templateUrl: './on-be-half-of.component.html',
   styleUrl: './on-be-half-of.component.scss',
   encapsulation: ViewEncapsulation.None,
 })
 export class OnBeHalfOfComponent {
+  applicablePolicies = APPLICABLE_POLICIES_KEYS.ON_BE_HALF_OF_LEAVES;
   moduleinfo: string = '';
   @ViewChild('halfDayRadio') halfDayRadio: any;
   @ViewChild('fullDayRadio') fullDayRadio: any;
@@ -683,14 +687,13 @@ export class OnBeHalfOfComponent {
   getCategoryDetails(employeeId: number) {
     console.log(employeeId);
     let apiUrl = `LeaveEntitlements/v2/employee/${employeeId}?year=${this.selectedYear}`;
-    
+
     this.subscription = this.http
       .getData(apiUrl)
       .subscribe({
         next: (response: any) => {
           if (response.success) {
             this.categoryDetails = response.data as ICategoryDetails[];
-
             this.calculateProbationLeavs(this.categoryDetails);
             this.logOptionalLeaveDays(this.categoryDetails);
             this.initChart(this.categoryDetails);
@@ -1395,7 +1398,7 @@ export class OnBeHalfOfComponent {
       const hasNonOptional = dateRange.some(date =>
         !optionalHolidays?.some((holiday: { holidayDate: moment.MomentInput; }) => moment(holiday.holidayDate).isSame(date, 'day'))
       );
-  
+
       const isStartOptional = optionalHolidays?.some((holiday: { holidayDate: moment.MomentInput; }) =>
         moment(holiday.holidayDate).isSame(startDate, 'day')
       );

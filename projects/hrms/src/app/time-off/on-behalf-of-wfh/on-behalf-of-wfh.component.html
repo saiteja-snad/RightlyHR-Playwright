@@ -50,6 +50,10 @@
             <button type="button" class="custom-btn btn-primary" (click)="openModal(addwfh)" [disabled]="!selectedOtherEmployee"
                 *ngIf="rbac.allowedToAccess('Request WFH Button.view')">{{'Apply On Behalf Of'|translate}}</button>
             }
+                  <app-applicable-policies-trigger
+        [moduleKey]="applicablePolicies.moduleKey"
+        [subModuleKey]="applicablePolicies.subModuleKey">
+      </app-applicable-policies-trigger>
         </div>
     </div>
 

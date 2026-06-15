@@ -42,6 +42,12 @@
         }
 
         <!-- } -->
+      <div>
+        <app-applicable-policies-trigger
+        [moduleKey]="applicablePolicies.moduleKey"
+        [subModuleKey]="applicablePolicies.subModuleKey">
+      </app-applicable-policies-trigger>
+      </div>
       <!-- <label class="form-label component-sub-header m-0" for="teamManager">Select Employee</label>
       <div class="custom-p-select-content">
         <p-select [options]="employeeiddetails" optionValue="employeeId" optionLabel="fullName" [filter]="true"

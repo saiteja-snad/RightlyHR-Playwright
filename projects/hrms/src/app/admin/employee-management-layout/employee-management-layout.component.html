@@ -23,6 +23,10 @@
             }
             <button class="custom-btn btn-primary" routerLink="/invite-user">{{'Invite User'|translate}}</button>
             <button class="custom-btn btn-primary" routerLink="/letters">{{'Generate Documents'|translate}}</button>
+            <app-applicable-policies-trigger
+                [moduleKey]="applicablePoliciesModuleKey"
+                [subModuleKey]="applicablePoliciesSubModuleKey">
+            </app-applicable-policies-trigger>
         </div>
     </div>
 

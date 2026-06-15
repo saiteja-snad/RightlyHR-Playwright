@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Select } from 'primeng/select';
-import { Subscription } from 'rxjs';
+import { Subject, Subscription, takeUntil } from 'rxjs';
 import { HttpService } from '../../../../services/http.service';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -10,6 +10,13 @@ import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { InfoIconComponent } from "../../../../icons/info-icon/info-icon.component";
+import { MultiSelectModule } from 'primeng/multiselect';
+import {
+  PolicyVisibilityModuleOption,
+  PolicyVisibilitySubModuleOption,
+  normalizePolicyVisibilityKey
+} from '../../../../shared/policies/policy-visibility.catalog';
+import { PolicyVisibilityOptionsService } from '../../../../shared/policies/policy-visibility-options.service';
 
 @Component({
   selector: 'app-view-policies',
@@ -20,7 +27,8 @@ import { InfoIconComponent } from "../../../../icons/info-icon/info-icon.compone
     TranslateModule,
     NgbPopoverModule,
     ToggleSwitchModule,
-    InfoIconComponent
+    InfoIconComponent,
+    MultiSelectModule
 ],
   templateUrl: './view-policies.component.html',
   styleUrl: './view-policies.component.scss',
@@ -28,6 +36,7 @@ import { InfoIconComponent } from "../../../../icons/info-icon/info-icon.compone
 export class ViewPoliciesComponent implements OnInit, OnDestroy {
   @ViewChild('deletepopup') deletepopup: any;
   subscription!: Subscription;
+  private destroy$ = new Subject<void>();
   policyForm!: FormGroup;
   jobLocationDropDownData: any = [];
   updatePoliciesData: any;
@@ -43,6 +52,8 @@ export class ViewPoliciesComponent implements OnInit, OnDestroy {
     { name: '2027', value: 2027 },
     { name: '2028', value: 2028 },
   ];
+  policyVisibilityModules: PolicyVisibilityModuleOption[] = [];
+  policyVisibilitySubModules: Record<string, Array<{ label: string; value: string }>> = {};
 
   constructor(
     private fb: FormBuilder,
@@ -50,7 +61,8 @@ export class ViewPoliciesComponent implements OnInit, OnDestroy {
     private http: HttpService,
     private confirmation: OpenModalService,
     private modalService: NgbModal,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private policyVisibilityOptionsService: PolicyVisibilityOptionsService
   ) {}
 
   ngOnInit(): void {
@@ -85,12 +97,14 @@ export class ViewPoliciesComponent implements OnInit, OnDestroy {
             ],
             acknowledged: [{ value: row.requiresAcknowledgment, disabled: true }],
             notification : [{ value: row.sendNotification, disabled: true }],
+            visibilityMappings: this.fb.array(this.getInitialVisibilityMappings(row)),
           })
         );
         const fileName = this.getFileName(row.policyAttachment);
         this.policyFileNames[index] = fileName;
       }
     );
+    this.loadPolicyVisibilityModules();
 
     this.policyForm.patchValue({
       location: { jobLocationName: this.updatePoliciesData.locationName },
@@ -116,6 +130,114 @@ export class ViewPoliciesComponent implements OnInit, OnDestroy {
 
   get policies(): FormArray {
     return this.policyForm.get('policies') as FormArray;
+  }
+
+  private createVisibilityMappingRow(value?: any): FormGroup {
+    const group = this.fb.group({
+      moduleKey: [normalizePolicyVisibilityKey(value?.moduleKey)],
+      subModuleKeys: [Array.isArray(value?.subModuleKeys) ? value.subModuleKeys.map((item: string) => normalizePolicyVisibilityKey(item)) : []],
+      displayEnabled: [value?.displayEnabled ?? false]
+    });
+    group.disable({ emitEvent: false });
+    return group;
+  }
+
+  private getInitialVisibilityMappings(item: any): FormGroup[] {
+    const byModule = new Map<string, { moduleKey: string; subModuleKeys: string[]; displayEnabled: boolean }>();
+    const moduleMappings = item?.moduleMappings;
+    if (Array.isArray(moduleMappings) && moduleMappings.length > 0) {
+      moduleMappings.forEach((m: any) => {
+        const moduleKey = normalizePolicyVisibilityKey(m?.moduleName);
+        const subModuleKey = normalizePolicyVisibilityKey(m?.subModuleName);
+        if (!moduleKey) return;
+        const existing = byModule.get(moduleKey);
+        const enabled = m?.isVisible === true;
+        if (!existing) {
+          byModule.set(moduleKey, { moduleKey, subModuleKeys: subModuleKey ? [subModuleKey] : [], displayEnabled: enabled });
+        } else {
+          if (subModuleKey && !existing.subModuleKeys.includes(subModuleKey)) existing.subModuleKeys.push(subModuleKey);
+          existing.displayEnabled = existing.displayEnabled || enabled;
+        }
+      });
+    } else {
+      const targets = item?.visibilityTargets;
+      if (Array.isArray(targets) && targets.length > 0) {
+        targets.forEach((t: any) => {
+          const moduleKey = normalizePolicyVisibilityKey(t?.moduleKey);
+          const subModuleKey = normalizePolicyVisibilityKey(t?.subModuleKey);
+          if (!moduleKey) return;
+          const existing = byModule.get(moduleKey);
+          const enabled = t?.enabled === true || t?.displayEnabled === true;
+          if (!existing) {
+            byModule.set(moduleKey, { moduleKey, subModuleKeys: subModuleKey ? [subModuleKey] : [], displayEnabled: enabled });
+          } else {
+            if (subModuleKey && !existing.subModuleKeys.includes(subModuleKey)) existing.subModuleKeys.push(subModuleKey);
+            existing.displayEnabled = existing.displayEnabled || enabled;
+          }
+        });
+      }
+    }
+    const rows = [...byModule.values()];
+    if (rows.length === 0) return [this.createVisibilityMappingRow()];
+    return rows.map(r => this.createVisibilityMappingRow(r));
+  }
+
+  getVisibilityMappings(policyIndex: number): FormArray {
+    return this.policies.at(policyIndex)?.get('visibilityMappings') as FormArray;
+  }
+
+  isDisplayToggleVisible(policyIndex: number, mappingIndex: number): boolean {
+    const row = this.getVisibilityMappings(policyIndex).at(mappingIndex) as FormGroup;
+    const moduleKey = normalizePolicyVisibilityKey(row.get('moduleKey')?.value);
+    const selected = row.get('subModuleKeys')?.value as string[] | null;
+    if (!moduleKey) {
+      return false;
+    }
+
+    if (this.getSubModuleOptions(moduleKey).length === 0) {
+      return true;
+    }
+
+    return (selected?.length ?? 0) > 0;
+  }
+
+  getSubModuleOptions(moduleKey: string | null): Array<{ label: string; value: string }> {
+    return this.policyVisibilitySubModules[normalizePolicyVisibilityKey(moduleKey)] ?? [];
+  }
+
+  private loadPolicyVisibilityModules(): void {
+    this.policyVisibilityOptionsService.getModules()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((modules) => {
+        this.policyVisibilityModules = modules;
+        this.preloadExistingSubModuleOptions();
+      });
+  }
+
+  private preloadExistingSubModuleOptions(): void {
+    this.policies.controls.forEach((policyControl) => {
+      const mappings = policyControl.get('visibilityMappings') as FormArray | null;
+      mappings?.controls.forEach((mappingControl) => {
+        const moduleKey = normalizePolicyVisibilityKey(mappingControl.get('moduleKey')?.value);
+        this.loadSubModuleOptions(moduleKey);
+      });
+    });
+  }
+
+  private loadSubModuleOptions(moduleKey: string | null | undefined): void {
+    const normalizedModuleKey = normalizePolicyVisibilityKey(moduleKey);
+    if (!normalizedModuleKey || this.policyVisibilitySubModules[normalizedModuleKey]) {
+      return;
+    }
+
+    this.policyVisibilityOptionsService.getSubModules(normalizedModuleKey)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((subModules: PolicyVisibilitySubModuleOption[]) => {
+        this.policyVisibilitySubModules[normalizedModuleKey] = subModules.map((item) => ({
+          label: item.label,
+          value: item.key
+        }));
+      });
   }
 
   addPolicyRow() {
@@ -359,6 +481,8 @@ export class ViewPoliciesComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
     if (this.subscription) {
       this.subscription.unsubscribe();
     }

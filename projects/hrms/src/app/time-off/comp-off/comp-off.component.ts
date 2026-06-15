@@ -24,6 +24,9 @@ import { environment } from '../../../environments/environment';
 import { AuthService } from '../../services/auth.service';
 import { ConfirmationIconComponent } from "../../icons/confirmation-icon/confirmation-icon.component";
 import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
+import { ApplicablePoliciesTriggerComponent } from '../../shared/policies/applicable-policies-trigger/applicable-policies-trigger.component';
+import { APPLICABLE_POLICIES_KEYS } from '../../shared/policies/policy-visibility.catalog';
+
 @Component({
   selector: 'app-comp-off',
   standalone: true,
@@ -36,7 +39,8 @@ import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-inf
     ModuleInformationComponent,
     NgbPopoverModule,
     ConfirmationIconComponent,
-    ModuleInfoIconComponent
+    ModuleInfoIconComponent,
+    ApplicablePoliciesTriggerComponent,
 
   ],
   templateUrl: './comp-off.component.html',
@@ -45,6 +49,7 @@ import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-inf
 })
 
 export class CompOffComponent implements OnInit, OnDestroy {
+  applicablePolicies = APPLICABLE_POLICIES_KEYS.TIME_OFF_COMP_OFF;
   moduleinfo: string = '';
   subscription!: Subscription;
   addCompOffForm!: FormGroup;

@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { Select } from 'primeng/select';
-import { Subscription } from 'rxjs';
+import { Subject, Subscription, takeUntil } from 'rxjs';
 import { HttpService } from '../../../../services/http.service';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -11,17 +11,26 @@ import { TranslateModule } from '@ngx-translate/core';
 import { FormValidationsService } from '../../../../services/form-validations.service';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { InfoIconComponent } from "../../../../icons/info-icon/info-icon.component";
+import { MultiSelectModule } from 'primeng/multiselect';
+import {
+  PolicyVisibilityModuleOption,
+  PolicyVisibilitySubModuleOption,
+  normalizePolicyVisibilityKey
+} from '../../../../shared/policies/policy-visibility.catalog';
+import { PolicyVisibilityOptionsService } from '../../../../shared/policies/policy-visibility-options.service';
 
 @Component({
   selector: 'app-clone-policies',
-  imports: [CommonModule, Select, ReactiveFormsModule, TranslateModule, NgbPopoverModule, ToggleSwitchModule, InfoIconComponent],
+  imports: [CommonModule, Select, ReactiveFormsModule, TranslateModule, NgbPopoverModule, ToggleSwitchModule, InfoIconComponent, MultiSelectModule],
   templateUrl: './clone-policies.component.html',
   styleUrl: './clone-policies.component.scss'
 })
 export class ClonePoliciesComponent implements OnInit, OnDestroy {
   @ViewChild('deletepopup') deletepopup: any;
   subscription!: Subscription;
+  private destroy$ = new Subject<void>();
   isFormEdited: boolean = false;
+  submitAttempted = false;
   policyForm!: FormGroup;
   jobLocationDropDownData: any = [];
   updatePoliciesData: any;
@@ -34,11 +43,14 @@ export class ClonePoliciesComponent implements OnInit, OnDestroy {
     { name: '2027', value: 2027 },
     { name: '2028', value: 2028 },
   ]
+  policyVisibilityModules: PolicyVisibilityModuleOption[] = [];
+  policyVisibilitySubModules: Record<string, Array<{ label: string; value: string }>> = {};
 
 
   constructor(private fb: FormBuilder, public router: Router, private http: HttpService,
     private confirmation: OpenModalService, private modalService: NgbModal,
-    public formValidations: FormValidationsService
+    public formValidations: FormValidationsService,
+    private policyVisibilityOptionsService: PolicyVisibilityOptionsService
   ) { }
 
 
@@ -68,6 +80,7 @@ export class ClonePoliciesComponent implements OnInit, OnDestroy {
           policyNewFile: [''],
           acknowledged: [row.requiresAcknowledgment],
           notification: [row.sendEmailNotification],
+          visibilityMappings: this.fb.array(this.getInitialVisibilityMappings(row)),
         },
           {
             validator: this.acknowledgementNotificationValidator
@@ -75,6 +88,8 @@ export class ClonePoliciesComponent implements OnInit, OnDestroy {
         )
       );
     });
+    this.policies.controls.forEach((_, policyIndex) => this.validateDuplicateModules(policyIndex));
+    this.loadPolicyVisibilityModules();
 
 
     this.policyForm.valueChanges.subscribe(() => {
@@ -168,6 +183,7 @@ restrictPolicyNamedescription(event: KeyboardEvent) {
       policyNewFile: ['', Validators.required],
       acknowledged: [false],
       notification: [false],
+      visibilityMappings: this.fb.array([this.createVisibilityMappingRow()]),
     },
       {
         validator: this.acknowledgementNotificationValidator
@@ -191,6 +207,186 @@ restrictPolicyNamedescription(event: KeyboardEvent) {
     }
 
     return null;
+  }
+
+  private createVisibilityMappingRow(value?: any): FormGroup {
+    return this.fb.group({
+      moduleKey: [normalizePolicyVisibilityKey(value?.moduleKey), Validators.required],
+      subModuleKeys: [Array.isArray(value?.subModuleKeys) ? value.subModuleKeys.map((item: string) => normalizePolicyVisibilityKey(item)) : []],
+      displayEnabled: [value?.displayEnabled ?? false]
+    });
+  }
+
+  private getInitialVisibilityMappings(item: any): FormGroup[] {
+    const byModule = new Map<string, { moduleKey: string; subModuleKeys: string[]; displayEnabled: boolean }>();
+    const moduleMappings = item?.moduleMappings;
+    if (Array.isArray(moduleMappings) && moduleMappings.length > 0) {
+      moduleMappings.forEach((m: any) => {
+        const moduleKey = normalizePolicyVisibilityKey(m?.moduleName);
+        const subModuleKey = normalizePolicyVisibilityKey(m?.subModuleName);
+        if (!moduleKey) return;
+        const existing = byModule.get(moduleKey);
+        const enabled = m?.isVisible === true;
+        if (!existing) {
+          byModule.set(moduleKey, { moduleKey, subModuleKeys: subModuleKey ? [subModuleKey] : [], displayEnabled: enabled });
+        } else {
+          if (subModuleKey && !existing.subModuleKeys.includes(subModuleKey)) existing.subModuleKeys.push(subModuleKey);
+          existing.displayEnabled = existing.displayEnabled || enabled;
+        }
+      });
+    } else {
+      const targets = item?.visibilityTargets;
+      if (Array.isArray(targets) && targets.length > 0) {
+        targets.forEach((t: any) => {
+          const moduleKey = normalizePolicyVisibilityKey(t?.moduleKey);
+          const subModuleKey = normalizePolicyVisibilityKey(t?.subModuleKey);
+          if (!moduleKey) return;
+          const existing = byModule.get(moduleKey);
+          const enabled = t?.enabled === true || t?.displayEnabled === true;
+          if (!existing) {
+            byModule.set(moduleKey, { moduleKey, subModuleKeys: subModuleKey ? [subModuleKey] : [], displayEnabled: enabled });
+          } else {
+            if (subModuleKey && !existing.subModuleKeys.includes(subModuleKey)) existing.subModuleKeys.push(subModuleKey);
+            existing.displayEnabled = existing.displayEnabled || enabled;
+          }
+        });
+      }
+    }
+    const rows = [...byModule.values()];
+    if (rows.length === 0) return [this.createVisibilityMappingRow()];
+    return rows.map(r => this.createVisibilityMappingRow(r));
+  }
+
+  getVisibilityMappings(policyIndex: number): FormArray {
+    return this.policies.at(policyIndex)?.get('visibilityMappings') as FormArray;
+  }
+
+  addVisibilityMapping(policyIndex: number): void {
+    this.getVisibilityMappings(policyIndex).push(this.createVisibilityMappingRow());
+    this.validateDuplicateModules(policyIndex);
+  }
+
+  removeVisibilityMapping(policyIndex: number, mappingIndex: number): void {
+    const mappings = this.getVisibilityMappings(policyIndex);
+    if (mappings.length <= 1) return;
+    mappings.removeAt(mappingIndex);
+    this.validateDuplicateModules(policyIndex);
+  }
+
+  onModuleKeyChange(policyIndex: number, mappingIndex: number, moduleKey: string | null): void {
+    const row = this.getVisibilityMappings(policyIndex).at(mappingIndex) as FormGroup;
+    const normalizedModuleKey = normalizePolicyVisibilityKey(moduleKey);
+    row.patchValue({ moduleKey: normalizedModuleKey, subModuleKeys: [], displayEnabled: false });
+    this.loadSubModuleOptions(normalizedModuleKey);
+    this.validateDuplicateModules(policyIndex);
+  }
+
+  onSubModuleKeysChange(policyIndex: number, mappingIndex: number, subModuleKeys: string[] | null): void {
+    const row = this.getVisibilityMappings(policyIndex).at(mappingIndex) as FormGroup;
+    const next = (subModuleKeys ?? []).map((item) => normalizePolicyVisibilityKey(item));
+    row.get('subModuleKeys')?.setValue(next);
+    if (next.length === 0) row.get('displayEnabled')?.setValue(false);
+  }
+
+  isDisplayToggleVisible(policyIndex: number, mappingIndex: number): boolean {
+    const row = this.getVisibilityMappings(policyIndex).at(mappingIndex) as FormGroup;
+    const moduleKey = normalizePolicyVisibilityKey(row.get('moduleKey')?.value);
+    const selected = row.get('subModuleKeys')?.value as string[] | null;
+    if (!moduleKey) {
+      return false;
+    }
+
+    if (this.getSubModuleOptions(moduleKey).length === 0) {
+      return true;
+    }
+
+    return (selected?.length ?? 0) > 0;
+  }
+
+  getSubModuleOptions(moduleKey: string | null): Array<{ label: string; value: string }> {
+    return this.policyVisibilitySubModules[normalizePolicyVisibilityKey(moduleKey)] ?? [];
+  }
+
+  getModuleOptionsForRow(policyIndex: number, mappingIndex: number): Array<PolicyVisibilityModuleOption & { disabled?: boolean }> {
+    const selectedModules = this.getVisibilityMappings(policyIndex).controls
+      .map((control, index) => index === mappingIndex ? null : normalizePolicyVisibilityKey(control.get('moduleKey')?.value))
+      .filter((value): value is string => !!value);
+    const currentValue = normalizePolicyVisibilityKey(this.getVisibilityMappings(policyIndex).at(mappingIndex)?.get('moduleKey')?.value);
+
+    return this.policyVisibilityModules.map((module) => ({
+      ...module,
+      disabled: module.key !== currentValue && selectedModules.includes(module.key)
+    }));
+  }
+
+  shouldShowMappingError(policyIndex: number, mappingIndex: number, controlName: 'moduleKey' | 'subModuleKeys', errorKey: string): boolean {
+    const control = this.getVisibilityMappings(policyIndex).at(mappingIndex)?.get(controlName);
+    return !!control && control.hasError(errorKey) && (control.touched || this.submitAttempted);
+  }
+
+  private validateDuplicateModules(policyIndex: number): void {
+    const mappings = this.getVisibilityMappings(policyIndex);
+    const counts = new Map<string, number>();
+
+    mappings.controls.forEach((control) => {
+      const moduleKey = normalizePolicyVisibilityKey(control.get('moduleKey')?.value);
+      if (!moduleKey) {
+        return;
+      }
+      counts.set(moduleKey, (counts.get(moduleKey) ?? 0) + 1);
+    });
+
+    mappings.controls.forEach((control) => {
+      const moduleControl = control.get('moduleKey');
+      const moduleKey = normalizePolicyVisibilityKey(moduleControl?.value);
+      if (!moduleControl) {
+        return;
+      }
+
+      const errors = { ...(moduleControl.errors ?? {}) };
+      if (moduleKey && (counts.get(moduleKey) ?? 0) > 1) {
+        errors['duplicateModule'] = true;
+      } else {
+        delete errors['duplicateModule'];
+      }
+
+      moduleControl.setErrors(Object.keys(errors).length ? errors : null);
+    });
+  }
+
+  private loadPolicyVisibilityModules(): void {
+    this.policyVisibilityOptionsService.getModules()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((modules) => {
+        this.policyVisibilityModules = modules;
+        this.preloadExistingSubModuleOptions();
+      });
+  }
+
+  private preloadExistingSubModuleOptions(): void {
+    this.policies.controls.forEach((policyControl) => {
+      const mappings = policyControl.get('visibilityMappings') as FormArray | null;
+      mappings?.controls.forEach((mappingControl) => {
+        const moduleKey = normalizePolicyVisibilityKey(mappingControl.get('moduleKey')?.value);
+        this.loadSubModuleOptions(moduleKey);
+      });
+    });
+  }
+
+  private loadSubModuleOptions(moduleKey: string | null | undefined): void {
+    const normalizedModuleKey = normalizePolicyVisibilityKey(moduleKey);
+    if (!normalizedModuleKey || this.policyVisibilitySubModules[normalizedModuleKey]) {
+      return;
+    }
+
+    this.policyVisibilityOptionsService.getSubModules(normalizedModuleKey)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((subModules: PolicyVisibilitySubModuleOption[]) => {
+        this.policyVisibilitySubModules[normalizedModuleKey] = subModules.map((item) => ({
+          label: item.label,
+          value: item.key
+        }));
+      });
   }
 
   hidePublishCloneButtons: boolean = false
@@ -223,7 +419,7 @@ restrictPolicyNamedescription(event: KeyboardEvent) {
   }
 
   renameFile(file: File, newName: string): File {
-    const sanitizedFileName = newName.replace(/\s+/g, '_').replace(/[^a-zA-Z0-9._-]/g, '');   
+    const sanitizedFileName = newName.replace(/\s+/g, '_').replace(/[^a-zA-Z0-9._-]/g, '');
     return new File([file], sanitizedFileName, { type: file.type });
   }
 
@@ -248,6 +444,10 @@ restrictPolicyNamedescription(event: KeyboardEvent) {
 
 
   submit() {
+    this.submitAttempted = true;
+    this.policyForm.markAllAsTouched();
+    this.policies.controls.forEach((_, policyIndex) => this.validateDuplicateModules(policyIndex));
+    if (this.policyForm.invalid) return;
 
     const formValue = this.policyForm.value;
 
@@ -272,6 +472,7 @@ restrictPolicyNamedescription(event: KeyboardEvent) {
         sendPushNotification: false,
         sendNotification: item.notification,
         status: "Pending for submission",
+        moduleMappings: this.buildModuleMappings(item.visibilityMappings),
       }))
     };
     this.subscription = this.http.postdata('orgPolicies/Post', payload).subscribe({
@@ -287,6 +488,63 @@ restrictPolicyNamedescription(event: KeyboardEvent) {
       }
     });
 
+  }
+
+  private buildModuleMappings(visibilityMappings: any[] | null | undefined): Array<{
+    moduleName: string;
+    subModuleName: string;
+    isVisible: boolean;
+  }> {
+    if (!Array.isArray(visibilityMappings)) {
+      return [];
+    }
+
+    return visibilityMappings.flatMap((mapping: any) => {
+      const moduleKey = normalizePolicyVisibilityKey(mapping?.moduleKey);
+      const subModuleKeys = Array.isArray(mapping?.subModuleKeys)
+        ? mapping.subModuleKeys.map((item: string) => normalizePolicyVisibilityKey(item)).filter(Boolean)
+        : [];
+
+      if (!moduleKey) {
+        return [];
+      }
+
+      const moduleName = this.getModuleLabel(moduleKey);
+      if (!moduleName) {
+        return [];
+      }
+
+      if (this.getSubModuleOptions(moduleKey).length === 0) {
+        return [{
+          moduleName,
+          subModuleName: '',
+          isVisible: mapping?.displayEnabled === true
+        }];
+      }
+
+      return subModuleKeys
+        .map((subModuleKey: string) => {
+          const subModuleName = this.getSubModuleLabel(moduleKey, subModuleKey);
+          if (!subModuleName) {
+            return null;
+          }
+
+          return {
+            moduleName,
+            subModuleName,
+            isVisible: mapping?.displayEnabled === true
+          };
+        })
+        .filter((item: { moduleName: string; subModuleName: string; isVisible: boolean } | null): item is { moduleName: string; subModuleName: string; isVisible: boolean } => item !== null);
+    });
+  }
+
+  private getModuleLabel(moduleKey: string): string {
+    return this.policyVisibilityModules.find((item) => item.key === moduleKey)?.label ?? moduleKey;
+  }
+
+  private getSubModuleLabel(moduleKey: string, subModuleKey: string): string {
+    return this.getSubModuleOptions(moduleKey).find((item) => item.value === subModuleKey)?.label ?? subModuleKey;
   }
 
   closeDelete(modal: any) {
@@ -443,6 +701,8 @@ restrictPolicyNamedescription(event: KeyboardEvent) {
   }
 
   ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
     if (this.subscription) {
       this.subscription.unsubscribe();
     }

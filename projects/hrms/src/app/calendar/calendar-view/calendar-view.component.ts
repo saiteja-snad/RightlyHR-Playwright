@@ -16,15 +16,18 @@ import { NavigationEnd, Router } from '@angular/router';
 import { MODULE_INFOS } from '../../shared/modules-info';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
+import { ApplicablePoliciesTriggerComponent } from '../../shared/policies/applicable-policies-trigger/applicable-policies-trigger.component';
+import { APPLICABLE_POLICIES_KEYS } from '../../shared/policies/policy-visibility.catalog';
 @Component({
   selector: 'app-calendar-view',
-  imports: [CommonModule, TranslateModule, FullCalendarModule, FormsModule, NgbPopoverModule, ModuleInformationComponent,ModuleInfoIconComponent],
+  imports: [CommonModule, TranslateModule, FullCalendarModule, FormsModule, NgbPopoverModule, ModuleInformationComponent,ModuleInfoIconComponent,ApplicablePoliciesTriggerComponent],
   templateUrl: './calendar-view.component.html',
   styleUrl: './calendar-view.component.scss',
   encapsulation: ViewEncapsulation.None,
 })
 
 export class CalendarViewComponent implements OnInit, OnDestroy {
+  applicablePolicies = APPLICABLE_POLICIES_KEYS.CALENDAR;
   moduleinfo: string = '';
   calendarOptions!: CalendarOptions;
   eventsPromise!: Promise<EventInput[]>;

@@ -8,16 +8,20 @@ import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
 import { PerformaceReviewTabsComponent } from "../../shared/pms-module-tabs/performace-review-tabs/performace-review-tabs.component";
+import { ApplicablePoliciesTriggerComponent } from '../../shared/policies/applicable-policies-trigger/applicable-policies-trigger.component';
+import { APPLICABLE_POLICIES_KEYS } from '../../shared/policies/policy-visibility.catalog';
+
 @Component({
   selector: 'app-my-performance-review',
   imports: [RouterOutlet, MyPerformanceTabsComponent, TranslateModule, ModuleInformationComponent, NgbPopoverModule,
-    ModuleInfoIconComponent, PerformaceReviewTabsComponent],
+    ModuleInfoIconComponent, PerformaceReviewTabsComponent, ApplicablePoliciesTriggerComponent],
   templateUrl: './my-performance-review.component.html',
   styleUrl: './my-performance-review.component.scss',
   encapsulation: ViewEncapsulation.None,
 })
 
 export class MyPerformanceReviewComponent implements OnInit {
+  applicablePolicies = APPLICABLE_POLICIES_KEYS.PMS_PERFORMANCE_REVIEW;
   moduleinfo: string = '';
 
   constructor(public readonly router: Router) { }

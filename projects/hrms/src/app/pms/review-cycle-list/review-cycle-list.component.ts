@@ -18,7 +18,8 @@ import { NavigationEnd, Router } from '@angular/router';
 import { MODULE_INFOS } from '../../shared/modules-info';
 import { PmsTabsComponent } from "../../shared/pms-module-tabs/pms-tabs/pms-tabs.component";
 import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
-
+import { ApplicablePoliciesTriggerComponent } from '../../shared/policies/applicable-policies-trigger/applicable-policies-trigger.component';
+import { APPLICABLE_POLICIES_KEYS } from '../../shared/policies/policy-visibility.catalog';
 @Component({
   selector: 'app-review-cycle-list',
   imports: [
@@ -32,7 +33,8 @@ import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-inf
     ModuleInformationComponent,
     NgbPopoverModule,
     PmsTabsComponent,
-    ModuleInfoIconComponent
+    ModuleInfoIconComponent,
+    ApplicablePoliciesTriggerComponent
 ],
   templateUrl: './review-cycle-list.component.html',
   styleUrl: './review-cycle-list.component.scss',
@@ -40,6 +42,7 @@ import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-inf
 })
 
 export class ReviewCycleListComponent implements OnInit, OnDestroy {
+  applicablePolicies = APPLICABLE_POLICIES_KEYS.PMS_REVIEW_CYCLE;
   moduleinfo : string = '';
   subscription!: Subscription;
   filteredDetails: any[] = [];
@@ -85,11 +88,11 @@ export class ReviewCycleListComponent implements OnInit, OnDestroy {
 
   updateModuleInfo() {
     const url = this.router.url;
-  
+
     const routeToInfoMap: { [key: string]: string } = {
       '/pms/review-cycle': MODULE_INFOS.PMS_REVIEW_CYCLE_LIST_MODULE_INFO
     };
-  
+
     const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
     this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }

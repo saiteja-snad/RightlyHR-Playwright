@@ -18,15 +18,18 @@ import { ActiveclientsPipe } from "../../../Pipes/activeclients.pipe";
 import { FormsModule } from '@angular/forms';
 import { ClientSideTabsComponent } from "../../../shared/project-management-tabs/client-side-tabs/client-side-tabs.component";
 import { PaginatorModule } from 'primeng/paginator';
+import { ApplicablePoliciesTriggerComponent } from "../../../shared/policies/applicable-policies-trigger/applicable-policies-trigger.component";
+import { APPLICABLE_POLICIES_KEYS } from "../../../shared/policies/policy-visibility.catalog";
 @Component({
   selector: 'app-active-clients',
   imports: [CommonModule, FormsModule, ProjectManagementModuleInfoComponent, NoDataFoundComponent, PaginatorModule,
-    DataLoaderContentComponent, TranslateModule, ConfirmationIconComponent, ActiveclientsPipe, ClientSideTabsComponent],
+    DataLoaderContentComponent, TranslateModule, ConfirmationIconComponent, ActiveclientsPipe, ClientSideTabsComponent, ApplicablePoliciesTriggerComponent],
   templateUrl: './active-clients.component.html',
   styleUrl: './active-clients.component.scss'
 })
 
 export class ActiveClientsComponent implements OnInit, OnDestroy {
+  applicablePolicies = APPLICABLE_POLICIES_KEYS.PROJECT_MANAGEMENT_CLIENTS;
   loading: boolean = true;
   clients: Client[] = [];
   searchValue: any;

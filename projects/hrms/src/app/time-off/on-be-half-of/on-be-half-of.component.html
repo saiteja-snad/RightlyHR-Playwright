@@ -53,13 +53,17 @@
                     </div>
                 </form>
             </div>
-            
+
             <!-- @if(showbutton){ -->
              @if(rbac.allowedToAccess('Request On Behalf Button.view') ) {
             <button type="button" class="custom-btn btn-primary" (click)="openModal(addleave)"
                 [disabled]="!selectedEmployeeId">{{ 'Apply On Behalf Of' | translate }}</button>
             <!-- } -->
             }
+        <app-applicable-policies-trigger
+        [moduleKey]="applicablePolicies.moduleKey"
+        [subModuleKey]="applicablePolicies.subModuleKey">
+      </app-applicable-policies-trigger>
         </div>
     </div>
 
@@ -237,8 +241,8 @@
                             Selected date is a weekend
                         </div>
                         <div class="error-msg"
-                            *ngIf="((leaveForm.get('enddate')?.invalid || leaveForm.get('enddate')?.touched) && 
-                                        (this.selectedleave && this.selectedleave.category && 
+                            *ngIf="((leaveForm.get('enddate')?.invalid || leaveForm.get('enddate')?.touched) &&
+                                        (this.selectedleave && this.selectedleave.category &&
                                         this.selectedleave.category.excludeWeekends)) && isWeekOffSelectedEndate && isWeekOffSelected"
                             role="alert">
                             Please select the working days
@@ -346,7 +350,7 @@
                         <p class="error-msg" *ngIf="!leaveFormData.isDaytype && isDayTypeselected">
                             The leave balance for {{ selectedleave.category?.name }} is insufficient.</p>
                     </ng-template>
-                    
+
                 </div>
                 @if(selectedleave && selectedleave.category){
                 <!-- <p>Balance {{ selectedleave.category?.name }} : {{ remainingLeaves }} {{ remainingLeaves === 1 || remainingLeaves === 0.5 ? 'Day' : 'Days' }}</p> -->
@@ -354,7 +358,7 @@
                     <p>Balance {{ selectedleave.category?.name }} : {{ remainingLeaves }} {{ remainingLeaves === 1 || remainingLeaves === 0.5 ? 'Day' : 'Days' }}</p>
                 </div>
                 }
-                <div class="alert alert-info custom-alert-info py-2" *ngIf="selectedleave?.category?.isNoticePeriodExtended === true 
+                <div class="alert alert-info custom-alert-info py-2" *ngIf="selectedleave?.category?.isNoticePeriodExtended === true
                 && selectedleave?.category?.noticePeriodAllowedValue >= 0 && (this.employeeiddetails.separationType === 'Separation' || this.employeeiddetails.separationType === 'Early Relieving' || this.employeeiddetails.separationType === 'Extended')">
                     <small>Note: Applying this leave will extend your last working day</small>
                 </div>
@@ -362,7 +366,7 @@
                     <button type="button" class="custom-btn btn-secondary" (click)="openModal(confirmationpopup)">
                         {{'Cancel'| translate}}</button>
                     <button type="submit" class="custom-btn btn-primary" [disabled]="leaveForm.invalid || leaveForm.errors?.['dateOrderInvalid'] ||
-                    !isstimeoffValid || !startdatevalid || isHolidaySelected || disableSubmitButton || !isDayTypeselected ||  isWeekOffSelected || isWeekOffSelectedEndate || 
+                    !isstimeoffValid || !startdatevalid || isHolidaySelected || disableSubmitButton || !isDayTypeselected ||  isWeekOffSelected || isWeekOffSelectedEndate ||
                     isoptionalnotallowedatWorkingdate || isHolidaySelectedEndate || isHolidaySelected || isNonOptionalHolidaySelected ||
                     (leaveFormData.isDaytype ? (dateDifference / 2) > remainingLeaves : dateDifference > remainingLeaves)  || isLoading">
                         <span *ngIf="!isLoading">Apply</span>

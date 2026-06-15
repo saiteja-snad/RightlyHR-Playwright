@@ -87,6 +87,7 @@ export class OrganizationDashboardComponent implements AfterViewInit {
     { key: 'remote', label: 'Remote', color: '#EA362C' },
     { key: 'weekend', label: 'Weekend', color: '#32CD32' },
     { key: 'holiday', label: 'Holiday', color: '#FFA500' },
+    { key: 'yetToLogin', label: 'Yet To Login', color: '#94A3B8' },
   ];
   genderTotal: number = 0;
   femaleCount: number = 0;
@@ -232,10 +233,14 @@ export class OrganizationDashboardComponent implements AfterViewInit {
   newJoineesandExitsData: any;
   newJoineesandExitsChartData: any;
   newJoineesandExitsOptionsData: any;
-  date: Date = new Date();
+  date: Date[] | null = [
+    new Date(new Date().getFullYear(), new Date().getMonth(), 1),
+    new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0)
+  ];
   maxMonth: Date = new Date();
   joineesExitsOffcanvasTitle: string = '';
   joineesExitsOffcanvasList: any[] = [];
+  joineesExitsOffcanvasType: string = '';
   // end of new joinees and exits variables
   // location based employee count variables
   LocationwiseEmployeeCountLoader = false;
@@ -244,7 +249,10 @@ export class OrganizationDashboardComponent implements AfterViewInit {
   locationDetails: any[] = [];
   // upcoming actions variables
   upcomingActionsLoader = false;
-  upcomingActionsDate: Date = new Date();
+  upcomingActionsDate: Date[] | null = [
+    new Date(new Date().getFullYear(), new Date().getMonth(), 1),
+    new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0)
+  ];
   minUpcomingActionsMonth: Date = new Date();
   upcomingPendingActionsData: any;
   upcomingActionsChartData: any;
@@ -771,8 +779,7 @@ export class OrganizationDashboardComponent implements AfterViewInit {
 
   getFilteredDepartmentEmployees() {
     return this.searchEmployeeText
-      ? this.departmentOffcanvasList.filter((emp: any) =>
-          emp.employeeName?.toLowerCase().includes(this.searchEmployeeText.toLowerCase()))
+      ? this.departmentOffcanvasList.filter((emp: any) => this.matchesSearch(emp))
       : this.departmentOffcanvasList;
   }
 
@@ -1043,8 +1050,7 @@ export class OrganizationDashboardComponent implements AfterViewInit {
   }
 
   getFilteredGenderEmployees() {
-    return this.searchEmployeeText ? this.genderOffcanvasList.filter((emp: any) => 
-      emp.employeeName?.toLowerCase().includes(this.searchEmployeeText.toLowerCase())) : this.genderOffcanvasList;
+    return this.searchEmployeeText ? this.genderOffcanvasList.filter((emp: any) => this.matchesSearch(emp)) : this.genderOffcanvasList;
   }
 
   openModalLarge(content: any) {
@@ -1100,7 +1106,7 @@ export class OrganizationDashboardComponent implements AfterViewInit {
         // Total = all except absent
         this.teamTotal = (this.teamSummary.inOffice || 0) + (this.teamSummary.halfDay || 0) + (this.teamSummary.wfh || 0)
           + (this.teamSummary.leave || 0) + (this.teamSummary.absent || 0) + (this.teamSummary.remote || 0) + 
-          (this.teamSummary.weekend || 0) + (this.teamSummary.holiday || 0);
+          (this.teamSummary.weekend || 0) + (this.teamSummary.holiday || 0) + (this.teamSummary.yetToLogin || 0);
         this.buildTeamChart();
       },
       error: (err: any) => {
@@ -1114,7 +1120,7 @@ export class OrganizationDashboardComponent implements AfterViewInit {
   buildTeamChart() {
     const summary = this.teamSummary;
     // Keys to display (order matters)
-    const keys = ["inOffice", "halfDay", "wfh", "leave", "absent", "remote", "weekend", "holiday"];
+    const keys = ["inOffice", "halfDay", "wfh", "leave", "absent", "remote", "weekend", "holiday", "yetToLogin"];
     // Convert keys into labels (formatted text)
     const labels: string[] = keys.map(x =>
       x.replace(/([A-Z])/g, ' $1').replace(/^./, c => c.toUpperCase())
@@ -1122,7 +1128,7 @@ export class OrganizationDashboardComponent implements AfterViewInit {
     // Values for chart
     const chartData = keys.map(k => summary[k] || 0);
     // Matching colors (same order as keys)
-    const colors = ["#1E90FF", "#FFD700", "#FF1493", "#8A2BE2", "#FF0000", "#EA362C", "#32CD32", "#FFA500"];
+    const colors = ["#1E90FF", "#FFD700", "#FF1493", "#8A2BE2", "#FF0000", "#EA362C", "#32CD32", "#FFA500", "#94A3B8"];
     this.teamChartData = {
       labels,
       datasets: [
@@ -1343,8 +1349,7 @@ export class OrganizationDashboardComponent implements AfterViewInit {
   }
 
   getFilteredEmployees() {
-    return this.searchEmployeeText ? this.processedOffcanvasEmployees.filter((emp: any) =>
-      emp.employeeName?.toLowerCase().includes(this.searchEmployeeText.toLowerCase())) : this.processedOffcanvasEmployees;
+    return this.searchEmployeeText ? this.processedOffcanvasEmployees.filter((emp: any) => this.matchesSearch(emp)) : this.processedOffcanvasEmployees;
   }
 
   close() {
@@ -1390,17 +1395,17 @@ export class OrganizationDashboardComponent implements AfterViewInit {
   }
 
   // new joinees and exits functions
-  checkdates(value: Date) {
+  checkdates(value: Date[]) {
+    if (!value?.[0] || !value?.[1]) return;
+    this.date = value;
     this.newJoineesandExitsLoader = true;
-    this.date = value || new Date();
     this.getNewJoineesAndExits();
   }
 
   getNewJoineesAndExits() {
     this.newJoineesandExitsLoader = true;
-    const selectedDate = moment(this.date || new Date());
-    const startDate = selectedDate.startOf('month').format('YYYY-MM-DD');
-    const endDate = selectedDate.endOf('month').format('YYYY-MM-DD');
+    const startDate = moment(this.date?.[0] ?? new Date()).format('YYYY-MM-DD');
+    const endDate = moment(this.date?.[1] ?? this.date?.[0] ?? new Date()).format('YYYY-MM-DD');
     this.http.getData(`v2/Employeedata/newjoineesnexitscount?fromDate=${startDate}&toDate=${endDate}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.newJoineesandExitsData = res;
@@ -1447,6 +1452,7 @@ export class OrganizationDashboardComponent implements AfterViewInit {
   openJoineesExitsOffcanvas(content: any, key: string, title: string) {
     this.searchEmployeeText = '';
     this.joineesExitsOffcanvasTitle = title;
+    this.joineesExitsOffcanvasType = key;
     const rawList = this.newJoineesandExitsData?.[key] || [];
     this.joineesExitsOffcanvasList = rawList.map((emp: any) => {
       const profilePicUrl = emp.profilePic ? this.getImageUrl(emp.profilePic) : null;
@@ -1456,8 +1462,9 @@ export class OrganizationDashboardComponent implements AfterViewInit {
   }
 
   getFilteredJoineesExits() {
-    return this.searchEmployeeText ? this.joineesExitsOffcanvasList.filter((emp: any) =>
-      emp.employeeName?.toLowerCase().includes(this.searchEmployeeText.toLowerCase())) : this.joineesExitsOffcanvasList;
+    return this.searchEmployeeText
+      ? this.joineesExitsOffcanvasList.filter((emp: any) => this.matchesSearch(emp))
+      : this.joineesExitsOffcanvasList;
   }
 
   // locationwise employee count functions
@@ -1672,8 +1679,7 @@ export class OrganizationDashboardComponent implements AfterViewInit {
 
   getFilteredShiftLocationEmployees() {
     return this.searchEmployeeText
-      ? this.shiftLocationOffcanvasList.filter((emp: any) =>
-          emp.employeeName?.toLowerCase().includes(this.searchEmployeeText.toLowerCase()))
+      ? this.shiftLocationOffcanvasList.filter((emp: any) => this.matchesSearch(emp))
       : this.shiftLocationOffcanvasList;
   }
 
@@ -1708,18 +1714,19 @@ export class OrganizationDashboardComponent implements AfterViewInit {
         this.attendanceEmployeesList = res?.employees || [];
         const summary = this.attendanceReportData;
         this.totalAttendanceCount = (summary?.onTime || 0) + (summary?.lateLogin || 0) + (summary?.earlyLogout || 0) 
-        + (summary?.hoursDeficit || 0) + (summary?.breakExceeded || 0);
+        + (summary?.hoursDeficit || 0) + (summary?.breakExceeded || 0) + (summary?.permission || 0);
         const values = [
           summary?.onTime || 0,
           summary?.lateLogin || 0,
           summary?.earlyLogout || 0,
           summary?.hoursDeficit || 0,
-          summary?.breakExceeded || 0
+          summary?.breakExceeded || 0,
+          summary?.permission || 0
         ];
         const total = values.reduce((a, b) => a + b, 0);
         this.hasAttendanceReportData = total > 0;
         this.attendanceChartData = {
-          labels: ['On Time', 'Late Login', 'Early Logout', 'Hours Deficit', 'Break Exceeded Hours'],
+          labels: ['On Time', 'Late Login', 'Early Logout', 'Hours Deficit', 'Break Exceeded Hours', 'Permissions'],
           datasets: [
             {
               data: values,
@@ -1728,7 +1735,8 @@ export class OrganizationDashboardComponent implements AfterViewInit {
                 '#F59E0B',
                 '#EF4444',
                 '#6366F1',
-                '#06B6D4'
+                '#06B6D4',
+                '#8B5CF6'
               ]
             }
           ]
@@ -1761,6 +1769,7 @@ export class OrganizationDashboardComponent implements AfterViewInit {
         case 'earlyLogout': return emp.isEarlyLogout;
         case 'hoursDeficit': return emp.isHoursDeficit;
         case 'breakExceeded': return emp.isBreakHrsExceeded;
+        case 'permission': return emp.hasPermission;
         default: return false;
       }
     });
@@ -1789,9 +1798,8 @@ export class OrganizationDashboardComponent implements AfterViewInit {
   // upcoming actions functions
   getUpcomingActions() {
     this.upcomingActionsLoader = true;
-    const selectedDate = moment(this.upcomingActionsDate || new Date());
-    const startDate = selectedDate.startOf('month').format('YYYY-MM-DD');
-    const endDate = selectedDate.endOf('month').format('YYYY-MM-DD');
+    const startDate = moment(this.upcomingActionsDate?.[0] ?? new Date()).format('YYYY-MM-DD');
+    const endDate = moment(this.upcomingActionsDate?.[1] ?? this.upcomingActionsDate?.[0] ?? new Date()).format('YYYY-MM-DD');
     this.http.getData(`v2/PendingApproval/pending-requests?fromDate=${startDate}&toDate=${endDate}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.upcomingPendingActionsData = res?.counts;
@@ -1872,13 +1880,15 @@ export class OrganizationDashboardComponent implements AfterViewInit {
   }
 
   getFilteredUpcomingActions() {
-    return this.searchEmployeeText ? this.upcomingActionsOffcanvasList.filter((emp: any) =>
-      emp.employeeName?.toLowerCase().includes(this.searchEmployeeText.toLowerCase())) : this.upcomingActionsOffcanvasList;
+    return this.searchEmployeeText
+      ? this.upcomingActionsOffcanvasList.filter((emp: any) => this.matchesSearch(emp))
+      : this.upcomingActionsOffcanvasList;
   }
 
-  onUpcomingActionsDateChange(value: Date) {
+  onUpcomingActionsDateChange(value: Date[]) {
+    if (!value?.[0] || !value?.[1]) return;
+    this.upcomingActionsDate = value;
     this.upcomingActionsLoader = true;
-    this.upcomingActionsDate = value || new Date();
     this.getUpcomingActions();
   }
   
@@ -2094,9 +2104,14 @@ export class OrganizationDashboardComponent implements AfterViewInit {
   }
 
   getFilteredExperienceEmployees() {
-    return this.searchEmployeeText ? this.experienceOffcanvasList.filter((emp: any) => 
-      emp.employeeName?.toLowerCase().includes(this.searchEmployeeText.toLowerCase()))
-      : this.experienceOffcanvasList;
+    return this.searchEmployeeText ? this.experienceOffcanvasList.filter((emp: any) => this.matchesSearch(emp)) : this.experienceOffcanvasList;
+  }
+
+  private matchesSearch(emp: any): boolean {
+    const q = this.searchEmployeeText.toLowerCase();
+    return emp.employeeName?.toLowerCase().includes(q)
+      || emp.designation?.toLowerCase().includes(q)
+      || emp.departmentName?.toLowerCase().includes(q);
   }
 
   navigateToAccessedRoute(route: string) {

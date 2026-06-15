@@ -87,6 +87,7 @@ export class ManagerDashboardComponent {
     { key: 'remote', label: 'Remote', color: '#EA362C' },
     { key: 'weekend', label: 'Weekend', color: '#32CD32' },
     { key: 'holiday', label: 'Holiday', color: '#FFA500' },
+    { key: 'yetToLogin', label: 'Yet To Login', color: '#94A3B8' },
   ];
   genderTotal: number = 0;
   femaleCount: number = 0;
@@ -595,15 +596,13 @@ export class ManagerDashboardComponent {
 
   getFilteredAttendanceEmployees() {
     return this.searchEmployeeText
-      ? this.processedOffcanvasEmployees.filter((emp: any) =>
-          emp.employeeName?.toLowerCase().includes(this.searchEmployeeText.toLowerCase()))
+      ? this.processedOffcanvasEmployees.filter((emp: any) => this.matchesSearch(emp))
       : this.processedOffcanvasEmployees;
   }
 
   getFilteredGenderEmployees() {
     return this.searchEmployeeText
-      ? this.genderOffcanvasList.filter((emp: any) =>
-          emp.employeeName?.toLowerCase().includes(this.searchEmployeeText.toLowerCase()))
+      ? this.genderOffcanvasList.filter((emp: any) => this.matchesSearch(emp))
       : this.genderOffcanvasList;
   }
 
@@ -646,7 +645,7 @@ export class ManagerDashboardComponent {
         // Total = all statuses
         this.teamTotal = (this.teamSummary.inOffice || 0) + (this.teamSummary.halfDay || 0) + (this.teamSummary.wfh || 0)
           + (this.teamSummary.leave || 0) + (this.teamSummary.absent || 0) + (this.teamSummary.remote || 0)
-          + (this.teamSummary.weekend || 0) + (this.teamSummary.holiday || 0);
+          + (this.teamSummary.weekend || 0) + (this.teamSummary.holiday || 0) + (this.teamSummary.yetToLogin || 0);
         this.buildTeamChart();
       },
       error: (err: any) => {
@@ -660,7 +659,7 @@ export class ManagerDashboardComponent {
   buildTeamChart() {
     const summary = this.teamSummary;
     // Keys to display (order matters)
-    const keys = ["inOffice", "halfDay", "wfh", "leave", "absent", "remote", "weekend", "holiday"];
+    const keys = ["inOffice", "halfDay", "wfh", "leave", "absent", "remote", "weekend", "holiday", "yetToLogin"];
     // Convert keys into labels (formatted text)
     const labels: string[] = keys.map(x =>
       x.replace(/([A-Z])/g, ' $1').replace(/^./, c => c.toUpperCase())
@@ -668,7 +667,7 @@ export class ManagerDashboardComponent {
     // Values for chart
     const chartData = keys.map(k => summary[k] || 0);
     // Matching colors (same order as keys)
-    const colors = ["#1E90FF", "#FFD700", "#FF1493", "#8A2BE2", "#FF0000", "#EA362C", "#32CD32", "#FFA500"];
+    const colors = ["#1E90FF", "#FFD700", "#FF1493", "#8A2BE2", "#FF0000", "#EA362C", "#32CD32", "#FFA500", "#94A3B8"];
     this.teamChartData = {
       labels,
       datasets: [
@@ -884,14 +883,18 @@ export class ManagerDashboardComponent {
   getFilteredEmployees() {
     const key = this.offCanvasData?.key;
     const list = this.OffCanvasemployeeList?.[key] || [];
-    // Filter first, then map only the filtered results
-    const filteredList = this.searchEmployeeText ? list.filter((emp: any) =>
-      emp.employeeName?.toLowerCase().includes(this.searchEmployeeText.toLowerCase())) : list;
-    // Only map profile URLs for filtered results
+    const filteredList = this.searchEmployeeText ? list.filter((emp: any) => this.matchesSearch(emp)) : list;
     return filteredList.map((emp: any) => ({
       ...emp,
       profilePicUrl: this.getImageUrl(emp.profilePic)
     }));
+  }
+
+  private matchesSearch(emp: any): boolean {
+    const q = this.searchEmployeeText.toLowerCase();
+    return emp.employeeName?.toLowerCase().includes(q)
+      || emp.designation?.toLowerCase().includes(q)
+      || emp.departmentName?.toLowerCase().includes(q);
   }
 
   close() {
@@ -1136,18 +1139,19 @@ export class ManagerDashboardComponent {
         this.attendanceEmployeesList = res?.employees || [];
         const summary = this.attendanceReportData;
         this.totalAttendanceCount = (summary?.onTime || 0) + (summary?.lateLogin || 0) + (summary?.earlyLogout || 0)
-          + (summary?.hoursDeficit || 0) + (summary?.breakExceeded || 0);
+          + (summary?.hoursDeficit || 0) + (summary?.breakExceeded || 0) + (summary?.permission || 0);
         const values = [
           summary?.onTime || 0,
           summary?.lateLogin || 0,
           summary?.earlyLogout || 0,
           summary?.hoursDeficit || 0,
-          summary?.breakExceeded || 0
+          summary?.breakExceeded || 0,
+          summary?.permission || 0
         ];
         const total = values.reduce((a, b) => a + b, 0);
         this.hasAttendanceReportData = total > 0;
         this.attendanceChartData = {
-          labels: ['On Time', 'Late Login', 'Early Logout', 'Hours Deficit', 'Break Exceeded Hours'],
+          labels: ['On Time', 'Late Login', 'Early Logout', 'Hours Deficit', 'Break Exceeded Hours', 'Permissions'],
           datasets: [
             {
               data: values,
@@ -1156,7 +1160,8 @@ export class ManagerDashboardComponent {
                 '#F59E0B',
                 '#EF4444',
                 '#6366F1',
-                '#06B6D4'
+                '#06B6D4',
+                '#8B5CF6'
               ]
             }
           ]
@@ -1188,6 +1193,7 @@ export class ManagerDashboardComponent {
         case 'earlyLogout': return emp.isEarlyLogout;
         case 'hoursDeficit': return emp.isHoursDeficit;
         case 'breakExceeded': return emp.isBreakHrsExceeded;
+        case 'permission': return emp.hasPermission;
         default: return false;
       }
     });

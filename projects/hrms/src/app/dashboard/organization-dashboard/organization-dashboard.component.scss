@@ -860,6 +860,18 @@
     color: var(--primary-color);
   }
 
+  .chip-doj {
+    border-color: #10B981 !important;
+    color: #10B981 !important;
+    background-color: rgba(16, 185, 129, 0.05) !important;
+  }
+
+  .chip-lwd {
+    border-color: #EF4444 !important;
+    color: #EF4444 !important;
+    background-color: rgba(239, 68, 68, 0.05) !important;
+  }
+
   .attendance-chip {
     font-size: var(--fontsize10);
     font-weight: 600;
@@ -889,6 +901,12 @@
       background-color: #FFF;
       border: 1px solid #d97400 !important;
       color: #d97400 !important;
+    }
+
+    &.chip-permission {
+      background-color: #FFF;
+      color: rgb(48, 88, 137) !important;
+      border-color: rgb(48, 88, 137) !important;
     }
   }
 }

@@ -81,6 +81,7 @@ export class EmployeeDashboardComponent {
     { key: 'remote', label: 'Remote', color: '#EA362C' },
     { key: 'weekend', label: 'Weekend', color: '#32CD32' },
     { key: 'holiday', label: 'Holiday', color: '#FFA500' },
+    { key: 'yetToLogin', label: 'Yet To Login', color: '#94A3B8' },
   ];
   weeklyWorkLogs: any[] = [];
   todayDurationLabel: string = "00:00:00";
@@ -351,7 +352,7 @@ export class EmployeeDashboardComponent {
         // Total = all statuses
         this.teamTotal = (this.teamSummary.inOffice || 0) + (this.teamSummary.halfDay || 0) + (this.teamSummary.wfh || 0)
           + (this.teamSummary.leave || 0) + (this.teamSummary.absent || 0) + (this.teamSummary.remote || 0)
-          + (this.teamSummary.weekend || 0) + (this.teamSummary.holiday || 0);
+          + (this.teamSummary.weekend || 0) + (this.teamSummary.holiday || 0) + (this.teamSummary.yetToLogin || 0);
         this.buildTeamChart();
       },
       error: (err: any) => {
@@ -365,7 +366,7 @@ export class EmployeeDashboardComponent {
   buildTeamChart() {
     const summary = this.teamSummary;
     // Keys to display (order matters)
-    const keys = ["inOffice", "halfDay", "wfh", "leave", "absent", "remote", "weekend", "holiday"];
+    const keys = ["inOffice", "halfDay", "wfh", "leave", "absent", "remote", "weekend", "holiday", "yetToLogin"];
     // Convert keys into labels (formatted text)
     const labels: string[] = keys.map(x =>
       x.replace(/([A-Z])/g, ' $1').replace(/^./, c => c.toUpperCase())
@@ -373,7 +374,7 @@ export class EmployeeDashboardComponent {
     // Values for chart
     const chartData = keys.map(k => summary[k] || 0);
     // Matching colors (same order as keys)
-    const colors = ["#1E90FF", "#FFD700", "#FF1493", "#8A2BE2", "#FF0000", "#EA362C", "#32CD32", "#FFA500"];
+    const colors = ["#1E90FF", "#FFD700", "#FF1493", "#8A2BE2", "#FF0000", "#EA362C", "#32CD32", "#FFA500", "#94A3B8"];
     this.teamChartData = {
       labels,
       datasets: [
@@ -589,14 +590,18 @@ export class EmployeeDashboardComponent {
   getFilteredEmployees() {
     const key = this.offCanvasData?.key;
     const list = this.OffCanvasemployeeList?.[key] || [];
-    // Filter first, then map only the filtered results
-    const filteredList = this.searchEmployeeText ? list.filter((emp: any) =>
-      emp.employeeName?.toLowerCase().includes(this.searchEmployeeText.toLowerCase())) : list;
-    // Only map profile URLs for filtered results
+    const filteredList = this.searchEmployeeText ? list.filter((emp: any) => this.matchesSearch(emp)) : list;
     return filteredList.map((emp: any) => ({
       ...emp,
       profilePicUrl: this.getImageUrl(emp.profilePic)
     }));
+  }
+
+  private matchesSearch(emp: any): boolean {
+    const q = this.searchEmployeeText.toLowerCase();
+    return emp.employeeName?.toLowerCase().includes(q)
+      || emp.designation?.toLowerCase().includes(q)
+      || emp.departmentName?.toLowerCase().includes(q);
   }
 
   close() {

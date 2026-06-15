@@ -260,7 +260,7 @@
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="custom-poup-header-content popup-header-border">
             <div>
-                <p class="popup-heading mb-0">{{ offCanvasData.label }}({{ teamSummary[offCanvasData.key] || 0 }})</p>
+                <p class="popup-heading mb-0">{{ offCanvasData.label }}({{ getFilteredEmployees().length }})</p>
             </div>
             <div>
                 <a (click)="close()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
@@ -274,13 +274,12 @@
                     <i class="bi bi-search"></i>
                 </span>
                 <input type="search" class="form-control custom-search-input" placeholder="Search"
-                    [(ngModel)]="searchEmployeeText" />
+                    [(ngModel)]="searchEmployeeText" placeholder="Search by Employee name/designation/department" />
             </div>
             <div *ngFor="let emp of getFilteredEmployees()" class="profile-content mb-2">
                 <div>
                     <ng-container *ngIf="emp.profilePicUrl; else showProfileIcon">
-                        <img [src]="emp.profilePicUrl" [width]="38" [height]="38" alt="Profile Image"
-                            class="profile-img" />
+                        <img [src]="emp.profilePicUrl" [width]="38" [height]="38" alt="Profile Image" class="profile-img" />
                     </ng-container>
                     <ng-template #showProfileIcon>
                         <app-profile-icon [iconWidth]="'38'" [iconHeight]="'38'" />
@@ -288,10 +287,9 @@
                 </div>
                 <div class="profile-info w-100">
                     <div class="name">{{ emp.employeeName }}</div>
-                    <div class="designation">{{ emp.designation }}</div>
+                    <div class="designation">{{ emp.designation }} - {{ emp.departmentName }}</div>
                     @if (emp.categoryName) {
-                    <div class="leave-chip mt-1" [ngStyle]="getLeaveChipStyle(emp.categoryColor)">{{ emp.categoryName }}
-                    </div>
+                    <div class="leave-chip mt-1" [ngStyle]="getLeaveChipStyle(emp.categoryColor)">{{ emp.categoryName }}</div>
                     }
                 </div>
             </div>

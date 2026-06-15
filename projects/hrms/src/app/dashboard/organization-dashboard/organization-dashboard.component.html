@@ -45,10 +45,10 @@
                         </ng-template>
                     </div>
                 </div>
-                <div class="custom-year-month-picker">
-                    <p-datepicker [(ngModel)]="date" placeholder="Select month and year"
-                        (ngModelChange)="checkdates($event)" [showIcon]="true" [selectOtherMonths]="true" view="month"
-                        dateFormat="mm/yy" [readonlyInput]="true"/>
+                <div class="custom-date-range-picker">
+                    <p-datepicker [(ngModel)]="date" placeholder="Select date range"
+                        (ngModelChange)="checkdates($event)" [showIcon]="true" selectionMode="range"
+                        [readonlyInput]="true" />
                 </div>
             </div>
             @if(!newJoineesandExitsLoader){
@@ -114,10 +114,10 @@
                         </ng-template>
                     </div>
                 </div>
-                <div class="custom-year-month-picker">
-                    <p-datepicker [(ngModel)]="upcomingActionsDate" placeholder="Select month and year"
-                        (ngModelChange)="onUpcomingActionsDateChange($event)" [showIcon]="true" [selectOtherMonths]="true" view="month"
-                        dateFormat="mm/yy" [readonlyInput]="true"/>
+                <div class="custom-date-range-picker">
+                    <p-datepicker [(ngModel)]="upcomingActionsDate" placeholder="Select date range"
+                        (ngModelChange)="onUpcomingActionsDateChange($event)" [showIcon]="true" selectionMode="range"
+                        [readonlyInput]="true" />
                 </div>
             </div>
 
@@ -309,6 +309,18 @@
                             </span>
                             }@else{
                             <span>{{ attendanceReportData?.breakExceeded || 0 }}</span>
+                            }
+                        </div>
+                    </div>
+                    <div [ngStyle]="{ 'border-left': '4px solid #8B5CF6' }" class="employee-type-text ps-2">
+                        <p class="m-0">Permissions</p>
+                        <div class="count-text">
+                            @if(attendanceReportData?.permission != 0){
+                            <span class="cursor" (click)="openAttendanceOffcanvas(resourceList, 'permission', 'Permissions', attendanceReportData?.permission)">
+                                <u>{{ attendanceReportData?.permission || 0 }}</u>
+                            </span>
+                            }@else{
+                            <span>{{ attendanceReportData?.permission || 0 }}</span>
                             }
                         </div>
                     </div>
@@ -598,7 +610,7 @@
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="custom-poup-header-content popup-header-border">
             <div>
-                <p class="popup-heading mb-0">{{ joineesExitsOffcanvasTitle }}({{ joineesExitsOffcanvasList.length }})
+                <p class="popup-heading mb-0">{{ joineesExitsOffcanvasTitle }}({{ getFilteredJoineesExits().length }})
                 </p>
             </div>
             <div>
@@ -611,7 +623,8 @@
                 <span class="input-group-text custom-input-group-search" id="basic-addon1">
                     <i class="bi bi-search"></i>
                 </span>
-                <input type="search" class="form-control custom-search-input" placeholder="Search" [(ngModel)]="searchEmployeeText" />
+                <input type="search" class="form-control custom-search-input" placeholder="Search" [(ngModel)]="searchEmployeeText" 
+                placeholder="Search by Employee name/designation/department"/>
             </div>
             <div *ngFor="let emp of getFilteredJoineesExits()" class="profile-content mb-2">
                 <div>
@@ -624,7 +637,13 @@
                 </div>
                 <div class="profile-info w-100">
                     <div class="name">{{ emp.employeeName }}</div>
-                    <div class="designation">{{ emp.designation }}</div>
+                    <div class="designation">{{ emp.designation }} - {{ emp.departmentName }}</div>
+                    @if (joineesExitsOffcanvasType === 'newJoinees' && emp.dateOfJoining) {
+                    <div class="leave-chip chip-doj mt-1">DOJ: {{ emp.dateOfJoining | date:'MMM dd, yyyy' }}</div>
+                    }
+                    @if (joineesExitsOffcanvasType === 'exits' && emp.lastWorkingDay) {
+                    <div class="leave-chip chip-lwd mt-1">LWD: {{ emp.lastWorkingDay | date:'MMM dd, yyyy' }}</div>
+                    }
                 </div>
             </div>
             <div *ngIf="getFilteredJoineesExits().length === 0" class="text-center text-muted py-3">
@@ -639,7 +658,7 @@
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="custom-poup-header-content popup-header-border">
             <div>
-                <p class="popup-heading mb-0">{{ offCanvasData.label }}({{ teamSummary[offCanvasData.key] || 0 }})</p>
+                <p class="popup-heading mb-0">{{ offCanvasData.label }}({{ getFilteredEmployees().length }})</p>
             </div>
             <div>
                 <a (click)="close()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
@@ -651,7 +670,8 @@
                 <span class="input-group-text custom-input-group-search" id="basic-addon1">
                     <i class="bi bi-search"></i>
                 </span>
-                <input type="search" class="form-control custom-search-input" placeholder="Search" [(ngModel)]="searchEmployeeText" />
+                <input type="search" class="form-control custom-search-input" placeholder="Search" [(ngModel)]="searchEmployeeText" 
+                placeholder="Search by Employee name/designation/department"/>
             </div>
             <div *ngFor="let emp of getFilteredEmployees()" class="profile-content mb-2">
                 <div>
@@ -664,7 +684,7 @@
                 </div>
                 <div class="profile-info w-100">
                     <div class="name">{{ emp.employeeName }}</div>
-                    <div class="designation">{{ emp.designation }}</div>
+                    <div class="designation">{{ emp.designation }} -{{ emp.departmentName }}</div>
                     @if (emp.categoryName) {
                     <div class="leave-chip mt-1" [ngStyle]="getLeaveChipStyle(emp.categoryColor)">{{ emp.categoryName }}</div>
                     }
@@ -805,7 +825,7 @@
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="custom-poup-header-content popup-header-border">
             <div>
-                <p class="popup-heading mb-0">{{ attendanceOffcanvasTitle }} ({{ processedOffcanvasEmployees.length }})</p>
+                <p class="popup-heading mb-0">{{ attendanceOffcanvasTitle }} ({{ getFilteredEmployees().length }})</p>
             </div>
             <div>
                 <a (click)="close()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
@@ -816,7 +836,8 @@
                 <span class="input-group-text custom-input-group-search">
                     <i class="bi bi-search"></i>
                 </span>
-                <input type="search" class="form-control custom-search-input" placeholder="Search" [(ngModel)]="searchEmployeeText" />
+                <input type="search" class="form-control custom-search-input" placeholder="Search" [(ngModel)]="searchEmployeeText" 
+                placeholder="Search by Employee name/designation/department"/>
             </div>
             <div *ngFor="let emp of getFilteredEmployees()" class="profile-content mb-2">
                 <div>
@@ -829,7 +850,7 @@
                 </div>
                 <div class="profile-info w-100">
                     <div class="name">{{ emp.employeeName }}</div>
-                    <div class="designation">{{ emp.designation }}</div>
+                    <div class="designation">{{ emp.designation }} - {{ emp.departmentName }}</div>
                     <div class="d-flex flex-wrap gap-1 mt-1">
                         @if(attendanceOffcanvasType === 'lateLogin' && emp.isLateLogin && emp.lateLoginDuration) {
                         <span class="attendance-chip chip-late">Late: {{ emp.lateLoginDuration }}</span>
@@ -842,6 +863,9 @@
                         }
                         @if(attendanceOffcanvasType === 'breakExceeded' && emp.isBreakHrsExceeded && emp.breakHrsExceededDuration) {
                         <span class="attendance-chip chip-break">Break Exceeded: {{ emp.breakHrsExceededDuration }}</span>
+                        }
+                        @if(attendanceOffcanvasType === 'permission' && emp.hasPermission && emp.permissionDuration) {
+                        <span class="attendance-chip chip-permission">Permission: {{ emp.permissionDuration }}</span>
                         }
                     </div>
                 </div>
@@ -858,7 +882,7 @@
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="custom-poup-header-content popup-header-border">
             <div>
-                <p class="popup-heading mb-0">{{ shiftLocationOffcanvasTitle }} ({{ shiftLocationOffcanvasList.length }})</p>
+                <p class="popup-heading mb-0">{{ shiftLocationOffcanvasTitle }} ({{ getFilteredShiftLocationEmployees().length }})</p>
             </div>
             <div>
                 <a (click)="close()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
@@ -869,7 +893,8 @@
                 <span class="input-group-text custom-input-group-search">
                     <i class="bi bi-search"></i>
                 </span>
-                <input type="search" class="form-control custom-search-input" placeholder="Search" [(ngModel)]="searchEmployeeText" />
+                <input type="search" class="form-control custom-search-input" placeholder="Search" [(ngModel)]="searchEmployeeText" 
+                placeholder="Search by Employee name/designation/department"/>
             </div>
             <div *ngFor="let emp of getFilteredShiftLocationEmployees()" class="profile-content mb-2">
                 <div>
@@ -882,7 +907,7 @@
                 </div>
                 <div class="profile-info w-100">
                     <div class="name">{{ emp.employeeName }}</div>
-                    <div class="designation">{{ emp.designation }}</div>
+                    <div class="designation">{{ emp.designation }} - {{ emp.departmentName }}</div>
                     <div class="designation">{{ emp.empStatus }}</div>
                 </div>
             </div>
@@ -898,7 +923,7 @@
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="custom-poup-header-content popup-header-border">
             <div>
-                <p class="popup-heading mb-0">{{ genderOffcanvasTitle }} ({{ genderOffcanvasList.length }})</p>
+                <p class="popup-heading mb-0">{{ genderOffcanvasTitle }} ({{ getFilteredGenderEmployees().length }})</p>
             </div>
             <div>
                 <a (click)="close()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
@@ -909,7 +934,8 @@
                 <span class="input-group-text custom-input-group-search">
                     <i class="bi bi-search"></i>
                 </span>
-                <input type="search" class="form-control custom-search-input" placeholder="Search" [(ngModel)]="searchEmployeeText" />
+                <input type="search" class="form-control custom-search-input" placeholder="Search" [(ngModel)]="searchEmployeeText" 
+                placeholder="Search by Employee name/designation/department"/>
             </div>
             <div *ngFor="let emp of getFilteredGenderEmployees()" class="profile-content mb-2">
                 <div>
@@ -922,7 +948,7 @@
                 </div>
                 <div class="profile-info w-100">
                     <div class="name">{{ emp.employeeName }}</div>
-                    <div class="designation">{{ emp.designation }}</div>
+                    <div class="designation">{{ emp.designation }} - {{ emp.departmentName }}</div>
                     <div class="designation">{{ emp.empStatus }}</div>
                 </div>
             </div>
@@ -938,7 +964,7 @@
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="custom-poup-header-content popup-header-border">
             <div>
-                <p class="popup-heading mb-0">Experience With {{ experienceOffcanvasTitle }} ({{ experienceOffcanvasList.length }})</p>
+                <p class="popup-heading mb-0">Experience With {{ experienceOffcanvasTitle }} ({{ getFilteredExperienceEmployees().length }})</p>
             </div>
             <div>
                 <a (click)="close()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
@@ -949,7 +975,8 @@
                 <span class="input-group-text custom-input-group-search">
                     <i class="bi bi-search"></i>
                 </span>
-                <input type="search" class="form-control custom-search-input" placeholder="Search" [(ngModel)]="searchEmployeeText" />
+                <input type="search" class="form-control custom-search-input" placeholder="Search" [(ngModel)]="searchEmployeeText" 
+                placeholder="Search by Employee name/designation/department"/>
             </div>
             <div *ngFor="let emp of getFilteredExperienceEmployees()" class="profile-content mb-2">
                 <div>
@@ -962,7 +989,7 @@
                 </div>
                 <div class="profile-info w-100">
                     <div class="name">{{ emp.employeeName }}</div>
-                    <div class="designation">{{ emp.designation }}</div>
+                    <div class="designation">{{ emp.designation }} - {{ emp.departmentName }}</div>
                     <div class="designation">{{ emp.empStatus }}</div>
                 </div>
             </div>
@@ -978,7 +1005,7 @@
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="custom-poup-header-content popup-header-border">
             <div>
-                <p class="popup-heading mb-0">{{ departmentOffcanvasTitle }} ({{ departmentOffcanvasList.length }})</p>
+                <p class="popup-heading mb-0">{{ departmentOffcanvasTitle }} ({{ getFilteredDepartmentEmployees().length }})</p>
             </div>
             <div>
                 <a (click)="close()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
@@ -989,7 +1016,8 @@
                 <span class="input-group-text custom-input-group-search">
                     <i class="bi bi-search"></i>
                 </span>
-                <input type="search" class="form-control custom-search-input" placeholder="Search" [(ngModel)]="searchEmployeeText" />
+                <input type="search" class="form-control custom-search-input" placeholder="Search" [(ngModel)]="searchEmployeeText" 
+                placeholder="Search by Employee name/designation/department"/>
             </div>
             <div *ngFor="let emp of getFilteredDepartmentEmployees()" class="profile-content mb-2">
                 <div>
@@ -1002,7 +1030,7 @@
                 </div>
                 <div class="profile-info w-100">
                     <div class="name">{{ emp.employeeName }}</div>
-                    <div class="designation">{{ emp.designation }}</div>
+                    <div class="designation">{{ emp.designation }} - {{ emp.departmentName }}</div>
                     <div class="designation">{{ emp.empStatus }}</div>
                 </div>
             </div>
@@ -1018,7 +1046,7 @@
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="custom-poup-header-content popup-header-border">
             <div>
-                <p class="popup-heading mb-0">{{ upcomingActionsOffcanvasTitle }}({{ upcomingActionsOffcanvasList.length }})</p>
+                <p class="popup-heading mb-0">{{ upcomingActionsOffcanvasTitle }}({{ getFilteredUpcomingActions().length }})</p>
             </div>
             <div>
                 <a (click)="close()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
@@ -1031,7 +1059,8 @@
                 <span class="input-group-text custom-input-group-search" id="basic-addon1">
                     <i class="bi bi-search"></i>
                 </span>
-                <input type="search" class="form-control custom-search-input" placeholder="Search" [(ngModel)]="searchEmployeeText" />
+                <input type="search" class="form-control custom-search-input" placeholder="Search" [(ngModel)]="searchEmployeeText" 
+                placeholder="Search by Employee name/designation/department"/>
             </div>
             <div *ngFor="let emp of getFilteredUpcomingActions()" class="profile-content mb-2">
                 <div>
@@ -1044,11 +1073,15 @@
                 </div>
                 <div class="profile-info w-100">
                     <div class="name">{{ emp.employeeName }}</div>
-                    <div class="designation">{{ emp.designation }}</div>
+                    <div class="designation">{{ emp.designation }} - {{ emp.departmentName }}</div>
                     @if (upcomingActionsOffcanvasType === 'noticePeriod' && emp.lastWorkingDate) {
-                    <div class="leave-chip mt-1" style="border-color: #EF4444; color: #EF4444; background-color: rgba(239,68,68,0.05)">
-                        LWD: {{ emp.lastWorkingDate | date:'MMM dd, yyyy' }}
-                    </div>
+                    <div class="leave-chip chip-lwd mt-1">LWD: {{ emp.lastWorkingDate | date:'MMM dd, yyyy' }}</div>
+                    }
+                    @if (upcomingActionsOffcanvasType === 'probation' && emp.probationEndDate) {
+                    <div class="leave-chip chip-lwd mt-1">Probation End: {{ emp.probationEndDate | date:'MMM dd, yyyy' }}</div>
+                    }
+                    @if (upcomingActionsOffcanvasType === 'trainee' && emp.trainingEndDate) {
+                    <div class="leave-chip chip-lwd mt-1">Training End: {{ emp.trainingEndDate | date:'MMM dd, yyyy' }}</div>
                     }
                 </div>
             </div>

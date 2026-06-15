@@ -29,7 +29,7 @@ import { PolicyVisibilityOptionsService } from '../../../../shared/policies/poli
     ToggleSwitchModule,
     InfoIconComponent,
     MultiSelectModule
-],
+  ],
   templateUrl: './view-policies.component.html',
   styleUrl: './view-policies.component.scss',
 })
@@ -203,6 +203,24 @@ export class ViewPoliciesComponent implements OnInit, OnDestroy {
 
   getSubModuleOptions(moduleKey: string | null): Array<{ label: string; value: string }> {
     return this.policyVisibilitySubModules[normalizePolicyVisibilityKey(moduleKey)] ?? [];
+  }
+
+  hasSubModuleOptions(moduleKey: string | null): boolean {
+    return this.getSubModuleOptions(moduleKey).length > 0;
+  }
+
+  hasVisibilityConfiguration(policyIndex: number): boolean {
+    return this.getVisibilityMappings(policyIndex)?.controls.some((mappingControl) =>
+      !!normalizePolicyVisibilityKey(mappingControl.get('moduleKey')?.value)
+    ) ?? false;
+  }
+
+  getSubModuleLabels(policyIndex: number, mappingIndex: number): string[] {
+    const row = this.getVisibilityMappings(policyIndex).at(mappingIndex);
+    const moduleKey = normalizePolicyVisibilityKey(row?.get('moduleKey')?.value);
+    const selectedKeys: string[] = row?.get('subModuleKeys')?.value ?? [];
+    const options = this.getSubModuleOptions(moduleKey);
+    return selectedKeys.map(k => options.find(o => o.value === k)?.label ?? k).filter(Boolean);
   }
 
   private loadPolicyVisibilityModules(): void {

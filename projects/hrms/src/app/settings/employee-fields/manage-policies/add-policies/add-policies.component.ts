@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormArray, FormControl, FormGroup, FormsModule, ReactiveFormsModule, FormBuilder, Validators, AbstractControl } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import moment from 'moment';
@@ -89,11 +89,12 @@ export class AddPoliciesComponent implements OnInit, OnDestroy {
 
   private createVisibilityMappingRow(value?: any): FormGroup {
     const row = this.fb.group({
-      moduleKey: [normalizePolicyVisibilityKey(value?.moduleKey), Validators.required],
+      moduleKey: [normalizePolicyVisibilityKey(value?.moduleKey)],
       subModuleKeys: [Array.isArray(value?.subModuleKeys) ? value.subModuleKeys.map((item: string) => normalizePolicyVisibilityKey(item)) : []],
       displayEnabled: [value?.displayEnabled ?? false]
     });
     this.updateVisibilityMappingValidators(row);
+    this.updateDisplayToggleState(row);
     return row;
   }
 
@@ -119,6 +120,7 @@ export class AddPoliciesComponent implements OnInit, OnDestroy {
     row.patchValue({ moduleKey: normalizedModuleKey, subModuleKeys: [], displayEnabled: false });
     this.loadSubModuleOptions(normalizedModuleKey);
     this.updateVisibilityMappingValidators(row);
+    this.updateDisplayToggleState(row);
     this.validateDuplicateModules(policyIndex);
   }
 
@@ -133,16 +135,10 @@ export class AddPoliciesComponent implements OnInit, OnDestroy {
   isDisplayToggleVisible(policyIndex: number, mappingIndex: number): boolean {
     const row = this.getVisibilityMappings(policyIndex).at(mappingIndex) as FormGroup;
     const moduleKey = normalizePolicyVisibilityKey(row.get('moduleKey')?.value);
-    const selected = row.get('subModuleKeys')?.value as string[] | null;
     if (!moduleKey || this.policyVisibilitySubModulesLoading[moduleKey] === true) {
       return false;
     }
-
-    if (!this.hasSubModuleOptions(moduleKey)) {
-      return true;
-    }
-
-    return (selected?.length ?? 0) > 0;
+    return true;
   }
 
   getSubModuleOptions(moduleKey: string | null): Array<{ label: string; value: string }> {
@@ -245,13 +241,34 @@ export class AddPoliciesComponent implements OnInit, OnDestroy {
     }
 
     if (moduleKey && this.hasSubModuleOptions(moduleKey)) {
+      subModuleKeysControl.enable({ emitEvent: false });
       subModuleKeysControl.setValidators([this.requiredArrayValidator]);
     } else {
+      if (!moduleKey || this.policyVisibilitySubModulesLoading[moduleKey] !== true) {
+        subModuleKeysControl.setValue([], { emitEvent: false });
+      }
+      subModuleKeysControl.disable({ emitEvent: false });
       subModuleKeysControl.clearValidators();
       subModuleKeysControl.setErrors(null);
     }
 
     subModuleKeysControl.updateValueAndValidity({ emitEvent: false });
+  }
+
+  private updateDisplayToggleState(row: FormGroup): void {
+    const moduleKey = normalizePolicyVisibilityKey(row.get('moduleKey')?.value);
+    const displayEnabledControl = row.get('displayEnabled');
+    if (!displayEnabledControl) {
+      return;
+    }
+
+    if (moduleKey) {
+      displayEnabledControl.enable({ emitEvent: false });
+      return;
+    }
+
+    displayEnabledControl.setValue(false, { emitEvent: false });
+    displayEnabledControl.disable({ emitEvent: false });
   }
 
   private requiredArrayValidator(control: AbstractControl): { [key: string]: boolean } | null {

@@ -64,4 +64,9 @@
         border-color: var(--primary-color) !important;
         background: var(--primary-color) !important;
     }
+
+
+    .p-inputtext:enabled:focus {
+        border-color: var(--primary-color) !important;
+    }
 }

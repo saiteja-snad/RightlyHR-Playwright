@@ -5,9 +5,11 @@
   <div class="ai-modal-header">
     <div class="header-left">
       <span class="ai-badge"><i class="pi pi-sparkles"></i> AI</span>
-      <span class="modal-title-text">Background Customization Studio</span>
+      <div class="header-title-block">
+        <span class="modal-title-text">AI Profile Background Studio</span>
+        <span class="modal-subtitle-text">Create a professional background that reflects you.</span>
+      </div>
     </div>
-    <!-- <button class="close-btn" (click)="close()"><i class="pi pi-times"></i></button> -->
   </div>
 
   <div class="modal-body p-0">
@@ -16,12 +18,14 @@
       <!-- ── LEFT PANEL ── -->
       <div class="left-panel">
 
-        <!-- Main preview / upload area -->
-        <p class="preview-label">INTERACTIVE LIVE CANVAS PREVIEW</p>
+        <!-- 1. Preview -->
+        <p class="section-label">1. PREVIEW YOUR PROFILE</p>
+        <p class="section-sublabel">See how your profile looks with the selected background.</p>
+
         <div class="main-preview-wrap">
           <ng-container *ngIf="previewUrl; else uploadArea">
             <img [src]="previewUrl" alt="Preview" class="preview-img" />
-            <div *ngIf="selectedVariation" class="preview-badge">{{ selectedVariation.label }}</div>
+            <div class="live-preview-badge"><i class="pi pi-eye me-1"></i> Live Preview</div>
           </ng-container>
           <ng-template #uploadArea>
             <label for="ai-upload-input" class="upload-area">
@@ -32,30 +36,15 @@
           </ng-template>
           <input id="ai-upload-input" type="file" accept="image/png,image/jpeg,image/jpg" class="hidden-input"
             (change)="onFileChange($event)" />
-
         </div>
 
-        <!-- Generating overlay -->
-        <div *ngIf="isGenerating" class="gen-overlay">
-          <div class="gen-spinner-ring">
-            <p-progressSpinner strokeWidth="3" animationDuration="1s" styleClass="gen-progress-spinner" />
-            <div class="gen-wand-icon"><i class="pi pi-sparkles"></i></div>
-          </div>
-          <p class="gen-title">Initializing Customizer engine...</p>
-          <p class="gen-sub">Synthesizing 3 unique options...</p>
-          <div class="gen-progress-bar"><div class="gen-progress-fill"></div></div>
-        </div>
-
-        <!-- Change photo + Original Shot -->
-        <div class="preview-footer" *ngIf="uploadedImageUrl && !selectedVariation">
-          <label for="ai-upload-change" class="original-shot-label">
-            <i class="pi pi-refresh me-1"></i> Change Photo
+        <!-- Replace Photo -->
+        <div class="preview-footer" *ngIf="uploadedImageUrl">
+          <label for="ai-upload-change" class="replace-photo-btn">
+            <i class="bi bi-upload fw-bold me-1"></i> Replace Photo
           </label>
           <input id="ai-upload-change" type="file" accept="image/png,image/jpeg,image/jpg" class="hidden-input"
             (change)="onFileChange($event)" />
-        </div>
-        <div class="preview-footer" *ngIf="selectedVariation">
-          <span class="original-shot-label" (click)="previewUrl = uploadedImageUrl">Original Shot</span>
         </div>
 
         <!-- Error alert -->
@@ -63,9 +52,10 @@
           <i class="pi pi-exclamation-triangle me-2"></i>{{ errorMessage }}
         </div>
 
-<!-- Generated variations -->
+        <!-- 2. Background Style Variations -->
         <ng-container *ngIf="variations.length > 0 && !isGenerating">
-          <p class="variations-title">SELECT YOUR PREFERRED BACKGROUND VARIATION:</p>
+          <p class="section-label mt-2">2. CHOOSE A BACKGROUND STYLE</p>
+          <p class="section-sublabel">Select a style to get started.</p>
           <div class="variations-row">
             <div *ngFor="let v of variations" class="variation-thumb" [class.active]="v.selected"
               (click)="selectVariation(v)">
@@ -74,16 +64,31 @@
                 <div *ngIf="v.selected" class="thumb-check"><i class="pi pi-check"></i></div>
               </div>
               <span class="thumb-label">{{ v.label }}</span>
+              <span class="thumb-sublabel">{{ v.sublabel }}</span>
             </div>
           </div>
+          <p class="style-hint">Each style can be customized further using your own prompt.</p>
         </ng-container>
+
+        <!-- Generating overlay -->
+        <div *ngIf="isGenerating" class="gen-overlay">
+          <div class="gen-spinner-ring">
+            <p-progressSpinner strokeWidth="3" animationDuration="1s" styleClass="gen-progress-spinner" />
+            <div class="gen-wand-icon"><i class="pi pi-sparkles"></i></div>
+          </div>
+          <p class="gen-title">Generating backgrounds...</p>
+          <p class="gen-sub">Synthesizing unique options...</p>
+          <div class="gen-progress-bar"><div class="gen-progress-fill"></div></div>
+        </div>
 
       </div>
 
       <!-- ── RIGHT PANEL ── -->
       <div class="right-panel">
 
-        <p class="section-heading">1. SELECT BACKGROUND TEMPLATE</p>
+        <!-- 3. Background Theme -->
+        <p class="section-label">3. SELECT A BACKGROUND THEME</p>
+        <p class="section-sublabel">Choose a theme that best represents your style and personality.</p>
         <div class="templates-grid">
           <div *ngFor="let t of templates" class="template-card" [class.selected]="selectedTemplate?.id === t.id"
             (click)="selectTemplate(t)">
@@ -92,42 +97,46 @@
               <span class="t-title">{{ t.title }}</span>
               <span class="t-desc">{{ t.description }}</span>
             </div>
-            <i *ngIf="selectedTemplate?.id === t.id" class="pi pi-check-circle t-check"></i>
           </div>
         </div>
 
-        <div class="section-heading-row">
-          <p class="section-heading mb-0">2. REFINE CUSTOM AI PROMPT</p>
-          <!-- <span class="ready-badge" *ngIf="uploadedBase64">Ready</span> -->
-        </div>
+        <!-- 4. Customize with AI Prompt -->
+        <p class="section-label mt-2">4. CUSTOMIZE WITH AI PROMPT</p>
+        <p class="section-sublabel">Describe the background you envision and let AI create it for you.</p>
 
         <form [formGroup]="form">
           <textarea pTextarea formControlName="prompt" rows="4" class="prompt-textarea"
             placeholder="Describe the background scene you want to generate behind the profile subject">
           </textarea>
-          <!-- <div class="prompt-options">
-            <span class="reset-prompt" (click)="resetPrompt()">Reset Prompt</span>
-          </div> -->
         </form>
+
+        <div class="prompt-footer">
+          <span class="prompt-tips"><i class="bi bi-lightbulb me-1"></i> Prompt Tips</span>
+          <span class="prompt-count">{{ (form.get('prompt')?.value?.length || 0) }}/500</span>
+        </div>
+
+        <div class="ai-info-row">
+          <i class="bi bi-sparkles me-1"></i>
+          <span>Our AI will generate multiple background options based on your prompt and style.</span>
+        </div>
 
         <!-- Action buttons -->
         <div class="action-buttons">
-          <button class="generate-btn" [disabled]="form.invalid" (click)="generate()">
+          <button class="generate-btn" [disabled]="form.invalid || isGenerating" (click)="generate()">
             <p-progressSpinner *ngIf="isGenerating" strokeWidth="4" animationDuration=".8s" styleClass="btn-spinner" />
             <i *ngIf="!isGenerating" class="pi pi-sparkles me-2"></i>
             {{ generatingLabel }}
           </button>
 
-          <div class="d-flex  gap-3">
-            <button class="custom-btn btn-primary px-4 w-100" [disabled]="!selectedVariation || isApplying"
-              (click)="applyVariation()">
+          <div class="d-flex gap-3">
+            <button  class="custom-btn btn-primary px-4 w-100"  [disabled]="!selectedVariation || isApplying" (click)="applyVariation()">
               <p-progressSpinner *ngIf="isApplying" strokeWidth="4" animationDuration=".8s" styleClass="btn-spinner" />
-              <i *ngIf="!isApplying" class="pi pi-check me-2"></i>
-              {{ isApplying ? 'Applying...' : 'Apply As Profile' }}
+              <i *ngIf="!isApplying" class="pi pi-user me-2"></i>
+              {{ isApplying ? 'Applying...' : 'Apply to Profile' }}
             </button>
-
-
-            <button class="custom-btn btn-secondary px-4 w-100" [disabled]="isGenerating" (click)="close()">Cancel</button>
+            <button class="custom-btn btn-secondary px-4 w-100" [disabled]="isGenerating" (click)="close()">
+              Cancel
+            </button>
           </div>
         </div>
 

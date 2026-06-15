@@ -31,5 +31,6 @@ export interface GeneratedVariation {
   image_base64: string;
   dataUrl: string;
   label: string;
+  sublabel?: string;
   selected: boolean;
 }

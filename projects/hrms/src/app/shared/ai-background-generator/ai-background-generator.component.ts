@@ -137,7 +137,8 @@ export class AiBackgroundGeneratorComponent implements OnInit {
           return;
         }
 
-        const labels = ['1. Classic', '2. Cinematic Bokeh', '3. Studio Soft'];
+        const labels = ['Classic Library', 'Warm Bokeh', 'Studio Neutral'];
+        const sublabels = ['Timeless & Elegant', 'Soft & Professional', 'Clean & Modern'];
 
         // Support multiple backend shapes:
         // - Array of base64 strings: ["iVBOR...", ...]
@@ -167,6 +168,7 @@ export class AiBackgroundGeneratorComponent implements OnInit {
             image_base64: base64,
             dataUrl,
             label,
+            sublabel: sublabels[i] ?? '',
             selected: false,
           } as GeneratedVariation;
         });

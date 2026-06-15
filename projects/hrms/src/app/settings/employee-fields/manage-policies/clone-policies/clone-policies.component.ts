@@ -349,7 +349,7 @@ restrictPolicyNamedescription(event: KeyboardEvent) {
       return;
     }
 
-    if (!moduleKey || this.policyVisibilitySubModulesLoading[moduleKey] !== true) {
+    if (!moduleKey) {
       subModuleKeysControl.setValue([], { emitEvent: false });
     }
     subModuleKeysControl.disable({ emitEvent: false });

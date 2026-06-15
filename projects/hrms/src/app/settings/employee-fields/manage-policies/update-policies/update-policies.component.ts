@@ -319,7 +319,7 @@ restrictPolicyNamedescription(event: KeyboardEvent) {
       subModuleKeysControl.enable({ emitEvent: false });
       subModuleKeysControl.setValidators([this.requiredArrayValidator]);
     } else {
-      if (!moduleKey || this.policyVisibilitySubModulesLoading[moduleKey] !== true) {
+      if (!moduleKey) {
         subModuleKeysControl.setValue([], { emitEvent: false });
       }
       subModuleKeysControl.disable({ emitEvent: false });

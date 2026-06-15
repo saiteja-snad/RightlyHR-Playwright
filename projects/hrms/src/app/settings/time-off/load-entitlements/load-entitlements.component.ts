@@ -7,13 +7,11 @@ import { FormArray, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFo
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { OpenModalService } from '../../../services/open-modal.service';
 import { Select } from 'primeng/select';
-import { MultiSelect } from 'primeng/multiselect';
-import { ICategoryDetails } from '../flexible-leave-allocation/leave-allocation.model';
 import { AccordionModule } from 'primeng/accordion';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 @Component({
   selector: 'app-load-entitlements',
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, NoDataFoundComponent, Select, MultiSelect, AccordionModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, NoDataFoundComponent, Select, AccordionModule],
   templateUrl: './load-entitlements.component.html',
   styleUrl: './load-entitlements.component.scss',
   standalone: true,
@@ -33,6 +31,8 @@ export class LoadEntitlementsComponent {
   categoryProRataMap: Map<number, boolean> = new Map();
   // Map of categoryId -> { gradeId, allowedDays } for payload
   categoryGradeMap: Map<number, { gradeId: number; allowedDays: number }> = new Map();
+  categoryFrequencyMap: Map<number, string> = new Map();
+  categoryCycleHandlingMap: Map<number, string> = new Map();
   selectedCycleHandling: string = '';
   entitlementBreakdownData: any[] = [];
   categoryTablesOrdered: any[] = [];
@@ -49,7 +49,7 @@ export class LoadEntitlementsComponent {
   employeeiddetails: any[] = [];
   currentDate: Date = new Date();
   loggedinuser = {} as any;
-  categoryDetails = [] as ICategoryDetails[];
+  private employeeSelectionRequestVersion = 0;
   frequencyTypes: { label: string; value: string }[] = [
     { label: 'Monthly', value: 'MONTHLY' },
     { label: 'Quarterly', value: 'QUARTERLY' },
@@ -83,9 +83,12 @@ export class LoadEntitlementsComponent {
   frequencyCards: {
     frequencyType: string;
     cycleHandling: string;
+    selectedCategoryIdx: number;
     categories: {
       categoryId: number;
       categoryName: string;
+      frequencyType: string;
+      cycleHandling: string;
       deleted: boolean;
       tableData: any;
       originalData: any;
@@ -149,10 +152,44 @@ export class LoadEntitlementsComponent {
     });
   }
 
+  private nextEmployeeSelectionRequestVersion(): number {
+    this.employeeSelectionRequestVersion += 1;
+    return this.employeeSelectionRequestVersion;
+  }
+
+  private isActiveEmployeeSelection(employeeId: string, requestVersion: number): boolean {
+    return (
+      this.employeeSelectionRequestVersion === requestVersion &&
+      String(this.selectedEmployeeId ?? '') === String(employeeId)
+    );
+  }
+
+  private clearEmployeeFormFields(): void {
+    const fields = ['dateOfJoining', 'WorkEmail', 'location', 'sublocation', 'shift'];
+    fields.forEach(id => {
+      const el = document.getElementById(id) as HTMLInputElement;
+      if (el) el.value = '';
+    });
+  }
+
+  clearSelectedEmployee(markTouched: boolean = false): void {
+    this.nextEmployeeSelectionRequestVersion();
+    this.employeeTouched = markTouched ? true : this.employeeTouched;
+    this.resetPage();
+  }
+
   onEmployeeClear(): void {
+    this.clearSelectedEmployee();
+  }
+
+  private resetEmployeeDataState(): void {
     this.selectedEmployeeDetails = null;
     this.selectedEmployeeId = null;
+    this.selectedFrequencyType = '';
+    this.selectedCycleHandling = '';
     this.frequencyCards = [];
+    this.breakdownLoader = false;
+    this.loading = false;
     this.showAddForm = false;
     this.addForm = { frequency: '', categories: [], cycleHandling: '' };
     this.addFormTouched = { frequency: false, categories: false, cycleHandling: false };
@@ -165,21 +202,28 @@ export class LoadEntitlementsComponent {
     this.employeePolicyMap = new Map();
     this.categoryProRataMap = new Map();
     this.categoryGradeMap = new Map();
+    this.categoryFrequencyMap = new Map();
+    this.categoryCycleHandlingMap = new Map();
     this.collectedCategoryIds = [];
-    const fields = ['dateOfJoining', 'WorkEmail', 'location', 'sublocation', 'shift'];
-    fields.forEach(id => {
-      const el = document.getElementById(id) as HTMLInputElement;
-      if (el) el.value = '';
-    });
+    this.categoryTablesOrdered = [];
+    this.breakdownForm = this.fb.group({ categories: this.fb.array([]) });
+    this.clearEmployeeFormFields();
   }
 
   onOptionClick(employeeId: string) {
+    if (!employeeId) {
+      this.clearSelectedEmployee();
+      return;
+    }
+
+    const requestVersion = this.nextEmployeeSelectionRequestVersion();
+
     try {
       // Find corresponding details in Employeedata/ActiveEmployees
       this.selectedEmployeeDetails = this.employeeiddetails.find(
         (detail) => detail.employeeId === employeeId
       );
-      this.fetchEmployeeDetails(employeeId);
+      this.fetchEmployeeDetails(employeeId, requestVersion);
       // Check if details are found for the selected employee
       if (this.selectedEmployeeDetails) {
         // Update HTML input boxes with retrieved employee details
@@ -485,8 +529,8 @@ export class LoadEntitlementsComponent {
         allEntitlements.push({
           categoryId: table.categoryId,
           policyId,
-          frequencyType: card.frequencyType,
-          cycleHandling: card.cycleHandling,
+          frequencyType: this.categoryFrequencyMap.get(table.categoryId) ?? card.frequencyType,
+          cycleHandling: this.categoryCycleHandlingMap.get(table.categoryId) ?? card.cycleHandling,
           allowedDays: gradeInfo?.allowedDays ?? 0,
           cycles
         });
@@ -546,21 +590,25 @@ export class LoadEntitlementsComponent {
   //   }
   // }
 
-  fetchEmployeeDetails(employeeId: string) {
+  fetchEmployeeDetails(employeeId: string, requestVersion: number) {
     if (employeeId) {
-      this.sendAPIRequest(employeeId);
+      this.sendAPIRequest(employeeId, requestVersion);
     } else {
       console.log('EmployeeId not provided.');
     }
   }
 
 
-  sendAPIRequest(employeeId: string) {
+  sendAPIRequest(employeeId: string, requestVersion: number) {
+    if (!this.isActiveEmployeeSelection(employeeId, requestVersion)) return;
+
     // Clear the tableData array
     this.tableData = [];
     this.employeePolicyMap = new Map();
     this.categoryProRataMap = new Map();
     this.categoryGradeMap = new Map();
+    this.categoryFrequencyMap = new Map();
+    this.categoryCycleHandlingMap = new Map();
     this.categoryTablesOrdered = [];
     this.breakdownForm = this.fb.group({ categories: this.fb.array([]) });
     // Reset new multi-card state
@@ -579,6 +627,15 @@ export class LoadEntitlementsComponent {
     const employeeDetails = this.jobDetails.find(
       (detail: any) => detail.employeeId === employeeId
     );
+    if (!employeeDetails) {
+      if (!this.isActiveEmployeeSelection(employeeId, requestVersion)) return;
+      this.collectedCategoryIds = [];
+      this.collectedLocationId = 0;
+      this.collectedSubLocationId = 0;
+      this.collectedShiftId = 0;
+      this.breakdownLoader = false;
+      return;
+    }
     const { locationId, subLocationId, shiftId, gradeId } = employeeDetails;
     // Step 7: Prepare the request body
     const requestBody = {
@@ -593,7 +650,9 @@ export class LoadEntitlementsComponent {
     };
     // Step 7: Call the API endpoint to get leave policy details
     this.http.postdata('LeavePolicy/getgeneralpolicies', requestBody)
-      .subscribe((response: any) => {
+      .subscribe({
+        next: (response: any) => {
+        if (!this.isActiveEmployeeSelection(employeeId, requestVersion)) return;
         // Collect categoryIds and job details from response
         if (Array.isArray(response) && response.length > 0) {
           this.collectedCategoryIds = response.map((item: any) => item.categoryId);
@@ -612,27 +671,57 @@ export class LoadEntitlementsComponent {
           this.categoryGradeMap = new Map(
             response.map((item: any) => [item.categoryId, { gradeId: item.entityReferenceId, allowedDays: item.allowedDays }])
           );
+          this.categoryFrequencyMap = new Map(
+            response.map((item: any) => [item.categoryId, item.frequencyType ?? item.frequency_type ?? response[0]?.frequencyType ?? response[0]?.frequency_type ?? 'YEARLY'])
+          );
+          this.categoryCycleHandlingMap = new Map(
+            response.map((item: any) => [item.categoryId, item.cycleHandling ?? item.cycle_handling ?? response[0]?.cycleHandling ?? response[0]?.cycle_handling ?? ''])
+          );
           // Build category dropdown options for Add New form
           this.allCategoryOptions = response.map((item: any) => ({
             label: item.orgLeaveCategories?.name ?? `Category ${item.categoryId}`,
             value: item.categoryId
           }));
           this.refreshAvailableCategoryOptions();
+          this.loadEntitlementBreakdown(employeeId, locationId, subLocationId, shiftId, requestVersion);
           // Validate before load
           this.validateBeforeLoad(
-            this.selectedEmployeeDetails.employeeId,
+            employeeId,
             this.collectedCategoryIds,
             this.collectedLocationId,
             this.collectedSubLocationId,
-            this.collectedShiftId
+            this.collectedShiftId,
+            requestVersion
           );
+        } else {
+          this.collectedCategoryIds = [];
+          this.collectedLocationId = 0;
+          this.collectedSubLocationId = 0;
+          this.collectedShiftId = 0;
+          this.frequencyCards = [];
+          this.entitledData = [];
+          this.alreadyEntitled = false;
+          this.breakdownLoader = false;
         }
-      });
+      },
+      error: (err: any) => {
+        if (!this.isActiveEmployeeSelection(employeeId, requestVersion)) return;
+        console.error('Error fetching leave policies:', err);
+        this.collectedCategoryIds = [];
+        this.collectedLocationId = 0;
+        this.collectedSubLocationId = 0;
+        this.collectedShiftId = 0;
+        this.frequencyCards = [];
+        this.entitledData = [];
+        this.alreadyEntitled = false;
+        this.breakdownLoader = false;
+      }
+    });
     // Step 9: Call the API endpoint to fetch entitlements
     // (validateBeforeLoad is now called inside the policy response handler above)
   }
 
-  validateBeforeLoad(employeeId: string, categoryIds: number[], locationId: number, subLocationId: number, shiftId: number): void {
+  validateBeforeLoad(employeeId: string, categoryIds: number[], locationId: number, subLocationId: number, shiftId: number, requestVersion: number = this.employeeSelectionRequestVersion): void {
     const payload = {
       employeeIds: [Number(employeeId)],
       categoryIds,
@@ -643,6 +732,7 @@ export class LoadEntitlementsComponent {
     };
     this.http.postdata('LoadEntitlementValidator/validate-before-load', payload).subscribe({
       next: (res: any) => {
+        if (!this.isActiveEmployeeSelection(employeeId, requestVersion)) return;
         const data = res?.data;
         if (data?.alreadyEntitled === true) {
           this.alreadyEntitled = true;
@@ -653,6 +743,7 @@ export class LoadEntitlementsComponent {
         }
       },
       error: () => {
+        if (!this.isActiveEmployeeSelection(employeeId, requestVersion)) return;
         this.alreadyEntitled = false;
         this.entitledData = [];
       }
@@ -680,6 +771,41 @@ export class LoadEntitlementsComponent {
     });
     // Assign tableData to leavePolicyRecords
     this.leavePolicyRecords = this.tableData;
+  }
+
+  private loadEntitlementBreakdown(employeeId: string, locationId: number, subLocationId: number, shiftId: number, requestVersion: number = this.employeeSelectionRequestVersion): void {
+    const payload = {
+      employeeId: Number(employeeId),
+      location_id: locationId,
+      sub_location_id: subLocationId,
+      shift_id: shiftId,
+      year: new Date().getFullYear(),
+    };
+
+    this.breakdownLoader = true;
+    this.frequencyCards = [];
+    this.categoryTablesOrdered = [];
+    this.breakdownForm = this.fb.group({ categories: this.fb.array([]) });
+
+    this.http.postdata('OrgLeavesCategories/leave-entitlement-breakdown', payload).subscribe({
+      next: (response: any) => {
+        if (!this.isActiveEmployeeSelection(employeeId, requestVersion)) return;
+        this.entitlementBreakdownData = response;
+        this.originalBreakdownData = JSON.parse(JSON.stringify(Array.isArray(response?.categories) ? response.categories : []));
+        this.buildFrequencyCardsFromBreakdown(response);
+        this.breakdownLoader = false;
+      },
+      error: (err: any) => {
+        if (!this.isActiveEmployeeSelection(employeeId, requestVersion)) return;
+        console.error('Error fetching entitlement breakdown:', err);
+        this.breakdownLoader = false;
+        this.entitlementBreakdownData = [];
+        this.originalBreakdownData = [];
+        this.frequencyCards = [];
+        this.categoryTablesOrdered = [];
+        this.breakdownForm = this.fb.group({ categories: this.fb.array([]) });
+      }
+    });
   }
 
   onFrequencyChange(): void {
@@ -773,6 +899,69 @@ export class LoadEntitlementsComponent {
 
     this.categoryTablesOrdered = tables;
     this.buildBreakdownForm(tables);
+  }
+
+  private buildFrequencyCardsFromBreakdown(response: any): void {
+    const categories = Array.isArray(response?.categories) ? response.categories : [];
+    const combinedCard: any = {
+      frequencyType: '',
+      cycleHandling: '',
+      selectedCategoryIdx: 0,
+      categories: []
+    };
+
+    for (const category of categories) {
+      const categoryId = Number(category?.category_id);
+      if (!categoryId) continue;
+
+      const frequencyType =
+        category?.frequency_type ??
+        category?.frequencyType ??
+        this.categoryFrequencyMap.get(categoryId) ??
+        response?.frequency_type ??
+        response?.frequencyType ??
+        'YEARLY';
+
+      const cycleHandling =
+        category?.cycle_handling ??
+        category?.cycleHandling ??
+        this.categoryCycleHandlingMap.get(categoryId) ??
+        response?.cycle_handling ??
+        response?.cycleHandling ??
+        '';
+
+      const entry: any = {
+        categoryId,
+        categoryName: category?.category_name ?? `Category ${categoryId}`,
+        frequencyType,
+        cycleHandling,
+        deleted: false,
+        tableData: null,
+        originalData: null,
+        formGroup: this.fb.group({ cycles: this.fb.array([]) }),
+        breakdownLoader: false,
+        isModified: false,
+        isExcluded: false,
+        exclusionReason: '',
+      };
+
+      if (category?.is_applicable === false) {
+        entry.isExcluded = true;
+        entry.exclusionReason = category?.exclusion_reason ?? 'Not applicable';
+      } else {
+        entry.tableData = this.buildSingleCategoryTable(category, frequencyType);
+        entry.originalData = JSON.parse(JSON.stringify(category));
+        entry.formGroup = this.buildSingleCategoryForm(entry.tableData);
+        entry.formGroup.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(() => {
+          entry.isModified = true;
+          this.formChangeCounter++;
+        });
+      }
+
+      combinedCard.categories.push(entry);
+    }
+
+    this.frequencyCards = combinedCard.categories.length > 0 ? [combinedCard] : [];
   }
 
   private formatCycleLabel(frequencyType: string, cycleNo: number, start: Date | null, end: Date | null): string {
@@ -984,10 +1173,10 @@ export class LoadEntitlementsComponent {
     void this.formChangeCounter;
     if (!this.selectedEmployeeDetails || this.frequencyCards.length === 0) return false;
 
-    const allActiveIds = new Set(
-      this.frequencyCards.flatMap(card => card.categories.filter(e => !e.deleted && !e.isExcluded).map(e => e.categoryId))
+    const activeEntries = this.frequencyCards.flatMap(card =>
+      card.categories.filter(e => !e.deleted && !e.isExcluded)
     );
-    if (!this.allCategoryOptions.every(opt => allActiveIds.has(opt.value))) return false;
+    if (activeEntries.length === 0) return false;
 
     for (const card of this.frequencyCards) {
       for (const entry of card.categories) {
@@ -1172,7 +1361,12 @@ export class LoadEntitlementsComponent {
     if (!card) return;
     card.categories[catIdx].deleted = true;
     const allDeleted = card.categories.every(c => c.deleted);
-    if (allDeleted) this.frequencyCards.splice(cardIdx, 1);
+    if (allDeleted) {
+      this.frequencyCards.splice(cardIdx, 1);
+    } else if (card.selectedCategoryIdx === catIdx || card.categories[card.selectedCategoryIdx]?.deleted) {
+      const nextIdx = card.categories.findIndex((c: any) => !c.deleted);
+      card.selectedCategoryIdx = nextIdx >= 0 ? nextIdx : 0;
+    }
     this.refreshAvailableCategoryOptions();
   }
 
@@ -1238,6 +1432,20 @@ export class LoadEntitlementsComponent {
     card.categories.filter((e: any) => !e.deleted).forEach((entry: any) => this.resetEntry(entry));
   }
 
+  getSelectedCardEntry(card: any): any | null {
+    if (!card?.categories?.length) return null;
+    const currentEntry = card.categories[card.selectedCategoryIdx];
+    if (currentEntry && !currentEntry.deleted) return currentEntry;
+    const nextIdx = card.categories.findIndex((entry: any) => !entry.deleted);
+    if (nextIdx === -1) return null;
+    card.selectedCategoryIdx = nextIdx;
+    return card.categories[nextIdx];
+  }
+
+  get combinedBreakdownCard(): any | null {
+    return this.frequencyCards[0] ?? null;
+  }
+
   resetAll(): void {
     this.categoryTablesOrdered.forEach((_, idx) => this.resetCategory(idx));
   }
@@ -1294,11 +1502,14 @@ export class LoadEntitlementsComponent {
   onAddNewConfirm(): void {
     const { frequency, categories, cycleHandling } = this.addForm;
     if (!frequency || !categories.length || !cycleHandling) return;
+    const activeEmployeeId = this.selectedEmployeeDetails?.employeeId;
+    if (!activeEmployeeId) return;
+    const requestVersion = this.employeeSelectionRequestVersion;
 
     // Card is keyed by frequency + cycleHandling combination
     let card = this.frequencyCards.find(c => c.frequencyType === frequency && c.cycleHandling === cycleHandling);
     if (!card) {
-      card = { frequencyType: frequency, cycleHandling, categories: [] };
+      card = { frequencyType: frequency, cycleHandling, selectedCategoryIdx: 0, categories: [] };
       this.frequencyCards.push(card);
     }
 
@@ -1332,11 +1543,12 @@ export class LoadEntitlementsComponent {
       sub_location_id: this.collectedSubLocationId,
       shift_id: this.collectedShiftId,
       year: new Date().getFullYear(),
-      employeeId: this.selectedEmployeeDetails.employeeId,
+      employeeId: activeEmployeeId,
     };
 
     this.http.postdata('OrgLeavesCategories/leave-entitlement-breakdown', payload).subscribe({
       next: (response: any) => {
+        if (!this.isActiveEmployeeSelection(activeEmployeeId, requestVersion)) return;
         const cats = Array.isArray(response?.categories) ? response.categories : [];
         for (const catData of cats) {
           const entry = entryMap.get(catData.category_id);
@@ -1361,36 +1573,17 @@ export class LoadEntitlementsComponent {
         // Mark any unmatched entries as done loading
         entryMap.forEach(entry => { entry.breakdownLoader = false; });
       },
-      error: () => { entryMap.forEach(entry => { entry.breakdownLoader = false; }); }
+      error: () => {
+        if (!this.isActiveEmployeeSelection(activeEmployeeId, requestVersion)) return;
+        entryMap.forEach(entry => { entry.breakdownLoader = false; });
+      }
     });
 
     this.refreshAvailableCategoryOptions();
   }
 
   private resetPage(): void {
-    this.selectedEmployeeId = null;
-    this.selectedEmployeeDetails = null;
-    this.frequencyCards = [];
-    this.showAddForm = false;
-    this.addForm = { frequency: '', categories: [], cycleHandling: '' };
-    this.addFormTouched = { frequency: false, categories: false, cycleHandling: false };
-    this.allCategoryOptions = [];
-    this.availableCategoryOptions = [];
-    this.alreadyEntitled = false;
-    this.entitledData = [];
-    this.viewCyclesEntry = null;
-    this.showCyclesModal = false;
-    this.employeePolicyMap = new Map();
-    this.categoryProRataMap = new Map();
-    this.categoryGradeMap = new Map();
-    this.collectedCategoryIds = [];
-    this.categoryTablesOrdered = [];
-    this.breakdownForm = this.fb.group({ categories: this.fb.array([]) });
-    const fields = ['dateOfJoining', 'WorkEmail', 'location', 'sublocation', 'shift'];
-    fields.forEach(id => {
-      const el = document.getElementById(id) as HTMLInputElement;
-      if (el) el.value = '';
-    });
+    this.resetEmployeeDataState();
   }
 
   blockInvalidEntitlementKeys(event: KeyboardEvent): void {

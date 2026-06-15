@@ -1192,7 +1192,6 @@ export const SECTION_DEFINITIONS: SectionDef[] = [
       'Rate Card Configuration Module',
       'Recruitment Configuration Module',
       'Helpdesk Configuration Module',
-
     ]
   }, {
     title: 'Dashboard Widgets',

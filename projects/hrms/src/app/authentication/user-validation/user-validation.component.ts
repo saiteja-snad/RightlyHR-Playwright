@@ -11,14 +11,10 @@ import { environment } from '../../../environments/environment';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AuthService } from '../../services/auth.service';
 import { SignalsService } from '../../services/signals.service';
-import { TranslateModule, TranslatePipe } from '@ngx-translate/core';
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
   selector: 'app-user-validation',
-  imports: [
-    FormsModule,
-    CommonModule,
-    TranslateModule
-  ],
+  imports: [FormsModule, CommonModule, TranslateModule],
   templateUrl: './user-validation.component.html',
   styleUrl: './user-validation.component.scss'
 })
@@ -110,23 +106,17 @@ export class UserValidationComponent implements OnInit, OnDestroy {
     this.router.navigate(['/login']);
   }
 
-
-
-
-
   getUserDetails(email: string) {
     this.subscription = this.http.getUserDetails(email).subscribe({
       next: (response: any) => {
         if (response.empdatum) {
           this.loginReposne = response;
           this.name = `${response.empdatum.firstName} ${response.empdatum.middleName ?? ''} ${response.empdatum.lastName ?? ''}`;
-
           localStorage.setItem('rightlyHrUser', JSON.stringify(response.empdatum));
           localStorage.setItem('rightlyHrUserRoles', JSON.stringify(response.roles));
           localStorage.setItem('rightlyHrRoleClaims', JSON.stringify(response.claims));
           if (response.roles.length === 0) {
             this.router.navigate(['/unauthorized']);
-
           }
           else {
             this.navigateBasedOnPermission();
@@ -139,14 +129,10 @@ export class UserValidationComponent implements OnInit, OnDestroy {
               //   if (response.roles.length <= 0) {
               //     this.router.navigate(['/unauthorized']);
               //   } else {
-
               //     this.navigateBasedOnPermission();
               //   }
               // }, 2000);
-
-
               this.stayBack()
-
             } else {
               this.modalService.open(this.newFeatureValidationPopup, { backdrop: 'static', keyboard: false, centered: true });
               // this.navigateToOldUIApplication();
@@ -163,7 +149,6 @@ export class UserValidationComponent implements OnInit, OnDestroy {
       },
     });
   }
-
 
   navigateBasedOnPermission() {
     const primaryPermissions = [
@@ -211,7 +196,6 @@ export class UserValidationComponent implements OnInit, OnDestroy {
       }
     }
 
-
     // Step 3: Check My Info permissions
     for (const item of myInfoPermissions) {
       if (this.rbac.allowedToAccess(item.permission)) {
@@ -241,12 +225,9 @@ export class UserValidationComponent implements OnInit, OnDestroy {
     this.router.navigate(['/unauthorized']);
   }
 
-
-
   goToAccessibleRoute(actualRoute: string) {
     return this.accessNav.navigateToAccessedHeaderRoute(actualRoute);
   }
-
 
   onClickGetStarted() {
     this.subscription = this.http.postdata('BetaUser/post', { employeeId: this.loginReposne.empdatum.employeeId, popUpShown: true }).subscribe({
@@ -260,7 +241,6 @@ export class UserValidationComponent implements OnInit, OnDestroy {
     })
   }
 
-
   navigateToOldUIApplication() {
     window.location.href = environment.oldVersionUrl || 'https://snad.rightlyhr.com/uservalidation';
   }
@@ -273,7 +253,6 @@ export class UserValidationComponent implements OnInit, OnDestroy {
         if (this.loginReposne.roles.length <= 0) {
           this.router.navigate(['/unauthorized']);
         } else {
-
           this.navigateBasedOnPermission();
           localStorage.removeItem('loadEntitlement')
           localStorage.removeItem('carryForwardJobId')
@@ -283,9 +262,7 @@ export class UserValidationComponent implements OnInit, OnDestroy {
     } else {
       this.router.navigate(['/unauthorized']);
     }
-
   }
-
 
   ngOnDestroy(): void {
     if (this.subscription) this.subscription.unsubscribe();

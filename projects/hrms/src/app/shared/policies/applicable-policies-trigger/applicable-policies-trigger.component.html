@@ -1,5 +1,5 @@
 <ng-container *ngIf="!hideWhenEmpty || shouldRender">
-  <div ngbDropdown class="applicable-policies-dropdown" [autoClose]="'outside'">
+  <div ngbDropdown class="applicable-policies-dropdown" [autoClose]="false">
     <button
       ngbDropdownToggle
       type="button"
@@ -17,12 +17,10 @@
 
       <button
         type="button"
-        ngbDropdownItem
-        class="policy-menu-item"
+        class="dropdown-item policy-menu-item"
         *ngFor="let policy of policies"
         (click)="openPolicy(policy)">
         <span class="policy-menu-title">{{ policy.policyName }}</span>
-        <small class="policy-menu-description">{{ policy.policyDescription || ('View policy details' | translate) }}</small>
       </button>
 
       <div *ngIf="!loading && hasLoaded && policies.length === 0" class="policy-empty-state">

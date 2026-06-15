@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { Select } from 'primeng/select';
 import { Subject, Subscription, takeUntil } from 'rxjs';
 import { HttpService } from '../../../../services/http.service';
-import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { OpenModalService } from '../../../../services/open-modal.service';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
@@ -54,6 +54,7 @@ export class UpdatePoliciesComponent implements OnInit, OnDestroy {
   ];
   policyVisibilityModules: PolicyVisibilityModuleOption[] = [];
   policyVisibilitySubModules: Record<string, Array<{ label: string; value: string }>> = {};
+  policyVisibilitySubModulesLoading: Record<string, boolean> = {};
 
   constructor(
     private fb: FormBuilder,
@@ -180,11 +181,14 @@ restrictPolicyNamedescription(event: KeyboardEvent) {
   }
 
   private createVisibilityMappingRow(value?: any): FormGroup {
-    return this.fb.group({
-      moduleKey: [normalizePolicyVisibilityKey(value?.moduleKey), Validators.required],
+    const row = this.fb.group({
+      moduleKey: [normalizePolicyVisibilityKey(value?.moduleKey)],
       subModuleKeys: [Array.isArray(value?.subModuleKeys) ? value.subModuleKeys.map((item: string) => normalizePolicyVisibilityKey(item)) : []],
       displayEnabled: [value?.displayEnabled ?? false]
     });
+    this.updateVisibilityMappingValidators(row);
+    this.updateDisplayToggleState(row);
+    return row;
   }
 
   private getInitialVisibilityMappings(item: any): FormGroup[] {
@@ -248,6 +252,8 @@ restrictPolicyNamedescription(event: KeyboardEvent) {
     const normalizedModuleKey = normalizePolicyVisibilityKey(moduleKey);
     row.patchValue({ moduleKey: normalizedModuleKey, subModuleKeys: [], displayEnabled: false });
     this.loadSubModuleOptions(normalizedModuleKey);
+    this.updateVisibilityMappingValidators(row);
+    this.updateDisplayToggleState(row);
     this.validateDuplicateModules(policyIndex);
   }
 
@@ -256,25 +262,33 @@ restrictPolicyNamedescription(event: KeyboardEvent) {
     const next = (subModuleKeys ?? []).map((item) => normalizePolicyVisibilityKey(item));
     row.get('subModuleKeys')?.setValue(next);
     if (next.length === 0) row.get('displayEnabled')?.setValue(false);
+    this.updateVisibilityMappingValidators(row);
   }
 
   isDisplayToggleVisible(policyIndex: number, mappingIndex: number): boolean {
     const row = this.getVisibilityMappings(policyIndex).at(mappingIndex) as FormGroup;
     const moduleKey = normalizePolicyVisibilityKey(row.get('moduleKey')?.value);
-    const selected = row.get('subModuleKeys')?.value as string[] | null;
     if (!moduleKey) {
       return false;
     }
-
-    if (this.getSubModuleOptions(moduleKey).length === 0) {
-      return true;
-    }
-
-    return (selected?.length ?? 0) > 0;
+    return true;
   }
 
   getSubModuleOptions(moduleKey: string | null): Array<{ label: string; value: string }> {
     return this.policyVisibilitySubModules[normalizePolicyVisibilityKey(moduleKey)] ?? [];
+  }
+
+  isSubModuleDisabled(policyIndex: number, mappingIndex: number): boolean {
+    const moduleKey = normalizePolicyVisibilityKey(this.getVisibilityMappings(policyIndex).at(mappingIndex)?.get('moduleKey')?.value);
+    return !moduleKey || this.policyVisibilitySubModulesLoading[moduleKey] === true || this.getSubModuleOptions(moduleKey).length === 0;
+  }
+
+  getSubModulePlaceholder(policyIndex: number, mappingIndex: number): string {
+    const moduleKey = normalizePolicyVisibilityKey(this.getVisibilityMappings(policyIndex).at(mappingIndex)?.get('moduleKey')?.value);
+    if (!moduleKey) return 'Select main module first';
+    if (this.policyVisibilitySubModulesLoading[moduleKey] === true) return 'Loading sub modules...';
+    if (this.getSubModuleOptions(moduleKey).length === 0) return 'No sub modules available';
+    return 'Please select sub modules';
   }
 
   getModuleOptionsForRow(policyIndex: number, mappingIndex: number): Array<PolicyVisibilityModuleOption & { disabled?: boolean }> {
@@ -292,6 +306,49 @@ restrictPolicyNamedescription(event: KeyboardEvent) {
   shouldShowMappingError(policyIndex: number, mappingIndex: number, controlName: 'moduleKey' | 'subModuleKeys', errorKey: string): boolean {
     const control = this.getVisibilityMappings(policyIndex).at(mappingIndex)?.get(controlName);
     return !!control && control.hasError(errorKey) && (control.touched || this.submitAttempted);
+  }
+
+  private updateVisibilityMappingValidators(row: FormGroup): void {
+    const moduleKey = normalizePolicyVisibilityKey(row.get('moduleKey')?.value);
+    const subModuleKeysControl = row.get('subModuleKeys');
+    if (!subModuleKeysControl) {
+      return;
+    }
+
+    if (moduleKey && this.policyVisibilitySubModulesLoading[moduleKey] !== true && this.getSubModuleOptions(moduleKey).length > 0) {
+      subModuleKeysControl.enable({ emitEvent: false });
+      subModuleKeysControl.setValidators([this.requiredArrayValidator]);
+    } else {
+      if (!moduleKey || this.policyVisibilitySubModulesLoading[moduleKey] !== true) {
+        subModuleKeysControl.setValue([], { emitEvent: false });
+      }
+      subModuleKeysControl.disable({ emitEvent: false });
+      subModuleKeysControl.clearValidators();
+      subModuleKeysControl.setErrors(null);
+    }
+
+    subModuleKeysControl.updateValueAndValidity({ emitEvent: false });
+  }
+
+  private updateDisplayToggleState(row: FormGroup): void {
+    const moduleKey = normalizePolicyVisibilityKey(row.get('moduleKey')?.value);
+    const displayEnabledControl = row.get('displayEnabled');
+    if (!displayEnabledControl) {
+      return;
+    }
+
+    if (moduleKey) {
+      displayEnabledControl.enable({ emitEvent: false });
+      return;
+    }
+
+    displayEnabledControl.setValue(false, { emitEvent: false });
+    displayEnabledControl.disable({ emitEvent: false });
+  }
+
+  private requiredArrayValidator(control: AbstractControl): { [key: string]: boolean } | null {
+    const value = control.value;
+    return Array.isArray(value) && value.length > 0 ? null : { required: true };
   }
 
   private validateDuplicateModules(policyIndex: number): void {
@@ -330,6 +387,13 @@ restrictPolicyNamedescription(event: KeyboardEvent) {
       .subscribe((modules) => {
         this.policyVisibilityModules = modules;
         this.preloadExistingSubModuleOptions();
+        this.policies.controls.forEach((policyControl, policyIndex) => {
+          const mappings = policyControl.get('visibilityMappings') as FormArray | null;
+          mappings?.controls.forEach((mappingControl) => {
+            this.updateVisibilityMappingValidators(mappingControl as FormGroup);
+          });
+          this.validateDuplicateModules(policyIndex);
+        });
       });
   }
 
@@ -349,6 +413,7 @@ restrictPolicyNamedescription(event: KeyboardEvent) {
       return;
     }
 
+    this.policyVisibilitySubModulesLoading[normalizedModuleKey] = true;
     this.policyVisibilityOptionsService.getSubModules(normalizedModuleKey)
       .pipe(takeUntil(this.destroy$))
       .subscribe((subModules: PolicyVisibilitySubModuleOption[]) => {
@@ -356,7 +421,28 @@ restrictPolicyNamedescription(event: KeyboardEvent) {
           label: item.label,
           value: item.key
         }));
+        this.policyVisibilitySubModulesLoading[normalizedModuleKey] = false;
+        this.refreshVisibilityRowsForModule(normalizedModuleKey);
+      }, () => {
+        this.policyVisibilitySubModulesLoading[normalizedModuleKey] = false;
+        this.refreshVisibilityRowsForModule(normalizedModuleKey);
       });
+  }
+
+  get isPolicyVisibilityLoading(): boolean {
+    return Object.values(this.policyVisibilitySubModulesLoading).some((value) => value === true);
+  }
+
+  private refreshVisibilityRowsForModule(moduleKey: string): void {
+    this.policies.controls.forEach((policyControl, policyIndex) => {
+      const mappings = policyControl.get('visibilityMappings') as FormArray | null;
+      mappings?.controls.forEach((mappingControl) => {
+        if (normalizePolicyVisibilityKey(mappingControl.get('moduleKey')?.value) === moduleKey) {
+          this.updateVisibilityMappingValidators(mappingControl as FormGroup);
+        }
+      });
+      this.validateDuplicateModules(policyIndex);
+    });
   }
 
   acknowledgementNotificationValidator(group: FormGroup): { [key: string]: boolean } | null {
@@ -424,7 +510,13 @@ restrictPolicyNamedescription(event: KeyboardEvent) {
   submit() {
     this.submitAttempted = true;
     this.policyForm.markAllAsTouched();
-    this.policies.controls.forEach((_, policyIndex) => this.validateDuplicateModules(policyIndex));
+    this.policies.controls.forEach((policyControl, policyIndex) => {
+      const mappings = policyControl.get('visibilityMappings') as FormArray | null;
+      mappings?.controls.forEach((mappingControl) => {
+        this.updateVisibilityMappingValidators(mappingControl as FormGroup);
+      });
+      this.validateDuplicateModules(policyIndex);
+    });
     if (this.policyForm.invalid) return;
 
     const formValue = this.policyForm.value;

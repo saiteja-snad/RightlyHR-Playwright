@@ -5,6 +5,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { RbacService } from '../../../services/rbac.service';
 import { AccessNavigationService } from '../../../services/access-navigation.service';
 import { HttpService } from '../../../services/http.service';
+import { SignalsService } from '../../../services/signals.service';
 @Component({
   selector: 'app-pending-approvals-tabs',
   imports: [CommonModule, RouterModule],
@@ -29,7 +30,41 @@ export class PendingApprovalsTabsComponent {
 
   kraKpiTotalCount = 0;
 
-  constructor(public readonly router: Router, private http: HttpService, private rbac: RbacService, private accessNav: AccessNavigationService) { }
+  constructor(public readonly router: Router, private http: HttpService, private rbac: RbacService, private accessNav: AccessNavigationService,private readonly signalService: SignalsService) { 
+
+     effect(() => {
+      if ((this.http.tirggerPendingApprovalCountSignal().wfh) || (this.http.tirggerPendingApprovalCountSignal().separation)
+        || (this.http.tirggerPendingApprovalCountSignal().nodue)) {
+        this.getAllPendingApprovalsCount();
+        this.http.tirggerPendingApprovalCountSignal.update(status => ({
+          ...status,
+          wfh: status.wfh ? false : status.wfh,
+          separation: status.separation ? false : status.separation,
+          nodue: status.nodue ? false : status.nodue,
+        }));
+      }
+      if (this.signalService.OfferLetterNavCountSignal()) {
+        this.getAllPendingApprovalsCount();
+        this.signalService.OfferLetterNavCountSignal.set(false);
+      }
+      if (this.signalService.TraineeOfferLetterNavCountSignal()) {
+        this.getAllPendingApprovalsCount();
+        this.signalService.TraineeOfferLetterNavCountSignal.set(false);
+      }
+      if (this.signalService.ContractOfferLetterNavCountSignal()) {
+        this.getAllPendingApprovalsCount();
+        this.signalService.ContractOfferLetterNavCountSignal.set(false);
+      }
+      if (this.signalService.AppointmentLetterNavCountSignal()) {
+        this.getAllPendingApprovalsCount();
+        this.signalService.AppointmentLetterNavCountSignal.set(false);
+      }
+      if (this.signalService.NDALetterNavCountSignal()) {
+        this.getAllPendingApprovalsCount();
+        this.signalService.NDALetterNavCountSignal.set(false);
+      }
+    });
+  }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
@@ -79,18 +114,23 @@ export class PendingApprovalsTabsComponent {
         if (response.success) {
           const modules = response.data.modules;
           const allowedLabels = this.getOnboardingAllowedLabels();
-          const totalCount = modules
-            .filter((m: any) => allowedLabels.includes(m.name))
-            .reduce((sum: number, m: any) => sum + m.count, 0);
-          
-          const onboardingTab = this.navTabs.find(tab => tab.label === 'Onboarding');
+          const totalCount = modules.filter((m: any) => allowedLabels.includes(m.name)).reduce((sum: number, m: any) => sum + m.count, 0);
+          const onboardingTab = this.navTabs.find(
+            tab => tab.label === 'Onboarding'
+          );
+
           if (onboardingTab) {
-            onboardingTab.totalCount = totalCount;
+            onboardingTab.totalCount = modules
+              .filter((m: any) => allowedLabels.includes(m.name))
+              .reduce((sum: number, m: any) => sum + Number(m.count || 0), 0);
+
+            console.log('Updated onboarding count:', onboardingTab.totalCount);
           }
+
           this.refreshFilteredTabs();
         }
       },
-      error: (err: any) => {},
+      error: (err: any) => { },
     });
   }
 
@@ -104,11 +144,9 @@ export class PendingApprovalsTabsComponent {
       { label: 'Probation', permission: 'Probation Details Tab.view' },
       { label: 'Trainees', permission: 'Trainee Details Tab.view' }
     ];
-    return onboardingLabels
-      .filter(item => this.rbac.allowedToAccess(item.permission))
-      .map(item => item.label);
+    return onboardingLabels.filter(item => this.rbac.allowedToAccess(item.permission)).map(item => item.label);
   }
-  
+
   refreshFilteredTabs(): void {
     this.filteredTabs = this.navTabs
       .filter(tab => {
@@ -134,6 +172,29 @@ export class PendingApprovalsTabsComponent {
       }
     });
   }
+
+  // getAllPendingApprovalsCount() {
+  //   const employeeId = Number.parseInt(this.empinfo.employeeId);
+  //   const currentDate = new Date();
+  //   const month = currentDate.getMonth() + 1; // getMonth() is 0-based
+  //   const year = currentDate.getFullYear();
+  //   this.http.getData(`PendingApproval/onboard-requests-count?month=${month}&year=${year}&EmployeeId=${employeeId}  `).subscribe({
+  //     next: (response: any) => {
+  //       if (response.success) {
+  //         const onboardingTab = this.navTabs.find(tab => tab.label === 'Onboarding');
+  //         if (onboardingTab) {
+  //           onboardingTab.totalCount = response.data.totalCount;
+  //           console.log("Onboarding Total Count: ", onboardingTab.totalCount);  
+  //         }
+  //         this.refreshFilteredTabs();
+  //       }
+  //     },
+  //     error: (err: any) => {
+
+  //     },
+  //   });
+  // }
+
 
 
 

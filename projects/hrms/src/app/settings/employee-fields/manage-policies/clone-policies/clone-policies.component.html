@@ -95,7 +95,7 @@
                 {{'Policy Attachment (Image and PDF only)' | translate}}<span class="text-danger">*</span>
               </label>
               <div class="d-flex align-items-center gap-2">
-                <input type="file" (change)="onPolicyFileChange($event, i)" class="form-control custom-input w-100 px-0"
+                <input type="file" (click)="markPolicyFileTouched(i)" (change)="onPolicyFileChange($event, i)" class="form-control custom-input w-100 px-0"
                   accept=".pdf,image/*" />
                 <div [ngbPopover]="oldPopContent" triggers="click" placement="top">
                   <app-info-icon />
@@ -104,8 +104,8 @@
               <ng-template #oldPopContent>
                 <div>{{ getPolicyAttachmentName(policy.get('policyFile')?.value) }}</div>
               </ng-template>
-              <div *ngIf="(submitAttempted || policy.get('policyName')?.touched) && policy.get('policyNewFile')?.invalid" class="error-msg">
-                {{'Policy Attachment is required'|translate}}
+              <div *ngIf="(submitAttempted || policy.get('policyNewFile')?.touched) && policy.get('policyNewFile')?.invalid" class="error-msg">
+                {{'Attachment is required'|translate}}
               </div>
             </div>
 
@@ -172,7 +172,7 @@
                           formControlName="moduleKey"
                           [filter]="true"
                           filterBy="label"
-                          filterPlaceHolder="Search module"
+                          filterPlaceholder="Search module"
                           class="form-select custom-select w-75"
                           appendTo="body"
                           [autoZIndex]="true"
@@ -252,7 +252,7 @@
       <button type="button" class="custom-btn btn-secondary px-5" (click)="Cancel()">
         {{'Cancel' | translate}}
       </button>
-      <button type="submit" class="custom-btn btn-primary px-5" [disabled]="policyForm.invalid || !isFormEdited">
+      <button type="submit" class="custom-btn btn-primary px-5" [disabled]="policyForm.invalid || !isFormEdited || isPolicyVisibilityLoading">
         {{'Submit' | translate}}
       </button>
     </div>

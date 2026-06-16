@@ -504,6 +504,12 @@ restrictPolicyNamedescription(event: KeyboardEvent) {
     });
   }
 
+  markPolicyFileTouched(index: number): void {
+    const control = this.policies.at(index)?.get('policyNewFile');
+    control?.markAsTouched();
+    control?.updateValueAndValidity({ emitEvent: false });
+  }
+
   renameFile(file: File, newName: string): File {
     const sanitizedFileName = newName.replace(/\s+/g, '_').replace(/[^a-zA-Z0-9._-]/g, '');
     return new File([file], sanitizedFileName, { type: file.type });

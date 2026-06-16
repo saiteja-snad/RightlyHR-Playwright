@@ -416,12 +416,11 @@ export class NdaContractorLetterComponent {
           this.spinnerLoader1 = false;
         }, 1000);
         this.sendEmployeeDetails();
-
-
+        this.signalService.AppointmentLetterNavCountSignal.set(true);
       },
       error: (reason: any) => {
         console.log(reason);
-
+        this.signalService.AppointmentLetterNavCountSignal.set(true);
         this.conformationPopup.openErrorModal(reason.error.details)
         this.spinnerLoader = false;
         this.spinnerLoader1 = false;

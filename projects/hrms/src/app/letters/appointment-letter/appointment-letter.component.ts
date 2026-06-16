@@ -397,15 +397,17 @@ export class AppointmentLetterComponent implements OnInit,OnDestroy {
       ),
       jobId: this.employeeJobDetails?.id,
     };
-    this.subscription = this.http.postdata('AppointmentLetter', postAppDetails).subscribe({
-      next: (data: any) => {
+    this.http.postdata('AppointmentLetter', postAppDetails).subscribe({
+      next: () => { 
         this.conformationPopup.openSuccessModal('Appointment letter generated successfully')
         setTimeout(() => {
           this.navigateDashboard();
         }, 3000);
+        this.signalService.AppointmentLetterNavCountSignal.set(true);
       },
-      error: (reason: any) => {
+      error: () => { 
         this.spinnerLoader = false;
+        this.signalService.AppointmentLetterNavCountSignal.set(true);
       },
       complete: () => {
         this.spinnerLoader = false;

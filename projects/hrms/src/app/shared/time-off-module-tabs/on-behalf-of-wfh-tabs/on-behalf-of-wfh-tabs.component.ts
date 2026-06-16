@@ -7,16 +7,31 @@ import { HttpService } from '../../../services/http.service';
 import { RbacService } from '../../../services/rbac.service';
 import { SidetabsloadersComponent } from '../../sidetabsloaders/sidetabsloaders.component';
 import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.service';
+import { DragDropModule } from '@angular/cdk/drag-drop';
+import { TabsDndDirective } from '../../tabs-dnd/tabs-dnd.directive';
+import { MenuOrderService } from '../../../services/theme-service/menu-order.service';
+
+interface StatusTab {
+  tabId: string;
+  label: string;
+  link: string;
+  count?: number;
+  permission?: { feature: string; action: string };
+  icon: string;
+}
 
 @Component({
   selector: 'app-on-behalf-of-wfh-tabs',
-  imports: [RouterModule, CommonModule, TabsModule, SidetabsloadersComponent],
+  imports: [RouterModule, CommonModule, TabsModule, SidetabsloadersComponent, DragDropModule, TabsDndDirective],
   templateUrl: './on-behalf-of-wfh-tabs.component.html',
   styleUrl: './on-behalf-of-wfh-tabs.component.scss'
 })
 
 export class OnBehalfOfWfhTabsComponent implements OnInit, OnDestroy {
+  readonly tabsKey = 'on-behalf-of-approval-wfh-tabs';
+  private readonly baseUrl = '/on-behalf-of/on-behalf-of-wfh';
   filteredTabs: any[] = [];
+  public defaultRoute = '';
   loading = false
   rejectedWFHRequestsCount = 0;
   waitingForApprovalWFHCount = 0;
@@ -24,33 +39,41 @@ export class OnBehalfOfWfhTabsComponent implements OnInit, OnDestroy {
   processedWFHRequestsCount = 0;
   cancelWFHRequestsCount = 0;
   destroy$: Subject<boolean> = new Subject<boolean>();
+  get tabs(): any[] {
+    return this.filteredTabs;
+  }
 
   navTabs: any[] = [
     {
+      tabId: '/on-behalf-of/on-behalf-of-wfh/waiting-for-approval',
       label: 'Waiting For Approval',
       link: 'waiting-for-approval',
       icon: '/time-off-icon/waiting-for-approval-icon.png',
       permission: { feature: 'Waiting For Approval (On Behalf Of WFH)', action: 'view' },
     },
     {
+      tabId: '/on-behalf-of/on-behalf-of-wfh/approved',
       label: 'Approved',
       link: 'approved',
       icon: '/time-off-icon/approved-icon.png',
       permission: { feature: 'Approved (On Behalf Of WFH)', action: 'view' },
     },
     {
+      tabId: '/on-behalf-of/on-behalf-of-wfh/processed',
       label: 'Processed',
       link: 'processed',
       icon: '/time-off-icon/processed-icon.png',
       permission: { feature: 'Processed (On Behalf Of WFH)', action: 'view' },
     },
     {
+      tabId: '/on-behalf-of/on-behalf-of-wfh/rejected',
       label: 'Rejected',
       link: 'rejected',
       icon: '/time-off-icon/rejected-icon.png',
       permission: { feature: 'Rejected (On Behalf Of WFH)', action: 'view' },
     },
     {
+      tabId: '/on-behalf-of/on-behalf-of-wfh/cancelled',
       label: 'Cancelled',
       link: 'cancelled',
       icon: '/time-off-icon/cancelled-icon.png',
@@ -62,7 +85,8 @@ export class OnBehalfOfWfhTabsComponent implements OnInit, OnDestroy {
     public readonly router: Router,
     private http: HttpService,
     public rbac: RbacService,
-    private timeoffYearFilterService: TimeoffYearFilterService
+    private timeoffYearFilterService: TimeoffYearFilterService,
+    private menuOrderService: MenuOrderService
   ) {
     effect(() => {
       if (this.http.onBehlafOfWFHSignal()) {
@@ -78,8 +102,10 @@ export class OnBehalfOfWfhTabsComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.filterTabsByRbac();
-    
+    void this.menuOrderService.ensureLoaded().then(() => {
+      this.filterTabsByRbac();
+    });
+
     this.http.onBehalfOfWFHSelectedEmp$.pipe(takeUntil(this.destroy$)).subscribe((emp: number) => {
       if (emp) {
         this.getWFHRequest(emp);
@@ -131,17 +157,25 @@ export class OnBehalfOfWfhTabsComponent implements OnInit, OnDestroy {
 
 
   filterTabsByRbac(): void {
-    this.filteredTabs = this.navTabs.filter(tab => {
+    const filtered = this.navTabs.filter(tab => {
       if (!tab.permission) return true;
       const { feature, action } = tab.permission;
       const permissionString = `${feature}.${action}`;
       return this.rbac.allowedToAccess(permissionString);
     });
+
+    this.filteredTabs = this.menuOrderService.applySavedTabsOrder(
+      this.tabsKey,
+      filtered,
+      (t) => t.tabId
+    );
+    this.updateNavigation();
   }
 
   updateNavTabs() {
     this.navTabs = [
       {
+        tabId: '/on-behalf-of/on-behalf-of-wfh/waiting-for-approval',
         label: 'Waiting For Approval',
         link: 'waiting-for-approval',
         icon: '/time-off-icon/waiting-for-approval-icon.png',
@@ -149,6 +183,7 @@ export class OnBehalfOfWfhTabsComponent implements OnInit, OnDestroy {
         permission: { feature: 'Waiting For Approval (On Behalf Of WFH)', action: 'view' },
       },
       {
+        tabId: '/on-behalf-of/on-behalf-of-wfh/approved',
         label: 'Approved',
         link: 'approved',
         icon: '/time-off-icon/approved-icon.png',
@@ -156,6 +191,7 @@ export class OnBehalfOfWfhTabsComponent implements OnInit, OnDestroy {
         permission: { feature: 'Approved (On Behalf Of WFH)', action: 'view' },
       },
       {
+        tabId: '/on-behalf-of/on-behalf-of-wfh/processed',
         label: 'Processed',
         link: 'processed',
         icon: '/time-off-icon/processed-icon.png',
@@ -163,6 +199,7 @@ export class OnBehalfOfWfhTabsComponent implements OnInit, OnDestroy {
         permission: { feature: 'Processed (On Behalf Of WFH)', action: 'view' },
       },
       {
+        tabId: '/on-behalf-of/on-behalf-of-wfh/rejected',
         label: 'Rejected',
         link: 'rejected',
         icon: '/time-off-icon/rejected-icon.png',
@@ -170,6 +207,7 @@ export class OnBehalfOfWfhTabsComponent implements OnInit, OnDestroy {
         permission: { feature: 'Rejected (On Behalf Of WFH)', action: 'view' },
       },
       {
+        tabId: '/on-behalf-of/on-behalf-of-wfh/cancelled',
         label: 'Cancelled',
         link: 'cancelled',
         icon: '/time-off-icon/cancelled-icon.png',
@@ -188,6 +226,29 @@ export class OnBehalfOfWfhTabsComponent implements OnInit, OnDestroy {
     this.cancelWFHRequestsCount = 0;
     this.loading = false;
     this.updateNavTabs();
+  }
+
+  trackByTabId(_: number, tab: any): string {
+    return tab.tabId || tab.link;
+  }
+
+  private updateNavigation(): void {
+    this.defaultRoute = this.filteredTabs.length > 0 ? `${this.baseUrl}/${this.filteredTabs[0].link}` : '';
+    const currentUrl = this.router.url.split('?')[0];
+    const baseUrl = this.baseUrl;
+
+    if ((currentUrl === baseUrl || currentUrl === `${baseUrl}/`) && this.defaultRoute) {
+      this.router.navigateByUrl(this.defaultRoute);
+      return;
+    }
+
+    const isAllowed = this.filteredTabs.some((tab) =>
+      currentUrl === tab.tabId || currentUrl === tab.link || currentUrl.endsWith(`/${tab.link}`)
+    );
+
+    if (!isAllowed && currentUrl.startsWith(baseUrl) && this.defaultRoute) {
+      this.router.navigateByUrl(this.defaultRoute);
+    }
   }
 
   ngOnDestroy(): void {

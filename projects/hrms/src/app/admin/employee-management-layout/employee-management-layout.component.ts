@@ -14,15 +14,60 @@ import { AddProspectiveInternComponent } from '../prospective-interns/add-prospe
 import { EmployeeStatusCount } from '../../Interfaces/dashboard.modal';
 import { Skeleton } from 'primeng/skeleton';
 import { AddContractEmployeeComponent } from '../contract-employee/add-contract-employee/add-contract-employee.component';
+import { DragDropModule } from '@angular/cdk/drag-drop';
+import { TabsDndDirective } from '../../shared/tabs-dnd/tabs-dnd.directive';
+import { CanActivateFn } from '@angular/router';
+import { MenuOrderService } from '../../services/theme-service/menu-order.service';
+import { inject } from '@angular/core';
+
+@Component({
+  selector: 'app-employee-management-home-redirect',
+  standalone: true,
+  template: ''
+})
+export class EmployeeManagementHomeRedirectComponent {}
+
+export const employeeManagementHomeActivate: CanActivateFn = async () => {
+  const menuOrderService = inject(MenuOrderService);
+  const router = inject(Router);
+
+  try {
+    await menuOrderService.ensureLoaded();
+  } catch {
+  }
+
+  const pref = menuOrderService.preferenceV2();
+  const modules = pref?.tabs?.modules ?? [];
+  const mod = modules.find(m => m.moduleKey === 'employee-management');
+  const items = mod?.items ?? [];
+
+  const orderedRoutes = items
+    .slice()
+    .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+    .map(i => i.route)
+    .filter(r => typeof r === 'string' && r.length > 0);
+
+  const defaultRoutes = [
+    '/employee-management/active',
+    '/employee-management/prospective',
+    '/employee-management/probation',
+    '/employee-management/inactive'
+  ];
+
+  const target = orderedRoutes[0] || defaultRoutes[0];
+  return router.parseUrl(target);
+};
+
 @Component({
   selector: 'app-employee-management-layout',
-  imports: [CommonModule, RouterModule, TranslateModule, TabsModule, ChartModule, AllEmployeesHeaderComponent, Skeleton],
+  imports: [CommonModule, RouterModule, TranslateModule, TabsModule, ChartModule, AllEmployeesHeaderComponent, Skeleton, DragDropModule, TabsDndDirective],
   templateUrl: './employee-management-layout.component.html',
   styleUrl: './employee-management-layout.component.scss',
   encapsulation: ViewEncapsulation.None
 })
 
 export class EmployeeManagementLayoutComponent {
+  readonly tabsKey = 'employee-management';
   moduleinfo: string = '';
   subscription!: Subscription;
   Inactive!: number;
@@ -159,6 +204,7 @@ export class EmployeeManagementLayoutComponent {
     this.loading = false;
     this.cardItems = [
       {
+        tabId: '/employee-management/active',
         label: 'Active',
         link: '/employee-management/active',
         count: this.Active + this.traineeactive + this.activeContract,
@@ -166,6 +212,7 @@ export class EmployeeManagementLayoutComponent {
         permission: { feature: 'Dashboard Active Employees Card', action: 'view' }
       },
       {
+        tabId: '/employee-management/prospective',
         label: 'Prospective',
         link: '/employee-management/prospective',
         count: this.ACTDATA + this.contract + this.Trainee,
@@ -173,6 +220,7 @@ export class EmployeeManagementLayoutComponent {
         permission: { feature: 'Dashboard Prospective Employees Card', action: 'view' }
       },
       {
+        tabId: '/employee-management/probation',
         label: 'Probation',
         link: '/employee-management/probation',
         count: this.PROBDATA,
@@ -180,6 +228,7 @@ export class EmployeeManagementLayoutComponent {
         permission: { feature: 'Dashboard Probation Employees Card', action: 'view' }
       },
       {
+        tabId: '/employee-management/inactive',
         label: 'Inactive',
         link: '/employee-management/inactive',
         count: this.Inactive + this.traineeInactive + this.inactivecontract,
@@ -187,6 +236,11 @@ export class EmployeeManagementLayoutComponent {
         permission: { feature: 'Dashboard Inactive Employees Card', action: 'view' }
       },
     ];
+  }
+
+
+  trackByTabId(_: number, tab: any): string {
+    return tab.tabId || tab.link;
   }
 
   initChart() {

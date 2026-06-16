@@ -63,16 +63,19 @@ export class HistoryLogComponent implements OnInit, OnDestroy {
   destroy$: Subject<boolean> = new Subject<boolean>();
   historylog: HistoryBatchItem[] = [];
   dataload: boolean = false;
+  // Pagination
+
+    totalRecords = 0;
   page = 1;
-  pageSize = 15;
-  first = 0;
-  rows = 15;
+  pageSize = 50;
+  rows = 50;
   collectionSize = 0;
+  first = 0;
   options = [
-    { label: '15', value: 15 },
-    { label: '30', value: 30 },
-    { label: '45', value: 45 },
-    { label: '60', value: 60 },
+    { label: 50, value: 50 },
+    { label: 100, value: 100 },
+    { label: 150, value: 150 },
+    { label: 200, value: 200 }
   ];
   filteredTabs: any[] = [];
   navTabs = [

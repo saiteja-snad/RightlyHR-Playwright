@@ -29,14 +29,30 @@
     <div class="d-flex w-100 gap-3">
         <div class="component-left-tabs-container">
             <div class="custom-sub-tabs-container">
-                <ul class="nav flex-column">
-                    <li class="nav-item" *ngFor="let tab of cardItems">
+                <ul
+                    class="nav flex-column"
+                    cdkDropList
+                    [cdkDropListData]="cardItems"
+                    cdkDropListOrientation="vertical"
+                    appTabsDnd
+                    [tabsDndKey]="tabsKey"
+                    [tabsDndItems]="cardItems"
+                    tabsDndIdProp="tabId"
+                    tabsDndRouteProp="link">
+                    <li class="nav-item" *ngFor="let tab of cardItems; trackBy: trackByTabId" cdkDrag cdkDragLockAxis="y"
+                        cdkDragBoundary=".component-left-tabs-container">
                         <div class="nav-link" [routerLink]="[tab.link]" routerLinkActive="active-nav-link">
                             <img [src]="tab.icon" alt="Icon" class="icon mb-2">
                             <div>{{ tab.label }}</div>
                             <div>({{ tab.count ?? 0 }})</div>
                         </div>
                         <div class="tabs-border-bottom"></div>
+                        <ng-template cdkDragPlaceholder>
+                            <li class="nav-item tabs-dnd-placeholder-item">
+                                <div class="nav-link tabs-dnd-placeholder"></div>
+                                <div class="tabs-border-bottom"></div>
+                            </li>
+                        </ng-template>
                     </li>
                 </ul>
             </div>

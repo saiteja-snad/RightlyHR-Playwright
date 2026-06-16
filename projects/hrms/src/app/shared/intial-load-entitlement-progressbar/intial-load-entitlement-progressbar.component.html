@@ -1,24 +1,103 @@
+<div class="toggle-progress-content w-100 mb-2">
 
-<div class="client-progress-bar-container">
-    <div class="progress" role="progress" [ngClass]="{'active': progress}" aria-valuenow="33" aria-valuemin="0"
-        aria-valuemax="100" [style.width.%]="progress * 50"></div>
-    <div class="progress" role="progress" [ngClass]="{'inactive': progress}" aria-valuemin="0" aria-valuemax="100"
-        [style.width.%]="100"></div>
-    <div class="progress-content">
-        <div class="d-flex justify-content-between">
-            <div class="d-flex gap-2 step" >
-                <div class="progress-number">1</div>
-                <div class="progress-name">Select Scope</div>
-            </div>
-            <div class="d-flex gap-2 step" [ngClass]="{ 'inactive-step': progress < 2 }">
-                <div class="progress-number">2</div>
-                <div class="progress-name">Review Report</div>
-            </div>
-           
-             <div class="d-flex gap-2 step" [ngClass]="{ 'inactive-step': progress < 3}">
-                <div class="progress-number">3</div>
-                <div class="progress-name">Execution</div>
-            </div>
+  @if (!isContentVisible) {
+  <!-- Collapsed: line style -->
+  <div class="initial-content d-flex align-items-center w-100 px-2 py-3">
+    <div class="line-progress-wrap">
+      <div class="line-step-row">
+        <div class="line-step">
+          <div class="line-circle" [ngClass]="getCircleClass(1)">S</div>
+          <span class="line-step-name" [ngClass]="getTextClass(1)">Select Scope</span>
         </div>
+        <div class="line-connector" [ngClass]="progress > 1 ? 'connector-active' : ''"></div>
+        <div class="line-step">
+          <div class="line-circle" [ngClass]="getCircleClass(2)">B</div>
+          <span class="line-step-name" [ngClass]="getTextClass(2)">Configure Breakdown</span>
+        </div>
+        <div class="line-connector" [ngClass]="progress > 2 ? 'connector-active' : ''"></div>
+        <div class="line-step">
+          <div class="line-circle" [ngClass]="getCircleClass(3)">R</div>
+          <span class="line-step-name" [ngClass]="getTextClass(3)">Review Report</span>
+        </div>
+      </div>
     </div>
+    <div class="toggle-arrow-btn ms-2" (click)="toggleContent($event)">
+      <img src="icons/thick-down-arrow.png" alt="expand" class="down-arrow" />
+    </div>
+  </div>
+
+  } @else {
+
+  <!-- Expanded: chevron steps + sub-content -->
+  <div class="next-content d-flex align-items-start w-100 px-2 pt-1 pb-1">
+    <div class="flex-grow-1" style="min-width:0">
+      <!-- Chevron steps row -->
+      <div class="chevron-steps-row">
+        <div class="chevron-step" [ngClass]="getStepClass(1)">
+          Select Scope @if(progress > 1){<img src="icons/bg-check.png" alt="done" class="step-check-icon ms-1" />}
+        </div>
+        <div class="chevron-step" [ngClass]="getStepClass(2)">
+          Configure Breakdown @if(progress > 2){<img src="icons/bg-check.png" alt="done"
+            class="step-check-icon ms-1" />}
+        </div>
+        <div class="chevron-step" [ngClass]="getStepClass(3)">
+          Review Report @if(progress > 3){<img src="icons/bg-check.png" alt="done" class="step-check-icon ms-1" />}
+        </div>
+      </div>
+      <!-- Sub-content row -->
+      <div class="d-flex sub-row">
+        <div class="sub-content pe-2" style="width:33.33%">
+          <div class="d-flex gap-2 flex-wrap pt-1">
+
+            @if(scopeData?.year){
+            <div class="info-text text-truncate cursor" [ngbPopover]="'Year'" placement="bottom"
+              triggers="mouseenter:mouseleave">
+              {{ scopeData.year }}
+            </div>
+            }
+
+            @if(scopeData?.locationName){
+            <div class="info-text text-truncate cursor" [ngbPopover]="'Location'" placement="bottom"
+              triggers="mouseenter:mouseleave">
+              {{ scopeData.locationName }}
+            </div>
+            }
+
+            @if(scopeData?.subLocationName){
+            <div class="info-text text-truncate cursor" [ngbPopover]="'Sub Location'" placement="bottom"
+              triggers="mouseenter:mouseleave">
+              {{ scopeData.subLocationName }}
+            </div>
+            }
+
+            @if(scopeData?.shiftName){
+            <div class="info-text text-truncate cursor" [ngbPopover]="'Shift'" placement="bottom"
+              triggers="mouseenter:mouseleave">
+              {{ scopeData.shiftName }}
+            </div>
+            }
+
+            <!-- @if(scopeData?.frequencyType){
+            <div class="info-text text-truncate cursor" [ngbPopover]="formatLabel(scopeData.frequencyType)"
+              placement="bottom" triggers="mouseenter:mouseleave">
+              {{ formatLabel(scopeData.frequencyType) }}
+            </div>
+            }
+
+            @if(scopeData?.cycleHandling){
+            <div class="info-text text-truncate cursor" [ngbPopover]="formatLabel(scopeData.cycleHandling)"
+              placement="bottom" triggers="mouseenter:mouseleave">
+              {{ formatLabel(scopeData.cycleHandling) }}
+            </div>
+            } -->
+
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="toggle-arrow-btn ms-2 mt-1" (click)="toggleContent($event)">
+      <img src="icons/thick-down-arrow.png" alt="collapse" class="down-arrow arrow" />
+    </div>
+  </div>
+  }
 </div>

@@ -148,6 +148,24 @@ checkDayStatus(date: Date, context: ValidationContext): DayStatusResult {
   /**
    * Build leave ranges for efficient range checking
    */
+  // private buildLeaveRanges(leaves: any[]): void {
+  //   this.leaveRanges = [];
+
+  //   if (!leaves || !Array.isArray(leaves)) return;
+
+  //   leaves.forEach(leave => {
+  //     if (leave.startDate && leave.endDate && leave.durationType === '2') {
+  //       const start = this.normalizeDate(leave.startDate);
+  //       const end = this.normalizeDate(leave.endDate);
+  //       this.leaveRanges.push({
+  //         start: start.getTime(),
+  //         end: end.getTime(),
+  //         durationType: leave.durationType
+  //       });
+  //     }
+  //   });
+  // }
+
   private buildLeaveRanges(leaves: any[]): void {
     this.leaveRanges = [];
 
@@ -161,7 +179,6 @@ checkDayStatus(date: Date, context: ValidationContext): DayStatusResult {
       if (!dateTypeMap.has(key)) dateTypeMap.set(key, new Set());
       dateTypeMap.get(key)!.add(String(leave.durationType));
     });
-
     const addedKeys = new Set<string>();
     leaves.forEach(leave => {
       if (!leave.startDate || !leave.endDate) return;
@@ -183,7 +200,6 @@ checkDayStatus(date: Date, context: ValidationContext): DayStatusResult {
       }
     });
   }
-
   /**
    * Build weekend configuration map
    * Key: weekday name (e.g., "Sunday")

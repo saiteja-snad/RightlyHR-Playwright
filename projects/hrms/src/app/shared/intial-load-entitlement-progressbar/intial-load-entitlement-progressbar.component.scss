@@ -1,61 +1,157 @@
-.client-progress-bar-container {
-    position: relative;
+.toggle-progress-content {
+    background-color: var(--body-bg-color);
+    border: 0.5px solid var(--input-border-color);
+    border-radius: 0.5rem;
+    cursor: pointer;
     width: 100%;
-    padding: 1rem 0rem;
+    box-sizing: border-box;
 }
 
-.progress-name {
-    font-weight: 500;
-    font-size: 15.71px;
-    color: var(--primary-color);
+// ── COLLAPSED ─────────────────────────────────────────────────────────────
+
+.line-progress-wrap {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
 }
 
-.progress-number {
-    width: 1.5rem;
-    height: 1.5rem;
-    border-radius: 50%;
-    color: #FFF;
-    background-color: var(--primary-color);
-    font-weight: 500;
-    font-size: 11px;
+.line-step-row {
     display: flex;
-    justify-content: center;
     align-items: center;
-}
-
-.progress-content {
-    position: absolute;
-    top: 10px;
     width: 100%;
-    z-index: 1;
 }
 
-.step {
-    width: max-content;
-    background-color: #FFF;
-    padding: 0px 0.625rem;
+.line-step {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 
-.progress {
-    position: relative;
-    height: 4px;
-    width: auto;
-    max-width: 100%;
-    opacity: 0.5;
-    background-color: var(--primary-color);
+.line-circle {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    color: #fff;
+    flex-shrink: 0;
+
+    &.circle-completed { background-color: #35B97D; }
+    &.circle-current   { background-color: var(--primary-color); }
+    &.circle-upcoming  { background-color: #C5D8F5; color: #4a5568; }
 }
 
-.progress.active {
-    position: relative;
-    background-color: var(--primary-color);
-    z-index: 1;
-    top: 4px;
+.line-step-name {
+    font-size: 14px;
+    font-weight: 500;
+
+    &.text-completed { color: #35B97D; }
+    &.text-current   { color: var(--primary-color); }
+    &.text-upcoming  { color: #9ab0cc; }
 }
 
-.inactive-step {
+.line-connector {
+    flex: 1;
+    height: 2.5px;          // fix 3: bolder line
+    background-color: #C5D8F5;
+    margin: 0 8px;
+    border-radius: 2px;
 
-    .progress-name,
-    .progress-number {
-        opacity: 0.5;
+    &.connector-active { background-color: #35B97D; }
+}
+
+// ── ARROW BUTTON (both states) ────────────────────────────────────────────
+
+.toggle-arrow-btn {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;    // fix 1: vertically centred arrow
+    cursor: pointer;
+}
+
+.down-arrow {
+    width: 20px;
+    height: 20px;
+    display: block;
+}
+
+.arrow {
+    transform: rotate(180deg);
+}
+
+// ── EXPANDED: chevron steps ───────────────────────────────────────────────
+
+.chevron-steps-row {
+    display: flex;
+    width: 100%;
+    gap: 2px;
+}
+
+.chevron-step {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 36px;           // fix 4: reduced height to save vertical space
+    font-size: 12px;
+    font-weight: 600;
+    color: #fff;
+    padding: 0 1.6rem;
+    clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 50%, calc(100% - 16px) 100%, 0 100%, 16px 50%);
+
+    &:first-child {
+        clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 50%, calc(100% - 16px) 100%, 0 100%);
+        padding-left: 1rem;
     }
+
+    &:last-child {
+        clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 16px 50%);
+        padding-right: 1rem;
+    }
+
+    &.step-completed { background-color: #35B97D; }
+    &.step-current   { background-color: var(--primary-color); }
+    &.step-upcoming  { background-color: #C5D8F5; color: #4a5568; }
+}
+
+.step-check-icon {
+    width: 16px;
+    height: 16px;
+    object-fit: contain;
+    vertical-align: middle;
+}
+
+// ── EXPANDED: sub-content ─────────────────────────────────────────────────
+
+.sub-row {
+    min-height: 36px;       // fix 4: compact sub-row
+}
+
+.sub-content {
+    // border-right: 1px solid #b6b6b6;
+    text-align: center;
+    padding: 4px 6px;
+}
+
+.info-text {
+    font-size: 12px;        // fix 4: slightly smaller to save space
+    padding: 0.4rem 0.65rem;
+    background-color: rgba(53, 185, 125, 0.1);
+    border-radius: 0.4rem;
+    color: #006034;
+}
+
+.common-text {
+    background-color: rgba(93, 207, 156, 0.1);
+    border: 1px solid #006034;
+    width: 80%;
+    height: 28px;           // fix 4: reduced height
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }

@@ -40,6 +40,13 @@
     }
 }
 
+.project-name {
+    font-size: 14px;
+    text-decoration: none;
+    color: var(--primary-color);
+    text-decoration: underline;
+}
+
 .project-name-nopermission {
     font-size: 14px;
     text-decoration: none;
@@ -88,6 +95,9 @@
 
 .circle-yellow {
     background-color: #FFEA00;
+}
+.circle-rejected {
+    background-color: #8f001c;
 }
 
 .status-text {

@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { RbacService } from './rbac.service';
+import { MenuOrderService } from './theme-service/menu-order.service';
 import {
   ASSEST_ALLOCATION_TABS,
   ATTENDANCE_REPORTS_TABS,
@@ -98,7 +99,9 @@ import {
 
 export class AccessNavigationService {
 
-  constructor(private rbac: RbacService) { }
+  constructor(private rbac: RbacService, private menuOrderService: MenuOrderService) {
+    void this.menuOrderService.ensureLoaded();
+  }
 
   navigateToAccessedHeaderRoute(actualRoute: string): string {
     let route = '';
@@ -414,6 +417,8 @@ export class AccessNavigationService {
         break;
 
       case '/claimsandexpenses':
+        const preferredExpenses = this.getExpensesPreferredRoute();
+        if (preferredExpenses) return preferredExpenses;
         for (const item of EXPENSE_TABS) {
           if (this.rbac.allowedToAccess(item.permission)) {
             return item.route;
@@ -507,6 +512,8 @@ export class AccessNavigationService {
 
       case '/on-behalf-of/on-behalf-of-wfh':
         if (this.rbac.allowedToAccess('On Behalf Of WFH.view')) {
+          const preferred = this.getOnBehalfOfWFHPreferredRoute();
+          if (preferred) return preferred;
           for (const item of ON_BEHALF_OF_WFH_TABS) {
             if (this.rbac.allowedToAccess(item.permission)) {
               return item.route;
@@ -517,6 +524,8 @@ export class AccessNavigationService {
 
       case '/on-behalf-of/on-behalf-of-remotelogin':
         if (this.rbac.allowedToAccess('On Behalf Of RemoteLogin.view')) {
+          const preferred = this.getOnBehalfOfRemoteLoginPreferredRoute();
+          if (preferred) return preferred;
           for (const item of ON_BEHALF_OF_REMOTELOGIN_TABS) {
             if (this.rbac.allowedToAccess(item.permission)) {
               return item.route;
@@ -527,6 +536,8 @@ export class AccessNavigationService {
 
       case '/on-behalf-of/on-behalf-of-expenses':
         if (this.rbac.allowedToAccess('On Behalf Of Expenses.view')) {
+          const preferred = this.getOnBehalfOfExpensesPreferredRoute();
+          if (preferred) return preferred;
           for (const item of ON_BEHALF_OF_EXPENSES_TABS) {
             if (this.rbac.allowedToAccess(item.permission)) {
               return item.route;
@@ -541,6 +552,8 @@ export class AccessNavigationService {
         }
 
         if (this.rbac.allowedToAccess('Team Tickets Tab.view')) {
+          const preferred = this.getPreferredRouteFromPermissionTabs('itsupport-compoment-tabs', IT_SUPPORT_TEAM_TICKETS_TABS);
+          if (preferred) return preferred;
           for (const item of IT_SUPPORT_TEAM_TICKETS_TABS) {
             if (this.rbac.allowedToAccess(item.permission)) {
               return item.route;
@@ -639,6 +652,8 @@ export class AccessNavigationService {
 
       case '/card-management':
         if (this.rbac.allowedToAccess('Cards Management.view')) {
+          const preferred = this.getCardsManagementPreferredRoute();
+          if (preferred) return preferred;
           for (const item of CARDS_SUB_TABS) {
             if (this.rbac.allowedToAccess(item.permission)) {
               return item.route;
@@ -659,6 +674,16 @@ export class AccessNavigationService {
 
       case '/project-management/projects':
         if (this.rbac.allowedToAccess('Projects.view')) {
+          const preferred = this.getPreferredRouteFromPermissionTabs(
+            'project-management-projects-side-tabs',
+            [
+              { route: '/project-management/projects/active', permission: 'Project Details Tab.view' },
+              { route: '/project-management/projects/inactive', permission: 'Project Details Tab.view' },
+              { route: '/project-management/projects/hold', permission: 'Project Details Tab.view' },
+            ]
+          );
+          if (preferred) return preferred;
+
           for (const item of PROJECTS_ROUTES) {
             if (this.rbac.allowedToAccess(item.permission)) {
               return item.route;
@@ -668,12 +693,38 @@ export class AccessNavigationService {
         break;
 
       case '/project-management/timesheet/mytimesheet':
-        if (this.rbac.allowedToAccess('Time Sheet.view')) {
-          for (const item of TIME_SHEETS_TABS) {
-            if (this.rbac.allowedToAccess(item.permission)) {
-              return item.route;
-            }
-          }
+        if (this.rbac.allowedToAccess('Time Sheet.view') || this.rbac.allowedToAccess('Team Time Sheet.view') || this.rbac.allowedToAccess('My Summary.view')) {
+          const preferred = this.getPreferredRouteFromPermissionTabs(
+            'project-management-timesheets-tabs',
+            [
+              { route: '/project-management/timesheet/mytimesheet', permission: 'Time Sheet.view' },
+              { route: '/project-management/timesheet/mysummary', permission: 'My Summary.view' },
+              { route: '/project-management/timesheet/teamtimesheet', permission: 'Team Time Sheet.view' },
+            ]
+          );
+          if (preferred) return preferred;
+
+          if (this.rbac.allowedToAccess('Time Sheet.view')) return '/project-management/timesheet/mytimesheet';
+          if (this.rbac.allowedToAccess('My Summary.view')) return '/project-management/timesheet/mysummary';
+          if (this.rbac.allowedToAccess('Team Time Sheet.view')) return '/project-management/timesheet/teamtimesheet';
+        }
+        break;
+
+         case '/project-management/timesheet':
+        if (this.rbac.allowedToAccess('Time Sheet.view') || this.rbac.allowedToAccess('Team Time Sheet.view') || this.rbac.allowedToAccess('My Summary.view')) {
+          const preferred = this.getPreferredRouteFromPermissionTabs(
+            'project-management-timesheets-tabs',
+            [
+              { route: '/project-management/timesheet/mytimesheet', permission: 'Time Sheet.view' },
+              { route: '/project-management/timesheet/mysummary', permission: 'My Summary.view' },
+              { route: '/project-management/timesheet/teamtimesheet', permission: 'Team Time Sheet.view' },
+            ]
+          );
+          if (preferred) return preferred;
+
+          if (this.rbac.allowedToAccess('Time Sheet.view')) return '/project-management/timesheet/mytimesheet';
+          if (this.rbac.allowedToAccess('My Summary.view')) return '/project-management/timesheet/mysummary';
+          if (this.rbac.allowedToAccess('Team Time Sheet.view')) return '/project-management/timesheet/teamtimesheet';
         }
         break;
 
@@ -989,6 +1040,11 @@ export class AccessNavigationService {
 
       case '/it-support/team-tickets':
         if (this.rbac.allowedToAccess('Team Tickets Tab.view')) {
+          const preferred = this.getPreferredRouteFromPermissionTabs(
+            'itsupport-compoment-tabs',
+            IT_SUPPORT_TEAM_TICKETS_TABS
+          );
+          if (preferred) return preferred;
           for (const item of IT_SUPPORT_TEAM_TICKETS_TABS) {
             if (this.rbac.allowedToAccess(item.permission)) {
               return item.route;
@@ -1005,6 +1061,11 @@ export class AccessNavigationService {
 
       case '/help-desk/support-desk':
         if (this.rbac.allowedToAccess('Support Helpdesk Queries Tab.view')) {
+          const preferred = this.getPreferredRouteFromPermissionTabs(
+            'helpdesk-component-tabs',
+            HELPDESK_SUPPORT_TICKETS_TABS
+          );
+          if (preferred) return preferred;
           for (const item of HELPDESK_SUPPORT_TICKETS_TABS) {
             if (this.rbac.allowedToAccess(item.permission)) {
               return item.route;
@@ -1035,6 +1096,16 @@ export class AccessNavigationService {
 
       case '/project-management/projects':
         if (this.rbac.allowedToAccess('Projects.view')) {
+          const preferred = this.getPreferredRouteFromPermissionTabs(
+            'project-management-projects-side-tabs',
+            [
+              { route: '/project-management/projects/active', permission: 'Project Details Tab.view' },
+              { route: '/project-management/projects/inactive', permission: 'Project Details Tab.view' },
+              { route: '/project-management/projects/hold', permission: 'Project Details Tab.view' },
+            ]
+          );
+          if (preferred) return preferred;
+
           for (const item of PROJECTS_ROUTES) {
             if (this.rbac.allowedToAccess(item.permission)) {
               return item.route;
@@ -1042,6 +1113,40 @@ export class AccessNavigationService {
           }
         }
         break;
+
+      case '/project-management/projects/details/phases':
+        if (this.rbac.allowedToAccess('Project Phases Tab.view')) {
+          const preferred = this.getPreferredRouteFromPermissionTabs(
+            'project-management-phases-side-tabs',
+            [
+              { route: '/project-management/projects/details/phases', permission: 'Project Phases Tab.view' },
+              { route: '/project-management/projects/details/inactive-phases', permission: 'Project Phases Tab.view' },
+              { route: '/project-management/projects/details/hold-phases', permission: 'Project Phases Tab.view' },
+            ]
+          );
+          if (preferred) return preferred;
+          return '/project-management/projects/details/phases';
+        }
+        break;
+
+              case '/project-management/timesheet':
+        if (this.rbac.allowedToAccess('Time Sheet.view') || this.rbac.allowedToAccess('Team Time Sheet.view') || this.rbac.allowedToAccess('My Summary.view')) {
+          const preferred = this.getPreferredRouteFromPermissionTabs(
+            'project-management-timesheets-tabs',
+            [
+              { route: '/project-management/timesheet/mytimesheet', permission: 'Time Sheet.view' },
+              { route: '/project-management/timesheet/mysummary', permission: 'My Summary.view' },
+              { route: '/project-management/timesheet/teamtimesheet', permission: 'Team Time Sheet.view' },
+            ]
+          );
+          if (preferred) return preferred;
+
+          if (this.rbac.allowedToAccess('Time Sheet.view')) return '/project-management/timesheet/mytimesheet';
+          if (this.rbac.allowedToAccess('My Summary.view')) return '/project-management/timesheet/mysummary';
+          if (this.rbac.allowedToAccess('Team Time Sheet.view')) return '/project-management/timesheet/teamtimesheet';
+        }
+        break;
+
 
       case '/project-management/timesheet/mytimesheet':
         if (this.rbac.allowedToAccess('Time Sheet.view')) {
@@ -1401,6 +1506,8 @@ export class AccessNavigationService {
 
       case '/time-off/leaves':
         if (this.rbac.allowedToAccess('Time Off Module.view')) {
+          const preferred = this.getLeavesPreferredRoute();
+          if (preferred) return preferred;
           for (const item of TIME_OFF_SUB_TABS) {
             if (this.rbac.allowedToAccess(item.permission)) {
               return item.route;
@@ -1411,6 +1518,8 @@ export class AccessNavigationService {
 
       case '/time-off/wfh':
         if (this.rbac.allowedToAccess('WFH/On Duty Module.view')) {
+          const preferred = this.getWfhPreferredRoute();
+          if (preferred) return preferred;
           for (const item of WFH_ONDUTY_SUB_TABS) {
             if (this.rbac.allowedToAccess(item.permission)) {
               return item.route;
@@ -1431,6 +1540,8 @@ export class AccessNavigationService {
 
       case '/time-off/comp-off':
         if (this.rbac.allowedToAccess('Comp Off Module.view')) {
+          const preferred = this.getCompoffPreferredRoute();
+          if (preferred) return preferred;
           for (const item of COMP_OFF_SUB_TABS) {
             if (this.rbac.allowedToAccess(item.permission)) {
               return item.route;
@@ -1441,6 +1552,8 @@ export class AccessNavigationService {
 
       case '/time-off/premissions':
         if (this.rbac.allowedToAccess('Permissions Module.view')) {
+          const preferred = this.getPermissionsPreferredRoute();
+          if (preferred) return preferred;
           for (const item of PERMISSIONS_SUB_TABS) {
             if (this.rbac.allowedToAccess(item.permission)) {
               return item.route;
@@ -1451,6 +1564,8 @@ export class AccessNavigationService {
 
       case '/time-off/regularization':
         if (this.rbac.allowedToAccess('Regularization Module.view')) {
+          const preferred = this.getRegularizationsPreferredRoute();
+          if (preferred) return preferred;
           for (const item of REGULARIZATION_SUB_TABS) {
             if (this.rbac.allowedToAccess(item.permission)) {
               return item.route;
@@ -1461,6 +1576,8 @@ export class AccessNavigationService {
 
       case '/time-off/extra-hours':
         if (this.rbac.allowedToAccess('Extra Hours Module.view')) {
+          const preferred = this.getExtrahoursPreferredRoute();
+          if (preferred) return preferred;
           for (const item of EXTRA_HOURS_SUB_TABS) {
             if (this.rbac.allowedToAccess(item.permission)) {
               return item.route;
@@ -1481,6 +1598,8 @@ export class AccessNavigationService {
 
       case '/on-behalf-of/on-behalf-of':
         if (this.rbac.allowedToAccess('On Behalf Of Module.view')) {
+          const preferred = this.getOnBehalfOfModulePreferredRoute();
+          if (preferred) return preferred;
           for (const item of ON_BEHALF_OF_TABS) {
             if (this.rbac.allowedToAccess(item.permission)) {
               return item.route;
@@ -1491,6 +1610,8 @@ export class AccessNavigationService {
 
       case '/on-behalf-of/on-behalf-of-wfh':
         if (this.rbac.allowedToAccess('On Behalf Of WFH.view')) {
+          const preferred = this.getOnBehalfOfWFHPreferredRoute();
+          if (preferred) return preferred;
           for (const item of ON_BEHALF_OF_WFH_TABS) {
             if (this.rbac.allowedToAccess(item.permission)) {
               return item.route;
@@ -1501,6 +1622,8 @@ export class AccessNavigationService {
 
       case '/on-behalf-of/on-behalf-of-remotelogin':
         if (this.rbac.allowedToAccess('On Behalf Of RemoteLogin.view')) {
+          const preferred = this.getOnBehalfOfRemoteLoginPreferredRoute();
+          if (preferred) return preferred;
           for (const item of ON_BEHALF_OF_REMOTELOGIN_TABS) {
             if (this.rbac.allowedToAccess(item.permission)) {
               return item.route;
@@ -1511,6 +1634,8 @@ export class AccessNavigationService {
 
       case '/on-behalf-of/on-behalf-of-expenses':
         if (this.rbac.allowedToAccess('On Behalf Of Expenses.view')) {
+          const preferred = this.getOnBehalfOfExpensesPreferredRoute();
+          if (preferred) return preferred;
           for (const item of ON_BEHALF_OF_EXPENSES_TABS) {
             if (this.rbac.allowedToAccess(item.permission)) {
               return item.route;
@@ -1551,6 +1676,9 @@ export class AccessNavigationService {
 
       case '/pending-approvals/time-off':
         if (this.rbac.allowedToAccess('Time Off main Tab.view')) {
+          const preferred = this.getPendingApprovalsTimeOffPreferredRoute();
+          if (preferred) return preferred;
+
           for (const item of TIMEOFF_APPROVALS_TABS) {
             if (this.rbac.allowedToAccess(item.permission) && item.permission === 'Time Off Tab.view') {
               if (item.route === '/pending-approvals/time-off/leaves') {
@@ -1753,6 +1881,12 @@ export class AccessNavigationService {
 
       case '/pending-approvals/on-boarding':
         if (this.rbac.allowedToAccess('Onboarding main Tab.view')) {
+          const preferred = this.getPreferredRouteFromPermissionTabs(
+            'pending-approvals-onboarding-tabs',
+            ONBOARDING_APPROVALS_TABS
+          );
+          if (preferred) return preferred;
+
           for (const item of ONBOARDING_APPROVALS_TABS) {
             if (this.rbac.allowedToAccess(item.permission) && item.permission === 'Probation Details Tab.view') {
               if (item.route === '/pending-approvals/on-boarding/probation-request') {
@@ -1843,6 +1977,9 @@ export class AccessNavigationService {
 
       case '/pending-approvals/off-boarding':
         if (this.rbac.allowedToAccess('Offboarding main Tab.view')) {
+          const preferred = this.getPendingApprovalsOffboardingPreferredRoute();
+          if (preferred) return preferred;
+
           for (const item of OFFBOARDING_APPROVALS_TABS) {
             if (this.rbac.allowedToAccess(item.permission) && item.permission === 'Separation Request Tab.view') {
               if (item.route === '/pending-approvals/off-boarding/separation-request') {
@@ -2060,7 +2197,16 @@ export class AccessNavigationService {
         break;
 
       case '/pms/kpi-kra':
-        if (this.rbac.allowedToAccess('My KRA KPI.view')) {
+        if (
+          this.rbac.allowedToAccess('Dashboard KRA KPI.view') ||
+          this.rbac.allowedToAccess('My KRA KPI.view') ||
+          this.rbac.allowedToAccess('Team KRA KPI.view')
+        ) {
+          const preferred = this.getPreferredRouteFromPermissionTabs(
+            'krakpi-management-layout-tabs',
+            MY_KRA_KPI_TABS
+          );
+          if (preferred) return preferred;
           for (const item of MY_KRA_KPI_TABS) {
             if (this.rbac.allowedToAccess(item.permission)) {
               return item.route;
@@ -2106,5 +2252,171 @@ export class AccessNavigationService {
         break;
     }
     return route;
+  }
+
+   private getPreferredOrderedRoutes(moduleKey: string): string[] {
+    const pref = this.menuOrderService.preferenceV2();
+    const modules = pref?.tabs?.modules ?? [];
+    const mod = modules.find(m => m.moduleKey === moduleKey);
+    const items = mod?.items ?? [];
+    if (items.length === 0) return [];
+
+    return items
+      .slice()
+      .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+      .map(i => i.route)
+      .filter((r): r is string => typeof r === 'string' && r.length > 0);
+  }
+
+  private getPreferredRouteFromPermissionTabs(
+    moduleKey: string,
+    tabs: Array<{ route: string; permission: string }>
+  ): string {
+    const orderedRoutes = this.getPreferredOrderedRoutes(moduleKey);
+    if (orderedRoutes.length === 0) return '';
+
+    for (const tabRoute of orderedRoutes) {
+      const match = tabs.find(t => t.route === tabRoute);
+      if (match && this.rbac.allowedToAccess(match.permission)) {
+        return match.route;
+      }
+    }
+
+    return '';
+  }
+
+  private getPreferredRouteFromResolver(moduleKey: string, resolve: (route: string) => string): string {
+    const orderedRoutes = this.getPreferredOrderedRoutes(moduleKey);
+    if (orderedRoutes.length === 0) return '';
+
+    for (const tabRoute of orderedRoutes) {
+      const resolved = resolve(tabRoute);
+      if (resolved) return resolved;
+    }
+
+    return '';
+  }
+
+  private getPendingApprovalsTimeOffPreferredRoute(): string {
+    const orderedRoutes = this.getPreferredOrderedRoutes('pending-approvals-timeoff-tabs');
+    if (orderedRoutes.length === 0) return '';
+
+    for (const mainRoute of orderedRoutes) {
+      const match = TIMEOFF_APPROVALS_TABS.find(t => t.route === mainRoute);
+      if (!match || !this.rbac.allowedToAccess(match.permission)) continue;
+      const child = this.resolvePendingApprovalsTimeOffModuleToFirstChild(mainRoute);
+      return child || mainRoute;
+    }
+
+    return '';
+  }
+
+  private resolvePendingApprovalsTimeOffModuleToFirstChild(mainRoute: string): string {
+    switch (mainRoute) {
+      case '/pending-approvals/time-off/leaves':
+        return this.firstAllowedFromTabs(PENDING_APPROVALS_TIME_OFF_SUB_TABS);
+      case '/pending-approvals/time-off/wfh':
+        return this.firstAllowedFromTabs(PENDING_APPROVALS_WFH_SUB_TABS);
+      case '/pending-approvals/time-off/remote':
+        return this.firstAllowedFromTabs(PENDING_APPROVALS_REMOTE_LOGIN_SUB_TABS);
+      case '/pending-approvals/time-off/comp-off':
+        return this.firstAllowedFromTabs(PENDING_APPROVALS_COMP_OFF_SUB_TABS);
+      case '/pending-approvals/time-off/permissions':
+        return this.firstAllowedFromTabs(PENDING_APPROVALS_PERMISSIONS_SUB_TABS);
+      case '/pending-approvals/time-off/regularization-request':
+        return this.firstAllowedFromTabs(PENDING_APPROVALS_REGULARIZATION_SUB_TABS);
+      case '/pending-approvals/time-off/extra-hours-request':
+        return this.firstAllowedFromTabs(PENDING_APPROVALS_EXTRA_HOURS_SUB_TABS);
+      default:
+        return '';
+    }
+  }
+
+  private getPendingApprovalsOffboardingPreferredRoute(): string {
+    const orderedRoutes = this.getPreferredOrderedRoutes('pending-approvals-offboarding-tabs');
+    if (orderedRoutes.length === 0) return '';
+
+    for (const mainRoute of orderedRoutes) {
+      const match = OFFBOARDING_APPROVALS_TABS.find(t => t.route === mainRoute);
+      if (!match || !this.rbac.allowedToAccess(match.permission)) continue;
+      const child = this.resolvePendingApprovalsOffboardingModuleToFirstChild(mainRoute);
+      return child || mainRoute;
+    }
+
+    return '';
+  }
+
+  private resolvePendingApprovalsOffboardingModuleToFirstChild(mainRoute: string): string {
+    switch (mainRoute) {
+      case '/pending-approvals/off-boarding/separation-request':
+        return this.firstAllowedFromTabs(SEPARATION_REQUEST_SUB_TABS);
+      case '/pending-approvals/off-boarding/recall-request':
+        return this.firstAllowedFromTabs(RECALL_REQUEST_SUB_TABS);
+      default:
+        return '';
+    }
+  }
+
+  private firstAllowedFromTabs(tabs: Array<{ route: string; permission: string }>): string {
+    for (const item of tabs) {
+      if (this.rbac.allowedToAccess(item.permission)) return item.route;
+    }
+    return '';
+  }
+
+  private getPendingApprovalsPreferredRoute(): string {
+    return this.getPreferredRouteFromResolver(
+      'pending-approvals',
+      (route) => this.navigateToAccessedRoute(route)
+    );
+  }
+
+  private getLeavesPreferredRoute(): string {
+    return this.getPreferredRouteFromPermissionTabs('timeoff-leaves-approval-tabs', TIME_OFF_SUB_TABS);
+  }
+
+  private getWfhPreferredRoute(): string {
+    return this.getPreferredRouteFromPermissionTabs('timeoff-wfh-approval-tabs', WFH_ONDUTY_SUB_TABS);
+  }
+
+  private getCompoffPreferredRoute(): string {
+    return this.getPreferredRouteFromPermissionTabs('timeoff-compoff-approval-tabs', COMP_OFF_SUB_TABS);
+  }
+
+
+  private getPermissionsPreferredRoute(): string {
+    return this.getPreferredRouteFromPermissionTabs('timeoff-permissions-approval-tabs', PERMISSIONS_SUB_TABS);
+  }
+
+  private getRegularizationsPreferredRoute(): string {
+    return this.getPreferredRouteFromPermissionTabs('timeoff-regularization-approval-tabs', REGULARIZATION_SUB_TABS);
+  }
+
+  private getExtrahoursPreferredRoute(): string {
+    return this.getPreferredRouteFromPermissionTabs('timeoff-extra-hours-approval-tabs', EXTRA_HOURS_SUB_TABS);
+  }
+
+  private getCardsManagementPreferredRoute(): string {
+    return this.getPreferredRouteFromPermissionTabs('cardsmanagement-tabs', CARDS_SUB_TABS);
+  }
+
+  private getExpensesPreferredRoute(): string {
+    return this.getPreferredRouteFromPermissionTabs('claimsandexpenses-tabs', EXPENSE_TABS);
+  }
+
+  private getOnBehalfOfExpensesPreferredRoute(): string {
+    return this.getPreferredRouteFromPermissionTabs('on-behalf-of-expenses-tabs', ON_BEHALF_OF_EXPENSES_TABS);
+  }
+
+  private getOnBehalfOfRemoteLoginPreferredRoute(): string {
+    return this.getPreferredRouteFromPermissionTabs('on-behalf-of-remotelogin-tabs', ON_BEHALF_OF_REMOTELOGIN_TABS);
+  }
+
+  private getOnBehalfOfWFHPreferredRoute(): string {
+    return this.getPreferredRouteFromPermissionTabs('on-behalf-of-approval-wfh-tabs', ON_BEHALF_OF_WFH_TABS);
+  }
+
+  private getOnBehalfOfModulePreferredRoute(): string {
+    return this.getPreferredRouteFromPermissionTabs('on-behalf-of-approval-timeoff-tabs', ON_BEHALF_OF_TABS);
   }
 }

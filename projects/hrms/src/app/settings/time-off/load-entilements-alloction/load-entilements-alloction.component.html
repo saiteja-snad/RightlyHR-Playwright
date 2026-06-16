@@ -1,79 +1,131 @@
 <div class="custom-main-component-container">
-  <p class="component-header">Job Details </p>
+  <!-- Header with Load Employees / Categories buttons -->
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <p class="component-header mb-0">Entitlement Details</p>
+    <div class="d-flex align-items-center gap-2" *ngIf="jobSummary?.jobType === 'Initial Load'">
+      <button type="button" class="custom-btn btn-primary text-nowrap"
+        [disabled]="newCategories.length === 0"
+        (click)="openLoadCategoriesModal(loadCategoriesModal)">
+        <i class="bi bi-plus-circle me-1"></i> Load Categories ({{ newCategories.length }})
+      </button>
+      <button type="button" class="custom-btn btn-primary text-nowrap"
+        [disabled]="newEmployees.length === 0"
+        (click)="openLoadEmployeesModal(loadEmployeesModal)">
+        <i class="bi bi-person-plus me-1"></i> Load Employees ({{ newEmployees.length }})
+      </button>
+    </div>
+  </div>
+  <!-- Top Info Card -->
+  <div class="job-details-grid mb-4">
+    <div class="info-item">
+      <label>Entitlement ID</label>
+      <span>{{ jobSummary.jobSequenceId? jobSummary.jobSequenceId : 'N/A' }}</span>
+    </div>
 
-  <div class="card criteria-card p-4 mb-3">
-    <!-- <p class="component-sub-header">Auto Mapped Job Criteria (Fixed)</p> -->
+    <div class="info-item">
+      <label>Entitlement Type</label>
+      <span>{{ jobSummary.jobType? jobSummary.jobType : 'N/A' }}</span>
+    </div>
 
-    <div class="row gy-2">
-      <div class="col-md-3 col-6">
-        <span class="label">Year<span class="me-2">:</span></span>
-        <b>{{jobSummary.processingYear}}</b>
-      </div>
+    <div class="info-item">
+      <label>Status</label>
+      <span>{{ jobSummary.status? jobSummary.status : 'N/A' }}</span>
+    </div>
 
-      <div class="col-md-3 col-6">
-        <span class="label">Location<span class="me-2">:</span></span>
-        <b>{{jobSummary.location }}</b>
-      </div>
+    <div class="info-item">
+      <label>Year</label>
+      <span>{{ jobSummary.processingYear? jobSummary.processingYear : 'N/A' }}</span>
+    </div>
 
-      <div class="col-md-3 col-6">
-        <span class="label">Sub Location<span class="me-2">:</span></span>
-        <b>{{jobSummary.subLocation }}</b>
-      </div>
+    <div class="info-item">
+      <label>Location</label>
+      <span>{{ jobSummary.location? jobSummary.location : 'N/A' }}</span>
+    </div>
 
-      <div class="col-md-3 col-6">
-        <span class="label">Shift<span class="me-2">:</span> </span>
-        <b>{{ jobSummary.shiftName}}</b>
-      </div>
+    <div class="info-item">
+      <label>Sub Location</label>
+      <span>{{ jobSummary.subLocation? jobSummary.subLocation : 'N/A' }}</span>
+    </div>
+
+    <div class="info-item">
+      <label>Shift</label>
+      <span>{{ jobSummary.shiftName? jobSummary.shiftName : 'N/A' }}</span>
+    </div>
+
+    <div class="info-item">
+      <label>Frequency</label>
+      <span>{{ jobSummary.frequencyType? formatLabel(jobSummary.frequencyType) : 'N/A' }}</span>
+    </div>
+
+    <div class="info-item">
+      <label>Cycle Handling</label>
+      <span>{{ jobSummary.cycleHandling? formatLabel(jobSummary.cycleHandling) : 'N/A' }}</span>
+    </div>
+
+    <div class="info-item">
+      <label>Cycle Period</label>
+      <span>{{ (jobSummary.cycleStart | date) }} - {{ jobSummary.cycleEnd | date }}</span>
     </div>
   </div>
 
-  <form autocomplete="off" [formGroup]="leaveAllocationForm">
-    <div class="custom-grid align-items-center">
-      <!-- Employee Name -->
-      <div class="mb-3">
-        <label for="employeeName" class="form-label custom-label mb-2">{{ "Employee Name" | translate }}</label>
-        <div class="custom-p-select-content">
-          <p-select [options]="employeeDetails" optionLabel="fullName" [filter]="true" filterBy="fullName"
-            [showClear]="false" class="form-select custom-select" formControlName="employeeName"  [resetFilterOnHide]="true"
-            (onChange)="onSelectedEmployee($event.value)" placeholder="Please select employee"   filterPlaceholder="Search Employee">
-            <ng-template let-selectedOption #selectedItem>
-               {{ selectedOption.fusionEmpId }} <span *ngIf="selectedOption.fusionEmpId">-</span> {{ selectedOption.firstName }} {{ selectedOption.middleName }} {{ selectedOption.lastName }}
+  <!-- Stats Cards -->
+  <!-- <div class="stats-grid mb-4"> -->
+    <!-- <div class="stat-card">{{ jobSummary.progress?.totalEmployees? jobSummary.progress?.totalEmployees : 0 }} <span>Total Employees</span></div> -->
+    <!-- <div class="stat-card">{{ jobSummary.progress?.totalRecords? jobSummary.progress?.totalRecords : 0 }} <span>Total Records</span></div> -->
+    <!-- <div class="stat-card card-success">{{ jobSummary.progress?.successCount? jobSummary.progress?.successCount : 0 }} <span>Success</span></div>
+    <div class="stat-card card-failed">{{ jobSummary.progress?.failedCount? jobSummary.progress?.failedCount : 0 }} <span>Failed</span></div>
+    <div class="stat-card">{{ jobSummary.progress?.pendingCount? jobSummary.progress?.pendingCount : 0 }} <span>Pending</span></div> -->
+    <!-- <div class="stat-card success">{{ jobSummary.cycleSummary?.totalCycles? jobSummary.cycleSummary?.totalCycles : 0 }} <span>Total Cycles</span></div> -->
+    <!-- <div class="stat-card card-success">{{ jobSummary.cycleSummary?.executedCycles? jobSummary.cycleSummary?.executedCycles : 0 }} <span>Executed Cycles</span></div> -->
+    <!-- <div class="stat-card">{{ jobSummary.cycleSummary?.pendingCycles? jobSummary.cycleSummary?.pendingCycles : 0 }} <span>Pending Cycles</span></div> -->
+  <!-- </div> -->
+
+  <!--Employee Entitlement Mapping View Content-->
+  <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+    <p class="component-header mb-0">Employee Entitlement Mapping View</p>
+
+    <div class="d-flex align-items-center gap-3 flex-wrap">
+      <form autocomplete="off" [formGroup]="leaveAllocationForm">
+        <div class="d-flex align-items-center gap-3 flex-wrap">
+        <!-- Employee Name -->
+        <div class="custom-p-multiSelect-content">
+          <p-multiSelect [options]="employeeDetails" optionLabel="fullName" [filter]="true" filterBy="fullName"
+            [showClear]="true" class="form-select custom-select" formControlName="employeeName" [resetFilterOnHide]="true"
+            (onChange)="onSelectedEmployee($event.value)" (onClear)="onSelectedEmployee([])"
+            placeholder="Please select employee" filterPlaceHolder="Search Employee" [maxSelectedLabels]="1"
+  selectedItemsLabel="{0} selected">
+            <ng-template let-user pTemplate="item">
+              {{ user.fusionEmpId }} <span class="me-2 ms-2" *ngIf="user.fusionEmpId">-</span>
+              {{ user.firstName }} {{ user.middleName }} {{ user.lastName }}
             </ng-template>
-            <ng-template let-user #item>  {{ user.fusionEmpId }} <span class="me-2 ms-2" *ngIf=" user.fusionEmpId">-</span>  {{ user.firstName }} {{ user.middleName }} {{ user.lastName }}</ng-template>
-          </p-select>
+          </p-multiSelect>
         </div>
-        <div
-          *ngIf="leaveAllocationForm.get('employeeName')?.touched && leaveAllocationForm.get('employeeName')?.invalid"
-          class="error-msg">
-          <div *ngIf="leaveAllocationForm.get('employeeName')?.errors?.['required']">Please select employee</div>
+        <!-- Category Name -->
+        <div class="custom-p-multiSelect-content">
+          <p-multiSelect [options]="categoryDetails" optionLabel="name" [filter]="true" filterBy="name" [showClear]="true"
+            formControlName="categoryName" class="form-select custom-select" placeholder="Please select category"
+            (onChange)="changeCategory($event.value)" (onClear)="changeCategory([])" [resetFilterOnHide]="true"
+            filterPlaceHolder="Search category" [maxSelectedLabels]="1"
+  selectedItemsLabel="{0} selected">
+            <ng-template let-cat pTemplate="item">{{ cat.name? cat.name : '-' }}</ng-template>
+          </p-multiSelect>
         </div>
-      </div>
-      <!-- Category Name -->
-      <div class="mb-3">
-        <label for="categoryName" class="form-label custom-label mb-2">{{ "Category Name" | translate }}</label>
-        <div class="custom-p-select-content">
-          <p-select [options]="categoryDetails" optionLabel="name" [filter]="true" filterBy="name" [showClear]="false"
-            formControlName="categoryName" class="form-select custom-select" placeholder="Please select category name"
-            (onChange)="changeCategory($event.value)"  [resetFilterOnHide]="true"   filterPlaceholder="Search category name">
-            <ng-template #selectedItem let-selectedOption>{{ selectedOption.name }}</ng-template>
-            <ng-template let-location #item>{{ location.name }}</ng-template>
-          </p-select>
+        <!-- Status -->
+        <div class="custom-p-multiSelect-content custom-select-position">
+          <p-multiSelect [options]="statusOptions" optionLabel="label" [filter]="true" filterBy="label" [showClear]="true"
+            formControlName="status" class="form-select custom-select" placeholder="Please select status"
+            (onChange)="onStatusChange($event.value)" (onClear)="onStatusChange([])" [resetFilterOnHide]="true"
+            filterPlaceHolder="Search status" [maxSelectedLabels]="1"
+  selectedItemsLabel="{0} selected">
+            <ng-template let-s pTemplate="item">{{ s.label? s.label : '-' }}</ng-template>
+          </p-multiSelect>
         </div>
 
-        <div
-          *ngIf="leaveAllocationForm.get('categoryName')?.touched && leaveAllocationForm.get('categoryName')?.invalid"
-          class="error-msg">
-          <div *ngIf="leaveAllocationForm.get('categoryName')?.errors?.['required']">Please select category name</div>
+        <button type="button" class="clear-all-btn" (click)="clearFilters()" *ngIf="!isApplyDisabledFlag">Clear All</button>
         </div>
-      </div>
-
-      <div class="mb-3 pt-4" *ngIf="!isApplyDisabledFlag">
-        <button type="button" class="clear-all-btn" (click)="clearFilters()">Clear All</button>
-      </div>
+      </form>
     </div>
-  </form>
-
-  <p class="component-header mb-3">Employee Entitlement Mapping View</p>
+  </div>
 
   <div class="custom-table-content">
     @if(!loading){
@@ -82,26 +134,52 @@
         <th>Employee ID</th>
         <th>Employee Name</th>
         <th>Leave Category</th>
-        <th class="text-center">Leave Carry Forward Count</th>
-        <th>Status </th>
+        <th class="text-center">Frequency Type</th>
+        <th class="text-center">Carry Forward Count</th>
+        <th>Status</th>
+        <th class="text-center">Cycles</th>
       </thead>
       <tbody>
         <ng-container *ngIf="employees.length > 0; else noDataTemplate">
           <tr *ngFor="let e of employees">
-            <td>{{e?.employee?.fusionEmpId || '-'}} </td>
-            <td>{{ e?.employee?.name }}</td>
-            <td>{{ e?.leaveCategory }}</td>
-            <td class="text-center">{{ e?.carryForwardCount }}</td>
-            <td [ngClass]="{'status-success': e.status === 'Success','status-failed': e.status === 'Failed',
-            'status-partial': e.status === 'Partially Completed','status-processing': e.status === 'Processing',
-            'status-completed': e.status === 'Completed','status-pending': e?.status === 'Pending'}"
-              class="text-capitalize">{{ e?.status }} <span *ngIf="e.status === 'Failed'">
-                <app-info-icon [ngbPopover]="pendingPopover" class=" info-pending" triggers="click" />
+            <td>{{ e?.employee?.fusionEmpId || '-' }}</td>
+            <td>{{ e?.employee?.name || '-' }}</td>
+            <td>{{ e?.leaveCategory || '-' }}</td>
+            <td class="text-center">{{ e?.frequencyType ? e.frequencyType : '-' }}</td>
+            <td class="text-center">{{ e?.carryForwardCount || '-' }}</td>
+            <td class="fw-bold" [ngClass]="{
+        'status-success': e.status?.trim().toUpperCase() === 'EXECUTED' || e.status?.trim().toUpperCase() === 'SUCCESS',
+        'status-failed': e.status?.trim().toUpperCase() === 'FAILED',
+        'status-pending': e.status?.trim().toUpperCase() === 'PENDING',
+        'status-processing': e.status?.trim().toUpperCase() === 'PROCESSING',
+        'status-partial': e.status?.trim().toUpperCase() === 'PARTIAL',
+        'status-skipped': e.status?.trim().toUpperCase() === 'SKIPPED'
+      }">
+              {{ e?.status ? (e.status | titlecase) : '-' }}
+              <span *ngIf="e?.statusReason" class="ms-2">
+                <a type="button" [ngbPopover]="reason">
+                  <app-info-icon />
+                </a>
+                <ng-template #reason>
+                  <p class="mb-0">{{ e.statusReason }}</p>
+                </ng-template>
               </span>
             </td>
-            <ng-template #pendingPopover>
-              <div class="module-info-text">{{e?.reason }}</div>
-            </ng-template>
+            <td class="text-center">
+              <div class="dropdown">
+                <a data-bs-toggle="dropdown" aria-expanded="false">
+                  <i class="bi bi-three-dots-vertical"></i>
+                </a>
+                <ul class="dropdown-menu custom-dropdown-menu">
+                  <li (click)="openCycleModal(cycleModal, e)">
+                    <a class="dropdown-item"><i class="bi bi-eye me-2"></i>View Cycles</a>
+                  </li>
+                  <!-- <li *ngIf="hasRetry(e)" (click)="retryPlan(jobid, e)">
+                    <a class="dropdown-item"><i class="bi bi-arrow-clockwise me-2"></i>Retry</a>
+                  </li> -->
+                </ul>
+              </div>
+            </td>
           </tr>
         </ng-container>
         <ng-template #noDataTemplate>
@@ -134,3 +212,179 @@
     </div>
   </div>
 </div>
+
+<!-- Load Employees Modal -->
+<ng-template #loadEmployeesModal let-modal>
+  <div class="custom-main-popup-container" ngbAutofocus>
+    <div class="custom-poup-header-content popup-header-border">
+      <div>
+        <p class="popup-heading mb-0">Load New Employees ({{ newEmployees.length }} available)</p>
+      </div>
+      <div>
+        <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+      </div>
+    </div>
+    <div class="custom-main-popup-content">
+      <div class="mb-3">
+        <div class="custom-p-multiSelect-content">
+          <p-multiSelect
+            [options]="newEmployees"
+            optionLabel="fullName"
+            [(ngModel)]="selectedNewEmployees"
+            [filter]="true"
+            filterBy="fullName"
+            [showClear]="true"
+            [resetFilterOnHide]="true"
+            placeholder="Select employees to load"
+            filterPlaceHolder="Search employee"
+            class="form-select custom-select w-100">
+            <ng-template let-emp pTemplate="item">
+              {{ emp.fusionEmpId }} - {{ emp.name }}
+            </ng-template>
+          </p-multiSelect>
+        </div>
+      </div>
+      <div class="custom-modal-footer">
+        <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">Cancel</button>
+        <button type="button" class="custom-btn btn-primary"
+          [disabled]="!selectedNewEmployees.length || submittingLoad"
+          (click)="loadEmployees(modal)">
+          @if(submittingLoad) {
+            <div class="button-loader-content">
+              <div class="spinner-border button-spinner text-light" role="status"></div>
+              <span>Loading...</span>
+            </div>
+          } @else {
+            Load {{ selectedNewEmployees.length || '' }} Employee(s)
+          }
+        </button>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<!-- Load Categories Modal -->
+<ng-template #loadCategoriesModal let-modal>
+  <div class="custom-main-popup-container" ngbAutofocus>
+    <div class="custom-poup-header-content popup-header-border">
+      <div>
+        <p class="popup-heading mb-0">Load New Categories ({{ newCategories.length }} available)</p>
+      </div>
+      <div>
+        <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+      </div>
+    </div>
+    <div class="custom-main-popup-content">
+      <div class="mb-3">
+        <div class="custom-p-multiSelect-content">
+          <p-multiSelect
+            [options]="newCategories"
+            optionLabel="categoryName"
+            [(ngModel)]="selectedNewCategories"
+            [filter]="true"
+            filterBy="categoryName"
+            [showClear]="true"
+            [resetFilterOnHide]="true"
+            placeholder="Select categories to load"
+            filterPlaceHolder="Search category"
+            class="form-select custom-select w-100">
+            <ng-template let-cat pTemplate="item">
+              {{ cat.categoryName }}
+            </ng-template>
+          </p-multiSelect>
+        </div>
+      </div>
+      <div class="custom-modal-footer">
+        <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">Cancel</button>
+        <button type="submit" class="custom-btn btn-primary"
+          [disabled]="!selectedNewCategories.length || submittingLoadCategories"
+          (click)="loadCategories(modal)"> 
+          @if(submittingLoadCategories) {
+            <div class="button-loader-content">
+              <div class="spinner-border button-spinner text-light" role="status"></div>
+              <span>Loading...</span>
+            </div>
+          } @else {
+            Next
+          }
+        </button>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<!-- Cycle Breakdown Modal -->
+<ng-template #cycleModal let-modal>
+  <div class="custom-main-popup-container" ngbAutofocus>
+    <div class="custom-poup-header-content popup-header-border">
+      <div>
+        <p class="popup-heading mb-0">
+          Cycle Breakdown - {{selectedCycleEmployee?.employee?.name}} ({{selectedCycleEmployee?.employee?.fusionEmpId}}) — {{ selectedCycleEmployee?.leaveCategory }}</p>
+      </div>
+      <div>
+        <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+      </div>
+    </div>
+
+    <div class="custom-main-popup-content">
+      <div class="popup-table-wrapper">
+        <div class="popup-table-scroll-container">
+          <table class="popup-table">
+            <thead>
+              <tr>
+                <th>Cycle</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th class="text-center">Entitlement Day(s)  </th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let c of selectedCycleEmployee?.cycles">
+                <td>Cycle {{ c.cycleNo }}</td>
+                <td>{{ c.cycleStart | date }}</td>
+                <td>{{ c.cycleEnd | date }}</td>
+                <td class="text-center">{{ c.plannedEntitlement }}</td>
+                <td [ngClass]="{
+                  'status-success': c.status?.toUpperCase() === 'EXECUTED' || c.status?.toUpperCase() === 'SUCCESS',
+                  'status-failed': c.status?.toUpperCase() === 'FAILED',
+                  'status-pending': c.status?.toUpperCase() === 'PENDING',
+                  'status-processing': c.status?.toUpperCase() === 'PROCESSING',
+                  'status-partial': c.status?.toUpperCase() === 'PARTIAL',
+                  'status-skipped': c.status?.toUpperCase() === 'SKIPPED'
+                }">
+                  {{ c.status | titlecase }}
+                  <span *ngIf="c?.statusReason" class="ms-2">
+                    <a type="button" [ngbPopover]="cycleReason">
+                      <app-info-icon />
+                    </a>
+                    <ng-template #cycleReason>
+                      <p class="mb-0">{{ c.statusReason }}</p>
+                    </ng-template>
+                  </span>
+                </td>
+                <td>
+                  @if(c?.requiresRetry) {
+                  <div class="dropdown">
+                    <a data-bs-toggle="dropdown" aria-expanded="false">
+                      <i class="bi bi-three-dots-vertical"></i>
+                    </a> 
+                    <ul class="dropdown-menu custom-dropdown-menu">
+                      <li (click)="retryCyclePlan(jobid, c)">
+                        <a class="dropdown-item"><i class="bi bi-arrow-clockwise me-2"></i>Retry</a>
+                      </li>
+                    </ul>
+                  </div>
+                  } @else {
+                  NA
+                  }
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>

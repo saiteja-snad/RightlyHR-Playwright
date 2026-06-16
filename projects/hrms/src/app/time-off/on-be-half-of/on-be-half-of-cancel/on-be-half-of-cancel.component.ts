@@ -51,7 +51,7 @@ export class OnBeHalfOfCancelComponent implements OnInit, OnDestroy {
 
   constructor(private http: HttpService, private authService: AuthService, public rbac: RbacService, private timeoffYearFilterService: TimeoffYearFilterService, private modalService: NgbModal) {
     effect(() => {
-      if (this.http.onBehalfOfTriggerSignal()) {
+      if (this.http.onBehalfOfTriggerSignal() > 0) {
         this.cadidateEmployeeId = parseInt(
           localStorage.getItem('onbehalfof') as string
         );
@@ -60,7 +60,6 @@ export class OnBeHalfOfCancelComponent implements OnInit, OnDestroy {
         } else {
           this.lpdata = [];
         }
-        this.http.onBehalfOfTriggerSignal.set(false);
       }
     });
   }

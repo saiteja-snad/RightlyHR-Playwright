@@ -10,9 +10,10 @@ import { AllemployeesComponent } from "./allemployees/allemployees.component";
 import { InactiveContractEmployeesComponent } from "./inactive-contract-employees/inactive-contract-employees.component";
 import { ContractEmployeeComponent } from "./contract-employee/contract-employee.component";
 import { ActiveContractEmployeesComponent } from "./active-contract-employees/active-contract-employees.component";
+import { EmployeeManagementHomeRedirectComponent, employeeManagementHomeActivate } from "./employee-management-layout/employee-management-layout.component";
 
 export default [
-    { path: '', redirectTo: '/employee-management/active', pathMatch: 'full' },
+    { path: '', pathMatch: 'full', component: EmployeeManagementHomeRedirectComponent, canActivate: [employeeManagementHomeActivate] },
     {
         path: 'active',
         children: [

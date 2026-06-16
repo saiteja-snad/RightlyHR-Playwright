@@ -1,0 +1,315 @@
+<div class="custom-main-component-container">
+     @if (selectedLeavesItems && selectedLeavesItems.length > 0 && multiSelect) {
+    <div class="component-header-content">
+        @if(selectedLeavesItems){
+        <div class="component-sub-header">Selected Records: {{selectedLeavesItems.length}}</div>
+        }
+        <div class="d-flex gap-3">
+            @if (canBulkApprove()) {
+            @if(rbac.allowedToAccess('Remote Login (On Behalf Of Approvals).update')){
+            <button class="custom-btn btn-primary-approve" (click)="bulkapprove(approval)">Approve</button>
+            }
+            @if(rbac.allowedToAccess('Remote Login (On Behalf Of Approvals).delete')){
+            <button class="custom-btn btn-primary-reject" (click)="bulkReject(rejectmodal)">Reject</button>
+            }
+            }
+            @if (canBulkProcess()) {
+            @if(rbac.allowedToAccess('Remote Login (On Behalf Of Approvals).update')){
+            <button class="custom-btn btn-primary-approve" (click)="bulkProcess()">Process</button>
+            }
+            @if(rbac.allowedToAccess('Remote Login (On Behalf Of Approvals).delete')){
+            <button class="custom-btn btn-primary-reject" (click)="bulkReject(rejectmodal)">Reject</button>
+            }
+            }
+        </div>
+    </div>
+    }
+
+    <div class="input-group custom-search mb-3">
+        <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
+        <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input"
+            placeholder="Search here" aria-label="Username" aria-describedby="basic-addon1" autocomplete="off" (ngModelChange)="onSearchChange()">
+    </div>
+
+    <div class="custom-p-multi-select-table">
+        @if(!dataload){
+        <p-table #dt [value]="getFilteredAndSortedLeaves()" (selectionChange)="selectCheck($event)"
+            [(selection)]="selectedLeavesItems" dataKey="approvalHeader.id" [tableStyle]="{'min-width': '50rem'}">
+            <ng-template #header>
+                <tr>
+                    <th style="width: 4rem"><p-tableHeaderCheckbox /></th>
+                    <th>{{'Employee ID' | translate}} </th>
+                    <th>{{'Employee Name' | translate}}</th>
+                    <th>{{'Worked Date' | translate}}</th>
+                    <th>{{'Availed' | translate}}</th>
+                    <th class="text-center">{{'Reason' | translate}}</th>
+                    <th class="text-center">{{'Approver Comments' | translate}}</th>
+                    <th>{{'Applied Date' | translate}}</th>
+                    @if(!multiSelect && (rbac.allowedToAccess('Remote Login (On Behalf Of Approvals).update') ||
+                    rbac.allowedToAccess('Remote Login (On Behalf Of Approvals).delete'))){
+                    <th class="text-center">{{'Action' | translate}}</th>
+                    }
+                </tr>
+            </ng-template>
+            <ng-template #body let-leave>
+                <tr>
+                    <td>
+                        <p-tableCheckbox [value]="leave" (selectionChange)="selectCheck($event)" />
+                    </td>
+                    <td>{{leave?.entity?.attendanceRequestFusionEmployeeId}}</td>
+                    <td>{{leave?.entity?.attendanceRequesterName}}</td>
+                    <td>{{leave?.entity?.attendanceRequestStartTime | dateformat}}</td>
+                    <td>{{leave?.entity?.attendanceRequestDurationType}}</td>
+                    <td class="text-center">
+                        @if(leave?.entity?.attendanceRequestDescription != null &&
+                        leave?.entity?.attendanceRequestDescription != '') {
+                        <div>
+                            <a type="button" [ngbPopover]="reason">
+                                <app-info-icon />
+                            </a>
+                            <ng-template #reason>
+                                <p class="mb-0">{{leave?.entity?.attendanceRequestDescription}} </p>
+                            </ng-template>
+                        </div>
+                        }@else {
+                        <span>-</span>
+                        }
+                    </td>
+                    <td class="text-center">
+                        <div *ngIf="leave?.entity?.attendanceApprovalcomments[0]?.comments;else compoffcomments">
+                            <div (click)="comments(leave?.entity?.attendanceApprovalcomments,commentspopup)">
+                                <app-info-icon />
+                            </div>
+                        </div>
+                        <ng-template #compoffcomments>-</ng-template>
+                    </td>
+                    <td>{{leave?.entity?.attendanceRequestAppliedDate | dateformat}}</td>
+                    @if(!multiSelect && (rbac.allowedToAccess('Remote Login (On Behalf Of Approvals).update') ||
+                    rbac.allowedToAccess('Remote Login (On Behalf Of Approvals).delete'))) {
+                    <td class="text-center">
+                        <div class="dropdown">
+                            <a type="button" data-bs-toggle="dropdown">
+                                <i class="bi bi-three-dots-vertical"></i>
+                            </a>
+                            <ul class="dropdown-menu custom-dropdown-menu">
+                                @if(rbac.allowedToAccess('Remote Login (On Behalf Of Approvals).update') ) {
+                                @if( leave?.approvalHeader?.currentapprovalStage !=
+                                leave?.approvalHeader?.finalapprovalStage){
+                                <li (click)="openApproveModal(approval,leave)">
+                                    <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{'Approve' |
+                                        translate}}</a>
+                                </li>
+                                }
+                                }
+                                @if(rbac.allowedToAccess('Remote Login (On Behalf Of Approvals).update') ) {
+                                @if( leave?.approvalHeader?.currentapprovalStage ==
+                                leave?.approvalHeader?.finalapprovalStage){
+                                <li (click)="handleProcess(leave)">
+                                    <a class="dropdown-item">
+                                        <i class="bi bi-check-circle me-2"></i>{{'Process' | translate}}</a>
+                                </li>
+                                }
+                                }
+                                @if(rbac.allowedToAccess('Remote Login (On Behalf Of Approvals).delete')) {
+                                <li (click)="openRejectModal(rejectmodal,leave)">
+                                    <a class="dropdown-item"><i class="bi bi-x-circle me-2"></i>{{'Reject' |
+                                        translate}}</a>
+                                </li>
+                                }
+                            </ul>
+                        </div>
+                    </td>
+                    }
+                </tr>
+            </ng-template>
+            <ng-template #emptymessage>
+                <tr>
+                    <app-no-data-found />
+                </tr>
+            </ng-template>
+        </p-table>
+        }@else{
+       
+            <app-data-loader-content />
+    
+        }
+    </div>
+</div>
+
+<ng-template #approval let-modal>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
+            <p class="confirmation-text">{{'Are you sure you want to Approve?' | translate}}</p>
+        </div>
+        <form autocomplete="off" [formGroup]="approveForm" (ngSubmit)="handleAccept(approveForm)"
+            class="custom-main-popup-content">
+            <div class="mb-3">
+                <label for="comments" class="form-label custom-label mb-2">{{'Comments' | translate}}<span
+                        class="text-danger">*</span></label>
+                <textarea class="form-control custom-input" id="comments" placeholder="Please provide comments"
+                    formControlName="comments" maxlength="250" (keydown)="formsValidation.restrictInitialSpace($event)"></textarea>
+                <!-- Character counter -->
+                <div class="textarea-count-text">{{ approveForm.get('comments')?.value?.length || 0 }}/250</div>
+                <div class="error-msg"
+                    *ngIf="approveForm.get('comments')?.touched && approveForm.get('comments')?.invalid">
+                    <div *ngIf="approveForm.get('comments')?.errors?.['required']">Comments are required</div>
+                    <div *ngIf="approveForm.get('comments')?.errors?.['maxlength']">Comments cannot exceed 250 characters
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex align-items-center flex-wrap gap-2 mb-3">
+                    <button type="button" class="custom-btn btn-secondary chip-btn" [class.active]="selectedLeaveStatus === 'approved'"
+                        (click)="onStatusApproveSelect('approved')">
+                        Approved
+                    </button>
+        
+                    <button type="button" class="custom-btn btn-secondary chip-btn" [class.active]="selectedLeaveStatus === 'planned'"
+                        (click)="onStatusApproveSelect('planned')">
+                        Planned Remote Login
+                    </button>
+        
+                    <button type="button"class="custom-btn btn-secondary chip-btn" [class.active]="selectedLeaveStatus === 'unplanned'"
+                        (click)="onStatusApproveSelect('unplanned')">
+                        Unplanned Remote Login
+                    </button>
+                </div>
+            <div class="custom-modal-footer">
+                <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss();" [disabled]=" spinnerLoader">{{'Cancel'|
+                    translate}}</button>
+                <button type="submit" class="custom-btn btn-primary" [disabled]="approveForm.invalid || spinnerLoader">
+                    @if(spinnerLoader){
+                    <div class="button-loader-content">
+                        <div class="spinner-border button-spinner text-light" role="status"></div>
+                        <div>{{'Loading...'}}</div>
+                    </div>
+                    }@else {
+                    <span>{{'Approve'| translate}}</span>
+                    }
+                </button>
+            </div>
+        </form>
+    </div>
+</ng-template>
+
+<ng-template #rejectmodal let-modal>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
+            <p class="confirmation-text">{{'Are you sure you want to Reject?' | translate}}</p>
+        </div>
+        <form autocomplete="off" [formGroup]="rejectForm" (ngSubmit)="handleReject(rejectForm)"
+            class="custom-main-popup-content">
+            <div class="mb-3">
+                <label for="comments" class="form-label custom-label mb-2">{{"Comments" | translate}}
+                    <span class="text-danger">*</span></label>
+                <textarea class="form-control custom-input" id="comments"
+                    placeholder="Please provide comments" formControlName="comments"
+                    maxlength="250" (keydown)="formsValidation.restrictInitialSpace($event)"></textarea>
+                <div class="textarea-count-text">{{ rejectForm.get('comments')?.value?.length || 0 }}/250</div>
+                <div class="error-msg"
+                    *ngIf="rejectForm.get('comments')?.touched && rejectForm.get('comments')?.invalid">
+                    <div *ngIf="rejectForm.get('comments')?.errors?.['required']">Comments are required</div>
+                    <div *ngIf="rejectForm.get('comments')?.errors?.['maxlength']">Comments cannot exceed 250 characters
+                    </div>
+                </div>
+            </div>
+               <div class="d-flex align-items-center flex-wrap gap-2 mb-3">
+                    <button type="button" class="custom-btn btn-secondary chip-btn" [class.active]="selectedLeaveStatus === 'reject'"
+                        (click)="onStatusRejectSelect('reject')">
+                        Rejected
+                    </button>
+        
+                    <button type="button" class="custom-btn btn-secondary chip-btn" [class.active]="selectedLeaveStatus === 'planned'"
+                        (click)="onStatusRejectSelect('planned')">
+                        Planned Remote Login
+                    </button>
+        
+                    <button type="button"class="custom-btn btn-secondary chip-btn" [class.active]="selectedLeaveStatus === 'unplanned'"
+                        (click)="onStatusRejectSelect('unplanned')">
+                        Unplanned Remote Login
+                    </button>
+                </div>
+            <div class="custom-modal-footer">
+                <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()" [disabled]="spinnerLoader">{{'Cancel'|
+                    translate}}</button>
+                <button type="submit" class="custom-btn btn-primary" [disabled]="rejectForm.invalid || spinnerLoader">
+                    @if(spinnerLoader){
+                    <div class="button-loader-content">
+                        <div class="spinner-border button-spinner text-light" role="status"></div>
+                        <div>{{'Loading...'}}</div>
+                    </div>
+                    }@else {
+                    <span>{{'Reject' | translate}}</span>
+                    }
+                </button>
+            </div>
+        </form>
+    </div>
+</ng-template>
+
+<!-- commentspopup -->
+<ng-template #commentspopup let-modal>
+    <div class="custom-main-popup-container" ngbAutofocus>
+        <div class="custom-poup-header-content popup-header-border">
+            <div class="pt-2">
+                <p class="popup-heading mb-0">Approver History Details</p>
+            </div>
+            <div>
+                <a (click)="modal.dismiss('Cross click')"><img src="icons/close.png" alt="Close Icon"
+                        class="close-icon"></a>
+            </div>
+        </div>
+
+        <div class="custom-main-popup-content">
+            <div class="card p-3">
+                <div *ngFor="let comment of approverComments">
+                    <div class="mb-0">
+                        <p><b>{{'Comments' | translate}}:</b> {{ comment?.comments }} </p>
+                        <p><b>{{'Commented By'|translate}}:</b> {{ comment?.addedName }}</p>
+                        <p><b>{{"Approved Date" | translate}}:</b> {{ comment?.addedDate | dateformat }}</p>
+                        <p><b>{{'Commented By ID' | translate}}:</b> {{ comment?.addedByFusionEmpId }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+
+<ng-template #leaveSummary let-modal>
+    <div class="custom-main-popup-container" ngbAutofocus>
+        <div class="custom-poup-header-content popup-header-border">
+            <div>
+                <p class="popup-heading mb-0">{{"Summary" | translate}}</p>
+            </div>
+               <div>
+                <a>
+                    <img src="icons/close.png" alt="Close Icon" class="close-icon"  (click)="modal.dismiss()">
+                </a>
+            </div>
+        </div>
+        <div class="custom-main-popup-content custom-accordians">
+            <div class="popup-table-wrapper">
+                <div class="popup-table-scroll-container">
+                    <table class="popup-table">
+                        <thead>
+                            <tr>
+                                <th>{{'Total Records' | translate}}</th>
+                                <th>{{'Success Records'|translate}}</th>
+                                <th>{{'Failed Records' | translate}}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="log-time">{{ requestSummary?.totalRecordCount }}</td>
+                                <td class="log-time">{{ requestSummary?.successRecordsCount }}</td>
+                                <td class="log-time">{{ requestSummary?.failureRecordsCount }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>

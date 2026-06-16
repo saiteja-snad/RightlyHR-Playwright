@@ -38,6 +38,7 @@ import { InfoIconComponent } from '../../../icons/info-icon/info-icon.component'
 import { ProjectResourceTabComponent } from '../../../shared/project-management-tabs/project-resource-tab/project-resource-tab.component';
 import { environment } from '../../../../environments/environment';
 import { ProfileIconComponent } from "../../../icons/profile-icon/profile-icon.component";
+import { PaginatorModule } from 'primeng/paginator';
 
 @Component({
   selector: 'app-project-resources',
@@ -54,7 +55,8 @@ import { ProfileIconComponent } from "../../../icons/profile-icon/profile-icon.c
     InfoIconComponent,
     NgbPopover,
     ProjectResourceTabComponent,
-    ProfileIconComponent
+    ProfileIconComponent,
+    PaginatorModule
   ],
   templateUrl: './project-resources.component.html',
   styleUrl: './project-resources.component.scss',
@@ -112,7 +114,17 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
   selectedResource: any;
   resourceName: any;
   spinnerLoader = false;
-
+  page = 1;
+  pageSize = 50;
+  rows = 50;
+  collectionSize = 0;
+  first = 0;
+  options = [
+    { label: 50, value: 50 },
+    { label: 100, value: 100 },
+    { label: 150, value: 150 },
+    { label: 200, value: 200 }
+  ];
   constructor(
     private router: Router,
     private fb: FormBuilder,
@@ -133,12 +145,8 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
       if (projectId) {
         this.projectId = parseInt(projectId);
         this.getProjects(this.projectId);
-        this.getResourceData(
-          this.projectId,
-          undefined,
-          false,
-          this.searchValue,
-        );
+          //  this.getResourceData(this.projectId, undefined, false, this.searchValue, this.page, this.pageSize);
+
       }
     });
     this.getPhaseData();
@@ -165,6 +173,8 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
             undefined,
             false,
             this.searchValue,
+            this.page,
+            this.pageSize
           );
         }
       });
@@ -513,18 +523,39 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
     return workingDays;
   }
 
+
+    onPageSizeChange(newPageSize: number) {
+    this.pageSize = newPageSize;
+    this.rows = newPageSize;
+    this.page = 1;
+    this.first = 0;
+    this.selectedResources = [];
+    this.getResourceData(this.projectId, undefined, false, this.searchValue, this.page, this.pageSize);
+  }
+
+  onPageChange(event: any) {
+    this.page = event.page + 1;
+    this.pageSize = event.rows;
+    this.first = event.first;
+        this.selectedResources = [];
+    this.getResourceData(this.projectId, undefined, false, this.searchValue, this.page, this.pageSize);
+  }
   getResourceData(
     projectId: number,
     phaseId?: number,
     isPopupCall: boolean = false,
     searchTerm?: string,
+    pageNumber?: any,
+    pageSize?: any 
   ) {
     const params: any = {
       entityType: 'project',
       entityRefId: projectId,
-      // status: 'active,assigned',
-      status:
-        this.inactiveStatus === 'inactive' ? 'released' : 'active,assigned',
+      status: 'active,assigned',
+      // status:
+      //   this.inactiveStatus === 'inactive' ? 'released' : 'active,assigned',
+       pageNumber: pageNumber || this.page,
+      pageSize: pageSize || this.pageSize
     };
 
     if (phaseId) {
@@ -550,7 +581,9 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
       .getDataIncludeParams('ProjectResource', params)
       .subscribe({
         next: (data: any) => {
-          this.loading = false;
+        
+          this.collectionSize = data?.pagination?.totalRecords || 0;
+
           if (isPopupCall) {
             // DO NOT TOUCH TABLE DATA
             const popupData = data.data ?? [];
@@ -566,6 +599,7 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
               popupData[0]?.pendingApprovalAuthority?.id ?? null;
           } else {
             // NORMAL CALL - UPDATE TABLE DATA
+              this.loading = false;
             this.resourcesData = Array.isArray(data?.data) ? data.data : [];
             this.resourcesData = this.resourcesData.map((item: any) => ({
               ...item,
@@ -600,7 +634,6 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
           }
         },
         error: (reason: any) => {
-          this.loading = false;
           console.error(reason);
         },
       });
@@ -900,7 +933,6 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
       .getDataIncludeParams('ProjectPhases/list', params)
       .subscribe({
         next: (data: any) => {
-          this.loading = false;
           this.phaseData = (data?.data || []).filter(
             (p: any) =>
               p?.status?.toLowerCase() === 'in progress' ||

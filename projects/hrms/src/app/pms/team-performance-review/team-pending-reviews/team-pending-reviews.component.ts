@@ -30,19 +30,19 @@ export class TeamPendingReviewsComponent implements OnInit, OnDestroy {
   pendingReviews: any[] = [];
   filteredReviews: any[] = [];
   filteredCompletedReviews: any[] = [];
-  page = 1;
-  pageSize = 10;
-  collectionSize = 100;
-  totalItems = 0;
-  rows = 10;
-  options = [
-    { label: 10, value: 10 },
-    { label: 15, value: 15 },
-    { label: 20, value: 20 },
-    { label: 25, value: 25 }
-  ];
-  first = 0;
 
+  totalRecords = 0;
+  page = 1;
+  pageSize = 50;
+  rows = 50;
+  collectionSize = 0;
+  first = 0;
+  options = [
+    { label: 50, value: 50 },
+    { label: 100, value: 100 },
+    { label: 150, value: 150 },
+    { label: 200, value: 200 }
+  ];
   constructor(private modal: OpenModalService,private router: Router,private http: HttpService,
     public rbac : RbacService) { }
 
@@ -58,7 +58,7 @@ export class TeamPendingReviewsComponent implements OnInit, OnDestroy {
       this.employeeId, 'Team Manager,Reporting Manager,HR', 'Pending,Draft').subscribe({
         next: (data: any) => {
           this.reviewCycles = data.items;
-          this.totalItems = data.totalCount || 0;
+          this.totalRecords = data.totalCount || 0;
           this.pendingReviews =  data.items;
           this.filteredReviews = this.pendingReviews;
           if(this.pendingReviews.length>0){

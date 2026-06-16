@@ -8,9 +8,12 @@ import { HttpService } from '../../../services/http.service';
 import { RbacService } from '../../../services/rbac.service';
 import { SidetabsloadersComponent } from "../../sidetabsloaders/sidetabsloaders.component";
 import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.service';
+import { CdkDragDrop, DragDropModule, moveItemInArray } from '@angular/cdk/drag-drop';
+import { MenuOrderService } from '../../../services/theme-service/menu-order.service';
 @Component({
   selector: 'app-wfh-approvaltabs',
-  imports: [RouterModule, CommonModule, TabsModule, SidetabsloadersComponent],
+  standalone: true,
+  imports: [CommonModule, RouterModule, TabsModule, SidetabsloadersComponent, DragDropModule],
   templateUrl: './wfh-approvaltabs.component.html',
   styleUrl: './wfh-approvaltabs.component.scss',
 })
@@ -28,9 +31,23 @@ export class WfhApprovaltabsComponent implements OnInit, OnDestroy {
   empinfo = {} as IJob;
   loading = false
   destroy$: Subject<boolean> = new Subject<boolean>();
+  readonly tabsKey = 'timeoff-wfh-approval-tabs';
+  private userInteracted = false;
+
+  trackByNavLink(index: number, tab: any): string {
+    return tab.link;
+  }
+
   selectedYear: any;
 
-  constructor(public readonly router: Router, private http: HttpService, public rbac: RbacService, private TimeoffYearFilterService: TimeoffYearFilterService) {
+  constructor(
+    public readonly router: Router,
+    private http: HttpService,
+    public rbac: RbacService,
+    private TimeoffYearFilterService: TimeoffYearFilterService,
+    private readonly menuOrderService: MenuOrderService
+  ) {
+    void this.menuOrderService.ensureLoaded();
     effect(() => {
       if (this.http.tirggerCountSignal().wfh || this.http.wfhTriggerSignal()) {
         this.getWFHRequest();
@@ -125,41 +142,99 @@ export class WfhApprovaltabsComponent implements OnInit, OnDestroy {
       const permissionString = `${feature}.${action}`;
       return this.rbac.allowedToAccess(permissionString);
     });
+    this.applySavedTabsOrder();
+    this.redirectIfNeeded();
+  }
+
+  private applySavedTabsOrder(): void {
+    if (!this.filteredTabs.length) return;
+    const reordered = this.menuOrderService.applySavedTabsOrder(
+      this.tabsKey,
+      this.filteredTabs,
+      item => String(item?.link ?? '')
+    );
+    if (reordered !== this.filteredTabs) {
+      this.filteredTabs.splice(0, this.filteredTabs.length, ...reordered);
+    }
+  }
+
+  navigate(link: string): void {
+    this.userInteracted = true;
+    this.router.navigate([link], { queryParamsHandling: 'preserve' });
+  }
+
+  private redirectIfNeeded(): void {
+    if (this.userInteracted) return;
+    if (!this.filteredTabs.length) return;
+
+    const currentPath = this.router.url.split('?')[0];
+    const entryPaths = new Set([
+      '/time-off/wfh',
+      '/time-off/wfh/waiting-for-approval',
+      '/time-off/wfh/approved',
+      '/time-off/wfh/processed',
+      '/time-off/wfh/rejected',
+      '/time-off/wfh/cancelled',
+    ]);
+    if (!entryPaths.has(currentPath)) return;
+
+    const preferred = String(this.filteredTabs[0]?.link ?? '');
+    if (!preferred || preferred === currentPath) return;
+    this.router.navigate([preferred], { queryParamsHandling: 'preserve' });
+  }
+
+  isActive(link: string): boolean {
+    const currentPath = this.router.url.split('?')[0];
+    return currentPath === link || currentPath.startsWith(link + '/');
+  }
+
+  onDrop(event: CdkDragDrop<any[]>): void {
+    if (event.previousIndex === event.currentIndex) return;
+    moveItemInArray(this.filteredTabs, event.previousIndex, event.currentIndex);
+    const employeeId = this.menuOrderService.getCurrentEmployeeId();
+    if (!employeeId) return;
+
+    const tabs = this.filteredTabs.map(item => ({
+      id: String(item.link ?? ''),
+      label: String(item.label ?? ''),
+      route: String(item.link ?? '')
+    }));
+    this.menuOrderService.saveTabsModuleOrder(employeeId, this.tabsKey, tabs);
   }
 
   updateNavTabs() {
     this.navTabs = [
       {
         label: 'Waiting For Approval',
-        link: 'waiting-for-approval',
+        link: '/time-off/wfh/waiting-for-approval',
         icon: '/time-off-icon/waiting-for-approval-icon.png',
         count: this.waitingForApprovalWFHCount,
         permission: { feature: 'Waiting For Approval (WFH)', action: 'view' },
       },
       {
         label: 'Approved',
-        link: 'approved',
+        link: '/time-off/wfh/approved',
         icon: '/time-off-icon/approved-icon.png',
         count: this.approvedWFHRequestsCount,
         permission: { feature: 'Approved (WFH)', action: 'view' },
       },
       {
         label: 'Processed',
-        link: 'processed',
+        link: '/time-off/wfh/processed',
         icon: '/time-off-icon/processed-icon.png',
         count: this.processedWFHRequestsCount,
         permission: { feature: 'Processed (WFH)', action: 'view' },
       },
       {
         label: 'Rejected',
-        link: 'rejected',
+        link: '/time-off/wfh/rejected',
         icon: '/time-off-icon/rejected-icon.png',
         count: this.rejectedWFHRequestsCount,
         permission: { feature: 'Rejected (WFH)', action: 'view' },
       },
       {
         label: 'Cancelled',
-        link: 'cancelled',
+        link: '/time-off/wfh/cancelled',
         icon: '/time-off-icon/cancelled-icon.png',
         count: this.cancelWFHRequestsCount,
         permission: { feature: 'Cancel (WFH)', action: 'view' },

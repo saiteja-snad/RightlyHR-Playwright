@@ -38,6 +38,7 @@ export class UpdatePoliciesComponent implements OnInit, OnDestroy {
   @ViewChild('deletepopup') deletepopup: any;
   subscription!: Subscription;
   private destroy$ = new Subject<void>();
+  private uploadingPolicyRows = new Set<AbstractControl>();
   submitAttempted = false;
   policyForm!: FormGroup;
   jobLocationDropDownData: any = [];
@@ -95,6 +96,7 @@ export class UpdatePoliciesComponent implements OnInit, OnDestroy {
             [Validators.required, Validators.maxLength(50), Validators.pattern(/.*\S.*/)],
           ],
           policyFile: [row.policyAttachment],
+          policyFilePath: [row.policyAttachment],
           policyDescription: [
             row.policyDescription,
             [Validators.required, Validators.maxLength(50), Validators.pattern(/.*\S.*/)],
@@ -129,6 +131,7 @@ export class UpdatePoliciesComponent implements OnInit, OnDestroy {
     const policyGroup = this.fb.group({
       policyName: ['', [Validators.required]],
       policyFile: [''],
+      policyFilePath: [''],
       policyDescription: ['', [Validators.required]],
       policyNewFile: ['', Validators.required],
       acknowledged: [false],
@@ -176,6 +179,8 @@ restrictPolicyNamedescription(event: KeyboardEvent) {
 
   removePolicyRow(index: number) {
     if (this.policies.length > 1) {
+      const control = this.policies.at(index);
+      this.uploadingPolicyRows.delete(control);
       this.policies.removeAt(index);
     }
   }
@@ -488,20 +493,50 @@ restrictPolicyNamedescription(event: KeyboardEvent) {
     const filepath = `/Policies/${year}/${shiftId}`;
 
     const control = this.policies.at(index);
-
+    this.uploadingPolicyRows.add(control);
     control.get('policyNewFile')?.setValue(file);
+    control.get('policyFilePath')?.setValue('');
+    control.get('policyNewFile')?.markAsTouched();
+    control.get('policyNewFile')?.updateValueAndValidity({ emitEvent: false });
 
     this.http.uploadFileWithQuery('FileSystem/uploadfiletodirectory', filepath, renamedFile).subscribe({
       next: (response: any) => {
-        const uploadedPath = response?.path;
+        const uploadedPath = this.extractUploadedFilePath(response);
         if (uploadedPath) {
-          control.get('policyNewFile')?.setValue(uploadedPath);
+          control.get('policyFilePath')?.setValue(uploadedPath);
+        } else {
+          control.get('policyNewFile')?.setValue('');
+          control.get('policyFilePath')?.setValue('');
+          control.get('policyNewFile')?.markAsTouched();
+          this.confirmation.openErrorModal('Attachment upload failed. Please try again');
         }
+        this.uploadingPolicyRows.delete(control);
       },
       error: (err) => {
+        control.get('policyNewFile')?.setValue('');
+        control.get('policyFilePath')?.setValue('');
+        this.uploadingPolicyRows.delete(control);
+        control.get('policyNewFile')?.markAsTouched();
+        this.confirmation.openErrorModal('Attachment upload failed. Please try again');
         console.error('Upload failed:', err);
       }
     });
+  }
+
+  private extractUploadedFilePath(response: any): string {
+    if (typeof response === 'string' && response.trim() !== '') {
+      return response;
+    }
+
+    const possiblePath =
+      response?.path ??
+      response?.Path ??
+      response?.filePath ??
+      response?.FilePath ??
+      response?.data?.path ??
+      response?.data?.Path;
+
+    return typeof possiblePath === 'string' ? possiblePath : '';
   }
 
   markPolicyFileTouched(index: number): void {
@@ -516,6 +551,22 @@ restrictPolicyNamedescription(event: KeyboardEvent) {
   }
 
   hidePublishCloneButtons: boolean = false;
+  get isAnyPolicyUploadInProgress(): boolean {
+    return this.uploadingPolicyRows.size > 0;
+  }
+
+  private getPolicyAttachmentValue(item: any): string {
+    if (typeof item?.policyFilePath === 'string' && item.policyFilePath.trim() !== '') {
+      return item.policyFilePath;
+    }
+
+    if (typeof item?.policyFile === 'string' && item.policyFile.trim() !== '') {
+      return item.policyFile;
+    }
+
+    return '';
+  }
+
   submit() {
     this.submitAttempted = true;
     this.policyForm.markAllAsTouched();
@@ -528,12 +579,17 @@ restrictPolicyNamedescription(event: KeyboardEvent) {
     });
     if (this.policyForm.invalid) return;
 
-    const hasNewPolicyWithoutFile = this.policies.controls.some(
-      control => !control.get('policyFile')?.value && !control.get('policyNewFile')?.value
-    );
-    if (hasNewPolicyWithoutFile) return;
+    if (this.isAnyPolicyUploadInProgress) {
+      this.confirmation.openErrorModal('Please wait until the file upload is completed');
+      return;
+    }
 
     const formValue = this.policyForm.value;
+    const hasPolicyWithoutAttachment = formValue.policies.some((item: any) => !this.getPolicyAttachmentValue(item));
+    if (hasPolicyWithoutAttachment) {
+      this.confirmation.openErrorModal('Please upload the attachment and try again');
+      return;
+    }
     const payload = {
       locationId: formValue.location?.id ?? this.updatePoliciesData.locationId,
       subLocationId:
@@ -552,10 +608,7 @@ restrictPolicyNamedescription(event: KeyboardEvent) {
       orgPolicyItems: formValue.policies.map((item: any) => ({
         Id: item.id,
         PolicyName: item.policyName,
-        PolicyAttachment:
-          item.policyNewFile && item.policyNewFile !== ''
-            ? item.policyNewFile
-            : item.policyFile,
+        PolicyAttachment: this.getPolicyAttachmentValue(item),
         PolicyDescription: item.policyDescription,
         requiresAcknowledgment: item.acknowledged,
         sendEmailNotification: item.notification,

@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { Select } from 'primeng/select';
 import { Subject, Subscription, takeUntil } from 'rxjs';
 import { HttpService } from '../../../../services/http.service';
-import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { OpenModalService } from '../../../../services/open-modal.service';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
@@ -191,6 +191,7 @@ restrictPolicyNamedescription(event: KeyboardEvent) {
       }
     );
     this.policies.push(policyGroup);
+    this.validateDuplicateModules(this.policies.length - 1);
   }
 
   removePolicyRow(index: number) {
@@ -310,12 +311,13 @@ restrictPolicyNamedescription(event: KeyboardEvent) {
 
   isSubModuleDisabled(policyIndex: number, mappingIndex: number): boolean {
     const moduleKey = normalizePolicyVisibilityKey(this.getVisibilityMappings(policyIndex).at(mappingIndex)?.get('moduleKey')?.value);
-    return !moduleKey || this.getSubModuleOptions(moduleKey).length === 0;
+    return !moduleKey || this.policyVisibilitySubModulesLoading[moduleKey] === true || this.getSubModuleOptions(moduleKey).length === 0;
   }
 
   getSubModulePlaceholder(policyIndex: number, mappingIndex: number): string {
     const moduleKey = normalizePolicyVisibilityKey(this.getVisibilityMappings(policyIndex).at(mappingIndex)?.get('moduleKey')?.value);
     if (!moduleKey) return 'Select main module first';
+    if (this.policyVisibilitySubModulesLoading[moduleKey] === true) return 'Loading sub modules...';
     if (this.getSubModuleOptions(moduleKey).length === 0) return 'No sub modules available';
     return 'Please select sub modules';
   }
@@ -346,6 +348,8 @@ restrictPolicyNamedescription(event: KeyboardEvent) {
 
     if (moduleKey && this.policyVisibilitySubModulesLoading[moduleKey] !== true && this.getSubModuleOptions(moduleKey).length > 0) {
       subModuleKeysControl.enable({ emitEvent: false });
+      subModuleKeysControl.setValidators([this.requiredArrayValidator]);
+      subModuleKeysControl.updateValueAndValidity({ emitEvent: false });
       return;
     }
 
@@ -353,6 +357,14 @@ restrictPolicyNamedescription(event: KeyboardEvent) {
       subModuleKeysControl.setValue([], { emitEvent: false });
     }
     subModuleKeysControl.disable({ emitEvent: false });
+    subModuleKeysControl.clearValidators();
+    subModuleKeysControl.setErrors(null);
+    subModuleKeysControl.updateValueAndValidity({ emitEvent: false });
+  }
+
+  private requiredArrayValidator(control: AbstractControl): { [key: string]: boolean } | null {
+    const value = control.value;
+    return Array.isArray(value) && value.length > 0 ? null : { required: true };
   }
 
   private updateDisplayToggleState(row: FormGroup): void {
@@ -448,6 +460,10 @@ restrictPolicyNamedescription(event: KeyboardEvent) {
       });
   }
 
+  get isPolicyVisibilityLoading(): boolean {
+    return Object.values(this.policyVisibilitySubModulesLoading).some((value) => value === true);
+  }
+
   private refreshVisibilityRowsForModule(moduleKey: string): void {
     this.policies.controls.forEach((policyControl, policyIndex) => {
       const mappings = policyControl.get('visibilityMappings') as FormArray | null;
@@ -465,28 +481,34 @@ restrictPolicyNamedescription(event: KeyboardEvent) {
     const file = event.target.files[0];
     if (!file) return;
 
-    const formValue = this.policyForm.value;
-    const year = formValue.year ?? new Date().getFullYear();
-    const shiftId = formValue.shift;
+    const rawValue = this.policyForm.getRawValue();
+    const year = rawValue.year?.value ?? new Date().getFullYear();
+    const shiftId = rawValue.shift?.id ?? rawValue.shift;
 
     const timestamp = new Date().getTime();
     const renamedFile = this.renameFile(file, `${this.empinfo.employeeId}_${timestamp}_${file.name}`);
     const filepath = `/Policies/${year}/${shiftId}`;
 
     const control = this.policies.at(index);
-
-    // Save original file object (for validation or display if needed)
     control.get('policyNewFile')?.setValue(file);
 
     this.http.uploadFileWithQuery('FileSystem/uploadfiletodirectory', filepath, renamedFile).subscribe({
       next: (response: any) => {
-        control.get('policyNewFile')?.setValue(response.path);  // save uploaded file path instead
-
+        const uploadedPath = response?.path;
+        if (uploadedPath) {
+          control.get('policyNewFile')?.setValue(uploadedPath);
+        }
       },
       error: (err) => {
         console.error('Upload failed:', err);
       }
     });
+  }
+
+  markPolicyFileTouched(index: number): void {
+    const control = this.policies.at(index)?.get('policyNewFile');
+    control?.markAsTouched();
+    control?.updateValueAndValidity({ emitEvent: false });
   }
 
   renameFile(file: File, newName: string): File {
@@ -517,8 +539,19 @@ restrictPolicyNamedescription(event: KeyboardEvent) {
   submit() {
     this.submitAttempted = true;
     this.policyForm.markAllAsTouched();
-    this.policies.controls.forEach((_, policyIndex) => this.validateDuplicateModules(policyIndex));
+    this.policies.controls.forEach((policyControl, policyIndex) => {
+      const mappings = policyControl.get('visibilityMappings') as FormArray | null;
+      mappings?.controls.forEach((mappingControl) => {
+        this.updateSubModuleControlState(mappingControl as FormGroup);
+      });
+      this.validateDuplicateModules(policyIndex);
+    });
     if (this.policyForm.invalid) return;
+
+    const hasNewPolicyWithoutFile = this.policies.controls.some(
+      control => !control.get('policyFile')?.value && !control.get('policyNewFile')?.value
+    );
+    if (hasNewPolicyWithoutFile) return;
 
     const formValue = this.policyForm.value;
 

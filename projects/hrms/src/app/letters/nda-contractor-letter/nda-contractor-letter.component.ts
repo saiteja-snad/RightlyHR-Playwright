@@ -21,6 +21,7 @@ import { IEmployeeIdentity, IAsset, IEmployeeJobInfo, IEmployeeProfile, IEmploye
 import { IEmployeeSignatures } from '../letters.modal';
 import { LettersheaderComponent } from "../../shared/letters-shared-content/lettersheader/lettersheader.component";
 import { LetterFooterComponent } from "../../shared/letters-shared-content/letter-footer/letter-footer.component";
+import { SignalsService } from '../../services/signals.service';
 @Component({
   selector: 'app-nda-contractor-letter',
   imports: [CommonModule, TranslateModule, Select, NgxCountriesDropdownModule, ReactiveFormsModule, NgbPopoverModule, DateformatPipe, LettersheaderComponent, LetterFooterComponent],
@@ -68,7 +69,8 @@ export class NdaContractorLetterComponent {
     private router: Router,
     private authService: AuthService,
     private conformationPopup: OpenModalService,
-    private fb: FormBuilder) { }
+    private fb: FormBuilder,
+    private signalService: SignalsService) { }
 
   ngOnInit(): void {
     this.initializeForm();
@@ -427,6 +429,7 @@ export class NdaContractorLetterComponent {
       complete: () => {
         this.spinnerLoader = false;
         this.spinnerLoader1 = false;
+        this.signalService.AppointmentLetterNavCountSignal.set(true);
       }
     });
   }
@@ -445,6 +448,10 @@ export class NdaContractorLetterComponent {
         this.spinnerLoader = false;
         this.spinnerLoader1 = false;
       },
+      complete: () => {
+        this.spinnerLoader = false;
+        this.signalService.AppointmentLetterNavCountSignal.set(true);
+      }
     });
   }
 

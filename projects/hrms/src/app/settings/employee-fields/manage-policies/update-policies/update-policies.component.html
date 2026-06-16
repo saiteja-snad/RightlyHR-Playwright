@@ -111,6 +111,9 @@
               <ng-template #newPopContent>
                 <div>{{ getPolicyAttachmentName(policy.get('policyFile')?.value) }}</div>
               </ng-template>
+              <div *ngIf="(submitAttempted || policy.get('policyName')?.touched) && policy.get('policyNewFile')?.invalid" class="error-msg">
+                {{'Policy Attachment is required'|translate}}
+              </div>
             </div>
             <!-- Acknowledgement Toggle -->
             <div class="w-100">

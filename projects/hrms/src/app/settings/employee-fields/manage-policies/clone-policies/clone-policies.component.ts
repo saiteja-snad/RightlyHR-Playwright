@@ -191,6 +191,7 @@ restrictPolicyNamedescription(event: KeyboardEvent) {
       }
     );
     this.policies.push(policyGroup);
+    this.validateDuplicateModules(this.policies.length - 1);
   }
 
   removePolicyRow(index: number) {
@@ -465,23 +466,23 @@ restrictPolicyNamedescription(event: KeyboardEvent) {
     const file = event.target.files[0];
     if (!file) return;
 
-    const formValue = this.policyForm.value;
-    const year = formValue.year ?? new Date().getFullYear();
-    const shiftId = formValue.shift;
+    const rawValue = this.policyForm.getRawValue();
+    const year = rawValue.year?.value ?? new Date().getFullYear();
+    const shiftId = rawValue.shift?.id ?? rawValue.shift;
 
     const timestamp = new Date().getTime();
     const renamedFile = this.renameFile(file, `${this.empinfo.employeeId}_${timestamp}_${file.name}`);
     const filepath = `/Policies/${year}/${shiftId}`;
 
     const control = this.policies.at(index);
-
-    // Save original file object (for validation or display if needed)
     control.get('policyNewFile')?.setValue(file);
 
     this.http.uploadFileWithQuery('FileSystem/uploadfiletodirectory', filepath, renamedFile).subscribe({
       next: (response: any) => {
-        control.get('policyNewFile')?.setValue(response.path);  // save uploaded file path instead
-
+        const uploadedPath = response?.path;
+        if (uploadedPath) {
+          control.get('policyNewFile')?.setValue(uploadedPath);
+        }
       },
       error: (err) => {
         console.error('Upload failed:', err);
@@ -519,6 +520,11 @@ restrictPolicyNamedescription(event: KeyboardEvent) {
     this.policyForm.markAllAsTouched();
     this.policies.controls.forEach((_, policyIndex) => this.validateDuplicateModules(policyIndex));
     if (this.policyForm.invalid) return;
+
+    const hasNewPolicyWithoutFile = this.policies.controls.some(
+      control => !control.get('policyFile')?.value && !control.get('policyNewFile')?.value
+    );
+    if (hasNewPolicyWithoutFile) return;
 
     const formValue = this.policyForm.value;
 

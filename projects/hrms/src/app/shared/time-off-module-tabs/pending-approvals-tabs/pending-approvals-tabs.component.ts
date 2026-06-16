@@ -34,13 +34,14 @@ export class PendingApprovalsTabsComponent {
 
      effect(() => {
       if ((this.http.tirggerPendingApprovalCountSignal().wfh) || (this.http.tirggerPendingApprovalCountSignal().separation)
-        || (this.http.tirggerPendingApprovalCountSignal().nodue)) {
+        || (this.http.tirggerPendingApprovalCountSignal().nodue) || (this.http.tirggerPendingApprovalCountSignal().onboarding)) {
         this.getAllPendingApprovalsCount();
         this.http.tirggerPendingApprovalCountSignal.update(status => ({
           ...status,
           wfh: status.wfh ? false : status.wfh,
           separation: status.separation ? false : status.separation,
           nodue: status.nodue ? false : status.nodue,
+          onboarding: status.onboarding ? false : status.onboarding
         }));
       }
       if (this.signalService.OfferLetterNavCountSignal()) {
@@ -109,7 +110,7 @@ export class PendingApprovalsTabsComponent {
     const currentDate = new Date();
     const month = currentDate.getMonth() + 1;
     const year = currentDate.getFullYear();
-    this.http.getData(`PendingApproval/onboard-requests-count?month=${month}&year=${year}&EmployeeId=${employeeId}  `).subscribe({
+    this.http.getData(`PendingApproval/onboard-requests-count?month=${month}&year=${year}&EmployeeId=${employeeId}`).subscribe({
       next: (response: any) => {
         if (response.success) {
           const modules = response.data.modules;

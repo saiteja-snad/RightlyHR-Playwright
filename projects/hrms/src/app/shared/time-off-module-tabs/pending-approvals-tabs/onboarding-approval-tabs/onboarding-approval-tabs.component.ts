@@ -98,8 +98,8 @@ export class OnboardingApprovalTabsComponent implements OnInit, OnDestroy {
 
       effect(() => {
       if ((this.http.tirggerPendingApprovalCountSignal().wfh) || (this.http.tirggerPendingApprovalCountSignal().separation)
-        || (this.http.tirggerPendingApprovalCountSignal().nodue)) {
-        this.getAllPendingApprovalsCount();
+        || (this.http.tirggerPendingApprovalCountSignal().nodue) || (this.http.tirggerPendingApprovalCountSignal().onboarding)) {
+        this.getAllPendingApprovalsCount(true);
         this.http.tirggerPendingApprovalCountSignal.update(status => ({
           ...status,
           wfh: status.wfh ? false : status.wfh,
@@ -108,25 +108,26 @@ export class OnboardingApprovalTabsComponent implements OnInit, OnDestroy {
         }));
       }
       if (this.signalService.OfferLetterNavCountSignal()) {
-        this.getAllPendingApprovalsCount();
-        this.signalService.OfferLetterNavCountSignal.set(false);
+        this.getAllPendingApprovalsCount(true);
+        //this.signalService.OfferLetterNavCountSignal.set(false);
       }
       if (this.signalService.TraineeOfferLetterNavCountSignal()) {
-        this.getAllPendingApprovalsCount();
-        this.signalService.TraineeOfferLetterNavCountSignal.set(false);
+        this.getAllPendingApprovalsCount(true);
+        //this.signalService.TraineeOfferLetterNavCountSignal.set(false);
       }
       if (this.signalService.ContractOfferLetterNavCountSignal()) {
-        this.getAllPendingApprovalsCount();
-        this.signalService.ContractOfferLetterNavCountSignal.set(false);
+        this.getAllPendingApprovalsCount(true);
+        //this.signalService.ContractOfferLetterNavCountSignal.set(false);
       }
       if (this.signalService.AppointmentLetterNavCountSignal()) {
-        this.getAllPendingApprovalsCount();
-        this.signalService.AppointmentLetterNavCountSignal.set(false);
+        this.getAllPendingApprovalsCount(true);
+        //this.signalService.AppointmentLetterNavCountSignal.set(false);
       }
       if (this.signalService.NDALetterNavCountSignal()) {
-        this.getAllPendingApprovalsCount();
-        this.signalService.NDALetterNavCountSignal.set(false);
+        this.getAllPendingApprovalsCount(true);
+        //this.signalService.NDALetterNavCountSignal.set(false);
       }
+      
     });
 
  

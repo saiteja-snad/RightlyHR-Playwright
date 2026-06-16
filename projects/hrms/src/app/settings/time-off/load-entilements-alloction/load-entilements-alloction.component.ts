@@ -49,11 +49,13 @@ export class LoadEntilementsAlloctionComponent implements OnInit, OnDestroy {
   statusOptions = [
     { label: 'Executed', value: 'EXECUTED' },
     {label: 'Pending', value:'PENDING'},
+    { label: 'Queued', value: 'QUEUED' },
     { label: 'Failed', value: 'FAILED' },
   ];
   selectedCycleEmployee: any = null;
   isApplyDisabledFlag = true;
   leaveAllocationForm!: FormGroup;
+  employeeDropdownContextKey = '';
 
   newEmployees: any[] = [];
   selectedNewEmployees: any[] = [];
@@ -62,6 +64,8 @@ export class LoadEntilementsAlloctionComponent implements OnInit, OnDestroy {
   loadingNewEmployees = false;
   submittingLoad = false;
   submittingLoadCategories = false;
+  validationErrors: any[] = [];
+  validationMessage = '';
 
   constructor(private route: ActivatedRoute, private http: HttpService, private fb: FormBuilder,
     private modalService: NgbModal, private conformationPopup: OpenModalService, private router: Router) { }
@@ -166,7 +170,7 @@ export class LoadEntilementsAlloctionComponent implements OnInit, OnDestroy {
         this.jobSummary = res.data.jobSummary;
         this.employees = res.data.employees;
         this.collectionSize = res.pagination.totalRecords;
-        this.buildEmployeeDropdown();
+        this.updateEmployeeDropdown();
         this.getCategoryDetails();
         this.getNewEmployees();
       },
@@ -288,24 +292,25 @@ export class LoadEntilementsAlloctionComponent implements OnInit, OnDestroy {
     });
   }
 
-  buildEmployeeDropdown(): void {
-    const seen = new Set<number>();
-    this.employeeDetails = this.employees
-      .filter((e: any) => {
-        const id = e?.employee?.id;
-        if (!id || seen.has(id)) return false;
-        seen.add(id);
-        return true;
-      })
-      .map((e: any) => ({
-        ...e.employee,
-        employeeId: e.employee.id,
-        fusionEmpId: e.employee.fusionEmpId ?? '',
-        firstName: e.employee.name ?? '',
-        middleName: '',
-        lastName: '',
-        fullName: `${e.employee.fusionEmpId ?? ''} ${e.employee.name ?? ''}`.trim()
-      }));
+  updateEmployeeDropdown(): void {
+    const locationId = this.jobSummary?.locationId;
+    const subLocationId = this.jobSummary?.subLocationId;
+    const shiftId = this.jobSummary?.shiftId;
+
+    if (!locationId || !subLocationId || !shiftId) {
+      this.employeeDropdownContextKey = '';
+      this.employeeDetails = [];
+      return;
+    }
+
+    const nextContextKey = `${locationId}|${subLocationId}|${shiftId}`;
+    if (this.employeeDropdownContextKey === nextContextKey && this.employeeDetails.length) {
+      this.syncSelectedEmployees();
+      return;
+    }
+
+    this.employeeDropdownContextKey = nextContextKey;
+    this.getAllEmployees();
   }
 
   getAllEmployees() {
@@ -314,17 +319,46 @@ export class LoadEntilementsAlloctionComponent implements OnInit, OnDestroy {
       subLocationId: this.jobSummary?.subLocationId,
       shiftId: this.jobSummary?.shiftId,
     };
+
+    if (!payload.locationId || !payload.subLocationId || !payload.shiftId) {
+      this.employeeDetails = [];
+      return;
+    }
+
     this.http.getDataWithQueryParams("Employeedata/getAll", payload).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.employeeDetails = res.map((employee: any) => ({
           ...employee,
-          fullName: ` ${employee.fusionEmpId} ${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`
+          fullName: `${employee.fusionEmpId ?? ''} ${employee.firstName ?? ''} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName ?? ''}`.trim()
         }));
+        this.syncSelectedEmployees();
       },
       error: err => {
         console.error('Error fetching employees:', err);
       }
     });
+  }
+
+  private syncSelectedEmployees(): void {
+    const control = this.leaveAllocationForm.get('employeeName');
+    const selectedValues = control?.value;
+
+    if (!Array.isArray(selectedValues) || !selectedValues.length) {
+      return;
+    }
+
+    const selectedIds = new Set(
+      selectedValues
+        .map((employee: any) => employee?.employeeId ?? employee?.id)
+        .filter((id: any) => id)
+    );
+
+    const matchedEmployees = this.employeeDetails.filter((employee: any) =>
+      selectedIds.has(employee?.employeeId ?? employee?.id)
+    );
+
+    this.selectedEmployee = matchedEmployees.map((employee: any) => employee.employeeId ?? employee.id);
+    control?.setValue(matchedEmployees.length ? matchedEmployees : null, { emitEvent: false });
   }
 
   getNewEmployees(): void {
@@ -358,15 +392,22 @@ export class LoadEntilementsAlloctionComponent implements OnInit, OnDestroy {
     this.modalService.open(content, { size: 'lg', centered: true, backdrop: 'static' });
   }
 
-  loadEmployees(modal: any): void {
+  loadEmployees(modal: any, validationModal: any): void {
     if (!this.selectedNewEmployees.length) return;
     this.submittingLoad = true;
     const payload = { employeeIds: this.selectedNewEmployees.map((e: any) => e.employeeId) };
     this.http.postdata(`LeaveEntitlementJobs/${this.jobid}/load-employees`, payload).pipe(takeUntil(this.destroy$)).subscribe({
-      next: () => {
+      next: (res: any) => {
         this.submittingLoad = false;
         modal.dismiss();
-        this.conformationPopup.openSuccessModal('Employees loaded successfully.');
+        const errors = res?.data?.validationErrors;
+        if (Array.isArray(errors) && errors.length > 0) {
+          this.validationErrors = errors;
+          this.validationMessage = res?.data?.message || 'Some employees were skipped due to validation errors.';
+          this.modalService.open(validationModal, { size: 'lg', centered: true, backdrop: 'static' });
+        } else {
+          this.conformationPopup.openSuccessModal('Employees loaded successfully.');
+        }
         this.getdatacarryforword();
       },
       error: (err: any) => {

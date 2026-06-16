@@ -733,7 +733,7 @@ getWorkfromhomeManager() {
         next: (data: any) => {
           console.log(data);
           // Assuming IWfh is your interface/model for the Manager data
-          this.WFHRemoteMangers = data.getUserWithRoleNames.map(
+          this.WFHRemoteMangers = data.getUserWithRoleNames?.filter((user: any) => user.employeeId !== this.personalinfo.employeeId)?.map(
             (user: {
               firstName: any;
               middleName: any;
@@ -762,7 +762,7 @@ getWorkfromhomeManager() {
     const url = `RightlyHrRole/getbyNormalizedName?Nname=${normalizedName}&includeAssignee=${includeAssignee}`;
     this.subscription = this.http.getData(url).subscribe({
       next: (data: any) => {
-        this.WFHRemoteMangers = data.getUserWithRoleNames.map(
+        this.WFHRemoteMangers = data.getUserWithRoleNames?.filter((user: any) => user.employeeId !== this.personalinfo.employeeId)?.map(
           (user: {
             firstName: any;
             middleName: any;

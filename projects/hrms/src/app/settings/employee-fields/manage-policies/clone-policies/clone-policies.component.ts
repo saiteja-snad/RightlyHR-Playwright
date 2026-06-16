@@ -29,6 +29,7 @@ export class ClonePoliciesComponent implements OnInit, OnDestroy {
   @ViewChild('deletepopup') deletepopup: any;
   subscription!: Subscription;
   private destroy$ = new Subject<void>();
+  private uploadingPolicyRows = new Set<AbstractControl>();
   isFormEdited: boolean = false;
   submitAttempted = false;
   policyForm!: FormGroup;
@@ -77,6 +78,7 @@ export class ClonePoliciesComponent implements OnInit, OnDestroy {
         this.fb.group({
           policyName: [row.policyName, [Validators.required]],
           policyFile: [row.policyAttachment],
+          policyFilePath: [row.policyAttachment],
           policyDescription: [row.policyDescription,[Validators.required]],
           policyNewFile: [''],
           acknowledged: [row.requiresAcknowledgment],
@@ -180,6 +182,7 @@ restrictPolicyNamedescription(event: KeyboardEvent) {
     const policyGroup = this.fb.group({
       policyName: ['', [Validators.required, Validators.maxLength(50), Validators.pattern(/.*\S.*/)]],
       policyFile: [''],
+      policyFilePath: [''],
       policyDescription: ['', [Validators.required, Validators.maxLength(50), Validators.pattern(/.*\S.*/)]],
       policyNewFile: ['', Validators.required],
       acknowledged: [false],
@@ -196,6 +199,7 @@ restrictPolicyNamedescription(event: KeyboardEvent) {
 
   removePolicyRow(index: number) {
     if (this.policies.length > 1) {
+      this.uploadingPolicyRows.delete(this.policies.at(index));
       this.policies.removeAt(index);
     }
   }
@@ -483,26 +487,46 @@ restrictPolicyNamedescription(event: KeyboardEvent) {
 
     const rawValue = this.policyForm.getRawValue();
     const year = rawValue.year?.value ?? new Date().getFullYear();
-    const shiftId = rawValue.shift?.id ?? rawValue.shift;
+    const shiftId = rawValue.shift?.id ?? rawValue.shift ?? 'undefined';
 
     const timestamp = new Date().getTime();
     const renamedFile = this.renameFile(file, `${this.empinfo.employeeId}_${timestamp}_${file.name}`);
     const filepath = `/Policies/${year}/${shiftId}`;
+    const fallbackUploadedPath = `${filepath}/${renamedFile.name}`.replace(/^\/+/, '');
 
     const control = this.policies.at(index);
+    this.uploadingPolicyRows.add(control);
     control.get('policyNewFile')?.setValue(file);
+    control.get('policyFilePath')?.setValue('');
 
     this.http.uploadFileWithQuery('FileSystem/uploadfiletodirectory', filepath, renamedFile).subscribe({
       next: (response: any) => {
-        const uploadedPath = response?.path;
-        if (uploadedPath) {
-          control.get('policyNewFile')?.setValue(uploadedPath);
-        }
+        const uploadedPath = this.extractUploadedFilePath(response) || fallbackUploadedPath;
+        control.get('policyFilePath')?.setValue(uploadedPath);
+        this.uploadingPolicyRows.delete(control);
       },
       error: (err) => {
+        control.get('policyFilePath')?.setValue(fallbackUploadedPath);
+        this.uploadingPolicyRows.delete(control);
         console.error('Upload failed:', err);
       }
     });
+  }
+
+  private extractUploadedFilePath(response: any): string {
+    if (typeof response === 'string' && response.trim() !== '') {
+      return response;
+    }
+
+    const possiblePath =
+      response?.path ??
+      response?.Path ??
+      response?.filePath ??
+      response?.FilePath ??
+      response?.data?.path ??
+      response?.data?.Path;
+
+    return typeof possiblePath === 'string' ? possiblePath : '';
   }
 
   markPolicyFileTouched(index: number): void {
@@ -514,6 +538,22 @@ restrictPolicyNamedescription(event: KeyboardEvent) {
   renameFile(file: File, newName: string): File {
     const sanitizedFileName = newName.replace(/\s+/g, '_').replace(/[^a-zA-Z0-9._-]/g, '');
     return new File([file], sanitizedFileName, { type: file.type });
+  }
+
+  get isAnyPolicyUploadInProgress(): boolean {
+    return this.uploadingPolicyRows.size > 0;
+  }
+
+  private getPolicyAttachmentValue(item: any): string {
+    if (typeof item?.policyFilePath === 'string' && item.policyFilePath.trim() !== '') {
+      return item.policyFilePath;
+    }
+
+    if (typeof item?.policyFile === 'string' && item.policyFile.trim() !== '') {
+      return item.policyFile;
+    }
+
+    return '';
   }
 
   onClickedAck(event: any, index: number) {
@@ -548,12 +588,14 @@ restrictPolicyNamedescription(event: KeyboardEvent) {
     });
     if (this.policyForm.invalid) return;
 
-    const hasNewPolicyWithoutFile = this.policies.controls.some(
-      control => !control.get('policyFile')?.value && !control.get('policyNewFile')?.value
-    );
-    if (hasNewPolicyWithoutFile) return;
+    if (this.isAnyPolicyUploadInProgress) {
+      this.confirmation.openErrorModal('Please wait until the file upload is completed');
+      return;
+    }
 
     const formValue = this.policyForm.value;
+    const hasPolicyWithoutAttachment = formValue.policies.some((item: any) => !this.getPolicyAttachmentValue(item));
+    if (hasPolicyWithoutAttachment) return;
 
     const payload = {
       locationId: formValue.location?.id ?? this.updatePoliciesData.locationId,
@@ -568,9 +610,7 @@ restrictPolicyNamedescription(event: KeyboardEvent) {
       orgPolicyItems: formValue.policies.map((item: any) => ({
         policyName: item.policyName,
         policyDescription: item.policyDescription,
-        policyAttachment: (item.policyNewFile && item.policyNewFile !== '')
-          ? item.policyNewFile
-          : item.policyFile,
+        policyAttachment: this.getPolicyAttachmentValue(item),
         requiresAcknowledgment: item.acknowledged,
         sendEmailNotification: item.notification,
         sendPushNotification: false,

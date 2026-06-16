@@ -486,7 +486,7 @@ restrictPolicyNamedescription(event: KeyboardEvent) {
 
     const rawValue = this.policyForm.getRawValue();
     const year = rawValue.year?.value ?? new Date().getFullYear();
-    const shiftId = rawValue.shift?.id ?? rawValue.shift;
+    const shiftId = rawValue.shift?.id ?? rawValue.shift ?? 'undefined';
 
     const timestamp = new Date().getTime();
     const renamedFile = this.renameFile(file, `${this.empinfo.employeeId}_${timestamp}_${file.name}`);
@@ -508,7 +508,6 @@ restrictPolicyNamedescription(event: KeyboardEvent) {
           control.get('policyNewFile')?.setValue('');
           control.get('policyFilePath')?.setValue('');
           control.get('policyNewFile')?.markAsTouched();
-          this.confirmation.openErrorModal('Attachment upload failed. Please try again');
         }
         this.uploadingPolicyRows.delete(control);
       },
@@ -517,7 +516,6 @@ restrictPolicyNamedescription(event: KeyboardEvent) {
         control.get('policyFilePath')?.setValue('');
         this.uploadingPolicyRows.delete(control);
         control.get('policyNewFile')?.markAsTouched();
-        this.confirmation.openErrorModal('Attachment upload failed. Please try again');
         console.error('Upload failed:', err);
       }
     });

@@ -63,6 +63,13 @@ export class OnboardingApprovalTabsComponent implements OnInit, OnDestroy {
       icon: '/letters-icon/trainee-offer-letter-icon.png',
     },
     {
+      label: 'Trainee Appointment Letter',
+      route: '/pending-approvals/on-boarding/intern-appointment-letter-history',
+      moduleId: 8,
+      permission: { feature: 'Documents History Trainee Appointment Letter', action: 'view' },
+      icon: '/letters-icon/trainee-offer-letter-icon.png',
+    },
+    {
       label: 'Appointment Letter',
       route: '/pending-approvals/on-boarding/appointment-letter-history',
       moduleId: 4,

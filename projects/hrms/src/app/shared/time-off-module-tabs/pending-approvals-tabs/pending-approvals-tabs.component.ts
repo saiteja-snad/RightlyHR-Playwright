@@ -143,7 +143,9 @@ export class PendingApprovalsTabsComponent {
       { label: 'Appointment Letter', permission: 'Documents History Appointment Letter.view' },
       { label: 'Non-Disclosure Agreement Letter', permission: 'Documents History Non-Disclosure Agreement Letter.view' },
       { label: 'Probation', permission: 'Probation Details Tab.view' },
-      { label: 'Trainees', permission: 'Trainee Details Tab.view' }
+      { label: 'Trainees', permission: 'Trainee Details Tab.view' },
+      { label: 'Trainee Appointment Letter', permission: 'Documents History Trainee Appointment Letter.view' }
+
     ];
     return onboardingLabels.filter(item => this.rbac.allowedToAccess(item.permission)).map(item => item.label);
   }

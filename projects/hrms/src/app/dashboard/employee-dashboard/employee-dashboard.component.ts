@@ -22,7 +22,7 @@ import { ProfileIconComponent } from '../../icons/profile-icon/profile-icon.comp
 import { WfhIconComponent } from '../../icons/wfh-icon/wfh-icon.component';
 import { AttendanceResponse, Permission } from '../../Interfaces/dashboard.modal';
 import { Ipersonal } from '../../Interfaces/personal-modal';
-import { DateformatPipe } from '../../Pipes/dateformat.pipe';
+import { DateformatPipe } from '../../pipes/dateformat.pipe';
 import { HttpService } from '../../services/http.service';
 import { RbacService } from '../../services/rbac.service';
 import { NoDataFoundComponent } from '../../shared/no-data-found/no-data-found.component';
@@ -116,7 +116,7 @@ export class EmployeeDashboardComponent {
   permissions_list: Permission[] = [];
   isScreenLessThan1600 = window.innerWidth < 1600;
 
-  constructor(private http: HttpService, private router: Router, public modalService: NgbModal, 
+  constructor(private http: HttpService, private router: Router, public modalService: NgbModal,
     private offcanvasService: NgbOffcanvas, public rbac: RbacService, private accessNav: AccessNavigationService) { }
 
   ngOnInit(): void {
@@ -196,7 +196,7 @@ export class EmployeeDashboardComponent {
       },
     });
   }
-  
+
   getAllTeammembersList() {
     this.loading = true;
     const EmployeeId = this.empinfo?.employeeId;

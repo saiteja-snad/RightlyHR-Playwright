@@ -22,7 +22,7 @@ import { AttendanceResponse, Permission, EmployeeStatusCount } from '../../Inter
 import { IDepartment } from '../../Interfaces/letters-model';
 import { Ipersonal } from '../../Interfaces/personal-modal';
 import { ICategoryDetails } from '../../Interfaces/timoff-model';
-import { DateformatPipe } from '../../Pipes/dateformat.pipe';
+import { DateformatPipe } from '../../pipes/dateformat.pipe';
 import { HttpService } from '../../services/http.service';
 import { RbacService } from '../../services/rbac.service';
 import { NoDataFoundComponent } from '../../shared/no-data-found/no-data-found.component';
@@ -31,7 +31,7 @@ import { AccessNavigationService } from '../../services/access-navigation.servic
 @Component({
   selector: 'app-manager-dashboard',
   imports: [CommonModule, RouterModule, FormsModule, TranslateModule, NgbPopoverModule, ModuleInfoIconComponent,
-    ChartModule, DateformatPipe, Skeleton, AccordionModule, ProfileIconComponent, NoDataFoundComponent, 
+    ChartModule, DateformatPipe, Skeleton, AccordionModule, ProfileIconComponent, NoDataFoundComponent,
     DatePicker, TabList, Calendar, TabsModule, Select, Chip],
   templateUrl: './manager-dashboard.component.html',
   styleUrl: './manager-dashboard.component.scss',
@@ -106,11 +106,11 @@ export class ManagerDashboardComponent {
       const ctx = chart.ctx;
       const isHorizontal = chart.config?.options?.indexAxis === 'y';
       if (!isHorizontal) return;
-      
+
       // Check if user has permission to view employee list
       const hasViewPermission = this.rbac.allowedToAccess('Headcount by Gender View Employee List.view');
       if (!hasViewPermission) return; // Don't draw underline if no permission
-      
+
       chart.data.datasets.forEach((dataset: any, dsIndex: number) => {
         const meta = chart.getDatasetMeta(dsIndex);
         if (meta.hidden) return;
@@ -161,7 +161,7 @@ export class ManagerDashboardComponent {
   permissions_list: Permission[] = [];
   departmentDetails = [] as IDepartment[];
   isScreenLessThan1600 = window.innerWidth < 1600;
-  // employee skill popup variables  
+  // employee skill popup variables
   selectedEmployee: any = null;
   selectedProject: any = null;
   selectedPhases: any[] = [];
@@ -1225,7 +1225,7 @@ export class ManagerDashboardComponent {
     this.approvalsOverviewLoader = true;
     const employeeId = parseInt(this.empinfo?.employeeId);
     this.http.getAllPendingApprovalsCount(undefined, employeeId).pipe(takeUntil(this.destroy$)).subscribe({
-      next: (data: any[]) => {        
+      next: (data: any[]) => {
         const leaveCount = this.getCountByModuleId(data, environment.leavesModuleId);
         const wfhCount = this.getCountByModuleId(data, environment.wfhModuleId);
         const remoteCount = this.getCountByModuleId(data, environment.remoteLoginModuleId);
@@ -1239,7 +1239,7 @@ export class ManagerDashboardComponent {
         const timesheetCount = this.getCountByModuleId(data, environment.timesheetModuleId);
         const globalCount = this.getCountByModuleId(data, 0);
         const employeeInfoCount = this.getCountByModuleId(data, 32);
-        
+
         this.approvalsList = [
           { name: 'Leaves', count: leaveCount, color: '#8A2BE2', route: '/pending-approvals/time-off/leaves' },
           { name: 'WFH', count: wfhCount, color: '#FF1493', route: '/pending-approvals/time-off/wfh' },

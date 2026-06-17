@@ -15,7 +15,7 @@ import { PendingApprovalsTabsComponent } from "../time-off-module-tabs/pending-a
 import { PmsMainTabsComponent } from "../pms-module-tabs/pms-main-tabs/pms-main-tabs.component";
 import { MenuOrderService } from '../../services/theme-service/menu-order.service';
 import { MenuRegistryService, MenuItemDef } from './menu-registry.service';
-import { DragDropModule, CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+import { DragDropModule, CdkDragDrop, CdkDrag, CdkDropList, moveItemInArray } from '@angular/cdk/drag-drop';
 import { MenuOrder } from '../../theme-customization/theme-action.service';
 import { UserTourService } from '../user-tour/user-tour.service';
 
@@ -37,6 +37,9 @@ const DROPDOWN_COMPONENT_MAP: Record<string, any> = {
   styleUrl: './sidenav.component.scss'
 })
 export class SidenavComponent implements OnInit, OnDestroy {
+   readonly quickLinksDropListId = 'dashboard-quick-links';
+  readonly sidenavMainDropListId = 'sidenav-main-drop';
+  readonly sidenavEllipsesDropListId = 'sidenav-ellipses-drop';
 
   mainMenuItems: MenuItemDef[] = [];
   modules: MenuItemDef[] = [];
@@ -119,6 +122,10 @@ export class SidenavComponent implements OnInit, OnDestroy {
     this.routerSub?.unsubscribe();
     this.destroyOverlay();
   }
+
+  readonly sidenavEnterPredicate = (drag: CdkDrag, _drop: CdkDropList): boolean => {
+    return drag.dropContainer.id !== this.quickLinksDropListId;
+  };
 
   private applyMenuOrder(order: MenuOrder): void {
     const { main, ellipses } = this.menuRegistry.resolveMenus(

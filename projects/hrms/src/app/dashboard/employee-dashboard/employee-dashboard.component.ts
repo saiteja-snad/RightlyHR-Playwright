@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, ViewEncapsulation } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, Router } from '@angular/router';
+import { ScrollingModule } from '@angular/cdk/scrolling';
 import { NgbPopoverModule, NgbModal, NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import moment from 'moment';
@@ -28,11 +29,14 @@ import { RbacService } from '../../services/rbac.service';
 import { NoDataFoundComponent } from '../../shared/no-data-found/no-data-found.component';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { AccessNavigationService } from '../../services/access-navigation.service';
+import { DragDropModule, CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+import { MenuOrderService } from '../../services/theme-service/menu-order.service';
+import { QuickLinkRouteDef, QUICK_LINK_DEFAULT_ROUTES, resolveQuickLinkRouteDef, resolveQuickLinksFromSourceRoute } from '../../shared/quick-links/quick-links.registry';
 @Component({
   selector: 'app-employee-dashboard',
   imports: [CommonModule, RouterModule, FormsModule, TranslateModule, NgbPopoverModule, ModuleInfoIconComponent,
     ChartModule, DateformatPipe, Skeleton, AccordionModule, DashAttIconComponent, FingerPrintIconComponent, LeaveIconComponent,
-    WfhIconComponent, ProfileIconComponent, NoDataFoundComponent, DatePicker, TabList, Calendar, TabsModule],
+    WfhIconComponent, ProfileIconComponent, NoDataFoundComponent, DatePicker, TabList, Calendar, TabsModule, DragDropModule, ScrollingModule],
   templateUrl: './employee-dashboard.component.html',
   styleUrl: './employee-dashboard.component.scss',
   encapsulation: ViewEncapsulation.None
@@ -116,8 +120,72 @@ export class EmployeeDashboardComponent {
   permissions_list: Permission[] = [];
   isScreenLessThan1600 = window.innerWidth < 1600;
 
-  constructor(private http: HttpService, private router: Router, public modalService: NgbModal,
-    private offcanvasService: NgbOffcanvas, public rbac: RbacService, private accessNav: AccessNavigationService) { }
+  quickMenuItems = [
+  {
+    label: 'My Info',
+    link: '/myinfo/personal/basic-info',
+    icon: '/dashboard-icon/personal-information.png',
+  },
+  {
+    label: 'Holidays',
+    link: '/holidays/public-holidays',
+    icon: '/main-menu-icons/holiday-icon.png',
+  },
+  {
+    label: 'Leaves',
+    link: '/time-off/leaves/waiting-for-approval',
+    icon: '/time-off-icon/leaves-icon.png',
+  },
+  {
+    label: 'Permissions',
+    link: '/time-off/premissions/waiting-for-approval',
+    icon: '/time-off-icon/permissions-icon.png',
+  },
+  {
+    label: 'Policies',
+    link: '/policies/companypolicies',
+    icon: '/main-menu-icons/policies-icon.png',
+  },
+  {
+    label: 'Calendar',
+    link: '/calendar-view',
+    icon: '/dashboard-icon/calendar.png',
+  },
+    {
+    label: 'Timesheets',
+    link: '/project-management/timesheet',
+    icon: '/main-menu-icons/project-management-timesheet.png',
+  },
+    {
+    label: 'Expenses',
+    link: '/claimsandexpenses/expenses',
+    icon: '/main-menu-icons/expenses-icon.png',
+  },
+    {
+    label: 'Personalization',
+    link: '/theme/selection',
+    icon: '/main-menu-icons/themes-color-icon.png',
+  },
+];
+
+quickLinks: QuickLinkRouteDef[] = [];
+  readonly defaultQuickLinkRoutes = new Set(QUICK_LINK_DEFAULT_ROUTES);
+  selectedQuickLinkRoutes = new Set<string>();
+  readonly quickLinksDropListId = 'dashboard-quick-links';
+  readonly quickLinksConnectedDropListIds = ['sidenav-main-drop', 'sidenav-ellipses-drop'];
+
+quickLinksInfo =
+  'Provides quick access to commonly used pages and actions across the portal.';
+
+  constructor(
+    private http: HttpService,
+    private router: Router,
+    public modalService: NgbModal,
+    private offcanvasService: NgbOffcanvas,
+    public rbac: RbacService,
+    private accessNav: AccessNavigationService,
+    private menuOrderService: MenuOrderService
+  ) { }
 
   ngOnInit(): void {
     this.intialLoading = true;
@@ -153,6 +221,155 @@ export class EmployeeDashboardComponent {
     this.todayMaxdate = new Date();
     this.checkScreenSize();
     window.addEventListener('resize', this.checkScreenSize.bind(this));
+    this.initQuickLinks();
+  }
+
+
+  private async initQuickLinks(): Promise<void> {
+    await this.menuOrderService.ensureLoaded();
+    const savedRoutes = this.menuOrderService.getQuickLinksRoutes();
+    const routes = savedRoutes.length > 0 ? this.resolveInitialQuickLinkRoutes(savedRoutes) : QUICK_LINK_DEFAULT_ROUTES;
+    this.quickLinks = this.hydrateQuickLinks(routes);
+    this.selectedQuickLinkRoutes.clear();
+  }
+
+  private resolveInitialQuickLinkRoutes(savedRoutes: string[]): string[] {
+    const legacyDefaults = QUICK_LINK_DEFAULT_ROUTES.slice(0, 6);
+    const legacySet = new Set(legacyDefaults);
+    const savedSet = new Set(savedRoutes);
+
+    const isLegacyDefault =
+      savedRoutes.length === legacyDefaults.length &&
+      legacyDefaults.every((route) => savedSet.has(route)) &&
+      savedRoutes.every((route) => legacySet.has(route));
+
+    if (!isLegacyDefault) return savedRoutes;
+
+    const merged = [...savedRoutes];
+    QUICK_LINK_DEFAULT_ROUTES.forEach((route) => {
+      if (!savedSet.has(route)) merged.push(route);
+    });
+    return merged;
+  }
+
+  private hydrateQuickLinks(routes: string[]): QuickLinkRouteDef[] {
+    const ordered: QuickLinkRouteDef[] = [];
+    const placed = new Set<string>();
+
+    routes.forEach((route) => {
+      const normalizedRoute = this.resolveDefaultQuickLinkRoute(route);
+      const def = resolveQuickLinkRouteDef(normalizedRoute);
+      if (!def) return;
+      if (!this.rbac.allowedToAccess(`${def.permission.feature}.${def.permission.action}`)) return;
+      if (placed.has(def.route)) return;
+      ordered.push(def);
+      placed.add(def.route);
+    });
+
+    return ordered;
+  }
+
+  onQuickLinksDrop(event: CdkDragDrop<any[]>): void {
+    if (event.previousContainer === event.container) {
+      moveItemInArray(this.quickLinks, event.previousIndex, event.currentIndex);
+      this.saveQuickLinks();
+      return;
+    }
+
+    const dragged = event.item?.data ?? event.previousContainer.data?.[event.previousIndex];
+    const next = this.buildQuickLinksFromDraggedItem(dragged);
+    if (next.length === 0) return;
+
+    const existing = new Set(this.quickLinks.map((q) => q.route));
+    const toAdd = next.filter((q) => !existing.has(q.route));
+    if (toAdd.length === 0) return;
+
+    const insertIndex = Math.min(Math.max(event.currentIndex, 0), this.quickLinks.length);
+    this.quickLinks.splice(insertIndex, 0, ...toAdd);
+    this.saveQuickLinks();
+  }
+
+  get selectedQuickLinksCount(): number {
+    return this.selectedQuickLinkRoutes.size;
+  }
+
+  get hasRemovableQuickLinks(): boolean {
+    return this.quickLinks.some((item) => this.isQuickLinkRemovable(item.route));
+  }
+
+  isQuickLinkRemovable(route: string): boolean {
+    return !this.defaultQuickLinkRoutes.has(route);
+  }
+
+  isQuickLinkSelected(route: string): boolean {
+    return this.selectedQuickLinkRoutes.has(route);
+  }
+
+  toggleQuickLinkSelection(route: string, event: Event): void {
+    event.preventDefault();
+    event.stopPropagation();
+    if (!this.isQuickLinkRemovable(route)) return;
+
+    if (this.selectedQuickLinkRoutes.has(route)) this.selectedQuickLinkRoutes.delete(route);
+    else this.selectedQuickLinkRoutes.add(route);
+  }
+
+  openQuickLink(route: string, event?: Event): void {
+    event?.preventDefault();
+    event?.stopPropagation();
+    const actualRoute = this.accessNav.navigateToAccessedRoute(route) || route;
+    this.router.navigateByUrl(actualRoute);
+  }
+
+  removeSelectedQuickLinks(): void {
+    if (this.selectedQuickLinkRoutes.size === 0) return;
+    this.quickLinks = this.quickLinks.filter((item) => !this.selectedQuickLinkRoutes.has(item.route));
+    this.selectedQuickLinkRoutes.clear();
+    this.saveQuickLinks();
+  }
+
+  private buildQuickLinksFromDraggedItem(dragged: any): QuickLinkRouteDef[] {
+    const draggedRoute = typeof dragged?.route === 'string' ? dragged.route : '';
+    if (!draggedRoute) return [];
+
+    const expandedRoutes = resolveQuickLinksFromSourceRoute(draggedRoute, {
+      allowWFH: !!(this.empinfo as any)?.allowWFH,
+      allowRemoteLogin: !!(this.empinfo as any)?.allowRemoteLogin
+    });
+    const routesToResolve = expandedRoutes.length > 0 ? expandedRoutes : [this.resolveDefaultQuickLinkRoute(draggedRoute)];
+
+    return routesToResolve
+      .map((route) => resolveQuickLinkRouteDef(route))
+      .filter((def): def is QuickLinkRouteDef => !!def)
+      .filter((def) => this.rbac.allowedToAccess(`${def.permission.feature}.${def.permission.action}`));
+  }
+
+  private resolveDefaultQuickLinkRoute(moduleRoute: string): string {
+    if (moduleRoute === '/myinfo') return '/myinfo/personal/basic-info';
+    if (moduleRoute === '/holidays') return '/holidays/public-holidays';
+    if (moduleRoute === '/skill-management') return '/skill-management/dashboard';
+    if (moduleRoute === '/policies') return '/policies/companypolicies';
+    if (moduleRoute === '/events') return '/events/upcoming';
+    if (moduleRoute === '/claimsandexpenses') return '/claimsandexpenses/expenses';
+    if (moduleRoute === '/theme') return '/theme/selection';
+    if (moduleRoute === '/assets-management') return '/assets-management/available-assets';
+    if (moduleRoute === '/card-management') return '/card-management/details';
+    if (moduleRoute === '/desk') return '/desk/management/available-desks';
+    if (moduleRoute === '/calendar-view') return '/calendar-view';
+    return moduleRoute;
+  }
+
+  removeQuickLink(route: string): void {
+    const idx = this.quickLinks.findIndex((q) => q.route === route);
+    if (idx === -1) return;
+    this.quickLinks.splice(idx, 1);
+    this.saveQuickLinks();
+  }
+
+  private saveQuickLinks(): void {
+    const employeeId = this.menuOrderService.getCurrentEmployeeId();
+    if (!employeeId) return;
+    this.menuOrderService.saveQuickLinks(employeeId, this.quickLinks.map((q) => q.route));
   }
 
   checkScreenSize() {

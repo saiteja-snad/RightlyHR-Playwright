@@ -79,6 +79,8 @@ export class SignalsService {
   AppointmentLetterNavCountSignal = signal<boolean>(false);
   NDALetterNavCountSignal = signal<boolean>(false);
 
+  timesheetApprovalsCountSignal = signal<boolean>(false);
+
   // Offboarding reload signal
   offboardingReloadTriggerSignal = signal<boolean>(false);
 

@@ -117,6 +117,10 @@ export class PendingApprovalsTabsComponent {
         this.getApprovalStatusCounts();
         this.signalService.employeinfoDetailsTriggerSignal.set(false);
       }
+      if (this.signalService.timesheetApprovalsCountSignal()) {
+        this.getApprovalStatusCounts();
+        this.signalService.timesheetApprovalsCountSignal.set(false);
+      }
     });
   }
 

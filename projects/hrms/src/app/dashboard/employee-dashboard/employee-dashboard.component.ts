@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, ViewEncapsulation } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, Router } from '@angular/router';
+import { ScrollingModule } from '@angular/cdk/scrolling';
 import { NgbPopoverModule, NgbModal, NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import moment from 'moment';
@@ -35,7 +36,7 @@ import { QuickLinkRouteDef, QUICK_LINK_DEFAULT_ROUTES, resolveQuickLinkRouteDef,
   selector: 'app-employee-dashboard',
   imports: [CommonModule, RouterModule, FormsModule, TranslateModule, NgbPopoverModule, ModuleInfoIconComponent,
     ChartModule, DateformatPipe, Skeleton, AccordionModule, DashAttIconComponent, FingerPrintIconComponent, LeaveIconComponent,
-    WfhIconComponent, ProfileIconComponent, NoDataFoundComponent, DatePicker, TabList, Calendar, TabsModule, DragDropModule],
+    WfhIconComponent, ProfileIconComponent, NoDataFoundComponent, DatePicker, TabList, Calendar, TabsModule, DragDropModule, ScrollingModule],
   templateUrl: './employee-dashboard.component.html',
   styleUrl: './employee-dashboard.component.scss',
   encapsulation: ViewEncapsulation.None
@@ -153,11 +154,11 @@ export class EmployeeDashboardComponent {
     {
     label: 'Timesheets',
     link: '/project-management/timesheet',
-    icon: 'main-menu-icons/project-management-timesheet.png',
+    icon: '/main-menu-icons/project-management-timesheet.png',
   },
     {
     label: 'Expenses',
-    link: 'claimsandexpenses/expenses',
+    link: '/claimsandexpenses/expenses',
     icon: '/main-menu-icons/expenses-icon.png',
   },
     {
@@ -176,8 +177,15 @@ quickLinks: QuickLinkRouteDef[] = [];
 quickLinksInfo =
   'Provides quick access to commonly used pages and actions across the portal.';
 
-  constructor(private http: HttpService, private router: Router, public modalService: NgbModal,
-    private offcanvasService: NgbOffcanvas, public rbac: RbacService, private accessNav: AccessNavigationService, private menuOrderService: MenuOrderService) { }
+  constructor(
+    private http: HttpService,
+    private router: Router,
+    public modalService: NgbModal,
+    private offcanvasService: NgbOffcanvas,
+    public rbac: RbacService,
+    private accessNav: AccessNavigationService,
+    private menuOrderService: MenuOrderService
+  ) { }
 
   ngOnInit(): void {
     this.intialLoading = true;
@@ -220,9 +228,28 @@ quickLinksInfo =
   private async initQuickLinks(): Promise<void> {
     await this.menuOrderService.ensureLoaded();
     const savedRoutes = this.menuOrderService.getQuickLinksRoutes();
-    const routes = savedRoutes.length > 0 ? savedRoutes : QUICK_LINK_DEFAULT_ROUTES;
+    const routes = savedRoutes.length > 0 ? this.resolveInitialQuickLinkRoutes(savedRoutes) : QUICK_LINK_DEFAULT_ROUTES;
     this.quickLinks = this.hydrateQuickLinks(routes);
     this.selectedQuickLinkRoutes.clear();
+  }
+
+  private resolveInitialQuickLinkRoutes(savedRoutes: string[]): string[] {
+    const legacyDefaults = QUICK_LINK_DEFAULT_ROUTES.slice(0, 6);
+    const legacySet = new Set(legacyDefaults);
+    const savedSet = new Set(savedRoutes);
+
+    const isLegacyDefault =
+      savedRoutes.length === legacyDefaults.length &&
+      legacyDefaults.every((route) => savedSet.has(route)) &&
+      savedRoutes.every((route) => legacySet.has(route));
+
+    if (!isLegacyDefault) return savedRoutes;
+
+    const merged = [...savedRoutes];
+    QUICK_LINK_DEFAULT_ROUTES.forEach((route) => {
+      if (!savedSet.has(route)) merged.push(route);
+    });
+    return merged;
   }
 
   private hydrateQuickLinks(routes: string[]): QuickLinkRouteDef[] {
@@ -230,7 +257,8 @@ quickLinksInfo =
     const placed = new Set<string>();
 
     routes.forEach((route) => {
-      const def = resolveQuickLinkRouteDef(route);
+      const normalizedRoute = this.resolveDefaultQuickLinkRoute(route);
+      const def = resolveQuickLinkRouteDef(normalizedRoute);
       if (!def) return;
       if (!this.rbac.allowedToAccess(`${def.permission.feature}.${def.permission.action}`)) return;
       if (placed.has(def.route)) return;
@@ -286,6 +314,13 @@ quickLinksInfo =
     else this.selectedQuickLinkRoutes.add(route);
   }
 
+  openQuickLink(route: string, event?: Event): void {
+    event?.preventDefault();
+    event?.stopPropagation();
+    const actualRoute = this.accessNav.navigateToAccessedRoute(route) || route;
+    this.router.navigateByUrl(actualRoute);
+  }
+
   removeSelectedQuickLinks(): void {
     if (this.selectedQuickLinkRoutes.size === 0) return;
     this.quickLinks = this.quickLinks.filter((item) => !this.selectedQuickLinkRoutes.has(item.route));
@@ -312,7 +347,14 @@ quickLinksInfo =
   private resolveDefaultQuickLinkRoute(moduleRoute: string): string {
     if (moduleRoute === '/myinfo') return '/myinfo/personal/basic-info';
     if (moduleRoute === '/holidays') return '/holidays/public-holidays';
+    if (moduleRoute === '/skill-management') return '/skill-management/dashboard';
     if (moduleRoute === '/policies') return '/policies/companypolicies';
+    if (moduleRoute === '/events') return '/events/upcoming';
+    if (moduleRoute === '/claimsandexpenses') return '/claimsandexpenses/expenses';
+    if (moduleRoute === '/theme') return '/theme/selection';
+    if (moduleRoute === '/assets-management') return '/assets-management/available-assets';
+    if (moduleRoute === '/card-management') return '/card-management/details';
+    if (moduleRoute === '/desk') return '/desk/management/available-desks';
     if (moduleRoute === '/calendar-view') return '/calendar-view';
     return moduleRoute;
   }

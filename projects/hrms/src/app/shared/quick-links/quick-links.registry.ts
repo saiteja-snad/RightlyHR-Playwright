@@ -50,11 +50,11 @@ export const QUICK_LINK_ROUTES: Record<string, QuickLinkRouteDef> = {
     icon: '/personalization/Ellipses_Reports.png',
     permission: { feature: 'Reports', action: 'view' }
   },
-  '/skill-management': {
-    route: '/skill-management',
+  '/skill-management/dashboard': {
+    route: '/skill-management/dashboard',
     label: 'Skill Set',
     icon: '/personalization/Ellipses_Skill Set.png',
-    permission: { feature: 'Skill Set Management', action: 'view' }
+    permission: { feature: 'Skills Dashboard', action: 'view' }
   },
   '/policies/companypolicies': {
     route: '/policies/companypolicies',
@@ -68,11 +68,23 @@ export const QUICK_LINK_ROUTES: Record<string, QuickLinkRouteDef> = {
     icon: '/main-menu-icons/events-colored-icon.png',
     permission: { feature: 'Events', action: 'view' }
   },
+  '/events/upcoming': {
+    route: '/events/upcoming',
+    label: 'Events',
+    icon: '/main-menu-icons/events-colored-icon.png',
+    permission: { feature: 'Events(Upcoming Events)', action: 'view' }
+  },
   '/claimsandexpenses': {
     route: '/claimsandexpenses',
     label: 'Expenses',
     icon: '/main-menu-icons/expenses-icon.png',
     permission: { feature: 'Expenses', action: 'view' }
+  },
+  '/claimsandexpenses/expenses': {
+    route: '/claimsandexpenses/expenses',
+    label: 'Expenses',
+    icon: '/main-menu-icons/expenses-icon.png',
+    permission: { feature: 'Draft Tab', action: 'view' }
   },
   '/organization-chart': {
     route: '/organization-chart',
@@ -82,6 +94,12 @@ export const QUICK_LINK_ROUTES: Record<string, QuickLinkRouteDef> = {
   },
   '/theme': {
     route: '/theme',
+    label: 'Personalization',
+    icon: '/main-menu-icons/themes-color-icon.png',
+    permission: { feature: 'Themes', action: 'view' }
+  },
+  '/theme/selection': {
+    route: '/theme/selection',
     label: 'Personalization',
     icon: '/main-menu-icons/themes-color-icon.png',
     permission: { feature: 'Themes', action: 'view' }
@@ -110,17 +128,29 @@ export const QUICK_LINK_ROUTES: Record<string, QuickLinkRouteDef> = {
     icon: '/main-menu-icons/assets-icon.png',
     permission: { feature: 'Asset Management', action: 'view' }
   },
+  '/assets-management/available-assets': {
+    route: '/assets-management/available-assets',
+    label: 'Assets',
+    icon: '/main-menu-icons/assets-icon.png',
+    permission: { feature: 'Asset Management - Available', action: 'view' }
+  },
   '/card-management': {
     route: '/card-management',
     label: 'Cards Management',
     icon: '/main-menu-icons/card-management-icon.png',
     permission: { feature: 'Cards Management', action: 'view' }
   },
-  '/desk': {
-    route: '/desk',
+  '/card-management/details': {
+    route: '/card-management/details',
+    label: 'Cards Management',
+    icon: '/main-menu-icons/card-management-icon.png',
+    permission: { feature: 'Cards Available', action: 'view' }
+  },
+  '/desk/management/available-desks': {
+    route: '/desk/management/available-desks',
     label: 'Desk Allocation',
     icon: '/main-menu-icons/desk-icon.png',
-    permission: { feature: 'Desk Allocation', action: 'view' }
+    permission: { feature: 'Desk Allocation - Available', action: 'view' }
   },
   '/calendar-view': {
     route: '/calendar-view',
@@ -129,23 +159,26 @@ export const QUICK_LINK_ROUTES: Record<string, QuickLinkRouteDef> = {
     permission: { feature: 'Calendar', action: 'view' }
   },
 
+
+  //Time Off
+
   '/time-off/leaves/waiting-for-approval': {
     route: '/time-off/leaves/waiting-for-approval',
-    label: 'Leaves',
+    label: 'Time Off-Leaves',
     icon: '/time-off-icon/leaves-icon.png',
     permission: { feature: 'Time Off Module', action: 'view' },
     parentRoute: '/time-off'
   },
   '/time-off/wfh/waiting-for-approval': {
     route: '/time-off/wfh/waiting-for-approval',
-    label: 'WFH',
+    label: 'Time Off-WFH',
     icon: '/time-off-icon/WFH-icon.png',
     permission: { feature: 'WFH/On Duty Module', action: 'view' },
     parentRoute: '/time-off'
   },
   '/time-off/remote/waiting-for-approval': {
     route: '/time-off/remote/waiting-for-approval',
-    label: 'Remote Login',
+    label: 'Time Off-Remote Login',
     icon: '/time-off-icon/remote-login-icon.png',
     permission: { feature: 'Remote Login Module', action: 'view' },
     parentRoute: '/time-off'
@@ -178,6 +211,8 @@ export const QUICK_LINK_ROUTES: Record<string, QuickLinkRouteDef> = {
     permission: { feature: 'Extra Hours Module', action: 'view' },
     parentRoute: '/time-off'
   },
+
+  //Pending Approvals
 
   '/pending-approvals/time-off': {
     route: '/pending-approvals/time-off',
@@ -243,6 +278,8 @@ export const QUICK_LINK_ROUTES: Record<string, QuickLinkRouteDef> = {
     parentRoute: '/pending-approvals'
   },
 
+  //Project Management
+
   '/project-management/clients': {
     route: '/project-management/clients',
     label: 'Clients',
@@ -265,23 +302,25 @@ export const QUICK_LINK_ROUTES: Record<string, QuickLinkRouteDef> = {
     parentRoute: '/project-management'
   },
 
+  //On Behalf Of
+
   '/on-behalf-of/on-behalf-of': {
     route: '/on-behalf-of/on-behalf-of',
-    label: 'Leaves',
+    label: 'On Behalf Of-Leaves',
     icon: '/time-off-icon/on-behalf-of-icon.png',
     permission: { feature: 'On Behalf Of Module', action: 'view' },
     parentRoute: '/on-behalf-of'
   },
   '/on-behalf-of/on-behalf-of-wfh': {
     route: '/on-behalf-of/on-behalf-of-wfh',
-    label: 'WFH',
+    label: 'On Behalf Of-WFH',
     icon: '/time-off-icon/WFH-icon.png',
     permission: { feature: 'On Behalf Of WFH', action: 'view' },
     parentRoute: '/on-behalf-of'
   },
   '/on-behalf-of/on-behalf-of-remotelogin': {
     route: '/on-behalf-of/on-behalf-of-remotelogin',
-    label: 'RemoteLogin',
+    label: 'On Behalf Of-Remote Login',
     icon: '/time-off-icon/RemoteLogin-icon.png',
     permission: { feature: 'On Behalf Of RemoteLogin', action: 'view' },
     parentRoute: '/on-behalf-of'
@@ -302,11 +341,13 @@ export const QUICK_LINK_ROUTES: Record<string, QuickLinkRouteDef> = {
   },
   '/on-behalf-of/on-behalf-of-expenses': {
     route: '/on-behalf-of/on-behalf-of-expenses',
-    label: 'Expenses',
+    label: 'On Behalf Of-Expenses',
     icon: '/main-menu-icons/expenses-icon.png',
     permission: { feature: 'On Behalf Of Expenses', action: 'view' },
     parentRoute: '/on-behalf-of'
   },
+
+  //PMS
 
   '/pms/review-cycle': {
     route: '/pms/review-cycle',
@@ -315,8 +356,8 @@ export const QUICK_LINK_ROUTES: Record<string, QuickLinkRouteDef> = {
     permission: { feature: 'Review Cycle List', action: 'view' },
     parentRoute: '/pms'
   },
-  '/pms/performace-review': {
-    route: '/pms/performace-review',
+  '/pms/performace-review/myPerformance/pending-review': {
+    route: '/pms/performace-review/myPerformance/pending-review',
     label: 'Performance Review',
     icon: 'main-menu-icons/performance-review.png',
     permission: { feature: 'My Performance Review', action: 'view' },
@@ -358,7 +399,7 @@ export const QUICK_LINK_SOURCES: Record<string, QuickLinksSourceDef> = {
   '/holidays': { route: '/holidays', type: 'direct' },
   '/attendance': { route: '/attendance', type: 'direct' },
   '/reports': { route: '/reports', type: 'direct' },
-  '/skill-management': { route: '/skill-management', type: 'direct' },
+  '/skill-management/dashboard': { route: '/skill-management/dashboard', type: 'direct' },
   '/policies': { route: '/policies', type: 'direct' },
   '/events': { route: '/events', type: 'direct' },
   '/claimsandexpenses': { route: '/claimsandexpenses', type: 'direct' },
@@ -425,7 +466,7 @@ export const QUICK_LINK_SOURCES: Record<string, QuickLinksSourceDef> = {
     type: 'dropdown',
     children: [
       '/pms/review-cycle',
-      '/pms/performace-review',
+      '/pms/performace-review/myPerformance/pending-review',
       '/pms/kra',
       '/pms/kpi',
       '/pms/assign-kra-kpi',

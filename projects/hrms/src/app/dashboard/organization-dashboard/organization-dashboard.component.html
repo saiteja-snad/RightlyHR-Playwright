@@ -1,0 +1,1093 @@
+<div class="organization-dashboard-content">
+    <div class="dashboard-top-section mb-3">
+        <div class="flex-between-content">
+            <div>
+                <div class="welcome-text d-flex align-items-center gap-1">
+                    <div>{{greetingMessage}},</div>
+                    <div class="name">{{this.employeedata.firstName}} {{this.employeedata.middleName}} {{this.employeedata.lastName}}!</div>
+                </div>
+                <div class="gesture-text mb-1">Have a nice day at work!</div>
+            </div>
+
+            @if (rbac.allowedToAccess('Organization Toggle.view') || rbac.allowedToAccess('Manager Toggle.view')) {
+            <div class="tab-btns">
+                <div class="item" routerLink="/dashboard">Home</div>
+                <div class="item" routerLink="/dashboard/rm-tm" *ngIf="rbac.allowedToAccess('Manager Toggle.view')">Team</div>
+                <div class="item" routerLink="/dashboard/org" *ngIf="rbac.allowedToAccess('Organization Toggle.view')" 
+                routerLinkActive="active">Organization</div>
+            </div>
+            }
+        </div>
+    </div>
+
+    <div class="dashboard-content-grid">
+        <!-- All employees-->
+        @if (rbac.allowedToAccess('All Employees.view')) {
+        <ng-container *ngTemplateOutlet="allEmployeesContent"></ng-container>
+        }
+        <!-- Team Availability -->
+        @if (rbac.allowedToAccess('My Team Availability.view')) {
+        <div>
+            <ng-container *ngTemplateOutlet="teamAvaliabilityContent"></ng-container>
+        </div>
+        }
+        <!-- New Hires and Exits count -->
+        @if(rbac.allowedToAccess('New Hires and Exits.view')){
+        <div class="content-card employees-list-content">
+            <div class="flex-between-content mb-3">
+                <div class="summary-header d-inline-flex gap-1">
+                    <div class="section-title">New Hires & Exits</div>
+                    <div>
+                        <app-module-info-icon placement="bottom" [ngbPopover]="newJoineesExitsInfo" class="module-icon" />
+                        <ng-template #newJoineesExitsInfo>
+                            <div class="module-info-text">Displays the number of employees who joined and exited within
+                                the selected period. Helps monitor hiring trends and employee turnover in the organization.</div>
+                        </ng-template>
+                    </div>
+                </div>
+                <div class="custom-date-range-picker">
+                    <p-datepicker [(ngModel)]="date" placeholder="Select date range"
+                        (ngModelChange)="checkdates($event)" [showIcon]="true" selectionMode="range"
+                        [readonlyInput]="true" />
+                </div>
+            </div>
+            @if(!newJoineesandExitsLoader){
+            <div class="total-leave-balance-graph-content" [ngClass]="{'graph-no-data-content': !hasJoineesAndExits}">
+                @if (hasJoineesAndExits) {
+                <div class="chart-content flex-center-content">
+                    <p-chart type="pie" [data]="newJoineesandExitsChartData" [options]="newJoineesandExitsOptionsData" class="doughnut-chart" />
+                </div>
+                <div class="employees-type-grid team-avaliability-grid">
+                    <div [ngStyle]="{ 'border-left': '4px solid #10B981' }" class="ps-2">
+                        <div class="employee-type-text">
+                            <p class="m-0">New Hires</p>
+                            <div class="count-text">
+                                @if(newJoineesandExitsData?.newJoineesCount > 0){
+                                <span class="cursor"
+                                    (click)="openJoineesExitsOffcanvas(joineesExitsList, 'newJoinees', 'New Joinees')">
+                                    <u>{{ newJoineesandExitsData?.newJoineesCount }}</u>
+                                </span>
+                                }@else{
+                                <span>{{ newJoineesandExitsData?.newJoineesCount || 0 }}</span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <div [ngStyle]="{ 'border-left': '4px solid #EF4444' }" class="ps-2">
+                        <div class="employee-type-text">
+                            <p class="m-0">Exits</p>
+                            <div class="count-text">
+                                @if(newJoineesandExitsData?.exitsCount > 0){
+                                <span class="cursor"
+                                    (click)="openJoineesExitsOffcanvas(joineesExitsList, 'exits', 'Exits')">
+                                    <u>{{ newJoineesandExitsData?.exitsCount }}</u>
+                                </span>
+                                }@else{
+                                <span>{{ newJoineesandExitsData?.exitsCount || 0 }}</span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                }@else {
+                <app-no-data-found />
+                }
+            </div>
+            } @else {
+            <p-skeleton height="8rem" />
+            }
+        </div>
+        }
+        <!-- Upcoming Actions -->
+        @if(rbac.allowedToAccess('Upcoming Actions.view')){
+        <div class="content-card employees-list-content">
+
+            <div class="flex-between-content mb-3">
+                <div class="summary-header d-inline-flex gap-1">
+                    <div class="section-title">Upcoming Actions</div>
+                    <div>
+                        <app-module-info-icon placement="bottom" [ngbPopover]="upcomingActionsInfo"
+                            class="module-icon" />
+                        <ng-template #upcomingActionsInfo>
+                            <div class="module-info-text">Highlights upcoming employee-related actions such as
+                                Probation, Onboarding, and other activities. Helps ensure timely completion of important HR processes.</div>
+                        </ng-template>
+                    </div>
+                </div>
+                <div class="custom-date-range-picker">
+                    <p-datepicker [(ngModel)]="upcomingActionsDate" placeholder="Select date range"
+                        (ngModelChange)="onUpcomingActionsDateChange($event)" [showIcon]="true" selectionMode="range"
+                        [readonlyInput]="true" />
+                </div>
+            </div>
+
+            @if(!upcomingActionsLoader){
+            <div class="total-leave-balance-graph-content"
+                [ngClass]="{'graph-no-data-content': !hasUpcomingActionsData}">
+                @if (hasUpcomingActionsData) {
+                <div class="chart-content flex-center-content">
+                    <p-chart type="doughnut" [data]="upcomingActionsChartData" [options]="upcomingActionsChartOptions" class="doughnut-chart" />
+                    <div class="total-count-content">
+                        <p class="count m-0 p-0">{{totalUpcomingActionsCount}}</p>
+                    </div>
+                </div>
+                <div class="employees-type-grid team-avaliability-grid">
+                    <div [ngStyle]="{ 'border-left': '4px solid #3B82F6' }" class="ps-2">
+                        <div class="employee-type-text">
+                            <p class="m-0">Probation</p>
+                            <div class="count-text">
+                                @if(upcomingPendingActionsData?.probationCount != 0){
+                                <span class="cursor" (click)="openUpcomingActionsOffcanvas(upcomingActionsList, 'probation', 'Probation', 
+                                upcomingPendingActionsData?.probationCount)">
+                                    <u>{{ upcomingPendingActionsData?.probationCount || 0 }}</u>
+                                </span>
+                                }@else{
+                                <span>{{ upcomingPendingActionsData?.probationCount || 0 }}</span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <div [ngStyle]="{ 'border-left': '4px solid #10B981' }" class="ps-2">
+                        <div class="employee-type-text">
+                            <p class="m-0">Trainee</p>
+                            <div class="count-text">
+                                @if(upcomingPendingActionsData?.traineeCount != 0){
+                                <span class="cursor" (click)="openUpcomingActionsOffcanvas(upcomingActionsList, 'trainee', 'Trainee', 
+                                upcomingPendingActionsData?.traineeCount)">
+                                    <u>{{ upcomingPendingActionsData?.traineeCount || 0 }}</u>
+                                </span>
+                                }@else{
+                                <span>{{ upcomingPendingActionsData?.traineeCount || 0 }}</span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <div [ngStyle]="{ 'border-left': '4px solid #F59E0B' }" class="ps-2">
+                        <div class="employee-type-text">
+                            <p class="m-0">No Due</p>
+                            <div class="count-text">
+                                @if(upcomingPendingActionsData?.noDueCount != 0){
+                                <span class="cursor" (click)="openUpcomingActionsOffcanvas(upcomingActionsList, 'noDue', 'No Due', 
+                                upcomingPendingActionsData?.noDueCount)">
+                                    <u>{{ upcomingPendingActionsData?.noDueCount || 0 }}</u>
+                                </span>
+                                }@else{
+                                <span>{{ upcomingPendingActionsData?.noDueCount || 0 }}</span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <div [ngStyle]="{ 'border-left': '4px solid #8B5CF6' }" class="ps-2">
+                        <div class="employee-type-text">
+                            <p class="m-0">Onboarding</p>
+                            <div class="count-text">
+                                @if(upcomingPendingActionsData?.onboardingCount != 0){
+                                <span class="cursor" (click)="openUpcomingActionsOffcanvas(upcomingActionsList, 'onboarding', 'Onboarding',
+                                upcomingPendingActionsData?.onboardingCount)">
+                                    <u>{{ upcomingPendingActionsData?.onboardingCount || 0 }}</u>
+                                </span>
+                                }@else{
+                                <span>{{ upcomingPendingActionsData?.onboardingCount || 0 }}</span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <div [ngStyle]="{ 'border-left': '4px solid #EF4444' }" class="ps-2">
+                        <div class="employee-type-text">
+                            <p class="m-0">Notice Period</p>
+                            <div class="count-text">
+                                @if(upcomingPendingActionsData?.noticePeriodCount != 0){
+                                <span class="cursor" (click)="openUpcomingActionsOffcanvas(upcomingActionsList, 'noticePeriod', 'Notice Period',
+                                upcomingPendingActionsData?.noticePeriodCount)">
+                                    <u>{{ upcomingPendingActionsData?.noticePeriodCount || 0 }}</u>
+                                </span>
+                                }@else{
+                                <span>{{ upcomingPendingActionsData?.noticePeriodCount || 0 }}</span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                }@else {
+                <app-no-data-found />
+                }
+            </div>
+            } @else {
+            <p-skeleton height="8rem" />
+            }
+        </div>
+        }
+        <!-- Attendance Status -->
+        @if(rbac.allowedToAccess('Attendance Status.view')){
+        <div class="content-card employees-list-content">
+
+            <div class="flex-between-content mb-3">
+                <div class="summary-header d-inline-flex gap-1">
+                    <div class="section-title">Attendance Status</div>
+                    <div>
+                        <app-module-info-icon placement="bottom" [ngbPopover]="attendanceStatusInfo"
+                            class="module-icon" />
+                        <ng-template #attendanceStatusInfo>
+                            <div class="module-info-text">Displays the distribution of employee attendance such as On
+                                Time, Late Login, Early Logout, and Hours Deficit. Helps monitor attendance behavior and identify patterns
+                                across the organization.</div>
+                        </ng-template>
+                    </div>
+                </div>
+                <div class="custom-date-range-picker">
+                    <p-datepicker [(ngModel)]="attendanceReportDate" [iconDisplay]="'input'" [showIcon]="true"
+                        inputId="attendancedate" [readonlyInput]="true" [minDate]="minAttendanceReportDate"
+                        [maxDate]="maxAttendanceReportDate" (onSelect)="onAttendanceReportDateChange($event)" />
+                </div>
+            </div>
+
+            @if(!attendanceReportLoader){
+            <div class="total-leave-balance-graph-content" [ngClass]="{'graph-no-data-content': !hasAttendanceReportData}">
+                @if (hasAttendanceReportData) {
+                <div class="chart-content flex-center-content">
+                    <p-chart type="doughnut" [data]="attendanceChartData" [options]="attendanceChartOptions"
+                        class="doughnut-chart" />
+                    <div class="total-count-content">
+                        <p class="count m-0 p-0">{{totalAttendanceCount}}</p>
+                    </div>
+                </div>
+                <div class="employees-type-grid team-avaliability-grid">
+                    <div [ngStyle]="{ 'border-left': '4px solid #10B981' }" class="employee-type-text ps-2">
+                        <p class="m-0">On Time</p>
+                        <div class="count-text">
+                            @if(attendanceReportData?.onTime != 0){
+                            <span class="cursor" (click)="openAttendanceOffcanvas(resourceList, 'onTime', 'On Time', attendanceReportData?.onTime)">
+                                <u>{{ attendanceReportData?.onTime || 0 }}</u>
+                            </span>
+                            }@else{
+                            <span>{{ attendanceReportData?.onTime || 0 }}</span>
+                            }
+                        </div>
+                    </div>
+                    <div [ngStyle]="{ 'border-left': '4px solid #F59E0B' }" class="employee-type-text ps-2">
+                        <p class="m-0">Late Login</p>
+                        <div class="count-text">
+                            @if(attendanceReportData?.lateLogin != 0){
+                            <span class="cursor" (click)="openAttendanceOffcanvas(resourceList, 'lateLogin', 'Late Login', attendanceReportData?.lateLogin)">
+                                <u>{{ attendanceReportData?.lateLogin || 0 }}</u>
+                            </span>
+                            }@else{
+                            <span>{{ attendanceReportData?.lateLogin || 0 }}</span>
+                            }
+                        </div>
+                    </div>
+                    <div [ngStyle]="{ 'border-left': '4px solid #EF4444' }" class="employee-type-text ps-2">
+                        <p class="m-0">Early Logout</p>
+                        <div class="count-text">
+                            @if(attendanceReportData?.earlyLogout != 0){
+                            <span class="cursor" (click)="openAttendanceOffcanvas(resourceList, 'earlyLogout', 'Early Logout', attendanceReportData?.earlyLogout)">
+                                <u>{{ attendanceReportData?.earlyLogout || 0 }}</u>
+                            </span>
+                            }@else{
+                            <span>{{ attendanceReportData?.earlyLogout || 0 }}</span>
+                            }
+                        </div>
+                    </div>
+                    <div [ngStyle]="{ 'border-left': '4px solid #6366F1' }" class="employee-type-text ps-2">
+                        <p class="m-0">Hours Deficit</p>
+                        <div class="count-text">
+                            @if(attendanceReportData?.hoursDeficit != 0){
+                            <span class="cursor" (click)="openAttendanceOffcanvas(resourceList, 'hoursDeficit', 'Hours Deficit', attendanceReportData?.hoursDeficit)">
+                                <u>{{ attendanceReportData?.hoursDeficit || 0 }}</u>
+                            </span>
+                            }@else{
+                            <span>{{ attendanceReportData?.hoursDeficit || 0 }}</span>
+                            }
+                        </div>
+                    </div>
+                    <div [ngStyle]="{ 'border-left': '4px solid #06B6D4' }" class="employee-type-text ps-2">
+                        <p class="m-0">Break Exceeded Hours</p>
+                        <div class="count-text">
+                            @if(attendanceReportData?.breakExceeded != 0){
+                            <span class="cursor" (click)="openAttendanceOffcanvas(resourceList, 'breakExceeded', 'Break Exceeded Hours', attendanceReportData?.breakExceeded)">
+                                <u>{{ attendanceReportData?.breakExceeded || 0 }}</u>
+                            </span>
+                            }@else{
+                            <span>{{ attendanceReportData?.breakExceeded || 0 }}</span>
+                            }
+                        </div>
+                    </div>
+                    <div [ngStyle]="{ 'border-left': '4px solid #8B5CF6' }" class="employee-type-text ps-2">
+                        <p class="m-0">Permissions</p>
+                        <div class="count-text">
+                            @if(attendanceReportData?.permission != 0){
+                            <span class="cursor" (click)="openAttendanceOffcanvas(resourceList, 'permission', 'Permissions', attendanceReportData?.permission)">
+                                <u>{{ attendanceReportData?.permission || 0 }}</u>
+                            </span>
+                            }@else{
+                            <span>{{ attendanceReportData?.permission || 0 }}</span>
+                            }
+                        </div>
+                    </div>
+                </div>
+                }@else {
+                <app-no-data-found />
+                }
+            </div>
+            } @else {
+            @if(!showAttendanceMessage) {
+            <p-skeleton height="8rem" />
+            }@else {
+            <div class="position-relative">
+                <p-skeleton height="8rem" />
+                <div class="loading-message-overlay">
+                    <p class="loading-text mb-0">Please wait while we fetch the latest attendance status details<span class="loading-dots"></span></p>
+                </div>
+            </div>
+            }
+            }
+        </div>
+        }
+        <!-- Approvals Overview -->
+        @if(rbac.allowedToAccess('Approvals Overview.view')){
+        <div class="content-card">
+            <div class="flex-between-content mb-3">
+                <div class="summary-header d-inline-flex gap-1">
+                    <div class="section-title">Approvals Overview</div>
+                    <div>
+                        <app-module-info-icon placement="bottom" [ngbPopover]="approvalsInfo" class="module-icon" />
+                        <ng-template #approvalsInfo>
+                            <div class="module-info-text">Displays pending approvals across different categories such as
+                                Expenses, Permissions, and Employee Info. Helps managers quickly identify and act on pending approval requests.
+                            </div>
+                        </ng-template>
+                    </div>
+                </div>
+
+                <div class="d-flex align-items-center gap-2">
+                    <div class="custom-p-select-content custom-small-select">
+                        <p-select [options]="teamdetails" [filter]="true" optionLabel="fullName" filterBy="fullName"
+                            [(ngModel)]="selectedApprovalEmployee" placeholder="Please select manager"
+                            class="form-select custom-select" filterPlaceholder="Search manager" [showClear]="true"
+                            (onChange)="onApprovalEmployeeChange($event.value)">
+                            <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
+                            <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
+                        </p-select>
+                    </div>
+                </div>
+            </div>
+            @if(!approvalsOverviewLoader){
+            <div [ngClass]="{'graph-no-data-content': approvalsList.length === 0}" class="leave-list-content pb-2">
+                <div *ngFor="let approval of approvalsList">
+                    <div class="leave-card gap-4 cursor" (click)="navigateToAccessedRoute(approval.route)">
+                        <div [style.color]="approval.color" class="leave-name text-nowrap">{{ approval.name }}</div>
+                        <div class="d-flex align-items-center">
+                            <div class="leaves-used-count"><b>{{ approval.count }}</b></div>
+                        </div>
+                    </div>
+                </div>
+                <div *ngIf="approvalsList.length === 0">
+                    <app-no-data-found />
+                </div>
+            </div>
+            }@else{
+            <p-skeleton height="8rem" />
+            }
+        </div>
+        }
+        <!-- Consumed Leave Types -->
+        @if(rbac.allowedToAccess('Consumed Leave Types.view')){
+        <div class="content-card">
+            <div class="flex-between-content mb-3">
+                <div class="summary-header d-inline-flex gap-1">
+                    <div class="section-title">Consumed Leave Types</div>
+                    <div>
+                        <app-module-info-icon placement="bottom" [ngbPopover]="leavesConsumed" class="module-icon" />
+                        <ng-template #leavesConsumed>
+                            <div class="module-info-text">{{leavesConsumedinfo}}</div>
+                        </ng-template>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                    @if(rbac.allowedToAccess('All Employees (Time Off).view') && rbac.allowedToAccess('My Team (Time Off).view')) {
+                    <div class="custom-p-select-content custom-small-select">
+                        <p-select [options]="activeEmplist" [filter]="true" filterBy="label" resetFilterOnHide="true" optionLabel="label"
+                            optionValue="value" showClear="true" [ngModel]="selectedEmployeeId" placeholder="Select employee name"
+                            (onChange)="onCheckemployee($event.value)" class="form-select custom-select" />
+                    </div>
+                    }
+                    @else if(rbac.allowedToAccess('All Employees (Time Off).view')) {
+                    <div class="custom-p-select-content custom-small-select">
+                        <p-select [options]="activeEmplist" [filter]="true" filterBy="label" resetFilterOnHide="true" optionLabel="label"
+                            optionValue="value" showClear="true" [ngModel]="selectedEmployeeId" placeholder="Select employee name"
+                            (onChange)="onCheckemployee($event.value)" class="form-select custom-select" />
+                    </div>
+                    }
+                    @else if(rbac.allowedToAccess('My Team (Time Off).view')) {
+                    <div class="custom-p-select-content custom-small-select">
+                        <p-select [options]="getEmployeeInfo" optionLabel="fullName" showClear="true" optionValue="employeeId"
+                            name="myteamemployees" placeholder="Select employee name" [filter]="true" resetFilterOnHide="true"
+                            class="form-select custom-select" [ngModel]="selectedEmployeeId" [autoDisplayFirst]="false" required
+                            (onChange)="onCheckemployee($event.value)" />
+                    </div>
+                    }
+                    <div class="d-flex align-items-center total">Leaves Consumed
+                        <span class="me-1">:</span>
+                        <div class="count">{{ totalLeaves.used }}</div>
+                        <div class="total-allowed">/{{ totalLeaves.allowed }}</div>
+                    </div>
+                </div>
+            </div>
+            @if(!consumedLeavesLoader){
+            <div [ngClass]="{'graph-no-data-content': leavesList.length === 0}" class="leave-list-content pb-2">
+                <div *ngFor="let leave of leavesList">
+                    <div class="leave-card gap-4 cursor" (click)="navigateToAccessedRoute('/time-off/leaves')">
+                        <div [style.color]="leave.color" class="leave-name text-nowrap">{{ leave.name }}</div>
+                        <div class="d-flex align-items-center">
+                            <div class="leaves-used-count"><b>{{ leave.used }}</b></div>
+                            <div class="leaves-allowed-count">/{{ leave.allowed }}</div>
+                        </div>
+                    </div>
+                </div>
+                <div *ngIf="leavesList.length === 0">
+                    <app-no-data-found />
+                </div>
+            </div>
+            }@else{
+            <p-skeleton height="8rem" />
+            }
+        </div>
+        }
+        <!-- HeadCount By Department -->
+        @if(rbac.allowedToAccess('Headcount by Department.view')){
+        @if(!departmentHeadCountsLoader){
+        <div class="content-card">
+            <div class="flex-between-content mb-2">
+                <div class="summary-header d-inline-flex gap-1">
+                    <div class="section-title">Head Count By Department</div>
+                    <div>
+                        <app-module-info-icon placement="bottom" [ngbPopover]="departmentByHeadcountContent" class="module-icon" />
+                        <ng-template #departmentByHeadcountContent>
+                            <div class="module-info-text">{{departmentByHeadcountInfo}}</div>
+                        </ng-template>
+                    </div>
+                </div>
+            </div>
+            <div class="disply-grid-custom" [ngClass]="{'graph-no-data-content': !departmentHeadCountChartData}">
+                <div class="department-graph-content">
+                    <p-chart type="bar" [data]="departmentHeadCountChartData" [options]="departmentHeadCountChartDataOptions" [plugins]="[ChartDataLabels, datalabelUnderlinePlugin]" />
+                </div>
+                <div *ngIf="!departmentHeadCountChartData">
+                    <app-no-data-found />
+                </div>
+            </div>
+        </div>
+        }
+        @else {
+        <div class="content-card">
+            <p-skeleton height="8rem" />
+        </div>
+        }
+        }
+        <!-- Employees experience details -->
+        @if(rbac.allowedToAccess('Employee Experience Overview.view')){
+        <div class="content-card">
+            <div class="flex-between-content mb-2">
+                <div class="summary-header d-inline-flex gap-1">
+                    <div class="section-title">Employee Experience Overview</div>
+                    <div>
+                        <app-module-info-icon placement="bottom" [ngbPopover]="experienceDetailsContent" class="module-icon" />
+                        <ng-template #experienceDetailsContent>
+                            <div class="module-info-text">Displays employees categorized based on their years of
+                                experience in the organization. Helps understand experience distribution and workforce maturity levels.</div>
+                        </ng-template>
+                    </div>
+                </div>
+            </div>
+            @if(!experienceDetailsLoader){
+            <div class="disply-grid-custom" [ngClass]="{'graph-no-data-content': !hasExperienceData}">
+                @if(hasExperienceData) {
+                <div class="department-graph-content">
+                    <p-chart type="bar" [data]="experienceChartData" [options]="experienceChartOptions" 
+                    [plugins]="[ChartDataLabels, datalabelUnderlinePlugin]" />
+                </div>
+                } @else {
+                <app-no-data-found />
+                }
+            </div>
+            }
+            @else {
+            <div class="content-card">
+                <p-skeleton height="8rem" />
+            </div>
+            }
+        </div>
+        }
+        <!-- Shift & Location Overview -->
+        @if(rbac.allowedToAccess('Locations and Shifts.view')){
+        <div class="content-card">
+            <div class="flex-between-content mb-2">
+                <div class="summary-header d-inline-flex gap-1">
+                    <div class="section-title">Shift & Location Overview</div>
+                    <div>
+                        <app-module-info-icon placement="bottom" [ngbPopover]="shiftLocationContent" class="module-icon" />
+                        <ng-template #shiftLocationContent>
+                            <div class="module-info-text">Shows employee distribution based on assigned shifts and work
+                                locations. Helps track workforce allocation across different locations and shifts.</div>
+                        </ng-template>
+                    </div>
+                </div>
+                <div class="custom-p-select-content custom-small-select">
+                    <div class="custom-p-select-content custom-small-select">
+                        <p-select [options]="locationDetails" optionLabel="label" optionValue="value" [(ngModel)]="selectedLocationId"
+                            (onChange)="onLocationChange($event)" [filter]="true" filterBy="label" [showClear]="true"
+                            placeholder="Select location" class="form-select custom-select" />
+                    </div>
+                </div>
+            </div>
+            @if(!LocationwiseEmployeeCountLoader){
+            <div class="disply-grid-custom" [ngClass]="{'graph-no-data-content': !hasShiftLocationData}">
+                @if(hasShiftLocationData) {
+                <div class="department-graph-content">
+                    <p-chart type="bar" [data]="shiftLocationChartData" [options]="shiftLocationChartOptions" [plugins]="[ChartDataLabels, datalabelUnderlinePlugin]" />
+                </div>
+                } @else {
+                <app-no-data-found />
+                }
+            </div>
+            }
+            @else {
+            <div class="content-card">
+                <p-skeleton height="8rem" />
+            </div>
+            }
+        </div>
+        }
+        <!-- Gender Diversity -->
+        @if(rbac.allowedToAccess('Headcount by Gender.view')){
+        <div class="content-card">
+            <div class="flex-between-content mb-3">
+                <div class="summary-header d-inline-flex gap-1">
+                    <div class="section-title">Gender Diversity</div>
+                    <div>
+                        <app-module-info-icon placement="bottom" [ngbPopover]="genderdata" class="module-icon" />
+                        <ng-template #genderdata>
+                            <div class="module-info-text">{{genderdiversityinfo}}</div>
+                        </ng-template>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                    @if(rbac.allowedToAccess('Headcount by Gender Select Department.view')){
+                    <div class="custom-p-select-content custom-small-select">
+                        <p-select [options]="departmentDropdownOptions" optionLabel="departmentName" optionValue="sno"
+                            [(ngModel)]="selectedDepartmentId" (onChange)="onDepartmentChange($event)" [showClear]="true" [filter]="true"
+                            filterBy="departmentName" placeholder="Please select department" class="form-select custom-select" />
+                    </div>
+                    }
+                    <div class="total">Total: <span class="count">{{ genderTotal }}</span></div>
+                </div>
+            </div>
+            @if(!genderCountLoader){
+            <div class="disply-grid-custom" [ngClass]="{'graph-no-data-content': !hasGenderData}">
+                @if(hasGenderData) {
+                <div class="gender-graph">
+                    <p-chart type="bar" [data]="genderChartData" [options]="genderChartOptions" [plugins]="[ChartDataLabels, datalabelUnderlinePlugin]" />
+                </div>
+                } @else {
+                <div class="no-data-container">
+                    <app-no-data-found />
+                </div>
+                }
+            </div>
+            }
+            @else {
+            <div class="content-card mb-3">
+                <p-skeleton height="8rem" />
+            </div>
+            }
+        </div>
+        }
+    </div>
+</div>
+
+<!--Joinees and Exits List-->
+<ng-template #joineesExitsList let-offcanvas>
+    <div class="custom-main-popup-container" ngbAutofocus>
+        <div class="custom-poup-header-content popup-header-border">
+            <div>
+                <p class="popup-heading mb-0">{{ joineesExitsOffcanvasTitle }}({{ getFilteredJoineesExits().length }})
+                </p>
+            </div>
+            <div>
+                <a (click)="close()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+            </div>
+        </div>
+        <div class="custom-offcanvas-body p-3">
+            <!-- Search -->
+            <div class="input-group custom-search mb-3">
+                <span class="input-group-text custom-input-group-search" id="basic-addon1">
+                    <i class="bi bi-search"></i>
+                </span>
+                <input type="search" class="form-control custom-search-input" placeholder="Search" [(ngModel)]="searchEmployeeText" 
+                placeholder="Search by Employee name/designation/department"/>
+            </div>
+            <div *ngFor="let emp of getFilteredJoineesExits()" class="profile-content mb-2">
+                <div>
+                    <ng-container *ngIf="emp.profilePicUrl; else showProfileIcon">
+                        <img [src]="emp.profilePicUrl" [width]="38" [height]="38" alt="Profile Image" class="profile-img" />
+                    </ng-container>
+                    <ng-template #showProfileIcon>
+                        <app-profile-icon [iconWidth]="'38'" [iconHeight]="'38'" />
+                    </ng-template>
+                </div>
+                <div class="profile-info w-100">
+                    <div class="name">{{ emp.employeeName }}</div>
+                    <div class="designation">{{ emp.designation }} - {{ emp.departmentName }}</div>
+                    @if (joineesExitsOffcanvasType === 'newJoinees' && emp.dateOfJoining) {
+                    <div class="leave-chip chip-doj mt-1">DOJ: {{ emp.dateOfJoining | date:'MMM dd, yyyy' }}</div>
+                    }
+                    @if (joineesExitsOffcanvasType === 'exits' && emp.lastWorkingDay) {
+                    <div class="leave-chip chip-lwd mt-1">LWD: {{ emp.lastWorkingDay | date:'MMM dd, yyyy' }}</div>
+                    }
+                </div>
+            </div>
+            <div *ngIf="getFilteredJoineesExits().length === 0" class="text-center text-muted py-3">
+                <app-no-data-found />
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+<!--Resources List-->
+<ng-template #resourceList let-offcanvas>
+    <div class="custom-main-popup-container" ngbAutofocus>
+        <div class="custom-poup-header-content popup-header-border">
+            <div>
+                <p class="popup-heading mb-0">{{ offCanvasData.label }}({{ getFilteredEmployees().length }})</p>
+            </div>
+            <div>
+                <a (click)="close()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+            </div>
+        </div>
+        <div class="custom-offcanvas-body p-3">
+            <!-- Search -->
+            <div class="input-group custom-search mb-3">
+                <span class="input-group-text custom-input-group-search" id="basic-addon1">
+                    <i class="bi bi-search"></i>
+                </span>
+                <input type="search" class="form-control custom-search-input" placeholder="Search" [(ngModel)]="searchEmployeeText" 
+                placeholder="Search by Employee name/designation/department"/>
+            </div>
+            <div *ngFor="let emp of getFilteredEmployees()" class="profile-content mb-2">
+                <div>
+                    <ng-container *ngIf="emp.profilePicUrl; else showProfileIcon">
+                        <img [src]="emp.profilePicUrl" [width]="38" [height]="38" alt="Profile Image" class="profile-img" />
+                    </ng-container>
+                    <ng-template #showProfileIcon>
+                        <app-profile-icon [iconWidth]="'38'" [iconHeight]="'38'" />
+                    </ng-template>
+                </div>
+                <div class="profile-info w-100">
+                    <div class="name">{{ emp.employeeName }}</div>
+                    <div class="designation">{{ emp.designation }} -{{ emp.departmentName }}</div>
+                    @if (emp.categoryName) {
+                    <div class="leave-chip mt-1" [ngStyle]="getLeaveChipStyle(emp.categoryColor)">{{ emp.categoryName }}</div>
+                    }
+                </div>
+            </div>
+            <div *ngIf="getFilteredEmployees().length === 0" class="text-center text-muted py-3">
+                <app-no-data-found />
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+<!--All Employees content-->
+<ng-template #allEmployeesContent>
+    <div class="content-card employees-list-content">
+        <div class="flex-between-content mb-3">
+            <div class="summary-header d-inline-flex gap-1">
+                <div class="section-title">Employees overview</div>
+                <div>
+                    <app-module-info-icon placement="bottom" [ngbPopover]="employeeOverviewContent" class="module-icon" />
+                    <ng-template #employeeOverviewContent>
+                        <div class="module-info-text">{{employeeOverviewInfo}}</div>
+                    </ng-template>
+                </div>
+            </div>
+        </div>
+        @if(!chartLoader && EmployeeInfoData){
+        <div class="total-leave-balance-graph-content">
+            <div class="chart-content flex-center-content">
+                <p-chart type="doughnut" [data]="EmployeeInfoData" [options]="EmployeeInfoDataOptions" class="doughnut-chart" />
+                <div class="total-count-content">
+                    <p class="count m-0 p-0">{{totalEmployeesCount}}</p>
+                </div>
+            </div>
+            <div class="employees-type-grid">
+                @for (group of cardItems; track $index) {
+                <div class="employee-group">
+                    <div class="group-title">{{ group.header }}</div>
+                    <div class="group-row">
+                        @for (item of group.items; track $index) {
+                        <div class="employee-item cursor ps-2" [routerLink]="item.link"
+                            [ngStyle]="{ 'border-left': '4px solid ' + item.color }">
+                            <div class="employee-type-text">
+                                <p class="m-0">{{ item.label }}</p>
+                                <p class="count-text m-0"><u>{{ item.count }}</u></p>
+                            </div>
+                        </div>
+                        }
+                    </div>
+                </div>
+                }
+            </div>
+        </div>
+        }@else {
+        <p-skeleton height="8rem" />
+        }
+    </div>
+</ng-template>
+
+<!--team avaliability content-->
+<ng-template #teamAvaliabilityContent>
+    <div class="content-card employees-list-content">
+        <div class="flex-between-content mb-3">
+            <div class="summary-header d-inline-flex gap-1">
+                <div class="section-title">Team Availability</div>
+                <div>
+                    <app-module-info-icon placement="bottom" [ngbPopover]="resourceSummaryContent" class="module-icon" />
+                    <ng-template #resourceSummaryContent>
+                        <div class="module-info-text">{{teamavailabilityinfo}}</div>
+                    </ng-template>
+                </div>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+                @if(rbac.allowedToAccess('Organization Availability Select Department.view')){
+                <div class="custom-p-select-content custom-small-select">
+                    <p-select [options]="departDropdownOptions" optionLabel="departmentName" optionValue="sno"
+                        [(ngModel)]="selectedDepartId" (onChange)="onDepartChange($event)" [showClear]="true" [filter]="true"
+                        filterBy="departmentName" filterPlaceholder="Search department" placeholder="Please select department"
+                        class="form-select custom-select" />
+                </div>
+                }
+                <div class="custom-date-range-picker">
+                    <p-datepicker [(ngModel)]="selectedDate" [iconDisplay]="'input'" [showIcon]="true" inputId="icondisplay"
+                        [readonlyInput]="true" [maxDate]="todayMaxdate" (onSelect)="onDateChange($event)" />
+                </div>
+            </div>
+        </div>
+        @if(!availabilityLoading){
+        <div class="total-leave-balance-graph-content" [ngClass]="{'graph-no-data-content': teamTotal === 0}">
+            @if (teamTotal !== 0) {
+            <div class="chart-content flex-center-content">
+                <p-chart type="doughnut" [data]="teamChartData" [options]="teamChartOptions" class="doughnut-chart" />
+                <div class="total-count-content">
+                    <p class="count m-0 p-0">{{teamTotal}}</p>
+                </div>
+            </div>
+            <div class="employees-type-grid team-avaliability-grid">
+                @for (item of legendList; track $index) {
+                <div [ngStyle]="{ 'border-left': '4px solid ' + item.color }" class="ps-2">
+                    <div class="employee-type-text">
+                        <p class="m-0">{{ item.label }}</p>
+                        <div class="count-text">
+                            @if(teamSummary[item.key] > 0){
+                            <span class="cursor" (click)="openOffcanvas(resourceList,item)">
+                                <u>{{teamSummary[item.key]}}</u>
+                            </span>
+                            }@else{
+                            <span>{{teamSummary[item.key] || 0 }}</span>
+                            }
+                        </div>
+                    </div>
+                </div>
+                }
+            </div>
+            }@else {
+            <app-no-data-found />
+            }
+        </div>
+        }@else {
+        @if(!showAvailabilityMessage) {
+        <p-skeleton height="8rem" />
+        }@else {
+        <div class="position-relative" style="min-height: 10rem;">
+            <p-skeleton height="8rem" />
+            <div class="loading-message-overlay">
+                <p class="loading-text mb-0">Please wait while we fetch the latest employee availability details
+                    <span class="loading-dots"></span>
+                </p>
+            </div>
+        </div>
+        }
+        }
+    </div>
+</ng-template>
+
+<!--Attendance Employees List-->
+<ng-template #attendanceEmployeesList let-offcanvas>
+    <div class="custom-main-popup-container" ngbAutofocus>
+        <div class="custom-poup-header-content popup-header-border">
+            <div>
+                <p class="popup-heading mb-0">{{ attendanceOffcanvasTitle }} ({{ getFilteredEmployees().length }})</p>
+            </div>
+            <div>
+                <a (click)="close()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+            </div>
+        </div>
+        <div class="custom-offcanvas-body p-3">
+            <div class="input-group custom-search mb-3">
+                <span class="input-group-text custom-input-group-search">
+                    <i class="bi bi-search"></i>
+                </span>
+                <input type="search" class="form-control custom-search-input" placeholder="Search" [(ngModel)]="searchEmployeeText" 
+                placeholder="Search by Employee name/designation/department"/>
+            </div>
+            <div *ngFor="let emp of getFilteredEmployees()" class="profile-content mb-2">
+                <div>
+                    <ng-container *ngIf="emp.profilePicUrl; else attendanceProfileIcon">
+                        <img [src]="emp.profilePicUrl" [width]="38" [height]="38" alt="Profile Image" class="profile-img" />
+                    </ng-container>
+                    <ng-template #attendanceProfileIcon>
+                        <app-profile-icon [iconWidth]="'38'" [iconHeight]="'38'" />
+                    </ng-template>
+                </div>
+                <div class="profile-info w-100">
+                    <div class="name">{{ emp.employeeName }}</div>
+                    <div class="designation">{{ emp.designation }} - {{ emp.departmentName }}</div>
+                    <div class="d-flex flex-wrap gap-1 mt-1">
+                        @if(attendanceOffcanvasType === 'lateLogin' && emp.isLateLogin && emp.lateLoginDuration) {
+                        <span class="attendance-chip chip-late">Late: {{ emp.lateLoginDuration }}</span>
+                        }
+                        @if(attendanceOffcanvasType === 'earlyLogout' && emp.isEarlyLogout) {
+                        <span class="attendance-chip chip-early">Early Logout: {{ emp.earlyLogoutDuration }}</span>
+                        }
+                        @if(attendanceOffcanvasType === 'hoursDeficit' && emp.isHoursDeficit) {
+                        <span class="attendance-chip chip-deficit">Hours Deficit: {{ emp.deficitHoursDuration }}</span>
+                        }
+                        @if(attendanceOffcanvasType === 'breakExceeded' && emp.isBreakHrsExceeded && emp.breakHrsExceededDuration) {
+                        <span class="attendance-chip chip-break">Break Exceeded: {{ emp.breakHrsExceededDuration }}</span>
+                        }
+                        @if(attendanceOffcanvasType === 'permission' && emp.hasPermission && emp.permissionDuration) {
+                        <span class="attendance-chip chip-permission">Permission: {{ emp.permissionDuration }}</span>
+                        }
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="getFilteredEmployees().length === 0" class="text-center text-muted py-3">
+                <app-no-data-found />
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+<!--Shift Location Employees List-->
+<ng-template #shiftLocationEmployeesList let-offcanvas>
+    <div class="custom-main-popup-container" ngbAutofocus>
+        <div class="custom-poup-header-content popup-header-border">
+            <div>
+                <p class="popup-heading mb-0">{{ shiftLocationOffcanvasTitle }} ({{ getFilteredShiftLocationEmployees().length }})</p>
+            </div>
+            <div>
+                <a (click)="close()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+            </div>
+        </div>
+        <div class="custom-offcanvas-body p-3">
+            <div class="input-group custom-search mb-3">
+                <span class="input-group-text custom-input-group-search">
+                    <i class="bi bi-search"></i>
+                </span>
+                <input type="search" class="form-control custom-search-input" placeholder="Search" [(ngModel)]="searchEmployeeText" 
+                placeholder="Search by Employee name/designation/department"/>
+            </div>
+            <div *ngFor="let emp of getFilteredShiftLocationEmployees()" class="profile-content mb-2">
+                <div>
+                    <ng-container *ngIf="emp.profilePicUrl; else shiftProfileIcon">
+                        <img [src]="emp.profilePicUrl" [width]="38" [height]="38" alt="Profile Image" class="profile-img" />
+                    </ng-container>
+                    <ng-template #shiftProfileIcon>
+                        <app-profile-icon [iconWidth]="'38'" [iconHeight]="'38'" />
+                    </ng-template>
+                </div>
+                <div class="profile-info w-100">
+                    <div class="name">{{ emp.employeeName }}</div>
+                    <div class="designation">{{ emp.designation }} - {{ emp.departmentName }}</div>
+                    <div class="designation">{{ emp.empStatus }}</div>
+                </div>
+            </div>
+            <div *ngIf="getFilteredShiftLocationEmployees().length === 0" class="text-center text-muted py-3">
+                <app-no-data-found />
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+<!--Gender Employees List-->
+<ng-template #genderEmployeesList let-offcanvas>
+    <div class="custom-main-popup-container" ngbAutofocus>
+        <div class="custom-poup-header-content popup-header-border">
+            <div>
+                <p class="popup-heading mb-0">{{ genderOffcanvasTitle }} ({{ getFilteredGenderEmployees().length }})</p>
+            </div>
+            <div>
+                <a (click)="close()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+            </div>
+        </div>
+        <div class="custom-offcanvas-body p-3">
+            <div class="input-group custom-search mb-3">
+                <span class="input-group-text custom-input-group-search">
+                    <i class="bi bi-search"></i>
+                </span>
+                <input type="search" class="form-control custom-search-input" placeholder="Search" [(ngModel)]="searchEmployeeText" 
+                placeholder="Search by Employee name/designation/department"/>
+            </div>
+            <div *ngFor="let emp of getFilteredGenderEmployees()" class="profile-content mb-2">
+                <div>
+                    <ng-container *ngIf="emp.profilePicUrl; else genderProfileIcon">
+                        <img [src]="emp.profilePicUrl" [width]="38" [height]="38" alt="Profile Image" class="profile-img" />
+                    </ng-container>
+                    <ng-template #genderProfileIcon>
+                        <app-profile-icon [iconWidth]="'38'" [iconHeight]="'38'" />
+                    </ng-template>
+                </div>
+                <div class="profile-info w-100">
+                    <div class="name">{{ emp.employeeName }}</div>
+                    <div class="designation">{{ emp.designation }} - {{ emp.departmentName }}</div>
+                    <div class="designation">{{ emp.empStatus }}</div>
+                </div>
+            </div>
+            <div *ngIf="getFilteredGenderEmployees().length === 0" class="text-center text-muted py-3">
+                <app-no-data-found />
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+<!--Experience Employees List-->
+<ng-template #experienceEmployeesList let-offcanvas>
+    <div class="custom-main-popup-container" ngbAutofocus>
+        <div class="custom-poup-header-content popup-header-border">
+            <div>
+                <p class="popup-heading mb-0">Experience With {{ experienceOffcanvasTitle }} ({{ getFilteredExperienceEmployees().length }})</p>
+            </div>
+            <div>
+                <a (click)="close()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+            </div>
+        </div>
+        <div class="custom-offcanvas-body p-3">
+            <div class="input-group custom-search mb-3">
+                <span class="input-group-text custom-input-group-search">
+                    <i class="bi bi-search"></i>
+                </span>
+                <input type="search" class="form-control custom-search-input" placeholder="Search" [(ngModel)]="searchEmployeeText" 
+                placeholder="Search by Employee name/designation/department"/>
+            </div>
+            <div *ngFor="let emp of getFilteredExperienceEmployees()" class="profile-content mb-2">
+                <div>
+                    <ng-container *ngIf="emp.profilePicUrl; else expProfileIcon">
+                        <img [src]="emp.profilePicUrl" [width]="38" [height]="38" alt="Profile Image" class="profile-img" />
+                    </ng-container>
+                    <ng-template #expProfileIcon>
+                        <app-profile-icon [iconWidth]="'38'" [iconHeight]="'38'" />
+                    </ng-template>
+                </div>
+                <div class="profile-info w-100">
+                    <div class="name">{{ emp.employeeName }}</div>
+                    <div class="designation">{{ emp.designation }} - {{ emp.departmentName }}</div>
+                    <div class="designation">{{ emp.empStatus }}</div>
+                </div>
+            </div>
+            <div *ngIf="getFilteredExperienceEmployees().length === 0" class="text-center text-muted py-3">
+                <app-no-data-found />
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+<!--Department Employees List-->
+<ng-template #departmentEmployeesList let-offcanvas>
+    <div class="custom-main-popup-container" ngbAutofocus>
+        <div class="custom-poup-header-content popup-header-border">
+            <div>
+                <p class="popup-heading mb-0">{{ departmentOffcanvasTitle }} ({{ getFilteredDepartmentEmployees().length }})</p>
+            </div>
+            <div>
+                <a (click)="close()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+            </div>
+        </div>
+        <div class="custom-offcanvas-body p-3">
+            <div class="input-group custom-search mb-3">
+                <span class="input-group-text custom-input-group-search">
+                    <i class="bi bi-search"></i>
+                </span>
+                <input type="search" class="form-control custom-search-input" placeholder="Search" [(ngModel)]="searchEmployeeText" 
+                placeholder="Search by Employee name/designation/department"/>
+            </div>
+            <div *ngFor="let emp of getFilteredDepartmentEmployees()" class="profile-content mb-2">
+                <div>
+                    <ng-container *ngIf="emp.profilePicUrl; else deptProfileIcon">
+                        <img [src]="emp.profilePicUrl" [width]="38" [height]="38" alt="Profile Image" class="profile-img" />
+                    </ng-container>
+                    <ng-template #deptProfileIcon>
+                        <app-profile-icon [iconWidth]="'38'" [iconHeight]="'38'" />
+                    </ng-template>
+                </div>
+                <div class="profile-info w-100">
+                    <div class="name">{{ emp.employeeName }}</div>
+                    <div class="designation">{{ emp.designation }} - {{ emp.departmentName }}</div>
+                    <div class="designation">{{ emp.empStatus }}</div>
+                </div>
+            </div>
+            <div *ngIf="getFilteredDepartmentEmployees().length === 0" class="text-center text-muted py-3">
+                <app-no-data-found />
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+<!--Upcoming Actions List-->
+<ng-template #upcomingActionsList let-offcanvas>
+    <div class="custom-main-popup-container" ngbAutofocus>
+        <div class="custom-poup-header-content popup-header-border">
+            <div>
+                <p class="popup-heading mb-0">{{ upcomingActionsOffcanvasTitle }}({{ getFilteredUpcomingActions().length }})</p>
+            </div>
+            <div>
+                <a (click)="close()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+            </div>
+        </div>
+
+        <div class="custom-offcanvas-body p-3">
+            <!-- Search -->
+            <div class="input-group custom-search mb-3">
+                <span class="input-group-text custom-input-group-search" id="basic-addon1">
+                    <i class="bi bi-search"></i>
+                </span>
+                <input type="search" class="form-control custom-search-input" placeholder="Search" [(ngModel)]="searchEmployeeText" 
+                placeholder="Search by Employee name/designation/department"/>
+            </div>
+            <div *ngFor="let emp of getFilteredUpcomingActions()" class="profile-content mb-2">
+                <div>
+                    <ng-container *ngIf="emp.profilePicUrl; else showProfileIcon">
+                        <img [src]="emp.profilePicUrl" [width]="38" [height]="38" alt="Profile Image" class="profile-img" />
+                    </ng-container>
+                    <ng-template #showProfileIcon>
+                        <app-profile-icon [iconWidth]="'38'" [iconHeight]="'38'" />
+                    </ng-template>
+                </div>
+                <div class="profile-info w-100">
+                    <div class="name">{{ emp.employeeName }}</div>
+                    <div class="designation">{{ emp.designation }} - {{ emp.departmentName }}</div>
+                    @if (upcomingActionsOffcanvasType === 'noticePeriod' && emp.lastWorkingDate) {
+                    <div class="leave-chip chip-lwd mt-1">LWD: {{ emp.lastWorkingDate | date:'MMM dd, yyyy' }}</div>
+                    }
+                    @if (upcomingActionsOffcanvasType === 'probation' && emp.probationEndDate) {
+                    <div class="leave-chip chip-lwd mt-1">Probation End: {{ emp.probationEndDate | date:'MMM dd, yyyy' }}</div>
+                    }
+                    @if (upcomingActionsOffcanvasType === 'trainee' && emp.trainingEndDate) {
+                    <div class="leave-chip chip-lwd mt-1">Training End: {{ emp.trainingEndDate | date:'MMM dd, yyyy' }}</div>
+                    }
+                </div>
+            </div>
+            <div *ngIf="getFilteredUpcomingActions().length === 0" class="text-center text-muted py-3">
+                <app-no-data-found />
+            </div>
+        </div>
+    </div>
+</ng-template>

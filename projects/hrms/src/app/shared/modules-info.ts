@@ -354,7 +354,6 @@ export const MODULE_INFOS = {
     TIMESHEET_BULK_EXPORT: "The Timesheet Export feature enables users to download timesheet data based on selected filters such as date range, employee, or project. It helps in reporting, analysis, and sharing timesheet records in Excel format.",
 
 
-
      ONBEHALFHALF_APPROVALS_TIME_OFF_MODULE_INFO: "The Leaves page displays all pending leave requests submitted by employees, which can be approved on behalf of managers or designated approval authorities. Approvers can review leave type, duration, and applied dates to ensure proper leave tracking before taking action.",
     ONBEHALFHALF_APPROVALS_COMPOFF_MODULE_INFO: "The Comp Off page displays all pending comp-off requests submitted by employees for extra working days which can be approved on behalf of managers or designated approval authorities. Approvers can verify eligibility against worked days and validate balances before approving or rejecting on behalf of managers.",
     ONBEHALFHALF_APPROVALS_WFH_MODULE_INFO: "The WFH page displays all pending work-from-home requests submitted by employees which can be approved on behalf of managers or designated approval authorities. Approvers can review requested dates and reasons to ensure alignment with team availability and remote work policies before taking action.",
@@ -370,7 +369,6 @@ export const MODULE_INFOS = {
     ONBEHALFHALF_APPROVALS_EMPLOYEE_INFO_MODULE_INFO: "The Employee Info module page displays employee profile details and requested changes. It enables authorized users to review and approve or reject profile update requests on behalf of the designated approver, ensuring accurate and up-to-date employee information.",
     ONBEHALFHALF_APPROVALS_TIMESHEET_MODULE_INFO: "The Timesheets module page displays employee work entries submitted against assigned projects and clients. It allows authorized users to review and approve or reject timesheets on behalf of the Reporting Manager, ensuring timely validation of work hours.",
 
-    
     THEME_PERSONALIZATION_MODULE_INFO: "This module allows users to customize the application appearance by selecting preferred theme colors and font styles. It helps enhance the visual experience and align the interface with user preferences.",
     MENU_PERSONALIZATION_MODULE_INFO: "This module allows users to customize and organize the application menu based on their preferences, improving accessibility and navigation. Users can manage primary and additional menu items by rearranging, enabling, or configuring them as needed."
 }

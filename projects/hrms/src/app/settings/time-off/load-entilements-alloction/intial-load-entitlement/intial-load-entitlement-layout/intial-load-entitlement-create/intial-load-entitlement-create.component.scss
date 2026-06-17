@@ -1,10 +1,48 @@
-.load-components-container{
+.load-components-container {
     position: relative;
     height: calc(100dvh - 17rem);
 
     .footer-content {
+        width: 100%;
         position: absolute;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
         bottom: 0;
         right: 0;
     }
+}
+
+.custom-p-select-content {
+    .p-select {
+        background-color: #FFF !important;
+    }
+
+    .p-select-label {
+        border-top-left-radius: 0.5rem;
+        border-bottom-left-radius: 0.5rem;
+    }
+}
+
+.custom-p-multiSelect-content {
+    .p-multiselect {
+        background-color: #FFF !important;
+    }
+
+    .p-multiselect-option {
+        width: 100% !important;
+    }
+}
+
+.p-inputtext{
+    font-size: 0.8rem !important;
+}
+
+/* Fix 2: Grey out disabled p-select and p-multiselect fields */
+.custom-p-select-content .p-select.p-disabled,
+.custom-p-multiSelect-content .p-multiselect.p-disabled {
+    background-color: #f0f0f0 !important;
+    opacity: 0.6;
+    cursor: not-allowed;
+    pointer-events: none;
 }

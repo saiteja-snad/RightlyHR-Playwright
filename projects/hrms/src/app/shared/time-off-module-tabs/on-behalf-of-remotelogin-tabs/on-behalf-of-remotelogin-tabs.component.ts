@@ -7,15 +7,20 @@ import { HttpService } from '../../../services/http.service';
 import { RbacService } from '../../../services/rbac.service';
 import { SidetabsloadersComponent } from '../../sidetabsloaders/sidetabsloaders.component';
 import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.service';
+import { DragDropModule } from '@angular/cdk/drag-drop';
+import { TabsDndDirective } from '../../tabs-dnd/tabs-dnd.directive';
+import { MenuOrderService } from '../../../services/theme-service/menu-order.service';
 
 @Component({
   selector: 'app-on-behalf-of-remotelogin-tabs',
-  imports: [RouterModule, CommonModule, TabsModule, SidetabsloadersComponent],
+  imports: [RouterModule, CommonModule, TabsModule, SidetabsloadersComponent, DragDropModule, TabsDndDirective],
   templateUrl: './on-behalf-of-remotelogin-tabs.component.html',
   styleUrl: './on-behalf-of-remotelogin-tabs.component.scss'
 })
 export class OnBehalfOfRemoteloginTabsComponent implements OnInit, OnDestroy{
-filteredTabs: any[] = [];
+  readonly tabsKey = 'on-behalf-of-remotelogin-tabs';
+  private readonly baseUrl = '/on-behalf-of/on-behalf-of-remotelogin';
+  filteredTabs: any[] = [];
   loading = false
   rejectedRemoteLoginRequestsCount = 0;
   waitingForApprovalRemoteLoginCount = 0;
@@ -26,30 +31,35 @@ filteredTabs: any[] = [];
 
   navTabs: any[] = [
     {
+      tabId: '/on-behalf-of/on-behalf-of-remotelogin/waiting-for-approval',
       label: 'Waiting For Approval',
       link: 'waiting-for-approval',
       icon: '/time-off-icon/waiting-for-approval-icon.png',
       permission: { feature: 'Waiting For Approval (On Behalf Of RemoteLogin)', action: 'view' },
     },
     {
+      tabId: '/on-behalf-of/on-behalf-of-remotelogin/approved',
       label: 'Approved',
       link: 'approved',
       icon: '/time-off-icon/approved-icon.png',
       permission: { feature: 'Approved (On Behalf Of RemoteLogin)', action: 'view' },
     },
     {
+      tabId: '/on-behalf-of/on-behalf-of-remotelogin/processed',
       label: 'Processed',
       link: 'processed',
       icon: '/time-off-icon/processed-icon.png',
       permission: { feature: 'Processed (On Behalf Of RemoteLogin)', action: 'view' },
     },
     {
+      tabId: '/on-behalf-of/on-behalf-of-remotelogin/rejected',
       label: 'Rejected',
       link: 'rejected',
       icon: '/time-off-icon/rejected-icon.png',
       permission: { feature: 'Rejected (On Behalf Of RemoteLogin)', action: 'view' },
     },
     {
+      tabId: '/on-behalf-of/on-behalf-of-remotelogin/cancelled',
       label: 'Cancelled',
       link: 'cancelled',
       icon: '/time-off-icon/cancelled-icon.png',
@@ -61,7 +71,8 @@ filteredTabs: any[] = [];
     public readonly router: Router,
     private http: HttpService,
     public rbac: RbacService,
-    private timeoffYearFilterService: TimeoffYearFilterService
+    private timeoffYearFilterService: TimeoffYearFilterService,
+    private menuOrderService: MenuOrderService
   ) {
     effect(() => {
       if (this.http.onBehlafOfRemoteLoginSignal()) {
@@ -77,7 +88,9 @@ filteredTabs: any[] = [];
   }
 
   ngOnInit(): void {
-    this.filterTabsByRbac();
+    void this.menuOrderService.ensureLoaded().then(() => {
+      this.filterTabsByRbac();
+    });
     
     this.http.onBehalfOfRemoteLoginSelectedEmp$.pipe(takeUntil(this.destroy$)).subscribe((emp: number) => {
       if (emp) {
@@ -130,17 +143,25 @@ filteredTabs: any[] = [];
 
 
   filterTabsByRbac(): void {
-    this.filteredTabs = this.navTabs.filter(tab => {
+    const filtered = this.navTabs.filter(tab => {
       if (!tab.permission) return true;
       const { feature, action } = tab.permission;
       const permissionString = `${feature}.${action}`;
       return this.rbac.allowedToAccess(permissionString);
     });
+
+    this.filteredTabs = this.menuOrderService.applySavedTabsOrder(
+      this.tabsKey,
+      filtered,
+      (t) => t.tabId
+    );
+    this.updateNavigation();
   }
 
   updateNavTabs() {
     this.navTabs = [
       {
+        tabId: '/on-behalf-of/on-behalf-of-remotelogin/waiting-for-approval',
         label: 'Waiting For Approval',
         link: 'waiting-for-approval',
         icon: '/time-off-icon/waiting-for-approval-icon.png',
@@ -148,6 +169,7 @@ filteredTabs: any[] = [];
         permission: { feature: 'Waiting For Approval (On Behalf Of RemoteLogin)', action: 'view' },
       },
       {
+        tabId: '/on-behalf-of/on-behalf-of-remotelogin/approved',
         label: 'Approved',
         link: 'approved',
         icon: '/time-off-icon/approved-icon.png',
@@ -155,6 +177,7 @@ filteredTabs: any[] = [];
         permission: { feature: 'Approved (On Behalf Of RemoteLogin)', action: 'view' },
       },
       {
+        tabId: '/on-behalf-of/on-behalf-of-remotelogin/processed',
         label: 'Processed',
         link: 'processed',
         icon: '/time-off-icon/processed-icon.png',
@@ -162,6 +185,7 @@ filteredTabs: any[] = [];
         permission: { feature: 'Processed (On Behalf Of RemoteLogin)', action: 'view' },
       },
       {
+        tabId: '/on-behalf-of/on-behalf-of-remotelogin/rejected',
         label: 'Rejected',
         link: 'rejected',
         icon: '/time-off-icon/rejected-icon.png',
@@ -169,6 +193,7 @@ filteredTabs: any[] = [];
         permission: { feature: 'Rejected (On Behalf Of RemoteLogin)', action: 'view' },
       },
       {
+        tabId: '/on-behalf-of/on-behalf-of-remotelogin/cancelled',
         label: 'Cancelled',
         link: 'cancelled',
         icon: '/time-off-icon/cancelled-icon.png',
@@ -187,6 +212,29 @@ filteredTabs: any[] = [];
     this.cancelRemoteLoginRequestsCount = 0;
     this.loading = false;
     this.updateNavTabs();
+  }
+
+  trackByTabId(_: number, tab: any): string {
+    return tab.tabId || tab.link;
+  }
+
+  private updateNavigation(): void {
+    const baseUrl = this.baseUrl;
+    const currentUrl = this.router.url.split('?')[0];
+    const defaultRoute = this.filteredTabs.length > 0 ? `${this.baseUrl}/${this.filteredTabs[0].link}` : '';
+
+    if ((currentUrl === baseUrl || currentUrl === `${baseUrl}/`) && defaultRoute) {
+      this.router.navigateByUrl(defaultRoute);
+      return;
+    }
+
+    const isAllowed = this.filteredTabs.some((tab) =>
+      currentUrl === tab.tabId || currentUrl === tab.link || currentUrl.endsWith(`/${tab.link}`)
+    );
+
+    if (!isAllowed && currentUrl.startsWith(baseUrl) && defaultRoute) {
+      this.router.navigateByUrl(defaultRoute);
+    }
   }
 
   ngOnDestroy(): void {

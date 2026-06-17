@@ -30,9 +30,9 @@ export default [
         path: 'leave-entitlements', component: LoadEntitlementsCarryForwardComponent,
         children: [
             { path: 'load-entitlement-create', loadComponent: () => import('./load-entilements-alloction/load-entitlements-carry-forward/load-entitlement-create/load-entitlement-create.component').then((m) => m.LoadEntitlementCreateComponent) },
-            { path: 'load-entitlement-preview', loadComponent: () => import('./load-entilements-alloction/load-entitlements-carry-forward/load-entitlemetpreview/load-entitlemetpreview.component').then((m) => m.LoadEntitlemetpreviewComponent) },
             { path: 'load-entitlement-map-categoery', loadComponent: () => import('./load-entilements-alloction/load-entitlements-carry-forward/load-entilements-map-categoery/load-entilements-map-categoery.component').then((m) => m.LoadEntilementsMapCategoeryComponent) },
-            { path: 'load-entitlement-execution', loadComponent: () => import('./load-entilements-alloction/load-entitlements-carry-forward/load-entitlemetexecution/load-entitlemetexecution.component').then((m) => m.LoadEntitlemetexecutionComponent) }
+            { path: 'load-entitlement-breakdown', loadComponent: () => import('./load-entilements-alloction/load-entitlements-carry-forward/load-entitlement-breakdown/load-entitlement-breakdown.component').then((m) => m.LoadEntitlementBreakdownComponent) },
+            { path: 'load-entitlement-preview', loadComponent: () => import('./load-entilements-alloction/load-entitlements-carry-forward/load-entitlemetpreview/load-entitlemetpreview.component').then((m) => m.LoadEntitlemetpreviewComponent) },
         ]
     },
     {
@@ -40,6 +40,7 @@ export default [
         component: IntialLoadEntitlementLayoutComponent,
         children: [
             { path: 'intial-load-entitlement-create', loadComponent: () => import('./load-entilements-alloction/intial-load-entitlement/intial-load-entitlement-layout/intial-load-entitlement-create/intial-load-entitlement-create.component').then((m) => m.IntialLoadEntitlementCreateComponent) },
+            { path: 'intial-load-entitlement-breakdown', loadComponent: () => import('./load-entilements-alloction/intial-load-entitlement/intial-load-entitlement-layout/intial-load-entitlement-breakdown/intial-load-entitlement-breakdown.component').then((m) => m.IntialLoadEntitlementBreakdownComponent) },
             { path: 'intial-load-entitlement-preview', loadComponent: () => import('./load-entilements-alloction/intial-load-entitlement/intial-load-entitlement-layout/intial-load-entitlement-preview/intial-load-entitlement-preview.component').then((m) => m.IntialLoadEntitlementPreviewComponent) },
             {path:'intial-load-entitlement-execution',loadComponent:()=>import('./load-entilements-alloction/intial-load-entitlement/intial-load-entitlement-layout/intial-load-entitlement-execution/intial-load-entitlement-execution.component').then((m)=>m.IntialLoadEntitlementExecutionComponent)}
 

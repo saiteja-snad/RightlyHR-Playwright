@@ -1,15 +1,9 @@
-.nav-link.active {
-   background: linear-gradient(180deg, #FFFFFF 0%, var(--custom-component-tabs-bg-color) 100%);
-}
+// .nav-link.active {
+//    background: linear-gradient(180deg, #FFFFFF 0%, var(--custom-component-tabs-bg-color) 100%);
+// }
 
 .custom-tab-content {
-   width: 100%;
-}
-
-@media only screen and (max-width: 1430px) {
-   .custom-tab-content {
-      width: calc(100% - 8.625rem) !important;
-   }
+   width: calc(100% - 8.625rem) !important;
 }
 
 .component-left-tabs-container {
@@ -19,7 +13,39 @@
 
 .custom-p-multi-select-table {
    .p-datatable-table-container {
-        height: calc(100vh - 11.5rem);
-    min-height: 45vh;
+      height: calc(100vh - 11.25rem);
+      min-height: 45vh;
    }
+}
+
+.filter-indicator {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 8px;
+    height: 8px;
+    background-color: #0B3A83;
+    border-radius: 50%;
+    border: 2px solid white;
+    animation: pulse 2s infinite;
+
+
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 #0B3A83;
+    }
+
+    70% {
+        box-shadow: 0 0 0 6px rgba(255, 68, 68, 0);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(255, 68, 68, 0);
+    }
+}
+
+.p-datepicker {
+    width: 100% !important;
 }

@@ -1,0 +1,128 @@
+<div class="load-components-container">
+    <!-- Selected Fields Summary -->
+    <!-- <div class="card custom-background-card p-3 mb-3">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+            <div class="text-nowrap summary-context" *ngFor="let item of selectedFieldSummary">
+                <span>{{ item.label }}</span>
+                <span>:</span>
+                <span class="ms-1 value"><b>{{ item.value }}</b></span>
+            </div>
+        </div>
+    </div> -->
+
+    <!-- No data -->
+    <div class="breakdown-layout d-flex align-items-center justify-content-center"
+        *ngIf="apiLoaded && !breakdownLoader && categoryTablesOrdered.length === 0">
+        <app-no-data-found />
+    </div>
+
+    <!-- Breakdown Layout -->
+    <div class="breakdown-layout" *ngIf="!breakdownLoader && categoryTablesOrdered.length > 0">
+
+        <!-- Left sidebar -->
+        <div class="breakdown-left-nav">
+            <div class="component-side-nav-tabs-container">
+                <ul class="nav flex-column">
+                    <li class="nav-item" *ngFor="let table of categoryTablesOrdered; let i = index">
+                        <a class="nav-link" [class.active-nav-link]="selectedCatIdx === i" (click)="selectedCatIdx = i">
+                            {{ table.categoryName }}
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Right content -->
+        <div class="breakdown-right-content">
+
+            <div *ngIf="breakdownLoader">Loading...</div>
+
+            <ng-container *ngIf="!breakdownLoader" [formGroup]="breakdownForm">
+                <ng-container formArrayName="categories">
+                    <ng-container *ngFor="let table of categoryTablesOrdered; let catIdx = index"
+                        [formGroupName]="catIdx">
+
+                        <div *ngIf="catIdx === selectedCatIdx" class="custom-accordians">
+                            <div class="custom-accordian-data-content">
+
+                                <!-- Info bar: badges left, reset right -->
+                                <div class="d-flex justify-content-end align-items-end w-100 pe-3 mb-3">
+                                    <div class="breakdown-badges me-2">
+                                        <div class="info-badge">
+                                           <span style="color: rgb(105, 105, 105);"> Frequency Type:  </span><span class="fw-bolder ms-1">{{ formatLabel(table.frequencyType) }}</span>
+                                        </div>
+                                        <div class="info-badge" *ngIf="table.cycleHandling">
+                                           <span style="color: rgb(105, 105, 105);">  Leave Balance Handling: </span><span class="fw-bolder ms-1">{{ formatLabel(table.cycleHandling) }}</span>
+                                        </div>
+                                    </div>
+                                    <button type="button"
+                                        class="custom-btn btn-secondary btn-sm reset-category-btn"
+                                        (click)="resetCategory(catIdx)"
+                                        [disabled]="!isModified">
+                                        <i class="bi bi-arrow-counterclockwise me-1"></i> Reset
+                                    </button>
+                                </div>
+
+                                <!-- Direct Table -->
+                                <div class="custom-table-content">
+                                    <table class="w-100">
+                                        <thead>
+                                            <tr>
+                                                <th class="fw-bold">Cycle</th>
+                                                <th class="text-center fw-bold" *ngFor="let c of table.columns">
+                                                    Grades: {{ c.gradeLabel }}
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <ng-container formArrayName="cycles">
+                                                <tr *ngFor="let cycle of table.cycles; let cycleIdx = index"
+                                                    [formGroupName]="cycleIdx">
+                                                    <td class="fw-semibold">{{ cycle.label }}</td>
+                                                    <td class="text-center" *ngFor="let col of table.columns; let colIdx = index">
+                                                        <input type="number"
+                                                            class="form-control custom-input text-center entitlement-input"
+                                                            [min]="0" [step]="0.5"
+                                                            [formControlName]="'col_' + colIdx"
+                                                            (keydown)="onEntitlementKeydown($event)"
+                                                            (blur)="onEntitlementBlur(catIdx, cycleIdx, colIdx)" />
+                                                    </td>
+                                                </tr>
+                                            </ng-container>
+                                        </tbody>
+                                        <tfoot>
+                                            <tr class="total-row">
+                                                <td class="total-label fw-bold">Total</td>
+                                                <td class="text-center" *ngFor="let col of table.columns; let colIdx = index">
+                                                    <span class="total-badge"
+                                                        [ngClass]="isColumnValid(catIdx, colIdx) ? 'total-valid' : 'total-invalid'">
+                                                        {{ getColumnTotal(catIdx, colIdx) }} / {{ col.allowedDays }}
+                                                    </span>
+                                                    <div class="error-msg mt-1" *ngIf="!isColumnValid(catIdx, colIdx)">
+                                                        Ensure total equals {{ col.allowedDays }} days.
+                                                        <ng-container *ngIf="getColumnTotal(catIdx, colIdx) < col.allowedDays">
+                                                            Remaining: {{ col.allowedDays - getColumnTotal(catIdx, colIdx) }}
+                                                        </ng-container>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </ng-container>
+                </ng-container>
+            </ng-container>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer-content">
+        <button type="button" class="custom-btn btn-secondary px-5" (click)="back()">Back</button>
+        <button type="button" class="custom-btn btn-primary px-5" [disabled]="hasAnyValidationError"
+            (click)="next()">Load Eligible Employees</button>
+    </div>
+</div>

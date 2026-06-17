@@ -1192,7 +1192,7 @@ export const SECTION_DEFINITIONS: SectionDef[] = [
       'Rate Card Configuration Module',
       'Recruitment Configuration Module',
       'Helpdesk Configuration Module',
-
+      'Employee Fields Config Update Module'
     ]
   }, {
     title: 'Dashboard Widgets',
@@ -1576,7 +1576,7 @@ export const SECTION_DEFINITIONS: SectionDef[] = [
   { title: 'Kra Configuration Actions', disableFn: 'isAssetCheckboxDisabled', fieldNames: ['Kra Create', 'Kra Update(Status - Created)', 'Kra Delete(Status - Created)', 'Kra Update(Status - Initialted)', 'Kra Update(Status - Review On Hold)'] },
   { title: 'Events Tabs', disableFn: 'isProjectManagementTabsCheckboxDisabled', fieldNames: ['Events(Upcoming Events)'] },
   { title: 'Settings Header Icon', disableFn: 'isonlyviewfunction', fieldNames: ['Settings Icon'] },
-  { title: 'Project Management Configuration Fields', disableFn: 'isSettingsProjectManagementConfig', fieldNames: ['Project Type', 'Industry Type', 'Project Document Type', 'Client Document Type', 'Letter Configurations', 'Project Management Authority', 'Letter Frequency Configurations', 'Project Role','Task', 'Task Type'] },
+  { title: 'Project Management Configuration Fields', disableFn: 'isSettingsProjectManagementConfig', fieldNames: ['Project Type', 'Industry Type', 'Project Document Type', 'Client Document Type', 'Letter Configurations', 'Project Management Authority', 'Letter Frequency Configurations', 'Project Role','Task', 'Task Type','Timesheet Configurations'] },
   { title: 'Helpdesk Configuration Fields', disableFn: 'isSettingsProjectManagementConfig', fieldNames: ['Category', 'Subcategory'] },
   { title: 'Project Management Projects Tabs', disableFn: 'isProjectManagementTabsCheckboxDisabled', fieldNames: ['Project Details Tab', 'Contact Info Tab', 'Documents Tab', 'Resources Tab', 'Project Timesheets Tab', 'Project Phases Tab', 'Project Detailed Tab'] }, { title: 'Project Management Clients Tabs', disableFn: 'isProjectManagementClientsTabsCheckboxDisabled', fieldNames: ['Client Information', 'Contact Information', 'Client Projects', 'Client Resources', 'Client Timesheets', 'Client Documents', 'Client Detailed Tab'] },
   { title: 'Project Management Documents', disableFn: 'isonlyviewfunction', fieldNames: ['MSA Document', 'NDA Document'] },

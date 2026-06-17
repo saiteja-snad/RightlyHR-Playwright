@@ -22,7 +22,9 @@ import { TimeoffYearFilterService } from '../../services/timeoff-year-filter.ser
 import { AuthService } from '../../services/auth.service';
 import { ConfirmationIconComponent } from "../../icons/confirmation-icon/confirmation-icon.component";
 import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
-7
+import { ApplicablePoliciesTriggerComponent } from '../../shared/policies/applicable-policies-trigger/applicable-policies-trigger.component';
+import { APPLICABLE_POLICIES_KEYS } from '../../shared/policies/policy-visibility.catalog';
+
 @Component({
   selector: 'app-premissions',
   imports: [
@@ -35,6 +37,7 @@ import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-inf
     NgbPopoverModule,
     ConfirmationIconComponent,
     ModuleInfoIconComponent,
+    ApplicablePoliciesTriggerComponent,
   ],
   templateUrl: './premissions.component.html',
   styleUrl: './premissions.component.scss',
@@ -42,6 +45,7 @@ import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-inf
 })
 
 export class PremissionsComponent implements OnInit, OnDestroy {
+  applicablePolicies = APPLICABLE_POLICIES_KEYS.TIME_OFF_PERMISSIONS;
   moduleinfo: string = '';
   subscription!: Subscription;
   permissiondata = {} as any;

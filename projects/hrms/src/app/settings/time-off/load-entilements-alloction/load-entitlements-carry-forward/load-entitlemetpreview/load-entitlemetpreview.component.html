@@ -1,82 +1,212 @@
 <div class="load-components-container">
-    <div class="custom-table-content">
+    <div class="custom-p-multi-select-table mb-3">
         @if(!loading){
-        <table class="w-100">
-            <thead>
+        <p-table [value]="employeesList" [scrollable]="true" scrollHeight="60dvh" class="w-100">
+            <ng-template pTemplate="header">
                 <tr>
                     <th>Employee</th>
-                    <th *ngFor="let type of leaveTypes">{{type}}</th>
+                    <th class="text-center" *ngFor="let type of leaveTypes">{{ type }}</th>
                 </tr>
-            </thead>
-            <tbody>
-                <ng-container *ngIf="employeesList.length > 0; else noDataTemplate">
-                    <tr *ngFor="let row of employeesList">
-                        <td>
-                            <a class="data-nav-btn" (click)="openLeaveDetails(row,viewmodal)">{{ row.employee }}</a>
-                        </td>
-                        <td *ngFor="let type of leaveTypes">{{ row[type] ?? 0 }}</td>
-                    </tr>
-                </ng-container>
-                <ng-template #noDataTemplate>
-                    <tr>
-                        <app-no-data-found />
-                    </tr>
-                </ng-template>
-            </tbody>
-        </table>
-        }
-        @else {
+            </ng-template>
+            <ng-template pTemplate="body" let-row>
+                <tr>
+                    <td>
+                        <a class="data-nav-btn" (click)="openLeaveDetails(row)">{{ row.employee }}</a>
+                    </td>
+                    <td class="text-center" *ngFor="let type of leaveTypes">{{ row[type] ?? 0 }}</td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+                <tr><app-no-data-found /></tr>
+            </ng-template>
+        </p-table>
+        } @else {
         <app-data-loader-content />
         }
     </div>
 
     <div class="footer-content">
-        <div class="d-flex justify-content-end align-items-center gap-3">
-            <button type="button" class="custom-btn btn-secondary" (click)="navigationtoback()">Back</button>
-            <button type="submit" class="custom-btn btn-primary" [disabled]="leaveTypes.length === 0"
-                (click)="navigationtomapcategory()">Proceed to Mapping</button>
-        </div>
+        <button type="button" class="custom-btn btn-secondary px-5" (click)="navigationtoback()">Back</button>
+        <button type="submit" class="custom-btn btn-primary px-5" [disabled]="employeesList.length === 0 || spinnerLoader" (click)="submit()">
+            @if(spinnerLoader){
+            <div class="button-loader-content">
+                <div class="spinner-border button-spinner text-light" role="status"></div>
+                <span>Loading...</span>
+            </div>
+            } @else {
+            <span>{{ 'Submit' | translate }}</span>
+            }
+        </button>
     </div>
 </div>
 
-<!--View Modal-->
+<!-- Employee name click — detail popup -->
 <ng-template #viewmodal let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="custom-poup-header-content popup-header-border">
             <div>
-                <p class="popup-heading mb-0"> Leave Carry Forward Summary - {{selectemployeename}}
-                    ({{selectedfusionEmpId}})</p>
+                <p class="popup-heading mb-0">Leave Carry Forward Summary - {{ selectemployeename }} ({{ selectedfusionEmpId }})</p>
             </div>
             <div>
                 <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
             </div>
         </div>
         <div class="custom-main-popup-content">
-            <div class="popup-table-wrapper">
-                <div class="popup-table-scroll-container">
-                    <table class="popup-table">
-                        <thead>
+            <!-- Table 1: Leave detail -->
+            <div class="custom-p-multi-select-table mb-3">
+                <p-table [value]="selectedEmployeeDetail" [scrollable]="true" scrollHeight="25dvh">
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th>Leave Type</th>
+                            <th class="text-center">Entitled</th>
+                            <th class="text-center">Availed</th>
+                            <th class="text-center">Balance</th>
+                            <th class="text-center">Max CF</th>
+                            <th class="text-center">Actual CF</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-l>
+                        <tr>
+                            <td>{{ l.leaveType }}</td>
+                            <td class="text-center">{{ l.entitled }}</td>
+                            <td class="text-center">{{ l.availed }}</td>
+                            <td class="text-center">{{ l.balance }}</td>
+                            <td class="text-center">{{ l.maxCarryForward }}</td>
+                            <td class="text-center">{{ l.actualCarryForward }}</td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="emptymessage">
+                        <tr><td colspan="6" class="text-center text-muted">No data</td></tr>
+                    </ng-template>
+                </p-table>
+            </div>
+
+            <!-- Table 2: Breakdown summary with source category + info icon -->
+            <div *ngIf="selectedEmployeeBreakdownView.length > 0">
+                <p class="popup-heading mb-2">Entitlement Breakdown</p>
+                <div class="custom-p-multi-select-table mb-2">
+                    <p-table [value]="selectedEmployeeBreakdownView" [scrollable]="true" scrollHeight="30dvh">
+                        <ng-template pTemplate="header">
                             <tr>
-                                <th>Leave Type</th>
-                                <th>Entitled</th>
-                                <th>Availed</th>
-                                <th>Balance</th>
-                                <th>Max CF</th>
-                                <th>Actual CF</th>
+                                <th>Source Category</th>
+                                <th>Target Category</th>
+                                <th class="text-center">Frequency</th>
+                                <th class="text-center">Cycle Handling</th>
+                                <th class="text-center">Total</th>
                             </tr>
-                        </thead>
-                        <tbody>
-                            <tr *ngFor="let l of selectedEmployeeDetail">
-                                <td>{{l.leaveType}}</td>
-                                <td>{{l.entitled}}</td>
-                                <td>{{l.availed}}</td>
-                                <td>{{l.balance}}</td>
-                                <td>{{l.maxCarryForward}}</td>
-                                <td>{{l.actualCarryForward}}</td>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-entry let-i="rowIndex">
+                            <tr>
+                                <td>
+                                    <div *ngFor="let src of entry.sourceCategories" class="d-flex align-items-center gap-1 mb-1">
+                                        <span>{{ src.name }}</span>
+                                        <span class="text-muted small">({{ src.actualCarryForward }})</span>
+                                    </div>
+                                </td>
+                                <td>{{ entry.destinationCategoryName }}</td>
+                                <td class="text-center">{{ entry.frequencyType }}</td>
+                                <td class="text-center">{{ entry.previousCycleHandling }}</td>
+                                <td class="text-center">
+                                    <span>{{ entry.allowedDays }}</span>
+                                    <i class="bi bi-info-circle ms-2 text-primary" style="cursor:pointer" title="View cycle breakdown"
+                                        (click)="toggleBreakdownRow(i)"></i>
+                                </td>
                             </tr>
-                        </tbody>
-                    </table>
+                            <!-- Inline cycle breakdown -->
+                            <tr *ngIf="expandedBreakdownIdx === i">
+                                <td colspan="5" class="p-0">
+                                    <div class="p-3">
+                                        <p-table [value]="entry.cycles" [scrollable]="true" scrollHeight="20dvh">
+                                            <ng-template pTemplate="header">
+                                                <tr>
+                                                    <th>Cycle</th>
+                                                    <th class="text-center">Start Date</th>
+                                                    <th class="text-center">End Date</th>
+                                                    <th class="text-center">Entitlement</th>
+                                                </tr>
+                                            </ng-template>
+                                            <ng-template pTemplate="body" let-c>
+                                                <tr>
+                                                    <td>C{{ c.cycleNo }}</td>
+                                                    <td class="text-center">{{ c.cycleStart | date }}</td>
+                                                    <td class="text-center">{{ c.cycleEnd | date }}</td>
+                                                    <td class="text-center">
+                                                        <span [class.text-muted]="c.entitlement === 0">{{ c.entitlement }}</span>
+                                                    </td>
+                                                </tr>
+                                            </ng-template>
+                                            <ng-template pTemplate="emptymessage">
+                                                <tr><td colspan="4" class="text-center text-muted">No breakdown configured</td></tr>
+                                            </ng-template>
+                                        </p-table>
+                                    </div>
+                                </td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="emptymessage">
+                            <tr><td colspan="5" class="text-center text-muted">No breakdown data</td></tr>
+                        </ng-template>
+                    </p-table>
                 </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+<!-- Total count click — full cycle breakdown popup -->
+<ng-template #breakdownModal let-modal>
+    <div class="custom-main-popup-container" ngbAutofocus>
+        <div class="custom-poup-header-content popup-header-border">
+            <div class="pt-2">
+                <p class="popup-heading mb-0">Cycle Breakdown - {{ selectedEmployeeBreakdown?.employee }} ({{ selectedEmployeeBreakdown?.fusionEmpId }})</p>
+            </div>
+        </div>
+        <div class="custom-main-popup-content">
+            <div class="custom-accordians custom-modal-height">
+                <p-accordion [multiple]="true">
+                    <p-accordion-panel *ngFor="let entry of selectedEmployeeBreakdownView; let i = index" [value]="i">
+                        <p-accordion-header>
+                            <div class="d-flex align-items-center gap-2 w-100">
+                                <span class="accordian-header-text">{{ entry.destinationCategoryName }}</span>
+                                <span class="badge-pill">{{ entry.frequencyType }}</span>
+                                <span class="badge-pill">{{ entry.previousCycleHandling }}</span>
+                                <span class="ms-auto text-muted small pe-3">Total: {{ entry.allowedDays }}</span>
+                            </div>
+                        </p-accordion-header>
+                        <p-accordion-content>
+                            <div class="custom-p-multi-select-table custom-accordian-table">
+                                <p-table [value]="entry.cycles" [scrollable]="true" scrollHeight="30dvh">
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th class="text-start">Cycle</th>
+                                            <th class="text-center">Start Date</th>
+                                            <th class="text-center">End Date</th>
+                                            <th class="text-center">Entitlement</th>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-c>
+                                        <tr>
+                                            <td class="text-start">C{{ c.cycleNo }}</td>
+                                            <td class="text-center">{{ c.cycleStart | date:'yyyy-MM-dd' }}</td>
+                                            <td class="text-center">{{ c.cycleEnd | date:'yyyy-MM-dd' }}</td>
+                                            <td class="text-center">
+                                                <span [class.text-muted]="c.entitlement === 0" [class.fw-bold]="c.entitlement > 0">{{ c.entitlement }}</span>
+                                            </td>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="emptymessage">
+                                        <tr>
+                                            <td colspan="4" class="text-center text-muted">No breakdown available</td>
+                                        </tr>
+                                    </ng-template>
+                                </p-table>
+                            </div>
+                        </p-accordion-content>
+                    </p-accordion-panel>
+                </p-accordion>
+            </div>
+            <div class="custom-modal-footer">
+                <button type="button" class="custom-btn btn-primary" (click)="modal.dismiss()">Close</button>
             </div>
         </div>
     </div>

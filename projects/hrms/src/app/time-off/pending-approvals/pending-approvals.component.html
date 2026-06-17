@@ -39,7 +39,7 @@
     }
     @else {
     <div class="heading-content">
-      <div class="commpoment-name cursor" (click)="navigate()"><u>Probation</u>
+       <div class="commpoment-name cursor" (click)="navigate()"><u>Probation</u>
         <span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
       </div>
       <div class="component-header">Assessment Form</div>
@@ -51,8 +51,9 @@
       </ng-template>
     </div>
     }
-    @if (router.url == '/pending-approvals/time-sheets') {
+    @if (applicablePoliciesSubModuleKey) {
     <div class="d-flex gap-2 align-items-center">
+      @if (router.url == '/pending-approvals/time-sheets') {
       <div>
         <button type="button" class="custom-btn btn-secondary position-relative" (click)="toggleFilters(filterContent)">
           <i class="bi bi-funnel me-2"></i>Filters
@@ -62,6 +63,11 @@
       <div class="ms-auto">
         <ng-container *ngTemplateOutlet="headerRightTemplate"></ng-container>
       </div>
+      }
+            <app-applicable-policies-trigger
+        [moduleKey]="applicablePoliciesModuleKey"
+        [subModuleKey]="applicablePoliciesSubModuleKey">
+      </app-applicable-policies-trigger>
     </div>
     }
     <!-- @if (router.url == '/pending-approvals/time-sheets') {

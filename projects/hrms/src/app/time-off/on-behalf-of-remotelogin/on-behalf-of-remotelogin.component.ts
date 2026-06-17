@@ -19,17 +19,22 @@ import { AuthService } from '../../services/auth.service';
 import { OnBehalfOfRemoteloginTabsComponent } from '../../shared/time-off-module-tabs/on-behalf-of-remotelogin-tabs/on-behalf-of-remotelogin-tabs.component';
 import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
 import { TimeoffYearFilterService } from '../../services/timeoff-year-filter.service';
+import { ApplicablePoliciesTriggerComponent } from '../../shared/policies/applicable-policies-trigger/applicable-policies-trigger.component';
+import { APPLICABLE_POLICIES_KEYS } from '../../shared/policies/policy-visibility.catalog';
+
+
 
 @Component({
   selector: 'app-on-behalf-of-remotelogin',
   imports: [CommonModule, RouterModule, ReactiveFormsModule, TranslateModule, DropdownModule, ModuleInfoIconComponent,
-    Select, ModuleInformationComponent, NgbPopoverModule, FormsModule, OnBehalfOfRemoteloginTabsComponent],
+    Select, ModuleInformationComponent, NgbPopoverModule, FormsModule, OnBehalfOfRemoteloginTabsComponent, ApplicablePoliciesTriggerComponent],
   templateUrl: './on-behalf-of-remotelogin.component.html',
   styleUrl: './on-behalf-of-remotelogin.component.scss',
   encapsulation: ViewEncapsulation.None,
 })
 
 export class OnBehalfOfRemoteloginComponent implements OnInit, OnDestroy {
+  applicablePolicies = APPLICABLE_POLICIES_KEYS.ON_BE_HALF_OF_REMOTE_LOGIN;
   empinfo = {} as IJob;
   remoteLogin = [] as any;
   destroy$: Subject<boolean> = new Subject<boolean>();
@@ -46,8 +51,8 @@ export class OnBehalfOfRemoteloginComponent implements OnInit, OnDestroy {
   selectedYear: number = this.currentYear;
   years: number[] = [];
 
-  constructor(private modalService: NgbModal, private fb: FormBuilder, private http: HttpService, 
-    private sharedModalService: OpenModalService, public rbac: RbacService, public formsValidation: FormValidationsService, 
+  constructor(private modalService: NgbModal, private fb: FormBuilder, private http: HttpService,
+    private sharedModalService: OpenModalService, public rbac: RbacService, public formsValidation: FormValidationsService,
     public readonly router: Router, private authService: AuthService, private timeoffYearFilterService: TimeoffYearFilterService) { }
 
   ngOnInit(): void {
@@ -108,7 +113,7 @@ export class OnBehalfOfRemoteloginComponent implements OnInit, OnDestroy {
         this.employeeiddetails = data.filter((emp: any) => emp.employeeId != loggedInUser.employeeId).map((emp: any) => {
           const fusionPart = emp.fusionEmpId ? `${emp.fusionEmpId} - ` : '';
           const fullName = `${fusionPart}${emp.firstName ?? ''} ${emp.middleName ? emp.middleName + ' ' : '' }${emp.lastName ?? ''}`.trim();
-          const leaveRequestName = `${emp.firstName ?? ''} ${emp.middleName ? emp.middleName + ' ' : '' }${emp.lastName ?? ''} 
+          const leaveRequestName = `${emp.firstName ?? ''} ${emp.middleName ? emp.middleName + ' ' : '' }${emp.lastName ?? ''}
           ${emp.fusionEmpId ? `(${emp.fusionEmpId})` : '' }`.trim();
           return {
             ...emp,
@@ -137,7 +142,7 @@ export class OnBehalfOfRemoteloginComponent implements OnInit, OnDestroy {
         this.myTeamData = data.filter((emp: any) => emp.employeeId != loggedInUser.employeeId).map((emp: any) => {
           const fusionPart = emp.fusionEmpId ? `${emp.fusionEmpId} - ` : '';
           const fullName = `${fusionPart}${emp.firstName ?? ''} ${emp.middleName ? emp.middleName + ' ' : ''}${emp.lastName ?? ''}`.trim();
-          const leaveRequestName = `${emp.firstName ?? ''} ${emp.middleName ? emp.middleName + ' ' : ''}${emp.lastName ?? ''} 
+          const leaveRequestName = `${emp.firstName ?? ''} ${emp.middleName ? emp.middleName + ' ' : ''}${emp.lastName ?? ''}
           ${emp.fusionEmpId ? `(${emp.fusionEmpId})` : ''}`.trim();
           return {
             ...emp,
@@ -197,7 +202,7 @@ export class OnBehalfOfRemoteloginComponent implements OnInit, OnDestroy {
   onEmployeeChange(event: any): void {
     const selectedEmp = event?.value?.employeeId || 0;
     this.selectedOtherEmployee = event?.value;
-    this.selectedEmpName = `${this.selectedOtherEmployee?.firstName ?? ''} ${this.selectedOtherEmployee?.middleName 
+    this.selectedEmpName = `${this.selectedOtherEmployee?.firstName ?? ''} ${this.selectedOtherEmployee?.middleName
       ? this.selectedOtherEmployee?.middleName + ' ' : '' }${this.selectedOtherEmployee?.lastName ?? ''}`;
     this.selectedEmpFusionId = this.selectedOtherEmployee?.fusionEmpId;
     this.http.onBehalfOfRemoteLoginSelectedEmp$.next(selectedEmp);
@@ -255,7 +260,7 @@ export class OnBehalfOfRemoteloginComponent implements OnInit, OnDestroy {
     const selectedYear = this.yearSelectionForm.get('selectedYear')?.value;
     this.selectedYear = selectedYear;
     this.timeoffYearFilterService.setSelectedYear(selectedYear);
-    
+
     if (this.selectedOtherEmployee?.employeeId) {
       this.getRemoteLoginRequest(this.selectedOtherEmployee.employeeId);
       this.http.onBehlafOfRemoteLoginSignal.set(true);

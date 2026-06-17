@@ -11,4 +11,6 @@ export interface ISeparation {
     status: string;
     id: number;
     noticePeriodTypeDays:string;
+    finalLastWorkingDate:string;
+    noOfDaysExtended:number;
 }

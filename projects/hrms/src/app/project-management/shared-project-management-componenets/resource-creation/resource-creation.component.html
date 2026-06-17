@@ -314,15 +314,9 @@
                   </div>
                 </div>
 
-                <!-- RIGHT: Buttons -->
-                <!-- <div class="action-block">
-                <app-circular-add (click)="addResourceRow(); $event.stopPropagation()" />
-                <app-circular-delete *ngIf="resources.length > 1"
-                  (click)="removeResource(i); $event.stopPropagation()" />
-              </div> -->
 
                 <div class="action-block d-flex align-items-end justify-content-end">
-                  <app-circular-delete *ngIf="editingEmployeeId !== null"
+                  <app-circular-delete *ngIf="editingEmployeeId !== null && !spinnerLoader"
                     (click)="removeResource(i); $event.stopPropagation()"></app-circular-delete>
                   <button type="button" class="custom-btn btn-primary" (click)="onRowSave(i); $event.stopPropagation()"
                     [disabled]="row.get('saved')?.value || (row.invalid && editingEmployeeId === null)">
@@ -355,8 +349,8 @@
                     [disabled]="row.get('saved')?.value || (row.invalid && editingEmployeeId === null) || spinnerLoader">
                     {{ editingEmployeeId !== null ? 'Update' : 'Add' }}
                   </button>
-                  <app-circular-delete *ngIf="editingEmployeeId !== null || spinnerLoader" class="cursor"
-                    (click)="removeResource(i); $event.stopPropagation()"></app-circular-delete>
+                  <app-circular-delete *ngIf="editingEmployeeId !== null && !spinnerLoader" class="cursor"
+                    type="button" (click)="removeResource(i); $event.stopPropagation()"></app-circular-delete>
                 </div>
               </div>
             </div>
@@ -474,7 +468,7 @@
           <i class="bi bi-pencil-square"></i>
         </span>
         <span type="button" class="text-danger" (click)="deleteOffcanvasEmployee(emp); $event.stopPropagation()"
-          title="Delete">
+          title="Delete" *ngIf="!spinnerLoader">
           <i class="bi bi-trash"></i>
         </span>
       </div>

@@ -302,6 +302,7 @@ export class RegularizationComponent {
         comments: comments,
         moduleId: environment.attendanceRegularizationModuleId,
         onBehalfOfApproval: true,
+        approvedPersonaType: 'onBehalfOf',
         headerRequests: this.selectedLeavesItems.map(item => ({
           headerID: item.approvalHeader.id,
           currentStage: item.approvalHeader.currentapprovalStage
@@ -314,6 +315,7 @@ export class RegularizationComponent {
         comments: comments,
         moduleId: environment.attendanceRegularizationModuleId,
         onBehalfOfApproval: true,
+        approvedPersonaType: 'onBehalfOf',
         headerRequests: [{
           headerID: this.selectedLeaveData.approvalHeader.id,
           currentStage: this.selectedLeaveData.approvalHeader.currentapprovalStage
@@ -336,6 +338,7 @@ export class RegularizationComponent {
         status: 'Processed',
         moduleId: environment.attendanceRegularizationModuleId,
         onBehalfOfApproval: true,
+        approvedPersonaType: 'onBehalfOf',
         headerRequests: this.selectedLeavesItems.map(item => ({
           headerID: item.approvalHeader.id,
           currentStage: item.approvalHeader.currentapprovalStage
@@ -347,6 +350,7 @@ export class RegularizationComponent {
         status: 'Processed',
         moduleId: environment.attendanceRegularizationModuleId,
         onBehalfOfApproval: true,
+        approvedPersonaType: 'onBehalfOf',
         headerRequests: [{
           headerID: this.selectedLeaveData.approvalHeader.id,
           currentStage: this.selectedLeaveData.approvalHeader.currentapprovalStage
@@ -376,6 +380,7 @@ export class RegularizationComponent {
         comments: comments,
         moduleId: environment.attendanceRegularizationModuleId,
         onBehalfOfApproval: true,
+        approvedPersonaType: 'onBehalfOf',
         headerRequests: this.selectedLeavesItems.map(item => ({
           headerID: item.approvalHeader.id,
           currentStage: item.approvalHeader.currentapprovalStage
@@ -388,6 +393,7 @@ export class RegularizationComponent {
         comments: comments,
         moduleId: environment.attendanceRegularizationModuleId,
         onBehalfOfApproval: true,
+        approvedPersonaType: 'onBehalfOf',
         headerRequests: [{
           headerID: this.selectedLeaveData.approvalHeader.id,
           currentStage: this.selectedLeaveData.approvalHeader.currentapprovalStage
@@ -406,10 +412,10 @@ export class RegularizationComponent {
           this.modalService.dismissAll();
           this.requestSummary = res.data;
 
-          if (this.selectedLeavesItems.length <= 1) {
+          if (this.selectedLeavesItems.length <= 0) {
             this.signalService.handleResponse(this.requestSummary, successMessage);
           } else {
-            this.modalService.open(this.leaveSummary, {centered: true,});
+            this.modalService.open(this.leaveSummary, {centered: true, size: 'lg', backdrop: 'static'});
             setTimeout(() => this.modalService.dismissAll(), 5000);
           }
 

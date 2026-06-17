@@ -62,6 +62,12 @@
                 <button type="button" (click)="navigateToLeaveSummary()" class="custom-btn btn-primary">View Leave Summary</button>
                 }
             </div>
+            <div *ngIf="disaplyapplybutton">
+                <app-applicable-policies-trigger
+                    [moduleKey]="applicablePolicies.moduleKey"
+                    [subModuleKey]="applicablePolicies.subModuleKey">
+                </app-applicable-policies-trigger>
+            </div>
         </div>
     </div>
 
@@ -101,7 +107,7 @@
                             <p class="m-0">0</p>
                             }
                         </div>
-                        
+
                         @if(this.employeeiddetails.empType === 'Probation' && (item.category.isProbationAllowed && item.probationLeaves >= 0)){
                         <div class="separator"></div>
                         <div class="leave-category-text">
@@ -111,8 +117,8 @@
                             }
                         </div>
                         }
-                        
-                        
+
+
                         @if (
                         ['comp off',
                         'compoff',
@@ -125,7 +131,7 @@
                         'compensatory off leaves',
                         'comp off leave',
                         'compoff leave'
-                        ].includes((item.category?.name ?? '').toLowerCase())
+                        ].includes((item.category.name || '').toLowerCase())
                         ) {
                         <div class="separator"></div>
                         <div class="leave-category-text">
@@ -301,7 +307,7 @@
                         <label class="form-label custom-label mb-2">{{'Reason For Leave'| translate}}<span class="text-danger">*</span></label>
                         <textarea class="form-control custom-input" [maxlength]="250" [minlength]="10" formControlName="reason"
                             placeholder="Please enter reason" (input)="formsValidation.validateInput(leaveForm.get('reason'))"></textarea>
-                        <div class="textarea-count-text">{{ leaveForm.get('reason')?.value?.length ?? 0 }}/250</div>
+                        <div class="textarea-count-text">{{ (leaveForm.get('reason')?.value || '').length }}/250</div>
                         <div class="error-msg">
                             <div *ngIf="(leaveForm.get('reason')?.touched && leaveForm.get('reason')?.errors?.['required'])">Reason is required</div>
                             <div *ngIf="leaveForm.get('reason')?.invalid && leaveForm.get('reason')?.errors?.['minlength']">
@@ -333,6 +339,10 @@
                     <p>Balance {{ selectedleave.category?.name }} : {{ remainingLeaves }} {{ remainingLeaves === 1 || remainingLeaves === 0.5 ? 'Day' : 'Days' }}</p>
                     </div>
                     }
+                </div>
+                <div class="alert alert-info custom-alert-info py-2" *ngIf="selectedleave?.category?.isNoticePeriodExtended === true 
+                && selectedleave?.category?.noticePeriodAllowedValue >= 0 && (this.employeeiddetails.separationType === 'Separation' || this.employeeiddetails.separationType === 'Early Relieving' || this.employeeiddetails.separationType === 'Extended')"  >
+                    <small>Note: Applying this leave will extend your last working day</small>
                 </div>
                 <div class="custom-modal-footer">
                     <button type="button" class="custom-btn btn-secondary" (click)="openModal(confirmationpopup)">{{'Cancel'| translate}}</button>

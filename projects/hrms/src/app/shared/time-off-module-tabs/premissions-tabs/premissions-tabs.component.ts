@@ -7,9 +7,12 @@ import { HttpService } from '../../../services/http.service';
 import { RbacService } from '../../../services/rbac.service';
 import { SidetabsloadersComponent } from "../../sidetabsloaders/sidetabsloaders.component";
 import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.service';
+import { CdkDragDrop, DragDropModule, moveItemInArray } from '@angular/cdk/drag-drop';
+import { MenuOrderService } from '../../../services/theme-service/menu-order.service';
 @Component({
   selector: 'app-premissions-tabs',
-  imports: [CommonModule, RouterModule, SidetabsloadersComponent],
+  standalone: true,
+  imports: [CommonModule, RouterModule, SidetabsloadersComponent, DragDropModule],
   templateUrl: './premissions-tabs.component.html',
   styleUrl: './premissions-tabs.component.scss'
 })
@@ -25,9 +28,23 @@ export class PremissionsTabsComponent implements OnInit, OnDestroy {
   destroy$: Subject<boolean> = new Subject<boolean>();
   loadiing = false;
   selectedYear: any;
+  navTabs: any[] = [];
+  filteredTabs: any[] = [];
+  readonly tabsKey = 'timeoff-permissions-approval-tabs';
+  private userInteracted = false;
 
-  constructor(public readonly router: Router, private http: HttpService, public rbac: RbacService,
-    private TimeoffYearFilterService: TimeoffYearFilterService) {
+  trackByNavLink(index: number, tab: any): string {
+    return tab.link;
+  }
+
+  constructor(
+    public readonly router: Router,
+    private http: HttpService,
+    public rbac: RbacService,
+    private TimeoffYearFilterService: TimeoffYearFilterService,
+    private readonly menuOrderService: MenuOrderService
+  ) {
+    void this.menuOrderService.ensureLoaded();
     effect(() => {
       if (this.http.permissionTriggerSignal()) {
         this.getPermissionRequest();
@@ -76,6 +93,7 @@ export class PremissionsTabsComponent implements OnInit, OnDestroy {
         this.cancelPermissionsRequestsCount = this.wfh.filter(
           (element: { status: string }) => element.status === 'Cancelled'
         ).length;
+        this.updateNavTabs();
         this.loadiing = false
       },
       error: (error) => {
@@ -109,6 +127,91 @@ export class PremissionsTabsComponent implements OnInit, OnDestroy {
         this.wfh = []; // Set to empty array on error
       },
     });
+  }
+
+  private updateNavTabs() {
+    this.navTabs = [
+      {
+        label: 'Waiting For Approval',
+        link: '/time-off/premissions/waiting-for-approval',
+        icon: '/time-off-icon/waiting-for-approval-icon.png',
+        count: this.waitingForApprovalPermissionsCount,
+        permission: { feature: 'Waiting For Approval (Permissions)', action: 'view' }
+      },
+      {
+        label: 'Processed',
+        link: '/time-off/premissions/processed',
+        icon: '/time-off-icon/processed-icon.png',
+        count: this.approvalPermissionsRequestsCount,
+        permission: { feature: 'Processed (Permissions)', action: 'view' }
+      },
+      {
+        label: 'Rejected',
+        link: '/time-off/premissions/rejected',
+        icon: '/time-off-icon/rejected-icon.png',
+        count: this.rejectedPermissionsRequestsCount,
+        permission: { feature: 'Rejected (Permissions)', action: 'view' }
+      },
+      {
+        label: 'Cancelled',
+        link: '/time-off/premissions/cancelled',
+        icon: '/time-off-icon/cancelled-icon.png',
+        count: this.cancelPermissionsRequestsCount,
+        permission: { feature: 'Cancel (Permissions)', action: 'view' }
+      }
+    ];
+    this.filterTabsByRbac();
+  }
+
+  filterTabsByRbac(): void {
+    this.filteredTabs = this.navTabs.filter(tab => {
+      if (!tab.permission) return true;
+      const { feature, action } = tab.permission;
+      return this.rbac.allowedToAccess(`${feature}.${action}`);
+    });
+    this.applySavedTabsOrder();
+    this.redirectIfNeeded();
+  }
+
+  private applySavedTabsOrder(): void {
+    if (!this.filteredTabs.length) return;
+    const reordered = this.menuOrderService.applySavedTabsOrder(this.tabsKey, this.filteredTabs, item => String(item?.link ?? ''));
+    if (reordered !== this.filteredTabs) {
+      this.filteredTabs.splice(0, this.filteredTabs.length, ...reordered);
+    }
+  }
+
+  navigate(link: string): void {
+    this.userInteracted = true;
+    this.router.navigate([link], { queryParamsHandling: 'preserve' });
+  }
+
+  private redirectIfNeeded(): void {
+    if (this.userInteracted) return;
+    if (!this.filteredTabs.length) return;
+
+    const currentPath = this.router.url.split('?')[0];
+    const entryPaths = new Set([
+      '/time-off/premissions',
+      '/time-off/premissions/waiting-for-approval',
+      '/time-off/premissions/processed',
+      '/time-off/premissions/rejected',
+      '/time-off/premissions/cancelled',
+    ]);
+    if (!entryPaths.has(currentPath)) return;
+
+    const preferred = String(this.filteredTabs[0]?.link ?? '');
+    if (!preferred || preferred === currentPath) return;
+    this.router.navigate([preferred], { queryParamsHandling: 'preserve' });
+  }
+
+  onDrop(event: CdkDragDrop<any[]>): void {
+    if (event.previousIndex === event.currentIndex) return;
+    moveItemInArray(this.filteredTabs, event.previousIndex, event.currentIndex);
+    const employeeId = this.menuOrderService.getCurrentEmployeeId();
+    if (!employeeId) return;
+    const tabs = this.filteredTabs.map(item => ({ id: String(item.link ?? ''), label: String(item.label ?? ''), route: String(item.link ?? '') }));
+    this.menuOrderService.saveTabsModuleOrder(employeeId, this.tabsKey, tabs);
   }
 
   ngOnDestroy(): void {

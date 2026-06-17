@@ -29,7 +29,7 @@
             {{'Year is required'|translate}}
           </div>
         </div>
-  
+
         <!-- Location -->
         <div>
           <label for="location" class="form-label custom-label mb-2">
@@ -46,7 +46,7 @@
             {{'Location is required' | translate}}
           </div>
         </div>
-  
+
         <!-- Sub Location -->
         <div>
           <label for="subLocation" class="form-label custom-label mb-2">
@@ -63,7 +63,7 @@
             {{'Sub Location is required' | translate}}
           </div>
         </div>
-  
+
         <!-- Shift -->
         <div>
           <label for="shift" class="form-label custom-label mb-2">
@@ -80,7 +80,7 @@
             {{'Shift is required' | translate}}
           </div>
         </div>
-  
+
         <div class="pt-4 mt-1">
           <button type="button" class="custom-btn btn-primary px-4" (click)="addMomentRow()">
             <i class="bi bi-plus me-2"></i>{{'Add New' | translate}}
@@ -116,7 +116,7 @@
               </div>
             </div>
 
-            
+
             <div class="w-100">
               <label class="form-label custom-label">{{'Policy Attachment (Image and PDF only)' | translate}}<span
                   class="text-danger">*</span></label>
@@ -136,9 +136,9 @@
               <div class="small-blue-toggle mt-2">
                 <p-toggleswitch formControlName="acknowledged" (change)="onClickedAck($event, i)" class="custom-toggle" />
               </div>
-            
+
             </div>
-  
+
             <!-- Email Notification Toggle + Delete Button -->
             <div class="w-100">
               <div class="d-flex justify-content-between">
@@ -151,16 +151,113 @@
               <div class="small-blue-toggle mt-2">
                 <p-toggleswitch formControlName="notification" (onChange)="onClickedEmail($event, i)" class="custom-toggle" />
               </div>
-              
+
+            </div>
+          </div>
+
+          <div class="mt-3 policy-mapping-section" formArrayName="visibilityMappings">
+            <div class="policy-mapping-table">
+              <table class="w-100">
+                <thead>
+                  <tr>
+                    <th>Module</th>
+                    <th>Sub Modules</th>
+                    <th class="text-center">Display Policy</th>
+                    <th class="text-center">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let mapping of getVisibilityMappings(i).controls; let m = index" [formGroupName]="m">
+                    <td>
+                      <div class="custom-p-select-content m-0">
+                        <p-select
+                          [options]="getModuleOptionsForRow(i, m)"
+                          optionLabel="label"
+                          optionValue="key"
+                          optionDisabled="disabled"
+                          formControlName="moduleKey"
+                          [filter]="true"
+                          filterBy="label"
+                          filterPlaceholder="Search module"
+                          class="form-select custom-select w-75"
+                          appendTo="body"
+                          [autoZIndex]="true"
+                          [baseZIndex]="2000"
+                          [resetFilterOnHide]="true"
+                          placeholder="Please select a module"
+                          (onChange)="onModuleKeyChange(i, m, $event.value)">
+                        </p-select>
+                      </div>
+                      <div *ngIf="shouldShowMappingError(i, m, 'moduleKey', 'duplicateModule')" class="error-msg text-start">
+                        {{'Module already selected' | translate}}
+                      </div>
+                    </td>
+                    <td>
+                      <div class="custom-p-multiSelect-content m-0">
+                        <p-multiselect
+                          [options]="getSubModuleOptions(getVisibilityMappings(i).at(m).get('moduleKey')?.value)"
+                          optionLabel="label"
+                          optionValue="value"
+                          formControlName="subModuleKeys"
+                          class="form-select custom-select w-75"
+                          appendTo="body"
+                          [autoZIndex]="true"
+                          [baseZIndex]="2000"
+                          panelStyleClass="custom-phase-multiselect-panel"
+                          [disabled]="isSubModuleDisabled(i, m)"
+                          [showClear]="true"
+                          [filter]="true"
+                          filterBy="label"
+                          filterPlaceHolder="Search sub modules"
+                          [placeholder]="getSubModulePlaceholder(i, m)"
+                          (onChange)="onSubModuleKeysChange(i, m, $event.value)"
+                          selectedItemsLabel="{2} items selected"
+                          [maxSelectedLabels]="2"
+                          resetFilterOnHide="true">
+                        </p-multiselect>
+                      </div>
+                      <div *ngIf="shouldShowMappingError(i, m, 'subModuleKeys', 'required')" class="error-msg text-start">
+                        {{'Sub Modules are required' | translate}}
+                      </div>
+                    </td>
+                    <td class="text-center">
+                      <div class="d-flex justify-content-center">
+                        <div class="small-blue-toggle">
+                          <p-toggleswitch formControlName="displayEnabled" [disabled]="!isDisplayToggleVisible(i, m)" class="custom-toggle" />
+                        </div>
+                      </div>
+                    </td>
+                    <td class="text-center">
+                      <div class="d-flex justify-content-center align-items-center gap-2">
+                        <button
+                          type="button"
+                          class="custom-action-btn"
+                          title="Add"
+                          (click)="addVisibilityMapping(i)">
+                          <i class="bi bi-plus-circle-fill custom-action-btn-icon"></i>
+                        </button>
+                        <button
+                          *ngIf="m > 0"
+                          title="Delete"
+                          type="button"
+                          class="custom-action-btn"
+                          (click)="removeVisibilityMapping(i, m)">
+                          <img src="/icons/red-trash-icon.png" alt="trash-icon" class="red-trash-icon" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
       </div>
-      <div class="error-msg my-1">Note: All Fields are Mandatory Fields</div>
+      <!-- <div class="error-msg my-1">Note: All Fields are Mandatory Fields</div> -->
     </div>
     <div class="d-flex gap-3 justify-content-end">
       <button type="button" class="custom-btn btn-secondary px-5" (click)="Cancel()">{{'Cancel' | translate}}</button>
-      <button class="custom-btn btn-primary px-5" [disabled]="policiesForm.invalid || !isShiftAvailable"
+      <button class="custom-btn btn-primary px-5" [disabled]="policiesForm.invalid || !isShiftAvailable || isPolicyVisibilityLoading"
         type="submit">{{'Submit' | translate}}</button>
     </div>
   </form>

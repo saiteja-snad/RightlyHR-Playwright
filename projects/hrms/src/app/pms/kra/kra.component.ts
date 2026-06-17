@@ -39,6 +39,9 @@ import { DomSanitizer, SafeResourceUrl, SafeUrl } from '@angular/platform-browse
 import { environment } from '../../../environments/environment';
 import { DocumentViewIconComponent } from '../../icons/document-view-icon/document-view-icon.component';
 import { FormValidationsService } from '../../services/form-validations.service';
+import { ApplicablePoliciesTriggerComponent } from '../../shared/policies/applicable-policies-trigger/applicable-policies-trigger.component';
+import { APPLICABLE_POLICIES_KEYS } from '../../shared/policies/policy-visibility.catalog';
+
 
 
 @Component({
@@ -58,12 +61,14 @@ import { FormValidationsService } from '../../services/form-validations.service'
     SelectModule,
     InfoIconComponent,
     DocumentViewIconComponent,
+    ApplicablePoliciesTriggerComponent,
   ],
   templateUrl: './kra.component.html',
   styleUrl: './kra.component.scss',
   encapsulation: ViewEncapsulation.None,
 })
 export class KraComponent implements OnInit, OnDestroy {
+  applicablePolicies = APPLICABLE_POLICIES_KEYS.PMS_KRA;
   moduleinfo = '';
   searchText = '';
   kraList: any[] = [];
@@ -71,23 +76,24 @@ export class KraComponent implements OnInit, OnDestroy {
   dataload = false;
   isSubmitting = false;
 
-  page = 1;
-  rows = 10;
-  first = 0;
-  collectionSize = 0;
 
   totalRecordsFromApi = 0;
   allKraRecords: any[] = [];
 
   selectedKraId: number = 0;
 
+  totalRecords = 0;
+  page = 1;
+  pageSize = 50;
+  rows = 50;
+  collectionSize = 0;
+  first = 0;
   options = [
-    { label: 10, value: 10 },
-    { label: 15, value: 15 },
-    { label: 20, value: 20 },
-    { label: 25, value: 25 },
+    { label: 50, value: 50 },
+    { label: 100, value: 100 },
+    { label: 150, value: 150 },
+    { label: 200, value: 200 }
   ];
-
   kraCategories: { id: number; name: string }[] = [];
   private pendingKraPayload: any = null;
 
@@ -235,7 +241,7 @@ existingDocumentUrl: string = '';
   loadKraList() {
     const params: any = {
       pageNumber: 1,
-      pageSize: 1000,
+      pageSize:1000 ,
       ...(this.searchText && { search: this.searchText }),
     };
 

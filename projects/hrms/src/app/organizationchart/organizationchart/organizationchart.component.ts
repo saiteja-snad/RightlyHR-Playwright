@@ -19,17 +19,21 @@ import { Skeleton } from 'primeng/skeleton';
 import { OrgchartService } from './../../services/orgchartservices/orgchart.service';
 import { OrgChartGridComponent } from './org-chart-grid/org-chart-grid.component';
 import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
+import { ApplicablePoliciesTriggerComponent } from '../../shared/policies/applicable-policies-trigger/applicable-policies-trigger.component';
+import { APPLICABLE_POLICIES_KEYS } from '../../shared/policies/policy-visibility.catalog';
+
 
 @Component({
   selector: 'app-organizationchart',
   imports: [CommonModule, Select, FormsModule, OrganizationChartModule, NgbPopoverModule, NoDataFoundComponent, TranslateModule,
-    ModuleInformationComponent, Skeleton, ModuleInformationComponent, OrgChartGridComponent,ModuleInfoIconComponent],
+    ModuleInformationComponent, Skeleton, ModuleInformationComponent, OrgChartGridComponent,ModuleInfoIconComponent, ApplicablePoliciesTriggerComponent],
   templateUrl: './organizationchart.component.html',
   styleUrl: './organizationchart.component.scss',
   encapsulation: ViewEncapsulation.None,
 })
 
 export class OrganizationchartComponent implements OnInit, OnDestroy {
+  applicablePolicies = APPLICABLE_POLICIES_KEYS.ORG_HIERARCHY;
   moduleinfo: string = '';
   data: TreeNode[] = [];
   subscription!: Subscription;
@@ -77,7 +81,7 @@ export class OrganizationchartComponent implements OnInit, OnDestroy {
   compact() {
     this.OrgchartService.triggerAction('toggleCompact');
   }
-  
+
   swap() {
     this.OrgchartService.triggerAction('swapLayout');
   }
@@ -105,7 +109,7 @@ export class OrganizationchartComponent implements OnInit, OnDestroy {
   downloadPdf() {
     this.OrgchartService.triggerAction('downloadPdf');
   }
-  
+
   onCompensationChange(value: boolean) {
   this.OrgchartService.setCompensationAmount(value);
 }

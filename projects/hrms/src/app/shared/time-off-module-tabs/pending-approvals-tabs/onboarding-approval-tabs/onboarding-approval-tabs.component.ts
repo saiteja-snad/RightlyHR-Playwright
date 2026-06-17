@@ -11,6 +11,8 @@ import { SignalsService } from '../../../../services/signals.service';
 import { CommonModule } from '@angular/common';
 import { SidetabsloadersComponent } from "../../../sidetabsloaders/sidetabsloaders.component";
 import { OnboardingFilterService } from '../onboarding-filter.service';
+import { DragDropModule } from '@angular/cdk/drag-drop';
+import { TabsDndDirective } from '../../../tabs-dnd/tabs-dnd.directive';
 interface NavLink {
   label: string;
   route: string;
@@ -21,7 +23,8 @@ interface NavLink {
 }
 @Component({
   selector: 'app-onboarding-approval-tabs',
-  imports: [CommonModule, RouterModule, SidetabsloadersComponent],
+  standalone: true,
+  imports: [CommonModule, RouterModule, DragDropModule, TabsDndDirective, SidetabsloadersComponent],
   templateUrl: './onboarding-approval-tabs.component.html',
   styleUrl: './onboarding-approval-tabs.component.scss'
 })
@@ -36,11 +39,13 @@ export class OnboardingApprovalTabsComponent implements OnInit, OnDestroy {
   countEmp: any;
   countRole: any;
   loading = false;
+  tabsKey = 'pending-approvals-onboarding-tabs';
+  private userInteracted = false;
 
   nodue_Request_data = [] as any[];
   selectedMonth: number = new Date().getMonth() + 1;
   selectedYear: number = new Date().getFullYear();
-  navLinks: any[] = [
+  navLinks: NavLink[] = [
     {
       label: 'Offer Letter',
       route: '/pending-approvals/on-boarding/offer-letter-history',
@@ -157,11 +162,12 @@ export class OnboardingApprovalTabsComponent implements OnInit, OnDestroy {
         this.selectedYear = year;
         this.getAllPendingApprovalsCount(false);
       });
-    this.navLinks = this.navLinks.filter(
-      (tab) => tab.permission?.feature && tab.permission?.action &&
-        this.rbac.allowedToAccess(`${tab.permission.feature}.${tab.permission.action}`)
+    this.navLinks = this.navLinks.filter((tab: NavLink) =>
+      !!tab.permission?.feature && !!tab.permission?.action &&
+      this.rbac.allowedToAccess(`${tab.permission.feature}.${tab.permission.action}`)
     );
     this.filteredNavLinks = this.navLinks;
+    this.redirectIfNeeded();
   }
 
  getAllPendingApprovalsCount(updateAll: boolean = false) {
@@ -172,23 +178,24 @@ export class OnboardingApprovalTabsComponent implements OnInit, OnDestroy {
         if (response.success) {
           const modules = response.data.modules;
           const moduleMap = new Map(modules.map((m: any) => [m.name, m.count]));
-          
+
           if (updateAll) {
-            this.navLinks = this.navLinks.map((link: { label: unknown; }) => ({
+            this.navLinks = this.navLinks.map((link: NavLink) => ({
               ...link,
-              count: moduleMap.get(link.label) ?? 0,
+              count: Number(moduleMap.get(link.label)) || 0,
             }));
             this.filteredNavLinks = [...this.navLinks];
           } else {
-            const activeLink = this.navLinks.find((link: { route: string; }) => this.isActiveRoute(link.route));
+            const activeLink = this.navLinks.find((link: NavLink) => this.isActiveRoute(link.route));
             if (activeLink) {
-              activeLink.count = moduleMap.get(activeLink.label) ?? 0;
+              activeLink.count = Number(moduleMap.get(activeLink.label)) || 0;
               const filteredLink = this.filteredNavLinks.find(l => l.label === activeLink.label);
               if (filteredLink) filteredLink.count = activeLink.count;
             }
           }
         }
         this.loading = false;
+        this.redirectIfNeeded();
       },
       error: (err: any) => {
         console.error('Error fetching approvals:', err);
@@ -198,6 +205,7 @@ export class OnboardingApprovalTabsComponent implements OnInit, OnDestroy {
   }
 
   navigateToAccessedRoute(route: string) {
+    this.userInteracted = true;
     this.onboardingFilter.setMonthYear(new Date().getMonth() + 1, new Date().getFullYear());
     this.getAllPendingApprovalsCount(true);
     const actualRoute = this.accessNav.navigateToAccessedRoute(route);
@@ -208,8 +216,25 @@ export class OnboardingApprovalTabsComponent implements OnInit, OnDestroy {
     }
   }
 
+  trackByNavLink(index: number, link: NavLink): string {
+    return link.route;
+  }
+
   isActiveRoute(link: string): boolean {
-    return this.router.url.includes(link);
+    const currentUrl = this.router.url;
+    return currentUrl === link || currentUrl.startsWith(link + '/');
+  }
+
+  private redirectIfNeeded(): void {
+    if (this.userInteracted) return;
+    if (!this.filteredNavLinks || this.filteredNavLinks.length === 0) return;
+
+    const currentPath = this.router.url.split('?')[0];
+    if (currentPath !== '/pending-approvals/on-boarding') return;
+
+    const preferred = this.filteredNavLinks[0]?.route ?? '';
+    if (!preferred || preferred === currentPath) return;
+    this.router.navigate([preferred], { queryParamsHandling: 'preserve' });
   }
 
   ngOnDestroy(): void {

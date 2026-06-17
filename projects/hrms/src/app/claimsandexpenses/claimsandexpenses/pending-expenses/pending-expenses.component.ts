@@ -8,7 +8,7 @@ import { HttpService } from '../../../services/http.service';
 import { CommonModule } from '@angular/common';
 import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { NgxDocViewerModule } from 'ngx-doc-viewer';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
@@ -16,10 +16,11 @@ import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.
 import { DownloadExpenseComponent } from "../../download-expense/download-expense.component";
 import { DocumentViewIconComponent } from "../../../icons/document-view-icon/document-view-icon.component";
 import { TranslateModule } from '@ngx-translate/core';
+import { TableModule } from 'primeng/table';
 
 @Component({
   selector: 'app-pending-expenses',
-  imports: [CommonModule, DateformatPipe,TranslateModule, NgxDocViewerModule, FormsModule, NoDataFoundComponent, DataLoaderContentComponent, DownloadExpenseComponent, DocumentViewIconComponent],
+  imports: [CommonModule, DateformatPipe, TranslateModule, NgxDocViewerModule, FormsModule, NoDataFoundComponent, DataLoaderContentComponent, DownloadExpenseComponent, DocumentViewIconComponent, TableModule, ReactiveFormsModule],
   templateUrl: './pending-expenses.component.html',
   styleUrl: './pending-expenses.component.scss'
 })
@@ -43,7 +44,17 @@ export class PendingExpensesComponent implements OnInit, OnDestroy {
   draftsCount: number = 0;
   expensesAttachment: any;
   selectedData = {} as any;
-  constructor(private http: HttpService, public formValidation: FormValidationService, private modalService: NgbModal, private sanitizer: DomSanitizer, private SelectedyeartimeOffService: TimeoffYearFilterService) { }
+  selectedExpenses: any[] = [];
+  selectedExpenseData: any;
+  responseSummary: any;
+  spinnerLoader = false;
+  approveForm!: FormGroup;
+  rejectForm!: FormGroup;
+  selectedLeaveStatus: any;
+
+
+  @ViewChild('expenseSummary') expenseSummary: any;
+  constructor(private http: HttpService, public formValidation: FormValidationService, private modalService: NgbModal, private sanitizer: DomSanitizer, private SelectedyeartimeOffService: TimeoffYearFilterService, private fb: FormBuilder) { }
 
   selectedYear: any;
   selectemp: any;
@@ -69,6 +80,18 @@ export class PendingExpensesComponent implements OnInit, OnDestroy {
           }
         });
       }
+    });
+  }
+
+  intializeApproveForm() {
+    this.approveForm = this.fb.group({
+      comments: ['', [Validators.required, Validators.maxLength(250)]]
+    });
+  }
+
+  intializeRejectForm() {
+    this.rejectForm = this.fb.group({
+      comments: ['', [Validators.required, Validators.maxLength(250)]]
     });
   }
 
@@ -101,7 +124,7 @@ export class PendingExpensesComponent implements OnInit, OnDestroy {
         },
       });
   }
-  
+
   viewItem(expid: number,) {
     this.updataid = expid;
     this.subscription = this.http
@@ -203,6 +226,204 @@ export class PendingExpensesComponent implements OnInit, OnDestroy {
     if (!url) return false;
     const lowerUrl = url.toLowerCase();
     return lowerUrl.endsWith('.jpg') || lowerUrl.endsWith('.jpeg') || lowerUrl.endsWith('.png');
+  }
+
+  selectCheck(value: any) {
+    this.selectedExpenses = [...value];
+  }
+
+  approveExpense(popup: any, item: any) {
+    this.selectedExpenseData = item;
+
+    this.modalService.open(popup, {
+      centered: true,
+      backdrop: 'static'
+    });
+  }
+
+  rejectExpense(popup: any, item: any) {
+    this.selectedExpenseData = item;
+
+    this.modalService.open(popup, {
+      centered: true,
+      backdrop: 'static'
+    });
+  }
+
+  handleAccept(form: FormGroup) {
+
+    this.spinnerLoader = true;
+
+    const payload = {
+      requestProcessedBy: this.empinfo.employeeId.toString(),
+      status: 'Approved',
+      comments: this.approveForm.value.comments,
+      moduleId: 19, // Replace with actual Expense Module Id
+      headerRequests:
+        this.selectedExpenses.length > 0
+          ? this.selectedExpenses.map(item => ({
+            headerID: item.pendingApprovalHeader?.id,
+            currentStage: item.pendingApprovalHeader?.currentapprovalStage
+          }))
+          : [
+            {
+              headerID: this.selectedExpenseData.pendingApprovalHeader?.id,
+              currentStage:
+                this.selectedExpenseData.pendingApprovalHeader?.currentapprovalStage
+            }
+          ]
+    };
+
+    this.http.putData(
+      'v2/PendingApproval/multiapprovals',
+      payload
+    ).subscribe({
+      next: (response: any) => {
+
+        const selectedCount = this.selectedExpenses.length;
+
+        this.selectedExpenses = [];
+        this.modalService.dismissAll();
+
+        this.responseSummary = response.data;
+
+        if (selectedCount > 1) {
+          this.modalService.open(this.expenseSummary, {
+            centered: true,
+            backdrop: 'static',
+            size: 'lg'
+          });
+        }
+
+        this.approveForm.reset();
+        this.getexpensesheaderbyemployeeid();
+      },
+      error: (err) => {
+        console.log(err);
+        this.modalService.dismissAll();
+      },
+      complete: () => {
+        this.spinnerLoader = false;
+      }
+    });
+  }
+
+  handleReject(form: FormGroup) {
+
+    this.spinnerLoader = true;
+
+    const payload = {
+      requestProcessedBy: this.empinfo.employeeId.toString(),
+      status: 'Rejected',
+      comments: this.rejectForm.value.comments,
+      moduleId: 19, // Replace with actual Expense Module Id
+      headerRequests:
+        this.selectedExpenses.length > 0
+          ? this.selectedExpenses.map(item => ({
+            headerID: item.pendingApprovalHeader?.id,
+            currentStage: item.pendingApprovalHeader?.currentapprovalStage
+          }))
+          : [
+            {
+              headerID: this.selectedExpenseData.pendingApprovalHeader?.id,
+              currentStage:
+                this.selectedExpenseData.pendingApprovalHeader?.currentapprovalStage
+            }
+          ]
+    };
+
+    this.http.putData(
+      'v2/PendingApproval/multiapprovals',
+      payload
+    ).subscribe({
+      next: (response: any) => {
+
+        const selectedCount = this.selectedExpenses.length;
+
+        this.selectedExpenses = [];
+        this.modalService.dismissAll();
+
+        this.responseSummary = response.data;
+
+        if (selectedCount > 1) {
+          this.modalService.open(this.expenseSummary, {
+            centered: true,
+            backdrop: 'static',
+            size: 'lg'
+          });
+        }
+
+        this.rejectForm.reset();
+        this.getexpensesheaderbyemployeeid();
+      },
+      error: (err) => {
+        console.log(err);
+        this.modalService.dismissAll();
+      },
+      complete: () => {
+        this.spinnerLoader = false;
+      }
+    });
+  }
+  onStatusApproveSelect(status: string) {
+    this.selectedLeaveStatus = status;
+
+    if (status === 'approved') {
+      this.approveForm.get('comments')?.setValue('Approved');
+    }
+  }
+
+  onStatusRejectSelect(status: string) {
+    this.selectedLeaveStatus = status;
+
+    if (status === 'reject') {
+      this.rejectForm.get('comments')?.setValue('Rejected');
+    }
+  }
+
+  openApproveModal(content: any, item: any) {
+    this.intializeApproveForm();
+    this.selectedExpenseData = item;
+
+    this.modalService.open(content, {
+      centered: true,
+      backdrop: 'static'
+    });
+  }
+
+  openRejectModal(content: any, item: any) {
+    this.intializeRejectForm();
+    this.selectedExpenseData = item;
+
+    this.modalService.open(content, {
+      centered: true,
+      backdrop: 'static'
+    });
+  }
+
+  LOGIN: any = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
+
+  canApproveExpense(exp: any): boolean {
+
+   console.log(JSON.stringify(exp, null, 2));
+    const currentApproverId =
+      exp?.pendingApprovalHeader?.currentApproverId;
+
+    const loginId =
+      this.LOGIN.employeeId?.toString();
+
+    return currentApproverId?.toString() === loginId;
+  }
+
+  canShowBulkActions(): boolean {
+
+    if (!this.selectedExpenses?.length) {
+      return false;
+    }
+
+    return this.selectedExpenses.every(
+      expense => this.canApproveExpense(expense)
+    );
   }
 
   ngOnDestroy(): void {

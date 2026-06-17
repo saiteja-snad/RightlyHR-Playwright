@@ -88,6 +88,14 @@ export class PendingApprovalsTabsComponent {
         this.getApprovalStatusCounts();
         this.signalService.wfhSidNavCountTriggerSignal.set(false);
       }
+      if (this.signalService.noDueSideNavCountTriggerSignal()) {
+        this.getApprovalStatusCounts();
+        this.signalService.noDueSideNavCountTriggerSignal.set(false);
+      }
+      if (this.signalService.noDueTriggerSignal()) {
+        this.getApprovalStatusCounts();
+        this.signalService.noDueTriggerSignal.set(false);
+      }
     });
   }
 

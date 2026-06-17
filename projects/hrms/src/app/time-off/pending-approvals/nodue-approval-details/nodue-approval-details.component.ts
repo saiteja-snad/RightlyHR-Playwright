@@ -204,6 +204,12 @@ onStatusApproveSelect(status: string) {
         error: (reason: any) => {
           this.isLoading = false;
           this.conformationPopup.openErrorModal(reason.error.message);
+          this.signalService.noDueTriggerSignal.set(true);
+          this.signalService.noDueSideNavCountTriggerSignal.set(true);
+          this.http.tirggerPendingApprovalCountSignal.update((status) => ({
+            ...status,
+            nodue: true,
+          }));
         },
       });
   }
@@ -257,6 +263,12 @@ onStatusApproveSelect(status: string) {
         error: (reason: any) => {
           this.isLoading = false;
           this.conformationPopup.openSuccessModal(reason.error.message);
+          this.signalService.noDueTriggerSignal.set(true);
+          this.signalService.noDueSideNavCountTriggerSignal.set(true);
+          this.http.tirggerPendingApprovalCountSignal.update((status) => ({
+            ...status,
+            nodue: true,
+          }));
         },
       });
   }

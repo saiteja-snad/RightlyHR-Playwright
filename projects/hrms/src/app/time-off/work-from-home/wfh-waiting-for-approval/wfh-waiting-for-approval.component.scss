@@ -26,3 +26,10 @@
     border: none !important;
     padding-top: 0 !important;
 }
+
+.empty-state-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 650px;
+}

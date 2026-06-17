@@ -6,55 +6,100 @@
       aria-describedby="basic-addon1">
   </div>
 
-  <div class="custom-table-content">
+
+
+  <div class="custom-p-multi-select-table">
     @if(!loading){
-    <table class="w-100">
-      <thead>
-          <th>{{'Expense Title' | translate}}</th>
-        <th>{{'Expense Date' | translate}}</th>
-        <th>{{"Applied Date" | translate}}</th>
-        <th>{{'Total Amount' | translate}}</th>
-        <th>{{'Approver' | translate}}</th>
-        <th>{{'Status' | translate}}</th>
-        <th class="text-center">{{'View Details' | translate}}</th>
+    <div *ngIf="canShowBulkActions()" class="component-header-content">
+      <div>
+        Selected Records: {{ selectedExpenses.length }}
+      </div>
 
-      </thead>
-      <tbody>
-        <ng-container *ngIf="((expenesEmplyeedata | async) ?? []).length > 0; else noDataTemplate">
-          <tr *ngFor="let exp of expenesEmplyeedata | async">
-            <td>{{ exp?.expenses_Title }}</td>
-            <td>{{ exp?.expenseitem?.[0]?.expense_Date | dateformat }}</td>
+      <div class="d-flex gap-2">
+        <button class="custom-btn btn-primary-approve" (click)="openApproveModal(approval, selectedExpenses[0])">
+          Approve
+        </button>
 
-            <td>{{ exp?.applied_date | dateformat }}</td>
-            <td> <span class="me-1" *ngIf="exp.totalExpenseAmount">₹</span>{{ exp?.totalExpenseAmount}}</td>
-            <td>{{exp?.pendingApprovalHeader?.approver_Name}}</td>
-            <td><span class="me-2 status-colour">● {{ exp.status }}</span></td>
-            <td class="text-center">
-              <div class="dropdown">
-                <a data-bs-toggle="dropdown" aria-expanded="false">
-                  <i class="bi bi-three-dots-vertical"></i>
-                </a>
-                <ul class="dropdown-menu custom-dropdown-menu">
-                  <li><a class="dropdown-item" (click)="openModal(viewDetailsModal);viewItem(exp.expenses_ID)">
-                      <i class="bi bi-eye-fill me-2"></i>{{'View' | translate}}</a></li>
-                  <li>
-                    <a class="dropdown-item" (click)="openpopupforDownload(openpopupForDownload,exp)">
-                      <i class="bi bi-download me-1"></i>{{'Download' | translate}}
-                    </a>
-                  </li>
-                </ul>
-              </div>
-            </td>
-          </tr>
-        </ng-container>
-        <!-- No Data Found Template -->
-        <ng-template #noDataTemplate>
-          <tr>
-            <app-no-data-found />
-          </tr>
-        </ng-template>
-      </tbody>
-    </table>
+        <button class="custom-btn btn-primary-reject" (click)="openRejectModal(rejectmodal, selectedExpenses[0])">
+          Reject
+        </button>
+      </div>
+    </div>
+
+    <p-table [value]="(expenesEmplyeedata | async) ?? []" [(selection)]="selectedExpenses"
+      (selectionChange)="selectCheck($event)" dataKey="expenses_ID">
+
+      <ng-template pTemplate="header">
+        <tr>
+          <th style="width:4rem">
+            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+          </th>
+
+          <th>Expense Title</th>
+          <th>Expense Date</th>
+          <th>Applied Date</th>
+          <th>Total Amount</th>
+          <th>Approver</th>
+          <th>Status</th>
+
+          <th *ngIf="selectedExpenses.length == 0">
+            Action
+          </th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-exp>
+        <tr>
+          <td>
+            <p-tableCheckbox [value]="exp"></p-tableCheckbox>
+          </td>
+
+          <td>{{ exp.expenses_Title }}</td>
+          <td>{{ exp?.expenseitem?.[0]?.expense_Date | dateformat }}</td>
+          <td>{{ exp.applied_date | dateformat }}</td>
+          <td>{{ exp.totalExpenseAmount }}</td>
+          <td>{{ exp?.pendingApprovalHeader?.approver_Name }}</td>
+          <td>{{ exp.status }}</td>
+
+          <td *ngIf="selectedExpenses.length == 0">
+            <div class="dropdown">
+              <a data-bs-toggle="dropdown">
+                <i class="bi bi-three-dots-vertical"></i>
+              </a>
+
+              <ul class="dropdown-menu custom-dropdown-menu">
+
+                <li *ngIf="canApproveExpense(exp)">
+                  <a class="dropdown-item" (click)="openApproveModal(approval, exp)">
+                    <i class="bi bi-check-circle me-2"></i>Approve
+                  </a>
+                </li>
+
+                <li *ngIf="canApproveExpense(exp)">
+                  <a class="dropdown-item" (click)="openRejectModal(rejectmodal, exp)">
+                    <i class="bi bi-x-circle me-2"></i>Reject
+                  </a>
+                </li>
+
+                <li>
+                  <a class="dropdown-item" (click)="openModal(viewDetailsModal);viewItem(exp.expenses_ID)">
+                    <i class="bi bi-eye-fill me-2"></i>View
+                  </a>
+                </li>
+
+                <li>
+                  <a class="dropdown-item" (click)="openpopupforDownload(openpopupForDownload, exp)">
+                    <i class="bi bi-download me-2"></i>Download
+                  </a>
+                </li>
+
+              </ul>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+
+    </p-table>
     }
     @else {
     <app-data-loader-content />
@@ -78,10 +123,8 @@
       <div class="mb-3" *ngFor="let comment of approverComments">
         <!-- Hide the card if comment.comments is exactly "string" -->
         <ng-container *ngIf="comment.comments !== 'string'">
-          <div>
-            <p><b>{{ 'Comments' | translate }}:</b> {{ comment.comments }}</p>
+          <div class="card p-3">
             <p><b>{{ 'Commented by' | translate }}:</b> {{ comment.addedName }}</p>
-            <p><b>{{ 'Date' | translate }}:</b> {{ comment.addedDate | dateformat }}</p>
             <p><b>{{ 'Commented by ID' | translate }}:</b> {{ comment.addedByFusionEmpId }}</p>
             <p><b>{{ 'Date' | translate }}:</b> {{ comment.addedDate | date:'short' }}</p>
             <p><b>{{ 'Status' | translate }}:</b> {{ comment.action }}</p>
@@ -116,13 +159,13 @@
         <table class="w-100">
           <thead>
             <tr>
-               <th>{{ 'Expense Type' | translate }}</th>
-            <th>{{ 'Expense Name' | translate }}</th>
-            <th>{{ 'Expense Date' | translate }}</th>
-            <th>{{ 'Expense Amount' | translate }}</th>
-            <th>{{ 'Status' | translate }}</th>
-            <th>{{ 'Receipt Number' | translate }}</th>
-            <th class="text-center">{{ 'Action' | translate }}</th>
+              <th>{{ 'Expense Type' | translate }}</th>
+              <th>{{ 'Expense Name' | translate }}</th>
+              <th>{{ 'Expense Date' | translate }}</th>
+              <th>{{ 'Expense Amount' | translate }}</th>
+              <th>{{ 'Status' | translate }}</th>
+              <th>{{ 'Receipt Number' | translate }}</th>
+              <th class="text-center">{{ 'Action' | translate }}</th>
             </tr>
           </thead>
           <tbody>
@@ -141,7 +184,7 @@
                   </a>
                   <a type="button" class="download-text text-nowrap" *ngIf="isImageFile(item?.attachment_url)"
                     (click)="onViewAttachement(item?.attachment_url)">
-                      <app-document-view-icon />{{'View' | translate}}
+                    <app-document-view-icon />{{'View' | translate}}
                   </a>
                 </div>
               </td>
@@ -186,6 +229,105 @@
     </div>
     <div class="popup-content">
       <app-download-expense [downloadData]="selectedData" />
+    </div>
+  </div>
+</ng-template>
+
+
+<ng-template #approval let-modal>
+  <div class="result-popup-content" ngbAutofocus>
+    <div>
+      <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
+      <p class="confirmation-text">{{'Are you sure you want to Approve?' | translate}}</p>
+    </div>
+    <form autocomplete="off" [formGroup]="approveForm" (ngSubmit)="handleAccept(approveForm)">
+      <div class="custom-main-popup-content">
+        <label for="comments" class="form-label custom-label mb-2">{{'Comments' | translate}}<span
+            class="text-danger">*</span></label>
+        <textarea class="form-control custom-input" id="comments" placeholder="Please provide comments"
+          formControlName="comments" maxlength="250" (keydown)="formValidation.restrictInitialSpace($event)"></textarea>
+        <!-- Character counter -->
+        <div class="error-msg" *ngIf="approveForm.get('comments')?.touched && approveForm.get('comments')?.invalid">
+          <div *ngIf="approveForm.get('comments')?.errors?.['required']">Comment is required.</div>
+          <div *ngIf="approveForm.get('comments')?.errors?.['maxlength']">Comment cannot exceed 250 characters.</div>
+        </div>
+        <div class="textarea-count-text">{{ approveForm.get('comments')?.value?.length || 0 }}/250
+        </div>
+
+      </div>
+      <div class="d-flex align-items-center flex-wrap gap-2 mb-3">
+        <button type="button" class="custom-btn btn-secondary chip-btn"
+          [class.active]="selectedLeaveStatus === 'approved'" (click)="onStatusApproveSelect('approved')">
+          Approved
+        </button>
+      </div>
+      <div class="custom-modal-footer">
+        <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss();">{{'Cancel'|
+          translate}}</button>
+        <button type="submit" class="custom-btn btn-primary" [disabled]="approveForm.invalid">{{'Approve'|
+          translate}}</button>
+      </div>
+    </form>
+  </div>
+</ng-template>
+
+<ng-template #rejectmodal let-modal>
+  <div class="result-popup-content" ngbAutofocus>
+    <div>
+      <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
+      <p class="confirmation-text">{{'Are you sure you want to Reject?' | translate}}</p>
+    </div>
+    <form autocomplete="off" [formGroup]="rejectForm" (ngSubmit)="handleReject(rejectForm)">
+      <div class="custom-main-popup-content">
+        <label for="comments" class="form-label custom-label mb-2">{{"Comments" | translate}}
+          <span class="text-danger">*</span></label>
+        <textarea class="form-control custom-input" id="comments" placeholder="Please provide comments"
+          formControlName="comments" maxlength="250" (keydown)="formValidation.restrictInitialSpace($event)"></textarea>
+        <div class="error-msg" *ngIf="rejectForm.get('comments')?.touched && rejectForm.get('comments')?.invalid">
+          <div *ngIf="rejectForm.get('comments')?.errors?.['required']">Comments is required.</div>
+          <div *ngIf="rejectForm.get('comments')?.errors?.['maxlength']">Comments cannot exceed 250 characters.</div>
+        </div>
+        <div class="textarea-count-text">{{ rejectForm.get('comments')?.value?.length || 0 }}/250</div>
+
+      </div>
+      <div class="d-flex align-items-center flex-wrap gap-2 mb-3">
+        <button type="button" class="custom-btn btn-secondary chip-btn"
+          [class.active]="selectedLeaveStatus === 'reject'" (click)="onStatusRejectSelect('reject')">
+          Rejected
+        </button>
+      </div>
+      <div class="custom-modal-footer">
+        <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'Cancel' |
+          translate}}</button>
+        <button type="submit" class="custom-btn btn-primary" [disabled]="rejectForm.invalid">{{'Reject' |
+          translate}}</button>
+      </div>
+    </form>
+  </div>
+</ng-template>
+
+<!-- commentspopup -->
+<ng-template #commentspopup let-modal>
+  <div class="custom-main-popup-container">
+    <div class="custom-poup-header-content popup-header-border">
+      <div class="pt-2">
+        <p class="popup-heading mb-0">Approver Comments</p>
+      </div>
+      <div>
+        <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+      </div>
+    </div>
+
+    <div class="custom-main-popup-content">
+      <div *ngFor="let comment of approverComments" class="card p-3 mb-3">
+        <div class="mb-0">
+          <p><b>Commented by:</b> {{ comment.addedName }} </p>
+          <p><b>Commented by ID:</b> {{ comment.addedByFusionEmpId }} </p>
+          <p><b>Approved Date:</b> {{ comment.addedDate | date: 'short' }} </p>
+          <p><b>Status:</b> {{ comment.action }}</p>
+          <p><b>Comments:</b> {{ comment.comments }} </p>
+        </div>
+      </div>
     </div>
   </div>
 </ng-template>

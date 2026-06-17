@@ -91,9 +91,7 @@
           </td>
           <td>{{permissionRequest.type}}</td>
           <td>{{permissionRequest.status}}</td>
-          <td class="text-center">
-
-            <ng-container *ngIf="selectedProducts.length == 0">
+          <td class="text-center" *ngIf="selectedProducts.length == 0">
 
               @if(isBeforeToday(permissionRequest.requestedDate) &&
               (permissionForLoggedInUser || canApprove(permissionRequest))) {
@@ -136,7 +134,7 @@
               <span>-</span>
               }
 
-            </ng-container>
+          
 
           </td>
         </tr>

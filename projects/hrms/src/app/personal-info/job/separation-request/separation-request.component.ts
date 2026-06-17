@@ -42,7 +42,8 @@ import { MyinfoSeparationSubTabsComponent } from "../../../shared/myinfo-tabs/my
     InfoIconComponent,
     SeparationSubTabsComponent,
     MyinfoSeparationSubTabsComponent,
-    Select
+    Select,
+    DateformatPipe
 ],
   templateUrl: './separation-request.component.html',
   styleUrl: './separation-request.component.scss',
@@ -72,8 +73,9 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
   profileForm!: FormGroup;
   isDataLoaded = false;
   totalCount:any;
- @ViewChild('NoticePopup') NoticePopup?: TemplateRef<any>;
- @ViewChild('initiateModal') initiateModal!: TemplateRef<any>;
+  @ViewChild('NoticePopup') NoticePopup?: TemplateRef<any>;
+  @ViewChild('initiateModal') initiateModal!: TemplateRef<any>;
+  @ViewChild('extensionBreakdownModal') extensionBreakdownModal!: TemplateRef<any>;
   constructor(
     private authService: AuthService,
     private fb: FormBuilder,
@@ -91,6 +93,9 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.http.separationDetailesadded$.subscribe((value:any)=>{
+      this.getEmpInfoFromRoute()
+    })
     this.getonboardPeriodData();
     this.formInitialization();
     this.getEmpInfoFromRoute();
@@ -126,7 +131,7 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
       this.getExitFeeddBackDetails();
     }
   }
-
+  
  isActive(route: string): boolean {
     return this.router.url.includes(route);
   }
@@ -338,7 +343,7 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
         next: (data: any) => {
           console.log(data);
           this.nodueclearancedetails = data;
-
+          
           // Check if all nodue records are approved
           const validItems = data.filter((ele: any) => ele.subStatus?.toLowerCase() !== 'rerequested');
           const approvedCount = validItems.filter((ele: any) => ele.status?.toLowerCase() === 'approved').length;
@@ -365,7 +370,7 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
           console.log('Raw exit feedback data:', data);
           console.log('Data type:', typeof data);
           console.log('Is array:', Array.isArray(data));
-
+          
           // Handle different response structures
           let feedbackArray = [];
           if (Array.isArray(data)) {
@@ -375,17 +380,17 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
           } else if (data && data.length !== undefined) {
             feedbackArray = [data];
           }
-
+          
           this.exitfeedbackdata = feedbackArray;
           console.log('Processed feedback array:', this.exitfeedbackdata);
           console.log('Array length:', this.exitfeedbackdata.length);
-
+          
           const existingRecords = this.exitfeedbackdata.filter((ele: any) => {
             const status = ele?.status?.toLowerCase();
             console.log('Checking status:', status);
             return status === 'initiated' || status === 'submitted';
           });
-
+          
           console.log('Filtered records:', existingRecords);
           this.exitfeedbacksubmitted = existingRecords.length > 0;
           console.log('Exit feedback submitted:', this.exitfeedbacksubmitted);
@@ -398,7 +403,7 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
       });
   }
 
-
+  
 
   shouldShowButton(date: string): boolean {
     console.log(date);
@@ -464,7 +469,6 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
               'waiting for approval',
               'approved',
               'processed',
-              'recalled processed',
               'early relieving processed',
               'extended',
             ];
@@ -583,7 +587,7 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
   }
   //function to recall the request
   postRecallRequest() {
-
+     
     this.isLoading = true;
     let currentDate = new Date();
     let payLoad = {
@@ -629,7 +633,7 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
       });
   }
 
-
+  
   openInitiateModal(item: any): void {
     this.selectedItem = item;
     this.initiateForm.reset();
@@ -660,7 +664,7 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
         moduleId : 33,
         lastWorkingDate : this.selectedItem.lastWorkingDate
       };
-
+      
       this.subscription = this.http.postdata(`ExitFeedbackRequest/initiate`, payload).subscribe({
         next: (response: any) => {
           this.isLoading = false;
@@ -764,7 +768,79 @@ noticedetails(item: any): void {
   this.noticeDetailsData = item;
   this.modalService.open(this.NoticePopup, { centered: true });
 }
+  totalextendeddays!:number;
+  initallastworkingday:any;
+  finallastworkingday:any;
+  openExtensionBreakdown(item: any, modal: TemplateRef<any>): void {
+    this.totalextendeddays=item.noOfDaysExtended;
+    this.initallastworkingday=item.lastWorkingDate;
+    this.finallastworkingday=item.finalLastWorkingDate
+    this.modalService.open(modal, { 
+      centered: true, 
+      backdrop: 'static', 
+      keyboard: false,
+      size: 'xl'
+    });
+    this.getnoticeperioddata(item.id)
+  }
+//get the notice period history based on the separation request id
+noticePeriodHistory=[] as any;
+getnoticeperioddata(id:number){
+   this.noticePeriodHistory=[];
+  this.isLoading=true
+  this.subscription=this.http.getData(`EmployeeNoticePeriodExtensionHistory/${id}`).subscribe({
+    next:(res:any)=>{
+     console.log(res.data);
+     this.noticePeriodHistory=res.data;
+     this.isLoading=false;
+    },
+    error:(err:any)=>{
+    this.noticePeriodHistory=[];
+    this.isLoading=false;
+    }
+  })
+}
+ getLighterColor(color: any, amount: number = 0.9): string {
+  if (!color) return color || '#d8d8daff'; // Default color if none provided;
 
+  // Remove # if present
+  const hex = color.replace('#', '');
+
+  // Parse RGB values
+  const r = parseInt(hex.substr(0, 2), 16);
+  const g = parseInt(hex.substr(2, 2), 16);
+  const b = parseInt(hex.substr(4, 2), 16);
+
+  // Calculate lighter values
+  const newR = Math.min(255, Math.floor(r + (255 - r) * amount));
+  const newG = Math.min(255, Math.floor(g + (255 - g) * amount));
+  const newB = Math.min(255, Math.floor(b + (255 - b) * amount));
+
+  // Convert back to hex
+  return `#${newR.toString(16).padStart(2, '0')}${newG.toString(16).padStart(2, '0')}${newB.toString(16).padStart(2, '0')}`;
+}
+getStatusStyles(status: string | null | undefined) {
+  const value = (status || '').toLowerCase();
+
+  if (value === 'active') {
+    return {
+      color: '#155724',
+      background: '#d4edda' // light green
+    };
+  } 
+  else if (value === 'inactive') {
+    return {
+      color: '#721c24',
+      background: '#f8d7da' // light red
+    };
+  } 
+  else {
+    return {
+      color: '#383d41',
+      background: '#e2e3e5' // gray
+    };
+  }
+}
   ngOnDestroy(): void {
     // Clean up any subscriptions or resources
     if (this.subscription) {

@@ -9,10 +9,13 @@ export const permissionsData = [
   { fields: 'Project Management Configuration Module', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Ats Configuration Module', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Helpdesk Configuration Module', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Employee Fields Config Update Module', View: false, Update: false, Create: false, Delete: false },
+
   { fields: 'Locking System Configuration Module', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Rate Card Configuration Module', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Rate Card In-active Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Rate Card Active Tab', View: false, Update: false, Create: false, Delete: false },
+
   // { fields: 'Recruitment Configuration Module', View: false, Update: false, Create: false, Delete: false },
 
   //Employee Field Config Update Tabs Sections
@@ -124,7 +127,7 @@ export const permissionsData = [
   { fields: 'Weekends Published Tab', View: false, Update: false, Create: false, Delete: false },
 
   //Manage Expense tab
-  { fields: 'Expense Type Configuration', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Expenes Configuartion', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Expense Allowed Days', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Expense Threshold Validation', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Global Expense Configuration', View: false, Update: false, Create: false, Delete: false },
@@ -1167,6 +1170,7 @@ export const permissionsData = [
   { fields: 'Project Role', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Task', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Task Type', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Timesheet Configurations', View: false, Update: false, Create: false, Delete: false },
   { fields: 'My Team (Timesheet)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'All Employees (Timesheet)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Timesheet Bulk Import', View: false, Update: false, Create: false, Delete: false },

@@ -466,7 +466,7 @@ export class OnBeHalfOfComponent {
     this.getLeavesData(fusionemployeeId.value);
     localStorage.setItem('onbehalfof', fusionemployeeId.value);
     this.http.triggerActionSignal();
-    this.http.onBehalfOfTriggerSignal.update((value) => true);
+    this.http.onBehalfOfTriggerSignal.update(v => v + 1);
   }
 
   Onclick(fusionemployeeId: any): void {
@@ -500,7 +500,7 @@ export class OnBeHalfOfComponent {
     this.getLeavesData(fusionemployeeId.value);
     localStorage.setItem('onbehalfof', fusionemployeeId.value);
     this.http.triggerActionSignal();
-    this.http.onBehalfOfTriggerSignal.update((value) => true);
+    this.http.onBehalfOfTriggerSignal.update(v => v + 1);
   }
 
   resetOnBehalfOfData(): void {
@@ -513,7 +513,7 @@ export class OnBeHalfOfComponent {
     this.categoryDetails = [];
     this.cadidateEmployeeId = 0;
     localStorage.removeItem('onbehalfof');
-    this.http.onBehalfOfTriggerSignal.update((value) => true);
+    this.http.onBehalfOfTriggerSignal.update(v => v + 1);
 
     // Navigate first, then reload if necessary
     this.router
@@ -1180,7 +1180,7 @@ export class OnBeHalfOfComponent {
           complete: () => {
             this.isLoading = false;
             this.leaveForm.reset();
-            this.http.onBehalfOfTriggerSignal.update((value) => true);
+            this.http.onBehalfOfTriggerSignal.update(v => v + 1);
           },
         });
     } else {
@@ -2046,7 +2046,7 @@ export class OnBeHalfOfComponent {
       this.getLeavesData(parseInt(employeeId));
       this.getCategoryDetails(parseInt(employeeId));
       // Trigger refresh for child components only when employee is selected
-      this.http.onBehalfOfTriggerSignal.update((value : any) => true);
+      this.http.onBehalfOfTriggerSignal.update(v => v + 1);
     }
   }
 }

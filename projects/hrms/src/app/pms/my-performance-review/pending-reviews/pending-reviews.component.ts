@@ -17,34 +17,29 @@ import { RbacService } from '../../../services/rbac.service';
   templateUrl: './pending-reviews.component.html',
   styleUrl: './pending-reviews.component.scss'
 })
-export class PendingReviewsComponent implements OnInit, OnDestroy{
-  dataload=false;
-  employeeId!:number;
+export class PendingReviewsComponent implements OnInit, OnDestroy {
+  dataload = false;
+  employeeId!: number;
   searchQuery = '';
 
   reviewCycles: any[] = [];
-  pendingReviews: any[] = []; 
+  pendingReviews: any[] = [];
   completedReviews: any[] = [];
   filteredReviews: any[] = [];
-
-  page = 1;
-  pageSize = 10;
-  collectionSize=100;
-  totalItems = 0;
-  rows = 10;
-
-  options = [
-    { label: 10, value: 10 },
-    { label: 15, value: 15 },
-    { label: 20, value: 20 },
-    { label: 25, value: 25 }
-  ];
-
-  first = 0;
   totalRecords = 0;
-
+  page = 1;
+  pageSize = 50;
+  rows = 50;
+  collectionSize = 0;
+  first = 0;
+  options = [
+    { label: 50, value: 50 },
+    { label: 100, value: 100 },
+    { label: 150, value: 150 },
+    { label: 200, value: 200 }
+  ];
   destroy$: Subject<boolean> = new Subject();
-  
+
   ngOnInit(): void {
     const fusionuserString = localStorage.getItem('rightlyHrUser');
     if (fusionuserString) {
@@ -58,31 +53,31 @@ export class PendingReviewsComponent implements OnInit, OnDestroy{
     private readonly modalService: NgbModal,
     private readonly http: HttpService,
     private router: Router,
-    public rbac : RbacService
+    public rbac: RbacService
   ) { }
-  
+
   fetchReviewCycles(): void {
-    this.dataload=true;
-    this.http.getReviewCycles('reviewCycleHeader/getallperformances', 
-      this.page, this.pageSize, 
-      this.searchQuery, 
-      this.employeeId.toString(), 
-      'Employee', 'Pending,Draft' ).pipe(takeUntil(this.destroy$)).subscribe({
+    this.dataload = true;
+    this.http.getReviewCycles('reviewCycleHeader/getallperformances',
+      this.page, this.pageSize,
+      this.searchQuery,
+      this.employeeId.toString(),
+      'Employee', 'Pending,Draft').pipe(takeUntil(this.destroy$)).subscribe({
         next: (data) => {
           this.reviewCycles = data.items;
-          this.totalItems = data.totalCount || 0;
-          this.pendingReviews =  data.items;
+          this.totalRecords = data.totalCount || 0;
+          this.pendingReviews = data.items;
           this.filteredReviews = this.pendingReviews;
-          if(this.pendingReviews.length>0){
+          if (this.pendingReviews.length > 0) {
             this.collectionSize = data.totalCount;
           }
         },
         error: (err) => {
-          this.dataload=false;
+          this.dataload = false;
           console.error('Error fetching review cycles:', err);
         },
         complete: () => {
-          this.dataload=false;
+          this.dataload = false;
         },
       });
   }
@@ -105,7 +100,7 @@ export class PendingReviewsComponent implements OnInit, OnDestroy{
 
   onPageSizeChange(newPageSize: number) {
     this.pageSize = newPageSize;
-    this.rows = newPageSize; 
+    this.rows = newPageSize;
     this.page = 1;
     this.first = 0;
 
@@ -122,34 +117,34 @@ export class PendingReviewsComponent implements OnInit, OnDestroy{
   }
 
   onSearch(): void {
-    this.page = 1; 
+    this.page = 1;
   }
 
-  selfAssessment(reviewCycleItemId: number, currentStage: number, assessorItemId:number,reviewEmployeeId:number,reviewcycleitemformresponseid:number,formresponseid:number) {
+  selfAssessment(reviewCycleItemId: number, currentStage: number, assessorItemId: number, reviewEmployeeId: number, reviewcycleitemformresponseid: number, formresponseid: number) {
     const queryParams = {
       reviewCycleItemId: reviewCycleItemId,
       currentStage: currentStage,
       assessorItemId: assessorItemId,
       reviewCycles: JSON.stringify(this.reviewCycles), // Ensure this.reviewCycles is defined
-      reviewEmployeeId:reviewEmployeeId,
-      reviewcycleitemformresponseid:reviewcycleitemformresponseid,
-      formresponseid:formresponseid
+      reviewEmployeeId: reviewEmployeeId,
+      reviewcycleitemformresponseid: reviewcycleitemformresponseid,
+      formresponseid: formresponseid
     };
-  
+
     // Store queryParams in localStorage
     localStorage.setItem('queryParams', JSON.stringify(queryParams));
-  
+
     // Navigate to the assessment route
     this.router.navigate(['/pms/assessment-form']);
   }
 
-  closeModal(){
+  closeModal() {
     this.modalService.dismissAll();
   }
 
   ngOnDestroy() {
-   this.destroy$.next(true);
-   this.destroy$.unsubscribe();
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
   }
 
 }

@@ -71,20 +71,20 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
 
   // Pagination
   page = 1;
-  pageSize = 10;
-  rows = 10;
+  pageSize = 25;
+  rows = 25;
   collectionSize = 0;
   first = 0;
   options = [
-    { label: 10, value: 10 },
-    { label: 15, value: 15 },
-    { label: 20, value: 20 },
-    { label: 25, value: 25 }
-  ];
+    { label: 25, value: 25 },
+    { label: 50, value: 50 },
+    { label: 75, value: 75 },
+    { label: 100, value: 100 },
 
+  ];
   constructor(private fb: FormBuilder, private modalService: NgbModal, private router: Router,
     public formValidation: FormValidationsService, private http: HttpService, private conformationPopup: OpenModalService,
-    private route: ActivatedRoute, public rbac: RbacService, private offcanvasService: NgbOffcanvas) {}
+    private route: ActivatedRoute, public rbac: RbacService, private offcanvasService: NgbOffcanvas) { }
 
   ngOnInit() {
     this.http.setDepartmentIds([]);
@@ -103,13 +103,13 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
     });
 
     combineLatest([this.http.selectedDepartmentIds$, this.http.projectTypeFilter$]).pipe(takeUntil(this.destroy$))
-    .subscribe(([deptIds, projectTypes]) => {
-      this.selectedDepartmentIds = deptIds || [];
-      this.selectedProjectTypes = projectTypes || [];
-      this.page = 1;
-      this.first = 0;
-      this.getProjectsBasedOnRoute();
-    });
+      .subscribe(([deptIds, projectTypes]) => {
+        this.selectedDepartmentIds = deptIds || [];
+        this.selectedProjectTypes = projectTypes || [];
+        this.page = 1;
+        this.first = 0;
+        this.getProjectsBasedOnRoute();
+      });
     this.editProjectForm();
     this.getClientsData();
     this.getprojecttypesData();
@@ -219,9 +219,8 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
         next: (res: any) => {
           this.authorityList = (res?.data || []).map((item: any) => ({
             value: item.authority.id,
-            name: `${item.authority.fusionEmployeeId ?? ''} - ${
-              item.authority.name
-            }`.trim(),
+            name: `${item.authority.fusionEmployeeId ?? ''} - ${item.authority.name
+              }`.trim(),
             email: item.authority.workMail,
             recordId: item.id,
           }));
@@ -251,9 +250,8 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
           if (this.resourcesData?.length > 0) {
             this.authorityList = (res?.data || []).map((item: IResource) => ({
               value: item.employee?.id ?? 0,
-              name: `${item.employee?.fusionEmployeeId ?? ''} - ${
-                item.employee?.name ?? ''
-              }`.trim(),
+              name: `${item.employee?.fusionEmployeeId ?? ''} - ${item.employee?.name ?? ''
+                }`.trim(),
               email: item.employee?.workMail ?? '',
               recordId: item.resourceId ?? 0,
             }));
@@ -288,7 +286,7 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
         ],
       ],
       updateclientName: [null, Validators.required],
-      updatecode: [null, [Validators.required,  Validators.maxLength(12)]],
+      updatecode: [null, [Validators.required, Validators.maxLength(12)]],
       updatestartDate: [null, Validators.required],
       updateendDate: [null, Validators.required],
       // updateeffectiveDate: [null, Validators.required],
@@ -484,7 +482,7 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
     const selectedDepartmentIds =
       project.departments?.map((d: any) => d.departmentId) || [];
     // Patch form values
-       if (project.client?.clientId) {
+    if (project.client?.clientId) {
       this.getClientByIdForUpdate(project.client.clientId);
     }
     this.updateprojectform.patchValue({
@@ -803,24 +801,24 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
     this.getProjectsBasedOnRoute();
   }
   getLighterColor(color: any, amount: number = 0.9): string {
-  if (!color) return color || '#d8d8daff'; // Default color if none provided;
+    if (!color) return color || '#d8d8daff'; // Default color if none provided;
 
-  // Remove # if present
-  const hex = color.replace('#', '');
+    // Remove # if present
+    const hex = color.replace('#', '');
 
-  // Parse RGB values
-  const r = parseInt(hex.substr(0, 2), 16);
-  const g = parseInt(hex.substr(2, 2), 16);
-  const b = parseInt(hex.substr(4, 2), 16);
+    // Parse RGB values
+    const r = parseInt(hex.substr(0, 2), 16);
+    const g = parseInt(hex.substr(2, 2), 16);
+    const b = parseInt(hex.substr(4, 2), 16);
 
-  // Calculate lighter values
-  const newR = Math.min(255, Math.floor(r + (255 - r) * amount));
-  const newG = Math.min(255, Math.floor(g + (255 - g) * amount));
-  const newB = Math.min(255, Math.floor(b + (255 - b) * amount));
+    // Calculate lighter values
+    const newR = Math.min(255, Math.floor(r + (255 - r) * amount));
+    const newG = Math.min(255, Math.floor(g + (255 - g) * amount));
+    const newB = Math.min(255, Math.floor(b + (255 - b) * amount));
 
-  // Convert back to hex
-  return `#${newR.toString(16).padStart(2, '0')}${newG.toString(16).padStart(2, '0')}${newB.toString(16).padStart(2, '0')}`;
-}
+    // Convert back to hex
+    return `#${newR.toString(16).padStart(2, '0')}${newG.toString(16).padStart(2, '0')}${newB.toString(16).padStart(2, '0')}`;
+  }
 
   // isFilterApplied(): boolean {
   //   const formValue = this.datepickerForm?.value;
@@ -842,11 +840,11 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
   }
 
 
-    // 1. Show red dot on Filters button
+  // 1. Show red dot on Filters button
   isFilterApplied(): boolean {
     return this.selectedClients.length > 0 ||
-           this.selectedDepartmentIds.length > 0 ||
-           this.selectedProjectTypes.length > 0;
+      this.selectedDepartmentIds.length > 0 ||
+      this.selectedProjectTypes.length > 0;
   }
 
   // 2. Build chips list

@@ -1,0 +1,7 @@
+.custom-table-content {
+  height: calc(100vh - 20rem) !important;
+
+  &.has-data {
+    height: calc(100dvh - 22.75rem) !important;
+  }
+}

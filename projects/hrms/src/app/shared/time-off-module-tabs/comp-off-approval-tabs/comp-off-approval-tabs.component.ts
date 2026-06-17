@@ -7,9 +7,12 @@ import { HttpService } from '../../../services/http.service';
 import { RbacService } from '../../../services/rbac.service';
 import { SidetabsloadersComponent } from "../../sidetabsloaders/sidetabsloaders.component";
 import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.service';
+import { CdkDragDrop, DragDropModule, moveItemInArray } from '@angular/cdk/drag-drop';
+import { MenuOrderService } from '../../../services/theme-service/menu-order.service';
 @Component({
   selector: 'app-comp-off-approval-tabs',
-  imports: [CommonModule, RouterModule, SidetabsloadersComponent],
+  standalone: true,
+  imports: [CommonModule, RouterModule, SidetabsloadersComponent, DragDropModule],
   templateUrl: './comp-off-approval-tabs.component.html',
   styleUrl: './comp-off-approval-tabs.component.scss',
 })
@@ -25,8 +28,22 @@ export class CompOffApprovalTabsComponent implements OnInit, OnDestroy {
   loading = false;
   destroy$: Subject<boolean> = new Subject<boolean>();
   selectedYear: any;
+  navTabs: any[] = [];
+  filteredTabs: any[] = [];
+  readonly tabsKey = 'timeoff-compoff-approval-tabs';
 
-  constructor(public readonly router: Router, private http: HttpService, public rbac: RbacService, private TimeoffYearFilterService: TimeoffYearFilterService) {
+  trackByNavLink(index: number, tab: any): string {
+    return tab.link;
+  }
+
+  constructor(
+    public readonly router: Router,
+    private http: HttpService,
+    public rbac: RbacService,
+    private TimeoffYearFilterService: TimeoffYearFilterService,
+    private readonly menuOrderService: MenuOrderService
+  ) {
+    void this.menuOrderService.ensureLoaded();
     effect(() => {
       if (this.http.tirggerCountSignal().compOff) {
         this.getCompOffRequest();
@@ -73,6 +90,7 @@ export class CompOffApprovalTabsComponent implements OnInit, OnDestroy {
         this.approvalCompOffRequestsCount = this.compOff.filter((element: { status: string }) => element.status === 'Approved').length;
         this.rejectedCompOffRequestsCount = this.compOff.filter((element: { status: string }) => element.status === 'Rejected').length;
         this.processedCompOffRequestsCount = this.compOff.filter((element: { status: string }) => element.status === 'Processed').length;
+        this.updateNavTabs();
       },
       error: (error) => {
         this.loading = false;
@@ -91,12 +109,73 @@ export class CompOffApprovalTabsComponent implements OnInit, OnDestroy {
         this.approvalCompOffRequestsCount = this.compOff.filter((element: { status: string }) => element.status === 'Approved').length;
         this.rejectedCompOffRequestsCount = this.compOff.filter((element: { status: string }) => element.status === 'Rejected').length;
         this.processedCompOffRequestsCount = this.compOff.filter((element: { status: string }) => element.status === 'Processed').length;
+        this.updateNavTabs();
       },
       error: (error) => {
         console.error('Error fetching data:', error);
         this.compOff = []; // Set to empty array on error
       },
     });
+  }
+
+  private updateNavTabs() {
+    this.navTabs = [
+      {
+        label: 'Waiting For Approval',
+        link: '/time-off/comp-off/waiting-for-approval',
+        icon: '/time-off-icon/waiting-for-approval-icon.png',
+        count: this.waitingForApprovalCompOffCount,
+        permission: { feature: 'Waiting For Approval (Comp Off)', action: 'view' }
+      },
+      {
+        label: 'Approved',
+        link: '/time-off/comp-off/approved',
+        icon: '/time-off-icon/approved-icon.png',
+        count: this.approvalCompOffRequestsCount,
+        permission: { feature: 'Approved (Comp Off)', action: 'view' }
+      },
+      {
+        label: 'Processed',
+        link: '/time-off/comp-off/processed',
+        icon: '/time-off-icon/processed-icon.png',
+        count: this.processedCompOffRequestsCount,
+        permission: { feature: 'Processed (Comp Off)', action: 'view' }
+      },
+      {
+        label: 'Rejected',
+        link: '/time-off/comp-off/rejected',
+        icon: '/time-off-icon/rejected-icon.png',
+        count: this.rejectedCompOffRequestsCount,
+        permission: { feature: 'Rejected (Comp Off)', action: 'view' }
+      }
+    ];
+    this.filterTabsByRbac();
+  }
+
+  filterTabsByRbac(): void {
+    this.filteredTabs = this.navTabs.filter(tab => {
+      if (!tab.permission) return true;
+      const { feature, action } = tab.permission;
+      return this.rbac.allowedToAccess(`${feature}.${action}`);
+    });
+    this.applySavedTabsOrder();
+  }
+
+  private applySavedTabsOrder(): void {
+    if (!this.filteredTabs.length) return;
+    const reordered = this.menuOrderService.applySavedTabsOrder(this.tabsKey, this.filteredTabs, item => String(item?.link ?? ''));
+    if (reordered !== this.filteredTabs) {
+      this.filteredTabs.splice(0, this.filteredTabs.length, ...reordered);
+    }
+  }
+
+  onDrop(event: CdkDragDrop<any[]>): void {
+    if (event.previousIndex === event.currentIndex) return;
+    moveItemInArray(this.filteredTabs, event.previousIndex, event.currentIndex);
+    const employeeId = this.menuOrderService.getCurrentEmployeeId();
+    if (!employeeId) return;
+    const tabs = this.filteredTabs.map(item => ({ id: String(item.link ?? ''), label: String(item.label ?? ''), route: String(item.link ?? '') }));
+    this.menuOrderService.saveTabsModuleOrder(employeeId, this.tabsKey, tabs);
   }
 
   ngOnDestroy(): void {

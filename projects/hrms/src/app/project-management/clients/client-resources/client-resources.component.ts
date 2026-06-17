@@ -38,6 +38,7 @@ import { InfoIconComponent } from '../../../icons/info-icon/info-icon.component'
 import { ClientResourceTabComponent } from '../../../shared/project-management-tabs/client-resource-tab/client-resource-tab.component';
 import { ProfileIconComponent } from "../../../icons/profile-icon/profile-icon.component";
 import { environment } from '../../../../environments/environment';
+import { PaginatorModule } from 'primeng/paginator';
 
 @Component({
   selector: 'app-client-resources',
@@ -54,7 +55,8 @@ import { environment } from '../../../../environments/environment';
     NoDataFoundComponent,
     ConfirmationIconComponent,
     InfoIconComponent,
-    ProfileIconComponent
+    ProfileIconComponent,
+    PaginatorModule
   ],
   templateUrl: './client-resources.component.html',
   styleUrl: './client-resources.component.scss',
@@ -112,6 +114,19 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
   selectedEntityRefId: number = 0;
   spinnerLoader = false;
   isReleasing = false;
+  // Pagination
+  page = 1;
+  pageSize = 50;
+  rows = 50;
+  collectionSize = 0;
+  first = 0;
+  options = [
+    { label: 50, value: 50 },
+    { label: 100, value: 100 },
+    { label: 150, value: 150 },
+    { label: 200, value: 200 }
+  ];
+
 
   constructor(
     private fb: FormBuilder,
@@ -258,9 +273,26 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
     }
     statusEffectiveDateControl?.updateValueAndValidity();
   }
+   onPageSizeChange(newPageSize: number) {
+    this.pageSize = newPageSize;
+    this.rows = newPageSize;
+    this.page = 1;
+    this.first = 0;
+    this.selectedResources = [];
+    this.getResourceData(this.clientID, this.searchValue);
+  }
+
+  onPageChange(event: any) {
+    this.page = event.page + 1;
+    this.pageSize = event.rows;
+    this.first = event.first;
+    this.selectedResources = [];
+    this.getResourceData(this.clientID, this.searchValue);
+  }
+
 
   getResourceData(id: any, searchTerm?: string) {
-    let url = `ProjectResource?status=Active,assigned&entityType=Client&entityRefId=${id}&isProjectRequired=true&isGroupedByProject=true`;
+    let url = `ProjectResource?status=Active,assigned&entityType=Client&entityRefId=${id}&isProjectRequired=true&isGroupedByProject=true&pageNumber=${this.page}&pageSize=${this.pageSize}`;
     if (searchTerm) {
       url += `&searchTerm=${encodeURIComponent(searchTerm)}`;
     }
@@ -279,20 +311,15 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
     this.subscription = this.http.getDataIncludeParams(url).subscribe({
       next: (data: any) => {
         if (data?.data?.length > 0) {
-          this.resourcesData = Array.isArray(data?.data) ? data.data : [];
-          this.resourcesData = this.resourcesData.map((item: any) => ({
-            ...item,
-            employee: {
-              ...item.employee,
-              profileUrl: this.getImageUrl(item.employee?.profileUrl)
-            }
-          }));
+                  this.loading = false;
+
+          this.resourcesData = data.data;
+          this.collectionSize = data.pagination.totalRecords || 0;
           this.filteredResourcesData = data.data;
         } else {
           this.resourcesData = [];
           this.filteredResourcesData = [];
         }
-        this.loading = false;
       },
       error: (reason: any) => {
         this.loading = false;
@@ -329,7 +356,6 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
       .getDataIncludeParams('ProjectResource', params)
       .subscribe({
         next: (data: any) => {
-          this.loading = false;
           if (isPopupCall) {
             // DO NOT TOUCH TABLE DATA
             const popupData = data.data ?? [];

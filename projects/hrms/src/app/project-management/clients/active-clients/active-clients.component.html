@@ -25,12 +25,13 @@
                 <span class="input-group-text custom-input-group-search" id="basic-addon1">
                     <i class="bi bi-search"></i>
                 </span>
-                <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input"
+                <input type="search" #search="ngModel" [(ngModel)]="searchValue"
+                    class="form-control custom-search-input"
                     placeholder="Search by client name / contact name / email / role" aria-label="Search"
                     aria-describedby="basic-addon1">
             </div>
 
-            <div class="custom-table-content w-100">
+            <div class="custom-table-content w-100" [ngClass]="{'has-data': clients.length > 0}">
                 @if (!loading) {
                 <table class="w-100">
                     <thead>
@@ -52,11 +53,13 @@
                                         <img [src]="getImageUrl(client.logoPath)" alt="Logo" class="client-image" />
                                     </td>
                                     <td>
-                                        <a class="data-nav-btn" (click)="navigateView(client.clientId)">{{client.clientName}}</a>
+                                        <a class="data-nav-btn"
+                                            (click)="navigateView(client.clientId)">{{client.clientName}}</a>
                                     </td>
                                     <td>{{client?.contact?.name || '-'}}</td>
                                     <td>{{client?.contact?.email || '-'}}</td>
-                                    <td>{{client?.contact?.phoneDialCode || '-'}} {{client?.contact?.phoneNumber || '-'}}</td>
+                                    <td>{{client?.contact?.phoneDialCode || '-'}} {{client?.contact?.phoneNumber ||
+                                        '-'}}</td>
                                     <td>{{client?.contact?.role || '-'}}</td>
                                     <td class="text-center">
                                         <div class="dropdown">
@@ -92,6 +95,24 @@
                 <app-data-loader-content />
                 }
             </div>
+            <!-- Pagination -->
+            <div class="pagination-content" *ngIf="clients.length > 0">
+                <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
+                    <div class="d-flex align-items-center gap-3 p-2">
+                        <select title="text" class="form-select custom-pagination-select" [(ngModel)]="rows"
+                            (ngModelChange)="onPageSizeChange($event)">
+                            <option *ngFor="let option of options" [value]="option.value">{{ option.label }}
+                            </option>
+                        </select>
+                        <span class="pagination-label text-nowrap">
+                            Showing {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize :
+                            (+first + +rows) }} of {{ collectionSize }}
+                        </span>
+                    </div>
+                    <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"
+                        (onPageChange)="onPageChange($event)"></p-paginator>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -117,7 +138,8 @@
         </div>
         <div class="custom-modal-footer">
             <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'}}</button>
-            <button type="submit" class="custom-btn btn-primary" (click)="confirmStatusChangetohold(modal)">{{'Yes'}}</button>
+            <button type="submit" class="custom-btn btn-primary"
+                (click)="confirmStatusChangetohold(modal)">{{'Yes'}}</button>
         </div>
     </div>
 </ng-template>

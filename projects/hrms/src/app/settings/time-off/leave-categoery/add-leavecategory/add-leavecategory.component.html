@@ -768,6 +768,65 @@
             </span>
           </div>
         </div>
+
+         <!-- Extend Last Working Day Based on Leave -->
+        <div class="col-md-3 mb-3" *ngIf="leavePolicyForm.get('noticeperiodAllowedType')?.value === true">
+          <label class="form-label custom-label mb-2" for="extendLastWorkingDay">
+            Extend Last Working Day Based on Leave<span class="text-danger">*</span>
+          </label>
+          <div class="custom-p-select-content">
+            <p-select [options]="global" optionLabel="label" optionValue="value" placeholder="Select"
+              formControlName="extendLastWorkingDay" class="custom-select w-100" appendTo="body">
+            </p-select>
+          </div>
+          <div class="error-msg"
+            *ngIf="leavePolicyForm.get('extendLastWorkingDay')?.invalid && leavePolicyForm.get('extendLastWorkingDay')?.touched">
+            Extend Last Working Day Based on Leave is required
+          </div>
+        </div>
+
+
+        <div class="component-sub-header mb-3">{{'Entitlement Frequency' | translate}}</div>
+
+        <!-- Entitlement Frequency Type -->
+        <div class="col-md-3 mb-3">
+          <label class="form-label custom-label mb-2">Frequency Type <span class="text-danger">*</span></label>
+          <div class="custom-p-select-content">
+            <p-select [options]="frequencyTypes" optionLabel="label" optionValue="value"
+              placeholder="Select frequency type" formControlName="entitlementFrequency" class="custom-select w-100">
+            </p-select>
+          </div>
+          <div class="error-msg" *ngIf="leavePolicyForm.get('entitlementFrequency')?.invalid && leavePolicyForm.get('entitlementFrequency')?.touched">
+            Frequency Type is required
+          </div>
+        </div>
+
+        <!-- Entitlement Cycle Handling -->
+        <div class="col-md-3 mb-3" *ngIf="leavePolicyForm.get('entitlementFrequency')?.value !== 'YEARLY'">
+          <label class="form-label custom-label mb-2">Leave Balance Handling <span class="text-danger">*</span></label>
+          <div class="custom-p-select-content">
+            <p-select [options]="cycleHandlingOptions" optionLabel="label" optionValue="value"
+              placeholder="Select cycle handling" formControlName="entitlementCycleHandling" class="custom-select w-100">
+            </p-select>
+          </div>
+          <div class="error-msg" *ngIf="leavePolicyForm.get('entitlementCycleHandling')?.invalid && leavePolicyForm.get('entitlementCycleHandling')?.touched">
+            Leave Balance Handling is required
+          </div>
+        </div>
+
+        <!-- Allow Past Cycle Application -->
+        <div class="col-md-3 mb-3" *ngIf="leavePolicyForm.get('entitlementFrequency')?.value !== 'YEARLY'">
+          <label class="form-label custom-label mb-2">Allow Leave for Past Cycle <span class="text-danger">*</span></label>
+          <div class="custom-p-select-content">
+            <p-select [options]="global" optionLabel="label" optionValue="value"
+              placeholder="Select allow leave for past cycle" formControlName="allowPastCycleApplication" class="custom-select w-100" appendTo="body">
+            </p-select>
+          </div>
+          <div class="error-msg" *ngIf="leavePolicyForm.get('allowPastCycleApplication')?.invalid && leavePolicyForm.get('allowPastCycleApplication')?.touched">
+            Allow Leave for Past Cycle is required
+
+          </div>
+        </div>
       </div>
 
     </div>

@@ -35,7 +35,7 @@ export class PendingApprovalsTabsComponent {
      effect(() => {
       if ((this.http.tirggerPendingApprovalCountSignal().wfh) || (this.http.tirggerPendingApprovalCountSignal().separation)
         || (this.http.tirggerPendingApprovalCountSignal().nodue) || (this.http.tirggerPendingApprovalCountSignal().onboarding)) {
-        this.getAllPendingApprovalsCount();
+        this.getApprovalStatusCounts();
         this.http.tirggerPendingApprovalCountSignal.update(status => ({
           ...status,
           wfh: status.wfh ? false : status.wfh,
@@ -45,32 +45,48 @@ export class PendingApprovalsTabsComponent {
         }));
       }
       if (this.signalService.OfferLetterNavCountSignal()) {
-        this.getAllPendingApprovalsCount();
+        this.getApprovalStatusCounts();
         this.signalService.OfferLetterNavCountSignal.set(false);
       }
       if (this.signalService.TraineeOfferLetterNavCountSignal()) {
-        this.getAllPendingApprovalsCount();
+        this.getApprovalStatusCounts();
         this.signalService.TraineeOfferLetterNavCountSignal.set(false);
       }
       if (this.signalService.ContractOfferLetterNavCountSignal()) {
-        this.getAllPendingApprovalsCount();
+        this.getApprovalStatusCounts();
         this.signalService.ContractOfferLetterNavCountSignal.set(false);
       }
       if (this.signalService.AppointmentLetterNavCountSignal()) {
-        this.getAllPendingApprovalsCount();
+        this.getApprovalStatusCounts();
         this.signalService.AppointmentLetterNavCountSignal.set(false);
       }
       if (this.signalService.NDALetterNavCountSignal()) {
-        this.getAllPendingApprovalsCount();
+        this.getApprovalStatusCounts();
         this.signalService.NDALetterNavCountSignal.set(false);
       }
       if (this.signalService.contractConversionForYouTriggerSignal()) {
-        this.getAllPendingApprovalsCount();
+        this.getApprovalStatusCounts();
         this.signalService.contractConversionForYouTriggerSignal.set(false);
       }
       if (this.signalService.contractConversionForYouRoleTriggerSignal()) {
-        this.getAllPendingApprovalsCount();
+        this.getApprovalStatusCounts();
         this.signalService.contractConversionForYouRoleTriggerSignal.set(false);
+      }
+      if (this.signalService.timeoffForYouTriggerSignal()) {
+        this.getApprovalStatusCounts();
+        this.signalService.timeoffForYouTriggerSignal.set(false);
+      }
+      if (this.signalService.timeoffForRoleTriggerSignal()) {
+        this.getApprovalStatusCounts();
+        this.signalService.timeoffForRoleTriggerSignal.set(false);
+      }
+      if (this.signalService.wfhForYouTriggerSignal()) {
+        this.getApprovalStatusCounts();
+        this.signalService.wfhForYouTriggerSignal.set(false);
+      }
+      if (this.signalService.wfhSidNavCountTriggerSignal()) {
+        this.getApprovalStatusCounts();
+        this.signalService.wfhSidNavCountTriggerSignal.set(false);
       }
     });
   }

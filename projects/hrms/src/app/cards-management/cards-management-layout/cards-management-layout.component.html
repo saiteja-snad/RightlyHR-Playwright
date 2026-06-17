@@ -21,6 +21,10 @@
           Register a Card</button>
         }
       </div>
+        <app-applicable-policies-trigger
+          [moduleKey]="applicablePolicies.moduleKey"
+          [subModuleKey]="applicablePolicies.subModuleKey">
+        </app-applicable-policies-trigger>
     </div>
   </div>
 
@@ -28,7 +32,7 @@
   <ng-template #popContent>
     <app-module-information [moduleInfo]="moduleinfo" />
   </ng-template>
-  
+
   <div class="d-flex gap-3 w-100">
     @if(!router.url.startsWith('/card-management/card-history')){
     <div class="component-left-tabs-container">
@@ -62,12 +66,12 @@
             <div class="error-msg" *ngIf="cardDetailsForm.get('cardNumber')?.hasError('required') && cardDetailsForm.get('cardNumber')?.touched">
               Card number is required
             </div>
-            
+
             <!-- Show when pattern invalid -->
             <div class="error-msg" *ngIf="cardDetailsForm.get('cardNumber')?.hasError('pattern') && cardDetailsForm.get('cardNumber')?.touched">
               Card number must be 16 digits
             </div>
-            
+
             <!-- Show when Luhn check fails -->
             <div class="error-msg"
               *ngIf="cardDetailsForm.get('cardNumber')?.hasError('validateCCNumber') && cardDetailsForm.get('cardNumber')?.touched">
@@ -106,7 +110,7 @@
                 [resetFilterOnHide]="true" filterBy="bankName1" formControlName="bankName" placeholder="Select bank name"
                 class="form-select custom-select"></p-select>
             </div>
-            <div class="error-msg" *ngIf="cardDetailsForm.controls['bankName'].invalid && (cardDetailsForm.controls['bankName'].touched 
+            <div class="error-msg" *ngIf="cardDetailsForm.controls['bankName'].invalid && (cardDetailsForm.controls['bankName'].touched
             || cardDetailsForm.controls['bankName'].dirty)">
               <span *ngIf="cardDetailsForm.controls['bankName'].errors?.['required']">Bank Name is required</span>
             </div>
@@ -157,7 +161,7 @@
                 Maximum 4 digits allowed
               </div>
               <div *ngIf="cardDetailsForm.get('expiryYear')?.errors?.['pastYear']">
-                Must be a valid current or future year 
+                Must be a valid current or future year
               </div>
             </div>
           </div>

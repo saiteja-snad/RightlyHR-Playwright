@@ -21,14 +21,18 @@ import { RbacService } from '../../../services/rbac.service';
 import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.service';
 import { IJob } from '../../../Interfaces/letters-model';
 import { IExpense, ISummary } from '../../../Interfaces/claimsandexpenses.model';
+import { ApplicablePoliciesTriggerComponent } from '../../../shared/policies/applicable-policies-trigger/applicable-policies-trigger.component';
+import { APPLICABLE_POLICIES_KEYS } from '../../../shared/policies/policy-visibility.catalog';
+
 @Component({
   selector: 'app-on-behalf-of-expenses',
-  imports: [OnBehalfOfExpensesTabsComponent, FormsModule, RouterModule, Select, ModuleInformationComponent, Skeleton,
+  imports: [OnBehalfOfExpensesTabsComponent, FormsModule, RouterModule, Select, ModuleInformationComponent, Skeleton, ApplicablePoliciesTriggerComponent,
     NgbPopoverModule, ModuleInfoIconComponent, TranslateModule, DatePicker, ReactiveFormsModule, TabsModule, CommonModule, ChartModule, InfoIconComponent],
   templateUrl: './on-behalf-of-expenses.component.html',
   styleUrl: './on-behalf-of-expenses.component.scss'
 })
 export class OnBehalfOfExpensesComponent {
+  applicablePolicies = APPLICABLE_POLICIES_KEYS.ON_BE_HALF_OF_EXPENSES;
   empinfo = {} as IJob;
   expenses = [] as any;
   destroy$: Subject<boolean> = new Subject<boolean>();

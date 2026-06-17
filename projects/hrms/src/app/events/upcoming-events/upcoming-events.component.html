@@ -6,11 +6,17 @@
         <app-module-info-icon placement="bottom" [ngbPopover]="popContent" />
       </div>
     </div>
+    <div class="d-flex gap-3 align-items-center">
     @if(this.rbac.allowedToAccess('Events(Upcoming Events).create')){
     <div>
       <button type="button" class="custom-btn btn-primary" (click)="openAddProspective()">{{ 'Add Event' | translate }}</button>
     </div>
     }
+    <app-applicable-policies-trigger
+      [moduleKey]="applicablePolicies.moduleKey"
+      [subModuleKey]="applicablePolicies.subModuleKey">
+    </app-applicable-policies-trigger>
+    </div>
   </div>
 
   <!--Module Information-->

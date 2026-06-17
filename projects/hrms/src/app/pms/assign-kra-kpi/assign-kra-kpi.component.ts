@@ -23,12 +23,15 @@ import { CheckboxModule } from 'primeng/checkbox';
 import { MODULE_INFOS } from '../../shared/modules-info';
 import { RbacService } from '../../services/rbac.service';
 import { InfoIconComponent } from '../../icons/info-icon/info-icon.component';
+import { ApplicablePoliciesTriggerComponent } from '../../shared/policies/applicable-policies-trigger/applicable-policies-trigger.component';
+import { APPLICABLE_POLICIES_KEYS } from '../../shared/policies/policy-visibility.catalog';
+
 @Component({
   selector: 'app-assign-kra-kpi',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, FormsModule, TranslateModule, SelectModule,
     TableModule, DataLoaderContentComponent, NoDataFoundComponent, ModuleInformationComponent,
-    ModuleInfoIconComponent, NgbPopoverModule, PaginatorModule, MultiSelectModule, ChipModule,
+    ModuleInfoIconComponent, NgbPopoverModule, PaginatorModule, MultiSelectModule, ChipModule, ApplicablePoliciesTriggerComponent,
     AccordionModule, CheckboxModule, InfoIconComponent],
   templateUrl: './assign-kra-kpi.component.html',
   styleUrl: './assign-kra-kpi.component.scss',
@@ -36,6 +39,7 @@ import { InfoIconComponent } from '../../icons/info-icon/info-icon.component';
 })
 
 export class AssignKraKpiComponent implements OnInit {
+  applicablePolicies = APPLICABLE_POLICIES_KEYS.PMS_ASSIGN_KRA_KPI;
   @ViewChild('dt') table!: Table;
   @ViewChild('assignKraKpiModal') assignKraKpiModal!: TemplateRef<any>;
   @ViewChild('deleteKpiConfirmation') deleteKpiConfirmation!: TemplateRef<any>;

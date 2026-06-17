@@ -15,15 +15,18 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { TimeoffYearFilterService } from '../../services/timeoff-year-filter.service';
 import { ExtraHoursTabsComponent } from "../../shared/time-off-module-tabs/extra-hours-tabs/extra-hours-tabs.component";
 import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
+import { ApplicablePoliciesTriggerComponent } from '../../shared/policies/applicable-policies-trigger/applicable-policies-trigger.component';
+import { APPLICABLE_POLICIES_KEYS } from '../../shared/policies/policy-visibility.catalog';
 
 @Component({
   selector: 'app-extra-hours',
-  imports: [RouterModule, ReactiveFormsModule, TranslateModule, CommonModule, Select,ModuleInfoIconComponent, ModuleInformationComponent, NgbPopoverModule, ExtraHoursTabsComponent],
+  imports: [RouterModule, ReactiveFormsModule, TranslateModule, CommonModule, Select,ModuleInfoIconComponent, ModuleInformationComponent, NgbPopoverModule, ExtraHoursTabsComponent, ApplicablePoliciesTriggerComponent],
   templateUrl: './extra-hours.component.html',
   styleUrl: './extra-hours.component.scss',
   encapsulation: ViewEncapsulation.None,
 })
 export class ExtraHoursComponent implements OnInit {
+  applicablePolicies = APPLICABLE_POLICIES_KEYS.TIME_OFF_EXTRA_HOURS;
   moduleinfo: string = '';
   subscription!: Subscription;
   ApprovedCount = 0;

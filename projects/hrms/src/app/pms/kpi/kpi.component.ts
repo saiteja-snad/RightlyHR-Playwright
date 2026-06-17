@@ -32,6 +32,10 @@ import { TooltipModule } from 'primeng/tooltip';
 import { SelectModule } from 'primeng/select';
 import { InfoIconComponent } from '../../icons/info-icon/info-icon.component';
 import { MODULE_INFOS } from '../../shared/modules-info';
+import { ApplicablePoliciesTriggerComponent } from '../../shared/policies/applicable-policies-trigger/applicable-policies-trigger.component';
+import { APPLICABLE_POLICIES_KEYS } from '../../shared/policies/policy-visibility.catalog';
+
+
 
 @Component({
   selector: 'app-kpi',
@@ -51,12 +55,15 @@ import { MODULE_INFOS } from '../../shared/modules-info';
     SelectModule,
     TooltipModule,
     InfoIconComponent,
+    ApplicablePoliciesTriggerComponent,
   ],
   templateUrl: './kpi.component.html',
   styleUrl: './kpi.component.scss',
   encapsulation: ViewEncapsulation.None,
 })
 export class KpiComponent implements OnInit, OnDestroy {
+  applicablePolicies = APPLICABLE_POLICIES_KEYS.PMS_KPI;
+
   private fb = inject(FormBuilder);
   private http = inject(HttpService);
   private modalService = inject(NgbModal);

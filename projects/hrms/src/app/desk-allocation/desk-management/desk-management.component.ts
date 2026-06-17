@@ -16,15 +16,17 @@ import { Skeleton } from 'primeng/skeleton';
 import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
 import { transition } from '@angular/animations';
 import { TranslateModule } from '@ngx-translate/core';
-@Component({
+import { ApplicablePoliciesTriggerComponent } from '../../shared/policies/applicable-policies-trigger/applicable-policies-trigger.component';
+import { APPLICABLE_POLICIES_KEYS } from '../../shared/policies/policy-visibility.catalog';@Component({
   selector: 'app-desk-management',
-  imports: [CommonModule, TabsModule, RouterModule, ReactiveFormsModule, Select, ModuleInformationComponent, NgbPopoverModule, ChartModule, Skeleton, ModuleInfoIconComponent,TranslateModule],
+  imports: [CommonModule, TabsModule, RouterModule, ReactiveFormsModule, Select, ModuleInformationComponent, NgbPopoverModule, ChartModule, Skeleton, ModuleInfoIconComponent,TranslateModule, ApplicablePoliciesTriggerComponent],
   templateUrl: './desk-management.component.html',
   styleUrl: './desk-management.component.scss',
   encapsulation: ViewEncapsulation.None
 })
 
 export class DeskManagementComponent implements OnInit, OnDestroy {
+  applicablePolicies = APPLICABLE_POLICIES_KEYS.DESK_ALLOCATION;
   moduleinfo: string = '';
   @ViewChild('createDeskModal') private readonly createDeskModal!: NgbModal;
   deskForm!: FormGroup;
@@ -300,7 +302,7 @@ export class DeskManagementComponent implements OnInit, OnDestroy {
         // Transform data to include `employeeName`
         this.approvalname = res.map((employee: any) => ({
           ...employee,
-          employeeNames: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''} ${employee.firstName} 
+          employeeNames: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''} ${employee.firstName}
           ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
         })).sort((a: any, b: any) =>
           a.firstName.toLowerCase().localeCompare(b.firstName.toLowerCase())

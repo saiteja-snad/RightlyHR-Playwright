@@ -21,6 +21,9 @@ import { ExpensesComponent } from './expenses/expenses.component';
 import { RegularizationComponent } from './regularization/regularization.component';
 import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
 import { TraineeRequestsComponent } from './trainee-requests/trainee-requests.component';
+import { ApplicablePoliciesTriggerComponent } from '../../shared/policies/applicable-policies-trigger/applicable-policies-trigger.component';
+import { APPLICABLE_POLICIES_KEYS } from '../../shared/policies/policy-visibility.catalog';
+
 @Component({
   selector: 'app-onbehalf-of-approvals',
   imports: [
@@ -40,8 +43,8 @@ import { TraineeRequestsComponent } from './trainee-requests/trainee-requests.co
     FormsModule,
     ExpensesComponent,
     ModuleInfoIconComponent,
-    TraineeRequestsComponent
-
+    TraineeRequestsComponent,
+    ApplicablePoliciesTriggerComponent
 ],
 
   templateUrl: './onbehalf-of-approvals.component.html',
@@ -50,6 +53,7 @@ import { TraineeRequestsComponent } from './trainee-requests/trainee-requests.co
 })
 
 export class OnbehalfOfApprovalsComponent {
+  applicablePolicies = APPLICABLE_POLICIES_KEYS.ON_BE_HALF_OF_APPROVALS;
   moduleinfo: string = '';
   subscription!: Subscription;
   employeedata = {} as any;
@@ -104,7 +108,7 @@ export class OnbehalfOfApprovalsComponent {
   }
 
   ngOnInit(): void {
-    
+
     this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     localStorage.removeItem("onbehalfofaproverData");
     this.getEmployeeId();
@@ -314,7 +318,7 @@ export class OnbehalfOfApprovalsComponent {
       }
     });
   }
-  
+
 
   getRegularizationoff(employeeId: any) {
   this.subscription = this.http.getData(`PendingApproval/employee/${employeeId}?moduleId=${environment.attendanceRegularizationModuleId}`).subscribe({

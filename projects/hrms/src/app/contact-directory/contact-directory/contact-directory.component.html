@@ -6,8 +6,13 @@
         <app-module-info-icon placement="bottom" [ngbPopover]="popContent" />
       </div>
     </div>
+
+    <app-applicable-policies-trigger
+      [moduleKey]="applicablePolicies.moduleKey"
+      [subModuleKey]="applicablePolicies.subModuleKey">
+    </app-applicable-policies-trigger>
   </div>
-  
+
   <!--Module Information-->
   <ng-template #popContent>
     <app-module-information [moduleInfo]="moduleinfo" />

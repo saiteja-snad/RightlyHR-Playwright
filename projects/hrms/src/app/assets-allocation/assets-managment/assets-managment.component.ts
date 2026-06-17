@@ -20,9 +20,11 @@ import { TimesheetFilterService } from '../../services/timesheet-filter.service'
 import dayjs from 'dayjs';
 import { DatePicker } from 'primeng/datepicker';
 import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
+import { ApplicablePoliciesTriggerComponent } from '../../shared/policies/applicable-policies-trigger/applicable-policies-trigger.component';
+import { APPLICABLE_POLICIES_KEYS } from '../../shared/policies/policy-visibility.catalog';
 @Component({
   selector: 'app-assets-managment',
-  imports: [CommonModule, TabsModule, TranslateModule,Select,DatePicker, RouterModule,Skeleton, ReactiveFormsModule, NgbPopoverModule, FormsModule, ModuleInformationComponent, ChartModule,ModuleInfoIconComponent],
+  imports: [CommonModule, TabsModule, TranslateModule, Select, DatePicker, RouterModule, Skeleton, ReactiveFormsModule, NgbPopoverModule, FormsModule, ModuleInformationComponent, ChartModule, ModuleInfoIconComponent, ApplicablePoliciesTriggerComponent],
   templateUrl: './assets-managment.component.html',
   styleUrl: './assets-managment.component.scss',
   encapsulation: ViewEncapsulation.None,
@@ -30,6 +32,7 @@ import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-inf
 
 export class AssetsManagmentComponent {
   moduleinfo: string = '';
+  applicablePolicies = APPLICABLE_POLICIES_KEYS.ASSETS;
   navTabs: any[] = [];
   subscription!: Subscription;
   jobLocationDropDownData: any = [];
@@ -82,7 +85,7 @@ export class AssetsManagmentComponent {
   this.getassetsCategory();
   this.getjobLocationList();
   this.getvendor();
-  
+
   this.intiallocationandsublocation();
 
   // Load default count & unfiltered data after clearing
@@ -106,7 +109,7 @@ export class AssetsManagmentComponent {
     this.updateModuleInfo();
     this.initiateUpdateModuleInfo();
   }
-  
+
   isFilterApplied(): boolean {
     const formValue = this.locationfromdata?.value;
     // Check if any filter (except date & employee) has value
@@ -153,7 +156,7 @@ export class AssetsManagmentComponent {
     //this.getteamsummary(employeeIds);
     this.closeCanvas();
   }
- 
+
 
   resetForm() {
     // Reset to current month
@@ -204,7 +207,7 @@ export class AssetsManagmentComponent {
     //   { label: 'Under Maintenance', route: '/assets-management/under-maintenance-assets', count$: this.http.undermatinaceassetCountSubject, icon: '/assets-icon/Maintenance-icon.png', backgroundcolour: '#FF8000', permission: { feature: 'Asset Management - Under Maintenance', action: 'view' } },
     //   { label: 'Inactive', route: '/assets-management/inactive-assets', count$: this.http.inactiveaceassetCountSubject, icon: '/assets-icon/Inactive-icon.png', backgroundcolour: '#FF2E22', permission: { feature: 'Asset Management - Inactive', action: 'view' } },
     //   { label: 'Block', route: '/assets-management/block-assets', count$: this.http.blockassetCountSubject, icon: '/assets-icon/Inactive-icon.png', backgroundcolour: '#FF2E22', permission: { feature: 'Asset Management - Block', action: 'view' } },
-      
+
     // ];
       this.allNavTabs = [
       // { label: 'All', route: '/assets-management/all-assets', count$: this.http.assetCountSubject, icon: '/desk-icon/all-icon.png', permission: { feature: 'Asset Management - All', action: 'view' } },
@@ -460,7 +463,7 @@ checkIfFormIsEmpty(): boolean {
       },
     });
   }
-  
+
   // onassetsubcategory() {
   //   this.assetForm.get('assetSubCategory')?.enable()
   //   const selectedId = this.assetForm.get('assetCategory')?.value.id;
@@ -562,7 +565,7 @@ onassetcategoryfilter() {
      localStorage.setItem('formDate', JSON.stringify(startDate));
       localStorage.setItem('toDate', JSON.stringify(endDate));
   }
-  
+
   applydata() {
     const formValue = this.locationfromdata.value;
     const locationId = formValue.locationId || null;
@@ -598,7 +601,7 @@ onassetcategoryfilter() {
   closeCanvas() {
     this.offcanvasService.dismiss();
   }
-  
+
   getSubLocationByidfliters(selectedLocation: any): void {
     this.locationfromdata.get('subLocationId')?.enable();
     this.subscription = this.http
@@ -768,7 +771,7 @@ onassetcategoryfilter() {
     });
   }
 
-  
+
   getassetsdata(pagenum: number, pagesize: number, locationid: any, sublocationid: any,catageory:any,subcatageory:any,fromDate:any,toDate:any, Assetsstatus: any) {
   console.log('payload-01',this.page, this.pageSize, locationid, sublocationid,
     catageory, subcatageory, fromDate, toDate, null);
@@ -803,8 +806,8 @@ onassetcategoryfilter() {
     if (fromDate) params.append('fromDate', fromDate);
     if (toDate) params.append('toDate', toDate);
     params.append('status', status);
-   
-  
+
+
   this.http.getData(`AssetMaster/v1/statuscount?${params.toString()}`).subscribe({
     next: (data: any) => {
   const totalCount = data.totalCount || 0;
@@ -865,7 +868,7 @@ initChart() {
     };
     this.loading=false
   }
- 
+
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();

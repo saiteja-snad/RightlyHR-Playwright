@@ -53,6 +53,12 @@
             <button type="button" class="custom-btn btn-primary" (click)="navigatetoAddExpenses()"
                 [disabled]="!selectedOtherEmployee">{{'Apply On Behalf Of' | translate}}</button>
             }
+            <div>
+                <app-applicable-policies-trigger
+                [moduleKey]="applicablePolicies.moduleKey"
+                [subModuleKey]="applicablePolicies.subModuleKey">
+              </app-applicable-policies-trigger>
+            </div>
         </div>
         <div class="graph-grid w-100 mb-3" *ngIf="showDashboard">
             <div class="employee-category-container">

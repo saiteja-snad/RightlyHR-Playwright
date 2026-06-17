@@ -8,6 +8,9 @@
             @if(rbac.allowedToAccess('Client Information.create')){
             <button type="button" class="custom-btn btn-primary" (click)="navigateAddClient()">Add Client</button>
             }
+            <app-applicable-policies-trigger [moduleKey]="applicablePolicies.moduleKey"
+                [subModuleKey]="applicablePolicies.subModuleKey">
+            </app-applicable-policies-trigger>
         </div>
     </div>
 

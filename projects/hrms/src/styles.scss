@@ -2910,6 +2910,34 @@ input[type=number]::-webkit-outer-spin-button {
     }
 }
 
+/* Clone Timesheet offcanvas global overrides */
+.offcanvas.clone-offcanvas-panel,
+.clone-offcanvas-panel.offcanvas,
+.offcanvas.clone-offcanvas-panel.offcanvas-end,
+.clone-offcanvas-panel {
+    width: 420px !important;
+    max-width: 95% !important;
+    background: #ffffff !important;
+    border: 1px solid #e4e9f4 !important;
+    border-top-left-radius: 2rem !important;
+    border-bottom-left-radius: 2rem !important;
+    border-top-right-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+    overflow: hidden !important;
+    box-shadow: 0 24px 60px rgba(15, 23, 42, 0.12) !important;
+}
+
+.offcanvas.clone-offcanvas-panel .offcanvas-body,
+.clone-offcanvas-panel .offcanvas-body {
+    padding: 0 !important;
+    overflow-y: auto !important;
+    max-height: calc(100vh - 4rem) !important;
+}
+
+.clone-offcanvas-panel .offcanvas-backdrop {
+    background: rgba(16, 24, 40, 0.24) !important;
+}
+
 .fliter-chip-content {
     .p-chip {
         font-size: var(--fontsize12) !important;

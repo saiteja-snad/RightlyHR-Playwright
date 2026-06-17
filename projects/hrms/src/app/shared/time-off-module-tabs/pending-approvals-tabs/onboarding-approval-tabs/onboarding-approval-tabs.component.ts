@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, effect } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { Subscription, Subject, combineLatest, takeUntil, distinctUntilChanged, skip, debounceTime } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
@@ -49,49 +49,56 @@ export class OnboardingApprovalTabsComponent implements OnInit, OnDestroy {
     {
       label: 'Offer Letter',
       route: '/pending-approvals/on-boarding/offer-letter-history',
-      moduleId: environment.ProbationrequestmoduleId,
+      moduleId: 1,
       permission: { feature: 'Documents History Offer Letter', action: 'view' },
       icon: '/letters-icon/offer-letter-icon.png',
     },
     {
       label: 'Contract Offer Letter',
       route: '/pending-approvals/on-boarding/contractor-offer-letter-history',
-      moduleId: environment.traineeoffboardingModuleId,
+      moduleId: 2,
       permission: { feature: 'Documents History Contract Offer Letter', action: 'view' },
       icon: '/letters-icon/appointment-letter-icon.png',
     },
     {
       label: 'Trainee Offer Letter',
       route: '/pending-approvals/on-boarding/intern-offer-letter-history',
-      moduleId: environment.ProbationrequestmoduleId,
+      moduleId: 3,
       permission: { feature: 'Documents History Trainee Offer Letter', action: 'view' },
+      icon: '/letters-icon/trainee-offer-letter-icon.png',
+    },
+    {
+      label: 'Trainee Appointment Letter',
+      route: '/pending-approvals/on-boarding/intern-appointment-letter-history',
+      moduleId: 8,
+      permission: { feature: 'Documents History Trainee Appointment Letter', action: 'view' },
       icon: '/letters-icon/trainee-offer-letter-icon.png',
     },
     {
       label: 'Appointment Letter',
       route: '/pending-approvals/on-boarding/appointment-letter-history',
-      moduleId: environment.traineeoffboardingModuleId,
+      moduleId: 4,
       permission: { feature: 'Documents History Appointment Letter', action: 'view' },
       icon: '/letters-icon/appointment-letter-icon.png',
     },
     {
       label: 'Non-Disclosure Agreement Letter',
       route: '/pending-approvals/on-boarding/nda-letter-history',
-      moduleId: environment.traineeoffboardingModuleId,
+      moduleId: 5,
       permission: { feature: 'Documents History Non-Disclosure Agreement Letter', action: 'view' },
       icon: '/my-info-icons/contractor.png',
     },
     {
       label: 'Probation',
       route: '/pending-approvals/on-boarding/probation-request',
-      moduleId: environment.ProbationrequestmoduleId,
+      moduleId: 6,
       permission: { feature: 'Probation Details Tab', action: 'view' },
       icon: '/time-off-icon/Probation-icon.png',
     },
     {
       label: 'Trainees',
       route: '/pending-approvals/on-boarding/trainee-approvals',
-      moduleId: environment.traineeoffboardingModuleId,
+      moduleId: 7,
       permission: { feature: 'Trainee Details Tab', action: 'view' },
       icon: '/time-off-icon/trainee-icon.png',
     },
@@ -101,6 +108,41 @@ export class OnboardingApprovalTabsComponent implements OnInit, OnDestroy {
   constructor(public readonly router: Router, private readonly http: HttpService, public readonly rbac: RbacService,
     private readonly signalService: SignalsService, private readonly accessNav: AccessNavigationService, private readonly onboardingFilter: OnboardingFilterService) {
 
+      effect(() => {
+      if ((this.http.tirggerPendingApprovalCountSignal().wfh) || (this.http.tirggerPendingApprovalCountSignal().separation)
+        || (this.http.tirggerPendingApprovalCountSignal().nodue) || (this.http.tirggerPendingApprovalCountSignal().onboarding)) {
+        this.getAllPendingApprovalsCount(true);
+        this.http.tirggerPendingApprovalCountSignal.update(status => ({
+          ...status,
+          wfh: status.wfh ? false : status.wfh,
+          separation: status.separation ? false : status.separation,
+          nodue: status.nodue ? false : status.nodue,
+        }));
+      }
+      if (this.signalService.OfferLetterNavCountSignal()) {
+        this.getAllPendingApprovalsCount(true);
+        //this.signalService.OfferLetterNavCountSignal.set(false);
+      }
+      if (this.signalService.TraineeOfferLetterNavCountSignal()) {
+        this.getAllPendingApprovalsCount(true);
+        //this.signalService.TraineeOfferLetterNavCountSignal.set(false);
+      }
+      if (this.signalService.ContractOfferLetterNavCountSignal()) {
+        this.getAllPendingApprovalsCount(true);
+        //this.signalService.ContractOfferLetterNavCountSignal.set(false);
+      }
+      if (this.signalService.AppointmentLetterNavCountSignal()) {
+        this.getAllPendingApprovalsCount(true);
+        //this.signalService.AppointmentLetterNavCountSignal.set(false);
+      }
+      if (this.signalService.NDALetterNavCountSignal()) {
+        this.getAllPendingApprovalsCount(true);
+        //this.signalService.NDALetterNavCountSignal.set(false);
+      }
+      
+    });
+
+ 
   }
 
   ngOnInit(): void {
@@ -131,7 +173,7 @@ export class OnboardingApprovalTabsComponent implements OnInit, OnDestroy {
  getAllPendingApprovalsCount(updateAll: boolean = false) {
     this.loading = true;
     const employeeId = Number.parseInt(this.LOGIN.employeeId);
-    this.http.getData(`PendingApproval/onboard-requests-count?month=${this.selectedMonth}&year=${this.selectedYear}&EmployeeId=${employeeId}  `).pipe(takeUntil(this.destroy$)).subscribe({
+    this.http.getData(`PendingApproval/onboard-requests-count?month=${this.selectedMonth}&year=${this.selectedYear}&EmployeeId=${employeeId}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: any) => {
         if (response.success) {
           const modules = response.data.modules;

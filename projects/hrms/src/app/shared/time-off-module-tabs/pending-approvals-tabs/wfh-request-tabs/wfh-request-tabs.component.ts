@@ -59,11 +59,11 @@ navTabs = computed(() => {
       
         // Conditionally reset the signals based on their current state
         if (this.signalService.wfhForYouTriggerSignal()) {
-          this.signalService.wfhForYouTriggerSignal.set(false);
+          //this.signalService.wfhForYouTriggerSignal.set(false);
         }
         
         if (this.signalService.wfhForRoleTriggerSignal()) {
-          this.signalService.wfhForRoleTriggerSignal.set(false);
+          //this.signalService.wfhForRoleTriggerSignal.set(false);
         }
       }
       

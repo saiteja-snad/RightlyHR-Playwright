@@ -73,6 +73,14 @@ export class SignalsService {
   contractConversionForYouTriggerSignal = signal<boolean>(false);
   contractConversionForYouRoleTriggerSignal = signal<boolean>(false);
 
+  //on behalf of
+  onBhehalfOfApprovalSignal = signal<Boolean>(false);
+  OfferLetterNavCountSignal = signal<boolean>(false);
+  TraineeOfferLetterNavCountSignal = signal<boolean>(false);
+  ContractOfferLetterNavCountSignal = signal<boolean>(false);
+  AppointmentLetterNavCountSignal = signal<boolean>(false);
+  NDALetterNavCountSignal = signal<boolean>(false);
+
   // Offboarding reload signal
   offboardingReloadTriggerSignal = signal<boolean>(false);
 

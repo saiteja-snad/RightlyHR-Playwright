@@ -64,6 +64,14 @@ export class PendingApprovalsTabsComponent {
         this.getAllPendingApprovalsCount();
         this.signalService.NDALetterNavCountSignal.set(false);
       }
+      if (this.signalService.contractConversionForYouTriggerSignal()) {
+        this.getAllPendingApprovalsCount();
+        this.signalService.contractConversionForYouTriggerSignal.set(false);
+      }
+      if (this.signalService.contractConversionForYouRoleTriggerSignal()) {
+        this.getAllPendingApprovalsCount();
+        this.signalService.contractConversionForYouRoleTriggerSignal.set(false);
+      }
     });
   }
 

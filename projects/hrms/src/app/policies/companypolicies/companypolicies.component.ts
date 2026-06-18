@@ -62,6 +62,8 @@ export class CompanypoliciesComponent implements OnInit, OnDestroy {
     });
     this.policiesform.get('selectedYear')?.valueChanges.subscribe((year: number) => {
       this.selectedYear = year;
+      // Clear selections when year changes
+      this.selectedPolicyItems = [];
       this.getpolicys(this.jobshiftdetials);
     });
     this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
@@ -265,6 +267,12 @@ export class CompanypoliciesComponent implements OnInit, OnDestroy {
         this.Policies = response;
         this.filteredpolicy = response.map((policy: any) => policy.orgPolicyItems);
         this.orgPolicyItemsArray = [].concat(...this.filteredpolicy);
+        
+        // Clear selections when new data is loaded and reset table selection
+        this.selectedPolicyItems = [];
+        if (this.table) {
+          this.table.selection = [];
+        }
         
         // Sort items initially to maintain consistent ordering
         this.sortPolicyItems();

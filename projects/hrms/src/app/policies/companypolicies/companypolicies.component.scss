@@ -15,6 +15,35 @@
     min-height: 45vh;
     border: 1px solid var(--content-border-color);
     overflow: auto;
+
+    // Sticky table header
+    ::ng-deep .p-datatable {
+        .p-datatable-header {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background-color: var(--table-header-bg, #f8f9fa);
+            border-bottom: 2px solid var(--content-border-color, #dee2e6);
+        }
+
+        .p-datatable-thead > tr > th {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background-color: var(--table-header-bg, #f8f9fa);
+            border-bottom: 2px solid var(--content-border-color, #dee2e6);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .p-datatable-scrollable .p-datatable-thead > tr > th {
+            position: sticky;
+            top: 0;
+        }
+
+        .p-datatable-tbody {
+            overflow-y: auto;
+        }
+    }
 }
 
 .view-icon {

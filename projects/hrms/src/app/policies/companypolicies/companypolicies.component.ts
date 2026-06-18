@@ -110,6 +110,7 @@ export class CompanypoliciesComponent implements OnInit, OnDestroy {
     // Update selection state and filter out invalid selections
     if (!selectedItems || selectedItems.length === 0) {
       this.selectedPolicyItems = [];
+      this.sortPolicyItems();
       return;
     }
 
@@ -121,12 +122,39 @@ export class CompanypoliciesComponent implements OnInit, OnDestroy {
     // Update the selection to only include valid items
     this.selectedPolicyItems = [...validSelections];
 
+    // Sort the array to bring selected items to the top
+    this.sortPolicyItems();
+
     // If some items were filtered out, update the table selection to match
     if (validSelections.length !== selectedItems.length && this.table) {
       setTimeout(() => {
         this.table.selection = validSelections;
       });
     }
+  }
+
+  // Method to sort policy items with selected items at the top
+  private sortPolicyItems() {
+    if (!this.orgPolicyItemsArray || this.orgPolicyItemsArray.length === 0) {
+      return;
+    }
+
+    // Get selected item IDs for quick lookup
+    const selectedIds = new Set(this.selectedPolicyItems.map(item => item.id));
+
+    // Sort the array: selected items first, then non-selected items
+    this.orgPolicyItemsArray = this.orgPolicyItemsArray.sort((a, b) => {
+      const aIsSelected = selectedIds.has(a.id);
+      const bIsSelected = selectedIds.has(b.id);
+
+      // If both are selected or both are not selected, maintain original order
+      if (aIsSelected === bIsSelected) {
+        return 0;
+      }
+
+      // Selected items come first (return -1 for a if a is selected and b is not)
+      return aIsSelected ? -1 : 1;
+    });
   }
 
   isCheckboxDisabled(item: any): boolean {
@@ -157,6 +185,11 @@ export class CompanypoliciesComponent implements OnInit, OnDestroy {
   // Check if individual acknowledge buttons should be disabled (when multi-select is active)
   isIndividualAcknowledgeDisabled(): boolean {
     return this.selectedPolicyItems && this.selectedPolicyItems.length > 0;
+  }
+
+  // Check if header checkbox should be disabled (when no records need acknowledgment)
+  isHeaderCheckboxDisabled(): boolean {
+    return this.pendingAcknowledgmentCount === 0;
   }
 
   openModal(content: any) {
@@ -231,6 +264,10 @@ export class CompanypoliciesComponent implements OnInit, OnDestroy {
         this.Policies = response;
         this.filteredpolicy = response.map((policy: any) => policy.orgPolicyItems);
         this.orgPolicyItemsArray = [].concat(...this.filteredpolicy);
+        
+        // Sort items initially to maintain consistent ordering
+        this.sortPolicyItems();
+        
         console.log(this.orgPolicyItemsArray);
       },
       error: () => {
@@ -263,6 +300,11 @@ export class CompanypoliciesComponent implements OnInit, OnDestroy {
           this.modalService.dismissAll();
         }, 2000);
         selectedItem.acknowledged = true;
+        
+        // Clear selections and reset sorting when individual acknowledgment is completed
+        this.selectedPolicyItems = [];
+        this.sortPolicyItems();
+        
         this.getjobDetails();
       },
       error: (reason: any) => {
@@ -330,6 +372,8 @@ export class CompanypoliciesComponent implements OnInit, OnDestroy {
     });
     
     this.selectedPolicyItems = [];
+    // Reset sorting when selections are cleared
+    this.sortPolicyItems();
     this.getjobDetails();
   }
 

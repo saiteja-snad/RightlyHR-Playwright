@@ -11,8 +11,8 @@
       <!-- Multi-select header - show when any items are selected -->
       @if (selectedPolicyItems && selectedPolicyItems.length > 0) {
         <!-- <div class="component-sub-header ">{{"Selected Records" | translate}}: {{validSelectedCount}} / {{"Pending Acknowledgment" | translate}}: {{pendingAcknowledgmentCount}}</div> -->
-          <button class="btn btn-primary" (click)="bulkAcknowledgePolicies()" [disabled]="validSelectedCount === 0">>
-            <span *ngIf="!bulkAcknowledging">{{'Acknowledge'|translate}}</span>
+          <button class="btn btn-primary" (click)="bulkAcknowledgePolicies()" [disabled]="validSelectedCount === 0">
+            <span *ngIf="!bulkAcknowledging"> {{'Acknowledge'|translate}}</span>
             <span *ngIf="bulkAcknowledging">
               <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
               {{'Acknowledging...'|translate}}

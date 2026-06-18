@@ -12,6 +12,7 @@ export interface QuickLinksSourceDef {
   route: string;
   type: 'direct' | 'dropdown';
   children?: string[];
+  permission?: QuickLinkPermission;
 }
 
 export interface QuickLinksResolveContext {
@@ -164,21 +165,21 @@ export const QUICK_LINK_ROUTES: Record<string, QuickLinkRouteDef> = {
 
   '/time-off/leaves/waiting-for-approval': {
     route: '/time-off/leaves/waiting-for-approval',
-    label: 'Time Off-Leaves',
+    label: 'Leaves',
     icon: '/time-off-icon/leaves-icon.png',
     permission: { feature: 'Time Off Module', action: 'view' },
     parentRoute: '/time-off'
   },
   '/time-off/wfh/waiting-for-approval': {
     route: '/time-off/wfh/waiting-for-approval',
-    label: 'Time Off-WFH',
+    label: 'WFH',
     icon: '/time-off-icon/WFH-icon.png',
     permission: { feature: 'WFH/On Duty Module', action: 'view' },
     parentRoute: '/time-off'
   },
   '/time-off/remote/waiting-for-approval': {
     route: '/time-off/remote/waiting-for-approval',
-    label: 'Time Off-Remote Login',
+    label: 'Remote Login',
     icon: '/time-off-icon/remote-login-icon.png',
     permission: { feature: 'Remote Login Module', action: 'view' },
     parentRoute: '/time-off'
@@ -216,63 +217,63 @@ export const QUICK_LINK_ROUTES: Record<string, QuickLinkRouteDef> = {
 
   '/pending-approvals/time-off': {
     route: '/pending-approvals/time-off',
-    label: 'Time-Off',
+    label: 'PA-Time Off',
     icon: '/main-menu-icons/Time-off-settings-icon.png',
     permission: { feature: 'Time Off main Tab', action: 'view' },
     parentRoute: '/pending-approvals'
   },
   '/pending-approvals/on-boarding': {
     route: '/pending-approvals/on-boarding',
-    label: 'Onboarding',
+    label: 'PA-Onboarding',
     icon: '/images/onboarding.png',
     permission: { feature: 'Onboarding main Tab', action: 'view' },
     parentRoute: '/pending-approvals'
   },
   '/pending-approvals/contractors': {
     route: '/pending-approvals/contractors',
-    label: 'Contractors',
+    label: 'PA-Contractors',
     icon: '/my-info-icons/contractor.png',
     permission: { feature: 'Contractors main Tab', action: 'view' },
     parentRoute: '/pending-approvals'
   },
   '/pending-approvals/off-boarding': {
     route: '/pending-approvals/off-boarding',
-    label: 'Offboarding',
+    label: 'PA-Offboarding',
     icon: '/images/sepration-request.png',
     permission: { feature: 'Offboarding main Tab', action: 'view' },
     parentRoute: '/pending-approvals'
   },
   '/pending-approvals/desk-approval': {
     route: '/pending-approvals/desk-approval',
-    label: 'Desks',
+    label: 'PA-Desks',
     icon: '/main-menu-icons/desk-icon.png',
     permission: { feature: 'Desk Requests Tab', action: 'view' },
     parentRoute: '/pending-approvals'
   },
   '/pending-approvals/claimsandexpenses-request': {
     route: '/pending-approvals/claimsandexpenses-request',
-    label: 'Expenses',
+    label: 'PA-Expenses',
     icon: '/main-menu-icons/expenses-icon.png',
     permission: { feature: 'Claims and Expenses Tab', action: 'view' },
     parentRoute: '/pending-approvals'
   },
   '/pending-approvals/time-sheets': {
     route: '/pending-approvals/time-sheets',
-    label: 'Timesheets',
+    label: 'PA-Timesheets',
     icon: '/time-off-icon/calender-activity.png',
     permission: { feature: 'Time Sheet approval Tab', action: 'view' },
     parentRoute: '/pending-approvals'
   },
   '/pending-approvals/employeeinfo-request': {
     route: '/pending-approvals/employeeinfo-request',
-    label: 'Employee Info',
+    label: 'PA-Employee Info',
     icon: '/time-off-icon/employee-info-approvals.png',
     permission: { feature: 'EmployeeInfo Tab', action: 'view' },
     parentRoute: '/pending-approvals'
   },
   '/pending-approvals/kra-kpi': {
     route: '/pending-approvals/kra-kpi',
-    label: "KRA/KPI's",
+    label: "PA-KRA/KPI's",
     icon: '/main-menu-icons/kra-kpi.png',
     permission: { feature: 'KRA KPI approval Tab', action: 'view' },
     parentRoute: '/pending-approvals'
@@ -327,7 +328,7 @@ export const QUICK_LINK_ROUTES: Record<string, QuickLinkRouteDef> = {
   },
   '/on-behalf-of/global/permissions': {
     route: '/on-behalf-of/global/permissions',
-    label: 'Global Actions',
+    label: 'On Behalf Of-Global Actions',
     icon: '/time-off-icon/Global-Permissions-icon.png',
     permission: { feature: 'Global Permissions Module', action: 'view' },
     parentRoute: '/on-behalf-of'
@@ -394,27 +395,28 @@ export const QUICK_LINK_ROUTES: Record<string, QuickLinkRouteDef> = {
 };
 
 export const QUICK_LINK_SOURCES: Record<string, QuickLinksSourceDef> = {
-  '/myinfo': { route: '/myinfo', type: 'direct' },
-  '/employee-management': { route: '/employee-management', type: 'direct' },
-  '/holidays': { route: '/holidays', type: 'direct' },
-  '/attendance': { route: '/attendance', type: 'direct' },
-  '/reports': { route: '/reports', type: 'direct' },
-  '/skill-management/dashboard': { route: '/skill-management/dashboard', type: 'direct' },
-  '/policies': { route: '/policies', type: 'direct' },
-  '/events': { route: '/events', type: 'direct' },
-  '/claimsandexpenses': { route: '/claimsandexpenses', type: 'direct' },
-  '/organization-chart': { route: '/organization-chart', type: 'direct' },
-  '/theme': { route: '/theme', type: 'direct' },
-  '/blood-bank': { route: '/blood-bank', type: 'direct' },
-  '/contacts-directory': { route: '/contacts-directory', type: 'direct' },
-  '/phonebook': { route: '/phonebook', type: 'direct' },
-  '/assets-management': { route: '/assets-management', type: 'direct' },
-  '/card-management': { route: '/card-management', type: 'direct' },
-  '/desk': { route: '/desk', type: 'direct' },
-  '/calendar-view': { route: '/calendar-view', type: 'direct' },
+  '/myinfo': { route: '/myinfo', type: 'direct', permission: { feature: 'My Info', action: 'view' } },
+  '/employee-management': { route: '/employee-management', type: 'direct', permission: { feature: 'Employees', action: 'view' } },
+  '/holidays': { route: '/holidays', type: 'direct', permission: { feature: 'Holidays', action: 'view' } },
+  '/attendance': { route: '/attendance', type: 'direct', permission: { feature: 'Attendance', action: 'view' } },
+  '/reports': { route: '/reports', type: 'direct', permission: { feature: 'Reports', action: 'view' } },
+  '/skill-management/dashboard': { route: '/skill-management/dashboard', type: 'direct', permission: { feature: 'Skills Dashboard', action: 'view' } },
+  '/policies': { route: '/policies', type: 'direct', permission: { feature: 'Policies', action: 'view' } },
+  '/events': { route: '/events', type: 'direct', permission: { feature: 'Events', action: 'view' } },
+  '/claimsandexpenses': { route: '/claimsandexpenses', type: 'direct', permission: { feature: 'Expenses', action: 'view' } },
+  '/organization-chart': { route: '/organization-chart', type: 'direct', permission: { feature: 'Org Hierarchy', action: 'view' } },
+  '/theme': { route: '/theme', type: 'direct', permission: { feature: 'Themes', action: 'view' } },
+  '/blood-bank': { route: '/blood-bank', type: 'direct', permission: { feature: 'Blood Bank', action: 'view' } },
+  '/contacts-directory': { route: '/contacts-directory', type: 'direct', permission: { feature: 'Contacts Directory', action: 'view' } },
+  '/phonebook': { route: '/phonebook', type: 'direct', permission: { feature: 'Phone Book', action: 'view' } },
+  '/assets-management': { route: '/assets-management', type: 'direct', permission: { feature: 'Asset Management', action: 'view' } },
+  '/card-management': { route: '/card-management', type: 'direct', permission: { feature: 'Cards Management', action: 'view' } },
+  '/desk': { route: '/desk', type: 'direct', permission: { feature: 'Desk Allocation', action: 'view' } },
+  '/calendar-view': { route: '/calendar-view', type: 'direct', permission: { feature: 'Calendar', action: 'view' } },
   '/time-off': {
     route: '/time-off',
     type: 'dropdown',
+    permission: { feature: 'Time-Off', action: 'view' },
     children: [
       '/time-off/leaves/waiting-for-approval',
       '/time-off/wfh/waiting-for-approval',
@@ -428,6 +430,7 @@ export const QUICK_LINK_SOURCES: Record<string, QuickLinksSourceDef> = {
   '/pending-approvals': {
     route: '/pending-approvals',
     type: 'dropdown',
+    permission: { feature: 'Pending Approvals Module', action: 'view' },
     children: [
       '/pending-approvals/time-off',
       '/pending-approvals/on-boarding',
@@ -443,6 +446,7 @@ export const QUICK_LINK_SOURCES: Record<string, QuickLinksSourceDef> = {
   '/project-management': {
     route: '/project-management',
     type: 'dropdown',
+    permission: { feature: 'Project Management', action: 'view' },
     children: [
       '/project-management/clients',
       '/project-management/projects',
@@ -452,6 +456,7 @@ export const QUICK_LINK_SOURCES: Record<string, QuickLinksSourceDef> = {
   '/on-behalf-of': {
     route: '/on-behalf-of',
     type: 'dropdown',
+    permission: { feature: 'On Behalf Of', action: 'view' },
     children: [
       '/on-behalf-of/on-behalf-of',
       '/on-behalf-of/on-behalf-of-wfh',
@@ -464,6 +469,7 @@ export const QUICK_LINK_SOURCES: Record<string, QuickLinksSourceDef> = {
   '/pms': {
     route: '/pms',
     type: 'dropdown',
+    permission: { feature: 'PMS', action: 'view' },
     children: [
       '/pms/review-cycle',
       '/pms/performace-review/myPerformance/pending-review',
@@ -507,4 +513,8 @@ export function resolveQuickLinksFromSourceRoute(sourceRoute: string, context?: 
     if (route === '/time-off/remote/waiting-for-approval') return allowRemoteLogin;
     return true;
   });
+}
+
+export function resolveQuickLinksSourceDef(route: string): QuickLinksSourceDef | null {
+  return QUICK_LINK_SOURCES[route] ?? null;
 }

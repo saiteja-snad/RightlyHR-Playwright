@@ -31,7 +31,7 @@ import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { AccessNavigationService } from '../../services/access-navigation.service';
 import { DragDropModule, CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { MenuOrderService } from '../../services/theme-service/menu-order.service';
-import { QuickLinkRouteDef, QUICK_LINK_DEFAULT_ROUTES, resolveQuickLinkRouteDef, resolveQuickLinksFromSourceRoute } from '../../shared/quick-links/quick-links.registry';
+import { QuickLinkRouteDef, QUICK_LINK_DEFAULT_ROUTES, resolveQuickLinkRouteDef, resolveQuickLinksFromSourceRoute, resolveQuickLinksSourceDef } from '../../shared/quick-links/quick-links.registry';
 @Component({
   selector: 'app-employee-dashboard',
   imports: [CommonModule, RouterModule, FormsModule, TranslateModule, NgbPopoverModule, ModuleInfoIconComponent,
@@ -260,7 +260,7 @@ quickLinksInfo =
       const normalizedRoute = this.resolveDefaultQuickLinkRoute(route);
       const def = resolveQuickLinkRouteDef(normalizedRoute);
       if (!def) return;
-      if (!this.rbac.allowedToAccess(`${def.permission.feature}.${def.permission.action}`)) return;
+      if (!this.canAccessQuickLink(def)) return;
       if (placed.has(def.route)) return;
       ordered.push(def);
       placed.add(def.route);
@@ -321,6 +321,14 @@ quickLinksInfo =
     this.router.navigateByUrl(actualRoute);
   }
 
+  isPendingApprovalsQuickLink(item: QuickLinkRouteDef): boolean {
+    return item.parentRoute === '/pending-approvals' && item.label.startsWith('PA-');
+  }
+
+  getPendingApprovalsQuickLinkSuffix(label: string): string {
+    return label.startsWith('PA-') ? label.slice(3) : label;
+  }
+
   removeSelectedQuickLinks(): void {
     if (this.selectedQuickLinkRoutes.size === 0) return;
     this.quickLinks = this.quickLinks.filter((item) => !this.selectedQuickLinkRoutes.has(item.route));
@@ -341,7 +349,17 @@ quickLinksInfo =
     return routesToResolve
       .map((route) => resolveQuickLinkRouteDef(route))
       .filter((def): def is QuickLinkRouteDef => !!def)
-      .filter((def) => this.rbac.allowedToAccess(`${def.permission.feature}.${def.permission.action}`));
+      .filter((def) => this.canAccessQuickLink(def));
+  }
+
+  private canAccessQuickLink(def: QuickLinkRouteDef): boolean {
+    if (!this.rbac.allowedToAccess(`${def.permission.feature}.${def.permission.action}`)) return false;
+    if (!def.parentRoute) return true;
+
+    const parent = resolveQuickLinksSourceDef(def.parentRoute);
+    if (!parent?.permission) return true;
+
+    return this.rbac.allowedToAccess(`${parent.permission.feature}.${parent.permission.action}`);
   }
 
   private resolveDefaultQuickLinkRoute(moduleRoute: string): string {

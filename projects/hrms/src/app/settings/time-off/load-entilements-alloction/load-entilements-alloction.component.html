@@ -89,14 +89,14 @@
         <div class="d-flex align-items-center gap-3 flex-wrap">
         <!-- Employee Name -->
         <div class="custom-p-multiSelect-content">
-          <p-multiSelect [options]="employeeDetails" optionLabel="fullName" dataKey="employeeId" [filter]="true" filterBy="fullName"
+          <p-multiSelect [options]="employeeDetails" optionLabel="fullName" dataKey="id" [filter]="true" filterBy="fullName"
             [showClear]="true" class="form-select custom-select" formControlName="employeeName" [resetFilterOnHide]="true"
             (onChange)="onSelectedEmployee($event.value)" (onClear)="onSelectedEmployee([])"
             placeholder="Please select employee" filterPlaceHolder="Search Employee" [maxSelectedLabels]="1"
   selectedItemsLabel="{0} selected">
             <ng-template let-user pTemplate="item">
               {{ user.fusionEmpId }} <span class="me-2 ms-2" *ngIf="user.fusionEmpId">-</span>
-              {{ user.firstName }} {{ user.middleName }} {{ user.lastName }}
+              {{ user.name }}
             </ng-template>
           </p-multiSelect>
         </div>

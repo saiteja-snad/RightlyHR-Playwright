@@ -7,13 +7,27 @@
             </div>
     </div>
 
-    <div class="d-flex align-items-center gap-2">
-      <label class="form-label custom-label m-0">{{'Select Year'|translate}}</label>
-      <form autocomplete="off" [formGroup]="policiesform" class="m-0">
-        <div class="custom-p-select-content m-0">
-          <p-select formControlName="selectedYear" [options]="years" class="custom-select w-100"></p-select>
-        </div>
-      </form>
+    <div class="d-flex align-items-center gap-3">
+      <!-- Multi-select header - show when any items are selected -->
+      @if (selectedPolicyItems && selectedPolicyItems.length > 0) {
+        <div class="component-sub-header ">{{"Selected Records" | translate}}: {{validSelectedCount}}</div>
+          <button class="btn btn-primary" (click)="bulkAcknowledgePolicies()" [disabled]="validSelectedCount === 0">
+            <span *ngIf="!bulkAcknowledging"> {{'Acknowledge'|translate}}</span>
+            <span *ngIf="bulkAcknowledging">
+              <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+              {{'Acknowledging...'|translate}}
+            </span>
+          </button>
+      }
+
+      <div class="d-flex align-items-center gap-2">
+        <label class="form-label custom-label m-0">{{'Select Year'|translate}}</label>
+        <form autocomplete="off" [formGroup]="policiesform" class="m-0">
+          <div class="custom-p-select-content m-0">
+            <p-select formControlName="selectedYear" [options]="years" class="custom-select w-100"></p-select>
+          </div>
+        </form>
+      </div>
     </div>
   </div>
 
@@ -22,50 +36,67 @@
     <app-module-information [moduleInfo]="moduleinfo" />
   </ng-template>
 
-  <div class="custom-table-content">
+  <div class="custom-p-multi-select-table">
     @if (!loading) {
-    <table class="w-100">
-      <thead>
-        <th>{{'Policy Name'|translate}}</th>
-        <th>{{'Description'|translate}}</th>
-        <th class="text-center">{{'Attachment'|translate}}</th>
-        <th class="text-center">{{'Acknowledged' | translate}}</th>
-      </thead>
-      <tbody>
-        <ng-container *ngIf="((orgPolicyItemsArray) ?? []).length > 0; else noDataTemplate">
-          <tr *ngFor="let item of orgPolicyItemsArray">
-            <td>{{item.policyName}}</td>
-            <td>{{item.policyDescription}}</td>
-            <td class="text-center">
-              <a type="button" class="view-btn text-nowrap"
-                (click)="onViewAttachement(item.policyAttachment,item.policyName,item)">
-                <img src="/my-info-icons/View-Policy-icon.png" alt="Icon" class="view-icon">
-              </a>
-            </td>
-            <td class="text-center acknowledge-content">
-              <ng-container *ngIf="item.requiresAcknowledgment">
-                <ng-container *ngIf="item.acknowledged; else showAcknowledge">
-                 <span class="success-text">{{'Yes'|translate}}</span>
-                </ng-container>
-                <ng-template #showAcknowledge>
-                  <a class="acknowledge-btn" (click)="onViewAttachement(item.policyAttachment, item.policyName, item)">
-                    <u>{{'Acknowledge'|translate}}</u></a>
-                </ng-template>
+    <p-table #dt [value]="orgPolicyItemsArray" (selectionChange)="onSelectionChange($event)" 
+             [(selection)]="selectedPolicyItems" dataKey="id" [tableStyle]="{'min-width': '50rem'}">
+      <ng-template #header>
+        <tr>
+          <th style="width: 4rem"><p-tableHeaderCheckbox [disabled]="isHeaderCheckboxDisabled()" /></th>
+          <th>{{'Policy Name'|translate}}</th>
+          <th>{{'Description'|translate}}</th>
+          <th class="text-center">{{'Attachment'|translate}}</th>
+          <th class="text-center">{{'Acknowledged' | translate}}</th>
+          <!-- <th class="text-center">{{'Action'|translate}}</th> -->
+        </tr>
+      </ng-template>
+      <ng-template #body let-item>
+        @if (orgPolicyItemsArray && orgPolicyItemsArray.length > 0) {
+        <tr>
+          <td>
+            <p-tableCheckbox [value]="item" [disabled]="isCheckboxDisabled(item)" />
+          </td>
+          <td>{{item.policyName}}</td>
+          <td>{{item.policyDescription}}</td>
+          <td class="text-center">
+            <a type="button" class="view-btn text-nowrap"
+              (click)="onViewAttachement(item.policyAttachment,item.policyName,item)">
+              <img src="/my-info-icons/View-Policy-icon.png" alt="Icon" class="view-icon">
+            </a>
+          </td>
+          <td class="text-center acknowledge-content">
+            <ng-container *ngIf="item.requiresAcknowledgment">
+              <ng-container *ngIf="item.acknowledged; else showAcknowledge">
+               <span class="success-text">{{'Yes'|translate}}</span>
               </ng-container>
-              <ng-container *ngIf="!item.requiresAcknowledgment">
-                <span>{{'NA'|translate}}</span>
-              </ng-container>
-            </td>
-          </tr>
-        </ng-container>
-        <!-- No Data Found Template -->
-        <ng-template #noDataTemplate>
-          <tr>
-            <app-no-data-found />
-          </tr>
-        </ng-template>
-      </tbody>
-    </table>
+              <ng-template #showAcknowledge>
+                <a class="acknowledge-btn" 
+                   [class.disabled]="isIndividualAcknowledgeDisabled()"
+                   [style.pointer-events]="isIndividualAcknowledgeDisabled() ? 'none' : 'auto'"
+                   [style.opacity]="isIndividualAcknowledgeDisabled() ? '0.5' : '1'"
+                   (click)="!isIndividualAcknowledgeDisabled() && onViewAttachement(item.policyAttachment, item.policyName, item)">
+                  <u>{{'Acknowledge'|translate}}</u>
+                </a>
+              </ng-template>
+            </ng-container>
+            <ng-container *ngIf="!item.requiresAcknowledgment">
+              <span>{{'NA'|translate}}</span>
+            </ng-container>
+          </td>
+        </tr>
+        }
+        @else {
+        <tr>
+          <app-no-data-found />
+        </tr>
+        }
+      </ng-template>
+      <ng-template #emptymessage>
+        <tr>
+          <app-no-data-found />
+        </tr>
+      </ng-template>
+    </p-table>
     }
     @else {
     <app-data-loader-content />
@@ -81,7 +112,7 @@
         <p class="popup-heading mb-0">{{viewPolicyname}}</p>
       </div>
       <div>
-        <a (click)="modal.dismiss(); ExpenseViewURL = null; ExpenseImageUrl = null"><img src="icons/close.png"
+        <a (click)="closeModal()"><img src="icons/close.png"
             alt="Close Icon" class="close-icon"></a>
       </div>
     </div>
@@ -102,7 +133,7 @@
       </div>
       <!-- Acknowledge Footer -->
       <div class="modal-footer justify-content-between bg-white px-4 py-3 border-top"
-        *ngIf="selectedItem?.requiresAcknowledgment && !selectedItem?.acknowledged">
+        *ngIf="shouldShowAcknowledgeFooter()">
         <form [formGroup]="ackForm" class="d-flex justify-content-between w-100 align-items-center">
           <div class="form-check">
             <input class="form-check-input" type="checkbox" id="ackCheckbox" formControlName="acknowledged" />
@@ -111,7 +142,7 @@
             </label>
           </div>
 
-          <button class="btn btn-primary" [disabled]="ackForm.invalid || loading"
+          <button class="btn btn-primary" [disabled]="isAcknowledgeButtonDisabled()"
             (click)="postacknowledgement(selectedItem)">
             <span *ngIf="!loading">{{'Acknowledge'|translate}}</span>
             <span *ngIf="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>

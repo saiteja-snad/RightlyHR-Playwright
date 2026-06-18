@@ -1,15 +1,15 @@
-import { Component, OnDestroy, OnInit, ViewChild, TemplateRef } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, TemplateRef, ViewEncapsulation } from '@angular/core';
 import { ProjectManagementModuleInfoComponent } from '../../../shared/project-management-tabs/project-management-module-info/project-management-module-info.component';
 import { AbstractControl, FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { NgbDatepickerModule, NgbModal, NgbPopover } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDatepickerModule, NgbModal, NgbOffcanvas, NgbPopover } from '@ng-bootstrap/ng-bootstrap';
 import moment from 'moment';
 import { DatePicker } from 'primeng/datepicker';
 import { AuthService } from '../../../services/auth.service';
 import { HttpService } from '../../../services/http.service';
 import { AccordionModule } from 'primeng/accordion';
 import { OpenModalService } from '../../../services/open-modal.service';
-import { Subject, Subscription, takeUntil } from 'rxjs';
+import { Subject, Subscription, takeUntil, forkJoin } from 'rxjs';
 import { IResourceDetail, TimesheetResponse } from '../../../timesheetmodel';
 import { InfoIconComponent } from '../../../icons/info-icon/info-icon.component';
 import { ConfirmationIconComponent } from '../../../icons/confirmation-icon/confirmation-icon.component';
@@ -28,23 +28,19 @@ import { MenuModule } from 'primeng/menu';
 import { MenuItem } from 'primeng/api';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { BulkUploadStore } from '../bulk-upload/models/bulk-upload.store';
-import { Select } from 'primeng/select';
 import { DateformatPipe } from '../../../pipes/dateformat.pipe';
-import { ApplicablePoliciesTriggerComponent } from '../../../shared/policies/applicable-policies-trigger/applicable-policies-trigger.component';
-import { APPLICABLE_POLICIES_KEYS } from '../../../shared/policies/policy-visibility.catalog';
-import { SignalsService } from '../../../services/signals.service';
+import { Select } from 'primeng/select';
 @Component({
   selector: 'app-time-sheet-view',
   imports: [ProjectManagementModuleInfoComponent, NgbDatepickerModule, FormsModule, ReactiveFormsModule,
     NgbPopover, CommonModule, DatePicker, DateformatPipe, AccordionModule, InfoIconComponent, ConfirmationIconComponent,
-    TranslateModule, DataLoaderContentComponent, TimesheetsTabsComponent, MenuModule, MultiSelectModule,Select, ApplicablePoliciesTriggerComponent],
+    TranslateModule, DataLoaderContentComponent, TimesheetsTabsComponent, MenuModule, MultiSelectModule, Select],
   templateUrl: './time-sheet-view.component.html',
   styleUrl: './time-sheet-view.component.scss',
+  encapsulation: ViewEncapsulation.None
 })
 
 export class TimeSheetViewComponent implements OnInit, OnDestroy {
-  applicablePolicies = APPLICABLE_POLICIES_KEYS.PROJECT_MANAGEMENT_TIMESHEETS;
-
   timesheetForm!: FormGroup;
   orgholidays: any;
   orgweekend: any;
@@ -110,6 +106,11 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   @ViewChild('employeeDropdown') employeeDropdown: any;
   @ViewChild('errormodal') errormodal!: TemplateRef<any>;
   @ViewChild('addtask') addtask!: TemplateRef<any>;
+  @ViewChild('cloneTimesheetModal') cloneTimesheetModal!: TemplateRef<any>;
+  cloneForm!: FormGroup;
+  cloneSourceWeekLabel = '';
+  cloneTargetWeekLabel = '';
+  cloneErrorMessage: string | null = null;
   private readonly baseMenuItems = [
     { key: 'import', label: 'Import', icon: 'file-import-icon', command: () => this.navigateToImport() },
     { key: 'export', label: 'Export', icon: 'file-export-icon', command: () => this.navigateToExport() },
@@ -121,19 +122,11 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   canViewHistoryLog = false;
   taskType: any;
   alltaskTypes = [] as any;
-  responseSummary = {
-    failedreason: '',
-    successRecordsCount: 0,
-    failureRecordsCount: 0,
-    totalRecordsCount: 0
-  };
-  @ViewChild('releaseSummary') releaseSummaryModal!: any;
-  constructor(private fb: FormBuilder, private modalService: NgbModal,
+  constructor(private fb: FormBuilder, private modalService: NgbModal, private offcanvasService: NgbOffcanvas,
     private http: HttpService, public formValidation: FormValidationsService,
     public dayValidationService: DayValidationService, public authService: AuthService,
     public rbac: RbacService, private conformationPopup: OpenModalService,
-    private router: Router, private encryptionService: EncriptdecriptService, private bulkStore: BulkUploadStore
-  , private signalService : SignalsService) { }
+    private router: Router, private encryptionService: EncriptdecriptService, private bulkStore: BulkUploadStore) { }
 
   ngOnInit(): void {
     this.loggedinuser = this.authService.getToken();
@@ -479,9 +472,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       rejectReason: [day?.rejectReason || ''],
       blockReason: [blockReason],
       resourceId: [{ value: day?.resourceId || null }],
-      taskId: [{ value: day?.taskId || null, disabled: !shouldEnable }],
-      pendingApprovalDetails: [day?.pendingApprovalDetails || null],
-      taskName: [{ value: day?.taskName || null,}],
+      taskId: [{ value: day?.taskId || null, disabled: !shouldEnable }]
 
     });
   }
@@ -541,6 +532,308 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       // Fallback: load logged-in user’s data
       this.getTimeSheetEntriesbyEmployeeId(this.employeeId, formattedStart);
     }
+  }
+
+  openCloneModal() {
+    this.cloneErrorMessage = null;
+    this.initializeCloneForm();
+    this.offcanvasService.open(this.cloneTimesheetModal, {
+      position: 'end',
+      backdrop: 'static',
+      keyboard: false,
+      panelClass: 'clone-offcanvas-panel'
+    });
+  }
+
+  private initializeCloneForm(): void {
+    const defaultSourceStart = this.start ? moment(this.start).subtract(7, 'days').startOf('isoWeek').toDate() : moment().startOf('isoWeek').toDate();
+    const defaultSourceEnd = this.start ? moment(this.start).subtract(7, 'days').endOf('isoWeek').toDate() : moment().endOf('isoWeek').toDate();
+    const defaultTargetStart = this.start ? this.start : moment().startOf('isoWeek').toDate();
+    const defaultTargetEnd = this.start ? this.end : moment().endOf('isoWeek').toDate();
+
+    this.cloneForm = this.fb.group({
+      sourceWeekDateRange: [null, Validators.required],
+      targetWeekDateRange: [null, Validators.required],
+      cloneMode: ['merge', Validators.required],
+      copyProjects: [true],
+      copyLoggedHours: [false],
+      copyDescription: [false],
+      copyTask: [false]
+    });
+
+    this.cloneForm.get('sourceWeekDateRange')?.valueChanges
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((range: Date[] | null) => this.updateCloneSourceWeekLabel(range));
+
+    this.cloneForm.get('targetWeekDateRange')?.valueChanges
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((range: Date[] | null) => this.updateCloneTargetWeekLabel(range));
+
+    this.cloneSourceWeekLabel = '';
+    this.cloneTargetWeekLabel = '';
+  }
+
+  onCloneSourceDateSelect(selectedDate: Date | Date[]) {
+    if (!selectedDate) return;
+    const chosenRange = Array.isArray(selectedDate) ? selectedDate : [selectedDate];
+    this.cloneForm.patchValue({ sourceWeekDateRange: chosenRange });
+  }
+
+  onCloneTargetDateSelect(selectedDate: Date | Date[]) {
+    if (!selectedDate) return;
+    const chosenRange = Array.isArray(selectedDate) ? selectedDate : [selectedDate];
+    this.cloneForm.patchValue({ targetWeekDateRange: chosenRange });
+  }
+
+  private getRangeStartDate(range: Date[] | null): Date | null {
+    if (!Array.isArray(range) || range.length === 0 || !range[0]) {
+      return null;
+    }
+    return range[0] instanceof Date ? range[0] : new Date(range[0]);
+  }
+
+  private updateCloneSourceWeekLabel(range: Date[] | null): void {
+    const date = this.getRangeStartDate(range);
+    if (!date) {
+      this.cloneSourceWeekLabel = '';
+      return;
+    }
+    const start = moment(date).startOf('isoWeek');
+    const end = moment(date).endOf('isoWeek');
+    this.cloneSourceWeekLabel = `${start.format('DD MMM YYYY')} - ${end.format('DD MMM YYYY')}`;
+  }
+
+  private updateCloneTargetWeekLabel(range: Date[] | null): void {
+    const date = this.getRangeStartDate(range);
+    if (!date) {
+      this.cloneTargetWeekLabel = '';
+      return;
+    }
+    const start = moment(date).startOf('isoWeek');
+    const end = moment(date).endOf('isoWeek');
+    this.cloneTargetWeekLabel = `${start.format('DD MMM YYYY')} - ${end.format('DD MMM YYYY')}`;
+  }
+
+  private getWeekRangeFromDate(date: Date): { start: Date; end: Date } {
+    const selected = moment(date);
+    return {
+      start: selected.clone().startOf('isoWeek').toDate(),
+      end: selected.clone().endOf('isoWeek').toDate()
+    };
+  }
+
+  private getWeekDatesFromDate(date: Date): Date[] {
+    const { start } = this.getWeekRangeFromDate(date);
+    return Array.from({ length: 7 }, (_, index) => moment(start).add(index, 'days').toDate());
+  }
+
+  private isCurrentWeekLocked(): boolean {
+    return this.lockMessages?.some((item: any) => item.type === 'locked' || item.type === 'locked-today') ?? false;
+  }
+
+  private findMatchingProjectRowIndex(sourceRow: RowModel): number {
+    return this.projects.controls.findIndex((project) => {
+      const isNoClientProject = project.get('isNoClientProject')?.value;
+      const projectId = project.get('projectId')?.value;
+      const clientId = project.get('clientId')?.value;
+      const phaseId = project.get('phaseId')?.value ?? null;
+      return (
+        isNoClientProject === sourceRow.isNoClientProject &&
+        projectId === sourceRow.projectId &&
+        clientId === sourceRow.clientId &&
+        phaseId === (sourceRow.phaseId ?? null)
+      );
+    });
+  }
+
+  private shouldSkipCloneForTargetCell(targetCell: any | undefined, cloneMode: string): boolean {
+    if (!targetCell) {
+      return false;
+    }
+
+    const targetApproval = targetCell.approvalStatus;
+    const targetDuration = targetCell.durationSeconds;
+    const hasTargetValue = !!targetDuration || targetApproval !== ApprovalStatus.NotEntered;
+
+    if (cloneMode === 'merge') {
+      return hasTargetValue;
+    }
+
+    if (cloneMode === 'overwrite') {
+      return targetApproval === ApprovalStatus.Processed || targetApproval === ApprovalStatus.Waiting;
+    }
+
+    return true;
+  }
+
+  private buildClonePayloads(sourceMatrix: WeekMatrix, targetMatrix: WeekMatrix, cloneMode: string, targetWeekDates: Date[], targetTimesheetId: number): any[] {
+    const payloads: any[] = [];
+    const dayKeys = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
+    const copyProjects = this.cloneForm.get('copyProjects')?.value ?? true;
+    const copyLoggedHours = this.cloneForm.get('copyLoggedHours')?.value ?? false;
+    const copyDescription = this.cloneForm.get('copyDescription')?.value ?? false;
+    const copyTask = this.cloneForm.get('copyTask')?.value ?? false;
+
+    const groupUsage = new Map<string, number>();
+
+    sourceMatrix.rows.forEach((sourceRow) => {
+      const groupKey = `${sourceRow.projectId}_${sourceRow.phaseId}_${sourceRow.clientId}_${sourceRow.isNoClientProject}`;
+      const matchingTargetRows = targetMatrix.rows.filter((targetRow) =>
+        targetRow.projectId === sourceRow.projectId &&
+        targetRow.phaseId === sourceRow.phaseId &&
+        targetRow.clientId === sourceRow.clientId &&
+        targetRow.isNoClientProject === sourceRow.isNoClientProject
+      );
+
+      const usageCount = groupUsage.get(groupKey) ?? 0;
+      let targetRow: RowModel | null = null;
+
+      if (usageCount < matchingTargetRows.length) {
+        targetRow = matchingTargetRows[usageCount];
+        groupUsage.set(groupKey, usageCount + 1);
+      } else if (matchingTargetRows.length > 0) {
+        targetRow = matchingTargetRows[matchingTargetRows.length - 1];
+        groupUsage.set(groupKey, usageCount + 1);
+      } else if (copyProjects) {
+        targetRow = sourceRow;
+        groupUsage.set(groupKey, usageCount + 1);
+      }
+
+      if (!targetRow) {
+        return;
+      }
+
+      
+
+      sourceMatrix.days.forEach((sourceDay, index) => {
+        const sourceCell = sourceMatrix.cellMap.get(`${sourceRow.rowId}_${sourceDay.date}`);
+        if (!sourceCell) {
+          return;
+        }
+
+        const shouldCloneSourceCell =
+          copyLoggedHours ? !!sourceCell.durationSeconds :
+            copyDescription ? !!sourceCell.description :
+              copyTask ? !!sourceCell.taskId :
+                (copyProjects ? true : false);
+
+        if (sourceCell.approvalStatus?.toLowerCase() === 'rejected') {
+          return;
+        }
+
+        if (!shouldCloneSourceCell) {
+          return;
+        }
+
+        const targetDay = targetMatrix.days[index];
+        const targetCell = targetMatrix.cellMap.get(`${targetRow.rowId}_${targetDay.date}`);
+
+        if (this.shouldSkipCloneForTargetCell(targetCell, cloneMode)) {
+          return;
+        }
+
+        const entryDate = moment(targetWeekDates[index]).format('YYYY-MM-DD');
+        const payload: any = {
+          entryId: targetCell?.entryId || 0,
+          employeeId: this.employeeId || 0,
+          entryDate,
+          approvalStatus: 'draft',
+          clientId: targetRow.clientId || null,
+          projectId: targetRow.projectId || null,
+          phaseId: targetRow.phaseId || null,
+          timesheetId: targetTimesheetId || 0,
+          isOverride: false,
+          totalDurationSeconds: copyLoggedHours ? sourceCell.durationSeconds || 0 : 0,
+          description: copyDescription ? sourceCell.description || '' : '',
+          isBillable: sourceCell.isBillable || false,
+          moduleId: 30,
+          resourceId: targetRow.resourceId || sourceRow.resourceId || null,
+          startTime: copyLoggedHours ? this.toTimeSpan(sourceCell.startTime) : null,
+          endTime: copyLoggedHours ? this.toTimeSpan(sourceCell.endTime) : null,
+          taskId: copyTask ? sourceCell.taskId || null : null
+        };
+
+        payloads.push(payload);
+      });
+    });
+
+    return payloads;
+  }
+
+  cloneTimesheetEntries(): void {
+    if (!this.cloneForm || this.cloneForm.invalid) {
+      this.cloneErrorMessage = 'Please select a source week and clone method.';
+      return;
+    }
+
+    if (this.isCurrentWeekLocked()) {
+      this.cloneErrorMessage = 'Current week is locked and cannot be cloned into.';
+      return;
+    }
+
+    this.cloneErrorMessage = null;
+    this.spinnerLoader = true;
+
+    const sourceWeekRange = this.cloneForm.get('sourceWeekDateRange')?.value as Date[] | null;
+    const sourceWeekStartDate = this.getRangeStartDate(sourceWeekRange) || new Date();
+    const sourceWeekStart = moment(sourceWeekStartDate).startOf('isoWeek').format('YYYY-MM-DD');
+    const targetWeekRange = this.cloneForm.get('targetWeekDateRange')?.value as Date[] | null;
+    const targetWeekStartDate = this.getRangeStartDate(targetWeekRange) || new Date();
+    const targetWeekStart = moment(targetWeekStartDate).startOf('isoWeek').format('YYYY-MM-DD');
+    const targetWeekDates = this.getWeekDatesFromDate(targetWeekStartDate);
+    const cloneMode = this.cloneForm.get('cloneMode')?.value;
+    const copyProjects = this.cloneForm.get('copyProjects')?.value ?? true;
+    const copyLoggedHours = this.cloneForm.get('copyLoggedHours')?.value ?? false;
+    const copyDescription = this.cloneForm.get('copyDescription')?.value ?? false;
+    const copyTask = this.cloneForm.get('copyTask')?.value ?? false;
+
+    if (!copyProjects && !copyLoggedHours && !copyDescription && !copyTask) {
+      this.spinnerLoader = false;
+      this.cloneErrorMessage = 'Please select at least one clone option.';
+      return;
+    }
+
+    forkJoin([
+      this.http.getData(`v2/Timesheet/week/employee/${this.employeeId}?weekStartDate=${sourceWeekStart}`),
+      this.http.getData(`v2/Timesheet/week/employee/${this.employeeId}?weekStartDate=${targetWeekStart}`)
+    ]).pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: ([sourceRes, targetRes]: any) => {
+          const sourceMatrix = transformV2ResponseToWeekMatrix(sourceRes);
+          const targetMatrix = transformV2ResponseToWeekMatrix(targetRes);
+          const payloads = this.buildClonePayloads(sourceMatrix, targetMatrix, cloneMode, targetWeekDates, targetMatrix.metadata.timesheetId || 0);
+
+          if (!payloads.length) {
+            this.spinnerLoader = false;
+            this.conformationPopup.openErrorModal('No entries available to clone from the selected source week.');
+            return;
+          }
+
+          forkJoin(payloads.map((payload) => this.http.postdata('v2/Timesheet/save-or-update', payload)))
+            .pipe(takeUntil(this.destroy$))
+            .subscribe({
+              next: () => {
+                this.spinnerLoader = false;
+                this.offcanvasService.dismiss();
+                this.conformationPopup.openSuccessModal('Timesheet entries cloned successfully.');
+                this.formattedweakendStart = moment(this.start).format('YYYY-MM-DD');
+                this.getTimeSheetEntriesbyEmployeeId(this.employeeId, this.formattedweakendStart);
+              },
+              error: (err: any) => {
+                this.spinnerLoader = false;
+                this.cloneErrorMessage = err?.error?.message || 'Failed to clone timesheet entries.';
+              }
+            });
+        },
+        error: (err: any) => {
+          this.spinnerLoader = false;
+          this.cloneErrorMessage = err?.error?.message || 'Failed to load source or target week entries.';
+        }
+      });
+  }
+
+  isCloneDisabled(): boolean {
+    return this.loading || this.isCurrentWeekLocked();
   }
 
   // --- Add new project row ---
@@ -784,9 +1077,8 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       rejectReason: [cell.rejectReason || ''],
       blockReason: [cell.blockReason || ''],
       resourceId: [row.resourceId || null],
-      taskId: [cell.taskId || null,],
-      pendingApprovalDetails: [cell.pendingApprovalDetails || null],
-      taskName: [cell.taskName || null]
+      taskId: [{ value: cell.taskId || null, disabled: !billablecheck }]
+
     });
   }
 
@@ -1663,6 +1955,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       dropdownBtn.setAttribute('aria-expanded', 'false');
     }
 
+
   }
 
   getClientColor(clientId: number): string {
@@ -1736,9 +2029,8 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       });
 
       this.dayForm = dayForm;
-      //start//code for the task type
+      //start//code for the task type 
       let taskId = this.dayForm.get('taskId')?.value;
-      console.log('Selected Task ID:', taskId);
       let taskdata = this.alltaskTypes?.find((ele: any) => ele?.id == taskId && ele?.status?.toLowerCase() == 'inactive');
       if (taskdata) {
         const alreadyExists = this.taskType?.some((ele: any) => ele.id == taskdata.id);
@@ -1749,7 +2041,6 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
         this.taskType = this.alltaskTypes?.filter((ele: any) => ele?.status?.toLowerCase() == 'active'
         );
       }
-      this.getTimesheetMadatorydata(this.dayForm.get('projectId')?.value, this.dayForm.get('phaseId')?.value)
       //end//code for the task type
       // ✅ Normalize date (fix timezone issue)
       const normalizeDate = (date: any) => {
@@ -1820,54 +2111,8 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
         });
       }
     }
-
   }
- getTimesheetMadatorydata(projectId: number, phaseId: number) {
-  const url = `TimesheetConfiguration?projectId=${projectId ?? 0}&phaseId=${phaseId ?? 0}`;
 
-  this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
-    next: (res: any) => {
-
-      const items = res?.items || [];
-
-      const fieldMap: any = {
-        'Start Time': 'startTime',
-        'End Time': 'endTime',
-        'Task Type': 'taskId',
-        'Description': 'description'
-      };
-      const selectedDate = moment(this.dayForm.get('entryDate')?.value).format('YYYY-MM-DD');
-      console.log('Selected Date for Validation:', selectedDate);
-      items.forEach((item: any) => {
-        const controlName = fieldMap[item.fieldName];
-        const effectiveDate = moment(item.effectiveDate).format('YYYY-MM-DD');
-        const isEffective = moment(selectedDate).isSameOrAfter(moment(effectiveDate),'day');
-        if(isEffective){
-        if (!controlName) return;
-        const control = this.dayForm.get(controlName);
-        if (!control) return;
-        control.clearValidators();
-        const approvalstatus = this.dayForm.get('approvalStatus')?.value;
-        console.log('Approval Status:', approvalstatus);
-        // if (isEffective && item.isMandatory &&(!approvalstatus || approvalstatus?.toLowerCase() === 'draft' || approvalstatus?.toLowerCase() === 'rejected'|| approvalstatus?.toLowerCase() === 'not entered')) {
-          //control.setValidators([Validators.required]);
-        // }
-        if (item.isMandatory) {
-           control.setValidators([Validators.required]);
-         }
-        control.updateValueAndValidity({ emitEvent: false });
-      }
-      });
-    }
-  });
-}
-  isRequired(controlName: string): boolean {
-    const control = this.dayForm?.get(controlName);
-
-    return control
-      ? control.hasValidator(Validators.required)
-      : false;
-  }
   recalculateTimes(dayKey: string, startIndex: number) {
     for (let i = 0; i < this.projects.length; i++) {
       const projectForm = this.projects.at(i).get(dayKey) as FormGroup;
@@ -1972,7 +2217,6 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
         this.resourceId = null;
         this.formattedweakendStart = moment(this.start).format('YYYY-MM-DD');
         this.getTimeSheetEntriesbyEmployeeId(this.employeeId, this.formattedweakendStart);
-        this.signalService.timesheetApprovalsCountSignal.set(true);
       },
       error: (err) => {
         this.spinnerLoader = false;
@@ -1980,7 +2224,6 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
         // console.error('Error saving entry', err);
         // this.formattedweakendStart = moment(this.start).format('YYYY-MM-DD');
         // this.getTimeSheetEntriesbyEmployeeId(this.employeeId, this.formattedweakendStart);
-        this.signalService.timesheetApprovalsCountSignal.set(true);
       },
     });
   }
@@ -1994,7 +2237,6 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
 
   openModalforconformation(content: any) {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
-    this.getTimeSheetEntriesbyEmployeeId(this.employeeId, this.formattedweakendStart);
   }
 
   cleardata() {
@@ -2081,27 +2323,10 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     this.spinnerLoaderforallrecoders = true
     const payload = this.buildPayload();
     this.http.postdata('Timesheet/submit-for-approval', payload).subscribe({
-      next: (res: any) => {
+      next: (res) => {
         this.spinnerLoaderforallrecoders = false
-        //this.modalService.dismissAll();
-        //this.conformationPopup.openSuccessModal('Timesheet submitted successfully');
-        const successCount = res?.data?.successCount;
-        const failureCount = res?.data?.failedCount;
-        this.responseSummary = {
-          failedreason: Array.isArray(res?.data?.errors) && res.data.errors.length > 0 ? res.data.errors : 'NA',
-          successRecordsCount: successCount,
-          failureRecordsCount: failureCount,
-          totalRecordsCount: res?.data?.totalCount,
-        };
-        console.log(this.responseSummary);
         this.modalService.dismissAll();
-        const modalRef = this.modalService.open(this.releaseSummaryModal, {
-          centered: true,
-          size: 'lg',
-        });
-        setTimeout(() => {
-          modalRef.close();
-        }, 3000);
+        this.conformationPopup.openSuccessModal('Timesheet submitted successfully');
         this.selectedclientid = null;
         this.selectedprojectid = null;
         this.selectedProjectName = null;
@@ -2111,8 +2336,6 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
         this.formattedweakendStart = moment(this.start).format('YYYY-MM-DD');
         this.getTimeSheetEntriesbyEmployeeId(this.employeeId, this.formattedweakendStart);
         this.getApprovalStatusCounts();
-        this.signalService.timesheetApprovalsCountSignal.set(true);
-        console.log('SIgnal triggered');   
       },
       error: (err) => {
         this.modalService.dismissAll();
@@ -2126,13 +2349,6 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
         setTimeout(() => {
           modalRef.close();
         }, 3000);
-        this.signalService.timesheetApprovalsCountSignal.set(true);
-        console.log('SIgnal triggered');   
-      },
-      complete : () =>{
-        this.signalService.timesheetApprovalsCountSignal.set(true);
-        console.log('SIgnal triggered');   
-        
       },
     });
   }
@@ -2200,26 +2416,8 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
 
   // Check if any of the fields in the day form are filled
   isDayFormDirtyOrFilled(form: FormGroup): boolean {
-    const fieldsToCheck = ['description', 'duration', 'startTime', 'endTime', 'taskId'];
-
-    for (const field of fieldsToCheck) {
-      const control = form.get(field);
-
-      // Check only if the field has Validators.required
-      if (control?.hasValidator(Validators.required)) {
-        const value = control.value;
-
-        if (
-          value === null ||
-          value === undefined ||
-          value === ''
-        ) {
-          return false;
-        }
-      }
-    }
-
-    return true;
+    const { description, duration, } = form.value;
+    return !!(description && duration);
   }
   //based status colour
   getApprovalClass(control: AbstractControl | null): any {
@@ -2345,37 +2543,6 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       error: (err) => console.error('Failed to load leaves', err)
     });
   }
-  approvardetails = {} as any;
-
-  getStatusBadgeClass(status: string): string {
-    if (!status) return 'badge-default';
-    const s = status.toLowerCase();
-    if (s.includes('waiting') || s.includes('pending')) return 'badge-waiting';
-    if (s.includes('approved') || s.includes('processed')) return 'badge-approved';
-    if (s.includes('rejected')) return 'badge-rejected';
-    if (s.includes('draft')) return 'badge-draft';
-    return 'badge-default';
-  }
-
-  getHeaderClass(status: string): string {
-    if (!status) return 'header-default';
-    const s = status.toLowerCase();
-    if (s.includes('waiting') || s.includes('pending')) return 'header-waiting';
-    if (s.includes('approved') || s.includes('processed')) return 'header-approved';
-    if (s.includes('rejected')) return 'header-rejected';
-    if (s.includes('draft')) return 'header-draft';
-    return 'header-default';
-  }
-
-  onclickinfo(day?: any) {
-    this.approvardetails = { ...(day.value.pendingApprovalDetails || {}) };
-    console.log('this.approvardetails', this.approvardetails);
-    console.log(day.get('approvalStatus')?.value)
-    this.approvardetails.description = day.get('description')?.value;
-    this.approvardetails.taskName = day.get('taskName')?.value;
-    this.approvardetails.approvalStatus=day.get('approvalStatus')?.value
-
-   }
   ngOnDestroy() {
     this.destroy$.next(true);
     this.destroy$.complete();

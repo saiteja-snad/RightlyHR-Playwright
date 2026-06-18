@@ -555,8 +555,8 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       sourceWeekDateRange: [null, Validators.required],
       targetWeekDateRange: [null, Validators.required],
       cloneMode: ['merge', Validators.required],
-      copyProjects: [true],
-      copyLoggedHours: [false],
+      copyProjects: [{ value: true, disabled: true }],
+      copyLoggedHours: [{ value: true, disabled: true }],
       copyDescription: [false],
       copyTask: [false]
     });
@@ -660,7 +660,10 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     }
 
     if (cloneMode === 'overwrite') {
-      return targetApproval === ApprovalStatus.Processed || targetApproval === ApprovalStatus.Waiting;
+      const status = targetApproval?.toLowerCase();
+
+      // Allow overwrite only for Draft and Rejected
+      return status !== 'draft' && status !== 'rejected';
     }
 
     return true;
@@ -703,7 +706,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
         return;
       }
 
-      
+
 
       sourceMatrix.days.forEach((sourceDay, index) => {
         const sourceCell = sourceMatrix.cellMap.get(`${sourceRow.rowId}_${sourceDay.date}`);
@@ -821,9 +824,11 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
               },
               error: (err: any) => {
                 this.spinnerLoader = false;
-                this.cloneErrorMessage = err?.error?.message || 'Failed to clone timesheet entries.';
+                this.cloneErrorMessage =
+                  err?.error?.message || 'Failed to clone timesheet entries.';
               }
             });
+
         },
         error: (err: any) => {
           this.spinnerLoader = false;
@@ -833,9 +838,8 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   }
 
   isCloneDisabled(): boolean {
-    return this.loading || this.isCurrentWeekLocked();
+    return this.spinnerLoader || this.isCurrentWeekLocked();
   }
-
   // --- Add new project row ---
   addProject(project?: any, isProjectSelected: boolean = false) {
     const days = project?.days || [];
@@ -2545,28 +2549,28 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   }
 
   openCancelClonePopup(content: any) {
-  this.modalService.open(content, {
-    centered: true,
-    backdrop: 'static'
-  });
-}
+    this.modalService.open(content, {
+      centered: true,
+      backdrop: 'static'
+    });
+  }
 
-confirmCloneCancel(modal: any) {
-  modal.close();
+  confirmCloneCancel(modal: any) {
+    modal.close();
 
-  this.offcanvasService.dismiss();
+    this.offcanvasService.dismiss();
 
-  this.conformationPopup.openSuccessModal(
-    'Clone Cancelled Successfully'
-  );
-}
+    this.conformationPopup.openSuccessModal(
+      'Clone Cancelled Successfully'
+    );
+  }
 
-testMenu(event: any, menu: any) {
-  console.log('Actions Clicked');
-  console.log(this.bulkOperationMenuItems);
-  console.log(menu);
-  menu.show(event);
-}
+  testMenu(event: any, menu: any) {
+    console.log('Actions Clicked');
+    console.log(this.bulkOperationMenuItems);
+    console.log(menu);
+    menu.show(event);
+  }
 
   ngOnDestroy() {
     this.destroy$.next(true);

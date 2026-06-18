@@ -1173,6 +1173,7 @@ export const permissionsData = [
   { fields: 'Timesheet Bulk Export', View: false, Update: false, Create: false, Delete: false },
   { fields: 'View History Export Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'View History Import Tab', View: false, Update: false, Create: false, Delete: false },
+   { fields: 'Timesheet Clone', View: false, Update: false, Create: false, Delete: false },
 
   { fields: 'On Behalf Of', View: false, Update: false, Create: false, Delete: false },
   { fields: 'On Behalf Of WFH', View: false, Update: false, Create: false, Delete: false },

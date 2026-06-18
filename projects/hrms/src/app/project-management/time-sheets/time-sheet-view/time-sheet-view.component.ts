@@ -34,10 +34,10 @@ import { Select } from 'primeng/select';
   selector: 'app-time-sheet-view',
   imports: [ProjectManagementModuleInfoComponent, NgbDatepickerModule, FormsModule, ReactiveFormsModule,
     NgbPopover, CommonModule, DatePicker, DateformatPipe, AccordionModule, InfoIconComponent, ConfirmationIconComponent,
-    TranslateModule, DataLoaderContentComponent, TimesheetsTabsComponent, MenuModule, MultiSelectModule,Select],
+    TranslateModule, DataLoaderContentComponent, TimesheetsTabsComponent, MenuModule, MultiSelectModule, Select],
   templateUrl: './time-sheet-view.component.html',
   styleUrl: './time-sheet-view.component.scss',
-   encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None
 })
 
 export class TimeSheetViewComponent implements OnInit, OnDestroy {
@@ -120,8 +120,8 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   canBulkImport = false;
   canBulkExport = false;
   canViewHistoryLog = false;
-  taskType:any;
-  alltaskTypes=[] as any;
+  taskType: any;
+  alltaskTypes = [] as any;
   constructor(private fb: FormBuilder, private modalService: NgbModal, private offcanvasService: NgbOffcanvas,
     private http: HttpService, public formValidation: FormValidationsService,
     public dayValidationService: DayValidationService, public authService: AuthService,
@@ -150,18 +150,18 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     this.buildBulkOperationMenuItems();
     this.getTaskType();
   }
-getTaskType() {
-  this.loading = true;
-  this.subscription = this.http.getData('TaskType').subscribe({
-    next: (res: any) => {
-      this.loading = false;
-      this.alltaskTypes = res;
-      this.taskType = res?.filter((ele:any)=>ele?.status?.toLowerCase()==='active');
-    },
-    error: () => (this.loading = false),
-    complete: () => (this.loading = false)
-  });
-}
+  getTaskType() {
+    this.loading = true;
+    this.subscription = this.http.getData('TaskType').subscribe({
+      next: (res: any) => {
+        this.loading = false;
+        this.alltaskTypes = res;
+        this.taskType = res?.filter((ele: any) => ele?.status?.toLowerCase() === 'active');
+      },
+      error: () => (this.loading = false),
+      complete: () => (this.loading = false)
+    });
+  }
   get projects(): FormArray {
     return this.timesheetForm.get('projects') as FormArray<FormGroup>;
   }
@@ -472,7 +472,7 @@ getTaskType() {
       rejectReason: [day?.rejectReason || ''],
       blockReason: [blockReason],
       resourceId: [{ value: day?.resourceId || null }],
-      taskId:[{ value: day?.taskId || null, disabled: !shouldEnable }]
+      taskId: [{ value: day?.taskId || null, disabled: !shouldEnable }]
 
     });
   }
@@ -552,12 +552,13 @@ getTaskType() {
     const defaultTargetEnd = this.start ? this.end : moment().endOf('isoWeek').toDate();
 
     this.cloneForm = this.fb.group({
-      sourceWeekDateRange: [[defaultSourceStart, defaultSourceEnd], Validators.required],
-      targetWeekDateRange: [[defaultTargetStart, defaultTargetEnd], Validators.required],
+      sourceWeekDateRange: [null, Validators.required],
+      targetWeekDateRange: [null, Validators.required],
       cloneMode: ['merge', Validators.required],
       copyProjects: [true],
       copyLoggedHours: [false],
-      copyDescription: [false]
+      copyDescription: [false],
+      copyTask: [false]
     });
 
     this.cloneForm.get('sourceWeekDateRange')?.valueChanges
@@ -568,8 +569,8 @@ getTaskType() {
       .pipe(takeUntil(this.destroy$))
       .subscribe((range: Date[] | null) => this.updateCloneTargetWeekLabel(range));
 
-    this.updateCloneSourceWeekLabel([defaultSourceStart, defaultSourceEnd]);
-    this.updateCloneTargetWeekLabel([defaultTargetStart, defaultTargetEnd]);
+    this.cloneSourceWeekLabel = '';
+    this.cloneTargetWeekLabel = '';
   }
 
   onCloneSourceDateSelect(selectedDate: Date | Date[]) {
@@ -645,9 +646,13 @@ getTaskType() {
     });
   }
 
-  private shouldSkipCloneForTargetDay(targetDayForm: FormGroup, sourceCell: any, cloneMode: string): boolean {
-    const targetApproval = targetDayForm.get('approvalStatus')?.value;
-    const targetDuration = targetDayForm.get('duration')?.value;
+  private shouldSkipCloneForTargetCell(targetCell: any | undefined, cloneMode: string): boolean {
+    if (!targetCell) {
+      return false;
+    }
+
+    const targetApproval = targetCell.approvalStatus;
+    const targetDuration = targetCell.durationSeconds;
     const hasTargetValue = !!targetDuration || targetApproval !== ApprovalStatus.NotEntered;
 
     if (cloneMode === 'merge') {
@@ -661,54 +666,91 @@ getTaskType() {
     return true;
   }
 
-  private buildClonePayloads(sourceMatrix: WeekMatrix, cloneMode: string, targetWeekDates: Date[]): any[] {
+  private buildClonePayloads(sourceMatrix: WeekMatrix, targetMatrix: WeekMatrix, cloneMode: string, targetWeekDates: Date[], targetTimesheetId: number): any[] {
     const payloads: any[] = [];
     const dayKeys = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
+    const copyProjects = this.cloneForm.get('copyProjects')?.value ?? true;
+    const copyLoggedHours = this.cloneForm.get('copyLoggedHours')?.value ?? false;
+    const copyDescription = this.cloneForm.get('copyDescription')?.value ?? false;
+    const copyTask = this.cloneForm.get('copyTask')?.value ?? false;
+
+    const groupUsage = new Map<string, number>();
 
     sourceMatrix.rows.forEach((sourceRow) => {
-      let targetRowIndex = this.findMatchingProjectRowIndex(sourceRow);
-      if (targetRowIndex === -1) {
-        this.addProjectFromRow(sourceRow, true);
-        targetRowIndex = this.findMatchingProjectRowIndex(sourceRow);
+      const groupKey = `${sourceRow.projectId}_${sourceRow.phaseId}_${sourceRow.clientId}_${sourceRow.isNoClientProject}`;
+      const matchingTargetRows = targetMatrix.rows.filter((targetRow) =>
+        targetRow.projectId === sourceRow.projectId &&
+        targetRow.phaseId === sourceRow.phaseId &&
+        targetRow.clientId === sourceRow.clientId &&
+        targetRow.isNoClientProject === sourceRow.isNoClientProject
+      );
+
+      const usageCount = groupUsage.get(groupKey) ?? 0;
+      let targetRow: RowModel | null = null;
+
+      if (usageCount < matchingTargetRows.length) {
+        targetRow = matchingTargetRows[usageCount];
+        groupUsage.set(groupKey, usageCount + 1);
+      } else if (matchingTargetRows.length > 0) {
+        targetRow = matchingTargetRows[matchingTargetRows.length - 1];
+        groupUsage.set(groupKey, usageCount + 1);
+      } else if (copyProjects) {
+        targetRow = sourceRow;
+        groupUsage.set(groupKey, usageCount + 1);
       }
 
-      const targetProjectForm = this.projects.at(targetRowIndex) as FormGroup;
+      if (!targetRow) {
+        return;
+      }
+
+      
 
       sourceMatrix.days.forEach((sourceDay, index) => {
         const sourceCell = sourceMatrix.cellMap.get(`${sourceRow.rowId}_${sourceDay.date}`);
-        if (!sourceCell || !sourceCell.durationSeconds) {
+        if (!sourceCell) {
           return;
         }
 
-        const targetDayKey = dayKeys[index];
-        const targetDayForm = targetProjectForm.get(targetDayKey) as FormGroup;
-        if (!targetDayForm) {
+        const shouldCloneSourceCell =
+          copyLoggedHours ? !!sourceCell.durationSeconds :
+            copyDescription ? !!sourceCell.description :
+              copyTask ? !!sourceCell.taskId :
+                (copyProjects ? true : false);
+
+        if (sourceCell.approvalStatus?.toLowerCase() === 'rejected') {
           return;
         }
 
-        if (this.shouldSkipCloneForTargetDay(targetDayForm, sourceCell, cloneMode)) {
+        if (!shouldCloneSourceCell) {
+          return;
+        }
+
+        const targetDay = targetMatrix.days[index];
+        const targetCell = targetMatrix.cellMap.get(`${targetRow.rowId}_${targetDay.date}`);
+
+        if (this.shouldSkipCloneForTargetCell(targetCell, cloneMode)) {
           return;
         }
 
         const entryDate = moment(targetWeekDates[index]).format('YYYY-MM-DD');
-        const payload = {
-          entryId: targetDayForm.get('entryId')?.value || 0,
+        const payload: any = {
+          entryId: targetCell?.entryId || 0,
           employeeId: this.employeeId || 0,
           entryDate,
-          startTime: this.toTimeSpan(sourceCell.startTime) || null,
-          endTime: this.toTimeSpan(sourceCell.endTime) || null,
-          description: sourceCell.description || '',
           approvalStatus: 'draft',
-          clientId: targetProjectForm.get('clientId')?.value || null,
-          projectId: targetProjectForm.get('projectId')?.value || null,
-          phaseId: targetProjectForm.get('phaseId')?.value || null,
-          timesheetId: this.timesheetdata?.timesheetId || 0,
+          clientId: targetRow.clientId || null,
+          projectId: targetRow.projectId || null,
+          phaseId: targetRow.phaseId || null,
+          timesheetId: targetTimesheetId || 0,
           isOverride: false,
-          totalDurationSeconds: sourceCell.durationSeconds || 0,
+          totalDurationSeconds: copyLoggedHours ? sourceCell.durationSeconds || 0 : 0,
+          description: copyDescription ? sourceCell.description || '' : '',
           isBillable: sourceCell.isBillable || false,
           moduleId: 30,
-          resourceId: sourceCell.resourceId || targetProjectForm.get('resourceId')?.value || null,
-          taskId: sourceCell.taskId || null
+          resourceId: targetRow.resourceId || sourceRow.resourceId || null,
+          startTime: copyLoggedHours ? this.toTimeSpan(sourceCell.startTime) : null,
+          endTime: copyLoggedHours ? this.toTimeSpan(sourceCell.endTime) : null,
+          taskId: copyTask ? sourceCell.taskId || null : null
         };
 
         payloads.push(payload);
@@ -734,19 +776,32 @@ getTaskType() {
 
     const sourceWeekRange = this.cloneForm.get('sourceWeekDateRange')?.value as Date[] | null;
     const sourceWeekStartDate = this.getRangeStartDate(sourceWeekRange) || new Date();
-    const { start } = this.getWeekRangeFromDate(sourceWeekStartDate);
-    const sourceWeekStart = moment(start).format('YYYY-MM-DD');
+    const sourceWeekStart = moment(sourceWeekStartDate).startOf('isoWeek').format('YYYY-MM-DD');
     const targetWeekRange = this.cloneForm.get('targetWeekDateRange')?.value as Date[] | null;
     const targetWeekStartDate = this.getRangeStartDate(targetWeekRange) || new Date();
+    const targetWeekStart = moment(targetWeekStartDate).startOf('isoWeek').format('YYYY-MM-DD');
     const targetWeekDates = this.getWeekDatesFromDate(targetWeekStartDate);
     const cloneMode = this.cloneForm.get('cloneMode')?.value;
+    const copyProjects = this.cloneForm.get('copyProjects')?.value ?? true;
+    const copyLoggedHours = this.cloneForm.get('copyLoggedHours')?.value ?? false;
+    const copyDescription = this.cloneForm.get('copyDescription')?.value ?? false;
+    const copyTask = this.cloneForm.get('copyTask')?.value ?? false;
 
-    this.http.getData(`v2/Timesheet/week/employee/${this.employeeId}?weekStartDate=${sourceWeekStart}`)
-      .pipe(takeUntil(this.destroy$))
+    if (!copyProjects && !copyLoggedHours && !copyDescription && !copyTask) {
+      this.spinnerLoader = false;
+      this.cloneErrorMessage = 'Please select at least one clone option.';
+      return;
+    }
+
+    forkJoin([
+      this.http.getData(`v2/Timesheet/week/employee/${this.employeeId}?weekStartDate=${sourceWeekStart}`),
+      this.http.getData(`v2/Timesheet/week/employee/${this.employeeId}?weekStartDate=${targetWeekStart}`)
+    ]).pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (res: any) => {
-          const sourceMatrix = transformV2ResponseToWeekMatrix(res);
-          const payloads = this.buildClonePayloads(sourceMatrix, cloneMode, targetWeekDates);
+        next: ([sourceRes, targetRes]: any) => {
+          const sourceMatrix = transformV2ResponseToWeekMatrix(sourceRes);
+          const targetMatrix = transformV2ResponseToWeekMatrix(targetRes);
+          const payloads = this.buildClonePayloads(sourceMatrix, targetMatrix, cloneMode, targetWeekDates, targetMatrix.metadata.timesheetId || 0);
 
           if (!payloads.length) {
             this.spinnerLoader = false;
@@ -772,7 +827,7 @@ getTaskType() {
         },
         error: (err: any) => {
           this.spinnerLoader = false;
-          this.cloneErrorMessage = err?.error?.message || 'Failed to load source week entries.';
+          this.cloneErrorMessage = err?.error?.message || 'Failed to load source or target week entries.';
         }
       });
   }
@@ -880,7 +935,7 @@ getTaskType() {
     };
   }
 
- private createDayEntryFromCell(row: RowModel, day: DayModel, isProjectSelected: boolean = false): FormGroup {
+  private createDayEntryFromCell(row: RowModel, day: DayModel, isProjectSelected: boolean = false): FormGroup {
     const cellKey = `${row.rowId}_${day.date}`;
     const cell = this.weekMatrix.cellMap.get(cellKey);
 
@@ -910,14 +965,14 @@ getTaskType() {
         allocations: matchedResources
       }
       : null;
-      console.log(matchedResources);
-      
+    console.log(matchedResources);
+
 
     const resourceDateRange = mergedResource ? {
       startDate: mergedResource.startDate ? new Date(mergedResource.startDate) : null,
       endDate: mergedResource.endDate ? new Date(mergedResource.endDate) : null
     } : undefined;
-       console.log(resourceDateRange);
+    console.log(resourceDateRange);
 
     const phaseDateRange = mergedResource?.phase ? {
       startDate: mergedResource.phase.startDate ? new Date(mergedResource.phase.startDate) : null,
@@ -1763,7 +1818,7 @@ getTaskType() {
     this.dayValidationService.initialize(context);
   }
 
-   selectProjectForRow(row: AbstractControl, client: any, project: any, phase: any = null) {
+  selectProjectForRow(row: AbstractControl, client: any, project: any, phase: any = null) {
 
     const form = row as FormGroup;
 
@@ -1959,104 +2014,104 @@ getTaskType() {
   }
 
   //OPEN TIME ENTERIY
-openModal(content: any, dayForm: AbstractControl | null, index: number, dayKey: string) {
+  openModal(content: any, dayForm: AbstractControl | null, index: number, dayKey: string) {
 
-  if (dayForm instanceof FormGroup) {
-    this.currentRowIndex = index;
-    this.currentDay = dayKey;
-    this.isModalOpen = true;
-    const modalRef = this.modalService.open(content, {
-      centered: true,
-      backdrop: 'static'
-    });
-    modalRef.result.finally(() => {
-      this.isModalOpen = false;
-    });
-
-    this.dayForm = dayForm;
-    //start//code for the task type 
-    let taskId = this.dayForm.get('taskId')?.value;
-    let taskdata = this.alltaskTypes?.find((ele: any) => ele?.id == taskId && ele?.status?.toLowerCase() == 'inactive');
-    if (taskdata) {
-      const alreadyExists = this.taskType?.some((ele: any) => ele.id == taskdata.id);
-      if (!alreadyExists) {
-        this.taskType.push(taskdata);
-      }
-    } else {
-      this.taskType = this.alltaskTypes?.filter((ele: any) => ele?.status?.toLowerCase() == 'active'
-      );
-    }
-    //end//code for the task type
-    // ✅ Normalize date (fix timezone issue)
-    const normalizeDate = (date: any) => {
-      const d = new Date(date);
-      d.setHours(0, 0, 0, 0);
-      return d;
-    };
-
-    const entryDate = normalizeDate(this.dayForm.get('entryDate')?.value);
-
-    // ✅ 🔥 Get correct resource based on project/client/phase + DATE RANGE
-    const matchedResource = this.resourcesArrayList
-      .filter((res: any) =>
-        res.project?.projectId === this.dayForm.get('projectId')?.value &&
-        res.client?.clientId === this.dayForm.get('clientId')?.value &&
-        res.phase?.phaseId === this.dayForm.get('phaseId')?.value
-      )
-      .filter((res: any) => {
-        const start = normalizeDate(res.startDate);
-        const end = normalizeDate(res.endDate);
-        return entryDate >= start && entryDate <= end;
-      })
-      // ✅ If multiple matches → pick latest (optional but safe)
-      .sort((a: any, b: any) =>
-        new Date(b.startDate).getTime() - new Date(a.startDate).getTime()
-      )[0];
-
-    console.log('Matched Resource (by date):', matchedResource);
-
-    let isBillableForDay = false;
-
-    if (matchedResource) {
-      isBillableForDay = matchedResource.billable === true;
-    }
-
-    console.log('Final Billable:', isBillableForDay);
-
-    // ✅ Disable form for processed حالات
-    if (
-      this.dayForm.get('approvalStatus')?.value === 'Processed' ||
-      this.dayForm.get('approvalStatus')?.value === 'Waiting for Approval' ||
-      this.employeeSelected
-    ) {
-      this.dayForm.disable();
-    } else {
-
-      this.dayForm.enable();
-
-      // ✅ Enable / Disable billable checkbox
-      if (isBillableForDay) {
-        this.dayForm.get('isBillable')?.enable();
-      } else {
-        this.dayForm.get('isBillable')?.disable();
-      }
-    }
-
-    // ✅ Set default billable only if not entered
-    const approvalStatus = this.dayForm.get('approvalStatus')?.value;
-
-    if (
-      approvalStatus === 'Not Entered' ||
-      approvalStatus === '' ||
-      approvalStatus === null ||
-      approvalStatus === undefined
-    ) {
-      this.dayForm.patchValue({
-        isBillable: isBillableForDay
+    if (dayForm instanceof FormGroup) {
+      this.currentRowIndex = index;
+      this.currentDay = dayKey;
+      this.isModalOpen = true;
+      const modalRef = this.modalService.open(content, {
+        centered: true,
+        backdrop: 'static'
       });
+      modalRef.result.finally(() => {
+        this.isModalOpen = false;
+      });
+
+      this.dayForm = dayForm;
+      //start//code for the task type 
+      let taskId = this.dayForm.get('taskId')?.value;
+      let taskdata = this.alltaskTypes?.find((ele: any) => ele?.id == taskId && ele?.status?.toLowerCase() == 'inactive');
+      if (taskdata) {
+        const alreadyExists = this.taskType?.some((ele: any) => ele.id == taskdata.id);
+        if (!alreadyExists) {
+          this.taskType.push(taskdata);
+        }
+      } else {
+        this.taskType = this.alltaskTypes?.filter((ele: any) => ele?.status?.toLowerCase() == 'active'
+        );
+      }
+      //end//code for the task type
+      // ✅ Normalize date (fix timezone issue)
+      const normalizeDate = (date: any) => {
+        const d = new Date(date);
+        d.setHours(0, 0, 0, 0);
+        return d;
+      };
+
+      const entryDate = normalizeDate(this.dayForm.get('entryDate')?.value);
+
+      // ✅ 🔥 Get correct resource based on project/client/phase + DATE RANGE
+      const matchedResource = this.resourcesArrayList
+        .filter((res: any) =>
+          res.project?.projectId === this.dayForm.get('projectId')?.value &&
+          res.client?.clientId === this.dayForm.get('clientId')?.value &&
+          res.phase?.phaseId === this.dayForm.get('phaseId')?.value
+        )
+        .filter((res: any) => {
+          const start = normalizeDate(res.startDate);
+          const end = normalizeDate(res.endDate);
+          return entryDate >= start && entryDate <= end;
+        })
+        // ✅ If multiple matches → pick latest (optional but safe)
+        .sort((a: any, b: any) =>
+          new Date(b.startDate).getTime() - new Date(a.startDate).getTime()
+        )[0];
+
+      console.log('Matched Resource (by date):', matchedResource);
+
+      let isBillableForDay = false;
+
+      if (matchedResource) {
+        isBillableForDay = matchedResource.billable === true;
+      }
+
+      console.log('Final Billable:', isBillableForDay);
+
+      // ✅ Disable form for processed حالات
+      if (
+        this.dayForm.get('approvalStatus')?.value === 'Processed' ||
+        this.dayForm.get('approvalStatus')?.value === 'Waiting for Approval' ||
+        this.employeeSelected
+      ) {
+        this.dayForm.disable();
+      } else {
+
+        this.dayForm.enable();
+
+        // ✅ Enable / Disable billable checkbox
+        if (isBillableForDay) {
+          this.dayForm.get('isBillable')?.enable();
+        } else {
+          this.dayForm.get('isBillable')?.disable();
+        }
+      }
+
+      // ✅ Set default billable only if not entered
+      const approvalStatus = this.dayForm.get('approvalStatus')?.value;
+
+      if (
+        approvalStatus === 'Not Entered' ||
+        approvalStatus === '' ||
+        approvalStatus === null ||
+        approvalStatus === undefined
+      ) {
+        this.dayForm.patchValue({
+          isBillable: isBillableForDay
+        });
+      }
     }
   }
-}
 
   recalculateTimes(dayKey: string, startIndex: number) {
     for (let i = 0; i < this.projects.length; i++) {
@@ -2142,7 +2197,7 @@ openModal(content: any, dayForm: AbstractControl | null, index: number, dayKey: 
       isBillable: formValue.isBillable || false,
       moduleId: 30,
       resourceId: formValue.resourceId || null,
-      taskId:formValue.taskId
+      taskId: formValue.taskId
     };
     // POST request
     this.http.postdata('v2/Timesheet/save-or-update', payload).subscribe({
@@ -2198,7 +2253,7 @@ openModal(content: any, dayForm: AbstractControl | null, index: number, dayKey: 
         startTime: null,
         endTime: null,
         approvalStatus: 'Not Entered',
-        taskId:null,
+        taskId: null,
       }, { emitEvent: true });
 
       this.timesheetForm.get('duration')?.patchValue(null);
@@ -2249,7 +2304,7 @@ openModal(content: any, dayForm: AbstractControl | null, index: number, dayKey: 
           projectName: project.selectedProject?.projectName || '',
           clientName: project.selectedProject?.clientName || '',
           approvalStatus: day.approvalStatus, // include approvalStatus
-          taskId:day.taskId,
+          taskId: day.taskId,
         };
       })
     )

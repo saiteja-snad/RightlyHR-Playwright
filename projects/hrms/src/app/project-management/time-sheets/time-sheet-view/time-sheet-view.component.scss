@@ -77,6 +77,8 @@
     overflow: visible;
 }
 
+/* removed top overlay; errors shown inline under options */
+
 .clone-header-card {
     display: flex;
     align-items: center;
@@ -132,6 +134,11 @@
     background: transparent;
     border: none;
     padding: 0;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    overflow: visible;
 }
 
 .offcanvas-filter-content {
@@ -139,10 +146,10 @@
 }
 
 .clone-offcanvas-panel .offcanvas {
-     width: 400px !important;
+    width: 400px !important;
     max-width: 95% !important;
     right: calc(50% - 210px) !important;
-    top: 10% !important;
+    top: 4% !important;
     bottom: auto !important;
     transform: none !important;
     background: #ffffff !important;
@@ -150,13 +157,98 @@
     border-radius: 2rem !important;
     overflow: hidden !important;
     box-shadow: 0 24px 60px rgba(15, 23, 42, 0.12) !important;
-    max-height: calc(100vh - 2rem) !important;
+    max-height: 90vh !important;
 }
 
 .clone-offcanvas-panel .offcanvas-body {
     padding: 0 !important;
-    overflow-y: auto !important;
-    max-height: calc(100vh - 4rem) !important;
+    overflow-y: scroll !important;
+    padding-bottom: 20px !important;
+    max-height: calc(100vh - 2rem) !important;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Thinner, subtler scrollbar for the clone modal */
+.clone-offcanvas-panel .offcanvas-body::-webkit-scrollbar {
+    width: 6px;
+}
+
+.clone-offcanvas-panel .offcanvas-body::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.clone-offcanvas-panel .offcanvas-body::-webkit-scrollbar-thumb {
+    background: rgba(16, 24, 40, 0.12);
+    border-radius: 8px;
+}
+
+.clone-offcanvas-panel .offcanvas-body::-webkit-scrollbar-thumb:hover {
+    background: rgba(16, 24, 40, 0.18);
+}
+
+.clone-offcanvas-panel .offcanvas-body {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(16, 24, 40, 0.12) transparent;
+}
+
+.clone-body-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    padding-bottom: 1rem;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: visible;
+}
+
+.clone-body-content.scrollable {
+    overflow-y: auto;
+}
+
+.clone-footer {
+    position: sticky;
+    bottom: 0;
+    background: #ffffff;
+    padding: 0.35rem 0 0 0;
+    border-top: 1px solid #e4e9f4;
+}
+
+.clone-footer .custom-btn {
+    min-height: 36px !important;
+    padding: 0.5rem 1rem !important;
+}
+
+.info-box {
+    margin-bottom: 1rem;
+}
+
+.clone-error-box {
+    width: 100%;
+    box-shadow: 0 6px 18px rgba(163, 42, 47, 0.06);
+}
+
+.clone-error-box {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    background: #ffe7e9;
+    border: 1px solid #f2c3c7;
+    color: #a32a2f;
+    border-radius: 0.75rem;
+    padding: 0.9rem 1rem;
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+.clone-error-box i {
+    font-size: 1rem;
+    margin-top: 2px;
+}
+
+.clone-footer .custom-btn {
+    min-height: 44px !important;
 }
 
 .clone-offcanvas-panel .offcanvas-backdrop {
@@ -180,7 +272,7 @@
     border: none;
     border-radius: 0;
     padding: 0;
-    margin-bottom: 1.5rem;
+    margin-bottom: 0.75rem;
 }
 
 .clone-body-card .select-weeks-block .section-heading {
@@ -190,7 +282,7 @@
 .clone-divider {
     border: none;
     border-top: 2px dashed #b8bfd0;
-    margin: 1rem 0;
+   margin: 0.25rem 0;
     background: transparent;
 }
 
@@ -417,7 +509,7 @@
     background: #f7f9ff;
     border: 1px solid #e4e9f4;
     border-radius: 1rem;
-    padding: 1rem;
+     padding: 0.5rem;
 }
 
 .info-box {
@@ -889,7 +981,7 @@
     height: 100%;
 }
 
-.custom-checkbox input[type="checkbox"] { 
+.custom-checkbox input[type="checkbox"] {
     accent-color: #0B3A83;
 }
 

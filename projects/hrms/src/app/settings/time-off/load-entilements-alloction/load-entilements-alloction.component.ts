@@ -44,6 +44,7 @@ export class LoadEntilementsAlloctionComponent implements OnInit, OnDestroy {
   jobSummary: any = {};
   employees: any[] = [];
   categoryDetails = [] as ICategoryDetails[];
+  allCategoryDetails = [] as ICategoryDetails[];
   employeeDetails = [] as IEmployees[];
   selectedEmployee: any[] = [];
   selectedCategory: any[] = [];
@@ -57,7 +58,6 @@ export class LoadEntilementsAlloctionComponent implements OnInit, OnDestroy {
   selectedCycleEmployee: any = null;
   isApplyDisabledFlag = true;
   leaveAllocationForm!: FormGroup;
-  employeeDropdownContextKey = '';
 
   newEmployees: any[] = [];
   selectedNewEmployees: any[] = [];
@@ -121,7 +121,7 @@ export class LoadEntilementsAlloctionComponent implements OnInit, OnDestroy {
   onSelectedEmployee(values: any[]) {
     this.page = 1;
     this.first = 0;
-    this.selectedEmployee = Array.isArray(values) && values.length ? values.map((e: any) => e.employeeId) : [];
+    this.selectedEmployee = Array.isArray(values) && values.length ? values.map((e: any) => e.id) : [];
     if (!this.selectedEmployee.length) this.leaveAllocationForm.get('employeeName')?.setValue(null, { emitEvent: false });
     this.getdatacarryforword();
   }
@@ -172,8 +172,8 @@ export class LoadEntilementsAlloctionComponent implements OnInit, OnDestroy {
         this.jobSummary = res.data.jobSummary;
         this.employees = res.data.employees;
         this.collectionSize = res.pagination.totalRecords;
-        this.updateEmployeeDropdown();
-        this.getCategoryDetails();
+        this.buildEmployeeDropdown(res.data.employees);
+        this.buildCategoryDropdown(res.data.employees);
         this.getNewEmployees();
       },
       error: (err) => {
@@ -276,7 +276,28 @@ export class LoadEntilementsAlloctionComponent implements OnInit, OnDestroy {
     });
   }
 
-  getCategoryDetails(): void {
+  buildEmployeeDropdown(employees: any[]): void {
+    const seen = new Set<number>();
+    this.employeeDetails = (employees || []).reduce((acc: any[], e: any) => {
+      const emp = e?.employee;
+      if (emp?.id && !seen.has(emp.id)) {
+        seen.add(emp.id);
+        acc.push({ ...emp, fullName: `${emp.fusionEmpId ?? ''} ${emp.name ?? ''}`.trim() });
+      }
+      return acc;
+    }, []);
+  }
+
+  buildCategoryDropdown(employees: any[]): void {
+    const presentIds = new Set((employees || []).map((e: any) => e?.leaveCategoryId).filter(Boolean));
+    if (this.allCategoryDetails.length) {
+      this.categoryDetails = this.allCategoryDetails.filter((c: any) => presentIds.has(c.id));
+    } else {
+      this.getCategoryDetails(presentIds);
+    }
+  }
+
+  getCategoryDetails(filterIds?: Set<number>): void {
     const payload = {
       year: this.jobSummary?.processingYear,
       locationId: this.jobSummary?.locationId,
@@ -286,81 +307,13 @@ export class LoadEntilementsAlloctionComponent implements OnInit, OnDestroy {
     };
     this.http.getDataWithQueryParams("OrgLeavesCategories", payload).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
-        this.categoryDetails = res;
+        this.allCategoryDetails = res;
+        this.categoryDetails = filterIds ? res.filter((c: any) => filterIds.has(c.id)) : res;
       },
       error: err => {
         console.error('Error fetching categories:', err);
       }
     });
-  }
-
-  updateEmployeeDropdown(): void {
-    const locationId = this.jobSummary?.locationId;
-    const subLocationId = this.jobSummary?.subLocationId;
-    const shiftId = this.jobSummary?.shiftId;
-
-    if (!locationId || !subLocationId || !shiftId) {
-      this.employeeDropdownContextKey = '';
-      this.employeeDetails = [];
-      return;
-    }
-
-    const nextContextKey = `${locationId}|${subLocationId}|${shiftId}`;
-    if (this.employeeDropdownContextKey === nextContextKey && this.employeeDetails.length) {
-      this.syncSelectedEmployees();
-      return;
-    }
-
-    this.employeeDropdownContextKey = nextContextKey;
-    this.getAllEmployees();
-  }
-
-  getAllEmployees() {
-    const payload = {
-      locationId: this.jobSummary?.locationId,
-      subLocationId: this.jobSummary?.subLocationId,
-      shiftId: this.jobSummary?.shiftId,
-    };
-
-    if (!payload.locationId || !payload.subLocationId || !payload.shiftId) {
-      this.employeeDetails = [];
-      return;
-    }
-
-    this.http.getDataWithQueryParams("Employeedata/getAll", payload).pipe(takeUntil(this.destroy$)).subscribe({
-      next: (res: any) => {
-        this.employeeDetails = res.map((employee: any) => ({
-          ...employee,
-          fullName: `${employee.fusionEmpId ?? ''} ${employee.firstName ?? ''} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName ?? ''}`.trim()
-        }));
-        this.syncSelectedEmployees();
-      },
-      error: err => {
-        console.error('Error fetching employees:', err);
-      }
-    });
-  }
-
-  private syncSelectedEmployees(): void {
-    const control = this.leaveAllocationForm.get('employeeName');
-    const selectedValues = control?.value;
-
-    if (!Array.isArray(selectedValues) || !selectedValues.length) {
-      return;
-    }
-
-    const selectedIds = new Set(
-      selectedValues
-        .map((employee: any) => employee?.employeeId ?? employee?.id)
-        .filter((id: any) => id)
-    );
-
-    const matchedEmployees = this.employeeDetails.filter((employee: any) =>
-      selectedIds.has(employee?.employeeId ?? employee?.id)
-    );
-
-    this.selectedEmployee = matchedEmployees.map((employee: any) => employee.employeeId ?? employee.id);
-    control?.setValue(matchedEmployees.length ? matchedEmployees : null, { emitEvent: false });
   }
 
   getNewEmployees(): void {

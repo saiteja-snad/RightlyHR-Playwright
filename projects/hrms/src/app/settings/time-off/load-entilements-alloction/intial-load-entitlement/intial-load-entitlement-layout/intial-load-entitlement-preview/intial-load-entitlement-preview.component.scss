@@ -183,8 +183,12 @@
     overflow-y: auto;
 }
 
-.p-accordioncontent{
-  padding: 0.75rem !important;
+.p-accordioncontent {
+  padding: 0.25rem !important;
+}
+
+.custom-accordians .p-accordion {
+  gap: 4px !important;
 }
 
 .custom-accordian-table{

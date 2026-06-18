@@ -835,6 +835,41 @@
 }
 
 
+
+::ng-deep .menu-dropdown-content {
+    .p-menu-item-link {
+        font-weight: 400 !important;
+        font-size: var(--fontsize14) !important;
+        color: #4D4D4D !important;
+        gap: 0rem !important;
+        text-wrap: nowrap !important;
+
+        .p-menu-item-icon {
+            color: #4D4D4D !important;
+        }
+    }
+}
+
+::ng-deep .p-menu-item-icon.file-import-icon,
+::ng-deep .p-menu-item-icon.file-export-icon {
+    display: inline-block;
+    width: 1rem;
+    height: 1rem;
+    margin-right: 0.5rem;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+}
+
+::ng-deep .p-menu-item-icon.file-import-icon {
+    background-image: url('/main-menu-icons/file-import.png');
+}
+
+::ng-deep .p-menu-item-icon.file-export-icon {
+    background-image: url('/main-menu-icons/file-export.png');
+}
+
+
 .info-section {
     background: #FCF3E8;
     border-radius: 0.5rem;
@@ -973,4 +1008,13 @@
 ::ng-deep .p-datepicker-day-selected-range {
     background: #DCE5F7 !important;
     color: #0B3A83 !important;
+}
+
+.clone-cancel-icon {
+    width: 80px !important;
+    height: 80px !important;
+}
+
+.clone-footer .custom-btn {
+    flex: 1;
 }

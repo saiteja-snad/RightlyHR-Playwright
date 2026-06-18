@@ -2543,6 +2543,31 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       error: (err) => console.error('Failed to load leaves', err)
     });
   }
+
+  openCancelClonePopup(content: any) {
+  this.modalService.open(content, {
+    centered: true,
+    backdrop: 'static'
+  });
+}
+
+confirmCloneCancel(modal: any) {
+  modal.close();
+
+  this.offcanvasService.dismiss();
+
+  this.conformationPopup.openSuccessModal(
+    'Clone Cancelled Successfully'
+  );
+}
+
+testMenu(event: any, menu: any) {
+  console.log('Actions Clicked');
+  console.log(this.bulkOperationMenuItems);
+  console.log(menu);
+  menu.show(event);
+}
+
   ngOnDestroy() {
     this.destroy$.next(true);
     this.destroy$.complete();

@@ -289,13 +289,13 @@ export class CompanypoliciesComponent implements OnInit, OnDestroy {
   }
 
   postacknowledgement(selectedItem: any) {
-    let data = {
+    let data = [{
       orgPolicyItemId: selectedItem.id,
       employeeId: this.empinfo.employeeId,
       acknowledged: true,
       acknowledgedDate: new Date(),
       source: "Web"
-    }
+    }]
     console.log(data);
     this.loading = true;
     this.subscription = this.http.postdata('OrgPolicyAcknowledgment', data).subscribe({

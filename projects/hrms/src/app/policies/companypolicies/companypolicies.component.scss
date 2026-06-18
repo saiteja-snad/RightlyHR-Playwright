@@ -7,14 +7,50 @@
 .custom-table-content {
     height: calc(100dvh - 8rem) !important;
     min-height: 45vh;
-    border: 1px solid var(--content-border-color);
 }
 
+.modal-image {
+    width: inherit !important;
+    max-height: 60vh;
+}
 .custom-p-multi-select-table {
     height: calc(100dvh - 8rem) !important;
     min-height: 45vh;
     border: 1px solid var(--content-border-color);
     overflow: auto;
+
+    // Remove all vertical borders from table headers - most specific selectors
+    ::ng-deep {
+        // Target the actual table element and all th elements
+        p-table table thead tr th {
+            border-left: none !important;
+            border-right: none !important;
+        }
+
+        // Target PrimeNG specific classes
+        .p-datatable thead th {
+            border-left: none !important;
+            border-right: none !important;
+        }
+
+        .p-datatable .p-datatable-thead > tr > th {
+            border-left: none !important;
+            border-right: none !important;
+        }
+
+        // Target any potential PrimeNG table header elements
+        .p-column-header-content,
+        .p-sortable-column,
+        .p-datatable-column-header {
+            border-left: none !important;
+            border-right: none !important;
+        }
+
+        // Override any CSS variables that might control borders
+        .p-datatable {
+            --p-datatable-header-border-width: 0 0 2px 0 !important;
+        }
+    }
 
     // Sticky table header
     ::ng-deep .p-datatable {
@@ -33,6 +69,9 @@
             background-color: var(--table-header-bg, #f8f9fa);
             border-bottom: 2px solid var(--content-border-color, #dee2e6);
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            // Remove vertical borders between header columns
+            border-left: none !important;
+            border-right: none !important;
         }
 
         .p-datatable-scrollable .p-datatable-thead > tr > th {
@@ -42,6 +81,24 @@
 
         .p-datatable-tbody {
             overflow-y: auto;
+        }
+
+        // Additional selectors to remove vertical borders
+        .p-datatable-thead th,
+        .p-datatable-thead .p-column-header-content,
+        .p-datatable table th {
+            border-left: none !important;
+            border-right: none !important;
+        }
+
+        // Remove borders from table structure
+        table {
+            border-collapse: collapse;
+            
+            th {
+                border-left: none !important;
+                border-right: none !important;
+            }
         }
     }
 }

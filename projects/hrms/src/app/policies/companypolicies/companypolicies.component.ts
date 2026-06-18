@@ -18,9 +18,10 @@ import { MODULE_INFOS } from '../../shared/modules-info';
 import { OpenModalService } from '../../services/open-modal.service';
 import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
 import { TableModule, Table } from 'primeng/table';
+import { DocumentViewIconComponent } from "../../icons/document-view-icon/document-view-icon.component";
 @Component({
   selector: 'app-companypolicies',
-  imports: [CommonModule, ReactiveFormsModule, NgxDocViewerModule, Select, NgbPopoverModule, NoDataFoundComponent, TranslateModule, DataLoaderContentComponent, ModuleInformationComponent, ModuleInfoIconComponent, TableModule],
+  imports: [CommonModule, ReactiveFormsModule, NgxDocViewerModule, Select, NgbPopoverModule, NoDataFoundComponent, TranslateModule, DataLoaderContentComponent, ModuleInformationComponent, ModuleInfoIconComponent, TableModule, DocumentViewIconComponent],
   templateUrl: './companypolicies.component.html',
   styleUrl: './companypolicies.component.scss'
 })

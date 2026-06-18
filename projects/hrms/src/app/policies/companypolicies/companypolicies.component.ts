@@ -18,9 +18,10 @@ import { MODULE_INFOS } from '../../shared/modules-info';
 import { OpenModalService } from '../../services/open-modal.service';
 import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
 import { TableModule, Table } from 'primeng/table';
+import { DocumentViewIconComponent } from "../../icons/document-view-icon/document-view-icon.component";
 @Component({
   selector: 'app-companypolicies',
-  imports: [CommonModule, ReactiveFormsModule, NgxDocViewerModule, Select, NgbPopoverModule, NoDataFoundComponent, TranslateModule, DataLoaderContentComponent, ModuleInformationComponent, ModuleInfoIconComponent, TableModule],
+  imports: [CommonModule, ReactiveFormsModule, NgxDocViewerModule, Select, NgbPopoverModule, NoDataFoundComponent, TranslateModule, DataLoaderContentComponent, ModuleInformationComponent, ModuleInfoIconComponent, TableModule, DocumentViewIconComponent],
   templateUrl: './companypolicies.component.html',
   styleUrl: './companypolicies.component.scss'
 })
@@ -61,6 +62,8 @@ export class CompanypoliciesComponent implements OnInit, OnDestroy {
     });
     this.policiesform.get('selectedYear')?.valueChanges.subscribe((year: number) => {
       this.selectedYear = year;
+      // Clear selections when year changes
+      this.selectedPolicyItems = [];
       this.getpolicys(this.jobshiftdetials);
     });
     this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
@@ -265,6 +268,12 @@ export class CompanypoliciesComponent implements OnInit, OnDestroy {
         this.filteredpolicy = response.map((policy: any) => policy.orgPolicyItems);
         this.orgPolicyItemsArray = [].concat(...this.filteredpolicy);
         
+        // Clear selections when new data is loaded and reset table selection
+        this.selectedPolicyItems = [];
+        if (this.table) {
+          this.table.selection = [];
+        }
+        
         // Sort items initially to maintain consistent ordering
         this.sortPolicyItems();
         
@@ -280,13 +289,13 @@ export class CompanypoliciesComponent implements OnInit, OnDestroy {
   }
 
   postacknowledgement(selectedItem: any) {
-    let data = {
+    let data = [{
       orgPolicyItemId: selectedItem.id,
       employeeId: this.empinfo.employeeId,
       acknowledged: true,
       acknowledgedDate: new Date(),
       source: "Web"
-    }
+    }]
     console.log(data);
     this.loading = true;
     this.subscription = this.http.postdata('OrgPolicyAcknowledgment', data).subscribe({

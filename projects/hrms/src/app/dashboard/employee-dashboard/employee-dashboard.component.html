@@ -153,7 +153,22 @@
           </button>
           }
           <img [src]="item.icon" [alt]="item.label" class="icon mb-2" />
-          <div class="link" (click)="openQuickLink(item.route, $event)"><u>{{ item.label }}</u></div>
+          <div class="link" (click)="openQuickLink(item.route, $event)">
+            <u>
+              @if (isPendingApprovalsQuickLink(item)) {
+              <span class="quick-link-pa-label">
+                <span class="quick-link-pa-prefix"
+                  ngbPopover="Pending Approvals"
+                  triggers="mouseenter:mouseleave"
+                  placement="top"
+                  popoverClass="quick-link-pa-popover">PA</span>-{{ getPendingApprovalsQuickLinkSuffix(item.label) }}
+              </span>
+              }
+              @else {
+              {{ item.label }}
+              }
+            </u>
+          </div>
           <ng-template cdkDragPreview>
             <div class="quick-links-content quick-links-drag-preview text-center">
               <img [src]="item.icon" [alt]="item.label" class="icon mb-2" />

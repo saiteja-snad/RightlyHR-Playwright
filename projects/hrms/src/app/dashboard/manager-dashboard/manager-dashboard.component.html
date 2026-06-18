@@ -119,7 +119,7 @@
                             }
                         </div>
                     </div>
-                    <div [ngStyle]="{ 'border-left': '4px solid #8B5CF6' }" class="employee-type-text ps-2">
+                    <div [ngStyle]="{ 'border-left': '4px solid #305889' }" class="employee-type-text ps-2">
                         <p class="m-0">Permissions</p>
                         <div class="count-text">
                             @if(attendanceReportData?.permission != 0){
@@ -144,7 +144,7 @@
         <!-- Consumed Leave Types -->
         @if(rbac.allowedToAccess('Consumed Leave Types.view')){
         <div class="content-card">
-        
+
             <div class="flex-between-content mb-3">
                 <div class="summary-header d-inline-flex gap-1">
                     <div class="section-title">Consumed Leave Types</div>
@@ -210,7 +210,7 @@
         <!-- Approvals Overview -->
         @if(rbac.allowedToAccess('Approvals Overview.view')){
         <div class="content-card">
-           
+
             <div class="flex-between-content mb-3">
                 <div class="summary-header d-inline-flex gap-1">
                     <div class="section-title">Approvals Overview</div>
@@ -402,7 +402,7 @@
                 <span class="input-group-text custom-input-group-search">
                     <i class="bi bi-search"></i>
                 </span>
-                <input type="search" class="form-control custom-search-input" placeholder="Search" [(ngModel)]="searchEmployeeText" 
+                <input type="search" class="form-control custom-search-input" placeholder="Search" [(ngModel)]="searchEmployeeText"
                 placeholder="Search by Employee name/designation/department"/>
             </div>
             <div *ngFor="let emp of getFilteredAttendanceEmployees()" class="profile-content mb-2">
@@ -459,7 +459,7 @@
                 <span class="input-group-text custom-input-group-search">
                     <i class="bi bi-search"></i>
                 </span>
-                <input type="search" class="form-control custom-search-input" placeholder="Search" [(ngModel)]="searchEmployeeText" 
+                <input type="search" class="form-control custom-search-input" placeholder="Search" [(ngModel)]="searchEmployeeText"
                 placeholder="Search by Employee name/designation/department"/>
             </div>
             <div *ngFor="let emp of getFilteredGenderEmployees()" class="profile-content mb-2">
@@ -502,7 +502,7 @@
                 <span class="input-group-text custom-input-group-search" id="basic-addon1">
                     <i class="bi bi-search"></i>
                 </span>
-                <input type="search" class="form-control custom-search-input" placeholder="Search" [(ngModel)]="searchEmployeeText" 
+                <input type="search" class="form-control custom-search-input" placeholder="Search" [(ngModel)]="searchEmployeeText"
                 placeholder="Search by Employee name/designation/department"/>
             </div>
             <div *ngFor="let emp of getFilteredEmployees()" class="profile-content mb-2">

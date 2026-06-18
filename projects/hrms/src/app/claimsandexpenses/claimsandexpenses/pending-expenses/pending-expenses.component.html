@@ -10,12 +10,14 @@
 
   <div class="custom-p-multi-select-table">
     @if(!loading){
-    <div *ngIf="canShowBulkActions()" class="component-header-content">
+    <div *ngIf="selectedExpenses.length > 0" class="component-header-content">
+
       <div>
         Selected Records: {{ selectedExpenses.length }}
       </div>
 
-      <div class="d-flex gap-2">
+      <div class="d-flex gap-2" *ngIf="canShowBulkActions()">
+
         <button class="custom-btn btn-primary-approve" (click)="openApproveModal(approval, selectedExpenses[0])">
           Approve
         </button>
@@ -23,9 +25,10 @@
         <button class="custom-btn btn-primary-reject" (click)="openRejectModal(rejectmodal, selectedExpenses[0])">
           Reject
         </button>
-      </div>
-    </div>
 
+      </div>
+
+    </div>
     <p-table [value]="(expenesEmplyeedata | async) ?? []" [(selection)]="selectedExpenses"
       (selectionChange)="selectCheck($event)" dataKey="expenses_ID">
 
@@ -251,21 +254,21 @@
           <div *ngIf="approveForm.get('comments')?.errors?.['required']">Comment is required.</div>
           <div *ngIf="approveForm.get('comments')?.errors?.['maxlength']">Comment cannot exceed 250 characters.</div>
         </div>
-        <div class="textarea-count-text">{{ approveForm.get('comments')?.value?.length || 0 }}/250
-        </div>
+        <div class="textarea-count-text">{{ approveForm.get('comments')?.value?.length || 0 }}/250</div>
 
       </div>
       <div class="d-flex align-items-center flex-wrap gap-2 mb-3">
         <button type="button" class="custom-btn btn-secondary chip-btn"
-          [class.active]="selectedLeaveStatus === 'approved'" (click)="onStatusApproveSelect('approved')">
-          Approved
-        </button>
+          [class.active]="selectedLeaveStatus === 'approved'"
+          (click)="onStatusApproveSelect('approved')">Approved</button>
       </div>
+
       <div class="custom-modal-footer">
         <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss();">{{'Cancel'|
           translate}}</button>
         <button type="submit" class="custom-btn btn-primary" [disabled]="approveForm.invalid">{{'Approve'|
           translate}}</button>
+
       </div>
     </form>
   </div>
@@ -297,8 +300,7 @@
         </button>
       </div>
       <div class="custom-modal-footer">
-        <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'Cancel' |
-          translate}}</button>
+        <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'Cancel'| translate}}</button>
         <button type="submit" class="custom-btn btn-primary" [disabled]="rejectForm.invalid">{{'Reject' |
           translate}}</button>
       </div>
@@ -321,11 +323,44 @@
     <div class="custom-main-popup-content">
       <div *ngFor="let comment of approverComments" class="card p-3 mb-3">
         <div class="mb-0">
-          <p><b>Commented by:</b> {{ comment.addedName }} </p>
-          <p><b>Commented by ID:</b> {{ comment.addedByFusionEmpId }} </p>
-          <p><b>Approved Date:</b> {{ comment.addedDate | date: 'short' }} </p>
+          <p><b>Commented by:</b> {{ comment.addedName }}</p>
+          <p><b>Commented by ID:</b> {{ comment.addedByFusionEmpId }}</p>
+          <p><b>Approved Date:</b> {{ comment.addedDate | date: 'short' }}</p>
           <p><b>Status:</b> {{ comment.action }}</p>
-          <p><b>Comments:</b> {{ comment.comments }} </p>
+          <p><b>Comments:</b> {{ comment.comments }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #expenseSummary let-modal>
+  <div class="custom-main-popup-container">
+    <div class="custom-poup-header-content popup-header-border">
+      <div>
+        <p class="popup-heading mb-0">Summary</p>
+      </div>
+    </div>
+
+    <div class="custom-main-popup-content">
+      <div class="popup-table-wrapper">
+        <div class="popup-table-scroll-container">
+          <table class="popup-table">
+            <thead>
+              <tr>
+                <th>Total Records</th>
+                <th>Success Records</th>
+                <th>Failed Records</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>{{ responseSummary?.totalRecordCount }}</td>
+                <td>{{ responseSummary?.successRecordsCount }}</td>
+                <td>{{ responseSummary?.failureRecordsCount }}</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>

@@ -23,3 +23,36 @@
 .custom-dropdown-menu {
     z-index: 9999 !important;
 }
+
+.result-popup-content .chip-btn {
+    width: auto !important;
+    min-width: auto !important;
+    flex: none !important;
+    display: inline-block !important;
+}
+
+.result-popup-content .btn-primary {
+    border-radius: 10px !important;
+    width: 170px !important;
+}
+
+.result-popup-content .btn-secondary {
+    border-radius: 10px !important;
+}
+
+.result-popup-content .chip-btn {
+    border-radius: 10px !important;
+}
+
+.chip-btn,
+.chip-btn.active {
+    font-size: 13px !important;   /* decrease text size */
+    padding: 6px 20px !important; /* increase left & right space */
+    min-width: 115px !important;
+    border-radius: 10px !important;
+}
+
+.chip-btn.active {
+    border: 2px solid #233B9C !important; /* bold border when clicked */
+    font-weight: 600 !important;
+}

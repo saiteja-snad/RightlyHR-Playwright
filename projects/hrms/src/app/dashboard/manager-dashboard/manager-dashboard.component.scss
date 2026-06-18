@@ -895,11 +895,16 @@
             color: #d97400 !important;
         }
 
+        // &.chip-permission {
+        //     background-color: #FFF;
+        //     color: rgb(48, 88, 137) !important;
+        //     border-color: rgb(48, 88, 137) !important;
+        // }
         &.chip-permission {
             background-color: #FFF;
-            color: rgb(48, 88, 137) !important;
-            border-color: rgb(48, 88, 137) !important;
-        }
+            color: #305889 !important;
+            border: 1px solid #305889;
+    }
     }
 }
 

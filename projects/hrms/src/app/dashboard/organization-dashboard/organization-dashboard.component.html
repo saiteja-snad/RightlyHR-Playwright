@@ -13,7 +13,7 @@
             <div class="tab-btns">
                 <div class="item" routerLink="/dashboard">Home</div>
                 <div class="item" routerLink="/dashboard/rm-tm" *ngIf="rbac.allowedToAccess('Manager Toggle.view')">Team</div>
-                <div class="item" routerLink="/dashboard/org" *ngIf="rbac.allowedToAccess('Organization Toggle.view')" 
+                <div class="item" routerLink="/dashboard/org" *ngIf="rbac.allowedToAccess('Organization Toggle.view')"
                 routerLinkActive="active">Organization</div>
             </div>
             }
@@ -137,7 +137,7 @@
                             <p class="m-0">Probation</p>
                             <div class="count-text">
                                 @if(upcomingPendingActionsData?.probationCount != 0){
-                                <span class="cursor" (click)="openUpcomingActionsOffcanvas(upcomingActionsList, 'probation', 'Probation', 
+                                <span class="cursor" (click)="openUpcomingActionsOffcanvas(upcomingActionsList, 'probation', 'Probation',
                                 upcomingPendingActionsData?.probationCount)">
                                     <u>{{ upcomingPendingActionsData?.probationCount || 0 }}</u>
                                 </span>
@@ -152,7 +152,7 @@
                             <p class="m-0">Trainee</p>
                             <div class="count-text">
                                 @if(upcomingPendingActionsData?.traineeCount != 0){
-                                <span class="cursor" (click)="openUpcomingActionsOffcanvas(upcomingActionsList, 'trainee', 'Trainee', 
+                                <span class="cursor" (click)="openUpcomingActionsOffcanvas(upcomingActionsList, 'trainee', 'Trainee',
                                 upcomingPendingActionsData?.traineeCount)">
                                     <u>{{ upcomingPendingActionsData?.traineeCount || 0 }}</u>
                                 </span>
@@ -167,7 +167,7 @@
                             <p class="m-0">No Due</p>
                             <div class="count-text">
                                 @if(upcomingPendingActionsData?.noDueCount != 0){
-                                <span class="cursor" (click)="openUpcomingActionsOffcanvas(upcomingActionsList, 'noDue', 'No Due', 
+                                <span class="cursor" (click)="openUpcomingActionsOffcanvas(upcomingActionsList, 'noDue', 'No Due',
                                 upcomingPendingActionsData?.noDueCount)">
                                     <u>{{ upcomingPendingActionsData?.noDueCount || 0 }}</u>
                                 </span>
@@ -312,7 +312,7 @@
                             }
                         </div>
                     </div>
-                    <div [ngStyle]="{ 'border-left': '4px solid #8B5CF6' }" class="employee-type-text ps-2">
+                    <div [ngStyle]="{ 'border-left': '4px solid #305889' }" class="employee-type-text ps-2">
                         <p class="m-0">Permissions</p>
                         <div class="count-text">
                             @if(attendanceReportData?.permission != 0){
@@ -503,7 +503,7 @@
             <div class="disply-grid-custom" [ngClass]="{'graph-no-data-content': !hasExperienceData}">
                 @if(hasExperienceData) {
                 <div class="department-graph-content">
-                    <p-chart type="bar" [data]="experienceChartData" [options]="experienceChartOptions" 
+                    <p-chart type="bar" [data]="experienceChartData" [options]="experienceChartOptions"
                     [plugins]="[ChartDataLabels, datalabelUnderlinePlugin]" />
                 </div>
                 } @else {
@@ -623,7 +623,7 @@
                 <span class="input-group-text custom-input-group-search" id="basic-addon1">
                     <i class="bi bi-search"></i>
                 </span>
-                <input type="search" class="form-control custom-search-input" placeholder="Search" [(ngModel)]="searchEmployeeText" 
+                <input type="search" class="form-control custom-search-input" placeholder="Search" [(ngModel)]="searchEmployeeText"
                 placeholder="Search by Employee name/designation/department"/>
             </div>
             <div *ngFor="let emp of getFilteredJoineesExits()" class="profile-content mb-2">
@@ -670,7 +670,7 @@
                 <span class="input-group-text custom-input-group-search" id="basic-addon1">
                     <i class="bi bi-search"></i>
                 </span>
-                <input type="search" class="form-control custom-search-input" placeholder="Search" [(ngModel)]="searchEmployeeText" 
+                <input type="search" class="form-control custom-search-input" placeholder="Search" [(ngModel)]="searchEmployeeText"
                 placeholder="Search by Employee name/designation/department"/>
             </div>
             <div *ngFor="let emp of getFilteredEmployees()" class="profile-content mb-2">
@@ -836,7 +836,7 @@
                 <span class="input-group-text custom-input-group-search">
                     <i class="bi bi-search"></i>
                 </span>
-                <input type="search" class="form-control custom-search-input" placeholder="Search" [(ngModel)]="searchEmployeeText" 
+                <input type="search" class="form-control custom-search-input" placeholder="Search" [(ngModel)]="searchEmployeeText"
                 placeholder="Search by Employee name/designation/department"/>
             </div>
             <div *ngFor="let emp of getFilteredEmployees()" class="profile-content mb-2">
@@ -893,7 +893,7 @@
                 <span class="input-group-text custom-input-group-search">
                     <i class="bi bi-search"></i>
                 </span>
-                <input type="search" class="form-control custom-search-input" placeholder="Search" [(ngModel)]="searchEmployeeText" 
+                <input type="search" class="form-control custom-search-input" placeholder="Search" [(ngModel)]="searchEmployeeText"
                 placeholder="Search by Employee name/designation/department"/>
             </div>
             <div *ngFor="let emp of getFilteredShiftLocationEmployees()" class="profile-content mb-2">
@@ -934,7 +934,7 @@
                 <span class="input-group-text custom-input-group-search">
                     <i class="bi bi-search"></i>
                 </span>
-                <input type="search" class="form-control custom-search-input" placeholder="Search" [(ngModel)]="searchEmployeeText" 
+                <input type="search" class="form-control custom-search-input" placeholder="Search" [(ngModel)]="searchEmployeeText"
                 placeholder="Search by Employee name/designation/department"/>
             </div>
             <div *ngFor="let emp of getFilteredGenderEmployees()" class="profile-content mb-2">
@@ -975,7 +975,7 @@
                 <span class="input-group-text custom-input-group-search">
                     <i class="bi bi-search"></i>
                 </span>
-                <input type="search" class="form-control custom-search-input" placeholder="Search" [(ngModel)]="searchEmployeeText" 
+                <input type="search" class="form-control custom-search-input" placeholder="Search" [(ngModel)]="searchEmployeeText"
                 placeholder="Search by Employee name/designation/department"/>
             </div>
             <div *ngFor="let emp of getFilteredExperienceEmployees()" class="profile-content mb-2">
@@ -1016,7 +1016,7 @@
                 <span class="input-group-text custom-input-group-search">
                     <i class="bi bi-search"></i>
                 </span>
-                <input type="search" class="form-control custom-search-input" placeholder="Search" [(ngModel)]="searchEmployeeText" 
+                <input type="search" class="form-control custom-search-input" placeholder="Search" [(ngModel)]="searchEmployeeText"
                 placeholder="Search by Employee name/designation/department"/>
             </div>
             <div *ngFor="let emp of getFilteredDepartmentEmployees()" class="profile-content mb-2">
@@ -1059,7 +1059,7 @@
                 <span class="input-group-text custom-input-group-search" id="basic-addon1">
                     <i class="bi bi-search"></i>
                 </span>
-                <input type="search" class="form-control custom-search-input" placeholder="Search" [(ngModel)]="searchEmployeeText" 
+                <input type="search" class="form-control custom-search-input" placeholder="Search" [(ngModel)]="searchEmployeeText"
                 placeholder="Search by Employee name/designation/department"/>
             </div>
             <div *ngFor="let emp of getFilteredUpcomingActions()" class="profile-content mb-2">

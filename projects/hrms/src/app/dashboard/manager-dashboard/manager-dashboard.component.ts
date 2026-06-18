@@ -78,16 +78,27 @@ export class ManagerDashboardComponent {
   Weeklyworklogsinfo = 'Shows a weekly summary of the hours that are logged, making it easy to track their work and productivity.';
   leavesConsumedinfo = 'Provides an overview of consumed leave balances categorized by leave type.';
   attendancoverviewinfo = 'Displays your attendance details for the selected date, including duty status, first in time, last out time, and the previous day’s log duration.'
+  // legendList = [
+  //   { key: 'inOffice', label: 'In Office', color: '#1E90FF' },
+  //   { key: 'halfDay', label: 'Half Day', color: '#FFD700' },
+  //   { key: 'wfh', label: 'WFH', color: '#FF1493' },
+  //   { key: 'absent', label: 'Absent', color: '#FF0000' },
+  //   { key: 'leave', label: 'Leave', color: '#8A2BE2' },
+  //   { key: 'remote', label: 'Remote', color: '#EA362C' },
+  //   { key: 'weekend', label: 'Weekend', color: '#32CD32' },
+  //   { key: 'holiday', label: 'Holiday', color: '#FFA500' },
+  //   { key: 'yetToLogin', label: 'Yet To Login', color: '#94A3B8' },
+  // ];
   legendList = [
+  { key: 'yetToLogin', label: 'Yet To Login', color: '#94A3B8' },
     { key: 'inOffice', label: 'In Office', color: '#1E90FF' },
+    { key: 'absent', label: 'Absent', color: '#FF0000' },
     { key: 'halfDay', label: 'Half Day', color: '#FFD700' },
     { key: 'wfh', label: 'WFH', color: '#FF1493' },
-    { key: 'absent', label: 'Absent', color: '#FF0000' },
-    { key: 'leave', label: 'Leave', color: '#8A2BE2' },
     { key: 'remote', label: 'Remote', color: '#EA362C' },
+    { key: 'leave', label: 'Leave', color: '#8A2BE2' },
     { key: 'weekend', label: 'Weekend', color: '#32CD32' },
     { key: 'holiday', label: 'Holiday', color: '#FFA500' },
-    { key: 'yetToLogin', label: 'Yet To Login', color: '#94A3B8' },
   ];
   genderTotal: number = 0;
   femaleCount: number = 0;

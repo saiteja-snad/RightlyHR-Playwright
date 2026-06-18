@@ -17,6 +17,7 @@ import { DownloadExpenseComponent } from "../../download-expense/download-expens
 import { DocumentViewIconComponent } from "../../../icons/document-view-icon/document-view-icon.component";
 import { TranslateModule } from '@ngx-translate/core';
 import { TableModule } from 'primeng/table';
+import { OpenModalService } from '../../../services/open-modal.service';
 
 @Component({
   selector: 'app-pending-expenses',
@@ -54,7 +55,7 @@ export class PendingExpensesComponent implements OnInit, OnDestroy {
 
 
   @ViewChild('expenseSummary') expenseSummary: any;
-  constructor(private http: HttpService, public formValidation: FormValidationService, private modalService: NgbModal, private sanitizer: DomSanitizer, private SelectedyeartimeOffService: TimeoffYearFilterService, private fb: FormBuilder) { }
+  constructor(private http: HttpService, public formValidation: FormValidationService, private modalService: NgbModal, private sanitizer: DomSanitizer, private SelectedyeartimeOffService: TimeoffYearFilterService, private fb: FormBuilder, private sharedModalService: OpenModalService) { }
 
   selectedYear: any;
   selectemp: any;
@@ -85,15 +86,29 @@ export class PendingExpensesComponent implements OnInit, OnDestroy {
 
   intializeApproveForm() {
     this.approveForm = this.fb.group({
-      comments: ['', [Validators.required, Validators.maxLength(250)]]
+      comments: ['', [Validators.required, Validators.maxLength(250)]],
+    });
+
+    this.approveForm.get('comments')?.valueChanges.subscribe((value: string) => {
+      if (!value || value.trim() === '') {
+        this.selectedLeaveStatus = null;
+      }
     });
   }
 
   intializeRejectForm() {
     this.rejectForm = this.fb.group({
-      comments: ['', [Validators.required, Validators.maxLength(250)]]
+      comments: ['', [Validators.required, Validators.maxLength(250)]],
+    });
+
+    this.rejectForm.get('comments')?.valueChanges.subscribe((value: string) => {
+      if (!value || value.trim() === '') {
+        this.selectedLeaveStatus = null;
+      }
     });
   }
+
+
 
   openModal(content: any) {
     this.modalService.open(content, { centered: true, size: 'xl', backdrop: 'static' });
@@ -255,7 +270,7 @@ export class PendingExpensesComponent implements OnInit, OnDestroy {
     this.spinnerLoader = true;
 
     const payload = {
-      requestProcessedBy: this.empinfo.employeeId.toString(),
+      requestProcessedBy: this.LOGIN.employeeId.toString(),
       status: 'Approved',
       comments: this.approveForm.value.comments,
       moduleId: 19, // Replace with actual Expense Module Id
@@ -288,11 +303,23 @@ export class PendingExpensesComponent implements OnInit, OnDestroy {
         this.responseSummary = response.data;
 
         if (selectedCount > 1) {
+
           this.modalService.open(this.expenseSummary, {
             centered: true,
             backdrop: 'static',
             size: 'lg'
           });
+
+          setTimeout(() => {
+            this.modalService.dismissAll();
+          }, 3000);
+
+        } else {
+
+          this.sharedModalService.openSuccessModal(
+            'Expense request approved successfully'
+          );
+
         }
 
         this.approveForm.reset();
@@ -313,7 +340,7 @@ export class PendingExpensesComponent implements OnInit, OnDestroy {
     this.spinnerLoader = true;
 
     const payload = {
-      requestProcessedBy: this.empinfo.employeeId.toString(),
+      requestProcessedBy: this.LOGIN.employeeId.toString(),
       status: 'Rejected',
       comments: this.rejectForm.value.comments,
       moduleId: 19, // Replace with actual Expense Module Id
@@ -346,11 +373,23 @@ export class PendingExpensesComponent implements OnInit, OnDestroy {
         this.responseSummary = response.data;
 
         if (selectedCount > 1) {
+
           this.modalService.open(this.expenseSummary, {
             centered: true,
             backdrop: 'static',
             size: 'lg'
           });
+
+          setTimeout(() => {
+            this.modalService.dismissAll();
+          }, 3000);
+
+        } else {
+
+          this.sharedModalService.openSuccessModal(
+            'Expense request rejected successfully'
+          );
+
         }
 
         this.rejectForm.reset();
@@ -382,6 +421,7 @@ export class PendingExpensesComponent implements OnInit, OnDestroy {
   }
 
   openApproveModal(content: any, item: any) {
+    this.selectedLeaveStatus = null;   // add this
     this.intializeApproveForm();
     this.selectedExpenseData = item;
 
@@ -392,6 +432,7 @@ export class PendingExpensesComponent implements OnInit, OnDestroy {
   }
 
   openRejectModal(content: any, item: any) {
+    this.selectedLeaveStatus = null;   // add this
     this.intializeRejectForm();
     this.selectedExpenseData = item;
 
@@ -405,7 +446,7 @@ export class PendingExpensesComponent implements OnInit, OnDestroy {
 
   canApproveExpense(exp: any): boolean {
 
-   console.log(JSON.stringify(exp, null, 2));
+    console.log(JSON.stringify(exp, null, 2));
     const currentApproverId =
       exp?.pendingApprovalHeader?.currentApproverId;
 

@@ -19,6 +19,7 @@ import { PaginatorModule } from 'primeng/paginator';
 import { Router } from '@angular/router';
 import { Skeleton } from "primeng/skeleton";
 import { DateformatPipe } from '../../../pipes/dateformat.pipe';
+import { SignalsService } from '../../../services/signals.service';
 @Component({
   selector: 'app-time-sheet-approvals',
   imports: [AccordionModule, CommonModule, PaginatorModule, ReactiveFormsModule, TableModule, TranslateModule, InfoIconComponent, NgbPopover,
@@ -91,7 +92,7 @@ export class TimeSheetApprovalsComponent implements OnInit {
   selectedSummaryEntries: any[] = [];
   requestType!:string;
   constructor(private http: HttpService, public formsValidation: FormValidationsService, private modalService: NgbModal,
-    private conformationPopup: OpenModalService, public router: Router, private fb: FormBuilder) { }
+    private conformationPopup: OpenModalService, public router: Router, private fb: FormBuilder, private signalService : SignalsService) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
@@ -476,6 +477,8 @@ onStatusApproveSelect(status: string) {
             });
             setTimeout(() => modalRef.close(), 3000);
           }
+          this.signalService.timesheetApprovalsCountSignal.set(true);
+          console.log('SIgnal triggered');   
         },
         error: (reason: any) => {
           this.spinnerLoader = false;
@@ -483,6 +486,8 @@ onStatusApproveSelect(status: string) {
           this.timeSheetRejectForm.reset();
           this.modalService.dismissAll();
           this.conformationPopup.openErrorModal(reason.error.message);
+          this.signalService.timesheetApprovalsCountSignal.set(true);
+          console.log('SIgnal triggered');   
         },
         complete: () => {
           this.spinnerLoader = false;
@@ -500,6 +505,9 @@ onStatusApproveSelect(status: string) {
           this.timeSheetApproveForm.reset();
           this.timeSheetRejectForm.reset();
           this.http.triggerActionSignal();
+          this.signalService.timesheetApprovalsCountSignal.set(true);
+          console.log('SIgnal triggered');   
+         
         },
       });
     }
@@ -562,7 +570,10 @@ onStatusApproveSelect(status: string) {
               beforeDismiss: () => false // prevents manual close by ESC/backdrop
             });
             setTimeout(() => modalRef.close(), 3000);
+            
           }
+          this.signalService.timesheetApprovalsCountSignal.set(true);
+          console.log('SIgnal triggered');   
         },
         error: (reason: any) => {
           this.spinnerLoader = false;
@@ -570,6 +581,8 @@ onStatusApproveSelect(status: string) {
           this.timeSheetRejectForm.reset();
           this.modalService.dismissAll();
           this.conformationPopup.openErrorModal(reason.error.message);
+          this.signalService.timesheetApprovalsCountSignal.set(true);
+          console.log('SIgnal triggered');   
         },
         complete: () => {
           this.spinnerLoader = false;
@@ -584,9 +597,13 @@ onStatusApproveSelect(status: string) {
           this.allPagesSelected = false;
           this.showBulkSelectionBanner = false;
           this.showhideaction = true;
+          
           this.timeSheetApproveForm.reset();
           this.timeSheetRejectForm.reset();
           this.http.triggerActionSignal();
+          this.signalService.timesheetApprovalsCountSignal.set(true);
+         console.log('SIgnal triggered');          
+           
         },
       });
     }

@@ -48,7 +48,6 @@ export class ActiveClientsComponent implements OnInit, OnDestroy {
     { label: 50, value: 50 },
     { label: 75, value: 75 },
     { label: 100, value: 100 },
-
   ];
   constructor(private modalService: NgbModal, public rbac: RbacService, private http: HttpService,
     public formValidation: FormValidationsService, private conformationPopup: OpenModalService, private router: Router) { }

@@ -22,6 +22,7 @@ import { ClientResourceTabComponent } from '../../../shared/project-management-t
 import { ProfileIconComponent } from "../../../icons/profile-icon/profile-icon.component";
 import { environment } from '../../../../environments/environment';
 import { DateformatPipe } from '../../../pipes/dateformat.pipe';
+
 import { PaginatorModule } from 'primeng/paginator';
 @Component({
   selector: 'app-client-resource-inactive',

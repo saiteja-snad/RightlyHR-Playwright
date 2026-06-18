@@ -29,7 +29,8 @@ export class PendingApprovalsTabsComponent {
   timeOffTotalCount: number = 0;
 
   kraKpiTotalCount = 0;
-
+  nodue_Request_data = [] as any[];
+  noDueCount : any;
   constructor(public readonly router: Router, private http: HttpService, private rbac: RbacService, private accessNav: AccessNavigationService,private readonly signalService: SignalsService) { 
 
      effect(() => {
@@ -88,6 +89,38 @@ export class PendingApprovalsTabsComponent {
         this.getApprovalStatusCounts();
         this.signalService.wfhSidNavCountTriggerSignal.set(false);
       }
+      if (this.signalService.noDueSideNavCountTriggerSignal()) {
+        this.getApprovalStatusCounts();
+        this.signalService.noDueSideNavCountTriggerSignal.set(false);
+      }
+      if (this.signalService.noDueTriggerSignal()) {
+        this.getApprovalStatusCounts();
+        this.signalService.noDueTriggerSignal.set(false);
+      }
+      if (this.signalService.clamisandexpensesForYouTriggerSignal()) {
+        this.getApprovalStatusCounts();
+        this.signalService.clamisandexpensesForYouTriggerSignal.set(false);
+      }
+      if (this.signalService.claimsandexpensesForRoleTriggerSignal()) {
+        this.getApprovalStatusCounts();
+        this.signalService.claimsandexpensesForRoleTriggerSignal.set(false);
+      }
+      if (this.signalService.employeinfoDetailsForYouTriggerSignal()) {
+        this.getApprovalStatusCounts();
+        this.signalService.employeinfoDetailsForYouTriggerSignal.set(false);
+      }
+      if (this.signalService.employeinfoDetailsForRoleTriggerSignal()) {
+        this.getApprovalStatusCounts();
+        this.signalService.employeinfoDetailsForRoleTriggerSignal.set(false);
+      }
+      if (this.signalService.employeinfoDetailsTriggerSignal()) {
+        this.getApprovalStatusCounts();
+        this.signalService.employeinfoDetailsTriggerSignal.set(false);
+      }
+      if (this.signalService.timesheetApprovalsCountSignal()) {
+        this.getApprovalStatusCounts();
+        this.signalService.timesheetApprovalsCountSignal.set(false);
+      }
     });
   }
 
@@ -124,6 +157,7 @@ export class PendingApprovalsTabsComponent {
       this.approvalCounts = res;
       this.updateTabCounts();
       this.refreshFilteredTabs();
+      this.getAllPendingApprovalsNoDue();
       this.getAllPendingApprovalsCount();
     });
   }
@@ -157,6 +191,35 @@ export class PendingApprovalsTabsComponent {
       },
       error: (err: any) => { },
     });
+  }
+
+  getAllPendingApprovalsNoDue() {
+    const employeeId = Number.parseInt(this.empinfo.employeeId);
+
+    this.http.getData(`NoDueClearanceForm/getByApproverIdPendingApprovals/${employeeId}`)
+      .subscribe({
+        next: (data: any) => {
+
+          this.nodue_Request_data = data;
+          this.noDueCount = data?.length || 0;
+          console.log('Final NoDue Count:', this.noDueCount);
+
+          const offboardingCount = this.approvalCounts
+            .filter(x =>
+              x.moduleName === 'SeparationRequests' ||
+              x.moduleName === 'RecallSeparationRequests'
+            )
+            .reduce((sum, x) => sum + Number(x.totalCount || 0), 0);
+
+          const finalCount = offboardingCount + this.noDueCount;
+
+          console.log('Final Offboarding Count:', finalCount);
+           this.updateTabCounts();
+           this.refreshFilteredTabs();
+          
+
+        }
+      });
   }
 
   private getOnboardingAllowedLabels(): string[] {
@@ -195,6 +258,10 @@ export class PendingApprovalsTabsComponent {
             total += result.totalCount;
           }
         });
+        // Add No Due count to Offboarding tab
+      if (tab.label === 'Offboarding') {
+        total += Number(this.noDueCount || 0);
+      }
         tab.totalCount = total;
       }
     });

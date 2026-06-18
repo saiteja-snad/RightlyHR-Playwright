@@ -41,6 +41,7 @@ import { ExpensesComponent } from './expenses/expenses.component';
 import { ApplicablePoliciesTriggerComponent } from '../../shared/policies/applicable-policies-trigger/applicable-policies-trigger.component';
 import { APPLICABLE_POLICIES_KEYS } from '../../shared/policies/policy-visibility.catalog';
 
+
 @Component({
   selector: 'app-onbehalf-of-approvals',
   imports: [
@@ -74,6 +75,7 @@ import { APPLICABLE_POLICIES_KEYS } from '../../shared/policies/policy-visibilit
     TabsDndDirective,
     ExpensesComponent,
     ApplicablePoliciesTriggerComponent
+
 ],
 
   templateUrl: './onbehalf-of-approvals.component.html',

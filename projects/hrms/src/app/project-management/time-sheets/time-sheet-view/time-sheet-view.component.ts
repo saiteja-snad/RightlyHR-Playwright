@@ -32,6 +32,7 @@ import { Select } from 'primeng/select';
 import { DateformatPipe } from '../../../pipes/dateformat.pipe';
 import { ApplicablePoliciesTriggerComponent } from '../../../shared/policies/applicable-policies-trigger/applicable-policies-trigger.component';
 import { APPLICABLE_POLICIES_KEYS } from '../../../shared/policies/policy-visibility.catalog';
+import { SignalsService } from '../../../services/signals.service';
 @Component({
   selector: 'app-time-sheet-view',
   imports: [ProjectManagementModuleInfoComponent, NgbDatepickerModule, FormsModule, ReactiveFormsModule,
@@ -131,7 +132,8 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     private http: HttpService, public formValidation: FormValidationsService,
     public dayValidationService: DayValidationService, public authService: AuthService,
     public rbac: RbacService, private conformationPopup: OpenModalService,
-    private router: Router, private encryptionService: EncriptdecriptService, private bulkStore: BulkUploadStore) { }
+    private router: Router, private encryptionService: EncriptdecriptService, private bulkStore: BulkUploadStore
+  , private signalService : SignalsService) { }
 
   ngOnInit(): void {
     this.loggedinuser = this.authService.getToken();
@@ -1970,6 +1972,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
         this.resourceId = null;
         this.formattedweakendStart = moment(this.start).format('YYYY-MM-DD');
         this.getTimeSheetEntriesbyEmployeeId(this.employeeId, this.formattedweakendStart);
+        this.signalService.timesheetApprovalsCountSignal.set(true);
       },
       error: (err) => {
         this.spinnerLoader = false;
@@ -1977,6 +1980,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
         // console.error('Error saving entry', err);
         // this.formattedweakendStart = moment(this.start).format('YYYY-MM-DD');
         // this.getTimeSheetEntriesbyEmployeeId(this.employeeId, this.formattedweakendStart);
+        this.signalService.timesheetApprovalsCountSignal.set(true);
       },
     });
   }
@@ -2107,6 +2111,8 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
         this.formattedweakendStart = moment(this.start).format('YYYY-MM-DD');
         this.getTimeSheetEntriesbyEmployeeId(this.employeeId, this.formattedweakendStart);
         this.getApprovalStatusCounts();
+        this.signalService.timesheetApprovalsCountSignal.set(true);
+        console.log('SIgnal triggered');   
       },
       error: (err) => {
         this.modalService.dismissAll();
@@ -2120,6 +2126,13 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
         setTimeout(() => {
           modalRef.close();
         }, 3000);
+        this.signalService.timesheetApprovalsCountSignal.set(true);
+        console.log('SIgnal triggered');   
+      },
+      complete : () =>{
+        this.signalService.timesheetApprovalsCountSignal.set(true);
+        console.log('SIgnal triggered');   
+        
       },
     });
   }

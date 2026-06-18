@@ -731,9 +731,8 @@
                                 <span>Copy Task</span>
                             </label>
                         </div>
-                        <div *ngIf="cloneErrorMessage" class="clone-error-box mt-3">
-                            <i class="bi bi-exclamation-circle-fill"></i>
-                            <span>{{ cloneErrorMessage }}</span>
+                        <div *ngIf="cloneErrorMessage" class="clone-validation-error">
+                            {{ cloneErrorMessage }}
                         </div>
                     </div>
 

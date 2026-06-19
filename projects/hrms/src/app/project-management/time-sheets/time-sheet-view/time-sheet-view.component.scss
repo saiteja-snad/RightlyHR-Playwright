@@ -1005,10 +1005,6 @@
     accent-color: #0B3A83;
 }
 
-::ng-deep .p-datepicker-day-selected-range {
-    background: #DCE5F7 !important;
-    color: #0B3A83 !important;
-}
 
 .clone-cancel-icon {
     width: 80px !important;
@@ -1019,3 +1015,23 @@
     flex: 1;
 }
 
+::ng-deep .p-datepicker-day-selected-range {
+    background: #EEF1F7 !important;
+    color: #495057 !important;
+}
+
+::ng-deep .p-datepicker-day-selected-range-start,
+::ng-deep .p-datepicker-day-selected-range-end {
+    background: #0B3A83 !important;
+    color: #fff !important;
+}
+
+:host {
+    --p-datepicker-date-range-selected-background: #EEF1F7;
+    --p-datepicker-date-range-selected-color: #495057;
+}
+
+.p-datepicker-day-selected-range {
+    background: #EEF1F7 !important;
+    color: #495057 !important;
+}

@@ -29,7 +29,7 @@
                 @for (item of module.items; track item.itemId) {
                 <tr>
                   <td>{{ item.fieldName || "-" }}</td>
-                  <td> 
+                  <td>
                     <span #oldEl class="ellipsis-cell" [pTooltip]="shouldShowTooltip(oldEl) ? item.oldValue : undefined"
                       tooltipPosition="top">
                        @if(showdate(item)){
@@ -44,8 +44,8 @@
                       }
                         <!-- {{ item.oldValue ? item.oldValue : "-" }} -->
                        }
-                       
-                      
+
+
                     </span>
                   </td>
 
@@ -83,10 +83,10 @@
                     }@else {
                     <span>-</span>
                     }
-                     
+
                   </td> -->
                   <!--Module Information-->
-                   
+
                   <td class="text-capitalize" [ngClass]="getStatusClass(item.approvalStatus)">
                      <div class=" align-items-center gap-1">
                     {{ item.approvalStatus.toLowerCase() }}  @if(item?.comments && item?.comments !== '-'){
@@ -103,13 +103,22 @@
                     <span>-</span>
                     } -->
                   </div>
-                  </td>                         
+                  </td>
                   @if (!cameFromPersonalInfo) {
-                  <td class="text-center">
+                  <td class="text-center action-dropdown-cell">
                     @if (isPending(item.approvalStatus)) {
-                    <a (click)="openCancelModal(item, cancelModal)">
-                      <img src="/icons/cancel-circle.png" class="popup-icon" alt="Cancel Request" />
-                    </a>
+                    <div class="dropdown">
+                      <a data-bs-toggle="dropdown" aria-expanded="false" class="cursor-pointer">
+                        <i class="bi bi-three-dots-vertical"></i>
+                      </a>
+                      <ul class="dropdown-menu custom-dropdown-menu">
+                        <li>
+                          <a class="dropdown-item" (click)="openCancelModal(item, cancelModal)">
+                            <i class="bi bi-x-circle me-2"></i>{{ 'Cancel Request' | translate }}
+                          </a>
+                        </li>
+                      </ul>
+                    </div>
                     } @else {
                     <span class="text-muted">-</span>
                     }
@@ -261,7 +270,7 @@
     <!-- <div class="custom-main-popup-content" >
             <div class="p-1">
                     <div class="mb-0" *ngFor="let item of actionsDetails.oldValue | keyvalue">
-                         <p><span class="heading-name">{{ item.key }}:</span> <span class="sub-name"> 
+                         <p><span class="heading-name">{{ item.key }}:</span> <span class="sub-name">
                           @if(item.key==='Document'){
                             <a type="button" class="view-btn text-nowrap me-2" (click)="onViewAttachement(item.value)">
                               <img src="/my-info-icons/View-Policy-icon.png" alt="Icon" class="view-icon">

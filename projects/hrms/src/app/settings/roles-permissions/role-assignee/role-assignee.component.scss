@@ -15,6 +15,15 @@
     border: 1px solid var(--table-header-bg-color);
 }
 
+.custom-table-content td.action-dropdown-cell {
+    overflow: visible !important;
+    position: relative;
+}
+
+.custom-table-content td.action-dropdown-cell .dropdown-menu.show {
+    z-index: 1060 !important;
+}
+
 .settings-common-icon {
     width: 1.5rem;
     height: 1.5rem;

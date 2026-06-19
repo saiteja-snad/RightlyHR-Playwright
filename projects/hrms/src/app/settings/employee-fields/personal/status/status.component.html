@@ -5,7 +5,7 @@
         <div class="mb-4">
             <div class="custom-settings-add-input input-group">
                 <input type="text" class="form-control custom-input" placeholder="Please enter status"
-                    formControlName="status" aria-label="stat" (keydown)="formValidations.restrictInput($event); 
+                    formControlName="status" aria-label="stat" (keydown)="formValidations.restrictInput($event);
                                     formValidations.blockNonAlphabets($event)" maxlength="51">
                 <span class="input-group-text" id="stat">
                     <button type="submit" class="custom-btn btn-primary"
@@ -38,20 +38,23 @@
                 @for (status of statusdetails; track $index) {
                 <tr>
                     <td class="w-75">{{status.statusname}}</td>
-                    <td class="w-25">
-                        <div class="d-flex gap-4">
-                            <!--Update-->
-                            <div>
-                                <a (click)="openupdate(status)" *ngIf="rbac.allowedToAccess('Status.update')">
-                                     <app-settings-update-icon />
-                                </a>
-                            </div>
-                            <!--Delete-->
-                            <div>
-                                <a (click)="opendelete(status)" *ngIf="rbac.allowedToAccess('Status.delete')">
-                                       <app-settings-delete-icon />
-                                </a>
-                            </div>
+                    <td class="w-25 text-end action-dropdown-cell">
+                        <div class="dropdown" *ngIf="rbac.allowedToAccess('Status.update') || rbac.allowedToAccess('Status.delete')">
+                            <a data-bs-toggle="dropdown" aria-expanded="false" class="cursor-pointer">
+                                <i class="bi bi-three-dots-vertical"></i>
+                            </a>
+                            <ul class="dropdown-menu custom-dropdown-menu">
+                                <li *ngIf="rbac.allowedToAccess('Status.update')">
+                                    <a class="dropdown-item" (click)="openupdate(status)">
+                                        <i class="bi bi-pencil-square me-2"></i>{{ 'Update' | translate }}
+                                    </a>
+                                </li>
+                                <li *ngIf="rbac.allowedToAccess('Status.delete')">
+                                    <a class="dropdown-item" (click)="opendelete(status)">
+                                        <i class="bi bi-trash me-2"></i>{{ 'Delete' | translate }}
+                                    </a>
+                                </li>
+                            </ul>
                         </div>
                     </td>
                 </tr>

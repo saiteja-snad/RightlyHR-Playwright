@@ -39,20 +39,23 @@
                 @for (gender of GenderDetail; track $index) {
                 <tr>
                     <td class="w-75">{{ gender.genderName}}</td>
-                    <td class="w-25">
-                        <div class="d-flex gap-4">
-                            <!--Update-->
-                            <div>
-                                <a (click)="openupdate(gender)" *ngIf="rbac.allowedToAccess('Gender.update')">
-                                     <app-settings-update-icon />
-                                </a>
-                            </div>
-                            <!--Delete-->
-                            <div>
-                                <a (click)="opendelete(gender)" *ngIf="rbac.allowedToAccess('Gender.delete')">
-                                       <app-settings-delete-icon />
-                                </a>
-                            </div>
+                    <td class="w-25 text-end action-dropdown-cell">
+                        <div class="dropdown" *ngIf="rbac.allowedToAccess('Gender.update') || rbac.allowedToAccess('Gender.delete')">
+                            <a data-bs-toggle="dropdown" aria-expanded="false" class="cursor-pointer">
+                                <i class="bi bi-three-dots-vertical"></i>
+                            </a>
+                            <ul class="dropdown-menu custom-dropdown-menu">
+                                <li *ngIf="rbac.allowedToAccess('Gender.update')">
+                                    <a class="dropdown-item" (click)="openupdate(gender)">
+                                        <i class="bi bi-pencil-square me-2"></i>{{ 'Update' | translate }}
+                                    </a>
+                                </li>
+                                <li *ngIf="rbac.allowedToAccess('Gender.delete')">
+                                    <a class="dropdown-item" (click)="opendelete(gender)">
+                                        <i class="bi bi-trash me-2"></i>{{ 'Delete' | translate }}
+                                    </a>
+                                </li>
+                            </ul>
                         </div>
                     </td>
                 </tr>

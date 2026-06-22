@@ -101,6 +101,15 @@
 
 }
 
+.popup-table td.action-dropdown-cell {
+  overflow: visible !important;
+  position: relative;
+}
+
+.popup-table td.action-dropdown-cell .dropdown-menu.show {
+  z-index: 1060 !important;
+}
+
 .ellipsis-cell {
   display: inline-block;
   max-width: 180px; /* same width as your table cells */
@@ -147,7 +156,7 @@
     display: inline-block !important;
     padding: 4px;
     border-radius: 4px;
-   
+
 }
 
 .font-highlight {

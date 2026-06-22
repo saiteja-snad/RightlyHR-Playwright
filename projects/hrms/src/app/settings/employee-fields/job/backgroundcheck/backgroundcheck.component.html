@@ -37,27 +37,30 @@
               @for (back of BackgroundCheckDetail; track $index) {
               <tr>
                   <td class="w-75">{{ back.backgroundcheckstatus1}}</td>
-                  <td class="w-25">
-                      <div class="d-flex gap-4">
-                          <!--Update-->
-                          <div>
-                              <a (click)="openupdate(back)" *ngIf="rbac.allowedToAccess('Background check Status.update')">
-                                 <app-settings-update-icon />
+                  <td class="w-25 text-end action-dropdown-cell">
+                        <div class="dropdown" *ngIf="rbac.allowedToAccess('Background check Status.update') || rbac.allowedToAccess('Background check Status.delete')">
+                            <a data-bs-toggle="dropdown" aria-expanded="false" class="cursor-pointer">
+                                <i class="bi bi-three-dots-vertical"></i>
                             </a>
-                          </div>
-                          <!--Delete-->
-                          <div>
-                              <a (click)="opendelete(back)" *ngIf="rbac.allowedToAccess('Background check Status.delete')">
-                                   <app-settings-delete-icon />
-                            </a>
-                          </div>
-                      </div>
-                  </td>
+                            <ul class="dropdown-menu custom-dropdown-menu">
+                                <li *ngIf="rbac.allowedToAccess('Background check Status.update')">
+                                    <a class="dropdown-item" (click)="openupdate(back)">
+                                        <i class="bi bi-pencil-square me-2"></i>{{ 'Update' | translate }}
+                                    </a>
+                                </li>
+                                <li *ngIf="rbac.allowedToAccess('Background check Status.delete')">
+                                    <a class="dropdown-item" (click)="opendelete(back)">
+                                        <i class="bi bi-trash me-2"></i>{{ 'Delete' | translate }}
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </td>
               </tr>
               }
           </tbody>
       </table>
-    
+
       }
         @else {
         <app-settings-loader />

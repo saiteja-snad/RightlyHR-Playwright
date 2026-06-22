@@ -33,10 +33,23 @@ ndaLetter.id){
                     <td>{{ndaLetter.ndaSentDate | dateformat }}</td>
                     <td>{{ndaLetter.employeeName ?ndaLetter.employeeName:'-'}}</td>
                     <td class="text-center">
-                        <span (click)="onSelectDownload(ndaLetter)">
-                            <img src="/icons/Download.png" alt="Icon" class="download-icon">
-                        </span>
-                    </td>
+            <div class="dropdown">
+              <a type="button" data-bs-toggle="dropdown">
+                <i class="bi bi-three-dots-vertical"></i>
+              </a>
+
+              <ul class="dropdown-menu custom-dropdown-menu">
+
+                <li (click)="onSelectDownload(ndaLetter)">
+                  <a class="dropdown-item">
+                    <i class="bi bi-download me-2"></i>
+                    {{'Download' | translate}}
+                  </a>
+                </li>
+
+              </ul>
+            </div>
+          </td>
                 </tr>
                 }
                 }

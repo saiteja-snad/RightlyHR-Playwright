@@ -24,7 +24,7 @@
                 {{ ' Frequency Type must be between 2–50 characters' | translate }}
             </div>
         </div>
-    </form> 
+    </form>
 
     <!--Data Content-->
     <div class="custom-table-content position-relative w-50">
@@ -33,7 +33,7 @@
             <thead>
                 <tr>
                     <th> Frequency</th>
-                       <th>Actions</th>
+                       <th class="text-center">Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -41,22 +41,25 @@
                     @for (item of letterFrequencies; track $index) {
                     <tr>
                         <td class="w-75">{{item.value}}</td>
-                             <td class="w-25">
-                            <div class="d-flex gap-4">
-                                <!--Update-->
-                                <div (click)="openupdate(item, updatepopup)">
-                                    <a *ngIf="rbac.allowedToAccess('Letter Frequency Configurations.update')">
-                                        <app-settings-update-icon />
+                              <td class="w-25 text-center action-dropdown-cell">
+                        <div class="dropdown" *ngIf="rbac.allowedToAccess('Letter Frequency Configurations.update') || rbac.allowedToAccess('Letter Frequency Configurations.delete')">
+                            <a data-bs-toggle="dropdown" aria-expanded="false" class="cursor-pointer">
+                                <i class="bi bi-three-dots-vertical"></i>
+                            </a>
+                            <ul class="dropdown-menu custom-dropdown-menu">
+                                <li *ngIf="rbac.allowedToAccess('Letter Frequency Configurations.update')">
+                                    <a class="dropdown-item" (click)="openupdate(item, updatepopup)">
+                                        <i class="bi bi-pencil-square me-2"></i>{{ 'Update' | translate }}
                                     </a>
-                                </div>
-                                <!--Delete-->
-                                <div (click)="opendelete(item, deletepopup)">
-                                    <a *ngIf="rbac.allowedToAccess('Letter Frequency Configurations.delete')">
-                                        <app-settings-delete-icon />
+                                </li>
+                                <li *ngIf="rbac.allowedToAccess('Letter Frequency Configurations.delete')">
+                                    <a class="dropdown-item" (click)="opendelete(item, deletepopup)">
+                                        <i class="bi bi-trash me-2"></i>{{ 'Delete' | translate }}
                                     </a>
-                                </div>
-                            </div>
-                        </td>
+                                </li>
+                            </ul>
+                        </div>
+                    </td>
                     </tr>
                     }
                 </ng-container>

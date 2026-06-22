@@ -3,7 +3,7 @@
         <div class="mb-4">
             <div class="custom-settings-add-input input-group">
                 <input type="text" class="form-control custom-input" placeholder="Please enter document type"
-                    formControlName="documentType" aria-label="stat" (keydown)="formValidations.restrictInput($event); 
+                    formControlName="documentType" aria-label="stat" (keydown)="formValidations.restrictInput($event);
                     formValidations.blockNonAlphabets($event)" maxlength="51">
                 <span class="input-group-text" id="stat">
                     <button type="submit" class="custom-btn btn-primary" [disabled]="addForm.invalid">{{'Add'|translate}}</button>
@@ -40,22 +40,25 @@
                     @for (item of documentTypes; track $index) {
                     <tr>
                         <td class="w-75">{{item.value}}</td>
-                        <td class="w-25">
-                            <div class="d-flex gap-4">
-                                <!--Update-->
-                                <div (click)="openupdate(item, updatepopup)">
-                                    <a *ngIf="rbac.allowedToAccess('Project Document Type.update')">
-                                        <app-settings-update-icon />
+                         <td class="w-25 text-end action-dropdown-cell">
+                        <div class="dropdown" *ngIf="rbac.allowedToAccess('Project Document Type.update') || rbac.allowedToAccess('Client Document Type.delete')">
+                            <a data-bs-toggle="dropdown" aria-expanded="false" class="cursor-pointer">
+                                <i class="bi bi-three-dots-vertical"></i>
+                            </a>
+                            <ul class="dropdown-menu custom-dropdown-menu">
+                                <li *ngIf="rbac.allowedToAccess('Project Document Type.update')">
+                                    <a class="dropdown-item" (click)="openupdate(item, updatepopup)">
+                                        <i class="bi bi-pencil-square me-2"></i>{{ 'Update' | translate }}
                                     </a>
-                                </div>
-                                <!--Delete-->
-                                <div (click)="opendelete(item, deletepopup)">
-                                    <a *ngIf="rbac.allowedToAccess('Project Document Type.delete')">
-                                        <app-settings-delete-icon />
+                                </li>
+                                <li *ngIf="rbac.allowedToAccess('Project Document Type.delete')">
+                                    <a class="dropdown-item" (click)="opendelete(item, deletepopup)">
+                                        <i class="bi bi-trash me-2"></i>{{ 'Delete' | translate }}
                                     </a>
-                                </div>
-                            </div>
-                        </td>
+                                </li>
+                            </ul>
+                        </div>
+                    </td>
                     </tr>
                     }
                 </ng-container>

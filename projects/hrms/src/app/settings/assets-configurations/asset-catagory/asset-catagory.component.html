@@ -32,28 +32,32 @@
         <table class="w-100">
             <thead>
                 <th>{{ 'Asset Category' | translate }}</th>
-                <th *ngIf="rbac.allowedToAccess('Asset Category.update') || 
+                <th class="text-center" *ngIf="rbac.allowedToAccess('Asset Category.update') ||
                 rbac.allowedToAccess('Asset Category.delete')">{{ 'Action' | translate }}</th>
             </thead>
             <tbody>
                 <ng-container *ngIf="((assetCategorys | async) ?? []).length > 0; else noDataTemplate">
                     <tr *ngFor="let asset of assetCategorys | async">
                         <td>{{asset.name}}</td>
-                        <td class="text-center"
-                            *ngIf="rbac.allowedToAccess('Asset Category.update') || rbac.allowedToAccess('Asset Category.delete')">
-                            <div class="d-flex gap-4">
-                                <div *ngIf="rbac.allowedToAccess('Asset Category.update')">
-                                    <a (click)="openupdate(updateassetcatgey, asset)">
-                                           <app-settings-update-icon />
+                        <td class="text-center action-dropdown-cell">
+                        <div class="dropdown" *ngIf="rbac.allowedToAccess('Asset Catagory.update') || rbac.allowedToAccess('Asset Catagory.delete')">
+                            <a data-bs-toggle="dropdown" aria-expanded="false" class="cursor-pointer">
+                                <i class="bi bi-three-dots-vertical"></i>
+                            </a>
+                            <ul class="dropdown-menu custom-dropdown-menu">
+                                <li *ngIf="rbac.allowedToAccess('Asset Catagory.update')">
+                                    <a class="dropdown-item" (click)="openupdate(updateassetcatgey, asset)">
+                                        <i class="bi bi-pencil-square me-2"></i>{{ 'Update' | translate }}
                                     </a>
-                                </div>
-                                <div *ngIf="rbac.allowedToAccess('Asset Category.delete')">
-                                    <a (click)="opendelete(deleteconformation,asset)">
-                                            <app-settings-delete-icon />
+                                </li>
+                                <li *ngIf="rbac.allowedToAccess('Asset Catagory.delete')">
+                                    <a class="dropdown-item" (click)="opendelete(deleteconformation,asset)">
+                                        <i class="bi bi-trash me-2"></i>{{ 'Delete' | translate }}
                                     </a>
-                                </div>
-                            </div>
-                        </td>
+                                </li>
+                            </ul>
+                        </div>
+                    </td>
                     </tr>
                 </ng-container>
                 <ng-template #noDataTemplate>

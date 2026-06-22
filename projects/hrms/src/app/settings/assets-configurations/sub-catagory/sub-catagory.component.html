@@ -14,7 +14,7 @@
         <tr>
           <th>{{ 'Asset Category' | translate }}</th>
           <th>{{ 'Asset Sub Category' | translate }}</th>
-          <th *ngIf="rbac.allowedToAccess('Asset Sub Category.update') || 
+          <th class="text-center"*ngIf="rbac.allowedToAccess('Asset Sub Category.update') ||
           rbac.allowedToAccess('Asset Sub Category.delete')">{{ 'Action' | translate }}</th>
         </tr>
       </thead>
@@ -23,18 +23,25 @@
           <tr *ngFor="let asset of categoridata | async">
             <td>{{ getAssetCatData(asset.parentId) }}</td>
             <td>{{ asset.name }}</td>
-            <td class="text-center"
-              *ngIf="rbac.allowedToAccess('Asset Sub Category.update') || rbac.allowedToAccess('Asset Sub Category.delete')">
-              <div class="d-flex gap-4">
-                <div *ngIf="rbac.allowedToAccess('Asset Sub Category.update')">
-                  <a (click)="openupdate(updateassetescataerys, asset)"> <app-settings-update-icon />
-                  </a>
-                </div>
-                <div *ngIf="rbac.allowedToAccess('Asset Sub Category.delete')">
-                  <a (click)="opendelete(deleteconformation,asset)">  <app-settings-delete-icon /></a>
-                </div>
-              </div>
-            </td>
+            <td class="text-center action-dropdown-cell">
+                        <div class="dropdown" *ngIf="rbac.allowedToAccess('Asset Sub Catagory.update') || rbac.allowedToAccess('Asset Sub Catagory.delete')">
+                            <a data-bs-toggle="dropdown" aria-expanded="false" class="cursor-pointer">
+                                <i class="bi bi-three-dots-vertical"></i>
+                            </a>
+                            <ul class="dropdown-menu custom-dropdown-menu">
+                                <li *ngIf="rbac.allowedToAccess('Asset Sub Catagory.update')">
+                                    <a class="dropdown-item" (click)="openupdate(updateassetescataerys, asset)">
+                                        <i class="bi bi-pencil-square me-2"></i>{{ 'Update' | translate }}
+                                    </a>
+                                </li>
+                                <li *ngIf="rbac.allowedToAccess('Asset Sub Catagory.delete')">
+                                    <a class="dropdown-item" (click)="opendelete(deleteconformation,asset)">
+                                        <i class="bi bi-trash me-2"></i>{{ 'Delete' | translate }}
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </td>
           </tr>
         </ng-container>
         <ng-template #noDataTemplate>
@@ -155,7 +162,7 @@
                 [placeholder]="'Please select asset category' | translate" class="form-select custom-select"
                 (onChange)="onassetsubcategory()"></p-select>
             </div>
-            <div class="error-msg" *ngIf="assetcataeryupdateForm.get('assetCategory')?.invalid && 
+            <div class="error-msg" *ngIf="assetcataeryupdateForm.get('assetCategory')?.invalid &&
                       assetcataeryupdateForm.get('assetCategory')?.touched">
               {{ 'Asset Category is required' | translate }}
             </div>
@@ -168,7 +175,7 @@
             <input class="form-control custom-input" formControlName="assetSubCategory"
               [placeholder]="'Please enter asset sub category' | translate"
               (keypress)="formValidation.restrictInputallowhypen($event)" />
-            <div *ngIf="assetcataeryupdateForm.get('assetSubCategory')?.invalid && 
+            <div *ngIf="assetcataeryupdateForm.get('assetSubCategory')?.invalid &&
                       assetcataeryupdateForm.get('assetSubCategory')?.touched" class="error-msg">
               <div *ngIf="assetcataeryupdateForm.get('assetSubCategory')?.errors?.['required']">
                 {{ 'Asset Sub Category is required' | translate }}

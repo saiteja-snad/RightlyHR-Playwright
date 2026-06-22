@@ -60,18 +60,20 @@
                 </button>
             </div>
 
-            <div *ngIf="!employeeSelected" class="d-flex align-items-center clone-btn-wrap">
+            @if (rbac.allowedToAccess('Timesheet Clone.view')) {
+            <div class="d-flex align-items-center clone-btn-wrap">
                 <button type="button" class="custom-btn btn-primary clone-action-btn" (click)="openCloneModal()"
                     [disabled]="isCloneDisabled()">
                     <i class="bi bi-copy" aria-hidden="true"></i>
                     Clone
                 </button>
             </div>
+            }
 
             @if(rbac.allowedToAccess('Timesheet Bulk Export.view')
             || rbac.allowedToAccess('Timesheet Bulk Import.view')
             || rbac.allowedToAccess('Timesheet History Log.view')) {
-            <div class="position-relative menu-dropdown-content action-btn-wrap">
+            <div class="position-relative menu-dropdown-content ">
                 <button class="custom-btn btn-primary" type="button"
                     (click)="bulkMenu.toggle($event)">{{'Actions'}}</button>
                 <p-menu #bulkMenu [popup]="true" [model]="bulkOperationMenuItems" />
@@ -684,7 +686,8 @@
     <div class="custom-offcanvas-body p-4 clone-card-shell">
         <div class="clone-header-card mb-0">
             <p class="popup-heading mb-0">Clone Timesheet</p>
-            <button type="button" class="clone-close-btn" aria-label="Close" (click)="offcanvas.dismiss()">
+            <button type="button" class="clone-close-btn" aria-label="Close"
+                (click)="openCancelClonePopup(cancelClonePopup)">
                 <i class="bi bi-x-lg"></i>
             </button>
         </div>
@@ -697,13 +700,13 @@
                         <p class="section-heading mb-3">Select Weeks</p>
                         <div class="field-block mb-3">
                             <label class="form-label mb-2">Source Week<span class="text-danger">*</span></label>
-                            <p-datepicker formControlName="sourceWeekDateRange" selectionMode="range" [showIcon]="true"
+                            <p-datepicker styleClass="clone-datepicker" formControlName="sourceWeekDateRange" selectionMode="range" [showIcon]="true"
                                 [readonlyInput]="true" [placeholder]="'dd/mm/yyyy - dd/mm/yyyy'">
                             </p-datepicker>
                         </div>
                         <div class="field-block">
                             <label class="form-label mb-2">Target Week<span class="text-danger">*</span></label>
-                            <p-datepicker formControlName="targetWeekDateRange" selectionMode="range" [showIcon]="true"
+                            <p-datepicker styleClass="clone-datepicker" formControlName="targetWeekDateRange" selectionMode="range" [showIcon]="true"
                                 [readonlyInput]="true" [placeholder]="'dd/mm/yyyy - dd/mm/yyyy'">
                             </p-datepicker>
                         </div>
@@ -718,6 +721,7 @@
                                 <input type="checkbox" formControlName="copyProjects" />
                                 <span>Copy Projects</span>
                             </label>
+
                             <label class="custom-checkbox">
                                 <input type="checkbox" formControlName="copyLoggedHours" />
                                 <span>Copy Logged Hours</span>
@@ -790,8 +794,10 @@
 
                 <div class="clone-footer">
                     <div class="d-flex align-items-center gap-3">
-                        <button type="button" class="custom-btn btn-secondary w-100"
-                            (click)="offcanvas.dismiss()">Cancel</button>
+                        <button type="button" class="custom-btn btn-secondary"
+                            (click)="openCancelClonePopup(cancelClonePopup)">
+                            Cancel
+                        </button>
                         <button type="button" class="custom-btn btn-primary w-100"
                             [disabled]="cloneForm.invalid || spinnerLoader" (click)="cloneTimesheetEntries()">
                             <span *ngIf="spinnerLoader" class="spinner-border spinner-border-sm me-2" role="status"
@@ -812,6 +818,28 @@
         <div>
             <img src="icons\reject.png" alt="failure icon" class="confirmation-delete-icon">
             <p class="confirmation-text">{{errormodaldata}}</p>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #cancelClonePopup let-modal>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="/icons/reject.png" alt="delete-icon" class="confirmation-delete-icon">
+
+            <p class="confirmation-text">
+                Are you sure you want to cancel this clone?
+            </p>
+        </div>
+
+        <div class="custom-modal-footer">
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">
+                No
+            </button>
+
+            <button type="button" class="custom-btn btn-primary" (click)="confirmCloneCancel(modal)">
+                Yes
+            </button>
         </div>
     </div>
 </ng-template>

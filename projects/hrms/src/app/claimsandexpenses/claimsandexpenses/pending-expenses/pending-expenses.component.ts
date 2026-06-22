@@ -18,6 +18,7 @@ import { DocumentViewIconComponent } from "../../../icons/document-view-icon/doc
 import { TranslateModule } from '@ngx-translate/core';
 import { TableModule } from 'primeng/table';
 import { OpenModalService } from '../../../services/open-modal.service';
+import { RbacService } from '../../../services/rbac.service';
 
 @Component({
   selector: 'app-pending-expenses',
@@ -55,7 +56,7 @@ export class PendingExpensesComponent implements OnInit, OnDestroy {
 
 
   @ViewChild('expenseSummary') expenseSummary: any;
-  constructor(private http: HttpService, public formValidation: FormValidationService, private modalService: NgbModal, private sanitizer: DomSanitizer, private SelectedyeartimeOffService: TimeoffYearFilterService, private fb: FormBuilder, private sharedModalService: OpenModalService) { }
+  constructor(private http: HttpService, public formValidation: FormValidationService, private modalService: NgbModal, private sanitizer: DomSanitizer, private SelectedyeartimeOffService: TimeoffYearFilterService, private fb: FormBuilder, private sharedModalService: OpenModalService, public rbac: RbacService,) { }
 
   selectedYear: any;
   selectemp: any;
@@ -324,6 +325,14 @@ export class PendingExpensesComponent implements OnInit, OnDestroy {
 
         this.approveForm.reset();
         this.getexpensesheaderbyemployeeid();
+
+        // Refresh pending approval count
+        this.http.setnewcountDetails();
+
+        this.http.tirggerPendingApprovalCountSignal.update((status) => ({
+          ...status,
+          expenses: true,
+        }));
       },
       error: (err) => {
         console.log(err);
@@ -394,6 +403,13 @@ export class PendingExpensesComponent implements OnInit, OnDestroy {
 
         this.rejectForm.reset();
         this.getexpensesheaderbyemployeeid();
+
+        this.http.setnewcountDetails();
+
+        this.http.tirggerPendingApprovalCountSignal.update((status) => ({
+          ...status,
+          expenses: true,
+        }));
       },
       error: (err) => {
         console.log(err);
@@ -446,16 +462,33 @@ export class PendingExpensesComponent implements OnInit, OnDestroy {
 
   canApproveExpense(exp: any): boolean {
 
-    console.log(JSON.stringify(exp, null, 2));
     const currentApproverId =
       exp?.pendingApprovalHeader?.currentApproverId;
+
+    const approvedType =
+      exp?.pendingApprovalHeader?.approvedType;
 
     const loginId =
       this.LOGIN.employeeId?.toString();
 
-    return currentApproverId?.toString() === loginId;
-  }
+    // Employee-based approvals (RM/TM)
+    if (
+      approvedType === 'EMP' &&
+      currentApproverId?.toString() === loginId
+    ) {
+      return true;
+    }
 
+    // Role-based approvals (HR)
+    if (
+      approvedType === 'ROLE' &&
+      this.rbac.allowedToAccess('For Role (Claims and Expenses).update')
+    ) {
+      return true;
+    }
+
+    return false;
+  }
   canShowBulkActions(): boolean {
 
     if (!this.selectedExpenses?.length) {
@@ -465,6 +498,17 @@ export class PendingExpensesComponent implements OnInit, OnDestroy {
     return this.selectedExpenses.every(
       expense => this.canApproveExpense(expense)
     );
+  }
+
+  canShowMultiSelect(exp?: any): boolean {
+
+    const currentApproverId =
+      exp?.pendingApprovalHeader?.currentApproverId;
+
+    const loginId =
+      this.LOGIN.employeeId?.toString();
+
+    return currentApproverId?.toString() === loginId;
   }
 
   ngOnDestroy(): void {

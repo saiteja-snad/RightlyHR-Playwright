@@ -100,6 +100,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   leavesData: any[] = [];
   currentRowIndex: number = -1;
   currentDay: string = '';
+  today: Date = new Date();
 
   @ViewChild('datePicker') datePicker: any;
   @ViewChild('deleteconformation', { static: true }) deleteconformation!: TemplateRef<any>;
@@ -545,6 +546,12 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     });
   }
 
+  closeCloneModal(): void {
+  this.cloneErrorMessage = '';
+  this.cloneForm?.reset();
+  this.offcanvasService.dismiss();
+}
+
   private initializeCloneForm(): void {
     const defaultSourceStart = this.start ? moment(this.start).subtract(7, 'days').startOf('isoWeek').toDate() : moment().startOf('isoWeek').toDate();
     const defaultSourceEnd = this.start ? moment(this.start).subtract(7, 'days').endOf('isoWeek').toDate() : moment().endOf('isoWeek').toDate();
@@ -558,7 +565,10 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       copyProjects: [{ value: true, disabled: true }],
       copyLoggedHours: [{ value: true, disabled: true }],
       copyDescription: [false],
-      copyTask: [false]
+      copyTask: [false],
+      copyClients: [false],
+      copyPhases: [false]
+
     });
 
     this.cloneForm.get('sourceWeekDateRange')?.valueChanges
@@ -729,10 +739,6 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
               copyTask ? !!sourceCell.taskId :
                 (copyProjects ? true : false);
 
-        if (sourceCell.approvalStatus?.toLowerCase() === 'rejected') {
-          return;
-        }
-
         if (!shouldCloneSourceCell) {
           return;
         }
@@ -798,6 +804,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
 
   cloneTimesheetEntries(): void {
     if (!this.cloneForm || this.cloneForm.invalid) {
+      this.cloneForm.markAllAsTouched();
       this.cloneErrorMessage = 'Please select a source week and clone method.';
       return;
     }
@@ -871,8 +878,12 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     const copyLoggedHours = this.cloneForm.get('copyLoggedHours')?.value ?? false;
     const copyDescription = this.cloneForm.get('copyDescription')?.value ?? false;
     const copyTask = this.cloneForm.get('copyTask')?.value ?? false;
+    const copyClients =
+      this.cloneForm.get('copyClients')?.value ?? true;
 
-    if (!copyProjects && !copyLoggedHours && !copyDescription && !copyTask) {
+    const copyPhases =
+      this.cloneForm.get('copyPhases')?.value ?? true;
+    if (!copyProjects && !copyProjects && !copyPhases && !copyLoggedHours && !copyDescription && !copyTask) {
       this.spinnerLoader = false;
       this.cloneErrorMessage = 'Please select at least one clone option.';
       return;

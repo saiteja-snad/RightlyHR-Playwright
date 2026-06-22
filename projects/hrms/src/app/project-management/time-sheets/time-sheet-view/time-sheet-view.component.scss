@@ -487,12 +487,15 @@
 
 .clone-body-card {
     height: calc(100vh - 140px);
+    display: flex;
+    flex-direction: column;
 }
 
 .clone-body-card form {
     display: flex;
     flex-direction: column;
-    height: 100%;
+    flex: 1 1 auto;
+    min-height: 0;
 }
 
 .custom-checkbox input[type="checkbox"] {
@@ -698,7 +701,7 @@
     padding-bottom: 1rem;
     flex: 1 1 auto;
     min-height: 0;
-    overflow-y: visible;
+    overflow-y: auto;
 }
 
 .clone-body-content.scrollable {

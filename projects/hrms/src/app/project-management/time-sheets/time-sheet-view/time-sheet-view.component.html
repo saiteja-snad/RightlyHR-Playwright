@@ -733,11 +733,18 @@
                     <div class="section-block mb-3">
                         <p class="section-heading mb-3">Select Items to Clone</p>
                         <div class="d-flex flex-column gap-2">
+                             <label class="custom-checkbox">
+                                <input type="checkbox" formControlName="copyClients" />
+                                <span>Copy Clients</span>
+                            </label>
                             <label class="custom-checkbox">
                                 <input type="checkbox" formControlName="copyProjects" />
                                 <span>Copy Projects<span class="text-danger">*</span></span>
                             </label>
-
+                             <label class="custom-checkbox">
+                                <input type="checkbox" formControlName="copyPhases" />
+                                <span>Copy Phases</span>
+                            </label>
                             <label class="custom-checkbox">
                                 <input type="checkbox" formControlName="copyLoggedHours" />
                                 <span>Copy Logged Hours<span class="text-danger">*</span></span>
@@ -750,15 +757,9 @@
                                 <input type="checkbox" formControlName="copyTask" />
                                 <span>Copy Task</span>
                             </label>
-                            <label class="custom-checkbox">
-                                <input type="checkbox" formControlName="copyClients" />
-                                <span>Copy Clients</span>
-                            </label>
+                           
 
-                            <label class="custom-checkbox">
-                                <input type="checkbox" formControlName="copyPhases" />
-                                <span>Copy Phases</span>
-                            </label>
+                           
 
                         </div>
                         <div *ngIf="cloneErrorMessage" class="clone-validation-error">

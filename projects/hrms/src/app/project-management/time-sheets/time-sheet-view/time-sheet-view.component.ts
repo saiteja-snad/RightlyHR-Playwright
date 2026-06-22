@@ -37,7 +37,7 @@ import { Select } from 'primeng/select';
     TranslateModule, DataLoaderContentComponent, TimesheetsTabsComponent, MenuModule, MultiSelectModule, Select],
   templateUrl: './time-sheet-view.component.html',
   styleUrl: './time-sheet-view.component.scss',
-  encapsulation: ViewEncapsulation.None
+
 })
 
 export class TimeSheetViewComponent implements OnInit, OnDestroy {

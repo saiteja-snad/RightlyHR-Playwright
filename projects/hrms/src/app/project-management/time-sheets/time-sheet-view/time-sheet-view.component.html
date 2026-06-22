@@ -73,10 +73,10 @@
             @if(rbac.allowedToAccess('Timesheet Bulk Export.view')
             || rbac.allowedToAccess('Timesheet Bulk Import.view')
             || rbac.allowedToAccess('Timesheet History Log.view')) {
-            <div class="position-relative menu-dropdown-content action-btn-wrap">
+            <div class="position-relative menu-dropdown-content ">
                 <button class="custom-btn btn-primary" type="button"
                     (click)="bulkMenu.toggle($event)">{{'Actions'}}</button>
-                <p-menu #bulkMenu [popup]="true" [model]="bulkOperationMenuItems" appendTo="body" />
+                <p-menu #bulkMenu [popup]="true" [model]="bulkOperationMenuItems" />
             </div>
             }
         </div>

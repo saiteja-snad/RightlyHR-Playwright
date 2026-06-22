@@ -52,7 +52,15 @@
     border-radius: 10px !important;
 }
 
+.chip-btn,
 .chip-btn.active {
-    border: 2px solid #233B9C !important; /* bold border when clicked */
+    font-size: 13px !important;
+    padding: 6px 20px !important;
+    min-width: 115px !important;
+    border-radius: 10px !important;
+}
+
+.chip-btn.active {
+    border-width: 2px !important;
     font-weight: 600 !important;
 }

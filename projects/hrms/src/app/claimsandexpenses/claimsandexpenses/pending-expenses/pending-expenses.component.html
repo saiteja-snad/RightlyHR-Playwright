@@ -10,7 +10,8 @@
 
   <div class="custom-p-multi-select-table">
     @if(!loading){
-    <div *ngIf="selectedExpenses.length > 0" class="component-header-content">
+   <div *ngIf="selectedExpenses.length > 0 && (expenesEmplyeedata | async)?.some(canApproveExpense.bind(this))"
+     class="component-header-content">
 
       <div>
         Selected Records: {{ selectedExpenses.length }}
@@ -34,7 +35,7 @@
 
       <ng-template pTemplate="header">
         <tr>
-          <th style="width:4rem">
+          <th style="width:4rem" *ngIf="(expenesEmplyeedata | async)?.some(canApproveExpense.bind(this))">
             <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
           </th>
 
@@ -53,7 +54,7 @@
 
       <ng-template pTemplate="body" let-exp>
         <tr>
-          <td>
+          <td *ngIf="canApproveExpense(exp)">
             <p-tableCheckbox [value]="exp"></p-tableCheckbox>
           </td>
 

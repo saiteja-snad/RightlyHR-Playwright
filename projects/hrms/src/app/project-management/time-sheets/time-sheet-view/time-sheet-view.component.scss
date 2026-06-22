@@ -436,9 +436,37 @@
     box-shadow: none !important;
 }
 
-.p-datepicker-prev-button,
-.p-datepicker-next-button {
+.clone-body-card .select-weeks-block .field-block ::ng-deep .p-datepicker-input:focus,
+.clone-body-card .select-weeks-block .field-block ::ng-deep .p-inputtext:focus {
+    border-color: #DAE2ED !important;
+    box-shadow: none !important;
+}
+
+.clone-body-card .select-weeks-block .field-block ::ng-deep .p-focus {
+    box-shadow: none !important;
+}
+
+::ng-deep .p-datepicker-prev-button,
+::ng-deep .p-datepicker-next-button {
     color: #0B3A83 !important;
+}
+
+::ng-deep .p-datepicker-prev-button svg,
+::ng-deep .p-datepicker-next-button svg {
+    color: #0B3A83 !important;
+    fill: #0B3A83 !important;
+}
+
+::ng-deep .p-datepicker-prev-button:hover,
+::ng-deep .p-datepicker-next-button:hover {
+    background: transparent !important;
+    color: #0B3A83 !important;
+}
+
+::ng-deep .p-datepicker-prev-button:hover svg,
+::ng-deep .p-datepicker-next-button:hover svg {
+    color: #0B3A83 !important;
+    fill: #0B3A83 !important;
 }
 
 .p-datepicker-day-selected {

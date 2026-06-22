@@ -656,20 +656,20 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     const hasTargetValue = !!targetDuration || targetApproval !== ApprovalStatus.NotEntered;
 
     if (cloneMode === 'merge') {
-      return hasTargetValue;
+      return false;
     }
 
     if (cloneMode === 'overwrite') {
       const status = targetApproval?.toLowerCase();
 
-      // Allow overwrite only for Draft and Rejected
       return status !== 'draft' && status !== 'rejected';
     }
+
 
     return true;
   }
 
-  private buildClonePayloads(sourceMatrix: WeekMatrix, targetMatrix: WeekMatrix, cloneMode: string, targetWeekDates: Date[], targetTimesheetId: number): any[] {
+  private buildClonePayloads(sourceMatrix: WeekMatrix, targetMatrix: WeekMatrix, cloneMode: string, targetWeekDates: Date[], targetTimesheetId: number, sourceWeekRange: Date[]): any[] {
     const payloads: any[] = [];
     const dayKeys = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
     const copyProjects = this.cloneForm.get('copyProjects')?.value ?? true;
@@ -707,8 +707,17 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       }
 
 
+      const selectedSourceDays = sourceMatrix.days.filter(day => {
+        const currentDate = moment(day.date);
 
-      sourceMatrix.days.forEach((sourceDay, index) => {
+        return currentDate.isBetween(
+          moment(sourceWeekRange[0]),
+          moment(sourceWeekRange[1]),
+          'day',
+          '[]'
+        );
+      });
+      selectedSourceDays.forEach((sourceDay, index) => {
         const sourceCell = sourceMatrix.cellMap.get(`${sourceRow.rowId}_${sourceDay.date}`);
         if (!sourceCell) {
           return;
@@ -728,8 +737,21 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
           return;
         }
 
-        const targetDay = targetMatrix.days[index];
-        const targetCell = targetMatrix.cellMap.get(`${targetRow.rowId}_${targetDay.date}`);
+        const targetDate = targetWeekDates[index];
+
+        if (!targetDate) {
+          return;
+        }
+        const targetCell = targetMatrix.cellMap.get(`${targetRow.rowId}_${targetDate}`);
+
+        console.log('Source Day:', sourceDay.date);
+        console.log('Target Day:', targetDate);
+        console.log('Target Cell:', targetCell);
+        console.log('Clone Mode:', cloneMode);
+        console.log(
+          'Skip Result:',
+          this.shouldSkipCloneForTargetCell(targetCell, cloneMode)
+        );
 
         if (this.shouldSkipCloneForTargetCell(targetCell, cloneMode)) {
           return;
@@ -778,12 +800,61 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     this.spinnerLoader = true;
 
     const sourceWeekRange = this.cloneForm.get('sourceWeekDateRange')?.value as Date[] | null;
+    const targetWeekRange = this.cloneForm.get('targetWeekDateRange')?.value as Date[] | null;
+
+    if (!sourceWeekRange || !targetWeekRange) {
+      this.cloneErrorMessage = 'Please select both source and target week ranges.';
+      this.spinnerLoader = false;
+      return;
+    }
+
     const sourceWeekStartDate = this.getRangeStartDate(sourceWeekRange) || new Date();
     const sourceWeekStart = moment(sourceWeekStartDate).startOf('isoWeek').format('YYYY-MM-DD');
-    const targetWeekRange = this.cloneForm.get('targetWeekDateRange')?.value as Date[] | null;
     const targetWeekStartDate = this.getRangeStartDate(targetWeekRange) || new Date();
     const targetWeekStart = moment(targetWeekStartDate).startOf('isoWeek').format('YYYY-MM-DD');
-    const targetWeekDates = this.getWeekDatesFromDate(targetWeekStartDate);
+
+    console.log('Source Week Range:', sourceWeekRange);
+    console.log('Target Week Range:', targetWeekRange);
+    console.log('Source Week Start:', sourceWeekStart);
+    console.log('Target Week Start:', targetWeekStart);
+
+    const sourceStart = moment(sourceWeekRange[0]).format('YYYY-MM-DD');
+    const sourceEnd = moment(sourceWeekRange[1]).format('YYYY-MM-DD');
+    const targetStart = moment(targetWeekRange[0]).format('YYYY-MM-DD');
+    const targetEnd = moment(targetWeekRange[1]).format('YYYY-MM-DD');
+
+    if (sourceStart === targetStart && sourceEnd === targetEnd) {
+      this.cloneErrorMessage = 'Source week and target week cannot be the same.';
+      this.spinnerLoader = false;
+      return;
+    }
+
+    const sourceDays =
+      moment(sourceWeekRange[1]).diff(moment(sourceWeekRange[0]), 'days') + 1;
+
+    const targetDays =
+      moment(targetWeekRange[1]).diff(moment(targetWeekRange[0]), 'days') + 1;
+
+    if (sourceDays !== targetDays) {
+      this.cloneErrorMessage =
+        'Source week and target week must contain the same number of days.';
+      this.spinnerLoader = false;
+      return;
+    }
+
+    const targetWeekDates: Date[] = [];
+
+    for (
+      let d = moment(targetWeekRange[0]);
+      d.isSameOrBefore(targetWeekRange[1], 'day');
+      d.add(1, 'day')
+    ) {
+      targetWeekDates.push(d.toDate());
+    }
+
+    console.log('Target Week Dates', targetWeekDates);
+
+
     const cloneMode = this.cloneForm.get('cloneMode')?.value;
     const copyProjects = this.cloneForm.get('copyProjects')?.value ?? true;
     const copyLoggedHours = this.cloneForm.get('copyLoggedHours')?.value ?? false;
@@ -804,7 +875,21 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
         next: ([sourceRes, targetRes]: any) => {
           const sourceMatrix = transformV2ResponseToWeekMatrix(sourceRes);
           const targetMatrix = transformV2ResponseToWeekMatrix(targetRes);
-          const payloads = this.buildClonePayloads(sourceMatrix, targetMatrix, cloneMode, targetWeekDates, targetMatrix.metadata.timesheetId || 0);
+
+          console.log(
+            'Source Matrix Days',
+            sourceMatrix.days.map((d: any) => d.date)
+          );
+
+          console.log(
+            'Target Matrix Days',
+            targetMatrix.days.map((d: any) => d.date)
+          );
+
+          const payloads = this.buildClonePayloads(sourceMatrix, targetMatrix, cloneMode, targetWeekDates, targetMatrix.metadata.timesheetId || 0, sourceWeekRange);
+
+          console.log('Clone Payloads', payloads);
+          console.log('Payload Count', payloads.length);
 
           if (!payloads.length) {
             this.spinnerLoader = false;

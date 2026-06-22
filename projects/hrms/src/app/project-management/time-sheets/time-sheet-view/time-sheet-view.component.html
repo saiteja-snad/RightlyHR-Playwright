@@ -734,7 +734,7 @@
 <ng-template #cloneTimesheetModal let-offcanvas>
     <div class="custom-offcanvas-body p-4 clone-card-shell">
         <div class="clone-header-card mb-0">
-            <p class="popup-heading mb-0">Clone Timesheet</p>
+            <p class="popup-heading mb-0">Clone Timesheet Entries</p>
             <button type="button" class="clone-close-btn" aria-label="Close"
                 (click)="openCancelClonePopup(cancelClonePopup)">
                 <i class="bi bi-x-lg"></i>
@@ -748,32 +748,56 @@
                     <div class="mb-4 select-weeks-block">
                         <p class="section-heading mb-3">Select Weeks</p>
                         <div class="field-block mb-3">
-                            <label class="form-label mb-2">Source Week<span class="text-danger">*</span></label>
-                            <p-datepicker styleClass="clone-datepicker" formControlName="sourceWeekDateRange" selectionMode="range" [showIcon]="true"
-                                [readonlyInput]="true" [placeholder]="'dd/mm/yyyy - dd/mm/yyyy'">
+                            <label class="form-label mb-2">Source Date Range<span class="text-danger">*</span></label>
+                            <p-datepicker styleClass="clone-datepicker" formControlName="sourceWeekDateRange"
+                                selectionMode="range" [showIcon]="true" [readonlyInput]="true"
+                                [placeholder]="'dd/mm/yyyy - dd/mm/yyyy'" [maxDate]="today">
                             </p-datepicker>
+
+                            @if (cloneForm.get('sourceWeekDateRange')?.invalid &&
+                            cloneForm.get('sourceWeekDateRange')?.touched) {
+                            <small class="text-danger">
+                                Source Date Range is required
+                            </small>
+                            }
                         </div>
                         <div class="field-block">
-                            <label class="form-label mb-2">Target Week<span class="text-danger">*</span></label>
-                            <p-datepicker styleClass="clone-datepicker" formControlName="targetWeekDateRange" selectionMode="range" [showIcon]="true"
-                                [readonlyInput]="true" [placeholder]="'dd/mm/yyyy - dd/mm/yyyy'">
+                            <label class="form-label mb-2">Target Date Range<span class="text-danger">*</span></label>
+                            <p-datepicker styleClass="clone-datepicker" formControlName="targetWeekDateRange"
+                                selectionMode="range" [showIcon]="true" [readonlyInput]="true"
+                                [placeholder]="'dd/mm/yyyy - dd/mm/yyyy'" [maxDate]="today">
                             </p-datepicker>
+
+
+                            @if (cloneForm.get('targetWeekDateRange')?.invalid &&
+                            cloneForm.get('targetWeekDateRange')?.touched) {
+                            <small class="text-danger">
+                                Target Date Range is required
+                            </small>
+                            }
                         </div>
                     </div>
 
                     <hr class="clone-divider mb-4">
 
                     <div class="section-block mb-3">
-                        <p class="section-heading mb-3">Select Clone Options</p>
+                        <p class="section-heading mb-3">Select Items to Clone</p>
                         <div class="d-flex flex-column gap-2">
                             <label class="custom-checkbox">
-                                <input type="checkbox" formControlName="copyProjects" />
-                                <span>Copy Projects</span>
+                                <input type="checkbox" formControlName="copyClients" />
+                                <span>Copy Clients<span class="text-danger">*</span></span>
                             </label>
-
+                            <label class="custom-checkbox">
+                                <input type="checkbox" formControlName="copyProjects" />
+                                <span>Copy Projects<span class="text-danger">*</span></span>
+                            </label>
+                            <label class="custom-checkbox">
+                                <input type="checkbox" formControlName="copyPhases" />
+                                <span>Copy Phases<span class="text-danger">*</span></span>
+                            </label>
                             <label class="custom-checkbox">
                                 <input type="checkbox" formControlName="copyLoggedHours" />
-                                <span>Copy Logged Hours</span>
+                                <span>Copy Logged Hours<span class="text-danger">*</span></span>
                             </label>
                             <label class="custom-checkbox">
                                 <input type="checkbox" formControlName="copyDescription" />
@@ -783,6 +807,10 @@
                                 <input type="checkbox" formControlName="copyTask" />
                                 <span>Copy Task</span>
                             </label>
+
+
+
+
                         </div>
                         <div *ngIf="cloneErrorMessage" class="clone-validation-error">
                             {{ cloneErrorMessage }}
@@ -833,11 +861,12 @@
                         </div>
                     </div>
 
-                    <hr class="clone-divider mb-4">
+                    <hr *ngIf="cloneForm.get('cloneMode')?.value === 'overwrite'" class="clone-divider mb-4">
 
-                    <div class="info-box mb-3">
+                    <div class="info-box mb-3" *ngIf="cloneForm.get('cloneMode')?.value === 'overwrite'">
                         <i class="bi bi-info-circle-fill"></i>
-                        If entries already exist in the target week, they will be overwritten when using Overwrite.
+                        Existing draft and rejected entries in the target week will be replaced when Overwrite is
+                        selected.
                     </div>
                 </div>
 
@@ -847,6 +876,7 @@
                             (click)="openCancelClonePopup(cancelClonePopup)">
                             Cancel
                         </button>
+
                         <button type="button" class="custom-btn btn-primary w-100"
                             [disabled]="cloneForm.invalid || spinnerLoader" (click)="cloneTimesheetEntries()">
                             <span *ngIf="spinnerLoader" class="spinner-border spinner-border-sm me-2" role="status"

@@ -492,12 +492,15 @@
 
 .clone-body-card {
     height: calc(100vh - 140px);
+    display: flex;
+    flex-direction: column;
 }
 
 .clone-body-card form {
     display: flex;
     flex-direction: column;
-    height: 100%;
+    flex: 1 1 auto;
+    min-height: 0;
 }
 
 .custom-checkbox input[type="checkbox"] {
@@ -703,7 +706,7 @@
     padding-bottom: 1rem;
     flex: 1 1 auto;
     min-height: 0;
-    overflow-y: visible;
+    overflow-y: auto;
 }
 
 .clone-body-content.scrollable {
@@ -725,13 +728,16 @@
 
 .info-box {
     margin-bottom: 1rem;
+    font-size: 10px;
+    line-height: 1.2;
+    color: #4b5563;
 }
 
 
 .clone-validation-error {
     color: #ef4444;
-    font-size: 14px;
-    font-weight: 500;
+    font-size: 11px;
+    font-weight: 400;
     margin-top: 6px;
 }
 
@@ -794,6 +800,8 @@
 
 .clone-body-card .select-weeks-block .field-block .text-danger {
     margin-left: 0.25rem;
+    font-size: 11px;
+    font-weight: 400;
 }
 
 .clone-body-card .select-weeks-block .p-datepicker {

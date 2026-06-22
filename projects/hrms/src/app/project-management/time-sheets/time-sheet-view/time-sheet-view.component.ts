@@ -742,8 +742,16 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
         if (!targetDate) {
           return;
         }
-        const targetCell = targetMatrix.cellMap.get(`${targetRow.rowId}_${targetDate}`);
+        const targetDateKey = moment(targetDate).format(
+          'YYYY-MM-DDT00:00:00'
+        );
 
+        const targetCell = targetMatrix.cellMap.get(
+          `${targetRow.rowId}_${targetDateKey}`
+        );
+
+        console.log('Target Cell EntryId:', targetCell?.entryId);
+        console.log('Target Cell Status:', targetCell?.approvalStatus);
         console.log('Source Day:', sourceDay.date);
         console.log('Target Day:', targetDate);
         console.log('Target Cell:', targetCell);
@@ -777,6 +785,9 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
           endTime: copyLoggedHours ? this.toTimeSpan(sourceCell.endTime) : null,
           taskId: copyTask ? sourceCell.taskId || null : null
         };
+
+        console.log('Payload EntryId:', payload.entryId);
+        console.log('Payload:', payload);
 
         payloads.push(payload);
       });

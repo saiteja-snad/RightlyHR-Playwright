@@ -686,7 +686,8 @@
     <div class="custom-offcanvas-body p-4 clone-card-shell">
         <div class="clone-header-card mb-0">
             <p class="popup-heading mb-0">Clone Timesheet Entries</p>
-            <button type="button" class="clone-close-btn" aria-label="Close" (click)="closeCloneModal()">
+            <button type="button" class="clone-close-btn" aria-label="Close"
+                (click)="openCancelClonePopup(cancelClonePopup)">
                 <i class="bi bi-x-lg"></i>
             </button>
         </div>
@@ -733,7 +734,7 @@
                     <div class="section-block mb-3">
                         <p class="section-heading mb-3">Select Items to Clone</p>
                         <div class="d-flex flex-column gap-2">
-                             <label class="custom-checkbox">
+                            <label class="custom-checkbox">
                                 <input type="checkbox" formControlName="copyClients" />
                                 <span>Copy Clients<span class="text-danger">*</span></span>
                             </label>
@@ -741,7 +742,7 @@
                                 <input type="checkbox" formControlName="copyProjects" />
                                 <span>Copy Projects<span class="text-danger">*</span></span>
                             </label>
-                             <label class="custom-checkbox">
+                            <label class="custom-checkbox">
                                 <input type="checkbox" formControlName="copyPhases" />
                                 <span>Copy Phases<span class="text-danger">*</span></span>
                             </label>
@@ -757,9 +758,9 @@
                                 <input type="checkbox" formControlName="copyTask" />
                                 <span>Copy Task</span>
                             </label>
-                           
 
-                           
+
+
 
                         </div>
                         <div *ngIf="cloneErrorMessage" class="clone-validation-error">
@@ -811,7 +812,7 @@
                         </div>
                     </div>
 
-                    <hr class="clone-divider mb-4">
+                    <hr *ngIf="cloneForm.get('cloneMode')?.value === 'overwrite'" class="clone-divider mb-4">
 
                     <div class="info-box mb-3" *ngIf="cloneForm.get('cloneMode')?.value === 'overwrite'">
                         <i class="bi bi-info-circle-fill"></i>
@@ -822,9 +823,11 @@
 
                 <div class="clone-footer">
                     <div class="d-flex align-items-center gap-3">
-                        <button type="button" class="custom-btn btn-secondary" (click)="closeCloneModal()">
+                        <button type="button" class="custom-btn btn-secondary"
+                            (click)="openCancelClonePopup(cancelClonePopup)">
                             Cancel
                         </button>
+
                         <button type="button" class="custom-btn btn-primary w-100"
                             [disabled]="cloneForm.invalid || spinnerLoader" (click)="cloneTimesheetEntries()">
                             <span *ngIf="spinnerLoader" class="spinner-border spinner-border-sm me-2" role="status"
@@ -848,7 +851,7 @@
         </div>
     </div>
 </ng-template>
-<!-- 
+
 <ng-template #cancelClonePopup let-modal>
     <div class="result-popup-content" ngbAutofocus>
         <div>
@@ -869,4 +872,4 @@
             </button>
         </div>
     </div>
-</ng-template> -->
+</ng-template>

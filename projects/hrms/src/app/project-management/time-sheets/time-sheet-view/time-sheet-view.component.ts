@@ -547,10 +547,10 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   }
 
   closeCloneModal(): void {
-  this.cloneErrorMessage = '';
-  this.cloneForm?.reset();
-  this.offcanvasService.dismiss();
-}
+    this.cloneErrorMessage = '';
+    this.cloneForm?.reset();
+    this.offcanvasService.dismiss();
+  }
 
   private initializeCloneForm(): void {
     const defaultSourceStart = this.start ? moment(this.start).subtract(7, 'days').startOf('isoWeek').toDate() : moment().startOf('isoWeek').toDate();
@@ -686,7 +686,8 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     const copyLoggedHours = this.cloneForm.get('copyLoggedHours')?.value ?? false;
     const copyDescription = this.cloneForm.get('copyDescription')?.value ?? false;
     const copyTask = this.cloneForm.get('copyTask')?.value ?? false;
-
+    const copyClients = this.cloneForm.get('copyClients')?.value ?? false;
+    const copyPhases = this.cloneForm.get('copyPhases')?.value ?? false;
     const groupUsage = new Map<string, number>();
 
     sourceMatrix.rows.forEach((sourceRow) => {
@@ -777,9 +778,13 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
           employeeId: this.employeeId || 0,
           entryDate,
           approvalStatus: 'draft',
-          clientId: targetRow.clientId || null,
+          clientId: copyClients
+            ? sourceRow.clientId || null
+            : targetRow.clientId || null,
           projectId: targetRow.projectId || null,
-          phaseId: targetRow.phaseId || null,
+          phaseId: copyPhases
+            ? sourceRow.phaseId || null
+            : targetRow.phaseId || null,
           timesheetId: targetTimesheetId || 0,
           isOverride: false,
           totalDurationSeconds: copyLoggedHours ? sourceCell.durationSeconds || 0 : 0,
@@ -2667,9 +2672,6 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
 
     this.offcanvasService.dismiss();
 
-    this.conformationPopup.openSuccessModal(
-      'Clone Cancelled Successfully'
-    );
   }
 
   testMenu(event: any, menu: any) {

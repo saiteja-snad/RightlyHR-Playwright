@@ -1175,7 +1175,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       rejectReason: [cell.rejectReason || ''],
       blockReason: [cell.blockReason || ''],
       resourceId: [row.resourceId || null],
-      taskId: [cell.taskId || null,disabled: !billablecheck],
+      taskId: [{ value: cell.taskId || null, disabled: !billablecheck }],
       pendingApprovalDetails: [cell.pendingApprovalDetails || null],
       taskName: [cell.taskName || null]
     });

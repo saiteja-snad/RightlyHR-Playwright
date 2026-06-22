@@ -24,6 +24,7 @@
 
     }
     <div class="custom-p-multi-select-table">
+      @if(showMultiSelectAndSearch()){
       <div class="input-group custom-search mb-3">
         <span class="input-group-text custom-input-group-search">
           <i class="bi bi-search"></i>
@@ -31,6 +32,7 @@
 
         <input type="search" [(ngModel)]="searchText" class="form-control custom-search-input" placeholder="Search">
       </div>
+      }
     </div>
     @if(!dataload){
     <div class="custom-p-multi-select-table">
@@ -39,9 +41,12 @@
         (selectionChange)="selectCheck($event)" dataKey="id">
         <ng-template pTemplate="header">
           <tr>
+            @if(showMultiSelectAndSearch()){
             <th style="width:4rem">
               <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
             </th>
+            }
+            
             <th>{{'Worked Date' | translate}}</th>
             <th>{{'Availed' | translate}}</th>
             <th class="text-center">{{'Reason' | translate}}</th>
@@ -57,9 +62,11 @@
         <ng-template pTemplate="body" let-compOffRequest>
           <tr>
 
+            @if(canApprove(compOffRequest)){
             <td>
               <p-tableCheckbox [value]="compOffRequest"></p-tableCheckbox>
             </td>
+            }
             <td>{{ compOffRequest.startTime ? (compOffRequest.startTime | dateformat) : ' -' }}</td>
             <td [ngSwitch]="compOffRequest.durationType">
               <span *ngSwitchCase="1">First Half</span>

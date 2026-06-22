@@ -26,7 +26,7 @@
 
         }
         <div class="custom-p-multi-select-table">
-
+            @if(showMultiSelectAndSearch()){
             <div class="input-group custom-search mb-3">
                 <span class="input-group-text custom-input-group-search">
                     <i class="bi bi-search"></i>
@@ -35,6 +35,7 @@
                 <input type="search" [(ngModel)]="searchText" class="form-control custom-search-input"
                     placeholder="Search">
             </div>
+            }
 
             @if(!dataLoad){
 
@@ -43,9 +44,11 @@
 
                 <ng-template pTemplate="header">
                     <tr>
+                        @if(showMultiSelectAndSearch()){
                         <th style="width:4rem">
                             <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
                         </th>
+                        }
 
                         <th>{{'Requested Date' | translate}}</th>
                         <th>{{'Worked Date' | translate}}</th>
@@ -62,9 +65,11 @@
                 <ng-template pTemplate="body" let-permissionRequest>
                     <tr>
 
+                        @if(canApprove(permissionRequest)){
                         <td>
                             <p-tableCheckbox [value]="permissionRequest"></p-tableCheckbox>
                         </td>
+                        }
 
                         <td>{{permissionRequest.createdDate | dateformat}}</td>
                         <td>{{permissionRequest.requestedDate | dateformat}}</td>

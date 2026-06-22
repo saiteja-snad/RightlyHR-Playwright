@@ -35,6 +35,7 @@
 
 
       <!-- Always visible -->
+       @if(lpdata.length > 0 && canApprove(lpdata[0])){
       <div class="input-group custom-search mb-3">
         <span class="input-group-text custom-input-group-search">
           <i class="bi bi-search"></i>
@@ -43,6 +44,7 @@
         <input type="search" #search="ngModel" [(ngModel)]="searchText" class="form-control custom-search-input"
           placeholder="Search by employee name / leave type / availed" autocomplete="off">
       </div>
+    }
 
 
       @if(!loading){
@@ -51,9 +53,11 @@
           [tableStyle]="{'min-width': '50rem'}">
           <ng-template pTemplate="header">
             <tr>
+              @if(lpdata.length > 0 && canApprove(lpdata[0])){
               <th style="width:4rem">
                 <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
               </th>
+              }
               <th>Date</th>
               <th>Leave Type</th>
               <th>Duration</th>
@@ -69,9 +73,11 @@
           </ng-template>
           <ng-template pTemplate="body" let-item>
             <tr>
+              @if(canApprove(item)){
               <td>
                 <p-tableCheckbox [value]="item"></p-tableCheckbox>
               </td>
+              }
 
               @if (rbac.allowedToAccess('Waiting For Approval (Time Off).view')) {
 

@@ -372,6 +372,12 @@ export class RegularizationWaitingForApprovalComponent implements OnInit, OnDest
     this.selectedProducts = event;
   }
 
+  showMultiSelectAndSearch(): boolean {
+    return this.waitingForApprovalPerimisions.some(item =>
+      this.canApprove(item)
+    );
+  }
+
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();

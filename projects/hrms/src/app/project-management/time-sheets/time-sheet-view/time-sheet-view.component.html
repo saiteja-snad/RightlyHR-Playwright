@@ -197,256 +197,279 @@
                                     </ul>
             </div>
             </td>
-            <td [formGroupName]="'mon'">
-                <div class="d-flex d-flex align-items-center">
-                    <div class="input-group custom-input-group" [ngClass]="getApprovalClass(project.get('mon'))">
+             <td [formGroupName]="'mon'">
+            <div class="d-flex d-flex align-items-center">
+                <div class="input-group custom-input-group" [ngClass]="getApprovalClass(project.get('mon'))">
                     <input type="text" formControlName="duration" class="form-control custom-input border-none"
                         placeholder="HH:MM" maxlength="4" (keypress)="allowNumbersOnly($event)"
                         (keydown)="checkClearDuration($event, 'mon', i)"
                         (keyup.enter)="formatTime($event, 'mon', i, 'duration',project.get('mon'))"
                         (blur)="formatTime($event, 'mon', i, 'duration',project.get('mon'))">
-                        <span  class="input-group-text border-none" *ngIf="project.get('mon.duration')?.value && (project.get('mon.approvalStatus')?.value === 'Rejected'||project.get('mon.approvalStatus')?.value === 'Waiting for Approval'
-                        ||project.get('mon.approvalStatus')?.value === 'Processed')" (mousedown)="$event.preventDefault()" >
-                            <a [ngbPopover]="approvalInfo"
-                            triggers="click" 
-                            popoverClass="approval-info-popover"
-                            container="body"
-                            class="cursor" (click)="onclickinfo(project.get('mon'))"> <i class="bi bi-info-circle"></i></a>
-                        </span>
-                    <!-- <div *ngIf="project.get('mon.duration')?.value" class="timesheet-input-info" (mousedown)="$event.preventDefault()">
-                        <a [ngbPopover]="approvalInfo"
-                            triggers="click"
-                            popoverClass="approval-info-popover"
-                            container="body"
-                            class="cursor"> <i class="bi bi-info-circle"></i></a>
-                    </div> -->
-                    <div
-                        *ngIf="shouldShowIcon(project, 'mon', i)"
-                        class="input-group-text border-none" (mousedown)="$event.preventDefault()">
+                    <span class="input-group-text border-none" *ngIf="project.get('mon.duration')?.value && (project.get('mon.approvalStatus')?.value === 'Rejected'||project.get('mon.approvalStatus')?.value === 'Waiting for Approval'
+                        ||project.get('mon.approvalStatus')?.value === 'Processed')"
+                        (mousedown)="$event.preventDefault()">
+                        <div class="info-icon" [ngbPopover]="approvalInfo" triggers="click" autoClose="outside"
+                            popoverClass="approval-info-popover" container="body"
+                            (click)="onclickinfo(project.get('mon'))"> <i class="bi bi-info-circle"></i></div>
+                    </span>
+                    <span *ngIf="shouldShowIcon(project, 'mon', i)" class="input-group-text border-none"
+                        (mousedown)="$event.preventDefault()">
                         <i class="bi bi-three-dots-vertical cursor"
                             (click)="openModal(addtask, project.get('mon'),i,'mon')"></i>
-                    </div>
-                    
+                    </span>
                 </div>
-                    <div *ngIf="project.get('mon.approvalStatus')?.value === 'Rejected'" class="ms-2">
-                        <a type="button" [ngbPopover]="description">
-                            <app-info-icon></app-info-icon>
-                        </a>
-                        <ng-template #description>
-                            <p class="mb-0">{{ project.get('mon.rejectReason')?.value}}</p>
-                        </ng-template>
-                    </div>
-                    <div *ngIf="project.get('mon.blockReason')?.value === 'Phase Date Restriction'" class="ms-2">
-                        <a type="button" [ngbPopover]="phaseRestriction">
-                            <app-info-icon></app-info-icon>
-                        </a>
-                        <ng-template #phaseRestriction>
-                            <p class="mb-0">This date is outside the phase's active period</p>
-                        </ng-template>
-                    </div>
+                <div *ngIf="project.get('mon.approvalStatus')?.value === 'Rejected'" class="ms-2">
+                    <a type="button" [ngbPopover]="description">
+                        <app-info-icon></app-info-icon>
+                    </a>
+                    <ng-template #description>
+                        <p class="mb-0">{{ project.get('mon.rejectReason')?.value}}</p>
+                    </ng-template>
                 </div>
-            </td>
-            <td [formGroupName]="'tue'">
-                <div class="d-flex align-items-center">
-                    <div class="input-group custom-input-group" [ngClass]="getApprovalClass(project.get('tue'))">
-                        <input type="text" formControlName="duration" class="form-control custom-input border-none"
-                            placeholder="HH:MM" maxlength="4" (keypress)="allowNumbersOnly($event)"
-                            (keydown)="checkClearDuration($event, 'tue', i)"
-                            (keyup.enter)="formatTime($event, 'tue', i, 'duration',project.get('tue'))"
-                            (blur)="formatTime($event, 'tue', i, 'duration',project.get('tue'))">
-                        <span *ngIf="shouldShowIcon(project, 'tue', i)" class="input-group-text border-none"
-                            (mousedown)="$event.preventDefault()">
-                            <i class="bi bi-three-dots-vertical cursor"
-                                (click)="openModal(addtask,project.get('tue'),i,'tue')"></i>
-                        </span>
-                    </div>
-                    <div *ngIf="project.get('tue.approvalStatus')?.value === 'Rejected'" class="ms-2">
-                        <a type="button" [ngbPopover]="description">
-                            <app-info-icon></app-info-icon>
-                        </a>
-                        <ng-template #description>
-                            <p class="mb-0">{{ project.get('tue.rejectReason')?.value}}</p>
-                        </ng-template>
-                    </div>
-                    <div *ngIf="project.get('tue.blockReason')?.value === 'Phase Date Restriction'" class="ms-2">
-                        <a type="button" [ngbPopover]="phaseRestriction">
-                            <app-info-icon></app-info-icon>
-                        </a>
-                        <ng-template #phaseRestriction>
-                            <p class="mb-0">This date is outside the phase's active period</p>
-                        </ng-template>
-                    </div>
+                <div *ngIf="project.get('mon.blockReason')?.value === 'Phase Date Restriction'" class="ms-2">
+                    <a type="button" [ngbPopover]="phaseRestriction">
+                        <app-info-icon></app-info-icon>
+                    </a>
+                    <ng-template #phaseRestriction>
+                        <p class="mb-0">This date is outside the phase's active period</p>
+                    </ng-template>
                 </div>
-            </td>
-            <td [formGroupName]="'wed'">
-                <div class="d-flex align-items-center">
-                    <div class="input-group custom-input-group" [ngClass]="getApprovalClass(project.get('wed'))">
-                        <input type="text" formControlName="duration" class="form-control custom-input border-none"
-                            placeholder="HH:MM" maxlength="4" (keypress)="allowNumbersOnly($event)"
-                            (keydown)="checkClearDuration($event, 'wed', i)"
-                            (keyup.enter)="formatTime($event, 'wed', i, 'duration',project.get('wed'))"
-                            (blur)="formatTime($event, 'wed', i, 'duration',project.get('wed'))">
-                        <span *ngIf="shouldShowIcon(project, 'wed', i)" class="input-group-text border-none"
-                            (mousedown)="$event.preventDefault()">
-                            <i class="bi bi-three-dots-vertical cursor"
-                                (click)="openModal(addtask,project.get('wed'),i,'wed')"></i>
-                        </span>
-                    </div>
-                    <div *ngIf="project.get('wed.approvalStatus')?.value === 'Rejected'" class="ms-2">
-                        <a type="button" [ngbPopover]="description">
-                            <app-info-icon></app-info-icon>
-                        </a>
-                        <ng-template #description>
-                            <p class="mb-0">{{ project.get('wed.rejectReason')?.value}}</p>
-                        </ng-template>
-                    </div>
-                    <div *ngIf="project.get('wed.blockReason')?.value === 'Phase Date Restriction'" class="ms-2">
-                        <a type="button" [ngbPopover]="phaseRestriction">
-                            <app-info-icon></app-info-icon>
-                        </a>
-                        <ng-template #phaseRestriction>
-                            <p class="mb-0">This date is outside the phase's active period</p>
-                        </ng-template>
-                    </div>
+            </div>
+        </td>
+        <td [formGroupName]="'tue'">
+            <div class="d-flex align-items-center">
+                <div class="input-group custom-input-group" [ngClass]="getApprovalClass(project.get('tue'))">
+                    <input type="text" formControlName="duration" class="form-control custom-input border-none"
+                        placeholder="HH:MM" maxlength="4" (keypress)="allowNumbersOnly($event)"
+                        (keydown)="checkClearDuration($event, 'tue', i)"
+                        (keyup.enter)="formatTime($event, 'tue', i, 'duration',project.get('tue'))"
+                        (blur)="formatTime($event, 'tue', i, 'duration',project.get('tue'))">
+                    <span *ngIf="project.get('tue.duration')?.value && (project.get('tue.approvalStatus')?.value === 'Rejected'||project.get('tue.approvalStatus')?.value === 'Waiting for Approval'
+                        ||project.get('tue.approvalStatus')?.value === 'Processed')"
+                        class="input-group-text border-none" (mousedown)="$event.preventDefault()">
+                        <div class="info-icon" [ngbPopover]="approvalInfo" triggers="click" autoClose="outside"
+                            popoverClass="approval-info-popover" container="body"
+                            (click)="onclickinfo(project.get('tue'))"> <i class="bi bi-info-circle"></i></div>
+                    </span>
+                    <span *ngIf="shouldShowIcon(project, 'tue', i)" class="input-group-text border-none"
+                        (mousedown)="$event.preventDefault()">
+                        <i class="bi bi-three-dots-vertical cursor"
+                            (click)="openModal(addtask,project.get('tue'),i,'tue')"></i>
+                    </span>
                 </div>
-            </td>
-            <td [formGroupName]="'thu'">
-                <div class="d-flex align-items-center">
-                    <div class="input-group custom-input-group" [ngClass]="getApprovalClass(project.get('wed'))">
+                <div *ngIf="project.get('tue.approvalStatus')?.value === 'Rejected'" class="ms-2">
+                    <a type="button" [ngbPopover]="description">
+                        <app-info-icon></app-info-icon>
+                    </a>
+                    <ng-template #description>
+                        <p class="mb-0">{{ project.get('tue.rejectReason')?.value}}</p>
+                    </ng-template>
+                </div>
+                <div *ngIf="project.get('tue.blockReason')?.value === 'Phase Date Restriction'" class="ms-2">
+                    <a type="button" [ngbPopover]="phaseRestriction">
+                        <app-info-icon></app-info-icon>
+                    </a>
+                    <ng-template #phaseRestriction>
+                        <p class="mb-0">This date is outside the phase's active period</p>
+                    </ng-template>
+                </div>
+            </div>
+        </td>
+        <td [formGroupName]="'wed'">
+            <div class="d-flex align-items-center">
+                <div class="input-group custom-input-group" [ngClass]="getApprovalClass(project.get('wed'))">
                     <input type="text" formControlName="duration" class="form-control custom-input border-none"
                         placeholder="HH:MM" maxlength="4" (keypress)="allowNumbersOnly($event)"
                         (keydown)="checkClearDuration($event, 'wed', i)"
                         (keyup.enter)="formatTime($event, 'wed', i, 'duration',project.get('wed'))"
                         (blur)="formatTime($event, 'wed', i, 'duration',project.get('wed'))">
                     <span *ngIf="project.get('wed.duration')?.value && (project.get('wed.approvalStatus')?.value === 'Rejected'||project.get('wed.approvalStatus')?.value === 'Waiting for Approval'
-                        ||project.get('wed.approvalStatus')?.value === 'Processed')" class="timesheet-input-info" (mousedown)="$event.preventDefault()">
-                         <a [ngbPopover]="approvalInfo"
-                            triggers="click"
-                            popoverClass="approval-info-popover"
-                            container="body"
-                            class="cursor" (click)="onclickinfo(project.get('wed'))"> <i class="bi bi-info-circle"></i></a>
-                    </span>
-                    <span
-                         *ngIf="shouldShowIcon(project, 'wed', i)"
+                        ||project.get('wed.approvalStatus')?.value === 'Processed')"
                         class="input-group-text border-none" (mousedown)="$event.preventDefault()">
+                        <div class="info-icon" [ngbPopover]="approvalInfo" triggers="click" autoClose="outside"
+                            popoverClass="approval-info-popover" container="body"
+                            (click)="onclickinfo(project.get('wed'))"> <i class="bi bi-info-circle"></i></div>
+                    </span>
+                    <span *ngIf="shouldShowIcon(project, 'wed', i)" class="input-group-text border-none"
+                        (mousedown)="$event.preventDefault()">
                         <i class="bi bi-three-dots-vertical cursor"
                             (click)="openModal(addtask,project.get('wed'),i,'wed')"></i>
                     </span>
-                    </div>
-                    <div *ngIf="project.get('thu.approvalStatus')?.value === 'Rejected'" class="ms-2">
-                        <a type="button" [ngbPopover]="description">
-                            <app-info-icon></app-info-icon>
-                        </a>
-                        <ng-template #description>
-                            <p class="mb-0">{{ project.get('thu.rejectReason')?.value}}</p>
-                        </ng-template>
-                    </div>
-                    <div *ngIf="project.get('thu.blockReason')?.value === 'Phase Date Restriction'" class="ms-2">
-                        <a type="button" [ngbPopover]="phaseRestriction">
-                            <app-info-icon></app-info-icon>
-                        </a>
-                        <ng-template #phaseRestriction>
-                            <p class="mb-0">This date is outside the phase's active period</p>
-                        </ng-template>
-                    </div>
                 </div>
-            </td>
-            <td [formGroupName]="'fri'">
-                <div class="d-flex align-items-center">
-                    <div class="input-group custom-input-group" [ngClass]="getApprovalClass(project.get('fri'))">
-                        <input type="text" formControlName="duration" class="form-control custom-input border-none"
-                            placeholder="HH:MM" maxlength="4" (keypress)="allowNumbersOnly($event)"
-                            (keydown)="checkClearDuration($event, 'fri', i)"
-                            (keyup.enter)="formatTime($event, 'fri', i, 'duration',project.get('fri'))"
-                            (blur)="formatTime($event, 'fri', i, 'duration',project.get('fri'))">
-                        <span *ngIf="shouldShowIcon(project, 'fri', i)" class="input-group-text border-none"
-                            (mousedown)="$event.preventDefault()">
-                            <i class="bi bi-three-dots-vertical cursor"
-                                (click)="openModal(addtask,project.get('fri'),i,'fri')"></i>
-                        </span>
-                    </div>
-                    <div *ngIf="project.get('fri.approvalStatus')?.value === 'Rejected'" class="ms-2">
-                        <a type="button" [ngbPopover]="description">
-                            <app-info-icon></app-info-icon>
-                        </a>
-                        <ng-template #description>
-                            <p class="mb-0">{{ project.get('fri.rejectReason')?.value}}</p>
-                        </ng-template>
-                    </div>
-                    <div *ngIf="project.get('fri.blockReason')?.value === 'Phase Date Restriction'" class="ms-2">
-                        <a type="button" [ngbPopover]="phaseRestriction">
-                            <app-info-icon></app-info-icon>
-                        </a>
-                        <ng-template #phaseRestriction>
-                            <p class="mb-0">This date is outside the phase's active period</p>
-                        </ng-template>
-                    </div>
+                <div *ngIf="project.get('wed.approvalStatus')?.value === 'Rejected'" class="ms-2">
+                    <a type="button" [ngbPopover]="description">
+                        <app-info-icon></app-info-icon>
+                    </a>
+                    <ng-template #description>
+                        <p class="mb-0">{{ project.get('wed.rejectReason')?.value}}</p>
+                    </ng-template>
                 </div>
-            </td>
-            <td [formGroupName]="'sat'">
-                <div class="d-flex align-items-center">
-                    <div class="input-group custom-input-group" [ngClass]="getApprovalClass(project.get('sat'))">
-                        <input type="text" formControlName="duration" class="form-control custom-input border-none"
-                            placeholder="HH:MM" maxlength="4" (keypress)="allowNumbersOnly($event)"
-                            (keydown)="checkClearDuration($event, 'sat', i)"
-                            (keyup.enter)="formatTime($event, 'sat', i, 'duration',project.get('sat'))"
-                            (blur)="formatTime($event, 'sat', i, 'duration',project.get('sat'))">
-                        <span *ngIf="shouldShowIcon(project, 'sat', i)" class="input-group-text border-none"
-                            (mousedown)="$event.preventDefault()">
-                            <i class="bi bi-three-dots-vertical cursor"
-                                (click)="openModal(addtask,project.get('sat'),i,'sat')"></i>
-                        </span>
-                    </div>
-                    <div *ngIf="project.get('sat.approvalStatus')?.value === 'Rejected'" class="ms-2">
-                        <a type="button" [ngbPopover]="description">
-                            <app-info-icon></app-info-icon>
-                        </a>
-                        <ng-template #description>
-                            <p class="mb-0">{{ project.get('sat.rejectReason')?.value}}</p>
-                        </ng-template>
-                    </div>
-                    <div *ngIf="project.get('sat.blockReason')?.value === 'Phase Date Restriction'" class="ms-2">
-                        <a type="button" [ngbPopover]="phaseRestriction">
-                            <app-info-icon></app-info-icon>
-                        </a>
-                        <ng-template #phaseRestriction>
-                            <p class="mb-0">This date is outside the phase's active period</p>
-                        </ng-template>
-                    </div>
+                <div *ngIf="project.get('wed.blockReason')?.value === 'Phase Date Restriction'" class="ms-2">
+                    <a type="button" [ngbPopover]="phaseRestriction">
+                        <app-info-icon></app-info-icon>
+                    </a>
+                    <ng-template #phaseRestriction>
+                        <p class="mb-0">This date is outside the phase's active period</p>
+                    </ng-template>
                 </div>
-            </td>
-            <td [formGroupName]="'sun'">
-                <div class="d-flex align-items-center">
-                    <div class="input-group custom-input-group" [ngClass]="getApprovalClass(project.get('sun'))">
-                        <input type="text" formControlName="duration" class="form-control custom-input border-none"
-                            placeholder="HH:MM" maxlength="4" (keypress)="allowNumbersOnly($event)"
-                            (keydown)="checkClearDuration($event, 'sun', i)"
-                            (keyup.enter)="formatTime($event, 'sun', i, 'duration',project.get('sun'))"
-                            (blur)="formatTime($event, 'sun', i, 'duration',project.get('sun'))">
-                        <span *ngIf="shouldShowIcon(project, 'sun', i)" class="input-group-text border-none"
-                            (mousedown)="$event.preventDefault()">
-                            <i class="bi bi-three-dots-vertical cursor"
-                                (click)="openModal(addtask,project.get('sun'),i,'sun')"></i>
-                        </span>
-                    </div>
-                    <div *ngIf="project.get('sun.approvalStatus')?.value === 'Rejected'" class="ms-2">
-                        <a type="button" [ngbPopover]="description">
-                            <app-info-icon></app-info-icon>
-                        </a>
-                        <ng-template #description>
-                            <p class="mb-0">{{ project.get('sun.rejectReason')?.value}}</p>
-                        </ng-template>
-                    </div>
-                    <div *ngIf="project.get('sun.blockReason')?.value === 'Phase Date Restriction'" class="ms-2">
-                        <a type="button" [ngbPopover]="phaseRestriction">
-                            <app-info-icon></app-info-icon>
-                        </a>
-                        <ng-template #phaseRestriction>
-                            <p class="mb-0">This date is outside the phase's active period</p>
-                        </ng-template>
-                    </div>
+            </div>
+        </td>
+        <td [formGroupName]="'thu'">
+            <div class="d-flex align-items-center">
+                <div class="input-group custom-input-group" [ngClass]="getApprovalClass(project.get('thu'))">
+                    <input type="text" formControlName="duration" class="form-control custom-input border-none"
+                        placeholder="HH:MM" maxlength="4" (keypress)="allowNumbersOnly($event)"
+                        (keydown)="checkClearDuration($event, 'thu', i)"
+                        (keyup.enter)="formatTime($event, 'thu', i, 'duration',project.get('thu'))"
+                        (blur)="formatTime($event, 'thu', i, 'duration',project.get('thu'))">
+                    <span *ngIf="project.get('thu.duration')?.value && (project.get('thu.approvalStatus')?.value === 'Rejected'||project.get('thu.approvalStatus')?.value === 'Waiting for Approval'
+                        ||project.get('thu.approvalStatus')?.value === 'Processed')"
+                        class="input-group-text border-none" (mousedown)="$event.preventDefault()">
+                        <div class="info-icon" [ngbPopover]="approvalInfo" triggers="click" autoClose="outside"
+                            popoverClass="approval-info-popover" container="body"
+                            (click)="onclickinfo(project.get('thu'))"> <i class="bi bi-info-circle"></i></div>
+                    </span>
+                    <span *ngIf="shouldShowIcon(project, 'thu', i)" class="input-group-text border-none "
+                        (mousedown)="$event.preventDefault()">
+                        <i class="bi bi-three-dots-vertical cursor"
+                            (click)="openModal(addtask,project.get('thu'),i,'thu')"></i>
+                    </span>
                 </div>
-            </td>
+                <div *ngIf="project.get('thu.approvalStatus')?.value === 'Rejected'" class="ms-2">
+                    <a type="button" [ngbPopover]="description">
+                        <app-info-icon></app-info-icon>
+                    </a>
+                    <ng-template #description>
+                        <p class="mb-0">{{ project.get('thu.rejectReason')?.value}}</p>
+                    </ng-template>
+                </div>
+                <div *ngIf="project.get('thu.blockReason')?.value === 'Phase Date Restriction'" class="ms-2">
+                    <a type="button" [ngbPopover]="phaseRestriction">
+                        <app-info-icon></app-info-icon>
+                    </a>
+                    <ng-template #phaseRestriction>
+                        <p class="mb-0">This date is outside the phase's active period</p>
+                    </ng-template>
+                </div>
+            </div>
+        </td>
+        <td [formGroupName]="'fri'">
+            <div class="d-flex align-items-center">
+                <div class="input-group custom-input-group" [ngClass]="getApprovalClass(project.get('fri'))">
+                    <input type="text" formControlName="duration" class="form-control custom-input border-none"
+                        placeholder="HH:MM" maxlength="4" (keypress)="allowNumbersOnly($event)"
+                        (keydown)="checkClearDuration($event, 'fri', i)"
+                        (keyup.enter)="formatTime($event, 'fri', i, 'duration',project.get('fri'))"
+                        (blur)="formatTime($event, 'fri', i, 'duration',project.get('fri'))">
+                    <span *ngIf="project.get('fri.duration')?.value && (project.get('fri.approvalStatus')?.value === 'Rejected'||project.get('fri.approvalStatus')?.value === 'Waiting for Approval'
+                        ||project.get('fri.approvalStatus')?.value === 'Processed')"
+                        class="input-group-text border-none" (mousedown)="$event.preventDefault()">
+                        <div class="info-icon" [ngbPopover]="approvalInfo" autoClose="outside" triggers="click"
+                            popoverClass="approval-info-popover" container="body"
+                            (click)="onclickinfo(project.get('fri'))"> <i class="bi bi-info-circle"></i></div>
+                    </span>
+                    <span *ngIf="shouldShowIcon(project, 'fri', i)" class="input-group-text border-none"
+                        (mousedown)="$event.preventDefault()">
+                        <i class="bi bi-three-dots-vertical cursor"
+                            (click)="openModal(addtask,project.get('fri'),i,'fri')"></i>
+                    </span>
+                </div>
+                <div *ngIf="project.get('fri.approvalStatus')?.value === 'Rejected'" class="ms-2">
+                    <a type="button" [ngbPopover]="description">
+                        <app-info-icon></app-info-icon>
+                    </a>
+                    <ng-template #description>
+                        <p class="mb-0">{{ project.get('fri.rejectReason')?.value}}</p>
+                    </ng-template>
+                </div>
+                <div *ngIf="project.get('fri.blockReason')?.value === 'Phase Date Restriction'" class="ms-2">
+                    <a type="button" [ngbPopover]="phaseRestriction">
+                        <app-info-icon></app-info-icon>
+                    </a>
+                    <ng-template #phaseRestriction>
+                        <p class="mb-0">This date is outside the phase's active period</p>
+                    </ng-template>
+                </div>
+            </div>
+        </td>
+        <td [formGroupName]="'sat'">
+            <div class="d-flex align-items-center">
+                <div class="input-group custom-input-group" [ngClass]="getApprovalClass(project.get('sat'))">
+                    <input type="text" formControlName="duration" class="form-control custom-input border-none"
+                        placeholder="HH:MM" maxlength="4" (keypress)="allowNumbersOnly($event)"
+                        (keydown)="checkClearDuration($event, 'sat', i)"
+                        (keyup.enter)="formatTime($event, 'sat', i, 'duration',project.get('sat'))"
+                        (blur)="formatTime($event, 'sat', i, 'duration',project.get('sat'))">
+                    <span *ngIf="project.get('sat.duration')?.value && (project.get('sat.approvalStatus')?.value === 'Rejected'||project.get('sat.approvalStatus')?.value === 'Waiting for Approval'
+                        ||project.get('sat.approvalStatus')?.value === 'Processed')"
+                        class="input-group-text border-none" (mousedown)="$event.preventDefault()">
+                        <div class="info-icon" [ngbPopover]="approvalInfo" triggers="click" autoClose="outside"
+                            popoverClass="approval-info-popover" container="body"
+                            (click)="onclickinfo(project.get('sat'))"> <i class="bi bi-info-circle"></i></div>
+                    </span>
+                    <span *ngIf="shouldShowIcon(project, 'sat', i)" class="input-group-text border-none"
+                        (mousedown)="$event.preventDefault()">
+                        <i class="bi bi-three-dots-vertical cursor"
+                            (click)="openModal(addtask,project.get('sat'),i,'sat')"></i>
+                    </span>
+                </div>
+                <div *ngIf="project.get('sat.approvalStatus')?.value === 'Rejected'" class="ms-2">
+                    <a type="button" [ngbPopover]="description">
+                        <app-info-icon></app-info-icon>
+                    </a>
+                    <ng-template #description>
+                        <p class="mb-0">{{ project.get('sat.rejectReason')?.value}}</p>
+                    </ng-template>
+                </div>
+                <div *ngIf="project.get('sat.blockReason')?.value === 'Phase Date Restriction'" class="ms-2">
+                    <a type="button" [ngbPopover]="phaseRestriction">
+                        <app-info-icon></app-info-icon>
+                    </a>
+                    <ng-template #phaseRestriction>
+                        <p class="mb-0">This date is outside the phase's active period</p>
+                    </ng-template>
+                </div>
+            </div>
+        </td>
+        <td [formGroupName]="'sun'">
+            <div class="d-flex align-items-center">
+                <div class="input-group custom-input-group" [ngClass]="getApprovalClass(project.get('sun'))">
+                    <input type="text" formControlName="duration" class="form-control custom-input border-none"
+                        placeholder="HH:MM" maxlength="4" (keypress)="allowNumbersOnly($event)"
+                        (keydown)="checkClearDuration($event, 'sun', i)"
+                        (keyup.enter)="formatTime($event, 'sun', i, 'duration',project.get('sun'))"
+                        (blur)="formatTime($event, 'sun', i, 'duration',project.get('sun'))">
+                    <span *ngIf="project.get('sun.duration')?.value && (project.get('sun.approvalStatus')?.value === 'Rejected'||project.get('sun.approvalStatus')?.value === 'Waiting for Approval'
+                        ||project.get('sun.approvalStatus')?.value === 'Processed')"
+                        class="input-group-text border-none" (mousedown)="$event.preventDefault()">
+                        <div class="info-icon" [ngbPopover]="approvalInfo" triggers="click" autoClose="outside"
+                            popoverClass="approval-info-popover" container="body"
+                            (click)="onclickinfo(project.get('sun'))"> <i class="bi bi-info-circle"></i></div>
+                    </span>
+                    <span *ngIf="shouldShowIcon(project, 'sun', i)" class="input-group-text border-none"
+                        (mousedown)="$event.preventDefault()">
+                        <i class="bi bi-three-dots-vertical cursor"
+                            (click)="openModal(addtask,project.get('sun'),i,'sun')"></i>
+                    </span>
+                </div>
+                <div *ngIf="project.get('sun.approvalStatus')?.value === 'Rejected'" class="ms-2">
+                    <a type="button" [ngbPopover]="description">
+                        <app-info-icon></app-info-icon>
+                    </a>
+                    <ng-template #description>
+                        <p class="mb-0">{{ project.get('sun.rejectReason')?.value}}</p>
+                    </ng-template>
+                </div>
+                <div *ngIf="project.get('sun.blockReason')?.value === 'Phase Date Restriction'" class="ms-2">
+                    <a type="button" [ngbPopover]="phaseRestriction">
+                        <app-info-icon></app-info-icon>
+                    </a>
+                    <ng-template #phaseRestriction>
+                        <p class="mb-0">This date is outside the phase's active period</p>
+                    </ng-template>
+                </div>
+            </div>
+        </td>
             <td *ngIf="!employeeSelected">
                 <span type="button" (click)="openModalfordeletealldata(alldeleteconformation,i)"
                     *ngIf="canDelete(project,i)">

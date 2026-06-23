@@ -6,16 +6,15 @@
     <div class="custom-component-right-content">
         <div class="component-tabs-accordian">
             <ul class="accordian-tabs-list-content">
-                <p-accordion value="0">
+                <p-accordion [value]="activeAccordionValue" (valueChange)="onAccordionChange($event)">
                     <!--Standard Reports-->
                     @if(rbac.allowedToAccess('Standard Reports.view')){
-                    <li class="accordian-list-item">
+                    <li class="accordian-list-item" id="reports-panel-0">
                         <p-accordion-panel value="0">
                             <p-accordion-header>
                                 <div>
                                     <div class="d-flex align-items-center gap-2 mb-2">
-                                        <img src="/reports-icons/Standard-reports-icon.png" alt="Icon"
-                                            class="list-icon">
+                                        <img src="/reports-icons/Standard-reports-icon.png" alt="Icon" class="list-icon">
                                         <div class="list-label-name">Standard Reports</div>
                                     </div>
                                     <p class="list-description m-0">{{standardReports}}</p>
@@ -27,16 +26,14 @@
                         </p-accordion-panel>
                     </li>
                     }
-
                     <!--Attendance Reports-->
                     @if(rbac.allowedToAccess('Attendance reports.view')){
-                    <li class="accordian-list-item">
+                    <li class="accordian-list-item" id="reports-panel-1">
                         <p-accordion-panel value="1">
                             <p-accordion-header>
                                 <div>
                                     <div class="d-flex align-items-center gap-2 mb-2">
-                                        <img src="/reports-icons/attendance-Report-icon.png" alt="Icon"
-                                            class="list-icon">
+                                        <img src="/reports-icons/attendance-Report-icon.png" alt="Icon" class="list-icon">
                                         <div class="list-label-name">Attendance Reports</div>
                                     </div>
                                     <p class="list-description m-0">{{attendanceReports}}</p>
@@ -48,16 +45,14 @@
                         </p-accordion-panel>
                     </li>
                     }
-
                     @if(rbac.allowedToAccess('Policy Reports.view')){
                     <!--Policy Reports-->
-                    <li class="accordian-list-item">
+                    <li class="accordian-list-item" id="reports-panel-2">
                         <p-accordion-panel value="2">
                             <p-accordion-header>
                                 <div>
                                     <div class="d-flex align-items-center gap-2 mb-2">
-                                        <img src="/reports-icons/attendance-Report-icon.png" alt="Icon"
-                                            class="list-icon">
+                                        <img src="/reports-icons/attendance-Report-icon.png" alt="Icon" class="list-icon">
                                         <div class="list-label-name">Policy Reports</div>
                                     </div>
                                     <p class="list-description m-0">{{policyReportModuleReports}}</p>
@@ -70,10 +65,9 @@
                     </li>
                     }
                     <!--Time Off-->
-
                     <!--Custom Reports-->
                     @if(rbac.allowedToAccess('Custom Reports.view')){
-                    <li class="accordian-list-item" [routerLink]="['/reports/custom-reports']">
+                    <li class="accordian-list-item" [routerLink]="['/reports/custom-reports']" id="reports-panel-3">
                         <div class="d-flex justify-content-between gap-2 align-items-center">
                             <div>
                                 <div class="d-flex align-items-center gap-2 mb-2">
@@ -88,10 +82,10 @@
                         </div>
                     </li>
                     }
-
                     <!--Monthly Attendance Reports-->
                     @if(rbac.allowedToAccess('Monthly Attendance Reports.view')){
-                    <li class="accordian-list-item" [routerLink]="['/reports/monthly-attandance-reports']">
+                    <li class="accordian-list-item" [routerLink]="['/reports/monthly-attandance-reports']"
+                        id="reports-panel-4">
                         <div class="d-flex justify-content-between gap-2 align-items-center">
                             <div>
                                 <div class="d-flex align-items-center gap-2 mb-2">
@@ -106,10 +100,9 @@
                         </div>
                     </li>
                     }
-
                     <!--Team Leave Balance-->
                     @if(rbac.allowedToAccess('Team Leave Balance.view')){
-                    <li class="accordian-list-item" [routerLink]="['/reports/team-leave-balance']">
+                    <li class="accordian-list-item" [routerLink]="['/reports/team-leave-balance']" id="reports-panel-5">
                         <div class="d-flex justify-content-between gap-2 align-items-center">
                             <div>
                                 <div class="d-flex align-items-center gap-2 mb-2">
@@ -124,10 +117,9 @@
                         </div>
                     </li>
                     }
-
                     <!--Team Leave Summary-->
                     @if(rbac.allowedToAccess('Team Leave Balance Summary.view')){
-                    <li class="accordian-list-item" [routerLink]="['/reports/team-leave-summary']">
+                    <li class="accordian-list-item" [routerLink]="['/reports/team-leave-summary']" id="reports-panel-6">
                         <div class="d-flex justify-content-between gap-2 align-items-center">
                             <div>
                                 <div class="d-flex align-items-center gap-2 mb-2">
@@ -142,10 +134,9 @@
                         </div>
                     </li>
                     }
-
                     <!-- Org Leave Balance -->
                     @if(rbac.allowedToAccess('Org Leave Balance.view')){
-                    <li class="accordian-list-item" [routerLink]="['/reports/org-leave-balance']">
+                    <li class="accordian-list-item" [routerLink]="['/reports/org-leave-balance']" id="reports-panel-7">
                         <div class="d-flex justify-content-between gap-2 align-items-center">
                             <div>
                                 <div class="d-flex align-items-center gap-2 mb-2">
@@ -160,29 +151,27 @@
                         </div>
                     </li>
                     }
-                     @if(rbac.allowedToAccess('Timesheet Reports.view')){
-                    <li class="accordian-list-item">
+                    @if(rbac.allowedToAccess('Timesheet Reports.view')){
+                    <li class="accordian-list-item" id="reports-panel-8">
                         <p-accordion-panel value="3">
                             <p-accordion-header>
                                 <div>
                                     <div class="d-flex align-items-center gap-2 mb-2">
-                                        <img src="/reports-icons/timesheet-Report.png" alt="Icon"
-                                            class="list-icon">
+                                        <img src="/reports-icons/timesheet-Report.png" alt="Icon" class="list-icon">
                                         <div class="list-label-name">Timesheet Reports</div>
                                     </div>
                                     <p class="list-description m-0">{{timesheetReports}}</p>
                                 </div>
                             </p-accordion-header>
                             <p-accordion-content>
-                                <app-timesheet-report-tabs/>
+                                <app-timesheet-report-tabs />
                             </p-accordion-content>
                         </p-accordion-panel>
-                        </li>
+                    </li>
                     }
-
-                          <!-- Expense Reports -->
+                    <!-- Expense Reports -->
                     @if(rbac.allowedToAccess('Expense Reports.view')){
-                    <li class="accordian-list-item" [routerLink]="['/reports/expense-reports']">
+                    <li class="accordian-list-item" [routerLink]="['/reports/expense-reports']" id="reports-panel-9">
                         <div class="d-flex justify-content-between gap-2 align-items-center">
                             <div>
                                 <div class="d-flex align-items-center gap-2 mb-2">
@@ -197,43 +186,42 @@
                         </div>
                     </li>
                     }
-
                     @if(rbac.allowedToAccess('Help Desk Reports.view')){
-          <li class="accordian-list-item">
-            <p-accordion-panel value="4">
-              <p-accordion-header>
-                <div>
-                  <div class="d-flex align-items-center gap-2 mb-2">
-                    <img src="/reports-icons/Help desk report.png" alt="Icon" class="list-icon">
-                    <div class="list-label-name">Help Desk Reports</div>
-                  </div>
-                  <p class="list-description m-0">{{helpDeskReports}}</p>
-                </div>
-              </p-accordion-header>
-              <p-accordion-content>
-                <app-help-desk-report-tabs />
-                </p-accordion-content>
-            </p-accordion-panel>
-          </li>
-          }
-          @if(rbac.allowedToAccess('IT Support Reports.view')){
-          <li class="accordian-list-item">
-            <p-accordion-panel value="5">
-              <p-accordion-header>
-                <div>
-                  <div class="d-flex align-items-center gap-2 mb-2">
-                    <img src="/reports-icons/It support.png" alt="Icon" class="list-icon">
-                    <div class="list-label-name">{{'IT Support Reports'|translate}}</div>
-                  </div>
-                  <p class="list-description m-0">{{itsupportReports}}</p>
-                </div>
-              </p-accordion-header>
-              <p-accordion-content>
-                <app-it-support-reports-tabs />
-              </p-accordion-content>
-            </p-accordion-panel>
-          </li>
-          }
+                    <li class="accordian-list-item" id="reports-panel-10">
+                        <p-accordion-panel value="4">
+                            <p-accordion-header>
+                                <div>
+                                    <div class="d-flex align-items-center gap-2 mb-2">
+                                        <img src="/reports-icons/Help desk report.png" alt="Icon" class="list-icon">
+                                        <div class="list-label-name">Help Desk Reports</div>
+                                    </div>
+                                    <p class="list-description m-0">{{helpDeskReports}}</p>
+                                </div>
+                            </p-accordion-header>
+                            <p-accordion-content>
+                                <app-help-desk-report-tabs />
+                            </p-accordion-content>
+                        </p-accordion-panel>
+                    </li>
+                    }
+                    @if(rbac.allowedToAccess('IT Support Reports.view')){
+                    <li class="accordian-list-item" id="reports-panel-11">
+                        <p-accordion-panel value="5">
+                            <p-accordion-header>
+                                <div>
+                                    <div class="d-flex align-items-center gap-2 mb-2">
+                                        <img src="/reports-icons/It support.png" alt="Icon" class="list-icon">
+                                        <div class="list-label-name">{{'IT Support Reports'|translate}}</div>
+                                    </div>
+                                    <p class="list-description m-0">{{itsupportReports}}</p>
+                                </div>
+                            </p-accordion-header>
+                            <p-accordion-content>
+                                <app-it-support-reports-tabs />
+                            </p-accordion-content>
+                        </p-accordion-panel>
+                    </li>
+                    }
                 </p-accordion>
             </ul>
         </div>

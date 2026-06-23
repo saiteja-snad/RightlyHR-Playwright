@@ -24,11 +24,12 @@ import { Editor } from 'primeng/editor';
 import { environment } from '../../../environments/environment';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { DateformatPipe } from '../../pipes/dateformat.pipe';
-import { LetterFooterComponent } from "../../shared/letters-shared-content/letter-footer/letter-footer.component";
 import { LettersheaderComponent } from "../../shared/letters-shared-content/lettersheader/lettersheader.component";
+import { LetterFooterComponent } from "../../shared/letters-shared-content/letter-footer/letter-footer.component";
+import { fetchLetterAssets, setupLetterPdfMake } from '../../letters-builder-files/letter-pdf.utils';
 @Component({
   selector: 'app-contractor-letter',
-  imports: [CommonModule, TranslateModule, Select, NgxCountriesDropdownModule, ReactiveFormsModule, DateformatPipe, NgbPopoverModule, Editor, LetterFooterComponent, LettersheaderComponent],
+  imports: [CommonModule, TranslateModule, Select, NgxCountriesDropdownModule, ReactiveFormsModule, DateformatPipe, NgbPopoverModule, Editor, LettersheaderComponent, LetterFooterComponent],
   templateUrl: './contractor-letter.component.html',
   styleUrl: './contractor-letter.component.scss',
   encapsulation: ViewEncapsulation.None,
@@ -227,23 +228,13 @@ export class ContractorLetterComponent implements OnInit, OnDestroy {
     this.loading = true;
     const data = this.prospectiveEmpData;
     const fileName = `${data.firstName}_${data.middleName ?? ''}_${data.lastName ?? ''}_${new Date().getTime()}_ContractorLetter.pdf`;
-    const [backgroundImageBase64, verdanaItalic, verdanaSemiBold] = await Promise.all([
-      this.fetchImageAsBase64('/images/snad-new-letter-bg.png'),
-      this.getFileBase64('/fonts/Verdana Italic.ttf'),
-      this.getFileBase64('/fonts/verdana-pro-semi-bold.ttf'),
-    ]);
-
-    const pm = (pdfMake as any).default ?? pdfMake;
-    const mergedVfs: Record<string, string> = { ...customVfs };
-    if (verdanaItalic)   mergedVfs['VerdanaItalic.ttf']   = verdanaItalic;
-    if (verdanaSemiBold) mergedVfs['VerdanaSemiBold.ttf'] = verdanaSemiBold;
-    pm.addVirtualFileSystem(mergedVfs);
-    pm.setFonts({
-      VERDANA: { normal: 'VerdanaNow.ttf', bold: 'VerdanaNowBold.ttf', italics: verdanaItalic ? 'VerdanaItalic.ttf' : 'VerdanaNow.ttf', bolditalics: 'VerdanaNowBold.ttf' },
-      VERDANABOLD: { normal: verdanaSemiBold ? 'VerdanaSemiBold.ttf' : 'VerdanaNowBold.ttf', bold: verdanaSemiBold ? 'VerdanaSemiBold.ttf' : 'VerdanaNowBold.ttf', italics: verdanaSemiBold ? 'VerdanaSemiBold.ttf' : 'VerdanaNowBold.ttf', bolditalics: verdanaSemiBold ? 'VerdanaSemiBold.ttf' : 'VerdanaNowBold.ttf' },
-      Autography: { normal: 'Autography.otf', bold: 'Autography.otf', italics: 'Autography.otf', bolditalics: 'Autography.otf' },
-    });
-
+       const isSoftCopy = true;
+   
+   
+       const [assets, pm] = await Promise.all([
+         fetchLetterAssets(isSoftCopy),
+         setupLetterPdfMake(),
+       ]);
     const selectedCurrency = this.currencyDetails.find(c => c.key === this.employeeForm.get('currencyType')?.value);
     const docDef = buildContractorLetterDoc({
       title: data.title,
@@ -266,7 +257,8 @@ export class ContractorLetterComponent implements OnInit, OnDestroy {
       rolesAndResponsibilities: this.employeeForm.get('rolesAndResponsibilitiesId')?.value,
       authorityName: data.authorityName ?? '',
       authorityDesignation: this.authorityDesignation ?? '',
-      backgroundImageBase64,
+        backgroundImageBase64: assets.backgroundImageBase64,
+      headerLogoBase64: assets.headerLogoBase64,
       useVerdanaFont: true,
       useAutographyFont: true,
     });
@@ -293,22 +285,12 @@ export class ContractorLetterComponent implements OnInit, OnDestroy {
   async downLoadDocument(EmpValue: any) {
     const data = this.prospectiveEmpData;
     const fileName = `${data.firstName}_${data.middleName ?? ''}_${data.lastName ?? ''}_${new Date().getTime()}_ContractorLetter.pdf`;
-    const [backgroundImageBase64, verdanaItalic, verdanaSemiBold] = await Promise.all([
-      this.fetchImageAsBase64('/images/snad-new-letter-bg.png'),
-      this.getFileBase64('/fonts/Verdana Italic.ttf'),
-      this.getFileBase64('/fonts/verdana-pro-semi-bold.ttf'),
-    ]);
-
-    const pm = (pdfMake as any).default ?? pdfMake;
-    const mergedVfs: Record<string, string> = { ...customVfs };
-    if (verdanaItalic)   mergedVfs['VerdanaItalic.ttf']   = verdanaItalic;
-    if (verdanaSemiBold) mergedVfs['VerdanaSemiBold.ttf'] = verdanaSemiBold;
-    pm.addVirtualFileSystem(mergedVfs);
-    pm.setFonts({
-      VERDANA: { normal: 'VerdanaNow.ttf', bold: 'VerdanaNowBold.ttf', italics: verdanaItalic ? 'VerdanaItalic.ttf' : 'VerdanaNow.ttf', bolditalics: 'VerdanaNowBold.ttf' },
-      VERDANABOLD: { normal: verdanaSemiBold ? 'VerdanaSemiBold.ttf' : 'VerdanaNowBold.ttf', bold: verdanaSemiBold ? 'VerdanaSemiBold.ttf' : 'VerdanaNowBold.ttf', italics: verdanaSemiBold ? 'VerdanaSemiBold.ttf' : 'VerdanaNowBold.ttf', bolditalics: verdanaSemiBold ? 'VerdanaSemiBold.ttf' : 'VerdanaNowBold.ttf' },
-      Autography: { normal: 'Autography.otf', bold: 'Autography.otf', italics: 'Autography.otf', bolditalics: 'Autography.otf' },
-    });
+       const isSoftCopy = true;
+  
+       const [assets, pm] = await Promise.all([
+         fetchLetterAssets(isSoftCopy),
+         setupLetterPdfMake(),
+       ]);
 
     const selectedCurrency = this.currencyDetails.find(c => c.key === this.employeeForm.get('currencyType')?.value);
     const docDef = buildContractorLetterDoc({
@@ -332,7 +314,8 @@ export class ContractorLetterComponent implements OnInit, OnDestroy {
       rolesAndResponsibilities: this.employeeForm.get('rolesAndResponsibilitiesId')?.value,
       authorityName: data.authorityName ?? '',
       authorityDesignation: this.authorityDesignation ?? '',
-      backgroundImageBase64,
+         backgroundImageBase64: assets.backgroundImageBase64,
+      headerLogoBase64: assets.headerLogoBase64,
       useVerdanaFont: true,
       useAutographyFont: true,
     });
@@ -1238,3 +1221,4 @@ export class ContractorLetterComponent implements OnInit, OnDestroy {
     }
   }
 }
+

@@ -15,9 +15,11 @@ import { ConfirmationIconComponent } from '../../../icons/confirmation-icon/conf
 import { FormValidationsService } from '../../../services/form-validations.service';
 import { IAddress } from '../../../Interfaces/letters-model';
 import { fetchLetterAssets, setupLetterPdfMake } from '../../../letters-builder-files/letter-pdf.utils';
+import { LettersheaderComponent } from "../../../shared/letters-shared-content/lettersheader/lettersheader.component";
+import { LetterFooterComponent } from "../../../shared/letters-shared-content/letter-footer/letter-footer.component";
 @Component({
   selector: 'app-salery-revision-letter-acknowedgement',
-  imports: [CommonModule, TranslateModule, ReactiveFormsModule, DateformatPipe, ConfirmationIconComponent],
+  imports: [CommonModule, TranslateModule, ReactiveFormsModule, DateformatPipe, ConfirmationIconComponent, LettersheaderComponent, LetterFooterComponent],
   templateUrl: './salery-revision-letter-acknowedgement.component.html',
   styleUrl: './salery-revision-letter-acknowedgement.component.scss'
 })

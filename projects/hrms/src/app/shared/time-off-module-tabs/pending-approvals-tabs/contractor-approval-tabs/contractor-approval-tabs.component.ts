@@ -81,7 +81,7 @@ export class ContractorApprovalTabsComponent {
         this.navLinks = this.navLinks.map((link) => ({
           ...link,
           count: countMap.get(link.moduleId) || 0,
-        }));
+        })).sort((a, b) => (b.count ?? 0) - (a.count ?? 0));
         this.loading = false;
       },
       error: (err) => {

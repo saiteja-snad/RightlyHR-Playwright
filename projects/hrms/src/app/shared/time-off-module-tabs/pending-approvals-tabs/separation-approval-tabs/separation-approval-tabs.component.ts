@@ -122,6 +122,7 @@ export class SeparationApprovalTabsComponent {
         if (filteredNoDueLink) {
           filteredNoDueLink.count = noDueLink?.count || 0;
         }
+        this.filteredNavLinks = [...this.filteredNavLinks].sort((a, b) => (b.count ?? 0) - (a.count ?? 0));
       },
     });
   }
@@ -136,7 +137,7 @@ export class SeparationApprovalTabsComponent {
         this.navLinks = this.navLinks.map((link: NavLink) => ({
           ...link,
           count: countMap.get(link.moduleId) || 0,
-        }));
+        })).sort((a, b) => (b.count ?? 0) - (a.count ?? 0));
         this.filteredNavLinks = [...this.navLinks];
         this.loading = false;
         this.redirectIfNeeded();

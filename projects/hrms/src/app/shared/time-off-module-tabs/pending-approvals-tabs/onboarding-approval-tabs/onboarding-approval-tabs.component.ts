@@ -183,7 +183,7 @@ export class OnboardingApprovalTabsComponent implements OnInit, OnDestroy {
             this.navLinks = this.navLinks.map((link: NavLink) => ({
               ...link,
               count: Number(moduleMap.get(link.label)) || 0,
-            }));
+            })).sort((a, b) => (b.count ?? 0) - (a.count ?? 0));
             this.filteredNavLinks = [...this.navLinks];
           } else {
             const activeLink = this.navLinks.find((link: NavLink) => this.isActiveRoute(link.route));

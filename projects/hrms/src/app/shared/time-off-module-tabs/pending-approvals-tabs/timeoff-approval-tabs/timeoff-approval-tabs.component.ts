@@ -131,13 +131,6 @@ export class TimeoffApprovalTabsComponent {
   ngOnInit(): void {
     this.LOGIN = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.getAllPendingApprovalsCount();
-    this.navLinks = this.navLinks.filter(
-      (tab) =>
-        tab.permission &&
-        tab.permission.feature &&
-        tab.permission.action &&
-        this.rbac.allowedToAccess(`${tab.permission.feature}.${tab.permission.action}`)
-    );
     this.redirectIfNeeded();
   }
 
@@ -153,14 +146,26 @@ export class TimeoffApprovalTabsComponent {
   getAllPendingApprovalsCount() {
     this.loading = true;
     const employeeId = parseInt(this.LOGIN.employeeId);
+    console.log("lets debug the pending approval count");
     this.http.getAllPendingApprovalsCount(undefined, employeeId).subscribe({
       next: (data: ApprovalStatusCount[]) => {
+        console.log("found the count and proceed to sort");
         const countMap = new Map<number, number>();
         data.forEach((item) => countMap.set(item.moduleId, item.totalCount));
-        this.navLinks = this.navLinks.map((link) => ({
-          ...link,
-          count: countMap.get(link.moduleId) || 0,
-        }));
+        console.log(data);
+        console.log(countMap);
+        this.navLinks = this.navLinks
+          .filter((tab) =>
+            tab.permission &&
+            tab.permission.feature &&
+            tab.permission.action &&
+            this.rbac.allowedToAccess(`${tab.permission.feature}.${tab.permission.action}`)
+          )
+          .map((link) => ({
+            ...link,
+            count: countMap.get(link.moduleId) || 0,
+          }))
+          .sort((a, b) => (b.count ?? 0) - (a.count ?? 0));
         this.loading = false;
         this.redirectIfNeeded();
       },

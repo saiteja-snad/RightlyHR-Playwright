@@ -414,6 +414,7 @@ export function buildOfferLetterDoc(data: OfferLetterData): any {
 
 
  const isSoftCopy = !!data.backgroundImageBase64;
+ 
   const margins = isSoftCopy ? LETTER_MARGINS.softCopy : LETTER_MARGINS.hardCopy;
 
   const docDef: any = {

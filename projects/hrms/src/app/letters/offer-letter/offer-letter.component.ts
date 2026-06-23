@@ -21,6 +21,7 @@ import { DateformatPipe } from '../../pipes/dateformat.pipe';
 import { LetterFooterComponent } from "../../shared/letters-shared-content/letter-footer/letter-footer.component";
 import { LettersheaderComponent } from "../../shared/letters-shared-content/lettersheader/lettersheader.component";
 import { ConfirmationIconComponent } from "../../icons/confirmation-icon/confirmation-icon.component";
+import { fetchLetterAssets, setupLetterPdfMake } from '../../letters-builder-files/letter-pdf.utils';
 @Component({
   selector: 'app-offer-letter',
   imports: [CommonModule, TranslateModule, Select, NgxCountriesDropdownModule, ReactiveFormsModule, DateformatPipe, NgbPopoverModule, LetterFooterComponent, LettersheaderComponent, ConfirmationIconComponent],
@@ -188,23 +189,11 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
   async downLoadDocument(EmpValue: any) {
     const data = this.prospectiveEmpData;
     const fileName = `${data.firstName}_${data.middleName ?? ''}_${data.lastName ?? ''}_${new Date().getTime()}_OfferLetter.pdf`;
-    const [backgroundImageBase64, verdanaItalic, verdanaSemiBold] = await Promise.all([
-      this.fetchImageAsBase64('/images/snad-new-letter-bg.png'),
-      this.getFileBase64('/fonts/Verdana Italic.ttf'),
-      this.getFileBase64('/fonts/verdana-pro-semi-bold.ttf'),
+    const isSoftCopy = true;
+    const [assets, pm] = await Promise.all([
+      fetchLetterAssets(isSoftCopy),
+      setupLetterPdfMake(),
     ]);
-
-    const pm = (pdfMake as any).default ?? pdfMake;
-    const mergedVfs: Record<string, string> = { ...customVfs };
-    if (verdanaItalic)   mergedVfs['VerdanaItalic.ttf']   = verdanaItalic;
-    if (verdanaSemiBold) mergedVfs['VerdanaSemiBold.ttf'] = verdanaSemiBold;
-    pm.addVirtualFileSystem(mergedVfs);
-    pm.setFonts({
-      VERDANA: { normal: 'VerdanaNow.ttf', bold: 'VerdanaNowBold.ttf', italics: verdanaItalic ? 'VerdanaItalic.ttf' : 'VerdanaNow.ttf', bolditalics: 'VerdanaNowBold.ttf' },
-      VERDANABOLD: { normal: verdanaSemiBold ? 'VerdanaSemiBold.ttf' : 'VerdanaNowBold.ttf', bold: verdanaSemiBold ? 'VerdanaSemiBold.ttf' : 'VerdanaNowBold.ttf', italics: verdanaSemiBold ? 'VerdanaSemiBold.ttf' : 'VerdanaNowBold.ttf', bolditalics: verdanaSemiBold ? 'VerdanaSemiBold.ttf' : 'VerdanaNowBold.ttf' },
-      Autography: { normal: 'Autography.otf', bold: 'Autography.otf', italics: 'Autography.otf', bolditalics: 'Autography.otf' },
-    });
-
     const docDef = buildOfferLetterDoc({
       firstName: data.firstName,
       middleName: data.middleName,
@@ -246,7 +235,8 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
       grossSalary: data.grossSalary,
       esicContribution: data.esicContribution,
       esiPerAnnum: data.esiPerAnnum,
-      backgroundImageBase64,
+      backgroundImageBase64: assets.backgroundImageBase64,
+      headerLogoBase64: assets.headerLogoBase64,
       useVerdanaFont: true,
       useAutographyFont: true,
     });
@@ -423,7 +413,7 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
       next: (data: any) => {
         this.authorityDetails = data.map((authority: any) => ({
           ...authority,
-          fullName: `${authority.firstName} ${authority.middleName ? authority.middleName + ' ' : ''}${authority.lastName}` 
+          fullName: `${authority.firstName} ${authority.middleName ? authority.middleName + ' ' : ''}${authority.lastName}`
           // Concatenate first, middle, last name and trim any extra spaces
         }));
       },
@@ -492,9 +482,9 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
   pathValuesFuction() {
     const formValues = this.employeeForm.value;
     this.prospectiveEmpData.offerIssuedDate = formValues.offerIssuedDate,
-    this.prospectiveEmpData.dateOfJoining = formValues.dateOfJoining,
-    this.prospectiveEmpData.Copys = formValues.Copys,
-    this.prospectiveEmpData.offerExpiryDate = formValues.offerExpiryDate
+      this.prospectiveEmpData.dateOfJoining = formValues.dateOfJoining,
+      this.prospectiveEmpData.Copys = formValues.Copys,
+      this.prospectiveEmpData.offerExpiryDate = formValues.offerExpiryDate
     this.prospectiveEmpData.note = formValues.note
   }
 
@@ -829,17 +819,17 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
       this.prospectiveEmpData.dateOfJoining = this.employeeForm.get('dateOfJoining')?.value,
       this.prospectiveEmpData.substatus = 'Offer Letter Generated',
       this.prospectiveEmpData.password = this.employeeaddress.password
-      this.prospectiveEmpData.reportsTo = this.prospectiveEmpData.reportsTo?.toString();
-      this.prospectiveEmpData.note = this.employeeForm?.get('note')?.value ? this.employeeForm?.get('note')?.value : null;
-      this.prospectiveEmpData.offerIssuedDate = this.employeeForm?.get('offerIssuedDate')?.value ? this.employeeForm?.get('offerIssuedDate')?.value : null;
-      this.prospectiveEmpData.offerExpiryDate = this.employeeForm?.get('offerExpiryDate')?.value ? this.employeeForm?.get('offerExpiryDate')?.value : null;
-      this.prospectiveEmpData.empId = this.prospectiveEmpData.empId.toString();
-      this.prospectiveEmpData.workEmail=this.prospectiveEmpData.workEmail;
-      this.prospectiveEmpData.maritalStatus=this.prospectiveEmpData.maritalStatus
+    this.prospectiveEmpData.reportsTo = this.prospectiveEmpData.reportsTo?.toString();
+    this.prospectiveEmpData.note = this.employeeForm?.get('note')?.value ? this.employeeForm?.get('note')?.value : null;
+    this.prospectiveEmpData.offerIssuedDate = this.employeeForm?.get('offerIssuedDate')?.value ? this.employeeForm?.get('offerIssuedDate')?.value : null;
+    this.prospectiveEmpData.offerExpiryDate = this.employeeForm?.get('offerExpiryDate')?.value ? this.employeeForm?.get('offerExpiryDate')?.value : null;
+    this.prospectiveEmpData.empId = this.prospectiveEmpData.empId.toString();
+    this.prospectiveEmpData.workEmail = this.prospectiveEmpData.workEmail;
+    this.prospectiveEmpData.maritalStatus = this.prospectiveEmpData.maritalStatus
     if (this.buttonValue == 'Regenerate Offer Letter' && this.employeeaddress.substatus != 'Offer Letter Rejected By Manager') {
       this.prospectiveEmpData.substatus = 'Offer Letter Regenerated';
-    } else { 
-      this.prospectiveEmpData.substatus = 'Offer Letter Generated'; 
+    } else {
+      this.prospectiveEmpData.substatus = 'Offer Letter Generated';
     }
     this.subscription = this.http.postdata('Employeedata/UPDATER', this.prospectiveEmpData).subscribe({
       next: (res: any) => {
@@ -875,8 +865,8 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
     if (employeeData.substatus == 'Offer Letter Rejected By Manager') {
       employeeData.substatus = 'Offer Letter Generated';
       (employeeData.generateOffer = false),
-      (employeeData.esic = this.prospectiveEmpData.esic),
-      (employeeData.pf = this.prospectiveEmpData.pf);
+        (employeeData.esic = this.prospectiveEmpData.esic),
+        (employeeData.pf = this.prospectiveEmpData.pf);
       this.subscription = this.http.postdata('Employeedata/UPDATER', employeeData).subscribe({
         next: (res: any) => {
           this.result = res;
@@ -895,7 +885,7 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
       });
     } else {
       (employeeData.substatus = 'Offer Letter Regenerated'),
-      (employeeData.generateOffer = false);
+        (employeeData.generateOffer = false);
       this.subscription = this.http.postdata('Employeedata/UPDATER', employeeData).subscribe({
         next: (res: any) => {
           this.result = res;
@@ -941,13 +931,13 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
   }
 
   //function to updated details to respective tables
-  jobdetailsupdate!:any;
+  jobdetailsupdate!: any;
   UpdateFieldsToRespectiveTables() {
-    if(this.employeeaddress.empstatus != 'Prospective' && this.buttonValue!='Regenerate Offer Letter'){
-    this.postjobdetails(this.currentDate);
+    if (this.employeeaddress.empstatus != 'Prospective' && this.buttonValue != 'Regenerate Offer Letter') {
+      this.postjobdetails(this.currentDate);
     }
-    else{
-    this.updatejobdetails();
+    else {
+      this.updatejobdetails();
     }
   }
 
@@ -1019,7 +1009,7 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
   }
 
   //function to posting to respective fields data of job,compensation,employment
-  generatepostingtorepectivefields(currentDate:any) {
+  generatepostingtorepectivefields(currentDate: any) {
     let data = this.prospectiveEmpData;
     const Compensationdata = {
       employeeId: data.empId,
@@ -1099,7 +1089,7 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
       this.offerletterUpload(this.generatingEmployeeId, this.generatedfile);
     }
   }
-  
+
   //function to send the email to employeee
   emailToSendManager() {
     this.ApprovalLoader = true;
@@ -1152,93 +1142,93 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
       },
     });
   }
-  
-async generateDocument() {
-  this.loading = true;
-  this.disableFieldsForApproval = true;
-  const data = this.prospectiveEmpData;
-  const fileName = `${data.firstName}_${data.middleName ?? ''}_${data.lastName ?? ''}_${new Date().getTime()}_OfferLetter.pdf`;
-  const [backgroundImageBase64, verdanaItalic, verdanaSemiBold] = await Promise.all([
-    this.fetchImageAsBase64('/images/snad-new-letter-bg.png'),
-    this.getFileBase64('/fonts/verdana-pro-semi-bold-italic.ttf'),
-    this.getFileBase64('/fonts/verdana-pro-semi-bold.ttf'),
-  ]);
 
-  const pm = (pdfMake as any).default ?? pdfMake;
-  const mergedVfs: Record<string, string> = { ...customVfs };
-  if (verdanaItalic)   mergedVfs['VerdanaItalic.ttf']   = verdanaItalic;
-  if (verdanaSemiBold) mergedVfs['VerdanaSemiBold.ttf'] = verdanaSemiBold;
-  pm.addVirtualFileSystem(mergedVfs);
-  pm.setFonts({
-    VERDANA: { normal: 'VerdanaNow.ttf', italics: verdanaItalic ? 'VerdanaItalic.ttf' : 'VerdanaNow.ttf' },
-    VERDANABOLD: { normal: verdanaSemiBold ? 'VerdanaSemiBold.ttf' : 'VerdanaNowBold.ttf'  },
-    Autography: { normal: 'Autography.otf' },
-  });
+  async generateDocument() {
+    this.loading = true;
+    this.disableFieldsForApproval = true;
+    const data = this.prospectiveEmpData;
+    const fileName = `${data.firstName}_${data.middleName ?? ''}_${data.lastName ?? ''}_${new Date().getTime()}_OfferLetter.pdf`;
+    const [backgroundImageBase64, verdanaItalic, verdanaSemiBold] = await Promise.all([
+      this.fetchImageAsBase64('/images/snad-new-letter-bg.png'),
+      this.getFileBase64('/fonts/verdana-pro-semi-bold-italic.ttf'),
+      this.getFileBase64('/fonts/verdana-pro-semi-bold.ttf'),
+    ]);
 
-  const docDef = buildOfferLetterDoc({
-    firstName: data.firstName,
-    middleName: data.middleName,
-    lastName: data.lastName,
-    addressLine1: data.addressLine1,
-    addressLine2: data.addressLine2,
-    city: data.city,
-    state: data.state,
-    country: data.country,
-    pinCode: data.pinCode,
-    offerIssuedDate: this.employeeForm.get('offerIssuedDate')?.value,
-    dateOfJoining: this.employeeForm.get('dateOfJoining')?.value,
-    offerExpiryDate: this.employeeForm.get('offerExpiryDate')?.value,
-    jobRole: data.jobRole,
-    workAddress: data.address ?? '',
-    amount: data.amount,
-    variablePayAmount: data.variablePayAmount,
-    authorityName: data.authorityName ?? '',
-    authorityDesignation: this.authorityDesignation ?? '',
-    note: this.employeeForm.get('note')?.value,
-    basicSalary: data.basicSalary,
-    basicPerannum: data.basicPerannum,
-    hraSalary: data.hraSalary,
-    hraPerAnnum: data.hraPerAnnum,
-    otherAllowances: data.otherAllowances,
-    otherAllowancesPerAnnum: data.otherAllowancesPerAnnum,
-    totalGrossSalary: data.totalGrossSalary,
-    totalGrossPerAnnum: data.totalGrossPerAnnum,
-    pfContribution: data.pfContribution,
-    pfPreAnuum: data.pfPreAnuum,
-    employeeEsi: data.employeeEsi,
-    esiPerAnnumemployee: data.esiPerAnnumemployee,
-    professionalTax: data.professionalTax,
-    professionalPerAnnum: data.professionalPerAnnum,
-    totalDeduction: data.totalDeduction,
-    totalDeductionsPerAnnum: data.totalDeductionsPerAnnum,
-    netSalary: data.netSalary,
-    netSalaryPerAnnum: data.netSalaryPerAnnum,
-    grossSalary: data.grossSalary,
-    esicContribution: data.esicContribution,
-    esiPerAnnum: data.esiPerAnnum,
-    backgroundImageBase64,
-    useVerdanaFont: true,
-    useAutographyFont: true,
-  });
+    const pm = (pdfMake as any).default ?? pdfMake;
+    const mergedVfs: Record<string, string> = { ...customVfs };
+    if (verdanaItalic) mergedVfs['VerdanaItalic.ttf'] = verdanaItalic;
+    if (verdanaSemiBold) mergedVfs['VerdanaSemiBold.ttf'] = verdanaSemiBold;
+    pm.addVirtualFileSystem(mergedVfs);
+    pm.setFonts({
+      VERDANA: { normal: 'VerdanaNow.ttf', italics: verdanaItalic ? 'VerdanaItalic.ttf' : 'VerdanaNow.ttf' },
+      VERDANABOLD: { normal: verdanaSemiBold ? 'VerdanaSemiBold.ttf' : 'VerdanaNowBold.ttf' },
+      Autography: { normal: 'Autography.otf' },
+    });
 
-  try {
-    const blob: Blob = await pm.createPdf(docDef).getBlob();
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = fileName;
-    link.click();
-    URL.revokeObjectURL(link.href);
-    this.generatedfile = new File([blob], fileName, { type: 'application/pdf' });
-    this.generatingEmployeeId = this.prospectiveEmpData.empId;
-    this.loading = false;
-    this.disableFieldsForApproval = false;
-    this.conformationPopup.openSuccessModal('Offer letter generated successfully');
-  } catch (err) {
-    console.error('PDF generation failed:', err);
-    this.loading = false;
-    this.disableFieldsForApproval = false;
+    const docDef = buildOfferLetterDoc({
+      firstName: data.firstName,
+      middleName: data.middleName,
+      lastName: data.lastName,
+      addressLine1: data.addressLine1,
+      addressLine2: data.addressLine2,
+      city: data.city,
+      state: data.state,
+      country: data.country,
+      pinCode: data.pinCode,
+      offerIssuedDate: this.employeeForm.get('offerIssuedDate')?.value,
+      dateOfJoining: this.employeeForm.get('dateOfJoining')?.value,
+      offerExpiryDate: this.employeeForm.get('offerExpiryDate')?.value,
+      jobRole: data.jobRole,
+      workAddress: data.address ?? '',
+      amount: data.amount,
+      variablePayAmount: data.variablePayAmount,
+      authorityName: data.authorityName ?? '',
+      authorityDesignation: this.authorityDesignation ?? '',
+      note: this.employeeForm.get('note')?.value,
+      basicSalary: data.basicSalary,
+      basicPerannum: data.basicPerannum,
+      hraSalary: data.hraSalary,
+      hraPerAnnum: data.hraPerAnnum,
+      otherAllowances: data.otherAllowances,
+      otherAllowancesPerAnnum: data.otherAllowancesPerAnnum,
+      totalGrossSalary: data.totalGrossSalary,
+      totalGrossPerAnnum: data.totalGrossPerAnnum,
+      pfContribution: data.pfContribution,
+      pfPreAnuum: data.pfPreAnuum,
+      employeeEsi: data.employeeEsi,
+      esiPerAnnumemployee: data.esiPerAnnumemployee,
+      professionalTax: data.professionalTax,
+      professionalPerAnnum: data.professionalPerAnnum,
+      totalDeduction: data.totalDeduction,
+      totalDeductionsPerAnnum: data.totalDeductionsPerAnnum,
+      netSalary: data.netSalary,
+      netSalaryPerAnnum: data.netSalaryPerAnnum,
+      grossSalary: data.grossSalary,
+      esicContribution: data.esicContribution,
+      esiPerAnnum: data.esiPerAnnum,
+      backgroundImageBase64,
+      useVerdanaFont: true,
+      useAutographyFont: true,
+    });
+
+    try {
+      const blob: Blob = await pm.createPdf(docDef).getBlob();
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = fileName;
+      link.click();
+      URL.revokeObjectURL(link.href);
+      this.generatedfile = new File([blob], fileName, { type: 'application/pdf' });
+      this.generatingEmployeeId = this.prospectiveEmpData.empId;
+      this.loading = false;
+      this.disableFieldsForApproval = false;
+      this.conformationPopup.openSuccessModal('Offer letter generated successfully');
+    } catch (err) {
+      console.error('PDF generation failed:', err);
+      this.loading = false;
+      this.disableFieldsForApproval = false;
+    }
   }
-}
 
   ngOnDestroy(): void {
     if (this.subscription) {

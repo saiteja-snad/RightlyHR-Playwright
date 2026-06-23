@@ -146,7 +146,30 @@
             </div>
           </div>
         </ng-container>
-
+        <!-- WFH and Remote Login New Reporting manager -->
+         <ng-container *ngIf="assignForm.get('changeType')?.value === 'WFH'||assignForm.get('changeType')?.value === 'Remote Login'">
+          <div class="col-md-4">
+            <label class="form-label custom-label mb-2">
+              {{ 'New Reporting Manager' | translate }}<span class="text-danger">*</span>
+            </label>
+            <div class="custom-p-select-content">
+              <p-select
+                [options]="WFHRemoteMangers"
+                formControlName="newReportingManager"
+                optionLabel="name"
+                optionValue="value"
+                placeholder="Select manager"
+                [filter]="true"
+                filterBy="name"
+                filterPlaceholder="Search employees" [showClear]="true"
+                class="form-select custom-select w-100">
+              </p-select>
+            </div>
+            <div *ngIf="f['newReportingManager'].touched && f['newReportingManager'].invalid" class="error-msg">
+              New reporting manager is required
+            </div>
+          </div>
+        </ng-container>
       </div>
     </form>
   </div>
@@ -161,6 +184,12 @@
           </p-tab>
           <p-tab value="TM">
             <a class="nav-link" [class.nav-tab-active]="activeTab === 'TM'" (click)="activeTab = 'TM'">{{ 'Change TM' | translate }}</a>
+          </p-tab>
+          <p-tab value="WFH">
+            <a class="nav-link" [class.nav-tab-active]="activeTab === 'WFH'" (click)="activeTab = 'WFH'">{{ 'Change WFH' | translate }}</a>
+          </p-tab>
+          <p-tab value="Remote Login">
+            <a class="nav-link" [class.nav-tab-active]="activeTab === 'Remote Login'" (click)="activeTab = 'Remote Login'">{{ 'Change Remote Login' | translate }}</a>
           </p-tab>
         </p-tablist>
       </p-tabs>
@@ -241,12 +270,86 @@
         </table>
       </div>
     </ng-container>
+    <!-- Change WFH Records -->
+     <ng-container *ngIf="activeTab === 'WFH'">
+      <app-data-loader-content *ngIf="historyLoading" />
+      <div class="custom-table-content w-100" *ngIf="!historyLoading">
+        <table class="w-100">
+          <thead>
+            <tr>
+              <th>{{ 'Employee' | translate }}</th>
+              <th>{{ 'WFH Manager' | translate }}</th>
+              <!-- <th>{{ 'Effective Date' | translate }}</th> -->
+              <th class="text-center">{{ 'Action' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @if(wfhRecords.length > 0) {
+              <tr *ngFor="let record of wfhRecords">
+                <td>{{ record.employeeName }}</td>
+                <td>{{ record.newManagerName }}</td>
+                <!-- <td>{{ record.effectiveDate | dateformat }}</td> -->
+                <td class="text-center">
+                  <div class="dropdown">
+                    <span type="button" data-bs-toggle="dropdown"><i class="bi bi-three-dots-vertical"></i></span>
+                    <ul class="dropdown-menu custom-dropdown-menu">
+                      <li><a class="dropdown-item" (click)="onChangeManager(record)"><i class="bi bi-pencil me-2"></i>{{ 'Change' | translate }}</a></li>
+                    </ul>
+                  </div>
+                </td>
+              </tr>
+            } @else {
+              <tr>
+                <td colspan="4" class="text-center py-4"><app-no-data-found /></td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </ng-container>
+    <!-- Change Remote Login Records -->
+     <ng-container *ngIf="activeTab === 'Remote Login'">
+      <app-data-loader-content *ngIf="historyLoading" />
+      <div class="custom-table-content w-100" *ngIf="!historyLoading">
+        <table class="w-100">
+          <thead>
+            <tr>
+              <th>{{ 'Employee' | translate }}</th>
+              <th>{{ 'Remote Login Manager' | translate }}</th>
+              <!-- <th>{{ 'Effective Date' | translate }}</th> -->
+              <th class="text-center">{{ 'Action' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @if(remoteLoginRecords.length > 0) {
+              <tr *ngFor="let record of remoteLoginRecords">
+                <td>{{ record.employeeName }}</td>
+                <td>{{ record.newManagerName }}</td>
+                <!-- <td>{{ record.effectiveDate | dateformat }}</td> -->
+                <td class="text-center">
+                  <div class="dropdown">
+                    <span type="button" data-bs-toggle="dropdown"><i class="bi bi-three-dots-vertical"></i></span>
+                    <ul class="dropdown-menu custom-dropdown-menu">
+                      <li><a class="dropdown-item" (click)="onChangeManager(record)"><i class="bi bi-pencil me-2"></i>{{ 'Change' | translate }}</a></li>
+                    </ul>
+                  </div>
+                </td>
+              </tr>
+            } @else {
+              <tr>
+                <td colspan="4" class="text-center py-4"><app-no-data-found /></td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </ng-container>
   </div>
-
+   
   <!-- Action Buttons: fixed to bottom-right -->
   <div class="action-buttons d-flex justify-content-between">
     <button type="button" class="custom-btn btn-secondary px-4" (click)="navigationtoPrevious()">{{'Previous'|translate}}</button>
-    <button class="custom-btn btn-primary px-5" (click)="onNext()" [disabled]="activeRecordsCount < 1">
+    <button class="custom-btn btn-primary px-5" (click)="onNext()">
       {{ 'Next' | translate }}
     </button>
   </div>
@@ -330,6 +433,82 @@
       <div class="custom-modal-footer mt-3">
         <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{ 'Cancel' | translate }}</button>
         <button type="button" class="custom-btn btn-primary" [disabled]="!isModalFormValid" (click)="onAssignChange()">{{ 'Update' | translate }}</button>
+      </div>
+    </div>
+  </div>
+</ng-template>
+<ng-template #releaseSummary let-modal>
+  <div class="custom-main-popup-container">
+    <div class="custom-poup-header-content popup-header-border">
+      <p class="popup-heading mb-0">{{'Summary' | translate}}</p>
+      <img src="icons/close.png" class="close-icon" (click)="modal.dismiss()" />
+    </div>
+
+    <div class="custom-main-popup-content custom-accordians">
+      <div class="popup-table-wrapper">
+        <div class="popup-table-scroll-container">
+          <table class="popup-table">
+            <thead>
+              <tr>
+                <th>{{ "Total Records" | translate }}</th>
+                <th>{{ "Success Records" | translate }}</th>
+                <th>{{ "Failed Records" | translate }}</th>
+                 <th>{{ "Reason" | translate }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>{{ responseSummary?.totalRecordsCount ||0}}</td>
+                <td>{{ responseSummary?.successRecordsCount }}</td>
+                <td>{{ responseSummary?.failureRecordsCount }}</td>
+                <td>{{ responseSummary?.failedreason ||'NA' }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<!-- Change Manager Modal -->
+<ng-template #changewfhManagerModal let-modal>
+  <div class="custom-main-popup-container" ngbAutofocus>
+    <div class="custom-poup-header-content popup-header-border">
+      <div class="pt-2">
+        <p class="popup-heading mb-0">{{ selectedChangeAssignment?.reportingType === 'WFH' ? ('Change WFH for' | translate) : ('Change Remote Login for' | translate) }} {{ selectedChangeAssignment?.employeeName }}</p>
+      </div>
+      <div>
+        <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close" class="close-icon"></a>
+      </div>
+    </div>
+    <div class="custom-main-popup-content">
+      <form [formGroup]="changeWFHModalForm">
+        <div class="row g-3">
+          <!-- RM fields -->
+          <ng-container>
+            <div class="col-md-6">
+              <label class="form-label custom-label mb-2">{{ 'New Manager' | translate }} <span class="text-danger">*</span></label>
+              <div class="custom-p-select-content">
+                <p-select
+                  [options]="WFHRemoteMangers"
+                  formControlName="newReportingManager"
+                  optionLabel="name"
+                  optionValue="value"
+                  placeholder="Select manager"
+                  [filter]="true"
+                  filterBy="name"
+                  class="form-select custom-select w-100"
+                  filterPlaceholder="Search manager">
+                </p-select>
+              </div>
+            </div>
+          </ng-container>
+        </div>
+      </form>
+      <div class="custom-modal-footer mt-3">
+        <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{ 'Cancel' | translate }}</button>
+        <button type="button" class="custom-btn btn-primary" [disabled]="changeWFHModalForm.invalid" (click)="wfhRemoteAssineChange()">{{ 'Update' | translate }}</button>
       </div>
     </div>
   </div>

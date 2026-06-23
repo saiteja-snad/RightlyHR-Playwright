@@ -16,6 +16,7 @@ import { buildAddressLetterDoc } from '../../letters-builder-files/address-lette
 import { DateformatPipe } from '../../pipes/dateformat.pipe';
 import { LetterFooterComponent } from "../../shared/letters-shared-content/letter-footer/letter-footer.component";
 import { LettersheaderComponent } from "../../shared/letters-shared-content/lettersheader/lettersheader.component";
+import { fetchLetterAssets, setupLetterPdfMake } from '../../letters-builder-files/letter-pdf.utils';
 @Component({
   selector: 'app-address-proof-letter',
   imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, TranslateModule, NgbPopoverModule, LetterFooterComponent, LettersheaderComponent],
@@ -118,6 +119,8 @@ export class AddressProofLetterComponent implements OnInit, OnDestroy {
   }
 
   Onclick(selectedEmployee: any) {
+    console.log(selectedEmployee);
+    
     if (!selectedEmployee || typeof selectedEmployee !== 'object' || !selectedEmployee.hasOwnProperty('employeeId')) {
       return;
     }
@@ -331,23 +334,12 @@ export class AddressProofLetterComponent implements OnInit, OnDestroy {
       this.spinnerLoader = false;
       return;
     }
-    const fileName = `${formVal.firstName}_${formVal.lastName}_${Date.now()}_AddressProofLetter.pdf`;
-    const isSoftCopy = formVal.Documenttype?.value === true;
-    const [backgroundImageBase64, verdanaItalic, verdanaSemiBold] = await Promise.all([
-      isSoftCopy ? this.fetchImageAsBase64('/images/snad-new-letter-bg.png') : Promise.resolve(undefined as string | undefined),
-      this.getFileBase64('/fonts/Verdana Italic.ttf'),
-      this.getFileBase64('/fonts/verdana-pro-semi-bold.ttf'),
+    const fileName = `${formVal?.firstName}_${formVal.lastName}_${Date.now()}_AddressProofLetter.pdf`;
+    const isSoftCopy = f.value.Documenttype?.value === true;
+    const [assets, pm] = await Promise.all([
+      fetchLetterAssets(isSoftCopy),
+      setupLetterPdfMake(),
     ]);
-    const pm = (pdfMake as any).default ?? pdfMake;
-    const mergedVfs: Record<string, string> = { ...customVfs };
-    if (verdanaItalic)   mergedVfs['VerdanaItalic.ttf']   = verdanaItalic;
-    if (verdanaSemiBold) mergedVfs['VerdanaSemiBold.ttf'] = verdanaSemiBold;
-    pm.addVirtualFileSystem(mergedVfs);
-    pm.setFonts({
-      VERDANA: { normal: 'VerdanaNow.ttf', bold: 'VerdanaNowBold.ttf', italics: verdanaItalic ? 'VerdanaItalic.ttf' : 'VerdanaNow.ttf', bolditalics: 'VerdanaNowBold.ttf' },
-      VERDANABOLD: { normal: verdanaSemiBold ? 'VerdanaSemiBold.ttf' : 'VerdanaNowBold.ttf', bold: verdanaSemiBold ? 'VerdanaSemiBold.ttf' : 'VerdanaNowBold.ttf', italics: verdanaSemiBold ? 'VerdanaSemiBold.ttf' : 'VerdanaNowBold.ttf', bolditalics: verdanaSemiBold ? 'VerdanaSemiBold.ttf' : 'VerdanaNowBold.ttf' },
-      Autography: { normal: 'Autography.otf', bold: 'Autography.otf', italics: 'Autography.otf', bolditalics: 'Autography.otf' },
-    });
     const docDef = buildAddressLetterDoc({
       firstName: formVal.firstName,
       middleName: formVal.middleName || '',
@@ -363,7 +355,8 @@ export class AddressProofLetterComponent implements OnInit, OnDestroy {
       letterDate: new Date().toISOString(),
       authorityFullName: this.addressLetterData.authorityName || '',
       authorityDesignation: this.authorityDesignation || '',
-      backgroundImageBase64,
+      backgroundImageBase64: assets.backgroundImageBase64,
+      headerLogoBase64: assets.headerLogoBase64,
       useVerdanaFont: true,
       useAutographyFont: true,
     });

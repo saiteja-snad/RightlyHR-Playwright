@@ -1,3 +1,5 @@
+import { LETTER_MARGINS, stampFont, applyLetterPageSetup } from "./letter-builder.utils";
+
 export interface ProbationExtensionLetterData {
   firstName?: string;
   middleName?: string;
@@ -13,6 +15,7 @@ export interface ProbationExtensionLetterData {
   authorityDesignation?: string;
   employeeSignatureDate?: string;
   backgroundImageBase64?: string;
+  headerLogoBase64?: string;
   useVerdanaFont?: boolean;
   useAutographyFont?: boolean;
   headerLogoBase64?: string;
@@ -87,35 +90,26 @@ export function buildProbationExtensionLetterDoc(data: ProbationExtensionLetterD
     ] : []),
   ];
 
-  function stampFont(nodes: any[]): any[] {
-    return nodes.map(node => {
-      if (typeof node === 'string') return node;
-      if (Array.isArray(node)) return stampFont(node);
-      const stamped: any = node.font ? node : { font: bodyFont, ...node };
-      if (Array.isArray(stamped.text)) {
-        stamped.text = stamped.text.map((t: any) => typeof t === 'string' ? t : (t.font ? t : { font: bodyFont, ...t }));
-      }
-      if (stamped.stack) stamped.stack = stampFont(stamped.stack);
-      if (stamped.columns) stamped.columns = stampFont(stamped.columns);
-      return stamped;
-    });
-  }
-
-  const styledContent = stampFont(content);
-  const topMargin = data.backgroundImageBase64 ? 120 : 50;
-  const bottomMargin = data.backgroundImageBase64 ? 120 : 50;
+const isSoftCopy = !!data.backgroundImageBase64;
+  const margins = isSoftCopy ? LETTER_MARGINS.softCopy : LETTER_MARGINS.hardCopy;
 
   const docDef: any = {
     pageSize: 'A4',
-    pageMargins: [60, topMargin, 60, bottomMargin],
-    defaultStyle: { font: bodyFont, fontSize: PX(13), color: '#000' },
-    content: styledContent,
+    pageMargins: [margins.left, margins.top, margins.right, margins.bottom],
+    defaultStyle: {
+      font: bodyFont,
+      fontSize: PX(13),
+      alignment: 'justify',
+      color: '#000',
+    },
+    content: stampFont(content, bodyFont),
   };
 
-  if (data.backgroundImageBase64) {
-    docDef.images = { letterBg: data.backgroundImageBase64 };
-    docDef.background = () => ({ image: 'letterBg', width: 620, height: 870, absolutePosition: { x: -12, y: -14 } });
-  }
+  applyLetterPageSetup(docDef, {
+    backgroundImageBase64: data.backgroundImageBase64,
+    headerLogoBase64: data.headerLogoBase64,
+    bodyFont,
+  });
 
   return docDef;
 }

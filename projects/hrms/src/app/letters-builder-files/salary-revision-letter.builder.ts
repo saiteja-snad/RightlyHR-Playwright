@@ -480,22 +480,10 @@ export function buildSalaryRevisionLetterDoc(
       },
       margin: [0, 0, 0, 8],
     },
-    {
-      text: [
-        'Compensation Details ',
-        { text: '(All figures in Rs.)', bold: false },
-      ],
-      alignment: 'center',
-      margin: [0, 0, 0, 8],
-      font: 'VERDANABOLD',
-    },
+    { text: ['Compensation Details ', { text: '(All figures in Rs.)', bold: false }], alignment: 'center', margin: [0, 0, 0, 8], font: 'VERDANABOLD' },
     salaryTable,
     ctcTable,
-    {
-      text: 'Additional Details Related to Salary Structure:',
-      margin: [0, 0, 0, 2],
-      font: 'VERDANABOLD',
-    },
+    { text: 'Additional Details Related to Salary Structure:', margin: [0, 0, 0, 2], font: 'VERDANABOLD' },
     {
       table: {
         widths: ['auto', '*'],

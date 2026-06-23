@@ -81,7 +81,7 @@ export class LettersTabComponent {
       link: '/letters/salary-revision-letter',
       icon: '/letters-icon/salary-revision-letter-icon.png',
       subject: MODULE_INFOS.SALARY_REVISION_LETTER_MODULE_INFO,
-      permission: { feature: 'Dashboard Generate Documents Welcome Letter', action: 'view' }
+      permission: { feature: 'Salary Revision Letter', action: 'view' }
     },
     {
       label: 'Relieving Letter',

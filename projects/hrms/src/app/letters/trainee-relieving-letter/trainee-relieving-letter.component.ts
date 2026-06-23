@@ -4,27 +4,26 @@ import { Router } from '@angular/router';
 import { Select } from 'primeng/select';
 import { Subscription } from 'rxjs';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { DateformatPipe } from '../../pipes/dateformat.pipe';
 import { HttpService } from '../../services/http.service';
-import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../../services/auth.service';
-import html2canvas from 'html2canvas';
-import jsPDF from 'jspdf';
 import { OpenModalService } from '../../services/open-modal.service';
+import * as pdfMake from 'pdfmake/build/pdfmake';
+import { customVfs } from '../../letters-builder-files/custom-fonts-vfs';
+import { buildTraineeRelievingLetterDoc } from '../../letters-builder-files/trainee-relieving-letter.builder';
 import { TranslateModule } from '@ngx-translate/core';
-import { LetterFooterComponent } from '../../shared/letters-shared-content/letter-footer/letter-footer.component';
-import { LettersheaderComponent } from '../../shared/letters-shared-content/lettersheader/lettersheader.component';
 import { IEmployeeDetails, IEmployeeJobDetails, IEmployeeSignatures } from '../letters.modal';
-
+import { LettersheaderComponent } from "../../shared/letters-shared-content/lettersheader/lettersheader.component";
+import { LetterFooterComponent } from "../../shared/letters-shared-content/letter-footer/letter-footer.component";
+import { DateformatPipe } from '../../pipes/dateformat.pipe';
 @Component({
   selector: 'app-trainee-relieving-letter',
-  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, LettersheaderComponent, TranslateModule, LetterFooterComponent],
+  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, TranslateModule, LettersheaderComponent, LetterFooterComponent],
   templateUrl: './trainee-relieving-letter.component.html',
   styleUrl: './trainee-relieving-letter.component.scss'
 })
+
 export class TraineeRelievingLetterComponent implements OnInit, OnDestroy {
   subscription!: Subscription;
-  relievingTemplate: any | string | ArrayBuffer | null = null;
   result = {} as any;
   RelievingFile!: File;
   gender: any;
@@ -47,17 +46,10 @@ export class TraineeRelievingLetterComponent implements OnInit, OnDestroy {
   ];
   spinnerLoader = false;
 
-  constructor(
-    private router: Router,
-    private fb: FormBuilder,
-    private http: HttpService,
-    private httpclient: HttpClient,
-    private authService: AuthService,
-    private conformationPopup: OpenModalService,
-  ) { }
+  constructor(private router: Router, private fb: FormBuilder, private http: HttpService, 
+    private authService: AuthService, private conformationPopup: OpenModalService) { }
 
   ngOnInit() {
-    this.getRelievingTemplate();
     this.initializeForm();
     this.getAllInActiveEmployees();
     this.getAuthorityDetails();
@@ -93,36 +85,26 @@ export class TraineeRelievingLetterComponent implements OnInit, OnDestroy {
     event.preventDefault();
   }
 
-  async getRelievingTemplate() {
-    this.relievingTemplate = await this.httpclient
-      .get('assets/Relieving_Letter.docx', {
-        responseType: 'arraybuffer',
-      }).toPromise();
+  getEmployeeId() {
+    const status = ['Trainee Inactive'];
+    this.subscription = this.http.getData(`Employeedata/v3/Getallemployees?statuses=${status}`).subscribe({
+      next: (data: any) => {
+        this.employeeDetails = data as IEmployeeDetails[];
+        this.employeeDetails = data.map((employee: any) => {
+          return {
+            ...employee, // Spread the existing properties (like fusionEmpId, firstName, etc.)
+            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName} 
+            ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
+            // Concatenate first, middle (if present), and last name
+          };
+        }).sort((a: any, b: any) => (a.firstName ?? '').localeCompare(b.firstName ?? ''));
+      },
+      error: (reason: any) => {
+        console.log(reason);
+      },
+    });
   }
 
-    getEmployeeId() {
-    const status = ['Trainee Inactive'];
-    this.subscription = this.http
-      .getData(`Employeedata/v3/Getallemployees?statuses=${status}`)
-      .subscribe({
-        next: (data: any) => {
-          console.log(data);
-          this.employeeDetails = data as IEmployeeDetails[];
-          this.employeeDetails = data.map((employee: any) => {
-            return {
-              ...employee, // Spread the existing properties (like fusionEmpId, firstName, etc.)
-              fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
-              // Concatenate first, middle (if present), and last name
-            };
-          }).sort((a: any, b: any) => (a.firstName ?? '').localeCompare(b.firstName ?? '')); 
-          console.log(this.employeeDetails);
-        },
-        error: (reason: any) => {
-
-          console.log(reason);
-        },
-      });
-    }
   getAllInActiveEmployees() {
     const status = 'Trainee Inactive';
     this.subscription = this.http.getData(`Employeedata/TraineeActiveEmployees/${status}`).subscribe({
@@ -130,9 +112,8 @@ export class TraineeRelievingLetterComponent implements OnInit, OnDestroy {
         this.employeeDetails = data.map((employee: any) => {
           return {
             ...employee,
-            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
-              }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
-              }${employee.lastName}`,
+            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName} 
+            ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
           };
         });
       },
@@ -141,7 +122,6 @@ export class TraineeRelievingLetterComponent implements OnInit, OnDestroy {
       },
     });
   }
-
 
   getAuthorityDetails() {
     let offertype = 'Trainee Completion Letter';
@@ -161,8 +141,6 @@ export class TraineeRelievingLetterComponent implements OnInit, OnDestroy {
   onClickEmployee(event: any) {
     this.managerDetails = null;
     this.selectedEmployee = event.value;
-    console.log(this.selectedEmployee);
-    
     if (this.selectedEmployee.lastworkingday && !this.selectedEmployee.lastworkingday) {
       this.selectedEmployee.lastworkingday = this.selectedEmployee.lastworkingday;
     }
@@ -171,13 +149,10 @@ export class TraineeRelievingLetterComponent implements OnInit, OnDestroy {
       this.gender = "his";
       this.gender2 = 'he';
       this.gender3 = 'Mr.';
-      console.log(this.gender3);
-      
     } else {
       this.gender = "her";
       this.gender2 = 'she';
       this.gender3 = 'Ms.';
-          console.log(this.gender3);
     }
     this.getJobdetails(this.selectedEmployee.employeeId);
   }
@@ -227,10 +202,12 @@ export class TraineeRelievingLetterComponent implements OnInit, OnDestroy {
   onclickDesignation(event: any) {
     this.selectedAuthority = event.value;
     if (this.selectedAuthority) {
-      this.authorityFullName = this.selectedAuthority.middleName ? `${this.selectedAuthority.firstName} ${this.selectedAuthority.middleName}
-       ${this.selectedAuthority.lastName}` : `${this.selectedAuthority.firstName} ${this.selectedAuthority.lastName}`;
+      this.authorityFullName = this.selectedAuthority.middleName ?
+        `${this.selectedAuthority.firstName} ${this.selectedAuthority.middleName} ${this.selectedAuthority.lastName}`
+        : `${this.selectedAuthority.firstName} ${this.selectedAuthority.lastName}`;
     }
   }
+
   private formatDate(dateString: Date): string {
     const date = new Date(dateString);
     const day = date.getDate().toString().padStart(2, '0');
@@ -240,34 +217,86 @@ export class TraineeRelievingLetterComponent implements OnInit, OnDestroy {
   }
 
   async postRelievingLetterFormSubmit(f: FormGroup) {
-
-    const data = f.value;
-    let fileName = '';
     this.spinnerLoader = true;
-    if (this.selectedEmployee && this.selectedEmployee.firstName && this.selectedEmployee.lastName) {
-      fileName = `${this.selectedEmployee.firstName}_${this.selectedEmployee.lastName}_${new Date().getTime()}_RelievingLetter.pdf`;
-    } else {
+    if (!this.selectedEmployee?.firstName || !this.selectedEmployee?.lastName) {
       console.error('Employee first name or last name is missing');
+      this.spinnerLoader = false;
       return;
     }
-    data.dateofRelieving = this.formatDate(data.dateofRelieving);
-    data.dateOfJoining = this.formatDate(new Date(this.selectedEmployee.dateOfJoining));
-    data.lastWorkingDay = this.formatDate(new Date(this.selectedEmployee.lastworkingday));
-    const pdfContent = document.getElementById('pdfContent');
-    if (pdfContent) {
-      html2canvas(pdfContent, { scale: 3 }).then(canvas => {
-        const imgData = canvas.toDataURL('image/png');
-        const pdf = new jsPDF('p', 'mm', 'a4');
-        const imgWidth = pdf.internal.pageSize.getWidth();
-        const imgHeight = (canvas.height * imgWidth) / canvas.width;
-        pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight, '', 'FAST');
-        pdf.save(fileName);
-        const blob = pdf.output('blob');
-        //creating form file to upload into AZure
-        let d: Date = new Date()
-        this.RelievingFile = new File([blob], fileName, { type: 'application/pdf', });
-        this.uploadRelievingLetter();
-      });
+    const fileName = `${this.selectedEmployee.firstName}_${this.selectedEmployee.lastName}_${Date.now()}_RelievingLetter.pdf`;
+    const isSoftCopy = f.value.documentType?.value === true;
+    const [backgroundImageBase64, verdanaItalic, verdanaSemiBold] = await Promise.all([
+      isSoftCopy ? this.fetchImageAsBase64('/images/snad-new-letter-bg.png') : Promise.resolve(undefined as string | undefined),
+      this.getFileBase64('/fonts/Verdana Italic.ttf'),
+      this.getFileBase64('/fonts/verdana-pro-semi-bold.ttf'),
+    ]);
+    const pm = (pdfMake as any).default ?? pdfMake;
+    const mergedVfs: Record<string, string> = { ...customVfs };
+    if (verdanaItalic)   mergedVfs['VerdanaItalic.ttf']   = verdanaItalic;
+    if (verdanaSemiBold) mergedVfs['VerdanaSemiBold.ttf'] = verdanaSemiBold;
+    pm.addVirtualFileSystem(mergedVfs);
+    pm.setFonts({
+      VERDANA: { normal: 'VerdanaNow.ttf', bold: 'VerdanaNowBold.ttf', italics: verdanaItalic ? 'VerdanaItalic.ttf' : 'VerdanaNow.ttf', bolditalics: 'VerdanaNowBold.ttf' },
+      VERDANABOLD: { normal: verdanaSemiBold ? 'VerdanaSemiBold.ttf' : 'VerdanaNowBold.ttf', bold: verdanaSemiBold ? 'VerdanaSemiBold.ttf' : 'VerdanaNowBold.ttf', italics: verdanaSemiBold ? 'VerdanaSemiBold.ttf' : 'VerdanaNowBold.ttf', bolditalics: verdanaSemiBold ? 'VerdanaSemiBold.ttf' : 'VerdanaNowBold.ttf' },
+      Autography: { normal: 'Autography.otf', bold: 'Autography.otf', italics: 'Autography.otf', bolditalics: 'Autography.otf' },
+    });
+    const docDef = buildTraineeRelievingLetterDoc({
+      firstName: this.selectedEmployee.firstName,
+      middleName: this.selectedEmployee.middleName || undefined,
+      lastName: this.selectedEmployee.lastName,
+      gender3: this.gender3 || 'Mr.',
+      jobRole: this.selectedEmployeeJobDetails?.jobRole || '',
+      managerTitle: this.managerDetails?.gender === 'Female' ? 'Ms.' : 'Mr.',
+      managerFirstName: this.managerDetails?.firstName || undefined,
+      managerMiddleName: this.managerDetails?.middleName || undefined,
+      managerLastName: this.managerDetails?.lastName || undefined,
+      dateOfJoining: this.selectedEmployee.dateOfJoining ? String(this.selectedEmployee.dateOfJoining) : '',
+      lastWorkingDay: this.selectedEmployee.lastworkingday ? String(this.selectedEmployee.lastworkingday) : '',
+      issuedDate: f.value.dateofRelieving || '',
+      authorityFullName: this.authorityFullName || '',
+      authorityDesignation: this.selectedAuthority?.designation || '',
+      backgroundImageBase64,
+      useVerdanaFont: true,
+      useAutographyFont: true,
+    });
+    try {
+      const blob: Blob = await pm.createPdf(docDef).getBlob();
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = fileName;
+      link.click();
+      URL.revokeObjectURL(link.href);
+      this.RelievingFile = new File([blob], fileName, { type: 'application/pdf' });
+      this.uploadRelievingLetter();
+    } catch (err) {
+      console.error('PDF generation failed:', err);
+      this.spinnerLoader = false;
+      this.conformationPopup.openErrorModal('Failed to generate Trainee Relieving Letter');
+    }
+  }
+
+  private fetchImageAsBase64(url: string): Promise<string> {
+    return fetch(url).then(res => res.blob()).then(blob => new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result as string);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    }));
+  }
+
+  private async getFileBase64(url: string): Promise<string | null> {
+    try {
+      const response = await fetch(url);
+      if (!response.ok) return null;
+      const buffer = await response.arrayBuffer();
+      const bytes = new Uint8Array(buffer);
+      let binary = '';
+      for (let i = 0; i < bytes.byteLength; i++) {
+        binary += String.fromCharCode(bytes[i]);
+      }
+      return btoa(binary);
+    } catch {
+      return null;
     }
   }
 
@@ -275,18 +304,16 @@ export class TraineeRelievingLetterComponent implements OnInit, OnDestroy {
     let filePath = `/FusionDocuments/Employee Documents/Relieving Letters/${this.selectedEmployee.employeeId}`;
     this.subscription = this.http.uploadFileWithQuery('FileSystem/uploadfiletodirectory', filePath, this.RelievingFile).subscribe({
       next: (data: any) => {
-        if (data) {
+        this.spinnerLoader = false;
+        if (data?.path) {
           this.result.documentUrl = data.path;
-          this.conformationPopup.openSuccessModal('Trainee relieving letter generated successfully')
-          this.relievingemail();
         }
+        this.conformationPopup.openSuccessModal('Trainee relieving letter generated successfully');
+        this.relievingemail();
       },
-      error: (reason: any) => {
+      error: (_reason: any) => {
         this.spinnerLoader = false;
-        this.conformationPopup.openErrorModal('File upload  is failed');
-      },
-      complete: () => {
-        this.spinnerLoader = false;
+        this.conformationPopup.openErrorModal('File upload is failed');
       }
     });
   }
@@ -295,7 +322,9 @@ export class TraineeRelievingLetterComponent implements OnInit, OnDestroy {
     let loggedInUser = this.authService.getToken();
     let emaildetails = {
       personEmail: this.selectedEmployee.emailaddress,
-      senderName: `${loggedInUser.firstName} ${loggedInUser.middleName} ${loggedInUser.lastName}`,
+      senderName: loggedInUser.middleName
+        ? `${loggedInUser.firstName} ${loggedInUser.middleName} ${loggedInUser.lastName}`
+        : `${loggedInUser.firstName} ${loggedInUser.lastName}`,
       senderEmail: loggedInUser.workEmail,
       firstName: this.selectedEmployee.firstName,
       lastName: this.selectedEmployee.lastName,
@@ -303,25 +332,31 @@ export class TraineeRelievingLetterComponent implements OnInit, OnDestroy {
       role: this.selectedEmployeeJobDetails.jobRole,
       documentUrl: this.result.documentUrl,
       employeeId: this.selectedEmployee.employeeId,
-    }
-    if (loggedInUser.middleName) {
-      emaildetails.senderName = `${loggedInUser.firstName} ${loggedInUser.middleName} ${loggedInUser.lastName}`
-    } else {
-      emaildetails.senderName = `${loggedInUser.firstName} ${loggedInUser.lastName}`
-    }
+    };
     this.subscription = this.http.postdata(`CustomEmail/relievingLetter`, emaildetails).subscribe({
-      next: (data: any) => {
-        this.conformationPopup.openSuccessModal('Email has been sent successfully')
-        setTimeout(() => {
-          this.navigateDashboard();
-        }, 2000)
+      next: (_data: any) => {
+        this.conformationPopup.openSuccessModal('Email has been sent successfully');
+        this.resetForm();
       },
-      error: (err: any) => {
+      error: (_err: any) => {
         this.spinnerLoader = false;
-      }, complete: () => {
-        this.spinnerLoader = false;
+        this.resetForm();
       }
-    })
+    });
+  }
+
+  private resetForm() {
+    this.initializeForm();
+    this.employeeFullname = '';
+    this.selectedEmployee = null!;
+    this.selectedEmployeeJobDetails = null!;
+    this.selectedAuthority = null!;
+    this.authorityFullName = '';
+    this.gender = null;
+    this.gender2 = null;
+    this.gender3 = null;
+    this.jobErrorMessage = '';
+    this.managerDetails = null;
   }
 
   ngOnDestroy(): void {

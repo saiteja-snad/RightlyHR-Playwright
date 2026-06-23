@@ -9,68 +9,70 @@
 
   <div class="custom-table-content">
     @if (!loader) {
-    <table class="w-100">
-      <thead>
-        <th>{{'Employee ID'|translate}}</th>
-        <th>{{'Employee Name'|translate}}</th>
-        <th>{{'Date of Joining'|translate}}</th>
-        <th>{{'Personal Email'|translate}}</th>
-        <th>{{'Phone Number'|translate}}</th>
-        <th>{{'Location'|translate}}</th>
-        <th>{{'Sub Location'|translate}}</th>
-        <th>{{'Designation'|translate}}</th>
-        <th>{{'Sub Status'|translate}}</th>
-      </thead>
-      <tbody>
-        @if(((Prospective | async) ?? []).length > 0){
-        @for (act of ((Prospective | async) ?? []) | prospective : searchValue; track act.id) {
+    <p-table #prospectiveEmployeesTable [value]="getFilteredAndSortedEmployees()" [tableStyle]="{'width': '100%'}" [customSort]="true" (sortFunction)="customSort($event)">
+      <ng-template pTemplate="header">
         <tr>
+          <th pSortableColumn="employeeId">{{'Employee ID'|translate}} <p-sortIcon field="employeeId" /></th>
+          <th pSortableColumn="employeeName">{{'Employee Name'|translate}} <p-sortIcon field="employeeName" /></th>
+          <th pSortableColumn="dateOfJoining">{{'Date of Joining'|translate}} <p-sortIcon field="dateOfJoining" /></th>
+          <th pSortableColumn="emailaddress">{{'Personal Email'|translate}} <p-sortIcon field="emailaddress" /></th>
+          <th pSortableColumn="contactnumber">{{'Phone Number'|translate}} <p-sortIcon field="contactnumber" /></th>
+          <th pSortableColumn="location">{{'Location'|translate}} <p-sortIcon field="location" /></th>
+          <th pSortableColumn="subLocation">{{'Sub Location'|translate}} <p-sortIcon field="subLocation" /></th>
+          <th pSortableColumn="designation">{{'Designation'|translate}} <p-sortIcon field="designation" /></th>
+          <th pSortableColumn="substatus">{{'Sub Status'|translate}} <p-sortIcon field="substatus" /></th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-act>
+        <tr>
+          <!--Employee ID-->
           <td>{{act.employeeId}}</td>
+          <!--Name-->
           <td>
             <span *ngIf="act.firstName ; else firstname">
               <a class="data-nav-btn" (click)="select(act)">{{act.firstName?act.firstName:''}} {{act.middleName ?act.middleName:''}} {{act.lastName ? act.lastName:''}}</a>
             </span>
             <ng-template #firstname>-</ng-template>
           </td>
+          <!--Date of Joining-->
           <td>{{act.dateOfJoining ? (act.dateOfJoining | date) : '-'}}</td>
+          <!--Personal Email-->
           <td>{{act.emailaddress?act.emailaddress:'-'}}</td>
+          <!--Contact Number-->
           <td>{{act.mobilePhoneCountryCode?act.mobilePhoneCountryCode:''}} {{act.contactnumber?act.contactnumber:'-'}}</td>
+          <!--Location-->
           <td>
-            @if(act.jobDetails!.length > 0){
-            @for(jobDetail of act?.jobDetails;track jobDetail.id){
-            {{ jobDetail?.lopcation?jobDetail?.lopcation:'-' }}
-            }
-            }@else {
-            <span>-</span>
-            }
+            <span *ngIf="act.jobDetails && act.jobDetails.length > 0; else noLocation">
+              {{ act.jobDetails[0]?.lopcation || '-' }}
+            </span>
+            <ng-template #noLocation>-</ng-template>
           </td>
+          <!--Sub Location-->
           <td>
-            @if(act.jobDetails!.length > 0){
-            @for(jobDetail of act?.jobDetails;track jobDetail.id){
-            {{ jobDetail?.subLocation?jobDetail?.subLocation:'-'}}
-            }}@else {
-            <span>-</span>
-            }
+            <span *ngIf="act.jobDetails && act.jobDetails.length > 0; else noSubLocation">
+              {{ act.jobDetails[0]?.subLocation || '-' }}
+            </span>
+            <ng-template #noSubLocation>-</ng-template>
           </td>
+          <!--Designation-->
           <td>
-            @if(act.jobDetails!.length > 0){
-            @for(jobDetail of act?.jobDetails; track jobDetail.id){
-            {{ jobDetail?.jobRole?jobDetail?.jobRole:'-'}}
-            }}@else {
-            <span>-</span>
-            }
+            <span *ngIf="act.jobDetails && act.jobDetails.length > 0; else noDesignation">
+              {{ act.jobDetails[0]?.jobRole || '-' }}
+            </span>
+            <ng-template #noDesignation>-</ng-template>
           </td>
+          <!--Sub Status-->
           <td>{{act.substatus?act.substatus:'-'}}</td>
         </tr>
-        }
-        }
-        @if ((((Prospective | async) ?? []) | prospective : searchValue).length === 0){
-        <tr>
-          <app-no-data-found />
-        </tr>
-        }
-      </tbody>
-    </table>
+      </ng-template>
+      <ng-template #emptymessage>
+        <div class="wrapper">
+          <tr>
+            <app-no-data-found />
+          </tr>
+        </div>
+      </ng-template>
+    </p-table>
     } @else {
     <app-data-loader-content />
     }

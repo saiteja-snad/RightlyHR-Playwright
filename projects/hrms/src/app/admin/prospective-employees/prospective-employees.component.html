@@ -28,7 +28,8 @@
           <td>{{act.employeeId}}</td>
           <td>
             <span *ngIf="act.firstName ; else firstname">
-              <a class="data-nav-btn" (click)="select(act)">{{act.firstName?act.firstName:''}} {{act.middleName ?act.middleName:''}} {{act.lastName ? act.lastName:''}}</a>
+              <a class="data-nav-btn" (click)="select(act)">{{act.firstName?act.firstName:''}} 
+                {{act.middleName ?act.middleName:''}} {{act.lastName ? act.lastName:''}}</a>
             </span>
             <ng-template #firstname>-</ng-template>
           </td>

@@ -32,7 +32,7 @@ export class ProbationEmployeesComponent {
   sortField: string | null = null;
   sortDirection: 'asc' | 'desc' = 'asc';
 
-  constructor(private router: Router, private http: HttpService, private modalService: NgbModal, public rbac: RbacService, private accessNav: AccessNavigationService) { }
+  constructor(private router: Router, private http: HttpService, public rbac: RbacService, private accessNav: AccessNavigationService) { }
 
   ngOnInit(): void {
     this.getProbationEmployees();
@@ -48,8 +48,6 @@ export class ProbationEmployeesComponent {
       }
     })
   }
-
-
 
   select(act: any) {
     this.emp = localStorage.setItem('personaldata', JSON.stringify(act));
@@ -80,11 +78,11 @@ export class ProbationEmployeesComponent {
   navigateDashboard() {
     this.router.navigate(['/letters/lettes-tabs'])
   }
+  
   /** Sort immediately and re‑render */
   sortData(field: keyof IProbationEmployees, direction: 'asc' | 'desc'): void {
     this.sortField = field;
     this.sortDirection = direction;
-
     // asc and desc ordering
     this.probationemp = [...this.probationemp].sort((a: any, b: any) => {
       const aDate = new Date(a[field] ?? 0).getTime();

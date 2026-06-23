@@ -48,8 +48,7 @@
           </td>
           <!-- Sub Location -->
           <td>
-            <span *ngIf="act.jobDetails?.[0]?.subLocation; else noSubLocation">{{ act.jobDetails?.[0]?.subLocation
-              }}</span>
+            <span *ngIf="act.jobDetails?.[0]?.subLocation; else noSubLocation">{{ act.jobDetails?.[0]?.subLocation }}</span>
             <ng-template #noSubLocation>-</ng-template>
           </td>
           <!-- Shift Name -->

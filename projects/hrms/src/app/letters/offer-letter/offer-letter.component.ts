@@ -1148,22 +1148,12 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
     this.disableFieldsForApproval = true;
     const data = this.prospectiveEmpData;
     const fileName = `${data.firstName}_${data.middleName ?? ''}_${data.lastName ?? ''}_${new Date().getTime()}_OfferLetter.pdf`;
-    const [backgroundImageBase64, verdanaItalic, verdanaSemiBold] = await Promise.all([
-      this.fetchImageAsBase64('/images/snad-new-letter-bg.png'),
-      this.getFileBase64('/fonts/verdana-pro-semi-bold-italic.ttf'),
-      this.getFileBase64('/fonts/verdana-pro-semi-bold.ttf'),
+    const isSoftCopy = true;
+    const [assets, pm] = await Promise.all([
+      fetchLetterAssets(isSoftCopy),
+      setupLetterPdfMake(),
     ]);
 
-    const pm = (pdfMake as any).default ?? pdfMake;
-    const mergedVfs: Record<string, string> = { ...customVfs };
-    if (verdanaItalic) mergedVfs['VerdanaItalic.ttf'] = verdanaItalic;
-    if (verdanaSemiBold) mergedVfs['VerdanaSemiBold.ttf'] = verdanaSemiBold;
-    pm.addVirtualFileSystem(mergedVfs);
-    pm.setFonts({
-      VERDANA: { normal: 'VerdanaNow.ttf', italics: verdanaItalic ? 'VerdanaItalic.ttf' : 'VerdanaNow.ttf' },
-      VERDANABOLD: { normal: verdanaSemiBold ? 'VerdanaSemiBold.ttf' : 'VerdanaNowBold.ttf' },
-      Autography: { normal: 'Autography.otf' },
-    });
 
     const docDef = buildOfferLetterDoc({
       firstName: data.firstName,
@@ -1206,7 +1196,8 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
       grossSalary: data.grossSalary,
       esicContribution: data.esicContribution,
       esiPerAnnum: data.esiPerAnnum,
-      backgroundImageBase64,
+      backgroundImageBase64: assets.backgroundImageBase64,
+      headerLogoBase64: assets.headerLogoBase64,
       useVerdanaFont: true,
       useAutographyFont: true,
     });

@@ -19,6 +19,7 @@ import { buildTraineeOfferLetterDoc } from '../../letters-builder-files/trainee-
 import { DateformatPipe } from '../../pipes/dateformat.pipe';
 import { LettersheaderComponent } from "../../shared/letters-shared-content/lettersheader/lettersheader.component";
 import { LetterFooterComponent } from "../../shared/letters-shared-content/letter-footer/letter-footer.component";
+import { fetchLetterAssets, setupLetterPdfMake } from '../../letters-builder-files/letter-pdf.utils';
 @Component({
   selector: 'app-trainee-offer-letter',
   imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, TranslateModule,
@@ -132,7 +133,7 @@ export class TraineeOfferLetterComponent implements OnInit, OnDestroy {
     { name: 'No', value: false }
   ];
 
-  constructor(private http: HttpService, private modalService: NgbModal, private fb: FormBuilder, 
+  constructor(private http: HttpService, private modalService: NgbModal, private fb: FormBuilder,
     private router: Router, public formValidation: FormValidationService,
     private authService: AuthService, private conformationPopup: OpenModalService,) {
     this.initializeForm();
@@ -186,7 +187,7 @@ export class TraineeOfferLetterComponent implements OnInit, OnDestroy {
       phoneNumber: [{ value: null, disabled: true }],
       jobRoleDetails: [{ value: null, disabled: true }],
       amount: ['',],
-      monthlyammount: ['',Validators.required],
+      monthlyammount: ['', Validators.required],
       locationId: [{ value: null, disabled: true }],
       JobSubLocationName: [{ value: null, disabled: true }],
       offerSentDate: ['', Validators.required],
@@ -346,7 +347,7 @@ export class TraineeOfferLetterComponent implements OnInit, OnDestroy {
       next: (data: any) => {
         this.authorityDetails = data.map((authority: any) => ({
           ...authority,
-          fullName: `${authority.firstName} ${authority.middleName ? authority.middleName + ' ' : ''}${authority.lastName}` 
+          fullName: `${authority.firstName} ${authority.middleName ? authority.middleName + ' ' : ''}${authority.lastName}`
           // Concatenate first, middle, last name and trim any extra spaces
         })).sort((a: any, b: any) => (a.firstName ?? '').localeCompare(b.firstName ?? ''));
       },
@@ -433,7 +434,7 @@ export class TraineeOfferLetterComponent implements OnInit, OnDestroy {
         if (this.employeeaddress.substatus == 'Documents Verified') {
           this.buttonValue = 'Generate Offer Letter';
         }
-        else if (this.employeeaddress.substatus == 'Offer Letter Rejected' || this.employeeaddress.substatus == 'Offer Letter Accepted' 
+        else if (this.employeeaddress.substatus == 'Offer Letter Rejected' || this.employeeaddress.substatus == 'Offer Letter Accepted'
           || this.employeeaddress.substatus == 'Offer Letter Rejected By Manager') {
           this.buttonValue = 'Regenerate Offer Letter';
         }
@@ -622,22 +623,11 @@ export class TraineeOfferLetterComponent implements OnInit, OnDestroy {
     const fileName = `${data.firstName}_${data.middleName ?? ''}_${data.lastName ?? ''}_${Date.now()}_TraineeOfferLetter.pdf`;
     const isSoftCopy = true;
 
-    const [backgroundImageBase64, verdanaItalic, verdanaSemiBold] = await Promise.all([
-      isSoftCopy ? this.fetchImageAsBase64('/images/snad-new-letter-bg.png') : Promise.resolve(undefined as string | undefined),
-      this.getFileBase64('/fonts/Verdana Italic.ttf'),
-      this.getFileBase64('/fonts/verdana-pro-semi-bold.ttf'),
-    ]);
 
-    const pm = (pdfMake as any).default ?? pdfMake;
-    const mergedVfs: Record<string, string> = { ...customVfs };
-    if (verdanaItalic)   mergedVfs['VerdanaItalic.ttf']   = verdanaItalic;
-    if (verdanaSemiBold) mergedVfs['VerdanaSemiBold.ttf'] = verdanaSemiBold;
-    pm.addVirtualFileSystem(mergedVfs);
-    pm.setFonts({
-      VERDANA: { normal: 'VerdanaNow.ttf', bold: 'VerdanaNowBold.ttf', italics: verdanaItalic ? 'VerdanaItalic.ttf' : 'VerdanaNow.ttf', bolditalics: 'VerdanaNowBold.ttf' },
-      VERDANABOLD: { normal: verdanaSemiBold ? 'VerdanaSemiBold.ttf' : 'VerdanaNowBold.ttf', bold: verdanaSemiBold ? 'VerdanaSemiBold.ttf' : 'VerdanaNowBold.ttf', italics: verdanaSemiBold ? 'VerdanaSemiBold.ttf' : 'VerdanaNowBold.ttf', bolditalics: verdanaSemiBold ? 'VerdanaSemiBold.ttf' : 'VerdanaNowBold.ttf' },
-      Autography: { normal: 'Autography.otf', bold: 'Autography.otf', italics: 'Autography.otf', bolditalics: 'Autography.otf' },
-    });
+    const [assets, pm] = await Promise.all([
+      fetchLetterAssets(isSoftCopy),
+      setupLetterPdfMake(),
+    ]);
 
     const docDef = buildTraineeOfferLetterDoc({
       firstName: data.firstName || '',
@@ -660,7 +650,8 @@ export class TraineeOfferLetterComponent implements OnInit, OnDestroy {
       note: this.employeeForm.get('note')?.value || undefined,
       authorityName: data.authorityName || '',
       authorityDesignation: this.authorityDesignation || undefined,
-      backgroundImageBase64,
+      backgroundImageBase64: assets.backgroundImageBase64,
+      headerLogoBase64: assets.headerLogoBase64,
       useVerdanaFont: true,
       useAutographyFont: true,
     });
@@ -769,30 +760,30 @@ export class TraineeOfferLetterComponent implements OnInit, OnDestroy {
     this.loading = true;
     this.traineeEmpData.jobRole = this.jobRoleDetails;
     this.traineeEmpData.employeeId = this.traineeEmpData.empId,
-    this.traineeEmpData.empId = this.traineeEmpData.empId?.toString(),
-    this.traineeEmpData.firstName = data.firstName,
-    this.traineeEmpData.lastName = data.lastName,
-    this.traineeEmpData.middleName = data.middleName,
-    this.traineeEmpData.empstatus = 'Trainee Prospective',
-    this.traineeEmpData.emptype = 'Trainee',
-    this.traineeEmpData.title = data.title,
-    this.traineeEmpData.emailaddress = data.personalEmail,
-    this.traineeEmpData.gender = data.gender,
-    this.traineeEmpData.contactnumber = parseInt(data.phoneNumber),
-    this.traineeEmpData.mobilePhoneCountryCode = data.mobilePhoneCountryCode,
-    this.traineeEmpData.fusionEmpId = data.fusionPlusEmpId,
-    this.traineeEmpData.durationOfTrainee = data.durationOfTrainee,
-    this.traineeEmpData.generateOffer = true,
-    this.traineeEmpData.pf = data.pf,
-    this.traineeEmpData.esic = data.esic,
-    this.traineeEmpData.dob = this.employeeaddress.dob,
-    this.traineeEmpData.bloodGroup = this.employeeaddress.bloodGroup,
-    this.traineeEmpData.insurance = this.employeeaddress.insurance,
-    this.traineeEmpData.dateOfJoining = data.dateOfJoining,
-    this.traineeEmpData.substatus = 'Offer Letter Generated',
-    this.traineeEmpData.password = this.employeeaddress.password,
-    this.traineeEmpData.trainingEndDate = this.traineeEmpData.endDate,
-    this.traineeEmpData.reportsTo = this.traineeEmpData.reportingmanagerId?.toString()
+      this.traineeEmpData.empId = this.traineeEmpData.empId?.toString(),
+      this.traineeEmpData.firstName = data.firstName,
+      this.traineeEmpData.lastName = data.lastName,
+      this.traineeEmpData.middleName = data.middleName,
+      this.traineeEmpData.empstatus = 'Trainee Prospective',
+      this.traineeEmpData.emptype = 'Trainee',
+      this.traineeEmpData.title = data.title,
+      this.traineeEmpData.emailaddress = data.personalEmail,
+      this.traineeEmpData.gender = data.gender,
+      this.traineeEmpData.contactnumber = parseInt(data.phoneNumber),
+      this.traineeEmpData.mobilePhoneCountryCode = data.mobilePhoneCountryCode,
+      this.traineeEmpData.fusionEmpId = data.fusionPlusEmpId,
+      this.traineeEmpData.durationOfTrainee = data.durationOfTrainee,
+      this.traineeEmpData.generateOffer = true,
+      this.traineeEmpData.pf = data.pf,
+      this.traineeEmpData.esic = data.esic,
+      this.traineeEmpData.dob = this.employeeaddress.dob,
+      this.traineeEmpData.bloodGroup = this.employeeaddress.bloodGroup,
+      this.traineeEmpData.insurance = this.employeeaddress.insurance,
+      this.traineeEmpData.dateOfJoining = data.dateOfJoining,
+      this.traineeEmpData.substatus = 'Offer Letter Generated',
+      this.traineeEmpData.password = this.employeeaddress.password,
+      this.traineeEmpData.trainingEndDate = this.traineeEmpData.endDate,
+      this.traineeEmpData.reportsTo = this.traineeEmpData.reportingmanagerId?.toString()
     if (this.buttonValue == 'Regenerate Offer Letter' && this.employeeaddress.substatus != 'Offer Letter Rejected By Manager') {
       this.traineeEmpData.substatus = 'Offer Letter Regenerated';
     }
@@ -915,7 +906,7 @@ export class TraineeOfferLetterComponent implements OnInit, OnDestroy {
       isdeleted: 'Active',
     };
 
-    if (this.traineeEmpData?.amount != null &&( this.employeeForm.get('amount')?.value != null || this.employeeForm.get('monthlyammount')?.value != null)) {
+    if (this.traineeEmpData?.amount != null && (this.employeeForm.get('amount')?.value != null || this.employeeForm.get('monthlyammount')?.value != null)) {
       this.subscription = this.http.postdata('Compensationdata', Compensationdata).subscribe({
         next: (data: any) => {
           console.log("comp data successfully added");
@@ -975,8 +966,8 @@ export class TraineeOfferLetterComponent implements OnInit, OnDestroy {
     if (employeeData.substatus == 'Offer Letter Rejected By Manager') {
       employeeData.substatus = 'Offer Letter Generated';
       (employeeData.generateOffer = false),
-      (employeeData.esic = this.traineeEmpData.esic),
-      (employeeData.pf = this.traineeEmpData.pf);
+        (employeeData.esic = this.traineeEmpData.esic),
+        (employeeData.pf = this.traineeEmpData.pf);
       this.subscription = this.http.postdata('Employeedata/UPDATER', employeeData).subscribe({
         next: (res: any) => {
           this.result = res;
@@ -995,7 +986,7 @@ export class TraineeOfferLetterComponent implements OnInit, OnDestroy {
       });
     } else {
       (employeeData.substatus = 'Offer Letter Regenerated'),
-      (employeeData.generateOffer = false);
+        (employeeData.generateOffer = false);
       this.subscription = this.http.postdata('Employeedata/UPDATER', employeeData).subscribe({
         next: (res: any) => {
           this.result = res;

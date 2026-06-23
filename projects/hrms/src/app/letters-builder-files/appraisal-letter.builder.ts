@@ -1,3 +1,5 @@
+import { applyLetterPageSetup, LETTER_MARGINS, stampFont } from "./letter-builder.utils";
+
 export interface AppraisalLetterData {
   firstName: string;
   middleName?: string;
@@ -40,9 +42,9 @@ export interface AppraisalLetterData {
   authorityDesignation: string;
   employeeSignatureDate?: string;
   backgroundImageBase64?: string;
+  headerLogoBase64?: string;
   useVerdanaFont?: boolean;
   useAutographyFont?: boolean;
-  headerLogoBase64?: string;
 }
 
 const PX = (px: number) => Math.round((px * 72) / 96);
@@ -263,69 +265,27 @@ export function buildAppraisalLetterDoc(data: AppraisalLetterData): any {
     { text: [{ text: 'Date: ', font: 'VERDANABOLD' }, { text: data.employeeSignatureDate ? fmt(data.employeeSignatureDate) : '', font: bodyFont }], margin: [0, 0, 0, 8] },
   ];
 
-  function stampFont(nodes: any[]): any[] {
-    return nodes.map(node => {
-      if (typeof node === 'string') return node;
-      if (Array.isArray(node)) return stampFont(node);
-      const stamped: any = node.font ? node : { font: bodyFont, ...node };
-      if (stamped.table?.body) {
-        stamped.table.body = stamped.table.body.map((row: any[]) =>
-          row.map(cell => {
-            if (!cell || typeof cell !== 'object') return cell;
-            if (cell.font || cell.text === '') return cell;
-            const s: any = { font: bodyFont, ...cell };
-            if (Array.isArray(s.text)) {
-              s.text = s.text.map((t: any) => typeof t === 'string' ? t : (t.font ? t : { font: bodyFont, ...t }));
-            }
-            return s;
-          })
-        );
-      }
-      if (Array.isArray(stamped.text)) {
-        stamped.text = stamped.text.map((t: any) => typeof t === 'string' ? t : (t.font ? t : { font: bodyFont, ...t }));
-      }
-      if (stamped.ol) stamped.ol = stampFont(stamped.ol);
-      return stamped;
+   const content: any[] = [...page1, ...page2];
+   const isSoftCopy = !!data.backgroundImageBase64;
+    const margins = isSoftCopy ? LETTER_MARGINS.softCopy : LETTER_MARGINS.hardCopy;
+
+    const docDef: any = {
+      pageSize: 'A4',
+      pageMargins: [margins.left, margins.top, margins.right, margins.bottom],
+      defaultStyle: {
+        font: bodyFont,
+        fontSize: PX(13),
+        alignment: 'justify',
+        color: '#000',
+      },
+      content: stampFont(content, bodyFont),
+    };
+
+    applyLetterPageSetup(docDef, {
+      backgroundImageBase64: data.backgroundImageBase64,
+      headerLogoBase64: data.headerLogoBase64,
+      bodyFont,
     });
-  }
 
-  const topMarginPage1 = data.backgroundImageBase64 ? 100 : 50;
-  const topMargin = data.backgroundImageBase64 ? 120 : 50;
-  const bottomMargin = data.backgroundImageBase64 ? 100 : 50;
-
-  const page1Content = {
-    margin: [0, topMarginPage1, 0, bottomMargin],
-    stack: [...page1]
-  };
-
-  const page2Content = {
-    pageBreak: 'before',
-    margin: [0, topMargin, 0, bottomMargin],
-    stack: [...page2]
-  };
-
-  const docDef: any = {
-    pageSize: 'A4',
-
-    // left, top, right, bottom
-    pageMargins: [60, 0, 60, 0],
-
-    defaultStyle: {
-      font: bodyFont,
-      fontSize: PX(12),
-      color: '#000'
-    },
-
-    content: [
-      page1Content,
-      page2Content
-    ]
-  };
-
-  if (data.backgroundImageBase64) {
-    docDef.images = { letterBg: data.backgroundImageBase64 };
-    docDef.background = () => ({ image: 'letterBg', width: 620, height: 870, absolutePosition: { x: -12, y: -14 } });
-  }
-
-  return docDef;
+    return docDef;
 }

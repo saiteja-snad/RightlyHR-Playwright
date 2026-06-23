@@ -1,3 +1,5 @@
+import { applyLetterPageSetup, LETTER_MARGINS, stampFont } from "./letter-builder.utils";
+
 export interface OfferLetterData {
   firstName: string;
   middleName?: string;
@@ -40,6 +42,7 @@ export interface OfferLetterData {
   esicContribution?: number;
   esiPerAnnum?: number;
   backgroundImageBase64?: string;
+  headerLogoBase64?:string;
   useVerdanaFont?: boolean;
   useAutographyFont?: boolean;
   employeeFullName?: string;
@@ -137,16 +140,16 @@ export function buildOfferLetterDoc(data: OfferLetterData): any {
       margin: [0, 0, 0, 10]
     },
     p([{ text: `Dear ${fullName},`, font: 'VERDANABOLD' }], 10),
-    p('Congratulations and Welcome to SNAD Developers India Pvt Ltd!!!', 12),
+    p('Congratulations and Welcome to RightlyHR!!!', 12),
     p([
       'Further to your application for employment with us,and the subsequent selection process, we are delighted to offer you the role of ',
       { text: jobRole, font: 'VERDANABOLD' },' in our organization and your ',{ text: 'CTC', font: 'VERDANABOLD' },' will be ',
       { text: `INR ${ctcTotal}`, font: 'VERDANABOLD' },' per annum.',
     ], 12),
-    p('SNAD Developers India Pvt Ltd is formed as an INDIAN Spin-off of AVERON SOLUTIONS INC., a US based organization for providing Software Development and Services to various IT Organizations across the globe. We are a core team of engineers with a mindset to excel as a family under the guidance of our superior leadership.', 12),
+    p('RightlyHR is formed as an INDIAN Spin-off of AVERON SOLUTIONS INC., a US based organization for providing Software Development and Services to various IT Organizations across the globe. We are a core team of engineers with a mindset to excel as a family under the guidance of our superior leadership.', 12),
     p([
       'Your reporting location will be ',
-      { text: `SNAD Developers India Pvt Ltd, ${workAddress}. Your date of joining would be ${doj}.`, font: 'VERDANABOLD' },
+      { text: `RightlyHR, ${workAddress}. Your date of joining would be ${doj}.`, font: 'VERDANABOLD' },
     ], 12),
     p([
       'Your respective ',
@@ -217,7 +220,7 @@ export function buildOfferLetterDoc(data: OfferLetterData): any {
             {
               ul: [
                 "During your service with the Company, you are expected to dedicate your whole time and attention to the Company's affairs and abstain from directly or indirectly engaging in any other business.",
-                'Information pertaining to SNAD Developers India Pvt Ltd operations and intellectual property is confidential and you will sign a non-disclosure agreement. If you are bound by a confidentiality agreement with a previous employer, you must notify the Company and indemnify the Company against any breach thereof.',
+                'Information pertaining to RightlyHR operations and intellectual property is confidential and you will sign a non-disclosure agreement. If you are bound by a confidentiality agreement with a previous employer, you must notify the Company and indemnify the Company against any breach thereof.',
                 'You may be required to travel on Company work, and you will be reimbursed expenses as per Company policy.',
                 'Your Remuneration and the terms and conditions of this offer letter shall remain confidential and are not to be disclosed to any third party.',
                 'Upon acceptance of the offer letter, your official Employment ID will be created with us and you will entitled to the corporate benefits structure based on the category of work. Your employment with the company as a FTE will stand confirmed subjected to the terms and conditions as per rules, regulations, and policies of The Company.',
@@ -259,7 +262,7 @@ export function buildOfferLetterDoc(data: OfferLetterData): any {
     p(['For any further information or clarification required, please feel free to reach us on our email at ',{ text: 'hr@snaddevelopers.com', color: '#0d6efd', decoration: 'underline'}], 12),
 
     p('Yours Sincerely,', 4),
-    { text: 'For SNAD Developers India Pvt Ltd', font: 'VERDANABOLD', fontSize: PX(14), margin: [0, 0, 0, 20] },
+    { text: 'For RightlyHR', font: 'VERDANABOLD', fontSize: PX(14), margin: [0, 0, 0, 20] },
     { text: authorityName, font: data.useAutographyFont ? 'Autography' : bodyFont, fontSize: PX(32), margin: [0, 0, 0, 2], noWrap: true, alignment: 'left' },
     { text: 'Authorized Signatory,', font: 'VERDANABOLD', fontSize: PX(13), margin: [0, 0, 0, 0] },
     { text: authorityName, font: 'VERDANABOLD', fontSize: PX(13), margin: [0, 0, 0, 0] },
@@ -291,7 +294,7 @@ export function buildOfferLetterDoc(data: OfferLetterData): any {
     { text: 'ANNEXURE - 1', font: 'VERDANABOLD', fontSize: PX(16), alignment: 'center', pageBreak: 'before', margin: [0, 0, 0, 8] },
     { text: 'Documents / Information required to be submitted on the day of joining:', font: 'VERDANABOLD', margin: [0, 0, 0, 8] },
     { text: 'On the day joining, you are requested to bring to the following original documents and certificates (For verification purpose), along with 1 copy of each', margin: [0, 0, 0, 8] },
-    checkbox('Acceptance copies of SNAD Developers India Pvt Ltd. duly signed offer Letter.', 4),
+    checkbox('Acceptance copies of RightlyHR. duly signed offer Letter.', 4),
     checkbox("Certificates' supporting your educational qualifications along with marks sheet", 4),
     checkbox('Xth certificate & marks sheet', 3, 20),
     checkbox('XII th certificate & marks sheet', 3, 20),
@@ -385,7 +388,7 @@ export function buildOfferLetterDoc(data: OfferLetterData): any {
     },
     { text: [{ text: 'Note: ', font: 'VERDANABOLD' }, note ?? ''], margin: [0, 0, 0, 8] },
     {
-      text: [{ text: 'The Company presently has a Performance Award Program. Performance Award Program will be made available to you upon joining SNAD. Please note: SNAD Developers India Pvt Ltd reserves the right, in its sole discretion, to amend, change, suspend, or terminate the Performance Award Program at any time.', font: 'VERDANABOLD'}],
+      text: [{ text: 'The Company presently has a Performance Award Program. Performance Award Program will be made available to you upon joining SNAD. Please note: RightlyHR reserves the right, in its sole discretion, to amend, change, suspend, or terminate the Performance Award Program at any time.', font: 'VERDANABOLD'}],
       margin: [0, 0, 0, 8]
     },
 
@@ -410,59 +413,27 @@ export function buildOfferLetterDoc(data: OfferLetterData): any {
     },
   ];
 
-  function stampFont(nodes: any[]): any[] {
-    return nodes.map(node => {
-      if (typeof node === 'string') return node;
-      if (Array.isArray(node)) return stampFont(node);
-      const stamped: any = node.font ? node : { font: bodyFont, ...node };
-      if (Array.isArray(stamped.text)) {
-        stamped.text = stamped.text.map((t: any) =>
-          typeof t === 'string' ? t : (t.font ? t : { font: bodyFont, ...t })
-        );
-      }
-      if (Array.isArray(stamped.ol)) stamped.ol = stampFont(stamped.ol);
-      if (Array.isArray(stamped.ul)) stamped.ul = stampFont(stamped.ul);
-      if (Array.isArray(stamped.stack)) stamped.stack = stampFont(stamped.stack);
-      if (Array.isArray(stamped.columns)) stamped.columns = stampFont(stamped.columns);
-      if (stamped.table?.body) {
-        stamped.table.body = stamped.table.body.map((row: any[]) =>
-          row.map((c: any) => {
-            if (typeof c === 'string') return { text: c, font: bodyFont };
-            // Only stamp font on cells that have actual content (text property)
-            if (c && !c.font && c.text !== undefined) return { font: bodyFont, ...c };
-            return c;
-          })
-        );
-      }
-      return stamped;
-    });
-  }
 
-  const styledContent = stampFont(content);
-  const topMargin = data.backgroundImageBase64 ? 120 : 50;
-  const bottomMargin = data.backgroundImageBase64 ? 120 : 50;
+ const isSoftCopy = !!data.backgroundImageBase64;
+  const margins = isSoftCopy ? LETTER_MARGINS.softCopy : LETTER_MARGINS.hardCopy;
 
   const docDef: any = {
     pageSize: 'A4',
-    pageMargins: [60, topMargin, 60, bottomMargin],
+    pageMargins: [margins.left, margins.top, margins.right, margins.bottom],
     defaultStyle: {
       font: bodyFont,
-      fontSize: PX(12),
+      fontSize: PX(13),
       alignment: 'justify',
       color: '#000',
     },
-    content: styledContent,
+    content: stampFont(content, bodyFont),
   };
 
-  if (data.backgroundImageBase64) {
-    docDef.images = { letterBg: data.backgroundImageBase64 };
-    docDef.background = () => ({
-      image: 'letterBg',
-      width: 620,
-      height: 870,
-      absolutePosition: { x: -12, y: -14 },
-    });
-  }
+  applyLetterPageSetup(docDef, {
+    backgroundImageBase64: data.backgroundImageBase64,
+    headerLogoBase64: data.headerLogoBase64,
+    bodyFont,
+  });
 
   return docDef;
 }

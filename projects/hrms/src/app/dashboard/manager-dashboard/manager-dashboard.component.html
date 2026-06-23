@@ -520,6 +520,9 @@
                     @if (emp.categoryName) {
                     <div class="leave-chip mt-1" [ngStyle]="getLeaveChipStyle(emp.categoryColor)">{{ emp.categoryName }}</div>
                     }
+                    @if (emp.hasPermission && emp.permissionDuration) {
+                        <span class="attendance-chip chip-permission">{{ emp.permissionType }} ({{ emp.permissionDuration }})</span>
+                    }
                 </div>
             </div>
             <div *ngIf="getFilteredEmployees().length === 0" class="text-center text-muted py-3">

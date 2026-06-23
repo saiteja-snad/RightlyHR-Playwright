@@ -13,6 +13,7 @@ import { buildOfferLetterDoc } from '../../../../../hrms/src/app/letters-builder
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { PopupService } from '../../common-services/popup.service';
 import { DetailedStepProgressbarComponent } from "../../shared/detailed-step-progressbar/detailed-step-progressbar.component";
+import { fetchLetterAssets, setupLetterPdfMake } from '../../../../../hrms/src/app/letters-builder-files/letter-pdf.utils';
 @Component({
   selector: 'app-offer-letter',
   imports: [CommonModule, DateFormatPipe, ReactiveFormsModule, DetailedStepProgressbarComponent],
@@ -502,22 +503,12 @@ export class OfferLetterComponent implements OnInit {
     const data = this.offerLetterData;
     const fullName = [data.firstName, data.middleName, data.lastName].filter(Boolean).join(' ');
 
-    const [backgroundImageBase64, verdanaItalic, verdanaSemiBold] = await Promise.all([
-      this.fetchImageAsBase64('/images/snad-new-letter-bg.png'),
-      this.getFileBase64('/fonts/Verdana Italic.ttf'),
-      this.getFileBase64('/fonts/verdana-pro-semi-bold.ttf'),
-    ]);
+    const isSoftCopy = !!data.docType;
 
-    const pm = (pdfMake as any).default ?? pdfMake;
-    const mergedVfs: Record<string, string> = { ...customVfs };
-    if (verdanaItalic)   mergedVfs['VerdanaItalic.ttf']   = verdanaItalic;
-    if (verdanaSemiBold) mergedVfs['VerdanaSemiBold.ttf'] = verdanaSemiBold;
-    pm.addVirtualFileSystem(mergedVfs);
-    pm.setFonts({
-      VERDANA: { normal: 'VerdanaNow.ttf', italics: verdanaItalic ? 'VerdanaItalic.ttf' : 'VerdanaNow.ttf' },
-      VERDANABOLD: { normal: verdanaSemiBold ? 'VerdanaSemiBold.ttf' : 'VerdanaNowBold.ttf' },
-      Autography: { normal: 'Autography.otf' },
-    });
+    const [assets, pm] = await Promise.all([
+      fetchLetterAssets(isSoftCopy),
+      setupLetterPdfMake(),
+    ]);
 
     const docDef = buildOfferLetterDoc({
       firstName: data.firstName,
@@ -563,7 +554,8 @@ export class OfferLetterComponent implements OnInit {
       useVerdanaFont: true,
       useAutographyFont: true,
       employeeFullName: fullName,
-      backgroundImageBase64,
+      backgroundImageBase64: assets.backgroundImageBase64,
+      headerLogoBase64: assets.headerLogoBase64,
     });
 
     const blob: Blob = await pm.createPdf(docDef).getBlob();

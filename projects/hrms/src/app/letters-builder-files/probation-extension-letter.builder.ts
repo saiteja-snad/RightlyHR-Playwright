@@ -15,7 +15,6 @@ export interface ProbationExtensionLetterData {
   authorityDesignation?: string;
   employeeSignatureDate?: string;
   backgroundImageBase64?: string;
-  headerLogoBase64?: string;
   useVerdanaFont?: boolean;
   useAutographyFont?: boolean;
   headerLogoBase64?: string;

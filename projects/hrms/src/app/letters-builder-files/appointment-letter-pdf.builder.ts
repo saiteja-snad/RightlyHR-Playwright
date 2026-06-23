@@ -16,7 +16,6 @@ export interface AppointmentLetterData {
   dateOfJoining: string;
   employeeSignatureDate?: string;
   backgroundImageBase64?: string;
-  headerLogoBase64?: string;
   useVerdanaFont?: boolean;
   useAutographyFont?: boolean;
   headerLogoBase64?: string;
@@ -385,7 +384,7 @@ export function buildAppointmentLetterDoc(data: AppointmentLetterData): any {
 
     const isSoftCopy = !!data.backgroundImageBase64;
        const margins = isSoftCopy ? LETTER_MARGINS.softCopy : LETTER_MARGINS.hardCopy;
-     
+
        const docDef: any = {
          pageSize: 'A4',
          pageMargins: [margins.left, margins.top, margins.right, margins.bottom],
@@ -397,12 +396,12 @@ export function buildAppointmentLetterDoc(data: AppointmentLetterData): any {
          },
          content: stampFont(content, bodyFont),
        };
-     
+
        applyLetterPageSetup(docDef, {
          backgroundImageBase64: data.backgroundImageBase64,
          headerLogoBase64: data.headerLogoBase64,
          bodyFont,
        });
-     
+
        return docDef;
 }

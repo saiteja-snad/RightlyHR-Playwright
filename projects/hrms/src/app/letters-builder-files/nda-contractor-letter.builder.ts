@@ -16,6 +16,7 @@ export interface NdaLetterData {
   useVerdanaFont?: boolean;
   useAutographyFont?: boolean;
   employeeFullName?: string;
+  headerLogoBase64?: string;
 }
 
 const PX = (px: number) => Math.round((px * 72) / 96);

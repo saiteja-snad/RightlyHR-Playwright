@@ -13,6 +13,7 @@ import { DateformatPipe } from "../../../../../hrms/src/app/pipes/dateformat.pip
 import { CommonModule } from '@angular/common';
 import { PopupService } from '../../common-services/popup.service';
 import { DetailedStepProgressbarComponent } from "../../shared/detailed-step-progressbar/detailed-step-progressbar.component";
+import { fetchLetterAssets, setupLetterPdfMake } from '../../../../../hrms/src/app/letters-builder-files/letter-pdf.utils';
 @Component({
   selector: 'app-trainee-offerletter',
   imports: [DateformatPipe, ReactiveFormsModule, CommonModule, DetailedStepProgressbarComponent],
@@ -333,22 +334,12 @@ export class TraineeOfferletterComponent implements OnInit, OnDestroy {
         : `${signatureAuth.firstName} ${signatureAuth.lastName}`;
     }
 
-    const [backgroundImageBase64, verdanaItalic, verdanaSemiBold] = await Promise.all([
-      this.fetchImageAsBase64('/images/snad-new-letter-bg.png'),
-      this.getFileBase64('/fonts/Verdana Italic.ttf'),
-      this.getFileBase64('/fonts/verdana-pro-semi-bold.ttf'),
-    ]);
+    const isSoftCopy = !!data.docType;
 
-    const pm = (pdfMake as any).default ?? pdfMake;
-    const mergedVfs: Record<string, string> = { ...customVfs };
-    if (verdanaItalic)   mergedVfs['VerdanaItalic.ttf']   = verdanaItalic;
-    if (verdanaSemiBold) mergedVfs['VerdanaSemiBold.ttf'] = verdanaSemiBold;
-    pm.addVirtualFileSystem(mergedVfs);
-    pm.setFonts({
-      VERDANA: { normal: 'VerdanaNow.ttf', bold: 'VerdanaNowBold.ttf', italics: verdanaItalic ? 'VerdanaItalic.ttf' : 'VerdanaNow.ttf', bolditalics: 'VerdanaNowBold.ttf' },
-      VERDANABOLD: { normal: verdanaSemiBold ? 'VerdanaSemiBold.ttf' : 'VerdanaNowBold.ttf', bold: verdanaSemiBold ? 'VerdanaSemiBold.ttf' : 'VerdanaNowBold.ttf', italics: verdanaSemiBold ? 'VerdanaSemiBold.ttf' : 'VerdanaNowBold.ttf', bolditalics: verdanaSemiBold ? 'VerdanaSemiBold.ttf' : 'VerdanaNowBold.ttf' },
-      Autography: { normal: 'Autography.otf', bold: 'Autography.otf', italics: 'Autography.otf', bolditalics: 'Autography.otf' },
-    });
+    const [assets, pm] = await Promise.all([
+      fetchLetterAssets(isSoftCopy),
+      setupLetterPdfMake(),
+    ]);
 
     const startDate = this.getofferdata.offerStartDate || this.traineeEmpData.dateOfJoining;
     const rawEnd = this.getofferdata.trainingEndDate || this.getofferdata.offertrainingEndDate;
@@ -384,7 +375,8 @@ export class TraineeOfferletterComponent implements OnInit, OnDestroy {
       useVerdanaFont: true,
       useAutographyFont: true,
       employeeFullName: fullName,
-      backgroundImageBase64,
+      backgroundImageBase64: assets.backgroundImageBase64,
+      headerLogoBase64: assets.headerLogoBase64,
     });
 
     const blob: Blob = await pm.createPdf(docDef).getBlob();

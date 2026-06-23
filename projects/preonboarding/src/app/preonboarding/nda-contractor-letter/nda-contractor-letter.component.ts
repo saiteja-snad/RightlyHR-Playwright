@@ -19,6 +19,7 @@ import { DetailedStepProgressbarComponent } from "../../shared/detailed-step-pro
 import { DateFormatPipe } from '../../pipes/date-format.pipe';
 import { PopupService } from '../../common-services/popup.service';
 import { Iofferletter, IJobDetails } from '../../models/offer-letter.model';
+import { fetchLetterAssets, setupLetterPdfMake } from '../../../../../hrms/src/app/letters-builder-files/letter-pdf.utils';
 @Component({
   selector: 'app-nda-contractor-letter',
   imports: [CommonModule, TranslateModule, NgxCountriesDropdownModule, ReactiveFormsModule, DateformatPipe,
@@ -524,23 +525,12 @@ export class NdaContractorLetterComponent implements OnInit, OnDestroy{
   async downLoadDocument(offerUpdateDetails: Iofferletter) {
     const data = this.ndaLetterData;
 
-    const isSoftCopy = this.getofferdata.docType === true;
-    const [backgroundImageBase64, verdanaItalic, verdanaSemiBold] = await Promise.all([
-      isSoftCopy ? this.fetchImageAsBase64('/images/snad-new-letter-bg.png') : Promise.resolve(undefined as string | undefined),
-      this.getFileBase64('/fonts/Verdana Italic.ttf'),
-      this.getFileBase64('/fonts/verdana-pro-semi-bold.ttf'),
-    ]);
+    const isSoftCopy = !!data.docType;
 
-    const pm = (pdfMake as any).default ?? pdfMake;
-    const mergedVfs: Record<string, string> = { ...customVfs };
-    if (verdanaItalic)   mergedVfs['VerdanaItalic.ttf']   = verdanaItalic;
-    if (verdanaSemiBold) mergedVfs['VerdanaSemiBold.ttf'] = verdanaSemiBold;
-    pm.addVirtualFileSystem(mergedVfs);
-    pm.setFonts({
-      VERDANA: { normal: 'VerdanaNow.ttf', bold: 'VerdanaNowBold.ttf', italics: verdanaItalic ? 'VerdanaItalic.ttf' : 'VerdanaNow.ttf', bolditalics: 'VerdanaNowBold.ttf' },
-      VERDANABOLD: { normal: verdanaSemiBold ? 'VerdanaSemiBold.ttf' : 'VerdanaNowBold.ttf', bold: verdanaSemiBold ? 'VerdanaSemiBold.ttf' : 'VerdanaNowBold.ttf', italics: verdanaSemiBold ? 'VerdanaSemiBold.ttf' : 'VerdanaNowBold.ttf', bolditalics: verdanaSemiBold ? 'VerdanaSemiBold.ttf' : 'VerdanaNowBold.ttf' },
-      Autography: { normal: 'Autography.otf', bold: 'Autography.otf', italics: 'Autography.otf', bolditalics: 'Autography.otf' },
-    });
+    const [assets, pm] = await Promise.all([
+      fetchLetterAssets(isSoftCopy),
+      setupLetterPdfMake(),
+    ]);
 
     const docDef = buildNdaLetterDoc({
       firstName: data.firstName,
@@ -559,7 +549,8 @@ export class NdaContractorLetterComponent implements OnInit, OnDestroy{
       useVerdanaFont: true,
       useAutographyFont: true,
       employeeFullName: this.employeeFullname,
-      backgroundImageBase64,
+      backgroundImageBase64: assets.backgroundImageBase64,
+      headerLogoBase64: assets.headerLogoBase64,
     });
 
     const blob: Blob = await pm.createPdf(docDef).getBlob();

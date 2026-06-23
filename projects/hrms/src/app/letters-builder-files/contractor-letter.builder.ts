@@ -24,6 +24,7 @@ export interface ContractorLetterData {
   useAutographyFont?: boolean;
   employeeFullName?: string;
   acceptanceDate?: string;
+  headerLogoBase64?: string;
 }
 
 const PX = (px: number) => Math.round((px * 72) / 96);

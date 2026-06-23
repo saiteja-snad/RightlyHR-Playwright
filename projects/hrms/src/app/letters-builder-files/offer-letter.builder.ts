@@ -43,6 +43,7 @@ export interface OfferLetterData {
   useVerdanaFont?: boolean;
   useAutographyFont?: boolean;
   employeeFullName?: string;
+  headerLogoBase64?: string;
 }
 
 const PX = (px: number) => Math.round((px * 72) / 96);
@@ -341,13 +342,13 @@ export function buildOfferLetterDoc(data: OfferLetterData): any {
           [cell('Basic Salary',{ alignment: 'center' }), cell(v(data.basicSalary),{ alignment: 'center' }), cell(v(data.basicPerannum),{ alignment: 'center' })],
           [cell('HRA',{ alignment: 'center' }), cell(v(data.hraSalary),{ alignment: 'center' }), cell(v(data.hraPerAnnum),{ alignment: 'center' })],
           [cell('Other Allowances',{ alignment: 'center' }), cell(v(data.otherAllowances),{ alignment: 'center' }), cell(v(data.otherAllowancesPerAnnum),{ alignment: 'center' })],
-          [boldCell('Total Gross Salary',{ fillColor: '#ffffcc', alignment: 'center' }), boldCell(v(data.totalGrossSalary),{ fillColor: '#ffffcc', alignment: 'center' }), 
+          [boldCell('Total Gross Salary',{ fillColor: '#ffffcc', alignment: 'center' }), boldCell(v(data.totalGrossSalary),{ fillColor: '#ffffcc', alignment: 'center' }),
             boldCell(v(data.totalGrossPerAnnum),{ fillColor: '#ffffcc', alignment: 'center' })],
           [cell('PF Contribution by Employee',{ alignment: 'center' }), cell(v(data.pfContribution),{ alignment: 'center' }), cell(v(data.pfPreAnuum),{ alignment: 'center' })],
           [cell('ESI Contribution by Employee',{ alignment: 'center' }), cell(v(data.employeeEsi),{ alignment: 'center' }), cell(v(data.esiPerAnnumemployee),{ alignment: 'center' })],
           [cell('Professional Tax (PT)',{ alignment: 'center' }), cell(v(data.professionalTax),{ alignment: 'center' }), cell(v(data.professionalPerAnnum),{ alignment: 'center' })],
           [boldCell('Total Deductions (PF+ESI+PT)',{ alignment: 'center' }), boldCell(v(data.totalDeduction),{ alignment: 'center' }), boldCell(v(data.totalDeductionsPerAnnum),{ alignment: 'center' })],
-          [boldCell('Net Salary',{ fillColor: '#fff2cc', alignment: 'center' }), boldCell(v(data.netSalary),{ fillColor: '#fff2cc', alignment: 'center' }), 
+          [boldCell('Net Salary',{ fillColor: '#fff2cc', alignment: 'center' }), boldCell(v(data.netSalary),{ fillColor: '#fff2cc', alignment: 'center' }),
             boldCell(v(data.netSalaryPerAnnum),{ fillColor: '#fff2cc', alignment: 'center' })],
         ]
       },
@@ -369,7 +370,7 @@ export function buildOfferLetterDoc(data: OfferLetterData): any {
           [cell('Employer PF Contribution',{ alignment: 'center' }), cell(v(data.pfContribution),{ alignment: 'center' }), cell(v(data.pfPreAnuum),{ alignment: 'center' })],
           [cell('Employer ESI Contribution',{ alignment: 'center' }), cell(v(data.esicContribution),{ alignment: 'center' }), cell(v(data.esiPerAnnum),{ alignment: 'center' })],
           [boldCell('Variable Amount',{ alignment: 'center' }), { text: v(variablePayAmount) || '', font: 'VERDANABOLD', colSpan: 2, alignment: 'center' }, { text: '' }],
-          [boldCell('CTC=Gross Salary +(Employer PF+ESI+Variable Amount)',{ alignment: 'center', noWrap: true }), boldCell(v(data.grossSalary),{ alignment: 'center' }), 
+          [boldCell('CTC=Gross Salary +(Employer PF+ESI+Variable Amount)',{ alignment: 'center', noWrap: true }), boldCell(v(data.grossSalary),{ alignment: 'center' }),
             boldCell(ctcPerAnnumDisplay,{ alignment: 'center' })],
         ]
       },

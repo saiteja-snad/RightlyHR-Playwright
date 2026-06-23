@@ -10,35 +10,10 @@
 
   <div class="custom-p-multi-select-table">
     @if(!loading){
-    <div *ngIf="selectedExpenses.length > 0 && (expenesEmplyeedata | async)?.some(canApproveExpense.bind(this))"
-      class="component-header-content">
-
-      <div>
-        Selected Records: {{ selectedExpenses.length }}
-      </div>
-
-      <div class="d-flex gap-2" *ngIf="canShowBulkActions()">
-
-        <button class="custom-btn btn-primary-approve" (click)="openApproveModal(approval, selectedExpenses[0])">
-          Approve
-        </button>
-
-        <button class="custom-btn btn-primary-reject" (click)="openRejectModal(rejectmodal, selectedExpenses[0])">
-          Reject
-        </button>
-
-      </div>
-
-    </div>
-    <p-table [value]="(expenesEmplyeedata | async) ?? []" [(selection)]="selectedExpenses"
-      (selectionChange)="selectCheck($event)" dataKey="expenses_ID">
+    <p-table [value]="(expenesEmplyeedata | async) ?? []" dataKey="expenses_ID">
 
       <ng-template pTemplate="header">
         <tr>
-          <th style="width:4rem" *ngIf="(expenesEmplyeedata | async)?.some(canApproveExpense.bind(this))">
-            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
-          </th>
-
           <th>Expense Title</th>
           <th>Expense Date</th>
           <th>Applied Date</th>
@@ -46,7 +21,7 @@
           <th>Approver</th>
           <th>Status</th>
 
-          <th *ngIf="selectedExpenses.length == 0">
+          <th>
             Action
           </th>
         </tr>
@@ -54,10 +29,7 @@
 
       <ng-template pTemplate="body" let-exp>
         <tr>
-          <td *ngIf="(expenesEmplyeedata | async)?.some(canApproveExpense.bind(this))">
-            <p-tableCheckbox *ngIf="canApproveExpense(exp)" [value]="exp">
-            </p-tableCheckbox>
-          </td>
+
 
           <td>{{ exp.expenses_Title }}</td>
           <td>{{ exp?.expenseitem?.[0]?.expense_Date | dateformat }}</td>
@@ -66,7 +38,7 @@
           <td>{{ exp?.pendingApprovalHeader?.approver_Name }}</td>
           <td>{{ exp.status }}</td>
 
-          <td *ngIf="selectedExpenses.length == 0">
+          <td>
             <div class="dropdown">
               <a data-bs-toggle="dropdown">
                 <i class="bi bi-three-dots-vertical"></i>
@@ -74,18 +46,57 @@
 
               <ul class="dropdown-menu custom-dropdown-menu">
 
-                <li *ngIf="canApproveExpense(exp)">
+                <!-- RM -->
+                <li *ngIf="isRMStage(exp)">
                   <a class="dropdown-item" (click)="openApproveModal(approval, exp)">
-                    <i class="bi bi-check-circle me-2"></i>Approve
+                    <i class="bi bi-check-circle me-2"></i>
+                    Approve
                   </a>
                 </li>
 
-                <li *ngIf="canApproveExpense(exp)">
+                <li *ngIf="isRMStage(exp)">
                   <a class="dropdown-item" (click)="openRejectModal(rejectmodal, exp)">
-                    <i class="bi bi-x-circle me-2"></i>Reject
+                    <i class="bi bi-x-circle me-2"></i>
+                    Reject
                   </a>
                 </li>
 
+                <!-- HR -->
+                <li *ngIf="isHRStage(exp)">
+                  <a class="dropdown-item" (click)="expensesCheckList(exp,'Verify')">
+                    <i class="bi bi-check-circle me-2"></i>
+                    Verify
+                  </a>
+                </li>
+
+                <li *ngIf="isHRStage(exp)">
+                  <a class="dropdown-item" (click)="openRejectModal(rejectmodal, exp)">
+                    <i class="bi bi-x-circle me-2"></i>
+                    Reject
+                  </a>
+                </li>
+
+                <!-- Finance -->
+                <li *ngIf="isFinanceStage(exp) && !isAllVerifiedForRecord(exp.expenses_ID)">
+                  <a class="dropdown-item" (click)="viewItem(exp.expenses_ID); openModal(verificationofModal)">
+                    <i class="bi bi-check-circle me-2"></i>
+                    Verify
+                  </a>
+                </li>
+
+                <li *ngIf="isFinanceStage(exp) && !isAllVerifiedForRecord(exp.expenses_ID)">
+                  <a class="dropdown-item" (click)="openRejectModal(rejectmodal, exp)">
+                    <i class="bi bi-x-circle me-2"></i>
+                    Reject
+                  </a>
+                </li>
+
+                <li *ngIf="isFinanceStage(exp) && isAllVerifiedForRecord(exp.expenses_ID)">
+                  <a class="dropdown-item" (click)="openApproveModal(approval, exp)">
+                    <i class="bi bi-check-circle me-2"></i>
+                    Approve for Payment
+                  </a>
+                </li>
                 <li>
                   <a class="dropdown-item" (click)="openModal(viewDetailsModal);viewItem(exp.expenses_ID)">
                     <i class="bi bi-eye-fill me-2"></i>View
@@ -366,5 +377,281 @@
         </div>
       </div>
     </div>
+  </div>
+</ng-template>
+
+<!-- Checklist Confirmation Modal -->
+<ng-template #checklistconfirmationmodal let-modal>
+  <div class="result-popup-content p-4 ms-3 me-3" ngbAutofocus>
+
+    <div class="custom-poup-header-content popup-header-border">
+      <div class="pt-2">
+        <p class="checklist-title mb-0">{{'Confirmation Checklist' | translate}}</p>
+      </div>
+
+    </div>
+
+    <div class="custom-check-list-content p-4 my-4">
+      <div *ngFor="let item of checklistdata" class="list-card mb-3">
+        <label class="d-flex align-items-center gap-2">
+          <input class=" custom-checkbox me-3" type="checkbox" [id]="'check'+item.id" [(ngModel)]="item.checked"
+            [ngModelOptions]="{standalone: true}">
+          <label class="form-check-label checklist-label" [for]="'check'+item.id">
+            {{ item.policyType }} <span *ngIf="item.isMandatory" class="text-danger">*</span>
+          </label>
+        </label>
+      </div>
+    </div>
+    <form autocomplete="off" [formGroup]="approveForm">
+      <div class="custom-main-popup-content"
+        *ngIf="storeapprovalRequest.action === 'Approve' || storeapprovalRequest.action === 'Verify'">
+        <label for="comments" class="form-label custom-label mb-2">{{'Comments' | translate}}<span
+            class="text-danger">*</span></label>
+        <textarea class="form-control custom-input" id="comments" placeholder="Please provide comments"
+          formControlName="comments" maxlength="250" (keydown)="formValidation.restrictInitialSpace($event)"></textarea>
+        <!-- Character counter -->
+        <div class="error-msg" *ngIf="approveForm.get('comments')?.touched && approveForm.get('comments')?.invalid">
+          <div *ngIf="approveForm.get('comments')?.errors?.['required']">Comment is required.</div>
+          <div *ngIf="approveForm.get('comments')?.errors?.['maxlength']">Comment cannot exceed 250 characters.</div>
+        </div>
+        <div class="textarea-count-text">{{ approveForm.get('comments')?.value?.length || 0 }}/250</div>
+      </div>
+      <div class="custom-modal-footer">
+        <button type="button" class="custom-btn btn-secondary " (click)="onCancel(modal)">
+          {{'Cancel' | translate}}
+        </button>
+        <button type="button" class="custom-btn btn-primary "
+          [disabled]="!isAllChecked() ||(storeapprovalRequest.action === 'Approve' && approveForm.invalid)||isloading"
+          (click)="confirmApproval(modal)">
+          @if(isloading){
+          <div class="button-loader-content">
+            <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
+            <span>{{'Loading...' | translate}}</span>
+          </div>
+          }@else {
+          <span>{{storeapprovalRequest.action}}</span>
+          }
+        </button>
+      </div>
+    </form>
+  </div>
+
+</ng-template>
+
+<ng-template #Verify let-modal>
+  <div class="result-popup-content" ngbAutofocus>
+    <div>
+      <app-confirmation-icon />
+      <p class="confirmation-text pt-3">{{'Are you sure you want to Verify?' | translate}}</p>
+    </div>
+    <form autocomplete="off" [formGroup]="verifyForm" (ngSubmit)="handleVerify(verifyForm)">
+      <div class="custom-main-popup-content">
+        <label for="comments" class="form-label custom-label mb-2">{{'Comments' | translate}}<span
+            class="text-danger">*</span></label>
+        <textarea class="form-control custom-input" id="comments" placeholder="Please provide comments"
+          formControlName="comments" maxlength="250" (keydown)="formValidation.restrictInitialSpace($event)"></textarea>
+        <!-- Character counter -->
+        <div class="error-msg" *ngIf="verifyForm.get('comments')?.touched && verifyForm.get('comments')?.invalid">
+          <div *ngIf="verifyForm.get('comments')?.errors?.['required']">Comment is required.</div>
+          <div *ngIf="verifyForm.get('comments')?.errors?.['maxlength']">Comment cannot exceed 250 characters.</div>
+        </div>
+        <div class="textarea-count-text">{{ verifyForm.get('comments')?.value?.length || 0 }}/250
+        </div>
+      </div>
+      <div class="d-flex align-items-center flex-wrap gap-2 mb-3">
+        <button type="button" class="custom-btn btn-secondary chip-btn"
+          [class.active]="selectedLeaveStatus === 'verified'" (click)="onStatusVerifySelect('verified')">
+          Verified
+        </button>
+      </div>
+
+      <div class="custom-modal-footer">
+        <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss();">{{'Cancel'|translate}}</button>
+        <button type="submit" class="custom-btn btn-primary" [disabled]="verifyForm.invalid">{{'Verify'|
+          translate}}</button>
+      </div>
+    </form>
+  </div>
+</ng-template>
+
+<ng-template #markAsPaid let-modal>
+  <div class="result-popup-content" ngbAutofocus>
+    <div>
+      <p class="confirmation-text text-start">{{'Confirm Payment Details' | translate}}</p>
+    </div>
+    <form autocomplete="off" [formGroup]="markAsPaidForm" (ngSubmit)="markasPaid(markAsPaidForm)">
+      <div class="custom-main-popup-content">
+        <div class="mb-3">
+          <label for="comments" class="custom-label mb-2">{{'Payment Date' | translate}}<span
+              class="text-danger">*</span></label>
+          <input class="form-control custom-input mb-3" id="paymentDate" placeholder="Select Payment Date"
+            formControlName="paymentDate" type="date" [min]="minPaymentDate">
+          <div class="error-msg"
+            *ngIf="markAsPaidForm.get('paymentDate')?.touched && markAsPaidForm.get('paymentDate')?.invalid">
+            <div *ngIf="markAsPaidForm.get('paymentDate')?.errors?.['required']">Payment Date is required.</div>
+          </div>
+        </div>
+        <div class="mb-3">
+          <label for="exampleFormControlInput1" class="custom-label mb-2">{{'Payment Mode'|translate}}<span
+              class="error-msg">*</span></label>
+          <div class="custom-p-select-content">
+            <p-select [options]="paymentmodedata" optionLabel="value" [filter]="true" filterBy="value"
+              optionValue="value" resetFilterOnHide="true" placeholder="Please select payment mode"
+              formControlName="paymentMode" class="custom-select w-100">
+            </p-select>
+          </div>
+          <div *ngIf="markAsPaidForm.get('paymentMode')?.invalid && markAsPaidForm.get('paymentMode')?.touched"
+            class="error-msg">
+            {{'Payment Mode is required'|translate}}.
+          </div>
+        </div>
+        <div class="mb-3">
+          <label for="comments" class="custom-label mb-2">{{'Transaction Reference Id' | translate}}<span
+              class="text-danger"></span></label>
+          <input type="text" class="form-control custom-input mb-3" id="transactionId"
+            placeholder="Enter Transaction Reference Id" formControlName="transactionId" type="text">
+          <!-- <div class="error-msg"
+            *ngIf="markAsPaidForm.get('transactionId')?.touched && markAsPaidForm.get('transactionId')?.invalid">
+            <div *ngIf="markAsPaidForm.get('transactionId')?.errors?.['required']">Transaction Reference Id is required.</div>
+          </div> -->
+        </div>
+      </div>
+      <div class="custom-modal-footer">
+        <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss();">{{'Cancel'|translate}}</button>
+        <button type="submit" class=" custom-btn btn-primary text-nowrap "
+          [disabled]="markAsPaidForm.invalid||isloading">
+          @if(isloading){
+          <div class="button-loader-content">
+            <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
+            <span>{{'Loading...' | translate}}</span>
+          </div>
+          }@else {
+          <span>{{'Mark as Paid'| translate}}</span>
+          }
+        </button>
+      </div>
+    </form>
+  </div>
+</ng-template>
+<ng-template #verificationofModal let-modal>
+  <div class="custom-main-popup-container">
+    <div class="d-flex justify-content-between popup-header-border p-3">
+      <div class="pt-2">
+        <p class="popup-heading mb-0">{{'Expense Details' | translate}}</p>
+      </div>
+      <div>
+        <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+      </div>
+    </div>
+    <div class="custom-main-popup-content">
+      <div class="mb-3 d-flex gap-3">
+        <b class="expenses-title-text">{{'Expense Title' | translate}} : {{ expenseheaderiteams.expenses_Title }}</b>
+        <!-- <b class="expenses-title-text">Approval Email : {{ expenseheaderiteams.approverEmail }}</b> -->
+      </div>
+      <div class="custom-table">
+        <table class="w-100">
+          <thead>
+            <tr>
+              <th>{{ 'Expense Type' | translate }}</th>
+              <th>{{ 'Expense Name' | translate }}</th>
+              <th>{{ 'Expense Date' | translate }}</th>
+              <th>{{ 'Expense Amount' | translate }}</th>
+              <th>{{ 'Status' | translate }}</th>
+              <th>{{ 'Receipt Number' | translate }}</th>
+              <th class="text-center">{{ 'View' | translate }}</th>
+              <th class="text-center">{{ 'Action' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of expenseheaderiteams?.expenseitem">
+              <td>{{ item?.expenseType }}</td>
+              <td>{{ item?.item_Name }}</td>
+              <td>{{ item?.expense_Date | date: 'dd-MM-yyyy' }}</td>
+              <td>{{ item?.expense_Amount | number: '1.2-2' }}</td>
+              <td>{{ item?.status }}</td>
+              <td>{{ item?.receipt_Number }}</td>
+              <td class="text-center">
+                <div class="d-flex gap-2">
+                  <a type="button" class="me-2 download-text text-nowrap"
+                    (click)="onSelectDownload(item?.attachment_url)">
+                    <i class="bi bi-download me-2"></i>{{'Download' | translate}}
+                  </a>
+                  <a type="button" class="download-text text-nowrap" *ngIf="isImageFile(item?.attachment_url)"
+                    (click)="onViewAttachementverification(item?.attachment_url)">
+                    <i class="bi bi-eye-fill me-2"></i>{{'View' | translate}}
+                  </a>
+                </div>
+              </td>
+              <td class="text-center">
+                <div class="d-flex justify-content-center gap-3">
+                  <a (click)="openVerifyModal(item, Verify)"
+                    *ngIf="!(item?.isVerified === true|| verifiedExpenseIds?.includes(item?.expenseitem_id ?? 0))">
+                    <img src="/icons/check-approve-icon.png" class="action-img" alt="Approve" />
+                  </a>
+                  <a (click)="openVerifyModal(item, Verificationreject)"
+                    *ngIf="!(item?.isVerified === true|| verifiedExpenseIds?.includes(item?.expenseitem_id ?? 0))">
+                    <img src="/icons/cancel-circle.png" class="action-img" alt="Reject" />
+                  </a>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="text-center mt-3">
+          <b>Total Amount : {{expenseheaderiteams?.expense_Amount | number: '1.2-2'}}</b>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+<!-- Attachment View Modal -->
+<ng-template #verificationViewattamchment let-modal>
+  <div class="custom-main-popup-container">
+    <div class="custom-poup-header-content popup-header-border">
+      <div class="pt-2">
+        <p class="popup-heading mb-0">{{'Expense Details' | translate}}</p>
+      </div>
+      <div>
+        <a (click)="modal.dismiss();openModal(verificationofModal); expenseViewURL = null; expenseImageUrl = null"><img
+            src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+      </div>
+    </div>
+
+    <div class="custom-main-popup-content">
+      <p *ngIf="!expenseImageUrl; else imageView">
+        <ngx-doc-viewer [url]="expenseViewURL" viewer="google" style="width: 100%; height: 100vh"></ngx-doc-viewer>
+      </p>
+      <ng-template #imageView>
+        <img [src]="expenseImageUrl" alt="My Image" class="modal-image" />
+      </ng-template>
+    </div>
+  </div>
+</ng-template>
+<ng-template #Verificationreject let-modal>
+  <div class="result-popup-content" ngbAutofocus>
+    <div>
+      <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
+      <p class="confirmation-text pt-3">{{'Are you sure you want to Reject?' | translate}}</p>
+    </div>
+    <form autocomplete="off" [formGroup]="verifyForm" (ngSubmit)="handleVerifyReject(verifyForm)">
+      <div class="custom-main-popup-content">
+        <label for="comments" class="form-label custom-label mb-2">{{'Comments' | translate}}<span
+            class="text-danger">*</span></label>
+        <textarea class="form-control custom-input" id="comments" placeholder="Please provide comments"
+          formControlName="comments" maxlength="250" (keydown)="formValidation.restrictInitialSpace($event)"></textarea>
+        <!-- Character counter -->
+        <div class="error-msg" *ngIf="verifyForm.get('comments')?.touched && verifyForm.get('comments')?.invalid">
+          <div *ngIf="verifyForm.get('comments')?.errors?.['required']">Comment is required.</div>
+          <div *ngIf="verifyForm.get('comments')?.errors?.['maxlength']">Comment cannot exceed 250 characters.</div>
+        </div>
+        <div class="textarea-count-text">{{ verifyForm.get('comments')?.value?.length || 0 }}/250
+        </div>
+      </div>
+      <div class="custom-modal-footer">
+        <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss();">{{'Cancel'|translate}}</button>
+        <button type="submit" class="custom-btn btn-primary" [disabled]="verifyForm.invalid">{{'Reject'|
+          translate}}</button>
+      </div>
+    </form>
   </div>
 </ng-template>

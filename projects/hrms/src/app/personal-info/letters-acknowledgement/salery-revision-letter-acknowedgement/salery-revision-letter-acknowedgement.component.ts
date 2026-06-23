@@ -14,12 +14,10 @@ import { DateformatPipe } from '../../../pipes/dateformat.pipe';
 import { ConfirmationIconComponent } from '../../../icons/confirmation-icon/confirmation-icon.component';
 import { FormValidationsService } from '../../../services/form-validations.service';
 import { IAddress } from '../../../Interfaces/letters-model';
-import { LetterFooterComponent } from "../../../shared/letters-shared-content/letter-footer/letter-footer.component";
-import { LettersheaderComponent } from "../../../shared/letters-shared-content/lettersheader/lettersheader.component";
 import { fetchLetterAssets, setupLetterPdfMake } from '../../../letters-builder-files/letter-pdf.utils';
 @Component({
   selector: 'app-salery-revision-letter-acknowedgement',
-  imports: [CommonModule, TranslateModule, ReactiveFormsModule, DateformatPipe, ConfirmationIconComponent, LetterFooterComponent, LettersheaderComponent],
+  imports: [CommonModule, TranslateModule, ReactiveFormsModule, DateformatPipe, ConfirmationIconComponent],
   templateUrl: './salery-revision-letter-acknowedgement.component.html',
   styleUrl: './salery-revision-letter-acknowedgement.component.scss'
 })
@@ -52,7 +50,7 @@ export class SaleryRevisionLetterAcknowedgementComponent implements OnInit, OnDe
   subscription!: Subscription;
   @Input() letterdata: any;
 
-  constructor(private http: HttpService, private conformationPopup: OpenModalService,
+  constructor(private http: HttpService, private conformationPopup: OpenModalService, 
     private modalService: NgbModal, private fb: FormBuilder, public formsValidation: FormValidationsService) {}
 
   ngOnInit(): void {
@@ -224,7 +222,7 @@ export class SaleryRevisionLetterAcknowedgementComponent implements OnInit, OnDe
     this.spinnerLoader = true;
     const data = this.appraisalData;
 
-      const isSoftCopy = !!data.docType;
+       const isSoftCopy = !!data.docType;
 
     const [assets, pm] = await Promise.all([
       fetchLetterAssets(isSoftCopy),

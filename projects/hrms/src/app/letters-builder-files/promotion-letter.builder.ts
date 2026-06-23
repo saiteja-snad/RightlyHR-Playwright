@@ -1,3 +1,5 @@
+import { LETTER_MARGINS, stampFont, applyLetterPageSetup } from "./letter-builder.utils";
+
 export interface PromotionLetterData {
   firstName: string;
   middleName?: string;
@@ -164,46 +166,29 @@ export function buildPromotionLetterDoc(data: PromotionLetterData): any {
     },
   ];
 
-  function stampFont(nodes: any[]): any[] {
-    return nodes.map(node => {
-      if (typeof node === 'string') return node;
-      if (Array.isArray(node)) return stampFont(node);
-      const stamped: any = node.font ? node : { font: bodyFont, ...node };
-      if (stamped.table?.body) {
-        stamped.table.body = stamped.table.body.map((row: any[]) =>
-          row.map(cell => {
-            if (!cell || typeof cell !== 'object') return cell;
-            if (cell.font || cell.text === '') return cell;
-            const s: any = { font: bodyFont, ...cell };
-            if (Array.isArray(s.text)) {
-              s.text = s.text.map((t: any) => typeof t === 'string' ? t : (t.font ? t : { font: bodyFont, ...t }));
-            }
-            return s;
-          })
-        );
-      }
-      if (Array.isArray(stamped.text)) {
-        stamped.text = stamped.text.map((t: any) => typeof t === 'string' ? t : (t.font ? t : { font: bodyFont, ...t }));
-      }
-      return stamped;
-    });
-  }
-
-  const styledContent = stampFont(content);
-  const topMargin = data.backgroundImageBase64 ? 130 : 50;
-  const bottomMargin = data.backgroundImageBase64 ? 120 : 50;
-
-  const docDef: any = {
-    pageSize: 'A4',
-    pageMargins: [60, topMargin, 60, bottomMargin],
-    defaultStyle: { font: bodyFont, fontSize: PX(15), lineHeight: 1.3, color: '#000000' },
-    content: styledContent,
-  };
-
-  if (data.backgroundImageBase64) {
-    docDef.images = { letterBg: data.backgroundImageBase64 };
-    docDef.background = () => ({ image: 'letterBg', width: 620, height: 870, absolutePosition: { x: -12, y: -14 } });
-  }
-
-  return docDef;
+ 
+   const isSoftCopy = !!data.backgroundImageBase64;
+   const margins = isSoftCopy
+     ? LETTER_MARGINS.softCopy
+     : LETTER_MARGINS.hardCopy;
+ 
+   const docDef: any = {
+     pageSize: 'A4',
+     pageMargins: [margins.left, margins.top, margins.right, margins.bottom],
+     defaultStyle: {
+       font: bodyFont,
+       fontSize: PX(13),
+       alignment: 'justify',
+       color: '#000',
+     },
+     content: stampFont(content, bodyFont),
+   };
+ 
+   applyLetterPageSetup(docDef, {
+     backgroundImageBase64: data.backgroundImageBase64,
+     headerLogoBase64: data.headerLogoBase64,
+     bodyFont,
+   });
+ 
+   return docDef;
 }

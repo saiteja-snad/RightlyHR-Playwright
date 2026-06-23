@@ -1,4 +1,3 @@
-import { content } from 'html2canvas/dist/types/css/property-descriptors/content';
 import {
   LETTER_MARGINS,
   stampFont,
@@ -458,6 +457,7 @@ export function buildSalaryRevisionLetterDoc(
       alignment: 'center',
       margin: [0, 0, 0, 8],
       font: 'VERDANABOLD',
+      pageBreak: 'before',
     },
     {
       text: 'STRICTLY PRIVATE & CONFIDENTIAL',

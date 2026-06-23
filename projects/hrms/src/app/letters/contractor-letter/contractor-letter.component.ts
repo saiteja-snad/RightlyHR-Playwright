@@ -4,15 +4,15 @@ import { Component, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@ang
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Select } from 'primeng/select';
-import { jsPDF } from "jspdf";
-import html2canvas from 'html2canvas';
 import { AbstractControl, FormBuilder, FormControl, FormGroup, NgForm, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import * as pdfMake from 'pdfmake/build/pdfmake';
+import { customVfs } from '../../letters-builder-files/custom-fonts-vfs';
+import { buildContractorLetterDoc } from '../../letters-builder-files/contractor-letter.builder';
 import { Subscription } from 'rxjs';
 import moment from 'moment';
 import { AuthService } from '../../services/auth.service';
 import { HttpService } from '../../services/http.service';
 import { IAddress, ICountry, IGender, IJobtype, IRole, ITitle } from '../../Interfaces/letters-model';
-import { DateformatPipe } from "../../pipes/dateformat.pipe";
 import { OpenModalService } from '../../services/open-modal.service';
 import { NgxCountriesDropdownModule } from 'ngx-countries-dropdown';
 import { TranslateModule } from '@ngx-translate/core';
@@ -23,17 +23,18 @@ import { IFrequency } from '../../Interfaces/job-model';
 import { Editor } from 'primeng/editor';
 import { environment } from '../../../environments/environment';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-import { LettersheaderComponent } from "../../shared/letters-shared-content/lettersheader/lettersheader.component";
+import { DateformatPipe } from '../../pipes/dateformat.pipe';
 import { LetterFooterComponent } from "../../shared/letters-shared-content/letter-footer/letter-footer.component";
+import { LettersheaderComponent } from "../../shared/letters-shared-content/lettersheader/lettersheader.component";
 @Component({
   selector: 'app-contractor-letter',
-  imports: [CommonModule, TranslateModule, Select, NgxCountriesDropdownModule, ReactiveFormsModule, DateformatPipe, NgbPopoverModule, Editor, LettersheaderComponent, LetterFooterComponent],
+  imports: [CommonModule, TranslateModule, Select, NgxCountriesDropdownModule, ReactiveFormsModule, DateformatPipe, NgbPopoverModule, Editor, LetterFooterComponent, LettersheaderComponent],
   templateUrl: './contractor-letter.component.html',
   styleUrl: './contractor-letter.component.scss',
   encapsulation: ViewEncapsulation.None,
 })
 
-export class ContractorLetterComponent implements OnInit, OnDestroy{
+export class ContractorLetterComponent implements OnInit, OnDestroy {
   currentDate = moment();
   isIssuedDateValid = true;
   isExpiryDateValid = true;
@@ -133,10 +134,10 @@ export class ContractorLetterComponent implements OnInit, OnDestroy{
   startDatevalidate: any;
   expiryDatevalidate: any;
   selectedSymbol: string = '';
-  constructor(private router: Router, private modalService: NgbModal, private fb: FormBuilder, private http: HttpService,
-    private authService: AuthService, private conformationPopup: OpenModalService, public formvalidators: FormValidationService, private sanitizer: DomSanitizer
-    // private _userAcessService: UserAccessService,
-  ) {
+
+  constructor(private router: Router, private modalService: NgbModal, private fb: FormBuilder, 
+    private http: HttpService, private authService: AuthService, private conformationPopup: OpenModalService, 
+    public formvalidators: FormValidationService, private sanitizer: DomSanitizer) {
     this.initializeForm();
   }
 
@@ -201,13 +202,13 @@ export class ContractorLetterComponent implements OnInit, OnDestroy{
       address: [{ value: null, disabled: true }],
       offerIssuedDate: ['', Validators.required],
       dateOfJoining: ['', Validators.required],
-      Copys: [null, Validators.required],
+      Copys: [null],
       offerExpiryDate: ['', Validators.required],
       authorityid: [null, Validators.required],
       frequency: [null, Validators.required],
       currencyType: [null, Validators.required],
     },
-      { validators: [this.offerExpiryDateValidator(), this.offerDateofjoiningDateValidator()] } // Add the custom validators here
+    { validators: [this.offerExpiryDateValidator(), this.offerDateofjoiningDateValidator()] } // Add the custom validators here
     );
   }
 
@@ -224,100 +225,152 @@ export class ContractorLetterComponent implements OnInit, OnDestroy{
   //function to generate the offer letter
   async generateOfferLetter() {
     this.loading = true;
+    const data = this.prospectiveEmpData;
+    const fileName = `${data.firstName}_${data.middleName ?? ''}_${data.lastName ?? ''}_${new Date().getTime()}_ContractorLetter.pdf`;
+    const [backgroundImageBase64, verdanaItalic, verdanaSemiBold] = await Promise.all([
+      this.fetchImageAsBase64('/images/snad-new-letter-bg.png'),
+      this.getFileBase64('/fonts/Verdana Italic.ttf'),
+      this.getFileBase64('/fonts/verdana-pro-semi-bold.ttf'),
+    ]);
 
-    // Let Angular update the DOM before starting heavy operations
-    setTimeout(async () => {
-      const data = this.prospectiveEmpData;
-      const pdf = new jsPDF('p', 'mm', 'a4');
-      const imgWidth = pdf.internal.pageSize.getWidth();
-      const imgHeight = pdf.internal.pageSize.getHeight();
-      const pdfContents = ['pdfContent1', 'pdfContent2', 'pdfContent3', 'pdfContent4', 'pdfContent5', 'pdfContent6'];
+    const pm = (pdfMake as any).default ?? pdfMake;
+    const mergedVfs: Record<string, string> = { ...customVfs };
+    if (verdanaItalic)   mergedVfs['VerdanaItalic.ttf']   = verdanaItalic;
+    if (verdanaSemiBold) mergedVfs['VerdanaSemiBold.ttf'] = verdanaSemiBold;
+    pm.addVirtualFileSystem(mergedVfs);
+    pm.setFonts({
+      VERDANA: { normal: 'VerdanaNow.ttf', bold: 'VerdanaNowBold.ttf', italics: verdanaItalic ? 'VerdanaItalic.ttf' : 'VerdanaNow.ttf', bolditalics: 'VerdanaNowBold.ttf' },
+      VERDANABOLD: { normal: verdanaSemiBold ? 'VerdanaSemiBold.ttf' : 'VerdanaNowBold.ttf', bold: verdanaSemiBold ? 'VerdanaSemiBold.ttf' : 'VerdanaNowBold.ttf', italics: verdanaSemiBold ? 'VerdanaSemiBold.ttf' : 'VerdanaNowBold.ttf', bolditalics: verdanaSemiBold ? 'VerdanaSemiBold.ttf' : 'VerdanaNowBold.ttf' },
+      Autography: { normal: 'Autography.otf', bold: 'Autography.otf', italics: 'Autography.otf', bolditalics: 'Autography.otf' },
+    });
 
-      const imagesData = [];
+    const selectedCurrency = this.currencyDetails.find(c => c.key === this.employeeForm.get('currencyType')?.value);
+    const docDef = buildContractorLetterDoc({
+      title: data.title,
+      firstName: data.firstName,
+      middleName: data.middleName,
+      lastName: data.lastName,
+      addressLine1: data.addressLine1,
+      addressLine2: data.addressLine2,
+      city: data.city,
+      state: data.state,
+      country: data.country,
+      pinCode: data.pinCode,
+      offerIssuedDate: this.employeeForm.get('offerIssuedDate')?.value,
+      dateOfJoining: this.employeeForm.get('dateOfJoining')?.value,
+      jobRole: data.jobRole,
+      currencySymbol: selectedCurrency?.value ?? '',
+      currencyType: this.employeeForm.get('currencyType')?.value,
+      amount: data.amount,
+      frequency: this.employeeForm.get('frequency')?.value,
+      rolesAndResponsibilities: this.employeeForm.get('rolesAndResponsibilitiesId')?.value,
+      authorityName: data.authorityName ?? '',
+      authorityDesignation: this.authorityDesignation ?? '',
+      backgroundImageBase64,
+      useVerdanaFont: true,
+      useAutographyFont: true,
+    });
 
-      for (const contentId of pdfContents) {
-        const pdfContent = document.getElementById(contentId);
-        if (pdfContent) {
-          const canvas = await html2canvas(pdfContent, { scale: 2, useCORS: true });
-          const imgData = canvas.toDataURL('image/png');
-          const imgHeight = (canvas.height * imgWidth) / canvas.width;
-          imagesData.push({ imgData, imgHeight });
-        }
-      }
-
-      for (let i = 0; i < imagesData.length - 1; i++) {
-        const imageData = imagesData[i];
-        pdf.addImage(imageData.imgData, 'PNG', 0, 0, imgWidth, imageData.imgHeight, '', 'FAST');
-        pdf.addPage();
-      }
-
-      if (imagesData.length > 0) {
-        const lastImageData = imagesData[imagesData.length - 1];
-        pdf.addImage(lastImageData.imgData, 'PNG', 0, 0, imgWidth, lastImageData.imgHeight, '', 'FAST');
-      }
-
-      const fileName = `${data.firstName}_${data.middleName ?? ""}_${data.lastName ?? ""}_${new Date().getTime()}_OfferLetter.pdf`;
-      pdf.save(fileName);
-
-      const blob = pdf.output('blob');
-      const file = new File([blob], fileName, { type: 'application/pdf' });
-      this.generatedfile = file;
+    try {
+      const blob: Blob = await pm.createPdf(docDef).getBlob();
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = fileName;
+      link.click();
+      URL.revokeObjectURL(link.href);
+      this.generatedfile = new File([blob], fileName, { type: 'application/pdf' });
       this.generatingEmployeeId = this.prospectiveEmpData.empId;
-
       this.loading = false;
       this.disableFieldsForApproval = false;
       this.conformationPopup.openSuccessModal('Offer Letter generated successfully');
-    });
+    } catch (err) {
+      console.error('PDF generation failed:', err);
+      this.loading = false;
+    }
   }
 
   //download document
   async downLoadDocument(EmpValue: any) {
     const data = this.prospectiveEmpData;
-    const pdf = new jsPDF('p', 'mm', 'a4');
-    const imgWidth = pdf.internal.pageSize.getWidth();
-    const imgHeight = pdf.internal.pageSize.getHeight();
-    const pdfContents = ['pdfContent1', 'pdfContent2',]; // IDs of the content elements to be converted to PDF
-    // Create a single canvas to combine all content elements
-    const combinedCanvas = document.createElement('canvas');
-    combinedCanvas.width = imgWidth;
-    combinedCanvas.height = pdfContents.length * imgHeight;
-    const imagesData = [];
-    // this.isLoading = true;
-    for (const contentId of pdfContents) {
-      const pdfContent = document.getElementById(contentId);
-      if (pdfContent) {
-        const canvas = await html2canvas(pdfContent, { scale: 3 });
-        const imgData = canvas.toDataURL('image/png');
-        const imgHeight = (canvas.height * imgWidth) / canvas.width;
-        imagesData.push({ imgData, imgHeight });
-      }
-    }
-    // Add all images to the PDF except for the last one
-    for (let i = 0; i < imagesData.length - 1; i++) {
-      const imageData = imagesData[i];
-      pdf.addImage(imageData.imgData, 'PNG', 0, 0, imgWidth, imageData.imgHeight, '', 'FAST');
-      pdf.addPage(); // Add a new page for the next image (except for the last one)
-    }
-    // Add the last image without adding a new page
-    if (imagesData.length > 0) {
-      const lastImageData = imagesData[imagesData.length - 1];
-      pdf.addImage(lastImageData.imgData, 'PNG', 0, 0, imgWidth, lastImageData.imgHeight, '', 'FAST');
-    }
-    const fileName = `${data.firstName}_${data.middleName ?? ""}_${data.lastName ?? ""}_${new Date().getTime()}_OfferLetter.pdf`;
-    // pdf.save(fileName);
-    const blob = pdf.output('blob');
-    //creating form file to upload into AZure
-    let d: Date = new Date();
-    const file = new File([blob], fileName, {
-      type: 'application/pdf',
+    const fileName = `${data.firstName}_${data.middleName ?? ''}_${data.lastName ?? ''}_${new Date().getTime()}_ContractorLetter.pdf`;
+    const [backgroundImageBase64, verdanaItalic, verdanaSemiBold] = await Promise.all([
+      this.fetchImageAsBase64('/images/snad-new-letter-bg.png'),
+      this.getFileBase64('/fonts/Verdana Italic.ttf'),
+      this.getFileBase64('/fonts/verdana-pro-semi-bold.ttf'),
+    ]);
+
+    const pm = (pdfMake as any).default ?? pdfMake;
+    const mergedVfs: Record<string, string> = { ...customVfs };
+    if (verdanaItalic)   mergedVfs['VerdanaItalic.ttf']   = verdanaItalic;
+    if (verdanaSemiBold) mergedVfs['VerdanaSemiBold.ttf'] = verdanaSemiBold;
+    pm.addVirtualFileSystem(mergedVfs);
+    pm.setFonts({
+      VERDANA: { normal: 'VerdanaNow.ttf', bold: 'VerdanaNowBold.ttf', italics: verdanaItalic ? 'VerdanaItalic.ttf' : 'VerdanaNow.ttf', bolditalics: 'VerdanaNowBold.ttf' },
+      VERDANABOLD: { normal: verdanaSemiBold ? 'VerdanaSemiBold.ttf' : 'VerdanaNowBold.ttf', bold: verdanaSemiBold ? 'VerdanaSemiBold.ttf' : 'VerdanaNowBold.ttf', italics: verdanaSemiBold ? 'VerdanaSemiBold.ttf' : 'VerdanaNowBold.ttf', bolditalics: verdanaSemiBold ? 'VerdanaSemiBold.ttf' : 'VerdanaNowBold.ttf' },
+      Autography: { normal: 'Autography.otf', bold: 'Autography.otf', italics: 'Autography.otf', bolditalics: 'Autography.otf' },
     });
-    this.generatedfile = file;
-    this.generatingEmployeeId = this.prospectiveEmpData.empId;
-    // this.loading = false
-    // this.disableFieldsForApproval = false;
-    setTimeout(() => {
+
+    const selectedCurrency = this.currencyDetails.find(c => c.key === this.employeeForm.get('currencyType')?.value);
+    const docDef = buildContractorLetterDoc({
+      title: data.title,
+      firstName: data.firstName,
+      middleName: data.middleName,
+      lastName: data.lastName,
+      addressLine1: data.addressLine1,
+      addressLine2: data.addressLine2,
+      city: data.city,
+      state: data.state,
+      country: data.country,
+      pinCode: data.pinCode,
+      offerIssuedDate: this.employeeForm.get('offerIssuedDate')?.value,
+      dateOfJoining: this.employeeForm.get('dateOfJoining')?.value,
+      jobRole: data.jobRole,
+      currencySymbol: selectedCurrency?.value ?? '',
+      currencyType: this.employeeForm.get('currencyType')?.value,
+      amount: data.amount,
+      frequency: this.employeeForm.get('frequency')?.value,
+      rolesAndResponsibilities: this.employeeForm.get('rolesAndResponsibilitiesId')?.value,
+      authorityName: data.authorityName ?? '',
+      authorityDesignation: this.authorityDesignation ?? '',
+      backgroundImageBase64,
+      useVerdanaFont: true,
+      useAutographyFont: true,
+    });
+
+    try {
+      const blob: Blob = await pm.createPdf(docDef).getBlob();
+      this.generatedfile = new File([blob], fileName, { type: 'application/pdf' });
+      this.generatingEmployeeId = this.prospectiveEmpData.empId;
       this.emailSendingforApprover();
-    }, 1000);
+    } catch (err) {
+      console.error('PDF generation failed:', err);
+      this.loading = false;
+    }
+  }
+
+  private fetchImageAsBase64(url: string): Promise<string> {
+    return fetch(url).then(res => res.blob()).then(blob => new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result as string);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    }));
+  }
+
+  private async getFileBase64(url: string): Promise<string | null> {
+    try {
+      const response = await fetch(url);
+      if (!response.ok) return null;
+      const buffer = await response.arrayBuffer();
+      const bytes = new Uint8Array(buffer);
+      let binary = '';
+      for (let i = 0; i < bytes.byteLength; i++) {
+        binary += String.fromCharCode(bytes[i]);
+      }
+      return btoa(binary);
+    } catch {
+      return null;
+    }
   }
 
   //function to validate the offer expiry date and offer issued date
@@ -355,7 +408,7 @@ export class ContractorLetterComponent implements OnInit, OnDestroy{
         this.employeeiddetails = data.map((employee: any) => {
           return {
             ...employee,
-            fullName: `${employee.employeeId ? employee.employeeId + ' - ' : ''}${employee.firstName}
+            fullName: `${employee.employeeId ? employee.employeeId + ' - ' : ''}${employee.firstName} 
             ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`
           };
         });
@@ -372,13 +425,11 @@ export class ContractorLetterComponent implements OnInit, OnDestroy{
       next: (data: any) => {
         this.employeeaddress = data as IAddress[];
         if (this.employeeaddress.substatus == 'Documents Verified' ||
-          this.employeeaddress.substatus == 'Trainee Onboarded'
-        ) {
+          this.employeeaddress.substatus == 'Trainee Onboarded') {
           this.buttonValue = 'Generate Offer Letter';
         } else if (this.employeeaddress.substatus == 'Offer Letter Rejected' ||
           this.employeeaddress.substatus == 'Offer Letter Accepted' ||
-          this.employeeaddress.substatus == 'Offer Letter Rejected By Manager'
-        ) {
+          this.employeeaddress.substatus == 'Offer Letter Rejected By Manager') {
           this.buttonValue = 'Regenerate Offer Letter';
         }
       },
@@ -440,7 +491,7 @@ export class ContractorLetterComponent implements OnInit, OnDestroy{
     if (signatureAuthorityDetails) {
       this.authorityDesignation = signatureAuthorityDetails.designation;
       this.prospectiveEmpData.authorityName = signatureAuthorityDetails.fullName;
-      this.prospectiveEmpData.authorityName = `${signatureAuthorityDetails.firstName} ${signatureAuthorityDetails?.middleName ?? ''}  ${signatureAuthorityDetails.lastName}`;
+      this.prospectiveEmpData.authorityName = `${signatureAuthorityDetails.firstName} ${signatureAuthorityDetails.lastName}`;
     }
   }
 
@@ -507,13 +558,17 @@ export class ContractorLetterComponent implements OnInit, OnDestroy{
 
   //function to reset the feilds
   resetInputFields() {
-    this.employeeForm?.reset();
-    this.prospectiveEmpData.personalEmail = '';
+    this.initializeForm();
     this.prospectiveEmpData = {};
     this.jobRoleDetails = '';
     this.buttonValue = 'Generate Offer Letter';
     this.fusionEmpId = null;
-    this.prospectiveEmpData.title = null;
+    this.addresFlag = false;
+    this.disableFieldsForApproval = true;
+    this.authorityDesignation = null;
+    this.selectedSymbol = '';
+    this.generatedfile = {};
+    this.addressType = null;
   }
 
   //function to patch the values in the form to the template
@@ -521,7 +576,6 @@ export class ContractorLetterComponent implements OnInit, OnDestroy{
     const formValues = this.employeeForm.value;
     this.prospectiveEmpData.offerIssuedDate = formValues.offerIssuedDate,
       // this.prospectiveEmpData.dateOfJoining = formValues.dateOfJoining,
-      this.prospectiveEmpData.Copys = formValues.Copys,
       this.prospectiveEmpData.offerExpiryDate = formValues.offerExpiryDate
   }
 
@@ -534,7 +588,6 @@ export class ContractorLetterComponent implements OnInit, OnDestroy{
         next: (data: any) => {
           if (data.isEmployeevalid === true) {
             if (Empidvalue) {
-
               this.prospectiveEmpData = data.checkofferletter;
               this.getEmployeeStatusChanges(Empidvalue.value)
               this.employeeForm?.patchValue({
@@ -556,7 +609,6 @@ export class ContractorLetterComponent implements OnInit, OnDestroy{
                 address: this.prospectiveEmpData?.address,
                 offerIssuedDate: this.formatDate(this.prospectiveEmpData?.offerIssuedDate),
                 dateOfJoining: this.formatDate(this.prospectiveEmpData?.dateOfJoining),
-                Copys: this.prospectiveEmpData?.copys,
                 offerExpiryDate: this.formatDate(this.prospectiveEmpData?.offerExpiryDate),
                 authorityid: this.prospectiveEmpData?.signatureAuthority,
                 phoneNumber: this.prospectiveEmpData?.phoneNumber
@@ -640,9 +692,7 @@ export class ContractorLetterComponent implements OnInit, OnDestroy{
     //CTC calculation stated
     let Employee = this.prospectiveEmpData;
     Employee.grossby = 12;
-    Employee.grossSalary = Math.round(
-      this.prospectiveEmpData.amount / Employee.grossby
-    );
+    Employee.grossSalary = Math.round(this.prospectiveEmpData.amount / Employee.grossby);
     //Calculation condition for pf contribution of an employee]
     if (this.prospectiveEmpData.pf == true || this.prospectiveEmpData.pf == false) {
       switch (this.prospectiveEmpData.pf) {
@@ -713,18 +763,13 @@ export class ContractorLetterComponent implements OnInit, OnDestroy{
     }
     //==============================================================================================================================
     //Calculation conditions for totalgrosssalary of an employee
-    Employee.totalGrossSalary = Math.round(
-      Employee.grossSalary - Employee.pfContribution - Employee.esicContribution
-    );
+    Employee.totalGrossSalary = Math.round(Employee.grossSalary - Employee.pfContribution - Employee.esicContribution);
     //===============================================================================================================================
     //Calculation conditions for pt contrubution of an employee
     if (Employee.totalGrossSalary <= 15000) {
       Employee.professionalTax = 0;
       this.prospectiveEmpData.pt = false;
-    } else if (
-      Employee.totalGrossSalary >= 15001 &&
-      Employee.totalGrossSalary <= 20000
-    ) {
+    } else if (Employee.totalGrossSalary >= 15001 && Employee.totalGrossSalary <= 20000) {
       Employee.professionalTax = 150;
       this.prospectiveEmpData.pt = true;
     } else if (Employee.totalGrossSalary >= 20001) {
@@ -856,16 +901,12 @@ export class ContractorLetterComponent implements OnInit, OnDestroy{
       offerExpiryDate: this.employeeForm.get('offerExpiryDate')?.value,
       authoritySignature: this.employeeForm.get('authorityid')?.value,
       addressType: this.addressType.toUpperCase(),
-      documentType: this.employeeForm.get('Copys')?.value,
+      documentType: null,
       rolesAndResponsibilitesId: this.prospectiveEmpData.rolesAndResponsibilitiesId,
       rolesAndResponsibilitesData: this.employeeForm.get('rolesAndResponsibilitiesId')?.value,
-      letterType: this.prospectiveEmpData.empType === 'Contract'
-        ? 'Contract Offer Letter'
-        : 'Offer Letter',
+      letterType: this.prospectiveEmpData.empType === 'Contract' ? 'Contract Offer Letter' : 'Offer Letter',
       currencyType: this.employeeForm.get('currencyType')?.value
     };
-
-    console.log("postofferletterdeatails",postOfferLetterDetails);
     this.subscription = this.http.postdata('OfferLetter/postContractOfferLetter', postOfferLetterDetails).subscribe({
       next: (data: any) => {
         this.emailToSendManager();
@@ -878,29 +919,28 @@ export class ContractorLetterComponent implements OnInit, OnDestroy{
 
   //function to updated the data
   updateOfferLetterFieldsDetails(f: NgForm) {
-
     const data = JSON.parse(JSON.stringify(this.prospectiveEmpData));
     this.ApprovalLoader = true;
     this.prospectiveEmpData.employeeId = this.prospectiveEmpData.empId,
-      this.prospectiveEmpData.empstatus = 'Prospective Contract',
-      this.prospectiveEmpData.emailaddress = data.personalEmail,
-      this.prospectiveEmpData.contactnumber = parseInt(data.phoneNumber),
-      this.prospectiveEmpData.emailId = this.employeeaddress.emailId,
-      this.prospectiveEmpData.fusionEmpId = data.fusionPlusEmpId,
-      this.prospectiveEmpData.insurance = this.employeeaddress.insurance,
-      this.prospectiveEmpData.generateOffer = true,
-      this.prospectiveEmpData.pf = this.employeeForm.get('pf')?.value,
-      this.prospectiveEmpData.esic = this.employeeForm.get('esic')?.value,
-      this.prospectiveEmpData.dob = this.employeeaddress.dob,
-      this.prospectiveEmpData.bloodGroup = this.employeeaddress.bloodGroup,
-      this.prospectiveEmpData.trainingEndDate = data.trainingEndDate,
-      this.prospectiveEmpData.dateOfJoining = this.employeeStatus != null ? this.prospectiveEmpData.dateOfJoining : this.employeeForm.get('dateOfJoining')?.value,
-      this.prospectiveEmpData.substatus = 'Offer Letter Generated',
-      this.prospectiveEmpData.password = this.employeeaddress.password
+    this.prospectiveEmpData.empstatus = 'Prospective Contract',
+    this.prospectiveEmpData.emailaddress = data.personalEmail,
+    this.prospectiveEmpData.contactnumber = parseInt(data.phoneNumber),
+    this.prospectiveEmpData.emailId = this.employeeaddress.emailId,
+    this.prospectiveEmpData.fusionEmpId = data.fusionPlusEmpId,
+    this.prospectiveEmpData.insurance = this.employeeaddress.insurance,
+    this.prospectiveEmpData.generateOffer = true,
+    this.prospectiveEmpData.pf = this.employeeForm.get('pf')?.value,
+    this.prospectiveEmpData.esic = this.employeeForm.get('esic')?.value,
+    this.prospectiveEmpData.dob = this.employeeaddress.dob,
+    this.prospectiveEmpData.bloodGroup = this.employeeaddress.bloodGroup,
+    this.prospectiveEmpData.trainingEndDate = data.trainingEndDate,
+    this.prospectiveEmpData.dateOfJoining = this.employeeStatus != null ? 
+    this.prospectiveEmpData.dateOfJoining : this.employeeForm.get('dateOfJoining')?.value,
+    this.prospectiveEmpData.substatus = 'Offer Letter Generated',
+    this.prospectiveEmpData.password = this.employeeaddress.password
     this.prospectiveEmpData.reportsTo = this.prospectiveEmpData.reportsTo?.toString();
     this.prospectiveEmpData.empId = this.prospectiveEmpData.empId.toString();
-    if (this.buttonValue == 'Regenerate Offer Letter' && this.employeeaddress.substatus != 'Offer Letter Rejected By Manager'
-    ) {
+    if (this.buttonValue == 'Regenerate Offer Letter' && this.employeeaddress.substatus != 'Offer Letter Rejected By Manager') {
       this.prospectiveEmpData.substatus = 'Offer Letter Regenerated';
     } else { this.prospectiveEmpData.substatus = 'Offer Letter Generated'; }
     this.subscription = this.http.postdata('Employeedata/UPDATER', this.prospectiveEmpData).subscribe({
@@ -919,8 +959,6 @@ export class ContractorLetterComponent implements OnInit, OnDestroy{
       },
       error: (err: any) => {
         console.log(err);
-        this.conformationPopup.openErrorModal(err?.error?.message || err?.error?.Message || 'An error occurred');
-        this.ApprovalLoader = false;
       },
     });
   }
@@ -938,17 +976,17 @@ export class ContractorLetterComponent implements OnInit, OnDestroy{
   get safeRolesAndResponsibilities(): SafeHtml {
     let html = this.employeeForm.get('rolesAndResponsibilitiesId')?.value || '';
     html = html.replace(/<p><br><\/p>/g, ''); // remove empty paragraphs
-  html = html.replace(/<\/p><p>/g, '<br>'); // convert paragraph breaks to <br>
-  html = html.replace(/<p>|<\/p>/g, ''); // remove remaining p tags
-  return this.sanitizer.bypassSecurityTrustHtml(html);
+    html = html.replace(/<\/p><p>/g, '<br>'); // convert paragraph breaks to <br>
+    html = html.replace(/<p>|<\/p>/g, ''); // remove remaining p tags
+    return this.sanitizer.bypassSecurityTrustHtml(html);
   }
 
   updateEmployeeData(employeeData: any) {
     if (employeeData.substatus == 'Offer Letter Rejected By Manager') {
       employeeData.substatus = 'Offer Letter Generated';
       (employeeData.generateOffer = false),
-        (employeeData.esic = this.prospectiveEmpData.esic),
-        (employeeData.pf = this.prospectiveEmpData.pf);
+      (employeeData.esic = this.prospectiveEmpData.esic),
+      (employeeData.pf = this.prospectiveEmpData.pf);
       this.subscription = this.http.postdata('Employeedata/UPDATER', employeeData).subscribe({
         next: (res: any) => {
           this.result = res;
@@ -962,13 +1000,12 @@ export class ContractorLetterComponent implements OnInit, OnDestroy{
           }
         },
         error: (err: any) => {
-          this.conformationPopup.openErrorModal(err?.error?.message || err?.error?.Message || 'An error occurred');
           console.log(err);
         },
       });
     } else {
       (employeeData.substatus = 'Offer Letter Regenerated'),
-        (employeeData.generateOffer = false);
+      (employeeData.generateOffer = false);
       this.subscription = this.http.postdata('Employeedata/UPDATER', employeeData).subscribe({
         next: (res: any) => {
           this.result = res;
@@ -984,7 +1021,6 @@ export class ContractorLetterComponent implements OnInit, OnDestroy{
           }
         },
         error: (err: any) => {
-          this.conformationPopup.openErrorModal(err?.error?.message || err?.error?.Message || 'An error occurred');
           console.log(err);
         },
       });
@@ -1148,10 +1184,10 @@ export class ContractorLetterComponent implements OnInit, OnDestroy{
         this.conformationPopup.openSuccessModal('Approval request sent successfully');
         this.ApprovalLoader = false;
         this.loading = false;
+        this.resetInputFields();
       },
       error: (err: any) => {
         this.conformationPopup.openErrorModal('Email Sent Failed');
-        this.ApprovalLoader = false;
       },
       complete: () => { },
     });
@@ -1168,14 +1204,14 @@ export class ContractorLetterComponent implements OnInit, OnDestroy{
       isRead: false,
       isDelete: false,
       notificationDate: currentDate,
-      notificationType: `${loggedInUser?.firstName ?? ''} ${loggedInUser?.middleName ?? ''} ${loggedInUser.lastName ?? ''}
-      requested you for the approval of the offer letter of employee ${this.prospectiveEmpData?.firstName} ${this.prospectiveEmpData?.middleName ?? ''}
+      notificationType: `${loggedInUser?.firstName ?? ''} ${loggedInUser?.middleName ?? ''} ${loggedInUser.lastName ?? ''} 
+      requested you for the approval of the offer letter of employee ${this.prospectiveEmpData?.firstName} ${this.prospectiveEmpData?.middleName ?? ''} 
       ${this.prospectiveEmpData?.lastName} Offer Letter`,
       empId: loggedInUser.employeeId,
     };
     this.subscription = this.http.postdata(`Notification/Notify/Manager`, senddata).subscribe({
       next: (data: any) => {
-        this.router.navigate(['/letters/lettes-tabs']);
+        this.router.navigate(['/admin/dashboard']);
       },
       error: (err: any) => {
         console.log(err);

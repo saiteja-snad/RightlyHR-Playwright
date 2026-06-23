@@ -155,7 +155,7 @@ export function buildContractorLetterDoc(data: ContractorLetterData): any {
     },
     { text: `Dear ${fullName},`, margin: [0, 0, 0, 8], font: 'VERDANABOLD' },
     p([
-      'We are pleased to offer you contract employment in SNAD Developers India Pvt Ltd. as a ',
+      'We are pleased to offer you contract employment in RightlyHR. as a ',
       { text: data.jobRole ?? '', font: 'VERDANABOLD' },
       ' on a remuneration of ',
       { text: `${amountDisplay} per ${data.frequency ?? ''}`, font: 'VERDANABOLD' },
@@ -164,7 +164,7 @@ export function buildContractorLetterDoc(data: ContractorLetterData): any {
     ], 8),
     p('Please note the following details regarding your consultancy engagement', 8),
     ...(data.rolesAndResponsibilities ? parseHtmlToPdfMake(data.rolesAndResponsibilities, bodyFont) : []),
-    p('SNAD Developers India Pvt Ltd is in the business of product development and deployment and also providing technology and business consultants to various multinational companies.', 0),
+    p('RightlyHR is in the business of product development and deployment and also providing technology and business consultants to various multinational companies.', 0),
   ];
 
   const page2: any[] = [
@@ -178,7 +178,7 @@ export function buildContractorLetterDoc(data: ContractorLetterData): any {
       pageBreak: 'before',
     },
     p([{ text: 'Yours Sincerely', font: 'VERDANABOLD' }, ','], 4),
-    { text: 'For SNAD Developers India Pvt Ltd', font: 'VERDANABOLD', fontSize: PX(13), margin: [0, 0, 0, 16], noWrap: true },
+    { text: 'For RightlyHR', font: 'VERDANABOLD', fontSize: PX(13), margin: [0, 0, 0, 16], noWrap: true },
     { text: data.authorityName, font: 'Autography', fontSize: PX(32), margin: [0, 0, 0, 4], noWrap: true, alignment: 'left' },
     { text: 'Authorized Signatory,', font: 'VERDANABOLD', fontSize: PX(13), margin: [0, 0, 0, 4], noWrap: true },
     { text: data.authorityName, font: 'VERDANABOLD', fontSize: PX(13), margin: [0, 0, 0, 0], noWrap: true },

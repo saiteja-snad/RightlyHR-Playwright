@@ -64,8 +64,8 @@ export function buildAppointmentLetterDoc(data: AppointmentLetterData): any {
     { text: `Date: ${apptDate}`, alignment: 'right', margin: [0, 0, 0, 8], font: 'VERDANA' },
     p([{ text: `Dear ${employeeFullname},`, font: 'VERDANABOLD' }]),
     ...(hasAddress ? [p('Address:'), p(addressText, 4)] : []),
-    p([{ text: 'Welcome to SNAD Developers India Pvt Ltd!', font: 'VERDANABOLD' }], 4),
-    para(['Pursuant to your application for employment with us, and the subsequent selection process, it gives us great pleasure to appoint you as ', { text: jobRole, font: 'VERDANABOLD' }, ' with SNAD Developers India Pvt Ltd at the location that will be informed to you separately.']),
+    p([{ text: 'Welcome to RightlyHR!', font: 'VERDANABOLD' }], 4),
+    para(['Pursuant to your application for employment with us, and the subsequent selection process, it gives us great pleasure to appoint you as ', { text: jobRole, font: 'VERDANABOLD' }, ' with RightlyHR at the location that will be informed to you separately.']),
     p('We hope your association with us will be challenging and rewarding to your career. Your employment with the Company shall be subject to the following terms and conditions:'),
     heading('1. Compensation:'),
     para([{ text: 'a) ', font: 'VERDANABOLD' }, 'Your total annual cost to the Company (CTC) will be as detailed in your Offer Letter. Your CTC shall be due for revision as per the Company policy. Your compensation and benefits may be amended at the sole discretion of the Company.']),
@@ -203,7 +203,7 @@ export function buildAppointmentLetterDoc(data: AppointmentLetterData): any {
     p('Please return a signed copy of this Appointment Letter as a token of your acceptance of the terms and conditions mentioned above on the DOJ.', 4),
     p('All of us are excited about working with you and look forward to a mutually rewarding relationship.', 16),
     p('Yours Sincerely,'),
-    { text: 'For SNAD Developers India Pvt Ltd', font: 'VERDANABOLD', fontSize: PX(13), margin: [0, 0, 0, 30] },
+    { text: 'For RightlyHR', font: 'VERDANABOLD', fontSize: PX(13), margin: [0, 0, 0, 30] },
     { text: authorityFullName, font: 'Autography', fontSize: PX(32), margin: [0, 0, 0, 4], noWrap: true, alignment: 'left' },
     signatory('Authorized Signatory'),
     signatory(authorityFullName),
@@ -238,7 +238,7 @@ export function buildAppointmentLetterDoc(data: AppointmentLetterData): any {
     p('This Non-Disclosure Agreement and Invention Assignment Agreement (hereinafter "Agreement") is effective as of by and between'),
     {
       text: [
-        { text: 'SNAD Developers India Pvt Ltd ', font: 'VERDANABOLD' },
+        { text: 'RightlyHR ', font: 'VERDANABOLD' },
         'with its office at Vijay Krishna Towers, Floor#16, Madhava Reddy Colony, Gachibowli, HYD - 500032 (hereinafter referred to as the "Company")',
       ],
       margin: [0, 0, 0, 4],
@@ -252,7 +252,7 @@ export function buildAppointmentLetterDoc(data: AppointmentLetterData): any {
         { text: 'a) ', font: 'VERDANABOLD' },
         'As per the Appointment Letter dated ',
         { text: apptDate, font: 'VERDANABOLD' },
-        ', the Receiving Party is working with the Company as [SNAD Developers India Pvt Ltd] ("Engagement"). During the course of Engagement, the Receiving Party may be exposed to the Confidential Information (as defined below) of the Company and/or the Company\'s affiliates, clients, customers, consultants, vendors, partners, agents or suppliers etc. The Receiving Party may also generate, create or receive, possess, oversee information that is confidential in nature.'
+        ', the Receiving Party is working with the Company as [RightlyHR] ("Engagement"). During the course of Engagement, the Receiving Party may be exposed to the Confidential Information (as defined below) of the Company and/or the Company\'s affiliates, clients, customers, consultants, vendors, partners, agents or suppliers etc. The Receiving Party may also generate, create or receive, possess, oversee information that is confidential in nature.'
       ],
       margin: [0, 0, 0, 2]
     },
@@ -357,7 +357,7 @@ export function buildAppointmentLetterDoc(data: AppointmentLetterData): any {
     para([{ text: 'd) ', font: 'VERDANABOLD' }, 'Entire Agreement. This Agreement contains the entire understanding between the Company and the Receiving Party concerning the subject matter hereof and is in addition to any and all prior and contemporaneous negotiations, correspondence, understandings and agreements, whether oral or written, respecting that subject matter.']),
     { text: 'Thank You!!', margin: [0, 16, 0, 5] },
     p('Yours Sincerely,'),
-    { text: 'FOR SNAD Developers India Pvt Ltd', font: 'VERDANABOLD', fontSize: PX(13), margin: [0, 0, 0, 24] },
+    { text: 'FOR RightlyHR', font: 'VERDANABOLD', fontSize: PX(13), margin: [0, 0, 0, 24] },
     { text: authorityFullName, font: 'Autography', fontSize: PX(32), margin: [0, 0, 0, 4], noWrap: true, alignment: 'left' },
     signatory('Authorized Signatory'),
     signatory(authorityFullName),

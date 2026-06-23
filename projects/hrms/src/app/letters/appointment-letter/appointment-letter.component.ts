@@ -2,14 +2,14 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { SelectModule } from 'primeng/select';
-import { DateformatPipe } from "../../pipes/dateformat.pipe";
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IAsset, IDepartment, IEmployeeAddress, IemployeeDetails, IEmployeeIdentity, IEmployeeJobInfo, IEmployeeProfile, IIssuelocation, IMake } from './appointment-letter-model';
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';
-import html2canvas from 'html2canvas';
-import jsPDF from 'jspdf';
 import { AuthService } from '../../services/auth.service';
+import * as pdfMake from 'pdfmake/build/pdfmake';
+import { customVfs } from '../../letters-builder-files/custom-fonts-vfs';
+import { buildAppointmentLetterDoc } from '../../letters-builder-files/appointment-letter-pdf.builder';
 import moment from 'moment';
 import { OpenModalService } from '../../services/open-modal.service';
 import { LetterFooterComponent } from '../../shared/letters-shared-content/letter-footer/letter-footer.component';
@@ -18,6 +18,8 @@ import { TranslateModule } from '@ngx-translate/core';
 import { IEmployeeSignatures } from '../letters.modal';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { IAssertsType } from '../../Interfaces/job-model';
+import { SignalsService } from '../../services/signals.service';
+import { DateformatPipe } from '../../pipes/dateformat.pipe';
 @Component({
   selector: 'app-appointment-letter',
   imports: [CommonModule, SelectModule, DateformatPipe, ReactiveFormsModule, TranslateModule, NgbPopoverModule, LetterFooterComponent, LettersheaderComponent],
@@ -27,7 +29,6 @@ import { IAssertsType } from '../../Interfaces/job-model';
 
 export class AppointmentLetterComponent implements OnInit,OnDestroy {
  subscription!: Subscription;
-  appointmentLetterTemplate: any | string | ArrayBuffer | null = null;
   JoinDateValid: boolean = true;
   currentDate: Date = new Date();
   AppointmentFile!: File;
@@ -62,6 +63,7 @@ export class AppointmentLetterComponent implements OnInit,OnDestroy {
     private router: Router,
     private authService: AuthService,
     private conformationPopup: OpenModalService,
+    private signalService: SignalsService,
     private fb: FormBuilder) { }
 
   ngOnInit(): void {
@@ -75,7 +77,7 @@ export class AppointmentLetterComponent implements OnInit,OnDestroy {
     this.todayDate = today.toISOString().split('T')[0];
   }
 
-   initializeForm() {
+  initializeForm() {
     this.employeeForm = this.fb.group({
       fusionEmployeeId: ['', Validators.required],
       appointmentdate: ['', Validators.required],
@@ -84,9 +86,6 @@ export class AppointmentLetterComponent implements OnInit,OnDestroy {
       department: ['', Validators.required],
       branchCode: ['', Validators.required],
       documentType: ['', Validators.required],
-      assertType: ['', Validators.required],
-      model: ['', Validators.required],
-      serial: ['', Validators.required],
       notes: ['',],
       authorityid: ['', Validators.required],
       jobValid: [false, Validators.requiredTrue],
@@ -97,7 +96,11 @@ export class AppointmentLetterComponent implements OnInit,OnDestroy {
       country: [''],
       pinCode: ['']
     });
+    this.employeeForm.get('dateOfJoining')?.valueChanges.subscribe(() => {
+      this.JoiningDateValidation();
+    });
   }
+
   getAllActiveEmployees() {
     this.subscription = this.http.getData('Employeedata/ActiveEmployees').subscribe({
       next: (data: any) => {
@@ -295,56 +298,96 @@ export class AppointmentLetterComponent implements OnInit,OnDestroy {
   async onAppointmentLetterSubmit(f: FormGroup) {
     console.log(f)
     this.spinnerLoader = true;
-    const data = f.value;
-    let fileName = '';
 
-    if (this.selectedEmployee && this.selectedEmployee.firstName && this.selectedEmployee.lastName) {
-      fileName = `${this.selectedEmployee.firstName}_${this.selectedEmployee.lastName}_${new Date().getTime()}_AppointmentLetter_Unsigned.pdf`;
-    } else {
+    if (!this.selectedEmployee?.firstName || !this.selectedEmployee?.lastName) {
       console.error('Employee first name or last name is missing');
+      this.spinnerLoader = false;
       return;
     }
 
-    // const data = this.appointmentletter;
-    const pdf = new jsPDF('p', 'mm', 'a4');
-    const imgWidth = pdf.internal.pageSize.getWidth();
-    const imgHeight = pdf.internal.pageSize.getHeight();
-    const pdfContents = ['pdfContent1', 'pdfContent2', 'pdfContent3', 'pdfContent4', 'pdfContent5', 'pdfContent6', 'pdfContent7',
-      'pdfContent8', 'pdfContent9', 'pdfContent10', 'pdfContent11', 'pdfContent12', 'pdfContent13'];
+    const fileName = `${this.selectedEmployee.firstName}_${this.selectedEmployee.lastName}_${Date.now()}_AppointmentLetter_Unsigned.pdf`;
+    const isSoftCopy = f.value.documentType?.value === true;
 
-    const combinedCanvas = document.createElement('canvas');
-    combinedCanvas.width = imgWidth;
-    combinedCanvas.height = pdfContents.length * imgHeight;
-    const imagesData = [];
-    this.isLoading = true;
+    const [backgroundImageBase64, verdanaItalic, verdanaSemiBold] = await Promise.all([
+      isSoftCopy ? this.fetchImageAsBase64('/images/snad-new-letter-bg.png') : Promise.resolve(undefined as string | undefined),
+      this.getFileBase64('/fonts/Verdana Italic.ttf'),
+      this.getFileBase64('/fonts/verdana-pro-semi-bold.ttf'),
+    ]);
 
-    for (const contentId of pdfContents) {
-      const pdfContent = document.getElementById(contentId);
-      if (pdfContent) {
-        const canvas = await html2canvas(pdfContent, { scale: 3 });
-        const imgData = canvas.toDataURL('image/png');
-        const imgHeight = (canvas.height * imgWidth) / canvas.width;
-        imagesData.push({ imgData, imgHeight });
+    const pm = (pdfMake as any).default ?? pdfMake;
+    const mergedVfs: Record<string, string> = { ...customVfs };
+    if (verdanaItalic)   mergedVfs['VerdanaItalic.ttf']   = verdanaItalic;
+    if (verdanaSemiBold) mergedVfs['VerdanaSemiBold.ttf'] = verdanaSemiBold;
+    pm.addVirtualFileSystem(mergedVfs);
+    pm.setFonts({
+      VERDANA: { normal: 'VerdanaNow.ttf', bold: 'VerdanaNowBold.ttf', italics: verdanaItalic ? 'VerdanaItalic.ttf' : 'VerdanaNow.ttf', bolditalics: 'VerdanaNowBold.ttf' },
+      VERDANABOLD: { normal: verdanaSemiBold ? 'VerdanaSemiBold.ttf' : 'VerdanaNowBold.ttf', bold: verdanaSemiBold ? 'VerdanaSemiBold.ttf' : 'VerdanaNowBold.ttf', italics: verdanaSemiBold ? 'VerdanaSemiBold.ttf' : 'VerdanaNowBold.ttf', bolditalics: verdanaSemiBold ? 'VerdanaSemiBold.ttf' : 'VerdanaNowBold.ttf' },
+      Autography: { normal: 'Autography.otf', bold: 'Autography.otf', italics: 'Autography.otf', bolditalics: 'Autography.otf' },
+    });
+
+    const docDef = buildAppointmentLetterDoc({
+      employeeFullname: this.employeeFullname,
+      appointmentDate: f.value.appointmentdate,
+      addressLine1: this.appointmentletter.addressLine1 || '',
+      addressLine2: this.appointmentletter.addressLine2 || '',
+      city: this.appointmentletter.city || '',
+      state: this.appointmentletter.state || '',
+      country: this.appointmentletter.country || '',
+      pinCode: this.appointmentletter.zipCode || '',
+      jobRole: this.employeeJobDetails?.jobRole || '',
+      authorityFullName: this.authorityFullName || '',
+      authorityDesignation: this.selectedAuthority?.designation || '',
+      panNumber: this.panDetails?.[0]?.identityNumber || '',
+      dateOfJoining: f.value.dateOfJoining || '',
+      backgroundImageBase64,
+      useVerdanaFont: true,
+      useAutographyFont: true,
+    });
+
+    try {
+      const blob: Blob = await pm.createPdf(docDef).getBlob();
+
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = fileName;
+      link.click();
+      URL.revokeObjectURL(link.href);
+
+      this.AppointmentFile = new File([blob], fileName, { type: 'application/pdf' });
+      this.sendEmployeeDetails();
+      this.uploadAppointLetter();
+    } catch (err) {
+      console.error('PDF generation failed:', err);
+      this.spinnerLoader = false;
+      this.conformationPopup.openErrorModal('Failed to generate Appointment Letter');
+    }
+  }
+
+  private fetchImageAsBase64(url: string): Promise<string> {
+    return fetch(url)
+      .then(res => res.blob())
+      .then(blob => new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result as string);
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+      }));
+  }
+
+  private async getFileBase64(url: string): Promise<string | null> {
+    try {
+      const response = await fetch(url);
+      if (!response.ok) return null;
+      const buffer = await response.arrayBuffer();
+      const bytes = new Uint8Array(buffer);
+      let binary = '';
+      for (let i = 0; i < bytes.byteLength; i++) {
+        binary += String.fromCharCode(bytes[i]);
       }
+      return btoa(binary);
+    } catch {
+      return null;
     }
-    // Add all images to the PDF except for the last one
-    for (let i = 0; i < imagesData.length - 1; i++) {
-      const imageData = imagesData[i];
-      pdf.addImage(imageData.imgData, 'PNG', 0, 0, imgWidth, imageData.imgHeight, '', 'FAST');
-      pdf.addPage(); // Add a new page for the next image (except for the last one)
-    }
-    // Add the last image without adding a new page
-    if (imagesData.length > 0) {
-      const lastImageData = imagesData[imagesData.length - 1];
-      pdf.addImage(lastImageData.imgData, 'PNG', 0, 0, imgWidth, lastImageData.imgHeight, '', 'FAST');
-    }
-    // const fileName = `${data.firstName}_${data.lastName}_${new Date().getTime()}_AppointmentLetter_Unsigned.pdf`;
-    pdf.save(fileName);
-    const blob = pdf.output('blob');
-    //creating form file to upload into AZure
-    this.AppointmentFile = new File([blob], fileName, { type: 'application/pdf', });
-    this.sendEmployeeDetails();
-    this.uploadAppointLetter();
   }
 
   sendEmployeeDetails() {
@@ -370,9 +413,7 @@ export class AppointmentLetterComponent implements OnInit,OnDestroy {
         this.spinnerLoader = false;
         this.conformationPopup.openErrorModal('File upload  is failed')
       },
-      complete: () => {
-        this.spinnerLoader = false;
-      }
+      complete: () => { }
     });
   }
 
@@ -395,19 +436,16 @@ export class AppointmentLetterComponent implements OnInit,OnDestroy {
       ),
       jobId: this.employeeJobDetails?.id,
     };
-    this.subscription = this.http.postdata('AppointmentLetter', postAppDetails).subscribe({
-      next: (data: any) => {
-        this.conformationPopup.openSuccessModal('Appointment letter generated successfully')
-        setTimeout(() => {
-          this.navigateDashboard();
-        }, 3000);
+    this.http.postdata('AppointmentLetter', postAppDetails).subscribe({
+      next: () => { 
+        this.signalService.AppointmentLetterNavCountSignal.set(true);
       },
-      error: (reason: any) => {
-        this.spinnerLoader = false;
+      error: () => { 
+        this.signalService.AppointmentLetterNavCountSignal.set(true);
       },
       complete: () => {
-        this.spinnerLoader = false;
-      }
+          this.signalService.AppointmentLetterNavCountSignal.set(true);
+        },
     });
   }
 
@@ -442,16 +480,15 @@ export class AppointmentLetterComponent implements OnInit,OnDestroy {
     }
   this.subscription = this.http.postdata(`CustomEmail/appointmentletter`, emaildetails).subscribe({
       next: (data: any) => {
-        this.spinnerLoader= false;
+        this.resetForm();
+        this.spinnerLoader = false;
         this.conformationPopup.openSuccessModal('Email has been sent successfully');
-        this.router.navigate(['/letters/lettes-tabs']);
+        this.router.navigate(['/admin/dashboard']);
       },
       error: (err: any) => {
+        this.resetForm();
         this.spinnerLoader = false;
       },
-      complete: () => {
-        this.spinnerLoader = false;
-      }
     })
   }
 
@@ -475,6 +512,21 @@ export class AppointmentLetterComponent implements OnInit,OnDestroy {
         this.spinnerLoader = false;
       },
     });
+  }
+
+  private resetForm() {
+    this.initializeForm();
+    this.employeeFullname = '';
+    this.selectedEmployee = null!;
+    this.employeeJobDetails = undefined;
+    this.employeeaddress = null!;
+    this.selectedAuthority = undefined;
+    this.authorityFullName = '';
+    this.panDetails = [];
+    this.appointmentletter = {};
+    this.assesttypegetdetails = [];
+    this.offerDetails = null;
+    this.errorMsg = '';
   }
 
   navigateDashboard() {

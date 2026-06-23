@@ -1,17 +1,17 @@
 
 import { CommonModule } from '@angular/common';
-import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 import { Select } from 'primeng/select';
-import { jsPDF } from "jspdf";
-import html2canvas from 'html2canvas';
-import { AbstractControl, FormBuilder, FormGroup, NgForm, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import * as pdfMake from 'pdfmake/build/pdfmake';
+import { customVfs } from '../../letters-builder-files/custom-fonts-vfs';
+import { buildNdaLetterDoc } from '../../letters-builder-files/nda-contractor-letter.builder';
 import { Subscription } from 'rxjs';
 import moment from 'moment';
 import { AuthService } from '../../services/auth.service';
 import { HttpService } from '../../services/http.service';
-import { IAddress, IDepartment, IemployeeDetails, IIssuelocation, } from '../../Interfaces/letters-model';
-import { DateformatPipe } from "../../pipes/dateformat.pipe";
+import { IDepartment, IemployeeDetails, IIssuelocation, } from '../../Interfaces/letters-model';
 import { OpenModalService } from '../../services/open-modal.service';
 import { NgxCountriesDropdownModule } from 'ngx-countries-dropdown';
 import { TranslateModule } from '@ngx-translate/core';
@@ -19,6 +19,8 @@ import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { IAssertsType } from '../../Interfaces/job-model';
 import { IEmployeeIdentity, IAsset, IEmployeeJobInfo, IEmployeeProfile, IEmployeeAddress } from '../appointment-letter/appointment-letter-model';
 import { IEmployeeSignatures } from '../letters.modal';
+import { SignalsService } from '../../services/signals.service';
+import { DateformatPipe } from '../../pipes/dateformat.pipe';
 import { LettersheaderComponent } from "../../shared/letters-shared-content/lettersheader/lettersheader.component";
 import { LetterFooterComponent } from "../../shared/letters-shared-content/letter-footer/letter-footer.component";
 @Component({
@@ -63,12 +65,8 @@ export class NdaContractorLetterComponent {
     { name: 'Hard Copy', value: false },
   ];
 
-  constructor(
-    private http: HttpService,
-    private router: Router,
-    private authService: AuthService,
-    private conformationPopup: OpenModalService,
-    private fb: FormBuilder) { }
+  constructor(private http: HttpService, private router: Router, private authService: AuthService, 
+    private conformationPopup: OpenModalService, private fb: FormBuilder,private signalService: SignalsService) { }
 
   ngOnInit(): void {
     this.initializeForm();
@@ -97,12 +95,12 @@ export class NdaContractorLetterComponent {
       country: [''],
       pinCode: ['']
     });
-  //   this.employeeForm.get('ndassentdate')?.valueChanges.subscribe(() => {
-  //   this.JoiningDateValidation();
-  // });
-  //   this.employeeForm.get('dateOfJoining')?.valueChanges.subscribe(() => {
-  //     this.JoiningDateValidation();
-  //   });
+    //   this.employeeForm.get('ndassentdate')?.valueChanges.subscribe(() => {
+    //   this.JoiningDateValidation();
+    // });
+    //   this.employeeForm.get('dateOfJoining')?.valueChanges.subscribe(() => {
+    //     this.JoiningDateValidation();
+    //   });
   }
 
   getAllActiveEmployees() {
@@ -111,7 +109,8 @@ export class NdaContractorLetterComponent {
         this.employeeiddetails = data as IemployeeDetails[];
         this.employeeiddetails = this.employeeiddetails.map((emp: IemployeeDetails) => ({
           ...emp,
-          fullName: `${emp.employeeId ?? ''} - ${emp.firstName ?? ''} ${emp.middleName ?? ''} ${emp.lastName ?? ''}`, // Concatenate firstName, middleName, lastName
+          fullName: `${emp.employeeId ?? ''} - ${emp.firstName ?? ''} ${emp.middleName ?? ''} ${emp.lastName ?? ''}`, 
+          // Concatenate firstName, middleName, lastName
         }));
       },
       error: (reason: any) => {
@@ -167,7 +166,8 @@ export class NdaContractorLetterComponent {
 
   onClickEmployee(event: any) {
     this.selectedEmployee = event.value;
-    this.employeeFullname = this.selectedEmployee.firstName + ' ' + (this.selectedEmployee.middleName ? this.selectedEmployee.middleName + ' ' : '') + this.selectedEmployee.lastName;
+    this.employeeFullname = this.selectedEmployee.firstName + ' ' + (this.selectedEmployee.middleName ? 
+      this.selectedEmployee.middleName + ' ' : '') + this.selectedEmployee.lastName;
     this.getContractorDetails(this.selectedEmployee.employeeId);
     this.getJobdetails(this.selectedEmployee.employeeId);
     this.getEmployeeAddress(this.selectedEmployee.employeeId);
@@ -183,9 +183,7 @@ export class NdaContractorLetterComponent {
           const latestRecord = res.data.reduce((latest: { id: number; }, current: { id: number; }) => {
             return current.id > latest.id ? current : latest;
           });
-
           const doj = this.formatDatewithDate(latestRecord.contractStartDate);
-
           this.employeeForm.patchValue({
             dateOfJoining: doj
           });
@@ -196,8 +194,8 @@ export class NdaContractorLetterComponent {
       error: (err) => {
         const doj = this.formatDatewithDate(this.employeeaddress.dateOfJoining);
         this.employeeForm.patchValue({
-            dateOfJoining: doj
-          });
+          dateOfJoining: doj
+        });
         console.error('Error fetching contractor details:', err);
       }
     });
@@ -207,19 +205,16 @@ export class NdaContractorLetterComponent {
   ndaletter = {} as any;
   //function to get assest type by employeeid
   getAssestTypeByEmployeeId(EmployeeId: number) {
-    this.subscription = this.http
-      .getData(`AssetTable/${EmployeeId}`)
-      .subscribe({
-        next: (data: any) => {
-          this.assesttypegetdetails = data as IAssertsType[];
-          if (this.assesttypegetdetails?.length > 0) {
-            this.ndaletter.asserttype = data[0].assetType;
-            this.ndaletter.model = data[0].model;
-            this.ndaletter.serial = data[0].serialNumber;
-          }
-
-        },
-      });
+    this.subscription = this.http.getData(`AssetTable/${EmployeeId}`).subscribe({
+      next: (data: any) => {
+        this.assesttypegetdetails = data as IAssertsType[];
+        if (this.assesttypegetdetails?.length > 0) {
+          this.ndaletter.asserttype = data[0].assetType;
+          this.ndaletter.model = data[0].model;
+          this.ndaletter.serial = data[0].serialNumber;
+        }
+      },
+    });
   }
 
   getJobdetails(employeeId: number) {
@@ -271,11 +266,10 @@ export class NdaContractorLetterComponent {
       }
     })
   }
+
   designationName: any;
   onclickDesignation(event: any) {
     this.selectedAuthority = event.value;
-    console.log(this.selectedAuthority);
-
     if (this.selectedAuthority) {
       this.authorityFullName = this.selectedAuthority.middleName
         ? `${this.selectedAuthority.firstName} ${this.selectedAuthority.middleName} ${this.selectedAuthority.lastName}`
@@ -303,7 +297,6 @@ export class NdaContractorLetterComponent {
         country: selectedAddress.country,
         pinCode: selectedAddress.zipCode
       });
-
       this.ndaletter.addressLine1 = selectedAddress.addressLine1;
       this.ndaletter.addressLine2 = selectedAddress.addressLine2;
       this.ndaletter.city = selectedAddress.city;
@@ -316,7 +309,6 @@ export class NdaContractorLetterComponent {
   JoiningDateValidation() {
     const appointmentDate = this.employeeForm.get('ndassentdate')?.value;
     const dateOfJoining = this.employeeForm.get('dateOfJoining')?.value;
-
     if (appointmentDate && dateOfJoining) {
       const appDate = new Date(appointmentDate);
       const joinDate = new Date(dateOfJoining);
@@ -324,66 +316,97 @@ export class NdaContractorLetterComponent {
     } else {
       this.JoinDateValid = true;
     }
-
     // Optional: trigger Angular validation refresh
     this.employeeForm.get('dateOfJoining')?.updateValueAndValidity({ onlySelf: true });
   }
 
-
   async onAppointmentLetterSubmit(f: FormGroup) {
     this.spinnerLoader = true;
-    const data = f.value;
-    let fileName = '';
-
-    if (this.selectedEmployee && this.selectedEmployee.firstName && this.selectedEmployee.lastName) {
-      fileName = `${this.selectedEmployee.firstName ?? ''}_${this.selectedEmployee.middleName ?? ''}_${this.selectedEmployee.lastName ?? ''}_${new Date().getTime()}_Non-DisclosureAgreementLetter_Unsigned.pdf`;
-    } else {
+    if (!this.selectedEmployee?.firstName || !this.selectedEmployee?.lastName) {
       console.error('Employee first name or last name is missing');
+      this.spinnerLoader = false;
       return;
     }
+    const fileName = `${this.selectedEmployee.firstName}_${this.selectedEmployee.middleName ?? ''}_${this.selectedEmployee.lastName}_${new Date().getTime()}_Non-DisclosureAgreementLetter_Unsigned.pdf`;
+    const isSoftCopy = f.value.documentType === true;
 
-    // const data = this.ndaletter;
-    const pdf = new jsPDF('p', 'mm', 'a4');
-    const imgWidth = pdf.internal.pageSize.getWidth();
-    const imgHeight = pdf.internal.pageSize.getHeight();
-    const pdfContents = ['pdfContent1', 'pdfContent2', 'pdfContent3', 'pdfContent4', 'pdfContent5'];
-    const combinedCanvas = document.createElement('canvas');
-    combinedCanvas.width = imgWidth;
-    combinedCanvas.height = pdfContents.length * imgHeight;
-    const imagesData = [];
-    this.isLoading = true;
+    const [backgroundImageBase64, verdanaItalic, verdanaSemiBold] = await Promise.all([
+      isSoftCopy ? this.fetchImageAsBase64('/images/snad-new-letter-bg.png') : Promise.resolve(undefined as string | undefined),
+      this.getFileBase64('/fonts/Verdana Italic.ttf'),
+      this.getFileBase64('/fonts/verdana-pro-semi-bold.ttf'),
+    ]);
 
-    for (const contentId of pdfContents) {
-      const pdfContent = document.getElementById(contentId);
-      if (pdfContent) {
-        const canvas = await html2canvas(pdfContent, { scale: 3 });
-        const imgData = canvas.toDataURL('image/png');
-        const imgHeight = (canvas.height * imgWidth) / canvas.width;
-        imagesData.push({ imgData, imgHeight });
-      }
+    const pm = (pdfMake as any).default ?? pdfMake;
+    const mergedVfs: Record<string, string> = { ...customVfs };
+    if (verdanaItalic)   mergedVfs['VerdanaItalic.ttf']   = verdanaItalic;
+    if (verdanaSemiBold) mergedVfs['VerdanaSemiBold.ttf'] = verdanaSemiBold;
+    pm.addVirtualFileSystem(mergedVfs);
+    pm.setFonts({
+      VERDANA: { normal: 'VerdanaNow.ttf', bold: 'VerdanaNowBold.ttf', italics: verdanaItalic ? 'VerdanaItalic.ttf' : 'VerdanaNow.ttf', bolditalics: 'VerdanaNowBold.ttf' },
+      VERDANABOLD: { normal: verdanaSemiBold ? 'VerdanaSemiBold.ttf' : 'VerdanaNowBold.ttf', bold: verdanaSemiBold ? 'VerdanaSemiBold.ttf' : 'VerdanaNowBold.ttf', italics: verdanaSemiBold ? 'VerdanaSemiBold.ttf' : 'VerdanaNowBold.ttf', bolditalics: verdanaSemiBold ? 'VerdanaSemiBold.ttf' : 'VerdanaNowBold.ttf' },
+      Autography: { normal: 'Autography.otf', bold: 'Autography.otf', italics: 'Autography.otf', bolditalics: 'Autography.otf' },
+    });
+
+    const docDef = buildNdaLetterDoc({
+      firstName: this.selectedEmployee.firstName,
+      middleName: this.selectedEmployee.middleName,
+      lastName: this.selectedEmployee.lastName,
+      panNumber: this.panDetails?.[0]?.identityNumber,
+      addressLine1: f.value.addressLine1,
+      addressLine2: f.value.addressLine2,
+      city: f.value.city,
+      state: f.value.state,
+      country: f.value.country,
+      pinCode: f.value.pinCode,
+      ndaSentDate: f.value.ndassentdate,
+      authorityFullName: this.authorityFullName,
+      authorityDesignation: this.selectedAuthority?.designation,
+      backgroundImageBase64,
+      useVerdanaFont: true,
+      useAutographyFont: true,
+    });
+
+    try {
+      const blob: Blob = await pm.createPdf(docDef).getBlob();
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = fileName;
+      link.click();
+      URL.revokeObjectURL(link.href);
+      this.AppointmentFile = new File([blob], fileName, { type: 'application/pdf' });
+      this.spinnerLoader = false;
+      this.releaseLetterButton = false;
+      this.conformationPopup.openSuccessModal('Non-Disclosure Agreement Letter generated successfully');
+    } catch (err) {
+      console.error('PDF generation failed:', err);
+      this.spinnerLoader = false;
     }
-    // Add all images to the PDF except for the last one
-    for (let i = 0; i < imagesData.length - 1; i++) {
-      const imageData = imagesData[i];
-      pdf.addImage(imageData.imgData, 'PNG', 0, 0, imgWidth, imageData.imgHeight, '', 'FAST');
-      pdf.addPage(); // Add a new page for the next image (except for the last one)
-    }
-    // Add the last image without adding a new page
-    if (imagesData.length > 0) {
-      const lastImageData = imagesData[imagesData.length - 1];
-      pdf.addImage(lastImageData.imgData, 'PNG', 0, 0, imgWidth, lastImageData.imgHeight, '', 'FAST');
-    }
-    // const fileName = `${data.firstName}_${data.lastName}_${new Date().getTime()}_AppointmentLetter_Unsigned.pdf`;
-    pdf.save(fileName);
-    const blob = pdf.output('blob');
-    //creating form file to upload into AZure
-    this.AppointmentFile = new File([blob], fileName, { type: 'application/pdf', });
-    this.spinnerLoader = false;
-    this.releaseLetterButton = false;
-    this.conformationPopup.openSuccessModal('Non-Disclosure Agreement Letter generated successfully')
   }
 
+  private fetchImageAsBase64(url: string): Promise<string> {
+    return fetch(url).then(res => res.blob()).then(blob => new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result as string);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    }));
+  }
 
+  private async getFileBase64(url: string): Promise<string | null> {
+    try {
+      const response = await fetch(url);
+      if (!response.ok) return null;
+      const buffer = await response.arrayBuffer();
+      const bytes = new Uint8Array(buffer);
+      let binary = '';
+      for (let i = 0; i < bytes.byteLength; i++) {
+        binary += String.fromCharCode(bytes[i]);
+      }
+      return btoa(binary);
+    } catch {
+      return null;
+    }
+  }
 
   //Post NDA Details
   postNDADetails(docUrl: string) {
@@ -400,9 +423,7 @@ export class NdaContractorLetterComponent {
       note: this.employeeForm.get('notes')?.value,
       authoritySignature: this.selectedAuthority?.employeeId,
       docType: this.employeeForm.get('documentType')?.value,
-      issuedDate: moment(this.employeeForm.get('ndassentdate')?.value).format(
-        'YYYY-MM-DD'
-      ),
+      issuedDate: moment(this.employeeForm.get('ndassentdate')?.value).format('YYYY-MM-DD'),
       jobId: this.employeeJobDetails?.id,
       isDeleted: false
     };
@@ -414,19 +435,17 @@ export class NdaContractorLetterComponent {
           this.spinnerLoader1 = false;
         }, 1000);
         this.sendEmployeeDetails();
-
-
+        this.signalService.AppointmentLetterNavCountSignal.set(true);
       },
       error: (reason: any) => {
         console.log(reason);
-
+        this.signalService.AppointmentLetterNavCountSignal.set(true);
         this.conformationPopup.openErrorModal(reason.error.details)
         this.spinnerLoader = false;
-        this.spinnerLoader1 = false;
       },
       complete: () => {
         this.spinnerLoader = false;
-        this.spinnerLoader1 = false;
+        this.signalService.AppointmentLetterNavCountSignal.set(true);
       }
     });
   }
@@ -436,6 +455,7 @@ export class NdaContractorLetterComponent {
     this.uploadAppointLetter();
     this.spinnerLoader1 = false;
   }
+
   sendEmployeeDetails() {
     this.selectedEmployee.substatus = 'NDA Letter Released'
     this.subscription = this.http.postdata('Employeedata/UPDATER', this.selectedEmployee).subscribe({
@@ -443,8 +463,11 @@ export class NdaContractorLetterComponent {
       },
       error: (reason: any) => {
         this.spinnerLoader = false;
-        this.spinnerLoader1 = false;
       },
+      complete: () => {
+        this.spinnerLoader = false;
+        this.signalService.AppointmentLetterNavCountSignal.set(true);
+      }
     });
   }
 
@@ -454,7 +477,6 @@ export class NdaContractorLetterComponent {
       next: (data: any) => {
         if (data) {
           this.postNDADetails(data.path);
-
         }
       },
       error: (reason: any) => {
@@ -466,6 +488,7 @@ export class NdaContractorLetterComponent {
       }
     });
   }
+  
   //NDA letter email
   ndaLetterEmail(docUrl: string) {
     let loggedInUser = this.authService.getToken();
@@ -491,16 +514,13 @@ export class NdaContractorLetterComponent {
     this.subscription = this.http.postdata(`CustomEmail/ndaletter`, emaildetails).subscribe({
       next: (data: any) => {
         this.spinnerLoader = false;
-        this.spinnerLoader1 = false;
         this.conformationPopup.openSuccessModal('Email has been sent successfully');
       },
       error: (err: any) => {
         this.spinnerLoader = false;
-        this.spinnerLoader1 = false;
       },
       complete: () => {
         this.spinnerLoader = false;
-        this.spinnerLoader1 = false;
       }
     })
   }

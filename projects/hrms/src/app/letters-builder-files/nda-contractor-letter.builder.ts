@@ -182,7 +182,7 @@ export function buildNdaLetterDoc(data: NdaLetterData): any {
         {
           width: '50%',
           stack: [
-            { text: 'SNAD DEVELOPERS INDIA PVT. LTD', font: 'VERDANABOLD', margin: [0, 0, 0, 24] },
+            { text: 'RightlyHR', font: 'VERDANABOLD', margin: [0, 0, 0, 24] },
             {
               text: ['Signature: ', { text: data.authorityFullName, font: 'Autography', fontSize: PX(32), noWrap: true }],
               margin: [0, 0, 0, 4], font: bodyFont, alignment: 'left',

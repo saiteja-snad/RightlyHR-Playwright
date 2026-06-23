@@ -30,7 +30,10 @@ export class SignalsService {
   retoteLoginForRoleTriggerSignal = signal<boolean>(false);
   remoteLoginSidNavCountTriggerSignal = signal<boolean>(false);
 
-
+TraineeOfferLetterNavCountSignal = signal<boolean>(false);
+  ContractOfferLetterNavCountSignal = signal<boolean>(false);
+  AppointmentLetterNavCountSignal = signal<boolean>(false);
+  NDALetterNavCountSignal = signal<boolean>(false);
   //Separation request
   separationForYouTriggerSignal = signal<boolean>(false);
   separationForRoleTriggerSignal = signal<boolean>(false);

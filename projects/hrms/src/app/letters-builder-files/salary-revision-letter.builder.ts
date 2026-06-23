@@ -43,6 +43,7 @@ export interface SalaryRevisionLetterData {
   backgroundImageBase64?: string;
   useVerdanaFont?: boolean;
   useAutographyFont?: boolean;
+  headerLogoBase64?: string,
 }
 
 const PX = (px: number) => Math.round((px * 72) / 96);
@@ -254,10 +255,10 @@ export function buildSalaryRevisionLetterDoc(data: SalaryRevisionLetterData): an
       },
       margin: [0, 0, 0, 8],
     },
-    { text: ['Compensation Details ', { text: '(All figures in Rs.)', bold: false }], alignment: 'center', margin: [0, 0, 0, 8], font: 'VERDANABOLD'},
+    { text: ['Compensation Details ', { text: '(All figures in Rs.)', bold: false }], alignment: 'center', margin: [0, 0, 0, 8], font: 'VERDANABOLD' },
     salaryTable,
     ctcTable,
-    { text: 'Additional Details Related to Salary Structure:', margin: [0, 0, 0, 2], font: 'VERDANABOLD'},
+    { text: 'Additional Details Related to Salary Structure:', margin: [0, 0, 0, 2], font: 'VERDANABOLD' },
     {
       table: {
         widths: ['auto', '*'],
@@ -304,7 +305,7 @@ export function buildSalaryRevisionLetterDoc(data: SalaryRevisionLetterData): an
 
   const topMarginPage1 = data.backgroundImageBase64 ? 115 : 50;
   const topMarginPage2 = data.backgroundImageBase64 ? 100 : 50;
-  const bottomMargin   = data.backgroundImageBase64 ? 115 : 50;
+  const bottomMargin = data.backgroundImageBase64 ? 115 : 50;
 
   const page1Content = {
     margin: [0, topMarginPage1, 0, bottomMargin],

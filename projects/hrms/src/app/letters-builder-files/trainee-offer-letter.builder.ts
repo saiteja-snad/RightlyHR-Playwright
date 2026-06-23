@@ -127,7 +127,7 @@ export function buildTraineeOfferLetterDoc(data: TraineeOfferLetterData): any {
         {
           text: [
             { text: 'Working Hours and Location: ', font: 'VERDANABOLD'},
-            'The standard working hours are (10:00 AM to 7:00 PM), from (Monday to Friday), at our office located at SNAD Developers India Pvt Ltd',
+            'The standard working hours are (10:00 AM to 7:00 PM), from (Monday to Friday), at our office located at RightlyHR',
             data.officeAddress ? `, ${data.officeAddress}` : '',
             '. Occasionally, you may be required to work additional hours or remotely, depending on the nature of the projects and business requirements.',
           ],
@@ -202,7 +202,7 @@ export function buildTraineeOfferLetterDoc(data: TraineeOfferLetterData): any {
     ], 12),
     p('We are excited about the possibility of you joining our team and look forward to a productive and successful internship.', 20),
     p('Your Sincerely,', 4),
-    { text: 'For SNAD Developers India Pvt Ltd', font: 'VERDANABOLD', fontSize: PX(13), margin: [0, 0, 0, 16] },
+    { text: 'For RightlyHR', font: 'VERDANABOLD', fontSize: PX(13), margin: [0, 0, 0, 16] },
     { text: data.authorityName, font: 'Autography', fontSize: PX(32), margin: [0, 0, 0, 4], noWrap: true, alignment: 'left' },
     { text: 'Authorized Signatory,', font: 'VERDANABOLD', fontSize: PX(13), margin: [0, 0, 0, 4] },
     { text: data.authorityName, font: 'VERDANABOLD', fontSize: PX(13), margin: [0, 0, 0, 4] },

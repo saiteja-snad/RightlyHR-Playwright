@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { Ipersonal, Iteammembers } from '../../../Interfaces/members-model';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -16,6 +16,8 @@ import { Select } from 'primeng/select';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { CommonModule } from '@angular/common';
 import { MultiSelectModule } from 'primeng/multiselect';
+import { TableModule } from 'primeng/table';
+import { Table } from 'primeng/table';
 import { AccessNavigationService } from '../../../services/access-navigation.service';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { TeamMembersTabsComponent } from "../../../shared/personalinfo-tabs/team-members-tabs/team-members-tabs.component";
@@ -23,13 +25,14 @@ import { MyInfoTeamNumbersTabComponent } from "../../../shared/myinfo-tabs/my-in
 @Component({
   selector: 'app-team-members',
   imports: [NoDataFoundComponent, CommonModule, FormsModule, TranslateModule, Select, MultiSelectModule, 
-    SearchfilterPipe, ReactiveFormsModule, DataLoaderContentComponent, TeamMembersTabsComponent,
+    ReactiveFormsModule, TableModule, DataLoaderContentComponent, TeamMembersTabsComponent,
     MyInfoTeamNumbersTabComponent],
   templateUrl: './team-members.component.html',
   styleUrl: './team-members.component.scss',
 })
 
 export class TeamMembersComponent implements OnInit, OnDestroy {
+  @ViewChild('teamMembersTable') teamMembersTable!: Table;
   emp: any;
   empinfo = {} as Ipersonal;
   subscription!: Subscription;
@@ -47,7 +50,8 @@ export class TeamMembersComponent implements OnInit, OnDestroy {
   departmentDetails = [] as IDepartment[];
   teamDropdownValues: any[] = [];
   teamMemberArray: any[] = [];
-    getTeamMemberArray: any[] = [];
+  getTeamMemberArray: any[] = [];
+  originalTeamMemberArray: any[] = []; // Store original unsorted data
   requestForm!: FormGroup;
   foremployeeForm!: FormGroup;
   teamManagerDropdownValues: any[] = [];
@@ -56,6 +60,8 @@ export class TeamMembersComponent implements OnInit, OnDestroy {
   jobdetailes: any = [];
   selectedemployeid: any;
   loading = false;
+  currentSortField: string = '';
+  currentSortOrder: number = 0; // 0 = no sort, 1 = asc, -1 = desc
 
   constructor(private http: HttpService, private accessNav: AccessNavigationService, private modalService: NgbModal, 
     private fb: FormBuilder, private conformationPopup: OpenModalService, public rbac: RbacService, 
@@ -198,6 +204,7 @@ export class TeamMembersComponent implements OnInit, OnDestroy {
         this.teamMemberArray.sort((a: any, b: any) =>
           a.firstName.localeCompare(b.firstName, 'en', { sensitivity: 'base' })
         );
+        this.originalTeamMemberArray = [...this.teamMemberArray];
         this.getTeamMemberArray = [...this.teamMemberArray];
       },
       (error) => {
@@ -538,6 +545,96 @@ export class TeamMembersComponent implements OnInit, OnDestroy {
           //this.getAllTeammembersLists();
         }
       },
+    });
+  }
+
+  getFilteredAndSortedMembers(): any[] {
+    if (!this.searchValue || this.searchValue.trim() === '') {
+      return this.getTeamMemberArray;
+    }
+    
+    const searchTerm = this.searchValue.toLowerCase().trim();
+    return this.getTeamMemberArray.filter((member: any) => {
+      const fusionEmpId = member.fusionEmpId?.toLowerCase() || '';
+      const employeeName = `${member.firstName || ''} ${member.middleName || ''} ${member.lastName || ''}`.toLowerCase().trim();
+      const workEmail = member.workEmail?.toLowerCase() || '';
+      const contactNumber = member.contactnumber?.toString() || '';
+      
+      return fusionEmpId.includes(searchTerm) ||
+             employeeName.includes(searchTerm) ||
+             workEmail.includes(searchTerm) ||
+             contactNumber.includes(searchTerm);
+    });
+  }
+
+  customSort(event: any): void {
+    const field = event.field;
+    
+    // Track current sort state for the clicked field
+    if (this.currentSortField === field) {
+      // Same field clicked - cycle through: asc (1) -> desc (-1) -> reset (0)
+      if (this.currentSortOrder === 1) {
+        // Currently ascending, change to descending
+        this.currentSortOrder = -1;
+        event.order = -1;
+      } else if (this.currentSortOrder === -1) {
+        // Currently descending, reset to original order
+        this.getTeamMemberArray = [...this.originalTeamMemberArray];
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        if (this.teamMembersTable) {
+          this.teamMembersTable.reset();
+        }
+        return;
+      } else {
+        // Currently reset, change to ascending
+        this.currentSortOrder = 1;
+        event.order = 1;
+      }
+    } else {
+      // New field clicked - start with ascending
+      this.currentSortField = field;
+      this.currentSortOrder = 1;
+      event.order = 1;
+    }
+
+    event.data.sort((a: any, b: any) => {
+      let val1: any;
+      let val2: any;
+
+      if (field === 'employeeName') {
+        // Handle employee name sorting (combine first, middle, last name)
+        val1 = `${a.firstName || ''} ${a.middleName || ''} ${a.lastName || ''}`.trim();
+        val2 = `${b.firstName || ''} ${b.middleName || ''} ${b.lastName || ''}`.trim();
+      } else {
+        // Handle direct fields
+        val1 = a[field];
+        val2 = b[field];
+      }
+
+      // Handle Employee ID sorting (alphanumeric)
+      if (field === 'fusionEmpId') {
+        return event.order * String(val1 ?? '').localeCompare(
+          String(val2 ?? ''),
+          undefined,
+          {
+            numeric: true,
+            sensitivity: 'base'
+          }
+        );
+      }
+
+      // Handle contact number sorting (numeric)
+      if (field === 'contactnumber') {
+        const num1 = parseInt(String(val1).replace(/\D/g, ''), 10) || 0;
+        const num2 = parseInt(String(val2).replace(/\D/g, ''), 10) || 0;
+        return event.order * (num1 - num2);
+      }
+
+      // Handle string sorting for all other fields
+      val1 = String(val1 ?? '').trim();
+      val2 = String(val2 ?? '').trim();
+      return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
     });
   }
 

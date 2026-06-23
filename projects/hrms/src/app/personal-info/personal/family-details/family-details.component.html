@@ -10,13 +10,25 @@
     </div>
     <div class="custom-table-content">
         @if(!loading){
-        <table class="w-100">
-            <thead>
+        <p-table #familyDetailsTable [value]="familyDetailsTableData" [customSort]="true" (sortFunction)="customSort($event)" styleClass="w-100">
+            <ng-template pTemplate="header">
                 <tr>
-                    <th>{{ 'Name' | translate }}</th>
-                    <th>{{ 'Relationship' | translate }}</th>
-                    <th class="text-center">{{ 'Date of Birth' | translate }}</th>
-                    <th class="text-center">{{ 'Dependent' | translate }}</th>
+                    <th pSortableColumn="memberName">
+                        {{ 'Name' | translate }}
+                        <p-sortIcon field="memberName"></p-sortIcon>
+                    </th>
+                    <th pSortableColumn="relationShipName">
+                        {{ 'Relationship' | translate }}
+                        <p-sortIcon field="relationShipName"></p-sortIcon>
+                    </th>
+                    <th class="text-center" pSortableColumn="dateOfBirth">
+                        {{ 'Date of Birth' | translate }}
+                        <p-sortIcon field="dateOfBirth"></p-sortIcon>
+                    </th>
+                    <th class="text-center" pSortableColumn="isDependent">
+                        {{ 'Dependent' | translate }}
+                        <p-sortIcon field="isDependent"></p-sortIcon>
+                    </th>
                     @if(canAccess('update','family') || canAccess('delete','family') ){
                     @if((employedata?.empstatus?.toLowerCase() !== 'prospective' &&
                     employedata?.empstatus?.toLowerCase() !== 'trainee prospective'
@@ -25,51 +37,51 @@
                     <th class="text-center">{{"Action" | translate}}</th>
                     }}
                 </tr>
-            </thead>
-            <tbody>
-                <!-- Check if familyDetailsdisplay has data -->
-                <ng-container *ngIf="((familyDetailsdisplay | async) ?? []).length > 0; else noDataTemplate">
-                    <tr *ngFor="let familyDetail of familyDetailsdisplay | async">
-                        <td>{{ familyDetail.memberName }}</td>
-                        <td>{{ familyDetail.relationShipName }}</td>
-                        <td class="text-center text-nowrap">{{ familyDetail.dateOfBirth | dateformat }}</td>
-                        <td class="text-center text-nowrap">{{ familyDetail.isDependent ? ('Yes' | translate) : ('No' | translate) }}</td>
-                        @if(canAccess('update','family') || canAccess('delete','family') ){<td class="text-center">
-                            @if((employedata?.empstatus?.toLowerCase() !== 'prospective' &&
-                            employedata?.empstatus?.toLowerCase() !== 'trainee prospective'
-                            && employedata?.empstatus?.toLowerCase() !== 'inactive' &&
-                            employedata?.empstatus?.toLowerCase() !== 'trainee inactive')){
-                            <div class="dropdown">
-                                <span type="button" data-bs-toggle="dropdown">
-                                    <i class="bi bi-three-dots-vertical"></i>
-                                </span>
-                                <ul class="dropdown-menu custom-dropdown-menu">
-                                    @if(canAccess('update','family')){
-                                    <li (click)="openModalupdate(updateFamilyModal, familyDetail)">
-                                        <a class="dropdown-item">
-                                             <i class="bi bi-pencil me-2"></i>{{ 'Update' | translate }}
-                                        </a>
-                                    </li>}
-                                    @if(canAccess('delete','family')){
-                                    <li (click)="opendeletModal(deleteconformation,familyDetail)">
-                                        <a class="dropdown-item">
-                                                <i class="bi bi-trash3 me-2"></i>{{ 'Delete' | translate }}
-                                        </a>
-                                    </li>}
-                                </ul>
-                            </div>
-                            }
-                        </td>}
-                    </tr>
-                </ng-container>
-            </tbody>
-            <!-- No Data Found Template -->
-            <ng-template #noDataTemplate>
+            </ng-template>
+            <ng-template pTemplate="body" let-familyDetail>
                 <tr>
-                    <app-no-data-found />
+                    <td>{{ familyDetail.memberName }}</td>
+                    <td>{{ familyDetail.relationShipName }}</td>
+                    <td class="text-center text-nowrap">{{ familyDetail.dateOfBirth | dateformat }}</td>
+                    <td class="text-center text-nowrap">{{ familyDetail.isDependent ? ('Yes' | translate) : ('No' | translate) }}</td>
+                    @if(canAccess('update','family') || canAccess('delete','family') ){<td class="text-center">
+                        @if((employedata?.empstatus?.toLowerCase() !== 'prospective' &&
+                        employedata?.empstatus?.toLowerCase() !== 'trainee prospective'
+                        && employedata?.empstatus?.toLowerCase() !== 'inactive' &&
+                        employedata?.empstatus?.toLowerCase() !== 'trainee inactive')){
+                        <div class="dropdown">
+                            <span type="button" data-bs-toggle="dropdown">
+                                <i class="bi bi-three-dots-vertical"></i>
+                            </span>
+                            <ul class="dropdown-menu custom-dropdown-menu">
+                                @if(canAccess('update','family')){
+                                <li (click)="openModalupdate(updateFamilyModal, familyDetail)">
+                                    <a class="dropdown-item">
+                                         <i class="bi bi-pencil me-2"></i>{{ 'Update' | translate }}
+                                    </a>
+                                </li>}
+                                @if(canAccess('delete','family')){
+                                <li (click)="opendeletModal(deleteconformation,familyDetail)">
+                                    <a class="dropdown-item">
+                                            <i class="bi bi-trash3 me-2"></i>{{ 'Delete' | translate }}
+                                    </a>
+                                </li>}
+                            </ul>
+                        </div>
+                        }
+                    </td>}
                 </tr>
             </ng-template>
-        </table>
+            <ng-template pTemplate="emptymessage">
+                <div class="wrapper">
+                <tr>
+                    <td colspan="5">
+                        <app-no-data-found />
+                    </td>
+                </tr>
+                </div>
+            </ng-template>
+        </p-table>
         }
         @else {
         <app-data-loader-content />

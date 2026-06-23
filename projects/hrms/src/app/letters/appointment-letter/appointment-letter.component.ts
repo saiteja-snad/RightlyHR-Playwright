@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { SelectModule } from 'primeng/select';
-import { DateformatPipe } from "../../Pipes/dateformat.pipe";
+import { DateformatPipe } from "../../pipes/dateformat.pipe";
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IAsset, IDepartment, IEmployeeAddress, IemployeeDetails, IEmployeeIdentity, IEmployeeJobInfo, IEmployeeProfile, IIssuelocation, IMake } from './appointment-letter-model';
 import { Subscription } from 'rxjs';
@@ -18,6 +18,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { IEmployeeSignatures } from '../letters.modal';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { IAssertsType } from '../../Interfaces/job-model';
+import { SignalsService } from '../../services/signals.service';
 @Component({
   selector: 'app-appointment-letter',
   imports: [CommonModule, SelectModule, DateformatPipe, ReactiveFormsModule, TranslateModule, NgbPopoverModule, LetterFooterComponent, LettersheaderComponent],
@@ -62,6 +63,7 @@ export class AppointmentLetterComponent implements OnInit,OnDestroy {
     private router: Router,
     private authService: AuthService,
     private conformationPopup: OpenModalService,
+    private signalService: SignalsService,
     private fb: FormBuilder) { }
 
   ngOnInit(): void {
@@ -395,18 +397,21 @@ export class AppointmentLetterComponent implements OnInit,OnDestroy {
       ),
       jobId: this.employeeJobDetails?.id,
     };
-    this.subscription = this.http.postdata('AppointmentLetter', postAppDetails).subscribe({
-      next: (data: any) => {
+    this.http.postdata('AppointmentLetter', postAppDetails).subscribe({
+      next: () => { 
         this.conformationPopup.openSuccessModal('Appointment letter generated successfully')
         setTimeout(() => {
           this.navigateDashboard();
         }, 3000);
+        this.signalService.AppointmentLetterNavCountSignal.set(true);
       },
-      error: (reason: any) => {
+      error: () => { 
         this.spinnerLoader = false;
+        this.signalService.AppointmentLetterNavCountSignal.set(true);
       },
       complete: () => {
         this.spinnerLoader = false;
+        this.signalService.AppointmentLetterNavCountSignal.set(true);
       }
     });
   }

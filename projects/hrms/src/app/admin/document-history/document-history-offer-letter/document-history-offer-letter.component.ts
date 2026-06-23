@@ -9,13 +9,14 @@ import { AuthService } from '../../../services/auth.service';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { Subscription } from 'rxjs';
 import { OfferletterdashboardpipePipe } from '../../../Pipes/offerletterdashboardpipe.pipe';
-import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
+import { DateformatPipe } from '../../../pipes/dateformat.pipe';
 import { RbacService } from '../../../services/rbac.service';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { DataLoaderContentComponent } from '../../../shared/data-loader-content/data-loader-content.component';
 import moment from 'moment';
 import { DatePicker } from 'primeng/datepicker';
 import { OnboardingFilterService } from '../../../shared/time-off-module-tabs/pending-approvals-tabs/onboarding-filter.service';
+import { SignalsService } from '../../../services/signals.service';
 @Component({
   selector: 'app-document-history-offer-letter',
   imports: [CommonModule, ReactiveFormsModule, TranslateModule, FormsModule, DateformatPipe,
@@ -42,7 +43,8 @@ export class DocumentHistoryOfferLetterComponent implements OnInit, OnDestroy {
   offerLetters: any[] = []; // filtered data shown in table
 
   constructor(private router: Router, private modalService: NgbModal, private fb: FormBuilder, private http: HttpService,
-    private authService: AuthService, private conformationPopup: OpenModalService, public rbac: RbacService, private onboardingFilter: OnboardingFilterService) {
+    private authService: AuthService, private conformationPopup: OpenModalService, public rbac: RbacService, private onboardingFilter: OnboardingFilterService,
+    private signalService: SignalsService) {
     this.initializeForm();
   }
 
@@ -167,6 +169,10 @@ export class DocumentHistoryOfferLetterComponent implements OnInit, OnDestroy {
       error: (reason: any) => {
         console.log(reason);
       },
+      complete: () => {
+          this.signalService.OfferLetterNavCountSignal.set(true);
+          this.getOfferLetters();
+        },
     });
   }
 
@@ -232,6 +238,10 @@ export class DocumentHistoryOfferLetterComponent implements OnInit, OnDestroy {
       error: (reason: any) => {
         console.log(reason);
       },
+      complete: () => {
+          this.signalService.OfferLetterNavCountSignal.set(true);
+          this.getOfferLetters();
+        },
     });
   }
 
@@ -343,6 +353,10 @@ export class DocumentHistoryOfferLetterComponent implements OnInit, OnDestroy {
       error: (reason: any) => {
         console.log(reason);
       },
+      complete: () => {
+          this.signalService.OfferLetterNavCountSignal.set(true);
+          this.getOfferLetters();
+        },
     });
   }
 

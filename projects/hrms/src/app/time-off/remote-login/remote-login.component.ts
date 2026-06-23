@@ -21,6 +21,8 @@ import { TimeoffYearFilterService } from '../../services/timeoff-year-filter.ser
 import { Select } from 'primeng/select';
 import { DropdownModule } from 'primeng/dropdown';
 import { OrgHolidayHeader, OrgWeekendHeader } from '../comp-off/compoff.modal';
+import { ApplicablePoliciesTriggerComponent } from '../../shared/policies/applicable-policies-trigger/applicable-policies-trigger.component';
+import { APPLICABLE_POLICIES_KEYS } from '../../shared/policies/policy-visibility.catalog';
 // import { TranslateModule } from '@ngx-translate/core';
 @Component({
   selector: 'app-remote-login',
@@ -34,7 +36,8 @@ import { OrgHolidayHeader, OrgWeekendHeader } from '../comp-off/compoff.modal';
     NgbPopoverModule,
     DropdownModule,
     Select,
-    ModuleInformationComponent
+    ModuleInformationComponent,
+    ApplicablePoliciesTriggerComponent,
     // TranslateModule,
   ],
   templateUrl: './remote-login.component.html',
@@ -42,6 +45,7 @@ import { OrgHolidayHeader, OrgWeekendHeader } from '../comp-off/compoff.modal';
 })
 
 export class RemoteLoginComponent {
+  applicablePolicies = APPLICABLE_POLICIES_KEYS.TIME_OFF_REMOTE_LOGIN;
   empinfo = {} as IJob;
   halfDayValue = {} as any;
   fullDayValue = {} as any;

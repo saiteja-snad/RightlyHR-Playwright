@@ -6,7 +6,7 @@ import { AddEventComponent } from './add-event/add-event.component';
 import { filter, Observable, of, shareReplay, Subscription, tap } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import moment from 'moment';
-import { DateformatPipe } from "../../Pipes/dateformat.pipe";
+import { DateformatPipe } from "../../pipes/dateformat.pipe";
 import { OpenModalService } from '../../services/open-modal.service';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidatorFn, Validators } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
@@ -22,15 +22,20 @@ import { Skeleton } from 'primeng/skeleton';
 import { SettingsDeleteIconComponent } from "../../icons/settings-delete-icon/settings-delete-icon.component";
 import { SettingsUpdateIconComponent } from "../../icons/settings-update-icon/settings-update-icon.component";
 import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
+import { ApplicablePoliciesTriggerComponent } from '../../shared/policies/applicable-policies-trigger/applicable-policies-trigger.component';
+import { APPLICABLE_POLICIES_KEYS } from '../../shared/policies/policy-visibility.catalog';
+
+
 
 @Component({
   selector: 'app-upcoming-events',
-  imports: [CommonModule, DateformatPipe, ReactiveFormsModule, TranslateModule, NgbPopoverModule, NoDataFoundComponent, EventsTabsComponent, DataLoaderContentComponent, ModuleInformationComponent, Skeleton, SettingsDeleteIconComponent, SettingsUpdateIconComponent,ModuleInfoIconComponent],
+  imports: [CommonModule, DateformatPipe, ReactiveFormsModule, TranslateModule, NgbPopoverModule, NoDataFoundComponent, EventsTabsComponent, DataLoaderContentComponent, ModuleInformationComponent, Skeleton, SettingsDeleteIconComponent, SettingsUpdateIconComponent,ModuleInfoIconComponent, ApplicablePoliciesTriggerComponent],
   templateUrl: './upcoming-events.component.html',
   styleUrl: './upcoming-events.component.scss'
 })
 
 export class UpcomingEventsComponent implements OnInit,OnDestroy {
+  applicablePolicies = APPLICABLE_POLICIES_KEYS.EVENTS;
   moduleinfo : string = '';
   subscription!: Subscription
   postEventsData: any
@@ -84,11 +89,11 @@ export class UpcomingEventsComponent implements OnInit,OnDestroy {
 
   updateModuleInfo() {
     const url = this.router.url;
-  
+
     const routeToInfoMap: { [key: string]: string } = {
       '/events/upcoming': MODULE_INFOS.EVENTS_MODULE_INFO
     };
-  
+
     const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
     this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
@@ -334,7 +339,7 @@ export class UpcomingEventsComponent implements OnInit,OnDestroy {
     return `${year}-${month}-${day}T${hours}:${minutes}`;
   }
   ngOnDestroy(): void {
-   
+
     if (this.subscription) {
       this.subscription.unsubscribe()
     }

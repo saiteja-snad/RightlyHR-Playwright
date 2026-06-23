@@ -11,16 +11,18 @@ import { Select } from 'primeng/select';
 import { TranslateModule } from '@ngx-translate/core';
 import { OpenModalService } from '../../services/open-modal.service';
 import { IDepartment } from '../../Interfaces/letters-model';
-import { DateformatPipe } from "../../Pipes/dateformat.pipe";
+import { DateformatPipe } from "../../pipes/dateformat.pipe";
 import { RbacService } from '../../services/rbac.service';
 import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
 import { MODULE_INFOS } from '../../shared/modules-info';
 import { ItsuporrtHeaderTabsComponent } from "../../shared/itsuporrt-header-tabs/itsuporrt-header-tabs.component";
 import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
 import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
+import { ApplicablePoliciesTriggerComponent } from '../../shared/policies/applicable-policies-trigger/applicable-policies-trigger.component';
+import { APPLICABLE_POLICIES_KEYS } from '../../shared/policies/policy-visibility.catalog';
 @Component({
   selector: 'app-my-tickets',
-  imports: [CommonModule, Select, RouterModule, ReactiveFormsModule, NoDataFoundComponent, NgbPopoverModule,
+  imports: [CommonModule, Select, RouterModule, ReactiveFormsModule, NoDataFoundComponent, NgbPopoverModule, ApplicablePoliciesTriggerComponent,
     TranslateModule, DateformatPipe, ModuleInformationComponent, ItsuporrtHeaderTabsComponent, DataLoaderContentComponent,ModuleInfoIconComponent],
   templateUrl: './my-tickets.component.html',
   styleUrl: './my-tickets.component.scss',
@@ -28,6 +30,7 @@ import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-inf
 })
 
 export class MyTicketsComponent implements OnInit,OnDestroy {
+  applicablePolicies = APPLICABLE_POLICIES_KEYS.IT_SUPORRT_TICKETS;
   moduleinfo: string = '';
   subscription!: Subscription;
   empinfo = {} as Ipersonal;
@@ -116,7 +119,7 @@ subCategoryDetails=[] as any;
         this.categoryDetails = data;
       },
       error: (error: any) => {
-        
+
       }
     });
   }

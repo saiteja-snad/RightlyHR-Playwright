@@ -108,7 +108,6 @@
     height: calc(100dvh - 20.5rem);
     min-height: 50vh !important;
 }
-
 .custom-alert-info {
     background: #fff7ec !important;
     border: 1px solid #ff8000 !important;
@@ -136,4 +135,8 @@
 
 .p-inputtext {
     font-size: 0.8rem !important;
+}
+th,
+td {
+    text-align: center !important;
 }

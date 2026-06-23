@@ -11,7 +11,7 @@ import { Select } from 'primeng/select';
 import { TranslateModule } from '@ngx-translate/core';
 import { OpenModalService } from '../../services/open-modal.service';
 import { IDepartment } from '../../Interfaces/letters-model';
-import { DateformatPipe } from "../../Pipes/dateformat.pipe";
+import { DateformatPipe } from "../../pipes/dateformat.pipe";
 import { RbacService } from '../../services/rbac.service';
 import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
 import { MODULE_INFOS } from '../../shared/modules-info';
@@ -25,15 +25,19 @@ import { InfoIconComponent } from "../../icons/info-icon/info-icon.component";
 import { HelpdeskPipe } from "../../Pipes/helpdesk.pipe";
 import { Paginator } from "primeng/paginator";
 import { HelpdeskCreatequeires } from '../helpdesk-model';
+import { ApplicablePoliciesTriggerComponent } from '../../shared/policies/applicable-policies-trigger/applicable-policies-trigger.component';
+import { APPLICABLE_POLICIES_KEYS } from '../../shared/policies/policy-visibility.catalog';
+
 @Component({
   selector: 'app-employee-help-desk',
-  imports: [CommonModule, Select, RouterModule, ReactiveFormsModule, NoDataFoundComponent, NgbPopoverModule,
+  imports: [CommonModule, Select, RouterModule, ReactiveFormsModule, NoDataFoundComponent, NgbPopoverModule, ApplicablePoliciesTriggerComponent,
     TranslateModule, DateformatPipe, FormsModule, ModuleInformationComponent, ItsuporrtHeaderTabsComponent, DataLoaderContentComponent, ModuleInfoIconComponent, ProfileIconComponent, InfoIconComponent, HelpdeskPipe, HelpdeskHeaderTabsComponent, Paginator],
   templateUrl: './employee-help-desk.component.html',
   styleUrl: './employee-help-desk.component.scss',
   encapsulation: ViewEncapsulation.None
 })
 export class EmployeeHelpDeskComponent {
+  applicablePolicies = APPLICABLE_POLICIES_KEYS.HELP_DESK_TICKETS;
   moduleinfo: string = '';
   subscription!: Subscription;
   empinfo = {} as Ipersonal;
@@ -304,13 +308,13 @@ export class EmployeeHelpDeskComponent {
   //   this.helpDeskForm.get('subcategoryId')?.reset();
   //   this.subCategoryDetails = [];
   //   this.categoryDetails = [];
-    
+
   //   if (!department || !department.department) {
   //     this.helpDeskForm.get('categoryId')?.disable();
   //     this.helpDeskForm.get('subcategoryId')?.disable();
   //     return;
   //   }
-    
+
   //   const departmentId = department.department;
   //   this.subscription = this.http.getData(`HelpDeskCategory/getAll?deptId=${departmentId}`).subscribe({
   //     next: (response: any) => {
@@ -328,7 +332,7 @@ export class EmployeeHelpDeskComponent {
   //         });
   //         this.categoryDetails = Array.from(categoryMap.values())
   //           .sort((a, b) => a.label.localeCompare(b.label));
-          
+
   //         if (this.categoryDetails.length > 0) {
   //           this.helpDeskForm.get('categoryId')?.enable();
   //         } else {
@@ -347,12 +351,12 @@ export class EmployeeHelpDeskComponent {
   getsubcategoryName(categoryId: number) {
     this.helpDeskForm.get('subcategoryId')?.reset();
     this.subCategoryDetails = [];
-    
+
     if (!categoryId) {
       this.helpDeskForm.get('subcategoryId')?.disable();
       return;
     }
-    
+
     this.subscription = this.http.getData(`HelpDeskCategory/getAll?categoryId=${categoryId}`).subscribe({
       next: (response: any) => {
         if (response && Array.isArray(response) && response.length > 0) {
@@ -369,7 +373,7 @@ export class EmployeeHelpDeskComponent {
           });
           this.subCategoryDetails = Array.from(subcategoryMap.values())
             .sort((a, b) => a.label.localeCompare(b.label));
-          
+
           if (this.subCategoryDetails.length > 0) {
             this.helpDeskForm.get('subcategoryId')?.enable();
           } else {
@@ -466,7 +470,7 @@ export class EmployeeHelpDeskComponent {
       return;
     }
     console.log('from');
-    
+
     this.isLoading = true;
     const payload: HelpdeskCreatequeires = {
       employeeId: this.empinfo.employeeId,

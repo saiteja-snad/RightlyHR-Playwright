@@ -9,7 +9,7 @@ import { CommonModule } from '@angular/common';
 import { NgxDocViewerModule } from 'ngx-doc-viewer';
 import { FormsModule } from '@angular/forms';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
-import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
+import { DateformatPipe } from '../../../pipes/dateformat.pipe';
 import { TranslateModule } from '@ngx-translate/core';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
@@ -73,14 +73,15 @@ export class RejectedExpensesComponent implements OnInit, OnDestroy {
   openModal(content: any) {
     this.modalService.open(content, { centered: true, size: "xl", backdrop: 'static' });
   }
-
-  comments_Function(comments: any) {
-    this.commentsrecivced = comments;
-  }
   //download expenses popup open function
   openpopupforDownload(content: any, expenseDetails: any) {
     this.selectedData = expenseDetails;
     this.modalService.open(content, { size: 'xl', centered: true });
+  }
+
+  comments_Function(comments: any) {
+    let filteredComments = comments?.filter((ele: any) => ele?.action !== 'Required Clarification');
+    this.commentsrecivced = filteredComments;
   }
 
   getexpensesheaderbyemployeeid(): void {

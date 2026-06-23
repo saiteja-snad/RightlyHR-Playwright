@@ -9,11 +9,11 @@ import { AuthService } from '../../../services/auth.service';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { DownloadIconComponent } from "../../../icons/download-icon/download-icon.component";
-import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { ConfirmationIconComponent } from '../../../icons/confirmation-icon/confirmation-icon.component';
 import { ProjectDocumentsSideTabsComponent } from "../../../shared/project-management-tabs/project-documents-side-tabs/project-documents-side-tabs.component";
+import { DateformatPipe } from '../../../pipes/dateformat.pipe';
 @Component({
   selector: 'app-inactive-project-documents',
   imports: [NoDataFoundComponent, DataLoaderContentComponent, DownloadIconComponent, DateformatPipe,

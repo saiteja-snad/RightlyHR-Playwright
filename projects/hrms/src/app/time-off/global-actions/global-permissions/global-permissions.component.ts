@@ -14,7 +14,7 @@ import { environment } from '../../../../environments/environment';
 import { InfoIconComponent } from '../../../icons/info-icon/info-icon.component';
 import { ModuleInfoIconComponent } from '../../../icons/module-info-icon/module-info-icon.component';
 import { IDepartment } from '../../../Interfaces/letters-model';
-import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
+import { DateformatPipe } from '../../../pipes/dateformat.pipe';
 import { GlobalpermissionsPipe } from '../../../Pipes/globalpermissions.pipe';
 import { HttpService } from '../../../services/http.service';
 import { RbacService } from '../../../services/rbac.service';
@@ -26,16 +26,20 @@ import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-foun
 import { Iglobalpermissions } from './globalpermissions-modal';
 import { GlobalActionsTabsComponent } from "../../../shared/time-off-module-tabs/global-actions-tabs/global-actions-tabs.component";
 import { TranslateModule } from '@ngx-translate/core';
+import { ApplicablePoliciesTriggerComponent } from '../../../shared/policies/applicable-policies-trigger/applicable-policies-trigger.component';
+import { APPLICABLE_POLICIES_KEYS } from '../../../shared/policies/policy-visibility.catalog';
+
 @Component({
   selector: 'app-global-permissions',
   imports: [CommonModule, NgbPopoverModule, FormsModule, ReactiveFormsModule, PaginatorModule,
     DropdownModule, DateformatPipe, NoDataFoundComponent, GlobalpermissionsPipe, InfoIconComponent,TranslateModule,
-    ModuleInformationComponent, DataLoaderContentComponent, ModuleInfoIconComponent, Select, GlobalActionsTabsComponent],
+    ModuleInformationComponent, DataLoaderContentComponent, ModuleInfoIconComponent, Select, GlobalActionsTabsComponent, ApplicablePoliciesTriggerComponent],
   templateUrl: './global-permissions.component.html',
   styleUrl: './global-permissions.component.scss'
 })
 
 export class GlobalPermissionsComponent implements OnInit, OnDestroy {
+  applicablePolicies = APPLICABLE_POLICIES_KEYS.ON_BE_HALF_OF_GLOBAL_ACTIONS;
   moduleinfo: string = '';
   totalRecords = 100
   first: any = 1;
@@ -82,7 +86,7 @@ export class GlobalPermissionsComponent implements OnInit, OnDestroy {
     applyLabel: 'ok',
     format: environment.dateformat.toUpperCase(),
     direction: 'ltr',
-    clearLabel: 'Clear', // could be rtl 
+    clearLabel: 'Clear', // could be rtl
   };
   dateRange!: { startDate: dayjs.Dayjs; endDate: dayjs.Dayjs; };
   yearSelectionForm!: FormGroup;
@@ -213,12 +217,12 @@ export class GlobalPermissionsComponent implements OnInit, OnDestroy {
     params = addParamIfExists(params, 'department', this.departmentId);
     params = addParamIfExists(params, 'subdepartment', this.teamId);
     params = addParamIfExists(params, 'year', this.selectedYear);
-    
+
     // Add moduleId if provided (including 0)
     if (moduleId !== null && moduleId !== undefined) {
       params = params.set('moduleId', moduleId.toString());
     }
-    
+
     this.subscription = this.http.getData(`v2/GlobalPermissions/getGlobalPermissions?${params}`).subscribe({
       next: (response: any) => {
         this.loading = false;
@@ -231,7 +235,7 @@ export class GlobalPermissionsComponent implements OnInit, OnDestroy {
     })
   }
 
-  //function to get the values 
+  //function to get the values
   selectedEmployees: any[] = [];
   getEmployeeNames(employeeIds: any[]): void {
     // Assuming employeeIds is an array of employee objects

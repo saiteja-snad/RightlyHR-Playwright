@@ -9,9 +9,12 @@ import { CommonModule } from '@angular/common';
 import { SidetabsloadersComponent } from '../../sidetabsloaders/sidetabsloaders.component';
 import { environment } from '../../../../environments/environment';
 import { SignalsService } from '../../../services/signals.service';
+import { CdkDragDrop, DragDropModule, moveItemInArray } from '@angular/cdk/drag-drop';
+import { MenuOrderService } from '../../../services/theme-service/menu-order.service';
 @Component({
   selector: 'app-remotelogin-approval-tabs',
-  imports: [CommonModule, RouterModule, SidetabsloadersComponent],
+  standalone: true,
+  imports: [CommonModule, RouterModule, SidetabsloadersComponent, DragDropModule],
   templateUrl: './remotelogin-approval-tabs.component.html',
   styleUrl: './remotelogin-approval-tabs.component.scss',
 })
@@ -29,14 +32,21 @@ export class RemoteloginApprovalTabsComponent implements OnInit, OnDestroy {
   remoteLoginModuleId = environment.remoteLoginModuleId;
   navTabs: any[] = [];
   filteredTabs: any[] = [];
+  readonly tabsKey = 'timeoff-remotelogin-status-tabs';
+
+  trackByNavLink(index: number, tab: any): string {
+    return tab.link;
+  }
 
   constructor(
     public readonly router: Router,
     private http: HttpService,
     public rbac: RbacService,
     private TimeoffYearFilterService: TimeoffYearFilterService,
-    private signalsService: SignalsService
+    private signalsService: SignalsService,
+    private readonly menuOrderService: MenuOrderService
   ) {
+    void this.menuOrderService.ensureLoaded();
     effect(() => {
       if (this.signalsService.remoteLoginSidNavCountTriggerSignal()) {
         this.getRemoteLoginRequest();
@@ -177,13 +187,31 @@ updateNavTabs() {
     this.filterTabsByRbac();
   }
 
-    filterTabsByRbac(): void {
+  filterTabsByRbac(): void {
     this.filteredTabs = this.navTabs.filter(tab => {
       if (!tab.permission) return true;
       const { feature, action } = tab.permission;
       const permissionString = `${feature}.${action}`;
       return this.rbac.allowedToAccess(permissionString);
     });
+    this.applySavedTabsOrder();
+  }
+
+  private applySavedTabsOrder(): void {
+    if (!this.filteredTabs.length) return;
+    const reordered = this.menuOrderService.applySavedTabsOrder(this.tabsKey, this.filteredTabs, item => String(item?.link ?? ''));
+    if (reordered !== this.filteredTabs) {
+      this.filteredTabs.splice(0, this.filteredTabs.length, ...reordered);
+    }
+  }
+
+  onDrop(event: CdkDragDrop<any[]>): void {
+    if (event.previousIndex === event.currentIndex) return;
+    moveItemInArray(this.filteredTabs, event.previousIndex, event.currentIndex);
+    const employeeId = this.menuOrderService.getCurrentEmployeeId();
+    if (!employeeId) return;
+    const tabs = this.filteredTabs.map(item => ({ id: String(item.link ?? ''), label: String(item.label ?? ''), route: String(item.link ?? '') }));
+    this.menuOrderService.saveTabsModuleOrder(employeeId, this.tabsKey, tabs);
   }
   ngOnDestroy(): void {
     this.destroy$.next(true);

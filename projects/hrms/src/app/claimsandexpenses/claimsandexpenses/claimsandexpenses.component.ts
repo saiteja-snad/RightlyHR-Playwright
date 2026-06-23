@@ -21,16 +21,19 @@ import { DatePicker } from 'primeng/datepicker';
 import moment from 'moment';
 import { InfoIconComponent } from "../../icons/info-icon/info-icon.component";
 import { TimeoffYearFilterService } from '../../services/timeoff-year-filter.service';
+import { ApplicablePoliciesTriggerComponent } from '../../shared/policies/applicable-policies-trigger/applicable-policies-trigger.component';
+import { APPLICABLE_POLICIES_KEYS } from '../../shared/policies/policy-visibility.catalog';
 @Component({
   selector: 'app-claimsandexpenses',
   imports: [ExpenesHeaderTabsComponent, FormsModule, RouterModule, Select,ModuleInformationComponent, Skeleton,
-    NgbPopoverModule, ModuleInfoIconComponent, TranslateModule, DatePicker, ReactiveFormsModule, TabsModule, CommonModule, ChartModule, InfoIconComponent],
+    NgbPopoverModule, ModuleInfoIconComponent, TranslateModule, DatePicker, ReactiveFormsModule, TabsModule, CommonModule, ChartModule, InfoIconComponent, ApplicablePoliciesTriggerComponent],
   templateUrl: './claimsandexpenses.component.html',
   styleUrl: './claimsandexpenses.component.scss',
   encapsulation: ViewEncapsulation.None
 })
 
 export class ClaimsandexpensesComponent implements OnInit {
+  applicablePolicies = APPLICABLE_POLICIES_KEYS.CLAIMS_AND_EXPENSES;
   moduleinfo: string = '';
   employeeSelected = false
     expenesEmplyeedatastatusfliter = new BehaviorSubject<IExpense[]>([]);
@@ -95,7 +98,7 @@ export class ClaimsandexpensesComponent implements OnInit {
     // Send initial year to the service so other component can pick it up
     this.SelectedyeartimeOffService.setSelectedYear(this.selectedYear);
     this.SelectedyeartimeOffService.setSelectedMounthly(this.selectedMonth);
-    
+
     this.http.expensesprocesscount$.subscribe(() => {
        this.getexpensesheaderbyemployeeid(this.empdata?.employeeId)
     });
@@ -170,7 +173,7 @@ export class ClaimsandexpensesComponent implements OnInit {
     });
   }
 
-  
+
   updateAllFilteredExpenses() {
     const data = this.expenesEmplyeedatastatusfliter.value;
     const drafts = data.filter(x => x.status === 'Draft').reverse();

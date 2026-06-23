@@ -21,6 +21,8 @@ import { ModuleInformationComponent } from '../../shared/module-information/modu
 import { Router } from '@angular/router';
 import { MODULE_INFOS } from '../../shared/modules-info';
 import { Subscription } from 'rxjs';
+import { ApplicablePoliciesTriggerComponent } from '../../shared/policies/applicable-policies-trigger/applicable-policies-trigger.component';
+import { APPLICABLE_POLICIES_KEYS } from '../../shared/policies/policy-visibility.catalog';
 
 @Component({
   selector: 'app-my-kra-kpi',
@@ -35,6 +37,7 @@ import { Subscription } from 'rxjs';
     TableModule,
     Select,
     ModuleInfoIconComponent,
+    ApplicablePoliciesTriggerComponent,
     NoDataFoundComponent,
     DataLoaderContentComponent,
     KraKpiManagementLayoutComponent,
@@ -45,21 +48,24 @@ import { Subscription } from 'rxjs';
   styleUrl: './my-kra-kpi.component.scss',
 })
 export class MyKraKpiComponent implements OnInit, OnDestroy {
+  applicablePolicies = APPLICABLE_POLICIES_KEYS.PMS_KRA_KPI;
   kraList: any[] = [];
   dataload = false;
   moduleinfo = '';
 
   searchText = '';
 
+  totalRecords = 0;
   page = 1;
-  rows = 10;
-  first = 0;
+  pageSize = 50;
+  rows = 50;
   collectionSize = 0;
-
+  first = 0;
   options = [
-    { label: '10', value: 10 },
-    { label: '20', value: 20 },
-    { label: '50', value: 50 },
+    { label: 50, value: 50 },
+    { label: 100, value: 100 },
+    { label: 150, value: 150 },
+    { label: 200, value: 200 }
   ];
 
   myKpiList: any[] = [];

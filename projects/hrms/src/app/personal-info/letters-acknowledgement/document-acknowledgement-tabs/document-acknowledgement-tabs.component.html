@@ -1,15 +1,35 @@
 <div class="document-history-layout w-100">
-  <div class="component-left-tabs-container">
+  <div class="component-left-tabs-container" cdkScrollable>
     <div class="custom-sub-tabs-container">
-      <ul ngbNav #nav="ngbNav" class="nav flex-column" [(activeId)]="active">
-        <li *ngFor="let folder of Documents" [ngbNavItem]="folder.documentName" class="nav-item"
-          (click)="onSelectedFile(folder.documentName)">
+      <ul
+        ngbNav
+        #nav="ngbNav"
+        class="nav flex-column"
+        [(activeId)]="active"
+        cdkDropList
+        [cdkDropListData]="Documents"
+        cdkDropListOrientation="vertical"
+        appTabsDnd
+        [tabsDndKey]="tabsKey"
+        [tabsDndItems]="Documents"
+        tabsDndIdProp="id"
+        tabsDndLabelProp="documentName"
+        tabsDndRouteProp="route"
+      >
+        <li *ngFor="let folder of Documents; trackBy: trackByDocId" [ngbNavItem]="folder.id" class="nav-item"
+          cdkDrag cdkDragLockAxis="y" cdkDragBoundary=".component-left-tabs-container" (click)="onSelectedFile(folder)">
           <button class="nav-link" ngbNavLink>
             <img src="/letters-icon/appointment-letter-icon.png" alt="Icon" class="icon mb-2">
             <div class="d-flex">{{ folder.documentName }}</div>
           </button>
           <ng-template ngbNavContent>
             <app-acknowledgeletter [folder]="folder.documentName"></app-acknowledgeletter>
+          </ng-template>
+          <ng-template cdkDragPlaceholder>
+            <li class="nav-item tabs-dnd-placeholder-item">
+              <div class="nav-link tabs-dnd-placeholder"></div>
+              <div class="tabs-border-bottom"></div>
+            </li>
           </ng-template>
         </li>
       </ul>

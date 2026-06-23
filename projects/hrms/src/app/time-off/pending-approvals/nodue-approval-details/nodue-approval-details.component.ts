@@ -13,7 +13,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import moment from 'moment';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { RbacService } from '../../../services/rbac.service';
-import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
+import { DateformatPipe } from "../../../pipes/dateformat.pipe";
 import { SignalsService } from '../../../services/signals.service';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { FormValidationsService } from '../../../services/form-validations.service';
@@ -204,6 +204,12 @@ onStatusApproveSelect(status: string) {
         error: (reason: any) => {
           this.isLoading = false;
           this.conformationPopup.openErrorModal(reason.error.message);
+          this.signalService.noDueTriggerSignal.set(true);
+          this.signalService.noDueSideNavCountTriggerSignal.set(true);
+          this.http.tirggerPendingApprovalCountSignal.update((status) => ({
+            ...status,
+            nodue: true,
+          }));
         },
       });
   }
@@ -257,6 +263,12 @@ onStatusApproveSelect(status: string) {
         error: (reason: any) => {
           this.isLoading = false;
           this.conformationPopup.openSuccessModal(reason.error.message);
+          this.signalService.noDueTriggerSignal.set(true);
+          this.signalService.noDueSideNavCountTriggerSignal.set(true);
+          this.http.tirggerPendingApprovalCountSignal.update((status) => ({
+            ...status,
+            nodue: true,
+          }));
         },
       });
   }

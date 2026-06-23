@@ -42,6 +42,9 @@ import { ExtraHoursProcessComponent } from './extra-hours/extra-hours-process/ex
 import { ExtraHoursRejectComponent } from './extra-hours/extra-hours-reject/extra-hours-reject.component';
 import { LeaveSummaryComponent } from './leaves/leave-summary/leave-summary.component';
 import { EntitlementFrequencyComponent } from './leaves/entitlement-frequency/entitlement-frequency.component';
+import { RemoteLoginRequestsComponent } from './onbehalf-of-approvals/remote-login-requests/remote-login-requests.component';
+import { ExtraLogHoursComponent } from './onbehalf-of-approvals/extra-log-hours/extra-log-hours.component';
+import { TimesheetRequestsComponent } from './onbehalf-of-approvals/timesheet-requests/timesheet-requests.component';
 
 export default [
   { path: '', redirectTo: '/time-off/leaves', pathMatch: 'full' },
@@ -111,6 +114,9 @@ export default [
       { path: 'entitlement', component: CompOffEntitlementComponent, data: { permission: 'Comp Off (On Behalf Of Approvals).view' } },
       { path: 'wfh', component: WfhComponent, data: { permission: 'WFH (On Behalf Of Approvals).view' } },
       { path: 'permissions', component: PermissionsComponent, data: { permission: 'Permissions (On Behalf Of Approvals).view' } },
+      { path: 'remote-login', component: RemoteLoginRequestsComponent, data: { permission: 'Remote Login (On Behalf Of Approvals).view' } },
+       { path: 'extra-log-hours', component: ExtraLogHoursComponent, data: { permission: 'Permissions (On Behalf Of Approvals).view' } },
+       { path: 'timesheet-requests', component: TimesheetRequestsComponent, data: { permission: 'Timesheet (On Behalf Of Approvals).view' } },
     ],
   },
   {

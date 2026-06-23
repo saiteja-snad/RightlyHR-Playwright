@@ -10,11 +10,11 @@ import { CommonModule } from '@angular/common';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { TranslateModule } from '@ngx-translate/core';
 import { Select } from 'primeng/select';
-import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { PaginatorModule } from 'primeng/paginator';
 import { Ipersonal } from '../../../Interfaces/personal-modal';
 import { ConfirmationIconComponent } from "../../../icons/confirmation-icon/confirmation-icon.component";
 import { Category, ITimesheetLockItem} from '../timesheet-lock.modal';
+import { DateformatPipe } from '../../../pipes/dateformat.pipe';
 
 @Component({
   selector: 'app-pending-timesheet-lock',

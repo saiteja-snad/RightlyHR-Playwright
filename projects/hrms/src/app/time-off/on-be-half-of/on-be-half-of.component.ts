@@ -28,6 +28,8 @@ import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-inf
 import { TimeoffYearFilterService } from '../../services/timeoff-year-filter.service';
 import { FrequencyFilterService } from '../../services/frequency-filter.service';
 import { ChipModule } from 'primeng/chip';
+import { ApplicablePoliciesTriggerComponent } from '../../shared/policies/applicable-policies-trigger/applicable-policies-trigger.component';
+import { APPLICABLE_POLICIES_KEYS } from '../../shared/policies/policy-visibility.catalog';
 
 @Component({
   selector: 'app-on-be-half-of',
@@ -46,13 +48,15 @@ import { ChipModule } from 'primeng/chip';
     FormsModule,
     ConfirmationIconComponent,
     ModuleInfoIconComponent,
-    ChipModule
+    ChipModule,
+    ApplicablePoliciesTriggerComponent,
   ],
   templateUrl: './on-be-half-of.component.html',
   styleUrl: './on-be-half-of.component.scss',
   encapsulation: ViewEncapsulation.None,
 })
 export class OnBeHalfOfComponent {
+  applicablePolicies = APPLICABLE_POLICIES_KEYS.ON_BE_HALF_OF_LEAVES;
   moduleinfo: string = '';
   @ViewChild('halfDayRadio') halfDayRadio: any;
   @ViewChild('fullDayRadio') fullDayRadio: any;
@@ -406,8 +410,28 @@ export class OnBeHalfOfComponent {
   }
 
   getAvailableLeaves(item: any): number {
-    if (item.category?.isProbationAllowed && item.probationLeaves > 0) {
-      return item.probationLeaves - item.utilizedDays - item.booked - (item.expiryDaysLeaves ? item.expiryDaysLeaves : 0);
+   const isCompOff = [
+      'comp off',
+      'compoff',
+      'compensatory off',
+      'compensatory leaves',
+      'compensatory leave',
+      'compensatory off leave',
+      'compensatoryoff leaves',
+      'compensatoryoff leave',
+      'compensatory off leaves',
+      'comp off leave',
+      'compoff leave'
+    ].includes((item.category?.name ?? '').toLowerCase());
+
+    const expiryDeduction = isCompOff ? (item.expiryDaysLeaves ? item.expiryDaysLeaves : 0) : 0;
+
+    const isProbationActive = this.leaveapplication.empType === 'Probation' &&
+      this.leaveapplication?.probationEndDate &&
+      new Date(this.leaveapplication.probationEndDate) > new Date();
+
+    if (isProbationActive && item.category?.isProbationAllowed && item.probationLeaves > 0) {
+      return item.availableProbationLeaves;
     } else {
       return item.allowedDays - item.utilizedDays - item.booked - (item.expiryDaysLeaves ? item.expiryDaysLeaves : 0);
     }
@@ -468,7 +492,7 @@ export class OnBeHalfOfComponent {
     this.getLeavesData(fusionemployeeId.value);
     localStorage.setItem('onbehalfof', fusionemployeeId.value);
     this.http.triggerActionSignal();
-    this.http.onBehalfOfTriggerSignal.set(true);
+    this.http.onBehalfOfTriggerSignal.update(v => v + 1);
   }
 
   Onclick(fusionemployeeId: any): void {
@@ -502,7 +526,7 @@ export class OnBeHalfOfComponent {
     this.getLeavesData(fusionemployeeId.value);
     localStorage.setItem('onbehalfof', fusionemployeeId.value);
     this.http.triggerActionSignal();
-    this.http.onBehalfOfTriggerSignal.set(true);
+    this.http.onBehalfOfTriggerSignal.update(v => v + 1);
   }
 
   resetOnBehalfOfData(): void {
@@ -519,7 +543,14 @@ export class OnBeHalfOfComponent {
     this.selectedMyTeamEmployee = null;
     this.selectedOtherEmployee = null;
     localStorage.removeItem('onbehalfof');
-    this.http.onBehalfOfTriggerSignal.set(true);
+    this.http.onBehalfOfTriggerSignal.update(v => v + 1);
+
+    // Navigate first, then reload if necessary
+    this.router
+      .navigate(['/on-behalf-of/on-behalf-of/waiting-for-approval'])
+      .then(() => {
+        window.location.reload(); // Reload after navigation is complete
+      });
   }
 
   onleaveSelect(categoryId: number) {
@@ -1182,7 +1213,7 @@ export class OnBeHalfOfComponent {
           complete: () => {
             this.isLoading = false;
             this.leaveForm.reset();
-            this.http.onBehalfOfTriggerSignal.set(true);
+            this.http.onBehalfOfTriggerSignal.update(v => v + 1);
           },
         });
     } else {
@@ -2048,7 +2079,7 @@ export class OnBeHalfOfComponent {
       this.getLeavesData(parseInt(employeeId));
       this.getCategoryDetails(parseInt(employeeId));
       // Trigger refresh for child components only when employee is selected
-      this.http.onBehalfOfTriggerSignal.set(true);
+      this.http.onBehalfOfTriggerSignal.update(v => v + 1);
     }
   }
 

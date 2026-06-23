@@ -8,7 +8,7 @@ import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { BehaviorSubject, Subject, Subscription, takeUntil } from 'rxjs';
 import { LeaveApproval, LeaveApproverComment } from '../../../Interfaces/pendingapprovalsmodel';
 import { ICategoryDetails } from '../../../Interfaces/timoff-model';
-import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
+import { DateformatPipe } from '../../../pipes/dateformat.pipe';
 import { HttpService } from '../../../services/http.service';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { RbacService } from '../../../services/rbac.service';
@@ -601,6 +601,7 @@ onStatusApproveSelect(status: string) {
         comments: comments,
         moduleId: environment.leavesModuleId,
         onBehalfOfApproval : true,
+        approvedPersonaType: 'onBehalfOf',
         isPlannedLeave: this.selectedLeaveData.isPlannedLeave,
         headerRequests: this.selectedProducts.map((item) => ({
           headerID: item.approvalHeader.id,
@@ -614,6 +615,7 @@ onStatusApproveSelect(status: string) {
         comments: comments,
         moduleId: environment.leavesModuleId,
         onBehalfOfApproval : true,
+        approvedPersonaType: 'onBehalfOf',
         isPlannedLeave: this.selectedLeaveData.isPlannedLeave,
         headerRequests: [
           {
@@ -676,6 +678,7 @@ onStatusApproveSelect(status: string) {
         isPlannedLeave: false,
         moduleId: environment.leavesModuleId,
         onBehalfOfApproval : true,
+        approvedPersonaType: 'onBehalfOf',
         headerRequests: this.selectedProducts.map((item) => ({
           headerID: item.approvalHeader.id,
           currentStage: item.approvalHeader.currentapprovalStage
@@ -689,6 +692,7 @@ onStatusApproveSelect(status: string) {
         isPlannedLeave: false,
         moduleId: environment.leavesModuleId,
         onBehalfOfApproval : true,
+        approvedPersonaType: 'onBehalfOf',
         headerRequests: [
           {
             headerID: this.selectedLeaveData.approvalHeader?.id,
@@ -749,6 +753,7 @@ onStatusApproveSelect(status: string) {
         status: 'Processed',
         moduleId: environment.leavesModuleId,
         onBehalfOfApproval : true,
+        approvedPersonaType: 'onBehalfOf',
         headerRequests: this.selectedProducts.map((item) => ({
           headerID: item.approvalHeader.id,
           currentStage: item.approvalHeader.currentapprovalStage
@@ -761,6 +766,7 @@ onStatusApproveSelect(status: string) {
         status: 'Processed',
         moduleId: environment.leavesModuleId,
         onBehalfOfApproval : true,
+        approvedPersonaType: 'onBehalfOf',
         headerRequests: [
           {
             headerID: this.selectedLeaveData.approvalHeader?.id,

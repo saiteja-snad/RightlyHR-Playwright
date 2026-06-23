@@ -60,6 +60,10 @@
         </ul>
       </div>
       }
+      <app-applicable-policies-trigger
+        [moduleKey]="applicablePolicies.moduleKey"
+        [subModuleKey]="applicablePolicies.subModuleKey">
+      </app-applicable-policies-trigger>
     </div>
   </div>
 
@@ -101,7 +105,7 @@
             <button class="custom-btn btn-secondary feature-btn" (click)="expandAll()">Expand All</button>
             <button class="custom-btn btn-secondary feature-btn" (click)="collapseAll()">Collapse All</button>
           </div>
-        
+
           <div class="org-chart-content">
             <app-org-chart-grid [data]="data" />
           </div>

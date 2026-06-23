@@ -7,7 +7,7 @@ import { Paginator } from "primeng/paginator";
 import { SelectModule } from "primeng/select";
 import { TabsModule } from "primeng/tabs";
 import { InfoIconComponent } from "../../../../icons/info-icon/info-icon.component";
-import { DateformatPipe } from "../../../../Pipes/dateformat.pipe";
+import { DateformatPipe } from "../../../../pipes/dateformat.pipe";
 import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
 import { NoDataFoundComponent } from "../../../../shared/no-data-found/no-data-found.component";
 import { MultiSelectModule } from "primeng/multiselect";
@@ -46,7 +46,7 @@ export class ReportingmangerchangeComponent implements OnInit, OnDestroy {
   changeModalForm!: FormGroup;
 
   @ViewChild('changeManagerModal') changeManagerModal!: TemplateRef<any>;
-
+  @ViewChild('changewfhManagerModal') changewfhManagerModal!: TemplateRef<any>;
   employees: any[] = [];
   managers: any[] = [];
   empinfo: any = {};
@@ -54,6 +54,8 @@ export class ReportingmangerchangeComponent implements OnInit, OnDestroy {
   activeTab: string = 'RM';
   tmRecords: any[] = [];
   rmRecords: any[] = [];
+  wfhRecords:any[] = [];
+  remoteLoginRecords:any[] = [];
   historyLoading = false;
 
   assignForm!: FormGroup;
@@ -61,14 +63,23 @@ export class ReportingmangerchangeComponent implements OnInit, OnDestroy {
   teamDropdownValues: any[] = [];
   teammangerid: any;
   joiningDate: any;
-
+  WFHRemoteMangers=[] as any;
   changeTypeOptions = [
     { label: 'RM', value: 'RM' },
-    { label: 'TM', value: 'TM' }
+    { label: 'TM', value: 'TM' },
+    { label: 'WFH', value: 'WFH' },
+    { label: 'Remote Login', value: 'Remote Login' }
   ];
 
   viewUrl = environment.viewUrl;
-
+  responseSummary = {
+    failedreason: '',
+    successRecordsCount: 0,
+    failureRecordsCount: 0,
+    totalRecordsCount: 0
+  };
+  @ViewChild('releaseSummary') releaseSummaryModal!: any;
+  changeWFHModalForm!: FormGroup;
   constructor(private http: HttpService, public router: Router, private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService) {}
 
   ngOnInit(): void {
@@ -79,6 +90,8 @@ export class ReportingmangerchangeComponent implements OnInit, OnDestroy {
     this.getDepartment();
     this.getJoiningDate();
     this.getReportingHistory();
+    this.getRemoteLoginManagers();
+    this.getWorkfromhomeManager();
   }
 
   initForm(): void {
@@ -97,6 +110,9 @@ export class ReportingmangerchangeComponent implements OnInit, OnDestroy {
       department: [null],
       team: [null],
       teamManagerName: [{ value: null, disabled: true }]
+    });
+    this.changeWFHModalForm = this.fb.group({
+      newReportingManager: [null, Validators.required],
     });
   }
 
@@ -117,6 +133,12 @@ export class ReportingmangerchangeComponent implements OnInit, OnDestroy {
         !!this.assignForm.get('department')?.value &&
         !!this.assignForm.get('team')?.value &&
         !!this.teammangerid;
+    }
+     if (type === 'WFH') {
+      return !!this.assignForm.get('newReportingManager')?.value
+    }
+    if (type === 'Remote Login') {
+      return !!this.assignForm.get('newReportingManager')?.value
     }
     return false;
   }
@@ -143,6 +165,10 @@ export class ReportingmangerchangeComponent implements OnInit, OnDestroy {
       this.assignForm.get('effectiveDate')?.setValidators(Validators.required);
       this.assignForm.get('department')?.setValidators(Validators.required);
       this.assignForm.get('team')?.setValidators(Validators.required);
+    } else if (type === 'WFH') {
+      this.assignForm.get('newReportingManager')?.setValidators(Validators.required);
+    }else if (type === 'Remote Login') {
+      this.assignForm.get('newReportingManager')?.setValidators(Validators.required);
     }
 
     this.assignForm.patchValue({
@@ -242,8 +268,129 @@ export class ReportingmangerchangeComponent implements OnInit, OnDestroy {
     } else if (type === 'TM') {
       this.assignTM();
     }
+    else if (type === 'WFH') {
+      this.assignWFH();
+    }
+    else if (type === 'Remote Login') {
+      this.assignRemote();
+    }
   }
+private assignWFH(): void {
+    const selectedEmps: any[] = this.assignForm.get('selectedEmployees')?.value ?? [];
+    const ManagerId = this.assignForm.get('newReportingManager')?.value;
+    const newManagerName = this.assignForm.get('newReportingManager')?.value?.name;
+    const loggedInId = this.empinfo?.employeeId;
+    const selectedempId = this.personalinfo?.employeeId;
+  const requestBody = {
+    employeeIds: selectedEmps.map((emp: any) => emp.employeeId),
+    managerId: ManagerId,
+    reportingType: this.assignForm.get('changeType')?.value
+  };
+    this.subscription = this.http.putData(`v2/Employeedata/EmployeeManagerChange`, requestBody).subscribe({
+      next: (res:any) => {
+        const historyPayload = res?.successEmployees?.map((employeeId: number) => ({
+          employeeId: employeeId,
+          newManagerId: ManagerId,
+          createdBy: loggedInId,
+          createdAt: new Date().toISOString(),
+          updatedBy: loggedInId,
+          updatedAt: new Date().toISOString(),
+          reportingType: 'WFH',
+          reportingEmployeeId: selectedempId,
+          oldManagerId:selectedempId
+        }));
+        if(res?.successCount>=1){
+        this.http.postdata('EmployeeReportingHistory/CreateReportingHistory', historyPayload).subscribe({
+          error: (err: any) => console.error('History API error:', err)
+        });}
+        this.activeTab = 'WFH';
+        //this.conformationPopup.openSuccessModal('WFH manager updated successfully');
+        const successCount = res?.successCount;
+        const failureCount = res?.failedCount;
+        this.modalService.dismissAll();
+        this.responseSummary = {
+          failedreason: Array.isArray(res?.failedEmployees) && res.failedEmployees.length > 0 ? res.failedEmployees : 'NA',
+          successRecordsCount: successCount,
+          failureRecordsCount: failureCount,
+          totalRecordsCount: res?.totalCount,
+        };
+        const modalRef = this.modalService.open(this.releaseSummaryModal, {
+          centered: true,
+          size: 'lg',
+        });
+        setTimeout(() => {
+          modalRef.close();
+        }, 3000);
+        this.assignForm.reset();
+        this.employees = [];
+        setTimeout(()=>
+          this.getReportingHistory()
+        ,100)
 
+      },
+      error: (err: any) => {
+        this.conformationPopup.openErrorModal(err?.error?.Message || 'WFH manager update failed');
+      }
+    });
+  }
+  private assignRemote(): void {
+    const selectedEmps: any[] = this.assignForm.get('selectedEmployees')?.value ?? [];
+    const ManagerId = this.assignForm.get('newReportingManager')?.value;
+    const newManagerName = this.assignForm.get('newReportingManager')?.value?.name;
+    const loggedInId = this.empinfo?.employeeId;
+    const selectedempId = this.personalinfo?.employeeId;
+  const requestBody = {
+    employeeIds: selectedEmps.map((emp: any) => emp.employeeId),
+    managerId: ManagerId,
+    reportingType: this.assignForm.get('changeType')?.value
+  };
+    this.subscription = this.http.putData(`v2/Employeedata/EmployeeManagerChange`, requestBody).subscribe({
+      next: (res:any) => {
+        const historyPayload = res?.successEmployees?.map((employeeId: number) => ({
+          employeeId: employeeId,
+          newManagerId: ManagerId,
+          createdBy: loggedInId,
+          createdAt: new Date().toISOString(),
+          updatedBy: loggedInId,
+          updatedAt: new Date().toISOString(),
+          reportingType: 'Remote Login',
+          reportingEmployeeId: selectedempId,
+          oldManagerId:selectedempId
+        }));
+        if(res?.successCount>=1){
+        this.http.postdata('EmployeeReportingHistory/CreateReportingHistory', historyPayload).subscribe({
+          error: (err: any) => console.error('History API error:', err)
+        });}
+        this.activeTab = 'Remote Login';
+        //this.conformationPopup.openSuccessModal('WFH manager updated successfully');
+        const successCount = res?.successCount;
+        const failureCount = res?.failedCount;
+        this.modalService.dismissAll();
+        this.responseSummary = {
+          failedreason: Array.isArray(res?.failedEmployees) && res.failedEmployees.length > 0 ? res.failedEmployees : 'NA',
+          successRecordsCount: successCount,
+          failureRecordsCount: failureCount,
+          totalRecordsCount: res?.totalCount,
+        };
+        const modalRef = this.modalService.open(this.releaseSummaryModal, {
+          centered: true,
+          size: 'lg',
+        });
+        setTimeout(() => {
+          modalRef.close();
+        }, 3000);
+        this.assignForm.reset();
+        this.employees = [];
+        setTimeout(()=>
+          this.getReportingHistory()
+        ,100)
+
+      },
+      error: (err: any) => {
+        this.conformationPopup.openErrorModal(err?.error?.Message || 'Remote Login manager update failed');
+      }
+    });
+  }
   private assignRM(): void {
     const selectedEmps: any[] = this.assignForm.get('selectedEmployees')?.value ?? [];
     const ManagerId = this.assignForm.get('newReportingManager')?.value?.employeeId;
@@ -358,7 +505,8 @@ export class ReportingmangerchangeComponent implements OnInit, OnDestroy {
         newReportingManager: preselectedManager
       });
       this.modalService.open(this.changeManagerModal, { centered: true, backdrop: 'static', size: 'lg' });
-    } else if (record.reportingType === 'TM') {
+    } 
+    else if (record.reportingType === 'TM') {
       const deptId = record.empJobData?.departmentId;
       // Load teams for the pre-populated department, then set team and manager
       if (deptId) {
@@ -394,11 +542,24 @@ export class ReportingmangerchangeComponent implements OnInit, OnDestroy {
             this.modalService.open(this.changeManagerModal, { centered: true, backdrop: 'static', size: 'lg' });
           }
         });
-      } else {
+      } 
+      else {
         this.changeModalForm.patchValue({ effectiveDate: effectiveDateStr });
         this.modalService.open(this.changeManagerModal, { centered: true, backdrop: 'static', size: 'lg' });
       }
     }
+     else if (record.reportingType === 'WFH') {
+        // const preselectedManager = this.WFHRemoteMangers.find((m:any )=> m.employeeId === record.newManagerId) ?? null;
+        // console.log(preselectedManager,record.newManagerId)
+        this.changeWFHModalForm.patchValue({ newReportingManager: record.newManagerId });
+        this.modalService.open(this.changewfhManagerModal, { centered: true, backdrop: 'static', size: 'lg' });
+      }
+      else if (record.reportingType === 'Remote Login') {
+      //  const preselectedManager = this.WFHRemoteMangers.find((m:any) => m.employeeId === record.newManagerId) ?? null;
+      //   console.log(preselectedManager,record.newManagerId)
+        this.changeWFHModalForm.patchValue({ newReportingManager: record.newManagerId });
+        this.modalService.open(this.changewfhManagerModal, { centered: true, backdrop: 'static', size: 'lg' });
+      }
   }
 
   onModalDepartmentChange(selectedDepartment: any): void {
@@ -520,6 +681,7 @@ export class ReportingmangerchangeComponent implements OnInit, OnDestroy {
         error: (err: any) => this.conformationPopup.openErrorModal(err?.error?.Message || 'Update failed')
       });
     }
+   
   }
 
   // get activeRecordsCount(): number {
@@ -535,6 +697,8 @@ export class ReportingmangerchangeComponent implements OnInit, OnDestroy {
         const data: any[] = res?.data || [];
         this.tmRecords = data.filter((r: any) => r.reportingType === 'TM');
         this.rmRecords = data.filter((r: any) => r.reportingType === 'RM');
+        this.wfhRecords = data.filter((r: any) => r.reportingType === 'WFH');
+        this.remoteLoginRecords = data.filter((r: any) => r.reportingType === 'Remote Login');
         this.historyLoading = false;
       },
       error: () => { this.historyLoading = false; }
@@ -560,8 +724,140 @@ export class ReportingmangerchangeComponent implements OnInit, OnDestroy {
   navigationtoPrevious(){
     this.router.navigate(['/personalinfo/job/employmentType/approval-requests/no-approvals-screen']);
   }
+getWorkfromhomeManager() {
+    this.subscription = this.http
+      .getData(
+        'RightlyHrRole/getbyNormalizedName?Nname=WORK FROM HOME MANAGER&includeAssignee=true'
+      )
+      .subscribe({
+        next: (data: any) => {
+          console.log(data);
+          // Assuming IWfh is your interface/model for the Manager data
+          this.WFHRemoteMangers = data.getUserWithRoleNames?.filter((user: any) => user.employeeId !== this.personalinfo.employeeId)?.map(
+            (user: {
+              firstName: any;
+              middleName: any;
+              lastName: any;
+              employeeId: any;
+              fusionEmpId: any;
+            }) => ({
+              ...user,
+              name: ` ${user.fusionEmpId ?? ''} -${user.firstName} ${
+                user.middleName ?? ''
+              } ${user.lastName ?? ''}`.trim(),
+              value: user.employeeId,
+            })
+          );
+          console.log(this.WFHRemoteMangers);
+        },
+        error: (error) => {
+          console.error('Error fetching data:', error);
+        },
+      });
+  }
 
-
+  getRemoteLoginManagers() {
+    const normalizedName = encodeURIComponent('REMOTE LOGIN MANAGER');
+    const includeAssignee = true;
+    const url = `RightlyHrRole/getbyNormalizedName?Nname=${normalizedName}&includeAssignee=${includeAssignee}`;
+    this.subscription = this.http.getData(url).subscribe({
+      next: (data: any) => {
+        this.WFHRemoteMangers = data.getUserWithRoleNames?.filter((user: any) => user.employeeId !== this.personalinfo.employeeId)?.map(
+          (user: {
+            firstName: any;
+            middleName: any;
+            lastName: any;
+            employeeId: any;
+            fusionEmpId: any;
+          }) => ({
+            ...user,
+            name: ` ${user.fusionEmpId ?? ''} -${user.firstName} ${
+              user.middleName ?? ''
+            } ${user.lastName ?? ''}`.trim(),
+            value: user.employeeId,
+          })
+        );
+      },
+      error: (error) => {
+        console.error('Error fetching data:', error);
+      },
+    });
+  }
+wfhRemoteAssineChange(){
+  const record = this.selectedChangeAssignment;
+  if (record.reportingType === 'WFH') {
+      const record = this.selectedChangeAssignment;
+    const ManagerId = this.changeWFHModalForm.get('newReportingManager')?.value;
+    const loggedInId = this.empinfo?.employeeId;
+    const selectedempId = this.personalinfo?.employeeId;
+      const requestBody = {
+        employeeIds: [record.employeeId?.toString()],
+        managerId: ManagerId,
+        reportingType: "WFH"
+      };
+    this.subscription = this.http.putData(`v2/Employeedata/EmployeeManagerChange`, requestBody).subscribe({
+      next: (res:any) => {
+          const historyPayload = {
+            id: record.id,
+            employeeId: record.employeeId?.toString(),
+            oldManagerId: selectedempId,
+            newManagerId: this.changeWFHModalForm.get('newReportingManager')?.value,
+            changeReason: '',
+            createdBy: loggedInId,
+            createdAt: new Date().toISOString(),
+            updatedBy: loggedInId,
+            updatedAt: new Date().toISOString(),
+            isDeleted: false,
+            reportingType: 'WFH',
+            reportingEmployeeId: selectedempId
+          };
+          this.http.putData(`EmployeeReportingHistory/UpdateReportingHistory/${record.id}`, historyPayload).subscribe({
+            error: (err: any) => console.error('History update error:', err)
+          });
+          this.modalService.dismissAll();
+          setTimeout(() => this.conformationPopup.openSuccessModal('WFH manager updated successfully'), 150);
+          this.getReportingHistory();
+        },
+        error: (err: any) => this.conformationPopup.openErrorModal(err?.error?.Message || 'Update failed')
+      });
+    }
+    else if (record.reportingType === 'Remote Login') {
+      const record = this.selectedChangeAssignment;
+    const ManagerId = this.changeWFHModalForm.get('newReportingManager')?.value;
+    const loggedInId = this.empinfo?.employeeId;
+    const selectedempId = this.personalinfo?.employeeId;
+      const requestBody = {
+        employeeIds: [record.employeeId],
+        managerId: ManagerId,
+        reportingType: "Remote Login"
+      };
+    this.subscription = this.http.putData(`v2/Employeedata/EmployeeManagerChange`, requestBody).subscribe({
+      next: (res:any) => {
+          const historyPayload = {
+            id: record.id,
+            employeeId: record.employeeId?.toString(),
+            oldManagerId: selectedempId,
+            newManagerId: this.changeWFHModalForm.get('newReportingManager')?.value,
+            changeReason: '',
+            createdBy: loggedInId,
+            createdAt: new Date().toISOString(),
+            updatedBy: loggedInId,
+            updatedAt: new Date().toISOString(),
+            isDeleted: false,
+            reportingType: 'Remote Login',
+            reportingEmployeeId: selectedempId
+          };
+          this.http.putData(`EmployeeReportingHistory/UpdateReportingHistory/${record.id}`, historyPayload).subscribe({
+            error: (err: any) => console.error('History update error:', err)
+          });
+          this.modalService.dismissAll();
+          setTimeout(() => this.conformationPopup.openSuccessModal('Remote Login manager updated successfully'), 150);
+          this.getReportingHistory();
+        },
+        error: (err: any) => this.conformationPopup.openErrorModal(err?.error?.Message || 'Update failed')
+      });
+    }
+}
   ngOnDestroy(): void {
     if (this.subscription) {
       this.subscription.unsubscribe();

@@ -9,7 +9,7 @@ import { RouterModule } from '@angular/router';
 import { Assignee, Ticket } from '../../Interfaces/hierachy.modal';
 import { ItsupportPipe } from "../../Pipes/itsupport.pipe";
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { DateformatPipe } from "../../Pipes/dateformat.pipe";
+import { DateformatPipe } from "../../pipes/dateformat.pipe";
 import { TranslateModule } from '@ngx-translate/core';
 import { Select } from 'primeng/select';
 import { OpenModalService } from '../../services/open-modal.service';

@@ -1,0 +1,63 @@
+.applicable-policies-dropdown {
+  .applicable-policies-btn {
+    white-space: nowrap;
+  }
+}
+
+.applicable-policies-menu {
+  min-width: 20rem;
+  max-width: 24rem;
+  max-height: 18rem;
+  overflow-y: auto;
+  padding: 0.5rem 0;
+  border-radius: 0.75rem;
+  border: 1px solid var(--table-data-border-color);
+  box-shadow: 0 0.5rem 1.5rem rgba(15, 23, 42, 0.12);
+}
+
+.applicable-policies-menu-header {
+  padding: 0 1rem 0.5rem;
+  font-size: var(--fontsize12);
+  font-weight: 700;
+  color: var(--table-header-color);
+  text-transform: uppercase;
+}
+
+.applicable-policies-loading,
+.policy-empty-state {
+  padding: 0.75rem 1rem;
+  font-size: var(--fontsize12);
+  color: var(--module-info-text-color);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.policy-menu-item {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  min-height: 2.75rem;
+  padding: 0.625rem 1rem;
+  gap: 0;
+  &:hover,
+  &:focus,
+  &:active,
+  &.active {
+    background-color: var(--table-header-bg-color) !important;
+    color: inherit !important;
+    box-shadow: none !important;
+  }
+}
+
+.policy-menu-title {
+  display: block;
+  font-size: var(--fontsize13);
+  font-weight: 600;
+  line-height: 1.25rem;
+  color: var(--primary-color);
+  width: 100%;
+  text-align: left;
+}

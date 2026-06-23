@@ -9,7 +9,7 @@ import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { Subject, BehaviorSubject, takeUntil } from 'rxjs';
 import { IJob } from '../../../Interfaces/letters-model';
 import { AttendanceRequest, ICategoryDetails } from '../../../Interfaces/timoff-model';
-import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
+import { DateformatPipe } from '../../../pipes/dateformat.pipe';
 import { HttpService } from '../../../services/http.service';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { RbacService } from '../../../services/rbac.service';
@@ -335,6 +335,7 @@ export class WfhComponent {
           comments: comments,
           moduleId: environment.wfhModuleId,
           onBehalfOfApproval: true,
+          approvedPersonaType: 'onBehalfOf',
           headerRequests: this.selectedLeavesItems.map((item) => ({
             headerID: item.approvalHeader.id,
             currentStage: item.approvalHeader.currentapprovalStage,
@@ -347,6 +348,7 @@ export class WfhComponent {
           comments: comments,
           moduleId: environment.wfhModuleId,
           onBehalfOfApproval: true,
+          approvedPersonaType: 'onBehalfOf',
           headerRequests: [
             {
               headerID: this.selectedLeaveData.approvalHeader.id,
@@ -406,6 +408,7 @@ export class WfhComponent {
           comments: comments,
           moduleId: environment.wfhModuleId,
           onBehalfOfApproval: true,
+          approvedPersonaType: 'onBehalfOf',
           headerRequests: this.selectedLeavesItems.map((item) => ({
             headerID: item.approvalHeader.id,
             currentStage: item.approvalHeader.currentapprovalStage,
@@ -418,6 +421,7 @@ export class WfhComponent {
           comments: comments,
           moduleId: environment.wfhModuleId,
           onBehalfOfApproval: true,
+          approvedPersonaType: 'onBehalfOf',
           headerRequests: [
             {
               headerID: this.selectedLeaveData.approvalHeader.id,
@@ -474,6 +478,7 @@ export class WfhComponent {
         status: 'Processed',
         moduleId: environment.wfhModuleId,
         onBehalfOfApproval: true,
+        approvedPersonaType: 'onBehalfOf',
         headerRequests: this.selectedLeavesItems.map((item) => ({
           headerID: item.approvalHeader.id,
           currentStage: item.approvalHeader.currentapprovalStage,
@@ -486,6 +491,7 @@ export class WfhComponent {
         status: 'Processed',
         moduleId: environment.wfhModuleId,
         onBehalfOfApproval: true,
+        approvedPersonaType: 'onBehalfOf',
         headerRequests: [
           {
             headerID: this.selectedLeaveData.approvalHeader.id,

@@ -22,11 +22,13 @@ import { DownloadIconComponent } from "../../../icons/download-icon/download-ico
 import { environment } from '../../../../environments/environment';
 import { ChartModule } from 'primeng/chart';
 import { InfoIconComponent } from '../../../icons/info-icon/info-icon.component';
-import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
+
+import { AutoCompleteModule } from 'primeng/autocomplete';
+import { DateformatPipe } from '../../../pipes/dateformat.pipe';
 
 @Component({
   selector: 'app-previous-experince',
-  imports: [CommonModule, ReactiveFormsModule, Select, DateformatPipe, TranslateModule, DataLoaderContentComponent, NoDataFoundComponent, SettingsDeleteIconComponent, SettingsUpdateIconComponent, DownloadIconComponent, NgbPopoverModule, ChartModule, InfoIconComponent],
+  imports: [CommonModule, ReactiveFormsModule, Select, DateformatPipe, TranslateModule, DataLoaderContentComponent, NoDataFoundComponent, SettingsDeleteIconComponent, SettingsUpdateIconComponent, DownloadIconComponent, NgbPopoverModule, ChartModule, InfoIconComponent, AutoCompleteModule],
   templateUrl: './previous-experince.component.html',
   styleUrl: './previous-experince.component.scss'
 })
@@ -60,6 +62,7 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
   currentCompanyName: string = environment.currentCompanyName;
   experienceData: any;
   experienceDataOptions: any;
+  companySuggestions: string[] = [];
 
   constructor(private modalService: NgbModal, private http: HttpService, public formValidation: FormValidationService, private fb: FormBuilder, private conformationPopup: OpenModalService, public rbac: RbacService, public permissionRouteService: AccessForEmployeeinfoService, private router: Router) { }
 
@@ -730,6 +733,24 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
     this.isInvalidToDate = false;
     this.isFutureDate = false
   }
+
+searchCompanies(event: any) {
+
+  const query = event.query || '';
+
+  this.http
+    .getData(`ExperienceDetail/company-suggestions?search=${query}`)
+    .subscribe({
+      next: (data: any) => {
+        this.companySuggestions = data;
+      },
+      error: (err) => {
+        console.error(err);
+      }
+    });
+}
+
+
 
   ngOnDestroy(): void {
     if (this.subscription) {

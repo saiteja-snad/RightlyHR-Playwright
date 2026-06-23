@@ -1,12 +1,242 @@
-import { Route, } from '@angular/router';
+import { Route } from '@angular/router';
 import { PermissionsGuard } from '../guards/permissions.guard';
 import { PolicyAcknowledgementReportComponent } from './policy-reports/policy-acknowledgement-report/policy-acknowledgement-report.component';
 
 export default [
-
-    {
+  {
     path: '',
-    loadComponent: () => import('./view-reports/view-reports.component').then(m => m.ViewReportsComponent)
+    loadComponent: () =>
+      import('./view-reports/view-reports.component').then(
+        (m) => m.ViewReportsComponent,
+      ),
+  },
+  {
+    path: 'standard-reports',
+    children: [
+      // { path: '', redirectTo: 'employee-data', pathMatch: 'full' },
+      {
+        path: 'employee-data',
+        loadComponent: () =>
+          import('./standard-reports/employee-master-data/employee-master-data.component').then(
+            (m) => m.EmployeeMasterDataComponent,
+          ),
+        canActivate: [PermissionsGuard],
+        data: { permission: 'Employee Overview Report.view' },
+      },
+      {
+        path: 'job-data',
+        loadComponent: () =>
+          import('./standard-reports/job-location-wise-data/job-location-wise-data.component').then(
+            (m) => m.JobLocationWiseDataComponent,
+          ),
+        canActivate: [PermissionsGuard],
+        data: { permission: 'Job Location Report.view' },
+      },
+      {
+        path: 'branch-data',
+        loadComponent: () =>
+          import('./standard-reports/branch-location-wise-data/branch-location-wise-data.component').then(
+            (m) => m.BranchLocationWiseDataComponent,
+          ),
+        canActivate: [PermissionsGuard],
+        data: { permission: 'Branch-Wise Employee Report.view' },
+      },
+      {
+        path: 'family-data',
+        loadComponent: () =>
+          import('./standard-reports/family-members-data/family-members-data.component').then(
+            (m) => m.FamilyMembersDataComponent,
+          ),
+        canActivate: [PermissionsGuard],
+        data: { permission: 'Family Details Report.view' },
+      },
+    ],
+  },
+  {
+    path: 'custom-reports',
+    loadComponent: () =>
+      import('./custom-reports/custom-reports.component').then(
+        (m) => m.CustomReportsComponent,
+      ),
+    canActivate: [PermissionsGuard],
+    data: { permission: 'Custom Reports.view' },
+  },
+  {
+    path: 'attendence-reports',
+    children: [
+      //    { path: '',redirectTo: 'leave-report', pathMatch: 'full' },
+      {
+        path: 'leave-report',
+        loadComponent: () =>
+          import('./attendence-reports/leave-report/leave-report.component').then(
+            (m) => m.LeaveReportComponent,
+          ),
+        canActivate: [PermissionsGuard],
+        data: { permission: 'Leave Report.view' },
+      },
+      {
+        path: 'leave-summary-report',
+        loadComponent: () =>
+          import('./attendence-reports/leave-summary-report/leave-summary-report.component').then(
+            (m) => m.LeaveSummaryReportComponent,
+          ),
+        canActivate: [PermissionsGuard],
+        data: { permission: 'Leave Summary Report.view' },
+      },
+      {
+        path: 'compoff-report',
+        loadComponent: () =>
+          import('./attendence-reports/compoff-report/compoff-report.component').then(
+            (m) => m.CompoffReportComponent,
+          ),
+        canActivate: [PermissionsGuard],
+        data: { permission: 'Comp Off Report.view' },
+      },
+      {
+        path: 'wfh-report',
+        loadComponent: () =>
+          import('./attendence-reports/wfh-report/wfh-report.component').then(
+            (m) => m.WfhReportComponent,
+          ),
+        canActivate: [PermissionsGuard],
+        data: { permission: 'WFH Report.view' },
+      },
+      {
+        path: 'absent-report',
+        loadComponent: () =>
+          import('./attendence-reports/absent-report/absent-report.component').then(
+            (m) => m.AbsentReportComponent,
+          ),
+        canActivate: [PermissionsGuard],
+        data: { permission: 'Absent Report.view' },
+      },
+      {
+        path: 'inactive-employee-report',
+        loadComponent: () =>
+          import('./attendence-reports/inactive-employee-report/inactive-employee-report.component').then(
+            (m) => m.InactiveEmployeeReportComponent,
+          ),
+        canActivate: [PermissionsGuard],
+        data: { permission: 'Inactive Employee Leave Summary Report.view' },
+      },
+      {
+        path: 'yearly-summary-report',
+        loadComponent: () =>
+          import('./attendence-reports/yearly-summary-report/yearly-summary-report.component').then(
+            (m) => m.YearlySummaryReportComponent,
+          ),
+        canActivate: [PermissionsGuard],
+        data: { permission: 'Yearly Summary Report.view' },
+      },
+      {
+        path: 'permission-report',
+        loadComponent: () =>
+          import('./attendence-reports/permission-reports/permission-reports.component').then(
+            (m) => m.PermissionReportsComponent,
+          ),
+        canActivate: [PermissionsGuard],
+        data: { permission: 'Permission Report.view' },
+      },
+      {
+        path: 'exit-feedback-report',
+        loadComponent: () =>
+          import('./attendence-reports/exit-feedback-reports/exit-feedback-reports.component').then(
+            (m) => m.ExitFeedbackReportsComponent,
+          ),
+        canActivate: [PermissionsGuard],
+        data: { permission: 'Employee Exit Report.view' },
+      },
+      {
+        path: 'regularization-report',
+        loadComponent: () =>
+          import('./attendence-reports/regularization-reports/regularization-reports.component').then(
+            (m) => m.RegularizationReportsComponent,
+          ),
+        canActivate: [PermissionsGuard],
+        data: { permission: 'Regularization Report.view' },
+      },
+      {
+        path: 'remotelogin-report',
+        loadComponent: () =>
+          import('./attendence-reports/remote-login-report/remote-login-report.component').then(
+            (m) => m.RemoteLoginReportComponent,
+          ),
+        canActivate: [PermissionsGuard],
+        data: { permission: 'Remote Login Report.view' },
+      },
+      {
+        path: 'leave-carryforward-report',
+        loadComponent: () =>
+          import('./attendence-reports/leave-carry-forward-report/leave-carry-forward-report.component').then(
+            (m) => m.LeaveCarryForwardReportComponent,
+          ),
+        canActivate: [PermissionsGuard],
+        data: { permission: 'Leave Carry Forward & Encashment Report.view' },
+      },
+      {
+        path: 'remotelogin-report',
+        loadComponent: () =>
+          import('./attendence-reports/remote-login-report/remote-login-report.component').then(
+            (m) => m.RemoteLoginReportComponent,
+          ),
+        canActivate: [PermissionsGuard],
+        data: { permission: 'Remote Login Report.view' },
+      },
+      {
+        path: 'extraloghour-report',
+        loadComponent: () =>
+          import('./attendence-reports/extraloghour-report/extraloghour-report.component').then(
+            (m) => m.ExtraloghourReportComponent,
+          ),
+        canActivate: [PermissionsGuard],
+        data: { permission: 'Extra Log Hours Report.view' },
+      },
+    ],
+  },
+  {
+    path: 'monthly-attandance-reports',
+    loadComponent: () =>
+      import('./monthly-attandance-report/monthly-attandance-report.component').then(
+        (m) => m.MonthlyAttandanceReportComponent,
+      ),
+    canActivate: [PermissionsGuard],
+    data: { permission: 'Monthly Attendance Reports.view' },
+  },
+  {
+    path: 'policy-reports',
+    children: [
+      {
+        path: 'policy-acknowledgment-report',
+        component: PolicyAcknowledgementReportComponent,
+      },
+    ],
+  },
+  {
+    path: 'team-leave-balance',
+    loadComponent: () =>
+      import('./team-leave-balance/team-leave-balance.component').then(
+        (m) => m.TeamLeaveBalanceComponent,
+      ),
+    canActivate: [PermissionsGuard],
+    data: { permission: 'Team Leave Balance.view' },
+  },
+  {
+    path: 'team-leave-summary',
+    loadComponent: () =>
+      import('./team-leave-summary/team-leave-summary.component').then(
+        (m) => m.TeamLeaveSummaryComponent,
+      ),
+    canActivate: [PermissionsGuard],
+    data: { permission: 'Team Leave Balance Summary.view' },
+  },
+  {
+    path: 'org-leave-balance',
+    loadComponent: () =>
+      import('./org-leave-balance//org-leave-balance.component').then(
+        (m) => m.OrgLeaveBalanceComponent,
+      ),
+    canActivate: [PermissionsGuard],
+    data: { permission: 'Org Leave Balance.view' },
   },
     {
         path: 'standard-reports', children: [
@@ -65,38 +295,150 @@ export default [
     { path: 'team-leave-summary', loadComponent: () => import('./team-leave-summary/team-leave-summary.component').then((m) => m.TeamLeaveSummaryComponent), canActivate: [PermissionsGuard], data: { permission: 'Team Leave Balance Summary.view' } },
     { path: 'org-leave-balance', loadComponent: () => import('./org-leave-balance//org-leave-balance.component').then((m) => m.OrgLeaveBalanceComponent), canActivate: [PermissionsGuard], data: { permission: 'Org Leave Balance.view' } },
 
-     {
-        path: 'timesheet-reports', children: [
-            //    { path: '',redirectTo: 'leave-report', pathMatch: 'full' },
-            { path: 'my-timesheet-report', loadComponent: () => import('./timesheet-reports/my-timesheet-report/my-timesheet-report.component').then((m) => m.MyTimesheetReportComponent), canActivate: [PermissionsGuard], data: { permission: 'My Timesheet Report.view' } },
-            { path: 'timesheet-summary-monthly-report', loadComponent: () => import('./timesheet-reports/timesheet-summery-report/timesheet-summery-report.component').then((m) => m.TimesheetSummeryReportComponent), canActivate: [PermissionsGuard], data: { permission: 'Timesheet Summary Monthly Report.view' } },
-            { path: 'team-timesheet-report', loadComponent: () => import('./timesheet-reports/team-timesheet-report/team-timesheet-report.component').then((m) => m.TeamTimesheetReportComponent), canActivate: [PermissionsGuard], data: { permission: 'Team Timesheet Report.view' } },
-            { path: 'pending-approval-status-report', loadComponent: () => import('./timesheet-reports/pending-approval-status-report/pending-approval-status-report.component').then((m) => m.PendingApprovalStatusReportComponent), canActivate: [PermissionsGuard], data: { permission: 'Pending Approval Status Report.view' } },
-            { path: 'project-effort-report', loadComponent: () => import('./timesheet-reports/project-effort-report/project-effort-report.component').then((m) => m.ProjectEffortReportComponent), canActivate: [PermissionsGuard], data: { permission: 'Project Effort Report.view' } },
-            { path: 'utilization-report', loadComponent: () => import('./timesheet-reports/utilization-report/utilization-report.component').then((m) => m.UtilizationReportComponent), canActivate: [PermissionsGuard], data: { permission: 'Utilization Report.view' } },
-            { path: 'resource-availability-report', loadComponent: () => import('./timesheet-reports/resource-availability-report/resource-availability-report.component').then((m) => m.ResourceAvailabilityReportComponent), canActivate: [PermissionsGuard], data: { permission: 'Resource Availability Report.view' } },
-            { path: 'attendance-vs-timesheet-report', loadComponent: () => import('./timesheet-reports/attendance-vs-timesheet-report/attendance-vs-timesheet-report.component').then((m) => m.AttendanceVsTimesheetReportComponent), canActivate: [PermissionsGuard], data: { permission: 'Attendance vs Timesheet Report.view' } },
-            { path: 'consolidated-timesheet-summary', loadComponent: () => import('./timesheet-reports/consolidated-timesheet-summary/consolidated-timesheet-summary.component').then((m) => m.ConsolidatedTimesheetSummaryComponent), canActivate: [PermissionsGuard], data: { permission: 'Consolidated Timesheet Summary Report.view' } },
-        ]
-    },
+  {
+    path: 'timesheet-reports',
+    children: [
+      //    { path: '',redirectTo: 'leave-report', pathMatch: 'full' },
+      {
+        path: 'my-timesheet-report',
+        loadComponent: () =>
+          import('./timesheet-reports/my-timesheet-report/my-timesheet-report.component').then(
+            (m) => m.MyTimesheetReportComponent,
+          ),
+        canActivate: [PermissionsGuard],
+        data: { permission: 'My Timesheet Report.view' },
+      },
+      {
+        path: 'timesheet-summary-monthly-report',
+        loadComponent: () =>
+          import('./timesheet-reports/timesheet-summery-report/timesheet-summery-report.component').then(
+            (m) => m.TimesheetSummeryReportComponent,
+          ),
+        canActivate: [PermissionsGuard],
+        data: { permission: 'Timesheet Summary Monthly Report.view' },
+      },
+      {
+        path: 'team-timesheet-report',
+        loadComponent: () =>
+          import('./timesheet-reports/team-timesheet-report/team-timesheet-report.component').then(
+            (m) => m.TeamTimesheetReportComponent,
+          ),
+        canActivate: [PermissionsGuard],
+        data: { permission: 'Team Timesheet Report.view' },
+      },
+      {
+        path: 'pending-approval-status-report',
+        loadComponent: () =>
+          import('./timesheet-reports/pending-approval-status-report/pending-approval-status-report.component').then(
+            (m) => m.PendingApprovalStatusReportComponent,
+          ),
+        canActivate: [PermissionsGuard],
+        data: { permission: 'Pending Approval Status Report.view' },
+      },
+      {
+        path: 'project-effort-report',
+        loadComponent: () =>
+          import('./timesheet-reports/project-effort-report/project-effort-report.component').then(
+            (m) => m.ProjectEffortReportComponent,
+          ),
+        canActivate: [PermissionsGuard],
+        data: { permission: 'Project Effort Report.view' },
+      },
+      {
+        path: 'utilization-report',
+        loadComponent: () =>
+          import('./timesheet-reports/utilization-report/utilization-report.component').then(
+            (m) => m.UtilizationReportComponent,
+          ),
+        canActivate: [PermissionsGuard],
+        data: { permission: 'Utilization Report.view' },
+      },
+      {
+        path: 'resource-availability-report',
+        loadComponent: () =>
+          import('./timesheet-reports/resource-availability-report/resource-availability-report.component').then(
+            (m) => m.ResourceAvailabilityReportComponent,
+          ),
+        canActivate: [PermissionsGuard],
+        data: { permission: 'Resource Availability Report.view' },
+      },
+      {
+        path: 'attendance-vs-timesheet-report',
+        loadComponent: () =>
+          import('./timesheet-reports/attendance-vs-timesheet-report/attendance-vs-timesheet-report.component').then(
+            (m) => m.AttendanceVsTimesheetReportComponent,
+          ),
+        canActivate: [PermissionsGuard],
+        data: { permission: 'Attendance vs Timesheet Report.view' },
+      },
+      {
+        path: 'consolidated-timesheet-summary',
+        loadComponent: () =>
+          import('./timesheet-reports/consolidated-timesheet-summary/consolidated-timesheet-summary.component').then(
+            (m) => m.ConsolidatedTimesheetSummaryComponent,
+          ),
+        canActivate: [PermissionsGuard],
+        data: { permission: 'Consolidated Timesheet Summary Report.view' },
+      },
+    ],
+  },
 
-    { path: 'expense-reports', loadComponent: () => import('./expense-reports/expense-reports.component').then((m) => m.ExpenseReportsComponent), canActivate: [PermissionsGuard], data: { permission: 'Expense Reports.view' } },
+  {
+    path: 'expense-reports',
+    loadComponent: () =>
+      import('./expense-reports/expense-reports.component').then(
+        (m) => m.ExpenseReportsComponent,
+      ),
+    canActivate: [PermissionsGuard],
+    data: { permission: 'Expense Reports.view' },
+  },
 
-    {
-        path: 'helpdesk-reports', children: [
-            //    { path: '',redirectTo: 'leave-report', pathMatch: 'full' },
-            { path: 'detailed-queries-report', loadComponent: () => import('./help-desk-reports/detailed-queries-report/detailed-queries-report.component').then((m) => m.DetailedQueriesReportComponent), canActivate: [PermissionsGuard], data: { permission: 'Help Desk Query Detailed Report.view' } },
-            { path: 'queries-summary-report', loadComponent: () => import('./help-desk-reports/queries-summary-report/queries-summary-report.component').then((m) => m.QueriesSummaryReportComponent), canActivate: [PermissionsGuard], data: { permission: 'Help Desk Query Summary Report.view' } },
-        ]
-    },
-    {
-            path: 'itsupport-reports', children: [
-            //    { path: '',redirectTo: 'leave-report', pathMatch: 'full' },
-            { path: 'itsupport-detailed-report', loadComponent: () => import('./it-support-reports/it-support-detailed-report/it-support-detailed-report.component').then((m) => m.ItSupportDetailedReportComponent), canActivate: [PermissionsGuard], data: { permission: 'IT Support Detailed Report.view' } },
-            { path: 'itsupport-summary-report', loadComponent: () => import('./it-support-reports/it-support-summary-report/it-support-summary-report.component').then((m) => m.ItSupportSummaryReportComponent), canActivate: [PermissionsGuard], data: { permission: 'IT Support Summary Report.view' } },
-
-        ]
-    },
-
-
+  {
+    path: 'helpdesk-reports',
+    children: [
+      //    { path: '',redirectTo: 'leave-report', pathMatch: 'full' },
+      {
+        path: 'detailed-queries-report',
+        loadComponent: () =>
+          import('./help-desk-reports/detailed-queries-report/detailed-queries-report.component').then(
+            (m) => m.DetailedQueriesReportComponent,
+          ),
+        canActivate: [PermissionsGuard],
+        data: { permission: 'Help Desk Query Detailed Report.view' },
+      },
+      {
+        path: 'queries-summary-report',
+        loadComponent: () =>
+          import('./help-desk-reports/queries-summary-report/queries-summary-report.component').then(
+            (m) => m.QueriesSummaryReportComponent,
+          ),
+        canActivate: [PermissionsGuard],
+        data: { permission: 'Help Desk Query Summary Report.view' },
+      },
+    ],
+  },
+  {
+    path: 'itsupport-reports',
+    children: [
+      //    { path: '',redirectTo: 'leave-report', pathMatch: 'full' },
+      {
+        path: 'itsupport-detailed-report',
+        loadComponent: () =>
+          import('./it-support-reports/it-support-detailed-report/it-support-detailed-report.component').then(
+            (m) => m.ItSupportDetailedReportComponent,
+          ),
+        canActivate: [PermissionsGuard],
+        data: { permission: 'IT Support Detailed Report.view' },
+      },
+      {
+        path: 'itsupport-summary-report',
+        loadComponent: () =>
+          import('./it-support-reports/it-support-summary-report/it-support-summary-report.component').then(
+            (m) => m.ItSupportSummaryReportComponent,
+          ),
+        canActivate: [PermissionsGuard],
+        data: { permission: 'IT Support Summary Report.view' },
+      },
+    ],
+  },
 ] as Route[];

@@ -580,6 +580,7 @@ export class ViewLeavecategoryComponent implements OnInit, OnDestroy {
 
   // Patch form values (for edit mode)
   patchFormValues(data: any) {
+    console.log(data);
     // if (!this.jobLocationDropDownData.length || !this.leaveTypes.length) return;
     // debugger
     const leaveTypeValue = this.leaveTypes.find(lt => lt.id === data.leaveTypeId)?.id || '';

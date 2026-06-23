@@ -19,16 +19,19 @@ import { AuthService } from '../../services/auth.service';
 import { OnBehalfOfWfhTabsComponent } from "../../shared/time-off-module-tabs/on-behalf-of-wfh-tabs/on-behalf-of-wfh-tabs.component";
 import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
 import { TimeoffYearFilterService } from '../../services/timeoff-year-filter.service';
+import { ApplicablePoliciesTriggerComponent } from '../../shared/policies/applicable-policies-trigger/applicable-policies-trigger.component';
+import { APPLICABLE_POLICIES_KEYS } from '../../shared/policies/policy-visibility.catalog';
 @Component({
   selector: 'app-on-behalf-of-wfh',
-  imports: [CommonModule, RouterModule, ReactiveFormsModule, TranslateModule, DropdownModule, 
-    Select, ModuleInformationComponent, NgbPopoverModule, FormsModule, OnBehalfOfWfhTabsComponent, ModuleInfoIconComponent],
+  imports: [CommonModule, RouterModule, ReactiveFormsModule, TranslateModule, DropdownModule,
+    Select, ModuleInformationComponent, NgbPopoverModule, FormsModule, OnBehalfOfWfhTabsComponent, ModuleInfoIconComponent, ApplicablePoliciesTriggerComponent],
   templateUrl: './on-behalf-of-wfh.component.html',
   styleUrl: './on-behalf-of-wfh.component.scss',
   encapsulation: ViewEncapsulation.None,
 })
 
 export class OnBehalfOfWfhComponent implements OnInit, OnDestroy {
+  applicablePolicies = APPLICABLE_POLICIES_KEYS.ON_BE_HALF_OF_WFH;
   empinfo = {} as IJob;
   Workfromhome = [] as any;
   destroy$: Subject<boolean> = new Subject<boolean>();
@@ -45,8 +48,8 @@ export class OnBehalfOfWfhComponent implements OnInit, OnDestroy {
   selectedYear: number = this.currentYear;
   years: number[] = [];
 
-  constructor(private modalService: NgbModal, private fb: FormBuilder, private http: HttpService, 
-    private sharedModalService: OpenModalService, public rbac: RbacService, public formsValidation: FormValidationsService, 
+  constructor(private modalService: NgbModal, private fb: FormBuilder, private http: HttpService,
+    private sharedModalService: OpenModalService, public rbac: RbacService, public formsValidation: FormValidationsService,
     public readonly router: Router, private authService: AuthService, private timeoffYearFilterService: TimeoffYearFilterService) {}
 
   ngOnInit(): void {
@@ -109,7 +112,7 @@ export class OnBehalfOfWfhComponent implements OnInit, OnDestroy {
         this.employeeiddetails = data.filter((emp: any) => emp.employeeId != loggedInUser.employeeId).map((emp: any) => {
           const fusionPart = emp.fusionEmpId ? `${emp.fusionEmpId} - ` : '';
           const fullName = `${fusionPart}${emp.firstName ?? ''} ${emp.middleName ? emp.middleName + ' ' : '' }${emp.lastName ?? ''}`.trim();
-          const leaveRequestName = `${emp.firstName ?? ''} ${emp.middleName ? emp.middleName + ' ' : '' }${emp.lastName ?? ''} 
+          const leaveRequestName = `${emp.firstName ?? ''} ${emp.middleName ? emp.middleName + ' ' : '' }${emp.lastName ?? ''}
           ${emp.fusionEmpId ? `(${emp.fusionEmpId})` : '' }`.trim();
           return {
             ...emp,
@@ -138,7 +141,7 @@ export class OnBehalfOfWfhComponent implements OnInit, OnDestroy {
         this.myTeamData = data.filter((emp: any) => emp.employeeId != loggedInUser.employeeId).map((emp: any) => {
           const fusionPart = emp.fusionEmpId ? `${emp.fusionEmpId} - ` : '';
           const fullName = `${fusionPart}${emp.firstName ?? ''} ${emp.middleName ? emp.middleName + ' ' : ''}${emp.lastName ?? ''}`.trim();
-          const leaveRequestName = `${emp.firstName ?? ''} ${emp.middleName ? emp.middleName + ' ' : ''}${emp.lastName ?? ''} 
+          const leaveRequestName = `${emp.firstName ?? ''} ${emp.middleName ? emp.middleName + ' ' : ''}${emp.lastName ?? ''}
           ${emp.fusionEmpId ? `(${emp.fusionEmpId})` : '' }`.trim();
           return {
             ...emp,
@@ -256,7 +259,7 @@ export class OnBehalfOfWfhComponent implements OnInit, OnDestroy {
     const selectedYear = this.yearSelectionForm.get('selectedYear')?.value;
     this.selectedYear = selectedYear;
     this.timeoffYearFilterService.setSelectedYear(selectedYear);
-    
+
     if (this.selectedOtherEmployee?.employeeId) {
       this.getWorkfromhomeRequest(this.selectedOtherEmployee.employeeId);
       this.http.onBehlafOfWFHSignal.set(true);

@@ -11,7 +11,7 @@ import { ChartModule } from 'primeng/chart';
 import { TabsModule } from 'primeng/tabs';
 import { Subject, takeUntil } from 'rxjs';
 import { Icardsdetails } from '../../Interfaces/cardsdetails.model';
-import { DateformatPipe } from '../../Pipes/dateformat.pipe';
+import { DateformatPipe } from '../../pipes/dateformat.pipe';
 import { AuthService } from '../../services/auth.service';
 import { FormValidationsService } from '../../services/form-validations.service';
 import { HttpService } from '../../services/http.service';
@@ -23,7 +23,7 @@ import { InfoIconComponent } from "../../icons/info-icon/info-icon.component";
 import { Select } from 'primeng/select';
 @Component({
   selector: 'app-card-allocated-details',
-  imports: [CommonModule, TabsModule, FormsModule,Select, TranslateModule, RouterModule, ReactiveFormsModule,
+  imports: [CommonModule, TabsModule, FormsModule, Select, TranslateModule, RouterModule, ReactiveFormsModule,
     NgbPopoverModule, ChartModule, NoDataFoundComponent, DataLoaderContentComponent, DateformatPipe, Paginator, InfoIconComponent],
   templateUrl: './card-allocated-details.component.html',
   styleUrl: './card-allocated-details.component.scss',
@@ -32,24 +32,26 @@ import { Select } from 'primeng/select';
 export class CardAllocatedDetailsComponent implements OnInit, OnDestroy {
   hasPreviousPage!: Boolean;
   hasNextPage!: Boolean;
-  pageSize = 10;
+
+  // Pagination
   pageNum = 1;
-  rows = 10;
-  collectionSize!: number;
-  searchQuery = '';
+  pageSize = 25;
+  rows = 25;
+  collectionSize = 0;
   first = 0;
-  totalRecords = 0;
   options = [
-    { label: 10, value: 10 },
-    { label: 15, value: 15 },
-    { label: 20, value: 20 },
     { label: 25, value: 25 },
+    { label: 50, value: 50 },
+    { label: 75, value: 75 },
+    { label: 100, value: 100 },
+
   ];
+  searchQuery = '';
   searchValue: any;
   loader: boolean = false;
   releaseDetailsForm!: FormGroup;
   cardDetails = [] as Icardsdetails[];
-  reasonDetails=[
+  reasonDetails = [
     // {reason:'Access required for new department/floor',value:'Access required for new department/floor'},
     // {reason:'New credit card application approved',value:'New credit card application approved'}
   ] as any;
@@ -64,8 +66,8 @@ export class CardAllocatedDetailsComponent implements OnInit, OnDestroy {
   allocatedId!: number;
   destroy$: Subject<boolean> = new Subject<boolean>();
   employeeId: any;
-  allocated_history=[] as any;
-  constructor(private authService: AuthService,private readonly router: Router, public http: HttpService, private modalService: NgbModal,private fb: FormBuilder,
+  allocated_history = [] as any;
+  constructor(private authService: AuthService, private readonly router: Router, public http: HttpService, private modalService: NgbModal, private fb: FormBuilder,
     private conformationPopup: OpenModalService, public rbac: RbacService, public formValidations: FormValidationsService) { }
 
   ngOnInit(): void {
@@ -73,18 +75,18 @@ export class CardAllocatedDetailsComponent implements OnInit, OnDestroy {
     this.intialiseReleaseDetails();
     this.getcardsReasons('Release');
   }
-    getcardsReasons(reasonType: string) {
-      this.http.getData(`entityAttributeValues?entity=CardManagement&attribute=${reasonType}`).pipe(takeUntil(this.destroy$)).subscribe({
-        next: (data) => {
-          this.reasonDetails = data
-        },
-        error: (reason) => {
-          console.log(reason);
-        },
-        complete: () => {},
-      });
-    }
-     //initalize release form
+  getcardsReasons(reasonType: string) {
+    this.http.getData(`entityAttributeValues?entity=CardManagement&attribute=${reasonType}`).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (data) => {
+        this.reasonDetails = data
+      },
+      error: (reason) => {
+        console.log(reason);
+      },
+      complete: () => { },
+    });
+  }
+  //initalize release form
   intialiseReleaseDetails() {
     this.releaseDetailsForm = this.fb.group({
       reason: ['', Validators.required],
@@ -103,27 +105,27 @@ export class CardAllocatedDetailsComponent implements OnInit, OnDestroy {
     this.selectedcardDetails = cardDetails.card;
     this.modalService.open(content, { centered: true, backdrop: 'static', keyboard: false });
   }
-  approverHistoryFunction(historydata:any,content:any){
+  approverHistoryFunction(historydata: any, content: any) {
     console.log(historydata)
     this.getallocatedhistory(historydata.cardId);
     this.modalService.open(content, { centered: true, size: 'xl', backdrop: 'static', keyboard: false });
-    
+
   }
-  close(){
+  close() {
     this.releaseDetailsForm.reset();
     this.modalService.dismissAll();
   }
-   navigateToAsset(deskid: any) {
+  navigateToAsset(deskid: any) {
     this.router.navigate(['/card-management/card-history'], { queryParams: { id: deskid } });
   }
-  getallocatedhistory(cardId:number) {
+  getallocatedhistory(cardId: number) {
     // CardAllocation?searchTerm=t&pageNumber=1&pageSize=100
     this.http.getData(`CardAllocation?cardId=${cardId}`)
       .pipe(takeUntil(this.destroy$)).subscribe({
         next: (res: any) => {
           // Transform data to include `employeeName`
-              this.allocated_history=res.data;
-              console.log(res)
+          this.allocated_history = res.data;
+          console.log(res)
         },
         error: (errormessage) => {
           console.log(errormessage);
@@ -182,12 +184,12 @@ export class CardAllocatedDetailsComponent implements OnInit, OnDestroy {
   }
 
   //update card details
-  releaseCards(f:FormGroup) {
+  releaseCards(f: FormGroup) {
     const loggedinuser = this.authService.getToken();
     const payload = {
       allocationStatus: 'Released',
-      reason:this.releaseDetailsForm.get('reason')?.value,
-      additionalComments:this.releaseDetailsForm.get('addictionalcomments')?.value,
+      reason: this.releaseDetailsForm.get('reason')?.value,
+      additionalComments: this.releaseDetailsForm.get('addictionalcomments')?.value,
     };
     this.http.putData(`CardAllocation/${this.allocatedId}`, payload).subscribe({
       next: (res) => {

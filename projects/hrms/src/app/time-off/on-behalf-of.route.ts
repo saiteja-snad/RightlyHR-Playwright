@@ -31,6 +31,9 @@ import { PermissionsComponent } from './onbehalf-of-approvals/permissions/permis
 import { GlobalPermissionsComponent } from './global-actions/global-permissions/global-permissions.component';
 import { GlobalWfhComponent } from './global-actions/global-wfh/global-wfh.component';
 import { OnBeHalfOfEntitlementSummaryComponent } from './on-be-half-of/on-be-half-of-entitlement-summary/on-be-half-of-entitlement-summary.component';
+import { SeperationRequestsComponent } from './onbehalf-of-approvals/seperation-requests/seperation-requests.component';
+import { ProbationRequestsComponent } from './onbehalf-of-approvals/probation-requests/probation-requests.component';
+import { TimesheetRequestsComponent } from './onbehalf-of-approvals/timesheet-requests/timesheet-requests.component';
 
 export default [
     { path: '', redirectTo: '/on-behalf-of/on-behalf-of', pathMatch: 'full' },
@@ -84,11 +87,14 @@ export default [
     },
     {
         path: 'on-behalf-of-approvals', component: OnbehalfOfApprovalsComponent,
-        children: [
+      children: [
             { path: 'time-off', component: TimeOffComponent, data: { permission: 'Time Off (On Behalf Of Approvals).view' } },
             { path: 'entitlement', component: CompOffEntitlementComponent, data: { permission: 'Comp Off (On Behalf Of Approvals).view' } },
             { path: 'wfh', component: WfhComponent, data: { permission: 'WFH (On Behalf Of Approvals).view' } },
             { path: 'permissions', component: PermissionsComponent, data: { permission: 'Permissions (On Behalf Of Approvals).view' } },
+            {path: 'separations', component: SeperationRequestsComponent, data: { permission: 'Separations (On Behalf Of Approvals).view' } },
+            { path: 'probation-requests', component: ProbationRequestsComponent, data: { permission: 'Probation Requests (On Behalf Of Approvals).view' } },
+            { path: 'timesheet-requests', component: TimesheetRequestsComponent, data: { permission: 'Timesheet (On Behalf Of Approvals).view' } },
         ],
     },
 ] as Route[];

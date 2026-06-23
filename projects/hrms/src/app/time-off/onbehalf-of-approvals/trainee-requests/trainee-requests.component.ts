@@ -8,12 +8,11 @@ import { OpenModalService } from '../../../services/open-modal.service';
 import { RbacService } from '../../../services/rbac.service';
 import { AuthService } from '../../../services/auth.service';
 import { FormValidationsService } from '../../../services/form-validations.service';
-import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
+import { DateformatPipe } from '../../../pipes/dateformat.pipe';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { DataLoaderContentComponent } from '../../../shared/data-loader-content/data-loader-content.component';
 import { InfoIconComponent } from '../../../icons/info-icon/info-icon.component';
 import { environment } from '../../../../environments/environment';
-import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-trainee-requests',
@@ -25,7 +24,6 @@ import { TranslateModule } from '@ngx-translate/core';
     NoDataFoundComponent,
     DataLoaderContentComponent,
     InfoIconComponent,
-    TranslateModule
   ],
   templateUrl: './trainee-requests.component.html',
   styleUrl: './trainee-requests.component.scss',

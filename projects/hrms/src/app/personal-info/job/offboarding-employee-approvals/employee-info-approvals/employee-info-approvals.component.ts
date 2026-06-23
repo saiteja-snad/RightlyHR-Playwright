@@ -15,7 +15,7 @@ import { environment } from "../../../../../environments/environment";
 import { ConfirmationIconComponent } from "../../../../icons/confirmation-icon/confirmation-icon.component";
 import { InfoIconComponent } from "../../../../icons/info-icon/info-icon.component";
 import { EMPLOYEEINFO } from "../../../../Interfaces/timoff-model";
-import { DateformatPipe } from "../../../../Pipes/dateformat.pipe";
+import { DateformatPipe } from "../../../../pipes/dateformat.pipe";
 import { FormValidationsService } from "../../../../services/form-validations.service";
 import { HttpService } from "../../../../services/http.service";
 import { OpenModalService } from "../../../../services/open-modal.service";
@@ -440,10 +440,7 @@ isFieldChanged(objectKey: string, changedFields: any): boolean {
             }, 5000);
 
           }
-             this.http.tirggerPendingApprovalCountSignal.update((status) => ({
-              ...status,
-              employeinfo: true,
-            }));
+             this.signalService.employeinfoDetailsTriggerSignal.set(true);
         },
         error: (reason: any) => {
           this.spinnerLoader = false;

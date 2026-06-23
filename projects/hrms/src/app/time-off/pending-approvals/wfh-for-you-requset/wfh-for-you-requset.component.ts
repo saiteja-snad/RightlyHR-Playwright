@@ -24,7 +24,7 @@ import {
   ICategoryDetails,
 } from '../../../Interfaces/timoff-model';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
-import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
+import { DateformatPipe } from '../../../pipes/dateformat.pipe';
 import { BehaviorSubject, Subject, takeUntil } from 'rxjs';
 import { TranslateModule } from '@ngx-translate/core';
 import { RbacService } from '../../../services/rbac.service';

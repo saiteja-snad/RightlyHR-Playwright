@@ -104,6 +104,88 @@
                             <p-toggleswitch formControlName="notification" />
                         </div>
                     </div>
+
+                    <div class="mt-3" formArrayName="visibilityMappings">
+                        <div class="policy-mapping-title mb-2">Module Configuration Table</div>
+                        <div class="policy-mapping-table">
+                            <table class="w-100">
+                                <thead>
+                                    <tr>
+                                        <th>Module</th>
+                                        <th>Sub Modules</th>
+                                        <th class="text-center">Display Policy</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngIf="!hasVisibilityConfiguration(i)">
+                                        <td>NA</td>
+                                        <td>NA</td>
+                                        <td class="text-center">NA</td>
+                                    </tr>
+                                    <ng-container *ngFor="let mapping of getVisibilityMappings(i).controls; let m = index">
+                                    <tr *ngIf="hasVisibilityConfiguration(i)" [formGroupName]="m">
+                                        <td>
+                                            <div class="custom-p-select-content m-0">
+                                                <p-select
+                                                    [options]="policyVisibilityModules"
+                                                    optionLabel="label"
+                                                    optionValue="key"
+                                                    formControlName="moduleKey"
+                                                    [filter]="true"
+                                                    filterBy="label"
+                                                    filterPlaceHolder="Search module"
+                                                    class="form-select custom-select w-75"
+                                                    appendTo="body"
+                                                    [autoZIndex]="true"
+                                                    [baseZIndex]="2000"
+                                                    [resetFilterOnHide]="true"
+                                                    [disabled]="true">
+                                                </p-select>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="custom-p-multiSelect-content m-0 d-flex align-items-center gap-2">
+                                                <p-multiselect
+                                                    [options]="getSubModuleOptions(getVisibilityMappings(i).at(m).get('moduleKey')?.value)"
+                                                    optionLabel="label"
+                                                    optionValue="value"
+                                                    formControlName="subModuleKeys"
+                                                    class="form-select custom-select w-75"
+                                                    appendTo="body"
+                                                    [autoZIndex]="true"
+                                                    [baseZIndex]="2000"
+                                                    panelStyleClass="custom-phase-multiselect-panel"
+                                                    [disabled]="true"
+                                                    [showClear]="false"
+                                                    [filter]="true"
+                                                    filterBy="label"
+                                                    filterPlaceHolder="Search sub modules"
+                                                    [placeholder]="hasSubModuleOptions(getVisibilityMappings(i).at(m).get('moduleKey')?.value) ? 'Please select sub modules' : 'No sub modules available'"
+                                                    selectedItemsLabel="{2} items selected"
+                                                    [maxSelectedLabels]="2"
+                                                    resetFilterOnHide="true">
+                                                </p-multiselect>
+                                                <ng-container *ngIf="getSubModuleLabels(i, m).length > 2">
+                                                    <span [ngbPopover]="subModulePopContent" triggers="click" placement="top" container="body">
+                                                        <app-info-icon />
+                                                    </span>
+                                                    <ng-template #subModulePopContent>{{ getSubModuleLabels(i, m).join(', ') }}</ng-template>
+                                                </ng-container>
+                                            </div>
+                                        </td>
+                                        <td class="text-center">
+                                            <div class="d-flex justify-content-center">
+                                                <div class="small-blue-toggle">
+                                                    <p-toggleswitch formControlName="displayEnabled" [disabled]="true" class="custom-toggle" />
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    </ng-container>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

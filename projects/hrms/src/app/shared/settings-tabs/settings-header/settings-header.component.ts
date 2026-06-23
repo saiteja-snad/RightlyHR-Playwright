@@ -134,7 +134,7 @@ export class SettingsHeaderComponent implements OnInit, OnDestroy {
     }
     else if (url.startsWith('/settings/employee-fields/expenes')) {
       this.moduleName = 'Employee Fields';
-      this.componentName = 'Expense Configurations';
+      this.componentName = 'Expense Type Configurations';
     }
     else if (url.startsWith('/settings/employee-fields/manage-dsts')) {
       this.moduleName = 'Employee Fields';
@@ -294,6 +294,10 @@ export class SettingsHeaderComponent implements OnInit, OnDestroy {
     else if (url.startsWith('/settings/project-management-config/task-type')) {
       this.moduleName = 'Project Management Configurations';
       this.componentName = 'Task Type';
+    }
+    else if (url.startsWith('/settings/project-management-config/timesheet-configurations')) {
+      this.moduleName = 'Timesheet Configurations';
+      this.componentName = 'Timesheet Configurations';
     }
     else if (url.startsWith('/settings/project-management-config/task')) {
       this.moduleName = 'Project Management Configurations';

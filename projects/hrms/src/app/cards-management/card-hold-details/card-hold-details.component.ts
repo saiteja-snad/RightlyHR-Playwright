@@ -6,7 +6,7 @@ import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { ChartModule } from 'primeng/chart';
 import { TabsModule } from 'primeng/tabs';
-import { DateformatPipe } from '../../Pipes/dateformat.pipe';
+import { DateformatPipe } from '../../pipes/dateformat.pipe';
 import { DataLoaderContentComponent } from '../../shared/data-loader-content/data-loader-content.component';
 import { NoDataFoundComponent } from '../../shared/no-data-found/no-data-found.component';
 import moment from 'moment';
@@ -30,19 +30,21 @@ import { InfoIconComponent } from "../../icons/info-icon/info-icon.component";
 export class CardHoldDetailsComponent implements OnInit, OnDestroy {
   hasPreviousPage!: Boolean;
   hasNextPage!: Boolean;
-  pageSize = 10;
+  // Pagination
   pageNum = 1;
-  rows = 10;
-  collectionSize!: number;
-  searchQuery = '';
+  pageSize = 25;
+  rows = 25;
+  collectionSize = 0;
   first = 0;
-  totalRecords = 0;
   options = [
-    { label: 10, value: 10 },
-    { label: 15, value: 15 },
-    { label: 20, value: 20 },
     { label: 25, value: 25 },
+    { label: 50, value: 50 },
+    { label: 75, value: 75 },
+    { label: 100, value: 100 },
+
   ];
+  searchQuery = '';
+
   searchValue: any;
   loader: boolean = false;
   cardDetails = [] as Icardsdetails[];

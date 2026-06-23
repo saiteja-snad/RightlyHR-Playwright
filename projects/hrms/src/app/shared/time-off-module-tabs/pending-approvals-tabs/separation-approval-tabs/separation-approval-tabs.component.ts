@@ -2,6 +2,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, effect, signal } from '@angular/core';
 import { RouterModule, Router } from '@angular/router';
+import { DragDropModule } from '@angular/cdk/drag-drop';
+import { TabsDndDirective } from '../../../tabs-dnd/tabs-dnd.directive';
 import { Subscription, Subject } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
 import { LeaveApproval } from '../../../../Interfaces/pendingapprovalsmodel';
@@ -23,7 +25,8 @@ interface NavLink {
 
 @Component({
   selector: 'app-separation-approval-tabs',
-  imports: [CommonModule, RouterModule, SidetabsloadersComponent],
+  standalone: true,
+  imports: [CommonModule, RouterModule, DragDropModule, TabsDndDirective, SidetabsloadersComponent],
   templateUrl: './separation-approval-tabs.component.html',
   styleUrl: './separation-approval-tabs.component.scss'
 })
@@ -39,6 +42,9 @@ export class SeparationApprovalTabsComponent {
   countRole: any;
   loading = false;
   nodue_Request_data = [] as any[];
+  tabsKey = 'pending-approvals-offboarding-tabs';
+  filteredNavLinks: NavLink[] = [];
+  private userInteracted = false;
   navLinks: NavLink[] = [
     {
       label: 'Separations',
@@ -94,10 +100,12 @@ export class SeparationApprovalTabsComponent {
     this.LOGIN = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.getAllPendingApprovalsCount();
     this.getAllPendingApprovalsNoDue();
-    this.navLinks = this.navLinks.filter(
-      (tab) => tab.permission && tab.permission.feature && tab.permission.action &&
+    this.navLinks = this.navLinks.filter((tab: NavLink) =>
+      !!tab.permission?.feature && !!tab.permission?.action &&
       this.rbac.allowedToAccess(`${tab.permission.feature}.${tab.permission.action}`)
     );
+    this.filteredNavLinks = this.navLinks;
+    this.redirectIfNeeded();
   }
 
   getAllPendingApprovalsNoDue() {
@@ -110,6 +118,10 @@ export class SeparationApprovalTabsComponent {
         if (noDueLink) {
           noDueLink.count = data?.length || 0;
         }
+        const filteredNoDueLink = this.filteredNavLinks.find(link => link.label === 'No Due Clearances');
+        if (filteredNoDueLink) {
+          filteredNoDueLink.count = noDueLink?.count || 0;
+        }
       },
     });
   }
@@ -121,11 +133,13 @@ export class SeparationApprovalTabsComponent {
       next: (data: ApprovalStatusCount[]) => {
         const countMap = new Map<number, number>();
         data.forEach((item) => countMap.set(item.moduleId, item.totalCount));
-        this.navLinks = this.navLinks.map((link) => ({
+        this.navLinks = this.navLinks.map((link: NavLink) => ({
           ...link,
           count: countMap.get(link.moduleId) || 0,
         }));
+        this.filteredNavLinks = [...this.navLinks];
         this.loading = false;
+        this.redirectIfNeeded();
       },
       error: (err) => {
         console.error('Error fetching approvals:', err);
@@ -135,6 +149,7 @@ export class SeparationApprovalTabsComponent {
   }
 
   navigateToAccessedRoute(route: string) {
+    this.userInteracted = true;
     const actualRoute = this.accessNav.navigateToAccessedRoute(route);
     if (actualRoute) {
       this.router.navigate([actualRoute]);
@@ -143,8 +158,26 @@ export class SeparationApprovalTabsComponent {
     }
   }
 
+  trackByNavLink(index: number, link: NavLink): string {
+    return link.route;
+  }
+
   isActiveRoute(link: string): boolean {
-    return this.router.url.includes(link);
+    const currentUrl = this.router.url;
+    return currentUrl === link || currentUrl.startsWith(link + '/');
+  }
+
+  private redirectIfNeeded(): void {
+    if (this.userInteracted) return;
+    if (!this.filteredNavLinks || this.filteredNavLinks.length === 0) return;
+
+    const currentPath = this.router.url.split('?')[0];
+    if (currentPath !== '/pending-approvals/off-boarding') return;
+
+    const preferred = this.filteredNavLinks[0]?.route ?? '';
+    if (!preferred || preferred === currentPath) return;
+    const actual = this.accessNav.navigateToAccessedRoute(preferred);
+    this.router.navigate([actual || preferred], { queryParamsHandling: 'preserve' });
   }
 
   ngOnDestroy(): void {

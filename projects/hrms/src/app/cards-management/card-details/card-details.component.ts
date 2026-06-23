@@ -19,7 +19,7 @@ import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.c
 import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
 import { FormValidationsService } from '../../services/form-validations.service';
 import moment from 'moment';
-import { DateformatPipe } from "../../Pipes/dateformat.pipe";
+import { DateformatPipe } from "../../pipes/dateformat.pipe";
 import { Paginator } from "primeng/paginator";
 import { Ibank } from '../../Interfaces/personal-modal';
 import { InfoIconComponent } from "../../icons/info-icon/info-icon.component";
@@ -34,18 +34,20 @@ import { InfoIconComponent } from "../../icons/info-icon/info-icon.component";
 export class CardDetailsComponent implements OnInit, OnDestroy {
   hasPreviousPage!: Boolean;
   hasNextPage!: Boolean;
-  pageSize = 10;
-  pageNum = 1;
-  rows = 10;
-  collectionSize!: number;
   searchQuery = '';
-  first = 0;
   totalRecords = 0;
+   // Pagination
+  pageNum = 1;
+  pageSize = 25;
+  rows = 25;
+  collectionSize = 0;
+  first = 0;
   options = [
-    { label: 10, value: 10 },
-    { label: 15, value: 15 },
-    { label: 20, value: 20 },
     { label: 25, value: 25 },
+    { label: 50, value: 50 },
+    { label: 75, value: 75 },
+    { label: 100, value: 100 },
+
   ];
   empinfo = {} as any;
   searchValue: any;

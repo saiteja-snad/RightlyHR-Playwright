@@ -2,7 +2,7 @@ import { Component, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, ValidatorFn, AbstractControl, ValidationErrors, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { NgbModal, NgbPopover } from '@ng-bootstrap/ng-bootstrap';
-import { Subject, Subscription, takeUntil } from 'rxjs';
+import { Subject, Subscription, takeUntil, combineLatest, startWith, BehaviorSubject } from 'rxjs';
 import { IPhases } from '../../../Interfaces/project-management/phases.model';
 import { IResource } from '../../../Interfaces/project-management/resources.model';
 import { IEmployeeDetails } from '../../../letters/letters.modal';
@@ -16,15 +16,16 @@ import { TranslateModule } from '@ngx-translate/core';
 import { Select } from 'primeng/select';
 import { ConfirmationIconComponent } from '../../../icons/confirmation-icon/confirmation-icon.component';
 import { InfoIconComponent } from '../../../icons/info-icon/info-icon.component';
-import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { DataLoaderContentComponent } from '../../../shared/data-loader-content/data-loader-content.component';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { ProjectResourceTabComponent } from "../../../shared/project-management-tabs/project-resource-tab/project-resource-tab.component";
 import { environment } from '../../../../environments/environment';
 import { ProfileIconComponent } from "../../../icons/profile-icon/profile-icon.component";
+import { DateformatPipe } from '../../../pipes/dateformat.pipe';
+import { PaginatorModule } from 'primeng/paginator';
 @Component({
   selector: 'app-project-inactive-resources',
-  imports: [CommonModule, ConfirmationIconComponent, TranslateModule, ReactiveFormsModule, FormsModule, DateformatPipe,
+  imports: [CommonModule, ConfirmationIconComponent, TranslateModule, ReactiveFormsModule, FormsModule, DateformatPipe, PaginatorModule,
     Select, DataLoaderContentComponent, NoDataFoundComponent, NgbPopover, InfoIconComponent, ProjectResourceTabComponent, ProfileIconComponent],
   templateUrl: './project-inactive-resources.component.html',
   styleUrl: './project-inactive-resources.component.scss'
@@ -37,6 +38,7 @@ export class ProjectInactiveResourcesComponent {
   selectedRoleIds: number[] = [];
   selectedPhaseIds: number[] = [];
   selectedAuthorityIds: number[] = [];
+  lastResourceQueryKey: string = '';
   subscription!: Subscription;
   updateResourceForm!: FormGroup;
   reasonForm!: FormGroup;
@@ -56,6 +58,8 @@ export class ProjectInactiveResourcesComponent {
   empinfo: any = {};
   projectsData: Project[] = [];
   destroy$: Subject<boolean> = new Subject<boolean>();
+  // emits when a valid projectId is available so combined stream waits for it
+  projectId$: BehaviorSubject<number | null> = new BehaviorSubject<number | null>(null);
   startndEndDateValid: any;
   startDatevalidate: any;
   endDatevalidate: any;
@@ -75,7 +79,17 @@ export class ProjectInactiveResourcesComponent {
   projectMinStartDate!: string;
   projectMaxEndDate!: string;
   selectedResource: any;
-
+  page = 1;
+  pageSize = 50;
+  rows = 50;
+  collectionSize = 0;
+  first = 0;
+  options = [
+    { label: 50, value: 50 },
+    { label: 100, value: 100 },
+    { label: 150, value: 150 },
+    { label: 200, value: 200 }
+  ];
   constructor(private router: Router, private fb: FormBuilder, public rbac: RbacService, private modalService: NgbModal,
     private http: HttpService, private route: ActivatedRoute, private conformationPopup: OpenModalService,
     public formValidation: FormValidationsService,) { }
@@ -89,27 +103,34 @@ export class ProjectInactiveResourcesComponent {
       if (projectId) {
         this.projectId = parseInt(projectId);
         this.getProjects(this.projectId)
-        this.getResourceData(this.projectId, undefined, false, this.searchValue);
+        // emit projectId for combined filter stream; avoid calling getResourceData here
+        this.projectId$.next(this.projectId);
       }
     });
     this.getPhaseData();
+    // Combine projectId + role/phase/authority filter streams so API is called once per combined change
+    combineLatest([
+      this.projectId$,
+      this.http.resourceRoleFilter$.pipe(startWith([])),
+      this.http.resourcePhaseFilter$.pipe(startWith([])),
+      this.http.resourceAuthorityFilter$.pipe(startWith([]))
+    ])
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(([projectId, roleIds, phaseIds, authorityIds]) => {
+        if (!projectId) return; // wait until a projectId is available
+        this.projectId = projectId;
+        this.selectedRoleIds = roleIds;
+        this.selectedPhaseIds = phaseIds;
+        this.selectedAuthorityIds = authorityIds;
 
-    this.http.resourceRoleFilter$.pipe(takeUntil(this.destroy$)).subscribe(roleIds => {
-      this.selectedRoleIds = roleIds;
-      if (this.projectId) this.getResourceData(this.projectId, undefined, false, this.searchValue);
-    });
+        const queryKey = `${projectId}|${roleIds.join(',')}|${phaseIds.join(',')}|${authorityIds.join(',')}`;
+        if (queryKey === this.lastResourceQueryKey) return;
+        this.lastResourceQueryKey = queryKey;
 
-    this.http.resourcePhaseFilter$.pipe(takeUntil(this.destroy$)).subscribe(phaseIds => {
-      this.selectedPhaseIds = phaseIds;
-      if (this.projectId) this.getResourceData(this.projectId, undefined, false, this.searchValue);
-    });
-
-    this.http.resourceAuthorityFilter$.pipe(takeUntil(this.destroy$)).subscribe(authorityIds => {
-      this.selectedAuthorityIds = authorityIds;
-      if (this.projectId) this.getResourceData(this.projectId, undefined, false, this.searchValue);
-    });
+        this.getResourceData(this.projectId, undefined, false, this.searchValue);
+      });
     this.http.resourceDetailesadded$.pipe(takeUntil(this.destroy$)).subscribe(() => {
-      this.getResourceData(parseInt(this.projectId), undefined, false, this.searchValue);
+      this.getResourceData(this.projectId, undefined, false, this.searchValue);
     });
     this.updateResourceForm.get('startDate')?.valueChanges.subscribe(() => {
       this.StartndendDateValidation();
@@ -270,11 +291,13 @@ export class ProjectInactiveResourcesComponent {
     return workingDays;
   }
 
-  getResourceData(projectId: number, phaseId?: number, isPopupCall: boolean = false, searchTerm?: string) {
+  getResourceData(projectId: number, phaseId?: number, isPopupCall: boolean = false, searchTerm?: string, pageNumber?: number, pageSize?: number) {
     const params: any = {
       entityType: 'project',
       entityRefId: projectId,
-      status: 'Released'
+      status: 'Released',
+      pageNumber: pageNumber || this.page,
+      pageSize: pageSize || this.pageSize
     };
     if (phaseId) {
       params.phaseId = phaseId;
@@ -294,7 +317,8 @@ export class ProjectInactiveResourcesComponent {
     }
     this.subscription = this.http.getDataIncludeParams('ProjectResource', params).subscribe({
       next: (data: any) => {
-        this.loading = false;
+        this.collectionSize = data?.pagination?.totalRecords || 0
+
         if (isPopupCall) {
           // DO NOT TOUCH TABLE DATA
           const popupData = data.data ?? [];
@@ -306,13 +330,15 @@ export class ProjectInactiveResourcesComponent {
         } else {
           // NORMAL CALL - UPDATE TABLE DATA
           this.resourcesData = Array.isArray(data?.data) ? data.data : [];
-            this.resourcesData = this.resourcesData.map((item: any) => ({
-              ...item,
-              employee: {
-                ...item.employee,
-                profileUrl: this.getImageUrl(item.employee?.profileUrl)
-              }
-            }));
+                  this.loading = false;
+
+          this.resourcesData = this.resourcesData.map((item: any) => ({
+            ...item,
+            employee: {
+              ...item.employee,
+              profileUrl: this.getImageUrl(item.employee?.profileUrl)
+            }
+          }));
           this.resoucesDropDownData = this.resourcesData.filter(r => r.employee).map(r => ({
             label: `${r.employee.fusionEmployeeId} - ${r.employee.name}`,
             value: r.employee.id
@@ -590,13 +616,26 @@ export class ProjectInactiveResourcesComponent {
     // this.router.navigate(['/project-management/clients/active'])
   }
 
+  onPageSizeChange(newPageSize: number) {
+    this.pageSize = newPageSize;
+    this.rows = newPageSize;
+    this.page = 1;
+    this.first = 0;
+    this.getResourceData(this.projectId, undefined, false, this.searchValue, this.page, this.pageSize);
+  }
+
+  onPageChange(event: any) {
+    this.page = event.page + 1;
+    this.pageSize = event.rows;
+    this.first = event.first;
+    this.getResourceData(this.projectId, undefined, false, this.searchValue, this.page, this.pageSize);
+  }
   getPhaseData() {
     const params = {
       projectId: this.projectId
     };
     this.subscription = this.http.getDataIncludeParams('ProjectPhases/list', params).subscribe({
       next: (data: any) => {
-        this.loading = false;
         this.phaseData = (data?.data || []).filter(
           (p: any) =>
             p?.status?.toLowerCase() === 'in progress' ||
@@ -613,7 +652,6 @@ export class ProjectInactiveResourcesComponent {
         }));
       },
       error: (reason: any) => {
-        this.loading = false;
       }
     });
   }

@@ -8,7 +8,7 @@ import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { BehaviorSubject, Subject, takeUntil } from 'rxjs';
 import { IJob } from '../../../Interfaces/letters-model';
 import { AttendanceRequest, ICategoryDetails } from '../../../Interfaces/timoff-model';
-import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
+import { DateformatPipe } from '../../../pipes/dateformat.pipe';
 import { HttpService } from '../../../services/http.service';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { RbacService } from '../../../services/rbac.service';
@@ -437,6 +437,7 @@ export class CompOffEntitlementComponent {
         status: 'Processed',
         moduleId: environment.compoffModuleId,
         onBehalfOfApproval: true,
+        approvedPersonaType: 'onBehalfOf',
         headerRequests: this.selectedLeavesItems.map((item) => ({
           headerID: item.approvalHeader.id,
           currentStage: item.approvalHeader.currentapprovalStage,
@@ -449,6 +450,7 @@ export class CompOffEntitlementComponent {
         status: 'Processed',
         moduleId: environment.compoffModuleId,
         onBehalfOfApproval: true,
+        approvedPersonaType: 'onBehalfOf',
         headerRequests: [
           {
             headerID: this.selectedLeaveData.approvalHeader.id,
@@ -502,6 +504,7 @@ export class CompOffEntitlementComponent {
           comments: comments,
           moduleId: environment.compoffModuleId,
           onBehalfOfApproval: true,
+          approvedPersonaType: 'onBehalfOf',
           headerRequests: this.selectedLeavesItems.map((item) => ({
             headerID: item.approvalHeader.id,
             currentStage: item.approvalHeader.currentapprovalStage,
@@ -513,6 +516,7 @@ export class CompOffEntitlementComponent {
           status: 'Approved',
           comments: comments,
           onBehalfOfApproval: true,
+          approvedPersonaType: 'onBehalfOf',
           moduleId: environment.compoffModuleId,
           headerRequests: [
             {
@@ -567,6 +571,7 @@ export class CompOffEntitlementComponent {
           comments: comments,
           moduleId: environment.compoffModuleId,
           onBehalfOfApproval: true,
+          approvedPersonaType: 'onBehalfOf',
           headerRequests: this.selectedLeavesItems.map((item) => ({
             headerID: item.approvalHeader.id,
             currentStage: item.approvalHeader.currentapprovalStage,
@@ -578,6 +583,7 @@ export class CompOffEntitlementComponent {
           status: 'Rejected',
           comments: comments,
           onBehalfOfApproval: true,
+          approvedPersonaType: 'onBehalfOf',
           moduleId: environment.compoffModuleId,
           headerRequests: [
             {

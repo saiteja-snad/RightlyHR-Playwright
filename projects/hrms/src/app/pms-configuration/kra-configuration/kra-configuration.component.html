@@ -19,10 +19,8 @@
         <i class="bi bi-search"></i>
       </span>
       <input type="search" class="form-control custom-search-input"
-             [placeholder]="'Search by category name or code'|translate"
-             [(ngModel)]="searchText"
-             (ngModelChange)="onSearchTextChange()"
-             aria-label="Search">
+        [placeholder]="'Search by category name or code'|translate" [(ngModel)]="searchText"
+        (ngModelChange)="onSearchTextChange()" aria-label="Search">
     </div>
 
     <!-- Table -->
@@ -34,61 +32,64 @@
           <th class="text-center">{{'Category Code'|translate}}</th>
           <th class="text-center">{{'Description'|translate}}</th>
           <!-- <th class="text-center">Status</th> -->
-          @if(rbac.allowedToAccess('Kra Update(Status - Created).view') || rbac.allowedToAccess('Kra Delete(Status - Created).view')) {
+          @if(rbac.allowedToAccess('Kra Update(Status - Created).view') || rbac.allowedToAccess('Kra Delete(Status -
+          Created).view')) {
           <th class="text-center">{{'Action'|translate}}</th>
           }
         </thead>
         <tbody>
           @if(kraCategories.length > 0) {
-            @for (item of kraCategories; track item.categoryId) {
-            <tr>
-              <td>{{ item.categoryName || '-' }}</td>
-              <td class="text-center">{{ item.categoryCode || '-' }}</td>
-              <td>
-                <div class="text-center" *ngIf="item?.description; else noDescription">
-                  <app-info-icon ngbPopover="{{ item?.description }}" container="body">
-                  </app-info-icon>
-                </div>
-                <ng-template #noDescription>{{'NA'|translate}}</ng-template>
-              </td>
-              <!-- <td class="text-center">
+          @for (item of kraCategories; track item.categoryId) {
+          <tr>
+            <td>{{ item.categoryName || '-' }}</td>
+            <td class="text-center">{{ item.categoryCode || '-' }}</td>
+            <td>
+              <div class="text-center" *ngIf="item?.description; else noDescription">
+                <app-info-icon ngbPopover="{{ item?.description }}" container="body">
+                </app-info-icon>
+              </div>
+              <ng-template #noDescription>{{'NA'|translate}}</ng-template>
+            </td>
+            <!-- <td class="text-center">
                 <span class="kra-status" [ngClass]="getStatusClass(item.status)">
                   {{ item.status || 'Inactive' }}
                 </span>
 
               </td> -->
 
-              @if(rbac.allowedToAccess('Kra Update(Status - Created).view') || rbac.allowedToAccess('Kra Delete(Status - Created).view')) {
-              <td class="text-center">
-                <div class="dropdown">
-                  <span type="button" data-bs-toggle="dropdown" class="cursor-pointer">
-                    <i class="bi bi-three-dots-vertical"></i>
-                  </span>
-                  <ul class="dropdown-menu custom-dropdown-menu">
-                    @if(rbac.allowedToAccess('Kra Update(Status - Created).view')) {
-                    <li>
-                      <a class="dropdown-item" (click)="editDetails(item)"><i class="bi bi-pencil me-2"></i>{{'Update'|translate}}</a>
-                    </li>
-                    }
-                    @if(rbac.allowedToAccess('Kra Delete(Status - Created).view')) {
-                    <li>
-                      <a class="dropdown-item text-danger" (click)="openDelete(confirmation, item.categoryId)">
-                        <i class="bi bi-trash3 me-2"></i>{{'Delete'|translate}}
-                      </a>
-                    </li>
-                    }
-                  </ul>
-                </div>
-              </td>
-              }
-            </tr>
+            @if(rbac.allowedToAccess('Kra Update(Status - Created).view') || rbac.allowedToAccess('Kra Delete(Status -
+            Created).view')) {
+            <td class="text-center">
+              <div class="dropdown">
+                <span type="button" data-bs-toggle="dropdown" class="cursor-pointer">
+                  <i class="bi bi-three-dots-vertical"></i>
+                </span>
+                <ul class="dropdown-menu custom-dropdown-menu">
+                  @if(rbac.allowedToAccess('Kra Update(Status - Created).view')) {
+                  <li>
+                    <a class="dropdown-item" (click)="editDetails(item)"><i
+                        class="bi bi-pencil me-2"></i>{{'Update'|translate}}</a>
+                  </li>
+                  }
+                  @if(rbac.allowedToAccess('Kra Delete(Status - Created).view')) {
+                  <li>
+                    <a class="dropdown-item text-danger" (click)="openDelete(confirmation, item.categoryId)">
+                      <i class="bi bi-trash3 me-2"></i>{{'Delete'|translate}}
+                    </a>
+                  </li>
+                  }
+                </ul>
+              </div>
+            </td>
             }
+          </tr>
+          }
           } @else {
-            <tr>
-              <td colspan="5">
-                <app-no-data-found></app-no-data-found>
-              </td>
-            </tr>
+          <tr>
+            <td colspan="5">
+              <app-no-data-found></app-no-data-found>
+            </td>
+          </tr>
           }
         </tbody>
       </table>
@@ -102,15 +103,18 @@
     <div class="pagination-content">
       <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
         <div class="d-flex align-items-center gap-3 p-2">
-          <select class="form-select custom-pagination-select" [(ngModel)]="rows" (ngModelChange)="onPageSizeChange($event)">
-            <option *ngFor="let opt of pageOptions" [value]="opt">{{ opt }}</option>
+          <select title="text" class="form-select custom-pagination-select" [(ngModel)]="rows"
+            (ngModelChange)="onPageSizeChange($event)">
+            <option *ngFor="let option of options" [value]="option.value">{{ option.label }}
+            </option>
           </select>
           <span class="pagination-label text-nowrap">
-            {{'Showing'|translate}} {{ first + 1 }} - {{ (first + rows) > collectionSize ? collectionSize : (first + rows) }} {{'of'|translate}} {{ collectionSize }}
+            {{'Showing'|translate}} {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize : (+first +
+            +rows) }} {{'of'|translate}} {{ collectionSize }}
           </span>
         </div>
         <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"
-                     (onPageChange)="onPageChange($event)"></p-paginator>
+          (onPageChange)="onPageChange($event)"></p-paginator>
       </div>
     </div>
     }

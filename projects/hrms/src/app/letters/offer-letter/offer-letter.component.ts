@@ -11,7 +11,7 @@ import moment from 'moment';
 import { AuthService } from '../../services/auth.service';
 import { HttpService } from '../../services/http.service';
 import { IAddress, ICountry, IGender, IJobtype, IRole, ITitle } from '../../Interfaces/letters-model';
-import { DateformatPipe } from "../../Pipes/dateformat.pipe";
+import { DateformatPipe } from "../../pipes/dateformat.pipe";
 import { OpenModalService } from '../../services/open-modal.service';
 import { NgxCountriesDropdownModule } from 'ngx-countries-dropdown';
 import { TranslateModule } from '@ngx-translate/core';

@@ -2,6 +2,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, effect, signal } from '@angular/core';
 import { RouterModule, Router } from '@angular/router';
+import { DragDropModule } from '@angular/cdk/drag-drop';
+import { TabsDndDirective } from '../../../tabs-dnd/tabs-dnd.directive';
 import { Subscription, Subject } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
 import { LeaveApproval } from '../../../../Interfaces/pendingapprovalsmodel';
@@ -21,7 +23,8 @@ interface NavLink {
 }
 @Component({
   selector: 'app-timeoff-approval-tabs',
-  imports: [CommonModule, RouterModule, SidetabsloadersComponent],
+  standalone: true,
+  imports: [CommonModule, RouterModule, DragDropModule, TabsDndDirective, SidetabsloadersComponent],
   templateUrl: './timeoff-approval-tabs.component.html',
   styleUrl: './timeoff-approval-tabs.component.scss'
 })
@@ -37,6 +40,8 @@ export class TimeoffApprovalTabsComponent {
   countRole: any;
   loading = false;
   nodue_Request_data = [] as any[];
+  tabsKey = 'pending-approvals-timeoff-tabs';
+  private userInteracted = false;
   navLinks: NavLink[] = [
     {
       label: 'Leaves',
@@ -133,6 +138,7 @@ export class TimeoffApprovalTabsComponent {
         tab.permission.action &&
         this.rbac.allowedToAccess(`${tab.permission.feature}.${tab.permission.action}`)
     );
+    this.redirectIfNeeded();
   }
 
   getAllPendingApprovalsNoDue() {
@@ -156,6 +162,7 @@ export class TimeoffApprovalTabsComponent {
           count: countMap.get(link.moduleId) || 0,
         }));
         this.loading = false;
+        this.redirectIfNeeded();
       },
       error: (err) => {
         console.error('Error fetching approvals:', err);
@@ -165,6 +172,7 @@ export class TimeoffApprovalTabsComponent {
   }
 
   navigateToAccessedRoute(route: string) {
+    this.userInteracted = true;
     const actualRoute = this.accessNav.navigateToAccessedRoute(route);
     if (actualRoute) {
       this.router.navigate([actualRoute]);
@@ -173,8 +181,26 @@ export class TimeoffApprovalTabsComponent {
     }
   }
 
+  trackByNavLink(index: number, link: NavLink): string {
+    return link.route;
+  }
+
   isActiveRoute(link: string): boolean {
-    return this.router.url.includes(link);
+    const currentUrl = this.router.url;
+    return currentUrl === link || currentUrl.startsWith(link + '/');
+  }
+
+  private redirectIfNeeded(): void {
+    if (this.userInteracted) return;
+    if (!this.navLinks || this.navLinks.length === 0) return;
+
+    const currentPath = this.router.url.split('?')[0];
+    if (currentPath !== '/pending-approvals/time-off') return;
+
+    const preferred = this.navLinks[0]?.route ?? '';
+    if (!preferred || preferred === currentPath) return;
+    const actual = this.accessNav.navigateToAccessedRoute(preferred);
+    this.router.navigate([actual || preferred], { queryParamsHandling: 'preserve' });
   }
 
   ngOnDestroy(): void {

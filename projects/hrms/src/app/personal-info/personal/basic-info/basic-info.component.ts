@@ -20,6 +20,7 @@ import { environment } from '../../../../environments/environment';
 import { EditIconComponent } from "../../../icons/edit-icon/edit-icon.component";
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 import { TranslateModule } from '@ngx-translate/core';
+import { SignalsService } from '../../../services/signals.service';
 @Component({
   selector: 'app-basic-info',
   imports: [CommonModule, ReactiveFormsModule, Select, Skeleton, TooltipModule, NgbPopoverModule, ModuleInformationComponent, EditIconComponent, InfoIconComponent, TranslateModule],
@@ -59,7 +60,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
 
   constructor(private modalService: NgbModal, private fb: FormBuilder, public formValidation: FormValidationService, 
     private conformationPopup: OpenModalService, private http: HttpService, public rbac: RbacService, 
-    public permission: AccessForEmployeeinfoService, private router: Router) { }
+    public permission: AccessForEmployeeinfoService, private router: Router,private signalService : SignalsService) { }
 
   ngOnInit(): void {
     this.getEmpInfoFromRoute();
@@ -369,11 +370,19 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
           this.conformationPopup.openErrorModal(data.message);
           this.patchForm(this.empyployeedata);
         }
+        this.signalService.employeinfoDetailsForRoleTriggerSignal.set(true);
+        this.signalService.employeinfoDetailsForRoleTriggerSignal.set(true);
+        this.signalService.employeinfoDetailsTriggerSignal.set(true);
+
+
       },
       error: (reason: any) => {
         this.conformationPopup.openErrorModal(
           reason.error.message || 'Basic info update failed'
         );
+        this.signalService.employeinfoDetailsForRoleTriggerSignal.set(true);
+        this.signalService.employeinfoDetailsForRoleTriggerSignal.set(true);
+        this.signalService.employeinfoDetailsTriggerSignal.set(true);
       },
     });
   }

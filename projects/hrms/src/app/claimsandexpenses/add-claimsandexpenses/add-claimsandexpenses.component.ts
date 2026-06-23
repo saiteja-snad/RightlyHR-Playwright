@@ -15,6 +15,7 @@ import { ModuleInformationComponent } from "../../shared/module-information/modu
 import { MODULE_INFOS } from '../../shared/modules-info';
 import { AuthService } from '../../services/auth.service';
 import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
+import { SignalsService } from '../../services/signals.service';
 @Component({
   selector: 'app-add-claimsandexpenses',
   imports: [RouterModule, Select, ReactiveFormsModule, TranslateModule, NgbPopoverModule, CommonModule, TabsModule, ModuleInfoIconComponent, ModuleInformationComponent, ModuleInfoIconComponent],
@@ -58,7 +59,7 @@ export class AddClaimsandexpensesComponent implements OnInit, OnDestroy {
   totalCount: any;
 
   constructor(public router: Router, private fb: FormBuilder, private datepipe: DatePipe, private conformationPopup: OpenModalService,
-    private http: HttpService, private modalService: NgbModal, public formValidation: FormValidationService, private authService: AuthService,) {
+    private http: HttpService, private modalService: NgbModal, public formValidation: FormValidationService, private authService: AuthService,private signalService : SignalsService) {
     effect(() => {
       if (this.http.onBehlafOfExpensesSignal()) {
         console.log('Expenses signal triggered');
@@ -426,14 +427,21 @@ export class AddClaimsandexpensesComponent implements OnInit, OnDestroy {
               this.conformationPopup.openSuccessModal('Your expense request has been submitted');
               this.router.navigate(['/claimsandexpenses/expenses/draft'])
               this.getexpensesheaderbyid(this.empinfo.employeeId);
-              this.getApprovalStatusCounts()
+              this.getApprovalStatusCounts();
+              this.signalService.clamisandexpensesForYouTriggerSignal.set(true);
+              this.signalService.clamisandexpensesForYouTriggerSignal.set(true);
+
             }
           },
           error: (error: any) => {
             this.conformationPopup.openErrorModal(error.error.message)
             this.spinnerLoader = false;
+            this.signalService.clamisandexpensesForYouTriggerSignal.set(true);
+              this.signalService.clamisandexpensesForYouTriggerSignal.set(true);
           }, complete: () => {
             this.spinnerLoader = false;
+            this.signalService.clamisandexpensesForYouTriggerSignal.set(true);
+            this.signalService.clamisandexpensesForYouTriggerSignal.set(true);
           }
         });
       } else {
@@ -450,19 +458,27 @@ export class AddClaimsandexpensesComponent implements OnInit, OnDestroy {
               this.getexpensesheaderbyid(this.empinfo.employeeId);
               this.getApprovalStatusCounts();
               this.spinnerLoader = false;
+              this.signalService.clamisandexpensesForYouTriggerSignal.set(true);
+              this.signalService.clamisandexpensesForYouTriggerSignal.set(true);
             }
           },
           error: (error: any) => {
             this.spinnerLoader = false;
             this.conformationPopup.openErrorModal(error.error.message);
+            this.signalService.clamisandexpensesForYouTriggerSignal.set(true);
+            this.signalService.clamisandexpensesForYouTriggerSignal.set(true);
           },
           complete: () => {
-            this.spinnerLoader = false
+            this.spinnerLoader = false;
+            this.signalService.clamisandexpensesForYouTriggerSignal.set(true);
+            this.signalService.clamisandexpensesForYouTriggerSignal.set(true);
           },
         });
       }
     } else {
       console.log('Form is invalid');
+      this.signalService.clamisandexpensesForYouTriggerSignal.set(true);
+      this.signalService.clamisandexpensesForYouTriggerSignal.set(true);
     }
   }
 
@@ -519,16 +535,22 @@ export class AddClaimsandexpensesComponent implements OnInit, OnDestroy {
               this.router.navigate(['/claimsandexpenses/expenses/draft'])
               // this.filterAllExpenses()
               this.getexpensesheaderbyid(this.empinfo.employeeId);
+              this.signalService.clamisandexpensesForYouTriggerSignal.set(true);
+              this.signalService.clamisandexpensesForYouTriggerSignal.set(true);
               // Call the get function after posting
             }
           },
           error: (error: any) => {
             console.log('errror' + error)
             this.conformationPopup.openErrorModal(error.error.message)
-            this.saveasDraftloder = false
+            this.saveasDraftloder = false;
+            this.signalService.clamisandexpensesForYouTriggerSignal.set(true);
+            this.signalService.clamisandexpensesForYouTriggerSignal.set(true);
           },
           complete: () => {
-            this.saveasDraftloder = false
+            this.saveasDraftloder = false;
+            this.signalService.clamisandexpensesForYouTriggerSignal.set(true);
+            this.signalService.clamisandexpensesForYouTriggerSignal.set(true);
           },
         });
       } else {
@@ -543,15 +565,21 @@ export class AddClaimsandexpensesComponent implements OnInit, OnDestroy {
               this.newExpenseForm.reset();
               (this.newExpenseForm.controls['expenseItems'] as FormArray).clear();
               this.getexpensesheaderbyid(this.empinfo.employeeId);
+              this.signalService.clamisandexpensesForYouTriggerSignal.set(true);
+              this.signalService.clamisandexpensesForYouTriggerSignal.set(true);
             }
           },
           error: (error: any) => {
             console.log("error" + error)
             this.conformationPopup.openErrorModal(error.error.message)
-            this.saveasDraftloder = false
+            this.saveasDraftloder = false;
+            this.signalService.clamisandexpensesForYouTriggerSignal.set(true);
+            this.signalService.clamisandexpensesForYouTriggerSignal.set(true);
           },
           complete: () => {
-            this.saveasDraftloder = false
+            this.saveasDraftloder = false;
+            this.signalService.clamisandexpensesForYouTriggerSignal.set(true);
+            this.signalService.clamisandexpensesForYouTriggerSignal.set(true);
           },
         });
       }
@@ -610,11 +638,16 @@ export class AddClaimsandexpensesComponent implements OnInit, OnDestroy {
               i.attachment_url = data.path;
             }
           });
+          this.signalService.clamisandexpensesForYouTriggerSignal.set(true);
+          this.signalService.clamisandexpensesForYouTriggerSignal.set(true);
           return this.http.postdata(`Expenses_Header`, payload);
         })
       );
     } else {
+      
       submit$ = this.http.postdata(`Expenses_Header`, payload);
+      this.signalService.clamisandexpensesForYouTriggerSignal.set(true);
+      this.signalService.clamisandexpensesForYouTriggerSignal.set(true);
       this.getApprovalStatusCounts();
     }
 

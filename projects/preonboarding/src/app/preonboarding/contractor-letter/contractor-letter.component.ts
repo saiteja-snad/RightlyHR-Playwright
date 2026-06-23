@@ -16,10 +16,10 @@ import { HttpService } from '../../http-services/http.service';
 import { Iofferletter, IJobDetails } from '../../models/offer-letter.model';
 import { IAddress } from '../../models/personal-details.model';
 import { DetailedStepProgressbarComponent } from '../../shared/detailed-step-progressbar/detailed-step-progressbar.component';
-import { DateFormatPipe } from "../../Pipes/date-format.pipe";
+import { DateFormatPipe } from "../../pipes/date-format.pipe";
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { LettersheaderComponent } from "../../../../../hrms/src/app/shared/letters-shared-content/lettersheader/lettersheader.component";
-import { DateformatPipe } from '../../../../../hrms/src/app/Pipes/dateformat.pipe';
+import { DateformatPipe } from '../../../../../hrms/src/app/pipes/dateformat.pipe';
 
 @Component({
   selector: 'app-contractor-letter',

@@ -28,18 +28,23 @@ import { MenuModule } from 'primeng/menu';
 import { MenuItem } from 'primeng/api';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { BulkUploadStore } from '../bulk-upload/models/bulk-upload.store';
-import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
+import { DateformatPipe } from '../../../pipes/dateformat.pipe';
 import { Select } from 'primeng/select';
+import { ApplicablePoliciesTriggerComponent } from '../../../shared/policies/applicable-policies-trigger/applicable-policies-trigger.component';
+import { APPLICABLE_POLICIES_KEYS } from '../../../shared/policies/policy-visibility.catalog';
+import { SignalsService } from '../../../services/signals.service';
 @Component({
   selector: 'app-time-sheet-view',
   imports: [ProjectManagementModuleInfoComponent, NgbDatepickerModule, FormsModule, ReactiveFormsModule,
     NgbPopover, CommonModule, DatePicker, DateformatPipe, AccordionModule, InfoIconComponent, ConfirmationIconComponent,
-    TranslateModule, DataLoaderContentComponent, TimesheetsTabsComponent, MenuModule, MultiSelectModule,Select],
+    TranslateModule, DataLoaderContentComponent, TimesheetsTabsComponent, MenuModule, MultiSelectModule,Select, ApplicablePoliciesTriggerComponent],
   templateUrl: './time-sheet-view.component.html',
   styleUrl: './time-sheet-view.component.scss',
 })
 
 export class TimeSheetViewComponent implements OnInit, OnDestroy {
+  applicablePolicies = APPLICABLE_POLICIES_KEYS.PROJECT_MANAGEMENT_TIMESHEETS;
+
   timesheetForm!: FormGroup;
   orgholidays: any;
   orgweekend: any;
@@ -120,7 +125,8 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     private http: HttpService, public formValidation: FormValidationsService,
     public dayValidationService: DayValidationService, public authService: AuthService,
     public rbac: RbacService, private conformationPopup: OpenModalService,
-    private router: Router, private encryptionService: EncriptdecriptService, private bulkStore: BulkUploadStore) { }
+    private router: Router, private encryptionService: EncriptdecriptService, private bulkStore: BulkUploadStore
+  , private signalService : SignalsService) { }
 
   ngOnInit(): void {
     this.loggedinuser = this.authService.getToken();
@@ -658,7 +664,7 @@ getTaskType() {
       }
       : null;
       console.log(matchedResources);
-      
+
 
     const resourceDateRange = mergedResource ? {
       startDate: mergedResource.startDate ? new Date(mergedResource.startDate) : null,
@@ -768,8 +774,8 @@ getTaskType() {
       isBlocked: [{ value: cell.isBlocked, disabled: true }],
       rejectReason: [cell.rejectReason || ''],
       blockReason: [cell.blockReason || ''],
-      resourceId: [row.resourceId || null]
-
+      resourceId: [row.resourceId || null],
+      taskId:[cell.taskId || null,]
     });
   }
 
@@ -1646,7 +1652,6 @@ getTaskType() {
       dropdownBtn.setAttribute('aria-expanded', 'false');
     }
 
-
   }
 
   getClientColor(clientId: number): string {
@@ -1720,8 +1725,9 @@ openModal(content: any, dayForm: AbstractControl | null, index: number, dayKey: 
     });
 
     this.dayForm = dayForm;
-    //start//code for the task type 
+    //start//code for the task type
     let taskId = this.dayForm.get('taskId')?.value;
+    console.log('Selected Task ID:', taskId);
     let taskdata = this.alltaskTypes?.find((ele: any) => ele?.id == taskId && ele?.status?.toLowerCase() == 'inactive');
     if (taskdata) {
       const alreadyExists = this.taskType?.some((ele: any) => ele.id == taskdata.id);
@@ -1732,6 +1738,7 @@ openModal(content: any, dayForm: AbstractControl | null, index: number, dayKey: 
       this.taskType = this.alltaskTypes?.filter((ele: any) => ele?.status?.toLowerCase() == 'active'
       );
     }
+   this.getTimesheetMadatorydata(this.dayForm.get('projectId')?.value,this.dayForm.get('phaseId')?.value)
     //end//code for the task type
     // ✅ Normalize date (fix timezone issue)
     const normalizeDate = (date: any) => {
@@ -1802,8 +1809,46 @@ openModal(content: any, dayForm: AbstractControl | null, index: number, dayKey: 
       });
     }
   }
+  
 }
+ getTimesheetMadatorydata(projectId: number, phaseId: number) {
+  const url = `TimesheetConfiguration?projectId=${projectId ?? 0}&phaseId=${phaseId ?? 0}`;
+    this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res: any) => {
+        const items = res?.items || [];
+        const fieldMap: any = {
+          'Start Time': 'startTime',
+          'End Time': 'endTime',
+          'Task Type': 'taskId',
+          'Description': 'description'
+        };
+        items.forEach((item: any) => {
+          const controlName = fieldMap[item.fieldName];
+          if (!controlName) return;
+          const control = this.dayForm.get(controlName);
+          if (!control) return;
+          // ALWAYS reset validators first
+          control.clearValidators();
+          // Apply validator if mandatory
+          if (item.isMandatory === true) {
+            control.setValidators([Validators.required]);
+          }
+          control.updateValueAndValidity({ emitEvent: false });
+        });
+      },
+      error: () => {
+      },
+      complete: () => {
+      },
+    })
+  }
+  isRequired(controlName: string): boolean {
+  const control = this.dayForm?.get(controlName);
 
+  return control
+    ? control.hasValidator(Validators.required)
+    : false;
+}
   recalculateTimes(dayKey: string, startIndex: number) {
     for (let i = 0; i < this.projects.length; i++) {
       const projectForm = this.projects.at(i).get(dayKey) as FormGroup;
@@ -1908,6 +1953,7 @@ openModal(content: any, dayForm: AbstractControl | null, index: number, dayKey: 
         this.resourceId = null;
         this.formattedweakendStart = moment(this.start).format('YYYY-MM-DD');
         this.getTimeSheetEntriesbyEmployeeId(this.employeeId, this.formattedweakendStart);
+        this.signalService.timesheetApprovalsCountSignal.set(true);
       },
       error: (err) => {
         this.spinnerLoader = false;
@@ -1915,6 +1961,7 @@ openModal(content: any, dayForm: AbstractControl | null, index: number, dayKey: 
         // console.error('Error saving entry', err);
         // this.formattedweakendStart = moment(this.start).format('YYYY-MM-DD');
         // this.getTimeSheetEntriesbyEmployeeId(this.employeeId, this.formattedweakendStart);
+        this.signalService.timesheetApprovalsCountSignal.set(true);
       },
     });
   }
@@ -2027,6 +2074,8 @@ openModal(content: any, dayForm: AbstractControl | null, index: number, dayKey: 
         this.formattedweakendStart = moment(this.start).format('YYYY-MM-DD');
         this.getTimeSheetEntriesbyEmployeeId(this.employeeId, this.formattedweakendStart);
         this.getApprovalStatusCounts();
+        this.signalService.timesheetApprovalsCountSignal.set(true);
+        console.log('SIgnal triggered');   
       },
       error: (err) => {
         this.modalService.dismissAll();
@@ -2040,6 +2089,13 @@ openModal(content: any, dayForm: AbstractControl | null, index: number, dayKey: 
         setTimeout(() => {
           modalRef.close();
         }, 3000);
+        this.signalService.timesheetApprovalsCountSignal.set(true);
+        console.log('SIgnal triggered');   
+      },
+      complete : () =>{
+        this.signalService.timesheetApprovalsCountSignal.set(true);
+        console.log('SIgnal triggered');   
+        
       },
     });
   }
@@ -2107,8 +2163,26 @@ openModal(content: any, dayForm: AbstractControl | null, index: number, dayKey: 
 
   // Check if any of the fields in the day form are filled
   isDayFormDirtyOrFilled(form: FormGroup): boolean {
-    const { description, duration, } = form.value;
-    return !!(description && duration);
+    const fieldsToCheck = ['description', 'duration', 'startTime', 'endTime', 'taskId'];
+
+  for (const field of fieldsToCheck) {
+    const control = form.get(field);
+
+    // Check only if the field has Validators.required
+    if (control?.hasValidator(Validators.required)) {
+      const value = control.value;
+
+      if (
+        value === null ||
+        value === undefined ||
+        value === ''
+      ) {
+        return false;
+      }
+    }
+  }
+
+  return true;
   }
   //based status colour
   getApprovalClass(control: AbstractControl | null): any {

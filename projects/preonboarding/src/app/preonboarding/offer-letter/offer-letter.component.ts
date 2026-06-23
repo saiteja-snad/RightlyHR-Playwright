@@ -585,21 +585,12 @@ export class OfferLetterComponent implements OnInit {
   async downloadoffer() {
     const data = this.offerLetterData;
     const fullName = [data.firstName, data.middleName, data.lastName].filter(Boolean).join(' ');
-    const [backgroundImageBase64, verdanaItalic, verdanaSemiBold] = await Promise.all([
-      this.fetchImageAsBase64('/images/snad-new-letter-bg.png'),
-      this.getFileBase64('/fonts/Verdana Italic.ttf'),
-      this.getFileBase64('/fonts/verdana-pro-semi-bold.ttf'),
+    const isSoftCopy = true;
+
+    const [assets, pm] = await Promise.all([
+      fetchLetterAssets(isSoftCopy),
+      setupLetterPdfMake(),
     ]);
-    const pm = (pdfMake as any).default ?? pdfMake;
-    const mergedVfs: Record<string, string> = { ...customVfs };
-    if (verdanaItalic)   mergedVfs['VerdanaItalic.ttf']   = verdanaItalic;
-    if (verdanaSemiBold) mergedVfs['VerdanaSemiBold.ttf'] = verdanaSemiBold;
-    pm.addVirtualFileSystem(mergedVfs);
-    pm.setFonts({
-      VERDANA: { normal: 'VerdanaNow.ttf', bold: 'VerdanaNowBold.ttf', italics: verdanaItalic ? 'VerdanaItalic.ttf' : 'VerdanaNow.ttf', bolditalics: 'VerdanaNowBold.ttf' },
-      VERDANABOLD: { normal: verdanaSemiBold ? 'VerdanaSemiBold.ttf' : 'VerdanaNowBold.ttf', bold: verdanaSemiBold ? 'VerdanaSemiBold.ttf' : 'VerdanaNowBold.ttf', italics: verdanaSemiBold ? 'VerdanaSemiBold.ttf' : 'VerdanaNowBold.ttf', bolditalics: verdanaSemiBold ? 'VerdanaSemiBold.ttf' : 'VerdanaNowBold.ttf' },
-      Autography: { normal: 'Autography.otf', bold: 'Autography.otf', italics: 'Autography.otf', bolditalics: 'Autography.otf' },
-    });
     const docDef = buildOfferLetterDoc({
       firstName: data.firstName,
       middleName: data.middleName,
@@ -644,7 +635,8 @@ export class OfferLetterComponent implements OnInit {
       useVerdanaFont: true,
       useAutographyFont: true,
       employeeFullName: fullName,
-      backgroundImageBase64,
+      backgroundImageBase64: assets.backgroundImageBase64,
+      headerLogoBase64: assets.headerLogoBase64,
     });
     const blob: Blob = await pm.createPdf(docDef).getBlob();
     const fileName = `${data.firstName}_${data.middleName ?? ''}_${data.lastName ?? ''}_OfferLetter.pdf`;

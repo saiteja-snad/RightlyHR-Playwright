@@ -27,16 +27,15 @@ import { Skeleton } from 'primeng/skeleton';
 import { TimeoffYearFilterService } from '../../services/timeoff-year-filter.service';
 import { TimeoffSelectionService } from '../../services/timeoff-selection.service';
 import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
+import { ApplicablePoliciesTriggerComponent } from '../../shared/policies/applicable-policies-trigger/applicable-policies-trigger.component';
+import { APPLICABLE_POLICIES_KEYS, ApplicablePoliciesKeys } from '../../shared/policies/policy-visibility.catalog';
 import { ChipModule } from 'primeng/chip';
 import { FrequencyFilterService } from '../../services/frequency-filter.service';
 import { ConfirmationIconComponent } from '../../icons/confirmation-icon/confirmation-icon.component';
-import { ApplicablePoliciesTriggerComponent } from '../../shared/policies/applicable-policies-trigger/applicable-policies-trigger.component';
-import { APPLICABLE_POLICIES_KEYS, ApplicablePoliciesKeys } from '../../shared/policies/policy-visibility.catalog';
 @Component({
   selector: 'app-leaves',
   imports: [CommonModule, NgbNavModule, ModuleInfoIconComponent,NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, Select, Skeleton,
-    RouterModule, ReactiveFormsModule, TranslateModule, LeavesApprovaltabsComponent, TabsModule, ChartModule, ModuleInformationComponent,
-    ConfirmationIconComponent, ChipModule, MultiSelect, ApplicablePoliciesTriggerComponent],
+    RouterModule, ReactiveFormsModule, TranslateModule, LeavesApprovaltabsComponent, TabsModule, ChartModule, ModuleInformationComponent, ConfirmationIconComponent, ApplicablePoliciesTriggerComponent, ChipModule, MultiSelect],
   templateUrl: './leaves.component.html',
   styleUrl: './leaves.component.scss',
   encapsulation: ViewEncapsulation.None,
@@ -539,8 +538,28 @@ getTeamManagersDetails() {
   }
 
   getAvailableLeaves(item: any): number {
-    if (item.category?.isProbationAllowed && item.probationLeaves > 0) {
-      return item.probationLeaves - item.utilizedDays - item.booked - (item.expiryDaysLeaves ? item.expiryDaysLeaves : 0);
+    const isCompOff = [
+      'comp off',
+      'compoff',
+      'compensatory off',
+      'compensatory leaves',
+      'compensatory leave',
+      'compensatory off leave',
+      'compensatoryoff leaves',
+      'compensatoryoff leave',
+      'compensatory off leaves',
+      'comp off leave',
+      'compoff leave'
+    ].includes((item.category?.name ?? '').toLowerCase());
+
+    const expiryDeduction = isCompOff ? (item.expiryDaysLeaves ? item.expiryDaysLeaves : 0) : 0;
+
+    const isProbationActive = this.employeeiddetails.empType === 'Probation' &&
+      this.employeeiddetails?.probationEndDate &&
+      new Date(this.employeeiddetails.probationEndDate) > new Date();
+
+    if (isProbationActive && item.category?.isProbationAllowed && item.probationLeaves > 0) {
+      return item.availableProbationLeaves;
     } else {
       return item.allowedDays - item.utilizedDays - item.booked - (item.expiryDaysLeaves ? item.expiryDaysLeaves : 0);
     }
@@ -578,6 +597,8 @@ getTeamManagersDetails() {
     this.subscription = this.http.getData(`Employeedata/${this.empdata.employeeId}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data: any) => {
         this.employeeiddetails = data;
+        console.log(this.employeeiddetails);
+
         // this.calculateProbationLeavs(this.categoryDetails);
       },
     });

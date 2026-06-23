@@ -309,7 +309,7 @@ export class LoadEntitlemetpreviewComponent implements OnInit, OnDestroy {
   }
 
   navigationtoback() {
-    this.route.navigate(['/settings/timeoff-configurations/leave-entitlements/load-entitlement-breakdown']);
+    this.route.navigate(['/settings/timeoff-configurations/leave-entitlements/load-entitlement-map-categoery']);
   }
 
   ngOnDestroy(): void {

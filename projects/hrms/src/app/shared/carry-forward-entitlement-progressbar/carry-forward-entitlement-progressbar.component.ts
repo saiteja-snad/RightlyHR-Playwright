@@ -33,10 +33,8 @@ export class CarryForwardEntitlementProgressbarComponent implements OnInit, OnDe
       this.progress = 1;
     } else if (url.includes('load-entitlement-map-categoery')) {
       this.progress = 2;
-    } else if (url.includes('load-entitlement-breakdown')) {
-      this.progress = 3;
     } else if (url.includes('load-entitlement-preview')) {
-      this.progress = 4;
+      this.progress = 3;
     } else {
       this.progress = 0;
     }

@@ -32,7 +32,7 @@ export class OnBeHalfOfEntitlementSummaryComponent implements OnInit, OnDestroy 
   ) {
     effect(() => {
       if (this.http.onBehalfOfTriggerSignal()) {
-        this.http.onBehalfOfTriggerSignal.set(false);
+        this.http.onBehalfOfTriggerSignal.update(v => v + 1);
         const empId = parseInt(localStorage.getItem('onbehalfof') as string);
         if (!isNaN(empId) && empId > 0) {
           this.candidateEmployeeId = empId;

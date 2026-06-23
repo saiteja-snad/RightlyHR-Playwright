@@ -15,13 +15,8 @@
         </div>
         <div class="line-connector" [ngClass]="progress > 2 ? 'connector-active' : ''"></div>
         <div class="line-step">
-          <div class="line-circle" [ngClass]="getCircleClass(3)">B</div>
-          <span class="line-step-name" [ngClass]="getTextClass(3)">Configure Breakdown</span>
-        </div>
-        <div class="line-connector" [ngClass]="progress > 3 ? 'connector-active' : ''"></div>
-        <div class="line-step">
-          <div class="line-circle" [ngClass]="getCircleClass(4)">R</div>
-          <span class="line-step-name" [ngClass]="getTextClass(4)">Review Report</span>
+          <div class="line-circle" [ngClass]="getCircleClass(3)">R</div>
+          <span class="line-step-name" [ngClass]="getTextClass(3)">Review Report</span>
         </div>
       </div>
     </div>
@@ -42,10 +37,7 @@
           Map Categories @if(progress > 2){<img src="icons/bg-check.png" alt="done" class="step-check-icon ms-1" />}
         </div>
         <div class="chevron-step" [ngClass]="getStepClass(3)">
-          Configure Breakdown @if(progress > 3){<img src="icons/bg-check.png" alt="done" class="step-check-icon ms-1" />}
-        </div>
-        <div class="chevron-step" [ngClass]="getStepClass(4)">
-          Review Report @if(progress > 4){<img src="icons/bg-check.png" alt="done" class="step-check-icon ms-1" />}
+          Review Report @if(progress > 3){<img src="icons/bg-check.png" alt="done" class="step-check-icon ms-1" />}
         </div>
       </div>
       <div class="d-flex sub-row">

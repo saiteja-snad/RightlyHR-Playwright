@@ -58,7 +58,7 @@ export class OnBeHalfOfRejectComponent implements OnInit, OnDestroy{
         } else {
           this.rejectedLeaves = [];
         }
-        this.http.onBehalfOfTriggerSignal.set(false);
+        this.http.onBehalfOfTriggerSignal.update(v => v - 1);
       }
     });
   }

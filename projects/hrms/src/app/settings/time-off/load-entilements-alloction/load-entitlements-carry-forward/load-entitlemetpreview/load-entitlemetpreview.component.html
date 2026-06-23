@@ -105,7 +105,7 @@
                                 </td>
                                 <td>{{ entry.destinationCategoryName }}</td>
                                 <td class="text-center">{{ entry.frequencyType }}</td>
-                                <td class="text-center">{{ entry.previousCycleHandling }}</td>
+                                <td class="text-center">{{ entry.previousCycleHandling ?? '-' }}</td>
                                 <td class="text-center">
                                     <span>{{ entry.allowedDays }}</span>
                                     <i class="bi bi-info-circle ms-2 text-primary" style="cursor:pointer" title="View cycle breakdown"

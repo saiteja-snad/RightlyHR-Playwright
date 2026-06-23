@@ -74,7 +74,7 @@ export class OnBeHalfOfWaitingForApprovalComponent implements OnInit, OnDestroy{
         } else {
           this.waitingForApprovalLeaves = [];
         }
-        this.http.onBehalfOfTriggerSignal.set(false);
+        this.http.onBehalfOfTriggerSignal.update(v => v - 1);
       }
     });
   }

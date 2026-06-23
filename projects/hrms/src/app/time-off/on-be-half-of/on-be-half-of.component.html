@@ -120,6 +120,18 @@
                             <p class="m-0">0</p>
                             }
                         </div>
+
+                        @if(this.leaveapplication.empType === 'Probation' && (item.category.isProbationAllowed && item.probationLeaves >= 0)){
+                        <div class="separator"></div>
+                        <div class="leave-category-text">
+                            <p class="m-0">Probation</p>
+                            @if (item.category.isProbationAllowed && item.probationLeaves >= 0) {
+                            <p class="m-0">{{item.availableProbationLeaves ? item.availableProbationLeaves : '0'}}</p>
+                            }
+                        </div>
+                        }
+
+
                         @if (
                         ['comp off',
                         'compoff',
@@ -358,8 +370,8 @@
                     <p>Balance {{ selectedleave.category?.name }} : {{ remainingLeaves }} {{ remainingLeaves === 1 || remainingLeaves === 0.5 ? 'Day' : 'Days' }}</p>
                 </div>
                 }
-                <div class="alert alert-info custom-alert-info py-2" *ngIf="selectedleave?.category?.isNoticePeriodExtended === true
-                && selectedleave?.category?.noticePeriodAllowedValue >= 0 && (this.employeeiddetails.separationType === 'Separation' || this.employeeiddetails.separationType === 'Early Relieving' || this.employeeiddetails.separationType === 'Extended')">
+                <div class="alert alert-info custom-alert-info py-2" *ngIf="selectedleave?.category?.isNoticePeriodExtended === true 
+                && selectedleave?.category?.noticePeriodAllowedValue >= 0 && (this.employeeiddetails.separationType === 'Separation' || this.employeeiddetails.separationType === 'Early Relieving' || this.employeeiddetails.separationType === 'Extended')"  >
                     <small>Note: Applying this leave will extend your last working day</small>
                 </div>
                 <div class="custom-modal-footer">

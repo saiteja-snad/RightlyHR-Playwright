@@ -131,7 +131,7 @@ export class OnBeHalfOfApprovalTabsComponent implements OnInit{
             cancelled: 0,
           });
         }
-        this.http.onBehalfOfTriggerSignal.set(false);
+        this.http.onBehalfOfTriggerSignal.update(v => v - 1);
       }
     });
   }

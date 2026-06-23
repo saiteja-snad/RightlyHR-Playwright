@@ -771,6 +771,19 @@
         border: 1px solid var(--primary-color);
         color: var(--primary-color);
     }
+    .attendance-chip {
+        font-size: var(--fontsize10);
+        font-weight: 600;
+        padding: 0.125rem 0.5rem;
+        border-radius: 0.25rem;
+        width: max-content;
+        
+        &.chip-permission {
+            background-color: #FFF;
+            color: #305889 !important;
+            border: 1px solid #305889;
+    }
+    }
 }
 
 @media (max-width: 1600px) {

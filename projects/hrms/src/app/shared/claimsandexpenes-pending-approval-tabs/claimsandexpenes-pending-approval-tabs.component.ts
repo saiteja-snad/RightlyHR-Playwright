@@ -63,11 +63,11 @@ export class ClaimsandexpenesPendingApprovalTabsComponent
       
         // Conditionally reset the signals based on their current state
         if (this.signalService.claimsandexpensesForRoleTriggerSignal()) {
-          this.signalService.claimsandexpensesForRoleTriggerSignal.set(false);
+          //this.signalService.claimsandexpensesForRoleTriggerSignal.set(false);
         }
         
         if (this.signalService.clamisandexpensesForYouTriggerSignal()) {
-          this.signalService.clamisandexpensesForYouTriggerSignal.set(false);
+          //this.signalService.clamisandexpensesForYouTriggerSignal.set(false);
         }
       }
       

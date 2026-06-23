@@ -49,11 +49,11 @@ export class TimeOffRequestTabsComponent {
 
         // Conditionally reset the signals based on their current state
         if (this.signalService.timeoffForRoleTriggerSignal()) {
-          this.signalService.timeoffForRoleTriggerSignal.set(false);
+          //this.signalService.timeoffForRoleTriggerSignal.set(false);
         }
 
         if (this.signalService.timeoffForYouTriggerSignal()) {
-          this.signalService.timeoffForYouTriggerSignal.set(false);
+          //this.signalService.timeoffForYouTriggerSignal.set(false);
         }
       }
     });

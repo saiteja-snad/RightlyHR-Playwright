@@ -41,6 +41,7 @@
         <th class="text-center">{{ 'Entitled' | translate }}</th>
         <th class="text-center">{{ 'Availed' | translate }}</th>
         <th class="text-center">{{ 'Freeze' | translate }}</th>
+        <th class="text-center">{{ 'Lapse' | translate }}</th>
         <th class="text-center">{{ 'Balance' | translate }}</th>
       </thead>
       <tbody>
@@ -59,6 +60,7 @@
           <td class="text-center">{{ record.entitled ?? '-' }}</td>
           <td class="text-center">{{ record.availed ?? '-' }}</td>
           <td class="text-center">{{ record.frozenCount ?? '-' }}</td>
+          <td class="text-center">{{ record.lapseCount ?? '-' }}</td>
           <td class="text-center">{{ record.balance ?? '-' }}</td>
         </tr>
         }

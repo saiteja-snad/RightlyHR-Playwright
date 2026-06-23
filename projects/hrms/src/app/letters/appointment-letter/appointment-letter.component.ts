@@ -20,6 +20,7 @@ import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { IAssertsType } from '../../Interfaces/job-model';
 import { SignalsService } from '../../services/signals.service';
 import { DateformatPipe } from '../../pipes/dateformat.pipe';
+import { fetchLetterAssets, setupLetterPdfMake } from '../../letters-builder-files/letter-pdf.utils';
 @Component({
   selector: 'app-appointment-letter',
   imports: [CommonModule, SelectModule, DateformatPipe, ReactiveFormsModule, TranslateModule, NgbPopoverModule, LetterFooterComponent, LettersheaderComponent],
@@ -27,8 +28,8 @@ import { DateformatPipe } from '../../pipes/dateformat.pipe';
   styleUrl: './appointment-letter.component.scss'
 })
 
-export class AppointmentLetterComponent implements OnInit,OnDestroy {
- subscription!: Subscription;
+export class AppointmentLetterComponent implements OnInit, OnDestroy {
+  subscription!: Subscription;
   JoinDateValid: boolean = true;
   currentDate: Date = new Date();
   AppointmentFile!: File;
@@ -89,6 +90,9 @@ export class AppointmentLetterComponent implements OnInit,OnDestroy {
       notes: ['',],
       authorityid: ['', Validators.required],
       jobValid: [false, Validators.requiredTrue],
+      assertType: [''],
+      model: [''],
+      serial: [''],
       addressLine1: [''],
       addressLine2: [''],
       city: [''],
@@ -107,8 +111,8 @@ export class AppointmentLetterComponent implements OnInit,OnDestroy {
         this.employeeiddetails = data as IemployeeDetails[];
         this.employeeiddetails = this.employeeiddetails.map((emp: IemployeeDetails) => ({
           ...emp,
-          fullName: `${emp.fusionEmpId ? emp.fusionEmpId + ' -' :''} ${emp.firstName ?? ''} ${emp.middleName ?? ''} ${emp.lastName ?? ''}`, // Concatenate firstName, middleName, lastName
-        })).sort((a: any, b: any) => (a.firstName ?? '').localeCompare(b.firstName ?? '')); 
+          fullName: `${emp.fusionEmpId ? emp.fusionEmpId + ' -' : ''} ${emp.firstName ?? ''} ${emp.middleName ?? ''} ${emp.lastName ?? ''}`, // Concatenate firstName, middleName, lastName
+        })).sort((a: any, b: any) => (a.firstName ?? '').localeCompare(b.firstName ?? ''));
       },
       error: (reason: any) => {
         console.log(reason);
@@ -308,23 +312,10 @@ export class AppointmentLetterComponent implements OnInit,OnDestroy {
     const fileName = `${this.selectedEmployee.firstName}_${this.selectedEmployee.lastName}_${Date.now()}_AppointmentLetter_Unsigned.pdf`;
     const isSoftCopy = f.value.documentType?.value === true;
 
-    const [backgroundImageBase64, verdanaItalic, verdanaSemiBold] = await Promise.all([
-      isSoftCopy ? this.fetchImageAsBase64('/images/snad-new-letter-bg.png') : Promise.resolve(undefined as string | undefined),
-      this.getFileBase64('/fonts/Verdana Italic.ttf'),
-      this.getFileBase64('/fonts/verdana-pro-semi-bold.ttf'),
+    const [assets, pm] = await Promise.all([
+      fetchLetterAssets(isSoftCopy),
+      setupLetterPdfMake(),
     ]);
-
-    const pm = (pdfMake as any).default ?? pdfMake;
-    const mergedVfs: Record<string, string> = { ...customVfs };
-    if (verdanaItalic)   mergedVfs['VerdanaItalic.ttf']   = verdanaItalic;
-    if (verdanaSemiBold) mergedVfs['VerdanaSemiBold.ttf'] = verdanaSemiBold;
-    pm.addVirtualFileSystem(mergedVfs);
-    pm.setFonts({
-      VERDANA: { normal: 'VerdanaNow.ttf', bold: 'VerdanaNowBold.ttf', italics: verdanaItalic ? 'VerdanaItalic.ttf' : 'VerdanaNow.ttf', bolditalics: 'VerdanaNowBold.ttf' },
-      VERDANABOLD: { normal: verdanaSemiBold ? 'VerdanaSemiBold.ttf' : 'VerdanaNowBold.ttf', bold: verdanaSemiBold ? 'VerdanaSemiBold.ttf' : 'VerdanaNowBold.ttf', italics: verdanaSemiBold ? 'VerdanaSemiBold.ttf' : 'VerdanaNowBold.ttf', bolditalics: verdanaSemiBold ? 'VerdanaSemiBold.ttf' : 'VerdanaNowBold.ttf' },
-      Autography: { normal: 'Autography.otf', bold: 'Autography.otf', italics: 'Autography.otf', bolditalics: 'Autography.otf' },
-    });
-
     const docDef = buildAppointmentLetterDoc({
       employeeFullname: this.employeeFullname,
       appointmentDate: f.value.appointmentdate,
@@ -339,7 +330,8 @@ export class AppointmentLetterComponent implements OnInit,OnDestroy {
       authorityDesignation: this.selectedAuthority?.designation || '',
       panNumber: this.panDetails?.[0]?.identityNumber || '',
       dateOfJoining: f.value.dateOfJoining || '',
-      backgroundImageBase64,
+      backgroundImageBase64: assets.backgroundImageBase64,
+      headerLogoBase64: assets.headerLogoBase64,
       useVerdanaFont: true,
       useAutographyFont: true,
     });
@@ -437,15 +429,15 @@ export class AppointmentLetterComponent implements OnInit,OnDestroy {
       jobId: this.employeeJobDetails?.id,
     };
     this.http.postdata('AppointmentLetter', postAppDetails).subscribe({
-      next: () => { 
+      next: () => {
         this.signalService.AppointmentLetterNavCountSignal.set(true);
       },
-      error: () => { 
+      error: () => {
         this.signalService.AppointmentLetterNavCountSignal.set(true);
       },
       complete: () => {
-          this.signalService.AppointmentLetterNavCountSignal.set(true);
-        },
+        this.signalService.AppointmentLetterNavCountSignal.set(true);
+      },
     });
   }
 
@@ -468,7 +460,7 @@ export class AppointmentLetterComponent implements OnInit,OnDestroy {
       teamManagerId: this.employeeJobDetails?.reportingmanagerId,
       reportingManagerName: `${this.employeeJobDetails?.fName} ${this.employeeJobDetails?.mName} ${this.employeeJobDetails?.lName}`,
       teamManagerName: `${this.employeeJobDetails?.firstName} ${this.employeeJobDetails?.middleName} ${this.employeeJobDetails?.lastName}`,
-      generatedBy:loggedInUser.employeeId,
+      generatedBy: loggedInUser.employeeId,
       generatedDate: new Date().toISOString(),
     }
     if (loggedInUser.middleName) {
@@ -478,7 +470,7 @@ export class AppointmentLetterComponent implements OnInit,OnDestroy {
       emaildetails.senderName = `${loggedInUser.firstName} ${loggedInUser.lastName}`
       emaildetails.appointee = `${loggedInUser.firstName} ${loggedInUser.lastName}`
     }
-  this.subscription = this.http.postdata(`CustomEmail/appointmentletter`, emaildetails).subscribe({
+    this.subscription = this.http.postdata(`CustomEmail/appointmentletter`, emaildetails).subscribe({
       next: (data: any) => {
         this.resetForm();
         this.spinnerLoader = false;
@@ -506,7 +498,7 @@ export class AppointmentLetterComponent implements OnInit,OnDestroy {
     this.subscription = this.http.postdata('AssetTable', postAssetDetails).subscribe({
       next: (data: any) => {
         this.assertdata = data;
-        this.spinnerLoader= false;
+        this.spinnerLoader = false;
       },
       error: (reason: any) => {
         this.spinnerLoader = false;

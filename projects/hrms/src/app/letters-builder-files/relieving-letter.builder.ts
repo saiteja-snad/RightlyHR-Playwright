@@ -1,4 +1,7 @@
+import { applyLetterPageSetup, LETTER_MARGINS, stampFont } from "./letter-builder.utils";
+
 export interface RelievingLetterData {
+  headerLogoBase64: any;
   firstName: string;
   middleName?: string;
   lastName: string;
@@ -74,35 +77,26 @@ export function buildRelievingLetterDoc(data: RelievingLetterData): any {
     { text: data.authorityDesignation, fontSize: PX(13), margin: [0, 0, 0, 0], font: 'VERDANABOLD' },
   ];
 
-  function stampFont(nodes: any[]): any[] {
-    return nodes.map(node => {
-      if (typeof node === 'string') return node;
-      if (Array.isArray(node)) return stampFont(node);
-      const stamped: any = node.font ? node : { font: bodyFont, ...node };
-      if (Array.isArray(stamped.text)) {
-        stamped.text = stamped.text.map((t: any) => typeof t === 'string' ? t : (t.font ? t : { font: bodyFont, ...t }));
-      }
-      if (stamped.stack) stamped.stack = stampFont(stamped.stack);
-      if (stamped.columns) stamped.columns = stampFont(stamped.columns);
-      return stamped;
-    });
-  }
-
-  const styledContent = stampFont(content);
-  const topMargin = data.backgroundImageBase64 ? 120 : 50;
-  const bottomMargin = data.backgroundImageBase64 ? 120 : 50;
-
-  const docDef: any = {
-    pageSize: 'A4',
-    pageMargins: [60, topMargin, 60, bottomMargin],
-    defaultStyle: { font: bodyFont, fontSize: PX(13), color: '#000' },
-    content: styledContent,
-  };
-
-  if (data.backgroundImageBase64) {
-    docDef.images = { letterBg: data.backgroundImageBase64 };
-    docDef.background = () => ({ image: 'letterBg', width: 620, height: 870, absolutePosition: { x: -12, y: -14 } });
-  }
-
-  return docDef;
+   const isSoftCopy = !!data.backgroundImageBase64;
+     const margins = isSoftCopy ? LETTER_MARGINS.softCopy : LETTER_MARGINS.hardCopy;
+   
+     const docDef: any = {
+       pageSize: 'A4',
+       pageMargins: [margins.left, margins.top, margins.right, margins.bottom],
+       defaultStyle: {
+         font: bodyFont,
+         fontSize: PX(13),
+         alignment: 'justify',
+         color: '#000',
+       },
+       content: stampFont(content, bodyFont),
+     };
+   
+     applyLetterPageSetup(docDef, {
+       backgroundImageBase64: data.backgroundImageBase64,
+       headerLogoBase64: data.headerLogoBase64,
+       bodyFont,
+     });
+   
+     return docDef;
 }

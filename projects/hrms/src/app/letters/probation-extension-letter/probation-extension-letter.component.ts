@@ -17,6 +17,7 @@ import { buildProbationExtensionLetterDoc } from '../../letters-builder-files/pr
 import { DateformatPipe } from '../../pipes/dateformat.pipe';
 import { LettersheaderComponent } from "../../shared/letters-shared-content/lettersheader/lettersheader.component";
 import { LetterFooterComponent } from "../../shared/letters-shared-content/letter-footer/letter-footer.component";
+import { fetchLetterAssets, setupLetterPdfMake } from '../../letters-builder-files/letter-pdf.utils';
 @Component({
   selector: 'app-probation-extension-letter',
   imports: [CommonModule, SelectModule, ReactiveFormsModule, DateformatPipe, TranslateModule, NgbPopoverModule, LettersheaderComponent, LetterFooterComponent],
@@ -24,7 +25,7 @@ import { LetterFooterComponent } from "../../shared/letters-shared-content/lette
   styleUrl: './probation-extension-letter.component.scss',
 })
 
-export class ProbationExtensionLetterComponent implements OnInit,OnDestroy {
+export class ProbationExtensionLetterComponent implements OnInit, OnDestroy {
   moduleinfo: string = '';
   subscription!: Subscription;
   employeedetails: IEmployee[] = [];
@@ -46,7 +47,7 @@ export class ProbationExtensionLetterComponent implements OnInit,OnDestroy {
   todayDate!: string;
   lastSelectedEmployeeId: number | null = null;
 
-  constructor(private http: HttpService, private router: Router, private fb: FormBuilder, 
+  constructor(private http: HttpService, private router: Router, private fb: FormBuilder,
     private openModalService: OpenModalService) { }
 
   ngOnInit(): void {
@@ -110,7 +111,7 @@ export class ProbationExtensionLetterComponent implements OnInit,OnDestroy {
       next: (data: any) => {
         this.employeedetails = data.map((employee: any) => ({
           ...employee,
-          fullName: `${employee.fusionEmpId ? employee.fusionEmpId + '-' :''} ${employee.firstName} 
+          fullName: `${employee.fusionEmpId ? employee.fusionEmpId + '-' : ''} ${employee.firstName} 
           ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`
         })).sort((a: any, b: any) => (a.firstName ?? '').localeCompare(b.firstName ?? ''));
       },
@@ -166,41 +167,27 @@ export class ProbationExtensionLetterComponent implements OnInit,OnDestroy {
   pathValuesFuction() {
     const formValues = this.probationExtensionForm.value;
     this.probationExtensionLetterData.firstName = formValues.employeeId?.firstName,
-    this.probationExtensionLetterData.middleName = formValues.employeeId?.middleName,
-    this.probationExtensionLetterData.lastName = formValues.employeeId?.lastName,
-    this.probationExtensionLetterData.fusionEmpId = formValues.employeeId?.fusionEmpId,
-    this.probationExtensionLetterData.jobRole = formValues.employeeId?.jobDetails?.jobRole,
-    this.probationExtensionLetterData.department = formValues.employeeId?.departmentName,
-    this.probationExtensionLetterData.workLocation = formValues.employeeId?.jobDetails?.subLocation + ', ' + formValues.employeeId?.jobDetails?.lopcation,
-    this.probationExtensionLetterData.dateofprobationextension = formValues?.issuedDate,
-    this.probationExtensionLetterData.Documenttype = formValues?.Documenttype;
+      this.probationExtensionLetterData.middleName = formValues.employeeId?.middleName,
+      this.probationExtensionLetterData.lastName = formValues.employeeId?.lastName,
+      this.probationExtensionLetterData.fusionEmpId = formValues.employeeId?.fusionEmpId,
+      this.probationExtensionLetterData.jobRole = formValues.employeeId?.jobDetails?.jobRole,
+      this.probationExtensionLetterData.department = formValues.employeeId?.departmentName,
+      this.probationExtensionLetterData.workLocation = formValues.employeeId?.jobDetails?.subLocation + ', ' + formValues.employeeId?.jobDetails?.lopcation,
+      this.probationExtensionLetterData.dateofprobationextension = formValues?.issuedDate,
+      this.probationExtensionLetterData.Documenttype = formValues?.Documenttype;
     this.probationExtensionLetterData.authorityName = formValues.authorityid?.fullName,
-    this.probationExtensionLetterData.authorityDesignation = formValues.authorityid?.designation,
-    this.probationExtensionLetterData.employeeId = formValues.employeeId?.employeeId
+      this.probationExtensionLetterData.authorityDesignation = formValues.authorityid?.designation,
+      this.probationExtensionLetterData.employeeId = formValues.employeeId?.employeeId
   }
 
   async postProbationExtensionLetterFormSubmit() {
     this.spinnerLoader = true;
     const fileName = `${this.probationExtensionLetterData.firstName}_${this.probationExtensionLetterData.lastName}_${Date.now()}_ProbationExtensionLetter.pdf`;
     const isSoftCopy = this.probationExtensionForm.get('Documenttype')?.value === true;
-
-    const [backgroundImageBase64, verdanaItalic, verdanaSemiBold] = await Promise.all([
-      isSoftCopy ? this.fetchImageAsBase64('/images/snad-new-letter-bg.png') : Promise.resolve(undefined as string | undefined),
-      this.getFileBase64('/fonts/Verdana Italic.ttf'),
-      this.getFileBase64('/fonts/verdana-pro-semi-bold.ttf'),
+    const [assets, pm] = await Promise.all([
+      fetchLetterAssets(isSoftCopy),
+      setupLetterPdfMake(),
     ]);
-
-    const pm = (pdfMake as any).default ?? pdfMake;
-    const mergedVfs: Record<string, string> = { ...customVfs };
-    if (verdanaItalic)   mergedVfs['VerdanaItalic.ttf']   = verdanaItalic;
-    if (verdanaSemiBold) mergedVfs['VerdanaSemiBold.ttf'] = verdanaSemiBold;
-    pm.addVirtualFileSystem(mergedVfs);
-    pm.setFonts({
-      VERDANA: { normal: 'VerdanaNow.ttf', bold: 'VerdanaNowBold.ttf', italics: verdanaItalic ? 'VerdanaItalic.ttf' : 'VerdanaNow.ttf', bolditalics: 'VerdanaNowBold.ttf' },
-      VERDANABOLD: { normal: verdanaSemiBold ? 'VerdanaSemiBold.ttf' : 'VerdanaNowBold.ttf', bold: verdanaSemiBold ? 'VerdanaSemiBold.ttf' : 'VerdanaNowBold.ttf', italics: verdanaSemiBold ? 'VerdanaSemiBold.ttf' : 'VerdanaNowBold.ttf', bolditalics: verdanaSemiBold ? 'VerdanaSemiBold.ttf' : 'VerdanaNowBold.ttf' },
-      Autography: { normal: 'Autography.otf', bold: 'Autography.otf', italics: 'Autography.otf', bolditalics: 'Autography.otf' },
-    });
-
     const docDef = buildProbationExtensionLetterDoc({
       firstName: this.probationExtensionLetterData.firstName || '',
       middleName: this.probationExtensionLetterData.middleName || '',
@@ -214,7 +201,8 @@ export class ProbationExtensionLetterComponent implements OnInit,OnDestroy {
       probationExtendedDate: this.probationExtensionLetterData.probationExtendedDate || '',
       authorityName: this.probationExtensionLetterData.authorityName || '',
       authorityDesignation: this.probationExtensionLetterData.authorityDesignation || '',
-      backgroundImageBase64,
+      backgroundImageBase64: assets.backgroundImageBase64,
+      headerLogoBase64: assets.headerLogoBase64,
       useVerdanaFont: true,
       useAutographyFont: true,
     });
@@ -270,7 +258,7 @@ export class ProbationExtensionLetterComponent implements OnInit,OnDestroy {
         });
         this.probationExtensionLetterData.probationExtendedDate = this.getProbationDetails.probationExtendedDate
         this.probationExtensionLetterData.probationmonths = this.convertDaysToMonths(this.getProbationDetails.probationEndDate,
-        this.getProbationDetails.probationExtendedDate)
+          this.getProbationDetails.probationExtendedDate)
       }
     })
   }
@@ -323,7 +311,7 @@ export class ProbationExtensionLetterComponent implements OnInit,OnDestroy {
       generatedDate: this.todayDate,
       generatedBy: this.Employeeinfo.employeeId,
       DocType: this.probationExtensionForm.get('Documenttype')?.value,
-      letterType : 'Probation Extension Letter'
+      letterType: 'Probation Extension Letter'
     }
     this.getProbationDetails.documentURL = docurl;
     this.subscription = this.http.postdata('ProbationFlow/updateProbationActivationEmployees', payload).subscribe({

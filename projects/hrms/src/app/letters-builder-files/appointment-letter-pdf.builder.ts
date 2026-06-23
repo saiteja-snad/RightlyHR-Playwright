@@ -1,3 +1,5 @@
+import { applyLetterPageSetup, LETTER_MARGINS, stampFont } from "./letter-builder.utils";
+
 export interface AppointmentLetterData {
   employeeFullname: string;
   appointmentDate: string;
@@ -14,6 +16,7 @@ export interface AppointmentLetterData {
   dateOfJoining: string;
   employeeSignatureDate?: string;
   backgroundImageBase64?: string;
+  headerLogoBase64?: string;
   useVerdanaFont?: boolean;
   useAutographyFont?: boolean;
 }
@@ -377,68 +380,28 @@ export function buildAppointmentLetterDoc(data: AppointmentLetterData): any {
     { text: [{ text: 'Date : ', font: 'VERDANABOLD' }, { text: data.employeeSignatureDate ? fmt(data.employeeSignatureDate) : '', font: 'VERDANABOLD' }], margin: [0, 0, 0, 0] },
   ];
 
-  function stampFont(nodes: any[]): any[] {
-    return nodes.map(node => {
-      if (typeof node === 'string') return node;
-      if (Array.isArray(node)) return stampFont(node);
-      const stamped: any = node.font ? node : { font: bodyFont, ...node };
-      if (Array.isArray(stamped.text)) {
-        stamped.text = stamped.text.map((t: any) =>
-          typeof t === 'string' ? t : (t.font ? t : { font: bodyFont, ...t })
-        );
-      }
-      if (Array.isArray(stamped.ol)) stamped.ol = stampFont(stamped.ol);
-      if (Array.isArray(stamped.ul)) stamped.ul = stampFont(stamped.ul);
-      return stamped;
-    });
-  }
+    const content: any[] = [...page1, ...page2, ...page3, ...page4, ...page5, ...page6, ...page7, ...page8, ...page9, ...page10, ...page11, ...page12, ...page13];
 
-  const topMargin = data.backgroundImageBase64 ? 120 : 50;
-  const bottomMargin = data.backgroundImageBase64 ? 110 : 50;
-
-  function makePageStack(items: any[], isFirst = false): any {
-    return {
-      ...(isFirst ? {} : { pageBreak: 'before' }),
-      margin: [0, topMargin, 0, bottomMargin],
-      stack: stampFont(items),
-    };
-  }
-
-  const docDef: any = {
-    pageSize: 'A4',
-    pageMargins: [60, 0, 60, 0],
-    defaultStyle: {
-      font: bodyFont,
-      fontSize: PX(12),
-      alignment: 'justify',
-      color: '#000',
-    },
-    content: [
-      makePageStack(page1, true),
-      makePageStack(page2),
-      makePageStack(page3),
-      makePageStack(page4),
-      makePageStack(page5),
-      makePageStack(page6),
-      makePageStack(page7),
-      makePageStack(page8),
-      makePageStack(page9),
-      makePageStack(page10),
-      makePageStack(page11),
-      makePageStack(page12),
-      makePageStack(page13),
-    ],
-  };
-
-  if (data.backgroundImageBase64) {
-    docDef.images = { letterBg: data.backgroundImageBase64 };
-    docDef.background = () => ({
-      image: 'letterBg',
-      width: 620,
-      height: 870,
-      absolutePosition: { x: -12, y: -14 },
-    });
-  }
-
-  return docDef;
+    const isSoftCopy = !!data.backgroundImageBase64;
+       const margins = isSoftCopy ? LETTER_MARGINS.softCopy : LETTER_MARGINS.hardCopy;
+     
+       const docDef: any = {
+         pageSize: 'A4',
+         pageMargins: [margins.left, margins.top, margins.right, margins.bottom],
+         defaultStyle: {
+           font: bodyFont,
+           fontSize: PX(13),
+           alignment: 'justify',
+           color: '#000',
+         },
+         content: stampFont(content, bodyFont),
+       };
+     
+       applyLetterPageSetup(docDef, {
+         backgroundImageBase64: data.backgroundImageBase64,
+         headerLogoBase64: data.headerLogoBase64,
+         bodyFont,
+       });
+     
+       return docDef;
 }

@@ -16,6 +16,7 @@ import { buildProbationConfirmationLetterDoc } from '../../letters-builder-files
 import { DateformatPipe } from '../../pipes/dateformat.pipe';
 import { LettersheaderComponent } from "../../shared/letters-shared-content/lettersheader/lettersheader.component";
 import { LetterFooterComponent } from "../../shared/letters-shared-content/letter-footer/letter-footer.component";
+import { fetchLetterAssets, setupLetterPdfMake } from '../../letters-builder-files/letter-pdf.utils';
 @Component({
   selector: 'app-probation-confirmation-letter',
   imports: [CommonModule, SelectModule, ReactiveFormsModule, DateformatPipe, TranslateModule, NgbPopoverModule, LettersheaderComponent, LetterFooterComponent],
@@ -187,21 +188,10 @@ export class ProbationConfirmationLetterComponent implements OnInit, OnDestroy {
     this.loading = true;
     const fileName = `${this.probationLetterData.firstName}_${this.probationLetterData.lastName}_${Date.now()}_ProbationConfirmationLetter.pdf`;
     const isSoftCopy = this.probationConfirmationForm.get('Documenttype')?.value === true;
-    const [backgroundImageBase64, verdanaItalic, verdanaSemiBold] = await Promise.all([
-      isSoftCopy ? this.fetchImageAsBase64('/images/snad-new-letter-bg.png') : Promise.resolve(undefined as string | undefined),
-      this.getFileBase64('/fonts/Verdana Italic.ttf'),
-      this.getFileBase64('/fonts/verdana-pro-semi-bold.ttf'),
+    const [assets, pm] = await Promise.all([
+      fetchLetterAssets(isSoftCopy),
+      setupLetterPdfMake(),
     ]);
-    const pm = (pdfMake as any).default ?? pdfMake;
-    const mergedVfs: Record<string, string> = { ...customVfs };
-    if (verdanaItalic)   mergedVfs['VerdanaItalic.ttf']   = verdanaItalic;
-    if (verdanaSemiBold) mergedVfs['VerdanaSemiBold.ttf'] = verdanaSemiBold;
-    pm.addVirtualFileSystem(mergedVfs);
-    pm.setFonts({
-      VERDANA: { normal: 'VerdanaNow.ttf', bold: 'VerdanaNowBold.ttf', italics: verdanaItalic ? 'VerdanaItalic.ttf' : 'VerdanaNow.ttf', bolditalics: 'VerdanaNowBold.ttf' },
-      VERDANABOLD: { normal: verdanaSemiBold ? 'VerdanaSemiBold.ttf' : 'VerdanaNowBold.ttf', bold: verdanaSemiBold ? 'VerdanaSemiBold.ttf' : 'VerdanaNowBold.ttf', italics: verdanaSemiBold ? 'VerdanaSemiBold.ttf' : 'VerdanaNowBold.ttf', bolditalics: verdanaSemiBold ? 'VerdanaSemiBold.ttf' : 'VerdanaNowBold.ttf' },
-      Autography: { normal: 'Autography.otf', bold: 'Autography.otf', italics: 'Autography.otf', bolditalics: 'Autography.otf' },
-    });
 
     const docDef = buildProbationConfirmationLetterDoc({
       firstName: this.probationLetterData.firstName || '',
@@ -215,7 +205,8 @@ export class ProbationConfirmationLetterComponent implements OnInit, OnDestroy {
       effectiveDate: this.probationLetterData.effectiveDate || '',
       authorityName: this.probationLetterData.authorityName || '',
       authorityDesignation: this.probationLetterData.authorityDesignation || '',
-      backgroundImageBase64,
+      backgroundImageBase64: assets.backgroundImageBase64,
+      headerLogoBase64: assets.headerLogoBase64,
       useVerdanaFont: true,
       useAutographyFont: true,
     });

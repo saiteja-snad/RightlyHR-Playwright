@@ -1,4 +1,7 @@
+import { applyLetterPageSetup, LETTER_MARGINS, stampFont } from "./letter-builder.utils";
+
 export interface AddressLetterData {
+  headerLogoBase64: any;
   firstName: string;
   middleName?: string;
   lastName: string;
@@ -77,45 +80,26 @@ export function buildAddressLetterDoc(data: AddressLetterData): any {
     { text: authorityDesignation, bold: true, fontSize: PX(12), margin: [0, 0, 0, 0], font: 'VERDANABOLD' },
   ];
 
-  function stampFont(nodes: any[]): any[] {
-    return nodes.map(node => {
-      if (typeof node === 'string') return node;
-      if (Array.isArray(node)) return stampFont(node);
-      const stamped: any = node.font ? node : { font: bodyFont, ...node };
-      if (Array.isArray(stamped.text)) {
-        stamped.text = stamped.text.map((t: any) =>
-          typeof t === 'string' ? t : (t.font ? t : { font: bodyFont, ...t })
-        );
-      }
-      return stamped;
-    });
-  }
-
-  const styledContent = stampFont(content);
-  const topMargin = data.backgroundImageBase64 ? 140 : 50;
-  const bottomMargin = data.backgroundImageBase64 ? 120 : 50;
+  const isSoftCopy = !!data.backgroundImageBase64;
+  const margins = isSoftCopy ? LETTER_MARGINS.softCopy : LETTER_MARGINS.hardCopy;
 
   const docDef: any = {
     pageSize: 'A4',
-    pageMargins: [60, topMargin, 60, bottomMargin],
+    pageMargins: [margins.left, margins.top, margins.right, margins.bottom],
     defaultStyle: {
       font: bodyFont,
-      fontSize: PX(12),
+      fontSize: PX(13),
       alignment: 'justify',
       color: '#000',
     },
-    content: styledContent,
+    content: stampFont(content, bodyFont),
   };
 
-  if (data.backgroundImageBase64) {
-    docDef.images = { letterBg: data.backgroundImageBase64 };
-    docDef.background = () => ({
-      image: 'letterBg',
-      width: 620,
-      height: 870,
-      absolutePosition: { x: -12, y: -14 },
-    });
-  }
+  applyLetterPageSetup(docDef, {
+    backgroundImageBase64: data.backgroundImageBase64,
+    headerLogoBase64: data.headerLogoBase64,
+    bodyFont,
+  });
 
   return docDef;
 }

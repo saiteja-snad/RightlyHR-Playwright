@@ -38,6 +38,7 @@ export interface PromotionLetterData {
   backgroundImageBase64?: string;
   useVerdanaFont?: boolean;
   useAutographyFont?: boolean;
+  headerLogoBase64?: string;
 }
 
 const PX = (px: number) => Math.round((px * 72) / 96);
@@ -142,14 +143,14 @@ export function buildPromotionLetterDoc(data: PromotionLetterData): any {
             { text: '', border: [false, false, false, false] },
           ],
           [
-            { 
+            {
               text: data.employeeSignatureDate ? [
                 { text: 'Employee Signature: ', font: bodyFont },
                 { text: fullName, font: 'Autography', fontSize: PX(24) }
               ] : [
                 { text: 'Employee Signature: ', font: bodyFont }
               ],
-              border: [false, false, false, false] 
+              border: [false, false, false, false]
             },
             { text: '', border: [false, false, false, false] },
           ],

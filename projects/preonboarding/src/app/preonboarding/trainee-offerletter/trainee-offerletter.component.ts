@@ -5,13 +5,14 @@ import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import { HttpService } from '../../http-services/http.service';
 import { Router } from '@angular/router';
 import moment from 'moment';
-import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
+import * as pdfMake from 'pdfmake/build/pdfmake';
+import { customVfs } from '../../../../../hrms/src/app/letters-builder-files/custom-fonts-vfs';
+import { buildTraineeOfferLetterDoc } from '../../../../../hrms/src/app/letters-builder-files/trainee-offer-letter.builder';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { DateformatPipe } from "../../../../../hrms/src/app/pipes/dateformat.pipe";
 import { CommonModule } from '@angular/common';
 import { PopupService } from '../../common-services/popup.service';
 import { DetailedStepProgressbarComponent } from "../../shared/detailed-step-progressbar/detailed-step-progressbar.component";
-import { DateformatPipe } from '../../../../../hrms/src/app/pipes/dateformat.pipe';
 @Component({
   selector: 'app-trainee-offerletter',
   imports: [DateformatPipe, ReactiveFormsModule, CommonModule, DetailedStepProgressbarComponent],
@@ -41,11 +42,11 @@ export class TraineeOfferletterComponent implements OnInit, OnDestroy {
   loadingcircle: boolean = false;
   currentDate = new Date();
   rejectForm!: FormGroup;
-  durationOfTraining:any;
   @ViewChild('acceptpopup') acceptpopup: any;
   @ViewChild('rejectpopup') rejectpopup: any;
-  stipendApplicablecheck!: boolean;
+  stipendApplicablecheck: boolean | undefined = undefined;
   stipendAmountmonthly!: number;
+
   constructor(private http: HttpService, private router: Router, config: NgbModalConfig, private modalService: NgbModal,
     private fb: FormBuilder, private openPopup: PopupService,) {
     config.backdrop = 'static';
@@ -100,16 +101,16 @@ export class TraineeOfferletterComponent implements OnInit, OnDestroy {
     this.modalService.dismissAll();
   }
 
-  acceptoffer() {
+  async acceptoffer() {
     this.loadingcircle = true;
-    const offeraccept = "Offer Letter Accepted";
-    let offerUpdateDetails = JSON.parse(JSON.stringify(this.updatedOfferLetterDetails)) as Iofferletter;
-     this.downLoadDocument(offerUpdateDetails);
-    offerUpdateDetails.candidateStatus = "Offer Letter Accepted";
-   
-   
-
-    this.loadingcircle = true;
+    try {
+      let offerUpdateDetails = JSON.parse(JSON.stringify(this.updatedOfferLetterDetails)) as Iofferletter;
+      offerUpdateDetails.candidateStatus = "Offer Letter Accepted";
+      await this.downLoadDocument(offerUpdateDetails);
+    } catch (err) {
+      console.error(err);
+      this.loadingcircle = false;
+    }
   }
 
   updateOfferDetailsforAccept(updatedData: Iofferletter) {
@@ -125,7 +126,7 @@ export class TraineeOfferletterComponent implements OnInit, OnDestroy {
     })
   }
 
-  //function to get address details 
+  //function to get address details
   getEmployeeAddress() {
     let EmployeeId = this.prosempdata.employeeId
     this.subscription = this.http.getData(`PreonboardingEmployeedata/${EmployeeId}`).subscribe({
@@ -145,8 +146,6 @@ export class TraineeOfferletterComponent implements OnInit, OnDestroy {
         let res = data.reverse()[0];
         this.employeeCompensationDetails = res;
         this.traineeEmpData.salary = Employee.salary = res?.compensationamount;
-        console.log(this.traineeEmpData.salary);
-
       },
       error: (reason: any) => {
         console.log(reason);
@@ -173,9 +172,7 @@ export class TraineeOfferletterComponent implements OnInit, OnDestroy {
   getaddress(locationId: number, sublocationId: number) {
     this.subscription = this.http.getData(`PreonboardingJobDetails/GetbyJobLocationSubLocationId?joblocid=${locationId}&sublocid=${sublocationId}`).subscribe({
       next: (data: any) => {
-        console.log(data);
         this.traineeEmpData.address = data?.address;
-        console.log(this.traineeEmpData.address);
       }
     })
   }
@@ -187,35 +184,47 @@ export class TraineeOfferletterComponent implements OnInit, OnDestroy {
     this.subscription = this.http.getData(`Preonboardingsignaturauthority?LetterType=${offertype}`).subscribe({
       next: (data: any) => {
         this.authorityDetails = data;
+        if (this.getofferdata?.authoritySignature) {
+          const auth = this.authorityDetails.find((c: any) => c.employeeId == this.getofferdata.authoritySignature);
+          if (auth) {
+            this.authorityDesignation = auth.designation;
+            this.traineeEmpData.authorityName = auth.middleName
+              ? `${auth.firstName} ${auth.middleName ?? ''} ${auth.lastName}`
+              : `${auth.firstName} ${auth.lastName}`;
+          }
+        }
       },
     });
   }
-convertDaysToMonths(days: number): number {
-  if (days >= 28 && days <= 31) {
-    return 1;
-  }
-  return Math.ceil(days / 30);
-}
 
-  //function to get the offerletter details 
+  //function to get the offerletter details
   address = {} as IAddress;
   getOfferLetterDetails() {
-    let EmployeeId = parseInt(this.prosempdata.employeeId)
+    let EmployeeId = this.prosempdata.employeeId
     this.subscription = this.http.getData(`PreOnboardingTraineeOfferLetter/getbyEmpidNames/${EmployeeId}`).subscribe({
       next: (data: any) => {
-        this.getofferdata = data
+        this.getofferdata = data;
         this.getOfferDetailsByOfferId(parseInt(this.getofferdata.id))
         let url = this.getofferdata.documentUrl
         this.stipendAmountmonthly = this.getofferdata?.stipendAmount;
-        this.stipendApplicablecheck = this.getofferdata?.stipendApplicable;
+        const stipendRaw = this.getofferdata?.stipendApplicable;
+        if (stipendRaw !== null && stipendRaw !== undefined) {
+          this.stipendApplicablecheck = stipendRaw === true || stipendRaw === 1 ||
+            (typeof stipendRaw === 'string' && ['true', 'yes', '1'].includes(stipendRaw.trim().toLowerCase()));
+        }
         this.traineeEmpData.offerSentDate = this.getofferdata.offerSentDate
         this.traineeEmpData.offerExpiryDate = this.getofferdata.offerExpiryDate
-        const days = this.getofferdata.durationOfTraining;
-        this.traineeEmpData.durationOfTraining = this.convertDaysToMonths(days);
-        this.durationOfTraining = this.traineeEmpData.durationOfTraining ;
         this.traineeEmpData.note = this.getofferdata.note
+        this.traineeEmpData.dateOfJoining = this.getofferdata.offerStartDate || this.traineeEmpData.dateOfJoining;
+        const rawEndDate = this.getofferdata.trainingEndDate || this.getofferdata.offertrainingEndDate;
+        if (rawEndDate) {
+          this.traineeEmpData.trainingEndDate = rawEndDate;
+        } else if (this.getofferdata.durationOfTraining && this.traineeEmpData.dateOfJoining) {
+          this.traineeEmpData.trainingEndDate = moment(this.traineeEmpData.dateOfJoining).add(this.getofferdata.durationOfTraining, 'days').format('YYYY-MM-DD');
+        }
         if (this.employeeaddress?.employeeAddresses?.length > 0) {
-          this.address = this.employeeaddress.employeeAddresses.find((address: IAddress) => address.type.toLowerCase() == this.getofferdata.addressType.toLowerCase())
+          this.address = this.employeeaddress.employeeAddresses.find((address: IAddress) =>
+            address.type.toLowerCase() == this.getofferdata.addressType.toLowerCase())
         }
         this.traineeEmpData.addressLine1 = this.address.addressLine1
         this.traineeEmpData.addressLine2 = this.address.addressLine2
@@ -229,13 +238,15 @@ convertDaysToMonths(days: number): number {
         if (signatureAuthorityDetails) {
           this.authorityDesignation = signatureAuthorityDetails.designation;
           if (signatureAuthorityDetails.middleName) {
-            this.traineeEmpData.authorityName = `${signatureAuthorityDetails.firstName} ${signatureAuthorityDetails.middleName ?? ''} ${signatureAuthorityDetails.lastName}`;
+            this.traineeEmpData.authorityName = `${signatureAuthorityDetails.firstName}
+            ${signatureAuthorityDetails.middleName ?? ''} ${signatureAuthorityDetails.lastName}`;
           } else
-            this.traineeEmpData.authorityName = `${signatureAuthorityDetails.firstName} ${signatureAuthorityDetails.lastName}`;
+            this.traineeEmpData.authorityName = `${signatureAuthorityDetails.firstName}
+            ${signatureAuthorityDetails.lastName}`;
         }
         else if (signatureAuthorityDetails == undefined || signatureAuthorityDetails == null) {
-          this.traineeEmpData.authorityName = ''
-          this.authorityDesignation = ''
+          this.traineeEmpData.authorityName = '';
+          this.authorityDesignation = '';
         }
       },
       error: (err: any) => {
@@ -247,23 +258,30 @@ convertDaysToMonths(days: number): number {
   getTrainingDurationInMonths(start: Date, end: Date): number {
     const startDate = new Date(start);
     const endDate = new Date(end);
-
     let months = (endDate.getFullYear() - startDate.getFullYear()) * 12;
     months += endDate.getMonth() - startDate.getMonth();
-
     // If end day is before start day, reduce by 1
     if (endDate.getDate() < startDate.getDate()) {
       months--;
     }
-
     return months >= 0 ? months : 0;
   }
 
   getOfferDetailsByOfferId(offerId: number) {
     this.subscription = this.http.getData(`PreOnboardingTraineeOfferLetter/getbyid/${offerId}`).subscribe({
-      next: (respone) => {
+      next: (respone: any) => {
         if (respone) {
           this.updatedOfferLetterDetails = respone as Iofferletter;
+          if (this.stipendApplicablecheck === undefined) {
+            const raw = respone?.stipendApplicable;
+            if (raw !== null && raw !== undefined) {
+              this.stipendApplicablecheck = raw === true || raw === 1 ||
+                (typeof raw === 'string' && ['true', 'yes', '1'].includes(raw.trim().toLowerCase()));
+            }
+          }
+          if (!this.stipendAmountmonthly && respone?.stipendAmount != null) {
+            this.stipendAmountmonthly = respone.stipendAmount;
+          }
         }
       },
       error: (reason: any) => {
@@ -275,71 +293,122 @@ convertDaysToMonths(days: number): number {
     })
   }
 
+  private fetchImageAsBase64(url: string): Promise<string> {
+    return fetch(url).then(res => res.blob()).then(blob => new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result as string);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    }));
+  }
+
+  private async getFileBase64(url: string): Promise<string | null> {
+    try {
+      const response = await fetch(url);
+      if (!response.ok) return null;
+      const buffer = await response.arrayBuffer();
+      const bytes = new Uint8Array(buffer);
+      let binary = '';
+      for (let i = 0; i < bytes.byteLength; i++) {
+        binary += String.fromCharCode(bytes[i]);
+      }
+      return btoa(binary);
+    } catch {
+      return null;
+    }
+  }
+
   //download document
   async downLoadDocument(offerUpdateDetails: Iofferletter) {
-
     const data = this.traineeEmpData;
-    const pdf = new jsPDF('p', 'mm', 'a4');
-    const imgWidth = pdf.internal.pageSize.getWidth();
-    const imgHeight = pdf.internal.pageSize.getHeight();
-    const pdfContents = ['pdfContent1', 'pdfContent2']; // Add more content IDs if needed
-    // Create a single canvas to combine all content elements
-    const combinedCanvas = document.createElement('canvas');
-    combinedCanvas.width = imgWidth;
-    combinedCanvas.height = pdfContents.length * imgHeight;
-    const imagesData = [];
-    // this.isLoading = true;
-    for (const contentId of pdfContents) {
-      const pdfContent = document.getElementById(contentId);
-      if (pdfContent) {
-        const canvas = await html2canvas(pdfContent, { scale: 3 });
-        const imgData = canvas.toDataURL('image/png');
-        const imgHeight = (canvas.height * imgWidth) / canvas.width;
-        imagesData.push({ imgData, imgHeight });
-      }
+    const fullName = [data.firstName, data.middleName, data.lastName].filter(Boolean).join(' ');
+    // Resolve authority at generation time to avoid race condition with getAuthorityDetails()
+    const signatureAuth = this.authorityDetails.find(
+      (c: any) => c.employeeId == this.getofferdata.authoritySignature
+    );
+    if (signatureAuth) {
+      this.authorityDesignation = signatureAuth.designation;
+      data.authorityName = signatureAuth.middleName
+        ? `${signatureAuth.firstName} ${signatureAuth.middleName} ${signatureAuth.lastName}`
+        : `${signatureAuth.firstName} ${signatureAuth.lastName}`;
     }
-    // Add all images to the PDF except for the last one
-    for (let i = 0; i < imagesData.length - 1; i++) {
-      const imageData = imagesData[i];
-      pdf.addImage(imageData.imgData, 'PNG', 0, 0, imgWidth, imageData.imgHeight, '', 'FAST');
-      pdf.addPage(); // Add a new page for the next image (except for the last one)
-    }
-    // Add the last image without adding a new page
-    if (imagesData.length > 0) {
-      const lastImageData = imagesData[imagesData.length - 1];
-      pdf.addImage(lastImageData.imgData, 'PNG', 0, 0, imgWidth, lastImageData.imgHeight, '', 'FAST');
-    }
-    const fileName = `${data.firstName}_${data.middleName ?? ''}_${data.lastName ?? ''}_${new Date().getTime()}_TraineeOfferLetter_Signed.pdf`;
-    // pdf.save(fileName);
-    const blob = pdf.output('blob');
-    //creating form file to upload into AZure
-    let d: Date = new Date();
-    const file = new File([blob], fileName, {
-      type: 'application/pdf',
+
+    const [backgroundImageBase64, verdanaItalic, verdanaSemiBold] = await Promise.all([
+      this.fetchImageAsBase64('/images/snad-new-letter-bg.png'),
+      this.getFileBase64('/fonts/Verdana Italic.ttf'),
+      this.getFileBase64('/fonts/verdana-pro-semi-bold.ttf'),
+    ]);
+
+    const pm = (pdfMake as any).default ?? pdfMake;
+    const mergedVfs: Record<string, string> = { ...customVfs };
+    if (verdanaItalic)   mergedVfs['VerdanaItalic.ttf']   = verdanaItalic;
+    if (verdanaSemiBold) mergedVfs['VerdanaSemiBold.ttf'] = verdanaSemiBold;
+    pm.addVirtualFileSystem(mergedVfs);
+    pm.setFonts({
+      VERDANA: { normal: 'VerdanaNow.ttf', bold: 'VerdanaNowBold.ttf', italics: verdanaItalic ? 'VerdanaItalic.ttf' : 'VerdanaNow.ttf', bolditalics: 'VerdanaNowBold.ttf' },
+      VERDANABOLD: { normal: verdanaSemiBold ? 'VerdanaSemiBold.ttf' : 'VerdanaNowBold.ttf', bold: verdanaSemiBold ? 'VerdanaSemiBold.ttf' : 'VerdanaNowBold.ttf', italics: verdanaSemiBold ? 'VerdanaSemiBold.ttf' : 'VerdanaNowBold.ttf', bolditalics: verdanaSemiBold ? 'VerdanaSemiBold.ttf' : 'VerdanaNowBold.ttf' },
+      Autography: { normal: 'Autography.otf', bold: 'Autography.otf', italics: 'Autography.otf', bolditalics: 'Autography.otf' },
     });
-    // this.uploadAddressLetter();
+
+    const startDate = this.getofferdata.offerStartDate || this.traineeEmpData.dateOfJoining;
+    const rawEnd = this.getofferdata.trainingEndDate || this.getofferdata.offertrainingEndDate;
+    const endDate = rawEnd || this.traineeEmpData.trainingEndDate
+      || (startDate && this.getofferdata.durationOfTraining
+          ? moment(startDate).add(this.getofferdata.durationOfTraining, 'days').format('YYYY-MM-DD')
+          : undefined);
+    const internshipperiod = this.getofferdata.durationOfTraining
+      || (startDate && endDate ? this.getTrainingDurationInMonths(new Date(startDate), new Date(endDate)) : 0);
+
+    const docDef = buildTraineeOfferLetterDoc({
+      firstName: data.firstName,
+      middleName: data.middleName,
+      lastName: data.lastName,
+      addressLine1: data.addressLine1,
+      addressLine2: data.addressLine2,
+      city: data.city,
+      state: data.state,
+      country: data.country,
+      pinCode: data.zipCode,
+      offerIssuedDate: data.offerSentDate,
+      dateOfJoining: startDate,
+      endDate: endDate,
+      internshipperiod,
+      reportingmanagerName: data.reportingmanagerName,
+      officeAddress: data.address,
+      stipendApplicable: this.stipendApplicablecheck ?? false,
+      monthlyAmount: this.stipendAmountmonthly,
+      annualCTC: data.salary,
+      note: data.note,
+      authorityName: data.authorityName ?? '',
+      authorityDesignation: this.authorityDesignation ?? '',
+      useVerdanaFont: true,
+      useAutographyFont: true,
+      employeeFullName: fullName,
+      backgroundImageBase64,
+    });
+
+    const blob: Blob = await pm.createPdf(docDef).getBlob();
+    const fileName = `${data.firstName}_${data.middleName ?? ''}_${data.lastName ?? ''}_${new Date().getTime()}_TraineeOfferLetter_Signed.pdf`;
+    const file = new File([blob], fileName, { type: 'application/pdf' });
     this.generatedfile = file;
-    this.offerletterUpload(this.prosempdata.employeeId, this.generatedfile,offerUpdateDetails);
-    // });
-    // }
+    this.offerletterUpload(this.prosempdata.employeeId, this.generatedfile, offerUpdateDetails);
   }
 
   //to store file to the azure and return to the url
-  private offerletterUpload(empId: number, file: File,offerUpdateDetails:Iofferletter) {
-
+  private offerletterUpload(empId: number, file: File, offerUpdateDetails: Iofferletter) {
     let filePath = `/FusionDocuments/Employee Documents/Trainee Offer Letter/${empId}`;
     this.subscription = this.http.uploadFileWithQuery('PreonboardingFilesystem/uploadfiletodirectory', filePath, file).subscribe({
       next: (data: any) => {
         if (data) {
           this.updatedOfferLetterDetails.documentUrl = data.path;
-            offerUpdateDetails.documentUrl = data.path;
+          offerUpdateDetails.documentUrl = data.path;
           this.loadingcircle = false;
           localStorage.setItem('offerletterurl', data.path);
           this.getOfferLetterDetails();
           this.modalService.dismissAll();
           setTimeout(() => {
             this.openPopup.openSuccess("Offer letter accepted successfully");
-             this.updateOfferDetailsforAccept(offerUpdateDetails);
+            this.updateOfferDetailsforAccept(offerUpdateDetails);
           }, 3000);
           this.loadingcircle = false;
           //this.updateOfferDetails(data.path);
@@ -368,19 +437,13 @@ convertDaysToMonths(days: number): number {
   }
 
   submitRejectReason(form: FormGroup) {
-    if (form.invalid) {
-      form.markAllAsTouched();
-      return;
-    }
-
-    const comments = (form.get('rejectReason')?.value ?? '').toString().trim();
     let offerUpdateDetails = JSON.parse(JSON.stringify(this.updatedOfferLetterDetails)) as Iofferletter;
-    offerUpdateDetails.candidateComments = comments;
+    offerUpdateDetails.candidateComments = this.rejectionReason.comments;
     offerUpdateDetails.candidateStatus = "Offer Letter Rejected";
-    this.loadingcircle = true;
     this.updateOfferDetails(offerUpdateDetails);
     this.prosempdata.substatus = "Offer Letter Rejected";
     this.updateEmployeeDetails(this.prosempdata);
+    this.loadingcircle = true;
     form.reset();
   }
 

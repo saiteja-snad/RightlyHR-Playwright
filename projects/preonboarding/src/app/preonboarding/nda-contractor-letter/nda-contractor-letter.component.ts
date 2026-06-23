@@ -3,30 +3,30 @@ import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { Select } from 'primeng/select';
-import { jsPDF } from "jspdf";
-import html2canvas from 'html2canvas';
+import * as pdfMake from 'pdfmake/build/pdfmake';
+import { customVfs } from '../../../../../hrms/src/app/letters-builder-files/custom-fonts-vfs';
+import { buildNdaLetterDoc } from '../../../../../hrms/src/app/letters-builder-files/nda-contractor-letter.builder';
 import {  FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import moment from 'moment';
-
 import { NgxCountriesDropdownModule } from 'ngx-countries-dropdown';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
-import { IAddress, IGender, ITitle } from '../../models/personal-details.model';
+import { IAddress } from '../../models/personal-details.model';
+import { DateformatPipe } from '../../../../../hrms/src/app/pipes/dateformat.pipe';
 import { HttpService } from '../../http-services/http.service';
 import { DetailedStepProgressbarComponent } from "../../shared/detailed-step-progressbar/detailed-step-progressbar.component";
 import { DateFormatPipe } from '../../pipes/date-format.pipe';
 import { PopupService } from '../../common-services/popup.service';
 import { Iofferletter, IJobDetails } from '../../models/offer-letter.model';
-import { LettersheaderComponent } from "../../../../../hrms/src/app/shared/letters-shared-content/lettersheader/lettersheader.component";
-import { DateformatPipe } from '../../../../../hrms/src/app/pipes/dateformat.pipe';
 @Component({
   selector: 'app-nda-contractor-letter',
-  imports: [CommonModule, TranslateModule, Select, NgxCountriesDropdownModule, ReactiveFormsModule, DateformatPipe, NgbPopoverModule, DetailedStepProgressbarComponent, DateFormatPipe, LettersheaderComponent],
+  imports: [CommonModule, TranslateModule, NgxCountriesDropdownModule, ReactiveFormsModule, DateformatPipe,
+    NgbPopoverModule, DetailedStepProgressbarComponent, DateFormatPipe],
   templateUrl: './nda-contractor-letter.component.html',
   styleUrl: './nda-contractor-letter.component.scss'
 })
+
 export class NdaContractorLetterComponent implements OnInit, OnDestroy{
   subscription!: Subscription;
   doxImageUrl!: any;
@@ -53,7 +53,9 @@ export class NdaContractorLetterComponent implements OnInit, OnDestroy{
   employeeFullname:any;
   currentDate=moment();
   panDetails={} as any;
-  constructor(private router: Router, private http: HttpService, private modalService: NgbModal, private fb: FormBuilder, private confiramtionpopups: PopupService) { }
+
+  constructor(private router: Router, private http: HttpService, private modalService: NgbModal,
+    private fb: FormBuilder, private confiramtionpopups: PopupService) { }
 
   ngOnInit(): void {
     const storedstep = 7;
@@ -70,6 +72,7 @@ export class NdaContractorLetterComponent implements OnInit, OnDestroy{
     this.initializeRejectForm();
     this.getIdentityByEmpid(this.prosempdata.employeeId);
   }
+
   getIdentityByEmpid(employeeId: number) {
     this.subscription = this.http.getData(`PreonboardingIdentityTable/${employeeId}`).subscribe({
       next: (data: any) => {
@@ -80,6 +83,7 @@ export class NdaContractorLetterComponent implements OnInit, OnDestroy{
       }
     })
   }
+
   // Prospective Employee Data
   getprospectivempdata() {
     let employeeId = parseInt(this.prosempdata.employeeId);
@@ -127,7 +131,7 @@ export class NdaContractorLetterComponent implements OnInit, OnDestroy{
     this.router.navigate(['/experience-details']);
   }
 
-  //function to get address details 
+  //function to get address details
   getEmployeeAddress() {
     let EmployeeId = this.prosempdata.employeeId;
     this.subscription = this.http.getData(`PreonboardingEmployeedata/${EmployeeId}`).subscribe({
@@ -153,7 +157,7 @@ export class NdaContractorLetterComponent implements OnInit, OnDestroy{
     });
   }
 
-  //function to get the offerletter details 
+  //function to get the offerletter details
   address = {} as IAddress;
   getndaLetterDetails() {
     let EmployeeId = parseInt(this.prosempdata.employeeId)
@@ -237,9 +241,9 @@ export class NdaContractorLetterComponent implements OnInit, OnDestroy{
         this.modalService.dismissAll();
         this.getndaLetterDetails();
         this.confiramtionpopups.openSuccess('Non-Disclosure Agreement letter rejected successfully');
-        
-       
-        
+
+
+
       },
       error: (err: any) => {
         console.log(err);
@@ -465,10 +469,15 @@ export class NdaContractorLetterComponent implements OnInit, OnDestroy{
     this.Loading = false;
   }
 
-  acceptoffer() {
-    let offerUpdateDetails = JSON.parse(JSON.stringify(this.updatedndaLetterDetails)) as any;
-    this.downLoadDocument(offerUpdateDetails);
+  async acceptoffer() {
     this.loadingcircle = true;
+    try {
+      let offerUpdateDetails = JSON.parse(JSON.stringify(this.updatedndaLetterDetails)) as any;
+      await this.downLoadDocument(offerUpdateDetails);
+    } catch (err) {
+      console.error(err);
+      this.loadingcircle = false;
+    }
   }
 
   updateOfferDetailsforAccept(updatedData: any) {
@@ -486,42 +495,75 @@ export class NdaContractorLetterComponent implements OnInit, OnDestroy{
     })
   }
 
+  private fetchImageAsBase64(url: string): Promise<string> {
+    return fetch(url).then(res => res.blob()).then(blob => new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result as string);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    }));
+  }
+
+  private async getFileBase64(url: string): Promise<string | null> {
+    try {
+      const response = await fetch(url);
+      if (!response.ok) return null;
+      const buffer = await response.arrayBuffer();
+      const bytes = new Uint8Array(buffer);
+      let binary = '';
+      for (let i = 0; i < bytes.byteLength; i++) {
+        binary += String.fromCharCode(bytes[i]);
+      }
+      return btoa(binary);
+    } catch {
+      return null;
+    }
+  }
+
   //download document
   async downLoadDocument(offerUpdateDetails: Iofferletter) {
     const data = this.ndaLetterData;
-    const pdf = new jsPDF('p', 'mm', 'a4');
-    const imgWidth = pdf.internal.pageSize.getWidth();
-    const imgHeight = pdf.internal.pageSize.getHeight();
-    const pdfContents = ['pdfContent1', 'pdfContent2', 'pdfContent3', 'pdfContent4', 'pdfContent5']; // Add more content IDs if needed
-    // Create a single canvas to combine all content elements
-    const combinedCanvas = document.createElement('canvas');
-    combinedCanvas.width = imgWidth;
-    combinedCanvas.height = pdfContents.length * imgHeight;
-    const imagesData = [];
-    for (const contentId of pdfContents) {
-      const pdfContent = document.getElementById(contentId);
-      if (pdfContent) {
-        const canvas = await html2canvas(pdfContent, { scale: 3 });
-        const imgData = canvas.toDataURL('image/png');
-        const imgHeight = (canvas.height * imgWidth) / canvas.width;
-        imagesData.push({ imgData, imgHeight });
-      }
-    }
-    // Add all images to the PDF except for the last one
-    for (let i = 0; i < imagesData.length - 1; i++) {
-      const imageData = imagesData[i];
-      pdf.addImage(imageData.imgData, 'PNG', 0, 0, imgWidth, imageData.imgHeight, '', 'FAST');
-      pdf.addPage(); // Add a new page for the next image (except for the last one)
-    }
-    // Add the last image without adding a new page
-    if (imagesData.length > 0) {
-      const lastImageData = imagesData[imagesData.length - 1];
-      pdf.addImage(lastImageData.imgData, 'PNG', 0, 0, imgWidth, lastImageData.imgHeight, '', 'FAST');
-    }
+
+    const isSoftCopy = this.getofferdata.docType === true;
+    const [backgroundImageBase64, verdanaItalic, verdanaSemiBold] = await Promise.all([
+      isSoftCopy ? this.fetchImageAsBase64('/images/snad-new-letter-bg.png') : Promise.resolve(undefined as string | undefined),
+      this.getFileBase64('/fonts/Verdana Italic.ttf'),
+      this.getFileBase64('/fonts/verdana-pro-semi-bold.ttf'),
+    ]);
+
+    const pm = (pdfMake as any).default ?? pdfMake;
+    const mergedVfs: Record<string, string> = { ...customVfs };
+    if (verdanaItalic)   mergedVfs['VerdanaItalic.ttf']   = verdanaItalic;
+    if (verdanaSemiBold) mergedVfs['VerdanaSemiBold.ttf'] = verdanaSemiBold;
+    pm.addVirtualFileSystem(mergedVfs);
+    pm.setFonts({
+      VERDANA: { normal: 'VerdanaNow.ttf', bold: 'VerdanaNowBold.ttf', italics: verdanaItalic ? 'VerdanaItalic.ttf' : 'VerdanaNow.ttf', bolditalics: 'VerdanaNowBold.ttf' },
+      VERDANABOLD: { normal: verdanaSemiBold ? 'VerdanaSemiBold.ttf' : 'VerdanaNowBold.ttf', bold: verdanaSemiBold ? 'VerdanaSemiBold.ttf' : 'VerdanaNowBold.ttf', italics: verdanaSemiBold ? 'VerdanaSemiBold.ttf' : 'VerdanaNowBold.ttf', bolditalics: verdanaSemiBold ? 'VerdanaSemiBold.ttf' : 'VerdanaNowBold.ttf' },
+      Autography: { normal: 'Autography.otf', bold: 'Autography.otf', italics: 'Autography.otf', bolditalics: 'Autography.otf' },
+    });
+
+    const docDef = buildNdaLetterDoc({
+      firstName: data.firstName,
+      middleName: data.middleName,
+      lastName: data.lastName,
+      panNumber: this.panDetails?.[0]?.identityNumber,
+      addressLine1: data.addressLine1,
+      addressLine2: data.addressLine2,
+      city: data.city,
+      state: data.state,
+      country: data.country,
+      pinCode: data.zipCode,
+      ndaSentDate: data.issueddate,
+      authorityFullName: data.authorityName ?? '',
+      authorityDesignation: this.authorityDesignation ?? '',
+      useVerdanaFont: true,
+      useAutographyFont: true,
+      employeeFullName: this.employeeFullname,
+      backgroundImageBase64,
+    });
+
+    const blob: Blob = await pm.createPdf(docDef).getBlob();
     const fileName = `${data.firstName}_${data.middleName ?? ''}_${data.lastName ?? ''}_${new Date().getTime()}_Non-DisclosureAgreementLeter_Signed.pdf`;
-    const blob = pdf.output('blob');
-    //creating form file to upload into AZure
-    let d: Date = new Date();
     const file = new File([blob], fileName, { type: 'application/pdf' });
     this.generatedfile = file;
     this.offerletterUpload(this.prosempdata.employeeId, this.generatedfile, offerUpdateDetails);
@@ -548,7 +590,6 @@ export class NdaContractorLetterComponent implements OnInit, OnDestroy{
     const fileurl = this.updatedndaLetterDetails.documentUrl;
     this.subscription = this.http.DownloadDataWithQuery('PreonboardingFilesystem/Downloadfile', fileurl).subscribe({
       next: (res: any) => {
-        let fileName = res.headers.get('content-disposition')?.split(':')[1].split('=')[1];
         let blob: Blob = res.body as Blob;
         let a = document.createElement('a');
         a.href = window.URL.createObjectURL(blob);
@@ -567,7 +608,7 @@ export class NdaContractorLetterComponent implements OnInit, OnDestroy{
       event.preventDefault(); // Prevents the character from being typed
     }
   }
-  
+
   ngOnDestroy(): void {
     if (this.subscription) {
       this.subscription.unsubscribe();

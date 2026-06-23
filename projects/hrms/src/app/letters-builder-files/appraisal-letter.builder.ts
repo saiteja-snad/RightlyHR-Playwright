@@ -42,6 +42,7 @@ export interface AppraisalLetterData {
   backgroundImageBase64?: string;
   useVerdanaFont?: boolean;
   useAutographyFont?: boolean;
+  headerLogoBase64?: string;
 }
 
 const PX = (px: number) => Math.round((px * 72) / 96);

@@ -1,13 +1,13 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
-import { Router } from '@angular/router';
 import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import moment from 'moment';
 import { IAddress } from '../../../Interfaces/letters-model';
 import { IAssertsType } from '../../../Interfaces/job-model';
-import html2canvas from 'html2canvas';
-import jsPDF from 'jspdf';
+import * as pdfMake from 'pdfmake/build/pdfmake';
+import { customVfs } from '../../../letters-builder-files/custom-fonts-vfs';
+import { buildAppointmentLetterDoc } from '../../../letters-builder-files/appointment-letter-pdf.builder';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -16,44 +16,37 @@ import { FormValidationsService } from '../../../services/form-validations.servi
 import { LettersheaderComponent } from "../../../shared/letters-shared-content/lettersheader/lettersheader.component";
 import { DateformatPipe } from "../../../pipes/dateformat.pipe";
 import { LetterFooterComponent } from "../../../shared/letters-shared-content/letter-footer/letter-footer.component";
-
+import { fetchLetterAssets, setupLetterPdfMake } from '../../../letters-builder-files/letter-pdf.utils';
 @Component({
   selector: 'app-trainee-appointment-letter-acknowledgement',
   imports: [CommonModule, ReactiveFormsModule, TranslateModule, LettersheaderComponent, DateformatPipe, LetterFooterComponent],
   templateUrl: './trainee-appointment-letter-acknowledgement.component.html',
   styleUrl: './trainee-appointment-letter-acknowledgement.component.scss'
 })
+
 export class TraineeAppointmentLetterAcknowledgementComponent implements OnInit, OnDestroy {
   subscription!: Subscription;
   rejectForm!: FormGroup;
   @Input() letterdata: any;
+  empdata = {} as any;
+  employeeName: any;
+  traineeAppointmentletterData = {} as any;
+  currentDate = moment();
 
-  constructor(
-    private fb: FormBuilder,
-    private http: HttpService,
-    config: NgbModalConfig,
-    private modalService: NgbModal,
-    private confirmation: OpenModalService,
-    public formsValidation: FormValidationsService
-  ) {
+  constructor(private fb: FormBuilder, private http: HttpService, config: NgbModalConfig, private modalService: NgbModal,
+    private confirmation: OpenModalService, public formsValidation: FormValidationsService) {
     config.backdrop = 'static';
     config.keyboard = false;
   }
 
-  empdata = {} as any;
-  employeeName: any;
-  traineeAppointmentletterData = {} as any;
-  currentDate = moment()
   ngOnInit(): void {
     this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
-    this.employeeName = `${this.empdata.firstName ?? ''} ${this.empdata.middleName ?? ''
-      } ${this.empdata.lastName ?? ''}`;
+    this.employeeName = `${this.empdata.firstName ?? ''} ${this.empdata.middleName ?? ''} ${this.empdata.lastName ?? ''}`;
     this.traineeAppointmentletterData = this.empdata;
     this.Onclick(this.empdata.employeeId);
   }
 
   Onclick(employeeId: any) {
-    console.log(employeeId);
     this.traineeAppointmentletterData = {};
     this.traineeAppointmentletterData = this.empdata;
     this.traineeAppointmentletterData.dateOfJoining = this.formatDatewithDate(
@@ -61,13 +54,10 @@ export class TraineeAppointmentLetterAcknowledgementComponent implements OnInit,
     );
     if (this.letterdata) {
       this.traineeAppointmentletterData.notes = this.letterdata.note;
-      this.traineeAppointmentletterData.addressType =
-        this.letterdata.addressType;
-      this.traineeAppointmentletterData.appointmentdate =
-        this.letterdata.issuedDate;
+      this.traineeAppointmentletterData.addressType = this.letterdata.addressType;
+      this.traineeAppointmentletterData.appointmentdate = this.letterdata.issuedDate;
       this.traineeAppointmentletterData.Copys = this.letterdata.docType;
     }
-    console.log(this.traineeAppointmentletterData);
     this.getJobdetails(this.traineeAppointmentletterData);
     this.getEmployeeAddress(this.traineeAppointmentletterData.employeeId);
     this.getAuthorityDetails();
@@ -83,57 +73,45 @@ export class TraineeAppointmentLetterAcknowledgementComponent implements OnInit,
   //get Job Details by empployeeid
   employeeJobDetails = {} as any;
   getJobdetails(Employee: any) {
-    this.subscription = this.http
-      .getData(`JobDetails/Empname/${Employee.employeeId}`)
-      .subscribe({
-        next: (data: any) => {
-          //  console.log(data);
-          const today = new Date();
-          const jobdata = data.find((emp: any) => emp.id = this.letterdata.jobId);
-          const res = jobdata;
-          this.employeeJobDetails = res;
-
-          Employee.jobRole = res.jobRole;
-
-          Employee.locationName = res.locationName;
-          Employee.subLocation = res.subLocation;
-          Employee.department = res.departmentName;
-        },
-        error: (reason: any) => {
-          console.log(reason);
-        },
-      });
+    this.subscription = this.http.getData(`JobDetails/Empname/${Employee.employeeId}`).subscribe({
+      next: (data: any) => {
+        //  console.log(data);
+        const today = new Date();
+        const jobdata = data.find((emp: any) => emp.id = this.letterdata.jobId);
+        const res = jobdata;
+        this.employeeJobDetails = res;
+        Employee.jobRole = res.jobRole;
+        Employee.locationName = res.locationName;
+        Employee.subLocation = res.subLocation;
+        Employee.department = res.departmentName;
+      },
+      error: (reason: any) => {
+        console.log(reason);
+      },
+    });
   }
-
 
   //function to get the address
   employeeaddress = [] as any;
   address = {} as IAddress;
   getEmployeeAddress(Value: any) {
     const EmployeeId = Value;
-    this.subscription = this.http
-      .getData(`Employeedata/getProspectiveEmployeedata/${EmployeeId}`)
-      .subscribe({
-        next: (data: any) => {
-          console.log(data);
-          this.employeeaddress = data;
-          if (this.employeeaddress?.employeeAddresses?.length > 0) {
-            this.address = this.employeeaddress.employeeAddresses.find(
-              (address: IAddress) =>
-                address.type.toLowerCase() ==
-                this.traineeAppointmentletterData.addressType
-            );
-            this.traineeAppointmentletterData.addressLine1 =
-              this.address.addressLine1;
-            this.traineeAppointmentletterData.addressLine2 =
-              this.address.addressLine2;
-            this.traineeAppointmentletterData.city = this.address.city;
-            this.traineeAppointmentletterData.state = this.address.state;
-            this.traineeAppointmentletterData.country = this.address.country;
-            this.traineeAppointmentletterData.zipCode = this.address.zipCode;
-          }
-        },
-      });
+    this.subscription = this.http.getData(`Employeedata/getProspectiveEmployeedata/${EmployeeId}`).subscribe({
+      next: (data: any) => {
+        this.employeeaddress = data;
+        if (this.employeeaddress?.employeeAddresses?.length > 0) {
+          this.address = this.employeeaddress.employeeAddresses.find(
+            (address: IAddress) => address.type.toLowerCase() == this.traineeAppointmentletterData.addressType
+          );
+          this.traineeAppointmentletterData.addressLine1 = this.address.addressLine1;
+          this.traineeAppointmentletterData.addressLine2 = this.address.addressLine2;
+          this.traineeAppointmentletterData.city = this.address.city;
+          this.traineeAppointmentletterData.state = this.address.state;
+          this.traineeAppointmentletterData.country = this.address.country;
+          this.traineeAppointmentletterData.zipCode = this.address.zipCode;
+        }
+      },
+    });
   }
 
   //get offer letter Authority list
@@ -141,45 +119,36 @@ export class TraineeAppointmentLetterAcknowledgementComponent implements OnInit,
   authorityDesignation: any;
   getAuthorityDetails() {
     const offertype = 'Trainee Appointment Letter';
-    this.subscription = this.http
-      .getData(`SignaturesList?LetterType=${offertype}`)
-      .subscribe({
-        next: (data: any) => {
-          console.log(data);
-          this.authorityDetails = data;
-          if (this.letterdata.authoritySignature) {
-            if (this.authorityDetails?.length > 0) {
-              const signatureAuthorityDetails = this.authorityDetails.find(
-                (c: any) => c.employeeId == this.letterdata.authoritySignature
-              );
-              console.log(signatureAuthorityDetails);
-              this.authorityDesignation = signatureAuthorityDetails.designation;
-              this.traineeAppointmentletterData.authorityName = `${signatureAuthorityDetails.firstName ?? ''
-                } ${signatureAuthorityDetails.middleName ?? ''} ${signatureAuthorityDetails.lastName ?? ''
-                }`;
-            }
+    this.subscription = this.http.getData(`SignaturesList?LetterType=${offertype}`).subscribe({
+      next: (data: any) => {
+        this.authorityDetails = data;
+        if (this.letterdata.authoritySignature) {
+          if (this.authorityDetails?.length > 0) {
+            const signatureAuthorityDetails = this.authorityDetails.find(
+              (c: any) => c.employeeId == this.letterdata.authoritySignature
+            );
+            this.authorityDesignation = signatureAuthorityDetails.designation;
+            this.traineeAppointmentletterData.authorityName = `${signatureAuthorityDetails.firstName ?? ''}
+              ${signatureAuthorityDetails.middleName ?? ''} ${signatureAuthorityDetails.lastName ?? ''}`;
           }
-        },
-      });
+        }
+      },
+    });
   }
 
   //function to get assest type by employeeid
   assesttypegetdetails = [] as IAssertsType[];
   getAssestTypeByEmployeeId() {
     const EmployeeId = parseInt(this.empdata.employeeId);
-    console.log(EmployeeId);
-    this.subscription = this.http
-      .getData(`AssetTable/${EmployeeId}`)
-      .subscribe({
-        next: (data: any) => {
-          console.log(data);
-          this.assesttypegetdetails = data as IAssertsType[];
-          const res = data.find((emp: any) => emp.id == this.letterdata.assetId)
-          this.traineeAppointmentletterData.asserttype = res.assetType;
-          this.traineeAppointmentletterData.model = res.model;
-          this.traineeAppointmentletterData.serial = res.serialNumber;
-        },
-      });
+    this.subscription = this.http.getData(`AssetTable/${EmployeeId}`).subscribe({
+      next: (data: any) => {
+        this.assesttypegetdetails = data as IAssertsType[];
+        const res = data.find((emp: any) => emp.id == this.letterdata.assetId)
+        this.traineeAppointmentletterData.asserttype = res.assetType;
+        this.traineeAppointmentletterData.model = res.model;
+        this.traineeAppointmentletterData.serial = res.serialNumber;
+      },
+    });
   }
 
   openpopup(content: any) {
@@ -200,7 +169,6 @@ export class TraineeAppointmentLetterAcknowledgementComponent implements OnInit,
       authorityName: empdata.authorityName,
       authorityDesignation: this.authorityDesignation,
     };
-
     // Simulate document generation delay
     setTimeout(() => {
       this.isLoading = false;
@@ -208,113 +176,74 @@ export class TraineeAppointmentLetterAcknowledgementComponent implements OnInit,
     }, 2000);
   }
 
+  private async getFileBase64(url: string): Promise<string | null> {
+    try {
+      const response = await fetch(url);
+      if (!response.ok) return null;
+      const buffer = await response.arrayBuffer();
+      const bytes = new Uint8Array(buffer);
+      let binary = '';
+      for (let i = 0; i < bytes.byteLength; i++) {
+        binary += String.fromCharCode(bytes[i]);
+      }
+      return btoa(binary);
+    } catch {
+      return null;
+    }
+  }
+
   //function to generate the appointment letter
   async onAppointmentLetterSubmit() {
     this.isLoading = true;
     const data = this.traineeAppointmentletterData;
-    //data.dateOfJoining = this.formatDate(data.dateOfJoining);
-    //data.appointmentdate = this.formatDate(data.appointmentdate);
 
-    console.log(data);
+        const isSoftCopy = !!data.docType;
 
-    const pdf = new jsPDF('p', 'mm', 'a4');
-    const imgWidth = pdf.internal.pageSize.getWidth();
-    const imgHeight = pdf.internal.pageSize.getHeight();
+    const [assets, pm] = await Promise.all([
+      fetchLetterAssets(isSoftCopy),
+      setupLetterPdfMake(),
+    ]);
 
-    const pdfContents = [
-      'pdfContent1',
-      'pdfContent2',
-      'pdfContent3',
-      'pdfContent4',
-      'pdfContent5',
-      'pdfContent6',
-      'pdfContent7',
-      'pdfContent8',
-      'pdfContent9',
-      'pdfContent10',
-      'pdfContent11',
-      'pdfContent12',
-    ]; // Add more content IDs if needed
-    // Create a single canvas to combine all content elements
-    const combinedCanvas = document.createElement('canvas');
-    combinedCanvas.width = imgWidth;
-    combinedCanvas.height = pdfContents.length * imgHeight;
-    const imagesData = [];
-    this.isLoading = true;
-
-    for (const contentId of pdfContents) {
-      const pdfContent = document.getElementById(contentId);
-      if (pdfContent) {
-        const canvas = await html2canvas(pdfContent, { scale: 3 });
-        const imgData = canvas.toDataURL('image/png');
-        const imgHeight = (canvas.height * imgWidth) / canvas.width;
-        imagesData.push({ imgData, imgHeight });
-      }
-    }
-
-    // Add all images to the PDF except for the last one
-    for (let i = 0; i < imagesData.length - 1; i++) {
-      const imageData = imagesData[i];
-      pdf.addImage(
-        imageData.imgData,
-        'PNG',
-        0,
-        0,
-        imgWidth,
-        imageData.imgHeight,
-        '',
-        'FAST'
-      );
-      pdf.addPage(); // Add a new page for the next image (except for the last one)
-    }
-
-    // Add the last image without adding a new page
-    if (imagesData.length > 0) {
-      const lastImageData = imagesData[imagesData.length - 1];
-      pdf.addImage(
-        lastImageData.imgData,
-        'PNG',
-        0,
-        0,
-        imgWidth,
-        lastImageData.imgHeight,
-        '',
-        'FAST'
-      );
-    }
-
-    const fileName = `${data.firstName}${data.middleName ? `_${data.middleName}` : ''}${data.lastName ? `_${data.lastName}` : ''}_${new Date().getTime()}_TraineeAppointmentLetter_Signed.pdf`;
-    // pdf.save(fileName);
-
-    const blob = pdf.output('blob');
-    console.log(blob);
-    //creating form file to upload into AZure
-    this.AppointmentFile = new File([blob], fileName, {
-      type: 'application/pdf',
+    const docDef = buildAppointmentLetterDoc({
+      employeeFullname: this.employeeName,
+      appointmentDate: data.appointmentdate,
+      addressLine1: data.addressLine1 ?? '',
+      addressLine2: data.addressLine2 ?? '',
+      city: data.city ?? '',
+      state: data.state ?? '',
+      country: data.country ?? '',
+      pinCode: data.zipCode ?? '',
+      jobRole: data.jobRole ?? '',
+      authorityFullName: data.authorityName ?? '',
+      authorityDesignation: this.authorityDesignation ?? '',
+      panNumber: '',
+      dateOfJoining: data.dateOfJoining,
+      useVerdanaFont: true,
+      useAutographyFont: true,
+      employeeSignatureDate: new Date().toISOString(),
+      backgroundImageBase64: assets.backgroundImageBase64,
+      headerLogoBase64: assets.headerLogoBase64,
     });
+
+    const blob: Blob = await pm.createPdf(docDef).getBlob();
+    const fileName = `${data.firstName}${data.middleName ? `_${data.middleName}` : ''}${data.lastName ? `_${data.lastName}` : ''}_${new Date().getTime()}_TraineeAppointmentLetter_Signed.pdf`;
+    this.AppointmentFile = new File([blob], fileName, { type: 'application/pdf' });
     this.uploadAppointLetter();
   }
 
   // Function to upload the Appointment Letter
   uploadAppointLetter() {
     const filePath = `/FusionDocuments/Employee Documents/Trainee Appointment Letter/${this.traineeAppointmentletterData.employeeId}`;
-    this.subscription = this.http
-      .uploadFileWithQuery(
-        'FileSystem/uploadfiletodirectory',
-        filePath,
-        this.AppointmentFile
-      )
-      .subscribe({
-        next: (data: any) => {
-          if (data) {
-            this.postacknowledgement(data.path);
-            console.log(data);
-          }
-        },
-        error: (reason: any) => {
-          console.log(reason);
-        },
-      });
+    this.subscription = this.http.uploadFileWithQuery('FileSystem/uploadfiletodirectory', filePath, this.AppointmentFile).subscribe({
+      next: (data: any) => {
+        if (data) {
+          this.postacknowledgement(data.path);
+        }
+      },
+      error: (reason: any) => {
+        console.log(reason);
+      },
+    });
   }
 
   // Function to post the Acknowledgement if the employee acknowledge the Appointment Letter
@@ -329,26 +258,23 @@ export class TraineeAppointmentLetterAcknowledgementComponent implements OnInit,
       status: 'Acknowledged',
       createdBy: this.empdata.employeeId,
     };
-    this.subscription = this.http
-      .putData('LetterAcknowledgementDetails/updateAcknowledgement', payload)
-      .subscribe({
-        next: (data: any) => {
-          console.log(data);
-          this.isacknowledged = true;
-          this.isLoading = false;
-          this.confirmation.openSuccessModal('Trainee Appointment Letter Acknowledged Successfully');
-           setTimeout(() => {
-            this.modalService.dismissAll();
-            this.http.triggerRefresh();
-          }, 2000)
-        },
-        error: (error: any) => {
-          console.error('Error:', error);
-          this.confirmation.openErrorModal(error.error.error);
-          this.isacknowledged = false;
-          this.isLoading = false;
-        },
-      });
+    this.subscription = this.http.putData('LetterAcknowledgementDetails/updateAcknowledgement', payload).subscribe({
+      next: (data: any) => {
+        this.isacknowledged = true;
+        this.isLoading = false;
+        this.confirmation.openSuccessModal('Trainee Appointment Letter Acknowledged Successfully');
+        setTimeout(() => {
+          this.modalService.dismissAll();
+          this.http.triggerRefresh();
+        }, 2000)
+      },
+      error: (error: any) => {
+        console.error('Error:', error);
+        this.confirmation.openErrorModal(error.error.error);
+        this.isacknowledged = false;
+        this.isLoading = false;
+      },
+    });
   }
 
   initializeRejectForm() {
@@ -379,28 +305,25 @@ export class TraineeAppointmentLetterAcknowledgementComponent implements OnInit,
       status: 'Rejected',
       rejectedComments: form.value.notes
     };
-    this.subscription = this.http
-      .putData('LetterAcknowledgementDetails/updateAcknowledgement', payload)
-      .subscribe({
-        next: (data: any) => {
-          console.log(data);
-          this.isacknowledged = true;
-          this.isLoading = false;
-          this.isLoadingreject = false;
-          this.confirmation.openSuccessModal('Trainee Appointment Letter Rejected Successfully');
-           setTimeout(() => {
-            this.modalService.dismissAll();
-            this.http.triggerRefresh();
-          }, 2000)
-        },
-        error: (error: any) => {
-          console.error('Error:', error);
-          this.confirmation.openErrorModal(error.error.error);
-          this.isacknowledged = false;
-          this.isLoadingreject = false;
-          this.isLoading = false;
-        },
-      });
+    this.subscription = this.http.putData('LetterAcknowledgementDetails/updateAcknowledgement', payload).subscribe({
+      next: (data: any) => {
+        this.isacknowledged = true;
+        this.isLoading = false;
+        this.isLoadingreject = false;
+        this.confirmation.openSuccessModal('Trainee Appointment Letter Rejected Successfully');
+        setTimeout(() => {
+          this.modalService.dismissAll();
+          this.http.triggerRefresh();
+        }, 2000)
+      },
+      error: (error: any) => {
+        console.error('Error:', error);
+        this.confirmation.openErrorModal(error.error.error);
+        this.isacknowledged = false;
+        this.isLoadingreject = false;
+        this.isLoading = false;
+      },
+    });
   }
 
   ngOnDestroy(): void {
@@ -408,5 +331,4 @@ export class TraineeAppointmentLetterAcknowledgementComponent implements OnInit,
       this.subscription.unsubscribe();
     }
   }
-
 }

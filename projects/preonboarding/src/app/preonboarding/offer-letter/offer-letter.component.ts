@@ -7,8 +7,9 @@ import { HttpService } from '../../http-services/http.service';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import moment from 'moment';
 import { DateFormatPipe } from "../../pipes/date-format.pipe";
-import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
+import * as pdfMake from 'pdfmake/build/pdfmake';
+import { customVfs } from '../../../../../hrms/src/app/letters-builder-files/custom-fonts-vfs';
+import { buildOfferLetterDoc } from '../../../../../hrms/src/app/letters-builder-files/offer-letter.builder';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { PopupService } from '../../common-services/popup.service';
 import { DetailedStepProgressbarComponent } from "../../shared/detailed-step-progressbar/detailed-step-progressbar.component";
@@ -42,8 +43,10 @@ export class OfferLetterComponent implements OnInit {
   @ViewChild('acceptpopup') acceptpopup: any;
   @ViewChild('rejectpopup') rejectpopup: any;
   updateempdata = {} as any;
-  currentDate=moment();
-  constructor(private router: Router, private http: HttpService, private modalService: NgbModal, private fb: FormBuilder, private confiramtionpopups: PopupService) { }
+  currentDate = moment();
+
+  constructor(private router: Router, private http: HttpService, private modalService: NgbModal,
+    private fb: FormBuilder, private confiramtionpopups: PopupService) { }
 
   ngOnInit(): void {
     const storedstep = 3;
@@ -79,7 +82,7 @@ export class OfferLetterComponent implements OnInit {
 
   initializeRejectForm() {
     this.rejectForm = this.fb.group({
-      rejectReason: ['', [Validators.required,Validators.pattern(/^(?!\s).*$/)]],
+      rejectReason: ['', [Validators.required, Validators.pattern(/^(?!\s).*$/)]],
     });
   }
 
@@ -128,13 +131,31 @@ export class OfferLetterComponent implements OnInit {
     this.subscription = this.http.getData(`Preonboardingsignaturauthority?LetterType=${offertype}`).subscribe({
       next: (data: any) => {
         this.authorityDetails = data;
+        if (this.getofferdata?.authoritySignature) {
+          this.resolveAuthority();
+        }
       },
     });
   }
 
+  resolveAuthority() {
+    let signatureAuthorityDetails = this.authorityDetails.find(
+      (c: any) => (c.employeeId == this.getofferdata.authoritySignature)
+    );
+    if (signatureAuthorityDetails) {
+      this.authorityDesignation = signatureAuthorityDetails.designation;
+      if (signatureAuthorityDetails.middleName) {
+        this.offerLetterData.authorityName = `${signatureAuthorityDetails.firstName}
+        ${signatureAuthorityDetails.middleName} ${signatureAuthorityDetails.lastName}`;
+      } else {
+        this.offerLetterData.authorityName = `${signatureAuthorityDetails.firstName} ${signatureAuthorityDetails.lastName}`;
+      }
+    }
+  }
+
   //function to get the offerletter details
   address = {} as IAddress;
-getOfferLetterDetails() {
+  getOfferLetterDetails() {
     let EmployeeId = parseInt(this.prosempdata.employeeId)
     this.subscription = this.http.getData(`PreonboardingOfferLetter/getbyEmpidNames/${EmployeeId}`).subscribe({
       next: (data: any) => {
@@ -144,9 +165,9 @@ getOfferLetterDetails() {
         this.offerLetterData.offerSentDate = this.getofferdata.offerSentDate
         this.offerLetterData.offerExpiryDate = this.getofferdata.offerExpiryDate
         this.offerLetterData.note = this.getofferdata.note
-         this.offerLetterData.address=this.getofferdata.address;
         if (this.employeeaddress?.employeeAddresses?.length > 0) {
-          this.address = this.employeeaddress.employeeAddresses.find((address: IAddress) => address.type.toLowerCase() == this.getofferdata.addressType.toLowerCase())
+          this.address = this.employeeaddress.employeeAddresses.find((address: IAddress) => address.type.toLowerCase() ==
+          this.getofferdata.addressType.toLowerCase())
         }
         this.offerLetterData.addressLine1 = this.address.addressLine1
         this.offerLetterData.addressLine2 = this.address.addressLine2
@@ -154,20 +175,7 @@ getOfferLetterDetails() {
         this.offerLetterData.state = this.address.state
         this.offerLetterData.country = this.address.country
         this.offerLetterData.zipCode = this.address.zipCode
-        let signatureAuthorityDetails = this.authorityDetails.find(
-          (c: any) => (c.employeeId == this.getofferdata.authoritySignature)
-        );
-        if (signatureAuthorityDetails) {
-          this.authorityDesignation = signatureAuthorityDetails.designation;
-          if (signatureAuthorityDetails.middleName) {
-            this.offerLetterData.authorityName = `${signatureAuthorityDetails.firstName} ${signatureAuthorityDetails.middleName} ${signatureAuthorityDetails.lastName}`;
-          } else
-            this.offerLetterData.authorityName = `${signatureAuthorityDetails.firstName} ${signatureAuthorityDetails.lastName}`;
-        }
-        else if (signatureAuthorityDetails == undefined || signatureAuthorityDetails == null) {
-          this.offerLetterData.authorityName = ''
-          this.authorityDesignation = ''
-        }
+        this.resolveAuthority();
       },
       error: (err: any) => {
         console.log(err);
@@ -211,9 +219,6 @@ getOfferLetterDetails() {
         this.modalService.dismissAll();
         this.getOfferLetterDetails();
         this.confiramtionpopups.openSuccess('Offer letter rejected successfully');
-
-
-
       },
       error: (err: any) => {
         console.log(err);
@@ -334,11 +339,11 @@ getOfferLetterDetails() {
         // case true:
         if (Employee.totalGrossSalary <= 21000) {
           Employee.employeeEsi = Math.round(Employee.totalGrossSalary * (0.75 / 100));
-          this.offerLetterData.esic = true
+          this.offerLetterData.esic = true;
         }
         else {
-          Employee.employeeEsi = 0
-          this.offerLetterData.esic = false
+          Employee.employeeEsi = 0;
+          this.offerLetterData.esic = false;
         }
         //===========================================================================================================
         // calculation for the basicsalary
@@ -415,14 +420,15 @@ getOfferLetterDetails() {
         Employee.jobRole = res.jobRole;
         Employee.workLocation = res.lopcation;
         Employee.subLocation = res.subLocation;
-        this.getaddress(this.jobDeatils.
-          locationId,this.jobDeatils.subLocationId);
+        this.getaddress(this.jobDeatils.locationId, this.jobDeatils.subLocationId);
       }
     })
   }
+
   redirectToNextPage() {
     this.router.navigate(['preonboarding/education']);
   }
+
   navigatefirst() {
     localStorage.clear();
     this.router.navigate(['']);
@@ -440,10 +446,15 @@ getOfferLetterDetails() {
     this.Loading = false;
   }
 
-  acceptoffer() {
-    let offerUpdateDetails = JSON.parse(JSON.stringify(this.updatedOfferLetterDetails)) as Iofferletter;
-    this.downLoadDocument(offerUpdateDetails);
+  async acceptoffer() {
     this.loadingcircle = true;
+    try {
+      let offerUpdateDetails = JSON.parse(JSON.stringify(this.updatedOfferLetterDetails)) as Iofferletter;
+      await this.downLoadDocument(offerUpdateDetails);
+    } catch (err) {
+      console.error(err);
+      this.loadingcircle = false;
+    }
   }
 
   updateOfferDetailsforAccept(updatedData: Iofferletter) {
@@ -461,46 +472,107 @@ getOfferLetterDetails() {
     })
   }
 
+  private fetchImageAsBase64(url: string): Promise<string> {
+    return fetch(url).then(res => res.blob()).then(blob => new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result as string);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    }));
+  }
+
+  private async getFileBase64(url: string): Promise<string | null> {
+    try {
+      const response = await fetch(url);
+      if (!response.ok) return null;
+      const buffer = await response.arrayBuffer();
+      const bytes = new Uint8Array(buffer);
+      let binary = '';
+      for (let i = 0; i < bytes.byteLength; i++) {
+        binary += String.fromCharCode(bytes[i]);
+      }
+      return btoa(binary);
+    } catch {
+      return null;
+    }
+  }
+
   //download document
   async downLoadDocument(offerUpdateDetails: Iofferletter) {
     const data = this.offerLetterData;
-    const pdf = new jsPDF('p', 'mm', 'a4');
-    const imgWidth = pdf.internal.pageSize.getWidth();
-    const imgHeight = pdf.internal.pageSize.getHeight();
-    const pdfContents = ['pdfContent1', 'pdfContent2', 'pdfContent3', 'pdfContent4', 'pdfContent5']; // Add more content IDs if needed
-    // Create a single canvas to combine all content elements
-    const combinedCanvas = document.createElement('canvas');
-    combinedCanvas.width = imgWidth;
-    combinedCanvas.height = pdfContents.length * imgHeight;
-    const imagesData = [];
-    for (const contentId of pdfContents) {
-      const pdfContent = document.getElementById(contentId);
-      if (pdfContent) {
-        const canvas = await html2canvas(pdfContent, { scale: 3 });
-        const imgData = canvas.toDataURL('image/png');
-        const imgHeight = (canvas.height * imgWidth) / canvas.width;
-        imagesData.push({ imgData, imgHeight });
-      }
-    }
-    // Add all images to the PDF except for the last one
-    for (let i = 0; i < imagesData.length - 1; i++) {
-      const imageData = imagesData[i];
-      pdf.addImage(imageData.imgData, 'PNG', 0, 0, imgWidth, imageData.imgHeight, '', 'FAST');
-      pdf.addPage(); // Add a new page for the next image (except for the last one)
-    }
-    // Add the last image without adding a new page
-    if (imagesData.length > 0) {
-      const lastImageData = imagesData[imagesData.length - 1];
-      pdf.addImage(lastImageData.imgData, 'PNG', 0, 0, imgWidth, lastImageData.imgHeight, '', 'FAST');
-    }
+    const fullName = [data.firstName, data.middleName, data.lastName].filter(Boolean).join(' ');
+
+    const [backgroundImageBase64, verdanaItalic, verdanaSemiBold] = await Promise.all([
+      this.fetchImageAsBase64('/images/snad-new-letter-bg.png'),
+      this.getFileBase64('/fonts/Verdana Italic.ttf'),
+      this.getFileBase64('/fonts/verdana-pro-semi-bold.ttf'),
+    ]);
+
+    const pm = (pdfMake as any).default ?? pdfMake;
+    const mergedVfs: Record<string, string> = { ...customVfs };
+    if (verdanaItalic)   mergedVfs['VerdanaItalic.ttf']   = verdanaItalic;
+    if (verdanaSemiBold) mergedVfs['VerdanaSemiBold.ttf'] = verdanaSemiBold;
+    pm.addVirtualFileSystem(mergedVfs);
+    pm.setFonts({
+      VERDANA: { normal: 'VerdanaNow.ttf', italics: verdanaItalic ? 'VerdanaItalic.ttf' : 'VerdanaNow.ttf' },
+      VERDANABOLD: { normal: verdanaSemiBold ? 'VerdanaSemiBold.ttf' : 'VerdanaNowBold.ttf' },
+      Autography: { normal: 'Autography.otf' },
+    });
+
+    const docDef = buildOfferLetterDoc({
+      firstName: data.firstName,
+      middleName: data.middleName,
+      lastName: data.lastName,
+      addressLine1: data.addressLine1,
+      addressLine2: data.addressLine2,
+      city: data.city,
+      state: data.state,
+      country: data.country,
+      pinCode: data.zipCode,
+      offerIssuedDate: data.offerSentDate,
+      dateOfJoining: data.dateOfJoining,
+      offerExpiryDate: data.offerExpiryDate,
+      jobRole: data.jobRole ?? '',
+      workAddress: data.address ?? '',
+      amount: data.salary,
+      variablePayAmount: data.variablePayAmount,
+      authorityName: data.authorityName ?? '',
+      authorityDesignation: this.authorityDesignation ?? '',
+      note: data.note,
+      basicSalary: data.basicSalary,
+      basicPerannum: data.basicPerannum,
+      hraSalary: data.hraSalary,
+      hraPerAnnum: data.hraPerAnnum,
+      otherAllowances: data.otherAllowances,
+      otherAllowancesPerAnnum: data.otherAllowancesPerAnnum,
+      totalGrossSalary: data.totalGrossSalary,
+      totalGrossPerAnnum: data.totalGrossPerAnnum,
+      pfContribution: data.pfContribution,
+      pfPreAnuum: data.pfPreAnuum,
+      employeeEsi: data.employeeEsi,
+      esiPerAnnumemployee: data.esiPerAnnumemployee,
+      professionalTax: data.professionalTax,
+      professionalPerAnnum: data.professionalPerAnnum,
+      totalDeduction: data.totalDeduction,
+      totalDeductionsPerAnnum: data.totalDeductionsPerAnnum,
+      netSalary: data.netSalary,
+      netSalaryPerAnnum: data.netSalaryPerAnnum,
+      grossSalary: data.grossSalary,
+      esicContribution: data.esicContribution,
+      esiPerAnnum: data.esiPerAnnum,
+      useVerdanaFont: true,
+      useAutographyFont: true,
+      employeeFullName: fullName,
+      backgroundImageBase64,
+    });
+
+    const blob: Blob = await pm.createPdf(docDef).getBlob();
     const fileName = `${data.firstName}_${data.middleName ?? ''}_${data.lastName ?? ''}_${new Date().getTime()}_OfferLetter_Signed.pdf`;
-    const blob = pdf.output('blob');
-    //creating form file to upload into AZure
-    let d: Date = new Date();
     const file = new File([blob], fileName, { type: 'application/pdf' });
     this.generatedfile = file;
     this.offerletterUpload(this.prosempdata.employeeId, this.generatedfile, offerUpdateDetails);
   }
+
   //to store file to the azure and return to the url
   private offerletterUpload(empId: number, file: File, offerUpdateDetails: Iofferletter) {
     let filePath = `/FusionDocuments/Employee Documents/Offer Letter/${empId}`;
@@ -518,20 +590,77 @@ getOfferLetterDetails() {
     });
   }
 
-  downloadoffer() {
-    const fileurl = this.updatedOfferLetterDetails.documentUrl;
-    this.subscription = this.http.DownloadDataWithQuery('PreonboardingFilesystem/Downloadfile', fileurl).subscribe({
-      next: (res: any) => {
-        let fileName = res.headers.get('content-disposition')?.split(':')[1].split('=')[1];
-        let blob: Blob = res.body as Blob;
-        let a = document.createElement('a');
-        a.href = window.URL.createObjectURL(blob);
-        let filename = fileurl.split('/')[fileurl.split('/').length - 1];
-        a.download = filename;
-        a.click();
-      },
-      error: (reason) => console.log(reason),
+  async downloadoffer() {
+    const data = this.offerLetterData;
+    const fullName = [data.firstName, data.middleName, data.lastName].filter(Boolean).join(' ');
+    const [backgroundImageBase64, verdanaItalic, verdanaSemiBold] = await Promise.all([
+      this.fetchImageAsBase64('/images/snad-new-letter-bg.png'),
+      this.getFileBase64('/fonts/Verdana Italic.ttf'),
+      this.getFileBase64('/fonts/verdana-pro-semi-bold.ttf'),
+    ]);
+    const pm = (pdfMake as any).default ?? pdfMake;
+    const mergedVfs: Record<string, string> = { ...customVfs };
+    if (verdanaItalic)   mergedVfs['VerdanaItalic.ttf']   = verdanaItalic;
+    if (verdanaSemiBold) mergedVfs['VerdanaSemiBold.ttf'] = verdanaSemiBold;
+    pm.addVirtualFileSystem(mergedVfs);
+    pm.setFonts({
+      VERDANA: { normal: 'VerdanaNow.ttf', bold: 'VerdanaNowBold.ttf', italics: verdanaItalic ? 'VerdanaItalic.ttf' : 'VerdanaNow.ttf', bolditalics: 'VerdanaNowBold.ttf' },
+      VERDANABOLD: { normal: verdanaSemiBold ? 'VerdanaSemiBold.ttf' : 'VerdanaNowBold.ttf', bold: verdanaSemiBold ? 'VerdanaSemiBold.ttf' : 'VerdanaNowBold.ttf', italics: verdanaSemiBold ? 'VerdanaSemiBold.ttf' : 'VerdanaNowBold.ttf', bolditalics: verdanaSemiBold ? 'VerdanaSemiBold.ttf' : 'VerdanaNowBold.ttf' },
+      Autography: { normal: 'Autography.otf', bold: 'Autography.otf', italics: 'Autography.otf', bolditalics: 'Autography.otf' },
     });
+    const docDef = buildOfferLetterDoc({
+      firstName: data.firstName,
+      middleName: data.middleName,
+      lastName: data.lastName,
+      addressLine1: data.addressLine1,
+      addressLine2: data.addressLine2,
+      city: data.city,
+      state: data.state,
+      country: data.country,
+      pinCode: data.zipCode,
+      offerIssuedDate: data.offerSentDate,
+      dateOfJoining: data.dateOfJoining,
+      offerExpiryDate: data.offerExpiryDate,
+      jobRole: data.jobRole ?? '',
+      workAddress: data.address ?? '',
+      amount: data.salary,
+      variablePayAmount: data.variablePayAmount,
+      authorityName: data.authorityName ?? '',
+      authorityDesignation: this.authorityDesignation ?? '',
+      note: data.note,
+      basicSalary: data.basicSalary,
+      basicPerannum: data.basicPerannum,
+      hraSalary: data.hraSalary,
+      hraPerAnnum: data.hraPerAnnum,
+      otherAllowances: data.otherAllowances,
+      otherAllowancesPerAnnum: data.otherAllowancesPerAnnum,
+      totalGrossSalary: data.totalGrossSalary,
+      totalGrossPerAnnum: data.totalGrossPerAnnum,
+      pfContribution: data.pfContribution,
+      pfPreAnuum: data.pfPreAnuum,
+      employeeEsi: data.employeeEsi,
+      esiPerAnnumemployee: data.esiPerAnnumemployee,
+      professionalTax: data.professionalTax,
+      professionalPerAnnum: data.professionalPerAnnum,
+      totalDeduction: data.totalDeduction,
+      totalDeductionsPerAnnum: data.totalDeductionsPerAnnum,
+      netSalary: data.netSalary,
+      netSalaryPerAnnum: data.netSalaryPerAnnum,
+      grossSalary: data.grossSalary,
+      esicContribution: data.esicContribution,
+      esiPerAnnum: data.esiPerAnnum,
+      useVerdanaFont: true,
+      useAutographyFont: true,
+      employeeFullName: fullName,
+      backgroundImageBase64,
+    });
+    const blob: Blob = await pm.createPdf(docDef).getBlob();
+    const fileName = `${data.firstName}_${data.middleName ?? ''}_${data.lastName ?? ''}_OfferLetter.pdf`;
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = fileName;
+    a.click();
+    URL.revokeObjectURL(a.href);
   }
 
   blockNonAlphabetic(event: KeyboardEvent): void {
@@ -545,9 +674,7 @@ getOfferLetterDetails() {
   getaddress(locationId: number, sublocationId: number) {
     this.subscription = this.http.getData(`PreonboardingJobDetails/GetbyJobLocationSubLocationId?joblocid=${locationId}&sublocid=${sublocationId}`).subscribe({
       next: (data: any) => {
-        console.log(data);
         this.offerLetterData.address = data.address;
-        console.log(this.offerLetterData.address);
       }
     })
   }

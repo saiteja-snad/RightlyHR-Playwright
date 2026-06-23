@@ -8,6 +8,12 @@
                 <app-module-info-icon  placement="bottom" [ngbPopover]="popContent" />
             </div>
         </div>
+            <div class="d-flex align-items-center gap-3">
+        <app-applicable-policies-trigger
+            [moduleKey]="applicablePolicies.moduleKey"
+            [subModuleKey]="applicablePolicies.subModuleKey">
+        </app-applicable-policies-trigger>
+    </div>
     </div>
 
     <!--Module Information-->

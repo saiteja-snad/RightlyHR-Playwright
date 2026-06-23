@@ -57,16 +57,17 @@ export class EmployeeinfoForYourRoleRequestComponent {
   dataload = false;
   employeeresource: any;
   timesheetrecord: any;
+  totalRecords = 0;
   page = 1;
-  pageSize = 10;
-  rows = 10;
-  collectionSize!: number;
+  pageSize = 50;
+  rows = 50;
+  collectionSize = 0;
   first = 0;
   options = [
-    { label: 10, value: 10 },
-    { label: 15, value: 15 },
-    { label: 20, value: 20 },
-    { label: 25, value: 25 }
+    { label: 50, value: 50 },
+    { label: 100, value: 100 },
+    { label: 150, value: 150 },
+    { label: 200, value: 200 }
   ];
   startdate: any;
   enddate: any;
@@ -404,7 +405,7 @@ isFieldChanged(objectKey: string, changedFields: any): boolean {
           status: this.conformationstatus,
           comments: comments,
           moduleId: environment.pendingapprovalemployeid,
-          onBehalfOfApproval: true,
+          // onBehalfOfApproval: true,
           headerRequests: this.selectedLeavesItems.map((item) => ({
             headerID: item.pendingApprovalHeader.id,
             currentStage: item.pendingApprovalHeader.currentapprovalStage,
@@ -416,7 +417,7 @@ isFieldChanged(objectKey: string, changedFields: any): boolean {
           requestProcessedBy: approvedBy,
           status: this.conformationstatus,
           comments: comments,
-          onBehalfOfApproval: true,
+          // onBehalfOfApproval: true,
           moduleId: environment.pendingapprovalemployeid,
           headerRequests: [
             {
@@ -451,10 +452,7 @@ isFieldChanged(objectKey: string, changedFields: any): boolean {
             });
             setTimeout(() => modalRef.close(), 3000);
           }
-             this.http.tirggerPendingApprovalCountSignal.update((status) => ({
-              ...status,
-              employeinfo: true,
-            }));
+             this.signalService.employeinfoDetailsTriggerSignal.set(true);
         },
         error: (reason: any) => {
           this.spinnerLoader = false;
@@ -500,7 +498,7 @@ isFieldChanged(objectKey: string, changedFields: any): boolean {
           status: this.conformationstatus,
           comments: comments,
           moduleId: environment.pendingapprovalemployeid,
-          onBehalfOfApproval: true,
+          // onBehalfOfApproval: true,
           headerRequests: this.selectedLeavesItems.map((item) => ({
             headerID: item.pendingApprovalHeader.id,
             currentStage: item.pendingApprovalHeader.currentapprovalStage,
@@ -512,7 +510,7 @@ isFieldChanged(objectKey: string, changedFields: any): boolean {
           requestProcessedBy: approvedBy,
           status: this.conformationstatus,
           comments: comments,
-          onBehalfOfApproval: true,
+          // onBehalfOfApproval: true,
           moduleId: environment.pendingapprovalemployeid,
           headerRequests: [
             {

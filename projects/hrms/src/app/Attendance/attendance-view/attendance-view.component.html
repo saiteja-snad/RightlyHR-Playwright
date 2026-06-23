@@ -57,6 +57,10 @@
         <img src="icons/finger-print.png" alt="Icon" class="finger-icon me-1">{{'My Attendance'|translate}}
       </button>
       }
+      <app-applicable-policies-trigger
+        [moduleKey]="applicablePolicies.moduleKey"
+        [subModuleKey]="applicablePolicies.subModuleKey">
+      </app-applicable-policies-trigger>
     </div>
     <!-- select all employees drop down for team manager code end -->
   </div>
@@ -371,7 +375,7 @@
                   <tbody>
                     <tr *ngFor="let log of permissions_list">
                       <td class="log-time">{{ log.type?log.type:'-' }}</td>
-                      <td class="duration-time">{{ log.duration ? log.duration + ' Hrs' : '-' }} 
+                      <td class="duration-time">{{ log.duration ? log.duration + ' Hrs' : '-' }}
                       <a type="button" [ngbPopover]="reason">
                         <app-info-icon />
                       </a>
@@ -406,7 +410,7 @@
                   <tbody>
                     <tr *ngFor="let log of regularization_list">
                       <td class="log-time">{{ log.type?log.type:'-' }}</td>
-                      <td class="duration-time">{{ log.duration ? log.duration + ' Hrs' : '-' }} 
+                      <td class="duration-time">{{ log.duration ? log.duration + ' Hrs' : '-' }}
                       <a type="button" [ngbPopover]="regularization_reason">
                         <app-info-icon />
                       </a>
@@ -440,7 +444,7 @@
                   </thead>
                   <tbody>
                     <tr *ngFor="let log of extra_logs">
-                      <td class="duration-time">{{ log.duration ? log.duration + ' Hrs' : '-' }} 
+                      <td class="duration-time">{{ log.duration ? log.duration + ' Hrs' : '-' }}
                       </td>
                       <td class="text-capitalize">{{ log.status ? log.status : '-' }}</td>
                       <td>

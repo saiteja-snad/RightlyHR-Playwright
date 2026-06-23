@@ -10,7 +10,7 @@ import { Location } from '@angular/common'
 import { NgxDocViewerModule } from 'ngx-doc-viewer';
 import { environment } from '../../../../environments/environment';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { DateFormatPipe } from "../../Pipes/date-format.pipe";
+import { DateFormatPipe } from "../../pipes/date-format.pipe";
 import { DetailedStepProgressbarComponent } from "../../shared/detailed-step-progressbar/detailed-step-progressbar.component";
 import { Ipersonal } from '../../models/personal-details.model';
 import { ConfirmationIconComponent } from "../../../../../hrms/src/app/icons/confirmation-icon/confirmation-icon.component";

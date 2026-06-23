@@ -18,7 +18,8 @@ import { NavigationEnd, Router } from '@angular/router';
 import { MODULE_INFOS } from '../../shared/modules-info';
 import { PmsTabsComponent } from "../../shared/pms-module-tabs/pms-tabs/pms-tabs.component";
 import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
-
+import { ApplicablePoliciesTriggerComponent } from '../../shared/policies/applicable-policies-trigger/applicable-policies-trigger.component';
+import { APPLICABLE_POLICIES_KEYS } from '../../shared/policies/policy-visibility.catalog';
 @Component({
   selector: 'app-review-cycle-list',
   imports: [
@@ -32,7 +33,8 @@ import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-inf
     ModuleInformationComponent,
     NgbPopoverModule,
     PmsTabsComponent,
-    ModuleInfoIconComponent
+    ModuleInfoIconComponent,
+    ApplicablePoliciesTriggerComponent
 ],
   templateUrl: './review-cycle-list.component.html',
   styleUrl: './review-cycle-list.component.scss',
@@ -40,6 +42,7 @@ import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-inf
 })
 
 export class ReviewCycleListComponent implements OnInit, OnDestroy {
+  applicablePolicies = APPLICABLE_POLICIES_KEYS.PMS_REVIEW_CYCLE;
   moduleinfo : string = '';
   subscription!: Subscription;
   filteredDetails: any[] = [];
@@ -49,22 +52,18 @@ export class ReviewCycleListComponent implements OnInit, OnDestroy {
   searchText = '';
   reviewCyclesList: any[] = [];
   dataload = false;
-
-  page = 1;
-  pageSize = 10;
-  rows = 10;
-  collectionSize!: number;
-  searchQuery = '';
-  first = 0;
   totalRecords = 0;
-
+  page = 1;
+  pageSize = 50;
+  rows = 50;
+  collectionSize = 0;
+  first = 0;
   options = [
-    { label: 10, value: 10 },
-    { label: 15, value: 15 },
-    { label: 20, value: 20 },
-    { label: 25, value: 25 }
+    { label: 50, value: 50 },
+    { label: 100, value: 100 },
+    { label: 150, value: 150 },
+    { label: 200, value: 200 }
   ];
-
   @ViewChild('cancelationConfirmation') cancelationConfirmation: any;
   @ViewChild('confirmation') confirmation: any;
 
@@ -89,11 +88,11 @@ export class ReviewCycleListComponent implements OnInit, OnDestroy {
 
   updateModuleInfo() {
     const url = this.router.url;
-  
+
     const routeToInfoMap: { [key: string]: string } = {
       '/pms/review-cycle': MODULE_INFOS.PMS_REVIEW_CYCLE_LIST_MODULE_INFO
     };
-  
+
     const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
     this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }

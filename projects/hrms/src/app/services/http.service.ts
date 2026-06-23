@@ -49,6 +49,7 @@ export class HttpService {
     expenses: boolean;
     nodue: boolean;
     timeoff: boolean;
+    onboarding : boolean
   }>({
     compOff: false,
     wfh: false,
@@ -58,6 +59,7 @@ export class HttpService {
     expenses: false,
     nodue: false,
     timeoff: false,
+    onboarding : false
   });
   desklocationIdSubject = new BehaviorSubject<string | null>(null);
   desksublocationIdSubject = new BehaviorSubject<string | null>(null);
@@ -219,7 +221,7 @@ export class HttpService {
   }
 
   // OnBehalf Of
-  onBehalfOfTriggerSignal = signal<boolean>(false);
+  onBehalfOfTriggerSignal = signal<number>(0);
   desklocationId$ = this.desklocationIdSubject.asObservable();
   desksublocationId$ = this.desksublocationIdSubject.asObservable();
 
@@ -1432,5 +1434,31 @@ notifyMessageUpdate() {
   ratecardcountfuntion$ = this.ratecardcount.asObservable();
   setnewcountDetailsforratecard() {
     this.ratecardcount.next();
+  }
+
+    getIsFromOnBehalfOfProbation(): boolean {
+    try {
+      const value = localStorage.getItem('IsFromOnBehalfOfProbation');
+
+      if (value === null || value === undefined) {
+        return false; // default fallback
+      }
+
+      // Handle both JSON-stored and plain string cases
+      if (value === 'true' || value === 'false') {
+        return value === 'true';
+      }
+
+      return JSON.parse(value) === true;
+    } catch {
+      return false; // safe fallback on parse error
+    }
+  }
+  
+  getEmployeesWithBreakdown(payload: any) {
+    return this.http.post(
+      `${this.ApiUrl}Employeedata/employees/with-leave-categories/v3`,
+      payload
+    );
   }
 }

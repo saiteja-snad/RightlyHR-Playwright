@@ -1,171 +1,179 @@
 <div *ngIf="!router.url.includes('myqueries/')">
-    <div class="custom-main-component-container">
-        <div class="component-header-content">
-            <div class="heading-content">
-                <div class="commpoment-name">{{'Help Desk' | translate}}
-                    <span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
+  <div class="custom-main-component-container">
+    <div class="component-header-content">
+      <div class="heading-content">
+        <div class="commpoment-name">{{'Help Desk' | translate}}
+          <span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
+        </div>
+        <div class="component-header">{{'My Queries' | translate}}</div>
+        <div>
+          <app-module-info-icon placement="bottom" [ngbPopover]="popContent" />
+        </div>
+      </div>
+      <div class="d-flex align-items-center gap-3">
+
+        @if(rbac.allowedToAccess('Employee Helpdesk Queries Tab.create')){
+        <div>
+          <button type="button" class="custom-btn btn-primary" (click)="openModal(content)">{{'Raise a query' |
+            translate}}</button>
+        </div>
+        }
+        <app-applicable-policies-trigger [moduleKey]="applicablePolicies.moduleKey"
+          [subModuleKey]="applicablePolicies.subModuleKey">
+        </app-applicable-policies-trigger>
+      </div>
+    </div>
+
+    <!--Module Information-->
+    <ng-template #popContent>
+      <app-module-information [moduleInfo]="moduleinfo" />
+    </ng-template>
+
+    <div class="mb-3">
+      <app-helpdesk-header-tabs />
+    </div>
+
+    <!--Input search-->
+    <div class="input-group custom-search mb-3">
+      <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
+      <input type="search" #search="ngModel" [(ngModel)]="searchValue" (ngModelChange)="onSearchChange()"
+        class="form-control custom-search-input"
+        placeholder="Search by query id / category / subcategory  / status / priority  " aria-label="Username"
+        aria-describedby="basic-addon1">
+    </div>
+    <div class="custom-table-content">
+      @if (!dataloader) {
+      <table class="w-100">
+        <thead>
+          <th>{{'Query ID' | translate}}</th>
+          <th>{{'Category' | translate}}</th>
+          <th class="text-center">{{'Subcategory' | translate}}</th>
+          <!-- <th class="text-center">{{'Department' | translate}}</th> -->
+          <!-- <th class="text-center">{{'Subject' | translate}}</th> -->
+          <th class="text-center">{{'Description' | translate}}</th>
+          <th class="text-center">{{'Requested Date' | translate}}</th>
+          <th class="text-center">{{'Status' | translate}}</th>
+          <th class="text-center">{{'Priority' | translate}}</th>
+        </thead>
+        <tbody>
+          <ng-container *ngIf="tickets.length > 0; else noDataTemplate">
+            <tr *ngFor="let ticket of tickets">
+              <td>
+                <a class="project-name cursor" (click)="openEnd(ticket)">{{ 'TKT - ' + ticket.id }}</a>
+              </td>
+
+              <!-- Category -->
+              <td>{{ ticket.category || '-' }}</td>
+              <!-- Sub Category -->
+              <td class="text-center">{{ ticket.subcategory || '-' }}</td>
+              <!-- Department (Not in API, so show '-') -->
+              <!-- <td class="text-center">{{ ticket.department || '-' }}</td> -->
+              <td class="text-center">
+                <div class="cursor">
+                  <div [ngbPopover]="popContentdesc">
+                    <app-info-icon />
+                  </div>
                 </div>
-                <div class="component-header">{{'My Queries' | translate}}</div>
-                <div>
-                    <app-module-info-icon placement="bottom" [ngbPopover]="popContent" />
-                </div>
-            </div>
-            @if(rbac.allowedToAccess('Employee Helpdesk Queries Tab.create')){
-            <div>
-                <button type="button" class="custom-btn btn-primary" (click)="openModal(content)">{{'Raise a query' | translate}}</button>
-            </div>
-          }
-        </div>
+                <ng-template #popContentdesc>
+                  <div>
+                    {{ ticket.description || '-' }}
+                  </div>
+                </ng-template>
+              </td>
 
-        <!--Module Information-->
-        <ng-template #popContent>
-            <app-module-information [moduleInfo]="moduleinfo" />
-        </ng-template>
-
-        <div class="mb-3">
-            <app-helpdesk-header-tabs />
-        </div>
-
-        <!--Input search-->
-        <div class="input-group custom-search mb-3">
-            <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
-            <input type="search" #search="ngModel" [(ngModel)]="searchValue" (ngModelChange)="onSearchChange()"
-                class="form-control custom-search-input"
-                placeholder="Search by query id / category / subcategory  / status / priority  "
-                aria-label="Username" aria-describedby="basic-addon1">
-        </div>
-        <div class="custom-table-content">
-            @if (!dataloader) {
-            <table class="w-100">
-                <thead>
-                    <th>{{'Query ID' | translate}}</th>
-                    <th>{{'Category' | translate}}</th>
-                    <th class="text-center">{{'Subcategory' | translate}}</th>
-                    <!-- <th class="text-center">{{'Department' | translate}}</th> -->
-                    <!-- <th class="text-center">{{'Subject' | translate}}</th> -->
-                    <th class="text-center">{{'Description' | translate}}</th>
-                    <th class="text-center">{{'Requested Date' | translate}}</th>
-                    <th class="text-center">{{'Status' | translate}}</th>
-                    <th class="text-center">{{'Priority' | translate}}</th>
-                </thead>
-                <tbody>
-                    <ng-container *ngIf="tickets.length > 0; else noDataTemplate">
-                        <tr *ngFor="let ticket of tickets">
-                            <td>
-                                <a class="project-name cursor" (click)="openEnd(ticket)">{{ 'TKT - ' + ticket.id }}</a>
-                            </td>
-
-                            <!-- Category -->
-                            <td>{{ ticket.category || '-' }}</td>
-                            <!-- Sub Category -->
-                            <td class="text-center">{{ ticket.subcategory || '-' }}</td>
-                            <!-- Department (Not in API, so show '-') -->
-                            <!-- <td class="text-center">{{ ticket.department || '-' }}</td> -->
-                            <td class="text-center">
-                                <div class="cursor">
-                                    <div [ngbPopover]="popContentdesc">
-                                        <app-info-icon />
-                                    </div>
-                                </div>
-                                <ng-template #popContentdesc>
-                                    <div>
-                                        {{ ticket.description || '-' }}
-                                    </div>
-                                </ng-template>
-                            </td>
-
-                            <!-- Requested Date -->
-                            <td class="text-center">{{ ticket.createdDate | date}}</td>
-                            <!-- Status -->
-                            <td class="text-center">
-                                <span class="ticket-status" [ngClass]="{
+              <!-- Requested Date -->
+              <td class="text-center">{{ ticket.createdDate | date}}</td>
+              <!-- Status -->
+              <td class="text-center">
+                <span class="ticket-status" [ngClass]="{
                                 'status-open': ticket.status?.toLowerCase() === 'open',
                                 'status-closed': ticket.status?.toLowerCase() === 'closed',
                                 'status-await-on-user': ticket.status?.toLowerCase() === 'await on user',
                                 'status-rejected': ticket.status?.toLowerCase() === 'rejected'
                                     }">
-                                    {{ (ticket.status | titlecase) || '-' }}
-                                </span>
-                            </td>
+                  {{ (ticket.status | titlecase) || '-' }}
+                </span>
+              </td>
 
-                            <!-- Priority -->
-                            <td class="text-center">
-                                <span class="ticket-priority" [ngClass]="{
+              <!-- Priority -->
+              <td class="text-center">
+                <span class="ticket-priority" [ngClass]="{
                                             'priority-high': ticket.priority?.toLowerCase() === 'high',
                                             'priority-medium': ticket.priority?.toLowerCase() === 'medium',
                                             'priority-low': ticket.priority?.toLowerCase() === 'low',
                                             'priority-urgent': ticket.priority?.toLowerCase() === 'urgent'
                                           }">
-                                    {{ ticket.priority === 'N/A' ? 'N/A' : (ticket.priority | titlecase) || '-' }}
-                                </span>
-                            </td>
-                        </tr>
-                    </ng-container>
-                    <ng-template #noDataTemplate>
-                        <tr>
-                            <app-no-data-found />
-                        </tr>
-                    </ng-template>
+                  {{ ticket.priority === 'N/A' ? 'N/A' : (ticket.priority | titlecase) || '-' }}
+                </span>
+              </td>
+            </tr>
+          </ng-container>
+          <ng-template #noDataTemplate>
+            <tr>
+              <app-no-data-found />
+            </tr>
+          </ng-template>
 
-                </tbody>
-            </table>
-            }
-            @else {
-            <app-data-loader-content />
-            }
-        </div>
-        @if(tickets.length > 0) {
-        <div class="pagination-content">
-            <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
-                <div class="d-flex align-items-center gap-3 p-2">
-                    <select title="text" class="form-select custom-pagination-select" [(ngModel)]="rows"
-                        (ngModelChange)="onPageSizeChange($event)">
-                        <option *ngFor="let option of options" [value]="option.value">{{ option.label }}
-                        </option>
-                    </select>
-                    <span class="pagination-label text-nowrap">
-                        Showing {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize : (+first + +rows) }} of {{collectionSize }}
-                    </span>
-                </div>
-                <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"
-                    (onPageChange)="onPageChange($event)"></p-paginator>
-            </div>
-        </div>
-        }
-
+        </tbody>
+      </table>
+      }
+      @else {
+      <app-data-loader-content />
+      }
     </div>
-    <!-- confrim pop up -->
-    <ng-template #confirmationpopup let-model>
-        <div class="result-popup-content" ngbAutofocus>
-            <div>
-                <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
-                <p class="confirmation-text"> {{'Are you sure you want to cancel?' | translate}}</p>
-            </div>
-            <div class="custom-modal-footer">
-                <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">
-                    No
-                </button>
-                <button type="submit" class="custom-btn btn-primary" (click)="cleardata();model.dismiss()">
-                    Yes
-                </button>
-            </div>
+    @if(tickets.length > 0) {
+    <div class="pagination-content">
+      <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
+        <div class="d-flex align-items-center gap-3 p-2">
+          <select title="text" class="form-select custom-pagination-select" [(ngModel)]="rows"
+            (ngModelChange)="onPageSizeChange($event)">
+            <option *ngFor="let option of options" [value]="option.value">{{ option.label }}
+            </option>
+          </select>
+          <span class="pagination-label text-nowrap">
+            Showing {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize : (+first + +rows) }} of
+            {{collectionSize }}
+          </span>
         </div>
-    </ng-template>
+        <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"
+          (onPageChange)="onPageChange($event)"></p-paginator>
+      </div>
+    </div>
+    }
 
-    <!-- query details offcanvas -->
-    <ng-template #content let-offcanvas ngbAutofocus>
-        <form [formGroup]="helpDeskForm" (ngSubmit)="onSubmit()">
-            <div class="custom-main-popup-container resources-list-model">
-                <div class="custom-offcanvas-header p-3 d-flex justify-content-between align-items-center">
-                    <div class="custom-offcanvas-title">{{'Raise a query' | translate}}</div>
+  </div>
+  <!-- confrim pop up -->
+  <ng-template #confirmationpopup let-model>
+    <div class="result-popup-content" ngbAutofocus>
+      <div>
+        <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
+        <p class="confirmation-text"> {{'Are you sure you want to cancel?' | translate}}</p>
+      </div>
+      <div class="custom-modal-footer">
+        <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">
+          No
+        </button>
+        <button type="submit" class="custom-btn btn-primary" (click)="cleardata();model.dismiss()">
+          Yes
+        </button>
+      </div>
+    </div>
+  </ng-template>
 
-                    <a (click)="offcanvas.dismiss()">
-                        <img src="icons/close.png" alt="Close Icon" class="close-icon">
-                    </a>
-                </div>
+  <!-- query details offcanvas -->
+  <ng-template #content let-offcanvas ngbAutofocus>
+    <form [formGroup]="helpDeskForm" (ngSubmit)="onSubmit()">
+      <div class="custom-main-popup-container resources-list-model">
+        <div class="custom-offcanvas-header p-3 d-flex justify-content-between align-items-center">
+          <div class="custom-offcanvas-title">{{'Raise a query' | translate}}</div>
 
-                <div class="query-details-content p-3">
-                    <!-- <div class="mb-3">
+          <a (click)="offcanvas.dismiss()">
+            <img src="icons/close.png" alt="Close Icon" class="close-icon">
+          </a>
+        </div>
+
+        <div class="query-details-content p-3">
+          <!-- <div class="mb-3">
                         <label class="form-label custom-label mb-2">{{'Department' | translate}}<span
                                 class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
@@ -180,94 +188,91 @@
                             <div class="error-msg">{{'Department is required' | translate}}</div>
                         </div>
                     </div> -->
-                    <div class="mb-3">
-                        <label class="form-label custom-label mb-2">{{'Category' | translate}}<span
-                                class="text-danger">*</span></label>
-                        <div class="custom-p-select-content">
-                            <p-select [options]="categoryDetails" optionLabel="label" optionValue="value"
-                                [filter]="true" filterBy="label" placeholder="Please select category"
-                                formControlName="categoryId" [showClear]="true" class="custom-select w-100"
-                                (onChange)="getsubcategoryName($event.value)" (onClear)="onCategoryClear()">
-                            </p-select>
-                        </div>
-                        <div *ngIf="helpDeskForm.get('categoryId')?.invalid && helpDeskForm.get('categoryId')?.touched">
-                            <div class="error-msg">{{'Category is required' | translate}}</div>
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label custom-label mb-2">{{'Subcategory' | translate}}<span
-                                class="text-danger">*</span></label>
-                        <div class="custom-p-select-content">
-                            <p-select [options]="subCategoryDetails" resetFilterOnHide="true" [filter]="true"
-                                filterBy="label" optionLabel="label" optionValue="value" [showClear]="true"
-                                placeholder="Please select subcategory" formControlName="subcategoryId"
-                                (onClear)="onsubCategoryClear()" class="form-select custom-select">
-                            </p-select>
-                        </div>
-                        <div
-                            *ngIf="helpDeskForm.get('subcategoryId')?.invalid && helpDeskForm.get('subcategoryId')?.touched">
-                            <div class="error-msg">{{'Subcategory is required' | translate}}</div>
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label custom-label mb-2">
-                            {{'Attachment' | translate}}
-                        </label>
+          <div class="mb-3">
+            <label class="form-label custom-label mb-2">{{'Category' | translate}}<span
+                class="text-danger">*</span></label>
+            <div class="custom-p-select-content">
+              <p-select [options]="categoryDetails" optionLabel="label" optionValue="value" [filter]="true"
+                filterBy="label" placeholder="Please select category" formControlName="categoryId" [showClear]="true"
+                class="custom-select w-100" (onChange)="getsubcategoryName($event.value)" (onClear)="onCategoryClear()">
+              </p-select>
+            </div>
+            <div *ngIf="helpDeskForm.get('categoryId')?.invalid && helpDeskForm.get('categoryId')?.touched">
+              <div class="error-msg">{{'Category is required' | translate}}</div>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label custom-label mb-2">{{'Subcategory' | translate}}<span
+                class="text-danger">*</span></label>
+            <div class="custom-p-select-content">
+              <p-select [options]="subCategoryDetails" resetFilterOnHide="true" [filter]="true" filterBy="label"
+                optionLabel="label" optionValue="value" [showClear]="true" placeholder="Please select subcategory"
+                formControlName="subcategoryId" (onClear)="onsubCategoryClear()" class="form-select custom-select">
+              </p-select>
+            </div>
+            <div *ngIf="helpDeskForm.get('subcategoryId')?.invalid && helpDeskForm.get('subcategoryId')?.touched">
+              <div class="error-msg">{{'Subcategory is required' | translate}}</div>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label custom-label mb-2">
+              {{'Attachment' | translate}}
+            </label>
 
-                        <input type="file"  (change)="onChangeClientAttachment($event)"
-                            class="form-control custom-input px-0" accept="*/*">
+            <input type="file" (change)="onChangeClientAttachment($event)" class="form-control custom-input px-0"
+              accept="*/*">
 
-                        <div class="error-msg">
+            <div class="error-msg">
 
-                            <div *ngIf="fileErrorMessage">
-                                {{ fileErrorMessage }}
-                            </div>
+              <div *ngIf="fileErrorMessage">
+                {{ fileErrorMessage }}
+              </div>
 
-                            <!-- <div *ngIf="helpDeskForm.get('attachment')?.invalid
+              <!-- <div *ngIf="helpDeskForm.get('attachment')?.invalid
                         && helpDeskForm.get('attachment')?.touched">
                     {{ 'Attachment is required' | translate }}
                 </div>
          -->
-                            <div class="d-flex justify-content-between align-items-center mt-2">
-                                <p class="note-text">
-                                    <span class="note">Note:</span>
-                                    The file size should be less than 25MB.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label custom-label mb-2">{{'Description'| translate}}<span
-                                class="text-danger">*</span></label>
-                        <textarea class="form-control custom-input" formControlName="description" pattern="^\S.*"
-                            [maxlength]="250" placeholder="Please enter description"></textarea>
-                        <div class="textarea-count-text">{{ helpDeskForm.get('description')?.value?.length ?? 0 }}/250
-                        </div>
-                        <div *ngIf="helpDeskForm.get('description')?.touched
-                             && helpDeskForm.get('description')?.invalid">
-                            <div class="error-msg ">{{'Description is required' | translate}}</div>
-                        </div>
-                        <div *ngIf="helpDeskForm.get('description')?.hasError('pattern')">
-                            <div class="error-msg ">{{'Description must not contain only spaces' | translate}}</div>
-                        </div>
-
-                    </div>
-                </div>
-
-                <div class="p-3">
-                    <button type="submit" class="custom-btn btn-primary px-4 w-100"
-                        [disabled]="helpDeskForm.invalid || isLoading">
-                        @if (isLoading) {
-                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                        <span>{{'Loading' | translate}}...</span>
-                        } @else {
-                        <span>{{'Submit'| translate}}</span>
-                        }
-
-                    </button>
-                </div>
+              <div class="d-flex justify-content-between align-items-center mt-2">
+                <p class="note-text">
+                  <span class="note">Note:</span>
+                  The file size should be less than 25MB.
+                </p>
+              </div>
             </div>
-        </form>
-    </ng-template>
+          </div>
+          <div class="mb-3">
+            <label class="form-label custom-label mb-2">{{'Description'| translate}}<span
+                class="text-danger">*</span></label>
+            <textarea class="form-control custom-input" formControlName="description" pattern="^\S.*" [maxlength]="250"
+              placeholder="Please enter description"></textarea>
+            <div class="textarea-count-text">{{ helpDeskForm.get('description')?.value?.length ?? 0 }}/250
+            </div>
+            <div *ngIf="helpDeskForm.get('description')?.touched
+                             && helpDeskForm.get('description')?.invalid">
+              <div class="error-msg ">{{'Description is required' | translate}}</div>
+            </div>
+            <div *ngIf="helpDeskForm.get('description')?.hasError('pattern')">
+              <div class="error-msg ">{{'Description must not contain only spaces' | translate}}</div>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="p-3">
+          <button type="submit" class="custom-btn btn-primary px-4 w-100"
+            [disabled]="helpDeskForm.invalid || isLoading">
+            @if (isLoading) {
+            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+            <span>{{'Loading' | translate}}...</span>
+            } @else {
+            <span>{{'Submit'| translate}}</span>
+            }
+
+          </button>
+        </div>
+      </div>
+    </form>
+  </ng-template>
 </div>
 <router-outlet></router-outlet>

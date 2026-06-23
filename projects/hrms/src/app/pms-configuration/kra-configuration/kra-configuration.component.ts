@@ -44,11 +44,18 @@ export class KraConfigurationComponent implements OnInit, OnDestroy {
   deleteId: number | null = null;
 
   searchText = '';
+   totalRecords = 0;
   page = 1;
-  rows = 10;
-  first = 0;
+  pageSize = 50;
+  rows = 50;
   collectionSize = 0;
-  pageOptions = [10, 25, 50];
+  first = 0;
+  options = [
+    { label: 50, value: 50 },
+    { label: 100, value: 100 },
+    { label: 150, value: 150 },
+    { label: 200, value: 200 }
+  ];
 
   kraCategories: KraCategory[] = [];
 

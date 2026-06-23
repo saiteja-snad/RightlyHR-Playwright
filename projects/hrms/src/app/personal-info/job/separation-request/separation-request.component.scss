@@ -16,3 +16,33 @@
 .bi-repeat {
     color: var(--primary-color) !important;
 }
+
+.headertext-color {
+    color: var(--primary-color) !important;
+}
+
+.leave-name {
+    font-size: var(--fontsize12);
+    font-weight: 500;
+}
+
+.category-chip {
+    width: max-content;
+    font-size: 8px !important;
+    padding: 0.125rem 0.5rem;
+    border: 0.1px solid;
+    border-radius: 0.25rem;
+    text-align: center;
+}
+
+.popup-context {
+    font-size: 14px;
+    color: #333;
+    font-weight: 500;
+
+    span {
+        margin-left: 0.25rem;
+        font-weight: 600;
+        color: var(--primary-color);
+    }
+}

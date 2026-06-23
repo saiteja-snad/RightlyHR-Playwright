@@ -1,0 +1,62 @@
+.toggle-progress-content {
+    background-color: var(--table-data-bg-even-color);
+    border: 0.5px solid var(--input-border-color);
+    border-radius: 0.5rem;
+    cursor: pointer;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.line-progress-wrap { flex: 1; min-width: 0; overflow: hidden; }
+.line-step-row { display: flex; align-items: center; width: 100%; }
+.line-step { display: flex; align-items: center; gap: 6px; white-space: nowrap; flex-shrink: 0; }
+
+.line-circle {
+    width: 26px; height: 26px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700; color: #fff; flex-shrink: 0;
+    &.circle-completed { background-color: #35B97D; }
+    &.circle-current   { background-color: var(--primary-color); }
+    &.circle-upcoming  { background-color: #C5D8F5; color: #4a5568; }
+}
+
+.line-step-name {
+    font-size: 14px; font-weight: 500;
+    &.text-completed { color: #35B97D; }
+    &.text-current   { color: var(--primary-color); }
+    &.text-upcoming  { color: #9ab0cc; }
+}
+
+.line-connector {
+    flex: 1; height: 2.5px; background-color: #C5D8F5;
+    margin: 0 8px; border-radius: 2px;
+    &.connector-active { background-color: #35B97D; }
+}
+
+.toggle-arrow-btn { flex-shrink: 0; display: flex; align-items: center; cursor: pointer; }
+.down-arrow { width: 20px; height: 20px; display: block; }
+.arrow { transform: rotate(180deg); }
+
+.chevron-steps-row { display: flex; width: 100%; gap: 2px; }
+
+.chevron-step {
+    flex: 1; display: flex; align-items: center; justify-content: center;
+    height: 36px; font-size: 12px; font-weight: 600; color: #fff;
+    padding: 0 1.6rem;
+    clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 50%, calc(100% - 16px) 100%, 0 100%, 16px 50%);
+    &:first-child { clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 50%, calc(100% - 16px) 100%, 0 100%); padding-left: 1rem; }
+    &:last-child  { clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 16px 50%); padding-right: 1rem; }
+    &.step-completed { background-color: #35B97D; }
+    &.step-current   { background-color: var(--primary-color); }
+    &.step-upcoming  { background-color: #C5D8F5; color: #4a5568; }
+}
+
+.step-check-icon { width: 16px; height: 16px; object-fit: contain; vertical-align: middle; }
+.sub-row { min-height: 36px; }
+.sub-content { border-right: 1px solid #b6b6b6; text-align: center; padding: 4px 6px; }
+
+.info-text {
+    font-size: 12px; padding: 0.4rem 0.65rem;
+    background-color: rgba(53, 185, 125, 0.1);
+    border-radius: 0.4rem; color: #006034;
+}

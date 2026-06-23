@@ -19,6 +19,7 @@ import { PaginatorModule } from 'primeng/paginator';
 import { Router } from '@angular/router';
 import { Skeleton } from "primeng/skeleton";
 import { DateformatPipe } from '../../../pipes/dateformat.pipe';
+import { SignalsService } from '../../../services/signals.service';
 @Component({
   selector: 'app-time-sheet-approvals',
   imports: [AccordionModule, CommonModule, PaginatorModule, ReactiveFormsModule, TableModule, TranslateModule, InfoIconComponent, NgbPopover,
@@ -65,17 +66,21 @@ export class TimeSheetApprovalsComponent implements OnInit {
   //employeeflag:any;
   employeeresource: any;
   timesheetrecord: any;
+
+
+    // Pagination
   page = 1;
-  pageSize = 10;
-  rows = 10;
-  collectionSize!: number;
+  pageSize = 50;
+  rows = 50;
+  collectionSize = 0;
   first = 0;
   options = [
-    { label: 10, value: 10 },
-    { label: 15, value: 15 },
-    { label: 20, value: 20 },
-    { label: 25, value: 25 }
+    { label: 50, value: 50 },
+    { label: 100, value: 100 },
+    { label: 150, value: 150 },
+    { label: 200, value: 200 }
   ];
+
   startdate: any;
   enddate: any;
   globalSelectedEntries: any[] = [];
@@ -87,7 +92,7 @@ export class TimeSheetApprovalsComponent implements OnInit {
   selectedSummaryEntries: any[] = [];
   requestType!:string;
   constructor(private http: HttpService, public formsValidation: FormValidationsService, private modalService: NgbModal,
-    private conformationPopup: OpenModalService, public router: Router, private fb: FormBuilder) { }
+    private conformationPopup: OpenModalService, public router: Router, private fb: FormBuilder, private signalService : SignalsService) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
@@ -104,9 +109,9 @@ export class TimeSheetApprovalsComponent implements OnInit {
         this.allPagesSelected = false;
         this.showBulkSelectionBanner = false;
         this.page = 1;
-        this.pageSize = 10;
+        this.pageSize = 50;
         this.first = 0;
-        this.rows = 10;
+        this.rows = 50;
         if (data && data.request) {
           this.employeeresource = data.request.resourceId;
           this.phaseId = data.request.phaseId;
@@ -253,6 +258,7 @@ onStatusApproveSelect(status: string) {
             });
           }
           this.syncGlobalSelectedEntries();
+          this.updateBulkSelectionBanner();
         }
       },
       error: (err) => {
@@ -307,6 +313,17 @@ onStatusApproveSelect(status: string) {
     setTimeout(() => this.updateBulkSelectionBanner(), 0);
   }
 
+  // updateBulkSelectionBanner() {
+  //   this.currentPageItemCount = this.timesheetData.reduce((acc, day) => acc + (day.entries?.length || 0), 0);
+  //   const allCurrentPageSelected = this.selectedEntries.length > 0 && this.selectedEntries.length === this.currentPageItemCount;
+  //   this.showBulkSelectionBanner = allCurrentPageSelected && !this.allPagesSelected;
+  // console.log('Banner Debug:', {
+  //   currentPageItemCount: this.currentPageItemCount,
+  //   selectedCount: this.selectedEntries.length,
+  //   collectionSize: this.collectionSize,
+  //   allCurrentPageSelected,
+  //   showBanner: this.showBulkSelectionBanner
+  // });
   updateBulkSelectionBanner() {
     this.currentPageItemCount = this.timesheetData.reduce((acc, day) => acc + (day.entries?.length || 0), 0);
     const allCurrentPageSelected = this.selectedEntries.length > 0 && this.selectedEntries.length === this.currentPageItemCount;
@@ -316,14 +333,14 @@ onStatusApproveSelect(status: string) {
     //   selectedCount: this.selectedEntries.length,
     //   collectionSize: this.collectionSize,
     //   allCurrentPageSelected,
-    //   showBanner: this.showBulkSelectionBanner
+    //   showBanner: this.showBulkSelectionBanner,
     // });
   }
 
   selectAllPages() {
     this.allPagesSelected = true;
     this.showBulkSelectionBanner = false;
-    this.pageSize = this.collectionSize;
+    this.pageSize = this.totalrequestRecordCount;
     this.rows = this.collectionSize;
     this.page = 1;
     this.first = 0;
@@ -460,6 +477,8 @@ onStatusApproveSelect(status: string) {
             });
             setTimeout(() => modalRef.close(), 3000);
           }
+          this.signalService.timesheetApprovalsCountSignal.set(true);
+          console.log('SIgnal triggered');   
         },
         error: (reason: any) => {
           this.spinnerLoader = false;
@@ -467,6 +486,8 @@ onStatusApproveSelect(status: string) {
           this.timeSheetRejectForm.reset();
           this.modalService.dismissAll();
           this.conformationPopup.openErrorModal(reason.error.message);
+          this.signalService.timesheetApprovalsCountSignal.set(true);
+          console.log('SIgnal triggered');   
         },
         complete: () => {
           this.spinnerLoader = false;
@@ -484,6 +505,9 @@ onStatusApproveSelect(status: string) {
           this.timeSheetApproveForm.reset();
           this.timeSheetRejectForm.reset();
           this.http.triggerActionSignal();
+          this.signalService.timesheetApprovalsCountSignal.set(true);
+          console.log('SIgnal triggered');   
+         
         },
       });
     }
@@ -546,7 +570,10 @@ onStatusApproveSelect(status: string) {
               beforeDismiss: () => false // prevents manual close by ESC/backdrop
             });
             setTimeout(() => modalRef.close(), 3000);
+            
           }
+          this.signalService.timesheetApprovalsCountSignal.set(true);
+          console.log('SIgnal triggered');   
         },
         error: (reason: any) => {
           this.spinnerLoader = false;
@@ -554,6 +581,8 @@ onStatusApproveSelect(status: string) {
           this.timeSheetRejectForm.reset();
           this.modalService.dismissAll();
           this.conformationPopup.openErrorModal(reason.error.message);
+          this.signalService.timesheetApprovalsCountSignal.set(true);
+          console.log('SIgnal triggered');   
         },
         complete: () => {
           this.spinnerLoader = false;
@@ -568,9 +597,13 @@ onStatusApproveSelect(status: string) {
           this.allPagesSelected = false;
           this.showBulkSelectionBanner = false;
           this.showhideaction = true;
+          
           this.timeSheetApproveForm.reset();
           this.timeSheetRejectForm.reset();
           this.http.triggerActionSignal();
+          this.signalService.timesheetApprovalsCountSignal.set(true);
+         console.log('SIgnal triggered');          
+           
         },
       });
     }

@@ -11,12 +11,11 @@ import { FormValidationsService } from '../../../../services/form-validations.se
 import { RbacService } from '../../../../services/rbac.service';
 import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
 import { SettingsDeleteIconComponent } from "../../../../icons/settings-delete-icon/settings-delete-icon.component";
-import { SettingsUpdateIconComponent } from "../../../../icons/settings-update-icon/settings-update-icon.component";
 
 
 @Component({
   selector: 'app-team',
-  imports: [TranslateModule, CommonModule, ReactiveFormsModule, SelectModule, DataLoaderContentComponent, SettingsDeleteIconComponent, SettingsUpdateIconComponent],
+  imports: [TranslateModule, CommonModule, ReactiveFormsModule, SelectModule, DataLoaderContentComponent],
   templateUrl: './team.component.html',
   styleUrl: './team.component.scss'
 })

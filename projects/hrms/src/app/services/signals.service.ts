@@ -7,6 +7,8 @@ import { OpenModalService } from './open-modal.service';
 export class SignalsService {
   authSignal = signal<string>('');
 
+    //onBehalfOfApprovals Signals
+  onBhehalfOfApprovalSignal = signal<boolean>(false);
   // WFH PendingApprovals Signals
   wfhForYouTriggerSignal = signal<boolean>(false);
   wfhForRoleTriggerSignal = signal<boolean>(false);
@@ -70,6 +72,14 @@ export class SignalsService {
 
   contractConversionForYouTriggerSignal = signal<boolean>(false);
   contractConversionForYouRoleTriggerSignal = signal<boolean>(false);
+
+  OfferLetterNavCountSignal = signal<boolean>(false);
+  TraineeOfferLetterNavCountSignal = signal<boolean>(false);
+  ContractOfferLetterNavCountSignal = signal<boolean>(false);
+  AppointmentLetterNavCountSignal = signal<boolean>(false);
+  NDALetterNavCountSignal = signal<boolean>(false);
+
+  timesheetApprovalsCountSignal = signal<boolean>(false);
 
   // Offboarding reload signal
   offboardingReloadTriggerSignal = signal<boolean>(false);

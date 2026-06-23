@@ -15,13 +15,16 @@ import { ModuleInformationComponent } from "../../shared/module-information/modu
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { ProfileIconComponent } from "../../icons/profile-icon/profile-icon.component";
 import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
+import { ApplicablePoliciesTriggerComponent } from '../../shared/policies/applicable-policies-trigger/applicable-policies-trigger.component';
+import { APPLICABLE_POLICIES_KEYS } from '../../shared/policies/policy-visibility.catalog';
 @Component({
   selector: 'app-phonebook',
-  imports: [CommonModule, FormsModule, TranslateModule, TabsModule, Skeleton, NoDataFoundComponent, ModuleInformationComponent, NgbPopoverModule, ProfileIconComponent,ModuleInfoIconComponent],
+  imports: [CommonModule, FormsModule, TranslateModule, TabsModule, Skeleton, NoDataFoundComponent, ModuleInformationComponent, NgbPopoverModule, ProfileIconComponent,ModuleInfoIconComponent, ApplicablePoliciesTriggerComponent],
   templateUrl: './phonebook.component.html',
   styleUrl: './phonebook.component.scss'
 })
 export class PhonebookComponent {
+  applicablePolicies = APPLICABLE_POLICIES_KEYS.PHONE_BOOK;
   subscription!: Subscription
   phonebookData: any;
   searchphone: any = '';

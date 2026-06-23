@@ -24,6 +24,9 @@ import { environment } from '../../../environments/environment';
 import { AuthService } from '../../services/auth.service';
 import { ConfirmationIconComponent } from "../../icons/confirmation-icon/confirmation-icon.component";
 import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
+import { ApplicablePoliciesTriggerComponent } from '../../shared/policies/applicable-policies-trigger/applicable-policies-trigger.component';
+import { APPLICABLE_POLICIES_KEYS } from '../../shared/policies/policy-visibility.catalog';
+
 @Component({
   selector: 'app-comp-off',
   imports: [
@@ -34,8 +37,9 @@ import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-inf
     ModuleInformationComponent,
         NgbPopoverModule,
     ConfirmationIconComponent,
-    ModuleInfoIconComponent
-    
+    ModuleInfoIconComponent,
+    ApplicablePoliciesTriggerComponent,
+
   ],
   templateUrl: './comp-off.component.html',
   styleUrl: './comp-off.component.scss',
@@ -43,6 +47,7 @@ import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-inf
 })
 
 export class CompOffComponent implements OnInit, OnDestroy {
+  applicablePolicies = APPLICABLE_POLICIES_KEYS.TIME_OFF_COMP_OFF;
   moduleinfo: string = '';
   subscription!: Subscription;
   addCompOffForm!: FormGroup;
@@ -178,7 +183,7 @@ export class CompOffComponent implements OnInit, OnDestroy {
   openModal(content: any) {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
-  
+
   intializeCompOffForm() {
     this.addCompOffForm = this.fb.group({
       workedDate: ['', [Validators.required, this.afterJoiningDateValidator.bind(this)]],
@@ -392,7 +397,7 @@ getApprovalStatusCounts() {
    //Map counts to tabs
     });
   }
- 
+
   updateDuration() {
     if (this.compoffdata.startTimeProp && this.compoffdata.endTimeProp) {
       const formattedStartTime = moment(this.compoffdata.startTimeProp).format('HH:mm');

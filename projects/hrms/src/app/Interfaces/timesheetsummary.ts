@@ -1,15 +1,14 @@
 export interface TimesheetSummaryResponse {
-
   client: Client;
   project: Project;
   resource: Resource;
-  startDate: string;   // ISO string
-  endDate: string;     // ISO string
-  dailyData: DailyData[] ;
+  startDate: string; // ISO string
+  endDate: string; // ISO string
+  dailyData: DailyData[];
   monthlySummary: MonthlySummary;
   utilizationSummary: UtilizationSummary;
   resourceName?: string;
-  totalLoggedHHMML:any
+  totalLoggedHHMML: any;
 }
 
 export interface Client {
@@ -31,7 +30,7 @@ export interface Resource {
 
 export interface DailyData {
   fusionEmployeeId: any;
-  date: string;              // "2025-10-06"
+  date: string; // "2025-10-06"
   entries: TimesheetEntry[]; // one or more entries
   dailySummary: DailySummary;
   monthlySummary: MonthlySummary;
@@ -40,7 +39,7 @@ export interface DailyData {
 
 export interface DailyDataV2 {
   fusionEmployeeId?: any;
-  date: string;              // "2025-10-06"
+  date: string; // "2025-10-06"
   entries?: TimesheetEntry; // single entry
   dailySummary: DailySummary;
   monthlySummary?: MonthlySummary;
@@ -55,7 +54,7 @@ export interface TimesheetEntry {
   phaseName: string;
   clientId: number;
   clientName: string;
-  entryDate: string;    // "2025-10-06T00:00:00"
+  entryDate: string; // "2025-10-06T00:00:00"
   loggedHours: number;
   status: string;
   loggedHHMM: string;
@@ -73,7 +72,7 @@ export interface TimesheetEntry {
 export interface DailySummary {
   totalLoggedHours: string;
   status: string;
-  colour: string
+  colour: string;
   loggedISO: string;
   loggedHHMM: string;
   weekday: string;
@@ -82,13 +81,11 @@ export interface DailySummary {
   legendCode?: any;
 }
 
-
 export interface MonthlySummaryItem {
   order: number;
   status: string;
   value: number;
   colour: string;
-
 }
 
 export interface MonthlySummary {
@@ -107,5 +104,3 @@ export interface Overall {
   loggedHHMM: string;
   allocatedHours: number;
 }
-
-

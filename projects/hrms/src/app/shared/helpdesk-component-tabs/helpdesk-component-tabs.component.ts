@@ -1,20 +1,33 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { TabsModule } from 'primeng/tabs';
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import { Ipersonal } from '../../Interfaces/members-model';
 import { RbacService } from '../../services/rbac.service';
 import { SidetabsloadersComponent } from '../sidetabsloaders/sidetabsloaders.component';
+import { DragDropModule } from '@angular/cdk/drag-drop';
+import { TabsDndDirective } from '../tabs-dnd/tabs-dnd.directive';
+import { MenuOrderService } from '../../services/theme-service/menu-order.service';
+
+interface StatusTab {
+  tabId: string;
+  label: string;
+  link: string;
+  count?: number;
+  permission?: { feature: string; action: string };
+  icon: string;
+}
 
 @Component({
   selector: 'app-helpdesk-component-tabs',
-  imports: [CommonModule, TabsModule, RouterModule, SidetabsloadersComponent],
+  imports: [CommonModule, TabsModule, RouterModule, SidetabsloadersComponent, DragDropModule, TabsDndDirective],
   templateUrl: './helpdesk-component-tabs.component.html',
   styleUrl: './helpdesk-component-tabs.component.scss',
 })
 export class HelpdeskComponentTabsComponent implements OnInit {
+  readonly tabsKey = 'helpdesk-component-tabs';
   closedTicketCount: number = 0;
   AllCount: number = 0;
   openTicketCount: number = 0;
@@ -32,6 +45,7 @@ export class HelpdeskComponentTabsComponent implements OnInit {
   // Original unfiltered tab structure with permissions
   private allTabs = [
     {
+      tabId: '/help-desk/support-desk/all-tickets',
       label: 'All',
       link: '/help-desk/support-desk/all-tickets',
       countKey: 'AllCount',
@@ -39,6 +53,7 @@ export class HelpdeskComponentTabsComponent implements OnInit {
       permission: { feature: 'Helpdesk All Queries Tab', action: 'view' },
     },
     {
+      tabId: '/help-desk/support-desk/open-tickets',
       label: 'Open',
       link: '/help-desk/support-desk/open-tickets',
       countKey: 'openTicketCount',
@@ -46,6 +61,7 @@ export class HelpdeskComponentTabsComponent implements OnInit {
       permission: { feature: 'Helpdesk Open Queries Tab', action: 'view' },
     },
     {
+      tabId: '/help-desk/support-desk/await-on-user-tickets',
       label: 'Await On User',
       link: '/help-desk/support-desk/await-on-user-tickets',
       countKey: 'inprogressOnUserTicketCount',
@@ -56,6 +72,7 @@ export class HelpdeskComponentTabsComponent implements OnInit {
       },
     },
     {
+      tabId: '/help-desk/support-desk/solved-tickets',
       label: 'Closed',
       link: '/help-desk/support-desk/solved-tickets',
       countKey: 'closedTicketCount',
@@ -63,6 +80,7 @@ export class HelpdeskComponentTabsComponent implements OnInit {
       permission: { feature: 'Helpdesk Solved Queries Tab', action: 'view' },
     },
     {
+      tabId: '/help-desk/support-desk/rejected-tickets',
       label: 'Rejected',
       link: '/help-desk/support-desk/rejected-tickets',
       countKey: 'rejectedTicketCount',
@@ -74,10 +92,13 @@ export class HelpdeskComponentTabsComponent implements OnInit {
   constructor(
     private readonly http: HttpService,
     private rbac: RbacService,
+    private router: Router,
+    private menuOrderService: MenuOrderService
   ) {}
 
-  ngOnInit() {
+  async ngOnInit(): Promise<void> {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
+    await this.menuOrderService.ensureLoaded();
 
     // ✅ Subscribe to BehaviorSubject
     this.subscription = this.http.ticketCount$.subscribe((res: any) => {
@@ -134,7 +155,37 @@ export class HelpdeskComponentTabsComponent implements OnInit {
       }));
 
     if (this.navTabs.length > 0) {
+      this.navTabs = this.menuOrderService.applySavedTabsOrder(
+        this.tabsKey,
+        this.navTabs,
+        (t) => String(t?.tabId ?? ''),
+      );
       this.defaultRoute = this.navTabs[0].link;
+    } else {
+      this.defaultRoute = '';
+    }
+
+    this.redirectIfNeeded();
+  }
+
+    trackByTabId(_: number, tab: StatusTab): string {
+    return tab.tabId;
+  }
+
+  private redirectIfNeeded(): void {
+    const currentPath = this.router.url.split('?')[0];
+    const basePath = '/help-desk/support-desk';
+    if (currentPath === basePath && this.defaultRoute) {
+      this.router.navigate([this.defaultRoute], { queryParamsHandling: 'preserve' });
+      return;
+    }
+
+    if (!currentPath.startsWith(basePath)) return;
+    if (this.navTabs.length === 0) return;
+
+    const isAllowed = this.navTabs.some(t => t.link === currentPath);
+    if (!isAllowed && this.defaultRoute) {
+      this.router.navigate([this.defaultRoute], { queryParamsHandling: 'preserve' });
     }
   }
   ngOnDestroy() {

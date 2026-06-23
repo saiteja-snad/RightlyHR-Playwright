@@ -18,6 +18,7 @@ import { DataLoaderContentComponent } from "../../../shared/data-loader-content/
 import moment from 'moment';
 import { DatePicker } from 'primeng/datepicker';
 import { OnboardingFilterService } from '../../../shared/time-off-module-tabs/pending-approvals-tabs/onboarding-filter.service';
+import { SignalsService } from '../../../services/signals.service';
 @Component({
   selector: 'app-document-history-intern-offer-letter',
   imports: [CommonModule, ReactiveFormsModule, TranslateModule, DateformatPipe, FormsModule, OfferletterdashboardpipePipe,
@@ -42,7 +43,8 @@ export class DocumentHistoryInternOfferLetterComponent {
   offerLetters: any[] = [];
 
   constructor(private modalService: NgbModal, private fb: FormBuilder, private http: HttpService,
-    private authService: AuthService, private conformationPopup: OpenModalService, public rbac: RbacService,private onboardingFilter: OnboardingFilterService) {
+    private authService: AuthService, private conformationPopup: OpenModalService, public rbac: RbacService,private onboardingFilter: OnboardingFilterService,
+    private signalService: SignalsService) {
     this.initializeForm();
   }
 
@@ -161,6 +163,10 @@ export class DocumentHistoryInternOfferLetterComponent {
         console.log(reason);
         this.conformationPopup.openErrorModal('Released Failed');
       },
+      complete: () => {
+          this.signalService.TraineeOfferLetterNavCountSignal.set(true);
+          this.getTraineeOfferLetters();
+        },
     });
   }
 
@@ -198,6 +204,10 @@ export class DocumentHistoryInternOfferLetterComponent {
         console.log(reason);
         this.conformationPopup.openErrorModal('Update Failed');
       },
+      complete: () => {
+          this.signalService.TraineeOfferLetterNavCountSignal.set(true);
+          this.getTraineeOfferLetters();
+        },
     });
   }
 
@@ -337,6 +347,10 @@ export class DocumentHistoryInternOfferLetterComponent {
       error: (reason: any) => {
         console.log(reason);
       },
+      complete: () => {
+          this.signalService.TraineeOfferLetterNavCountSignal.set(true);
+          this.getTraineeOfferLetters();
+        },
     });
   }
 

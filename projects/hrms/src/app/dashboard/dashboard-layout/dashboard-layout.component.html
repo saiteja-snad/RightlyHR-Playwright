@@ -1,0 +1,122 @@
+<div class="main-dashboard-content">
+    <div class="dashboard-section">
+        <div class="dashboard-left-content custom-dashboard-main-container" [ngStyle]="noEventAccess ? {'width': '100%'} : {}">
+            <router-outlet />
+        </div>
+
+        @if(rbac.allowedToAccess('Upcoming Work Anniversaries.view') || rbac.allowedToAccess('Upcoming Birthdays.view')
+        || rbac.allowedToAccess('Today Events.view')){
+        <div class="dashboard-right-content" [ngStyle]="noEventAccess ? {'width': '0%'} : {}">
+            <!-- Upcoming Work Anniversary's Panel -->
+            @if(rbac.allowedToAccess('Upcoming Work Anniversaries.view')){
+            <div class="events-card work-anniversary-content position-relative mb-4">
+                @if(!anniversariesloader){
+                <div class="section-title mb-3">Upcoming Work Anniversaries</div>
+                <div class="party-image-content" *ngIf="anniversaries.length !== 0">
+                    <img src="icons\brithday.png" alt="Brithday Icon" class="party-image">
+                </div>
+                <div class="event-list-content">
+                    <div *ngFor="let item of anniversaries" class="mb-2">
+                        <div class="d-flex align-items-center gap-1">
+                            <div class="circular-dot circle-work-anniversary"></div>
+                            <div class="content-text content-name">{{ item.firstName }} {{ item.lastName }} ,
+                                {{ getSuffix(item.anniversaryYearCount) }} Work Anniversary</div>
+                        </div>
+                        <div class="content-text content-date ms-3">{{ getannuservierWithCurrentYear(item.dateOfJoining) | date:'MMM d, y'}}</div>
+                    </div>
+                    <div class="no-events-content" *ngIf="anniversaries.length === 0">
+                        <img src="icons\brithday.png" alt="Brithday Icon" class="party-image">
+                        <div class="no-data-text">No Upcoming Work Anniversaries</div>
+                    </div>
+                </div>
+                }
+                @else {
+                <div>
+                    <p-skeleton height="17rem" borderRadius="12px" />
+                </div>
+                }
+            </div>
+            }
+            <!-- Upcoming Birthday's Panel -->
+            @if(rbac.allowedToAccess('Upcoming Birthdays.view')){
+            <div class="events-card birthday-content position-relative mb-4">
+                @if(!brithdayloader){
+                <div class="section-title mb-3">Upcoming Birthdays</div>
+                <div class="party-image-content" *ngIf="employeesBirthdays.length !== 0">
+                    <img src="icons\brithday.png" alt="Brithday Icon" class="party-image">
+                </div>
+                <div class="event-list-content">
+                    <div *ngFor="let item of employeesBirthdays" class="mb-2">
+                        <div class="d-flex align-items-center gap-1">
+                            <div class="circular-dot circle-birthday"></div>
+                            <div class="content-text content-name">{{ item.firstName }} {{item.middleName}} {{item.lastName}}'s Brithday</div>
+                        </div>
+                        <div class="content-text content-date ms-3">{{getDobWithCurrentYear(item.dob) | date:'MMM d y'}}</div>
+                    </div>
+                    <div class="no-events-content" *ngIf="employeesBirthdays.length === 0">
+                        <img src="icons\brithday.png" alt="Brithday Icon" class="party-image">
+                        <div class="no-data-text">No Upcoming Birthdays</div>
+                    </div>
+                </div>
+                }
+                @else {
+                <div>
+                    <p-skeleton height="17rem" borderRadius="12px" />
+                </div>
+                }
+            </div>
+            }
+            <!-- Daily events Panel -->
+            @if(rbac.allowedToAccess('Today Events.view')){
+            <div class="events-card daliy-events-content">
+                <div *ngIf="eventItems?.length && hasRealEvents" class="party-image-content">
+                    <img src="icons\brithday.png" alt="Brithday Icon" class="party-image">
+                </div>
+                @if(!eventsLoader){
+                <div class="events-content">
+                    <div class="carousel-content">
+                        <p-carousel [value]="eventItems" [numVisible]="1" [numScroll]="1" showNavigators="false"
+                            [circular]="true" [autoplayInterval]="5000" (onPage)="onCarouselPageChange($event)"
+                            [showIndicators]="false">
+                            <ng-template pTemplate="item" let-item>
+                                <div class="accordian-text">
+                                    <ng-container [ngSwitch]="item.type">
+                                        <div *ngSwitchCase="'Birthday'">
+                                            <p class="event-name mb-2">{{ item.name }}</p>
+                                            <p class="m-0">{{'Celebrating Birthday today...'| translate}}</p>
+                                        </div>
+                                        <div *ngSwitchCase="'Work Anniversary'">
+                                            <p class="event-name mb-2">{{ item.name }}</p>
+                                            <p class="m-0">{{'Celebrating Work Anniversary today...'| translate}}</p>
+                                        </div>
+                                        <div *ngSwitchCase="'New Joinee'">
+                                            <p class="event-name mb-2">{{ item.name }}</p>
+                                            <p class="m-0">{{'Welcome Onboard...'| translate}}</p>
+                                        </div>
+                                        <div *ngSwitchCase="'Marriage Anniversary'">
+                                            <p class="event-name mb-2">{{ item.name }}</p>
+                                            <p class="m-0">{{'Celebrating their Marriage Anniversary today...'| translate}}</p>
+                                        </div>
+                                        <div *ngSwitchDefault class="d-flex justify-content-center align-items-center event-name">
+                                            {{ item.quotationname }}</div>
+                                    </ng-container>
+                                </div>
+                            </ng-template>
+                        </p-carousel>
+                        <!-- Custom 3-dot indicators -->
+                        <div class="custom-indicators" *ngIf="eventItems.length > 1">
+                            <span *ngFor="let dot of [0,1,2]; let i = index" class="indicator-dot" [class.active]="i === activeIndicatorIndex"></span>
+                        </div>
+                    </div>
+                </div>
+                }@else {
+                <div class="events-content">
+                    <p-skeleton height="11rem" />
+                </div>
+                }
+            </div>
+            }
+        </div>
+        }
+    </div>
+</div>

@@ -19,10 +19,12 @@ import { Location } from '@angular/common';
 import { MODULE_INFOS } from '../../shared/modules-info';
 import { ModuleInfoIconComponent } from "../../icons/module-info-icon/module-info-icon.component";
 import { CardsmanagementTabsComponent } from '../../shared/cardsmanagement-tabs/cardsmanagement-tabs.component';
+import { ApplicablePoliciesTriggerComponent } from '../../shared/policies/applicable-policies-trigger/applicable-policies-trigger.component';
+import { APPLICABLE_POLICIES_KEYS } from '../../shared/policies/policy-visibility.catalog';
 @Component({
   selector: 'app-cards-management-layout',
   imports: [CommonModule, CommonModule, TabsModule, TranslateModule, RouterModule,
-    ReactiveFormsModule, Select, ModuleInformationComponent, NgbPopoverModule, ChartModule, CardsmanagementTabsComponent, ModuleInfoIconComponent],
+    ReactiveFormsModule, Select, ModuleInformationComponent, NgbPopoverModule, ChartModule, CardsmanagementTabsComponent, ModuleInfoIconComponent,ApplicablePoliciesTriggerComponent],
   templateUrl: './cards-management-layout.component.html',
   styleUrl: './cards-management-layout.component.scss',
   encapsulation: ViewEncapsulation.None
@@ -30,6 +32,7 @@ import { CardsmanagementTabsComponent } from '../../shared/cardsmanagement-tabs/
 
 export class CardsManagementLayoutComponent implements OnInit, OnDestroy {
   banknames: Ibank[] = [];
+  applicablePolicies = APPLICABLE_POLICIES_KEYS.CARD_MANAGEMENT;
   cardDetailsForm!: FormGroup;
   moduleinfo: string = '';
   subscription!: Subscription;
@@ -46,7 +49,7 @@ export class CardsManagementLayoutComponent implements OnInit, OnDestroy {
     { label: 'Debit', value: 'Debit' }
   ];
 
-  constructor(private readonly fb: FormBuilder, private authService: AuthService, public http: HttpService, 
+  constructor(private readonly fb: FormBuilder, private authService: AuthService, public http: HttpService,
     private modalService: NgbModal, private conformationPopup: OpenModalService,private location: Location,
     public router: Router, public rbac: RbacService) { }
 
@@ -97,7 +100,7 @@ export class CardsManagementLayoutComponent implements OnInit, OnDestroy {
       event.preventDefault();
     }
   }
-  
+
   allowonlynumbers(event: KeyboardEvent){
      const key = event.key;
     const inputElement = event.target as HTMLInputElement;
@@ -127,7 +130,7 @@ export class CardsManagementLayoutComponent implements OnInit, OnDestroy {
       creditLimit: ['', [Validators.required, Validators.min(0)]],
       sharedLimit: [false],
     });
-    
+
     // Auto-detect card type whenever card number changes
     this.cardDetailsForm.get('cardNumber')?.valueChanges.subscribe(value => {
       const detectedType = CreditCard.cardType(value);

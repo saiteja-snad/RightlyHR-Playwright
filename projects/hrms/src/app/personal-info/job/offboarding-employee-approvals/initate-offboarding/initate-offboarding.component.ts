@@ -36,6 +36,7 @@ export class InitateOffboardingComponent {
   loginEmployee={} as any;
   subscription!:Subscription;
   isreportes=[] as any;
+  WFHRemoteMangers=[] as any;
   constructor(private http: HttpService, private authService: AuthService, private router: Router,
     public rbac: RbacService, private modalService: NgbModal, private fb: FormBuilder,
     private conformationPopup: OpenModalService, private route: ActivatedRoute,
@@ -49,6 +50,8 @@ export class InitateOffboardingComponent {
     this.loginEmployee = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.emppersonalinfo = JSON.parse(localStorage.getItem('personaldata') || '{}');
     this.getreportesdata();
+     this.getRemoteLoginManagers();
+    this.getWorkfromhomeManager();
     // Subscribe to checklist items changes
     this.offboardingChecklistService.checklistItems$.subscribe(items => {
       if (items.length > 0) {
@@ -56,7 +59,35 @@ export class InitateOffboardingComponent {
       }
     });
   }
-  
+  getWorkfromhomeManager() {
+     const managerType = 'WFH'
+    const url = `v2/Employeedata/GetEmployeesDataBasedonManager?EmployeeId=${this.emppersonalinfo.employeeId}&managerType=${managerType}`;
+    this.subscription = this.http
+      .getData(url)
+      .subscribe({
+        next: (data: any) => {
+          console.log(data);
+          // Assuming IWfh is your interface/model for the Manager data
+          this.WFHRemoteMangers = data;
+        },
+        error: (error) => {
+          console.error('Error fetching data:', error);
+        },
+      });
+  }
+
+  getRemoteLoginManagers() {
+    const managerType = 'Remote Login'
+    const url = `v2/Employeedata/GetEmployeesDataBasedonManager?EmployeeId=${this.emppersonalinfo.employeeId}&managerType=${managerType}`;
+    this.subscription = this.http.getData(url).subscribe({
+      next: (data: any) => {
+        this.WFHRemoteMangers = data;
+      },
+      error: (error) => {
+        console.error('Error fetching data:', error);
+      },
+    });
+  }
   private initializeChecklistItems(): void {
     // Get default checklist items from the service
     const defaultItems = this.offboardingChecklistService.getDefaultChecklistItems();
@@ -113,7 +144,7 @@ modalOpen(content:any){
       }];
     }
     
-    if( this.offboardingData && this.offboardingData.length > 0 && this.isreportes.length>0){
+    if( this.offboardingData && this.offboardingData.length > 0 && (this.isreportes.length>0||this.WFHRemoteMangers?.length>0)){
       let reportesPayload = this.offboardingData.map((item: any) => ({
         employeeId: parseInt(this.emppersonalinfo.employeeId),
         startedBy: parseInt(this.loginEmployee.employeeId),

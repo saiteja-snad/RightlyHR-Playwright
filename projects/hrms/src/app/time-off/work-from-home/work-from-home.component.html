@@ -60,6 +60,9 @@
                 <button type="button" class="custom-btn btn-primary" (click)="openModal(addwfh)"
                     *ngIf="rbac.allowedToAccess('Request WFH Button.view')">Request WFH</button>
             </div>
+            <app-applicable-policies-trigger [moduleKey]="applicablePolicies.moduleKey"
+                [subModuleKey]="applicablePolicies.subModuleKey">
+            </app-applicable-policies-trigger>
         </div>
     </div>
 

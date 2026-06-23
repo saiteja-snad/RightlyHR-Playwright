@@ -138,13 +138,13 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     event.preventDefault();
     event.stopPropagation();
     if (!this.searchText.trim()) return;
-    
+
     if (this.currentSearchMatches.length === 0) {
       this.updateSearchMatches();
     } else {
       this.currentMatchIndex = (this.currentMatchIndex + 1) % this.currentSearchMatches.length;
     }
-    
+
     if (this.currentMatchIndex >= 0 && this.currentMatchIndex < this.currentSearchMatches.length) {
       this.scrollToIndex(this.currentSearchMatches[this.currentMatchIndex]);
       this.cdr.markForCheck();
@@ -824,7 +824,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     return !this.roleToFilter?.id || !['Document Tab', 'NoDue Clearance Tab'].includes(per.fields);
   };
 
- 
+
   isSettingsEmployeeJobCheckboxDisabled = (_: PermissionRow, __: any) => !this.roleToFilter?.id;
   isSettingsProjectManagementConfig = (_: PermissionRow, __: any) => !this.roleToFilter?.id;
   isProjectManagementTabsCheckboxDisabled = (_: PermissionRow, __: any) => !this.roleToFilter?.id;
@@ -947,7 +947,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     action: 'View' | 'Update' | 'Create' | 'Delete'
   ) => {
 
-    // Allow Update 
+    // Allow Update
     if (
       ['Expense Allowed Days', 'Initial Load Entitlements', 'Carry Forward Load Entitlements', 'Permission Elgibility Tab',
         'WFH Entitlement Tab', 'Comp Off Entitlement Tab', 'Attendance Regularization Eligibility Tab',
@@ -1192,7 +1192,7 @@ export const SECTION_DEFINITIONS: SectionDef[] = [
       'Rate Card Configuration Module',
       'Recruitment Configuration Module',
       'Helpdesk Configuration Module',
-
+      'Employee Fields Config Update Module'
     ]
   }, {
     title: 'Dashboard Widgets',
@@ -1387,7 +1387,7 @@ export const SECTION_DEFINITIONS: SectionDef[] = [
       'Leave Summary (Time Off) - Export',
       'My Team (KRA KPI)',
       'All Employees (KRA KPI)',
-      
+
     ]
   }, { title: 'WFH Module Sub Tabs', disableFn: 'isonlyviewfunction', fieldNames: ['Waiting For Approval (WFH)', 'Approved (WFH)', 'Processed (WFH)', 'Cancel (WFH)', 'Rejected (WFH)', 'Request WFH Button', 'My Team (WFH)', 'All Employees (WFH)'] },
   {
@@ -1402,7 +1402,7 @@ export const SECTION_DEFINITIONS: SectionDef[] = [
   { title: 'On Behalf Of Module Sub Tabs', disableFn: 'isonlyviewfunction', fieldNames: ['Waiting For Approval (On Behalf Of)', 'Approved (On Behalf Of)', 'Request On Behalf Button', 'Rejected (On Behalf Of)', 'Processed (On Behalf Of)', 'Cancelled (On Behalf Of)', 'My Team On Behalf Of', 'On Behalf Of All Employees'] },
   { title: 'Attendance', disableFn: 'isonlyviewfunction', fieldNames: ['Request Regularization', 'Request Leave', 'Attendance Select Employee For Manager', 'Attendance Select Employee For HR'] },
   { title: 'Global Permission', disableFn: 'isonlyviewfunction', fieldNames: ['Global Permissions', 'Request Global Permission Button'] },
-  {title: 'Pending Approvals Sub Tabs',disableFn: 'isonlyviewfunction',fieldNames: [  'Time Off main Tab',  'Onboarding main Tab',  'Contractors main Tab',  'Offboarding main Tab',  'Time Off Tab',  'WFH Tab',  'Remote Login Tab',  'Comp Off Tab',  'Permissions Tab',  'Regularization Tab',  'Extra Hours Tab',  'Separation Request Tab',  'Recall Request Tab',  'Trainee Details Tab',  'No Due Clearence Requests Tab',  'Claims and Expenses Tab',  'Desk Requests Tab',  'Probation Details Tab',  'Time Sheet approval Tab',  'KRA KPI approval Tab',  'Recruitment approval Tab',  'Contractor Details Tab',  'Contract-Conversion Tab',  'EmployeeInfo Tab']}, 
+  {title: 'Pending Approvals Sub Tabs',disableFn: 'isonlyviewfunction',fieldNames: [  'Time Off main Tab',  'Onboarding main Tab',  'Contractors main Tab',  'Offboarding main Tab',  'Time Off Tab',  'WFH Tab',  'Remote Login Tab',  'Comp Off Tab',  'Permissions Tab',  'Regularization Tab',  'Extra Hours Tab',  'Separation Request Tab',  'Recall Request Tab',  'Trainee Details Tab',  'No Due Clearence Requests Tab',  'Claims and Expenses Tab',  'Desk Requests Tab',  'Probation Details Tab',  'Time Sheet approval Tab',  'KRA KPI approval Tab',  'Recruitment approval Tab',  'Contractor Details Tab',  'Contract-Conversion Tab',  'EmployeeInfo Tab']},
   { title: 'Pending Approval Time Off', disableFn: 'isonlycreatfunction', fieldNames: ['For You (Time Off)', 'For Role (Time Off)'] },
   { title: 'Pending Approval WFH', disableFn: 'isonlycreatfunction', fieldNames: ['For You (WFH)', 'For Role (WFH)'] },
   { title: 'Pending Approval Remote Login', disableFn: 'isonlycreatfunction', fieldNames: ['For You (Remote Login)', 'For Role (Remote Login)'] },
@@ -1530,10 +1530,10 @@ export const SECTION_DEFINITIONS: SectionDef[] = [
   { title: 'My Info Personal Sub tabs', disableFn: 'isMyInfoPersonalActionDisabled', fieldNames: ['My Info Basic Information', 'My Info Address Details', 'My Info Contact Details', 'My Info Emergency Contact Details', 'My Info Education Details', 'My Info Identity Details', 'My Info Family Details', 'My Info Bank Details', 'My Info Visa Details', 'My Skills'] },
   { title: 'My Info Documents', disableFn: 'isonlyviewfunction', fieldNames: ['My Info Documents Upload File', 'My Info Documents Dowload File', 'My Info Documents Acknowledgment'] },
   { title: 'My Info Letter Acknowledgement', disableFn: 'isonlyviewfunction', fieldNames: ['My Info Letter Acknowledgement'] },
-  {title: 'My Info Job Module',disableFn: 'isMyInfoJobActionDisabled',fieldNames: [  'My Info Pre-Onboarding Details',  'My Info Onboarding Details',  'My Info Job Details',  'My Info No Due Clearance Details',  'My Info Probation Details',  'My Info Previous Experience Details',  'My Info Certification Details',  'My Info Compensation Details',  'My Info Desk Details',  'My Info Asset Details',  'My Info Separation Request Button',  'My Info Contract Details',  'My Info Project Details',  'My Info Card Details',  'My Info Separation Request Details']}, 
+  {title: 'My Info Job Module',disableFn: 'isMyInfoJobActionDisabled',fieldNames: [  'My Info Pre-Onboarding Details',  'My Info Onboarding Details',  'My Info Job Details',  'My Info No Due Clearance Details',  'My Info Probation Details',  'My Info Previous Experience Details',  'My Info Certification Details',  'My Info Compensation Details',  'My Info Desk Details',  'My Info Asset Details',  'My Info Separation Request Button',  'My Info Contract Details',  'My Info Project Details',  'My Info Card Details',  'My Info Separation Request Details']},
   { title: 'My Info Separation Request Details', disableFn: 'isPmsConfigurationCheckboxDisabled', fieldNames: ['Raise No Due', 'Recall', 'Early relieving'] },
   { title: 'My Info No Due Clearance Details', disableFn: 'isPmsConfigurationCheckboxDisabled', fieldNames: ['Submission Of No Due Clearance', 'Re-request for no due'] },
-  {title: 'My Info Exit Feedback',disableFn: 'isonlyviewfunction',fieldNames: [  'My Info Exit Feedback Details',  'My Info Exit Feedback Submit']}, 
+  {title: 'My Info Exit Feedback',disableFn: 'isonlyviewfunction',fieldNames: [  'My Info Exit Feedback Details',  'My Info Exit Feedback Submit']},
   {title: 'My Info Approvals',disableFn: 'isonlyviewanddeletefunction',fieldNames: [  'My Info Personal Approval History',  'My Info Job Approval History',  'My Info Documents Approval History']},
     {
   title: 'Employee Approvals',
@@ -1576,13 +1576,13 @@ export const SECTION_DEFINITIONS: SectionDef[] = [
   { title: 'Kra Configuration Actions', disableFn: 'isAssetCheckboxDisabled', fieldNames: ['Kra Create', 'Kra Update(Status - Created)', 'Kra Delete(Status - Created)', 'Kra Update(Status - Initialted)', 'Kra Update(Status - Review On Hold)'] },
   { title: 'Events Tabs', disableFn: 'isProjectManagementTabsCheckboxDisabled', fieldNames: ['Events(Upcoming Events)'] },
   { title: 'Settings Header Icon', disableFn: 'isonlyviewfunction', fieldNames: ['Settings Icon'] },
-  { title: 'Project Management Configuration Fields', disableFn: 'isSettingsProjectManagementConfig', fieldNames: ['Project Type', 'Industry Type', 'Project Document Type', 'Client Document Type', 'Letter Configurations', 'Project Management Authority', 'Letter Frequency Configurations', 'Project Role','Task', 'Task Type'] },
+  { title: 'Project Management Configuration Fields', disableFn: 'isSettingsProjectManagementConfig', fieldNames: ['Project Type', 'Industry Type', 'Project Document Type', 'Client Document Type', 'Letter Configurations', 'Project Management Authority', 'Letter Frequency Configurations', 'Project Role','Task', 'Task Type','Timesheet Configurations'] },
   { title: 'Helpdesk Configuration Fields', disableFn: 'isSettingsProjectManagementConfig', fieldNames: ['Category', 'Subcategory'] },
   { title: 'Project Management Projects Tabs', disableFn: 'isProjectManagementTabsCheckboxDisabled', fieldNames: ['Project Details Tab', 'Contact Info Tab', 'Documents Tab', 'Resources Tab', 'Project Timesheets Tab', 'Project Phases Tab', 'Project Detailed Tab'] }, { title: 'Project Management Clients Tabs', disableFn: 'isProjectManagementClientsTabsCheckboxDisabled', fieldNames: ['Client Information', 'Contact Information', 'Client Projects', 'Client Resources', 'Client Timesheets', 'Client Documents', 'Client Detailed Tab'] },
   { title: 'Project Management Documents', disableFn: 'isonlyviewfunction', fieldNames: ['MSA Document', 'NDA Document'] },
   {title: 'Recruitment Jobs',disableFn: 'isapplicationscreeningfunction',fieldNames: ['Active Jobs','Inactive Jobs','Closed Jobs']},
    {title: 'Job View Permissions',disableFn: 'isapplicationscreeningfunction',fieldNames: ['Job Shortlisted','Job Interview Review','Job Rejected','Job On Hold','Job Request Onboarding','Job Onboarded','Job Archive','Job Revoke']},
-  {title: 'Job View Action Permissions',disableFn: 'isonlyviewfunction',fieldNames: ['Job View Initiate Interview Round','Job View On Hold','Job View Rejected','Job View Schedule Next Round','Job View Reschedule Interview','Job View Request to Onboard','Job View View Reject Reason','Job View View On Hold Reason']}, 
+  {title: 'Job View Action Permissions',disableFn: 'isonlyviewfunction',fieldNames: ['Job View Initiate Interview Round','Job View On Hold','Job View Rejected','Job View Schedule Next Round','Job View Reschedule Interview','Job View Request to Onboard','Job View View Reject Reason','Job View View On Hold Reason']},
   {title: 'On Behalf Of Tabs',disableFn: 'isonlyviewfunction',fieldNames: ['On Behalf Of','On Behalf Of WFH','On Behalf Of RemoteLogin','On Behalf Of Expenses']}, {title: 'On Behlaf Of WFH Tabs',disableFn: 'isonlyviewfunction',fieldNames: ['Waiting For Approval (On Behalf Of WFH)','Approved (On Behalf Of WFH)','Processed (On Behalf Of WFH)','Rejected (On Behalf Of WFH)','Cancelled (On Behalf Of WFH)','On Behalf Of WFH All Employees','On Behalf Of WFH Team','Request On Behalf Of WFH Button']},
    {title: 'On Behalf Of Remote Login Tabs',disableFn: 'isonlyviewfunction',fieldNames: ['Waiting For Approval (On Behalf Of RemoteLogin)','Approved (On Behalf Of RemoteLogin)','Processed (On Behalf Of RemoteLogin)','Rejected (On Behalf Of RemoteLogin)','Cancelled (On Behalf Of RemoteLogin)','On Behalf Of RemoteLogin All Employees','On Behalf Of RemoteLogin Team','Request On Behalf Of RemoteLogin Button']}, {title: 'On Behalf Of Expenses Tabs',disableFn: 'isonlyviewfunction',fieldNames: ['Waiting For Approval (On Behalf Of Expenses)','Approved (On Behalf Of Expenses)','Processed (On Behalf Of Expenses)','Rejected (On Behalf Of Expenses)','On Behalf Of Expenses All Employees','On Behalf Of Expenses Team','Request On Behalf Of Expenses Button']},
   { title: 'Timesheet Module', disableFn: 'isonlyviewfunction', fieldNames: ['Team Time Sheet', 'My Summary', 'Team Time Sheet Detailed Tab', 'Team Time Sheet Summary Tab', 'Team Time Sheet Filters Tab', 'Team Time Sheet Department Filter', 'Team Time Sheet RM/TM Filter', 'My Team (Timesheet)', 'All Employees (Timesheet)', 'Timesheet Bulk Import', 'Timesheet Bulk Export', 'View History Export Tab', 'View History Import Tab'] }, {title: 'Locking System Tabs',disableFn: 'isonlyviewfunction',fieldNames: [  'Attendance Configuration Module',  'Timesheet Configuration Module']},

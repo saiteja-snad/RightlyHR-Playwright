@@ -247,7 +247,7 @@ export class PromotionLetterComponent implements OnInit, OnDestroy {
     // let EmployeeId = this.promotiondata.employeeId
     this.subscription = this.http.getData(`Compensationdata/${Employee.employeeId}`).subscribe({
       next: (data: any) => {
-        let res = data[0];
+        let res = data.reverse()[0];
         this.employeeCompensationDetails = res;
         Employee.salary = res.compensationamount
 

@@ -65,7 +65,7 @@ export class OnBeHalfOfWaitingForApprovalComponent implements OnInit, OnDestroy{
   constructor(private http: HttpService, private authService: AuthService, private timeoffYearFilterService: TimeoffYearFilterService, private modalService: NgbModal) {
     // Signal reaction for employee switch
     effect(() => {
-      if (this.http.onBehalfOfTriggerSignal()) {
+      if (this.http.onBehalfOfTriggerSignal() > 0) {
         this.cadidateEmployeeId = parseInt(
           localStorage.getItem('onbehalfof') as string
         );
@@ -74,7 +74,6 @@ export class OnBeHalfOfWaitingForApprovalComponent implements OnInit, OnDestroy{
         } else {
           this.waitingForApprovalLeaves = [];
         }
-        this.http.onBehalfOfTriggerSignal.set(false);
       }
     });
   }

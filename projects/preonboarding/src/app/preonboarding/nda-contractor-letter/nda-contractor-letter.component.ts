@@ -525,7 +525,7 @@ export class NdaContractorLetterComponent implements OnInit, OnDestroy{
   async downLoadDocument(offerUpdateDetails: Iofferletter) {
     const data = this.ndaLetterData;
 
-    const isSoftCopy = !!data.docType;
+    const isSoftCopy = true;
 
     const [assets, pm] = await Promise.all([
       fetchLetterAssets(isSoftCopy),

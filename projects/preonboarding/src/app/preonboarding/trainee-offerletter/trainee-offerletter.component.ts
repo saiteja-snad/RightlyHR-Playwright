@@ -334,7 +334,7 @@ export class TraineeOfferletterComponent implements OnInit, OnDestroy {
         : `${signatureAuth.firstName} ${signatureAuth.lastName}`;
     }
 
-    const isSoftCopy = !!data.docType;
+    const isSoftCopy = true;
 
     const [assets, pm] = await Promise.all([
       fetchLetterAssets(isSoftCopy),

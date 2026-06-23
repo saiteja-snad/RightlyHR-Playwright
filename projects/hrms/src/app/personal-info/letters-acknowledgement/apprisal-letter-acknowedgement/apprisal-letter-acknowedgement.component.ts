@@ -510,8 +510,8 @@ export class ApprisalLetterAcknowedgementComponent {
   async postAppraisalLetterFormSubmit() {
     this.spinnerLoader = true;
     const data = this.appraisalData;
-    const isSoftCopy = !!data.docType;
-
+    const isSoftCopy = !!data.Documenttype;
+    console.log(isSoftCopy);
     const [assets, pm] = await Promise.all([
       fetchLetterAssets(isSoftCopy),
       setupLetterPdfMake(),

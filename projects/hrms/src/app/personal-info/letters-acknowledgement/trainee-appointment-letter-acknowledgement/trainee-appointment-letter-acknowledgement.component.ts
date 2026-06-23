@@ -197,7 +197,7 @@ export class TraineeAppointmentLetterAcknowledgementComponent implements OnInit,
     this.isLoading = true;
     const data = this.traineeAppointmentletterData;
 
-        const isSoftCopy = !!data.docType;
+        const isSoftCopy = !!data.documentType;
 
     const [assets, pm] = await Promise.all([
       fetchLetterAssets(isSoftCopy),

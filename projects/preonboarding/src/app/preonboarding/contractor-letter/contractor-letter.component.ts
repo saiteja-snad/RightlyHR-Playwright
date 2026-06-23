@@ -544,7 +544,7 @@ export class ContractorLetterComponent {
     const data = this.offerLetterData;
     const fullName = [data.firstName, data.middleName, data.lastName].filter(Boolean).join(' ');
 
-    const isSoftCopy = !!data.docType;
+    const isSoftCopy = true;
 
     const [assets, pm] = await Promise.all([
       fetchLetterAssets(isSoftCopy),

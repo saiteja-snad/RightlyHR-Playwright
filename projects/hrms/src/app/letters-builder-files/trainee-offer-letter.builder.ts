@@ -1,4 +1,6 @@
+import { content } from "html2canvas/dist/types/css/property-descriptors/content";
 import { color } from "html2canvas/dist/types/css/types/color";
+import { LETTER_MARGINS, stampFont, applyLetterPageSetup } from "./letter-builder.utils";
 
 export interface TraineeOfferLetterData {
   firstName: string;
@@ -224,50 +226,28 @@ export function buildTraineeOfferLetterDoc(data: TraineeOfferLetterData): any {
     { text: `Date: ${data.employeeFullName ? fmt(new Date().toISOString()) : '______________________________'}`, font: bodyFont, margin: [0, 0, 0, 0] },
   ];
 
-  function stampFont(nodes: any[]): any[] {
-    return nodes.map(node => {
-      if (typeof node === 'string') return node;
-      if (Array.isArray(node)) return stampFont(node);
-      const stamped: any = node.font ? node : { font: bodyFont, ...node };
-      if (stamped.table?.body) {
-        stamped.table.body = stamped.table.body.map((row: any[]) =>
-          row.map((cell: any) => {
-            if (!cell || typeof cell !== 'object') return cell;
-            if (cell.font || cell.text === '') return cell;
-            const s: any = { font: bodyFont, ...cell };
-            if (Array.isArray(s.text)) {
-              s.text = s.text.map((t: any) => typeof t === 'string' ? t : (t.font ? t : { font: bodyFont, ...t }));
-            }
-            return s;
-          })
-        );
-      }
-      if (Array.isArray(stamped.text)) {
-        stamped.text = stamped.text.map((t: any) => typeof t === 'string' ? t : (t.font ? t : { font: bodyFont, ...t }));
-      }
-      if (stamped.stack) stamped.stack = stampFont(stamped.stack);
-      if (stamped.columns) stamped.columns = stampFont(stamped.columns);
-      if (stamped.ol) stamped.ol = stampFont(stamped.ol);
-      if (stamped.ul) stamped.ul = stampFont(stamped.ul);
-      return stamped;
+  const content: any[] = [...page1, ...page2];
+
+   const isSoftCopy = !!data.backgroundImageBase64;
+    const margins = isSoftCopy ? LETTER_MARGINS.softCopy : LETTER_MARGINS.hardCopy;
+
+    const docDef: any = {
+      pageSize: 'A4',
+      pageMargins: [margins.left, margins.top, margins.right, margins.bottom],
+      defaultStyle: {
+        font: bodyFont,
+        fontSize: PX(13),
+        alignment: 'justify',
+        color: '#000',
+      },
+      content: stampFont(content, bodyFont),
+    };
+
+    applyLetterPageSetup(docDef, {
+      backgroundImageBase64: data.backgroundImageBase64,
+      headerLogoBase64: data.headerLogoBase64,
+      bodyFont,
     });
-  }
 
-  const allContent = stampFont([...page1, ...page2]);
-  const topMargin = data.backgroundImageBase64 ? 120 : 50;
-  const bottomMargin = data.backgroundImageBase64 ? 120 : 50;
-
-  const docDef: any = {
-    pageSize: 'A4',
-    pageMargins: [60, topMargin, 60, bottomMargin],
-    defaultStyle: { font: bodyFont, fontSize: PX(13), color: '#000' },
-    content: allContent,
-  };
-
-  if (data.backgroundImageBase64) {
-    docDef.images = { letterBg: data.backgroundImageBase64 };
-    docDef.background = () => ({ image: 'letterBg', width: 620, height: 870, absolutePosition: { x: -12, y: -14 } });
-  }
-
-  return docDef;
+    return docDef;
 }

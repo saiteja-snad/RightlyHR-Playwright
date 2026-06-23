@@ -187,7 +187,7 @@ export class TraineeOfferLetterComponent implements OnInit, OnDestroy {
       phoneNumber: [{ value: null, disabled: true }],
       jobRoleDetails: [{ value: null, disabled: true }],
       amount: ['',],
-      monthlyammount: ['', Validators.required],
+      // monthlyammount: ['', Validators.required],
       locationId: [{ value: null, disabled: true }],
       JobSubLocationName: [{ value: null, disabled: true }],
       offerSentDate: ['', Validators.required],
@@ -197,7 +197,6 @@ export class TraineeOfferLetterComponent implements OnInit, OnDestroy {
       authorityid: [null, Validators.required],
       reportingmanagerId: [null, Validators.required],
       internshipperiod: [null, Validators.required],
-      stipend: [null, Validators.required]
     });
     this.employeeForm.get('internshipperiod')?.valueChanges.subscribe((value: string) => {
       this.calculateEndDate(value);
@@ -278,7 +277,7 @@ export class TraineeOfferLetterComponent implements OnInit, OnDestroy {
           this.getAllEmployeeInfo = response.map((employee: any) => {
             return {
               ...employee,
-              fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName} 
+              fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName}
               ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
             };
           }).sort((a: any, b: any) => (a.firstName ?? '').localeCompare(b.firstName ?? ''));
@@ -308,7 +307,7 @@ export class TraineeOfferLetterComponent implements OnInit, OnDestroy {
         this.employeeiddetails = data.map((employee: any) => {
           return {
             ...employee,
-            fullName: `${employee.employeeId ? employee.employeeId + ' - ' : ''}${employee.firstName} 
+            fullName: `${employee.employeeId ? employee.employeeId + ' - ' : ''}${employee.firstName}
             ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
           };
         }).sort((a: any, b: any) => (a.firstName ?? '').localeCompare(b.firstName ?? ''));

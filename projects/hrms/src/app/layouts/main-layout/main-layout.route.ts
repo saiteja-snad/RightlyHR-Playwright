@@ -28,11 +28,11 @@ import { CardsManagementLayoutComponent } from "../../cards-management/cards-man
 import { SkillsetManagementLayoutComponent } from "../../skill-set-management/skillset-management-layout/skillset-management-layout.component";
 import { PendingApprovalsComponent } from "../../time-off/pending-approvals/pending-approvals.component";
 import { HelpdeskLayOutComponent } from "../../Helpdesk/helpdesk-lay-out/helpdesk-lay-out.component";
-
+import { DashboardLayoutComponent } from "../../dashboard/dashboard-layout/dashboard-layout.component";
 
 export default [
     { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
-    { path: 'dashboard', component: AdminLayoutComponent, canActivate: [authGuard], loadChildren: () => import('../../admin/admin.route') },
+    { path: 'dashboard', component: DashboardLayoutComponent, canActivate: [authGuard], loadChildren: () => import('../../dashboard/dashboard.route') },
     // { path: 'employee-dashboard', component: EmployeeDashboardComponent, canActivate: [authGuard], },
     { path: 'personalinfo', component: PersonalinfoLayoutComponent, canActivate: [authGuard], loadChildren: () => import('../../personal-info/personal-info-routes') },
     { path: 'myinfo', component: PersonalinfoLayoutComponent, canActivate: [authGuard], loadChildren: () => import('../../personal-info/personal-info-routes') },

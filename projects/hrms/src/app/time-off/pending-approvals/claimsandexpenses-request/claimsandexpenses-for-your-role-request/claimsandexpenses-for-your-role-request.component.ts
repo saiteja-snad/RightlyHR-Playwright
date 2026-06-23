@@ -12,7 +12,7 @@ import { CommonModule } from '@angular/common';
 import { DropdownModule } from 'primeng/dropdown';
 import { ExpenseApprovalResponse } from '../../../../Interfaces/timoff-model';
 import { TranslateModule } from '@ngx-translate/core';
-import { IExpenseHeaders } from '../../../../Interfaces/claimsandexpenses.model';
+import { IExpenseHeaders, IExpensePolicy } from '../../../../Interfaces/claimsandexpenses.model';
 import { DomSanitizer } from '@angular/platform-browser';
 import { environment } from '../../../../../environments/environment';
 import { NgxDocViewerModule } from 'ngx-doc-viewer';
@@ -26,6 +26,8 @@ import { FormValidationsService } from '../../../../services/form-validations.se
 import { ConfirmationIconComponent } from "../../../../icons/confirmation-icon/confirmation-icon.component";
 import { Router, RouterOutlet } from '@angular/router';
 import { DocumentViewIconComponent } from "../../../../icons/document-view-icon/document-view-icon.component";
+import { SelectModule } from 'primeng/select';
+import moment from 'moment';
 @Component({
   selector: 'app-claimsandexpenses-for-your-role-request',
   imports: [
@@ -43,8 +45,9 @@ import { DocumentViewIconComponent } from "../../../../icons/document-view-icon/
     InfoIconComponent,
     DataLoaderContentComponent,
     ConfirmationIconComponent,
-    DocumentViewIconComponent
-],
+    DocumentViewIconComponent,
+    SelectModule
+  ],
 
   templateUrl: './claimsandexpenses-for-your-role-request.component.html',
   styleUrl: './claimsandexpenses-for-your-role-request.component.scss',
@@ -62,6 +65,7 @@ export class ClaimsandexpensesForYourRoleRequestComponent
     { label: 20, value: 20 },
     { label: 25, value: 25 },
   ];
+  originalData: any[] = [];
   destroy$: Subject<boolean> = new Subject<boolean>();
   expenseheaderpending = [] as ExpenseApprovalResponse[];
   approverComments = [] as any[];
@@ -69,14 +73,18 @@ export class ClaimsandexpensesForYourRoleRequestComponent
   selectedLeaveData = {} as ExpenseApprovalResponse;
   approveForm!: FormGroup;
   rejectForm!: FormGroup;
-
+  markAsPaidForm!: FormGroup;
+  checklistdata: IExpensePolicy[] = [];
   expenseImageUrl: any;
   expenseViewURL: any;
+  storeapprovalRequest!: ExpenseApprovalResponse;
   expenseheaderiteams!: IExpenseHeaders;
   updataid!: number;
   @ViewChild('viewattamchment') private viewattamchment!: NgbModal;
+  @ViewChild('verificationViewattamchment') private verificationViewattamchment!: NgbModal;
   // approverComments = [] as AttendanceRequestC[];
   @ViewChild('commentspopup') modalContent: any;
+  @ViewChild('checklistconfirmationmodal') checklistconfirmationmodal: any;
   subscription!: Subscription;
 
   verifiedExpenseIds: number[] = [];
@@ -86,6 +94,9 @@ export class ClaimsandexpensesForYourRoleRequestComponent
 
   selectedLeaveStatus: any;
   totalCount: any;
+  paymentmodedata = [] as any[];
+  currentOpenExpensesId: number | null = null;
+  allVerifiedMap: Map<number, boolean> = new Map<number, boolean>();
 
 
   constructor(
@@ -99,10 +110,41 @@ export class ClaimsandexpensesForYourRoleRequestComponent
     public formsValidation: FormValidationsService,
     private router: Router
   ) { }
-
+  isloading: boolean = false;
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.getAllPendingApprovals();
+    this.getCheckListData();
+    this.getpaymentmode();
+  }
+  getpaymentmode() {
+    this.subscription = this.http.getData("entityAttributeValues?entity=ExpensesPaymentModeConfiguration&attribute=PaymentMode").subscribe({
+      next: (data: any) => {
+        this.paymentmodedata = data as any[];
+      },
+      error: () => {
+
+      },
+      complete: () => {
+
+      },
+    })
+  }
+  getCheckListData() {
+    this.http
+      .getData(`ExpensesCheckListConfiguration/getall`)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response: any) => {
+          this.checklistdata = response.data
+        },
+        error: () => {
+          this.loading = false;
+        },
+        complete: () => {
+          this.loading = false;
+        }
+      });
   }
   onStatusApproveSelect(status: string) {
     this.selectedLeaveStatus = status;
@@ -156,6 +198,15 @@ export class ClaimsandexpensesForYourRoleRequestComponent
     });
   }
 
+  intializeMarkAsPaidForm() {
+    this.markAsPaidForm = this.fb.group({
+      paymentDate: ['', [Validators.required]],
+      paymentMode: ['', [Validators.required]],
+      transactionId: ['', [Validators.maxLength(50), Validators.pattern(/^[^\s].*$/)]],
+      comments: ['', [Validators.maxLength(500)]]
+    });
+  }
+
   getAllPendingApprovals() {
     this.loading = true;
     let EmployeeId = parseInt(this.empinfo.employeeId);
@@ -174,6 +225,8 @@ export class ClaimsandexpensesForYourRoleRequestComponent
               item.approvalHeader.status != 'Processed' &&
               item.approvalHeader.status != 'Rejected'
           );
+
+          this.refreshAllVerifiedStates();
         },
         error: (reason) => {
           this.loading = false;
@@ -206,13 +259,31 @@ export class ClaimsandexpensesForYourRoleRequestComponent
     this.selectedLeaveData = request;
   }
 
-  openRejectModal(content: any, request: ExpenseApprovalResponse | IExpenseHeaders ) {
+  minPaymentDate!: string;
+  openMarkAsPaidModal(content: any, request: ExpenseApprovalResponse) {
+    this.modalService.open(content, { centered: true, backdrop: 'static' });
+    this.intializeMarkAsPaidForm();
+    this.selectedLeaveData = request;
+    const appliedDate = moment(request.entity.applied_date);
+    const today = moment();
+    // Get latest date between applied date and today
+    this.minPaymentDate = moment.max(appliedDate, today).format('YYYY-MM-DD');
+    console.log("selectedLeaveDatagvhcvbn", this.selectedLeaveData)
+  }
+  openRequiredCalrificationModal(content: any, request: ExpenseApprovalResponse) {
+    this.modalService.open(content, { centered: true, backdrop: 'static' });
+    this.intializeApproveForm();
+    this.selectedLeaveData = request;
+  }
+
+  openRejectModal(content: any, request: ExpenseApprovalResponse | IExpenseHeaders) {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
     this.intializeRejectForm();
     this.selectedLeaveData = request as any;
   }
 
   handleAccept(approveForm: FormGroup): void {
+    this.isloading = true;
     if (approveForm.valid) {
       const formData = approveForm.value;
       const requestBody = {
@@ -263,6 +334,7 @@ export class ClaimsandexpensesForYourRoleRequestComponent
   }
 
   handleReject(rejectForm: FormGroup): void {
+    this.isloading = true;
     if (rejectForm.valid) {
       const formData = rejectForm.value;
       const requestBody = {
@@ -312,6 +384,24 @@ export class ClaimsandexpensesForYourRoleRequestComponent
     }
   }
 
+  expensesCheckList(request: ExpenseApprovalResponse, action?: string): void {
+    this.storeapprovalRequest = request;
+    this.storeapprovalRequest.action = action || '';
+    this.intializeApproveForm();
+    this.selectedLeaveData = request;
+    this.modalService.open(this.checklistconfirmationmodal, {
+      centered: true,
+      backdrop: 'static'
+    });
+  }
+
+  isAllChecked(): boolean {
+    return this.checklistdata
+      .filter(x => x.isMandatory)
+      .every(x => x.checked);
+  }
+
+
   handleProcess(request: ExpenseApprovalResponse) {
     let requestBody = {
       status: 'Processed',
@@ -358,10 +448,10 @@ export class ClaimsandexpensesForYourRoleRequestComponent
   getApprovalStatusCounts() {
     this.http.get(`PendingApproval/getApprovalStatusCounts?moduleId=19&EmployeeId=${this.empinfo.employeeId}`).subscribe((res: any) => {
       this.totalCount = res.reduce((acc: number, curr: any) => acc + curr.totalCount, 0);
-       this.http.updatePendingApprovalCounts(this.totalCount);
+      this.http.updatePendingApprovalCounts(this.totalCount);
     });
   }
- 
+
 
   comments(value: any, commentspopup: any) {
     this.modalService.open(commentspopup, {
@@ -464,6 +554,42 @@ export class ClaimsandexpensesForYourRoleRequestComponent
     this.modalService.dismissAll();
     this.openModal(this.viewattamchment);
   }
+  onViewAttachementverification(url: any) {
+    const lowerUrl = url?.toLowerCase();
+
+    if (
+      lowerUrl?.endsWith('jpg') ||
+      lowerUrl?.endsWith('jpeg') ||
+      lowerUrl?.endsWith('png')
+    ) {
+      this.subscription = this.http
+        .DownloadDataWithQuery('FileSystem/Downloadfile', url)
+        .subscribe({
+          next: (res: any) => {
+            const blob = new Blob([res['body']], { type: 'image/png' });
+            const objectURL = URL.createObjectURL(blob);
+            this.expenseImageUrl =
+              this.sanitizer.bypassSecurityTrustUrl(objectURL);
+            this.expenseViewURL = null;
+            this.toggleViewModalforverification();
+          },
+          error: (err) => console.error('Error downloading image:', err),
+        });
+    } else if (lowerUrl?.endsWith('pdf')) {
+      this.expenseImageUrl = null;
+      this.expenseViewURL = `${environment.viewUrl}${url}`; // assumed to be full URL
+      this.toggleViewModalforverification();
+    } else {
+      // fallback for other types if needed
+      this.expenseImageUrl = null;
+      this.expenseViewURL = `${environment.viewUrl}${url}`;
+      this.toggleViewModalforverification();
+    }
+  }
+  toggleViewModalforverification() {
+    this.modalService.dismissAll();
+    this.openModal(this.verificationViewattamchment);
+  }
   isImageFile(url: any): boolean {
     if (!url) return false;
     const lowerUrl = url.toLowerCase();
@@ -474,7 +600,79 @@ export class ClaimsandexpensesForYourRoleRequestComponent
     );
   }
 
+  handleClarification(approveForm: FormGroup): void {
+    this.isloading = true;
+    if (approveForm.valid) {
+      const formData = approveForm.value;
+      const requestBody = {
+        status: 'Required Clarification',
+        comments: formData.comments,
+        approvedBy: this.empinfo.employeeId.toString(),
+        currentStage: parseInt(
+          this.selectedLeaveData.approvalHeader.currentapprovalStage
+        ),
+      };
+      this.sharedModalService.openLoaderModal(
+        'Sending for Clarification, Please wait...'
+      );
+      this.http
+        .putData(
+          `PendingApproval/${this.selectedLeaveData.approvalHeader.id}`,
+          requestBody
+        )
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (response: any) => {
+            this.isloading = false;
+            this.modalService.dismissAll();
+            this.signalService.claimsandexpensesForRoleTriggerSignal.set(true);
+            this.sharedModalService.openSuccessModal(
+              'Expense request sent for clarification successfully'
+            );
+            this.approveForm.reset();
+            this.http.setnewcountDetails();
+            this.selectedLeaveData = {} as ExpenseApprovalResponse;
+            this.http.tirggerPendingApprovalCountSignal.update((status) => ({
+              ...status,
+              expenses: true,
+            }));
+          },
+          error: (reason: any) => {
+            this.isloading = false;
+            this.modalService.dismissAll();
+            this.sharedModalService.openErrorModal(reason.error.Message);
+          },
+          complete: () => {
+            this.getAllPendingApprovals();
+          },
+        });
+    }
+  }
   selectedItem: any = null;
+
+  refreshAllVerifiedStates(): void {
+    this.expenseheaderpending.forEach(record => {
+      const expId = record.entity.expenses_ID;
+      if (!this.allVerifiedMap.has(expId)) {
+        this.http.getitembyid(`Expenses_Header/getby_Expense_ID`, expId)
+          .pipe(takeUntil(this.destroy$))
+          .subscribe({
+            next: (data: any) => {
+              const allDone = data.expenseitem?.length > 0 &&
+                data.expenseitem.every((item: any) => item.isVerified === true);
+              if (allDone) {
+                this.allVerifiedMap.set(expId, true);
+                console.log(this.allVerifiedMap);
+              }
+            }
+          });
+      }
+    });
+  }
+
+  isAllVerifiedForRecord(expensesId: number): boolean {
+    return this.allVerifiedMap.get(expensesId) === true;
+  }
   openVerifyModal(item: any, content: any) {
     this.verifyModalRef = this.modalService.open(content, { centered: true, backdrop: 'static' });
     this.intializeVerifyForm();
@@ -502,10 +700,13 @@ export class ClaimsandexpensesForYourRoleRequestComponent
     const requestBody = {
       isVerified: true,
       verifiedBy: this.empinfo.employeeId?.toString(),
-      verifiedByName: `${this.empinfo.firstName || ''} ${this.empinfo.lastName || ''}`.trim(),
-      comments: formData.comments
+      status: 'Verified',
+      meta: JSON.stringify({
+        addedBy: this.empinfo.employeeId?.toString(),
+        addedComments: formData.comments,
+        addedOn: moment().format('YYYY-MM-DD')
+      })
     };
-
     this.http.putData(`Expenses_Header/ExpensesItemUpdate/${verifiedItem.expenseitem_id}`, requestBody)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
@@ -531,6 +732,21 @@ export class ClaimsandexpensesForYourRoleRequestComponent
           // Update verified IDs for template checks
           this.verifiedExpenseIds.push(verifiedItem.expenseitem_id);
 
+          if (this.expenseheaderiteams?.expenseitem?.length) {
+            const allDone = this.expenseheaderiteams.expenseitem.every(
+              (it: any) =>
+                it.isVerified === true ||
+                this.verifiedExpenseIds.includes(it.expenseitem_id)
+            );
+
+            if (allDone) {
+              this.allVerifiedMap.set(
+                this.expenseheaderiteams.expenses_ID,
+                true
+              );
+            }
+          }
+
           // Refresh headers in background, but the modal stays open
           this.getAllPendingApprovals();
         },
@@ -539,6 +755,156 @@ export class ClaimsandexpensesForYourRoleRequestComponent
           this.sharedModalService.openErrorModal(err?.error?.Message || 'Verification failed');
         }
       });
+  }
+
+  confirmApproval(modal: any) {
+    this.isloading = true;
+    const payload = this.checklistdata.map((item: any) => ({
+      expenseHeaderId: this.storeapprovalRequest.approvalHeader.referenceEntityId,   // expense header id
+      employeeId: this.storeapprovalRequest.entity.employeeId,            // current employee id
+      checklistConfigurationId: item.id,          // checklist item id
+      isChecked: item.checked || false,
+      checkedBy: this.empinfo.employeeId,
+      checkedAt: moment().format('YYYY-MM-DD'),
+      comments: item.comments || '',
+      createdAt: moment().format('YYYY-MM-DD'),
+    }));
+    this.http.postdata('ExpensesCheckListTracking', payload).subscribe({
+      next: (res) => {
+        if (res) {
+          if (this.storeapprovalRequest.action === 'Approve') {
+            this.handleAccept(this.approveForm);
+          }
+          else {
+            this.handleProcess(this.storeapprovalRequest);
+          }
+        }
+        this.storeapprovalRequest = {} as ExpenseApprovalResponse;
+        modal.close();
+      },
+      error: (err) => {
+        this.isloading = false;
+        console.error(err);
+      }
+    });
+  }
+  markasPaid(modal: any) {
+    this.isloading = true;
+    if (!this.markAsPaidForm.valid || !this.selectedLeaveData) return;
+    console.log(this.selectedLeaveData);
+
+    const formData = this.markAsPaidForm.value;
+    const verifiedItem = this.selectedLeaveData;
+
+    const requestBody = {
+      expenses_ID: this.selectedLeaveData.entity.expenses_ID,
+      applied_date: this.selectedLeaveData.entity.applied_date || new Date().toISOString(),
+      expenses_Title: this.selectedLeaveData.entity.expenses_Title || '',
+      additional_details: '',
+      status: 'Processed',
+      expenseName: this.selectedLeaveData.entity.expenseType || '',
+      currentRole: '',
+      totalamount: this.selectedLeaveData.entity.totalExpenseAmount || 0,
+      employeeId: this.selectedLeaveData.entity.employeeId,
+      submissionDate: new Date().toISOString(),
+      expense_Amount: this.selectedLeaveData.entity.totalExpenseAmount || 0,
+      attachment_url: '',
+      currentApprover: this.selectedLeaveData.currentApprover || '',
+      nextApprover: '',
+      approverEmail: '',
+      comments: formData.comments || 'Marked as paid',
+      isCheckListRequired: false,
+      paymentDate: formData.paymentDate || new Date().toISOString(),
+      paymentMode: formData.paymentMode || '',
+      refTransactionId: formData.transactionId || '',
+      expenseitem: []
+    };
+
+    this.http.putData(`Expenses_Header/updateexpenses?id=${this.selectedLeaveData.entity.expenses_ID}`, requestBody)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res: any) => {
+          if (res) {
+            this.handleProcess(this.selectedLeaveData);
+          }
+          this.signalService.claimsandexpensesForRoleTriggerSignal.set(true);
+          this.http.setnewcountDetails();
+          this.http.tirggerPendingApprovalCountSignal.update((status) => ({
+            ...status,
+            expenses: true,
+          }));
+          this.storeapprovalRequest = {} as ExpenseApprovalResponse;
+          modal.close();
+        },
+        error: (err) => {
+          console.error(err);
+        }
+      });
+  }
+
+  handleVerifyReject(verifyForm: FormGroup): void {
+    if (!verifyForm.valid || !this.selectedItem) return;
+
+    const formData = verifyForm.value;
+    const verifiedItem = this.selectedItem;
+
+    const requestBody = {
+      isVerified: true,
+      status: 'Rejected',
+      meta: JSON.stringify({
+        addedBy: this.empinfo.employeeId?.toString(),
+        addedComments: formData.comments,
+        addedOn: moment().format('YYYY-MM-DD')
+      })
+    };
+
+    this.http.putData(`Expenses_Header/ExpensesItemUpdate/${verifiedItem.expenseitem_id}`, requestBody)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          // Close only the Verify modal
+          this.verifyModalRef?.close();
+
+          // Show success popup
+          this.sharedModalService.openSuccessModal('Expense item rejected successfully');
+
+          // Update local UI immediately
+          if (this.expenseheaderiteams?.expenseitem?.length) {
+            const idx = this.expenseheaderiteams.expenseitem.findIndex(
+              it => it.expenseitem_id === verifiedItem.expenseitem_id
+            );
+            if (idx > -1) {
+              this.expenseheaderiteams.expenseitem[idx].isVerified = true;
+            }
+          }
+
+          this.selectedItem = null;
+
+          // Update verified IDs for template checks
+          this.verifiedExpenseIds.push(verifiedItem.expenseitem_id);
+
+          // Refresh headers in background, but the modal stays open
+          this.getAllPendingApprovals();
+          this.signalService.claimsandexpensesForRoleTriggerSignal.set(true);
+          this.http.setnewcountDetails();
+          this.http.tirggerPendingApprovalCountSignal.update((status) => ({
+            ...status,
+            expenses: true,
+          }));
+        },
+        error: (err: any) => {
+          this.verifyModalRef?.close();
+          this.sharedModalService.openErrorModal(err?.error?.Message || 'Verification failed');
+        }
+      });
+  }
+  onCancel(modal: any) {
+    // 1. Reset form
+    this.approveForm.reset();
+    // 2. Reset checklist selection
+    this.checklistdata.forEach(item => item.checked = false);
+    // 4. Close modal
+    modal.dismiss();
   }
 
 

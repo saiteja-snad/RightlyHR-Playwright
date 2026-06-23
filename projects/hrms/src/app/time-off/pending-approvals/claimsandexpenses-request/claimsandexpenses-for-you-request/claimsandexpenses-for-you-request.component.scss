@@ -2,3 +2,52 @@
 .view-icon {
     width: 2rem;
 }
+
+.modal-image {
+    width: 100% !important;
+    max-height: 60vh;
+}
+.wrapper {
+  height: 75dvh;
+  justify-content: center;
+}
+.custom-poup-header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .checklist-title {
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--primary-color);
+        letter-spacing: 1px;
+    }
+
+}
+
+.custom-check-list-content {
+    width: 100%;
+    max-height: 30dvh;
+    overflow: auto;
+    background: #E7EDF2;
+    border-radius: 0.5rem;
+    border: 1px solid #DDE6EF;
+
+    .list-card {
+        font-weight: 500;
+        font-size: var(--fontsize14);
+        background-color: #FFFFFF;
+        border: 1px solid #FFFFFF;
+        border-radius: 0.5rem;
+        padding: 0.5rem 0.75rem;
+        color: #3B3B3B;
+    }
+
+    .list-card:not(:last-child) {
+        margin-bottom: 1rem;
+    }
+}
+
+input[type=checkbox] {
+    accent-color: var(--primary-color) !important;
+}

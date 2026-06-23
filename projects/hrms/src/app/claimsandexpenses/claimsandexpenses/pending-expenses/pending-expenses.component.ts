@@ -511,6 +511,12 @@ export class PendingExpensesComponent implements OnInit, OnDestroy {
     return currentApproverId?.toString() === loginId;
   }
 
+  canShowBulkActionsColumn(): boolean {
+  const data = this.expenesEmplyeedata.value || [];
+
+  return data.some(exp => this.canApproveExpense(exp));
+}
+
   ngOnDestroy(): void {
     if (this.subscription) {
       this.subscription.unsubscribe()

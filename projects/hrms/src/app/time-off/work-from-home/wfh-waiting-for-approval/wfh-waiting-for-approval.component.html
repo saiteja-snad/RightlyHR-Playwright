@@ -1,68 +1,71 @@
 <div class="custom-main-component-container">
   <div class="custom-table-content">
     @if(!dataload){
-    <table class="w-100">
-      <thead>
-        <th>{{'Worked Date' | translate}}</th>
-        <th>{{'Availed' | translate}}</th>
-        <th class="text-center">{{'Reason' | translate}}</th>
-        <th>{{'Applied Date' | translate }}</th>
-        <th>{{'Status' | translate }}</th>
-        <th class="text-center">{{"Action" | translate}}</th>
-      </thead>
-      <tbody>
-        <ng-container *ngIf="waitingForApprovalWFHs!.length > 0; else noDataTemplate">
-          <tr *ngFor="let wfhRequest of waitingForApprovalWFHs; let i = index">
-            <td>{{ wfhRequest.startTime ? (wfhRequest.startTime | dateformat) : ' -' }}</td>
-            <td [ngSwitch]="wfhRequest.durationType">
-              <span *ngSwitchCase="1">First Half</span>
-              <span *ngSwitchCase="3">Second Half</span>
-              <span *ngSwitchCase="2">Full Day</span>
-              <span *ngSwitchDefault>-</span>
-            </td>
-            <td class="text-center">
-              <div>
-                <div *ngIf="wfhRequest.requestedComments; else noReason" type="button" [ngbPopover]="requestedComments">
-                  <app-info-icon />
-                </div>
-                <ng-template #requestedComments>
-                  <p class="mb-0">{{ wfhRequest.requestedComments }}</p>
-                </ng-template>
-                <ng-template #noReason>
-                  <span>-</span>
-                </ng-template>
+    <p-table #wfhWaitingTable [value]="waitingForApprovalWFHs" [customSort]="true" (sortFunction)="customSort($event)" [scrollable]="true" scrollHeight="flex">
+      <ng-template pTemplate="header">
+        <tr>
+          <th pSortableColumn="startTime">{{'Worked Date' | translate}} <p-sortIcon field="startTime"></p-sortIcon></th>
+          <th pSortableColumn="durationType">{{'Availed' | translate}} <p-sortIcon field="durationType"></p-sortIcon></th>
+          <th class="text-center">{{'Reason' | translate}}</th>
+          <th pSortableColumn="requestedDate">{{'Applied Date' | translate }} <p-sortIcon field="requestedDate"></p-sortIcon></th>
+          <th pSortableColumn="status">{{'Status' | translate }} <p-sortIcon field="status"></p-sortIcon></th>
+          <th class="text-center">{{"Action" | translate}}</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-wfhRequest>
+        <tr>
+          <td>{{ wfhRequest.startTime ? (wfhRequest.startTime | dateformat) : ' -' }}</td>
+          <td [ngSwitch]="wfhRequest.durationType">
+            <span *ngSwitchCase="1">First Half</span>
+            <span *ngSwitchCase="3">Second Half</span>
+            <span *ngSwitchCase="2">Full Day</span>
+            <span *ngSwitchDefault>-</span>
+          </td>
+          <td class="text-center">
+            <div>
+              <div *ngIf="wfhRequest.requestedComments; else noReason" type="button" [ngbPopover]="requestedComments">
+                <app-info-icon />
               </div>
-            </td>
-            <td>{{ wfhRequest.requestedDate | dateformat }}</td>
-            <td>{{ wfhRequest.status }}</td>
-            <td class="text-center">
-              <!-- @if(isBeforeToday(wfhRequest.startTime)){ -->
-                 @if(permissionForLoggedInUser && isBeforeToday(wfhRequest.startTime)){
-              <div class="dropdown">
-                <a type="button" data-bs-toggle="dropdown">
-                  <i class="bi bi-three-dots-vertical"></i>
-                </a>
-                <ul class="dropdown-menu custom-dropdown-menu">
-                  <li (click)="onClick(wfhRequest,cancelModal)">
-                    <a class="dropdown-item">{{'Cancel WFH' | translate}}</a>
-                  </li>
-                </ul>
-              </div>
-              }@else {
-                -
-                <!-- {{"NA"}} -->
-              }
+              <ng-template #requestedComments>
+                <p class="mb-0">{{ wfhRequest.requestedComments }}</p>
+              </ng-template>
+              <ng-template #noReason>
+                <span>-</span>
+              </ng-template>
+            </div>
+          </td>
+          <td>{{ wfhRequest.requestedDate | dateformat }}</td>
+          <td>{{ wfhRequest.status }}</td>
+          <td class="text-center">
+            <!-- @if(isBeforeToday(wfhRequest.startTime)){ -->
+               @if(permissionForLoggedInUser && isBeforeToday(wfhRequest.startTime)){
+            <div class="dropdown">
+              <a type="button" data-bs-toggle="dropdown">
+                <i class="bi bi-three-dots-vertical"></i>
+              </a>
+              <ul class="dropdown-menu custom-dropdown-menu">
+                <li (click)="onClick(wfhRequest,cancelModal)">
+                  <a class="dropdown-item">{{'Cancel WFH' | translate}}</a>
+                </li>
+              </ul>
+            </div>
+            }@else {
+              -
+              <!-- {{"NA"}} -->
+            }
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <div class="wrapper">
+          <tr>
+            <td colspan="11">
+              <app-no-data-found />
             </td>
           </tr>
-        </ng-container>
-
-        <ng-template #noDataTemplate>
-          <tr class="table-placeholder">
-            <app-no-data-found></app-no-data-found>
-          </tr>
-        </ng-template>
-      </tbody>
-    </table>
+        </div>
+      </ng-template>
+    </p-table>
     }@else{<app-data-loader-content />}
   </div>
 </div>

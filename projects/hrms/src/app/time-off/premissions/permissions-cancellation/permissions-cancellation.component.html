@@ -1,56 +1,59 @@
 <div class="custom-main-component-container">
-    <div class="custom-table-content">
-        @if(!dataload){
-        <table class="w-100">
-            <thead>
-                <th>{{'Requested Date' | translate}}</th>
-                <th>{{'Permission Date'| translate}}</th>
-                <th>Duration(In<span class="text-lowercase"> hrs)</span></th> 
-                <th class="text-center">{{'Reason'| translate}}</th>
-                <th class="text-center">{{'Cancellation Reason' | translate}}</th>
-                <th>{{'Permission Type'| translate}}</th>
-                <th>{{'Status'| translate}}</th>
-            </thead>
-            <tbody>
-                <ng-container *ngIf="approvedPerimisions!.length > 0; else noDataTemplate">
-                    <tr *ngFor="let permissionRequest of approvedPerimisions; let i = index">
-                        <td>{{permissionRequest.createdDate | dateformat}}</td>
-                        <td>{{permissionRequest.requestedDate | dateformat}}</td>
-                        <td>{{(+permissionRequest.duration) * 60 * 60 * 1000 | date:'HH:mm':'UTC'}}</td>
-                        <td class="text-center">
-                            <div>
-                                <a type="button" [ngbPopover]="reason">
-                                    <app-info-icon />
-                                </a>
-                                <ng-template #reason>
-                                    <p class="mb-0">{{permissionRequest.notes}} </p>
-                                </ng-template>
-                            </div>
-                        </td>
-                        <td class="text-center">
-                            <div>
-                                <a type="button" [ngbPopover]="cancelledReason">
-                                    <app-info-icon />
-                                </a>
-                                <ng-template #cancelledReason>
-                                    <p class="mb-0">{{permissionRequest.cancelledReason}} </p>
-                                </ng-template>
-                            </div>
-                        </td>
-                        <td>{{permissionRequest.type}}</td>
-                        <td>{{permissionRequest.status}}</td>
-                    </tr>
-                </ng-container>
-
-                <ng-template #noDataTemplate>
-                    <tr class="table-placeholder">
-                        <app-no-data-found></app-no-data-found>
-                    </tr>
-                </ng-template>
-            </tbody>
-        </table>
-        }@else{
-        <app-data-loader-content />
-        }
-    </div>
+  <div class="custom-table-content">
+    @if(!dataload){
+    <p-table #permissionsCancellationTable [value]="approvedPerimisions" [customSort]="true" (sortFunction)="customSort($event)" [sortMode]="'single'">
+      <ng-template pTemplate="header">
+        <tr>
+          <th pSortableColumn="createdDate">{{'Requested Date' | translate}} <p-sortIcon field="createdDate"></p-sortIcon></th>
+          <th pSortableColumn="requestedDate">{{'Permission Date' | translate}} <p-sortIcon field="requestedDate"></p-sortIcon></th>
+          <th pSortableColumn="duration">Duration(In<span class="text-lowercase"> hrs)</span> <p-sortIcon field="duration"></p-sortIcon></th> 
+          <th class="text-center" pSortableColumn="notes">{{'Reason' | translate}} <p-sortIcon field="notes"></p-sortIcon></th>
+          <th class="text-center">{{'Cancellation Reason' | translate}}</th>
+          <th pSortableColumn="type">{{'Permission Type' | translate}} <p-sortIcon field="type"></p-sortIcon></th>
+          <th pSortableColumn="status">{{'Status' | translate}} <p-sortIcon field="status"></p-sortIcon></th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-permissionRequest>
+        <tr>
+          <td>{{permissionRequest.createdDate | dateformat}}</td>
+          <td>{{permissionRequest.requestedDate | dateformat}}</td>
+          <td>{{(+permissionRequest.duration) * 60 * 60 * 1000 | date:'HH:mm':'UTC'}}</td>
+          <td class="text-center">
+            <div>
+              <a type="button" [ngbPopover]="reason">
+                <app-info-icon />
+              </a>
+              <ng-template #reason>
+                <p class="mb-0">{{permissionRequest.notes}}</p>
+              </ng-template>
+            </div>
+          </td>
+          <td class="text-center">
+            <div>
+              <a type="button" [ngbPopover]="cancelledReason">
+                <app-info-icon />
+              </a>
+              <ng-template #cancelledReason>
+                <p class="mb-0">{{permissionRequest.cancelledReason}}</p>
+              </ng-template>
+            </div>
+          </td>
+          <td>{{permissionRequest.type}}</td>
+          <td>{{permissionRequest.status}}</td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <div class="wrapper">
+          <tr>
+            <td colspan="7">
+              <app-no-data-found />
+            </td>
+          </tr>
+        </div>
+      </ng-template>
+    </p-table>
+    }@else{
+    <app-data-loader-content />
+    }
+  </div>
 </div>

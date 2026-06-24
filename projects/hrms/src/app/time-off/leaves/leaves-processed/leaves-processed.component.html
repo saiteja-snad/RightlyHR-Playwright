@@ -1,21 +1,22 @@
 <div class="custom-main-component-container">
     <div class="custom-table-content">
         @if (!loading) {
-        <table class="w-100">
-            <thead>
-                <th>Date</th>
-                <th>Leave Type</th>
-                <th>Duration</th>
-                <th>Availed</th>
-                <th class="text-center text-nowrap">Start Date</th>
-                <th class="text-center text-nowrap">End Date</th>
-                <th class="text-center">Reason</th>
-                <th>Status</th>
-            </thead>
-            <tbody>
+        <p-table #leavesProcessedTable [value]="lpdata" [customSort]="true" (sortFunction)="customSort($event)" [scrollable]="true" scrollHeight="flex">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th pSortableColumn="date">Date <p-sortIcon field="date"></p-sortIcon></th>
+                    <th pSortableColumn="categoryName">Leave Type <p-sortIcon field="categoryName"></p-sortIcon></th>
+                    <th pSortableColumn="duration" class="text-center">Duration <p-sortIcon field="duration"></p-sortIcon></th>
+                    <th pSortableColumn="durationType">Availed <p-sortIcon field="durationType"></p-sortIcon></th>
+                    <th pSortableColumn="startdate" class="text-center text-nowrap">Start Date <p-sortIcon field="startdate"></p-sortIcon></th>
+                    <th pSortableColumn="enddate" class="text-center text-nowrap">End Date <p-sortIcon field="enddate"></p-sortIcon></th>
+                    <th class="text-center">Reason</th>
+                    <th pSortableColumn="status">Status <p-sortIcon field="status"></p-sortIcon></th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-item>
                 @if (rbac.allowedToAccess('Processed (Time Off).view')) {
-                @if (lpdata.length > 0) {
-                <tr *ngFor="let item of lpdata">
+                <tr>
                     <td>{{item.date| dateformat}}</td>
                     <td>{{item.categoryName}}</td>
                     <td class="text-center">
@@ -44,14 +45,17 @@
                     <td>{{item.status}}</td>
                 </tr>
                 }
-                @else{
-                <tr class="table-placeholder">
-                    <app-no-data-found></app-no-data-found>
-                </tr>
-                }
-                }
-            </tbody>
-        </table>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+                <div class="wrapper">
+                    <tr>
+                        <td colspan="11">
+                            <app-no-data-found></app-no-data-found>
+                        </td>
+                    </tr>
+                </div>
+            </ng-template>
+        </p-table>
         }
         @else {
         <app-data-loader-content></app-data-loader-content>

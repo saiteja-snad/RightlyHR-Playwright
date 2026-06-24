@@ -97,11 +97,13 @@
                 </tr>
             </ng-template>
             <ng-template pTemplate="emptymessage">
-                <tr>
-                    <td [attr.colspan]="canAccess('update','certification') || canAccess('delete','certification') ? 6 : 5">
-                        <app-no-data-found />
-                    </td>
-                </tr>
+                <div class="wrapper">
+                    <tr>
+                        <td [attr.colspan]="canAccess('update','certification') || canAccess('delete','certification') ? 6 : 5">
+                            <app-no-data-found />
+                        </td>
+                    </tr>
+                </div>
             </ng-template>
         </p-table>
         }

@@ -1,10 +1,12 @@
-import { Component, effect, OnDestroy, OnInit } from '@angular/core';
+import { Component, effect, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { HttpService } from '../../../services/http.service';
 import { AuthService } from '../../../services/auth.service';
 import { Subscription } from 'rxjs';
 import { DateformatPipe } from '../../../pipes/dateformat.pipe';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { DropdownModule } from 'primeng/dropdown';
+import { TableModule } from 'primeng/table';
+import { Table } from 'primeng/table';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { FormsModule } from '@angular/forms';
 import { NgbModal, NgbNavModule, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
@@ -16,21 +18,25 @@ import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.
 import { TranslateModule } from '@ngx-translate/core';
 @Component({
   selector: 'app-on-be-half-of-approval',
-  imports: [CommonModule, NgbNavModule, NgbPopoverModule,TranslateModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe, NoDataFoundComponent, InfoIconComponent, DataLoaderContentComponent],
+  imports: [CommonModule, NgbNavModule, NgbPopoverModule, TranslateModule, FormsModule, PaginatorModule, DropdownModule, TableModule, DateformatPipe, NoDataFoundComponent, InfoIconComponent, DataLoaderContentComponent],
   templateUrl: './on-be-half-of-approval.component.html',
   styleUrl: './on-be-half-of-approval.component.scss'
 })
 
 export class OnBeHalfOfApprovalComponent implements OnInit, OnDestroy{
+  @ViewChild('approvalTable') approvalTable!: Table;
   loggedinuser = {} as any;
   cadidateEmployeeId!:number;
   subscription!: Subscription;
   approvedLeaves: any = [];
+  originalApprovedLeaves: any = [];
   selectedSandwichItem: any = null;
   totalRecords = 100
   first: any = 0;
   rows: any = 10;
   loading: boolean = false;
+  currentSortField: string = '';
+  currentSortOrder: number = 0;
 
   options = [
     { label: 10, value: 10 },
@@ -78,6 +84,7 @@ export class OnBeHalfOfApprovalComponent implements OnInit, OnDestroy{
         console.log(response)
         if (Array.isArray(response)) {
           this.approvedLeaves = response.filter(item => item.status.toLowerCase() === 'approved');
+          this.originalApprovedLeaves = [...this.approvedLeaves];
           let pendingCount = this.approvedLeaves.length;
         } else {
           console.error("Invalid response format");
@@ -95,6 +102,77 @@ export class OnBeHalfOfApprovalComponent implements OnInit, OnDestroy{
   openSandwichBreakdown(item: any, modal: any) {
     this.selectedSandwichItem = item;
     this.modalService.open(modal, { centered: true, backdrop: 'static', size: 'lg' });
+  }
+
+  customSort(event: any): void {
+    const field = event.field;
+    
+    // Track current sort state for the clicked field
+    if (this.currentSortField === field) {
+      // Same field clicked - cycle through: asc (1) -> desc (-1) -> reset (0)
+      if (this.currentSortOrder === 1) {
+        // Currently ascending, change to descending
+        this.currentSortOrder = -1;
+        event.order = -1;
+      } else if (this.currentSortOrder === -1) {
+        // Currently descending, reset to original order
+        this.approvedLeaves = [...this.originalApprovedLeaves];
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        if (this.approvalTable) {
+          this.approvalTable.reset();
+        }
+        return;
+      } else {
+        // Currently reset, change to ascending
+        this.currentSortOrder = 1;
+        event.order = 1;
+      }
+    } else {
+      // New field clicked - start with ascending
+      this.currentSortField = field;
+      this.currentSortOrder = 1;
+      event.order = 1;
+    }
+
+    event.data.sort((a: any, b: any) => {
+      let val1: any;
+      let val2: any;
+
+      // Handle date fields
+      if (['date', 'startdate', 'enddate'].includes(field)) {
+        val1 = new Date(a[field]);
+        val2 = new Date(b[field]);
+        return event.order * (val1.getTime() - val2.getTime());
+      }
+
+      // Handle duration (numeric)
+      if (field === 'duration') {
+        val1 = parseFloat(a[field]) || 0;
+        val2 = parseFloat(b[field]) || 0;
+        return event.order * (val1 - val2);
+      }
+
+      // Handle durationType
+      if (field === 'durationType') {
+        const typeMap: { [key: number]: string } = {
+          1: 'First Half',
+          2: 'Full Day',
+          3: 'Second Half'
+        };
+        val1 = typeMap[a[field]] || 'Unknown';
+        val2 = typeMap[b[field]] || 'Unknown';
+      } else {
+        // Handle direct fields
+        val1 = a[field];
+        val2 = b[field];
+      }
+
+      // Handle string sorting for all other fields
+      val1 = String(val1 ?? '').trim();
+      val2 = String(val2 ?? '').trim();
+      return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+    });
   }
 
 

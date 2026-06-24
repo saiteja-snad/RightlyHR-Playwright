@@ -1,9 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, effect, OnDestroy, OnInit } from '@angular/core';
+import { Component, effect, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgbModal, NgbNavModule, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { DropdownModule } from 'primeng/dropdown';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
+import { TableModule } from 'primeng/table';
+import { Table } from 'primeng/table';
 import { DateformatPipe } from '../../../pipes/dateformat.pipe';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { Subscription } from 'rxjs';
@@ -18,12 +20,13 @@ import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-on-be-half-of-cancel',
-  imports: [CommonModule, NgbNavModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe, NoDataFoundComponent, InfoIconComponent, DataLoaderContentComponent, TranslateModule],
+  imports: [CommonModule, NgbNavModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, TableModule, DateformatPipe, NoDataFoundComponent, InfoIconComponent, DataLoaderContentComponent, TranslateModule],
   templateUrl: './on-be-half-of-cancel.component.html',
   styleUrl: './on-be-half-of-cancel.component.scss'
 })
 
 export class OnBeHalfOfCancelComponent implements OnInit, OnDestroy {
+  @ViewChild('cancelTable') cancelTable!: Table;
   totalRecords = 100
   first: any = 0;
   rows: any = 10;
@@ -31,9 +34,12 @@ export class OnBeHalfOfCancelComponent implements OnInit, OnDestroy {
   empdata = {} as any;
   subscription!: Subscription;
   lpdata = [] as Ilpid[];
+  originalLpdata = [] as Ilpid[];
   selectedSandwichItem: any = null;
   loading: boolean = false;
   cadidateEmployeeId!: number;
+  currentSortField: string = '';
+  currentSortOrder: number = 0;
 
   options = [
     { label: 10, value: 10 },
@@ -82,6 +88,7 @@ export class OnBeHalfOfCancelComponent implements OnInit, OnDestroy {
         console.log(response);
         if (Array.isArray(response)) {
           this.lpdata = response.filter(item => item.status.toLowerCase() === 'cancelled');
+          this.originalLpdata = [...this.lpdata];
         } else {
           console.error("Invalid response format");
         }
@@ -95,6 +102,77 @@ export class OnBeHalfOfCancelComponent implements OnInit, OnDestroy {
   openSandwichBreakdown(item: any, modal: any) {
     this.selectedSandwichItem = item;
     this.modalService.open(modal, { centered: true, backdrop: 'static', size: 'lg' });
+  }
+
+  customSort(event: any): void {
+    const field = event.field;
+    
+    // Track current sort state for the clicked field
+    if (this.currentSortField === field) {
+      // Same field clicked - cycle through: asc (1) -> desc (-1) -> reset (0)
+      if (this.currentSortOrder === 1) {
+        // Currently ascending, change to descending
+        this.currentSortOrder = -1;
+        event.order = -1;
+      } else if (this.currentSortOrder === -1) {
+        // Currently descending, reset to original order
+        this.lpdata = [...this.originalLpdata];
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        if (this.cancelTable) {
+          this.cancelTable.reset();
+        }
+        return;
+      } else {
+        // Currently reset, change to ascending
+        this.currentSortOrder = 1;
+        event.order = 1;
+      }
+    } else {
+      // New field clicked - start with ascending
+      this.currentSortField = field;
+      this.currentSortOrder = 1;
+      event.order = 1;
+    }
+
+    event.data.sort((a: any, b: any) => {
+      let val1: any;
+      let val2: any;
+
+      // Handle date fields
+      if (['date', 'startdate', 'enddate'].includes(field)) {
+        val1 = new Date(a[field]);
+        val2 = new Date(b[field]);
+        return event.order * (val1.getTime() - val2.getTime());
+      }
+
+      // Handle duration (numeric)
+      if (field === 'duration') {
+        val1 = parseFloat(a[field]) || 0;
+        val2 = parseFloat(b[field]) || 0;
+        return event.order * (val1 - val2);
+      }
+
+      // Handle durationType
+      if (field === 'durationType') {
+        const typeMap: { [key: number]: string } = {
+          1: 'First Half',
+          2: 'Full Day',
+          3: 'Second Half'
+        };
+        val1 = typeMap[a[field]] || 'Unknown';
+        val2 = typeMap[b[field]] || 'Unknown';
+      } else {
+        // Handle direct fields
+        val1 = a[field];
+        val2 = b[field];
+      }
+
+      // Handle string sorting for all other fields
+      val1 = String(val1 ?? '').trim();
+      val2 = String(val2 ?? '').trim();
+      return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+    });
   }
 
 

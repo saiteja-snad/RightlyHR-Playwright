@@ -112,16 +112,21 @@ export class SeparationApprovalTabsComponent {
     const EmployeeId = this.LOGIN.employeeId;
     this.subscription = this.http.getData(`NoDueClearanceForm/getByApproverIdPendingApprovals/${EmployeeId}`).subscribe({
       next: (data: any) => {
-        this.nodue_Request_data = data;
-        // Update the count for No Due Clearances tab based on array length
-        const noDueLink = this.navLinks.find(link => link.label === 'No Due Clearances');
-        if (noDueLink) {
-          noDueLink.count = data?.length || 0;
-        }
-        const filteredNoDueLink = this.filteredNavLinks.find(link => link.label === 'No Due Clearances');
-        if (filteredNoDueLink) {
-          filteredNoDueLink.count = noDueLink?.count || 0;
-        }
+         const count = data?.length || 0;
+      const updateCount = (links: NavLink[]) => {
+        const link = links.find(l => l.label === 'No Due Clearances');
+        if (link) link.count = count;
+      };
+      updateCount(this.navLinks);
+      updateCount(this.filteredNavLinks);
+
+      // Re-sort now that No Due count is accurate
+      const hasSavedPref = (this.menuOrderService.preferenceV2()?.tabs?.modules ?? [])
+        .some(m => m.moduleKey === this.tabsKey);
+      if (!hasSavedPref) {
+        this.navLinks = this.navLinks.sort((a, b) => (b.count ?? 0) - (a.count ?? 0));
+        this.filteredNavLinks = [...this.navLinks];
+      }
       },
     });
   }

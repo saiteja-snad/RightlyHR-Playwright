@@ -392,7 +392,11 @@ getTaskType() {
       this.regularizationCount = 0;
 
       this.traineeRequestsCount = 0;
-
+      this.resolvedCountApis = 0;
+      this.userInteracted = false;
+      this.filteredNavItems = [...this.navItems];
+      this.activeTab = this.filteredNavItems[0]?.key ?? 'timeOff';
+      this.updateModuleInfo();
       localStorage.setItem("onbehalfofaproverData", JSON.stringify(null));
       this.http.triggerActionSignal();
     }
@@ -435,7 +439,11 @@ getTaskType() {
       this.permissionsCount = 0;
       this.regularizationCount = 0;
       this.traineeRequestsCount = 0;
-
+      this.resolvedCountApis = 0;
+      this.userInteracted = false;
+      this.filteredNavItems = [...this.navItems];
+      this.activeTab = this.filteredNavItems[0]?.key ?? 'timeOff';
+      this.updateModuleInfo();
       localStorage.setItem("onbehalfofaproverData", JSON.stringify(null));
       this.http.triggerActionSignal();
     }

@@ -15,13 +15,16 @@
             <div cdkDropList
                 #mainMenuList="cdkDropList"
                 [cdkDropListData]="mainMenuItems"
-                [cdkDropListConnectedTo]="[threeDotList]"
+                [cdkDropListConnectedTo]="[sidenavEllipsesDropListId, quickLinksDropListId]"
+                [id]="sidenavMainDropListId"
+                [cdkDropListEnterPredicate]="sidenavEnterPredicate"
                 (cdkDropListDropped)="onMainMenuDrop($event)"
                 class="main-menu-drop-list"
                 >
                 <div class="nav-item menu-item-clear draggable-nav-item"
                     *ngFor="let item of mainMenuItems; trackBy: trackByRoute"
                     cdkDrag
+                    [cdkDragData]="item"
                     [class.active-nav-link]="isActiveItem(item)"
                     (click)="item.type === 'direct' ? onDirectItemClick(item) : null">
 
@@ -107,13 +110,16 @@
                             #threeDotList="cdkDropList"
                             cdkDropListOrientation="mixed"
                             [cdkDropListData]="filteredModules"
-                            [cdkDropListConnectedTo]="[mainMenuList]"
+                            [cdkDropListConnectedTo]="[sidenavMainDropListId, quickLinksDropListId]"
+                            [id]="sidenavEllipsesDropListId"
+                            [cdkDropListEnterPredicate]="sidenavEnterPredicate"
                             (cdkDropListDropped)="onThreeDotDrop($event)">
 
                             <div class="grid-item"
                                 *ngFor="let module of filteredModules; trackBy: trackByRoute"
                                 [id]="'menu-item-' + module.label.replace(' ', '-')"
                                 cdkDrag
+                                [cdkDragData]="module"
                                 (mousedown)="$event.stopPropagation()"
                                 (click)="selectDropdownModule(module)"
                                 [class.ellipses-item-active]="isActiveRoute(module.route)"

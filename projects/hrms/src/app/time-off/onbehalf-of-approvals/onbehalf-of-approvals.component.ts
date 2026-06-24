@@ -323,9 +323,7 @@ getTaskType() {
               }${employee.lastName ? employee.lastName : ''}`,
           };
         });
-        this.employeeiddetails = employeedata.filter((element: any) => {
-          return element.employeeId != loggedInUser.employeeId;
-        });
+        this.employeeiddetails = employeedata;
         // this.employeeiddetailsauthorityName = data as IemployeeDetails[];
       },
       error: (reason: any) => {

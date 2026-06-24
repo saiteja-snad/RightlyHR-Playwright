@@ -3,65 +3,69 @@
     <div class="input-group custom-search mb-3">
         <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
         <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input"
-            placeholder="Search by employee name  " aria-label="Username" aria-describedby="basic-addon1">
+            placeholder="Search by employee name  " aria-label="Username" aria-describedby="basic-addon1" 
+            autocomplete="off" (ngModelChange)="onSearchChange()">
     </div>
 
-    <div class="custom-table-content">
+    <div class="custom-p-multi-select-table">
         @if(!loading){
-        <table class="w-100">
-            <thead>
-                <th>{{'Employee ID' | translate}} </th>
-                <th>{{'Employee Name' | translate}}</th>
-                <th class="text-center">{{'Probation Start Date' | translate}}</th>
-                <th class="text-center">{{'Probation End Date' | translate}}</th>
-                <th class="text-center">{{'Approved History' | translate}}</th>
-                @if(rbac.allowedToAccess('Probation (On Behalf Of Approvals).update') || rbac.allowedToAccess('Probation (On Behalf Of Approvals).delete')) {
-                <th class="text-center">{{'Action' | translate}}</th>
-                }
-            </thead>
-            <tbody>
-                <ng-container *ngIf="(probationDetails | probationdetails: searchValue) as filteredDetails">
-                    <tr *ngFor="let item of filteredDetails">
-                        <td>{{item.entity?.fusionEmployeeId ?? '-'}}</td>
-                        <td>{{item.entity?.employeeName ?? '-'}}</td>
-                        <td class="text-center">{{item.entity?.probationStartDate ?? '-' | dateformat}}</td>
-                        <td class="text-center">{{item.entity?.probationEndDate ?? '-' | dateformat}}</td>
-                        <td class="text-center">
-                            <div *ngIf="item.entity?.prApproverComments.length>0;else approvercomments">
-                                <!-- <div *ngFor="let item of trn?.entity?.comments"> -->
-                                <div (click)="handleData(item)" (click)="approverComments(item.entity?.prApproverComments)">
-                                    <app-info-icon />
-                                </div>
-                                <!-- </div> -->
+        <p-table #dt [value]="getFilteredAndSortedProbations()" [tableStyle]="{'min-width': '50rem'}" [customSort]="true" (sortFunction)="customSort($event)" [sortMode]="'single'">
+            <ng-template #header>
+                <tr>
+                    <th pSortableColumn="entity.fusionEmployeeId">{{'Employee ID' | translate}} <p-sortIcon field="entity.fusionEmployeeId"></p-sortIcon></th>
+                    <th pSortableColumn="entity.employeeName">{{'Employee Name' | translate}} <p-sortIcon field="entity.employeeName"></p-sortIcon></th>
+                    <th pSortableColumn="entity.probationStartDate" class="text-center">{{'Probation Start Date' | translate}} <p-sortIcon field="entity.probationStartDate"></p-sortIcon></th>
+                    <th pSortableColumn="entity.probationEndDate" class="text-center">{{'Probation End Date' | translate}} <p-sortIcon field="entity.probationEndDate"></p-sortIcon></th>
+                    <th class="text-center">{{'Approved History' | translate}}</th>
+                    @if(rbac.allowedToAccess('Probation (On Behalf Of Approvals).update') || rbac.allowedToAccess('Probation (On Behalf Of Approvals).delete')) {
+                    <th class="text-center">{{'Action' | translate}}</th>
+                    }
+                </tr>
+            </ng-template>
+            <ng-template #body let-item>
+                <tr>
+                    <td>{{item.entity?.fusionEmployeeId ?? '-'}}</td>
+                    <td>{{item.entity?.employeeName ?? '-'}}</td>
+                    <td class="text-center">{{item.entity?.probationStartDate ?? '-' | dateformat}}</td>
+                    <td class="text-center">{{item.entity?.probationEndDate ?? '-' | dateformat}}</td>
+                    <td class="text-center">
+                        <div *ngIf="item.entity?.prApproverComments.length>0;else approvercomments">
+                            <div (click)="handleData(item)" (click)="approverComments(item.entity?.prApproverComments)">
+                                <app-info-icon />
                             </div>
-                            <ng-template #approvercomments>-</ng-template>
+                        </div>
+                        <ng-template #approvercomments>-</ng-template>
+                    </td>
+                    @if(rbac.allowedToAccess('Probation (On Behalf Of Approvals).update') || rbac.allowedToAccess('Probation (On Behalf Of Approvals).delete')) {
+                    <td class="text-center">
+                        <div>
+                            @if(rbac.allowedToAccess('Probation (On Behalf Of Approvals).update') ) {
+                            <button class="custom-btn btn-primary" (click)="handleRequests(item,ProbationProcess);
+                            getComments(item.entity?.prApproverComments)" *ngIf="item.approvalHeader?.currentapprovalStage == item.approvalHeader?.finalapprovalStage">
+                            {{'Process' | translate}}</button>
+                            }
+                            @if(rbac.allowedToAccess('Probation (On Behalf Of Approvals).update') ) {
+                            <button class="custom-btn btn-primary" *ngIf="item.approvalHeader?.currentapprovalStage != item.approvalHeader?.finalapprovalStage"
+                            [routerLink]="['/pending-approvals/assessmentform']" (click)="setData(item)">{{'Assessment form' | translate}}</button>
+                            }
+                        </div>
+                    </td>
+                    }
+                </tr>
+            </ng-template>
+            <ng-template #emptymessage>
+                <div class="wrapper">
+                    <tr>
+                        <td colspan="6">
+                            <app-no-data-found />
                         </td>
-                        @if(rbac.allowedToAccess('Probation (On Behalf Of Approvals).update') || rbac.allowedToAccess('Probation (On Behalf Of Approvals).delete')) {
-                        <td class="text-center">
-                            <div>
-                                @if(rbac.allowedToAccess('Probation (On Behalf Of Approvals).update') ) {
-                                <button class="custom-btn btn-primary" (click)="handleRequests(item,ProbationProcess);
-                                getComments(item.entity?.prApproverComments)" *ngIf="item.approvalHeader?.currentapprovalStage == item.approvalHeader?.finalapprovalStage">
-                                {{'Process' | translate}}</button>
-                                }
-                                @if(rbac.allowedToAccess('Probation (On Behalf Of Approvals).update') ) {
-                                <button class="custom-btn btn-primary" *ngIf="item.approvalHeader?.currentapprovalStage != item.approvalHeader?.finalapprovalStage"
-                                [routerLink]="['/pending-approvals/assessmentform']" (click)="setData(item)">{{'Assessment form' | translate}}</button>
-                                }
-                            </div>
-                        </td>
-                        }
                     </tr>
-                    <tr *ngIf="filteredDetails.length === 0">
-                        <app-no-data-found />
-                    </tr>
-                </ng-container>
-            </tbody>
-        </table>
-    }
-    @else{
+                </div>
+            </ng-template>
+        </p-table>
+        } @else {
         <app-data-loader-content />
-    }
+        }
     </div>
 </div>
 

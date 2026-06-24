@@ -3,6 +3,7 @@
 @import './new-theme-style-sheets/new-themes.scss';
 @import './new-theme-style-sheets/font-styles.scss';
 @import 'driver.js/dist/driver.css';
+@import 'cropperjs/dist/cropper.css';
 
 @font-face {
     font-family: "autographsignatureFont";
@@ -3465,3 +3466,4 @@ input[type=number]::-webkit-outer-spin-button {
         transform: rotate(1turn)
     }
 }
+

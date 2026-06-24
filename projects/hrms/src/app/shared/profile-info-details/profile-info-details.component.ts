@@ -191,7 +191,13 @@ getEmployeeId() {
   }
   
   openAiGenerator() {
-    this.aiGenerator.open();
+    if (this.imageUrl) {
+      // Pass the current profile image URL — strip SafeUrl wrapper if needed
+      const url = (this.imageUrl as any).changingThisBreaksApplicationSecurity ?? this.imageUrl;
+      this.aiGenerator.openWithImage(url);
+    } else {
+      this.aiGenerator.open();
+    }
   }
 
   onAiProfileApplied(file: File) {

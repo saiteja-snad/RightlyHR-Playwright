@@ -29,7 +29,7 @@
 
 
         <div class="custom-p-multi-select-table">
-
+            @if(showMultiSelectAndSearch()){
             <div class="input-group custom-search mb-3">
                 <span class="input-group-text custom-input-group-search">
                     <i class="bi bi-search"></i>
@@ -39,7 +39,7 @@
                     placeholder="Search">
             </div>
 
-
+            }
             @if(!dataLoad){
             <p-table [value]="waitingForApprovalPerimisions" [(selection)]="selectedProducts"
                 (selectionChange)="selectCheck($event)" dataKey="id">
@@ -47,9 +47,11 @@
                 <ng-template pTemplate="header">
                     <tr>
 
+                        @if(showMultiSelectAndSearch()){
                         <th style="width:4rem">
                             <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
                         </th>
+                        }
 
                         <th>{{'Requested Date' | translate}}</th>
                         <th>{{'Regularization Date' | translate}}</th>
@@ -68,9 +70,11 @@
                     <tr>
 
 
+                        @if(canApprove(permissionRequest)){
                         <td>
                             <p-tableCheckbox [value]="permissionRequest"></p-tableCheckbox>
                         </td>
+                        }
 
                         <td>{{permissionRequest.createdDate | dateformat}}</td>
                         <td>{{permissionRequest.requestedDate | dateformat}}</td>
@@ -122,13 +126,13 @@
                     </tr>
                 </ng-template>
 
-               <ng-template pTemplate="emptymessage">
-            <tr class="no-data-row">
-              <td colspan="10" class="no-data-cell">
-                <app-no-data-found></app-no-data-found>
-              </td>
-            </tr>
-          </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr class="no-data-row">
+                        <td colspan="10" class="no-data-cell">
+                            <app-no-data-found></app-no-data-found>
+                        </td>
+                    </tr>
+                </ng-template>
 
             </p-table>
             }@else{

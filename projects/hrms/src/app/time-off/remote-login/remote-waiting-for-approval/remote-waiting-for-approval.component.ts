@@ -443,6 +443,11 @@ export class RemoteWaitingForApprovalComponent implements OnInit, OnDestroy {
     this.selectedProducts = [...value];
   }
 
+  showMultiSelectAndSearch(): boolean {
+    return this.approvedRemotes.some(item =>
+      this.canApprove(item)
+    );
+  }
 
   ngOnDestroy(): void {
     this.destroy$.next(true);

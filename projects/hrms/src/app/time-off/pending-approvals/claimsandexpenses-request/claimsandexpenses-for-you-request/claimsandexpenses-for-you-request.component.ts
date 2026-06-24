@@ -50,8 +50,7 @@ import { SelectModule } from 'primeng/select';
   encapsulation: ViewEncapsulation.None,
 })
 export class ClaimsandexpensesForYouRequestComponent
-  implements OnInit, OnDestroy
-{
+  implements OnInit, OnDestroy {
   totalRecords = 100;
   first: any = 0;
   rows: any = 10;
@@ -62,6 +61,7 @@ export class ClaimsandexpensesForYouRequestComponent
     { label: 20, value: 20 },
     { label: 25, value: 25 },
   ];
+  originalData: any[] = [];
   subscription!: Subscription;
   destroy$: Subject<boolean> = new Subject<boolean>();
   loading: boolean = false;
@@ -101,7 +101,7 @@ export class ClaimsandexpensesForYouRequestComponent
     public rbac: RbacService,
     private signalService: SignalsService,
     public formsValidation: FormValidationsService,
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
@@ -122,6 +122,8 @@ export class ClaimsandexpensesForYouRequestComponent
       },
     })
   }
+ 
+
   getCheckListData() {
     this.http
       .getData(`ExpensesCheckListConfiguration/getall`)
@@ -138,16 +140,16 @@ export class ClaimsandexpensesForYouRequestComponent
         }
       });
   }
- onStatusApproveSelect(status: string) {
-  this.selectedLeaveStatus = status;
 
-  if (status === 'approved') {
-    this.approveForm.get('comments')?.setValue('Approved');
-  }
-  if (status === 'requested clarification') {
-      this.approveForm.get('comments')?.setValue('Requested Clarification');
+  onStatusApproveSelect(status: string) {
+    this.selectedLeaveStatus = status;
+
+    if (status === 'approved') {
+      this.approveForm.get('comments')?.setValue('Approved');
     }
-}
+  }
+ 
+
 
   onStatusRejectSelect(status: string) {
     this.selectedLeaveStatus = status;
@@ -155,7 +157,7 @@ export class ClaimsandexpensesForYouRequestComponent
       this.rejectForm.get('comments')?.setValue('Rejected');
     }
   }
-   onStatusVerifySelect(status: string) {
+  onStatusVerifySelect(status: string) {
     this.selectedLeaveStatus = status;
 
     if (status === 'verified') {
@@ -170,25 +172,25 @@ export class ClaimsandexpensesForYouRequestComponent
     this.approveForm = this.fb.group({
       comments: ['', [Validators.required, Validators.maxLength(250)]],
     });
-     this.approveForm.get('comments')?.valueChanges.subscribe((value: string) => {
-    if (!value || value.trim() === '') {
-      this.selectedLeaveStatus = null; // remove chip highlight if cleared
-    }
-  });
+    this.approveForm.get('comments')?.valueChanges.subscribe((value: string) => {
+      if (!value || value.trim() === '') {
+        this.selectedLeaveStatus = null; // remove chip highlight if cleared
+      }
+    });
   }
 
   intializeRejectForm() {
     this.rejectForm = this.fb.group({
       comments: ['', [Validators.required, Validators.maxLength(250)]],
     });
-     this.rejectForm.get('comments')?.valueChanges.subscribe((value: string) => {
-    if (!value || value.trim() === '') {
-      this.selectedLeaveStatus = null; // remove chip highlight if cleared
-    }
-  });
+    this.rejectForm.get('comments')?.valueChanges.subscribe((value: string) => {
+      if (!value || value.trim() === '') {
+        this.selectedLeaveStatus = null; // remove chip highlight if cleared
+      }
+    });
   }
 
-   intializeMarkAsPaidForm() {
+    intializeMarkAsPaidForm() {
     this.markAsPaidForm = this.fb.group({
       paymentDate: ['', [Validators.required]],
       paymentMode: ['', [Validators.required]],
@@ -196,6 +198,8 @@ export class ClaimsandexpensesForYouRequestComponent
       comments: ['', [Validators.maxLength(500)]]
     });
   }
+
+   
 
   getAllPendingApprovals() {
     this.loading = true;
@@ -221,10 +225,10 @@ export class ClaimsandexpensesForYouRequestComponent
         },
       });
   }
- getApprovalStatusCounts() {
+  getApprovalStatusCounts() {
     this.http.get(`PendingApproval/getApprovalStatusCounts?moduleId=19&EmployeeId=${this.empinfo.employeeId}`).subscribe((res: any) => {
       this.totalCount = res.reduce((acc: number, curr: any) => acc + curr.totalCount, 0);
-       this.http.updatePendingApprovalCounts(this.totalCount);
+      this.http.updatePendingApprovalCounts(this.totalCount);
     });
   }
   openModal(content: any) {
@@ -415,7 +419,7 @@ export class ClaimsandexpensesForYouRequestComponent
           this.sharedModalService.openErrorModal(reason.error.Message);
         },
         complete: () => {
-           this.http.triggerActionSignal();
+          this.http.triggerActionSignal();
           this.signalService.claimsandexpensesForRoleTriggerSignal.set(true);
           this.signalService.clamisandexpensesForYouTriggerSignal.set(true);
             this.getAllPendingApprovals();
@@ -640,7 +644,7 @@ export class ClaimsandexpensesForYouRequestComponent
     this.intializeVerifyForm();
     this.selectedItem = item;
   }
-    intializeVerifyForm() {
+  intializeVerifyForm() {
     this.verifyForm = this.fb.group({
       comments: [
         '',
@@ -659,7 +663,8 @@ export class ClaimsandexpensesForYouRequestComponent
     isVerified: true,
     verifiedBy: this.empinfo.employeeId?.toString(),
     verifiedByName: `${this.empinfo.firstName || ''} ${this.empinfo.lastName || ''}`.trim(),
-    comments: formData.comments
+    comments: formData.comments,
+    status: 'Rejected'
   };
 
   this.http.putData(`Expenses_Header/ExpensesItemUpdate/${verifiedItem.expenseitem_id}`, requestBody)
@@ -670,7 +675,7 @@ export class ClaimsandexpensesForYouRequestComponent
         this.verifyModalRef?.close();
 
         // Show success popup
-        this.sharedModalService.openSuccessModal('Expense item verified successfully');
+        this.sharedModalService.openSuccessModal('Expense item rejected successfully');
 
         // Update local UI immediately
         if (this.expenseheaderiteams?.expenseitem?.length) {

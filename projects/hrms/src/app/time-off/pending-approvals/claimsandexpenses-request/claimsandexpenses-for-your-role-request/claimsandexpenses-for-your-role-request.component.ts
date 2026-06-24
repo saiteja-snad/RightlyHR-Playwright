@@ -63,6 +63,7 @@ export class ClaimsandexpensesForYourRoleRequestComponent
     { label: 20, value: 20 },
     { label: 25, value: 25 },
   ];
+  originalData: any[] = [];
   destroy$: Subject<boolean> = new Subject<boolean>();
   expenseheaderpending = [] as ExpenseApprovalResponse[];
   approverComments = [] as any[];
@@ -454,10 +455,10 @@ isloading: boolean = false;
   getApprovalStatusCounts() {
     this.http.get(`PendingApproval/getApprovalStatusCounts?moduleId=19&EmployeeId=${this.empinfo.employeeId}`).subscribe((res: any) => {
       this.totalCount = res.reduce((acc: number, curr: any) => acc + curr.totalCount, 0);
-       this.http.updatePendingApprovalCounts(this.totalCount);
+      this.http.updatePendingApprovalCounts(this.totalCount);
     });
   }
- 
+
 
   comments(value: any, commentspopup: any) {
     this.modalService.open(commentspopup, {
@@ -612,27 +613,8 @@ isloading: boolean = false;
     );
   }
 
-  selectedItem: any = null;
-  openVerifyModal(item: any, content: any) {
-    this.verifyModalRef = this.modalService.open(content, { centered: true, backdrop: 'static' });
-    this.intializeVerifyForm();
-    this.selectedItem = item; // store clicked item
-  }
-  intializeVerifyForm() {
-    this.verifyForm = this.fb.group({
-      comments: ['', [Validators.required, Validators.maxLength(250)]],
-    });
-
-    // Remove chip highlight if comment is cleared manually
-    this.verifyForm.get('comments')?.valueChanges.subscribe((value: string) => {
-      if (!value || value.trim() === '') {
-        this.selectedLeaveStatus = null;
-      }
-    });
-  }
-
   handleClarification(approveForm: FormGroup): void {
-    this.isloading= true;
+    this.isloading = true;
     if (approveForm.valid) {
       const formData = approveForm.value;
       const requestBody = {
@@ -654,7 +636,7 @@ isloading: boolean = false;
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response: any) => {
-            this.isloading=false;
+            this.isloading = false;
             this.modalService.dismissAll();
             this.signalService.claimsandexpensesForRoleTriggerSignal.set(true);
             this.sharedModalService.openSuccessModal(
@@ -669,7 +651,7 @@ isloading: boolean = false;
             }));
           },
           error: (reason: any) => {
-            this.isloading=false;
+            this.isloading = false;
             this.modalService.dismissAll();
             this.sharedModalService.openErrorModal(reason.error.Message);
           },
@@ -679,6 +661,8 @@ isloading: boolean = false;
         });
     }
   }
+  selectedItem: any = null;
+
   refreshAllVerifiedStates(): void {
     this.expenseheaderpending.forEach(record => {
       const expId = record.entity.expenses_ID;
@@ -691,12 +675,35 @@ isloading: boolean = false;
                 data.expenseitem.every((item: any) => item.isVerified === true);
               if (allDone) {
                 this.allVerifiedMap.set(expId, true);
+                console.log(this.allVerifiedMap);
               }
             }
           });
       }
     });
   }
+
+ 
+  openVerifyModal(item: any, content: any) {
+    this.verifyModalRef = this.modalService.open(content, { centered: true, backdrop: 'static' });
+    this.intializeVerifyForm();
+    this.selectedItem = item; // store clicked item
+  }
+  intializeVerifyForm() {
+    this.verifyForm = this.fb.group({
+      comments: ['', [Validators.required, Validators.maxLength(250)]],
+    });
+
+    // Remove chip highlight if comment is cleared manually
+    this.verifyForm.get('comments')?.valueChanges.subscribe((value: string) => {
+      if (!value || value.trim() === '') {
+        this.selectedLeaveStatus = null;
+      }
+    });
+  }
+
+  
+  
 
   isAllVerifiedForRecord(expensesId: number): boolean {
     return this.allVerifiedMap.get(expensesId) === true;
@@ -719,7 +726,6 @@ isloading: boolean = false;
         addedOn: moment().format('YYYY-MM-DD')
       })
     };
-
     this.http.putData(`Expenses_Header/ExpensesItemUpdate/${verifiedItem.expenseitem_id}`, requestBody)
       .pipe(takeUntil(this.destroy$))
       .subscribe({

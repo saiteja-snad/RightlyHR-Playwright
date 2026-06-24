@@ -383,6 +383,13 @@ export class CompOffWaitingForApprovalComponent implements OnInit, OnDestroy {
     this.selectedProducts = event;
   }
 
+  
+  showMultiSelectAndSearch(): boolean {
+  return this.waitingForApprovalCompOff.some(item =>
+    this.canApprove(item)
+  );
+}
+
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();

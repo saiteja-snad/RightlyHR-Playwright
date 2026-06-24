@@ -20,11 +20,30 @@
 :host ::ng-deep .custom-p-multi-select-table .p-datatable-table-container {
     height: auto !important;
 }
+
+:host ::ng-deep .p-datatable-tbody > .no-data-row > td {
+    height: 400px !important;
+    vertical-align: middle !important;
+    text-align: center !important;
+    border: none !important;
+}
+
 .no-data-row td {
     border: none !important;
+    height: calc(100vh - 250px) !important; /* adjust if needed */
+    vertical-align: middle !important;
+    text-align: center !important;
+    padding: 0 !important;
 }
 
 .no-data-cell {
     border: none !important;
-    padding-top: 0 !important;
+    padding: 0 !important;
+}
+
+.no-data-cell app-no-data-found {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
 }

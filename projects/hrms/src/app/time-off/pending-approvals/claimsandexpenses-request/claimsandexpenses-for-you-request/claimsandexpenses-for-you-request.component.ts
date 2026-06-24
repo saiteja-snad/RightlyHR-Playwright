@@ -82,7 +82,7 @@ export class ClaimsandexpensesForYouRequestComponent
   @ViewChild('verificationViewattamchment') private verificationViewattamchment!: NgbModal;
   // approverComments = [] as AttendanceRequestC[];
   @ViewChild('commentspopup') modalContent: any;
-   @ViewChild('checklistconfirmationmodal') checklistconfirmationmodal: any;
+  @ViewChild('checklistconfirmationmodal') checklistconfirmationmodal: any;
 
   verifiedExpenseIds: number[] = [];
   verifyModalRef: NgbModalRef | null = null;
@@ -188,11 +188,11 @@ export class ClaimsandexpensesForYouRequestComponent
     });
   }
 
-    intializeMarkAsPaidForm() {
+  intializeMarkAsPaidForm() {
     this.markAsPaidForm = this.fb.group({
       paymentDate: ['', [Validators.required]],
       paymentMode: ['', [Validators.required]],
-      transactionId: ['', [ Validators.maxLength(50), Validators.pattern(/^[^\s].*$/)]],
+      transactionId: ['', [Validators.maxLength(50), Validators.pattern(/^[^\s].*$/)]],
       comments: ['', [Validators.maxLength(500)]]
     });
   }
@@ -265,7 +265,7 @@ export class ClaimsandexpensesForYouRequestComponent
   }
 
   handleAccept(approveForm: FormGroup): void {
-     this.isloading=true;
+    this.isloading = true;
     if (approveForm.valid) {
       const formData = approveForm.value;
       const requestBody = {
@@ -316,7 +316,7 @@ export class ClaimsandexpensesForYouRequestComponent
   }
 
   handleReject(rejectForm: FormGroup): void {
-     this.isloading=true;
+    this.isloading = true;
     if (rejectForm.valid) {
       const formData = rejectForm.value;
       const requestBody = {
@@ -367,7 +367,7 @@ export class ClaimsandexpensesForYouRequestComponent
   }
 
   handleProcess(request: ExpenseApprovalResponse) {
-    this.isloading=true;
+    this.isloading = true;
     let requestBody = {
       status: 'Processed',
       approvedBy: this.empinfo.employeeId.toString(),
@@ -534,14 +534,14 @@ export class ClaimsandexpensesForYouRequestComponent
     }));
     this.http.postdata('ExpensesCheckListTracking', payload).subscribe({
       next: (res) => {
-      if (res) {
-        if(this.storeapprovalRequest.action === 'Approve') {
-          this.handleAccept(this.approveForm);
+        if (res) {
+          if (this.storeapprovalRequest.action === 'Approve') {
+            this.handleAccept(this.approveForm);
+          }
+          else {
+            this.handleProcess(this.storeapprovalRequest);
+          }
         }
-        else{
-          this.handleProcess(this.storeapprovalRequest);
-        }
-      }
         this.storeapprovalRequest = {} as ExpenseApprovalResponse;
         modal.close();
       },
@@ -551,7 +551,7 @@ export class ClaimsandexpensesForYouRequestComponent
       }
     });
   }
-   selectedItem: any = null;
+  selectedItem: any = null;
   isAllVerifiedForRecord(approvalHeaderId: number): boolean {
     return this.allVerifiedMap.get(approvalHeaderId) === true;
   }
@@ -617,7 +617,8 @@ export class ClaimsandexpensesForYouRequestComponent
       });
   }
 
-   handleClarification(approveForm: FormGroup): void {
+  handleClarification(approveForm: FormGroup): void {
+    console.log('Form Valid:', approveForm.valid);
     this.isloading = true;
     if (approveForm.valid) {
       const formData = approveForm.value;
@@ -629,9 +630,17 @@ export class ClaimsandexpensesForYouRequestComponent
           this.selectedLeaveData.approvalHeader.currentapprovalStage
         ),
       };
+
+      console.log('Before Loader');
+
       this.sharedModalService.openLoaderModal(
         'Sending for Clarification, Please wait...'
       );
+
+      console.log('After Loader');
+
+      console.log('Calling API Now');
+
       this.http
         .putData(
           `PendingApproval/${this.selectedLeaveData.approvalHeader.id}`,
@@ -640,7 +649,7 @@ export class ClaimsandexpensesForYouRequestComponent
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response: any) => {
-            this.isloading=false;
+            this.isloading = false;
             this.modalService.dismissAll();
             this.signalService.claimsandexpensesForRoleTriggerSignal.set(true);
             this.sharedModalService.openSuccessModal(
@@ -655,7 +664,7 @@ export class ClaimsandexpensesForYouRequestComponent
             }));
           },
           error: (reason: any) => {
-            this.isloading=false;
+            this.isloading = false;
             this.modalService.dismissAll();
             this.sharedModalService.openErrorModal(reason.error.Message);
           },
@@ -666,15 +675,15 @@ export class ClaimsandexpensesForYouRequestComponent
         });
     }
   }
-   expensesCheckList(request: ExpenseApprovalResponse, action?: string): void {
-     this.storeapprovalRequest = request;
-     this.storeapprovalRequest.action=action || '';
-     this.intializeApproveForm();
-     this.selectedLeaveData = request;
-     this.modalService.open(this.checklistconfirmationmodal, {
-       centered: true,
-       backdrop: 'static'
-     });
+  expensesCheckList(request: ExpenseApprovalResponse, action?: string): void {
+    this.storeapprovalRequest = request;
+    this.storeapprovalRequest.action = action || '';
+    this.intializeApproveForm();
+    this.selectedLeaveData = request;
+    this.modalService.open(this.checklistconfirmationmodal, {
+      centered: true,
+      backdrop: 'static'
+    });
   }
   isAllChecked(): boolean {
     return this.checklistdata
@@ -696,15 +705,15 @@ export class ClaimsandexpensesForYouRequestComponent
     );
   }
 
-openMarkAsPaidModal(content: any, request: ExpenseApprovalResponse) {
+  openMarkAsPaidModal(content: any, request: ExpenseApprovalResponse) {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
     this.intializeMarkAsPaidForm();
     this.selectedLeaveData = request;
   }
-    markasPaid(modal: any) {
+  markasPaid(modal: any) {
     if (!this.markAsPaidForm.valid || !this.selectedLeaveData) return;
     console.log(this.selectedLeaveData);
-    
+
     const formData = this.markAsPaidForm.value;
     const verifiedItem = this.selectedLeaveData;
 
@@ -748,62 +757,62 @@ openMarkAsPaidModal(content: any, request: ExpenseApprovalResponse) {
       });
   }
   handleVerifyReject(verifyForm: FormGroup): void {
-  if (!verifyForm.valid || !this.selectedItem) return;
+    if (!verifyForm.valid || !this.selectedItem) return;
 
-  const formData = verifyForm.value;
-  const verifiedItem = this.selectedItem;
+    const formData = verifyForm.value;
+    const verifiedItem = this.selectedItem;
 
-  const requestBody = {
-    isVerified: true,
-    verifiedBy: this.empinfo.employeeId?.toString(),
-    verifiedByName: `${this.empinfo.firstName || ''} ${this.empinfo.lastName || ''}`.trim(),
-    comments: formData.comments,
-    status: 'Rejected'
-  };
+    const requestBody = {
+      isVerified: true,
+      verifiedBy: this.empinfo.employeeId?.toString(),
+      verifiedByName: `${this.empinfo.firstName || ''} ${this.empinfo.lastName || ''}`.trim(),
+      comments: formData.comments,
+      status: 'Rejected'
+    };
 
-  this.http.putData(`Expenses_Header/ExpensesItemUpdate/${verifiedItem.expenseitem_id}`, requestBody)
-    .pipe(takeUntil(this.destroy$))
-    .subscribe({
-      next: () => {
-        // Close only the Verify modal
-        this.verifyModalRef?.close();
+    this.http.putData(`Expenses_Header/ExpensesItemUpdate/${verifiedItem.expenseitem_id}`, requestBody)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          // Close only the Verify modal
+          this.verifyModalRef?.close();
 
-        // Show success popup
-        this.sharedModalService.openSuccessModal('Expense item rejected successfully');
+          // Show success popup
+          this.sharedModalService.openSuccessModal('Expense item rejected successfully');
 
-        // Update local UI immediately
-        if (this.expenseheaderiteams?.expenseitem?.length) {
-          const idx = this.expenseheaderiteams.expenseitem.findIndex(
-            it => it.expenseitem_id === verifiedItem.expenseitem_id
-          );
-          if (idx > -1) {
-            this.expenseheaderiteams.expenseitem[idx].isVerified = true;
+          // Update local UI immediately
+          if (this.expenseheaderiteams?.expenseitem?.length) {
+            const idx = this.expenseheaderiteams.expenseitem.findIndex(
+              it => it.expenseitem_id === verifiedItem.expenseitem_id
+            );
+            if (idx > -1) {
+              this.expenseheaderiteams.expenseitem[idx].isVerified = true;
+            }
           }
+
+          this.selectedItem = null;
+
+          // Update verified IDs for template checks
+          this.verifiedExpenseIds.push(verifiedItem.expenseitem_id);
+
+          // Refresh headers in background, but the modal stays open
+          this.getAllPendingApprovals();
+        },
+        error: (err: any) => {
+          this.verifyModalRef?.close();
+          this.sharedModalService.openErrorModal(err?.error?.Message || 'Verification failed');
         }
-
-        this.selectedItem = null;
-
-        // Update verified IDs for template checks
-        this.verifiedExpenseIds.push(verifiedItem.expenseitem_id);
-
-        // Refresh headers in background, but the modal stays open
-        this.getAllPendingApprovals();
-      },
-      error: (err: any) => {
-        this.verifyModalRef?.close();
-        this.sharedModalService.openErrorModal(err?.error?.Message || 'Verification failed');
-      }
-    });
-}
-onCancel(modal: any) {
-  // 1. Reset form
-  this.approveForm.reset();
-  // 2. Reset checklist selection
-  this.checklistdata.forEach(item => item.checked = false);
-  // 4. Close modal
-  modal.dismiss();
-}
-onViewAttachementverification(url: any) {
+      });
+  }
+  onCancel(modal: any) {
+    // 1. Reset form
+    this.approveForm.reset();
+    // 2. Reset checklist selection
+    this.checklistdata.forEach(item => item.checked = false);
+    // 4. Close modal
+    modal.dismiss();
+  }
+  onViewAttachementverification(url: any) {
     const lowerUrl = url?.toLowerCase();
 
     if (
@@ -835,7 +844,7 @@ onViewAttachementverification(url: any) {
       this.toggleViewModalforverification();
     }
   }
-   toggleViewModalforverification() {
+  toggleViewModalforverification() {
     this.modalService.dismissAll();
     this.openModal(this.verificationViewattamchment);
   }
@@ -844,6 +853,25 @@ onViewAttachementverification(url: any) {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
     this.intializeApproveForm();
     this.selectedLeaveData = request;
+  }
+
+  handleClarificationDirect(request: ExpenseApprovalResponse): void {
+    const requestBody = {
+      status: 'Required Clarification',
+      comments: 'Required Clarification',
+      approvedBy: this.empinfo.employeeId.toString(),
+      currentStage: parseInt(request.approvalHeader.currentapprovalStage),
+    };
+
+    this.http
+      .putData(`PendingApproval/${request.approvalHeader.id}`, requestBody)
+      .subscribe({
+        next: () => {
+          this.getAllPendingApprovals();
+          this.http.setnewcountDetails();
+          this.signalService.claimsandexpensesForRoleTriggerSignal.set(true);
+        }
+      });
   }
 
   ngOnDestroy(): void {

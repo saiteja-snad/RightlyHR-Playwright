@@ -34,7 +34,7 @@
             <td>{{ leave?.entity?.applied_date | dateformat }}</td>
             <td>₹ {{ leave?.entity?.totalExpenseAmount }}</td>
             <td>{{ leave?.entity?.status }}</td>
-             <td class="text-center">
+            <td class="text-center">
               <div class="dropdown">
                 <a class="dropdown-item" (click)="openModal(viewDetailsModal); viewItem(leave?.entity?.expenses_ID)">
                   <i class="bi bi-eye-fill me-2"></i></a>
@@ -75,11 +75,14 @@
                     <a class="dropdown-item"><i class="bi bi-x-circle me-2"></i>{{ "Reject" | translate }}</a>
                   </li>
                   }
-                   @if(rbac.allowedToAccess('For Role (Claims and Expenses).update')) {
-                    @if( leave.approvalHeader.currentapprovalStage !=leave.approvalHeader.finalapprovalStage){
-                    <li (click)="openRequiredCalrificationModal(requiredClarification, leave)">
-                    <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{ "Request for Clarification" |translate }}</a>
-                    </li>
+                  @if(rbac.allowedToAccess('For Role (Claims and Expenses).update')) {
+                  @if( leave.approvalHeader.currentapprovalStage !=leave.approvalHeader.finalapprovalStage){
+                  <li (click)="openRequiredCalrificationModal(requiredClarification, leave)">
+                    <a class="dropdown-item">
+                      <i class="bi bi-check-circle me-2"></i>
+                      Request for Clarification
+                    </a>
+                  </li>
                   }
                   }
                 </ul>
@@ -189,7 +192,7 @@
       </div>
     </div>
 
-    <div class="custom-main-popup-content" >
+    <div class="custom-main-popup-content">
       <div *ngFor="let comment of approverComments" class="card p-3 mb-3">
         <div class="mb-0">
           <p><b>Commented by:</b> {{ comment.addedName }}</p>
@@ -242,7 +245,7 @@
               <td> ₹ {{ item?.expense_Amount | number: '1.2-2' }}</td>
               <td>{{ item?.status }}</td>
               <td>{{ item?.receipt_Number }}</td>
-                  <td class="text-center">
+              <td class="text-center">
                 <div class="d-flex gap-2">
                   <a type="button" class="me-2 download-text text-nowrap"
                     (click)="onSelectDownload(item?.attachment_url)">
@@ -254,7 +257,7 @@
                   </a>
                 </div>
               </td>
-                 <!-- <td class="text-center justify-content-between">
+              <!-- <td class="text-center justify-content-between">
                 <a type="button" class="view-btn text-nowrap" (click)="onViewAttachement(item?.attachment_url)">
                   <img src="/my-info-icons/View-Policy-icon.png" alt="Icon" class="view-icon">
                 </a>
@@ -271,9 +274,9 @@
                         <i class="bi bi-download me-2"></i>Download
                       </a>
                     </li> -->
-                    <!-- @if (rbac.allowedToAccess('For Role (Claims and Expenses).update')) { -->
-                    <!-- @if (expenseheaderiteams.approvalHeader?.currentapprovalStage === expenseheaderiteams.approvalHeader?.finalapprovalStage) { -->
-                  <!-- @if (!(item?.isVerified === true|| verifiedExpenseIds?.includes(item?.expenseitem_id ?? 0))) {
+              <!-- @if (rbac.allowedToAccess('For Role (Claims and Expenses).update')) { -->
+              <!-- @if (expenseheaderiteams.approvalHeader?.currentapprovalStage === expenseheaderiteams.approvalHeader?.finalapprovalStage) { -->
+              <!-- @if (!(item?.isVerified === true|| verifiedExpenseIds?.includes(item?.expenseitem_id ?? 0))) {
 
                     <li>
                       <a class="dropdown-item" (click)="openVerifyModal(item, Verify)">
@@ -282,25 +285,25 @@
                     </li>
                     } -->
 
-                    <!-- } -->
-                    <!-- } -->
+              <!-- } -->
+              <!-- } -->
 
-                    <!-- @if (rbac.allowedToAccess('For Role (Claims and Expenses).delete')) { -->
-                    <!-- @if (expenseheaderiteams.approvalHeader?.currentapprovalStage === expenseheaderiteams.approvalHeader?.finalapprovalStage) { -->
+              <!-- @if (rbac.allowedToAccess('For Role (Claims and Expenses).delete')) { -->
+              <!-- @if (expenseheaderiteams.approvalHeader?.currentapprovalStage === expenseheaderiteams.approvalHeader?.finalapprovalStage) { -->
 
-                    <!-- @if (!(item?.isVerified === true|| verifiedExpenseIds?.includes(item?.expenseitem_id ?? 0))) { -->
-                      <!-- @if ((item?.isVerified === false)) { -->
-                    <!-- <li>
+              <!-- @if (!(item?.isVerified === true|| verifiedExpenseIds?.includes(item?.expenseitem_id ?? 0))) { -->
+              <!-- @if ((item?.isVerified === false)) { -->
+              <!-- <li>
                       <a class="dropdown-item" (click)="openRejectModal(rejectmodal, expenseheaderiteams)">
                         <i class="bi bi-x-circle me-2"></i>{{ 'Reject' | translate }}
                       </a>
                     </li>
                     } -->
 
-                    <!-- } -->
-                    <!-- } -->
+              <!-- } -->
+              <!-- } -->
 
-                  <!-- </ul>
+              <!-- </ul>
                 </div>
               </td> -->
             </tr>
@@ -349,19 +352,19 @@
       </div>
 
     </div>
-    
-      <div class="custom-check-list-content p-4 my-4">
-        <div *ngFor="let item of checklistdata" class="list-card mb-3">
-          <label class="d-flex align-items-center gap-2">
-            <input class=" custom-checkbox me-3" type="checkbox" [id]="'check'+item.id"
-              [(ngModel)]="item.checked" [ngModelOptions]="{standalone: true}">
-            <label class="form-check-label checklist-label" [for]="'check'+item.id">
-              {{ item.policyType }} <span *ngIf="item.isMandatory" class="text-danger">*</span>
-            </label>
+
+    <div class="custom-check-list-content p-4 my-4">
+      <div *ngFor="let item of checklistdata" class="list-card mb-3">
+        <label class="d-flex align-items-center gap-2">
+          <input class=" custom-checkbox me-3" type="checkbox" [id]="'check'+item.id" [(ngModel)]="item.checked"
+            [ngModelOptions]="{standalone: true}">
+          <label class="form-check-label checklist-label" [for]="'check'+item.id">
+            {{ item.policyType }} <span *ngIf="item.isMandatory" class="text-danger">*</span>
           </label>
-        </div>
+        </label>
       </div>
-       <form autocomplete="off" [formGroup]="approveForm">
+    </div>
+    <form autocomplete="off" [formGroup]="approveForm">
       <div class="custom-main-popup-content" *ngIf="storeapprovalRequest.action === 'Approve'">
         <label for="comments" class="form-label custom-label mb-2">{{'Comments' | translate}}<span
             class="text-danger">*</span></label>
@@ -379,7 +382,8 @@
         <button type="button" class="custom-btn btn-secondary " (click)="onCancel(modal)">
           {{'Cancel' | translate}}
         </button>
-        <button type="button" class="custom-btn btn-primary " [disabled]="!isAllChecked() ||(storeapprovalRequest.action === 'Approve' && approveForm.invalid)||isloading"
+        <button type="button" class="custom-btn btn-primary "
+          [disabled]="!isAllChecked() ||(storeapprovalRequest.action === 'Approve' && approveForm.invalid)||isloading"
           (click)="confirmApproval(modal)">
           @if(isloading){
           <div class="button-loader-content">
@@ -389,12 +393,12 @@
           }@else {
           <span>{{storeapprovalRequest.action}}</span>
           }
-          
+
         </button>
       </div>
-      </form>
-    </div>
- 
+    </form>
+  </div>
+
 </ng-template>
 
 <ng-template #Verify let-modal>
@@ -418,7 +422,7 @@
         <div class="textarea-count-text">{{ verifyForm.get('comments')?.value?.length || 0 }}/250
         </div>
       </div>
-       <div class="d-flex align-items-center flex-wrap gap-2 mb-3">
+      <div class="d-flex align-items-center flex-wrap gap-2 mb-3">
         <button type="button" class="custom-btn btn-secondary chip-btn"
           [class.active]="selectedLeaveStatus === 'verified'" (click)="onStatusVerifySelect('verified')">
           Verified
@@ -426,7 +430,8 @@
       </div>
       <div class="custom-modal-footer">
         <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss();">{{'Cancel'|translate}}</button>
-        <button type="submit" class="custom-btn btn-primary" [disabled]="verifyForm.invalid">{{'Verify'| translate}}</button>
+        <button type="submit" class="custom-btn btn-primary" [disabled]="verifyForm.invalid">{{'Verify'|
+          translate}}</button>
       </div>
     </form>
   </div>
@@ -491,20 +496,21 @@
           <label for="exampleFormControlInput1" class="custom-label mb-2">{{'Payment Mode'|translate}}<span
               class="error-msg">*</span></label>
           <div class="custom-p-select-content">
-            <p-select [options]="paymentmodedata" optionLabel="value" [filter]="true" filterBy="value" optionValue="value"
-              resetFilterOnHide="true" placeholder="Please select payment mode"
+            <p-select [options]="paymentmodedata" optionLabel="value" [filter]="true" filterBy="value"
+              optionValue="value" resetFilterOnHide="true" placeholder="Please select payment mode"
               formControlName="paymentMode" class="custom-select w-100">
             </p-select>
           </div>
-          <div *ngIf="markAsPaidForm.get('paymentMode')?.invalid && markAsPaidForm.get('paymentMode')?.touched" class="error-msg">
+          <div *ngIf="markAsPaidForm.get('paymentMode')?.invalid && markAsPaidForm.get('paymentMode')?.touched"
+            class="error-msg">
             {{'Payment Mode is required'|translate}}.
           </div>
         </div>
         <div class="mb-3">
           <label for="comments" class="custom-label mb-2">{{'Transaction Reference Id' | translate}}<span
               class="text-danger"></span></label>
-          <input type="text" class="form-control custom-input mb-3" id="transactionId" placeholder="Enter Transaction Reference Id"
-            formControlName="transactionId" type="text">
+          <input type="text" class="form-control custom-input mb-3" id="transactionId"
+            placeholder="Enter Transaction Reference Id" formControlName="transactionId" type="text">
           <!-- <div class="error-msg"
             *ngIf="markAsPaidForm.get('transactionId')?.touched && markAsPaidForm.get('transactionId')?.invalid">
             <div *ngIf="markAsPaidForm.get('transactionId')?.errors?.['required']">Transaction Reference Id is required.</div>
@@ -513,7 +519,8 @@
       </div>
       <div class="custom-modal-footer">
         <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss();">{{'Cancel'|translate}}</button>
-        <button type="submit" class="custom-btn btn-primary text-nowrap " [disabled]="markAsPaidForm.invalid || isloading">
+        <button type="submit" class="custom-btn btn-primary text-nowrap "
+          [disabled]="markAsPaidForm.invalid || isloading">
           @if(isloading){
           <div class="button-loader-content">
             <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
@@ -584,7 +591,7 @@
                   <ul class="dropdown-menu custom-dropdown-menu">
                     @if (rbac.allowedToAccess('For You (Claims and Expenses).update')) {
                     <!-- @if (expenseheaderiteams.approvalHeader?.currentapprovalStage === expenseheaderiteams.approvalHeader?.finalapprovalStage) { -->
-                  @if (!(item?.isVerified === true|| verifiedExpenseIds?.includes(item?.expenseitem_id ?? 0))) {
+                    @if (!(item?.isVerified === true|| verifiedExpenseIds?.includes(item?.expenseitem_id ?? 0))) {
                     <!-- @if ((item?.isVerified === false )) { -->
                     <li>
                       <a class="dropdown-item" (click)="openVerifyModal(item, Verify)">
@@ -600,7 +607,7 @@
                     <!-- @if (expenseheaderiteams.approvalHeader?.currentapprovalStage === expenseheaderiteams.approvalHeader?.finalapprovalStage) { -->
 
                     @if (!(item?.isVerified === true|| verifiedExpenseIds?.includes(item?.expenseitem_id ?? 0))) {
-                      <!-- @if ((item?.isVerified === false)) { -->
+                    <!-- @if ((item?.isVerified === false)) { -->
                     <li>
                       <a class="dropdown-item" (click)="openVerifyModal(item,Verificationreject)">
                         <i class="bi bi-x-circle me-2"></i>{{ 'Reject' | translate }}
@@ -710,8 +717,9 @@
       <div class="custom-modal-footer">
         <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss();">{{'Cancel'|
           translate}}</button>
-        <button type="submit" class="custom-btn btn-primary" [disabled]="approveForm.invalid">{{'Submit'|
-          translate}}</button>
+        <button type="button" class="custom-btn btn-primary" (click)="handleClarification(approveForm)">
+          Submit
+        </button>
       </div>
     </form>
   </div>

@@ -1,8 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
-import { AddProspectiveEmployeeComponent } from './add-prospective-employee/add-prospective-employee.component';
+import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule } from '@angular/forms';
 import { HttpService } from '../../services/http.service';
 import { BehaviorSubject, Subscription } from 'rxjs';
@@ -57,9 +56,9 @@ export class ProspectiveEmployeesComponent implements OnInit {
       },
     });
   }
+
   select(act: any) {
     this.emp = localStorage.setItem('personaldata', JSON.stringify(act));
-    // this.router.navigate(['/personalinfo']);
     this.goToAccessibleRoute('/personalinfo')
   }
 

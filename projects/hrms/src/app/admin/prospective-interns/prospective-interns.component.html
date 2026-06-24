@@ -38,9 +38,7 @@
           </td>
           <td>{{act.emailaddress}}</td>
           <td> <span *ngIf="act.contactnumber;else contact">{{act?.mobilePhoneCountryCode}} {{act.contactnumber}}</span>
-            <ng-template #contact>
-              <span class="d-inline-block">-</span>
-            </ng-template>
+            <ng-template #contact>-</ng-template>
           </td>
           <!-- Location -->
           <td>

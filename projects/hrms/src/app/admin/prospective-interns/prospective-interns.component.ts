@@ -1,8 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
-import { AddProspectiveInternComponent } from './add-prospective-intern/add-prospective-intern.component';
+import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';
@@ -39,8 +38,7 @@ export class ProspectiveInternsComponent implements OnInit, OnDestroy {
   filteredTabs: any[] = [];
   loader = false;
 
-  constructor(private router: Router, private http: HttpService, private modalService: NgbModal, public rbac: RbacService,
-    private accessNav: AccessNavigationService) { }
+  constructor(private router: Router, private http: HttpService, public rbac: RbacService, private accessNav: AccessNavigationService) { }
 
   ngOnInit(): void {
     this.empdata();
@@ -77,7 +75,6 @@ export class ProspectiveInternsComponent implements OnInit, OnDestroy {
 
   select(act: any) {
     this.emp = localStorage.setItem('personaldata', JSON.stringify(act));
-    // this.router.navigate(['/personalinfo']);
     this.goToAccessibleRoute('/personalinfo');
   }
 

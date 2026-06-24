@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ViewEncapsulation } from '@angular/core';
+import { AfterViewInit, Component, ViewEncapsulation } from '@angular/core';
 import { MODULE_INFOS } from '../../shared/modules-info';
 import { SettingsEmployeeFieldsModuleTabsComponent } from "../../shared/settings-tabs/settings-employee-fields-module-tabs/settings-employee-fields-module-tabs.component";
 import { SettingsRolePermissionsModuleTabsComponent } from "../../shared/settings-tabs/settings-role-permissions-module-tabs/settings-role-permissions-module-tabs.component";
@@ -17,19 +17,19 @@ import { SettingsLockingSystemTabsComponent } from "../../shared/settings-tabs/s
 import { SettingsTimesheetLockingTabsComponent } from "../../shared/settings-tabs/settings-timesheet-locking-tabs/settings-timesheet-locking-tabs.component";
 import { SettingsEmployeeFieldsUpdateConfigurationsComponent } from '../../shared/settings-employee-fields-update-configurations/settings-employee-fields-update-configurations.component';
 
+const SETTINGS_ACCORDION_KEY = 'settings_active_accordion';
 
 @Component({
   selector: 'app-settings-overview',
-  imports: [CommonModule, SettingsEmployeeFieldsModuleTabsComponent, SettingsRolePermissionsModuleTabsComponent,
-    SettingsTimeOffTabsComponent, SettingsAssetsConfigurationsTabsComponent, SettingDynamicFormsTabsComponent, PmsSettingsTabsComponent,SettingsEmployeeFieldsUpdateConfigurationsComponent,
+  imports: [CommonModule, SettingsEmployeeFieldsModuleTabsComponent, SettingsRolePermissionsModuleTabsComponent, SettingsTimeOffTabsComponent,
+    SettingsAssetsConfigurationsTabsComponent, SettingDynamicFormsTabsComponent, PmsSettingsTabsComponent,SettingsEmployeeFieldsUpdateConfigurationsComponent,
     AccordionModule, SettingsLockingSystemTabsComponent, SettingsTimesheetLockingTabsComponent, SettingsItConfigurationTabsComponent, TranslateModule],
-
   templateUrl: './settings-overview.component.html',
   styleUrl: './settings-overview.component.scss',
   encapsulation: ViewEncapsulation.None,
 })
 
-export class SettingsOverviewComponent {
+export class SettingsOverviewComponent implements AfterViewInit {
   settingsEmployeefieldupdateconfigModule = MODULE_INFOS.SETTINGS_EMPLOYEE_FIELDS_UPDATE_CONFIG_MODULE_INFO
   settingEmployeefieldsModule = MODULE_INFOS.SETTINGS_EMPLOYEE_FIELDS_MODULE_INFO;
   settingRolesPermissionsModule = MODULE_INFOS.SETTINGS_ROLES_PERMISSIONS_MODULE_INFO;
@@ -42,11 +42,24 @@ export class SettingsOverviewComponent {
   settingLockingsystemnModule = MODULE_INFOS.SETTINGS_LOCKINGSYSTEM_MODULE_INFO;
   settingrateCardModule=MODULE_INFOS.SETTINGS_RATE_CARD_MODULE_INFO;
   settinghelpdeskConfigurationModule = MODULE_INFOS.SETTINGS_HELPDESK_CONFIGURATION_MODULE_INFO;
-  constructor(
-    public rbac: RbacService,
-    private router: Router,
-    private accessNav: AccessNavigationService
-  ) { }
+
+  activeAccordionValue: string = sessionStorage.getItem(SETTINGS_ACCORDION_KEY) ?? '0';
+
+  constructor(public rbac: RbacService, private router: Router, private accessNav: AccessNavigationService) { }
+
+  ngAfterViewInit() {
+    setTimeout(() => {
+      document.getElementById(`settings-panel-${this.activeAccordionValue}`)
+        ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 300);
+  }
+
+  onAccordionChange(value: string | number | string[] | number[]) {
+    if (value != null) {
+      sessionStorage.setItem(SETTINGS_ACCORDION_KEY, String(value));
+    }
+    this.activeAccordionValue = String(value);
+  }
 
   navigateToAccessedRoute(route: string) {
     const actualRoute = this.accessNav.navigateToAccessedRoute(route);

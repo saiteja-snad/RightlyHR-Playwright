@@ -12,13 +12,13 @@ import { RbacService } from '../../services/rbac.service';
 import { DataLoaderContentComponent } from '../../shared/data-loader-content/data-loader-content.component';
 import { NoDataFoundComponent } from '../../shared/no-data-found/no-data-found.component';
 import { Iprospective } from '../prospective-employees/Prospective-model';
-
 @Component({
   selector: 'app-contract-employee',
   imports: [CommonModule, FormsModule, ProspectivePipe, TranslateModule, NoDataFoundComponent, DataLoaderContentComponent, NgbPopoverModule],
   templateUrl: './contract-employee.component.html',
   styleUrl: './contract-employee.component.scss'
 })
+
 export class ContractEmployeeComponent {
   moduleinfo: string = '';
   contract = new BehaviorSubject<Iprospective[]>([]);

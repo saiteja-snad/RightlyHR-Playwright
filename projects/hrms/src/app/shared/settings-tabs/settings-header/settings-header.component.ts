@@ -9,7 +9,6 @@ import { ModuleInformationComponent } from "../../module-information/module-info
 import { filter, Subject, Subscription, takeUntil } from 'rxjs';
 import { MODULE_INFOS } from '../../modules-info';
 import { HttpService } from '../../../services/http.service';
-
 @Component({
   selector: 'app-settings-header',
   imports: [CommonModule, TranslateModule, ModuleInfoIconComponent, NgbPopoverModule, ModuleInformationComponent],
@@ -30,10 +29,10 @@ export class SettingsHeaderComponent implements OnInit, OnDestroy {
   routeToInfoMap!: { [key: string]: string };
   @ViewChild('discardConfirmModal') discardConfirmModal: any;
 
-  constructor(public router: Router, public rbac: RbacService, private route: ActivatedRoute, private http: HttpService, private location: Location, private modalService: NgbModal) { }
+  constructor(public router: Router, public rbac: RbacService, private route: ActivatedRoute, 
+    private http: HttpService, private location: Location, private modalService: NgbModal) { }
 
   ngOnInit(): void {
-
     this.updateModuleInfo();
     this.initiateUpdateModuleInfo();
     this.ComponentnameDisplay();
@@ -50,17 +49,13 @@ export class SettingsHeaderComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.route.queryParams
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(params => {
-        const jobid = params['id'];
-        if (jobid) {
-          this.jobid = jobid;
-          this.getdatacarryforword();
-        }
-      });
-
-
+    this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe(params => {
+      const jobid = params['id'];
+      if (jobid) {
+        this.jobid = jobid;
+        this.getdatacarryforword();
+      }
+    });
   }
 
   updateModuleInfo() {
@@ -75,7 +70,6 @@ export class SettingsHeaderComponent implements OnInit, OnDestroy {
       '/settings/timeoff-configurations/intial-leave-entitlements/intial-load-entitlement-create': MODULE_INFOS.Initial_Leave_Entitlements,
       '/settings/timeoff-configurations/intial-leave-entitlements/intial-load-entitlement-breakdown': MODULE_INFOS.Initial_Leave_Entitlements,
       '/settings/timeoff-configurations/intial-leave-entitlements/intial-load-entitlement-preview': MODULE_INFOS.Initial_Leave_Entitlements
-
     };
     this.moduleinfo = this.routeToInfoMap[urlWithoutQuery] || '';
   }
@@ -86,7 +80,6 @@ export class SettingsHeaderComponent implements OnInit, OnDestroy {
     });
   }
 
-
   isShowsformoduelinfo() {
     const showPaths = [
       '/settings/timeoff-configurations/jobview',
@@ -95,11 +88,9 @@ export class SettingsHeaderComponent implements OnInit, OnDestroy {
       '/settings/timeoff-configurations/load-entitlement/initial-load-entitlements',
       '/settings/timeoff-configurations/intial-leave-entitlements',
       '/settings/timeoff-configurations/intial-leave-entitlements/intial-load-entitlement-execution'
-
     ];
     return showPaths.some(path => this.router.url.startsWith(path));
   }
-
 
   ComponentnameDisplay() {
     const url = this.router.url;
@@ -198,6 +189,7 @@ export class SettingsHeaderComponent implements OnInit, OnDestroy {
       this.moduleName = 'Time Off';
       this.componentName = 'Flexible WFH Allocation';
     }
+
     // Assets Configuration
     else if (url.startsWith('/settings/assets-configuration/vendor-detiles')) {
       this.moduleName = 'Assets Configuration';
@@ -257,7 +249,6 @@ export class SettingsHeaderComponent implements OnInit, OnDestroy {
       this.moduleName = 'Project Management Configurations';
       this.componentName = 'Client Document Type';
     }
-
     else if (url.startsWith('/settings/project-management-config/project-document-type')) {
       this.moduleName = 'Project Management Configurations';
       this.componentName = 'Project Document Type';
@@ -278,15 +269,6 @@ export class SettingsHeaderComponent implements OnInit, OnDestroy {
       this.moduleName = 'Project Management Configurations';
       this.componentName = ' Letter Configurations Frequency';
     }
-
-    else if (url.startsWith('/settings/attendance-configuration/pending-for-submission')) {
-      this.moduleName = 'Attendance Configuration';
-      this.componentName = 'Pending For Submission';
-    }
-    else if (url.startsWith('/settings/attendance-configuration/published')) {
-      this.moduleName = 'Attendance Configuration';
-      this.componentName = 'Published';
-    }
     else if (url.startsWith('/settings/project-management-config/project-role')) {
       this.moduleName = 'Project Management Configurations';
       this.componentName = 'Project Role';
@@ -306,6 +288,16 @@ export class SettingsHeaderComponent implements OnInit, OnDestroy {
     else if (url.startsWith('/settings/project-management-config/task')) {
       this.moduleName = 'Project Management Configurations';
       this.componentName = 'Task';
+    }
+
+    //Locking System
+    else if (url.startsWith('/settings/attendance-configuration/pending-for-submission')) {
+      this.moduleName = 'Attendance Configuration';
+      this.componentName = 'Pending For Submission';
+    }
+    else if (url.startsWith('/settings/attendance-configuration/published')) {
+      this.moduleName = 'Attendance Configuration';
+      this.componentName = 'Published';
     }
     else if (url.startsWith('/settings/it-configuration/itsupport-category')) {
       this.moduleName = 'IT Support Configuration';
@@ -331,7 +323,6 @@ export class SettingsHeaderComponent implements OnInit, OnDestroy {
       this.moduleName = 'Time Off';
       this.componentName = 'Flexible Work Hours Allocation';
     }
-
     else if (url.startsWith('/settings/timeoff-configurations/load-entitlement/initial-load-entitlements')) {
       this.moduleName = 'Time Off';
       this.navigationname = 'Entitlements'
@@ -347,13 +338,11 @@ export class SettingsHeaderComponent implements OnInit, OnDestroy {
       this.navigationname = 'Entitlements'
       this.componentName = this.jobSequenceId;
     }
-
     else if (url.startsWith('/settings/timeoff-configurations/leave-entitlements')) {
       this.moduleName = 'Time Off';
       this.navigationname = 'Entitlements'
       this.componentName = 'Leave Carry Forward';
     }
-
     else if (url.startsWith('/settings/timeoff-configurations/intial-leave-entitlements')) {
       this.moduleName = 'Time Off';
       this.navigationname = 'Entitlements'
@@ -371,7 +360,6 @@ export class SettingsHeaderComponent implements OnInit, OnDestroy {
       next: (res: any) => {
         this.jobSummary = res?.data?.jobSummary;
         this.jobSequenceId = this.jobSummary?.jobSequenceId;
-        console.log(this.jobSequenceId);
         // Update module name after getting jobSequenceId
         this.updateModuleInfo();
       },
@@ -380,6 +368,7 @@ export class SettingsHeaderComponent implements OnInit, OnDestroy {
       },
     });
   }
+
   isShowsettingsRoute(): boolean {
     const hidePaths = [
       '/settings/timeoff-configurations/jobview',
@@ -391,35 +380,24 @@ export class SettingsHeaderComponent implements OnInit, OnDestroy {
       '/settings/timeoff-configurations/leave-entitlements/load-entitlement-map-categoery',
       '/settings/timeoff-configurations/leave-entitlements/load-entitlement-execution'
     ];
-
     if (hidePaths.some(path => this.router.url.startsWith(path))) {
       return false;
     }
-
     return this.router.url.startsWith('/settings');
   }
 
   isShowsettingsjobRoute() {
-    const showPaths = [
-      '/settings/timeoff-configurations/jobview',
-      
-    ];
+    const showPaths = ['/settings/timeoff-configurations/jobview',];
     return showPaths.some(path => this.router.url.startsWith(path));
   }
 
-
   isShowsettingsjobRouteforintial() {
-    const showPaths = [
-      '/settings/timeoff-configurations/intial-leave-entitlements',
-    ];
+    const showPaths = ['/settings/timeoff-configurations/intial-leave-entitlements',];
     return showPaths.some(path => this.router.url.startsWith(path));
   }
 
   isshowsettingsforcarryforword() {
-    const showPaths = [
-      '/settings/timeoff-configurations/leave-entitlements',
-
-    ];
+    const showPaths = ['/settings/timeoff-configurations/leave-entitlements',];
     return showPaths.some(path => this.router.url.startsWith(path));
   }
 
@@ -456,7 +434,7 @@ export class SettingsHeaderComponent implements OnInit, OnDestroy {
   navigateToloadentiments() {
     this.router.navigate(['/settings/timeoff-configurations/load-entitlement/initial-load-entitlements'])
     localStorage.removeItem('carryForwardJobId'),
-      localStorage.removeItem('intialloadEntitlement')
+    localStorage.removeItem('intialloadEntitlement')
   }
 
   onSettingsClick(): void {
@@ -480,10 +458,8 @@ export class SettingsHeaderComponent implements OnInit, OnDestroy {
   }
 
   navigateToSettings() {
-    this.router.navigate(['/settings'])
-
+    this.router.navigate(['/settings']);
   }
-
 
   navigateTomain() {
     this.location.back();
@@ -495,6 +471,4 @@ export class SettingsHeaderComponent implements OnInit, OnDestroy {
     this.destroy$.next();
     this.destroy$.complete();
   }
-
 }
-

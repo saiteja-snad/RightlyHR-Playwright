@@ -751,7 +751,8 @@
                             <label class="form-label mb-2">Source Date Range<span class="text-danger">*</span></label>
                             <p-datepicker styleClass="clone-datepicker" formControlName="sourceWeekDateRange"
                                 selectionMode="range" [showIcon]="true" [readonlyInput]="true"
-                                [placeholder]="'dd/mm/yyyy - dd/mm/yyyy'" [maxDate]="today">
+                                [placeholder]="'dd/mm/yyyy - dd/mm/yyyy'" [maxDate]="today"
+                                (onSelect)="validateCloneDateRanges()">
                             </p-datepicker>
 
                             @if (cloneForm.get('sourceWeekDateRange')?.invalid &&
@@ -765,12 +766,20 @@
                             <label class="form-label mb-2">Target Date Range<span class="text-danger">*</span></label>
                             <p-datepicker styleClass="clone-datepicker" formControlName="targetWeekDateRange"
                                 selectionMode="range" [showIcon]="true" [readonlyInput]="true"
-                                [placeholder]="'dd/mm/yyyy - dd/mm/yyyy'" [maxDate]="today">
+                                [placeholder]="'dd/mm/yyyy - dd/mm/yyyy'" [maxDate]="today"
+                                (onSelect)="validateCloneDateRanges()">
                             </p-datepicker>
 
+                            <div *ngIf="cloneErrorMessage" class="clone-validation-error">
+                                {{ cloneErrorMessage }}
+                            </div>
 
-                            @if (cloneForm.get('targetWeekDateRange')?.invalid &&
-                            cloneForm.get('targetWeekDateRange')?.touched) {
+
+                            @if (
+                            cloneForm.get('targetWeekDateRange')?.invalid &&
+                            cloneForm.get('targetWeekDateRange')?.touched &&
+                            !cloneErrorMessage
+                            ) {
                             <small class="text-danger">
                                 Target Date Range is required
                             </small>
@@ -812,9 +821,7 @@
 
 
                         </div>
-                        <div *ngIf="cloneErrorMessage" class="clone-validation-error">
-                            {{ cloneErrorMessage }}
-                        </div>
+
                     </div>
 
                     <hr class="clone-divider mb-4">

@@ -575,8 +575,8 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       copyLoggedHours: [{ value: true, disabled: true }],
       copyDescription: [false],
       copyTask: [false],
-      copyClients: [false],
-      copyPhases: [false]
+      copyClients: [{ value: true, disabled: true }],
+      copyPhases: [{ value: true, disabled: true }]
 
     });
 
@@ -598,12 +598,36 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     this.cloneForm.patchValue({ sourceWeekDateRange: chosenRange });
   }
 
-  onCloneTargetDateSelect(selectedDate: Date | Date[]) {
-    if (!selectedDate) return;
-    const chosenRange = Array.isArray(selectedDate) ? selectedDate : [selectedDate];
-    this.cloneForm.patchValue({ targetWeekDateRange: chosenRange });
-  }
+  onCloneTargetDateSelect() {
+    this.cloneErrorMessage = null;
 
+    const range = this.cloneForm.get('targetWeekDateRange')?.value;
+
+    if (!range || range.length < 2) {
+      return;
+    }
+
+    const startDay = moment(range[0]).format('dddd');
+    const endDay = moment(range[1]).format('dddd');
+
+    console.log('Range Start', range[0]);
+    console.log('Range End', range[1]);
+    console.log('Start Day', startDay);
+    console.log('End Day', endDay);
+    console.log('Weekends Data', this.weekendsData);
+
+    const startWeekend = this.weekendsData?.some(
+      (w: any) => w.weekday === startDay
+    );
+
+    const endWeekend = this.weekendsData?.some(
+      (w: any) => w.weekday === endDay
+    );
+
+    if (startWeekend || endWeekend) {
+      this.cloneErrorMessage = 'Please select the appropriate date.';
+    }
+  }
   private getRangeStartDate(range: Date[] | null): Date | null {
     if (!Array.isArray(range) || range.length === 0 || !range[0]) {
       return null;
@@ -758,6 +782,42 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
         if (!targetDate) {
           return;
         }
+
+        const dayName = moment(targetDate).format('dddd');
+
+        const isWeekend = this.weekendsData?.some(
+          (w: any) => w.weekday === dayName
+        );
+
+        if (isWeekend) {
+          console.log('Skipping weekend:', dayName, targetDate);
+          return;
+        }
+
+        const resource = this.resourcesArrayList?.find((r: any) =>
+          r.project?.projectId === sourceRow.projectId &&
+          r.client?.clientId === sourceRow.clientId &&
+          r.phase?.phaseId === sourceRow.phaseId
+        );
+
+        console.log('Source Phase Id', sourceRow.phaseId);
+        console.log('Matched Phase Id', resource?.phase?.phaseId);
+        console.log('Phase Name', resource?.phase?.phaseName);
+
+
+        if (!resource) {
+          console.log('Skipping released phase', sourceRow.phaseId);
+          return;
+        }
+
+        if (resource?.endDate) {
+          const releaseDate = moment(resource.endDate).startOf('day');
+
+          if (moment(targetDate).isAfter(releaseDate, 'day')) {
+            return; // Skip cloning after release date
+          }
+        }
+
         const targetDateKey = moment(targetDate).format(
           'YYYY-MM-DDT00:00:00'
         );
@@ -817,6 +877,12 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   }
 
   cloneTimesheetEntries(): void {
+
+    console.log('cloneErrorMessage', this.cloneErrorMessage);
+    if (this.cloneErrorMessage === 'Please select the appropriate date.') {
+      return;
+    }
+
     if (!this.cloneForm || this.cloneForm.invalid) {
       this.cloneForm.markAllAsTouched();
       this.cloneErrorMessage = 'Please select a source week and clone method.';
@@ -845,10 +911,6 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     const targetWeekStartDate = this.getRangeStartDate(targetWeekRange) || new Date();
     const targetWeekStart = moment(targetWeekStartDate).startOf('isoWeek').format('YYYY-MM-DD');
 
-    console.log('Source Week Range:', sourceWeekRange);
-    console.log('Target Week Range:', targetWeekRange);
-    console.log('Source Week Start:', sourceWeekStart);
-    console.log('Target Week Start:', targetWeekStart);
 
     const sourceStart = moment(sourceWeekRange[0]).format('YYYY-MM-DD');
     const sourceEnd = moment(sourceWeekRange[1]).format('YYYY-MM-DD');
@@ -902,6 +964,8 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       this.cloneErrorMessage = 'Please select at least one clone option.';
       return;
     }
+
+
 
     forkJoin([
       this.http.getData(`v2/Timesheet/week/employee/${this.employeeId}?weekStartDate=${sourceWeekStart}`),
@@ -2799,6 +2863,36 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     console.log(day.get('taskName')?.value)
     this.approvardetails = day.value.pendingApprovalDetails;
     this.approvardetails.description = day.get('description')?.value
+  }
+  
+    validateCloneDateRanges() {
+    this.cloneErrorMessage = null;
+
+    const sourceRange = this.cloneForm.get('sourceWeekDateRange')?.value;
+    const targetRange = this.cloneForm.get('targetWeekDateRange')?.value;
+
+    const isInvalidRange = (range: Date[]) => {
+      if (!range || range.length < 2) return false;
+
+      const startDay = moment(range[0]).format('dddd');
+      const endDay = moment(range[1]).format('dddd');
+
+      const startWeekend = this.weekendsData?.some(
+        (w: any) => w.weekday === startDay
+      );
+
+      const endWeekend = this.weekendsData?.some(
+        (w: any) => w.weekday === endDay
+      );
+
+      return startWeekend || endWeekend;
+    };
+
+    if (isInvalidRange(sourceRange) || isInvalidRange(targetRange)) {
+      this.cloneErrorMessage = 'Please select the appropriate date.';
+    } else {
+      this.cloneErrorMessage = null;
+    }
   }
   ngOnDestroy() {
     this.destroy$.next(true);

@@ -32,6 +32,7 @@ export class ExpenesHeaderTabsComponent implements OnInit, OnDestroy {
   draftsCount = 0;
    selectemp: any;
  selectedYear: any;
+ requiredClarificationCount = 0;
   seletedMouthly: any;
   public navTabs: any[] = [];
   public defaultRoute: string = '';
@@ -40,7 +41,8 @@ export class ExpenesHeaderTabsComponent implements OnInit, OnDestroy {
     { label: 'Approved', link: '/claimsandexpenses/expenses/approved', icon: '/time-off-icon/approved-icon.png', permission: { feature: 'Approved Tab', action: 'view' }, count: this.ApprovedCount },
     { label: 'Waiting For Approval', link: '/claimsandexpenses/expenses/pending', icon: '/time-off-icon/waiting-for-approval-icon.png', permission: { feature: 'Pending Tab', action: 'view' }, count: this.pendingCount },
     { label: 'Processed', link: '/claimsandexpenses/expenses/processed', icon: '/time-off-icon/processed-icon.png', permission: { feature: 'Processed Tab', action: 'view' }, count: this.processedCount },
-    { label: 'Rejected', link: '/claimsandexpenses/expenses/rejected', icon: '/time-off-icon/rejected-icon.png', permission: { feature: 'Rejected Tab', action: 'view' }, count: this.rejectedCount }
+    { label: 'Rejected', link: '/claimsandexpenses/expenses/rejected', icon: '/time-off-icon/rejected-icon.png', permission: { feature: 'Rejected Tab', action: 'view' }, count: this.rejectedCount },
+    { label: 'Required Clarification', link: '/claimsandexpenses/expenses/required-clarification', icon: '/time-off-icon/required-clarification-icon.png', permission: { feature: 'Expense Clarifications Tab', action: 'view' }, count: this.requiredClarificationCount }
   ];
 
   constructor(private http: HttpService, private rbac: RbacService, private router: Router,private SelectedyeartimeOffService:TimeoffYearFilterService ) { }

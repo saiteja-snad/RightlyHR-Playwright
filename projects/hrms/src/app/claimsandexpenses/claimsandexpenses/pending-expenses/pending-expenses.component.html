@@ -34,7 +34,7 @@
           <td>{{ exp.expenses_Title }}</td>
           <td>{{ exp?.expenseitem?.[0]?.expense_Date | dateformat }}</td>
           <td>{{ exp.applied_date | dateformat }}</td>
-          <td>{{ exp.totalExpenseAmount }}</td>
+          <td>₹ {{ exp.totalExpenseAmount }}</td>
           <td>{{ exp?.pendingApprovalHeader?.approver_Name }}</td>
           <td>{{ exp.status }}</td>
 
@@ -108,7 +108,6 @@
                     <i class="bi bi-download me-2"></i>Download
                   </a>
                 </li>
-
               </ul>
             </div>
           </td>
@@ -168,7 +167,7 @@
 
     <div class="custom-main-popup-content">
       <div class="mb-3">
-        <b class="expenses-title-text">: {{ expenseheaderiteams?.expenses_Title }}</b>
+        <b class="expenses-title-text"> Expense Title : {{ expenseheaderiteams?.expenses_Title }}</b>
         <!-- <b class="expenses-title-text">Approval Email : {{ expenseheaderiteams.approverEmail }}</b> -->
       </div>
       <div class="custom-table">
@@ -189,11 +188,11 @@
               <td>{{ item?.expenseType }}</td>
               <td>{{ item?.item_Name }}</td>
               <td>{{ item?.expense_Date | date: 'dd-MM-yyyy' }}</td>
-              <td>{{ item?.expense_Amount | number: '1.2-2' }}</td>
+              <td>₹ {{ item?.expense_Amount | number: '1.2-2' }}</td>
               <td>{{ item?.status }}</td>
               <td>{{ item?.receipt_Number }}</td>
               <td class="text-center">
-                <div class="d-flex gap-2">
+                <div class="d-flex align-items-center justify-content-center gap-3 flex-nowrap">
                   <a type="button" class="me-2 download-text text-nowrap"
                     (click)="onSelectDownload(item?.attachment_url)">
                     <i class="bi bi-download me-2"></i>{{'Download' | translate}}
@@ -208,7 +207,7 @@
           </tbody>
         </table>
         <div class="text-center mt-3">
-          <b>{{'Total Amount ' | translate}}: {{expenseheaderiteams?.expense_Amount | number: '1.2-2'}}</b>
+          <b>{{'Total Amount ' | translate}}: ₹ {{expenseheaderiteams?.expense_Amount | number: '1.2-2'}}</b>
         </div>
       </div>
     </div>
@@ -421,8 +420,7 @@
           {{'Cancel' | translate}}
         </button>
         <button type="button" class="custom-btn btn-primary "
-          [disabled]="!isAllChecked() ||(storeapprovalRequest.action === 'Approve' && approveForm.invalid)||isloading"
-          (click)="confirmApproval(modal)">
+          [disabled]="!isAllChecked() || approveForm.invalid || isloading" (click)="confirmApproval(modal)">
           @if(isloading){
           <div class="button-loader-content">
             <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
@@ -567,7 +565,7 @@
               <td>{{ item?.expenseType }}</td>
               <td>{{ item?.item_Name }}</td>
               <td>{{ item?.expense_Date | date: 'dd-MM-yyyy' }}</td>
-              <td>{{ item?.expense_Amount | number: '1.2-2' }}</td>
+              <td>₹ {{ item?.expense_Amount | number: '1.2-2' }}</td>
               <td>{{ item?.status }}</td>
               <td>{{ item?.receipt_Number }}</td>
               <td class="text-center">
@@ -598,7 +596,7 @@
           </tbody>
         </table>
         <div class="text-center mt-3">
-          <b>Total Amount : {{expenseheaderiteams?.expense_Amount | number: '1.2-2'}}</b>
+          <b>Total Amount : ₹ {{expenseheaderiteams?.expense_Amount | number: '1.2-2'}}</b>
         </div>
       </div>
     </div>

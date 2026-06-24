@@ -840,6 +840,12 @@ onViewAttachementverification(url: any) {
     this.openModal(this.verificationViewattamchment);
   }
 
+  openRequiredCalrificationModal(content: any, request: ExpenseApprovalResponse) {
+    this.modalService.open(content, { centered: true, backdrop: 'static' });
+    this.intializeApproveForm();
+    this.selectedLeaveData = request;
+  }
+
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();

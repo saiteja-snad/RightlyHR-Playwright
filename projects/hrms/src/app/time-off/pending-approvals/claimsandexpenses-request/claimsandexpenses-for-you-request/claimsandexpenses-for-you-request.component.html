@@ -32,7 +32,7 @@
             <td>{{ leave?.entity?.employeeName }}</td>
             <td>{{ leave?.entity?.expenses_Title }}</td>
             <td>{{ leave?.entity?.applied_date | dateformat }}</td>
-            <td>{{ leave?.entity?.totalExpenseAmount }}</td>
+            <td>₹ {{ leave?.entity?.totalExpenseAmount }}</td>
             <td>{{ leave?.entity?.status }}</td>
              <td class="text-center">
               <div class="dropdown">
@@ -74,6 +74,13 @@
                   <li (click)="openRejectModal(rejectmodal, leave)">
                     <a class="dropdown-item"><i class="bi bi-x-circle me-2"></i>{{ "Reject" | translate }}</a>
                   </li>
+                  }
+                   @if(rbac.allowedToAccess('For Role (Claims and Expenses).update')) {
+                    @if( leave.approvalHeader.currentapprovalStage !=leave.approvalHeader.finalapprovalStage){
+                    <li (click)="openRequiredCalrificationModal(requiredClarification, leave)">
+                    <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{ "Request for Clarification" |translate }}</a>
+                    </li>
+                  }
                   }
                 </ul>
               </div>
@@ -554,7 +561,7 @@
               <td>{{ item?.expenseType }}</td>
               <td>{{ item?.item_Name }}</td>
               <td>{{ item?.expense_Date | date: 'dd-MM-yyyy' }}</td>
-              <td>{{ item?.expense_Amount | number: '1.2-2' }}</td>
+              <td>₹{{ item?.expense_Amount | number: '1.2-2' }}</td>
               <td>{{ item?.status }}</td>
               <td>{{ item?.receipt_Number }}</td>
               <!-- <td class="text-center">
@@ -611,7 +618,7 @@
           </tbody>
         </table>
         <div class="text-center mt-3">
-          <b>Total Amount : {{expenseheaderiteams?.expense_Amount | number: '1.2-2'}}</b>
+          <b>Total Amount : ₹ {{expenseheaderiteams?.expense_Amount | number: '1.2-2'}}</b>
         </div>
       </div>
     </div>
@@ -673,6 +680,38 @@
           <span>{{'Reject'| translate}}</span>
           }
         </button>
+      </div>
+    </form>
+  </div>
+</ng-template>
+
+<ng-template #requiredClarification let-modal>
+  <div class="result-popup-content" ngbAutofocus>
+    <div>
+      <app-confirmation-icon />
+      <p class="confirmation-text pt-3">{{'Are you sure you want to send for the Clarification?' | translate}}</p>
+    </div>
+    <form autocomplete="off" [formGroup]="approveForm" (ngSubmit)="handleClarification(approveForm)">
+      <div class="custom-main-popup-content">
+        <label for="comments" class="form-label custom-label mb-2">{{'Comments' | translate}}<span
+            class="text-danger">*</span></label>
+        <textarea class="form-control custom-input" id="comments" placeholder="Please provide comments"
+          formControlName="comments" maxlength="250"
+          (keydown)="formsValidation.restrictInitialSpace($event)"></textarea>
+        <!-- Character counter -->
+        <div class="error-msg" *ngIf="approveForm.get('comments')?.touched && approveForm.get('comments')?.invalid">
+          <div *ngIf="approveForm.get('comments')?.errors?.['required']">Comment is required.</div>
+          <div *ngIf="approveForm.get('comments')?.errors?.['maxlength']">Comment cannot exceed 250 characters.</div>
+        </div>
+        <div class="textarea-count-text">{{ approveForm.get('comments')?.value?.length || 0 }}/250
+        </div>
+
+      </div>
+      <div class="custom-modal-footer">
+        <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss();">{{'Cancel'|
+          translate}}</button>
+        <button type="submit" class="custom-btn btn-primary" [disabled]="approveForm.invalid">{{'Submit'|
+          translate}}</button>
       </div>
     </form>
   </div>

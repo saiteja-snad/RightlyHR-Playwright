@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AbstractControl, AsyncValidatorFn, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -9,22 +9,32 @@ import { ICompensation,IFrequency, IOvertime, IPayType } from '../../../Interfac
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { Select } from 'primeng/select';
+import { TableModule } from 'primeng/table';
+import { Table } from 'primeng/table';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { DateformatPipe } from "../../../pipes/dateformat.pipe";
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { Router } from '@angular/router';
 import { AccessForEmployeeinfoService } from '../../../services/access-for-employeeinfo.service';
 import { TranslateModule } from '@ngx-translate/core';
-import { SettingsDeleteIconComponent } from "../../../icons/settings-delete-icon/settings-delete-icon.component";
-import { SettingsUpdateIconComponent } from "../../../icons/settings-update-icon/settings-update-icon.component";
 
 @Component({
   selector: 'app-compensation',
-  imports: [CommonModule, ReactiveFormsModule, Select, TranslateModule, NoDataFoundComponent, DateformatPipe, DataLoaderContentComponent, SettingsDeleteIconComponent, SettingsUpdateIconComponent],
+  imports: [
+    CommonModule, 
+    ReactiveFormsModule, 
+    Select, 
+    TableModule, 
+    TranslateModule, 
+    NoDataFoundComponent, 
+    DateformatPipe, 
+    DataLoaderContentComponent
+  ],
   templateUrl: './compensation.component.html',
   styleUrl: './compensation.component.scss'
 })
 export class CompensationComponent implements OnInit,OnDestroy {
+  @ViewChild('compensationTable') compensationTable!: Table;
   subscription!: Subscription;
   compForm!: FormGroup;
   compupdateForm!: FormGroup
@@ -32,7 +42,8 @@ export class CompensationComponent implements OnInit,OnDestroy {
   joiningDate: any;
   paytypeDetails = [] as IPayType[];
   frequencyDetails = [] as IFrequency[];
-  compensationdetails = new BehaviorSubject<any>([])
+  compensationdetails: any[] = [];
+  originalCompensationDetails: any[] = [];
   compensationReason = [] as ICompensation[]
    variablePayOptions: { name: string, value: boolean }[]  = [
     { name: 'Yes', value: true },
@@ -41,6 +52,8 @@ export class CompensationComponent implements OnInit,OnDestroy {
   loading=false
   empinfo: any
   selectedid: any;
+  currentSortField: string = '';
+  currentSortOrder: number = 0; // 0 = no sort, 1 = asc, -1 = desc
   constructor(
     private modalService: NgbModal,
     private authService: AuthService,
@@ -199,7 +212,8 @@ onVariablePayChange() {
       .subscribe({
         next: (data: any) => {
          this.loading=false
-          this.compensationdetails.next(data)
+          this.compensationdetails = data;
+          this.originalCompensationDetails = [...data];
         },
         error:(err)=> {
           this.loading=false
@@ -362,6 +376,61 @@ onVariablePayChange() {
 
       },
 
+    });
+  }
+
+  customSort(event: any): void {
+    const field = event.field;
+    
+    // Track current sort state for the clicked field
+    if (this.currentSortField === field) {
+      // Same field clicked - cycle through: asc (1) -> desc (-1) -> reset (0)
+      if (this.currentSortOrder === 1) {
+        // Currently ascending, change to descending
+        this.currentSortOrder = -1;
+        event.order = -1;
+      } else if (this.currentSortOrder === -1) {
+        // Currently descending, reset to original order
+        this.compensationdetails = [...this.originalCompensationDetails];
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        if (this.compensationTable) {
+          this.compensationTable.reset();
+        }
+        return;
+      } else {
+        // Currently reset, change to ascending
+        this.currentSortOrder = 1;
+        event.order = 1;
+      }
+    } else {
+      // New field clicked - start with ascending
+      this.currentSortField = field;
+      this.currentSortOrder = 1;
+      event.order = 1;
+    }
+
+    event.data.sort((a: any, b: any) => {
+      let val1: any;
+      let val2: any;
+
+      if (field === 'compeffectivedate' || field === 'nextCompReviewDate') {
+        val1 = new Date(a[field] ?? 0).getTime();
+        val2 = new Date(b[field] ?? 0).getTime();
+        return event.order * (val1 - val2);
+      } else if (field === 'compensationamount' || field === 'variablePayAmount') {
+        val1 = parseFloat(a[field] ?? '0') || 0;
+        val2 = parseFloat(b[field] ?? '0') || 0;
+        return event.order * (val1 - val2);
+      } else if (field === 'isVariablePay') {
+        val1 = a[field] ? 'Yes' : 'No';
+        val2 = b[field] ? 'Yes' : 'No';
+        return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+      } else {
+        val1 = String(a[field] ?? '').trim();
+        val2 = String(b[field] ?? '').trim();
+        return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+      }
     });
   }
 

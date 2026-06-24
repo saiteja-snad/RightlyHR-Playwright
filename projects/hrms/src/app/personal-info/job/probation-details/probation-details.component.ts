@@ -17,25 +17,31 @@ import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component"
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { DocumentViewIconComponent } from "../../../icons/document-view-icon/document-view-icon.component";
+import { TableModule } from 'primeng/table';
+import { Table } from 'primeng/table';
 @Component({
   selector: 'app-probation-details',
   standalone: true,
-  imports: [CommonModule, DateformatPipe, NgbPopoverModule, ProbationformViewComponent, TranslateModule, InfoIconComponent, NoDataFoundComponent, DataLoaderContentComponent, DocumentViewIconComponent],
+  imports: [CommonModule, DateformatPipe, NgbPopoverModule, ProbationformViewComponent, TranslateModule, InfoIconComponent, NoDataFoundComponent, DataLoaderContentComponent, DocumentViewIconComponent, TableModule],
   templateUrl: './probation-details.component.html',
   styleUrl: './probation-details.component.scss'
 })
 
 export class ProbationDetailsComponent implements OnInit {
+  @ViewChild('probationDetailsTable') probationDetailsTable!: Table;
   empinfo = {} as IJob;
   empdata = {} as any;
   subscription!: Subscription;
   getProbationRequestDetails = [] as any;
+  originalProbationRequestDetails = [] as any;
   probationProbationNotiperiodDuration: any;
   probationExtendTimes: any;
   appcomment = {} as any;
   loggedinuser = {} as any;
   loading = false;
   totalCount: any;
+  currentSortField: string = '';
+  currentSortOrder: number = 0; // 0 = no sort, 1 = asc, -1 = desc
 
   constructor(private http: HttpService, private authService: AuthService, private openModalService: OpenModalService,
     private modalService: NgbModal, public rbac: RbacService, public permissionRouteService: AccessForEmployeeinfoService, private readonly router: Router) { }
@@ -86,6 +92,7 @@ export class ProbationDetailsComponent implements OnInit {
       next: (data: any) => {
         console.log(data)
         this.getProbationRequestDetails = data;
+        this.originalProbationRequestDetails = [...data];
         this.loading = false;
       },
       error: (err: any) => {
@@ -207,6 +214,57 @@ getApprovalStatusCounts() {
         ...ele,
         metadata: parsedMetaData
       };
+    });
+  }
+
+  customSort(event: any): void {
+    const field = event.field;
+    
+    // Track current sort state for the clicked field
+    if (this.currentSortField === field) {
+      // Same field clicked - cycle through: asc (1) -> desc (-1) -> reset (0)
+      if (this.currentSortOrder === 1) {
+        // Currently ascending, change to descending
+        this.currentSortOrder = -1;
+        event.order = -1;
+      } else if (this.currentSortOrder === -1) {
+        // Currently descending, reset to original order
+        this.getProbationRequestDetails = [...this.originalProbationRequestDetails];
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        if (this.probationDetailsTable) {
+          this.probationDetailsTable.reset();
+        }
+        return;
+      } else {
+        // Currently reset, change to ascending
+        this.currentSortOrder = 1;
+        event.order = 1;
+      }
+    } else {
+      // New field clicked - start with ascending
+      this.currentSortField = field;
+      this.currentSortOrder = 1;
+      event.order = 1;
+    }
+
+    event.data.sort((a: any, b: any) => {
+      let val1: any;
+      let val2: any;
+
+      if (field === 'appliedDate' || field === 'probationStartDate' || field === 'probationEndDate' || field === 'probationExtendedDate') {
+        val1 = new Date(a[field] ?? 0).getTime();
+        val2 = new Date(b[field] ?? 0).getTime();
+        return event.order * (val1 - val2);
+      } else if (field === 'probationDays') {
+        val1 = parseInt(a[field] ?? '0') || 0;
+        val2 = parseInt(b[field] ?? '0') || 0;
+        return event.order * (val1 - val2);
+      } else {
+        val1 = String(a[field] ?? '').trim();
+        val2 = String(b[field] ?? '').trim();
+        return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+      }
     });
   }
 }

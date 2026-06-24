@@ -13,32 +13,66 @@
 
     <div class="custom-table-content mt-2">
         @if(!loading){
-        <table class="w-100">
-            <thead>
-                <tr>
-                    <th class="text-center">{{'Effective Date'|translate}}</th>
-                    <th>{{'Overtime Eligibility'|translate}}</th>
-                    <th>{{'Reason'|translate}}</th>
-                    <th>{{'Frequency'|translate}}</th>
-                    <th>{{'Pay Type'|translate}}</th>
-                    <th>{{'Amount (Yearly CTC)'|translate}}</th>
-                    <th>{{'Variable Pay'|translate}}</th>
-                    <th>{{'Variable Pay Amount'|translate}}</th>
-                    <th>{{'Next Compensation Review Date'|translate}}</th>
-                    @if(canAccess('update','compensation') ||
-                    canAccess('delete','compensation')){
-                    @if((empinfo?.empstatus?.toLowerCase() !== 'prospective' && empinfo?.empstatus?.toLowerCase() !==
-                    'trainee prospective'
-                    && empinfo?.empstatus?.toLowerCase() !== 'inactive' && empinfo?.empstatus?.toLowerCase() !==
-                    'trainee inactive' )){
-                    <th class="text-center">{{"Action" | translate}}</th>
-                    }
-                    }
-                </tr>
-            </thead>
-            <tbody>
-                <ng-container *ngIf="((compensationdetails | async) ?? []).length > 0; else noDataTemplate">
-                    <tr *ngFor="let item of compensationdetails | async">
+        <div class="wrapper">
+            <p-table 
+                #compensationTable
+                [value]="compensationdetails" 
+                [customSort]="true"
+                (sortFunction)="customSort($event)"
+                [sortMode]="'single'"
+                styleClass="p-datatable-sm custom-table">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th class="text-center" pSortableColumn="compeffectivedate">
+                            {{'Effective Date'|translate}}
+                            <p-sortIcon field="compeffectivedate"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="overtimeeligibility">
+                            {{'Overtime Eligibility'|translate}}
+                            <p-sortIcon field="overtimeeligibility"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="reason">
+                            {{'Reason'|translate}}
+                            <p-sortIcon field="reason"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="frequency">
+                            {{'Frequency'|translate}}
+                            <p-sortIcon field="frequency"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="paytype">
+                            {{'Pay Type'|translate}}
+                            <p-sortIcon field="paytype"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="compensationamount">
+                            {{'Amount (Yearly CTC)'|translate}}
+                            <p-sortIcon field="compensationamount"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="isVariablePay">
+                            {{'Variable Pay'|translate}}
+                            <p-sortIcon field="isVariablePay"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="variablePayAmount">
+                            {{'Variable Pay Amount'|translate}}
+                            <p-sortIcon field="variablePayAmount"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="nextCompReviewDate">
+                            {{'Next Compensation Review Date'|translate}}
+                            <p-sortIcon field="nextCompReviewDate"></p-sortIcon>
+                        </th>
+                        @if(canAccess('update','compensation') ||
+                        canAccess('delete','compensation')){
+                        @if((empinfo?.empstatus?.toLowerCase() !== 'prospective' && empinfo?.empstatus?.toLowerCase() !==
+                        'trainee prospective'
+                        && empinfo?.empstatus?.toLowerCase() !== 'inactive' && empinfo?.empstatus?.toLowerCase() !==
+                        'trainee inactive' )){
+                        <th class="text-center">{{"Action" | translate}}</th>
+                        }
+                        }
+                    </tr>
+                </ng-template>
+                
+                <ng-template pTemplate="body" let-item>
+                    <tr>
                         <td class="text-center text-nowrap">{{item.compeffectivedate | dateformat}}</td>
                         <td>{{item.overtimeeligibility?item.overtimeeligibility:('NA'|translate)}}</td>
                         <td>{{item.reason?item.reason:('NA'|translate)}}</td>
@@ -90,15 +124,19 @@
                         }
                         }
                     </tr>
-                </ng-container>
-
-                <ng-template #noDataTemplate>
-                    <tr>
-                        <app-no-data-found />
-                    </tr>
                 </ng-template>
-            </tbody>
-        </table>
+
+                <ng-template pTemplate="emptymessage">
+                    <div class="wrapper">
+                        <tr>
+                            <td colspan="9">
+                                <app-no-data-found />
+                            </td>
+                        </tr>
+                    </div>
+                </ng-template>
+            </p-table>
+        </div>
         }
         @else {
         <app-data-loader-content />

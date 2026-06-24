@@ -365,6 +365,12 @@
                     @if (emp.hasPermission && emp.permissionDuration) {
                         <span class="attendance-chip chip-permission">{{ emp.permissionType }} ({{ emp.permissionDuration }})</span>
                     }
+                     @if (emp.hasWFHRequests) {
+                        <span class="attendance-chip chip-permission">{{ emp.wfhRequestDurationType }}</span>
+                    }
+                     @if (emp.hasRemoteLogin) {
+                        <span class="attendance-chip chip-permission">{{ emp.remoteLoginDurationType }}</span>
+                    }
                 </div>
             </div>
             <div *ngIf="getFilteredEmployees().length === 0" class="text-center text-muted py-3">

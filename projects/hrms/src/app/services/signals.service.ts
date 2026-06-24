@@ -77,10 +77,10 @@ TraineeOfferLetterNavCountSignal = signal<boolean>(false);
   contractConversionForYouRoleTriggerSignal = signal<boolean>(false);
 
   OfferLetterNavCountSignal = signal<boolean>(false);
-  TraineeOfferLetterNavCountSignal = signal<boolean>(false);
-  ContractOfferLetterNavCountSignal = signal<boolean>(false);
-  AppointmentLetterNavCountSignal = signal<boolean>(false);
-  NDALetterNavCountSignal = signal<boolean>(false);
+  // TraineeOfferLetterNavCountSignal = signal<boolean>(false);
+  // ContractOfferLetterNavCountSignal = signal<boolean>(false);
+  // AppointmentLetterNavCountSignal = signal<boolean>(false);
+  // NDALetterNavCountSignal = signal<boolean>(false);
 
   timesheetApprovalsCountSignal = signal<boolean>(false);
 

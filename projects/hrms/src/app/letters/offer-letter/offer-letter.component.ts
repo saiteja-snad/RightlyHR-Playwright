@@ -3,26 +3,28 @@ import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Select } from 'primeng/select';
-import { jsPDF } from "jspdf";
-import html2canvas from 'html2canvas';
 import { AbstractControl, FormBuilder, FormGroup, NgForm, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import * as pdfMake from 'pdfmake/build/pdfmake';
+import { customVfs } from '../../letters-builder-files/custom-fonts-vfs';
+import { buildOfferLetterDoc } from '../../letters-builder-files/offer-letter.builder';
 import { Subscription } from 'rxjs';
 import moment from 'moment';
 import { AuthService } from '../../services/auth.service';
 import { HttpService } from '../../services/http.service';
 import { IAddress, ICountry, IGender, IJobtype, IRole, ITitle } from '../../Interfaces/letters-model';
-import { DateformatPipe } from "../../pipes/dateformat.pipe";
 import { OpenModalService } from '../../services/open-modal.service';
 import { NgxCountriesDropdownModule } from 'ngx-countries-dropdown';
 import { TranslateModule } from '@ngx-translate/core';
 import { FormValidationService } from '../../../../../preonboarding/src/app/common-services/form-validation.service';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
-import { LettersheaderComponent } from '../../shared/letters-shared-content/lettersheader/lettersheader.component';
-import { LetterFooterComponent } from '../../shared/letters-shared-content/letter-footer/letter-footer.component';
-import { ConfirmationIconComponent } from '../../icons/confirmation-icon/confirmation-icon.component';
+import { DateformatPipe } from '../../pipes/dateformat.pipe';
+import { LetterFooterComponent } from "../../shared/letters-shared-content/letter-footer/letter-footer.component";
+import { LettersheaderComponent } from "../../shared/letters-shared-content/lettersheader/lettersheader.component";
+import { ConfirmationIconComponent } from "../../icons/confirmation-icon/confirmation-icon.component";
+import { fetchLetterAssets, setupLetterPdfMake } from '../../letters-builder-files/letter-pdf.utils';
 @Component({
   selector: 'app-offer-letter',
-  imports: [CommonModule, TranslateModule, Select, NgxCountriesDropdownModule, ReactiveFormsModule, DateformatPipe, NgbPopoverModule, LettersheaderComponent, LetterFooterComponent, ConfirmationIconComponent],
+  imports: [CommonModule, TranslateModule, Select, NgxCountriesDropdownModule, ReactiveFormsModule, DateformatPipe, NgbPopoverModule, LetterFooterComponent, LettersheaderComponent, ConfirmationIconComponent],
   templateUrl: './offer-letter.component.html',
   styleUrl: './offer-letter.component.scss',
 })
@@ -186,53 +188,94 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
   //download document
   async downLoadDocument(EmpValue: any) {
     const data = this.prospectiveEmpData;
-    const pdf = new jsPDF('p', 'mm', 'a4');
-    const imgWidth = pdf.internal.pageSize.getWidth();
-    const imgHeight = pdf.internal.pageSize.getHeight();
-    const pdfContents = ['pdfContent1', 'pdfContent2', 'pdfContent3', 'pdfContent4', 'pdfContent5', 'pdfContent6']; // IDs of the content elements to be converted to PDF
-    // Create a single canvas to combine all content elements
-    const combinedCanvas = document.createElement('canvas');
-    combinedCanvas.width = imgWidth;
-    combinedCanvas.height = pdfContents.length * imgHeight;
-    const imagesData = [];
-    // this.isLoading = true;
-    for (const contentId of pdfContents) {
-      const pdfContent = document.getElementById(contentId);
-      if (pdfContent) {
-        const canvas = await html2canvas(pdfContent, { scale: 3 });
-        const imgData = canvas.toDataURL('image/png');
-        const imgHeight = (canvas.height * imgWidth) / canvas.width;
-        imagesData.push({ imgData, imgHeight });
-      }
-    }
-    // Add all images to the PDF except for the last one
-    for (let i = 0; i < imagesData.length - 1; i++) {
-      const imageData = imagesData[i];
-      pdf.addImage(imageData.imgData, 'PNG', 0, 0, imgWidth, imageData.imgHeight, '', 'FAST');
-      pdf.addPage(); // Add a new page for the next image (except for the last one)
-    }
-    // Add the last image without adding a new page
-    if (imagesData.length > 0) {
-      const lastImageData = imagesData[imagesData.length - 1];
-      pdf.addImage(lastImageData.imgData, 'PNG', 0, 0, imgWidth, lastImageData.imgHeight, '', 'FAST');
-    }
-    const fileName = `${data.firstName}_${data.middleName ?? ""}_${data.lastName ?? ""}_${new Date().getTime()}_OfferLetter.pdf`;
-   // pdf.save(fileName);
-    const blob = pdf.output('blob');
-    //creating form file to upload into AZure
-    let d: Date = new Date();
-    const file = new File([blob], fileName, {
-      type: 'application/pdf',
+    const fileName = `${data.firstName}_${data.middleName ?? ''}_${data.lastName ?? ''}_${new Date().getTime()}_OfferLetter.pdf`;
+    const isSoftCopy = true;
+    const [assets, pm] = await Promise.all([
+      fetchLetterAssets(isSoftCopy),
+      setupLetterPdfMake(),
+    ]);
+    const docDef = buildOfferLetterDoc({
+      firstName: data.firstName,
+      middleName: data.middleName,
+      lastName: data.lastName,
+      addressLine1: data.addressLine1,
+      addressLine2: data.addressLine2,
+      city: data.city,
+      state: data.state,
+      country: data.country,
+      pinCode: data.pinCode,
+      offerIssuedDate: this.employeeForm.get('offerIssuedDate')?.value,
+      dateOfJoining: this.employeeForm.get('dateOfJoining')?.value,
+      offerExpiryDate: this.employeeForm.get('offerExpiryDate')?.value,
+      jobRole: data.jobRole,
+      workAddress: data.address ?? '',
+      amount: data.amount,
+      variablePayAmount: data.variablePayAmount,
+      authorityName: data.authorityName ?? '',
+      authorityDesignation: this.authorityDesignation ?? '',
+      note: this.employeeForm.get('note')?.value,
+      basicSalary: data.basicSalary,
+      basicPerannum: data.basicPerannum,
+      hraSalary: data.hraSalary,
+      hraPerAnnum: data.hraPerAnnum,
+      otherAllowances: data.otherAllowances,
+      otherAllowancesPerAnnum: data.otherAllowancesPerAnnum,
+      totalGrossSalary: data.totalGrossSalary,
+      totalGrossPerAnnum: data.totalGrossPerAnnum,
+      pfContribution: data.pfContribution,
+      pfPreAnuum: data.pfPreAnuum,
+      employeeEsi: data.employeeEsi,
+      esiPerAnnumemployee: data.esiPerAnnumemployee,
+      professionalTax: data.professionalTax,
+      professionalPerAnnum: data.professionalPerAnnum,
+      totalDeduction: data.totalDeduction,
+      totalDeductionsPerAnnum: data.totalDeductionsPerAnnum,
+      netSalary: data.netSalary,
+      netSalaryPerAnnum: data.netSalaryPerAnnum,
+      grossSalary: data.grossSalary,
+      esicContribution: data.esicContribution,
+      esiPerAnnum: data.esiPerAnnum,
+      backgroundImageBase64: assets.backgroundImageBase64,
+      headerLogoBase64: assets.headerLogoBase64,
+      useVerdanaFont: true,
+      useAutographyFont: true,
     });
-    this.generatedfile = file;
-    this.generatingEmployeeId = this.prospectiveEmpData.empId;
-    this.loading = false
-    this.disableFieldsForApproval = false;
-    //this.conformationPopup.openSuccessModal('Offer letter generated successfully');
-    if (this.prospectiveEmpData.isEmployeevalid === true) {
+
+    try {
+      const blob: Blob = await pm.createPdf(docDef).getBlob();
+      this.generatedfile = new File([blob], fileName, { type: 'application/pdf' });
+      this.generatingEmployeeId = this.prospectiveEmpData.empId;
+      this.loading = false;
+      this.disableFieldsForApproval = false;
       this.offerletterUpload(EmpValue?.empId, this.generatedfile);
-    } else {
-      this.offerletterUpload(EmpValue?.empId, this.generatedfile);
+    } catch (err) {
+      console.error('PDF generation failed:', err);
+      this.loading = false;
+    }
+  }
+
+  private fetchImageAsBase64(url: string): Promise<string> {
+    return fetch(url).then(res => res.blob()).then(blob => new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result as string);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    }));
+  }
+
+  private async getFileBase64(url: string): Promise<string | null> {
+    try {
+      const response = await fetch(url);
+      if (!response.ok) return null;
+      const buffer = await response.arrayBuffer();
+      const bytes = new Uint8Array(buffer);
+      let binary = '';
+      for (let i = 0; i < bytes.byteLength; i++) {
+        binary += String.fromCharCode(bytes[i]);
+      }
+      return btoa(binary);
+    } catch {
+      return null;
     }
   }
 
@@ -271,7 +314,8 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
         this.employeeiddetails = data.map((employee: any) => {
           return {
             ...employee,
-            fullName: `${employee.employeeId ? employee.employeeId + ' - ' : ''}${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`
+            fullName: `${employee.employeeId ? employee.employeeId + ' - ' : ''}${employee.firstName} 
+            ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`
           };
         });
       },
@@ -294,14 +338,11 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
             this.employeeForm.get('offerExpiryDate')?.setValue(this.formatDateForOfferIssedandExpiry(new Date(this.employeeaddress.offerExpiryDate)));
           }
         }
-        if (this.employeeaddress.substatus == 'Documents Verified' ||
-          this.employeeaddress.substatus == 'Trainee Onboarded'
-        ) {
+        if (this.employeeaddress.substatus == 'Documents Verified' || this.employeeaddress.substatus == 'Trainee Onboarded') {
           this.buttonValue = 'Generate Offer Letter';
         } else if (this.employeeaddress.substatus == 'Offer Letter Rejected' ||
           this.employeeaddress.substatus == 'Offer Letter Accepted' ||
-          this.employeeaddress.substatus == 'Offer Letter Rejected By Manager'
-        ) {
+          this.employeeaddress.substatus == 'Offer Letter Rejected By Manager') {
           this.buttonValue = 'Regenerate Offer Letter';
         }
       },
@@ -315,8 +356,6 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
       this.address = this.employeeaddress?.employeeAddresses.find(
         (address: IAddress) => address?.type?.toLowerCase() == Value?.value?.toLowerCase()
       );
-      console.log(this.address);
-
     }
     this.prospectiveEmpData.addressLine1 = this.address?.addressLine1;
     this.prospectiveEmpData.addressLine2 = this.address?.addressLine2;
@@ -358,9 +397,7 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
   //function to get the authority designation
   onclickDesignation() {
     let empId = this.employeeForm?.get('authorityid')?.value;
-    let signatureAuthorityDetails = this.authorityDetails.find(
-      (c: any) => c.employeeId == empId
-    );
+    let signatureAuthorityDetails = this.authorityDetails.find((c: any) => c.employeeId == empId);
     this.SignatureAuthorityValue = signatureAuthorityDetails;
     if (signatureAuthorityDetails) {
       this.authorityDesignation = signatureAuthorityDetails.designation;
@@ -376,7 +413,8 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
       next: (data: any) => {
         this.authorityDetails = data.map((authority: any) => ({
           ...authority,
-          fullName: `${authority.firstName} ${authority.middleName ? authority.middleName + ' ' : ''}${authority.lastName}` // Concatenate first, middle, last name and trim any extra spaces
+          fullName: `${authority.firstName} ${authority.middleName ? authority.middleName + ' ' : ''}${authority.lastName}`
+          // Concatenate first, middle, last name and trim any extra spaces
         }));
       },
       error: (error: any) => {
@@ -431,7 +469,6 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
 
   //function to reset the feilds
   resetInputFields() {
-
     this.employeeForm?.reset();
     this.prospectiveEmpData.personalEmail = '';
     this.prospectiveEmpData = {};
@@ -480,7 +517,7 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
                 address: this.prospectiveEmpData?.address,
                 offerIssuedDate: this.formatDate(this.prospectiveEmpData?.offerIssuedDate),
                 dateOfJoining: this.formatDate(this.prospectiveEmpData?.dateOfJoining),
-                Copys: this.prospectiveEmpData?.copys,
+                Copys: this.prospectiveEmpData?.documentType ?? this.prospectiveEmpData?.copys ?? this.prospectiveEmpData?.Copys,
                 offerExpiryDate: this.formatDate(this.prospectiveEmpData?.offerExpiryDate),
                 note: this.prospectiveEmpData?.note,
                 authorityid: this.prospectiveEmpData?.signatureAuthority,
@@ -539,69 +576,47 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
     //CTC calculation stated
     let Employee = this.prospectiveEmpData;
     Employee.grossby = 12;
-    Employee.grossSalary = Math.round(
-      this.prospectiveEmpData.amount / Employee.grossby
-    );
+    Employee.grossSalary = Math.round(this.prospectiveEmpData.amount / Employee.grossby);
     //Calculation condition for pf contribution of an employee]
-    if (
-      this.prospectiveEmpData.pf == true ||
-      this.prospectiveEmpData.pf == false
-    ) {
+    if (this.prospectiveEmpData.pf == true || this.prospectiveEmpData.pf == false) {
       switch (this.prospectiveEmpData.pf) {
         case true:
           if (this.prospectiveEmpData.esic.toString() == 'false') {
-            Employee.pfContribution = Math.round(
-              Employee.grossSalary * (6.719 / 100)
-            );
-
+            Employee.pfContribution = Math.round(Employee.grossSalary * (6.719 / 100));
             if (Employee.pfContribution >= 1800) {
               Employee.pfContribution = 1800;
             }
           } else if (Employee.grossSalary >= 23195) {
-            Employee.pfContribution = Math.round(
-              Employee.grossSalary * (6.717 / 100)
-            );
-
+            Employee.pfContribution = Math.round(Employee.grossSalary * (6.717 / 100));
             if (Employee.pfContribution >= 1800) {
               Employee.pfContribution = 1800;
             }
           } else if (Employee.grossSalary <= 23194) {
-            Employee.pfContribution = Math.round(
-              Employee.grossSalary * (6.519 / 100)
-            );
+            Employee.pfContribution = Math.round(Employee.grossSalary * (6.519 / 100));
             if (Employee.pfContribution >= 1800) {
               Employee.pfContribution = 1800;
             }
           } else {
             if (Employee.grossSalary <= 15000) {
-              Employee.pfContribution = Math.round(
-                Employee.grossSalary * (6.519 / 100)
-              );
+              Employee.pfContribution = Math.round(Employee.grossSalary * (6.519 / 100));
               if (Employee.pfContribution >= 1800) {
                 Employee.pfContribution = 1800;
               }
             } else if (Employee.grossSalary <= 23194) {
-              Employee.pfContribution = Math.round(
-                Employee.grossSalary * (6.519 / 100)
-              );
+              Employee.pfContribution = Math.round(Employee.grossSalary * (6.519 / 100));
               if (Employee.pfContribution >= 1800) {
                 Employee.pfContribution = 1800;
               }
             } else if (Employee.grossSalary >= 23195) {
-              Employee.pfContribution = Math.round(
-                Employee.grossSalary * (6.717 / 100)
-              );
-
+              Employee.pfContribution = Math.round(Employee.grossSalary * (6.717 / 100));
               if (Employee.pfContribution >= 1800) {
                 Employee.pfContribution = 1800;
               }
             }
           }
-
           break;
         case false:
           Employee.pfContribution = 0;
-
           break;
         default:
       }
@@ -613,9 +628,7 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
     if (this.prospectiveEmpData?.esic?.toString() == 'true') {
       let condition1 = Employee.grossSalary >= 23195;
       if (!condition1) {
-        Employee.esicContribution = Math.round(
-          Employee.grossSalary * (2.94 / 100)
-        );
+        Employee.esicContribution = Math.round(Employee.grossSalary * (2.94 / 100));
         this.prospectiveEmpData.esic = true;
       } else {
         Employee.esicContribution = 0;
@@ -623,37 +636,24 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
       }
     } else {
       Employee.esicContribution = 0;
-
       // const Input = document.getElementById('esic') as HTMLInputElement;
-
       // if (Input) {
       //   Input.value = 'false';
       // }
-
       const esicControl = this.employeeForm?.get('esic');
       if (esicControl && esicControl.value !== false) {
         esicControl.setValue(false, { emitEvent: false });
       }
-
-
     }
-    //===================================================================================================================================
-
     //==============================================================================================================================
     //Calculation conditions for totalgrosssalary of an employee
-    Employee.totalGrossSalary = Math.round(
-      Employee.grossSalary - Employee.pfContribution - Employee.esicContribution
-    );
-
+    Employee.totalGrossSalary = Math.round(Employee.grossSalary - Employee.pfContribution - Employee.esicContribution);
     //===============================================================================================================================
     //Calculation conditions for pt contrubution of an employee
     if (Employee.totalGrossSalary <= 15000) {
       Employee.professionalTax = 0;
       this.prospectiveEmpData.pt = false;
-    } else if (
-      Employee.totalGrossSalary >= 15001 &&
-      Employee.totalGrossSalary <= 20000
-    ) {
+    } else if (Employee.totalGrossSalary >= 15001 && Employee.totalGrossSalary <= 20000) {
       Employee.professionalTax = 150;
       this.prospectiveEmpData.pt = true;
     } else if (Employee.totalGrossSalary >= 20001) {
@@ -667,9 +667,7 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
     //Calculation conditions for esic contrubution of an employee
     if (this.prospectiveEmpData?.esic?.toString() == 'true') {
       if (Employee.totalGrossSalary <= 21000) {
-        Employee.employeeEsi = Math.round(
-          Employee.totalGrossSalary * (0.75 / 100)
-        );
+        Employee.employeeEsi = Math.round(Employee.totalGrossSalary * (0.75 / 100));
         this.prospectiveEmpData.esic = true;
       } else {
         Employee.employeeEsi = 0;
@@ -686,88 +684,50 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
       // if (Input) {
       //   Input.value = 'false';
       // }
-
       const esicControl = this.employeeForm?.get('esic');
       if (esicControl && esicControl.value !== false) {
         esicControl.setValue(false, { emitEvent: false });
       }
-
     }
-
-    //==================================================================================================================================
     //===========================================================================================================
     // calculation for the basicsalary
     Employee.basicSalary = Math.round(Employee.totalGrossSalary * (60 / 100));
     //calculation for the hraSalary
     Employee.hraSalary = Math.round(Employee.basicSalary * (40 / 100));
     //calculation for the educationAllowances
-    Employee.educationAllowances = Math.round(
-      Employee.totalGrossSalary * (2 / 100)
-    );
-
+    Employee.educationAllowances = Math.round(Employee.totalGrossSalary * (2 / 100));
     //calculation for the conveyance
     Employee.Conveyance = Math.round(Employee.totalGrossSalary * (4 / 100));
-
     //total deductions per month
-    Employee.totalDeduction = Math.round(
-      Employee.pfContribution + Employee.employeeEsi + Employee.professionalTax
-    );
+    Employee.totalDeduction = Math.round(Employee.pfContribution + Employee.employeeEsi + Employee.professionalTax);
     //total net salary  per month
-    Employee.netSalary = Math.round(
-      Employee.totalGrossSalary - Employee.totalDeduction
-    );
+    Employee.netSalary = Math.round(Employee.totalGrossSalary - Employee.totalDeduction);
     //calculation for the otherallowances
-    Employee.otherAllowances = Math.round(
-      Employee.totalGrossSalary * (16 / 100)
-    );
+    Employee.otherAllowances = Math.round(Employee.totalGrossSalary * (16 / 100));
     //pfcontribution per annum
-    Employee.pfPreAnuum = Math.round(
-      Employee.pfContribution * Employee.grossby
-    );
+    Employee.pfPreAnuum = Math.round(Employee.pfContribution * Employee.grossby);
     //totalGrossPerAnnum calculation
-    Employee.totalGrossPerAnnum = Math.round(
-      Employee.totalGrossSalary * Employee.grossby
-    );
+    Employee.totalGrossPerAnnum = Math.round(Employee.totalGrossSalary * Employee.grossby);
     //basicsalaryperannum
-    Employee.basicPerannum = Math.round(
-      Employee.basicSalary * Employee.grossby
-    );
+    Employee.basicPerannum = Math.round(Employee.basicSalary * Employee.grossby);
     //HRA per annum
     Employee.hraPerAnnum = Math.round(Employee.hraSalary * Employee.grossby);
     //esiper anuum
-    Employee.esiPerAnnum = Math.round(
-      Employee.esicContribution * Employee.grossby
-    );
+    Employee.esiPerAnnum = Math.round(Employee.esicContribution * Employee.grossby);
     //esiper anuum for employee
-    Employee.esiPerAnnumemployee = Math.round(
-      Employee.employeeEsi * Employee.grossby
-    );
+    Employee.esiPerAnnumemployee = Math.round(Employee.employeeEsi * Employee.grossby);
     //educationper annum
-    Employee.educationallowancesPerAnnum = Math.round(
-      Employee.educationAllowances * Employee.grossby
-    );
+    Employee.educationallowancesPerAnnum = Math.round(Employee.educationAllowances * Employee.grossby);
     //conveyance per annum
-    Employee.conveyancePerAnnum = Math.round(
-      Employee.Conveyance * Employee.grossby
-    );
+    Employee.conveyancePerAnnum = Math.round(Employee.Conveyance * Employee.grossby);
     //otherAllowancesper annum
-    Employee.otherAllowancesPerAnnum = Math.round(
-      Employee.otherAllowances * Employee.grossby
-    );
+    Employee.otherAllowancesPerAnnum = Math.round(Employee.otherAllowances * Employee.grossby);
     //professional per annum
-    Employee.professionalPerAnnum = Math.round(
-      Employee.professionalTax * Employee.grossby
-    );
+    Employee.professionalPerAnnum = Math.round(Employee.professionalTax * Employee.grossby);
     //salary deductions per annum
-    Employee.totalDeductionsPerAnnum = Math.round(
-      Employee.pfPreAnuum +
-      Employee.esiPerAnnumemployee +
-      Employee.professionalPerAnnum
-    );
+    Employee.totalDeductionsPerAnnum = Math.round(Employee.pfPreAnuum + Employee.esiPerAnnumemployee + Employee.professionalPerAnnum);
     //net salary per annum
-    Employee.netSalaryPerAnnum = Math.round(
-      Employee.totalGrossPerAnnum - Employee.totalDeductionsPerAnnum
-    );
+    Employee.netSalaryPerAnnum = Math.round(Employee.totalGrossPerAnnum - Employee.totalDeductionsPerAnnum);
     //Ctc per annum
     Employee.ctcperannum = Math.round(Employee.totalGrossPerAnnum + Employee.pfPreAnuum + Employee.esiPerAnnum);
   }
@@ -827,6 +787,7 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
       addressType: this.addressType.toUpperCase(),
       note: this.employeeForm.get('note')?.value,
       letterType: 'Offer Letter',
+      documentType: this.employeeForm.get('Copys')?.value ?? false,
     };
     this.subscription = this.http.postdata('OfferLetter', postOfferLetterDetails).subscribe({
       next: (data: any) => {
@@ -840,7 +801,6 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
 
   //function to updated the data
   updateOfferLetterFieldsDetails(f: NgForm) {
-
     const data = JSON.parse(JSON.stringify(this.prospectiveEmpData));
     this.ApprovalLoader = true;
     this.prospectiveEmpData.employeeId = this.prospectiveEmpData.empId,
@@ -859,17 +819,18 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
       this.prospectiveEmpData.dateOfJoining = this.employeeForm.get('dateOfJoining')?.value,
       this.prospectiveEmpData.substatus = 'Offer Letter Generated',
       this.prospectiveEmpData.password = this.employeeaddress.password
-      this.prospectiveEmpData.reportsTo = this.prospectiveEmpData.reportsTo?.toString();
-      this.prospectiveEmpData.note = this.employeeForm?.get('note')?.value ? this.employeeForm?.get('note')?.value : null;
-      this.prospectiveEmpData.offerIssuedDate = this.employeeForm?.get('offerIssuedDate')?.value ? this.employeeForm?.get('offerIssuedDate')?.value : null;
-      this.prospectiveEmpData.offerExpiryDate = this.employeeForm?.get('offerExpiryDate')?.value ? this.employeeForm?.get('offerExpiryDate')?.value : null;
-      this.prospectiveEmpData.empId = this.prospectiveEmpData.empId.toString();
-      this.prospectiveEmpData.workEmail=this.prospectiveEmpData.workEmail;
-      this.prospectiveEmpData.maritalStatus=this.prospectiveEmpData.maritalStatus
-    if (this.buttonValue == 'Regenerate Offer Letter' && this.employeeaddress.substatus != 'Offer Letter Rejected By Manager'
-    ) {
+    this.prospectiveEmpData.reportsTo = this.prospectiveEmpData.reportsTo?.toString();
+    this.prospectiveEmpData.note = this.employeeForm?.get('note')?.value ? this.employeeForm?.get('note')?.value : null;
+    this.prospectiveEmpData.offerIssuedDate = this.employeeForm?.get('offerIssuedDate')?.value ? this.employeeForm?.get('offerIssuedDate')?.value : null;
+    this.prospectiveEmpData.offerExpiryDate = this.employeeForm?.get('offerExpiryDate')?.value ? this.employeeForm?.get('offerExpiryDate')?.value : null;
+    this.prospectiveEmpData.empId = this.prospectiveEmpData.empId.toString();
+    this.prospectiveEmpData.workEmail = this.prospectiveEmpData.workEmail;
+    this.prospectiveEmpData.maritalStatus = this.prospectiveEmpData.maritalStatus
+    if (this.buttonValue == 'Regenerate Offer Letter' && this.employeeaddress.substatus != 'Offer Letter Rejected By Manager') {
       this.prospectiveEmpData.substatus = 'Offer Letter Regenerated';
-    } else { this.prospectiveEmpData.substatus = 'Offer Letter Generated'; }
+    } else {
+      this.prospectiveEmpData.substatus = 'Offer Letter Generated';
+    }
     this.subscription = this.http.postdata('Employeedata/UPDATER', this.prospectiveEmpData).subscribe({
       next: (res: any) => {
         this.result = res;
@@ -915,11 +876,7 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
             this.downLoadDocument(this.prospectiveEmpData);
           } else if (res.statusCode == 1002) {
             this.confirmation_Msg = res.message;
-            this.modalService.open(this.approveModal, {
-              centered: true,
-              backdrop: 'static',
-              keyboard: false
-            });
+            this.modalService.open(this.approveModal, { centered: true, backdrop: 'static', keyboard: false });
           }
         },
         error: (err: any) => {
@@ -929,30 +886,24 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
     } else {
       (employeeData.substatus = 'Offer Letter Regenerated'),
         (employeeData.generateOffer = false);
-      this.subscription = this.http
-        .postdata('Employeedata/UPDATER', employeeData)
-        .subscribe({
-          next: (res: any) => {
-            this.result = res;
-            if (res.statusCode == 409) {
-              this.conformationPopup.openErrorModal(res.message);
-              this.employeeForm.reset();
-            } else if (res.statusCode == 200) {
-              this.UpdateFieldsToRespectiveTables();
-              this.downLoadDocument(this.prospectiveEmpData);
-            } else if (res.statusCode == 1002) {
-              this.confirmation_Msg = res.message;
-              this.modalService.open(this.approveModal, {
-                centered: true,
-                backdrop: 'static',
-                keyboard: false
-              });
-            }
-          },
-          error: (err: any) => {
-            console.log(err);
-          },
-        });
+      this.subscription = this.http.postdata('Employeedata/UPDATER', employeeData).subscribe({
+        next: (res: any) => {
+          this.result = res;
+          if (res.statusCode == 409) {
+            this.conformationPopup.openErrorModal(res.message);
+            this.employeeForm.reset();
+          } else if (res.statusCode == 200) {
+            this.UpdateFieldsToRespectiveTables();
+            this.downLoadDocument(this.prospectiveEmpData);
+          } else if (res.statusCode == 1002) {
+            this.confirmation_Msg = res.message;
+            this.modalService.open(this.approveModal, { centered: true, backdrop: 'static', keyboard: false });
+          }
+        },
+        error: (err: any) => {
+          console.log(err);
+        },
+      });
     }
   }
 
@@ -980,17 +931,18 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
   }
 
   //function to updated details to respective tables
-  jobdetailsupdate!:any;
+  jobdetailsupdate!: any;
   UpdateFieldsToRespectiveTables() {
-    if(this.employeeaddress.empstatus != 'Prospective' && this.buttonValue!='Regenerate Offer Letter'){
-    this.postjobdetails(this.currentDate);
+    if (this.employeeaddress.empstatus != 'Prospective' && this.buttonValue != 'Regenerate Offer Letter') {
+      this.postjobdetails(this.currentDate);
     }
-    else{
-    this.updatejobdetails();
+    else {
+      this.updatejobdetails();
     }
   }
-    //funtion to post the jobdetails
-  postjobdetails(currentDate:any){
+
+  //funtion to post the jobdetails
+  postjobdetails(currentDate: any) {
     let data = this.prospectiveEmpData;
     const jobdata = {
       employeeId: data.empId,
@@ -1007,25 +959,23 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
       jobTypeId: null,
     };
     // console.log(jobdata);
-    this.subscription = this.http
-      .postdata('JobDetails', jobdata)
-      .subscribe({
-        next: (data: any) => {
-          console.log(data);
-          // alert("JobDetails data successfully added")
-        },
-        error: (Reason) => console.log(Reason),
-      });
-      if(this.buttonValue=='Regenerate Offer Letter'){
-        this.regenerateUpdate();
-      }
-      else{
-        this.generatepostingtorepectivefields(this.currentDate)
-      }
+    this.subscription = this.http.postdata('JobDetails', jobdata).subscribe({
+      next: (data: any) => {
+        console.log(data);
+        // alert("JobDetails data successfully added")
+      },
+      error: (Reason) => console.log(Reason),
+    });
+    if (this.buttonValue == 'Regenerate Offer Letter') {
+      this.regenerateUpdate();
     }
+    else {
+      this.generatepostingtorepectivefields(this.currentDate)
+    }
+  }
+
   updatejobdetails() {
-  let data = this.prospectiveEmpData;
-    console.log(this.result);
+    let data = this.prospectiveEmpData;
     const jobdata = {
       id: data.jobId,
       employeeId: data.empId,
@@ -1043,27 +993,23 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
     };
 
     // console.log(jobdata);
-    this.subscription = this.http
-      .postdata('JobDetails/UPDATER', jobdata)
-      .subscribe({
-        next: (data: any) => {
-          console.log(data);
-          // alert("JobDetails data successfully added")
-        },
-        error: (Reason) => console.log(Reason),
-      });
-
-
-      if(this.buttonValue=='Regenerate Offer Letter'){
-        this.regenerateUpdate();
-      }
-      else{
-        this.generatepostingtorepectivefields(data.dateOfJoining)
-      }
+    this.subscription = this.http.postdata('JobDetails/UPDATER', jobdata).subscribe({
+      next: (data: any) => {
+        console.log(data);
+        // alert("JobDetails data successfully added")
+      },
+      error: (Reason) => console.log(Reason),
+    });
+    if (this.buttonValue == 'Regenerate Offer Letter') {
+      this.regenerateUpdate();
+    }
+    else {
+      this.generatepostingtorepectivefields(data.dateOfJoining)
+    }
   }
 
   //function to posting to respective fields data of job,compensation,employment
-  generatepostingtorepectivefields(currentDate:any) {
+  generatepostingtorepectivefields(currentDate: any) {
     let data = this.prospectiveEmpData;
     const Compensationdata = {
       employeeId: data.empId,
@@ -1143,6 +1089,7 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
       this.offerletterUpload(this.generatingEmployeeId, this.generatedfile);
     }
   }
+
   //function to send the email to employeee
   emailToSendManager() {
     this.ApprovalLoader = true;
@@ -1195,53 +1142,83 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
       },
     });
   }
-async generateDocument() {
-  this.loading=true;
-  this.disableFieldsForApproval = true;
+
+  async generateDocument() {
+    this.loading = true;
+    this.disableFieldsForApproval = true;
     const data = this.prospectiveEmpData;
-    const pdf = new jsPDF('p', 'mm', 'a4');
-    const imgWidth = pdf.internal.pageSize.getWidth();
-    const imgHeight = pdf.internal.pageSize.getHeight();
-    const pdfContents = ['pdfContent1', 'pdfContent2', 'pdfContent3', 'pdfContent4', 'pdfContent5', 'pdfContent6']; // IDs of the content elements to be converted to PDF
-    // Create a single canvas to combine all content elements
-    const combinedCanvas = document.createElement('canvas');
-    combinedCanvas.width = imgWidth;
-    combinedCanvas.height = pdfContents.length * imgHeight;
-    const imagesData = [];
-    // this.isLoading = true;
-    for (const contentId of pdfContents) {
-      const pdfContent = document.getElementById(contentId);
-      if (pdfContent) {
-        const canvas = await html2canvas(pdfContent, { scale: 3 });
-        const imgData = canvas.toDataURL('image/png');
-        const imgHeight = (canvas.height * imgWidth) / canvas.width;
-        imagesData.push({ imgData, imgHeight });
-      }
-    }
-    // Add all images to the PDF except for the last one
-    for (let i = 0; i < imagesData.length - 1; i++) {
-      const imageData = imagesData[i];
-      pdf.addImage(imageData.imgData, 'PNG', 0, 0, imgWidth, imageData.imgHeight, '', 'FAST');
-      pdf.addPage(); // Add a new page for the next image (except for the last one)
-    }
-    // Add the last image without adding a new page
-    if (imagesData.length > 0) {
-      const lastImageData = imagesData[imagesData.length - 1];
-      pdf.addImage(lastImageData.imgData, 'PNG', 0, 0, imgWidth, lastImageData.imgHeight, '', 'FAST');
-    }
-    const fileName = `${data.firstName}_${data.middleName ?? ""}_${data.lastName ?? ""}_${new Date().getTime()}_OfferLetter.pdf`;
-    pdf.save(fileName);
-    const blob = pdf.output('blob');
-    //creating form file to upload into AZure
-    let d: Date = new Date();
-    const file = new File([blob], fileName, {
-      type: 'application/pdf',
+    const fileName = `${data.firstName}_${data.middleName ?? ''}_${data.lastName ?? ''}_${new Date().getTime()}_OfferLetter.pdf`;
+    const isSoftCopy = true;
+    const [assets, pm] = await Promise.all([
+      fetchLetterAssets(isSoftCopy),
+      setupLetterPdfMake(),
+    ]);
+
+
+    const docDef = buildOfferLetterDoc({
+      firstName: data.firstName,
+      middleName: data.middleName,
+      lastName: data.lastName,
+      addressLine1: data.addressLine1,
+      addressLine2: data.addressLine2,
+      city: data.city,
+      state: data.state,
+      country: data.country,
+      pinCode: data.pinCode,
+      offerIssuedDate: this.employeeForm.get('offerIssuedDate')?.value,
+      dateOfJoining: this.employeeForm.get('dateOfJoining')?.value,
+      offerExpiryDate: this.employeeForm.get('offerExpiryDate')?.value,
+      jobRole: data.jobRole,
+      workAddress: data.address ?? '',
+      amount: data.amount,
+      variablePayAmount: data.variablePayAmount,
+      authorityName: data.authorityName ?? '',
+      authorityDesignation: this.authorityDesignation ?? '',
+      note: this.employeeForm.get('note')?.value,
+      basicSalary: data.basicSalary,
+      basicPerannum: data.basicPerannum,
+      hraSalary: data.hraSalary,
+      hraPerAnnum: data.hraPerAnnum,
+      otherAllowances: data.otherAllowances,
+      otherAllowancesPerAnnum: data.otherAllowancesPerAnnum,
+      totalGrossSalary: data.totalGrossSalary,
+      totalGrossPerAnnum: data.totalGrossPerAnnum,
+      pfContribution: data.pfContribution,
+      pfPreAnuum: data.pfPreAnuum,
+      employeeEsi: data.employeeEsi,
+      esiPerAnnumemployee: data.esiPerAnnumemployee,
+      professionalTax: data.professionalTax,
+      professionalPerAnnum: data.professionalPerAnnum,
+      totalDeduction: data.totalDeduction,
+      totalDeductionsPerAnnum: data.totalDeductionsPerAnnum,
+      netSalary: data.netSalary,
+      netSalaryPerAnnum: data.netSalaryPerAnnum,
+      grossSalary: data.grossSalary,
+      esicContribution: data.esicContribution,
+      esiPerAnnum: data.esiPerAnnum,
+      backgroundImageBase64: assets.backgroundImageBase64,
+      headerLogoBase64: assets.headerLogoBase64,
+      useVerdanaFont: true,
+      useAutographyFont: true,
     });
-    this.generatedfile = file;
-    this.generatingEmployeeId = this.prospectiveEmpData.empId;
-    this.loading = false
-    this.disableFieldsForApproval = false;
-    this.conformationPopup.openSuccessModal('Offer letter generated successfully');
+
+    try {
+      const blob: Blob = await pm.createPdf(docDef).getBlob();
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = fileName;
+      link.click();
+      URL.revokeObjectURL(link.href);
+      this.generatedfile = new File([blob], fileName, { type: 'application/pdf' });
+      this.generatingEmployeeId = this.prospectiveEmpData.empId;
+      this.loading = false;
+      this.disableFieldsForApproval = false;
+      this.conformationPopup.openSuccessModal('Offer letter generated successfully');
+    } catch (err) {
+      console.error('PDF generation failed:', err);
+      this.loading = false;
+      this.disableFieldsForApproval = false;
+    }
   }
 
   ngOnDestroy(): void {

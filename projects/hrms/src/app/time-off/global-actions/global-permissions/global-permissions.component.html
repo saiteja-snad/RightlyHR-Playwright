@@ -88,26 +88,56 @@
     <div class="component-right-content">
       <div class="custom-table-content">
         @if(!loading){
-        <table class="w-100">
-          <thead>
+        <p-table #dt1 
+                 [value]="getFilteredAndSortedPermissions()" 
+                 [customSort]="true" 
+                 (sortFunction)="customSort($event)"
+                 styleClass="p-datatable-gridlines">
+          <ng-template pTemplate="header">
             <tr>
-              <th>{{'Permission Requested Date' | translate}}</th>
-              <th>{{'Permission Type' | translate}}</th>
-              <th>{{'Duration(In Hrs)' | translate}}</th>
-              <th>{{'Applicable For' | translate}}</th>
-              <th>{{'Department/Location' | translate}}</th>
-              <th>{{'Team/Sub Location' | translate}}</th>
-              <th>{{'Request Type' | translate}}</th>
+              <th pSortableColumn="permissionRequestedDate">
+                {{'Permission Requested Date' | translate}}
+                <p-sortIcon field="permissionRequestedDate"></p-sortIcon>
+              </th>
+              <th pSortableColumn="requestType">
+                {{'Permission Type' | translate}}
+                <p-sortIcon field="requestType"></p-sortIcon>
+              </th>
+              <th pSortableColumn="duration">
+                {{'Duration(In Hrs)' | translate}}
+                <p-sortIcon field="duration"></p-sortIcon>
+              </th>
+              <th pSortableColumn="selectType">
+                {{'Applicable For' | translate}}
+                <p-sortIcon field="selectType"></p-sortIcon>
+              </th>
+              <th pSortableColumn="deptId_locationIdName">
+                {{'Department/Location' | translate}}
+                <p-sortIcon field="deptId_locationIdName"></p-sortIcon>
+              </th>
+              <th pSortableColumn="teamId_sublocIdName">
+                {{'Team/Sub Location' | translate}}
+                <p-sortIcon field="teamId_sublocIdName"></p-sortIcon>
+              </th>
+              <th pSortableColumn="type">
+                {{'Request Type' | translate}}
+                <p-sortIcon field="type"></p-sortIcon>
+              </th>
               <th>{{'Reason' | translate}}</th>
               <th>{{'List of Employees' | translate}}</th>
-              <th>{{'Requested By' | translate}}</th>
-              <th>{{'Request Raised Date' | translate}}</th>
-              <th></th>
+              <th pSortableColumn="requestedBy">
+                {{'Requested By' | translate}}
+                <p-sortIcon field="requestedBy"></p-sortIcon>
+              </th>
+              <th pSortableColumn="requestedDate">
+                {{'Request Raised Date' | translate}}
+                <p-sortIcon field="requestedDate"></p-sortIcon>
+              </th>
             </tr>
-          </thead>
-          <tbody>
-            @if(globalpermissions.length > 0){
-            <tr *ngFor="let item of globalpermissions | globalpermissions : searchValue">
+          </ng-template>
+          
+          <ng-template pTemplate="body" let-item>
+            <tr>
               <td>
                 <span *ngIf="item.permissionRequestedDate !== '0001-01-01T00:00:00'; else permissiondate">
                   {{item.permissionRequestedDate? (item.permissionRequestedDate | dateformat):'-' }}
@@ -150,14 +180,18 @@
               </td>
               <td> {{item.requestedDate?(item.requestedDate|dateformat):'-'}}</td>
             </tr>
-            }
-            @else {
-            <tr>
-              <app-no-data-found />
-            </tr>
-            }
-          </tbody>
-        </table>
+          </ng-template>
+          
+          <ng-template pTemplate="emptymessage">
+            <div class="wrapper">
+              <tr>
+                <td colspan="11">
+                  <app-no-data-found />
+                </td>
+              </tr>
+            </div>
+          </ng-template>
+        </p-table>
         }
         @else {
         <app-data-loader-content />

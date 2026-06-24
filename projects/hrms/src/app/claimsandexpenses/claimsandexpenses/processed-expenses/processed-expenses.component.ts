@@ -14,13 +14,13 @@ import { DataLoaderContentComponent } from "../../../shared/data-loader-content/
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 import { DocumentViewIconComponent } from "../../../icons/document-view-icon/document-view-icon.component";
 import { TranslateModule } from '@ngx-translate/core';
-
 import { DownloadExpenseComponent } from '../../download-expense/download-expense.component';
 import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.service';
+import { TableModule, Table } from 'primeng/table';
 
 @Component({
   selector: 'app-processed-expenses',
-  imports: [CommonModule, DateformatPipe, NgxDocViewerModule, FormsModule, NoDataFoundComponent, DataLoaderContentComponent, InfoIconComponent, DocumentViewIconComponent, DownloadExpenseComponent, TranslateModule,NgbPopoverModule],
+  imports: [CommonModule, DateformatPipe, NgxDocViewerModule, FormsModule, NoDataFoundComponent, DataLoaderContentComponent, InfoIconComponent, DocumentViewIconComponent, DownloadExpenseComponent, TranslateModule,NgbPopoverModule, TableModule],
   templateUrl: './processed-expenses.component.html',
   styleUrl: './processed-expenses.component.scss'
 })
@@ -36,11 +36,13 @@ export class ProcessedExpensesComponent implements OnInit, OnDestroy {
   selectedYear: any;
   selectemp: any;
   searchTerm: any = ''
-  expenesEmplyeedata = new BehaviorSubject<IExpense[]>([])
+  expenesEmplyeedata: IExpense[] = [];
+  originalExpenseData: IExpense[] = [];
   draftsCount: number = 0;
   loading = false
-    seletedMouthly: any;
+  seletedMouthly: any;
   @ViewChild('viewattamchment') private viewattamchment!: NgbModal;
+  @ViewChild('dt1') table!: Table;
   constructor(
     private http: HttpService, private SelectedyeartimeOffService: TimeoffYearFilterService, private modalService: NgbModal, private sanitizer: DomSanitizer,) { }
 
@@ -85,7 +87,6 @@ export class ProcessedExpensesComponent implements OnInit, OnDestroy {
 
 
 
- 
   getexpensesheaderbyemployeeid(): void {
     let empId = this.selectemp ?? this.empinfo?.employeeId;
     this.loading = true
@@ -97,13 +98,56 @@ export class ProcessedExpensesComponent implements OnInit, OnDestroy {
           if (data) {
             // Filter out expenseSummary object
             const filteredData = data.filter((item: any) => !item.expenseSummary);
-            this.expenesEmplyeedata.next(filteredData)
+            this.originalExpenseData = [...filteredData];
+            this.expenesEmplyeedata = [...filteredData];
           }
 
         }, error(err) {
           console.log("expensesheadererror", err)
         },
       });
+  }
+
+  getFilteredAndSortedExpenses() {
+    return this.expenesEmplyeedata;
+  }
+
+  customSort(event: any) {
+    const field = event.field;
+    const order = event.order;
+
+    if (order === 0) {
+      // Reset to original order
+      this.expenesEmplyeedata = [...this.originalExpenseData];
+    } else {
+      this.expenesEmplyeedata.sort((a: any, b: any) => {
+        let aVal, bVal;
+
+        if (field === 'expenses_Title') {
+          aVal = a.expenses_Title?.toLowerCase() || '';
+          bVal = b.expenses_Title?.toLowerCase() || '';
+        } else if (field === 'expense_Date') {
+          aVal = new Date(a.expenseitem?.[0]?.expense_Date || 0);
+          bVal = new Date(b.expenseitem?.[0]?.expense_Date || 0);
+        } else if (field === 'applied_date') {
+          aVal = new Date(a.applied_date || 0);
+          bVal = new Date(b.applied_date || 0);
+        } else if (field === 'totalExpenseAmount') {
+          aVal = parseFloat(a.totalExpenseAmount) || 0;
+          bVal = parseFloat(b.totalExpenseAmount) || 0;
+        } else if (field === 'status') {
+          aVal = a.status?.toLowerCase() || '';
+          bVal = b.status?.toLowerCase() || '';
+        } else {
+          aVal = a[field];
+          bVal = b[field];
+        }
+
+        if (aVal < bVal) return -1 * order;
+        if (aVal > bVal) return 1 * order;
+        return 0;
+      });
+    }
   }
 
   comments_Function(comments: any) {

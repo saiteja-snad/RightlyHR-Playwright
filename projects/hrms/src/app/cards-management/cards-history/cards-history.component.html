@@ -17,70 +17,97 @@
 
         <div class="custom-component-right-content p-3">
             @if(cardHistoryResponse.length>0){
-
-
-            <div class="card p-3 mb-3" *ngFor="let item of cardHistoryResponse">
-                <p class=" component-header cursor mb-4">{{'Card Details' | translate}}</p>
-                <div class="row mb-3">
-                    <div class="col-3 mb-3"><b class="component-sub-header mb-0">{{'Card Number' | translate}}:</b>
-                        {{ item?.card?.cardNumberMasked ? item?.card?.cardNumberMasked:'-' }}</div>
-                    <div class="col-3 mb-3"><b class="component-sub-header mb-0">{{'Card Type' | translate}}:</b>
-                        {{ item?.card?.cardType ?item?.card?.cardType:'-' }}</div>
-                    <div class="col-3 mb-3"><b class="component-sub-header mb-0">{{'Status' | translate}}:</b>
-                        {{ item?.allocationStatus ?item?.allocationStatus:'-' }}</div>
-                    <div class="col-3 mb-3"><b class="component-sub-header mb-0">{{'Allocated To ' | translate}}:</b>
-                        {{ item?.employee?.name?item?.employee?.name:'-' }}
+            <p-table #cardsHistoryTable [value]="getFilteredAndSortedCardHistory()" [customSort]="true" (sortFunction)="customSort($event)"
+                     styleClass="custom-table" [tableStyle]="{'min-width': '50rem'}">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th pSortableColumn="cardNumber">
+                            {{'Card Number'|translate}}
+                            <p-sortIcon field="cardNumber"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="cardType">
+                            {{'Card Type'|translate}}
+                            <p-sortIcon field="cardType"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="allocationStatus">
+                            {{'Status'|translate}}
+                            <p-sortIcon field="allocationStatus"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="employeeName">
+                            {{'Allocated To'|translate}}
+                            <p-sortIcon field="employeeName"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="assignedByName">
+                            {{'Allocated By'|translate}}
+                            <p-sortIcon field="assignedByName"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="allocatedDate">
+                            {{'Allocated On'|translate}}
+                            <p-sortIcon field="allocatedDate"></p-sortIcon>
+                        </th>
+                        <th>{{'Allocated Comments'|translate}}</th>
+                        <th pSortableColumn="releasedDate">
+                            {{'Released On'|translate}}
+                            <p-sortIcon field="releasedDate"></p-sortIcon>
+                        </th>
+                        <th>{{'Reason'|translate}}</th>
+                        <th>{{'Released Comments'|translate}}</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-item>
+                    <tr>
+                        <td>{{ item?.card?.cardNumberMasked ? item?.card?.cardNumberMasked:'-' }}</td>
+                        <td>{{ item?.card?.cardType ?item?.card?.cardType:'-' }}</td>
+                        <td>{{ item?.allocationStatus ?item?.allocationStatus:'-' }}</td>
+                        <td>{{ item?.employee?.name?item?.employee?.name:'-' }}</td>
+                        <td>{{ item?.assignedBy?.name?item?.assignedBy?.name:'-' }}</td>
+                        <td>{{ item?.allocatedDate?(item?.allocatedDate |dateformat):'-' }}</td>
+                        <td>
+                            @if(item?.comments){
+                            <a type="button" [ngbPopover]="comments">
+                                <app-info-icon />
+                            </a>
+                            <ng-template #comments>
+                                <p class="mb-0">{{ item?.comments ?item?.comments:'-' }}</p>
+                            </ng-template>
+                            }
+                            @else{NA}
+                        </td>
+                        <td>{{ item?.releasedDate?(item?.releasedDate|dateformat):'-' }}</td>
+                        <td>
+                            @if(item?.reason){
+                            <a type="button" [ngbPopover]="reason">
+                                <app-info-icon />
+                            </a>
+                            <ng-template #reason>
+                                <p class="mb-0">{{ item?.reason ? item?.reason :'-' }}</p>
+                            </ng-template>
+                            }
+                            @else{NA}
+                        </td>
+                        <td>
+                            @if(item?.additionalComments){
+                            <a type="button" [ngbPopover]="additionalComments">
+                                <app-info-icon />
+                            </a>
+                            <ng-template #additionalComments>
+                                <p class="mb-0">{{ item?.additionalComments ? item?.additionalComments:'-' }}</p>
+                            </ng-template>
+                            }
+                            @else{NA}
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <div class="wrapper">
+                        <tr>
+                            <td colspan="10">
+                                <app-no-data-found />
+                            </td>
+                        </tr>
                     </div>
-                    <div class="col-3 mb-3"><b class="component-sub-header mb-0">{{'Allocated By ' | translate}}:</b>
-                        {{ item?.assignedBy?.name?item?.assignedBy?.name:'-' }}
-                    </div>
-                    <div class="col-3 mb-3"><b class="component-sub-header mb-0">{{'Allocated On ' | translate}}:</b>
-                        {{ item?.allocatedDate?(item?.allocatedDate |dateformat):'-' }}
-                    </div>
-                 <div class="col-3 mb-3"><b class="component-sub-header mb-0">{{'Allocated Comments' | translate}}:</b>
-                        @if(item?.comments){
-                        <a type="button" [ngbPopover]="comments">
-                            <app-info-icon />
-                        </a>
-                        <ng-template #comments>
-                            <p class="mb-0">{{ item?.comments ?item?.comments:'-' }}</p>
-                        </ng-template>
-                        }
-                        @else{NA}
-
-                    </div>
-                    <!-- <div class="col-3 mb-3"><b class="component-sub-header mb-0">{{'Action Date ' | translate}}:</b>
-
-                        {{ item?.updateAt?(item?.updateAt |dateformat):'-' }}</div> -->
-                        <div class="col-3 mb-3"><b class="component-sub-header mb-0">{{'Released On ' | translate}}:</b>
-                        {{ item?.releasedDate?(item?.releasedDate|dateformat):'-' }}
-                    </div>
-                    <div class="col-3 mb-3"><b class="component-sub-header mb-0">{{'Reason ' | translate}}:</b>
-                        @if(item?.reason){
-                        <a type="button" [ngbPopover]="reason">
-                            <app-info-icon />
-                        </a>
-                        <ng-template #reason>
-                            <p class="mb-0">{{ item?.reason ? item?.reason :'-' }}</p>
-                        </ng-template>
-                        }
-                        @else{NA}
-                    </div>
-                    <div class="col-3 mb-3"><b class="component-sub-header mb-0">{{'Released Comments' | translate}}:</b>
-                        @if(item?.additionalComments){
-                        <a type="button" [ngbPopover]="comments">
-                            <app-info-icon />
-                        </a>
-                        <ng-template #comments>
-                            <p class="mb-0">{{ item?.additionalComments ? item?.additionalComments:'-' }}</p>
-                        </ng-template>
-                        }
-                        @else{NA}
-
-                    </div>
-
-                </div>
-            </div>
+                </ng-template>
+            </p-table>
             }
             @else{
             <app-no-data-found />

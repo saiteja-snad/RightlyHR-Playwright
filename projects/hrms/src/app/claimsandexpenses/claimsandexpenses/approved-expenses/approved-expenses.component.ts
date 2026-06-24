@@ -10,6 +10,8 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { DateformatPipe } from '../../../pipes/dateformat.pipe';
 import { NgxDocViewerModule } from 'ngx-doc-viewer';
+import { TableModule } from 'primeng/table';
+import { Table } from 'primeng/table';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { TranslateModule } from '@ngx-translate/core';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
@@ -19,12 +21,13 @@ import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.
 import { DocumentViewIconComponent } from "../../../icons/document-view-icon/document-view-icon.component";
 @Component({
   selector: 'app-approved-expenses',
-  imports: [CommonModule, DateformatPipe, NgxDocViewerModule, FormsModule, NoDataFoundComponent, TranslateModule, DataLoaderContentComponent, InfoIconComponent, DownloadExpenseComponent, DocumentViewIconComponent,NgbPopoverModule],
+  imports: [CommonModule, DateformatPipe, NgxDocViewerModule, TableModule, FormsModule, NoDataFoundComponent, TranslateModule, DataLoaderContentComponent, InfoIconComponent, DownloadExpenseComponent, DocumentViewIconComponent,NgbPopoverModule],
   templateUrl: './approved-expenses.component.html',
   styleUrl: './approved-expenses.component.scss'
 })
 
 export class ApprovedExpensesComponent implements OnInit, OnDestroy {
+  @ViewChild('expensesTable') expensesTable!: Table;
   empinfo: any
   subscription!: Subscription;
   ExpenseImageUrl: any;
@@ -39,8 +42,11 @@ export class ApprovedExpensesComponent implements OnInit, OnDestroy {
   selectedYear: any;
   selectedData = {} as any;
   @Input() downloadData: any;
-  expenesEmplyeedata = new BehaviorSubject<IExpense[]>([])
+  expensesData: IExpense[] = [];
+  originalExpensesData: IExpense[] = []; // Store original unsorted data
   @ViewChild('viewattamchment') private viewattamchment!: NgbModal;
+  currentSortField: string = '';
+  currentSortOrder: number = 0; // 0 = no sort, 1 = asc, -1 = desc
 
   constructor(public router: Router, private http: HttpService, private SelectedyeartimeOffService: TimeoffYearFilterService, private modalService: NgbModal, private sanitizer: DomSanitizer,) { }
 
@@ -96,12 +102,116 @@ export class ApprovedExpensesComponent implements OnInit, OnDestroy {
         next: (data: any) => {
           this.loading = false
          const filteredData = data.filter((item: any) => !item.expenseSummary);
-            this.expenesEmplyeedata.next(filteredData)
-
+          this.expensesData = filteredData;
+          this.originalExpensesData = [...this.expensesData];
         }, error(err) {
           console.log("expensesheadererror", err)
         },
       });
+  }
+
+  getFilteredAndSortedExpenses(): IExpense[] {
+    if (!this.searchTerm || this.searchTerm.trim() === '') {
+      return this.expensesData;
+    }
+    
+    const searchTerm = this.searchTerm.toLowerCase().trim();
+    return this.expensesData.filter((expense: IExpense) => {
+      const expenseTitle = expense.expenses_Title?.toLowerCase() || '';
+      const totalAmount = expense.totalExpenseAmount?.toString() || '';
+      const appliedDate = expense.applied_date || '';
+      const expenseDate = expense.expenseitem?.[0]?.expense_Date || '';
+      const status = expense.status?.toLowerCase() || '';
+      
+      return expenseTitle.includes(searchTerm) ||
+             totalAmount.includes(searchTerm) ||
+             appliedDate.includes(searchTerm) ||
+             expenseDate.includes(searchTerm) ||
+             status.includes(searchTerm);
+    });
+  }
+
+  customSort(event: any): void {
+    const field = event.field;
+    
+    // Track current sort state for the clicked field
+    if (this.currentSortField === field) {
+      // Same field clicked - cycle through: asc (1) -> desc (-1) -> reset (0)
+      if (this.currentSortOrder === 1) {
+        // Currently ascending, change to descending
+        this.currentSortOrder = -1;
+        event.order = -1;
+      } else if (this.currentSortOrder === -1) {
+        // Currently descending, reset to original order
+        this.expensesData = [...this.originalExpensesData];
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        if (this.expensesTable) {
+          this.expensesTable.reset();
+        }
+        return;
+      } else {
+        // Currently reset, change to ascending
+        this.currentSortOrder = 1;
+        event.order = 1;
+      }
+    } else {
+      // New field clicked - start with ascending
+      this.currentSortField = field;
+      this.currentSortOrder = 1;
+      event.order = 1;
+    }
+
+    event.data.sort((a: any, b: any) => {
+      let val1: any;
+      let val2: any;
+
+      // Handle expense fields
+      switch (field) {
+        case 'expenseTitle':
+          val1 = a.expenses_Title;
+          val2 = b.expenses_Title;
+          break;
+        case 'expenseDate':
+          val1 = a.expenseitem?.[0]?.expense_Date;
+          val2 = b.expenseitem?.[0]?.expense_Date;
+          break;
+        case 'appliedDate':
+          val1 = a.applied_date;
+          val2 = b.applied_date;
+          break;
+        case 'totalAmount':
+          val1 = a.totalExpenseAmount;
+          val2 = b.totalExpenseAmount;
+          break;
+        case 'status':
+          val1 = a.status;
+          val2 = b.status;
+          break;
+        default:
+          val1 = a[field];
+          val2 = b[field];
+      }
+
+      // Handle date sorting
+      if (['expenseDate', 'appliedDate'].includes(field)) {
+        const date1 = val1 ? new Date(val1) : new Date(0);
+        const date2 = val2 ? new Date(val2) : new Date(0);
+        return event.order * (date1.getTime() - date2.getTime());
+      }
+
+      // Handle numeric sorting for amounts
+      if (field === 'totalAmount') {
+        const num1 = parseFloat(val1) || 0;
+        const num2 = parseFloat(val2) || 0;
+        return event.order * (num1 - num2);
+      }
+
+      // Handle string sorting for all other fields
+      val1 = String(val1 ?? '').trim();
+      val2 = String(val2 ?? '').trim();
+      return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+    });
   }
   viewItem(expid: number,) {
     this.updataid = expid;

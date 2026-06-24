@@ -9,63 +9,66 @@
 @if(rbac.allowedToAccess('Cards Allocated.view')){
 <div class="custom-table-content">
         @if (!loader) {
-        <table class="w-100">
-            <thead>
-                <th>{{'Issued Date'|translate}}</th>
-                <th>{{'Card Number'|translate}}</th>
-                <th>{{'Card Type'|translate}}</th>
-                <th>{{'Card Holder Name'|translate}}</th>
-                <th>{{'Bank Name'|translate}}</th>
-                <!-- <th>{{'Card Expiry Month'|translate}}</th>
-                <th>{{'Card Expiry Year'|translate}}</th> -->
-                <th>{{'Expiry Date' | translate}}</th>
-                <th>{{'Allocated To'|translate}}</th>
-                <th>{{'Allocated On'|translate}}</th>
-                <th>{{'Allocated By'|translate}}</th>
-                <!-- <th>{{'Allocated History'|translate}}</th> -->
-                <th>{{'Status'|translate}}</th>
-                <th *ngIf="rbac.allowedToAccess('Cards Allocated.create') || rbac.allowedToAccess('Cards Allocated.update')">
-                    {{'Actions'|translate}}</th>
-            </thead>
-            <tbody>
-                @if( cardDetails.length > 0){
-                <tr *ngFor="let item of cardDetails ">
-                    <!-- issued date -->
+        <p-table #cardAllocatedTable [value]="getFilteredAndSortedCardDetails()" [customSort]="true" (sortFunction)="customSort($event)"
+                 styleClass="custom-table" [tableStyle]="{'min-width': '50rem'}">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th pSortableColumn="issuedDate">
+                        {{'Issued Date'|translate}}
+                        <p-sortIcon field="issuedDate"></p-sortIcon>
+                    </th>
+                    <th pSortableColumn="cardNumberMasked">
+                        {{'Card Number'|translate}}
+                        <p-sortIcon field="cardNumberMasked"></p-sortIcon>
+                    </th>
+                    <th pSortableColumn="cardType">
+                        {{'Card Type'|translate}}
+                        <p-sortIcon field="cardType"></p-sortIcon>
+                    </th>
+                    <th pSortableColumn="cardHolderName">
+                        {{'Card Holder Name'|translate}}
+                        <p-sortIcon field="cardHolderName"></p-sortIcon>
+                    </th>
+                    <th pSortableColumn="issuedBankName">
+                        {{'Bank Name'|translate}}
+                        <p-sortIcon field="issuedBankName"></p-sortIcon>
+                    </th>
+                    <th pSortableColumn="expiryDate">
+                        {{'Expiry Date' | translate}}
+                        <p-sortIcon field="expiryDate"></p-sortIcon>
+                    </th>
+                    <th pSortableColumn="allocatedTo">
+                        {{'Allocated To'|translate}}
+                        <p-sortIcon field="allocatedTo"></p-sortIcon>
+                    </th>
+                    <th pSortableColumn="allocatedDate">
+                        {{'Allocated On'|translate}}
+                        <p-sortIcon field="allocatedDate"></p-sortIcon>
+                    </th>
+                    <th pSortableColumn="allocatedBy">
+                        {{'Allocated By'|translate}}
+                        <p-sortIcon field="allocatedBy"></p-sortIcon>
+                    </th>
+                    <th pSortableColumn="status">
+                        {{'Status'|translate}}
+                        <p-sortIcon field="status"></p-sortIcon>
+                    </th>
+                    <th *ngIf="rbac.allowedToAccess('Cards Allocated.create') || rbac.allowedToAccess('Cards Allocated.update')">
+                        {{'Actions'|translate}}</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-item>
+                <tr>
                     <td>{{item?.issuedDate?(item?.issuedDate| dateformat ):'-'}}</td>
-                    <!-- card number -->
                     <td>{{item?.cardNumberMasked?item?.cardNumberMasked:'-'}}</td>
-                    <!-- card type -->
                     <td>{{item?.cardType?item?.cardType:'-'}}</td>
-                    <!--Card Holder Name-->
                     <td>{{item?.cardHolderName ? item?.cardHolderName:'-'}}</td>
-                    <!-- bank name -->
                     <td>{{item?.issuedBankName ? item?.issuedBankName:'-'}}</td>
-                    <!-- expiry month -->
-                    <!-- <td>{{item?.expiryMonth?item?.expiryMonth:'-'}}</td> -->
-                    <!-- expity year -->
-                    <!-- <td>{{item?.expiryYear?item?.expiryYear:'-'}}</td> -->
-                     <td>{{ `${item?.expiryMonth?item?.expiryMonth:'-'} / ${item?.expiryYear?item?.expiryYear:'-'} `}}</td>
-                    <!-- allocated to -->
+                    <td>{{ `${item?.expiryMonth?item?.expiryMonth:'-'} / ${item?.expiryYear?item?.expiryYear:'-'} `}}</td>
                     <td>{{item?.allocations?.employee?.name?item?.allocations?.employee?.name:'-'}}</td>
-                    <!-- allocated on -->
                     <td>{{item?.allocations?.allocatedDate?(item?.allocations?.allocatedDate| dateformat ):'-'}}</td>
-                    <!-- allocated by -->
                     <td>{{item?.allocations?.assignedBy?.name?item.allocations?.assignedBy?.name:'-'}}</td>
-                     <!-- allocated history -->
-                    <!-- <td>
-                         @if (item.allocations) {
-                    <div id="tooltip" (click)="approverHistoryFunction(item,historyPopup)" class="cursor">
-                        <app-info-icon />
-                    </div>
-                    
-                    }
-                    @else{-}
-                    </td> -->
-                    <!-- status -->
                     <td>{{item?.status ? item?.status:'-'}}</td>
-                    <!-- allocation status -->
-                    <!-- <td>{{item?.allocationStatus ? item?.allocationStatus:'-'}}</td> -->
-                    <!-- actions -->
                     <td *ngIf="rbac.allowedToAccess('Cards Allocated.create') || rbac.allowedToAccess('Cards Allocated.update')">
                         @if(rbac.allowedToAccess('Cards Allocated.update')){
                         <div class="dropdown">
@@ -85,14 +88,17 @@
                         }
                     </td>
                 </tr>
-                }
-                @if (cardDetails.length === 0) {
-                <tr>
-                    <app-no-data-found />
-                </tr>
-                }
-            </tbody>
-        </table>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+                <div class="wrapper">
+                    <tr>
+                        <td [attr.colspan]="(rbac.allowedToAccess('Cards Allocated.create') || rbac.allowedToAccess('Cards Allocated.update')) ? 11 : 10">
+                            <app-no-data-found />
+                        </td>
+                    </tr>
+                </div>
+            </ng-template>
+        </p-table>
         } @else {
         <app-data-loader-content />
         }

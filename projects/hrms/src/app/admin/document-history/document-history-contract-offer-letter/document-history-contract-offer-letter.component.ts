@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -15,17 +15,20 @@ import { DataLoaderContentComponent } from "../../../shared/data-loader-content/
 import { OfferletterdashboardpipePipe } from "../../../Pipes/offerletterdashboardpipe.pipe";
 import { DateformatPipe } from "../../../pipes/dateformat.pipe";
 import { DatePicker } from 'primeng/datepicker';
+import { TableModule } from 'primeng/table';
+import { Table } from 'primeng/table';
 import { OnboardingFilterService } from '../../../shared/time-off-module-tabs/pending-approvals-tabs/onboarding-filter.service';
 import { SignalsService } from '../../../services/signals.service';
 @Component({
   selector: 'app-document-history-contract-offer-letter',
   imports: [CommonModule, ReactiveFormsModule, TranslateModule, NoDataFoundComponent,
-    DataLoaderContentComponent, OfferletterdashboardpipePipe, DateformatPipe, DatePicker, FormsModule],
+    DataLoaderContentComponent, OfferletterdashboardpipePipe, DateformatPipe, DatePicker, FormsModule, TableModule],
   templateUrl: './document-history-contract-offer-letter.component.html',
   styleUrl: './document-history-contract-offer-letter.component.scss'
 })
 
 export class DocumentHistoryContractOfferLetterComponent implements OnInit, OnDestroy {
+  @ViewChild('contractOfferLetterTable') contractOfferLetterTable!: Table;
   subscription!: Subscription;
   searchValue: any;
   rejectDocument!: FormGroup;
@@ -40,6 +43,9 @@ export class DocumentHistoryContractOfferLetterComponent implements OnInit, OnDe
   maxMonth: Date = new Date();
   allOfferLetters: any[] = []; // full data
   offerLetters: any[] = []; // filtered data shown in table
+  originalOfferLetters: any[] = []; // Store original unsorted data
+  currentSortField: string = '';
+  currentSortOrder: number = 0; // 0 = no sort, 1 = asc, -1 = desc
 
   constructor(private router: Router, private modalService: NgbModal, private fb: FormBuilder, private http: HttpService,
     private authService: AuthService, private conformationPopup: OpenModalService, public rbac: RbacService, private onboardingFilter: OnboardingFilterService,
@@ -89,6 +95,7 @@ export class DocumentHistoryContractOfferLetterComponent implements OnInit, OnDe
       next: (data: any) => {
         this.isloading = false;
         this.allOfferLetters = data;
+        this.originalOfferLetters = [...this.allOfferLetters];
         this.filterByMonth(); // Filter immediately if month is selected
       },
       error: (reason: any) => {
@@ -431,6 +438,77 @@ export class DocumentHistoryContractOfferLetterComponent implements OnInit, OnDe
       error: (err: any) => {
         console.log(err);
       },
+    });
+  }
+
+  getFilteredAndSortedOfferLetters(): any[] {
+    if (!this.searchValue || this.searchValue.trim() === '') {
+      return this.offerLetters;
+    }
+    
+    const searchTerm = this.searchValue.toLowerCase().trim();
+    return this.offerLetters.filter((letter: any) => {
+      const employeeName = letter.employeeName?.toLowerCase() || '';
+      const workLocation = letter.workLocation?.toLowerCase() || '';
+      const subLocation = letter.subLocation?.toLowerCase() || '';
+      const jobRole = letter.jobRole?.toLowerCase() || '';
+      const empSubstatus = letter.empSubstatus?.toLowerCase() || '';
+      
+      return employeeName.includes(searchTerm) ||
+             workLocation.includes(searchTerm) ||
+             subLocation.includes(searchTerm) ||
+             jobRole.includes(searchTerm) ||
+             empSubstatus.includes(searchTerm);
+    });
+  }
+
+  customSort(event: any): void {
+    const field = event.field;
+    
+    // Track current sort state for the clicked field
+    if (this.currentSortField === field) {
+      // Same field clicked - cycle through: asc (1) -> desc (-1) -> reset (0)
+      if (this.currentSortOrder === 1) {
+        // Currently ascending, change to descending
+        this.currentSortOrder = -1;
+        event.order = -1;
+      } else if (this.currentSortOrder === -1) {
+        // Currently descending, reset to original order
+        this.offerLetters = [...this.originalOfferLetters];
+        this.filterByMonth();
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        if (this.contractOfferLetterTable) {
+          this.contractOfferLetterTable.reset();
+        }
+        return;
+      } else {
+        // Currently reset, change to ascending
+        this.currentSortOrder = 1;
+        event.order = 1;
+      }
+    } else {
+      // New field clicked - start with ascending
+      this.currentSortField = field;
+      this.currentSortOrder = 1;
+      event.order = 1;
+    }
+
+    event.data.sort((a: any, b: any) => {
+      let val1: any;
+      let val2: any;
+
+      // Handle different field types
+      if (field === 'offerSentDate') {
+        val1 = new Date(a.offerSentDate);
+        val2 = new Date(b.offerSentDate);
+        return event.order * (val1.getTime() - val2.getTime());
+      } else {
+        // Handle string sorting for other fields
+        val1 = String(a[field] ?? '').trim();
+        val2 = String(b[field] ?? '').trim();
+        return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+      }
     });
   }
 

@@ -8,58 +8,80 @@
 
   <div class="custom-table-content">
     @if(!loading){
-    <table class="w-100">
-      <thead>
-        <th>{{'Expense Title' | translate}}</th>
-        <th>{{'Expense Date' | translate}}</th>
-        <th>{{"Applied Date" | translate}}</th>
-        <th>{{'Total Amount' | translate}}</th>
-        <th>{{'Status' | translate}}</th>
-        <th class="text-center">{{'Rejected Comments' | translate}}</th>
-        <th class="text-center">{{'View Details' | translate}}</th>
-      </thead>
-      <tbody>
-        <ng-container *ngIf="((expenesEmplyeedata | async) ?? []).length > 0; else noDataTemplate">
-          <tr *ngFor="let exp of expenesEmplyeedata | async">
-            <td>{{ exp.expenses_Title }}</td>
-            <td>{{ exp?.expenseitem?.[0]?.expense_Date | dateformat }}</td>
-
-            <td>{{ exp.applied_date | dateformat }}</td>
-            <td> <span *ngIf="exp.totalExpenseAmount" class="me-1">₹</span>{{ exp.totalExpenseAmount }}</td>
-            <td> <span class="me-2 status-colour">● {{ exp.status }}</span>
-            </td>
-            <td class="text-center">
-              <app-info-icon *ngIf="exp?.expenseApproverComments?.length>0; else na"
-                (click)="comments_Function(exp?.expenseApproverComments);openModalcomments(viewcomments)" />
-              <ng-template #na>N/A</ng-template>
-            </td>
-            <td class="text-center">
-              <div class="dropdown">
-                <a data-bs-toggle="dropdown" aria-expanded="false">
-                  <i class="bi bi-three-dots-vertical"></i>
-                </a>
-                <ul class="dropdown-menu custom-dropdown-menu">
-                  <li><a class="dropdown-item" (click)="openModal(viewDetailsModal);viewItem(exp.expenses_ID)">
-                      <i class="bi bi-eye me-2"></i>{{'View' |translate}}</a>
-                  </li>
-                  <li>
-                    <a class="dropdown-item" (click)="openpopupforDownload(openpopupForDownload,exp)">
-                      <i class="bi bi-download me-1"></i>{{'Download' |translate}}
-                    </a>
-                  </li>
-                </ul>
-              </div>
-            </td>
-          </tr>
-        </ng-container>
-        <!-- No Data Found Template -->
-        <ng-template #noDataTemplate>
+    <p-table #dt1 
+             [value]="getFilteredAndSortedExpenses()" 
+             [customSort]="true" 
+             (sortFunction)="customSort($event)"
+             styleClass="p-datatable-gridlines">
+      <ng-template pTemplate="header">
+        <tr>
+          <th pSortableColumn="expenses_Title">
+            {{'Expense Title' | translate}}
+            <p-sortIcon field="expenses_Title"></p-sortIcon>
+          </th>
+          <th pSortableColumn="expense_Date">
+            {{'Expense Date' | translate}}
+            <p-sortIcon field="expense_Date"></p-sortIcon>
+          </th>
+          <th pSortableColumn="applied_date">
+            {{"Applied Date" | translate}}
+            <p-sortIcon field="applied_date"></p-sortIcon>
+          </th>
+          <th pSortableColumn="totalExpenseAmount">
+            {{'Total Amount' | translate}}
+            <p-sortIcon field="totalExpenseAmount"></p-sortIcon>
+          </th>
+          <th pSortableColumn="status">
+            {{'Status' | translate}}
+            <p-sortIcon field="status"></p-sortIcon>
+          </th>
+          <th class="text-center">{{'Rejected Comments' | translate}}</th>
+          <th class="text-center">{{'View Details' | translate}}</th>
+        </tr>
+      </ng-template>
+      
+      <ng-template pTemplate="body" let-exp>
+        <tr>
+          <td>{{ exp.expenses_Title }}</td>
+          <td>{{ exp?.expenseitem?.[0]?.expense_Date | dateformat }}</td>
+          <td>{{ exp.applied_date | dateformat }}</td>
+          <td><span *ngIf="exp.totalExpenseAmount" class="me-1">₹</span>{{ exp.totalExpenseAmount }}</td>
+          <td><span class="me-2 status-colour">● {{ exp.status }}</span></td>
+          <td class="text-center">
+            <app-info-icon *ngIf="exp?.expenseApproverComments?.length>0; else na"
+              (click)="comments_Function(exp?.expenseApproverComments);openModalcomments(viewcomments)" />
+            <ng-template #na>N/A</ng-template>
+          </td>
+          <td class="text-center">
+            <div class="dropdown">
+              <a data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="bi bi-three-dots-vertical"></i>
+              </a>
+              <ul class="dropdown-menu custom-dropdown-menu">
+                <li><a class="dropdown-item" (click)="openModal(viewDetailsModal);viewItem(exp.expenses_ID)">
+                    <i class="bi bi-eye me-2"></i>{{'View' |translate}}</a>
+                </li>
+                <li>
+                  <a class="dropdown-item" (click)="openpopupforDownload(openpopupForDownload,exp)">
+                    <i class="bi bi-download me-1"></i>{{'Download' |translate}}
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+      
+      <ng-template pTemplate="emptymessage">
+        <div class="wrapper">
           <tr>
-            <app-no-data-found />
+            <td colspan="7">
+              <app-no-data-found />
+            </td>
           </tr>
-        </ng-template>
-      </tbody>
-    </table>
+        </div>
+      </ng-template>
+    </p-table>
     }
     @else {
     <app-data-loader-content />

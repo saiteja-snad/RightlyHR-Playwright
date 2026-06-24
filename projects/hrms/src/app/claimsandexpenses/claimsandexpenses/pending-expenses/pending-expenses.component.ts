@@ -16,10 +16,11 @@ import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.
 import { DownloadExpenseComponent } from "../../download-expense/download-expense.component";
 import { DocumentViewIconComponent } from "../../../icons/document-view-icon/document-view-icon.component";
 import { TranslateModule } from '@ngx-translate/core';
+import { TableModule, Table } from 'primeng/table';
 
 @Component({
   selector: 'app-pending-expenses',
-  imports: [CommonModule, DateformatPipe,TranslateModule, NgxDocViewerModule, FormsModule, NoDataFoundComponent, DataLoaderContentComponent, DownloadExpenseComponent, DocumentViewIconComponent],
+  imports: [CommonModule, DateformatPipe,TranslateModule, NgxDocViewerModule, FormsModule, NoDataFoundComponent, DataLoaderContentComponent, DownloadExpenseComponent, DocumentViewIconComponent, TableModule],
   templateUrl: './pending-expenses.component.html',
   styleUrl: './pending-expenses.component.scss'
 })
@@ -31,6 +32,7 @@ export class PendingExpensesComponent implements OnInit, OnDestroy {
   ExpenseViewURL: any;
   flitredWaitingforApprovalExpenses = new BehaviorSubject<any[]>([]);
   @ViewChild('viewattamchment') private viewattamchment!: NgbModal;
+  @ViewChild('dt1') table!: Table;
   expenseheaderiteams!: IExpenseHeaders;
   updataid!: number;
   commentsrecivced = [] as any
@@ -39,7 +41,8 @@ export class PendingExpensesComponent implements OnInit, OnDestroy {
   seletedMouthly: any;
   loading = false
   @ViewChild('commentspopup') modalContent: any;
-  expenesEmplyeedata = new BehaviorSubject<IExpense[]>([])
+  expenesEmplyeedata: IExpense[] = [];
+  originalExpenseData: IExpense[] = [];
   draftsCount: number = 0;
   expensesAttachment: any;
   selectedData = {} as any;
@@ -94,12 +97,55 @@ export class PendingExpensesComponent implements OnInit, OnDestroy {
         next: (data: any) => {
           this.loading = false
           const filteredData = data.filter((item: any) => !item.expenseSummary);
-          this.expenesEmplyeedata.next(filteredData)
+          this.originalExpenseData = [...filteredData];
+          this.expenesEmplyeedata = [...filteredData];
 
         }, error(err) {
           console.log("expensesheadererror", err)
         },
       });
+  }
+
+  getFilteredAndSortedExpenses() {
+    return this.expenesEmplyeedata;
+  }
+
+  customSort(event: any) {
+    const field = event.field;
+    const order = event.order;
+
+    if (order === 0) {
+      // Reset to original order
+      this.expenesEmplyeedata = [...this.originalExpenseData];
+    } else {
+      this.expenesEmplyeedata.sort((a: any, b: any) => {
+        let aVal, bVal;
+
+        if (field === 'expenses_Title') {
+          aVal = a.expenses_Title?.toLowerCase() || '';
+          bVal = b.expenses_Title?.toLowerCase() || '';
+        } else if (field === 'expense_Date') {
+          aVal = new Date(a.expenseitem?.[0]?.expense_Date || 0);
+          bVal = new Date(b.expenseitem?.[0]?.expense_Date || 0);
+        } else if (field === 'applied_date') {
+          aVal = new Date(a.applied_date || 0);
+          bVal = new Date(b.applied_date || 0);
+        } else if (field === 'totalExpenseAmount') {
+          aVal = parseFloat(a.totalExpenseAmount) || 0;
+          bVal = parseFloat(b.totalExpenseAmount) || 0;
+        } else if (field === 'status') {
+          aVal = a.status?.toLowerCase() || '';
+          bVal = b.status?.toLowerCase() || '';
+        } else {
+          aVal = a[field];
+          bVal = b[field];
+        }
+
+        if (aVal < bVal) return -1 * order;
+        if (aVal > bVal) return 1 * order;
+        return 0;
+      });
+    }
   }
   
   viewItem(expid: number,) {

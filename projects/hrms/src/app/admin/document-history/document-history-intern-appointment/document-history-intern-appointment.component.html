@@ -16,19 +16,24 @@
 
     <div class="custom-table-content documnet-history-table-height">
         @if(!dataloader){
-        <table class="w-100">
-            <thead>
+        <p-table #internAppointmentTable [value]="getFilteredAndSortedAppointmentLetters()" [customSort]="true" (sortFunction)="customSort($event)"
+                 styleClass="custom-table" [tableStyle]="{'min-width': '50rem'}">
+            <ng-template pTemplate="header">
                 <tr>
-                    <th class="text-nowrap">{{'Date'|translate}}</th>
-                    <th>{{'Employee Name'|translate}}</th>
+                    <th pSortableColumn="appointmentSentDate" class="text-nowrap">
+                        {{'Date'|translate}}
+                        <p-sortIcon field="appointmentSentDate"></p-sortIcon>
+                    </th>
+                    <th pSortableColumn="employeeName">
+                        {{'Employee Name'|translate}}
+                        <p-sortIcon field="employeeName"></p-sortIcon>
+                    </th>
                     @if(rbac.allowedToAccess('Trainee Appointment Letter Download.view')){
                     <th>{{'Action'|translate}}</th>
                     }
                 </tr>
-            </thead>
-            <tbody>
-                @if(offerLetters.length > 0){
-                @for (appointmentLetter of offerLetters | appointmentletterpipe : searchValue; ; track appointmentLetter.id){
+            </ng-template>
+            <ng-template pTemplate="body" let-appointmentLetter>
                 <tr>
                     <td>{{appointmentLetter.appointmentSentDate | dateformat }}</td>
                     <td>{{appointmentLetter.employeeName ?appointmentLetter.employeeName:'-'}}</td>
@@ -40,15 +45,17 @@
                     </td>
                     }
                 </tr>
-                }
-                }
-                @else {
-                <tr>
-                    <app-no-data-found />
-                </tr>
-                }
-            </tbody>
-        </table>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+                <div class="wrapper">
+                    <tr>
+                        <td [attr.colspan]="rbac.allowedToAccess('Trainee Appointment Letter Download.view') ? 3 : 2">
+                            <app-no-data-found />
+                        </td>
+                    </tr>
+                </div>
+            </ng-template>
+        </p-table>
         }
         @else {
         <app-data-loader-content />

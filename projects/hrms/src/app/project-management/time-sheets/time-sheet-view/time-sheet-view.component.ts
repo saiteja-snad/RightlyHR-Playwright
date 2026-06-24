@@ -984,7 +984,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
 
           if (!payloads.length) {
             this.spinnerLoader = false;
-            this.conformationPopup.openErrorModal('No entries available to clone from the selected source week.');
+            this.conformationPopup.openErrorModal('No entries available to clone from the selected source date range.');
             return;
           }
 

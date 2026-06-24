@@ -140,10 +140,13 @@ export class OnbehalfOfApprovalsComponent {
   isDistinct = true;
   employeeData: any[] = [];
   today: Date = new Date();
-tastType: any[] = [];
+  tastType: any[] = [];
   readonly tabsKey = 'onbehalf-of-approvals-main-tabs';
   navItems: any[] = [];
   filteredNavItems: any[] = [];
+  private totalCountApis = 14;
+  private resolvedCountApis = 0;
+  private userInteracted = false;
   constructor(private http: HttpService,
               private authService: AuthService,
               public rbac: RbacService,
@@ -230,10 +233,6 @@ tastType: any[] = [];
     const visible = items.filter(i => this.rbac.allowedToAccess(i.permission));
     this.filteredNavItems = this.menuOrderService.applySavedTabsOrder(this.tabsKey, visible, (t) => t.tabId);
     this.navItems = visible;
-    if (this.filteredNavItems.length > 0) {
-      this.activeTab = this.filteredNavItems[0].key;
-      this.updateModuleInfo();
-    }
   }
 
   trackByNavId(_: number, item: any): string {
@@ -354,6 +353,8 @@ getTaskType() {
 
   OnclickMyTeam($event: any) {
     if ($event.value) {
+      this.resolvedCountApis = 0;
+      this.userInteracted = false;
       this.employeedata = this.getEmployeeInfo.find((e: any) => e.employeeId == $event.value);
       localStorage.setItem("onbehalfofaproverData", JSON.stringify(this.employeedata));
       this.http.triggerActionSignal();
@@ -399,6 +400,8 @@ getTaskType() {
 
   Onclick($event: any) {
     if ($event.value) {
+      this.resolvedCountApis = 0;
+      this.userInteracted = false;
       this.employeedata = this.employeeiddetails.find((e: any) => e.employeeId == $event.value);
       localStorage.setItem("onbehalfofaproverData", JSON.stringify(this.employeedata));
       this.http.triggerActionSignal();
@@ -444,7 +447,28 @@ getTaskType() {
   }
 
   setActiveTab(tabName: string): void {
+    this.userInteracted = true;
     this.activeTab = tabName;
+    this.updateModuleInfo();
+  }
+
+  private onCountResolved(): void {
+    this.resolvedCountApis++;
+    if (this.resolvedCountApis >= this.totalCountApis) {
+      this.sortNavItemsByCount();
+    }
+  }
+
+  private sortNavItemsByCount(): void {
+    if (this.userInteracted) return;
+    const hasSavedPref = (this.menuOrderService.preferenceV2()?.tabs?.modules ?? [])
+      .some(m => m.moduleKey === this.tabsKey);
+    if (!hasSavedPref) {
+      this.filteredNavItems = [...this.filteredNavItems].sort(
+        (a, b) => this.getNavItemCount(b.countProp) - this.getNavItemCount(a.countProp)
+      );
+    }
+    this.activeTab = this.filteredNavItems[0]?.key ?? this.activeTab;
     this.updateModuleInfo();
   }
 
@@ -453,10 +477,9 @@ getTaskType() {
       next: (data: any) => {
         this.leaves = data.data.filter((item: any) => item.approvalHeader.status != 'Processed' && item.approvalHeader.status != 'Rejected');
         this.timeOffCount = this.leaves.length;
+        this.onCountResolved();
       },
-      error: (reason) => {
-        this.leaves = [];
-      }
+      error: () => { this.leaves = []; this.onCountResolved(); }
     });
   }
 
@@ -465,10 +488,9 @@ getTaskType() {
       next: (data: any) => {
         this.compOff = data.data.filter((item: any) => item.approvalHeader.status != 'Processed' && item.approvalHeader.status != 'Rejected');
         this.compOffCount = this.compOff.length;
+        this.onCountResolved();
       },
-      error: (reason) => {
-        this.compOff = [];
-      }
+      error: () => { this.compOff = []; this.onCountResolved(); }
     });
   }
 
@@ -477,10 +499,9 @@ getTaskType() {
       next: (data: any) => {
         this.wfh = data.data.filter((item: any) => item.approvalHeader.status != 'Processed' && item.approvalHeader.status != 'Rejected');
         this.wfhCount = this.wfh.length;
+        this.onCountResolved();
       },
-      error: (reason) => {
-        this.wfh = [];
-      }
+      error: () => { this.wfh = []; this.onCountResolved(); }
     });
   }
 
@@ -489,11 +510,9 @@ getTaskType() {
       next: (data: any) => {
         this.seperationRequests = data.data.filter((item: any) => item.approvalHeader.status != 'Processed' && item.approvalHeader.status != 'Rejected');
         this.separationsCount = this.seperationRequests.length;
+        this.onCountResolved();
       },
-      error: (reason) => {
-        this.seperationRequests = [];
-        this.separationsCount = 0;
-      }
+      error: () => { this.seperationRequests = []; this.separationsCount = 0; this.onCountResolved(); }
     });
   }
 
@@ -502,56 +521,44 @@ getTaskType() {
       next: (data: any) => {
         this.recalls = data.data.filter((item: any) => item.approvalHeader.status != 'Processed' && item.approvalHeader.status != 'Rejected');
         this.recallsCount = this.recalls.length;
+        this.onCountResolved();
       },
-      error: (reason) => {
-        this.recalls = [];
-        this.recallsCount = 0;
-      }
+      error: () => { this.recalls = []; this.recallsCount = 0; this.onCountResolved(); }
     });
   }
-
 
   getProbationRequestCount(employeeId: any) {
     this.subscription = this.http.getData(`PendingApproval/employee/${employeeId}?moduleId=${environment.ProbationrequestmoduleId}`).subscribe({
       next: (data: any) => {
         this.probationRequests = data.data.filter((item: any) => item.approvalHeader.status != 'Processed' && item.approvalHeader.status != 'Rejected');
         this.probationRequestsCount = this.probationRequests.length;
+        this.onCountResolved();
       },
-      error: (reason) => {
-        this.probationRequests = [];
-        this.probationRequestsCount = 0;
-      }
+      error: () => { this.probationRequests = []; this.probationRequestsCount = 0; this.onCountResolved(); }
     });
   }
-
 
   getTimesheetRequests(employeeId: any) {
     this.subscription = this.http
       .getData(`PendingApproval/getApprovalStatusCounts?EmployeeId=${employeeId}&moduleId=${environment.timesheetModuleId}`)
       .subscribe({
         next: (data: any) => {
-          const moduleData = (data as any[])?.find(
-            x => x.moduleId === environment.timesheetModuleId
-          );
-
+          const moduleData = (data as any[])?.find(x => x.moduleId === environment.timesheetModuleId);
           this.timesheetRequestsCount = moduleData?.totalCount ?? 0;
+          this.onCountResolved();
         },
-        error: () => {
-          this.timesheetRequestsCount = 0;
-        }
+        error: () => { this.timesheetRequestsCount = 0; this.onCountResolved(); }
       });
   }
-
 
   getRemoteLoginoff(employeeId: any) {
     this.subscription = this.http.getData(`PendingApproval/employee/${employeeId}?moduleId=${environment.remoteLoginModuleId}`).subscribe({
       next: (data: any) => {
         this.remoteLogin = data.data.filter((item: any) => item.approvalHeader.status != 'Processed' && item.approvalHeader.status != 'Rejected');
         this.remoteLoginCount = this.remoteLogin.length;
+        this.onCountResolved();
       },
-      error: (reason) => {
-        this.remoteLogin = [];
-      }
+      error: () => { this.remoteLogin = []; this.onCountResolved(); }
     });
   }
 
@@ -561,10 +568,9 @@ getTaskType() {
         console.log(data)
         this.permissions = data.data.filter((item: any) => item.approvalHeader.status != 'Processed' && item.approvalHeader.status != 'Rejected');
         this.permissionsCount = this.permissions.length;
+        this.onCountResolved();
       },
-      error: (reason) => {
-        this.permissions = [];
-      }
+      error: () => { this.permissions = []; this.onCountResolved(); }
     });
   }
 
@@ -573,41 +579,34 @@ getTaskType() {
       .getData(`PendingApproval/getApprovalStatusCounts?EmployeeId=${employeeId}&moduleId=${environment.pendingapprovalemployeid}`)
       .subscribe({
         next: (data: any) => {
-          const moduleData = (data as any[])?.find(
-            x => x.moduleId === environment.pendingapprovalemployeid
-          );
-
+          const moduleData = (data as any[])?.find(x => x.moduleId === environment.pendingapprovalemployeid);
           this.employeeInfoCount = moduleData?.totalCount ?? 0;
+          this.onCountResolved();
         },
-        error: () => {
-          this.employeeInfoCount = 0;
-        }
+        error: () => { this.employeeInfoCount = 0; this.onCountResolved(); }
       });
   }
+
   getExpensesoff(employeeId: any) {
     this.subscription = this.http.getData(`PendingApproval/employee/${employeeId}?moduleId=${environment.expensesModuleId}`).subscribe({
       next: (data: any) => {
         console.log(data)
         this.expenses = data.data.filter((item: any) => item.approvalHeader.status != 'Processed' && item.approvalHeader.status != 'Rejected');
         this.expensesCount = this.expenses.length;
+        this.onCountResolved();
       },
-      error: (reason) => {
-        this.expenses = [];
-      }
+      error: () => { this.expenses = []; this.onCountResolved(); }
     });
   }
-
 
   getRegularizationoff(employeeId: any) {
     this.subscription = this.http.getData(`PendingApproval/employee/${employeeId}?moduleId=${environment.attendanceRegularizationModuleId}`).subscribe({
       next: (data: any) => {
         this.regularization = data.data.filter((item: any) => item.approvalHeader.status !== 'Processed' && item.approvalHeader.status !== 'Rejected');
         this.regularizationCount = this.regularization.length;
+        this.onCountResolved();
       },
-      error: (reason) => {
-        this.regularization = [];
-        this.regularizationCount = 0;
-      }
+      error: () => { this.regularization = []; this.regularizationCount = 0; this.onCountResolved(); }
     });
   }
 
@@ -616,11 +615,9 @@ getTaskType() {
       next: (data: any) => {
         this.extraHours = data.data.filter((item: any) => item.approvalHeader.status !== 'Processed' && item.approvalHeader.status !== 'Rejected');
         this.extraHoursCount = this.extraHours.length;
+        this.onCountResolved();
       },
-      error: (reason) => {
-        this.extraHours = [];
-        this.extraHoursCount = 0;
-      }
+      error: () => { this.extraHours = []; this.extraHoursCount = 0; this.onCountResolved(); }
     });
   }
 
@@ -629,24 +626,21 @@ getTaskType() {
       next: (data: any) => {
         this.traineeRequests = data.data.filter((item: any) => item.approvalHeader.status != 'Processed' && item.approvalHeader.status != 'Rejected');
         this.traineeRequestsCount = this.traineeRequests.length;
+        this.onCountResolved();
       },
-      error: (reason) => {
-        this.traineeRequests = [];
-        this.traineeRequestsCount = 0;
-
-      }
+      error: () => { this.traineeRequests = []; this.traineeRequestsCount = 0; this.onCountResolved(); }
     });
   }
 
   getAllPendingApprovalsNoDue(EmployeeId: any) {
     this.subscription = this.http
-      .getData(
-        `NoDueClearanceForm/getByApproverIdPendingApprovals/${EmployeeId}`
-      )
+      .getData(`NoDueClearanceForm/getByApproverIdPendingApprovals/${EmployeeId}`)
       .subscribe({
         next: (data: any) => {
           this.nodueCount = data.length;
+          this.onCountResolved();
         },
+        error: () => { this.nodueCount = 0; this.onCountResolved(); }
       });
   }
 

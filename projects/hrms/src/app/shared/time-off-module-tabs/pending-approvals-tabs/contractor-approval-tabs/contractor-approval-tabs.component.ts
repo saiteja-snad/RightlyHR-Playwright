@@ -35,6 +35,7 @@ export class ContractorApprovalTabsComponent {
   countRole: any;
   loading = false;
   nodue_Request_data = [] as any[];
+  private userInteracted = false;
   navLinks: NavLink[] = [
     {
       label: 'Contractors',
@@ -83,6 +84,7 @@ export class ContractorApprovalTabsComponent {
           count: countMap.get(link.moduleId) || 0,
         })).sort((a, b) => (b.count ?? 0) - (a.count ?? 0));
         this.loading = false;
+        this.redirectIfNeeded();
       },
       error: (err) => {
         console.error('Error fetching approvals:', err);
@@ -92,6 +94,7 @@ export class ContractorApprovalTabsComponent {
   }
 
   navigateToAccessedRoute(route: string) {
+    this.userInteracted = true;
     const actualRoute = this.accessNav.navigateToAccessedRoute(route);
     if (actualRoute) {
       this.router.navigate([actualRoute]);
@@ -102,6 +105,22 @@ export class ContractorApprovalTabsComponent {
 
   isActiveRoute(link: string): boolean {
     return this.router.url.includes(link);
+  }
+
+  private redirectIfNeeded(): void {
+    if (this.userInteracted) return;
+    if (!this.navLinks || this.navLinks.length === 0) return;
+
+    const currentPath = this.router.url.split('?')[0];
+    if (!currentPath.startsWith('/pending-approvals/contractors')) return;
+
+    const preferred = this.navLinks[0]?.route ?? '';
+    if (!preferred) return;
+
+    const actual = this.accessNav.navigateToAccessedRoute(preferred);
+    const target = actual || preferred;
+    if (currentPath === target || currentPath.startsWith(target + '/')) return;
+    this.router.navigate([target], { queryParamsHandling: 'preserve' });
   }
 
   ngOnDestroy(): void {

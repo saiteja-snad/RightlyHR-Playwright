@@ -4,34 +4,49 @@
     </div>
     <div class="custom-table-content mt-2">
       @if (!loading) {
-        <table class="w-100">
-            <thead>
+        <p-table #deskTable [value]="(deskdata | async) ?? []" [customSort]="true" (sortFunction)="customSort($event)"
+                 styleClass="p-datatable-sm" [tableStyle]="{'min-width': '50rem'}">
+            <ng-template pTemplate="header">
                 <tr>
-                    <th>{{'Desk ID'|translate}}</th>
-                    <th>{{'Desk Type'|translate}}</th>
-                    <th>{{'Desk Status'|translate}}</th>
-                    <th class="text-center">{{'Allocated Date'|translate}}</th>
-                    <th class="text-center">{{'Released Date'|translate}}</th>
+                    <th pSortableColumn="deskName">
+                        {{'Desk ID'|translate}}
+                        <p-sortIcon field="deskName"></p-sortIcon>
+                    </th>
+                    <th pSortableColumn="deskType">
+                        {{'Desk Type'|translate}}
+                        <p-sortIcon field="deskType"></p-sortIcon>
+                    </th>
+                    <th pSortableColumn="status">
+                        {{'Desk Status'|translate}}
+                        <p-sortIcon field="status"></p-sortIcon>
+                    </th>
+                    <th class="text-center" pSortableColumn="allocatedDate">
+                        {{'Allocated Date'|translate}}
+                        <p-sortIcon field="allocatedDate"></p-sortIcon>
+                    </th>
+                    <th class="text-center" pSortableColumn="releavedDate">
+                        {{'Released Date'|translate}}
+                        <p-sortIcon field="releavedDate"></p-sortIcon>
+                    </th>
                 </tr>
-            </thead>
-            <tbody>
-                <ng-container *ngIf="((deskdata | async) ?? []).length > 0; else noDataTemplate">
-                    <tr *ngFor="let data of deskdata | async">
-                        <td>{{ data.deskName }}</td>
-                        <td>{{ data.deskType }}</td>
-                        <td>{{ data.status }}</td>
-                        <td class="text-center text-nowrap">{{ data.allocatedDate |dateformat }}</td>
-                        <td class="text-center text-nowrap">{{ data.releavedDate ? (data.releavedDate | dateformat) : ('N/A'|translate) }}</td>
-                    </tr>
-                </ng-container>
-
-                <ng-template #noDataTemplate>
-                    <tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-data>
+                <tr>
+                    <td>{{ data.deskName }}</td>
+                    <td>{{ data.deskType }}</td>
+                    <td>{{ data.status }}</td>
+                    <td class="text-center text-nowrap">{{ data.allocatedDate |dateformat }}</td>
+                    <td class="text-center text-nowrap">{{ data.releavedDate ? (data.releavedDate | dateformat) : ('N/A'|translate) }}</td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+                <tr>
+                    <td colspan="5">
                         <app-no-data-found />
-                    </tr>
-                </ng-template>
-            </tbody>
-        </table>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
       }
       @else {
         <app-data-loader-content/>

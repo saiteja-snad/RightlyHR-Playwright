@@ -14,13 +14,26 @@
 
     <div class="custom-table-content">
         @if(!loading){
-        <table class="w-100">
-            <thead>
+        <p-table #certificationsTable [value]="(empcertsdata | async) ?? []" [customSort]="true" (sortFunction)="customSort($event)"
+                 styleClass="p-datatable-sm" [tableStyle]="{'min-width': '50rem'}">
+            <ng-template pTemplate="header">
                 <tr>
-                    <th>{{'Certification Name'|translate}}</th>
-                    <th>{{'Certification Id'|translate}}</th>
-                    <th class="text-center">{{'Issued Date'|translate}}</th>
-                    <th class="text-center">{{'Expiry Date'|translate}}</th>
+                    <th pSortableColumn="certificationName">
+                        {{'Certification Name'|translate}}
+                        <p-sortIcon field="certificationName"></p-sortIcon>
+                    </th>
+                    <th pSortableColumn="certificationId">
+                        {{'Certification Id'|translate}}
+                        <p-sortIcon field="certificationId"></p-sortIcon>
+                    </th>
+                    <th class="text-center" pSortableColumn="issuedDate">
+                        {{'Issued Date'|translate}}
+                        <p-sortIcon field="issuedDate"></p-sortIcon>
+                    </th>
+                    <th class="text-center" pSortableColumn="expirationDate">
+                        {{'Expiry Date'|translate}}
+                        <p-sortIcon field="expirationDate"></p-sortIcon>
+                    </th>
                     <th class="text-center">{{'Document'|translate}}</th>
                     @if(canAccess('update','certification') || canAccess('delete','certification')){
                     @if((empinfo?.empstatus?.toLowerCase() !== 'prospective' && empinfo?.empstatus?.toLowerCase() !== 'trainee prospective'
@@ -29,68 +42,68 @@
                     }
                     }
                 </tr>
-            </thead>
-            <tbody>
-                <ng-container *ngIf="((empcertsdata | async) ?? []).length > 0; else noDataTemplate">
-                    <tr *ngFor="let empcreficition of empcertsdata | async">
-                        <td>{{ empcreficition.certificationName }}</td>
-                        <td>{{empcreficition.certificationId}}</td>
-                        <td class="text-center text-nowrap">{{empcreficition.issuedDate | dateformat}}</td>
-                        <td class="text-center text-nowrap">
-                            <span *ngIf="empcreficition.expirationDate != null; else NoExpiration"></span><ng-template
-                                #NoExpiration>{{'No Expiration'|translate}}</ng-template>{{ empcreficition.expirationDate | dateformat }}
-                        </td>
-                        <td class="text-center">
-                            <span *ngIf="empcreficition.attachment;else noData" (click)="onSelectBankProofDownload(empcreficition)">
-                                  <app-download-icon />
+            </ng-template>
+            <ng-template pTemplate="body" let-empcreficition>
+                <tr>
+                    <td>{{ empcreficition.certificationName }}</td>
+                    <td>{{empcreficition.certificationId}}</td>
+                    <td class="text-center text-nowrap">{{empcreficition.issuedDate | dateformat}}</td>
+                    <td class="text-center text-nowrap">
+                        <span *ngIf="empcreficition.expirationDate != null; else NoExpiration">{{ empcreficition.expirationDate | dateformat }}</span>
+                        <ng-template #NoExpiration>{{'No Expiration'|translate}}</ng-template>
+                    </td>
+                    <td class="text-center">
+                        <span *ngIf="empcreficition.attachment;else noData" (click)="onSelectBankProofDownload(empcreficition)">
+                              <app-download-icon />
+                        </span>
+                        <ng-template #noData><span class="text-center">-</span></ng-template>
+                    </td>
+                    @if(canAccess('update','certification') || canAccess('delete','certification')){
+                    @if((empinfo?.empstatus?.toLowerCase() !== 'prospective' && empinfo?.empstatus?.toLowerCase() !== 'trainee prospective'
+                    && empinfo?.empstatus?.toLowerCase() !== 'inactive' && empinfo?.empstatus?.toLowerCase() !== 'trainee inactive' )){
+                    <td class="text-center">
+                        <div class="dropdown">
+                            <span type="button" data-bs-toggle="dropdown">
+                                <i class="bi bi-three-dots-vertical"></i>
                             </span>
-                            <ng-template #noData><span class="text-center">-</span></ng-template>
-                        </td>
-                        @if(canAccess('update','certification') || canAccess('delete','certification')){
-                        @if((empinfo?.empstatus?.toLowerCase() !== 'prospective' && empinfo?.empstatus?.toLowerCase() !== 'trainee prospective'
-                        && empinfo?.empstatus?.toLowerCase() !== 'inactive' && empinfo?.empstatus?.toLowerCase() !== 'trainee inactive' )){
-                        <td class="text-center">
-                            <div class="dropdown">
-                                <span type="button" data-bs-toggle="dropdown">
-                                    <i class="bi bi-three-dots-vertical"></i>
-                                </span>
-                                <ul class="dropdown-menu custom-dropdown-menu">
-                                    @if(canAccess('update','certification')){
-                                    @if((empinfo?.empstatus?.toLowerCase() !== 'prospective' &&
-                                    empinfo?.empstatus?.toLowerCase() !== 'trainee prospective'
-                                    && empinfo?.empstatus?.toLowerCase() !== 'inactive' &&
-                                    empinfo?.empstatus?.toLowerCase() !== 'trainee inactive' )){
-                                    <li (click)="openModalupdate(updateexperincemodal, empcreficition)">
-                                        <a class="dropdown-item">
-                                             <i class="bi bi-pencil me-2"></i>{{'Update'|translate}}
-                                        </a>
-                                    </li>}
-                                    }
-                                    @if(canAccess('delete','certification')){
-                                    @if((empinfo?.empstatus?.toLowerCase() !== 'prospective' &&
-                                    empinfo?.empstatus?.toLowerCase() !== 'trainee prospective'
-                                    && empinfo?.empstatus?.toLowerCase() !== 'inactive' && 
-                                    empinfo?.empstatus?.toLowerCase() !== 'trainee inactive' )){
-                                    <li (click)="opendeletModal(deleteconformation,empcreficition)">
-                                        <a class="dropdown-item">
-                                                <i class="bi bi-trash3 me-2"></i>{{'Delete'|translate}}
-                                        </a>
-                                    </li>}
-                                    }
-                                </ul>
-                            </div>
-                        </td>
-                        }
-                        }
-                    </tr>
-                </ng-container>
-                <ng-template #noDataTemplate>
-                    <tr>
+                            <ul class="dropdown-menu custom-dropdown-menu">
+                                @if(canAccess('update','certification')){
+                                @if((empinfo?.empstatus?.toLowerCase() !== 'prospective' &&
+                                empinfo?.empstatus?.toLowerCase() !== 'trainee prospective'
+                                && empinfo?.empstatus?.toLowerCase() !== 'inactive' &&
+                                empinfo?.empstatus?.toLowerCase() !== 'trainee inactive' )){
+                                <li (click)="openModalupdate(updateexperincemodal, empcreficition)">
+                                    <a class="dropdown-item">
+                                         <i class="bi bi-pencil me-2"></i>{{'Update'|translate}}
+                                    </a>
+                                </li>}
+                                }
+                                @if(canAccess('delete','certification')){
+                                @if((empinfo?.empstatus?.toLowerCase() !== 'prospective' &&
+                                empinfo?.empstatus?.toLowerCase() !== 'trainee prospective'
+                                && empinfo?.empstatus?.toLowerCase() !== 'inactive' && 
+                                empinfo?.empstatus?.toLowerCase() !== 'trainee inactive' )){
+                                <li (click)="opendeletModal(deleteconformation,empcreficition)">
+                                    <a class="dropdown-item">
+                                            <i class="bi bi-trash3 me-2"></i>{{'Delete'|translate}}
+                                    </a>
+                                </li>}
+                                }
+                            </ul>
+                        </div>
+                    </td>
+                    }
+                    }
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+                <tr>
+                    <td [attr.colspan]="canAccess('update','certification') || canAccess('delete','certification') ? 6 : 5">
                         <app-no-data-found />
-                    </tr>
-                </ng-template>
-            </tbody>
-        </table>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
         }
         @else {
         <app-data-loader-content />

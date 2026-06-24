@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { HttpService } from '../../../services/http.service';
@@ -17,17 +17,23 @@ import { Router } from '@angular/router';
 import { SettingsDeleteIconComponent } from "../../../icons/settings-delete-icon/settings-delete-icon.component";
 import { SettingsUpdateIconComponent } from "../../../icons/settings-update-icon/settings-update-icon.component";
 import { DownloadIconComponent } from "../../../icons/download-icon/download-icon.component";
+import { TableModule } from 'primeng/table';
+import { Table } from 'primeng/table';
 
 @Component({
   selector: 'app-certification',
-  imports: [CommonModule, ReactiveFormsModule, DateformatPipe, NoDataFoundComponent, TranslateModule, DataLoaderContentComponent, SettingsDeleteIconComponent, SettingsUpdateIconComponent, DownloadIconComponent],
+  imports: [CommonModule, ReactiveFormsModule, DateformatPipe, NoDataFoundComponent, TranslateModule, DataLoaderContentComponent, SettingsDeleteIconComponent, SettingsUpdateIconComponent, DownloadIconComponent, TableModule],
   templateUrl: './certification.component.html',
   styleUrl: './certification.component.scss'
 })
 export class CertificationComponent implements OnInit, OnDestroy {
+  @ViewChild('certificationsTable') certificationsTable!: Table;
   subscription!: Subscription;
   selectedCertification: any;
   empcertsdata = new BehaviorSubject<any>([]);
+  originalCertsData = [] as any[]; // Store original unsorted data
+  currentSortField: string = '';
+  currentSortOrder: number = 0; // 0 = no sort, 1 = asc, -1 = desc
   empinfo: any
   loading = false
   certificationForm!: FormGroup;
@@ -329,12 +335,70 @@ export class CertificationComponent implements OnInit, OnDestroy {
 
           this.loading = false
           this.empcertsdata.next(data);
+          this.originalCertsData = [...data];
         },
         error: (err: any) => {
           console.log(err);
           this.loading = false
         },
       });
+  }
+
+  customSort(event: any): void {
+    const field = event.field;
+    
+    // Track current sort state for the clicked field
+    if (this.currentSortField === field) {
+      // Same field clicked - cycle through: asc (1) -> desc (-1) -> reset (0)
+      if (this.currentSortOrder === 1) {
+        // Currently ascending, change to descending
+        this.currentSortOrder = -1;
+        event.order = -1;
+      } else if (this.currentSortOrder === -1) {
+        // Currently descending, reset to original order
+        this.empcertsdata.next([...this.originalCertsData]);
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        if (this.certificationsTable) {
+          this.certificationsTable.reset();
+        }
+        return;
+      } else {
+        // Currently reset, change to ascending
+        this.currentSortOrder = 1;
+        event.order = 1;
+      }
+    } else {
+      // New field clicked - start with ascending
+      this.currentSortField = field;
+      this.currentSortOrder = 1;
+      event.order = 1;
+    }
+
+    event.data.sort((a: any, b: any) => {
+      let val1: any;
+      let val2: any;
+
+      // Handle direct fields
+      val1 = a[field];
+      val2 = b[field];
+
+      // Handle date fields
+      if (['issuedDate', 'expirationDate'].includes(field)) {
+        if (!val1 && !val2) return 0;
+        if (!val1) return event.order * 1; // null dates go to end
+        if (!val2) return event.order * -1;
+        
+        const date1 = new Date(val1);
+        const date2 = new Date(val2);
+        return event.order * (date1.getTime() - date2.getTime());
+      }
+
+      // Handle string sorting for all other fields
+      val1 = String(val1 ?? '').trim();
+      val2 = String(val2 ?? '').trim();
+      return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+    });
   }
 
   onReset(): void {

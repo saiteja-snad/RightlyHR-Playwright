@@ -4,7 +4,7 @@
             <div>
                 <app-project-management-module-info />
             </div>
-    
+
             <form [formGroup]="datepickerForm">
                 <div class="d-flex align-items-center gap-3">
                     <div class="total-hrs">{{"Total Logged Hours" }} :<span class="total-duration ms-1">
@@ -40,11 +40,11 @@
                     </div>
                     }
                     <button type="button" class="custom-btn btn-primary" [disabled]="datepickerForm.invalid ||
-                            (rbac.allowedToAccess('All Employees (Timesheet).view') && (activeEmplist.length === 0 || 
-                            !datepickerForm.get('resourceId')?.value?.length)) || (rbac.allowedToAccess('My Team (Timesheet).view') && 
-                            !rbac.allowedToAccess('All Employees (Timesheet).view') && (resourcesList.length === 0 || 
+                            (rbac.allowedToAccess('All Employees (Timesheet).view') && (activeEmplist.length === 0 ||
+                            !datepickerForm.get('resourceId')?.value?.length)) || (rbac.allowedToAccess('My Team (Timesheet).view') &&
+                            !rbac.allowedToAccess('All Employees (Timesheet).view') && (resourcesList.length === 0 ||
                             !datepickerForm.get('resourceId')?.value?.length))" (click)="onSubmit()">{{'Apply' | translate}}</button>
-    
+
                     <div *ngIf="rbac.allowedToAccess('Team Time Sheet Filters Tab.view')">
                         <button type="button" class="custom-btn btn-secondary position-relative" (click)="toggleFilters(filterContent)">
                             <i class="bi bi-funnel me-2"></i>Filters
@@ -92,7 +92,7 @@
                                     }
                                     @else{ <span class="project-name-nopermission">{{emp.employee.name}}</span> }
                                 </td>
-                                <td class="text-center" *ngFor="let day of emp.dailyData" [ngStyle]="{'color': day.dailySummary.colour, 
+                                <td class="text-center" *ngFor="let day of emp.dailyData" [ngStyle]="{'color': day.dailySummary.colour,
                                 'background': day.dailySummary.backgroundColor}">
                                     <div class="d-flex flex-column align-items-center gap-2">
                                         @if (day.dailySummary.loggedHHMM !== '0:00') {
@@ -194,7 +194,7 @@
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="custom-poup-header-content popup-header-border">
             <div>
-                <p class="popup-heading mb-0">{{'Timesheet Breakdown' | translate}} - {{selectedEmployeeName}} 
+                <p class="popup-heading mb-0">{{'Timesheet Breakdown' | translate}} - {{selectedEmployeeName}}
                     ({{ selectedEntries[0]?.entryDate | dateformat }})</p>
             </div>
             <div>
@@ -278,16 +278,24 @@
                                 <td [ngClass]="{'approved': entry.status === 'Processed', 'rejected': entry.status === 'Rejected',
                                  'waiting': entry.status === 'Waiting for Approval', 'draft': entry.status === 'draft'}">
                                     {{ entry.status.toLowerCase() == "processed" ? "Approved" : entry.status }}</td>
-                                    <td>
+                                    <td class="text-center action-dropdown-cell">
                                         @if(entry.status?.toLowerCase() === 'waiting for approval' && entry.finalApproverId===this.empdata.employeeId) {
-                                        <div class="d-flex justify-content-center gap-3">
-                                            <a (click)="openModalapprovals(approverPopup, entry, 'Processed')">
-                                                <img src="/icons/check-approve-icon.png" class="action-img"
-                                                    alt="Approve" />
+                                        <div class="dropdown">
+                                            <a data-bs-toggle="dropdown" aria-expanded="false" class="cursor-pointer">
+                                                <i class="bi bi-three-dots-vertical"></i>
                                             </a>
-                                            <a (click)="openModalapprovals(rejectPopup, entry, 'Rejected')">
-                                                <img src="/icons/cancel-circle.png" class="action-img" alt="Reject" />
-                                            </a>
+                                            <ul class="dropdown-menu custom-dropdown-menu">
+                                                <li>
+                                                    <a class="dropdown-item" (click)="openModalapprovals(approverPopup, entry, 'Processed')">
+                                                        <i class="bi bi-check-circle me-2"></i>{{ 'Approve' | translate }}
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a class="dropdown-item" (click)="openModalapprovals(rejectPopup, entry, 'Rejected')">
+                                                        <i class="bi bi-x-circle me-2"></i>{{ 'Reject' | translate }}
+                                                    </a>
+                                                </li>
+                                            </ul>
                                         </div>
                                     }
                                     @else{

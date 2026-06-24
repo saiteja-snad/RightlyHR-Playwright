@@ -1,258 +1,329 @@
 <div class="employee-dashboard-container">
-    <div class="dashboard-top-section mb-3">
-        <div class="flex-between-content">
-            <div class="welcome-text d-flex align-items-center gap-1">
-                <div>{{greetingMessage}},</div>
-                <div class="name">{{this.employeedata.firstName}} {{this.employeedata.middleName}}
-                    {{this.employeedata.lastName}}!</div>
-            </div>
+  <div class="dashboard-top-section mb-3">
+    <div class="flex-between-content">
+      <div class="welcome-text d-flex align-items-center gap-1">
+        <div>{{greetingMessage}},</div>
+        <div class="name">{{this.employeedata.firstName}} {{this.employeedata.middleName}}
+          {{this.employeedata.lastName}}!</div>
+      </div>
 
-            @if (rbac.allowedToAccess('Organization Toggle.view') || rbac.allowedToAccess('Manager Toggle.view')) {
-            <div class="tab-btns mb-2">
-                <div class="item" routerLink="/dashboard" routerLinkActive="active">Home</div>
-                <div class="item" routerLink="/dashboard/rm-tm" *ngIf="rbac.allowedToAccess('Manager Toggle.view')">Team</div>
-                <div class="item" routerLink="/dashboard/org" *ngIf="rbac.allowedToAccess('Organization Toggle.view')">Organization</div>
+      @if (rbac.allowedToAccess('Organization Toggle.view') || rbac.allowedToAccess('Manager Toggle.view')) {
+      <div class="tab-btns mb-2">
+        <div class="item" routerLink="/dashboard" routerLinkActive="active">Home</div>
+        <div class="item" routerLink="/dashboard/rm-tm" *ngIf="rbac.allowedToAccess('Manager Toggle.view')">Team</div>
+        <div class="item" routerLink="/dashboard/org" *ngIf="rbac.allowedToAccess('Organization Toggle.view')">
+          Organization</div>
+      </div>
+      }
+    </div>
+
+    <div class="top-grid" [ngClass]="{'top-custom-grid': rbac.allowedToAccess('My Team Availability.view')}">
+      <!--Day Display-->
+      @if(rbac.allowedToAccess('Sun View.view')){
+      @if(!intialLoading ){
+      <div class="present-day-content">
+        <div class="gesture-text mb-1">Have a nice day at work!</div>
+        <div class="content-card day-date-content">
+          <div class="d-flex align-items-center gap-3">
+            <div>
+              <img [src]="iconPath" alt="Icon" class="icon">
             </div>
-            }
+            <div>
+              <div class="time text-nowrap">{{ currentTime | date: 'HH:mm:ss' }}</div>
+              <div class="date">{{ currentTime | date: 'MMMM d, y' }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      }@else {
+      <p-skeleton height="8rem" />
+      }
+      }
+      <!--Attendance Display-->
+      @if(rbac.allowedToAccess('Attendance Overview.view')){
+      <div class="content-card attendance-content">
+        @if(!attendanceLoader && attendanceData?.data?.attendanceData?.length){
+        <div class="flex-between-content mb-3">
+          <div class="summary-header d-inline-flex gap-1">
+            <div class="section-title">Attendance Overview</div>
+            <div>
+              <app-module-info-icon placement="bottom" [ngbPopover]="attendancoverview" class="module-icon" />
+              <ng-template #attendancoverview>
+                <div class="module-info-text">{{attendancoverviewinfo}}</div>
+              </ng-template>
+            </div>
+          </div>
         </div>
 
-        <div class="top-grid" [ngClass]="{'top-custom-grid': rbac.allowedToAccess('My Team Availability.view')}">
-            <!--Day Display-->
-            @if(rbac.allowedToAccess('Sun View.view')){
-            @if(!intialLoading ){
-            <div class="present-day-content">
-                <div class="gesture-text mb-1">Have a nice day at work!</div>
-                <div class="content-card day-date-content">
-                    <div class="d-flex align-items-center gap-3">
-                        <div>
-                            <img [src]="iconPath" alt="Icon" class="icon">
-                        </div>
-                        <div>
-                            <div class="time text-nowrap">{{ currentTime | date: 'HH:mm:ss' }}</div>
-                            <div class="date">{{ currentTime | date: 'MMMM d, y' }}</div>
-                        </div>
-                    </div>
-                </div>
+        <div class="status">{{ attendanceData.data.attendanceData[0].status }}</div>
+        <div class="d-flex justify-content-center gap-3 pt-3 mb-3">
+          <div>
+            @if (attendanceData.data.attendanceData[0].status.toLowerCase() === 'wfh') {
+            <app-wfh-icon />
+            }
+            @else if (attendanceData.data.attendanceData[0].status.toLowerCase() === 'leave') {
+            <app-leave-icon />
+            }
+            @else {
+            <app-finger-print-icon />
+            }
+          </div>
+          <div>
+            <div class="date mb-1">{{ attendanceData.data.attendanceData[0].date | date: 'MMMM d, y' }}
             </div>
-            }@else {
-            <p-skeleton height="8rem" />
-            }
-            }
-            <!--Attendance Display-->
-            @if(rbac.allowedToAccess('Attendance Overview.view')){
-            <div class="content-card attendance-content">
-                @if(!attendanceLoader && attendanceData?.data?.attendanceData?.length){
-                <div class="flex-between-content mb-3">
-                    <div class="summary-header d-inline-flex gap-1">
-                        <div class="section-title">Attendance Overview</div>
-                        <div>
-                            <app-module-info-icon placement="bottom" [ngbPopover]="attendancoverview"
-                                class="module-icon" />
-                            <ng-template #attendancoverview>
-                                <div class="module-info-text">{{attendancoverviewinfo}}</div>
-                            </ng-template>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="status">{{ attendanceData.data.attendanceData[0].status }}</div>
-                <div class="d-flex justify-content-center gap-3 pt-3 mb-3">
-                    <div>
-                        @if (attendanceData.data.attendanceData[0].status.toLowerCase() === 'wfh') {
-                        <app-wfh-icon />
-                        }
-                        @else if (attendanceData.data.attendanceData[0].status.toLowerCase() === 'leave') {
-                        <app-leave-icon />
-                        }
-                        @else {
-                        <app-finger-print-icon />
-                        }
-                    </div>
-                    <div>
-                        <div class="date mb-1">{{ attendanceData.data.attendanceData[0].date | date: 'MMMM d, y' }}
-                        </div>
-                        <div class="d-flex align-items-center gap-2">
-                            <div class="start-end-time-text">First In:
-                                <span class="time">{{ attendanceData.data.attendanceData[0].firstLogin ?
-                                    (attendanceData.data.attendanceData[0].firstLogin | date:'HH:mm:ss') : '-'}}</span>
-                            </div>
-                            <br>
-                            <div class="start-end-time-text"><span class="text-nowrap">Last Out:</span>
-                                <span class="time">{{ attendanceData.data.attendanceData[0].lastLogout ?
-                                    (attendanceData.data.attendanceData[0].lastLogout | date:'HH:mm:ss') : '-'}}</span>
-                            </div>
-                            @if( attendanceData.data.attendanceData[0].status !== 'WFH' &&
-                            attendanceData.data.attendanceData[0].status !== 'Leave'
-                            && attendanceData.data.attendanceData[0].status !== 'Absent'){
-                            <div>
-                                <app-dash-att-icon alt="Icon" class="info-icon" (click)="openModalLarge(punchintimes); dayLogsData(attendanceData.data.attendanceData[0].biometricLogs,
+            <div class="d-flex align-items-center gap-2">
+              <div class="start-end-time-text">First In:
+                <span class="time">{{ attendanceData.data.attendanceData[0].firstLogin ?
+                  (attendanceData.data.attendanceData[0].firstLogin | date:'HH:mm:ss') : '-'}}</span>
+              </div>
+              <br>
+              <div class="start-end-time-text"><span class="text-nowrap">Last Out:</span>
+                <span class="time">{{ attendanceData.data.attendanceData[0].lastLogout ?
+                  (attendanceData.data.attendanceData[0].lastLogout | date:'HH:mm:ss') : '-'}}</span>
+              </div>
+              @if( attendanceData.data.attendanceData[0].status !== 'WFH' &&
+              attendanceData.data.attendanceData[0].status !== 'Leave'
+              && attendanceData.data.attendanceData[0].status !== 'Absent'){
+              <div>
+                <app-dash-att-icon alt="Icon" class="info-icon" (click)="openModalLarge(punchintimes); dayLogsData(attendanceData.data.attendanceData[0].biometricLogs,
                                     attendanceData.data.attendanceData[0].date,attendanceData.data.attendanceData[0].duration.biometricDuration,
                                     attendanceData.data.attendanceData[0].permissions,attendanceData.data.attendanceData[0].regularizations,
                                     attendanceData.data.attendanceData[0].duration.breakDuration)" />
-                            </div>
-                            }
-                        </div>
-                    </div>
-                </div>
-                <div class="flex-center-content w-100 mb-2">
-                    <div class="flex-between-content previous-day">
-                        <div class="previous-time-text">Previous Day Entry</div>
-                        <div class="mx-1">:</div>
-                        <div class="previous-duration">{{ previousDurationLabel }}</div>
-                    </div>
-                </div>
-                }@else {
-                <p-skeleton height="8rem" />
-                }
+              </div>
+              }
             </div>
-            }
-            <!-- displaying my team avaliability -->
-            @if (!isScreenLessThan1600) {
-            <div>
-                <ng-container *ngTemplateOutlet="teamAvaliabilityContent"></ng-container>
-            </div>
-            }
+          </div>
         </div>
+        <div class="flex-center-content w-100 mb-2">
+          <div class="flex-between-content previous-day">
+            <div class="previous-time-text">Previous Day Entry</div>
+            <div class="mx-1">:</div>
+            <div class="previous-duration">{{ previousDurationLabel }}</div>
+          </div>
+        </div>
+        }@else {
+        <p-skeleton height="8rem" />
+        }
+      </div>
+      }
+      <!-- displaying my team avaliability -->
+      @if (!isScreenLessThan1600) {
+      <div>
+        <ng-container *ngTemplateOutlet="teamAvaliabilityContent"></ng-container>
+      </div>
+      }
     </div>
+  </div>
 
-    <div class="dashboard-content-grid" [ngClass]="{'custom-grid-second': isScreenLessThan1600}">
-        <!-- Team Availability -->
-        @if (isScreenLessThan1600) {
+  <!--Quick Links-->
+  @if(rbac.allowedToAccess('Quick Links.view')){
+  <div class="content-card quick-links-card span-right">
+    <div class="flex-between-content mb-3 py-3">
+      <div class="summary-header d-inline-flex gap-1">
+        <div class="section-title">Quick Links</div>
         <div>
-            <ng-container *ngTemplateOutlet="teamAvaliabilityContent"></ng-container>
+          <app-module-info-icon placement="bottom" [ngbPopover]="quickLinksContent" class="module-icon" />
+          <ng-template #quickLinksContent>
+            <div class="module-info-text">{{quickLinksInfo}}</div>
+          </ng-template>
         </div>
-        }
-        <!-- Consumed Leave Types -->
-        @if(rbac.allowedToAccess('Consumed Leave Types.view')){
-        <div class="content-card">
-            <div class="flex-between-content mb-3">
-                <div class="summary-header d-inline-flex gap-1">
-                    <div class="section-title">Consumed Leave Types</div>
-                    <div>
-                        <app-module-info-icon placement="bottom" [ngbPopover]="leavesConsumed" class="module-icon" />
-                        <ng-template #leavesConsumed>
-                            <div class="module-info-text">{{leavesConsumedinfo}}</div>
-                        </ng-template>
-                    </div>
-                </div>
-                <div class="d-flex align-items-center total">Leaves Consumed
-                    <span class="me-1">:</span>
-                    <div class="count">{{ totalLeaves.used }}</div>
-                    <div class="total-allowed">/{{ totalLeaves.allowed }}</div>
-                </div>
-            </div>
-            @if(!consumedLeavesLoader){
-            <div [ngClass]="{'graph-no-data-content': leavesList.length === 0}" class="leave-list-content pb-2">
-                <div *ngFor="let leave of leavesList">
-                    <div class="leave-card gap-4 cursor" (click)="navigateToAccessedRoute('/time-off/leaves')">
-                        <div [style.color]="leave.color" class="leave-name text-nowrap">{{ leave.name }}</div>
-                        <div class="d-flex align-items-center">
-                            <div class="leaves-used-count"><b>{{ leave.used }}</b></div>
-                            <div class="leaves-allowed-count">/{{ leave.allowed }}</div>
-                        </div>
-                    </div>
-                </div>
-                <div *ngIf="leavesList.length === 0">
-                    <app-no-data-found />
-                </div>
-            </div>
-            }@else{
-            <p-skeleton height="8rem" />
-            }
-        </div>
-        }
-        <!-- Team Members Section -->
-        @if(rbac.allowedToAccess('Team Members.view')){
-        <div class="content-card">
-            <div class="flex-between-content mb-3">
-                <div class="summary-header d-inline-flex gap-2">
-                    <div class="section-title">My Team Members ({{teamMembers.length}})</div>
-                    <div>
-                        <app-module-info-icon placement="bottom" [ngbPopover]="myTeamMemberscontent"
-                            class="module-icon" />
-                        <ng-template #myTeamMemberscontent>
-                            <div class="module-info-text">{{myteammemberinfo}}</div>
-                        </ng-template>
-                    </div>
-                </div>
-            </div>
-
-            <div class="member-list-container">
-                <p-tabs scrollable>
-                    <p-tablist p-tablistNav>
-                        <ng-container *ngIf="!loading; else tabsSkeleton">
-                            @for (emp of teamMembers; track $index) {
-                            <p-tab p-tablistTab>
-                                <div class="custom-border-content">
-                                    <div class="member-card text-center">
-                                        <ng-container *ngIf="emp.photo; else showProfileIcon">
-                                            <img [src]="emp.photo ?? 'images/alternate.png'" class="profile-img mb-2" />
-                                        </ng-container>
-                                        <ng-template #showProfileIcon>
-                                            <app-profile-icon [iconWidth]="'45'" [iconHeight]="'45'" class=" mb-2" />
-                                        </ng-template>
-                                        <div class="name text-wrap">{{ emp.name }}</div>
-                                        <div class="role text-wrap">{{ emp.role }}</div>
-                                    </div>
-                                </div>
-                            </p-tab>
-                            }
-                        </ng-container>
-                        <ng-template #tabsSkeleton>
-                            <p-tab *ngFor="let i of [1, 2, 3, 4,5,6,7,8,9]">
-                                <div class="member-card text-center py-3">
-                                    <p-skeleton shape="circle" size="2.5rem" styleClass="mb-3 mx-auto" />
-                                    <p-skeleton width="8rem" height="1rem" styleClass="mx-auto" />
-                                </div>
-                            </p-tab>
-                        </ng-template>
-                    </p-tablist>
-                </p-tabs>
-            </div>
-        </div>
-        }
-        <!-- Weekly Work Logs -->
-        @if(rbac.allowedToAccess('Weekly Work Logs.view')){
-        <div class="content-card overflow-visible">
-            <div class="flex-between-content mb-3">
-                <div class="summary-header d-inline-flex gap-1">
-                    <div class="section-title">Weekly Work Logs</div>
-                    <div>
-                        <app-module-info-icon placement="bottom" [ngbPopover]="WeeklyWorkLogscontent"
-                            class="module-icon" />
-                        <ng-template #WeeklyWorkLogscontent>
-                            <div class="module-info-text">{{Weeklyworklogsinfo}}</div>
-                        </ng-template>
-                    </div>
-                </div>
-                <div class="d-flex align-items-center gap-2">
-                    <div class="custom-date-range-picker">
-                        <p-calendar [(ngModel)]="selectedWeek" selectionMode="range" [showIcon]="true"
-                            [readonlyInput]="true" [disabledDates]="disabledDates" (onSelect)="onWeekSelect($event)" />
-                    </div>
-                    <button class="custom-btn btn-primary view-attendance-btn" (click)="myattendance()">View Attendance</button>
-                </div>
-            </div>
-            @if(!weaklyloghrsloader){
-            <div class="total-hrs">{{totalHours}} <sub class="suffix-text">Work done this week</sub></div>
-            <div class="disply-grid-custom">
-                <div class="week-grid">
-                    <div class="text-center day-item py-4" *ngFor="let day of weeklyWorkLogs">
-                        <div class="work-time" *ngIf="day.time !== '00:00:00'">{{ day.time }}</div>
-                        <div class="status" *ngIf="day.time === '00:00:00'" [style.color]="day.statusColor">{{ day.status }}</div>
-                        <div class="day-name">{{ day.day }}</div>
-                    </div>
-                </div>
-            </div>
-            }
-            @else {
-            <div class="content-card">
-                <p-skeleton height="8rem" />
-            </div>
-            }
-        </div>
-        }
+      </div>
+      @if (selectedQuickLinksCount > 0) {
+      <button type="button" class="quick-links-remove-btn" (click)="removeSelectedQuickLinks()">
+        Remove
+        <span>({{ selectedQuickLinksCount }})</span>
+      </button>
+      }
     </div>
+
+    <div class="quick-links-scroll" cdkScrollable>
+      <div class="quick-links-grid quick-links-drop-list" cdkDropList cdkDropListOrientation="horizontal"
+        [cdkDropListData]="quickLinks" [cdkDropListConnectedTo]="quickLinksConnectedDropListIds"
+        [id]="quickLinksDropListId"
+        [cdkDropListAutoScrollStep]="24"
+        (cdkDropListDropped)="onQuickLinksDrop($event)">
+        @for (item of quickLinks; track item.route) {
+        <div class="quick-links-content text-center" [class.quick-links-removable]="isQuickLinkRemovable(item.route)"
+          [class.quick-links-selected]="isQuickLinkSelected(item.route)" cdkDrag cdkDragBoundary=".quick-links-card"
+          [cdkDragData]="item">
+          @if (isQuickLinkRemovable(item.route)) {
+          <button type="button" class="quick-link-select-toggle" [class.selected]="isQuickLinkSelected(item.route)"
+            (click)="toggleQuickLinkSelection(item.route, $event)" aria-label="Select quick link">
+            <span class="quick-link-select-check"></span>
+          </button>
+          }
+          <img [src]="item.icon" [alt]="item.label" class="icon mb-2" />
+          <div class="link" (click)="openQuickLink(item.route, $event)">
+            <u>
+              @if (isPendingApprovalsQuickLink(item)) {
+              <span class="quick-link-pa-label">
+                <span class="quick-link-pa-prefix"
+                  ngbPopover="Pending Approvals"
+                  triggers="mouseenter:mouseleave"
+                  placement="top"
+                  popoverClass="quick-link-pa-popover">PA</span>-{{ getPendingApprovalsQuickLinkSuffix(item.label) }}
+              </span>
+              }
+              @else {
+              {{ item.label }}
+              }
+            </u>
+          </div>
+          <ng-template cdkDragPreview>
+            <div class="quick-links-content quick-links-drag-preview text-center">
+              <img [src]="item.icon" [alt]="item.label" class="icon mb-2" />
+              <div class="link"><u>{{ item.label }}</u></div>
+            </div>
+          </ng-template>
+          <ng-template cdkDragPlaceholder>
+            <div class="quick-links-content quick-links-drag-placeholder"></div>
+          </ng-template>
+        </div>
+        }
+        <div *ngIf="quickLinks.length === 0" class="quick-links-empty w-100 text-center">
+          <app-no-data-found />
+        </div>
+      </div>
+    </div>
+  </div>
+  }
+
+    <div class="dashboard-content-grid mt-3" [ngClass]="{'custom-grid-second': isScreenLessThan1600}">
+    <!-- Team Availability -->
+    @if (isScreenLessThan1600) {
+    <div>
+      <ng-container *ngTemplateOutlet="teamAvaliabilityContent"></ng-container>
+    </div>
+    }
+    <!-- Consumed Leave Types -->
+    @if(rbac.allowedToAccess('Consumed Leave Types.view')){
+    <div class="content-card">
+      <div class="flex-between-content mb-3">
+        <div class="summary-header d-inline-flex gap-1">
+          <div class="section-title">Consumed Leave Types</div>
+          <div>
+            <app-module-info-icon placement="bottom" [ngbPopover]="leavesConsumed" class="module-icon" />
+            <ng-template #leavesConsumed>
+              <div class="module-info-text">{{leavesConsumedinfo}}</div>
+            </ng-template>
+          </div>
+        </div>
+        <div class="d-flex align-items-center total">Leaves Consumed
+          <span class="me-1">:</span>
+          <div class="count">{{ totalLeaves.used }}</div>
+          <div class="total-allowed">/{{ totalLeaves.allowed }}</div>
+        </div>
+      </div>
+      @if(!consumedLeavesLoader){
+      <div [ngClass]="{'graph-no-data-content': leavesList.length === 0}" class="leave-list-content pb-2">
+        <div *ngFor="let leave of leavesList">
+          <div class="leave-card gap-4 cursor" (click)="navigateToAccessedRoute('/time-off/leaves')">
+            <div [style.color]="leave.color" class="leave-name text-nowrap">{{ leave.name }}</div>
+            <div class="d-flex align-items-center">
+              <div class="leaves-used-count"><b>{{ leave.used }}</b></div>
+              <div class="leaves-allowed-count">/{{ leave.allowed }}</div>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="leavesList.length === 0">
+          <app-no-data-found />
+        </div>
+      </div>
+      }@else{
+      <p-skeleton height="8rem" />
+      }
+    </div>
+    }
+    <!-- Team Members Section -->
+    @if(rbac.allowedToAccess('Team Members.view')){
+    <div class="content-card">
+      <div class="flex-between-content mb-3">
+        <div class="summary-header d-inline-flex gap-2">
+          <div class="section-title">My Team Members ({{teamMembers.length}})</div>
+          <div>
+            <app-module-info-icon placement="bottom" [ngbPopover]="myTeamMemberscontent" class="module-icon" />
+            <ng-template #myTeamMemberscontent>
+              <div class="module-info-text">{{myteammemberinfo}}</div>
+            </ng-template>
+          </div>
+        </div>
+      </div>
+
+      <div class="member-list-container">
+        <p-tabs scrollable>
+          <p-tablist p-tablistNav>
+            <ng-container *ngIf="!loading; else tabsSkeleton">
+              @for (emp of teamMembers; track $index) {
+              <p-tab p-tablistTab>
+                <div class="custom-border-content">
+                  <div class="member-card text-center">
+                    <ng-container *ngIf="emp.photo; else showProfileIcon">
+                      <img [src]="emp.photo ?? 'images/alternate.png'" class="profile-img mb-2" />
+                    </ng-container>
+                    <ng-template #showProfileIcon>
+                      <app-profile-icon [iconWidth]="'45'" [iconHeight]="'45'" class=" mb-2" />
+                    </ng-template>
+                    <div class="name text-wrap">{{ emp.name }}</div>
+                    <div class="role text-wrap">{{ emp.role }}</div>
+                  </div>
+                </div>
+              </p-tab>
+              }
+            </ng-container>
+            <ng-template #tabsSkeleton>
+              <p-tab *ngFor="let i of [1, 2, 3, 4,5,6,7,8,9]">
+                <div class="member-card text-center py-3">
+                  <p-skeleton shape="circle" size="2.5rem" styleClass="mb-3 mx-auto" />
+                  <p-skeleton width="8rem" height="1rem" styleClass="mx-auto" />
+                </div>
+              </p-tab>
+            </ng-template>
+          </p-tablist>
+        </p-tabs>
+      </div>
+    </div>
+    }
+    <!-- Weekly Work Logs -->
+    @if(rbac.allowedToAccess('Weekly Work Logs.view')){
+    <div class="content-card overflow-visible">
+      <div class="flex-between-content mb-3">
+        <div class="summary-header d-inline-flex gap-1">
+          <div class="section-title">Weekly Work Logs</div>
+          <div>
+            <app-module-info-icon placement="bottom" [ngbPopover]="WeeklyWorkLogscontent" class="module-icon" />
+            <ng-template #WeeklyWorkLogscontent>
+              <div class="module-info-text">{{Weeklyworklogsinfo}}</div>
+            </ng-template>
+          </div>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+          <div class="custom-date-range-picker">
+            <p-calendar [(ngModel)]="selectedWeek" selectionMode="range" [showIcon]="true" [readonlyInput]="true"
+              [disabledDates]="disabledDates" (onSelect)="onWeekSelect($event)" />
+          </div>
+          <button class="custom-btn btn-primary view-attendance-btn" (click)="myattendance()">View Attendance</button>
+        </div>
+      </div>
+      @if(!weaklyloghrsloader){
+      <div class="total-hrs">{{totalHours}} <sub class="suffix-text">Work done this week</sub></div>
+      <div class="disply-grid-custom">
+        <div class="week-grid">
+          <div class="text-center day-item py-4" *ngFor="let day of weeklyWorkLogs">
+            <div class="work-time" *ngIf="day.time !== '00:00:00'">{{ day.time }}</div>
+            <div class="status" *ngIf="day.time === '00:00:00'" [style.color]="day.statusColor">{{ day.status }}</div>
+            <div class="day-name">{{ day.day }}</div>
+          </div>
+        </div>
+      </div>
+      }
+      @else {
+      <div class="content-card">
+        <p-skeleton height="8rem" />
+      </div>
+      }
+    </div>
+    }
+  </div>
 </div>
 
 <!--Resources List-->
@@ -305,181 +376,179 @@
 
 <!-- Punch In Times -->
 <ng-template #punchintimes let-modal>
-    <div class="custom-main-popup-container" ngbAutofocus>
-        <div class="custom-poup-header-content popup-header-border">
-            <div class="pt-2">
-                <p class="popup-heading mb-0">Attendance Logs ({{attendanceselectedDate|dateformat}})</p>
-            </div>
-            <div>
-                <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
-            </div>
-        </div>
-
-        <div class="custom-main-popup-content custom-accordians">
-            <p-accordion value="0">
-                @if(punchPairs.length > 0){
-                <p-accordion-panel value="0">
-                    <p-accordion-header>Biometric Logs</p-accordion-header>
-                    <p-accordion-content>
-                        <div class="popup-table-wrapper">
-                            <div class="popup-table-scroll-container">
-                                <table class="popup-table">
-                                    <thead>
-                                        <tr>
-                                            <th>In</th>
-                                            <th>Out</th>
-                                            <th>Duration</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr *ngFor="let log of punchPairs">
-                                            <td class="log-time">{{ log.in || '-' }}</td>
-                                            <td class="log-time">{{ log.out || '-' }}</td>
-                                            <td class="log-time">{{ log.duration || '-' }}</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div class="popup-table-footer">
-                                <div class="d-flex justify-content-center gap-2">
-                                    <div class="custom-text">Working Hours: <b
-                                            class="popup-heading">{{logsDuration}}</b></div>
-                                    <div class="break-line my-1"></div>
-                                    <div class="custom-text">Break Hours: <b class="popup-heading">{{breakDuration}}</b>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </p-accordion-content>
-                </p-accordion-panel>
-                }
-                @if(permissions_list.length > 0){
-                <p-accordion-panel value="1">
-                    <p-accordion-header>Permission(s)</p-accordion-header>
-                    <p-accordion-content>
-                        <div class="popup-table-wrapper">
-                            <div class="popup-table-scroll-container">
-                                <table class="popup-table">
-                                    <thead>
-                                        <tr>
-                                            <th>Type</th>
-                                            <th>Duration</th>
-                                            <th>Status</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr *ngFor="let log of permissions_list">
-                                            <td class="log-time">{{ log.type?log.type:'-' }}</td>
-                                            <td class="duration-time">{{ log.duration ? log.duration + ' HR(S)' : '-' }}
-                                            </td>
-                                            <td class="text-capitalize">{{ log.status ? log.status : '-' }}</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </p-accordion-content>
-                </p-accordion-panel>
-                }
-                @if(regularization_list.length > 0){
-                <p-accordion-panel value="2">
-                    <p-accordion-header>Regularization(s)</p-accordion-header>
-                    <p-accordion-content>
-                        <div class="popup-table-wrapper">
-                            <div class="popup-table-scroll-container">
-                                <table class="popup-table">
-                                    <thead>
-                                        <tr>
-                                            <th>Type</th>
-                                            <th>Duration</th>
-                                            <th>Status</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr *ngFor="let log of regularization_list">
-                                            <td class="log-time">{{ log.type?log.type:'-' }}</td>
-                                            <td class="duration-time">{{ log.duration ? log.duration + ' HR(S)' : '-' }}
-                                            </td>
-                                            <td class="text-capitalize">{{ log.status ? log.status : '-' }}</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </p-accordion-content>
-                </p-accordion-panel>
-                }
-            </p-accordion>
-        </div>
+  <div class="custom-main-popup-container" ngbAutofocus>
+    <div class="custom-poup-header-content popup-header-border">
+      <div class="pt-2">
+        <p class="popup-heading mb-0">Attendance Logs ({{attendanceselectedDate|dateformat}})</p>
+      </div>
+      <div>
+        <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+      </div>
     </div>
+
+    <div class="custom-main-popup-content custom-accordians">
+      <p-accordion value="0">
+        @if(punchPairs.length > 0){
+        <p-accordion-panel value="0">
+          <p-accordion-header>Biometric Logs</p-accordion-header>
+          <p-accordion-content>
+            <div class="popup-table-wrapper">
+              <div class="popup-table-scroll-container">
+                <table class="popup-table">
+                  <thead>
+                    <tr>
+                      <th>In</th>
+                      <th>Out</th>
+                      <th>Duration</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let log of punchPairs">
+                      <td class="log-time">{{ log.in || '-' }}</td>
+                      <td class="log-time">{{ log.out || '-' }}</td>
+                      <td class="log-time">{{ log.duration || '-' }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="popup-table-footer">
+                <div class="d-flex justify-content-center gap-2">
+                  <div class="custom-text">Working Hours: <b class="popup-heading">{{logsDuration}}</b></div>
+                  <div class="break-line my-1"></div>
+                  <div class="custom-text">Break Hours: <b class="popup-heading">{{breakDuration}}</b>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </p-accordion-content>
+        </p-accordion-panel>
+        }
+        @if(permissions_list.length > 0){
+        <p-accordion-panel value="1">
+          <p-accordion-header>Permission(s)</p-accordion-header>
+          <p-accordion-content>
+            <div class="popup-table-wrapper">
+              <div class="popup-table-scroll-container">
+                <table class="popup-table">
+                  <thead>
+                    <tr>
+                      <th>Type</th>
+                      <th>Duration</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let log of permissions_list">
+                      <td class="log-time">{{ log.type?log.type:'-' }}</td>
+                      <td class="duration-time">{{ log.duration ? log.duration + ' HR(S)' : '-' }}
+                      </td>
+                      <td class="text-capitalize">{{ log.status ? log.status : '-' }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </p-accordion-content>
+        </p-accordion-panel>
+        }
+        @if(regularization_list.length > 0){
+        <p-accordion-panel value="2">
+          <p-accordion-header>Regularization(s)</p-accordion-header>
+          <p-accordion-content>
+            <div class="popup-table-wrapper">
+              <div class="popup-table-scroll-container">
+                <table class="popup-table">
+                  <thead>
+                    <tr>
+                      <th>Type</th>
+                      <th>Duration</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let log of regularization_list">
+                      <td class="log-time">{{ log.type?log.type:'-' }}</td>
+                      <td class="duration-time">{{ log.duration ? log.duration + ' HR(S)' : '-' }}
+                      </td>
+                      <td class="text-capitalize">{{ log.status ? log.status : '-' }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </p-accordion-content>
+        </p-accordion-panel>
+        }
+      </p-accordion>
+    </div>
+  </div>
 </ng-template>
 
 <!--team avaliability content-->
 <ng-template #teamAvaliabilityContent>
-    @if (rbac.allowedToAccess('My Team Availability.view')) {
-    <div class="content-card employees-list-content">
-        <div class="flex-between-content mb-3">
-            <div class="summary-header d-inline-flex gap-1">
-                <div class="section-title">My Team Availability</div>
-                <div>
-                    <app-module-info-icon placement="bottom" [ngbPopover]="resourceSummaryContent"
-                        class="module-icon" />
-                    <ng-template #resourceSummaryContent>
-                        <div class="module-info-text">{{teamavailabilityinfo}}</div>
-                    </ng-template>
-                </div>
-            </div>
+  @if (rbac.allowedToAccess('My Team Availability.view')) {
+  <div class="content-card employees-list-content">
+    <div class="flex-between-content mb-3">
+      <div class="summary-header d-inline-flex gap-1">
+        <div class="section-title">My Team Availability</div>
+        <div>
+          <app-module-info-icon placement="bottom" [ngbPopover]="resourceSummaryContent" class="module-icon" />
+          <ng-template #resourceSummaryContent>
+            <div class="module-info-text">{{teamavailabilityinfo}}</div>
+          </ng-template>
+        </div>
+      </div>
 
-            <div class="custom-date-range-picker">
-                <p-datepicker [(ngModel)]="selectedDate" [iconDisplay]="'input'" [showIcon]="true" inputId="icondisplay"
-                    [readonlyInput]="true" [maxDate]="todayMaxdate" [disabled]="true" (onSelect)="onDateChange($event)" />
-            </div>
+      <div class="custom-date-range-picker">
+        <p-datepicker [(ngModel)]="selectedDate" [iconDisplay]="'input'" [showIcon]="true" inputId="icondisplay"
+          [readonlyInput]="true" [maxDate]="todayMaxdate" [disabled]="true" (onSelect)="onDateChange($event)" />
+      </div>
+    </div>
+    @if(!avaliabletlyloading){
+    <div class="total-leave-balance-graph-content" [ngClass]="{'graph-no-data-content': teamTotal === 0}">
+      @if (teamTotal !== 0) {
+      <div class="chart-content flex-center-content">
+        <p-chart type="doughnut" [data]="teamChartData" [options]="teamChartOptions" class="doughnut-chart" />
+        <div class="total-count-content">
+          <p class="count m-0 p-0">{{teamTotal}}</p>
         </div>
-        @if(!avaliabletlyloading){
-        <div class="total-leave-balance-graph-content" [ngClass]="{'graph-no-data-content': teamTotal === 0}">
-            @if (teamTotal !== 0) {
-            <div class="chart-content flex-center-content">
-                <p-chart type="doughnut" [data]="teamChartData" [options]="teamChartOptions" class="doughnut-chart" />
-                <div class="total-count-content">
-                    <p class="count m-0 p-0">{{teamTotal}}</p>
-                </div>
+      </div>
+      <div class="employees-type-grid team-avaliability-grid">
+        @for (item of legendList; track $index) {
+        <div [ngStyle]="{ 'border-left': '4px solid ' + item.color }" class="ps-2">
+          <div class="employee-type-text">
+            <p class="m-0">{{ item.label }}</p>
+            <div class="count-text">
+              @if(teamSummary[item.key] != '0'){
+              <span class="cursor" (click)="openOffcanvas(resourceList,item)">
+                <u>{{teamSummary[item.key]}}</u>
+              </span>
+              }@else{
+              <span>{{teamSummary[item.key] || 0 }}</span>
+              }
             </div>
-            <div class="employees-type-grid team-avaliability-grid">
-                @for (item of legendList; track $index) {
-                <div [ngStyle]="{ 'border-left': '4px solid ' + item.color }" class="ps-2">
-                    <div class="employee-type-text">
-                        <p class="m-0">{{ item.label }}</p>
-                        <div class="count-text">
-                            @if(teamSummary[item.key] != '0'){
-                            <span class="cursor" (click)="openOffcanvas(resourceList,item)">
-                                <u>{{teamSummary[item.key]}}</u>
-                            </span>
-                            }@else{
-                            <span>{{teamSummary[item.key] || 0 }}</span>
-                            }
-                        </div>
-                    </div>
-                </div>
-                }
-            </div>
-            }@else {
-            <app-no-data-found />
-            }
-        </div>
-        }@else {
-        @if(!showAvailabilityMessage) {
-        <p-skeleton height="8rem" />
-        }@else {
-        <div class="position-relative" style="min-height: 10rem;">
-            <p-skeleton height="8rem" />
-            <div class="loading-message-overlay">
-                <p class="loading-text mb-0">Please wait while we fetch the latest employee availability details
-                    <span class="loading-dots"></span>
-                </p>
-            </div>
+          </div>
         </div>
         }
-        }
+      </div>
+      }@else {
+      <app-no-data-found />
+      }
+    </div>
+    }@else {
+    @if(!showAvailabilityMessage) {
+    <p-skeleton height="8rem" />
+    }@else {
+    <div class="position-relative" style="min-height: 10rem;">
+      <p-skeleton height="8rem" />
+      <div class="loading-message-overlay">
+        <p class="loading-text mb-0">Please wait while we fetch the latest employee availability details
+          <span class="loading-dots"></span>
+        </p>
+      </div>
     </div>
     }
+    }
+  </div>
+  }
 </ng-template>

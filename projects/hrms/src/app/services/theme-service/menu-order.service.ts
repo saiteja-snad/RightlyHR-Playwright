@@ -5,6 +5,7 @@ import { MenuRegistryService } from '../../shared/sidenav/menu-registry.service'
 import { MenuOrder } from '../../theme-customization/theme-action.service';
 
 export const MENU_PREF_KEY = 'RHR_WEB_Menu_Items';
+export const QUICK_LINKS_PREF_KEY = 'RHR_WEB_Quick_Links';
 const LEGACY_TABS_PREF_KEY = 'RHR_WEB_Tab_Order';
 
 type MenuLocation = 'main' | 'ellipses';
@@ -51,10 +52,16 @@ export interface MenuPreferenceV2 {
   };
 }
 
+export interface QuickLinksPreferenceV1 {
+  schemaVersion: 1;
+  routes: string[];
+}
+
 @Injectable({ providedIn: 'root' })
 export class MenuOrderService {
   menuOrder = signal<MenuOrder | null>(null);
   readonly preferenceV2 = signal<MenuPreferenceV2 | null>(null);
+  readonly quickLinksPreference = signal<QuickLinksPreferenceV1 | null>(null);
   private initPromise: Promise<void> | null = null;
 
   constructor(private http: HttpService, private menuRegistry: MenuRegistryService) {}
@@ -108,6 +115,7 @@ async initMenuOrder(): Promise<void> {
       if (!employeeId) {
         this.preferenceV2.set({});
         this.menuOrder.set(null);
+        this.quickLinksPreference.set(null);
         return;
       }
 
@@ -117,6 +125,8 @@ async initMenuOrder(): Promise<void> {
 
       const savedValue = response?.data?.[MENU_PREF_KEY];
       const legacyTabsValue = response?.data?.[LEGACY_TABS_PREF_KEY];
+      const quickLinksValue = response?.data?.[QUICK_LINKS_PREF_KEY];
+
 
       const pref = this.normalizePreference(
         savedValue ? JSON.parse(savedValue) : null,
@@ -125,10 +135,14 @@ async initMenuOrder(): Promise<void> {
 
       this.preferenceV2.set(pref);
       this.menuOrder.set(this.extractMenuOrder(pref));
+      this.quickLinksPreference.set(
+        quickLinksValue ? this.normalizeQuickLinksPreference(JSON.parse(quickLinksValue)) : null
+      );
     } catch (error) {
       console.error('Error loading menu order:', error);
       this.menuOrder.set(null);
       this.preferenceV2.set(null);
+      this.quickLinksPreference.set(null);
     }
   }
 
@@ -323,5 +337,42 @@ async initMenuOrder(): Promise<void> {
     const primary = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     if (primary?.employeeId) return primary;
     return JSON.parse(localStorage.getItem('currentUser') || '{}');
+  }
+
+  getQuickLinksRoutes(): string[] {
+    const pref = this.quickLinksPreference();
+    return Array.isArray(pref?.routes) ? pref!.routes : [];
+  }
+
+  saveQuickLinks(
+    employeeId: number,
+    routes: string[],
+    options?: { onSuccess?: () => void; onError?: (err: any) => void }
+  ): void {
+    const cleaned = Array.isArray(routes) ? routes.filter((r) => typeof r === 'string' && r.length > 0) : [];
+    const pref: QuickLinksPreferenceV1 = {
+      schemaVersion: 1,
+      routes: cleaned
+    };
+
+    const payload = { employeeId, key: QUICK_LINKS_PREF_KEY, value: JSON.stringify(pref) };
+    this.http.postdata('Employeedata/save-user-preference', payload).subscribe({
+      next: () => {
+        this.quickLinksPreference.set(pref);
+        options?.onSuccess?.();
+      },
+      error: (err) => {
+        console.error('Failed to save quick links', err);
+        options?.onError?.(err);
+      }
+    });
+  }
+
+  private normalizeQuickLinksPreference(raw: any): QuickLinksPreferenceV1 {
+    const routes = Array.isArray(raw?.routes) ? raw.routes.filter((r: any) => typeof r === 'string') : [];
+    return {
+      schemaVersion: 1,
+      routes
+    };
   }
 }

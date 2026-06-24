@@ -13,10 +13,9 @@ import { IProjectAuthority } from '../../models/project-authority.modal';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { OpenModalService } from '../../../../services/open-modal.service';
 import { RbacService } from '../../../../services/rbac.service';
-import { SettingsDeleteIconComponent } from "../../../../icons/settings-delete-icon/settings-delete-icon.component";
 @Component({
   selector: 'app-signature-authority',
-  imports: [CommonModule, Select, TranslateModule, ReactiveFormsModule, NoDataFoundComponent, Skeleton, SettingsDeleteIconComponent],
+  imports: [CommonModule, Select, TranslateModule, ReactiveFormsModule, NoDataFoundComponent, Skeleton],
   templateUrl: './signature-authority.component.html',
   styleUrl: './signature-authority.component.scss'
 })

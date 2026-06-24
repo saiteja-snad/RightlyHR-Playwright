@@ -433,6 +433,7 @@ export class TimesheetRequestsComponent implements OnInit,OnDestroy {
             }, 5000);
 
           }
+          this.signalService.timesheetApprovalsCountSignal.set(true);
         },
         error: (reason: any) => {
           this.spinnerLoader = false;
@@ -440,6 +441,7 @@ export class TimesheetRequestsComponent implements OnInit,OnDestroy {
           this.timeSheetRejectForm.reset();
           this.modalService.dismissAll();
           this.conformationPopup.openErrorModal(reason.error.message);
+          this.signalService.timesheetApprovalsCountSignal.set(true);
         },
         complete: () => {
           this.spinnerLoader = false;
@@ -453,6 +455,7 @@ export class TimesheetRequestsComponent implements OnInit,OnDestroy {
           this.getApprovalStatusCounts();
           this.http.triggerActionSignal();
           this.signalService.onBhehalfOfApprovalSignal.set(true);
+          this.signalService.timesheetApprovalsCountSignal.set(true);
 
         },
       });
@@ -523,6 +526,7 @@ export class TimesheetRequestsComponent implements OnInit,OnDestroy {
               this.modalService.dismissAll();
             }, 5000);
           }
+          this.signalService.timesheetApprovalsCountSignal.set(true);
         },
         error: (reason: any) => {
           this.spinnerLoader = false;
@@ -530,6 +534,7 @@ export class TimesheetRequestsComponent implements OnInit,OnDestroy {
           this.timeSheetRejectForm.reset();
           this.modalService.dismissAll();
           this.conformationPopup.openErrorModal(reason.error.message);
+          this.signalService.timesheetApprovalsCountSignal.set(true);
         },
         complete: () => {
           this.spinnerLoader = false;
@@ -543,6 +548,7 @@ export class TimesheetRequestsComponent implements OnInit,OnDestroy {
           this.getApprovalStatusCounts();
           this.http.triggerActionSignal();
           this.signalService.onBhehalfOfApprovalSignal.set(true);
+          this.signalService.timesheetApprovalsCountSignal.set(true);
 
         },
       });

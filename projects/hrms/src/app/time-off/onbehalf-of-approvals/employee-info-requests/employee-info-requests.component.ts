@@ -496,10 +496,7 @@ isFieldChanged(objectKey: string, changedFields: any): boolean {
             }, 5000);
           
           }
-             this.http.tirggerPendingApprovalCountSignal.update((status) => ({
-              ...status,
-              employeinfo: true,
-            }));
+             this.signalService.employeinfoDetailsTriggerSignal.set(true);
         },
         error: (reason: any) => {
           this.spinnerLoader = false;

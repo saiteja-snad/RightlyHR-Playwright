@@ -1,4 +1,4 @@
-import { Component, effect, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { AfterViewInit, Component, effect, ElementRef, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NgbModal, NgbNavModule, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormBuilder, FormControl, FormGroup, FormsModule, NgForm, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -25,20 +25,20 @@ import { FormValidationsService } from '../../services/form-validations.service'
 import { Skeleton } from 'primeng/skeleton';
 import { TimeoffYearFilterService } from '../../services/timeoff-year-filter.service';
 import { TimeoffSelectionService } from '../../services/timeoff-selection.service';
-import { ConfirmationIconComponent } from "../../icons/confirmation-icon/confirmation-icon.component";
 import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
 import { ApplicablePoliciesTriggerComponent } from '../../shared/policies/applicable-policies-trigger/applicable-policies-trigger.component';
 import { APPLICABLE_POLICIES_KEYS, ApplicablePoliciesKeys } from '../../shared/policies/policy-visibility.catalog';
 @Component({
   selector: 'app-leaves',
   imports: [CommonModule, NgbNavModule, ModuleInfoIconComponent,NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, Select, Skeleton,
-    RouterModule, ReactiveFormsModule, TranslateModule, LeavesApprovaltabsComponent, TabsModule, ChartModule, ModuleInformationComponent, ConfirmationIconComponent, ApplicablePoliciesTriggerComponent],
+    RouterModule, ReactiveFormsModule, TranslateModule, LeavesApprovaltabsComponent, TabsModule, ChartModule, ModuleInformationComponent, 
+    ApplicablePoliciesTriggerComponent],
   templateUrl: './leaves.component.html',
   styleUrl: './leaves.component.scss',
   encapsulation: ViewEncapsulation.None,
 })
 
-export class LeavesComponent implements OnInit, OnDestroy{
+export class LeavesComponent implements OnInit, AfterViewInit, OnDestroy{
   moduleinfo: string = '';
   applicablePolicies: ApplicablePoliciesKeys = APPLICABLE_POLICIES_KEYS.TIME_OFF_LEAVES;
   subscription!: Subscription;
@@ -121,7 +121,8 @@ export class LeavesComponent implements OnInit, OnDestroy{
     public formsValidation: FormValidationsService,
     private signalService: SignalsService,
     private TimeoffYearFilterService: TimeoffYearFilterService,
-    private timeoffSelectionService: TimeoffSelectionService
+    private timeoffSelectionService: TimeoffSelectionService,
+    private elementRef: ElementRef
   ) {
     effect(() => {
       if (this.signalService.timecountTriggerSignal()) {
@@ -564,15 +565,12 @@ getTeamManagersDetails() {
       const percentage = Math.max(0, Math.min(available / total, 1)); // Clamp between 0 and 1
       return percentage * 360;
     }
-
   }
 
   getEmployeeid() {
     this.subscription = this.http.getData(`Employeedata/${this.empdata.employeeId}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data: any) => {
         this.employeeiddetails = data;
-        console.log(this.employeeiddetails);
-
         // this.calculateProbationLeavs(this.categoryDetails);
       },
     });
@@ -582,8 +580,6 @@ getTeamManagersDetails() {
     this.subscription = this.http.getData(`Employeedata/${employeeId}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data: any) => {
         this.employeeiddetails = data;
-        console.log(this.employeeiddetails);
-
         // this.calculateProbationLeavs(this.categoryDetails);
       },
     });
@@ -1545,7 +1541,41 @@ getTeamManagersDetails() {
     this.selectedleave = null;
   }
 
+  formatFrequency(value: string): string {
+    if (!value || !value.trim()) return 'Yearly';
+    return value.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
+  }
+
+  isStickyVisible = false;
+  private scrollContainer: HTMLElement | Window = window;
+  private readonly scrollHandler = () => {
+    const scrollTop = this.scrollContainer instanceof Window
+      ? window.scrollY
+      : (this.scrollContainer as HTMLElement).scrollTop;
+    if (!this.isStickyVisible && scrollTop > 50) {
+      this.isStickyVisible = true;
+    } else if (this.isStickyVisible && scrollTop < 10) {
+      this.isStickyVisible = false;
+    }
+  };
+
+  ngAfterViewInit(): void {
+    this.scrollContainer = this.getScrollableParent();
+    this.scrollContainer.addEventListener('scroll', this.scrollHandler);
+  }
+
+  private getScrollableParent(): HTMLElement | Window {
+    let el = (this.elementRef.nativeElement as HTMLElement).parentElement;
+    while (el) {
+      const style = window.getComputedStyle(el);
+      if (/auto|scroll/.test(style.overflow + style.overflowY)) return el;
+      el = el.parentElement;
+    }
+    return window;
+  }
+
   ngOnDestroy(): void {
+    this.scrollContainer?.removeEventListener('scroll', this.scrollHandler);
     if (this.subscription) this.subscription.unsubscribe();
     this.destroy$.next(true);
     this.destroy$.unsubscribe();

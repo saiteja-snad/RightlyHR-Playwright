@@ -35,20 +35,18 @@
                 @for (job of categoryDetails; track $index) {
                 <tr>
                     <td class="w-75">{{ job.value}}</td>
-                    <td class="w-25">
-                        <div class="d-flex gap-4">
-                            <!--Update-->
-                            <div>
-                                <a (click)="openupdate(job)" *ngIf="rbac.allowedToAccess('IT Support Category.update')">
-                                    <img src="/settings-icon/edit.png" alt="edit icon" class="settings-common-icon">
-                                </a>
-                            </div>
-                            <!--Delete-->
-                            <!-- <div>
-                                <a (click)="opendelete(job)" *ngIf="rbac.allowedToAccess('Job Type.delete')">
-                                    <img src="/settings-icon/trash-2.png" alt="edit icon" class="settings-common-icon">
-                                </a>
-                            </div> -->
+                    <td class="w-25 text-end action-dropdown-cell">
+                        <div class="dropdown" *ngIf="rbac.allowedToAccess('IT Support Category.update')">
+                            <a data-bs-toggle="dropdown" aria-expanded="false" class="cursor-pointer">
+                                <i class="bi bi-three-dots-vertical"></i>
+                            </a>
+                            <ul class="dropdown-menu custom-dropdown-menu">
+                                <li>
+                                    <a class="dropdown-item" (click)="openupdate(job)">
+                                        <i class="bi bi-pencil-square me-2"></i>{{ 'Update' | translate }}
+                                    </a>
+                                </li>
+                            </ul>
                         </div>
                     </td>
                 </tr>

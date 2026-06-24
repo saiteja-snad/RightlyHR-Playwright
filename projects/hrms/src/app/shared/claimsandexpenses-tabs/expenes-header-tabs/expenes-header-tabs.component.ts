@@ -113,12 +113,12 @@ export class ExpenesHeaderTabsComponent implements OnInit, OnDestroy {
     const currentUrl = this.router.url;
     const baseUrl = '/claimsandexpenses/expenses';
     if (currentUrl === baseUrl && this.defaultRoute) {
-      this.router.navigateByUrl(this.defaultRoute);
+      this.router.navigateByUrl(this.defaultRoute, { replaceUrl: true });
       return;
     }
     const isAllowed = this.navTabs.some(tab => tab.link === currentUrl);
     if (!isAllowed && this.defaultRoute) {
-      this.router.navigateByUrl(this.defaultRoute);
+      this.router.navigateByUrl(this.defaultRoute, { replaceUrl: true });
     }
   }
 

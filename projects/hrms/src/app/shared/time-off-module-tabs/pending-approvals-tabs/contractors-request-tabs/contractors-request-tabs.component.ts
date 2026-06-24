@@ -49,11 +49,11 @@ empinfo = {} as IJob;
       
         // Conditionally reset the signals based on their current state
         if (this.signalService.contractForyouTriggerSignal()) {
-          this.signalService.contractForyouTriggerSignal.set(false);
+          //this.signalService.contractForyouTriggerSignal.set(false);
         }
         
         if (this.signalService.contractForyouTriggerSignal()) {
-          this.signalService.contractForyouTriggerSignal.set(false);
+          //this.signalService.contractForyouTriggerSignal.set(false);
         }
       }
       

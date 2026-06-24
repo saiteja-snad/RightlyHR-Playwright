@@ -16,6 +16,7 @@ import { DataLoaderContentComponent } from '../../../shared/data-loader-content/
 import moment from 'moment';
 import { DatePicker } from 'primeng/datepicker';
 import { OnboardingFilterService } from '../../../shared/time-off-module-tabs/pending-approvals-tabs/onboarding-filter.service';
+import { SignalsService } from '../../../services/signals.service';
 @Component({
   selector: 'app-document-history-offer-letter',
   imports: [CommonModule, ReactiveFormsModule, TranslateModule, FormsModule, DateformatPipe,
@@ -42,7 +43,8 @@ export class DocumentHistoryOfferLetterComponent implements OnInit, OnDestroy {
   offerLetters: any[] = []; // filtered data shown in table
 
   constructor(private router: Router, private modalService: NgbModal, private fb: FormBuilder, private http: HttpService,
-    private authService: AuthService, private conformationPopup: OpenModalService, public rbac: RbacService, private onboardingFilter: OnboardingFilterService) {
+    private authService: AuthService, private conformationPopup: OpenModalService, public rbac: RbacService, private onboardingFilter: OnboardingFilterService,
+    private signalService: SignalsService) {
     this.initializeForm();
   }
 
@@ -119,16 +121,52 @@ export class DocumentHistoryOfferLetterComponent implements OnInit, OnDestroy {
   onSelectDownload(file: any) {
     this.subscription = this.http.DownloadDataWithQuery('FileSystem/Downloadfile', file.documentUrl).subscribe({
       next: (res: any) => {
-        let fileName = res.headers.get('content-disposition')?.split(':')[1].split('=')[1];
         let blob: Blob = res.body as Blob;
         let a = document.createElement('a');
         a.href = window.URL.createObjectURL(blob);
-        let filename = file.documentUrl.split('/')[file.documentUrl.split('/').length - 1];
+        const filename = this.getDownloadFileName(res?.headers?.get('content-disposition'), file?.documentUrl);
         a.download = filename;
         a.click();
+        window.URL.revokeObjectURL(a.href);
       },
       error: (reason) => console.log(reason),
     });
+  }
+
+  private getDownloadFileName(contentDisposition: string | null, documentUrl?: string): string {
+    const fileNameFromHeader = this.extractFileNameFromContentDisposition(contentDisposition);
+    if (fileNameFromHeader) {
+      return fileNameFromHeader;
+    }
+
+    if (typeof documentUrl === 'string' && documentUrl.trim()) {
+      const normalizedUrl = documentUrl.split('?')[0];
+      const pathParts = normalizedUrl.split('/').filter(Boolean);
+      const lastPathPart = pathParts[pathParts.length - 1];
+      if (lastPathPart) {
+        return decodeURIComponent(lastPathPart);
+      }
+    }
+
+    return 'document';
+  }
+
+  private extractFileNameFromContentDisposition(contentDisposition: string | null): string | null {
+    if (!contentDisposition) {
+      return null;
+    }
+
+    const utfMatch = contentDisposition.match(/filename\*=UTF-8''([^;]+)/i);
+    if (utfMatch?.[1]) {
+      return decodeURIComponent(utfMatch[1].replace(/["']/g, '').trim());
+    }
+
+    const standardMatch = contentDisposition.match(/filename="?([^";]+)"?/i);
+    if (standardMatch?.[1]) {
+      return standardMatch[1].trim();
+    }
+
+    return null;
   }
 
   //function to release the document
@@ -167,6 +205,10 @@ export class DocumentHistoryOfferLetterComponent implements OnInit, OnDestroy {
       error: (reason: any) => {
         console.log(reason);
       },
+      complete: () => {
+          this.signalService.OfferLetterNavCountSignal.set(true);
+          this.getOfferLetters();
+        },
     });
   }
 
@@ -232,6 +274,10 @@ export class DocumentHistoryOfferLetterComponent implements OnInit, OnDestroy {
       error: (reason: any) => {
         console.log(reason);
       },
+      complete: () => {
+          this.signalService.OfferLetterNavCountSignal.set(true);
+          this.getOfferLetters();
+        },
     });
   }
 
@@ -343,6 +389,10 @@ export class DocumentHistoryOfferLetterComponent implements OnInit, OnDestroy {
       error: (reason: any) => {
         console.log(reason);
       },
+      complete: () => {
+          this.signalService.OfferLetterNavCountSignal.set(true);
+          this.getOfferLetters();
+        },
     });
   }
 

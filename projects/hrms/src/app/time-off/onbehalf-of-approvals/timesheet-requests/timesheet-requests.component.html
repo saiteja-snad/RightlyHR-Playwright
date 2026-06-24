@@ -75,20 +75,31 @@
                                     <td>{{ entry.totalHours || '-' }}</td>
                                     @if(rbac.allowedToAccess('Timesheet (On Behalf Of Approvals).update') || rbac.allowedToAccess('Timesheet (On Behalf Of Approvals).delete')) {
                                     @if(showhideaction){
-                                    <td>
-                                        <div class="d-flex justify-content-center gap-3">
-                                            @if(rbac.allowedToAccess('Timesheet (On Behalf Of Approvals).update')){
-                                            <a (click)="openModal(approverPopup, entry, 'Processed')">
-                                                <img src="/icons/check-approve-icon.png" class="action-img" alt="Approve" />
-                                            </a>
-                                            }
-                                            @if(rbac.allowedToAccess('Timesheet (On Behalf Of Approvals).delete')){
-                                            <a (click)="openModal(rejectPopup, entry, 'Rejected')">
-                                                <img src="/icons/cancel-circle.png" class="action-img" alt="Reject" />
-                                            </a>
-                                            }
-                                        </div>
-                                    </td>
+                                  <td class="text-center">
+                                    <div class="dropdown">
+                                      <a data-bs-toggle="dropdown" aria-expanded="false" class="cursor-pointer">
+                                        <i class="bi bi-three-dots-vertical"></i>
+                                      </a>
+                                      <ul class="dropdown-menu custom-dropdown-menu">
+                                        @if(rbac.allowedToAccess('Timesheet (On Behalf Of Approvals).update')){
+                                        <li>
+                                          <a class="dropdown-item" (click)="openModal(approverPopup, entry, 'Processed')">
+                                            <i class="bi bi-check-circle me-2"></i>
+                                            {{ 'Approve' | translate }}
+                                          </a>
+                                        </li>
+                                        }
+                                        @if(rbac.allowedToAccess('Timesheet (On Behalf Of Approvals).delete')){
+                                        <li>
+                                          <a class="dropdown-item" (click)="openModal(rejectPopup, entry, 'Rejected')">
+                                            <i class="bi bi-x-circle me-2"></i>
+                                            {{ 'Reject' | translate }}
+                                          </a>
+                                        </li>
+                                        }
+                                      </ul>
+                                    </div>
+                                  </td>
                                     }
                                     }
                                 </tr>

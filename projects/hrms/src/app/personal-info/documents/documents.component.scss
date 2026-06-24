@@ -42,3 +42,12 @@
         font-size: var(--fontsize14);
     }
 }
+
+.custom-table-content td.action-dropdown-cell {
+    overflow: visible !important;
+    position: relative;
+}
+
+.custom-table-content td.action-dropdown-cell .dropdown-menu.show {
+    z-index: 1060 !important;
+}

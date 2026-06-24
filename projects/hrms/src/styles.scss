@@ -584,6 +584,50 @@ body {
     max-width: 100%;
 }
 
+.cdk-drag-preview.quick-links-drag-preview {
+    width: 6.5rem;
+    min-width: 6.5rem;
+    min-height: 5.5rem;
+    padding: 0.5rem 0.5rem;
+    border-radius: 0.75rem;
+    background: linear-gradient(180deg, #FFFFFF 0%, #DAE0EB 100%);
+    border: 1px solid rgba(6, 39, 79, 0.08);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 10px 24px rgba(6, 39, 79, 0.16);
+    opacity: 0.98;
+    box-sizing: border-box;
+}
+
+.cdk-drag-preview.quick-links-drag-preview .icon {
+    width: 1.35rem;
+    height: 1.35rem;
+    object-fit: contain;
+}
+
+.cdk-drag-preview.quick-links-drag-preview .link {
+    cursor: pointer;
+    font-size: var(--fontsize10);
+    font-weight: 500;
+    text-align: center;
+    color: var(--primary-color);
+    line-height: 1.2;
+}
+
+.quick-links-card .quick-links-drop-list .sidenav-drag-placeholder,
+.quick-links-card .quick-links-drop-list .sidenav-grid-placeholder {
+    flex: 0 0 var(--quick-link-card-width, 7rem);
+    width: var(--quick-link-card-width, 7rem);
+    height: 5.75rem;
+    min-height: 5.75rem;
+    border-radius: 0.75rem;
+    background: rgba(218, 224, 235, 0.35);
+    border: 2px dashed var(--primary-color);
+    box-sizing: border-box;
+}
+
 // Component stylings
 .custom-component-left-content {
     width: 25rem;

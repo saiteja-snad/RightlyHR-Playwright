@@ -34,13 +34,26 @@
                 <tr>
                     <td>{{appointmentLetter.appointmentSentDate | dateformat }}</td>
                     <td>{{appointmentLetter.employeeName ?appointmentLetter.employeeName:'-'}}</td>
-                    @if(rbac.allowedToAccess('Appointment Letter Download.view')){
                     <td class="text-center">
-                        <span (click)="onSelectDownload(appointmentLetter)">
-                            <app-download-icon />
-                        </span>
-                    </td>
-                    }
+            <div class="dropdown">
+              <a type="button" data-bs-toggle="dropdown">
+                <i class="bi bi-three-dots-vertical"></i>
+              </a>
+
+              <ul class="dropdown-menu custom-dropdown-menu">
+
+                @if(rbac.allowedToAccess('Appointment Letter Download.view')){
+                <li (click)="onSelectDownload(appointmentLetter)">
+                  <a class="dropdown-item">
+                    <i class="bi bi-download me-2"></i>
+                    {{'Download' | translate}}
+                  </a>
+                </li>
+                }
+
+              </ul>
+            </div>
+          </td>
                 </tr>
                 }
                 }

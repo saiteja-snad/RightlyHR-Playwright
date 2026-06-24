@@ -38,16 +38,26 @@
                         </td>
                         @if(rbac.allowedToAccess('Probation Details.update') || rbac.allowedToAccess('Probation Details.delete')) {
                         <td class="text-center">
-                            <div>
+                            <div class="dropdown">
+                                <a data-bs-toggle="dropdown" aria-expanded="false" class="cursor-pointer">
+                                    <i class="bi bi-three-dots-vertical"></i>
+                                </a>
+                                <ul class="dropdown-menu custom-dropdown-menu">
                                 @if(rbac.allowedToAccess('Probation Details.update') ) {
-                                <button class="custom-btn btn-primary" (click)="handleRequests(item,ProbationProcess);
-                                getComments(item.entity?.prApproverComments)" *ngIf="item.approvalHeader?.currentapprovalStage == item.approvalHeader?.finalapprovalStage">
-                                {{'Process' | translate}}</button>
+                                <li *ngIf="item.approvalHeader?.currentapprovalStage == item.approvalHeader?.finalapprovalStage">
+                                    <a class="dropdown-item" (click)="handleRequests(item,ProbationProcess); getComments(item.entity?.prApproverComments)">
+                                        <i class="bi bi-check-circle me-2"></i>{{'Process' | translate}}
+                                    </a>
+                                </li>
                                 }
                                 @if(rbac.allowedToAccess('Probation Details.update') ) {
-                                <button class="custom-btn btn-primary" *ngIf="item.approvalHeader?.currentapprovalStage != item.approvalHeader?.finalapprovalStage"
-                                [routerLink]="['/pending-approvals/assessmentform']" (click)="setData(item)">{{'Assessment form' | translate}}</button>
+                                <li *ngIf="item.approvalHeader?.currentapprovalStage != item.approvalHeader?.finalapprovalStage">
+                                    <a class="dropdown-item" [routerLink]="['/pending-approvals/assessmentform']" (click)="setData(item)">
+                                        <i class="bi bi-file-earmark-text me-2"></i>{{'Assessment form' | translate}}
+                                    </a>
+                                </li>
                                 }
+                                </ul>
                             </div>
                         </td>
                         }

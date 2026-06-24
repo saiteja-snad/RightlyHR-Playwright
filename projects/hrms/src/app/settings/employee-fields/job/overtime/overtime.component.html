@@ -24,7 +24,7 @@
             </div>
         </div>
     </form>
-  
+
     <!--Data Content-->
     <div class="custom-settings-data-table">
         @if(!loading){
@@ -38,20 +38,23 @@
                 @for (ovr of overtimeDetail; track $index) {
                 <tr>
                     <td class="w-75">{{ ovr.overtimeeligibility1}}</td>
-                    <td class="w-25">
-                        <div class="d-flex gap-4">
-                            <!--Update-->
-                            <div>
-                                <a (click)="openupdate(ovr)" *ngIf="rbac.allowedToAccess('Overtime Eligibility.update')">
-                                     <app-settings-update-icon />
-                                </a>
-                            </div>
-                            <!--Delete-->
-                            <div>
-                                <a (click)="opendelete(ovr)" *ngIf="rbac.allowedToAccess('Overtime Eligibility.delete')">
-                                      <app-settings-delete-icon />
-                                </a>
-                            </div>
+                    <td class="w-25 text-end action-dropdown-cell">
+                        <div class="dropdown" *ngIf="rbac.allowedToAccess('Overtime Eligibility.update') || rbac.allowedToAccess('Overtime Eligibility.delete')">
+                            <a data-bs-toggle="dropdown" aria-expanded="false" class="cursor-pointer">
+                                <i class="bi bi-three-dots-vertical"></i>
+                            </a>
+                            <ul class="dropdown-menu custom-dropdown-menu">
+                                <li *ngIf="rbac.allowedToAccess('Overtime Eligibility.update')">
+                                    <a class="dropdown-item" (click)="openupdate(ovr)">
+                                        <i class="bi bi-pencil-square me-2"></i>{{ 'Update' | translate }}
+                                    </a>
+                                </li>
+                                <li *ngIf="rbac.allowedToAccess('Overtime Eligibility.delete')">
+                                    <a class="dropdown-item" (click)="opendelete(ovr)">
+                                        <i class="bi bi-trash me-2"></i>{{ 'Delete' | translate }}
+                                    </a>
+                                </li>
+                            </ul>
                         </div>
                     </td>
                 </tr>
@@ -64,7 +67,7 @@
         }
     </div>
 </div>
-  
+
 <!--Update popup-->
 <ng-template #updatepopup let-modal>
     <form autocomplete="off" [formGroup]="updateForm">
@@ -106,7 +109,7 @@
         </div>
     </form>
 </ng-template>
-  
+
 <!--Delete Confirmation popup-->
 <ng-template #deletepopup let-modal>
     <div class="result-popup-content" ngbAutofocus>

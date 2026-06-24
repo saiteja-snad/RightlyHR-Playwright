@@ -4,7 +4,7 @@
         <div class="mb-4">
             <div class="custom-settings-add-input input-group">
                 <input type="text" class="form-control custom-input" placeholder="Please enter location"
-                    formControlName="jobLocationName" aria-label="location" 
+                    formControlName="jobLocationName" aria-label="location"
                     (keydown)="formValidations.restrictInputAllowSpecialChars($event)" maxlength="101"/>
                 <span class="input-group-text" id="location">
                     <button type="submit" class="custom-btn btn-primary" [disabled]="locationForm.invalid">{{'Add'|translate}}</button>
@@ -37,20 +37,23 @@
                 @for (loc of locationDetail; track $index) {
                 <tr>
                     <td class="w-75">{{ loc.jobLocationName}}</td>
-                    <td class="w-25">
-                        <div class="d-flex gap-4">
-                            <!--Update-->
-                            <div>
-                                <a (click)="openupdate(loc)" *ngIf="rbac.allowedToAccess('Location.update')">
-                                     <app-settings-update-icon />
-                                </a>
-                            </div>
-                            <!--Delete-->
-                            <div>
-                                <a (click)="opendelete(loc)" *ngIf="rbac.allowedToAccess('Location.delete')">
-                                       <app-settings-delete-icon />
-                                </a>
-                            </div>
+                    <td class="w-25 text-end action-dropdown-cell">
+                        <div class="dropdown" *ngIf="rbac.allowedToAccess('Location.update') || rbac.allowedToAccess('Location.delete')">
+                            <a data-bs-toggle="dropdown" aria-expanded="false" class="cursor-pointer">
+                                <i class="bi bi-three-dots-vertical"></i>
+                            </a>
+                            <ul class="dropdown-menu custom-dropdown-menu">
+                                <li *ngIf="rbac.allowedToAccess('Location.update')">
+                                    <a class="dropdown-item" (click)="openupdate(loc)">
+                                        <i class="bi bi-pencil-square me-2"></i>{{ 'Update' | translate }}
+                                    </a>
+                                </li>
+                                <li *ngIf="rbac.allowedToAccess('Location.delete')">
+                                    <a class="dropdown-item" (click)="opendelete(loc)">
+                                        <i class="bi bi-trash me-2"></i>{{ 'Delete' | translate }}
+                                    </a>
+                                </li>
+                            </ul>
                         </div>
                     </td>
                 </tr>

@@ -40,24 +40,26 @@
                 @for (reason of CompensationReason; track $index) {
                 <tr>
                     <td class="w-75">{{ reason.reason}}</td>
-                    <td class="w-25">
-                        <div class="d-flex gap-4">
-                            <!--Update-->
-                            <div>
-                                <a (click)="openupdate(reason)"
-                                    *ngIf="rbac.allowedToAccess('Compensation Reason.update')">
-                                      <app-settings-update-icon />
-                                </a>
-                            </div>
-                            <!--Delete-->
-                            <div>
-                                <a (click)="opendelete(reason)"
-                                    *ngIf="rbac.allowedToAccess('Compensation Reason.delete')">
-                                       <app-settings-delete-icon />
-                                </a>
-                            </div>
+                    <td class="w-25 text-end action-dropdown-cell">
+                        <div class="dropdown" *ngIf="rbac.allowedToAccess('Compensation Reason.update') || rbac.allowedToAccess('Compensation Reason.delete')">
+                            <a data-bs-toggle="dropdown" aria-expanded="false" class="cursor-pointer">
+                                <i class="bi bi-three-dots-vertical"></i>
+                            </a>
+                            <ul class="dropdown-menu custom-dropdown-menu">
+                                <li *ngIf="rbac.allowedToAccess('Compensation Reason.update')">
+                                    <a class="dropdown-item" (click)="openupdate(reason)">
+                                        <i class="bi bi-pencil-square me-2"></i>{{ 'Update' | translate }}
+                                    </a>
+                                </li>
+                                <li *ngIf="rbac.allowedToAccess('Compensation Reason.delete')">
+                                    <a class="dropdown-item" (click)="opendelete(reason)">
+                                        <i class="bi bi-trash me-2"></i>{{ 'Delete' | translate }}
+                                    </a>
+                                </li>
+                            </ul>
                         </div>
                     </td>
+
                 </tr>
                 }
             </tbody>

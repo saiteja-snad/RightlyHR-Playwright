@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, 
+import { AbstractControl, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule,
   ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -118,16 +118,52 @@ export class DocumentHistoryInternOfferLetterComponent {
   onSelectDownload(file: any) {
     this.subscription = this.http.DownloadDataWithQuery('FileSystem/Downloadfile', file.documentUrl).subscribe({
       next: (res: any) => {
-        let fileName = res.headers.get('content-disposition')?.split(':')[1].split('=')[1];
         let blob: Blob = res.body as Blob;
         let a = document.createElement('a');
         a.href = window.URL.createObjectURL(blob);
-        let filename = file.documentUrl.split('/')[file.documentUrl.split('/').length - 1];
+        const filename = this.getDownloadFileName(res?.headers?.get('content-disposition'), file?.documentUrl);
         a.download = filename;
         a.click();
+        window.URL.revokeObjectURL(a.href);
       },
       error: (reason) => console.log(reason),
     });
+  }
+
+  private getDownloadFileName(contentDisposition: string | null, documentUrl?: string): string {
+    const fileNameFromHeader = this.extractFileNameFromContentDisposition(contentDisposition);
+    if (fileNameFromHeader) {
+      return fileNameFromHeader;
+    }
+
+    if (typeof documentUrl === 'string' && documentUrl.trim()) {
+      const normalizedUrl = documentUrl.split('?')[0];
+      const pathParts = normalizedUrl.split('/').filter(Boolean);
+      const lastPathPart = pathParts[pathParts.length - 1];
+      if (lastPathPart) {
+        return decodeURIComponent(lastPathPart);
+      }
+    }
+
+    return 'document';
+  }
+
+  private extractFileNameFromContentDisposition(contentDisposition: string | null): string | null {
+    if (!contentDisposition) {
+      return null;
+    }
+
+    const utfMatch = contentDisposition.match(/filename\*=UTF-8''([^;]+)/i);
+    if (utfMatch?.[1]) {
+      return decodeURIComponent(utfMatch[1].replace(/["']/g, '').trim());
+    }
+
+    const standardMatch = contentDisposition.match(/filename="?([^";]+)"?/i);
+    if (standardMatch?.[1]) {
+      return standardMatch[1].trim();
+    }
+
+    return null;
   }
 
   releaseTraineeOfferLetter(Values: any) {
@@ -247,7 +283,7 @@ export class DocumentHistoryInternOfferLetterComponent {
       isRead: false,
       isDelete: false,
       notificationDate: currentDate,
-      notificationType: `${loggedInUser?.firstName} ${loggedInUser?.middleName ?? ''} 
+      notificationType: `${loggedInUser?.firstName} ${loggedInUser?.middleName ?? ''}
       ${loggedInUser?.lastName ?? ''} Approved  ${personname.employeeName} Trainee Offer Letter`,
       empId: personname.offerSentByName,
     };
@@ -376,7 +412,7 @@ export class DocumentHistoryInternOfferLetterComponent {
       employeeId: this.selectedValuesOfOffer.offerSentBy,
       documentUrl: this.selectedValuesOfOffer.documentUrl,
       workLocation: this.selectedValuesOfOffer.workLocation,
-      senderName: `${loggedInUser?.firstName ?? ''} ${loggedInUser?.middleName ?? ''} 
+      senderName: `${loggedInUser?.firstName ?? ''} ${loggedInUser?.middleName ?? ''}
       ${loggedInUser?.lastName ?? ''}`,
       senderEmail: loggedInUser.workEmail,
       approvedBy: this.selectedValuesOfOffer.approvedBy,
@@ -411,7 +447,7 @@ export class DocumentHistoryInternOfferLetterComponent {
       isRead: false,
       isDelete: false,
       notificationDate: currentDate,
-      notificationType: `${loggedInUser.firstName}${loggedInUser.middleName ? ' ' + loggedInUser.middleName : ''} 
+      notificationType: `${loggedInUser.firstName}${loggedInUser.middleName ? ' ' + loggedInUser.middleName : ''}
       ${loggedInUser.lastName ?? ''} Rejected ${this.selectedValuesOfOffer.employeeName} Offer Letter`,
       empId: this.selectedValuesOfOffer.offerSentBy,
     };

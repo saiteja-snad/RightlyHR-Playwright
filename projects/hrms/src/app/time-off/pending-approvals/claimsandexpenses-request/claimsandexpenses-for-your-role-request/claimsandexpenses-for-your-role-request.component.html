@@ -9,135 +9,130 @@
 
   <div class="custom-table-content">
     @if(!loading){
-    <table class="w-100">
-      <thead>
-        <th>{{'Employee Name' | translate}}</th>
-        <th>{{'Expense Title' | translate}}</th>
-        <th>{{'Applied Date' | translate}}</th>
-        <th>{{'Total Amount' | translate}}</th>
-        <th>{{'Status' | translate}}</th>
-        <th class="text-center">{{'View Expense' | translate}}</th>
-        <th class="text-center">{{'Approver Comments' | translate}}</th>
-        @if(rbac.allowedToAccess('For Role (Claims and Expenses).update') || rbac.allowedToAccess('For Role (Claims and Expenses).delete')) {
-        <th class="text-center">{{"Action" | translate}}</th>
-        }
-      </thead>
-      <tbody>
-        <ng-container
-          *ngIf="(expenseheaderpending | searchfordesk: searchValue : ['entity.employeeName', 'entity.expenses_Title','entity.totalExpenseAmount','entity.status']).length > 0; else noDataTemplate">
-          <tr
-            *ngFor="let leave of expenseheaderpending  | searchfordesk: searchValue : ['entity.employeeName', 'entity.expenses_Title','entity.totalExpenseAmount','entity.status'];  let i = index">
-            <td>{{ leave?.entity?.employeeName }}</td>
-            <td>{{ leave?.entity?.expenses_Title }}</td>
-            <td>{{ leave?.entity?.applied_date | dateformat }}</td>
-            <td>₹ {{ leave?.entity?.totalExpenseAmount | number: '1.2-2'}}</td>
-            <td>{{ leave?.entity?.status }}</td>
-            <td class="text-center">
-
-              <a class="dropdown-item"
-                      (click)="openModal(viewDetailsModal); viewItem(leave?.entity?.expenses_ID)"><i
-                        class="bi bi-eye-fill me-2"></i>{{'View' | translate}}</a>
-              <!-- <div class="dropdown">
-                <a data-bs-toggle="dropdown" aria-expanded="false">
-                  <i class="bi bi-three-dots-vertical"></i>
+    <p-table #expenseTable [value]="expenseheaderpending | searchfordesk: searchValue : ['entity.employeeName', 'entity.expenses_Title','entity.totalExpenseAmount','entity.status']" 
+             [customSort]="true" (sortFunction)="customSort($event)"
+             styleClass="p-datatable-gridlines" responsiveLayout="scroll">
+      <ng-template pTemplate="header">
+        <tr>
+          <th pSortableColumn="employeeName">
+            {{'Employee Name' | translate}}
+            <p-sortIcon field="employeeName"></p-sortIcon>
+          </th>
+          <th pSortableColumn="expenses_Title">
+            {{'Expense Title' | translate}}
+            <p-sortIcon field="expenses_Title"></p-sortIcon>
+          </th>
+          <th pSortableColumn="applied_date">
+            {{'Applied Date' | translate}}
+            <p-sortIcon field="applied_date"></p-sortIcon>
+          </th>
+          <th pSortableColumn="totalExpenseAmount">
+            {{'Total Amount' | translate}}
+            <p-sortIcon field="totalExpenseAmount"></p-sortIcon>
+          </th>
+          <th pSortableColumn="status">
+            {{'Status' | translate}}
+            <p-sortIcon field="status"></p-sortIcon>
+          </th>
+          <th class="text-center">{{'View Expense' | translate}}</th>
+          <th class="text-center">{{'Approver Comments' | translate}}</th>
+          @if(rbac.allowedToAccess('For Role (Claims and Expenses).update') || rbac.allowedToAccess('For Role (Claims and Expenses).delete')) {
+          <th class="text-center">{{"Action" | translate}}</th>
+          }
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-leave let-i="rowIndex">
+        <tr>
+          <td>{{ leave?.entity?.employeeName }}</td>
+          <td>{{ leave?.entity?.expenses_Title }}</td>
+          <td>{{ leave?.entity?.applied_date | dateformat }}</td>
+          <td>₹ {{ leave?.entity?.totalExpenseAmount | number: '1.2-2'}}</td>
+          <td>{{ leave?.entity?.status }}</td>
+          <td class="text-center">
+            <a class="dropdown-item"
+                    (click)="openModal(viewDetailsModal); viewItem(leave?.entity?.expenses_ID)"><i
+                      class="bi bi-eye-fill me-2"></i>{{'View' | translate}}</a>
+          </td>
+          <td class="text-center">
+            <div>
+              <span *ngIf="leave?.entity?.expenseApproverComments?.length > 0; else NA">
+                <a type="button" (click)="comments(leave?.entity?.expenseApproverComments, commentspopup)">
+                  <app-info-icon />
                 </a>
-                <ul class="dropdown-menu custom-dropdown-menu">
-                  <li>
-                    <a class="dropdown-item"
-                      (click)="openModal(viewDetailsModal); viewItem(leave.entity.expenses_ID)"><i
-                        class="bi bi-eye-fill me-2"></i>View</a>
-                  </li>
-
-                </ul>
-              </div> -->
-            </td>
-            <td class="text-center">
-              <div>
-                <span *ngIf="leave?.entity?.expenseApproverComments?.length > 0; else NA">
-                  <a type="button" (click)="comments(leave?.entity?.expenseApproverComments, commentspopup)">
-                    <app-info-icon />
-                  </a>
-                </span>
-                <ng-template #NA>
-                  N/A
-                </ng-template>
-              </div>
-            </td>
-            @if(rbac.allowedToAccess('For Role (Claims and Expenses).update') || rbac.allowedToAccess('For Role (Claims and Expenses).delete')) {
-            <td class="text-center">
-              <div class="dropdown">
-                <a type="button" data-bs-toggle="dropdown">
-                  <i class="bi bi-three-dots-vertical"></i>
-                </a>
-                <ul class="dropdown-menu custom-dropdown-menu py-0">
-                  @if(rbac.allowedToAccess('For Role (Claims and Expenses).update')) {
-                  @if( leave.approvalHeader.currentapprovalStage !=leave.approvalHeader.finalapprovalStage){
-                   @if(+leave.approvalHeader.currentapprovalStage === (+leave.approvalHeader.finalapprovalStage - 1)){
-                    @if(!isAllVerifiedForRecord(leave.entity.expenses_ID)){
-                   <li (click)="openModal(verificationofModal); viewItem(leave.entity.expenses_ID)">
+              </span>
+              <ng-template #NA>
+                N/A
+              </ng-template>
+            </div>
+          </td>
+          @if(rbac.allowedToAccess('For Role (Claims and Expenses).update') || rbac.allowedToAccess('For Role (Claims and Expenses).delete')) {
+          <td class="text-center">
+            <div class="dropdown">
+              <a type="button" data-bs-toggle="dropdown">
+                <i class="bi bi-three-dots-vertical"></i>
+              </a>
+              <ul class="dropdown-menu custom-dropdown-menu py-0">
+                @if(rbac.allowedToAccess('For Role (Claims and Expenses).update')) {
+                @if( leave.approvalHeader.currentapprovalStage !=leave.approvalHeader.finalapprovalStage){
+                 @if(+leave.approvalHeader.currentapprovalStage === (+leave.approvalHeader.finalapprovalStage - 1)){
+                  @if(!isAllVerifiedForRecord(leave.entity.expenses_ID)){
+                 <li (click)="openModal(verificationofModal); viewItem(leave.entity.expenses_ID)">
+                  <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{ "Verify" | translate }}</a>
+                </li>
+                }
+                @if(isAllVerifiedForRecord(leave.entity.expenses_ID)){
+                <li (click)="openApproveModal(approval, leave)">
+                  <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{ "Approve for Payment" | translate }}</a>
+                </li>
+                }
+                }
+                @else if(+leave.approvalHeader.currentapprovalStage === (+leave.approvalHeader.finalapprovalStage - 2)){
+                @if(checklistdata.length > 0){
+                  <li (click)="expensesCheckList(leave,'Approve')">
                     <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{ "Verify" | translate }}</a>
                   </li>
                   }
-                  @if(isAllVerifiedForRecord(leave.entity.expenses_ID)){
-                  <li (click)="openApproveModal(approval, leave)">
-                    <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{ "Approve for Payment" | translate }}</a>
-                  </li>
-                  }
-                  }
-                  @else if(+leave.approvalHeader.currentapprovalStage === (+leave.approvalHeader.finalapprovalStage - 2)){
-                  @if(checklistdata.length > 0){
-                    <li (click)="expensesCheckList(leave,'Approve')">
-                      <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{ "Verify" | translate }}</a>
-                    </li>
-                    }
-                    @else {
-                    <li (click)="openApproveModal(approval, leave)">
-                      <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{ "Approve" | translate }}</a>
-                    </li>
-                    }
-                  }
                   @else {
-                    <li (click)="openApproveModal(approval, leave)">
+                  <li (click)="openApproveModal(approval, leave)">
                     <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{ "Approve" | translate }}</a>
                   </li>
                   }
-                  }
-                  }
+                }
+                @else {
+                  <li (click)="openApproveModal(approval, leave)">
+                  <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{ "Approve" | translate }}</a>
+                </li>
+                }
+                }
+                }
 
-                  @if( leave.approvalHeader.currentapprovalStage ==leave.approvalHeader.finalapprovalStage){
-                  <li (click)="openMarkAsPaidModal(markAsPaid, leave)">
-                    <!-- <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{ "Process" | translate }}</a> -->
-                     <a class="dropdown-item" ><i class="bi bi-check-circle me-2"></i>{{ "Mark as Paid" | translate }}</a>
-                  </li>
-                  }
-                  
-                  @if(rbac.allowedToAccess('For Role (Claims and Expenses).delete') &&leave.approvalHeader.currentapprovalStage !==leave.approvalHeader.finalapprovalStage) {
-                  <li (click)="openRejectModal(rejectmodal, leave)">
-                    <a class="dropdown-item"><i class="bi bi-x-circle me-2"></i>{{ "Reject" | translate }}</a>
-                  </li>
-                  }
-                  <!-- @if(rbac.allowedToAccess('For Role (Claims and Expenses).update')) {
-                  @if( leave.approvalHeader.currentapprovalStage !=
-                  leave.approvalHeader.finalapprovalStage){
-                  <li (click)="openRequiredCalrificationModal(requiredClarification, leave)">
-                    <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{ "Request for Clarification" |
-                      translate }}</a>
-                  </li>
-                  }
-                  } -->
-                </ul>
-              </div>
-            </td>
-            }
-          </tr>
-        </ng-container>
-        <ng-template #noDataTemplate>
+                @if( leave.approvalHeader.currentapprovalStage ==leave.approvalHeader.finalapprovalStage){
+                <li (click)="openMarkAsPaidModal(markAsPaid, leave)">
+                   <a class="dropdown-item" ><i class="bi bi-check-circle me-2"></i>{{ "Mark as Paid" | translate }}</a>
+                </li>
+                }
+                
+                @if(rbac.allowedToAccess('For Role (Claims and Expenses).delete') &&leave.approvalHeader.currentapprovalStage !==leave.approvalHeader.finalapprovalStage) {
+                <li (click)="openRejectModal(rejectmodal, leave)">
+                  <a class="dropdown-item"><i class="bi bi-x-circle me-2"></i>{{ "Reject" | translate }}</a>
+                </li>
+                }
+              </ul>
+            </div>
+          </td>
+          }
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <div class="wrapper">
           <tr>
-            <app-no-data-found />
+            <td colspan="8">
+              <app-no-data-found />
+            </td>
           </tr>
-        </ng-template>
-      </tbody>
-    </table>
+        </div>
+      </ng-template>
+    </p-table>
     }
     @else {
     <app-data-loader-content />

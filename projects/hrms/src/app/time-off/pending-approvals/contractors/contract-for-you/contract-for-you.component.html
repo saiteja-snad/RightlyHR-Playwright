@@ -3,29 +3,46 @@
     <div class="input-group custom-search mb-3">
         <span class="input-group-text custom-input-group-search" id="basic-addon1">
             <i class="bi bi-search"></i></span>
-        <input type="search" class="form-control custom-search-input" placeholder="Search by employee name " aria-label="Username"
-            aria-describedby="basic-addon1">
+        <input type="search" class="form-control custom-search-input" placeholder="Search by employee name / employee ID / contract type" 
+               [(ngModel)]="searchValue" aria-label="Search" aria-describedby="basic-addon1">
     </div>
 
     <div class="custom-table-content">
         @if(!loading){
-        <table class="w-100">
-            <thead>
-                <th class="text-nowrap">{{'Employee ID'|translate}}</th>
-                <th class="text-nowrap">{{'Employee Name'|translate}}</th>
-                <th class="text-nowrap">{{'Contract Start Date'|translate}}</th>
-                <th class="text-nowrap">{{'Contract End Date'|translate}}</th>
-                <!-- <th class="text-nowrap">{{'Extend End Date'|translate}}</th> -->
-                <th class="text-nowrap">{{'Contract Type'|translate}}</th>
-                <th class="text-center">{{'Comments'|translate}}</th>
-                <th class="text-center">{{'Approver Comments'|translate}}</th>
-                 @if(rbac.allowedToAccess('For You (Contractors).update') || rbac.allowedToAccess('For You (Contractors).delete')) {
-                <th class="text-center">{{'Action'}}</th>
-                }
-            </thead>
-            <tbody>
-                @if(((Contractors | async) ?? []).length > 0) {
-                <tr *ngFor="let trn of ((Contractors |async) ?? [] ) | contractsearchfilter:aprovalsearch ; ">
+        <p-table #contractTable [value]="getFilteredAndSortedContracts()" 
+                 [customSort]="true" (sortFunction)="customSort($event)"
+                 styleClass="p-datatable-gridlines" responsiveLayout="scroll">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th pSortableColumn="employeeId">
+                        {{'Employee ID'|translate}}
+                        <p-sortIcon field="employeeId"></p-sortIcon>
+                    </th>
+                    <th pSortableColumn="employeeName">
+                        {{'Employee Name'|translate}}
+                        <p-sortIcon field="employeeName"></p-sortIcon>
+                    </th>
+                    <th pSortableColumn="contractStartDate">
+                        {{'Contract Start Date'|translate}}
+                        <p-sortIcon field="contractStartDate"></p-sortIcon>
+                    </th>
+                    <th pSortableColumn="contractEndDate">
+                        {{'Contract End Date'|translate}}
+                        <p-sortIcon field="contractEndDate"></p-sortIcon>
+                    </th>
+                    <th pSortableColumn="contractType">
+                        {{'Contract Type'|translate}}
+                        <p-sortIcon field="contractType"></p-sortIcon>
+                    </th>
+                    <th class="text-center">{{'Comments'|translate}}</th>
+                    <th class="text-center">{{'Approver Comments'|translate}}</th>
+                     @if(rbac.allowedToAccess('For You (Contractors).update') || rbac.allowedToAccess('For You (Contractors).delete')) {
+                    <th class="text-center">{{'Action'}}</th>
+                    }
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-trn>
+                <tr>
                     <td>
                         <span *ngIf="trn.entity?.fusionEmpId;else employeeid">{{trn.entity?.fusionEmpId}}</span>
                         <ng-template #employeeid>-</ng-template>
@@ -46,11 +63,6 @@
                             dateformat }}</span>
                         <ng-template #starttime>-</ng-template>
                     </td>
-                      <!-- <td>
-                        <span *ngIf="trn.entity?.contractExtendedDate;else workeddate">{{trn.entity?.contractExtendedDate |
-                            dateformat }}</span>
-                        <ng-template #workeddate>-</ng-template>
-                    </td> -->
                     <td>
                         <span *ngIf="trn.entity?.contractType;else RequesterName">{{trn.entity?.contractType}}</span>
                         <ng-template #RequesterName>-</ng-template>
@@ -87,9 +99,6 @@
                             <ul class="dropdown-menu custom-dropdown-menu">
                                 @if(rbac.allowedToAccess('For You (Contractors).update') ) {
                                 @if(trn.approvalHeader.currentapprovalStage != trn.approvalHeader.finalapprovalStage){
-                                <!-- <li>
-                                    <a class="dropdown-item" (click)="openModal(PermissionsApprove);handleRequests(trn)">Accept</a>
-                                </li> -->
                                  <li (click)="openModal(PermissionsApprove);handleRequests(trn)">
                                         <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{"Approve" |
                                             translate}}</a>
@@ -98,9 +107,6 @@
                                 }
                                 @if( rbac.allowedToAccess('For You (Contractors).delete')) {
                                 @if(trn.approvalHeader.currentapprovalStage != trn.approvalHeader.finalapprovalStage){
-                                <!-- <li>
-                                    <a class="dropdown-item" (click)="openModal(RejectTrainee);handleRequests(trn)">Reject</a>
-                                </li> -->
                                  <li (click)="openModal(RejectTrainee);handleRequests(trn)">
                                         <a class="dropdown-item"><i class="bi bi-x-circle me-2"></i>{{"Reject" |
                                             translate}}</a>
@@ -127,19 +133,21 @@
                     </td>
                     }
                 </tr>
-                }
-                @else{
-                <tr>
-                    <app-no-data-found />
-                </tr>
-                }
-                
-            </tbody>
-        </table>
-    }
-    @else {
-         <app-data-loader-content />
-    }
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+                <div class="wrapper">
+                    <tr>
+                        <td colspan="8">
+                            <app-no-data-found />
+                        </td>
+                    </tr>
+                </div>
+            </ng-template>
+        </p-table>
+        }
+        @else {
+             <app-data-loader-content />
+        }
     </div>
 </div>
 

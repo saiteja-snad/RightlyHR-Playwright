@@ -9,23 +9,40 @@
 
     <div class="custom-table-content">
         @if(!loading){
-        <table class="w-100">
-            <thead>
-                <th class="text-nowrap">{{'Employee ID'|translate}}</th>
-                <th class="text-nowrap">{{'Employee Name'|translate}}</th>
-                <th class="text-nowrap">{{'Contract Start Date'|translate}}</th>
-                <th class="text-nowrap">{{'Contract End Date'|translate}}</th>
-                <!-- <th class="text-nowrap">{{'Extend End Date'|translate}}</th> -->
-                <th class="text-nowrap">{{'Contract Type'|translate}}</th>
-                <th class="text-center">{{'Comments'|translate}}</th>
-                <th class="text-center">{{'Approver Comments'|translate}}</th>
-                 @if(rbac.allowedToAccess('For You (Contract-Conversion).update') || rbac.allowedToAccess('For You (Contract-Conversion).delete')) {
-                <th class="text-center">{{'Action'}}</th>
-                }
-            </thead>
-            <tbody>
-                @if(((Contractors | async) ?? []).length > 0) {
-                <tr *ngFor="let trn of ((Contractors |async) ?? [] ) | contractsearchfilter:aprovalsearch ; ">
+        <p-table #contractConversionTable [value]="((Contractors | async) ?? [] ) | contractsearchfilter:aprovalsearch" 
+                 [customSort]="true" (sortFunction)="customSort($event)" 
+                 styleClass="p-datatable-sm" [tableStyle]="{'min-width': '50rem'}">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th [pSortableColumn]="'employeeId'">
+                        {{'Employee ID'|translate}}
+                        <p-sortIcon field="employeeId"></p-sortIcon>
+                    </th>
+                    <th [pSortableColumn]="'employeeName'">
+                        {{'Employee Name'|translate}}
+                        <p-sortIcon field="employeeName"></p-sortIcon>
+                    </th>
+                    <th [pSortableColumn]="'contractStartDate'">
+                        {{'Contract Start Date'|translate}}
+                        <p-sortIcon field="contractStartDate"></p-sortIcon>
+                    </th>
+                    <th [pSortableColumn]="'contractEndDate'">
+                        {{'Contract End Date'|translate}}
+                        <p-sortIcon field="contractEndDate"></p-sortIcon>
+                    </th>
+                    <th [pSortableColumn]="'contractType'">
+                        {{'Contract Type'|translate}}
+                        <p-sortIcon field="contractType"></p-sortIcon>
+                    </th>
+                    <th class="text-center">{{'Comments'|translate}}</th>
+                    <th class="text-center">{{'Approver Comments'|translate}}</th>
+                    @if(rbac.allowedToAccess('For You (Contract-Conversion).update') || rbac.allowedToAccess('For You (Contract-Conversion).delete')) {
+                    <th class="text-center">{{'Action'}}</th>
+                    }
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-trn>
+                <tr>
                     <td>
                         <span *ngIf="trn.entity?.fusionEmpId;else employeeid">{{trn.entity?.fusionEmpId}}</span>
                         <ng-template #employeeid>-</ng-template>
@@ -34,23 +51,16 @@
                         <span *ngIf="trn.entity?.employeeName;else RequesterName">{{trn.entity?.employeeName}}</span>
                         <ng-template #RequesterName>-</ng-template>
                     </td>
-
                     <td>
                         <span *ngIf="trn.entity?.contractStartDate;else workeddate">{{trn.entity?.contractStartDate |
                             dateformat }}</span>
                         <ng-template #workeddate>-</ng-template>
                     </td>
-                   
                     <td>
                         <span *ngIf="trn.entity?.contractEndDate;else starttime">{{trn.entity?.contractEndDate |
                             dateformat }}</span>
                         <ng-template #starttime>-</ng-template>
                     </td>
-                      <!-- <td>
-                        <span *ngIf="trn.entity?.contractExtendedDate;else workeddate">{{trn.entity?.contractExtendedDate |
-                            dateformat }}</span>
-                        <ng-template #workeddate>-</ng-template>
-                    </td> -->
                     <td>
                         <span *ngIf="trn.entity?.contractType;else RequesterName">{{trn.entity?.contractType}}</span>
                         <ng-template #RequesterName>-</ng-template>
@@ -120,15 +130,15 @@
                     </td>
                     }
                 </tr>
-                }
-                @else{
-                <tr>
-                    <app-no-data-found />
-                </tr>
-                }
-                
-            </tbody>
-        </table>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+                <div class="wrapper">
+                    <tr>
+                        <td colspan="8"><app-no-data-found /></td>
+                    </tr>
+                </div>
+            </ng-template>
+        </p-table>
     }
     @else {
          <app-data-loader-content />

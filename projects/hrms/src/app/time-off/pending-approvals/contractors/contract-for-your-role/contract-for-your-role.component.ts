@@ -1,14 +1,14 @@
 import { CommonModule, DatePipe } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ReactiveFormsModule, FormsModule, FormBuilder, FormControl, FormGroup, NgForm, Validators } from '@angular/forms';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
-import { PaginatorModule, PaginatorState } from 'primeng/paginator';
+import { TableModule } from 'primeng/table';
+import { Table } from 'primeng/table';
 import { DateformatPipe } from '../../../../pipes/dateformat.pipe';
 import { DataLoaderContentComponent } from '../../../../shared/data-loader-content/data-loader-content.component';
 import { NoDataFoundComponent } from '../../../../shared/no-data-found/no-data-found.component';
-import { TraineeApprovalsTabsComponent } from '../../../../shared/time-off-module-tabs/pending-approvals-tabs/trainee-approvals-tabs/trainee-approvals-tabs.component';
-import { Subscription, BehaviorSubject } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
 import { Ipersonal } from '../../../../Interfaces/personal-modal';
 import { AuthService } from '../../../../services/auth.service';
@@ -18,17 +18,28 @@ import { OpenModalService } from '../../../../services/open-modal.service';
 import { RbacService } from '../../../../services/rbac.service';
 import { SignalsService } from '../../../../services/signals.service';
 import { Icontractapproval } from '../../../../Interfaces/contract-module';
-import { ContractsearchfilterPipe } from "../../../../Pipes/contractsearchfilter.pipe";
 import { InfoIconComponent } from "../../../../icons/info-icon/info-icon.component";
 
 @Component({
   selector: 'app-contract-for-your-role',
-  imports: [DateformatPipe, CommonModule, ReactiveFormsModule, NgbPopoverModule, PaginatorModule, FormsModule, TranslateModule,
-    NoDataFoundComponent, DataLoaderContentComponent, ContractsearchfilterPipe, InfoIconComponent],
+  standalone: true,
+  imports: [
+    DateformatPipe, 
+    CommonModule, 
+    ReactiveFormsModule, 
+    NgbPopoverModule, 
+    TableModule, 
+    FormsModule, 
+    TranslateModule,
+    NoDataFoundComponent, 
+    DataLoaderContentComponent, 
+    InfoIconComponent
+  ],
   templateUrl: './contract-for-your-role.component.html',
   styleUrl: './contract-for-your-role.component.scss'
 })
-export class ContractForYourRoleComponent {
+export class ContractForYourRoleComponent implements OnInit, OnDestroy {
+@ViewChild('contractTable') contractTable!: Table;
 isLoading = false;
   private customsetup: any;
   private datePipe: DatePipe;
@@ -42,7 +53,8 @@ isLoading = false;
   subscription!: Subscription;
   requesthandler = {} as any;
   empdata = {} as Ipersonal;
-  Contractors = new BehaviorSubject<Icontractapproval[]>([]);
+  contractData = [] as Icontractapproval[];
+  originalContractData = [] as Icontractapproval[]; // Store original unsorted data
   myApproverComments = {} as any;
   discontinue: any;
   extend: any;
@@ -53,18 +65,11 @@ isLoading = false;
   Status!: any;
   comments = [] as any;
   noRecalllength = [] as any;
-  aprovalsearch: any;
-  totalRecords = 100;
-  first: any = 0;
-  rows: any = 10;
-  options = [
-    { label: 10, value: 10 },
-    { label: 15, value: 15 },
-    { label: 20, value: 20 },
-    { label: 25, value: 25 },
-  ];
+  searchValue: any;
   selectedLeaveStatus: any;
-totalCount:any;
+  totalCount:any;
+  currentSortField: string = '';
+  currentSortOrder: number = 0; // 0 = no sort, 1 = asc, -1 = desc
   constructor(private conformationPopup: OpenModalService, private http: HttpService, private fb: FormBuilder, private modalService: NgbModal,
     private authService: AuthService, public rbac: RbacService,public formsValidation: FormValidationsService,private signalService: SignalsService) {
     this.customsetup = environment.dateformat;
@@ -143,14 +148,7 @@ onStatusApproveSelect(status: string) {
     this.comments = commentsArray;
   }
 
-  onRowsChange() {
-    this.first = 0;
-  }
 
-  onPageChange(event: PaginatorState) {
-    this.first = event.first;
-    this.rows = event.rows;
-  }
 
   toggleExtend() {
     this.discontinue = false;
@@ -232,6 +230,115 @@ onCommentChange(value: string) {
     this.selectedLeaveStatus = null;
   }
 }
+
+  getFilteredAndSortedContracts(): Icontractapproval[] {
+    if (!this.searchValue || this.searchValue.trim() === '') {
+      return this.contractData;
+    }
+    
+    const searchTerm = this.searchValue.toLowerCase().trim();
+    return this.contractData.filter((contract: Icontractapproval) => {
+      const employeeId = contract.entity?.fusionEmpId?.toString().toLowerCase() || '';
+      const employeeName = contract.entity?.employeeName?.toLowerCase() || '';
+      const contractStartDate = contract.entity?.contractStartDate || '';
+      const contractEndDate = contract.entity?.contractEndDate || '';
+      const contractType = contract.entity?.contractType?.toLowerCase() || '';
+      
+      return employeeId.includes(searchTerm) ||
+             employeeName.includes(searchTerm) ||
+             contractStartDate.includes(searchTerm) ||
+             contractEndDate.includes(searchTerm) ||
+             contractType.includes(searchTerm);
+    });
+  }
+
+  customSort(event: any): void {
+    const field = event.field;
+    
+    // Track current sort state for the clicked field
+    if (this.currentSortField === field) {
+      // Same field clicked - cycle through: asc (1) -> desc (-1) -> reset (0)
+      if (this.currentSortOrder === 1) {
+        // Currently ascending, change to descending
+        this.currentSortOrder = -1;
+        event.order = -1;
+      } else if (this.currentSortOrder === -1) {
+        // Currently descending, reset to original order
+        this.contractData = [...this.originalContractData];
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        if (this.contractTable) {
+          this.contractTable.reset();
+        }
+        return;
+      } else {
+        // Currently reset, change to ascending
+        this.currentSortOrder = 1;
+        event.order = 1;
+      }
+    } else {
+      // New field clicked - start with ascending
+      this.currentSortField = field;
+      this.currentSortOrder = 1;
+      event.order = 1;
+    }
+
+    event.data.sort((a: any, b: any) => {
+      let val1: any;
+      let val2: any;
+
+      // Handle contract fields
+      switch (field) {
+        case 'employeeId':
+          val1 = a.entity?.fusionEmpId;
+          val2 = b.entity?.fusionEmpId;
+          break;
+        case 'employeeName':
+          val1 = a.entity?.employeeName;
+          val2 = b.entity?.employeeName;
+          break;
+        case 'contractStartDate':
+          val1 = a.entity?.contractStartDate;
+          val2 = b.entity?.contractStartDate;
+          break;
+        case 'contractEndDate':
+          val1 = a.entity?.contractEndDate;
+          val2 = b.entity?.contractEndDate;
+          break;
+        case 'contractType':
+          val1 = a.entity?.contractType;
+          val2 = b.entity?.contractType;
+          break;
+        default:
+          val1 = a[field];
+          val2 = b[field];
+      }
+
+      // Handle date sorting
+      if (['contractStartDate', 'contractEndDate'].includes(field)) {
+        const date1 = val1 ? new Date(val1) : new Date(0);
+        const date2 = val2 ? new Date(val2) : new Date(0);
+        return event.order * (date1.getTime() - date2.getTime());
+      }
+
+      // Handle Employee ID sorting (numeric)
+      if (field === 'employeeId') {
+        return event.order * String(val1 ?? '').localeCompare(
+          String(val2 ?? ''),
+          undefined,
+          {
+            numeric: true,
+            sensitivity: 'base'
+          }
+        );
+      }
+
+      // Handle string sorting for all other fields
+      val1 = String(val1 ?? '').trim();
+      val2 = String(val2 ?? '').trim();
+      return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+    });
+  }
   //function to send the rejected status and comments
   handleReject(f: NgForm) {
     let loggedInUser = this.authService.getToken();
@@ -331,8 +438,9 @@ onCommentChange(value: string) {
     this.subscription = this.http.getData(`PendingApproval/employee/${EmployeeId}?moduleId=${moduleId}&approvedType=ROLE`).subscribe({
       next: (data: any) => {
         this.loading = false;
-        this.Contractors.next(data.data as Icontractapproval[])
-        this.noRecalllength = this.Contractors;
+        this.contractData = data.data as Icontractapproval[];
+        this.originalContractData = [...this.contractData];
+        this.noRecalllength = this.contractData;
       },
       error: (reason) => {
         console.log(reason)

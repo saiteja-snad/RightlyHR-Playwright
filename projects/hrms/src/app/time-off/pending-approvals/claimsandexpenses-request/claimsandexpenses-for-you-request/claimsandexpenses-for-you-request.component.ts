@@ -26,6 +26,8 @@ import { FormValidationsService } from '../../../../services/form-validations.se
 import { ConfirmationIconComponent } from "../../../../icons/confirmation-icon/confirmation-icon.component";
 import moment from 'moment';
 import { SelectModule } from 'primeng/select';
+import { TableModule } from 'primeng/table';
+import { Table } from 'primeng/table';
 @Component({
   selector: 'app-claimsandexpenses-for-you-request',
   imports: [
@@ -43,7 +45,8 @@ import { SelectModule } from 'primeng/select';
     InfoIconComponent,
     DataLoaderContentComponent,
     ConfirmationIconComponent,
-    SelectModule
+    SelectModule,
+    TableModule
 ],
   templateUrl: './claimsandexpenses-for-you-request.component.html',
   styleUrl: './claimsandexpenses-for-you-request.component.scss',
@@ -79,6 +82,7 @@ export class ClaimsandexpensesForYouRequestComponent
   storeapprovalRequest!: ExpenseApprovalResponse;
   @ViewChild('viewattamchment') private viewattamchment!: NgbModal;
   @ViewChild('verificationViewattamchment') private verificationViewattamchment!: NgbModal;
+  @ViewChild('expenseTable') expenseTable!: Table;
   // approverComments = [] as AttendanceRequestC[];
   @ViewChild('commentspopup') modalContent: any;
   @ViewChild('checklistconfirmationmodal') checklistconfirmationmodal: any;
@@ -92,6 +96,9 @@ export class ClaimsandexpensesForYouRequestComponent
   paymentmodedata= [] as any[];
   allVerifiedMap: Map<number, boolean> = new Map<number, boolean>();
   isloading:boolean=false;
+  originalExpenseData = [] as ExpenseApprovalResponse[]; // Store original unsorted data
+  currentSortField: string = '';
+  currentSortOrder: number = 0; // 0 = no sort, 1 = asc, -1 = desc
   constructor(
     private modalService: NgbModal,
     private fb: FormBuilder,
@@ -215,6 +222,7 @@ export class ClaimsandexpensesForYouRequestComponent
               item.approvalHeader.status != 'Processed' &&
               item.approvalHeader.status != 'Rejected'
           );
+          this.originalExpenseData = [...this.expenseheaderpending];
         },
         error: (reason) => {
           this.loading = false;
@@ -848,6 +856,93 @@ onViewAttachementverification(url: any) {
     this.modalService.dismissAll();
     this.openModal(this.verificationViewattamchment);
   }
+
+  customSort(event: any): void {
+    const field = event.field;
+    
+    // Track current sort state for the clicked field
+    if (this.currentSortField === field) {
+      // Same field clicked - cycle through: asc (1) -> desc (-1) -> reset (0)
+      if (this.currentSortOrder === 1) {
+        // Currently ascending, change to descending
+        this.currentSortOrder = -1;
+        event.order = -1;
+      } else if (this.currentSortOrder === -1) {
+        // Currently descending, reset to original order
+        this.expenseheaderpending = [...this.originalExpenseData];
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        if (this.expenseTable) {
+          this.expenseTable.reset();
+        }
+        return;
+      } else {
+        // Currently reset, change to ascending
+        this.currentSortOrder = 1;
+        event.order = 1;
+      }
+    } else {
+      // New field clicked - start with ascending
+      this.currentSortField = field;
+      this.currentSortOrder = 1;
+      event.order = 1;
+    }
+
+    event.data.sort((a: any, b: any) => {
+      let val1: any;
+      let val2: any;
+
+      // Handle nested entity fields for expense data
+      if (['employeeName', 'expenses_Title', 'applied_date', 'totalExpenseAmount', 'status'].includes(field)) {
+        switch (field) {
+          case 'employeeName':
+            val1 = a.entity?.employeeName;
+            val2 = b.entity?.employeeName;
+            break;
+          case 'expenses_Title':
+            val1 = a.entity?.expenses_Title;
+            val2 = b.entity?.expenses_Title;
+            break;
+          case 'applied_date':
+            val1 = a.entity?.applied_date;
+            val2 = b.entity?.applied_date;
+            break;
+          case 'totalExpenseAmount':
+            val1 = a.entity?.totalExpenseAmount;
+            val2 = b.entity?.totalExpenseAmount;
+            break;
+          case 'status':
+            val1 = a.entity?.status;
+            val2 = b.entity?.status;
+            break;
+        }
+      } else {
+        // Handle direct fields
+        val1 = a[field];
+        val2 = b[field];
+      }
+
+      // Handle date sorting
+      if (field === 'applied_date') {
+        const date1 = val1 ? new Date(val1).getTime() : 0;
+        const date2 = val2 ? new Date(val2).getTime() : 0;
+        return event.order * (date1 - date2);
+      }
+
+      // Handle amount sorting (numeric)
+      if (field === 'totalExpenseAmount') {
+        const num1 = parseFloat(String(val1).replace(/[^\d.-]/g, '')) || 0;
+        const num2 = parseFloat(String(val2).replace(/[^\d.-]/g, '')) || 0;
+        return event.order * (num1 - num2);
+      }
+
+      // Handle string sorting for all other fields
+      val1 = String(val1 ?? '').trim();
+      val2 = String(val2 ?? '').trim();
+      return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+    });
+  }
+
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();

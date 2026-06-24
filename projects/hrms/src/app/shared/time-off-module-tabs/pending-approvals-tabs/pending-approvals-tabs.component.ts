@@ -237,8 +237,12 @@ export class PendingApprovalsTabsComponent {
     return onboardingLabels.filter(item => this.rbac.allowedToAccess(item.permission)).map(item => item.label);
   }
 
+  private sortByCount(tabs: any[]): any[] {
+    return tabs.sort((a, b) => (b.totalCount ?? 0) - (a.totalCount ?? 0));
+  }
+
   refreshFilteredTabs(): void {
-    this.filteredTabs = this.navTabs
+    const filtered = this.navTabs
       .filter(tab => {
         if (!tab.permission) return true;
         const { feature, action } = tab.permission;
@@ -246,6 +250,7 @@ export class PendingApprovalsTabsComponent {
         return this.rbac.allowedToAccess(permissionString);
       })
       .map(tab => ({ ...tab }));
+    this.filteredTabs = this.sortByCount(filtered);
   }
 
   updateTabCounts() {

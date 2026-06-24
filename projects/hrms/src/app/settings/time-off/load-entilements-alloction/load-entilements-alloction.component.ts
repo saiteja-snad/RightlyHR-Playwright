@@ -64,6 +64,7 @@ export class LoadEntilementsAlloctionComponent implements OnInit, OnDestroy {
   newCategories: any[] = [];
   selectedNewCategories: any[] = [];
   loadingNewEmployees = false;
+  dropdownsInitialized = false;
   submittingLoad = false;
   submittingLoadCategories = false;
   validationErrors: any[] = [];
@@ -78,6 +79,7 @@ export class LoadEntilementsAlloctionComponent implements OnInit, OnDestroy {
       const jobid = params['id'];
       if (jobid) {
         this.jobid = jobid;
+        this.dropdownsInitialized = false;
         this.getdatacarryforword();
       }
     });
@@ -172,8 +174,11 @@ export class LoadEntilementsAlloctionComponent implements OnInit, OnDestroy {
         this.jobSummary = res.data.jobSummary;
         this.employees = res.data.employees;
         this.collectionSize = res.pagination.totalRecords;
-        this.buildEmployeeDropdown(res.data.employees);
-        this.buildCategoryDropdown(res.data.employees);
+        if (!this.dropdownsInitialized) {
+          this.buildEmployeeDropdown(res.data.employees);
+          this.buildCategoryDropdown(res.data.employees);
+          this.dropdownsInitialized = true;
+        }
         this.getNewEmployees();
       },
       error: (err) => {

@@ -3,8 +3,6 @@ import { FormGroup, FormBuilder, Validators, ReactiveFormsModule, FormArray, For
 import { Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 import { CommonModule } from '@angular/common';
-import { Select } from 'primeng/select';
-import { FormsModule } from '@angular/forms';
 import { NoDataFoundComponent } from '../../../../../shared/no-data-found/no-data-found.component';
 
 interface CycleRow { cycleNo: number; label: string; value: number; cycleStart: string; cycleEnd: string; }
@@ -19,15 +17,9 @@ interface BreakdownGroup {
   cycles: CycleRow[];
 }
 
-interface PendingRow {
-  destinationId: number | null;
-  frequencyType: string | null;
-  previousCycleHandling: string | null;
-}
-
 @Component({
   selector: 'app-load-entitlement-breakdown',
-  imports: [CommonModule, ReactiveFormsModule, Select, FormsModule, NoDataFoundComponent],
+  imports: [CommonModule, ReactiveFormsModule, NoDataFoundComponent],
   templateUrl: './load-entitlement-breakdown.component.html',
   styleUrl: './load-entitlement-breakdown.component.scss',
   encapsulation: ViewEncapsulation.None
@@ -35,28 +27,13 @@ interface PendingRow {
 
 export class LoadEntitlementBreakdownComponent implements OnInit, OnDestroy {
   carryforwarddata: any = {};
-  // available target categories derived from mapping (unique destinations)
   availableTargetCategories: { id: number; name: string; total: number }[] = [];
-  // pending config rows (not yet confirmed as accordions)
-  pendingRows: PendingRow[] = [];
-  // confirmed breakdown groups shown as accordions
   breakdownGroups: BreakdownGroup[] = [];
   private originalGroups: BreakdownGroup[] = [];
   dirtyGroups = new Set<number>();
   selectedGroupIdx = 0;
   breakdownForm!: FormGroup;
   destroy$: Subject<boolean> = new Subject<boolean>();
-  readonly frequencyTypes = [
-    { label: 'Monthly', value: 'MONTHLY' },
-    { label: 'Quarterly', value: 'QUARTERLY' },
-    { label: 'Half Yearly', value: 'HALF_YEARLY' },
-    { label: 'Yearly', value: 'YEARLY' },
-  ];
-  readonly previousCycleHandlingOptions = [
-    { label: 'Frozen', value: 'FROZEN' },
-    { label: 'Carry Forward', value: 'CARRY_FORWARD' },
-    { label: 'Lapsed', value: 'LAPSED' },
-  ];
   private readonly CYCLE_COUNT: Record<string, number> = {
     MONTHLY: 12, QUARTERLY: 4, HALF_YEARLY: 2, YEARLY: 1
   };
@@ -68,7 +45,12 @@ export class LoadEntitlementBreakdownComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.carryforwarddata = JSON.parse(localStorage.getItem('loadEntitlement') ?? '{}');
     this.buildAvailableCategories();
-    this.restoreSavedBreakdown();
+    const hasSaved = Array.isArray(this.carryforwarddata?.computedBreakdown) && this.carryforwarddata.computedBreakdown.length > 0;
+    if (hasSaved) {
+      this.restoreSavedBreakdown();
+    } else {
+      this.autoInitBreakdown();
+    }
   }
 
   // ── Build available target categories from mapping ────────────────────────
@@ -109,59 +91,28 @@ export class LoadEntitlementBreakdownComponent implements OnInit, OnDestroy {
     this.rebuildForm();
   }
 
-  // ── Add Row ───────────────────────────────────────────────────────────────
-
-  addRow(): void {
-    this.pendingRows.push({ destinationId: null, frequencyType: null, previousCycleHandling: null });
-  }
-
-  removePendingRow(idx: number): void {
-    this.pendingRows.splice(idx, 1);
-  }
-
-  // called whenever any dropdown in a pending row changes — confirm when all 3 are set
-  onPendingRowChange(row: PendingRow, idx: number): void {
-    if (!row.destinationId || !row.frequencyType || !row.previousCycleHandling) return;
+  // ── Auto-init breakdown from published category data ─────────────────────
+  private autoInitBreakdown(): void {
+    const nextYearData: any[] = Array.isArray(this.carryforwarddata?.nextYearData) ? this.carryforwarddata.nextYearData : [];
     const year: number = (this.carryforwarddata?.year ?? new Date().getFullYear()) + 1;
-    const cat = this.availableTargetCategories.find(c => c.id === row.destinationId)!;
-    const key = `${row.destinationId}__${row.frequencyType}__${row.previousCycleHandling}`;
-    const group: BreakdownGroup = {
-      key,
-      destinationId: row.destinationId,
-      targetCategoryName: cat.name,
-      frequencyType: row.frequencyType,
-      previousCycleHandling: row.previousCycleHandling,
-      total: cat.total,
-      cycles: this.generateCycles(cat.total, row.frequencyType, year),
-    };
-    this.breakdownGroups.push(group);
-    this.originalGroups.push(JSON.parse(JSON.stringify(group)));
-    this.pendingRows.splice(idx, 1);
-    this.selectedGroupIdx = this.breakdownGroups.length - 1;
+    this.breakdownGroups = this.availableTargetCategories.map(cat => {
+      const published = nextYearData.find((n: any) => n.id === cat.id);
+      const frequencyType = published?.entitlementFrequency ?? 'YEARLY';
+      const previousCycleHandling = published?.entitlementCycleHandling ?? 'FROZEN';
+      const key = `${cat.id}__${frequencyType}__${previousCycleHandling}`;
+      return {
+        key,
+        destinationId: cat.id,
+        targetCategoryName: cat.name,
+        frequencyType,
+        previousCycleHandling,
+        total: cat.total,
+        cycles: this.generateCycles(cat.total, frequencyType, year),
+      };
+    });
+    this.originalGroups = JSON.parse(JSON.stringify(this.breakdownGroups));
     this.rebuildForm();
     this.persistToStorage();
-  }
-
-  removeGroup(grpIdx: number): void {
-    this.breakdownGroups.splice(grpIdx, 1);
-    this.originalGroups.splice(grpIdx, 1);
-    const newDirty = new Set<number>();
-    this.dirtyGroups.forEach(idx => { if (idx < grpIdx) newDirty.add(idx); else if (idx > grpIdx) newDirty.add(idx - 1); });
-    this.dirtyGroups = newDirty;
-    this.selectedGroupIdx = Math.min(this.selectedGroupIdx, Math.max(0, this.breakdownGroups.length - 1));
-    this.rebuildForm();
-    this.persistToStorage();
-  }
-
-  // categories already used in confirmed groups (exclude from pending dropdowns)
-  get usedDestinationIds(): Set<number> {
-    return new Set(this.breakdownGroups.map(g => g.destinationId));
-  }
-
-  getAvailableForRow(row: PendingRow): { id: number; name: string; total: number }[] {
-    return this.availableTargetCategories.filter(
-      c => !this.usedDestinationIds.has(c.id) || c.id === row.destinationId
-    );
   }
 
   // ── Cycle generation ──────────────────────────────────────────────────────
@@ -374,8 +325,7 @@ export class LoadEntitlementBreakdownComponent implements OnInit, OnDestroy {
   get canProceed(): boolean {
     return this.availableTargetCategories.length > 0
       && this.breakdownGroups.length === this.availableTargetCategories.length
-      && !this.hasAnyValidationError
-      && this.pendingRows.length === 0;
+      && !this.hasAnyValidationError;
   }
 
   back(): void {

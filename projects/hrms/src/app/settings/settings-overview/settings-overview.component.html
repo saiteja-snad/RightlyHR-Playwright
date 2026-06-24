@@ -127,8 +127,9 @@
                     }
                     @if(rbac.allowedToAccess('Project Management Configuration Module.view')){
                     <!--Attendance Configuration-->
-                    <li class="accordian-list-item" (click)="navigateToAccessedRoute('/settings/project-management-config')"
-                    id="settings-panel-6">
+                    <li class="accordian-list-item"
+                        (click)="navigateToAccessedRoute('/settings/project-management-config', 'settings-panel-6')"
+                        id="settings-panel-6">
                         <p-accordion-panel value="6">
                             <p-accordion-header>
                                 <div>
@@ -164,8 +165,9 @@
                     </li>
                     }
                     @if(rbac.allowedToAccess('IT Support Configuration.view')){
-                    <li class="accordian-list-item" (click)="navigateToAccessedRoute('/settings/it-configuration')" 
-                    id="settings-panel-8">
+                    <li class="accordian-list-item"
+                        (click)="navigateToAccessedRoute('/settings/it-configuration', 'settings-panel-8')"
+                        id="settings-panel-8">
                         <p-accordion-panel value="8">
                             <p-accordion-header>
                                 <div>
@@ -203,8 +205,9 @@
                     </li>
                     }
                      @if(rbac.allowedToAccess('Rate Card Configuration Module.view')){
-                    <li class="accordian-list-item" (click)="navigateToAccessedRoute('/settings/employee-rate-card/rate-card')" 
-                    id="settings-panel-10">
+                    <li class="accordian-list-item"
+                        (click)="navigateToAccessedRoute('/settings/employee-rate-card/rate-card', 'settings-panel-10')"
+                        id="settings-panel-10">
                         <p-accordion-panel value="10">
                             <p-accordion-header>
                                 <div>
@@ -222,7 +225,8 @@
                     @if(rbac.allowedToAccess('Helpdesk Configuration Module.view')){
                     <!--Help Desk Configuration-->
                     <li class="accordian-list-item"
-                        (click)="navigateToAccessedRoute('/settings/helpdesk-management-config')" id="settings-panel-11">
+                        (click)="navigateToAccessedRoute('/settings/helpdesk-management-config', 'settings-panel-11')"
+                        id="settings-panel-11">
                         <p-accordion-panel value="11">
                             <p-accordion-header>
                                 <div>

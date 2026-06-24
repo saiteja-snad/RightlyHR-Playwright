@@ -11,11 +11,14 @@ import { HelpDeskReportTabsComponent } from '../../shared/reports-tabs/help-desk
 import { ItSupportReportsTabsComponent } from '../../shared/reports-tabs/it-support-reports-tabs/it-support-reports-tabs.component';
 import { TranslateModule } from '@ngx-translate/core';
 
-const REPORTS_ACCORDION_KEY = 'reports_active_accordion';
+// Module-level variables: cleared on page reload, persist during SPA navigation
+let reportsSavedAccordion: string | null = null;
+let reportsSavedScrollId: string | null = null;
 
 @Component({
   selector: 'app-view-reports',
-  imports: [RouterModule, StandardReportTabsComponent, AttandaceReportTabsComponent, PolicyReportsTabsComponent, AccordionModule, TimesheetReportTabsComponent, HelpDeskReportTabsComponent, ItSupportReportsTabsComponent, TranslateModule],
+  imports: [RouterModule, StandardReportTabsComponent, AttandaceReportTabsComponent, PolicyReportsTabsComponent, AccordionModule,
+    TimesheetReportTabsComponent, HelpDeskReportTabsComponent, ItSupportReportsTabsComponent, TranslateModule],
   templateUrl: './view-reports.component.html',
   styleUrl: './view-reports.component.scss',
   encapsulation: ViewEncapsulation.None
@@ -35,21 +38,30 @@ export class ViewReportsComponent implements AfterViewInit {
   helpDeskReports = MODULE_INFOS.HELP_DESK_REPORTS_MODULE_INFO;
   itsupportReports = MODULE_INFOS.ITSUPPORT_REPORTS_MODULE_INFO;
 
-  activeAccordionValue: string = sessionStorage.getItem(REPORTS_ACCORDION_KEY) ?? '0';
+  activeAccordionValue: string = reportsSavedAccordion ?? '';
 
   constructor(public rbac: RbacService) { }
 
   ngAfterViewInit() {
     setTimeout(() => {
-      document.getElementById(`reports-panel-${this.activeAccordionValue}`)
-        ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      if (reportsSavedScrollId) {
+        document.getElementById(reportsSavedScrollId)
+          ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
     }, 300);
   }
 
   onAccordionChange(value: string | number | string[] | number[]) {
     if (value != null) {
-      sessionStorage.setItem(REPORTS_ACCORDION_KEY, String(value));
+      reportsSavedAccordion = String(value);
+      reportsSavedScrollId = `reports-panel-${value}`;
+      this.activeAccordionValue = String(value);
     }
-    this.activeAccordionValue = String(value);
+  }
+
+  onNonAccordionNavigate(scrollId: string) {
+    reportsSavedAccordion = null;
+    reportsSavedScrollId = scrollId;
+    this.activeAccordionValue = '';
   }
 }

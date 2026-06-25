@@ -501,6 +501,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     this.date = [this.start, this.end];
     // Update the week range visually / in state
     this.setWeekRange(monday, sunday);
+    this.getResourceData();
     this.checkTimesheetLockByMonth(monday.toDate(), sunday.toDate()); // 🔹 check locks by mont
     // Format start date for API call
     const formattedStart = monday.format('YYYY-MM-DD');
@@ -1436,6 +1437,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       this.weakenddate = this.end;
       this.setWeekRange(prevStart, prevEnd);
       this.checkTimesheetLockByMonth(prevStart.toDate(), prevEnd.toDate()); //
+       this.getResourceData();  
       const formattedStart = moment(prevStart).format('YYYY-MM-DD');
       this.loadTimeSheetByResource(formattedStart);
     }
@@ -1452,6 +1454,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       this.weakenddate = this.end;
       this.setWeekRange(nextStart, nextEnd);
       this.checkTimesheetLockByMonth(nextStart.toDate(), nextEnd.toDate());
+       this.getResourceData();  
       const formattedStart = moment(nextStart).format('YYYY-MM-DD');
       this.loadTimeSheetByResource(formattedStart);
     }
@@ -1511,10 +1514,24 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
 
   //GET CLIENT AND PROJECT
   getResourceData() {
-    this.http.getDataIncludeParams(`ProjectResource?status=active&employeeId=${this.employeeId}&isProjectRequired=true`).pipe(takeUntil(this.destroy$)).subscribe((res: any) => {
+    
+    const weekStartDate = moment(this.start).format('YYYY-MM-DD');
+
+    console.log('this.start =', this.start);
+console.log('weekStartDate =', weekStartDate);
+    this.http.getDataIncludeParams(`ProjectResource?status=active,released&employeeId=${this.employeeId}&isProjectRequired=true&weekStartDate=${weekStartDate}`).pipe(takeUntil(this.destroy$)).subscribe((res: any) => {
       if (res.success) {
-        this.resourcesArrayList = res.data;
-        const rawData = res.data;
+        // this.resourcesArrayList = res.data;
+        // const rawData = res.data;
+        console.log(
+    res.data.map((x: any) => ({
+      project: x.project?.projectName,
+      status: x.status,
+      isBlocked: x.isBlocked
+    }))
+  );
+        const rawData = res.data.filter((item: any) => !item.isBlocked);
+        this.resourcesArrayList = rawData;
         this.clients = rawData.reduce((acc: any[], curr: any) => {
           const clientId = curr?.client?.clientId || 0;
           let existingClient = acc.find((c) => c.clientId === curr.client.clientId);

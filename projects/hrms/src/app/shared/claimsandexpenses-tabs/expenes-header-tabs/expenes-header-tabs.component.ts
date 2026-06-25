@@ -33,6 +33,7 @@ export class ExpenesHeaderTabsComponent implements OnInit, OnDestroy {
    selectemp: any;
  selectedYear: any;
  requiredClarificationCount = 0;
+ flitredrequiredClarification = new BehaviorSubject<any[]>([]);
   seletedMouthly: any;
   public navTabs: any[] = [];
   public defaultRoute: string = '';
@@ -42,7 +43,7 @@ export class ExpenesHeaderTabsComponent implements OnInit, OnDestroy {
     { label: 'Waiting For Approval', link: '/claimsandexpenses/expenses/pending', icon: '/time-off-icon/waiting-for-approval-icon.png', permission: { feature: 'Pending Tab', action: 'view' }, count: this.pendingCount },
     { label: 'Processed', link: '/claimsandexpenses/expenses/processed', icon: '/time-off-icon/processed-icon.png', permission: { feature: 'Processed Tab', action: 'view' }, count: this.processedCount },
     { label: 'Rejected', link: '/claimsandexpenses/expenses/rejected', icon: '/time-off-icon/rejected-icon.png', permission: { feature: 'Rejected Tab', action: 'view' }, count: this.rejectedCount },
-    { label: 'Required Clarification', link: '/claimsandexpenses/expenses/required-clarification', icon: '/time-off-icon/required-clarification-icon.png', permission: { feature: 'Expense Clarifications Tab', action: 'view' }, count: this.requiredClarificationCount }
+    { label: 'Expense Clarifications', link: '/claimsandexpenses/expenses/required-clarification', icon: '/time-off-icon/required-clarification-icon.png', permission: { feature: 'Expense Clarifications Tab', action: 'view' }, count: this.requiredClarificationCount }
   ];
 
   constructor(private http: HttpService, private rbac: RbacService, private router: Router,private SelectedyeartimeOffService:TimeoffYearFilterService ) { }
@@ -114,6 +115,7 @@ export class ExpenesHeaderTabsComponent implements OnInit, OnDestroy {
     this.allTabs[2].count = this.pendingCount;
     this.allTabs[3].count = this.processedCount;
     this.allTabs[4].count = this.rejectedCount;
+    this.allTabs[5].count = this.requiredClarificationCount;
     this.navTabs = this.allTabs.filter(tab =>
       tab.permission &&
       tab.permission.feature &&
@@ -129,11 +131,14 @@ export class ExpenesHeaderTabsComponent implements OnInit, OnDestroy {
     const pending = data.filter(x => x.status === 'Waiting for Approval').reverse();
     const processed = data.filter(x => x.status === 'Processed').reverse();
     const rejected = data.filter(x => x.status === 'Rejected').reverse();
+     const requiredClarification = data.filter(x => x.status === 'Required Clarification').reverse();
     this.flitredDrafts.next(drafts);
     this.flitredapproved.next(approved);
     this.flitredpending.next(pending);
     this.processedExpenses.next(processed);
     this.flitredrejected.next(rejected);
+    this.flitredrequiredClarification.next(requiredClarification);
+    this.requiredClarificationCount = requiredClarification.length;
     this.draftsCount = drafts.length;
     this.ApprovedCount = approved.length;
     this.pendingCount = pending.length;

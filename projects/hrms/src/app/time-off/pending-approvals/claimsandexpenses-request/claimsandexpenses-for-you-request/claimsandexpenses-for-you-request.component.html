@@ -714,6 +714,13 @@
         </div>
 
       </div>
+      <div class="mb-3 text-start">
+        <button type="button" class="custom-btn btn-secondary chip-btn"
+          [class.active]="selectedLeaveStatus === 'requiredClarification'"
+          (click)="onStatusClarificationSelect('requiredClarification')">
+          Required Clarification
+        </button>
+      </div>
       <div class="custom-modal-footer">
         <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss();">{{'Cancel'|
           translate}}</button>

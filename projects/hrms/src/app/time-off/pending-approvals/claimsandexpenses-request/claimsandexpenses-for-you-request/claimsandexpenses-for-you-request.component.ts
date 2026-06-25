@@ -874,6 +874,16 @@ export class ClaimsandexpensesForYouRequestComponent
       });
   }
 
+    onStatusClarificationSelect(status: string) {
+    this.selectedLeaveStatus = status;
+
+    if (status === 'requiredClarification') {
+      this.approveForm.patchValue({
+        comments: 'Required Clarification'
+      });
+    }
+  }
+
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();

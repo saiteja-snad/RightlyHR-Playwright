@@ -61,6 +61,13 @@
                   </a>
                 </li>
 
+                <li *ngIf="isRMStage(exp)">
+                  <a class="dropdown-item" (click)="openRequiredCalrificationModal(requiredClarification, exp)">
+                    <i class="bi bi-check-circle me-2"></i>
+                    Request for Clarification
+                  </a>
+                </li>
+
                 <!-- HR -->
                 <li *ngIf="isHRStage(exp)">
                   <a class="dropdown-item" (click)="expensesCheckList(exp,'Verify')">
@@ -197,9 +204,10 @@
                     (click)="onSelectDownload(item?.attachment_url)">
                     <i class="bi bi-download me-2"></i>{{'Download' | translate}}
                   </a>
-                  <a type="button" class="download-text text-nowrap" *ngIf="isImageFile(item?.attachment_url)"
-                    (click)="onViewAttachement(item?.attachment_url)">
-                    <app-document-view-icon />{{'View' | translate}}
+                  <a type="button" class="download-text text-nowrap d-inline-flex align-items-center gap-2"
+                    *ngIf="isImageFile(item?.attachment_url)" (click)="onViewAttachement(item?.attachment_url)">
+                    <app-document-view-icon></app-document-view-icon>
+                    <span>{{ 'View' | translate }}</span>
                   </a>
                 </div>
               </td>
@@ -649,6 +657,46 @@
         <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss();">{{'Cancel'|translate}}</button>
         <button type="submit" class="custom-btn btn-primary" [disabled]="verifyForm.invalid">{{'Reject'|
           translate}}</button>
+      </div>
+    </form>
+  </div>
+</ng-template>
+
+<ng-template #requiredClarification let-modal>
+  <div class="result-popup-content" ngbAutofocus>
+    <div>
+      <app-confirmation-icon />
+      <p class="confirmation-text pt-3">{{'Are you sure you want to send for the Clarification?' | translate}}</p>
+    </div>
+    <form autocomplete="off" [formGroup]="approveForm" (ngSubmit)="handleClarification(approveForm)">
+      <div class="custom-main-popup-content">
+        <label for="comments" class="form-label custom-label mb-2">{{'Comments' | translate}}<span
+            class="text-danger">*</span></label>
+        <textarea class="form-control custom-input" id="comments" placeholder="Please provide comments"
+          formControlName="comments" maxlength="250" (keydown)="formValidation.restrictInitialSpace($event)"></textarea>
+        <!-- Character counter -->
+        <div class="error-msg" *ngIf="approveForm.get('comments')?.touched && approveForm.get('comments')?.invalid">
+          <div *ngIf="approveForm.get('comments')?.errors?.['required']">Comment is required.</div>
+          <div *ngIf="approveForm.get('comments')?.errors?.['maxlength']">Comment cannot exceed 250 characters.</div>
+        </div>
+        <div class="textarea-count-text">{{ approveForm.get('comments')?.value?.length || 0 }}/250
+        </div>
+
+      </div>
+      <div class="mb-3 text-start">
+        <button type="button" class="custom-btn btn-secondary chip-btn"
+          [class.active]="selectedLeaveStatus === 'requiredClarification'"
+          (click)="onStatusClarificationSelect('requiredClarification')">
+          Required Clarification
+        </button>
+      </div>
+      <div class="custom-modal-footer">
+
+        <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss();">{{'Cancel'|
+          translate}}</button>
+        <button type="button" class="custom-btn btn-primary" (click)="handleClarification(approveForm)">
+          Submit
+        </button>
       </div>
     </form>
   </div>

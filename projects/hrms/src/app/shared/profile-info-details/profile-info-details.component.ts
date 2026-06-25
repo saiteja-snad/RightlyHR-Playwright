@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -18,12 +18,10 @@ import { MyInfoDocTabsComponent } from "../myinfo-tabs/my-info-doc-tabs/my-info-
 import { PersonalDocumentsTabsComponent } from "../personalinfo-tabs/personal-documents-tabs/personal-documents-tabs.component";
 import { FormatcontactnumberPipe } from "../../Pipes/formatcontactnumber.pipe";
 import moment from 'moment';
-import { AiBackgroundGeneratorComponent } from '../ai-background-generator/ai-background-generator.component';
 @Component({
   selector: 'app-profile-info-details',
   imports: [CommonModule, MyinfoHeaderTabsComponent, PersonalinfoHeaderTabsComponent, Skeleton, PersonalPersonalTabsComponent,
-    MyInfoPersonalTabsComponent, MyinfoJobTabsComponent, PersonalJobTabsComponent, MyInfoDocTabsComponent, ProfileIconComponent,
-    PersonalDocumentsTabsComponent, FormatcontactnumberPipe, AiBackgroundGeneratorComponent],
+    MyInfoPersonalTabsComponent, MyinfoJobTabsComponent, PersonalJobTabsComponent, MyInfoDocTabsComponent,ProfileIconComponent, PersonalDocumentsTabsComponent, FormatcontactnumberPipe],
   templateUrl: './profile-info-details.component.html',
   styleUrl: './profile-info-details.component.scss'
 })
@@ -44,8 +42,6 @@ export class ProfileInfoDetailsComponent implements OnInit, OnDestroy {
   empdata = {} as any;
   profilePic: any;
   isloading: boolean = false;
-  showAiGenerator = false;
-  @ViewChild('aiGenerator') aiGenerator: any;
 
   constructor(private http: HttpService, private sanitizer: DomSanitizer, private conformationPopup: OpenModalService,
     public rbac: RbacService, private router: Router) { }
@@ -189,24 +185,6 @@ getEmployeeId() {
       end: endMoment.format("HH:mm")
     };
   }
-  
-  openAiGenerator() {
-    if (this.imageUrl) {
-      // Pass the current profile image URL — strip SafeUrl wrapper if needed
-      const url = (this.imageUrl as any).changingThisBreaksApplicationSecurity ?? this.imageUrl;
-      this.aiGenerator.openWithImage(url);
-    } else {
-      this.aiGenerator.open();
-    }
-  }
-
-  onAiProfileApplied(file: File) {
-    const d = new Date();
-    this.profilePic = this.renameFile(file, `${this.empinfo.employeeId}_${d.getTime()}_${file.name}`);
-    this.postUploadprofilePic();
-    this.showAiGenerator = false;
-  }
-
   chooseNewProfile(event: any) {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {

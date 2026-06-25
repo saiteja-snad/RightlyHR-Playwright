@@ -2,25 +2,3 @@
     width: 0.75rem;
     height: 0.75rem;
 }
-
-.ai-gen-icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    margin-left: 4px;
-    transition: transform 0.2s, box-shadow 0.2s;
-
-    i {
-        font-size: 0.65rem;
-        color: #fff;
-    }
-
-    &:hover {
-        transform: scale(1.15);
-        box-shadow: 0 2px 8px rgba(102, 126, 234, 0.5);
-    }
-}

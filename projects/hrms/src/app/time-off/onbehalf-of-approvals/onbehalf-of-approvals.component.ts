@@ -233,6 +233,8 @@ export class OnbehalfOfApprovalsComponent {
     const visible = items.filter(i => this.rbac.allowedToAccess(i.permission));
     this.filteredNavItems = this.menuOrderService.applySavedTabsOrder(this.tabsKey, visible, (t) => t.tabId);
     this.navItems = visible;
+    this.activeTab = this.filteredNavItems[0]?.key ?? this.activeTab;
+    this.updateModuleInfo();
   }
 
   trackByNavId(_: number, item: any): string {

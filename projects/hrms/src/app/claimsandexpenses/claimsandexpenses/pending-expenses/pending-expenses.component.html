@@ -68,6 +68,13 @@
                   </a>
                 </li>
 
+                 <li *ngIf="isRMStage(exp)">
+                  <a class="dropdown-item" (click)="openRequiredCalrificationModal(requiredClarification, exp)">
+                    <i class="bi bi-check-circle me-2"></i>
+                    Request for Clarification
+                  </a>
+                </li>
+
                 <!-- HR -->
                 <li *ngIf="isHRStage(exp)">
                   <a class="dropdown-item" (click)="expensesCheckList(exp,'Verify')">

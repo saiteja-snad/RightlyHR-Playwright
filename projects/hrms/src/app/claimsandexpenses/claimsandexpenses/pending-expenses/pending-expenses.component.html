@@ -10,11 +10,8 @@
 
   <div class="custom-p-multi-select-table">
     @if(!loading){
-    <p-table #dt1 
-             [value]="getFilteredAndSortedExpenses()" 
-             [customSort]="true" 
-             (sortFunction)="customSort($event)"
-             styleClass="p-datatable-gridlines">
+    <p-table #dt1 [value]="getFilteredAndSortedExpenses()" [customSort]="true" (sortFunction)="customSort($event)"
+      styleClass="p-datatable-gridlines">
       <ng-template pTemplate="header">
         <tr>
           <th pSortableColumn="expenses_Title">
@@ -41,7 +38,7 @@
           <th class="text-center">{{'View Details' | translate}}</th>
         </tr>
       </ng-template>
-      
+
       <ng-template pTemplate="body" let-exp>
         <tr>
           <td>{{ exp?.expenses_Title }}</td>
@@ -56,6 +53,57 @@
                 <i class="bi bi-three-dots-vertical"></i>
               </a>
               <ul class="dropdown-menu custom-dropdown-menu">
+                <!-- RM -->
+                <li *ngIf="isRMStage(exp)">
+                  <a class="dropdown-item" (click)="openApproveModal(approval, exp)">
+                    <i class="bi bi-check-circle me-2"></i>
+                    Approve
+                  </a>
+                </li>
+
+                <li *ngIf="isRMStage(exp)">
+                  <a class="dropdown-item" (click)="openRejectModal(rejectmodal, exp)">
+                    <i class="bi bi-x-circle me-2"></i>
+                    Reject
+                  </a>
+                </li>
+
+                <!-- HR -->
+                <li *ngIf="isHRStage(exp)">
+                  <a class="dropdown-item" (click)="expensesCheckList(exp,'Verify')">
+                    <i class="bi bi-check-circle me-2"></i>
+                    Verify
+                  </a>
+                </li>
+
+                <li *ngIf="isHRStage(exp)">
+                  <a class="dropdown-item" (click)="openRejectModal(rejectmodal, exp)">
+                    <i class="bi bi-x-circle me-2"></i>
+                    Reject
+                  </a>
+                </li>
+
+                <!-- Finance -->
+                <li *ngIf="isFinanceStage(exp) && !isAllVerifiedForRecord(exp.expenses_ID)">
+                  <a class="dropdown-item" (click)="viewItem(exp.expenses_ID); openModal(verificationofModal)">
+                    <i class="bi bi-check-circle me-2"></i>
+                    Verify
+                  </a>
+                </li>
+
+                <li *ngIf="isFinanceStage(exp) && !isAllVerifiedForRecord(exp.expenses_ID)">
+                  <a class="dropdown-item" (click)="openRejectModal(rejectmodal, exp)">
+                    <i class="bi bi-x-circle me-2"></i>
+                    Reject
+                  </a>
+                </li>
+
+                <li *ngIf="isFinanceStage(exp) && isAllVerifiedForRecord(exp.expenses_ID)">
+                  <a class="dropdown-item" (click)="openApproveModal(approval, exp)">
+                    <i class="bi bi-check-circle me-2"></i>
+                    Approve for Payment
+                  </a>
+                </li>
                 <li><a class="dropdown-item" (click)="openModal(viewDetailsModal);viewItem(exp.expenses_ID)">
                     <i class="bi bi-eye-fill me-2"></i>{{'View' | translate}}</a></li>
                 <li>
@@ -68,7 +116,7 @@
           </td>
         </tr>
       </ng-template>
-      
+
       <ng-template pTemplate="emptymessage">
         <div class="wrapper">
           <tr>

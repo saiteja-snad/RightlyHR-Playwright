@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, TemplateRef } from '@angular/core';
+import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import {
   AbstractControl,
   FormBuilder,
@@ -19,6 +19,8 @@ import { Select } from 'primeng/select';
 import { NoDataFoundComponent } from '../../shared/no-data-found/no-data-found.component';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { DropdownModule } from 'primeng/dropdown';
+import { TableModule } from 'primeng/table';
+import { Table } from 'primeng/table';
 import { DataLoaderContentComponent } from '../../shared/data-loader-content/data-loader-content.component';
 import { RbacService } from '../../services/rbac.service';
 import { FormValidationService } from '../../../../../preonboarding/src/app/common-services/form-validation.service';
@@ -35,16 +37,21 @@ import { TranslateModule } from '@ngx-translate/core';
     Select,
     NoDataFoundComponent,
     DataLoaderContentComponent,
+    TableModule,
   ],
   templateUrl: './available-desk-list.component.html',
   styleUrl: './available-desk-list.component.scss',
 })
 export class AvailableDeskListComponent implements OnInit, OnDestroy {
+  @ViewChild('availableDeskTable') availableDeskTable!: Table;
   subscription!: Subscription;
   datesShouldNotBeEqual = false;
   empinfo = {} as any;
   approvalname: any[] = [];
   desklist = new BehaviorSubject<any[]>([]);
+  originalDeskList = [] as any[]; // Store original unsorted data
+  currentSortField: string = '';
+  currentSortOrder: number = 0; // 0 = no sort, 1 = asc, -1 = desc
   shift: any;
   filteredOptions: any[] = [];
   employeeiddetails = [] as any[];
@@ -331,7 +338,9 @@ export class AvailableDeskListComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (data: any) => {
           this.loading = false;
-          this.desklist.next(data.items);
+          const deskData = data.items;
+          this.desklist.next(deskData);
+          this.originalDeskList = [...deskData];
           //this.getcount(this.selectedLocationId, this.selectedSubLocationId)
           // Update the collection size (total records) for pagination
           this.collectionSize = data.totalRecords;
@@ -781,6 +790,74 @@ export class AvailableDeskListComponent implements OnInit, OnDestroy {
   cleardata() {
     this.assiginForm.reset();
     this.modalService.dismissAll();
+  }
+
+  getFilteredAndSortedDeskList(): any[] {
+    return this.desklist.getValue();
+  }
+
+  customSort(event: any): void {
+    const field = event.field;
+    
+    // Track current sort state for the clicked field
+    if (this.currentSortField === field) {
+      // Same field clicked - cycle through: asc (1) -> desc (-1) -> reset (0)
+      if (this.currentSortOrder === 1) {
+        // Currently ascending, change to descending
+        this.currentSortOrder = -1;
+        event.order = -1;
+      } else if (this.currentSortOrder === -1) {
+        // Currently descending, reset to original order
+        this.desklist.next([...this.originalDeskList]);
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        if (this.availableDeskTable) {
+          this.availableDeskTable.reset();
+        }
+        return;
+      } else {
+        // Currently reset, change to ascending
+        this.currentSortOrder = 1;
+        event.order = 1;
+      }
+    } else {
+      // New field clicked - start with ascending
+      this.currentSortField = field;
+      this.currentSortOrder = 1;
+      event.order = 1;
+    }
+
+    event.data.sort((a: any, b: any) => {
+      let val1: any;
+      let val2: any;
+
+      // Handle nested fields
+      if (field === 'deskName') {
+        val1 = a.deskName;
+        val2 = b.deskName;
+      } else if (field === 'deskType') {
+        val1 = a.deskType;
+        val2 = b.deskType;
+      } else if (field === 'locationName') {
+        val1 = a.location?.jobLocationName;
+        val2 = b.location?.jobLocationName;
+      } else if (field === 'subLocationName') {
+        val1 = a.subLocation?.jobSubLocationName;
+        val2 = b.subLocation?.jobSubLocationName;
+      } else if (field === 'deskStatus') {
+        val1 = a.deskStatus;
+        val2 = b.deskStatus;
+      } else {
+        // Handle direct fields
+        val1 = a[field];
+        val2 = b[field];
+      }
+
+      // Handle string sorting for all fields
+      val1 = String(val1 ?? '').trim();
+      val2 = String(val2 ?? '').trim();
+      return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+    });
   }
 
   ngOnDestroy(): void {

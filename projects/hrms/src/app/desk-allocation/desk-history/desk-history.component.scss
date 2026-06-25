@@ -1,20 +1,4 @@
-.card {
-    border: 1px solid rgb(204, 218, 236) !important;
-    box-shadow: 0px 0px 6px 1px rgba(34, 34, 34, 0.1019607843);
-}
-
-.no-data-wrapper {
-    display: flex;
+.wrapper {
+    height: 70dvh;
     justify-content: center;
-    align-items: center;
-    height: calc(100dvh - 9rem);
-    position: relative;
-}
-
-.component-left-tabs-container {
-    height: calc(100vh - 8rem);
-}
-
-.custom-component-right-content {
-    height: calc(100vh - 8rem);
 }

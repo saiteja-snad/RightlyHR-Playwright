@@ -8,56 +8,82 @@
 
     <div class="custom-table-content">
       @if(!loading){
-      <table class="w-100">
-        <thead>
-          <th>{{ 'Desk ID' | translate }}</th>
-          <th>{{ 'Desk Type' | translate }}</th>
-          <th>{{ 'Allocated To' | translate }}</th>
-          <th>{{ 'Location' | translate }}</th>
-          <th>{{ 'Sub Location' | translate }}</th>
-          <th>{{ 'Shift' | translate }}</th>
-          <th>{{ 'Desk Status' | translate }}</th>
-          <th>{{ 'Approver' | translate }}</th>
-          @if(rbac.allowedToAccess('Waiting For Approval View Desk Details.view')){
-          <th class="text-center">{{ 'Action' | translate }}</th>
-          }
-        </thead>
-        <tbody>
-          <ng-container *ngIf="((desklist | async) ?? []).length > 0; else noDataTemplate">
-            <tr *ngFor="let desk of desklist | async">
-              <td>{{ desk.deskName }}</td>
-              <td>{{ desk.deskType }}</td>
-              <td>{{ desk.allocatedToDetails?.employeeName || ('N/A' | translate) }}</td>
-              <td>{{ desk.location?.jobLocationName }}</td>
-              <td>{{ desk.subLocation?.jobSubLocationName }}</td>
-              <td>{{desk.latestAllocationItem?.shiftName}}</td>
-              <td>{{ desk.deskStatus }}</td>
-              <td>{{desk.allocatedToDetails?.approverIdName || ('N/A' | translate) }}</td>
-              @if(rbac.allowedToAccess('Waiting For Approval View Desk Details.view')){
-              <td class="text-center">
-                <div class="dropdown">
-                  <a data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="bi bi-three-dots-vertical"></i>
-                  </a>
-                  <ul class="dropdown-menu custom-dropdown-menu">
-                    <li>
-                      <a class="dropdown-item" (click)="viewdata(desk);navigateToAsset(desk.deskId)">
-                        {{ 'View Desk Details' | translate }}
-                      </a>
-                    </li>
-                  </ul>
-                </div>
-              </td>
-              }
-            </tr>
-          </ng-container>
-          <ng-template #noDataTemplate>
-            <tr>
-              <app-no-data-found />
-            </tr>
+      <p-table #waitingForApprovalTable [value]="getFilteredAndSortedDeskList()" [customSort]="true" (sortFunction)="customSort($event)"
+               styleClass="custom-table" [tableStyle]="{'min-width': '50rem'}">
+          <ng-template pTemplate="header">
+              <tr>
+                  <th pSortableColumn="deskName">
+                      {{ 'Desk ID' | translate }}
+                      <p-sortIcon field="deskName"></p-sortIcon>
+                  </th>
+                  <th pSortableColumn="deskType">
+                      {{ 'Desk Type' | translate }}
+                      <p-sortIcon field="deskType"></p-sortIcon>
+                  </th>
+                  <th pSortableColumn="allocatedToName">
+                      {{ 'Allocated To' | translate }}
+                      <p-sortIcon field="allocatedToName"></p-sortIcon>
+                  </th>
+                  <th pSortableColumn="locationName">
+                      {{ 'Location' | translate }}
+                      <p-sortIcon field="locationName"></p-sortIcon>
+                  </th>
+                  <th pSortableColumn="subLocationName">
+                      {{ 'Sub Location' | translate }}
+                      <p-sortIcon field="subLocationName"></p-sortIcon>
+                  </th>
+                  <th>{{ 'Shift' | translate }}</th>
+                  <th pSortableColumn="deskStatus">
+                      {{ 'Desk Status' | translate }}
+                      <p-sortIcon field="deskStatus"></p-sortIcon>
+                  </th>
+                  <th pSortableColumn="approverName">
+                      {{ 'Approver' | translate }}
+                      <p-sortIcon field="approverName"></p-sortIcon>
+                  </th>
+                  @if(rbac.allowedToAccess('Waiting For Approval View Desk Details.view')){
+                  <th class="text-center">{{ 'Action' | translate }}</th>
+                  }
+              </tr>
           </ng-template>
-        </tbody>
-      </table>
+          <ng-template pTemplate="body" let-desk>
+              <tr>
+                  <td>{{ desk.deskName }}</td>
+                  <td>{{ desk.deskType }}</td>
+                  <td>{{ desk.allocatedToDetails?.employeeName || ('N/A' | translate) }}</td>
+                  <td>{{ desk.location?.jobLocationName }}</td>
+                  <td>{{ desk.subLocation?.jobSubLocationName }}</td>
+                  <td>{{desk.latestAllocationItem?.shiftName}}</td>
+                  <td>{{ desk.deskStatus }}</td>
+                  <td>{{desk.allocatedToDetails?.approverIdName || ('N/A' | translate) }}</td>
+                  @if(rbac.allowedToAccess('Waiting For Approval View Desk Details.view')){
+                  <td class="text-center">
+                    <div class="dropdown">
+                      <a data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-three-dots-vertical"></i>
+                      </a>
+                      <ul class="dropdown-menu custom-dropdown-menu">
+                        <li>
+                          <a class="dropdown-item" (click)="viewdata(desk);navigateToAsset(desk.deskId)">
+                            {{ 'View Desk Details' | translate }}
+                          </a>
+                        </li>
+                      </ul>
+                    </div>
+                  </td>
+                  }
+              </tr>
+          </ng-template>
+          <ng-template pTemplate="emptymessage">
+              <div class="wrapper">
+                  <tr>
+                      <td [attr.colspan]="rbac.allowedToAccess('Waiting For Approval View Desk Details.view') ? 9 : 8">
+                          <app-no-data-found />
+                      </td>
+                  </tr>
+              </div>
+          </ng-template>
+      </p-table>
       }
       @else {
                   <app-data-loader-content />

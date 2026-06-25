@@ -255,6 +255,7 @@ export class PendingApprovalsTabsComponent {
 
   updateTabCounts() {
     this.navTabs.forEach(tab => {
+      if (tab.label === 'Onboarding') return; // managed by getAllPendingApprovalsCount()
       if (tab.moduleIds && tab.moduleIds.length > 0) {
         let total = 0;
         tab.moduleIds.forEach((id: any) => {
@@ -264,9 +265,9 @@ export class PendingApprovalsTabsComponent {
           }
         });
         // Add No Due count to Offboarding tab
-      if (tab.label === 'Offboarding') {
-        total += Number(this.noDueCount || 0);
-      }
+        if (tab.label === 'Offboarding') {
+          total += Number(this.noDueCount || 0);
+        }
         tab.totalCount = total;
       }
     });

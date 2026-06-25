@@ -75,6 +75,9 @@ export class CompoffForYouRequestComponent implements OnInit, OnDestroy {
   @ViewChild('commentspopup') modalContent: any;
   @ViewChild('leaveSummary') leaveSummary: any;
   @ViewChild('dt') table!: Table;
+  originalCompOffData = [] as AttendanceRequest[];
+  currentSortField: string = '';
+  currentSortOrder: number = 0; // 0 = no sort, 1 = asc, -1 = desc
   approveForm!: FormGroup;
   rejectForm!: FormGroup;
   searchValue: any | null;
@@ -271,9 +274,11 @@ onStatusApproveSelect(status: string) {
           if (response.data.length > 0) {
             this.leaves.next(response.data);
             this.compOffselect = response.data;
+            this.originalCompOffData = [...response.data];
           } else {
             this.leaves.next([]);
             this.compOffselect = [];
+            this.originalCompOffData = [];
           }
         },
         error: (reason) => {
@@ -565,5 +570,92 @@ getApprovalStatusCounts() {
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();
+  }
+
+  customSort(event: any): void {
+    const field = event.field;
+    
+    // Track current sort state for the clicked field
+    if (this.currentSortField === field) {
+      // Same field clicked - cycle through: asc (1) -> desc (-1) -> reset (0)
+      if (this.currentSortOrder === 1) {
+        // Currently ascending, change to descending
+        this.currentSortOrder = -1;
+        event.order = -1;
+      } else if (this.currentSortOrder === -1) {
+        // Currently descending, reset to original order
+        this.compOffselect = [...this.originalCompOffData];
+        this.leaves.next(this.compOffselect);
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        if (this.table) {
+          this.table.reset();
+        }
+        return;
+      } else {
+        // Currently reset, change to ascending
+        this.currentSortOrder = 1;
+        event.order = 1;
+      }
+    } else {
+      // New field clicked - start with ascending
+      this.currentSortField = field;
+      this.currentSortOrder = 1;
+      event.order = 1;
+    }
+
+    event.data.sort((a: any, b: any) => {
+      let val1: any;
+      let val2: any;
+
+      // Handle different field types for comp off data
+      switch (field) {
+        case 'employeeId':
+          val1 = a.entity?.attendanceRequestFusionEmployeeId;
+          val2 = b.entity?.attendanceRequestFusionEmployeeId;
+          break;
+        case 'employeeName':
+          val1 = a.entity?.attendanceRequesterName;
+          val2 = b.entity?.attendanceRequesterName;
+          break;
+        case 'workedDate':
+          val1 = new Date(a.entity?.attendanceRequestStartTime);
+          val2 = new Date(b.entity?.attendanceRequestStartTime);
+          break;
+        case 'availed':
+          val1 = a.entity?.attendanceRequestDurationType;
+          val2 = b.entity?.attendanceRequestDurationType;
+          break;
+        case 'appliedDate':
+          val1 = new Date(a.entity?.attendanceRequestAppliedDate);
+          val2 = new Date(b.entity?.attendanceRequestAppliedDate);
+          break;
+        default:
+          val1 = a[field];
+          val2 = b[field];
+      }
+
+      // Handle Date sorting
+      if (val1 instanceof Date && val2 instanceof Date) {
+        return event.order * (val1.getTime() - val2.getTime());
+      }
+
+      // Handle Employee ID sorting (alphanumeric)
+      if (field === 'employeeId') {
+        return event.order * String(val1 ?? '').localeCompare(
+          String(val2 ?? ''),
+          undefined,
+          {
+            numeric: true,
+            sensitivity: 'base'
+          }
+        );
+      }
+
+      // Handle string sorting for all other fields
+      val1 = String(val1 ?? '').trim();
+      val2 = String(val2 ?? '').trim();
+      return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+    });
   }
 }

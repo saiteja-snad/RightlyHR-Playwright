@@ -12,76 +12,91 @@
      <div *ngIf="addedRecords.length>0" class="error-msg float-end">{{'Note: Record addition request sent for approval'|translate}}</div>
     <div class="custom-table-content">
         @if (!loading) {
-        <table class="w-100">
-            <thead>
+        <p-table #bankTable [value]="bankTableData" [customSort]="true" (sortFunction)="customSort($event)" styleClass="w-100">
+            <ng-template pTemplate="header">
                 <tr>
-                    <th>{{'Bank Name'|translate}}</th>
-                    <th>{{'Account Holder\'s Name'|translate}}</th>
-                    <th>{{'Account Number'|translate}}</th>
-                    <th>{{'IFSC Code'|translate}}</th>
+                    <th pSortableColumn="bankName">
+                        {{'Bank Name'|translate}}
+                        <p-sortIcon field="bankName"></p-sortIcon>
+                    </th>
+                    <th pSortableColumn="accountName">
+                        {{'Account Holder\'s Name'|translate}}
+                        <p-sortIcon field="accountName"></p-sortIcon>
+                    </th>
+                    <th pSortableColumn="accountNo">
+                        {{'Account Number'|translate}}
+                        <p-sortIcon field="accountNo"></p-sortIcon>
+                    </th>
+                    <th pSortableColumn="ifscCode">
+                        {{'IFSC Code'|translate}}
+                        <p-sortIcon field="ifscCode"></p-sortIcon>
+                    </th>
                     <th class="text-center">{{'Proof'|translate}}</th>
-                    <th class="text-center">{{'Primary Bank'|translate}}</th>
+                    <th class="text-center" pSortableColumn="isPrimary">
+                        {{'Primary Bank'|translate}}
+                        <p-sortIcon field="isPrimary"></p-sortIcon>
+                    </th>
                     @if(canAccess('update','bank') || canAccess('delete','bank')){
                     @if((employedata?.empstatus?.toLowerCase() !== 'prospective' &&
                     employedata?.empstatus?.toLowerCase() !== 'trainee prospective' )){
                     <th class="text-center">{{"Action" | translate}}</th>}}
                 </tr>
-            </thead>
-            <tbody>
-                <ng-container *ngIf="((bankDetails | async) ?? []).length > 0; else noDataTemplate">
-                    <tr *ngFor="let bankiteams of bankDetails | async">
-                        <td>{{ bankiteams.bankName }}</td>
-                        <td>{{bankiteams.accountName}}</td>
-                        <td>{{bankiteams.accountNo}}</td>
-                        <td>{{bankiteams.ifscCode}}</td>
-                        <td class="text-center">
-                            <span *ngIf="bankiteams.docUrl;else noData" (click)="onSelectBankProofDownload(bankiteams)">
-                                  <app-download-icon /></span>
-                            <ng-template #noData>-</ng-template>
-                        </td>
-                        <td class="text-center">{{bankiteams.isPrimary ? ('Yes'|translate) :('No'|translate)}}</td>
-                        @if( canAccess('update','bank') || canAccess('delete','bank')){
-                        <td class="text-center">
-                            @if(disablePendingFields(bankiteams.bankId)){
-                                <app-info-icon [ngbPopover]="pendingPopover" triggers="click" class="cursor"
-                             popoverClass="pending-popover" (click)="setActiveMessage(bankiteams.bankId)"/>
-                            }@else{ 
-                            <div class="dropdown">
-                                <span type="button" data-bs-toggle="dropdown">
-                                    <i class="bi bi-three-dots-vertical"></i>
-                                </span>
-                                <ul class="dropdown-menu custom-dropdown-menu">
-                                    @if( canAccess('update','bank')){
-                                    <li >
-                                        <button class="dropdown-item"
-                                        (click)="openModalupdate(updateBankmodal, bankiteams)">
-                                            <i class="bi bi-pencil me-2"></i>{{'Update'|translate}}
-                                        </button>
-                                    </li>
-                                    }
-                                    @if( canAccess('delete','bank')){
-                                    <li >
-                                        <button type="button" class="dropdown-item"(click)="opendeletModal(deleteconformation,bankiteams)">
-                                            <i class="bi bi-trash3 me-2"></i>{{'Delete'|translate}}
-                                        </button>
-                                    </li>
-                                    }
-                                </ul>
-                            </div>
-                        }
-                        </td>
-                        }
-                    </tr>
-                </ng-container>
-                <ng-template #noDataTemplate>
-                    <tr>
-                        <td>
-                            <app-no-data-found />
-                        </td>
-                    </tr>
-                </ng-template>
-            </tbody>
-        </table>
+            </ng-template>
+            <ng-template pTemplate="body" let-bankiteams>
+                <tr>
+                    <td>{{ bankiteams.bankName }}</td>
+                    <td>{{bankiteams.accountName}}</td>
+                    <td>{{bankiteams.accountNo}}</td>
+                    <td>{{bankiteams.ifscCode}}</td>
+                    <td class="text-center">
+                        <span *ngIf="bankiteams.docUrl;else noData" (click)="onSelectBankProofDownload(bankiteams)">
+                              <app-download-icon /></span>
+                        <ng-template #noData>-</ng-template>
+                    </td>
+                    <td class="text-center">{{bankiteams.isPrimary ? ('Yes'|translate) :('No'|translate)}}</td>
+                    @if( canAccess('update','bank') || canAccess('delete','bank')){
+                    <td class="text-center">
+                        @if(disablePendingFields(bankiteams.bankId)){
+                            <app-info-icon [ngbPopover]="pendingPopover" triggers="click" class="cursor"
+                         popoverClass="pending-popover" (click)="setActiveMessage(bankiteams.bankId)"/>
+                        }@else{ 
+                        <div class="dropdown">
+                            <span type="button" data-bs-toggle="dropdown">
+                                <i class="bi bi-three-dots-vertical"></i>
+                            </span>
+                            <ul class="dropdown-menu custom-dropdown-menu">
+                                @if( canAccess('update','bank')){
+                                <li >
+                                    <button class="dropdown-item"
+                                    (click)="openModalupdate(updateBankmodal, bankiteams)">
+                                        <i class="bi bi-pencil me-2"></i>{{'Update'|translate}}
+                                    </button>
+                                </li>
+                                }
+                                @if( canAccess('delete','bank')){
+                                <li >
+                                    <button type="button" class="dropdown-item"(click)="opendeletModal(deleteconformation,bankiteams)">
+                                        <i class="bi bi-trash3 me-2"></i>{{'Delete'|translate}}
+                                    </button>
+                                </li>
+                                }
+                            </ul>
+                        </div>
+                    }
+                    </td>
+                    }
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+                <div class="wrapper">
+                <tr>
+                    <td colspan="7">
+                        <app-no-data-found />
+                    </td>
+                </tr>
+                </div>
+            </ng-template>
+        </p-table>
         }
         @else {
         <app-data-loader-content />

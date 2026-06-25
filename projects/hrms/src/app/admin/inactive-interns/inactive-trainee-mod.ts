@@ -10,6 +10,10 @@ export interface Iinactivetrainee{
     empstatus:string
     isNotVisible: boolean;
     jobDetails?:IJobdetails[] ;
+    fusionEmpId?: string;
+    workEmail?: string;
+    dateOfJoining?: any;
+    mobilePhoneCountryCode?: string;
   }
   export interface IJobdetails {
     subdeptId: any;

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
 import { CommonModule, DatePipe } from '@angular/common';
 import { AbstractControl, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
@@ -13,17 +13,19 @@ import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { DropdownModule } from 'primeng/dropdown';
 import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
 import { RbacService } from '../../services/rbac.service';
+import { TableModule, Table } from 'primeng/table';
 
 import { FormValidationService } from '../../../../../preonboarding/src/app/common-services/form-validation.service';
 import { ConfirmationIconComponent } from "../../icons/confirmation-icon/confirmation-icon.component";
 @Component({
   selector: 'app-all-assets-list',
-  imports: [NoDataFoundComponent, CommonModule, FormsModule, PaginatorModule, DropdownModule, ReactiveFormsModule, Select, DataLoaderContentComponent, ConfirmationIconComponent],
+  imports: [NoDataFoundComponent, CommonModule, FormsModule, PaginatorModule, DropdownModule, ReactiveFormsModule, Select, DataLoaderContentComponent, ConfirmationIconComponent, TableModule],
   templateUrl: './all-assets-list.component.html',
   styleUrl: './all-assets-list.component.scss',
   providers: [DatePipe]
 })
 export class AllAssetsListComponent {
+  @ViewChild('allAssetsTable') allAssetsTable!: Table;
   datesShouldNotBeEqual = false
   subscription!: Subscription;
   selectedLocationId: any;
@@ -49,6 +51,9 @@ export class AllAssetsListComponent {
   assetslist = new BehaviorSubject<IAsset[]>([])
   searchQuery = '';
   dateMismatch = false;
+  originalAssets = [] as IAsset[]; // Store original unsorted data
+  currentSortField: string = '';
+  currentSortOrder: number = 0; // 0 = no sort, 1 = asc, -1 = desc
   assetinactivedropdrown: any[] = []
   minEndDate = ''
   minAmcStartDate = ''
@@ -445,6 +450,7 @@ export class AllAssetsListComponent {
         }
 
         this.assetslist.next(items);
+        this.originalAssets = [...items]; // Store original data
         this.collectionSize = items.length;
         this.loading = false;
       },
@@ -798,6 +804,68 @@ export class AllAssetsListComponent {
     this.undermainteenceForm.get('vendorname')?.updateValueAndValidity();
     this.undermainteenceForm.get('contactnumber')?.updateValueAndValidity();
 
+  }
+
+  customSort(event: any): void {
+    const field = event.field;
+    
+    // Track current sort state for the clicked field
+    if (this.currentSortField === field) {
+      // Same field clicked - cycle through: asc (1) -> desc (-1) -> reset (0)
+      if (this.currentSortOrder === 1) {
+        // Currently ascending, change to descending
+        this.currentSortOrder = -1;
+        event.order = -1;
+      } else if (this.currentSortOrder === -1) {
+        // Currently descending, reset to original order
+        const currentAssets = this.assetslist.value;
+        this.assetslist.next([...this.originalAssets]);
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        if (this.allAssetsTable) {
+          this.allAssetsTable.reset();
+        }
+        return;
+      } else {
+        // Currently reset, change to ascending
+        this.currentSortOrder = 1;
+        event.order = 1;
+      }
+    } else {
+      // New field clicked - start with ascending
+      this.currentSortField = field;
+      this.currentSortOrder = 1;
+      event.order = 1;
+    }
+
+    event.data.sort((a: any, b: any) => {
+      let val1: any;
+      let val2: any;
+
+      // Handle nested assignedTo fields
+      if (['assignedEmployeeName'].includes(field)) {
+        const assignedTo1 = a.assignedTo || {};
+        const assignedTo2 = b.assignedTo || {};
+        val1 = `${assignedTo1.firstName || ''} ${assignedTo1.middleName || ''} ${assignedTo1.lastName || ''}`.trim();
+        val2 = `${assignedTo2.firstName || ''} ${assignedTo2.middleName || ''} ${assignedTo2.lastName || ''}`.trim();
+      } else {
+        // Handle direct fields
+        val1 = a[field];
+        val2 = b[field];
+      }
+
+      // Handle date sorting
+      if (['purchaseDate'].includes(field)) {
+        const date1 = val1 ? new Date(val1) : new Date(0);
+        const date2 = val2 ? new Date(val2) : new Date(0);
+        return event.order * (date1.getTime() - date2.getTime());
+      }
+
+      // Handle string sorting for all other fields
+      val1 = String(val1 ?? '').trim();
+      val2 = String(val2 ?? '').trim();
+      return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+    });
   }
 
 

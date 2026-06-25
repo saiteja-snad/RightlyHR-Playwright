@@ -1,8 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { Select } from 'primeng/select';
+import { TableModule } from 'primeng/table';
+import { Table } from 'primeng/table';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { IDegre, Ieducation } from '../../../Interfaces/personal-modal';
 import { BehaviorSubject, Subscription } from 'rxjs';
@@ -19,16 +21,19 @@ import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component"
 import { DownloadIconComponent } from '../../../icons/download-icon/download-icon.component';
 @Component({
   selector: 'app-education-details',
-  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, NoDataFoundComponent, TranslateModule, DataLoaderContentComponent, NgbPopoverModule, InfoIconComponent, DownloadIconComponent],
+  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, NoDataFoundComponent, TranslateModule, DataLoaderContentComponent, NgbPopoverModule, InfoIconComponent, DownloadIconComponent, TableModule],
   templateUrl: './education-details.component.html',
   styleUrl: './education-details.component.scss'
 })
 
 export class EducationDetailsComponent implements OnInit, OnDestroy {
+  @ViewChild('educationTable') educationTable!: Table;
   educationForm!: FormGroup;
   educationupdateForm!: FormGroup;
   selectedEducationId: any
   educationData = new BehaviorSubject<Ieducation[]>([])
+  educationTableData: Ieducation[] = []; // Data bound to the table
+  originalEducationData: Ieducation[] = []; // Store original unsorted data for reset
   degreeDetails: IDegre[] = [];
   educationAttachment: any;
   displalyeducationattachment: any
@@ -51,6 +56,8 @@ export class EducationDetailsComponent implements OnInit, OnDestroy {
   getFieldsApprovalStatusList: any[] = [];
   addedRecords=[] as any;
   activeMessage: string = '';
+  currentSortField: string = '';
+  currentSortOrder: number = 0; // 0 = no sort, 1 = asc, -1 = desc
   constructor(private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService, private http: HttpService,
     public formValidation: FormValidationService, public rbac: RbacService, public permissionRouteService: AccessForEmployeeinfoService, private router: Router) { }
   ngOnInit(): void {
@@ -329,7 +336,13 @@ export class EducationDetailsComponent implements OnInit, OnDestroy {
       next: (data: any) => {
         localStorage.setItem('educationinfodata', JSON.stringify(data));
         this.loading = false
+        // Store the original data for resetting sorts
+        this.originalEducationData = [...data];
+        this.educationTableData = [...data];
         this.educationData.next(data);
+        // Reset sorting state when new data is loaded
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
       },
     });
   }
@@ -525,6 +538,68 @@ getFieldsApprovalStatus() {
   setActiveMessage(referenceid:any) {
   this.activeMessage = this.getPendingApprovalMessage(referenceid);
 }
+
+  customSort(event: any): void {
+    const field = event.field;
+    
+    // Track current sort state for the clicked field
+    if (this.currentSortField === field) {
+      // Same field clicked - cycle through: asc (1) -> desc (-1) -> reset (0)
+      if (this.currentSortOrder === 1) {
+        // Currently ascending, change to descending
+        this.currentSortOrder = -1;
+        event.order = -1;
+      } else if (this.currentSortOrder === -1) {
+        // Currently descending, reset to original order
+        this.educationTableData = [...this.originalEducationData];
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        if (this.educationTable) {
+          this.educationTable.reset();
+        }
+        return;
+      } else {
+        // Currently reset, change to ascending
+        this.currentSortOrder = 1;
+        event.order = 1;
+      }
+    } else {
+      // New field clicked - start with ascending
+      this.currentSortField = field;
+      this.currentSortOrder = 1;
+      event.order = 1;
+    }
+
+    event.data.sort((a: any, b: any) => {
+      let val1 = a[field];
+      let val2 = b[field];
+
+      // Handle null/undefined values
+      if (val1 == null && val2 == null) return 0;
+      if (val1 == null) return event.order;
+      if (val2 == null) return -event.order;
+
+      // Handle date sorting
+      if (['degreeStartDate', 'degreeEndDate'].includes(field)) {
+        const date1 = new Date(val1).getTime();
+        const date2 = new Date(val2).getTime();
+        return event.order * (date1 - date2);
+      }
+
+      // Handle numeric sorting for GPA
+      if (field === 'gpa') {
+        const num1 = parseFloat(val1) || 0;
+        const num2 = parseFloat(val2) || 0;
+        return event.order * (num1 - num2);
+      }
+
+      // Handle string sorting for all other fields
+      val1 = String(val1).trim();
+      val2 = String(val2).trim();
+      return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+    });
+  }
+
   ngOnDestroy(): void {
     if (this.subscription) {
       this.subscription.unsubscribe()

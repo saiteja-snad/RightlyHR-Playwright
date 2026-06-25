@@ -35,16 +35,16 @@
     <div class="custom-p-multi-select-table">
         @if(!dataload){
         <p-table #dt [value]="getFilteredAndSortedLeaves()" (selectionChange)="selectCheck($event)"
-            [(selection)]="selectedLeavesItems" dataKey="approvalHeader.id" [tableStyle]="{'min-width': '50rem'}">
+            [(selection)]="selectedLeavesItems" dataKey="approvalHeader.id" [tableStyle]="{'min-width': '50rem'}" [customSort]="true" (sortFunction)="customSort($event)" [sortMode]="'single'">
             <ng-template #header>
                 <tr>
                     <th style="width: 4rem"><p-tableHeaderCheckbox /></th>
-                    <th>{{'Employee ID' | translate}} </th>
-                    <th>{{'Employee Name' | translate}}</th>
-                    <th>{{'Requested Date' | translate}}</th>
-                    <th>{{'Permission Date' | translate}}</th>
-                    <th>{{'Duration(InHours)' | translate}}</th>
-                    <th>{{'Permission Type' | translate}}</th>
+                    <th pSortableColumn="entity.fusionempId">{{'Employee ID' | translate}} <p-sortIcon field="entity.fusionempId"></p-sortIcon></th>
+                    <th pSortableColumn="entity.raisedForName">{{'Employee Name' | translate}}<p-sortIcon field="entity.raisedForName"></p-sortIcon></th>
+                    <th pSortableColumn="entity.createdDate">{{'Requested Date' | translate}}<p-sortIcon field="entity.createdDate"></p-sortIcon></th>
+                    <th pSortableColumn="entity.requestedDate">{{'Permission Date' | translate}}<p-sortIcon field="entity.requestedDate"></p-sortIcon></th>
+                    <th pSortableColumn="entity.duration">{{'Duration(InHours)' | translate}}<p-sortIcon field="entity.duration"></p-sortIcon></th>
+                    <th pSortableColumn="entity.type">{{'Permission Type' | translate}}<p-sortIcon field="entity.type"></p-sortIcon></th>
                     <th class="text-center">{{'Reason' | translate}}</th>
                     <th class="text-center">{{'Approver Comments' | translate}}</th>
                     @if(!multiSelect && (rbac.allowedToAccess('Permission (On Behalf Of Approvals).update') ||
@@ -122,9 +122,13 @@
                 </tr>
             </ng-template>
             <ng-template #emptymessage>
-                <tr>
-                    <app-no-data-found />
-                </tr>
+                <div class="wrapper">
+                  <tr>
+                    <td colspan="11">
+                      <app-no-data-found />
+                    </td>
+                  </tr>
+                </div>
             </ng-template>
         </p-table>
         }@else{

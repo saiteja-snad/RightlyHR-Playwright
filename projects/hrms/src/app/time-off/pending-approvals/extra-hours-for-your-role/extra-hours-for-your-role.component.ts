@@ -17,7 +17,7 @@ import { noWhitespaceValidator } from '../../../shared/nowhitespace/nowhitespace
 import { PermissionsearchPipe } from "../../../Pipes/permissionsearch.pipe";
 import { SignalsService } from '../../../services/signals.service';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
-import { TableModule } from 'primeng/table';
+import { Table, TableModule } from 'primeng/table';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 
@@ -61,6 +61,10 @@ export class ExtraHoursForYourRoleComponent {
   leaveEntitlementsList = {} as ICategoryDetails;
   @ViewChild('commentspopup') modalContent: any;
   @ViewChild('leaveSummary') leaveSummary: any;
+  @ViewChild('dt') table!: Table;
+  originalExtraHoursData = [] as PermissionRequestResponse[];
+  currentSortField: string = '';
+  currentSortOrder: number = 0; // 0 = no sort, 1 = asc, -1 = desc
   selectedLeaveData = {} as PermissionRequestResponse;
   leaves = new BehaviorSubject<PermissionRequestResponse[]>([]);
   destroy$: Subject<boolean> = new Subject<boolean>();
@@ -89,8 +93,77 @@ export class ExtraHoursForYourRoleComponent {
     this.getAllPendingApprovals();
   }
 
-  selectCheck(Value: any) {
-    this.multiSelect = Array.isArray(Value) && Value.length > 0;
+  selectCheck(value: any) {
+    this.multiSelect = Array.isArray(value) && value.length > 0;
+
+    if (!value || value.length === 0) {
+      this.selectedProducts = [];
+      this.hasSelectedAllOnce = false;
+      return;
+    }
+
+    const stageMap: { [stage: string]: any[] } = {};
+
+    value.forEach((item: any) => {
+      const stage = item.approvalHeader?.currentapprovalStage;
+      if (!stageMap[stage]) {
+        stageMap[stage] = [];
+      }
+      stageMap[stage].push(item);
+    });
+
+    const stages = Object.keys(stageMap);
+    const totalAvailable = this.leaves?.getValue().length || 0;
+    const totalSelected = value.length;
+    const isBulkSelect = totalSelected === totalAvailable;
+
+    if (isBulkSelect && stages.length > 1) {
+      if (this.hasSelectedAllOnce) {
+        this.sharedModalService.openErrorModal('You can only select records from the same approval stage');
+      }
+
+      this.hasSelectedAllOnce = true;
+
+      let dominantStage = stages[0];
+      let maxCount = stageMap[dominantStage].length;
+
+      for (const stage of stages) {
+        const count = stageMap[stage].length;
+        if (count > maxCount || (count === maxCount && stage === '1')) {
+          dominantStage = stage;
+          maxCount = count;
+        }
+      }
+
+      const dominantItems = stageMap[dominantStage];
+      this.selectedProducts = [...dominantItems];
+      setTimeout(() => this.updateTableSelectionState(dominantItems));
+      return;
+    }
+
+    if (!isBulkSelect && stages.length > 1) {
+      this.sharedModalService.openErrorModal('You can only select records from the same approval stage');
+      const validStage = this.selectedProducts[0]?.approvalHeader?.currentapprovalStage;
+      const newSelection = value.filter(
+        (item: { approvalHeader: { currentapprovalStage: string; }; }) => item.approvalHeader?.currentapprovalStage === validStage
+      );
+      this.selectedProducts = [...newSelection];
+      setTimeout(() => this.updateTableSelectionState(newSelection));
+      return;
+    }
+
+    this.selectedProducts = [...value];
+  }
+
+  private updateTableSelectionState(selectedItems: any[]) {
+    this.selectedProducts = [...selectedItems];
+
+    if (this.table) {
+      this.table.selection = null;
+      setTimeout(() => {
+        this.table.selection = selectedItems;
+      });
+    }
   }
   onStatusApproveSelect(status: string) {
     this.selectedLeaveStatus = status;
@@ -168,6 +241,7 @@ export class ExtraHoursForYourRoleComponent {
           response.data as PermissionRequestResponse[];
           this.leaves.next(response.data);
           this.regularizationselect = response.data;
+          this.originalExtraHoursData = [...response.data];
           this.dataLoad = false;
         },
         error: (reason) => {
@@ -209,6 +283,7 @@ export class ExtraHoursForYourRoleComponent {
       this.multiSelect = false;
       this.selectedProducts = [];
       this.hasSelectedAllOnce = false;
+      this.updateTableSelectionState([]);
     }
   }
 
@@ -680,5 +755,97 @@ getApprovalStatusCounts() {
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();
+  }
+
+  customSort(event: any): void {
+    const field = event.field;
+    
+    // Track current sort state for the clicked field
+    if (this.currentSortField === field) {
+      // Same field clicked - cycle through: asc (1) -> desc (-1) -> reset (0)
+      if (this.currentSortOrder === 1) {
+        // Currently ascending, change to descending
+        this.currentSortOrder = -1;
+        event.order = -1;
+      } else if (this.currentSortOrder === -1) {
+        // Currently descending, reset to original order
+        this.regularizationselect = [...this.originalExtraHoursData];
+        this.leaves.next(this.regularizationselect);
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        if (this.table) {
+          this.table.reset();
+        }
+        return;
+      } else {
+        // Currently reset, change to ascending
+        this.currentSortOrder = 1;
+        event.order = 1;
+      }
+    } else {
+      // New field clicked - start with ascending
+      this.currentSortField = field;
+      this.currentSortOrder = 1;
+      event.order = 1;
+    }
+
+    event.data.sort((a: any, b: any) => {
+      let val1: any;
+      let val2: any;
+
+      // Handle different field types for extra hours data
+      switch (field) {
+        case 'employeeId':
+          val1 = a.entity?.fusionempId;
+          val2 = b.entity?.fusionempId;
+          break;
+        case 'employeeName':
+          val1 = a.entity?.raisedForName;
+          val2 = b.entity?.raisedForName;
+          break;
+        case 'requestedDate':
+          val1 = new Date(a.entity?.createdDate);
+          val2 = new Date(b.entity?.createdDate);
+          break;
+        case 'workedDate':
+          val1 = new Date(a.entity?.requestedDate);
+          val2 = new Date(b.entity?.requestedDate);
+          break;
+        case 'duration':
+          val1 = parseFloat(a.entity?.duration) || 0;
+          val2 = parseFloat(b.entity?.duration) || 0;
+          break;
+        default:
+          val1 = a[field];
+          val2 = b[field];
+      }
+
+      // Handle Date sorting
+      if (val1 instanceof Date && val2 instanceof Date) {
+        return event.order * (val1.getTime() - val2.getTime());
+      }
+
+      // Handle numeric sorting for duration
+      if (field === 'duration') {
+        return event.order * (val1 - val2);
+      }
+
+      // Handle Employee ID sorting (alphanumeric)
+      if (field === 'employeeId') {
+        return event.order * String(val1 ?? '').localeCompare(
+          String(val2 ?? ''),
+          undefined,
+          {
+            numeric: true,
+            sensitivity: 'base'
+          }
+        );
+      }
+
+      // Handle string sorting for all other fields
+      val1 = String(val1 ?? '').trim();
+      val2 = String(val2 ?? '').trim();
+      return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+    });
   }
 }

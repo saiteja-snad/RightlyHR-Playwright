@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
@@ -17,6 +17,8 @@ import { Ipersonal } from '../../../Interfaces/personal-modal';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { RbacService } from '../../../services/rbac.service';
 import { AccessForEmployeeinfoService } from '../../../services/access-for-employeeinfo.service';
+import { TableModule } from 'primeng/table';
+import { Table } from 'primeng/table';
 
 @Component({
   selector: 'app-no-due-clearance',
@@ -29,13 +31,17 @@ import { AccessForEmployeeinfoService } from '../../../services/access-for-emplo
     DropdownModule,
     DateformatPipe,
     RouterModule,
-    NoDataFoundComponent, DataLoaderContentComponent],
+    NoDataFoundComponent, DataLoaderContentComponent, TableModule],
   templateUrl: './no-due-clearance.component.html',
   styleUrl: './no-due-clearance.component.scss'
 })
-export class NoDueClearanceComponent {
+export class NoDueClearanceComponent implements OnInit, OnDestroy {
+  @ViewChild('noDueTable') noDueTable!: Table;
   subscription!: Subscription
   nodue_Clearance_Details = new BehaviorSubject<any[]>([]);
+  originalNoDueData = [] as any[]; // Store original unsorted data
+  currentSortField: string = '';
+  currentSortOrder: number = 0; // 0 = no sort, 1 = asc, -1 = desc
   nodueapprovalcount!: any;
   empinfo = {} as Ipersonal;
   empdata = {} as Ipersonal;
@@ -136,6 +142,7 @@ export class NoDueClearanceComponent {
     next: (data: any) => {
       this.loading = false;
       this.nodue_Clearance_Details.next(data);
+      this.originalNoDueData = [...data];
 
       // Filter out re-requested
       const validItems = data.filter((ele: any) => ele.subStatus?.toLowerCase() !== 'rerequested');
@@ -159,6 +166,70 @@ export class NoDueClearanceComponent {
     },
   });
 }
+
+  customSort(event: any): void {
+    const field = event.field;
+    
+    // Track current sort state for the clicked field
+    if (this.currentSortField === field) {
+      // Same field clicked - cycle through: asc (1) -> desc (-1) -> reset (0)
+      if (this.currentSortOrder === 1) {
+        // Currently ascending, change to descending
+        this.currentSortOrder = -1;
+        event.order = -1;
+      } else if (this.currentSortOrder === -1) {
+        // Currently descending, reset to original order
+        this.nodue_Clearance_Details.next([...this.originalNoDueData]);
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        if (this.noDueTable) {
+          this.noDueTable.reset();
+        }
+        return;
+      } else {
+        // Currently reset, change to ascending
+        this.currentSortOrder = 1;
+        event.order = 1;
+      }
+    } else {
+      // New field clicked - start with ascending
+      this.currentSortField = field;
+      this.currentSortOrder = 1;
+      event.order = 1;
+    }
+
+    event.data.sort((a: any, b: any) => {
+      let val1: any;
+      let val2: any;
+
+      // Handle direct fields
+      val1 = a[field];
+      val2 = b[field];
+
+      // Handle date fields
+      if (['createdAt', 'updatedAt'].includes(field)) {
+        if (!val1 && !val2) return 0;
+        if (!val1) return event.order * 1; // null dates go to end
+        if (!val2) return event.order * -1;
+        
+        const date1 = new Date(val1);
+        const date2 = new Date(val2);
+        return event.order * (date1.getTime() - date2.getTime());
+      }
+
+      // Handle numeric fields
+      if (['lineOrder'].includes(field)) {
+        const num1 = parseInt(String(val1)) || 0;
+        const num2 = parseInt(String(val2)) || 0;
+        return event.order * (num1 - num2);
+      }
+
+      // Handle string sorting for all other fields
+      val1 = String(val1 ?? '').trim();
+      val2 = String(val2 ?? '').trim();
+      return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+    });
+  }
 
 
   rerequestFornoDue(Value: any) {

@@ -1,11 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, effect, OnDestroy, OnInit } from '@angular/core';
+import { Component, effect, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ReactiveFormsModule, FormsModule, FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { NgbPopoverModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { DropdownModule } from 'primeng/dropdown';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
+import { Table, TableModule } from 'primeng/table';
 import { Subscription, BehaviorSubject } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { InfoIconComponent } from '../../../icons/info-icon/info-icon.component';
@@ -33,6 +34,7 @@ import { ISeparation, ISeparationRequest } from '../../pending-approvals/separat
     FormsModule,
     PaginatorModule,
     DropdownModule,
+    TableModule,
     NoDataFoundComponent,
     PendingapprovalsseparationPipe,
     DataLoaderContentComponent,
@@ -42,6 +44,7 @@ import { ISeparation, ISeparationRequest } from '../../pending-approvals/separat
   styleUrl: './seperation-recall-requests.component.scss'
 })
 export class SeperationRecallRequestsComponent implements OnInit, OnDestroy {
+  @ViewChild('dt') table!: Table;
   subscription!: Subscription;
   searchValue!: string;
   totalRecords = 100;
@@ -49,6 +52,10 @@ export class SeperationRecallRequestsComponent implements OnInit, OnDestroy {
   rows: any = 10;
   isDataLoader = false;
   recall_For_You_Details = new BehaviorSubject<ISeparation[]>([]);
+  originalData: ISeparation[] = [];
+  currentSortField: string = '';
+  currentSortOrder: number = 0; // 0 = no sort, 1 = asc, -1 = desc
+  previousSearchValue: string = '';
   options = [
     { label: 10, value: 10 },
     { label: 15, value: 15 },
@@ -207,6 +214,7 @@ onStatusProcessSelect(status: string) {
                 item.approvalHeader.status != 'Rejected'
             )
           );
+          this.originalData = [...this.recall_For_You_Details.getValue()]; // Store original data for reset functionality
           this.isDataLoader = false;
         },
         error: (reason) => console.log(reason),
@@ -452,5 +460,96 @@ onStatusProcessSelect(status: string) {
     if (this.subscription) {
       this.subscription.unsubscribe();
     }
+  }
+
+  onSearchChange() {
+    // Reset sorting when search changes
+    if (this.searchValue !== this.previousSearchValue) {
+      this.currentSortField = '';
+      this.currentSortOrder = 0;
+      this.previousSearchValue = this.searchValue;
+      if (this.table) {
+        this.table.reset();
+      }
+    }
+  }
+
+  getFilteredAndSortedRecalls(): ISeparation[] {
+    const currentData = this.recall_For_You_Details.getValue();
+    if (!this.searchValue || this.searchValue.trim() === '') {
+      return currentData;
+    }
+    
+    const searchTerm = this.searchValue.toLowerCase().trim();
+    return currentData.filter((recall: ISeparation) => {
+      const employeeName = recall.entity?.spRequesterName?.toLowerCase() || '';
+      const employeeId = recall.entity?.spRequestFusionEmployeeId?.toLowerCase() || '';
+      const department = recall.entity?.spDepartment?.toLowerCase() || '';
+      const team = recall.entity?.spTeam?.toLowerCase() || '';
+      const designation = recall.entity?.spDesignation?.toLowerCase() || '';
+      const requestType = recall.entity?.sprecalledStatus?.toLowerCase() || '';
+      const recallReason = recall.entity?.spRecallReason?.toLowerCase() || '';
+      
+      return employeeName.includes(searchTerm) ||
+             employeeId.includes(searchTerm) ||
+             department.includes(searchTerm) ||
+             team.includes(searchTerm) ||
+             designation.includes(searchTerm) ||
+             requestType.includes(searchTerm) ||
+             recallReason.includes(searchTerm);
+    });
+  }
+
+  customSort(event: any): void {
+    const field = event.field;
+    
+    // Track current sort state for the clicked field
+    if (this.currentSortField === field) {
+      // Same field clicked - cycle through: asc (1) -> desc (-1) -> reset (0)
+      if (this.currentSortOrder === 1) {
+        // Currently ascending, change to descending
+        this.currentSortOrder = -1;
+        event.order = -1;
+      } else if (this.currentSortOrder === -1) {
+        // Currently descending, reset to original order
+        this.recall_For_You_Details.next([...this.originalData]);
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        if (this.table) {
+          this.table.reset();
+        }
+        return;
+      } else {
+        // Currently reset, change to ascending
+        this.currentSortOrder = 1;
+        event.order = 1;
+      }
+    } else {
+      // New field clicked - start with ascending
+      this.currentSortField = field;
+      this.currentSortOrder = 1;
+      event.order = 1;
+    }
+
+    event.data.sort((a: any, b: any) => {
+      let val1 = this.getNestedProperty(a, field);
+      let val2 = this.getNestedProperty(b, field);
+
+      // Handle date sorting
+      if (field.includes('Date')) {
+        val1 = new Date(val1 || 0).getTime();
+        val2 = new Date(val2 || 0).getTime();
+        return event.order * (val1 - val2);
+      }
+
+      // Handle string sorting
+      val1 = String(val1 ?? '').trim();
+      val2 = String(val2 ?? '').trim();
+      return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+    });
+  }
+
+  private getNestedProperty(obj: any, field: string): any {
+    return obj.entity?.[field] ?? '';
   }
 }

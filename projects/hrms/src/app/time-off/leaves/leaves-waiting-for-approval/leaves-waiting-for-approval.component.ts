@@ -4,6 +4,8 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 import { NgbModal, NgbNavModule, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { DropdownModule } from 'primeng/dropdown';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
+import { TableModule } from 'primeng/table';
+import { Table } from 'primeng/table';
 import { HttpService } from '../../../services/http.service';
 import { AuthService } from '../../../services/auth.service';
 import { Subject, Subscription, combineLatest, takeUntil } from 'rxjs';
@@ -20,7 +22,6 @@ import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component"
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.service';
 import { environment } from '../../../../environments/environment';
-import { TableModule } from 'primeng/table';
 @Component({
   selector: 'app-leaves-waiting-for-approval',
   imports: [CommonModule, TranslateModule, ReactiveFormsModule, NgbNavModule, NgbPopoverModule, FormsModule,
@@ -30,6 +31,7 @@ import { TableModule } from 'primeng/table';
 })
 
 export class LeavesWaitingForApprovalComponent implements OnInit, OnDestroy {
+  @ViewChild('leavesWaitingTable') leavesWaitingTable!: Table;
   totalRecords = 100
   first: any = 0;
   rows: any = 10;
@@ -40,6 +42,9 @@ export class LeavesWaitingForApprovalComponent implements OnInit, OnDestroy {
   multiSelect = false;
   selectedProducts: any[] = [];
   searchText: string = '';
+  originalLpdata = [] as Ilpid[]; // Store original unsorted data
+  currentSortField: string = '';
+  currentSortOrder: number = 0; // 0 = no sort, 1 = asc, -1 = desc
   cancelForm!: FormGroup;
   selectedFields = {} as any;
   loading: boolean = false;
@@ -219,6 +224,8 @@ export class LeavesWaitingForApprovalComponent implements OnInit, OnDestroy {
           if (this.lpdata.length > 0) {
             console.log('Sample leave item structure:', this.lpdata[0]);
           }
+          this.originalLpdata = [...this.lpdata]; // Store original unsorted data
+          console.error("Invalid response this lpdata ", this.lpdata);
         } else {
           console.error("Invalid response format");
           this.lpdata = [];
@@ -253,6 +260,8 @@ export class LeavesWaitingForApprovalComponent implements OnInit, OnDestroy {
             console.log('Sample leave item structure:', this.lpdata[0]);
             console.log('PendingApprovalsHeader:', this.lpdata[0]?.pendingApprovalsHeader);
           }
+          this.originalLpdata = [...this.lpdata]; // Store original unsorted data
+          console.error("Invalid response this lpdata ", this.lpdata);
         } else {
           console.error("Invalid response format");
           this.lpdata = [];
@@ -262,6 +271,60 @@ export class LeavesWaitingForApprovalComponent implements OnInit, OnDestroy {
         console.log(reason);
         this.loading = false;
         this.lpdata = [];
+      }
+    });
+  }
+
+  customSort(event: any): void {
+    const field = event.field;
+    
+    // Track current sort state for the clicked field
+    if (this.currentSortField === field) {
+      // Same field clicked - cycle through: asc (1) -> desc (-1) -> reset (0)
+      if (this.currentSortOrder === 1) {
+        // Currently ascending, change to descending
+        this.currentSortOrder = -1;
+        event.order = -1;
+      } else if (this.currentSortOrder === -1) {
+        // Currently descending, reset to original order
+        this.lpdata = [...this.originalLpdata];
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        if (this.leavesWaitingTable) {
+          this.leavesWaitingTable.reset();
+        }
+        return;
+      } else {
+        // Currently reset, change to ascending
+        this.currentSortOrder = 1;
+        event.order = 1;
+      }
+    } else {
+      // New field clicked - start with ascending
+      this.currentSortField = field;
+      this.currentSortOrder = 1;
+      event.order = 1;
+    }
+
+    event.data.sort((a: any, b: any) => {
+      let val1: any;
+      let val2: any;
+
+      if (field === 'date' || field === 'startdate' || field === 'enddate') {
+        // Handle date sorting
+        val1 = new Date(a[field]);
+        val2 = new Date(b[field]);
+        return event.order * (val1.getTime() - val2.getTime());
+      } else if (field === 'duration') {
+        // Handle numeric sorting
+        val1 = parseFloat(a[field]) || 0;
+        val2 = parseFloat(b[field]) || 0;
+        return event.order * (val1 - val2);
+      } else {
+        // Handle string sorting for all other fields
+        val1 = String(a[field] ?? '').trim();
+        val2 = String(b[field] ?? '').trim();
+        return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
       }
     });
   }

@@ -16,7 +16,7 @@ import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.
 import { DownloadExpenseComponent } from "../../download-expense/download-expense.component";
 import { DocumentViewIconComponent } from "../../../icons/document-view-icon/document-view-icon.component";
 import { TranslateModule } from '@ngx-translate/core';
-import { TableModule } from 'primeng/table';
+import { Table, TableModule } from 'primeng/table';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { RbacService } from '../../../services/rbac.service';
 import moment from 'moment';
@@ -43,6 +43,7 @@ export class PendingExpensesComponent implements OnInit, OnDestroy {
   @ViewChild('verificationViewattamchment') private verificationViewattamchment!: NgbModal;
   @ViewChild('checklistconfirmationmodal') checklistconfirmationmodal: any;
   @ViewChild('verificationofModal') verificationofModal: any;
+  @ViewChild('dt1') table!: Table;
   expenseheaderiteams!: IExpenseHeaders;
   updataid!: number;
   commentsrecivced = [] as any
@@ -51,7 +52,8 @@ export class PendingExpensesComponent implements OnInit, OnDestroy {
   seletedMouthly: any;
   loading = false
   @ViewChild('commentspopup') modalContent: any;
-  expenesEmplyeedata = new BehaviorSubject<IExpense[]>([])
+  expenesEmplyeedata: IExpense[] = [];
+  originalExpenseData: IExpense[] = [];
   draftsCount: number = 0;
   expensesAttachment: any;
   selectedData = {} as any;
@@ -189,7 +191,8 @@ export class PendingExpensesComponent implements OnInit, OnDestroy {
         next: (data: any) => {
           this.loading = false
           const filteredData = data.filter((item: any) => !item.expenseSummary);
-          this.expenesEmplyeedata.next(filteredData)
+          this.originalExpenseData = [...filteredData];
+          this.expenesEmplyeedata = [...filteredData];
 
         }, error(err) {
           console.log("expensesheadererror", err)
@@ -197,6 +200,48 @@ export class PendingExpensesComponent implements OnInit, OnDestroy {
       });
   }
 
+  getFilteredAndSortedExpenses() {
+    return this.expenesEmplyeedata;
+  }
+
+  customSort(event: any) {
+    const field = event.field;
+    const order = event.order;
+
+    if (order === 0) {
+      // Reset to original order
+      this.expenesEmplyeedata = [...this.originalExpenseData];
+    } else {
+      this.expenesEmplyeedata.sort((a: any, b: any) => {
+        let aVal, bVal;
+
+        if (field === 'expenses_Title') {
+          aVal = a.expenses_Title?.toLowerCase() || '';
+          bVal = b.expenses_Title?.toLowerCase() || '';
+        } else if (field === 'expense_Date') {
+          aVal = new Date(a.expenseitem?.[0]?.expense_Date || 0);
+          bVal = new Date(b.expenseitem?.[0]?.expense_Date || 0);
+        } else if (field === 'applied_date') {
+          aVal = new Date(a.applied_date || 0);
+          bVal = new Date(b.applied_date || 0);
+        } else if (field === 'totalExpenseAmount') {
+          aVal = parseFloat(a.totalExpenseAmount) || 0;
+          bVal = parseFloat(b.totalExpenseAmount) || 0;
+        } else if (field === 'status') {
+          aVal = a.status?.toLowerCase() || '';
+          bVal = b.status?.toLowerCase() || '';
+        } else {
+          aVal = a[field];
+          bVal = b[field];
+        }
+
+        if (aVal < bVal) return -1 * order;
+        if (aVal > bVal) return 1 * order;
+        return 0;
+      });
+    }
+  }
+  
   viewItem(expid: number,) {
     this.updataid = expid;
     this.subscription = this.http

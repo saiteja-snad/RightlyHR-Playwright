@@ -1,302 +1,46 @@
 <div class="custom-main-component-container">
-    <div class="custom-table-content">
-        @if(selectedProducts.length > 0 && !permissionForLoggedInUser){
-
-        <div class="component-header-content">
-
-            <div class="component-sub-header">
-                Selected Records: {{ selectedProducts.length }}
-            </div>
-
-            <div class="d-flex gap-3">
-
-                <button class="custom-btn btn-primary-approve"
-                    (click)="approveExtraHours(approval, selectedProducts[0])">
-                    Approve
-                </button>
-
-                <button class="custom-btn btn-primary-reject"
-                    (click)="rejectExtraHours(rejectmodal, selectedProducts[0])">
-                    Reject
-                </button>
-
-            </div>
-
-        </div>
-
-        }
-        <div class="custom-p-multi-select-table">
-            @if(showMultiSelectAndSearch()){
-            <div class="input-group custom-search mb-3">
-                <span class="input-group-text custom-input-group-search">
-                    <i class="bi bi-search"></i>
-                </span>
-
-                <input type="search" [(ngModel)]="searchText" class="form-control custom-search-input"
-                    placeholder="Search">
-            </div>
-            }
-
-            @if(!dataLoad){
-
-            <p-table [value]="waitingForApprovalPerimisions" [(selection)]="selectedProducts"
-                (selectionChange)="selectCheck($event)" dataKey="id">
-
-                <ng-template pTemplate="header">
-                    <tr>
-                        @if(showMultiSelectAndSearch()){
-                        <th style="width:4rem">
-                            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
-                        </th>
-                        }
-
-                        <th>{{'Requested Date' | translate}}</th>
-                        <th>{{'Worked Date' | translate}}</th>
-                        <th>{{'Duration(In Hrs)' | translate}}</th>
-                        <th class="text-center">{{'Description' | translate}}</th>
-                        <th class="text-center">{{'Status' | translate}}</th>
-
-                        @if(selectedProducts.length == 0 && !permissionForLoggedInUser){
-                        <th class="text-center">Action</th>
-                        }
-                    </tr>
-                </ng-template>
-
-                <ng-template pTemplate="body" let-permissionRequest>
-                    <tr>
-
-                        @if(canApprove(permissionRequest)){
-                        <td>
-                            <p-tableCheckbox [value]="permissionRequest"></p-tableCheckbox>
-                        </td>
-                        }
-
-                        <td>{{permissionRequest.createdDate | dateformat}}</td>
-                        <td>{{permissionRequest.requestedDate | dateformat}}</td>
-                        <td>{{(+permissionRequest.duration) * 60 * 60 * 1000 | date:'HH:mm':'UTC'}}</td>
-
-                        <td class="text-center">
-                            <a type="button" [ngbPopover]="reason">
-                                <app-info-icon />
-                            </a>
-
-                            <ng-template #reason>
-                                <p class="mb-0">{{permissionRequest.notes}}</p>
-                            </ng-template>
-                        </td>
-
-                        <td class="text-center">{{permissionRequest.status}}</td>
-
-                        @if(selectedProducts.length == 0 && !permissionForLoggedInUser){
-                        <td class="text-center">
-
-                            @if(canApprove(permissionRequest)){
-                            <div class="dropdown">
-                                <a type="button" data-bs-toggle="dropdown">
-                                    <i class="bi bi-three-dots-vertical"></i>
-                                </a>
-
-                                <ul class="dropdown-menu custom-dropdown-menu">
-                                    <li (click)="approveExtraHours(approval, permissionRequest)">
-                                        <a class="dropdown-item">
-                                            <i class="bi bi-check-circle me-2"></i>
-                                            Approve
-                                        </a>
-                                    </li>
-
-                                    <li (click)="rejectExtraHours(rejectmodal, permissionRequest)">
-                                        <a class="dropdown-item">
-                                            <i class="bi bi-x-circle me-2"></i>
-                                            Reject
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                            } @else {
-                            -
-                            }
-
-                        </td>
-                        }
-
-                    </tr>
-                </ng-template>
-
-                <ng-template pTemplate="emptymessage">
-                    <tr class="no-data-row">
-                        <td colspan="10" class="no-data-cell">
-                            <app-no-data-found></app-no-data-found>
-                        </td>
-                    </tr>
-                </ng-template>
-
-            </p-table>
-
-            }@else{
-            <app-data-loader-content />
-            }
-        </div>
-    </div>
-
-    <ng-template #approval let-modal>
-        <div class="result-popup-content" ngbAutofocus>
+  <div class="custom-table-content">
+    @if(!dataLoad){
+    <p-table #extraHoursWaitingTable [value]="waitingForApprovalPerimisions" [customSort]="true" (sortFunction)="customSort($event)" [sortMode]="'single'">
+      <ng-template pTemplate="header">
+        <tr>
+          <th pSortableColumn="createdDate">{{'Requested Date' | translate}} <p-sortIcon field="createdDate"></p-sortIcon></th>
+          <th pSortableColumn="requestedDate">{{'Worked Date' | translate}} <p-sortIcon field="requestedDate"></p-sortIcon></th>
+          <th pSortableColumn="duration">{{'Duration(In Hrs)' | translate}} <p-sortIcon field="duration"></p-sortIcon></th>
+          <th class="text-center" pSortableColumn="notes">{{'Description' | translate}} <p-sortIcon field="notes"></p-sortIcon></th>
+          <th class="text-center" pSortableColumn="status">{{'Status' | translate}} <p-sortIcon field="status"></p-sortIcon></th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-permissionRequest>
+        <tr>
+          <td>{{permissionRequest.createdDate | dateformat}}</td>
+          <td>{{permissionRequest.requestedDate | dateformat}}</td>
+          <td>{{(+permissionRequest.duration) * 60 * 60 * 1000 | date:'HH:mm':'UTC'}}</td>
+          <td class="text-center">
             <div>
-                <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
-                <p class="confirmation-text">{{'Are you sure you want to proceed with the approval?' | translate}}</p>
+              <a type="button" [ngbPopover]="reason">
+                <app-info-icon />
+              </a>
+              <ng-template #reason>
+                <p class="mb-0">{{permissionRequest.notes}}</p>
+              </ng-template>
             </div>
-            <form autocomplete="off" [formGroup]="approveForm" (ngSubmit)="handleAccept(approveForm)">
-                <div class="custom-main-popup-content">
-                    <label for="comments" class="form-label custom-label mb-2">{{'Approver Comments' | translate}}<span
-                            class="text-danger">*</span></label>
-                    <textarea class="form-control custom-input" id="comments"
-                        placeholder="Please provide approver comments" formControlName="comments" maxlength="250"
-                        (input)="removeLeadingWhitespace(approveForm.get('comments'))"></textarea>
-                    <!-- Character counter -->
-                    <div class="textarea-count-text">{{ approveForm.get('comments')?.value?.length || 0 }}/250</div>
-                    <div class="error-msg"
-                        *ngIf="approveForm.get('comments')?.touched && approveForm.get('comments')?.invalid">
-                        <div *ngIf="approveForm.get('comments')?.errors?.['required']">Approver Comments is required
-                        </div>
-                        <div *ngIf="approveForm.get('comments')?.errors?.['maxlength']">Approver Comments cannot exceed
-                            250
-                            characters</div>
-                    </div>
-                </div>
-                <div class="d-flex align-items-center flex-wrap gap-2 mb-3">
-                    <button type="button" class="custom-btn btn-secondary chip-btn"
-                        [class.active]="selectedLeaveStatus === 'approved'" (click)="onStatusApproveSelect('approved')">
-                        Approved
-                    </button>
-                </div>
-                <div class="custom-modal-footer">
-                    <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()"
-                        [disabled]="spinnerLoader">{{'Cancel'| translate}}</button>
-                    <button type="submit" class="custom-btn btn-primary"
-                        [disabled]="approveForm.invalid || spinnerLoader">
-                        @if(spinnerLoader){
-                        <div class="button-loader-content">
-                            <span class="spinner-border button-spinner text-light" role="status"
-                                aria-hidden="true"></span>
-                            <span>{{'Loading...' | translate}}</span>
-                        </div>
-                        }@else {
-                        <span>{{'Approve'| translate}}</span>
-                        }
-                    </button>
-                </div>
-            </form>
+          </td>
+          <td class="text-center">{{permissionRequest.status}}</td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <div class="wrapper">
+          <tr>
+            <td colspan="5">
+              <app-no-data-found />
+            </td>
+          </tr>
         </div>
-    </ng-template>
-
-
-    <ng-template #rejectmodal let-modal>
-        <div class="result-popup-content" ngbAutofocus>
-            <div>
-                <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
-                <p class="confirmation-text">{{'Do you really want to reject selected requests?' | translate}}</p>
-            </div>
-            <form autocomplete="off" [formGroup]="rejectForm" (ngSubmit)="handleReject(rejectForm)">
-                <div class="custom-main-popup-content">
-                    <label for="comments" class="form-label custom-label mb-2">{{"Reject Reason" | translate}}
-                        <span class="text-danger">*</span></label>
-                    <textarea class="form-control custom-input" id="comments" placeholder="Please provide reject reason"
-                        formControlName="comments" maxlength="250"
-                        (input)="removeLeadingWhitespace(rejectForm.get('comments'))"></textarea>
-                    <div class="textarea-count-text">{{ rejectForm.get('comments')?.value?.length || 0 }}/250</div>
-                    <div class="error-msg"
-                        *ngIf="rejectForm.get('comments')?.touched && rejectForm.get('comments')?.invalid">
-                        <div *ngIf="rejectForm.get('comments')?.errors?.['required']">Reject Reason is required</div>
-                        <div *ngIf="rejectForm.get('comments')?.errors?.['maxlength']">Reject Reason cannot exceed 250
-                            characters.
-                        </div>
-                    </div>
-                </div>
-                <div class="d-flex align-items-center flex-wrap gap-2 mb-3">
-                    <button type="button" class="custom-btn btn-secondary chip-btn"
-                        [class.active]="selectedLeaveStatus === 'reject'" (click)="onStatusRejectSelect('reject')">
-                        Rejected
-                    </button>
-                </div>
-
-                <div class="custom-modal-footer">
-                    <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()"
-                        [disabled]="spinnerLoader">{{'Cancel' |
-                        translate}}</button>
-                    <button type="submit" class="custom-btn btn-primary"
-                        [disabled]="rejectForm.invalid || spinnerLoader">
-                        @if(spinnerLoader){
-                        <div class="button-loader-content">
-                            <span class="spinner-border button-spinner text-light" role="status"
-                                aria-hidden="true"></span>
-                            <span>{{'Loading...' | translate}}</span>
-                        </div>
-                        }@else {
-                        <span>{{'Reject'| translate}}</span>
-                        }
-                    </button>
-                </div>
-            </form>
-        </div>
-    </ng-template>
-
-
-    <!-- Comments Popup-->
-    <ng-template #commentspopup let-modal>
-        <div class="custom-main-popup-container" ngbAutofocus>
-            <div class="custom-poup-header-content popup-header-border">
-                <div>
-                    <p class="popup-heading mb-0">{{'Approver Comments'| translate}}</p>
-                </div>
-                <div>
-                    <a (click)="modal.dismiss('Cross click')">
-                        <img src="icons/close.png" alt="Close Icon" class="close-icon">
-                    </a>
-                </div>
-            </div>
-            <div class="custom-main-popup-content" *ngFor="let comment of approverComments">
-                <div class="card p-3">
-                    <div>
-                        <div class="mb-0">
-                            <p><b>{{'Comments' | translate}}:</b> {{ comment.comments }} </p>
-                            <p><b>{{'Commented By'|translate}}:</b> {{ comment.addedName }}</p>
-                            <p><b>{{"Approved Date" | translate}}:</b> {{ comment.addedDate | dateformat }}</p>
-                            <p><b>{{'Commented By ID' | translate}}:</b> {{ comment.addedByFusionEmpId }}</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </ng-template>
-
-
-    <ng-template #leaveSummary let-modal>
-        <div class="custom-main-popup-container" ngbAutofocus>
-            <div class="custom-poup-header-content popup-header-border">
-                <div>
-                    <p class="popup-heading mb-0">{{"Summary" | translate}}</p>
-                </div>
-            </div>
-            <div class="custom-main-popup-content custom-accordians">
-                <div class="popup-table-wrapper">
-                    <div class="popup-table-scroll-container">
-                        <table class="popup-table">
-                            <thead>
-                                <tr>
-                                    <th>{{'Total Records' | translate}}</th>
-                                    <th>{{'Success Records'|translate}}</th>
-                                    <th>{{'Failed Records' | translate}}</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td class="log-time">{{ responseSummary?.totalRecordCount }}</td>
-                                    <td class="log-time">{{ responseSummary?.successRecordsCount }}</td>
-                                    <td class="log-time">{{ responseSummary?.failureRecordsCount }}</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </ng-template>
+      </ng-template>
+    </p-table>
+    }@else{
+    <app-data-loader-content />
+    }
+  </div>
+</div>

@@ -35,101 +35,53 @@
       }
     </div>
     @if(!dataload){
-    <div class="custom-p-multi-select-table">
-
-      <p-table [value]="waitingForApprovalCompOff" [(selection)]="selectedProducts"
-        (selectionChange)="selectCheck($event)" dataKey="id">
-        <ng-template pTemplate="header">
-          <tr>
-            @if(showMultiSelectAndSearch()){
-            <th style="width:4rem">
-              <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
-            </th>
-            }
-            
-            <th>{{'Worked Date' | translate}}</th>
-            <th>{{'Availed' | translate}}</th>
-            <th class="text-center">{{'Reason' | translate}}</th>
-            <th>{{'Applied Date' | translate}}</th>
-            <th>{{'Status' | translate}}</th>
-            <th class="text-center" *ngIf="showActions">
-              {{'Action' | translate}}
-            </th>
-          </tr>
-        </ng-template>
-
-
-        <ng-template pTemplate="body" let-compOffRequest>
-          <tr>
-
-            @if(canApprove(compOffRequest)){
-            <td>
-              <p-tableCheckbox [value]="compOffRequest"></p-tableCheckbox>
-            </td>
-            }
-            <td>{{ compOffRequest.startTime ? (compOffRequest.startTime | dateformat) : ' -' }}</td>
-            <td [ngSwitch]="compOffRequest.durationType">
-              <span *ngSwitchCase="1">First Half</span>
-              <span *ngSwitchCase="3">Second Half</span>
-              <span *ngSwitchCase="2">Full Day</span>
-              <span *ngSwitchDefault>-</span>
-            </td>
-            <td class="text-center">
-              <div>
-                <div *ngIf="compOffRequest.requestedComments; else noReason" type="button"
-                  [ngbPopover]="requestedComments">
-                  <app-info-icon />
-                </div>
-                <ng-template #requestedComments>
-                  <p class="mb-0">{{ compOffRequest.requestedComments }}</p>
-                </ng-template>
-                <ng-template #noReason>
-                  <span>-</span>
-                </ng-template>
+    <p-table #compOffWaitingTable [value]="waitingForApprovalCompOff" [customSort]="true" (sortFunction)="customSort($event)" [sortMode]="'single'">
+      <ng-template pTemplate="header">
+        <tr>
+          <th pSortableColumn="startTime">{{'Worked Date' | translate}} <p-sortIcon field="startTime"></p-sortIcon></th>
+          <th pSortableColumn="durationType">{{'Availed' | translate}} <p-sortIcon field="durationType"></p-sortIcon></th>
+          <th class="text-center" pSortableColumn="requestedComments">{{'Reason' | translate}} <p-sortIcon field="requestedComments"></p-sortIcon></th>
+          <th pSortableColumn="requestedDate">{{'Applied Date' | translate}} <p-sortIcon field="requestedDate"></p-sortIcon></th>
+          <th pSortableColumn="status">{{'Status' | translate}} <p-sortIcon field="status"></p-sortIcon></th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-compOffRequest>
+        <tr>
+          <td>{{ compOffRequest.startTime ? (compOffRequest.startTime | dateformat) : ' -' }}</td>
+          <td [ngSwitch]="compOffRequest.durationType">
+            <span *ngSwitchCase="1">First Half</span>
+            <span *ngSwitchCase="3">Second Half</span>
+            <span *ngSwitchCase="2">Full Day</span>
+            <span *ngSwitchDefault>-</span>
+          </td>
+          <td class="text-center">
+            <div>
+              <div *ngIf="compOffRequest.requestedComments; else noReason" type="button"
+                [ngbPopover]="requestedComments">
+                <app-info-icon />
               </div>
-            </td>
-            <td>{{ compOffRequest.requestedDate | dateformat }}</td>
-            <td>{{ compOffRequest.status }}</td>
-
-            <td class="text-center" *ngIf="showActions">
-
-              @if(canApprove(compOffRequest)){
-              <div class="dropdown">
-                <a type="button" data-bs-toggle="dropdown">
-                  <i class="bi bi-three-dots-vertical"></i>
-                </a>
-
-                <ul class="dropdown-menu custom-dropdown-menu">
-
-                  <li (click)="approveCompOff(approval, compOffRequest)">
-                    <a class="dropdown-item">
-                      <i class="bi bi-check-circle me-2"></i>Approve
-                    </a>
-                  </li>
-
-                  <li (click)="rejectCompOff(rejectmodal, compOffRequest)">
-                    <a class="dropdown-item">
-                      <i class="bi bi-x-circle me-2"></i>Reject
-                    </a>
-                  </li>
-
-                </ul>
-              </div>
-              }
-
+              <ng-template #requestedComments>
+                <p class="mb-0">{{ compOffRequest.requestedComments }}</p>
+              </ng-template>
+              <ng-template #noReason>
+                <span>-</span>
+              </ng-template>
+            </div>
+          </td>
+          <td>{{ compOffRequest.requestedDate | dateformat }}</td>
+          <td>{{ compOffRequest.status }}</td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <div class="wrapper">
+          <tr>
+            <td colspan="5">
+              <app-no-data-found />
             </td>
           </tr>
-        </ng-template>
-        <ng-template pTemplate="emptymessage">
-          <tr class="no-data-row">
-            <td colspan="10" class="no-data-cell">
-              <app-no-data-found></app-no-data-found>
-            </td>
-          </tr>
-        </ng-template>
-
-      </p-table>
-    </div>
+        </div>
+      </ng-template>
+    </p-table>
     }@else{
     <app-data-loader-content />
     }

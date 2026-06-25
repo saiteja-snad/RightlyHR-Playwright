@@ -74,6 +74,9 @@ export class PremissionForYouRequestComponent implements OnInit, OnDestroy {
   previousSearchValue: string = '';
   selectedLeaveStatus: any;
   totalCount: any;
+  originalPermissions = [] as PermissionRequestResponse[]; // Store original unsorted data
+  currentSortField: string = '';
+  currentSortOrder: number = 0; // 0 = no sort, 1 = asc, -1 = desc
   constructor(
     private modalService: NgbModal,
     private fb: FormBuilder,
@@ -255,9 +258,11 @@ onStatusApproveSelect(status: string) {
           if (response.data.length > 0) {
             this.leaves.next(response.data);
             this.permissionsselect = response.data;
+            this.originalPermissions = [...response.data]; // Store original data
           } else {
             this.leaves.next([]);
             this.permissionsselect = [];
+            this.originalPermissions = [];
           }
         },
         error: (reason) => {
@@ -554,6 +559,105 @@ onStatusApproveSelect(status: string) {
       size: 'lg',
     });
     this.approverComments = value;
+  }
+
+  customSort(event: any): void {
+    const field = event.field;
+    
+    // Track current sort state for the clicked field
+    if (this.currentSortField === field) {
+      // Same field clicked - cycle through: asc (1) -> desc (-1) -> reset (0)
+      if (this.currentSortOrder === 1) {
+        // Currently ascending, change to descending
+        this.currentSortOrder = -1;
+        event.order = -1;
+      } else if (this.currentSortOrder === -1) {
+        // Currently descending, reset to original order
+        this.permissionsselect = [...this.originalPermissions];
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        if (this.table) {
+          this.table.reset();
+        }
+        return;
+      } else {
+        // Currently reset, change to ascending
+        this.currentSortOrder = 1;
+        event.order = 1;
+      }
+    } else {
+      // New field clicked - start with ascending
+      this.currentSortField = field;
+      this.currentSortOrder = 1;
+      event.order = 1;
+    }
+
+    event.data.sort((a: any, b: any) => {
+      let val1: any;
+      let val2: any;
+
+      // Handle specific field mappings
+      switch (field) {
+        case 'fusionempId':
+          val1 = a.entity?.fusionempId;
+          val2 = b.entity?.fusionempId;
+          break;
+        case 'raisedForName':
+          val1 = a.entity?.raisedForName;
+          val2 = b.entity?.raisedForName;
+          break;
+        case 'createdDate':
+          val1 = a.entity?.createdDate;
+          val2 = b.entity?.createdDate;
+          break;
+        case 'requestedDate':
+          val1 = a.entity?.requestedDate;
+          val2 = b.entity?.requestedDate;
+          break;
+        case 'duration':
+          val1 = a.entity?.duration;
+          val2 = b.entity?.duration;
+          break;
+        case 'type':
+          val1 = a.entity?.type;
+          val2 = b.entity?.type;
+          break;
+        default:
+          val1 = a[field];
+          val2 = b[field];
+      }
+
+      // Handle date sorting
+      if (field === 'createdDate' || field === 'requestedDate') {
+        const date1 = val1 ? new Date(val1) : new Date(0);
+        const date2 = val2 ? new Date(val2) : new Date(0);
+        return event.order * (date1.getTime() - date2.getTime());
+      }
+
+      // Handle numeric sorting for duration
+      if (field === 'duration') {
+        const num1 = parseFloat(String(val1).replace(/[^\d.-]/g, '')) || 0;
+        const num2 = parseFloat(String(val2).replace(/[^\d.-]/g, '')) || 0;
+        return event.order * (num1 - num2);
+      }
+
+      // Handle Employee ID sorting (alphanumeric)
+      if (field === 'fusionempId') {
+        return event.order * String(val1 ?? '').localeCompare(
+          String(val2 ?? ''),
+          undefined,
+          {
+            numeric: true,
+            sensitivity: 'base'
+          }
+        );
+      }
+
+      // Handle string sorting for all other fields
+      val1 = String(val1 ?? '').trim();
+      val2 = String(val2 ?? '').trim();
+      return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+    });
   }
 
   ngOnDestroy(): void {

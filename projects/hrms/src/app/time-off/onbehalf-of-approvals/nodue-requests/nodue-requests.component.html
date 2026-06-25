@@ -4,27 +4,27 @@
         <span class="input-group-text custom-input-group-search" id="basic-addon1">
             <i class="bi bi-search"></i></span>
         <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input"
-            placeholder="Search by employee name / department / status / employee emails " aria-label="Username" aria-describedby="basic-addon1">
+            placeholder="Search by employee name / department / status / employee emails " aria-label="Username" 
+            aria-describedby="basic-addon1" autocomplete="off" (ngModelChange)="onSearchChange()">
     </div>
 
-    <div class="custom-table-content">
-
+    <div class="custom-p-multi-select-table">
         @if(!loading){
-        <table class="w-100">
-            <thead>
-                <th>{{'Employee ID'|translate}}</th>
-                <th>{{'Employee Name' | translate}}</th>
-                <th>{{'Requested Date' |translate}}</th>
-                <th>{{'Department' |translate}}</th>
-                <th>{{'Status' |translate}}</th>
-                <th class="text-center">{{'Employee Emails' |translate}}</th>
-                @if(rbac.allowedToAccess('No Due (On Behalf Of Approvals).update') || rbac.allowedToAccess('No Due (On Behalf Of Approvals).delete')) {
-                <th class="text-center">Action</th>
-                }
-            </thead>
-            <tbody>
-                @if (((nodue_Request_data | async) ?? []).length > 0) {
-                @for (item of ((nodue_Request_data | async) ?? []) | nodueDetails : searchValue; track item.id){
+        <p-table #dt [value]="getFilteredAndSortedNodue()" [tableStyle]="{'min-width': '50rem'}" [customSort]="true" (sortFunction)="customSort($event)" [sortMode]="'single'">
+            <ng-template #header>
+                <tr>
+                    <th pSortableColumn="employeeFusionEmpId">{{'Employee ID'|translate}} <p-sortIcon field="employeeFusionEmpId"></p-sortIcon></th>
+                    <th pSortableColumn="employeeName">{{'Employee Name' | translate}} <p-sortIcon field="employeeName"></p-sortIcon></th>
+                    <th pSortableColumn="requestedDate">{{'Requested Date' |translate}} <p-sortIcon field="requestedDate"></p-sortIcon></th>
+                    <th pSortableColumn="departmentName">{{'Department' |translate}} <p-sortIcon field="departmentName"></p-sortIcon></th>
+                    <th pSortableColumn="status">{{'Status' |translate}} <p-sortIcon field="status"></p-sortIcon></th>
+                    <th class="text-center">{{'Employee Emails' |translate}}</th>
+                    @if(rbac.allowedToAccess('No Due (On Behalf Of Approvals).update') || rbac.allowedToAccess('No Due (On Behalf Of Approvals).delete')) {
+                    <th class="text-center">Action</th>
+                    }
+                </tr>
+            </ng-template>
+            <ng-template #body let-item>
                 <tr>
                     <td>{{item?.employeeFusionEmpId ?? '-'}}</td>
                     <td>{{item?.employeeName ?? '-'}}</td>
@@ -64,17 +64,18 @@
                     </td>
                     }
                 </tr>
-                }
-                }
-                @else{
-                <tr>
-                    <app-no-data-found />
-                </tr>
-                }
-            </tbody>
-        </table>
-        }
-        @else {
+            </ng-template>
+            <ng-template #emptymessage>
+                <div class="wrapper">
+                    <tr>
+                        <td [attr.colspan]="rbac.allowedToAccess('No Due (On Behalf Of Approvals).update') || rbac.allowedToAccess('No Due (On Behalf Of Approvals).delete') ? 7 : 6">
+                            <app-no-data-found />
+                        </td>
+                    </tr>
+                </div>
+            </ng-template>
+        </p-table>
+        } @else {
         <app-data-loader-content />
         }
     </div>

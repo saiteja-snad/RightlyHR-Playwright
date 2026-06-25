@@ -4,6 +4,8 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { DropdownModule } from 'primeng/dropdown';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
+import { TableModule } from 'primeng/table';
+import { Table } from 'primeng/table';
 import { HttpService } from '../../../services/http.service';
 import { IJob } from '../../../Interfaces/letters-model';
 import { Subject, Subscription, takeUntil } from 'rxjs';
@@ -20,7 +22,6 @@ import { FormValidationsService } from '../../../services/form-validations.servi
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.service';
 import { ConfirmationIconComponent } from "../../../icons/confirmation-icon/confirmation-icon.component";
-import { TableModule } from 'primeng/table';
 @Component({
   selector: 'app-wfh-waiting-for-approval',
   imports: [
@@ -31,6 +32,7 @@ import { TableModule } from 'primeng/table';
     FormsModule,
     PaginatorModule,
     DropdownModule,
+    TableModule,
     DateformatPipe,
     NoDataFoundComponent,
     DataLoaderContentComponent,
@@ -43,10 +45,14 @@ import { TableModule } from 'primeng/table';
 })
 
 export class WfhWaitingForApprovalComponent implements OnInit, OnDestroy {
+  @ViewChild('wfhWaitingTable') wfhWaitingTable!: Table;
   totalRecords = 100;
   first: any = 0;
   rows: any = 10;
   waitingForApprovalWFHs: ICompOff[] = [];
+  originalWaitingForApprovalWFHs: ICompOff[] = []; // Store original unsorted data
+  currentSortField: string = '';
+  currentSortOrder: number = 0; // 0 = no sort, 1 = asc, -1 = desc
   subscription!: Subscription;
   compOff = [] as any;
   waitingForApprovalWFHCount = 0;
@@ -172,12 +178,14 @@ export class WfhWaitingForApprovalComponent implements OnInit, OnDestroy {
         this.waitingForApprovalWFHs = response.filter(
           (element: { status: string }) => element.status === 'Waiting for Approval'
         );
+        this.originalWaitingForApprovalWFHs = [...this.waitingForApprovalWFHs]; // Store original unsorted data
         this.waitingForApprovalWFHCount = this.waitingForApprovalWFHs.length;
       },
       error: (error) => {
         this.dataload = false;
         console.error('Error fetching data:', error);
         this.waitingForApprovalWFHs = [];
+        this.originalWaitingForApprovalWFHs = [];
       },
       complete: () => {
         this.dataload = false;
@@ -246,11 +254,13 @@ export class WfhWaitingForApprovalComponent implements OnInit, OnDestroy {
         this.waitingForApprovalWFHs = this.compOff.filter(
           (element: { status: string }) => element.status === 'Waiting for Approval'
         );
+        this.originalWaitingForApprovalWFHs = [...this.waitingForApprovalWFHs]; // Store original unsorted data
         this.waitingForApprovalWFHCount = this.waitingForApprovalWFHs.length;
       },
       error: (error) => {
         console.error('Error fetching data:', error);
         this.waitingForApprovalWFHs = [];
+        this.originalWaitingForApprovalWFHs = [];
       },
       complete: () => {
         this.dataload = false;
@@ -457,6 +467,59 @@ export class WfhWaitingForApprovalComponent implements OnInit, OnDestroy {
     this.modalService.open(rejectPopup, {
       centered: true,
       backdrop: 'static'
+       });
+  }
+  customSort(event: any): void {
+    const field = event.field;
+    
+    // Track current sort state for the clicked field
+    if (this.currentSortField === field) {
+      // Same field clicked - cycle through: asc (1) -> desc (-1) -> reset (0)
+      if (this.currentSortOrder === 1) {
+        // Currently ascending, change to descending
+        this.currentSortOrder = -1;
+        event.order = -1;
+      } else if (this.currentSortOrder === -1) {
+        // Currently descending, reset to original order
+        this.waitingForApprovalWFHs = [...this.originalWaitingForApprovalWFHs];
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        if (this.wfhWaitingTable) {
+          this.wfhWaitingTable.reset();
+        }
+        return;
+      } else {
+        // Currently reset, change to ascending
+        this.currentSortOrder = 1;
+        event.order = 1;
+      }
+    } else {
+      // New field clicked - start with ascending
+      this.currentSortField = field;
+      this.currentSortOrder = 1;
+      event.order = 1;
+    }
+
+    event.data.sort((a: any, b: any) => {
+      let val1: any;
+      let val2: any;
+
+      if (field === 'startTime' || field === 'requestedDate') {
+        // Handle date sorting
+        val1 = new Date(a[field]);
+        val2 = new Date(b[field]);
+        return event.order * (val1.getTime() - val2.getTime());
+      } else if (field === 'durationType') {
+        // Handle numeric sorting for duration type
+        val1 = parseInt(a[field]) || 0;
+        val2 = parseInt(b[field]) || 0;
+        return event.order * (val1 - val2);
+      } else {
+        // Handle string sorting for all other fields
+        val1 = String(a[field] ?? '').trim();
+        val2 = String(b[field] ?? '').trim();
+        return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+      }
     });
   }
 

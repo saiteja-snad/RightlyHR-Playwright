@@ -1,9 +1,11 @@
 import { CommonModule, DatePipe } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ReactiveFormsModule, FormsModule, FormBuilder, FormControl, FormGroup, NgForm, Validators } from '@angular/forms';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
+import { TableModule } from 'primeng/table';
+import { Table } from 'primeng/table';
 import { DateformatPipe } from '../../../../pipes/dateformat.pipe';
 import { DataLoaderContentComponent } from '../../../../shared/data-loader-content/data-loader-content.component';
 import { NoDataFoundComponent } from '../../../../shared/no-data-found/no-data-found.component';
@@ -24,11 +26,12 @@ import { InfoIconComponent } from "../../../../icons/info-icon/info-icon.compone
 @Component({
   selector: 'app-contract-conversion-for-you',
   imports: [DateformatPipe, CommonModule, ReactiveFormsModule, NgbPopoverModule, PaginatorModule, FormsModule, TranslateModule,
-    NoDataFoundComponent, DataLoaderContentComponent, ContractsearchfilterPipe, InfoIconComponent],
+    NoDataFoundComponent, DataLoaderContentComponent, ContractsearchfilterPipe, InfoIconComponent, TableModule],
   templateUrl: './contract-conversion-for-you.component.html',
   styleUrl: './contract-conversion-for-you.component.scss'
 })
 export class ContractConversionForYouComponent {
+@ViewChild('contractConversionTable') contractConversionTable!: Table;
 isLoading = false;
   private customsetup: any;
   private datePipe: DatePipe;
@@ -43,6 +46,9 @@ isLoading = false;
   requesthandler = {} as any;
   empdata = {} as Ipersonal;
   Contractors = new BehaviorSubject<Icontractapproval[]>([]);
+  originalContractors: Icontractapproval[] = []; // Store original unsorted data
+  currentSortField: string = '';
+  currentSortOrder: number = 0; // 0 = no sort, 1 = asc, -1 = desc
   myApproverComments = {} as any;
   discontinue: any;
   extend: any;
@@ -357,7 +363,9 @@ appover_comments = {} as any;
     this.subscription = this.http.getData(`PendingApproval/employee/${EmployeeId}?moduleId=${moduleId}&approvedType=EMP`).subscribe({
       next: (data: any) => {
         this.loading = false;
-        this.Contractors.next(data.data as Icontractapproval[])
+        const contractorsData = data.data as Icontractapproval[];
+        this.Contractors.next(contractorsData);
+        this.originalContractors = [...contractorsData]; // Store original data for reset
         //this.noRecalllength = this.Contractors;
       },
       error: (reason) => {
@@ -379,6 +387,97 @@ appover_comments = {} as any;
       Extendreason: new FormControl('', Validators.required),
       Descriptiondetails: new FormControl('', Validators.required),
     });
+  }
+
+  customSort(event: any): void {
+    const field = event.field;
+    
+    // Track current sort state for the clicked field
+    if (this.currentSortField === field) {
+      // Same field clicked - cycle through: asc (1) -> desc (-1) -> reset (0)
+      if (this.currentSortOrder === 1) {
+        // Currently ascending, change to descending
+        this.currentSortOrder = -1;
+        event.order = -1;
+      } else if (this.currentSortOrder === -1) {
+        // Currently descending, reset to original order
+        this.Contractors.next([...this.originalContractors]);
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        if (this.contractConversionTable) {
+          this.contractConversionTable.reset();
+        }
+        return;
+      } else {
+        // Currently reset, change to ascending
+        this.currentSortOrder = 1;
+        event.order = 1;
+      }
+    } else {
+      // New field clicked - start with ascending
+      this.currentSortField = field;
+      this.currentSortOrder = 1;
+      event.order = 1;
+    }
+
+    event.data.sort((a: any, b: any) => {
+      let val1: any;
+      let val2: any;
+
+      switch (field) {
+        case 'employeeId':
+          val1 = a.entity?.fusionEmpId;
+          val2 = b.entity?.fusionEmpId;
+          break;
+        case 'employeeName':
+          val1 = a.entity?.employeeName;
+          val2 = b.entity?.employeeName;
+          break;
+        case 'contractStartDate':
+          val1 = a.entity?.contractStartDate;
+          val2 = b.entity?.contractStartDate;
+          break;
+        case 'contractEndDate':
+          val1 = a.entity?.contractEndDate;
+          val2 = b.entity?.contractEndDate;
+          break;
+        case 'contractType':
+          val1 = a.entity?.contractType;
+          val2 = b.entity?.contractType;
+          break;
+        default:
+          val1 = a.entity?.[field];
+          val2 = b.entity?.[field];
+          break;
+      }
+
+      // Handle date fields
+      if (['contractStartDate', 'contractEndDate'].includes(field)) {
+        const date1 = val1 ? new Date(val1) : new Date(0);
+        const date2 = val2 ? new Date(val2) : new Date(0);
+        return event.order * (date1.getTime() - date2.getTime());
+      }
+
+      // Handle Employee ID sorting with alphanumeric
+      if (field === 'employeeId') {
+        return event.order * String(val1 ?? '').localeCompare(
+          String(val2 ?? ''),
+          undefined,
+          {
+            numeric: true,
+            sensitivity: 'base'
+          }
+        );
+      }
+
+      // Handle string sorting for all other fields
+      val1 = String(val1 ?? '').trim();
+      val2 = String(val2 ?? '').trim();
+      return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+    });
+
+    // Update the BehaviorSubject with sorted data
+    this.Contractors.next([...event.data]);
   }
 
   ngOnDestroy(): void {

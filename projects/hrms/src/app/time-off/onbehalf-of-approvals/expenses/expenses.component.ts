@@ -26,6 +26,7 @@ import { FormValidationsService } from '../../../services/form-validations.servi
 import { OpenModalService } from '../../../services/open-modal.service';
 import { environment } from '../../../../environments/environment';
 import { ConfirmationIconComponent } from '../../../icons/confirmation-icon/confirmation-icon.component';
+import { Table, TableModule } from 'primeng/table';
 
 @Component({
   selector: 'app-expenses',
@@ -43,7 +44,8 @@ import { ConfirmationIconComponent } from '../../../icons/confirmation-icon/conf
     SearchfordeskPipe,
     InfoIconComponent,
     DataLoaderContentComponent,
-    ConfirmationIconComponent
+    ConfirmationIconComponent,
+    TableModule
   ],
   templateUrl: './expenses.component.html',
   styleUrl: './expenses.component.scss'
@@ -75,8 +77,15 @@ export class ExpensesComponent implements OnInit, OnDestroy {
   expenseheaderiteams: IExpenseHeaders = {} as IExpenseHeaders;
   updataid!: number;
   @ViewChild('viewattamchment') private viewattamchment!: NgbModal;
-  // approverComments = [] as AttendanceRequestC[];
   @ViewChild('commentspopup') modalContent: any;
+  @ViewChild('dt') table!: Table;
+
+  // Sorting properties
+  originalData: ExpenseApprovalResponse[] = [];
+  currentSortField: string = '';
+  currentSortOrder: number = 0; // 0 = no sort, 1 = asc, -1 = desc
+  previousSearchValue: string = '';
+  
   subscription!: Subscription;
   LOGIN: any;
   verifiedExpenseIds: number[] = [];
@@ -210,6 +219,7 @@ export class ExpensesComponent implements OnInit, OnDestroy {
                 item.approvalHeader.status !== 'Processed' &&
                 item.approvalHeader.status !== 'Rejected'
               );
+            this.originalData = [...this.expenseheaderpending]; // Store original data
           } else {
             this.expenseheaderpending = [];
             this.expenses.next([]);
@@ -218,6 +228,95 @@ export class ExpensesComponent implements OnInit, OnDestroy {
         error: () => { this.loading = false; },
         complete: () => { this.loading = false; },
       });
+  }
+
+  onSearchChange(): void {
+    if (this.searchValue !== this.previousSearchValue) {
+      this.previousSearchValue = this.searchValue;
+      // Reset sorting when search changes
+      this.currentSortField = '';
+      this.currentSortOrder = 0;
+      if (this.table) {
+        this.table.reset();
+      }
+    }
+  }
+
+  getFilteredAndSortedExpenses(): ExpenseApprovalResponse[] {
+    const search = this.searchValue?.toLowerCase() ?? '';
+    let expenses = this.expenseheaderpending ?? [];
+
+    if (search) {
+      expenses = expenses.filter(item =>
+        item.entity?.employeeName?.toLowerCase().includes(search) ||
+        item.entity?.expenses_Title?.toLowerCase().includes(search) ||
+        item.entity?.totalExpenseAmount?.toString().includes(search) ||
+        item.entity?.status?.toLowerCase().includes(search)
+      );
+    }
+
+    return expenses;
+  }
+
+  customSort(event: any): void {
+    const field = event.field;
+    
+    // Track current sort state for the clicked field
+    if (this.currentSortField === field) {
+      // Same field clicked - cycle through: asc (1) -> desc (-1) -> reset (0)
+      if (this.currentSortOrder === 1) {
+        // Currently ascending, change to descending
+        this.currentSortOrder = -1;
+        event.order = -1;
+      } else if (this.currentSortOrder === -1) {
+        // Currently descending, reset to original order
+        this.expenseheaderpending = [...this.originalData];
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        if (this.table) {
+          this.table.reset();
+        }
+        return;
+      } else {
+        // Currently reset, change to ascending
+        this.currentSortOrder = 1;
+        event.order = 1;
+      }
+    } else {
+      // New field clicked - start with ascending
+      this.currentSortField = field;
+      this.currentSortOrder = 1;
+      event.order = 1;
+    }
+
+    event.data.sort((a: any, b: any) => {
+      let aValue = this.getNestedProperty(a, field);
+      let bValue = this.getNestedProperty(b, field);
+
+      // Handle date fields
+      if (field.includes('date') || field.includes('Date')) {
+        aValue = aValue ? new Date(aValue).getTime() : 0;
+        bValue = bValue ? new Date(bValue).getTime() : 0;
+      }
+      // Handle numeric fields
+      else if (field.includes('Amount')) {
+        aValue = parseFloat(aValue) || 0;
+        bValue = parseFloat(bValue) || 0;
+      }
+      // Handle string fields
+      else if (typeof aValue === 'string' && typeof bValue === 'string') {
+        aValue = aValue.toLowerCase();
+        bValue = bValue.toLowerCase();
+      }
+
+      if (aValue < bValue) return -1 * event.order;
+      if (aValue > bValue) return 1 * event.order;
+      return 0;
+    });
+  }
+
+  private getNestedProperty(obj: any, path: string): any {
+    return path.split('.').reduce((current, prop) => current && current[prop], obj);
   }
 
 

@@ -15,14 +15,17 @@ import { HttpService } from '../../../../services/http.service';
 import { TimeoffYearFilterService } from '../../../../services/timeoff-year-filter.service';
 import { DataLoaderContentComponent } from '../../../../shared/data-loader-content/data-loader-content.component';
 import { NoDataFoundComponent } from '../../../../shared/no-data-found/no-data-found.component';
+import { TableModule } from 'primeng/table';
+import { Table } from 'primeng/table';
 
 @Component({
   selector: 'app-on-behalf-of-expenses-rejected',
-  imports: [DateformatPipe, CommonModule, NgxDocViewerModule, FormsModule, NoDataFoundComponent, TranslateModule, DataLoaderContentComponent, InfoIconComponent, DownloadExpenseComponent],
+  imports: [DateformatPipe, CommonModule, NgxDocViewerModule, FormsModule, NoDataFoundComponent, TranslateModule, DataLoaderContentComponent, InfoIconComponent, DownloadExpenseComponent, TableModule],
   templateUrl: './on-behalf-of-expenses-rejected.component.html',
   styleUrl: './on-behalf-of-expenses-rejected.component.scss'
 })
 export class OnBehalfOfExpensesRejectedComponent {
+  @ViewChild('expensesRejectedTable') expensesRejectedTable!: Table;
   empinfo: any
   ExpenseImageUrl: any;
   ExpenseViewURL: any;
@@ -37,7 +40,10 @@ export class OnBehalfOfExpensesRejectedComponent {
   seletedMouthly: any;
   selectedData = {} as any;
   expenesEmplyeedata = new BehaviorSubject<IExpense[]>([]);
+  originalExpenseData: IExpense[] = []; // Store original unsorted data
   destroy$: Subject<boolean> = new Subject<boolean>();
+  currentSortField: string = '';
+  currentSortOrder: number = 0; // 0 = no sort, 1 = asc, -1 = desc
   
   constructor(private http: HttpService, private modalService: NgbModal, private sanitizer: DomSanitizer,
     private SelectedyeartimeOffService: TimeoffYearFilterService) {}
@@ -88,7 +94,8 @@ export class OnBehalfOfExpensesRejectedComponent {
         next: (data: any) => {
           this.expenesEmplyeedata.next(data);
           const filteredData = data.filter((item: any) => !item.expenseSummary);
-          this.expenesEmplyeedata.next(filteredData)
+          this.expenesEmplyeedata.next(filteredData);
+          this.originalExpenseData = [...filteredData]; // Store original data
         }, error: (err: any) => {
           this.loading = false;
           this.expenesEmplyeedata.next([]);
@@ -184,6 +191,67 @@ export class OnBehalfOfExpensesRejectedComponent {
     if (!url) return false;
     const lowerUrl = url.toLowerCase();
     return lowerUrl.endsWith('.jpg') || lowerUrl.endsWith('.jpeg') || lowerUrl.endsWith('.png');
+  }
+
+  customSort(event: any): void {
+    const field = event.field;
+    
+    // Track current sort state for the clicked field
+    if (this.currentSortField === field) {
+      // Same field clicked - cycle through: asc (1) -> desc (-1) -> reset (0)
+      if (this.currentSortOrder === 1) {
+        // Currently ascending, change to descending
+        this.currentSortOrder = -1;
+        event.order = -1;
+      } else if (this.currentSortOrder === -1) {
+        // Currently descending, reset to original order
+        this.expenesEmplyeedata.next([...this.originalExpenseData]);
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        if (this.expensesRejectedTable) {
+          this.expensesRejectedTable.reset();
+        }
+        return;
+      } else {
+        // Currently reset, change to ascending
+        this.currentSortOrder = 1;
+        event.order = 1;
+      }
+    } else {
+      // New field clicked - start with ascending
+      this.currentSortField = field;
+      this.currentSortOrder = 1;
+      event.order = 1;
+    }
+
+    event.data.sort((a: any, b: any) => {
+      let val1: any;
+      let val2: any;
+
+      switch (field) {
+        case 'expenseDate':
+          val1 = new Date(a.expenseitem?.[0]?.expense_Date);
+          val2 = new Date(b.expenseitem?.[0]?.expense_Date);
+          if (isNaN(val1.getTime())) val1 = new Date(0);
+          if (isNaN(val2.getTime())) val2 = new Date(0);
+          return event.order * (val1.getTime() - val2.getTime());
+        case 'applied_date':
+          val1 = new Date(a[field]);
+          val2 = new Date(b[field]);
+          if (isNaN(val1.getTime())) val1 = new Date(0);
+          if (isNaN(val2.getTime())) val2 = new Date(0);
+          return event.order * (val1.getTime() - val2.getTime());
+        case 'totalExpenseAmount':
+          val1 = parseFloat(String(a[field])) || 0;
+          val2 = parseFloat(String(b[field])) || 0;
+          return event.order * (val1 - val2);
+        default:
+          // Handle string sorting for other fields
+          val1 = String(a[field] ?? '').trim();
+          val2 = String(b[field] ?? '').trim();
+          return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+      }
+    });
   }
 
   ngOnDestroy(): void {

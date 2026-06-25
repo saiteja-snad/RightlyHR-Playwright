@@ -1,6 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { TableModule } from 'primeng/table';
+import { Table } from 'primeng/table';
 
 import { HttpService } from '../../../services/http.service';
 import { BehaviorSubject, Subscription } from 'rxjs';
@@ -20,17 +22,19 @@ import { DownloadIconComponent } from '../../../icons/download-icon/download-ico
 
 @Component({
   selector: 'app-identity-details',
-  imports: [CommonModule, ReactiveFormsModule, DropdownModule, NoDataFoundComponent, TranslateModule, DataLoaderContentComponent, NgbPopoverModule, InfoIconComponent, DownloadIconComponent],
+  imports: [CommonModule, ReactiveFormsModule, DropdownModule, NoDataFoundComponent, TranslateModule, DataLoaderContentComponent, NgbPopoverModule, InfoIconComponent, DownloadIconComponent, TableModule],
   templateUrl: './identity-details.component.html',
   styleUrls: ['./identity-details.component.scss']
 })
 export class IdentityDetailsComponent implements OnInit, OnDestroy {
+  @ViewChild('identityTable') identityTable!: Table;
   subscription!: Subscription;
   unmatchedIdentityDetails: any = [];
   displayidentiydocument: any
   selectedIdentityId: any
   getidentitydropdetails: Iidentitydrop[] = [];
-  getIdentitydetails = new BehaviorSubject<Iidentity[]>([]);
+  identityTableData: Iidentity[] = []; // Data bound to the table
+  originalIdentityData: Iidentity[] = []; // Store original unsorted data for reset
   identityForm!: FormGroup;
   identityupdateForm!: FormGroup
   empinfo: any = {};
@@ -45,6 +49,8 @@ export class IdentityDetailsComponent implements OnInit, OnDestroy {
   getFieldsApprovalStatusList: any[] = [];
   activeMessage: string = '';
   addedRecords=[] as any;
+  currentSortField: string = '';
+  currentSortOrder: number = 0; // 0 = no sort, 1 = asc, -1 = desc
   constructor(private modalService: NgbModal, private http: HttpService, public formValidation: FormValidationService,
     private fb: FormBuilder, private conformationPopup: OpenModalService, public rbac: RbacService, public permissionRouteService: AccessForEmployeeinfoService, private router: Router) { }
 
@@ -225,8 +231,13 @@ export class IdentityDetailsComponent implements OnInit, OnDestroy {
 
     this.subscription = this.http.getData(`IdentityTable/${EmpId}`).subscribe({
       next: (data: any) => {
-        this.getIdentitydetails.next(data);
+        // Store the original data for resetting sorts
+        this.originalIdentityData = [...data];
+        this.identityTableData = [...data];
         this.loading = false
+        // Reset sorting state when new data is loaded
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
       },
       error: (err: any) => {
         this.loading = false
@@ -572,6 +583,54 @@ export class IdentityDetailsComponent implements OnInit, OnDestroy {
   setActiveMessage(referenceid:any) {
   this.activeMessage = this.getPendingApprovalMessage(referenceid);
 }
+
+  customSort(event: any): void {
+    const field = event.field;
+    
+    // Track current sort state for the clicked field
+    if (this.currentSortField === field) {
+      // Same field clicked - cycle through: asc (1) -> desc (-1) -> reset (0)
+      if (this.currentSortOrder === 1) {
+        // Currently ascending, change to descending
+        this.currentSortOrder = -1;
+        event.order = -1;
+      } else if (this.currentSortOrder === -1) {
+        // Currently descending, reset to original order
+        this.identityTableData = [...this.originalIdentityData];
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        if (this.identityTable) {
+          this.identityTable.reset();
+        }
+        return;
+      } else {
+        // Currently reset, change to ascending
+        this.currentSortOrder = 1;
+        event.order = 1;
+      }
+    } else {
+      // New field clicked - start with ascending
+      this.currentSortField = field;
+      this.currentSortOrder = 1;
+      event.order = 1;
+    }
+
+    event.data.sort((a: any, b: any) => {
+      let val1 = a[field];
+      let val2 = b[field];
+
+      // Handle null/undefined values
+      if (val1 == null && val2 == null) return 0;
+      if (val1 == null) return event.order;
+      if (val2 == null) return -event.order;
+
+      // Handle string sorting for all fields
+      val1 = String(val1).trim();
+      val2 = String(val2).trim();
+      return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+    });
+  }
+
   ngOnDestroy(): void {
     if (this.subscription) {
       this.subscription.unsubscribe()

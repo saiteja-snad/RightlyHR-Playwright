@@ -7,53 +7,39 @@
     <div class="input-group custom-search mb-3">
         <span class="input-group-text custom-input-group-search" id="basic-addon1">
             <i class="bi bi-search"></i></span>
-        <input type="search" class="form-control custom-search-input" placeholder="Search by employee name " aria-label="Username"
+        <input type="search" #search="ngModel" [(ngModel)]="Traineeaprovalsearch" class="form-control custom-search-input" [placeholder]="'Search by employee name' | translate" aria-label="Username"
             aria-describedby="basic-addon1">
     </div>
 
     <div class="custom-table-content">
         @if(!loading){
-        <table class="w-100">
-            <thead>
-                <th class="text-nowrap">{{'Trainee Employee ID'|translate}}</th>
-                <th class="text-nowrap">{{'Employee Name'|translate}}</th>
-                <th class="text-nowrap">{{'Training Start Date'|translate}}</th>
-                <th class="text-nowrap">{{'Training End Date'|translate}}</th>
-                <th class="text-center">{{'Approver Comments'|translate}}</th>
-                @if(rbac.allowedToAccess('Trainee Details.update') || rbac.allowedToAccess('TraineeDetails.delete')) {
-                <th class="text-center">{{'Action' | translate}}</th>
-                }
-            </thead>
-            <tbody>
-                @if(((Trainees | async) ?? []).length > 0) {
-                <tr *ngFor="let trn of ((Trainees |async) ?? [] ) | traineesearchfilter:Traineeaprovalsearch ; ">
-                    <td>
-                        <span *ngIf="trn.entity?.empId;else employeeid">{{trn.entity?.empId}}</span>
-                        <ng-template #employeeid>-</ng-template>
-                    </td>
-                    <td>
-                        <span *ngIf="trn.entity?.empName;else RequesterName">{{trn.entity?.empName}}</span>
-                        <ng-template #RequesterName>-</ng-template>
-                    </td>
-
-                    <td>
-                        <span *ngIf="trn.entity?.traineeStartDate;else workeddate">{{trn.entity?.traineeStartDate |
-                            dateformat }}</span>
-                        <ng-template #workeddate>-</ng-template>
-                    </td>
-                    <td>
-                        <span *ngIf="trn.entity?.traineeEndDate;else starttime">{{trn.entity?.traineeEndDate |
-                            dateformat }}</span>
-                        <ng-template #starttime>-</ng-template>
-                    </td>
-                <td class="text-center">
-                    <div *ngIf="trn?.entity?.comments?.length > 0; else approvercomments">
+        <p-table #traineeTable [value]="getFilteredAndSortedTrainees()" [tableStyle]="{'min-width': '50rem'}" [customSort]="true" (sortFunction)="customSort($event)">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th pSortableColumn="empId">{{'Trainee Employee ID'|translate}}<p-sortIcon field="empId" /></th>
+                    <th pSortableColumn="empName">{{'Employee Name'|translate}}<p-sortIcon field="empName" /></th>
+                    <th pSortableColumn="traineeStartDate">{{'Training Start Date'|translate}}<p-sortIcon field="traineeStartDate" /></th>
+                    <th pSortableColumn="traineeEndDate">{{'Training End Date'|translate}}<p-sortIcon field="traineeEndDate" /></th>
+                    <th class="text-center">{{'Approver Comments'|translate}}</th>
+                    @if(rbac.allowedToAccess('Trainee Details.update') || rbac.allowedToAccess('TraineeDetails.delete')) {
+                    <th class="text-center">{{'Action' | translate}}</th>
+                    }
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-trn>
+                <tr>
+                    <td>{{trn.entity?.empId?trn.entity?.empId:'-'}}</td>
+                    <td>{{trn.entity?.empName?trn.entity?.empName:'-'}}</td>
+                    <td class="text-nowrap">{{trn.entity?.traineeStartDate?(trn.entity?.traineeStartDate | dateformat):'-'}}</td>
+                    <td class="text-nowrap">{{trn.entity?.traineeEndDate?(trn.entity?.traineeEndDate | dateformat):'-'}}</td>
+                    <td class="text-center">
+                        @if(trn?.entity?.comments?.length > 0){
                         <div (click)="commentsFunction(trn?.entity?.comments,commentspopup)">
                             <i class="bi bi-info-circle-fill info-icon"></i>
                         </div>
-                    </div>
-                    <ng-template #approvercomments>-</ng-template>
-                </td>
+                        }
+                        @else{-}
+                    </td>
                     @if(rbac.allowedToAccess('Trainee Details.update') || rbac.allowedToAccess('Trainee Details.delete')) {
                     <td class="text-center">
                         <div class="dropdown">
@@ -63,9 +49,6 @@
                             <ul class="dropdown-menu custom-dropdown-menu">
                                 @if(rbac.allowedToAccess('Trainee Details.update') ) {
                                 @if(trn.approvalHeader.currentapprovalStage != trn.approvalHeader.finalapprovalStage){
-                                <!-- <li>
-                                    <a class="dropdown-item" (click)="openModal(PermissionsApprove);handleRequests(trn)">Approve</a>
-                                </li> -->
                                  <li (click)="openModal(PermissionsApprove);handleRequests(trn)">
                                         <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{"Approve" |
                                             translate}}</a>
@@ -74,9 +57,6 @@
                                 }
                                 @if( rbac.allowedToAccess('Trainee Details.delete')) {
                                 @if(trn.approvalHeader.currentapprovalStage != trn.approvalHeader.finalapprovalStage){
-                                <!-- <li>
-                                    <a class="dropdown-item" (click)="openModal(RejectTrainee);handleRequests(trn)">Reject</a>
-                                </li> -->
                                  <li (click)="openModal(RejectTrainee);handleRequests(trn)">
                                         <a class="dropdown-item"><i class="bi bi-x-circle me-2"></i>{{"Reject" |
                                             translate}}</a>
@@ -103,19 +83,21 @@
                     </td>
                     }
                 </tr>
-                }
-                @else{
-                <tr>
-                    <app-no-data-found />
-                </tr>
-                }
-
-            </tbody>
-        </table>
-    }
-    @else {
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+                <div class="wrapper">
+                    <tr>
+                        <td colspan="6">
+                            <app-no-data-found />
+                        </td>
+                    </tr>
+                </div>
+            </ng-template>
+        </p-table>
+        }
+        @else {
          <app-data-loader-content />
-    }
+        }
     </div>
 </div>
 

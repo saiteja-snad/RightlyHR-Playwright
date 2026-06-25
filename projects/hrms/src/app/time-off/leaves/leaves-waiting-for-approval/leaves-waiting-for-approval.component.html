@@ -1,6 +1,85 @@
 <div class="custom-main-component-container">
   <div class="custom-table-content">
-    <div class="custom-table-content">
+    @if(!loading){
+    <p-table #leavesWaitingTable [value]="lpdata" [customSort]="true" (sortFunction)="customSort($event)" [scrollable]="true" scrollHeight="flex">
+      <ng-template pTemplate="header">
+        <tr>
+          <th pSortableColumn="date">Date <p-sortIcon field="date"></p-sortIcon></th>
+          <th pSortableColumn="categoryName">Leave Type <p-sortIcon field="categoryName"></p-sortIcon></th>
+          <th pSortableColumn="duration" class="text-center">Duration <p-sortIcon field="duration"></p-sortIcon></th>
+          <th pSortableColumn="durationType">Availed <p-sortIcon field="durationType"></p-sortIcon></th>
+          <th pSortableColumn="startdate" class="text-center text-nowrap">Start Date <p-sortIcon field="startdate"></p-sortIcon></th>
+          <th pSortableColumn="enddate" class="text-center text-nowrap">End Date <p-sortIcon field="enddate"></p-sortIcon></th>
+          <th class="text-center">Reason</th>
+          <th pSortableColumn="status">Status <p-sortIcon field="status"></p-sortIcon></th>
+          <th class="text-center">Action</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-item>
+        @if (rbac.allowedToAccess('Waiting For Approval (Time Off).view')) {
+        <tr>
+          <td>{{item.date| dateformat}}</td>
+          <td>{{item.categoryName}}</td>
+          <td class="text-center">
+            @if(item.isSandwichLeave) {
+                <a type="button" class="text-primary text-decoration-underline" (click)="openSandwichBreakdown(item, sandwichBreakdownModal)">{{item?.duration}}</a>
+            } @else {
+                {{item?.duration}}
+            }
+          </td>
+          <td>{{ item.durationType == 1 ? 'First Half' : item.durationType == 2 ? 'Full Day' :
+            item.durationType == 3 ? 'Second Half' : 'Unknown' }}
+          </td>
+          <td class="text-center text-nowrap">{{item.startdate | dateformat}}</td>
+          <td class="text-center text-nowrap">{{item.enddate | dateformat}}</td>
+          <td class="text-center">
+            <div>
+              <div type="button" [ngbPopover]="reason">
+                <app-info-icon />
+              </div>
+              <ng-template #reason>
+                <p class="mb-0">{{item.notes}}</p>
+              </ng-template>
+            </div>
+          </td>
+          <td>{{item.status}}</td>
+          <td class="text-center">
+            <!-- @if(isBeforeToday(item.startdate)){ -->
+               @if(permissionForLoggedInUser && isBeforeToday(item.startdate)){
+            <div class="dropdown">
+              <a type="button" data-bs-toggle="dropdown">
+                <i class="bi bi-three-dots-vertical"></i>
+              </a>
+              <ul class="dropdown-menu custom-dropdown-menu">
+                <li (click)="onClick(item,cancelModal)">
+                  <a class="dropdown-item"><i class="bi bi-x-circle me-2"></i>Cancel Leave</a>
+                </li>
+              </ul>
+            </div>
+            }
+            @else {
+              -
+            }
+          </td>
+        </tr>
+        }
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <div class="wrapper">
+          <tr>
+            <td colspan="11">
+              <app-no-data-found />
+            </td>
+          </tr>
+        </div>
+      </ng-template>
+    </p-table>
+  }
+  @else {
+    <app-data-loader-content />
+  }
+  </div>
+</div>
 
 
 
@@ -181,8 +260,6 @@
       @else {
       <app-data-loader-content />
       }
-    </div>
-  </div>
 
   <!-- cancel leave popup -->
   <ng-template #cancelModal let-modal>

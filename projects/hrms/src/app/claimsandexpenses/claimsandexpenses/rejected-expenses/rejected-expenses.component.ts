@@ -16,9 +16,10 @@ import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component"
 import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.service';
 import { DownloadExpenseComponent } from "../../download-expense/download-expense.component";
 import { DocumentViewIconComponent } from "../../../icons/document-view-icon/document-view-icon.component";
+import { TableModule, Table } from 'primeng/table';
 @Component({
   selector: 'app-rejected-expenses',
-  imports: [DateformatPipe, CommonModule, NgxDocViewerModule, FormsModule, NoDataFoundComponent,DocumentViewIconComponent, TranslateModule, DataLoaderContentComponent, InfoIconComponent, DownloadExpenseComponent],
+  imports: [DateformatPipe, CommonModule, NgxDocViewerModule, FormsModule, NoDataFoundComponent,DocumentViewIconComponent, TranslateModule, DataLoaderContentComponent, InfoIconComponent, DownloadExpenseComponent, TableModule],
   templateUrl: './rejected-expenses.component.html',
   styleUrl: './rejected-expenses.component.scss'
 })
@@ -30,6 +31,7 @@ export class RejectedExpensesComponent implements OnInit, OnDestroy {
   ExpenseViewURL: any;
   commentsrecivced = [] as any
   @ViewChild('viewattamchment') private viewattamchment!: NgbModal;
+  @ViewChild('dt1') table!: Table;
   expenseheaderiteams!: IExpenseHeaders;
   updataid!: number;
   loading = false;
@@ -38,7 +40,8 @@ export class RejectedExpensesComponent implements OnInit, OnDestroy {
   selectedYear: any;
   seletedMouthly: any;
   selectedData = {} as any;
-  expenesEmplyeedata = new BehaviorSubject<IExpense[]>([]);
+  expenesEmplyeedata: IExpense[] = [];
+  originalExpenseData: IExpense[] = [];
 
   constructor(private http: HttpService, private modalService: NgbModal, private sanitizer: DomSanitizer, private SelectedyeartimeOffService: TimeoffYearFilterService) { }
 
@@ -93,12 +96,55 @@ export class RejectedExpensesComponent implements OnInit, OnDestroy {
         next: (data: any) => {
           this.loading = false
           const filteredData = data.filter((item: any) => !item.expenseSummary);
-          this.expenesEmplyeedata.next(filteredData)
+          this.originalExpenseData = [...filteredData];
+          this.expenesEmplyeedata = [...filteredData];
 
         }, error(err) {
           console.log("expensesheadererror", err)
         },
       });
+  }
+
+  getFilteredAndSortedExpenses() {
+    return this.expenesEmplyeedata;
+  }
+
+  customSort(event: any) {
+    const field = event.field;
+    const order = event.order;
+
+    if (order === 0) {
+      // Reset to original order
+      this.expenesEmplyeedata = [...this.originalExpenseData];
+    } else {
+      this.expenesEmplyeedata.sort((a: any, b: any) => {
+        let aVal, bVal;
+
+        if (field === 'expenses_Title') {
+          aVal = a.expenses_Title?.toLowerCase() || '';
+          bVal = b.expenses_Title?.toLowerCase() || '';
+        } else if (field === 'expense_Date') {
+          aVal = new Date(a.expenseitem?.[0]?.expense_Date || 0);
+          bVal = new Date(b.expenseitem?.[0]?.expense_Date || 0);
+        } else if (field === 'applied_date') {
+          aVal = new Date(a.applied_date || 0);
+          bVal = new Date(b.applied_date || 0);
+        } else if (field === 'totalExpenseAmount') {
+          aVal = parseFloat(a.totalExpenseAmount) || 0;
+          bVal = parseFloat(b.totalExpenseAmount) || 0;
+        } else if (field === 'status') {
+          aVal = a.status?.toLowerCase() || '';
+          bVal = b.status?.toLowerCase() || '';
+        } else {
+          aVal = a[field];
+          bVal = b[field];
+        }
+
+        if (aVal < bVal) return -1 * order;
+        if (aVal > bVal) return 1 * order;
+        return 0;
+      });
+    }
   }
   
   viewItem(expid: number,) {

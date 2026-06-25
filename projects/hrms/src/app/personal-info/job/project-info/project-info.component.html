@@ -16,29 +16,43 @@
   <!-- Table Content -->
   <div class="custom-table-content">
     @if (!loader) {
-    <table class="w-100">
-      <thead>
+    <p-table #projectTable [value]="projectData" [customSort]="true" (sortFunction)="customSort($event)"
+             styleClass="p-datatable-sm" [tableStyle]="{'min-width': '50rem'}">
+      <ng-template pTemplate="header">
         <tr>
-          <th>Client Name</th>
-          <th>Project Name</th>
-          <th class="text-center">Project Code</th>
-          <th class="text-center">Project Type</th>
-          <th class="text-center">Phases</th>
-          <th>Hours Spent</th>
+          <th pSortableColumn="clientName">
+            Client Name
+            <p-sortIcon field="clientName"></p-sortIcon>
+          </th>
+          <th pSortableColumn="projectName">
+            Project Name
+            <p-sortIcon field="projectName"></p-sortIcon>
+          </th>
+          <th class="text-center" pSortableColumn="projectCode">
+            Project Code
+            <p-sortIcon field="projectCode"></p-sortIcon>
+          </th>
+          <th class="text-center" pSortableColumn="projectType">
+            Project Type
+            <p-sortIcon field="projectType"></p-sortIcon>
+          </th>
+          <th class="text-center" pSortableColumn="phasesCount">
+            Phases
+            <p-sortIcon field="phasesCount"></p-sortIcon>
+          </th>
+          <th pSortableColumn="spentHours">
+            Hours Spent
+            <p-sortIcon field="spentHours"></p-sortIcon>
+          </th>
         </tr>
-      </thead>
+      </ng-template>
 
-      <tbody>
-        @if (projectData.length > 0) { @for (project of projectData; track
-        $index) {
+      <ng-template pTemplate="body" let-project>
         <tr>
           <td>{{ project.clientName || '-' }}</td>
 
           <td>
-            <!-- <span #projectNameEl class="tooltip-text"
-              [pTooltip]="shouldShowTooltip(projectNameEl) ? project.projectName : null"  tooltipPosition="top"> -->
-              {{ project.projectName || '-' }}
-            <!-- </span> -->
+            {{ project.projectName || '-' }}
           </td>
           
           <td class="text-center">{{ project.meta?.graphData?.code || "-" }}</td>
@@ -57,15 +71,19 @@
             <span class="spent-hours">{{ convertDecimalToHours(project.spentHours) }}</span> /
             {{ convertDecimalToHours(project.allocatedHours) }} Hrs
           </td>
-
         </tr>
-        } } @else {
-        <tr>
-          <app-no-data-found />
-        </tr>
-        }
-      </tbody>
-    </table>
+      </ng-template>
+      
+      <ng-template pTemplate="emptymessage">
+        <div class="wrapper">
+          <tr>
+            <td colspan="6">
+              <app-no-data-found />
+            </td>
+          </tr>
+        </div>
+      </ng-template>
+    </p-table>
     } @else {
     <app-data-loader-content />
     }

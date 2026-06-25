@@ -10,111 +10,74 @@
 
   <div class="custom-p-multi-select-table">
     @if(!loading){
-    <p-table [value]="(expenesEmplyeedata | async) ?? []" dataKey="expenses_ID">
-
+    <p-table #dt1 
+             [value]="getFilteredAndSortedExpenses()" 
+             [customSort]="true" 
+             (sortFunction)="customSort($event)"
+             styleClass="p-datatable-gridlines">
       <ng-template pTemplate="header">
         <tr>
-          <th>Expense Title</th>
-          <th>Expense Date</th>
-          <th>Applied Date</th>
-          <th>Total Amount</th>
-          <th>Approver</th>
-          <th>Status</th>
-
-          <th>
-            Action
+          <th pSortableColumn="expenses_Title">
+            {{'Expense Title' | translate}}
+            <p-sortIcon field="expenses_Title"></p-sortIcon>
           </th>
+          <th pSortableColumn="expense_Date">
+            {{'Expense Date' | translate}}
+            <p-sortIcon field="expense_Date"></p-sortIcon>
+          </th>
+          <th pSortableColumn="applied_date">
+            {{"Applied Date" | translate}}
+            <p-sortIcon field="applied_date"></p-sortIcon>
+          </th>
+          <th pSortableColumn="totalExpenseAmount">
+            {{'Total Amount' | translate}}
+            <p-sortIcon field="totalExpenseAmount"></p-sortIcon>
+          </th>
+          <th>{{'Approver' | translate}}</th>
+          <th pSortableColumn="status">
+            {{'Status' | translate}}
+            <p-sortIcon field="status"></p-sortIcon>
+          </th>
+          <th class="text-center">{{'View Details' | translate}}</th>
         </tr>
       </ng-template>
-
+      
       <ng-template pTemplate="body" let-exp>
         <tr>
-
-
-          <td>{{ exp.expenses_Title }}</td>
+          <td>{{ exp?.expenses_Title }}</td>
           <td>{{ exp?.expenseitem?.[0]?.expense_Date | dateformat }}</td>
-          <td>{{ exp.applied_date | dateformat }}</td>
-          <td>{{ exp.totalExpenseAmount }}</td>
-          <td>{{ exp?.pendingApprovalHeader?.approver_Name }}</td>
-          <td>{{ exp.status }}</td>
-
-          <td>
+          <td>{{ exp?.applied_date | dateformat }}</td>
+          <td><span class="me-1" *ngIf="exp.totalExpenseAmount">₹</span>{{ exp?.totalExpenseAmount}}</td>
+          <td>{{exp?.pendingApprovalHeader?.approver_Name}}</td>
+          <td><span class="me-2 status-colour">● {{ exp.status }}</span></td>
+          <td class="text-center">
             <div class="dropdown">
-              <a data-bs-toggle="dropdown">
+              <a data-bs-toggle="dropdown" aria-expanded="false">
                 <i class="bi bi-three-dots-vertical"></i>
               </a>
-
               <ul class="dropdown-menu custom-dropdown-menu">
-
-                <!-- RM -->
-                <li *ngIf="isRMStage(exp)">
-                  <a class="dropdown-item" (click)="openApproveModal(approval, exp)">
-                    <i class="bi bi-check-circle me-2"></i>
-                    Approve
-                  </a>
-                </li>
-
-                <li *ngIf="isRMStage(exp)">
-                  <a class="dropdown-item" (click)="openRejectModal(rejectmodal, exp)">
-                    <i class="bi bi-x-circle me-2"></i>
-                    Reject
-                  </a>
-                </li>
-
-                <!-- HR -->
-                <li *ngIf="isHRStage(exp)">
-                  <a class="dropdown-item" (click)="expensesCheckList(exp,'Verify')">
-                    <i class="bi bi-check-circle me-2"></i>
-                    Verify
-                  </a>
-                </li>
-
-                <li *ngIf="isHRStage(exp)">
-                  <a class="dropdown-item" (click)="openRejectModal(rejectmodal, exp)">
-                    <i class="bi bi-x-circle me-2"></i>
-                    Reject
-                  </a>
-                </li>
-
-                <!-- Finance -->
-                <li *ngIf="isFinanceStage(exp) && !isAllVerifiedForRecord(exp.expenses_ID)">
-                  <a class="dropdown-item" (click)="viewItem(exp.expenses_ID); openModal(verificationofModal)">
-                    <i class="bi bi-check-circle me-2"></i>
-                    Verify
-                  </a>
-                </li>
-
-                <li *ngIf="isFinanceStage(exp) && !isAllVerifiedForRecord(exp.expenses_ID)">
-                  <a class="dropdown-item" (click)="openRejectModal(rejectmodal, exp)">
-                    <i class="bi bi-x-circle me-2"></i>
-                    Reject
-                  </a>
-                </li>
-
-                <li *ngIf="isFinanceStage(exp) && isAllVerifiedForRecord(exp.expenses_ID)">
-                  <a class="dropdown-item" (click)="openApproveModal(approval, exp)">
-                    <i class="bi bi-check-circle me-2"></i>
-                    Approve for Payment
-                  </a>
-                </li>
+                <li><a class="dropdown-item" (click)="openModal(viewDetailsModal);viewItem(exp.expenses_ID)">
+                    <i class="bi bi-eye-fill me-2"></i>{{'View' | translate}}</a></li>
                 <li>
-                  <a class="dropdown-item" (click)="openModal(viewDetailsModal);viewItem(exp.expenses_ID)">
-                    <i class="bi bi-eye-fill me-2"></i>View
+                  <a class="dropdown-item" (click)="openpopupforDownload(openpopupForDownload,exp)">
+                    <i class="bi bi-download me-1"></i>{{'Download' | translate}}
                   </a>
                 </li>
-
-                <li>
-                  <a class="dropdown-item" (click)="openpopupforDownload(openpopupForDownload, exp)">
-                    <i class="bi bi-download me-2"></i>Download
-                  </a>
-                </li>
-
               </ul>
             </div>
           </td>
         </tr>
       </ng-template>
-
+      
+      <ng-template pTemplate="emptymessage">
+        <div class="wrapper">
+          <tr>
+            <td colspan="7">
+              <app-no-data-found />
+            </td>
+          </tr>
+        </div>
+      </ng-template>
     </p-table>
     }
     @else {

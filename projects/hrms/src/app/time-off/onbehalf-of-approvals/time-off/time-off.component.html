@@ -34,20 +34,20 @@
     <div class="custom-p-multi-select-table">
         @if(!dataLoad){
         <p-table #dt [value]="getFilteredAndSortedLeaves()" (selectionChange)="selectCheck($event)"
-            [(selection)]="selectedProducts" dataKey="approvalHeader.id" [tableStyle]="{'min-width': '50rem'}">
+            [(selection)]="selectedProducts" dataKey="approvalHeader.id" [tableStyle]="{'min-width': '50rem'}" [customSort]="true" (sortFunction)="customSort($event)" [sortMode]="'single'">
             <ng-template #header>
                 <tr>
                     <th style="width: 4rem">
                         <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
                     </th>
-                    <th>{{'Employee ID' | translate}} </th>
-                    <th>{{'Employee Name' | translate}}</th>
-                    <th>{{'Leave Type' | translate}} </th>
-                    <th>{{'Duration' | translate}}</th>
-                    <th>{{'Availed' | translate}}</th>
-                    <th>{{'Applied Date' | translate}}</th>
-                    <th>{{'Start Date' | translate}}</th>
-                    <th>{{'End Date' | translate}}</th>
+                    <th pSortableColumn="entity.leavefusionempId">{{'Employee ID' | translate}} <p-sortIcon field="entity.leavefusionempId"></p-sortIcon></th>
+                    <th pSortableColumn="entity.employeeName">{{'Employee Name' | translate}}<p-sortIcon field="entity.employeeName"></p-sortIcon></th>
+                    <th pSortableColumn="entity.leaveCategoryName">{{'Leave Type' | translate}} <p-sortIcon field="entity.leaveCategoryName"></p-sortIcon></th>
+                    <th pSortableColumn="entity.leaveDuration">{{'Duration' | translate}}<p-sortIcon field="entity.leaveDuration"></p-sortIcon></th>
+                    <th pSortableColumn="entity.leaveDurationType">{{'Availed' | translate}}<p-sortIcon field="entity.leaveDurationType"></p-sortIcon></th>
+                    <th pSortableColumn="entity.appliedDate">{{'Applied Date' | translate}}<p-sortIcon field="entity.appliedDate"></p-sortIcon></th>
+                    <th pSortableColumn="entity.leaveStartDate">{{'Start Date' | translate}}<p-sortIcon field="entity.leaveStartDate"></p-sortIcon></th>
+                    <th pSortableColumn="entity.leaveEndDate">{{'End Date' | translate}}<p-sortIcon field="entity.leaveEndDate"></p-sortIcon></th>
                     <th class="text-center">{{'Reason' | translate}}</th>
                     <th class="text-center">{{'Approver Comments' | translate}}</th>
                     @if(!multiSelect && (rbac.allowedToAccess('Time Off (On Behalf Of Approvals).update') ||
@@ -128,9 +128,13 @@
                 </tr>
             </ng-template>
             <ng-template #emptymessage>
-                <tr>
-                    <app-no-data-found />
-                </tr>
+                <div class="wrapper">
+                  <tr>
+                    <td colspan="11">
+                      <app-no-data-found />
+                    </td>
+                  </tr>
+                </div>
             </ng-template>
         </p-table>
         }@else {

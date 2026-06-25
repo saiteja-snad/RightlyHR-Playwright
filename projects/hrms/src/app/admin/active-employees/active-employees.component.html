@@ -3,48 +3,57 @@
   <div class="input-group custom-search mb-3">
     <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
     <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input"
-      placeholder="{{'Search by employee ID / employee name / work email / phone number / location / sub location / shift name / designation'|translate}}"
+      placeholder="Search by employee ID / employee name / work email / phone number / location / sub location / shift name / designation"
       aria-label="Username" aria-describedby="basic-addon1">
   </div>
 
   <div class="custom-table-content">
     @if (!loader) {
-    <table class="w-100">
-      <thead>
-        <th>{{'Employee ID'|translate}}</th>
-        <th>{{'Employee Name'|translate}}</th>
-        <th>{{'Date of Joining'|translate}}</th>
-        <th>{{'Work Email'|translate}}</th>
-        <th>{{'Phone Number'|translate}}</th>
-        <th>{{'Location'|translate}}</th>
-        <th>{{'Sub Location'|translate}}</th>
-        <th>{{'Shift Name'|translate}}</th>
-        <th>{{'Designation'|translate}}</th>
-      </thead>
-      <tbody>
-        @if( Active.length > 0){
-        <tr *ngFor="let act of Active | activeEmployee : searchValue">
+    <p-table #activeEmployeesTable [value]="getFilteredAndSortedEmployees()" [tableStyle]="{'width': '100%'}" [customSort]="true" (sortFunction)="customSort($event)">
+      <ng-template pTemplate="header">
+        <tr>
+          <th pSortableColumn="fusionEmpId">{{'Employee ID'|translate}} <p-sortIcon field="fusionEmpId" /></th>
+          <th pSortableColumn="employeeName">{{'Employee Name'|translate}} <p-sortIcon field="employeeName" /></th>
+          <th pSortableColumn="dateOfJoining">{{'Date of Joining'|translate}} <p-sortIcon field="dateOfJoining" /></th>
+          <th pSortableColumn="workEmail">{{'Work Email'|translate}} <p-sortIcon field="workEmail" /></th>
+          <th pSortableColumn="contactnumber">{{'Phone Number'|translate}} <p-sortIcon field="contactnumber" /></th>
+          <th pSortableColumn="location">{{'Location'|translate}} <p-sortIcon field="location" /></th>
+          <th pSortableColumn="subLocation">{{'Sub Location'|translate}} <p-sortIcon field="subLocation" /></th>
+          <th pSortableColumn="shiftName">{{'Shift Name'|translate}} <p-sortIcon field="shiftName" /></th>
+          <th pSortableColumn="designation">{{'Designation'|translate}} <p-sortIcon field="designation" /></th>
+          <th pSortableColumn="jobType">{{'Job Type'|translate}} <p-sortIcon field="jobType" /></th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-act>
+        <tr>
+          <!--Employee ID-->
           <td>
-            <span *ngIf="act.fusionEmpId;else fusionid"> {{act.fusionEmpId}}</span>
+            <span *ngIf="act.fusionEmpId;else fusionid">{{act.fusionEmpId}}</span>
             <ng-template #fusionid>-</ng-template>
           </td>
+          <!--Name-->
           <td>
             <span *ngIf="act.firstName;else fistname">
               <a class="data-nav-btn" (click)="select(act)">{{act?.firstName}} {{act?.middleName}} {{act?.lastName}}</a>
             </span>
             <ng-template #fistname>-</ng-template>
           </td>
-          <!-- Date of joining -->
-          <td>
-            <span *ngIf="act.dateOfJoining; else noDateOfJoining">{{ act.dateOfJoining | date }}</span>
-            <ng-template #noDateOfJoining>-</ng-template>
+           <!-- DOJ -->
+           <td>
+            <span *ngIf="act.dateOfJoining;else dateOfJoining">{{act.dateOfJoining | date}}</span>
+            <ng-template #dateOfJoining>-</ng-template>
           </td>
+           <!-- DOJ -->
+          <!--Work Email-->
           <td>
             <span *ngIf="act.workEmail;else workemail">{{act.workEmail}}</span>
             <ng-template #workemail>-</ng-template>
           </td>
+          <!--Contact Number-->
           <td class="text-nowrap">
-            <span *ngIf="act.contactnumber;else contactnumb">{{act.mobilePhoneCountryCode}} {{act.contactnumber}}</span>
+            <span *ngIf="act.contactnumber;else contactnumb">
+              {{act.contactnumber ? act.contactnumber : '-'}}
+            </span>
             <ng-template #contactnumb>-</ng-template>
           </td>
           <!-- Location -->
@@ -67,15 +76,22 @@
             <span *ngIf="act.jobDetails?.[0]?.jobRole; else noRole">{{ act.jobDetails?.[0]?.jobRole }}</span>
             <ng-template #noRole>-</ng-template>
           </td>
+          <td>
+            <span *ngIf="act.jobDetails?.[0]?.jobType; else jobtype">{{ act.jobDetails?.[0]?.jobType }}</span>
+            <ng-template #jobtype>-</ng-template>
+          </td>
         </tr>
-        }
-        @if ((Active | activeEmployee : searchValue).length === 0) {
-        <tr>
-          <app-no-data-found />
-        </tr>
-        }
-      </tbody>
-    </table>
+      </ng-template>
+      <ng-template #emptymessage>
+        <div class="wrapper">
+          <tr>
+            <app-no-data-found />
+      
+          </tr>
+        </div>
+      
+      </ng-template>
+    </p-table>
     } @else {
     <app-data-loader-content />
     }

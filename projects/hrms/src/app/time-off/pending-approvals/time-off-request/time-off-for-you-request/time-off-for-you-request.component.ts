@@ -63,8 +63,13 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
   @ViewChild('commentspopup') modalContent: any;
   @ViewChild('leaveSummary') leaveSummary: any;
   @ViewChild('dt') table!: Table;
- selectedLeaveStatus: any;
+  selectedLeaveStatus: any;
   destroy$: Subject<boolean> = new Subject<boolean>();
+  
+  // Sorting properties
+  originalLeaveData: LeaveApproval[] = []; // Store original unsorted data
+  currentSortField: string = '';
+  currentSortOrder: number = 0; // 0 = no sort, 1 = asc, -1 = desc
 
   options = [
     { label: 10, value: 10 },
@@ -308,6 +313,7 @@ onStatusRejectSelect(status: string) {
         next: (response: any) => {
           this.leaves.next(response.data);
           this.leavesselect = response.data;
+          this.originalLeaveData = [...response.data]; // Store original data for reset functionality
         },
         error: (reason) => {
           this.dataLoad = false;
@@ -708,6 +714,69 @@ getApprovalStatusCounts() {
   openSandwichBreakdown(item: any, modal: any) {
     this.selectedSandwichItem = item;
     this.modalService.open(modal, { centered: true, backdrop: 'static', size: 'lg' });
+  }
+
+  customSort(event: any): void {
+    const field = event.field;
+    
+    // Track current sort state for the clicked field
+    if (this.currentSortField === field) {
+      // Same field clicked - cycle through: asc (1) -> desc (-1) -> reset (0)
+      if (this.currentSortOrder === 1) {
+        // Currently ascending, change to descending
+        this.currentSortOrder = -1;
+        event.order = -1;
+      } else if (this.currentSortOrder === -1) {
+        // Currently descending, reset to original order
+        this.leaves.next([...this.originalLeaveData]);
+        this.leavesselect = [...this.originalLeaveData];
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        if (this.table) {
+          this.table.reset();
+        }
+        return;
+      } else {
+        // Currently reset, change to ascending
+        this.currentSortOrder = 1;
+        event.order = 1;
+      }
+    } else {
+      // New field clicked - start with ascending
+      this.currentSortField = field;
+      this.currentSortOrder = 1;
+      event.order = 1;
+    }
+
+    event.data.sort((a: any, b: any) => {
+      let val1: any;
+      let val2: any;
+
+      // Handle nested field access
+      const getNestedValue = (obj: any, field: string) => {
+        return field.split('.').reduce((o, key) => o?.[key], obj);
+      };
+
+      switch (field) {
+        case 'entity.appliedDate':
+        case 'entity.leaveStartDate':
+        case 'entity.leaveEndDate':
+          val1 = new Date(getNestedValue(a, field));
+          val2 = new Date(getNestedValue(b, field));
+          if (isNaN(val1.getTime())) val1 = new Date(0);
+          if (isNaN(val2.getTime())) val2 = new Date(0);
+          return event.order * (val1.getTime() - val2.getTime());
+        case 'entity.leaveDuration':
+          val1 = parseFloat(String(getNestedValue(a, field))) || 0;
+          val2 = parseFloat(String(getNestedValue(b, field))) || 0;
+          return event.order * (val1 - val2);
+        default:
+          // Handle string sorting for other fields
+          val1 = String(getNestedValue(a, field) ?? '').trim();
+          val2 = String(getNestedValue(b, field) ?? '').trim();
+          return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+      }
+    });
   }
 
 }

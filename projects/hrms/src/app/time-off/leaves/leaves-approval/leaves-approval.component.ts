@@ -1,9 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgbModal, NgbNavModule, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { DropdownModule } from 'primeng/dropdown';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
+import { TableModule } from 'primeng/table';
+import { Table } from 'primeng/table';
 import { Subject, Subscription, takeUntil } from 'rxjs';
 import { Ilpid } from '../../../Interfaces/timoff-model';
 import { HttpService } from '../../../services/http.service';
@@ -16,13 +18,14 @@ import { DataLoaderContentComponent } from "../../../shared/data-loader-content/
 import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.service';
 @Component({
   selector: 'app-leaves-approval',
-  imports: [CommonModule, NgbNavModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe,
+  imports: [CommonModule, NgbNavModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, TableModule, DateformatPipe,
     NoDataFoundComponent, InfoIconComponent, DataLoaderContentComponent],
   templateUrl: './leaves-approval.component.html',
   styleUrl: './leaves-approval.component.scss'
 })
 
 export class LeavesApprovalComponent implements OnInit, OnDestroy {
+  @ViewChild('leavesApprovalTable') leavesApprovalTable!: Table;
   totalRecords = 100
   first: any = 0;
   rows: any = 10;
@@ -31,6 +34,9 @@ export class LeavesApprovalComponent implements OnInit, OnDestroy {
   selectempid = {} as any;
   subscription!: Subscription;
   lpdata = [] as Ilpid[];
+  originalLpdata = [] as Ilpid[]; // Store original unsorted data
+  currentSortField: string = '';
+  currentSortOrder: number = 0; // 0 = no sort, 1 = asc, -1 = desc
   loading: boolean = false;
   selectedSandwichItem: any = null;
   options = [
@@ -82,6 +88,7 @@ export class LeavesApprovalComponent implements OnInit, OnDestroy {
       next: (response: any) => {
         if (Array.isArray(response)) {
           this.lpdata = response.filter(item => item.status === 'Approved');
+          this.originalLpdata = [...this.lpdata]; // Store original unsorted data
         } else {
           console.error("Invalid response format");
         }
@@ -104,6 +111,7 @@ export class LeavesApprovalComponent implements OnInit, OnDestroy {
       next: (response: any) => {
         if (Array.isArray(response)) {
           this.lpdata = response.filter(item => item.status === 'Approved');
+          this.originalLpdata = [...this.lpdata]; // Store original unsorted data
         } else {
           console.error("Invalid response format");
         }
@@ -115,6 +123,60 @@ export class LeavesApprovalComponent implements OnInit, OnDestroy {
       },
       complete: () => {
         this.loading = false;
+      }
+    });
+  }
+
+  customSort(event: any): void {
+    const field = event.field;
+    
+    // Track current sort state for the clicked field
+    if (this.currentSortField === field) {
+      // Same field clicked - cycle through: asc (1) -> desc (-1) -> reset (0)
+      if (this.currentSortOrder === 1) {
+        // Currently ascending, change to descending
+        this.currentSortOrder = -1;
+        event.order = -1;
+      } else if (this.currentSortOrder === -1) {
+        // Currently descending, reset to original order
+        this.lpdata = [...this.originalLpdata];
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        if (this.leavesApprovalTable) {
+          this.leavesApprovalTable.reset();
+        }
+        return;
+      } else {
+        // Currently reset, change to ascending
+        this.currentSortOrder = 1;
+        event.order = 1;
+      }
+    } else {
+      // New field clicked - start with ascending
+      this.currentSortField = field;
+      this.currentSortOrder = 1;
+      event.order = 1;
+    }
+
+    event.data.sort((a: any, b: any) => {
+      let val1: any;
+      let val2: any;
+
+      if (field === 'date' || field === 'startdate' || field === 'enddate') {
+        // Handle date sorting
+        val1 = new Date(a[field]);
+        val2 = new Date(b[field]);
+        return event.order * (val1.getTime() - val2.getTime());
+      } else if (field === 'duration') {
+        // Handle numeric sorting
+        val1 = parseFloat(a[field]) || 0;
+        val2 = parseFloat(b[field]) || 0;
+        return event.order * (val1 - val2);
+      } else {
+        // Handle string sorting for all other fields
+        val1 = String(a[field] ?? '').trim();
+        val2 = String(b[field] ?? '').trim();
+        return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
       }
     });
   }

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
@@ -16,6 +16,8 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { FormValidationsService } from '../../../services/form-validations.service';
 import { InfoIconComponent } from '../../../icons/info-icon/info-icon.component';
 import { DateformatPipe } from '../../../pipes/dateformat.pipe';
+import { TableModule } from 'primeng/table';
+import { Table } from 'primeng/table';
 
 @Component({
   selector: 'app-contactor-info',
@@ -29,15 +31,20 @@ import { DateformatPipe } from '../../../pipes/dateformat.pipe';
     TranslateModule,
     DataLoaderContentComponent,
     InfoIconComponent,
+    TableModule,
   ],
   templateUrl: './contactor-info.component.html',
   styleUrl: './contactor-info.component.scss',
 })
-export class ContactorInfoComponent {
+export class ContactorInfoComponent implements OnInit, OnDestroy {
+  @ViewChild('contractorTable') contractorTable!: Table;
 
   loading = false;
   empdata = {} as any;
   dynamicData = new BehaviorSubject<any>([]);
+  originalDynamicData = [] as any[]; // Store original unsorted data
+  currentSortField: string = '';
+  currentSortOrder: number = 0; // 0 = no sort, 1 = asc, -1 = desc
   dynamicDataCount = new BehaviorSubject<any>([]);
   currentdateformate!: string;
   empinfo = {} as IJob;
@@ -349,6 +356,7 @@ export class ContactorInfoComponent {
           }
 
           this.dynamicData.next(filteredData);
+          this.originalDynamicData = [...filteredData];
           this.convdata = filteredData[0];
 
           this.disablebuttonforonboard1 =
@@ -389,6 +397,63 @@ export class ContactorInfoComponent {
           console.error('Error fetching onboard request data:', error);
         },
       });
+  }
+
+  customSort(event: any): void {
+    const field = event.field;
+    
+    // Track current sort state for the clicked field
+    if (this.currentSortField === field) {
+      // Same field clicked - cycle through: asc (1) -> desc (-1) -> reset (0)
+      if (this.currentSortOrder === 1) {
+        // Currently ascending, change to descending
+        this.currentSortOrder = -1;
+        event.order = -1;
+      } else if (this.currentSortOrder === -1) {
+        // Currently descending, reset to original order
+        this.dynamicData.next([...this.originalDynamicData]);
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        if (this.contractorTable) {
+          this.contractorTable.reset();
+        }
+        return;
+      } else {
+        // Currently reset, change to ascending
+        this.currentSortOrder = 1;
+        event.order = 1;
+      }
+    } else {
+      // New field clicked - start with ascending
+      this.currentSortField = field;
+      this.currentSortOrder = 1;
+      event.order = 1;
+    }
+
+    event.data.sort((a: any, b: any) => {
+      let val1: any;
+      let val2: any;
+
+      // Handle direct fields
+      val1 = a[field];
+      val2 = b[field];
+
+      // Handle date fields
+      if (['contractStartDate', 'contractEndDate', 'createdAt', 'updatedAt'].includes(field)) {
+        if (!val1 && !val2) return 0;
+        if (!val1) return event.order * 1; // null dates go to end
+        if (!val2) return event.order * -1;
+        
+        const date1 = new Date(val1);
+        const date2 = new Date(val2);
+        return event.order * (date1.getTime() - date2.getTime());
+      }
+
+      // Handle string sorting for all other fields
+      val1 = String(val1 ?? '').trim();
+      val2 = String(val2 ?? '').trim();
+      return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+    });
   }
 
   // check the latest extend record

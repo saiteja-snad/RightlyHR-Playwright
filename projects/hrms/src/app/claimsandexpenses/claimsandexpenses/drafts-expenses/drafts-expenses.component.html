@@ -9,57 +9,76 @@
 
     <div class="custom-table-content">
         @if(!loader){
-        <table class="w-100">
-            <thead>
-                <th>{{'Expense Title' | translate}}</th>
-                <th>{{'Expense Date' | translate}}</th>
-                <th>{{"Applied Date"}}</th>
-                <th>{{'Total Amount' | translate}}</th>
-                <th>{{'Status' | translate}}</th>
-                @if(rbac.allowedToAccess('Draft Tab.update')){
-                <th class="text-center">{{"Action" | translate}}</th>
-                }
-            </thead>
-            <tbody>
-                <ng-container *ngIf="((expenesEmplyeedata | async) ?? []).length > 0; else noDataTemplate">
-                    <tr *ngFor="let exp of expenesEmplyeedata | async">
-                        <td>{{ exp.expenses_Title }}</td>
-                        <td >{{ exp?.expenseitem?.[0]?.expense_Date | dateformat }}</td>
-                        <td>{{ exp.applied_date | dateformat }}</td>
-                        <td><span *ngIf="exp.totalExpenseAmount" class="me-1">₹</span>{{ exp.totalExpenseAmount }}</td>
-                        <td> <span class="me-2 status-colour">● {{ exp.status }}</span>
-                        </td>
-                        @if(rbac.allowedToAccess('Draft Tab.update')){
-                        <td class="text-center">
-                            <div class="dropdown">
-                                <a data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="bi bi-three-dots-vertical"></i>
-                                </a>
-                                <ul class="dropdown-menu custom-dropdown-menu">
-                                    <li *ngIf="!selectemp"><a class="dropdown-item"
-                                            (click)="openModal(updateModal);viewItem(exp.expenses_ID)">
-                                               <i class="bi bi-pencil me-2"></i>{{'Update' | translate}}</a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item"
-                                            (click)="openpopupforDownload(openpopupForDownload,exp)">
-                                            <i class="bi bi-download me-1"></i>{{'Download' | translate}}
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </td>
-                        }
-                    </tr>
-                </ng-container>
-                <!-- No Data Found Template -->
-                <ng-template #noDataTemplate>
+        <p-table #expensesTable [value]="getFilteredAndSortedExpenses()" 
+                 [customSort]="true" (sortFunction)="customSort($event)"
+                 styleClass="p-datatable-gridlines" responsiveLayout="scroll">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th pSortableColumn="expenseTitle">
+                        {{'Expense Title' | translate}}
+                        <p-sortIcon field="expenseTitle"></p-sortIcon>
+                    </th>
+                    <th pSortableColumn="expenseDate">
+                        {{'Expense Date' | translate}}
+                        <p-sortIcon field="expenseDate"></p-sortIcon>
+                    </th>
+                    <th pSortableColumn="appliedDate">
+                        {{"Applied Date"}}
+                        <p-sortIcon field="appliedDate"></p-sortIcon>
+                    </th>
+                    <th pSortableColumn="totalAmount">
+                        {{'Total Amount' | translate}}
+                        <p-sortIcon field="totalAmount"></p-sortIcon>
+                    </th>
+                    <th pSortableColumn="status">
+                        {{'Status' | translate}}
+                        <p-sortIcon field="status"></p-sortIcon>
+                    </th>
+                    @if(rbac.allowedToAccess('Draft Tab.update')){
+                    <th class="text-center">{{"Action" | translate}}</th>
+                    }
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-exp>
+                <tr>
+                    <td>{{ exp.expenses_Title }}</td>
+                    <td>{{ exp?.expenseitem?.[0]?.expense_Date | dateformat }}</td>
+                    <td>{{ exp.applied_date | dateformat }}</td>
+                    <td><span *ngIf="exp.totalExpenseAmount" class="me-1">₹</span>{{ exp.totalExpenseAmount }}</td>
+                    <td><span class="me-2 status-colour">● {{ exp.status }}</span></td>
+                    @if(rbac.allowedToAccess('Draft Tab.update')){
+                    <td class="text-center">
+                        <div class="dropdown">
+                            <a data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-three-dots-vertical"></i>
+                            </a>
+                            <ul class="dropdown-menu custom-dropdown-menu">
+                                <li *ngIf="!selectemp"><a class="dropdown-item"
+                                        (click)="openModal(updateModal);viewItem(exp.expenses_ID)">
+                                           <i class="bi bi-pencil me-2"></i>{{'Update' | translate}}</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item"
+                                        (click)="openpopupforDownload(openpopupForDownload,exp)">
+                                        <i class="bi bi-download me-1"></i>{{'Download' | translate}}
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </td>
+                    }
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+                <div class="wrapper">
                     <tr>
-                        <app-no-data-found />
+                        <td colspan="6">
+                            <app-no-data-found />
+                        </td>
                     </tr>
-                </ng-template>
-            </tbody>
-        </table>
+                </div>
+            </ng-template>
+        </p-table>
         }
         @else {
         <app-data-loader-content />

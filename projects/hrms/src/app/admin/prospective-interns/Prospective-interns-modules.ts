@@ -18,6 +18,8 @@ export interface ITrainee {
   jobDetails?: IJobdetails[];
   shiftName?: string;
   durationOfTrainee: any;
+  dateOfJoining?: any;
+  mobilePhoneCountryCode?: string;
 }
 export interface IJobdetails {
   subdeptId: any;

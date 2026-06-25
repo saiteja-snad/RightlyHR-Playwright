@@ -1,49 +1,52 @@
 <div class="custom-main-component-container">
   <div class="custom-table-content">
     @if(!dataload){
-    <table class="w-100">
-      <thead>
-        <th>{{'Worked Date' | translate}}</th>
-        <th>{{'Availed' | translate}}</th>
-        <th class="text-center">{{'Reason' | translate}}</th>
-        <th>{{'Applied Date' | translate }}</th>
-        <th>{{'Status' | translate }}</th>
-      </thead>
-      <tbody>
-        <ng-container *ngIf="wfhData!.length > 0; else noDataTemplate">
-          <tr *ngFor="let wfhRequest of wfhData; let i = index">
-            <td>{{ wfhRequest.startTime ? (wfhRequest.startTime | dateformat) : ' -' }}</td>
-            <td [ngSwitch]="wfhRequest.durationType">
-              <span *ngSwitchCase="1">First Half</span>
-              <span *ngSwitchCase="3">Second Half</span>
-              <span *ngSwitchCase="2">Full Day</span>
-              <span *ngSwitchDefault>-</span>
-            </td>
-            <td class="text-center">
-              <div>
-                <div *ngIf="wfhRequest.requestedComments; else noReason" type="button" [ngbPopover]="requestedComments">
-                  <app-info-icon />
-                </div>
-                <ng-template #requestedComments>
-                  <p class="mb-0">{{ wfhRequest.requestedComments }}</p>
-                </ng-template>
-                <ng-template #noReason>
-                  <span>-</span>
-                </ng-template>
+    <p-table #wfhWaitingTable [value]="wfhData" [tableStyle]="{'width': '100%'}" [customSort]="true" (sortFunction)="customSort($event)">
+      <ng-template pTemplate="header">
+        <tr>
+          <th pSortableColumn="startTime">{{'Worked Date' | translate}} <p-sortIcon field="startTime" /></th>
+          <th pSortableColumn="durationType">{{'Availed' | translate}} <p-sortIcon field="durationType" /></th>
+          <th class="text-center">{{'Reason' | translate}}</th>
+          <th pSortableColumn="requestedDate">{{'Applied Date' | translate }} <p-sortIcon field="requestedDate" /></th>
+          <th pSortableColumn="status">{{'Status' | translate }} <p-sortIcon field="status" /></th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-wfhRequest let-i="rowIndex">
+        <tr>
+          <td>{{ wfhRequest.startTime ? (wfhRequest.startTime | dateformat) : ' -' }}</td>
+          <td [ngSwitch]="wfhRequest.durationType">
+            <span *ngSwitchCase="1">First Half</span>
+            <span *ngSwitchCase="3">Second Half</span>
+            <span *ngSwitchCase="2">Full Day</span>
+            <span *ngSwitchDefault>-</span>
+          </td>
+          <td class="text-center">
+            <div>
+              <div *ngIf="wfhRequest.requestedComments; else noReason" type="button" [ngbPopover]="requestedComments">
+                <app-info-icon />
               </div>
+              <ng-template #requestedComments>
+                <p class="mb-0">{{ wfhRequest.requestedComments }}</p>
+              </ng-template>
+              <ng-template #noReason>
+                <span>-</span>
+              </ng-template>
+            </div>
+          </td>
+          <td>{{ wfhRequest.requestedDate | dateformat }}</td>
+          <td>{{ wfhRequest.status }}</td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <div class="wrapper">
+          <tr>
+            <td colspan="5">
+              <app-no-data-found />
             </td>
-            <td>{{ wfhRequest.requestedDate | dateformat }}</td>
-            <td>{{ wfhRequest.status }}</td>
           </tr>
-        </ng-container>
-
-        <ng-template #noDataTemplate>
-          <tr class="table-placeholder">
-            <app-no-data-found></app-no-data-found>
-          </tr>
-        </ng-template>
-      </tbody>
-    </table>
+        </div>
+      </ng-template>
+    </p-table>
     }@else{
       <app-data-loader-content />
     }

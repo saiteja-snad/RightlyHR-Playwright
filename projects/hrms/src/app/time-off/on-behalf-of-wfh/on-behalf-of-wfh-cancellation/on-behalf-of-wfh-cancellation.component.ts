@@ -1,9 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, effect, OnDestroy, OnInit } from '@angular/core';
+import { Component, effect, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { DropdownModule } from 'primeng/dropdown';
+import { TableModule } from 'primeng/table';
+import { Table } from 'primeng/table';
 import { Subject, takeUntil } from 'rxjs';
 import { InfoIconComponent } from '../../../icons/info-icon/info-icon.component';
 import { DateformatPipe } from '../../../pipes/dateformat.pipe';
@@ -20,6 +22,7 @@ import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.
     NgbPopoverModule,
     FormsModule,
     DropdownModule,
+    TableModule,
     DateformatPipe,
     NoDataFoundComponent,
     DataLoaderContentComponent,
@@ -28,9 +31,13 @@ import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.
   styleUrl: './on-behalf-of-wfh-cancellation.component.scss'
 })
 export class OnBehalfOfWhfCancellationComponent implements OnInit, OnDestroy {
+  @ViewChild('wfhCancellationTable') wfhCancellationTable!: Table;
   wfhData: ICompOff[] = [];
+  originalWfhData: ICompOff[] = [];
   destroy$: Subject<boolean> = new Subject<boolean>();
   dataload = false;
+  currentSortField: string = '';
+  currentSortOrder: number = 0;
 
   constructor(
     private http: HttpService,
@@ -74,6 +81,7 @@ export class OnBehalfOfWhfCancellationComponent implements OnInit, OnDestroy {
         this.wfhData = response.filter(
           (element: { status: string }) => element.status.toLowerCase() === 'cancelled'
         );
+        this.originalWfhData = [...this.wfhData];
       },
       error: (error) => {
         this.dataload = false;
@@ -82,6 +90,70 @@ export class OnBehalfOfWhfCancellationComponent implements OnInit, OnDestroy {
       complete: () => {
         this.dataload = false;
       },
+    });
+  }
+
+  customSort(event: any): void {
+    const field = event.field;
+    
+    // Track current sort state for the clicked field
+    if (this.currentSortField === field) {
+      // Same field clicked - cycle through: asc (1) -> desc (-1) -> reset (0)
+      if (this.currentSortOrder === 1) {
+        // Currently ascending, change to descending
+        this.currentSortOrder = -1;
+        event.order = -1;
+      } else if (this.currentSortOrder === -1) {
+        // Currently descending, reset to original order
+        this.wfhData = [...this.originalWfhData];
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        if (this.wfhCancellationTable) {
+          this.wfhCancellationTable.reset();
+        }
+        return;
+      } else {
+        // Currently reset, change to ascending
+        this.currentSortOrder = 1;
+        event.order = 1;
+      }
+    } else {
+      // New field clicked - start with ascending
+      this.currentSortField = field;
+      this.currentSortOrder = 1;
+      event.order = 1;
+    }
+
+    event.data.sort((a: any, b: any) => {
+      let val1: any;
+      let val2: any;
+
+      // Handle date fields
+      if (['startTime', 'requestedDate'].includes(field)) {
+        val1 = new Date(a[field]);
+        val2 = new Date(b[field]);
+        return event.order * (val1.getTime() - val2.getTime());
+      }
+
+      // Handle durationType
+      if (field === 'durationType') {
+        const typeMap: { [key: number]: string } = {
+          1: 'First Half',
+          2: 'Full Day',
+          3: 'Second Half'
+        };
+        val1 = typeMap[a[field]] || 'Unknown';
+        val2 = typeMap[b[field]] || 'Unknown';
+      } else {
+        // Handle direct fields
+        val1 = a[field];
+        val2 = b[field];
+      }
+
+      // Handle string sorting for all other fields
+      val1 = String(val1 ?? '').trim();
+      val2 = String(val2 ?? '').trim();
+      return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
     });
   }
 

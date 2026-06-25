@@ -259,4 +259,12 @@
 ::ng-deep .p-inputtext,
 ::ng-deep .p-autocomplete-input {
     border-color: #ced4da !important;
+.custom-input.ng-invalid::placeholder,
+.custom-input.is-invalid::placeholder {
+  color: #6c757d !important;
+}
+}
+.wrapper {
+  height: 50dvh;
+  justify-content: center;
 }

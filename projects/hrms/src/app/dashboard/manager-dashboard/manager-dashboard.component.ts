@@ -257,6 +257,7 @@ export class ManagerDashboardComponent {
         this.departmentDetails = data as IDepartment[];
         this.departmentDropdownOptions = [
           { departmentName: 'All', sno: null },
+          { departmentName: 'No Department', sno: 0 },
           ...this.departmentDetails
         ];
       }
@@ -468,7 +469,7 @@ export class ManagerDashboardComponent {
     if (selectedId === null || selectedId === undefined) {
       this.getGenderCountChart();
     } else {
-      this.getGenderCountChart(selectedId);
+      this.getGenderCountChart(selectedId); // passes 0 for No Department, actual id otherwise
     }
   }
 

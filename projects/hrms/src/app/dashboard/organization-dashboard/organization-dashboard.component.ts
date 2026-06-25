@@ -384,6 +384,7 @@ legendList = [
         this.departmentDetails = data as IDepartment[];
         this.departmentDropdownOptions = [
           { departmentName: 'All', sno: null },
+          { departmentName: 'No Department', sno: 0 },
           ...this.departmentDetails
         ];
         this.departDropdownOptions = [...this.departmentDropdownOptions];

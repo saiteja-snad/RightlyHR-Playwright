@@ -56,7 +56,7 @@ export class ExpenesHeaderTabsComponent implements OnInit, OnDestroy {
     { tabId: '/claimsandexpenses/expenses/pending',  label: 'Waiting For Approval', link: '/claimsandexpenses/expenses/pending', icon: '/time-off-icon/waiting-for-approval-icon.png', permission: { feature: 'Pending Tab', action: 'view' }, count: this.pendingCount },
     { tabId: '/claimsandexpenses/expenses/processed',  label: 'Processed', link: '/claimsandexpenses/expenses/processed', icon: '/time-off-icon/processed-icon.png', permission: { feature: 'Processed Tab', action: 'view' }, count: this.processedCount },
     { tabId: '/claimsandexpenses/expenses/rejected',  label: 'Rejected', link: '/claimsandexpenses/expenses/rejected', icon: '/time-off-icon/rejected-icon.png', permission: { feature: 'Rejected Tab', action: 'view' }, count: this.rejectedCount },
-    { tabId: '/claimsandexpenses/expenses/required-clarification',  label: 'Expense Clarifications', link: '/claimsandexpenses/expenses/required-clarification', icon: '/time-off-icon/clarification.png', permission: { feature: 'Expense Clarifications Tab', action: 'view' }, count: this.requiredClarificationCount },
+    { tabId: '/claimsandexpenses/expenses/required-clarification',  label: 'Expense Clarifications', link: '/claimsandexpenses/expenses/required-clarification-icon.png', icon: '/time-off-icon/clarification.png', permission: { feature: 'Expense Clarifications Tab', action: 'view' }, count: this.requiredClarificationCount },
 
   ];
 

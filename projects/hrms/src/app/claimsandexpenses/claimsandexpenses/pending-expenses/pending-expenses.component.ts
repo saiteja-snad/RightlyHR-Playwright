@@ -189,11 +189,21 @@ export class PendingExpensesComponent implements OnInit, OnDestroy {
     this.subscription = this.http
       .getData(`v2/Expenses_Header/gettotalamount?EmployeeId=${empId}&status=Waiting for Approval&month=${this.seletedMouthly}&year=${this.selectedYear}&searchQuery=${cleanSearchQuery}`,).subscribe({
         next: (data: any) => {
-          this.loading = false
+          this.loading = false;
+          console.log('Expense API Response:', data);
           const filteredData = data.filter((item: any) => !item.expenseSummary);
           this.originalExpenseData = [...filteredData];
           this.expenesEmplyeedata = [...filteredData];
 
+          console.log('First Expense:', filteredData[0]);
+          console.log('CanApprove:', filteredData[0]?.canApprove);
+
+          if (filteredData.length > 0) {
+            console.log('First Record:', filteredData[0]);
+            console.log('PendingApprovalHeader:', filteredData[0].pendingApprovalHeader);
+          }
+
+          // this.expenesEmplyeedata.next(filteredData);
         }, error(err) {
           console.log("expensesheadererror", err)
         },
@@ -579,7 +589,23 @@ export class PendingExpensesComponent implements OnInit, OnDestroy {
     );
   }
 
+  // isRMStage(exp: any): boolean {
+  //   return (
+  //     +exp?.pendingApprovalHeader?.currentapprovalStage === 1 &&
+  //     exp?.pendingApprovalHeader?.currentApproverId?.toString() ===
+  //     this.LOGIN?.employeeId?.toString()
+  //   );
+  // }
+
   isRMStage(exp: any): boolean {
+
+    console.log({
+      stage: exp?.pendingApprovalHeader?.currentapprovalStage,
+      currentApproverId: exp?.pendingApprovalHeader?.currentApproverId,
+      loginId: this.LOGIN?.employeeId,
+      approvedType: exp?.pendingApprovalHeader?.approvedType
+    });
+
     return (
       +exp?.pendingApprovalHeader?.currentapprovalStage === 1 &&
       exp?.pendingApprovalHeader?.currentApproverId?.toString() ===
@@ -588,21 +614,22 @@ export class PendingExpensesComponent implements OnInit, OnDestroy {
   }
 
   isHRStage(exp: any): boolean {
-    return (
-      +exp?.pendingApprovalHeader?.currentapprovalStage === 2
-    );
-  }
+  return (
+    +exp?.pendingApprovalHeader?.currentapprovalStage === 2 &&
+    exp.canApprove
+  );
+}
 
   isFinanceStage(exp: any): boolean {
     return (
-      +exp?.pendingApprovalHeader?.currentapprovalStage === 3
+      +exp?.pendingApprovalHeader?.currentapprovalStage === 3 &&
+      exp.canApprove
     );
   }
 
   isFinancePaymentStage(exp: any): boolean {
-    return (
-      +exp?.pendingApprovalHeader?.currentapprovalStage === 4
-    );
+    return exp.canApprove &&
+      +exp?.pendingApprovalHeader?.currentapprovalStage === 4;
   }
 
 
@@ -681,7 +708,7 @@ export class PendingExpensesComponent implements OnInit, OnDestroy {
       status: 'Processed',
       approvedBy: this.empinfo.employeeId.toString(),
       currentStage: parseInt(
-        this.selectedLeaveData?.approvalHeader?.currentapprovalStage
+        this.selectedLeaveData?.approvalHeader?.currentapprovalStage ?? '0'
       ),
     };
     this.sharedModalService.openLoaderModal(
@@ -742,8 +769,8 @@ export class PendingExpensesComponent implements OnInit, OnDestroy {
             response.data as ExpenseApprovalResponse[]
           ).filter(
             (item) =>
-              item.approvalHeader.status != 'Processed' &&
-              item.approvalHeader.status != 'Rejected'
+              item.approvalHeader?.status != 'Processed' &&
+              item.approvalHeader?.status != 'Rejected'
           );
 
           this.refreshAllVerifiedStates();
@@ -920,6 +947,10 @@ export class PendingExpensesComponent implements OnInit, OnDestroy {
     console.log("selectedLeaveDatagvhcvbn", this.selectedLeaveData)
   }
   openRequiredCalrificationModal(content: any, request: ExpenseApprovalResponse) {
+    console.log(request);
+    console.log(request.approvalHeader);
+
+
     this.modalService.open(content, { centered: true, backdrop: 'static' });
     this.intializeApproveForm();
     this.selectedLeaveData = request;
@@ -1064,8 +1095,83 @@ export class PendingExpensesComponent implements OnInit, OnDestroy {
   }
 
   approveForPayment(exp: any) {
-  console.log('Approve For Payment', exp);
-}
+    console.log('Approve For Payment', exp);
+  }
+
+  handleClarification(approveForm: FormGroup): void {
+    console.log('Form Valid:', approveForm.valid);
+    this.isloading = true;
+    if (approveForm.valid) {
+      const formData = approveForm.value;
+      console.log('Selected Leave Data:', this.selectedLeaveData);
+      console.log('Approval Header:', this.selectedLeaveData.approvalHeader);
+      const requestBody = {
+        status: 'Required Clarification',
+        comments: formData.comments,
+        approvedBy: this.empinfo.employeeId.toString(),
+        currentStage: parseInt(
+          this.selectedLeaveData.pendingApprovalHeader?.currentapprovalStage ||
+          this.selectedLeaveData.approvalHeader?.currentapprovalStage || '0'
+        ),
+      };
+
+      console.log('Before Loader');
+
+      this.sharedModalService.openLoaderModal(
+        'Sending for Clarification, Please wait...'
+      );
+
+      console.log('After Loader');
+
+      console.log('Calling API Now');
+
+      this.http
+        .putData(
+          `PendingApproval/${this.selectedLeaveData.pendingApprovalHeader?.id ??
+          this.selectedLeaveData.approvalHeader?.id
+          }`,
+          requestBody
+        )
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (response: any) => {
+            this.isloading = false;
+            this.modalService.dismissAll();
+            this.signalService.claimsandexpensesForRoleTriggerSignal.set(true);
+            this.sharedModalService.openSuccessModal(
+              'Expense request sent for clarification successfully'
+            );
+            this.approveForm.reset();
+            this.http.setnewcountDetails();
+            this.selectedLeaveData = {} as ExpenseApprovalResponse;
+            this.http.tirggerPendingApprovalCountSignal.update((status) => ({
+              ...status,
+              expenses: true,
+            }));
+          },
+          error: (reason: any) => {
+            this.isloading = false;
+            this.modalService.dismissAll();
+            this.sharedModalService.openErrorModal(reason.error.Message);
+          },
+          complete: () => {
+            this.isloading = false;
+            this.getAllPendingApprovals();
+          },
+        });
+    }
+  }
+
+  onStatusClarificationSelect(status: string) {
+    this.selectedLeaveStatus = status;
+
+    if (status === 'requiredClarification') {
+      this.approveForm.patchValue({
+        comments: 'Required Clarification'
+      });
+    }
+  }
+
   ngOnDestroy(): void {
     if (this.subscription) {
       this.subscription.unsubscribe()

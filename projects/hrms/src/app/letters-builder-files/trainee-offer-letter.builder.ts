@@ -18,7 +18,7 @@ export interface TraineeOfferLetterData {
   internshipperiod: number;
   reportingmanagerName?: string;
   officeAddress?: string;
-  stipendApplicable: boolean;
+  stipendApplicable?: boolean;
   monthlyAmount?: number | string;
   annualCTC?: number | string;
   note?: string;
@@ -53,36 +53,6 @@ export function buildTraineeOfferLetterDoc(data: TraineeOfferLetterData): any {
     return { text, font: bodyFont, margin: [0, 0, 0, marginBottom] };
   }
 
-  const stipendItems = data.stipendApplicable ? [
-    [
-      { text: 'Stipend:', font: 'VERDANABOLD' },
-      { text: ` As per company policy, you will be entitled to receive a monthly stipend of INR `, font: bodyFont },
-      { text: `${data.monthlyAmount ?? 0}`, font: 'VERDANABOLD' },
-      { text: ' for the duration of your internship.', font: bodyFont },
-    ],
-    [
-      { text: 'Full-Time Employment:', font: 'VERDANABOLD' },
-      { text: ' Upon successful completion of your internship and subject to satisfactory performance, you may be considered for full-time employment with SNAD. The terms and conditions of full-time employment, including compensation and benefits, will be communicated at the time of confirmation.', font: bodyFont },
-    ],
-  ] : [
-    [
-      { text: 'Internship Period (First 3 Months):', font: 'VERDANABOLD' },
-      { text: ' This will be an unpaid internship, and you will not be eligible for any stipend/salary during this period.', font: bodyFont },
-    ],
-    [
-      { text: 'Stipend (Next 3 Months):', font: 'VERDANABOLD' },
-      { text: ' Upon successful completion of the first 3 months, you will receive a stipend of ', font: bodyFont },
-      { text: `INR ${data.monthlyAmount ?? 0} per month`, font: 'VERDANABOLD' },
-      { text: ' for the next 3 months.', font: bodyFont },
-    ],
-    [
-      { text: 'Full-Time Employment:', font: 'VERDANABOLD' },
-      { text: ' After completion 6 months from the date of joining, based on satisfactory performance, you will be appointed as a full-time employee of SNAD with a ', font: bodyFont },
-      { text: `CTC of ${data.annualCTC ?? 0} per annum`, font: 'VERDANABOLD' },
-      { text: '.', font: bodyFont },
-    ],
-  ];
-
   const addressLines: string[] = [];
   if (data.addressLine1) addressLines.push(`${data.addressLine1},`);
   if (data.addressLine2) addressLines.push(`${data.addressLine2},`);
@@ -90,14 +60,14 @@ export function buildTraineeOfferLetterDoc(data: TraineeOfferLetterData): any {
   if (data.country && data.pinCode) addressLines.push(`${data.country} - ${data.pinCode}.`);
 
   const page1: any[] = [
-    { text: 'OFFER LETTER', font: 'VERDANABOLD', fontSize: PX(18), alignment: 'center', margin: [0, 0, 0, 16] },
+    { text: 'Trainee Offer Letter', font: 'VERDANABOLD', fontSize: PX(20), alignment: 'center', margin: [0, 0, 0, 16] },
     {
       columns: [
         {
           width: '60%',
           stack: [
-            { text: fullName + ',', font: bodyFont, margin: [0, 0, 0, 2] },
-            ...addressLines.map(line => ({ text: line, font: bodyFont, margin: [0, 0, 0, 2] })),
+            { text: fullName + ',', font: 'VERDANABOLD', margin: [0, 0, 0, 2] },
+            ...addressLines.map(line => ({ text: line, font: 'VERDANABOLD', margin: [0, 0, 0, 2] })),
           ],
         },
         {
@@ -148,14 +118,13 @@ export function buildTraineeOfferLetterDoc(data: TraineeOfferLetterData): any {
           margin: [0, 0, 0, 10],
         },
         {
-          stack: [
-            { text: [{ text: 'Stipend/Salary and Benefits: ', font: 'VERDANABOLD' }], font: bodyFont, margin: [0, 0, 0, 4] },
-            {
-              ul: stipendItems.map(item => ({ text: item, margin: [0, 0, 0, 4] })),
-              font: bodyFont,
-              margin: [0, 0, 0, 0],
-            },
+          text: [
+            { text: 'Stipend/Salary and Benefits: ', font: 'VERDANABOLD' },
+            "During the internship period, you're eligible to receive Rs.10,000/- per month as a stipend/salary. After successful completion of the internship period, you will be appointed as an employee of RightlyHR with a CTC of ",
+            { text: `${data.annualCTC ?? data.monthlyAmount ?? ''}`, font: 'VERDANABOLD' },
+            ' per annum.',
           ],
+          font: bodyFont,
           margin: [0, 0, 0, 10],
         },
         {
@@ -200,16 +169,16 @@ export function buildTraineeOfferLetterDoc(data: TraineeOfferLetterData): any {
     ...(data.note ? [p([{ text: 'Note: ', font: 'VERDANABOLD' }, data.note], 12)] : []),
     p([
       'Please confirm your acceptance of this offer by signing and returning a scanned copy of this letter within 1 day to ',
-      { text: 'hr@snaddevelopers.com', decoration: 'underline', color:'#0d6efd' },
+      { text: 'hr@rightlyhr.com', decoration: 'underline', color:'#0d6efd' },
       '.',
     ], 12),
     p('We are excited about the possibility of you joining our team and look forward to a productive and successful internship.', 20),
     p('Your Sincerely,', 4),
-    { text: 'For RightlyHR', font: 'VERDANABOLD', fontSize: PX(13), margin: [0, 0, 0, 16] },
+    { text: 'For RightlyHR', font: 'VERDANABOLD', fontSize: PX(16), margin: [0, 0, 0, 16] },
     { text: data.authorityName, font: 'Autography', fontSize: PX(32), margin: [0, 0, 0, 4], noWrap: true, alignment: 'left' },
-    { text: 'Authorized Signatory,', font: 'VERDANABOLD', fontSize: PX(13), margin: [0, 0, 0, 4] },
-    { text: data.authorityName, font: 'VERDANABOLD', fontSize: PX(13), margin: [0, 0, 0, 4] },
-    { text: data.authorityDesignation ?? '', font: 'VERDANABOLD', fontSize: PX(13), margin: [0, 0, 0, 36] },
+    { text: 'Authorized Signatory,', font: 'VERDANABOLD', fontSize: PX(16), margin: [0, 0, 0, 4] },
+    { text: data.authorityName, font: 'VERDANABOLD', fontSize: PX(16), margin: [0, 0, 0, 4] },
+    { text: data.authorityDesignation ?? '', font: 'VERDANABOLD', fontSize: PX(16), margin: [0, 0, 0, 36] },
     { canvas: [{ type: 'line', x1: 0, y1: 0, x2: 470, y2: 0, lineWidth: 1, lineColor: '#d8d8da' }], margin: [0, 0, 0, 36] },
     {
       text: data.employeeFullName
@@ -236,7 +205,7 @@ export function buildTraineeOfferLetterDoc(data: TraineeOfferLetterData): any {
       pageMargins: [margins.left, margins.top, margins.right, margins.bottom],
       defaultStyle: {
         font: bodyFont,
-        fontSize: PX(13),
+        fontSize: PX(16),
         alignment: 'justify',
         color: '#000',
       },

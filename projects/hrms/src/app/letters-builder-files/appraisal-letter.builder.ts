@@ -158,7 +158,11 @@ export function buildAppraisalLetterDoc(data: AppraisalLetterData): any {
           boldCell(e(data.salary), { alignment: 'center', fillColor: '#fce4d6' })
         ],
         ctcSpan('Variable Pay', e(data.variablePayAmount)),
-        ctcSpan('Total CTC (Including Variable Pay & ESOP)', e(data.totalCTC)),
+        [
+          boldCell('Total CTC (Including Variable Pay & ESOP)', { fillColor: '#fff2cc' }),
+          { text: e(data.totalCTC) !== '' ? String(e(data.totalCTC)) : '', font: 'VERDANABOLD', alignment: 'center', colSpan: 2, fillColor: '#fff2cc' },
+          { text: '' },
+        ],
       ],
     },
 

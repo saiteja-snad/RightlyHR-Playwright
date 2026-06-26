@@ -43,7 +43,7 @@ export function buildProbationExtensionLetterDoc(data: ProbationExtensionLetterD
   }
 
   const content: any[] = [
-    { text: 'EXTENSION OF PROBATION PERIOD', font: 'VERDANABOLD', fontSize: PX(16), alignment: 'center', margin: [0, 0, 0, 20] },
+    { text: 'Probation Extension Letter', font: 'VERDANABOLD', fontSize: PX(16), alignment: 'center', margin: [0, 0, 0, 20] },
     {
       columns: [
         {
@@ -58,7 +58,7 @@ export function buildProbationExtensionLetterDoc(data: ProbationExtensionLetterD
         },
         {
           width: '40%',
-          text: [{ text: 'Issued Date: ', font: 'VERDANABOLD' }, fmt(data.issuedDate)],
+          text: [{ text: ' Date: ', font: 'VERDANABOLD' }, fmt(data.issuedDate)],
           alignment: 'right',
           font: bodyFont,
         },
@@ -79,7 +79,7 @@ export function buildProbationExtensionLetterDoc(data: ProbationExtensionLetterD
     p('We look forward to witnessing your continued progress and contributions to our team during this extended probationary period.', 20),
     p('Sincerely,', 4),
     { text: 'For RightlyHR', font: 'VERDANABOLD', fontSize: PX(13), margin: [0, 0, 0, 8] },
-    {   text: (data.authorityName || '').trim(), font: 'Autography', fontSize: PX(32), margin: [0, 0, 0, 4], noWrap: true },
+    { text: (data.authorityName || '').trim(), font: 'Autography', fontSize: PX(32), margin: [0, 0, 0, 4], noWrap: true, alignment: 'left' },
     { text: 'Authority Signature', font: 'VERDANABOLD', fontSize: PX(13), margin: [0, 0, 0, 4] },
     { text: data.authorityName, font: 'VERDANABOLD', fontSize: PX(13), margin: [0, 0, 0, 0] },
     { text: data.authorityDesignation ?? '', font: 'VERDANABOLD', fontSize: PX(13), margin: [0, 0, 0, 16] },

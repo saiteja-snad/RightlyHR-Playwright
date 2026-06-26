@@ -180,6 +180,8 @@ export class SaleryRevisionLetterAcknowedgementComponent implements OnInit, OnDe
         Employee.salary = res.compensationamount;
         Employee.compeffectivedate = res.compeffectivedate;
         Employee.variablePayAmount = res.variablePayAmount ?? null;
+        Employee.incrementSalary = this.incrementSalary;
+        Employee.previousSalary = this.previusSalary.compensationamount;
 
         Employee.grossby = 12;
         Employee.grossSalary = Math.round(res.compensationamount / Employee.grossby);
@@ -240,6 +242,8 @@ export class SaleryRevisionLetterAcknowedgementComponent implements OnInit, OnDe
       letterDate: this.promotionDate,
       compEffectiveDate: data.compeffectivedate,
       totalCTC: (data.salary || 0) + (data.variablePayAmount || 0),
+      incrementSalary: data.incrementSalary || 0,
+      previousSalary: data.previousSalary || 0,
       variablePayAmount: data.variablePayAmount,
       addressLine1: data.addressLine1,
       addressLine2: data.addressLine2,

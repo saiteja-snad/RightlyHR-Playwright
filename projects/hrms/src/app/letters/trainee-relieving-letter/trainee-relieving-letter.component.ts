@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { Select } from 'primeng/select';
 import { Subscription } from 'rxjs';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { DateformatPipe } from '../../pipes/dateformat.pipe';
 import { HttpService } from '../../services/http.service';
 import { AuthService } from '../../services/auth.service';
 import { OpenModalService } from '../../services/open-modal.service';
@@ -13,9 +14,8 @@ import { buildTraineeRelievingLetterDoc } from '../../letters-builder-files/trai
 import { TranslateModule } from '@ngx-translate/core';
 import { IEmployeeDetails, IEmployeeJobDetails, IEmployeeSignatures } from '../letters.modal';
 import { LettersheaderComponent } from "../../shared/letters-shared-content/lettersheader/lettersheader.component";
-import { LetterFooterComponent } from "../../shared/letters-shared-content/letter-footer/letter-footer.component";
-import { DateformatPipe } from '../../pipes/dateformat.pipe';
 import { fetchLetterAssets, setupLetterPdfMake } from '../../letters-builder-files/letter-pdf.utils';
+import { LetterFooterComponent } from "../../shared/letters-shared-content/letter-footer/letter-footer.component";
 @Component({
   selector: 'app-trainee-relieving-letter',
   imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, TranslateModule, LettersheaderComponent, LetterFooterComponent],
@@ -47,7 +47,7 @@ export class TraineeRelievingLetterComponent implements OnInit, OnDestroy {
   ];
   spinnerLoader = false;
 
-  constructor(private router: Router, private fb: FormBuilder, private http: HttpService,
+  constructor(private router: Router, private fb: FormBuilder, private http: HttpService, 
     private authService: AuthService, private conformationPopup: OpenModalService) { }
 
   ngOnInit() {
@@ -226,7 +226,7 @@ export class TraineeRelievingLetterComponent implements OnInit, OnDestroy {
     }
     const fileName = `${this.selectedEmployee.firstName}_${this.selectedEmployee.lastName}_${Date.now()}_RelievingLetter.pdf`;
     const isSoftCopy = f.value.documentType?.value === true;
-    const [assets, pm] = await Promise.all([
+       const [assets, pm] = await Promise.all([
       fetchLetterAssets(isSoftCopy),
       setupLetterPdfMake(),
     ]);
@@ -267,9 +267,30 @@ export class TraineeRelievingLetterComponent implements OnInit, OnDestroy {
     }
   }
 
+  private fetchImageAsBase64(url: string): Promise<string> {
+    return fetch(url).then(res => res.blob()).then(blob => new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result as string);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    }));
+  }
 
-
-
+  private async getFileBase64(url: string): Promise<string | null> {
+    try {
+      const response = await fetch(url);
+      if (!response.ok) return null;
+      const buffer = await response.arrayBuffer();
+      const bytes = new Uint8Array(buffer);
+      let binary = '';
+      for (let i = 0; i < bytes.byteLength; i++) {
+        binary += String.fromCharCode(bytes[i]);
+      }
+      return btoa(binary);
+    } catch {
+      return null;
+    }
+  }
 
   uploadRelievingLetter() {
     let filePath = `/FusionDocuments/Employee Documents/Relieving Letters/${this.selectedEmployee.employeeId}`;

@@ -54,7 +54,7 @@ export function buildAddressLetterDoc(data: AddressLetterData): any {
     {
       text: 'TO WHOMSOEVER IT MAY CONCERN',
       font: 'VERDANABOLD',
-      fontSize: PX(12),
+      fontSize: PX(16),
       alignment: 'center',
       decoration: 'underline',
       margin: [0, 0, 0, 24],

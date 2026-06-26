@@ -8,7 +8,7 @@
                     <label class="form-label custom-label mb-2">{{'Select Employee'  | translate}}<span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="employeeiddetails" optionLabel="fullName" [filter]="true"
-                            filterBy="fullName" placeholder="Please select employee" formControlName="fusionEmpId"
+                            filterBy="fullName" placeholder="Please select employee" formControlName="fusionEmpId"    filterPlaceholder="Search employee"
                             class="custom-select w-100" (onChange)="Onclick($event.value)"
                             resetFilterOnHide="true"></p-select>
                     </div>
@@ -54,7 +54,7 @@
                     <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Signature Authority Name'  | translate}}<span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="authorityDetails" optionLabel="fullName" [filter]="true"
-                            filterBy="fullName" placeholder="Please select signature authority name"
+                            filterBy="fullName" placeholder="Please select signature authority name" filterPlaceholder="Search signature authority name"
                             class="custom-select w-100" formControlName="authorityid" resetFilterOnHide="true"
                             (onChange)="onclickDesignation($event.value)" />
                     </div>

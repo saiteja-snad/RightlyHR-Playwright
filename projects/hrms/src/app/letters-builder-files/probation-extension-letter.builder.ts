@@ -43,7 +43,7 @@ export function buildProbationExtensionLetterDoc(data: ProbationExtensionLetterD
   }
 
   const content: any[] = [
-    { text: 'EXTENSION OF PROBATION PERIOD', font: 'VERDANABOLD', fontSize: PX(16), alignment: 'center', margin: [0, 0, 0, 20] },
+    { text: 'Probation Extension Letter', font: 'VERDANABOLD', fontSize: PX(16), alignment: 'center', margin: [0, 0, 0, 20] },
     {
       columns: [
         {
@@ -58,7 +58,7 @@ export function buildProbationExtensionLetterDoc(data: ProbationExtensionLetterD
         },
         {
           width: '40%',
-          text: [{ text: 'Issued Date: ', font: 'VERDANABOLD' }, fmt(data.issuedDate)],
+          text: [{ text: ' Date: ', font: 'VERDANABOLD' }, fmt(data.issuedDate)],
           alignment: 'right',
           font: bodyFont,
         },

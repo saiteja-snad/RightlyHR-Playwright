@@ -82,30 +82,35 @@ export function buildProbationConfirmationLetterDoc(data: ProbationConfirmationL
     { text: data.authorityDesignation ?? '', font: 'VERDANABOLD', fontSize: PX(13), margin: [0, 0, 0, 16] },
     ...(data.employeeSignatureDate ? [
       { text: fullName, font: 'Autography', fontSize: PX(32), alignment: 'right', noWrap: true, margin: [0, 0, 0, 4] },
-      { text: "Employee's Signature", font: bodyFont, fontSize: PX(13), alignment: 'right' },
+      {
+        text: "Employee's Signature",
+        bold: true,
+        fontSize: PX(13),
+        alignment: 'right'
+      }
     ] : []),
   ];
 
-   const isSoftCopy = !!data.backgroundImageBase64;
-     const margins = isSoftCopy ? LETTER_MARGINS.softCopy : LETTER_MARGINS.hardCopy;
+  const isSoftCopy = !!data.backgroundImageBase64;
+  const margins = isSoftCopy ? LETTER_MARGINS.softCopy : LETTER_MARGINS.hardCopy;
 
-     const docDef: any = {
-       pageSize: 'A4',
-       pageMargins: [margins.left, margins.top, margins.right, margins.bottom],
-       defaultStyle: {
-         font: bodyFont,
-         fontSize: PX(16),
-         alignment: 'justify',
-         color: '#000',
-       },
-       content: stampFont(content, bodyFont),
-     };
+  const docDef: any = {
+    pageSize: 'A4',
+    pageMargins: [margins.left, margins.top, margins.right, margins.bottom],
+    defaultStyle: {
+      font: bodyFont,
+      fontSize: PX(16),
+      alignment: 'justify',
+      color: '#000',
+    },
+    content: stampFont(content, bodyFont),
+  };
 
-     applyLetterPageSetup(docDef, {
-       backgroundImageBase64: data.backgroundImageBase64,
-       headerLogoBase64: data.headerLogoBase64,
-       bodyFont,
-     });
+  applyLetterPageSetup(docDef, {
+    backgroundImageBase64: data.backgroundImageBase64,
+    headerLogoBase64: data.headerLogoBase64,
+    bodyFont,
+  });
 
-     return docDef;
+  return docDef;
 }

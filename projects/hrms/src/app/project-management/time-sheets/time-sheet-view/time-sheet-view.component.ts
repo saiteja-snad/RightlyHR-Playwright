@@ -598,27 +598,6 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     if (!range || range.length < 2) {
       return;
     }
-
-    const startDay = moment(range[0]).format('dddd');
-    const endDay = moment(range[1]).format('dddd');
-
-    console.log('Range Start', range[0]);
-    console.log('Range End', range[1]);
-    console.log('Start Day', startDay);
-    console.log('End Day', endDay);
-    console.log('Weekends Data', this.weekendsData);
-
-    const startWeekend = this.weekendsData?.some(
-      (w: any) => w.weekday === startDay
-    );
-
-    const endWeekend = this.weekendsData?.some(
-      (w: any) => w.weekday === endDay
-    );
-
-    if (startWeekend || endWeekend) {
-      this.cloneErrorMessage = 'Please select the appropriate date.';
-    }
   }
   private getRangeStartDate(range: Date[] | null): Date | null {
     if (!Array.isArray(range) || range.length === 0 || !range[0]) {
@@ -878,11 +857,6 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   }
 
   cloneTimesheetEntries(): void {
-
-    console.log('cloneErrorMessage', this.cloneErrorMessage);
-    if (this.cloneErrorMessage === 'Please select the appropriate date.') {
-      return;
-    }
 
     if (!this.cloneForm || this.cloneForm.invalid) {
       this.cloneForm.markAllAsTouched();
@@ -2772,34 +2746,8 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   }
 
   validateCloneDateRanges() {
-    this.cloneErrorMessage = null;
-
-    const sourceRange = this.cloneForm.get('sourceWeekDateRange')?.value;
-    const targetRange = this.cloneForm.get('targetWeekDateRange')?.value;
-
-    const isInvalidRange = (range: Date[]) => {
-      if (!range || range.length < 2) return false;
-
-      const startDay = moment(range[0]).format('dddd');
-      const endDay = moment(range[1]).format('dddd');
-
-      const startWeekend = this.weekendsData?.some(
-        (w: any) => w.weekday === startDay
-      );
-
-      const endWeekend = this.weekendsData?.some(
-        (w: any) => w.weekday === endDay
-      );
-
-      return startWeekend || endWeekend;
-    };
-
-    if (isInvalidRange(sourceRange) || isInvalidRange(targetRange)) {
-      this.cloneErrorMessage = 'Please select the appropriate date.';
-    } else {
-      this.cloneErrorMessage = null;
-    }
-  }
+  this.cloneErrorMessage = null;
+}
   ngOnDestroy() {
     this.destroy$.next(true);
     this.destroy$.complete();

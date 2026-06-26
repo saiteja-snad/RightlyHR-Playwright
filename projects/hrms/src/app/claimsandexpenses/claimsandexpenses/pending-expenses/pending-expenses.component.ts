@@ -251,7 +251,7 @@ export class PendingExpensesComponent implements OnInit, OnDestroy {
       });
     }
   }
-  
+
   viewItem(expid: number,) {
     this.updataid = expid;
     this.subscription = this.http
@@ -265,6 +265,7 @@ export class PendingExpensesComponent implements OnInit, OnDestroy {
   }
 
   comments(value: any, commentspopup: any) {
+     console.log(value);   
     this.modalService.open(commentspopup, {
       centered: true,
       backdrop: 'static',
@@ -614,11 +615,11 @@ export class PendingExpensesComponent implements OnInit, OnDestroy {
   }
 
   isHRStage(exp: any): boolean {
-  return (
-    +exp?.pendingApprovalHeader?.currentapprovalStage === 2 &&
-    exp.canApprove
-  );
-}
+    return (
+      +exp?.pendingApprovalHeader?.currentapprovalStage === 2 &&
+      exp.canApprove
+    );
+  }
 
   isFinanceStage(exp: any): boolean {
     return (
@@ -646,6 +647,9 @@ export class PendingExpensesComponent implements OnInit, OnDestroy {
   confirmApproval(modal: any) {
     console.log('storeapprovalRequest', this.storeapprovalRequest);
     this.isloading = true;
+    this.sharedModalService.openLoaderModal(
+      'Approving Request, Please wait...'
+    );
     const payload = this.checklistdata.map((item: any) => ({
       expenseHeaderId: this.storeapprovalRequest.pendingApprovalHeader.referenceEntityId,
       employeeId: this.storeapprovalRequest.employeeId,         // current employee id
@@ -684,10 +688,28 @@ export class PendingExpensesComponent implements OnInit, OnDestroy {
               payload
             ).subscribe({
               next: () => {
+                this.isloading = false;
+
+                this.modalService.dismissAll();
+
+                this.sharedModalService.openSuccessModal(
+                  'Expense request approved successfully'
+                );
+
                 this.getexpensesheaderbyemployeeid();
+                this.getAllPendingApprovals();
+
+                this.http.setnewcountDetails();
+
+                this.http.tirggerPendingApprovalCountSignal.update((status) => ({
+                  ...status,
+                  expenses: true,
+                }));
               },
               error: (err) => {
-                console.error(err);
+                this.isloading = false;
+                this.modalService.dismissAll();
+                this.sharedModalService.openErrorModal(err.error?.Message);
               }
             });
           }
@@ -1148,6 +1170,10 @@ export class PendingExpensesComponent implements OnInit, OnDestroy {
               ...status,
               expenses: true,
             }));
+            this.getexpensesheaderbyemployeeid();
+
+            // Refresh approval counts
+            this.getAllPendingApprovals();
           },
           error: (reason: any) => {
             this.isloading = false;

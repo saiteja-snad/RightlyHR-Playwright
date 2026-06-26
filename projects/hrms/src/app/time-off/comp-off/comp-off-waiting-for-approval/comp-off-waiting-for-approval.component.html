@@ -1,6 +1,6 @@
 <div class="custom-main-component-container">
   <div class="custom-table-content">
-    @if(selectedProducts.length > 0 && showActions){
+    @if(selectedProducts.length > 0 && canApprove(selectedProducts[0])){
 
     <div class="component-header-content">
 
@@ -22,31 +22,42 @@
 
     </div>
 
-    }
-    <div class="custom-p-multi-select-table">
-      @if(showMultiSelectAndSearch()){
-      <div class="input-group custom-search mb-3">
-        <span class="input-group-text custom-input-group-search">
-          <i class="bi bi-search"></i>
-        </span>
+  }
 
-        <input type="search" [(ngModel)]="searchText" class="form-control custom-search-input" placeholder="Search">
-      </div>
-      }
-    </div>
-    @if(!dataload){
-    <p-table #compOffWaitingTable [value]="waitingForApprovalCompOff" [customSort]="true" (sortFunction)="customSort($event)" [sortMode]="'single'">
+  @if(!dataload){
+  <div class="custom-p-multi-select-table">
+    <p-table #compOffWaitingTable [value]="waitingForApprovalCompOff" [(selection)]="selectedProducts"
+      (selectionChange)="selectCheck($event)" dataKey="id" [customSort]="true" (sortFunction)="customSort($event)"
+      [sortMode]="'single'">
       <ng-template pTemplate="header">
         <tr>
+          @if(waitingForApprovalCompOff.length > 0 && canApprove(waitingForApprovalCompOff[0])){
+          <th style="width:4rem">
+            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+          </th>
+          }
           <th pSortableColumn="startTime">{{'Worked Date' | translate}} <p-sortIcon field="startTime"></p-sortIcon></th>
-          <th pSortableColumn="durationType">{{'Availed' | translate}} <p-sortIcon field="durationType"></p-sortIcon></th>
-          <th class="text-center" pSortableColumn="requestedComments">{{'Reason' | translate}} <p-sortIcon field="requestedComments"></p-sortIcon></th>
-          <th pSortableColumn="requestedDate">{{'Applied Date' | translate}} <p-sortIcon field="requestedDate"></p-sortIcon></th>
+          <th pSortableColumn="durationType">{{'Availed' | translate}} <p-sortIcon field="durationType"></p-sortIcon>
+          </th>
+          <th class="text-center" pSortableColumn="requestedComments">{{'Reason' | translate}} <p-sortIcon
+              field="requestedComments"></p-sortIcon></th>
+          <th pSortableColumn="requestedDate">{{'Applied Date' | translate}} <p-sortIcon
+              field="requestedDate"></p-sortIcon></th>
           <th pSortableColumn="status">{{'Status' | translate}} <p-sortIcon field="status"></p-sortIcon></th>
+          @if(selectedProducts.length == 0){
+          <th class="text-center">
+            Action
+          </th>
+          }
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-compOffRequest>
         <tr>
+          @if(canApprove(compOffRequest)){
+          <td>
+            <p-tableCheckbox [value]="compOffRequest"></p-tableCheckbox>
+          </td>
+          }
           <td>{{ compOffRequest.startTime ? (compOffRequest.startTime | dateformat) : ' -' }}</td>
           <td [ngSwitch]="compOffRequest.durationType">
             <span *ngSwitchCase="1">First Half</span>
@@ -70,23 +81,56 @@
           </td>
           <td>{{ compOffRequest.requestedDate | dateformat }}</td>
           <td>{{ compOffRequest.status }}</td>
+          @if(selectedProducts.length == 0){
+          <td class="text-center">
+
+            @if(canApprove(compOffRequest)){
+            <div class="dropdown">
+              <a type="button" data-bs-toggle="dropdown">
+                <i class="bi bi-three-dots-vertical"></i>
+              </a>
+
+              <ul class="dropdown-menu custom-dropdown-menu">
+
+                <li (click)="approveCompOff(approval, compOffRequest)">
+                  <a class="dropdown-item">
+                    <i class="bi bi-check-circle me-2"></i>
+                    Approve
+                  </a>
+                </li>
+
+                <li (click)="rejectCompOff(rejectmodal, compOffRequest)">
+                  <a class="dropdown-item">
+                    <i class="bi bi-x-circle me-2"></i>
+                    Reject
+                  </a>
+                </li>
+
+              </ul>
+            </div>
+            }
+            @else{
+            -
+            }
+
+          </td>
+          }
         </tr>
       </ng-template>
       <ng-template pTemplate="emptymessage">
-        <div class="wrapper">
-          <tr>
-            <td colspan="5">
-              <app-no-data-found />
-            </td>
-          </tr>
-        </div>
+        <tr class="no-data-row">
+          <td colspan="7" class="no-data-cell">
+            <app-no-data-found></app-no-data-found>
+          </td>
+        </tr>
       </ng-template>
     </p-table>
-    }@else{
-    <app-data-loader-content />
-    }
   </div>
+  }@else{
+  <app-data-loader-content />
+  }
 </div>
+  </div>
 
 
 <!-- Approve popup -->

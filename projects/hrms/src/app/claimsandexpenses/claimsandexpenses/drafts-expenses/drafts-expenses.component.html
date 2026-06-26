@@ -260,7 +260,7 @@
                                         formControlName="item_Description" [maxlength]="250"
                                         (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)"
                                         placeholder="Please enter description " rows="1"></textarea>
-                                    <div class="textarea-count-text">{{ item.get("item_Description")?.value?.length || 0
+                                    <div class="textarea-count-text">₹ {{ item.get("item_Description")?.value?.length || 0
                                         }}/250</div>
                                 </div>
                             </div>

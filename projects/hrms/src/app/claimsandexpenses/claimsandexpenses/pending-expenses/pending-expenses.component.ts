@@ -1202,6 +1202,14 @@ isFinanceStage(exp: any): boolean {
     }
   }
 
+  onStatusVerifyRejectSelect(status: string) {
+  this.selectedLeaveStatus = status;
+
+  if (status === 'reject') {
+    this.verifyForm.get('comments')?.setValue('Rejected');
+  }
+}
+
   ngOnDestroy(): void {
     if (this.subscription) {
       this.subscription.unsubscribe()

@@ -15,12 +15,12 @@ import { HttpService } from '../../../services/http.service';
 import { IemployeeDetails } from '../../../Interfaces/letters-model';
 import { ConfirmationIconComponent } from "../../../icons/confirmation-icon/confirmation-icon.component";
 import { FormValidationsService } from '../../../services/form-validations.service';
-import { LettersheaderComponent } from "../../../shared/letters-shared-content/lettersheader/lettersheader.component";
 import { LetterFooterComponent } from "../../../shared/letters-shared-content/letter-footer/letter-footer.component";
+import { LettersheaderComponent } from "../../../shared/letters-shared-content/lettersheader/lettersheader.component";
 import { fetchLetterAssets, setupLetterPdfMake } from '../../../letters-builder-files/letter-pdf.utils';
 @Component({
   selector: 'app-apprisal-letter-acknowedgement',
-  imports: [CommonModule, ReactiveFormsModule, DateformatPipe, TranslateModule, NgbPopoverModule, ConfirmationIconComponent, LettersheaderComponent, LetterFooterComponent],
+  imports: [CommonModule, ReactiveFormsModule, DateformatPipe, TranslateModule, NgbPopoverModule, ConfirmationIconComponent, LetterFooterComponent, LettersheaderComponent],
   templateUrl: './apprisal-letter-acknowedgement.component.html',
   styleUrl: './apprisal-letter-acknowedgement.component.scss'
 })
@@ -510,8 +510,8 @@ export class ApprisalLetterAcknowedgementComponent {
   async postAppraisalLetterFormSubmit() {
     this.spinnerLoader = true;
     const data = this.appraisalData;
-    const isSoftCopy = !!data.Documenttype;
-    console.log(isSoftCopy);
+    const isSoftCopy = true;
+
     const [assets, pm] = await Promise.all([
       fetchLetterAssets(isSoftCopy),
       setupLetterPdfMake(),
@@ -560,7 +560,7 @@ export class ApprisalLetterAcknowedgementComponent {
       useVerdanaFont: true,
       useAutographyFont: true,
       employeeSignatureDate: new Date().toISOString(),
-      backgroundImageBase64: assets.backgroundImageBase64,
+       backgroundImageBase64: assets.backgroundImageBase64,
       headerLogoBase64: assets.headerLogoBase64,
     });
 

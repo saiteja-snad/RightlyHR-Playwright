@@ -79,17 +79,13 @@
 
 .salary-details-table {
     .mytable {
-
-        table,
-        th,
-        td {
+        table, th, td {
             border: 1px solid #474747;
             border-collapse: collapse;
             color: #000;
         }
 
-        th,
-        td {
+        th, td {
             padding: 0.5rem 0.625rem;
             text-align: center;
             color: #000;
@@ -100,13 +96,10 @@
             font-weight: bold;
         }
     }
-
 }
 
 .salary-details-table {
-
-    .mytable,
-    .secondtable {
+    .mytable,.secondtable {
         th {
             background: #f4f8ff !important;
         }

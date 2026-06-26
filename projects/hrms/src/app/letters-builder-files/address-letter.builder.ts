@@ -54,7 +54,7 @@ export function buildAddressLetterDoc(data: AddressLetterData): any {
     {
       text: 'TO WHOMSOEVER IT MAY CONCERN',
       font: 'VERDANABOLD',
-      fontSize: PX(12),
+      fontSize: PX(18),
       alignment: 'center',
       decoration: 'underline',
       margin: [0, 0, 0, 24],
@@ -88,7 +88,7 @@ export function buildAddressLetterDoc(data: AddressLetterData): any {
     pageMargins: [margins.left, margins.top, margins.right, margins.bottom],
     defaultStyle: {
       font: bodyFont,
-      fontSize: PX(13),
+      fontSize: PX(16),
       alignment: 'justify',
       color: '#000',
     },

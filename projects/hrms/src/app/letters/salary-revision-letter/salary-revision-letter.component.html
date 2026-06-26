@@ -141,10 +141,12 @@
                             <p class="mb-4">Management has truly recognized your potential for growth with
                                 the company and thus has given you a salary revision with great expectations. We would
                                 like you to take it as a challenge and prove your mettle.</p>
-                            <p class="mb-4">Keeping in view the above, Management has decided to revise your CTC to
-                                <b>Rs. {{ (appraisalData?.salary || 0) + (appraisalData?.variablePayAmount || 0) }}/-</b>
-                                w.e.f. This revision will be effective from
+                            <p class="mb-4">Keeping in view the above, Management has also decided to give
+                                you a revision of Rs. <b>{{incrementSalary}}/-</b> w.e.f.
                                 <u>{{employeeCompensationDetails.compeffectivedate | dateformat}}</u>.
+                                This will be in addition to your existing CTC, thereby increasing your CTC from Rs
+                                <b>{{previusSalary?.compensationamount || 0}}/-</b> to current CTC of Rs
+                                <b>{{appraisalData.salary}} /-</b>
                             </p>
 
                             <p class="mb-4">We are confident that you will put in your best efforts in

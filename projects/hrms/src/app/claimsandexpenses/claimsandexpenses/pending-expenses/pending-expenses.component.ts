@@ -78,6 +78,7 @@ export class PendingExpensesComponent implements OnInit, OnDestroy {
   verifyModalRef: NgbModalRef | null = null;
   expenseImageUrl: any;
   expenseViewURL: any;
+  userRoles: string[] = [];
 
 
   @ViewChild('expenseSummary') expenseSummary: any;
@@ -86,6 +87,9 @@ export class PendingExpensesComponent implements OnInit, OnDestroy {
   selectedYear: any;
   selectemp: any;
   ngOnInit(): void {
+    this.userRoles = JSON.parse(
+      localStorage.getItem('rightlyHrUserRoles') || '[]'
+    );
     this.SelectedyeartimeOffService.selectedYear$.subscribe(year => {
       if (year !== null) {
         this.selectedYear = year;
@@ -265,7 +269,7 @@ export class PendingExpensesComponent implements OnInit, OnDestroy {
   }
 
   comments(value: any, commentspopup: any) {
-     console.log(value);   
+    console.log(value);
     this.modalService.open(commentspopup, {
       centered: true,
       backdrop: 'static',
@@ -614,19 +618,19 @@ export class PendingExpensesComponent implements OnInit, OnDestroy {
     );
   }
 
-  isHRStage(exp: any): boolean {
-    return (
-      +exp?.pendingApprovalHeader?.currentapprovalStage === 2 &&
-      exp.canApprove
-    );
-  }
+isHRStage(exp: any): boolean {
+  return (
+    +exp.pendingApprovalHeader.currentapprovalStage === 2 &&
+    this.userRoles.includes(exp.pendingApprovalHeader.approver_Name)
+  );
+}
 
-  isFinanceStage(exp: any): boolean {
-    return (
-      +exp?.pendingApprovalHeader?.currentapprovalStage === 3 &&
-      exp.canApprove
-    );
-  }
+isFinanceStage(exp: any): boolean {
+  return (
+    +exp.pendingApprovalHeader.currentapprovalStage === 3 &&
+    this.userRoles.includes(exp.pendingApprovalHeader.approver_Name)
+  );
+}
 
   isFinancePaymentStage(exp: any): boolean {
     return exp.canApprove &&

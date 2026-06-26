@@ -24,8 +24,17 @@
     }
     @if(!dataLoad){
     <div class="custom-p-multi-select-table">
-      <p-table [value]="approvedRemotes" [(selection)]="selectedProducts" (selectionChange)="selectCheck($event)"
-        dataKey="id">
+      @if(showMultiSelectAndSearch()){
+      <div class="input-group custom-search mb-3">
+        <span class="input-group-text custom-input-group-search">
+          <i class="bi bi-search"></i>
+        </span>
+
+        <input type="search" [(ngModel)]="searchText" class="form-control custom-search-input" placeholder="Search">
+      </div>
+      }
+      <p-table #remoteWaitingTable [value]="approvedRemotes" [(selection)]="selectedProducts" (selectionChange)="selectCheck($event)"
+        dataKey="id" [customSort]="true" (sortFunction)="customSort($event)">
         <ng-template pTemplate="header">
           <tr>
 
@@ -35,13 +44,13 @@
             </th>
             }
 
-            <th>{{'Worked Date' | translate}}</th>
-            <th>{{'Availed' | translate}}</th>
-            <th class="text-center">{{'Reason' | translate}}</th>
-            <th>{{'Applied Date '|translate}}</th>
-            <th>{{'Status'|translate}}</th>
-            @if(selectedProducts.length == 0 && approvedRemotes.length > 0 && canApprove(approvedRemotes[0])){
-            <th class="text-center" style="width:60px">Action</th>
+            <th pSortableColumn="startTime">{{'Worked Date' | translate}} <p-sortIcon field="startTime" /></th>
+            <th pSortableColumn="durationType">{{'Availed' | translate}} <p-sortIcon field="durationType" /></th>
+            <th pSortableColumn="requestedComments" class="text-center">{{'Reason' | translate}} <p-sortIcon field="requestedComments" /></th>
+            <th pSortableColumn="requestedDate">{{'Applied Date '|translate}} <p-sortIcon field="requestedDate" /></th>
+            <th pSortableColumn="status">{{'Status'|translate}} <p-sortIcon field="status" /></th>
+            @if(selectedProducts.length == 0 && !permissionForLoggedInUser){
+            <th class="text-center">Action</th>
             }
 
           </tr>
@@ -112,11 +121,13 @@
 
 
         <ng-template pTemplate="emptymessage">
-          <tr class="no-data-row">
-            <td colspan="10" class="no-data-cell">
-              <app-no-data-found></app-no-data-found>
-            </td>
-          </tr>
+          <div class="wrapper">
+            <tr>
+              <td colspan="11">
+                <app-no-data-found />
+              </td>
+            </tr>
+          </div>
         </ng-template>
 
 

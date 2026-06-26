@@ -20,6 +20,7 @@ import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.
 import { FormValidationsService } from '../../../services/form-validations.service';
 import { DateformatPipe } from '../../../pipes/dateformat.pipe';
 import { TableModule } from 'primeng/table';
+import { Table } from 'primeng/table';
 
 @Component({
   selector: 'app-remote-waiting-for-approval',
@@ -37,6 +38,7 @@ import { TableModule } from 'primeng/table';
   styleUrl: './remote-waiting-for-approval.component.scss'
 })
 export class RemoteWaitingForApprovalComponent implements OnInit, OnDestroy {
+  @ViewChild('remoteWaitingTable') remoteWaitingTable!: Table;
   totalRecords = 100;
   first: any = 0;
   rows: any = 10;
@@ -46,6 +48,11 @@ export class RemoteWaitingForApprovalComponent implements OnInit, OnDestroy {
   empinfo = {} as IJob;
   dataLoad = false;
   destroy$: Subject<boolean> = new Subject<boolean>();
+  
+  // Sorting properties
+  originalApprovedRemotes = [] as ICompOff[];
+  currentSortField: string = '';
+  currentSortOrder: number = 0; // 0 = no sort, 1 = asc, -1 = desc
 
   options = [
     { label: 10, value: 10 },
@@ -181,6 +188,7 @@ export class RemoteWaitingForApprovalComponent implements OnInit, OnDestroy {
             (element: { status: string }) =>
               element.status === 'Waiting for Approval'
           );
+          this.originalApprovedRemotes = [...this.approvedRemotes]; // Store original data
           console.log('approvedRemotes:', this.approvedRemotes);
           console.log('approvedRemotes length:', this.approvedRemotes.length);
           this.approvedRemotesCount = this.approvedRemotes.length;
@@ -189,6 +197,7 @@ export class RemoteWaitingForApprovalComponent implements OnInit, OnDestroy {
           this.dataLoad = false;
           console.error('Error fetching data:', error);
           this.approvedRemotes = []; // Set to empty array on error
+          this.originalApprovedRemotes = [];
         },
       });
   }
@@ -214,11 +223,13 @@ export class RemoteWaitingForApprovalComponent implements OnInit, OnDestroy {
           this.approvedRemotes = this.remoteLogin.filter(
             (element: { status: string }) => element.status === 'Waiting for Approval'
           );
+          this.originalApprovedRemotes = [...this.approvedRemotes]; // Store original data
           this.approvedRemotesCount = this.approvedRemotes.length;
         },
         error: (error) => {
           console.error('Error fetching data:', error);
           this.approvedRemotes = []; // Set to empty array on error
+          this.originalApprovedRemotes = [];
         },
       });
   }
@@ -447,6 +458,79 @@ export class RemoteWaitingForApprovalComponent implements OnInit, OnDestroy {
     return this.approvedRemotes.some(item =>
       this.canApprove(item)
     );
+  }
+
+  customSort(event: any): void {
+    const field = event.field;
+    
+    // Track current sort state for the clicked field
+    if (this.currentSortField === field) {
+      // Same field clicked - cycle through: asc (1) -> desc (-1) -> reset (0)
+      if (this.currentSortOrder === 1) {
+        // Currently ascending, change to descending
+        this.currentSortOrder = -1;
+        event.order = -1;
+      } else if (this.currentSortOrder === -1) {
+        // Currently descending, reset to original order
+        this.approvedRemotes = [...this.originalApprovedRemotes];
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        if (this.remoteWaitingTable) {
+          this.remoteWaitingTable.reset();
+        }
+        return;
+      } else {
+        // Currently reset, change to ascending
+        this.currentSortOrder = 1;
+        event.order = 1;
+      }
+    } else {
+      // New field clicked - start with ascending
+      this.currentSortField = field;
+      this.currentSortOrder = 1;
+      event.order = 1;
+    }
+
+    event.data.sort((a: any, b: any) => {
+      let val1: any;
+      let val2: any;
+
+      // Handle different field types
+      switch (field) {
+        case 'startTime':
+        case 'requestedDate':
+          val1 = new Date(a[field]).getTime();
+          val2 = new Date(b[field]).getTime();
+          return event.order * (val1 - val2);
+        
+        case 'durationType':
+          // Map durationType numbers to sortable values for proper sorting
+          const durationMap: { [key: number]: number } = {
+            1: 1, // First Half
+            2: 3, // Full Day (should come last)
+            3: 2  // Second Half
+          };
+          val1 = durationMap[a[field]] || 0;
+          val2 = durationMap[b[field]] || 0;
+          return event.order * (val1 - val2);
+        
+        case 'status':
+        case 'requestedComments':
+        default:
+          val1 = a[field];
+          val2 = b[field];
+          break;
+      }
+
+      // Handle string sorting for non-date/duration fields
+      if (field !== 'startTime' && field !== 'requestedDate' && field !== 'durationType') {
+        val1 = String(val1 ?? '').trim();
+        val2 = String(val2 ?? '').trim();
+        return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+      }
+
+      return 0; // Fallback
+    });
   }
 
   ngOnDestroy(): void {

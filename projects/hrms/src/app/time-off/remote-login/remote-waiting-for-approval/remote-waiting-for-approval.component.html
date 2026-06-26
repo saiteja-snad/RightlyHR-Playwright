@@ -1,7 +1,7 @@
 <div class="custom-main-component-container">
   <div class="custom-table-content ">
 
-    @if (selectedProducts.length > 0 && !permissionForLoggedInUser) {
+    @if (selectedProducts.length > 0 && canApprove(selectedProducts[0])) {
 
     <div class="component-header-content">
 
@@ -24,32 +24,24 @@
     }
     @if(!dataLoad){
     <div class="custom-p-multi-select-table">
-      @if(showMultiSelectAndSearch()){
-      <div class="input-group custom-search mb-3">
-        <span class="input-group-text custom-input-group-search">
-          <i class="bi bi-search"></i>
-        </span>
-
-        <input type="search" [(ngModel)]="searchText" class="form-control custom-search-input" placeholder="Search">
-      </div>
-      }
-      <p-table #remoteWaitingTable [value]="approvedRemotes" [(selection)]="selectedProducts" (selectionChange)="selectCheck($event)"
-        dataKey="id" [customSort]="true" (sortFunction)="customSort($event)">
+      <p-table #remoteWaitingTable [value]="approvedRemotes" [(selection)]="selectedProducts"
+        (selectionChange)="selectCheck($event)" dataKey="id" [customSort]="true" (sortFunction)="customSort($event)">
         <ng-template pTemplate="header">
           <tr>
 
-            @if(showMultiSelectAndSearch()){
             <th style="width:4rem">
+              @if(showMultiSelectAndSearch()){
               <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+              }
             </th>
-            }
 
             <th pSortableColumn="startTime">{{'Worked Date' | translate}} <p-sortIcon field="startTime" /></th>
             <th pSortableColumn="durationType">{{'Availed' | translate}} <p-sortIcon field="durationType" /></th>
-            <th pSortableColumn="requestedComments" class="text-center">{{'Reason' | translate}} <p-sortIcon field="requestedComments" /></th>
+            <th pSortableColumn="requestedComments" class="text-center">{{'Reason' | translate}} <p-sortIcon
+                field="requestedComments" /></th>
             <th pSortableColumn="requestedDate">{{'Applied Date '|translate}} <p-sortIcon field="requestedDate" /></th>
             <th pSortableColumn="status">{{'Status'|translate}} <p-sortIcon field="status" /></th>
-            @if(selectedProducts.length == 0 && !permissionForLoggedInUser){
+            @if(selectedProducts.length == 0){
             <th class="text-center">Action</th>
             }
 
@@ -58,11 +50,11 @@
 
         <ng-template pTemplate="body" let-remoteRequest>
           <tr>
-            @if(canApprove(remoteRequest)){
-            <td>
+            <td style="width:4rem">
+              @if(canApprove(remoteRequest)){
               <p-tableCheckbox [value]="remoteRequest"></p-tableCheckbox>
+              }
             </td>
-            }
             <td>{{ remoteRequest.startTime ? (remoteRequest.startTime | dateformat) : ' -' }}</td>
             <td [ngSwitch]="remoteRequest.durationType">
               <span *ngSwitchCase="1">First Half</span>
@@ -87,12 +79,10 @@
               {{ remoteRequest.status }}
             </td>
 
-            @if(selectedProducts.length == 0 &&
-            !permissionForLoggedInUser &&
-            canApprove(remoteRequest))
-            {
+            @if(selectedProducts.length == 0){
             <td class="text-center">
 
+              @if(canApprove(remoteRequest)){
               <div class="dropdown">
                 <a type="button" data-bs-toggle="dropdown">
                   <i class="bi bi-three-dots-vertical"></i>
@@ -113,8 +103,11 @@
                     </a>
                   </li>
                 </ul>
-
               </div>
+
+              } @else {
+              -
+              }
 
             </td>
             }

@@ -1,7 +1,7 @@
 <div class="custom-main-component-container">
   <div class="custom-table-content">
 
-    @if (selectedProducts.length > 0) {
+    @if (selectedProducts.length > 0 && !permissionForLoggedInUser) {
     <div class="component-header-content">
 
       <div class="component-sub-header">
@@ -33,73 +33,134 @@
       </div>
     </div>
     }
-    @if(!permissionForLoggedInUser){
-    <div class="input-group custom-search mb-3">
-      <span class="input-group-text custom-input-group-search">
-        <i class="bi bi-search"></i>
-      </span>
 
-      <input type="search" [(ngModel)]="searchText" class="form-control custom-search-input" placeholder="Search">
-    </div>
-    }
     @if(!dataload){
-    <p-table #permissionsWaitingTable [value]="waitingForApprovalPerimisions" [customSort]="true" (sortFunction)="customSort($event)" [sortMode]="'single'">
-      <ng-template pTemplate="header">
-        <tr>
-          <th pSortableColumn="createdDate">{{'Requested Date' | translate}} <p-sortIcon field="createdDate"></p-sortIcon></th>
-          <th pSortableColumn="requestedDate">{{'Permission Date'| translate}} <p-sortIcon field="requestedDate"></p-sortIcon></th>
-          <th pSortableColumn="duration">Duration(In<span class="text-lowercase"> hrs)</span> <p-sortIcon field="duration"></p-sortIcon></th> 
-          <th class="text-center" pSortableColumn="notes">{{'Reason'| translate}} <p-sortIcon field="notes"></p-sortIcon></th>
-          <th pSortableColumn="type">{{'Permission Type'| translate}} <p-sortIcon field="type"></p-sortIcon></th>
-          <th pSortableColumn="status">{{'Status'| translate}} <p-sortIcon field="status"></p-sortIcon></th>
-          <th class="text-center">{{'Action'| translate}}</th>
-        </tr>
-      </ng-template>
-      <ng-template pTemplate="body" let-permissionRequest>
-        <tr>
-          <td>{{permissionRequest.createdDate | dateformat}}</td>
-          <td>{{permissionRequest.requestedDate | dateformat}}</td>
-          <td>{{(+permissionRequest.duration) * 60 * 60 * 1000 | date:'HH:mm':'UTC'}}</td>
-          <td class="text-center">
-            <div>
-              <a type="button" [ngbPopover]="reason">
-                <app-info-icon />
-              </a>
-              <ng-template #reason>
-                <p class="mb-0">{{permissionRequest.notes}}</p>
-              </ng-template>
-            </div>
-          </td>
-          <td>{{permissionRequest.type}}</td>
-          <td>{{permissionRequest.status}}</td>
-          <td class="text-center">
-            @if(permissionForLoggedInUser && isBeforeToday(permissionRequest.requestedDate)){
-            <div class="dropdown">
-              <a type="button" data-bs-toggle="dropdown">
-                <i class="bi bi-three-dots-vertical"></i>
-              </a>
-              <ul class="dropdown-menu custom-dropdown-menu">
-                <li (click)="onClick(permissionRequest,cancelModal)">
-                  <a class="dropdown-item">Cancel Permission</a>
-                </li>
-              </ul>
-            </div>
-            }@else {
-              -
-            }
-          </td>
-        </tr>
-      </ng-template>
-      <ng-template pTemplate="emptymessage">
-        <div class="wrapper">
+    <div class="custom-p-multi-select-table">
+      <p-table #permissionsWaitingTable [value]="waitingForApprovalPerimisions" [(selection)]="selectedProducts"
+        (selectionChange)="selectCheck($event)" dataKey="id" [customSort]="true" (sortFunction)="customSort($event)"
+        [sortMode]="'single'">
+        <ng-template pTemplate="header">
           <tr>
-            <td colspan="11">
-              <app-no-data-found />
-            </td>
+            <th style="width:4rem">
+              @if(showMultiSelectAndSearch()){
+              <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+              }
+            </th>
+
+
+            <th pSortableColumn="createdDate">{{'Requested Date' | translate}} <p-sortIcon
+                field="createdDate"></p-sortIcon></th>
+            <th pSortableColumn="requestedDate">{{'Permission Date'| translate}} <p-sortIcon
+                field="requestedDate"></p-sortIcon></th>
+            <th pSortableColumn="duration">Duration(In<span class="text-lowercase"> hrs)</span> <p-sortIcon
+                field="duration"></p-sortIcon></th>
+            <th class="text-center" pSortableColumn="notes">{{'Reason'| translate}} <p-sortIcon
+                field="notes"></p-sortIcon></th>
+            <th pSortableColumn="type">{{'Permission Type'| translate}} <p-sortIcon field="type"></p-sortIcon></th>
+            <th pSortableColumn="status">{{'Status'| translate}} <p-sortIcon field="status"></p-sortIcon></th>
+            @if(selectedProducts.length == 0){
+            <th class="text-center">
+              {{'Action'| translate}}
+            </th>
+            }
           </tr>
-        </div>
-      </ng-template>
-    </p-table>
+        </ng-template>
+        <ng-template pTemplate="body" let-permissionRequest>
+          <tr>
+            <td style="width:4rem">
+              @if(canApprove(permissionRequest)){
+              <p-tableCheckbox [value]="permissionRequest"></p-tableCheckbox>
+              }
+            </td>
+            <td>{{permissionRequest.createdDate | dateformat}}</td>
+            <td>{{permissionRequest.requestedDate | dateformat}}</td>
+            <td>{{(+permissionRequest.duration) * 60 * 60 * 1000 | date:'HH:mm':'UTC'}}</td>
+            <td class="text-center">
+              <div>
+                <a type="button" [ngbPopover]="reason">
+                  <app-info-icon />
+                </a>
+                <ng-template #reason>
+                  <p class="mb-0">{{permissionRequest.notes}}</p>
+                </ng-template>
+              </div>
+            </td>
+            <td>{{permissionRequest.type}}</td>
+            <td>{{permissionRequest.status}}</td>
+
+            @if(selectedProducts.length == 0){
+            <td class="text-center">
+
+              <!-- Employee -->
+              @if(permissionForLoggedInUser &&
+              isBeforeToday(permissionRequest.requestedDate)){
+
+              <div class="dropdown">
+                <a type="button" data-bs-toggle="dropdown">
+                  <i class="bi bi-three-dots-vertical"></i>
+                </a>
+
+                <ul class="dropdown-menu custom-dropdown-menu">
+                  <li (click)="onClick(permissionRequest,cancelModal)">
+                    <a class="dropdown-item">
+                      <i class="bi bi-x-circle me-2"></i>Cancel Permission
+                    </a>
+                  </li>
+                </ul>
+              </div>
+
+
+              }
+
+              <!-- Current Approver -->
+              @else if(canApprove(permissionRequest)){
+
+              <div class="dropdown">
+                <a type="button" data-bs-toggle="dropdown">
+                  <i class="bi bi-three-dots-vertical"></i>
+                </a>
+
+                <ul class="dropdown-menu custom-dropdown-menu">
+
+                  <li (click)="approvePermission(approval, permissionRequest)">
+                    <a class="dropdown-item">
+                      <i class="bi bi-check-circle me-2"></i>
+                      Approve
+                    </a>
+                  </li>
+
+                  <li (click)="rejectPermission(rejectmodal, permissionRequest)">
+                    <a class="dropdown-item">
+                      <i class="bi bi-x-circle me-2"></i>
+                      Reject
+                    </a>
+                  </li>
+
+                </ul>
+              </div>
+
+              }
+
+              @else{
+              -
+              }
+
+            </td>
+            }
+
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <div class="wrapper">
+            <tr>
+              <td colspan="11">
+                <app-no-data-found />
+              </td>
+            </tr>
+          </div>
+        </ng-template>
+      </p-table>
+    </div>
     }@else{
     <app-data-loader-content />
     }

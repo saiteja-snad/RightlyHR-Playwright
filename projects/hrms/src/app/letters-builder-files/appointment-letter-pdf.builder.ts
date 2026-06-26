@@ -390,7 +390,7 @@ export function buildAppointmentLetterDoc(data: AppointmentLetterData): any {
          pageMargins: [margins.left, margins.top, margins.right, margins.bottom],
          defaultStyle: {
            font: bodyFont,
-           fontSize: PX(13),
+           fontSize: PX(16),
            alignment: 'justify',
            color: '#000',
          },

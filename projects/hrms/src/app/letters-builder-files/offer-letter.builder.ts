@@ -414,7 +414,7 @@ export function buildOfferLetterDoc(data: OfferLetterData): any {
 
 
  const isSoftCopy = !!data.backgroundImageBase64;
- 
+
   const margins = isSoftCopy ? LETTER_MARGINS.softCopy : LETTER_MARGINS.hardCopy;
 
   const docDef: any = {
@@ -422,7 +422,7 @@ export function buildOfferLetterDoc(data: OfferLetterData): any {
     pageMargins: [margins.left, margins.top, margins.right, margins.bottom],
     defaultStyle: {
       font: bodyFont,
-      fontSize: PX(13),
+      fontSize: PX(16),
       alignment: 'justify',
       color: '#000',
     },

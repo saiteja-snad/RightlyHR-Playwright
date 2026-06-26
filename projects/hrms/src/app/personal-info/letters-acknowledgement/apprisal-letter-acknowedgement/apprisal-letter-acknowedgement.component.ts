@@ -17,6 +17,7 @@ import { ConfirmationIconComponent } from "../../../icons/confirmation-icon/conf
 import { FormValidationsService } from '../../../services/form-validations.service';
 import { LetterFooterComponent } from "../../../shared/letters-shared-content/letter-footer/letter-footer.component";
 import { LettersheaderComponent } from "../../../shared/letters-shared-content/lettersheader/lettersheader.component";
+import { fetchLetterAssets, setupLetterPdfMake } from '../../../letters-builder-files/letter-pdf.utils';
 @Component({
   selector: 'app-apprisal-letter-acknowedgement',
   imports: [CommonModule, ReactiveFormsModule, DateformatPipe, TranslateModule, NgbPopoverModule, ConfirmationIconComponent, LetterFooterComponent, LettersheaderComponent],
@@ -58,7 +59,7 @@ export class ApprisalLetterAcknowedgementComponent {
   jobErrorMessage: string = '';
   latestjobRole: any;
 
-  constructor(private http: HttpService, private confirmationPopup: OpenModalService, private modalService: NgbModal, 
+  constructor(private http: HttpService, private confirmationPopup: OpenModalService, private modalService: NgbModal,
     private fb: FormBuilder, public formsValidation: FormValidationsService,) { }
 
   ngOnInit(): void {
@@ -509,21 +510,12 @@ export class ApprisalLetterAcknowedgementComponent {
   async postAppraisalLetterFormSubmit() {
     this.spinnerLoader = true;
     const data = this.appraisalData;
-    const [backgroundImageBase64, verdanaItalic, verdanaSemiBold] = await Promise.all([
-      this.fetchImageAsBase64('/images/snad-new-letter-bg.png'),
-      this.getFileBase64('/fonts/Verdana Italic.ttf'),
-      this.getFileBase64('/fonts/verdana-pro-semi-bold.ttf'),
+    const isSoftCopy = true;
+
+    const [assets, pm] = await Promise.all([
+      fetchLetterAssets(isSoftCopy),
+      setupLetterPdfMake(),
     ]);
-    const pm = (pdfMake as any).default ?? pdfMake;
-    const mergedVfs: Record<string, string> = { ...customVfs };
-    if (verdanaItalic)   mergedVfs['VerdanaItalic.ttf']   = verdanaItalic;
-    if (verdanaSemiBold) mergedVfs['VerdanaSemiBold.ttf'] = verdanaSemiBold;
-    pm.addVirtualFileSystem(mergedVfs);
-    pm.setFonts({
-      VERDANA: { normal: 'VerdanaNow.ttf', bold: 'VerdanaNowBold.ttf', italics: verdanaItalic ? 'VerdanaItalic.ttf' : 'VerdanaNow.ttf', bolditalics: 'VerdanaNowBold.ttf' },
-      VERDANABOLD: { normal: verdanaSemiBold ? 'VerdanaSemiBold.ttf' : 'VerdanaNowBold.ttf', bold: verdanaSemiBold ? 'VerdanaSemiBold.ttf' : 'VerdanaNowBold.ttf', italics: verdanaSemiBold ? 'VerdanaSemiBold.ttf' : 'VerdanaNowBold.ttf', bolditalics: verdanaSemiBold ? 'VerdanaSemiBold.ttf' : 'VerdanaNowBold.ttf' },
-      Autography: { normal: 'Autography.otf', bold: 'Autography.otf', italics: 'Autography.otf', bolditalics: 'Autography.otf' },
-    });
 
     const docDef = buildAppraisalLetterDoc({
       firstName: data.firstName,
@@ -568,7 +560,8 @@ export class ApprisalLetterAcknowedgementComponent {
       useVerdanaFont: true,
       useAutographyFont: true,
       employeeSignatureDate: new Date().toISOString(),
-      backgroundImageBase64,
+       backgroundImageBase64: assets.backgroundImageBase64,
+      headerLogoBase64: assets.headerLogoBase64,
     });
 
     const blob: Blob = await pm.createPdf(docDef).getBlob();

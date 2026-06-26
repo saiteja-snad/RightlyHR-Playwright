@@ -35,7 +35,7 @@
                                                <app-download-icon /></a>
                                         </td>
                                       <td >{{item.status? item.status:'-'}}</td>
-                                        @if(canAccess('view','letteracknowledge')){
+                                        <!-- @if(canAccess('view','letteracknowledge')){ -->
                                         <td>
                                             <ng-container
                                                 *ngIf="(item.isAcknowledgmentRequired &&item?.status?.toLowerCase()==='waiting for review'&& i===0) else acknowledgementNotApplicable">
@@ -89,7 +89,7 @@
                                                 <span *ngIf="item?.status?.toLowerCase() === 'waiting for review'">NA</span>
                                             </ng-template>
                                         </td>
-                                        }
+                                        <!-- } -->
 
 
 

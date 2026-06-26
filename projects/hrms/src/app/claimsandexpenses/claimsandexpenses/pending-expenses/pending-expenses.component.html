@@ -665,6 +665,12 @@
         </div>
         <div class="textarea-count-text">{{ verifyForm.get('comments')?.value?.length || 0 }}/250
         </div>
+        <div class="d-flex align-items-center flex-wrap gap-2 mb-3">
+          <button type="button" class="custom-btn btn-secondary chip-btn"
+            [class.active]="selectedLeaveStatus === 'reject'" (click)="onStatusRejectSelect('reject')">
+            Rejected
+          </button>
+        </div>
       </div>
       <div class="custom-modal-footer">
         <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss();">{{'Cancel'|translate}}</button>
@@ -707,8 +713,16 @@
 
         <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss();">{{'Cancel'|
           translate}}</button>
-        <button type="button" class="custom-btn btn-primary" (click)="handleClarification(approveForm)">
-          Submit
+        <button type="button" class="custom-btn btn-primary" [disabled]="approveForm.invalid || isloading"
+          (click)="handleClarification(approveForm)">
+          @if(isloading){
+          <div class="button-loader-content">
+            <span class="spinner-border button-spinner text-light" role="status"></span>
+            <span>Loading...</span>
+          </div>
+          } @else {
+          <span>Submit</span>
+          }
         </button>
       </div>
     </form>

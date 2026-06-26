@@ -8,9 +8,8 @@
 
   <div class="custom-table-content">
     @if(!loading){
-    <p-table #expensesTable [value]="getFilteredAndSortedExpenses()" 
-             [customSort]="true" (sortFunction)="customSort($event)"
-             styleClass="p-datatable-gridlines" responsiveLayout="scroll">
+    <p-table #expensesTable [value]="getFilteredAndSortedExpenses()" [customSort]="true"
+      (sortFunction)="customSort($event)" styleClass="p-datatable-gridlines" responsiveLayout="scroll">
       <ng-template pTemplate="header">
         <tr>
           <th pSortableColumn="expenseTitle">
@@ -42,7 +41,8 @@
           <td>{{ exp.expenses_Title }}</td>
           <td class="text-nowrap">{{ exp?.expenseitem?.[0]?.expense_Date | dateformat }}</td>
           <td class="text-nowrap">{{ exp?.applied_date | dateformat }}</td>
-          <td class="text-nowrap"><span class="me-1" *ngIf="exp.totalExpenseAmount">₹</span> {{ exp.totalExpenseAmount }}</td>
+          <td class="text-nowrap"><span class="me-1" *ngIf="exp.totalExpenseAmount">₹</span> {{ exp.totalExpenseAmount
+            }}</td>
           <td><span class="me-2 status-colour">● {{ exp.status }}</span></td>
           <td class="text-center">
             <app-info-icon *ngIf="exp?.expenseApproverComments?.length>0; else na"
@@ -118,25 +118,26 @@
               <td>{{ item?.expenseType }}</td>
               <td>{{ item?.item_Name }}</td>
               <td>{{ item?.expense_Date | dateformat }}</td>
-              <td>{{ item?.expense_Amount | number: '1.2-2' }}</td>
+              <td>₹ {{ item?.expense_Amount | number: '1.2-2' }}</td>
               <td>{{ item?.status }}</td>
               <td class="text-center">
-            <div *ngIf="item.meta; else noDescription">
-              <app-info-icon class="cursor" ngbPopover="{{ item?.meta?.addedComments }}" container="body">
-              </app-info-icon>
-            </div>
-            <ng-template #noDescription>NA</ng-template>
-          </td>
+                <div *ngIf="item.meta; else noDescription">
+                  <app-info-icon class="cursor" ngbPopover="{{ item?.meta?.addedComments }}" container="body">
+                  </app-info-icon>
+                </div>
+                <ng-template #noDescription>NA</ng-template>
+              </td>
               <td>{{ item?.receipt_Number }}</td>
               <td class="text-center">
-                <div class="d-flex gap-2">
-                  <a type="button" class="me-2 download-text text-nowrap"
-                    (click)="onSelectDownload(item?.attachment_url)">
-                    <i class="bi bi-download me-2"></i>{{'Download' | translate}}
+                <div class="d-flex align-items-center justify-content-center gap-3 flex-nowrap">
+                  <a type="button" class="download-text text-nowrap" (click)="onSelectDownload(item?.attachment_url)">
+                    <i class="bi bi-download me-2"></i>{{ 'Download' | translate }}
                   </a>
-                  <a type="button" class="download-text text-nowrap" *ngIf="isImageFile(item?.attachment_url)"
-                    (click)="onViewAttachement(item?.attachment_url)">
-                      <app-document-view-icon />View
+
+                  <a type="button" class="download-text text-nowrap d-inline-flex align-items-center gap-2"
+                    *ngIf="isImageFile(item?.attachment_url)" (click)="onViewAttachement(item?.attachment_url)">
+                    <app-document-view-icon></app-document-view-icon>
+                    <span>{{ 'View' | translate }}</span>
                   </a>
                 </div>
               </td>
@@ -144,7 +145,7 @@
           </tbody>
         </table>
         <div class="text-center mt-3">
-          <b>{{"Total Amount" | translate}} : {{expenseheaderiteams?.expense_Amount | number: '1.2-2'}}</b>
+          <b>{{"Total Amount" | translate}} : ₹ {{expenseheaderiteams?.expense_Amount | number: '1.2-2'}}</b>
         </div>
       </div>
     </div>

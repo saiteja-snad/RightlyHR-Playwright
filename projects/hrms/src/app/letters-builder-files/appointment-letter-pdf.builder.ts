@@ -63,7 +63,7 @@ export function buildAppointmentLetterDoc(data: AppointmentLetterData): any {
 
   // ── PAGE 1: APPOINTMENT LETTER header → section 2c ─────────────────
   const page1: any[] = [
-    { text: 'APPOINTMENT LETTER', fontSize: PX(16), font: 'VERDANABOLD', alignment: 'center', margin: [0, 0, 0, 16] },
+    { text: 'Appointment Letter', fontSize: PX(16), font: 'VERDANABOLD', alignment: 'center', margin: [0, 0, 0, 16] },
     { text: `Date: ${apptDate}`, alignment: 'right', margin: [0, 0, 0, 8], font: 'VERDANA' },
     p([{ text: `Dear ${employeeFullname},`, font: 'VERDANABOLD' }]),
     ...(hasAddress ? [p('Address:'), p(addressText, 4)] : []),

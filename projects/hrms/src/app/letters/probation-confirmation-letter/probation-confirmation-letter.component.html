@@ -11,7 +11,7 @@
                     <div class="custom-p-select-content">
                         <p-select [options]="probationemp" optionLabel="fullName" [filter]="true" showClear="true"
                             filterBy="fullName" placeholder="Please select employee" formControlName="employeeId"
-                            resetFilterOnHide="true" (onChange)="onClickEmployee($event)" class="custom-select w-100">
+                            resetFilterOnHide="true" (onChange)="onClickEmployee($event)" class="custom-select w-100" filterPlaceholder="Search employee">
                         </p-select>
                     </div>
                     <div *ngIf="probationConfirmationForm.get('employeeId')?.invalid && probationConfirmationForm.get('employeeId')?.touched"
@@ -76,7 +76,7 @@
                     <div class="custom-p-select-content">
                         <p-select [options]="authorityDetails" optionLabel="fullName" [filter]="true"
                             filterBy="fullName" placeholder="Please select signature authority name"
-                            formControlName="authorityid" (onChange)="pathValuesFuction()" class="custom-select w-100"
+                            formControlName="authorityid" (onChange)="pathValuesFuction()" class="custom-select w-100" filterPlaceholder="Select signature authority name"
                             resetFilterOnHide="true">
                         </p-select>
                     </div>

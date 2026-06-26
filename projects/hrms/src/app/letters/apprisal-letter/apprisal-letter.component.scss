@@ -1,96 +1,96 @@
-// * {
+* {
 
-//     font-family: 'VERDANA', sans-serif !important;
-// }
-
-
-
-// .letter-signature {
-//     font-size: var(--fontsize32) !important;
-//     font-family: "autographsignatureFont" !important;
-// }
-
-// .employee-field {
-//     display: inline-block;
-//     border-bottom: 1px solid #000;
-//     width: 210px;
-// }
-
-// .employee-signature {
-//     display: inline-block;
-//     border-bottom: 1px solid #000;
-//     width: 185px;
-// }
-
-// .employee-date {
-//     display: inline-block;
-//     border-bottom: 1px solid #000;
-//     width: 300px;
-// }
-
-// input:focus {
-//     outline: none !important;
-//     box-shadow: none !important;
-//     border: 1px solid #DEE8F3 !important;
-//     background-color: #F8FBFF !important;
-// }
-
-// .disabled {
-//     pointer-events: none;
-//     opacity: 0.5;
-// }
+    font-family: 'VERDANA', sans-serif !important;
+}
 
 
 
-// .salary-details-table {
-//     .mytable {
+.letter-signature {
+    font-size: var(--fontsize32) !important;
+    font-family: "autographsignatureFont" !important;
+}
 
-//         table,
-//         th,
-//         td {
-//             border: 1px solid #474747;
-//             border-collapse: collapse;
-//             color: #000;
-//         }
+.employee-field {
+    display: inline-block;
+    border-bottom: 1px solid #000;
+    width: 210px;
+}
 
-//         th,
-//         td {
-//             padding: 0.5rem 0.625rem;
-//             text-align: center;
-//             color: #000;
-//             font-size: var(--fontsize16) !important;
-//         }
+.employee-signature {
+    display: inline-block;
+    border-bottom: 1px solid #000;
+    width: 185px;
+}
 
-//         th {
-//             font-weight: bold;
-//         }
-//     }
+.employee-date {
+    display: inline-block;
+    border-bottom: 1px solid #000;
+    width: 300px;
+}
 
-// }
+input:focus {
+    outline: none !important;
+    box-shadow: none !important;
+    border: 1px solid #DEE8F3 !important;
+    background-color: #F8FBFF !important;
+}
 
-// .salary-details-table {
+.disabled {
+    pointer-events: none;
+    opacity: 0.5;
+}
 
-//     .mytable,
-//     .secondtable {
-//         th {
-//             background: #e7f0fd;
-//         }
-//     }
-// }
 
-// .secondtable tr:nth-child(3) td:nth-child(3),
-// .secondtable tr:nth-child(3) td:nth-child(2) {
-//     background: #fce4d6;
-// }
 
-// .mytable tr:nth-child(4),
-// .mytable tr:nth-child(10) {
-//     background: #fff2cc;
-// }
+.salary-details-table {
+    .mytable {
 
-// .mytable tr:nth-child(9) {
-//     background: #fff2cc;
-// }
+        table,
+        th,
+        td {
+            border: 1px solid #474747;
+            border-collapse: collapse;
+            color: #000;
+        }
+
+        th,
+        td {
+            padding: 0.5rem 0.625rem;
+            text-align: center;
+            color: #000;
+            font-size: var(--fontsize14) !important;
+        }
+
+        th {
+            font-weight: bold;
+        }
+    }
+
+}
+
+.salary-details-table {
+
+    .mytable,
+    .secondtable {
+        th {
+            background: #e7f0fd;
+        }
+    }
+}
+
+.secondtable tr:nth-child(3) td:nth-child(3),
+.secondtable tr:nth-child(3) td:nth-child(2) {
+    background: #fce4d6;
+}
+
+.mytable tr:nth-child(4),
+.mytable tr:nth-child(10) {
+    background: #fff2cc;
+}
+
+.mytable tr:nth-child(9) {
+    background: #fff2cc;
+}
 
 // .soft-copy-letter {
 //     background-image: url('/images/snad-new-letter-bg.png') !important;
@@ -98,10 +98,10 @@
 
 // }
 
-// .authorized-signatory {
-//     font-size: 15px;
-//     font-weight: 700;
-// }
+.authorized-signatory {
+    font-size: 15px;
+    font-weight: 700;
+}
 
 input:focus{
     outline: none !important;
@@ -113,4 +113,8 @@ input:focus{
 .disabled {
     pointer-events: none;
     opacity: 0.5;
+}
+
+::ng-deep .p-select.ng-invalid.ng-dirty .p-select-label.p-placeholder {
+    color: #64748b !important;
 }

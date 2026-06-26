@@ -14,7 +14,7 @@
                             <p-select [options]="employeeDetails" optionLabel="fullName" [filter]="true"
                                 filterBy="fullName" [showClear]="false" placeholder="Please select employee"
                                 formControlName="employee" class="custom-select w-100"
-                                (onChange)="onClickEmployee($event)" resetFilterOnHide="true">
+                                (onChange)="onClickEmployee($event)" resetFilterOnHide="true" filterPlaceholder="Search employee">
                             </p-select>
                         </div>
                         <div *ngIf="employeeForm.get('employee')?.invalid && employeeForm.get('employee')?.touched">
@@ -61,7 +61,7 @@
                             <p-select [options]="signatureAuthorityDetails" optionLabel="fullName"
                                 placeholder="Please select signature authority name" class="form-select custom-select"
                                 formControlName="signatureAuthority" resetFilterOnHide="true" [filter]="true"
-                                filterBy="fullName" (onChange)="onclickDesignation($event)" resetFilterOnHide="true" />
+                                filterBy="fullName" (onChange)="onclickDesignation($event)" resetFilterOnHide="true" filterPlaceholder="Select signature authority name" />
                         </div>
                         <div
                             *ngIf="employeeForm.get('signatureAuthority')?.invalid && employeeForm.get('signatureAuthority')?.touched">

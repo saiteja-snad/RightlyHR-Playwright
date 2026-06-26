@@ -11,7 +11,7 @@
                         <p-select [options]="employeeiddetails" optionLabel="fullName"
                             [filter]="true" filterBy="fullName" placeholder="Please select employee"
                             (onChange)="onClickEmployee($event)" formControlName="employeeId"
-                            class="custom-select w-100" resetFilterOnHide="true">
+                            class="custom-select w-100" resetFilterOnHide="true" filterPlaceholder="Search employee">
                         </p-select>
                     </div>
                     <div *ngIf="employeeForm.get('employeeId')?.invalid && employeeForm.get('employeeId')?.touched"
@@ -67,7 +67,7 @@
                         <div class="error-msg">Document Type is required</div>
                     </div>
                 </div>
-                
+
                 <!-- Siganture Authority -->
                 <div class="mb-3">
                     <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Signature
@@ -75,7 +75,7 @@
                     <div class="custom-p-select-content">
                         <p-select [options]="authorityDetails" optionLabel="fullName" [filter]="true" filterBy="fullName"
                             placeholder="Please select signature authority name" class="form-select custom-select"
-                            formControlName="authorityid" (onChange)="onclickDesignation($event)" />
+                            formControlName="authorityid" (onChange)="onclickDesignation($event)" filterPlaceholder="Select signature authority name" />
                     </div>
                     <div *ngIf="employeeForm.get('authorityid')?.invalid && employeeForm.get('authorityid')?.touched">
                         <div class="error-msg">Signature Authority Name is required</div>
@@ -187,7 +187,7 @@
                                     the Company and delivered within 30 days of disclosure to the Receiving Party to
                                     qualify it as Confidential Information. Confidential Information shall however
                                     exclude any information which
-                    
+
                                     (a) is in the public domain; (b) was known to the Receiving Party of such disclosure
                                     or becomes known to the Receiving Party without breach of any confidentiality
                                     agreement.
@@ -426,7 +426,7 @@
                                         performance of this Agreement.
                                     </li>
                                 </ol>
-                    
+
                                 <ol start="5">
                                     <li class="mb-3">
                                         <p class="mb-0"><b>Return : </b></p>
@@ -533,7 +533,7 @@
                                             <div class="d-flex justify-content-end">
                                                 <p class="mb-2 me-2"><b>Date</b> {{ employeeForm.get('ndassentdate')?.value | dateformat }}</p>
                                             </div>
-                                       
+
                                         <div >
                                                 <p><b><u>ACCEPTANCE</u></b></p>
                                             </div>
@@ -571,4 +571,4 @@
     </div>
 </div>
 
-    
+

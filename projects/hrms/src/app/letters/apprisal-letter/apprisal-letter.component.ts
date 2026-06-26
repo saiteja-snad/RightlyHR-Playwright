@@ -1,14 +1,14 @@
-import { Component, ViewEncapsulation, OnDestroy, OnInit, } from '@angular/core';
+import { Component, OnDestroy, OnInit, } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
-import html2canvas from 'html2canvas';
-import jsPDF from 'jspdf';
 import moment from 'moment';
+import * as pdfMake from 'pdfmake/build/pdfmake';
+import { customVfs } from '../../letters-builder-files/custom-fonts-vfs';
+import { buildAppraisalLetterDoc } from '../../letters-builder-files/appraisal-letter.builder';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 import { HttpService } from '../../services/http.service';
-import { HttpClient } from '@angular/common/http';
-import { Subscription, switchMap } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { DateformatPipe } from '../../pipes/dateformat.pipe';
 import { CommonModule } from '@angular/common';
 import { Select } from 'primeng/select';
@@ -17,15 +17,12 @@ import { TranslateModule } from '@ngx-translate/core';
 import { OpenModalService } from '../../services/open-modal.service';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormValidationService } from '../../../../../preonboarding/src/app/common-services/form-validation.service';
-import { LetterFooterComponent } from "../../shared/letters-shared-content/letter-footer/letter-footer.component";
-import { LettersheaderComponent } from "../../shared/letters-shared-content/lettersheader/lettersheader.component";
-import pdfMake from 'pdfmake';
-import { customVfs } from '../../letters-builder-files/custom-fonts-vfs';
-import { buildAppraisalLetterDoc } from '../../letters-builder-files/appraisal-letter.builder';
 import { fetchLetterAssets, setupLetterPdfMake } from '../../letters-builder-files/letter-pdf.utils';
+import { LettersheaderComponent } from "../../shared/letters-shared-content/lettersheader/lettersheader.component";
+import { LetterFooterComponent } from "../../shared/letters-shared-content/letter-footer/letter-footer.component";
 @Component({
   selector: 'app-apprisal-letter',
-  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, TranslateModule, NgbPopoverModule, LetterFooterComponent, LettersheaderComponent],
+  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, TranslateModule, NgbPopoverModule, LettersheaderComponent, LetterFooterComponent],
   templateUrl: './apprisal-letter.component.html',
   styleUrl: './apprisal-letter.component.scss',
 })
@@ -33,7 +30,6 @@ import { fetchLetterAssets, setupLetterPdfMake } from '../../letters-builder-fil
 export class ApprisalLetterComponent implements OnInit, OnDestroy {
   allempdata = [] as IJob[];
   subscription!: Subscription;
-  appraisalTemplate: any | string | ArrayBuffer | null = null; //appraisal letter template
   appraisalData = {} as any; //appraisal letter form object
   result = {} as any;
   fusionEmpId: any;
@@ -106,14 +102,9 @@ export class ApprisalLetterComponent implements OnInit, OnDestroy {
   jobErrorMessage!: string;
   spinnerLoader = false;
 
-  constructor(
-    private http: HttpService,
-    private httpclient: HttpClient,
-    private conformationPopup: OpenModalService,
-    private router: Router,
-    private authService: AuthService,
-    private modalService: NgbModal, private fb: FormBuilder, public formValidation: FormValidationService
-  ) { }
+  constructor(private http: HttpService, private conformationPopup: OpenModalService, private router: Router,
+    private authService: AuthService, private modalService: NgbModal, private fb: FormBuilder,
+    public formValidation: FormValidationService) { }
 
   openmodel(content: any) {
     this.modalService.open(content, { centered: true });
@@ -152,8 +143,7 @@ export class ApprisalLetterComponent implements OnInit, OnDestroy {
 
   //function for issed by
   getIssuedEmployeebyId() {
-    this.employeedata =
-      this.Employeeinfo.firstName + ' ' + this.Employeeinfo.lastName;
+    this.employeedata = this.Employeeinfo.firstName + ' ' + this.Employeeinfo.lastName;
   }
 
   //function for disabling the incorrect employeeid
@@ -177,6 +167,7 @@ export class ApprisalLetterComponent implements OnInit, OnDestroy {
       this.appraisalData.variablePayAmount = '0';
     }
   }
+
   onPromotionChange() {
     const isPromotion = this.employeeForm.get('isPromotion')?.value;
     if (isPromotion === true) {
@@ -189,42 +180,29 @@ export class ApprisalLetterComponent implements OnInit, OnDestroy {
       this.appraisalData.JobRole = null;
     }
   }
+
   gender: any;
   gender2: any;
-  // Onclick(fusionemployeeId: any) {
-  //   this.fusionEmpId = fusionemployeeId;
-  //   this.appraisalData = this.employeeiddetails.find(
-  //     (c: any) => c.fusionEmpId == fusionemployeeId.fusionEmpId
-  //   );
-  //   this.disablebuttonforemployeeid = true;
-  //   this.getCompensationById(this.appraisalData);
-  //   this.getJobdetails(this.appraisalData);
-  //   if (this.appraisalData.gender == 'Male') {
-  //     return (this.gender = 'Mr.');
-  //   } else {
-  //     return (this.gender = 'Ms.');
-  //   }
-  // }
   selectedEmployeeSalary: number = 0; // Add this at class level
-
   Onclick(fusionemployeeId: any) {
     this.fusionEmpId = fusionemployeeId;
-    this.appraisalData = this.employeeiddetails.find(
-      (c: any) => c.fusionEmpId == fusionemployeeId.fusionEmpId
-    );
+    this.appraisalData = this.employeeiddetails.find((c: any) => c.employeeId == fusionemployeeId);
     this.disablebuttonforemployeeid = true;
     this.getCompensationById(this.appraisalData);
     this.getJobdetails(this.appraisalData);
     if (this.appraisalData?.salary) {
       this.selectedEmployeeSalary = this.appraisalData.salary;
+      // 👉 Set validator dynamically based on current salary
+      // const bonusControl = this.employeeForm.get('bonus');
+      // bonusControl?.setValidators([
+      //   Validators.required,
+      //   this.bonusValidator(this.selectedEmployeeSalary)
+      // ]);
+      // bonusControl?.updateValueAndValidity();
     }
-    if (this.appraisalData.gender == 'Male') {
-      return (this.gender = 'Mr.');
-    } else {
-      return (this.gender = 'Ms.');
-    }
-
+    this.gender = this.appraisalData.gender === 'Male' ? 'Mr.' : 'Ms.';
   }
+
   bonusValidator = (salary: number): ValidatorFn => {
     return (control: AbstractControl): ValidationErrors | null => {
       if (control.value != null && salary != null && control.value > salary) {
@@ -233,7 +211,6 @@ export class ApprisalLetterComponent implements OnInit, OnDestroy {
       return null;
     };
   };
-
 
   //toggledropdown to open and close the dropdown list
   toggleDropdown(dropcategory: any) {
@@ -261,18 +238,12 @@ export class ApprisalLetterComponent implements OnInit, OnDestroy {
       this.disablebuttonforauthority = false;
     }
     let authorityDesignationdata = this.authorityDetails.find(
-      (c: any) =>
-        c.firstName + ' ' + c.middleName + ' ' + c.lastName === ValueName
+      (c: any) => c.firstName + ' ' + c.middleName + ' ' + c.lastName === ValueName
     );
     this.authorityDesignation = authorityDesignationdata?.designation;
     this.signatureAuthorityName = JSON.parse(
-      JSON.stringify(
-        authorityDesignationdata?.firstName +
-        ' ' +
-        authorityDesignationdata?.middleName +
-        ' ' +
-        authorityDesignationdata?.lastName
-      )
+      JSON.stringify(authorityDesignationdata?.firstName + ' ' + authorityDesignationdata?.middleName +
+        ' ' + authorityDesignationdata?.lastName)
     );
     if (this.authorityName) {
       if (this.authorityName === this.signatureAuthorityName) {
@@ -286,6 +257,7 @@ export class ApprisalLetterComponent implements OnInit, OnDestroy {
       this.signatureAuthorityName = null;
     }
   }
+
   onclickDesignation() {
     let signatureAuthorityDetails = this.authoritydetails.find(
       (c: any) => c.employeeId == this.appraisalData.authorityid
@@ -313,7 +285,8 @@ export class ApprisalLetterComponent implements OnInit, OnDestroy {
         this.authoritydetails = data;
         this.authorityDetails = data.map((authority: any) => ({
           ...authority,
-          fullName: `${authority.firstName} ${authority.middleName ? authority.middleName + ' ' : ''}${authority.lastName}` // Concatenate first, middle, last name and trim any extra spaces
+          fullName: `${authority.firstName} ${authority.middleName ? authority.middleName + ' ' : ''}${authority.lastName}`
+          // Concatenate first, middle, last name and trim any extra spaces
         }));
       },
       error: (error: any) => {
@@ -349,234 +322,156 @@ export class ApprisalLetterComponent implements OnInit, OnDestroy {
     input.value = input.value.replace(/[^0-9]/g, '');
     this.appraisalData.bonus = input.value ? parseInt(input.value, 10) : null;
   }
+
   previusSalary: any;
   incrementSalary: any;
-
   //get compensation details by empid
   getCompensationById(Employee: any) {
     let EmployeeId = this.appraisalData.employeeId;
-    this.subscription = this.http
-      .getData(`Compensationdata/${EmployeeId}`)
-      .subscribe({
-        next: (data: any) => {
-          if (!data || data.length == 0) {
-            this.jobErrorMessage = 'No Compensation details found for this employee.';
-            this.employeeForm.get('jobValid')?.setValue(false);
-          } else {
-            let res = data.sort((a: any, b: any) => b.compeffectivedate - a.compeffectivedate)[0];
-            this.employeeCompensationData = res;
-            this.appraisalData.employeeId = res.employeeId;
-            this.appraisalData.bonus = res.bonusAmountData;
-            this.previusSalary = data[0];
-            this.incrementSalary = res?.compensationamount - this.previusSalary.compensationamount;
-            this.employeeCompensationDetails = res;
-            this.appraisalData.salary = res?.compensationamount;
-            this.appraisalData.compeffectivedate = res.compeffectivedate;
-            this.appraisalData.reviewdate = this.formatDate(res.nextCompReviewDate);
-            this.appraisalData.variablePayAmount = res.variablePayAmount ? res.variablePayAmount : null;
-            this.appraisalData.isVariablePay = res.isVariablePay ? res.isVariablePay : false;
-            this.employeeForm.patchValue({
-              isVariablePay: res.isVariablePay ? res.isVariablePay : false,
-              variablePayAmount: res.variablePayAmount ? res.variablePayAmount : null,
-              reviewdate: this.formatDate(res.nextCompReviewDate),
-
-            });
-            //CTC calculation stated
-            Employee.grossby = 12;
-            Employee.grossSalary = Math.round(res?.compensationamount / Employee.grossby);
-            this.grossSalary = Employee.grossSalary;
-            if (this.appraisalData.pf == true || this.appraisalData.pf == false) {
-              switch (this.appraisalData.pf) {
-                case true:
-                  if (this.appraisalData.esic == false) {
-                    Employee.pfContribution = Math.round(
-                      Employee.grossSalary * (6.719 / 100)
-                    );
-                    if (Employee.pfContribution >= 1800) {
-                      Employee.pfContribution = 1800;
-                    }
-                  } else if (Employee.grossSalary >= 23195) {
-                    Employee.pfContribution = Math.round(
-                      Employee.grossSalary * (6.717 / 100)
-                    );
-                    if (Employee.pfContribution >= 1800) {
-                      Employee.pfContribution = 1800;
-                    }
+    this.subscription = this.http.getData(`Compensationdata/${EmployeeId}`).subscribe({
+      next: (data: any) => {
+        if (!data || data.length == 0) {
+          this.jobErrorMessage = 'No Compensation details found for this employee.';
+          this.employeeForm.get('jobValid')?.setValue(false);
+        } else {
+          let res = data.sort((a: any, b: any) => b.compeffectivedate - a.compeffectivedate)[0];
+          this.employeeCompensationData = res;
+          this.appraisalData.employeeId = res.employeeId;
+          // this.appraisalData.bonus = res.bonusAmountData;
+          this.previusSalary = data[0];
+          this.incrementSalary = res?.compensationamount - this.previusSalary.compensationamount;
+          this.employeeCompensationDetails = res;
+          this.appraisalData.salary = res?.compensationamount;
+          this.appraisalData.compeffectivedate = res.compeffectivedate;
+          this.appraisalData.reviewdate = this.formatDate(res.nextCompReviewDate);
+          this.appraisalData.variablePayAmount = res.variablePayAmount ? res.variablePayAmount : null;
+          this.appraisalData.isVariablePay = res.isVariablePay ? res.isVariablePay : false;
+          this.employeeForm.patchValue({
+            isVariablePay: res.isVariablePay ? res.isVariablePay : false,
+            variablePayAmount: res.variablePayAmount ? res.variablePayAmount : null,
+            reviewdate: this.formatDate(res.nextCompReviewDate),
+          });
+          //CTC calculation stated
+          Employee.grossby = 12;
+          Employee.grossSalary = Math.round(res?.compensationamount / Employee.grossby);
+          this.grossSalary = Employee.grossSalary;
+          if (this.appraisalData.pf == true || this.appraisalData.pf == false) {
+            switch (this.appraisalData.pf) {
+              case true:
+                if (this.appraisalData.esic == false) {
+                  Employee.pfContribution = Math.round(Employee.grossSalary * (6.719 / 100));
+                  if (Employee.pfContribution >= 1800) {
+                    Employee.pfContribution = 1800;
                   }
-                  else if (Employee.grossSalary <= 23195) {
-                    Employee.pfContribution = Math.round(
-                      Employee.grossSalary * (6.519 / 100)
-                    );
-                    if (Employee.pfContribution >= 1800) {
-                      Employee.pfContribution = 1800;
-                    }
-                  } else {
-                    Employee.pfContribution = Math.round(
-                      Employee.grossSalary * (6.719 / 100)
-                    );
+                } else if (Employee.grossSalary >= 23195) {
+                  Employee.pfContribution = Math.round(Employee.grossSalary * (6.717 / 100));
+                  if (Employee.pfContribution >= 1800) {
+                    Employee.pfContribution = 1800;
                   }
-                  break;
-                case false:
-                  Employee.pfContribution = 0;
-                  break;
-                default:
-              }
-            } else {
-              0;
+                }
+                else if (Employee.grossSalary <= 23195) {
+                  Employee.pfContribution = Math.round(Employee.grossSalary * (6.519 / 100));
+                  if (Employee.pfContribution >= 1800) {
+                    Employee.pfContribution = 1800;
+                  }
+                } else {
+                  Employee.pfContribution = Math.round(Employee.grossSalary * (6.719 / 100));
+                }
+                break;
+              case false:
+                Employee.pfContribution = 0;
+                break;
+              default:
             }
-            if (this.appraisalData.esic == true) {
-              let condition1 = Employee.grossSalary >= 23195;
-              if (!condition1) {
-                Employee.esicContribution = Math.round(
-                  Employee.grossSalary * (2.94 / 100)
-                );
-              } else {
-                Employee.esicContribution = 0;
-                this.appraisalData.esic == false;
-              }
+          } else {
+            0;
+          }
+          if (this.appraisalData.esic == true) {
+            let condition1 = Employee.grossSalary >= 23195;
+            if (!condition1) {
+              Employee.esicContribution = Math.round(Employee.grossSalary * (2.94 / 100));
             } else {
               Employee.esicContribution = 0;
               this.appraisalData.esic == false;
             }
-
-            //=============================================================================================================
-            //calcution for the totalgrosssalary
-            Employee.totalGrossSalary = Math.round(
-              Employee.grossSalary -
-              Employee.pfContribution -
-              Employee.esicContribution
-            );
-
-            if (this.appraisalData == true) {
-              if (Employee.totalGrossSalary <= 21000) {
-                Employee.employeeEsi = Math.round(
-                  Employee.totalGrossSalary * (0.75 / 100)
-                );
-              } else {
-                Employee.employeeEsi = 0;
-                this.appraisalData.esic == false;
-              }
+          } else {
+            Employee.esicContribution = 0;
+            this.appraisalData.esic == false;
+          }
+          //=============================================================================================================
+          //calcution for the totalgrosssalary
+          Employee.totalGrossSalary = Math.round(Employee.grossSalary -
+            Employee.pfContribution - Employee.esicContribution);
+          if (this.appraisalData == true) {
+            if (Employee.totalGrossSalary <= 21000) {
+              Employee.employeeEsi = Math.round(Employee.totalGrossSalary * (0.75 / 100));
             } else {
               Employee.employeeEsi = 0;
               this.appraisalData.esic == false;
             }
-
-
-            //=================================================================================================================
-
-            //condtitions for professionaltax calulation.
-            if (Employee.grossSalary < 15000) {
-              Employee.professionalTax = 0;
-            } else if (
-              Employee.grossSalary > 15000 &&
-              Employee.grossSalary < 21000
-            ) {
-              Employee.professionalTax = 150;
-            } else if (Employee.grossSalary >= 21000) {
-              Employee.professionalTax = 200;
-            } else {
-              Employee.professionalTax = 0;
-            }
-
-            // calculation for the basicsalary
-            Employee.basicSalary = Math.round(
-              Employee.totalGrossSalary * (60 / 100)
-            );
-
-            //calculation for the hraSalary
-            Employee.hraSalary = Math.round(Employee.basicSalary * (40 / 100));
-
-            //calculation for the educationAllowances taking as medical insurenc per month
-            // Employee.educationAllowances = Math.round(Employee.totalGrossSalary * (2 / 100))
-            Employee.educationAllowances = Math.round(0);
-
-            //calculation for the conveyance
-            // Employee.Conveyance = Math.round(Employee.totalGrossSalary * (4 / 100))
-
-            //total deductions per month
-            Employee.totalDeduction = Math.round(
-              Employee.pfContribution +
-              Employee.employeeEsi +
-              Employee.professionalTax
-              //Employee.educationAllowances
-            );
-
-            //total net salary  per month
-            Employee.netSalary = Math.round(
-              Employee.totalGrossSalary - Employee.totalDeduction
-            );
-
-            //calculation for the otherallowances
-            Employee.otherAllowances = Math.round(
-              Employee.totalGrossSalary * (16 / 100)
-            );
-
-            //pfcontribution per annum
-            Employee.pfPreAnuum = Math.round(
-              Employee.pfContribution * Employee.grossby
-            );
-
-            //totalGrossPerAnnum calculation
-            Employee.totalGrossPerAnnum = Math.round(
-              Employee.totalGrossSalary * Employee.grossby
-            );
-
-            //basicsalaryperannum
-            Employee.basicPerannum = Math.round(
-              Employee.basicSalary * Employee.grossby
-            );
-
-            //HRA per annum
-            Employee.hraPerAnnum = Math.round(
-              Employee.hraSalary * Employee.grossby
-            );
-
-            //esiper anuum
-            Employee.esiPerAnnum = Math.round(
-              Employee.esicContribution * Employee.grossby
-            );
-            //esiper anuum for employee
-            Employee.esiPerAnnumemployee = Math.round(
-              Employee.employeeEsi * Employee.grossby
-            );
-
-            //educationper annum using for medical insurence
-            Employee.educationallowancesPerAnnum = 12 * 0;
-
-            //conveyance per annum
-            // Employee.conveyancePerAnnum = Math.round(Employee.Conveyance * Employee.grossby);
-
-            //otherAllowancesper annum
-            Employee.otherAllowancesPerAnnum = Math.round(
-              Employee.otherAllowances * Employee.grossby
-            );
-
-            //professional per annum
-            Employee.professionalPerAnnum = Math.round(
-              Employee.professionalTax * Employee.grossby
-            );
-
-            //salary deductions per annum
-            Employee.totalDeductionsPerAnnum = Math.round(
-              Employee.pfPreAnuum +
-              Employee.esiPerAnnumemployee +
-              Employee.professionalPerAnnum
-            );
-
-            //net salary per annum
-            Employee.netSalaryPerAnnum = Math.round(
-              Employee.totalGrossPerAnnum - Employee.totalDeductionsPerAnnum
-            );
-            //Ctc per annum
-            Employee.ctcperannum = Math.round(
-              Employee.totalGrossPerAnnum +
-              Employee.pfPreAnuum +
-              Employee.esiPerAnnum
-            );
+          } else {
+            Employee.employeeEsi = 0;
+            this.appraisalData.esic == false;
           }
+          //=================================================================================================================
+          //condtitions for professionaltax calulation.
+          if (Employee.grossSalary < 15000) {
+            Employee.professionalTax = 0;
+          } else if (Employee.grossSalary > 15000 && Employee.grossSalary < 21000) {
+            Employee.professionalTax = 150;
+          } else if (Employee.grossSalary >= 21000) {
+            Employee.professionalTax = 200;
+          } else {
+            Employee.professionalTax = 0;
+          }
+          // calculation for the basicsalary
+          Employee.basicSalary = Math.round(Employee.totalGrossSalary * (60 / 100));
+          //calculation for the hraSalary
+          Employee.hraSalary = Math.round(Employee.basicSalary * (40 / 100));
+          //calculation for the educationAllowances taking as medical insurenc per month
+          // Employee.educationAllowances = Math.round(Employee.totalGrossSalary * (2 / 100))
+          Employee.educationAllowances = Math.round(0);
+          //calculation for the conveyance
+          // Employee.Conveyance = Math.round(Employee.totalGrossSalary * (4 / 100))
+          //total deductions per month
+          Employee.totalDeduction = Math.round(Employee.pfContribution + Employee.employeeEsi +
+            Employee.professionalTax
+            //Employee.educationAllowances
+          );
+          //total net salary  per month
+          Employee.netSalary = Math.round(Employee.totalGrossSalary - Employee.totalDeduction);
+          //calculation for the otherallowances
+          Employee.otherAllowances = Math.round(Employee.totalGrossSalary * (16 / 100));
+          //pfcontribution per annum
+          Employee.pfPreAnuum = Math.round(Employee.pfContribution * Employee.grossby);
+          //totalGrossPerAnnum calculation
+          Employee.totalGrossPerAnnum = Math.round(Employee.totalGrossSalary * Employee.grossby);
+          //basicsalaryperannum
+          Employee.basicPerannum = Math.round(Employee.basicSalary * Employee.grossby);
+          //HRA per annum
+          Employee.hraPerAnnum = Math.round(Employee.hraSalary * Employee.grossby);
+          //esiper anuum
+          Employee.esiPerAnnum = Math.round(Employee.esicContribution * Employee.grossby);
+          //esiper anuum for employee
+          Employee.esiPerAnnumemployee = Math.round(Employee.employeeEsi * Employee.grossby);
+          //educationper annum using for medical insurence
+          Employee.educationallowancesPerAnnum = 12 * 0;
+          //conveyance per annum
+          // Employee.conveyancePerAnnum = Math.round(Employee.Conveyance * Employee.grossby);
+          //otherAllowancesper annum
+          Employee.otherAllowancesPerAnnum = Math.round(Employee.otherAllowances * Employee.grossby);
+          //professional per annum
+          Employee.professionalPerAnnum = Math.round(Employee.professionalTax * Employee.grossby);
+          //salary deductions per annum
+          Employee.totalDeductionsPerAnnum = Math.round(Employee.pfPreAnuum +
+            Employee.esiPerAnnumemployee + Employee.professionalPerAnnum);
+          //net salary per annum
+          Employee.netSalaryPerAnnum = Math.round(Employee.totalGrossPerAnnum - Employee.totalDeductionsPerAnnum);
+          //Ctc per annum
+          Employee.ctcperannum = Math.round(Employee.totalGrossPerAnnum + Employee.pfPreAnuum + Employee.esiPerAnnum);
         }
-
-      });
+      }
+    });
   }
 
   getEmployeeId() {
@@ -586,9 +481,8 @@ export class ApprisalLetterComponent implements OnInit, OnDestroy {
         this.employeeiddetails = data.map((employee: any) => {
           return {
             ...employee,
-            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
-              }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
-              }${employee.lastName}`,
+            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName}
+            ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
           };
         }).sort((a: any, b: any) => (a.firstName ?? '').localeCompare(b.firstName ?? ''));
       },
@@ -597,7 +491,8 @@ export class ApprisalLetterComponent implements OnInit, OnDestroy {
       },
     });
   }
-  async postAppraisalLetterFormSubmit(f: FormGroup) {
+
+ async postAppraisalLetterFormSubmit(f: FormGroup) {
     this.spinnerLoader = true;
     if (this.employeeForm.invalid) {
       this.employeeForm.markAllAsTouched();
@@ -681,30 +576,6 @@ export class ApprisalLetterComponent implements OnInit, OnDestroy {
     }
   }
 
-  private fetchImageAsBase64(url: string): Promise<string> {
-    return fetch(url).then(res => res.blob()).then(blob => new Promise<string>((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onloadend = () => resolve(reader.result as string);
-      reader.onerror = reject;
-      reader.readAsDataURL(blob);
-    }));
-  }
-
-  private async getFileBase64(url: string): Promise<string | null> {
-    try {
-      const response = await fetch(url);
-      if (!response.ok) return null;
-      const buffer = await response.arrayBuffer();
-      const bytes = new Uint8Array(buffer);
-      let binary = '';
-      for (let i = 0; i < bytes.byteLength; i++) {
-        binary += String.fromCharCode(bytes[i]);
-      }
-      return btoa(binary);
-    } catch {
-      return null;
-    }
-  }
 
   updateJobDetails() {
     let data = this.employeeJobDetails;
@@ -718,7 +589,7 @@ export class ApprisalLetterComponent implements OnInit, OnDestroy {
       status: 'Active',
       subdeptId: data.subdeptId,
       createddate: data.createddate,
-      gradeId: this.gradeIdValue?.gradeId ? this.gradeIdValue?.gradeId : data?.gradeId,
+      gradeId: this.gradeIdValue.gradeId ? this.gradeIdValue.gradeId : data.gradeId,
       reportsto: data.reportsto,
       shiftId: data.shiftId,
       jobTypeId: data.jobTypeId,
@@ -773,7 +644,66 @@ export class ApprisalLetterComponent implements OnInit, OnDestroy {
     });
   }
 
-
+  //to Upload Appraisal letter
+  // uploadAppraisalLetter() {
+  //   let loggedInUser = this.authService.getToken();
+  //   let filePath = `/FusionDocuments/Employee Documents/Appraisal Letters/${this.appraisalData.employeeId}`;
+  //   this.subscription = this.http.uploadFileWithQuery('FileSystem/uploadfiletodirectory',
+  //     filePath,
+  //     this.AppraisalFile
+  //   ).subscribe({
+  //     next: (data: any) => {
+  //       if (data) {
+  //         this.result.documentUrl = data.path;
+  //         // this.dataSuccessMsg('Appraisal Letter Generated Successfully');
+  //         this.conformationPopup.openSuccessModal('Appraisal letter generated successfully');
+  //         // this.router.navigate(['/admin/active']);
+  //       }
+  //       let emaildetails = {
+  //         personEmail: this.appraisalData.workEmail,
+  //         senderName: `${loggedInUser.firstName} ${loggedInUser.middleName} ${loggedInUser.lastName}`,
+  //         senderEmail: loggedInUser.workEmail,
+  //         firstName: this.appraisalData.firstName,
+  //         lastName: this.appraisalData.lastName,
+  //         middleName: this.appraisalData.middleName,
+  //         personRole: this.appraisalData.jobRole,
+  //         documentUrl: this.result.documentUrl,
+  //         compeffectivedate: this.employeeCompensationData.compeffectivedate,
+  //         employeeId: this.appraisalData.employeeId,
+  //         compensationamount: this.appraisalData.salary,
+  //         effectiveDate : this.employeeCompensationData.compeffectivedate,
+  //         jobRole : this.employeeForm.get('JobRole')?.value?.value,
+  //         generatedBy: this.appraisalData.employeeId,
+  //         generatedDate: new Date().toISOString(),
+  //       };
+  //       if (loggedInUser.middleName) {
+  //         emaildetails.senderName = `${loggedInUser.firstName} ${loggedInUser.middleName} ${loggedInUser.lastName}`;
+  //       } else {
+  //         emaildetails.senderName = `${loggedInUser.firstName} ${loggedInUser.lastName}`;
+  //       }
+  //       const ispromotion =this.employeeForm.get('isPromotion')?.value
+  //       this.subscription = this.http.postdata(`CustomEmail/AppraisalPromotionLetter?isPromotion=${ispromotion}`, emaildetails,).subscribe({
+  //         next: (data: any) => {
+  //           this.conformationPopup.openSuccessModal('Email has been sent successfully');
+  //           setTimeout(() => {
+  //             this.navigateDashboard();
+  //           }, 3000)
+  //         },
+  //         error: (err: any) => {
+  //           this.spinnerLoader = false;
+  //           console.log(err);
+  //         },
+  //         complete: () => {
+  //           this.spinnerLoader = false;
+  //         },
+  //       });
+  //       this.postAppraisalLetter();
+  //     },
+  //     error: (reason: any) => {
+  //       this.spinnerLoader = false;
+  //     },
+  //   });
+  // }
 
   uploadAppraisalLetter() {
     const filePath = `/FusionDocuments/Employee Documents/Appraisal Letters/${this.appraisalData.employeeId}`;
@@ -868,8 +798,6 @@ export class ApprisalLetterComponent implements OnInit, OnDestroy {
     });
   }
 
-
-
   //to format Date
   formatDate(date: any) {
     return date?.split('T')[0];
@@ -899,9 +827,6 @@ export class ApprisalLetterComponent implements OnInit, OnDestroy {
     if (this.subscription) {
       this.subscription.unsubscribe();
     }
-    // if (this.formValueSub) {
-    //   this.formValueSub.unsubscribe();
-    // }
   }
 
   checkaccess(rba: string): boolean {
@@ -955,13 +880,12 @@ export class ApprisalLetterComponent implements OnInit, OnDestroy {
   //function to get the grade name for the designation
   getGradeNameById() {
     let GradeId = this.gradeIdValue.gradeId;
-    this.subscription = this.http.getData(`GradeTable/getbyid/${GradeId}`)
-      .subscribe({
-        next: (data: any) => {
-          this.getGradename = data.gradeName;
-        },
-        error: (err: any) => { },
-      });
+    this.subscription = this.http.getData(`GradeTable/getbyid/${GradeId}`).subscribe({
+      next: (data: any) => {
+        this.getGradename = data.gradeName;
+      },
+      error: (err: any) => { },
+    });
   }
 
   buttondisable: boolean = false;
@@ -981,8 +905,7 @@ export class ApprisalLetterComponent implements OnInit, OnDestroy {
     if (dropdownCategory === 'JobRole') {
       this.selectedValueJobRoledrop = option;
       this.gradeIdValue = this.getDesignationWithGradeIdDetails.find(
-        (ele: { designationName: string }) =>
-          ele.designationName === event.designationName
+        (ele: { designationName: string }) => ele.designationName === event.designationName
       );
       this.getGradeNameById();
     } else if (dropdownCategory === 'reportingtoUpdate') {
@@ -992,8 +915,7 @@ export class ApprisalLetterComponent implements OnInit, OnDestroy {
         ({ firstName, lastName }) => `${firstName} ${lastName}` === selectedName
       );
       if (selectedObject) {
-        this.selectedValueReportstoEmployeeIddropUpdate =
-          selectedObject.employeeId;
+        this.selectedValueReportstoEmployeeIddropUpdate = selectedObject.employeeId;
       }
     }
   }
@@ -1001,15 +923,12 @@ export class ApprisalLetterComponent implements OnInit, OnDestroy {
   closeDropdown() {
     this.isDropdownOpen = false;
   }
+
   releaseToEmployee() {
     this.releaseLoader = true;
     let loggedInUser = this.authService.getToken();
     let filePath = `/FusionDocuments/Employee Documents/Appraisal Letters/${this.appraisalData.employeeId}`;
-    this.subscription = this.http.uploadFileWithQuery(
-      'FileSystem/uploadfiletodirectory',
-      filePath,
-      this.AppraisalFile
-    ).subscribe({
+    this.subscription = this.http.uploadFileWithQuery('FileSystem/uploadfiletodirectory',filePath,this.AppraisalFile).subscribe({
       next: (data: any) => {
         if (data) {
           this.result.documentUrl = data.path;
@@ -1026,7 +945,7 @@ export class ApprisalLetterComponent implements OnInit, OnDestroy {
           personRole: this.appraisalData.jobRole,
           documentUrl: this.result.documentUrl,
           employeeId: this.appraisalData.employeeId,
-          generatedBy: this.appraisalData.employeeId,
+          generatedBy: loggedInUser.employeeId,
           generatedDate: new Date().toISOString(),
           compensationamount: this.appraisalData.salary,
           effectiveDate: this.formatDates(this.employeeCompensationData?.compeffectivedate),
@@ -1042,6 +961,15 @@ export class ApprisalLetterComponent implements OnInit, OnDestroy {
               this.appraisalData = {};
               this.documentGenerated = false;
               this.releaseLoader = false;
+              this.authorityDesignation = null;
+              this.signatureAuthorityName = null;
+              this.employeeJobDetails = {};
+              this.employeeCompensationData = {};
+              this.gender = null;
+              this.incrementSalary = null;
+              this.previusSalary = null;
+              this.employeeCompensationDetails = {};
+              this.fusionEmpId = null;
               this.navigateDashboard();
             }, 2000);
           },
@@ -1060,7 +988,7 @@ export class ApprisalLetterComponent implements OnInit, OnDestroy {
   }
 
   navigateDashboard() {
-    this.router.navigate(['/letters/lettes-tabs'])
+    this.router.navigate(['/employee-management/all-employees'])
   }
 
   initializeForm() {
@@ -1073,9 +1001,9 @@ export class ApprisalLetterComponent implements OnInit, OnDestroy {
       note: [''],
       authorityid: [null, Validators.required],
       isPromotion: [false, Validators.required],
-      isVariablePay: [{ value: '' }, Validators.required],
-      variablePayAmount: [{ value: '' }, Validators.required],
-      // bonus: ['']
+      isVariablePay: [{ value: ''}, Validators.required],
+      variablePayAmount: [{ value: ''}, Validators.required],
+      jobValid: [false, Validators.requiredTrue]
     })
   }
 }

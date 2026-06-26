@@ -146,7 +146,7 @@
                                 <u>{{employeeCompensationDetails.compeffectivedate | dateformat}}</u>.
                                 This will be in addition to your existing CTC, thereby increasing your CTC from Rs
                                 <b>{{previusSalary?.compensationamount || 0}}/-</b> to current CTC of Rs
-                                <b>{{appraisalData.salary}} /-</b>
+                                <b>{{ (appraisalData?.salary || 0) + (appraisalData?.variablePayAmount || 0) }} /-</b>
                             </p>
 
                             <p class="mb-4">We are confident that you will put in your best efforts in

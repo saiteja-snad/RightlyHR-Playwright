@@ -84,13 +84,19 @@ input:focus {
 }
 
 .mytable tr:nth-child(4),
+.mytable tr:nth-child(9),
 .mytable tr:nth-child(10) {
     background: #fff2cc;
 }
 
-.mytable tr:nth-child(9) {
-    background: #fff2cc;
+.mytable tr:nth-child(8) {
+    background: unset;
 }
+
+.secondtable tr:nth-child(4) {
+    background: unset;
+}
+
 
 // .soft-copy-letter {
 //     background-image: url('/images/snad-new-letter-bg.png') !important;

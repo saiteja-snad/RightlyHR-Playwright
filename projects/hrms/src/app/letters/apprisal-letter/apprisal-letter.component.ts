@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewEncapsulation, } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import moment from 'moment';
 import * as pdfMake from 'pdfmake/build/pdfmake';
@@ -523,7 +523,7 @@ export class ApprisalLetterComponent implements OnInit, OnDestroy {
       newJobRole: this.employeeForm.get('JobRole')?.value?.value || '',
       reviewDate: data.reviewdate || '',
       variablePayAmount: data.variablePayAmount || 0,
-      note: data.note || '',
+      note: this.employeeForm.get('note')?.value || '',
       basicSalary: data.basicSalary,
       basicPerannum: data.basicPerannum,
       hraSalary: data.hraSalary,

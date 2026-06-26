@@ -179,9 +179,9 @@ export function buildAppraisalLetterDoc(data: AppraisalLetterData): any {
   const page1: any[] = [
     { text: 'Appraisal Letter', fontSize: PX(14), alignment: 'center', margin: [0, 0, 0, 6], font: 'VERDANABOLD', },
     { text: `Date: ${fmt(data.letterDate)}`, alignment: 'right', margin: [0, 0, 0, 6], font: 'VERDANABOLD' },
-    p([{ text: `${data.gender ? data.gender + ' ' : ''}${fullName}`, font: 'VERDANABOLD' }, '\n', { text: data.jobRole || '', font: 'VERDANABOLD' }], 7),
+    p([{ text: `${data.gender ? data.gender + ' ' : ''}${fullName}`, font: 'VERDANABOLD' }, '\n', { text: data.jobRole || '', font: 'VERDANABOLD' }], 5),
     p([{ text: `Dear ${fullName},`, font: 'VERDANABOLD' }], 7),
-    p('We are pleased to present you with this appraisal letter on behalf of RightlyHR. We want to extend our gratitude for your dedication and substantial contributions to the organization. Your hard work and commitment have made a significant impact on our success.', 7),
+    p('We are pleased to present you with this appraisal letter on behalf of RightlyHR. We want to extend our gratitude for your dedication and substantial contributions to the organization. Your hard work and commitment have made a significant impact on our success.', 5),
     ...(data.isPromotion && data.newJobRole ? [
       p([
         'We are happy with your performance and are equally pleased to share that you have been promoted to ',
@@ -196,7 +196,7 @@ export function buildAppraisalLetterDoc(data: AppraisalLetterData): any {
       { text: `Rs.${n(data.totalCTC)}`, font: 'VERDANABOLD' },
       '.',
     ], 8),
-    p('We are confident that you will put in your best efforts in discharging your duties and responsibilities even more efficiently and in the best of interest of the organization and measure up to the confidence and faith reposed in you by the Management repeatedly.', 7),
+    p('We are confident that you will put in your best efforts in discharging your duties and responsibilities even more efficiently and in the best of interest of the organization and measure up to the confidence and faith reposed in you by the Management repeatedly.', 5),
     p('All other terms & conditions of your Appointment Letter will remain unchanged.', 8),
     p('Your new compensation structure is as follows:', 10),
     salaryTable,
@@ -281,7 +281,7 @@ export function buildAppraisalLetterDoc(data: AppraisalLetterData): any {
       pageMargins: [margins.left, margins.top, margins.right, margins.bottom],
       defaultStyle: {
         font: bodyFont,
-        fontSize: PX(14),
+        fontSize: PX(13),
         alignment: 'justify',
         color: '#000',
       },

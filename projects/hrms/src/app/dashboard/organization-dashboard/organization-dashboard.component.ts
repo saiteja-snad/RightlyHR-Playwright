@@ -28,7 +28,7 @@ import { AccessNavigationService } from '../../services/access-navigation.servic
 @Component({
   selector: 'app-organization-dashboard',
   imports: [CommonModule, RouterModule, FormsModule, TranslateModule, NgbPopoverModule, ModuleInfoIconComponent,
-    ChartModule, Skeleton, AccordionModule, ProfileIconComponent, NoDataFoundComponent, 
+    ChartModule, Skeleton, AccordionModule, ProfileIconComponent, NoDataFoundComponent,
     DatePicker, TabsModule, Select],
   templateUrl: './organization-dashboard.component.html',
   styleUrl: './organization-dashboard.component.scss',
@@ -89,9 +89,8 @@ export class OrganizationDashboardComponent implements AfterViewInit {
   //   { key: 'holiday', label: 'Holiday', color: '#FFA500' },
   //   { key: 'yetToLogin', label: 'Yet To Login', color: '#94A3B8' },
   // ];
-
-legendList = [
-  { key: 'yetToLogin', label: 'Yet To Login', color: '#94A3B8' },
+  legendList = [
+    { key: 'yetToLogin', label: 'Yet To Login', color: '#94A3B8' },
     { key: 'inOffice', label: 'In Office', color: '#1E90FF' },
     { key: 'absent', label: 'Absent', color: '#FF0000' },
     { key: 'halfDay', label: 'Half Day', color: '#FFD700' },
@@ -101,9 +100,6 @@ legendList = [
     { key: 'weekend', label: 'Weekend', color: '#32CD32' },
     { key: 'holiday', label: 'Holiday', color: '#FFA500' },
   ];
-
-
-
   genderTotal: number = 0;
   femaleCount: number = 0;
   maleCount: number = 0;
@@ -121,12 +117,10 @@ legendList = [
       const ctx = chart.ctx;
       const isHorizontal = chart.config?.options?.indexAxis === 'y';
       const isStacked = chart.config?.options?.scales?.y?.stacked || chart.config?.options?.scales?.x?.stacked;
-
       if (isHorizontal) {
         // Check if user has permission to view employee list for gender chart
         const hasViewPermission = this.rbac.allowedToAccess('Headcount by Gender View Employee List.view');
         if (!hasViewPermission) return; // Don't draw underline if no permission
-        
         chart.data.datasets.forEach((dataset: any, dsIndex: number) => {
           const meta = chart.getDatasetMeta(dsIndex);
           if (meta.hidden) return;
@@ -356,6 +350,8 @@ legendList = [
     this.getAttendanceReportData();
     this.getApprovalsOverview();
     this.getExperienceDetails();
+    this.getDepartmentwiseAttritionRateDetails();
+    this.getEmployeeExitByTenure();
     this.getTeam();
   }
 
@@ -631,9 +627,7 @@ legendList = [
       '#E05D5D', // Inactive Contractors
       '#FFC107'  // Prospective Contractors
     ];
-
     this.totalEmployeesCount = data.reduce((sum, val) => sum + (val || 0), 0);
-
     this.EmployeeInfoData = {
       labels: [
         'Active',
@@ -699,14 +693,13 @@ legendList = [
     const labels = departments.map((d: any) => d.departmentName);
     const headCounts = departments.map((d: any) => d.headCount);
     const backgroundColors = departments.map((d: any) => d.meta?.graphData?.color ? d.meta.graphData.color : primaryColor);
-    
     const maxValue = Math.max(...headCounts, 0);
     let stepSize = 5;
     if (maxValue > 50) stepSize = 10;
     if (maxValue > 100) stepSize = 20;
     if (maxValue > 200) stepSize = 50;
     const suggestedMax = Math.ceil((maxValue * 1.15) / stepSize) * stepSize;
-    
+
     this.departmentHeadCountChartData = {
       labels,
       datasets: [
@@ -1019,7 +1012,7 @@ legendList = [
                 enter: (context: any) => {
                   if (!this.rbac.allowedToAccess('Headcount by Gender View Employee List.view')) return;
                   context.chart.canvas.style.cursor = 'pointer';
-                  
+
                 },
                 leave: (context: any) => {
                   context.chart.canvas.style.cursor = 'default';
@@ -1101,13 +1094,13 @@ legendList = [
     const formattedDate = this.formatDate(date);
     this.availabilityLoading = true;
     this.showAvailabilityMessage = false;
-    
+
     setTimeout(() => {
       if (this.availabilityLoading) {
         this.showAvailabilityMessage = true;
       }
     }, 2000);
-    
+
     let apiUrl = `v2/Employeedata/OrgSummary?date=${formattedDate}`;
     if (this.selectedDepartId !== null && this.selectedDepartId !== undefined) {
       apiUrl += `&deptId=${this.selectedDepartId}`;
@@ -1120,7 +1113,7 @@ legendList = [
         this.OffCanvasemployeeList = res.employees;
         // Total = all except absent
         this.teamTotal = (this.teamSummary.inOffice || 0) + (this.teamSummary.halfDay || 0) + (this.teamSummary.wfh || 0)
-          + (this.teamSummary.leave || 0) + (this.teamSummary.absent || 0) + (this.teamSummary.remote || 0) + 
+          + (this.teamSummary.leave || 0) + (this.teamSummary.absent || 0) + (this.teamSummary.remote || 0) +
           (this.teamSummary.weekend || 0) + (this.teamSummary.holiday || 0) + (this.teamSummary.yetToLogin || 0);
         this.buildTeamChart();
       },
@@ -1545,7 +1538,7 @@ legendList = [
     // Collect all unique shift names across all locations
     const allShifts = new Set<string>();
     const subLocationLabels: string[] = [];
-    
+
     dataArray.forEach((location: any) => {
       location.subLocations?.forEach((subLoc: any) => {
         subLocationLabels.push(subLoc.subLocationName);
@@ -1601,7 +1594,7 @@ legendList = [
     if (maxValue > 100) stepSize = 20;
     if (maxValue > 200) stepSize = 50;
     const suggestedMax = Math.ceil((maxValue * 1.15) / stepSize) * stepSize;
-    
+
     this.shiftLocationChartOptions = {
       responsive: true,
       maintainAspectRatio: false,
@@ -1712,13 +1705,13 @@ legendList = [
   getAttendanceReportData() {
     this.attendanceReportLoader = true;
     this.showAttendanceMessage = false;
-    
+
     setTimeout(() => {
       if (this.attendanceReportLoader) {
         this.showAttendanceMessage = true;
       }
     }, 2000);
-    
+
     const selectedDate = moment(this.attendanceReportDate || new Date());
     const formattedDate = selectedDate.format('YYYY-MM-DD');
     this.http.getData(`v2/Employeedata/OrgAttendanceStatus?date=${formattedDate}`).pipe(takeUntil(this.destroy$)).subscribe({
@@ -1728,8 +1721,8 @@ legendList = [
         this.attendanceReportData = res?.summary;
         this.attendanceEmployeesList = res?.employees || [];
         const summary = this.attendanceReportData;
-        this.totalAttendanceCount = (summary?.onTime || 0) + (summary?.lateLogin || 0) + (summary?.earlyLogout || 0) 
-        + (summary?.hoursDeficit || 0) + (summary?.breakExceeded || 0) + (summary?.permission || 0);
+        this.totalAttendanceCount = (summary?.onTime || 0) + (summary?.lateLogin || 0) + (summary?.earlyLogout || 0)
+          + (summary?.hoursDeficit || 0) + (summary?.breakExceeded || 0) + (summary?.permission || 0);
         const values = [
           summary?.onTime || 0,
           summary?.lateLogin || 0,
@@ -1809,7 +1802,7 @@ legendList = [
     this.attendanceReportDate = value || new Date();
     this.getAttendanceReportData();
   }
-  
+
   // upcoming actions functions
   getUpcomingActions() {
     this.upcomingActionsLoader = true;
@@ -1906,7 +1899,7 @@ legendList = [
     this.upcomingActionsLoader = true;
     this.getUpcomingActions();
   }
-  
+
   teamdetails = [] as any[];
   getTeam() {
     const statuses = 'Active';
@@ -2046,7 +2039,7 @@ legendList = [
     if (maxValue > 100) stepSize = 20;
     if (maxValue > 200) stepSize = 50;
     const suggestedMax = Math.ceil((maxValue * 1.15) / stepSize) * stepSize;
-    
+
     this.experienceChartOptions = {
       responsive: true,
       maintainAspectRatio: false,
@@ -2136,6 +2129,297 @@ legendList = [
     } else {
       this.router.navigate(['/unauthorized']);
     }
+  }
+
+  // DepartmentWise Attrition Rate functions
+  attritionRateLoader = false;
+  attritionChartData: any;
+  attritionChartOptions: any;
+  hasAttritionData = false;
+  attritionRawData: any[] = [];
+  attritionOffcanvasTitle: string = '';
+  attritionOffcanvasList: any[] = [];
+  attritionDateRange: Date[] | null = [
+    new Date(new Date().getFullYear(), 0, 1),
+    new Date()
+  ];
+  @ViewChild('attritionEmployeesList') attritionOffcanvasTemplate!: TemplateRef<any>;
+  // Employee Exit by Tenure variables
+  exitByTenureLoader = false;
+  exitByTenureChartData: any;
+  exitByTenureChartOptions: any;
+  hasExitByTenureData = false;
+  exitByTenureRawData: any[] = [];
+  exitByTenureOffcanvasTitle: string = '';
+  exitByTenureOffcanvasList: any[] = [];
+  exitByTenureDateRange: Date[] | null = [
+    new Date(new Date().getFullYear(), 0, 1),
+    new Date()
+  ];
+  totalExitedEmployees: number = 0;
+  @ViewChild('exitByTenureEmployeesList') exitByTenureOffcanvasTemplate!: TemplateRef<any>;
+
+  getDepartmentwiseAttritionRateDetails() {
+    this.attritionRateLoader = true;
+    const startDate = moment(this.attritionDateRange?.[0] ?? new Date(new Date().getFullYear(), 0, 1)).format('YYYY-MM-DD');
+    const endDate = moment(this.attritionDateRange?.[1] ?? new Date()).format('YYYY-MM-DD');
+    this.http.getData(`Reports/DepartmentWiseAttritionRate?fromDate=${startDate}&toDate=${endDate}`).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res: any) => {
+        const data = res?.data?.departmentAttritionRates || [];
+        this.buildAttritionChart(data);
+        this.attritionRateLoader = false;
+      },
+      error: (err) => {
+        console.error('Error fetching attrition rate:', err);
+        this.hasAttritionData = false;
+        this.attritionRateLoader = false;
+      }
+    });
+  }
+
+  onAttritionDateChange(value: Date[]) {
+    if (!value?.[0] || !value?.[1]) return;
+    this.attritionDateRange = value;
+    this.attritionRateLoader = true;
+    this.getDepartmentwiseAttritionRateDetails();
+  }
+
+  buildAttritionChart(data: any[]) {
+    if (!data || data.length === 0) {
+      this.hasAttritionData = false;
+      return;
+    }
+    this.hasAttritionData = true;
+    this.attritionRawData = data;
+    const labels = data.map(item => item.departmentName);
+    const rates = data.map(item => item.attritionRate);
+    const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim();
+    this.attritionChartData = {
+      labels,
+      datasets: [
+        {
+          label: 'Attrition Rate (%)',
+          data: rates,
+          barThickness: 24,
+          backgroundColor: primaryColor || '#3B82F6',
+        }
+      ]
+    };
+    const maxValue = Math.max(...rates, 0);
+    let stepSize = 5;
+    if (maxValue > 50) stepSize = 10;
+    if (maxValue > 100) stepSize = 20;
+    const suggestedMax = Math.ceil((maxValue * 1.15) / stepSize) * stepSize;
+
+    this.attritionChartOptions = {
+      responsive: true,
+      maintainAspectRatio: false,
+      layout: { padding: { top: 25 } },
+      onClick: (_event: any, elements: any[]) => {
+        if (!elements.length) return;
+        const item = this.attritionRawData[elements[0].index];
+        if (!item?.employeesLeft) return;
+        this.openAttritionOffcanvas(item);
+      },
+      onHover: (_event: any, elements: any[], chart: any) => {
+        chart.canvas.style.cursor = elements.length ? 'pointer' : 'default';
+      },
+      plugins: {
+        legend: {
+          display: false,
+        },
+        tooltip: {
+          callbacks: {
+            label: (context: any) => `${context.label}: ${context.raw}%`
+          }
+        },
+        datalabels: {
+          anchor: 'end',
+          align: 'end',
+          color: '#000',
+          font: {
+            weight: 'bold',
+            size: 10
+          },
+          formatter: (value: any) => value + '%',
+          listeners: {
+            click: (context: any) => {
+              const item = this.attritionRawData[context.dataIndex];
+              if (!item?.employeesLeft) return;
+              this.openAttritionOffcanvas(item);
+            },
+            enter: (context: any) => {
+              context.chart.canvas.style.cursor = 'pointer';
+            },
+            leave: (context: any) => {
+              context.chart.canvas.style.cursor = 'default';
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          grid: { display: false }
+        },
+        y: {
+          beginAtZero: true,
+          max: suggestedMax,
+          ticks: {
+            stepSize: stepSize,
+            callback: (value: any) => value + '%'
+          }
+        }
+      }
+    };
+  }
+
+  openAttritionOffcanvas(item: any) {
+    this.searchEmployeeText = '';
+    this.attritionOffcanvasTitle = item.departmentName;
+    this.attritionOffcanvasList = (item.employeesLeft || []).map((emp: any) => ({
+      ...emp,
+      profilePicUrl: emp.profilePic ? this.getImageUrl(emp.profilePic) : null
+    }));
+    this.offcanvasService.open(this.attritionOffcanvasTemplate, { position: 'end', backdrop: 'static', keyboard: false });
+  }
+
+  getFilteredAttritionEmployees() {
+    return this.searchEmployeeText ? this.attritionOffcanvasList.filter((emp: any) => this.matchesSearch(emp)) : this.attritionOffcanvasList;
+  }
+
+  // Employee Exit by Tenure functions
+  getEmployeeExitByTenure() {
+    this.exitByTenureLoader = true;
+    const startDate = moment(this.exitByTenureDateRange?.[0] ?? new Date(new Date().getFullYear(), 0, 1)).format('YYYY-MM-DD');
+    const endDate = moment(this.exitByTenureDateRange?.[1] ?? new Date()).format('YYYY-MM-DD');
+    this.http.getData(`Reports/EmployeeExitByTenure?fromDate=${startDate}&toDate=${endDate}`).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res: any) => {
+        const tenureData = res?.data?.tenureExitData || [];
+        this.totalExitedEmployees = res?.data?.totalExitedEmployees || 0;
+        this.buildExitByTenureChart(tenureData);
+        this.exitByTenureLoader = false;
+      },
+      error: (err) => {
+        console.error('Error fetching exit by tenure:', err);
+        this.hasExitByTenureData = false;
+        this.exitByTenureLoader = false;
+      }
+    });
+  }
+
+  buildExitByTenureChart(data: any[]) {
+    if (!data || data.length === 0) {
+      this.hasExitByTenureData = false;
+      return;
+    }
+    const totalCount = data.reduce((sum, item) => sum + (item.employeeCount || 0), 0);
+    if (totalCount === 0) {
+      this.hasExitByTenureData = false;
+      return;
+    }
+    this.hasExitByTenureData = true;
+    this.exitByTenureRawData = data;
+    const labels = data.map(item => item.tenureRange);
+    const counts = data.map(item => item.employeeCount);
+    const maxValue = Math.max(...counts);
+    let stepSize = 5;
+    if (maxValue > 50) stepSize = 10;
+    if (maxValue > 100) stepSize = 20;
+    if (maxValue > 200) stepSize = 50;
+    const suggestedMax = Math.ceil(maxValue / stepSize) * stepSize;
+    const colors = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6'];
+    this.exitByTenureChartData = {
+      labels,
+      datasets: [{
+        label: 'Count',
+        data: counts,
+        backgroundColor: colors.slice(0, labels.length),
+        barThickness: 10,
+        borderRadius: {
+          topRight: 12,
+          bottomRight: 12,
+          topLeft: 0,
+          bottomLeft: 0
+        }
+      }]
+    };
+    this.exitByTenureChartOptions = {
+      responsive: true,
+      maintainAspectRatio: false,
+      indexAxis: 'y',
+      layout: { padding: { right: 30 } },
+      onClick: (_event: any, elements: any[]) => {
+        if (!elements.length) return;
+        const dataIndex = elements[0].index;
+        const tenureRange = labels[dataIndex];
+        const count = counts[dataIndex];
+        if (!count) return;
+        this.openExitByTenureOffcanvas(tenureRange, count);
+      },
+      onHover: (_event: any, elements: any[], chart: any) => {
+        chart.canvas.style.cursor = elements.length ? 'pointer' : 'default';
+      },
+      plugins: {
+        legend: { display: false },
+        datalabels: {
+          anchor: 'end',
+          align: 'right',
+          color: '#000',
+          font: { weight: 'bold', size: 12 },
+          formatter: (value: number) => value,
+          listeners: {
+            click: (context: any) => {
+              const tenureRange = labels[context.dataIndex];
+              const count = counts[context.dataIndex];
+              if (!count) return;
+              this.openExitByTenureOffcanvas(tenureRange, count);
+            },
+            enter: (context: any) => {
+              context.chart.canvas.style.cursor = 'pointer';
+            },
+            leave: (context: any) => {
+              context.chart.canvas.style.cursor = 'default';
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          beginAtZero: true,
+          max: suggestedMax,
+          ticks: {
+            stepSize: stepSize
+          },
+          grid: { display: false }
+        },
+        y: {
+          grid: { display: false }
+        }
+      }
+    };
+  }
+
+  openExitByTenureOffcanvas(tenureRange: string, count: number) {
+    if (!count) return;
+    this.searchEmployeeText = '';
+    this.exitByTenureOffcanvasTitle = tenureRange;
+    const tenureItem = this.exitByTenureRawData.find((item: any) => item.tenureRange === tenureRange);
+    this.exitByTenureOffcanvasList = (tenureItem?.employeeDetails || []).map((emp: any) => ({
+      ...emp,
+      profilePicUrl: emp.profilePic ? this.getImageUrl(emp.profilePic) : null
+    }));
+    this.offcanvasService.open(this.exitByTenureOffcanvasTemplate, { position: 'end', backdrop: 'static', keyboard: false });
+  }
+
+  getFilteredExitByTenureEmployees() {
+    return this.searchEmployeeText ? this.exitByTenureOffcanvasList.filter((emp: any) => this.matchesSearch(emp)) : this.exitByTenureOffcanvasList;
+  }
+
+  onExitByTenureDateChange(value: Date[]) {
+    if (!value?.[0] || !value?.[1]) return;
+    this.exitByTenureDateRange = value;
+    this.exitByTenureLoader = true;
+    this.getEmployeeExitByTenure();
   }
 
   ngOnDestroy(): void {

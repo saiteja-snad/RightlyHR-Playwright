@@ -68,7 +68,7 @@
                   </a>
                 </li>
 
-                 <li *ngIf="isRMStage(exp)">
+                <li *ngIf="isRMStage(exp)">
                   <a class="dropdown-item" (click)="openRequiredCalrificationModal(requiredClarification, exp)">
                     <i class="bi bi-check-circle me-2"></i>
                     Request for Clarification
@@ -442,12 +442,13 @@
         <button type="button" class="custom-btn btn-primary "
           [disabled]="!isAllChecked() || approveForm.invalid || isloading" (click)="confirmApproval(modal)">
           @if(isloading){
-          <div class="button-loader-content">
-            <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
-            <span>{{'Loading...' | translate}}</span>
+          <div class="d-flex align-items-center justify-content-center gap-2">
+            <span class="spinner-border spinner-border-sm text-light" role="status" aria-hidden="true">
+            </span>
+            <span>{{ 'Loading...' | translate }}</span>
           </div>
-          }@else {
-          <span>{{storeapprovalRequest.action}}</span>
+          }@else{
+          <span>{{ 'Verify' | translate }}</span>
           }
         </button>
       </div>

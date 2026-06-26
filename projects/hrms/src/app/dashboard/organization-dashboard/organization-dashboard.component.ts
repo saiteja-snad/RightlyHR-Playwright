@@ -2186,6 +2186,7 @@ export class OrganizationDashboardComponent implements AfterViewInit {
   buildAttritionChart(data: any[]) {
     if (!data || data.length === 0) {
       this.hasAttritionData = false;
+      this.attritionChartData = null;
       return;
     }
     this.hasAttritionData = true;
@@ -2250,8 +2251,6 @@ export class OrganizationDashboardComponent implements AfterViewInit {
       }
     };
   }
-
-
 
   // Employee Exit by Tenure functions
   getEmployeeExitByTenure() {

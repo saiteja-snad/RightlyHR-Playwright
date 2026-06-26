@@ -128,8 +128,8 @@ export function buildContractorLetterDoc(data: ContractorLetterData): any {
   }
 
   const currencySymbol = data.currencyType === 'INR'
-    ? { text: '₹', font: 'Roboto', bold: true }
-    : { text: '$', font: 'Roboto', bold: true };
+    ? { text: '₹', font: 'VERDANABOLD', bold: true }
+    : { text: '$', font: 'VERDANABOLD', bold: true };
 
   const amountText = data.currencyType === 'INR'
     ? [currencySymbol, { text: ` ${data.amount ?? 0} /-`, font: 'VERDANABOLD' }]

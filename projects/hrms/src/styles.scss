@@ -3620,3 +3620,71 @@ input[type=number]::-webkit-outer-spin-button {
         transform: rotate(1turn)
     }
 }
+// PrimeNG Table Styling for Leave Carry Forward Report
+.custom-table-content .p-datatable {
+    .p-datatable-table {
+        width: 100%;
+        min-width: max-content;
+    }
+
+    .p-datatable-thead > tr > th {
+        background-color: var(--table-header-bg-color) !important;
+        color: var(--table-header-color) !important;
+        font-weight: 500 !important;
+        font-size: var(--fontsize14) !important;
+        padding: 1rem !important;
+        text-wrap: nowrap !important;
+        border: none !important;
+        vertical-align: middle !important;
+        text-transform: capitalize !important;
+    }
+
+    .p-datatable-thead > tr > th:first-child {
+        border-top-left-radius: 0.5rem;
+    }
+
+    .p-datatable-thead > tr > th:last-child {
+        border-top-right-radius: 0.5rem;
+    }
+
+    .p-datatable-tbody > tr > td {
+        font-weight: 400 !important;
+        font-size: var(--fontsize14) !important;
+        color: var(--table-data-color) !important;
+        padding: 1rem !important;
+        border-bottom: 1px solid var(--table-data-border-color) !important;
+        border-left: none !important;
+        border-right: none !important;
+        border-top: none !important;
+        vertical-align: middle !important;
+    }
+
+    .p-datatable-tbody > tr:last-child > td {
+        border-bottom: none !important;
+    }
+
+    .p-sortable-column-icon {
+        color: var(--table-header-color) !important;
+        width: 0.75rem !important;
+        height: 0.75rem !important;
+        margin-left: 0.25rem !important;
+    }
+
+    .p-datatable-wrapper {
+        border-radius: 0.5rem;
+        overflow-x: auto !important;
+        overflow-y: auto !important;
+    }
+
+    .p-datatable-table-container {
+        border-radius: 0.5rem;
+        overflow: visible !important;
+    }
+
+    // Remove default PrimeNG borders
+    .p-datatable-table,
+    .p-datatable-thead,
+    .p-datatable-tbody {
+        border: none !important;
+    }
+}

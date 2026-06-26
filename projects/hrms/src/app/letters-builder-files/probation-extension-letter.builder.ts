@@ -79,17 +79,28 @@ export function buildProbationExtensionLetterDoc(data: ProbationExtensionLetterD
     p('We look forward to witnessing your continued progress and contributions to our team during this extended probationary period.', 20),
     p('Sincerely,', 4),
     { text: 'For RightlyHR', font: 'VERDANABOLD', fontSize: PX(13), margin: [0, 0, 0, 8] },
-    { text: (data.authorityName || '').trim(), font: 'Autography', fontSize: PX(32), margin: [0, 0, 0, 4], noWrap: true, alignment: 'left' },
+    {
+      text: (data.authorityName || '').replace(/\s+/g, ' ').trim(),
+      font: 'Autography',
+      fontSize: PX(32),
+      margin: [0, 0, 0, 4],
+      noWrap: true
+    },
     { text: 'Authority Signature', font: 'VERDANABOLD', fontSize: PX(13), margin: [0, 0, 0, 4] },
     { text: data.authorityName, font: 'VERDANABOLD', fontSize: PX(13), margin: [0, 0, 0, 0] },
     { text: data.authorityDesignation ?? '', font: 'VERDANABOLD', fontSize: PX(13), margin: [0, 0, 0, 16] },
     ...(data.employeeSignatureDate ? [
       { text: fullName, font: 'Autography', fontSize: PX(32), alignment: 'right', noWrap: true, margin: [0, 0, 0, 4] },
-      { text: "Employee's Signature", font: bodyFont, fontSize: PX(13), alignment: 'right' },
+      {
+        text: "Employee's Signature",
+        bold: true,
+        fontSize: PX(13),
+        alignment: 'right'
+      }
     ] : []),
   ];
 
-const isSoftCopy = !!data.backgroundImageBase64;
+  const isSoftCopy = !!data.backgroundImageBase64;
   const margins = isSoftCopy ? LETTER_MARGINS.softCopy : LETTER_MARGINS.hardCopy;
 
   const docDef: any = {

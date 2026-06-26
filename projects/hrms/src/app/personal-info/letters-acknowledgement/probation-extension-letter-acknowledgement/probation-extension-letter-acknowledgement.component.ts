@@ -105,9 +105,13 @@ export class ProbationExtensionLetterAcknowledgementComponent implements OnInit,
             );
             if (signatureAuthorityDetails) {
               this.authorityDesignation = signatureAuthorityDetails.designation;
-              this.probationExtensionLetterData.authorityName = `${signatureAuthorityDetails?.firstName ?? ''}
-              ${signatureAuthorityDetails?.middleName ? signatureAuthorityDetails?.middleName : ''}
-              ${signatureAuthorityDetails?.lastName ?? ''}`;
+              this.probationExtensionLetterData.authorityName = [
+                signatureAuthorityDetails?.firstName,
+                signatureAuthorityDetails?.middleName,
+                signatureAuthorityDetails?.lastName
+              ]
+                .filter(name => name && name.trim())
+                .join(' ');
             }
           }
         }

@@ -569,6 +569,10 @@ managerPermissionRequests = this.waitingForApprovalPerimisions.filter(x =>
   this.canApprove(x)
 );
 
+showMultiSelectAndSearch(): boolean {
+  return this.waitingForApprovalPerimisions?.some(x => this.canApprove(x));
+}
+
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();

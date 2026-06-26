@@ -101,6 +101,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   currentRowIndex: number = -1;
   currentDay: string = '';
   today: Date = new Date();
+  approvardetails: any = {};
 
   @ViewChild('datePicker') datePicker: any;
   @ViewChild('deleteconformation', { static: true }) deleteconformation!: TemplateRef<any>;
@@ -607,27 +608,6 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     if (!range || range.length < 2) {
       return;
     }
-
-    const startDay = moment(range[0]).format('dddd');
-    const endDay = moment(range[1]).format('dddd');
-
-    console.log('Range Start', range[0]);
-    console.log('Range End', range[1]);
-    console.log('Start Day', startDay);
-    console.log('End Day', endDay);
-    console.log('Weekends Data', this.weekendsData);
-
-    const startWeekend = this.weekendsData?.some(
-      (w: any) => w.weekday === startDay
-    );
-
-    const endWeekend = this.weekendsData?.some(
-      (w: any) => w.weekday === endDay
-    );
-
-    if (startWeekend || endWeekend) {
-      this.cloneErrorMessage = 'Please select the appropriate date.';
-    }
   }
   private getRangeStartDate(range: Date[] | null): Date | null {
     if (!Array.isArray(range) || range.length === 0 || !range[0]) {
@@ -778,6 +758,10 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
           return;
         }
 
+        console.log('Source Cell Status:', sourceCell.approvalStatus);
+        console.log('Source Cell Duration:', sourceCell.durationSeconds);
+        console.log('Should Clone:', shouldCloneSourceCell);
+
         const targetDate = targetWeekDates[index];
 
         if (!targetDate) {
@@ -795,27 +779,32 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
           return;
         }
 
-        const resource = this.resourcesArrayList?.find((r: any) =>
-          r.project?.projectId === sourceRow.projectId &&
-          r.client?.clientId === sourceRow.clientId &&
-          r.phase?.phaseId === sourceRow.phaseId
-        );
+        let resource: any = null;
 
-        console.log('Source Phase Id', sourceRow.phaseId);
-        console.log('Matched Phase Id', resource?.phase?.phaseId);
-        console.log('Phase Name', resource?.phase?.phaseName);
+        // Skip resource validation for No Client - No Project
+        if (!sourceRow.isNoClientProject) {
 
+          resource = this.resourcesArrayList?.find((r: any) =>
+            r.project?.projectId === sourceRow.projectId &&
+            r.client?.clientId === sourceRow.clientId &&
+            r.phase?.phaseId === sourceRow.phaseId
+          );
 
-        if (!resource) {
-          console.log('Skipping released phase', sourceRow.phaseId);
-          return;
-        }
+          console.log('Source Phase Id', sourceRow.phaseId);
+          console.log('Matched Phase Id', resource?.phase?.phaseId);
+          console.log('Phase Name', resource?.phase?.phaseName);
 
-        if (resource?.endDate) {
-          const releaseDate = moment(resource.endDate).startOf('day');
+          if (!resource) {
+            console.log('Skipping released phase', sourceRow.phaseId);
+            return;
+          }
 
-          if (moment(targetDate).isAfter(releaseDate, 'day')) {
-            return; // Skip cloning after release date
+          if (resource.endDate) {
+            const releaseDate = moment(resource.endDate).startOf('day');
+
+            if (moment(targetDate).isAfter(releaseDate, 'day')) {
+              return;
+            }
           }
         }
 
@@ -878,11 +867,6 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   }
 
   cloneTimesheetEntries(): void {
-
-    console.log('cloneErrorMessage', this.cloneErrorMessage);
-    if (this.cloneErrorMessage === 'Please select the appropriate date.') {
-      return;
-    }
 
     if (!this.cloneForm || this.cloneForm.invalid) {
       this.cloneForm.markAllAsTouched();
@@ -1437,7 +1421,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       this.weakenddate = this.end;
       this.setWeekRange(prevStart, prevEnd);
       this.checkTimesheetLockByMonth(prevStart.toDate(), prevEnd.toDate()); //
-       this.getResourceData();  
+      this.getResourceData();
       const formattedStart = moment(prevStart).format('YYYY-MM-DD');
       this.loadTimeSheetByResource(formattedStart);
     }
@@ -1454,7 +1438,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       this.weakenddate = this.end;
       this.setWeekRange(nextStart, nextEnd);
       this.checkTimesheetLockByMonth(nextStart.toDate(), nextEnd.toDate());
-       this.getResourceData();  
+      this.getResourceData();
       const formattedStart = moment(nextStart).format('YYYY-MM-DD');
       this.loadTimeSheetByResource(formattedStart);
     }
@@ -1514,22 +1498,22 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
 
   //GET CLIENT AND PROJECT
   getResourceData() {
-    
+
     const weekStartDate = moment(this.start).format('YYYY-MM-DD');
 
     console.log('this.start =', this.start);
-console.log('weekStartDate =', weekStartDate);
+    console.log('weekStartDate =', weekStartDate);
     this.http.getDataIncludeParams(`ProjectResource?status=active,released&employeeId=${this.employeeId}&isProjectRequired=true&weekStartDate=${weekStartDate}`).pipe(takeUntil(this.destroy$)).subscribe((res: any) => {
       if (res.success) {
         // this.resourcesArrayList = res.data;
         // const rawData = res.data;
         console.log(
-    res.data.map((x: any) => ({
-      project: x.project?.projectName,
-      status: x.status,
-      isBlocked: x.isBlocked
-    }))
-  );
+          res.data.map((x: any) => ({
+            project: x.project?.projectName,
+            status: x.status,
+            isBlocked: x.isBlocked
+          }))
+        );
         const rawData = res.data.filter((item: any) => !item.isBlocked);
         this.resourcesArrayList = rawData;
         this.clients = rawData.reduce((acc: any[], curr: any) => {
@@ -2851,17 +2835,9 @@ console.log('weekStartDate =', weekStartDate);
     menu.show(event);
   }
 
-  approvardetails = {} as any;
-
-  getStatusBadgeClass(status: string): string {
-    if (!status) return 'badge-default';
-    const s = status.toLowerCase();
-    if (s.includes('waiting') || s.includes('pending')) return 'badge-waiting';
-    if (s.includes('approved') || s.includes('processed')) return 'badge-approved';
-    if (s.includes('rejected')) return 'badge-rejected';
-    if (s.includes('draft')) return 'badge-draft';
-    return 'badge-default';
-  }
+  validateCloneDateRanges() {
+  this.cloneErrorMessage = null;
+}
 
   getHeaderClass(status: string): string {
     if (!status) return 'header-default';
@@ -2881,36 +2857,18 @@ console.log('weekStartDate =', weekStartDate);
     this.approvardetails = day.value.pendingApprovalDetails;
     this.approvardetails.description = day.get('description')?.value
   }
-  
-    validateCloneDateRanges() {
-    this.cloneErrorMessage = null;
 
-    const sourceRange = this.cloneForm.get('sourceWeekDateRange')?.value;
-    const targetRange = this.cloneForm.get('targetWeekDateRange')?.value;
-
-    const isInvalidRange = (range: Date[]) => {
-      if (!range || range.length < 2) return false;
-
-      const startDay = moment(range[0]).format('dddd');
-      const endDay = moment(range[1]).format('dddd');
-
-      const startWeekend = this.weekendsData?.some(
-        (w: any) => w.weekday === startDay
-      );
-
-      const endWeekend = this.weekendsData?.some(
-        (w: any) => w.weekday === endDay
-      );
-
-      return startWeekend || endWeekend;
-    };
-
-    if (isInvalidRange(sourceRange) || isInvalidRange(targetRange)) {
-      this.cloneErrorMessage = 'Please select the appropriate date.';
-    } else {
-      this.cloneErrorMessage = null;
-    }
+   getStatusBadgeClass(status: string): string {
+    if (!status) return 'badge-default';
+    const s = status.toLowerCase();
+    if (s.includes('waiting') || s.includes('pending')) return 'badge-waiting';
+    if (s.includes('approved') || s.includes('processed')) return 'badge-approved';
+    if (s.includes('rejected')) return 'badge-rejected';
+    if (s.includes('draft')) return 'badge-draft';
+    return 'badge-default';
   }
+
+  
   ngOnDestroy() {
     this.destroy$.next(true);
     this.destroy$.complete();

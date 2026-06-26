@@ -198,7 +198,7 @@ export function buildNdaLetterDoc(data: NdaLetterData): any {
         {
           width: '50%',
           stack: [
-            { text: 'CONSULTANT', font: 'VERDANABOLD', margin: [0, 0, 0, 16] },
+            { text: 'CONSULTANT', font: 'VERDANABOLD', margin: [0, 0, 0, 24] },
             {
               text: data.employeeFullName
                 ? ['Signature: ', { text: data.employeeFullName, font: data.useAutographyFont ? 'Autography' : bodyFont, fontSize: PX(32), noWrap: true }]

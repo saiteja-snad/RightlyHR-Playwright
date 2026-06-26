@@ -127,9 +127,13 @@ export function buildContractorLetterDoc(data: ContractorLetterData): any {
     return { text, font: bodyFont, margin: [0, 0, 0, marginBottom] };
   }
 
-  const amountDisplay = data.currencyType === 'INR'
-    ? `${data.currencySymbol ?? ''}${data.currencyType ?? ''} ${data.amount ?? 0} /-`
-    : `${data.currencySymbol ?? ''}${data.currencyType ?? ''} ${data.amount ?? 0}`;
+  const currencySymbol = data.currencyType === 'INR'
+    ? { text: '₹', font: 'Roboto', bold: true }
+    : { text: '$', font: 'Roboto', bold: true };
+
+  const amountText = data.currencyType === 'INR'
+    ? [currencySymbol, { text: ` ${data.amount ?? 0} /-`, font: 'VERDANABOLD' }]
+    : [currencySymbol, { text: ` ${data.amount ?? 0}`, font: 'VERDANABOLD' }];
 
   // Address stack items
   const addressStack: any[] = [
@@ -148,7 +152,7 @@ export function buildContractorLetterDoc(data: ContractorLetterData): any {
   }
 
   const page1: any[] = [
-    { text: 'OFFER LETTER', font: 'VERDANABOLD', fontSize: PX(16), alignment: 'center', margin: [0, 0, 0, 16]},
+    { text: 'Contract Offer Letter', font: 'VERDANABOLD', fontSize: PX(16), alignment: 'center', margin: [0, 0, 0, 16]},
     {
       columns: [
         { width: '65%', stack: addressStack },
@@ -161,7 +165,8 @@ export function buildContractorLetterDoc(data: ContractorLetterData): any {
       'We are pleased to offer you contract employment in RightlyHR. as a ',
       { text: data.jobRole ?? '', font: 'VERDANABOLD' },
       ' on a remuneration of ',
-      { text: `${amountDisplay} per ${data.frequency ?? ''}`, font: 'VERDANABOLD' },
+      ...amountText,
+      { text: ` per ${data.frequency ?? ''}`, font: 'VERDANABOLD' },
       '. You will have to submit weekly/monthly Time sheet approved by the reporting manager. You will be working part time as required by SNAD. Your approximate start date with the company is ',
       fmt(data.dateOfJoining), '.',
     ], 8),

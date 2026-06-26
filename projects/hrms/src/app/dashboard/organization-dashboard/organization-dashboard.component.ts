@@ -117,6 +117,8 @@ export class OrganizationDashboardComponent implements AfterViewInit {
       const ctx = chart.ctx;
       const isHorizontal = chart.config?.options?.indexAxis === 'y';
       const isStacked = chart.config?.options?.scales?.y?.stacked || chart.config?.options?.scales?.x?.stacked;
+      const disableUnderline = chart.config?.options?.disableUnderline;
+      if (disableUnderline) return;
       if (isHorizontal) {
         // Check if user has permission to view employee list for gender chart
         const hasViewPermission = this.rbac.allowedToAccess('Headcount by Gender View Employee List.view');
@@ -2137,13 +2139,10 @@ export class OrganizationDashboardComponent implements AfterViewInit {
   attritionChartOptions: any;
   hasAttritionData = false;
   attritionRawData: any[] = [];
-  attritionOffcanvasTitle: string = '';
-  attritionOffcanvasList: any[] = [];
   attritionDateRange: Date[] | null = [
     new Date(new Date().getFullYear(), 0, 1),
     new Date()
   ];
-  @ViewChild('attritionEmployeesList') attritionOffcanvasTemplate!: TemplateRef<any>;
   // Employee Exit by Tenure variables
   exitByTenureLoader = false;
   exitByTenureChartData: any;
@@ -2163,7 +2162,7 @@ export class OrganizationDashboardComponent implements AfterViewInit {
     this.attritionRateLoader = true;
     const startDate = moment(this.attritionDateRange?.[0] ?? new Date(new Date().getFullYear(), 0, 1)).format('YYYY-MM-DD');
     const endDate = moment(this.attritionDateRange?.[1] ?? new Date()).format('YYYY-MM-DD');
-    this.http.getData(`Reports/DepartmentWiseAttritionRate?fromDate=${startDate}&toDate=${endDate}`).pipe(takeUntil(this.destroy$)).subscribe({
+    this.http.getData(`Reports/DepartmentWiseAttritionRate?startDate=${startDate}&endDate=${endDate}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         const data = res?.data?.departmentAttritionRates || [];
         this.buildAttritionChart(data);
@@ -2215,15 +2214,7 @@ export class OrganizationDashboardComponent implements AfterViewInit {
       responsive: true,
       maintainAspectRatio: false,
       layout: { padding: { top: 25 } },
-      onClick: (_event: any, elements: any[]) => {
-        if (!elements.length) return;
-        const item = this.attritionRawData[elements[0].index];
-        if (!item?.employeesLeft) return;
-        this.openAttritionOffcanvas(item);
-      },
-      onHover: (_event: any, elements: any[], chart: any) => {
-        chart.canvas.style.cursor = elements.length ? 'pointer' : 'default';
-      },
+      disableUnderline: true,
       plugins: {
         legend: {
           display: false,
@@ -2241,20 +2232,7 @@ export class OrganizationDashboardComponent implements AfterViewInit {
             weight: 'bold',
             size: 10
           },
-          formatter: (value: any) => value + '%',
-          listeners: {
-            click: (context: any) => {
-              const item = this.attritionRawData[context.dataIndex];
-              if (!item?.employeesLeft) return;
-              this.openAttritionOffcanvas(item);
-            },
-            enter: (context: any) => {
-              context.chart.canvas.style.cursor = 'pointer';
-            },
-            leave: (context: any) => {
-              context.chart.canvas.style.cursor = 'default';
-            }
-          }
+          formatter: (value: any) => value + '%'
         }
       },
       scales: {
@@ -2273,26 +2251,14 @@ export class OrganizationDashboardComponent implements AfterViewInit {
     };
   }
 
-  openAttritionOffcanvas(item: any) {
-    this.searchEmployeeText = '';
-    this.attritionOffcanvasTitle = item.departmentName;
-    this.attritionOffcanvasList = (item.employeesLeft || []).map((emp: any) => ({
-      ...emp,
-      profilePicUrl: emp.profilePic ? this.getImageUrl(emp.profilePic) : null
-    }));
-    this.offcanvasService.open(this.attritionOffcanvasTemplate, { position: 'end', backdrop: 'static', keyboard: false });
-  }
 
-  getFilteredAttritionEmployees() {
-    return this.searchEmployeeText ? this.attritionOffcanvasList.filter((emp: any) => this.matchesSearch(emp)) : this.attritionOffcanvasList;
-  }
 
   // Employee Exit by Tenure functions
   getEmployeeExitByTenure() {
     this.exitByTenureLoader = true;
     const startDate = moment(this.exitByTenureDateRange?.[0] ?? new Date(new Date().getFullYear(), 0, 1)).format('YYYY-MM-DD');
     const endDate = moment(this.exitByTenureDateRange?.[1] ?? new Date()).format('YYYY-MM-DD');
-    this.http.getData(`Reports/EmployeeExitByTenure?fromDate=${startDate}&toDate=${endDate}`).pipe(takeUntil(this.destroy$)).subscribe({
+    this.http.getData(`Reports/EmployeeExitByTenure?startDate=${startDate}&endDate=${endDate}&includeDetails=true`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         const tenureData = res?.data?.tenureExitData || [];
         this.totalExitedEmployees = res?.data?.totalExitedEmployees || 0;
@@ -2405,7 +2371,11 @@ export class OrganizationDashboardComponent implements AfterViewInit {
     this.exitByTenureOffcanvasTitle = tenureRange;
     const tenureItem = this.exitByTenureRawData.find((item: any) => item.tenureRange === tenureRange);
     this.exitByTenureOffcanvasList = (tenureItem?.employeeDetails || []).map((emp: any) => ({
-      ...emp,
+      employeeName: emp.fullName,
+      designation: emp.jobRole || 'N/A',
+      departmentName: emp.department || 'N/A',
+      lastWorkingDay: emp.lastWorkingDay,
+      profilePic: emp.profilePic,
       profilePicUrl: emp.profilePic ? this.getImageUrl(emp.profilePic) : null
     }));
     this.offcanvasService.open(this.exitByTenureOffcanvasTemplate, { position: 'end', backdrop: 'static', keyboard: false });

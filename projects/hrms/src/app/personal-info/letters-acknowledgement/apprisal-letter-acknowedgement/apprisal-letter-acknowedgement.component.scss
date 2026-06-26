@@ -125,6 +125,10 @@
     background: unset;
 }
 
+.secondtable tr:nth-child(5) {
+    background: #fff2cc;
+}
+
 .letter-signature {
     font-size: var(--fontsize32) !important;
     font-family: "autographsignatureFont" !important;

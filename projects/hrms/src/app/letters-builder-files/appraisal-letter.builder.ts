@@ -175,8 +175,8 @@ export function buildAppraisalLetterDoc(data: AppraisalLetterData): any {
   const page1: any[] = [
     { text: 'Appraisal Letter', fontSize: PX(14), alignment: 'center', margin: [0, 0, 0, 6], font: 'VERDANABOLD', },
     { text: `Date: ${fmt(data.letterDate)}`, alignment: 'right', margin: [0, 0, 0, 6], font: 'VERDANABOLD' },
-    p([{ text: `${data.gender ? data.gender + ' ' : ''}${fullName}`, font: 'VERDANABOLD' }, '\n', { text: data.jobRole || '', font: 'VERDANABOLD' }], 10),
-    p([{ text: `Dear ${fullName},`, font: 'VERDANABOLD' }], 10),
+    p([{ text: `${data.gender ? data.gender + ' ' : ''}${fullName}`, font: 'VERDANABOLD' }, '\n', { text: data.jobRole || '', font: 'VERDANABOLD' }], 7),
+    p([{ text: `Dear ${fullName},`, font: 'VERDANABOLD' }], 7),
     p('We are pleased to present you with this appraisal letter on behalf of RightlyHR. We want to extend our gratitude for your dedication and substantial contributions to the organization. Your hard work and commitment have made a significant impact on our success.', 7),
     ...(data.isPromotion && data.newJobRole ? [
       p([

@@ -139,18 +139,12 @@
                                 {{appraisalData.middleName}} {{appraisalData.lastName}},</p>
 
                             <p class="mb-4">Management has truly recognized your potential for growth with
-                                the
-                                company and thus has given you a good increment with great expectations. We would
-                                like
-                                you to take it as a challenge and prove your mettle. </p>
-                            <p class="mb-4">Keeping in view the above, Management has also decided to give
-                                you
-                                a revision of Rs. {{incrementSalary}}/- w.e.f.
+                                the company and thus has given you a salary revision with great expectations. We would
+                                like you to take it as a challenge and prove your mettle.</p>
+                            <p class="mb-4">Keeping in view the above, Management has decided to revise your CTC to
+                                <b>Rs. {{ (appraisalData?.salary || 0) + (appraisalData?.variablePayAmount || 0) }}/-</b>
+                                w.e.f. This revision will be effective from
                                 <u>{{employeeCompensationDetails.compeffectivedate | dateformat}}</u>.
-                                This will be in addition to your existing CTC, thereby increasing your CTC from Rs
-                                <span *ngIf="previusSalary?.compensationamount"></span>
-                                {{previusSalary?.compensationamount}}/- to current CTC of Rs
-                                {{appraisalData.salary}} /-
                             </p>
 
                             <p class="mb-4">We are confident that you will put in your best efforts in

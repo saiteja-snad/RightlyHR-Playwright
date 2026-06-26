@@ -21,8 +21,10 @@ input:focus {
 }
 
 .signature {
-    font-size: 12px;
-    font-weight: 600;
+    display: inline-block;
+    min-width: 90px;
+    font-size: 18px;
+    font-weight: 800;
 }
 
 .name {

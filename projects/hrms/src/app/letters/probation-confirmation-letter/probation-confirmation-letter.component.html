@@ -34,9 +34,9 @@
                         <!-- Custom validation error from DateValidation -->
                         <!-- <div class="error-msg" *ngIf="!isdateofprobation">Issued Date should not be after Probation End Date
                         </div> -->
-                        <div class="error-msg" *ngIf="!isdateofprobationIssued">Issued Date should not be after
+                        <!-- <div class="error-msg" *ngIf="!isdateofprobationIssued">Issued Date should not be after
                             Probation End Date
-                        </div>
+                        </div> -->
                     </div>
                 </div>
 
@@ -50,7 +50,7 @@
                             *ngIf="probationConfirmationForm.get('effectiveDate')?.invalid && probationConfirmationForm.get('effectiveDate')?.touched">
                             Effective Date is required</div>
                         <!-- Custom validation error from DateValidation -->
-                        <div *ngIf="!isdateofprobation">Effective Date should not be after Probation End Date</div>
+                        <!-- <div *ngIf="!isdateofprobation">Effective Date should not be after Probation End Date</div> -->
                     </div>
                 </div>
 

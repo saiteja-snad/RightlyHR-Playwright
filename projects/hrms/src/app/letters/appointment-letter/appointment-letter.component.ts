@@ -383,6 +383,7 @@ export class AppointmentLetterComponent implements OnInit, OnDestroy {
   }
 
   sendEmployeeDetails() {
+    this.selectedEmployee.dateOfJoining = this.employeeForm.get('dateOfJoining')?.value;
     this.subscription = this.http.postdata('Employeedata/UPDATER', this.selectedEmployee).subscribe({
       next: (data: any) => {
       },

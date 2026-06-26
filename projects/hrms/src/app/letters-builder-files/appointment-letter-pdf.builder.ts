@@ -1,5 +1,4 @@
 import { applyLetterPageSetup, LETTER_MARGINS, stampFont } from "./letter-builder.utils";
-
 export interface AppointmentLetterData {
   employeeFullname: string;
   appointmentDate: string;
@@ -43,7 +42,7 @@ export function buildAppointmentLetterDoc(data: AppointmentLetterData): any {
   }
 
   function heading(text: string): any {
-    return { font: 'VERDANABOLD', text, fontSize: PX(13), margin: [0, 6, 0, 2], keepWithNext: true };
+    return { font: 'VERDANABOLD', text, fontSize: PX(12), margin: [0, 6, 0, 2], keepWithNext: true };
   }
 
   function para(parts: any[]): any {
@@ -51,17 +50,17 @@ export function buildAppointmentLetterDoc(data: AppointmentLetterData): any {
   }
 
   function sub(text: string): any {
-    return { font: 'VERDANABOLD', text, fontSize: PX(13), margin: [0, 2, 0, 2] };
+    return { font: 'VERDANABOLD', text, fontSize: PX(12), margin: [0, 2, 0, 2] };
   }
 
   function signatory(text: string): any {
-    return { font: 'VERDANABOLD', text, fontSize: PX(13), margin: [0, 0, 0, 4] };
+    return { font: 'VERDANABOLD', text, fontSize: PX(12), margin: [0, 0, 0, 4] };
   }
 
   const hasAddress = !!addressLine1;
   const addressText = hasAddress ? `${addressLine1}${addressLine2 ? ', ' + addressLine2 : ''}, ${city}, ${state}, ${country} - ${pinCode}.` : '';
 
-  // ── PAGE 1: APPOINTMENT LETTER header → section 2c ─────────────────
+  // ── PAGE 1 
   const page1: any[] = [
     { text: 'Appointment Letter', fontSize: PX(16), font: 'VERDANABOLD', alignment: 'center', margin: [0, 0, 0, 16] },
     { text: `Date: ${apptDate}`, alignment: 'right', margin: [0, 0, 0, 8], font: 'VERDANA' },
@@ -76,17 +75,21 @@ export function buildAppointmentLetterDoc(data: AppointmentLetterData): any {
     para([{ text: 'c) ', font: 'VERDANABOLD' }, 'In case of any change in the existing statute or introduction of a new statute, the Company reserves a right to adjust the salary components within the then existing CTC to ensure that the payments are made in compliance with such statutes.']),
     para([{ text: 'd) ', font: 'VERDANABOLD' }, 'Company may from time to time, deduct any statutory deduction or withhold tax as may be required by applicable laws.']),
     heading('2. Working Hours and Leave:'),
+    // 2a – normal working days (HTML comment: <!-- 1 -->)
     para([{ text: 'a) ', font: 'VERDANABOLD' }, 'The normal working days will be five (5) days a week for nine (9) hours per day from 10:00 hrs to 19:00 hrs as per project Requirement. The Company provide flexible working hours, however, you are required to abide by the timings of your Work Location / Business Unit as and when required by the Company. Further, depending on project/ work contingencies, workload and business requirements, at any given time you may be required to work outside these stated hours, including weekends. You may also be required to work in shifts, which will be informed to you in advance.']),
-    para([{ text: 'b) ', font: 'VERDANABOLD' }, 'You may also be expected to travel to other locations and at times outside of your official working hours. You may at any time be called upon to perform other than your normal duties which in the opinion of the Company are within your competency to discharge and you will forthwith undertake these duties with due care and diligence. In this case, you are required to abide by the timings of your work location/business unit.']),
-    para([{ text: 'c) ', font: 'VERDANABOLD' }, "You are expected to work from home as and when required by the Company. Please note that you should have proper infrastructure for working from home, e.g. suitable internet connection, quiet workspace, etc. The Company shall pay each employee with the basic setup of the work from home infrastructure. You understand that the Company shall not provide any additional reimbursement for any expenses incurred by you to set up work from home infrastructure, e.g. electricity bills, internet charges, etc."]),
-  ];
-
-  // ── PAGE 2: section 2d → section 9 first paragraph ─────────────────
-  const page2: any[] = [
+    // 2b – work from home (HTML comment: <!-- 2 -->)
+    para([{ text: 'b) ', font: 'VERDANABOLD' }, "You are expected to work from home as and when required by the Company. Please note that you should have proper infrastructure for working from home, e.g. suitable internet connection, quiet workspace, etc. The Company shall pay each employee with the basic setup of the work from home infrastructure. You understand that the Company shall not provide any additional reimbursement for any expenses incurred by you to set up work from home infrastructure, e.g. electricity bills, internet charges, etc."]),
+    // 2c – travel to other locations
+    para([{ text: 'c) ', font: 'VERDANABOLD' }, 'You may also be expected to travel to other locations and at times outside of your official working hours. You may at any time be called upon to perform other than your normal duties which in the opinion of the Company are within your competency to discharge and you will forthwith undertake these duties with due care and diligence. In this case, you are required to abide by the timings of your work location/business unit.']),
+    // 2d – paid leave
     para([{ text: 'd) ', font: 'VERDANABOLD' }, 'You will be entitled to a certain amount of paid leave which is governed by the Leave Policy of the Company, as applicable from time to time.']),
     heading('3. Right to Transfer/Depute:'),
     p("As part of your duties', you may be required to travel outside of the Company's premises. Pursuant to any business requirement, the Company may also transfer or depute you to any other office or location of the Company or any of its subsidiaries or affiliates or group companies or to the worksite or office of the Company's customer within or outside of India or as part a business arrangement or, sale of assets, merger, takeover, acquisition, or hive-off, the transfer you onto the rolls of another entity and you shall accept such transfer or deputation without demur."),
-    heading('4. Probation:'),
+  ];
+
+  // ── PAGE 2 
+  const page2: any[] = [
+    { font: 'VERDANABOLD', text: '4. Probation:', fontSize: PX(12), margin: [0, 6, 0, 2], keepWithNext: true, pageBreak: 'before' },
     para([{ text: 'a) ', font: 'VERDANABOLD' }, 'Your probation period will start from the date of joining and will continue up to three months from DOJ. At the discretion of the Company, your probation period may be extended if it is found that the services provided by you are interrupted or not satisfactory.']),
     para([{ text: 'b) ', font: 'VERDANABOLD' }, 'On successful completion of the probation period, if in the opinion of the Company, you are found suitable for the appointed post, your appointment will be confirmed and communicated to you in writing by the Company.']),
     heading('5. Background Verification:'),
@@ -99,18 +102,17 @@ export function buildAppointmentLetterDoc(data: AppointmentLetterData): any {
     heading('8. Increments and Promotion:'),
     p("Your growth in the Company and increments in the salary will depend solely on your performance and contribution to the Company. The appraisal cycle for the company is April to March. You will be eligible for appraisal on pro rata basis. Anyone who joins the Company on or after November 1st, he/she will not be eligible for the appraisal cycle for that year."),
     heading('9. Information and security:'),
-    p("The role assigned during your employment with the Company includes the Information Security responsibilities as required by organization and customer. This includes adhering, maintaining information security artefact as required by policy of the organization and customer."),
-  ];
-
-  // ── PAGE 3: section 9 second paragraph → section 14c ───────────────
-  const page3: any[] = [
-    p("During your employment with the Company, you shall not disclose any information to anyone including but not limited to Company's customers, prospective customers, people or entities outside the Company or to any Company's employee which is confidential or trade secret under your previous employment contract or disclosure of which is in violation of any law or third-party intellectual property rights. If you disclose any such information, you shall be solely liable at your own cost and you agree to hold harmless the Company from and against any claims, actions, suits, demands, damages, claims for fees, costs, charges and expenses."),
+    p("The role assigned during your employment with the Company includes the Information Security responsibilities as required by organization and customer. This includes adhering, maintaining information security artefact as required by policy of the organization and customer. During your employment with the Company, you shall not disclose any information to anyone including but not limited to Company's customers, prospective customers, people or entities outside the Company or to any Company's employee which is confidential or trade secret under your previous employment contract or disclosure of which is in violation of any law or third-party intellectual property rights. If you disclose any such information, you shall be solely liable at your own cost and you agree to hold harmless the Company from and against any claims, actions, suits, demands, damages, claims for fees, costs, charges and expenses."),
     heading('10. No Conflict:'),
     p("You represent and warrant that if you accept this Appointment Letter with the Company, it shall not be in conflict with any other agreement that you may have entered into or any obligation that you may be bound to."),
     heading('11. Accountability:'),
     p('You shall perform any such duties diligently and faithfully as are incidental or implied and consistent with your relevant experience, training and qualifications or maybe reasonably delegated as being in the best intrest of the company.'),
     para([{ text: 'a) ', font: 'VERDANABOLD' }, 'You agree that the Company may assign you additional tasks or to a new manager; modify or remove your assigned duties; or change the place of your employment. Compensation change in such situations, if any, will be at the discretion of the Company.']),
-    para([{ text: 'b) ', font: 'VERDANABOLD' }, 'You agree to use all tools provided by the Company for professional purposes only. Internet and email access are provided to you as business communication tools for appropriate internal and external business uses. Generation, transmission, or storage of potentially offensive information is not allowed. You also agree to always act in the interest of the Company.']),
+  ];
+
+  // ── PAGE 3
+  const page3: any[] = [
+    { font: bodyFont, text: [{ text: 'b) ', font: 'VERDANABOLD' }, 'You agree to use all tools provided by the Company for professional purposes only. Internet and email access are provided to you as business communication tools for appropriate internal and external business uses. Generation, transmission, or storage of potentially offensive information is not allowed. You also agree to always act in the interest of the Company.'], margin: [0, 0, 0, 5], pageBreak: 'before' },
     heading('12. No Dual Employment:'),
     p("You shall devote your full time and attention to the performance of your duties incidental to your position with the Company. During your employment with the Company, you are refrained from taking up any other employment, consultancy, or any other job (with or without remuneration), without the prior written consent of the Company."),
     heading('13. Prior Service:'),
@@ -120,27 +122,24 @@ export function buildAppointmentLetterDoc(data: AppointmentLetterData): any {
     para([{ text: 'a) ', font: 'VERDANABOLD' }, 'Own or operate a business in competition with the business of the Company.']),
     para([{ text: 'b) ', font: 'VERDANABOLD' }, 'Solicit employment with a competitor or with any existing/prospective client (in any manner whatsoever);']),
     para([{ text: 'c) ', font: 'VERDANABOLD' }, 'Solicit employment of or advise any other employee of the Company to terminate his contract or relationship with the Company or accept any contract (directly or indirectly) or other arrangements for providing services to any other person or organization; or,']),
-  ];
-
-  // ── PAGE 4: section 14d → section 18a paragraph ────────────────────
-  const page4: any[] = [
     para([{ text: 'd) ', font: 'VERDANABOLD' }, 'Contact any of the existing or prospective clients of the Company, to entice such clients away from the Company or to damage in any way their business relationship with Company.']),
     p("You agree that the restrictions set forth in this clause are reasonable and necessary to protect the proprietary and business interests of the Company and constitute a material inducement to the Company to employ you. You further agree that the Company would not employ you in the absence of such inducement."),
     heading('15. Consent Regarding Personal Data:'),
     p("This clause relates to the Personal Data that you may be requested to provide in connection with your employment. Personal Data includes any information related to a natural person that is, in combination of other information or otherwise, is capable of identifying such person notably including financial information such as Bank account or credit card or debit card or other payment instrument details, physical, physiological and mental health condition, sexual orientation, medical records and history, biometric information, any information or detail relating to previous employment details, educational qualifications and criminal record."),
     para([{ text: 'a) ', font: 'VERDANABOLD' }, "You hereby understand and consent to Company, without any reservations, to (i) collect any of your Personal Data or other data from your last employer or through any internal or external agencies appointed for this purpose, (ii) use or process such data in connection with your employment with the Company or any matters arising from such employment, and (iii) sharing such data with any outside agencies or third parties including Company's client for verification and validation of this information, processing in relation to employment or matters arising from such employment, or in compliance with the Company's contractual or statutory obligations."]),
     para([{ text: 'b) ', font: 'VERDANABOLD' }, "You understand that you may withdraw the consent by informing in writing to Company's designated representative for this purpose. You also consent and accept that if such withdrawal of consent affects the purpose for which your Personal Data was sought, Company reserves the right to take steps as it deems appropriate. You understand that this consent is obtained by the Company to ensure compliance of The Information Technology (Reasonable Security Practices and Procedures and Sensitive Personal Data or Information) Rules, 2011 and any successor laws regarding the subject."]),
-    heading('16. Changes in Personal Details:'),
-    p('Any change in your residential address, telephone numbers, marital status, and academic qualifications should be notified in writing to the Company with three (3) days of such change. communication will be addressed to you on the last address notified by you and it will be presumed that you have received such communication addressed to you.'),
+  ];
+
+  // ── PAGE 4
+  const page4: any[] = [
+    { font: 'VERDANABOLD', text: '16. Changes in Personal Details:', fontSize: PX(12), margin: [0, 6, 0, 2], keepWithNext: true, pageBreak: 'before' },
+    p('Any change in your residential address, telephone numbers, marital status, and academic qualifications should be notified in writing to the Company with three (3) days of such change.'),
+    p('communication will be addressed to you on the last address notified by you and it will be presumed that you have received such communication addressed to you.'),
     heading('17. Retirement:'),
     p('The age of retirement from the Company shall be on attainment of fifty-eight (58) years of age. For this purpose, the date of birth considered will be as per the certificate of proof of age submitted by you at the date of joining the Company. In case the last day of your employment falls on a non-working day, your last day of employment shall be the immediately the preceding working day.'),
     heading('18. Notice Period:'),
     sub('a) Resignation by the Employee:'),
     p("During the probation period, you may resign from your services by providing a prior written notice of Thirty (30) days or payment of gross salary in lieu thereof. After completion of your probation period, if you voluntarily resign from the services of the Company, you will be required to give ninety (90) days of written notice or gross salary in lieu of the notice period Three Months (90 days), subject to the Company's discretion. Any shortfall in the Notice Period shall be recovered from your full and final settlement. In case of resignation, the Company reserves the right to:"),
-  ];
-
-  // ── PAGE 5: roman numerals list → section 20a ──────────────────────
-  const page5: any[] = [
     {
       ol: [
         'Relieve you earlier than the Notice Period',
@@ -165,11 +164,23 @@ export function buildAppointmentLetterDoc(data: AppointmentLetterData): any {
         'If any information furnished by you or representation made by you is found to be incorrect or if any material information is detected by the Company to have been suppressed by you or any action on your part is found to be in contravention to the terms and conditions herein:',
         'Become of unsound mind;',
         'Are accused or convicted of any criminal offense:',
+      ],
+      type: 'upper-roman',
+      margin: [20, 0, 0, 8],
+    },
+  ];
+
+  // ── PAGE 5
+  const page5: any[] = [
+    {
+      ol: [
         'Are reported to be on an unauthorized absence for more than ten (10) days.',
         'In case the last day of your employment falls on a non-working day, your last day of employment shall be the immediate previous working day.',
       ],
       type: 'upper-roman',
-      margin: [8, 0, 0, 8],
+      start: 9,
+      margin: [20, 0, 0, 8],
+      pageBreak: 'before',
     },
     heading('19. Subsistence Allowance:'),
     p('If your services are suspended by the Company during the pendency of any inquiry proceeding or as a result of any disciplinary action taken against you, your regular salary shall be suspended and for such suspension period and you will be eligible to receive only a subsistence allowance which will be calculated in accordance with the existing statutory requirements of the government of Telangana or the relevant policies of the Company"'),
@@ -178,13 +189,13 @@ export function buildAppointmentLetterDoc(data: AppointmentLetterData): any {
     para([{ text: 'a) ', font: 'VERDANABOLD' }, "Return of Property: You shall deliver to the Company, any and all work product, confidential information, records, manuals, training materials, keys, equipment (including, without limitation, any laptop computer, mobile phone or other wireless telecommunication device) and other property belonging to the Company or its client, which is your possession or control, without retaining any copies thereof."]),
   ];
 
-  // ── PAGE 6: section 20b → section 25b ──────────────────────────────
+  // ── PAGE 6
   const page6: any[] = [
-    para([{ text: 'b) ', font: 'VERDANABOLD' }, "You must not make any statements (whether oral or written) or do anything which might damage the reputation of the Company or interfere with the Company's relationship with its clients and customers."]),
+    { font: bodyFont, text: [{ text: 'b) ', font: 'VERDANABOLD' }, "You must not make any statements (whether oral or written) or do anything which might damage the reputation of the Company or interfere with the Company's relationship with its clients and customers."], margin: [0, 0, 0, 5], pageBreak: 'before' },
     para([{ text: 'c) ', font: 'VERDANABOLD' }, "Without prejudice to Company's other rights and remedies, the Company shall be entitled to deduct from your emoluments, the amount of any claims which the Company may have against you either under the terms of your employment or otherwise."]),
     para([{ text: 'd) ', font: 'VERDANABOLD' }, 'You understand that the Service and Experience Certificate will be issued only if you have served the entire Notice Period or have paid compensation to the Company in lieu of the Notice Period.']),
     heading('21. Company Policies:'),
-    p('In addition to the terms and conditions of this Agreement, your employment with the Company shall be subject to the policies and procedures set forth in the Company and/or the client\'s Policy (the "Policies"), the current version of which will be electronically accessible by you at all times during your employment. You agree that the Policies may be modified by the Company at any time, and that any such modifications shall apply to all the employees, including yourself. Violation of the Policies could lead to disciplinary actions up to and including termination of your employment. Additionally, while performing onsite work duties for any client of the Company, you are expected to adhere to the specific workplace policies of those clients and to familiarize yourself with those policies.'),
+    p('In addition to the terms and conditions of this Agreement, your employment with the Company shall be subject to the policies and procedures set forth in the Company and/or the client\'s Policy (the "Policies"), the current version of which will be electronically accessible by you at all times during your employment. You agree that the Policies may be modified by the Company at any time, and that any such modifications shall apply to all the employees, including yourself. Violation of the Policies could lead to disciplinary action up to and including termination of your employment. Additionally, while performing onsite work duties for any client of the Company, you are expected to adhere to the specific workplace policies of those clients and to familiarize yourself with those policies.'),
     heading('22. Indemnification:'),
     p("You shall, at all times, indemnify and keep indemnified the Company against all sums whether by way of claims, demands, damages, costs, charges or expenses paid or incurred by the Company in or in connection with any action, claim proceedings or demand instituted or made against the Company caused or occasioned by your breach, failure, default or neglect."),
     heading('23. Governing Laws and Arbitration:'),
@@ -196,11 +207,10 @@ export function buildAppointmentLetterDoc(data: AppointmentLetterData): any {
     para([{ text: 'b) Successors and Assigns: ', font: 'VERDANABOLD' }, 'The Company will have the right to transfer and assign this Appointment Letter and all covenants and agreements herein will inure to the benefit of and be enforceable by such successors and assigns. This Appointment Letter is personal to you and you will not be entitled to transfer or assign it in whole or in part.']),
   ];
 
-  // ── PAGE 7: section 25c → authority signature block ────────────────
+  // ── PAGE 7
   const page7: any[] = [
-    para([{ text: 'c) Independent Legal Advice: ', font: 'VERDANABOLD' }, 'By signing this Appointment Letter you agree that you have:']),
-    p("(a) been given two (2) days time to review this Appointment Letter; (b) read and understands the terms of this Appointment Letter; (c) has been advised of the right, and has been provided with a reasonable opportunity, to obtain independent legal advice in connection with the execution of this Appointment Letter prior to his/her execution hereof; and (d) obtained or freely chosen not to obtain such independent legal advice."),
-    para([{ text: 'd) Equitable Remedies: ', font: 'VERDANABOLD' }, "You acknowledge and agree that a breach by you of any of the provisions of Sections 14 (Non-Solicitation), 14 (Non-Competition) hereof or terms of NDA would cause substantial and irreparable harm to the Company, which could not be adequately compensated for by damages, and in the event of such a breach (or the reasonable apprehension of such a breach) by the Company of any such provisions, you agree that the Company shall be entitled to temporary and permanent injunctive relief against any breach or further breach of the said provisions, without bond or security, and without a requirement that the Company prove actual damages or establish the adequacy of any of the remedies available to it. The provisions of this section shall be in addition to and not substitution for any other remedy which the Company may have in respect of any such breach."]),
+    { font: bodyFont, text: [{ text: 'c) Independent Legal Advice: ', font: 'VERDANABOLD' }, 'By signing this Appointment Letter you agree that you have: (a) been given two (2) days time to review this Appointment Letter; (b) read and understands the terms of this Appointment Letter; (c) has been advised of the right, and has been provided with a reasonable opportunity, to obtain independent legal advice in connection with the execution of this Appointment Letter prior to his/her execution hereof; and (d) obtained or freely chosen not to obtain such independent legal advice.'], margin: [0, 0, 0, 5], pageBreak: 'before' },
+    para([{ text: 'd) Equitable Remedies: ', font: 'VERDANABOLD' }, "You acknowledge and agree that a breach by you of any of the provisions of Sections 14 (Non-Solicitation), 14 (Non-Competition) hereof or terms of NDA would cause substantial and irreparable harm to the Company, which could not be adequately compensated for by damages, and in the event of such a breach ( or the reasonable apprehension of such a breach) by the Company of any such provisions, you agree that the Company shall be entitled to temporary and permanent injunctive relief against any breach or further breach of the said provisions, without bond or security, and without a requirement that the Company prove actual damages or establish the adequacy of any of the remedies available to it. The provisions of this section shall be in addition to and not substitution for any other remedy which the Company may have in respect of any such breach."]),
     para([{ text: 'e) Headings: ', font: 'VERDANABOLD' }, 'Headings are for ease of reference only and do not affect the meaning of the agreement set out in this Appointment Letter. Unless expressly indicated otherwise, references to monetary amounts are references to an amount expressed in the currency of India.']),
     para([{ text: 'f) Amendment & Waiver: ', font: 'VERDANABOLD' }, "The terms of this Appointment Letter may not be amended or revised except by an instrument in writing signed by both parties. No waiver of any provision of this Agreement shall be binding unless in writing and signed by the party entitled to grant the waiver. No failure to exercise or delay in exercising any right or remedy under this Agreement will be deemed to be a waiver of that right or remedy. No waiver of any breach of any provision of this Agreement will be deemed to be a waiver of any subsequent breach of that provision. This Appointment Letter contains the entire understanding between you and the Company concerning the subject matter and includes the Annexure(s) referred to herein and attached hereto, and supersedes any and all prior and contemporaneous negotiations, correspondence, understandings and agreements, whether oral or written, respecting that subject matter."]),
     p('Please return a signed copy of this Appointment Letter as a token of your acceptance of the terms and conditions mentioned above on the DOJ.', 4),
@@ -211,38 +221,26 @@ export function buildAppointmentLetterDoc(data: AppointmentLetterData): any {
     signatory('Authorized Signatory'),
     signatory(authorityFullName),
     signatory(authorityDesignation),
-  ];
-
-  // ── PAGE 8: ACCEPTANCE ──────────────────────────────────────────────
-  const page8: any[] = [
-    { text: `Date of Joining: ${doj}`, alignment: 'right', margin: [0, 0, 0, 10], font: 'VERDANABOLD' },
+    { text: `Date of Joining: ${doj}`, alignment: 'right', margin: [0, 8, 0, 16], font: 'VERDANABOLD' },
+    // ACCEPTANCE section (HTML page 7 bottom, not a separate page 8)
     { text: 'ACCEPTANCE', font: 'VERDANABOLD', alignment: 'center', fontSize: PX(16), margin: [0, 20, 0, 10] },
     p('I have read and understood all the terms and conditions contained in this Appointment Letter. It accurately reflects my understanding of the terms and conditions of my employment with the Company.'),
     p('I understand and agree that any changes in the terms of employment described in this Appointment Letter must be set forth in a written document signed by a duly authorized officer of the Company.', 10),
-    { text: [{ text: 'Name: ', font: bodyFont }, data.employeeSignatureDate ? { text: employeeFullname, font: 'VERDANABOLD' } : ''], margin: [0, 0, 0, 4] },
-    {
-      columns: [
-        { text: 'Signature: ', font: bodyFont, width: 'auto', margin: [0, 0, 0, 4] },
-        data.employeeSignatureDate
-          ? { text: employeeFullname, font: 'Autography', fontSize: PX(24), width: 'auto', noWrap: true }
-          : { text: '', width: 'auto' },
-      ],
-      columnGap: 2,
-      margin: [0, 0, 0, 4],
-    },
+    { text: [{ text: 'Name: ', font: bodyFont }], margin: [0, 0, 0, 4] },
+    { text: [{ text: 'Signature: ', font: bodyFont }], margin: [0, 0, 0, 4] },
     { text: [{ text: 'Place: ', font: bodyFont }], margin: [0, 0, 0, 4] },
-    { text: [{ text: 'Date: ', font: bodyFont }, { text: data.employeeSignatureDate ? fmt(data.employeeSignatureDate) : '', font: bodyFont }], margin: [0, 0, 0, 4] },
+    { text: [{ text: 'Date: ', font: bodyFont }], margin: [0, 0, 0, 4] },
   ];
 
-  // ── PAGE 9: Annexure A → section 2 Definition of Developments ──────
-  const page9: any[] = [
-    { text: 'Annexure A', font: 'VERDANABOLD', fontSize: PX(16), alignment: 'center', margin: [0, 0, 0, 8] },
+  // ── PAGE 8
+  const page8: any[] = [
+    { text: 'Annexure A', font: 'VERDANABOLD', fontSize: PX(16), alignment: 'center', margin: [0, 0, 0, 8], pageBreak: 'before' },
     { text: 'Non-Disclosure Agreement and Invention Assignment Agreement', font: 'VERDANABOLD', alignment: 'center', margin: [0, 0, 0, 10] },
     p('This Non-Disclosure Agreement and Invention Assignment Agreement (hereinafter "Agreement") is effective as of by and between'),
     {
       text: [
-        { text: 'RightlyHR ', font: 'VERDANABOLD' },
-        'with its office at Vijay Krishna Towers, Floor#16, Madhava Reddy Colony, Gachibowli, HYD - 500032 (hereinafter referred to as the "Company")',
+        { text: 'RightlyHR', font: 'VERDANABOLD' },
+        ', with its office at Vijay Krishna Towers, Floor#16, Madhava Reddy Colony, Gachibowli, HYD - 500032 (hereinafter referred to as the "Company")',
       ],
       margin: [0, 0, 0, 4],
     },
@@ -255,58 +253,30 @@ export function buildAppointmentLetterDoc(data: AppointmentLetterData): any {
         { text: 'a) ', font: 'VERDANABOLD' },
         'As per the Appointment Letter dated ',
         { text: apptDate, font: 'VERDANABOLD' },
-        ', the Receiving Party is working with the Company as [RightlyHR] ("Engagement"). During the course of Engagement, the Receiving Party may be exposed to the Confidential Information (as defined below) of the Company and/or the Company\'s affiliates, clients, customers, consultants, vendors, partners, agents or suppliers etc. The Receiving Party may also generate, create or receive, possess, oversee information that is confidential in nature.'
+        ", the Receiving Party is working with the Company as [RightlyHR] (\"Engagement\"). During the course of Engagement, the Receiving Party may be exposed to the Confidential Information (as defined below) of the Company and/or the Company's affiliates, clients, customers, consultants, vendors, partners, agents or suppliers etc. The Receiving Party may also generate, create or receive, possess, oversee information that is confidential in nature.",
       ],
-      margin: [0, 0, 0, 2]
+      margin: [0, 0, 0, 4],
     },
-
     {
       text: [
         { text: 'b) ', font: 'VERDANABOLD' },
-        'Whereas the Receiving Party undertakes to protect all such information from any unauthorized use or disclosure and undertakes to handover all intellectual property rights in the Developments (as defined below), on the terms agreed between the Parties.'
+        'Whereas the Receiving Party undertakes to protect all such information from any unauthorized use or disclosure and undertakes to handover all intellectual property rights in the Developments (as defined below), on the terms agreed between the Parties.',
       ],
-      margin: [0, 0, 0, 2]
+      margin: [0, 0, 0, 8],
     },
-
-    {
-      text: [
-        { text: 'The Parties agree as follows:', font: 'VERDANABOLD' }
-      ],
-      margin: [0, 0, 0, 2]
-    },
-
-    {
-      text: [
-        { text: '1. Confidential Information and Exclusion:', font: 'VERDANABOLD' }
-      ],
-      margin: [0, 0, 0, 2]
-    },
-
-    {
-      text: [
-        'Confidential information includes, but is not limited to, any and all technical and non-technical information including patents, copyrights, trade secrets, and proprietary information, techniques, sketches, drawings, models, inventions, innovations, know-how, processes, apparatus, equipment, algorithms, software programs, software source documents, and formulae related to the current, future, and proposed services and products of the Company or its clients; details of the Company and its clients, suppliers, and customers; and includes, without limitation, the Company or its clients\' innovations, property, and information concerning research, experimental work, development, design details and specifications, engineering, financial information, procurement requirements, purchasing, manufacturing, business forecasts, sales, merchandising, and marketing plans and information which, according to the Company or its clients, are necessarily confidential and form valuable property of the Company or its clients. If any information is disclosed orally, it shall, at the time of disclosure, be identified as confidential or shall be summarized and designated in writing by the Company and delivered within 30 days of disclosure to the Receiving Party to qualify it as Confidential Information. Confidential Information shall, however, exclude any information which (a) is in the public domain; (b) was known to the Receiving Party prior to such disclosure; or (c) becomes known to the Receiving Party without breach of any confidentiality agreement.'
-      ],
-      margin: [0, 0, 0, 2]
-    },
-
-    {
-      text: [
-        { text: '2. Definition of Developments:', font: 'VERDANABOLD' }
-      ],
-      margin: [0, 0, 0, 2]
-    },
-    {
-      text: [
-        { text: '"Development(s)" ', font: 'VERDANABOLD' },
-        'shall mean and include all inventions, improvements, discoveries, methods, developments, software, and works of authorship, whether patentable or not, any new or useful research, experiment, new contribution, finding, creativity (including without limitation any designs, drawings, plans, technology, computer programs, software, test, concept, idea, mechanism, equipment, machinery, process, formula, or technique, algorithm), whether or not granted protection under intellectual property laws, which are created, made, conceived or reduced to practice by the Receiving Party or under the Receiving Party\'s direction or jointly with others during the Engagement, whether or not during normal working hours or on the premises of the Company.'
-      ],
-
-    }
+    { text: 'The Parties agree as follows:', font: 'VERDANABOLD', margin: [0, 0, 0, 4] },
+    heading('1. Confidential Information and Exclusion:'),
+    p("Confidential information, includes but is not limited to, any and all technical and non- technical information including patent, copyright, trade secret, and proprietary information, technique, sketches, drawings, models, inventions, Innovations, know-how, processes, apparatus, equipment, algorithms, software programs, software source documents, and formulae related to the current, future and proposed services and products of the Company or its clients, details of the Company and its clients suppliers and customers, and includes, without limitation, the Company or its clients Innovations, property and information concerning research, experimental work, development, design details and specifications, engineering, financial information, procurement requirements, purchasing, manufacturing, business forecasts, sales and merchandising and marketing plans and information which according to the Company or its clients are necessarily confidential and form valuable property of the Company or its clients. If any information is disclosed orally, it shall at the time of disclosure be identified as confidential or shall be summarized and designated in writing by the Company and delivered within 30 days of disclosure to the Receiving Party to qualify it as Confidential Information. Confidential Information shall however exclude any information which (a) is in the public domain; (b) was known to the Receiving Party of such disclosure or becomes known to the Receiving Party without breach of any confidentiality agreement."),
+    heading('2. Definition of Developments:'),
+    para([
+      { text: '"Development(s)" ', font: 'VERDANABOLD' },
+      "shall mean and include all inventions, improvements, discoveries, methods, developments, software, and works of authorship, whether palatable or not, any new or useful research, experiment, new contribution, finding, creativity (including without limitation any designs, drawings, plans, technology, computer programs, software, test, concept, idea, mechanism, equipment, machinery, process, formula, or technique, algorithm), whether or not granted protection under intellectual property laws, which are created, made, conceived or reduced to practice by the Receiving Party or under the Receiving Party's direction or jointly with others during the Engagement, whether or not during normal working hours or on the premises of the Company.",
+    ]),
   ];
 
-  // ── PAGE 10: section 3 Non-disclosure 3a through 3k ────────────────
-  const page10: any[] = [
-    heading('3. Non-disclosure and Non-Use of Confidential Information:'),
+  // ── PAGE 9
+  const page9: any[] = [
+    { font: 'VERDANABOLD', text: '3. Non-disclosure and Non-Use of Confidential Information:', fontSize: PX(12), margin: [0, 6, 0, 2], keepWithNext: true, pageBreak: 'before' },
     para([{ text: 'a) ', font: 'VERDANABOLD' }, "The Receiving Party acknowledges that the Confidential Information is the exclusive property of the Company or its client and the Receiving Party shall make use of the Confidential Information only for the purpose of carrying out obligations of the Engagement and for no other purpose. During the Engagement and thereafter, the Receiving Party unconditionally and unequivocally agrees and undertakes for self to take onerous responsibility not to disclose any of the Confidential Information or any related information obtained from discussions or meetings or tale-conf or video-conference or any other source to any third parties and shall restrict disclosure of Confidential Information only to the Company's concerned officers, employees, attorneys, subcontractors or professional advisors who need to have access to the Confidential Information and each of whom shall be informed by Receiving Party of the confidential nature of Confidential Information and agree to observe the same terms and conditions set forth herein as if specifically named a party hereto."]),
     para([{ text: 'b) ', font: 'VERDANABOLD' }, 'The Receiving Party shall not make copies of Confidential Information unless the same are reasonably necessary.']),
     para([{ text: 'c) ', font: 'VERDANABOLD' }, 'The Receiving Party shall immediately notify the Company in the event of any unauthorized use or disclosure of the Confidential Information and reasonably support the Company in taking necessary remedial action.']),
@@ -318,30 +288,29 @@ export function buildAppointmentLetterDoc(data: AppointmentLetterData): any {
     para([{ text: 'i) ', font: 'VERDANABOLD' }, "During the tenure of the Engagement, the Receiving Party shall not bring any media storage devices such as external hard drives, USB drives, external hard discs, or any other devices that can store data, to the Company office premises without prior written permission of the Company."]),
     para([{ text: 'j) ', font: 'VERDANABOLD' }, "The Receiving Party shall not, during his/her Engagement with the Company or otherwise, use or disclose to the Company any confidential, trade secret, or other proprietary information or material of any previous employer or other person and will not bring into the Company's premises any unpublished document or any other property belonging to any former employer without the written consent of that former employer."]),
     para([{ text: 'k) ', font: 'VERDANABOLD' }, 'The Receiving Party hereby undertakes not to, under any circumstances disclose, destroy, delete, alter, steal, or cause to disclose, destroy, delete, alter, steal the Confidential Information.']),
-  ];
-
-  // ── PAGE 11: section 3l + section 4 Developments 4a–4f ─────────────
-  const page11: any[] = [
     para([{ text: 'l) ', font: 'VERDANABOLD' }, "The Company's Property: All works, programs, papers, records, data, notes, drawings, files, documents, samples, devices, opinions, research material, checklists, dockets, processes and other materials, including copies in whatever form and translations into any other language and intellectual property, relating to the business of the Company that the Receiving Party possesses or creates during the term of the engagement with the Company, whether or not confidential, are and shall remain the sole and exclusive property of the Company."]),
     heading('4. Disclosure and Assignment of Developments:'),
     para([{ text: 'a) ', font: 'VERDANABOLD' }, 'The Receiving Party agrees to promptly disclose to the Company in writing, all the Developments which are conceived, made, discovered, written or created whether alone or jointly with someone else during the Engagement.']),
-    para([{ text: 'b) ', font: 'VERDANABOLD' }, "The Receiving Party understands and acknowledges that no license is granted to the Receiving Party in and to the Confidential Information and/or the Developments, nor is any intellectual property right implied to be granted by this Agreement. The Receiving Party understands and acknowledges that the Company shall be the exclusive owner of all rights pertaining to the Developments created or developed by him/her. The Receiving Party agrees to assign and does hereby assign to the Company all his/her right, title and interest in and to all Developments and all related patents, patent applications, copyrights and copyright applications. The Receiving Party understands and acknowledges that all Developments shall be the property of the Company and, to the greatest extent permitted by law, shall be 'works made for hire."]),
-    para([{ text: 'c) ', font: 'VERDANABOLD' }, "The Receiving Party shall give the Company all assistance it reasonably requires to perfect, protect, and use its rights to the Developments."]),
-    p("In particular, the Receiving Party shall sign all documents, do all things, and supply all information that the Company considers necessary or desirable to transfer or record the transfer of entire rights, title, and interest in the Developments; and to enable the Company to obtain patent, copyright, or other legal protection to the Developments."),
-    para([{ text: 'd) ', font: 'VERDANABOLD' }, 'Receiving Party acknowledges and agrees that the assignment set forth herein is worldwide and perpetual, and that he/she will have no rights to reversion of the Developments, even if the Company does not exploit them.']),
-    para([{ text: 'e) ', font: 'VERDANABOLD' }, "Receiving Party hereby permanently waives all paternity, integrity, special, moral or similar rights, if any, that vest or may vest in Receiving Party as of the date in any Developments. Receiving Party further acknowledges and agrees that through the complete and permanent waiver contained herein neither do Receiving Party's legal heirs retain any paternity, integrity, moral, special or similar rights in and to any Developments. Receiving Party hereby agrees, at the request and expense of the Company, to provide any assistance as may be necessary to confirm Receiving Party's waiver of any paternity, integrity, special, moral or similar rights associated with the Developments that may vest in the Receiving Party."]),
-    para([{ text: 'f) ', font: 'VERDANABOLD' }, 'Inventions, if any, patented or unpatented, made by the Receiving Party prior to the commencement of his/her Engagement with the Company are excluded from the scope of this Agreement. To preclude any possible uncertainty, the Receiving Party sets forth on Exhibit A (Previous Inventions) attached hereto a complete list of all inventions that the Receiving Party has, alone or jointly with others, conceived, developed or reduced to practice or caused to be conceived, developed or reduced to practice prior to the commencement of his/her Engagement, that the Receiving Party considers to be his/her property or the property of third parties and that the Receiving Party wishes to have excluded from the scope of this Agreement (collectively referred to as "Prior Inventions"). If, the Receiving Party incorporates a Prior Invention into the Company product, process or machine, the Company is hereby granted and shall have a nonexclusive, royalty-free, irrevocable, perpetual, worldwide license (with rights to sub license through multiple tiers of sub licensees) to make, have made, modify, use and sell such Prior Invention. Notwithstanding the foregoing, the Receiving Party agrees that the Receiving Party will not incorporate, or permit to be incorporated, Prior Inventions in any the Company\'s products without the Company\'s prior written consent.']),
   ];
 
-  // ── PAGE 12: section 4g–4h, Return, sections 5–10b ─────────────────
-  const page12: any[] = [
-    para([{ text: 'g) ', font: 'VERDANABOLD' }, "In the event the Company is unable for any reason, after reasonable effort, to secure the Receiving Party's signature on any document needed in connection with the actions specified in the preceding paragraphs, the Receiving Party hereby irrevocably designate and appoint the Company and its duly authorized officers and agents as the Receiving Party's agent and attorney in fact, which appointment is coupled with an interest, to act for and in the Receiving Party's behalf to execute, verify and file any such documents and to do all other lawfully permitted acts to further the purposes of the preceding paragraphs with the same legal force and effect as if executed by the Receiving Party."]),
+  // ── PAGE 10
+  const page10: any[] = [
+    { font: bodyFont, text: [{ text: 'b) ', font: 'VERDANABOLD' }, "The Receiving Party understands and acknowledges that no license is granted to the Receiving Party in and to the Confidential Information and/or the Developments, nor is any intellectual property right implied to be granted by this Agreement. The Receiving Party understands and acknowledges that the Company shall be the exclusive owner of all rights pertaining to the Developments created or developed by him/her. The Receiving Party agrees to assign and does hereby assign to the Company all his/her right, title and interest in and to all Developments and all related patents, patent applications, copyrights and copyright applications. The Receiving Party understands and acknowledges that all Developments shall be the property of the Company and, to the greatest extent permitted by law, shall be 'works made for hire."], margin: [0, 0, 0, 5], pageBreak: 'before' },
+    para([{ text: 'c) ', font: 'VERDANABOLD' }, "The Receiving Party shall give the Company all assistance it reasonably requires to perfect, protect, and use its rights to the Developments. In particular, the Receiving Party shall sign all documents, do all things, and supply all information that the Company considers necessary or desirable to transfer or record the transfer of entire rights, title and interest in the Developments; and to enable the Company to obtain patent, copyright, or other legal protection to the Developments."]),
+    para([{ text: 'd) ', font: 'VERDANABOLD' }, 'Receiving Party acknowledges and agrees that the assignment set forth herein is worldwide and perpetual, and that he/she will have no rights to reversion of the Developments, even if the Company does not exploit them.']),
+    para([{ text: 'e) ', font: 'VERDANABOLD' }, "Receiving Party hereby permanently waives all paternity, integrity, special, moral or similar rights, if any, that vest or may vest in Receiving Party as of the date in any Developments. Receiving Party further acknowledges and agrees that through the complete and permanent waiver contained herein neither do Receiving Party's legal heirs retain any paternity, integrity, moral, special or similar rights in and to any Developments. Receiving Party hereby agrees, at the request and expense of the Company, to provide any assistance as may be necessary to confirm Receiving Party's waiver of any paternity, integrity, special, moral or similar rights associated with the Developments that may vest in the Receiving Party."]),
+    para([{ text: 'f) ', font: 'VERDANABOLD' }, "Inventions, if any, patented or unpatented, made by the Receiving Party prior to the commencement of his/her Engagement with the Company are excluded from the scope of this Agreement. To preclude any possible uncertainty, the Receiving Party sets forth on Exhibit A (Previous Inventions) attached hereto a complete list of all inventions that the Receiving Party has, alone or jointly with others, conceived, developed or reduced to practice or caused to be conceived, developed or reduced to practice prior to the commencement of his/her Engagement, that the Receiving Party considers to be his/her property or the property of third parties and that the Receiving Party wishes to have excluded from the scope of this Agreement (collectively referred to as \"Prior Inventions\"). If, the Receiving Party incorporates a Prior Invention into the Company product, process or machine, the Company is hereby granted and shall have a nonexclusive, royalty-free, irrevocable, perpetual, worldwide license (with rights to sub license through multiple tiers of sub licensees) to make, have made, modify, use and sell such Prior Invention. Notwithstanding the foregoing, the Receiving Party agrees that the Receiving Party will not incorporate, or permit to be incorporated, Prior Inventions in any the Company's products without the Company's prior written consent."]),
+    para([{ text: 'g) ', font: 'VERDANABOLD' }, "In the event the Company is unable for any reason, after reasonable effort, to secure the Receiving Party's signature on any document needed in connection with the Action(S) specified in the preceding paragraphs, the Receiving Party hereby irrevocably designate and appoint the Company and its duly authorized officers and agents as the Receiving Party's agent and attorney in fact, which appointment is coupled with an interest, to act for and in the Receiving Party's behalf to execute, verify and file any such documents and to do all other lawfully permitted acts to further the purposes of the preceding paragraphs with the same legal force and effect as if executed by the Receiving Party."]),
     para([{ text: 'h) ', font: 'VERDANABOLD' }, 'The Receiving Party further represents that he/she has no other employment(s), consultancies or undertakings which would restrict and impair his/her performance of this Agreement.']),
     { text: 'Return:', font: 'VERDANABOLD', margin: [0, 6, 0, 2] },
     p("In the event of termination of Engagement, or upon request by the Company, the Receiving Party agrees to promptly return or destroy, at the Company's discretion, all Confidential Information provided by the Company, and any computer files and other materials incorporating any such Confidential Information and all copies thereof."),
     heading('5. Indemnity:'),
     p('The Receiving Party agrees to indemnify and save harmless the Company and its employees, successors and assigns against all losses, damages (including reasonable attorney fees) incurred by the Company and its employees, successors and assigns due to any breach of the terms of this Agreement.'),
-    heading('6. Survival:'),
+  ];
+
+  // ── PAGE 11
+  const page11: any[] = [
+    { font: 'VERDANABOLD', text: '6. Survival:', fontSize: PX(12), margin: [0, 6, 0, 2], keepWithNext: true, pageBreak: 'before' },
     p('This Agreement shall survive any termination of the Engagement or this Agreement and all other obligations which are meant to survive shall survive by its nature on termination of this Agreement.'),
     heading('7. Warranty:'),
     p('The Receiving Party understands and acknowledges that the Company is not obligated to supply any Confidential Information under this Agreement. Further, no representation or warranty is made or given about the accuracy or completeness of any Confidential Information or any other information supplied pursuant to this Agreement.'),
@@ -352,56 +321,55 @@ export function buildAppointmentLetterDoc(data: AppointmentLetterData): any {
     heading('10. Miscellaneous:'),
     para([{ text: 'a) ', font: 'VERDANABOLD' }, 'Enforcement. If any provision of this Agreement shall be determined to be invalid or unenforceable for any reason, it shall be adjusted rather than voided, if possible, in order to achieve the intent of the parties to the extent possible. In any event, all other provisions of this Agreement shall be deemed valid and enforceable to the full extent possible.']),
     para([{ text: 'b) ', font: 'VERDANABOLD' }, 'Waiver. The waiver by the Company of a breach of any provision of this Agreement shall not operate or be construed as a waiver of any subsequent breach of the same or any other provision hereof.']),
-  ];
-
-  // ── PAGE 13: 10c–10d + final signatures ────────────────────────────
-  const page13: any[] = [
     para([{ text: 'c) ', font: 'VERDANABOLD' }, "Attorneys' Fees. If either party seeks to enforce its rights under this Agreement by legal proceedings or otherwise, the non-prevailing party shall pay all costs and expenses of the prevailing Party."]),
     para([{ text: 'd) ', font: 'VERDANABOLD' }, 'Entire Agreement. This Agreement contains the entire understanding between the Company and the Receiving Party concerning the subject matter hereof and is in addition to any and all prior and contemporaneous negotiations, correspondence, understandings and agreements, whether oral or written, respecting that subject matter.']),
     { text: 'Thank You!!', margin: [0, 16, 0, 5] },
     p('Yours Sincerely,'),
-    { text: 'FOR RightlyHR', font: 'VERDANABOLD', fontSize: PX(13), margin: [0, 0, 0, 24] },
+    { text: 'For RightlyHR', font: 'VERDANABOLD', fontSize: PX(13), margin: [0, 0, 0, 30] },
     { text: authorityFullName, font: 'Autography', fontSize: PX(32), margin: [0, 0, 0, 4], noWrap: true, alignment: 'left' },
     signatory('Authorized Signatory'),
     signatory(authorityFullName),
     { ...signatory(authorityDesignation), margin: [0, 0, 0, 12] },
     { text: `Date of Joining: ${doj}`, alignment: 'right', margin: [0, 0, 0, 8], font: 'VERDANABOLD' },
-    { text: [{ text: 'Employee Name : ', font: 'VERDANABOLD' }, data.employeeSignatureDate ? { text: employeeFullname, font: 'VERDANABOLD' } : ''], margin: [0, 0, 0, 4] },
-    {
-      columns: [
-        { text: 'Signature : ', font: 'VERDANABOLD', width: 'auto', margin: [0, 0, 0, 4] },
-        data.employeeSignatureDate
-          ? { text: employeeFullname, font: 'Autography', fontSize: PX(24), width: 'auto', noWrap: true }
-          : { text: '', width: 'auto' },
-      ],
-      columnGap: 2,
-      margin: [0, 0, 0, 4],
-    },
-    { text: [{ text: 'Date : ', font: 'VERDANABOLD' }, { text: data.employeeSignatureDate ? fmt(data.employeeSignatureDate) : '', font: 'VERDANABOLD' }], margin: [0, 0, 0, 0] },
+    { text: [{ text: 'Employee Name : ', font: 'VERDANABOLD' }], margin: [0, 0, 0, 4] },
+    { text: [{ text: 'Sign : ', font: 'VERDANABOLD' }], margin: [0, 0, 0, 4] },
+    { text: [{ text: 'Date : ', font: 'VERDANABOLD' }], margin: [0, 0, 0, 0] },
   ];
 
-    const content: any[] = [...page1, ...page2, ...page3, ...page4, ...page5, ...page6, ...page7, ...page8, ...page9, ...page10, ...page11, ...page12, ...page13];
+  const content: any[] = [
+    ...page1,
+    ...page2,
+    ...page3,
+    ...page4,
+    ...page5,
+    ...page6,
+    ...page7,
+    ...page8,
+    ...page9,
+    ...page10,
+    ...page11,
+  ];
 
-    const isSoftCopy = !!data.backgroundImageBase64;
-       const margins = isSoftCopy ? LETTER_MARGINS.softCopy : LETTER_MARGINS.hardCopy;
+  const isSoftCopy = !!data.backgroundImageBase64;
+  const margins = isSoftCopy ? LETTER_MARGINS.softCopy : LETTER_MARGINS.hardCopy;
 
-       const docDef: any = {
-         pageSize: 'A4',
-         pageMargins: [margins.left, margins.top, margins.right, margins.bottom],
-         defaultStyle: {
-           font: bodyFont,
-           fontSize: PX(16),
-           alignment: 'justify',
-           color: '#000',
-         },
-         content: stampFont(content, bodyFont),
-       };
+  const docDef: any = {
+    pageSize: 'A4',
+    pageMargins: [margins.left, margins.top, margins.right, margins.bottom],
+    defaultStyle: {
+      font: bodyFont,
+      fontSize: PX(12),
+      alignment: 'justify',
+      color: '#000',
+    },
+    content: stampFont(content, bodyFont),
+  };
 
-       applyLetterPageSetup(docDef, {
-         backgroundImageBase64: data.backgroundImageBase64,
-         headerLogoBase64: data.headerLogoBase64,
-         bodyFont,
-       });
+  applyLetterPageSetup(docDef, {
+    backgroundImageBase64: data.backgroundImageBase64,
+    headerLogoBase64: data.headerLogoBase64,
+    bodyFont,
+  });
 
-       return docDef;
+  return docDef;
 }

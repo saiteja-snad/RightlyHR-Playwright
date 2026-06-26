@@ -432,6 +432,8 @@ export class AppointmentLetterComponent implements OnInit, OnDestroy {
     this.http.postdata('AppointmentLetter', postAppDetails).subscribe({
       next: () => {
         this.signalService.AppointmentLetterNavCountSignal.set(true);
+        this.sendEmployeeDetails();
+
       },
       error: () => {
         this.signalService.AppointmentLetterNavCountSignal.set(true);
@@ -456,7 +458,7 @@ export class AppointmentLetterComponent implements OnInit, OnDestroy {
       workLocation: (this.employeeJobDetails?.workLocation ?? '') + ", " + (this.employeeJobDetails?.subLocation ?? ''),
       documentUrl: docUrl,
       employeeId: this.selectedEmployee.employeeId,
-      dateOfJoining: this.selectedEmployee.dateOfJoining,
+      dateOfJoining:  this.employeeForm.get('dateOfJoining')?.value,
       reportingManagerId: this.employeeJobDetails?.reportsto,
       teamManagerId: this.employeeJobDetails?.reportingmanagerId,
       reportingManagerName: `${this.employeeJobDetails?.fName} ${this.employeeJobDetails?.mName} ${this.employeeJobDetails?.lName}`,

@@ -269,7 +269,12 @@ export class WfhWaitingForApprovalComponent implements OnInit, OnDestroy {
   }
 
   approveWFH(approvalPopup: any, item: any) {
-    this.selectedWFHData = item;
+
+    this.selectedWFHData =
+      this.selectedProducts.length > 0
+        ? [...this.selectedProducts]
+        : item;
+
     this.initializeApproveForm();
 
     this.modalService.open(approvalPopup, {
@@ -279,7 +284,12 @@ export class WfhWaitingForApprovalComponent implements OnInit, OnDestroy {
   }
 
   rejectWFH(rejectPopup: any, item: any) {
-    this.selectedWFHData = item;
+
+    this.selectedWFHData =
+      this.selectedProducts.length > 0
+        ? [...this.selectedProducts]
+        : item;
+
     this.initializeRejectForm();
 
     this.modalService.open(rejectPopup, {
@@ -287,7 +297,6 @@ export class WfhWaitingForApprovalComponent implements OnInit, OnDestroy {
       backdrop: 'static'
     });
   }
-
   onStatusApproveSelect(status: string) {
     this.selectedLeaveStatus = status;
 
@@ -313,18 +322,19 @@ export class WfhWaitingForApprovalComponent implements OnInit, OnDestroy {
   }
 
   handleAccept(form: FormGroup) {
+    const selectedItems = Array.isArray(this.selectedWFHData)
+      ? this.selectedWFHData
+      : [this.selectedWFHData];
+
     const payload = {
       requestProcessedBy: this.LOGIN.employeeId.toString(),
       status: 'Approved',
       comments: this.approveForm.get('comments')?.value,
       moduleId: 2,
-      headerRequests: [
-        {
-          headerID: this.selectedWFHData.pendingApprovalsHeader?.id,
-          currentStage:
-            this.selectedWFHData.pendingApprovalsHeader?.currentapprovalStage
-        }
-      ]
+      headerRequests: selectedItems.map(item => ({
+        headerID: item.pendingApprovalsHeader.id,
+        currentStage: item.pendingApprovalsHeader.currentapprovalStage
+      }))
     };
 
     this.http.putData('v2/PendingApproval/multiapprovals', payload)
@@ -354,32 +364,39 @@ export class WfhWaitingForApprovalComponent implements OnInit, OnDestroy {
 
           }
 
+          const ids = selectedItems.map(x => x.id);
+
           this.waitingForApprovalWFHs =
             this.waitingForApprovalWFHs.filter(
-              x => x.id !== this.selectedWFHData.id
+              x => !ids.includes(x.id)
             );
 
           this.waitingForApprovalWFHCount =
             this.waitingForApprovalWFHs.length;
+
+          this.selectedProducts = [];
+          this.multiSelect = false;
+
+          this.http.wfhTriggerSignal.set(true);
         }
       });
   }
 
   handleReject(form: FormGroup) {
+    const selectedItems = Array.isArray(this.selectedWFHData)
+      ? this.selectedWFHData
+      : [this.selectedWFHData];
+
     const payload = {
       requestProcessedBy: this.LOGIN.employeeId.toString(),
       status: 'Rejected',
       comments: this.rejectForm.get('comments')?.value,
       moduleId: 2,
-      headerRequests: [
-        {
-          headerID: this.selectedWFHData.pendingApprovalsHeader?.id,
-          currentStage:
-            this.selectedWFHData.pendingApprovalsHeader?.currentapprovalStage
-        }
-      ]
+      headerRequests: selectedItems.map(item => ({
+        headerID: item.pendingApprovalsHeader.id,
+        currentStage: item.pendingApprovalsHeader.currentapprovalStage
+      }))
     };
-
     this.http.putData('v2/PendingApproval/multiapprovals', payload)
       .subscribe({
         next: (response: any) => {
@@ -406,13 +423,19 @@ export class WfhWaitingForApprovalComponent implements OnInit, OnDestroy {
             );
 
           }
+          const ids = selectedItems.map(x => x.id);
+
           this.waitingForApprovalWFHs =
             this.waitingForApprovalWFHs.filter(
-              x => x.id !== this.selectedWFHData.id
+              x => !ids.includes(x.id)
             );
 
           this.waitingForApprovalWFHCount =
             this.waitingForApprovalWFHs.length;
+
+          this.selectedProducts = [];
+          this.multiSelect = false;
+          this.http.wfhTriggerSignal.set(true);
         }
       });
   }
@@ -423,6 +446,9 @@ export class WfhWaitingForApprovalComponent implements OnInit, OnDestroy {
 
     const loginId =
       this.LOGIN.employeeId?.toString();
+
+    console.log('Current Approver:', currentApproverId);
+    console.log('Login Id:', loginId);
 
     return currentApproverId === loginId;
   }
@@ -467,11 +493,11 @@ export class WfhWaitingForApprovalComponent implements OnInit, OnDestroy {
     this.modalService.open(rejectPopup, {
       centered: true,
       backdrop: 'static'
-       });
+    });
   }
   customSort(event: any): void {
     const field = event.field;
-    
+
     // Track current sort state for the clicked field
     if (this.currentSortField === field) {
       // Same field clicked - cycle through: asc (1) -> desc (-1) -> reset (0)

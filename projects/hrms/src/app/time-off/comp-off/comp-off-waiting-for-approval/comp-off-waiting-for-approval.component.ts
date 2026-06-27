@@ -159,7 +159,7 @@ export class CompOffWaitingForApprovalComponent implements OnInit, OnDestroy {
         );
 
         this.waitingForApprovalCompOffCount =
-        this.waitingForApprovalCompOff.length;
+          this.waitingForApprovalCompOff.length;
 
         this.selectedProducts = []; // ADD THIS
         this.originalWaitingForApprovalCompOff = [...this.waitingForApprovalCompOff];
@@ -230,19 +230,24 @@ export class CompOffWaitingForApprovalComponent implements OnInit, OnDestroy {
     if (form.valid) {
 
       let approvedBy = this.empinfo.employeeId.toString();
-
+      const isMultiSelection = this.selectedProducts.length > 0;
       this.requestBody = {
         requestProcessedBy: approvedBy,
         status: 'Approved',
         comments: form.value.comments,
         moduleId: 3,
-        headerRequests: [
-          {
-            headerID: this.selectedCompOffData.pendingApprovalsHeader.id,
-            currentStage:
-              this.selectedCompOffData.pendingApprovalsHeader.currentapprovalStage
-          }
-        ]
+        headerRequests: isMultiSelection
+          ? this.selectedProducts.map(x => ({
+            headerID: x.pendingApprovalsHeader.id,
+            currentStage: x.pendingApprovalsHeader.currentapprovalStage
+          }))
+          : [
+            {
+              headerID: this.selectedCompOffData.pendingApprovalsHeader.id,
+              currentStage:
+                this.selectedCompOffData.pendingApprovalsHeader.currentapprovalStage
+            }
+          ]
       };
 
 
@@ -261,11 +266,11 @@ export class CompOffWaitingForApprovalComponent implements OnInit, OnDestroy {
 
             this.waitingForApprovalCompOffCount =
               this.waitingForApprovalCompOff.length;
-            this.selectedProducts = [];
-
             this.requestSummary = response.data;
 
-            if (this.selectedProducts && this.selectedProducts.length > 0) {
+            if (isMultiSelection) {
+
+              this.selectedProducts = [];
 
               this.openModal(this.leaveSummary);
 
@@ -275,11 +280,12 @@ export class CompOffWaitingForApprovalComponent implements OnInit, OnDestroy {
 
             } else {
 
+              this.selectedProducts = [];
+
               this.signalService.handleResponse(
                 this.requestSummary,
                 'Comp Off request approved successfully'
               );
-
             }
             this.approveForm.reset();
           },
@@ -303,28 +309,33 @@ export class CompOffWaitingForApprovalComponent implements OnInit, OnDestroy {
 
   handleReject(form: FormGroup): void {
 
-    console.log('Step 1');
+
 
     this.spinnerLoader = true;
 
     if (form.valid) {
 
-      console.log('Step 2');
+
 
       let approvedBy = this.empinfo.employeeId.toString();
-      console.log('Step 3');
+      const isMultiSelection = this.selectedProducts.length > 0;
       this.requestBody = {
         requestProcessedBy: approvedBy,
         status: 'Rejected',
         comments: form.value.comments,
         moduleId: 3,
-        headerRequests: [
-          {
-            headerID: this.selectedCompOffData.pendingApprovalsHeader.id,
-            currentStage:
-              this.selectedCompOffData.pendingApprovalsHeader.currentapprovalStage
-          }
-        ]
+        headerRequests: isMultiSelection
+          ? this.selectedProducts.map(x => ({
+            headerID: x.pendingApprovalsHeader.id,
+            currentStage: x.pendingApprovalsHeader.currentapprovalStage
+          }))
+          : [
+            {
+              headerID: this.selectedCompOffData.pendingApprovalsHeader.id,
+              currentStage:
+                this.selectedCompOffData.pendingApprovalsHeader.currentapprovalStage
+            }
+          ]
       };
 
       console.log('Step 4', this.requestBody);
@@ -348,10 +359,11 @@ export class CompOffWaitingForApprovalComponent implements OnInit, OnDestroy {
             this.waitingForApprovalCompOffCount =
               this.waitingForApprovalCompOff.length;
 
-            this.selectedProducts = [];
             this.requestSummary = response.data;
 
-            if (this.selectedProducts && this.selectedProducts.length > 0) {
+            if (isMultiSelection) {
+
+              this.selectedProducts = [];
 
               this.openModal(this.leaveSummary);
 
@@ -361,11 +373,12 @@ export class CompOffWaitingForApprovalComponent implements OnInit, OnDestroy {
 
             } else {
 
+              this.selectedProducts = [];
+
               this.signalService.handleResponse(
                 this.requestSummary,
                 'Comp Off request rejected successfully'
               );
-
             }
 
             this.rejectForm.reset();
@@ -392,16 +405,16 @@ export class CompOffWaitingForApprovalComponent implements OnInit, OnDestroy {
     this.selectedProducts = event;
   }
 
-  
+
   showMultiSelectAndSearch(): boolean {
-  return this.waitingForApprovalCompOff.some(item =>
-    this.canApprove(item)
-  );
-}
+    return this.waitingForApprovalCompOff.some(item =>
+      this.canApprove(item)
+    );
+  }
 
   customSort(event: any): void {
     const field = event.field;
-    
+
     // Track current sort state for the clicked field
     if (this.currentSortField === field) {
       // Same field clicked - cycle through: asc (1) -> desc (-1) -> reset (0)

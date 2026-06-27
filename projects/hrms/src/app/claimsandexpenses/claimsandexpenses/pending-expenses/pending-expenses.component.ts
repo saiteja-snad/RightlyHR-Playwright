@@ -525,13 +525,14 @@ export class PendingExpensesComponent implements OnInit, OnDestroy {
     }
   }
 
-  onStatusRejectSelect(status: string) {
-    this.selectedLeaveStatus = status;
+ onStatusRejectSelect(status: string) {
+  this.selectedLeaveStatus = status;
 
-    if (status === 'reject') {
-      this.rejectForm.get('comments')?.setValue('Rejected');
-    }
+  if (status === 'reject') {
+    this.rejectForm?.get('comments')?.setValue('Rejected');
+    this.verifyForm?.get('comments')?.setValue('Rejected');
   }
+}
 
   openApproveModal(content: any, item: any) {
     this.selectedLeaveStatus = null;   // add this

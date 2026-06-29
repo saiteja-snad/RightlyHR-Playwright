@@ -76,7 +76,7 @@ export class ExtraHoursWaitingForApprovalComponent implements OnInit, OnDestroy 
   currentSortOrder: number = 0; // 0 = no sort, 1 = asc, -1 = desc
 
   constructor(private http: HttpService, public rbac: RbacService, private TimeoffYearFilterService: TimeoffYearFilterService, private modalService: NgbModal,
-    private fb: FormBuilder,private sharedModalService: OpenModalService) {
+    private fb: FormBuilder, private sharedModalService: OpenModalService) {
     effect(() => {
       if (this.http.tirggerCountSignal().permission) {
         this.getDataPermissions();
@@ -179,7 +179,10 @@ export class ExtraHoursWaitingForApprovalComponent implements OnInit, OnDestroy 
   }
 
   approveExtraHours(approvalPopup: any, item: any) {
-    this.selectedExtraHourData = item;
+    this.selectedExtraHourData =
+      this.selectedProducts.length > 0
+        ? [...this.selectedProducts]
+        : item;
 
     this.modalService.open(approvalPopup, {
       centered: true,
@@ -188,7 +191,10 @@ export class ExtraHoursWaitingForApprovalComponent implements OnInit, OnDestroy 
   }
 
   rejectExtraHours(rejectPopup: any, item: any) {
-    this.selectedExtraHourData = item;
+    this.selectedExtraHourData =
+      this.selectedProducts.length > 0
+        ? [...this.selectedProducts]
+        : item;
 
     this.modalService.open(rejectPopup, {
       centered: true,
@@ -228,18 +234,18 @@ export class ExtraHoursWaitingForApprovalComponent implements OnInit, OnDestroy 
     if (form.valid) {
 
       let approvedBy = this.empinfo.employeeId.toString();
-
+      const selectedItems = Array.isArray(this.selectedExtraHourData)
+        ? this.selectedExtraHourData
+        : [this.selectedExtraHourData];
       this.requestBody = {
         requestProcessedBy: approvedBy,
         status: 'Approved',
         comments: form.value.comments,
         moduleId: environment.extraHoursModuleId,
-        headerRequests: [
-          {
-            headerID: this.selectedExtraHourData.pendingApprovalsHeader.id,
-            currentStage: this.selectedExtraHourData.pendingApprovalsHeader.currentapprovalStage
-          }
-        ]
+        headerRequests: selectedItems.map(item => ({
+          headerID: item.pendingApprovalsHeader.id,
+          currentStage: item.pendingApprovalsHeader.currentapprovalStage
+        }))
       };
 
       this.http.putData(
@@ -250,18 +256,17 @@ export class ExtraHoursWaitingForApprovalComponent implements OnInit, OnDestroy 
 
           this.modalService.dismissAll();
 
+          const ids = selectedItems.map(x => x.id);
+
           this.waitingForApprovalPerimisions =
             this.waitingForApprovalPerimisions.filter(
-              x => x.id !== this.selectedExtraHourData.id
+              x => !ids.includes(x.id)
             );
-          this.selectedProducts =
-            this.selectedProducts.filter(
-              x => x.id !== this.selectedExtraHourData.id
-            );
+
+          this.selectedProducts = [];
 
           this.responseSummary = response.data;
-
-          if (this.selectedProducts && this.selectedProducts.length > 0) {
+          if (Array.isArray(this.selectedExtraHourData)) {
 
             this.openModal(this.leaveSummary);
 
@@ -291,18 +296,18 @@ export class ExtraHoursWaitingForApprovalComponent implements OnInit, OnDestroy 
     if (form.valid) {
 
       let approvedBy = this.empinfo.employeeId.toString();
-
+      const selectedItems = Array.isArray(this.selectedExtraHourData)
+        ? this.selectedExtraHourData
+        : [this.selectedExtraHourData];
       this.requestBody = {
         requestProcessedBy: approvedBy,
         status: 'Rejected',
         comments: form.value.comments,
         moduleId: environment.extraHoursModuleId,
-        headerRequests: [
-          {
-            headerID: this.selectedExtraHourData.pendingApprovalsHeader.id,
-            currentStage: this.selectedExtraHourData.pendingApprovalsHeader.currentapprovalStage
-          }
-        ]
+        headerRequests: selectedItems.map(item => ({
+          headerID: item.pendingApprovalsHeader.id,
+          currentStage: item.pendingApprovalsHeader.currentapprovalStage
+        }))
       };
 
       this.http.putData(
@@ -314,19 +319,18 @@ export class ExtraHoursWaitingForApprovalComponent implements OnInit, OnDestroy 
           this.modalService.dismissAll();
 
           // Remove from waiting list immediately
+          const ids = selectedItems.map(x => x.id);
+
           this.waitingForApprovalPerimisions =
             this.waitingForApprovalPerimisions.filter(
-              x => x.id !== this.selectedExtraHourData.id
+              x => !ids.includes(x.id)
             );
 
-          this.selectedProducts =
-            this.selectedProducts.filter(
-              x => x.id !== this.selectedExtraHourData.id
-            );
+          this.selectedProducts = [];
 
           this.responseSummary = response.data;
 
-          if (this.selectedProducts && this.selectedProducts.length > 0) {
+          if (Array.isArray(this.selectedExtraHourData)) {
 
             this.openModal(this.leaveSummary);
 
@@ -380,14 +384,14 @@ export class ExtraHoursWaitingForApprovalComponent implements OnInit, OnDestroy 
   }
 
   showMultiSelectAndSearch(): boolean {
-  return this.waitingForApprovalPerimisions.some(item =>
-    this.canApprove(item)
-  );
-}
+    return this.waitingForApprovalPerimisions.some(item =>
+      this.canApprove(item)
+    );
+  }
 
   customSort(event: any): void {
     const field = event.field;
-    
+
     // Track current sort state for the clicked field
     if (this.currentSortField === field) {
       // Same field clicked - cycle through: asc (1) -> desc (-1) -> reset (0)

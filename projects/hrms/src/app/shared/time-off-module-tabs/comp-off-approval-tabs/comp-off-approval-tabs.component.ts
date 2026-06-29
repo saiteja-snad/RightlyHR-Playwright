@@ -13,7 +13,7 @@ import { MenuOrderService } from '../../../services/theme-service/menu-order.ser
 @Component({
   selector: 'app-comp-off-approval-tabs',
   standalone: true,
-  imports: [CommonModule, RouterModule, SidetabsloadersComponent,DragDropModule],
+  imports: [CommonModule, RouterModule, SidetabsloadersComponent, DragDropModule],
   templateUrl: './comp-off-approval-tabs.component.html',
   styleUrl: './comp-off-approval-tabs.component.scss',
 })
@@ -46,14 +46,24 @@ export class CompOffApprovalTabsComponent implements OnInit, OnDestroy {
     private signalService: SignalsService
   ) {
     void this.menuOrderService.ensureLoaded();
+
     effect(() => {
+
+      console.log('Trigger selectempid =', this.selectempid);
       if (this.http.tirggerCountSignal().compOff) {
-        this.getCompOffRequest();
-        this.http.tirggerCountSignal.update((status) => ({
+
+        if (this.selectempid) {
+          this.getCompOffEMPRequest();
+        } else {
+          this.getCompOffRequest();
+        }
+
+        this.http.tirggerCountSignal.update(status => ({
           ...status,
           compOff: false,
         }));
       }
+
       if (this.signalService.compOffSidNavCountTriggerSignal()) {
         if (this.selectempid) {
           this.getCompOffEMPRequest();
@@ -61,7 +71,7 @@ export class CompOffApprovalTabsComponent implements OnInit, OnDestroy {
           this.getCompOffRequest();
         }
       }
-    })
+    });
   }
 
   ngOnInit(): void {

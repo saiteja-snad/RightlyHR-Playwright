@@ -2,14 +2,22 @@
   <!--Input search-->
   <div class="input-group custom-search mb-3">
     <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
-    <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input"
+    <input type="search" #search="ngModel" [(ngModel)]="searchValue" 
+           (ngModelChange)="onSearchChange()"
+           class="form-control custom-search-input"
       placeholder="Search by employee ID / employee name / work email / phone number / location / sub location / shift name / designation"
       aria-label="Username" aria-describedby="basic-addon1">
   </div>
 
   <div class="custom-table-content">
     @if (!loader) {
-    <p-table #activeContractEmployeesTable [value]="getFilteredAndSortedEmployees()" [tableStyle]="{'width': '100%'}" [customSort]="true" (sortFunction)="customSort($event)">
+    <p-table #activeContractEmployeesTable 
+    [value]="getFilteredAndSortedEmployees()" 
+    [tableStyle]="{'width': '100%'}" 
+    [customSort]="true" 
+    (onSort)="customSort($event)"
+    [sortField]="currentUIField"
+    [sortOrder]="currentSortOrder">
       <ng-template pTemplate="header">
         <tr>
           <th pSortableColumn="fusionEmpId">{{'Employee ID'|translate}} <p-sortIcon field="fusionEmpId" /></th>
@@ -76,6 +84,25 @@
         </div>
       </ng-template>
     </p-table>
+    @if(filteredActive.length > 0){
+    <div class="pagination-content">
+        <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
+            <div class="d-flex align-items-center gap-3 p-2">
+                <select title="text" class="form-select custom-pagination-select" [(ngModel)]="rows"
+                    (ngModelChange)="onPageSizeChange($event)">
+                    <option *ngFor="let option of options" [value]="option.value">{{ option.label }}
+                    </option>
+                </select>
+                <span class="pagination-label text-nowrap">
+                    {{'Showing' | translate}} {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize : (+first + +rows)
+                    }} {{'of' | translate}} {{ collectionSize }}
+                </span>
+            </div>
+            <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"
+                (onPageChange)="onPageChange($event)"></p-paginator>
+        </div>
+    </div>
+    }
     } @else {
     <app-data-loader-content />
     }

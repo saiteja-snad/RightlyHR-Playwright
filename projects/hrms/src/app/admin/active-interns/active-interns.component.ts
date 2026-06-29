@@ -161,16 +161,6 @@ export class ActiveInternsComponent implements OnInit, OnDestroy {
   isActiveRoute(link: string): boolean {
     return this.router.url.includes(link);
   }
-
-  ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
-    if (this.searchTimeout) {
-      clearTimeout(this.searchTimeout);
-    }
-  }
-
   getFilteredAndSortedInterns(): ITrainee[] {
     return this.filteredTraineeActive;
   }
@@ -286,5 +276,13 @@ export class ActiveInternsComponent implements OnInit, OnDestroy {
     this.currentSortOrder = order;
 
     this.getAllActiveInterns(this.page, this.pageSize);
+  }
+  ngOnDestroy(): void {
+   if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
+    if (this.searchTimeout) {
+      clearTimeout(this.searchTimeout);
+    }
   }
 }

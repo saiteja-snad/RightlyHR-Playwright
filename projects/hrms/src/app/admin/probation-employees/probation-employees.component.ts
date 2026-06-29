@@ -192,15 +192,6 @@ export class ProbationEmployeesComponent implements OnInit, OnDestroy {
     this.router.navigate(['/letters/lettes-tabs'])
   }
 
-  ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
-    if (this.searchTimeout) {
-      clearTimeout(this.searchTimeout);
-    }
-  }
-
   getFilteredAndSortedEmployees(): IProbationEmployees[] {
     return this.filteredProbationEmp;
   }
@@ -315,5 +306,14 @@ export class ProbationEmployeesComponent implements OnInit, OnDestroy {
     this.currentSortOrder = order;
 
     this.getProbationEmployees(this.page, this.pageSize);
+  }
+
+   ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
+    if (this.searchTimeout) {
+      clearTimeout(this.searchTimeout);
+    }
   }
 }

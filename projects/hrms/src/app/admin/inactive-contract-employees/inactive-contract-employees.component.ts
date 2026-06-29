@@ -116,17 +116,14 @@ export class InactiveContractEmployeesComponent implements OnInit, OnDestroy {
           } else {
             // Unknown format, fallback to original API
             console.log('Unknown paginated format, trying original API');
-            this.fallbackToOriginalAPI();
             return;
           }
         } else if (Array.isArray(data)) {
           // Direct array response from paginated endpoint (shouldn't happen but handle it)
           console.log('Paginated API returned direct array, trying original API');
-          this.fallbackToOriginalAPI();
           return;
         } else {
           console.log('Unexpected paginated API response format, trying original API');
-          this.fallbackToOriginalAPI();
           return;
         }
         
@@ -137,68 +134,11 @@ export class InactiveContractEmployeesComponent implements OnInit, OnDestroy {
       error: (err: any) => {
         console.error('Paginated API Error:', err);
         console.log('Fallback to original API due to error');
-        this.fallbackToOriginalAPI();
       }
     });
   }
 
-  private fallbackToOriginalAPI(): void {
-    console.log('Using original API endpoint');
-    this.subscription = this.http.getData(`Employeedata/TraineeActiveEmployees/Inactive Contract`).subscribe({
-      next: (data: any) => {
-        this.InActiveTrainee = data as Iinactivetrainee[];
-        this.filteredInActiveTrainee = [...this.InActiveTrainee];
-        this.collectionSize = this.InActiveTrainee.length;
-        
-        // Apply client-side search if search value exists
-        if (this.searchValue && this.searchValue.trim()) {
-          this.filteredInActiveTrainee = this.clientSideFilter(this.InActiveTrainee);
-        }
-        
-        // Apply client-side sorting if sort is active
-        if (this.currentSortField && this.currentSortOrder !== 0) {
-          this.filteredInActiveTrainee = this.clientSideSort(this.filteredInActiveTrainee);
-        }
-        
-        this.loader = false;
-        this.cdr.detectChanges();
-      },
-      error: (reason: any) => {
-        console.log(reason);
-        this.loader = false;
-        this.cdr.detectChanges();
-      }
-    });
-  }
-
-  private clientSideFilter(employees: Iinactivetrainee[]): Iinactivetrainee[] {
-    if (!this.searchValue || this.searchValue.trim() === '') {
-      return employees;
-    }
-    
-    const searchTerm = this.searchValue.toLowerCase().trim();
-    return employees.filter((employee: Iinactivetrainee) => {
-      const fusionEmpId = employee.fusionEmpId?.toLowerCase() || '';
-      const employeeName = `${employee.firstName || ''} ${employee.middleName || ''} ${employee.lastName || ''}`.toLowerCase().trim();
-      const workEmail = employee.workEmail?.toLowerCase() || '';
-      const personalEmail = employee.emailaddress?.toLowerCase() || '';
-      const contactNumber = employee.contactnumber?.toString() || '';
-      const location = employee.jobDetails?.[0]?.lopcation?.toLowerCase() || '';
-      const subLocation = employee.jobDetails?.[0]?.subLocation?.toLowerCase() || '';
-      const shiftName = employee.jobDetails?.[0]?.shiftName?.toLowerCase() || '';
-      const designation = employee.jobDetails?.[0]?.jobRole?.toLowerCase() || '';
-      
-      return fusionEmpId.includes(searchTerm) ||
-             employeeName.includes(searchTerm) ||
-             workEmail.includes(searchTerm) ||
-             personalEmail.includes(searchTerm) ||
-             contactNumber.includes(searchTerm) ||
-             location.includes(searchTerm) ||
-             subLocation.includes(searchTerm) ||
-             shiftName.includes(searchTerm) ||
-             designation.includes(searchTerm);
-    });
-  }
+  
 
   private clientSideSort(employees: Iinactivetrainee[]): Iinactivetrainee[] {
     return employees.sort((a: any, b: any) => {

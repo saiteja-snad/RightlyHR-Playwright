@@ -136,54 +136,85 @@
       }
     </div>
 
-    <div class="quick-links-scroll" cdkScrollable>
-      <div class="quick-links-grid quick-links-drop-list" cdkDropList cdkDropListOrientation="horizontal"
-        [cdkDropListData]="quickLinks" [cdkDropListConnectedTo]="quickLinksConnectedDropListIds"
-        [id]="quickLinksDropListId"
-        [cdkDropListAutoScrollStep]="24"
-        (cdkDropListDropped)="onQuickLinksDrop($event)">
-        @for (item of quickLinks; track item.route) {
-        <div class="quick-links-content text-center" [class.quick-links-removable]="isQuickLinkRemovable(item.route)"
-          [class.quick-links-selected]="isQuickLinkSelected(item.route)" cdkDrag cdkDragBoundary=".quick-links-card"
-          [cdkDragData]="item">
-          @if (isQuickLinkRemovable(item.route)) {
-          <button type="button" class="quick-link-select-toggle" [class.selected]="isQuickLinkSelected(item.route)"
-            (click)="toggleQuickLinkSelection(item.route, $event)" aria-label="Select quick link">
-            <span class="quick-link-select-check"></span>
-          </button>
-          }
-          <img [src]="item.icon" [alt]="item.label" class="icon mb-2" />
-          <div class="link" (click)="openQuickLink(item.route, $event)">
-            <u>
-              @if (isPendingApprovalsQuickLink(item)) {
-              <span class="quick-link-pa-label">
-                <span class="quick-link-pa-prefix"
-                  ngbPopover="Pending Approvals"
-                  triggers="mouseenter:mouseleave"
-                  placement="top"
-                  popoverClass="quick-link-pa-popover">PA</span>-{{ getPendingApprovalsQuickLinkSuffix(item.label) }}
-              </span>
-              }
-              @else {
-              {{ item.label }}
-              }
-            </u>
-          </div>
-          <ng-template cdkDragPreview>
-            <div class="quick-links-content quick-links-drag-preview text-center">
-              <img [src]="item.icon" [alt]="item.label" class="icon mb-2" />
-              <div class="link"><u>{{ item.label }}</u></div>
+    <div
+      class="quick-links-scroll-wrap"
+      [class.has-left-arrow]="showQuickLinksLeftArrow"
+      [class.has-right-arrow]="showQuickLinksRightArrow">
+      @if (showQuickLinksLeftArrow) {
+      <button
+        type="button"
+        class="quick-links-scroll-btn left"
+        (click)="scrollQuickLinks('left', $event)"
+        aria-label="Scroll quick links left">
+        <i class="bi bi-chevron-left"></i>
+      </button>
+      }
+
+      <div
+        class="quick-links-scroll"
+        [class.pad-left]="showQuickLinksLeftArrow"
+        [class.pad-right]="showQuickLinksRightArrow"
+        #quickLinksScroll
+        cdkScrollable
+        (scroll)="onQuickLinksScroll()">
+        <div class="quick-links-grid quick-links-drop-list" cdkDropList cdkDropListOrientation="horizontal"
+          [cdkDropListData]="quickLinks" [cdkDropListConnectedTo]="quickLinksConnectedDropListIds"
+          [id]="quickLinksDropListId"
+          [cdkDropListAutoScrollStep]="24"
+          (cdkDropListDropped)="onQuickLinksDrop($event)">
+          @for (item of quickLinks; track item.route) {
+          <div class="quick-links-content text-center" [class.quick-links-removable]="isQuickLinkRemovable(item.route)"
+            [class.quick-links-selected]="isQuickLinkSelected(item.route)" cdkDrag cdkDragBoundary=".quick-links-card"
+            [cdkDragData]="item">
+            @if (isQuickLinkRemovable(item.route)) {
+            <button type="button" class="quick-link-select-toggle" [class.selected]="isQuickLinkSelected(item.route)"
+              (click)="toggleQuickLinkSelection(item.route, $event)" aria-label="Select quick link">
+              <span class="quick-link-select-check"></span>
+            </button>
+            }
+            <img [src]="item.icon" [alt]="item.label" class="icon mb-2" />
+            <div class="link" (click)="openQuickLink(item.route, $event)">
+              <u>
+                @if (isPendingApprovalsQuickLink(item)) {
+                <span class="quick-link-pa-label">
+                  <span class="quick-link-pa-prefix"
+                    ngbPopover="Pending Approvals"
+                    triggers="mouseenter:mouseleave"
+                    placement="top"
+                    popoverClass="quick-link-pa-popover">PA</span>-{{ getPendingApprovalsQuickLinkSuffix(item.label) }}
+                </span>
+                }
+                @else {
+                {{ item.label }}
+                }
+              </u>
             </div>
-          </ng-template>
-          <ng-template cdkDragPlaceholder>
-            <div class="quick-links-content quick-links-drag-placeholder"></div>
-          </ng-template>
-        </div>
-        }
-        <div *ngIf="quickLinks.length === 0" class="quick-links-empty w-100 text-center">
-          <app-no-data-found />
+            <ng-template cdkDragPreview>
+              <div class="quick-links-content quick-links-drag-preview text-center">
+                <img [src]="item.icon" [alt]="item.label" class="icon mb-2" />
+                <div class="link"><u>{{ item.label }}</u></div>
+              </div>
+            </ng-template>
+            <ng-template cdkDragPlaceholder>
+              <div class="quick-links-content quick-links-drag-placeholder"></div>
+            </ng-template>
+          </div>
+          }
+          <div *ngIf="quickLinks.length === 0" class="quick-links-empty w-100 text-center">
+            <app-no-data-found />
+          </div>
         </div>
       </div>
+
+      @if (showQuickLinksRightArrow) {
+      <button
+        type="button"
+        class="quick-links-scroll-btn right"
+        (click)="scrollQuickLinks('right', $event)"
+        aria-label="Scroll quick links right">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+      }
     </div>
   </div>
   }

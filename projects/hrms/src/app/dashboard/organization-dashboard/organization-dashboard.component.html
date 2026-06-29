@@ -528,6 +528,7 @@
         </div>
         }
         <!-- Department Wise Attrition Rate -->
+        @if(rbac.allowedToAccess('Department Wise Attrition Rate.view')){
         <div class="content-card">
             <div class="flex-between-content mb-2">
                 <div class="summary-header d-inline-flex gap-1">
@@ -535,7 +536,8 @@
                     <div>
                         <app-module-info-icon placement="bottom" [ngbPopover]="attritionRateContent" class="module-icon" />
                         <ng-template #attritionRateContent>
-                            <div class="module-info-text">Displays attrition rate by department, showing the percentage of employees who left. Helps identify departments with higher turnover rates.</div>
+                            <div class="module-info-text">Displays attrition rate by department, showing the percentage
+                                of employees who left. Helps identify departments with higher turnover rates.</div>
                         </ng-template>
                     </div>
                 </div>
@@ -550,7 +552,7 @@
                 @if(hasAttritionData) {
                 <div class="department-graph-content">
                     <p-chart type="bar" [data]="attritionChartData" [options]="attritionChartOptions"
-                    [plugins]="[ChartDataLabels]" />
+                        [plugins]="[ChartDataLabels]" />
                 </div>
                 } @else {
                 <app-no-data-found />
@@ -563,7 +565,9 @@
             </div>
             }
         </div>
+        }
         <!-- Employees Exit by Tenure -->
+        @if(rbac.allowedToAccess('Employees Exit by Tenure.view')){
         <div class="content-card">
             <div class="flex-between-content mb-3">
                 <div class="summary-header d-inline-flex gap-1">
@@ -571,7 +575,8 @@
                     <div>
                         <app-module-info-icon placement="bottom" [ngbPopover]="exitByTenureContent" class="module-icon" />
                         <ng-template #exitByTenureContent>
-                            <div class="module-info-text">Displays the distribution of employee exits based on tenure ranges. Helps understand turnover patterns across different employee tenure groups.</div>
+                            <div class="module-info-text">Displays the distribution of employee exits based on tenure ranges.
+                                Helps understand turnover patterns across different employee tenure groups.</div>
                         </ng-template>
                     </div>
                 </div>
@@ -588,7 +593,8 @@
             <div class="disply-grid-custom" [ngClass]="{'graph-no-data-content': !hasExitByTenureData}">
                 @if(hasExitByTenureData) {
                 <div class="gender-graph">
-                    <p-chart type="bar" [data]="exitByTenureChartData" [options]="exitByTenureChartOptions" [plugins]="[ChartDataLabels, datalabelUnderlinePlugin]" />
+                    <p-chart type="bar" [data]="exitByTenureChartData" [options]="exitByTenureChartOptions"
+                        [plugins]="[ChartDataLabels, datalabelUnderlinePlugin]" />
                 </div>
                 } @else {
                 <div class="no-data-container">
@@ -603,6 +609,7 @@
             </div>
             }
         </div>
+        }
         <!-- Shift & Location Overview -->
         @if(rbac.allowedToAccess('Locations and Shifts.view')){
         <div class="content-card">
@@ -629,7 +636,8 @@
             <div class="disply-grid-custom" [ngClass]="{'graph-no-data-content': !hasShiftLocationData}">
                 @if(hasShiftLocationData) {
                 <div class="department-graph-content">
-                    <p-chart type="bar" [data]="shiftLocationChartData" [options]="shiftLocationChartOptions" [plugins]="[ChartDataLabels, datalabelUnderlinePlugin]" />
+                    <p-chart type="bar" [data]="shiftLocationChartData" [options]="shiftLocationChartOptions" 
+                    [plugins]="[ChartDataLabels, datalabelUnderlinePlugin]" />
                 </div>
                 } @else {
                 <app-no-data-found />
@@ -1177,6 +1185,7 @@
         </div>
     </div>
 </ng-template>
+
 <ng-template #upcomingActionsList let-offcanvas>
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="custom-poup-header-content popup-header-border">

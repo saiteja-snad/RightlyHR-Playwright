@@ -1255,7 +1255,9 @@ export const SECTION_DEFINITIONS: SectionDef[] = [
       'Approvals Overview',
       'Upcoming Actions',
       'Employee Experience Overview',
-      'Headcount by Gender View Employee List'
+      'Headcount by Gender View Employee List',
+      'Department Wise Attrition Rate',
+      'Employees Exit by Tenure'
     ]
   },
   { title: 'Rate Card Configuration Module', disableFn: 'israteCardCheckboxDisabled', fieldNames: ['Rate Card Active Tab', 'Rate Card In-active Tab'] },

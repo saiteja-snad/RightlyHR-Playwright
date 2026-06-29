@@ -47,10 +47,9 @@ export class ProbationEmployeesComponent implements OnInit, OnDestroy {
   collectionSize = 0;
   first = 0;
   options = [
-    { label: 50, value: 50 },
     { label: 100, value: 100 },
-    { label: 150, value: 150 },
-    { label: 200, value: 200 }
+    { label: 200, value: 200 },
+    { label: 300, value: 300 },
   ];
 
   // Search debounce

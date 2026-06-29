@@ -122,11 +122,6 @@
     color: #ff8000 !important;
 }
 
-th,
-td {
-    text-align: center !important;
-}
-
 .frequency-chip {
     position: absolute;
     top: -5px;
@@ -190,7 +185,7 @@ td {
 
 .grid-content-expanded {
     margin-top: 1.25rem;
-    
+
     .component-left-tabs-container {
         height: calc(100dvh - 14rem) !important;
     }

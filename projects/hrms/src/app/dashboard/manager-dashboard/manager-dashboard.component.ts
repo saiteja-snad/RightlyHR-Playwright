@@ -116,11 +116,18 @@ export class ManagerDashboardComponent {
     afterDraw: (chart: any) => {
       const ctx = chart.ctx;
       const isHorizontal = chart.config?.options?.indexAxis === 'y';
-      if (!isHorizontal) return;
+      if (!isHorizontal) {
+        chart.$clickableLabelRegions = [];
+        return;
+      }
 
       // Check if user has permission to view employee list
       const hasViewPermission = this.rbac.allowedToAccess('Headcount by Gender View Employee List.view');
-      if (!hasViewPermission) return; // Don't draw underline if no permission
+      if (!hasViewPermission) {
+        chart.$clickableLabelRegions = [];
+        return;
+      }
+      const clickableLabelRegions: Array<{ left: number; right: number; top: number; bottom: number }> = [];
 
       chart.data.datasets.forEach((dataset: any, dsIndex: number) => {
         const meta = chart.getDatasetMeta(dsIndex);
@@ -137,9 +144,34 @@ export class ManagerDashboardComponent {
           ctx.moveTo(element.x + 8, element.y + 7);
           ctx.lineTo(element.x + 8 + textWidth, element.y + 7);
           ctx.stroke();
+          clickableLabelRegions.push({
+            left: element.x + 8,
+            right: element.x + 8 + textWidth,
+            top: element.y - 8,
+            bottom: element.y + 8
+          });
           ctx.restore();
         });
       });
+      chart.$clickableLabelRegions = clickableLabelRegions;
+    },
+    afterEvent: (chart: any, args: any) => {
+      const event = args?.event;
+      if (!event || !chart?.canvas) return;
+      if (event.type === 'mouseout') {
+        chart.canvas.style.cursor = 'default';
+        return;
+      }
+
+      const regions = chart.$clickableLabelRegions || [];
+      const isOverClickableLabel = regions.some((region: any) =>
+        event.x >= region.left &&
+        event.x <= region.right &&
+        event.y >= region.top &&
+        event.y <= region.bottom
+      );
+
+      chart.canvas.style.cursor = isOverClickableLabel ? 'pointer' : 'default';
     }
   };
   selectedDate!: Date;
@@ -521,26 +553,12 @@ export class ManagerDashboardComponent {
             }
           }]
         };
-        let isOverLabel = false;
         const hasViewPermission = this.rbac.allowedToAccess('Headcount by Gender View Employee List.view');
         this.genderChartOptions = {
           responsive: true,
           maintainAspectRatio: false,
           indexAxis: 'y',
           layout: { padding: { right: 30 } },
-          onClick: (_event: any, elements: any[]) => {
-            if (!hasViewPermission || !elements.length) return;
-            const dataIndex = elements[0].index;
-            const gender = labels[dataIndex];
-            const count = counts[dataIndex];
-            if (!count) return;
-            this.openGenderOffcanvas(gender, count);
-          },
-          onHover: (_event: any, elements: any[], chart: any) => {
-            if (!isOverLabel) {
-              chart.canvas.style.cursor = (hasViewPermission && elements.length) ? 'pointer' : 'default';
-            }
-          },
           plugins: {
             legend: { display: false },
             datalabels: {
@@ -549,6 +567,7 @@ export class ManagerDashboardComponent {
               color: '#000',
               font: { weight: 'bold', size: 12 },
               formatter: (value: number) => value,
+              cursor: hasViewPermission ? 'pointer' : 'default',
               listeners: {
                 click: (context: any) => {
                   if (!hasViewPermission) return;
@@ -556,15 +575,6 @@ export class ManagerDashboardComponent {
                   const count = counts[context.dataIndex];
                   if (!count) return;
                   this.openGenderOffcanvas(gender, count);
-                },
-                enter: (context: any) => {
-                  if (!hasViewPermission) return;
-                  isOverLabel = true;
-                  context.chart.canvas.style.cursor = 'pointer';
-                },
-                leave: (context: any) => {
-                  isOverLabel = false;
-                  context.chart.canvas.style.cursor = 'default';
                 }
               }
             }

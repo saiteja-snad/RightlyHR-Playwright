@@ -320,7 +320,7 @@ export class RemoteWaitingForApprovalComponent implements OnInit, OnDestroy {
         this.requestBody
       ).subscribe({
         next: (response: any) => {
-
+          this.spinnerLoader = false;
           this.modalService.dismissAll();
 
           console.log('Before approve:', this.approvedRemotes.length);
@@ -400,7 +400,7 @@ export class RemoteWaitingForApprovalComponent implements OnInit, OnDestroy {
         this.requestBody
       ).subscribe({
         next: (response: any) => {
-
+          this.spinnerLoader = false;
           this.modalService.dismissAll();
 
           // Remove record immediately

@@ -340,6 +340,7 @@ export class WfhWaitingForApprovalComponent implements OnInit, OnDestroy {
     this.http.putData('v2/PendingApproval/multiapprovals', payload)
       .subscribe({
         next: (response: any) => {
+          this.spinnerLoader = false;
           this.modalService.dismissAll();
 
           this.requestSummary = response.data;
@@ -400,6 +401,7 @@ export class WfhWaitingForApprovalComponent implements OnInit, OnDestroy {
     this.http.putData('v2/PendingApproval/multiapprovals', payload)
       .subscribe({
         next: (response: any) => {
+          this.spinnerLoader = false;
           this.modalService.dismissAll();
 
           this.requestSummary = response.data;

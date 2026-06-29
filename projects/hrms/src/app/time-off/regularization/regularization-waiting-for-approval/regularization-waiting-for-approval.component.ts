@@ -249,7 +249,7 @@ export class RegularizationWaitingForApprovalComponent implements OnInit, OnDest
         this.requestBody
       ).subscribe({
         next: (response: any) => {
-
+          this.spinnerLoader = false; 
           this.modalService.dismissAll();
 
           const ids = selectedItems.map(x => x.id);
@@ -325,6 +325,7 @@ export class RegularizationWaitingForApprovalComponent implements OnInit, OnDest
       ).subscribe({
         next: (response: any) => {
 
+          this.spinnerLoader = false;
           this.modalService.dismissAll();
 
           const ids = selectedItems.map(x => x.id);

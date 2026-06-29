@@ -350,7 +350,7 @@ export class PremissionsWaitingForApprovalComponent implements OnInit, OnDestroy
         this.requestBody
       ).subscribe({
         next: (response: any) => {
-
+          this.spinnerLoader = false;
           this.modalService.dismissAll();
 
           const selectedItems = Array.isArray(this.selectedPermissionData)
@@ -436,6 +436,7 @@ export class PremissionsWaitingForApprovalComponent implements OnInit, OnDestroy
         this.requestBody
       ).subscribe({
         next: (response: any) => {
+          this.spinnerLoader = false;
           console.log('SUCCESS', response);
 
           this.modalService.dismissAll();

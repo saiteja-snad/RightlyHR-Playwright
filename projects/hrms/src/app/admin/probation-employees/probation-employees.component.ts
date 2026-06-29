@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
@@ -8,24 +8,26 @@ import { IProbationEmployees } from './probation-emp-module';
 import { FormsModule } from '@angular/forms';
 import { TableModule } from 'primeng/table';
 import { Table } from 'primeng/table';
+import { PaginatorModule } from 'primeng/paginator';
 import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
 import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
 import { RbacService } from '../../services/rbac.service';
 import { AccessNavigationService } from '../../services/access-navigation.service';
 @Component({
   selector: 'app-probation-employees',
-  imports: [CommonModule, RouterModule, TranslateModule, FormsModule, TableModule, DataLoaderContentComponent, NoDataFoundComponent],
+  imports: [CommonModule, RouterModule, TranslateModule, FormsModule, TableModule, PaginatorModule, DataLoaderContentComponent, NoDataFoundComponent],
   templateUrl: './probation-employees.component.html',
-  styleUrl: './probation-employees.component.scss'
+  styleUrl: './probation-employees.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 
 export class ProbationEmployeesComponent implements OnInit, OnDestroy {
   @ViewChild('probationEmployeesTable') probationEmployeesTable!: Table;
+  subscription!: Subscription;
+  probationemp = [] as IProbationEmployees[];
+  filteredProbationEmp = [] as IProbationEmployees[];
   moduleinfo: string = '';
   searchValue: any;
-  subscription!: Subscription
-  probationemp = [] as any
-  originalProbationEmp = [] as IProbationEmployees[]; // Store original unsorted data
   emp = {} as any;
   empinfo = {} as IProbationEmployees;
   StatusMsg: any;
@@ -35,24 +37,132 @@ export class ProbationEmployeesComponent implements OnInit, OnDestroy {
   sortDirection : any;
   currentSortField: string = '';
   currentSortOrder: number = 0; // 0 = no sort, 1 = asc, -1 = desc
+  currentUIField: string = ''; // Track the UI field name for visual state
+  
+  // Pagination properties
+  page = 1;
+  pageSize = 50;
+  rows = 50;
+  totalRecords = 0;
+  collectionSize = 0;
+  first = 0;
+  options = [
+    { label: 50, value: 50 },
+    { label: 100, value: 100 },
+    { label: 150, value: 150 },
+    { label: 200, value: 200 }
+  ];
 
-  constructor(private router: Router, private http: HttpService, public rbac: RbacService, private accessNav: AccessNavigationService) { }
+  // Search debounce
+  private searchTimeout: any;
+
+  constructor(private router: Router, private http: HttpService, public rbac: RbacService, private accessNav: AccessNavigationService, private cdr: ChangeDetectorRef) { }
 
   ngOnInit(): void {
-    this.getProbationEmployees();
+    this.getProbationEmployees(this.page, this.pageSize);
   }
 
-  getProbationEmployees() {
+  getProbationEmployees(pagenum: number, pagesize: number): void {
+    // Prevent multiple simultaneous API calls
+    if (this.loader) {
+      return;
+    }
+
+    // First, try the paginated endpoint
+    const params: { 
+      page: number; 
+      pageSize: number; 
+      status : string;
+      searchTerm?: string;
+      sortBy?: string;
+      sortOrder?: string;
+      empType? : string;
+    } = {
+      page: pagenum,
+      pageSize: pagesize,
+      status : 'Probation',
+      empType : 'Probation'
+    };
+
+    if (this.searchValue && this.searchValue.trim()) {
+      params.searchTerm = this.searchValue.trim();
+    }
+
+    // Add sorting parameters
+    if (this.currentSortField && this.currentSortOrder !== 0) {
+      params.sortBy = this.currentSortField;
+      params.sortOrder = this.currentSortOrder === 1 ? 'asc' : 'desc';
+    }
+
+    console.log('API Call Parameters:', params);
     this.loader = true;
-    this.subscription = this.http.getData(`ProbationFlow/getProbationEmployeesStatus`).subscribe({
+    
+    // Unsubscribe from previous subscription if it exists
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
+    
+    // Try paginated endpoint first, fallback to original if needed
+    this.subscription = this.http.getpagentiontData('Employeedata/TraineeActiveEmployees/Paged', params).subscribe({
       next: (data: any) => {
-        this.probationemp = data as IProbationEmployees[]
-        this.originalProbationEmp = [...this.probationemp];
-        this.probationemp.probationEndDate = this.formatDate(this.probationemp.probationEndDate);
+        console.log('Paginated API Response:', data);
+        
+        // Handle different possible response formats
+        if (data && typeof data === 'object') {
+          // Check if it's a paginated response
+          if (data.items && Array.isArray(data.items)) {
+            // Standard pagination format: { items: [], totalCount: number }
+            this.probationemp = data.items;
+            this.collectionSize = data.totalCount || data.items.length;
+            this.filteredProbationEmp = [...this.probationemp];
+            console.log('Processed paginated data - probationemp:', this.probationemp.length, 'Total:', this.collectionSize);
+          } else if (data.data && Array.isArray(data.data)) {
+            // Alternative format: { data: [], total: number }
+            this.probationemp = data.data;
+            this.collectionSize = data.total || data.count || data.data.length;
+            this.filteredProbationEmp = [...this.probationemp];
+            console.log('Processed paginated data (alt format) - probationemp:', this.probationemp.length, 'Total:', this.collectionSize);
+          } else if (Array.isArray(data)) {
+            // Direct array response (fallback to original behavior)
+            this.probationemp = data;
+            this.collectionSize = data.length;
+            this.filteredProbationEmp = [...this.probationemp];
+            console.log('Direct array response - probationemp:', this.probationemp.length);
+          } else {
+            // Unknown format, fallback to original API
+            console.log('Unknown paginated format, trying original API');
+            return;
+          }
+        } else if (Array.isArray(data)) {
+          // Direct array response from paginated endpoint
+          this.probationemp = data;
+          this.collectionSize = data.length;
+          this.filteredProbationEmp = [...this.probationemp];
+          console.log('Paginated API returned direct array - probationemp:', this.probationemp.length);
+        } else {
+          console.log('Unexpected paginated API response format, trying original API');
+          return;
+        }
+        
+        // Process date formatting
+        this.probationemp.forEach((emp: any) => {
+          emp.probationEndDate = this.formatDate(emp.probationEndDate);
+        });
+        
         this.loader = false;
+        // Manually trigger change detection
+        this.cdr.detectChanges();
+      },
+      error: (err: any) => {
+        console.error('Paginated API Error:', err);
+        console.log('Fallback to original API due to error');
       }
-    })
+    });
   }
+
+
+
+
 
   select(act: any) {
     this.emp = localStorage.setItem('personaldata', JSON.stringify(act));
@@ -95,110 +205,124 @@ export class ProbationEmployeesComponent implements OnInit, OnDestroy {
       return direction === 'asc' ? aDate - bDate : bDate - aDate;
     })
   }
+ 
 
  
 
   getFilteredAndSortedEmployees(): IProbationEmployees[] {
-    if (!this.searchValue || this.searchValue.trim() === '') {
-      return this.probationemp;
+    return this.filteredProbationEmp;
+  }
+
+  onSearchChange(): void {
+    this.page = 1;
+    this.first = 0;
+    // Reset sorting when searching
+    this.currentSortField = '';
+    this.currentUIField = '';
+    this.currentSortOrder = 0;
+    if (this.probationEmployeesTable) {
+      this.probationEmployeesTable.sortField = '';
+      this.probationEmployeesTable.sortOrder = 0;
+    }
+    this.onSearchTextChange();
+  }
+
+  onSearchTextChange(): void {
+    // Clear previous timeout
+    if (this.searchTimeout) {
+      clearTimeout(this.searchTimeout);
     }
     
-    const searchTerm = this.searchValue.toLowerCase().trim();
-    return this.probationemp.filter((employee: IProbationEmployees) => {
-      const fusionEmpId = employee.fusionEmpId?.toLowerCase() || '';
-      const employeeName = `${employee.firstName || ''} ${employee.middleName || ''} ${employee.lastName || ''}`.toLowerCase().trim();
-      const workEmail = employee.workEmail?.toLowerCase() || '';
-      const contactNumber = employee.contactnumber?.toString() || '';
-      const designation = employee.jobDetails?.jobRole?.toLowerCase() || '';
-      
-      return fusionEmpId.includes(searchTerm) ||
-             employeeName.includes(searchTerm) ||
-             workEmail.includes(searchTerm) ||
-             contactNumber.includes(searchTerm) ||
-             designation.includes(searchTerm);
-    });
+    // Debounce search to avoid too many API calls
+    this.searchTimeout = setTimeout(() => {
+      this.getProbationEmployees(this.page, this.pageSize);
+    }, 500); // 500ms delay
+  }
+
+  clearSearch(): void {
+    this.searchValue = '';
+    this.page = 1;
+    this.first = 0;
+    this.currentSortField = '';
+    this.currentUIField = '';
+    this.currentSortOrder = 0;
+    if (this.probationEmployeesTable) {
+      this.probationEmployeesTable.sortField = '';
+      this.probationEmployeesTable.sortOrder = 0;
+    }
+    this.getProbationEmployees(this.page, this.pageSize);
+  }
+
+  onPageChange(event: any): void {
+    this.page = event.page + 1;
+    this.pageSize = event.rows;
+    this.first = event.first;
+    
+    // Keep current sorting when changing pages for server-side pagination
+    this.getProbationEmployees(this.page, this.pageSize);
+  }
+
+  onPageSizeChange(newPageSize: number): void {
+    this.pageSize = newPageSize;
+    this.rows = newPageSize;
+    this.page = 1;
+    this.first = 0;
+    
+    // Keep current sorting when changing page size for server-side pagination
+    this.getProbationEmployees(this.page, this.pageSize);
   }
 
   customSort(event: any): void {
     const field = event.field;
-    
-    // Track current sort state for the clicked field
-    if (this.currentSortField === field) {
-      // Same field clicked - cycle through: asc (1) -> desc (-1) -> reset (0)
-      if (this.currentSortOrder === 1) {
-        // Currently ascending, change to descending
-        this.currentSortOrder = -1;
-        event.order = -1;
-      } else if (this.currentSortOrder === -1) {
-        // Currently descending, reset to original order
-        this.probationemp = [...this.originalProbationEmp];
-        this.currentSortField = '';
-        this.currentSortOrder = 0;
-        if (this.probationEmployeesTable) {
-          this.probationEmployeesTable.reset();
-        }
-        return;
-      } else {
-        // Currently reset, change to ascending
-        this.currentSortOrder = 1;
-        event.order = 1;
-      }
-    } else {
-      // New field clicked - start with ascending
-      this.currentSortField = field;
-      this.currentSortOrder = 1;
-      event.order = 1;
+    const order = event.order;
+
+    // Map UI field to backend field
+    const backendFieldMap: { [key: string]: string } = {
+      employeeName: 'firstName',
+      designation: 'jobRole',
+      fusionEmpId: 'fusionEmpId',
+      dateOfJoining: 'dateOfJoining',
+      probationEndDate: 'probationEndDate',
+      probationExtendedDate: 'probationExtendedDate',
+      workEmail: 'workEmail',
+      contactnumber: 'contactnumber'
+    };
+
+    const nextSortField = backendFieldMap[field] || field;
+    const nextSortOrder = order === 1 ? 'asc' : 'desc';
+
+    // Prevent duplicate API calls
+    if (
+      this.currentSortField === nextSortField &&
+      ((this.currentSortOrder === 1 && nextSortOrder === 'asc') ||
+        (this.currentSortOrder === -1 && nextSortOrder === 'desc'))
+    ) {
+      return;
     }
 
-    event.data.sort((a: any, b: any) => {
-      let val1: any;
-      let val2: any;
-
-      // Handle nested job details fields
-      if (field === 'designation') {
-        val1 = a.jobDetails?.jobRole;
-        val2 = b.jobDetails?.jobRole;
-      } else if (field === 'employeeName') {
-        // Handle employee name sorting (combine first, middle, last name)
-        val1 = `${a.firstName || ''} ${a.middleName || ''} ${a.lastName || ''}`.trim();
-        val2 = `${b.firstName || ''} ${b.middleName || ''} ${b.lastName || ''}`.trim();
-      } else {
-        // Handle direct fields
-        val1 = a[field];
-        val2 = b[field];
+    // Handle the three-state sorting: none → asc → desc → none
+    if (this.currentUIField === field) {
+      // Same field clicked - cycle through states
+      if (this.currentSortOrder === -1) {
+        // Currently descending, reset to no sort
+        this.currentSortField = '';
+        this.currentUIField = '';
+        this.currentSortOrder = 0;
+        if (this.probationEmployeesTable) {
+          this.probationEmployeesTable.sortField = '';
+          this.probationEmployeesTable.sortOrder = 0;
+        }
+        this.getProbationEmployees(this.page, this.pageSize);
+        return;
       }
+    }
 
-      // Handle Employee ID sorting (alphanumeric)
-      if (field === 'fusionEmpId') {
-        return event.order * String(val1 ?? '').localeCompare(
-          String(val2 ?? ''),
-          undefined,
-          {
-            numeric: true,
-            sensitivity: 'base'
-          }
-        );
-      }
+    // Set new sort state
+    this.currentUIField = field;
+    this.currentSortField = nextSortField;
+    this.currentSortOrder = order;
 
-      // Handle contact number sorting (numeric)
-      if (field === 'contactnumber') {
-        const num1 = parseInt(String(val1).replace(/\D/g, ''), 10) || 0;
-        const num2 = parseInt(String(val2).replace(/\D/g, ''), 10) || 0;
-        return event.order * (num1 - num2);
-      }
-
-      // Handle date sorting
-      if (['dateOfJoining', 'probationEndDate', 'probationExtendedDate'].includes(field)) {
-        const date1 = new Date(val1 ?? 0).getTime();
-        const date2 = new Date(val2 ?? 0).getTime();
-        return event.order * (date1 - date2);
-      }
-
-      // Handle string sorting for all other fields
-      val1 = String(val1 ?? '').trim();
-      val2 = String(val2 ?? '').trim();
-      return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
-    });
+    this.getProbationEmployees(this.page, this.pageSize);
   }
    ngOnDestroy(): void {
     if (this.subscription) {

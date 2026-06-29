@@ -35,7 +35,8 @@ import { ConfirmationIconComponent } from '../../icons/confirmation-icon/confirm
 @Component({
   selector: 'app-leaves',
   imports: [CommonModule, NgbNavModule, ModuleInfoIconComponent,NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, Select, Skeleton,
-    RouterModule, ReactiveFormsModule, TranslateModule, LeavesApprovaltabsComponent, TabsModule, ChartModule, ModuleInformationComponent, ConfirmationIconComponent, ApplicablePoliciesTriggerComponent, ChipModule, MultiSelect],
+    RouterModule, ReactiveFormsModule, TranslateModule, LeavesApprovaltabsComponent, TabsModule, ChartModule, ModuleInformationComponent, 
+    ConfirmationIconComponent, ApplicablePoliciesTriggerComponent, ChipModule, MultiSelect],
   templateUrl: './leaves.component.html',
   styleUrl: './leaves.component.scss',
   encapsulation: ViewEncapsulation.None,
@@ -597,8 +598,6 @@ getTeamManagersDetails() {
     this.subscription = this.http.getData(`Employeedata/${this.empdata.employeeId}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data: any) => {
         this.employeeiddetails = data;
-        console.log(this.employeeiddetails);
-
         // this.calculateProbationLeavs(this.categoryDetails);
       },
     });

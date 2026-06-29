@@ -116,15 +116,11 @@
     height: calc(100dvh - 20.5rem);
     min-height: 50vh !important;
 }
+
 .custom-alert-info {
     background: #fff7ec !important;
     border: 1px solid #ff8000 !important;
     color: #ff8000 !important;
-}
-
-th,
-td {
-    text-align: center !important;
 }
 
 .frequency-chip {
@@ -199,6 +195,7 @@ td {
         height: calc(100dvh - 14rem) !important;
     }
 }
+
 th,
 td {
     text-align: center !important;

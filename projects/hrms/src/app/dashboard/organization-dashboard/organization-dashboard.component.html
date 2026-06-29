@@ -518,6 +518,82 @@
             }
         </div>
         }
+        <!-- Department Wise Attrition Rate -->
+        <div class="content-card">
+            <div class="flex-between-content mb-2">
+                <div class="summary-header d-inline-flex gap-1">
+                    <div class="section-title">Department Wise Attrition Rate</div>
+                    <div>
+                        <app-module-info-icon placement="bottom" [ngbPopover]="attritionRateContent" class="module-icon" />
+                        <ng-template #attritionRateContent>
+                            <div class="module-info-text">Displays attrition rate by department, showing the percentage of employees who left. Helps identify departments with higher turnover rates.</div>
+                        </ng-template>
+                    </div>
+                </div>
+                <div class="custom-date-range-picker">
+                    <p-datepicker [(ngModel)]="attritionDateRange" placeholder="Select date range"
+                        (ngModelChange)="onAttritionDateChange($event)" [showIcon]="true" selectionMode="range"
+                        [readonlyInput]="true" />
+                </div>
+            </div>
+            @if(!attritionRateLoader){
+            <div class="disply-grid-custom" [ngClass]="{'graph-no-data-content': !hasAttritionData}">
+                @if(hasAttritionData) {
+                <div class="department-graph-content">
+                    <p-chart type="bar" [data]="attritionChartData" [options]="attritionChartOptions"
+                    [plugins]="[ChartDataLabels]" />
+                </div>
+                } @else {
+                <app-no-data-found />
+                }
+            </div>
+            }
+            @else {
+            <div class="content-card">
+                <p-skeleton height="8rem" />
+            </div>
+            }
+        </div>
+        <!-- Employees Exit by Tenure -->
+        <div class="content-card">
+            <div class="flex-between-content mb-3">
+                <div class="summary-header d-inline-flex gap-1">
+                    <div class="section-title">Employees Exit by Tenure</div>
+                    <div>
+                        <app-module-info-icon placement="bottom" [ngbPopover]="exitByTenureContent" class="module-icon" />
+                        <ng-template #exitByTenureContent>
+                            <div class="module-info-text">Displays the distribution of employee exits based on tenure ranges. Helps understand turnover patterns across different employee tenure groups.</div>
+                        </ng-template>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                    <div class="custom-date-range-picker">
+                        <p-datepicker [(ngModel)]="exitByTenureDateRange" placeholder="Select date range"
+                            (ngModelChange)="onExitByTenureDateChange($event)" [showIcon]="true" selectionMode="range"
+                            [readonlyInput]="true" />
+                    </div>
+                    <div class="total">Total Exits: <span class="count">{{ totalExitedEmployees }}</span></div>
+                </div>
+            </div>
+            @if(!exitByTenureLoader){
+            <div class="disply-grid-custom" [ngClass]="{'graph-no-data-content': !hasExitByTenureData}">
+                @if(hasExitByTenureData) {
+                <div class="gender-graph">
+                    <p-chart type="bar" [data]="exitByTenureChartData" [options]="exitByTenureChartOptions" [plugins]="[ChartDataLabels, datalabelUnderlinePlugin]" />
+                </div>
+                } @else {
+                <div class="no-data-container">
+                    <app-no-data-found />
+                </div>
+                }
+            </div>
+            }
+            @else {
+            <div class="content-card mb-3">
+                <p-skeleton height="8rem" />
+            </div>
+            }
+        </div>
         <!-- Shift & Location Overview -->
         @if(rbac.allowedToAccess('Locations and Shifts.view')){
         <div class="content-card">
@@ -1044,7 +1120,48 @@
     </div>
 </ng-template>
 
-<!--Upcoming Actions List-->
+<!--Exit by Tenure Employees List-->
+<ng-template #exitByTenureEmployeesList let-offcanvas>
+    <div class="custom-main-popup-container" ngbAutofocus>
+        <div class="custom-poup-header-content popup-header-border">
+            <div>
+                <p class="popup-heading mb-0">{{ exitByTenureOffcanvasTitle }} ({{ getFilteredExitByTenureEmployees().length }})</p>
+            </div>
+            <div>
+                <a (click)="close()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+            </div>
+        </div>
+        <div class="custom-offcanvas-body p-3">
+            <div class="input-group custom-search mb-3">
+                <span class="input-group-text custom-input-group-search">
+                    <i class="bi bi-search"></i>
+                </span>
+                <input type="search" class="form-control custom-search-input" placeholder="Search" [(ngModel)]="searchEmployeeText"
+                placeholder="Search by Employee name/designation/department"/>
+            </div>
+            <div *ngFor="let emp of getFilteredExitByTenureEmployees()" class="profile-content mb-2">
+                <div>
+                    <ng-container *ngIf="emp.profilePicUrl; else exitTenureProfileIcon">
+                        <img [src]="emp.profilePicUrl" [width]="38" [height]="38" alt="Profile Image" class="profile-img" />
+                    </ng-container>
+                    <ng-template #exitTenureProfileIcon>
+                        <app-profile-icon [iconWidth]="'38'" [iconHeight]="'38'" />
+                    </ng-template>
+                </div>
+                <div class="profile-info w-100">
+                    <div class="name">{{ emp.employeeName }}</div>
+                    <div class="designation">{{ emp.designation }} - {{ emp.departmentName }}</div>
+                    @if (emp.lastWorkingDay) {
+                    <div class="leave-chip chip-lwd mt-1">LWD: {{ emp.lastWorkingDay | date:'MMM dd, yyyy' }}</div>
+                    }
+                </div>
+            </div>
+            <div *ngIf="getFilteredExitByTenureEmployees().length === 0" class="text-center text-muted py-3">
+                <app-no-data-found />
+            </div>
+        </div>
+    </div>
+</ng-template>
 <ng-template #upcomingActionsList let-offcanvas>
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="custom-poup-header-content popup-header-border">

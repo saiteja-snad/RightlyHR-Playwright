@@ -119,7 +119,7 @@ export class ActiveEmployeesComponent implements OnInit, OnDestroy {
           this.Active = [];
           this.collectionSize = 0;
         }
-        
+        this.loader = false;
         this.filteredActive = [...this.Active];
         console.log('Processed data - Active:', this.Active.length, 'Total:', this.collectionSize);
         

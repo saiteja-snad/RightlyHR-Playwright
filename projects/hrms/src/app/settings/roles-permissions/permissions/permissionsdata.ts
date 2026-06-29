@@ -347,6 +347,8 @@ export const permissionsData = [
   { fields: 'Manager Toggle', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Employee Experience Overview', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Headcount by Gender View Employee List', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Department Wise Attrition Rate', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Employees Exit by Tenure', View: false, Update: false, Create: false, Delete: false },
 
   { fields: 'Team Time Sheet Detailed Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Team Time Sheet Summary Tab', View: false, Update: false, Create: false, Delete: false },

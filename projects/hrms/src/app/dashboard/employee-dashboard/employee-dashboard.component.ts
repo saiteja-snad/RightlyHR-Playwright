@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ViewEncapsulation } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, Router } from '@angular/router';
 import { ScrollingModule } from '@angular/cdk/scrolling';
@@ -42,7 +42,7 @@ import { QuickLinkRouteDef, QUICK_LINK_DEFAULT_ROUTES, resolveQuickLinkRouteDef,
   encapsulation: ViewEncapsulation.None
 })
 
-export class EmployeeDashboardComponent {
+export class EmployeeDashboardComponent implements AfterViewInit {
   greetingMessage = '';
   employeedata: any;
   currentTime: Date = new Date();
@@ -188,6 +188,20 @@ quickLinks: QuickLinkRouteDef[] = [];
 quickLinksInfo =
   'Provides quick access to commonly used pages and actions across the portal.';
 
+  @ViewChild('quickLinksScroll', { static: false })
+  private quickLinksScroll?: ElementRef<HTMLElement>;
+
+  quickLinksCanScrollLeft = false;
+  quickLinksCanScrollRight = false;
+
+  get showQuickLinksLeftArrow(): boolean {
+    return this.quickLinks.length > 9 && this.quickLinksCanScrollLeft;
+  }
+
+  get showQuickLinksRightArrow(): boolean {
+    return this.quickLinks.length > 9 && this.quickLinksCanScrollRight;
+  }
+
   constructor(
     private http: HttpService,
     private router: Router,
@@ -197,9 +211,9 @@ quickLinksInfo =
     private accessNav: AccessNavigationService,
     private menuOrderService: MenuOrderService
   ) { }
-
   ngOnInit(): void {
     this.intialLoading = true;
+    this.setIconBasedOnTime();
     this.setIconBasedOnTime();
     this.intervalId = setInterval(() => {
       this.currentTime = new Date();
@@ -235,6 +249,9 @@ quickLinksInfo =
     this.initQuickLinks();
   }
 
+  ngAfterViewInit(): void {
+    setTimeout(() => this.updateQuickLinksScrollState());
+  }
 
   private async initQuickLinks(): Promise<void> {
     await this.menuOrderService.ensureLoaded();
@@ -242,6 +259,7 @@ quickLinksInfo =
     const routes = savedRoutes.length > 0 ? this.resolveInitialQuickLinkRoutes(savedRoutes) : QUICK_LINK_DEFAULT_ROUTES;
     this.quickLinks = this.hydrateQuickLinks(routes);
     this.selectedQuickLinkRoutes.clear();
+    setTimeout(() => this.updateQuickLinksScrollState());
   }
 
   private resolveInitialQuickLinkRoutes(savedRoutes: string[]): string[] {
@@ -284,6 +302,7 @@ quickLinksInfo =
     if (event.previousContainer === event.container) {
       moveItemInArray(this.quickLinks, event.previousIndex, event.currentIndex);
       this.saveQuickLinks();
+      setTimeout(() => this.updateQuickLinksScrollState());
       return;
     }
 
@@ -298,6 +317,7 @@ quickLinksInfo =
     const insertIndex = Math.min(Math.max(event.currentIndex, 0), this.quickLinks.length);
     this.quickLinks.splice(insertIndex, 0, ...toAdd);
     this.saveQuickLinks();
+    setTimeout(() => this.updateQuickLinksScrollState());
   }
 
   get selectedQuickLinksCount(): number {
@@ -345,6 +365,7 @@ quickLinksInfo =
     this.quickLinks = this.quickLinks.filter((item) => !this.selectedQuickLinkRoutes.has(item.route));
     this.selectedQuickLinkRoutes.clear();
     this.saveQuickLinks();
+    setTimeout(() => this.updateQuickLinksScrollState());
   }
 
   private buildQuickLinksFromDraggedItem(dragged: any): QuickLinkRouteDef[] {
@@ -401,8 +422,52 @@ quickLinksInfo =
     this.menuOrderService.saveQuickLinks(employeeId, this.quickLinks.map((q) => q.route));
   }
 
+  onQuickLinksScroll(): void {
+    this.updateQuickLinksScrollState();
+  }
+
+  scrollQuickLinks(direction: 'left' | 'right', event: Event): void {
+    event.preventDefault();
+    event.stopPropagation();
+
+    const el = this.quickLinksScroll?.nativeElement;
+    if (!el) return;
+
+    const delta = this.getQuickLinksScrollDelta(el) * (direction === 'left' ? -1 : 1);
+    el.scrollBy({ left: delta, behavior: 'smooth' });
+    setTimeout(() => this.updateQuickLinksScrollState(), 200);
+  }
+
+  private getQuickLinksScrollDelta(el: HTMLElement): number {
+    const list = el.querySelector('.quick-links-drop-list') as HTMLElement | null;
+    const firstItem = el.querySelector('.quick-links-content') as HTMLElement | null;
+
+    const itemWidth = firstItem?.getBoundingClientRect().width ?? 112;
+    const listStyle = list ? window.getComputedStyle(list) : null;
+    const gapValue = listStyle?.columnGap || listStyle?.gap || '0';
+    const gap = Number.parseFloat(gapValue) || 0;
+
+    return Math.max(el.clientWidth * 0.85, itemWidth + gap);
+  }
+
+  private updateQuickLinksScrollState(): void {
+    const el = this.quickLinksScroll?.nativeElement;
+    if (!el) return;
+
+    const maxScrollLeft = el.scrollWidth - el.clientWidth;
+    if (maxScrollLeft <= 0) {
+      this.quickLinksCanScrollLeft = false;
+      this.quickLinksCanScrollRight = false;
+      return;
+    }
+
+    this.quickLinksCanScrollLeft = el.scrollLeft > 2;
+    this.quickLinksCanScrollRight = el.scrollLeft < maxScrollLeft - 2;
+  }
+
   checkScreenSize() {
     this.isScreenLessThan1600 = window.innerWidth < 1600;
+    this.updateQuickLinksScrollState();
   }
 
   setIconBasedOnTime() {

@@ -535,7 +535,7 @@
                 <div class="custom-date-range-picker">
                     <p-datepicker [(ngModel)]="attritionDateRange" placeholder="Select date range"
                         (ngModelChange)="onAttritionDateChange($event)" [showIcon]="true" selectionMode="range"
-                        [readonlyInput]="true" />
+                        [readonlyInput]="true" [maxDate]="maxAttritionDate" />
                 </div>
             </div>
             @if(!attritionRateLoader){
@@ -575,7 +575,7 @@
                     <div class="custom-date-range-picker">
                         <p-datepicker [(ngModel)]="exitByTenureDateRange" placeholder="Select date range"
                             (ngModelChange)="onExitByTenureDateChange($event)" [showIcon]="true" selectionMode="range"
-                            [readonlyInput]="true" />
+                            [readonlyInput]="true" [maxDate]="maxExitByTenureDate" />
                     </div>
                     <div class="total">Total Exits: <span class="count">{{ totalExitedEmployees }}</span></div>
                 </div>

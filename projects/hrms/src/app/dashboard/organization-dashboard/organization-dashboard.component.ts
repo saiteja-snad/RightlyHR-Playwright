@@ -2143,6 +2143,7 @@ export class OrganizationDashboardComponent implements AfterViewInit {
     new Date(new Date().getFullYear(), 0, 1),
     new Date()
   ];
+  maxAttritionDate: Date = new Date();
   // Employee Exit by Tenure variables
   exitByTenureLoader = false;
   exitByTenureChartData: any;
@@ -2156,6 +2157,7 @@ export class OrganizationDashboardComponent implements AfterViewInit {
     new Date()
   ];
   totalExitedEmployees: number = 0;
+  maxExitByTenureDate: Date = new Date();
   @ViewChild('exitByTenureEmployeesList') exitByTenureOffcanvasTemplate!: TemplateRef<any>;
 
   getDepartmentwiseAttritionRateDetails() {
@@ -2189,10 +2191,17 @@ export class OrganizationDashboardComponent implements AfterViewInit {
       this.attritionChartData = null;
       return;
     }
+    // Filter out departments with 0 attrition rate
+    const filteredData = data.filter(item => item.attritionRate > 0);
+    if (filteredData.length === 0) {
+      this.hasAttritionData = false;
+      this.attritionChartData = null;
+      return;
+    }
     this.hasAttritionData = true;
-    this.attritionRawData = data;
-    const labels = data.map(item => item.departmentName);
-    const rates = data.map(item => item.attritionRate);
+    this.attritionRawData = filteredData;
+    const labels = filteredData.map(item => item.departmentName);
+    const rates = filteredData.map(item => item.attritionRate);
     const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim();
     this.attritionChartData = {
       labels,

@@ -16,7 +16,12 @@
 
   <div class="custom-table-content">
     @if (!loader) {
-    <p-table #activeEmployeesTable [value]="getFilteredAndSortedEmployees()" [tableStyle]="{'width': '100%'}" [customSort]="true" (sortFunction)="customSort($event)">
+    <p-table #activeEmployeesTable
+  [value]="getFilteredAndSortedEmployees()"
+  [customSort]="true"
+  (onSort)="customSort($event)"
+  [sortField]="currentUIField"
+  [sortOrder]="currentSortOrder">
       <ng-template pTemplate="header">
         <tr>
           <th pSortableColumn="fusionEmpId">{{'Employee ID'|translate}} <p-sortIcon field="fusionEmpId" /></th>

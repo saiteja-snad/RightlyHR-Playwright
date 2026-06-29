@@ -17,12 +17,11 @@ import { RbacService } from '../../services/rbac.service';
 import { Router } from '@angular/router';
 import { AccessForEmployeeinfoService } from '../../services/access-for-employeeinfo.service';
 import { Skeleton } from 'primeng/skeleton';
-import { DownloadIconComponent } from "../../icons/download-icon/download-icon.component";
 
 @Component({
   selector: 'app-documents',
   imports: [LastValuePipe, DateformatPipe, ReactiveFormsModule, FormsModule, Skeleton, TranslateModule,
-    CommonModule, FileSizePipe, NoDataFoundComponent, DataLoaderContentComponent, DownloadIconComponent],
+    CommonModule, FileSizePipe, NoDataFoundComponent, DataLoaderContentComponent],
   templateUrl: './documents.component.html',
   styleUrl: './documents.component.scss'
 })
@@ -250,19 +249,52 @@ export class DocumentsComponent implements OnInit, OnDestroy {
       .DownloadDataWithQuery('FileSystem/Downloadfile', file.name)
       .subscribe({
         next: (res: any) => {
-          let fileName = res.headers
-            .get('content-disposition')
-            ?.split(':')[1]
-            .split('=')[1];
           let blob: Blob = res.body as Blob;
           let a = document.createElement('a');
           a.href = window.URL.createObjectURL(blob);
-          let filename = file.name.split('/')[file.name.split('/').length - 1];
+          const filename = this.getDownloadFileName(res?.headers?.get('content-disposition'), file?.name);
           a.download = filename;
           a.click();
+          window.URL.revokeObjectURL(a.href);
         },
         error: (reason) => console.log(reason),
       });
+  }
+
+  private getDownloadFileName(contentDisposition: string | null, filePath?: string): string {
+    const fileNameFromHeader = this.extractFileNameFromContentDisposition(contentDisposition);
+    if (fileNameFromHeader) {
+      return fileNameFromHeader;
+    }
+
+    if (typeof filePath === 'string' && filePath.trim()) {
+      const normalizedPath = filePath.split('?')[0];
+      const pathParts = normalizedPath.split('/').filter(Boolean);
+      const lastPathPart = pathParts[pathParts.length - 1];
+      if (lastPathPart) {
+        return decodeURIComponent(lastPathPart);
+      }
+    }
+
+    return 'document';
+  }
+
+  private extractFileNameFromContentDisposition(contentDisposition: string | null): string | null {
+    if (!contentDisposition) {
+      return null;
+    }
+
+    const utfMatch = contentDisposition.match(/filename\*=UTF-8''([^;]+)/i);
+    if (utfMatch?.[1]) {
+      return decodeURIComponent(utfMatch[1].replace(/["']/g, '').trim());
+    }
+
+    const standardMatch = contentDisposition.match(/filename="?([^";]+)"?/i);
+    if (standardMatch?.[1]) {
+      return standardMatch[1].trim();
+    }
+
+    return null;
   }
 
   ngOnDestroy(): void {

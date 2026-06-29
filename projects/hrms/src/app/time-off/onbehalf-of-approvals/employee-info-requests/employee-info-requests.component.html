@@ -55,7 +55,7 @@
                   <th>Current Data</th>
                   <th>Requested Data</th>
                   <!-- <th>Description</th> -->
-                  @if (showhideaction &&(rbac.allowedToAccess('Employee Info (On Behalf Of Approvals).update') 
+                  @if (showhideaction &&(rbac.allowedToAccess('Employee Info (On Behalf Of Approvals).update')
                                         || rbac.allowedToAccess('Employee Info (On Behalf Of Approvals).delete')
                                         ) ) {
                   <th class="text-center">Actions</th>
@@ -105,18 +105,36 @@
                     }@else{{{ entry.newValue ? entry.newValue : "-" }}}
                     }
                   </td>
-                  @if (showhideaction &&(rbac.allowedToAccess('Employee Info (On Behalf Of Approvals).update') 
+                  @if (showhideaction &&(rbac.allowedToAccess('Employee Info (On Behalf Of Approvals).update')
                                         || rbac.allowedToAccess('Employee Info (On Behalf Of Approvals).delete')
                                         ) ) {
-                  <td>
-                    <div class="d-flex justify-content-center gap-3">
-                      <a (click)="openModal(approverPopup, entry, 'Processed')">
-                        <img src="/icons/check-approve-icon.png" class="action-img" alt="Approve">
+                  <td class="text-center">
+                    <div class="dropdown">
+                      <a data-bs-toggle="dropdown" aria-expanded="false" class="cursor-pointer">
+                        <i class="bi bi-three-dots-vertical"></i>
                       </a>
 
-                      <a (click)="openModal(rejectPopup, entry, 'Rejected')">
-                        <img src="/icons/cancel-circle.png" class="action-img" alt="Reject">
-                      </a>
+                      <ul class="dropdown-menu custom-dropdown-menu">
+
+                        @if(rbac.allowedToAccess('Employee Info (On Behalf Of Approvals).update')){
+                        <li>
+                          <a class="dropdown-item" (click)="openModal(approverPopup, entry, 'Processed')">
+                            <i class="bi bi-check-circle me-2"></i>
+                            {{ 'Approve' | translate }}
+                          </a>
+                        </li>
+                        }
+
+                        @if(rbac.allowedToAccess('Employee Info (On Behalf Of Approvals).delete')){
+                        <li>
+                          <a class="dropdown-item" (click)="openModal(rejectPopup, entry, 'Rejected')">
+                            <i class="bi bi-x-circle me-2"></i>
+                            {{ 'Reject' | translate }}
+                          </a>
+                        </li>
+                        }
+
+                      </ul>
                     </div>
                   </td>
                   }
@@ -381,7 +399,7 @@
     <!-- <div class="custom-main-popup-content" >
             <div class="p-1">
                     <div class="mb-0" *ngFor="let item of actionsDetails.oldValue | keyvalue">
-                         <p><span class="heading-name">{{ item.key }}:</span> <span class="sub-name"> 
+                         <p><span class="heading-name">{{ item.key }}:</span> <span class="sub-name">
                           @if(item.key==='Document'){
                             <a type="button" class="view-btn text-nowrap me-2" (click)="onViewAttachement(item.value)">
                               <img src="/my-info-icons/View-Policy-icon.png" alt="Icon" class="view-icon">

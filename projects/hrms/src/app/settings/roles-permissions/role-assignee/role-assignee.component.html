@@ -46,7 +46,7 @@
                     <thead>
                         <tr>
                             <th>{{'Name' | translate}}</th>
-                            <th>{{'Action' | translate}}</th>
+                            <th class="text-center">{{'Action' | translate}}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -56,8 +56,19 @@
                                 <span *ngIf="user.middleName"> {{ user.middleName }} </span>
                                 {{ user.lastName }}
                             </td>
-                            <td (click)="onUserClick(user)">
-                                   <app-settings-delete-icon />
+                            <td class="text-center action-dropdown-cell">
+                                <div class="dropdown">
+                                    <a data-bs-toggle="dropdown" aria-expanded="false" class="cursor-pointer">
+                                        <i class="bi bi-three-dots-vertical"></i>
+                                    </a>
+                                    <ul class="dropdown-menu custom-dropdown-menu">
+                                        <li>
+                                            <a class="dropdown-item" (click)="onUserClick(user)">
+                                                <i class="bi bi-trash me-2"></i>{{ 'Delete' | translate }}
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
                             </td>
                         </tr>
                         }@else {

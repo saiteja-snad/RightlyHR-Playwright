@@ -39,20 +39,23 @@
                 @for (visa of VisaDetail; track visa.id) {
                 <tr>
                     <td class="w-75">{{ visa.visatype1}}</td>
-                    <td class="w-25">
-                        <div class="d-flex gap-4">
-                            <!--Update-->
-                            <div>
-                                <a (click)="openupdate(visa)" *ngIf="rbac.allowedToAccess('Visa Type.update')">
-                                     <app-settings-update-icon />
-                                </a>
-                            </div>
-                            <!--Delete-->
-                            <div>
-                                <a (click)="opendelete(visa)" *ngIf="rbac.allowedToAccess('Visa Type.delete')">
-                                       <app-settings-delete-icon />
-                                </a>
-                            </div>
+                    <td class="w-25 text-end action-dropdown-cell">
+                        <div class="dropdown" *ngIf="rbac.allowedToAccess('Visa Type.update') || rbac.allowedToAccess('Visa Type.delete')">
+                            <a data-bs-toggle="dropdown" aria-expanded="false" class="cursor-pointer">
+                                <i class="bi bi-three-dots-vertical"></i>
+                            </a>
+                            <ul class="dropdown-menu custom-dropdown-menu">
+                                <li *ngIf="rbac.allowedToAccess('Visa Type.update')">
+                                    <a class="dropdown-item" (click)="openupdate(visa)">
+                                        <i class="bi bi-pencil-square me-2"></i>{{ 'Update' | translate }}
+                                    </a>
+                                </li>
+                                <li *ngIf="rbac.allowedToAccess('Visa Type.delete')">
+                                    <a class="dropdown-item" (click)="opendelete(visa)">
+                                        <i class="bi bi-trash me-2"></i>{{ 'Delete' | translate }}
+                                    </a>
+                                </li>
+                            </ul>
                         </div>
                     </td>
                 </tr>

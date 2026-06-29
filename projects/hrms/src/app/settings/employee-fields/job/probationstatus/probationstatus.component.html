@@ -38,20 +38,23 @@
                 @for (job of probitiontypeDetail; track $index) {
                 <tr>
                     <td class="w-75">{{ job.probationstatus1}}</td>
-                    <td class="w-25">
-                        <div class="d-flex gap-4">
-                            <!--Update-->
-                            <div>
-                                <a (click)="openupdate(job)" *ngIf="rbac.allowedToAccess('Probation Status.update')">
-                                     <app-settings-update-icon />
-                                </a>
-                            </div>
-                            <!--Delete-->
-                            <div>
-                                <a (click)="opendelete(job)" *ngIf="rbac.allowedToAccess('Probation Status.delete')">
-                                       <app-settings-delete-icon />
-                                </a>
-                            </div>
+                    <td class="w-25 text-end action-dropdown-cell">
+                        <div class="dropdown" *ngIf="rbac.allowedToAccess('Probation Status.update') || rbac.allowedToAccess('Probation Status.delete')">
+                            <a data-bs-toggle="dropdown" aria-expanded="false" class="cursor-pointer">
+                                <i class="bi bi-three-dots-vertical"></i>
+                            </a>
+                            <ul class="dropdown-menu custom-dropdown-menu">
+                                <li *ngIf="rbac.allowedToAccess('Probation Status.update')">
+                                    <a class="dropdown-item" (click)="openupdate(job)">
+                                        <i class="bi bi-pencil-square me-2"></i>{{ 'Update' | translate }}
+                                    </a>
+                                </li>
+                                <li *ngIf="rbac.allowedToAccess('Probation Status.delete')">
+                                    <a class="dropdown-item" (click)="opendelete(job)">
+                                        <i class="bi bi-trash me-2"></i>{{ 'Delete' | translate }}
+                                    </a>
+                                </li>
+                            </ul>
                         </div>
                     </td>
                 </tr>
@@ -64,7 +67,7 @@
         }
     </div>
 </div>
-  
+
 <!--Update popup-->
 <ng-template #updatepopup let-modal>
     <form autocomplete="off" [formGroup]="updateForm">
@@ -107,7 +110,7 @@
         </div>
     </form>
 </ng-template>
-  
+
 <!--Delete Confirmation popup-->
 <ng-template #deletepopup let-modal>
     <div class="result-popup-content" ngbAutofocus>

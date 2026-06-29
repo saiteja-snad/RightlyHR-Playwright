@@ -518,16 +518,16 @@
                     <div class="name">{{ emp.employeeName }}</div>
                     <div class="designation">{{ emp.designation }} - {{ emp.departmentName }}</div>
                     @if (emp.categoryName) {
-                    <div class="leave-chip mt-1" [ngStyle]="getLeaveChipStyle(emp.categoryColor)">{{ emp.categoryName }}</div>
+                    <div class="leave-chip mt-1 me-2 d-inline-block" [ngStyle]="getLeaveChipStyle(emp.categoryColor)">{{ emp.categoryName }}</div>
                     }
                     @if (emp.hasPermission && emp.permissionDuration) {
-                        <span class="attendance-chip chip-permission">{{ emp.permissionType }} ({{ emp.permissionDuration }})</span>
+                        <span class="attendance-chip chip-permission me-2 d-inline-block mb-1">{{ emp.permissionType }} ({{ emp.permissionDuration }})</span>
                     }
                     @if (emp.hasWFHRequests) {
-                        <span class="attendance-chip chip-permission">{{ emp.wfhRequestDurationType }}</span>
+                        <span class="attendance-chip chip-permission me-2 d-inline-block mb-1">{{ emp.wfhRequestDurationType }}</span>
                     }
                      @if (emp.hasRemoteLogin) {
-                        <span class="attendance-chip chip-permission">{{ emp.remoteLoginDurationType }}</span>
+                        <span class="attendance-chip chip-permission me-2 d-inline-block mb-1">{{ emp.remoteLoginDurationType }}</span>
                     }
                 </div>
             </div>

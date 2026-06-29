@@ -117,12 +117,17 @@ export class OrganizationDashboardComponent implements AfterViewInit {
       const ctx = chart.ctx;
       const isHorizontal = chart.config?.options?.indexAxis === 'y';
       const isStacked = chart.config?.options?.scales?.y?.stacked || chart.config?.options?.scales?.x?.stacked;
-      const disableUnderline = chart.config?.options?.disableUnderline;
-      if (disableUnderline) return;
+      const clickableLabelRegions: Array<{ left: number; right: number; top: number; bottom: number }> = [];
+      const hasClickableLabels = chart.config?.options?.plugins?.datalabels?.cursor === 'pointer';
+
       if (isHorizontal) {
         // Check if user has permission to view employee list for gender chart
         const hasViewPermission = this.rbac.allowedToAccess('Headcount by Gender View Employee List.view');
-        if (!hasViewPermission) return; // Don't draw underline if no permission
+        if (!hasViewPermission) {
+          chart.$clickableLabelRegions = [];
+          return;
+        }
+
         chart.data.datasets.forEach((dataset: any, dsIndex: number) => {
           const meta = chart.getDatasetMeta(dsIndex);
           if (meta.hidden) return;
@@ -139,6 +144,14 @@ export class OrganizationDashboardComponent implements AfterViewInit {
             ctx.moveTo(element.x + 8, element.y + 7);
             ctx.lineTo(element.x + 8 + textWidth, element.y + 7);
             ctx.stroke();
+            if (hasClickableLabels) {
+              clickableLabelRegions.push({
+                left: element.x + 8,
+                right: element.x + 8 + textWidth,
+                top: element.y - 8,
+                bottom: element.y + 8
+              });
+            }
             ctx.restore();
           });
         });
@@ -166,6 +179,14 @@ export class OrganizationDashboardComponent implements AfterViewInit {
           ctx.moveTo(element.x - textWidth / 2, element.y - 8);
           ctx.lineTo(element.x + textWidth / 2, element.y - 8);
           ctx.stroke();
+          if (hasClickableLabels) {
+            clickableLabelRegions.push({
+              left: element.x - textWidth / 2,
+              right: element.x + textWidth / 2,
+              top: element.y - 20,
+              bottom: element.y - 2
+            });
+          }
           ctx.restore();
         }
       } else {
@@ -184,10 +205,37 @@ export class OrganizationDashboardComponent implements AfterViewInit {
             ctx.moveTo(element.x - textWidth / 2, element.y - 8);
             ctx.lineTo(element.x + textWidth / 2, element.y - 8);
             ctx.stroke();
+            if (hasClickableLabels) {
+              clickableLabelRegions.push({
+                left: element.x - textWidth / 2,
+                right: element.x + textWidth / 2,
+                top: element.y - 20,
+                bottom: element.y - 2
+              });
+            }
             ctx.restore();
           });
         });
       }
+      chart.$clickableLabelRegions = clickableLabelRegions;
+    },
+    afterEvent: (chart: any, args: any) => {
+      const event = args?.event;
+      if (!event || !chart?.canvas) return;
+      if (event.type === 'mouseout') {
+        chart.canvas.style.cursor = 'default';
+        return;
+      }
+
+      const regions = chart.$clickableLabelRegions || [];
+      const isOverClickableLabel = regions.some((region: any) =>
+        event.x >= region.left &&
+        event.x <= region.right &&
+        event.y >= region.top &&
+        event.y <= region.bottom
+      );
+
+      chart.canvas.style.cursor = isOverClickableLabel ? 'pointer' : 'default';
     }
   };
   selectedDate!: Date;
@@ -720,15 +768,6 @@ export class OrganizationDashboardComponent implements AfterViewInit {
       responsive: true,
       maintainAspectRatio: false,
       layout: { padding: { top: 25 } },
-      onClick: (_event: any, elements: any[]) => {
-        if (!elements.length) return;
-        const dept = this.departmentRawData[elements[0].index];
-        if (!dept?.headCount) return;
-        this.openDepartmentOffcanvas(dept);
-      },
-      onHover: (_event: any, elements: any[], chart: any) => {
-        chart.canvas.style.cursor = elements.length ? 'pointer' : 'default';
-      },
       plugins: {
         legend: {
           display: false,
@@ -753,12 +792,6 @@ export class OrganizationDashboardComponent implements AfterViewInit {
               const dept = this.departmentRawData[context.dataIndex];
               if (!dept?.headCount) return;
               this.openDepartmentOffcanvas(dept);
-            },
-            enter: (context: any) => {
-              context.chart.canvas.style.cursor = 'pointer';
-            },
-            leave: (context: any) => {
-              context.chart.canvas.style.cursor = 'default';
             }
           }
         }
@@ -986,18 +1019,6 @@ export class OrganizationDashboardComponent implements AfterViewInit {
           maintainAspectRatio: false,
           indexAxis: 'y',
           layout: { padding: { right: 30 } },
-          onClick: (_event: any, elements: any[]) => {
-            if (!this.rbac.allowedToAccess('Headcount by Gender View Employee List.view') || !elements.length) return;
-            const dataIndex = elements[0].index;
-            const gender = labels[dataIndex];
-            const count = counts[dataIndex];
-            if (!count) return;
-            this.openGenderOffcanvas(gender, count);
-          },
-          onHover: (_event: any, elements: any[], chart: any) => {
-            const hasViewPermission = this.rbac.allowedToAccess('Headcount by Gender View Employee List.view');
-            chart.canvas.style.cursor = (hasViewPermission && elements.length) ? 'pointer' : 'default';
-          },
           plugins: {
             legend: { display: false },
             datalabels: {
@@ -1006,6 +1027,7 @@ export class OrganizationDashboardComponent implements AfterViewInit {
               color: '#000',
               font: { weight: 'bold', size: 12 },
               formatter: (value: number) => value,
+              cursor: this.rbac.allowedToAccess('Headcount by Gender View Employee List.view') ? 'pointer' : 'default',
               listeners: {
                 click: (context: any) => {
                   if (!this.rbac.allowedToAccess('Headcount by Gender View Employee List.view')) return;
@@ -1013,14 +1035,6 @@ export class OrganizationDashboardComponent implements AfterViewInit {
                   const count = counts[context.dataIndex];
                   if (!count) return;
                   this.openGenderOffcanvas(gender, count);
-                },
-                enter: (context: any) => {
-                  if (!this.rbac.allowedToAccess('Headcount by Gender View Employee List.view')) return;
-                  context.chart.canvas.style.cursor = 'pointer';
-
-                },
-                leave: (context: any) => {
-                  context.chart.canvas.style.cursor = 'default';
                 }
               }
             }
@@ -1604,24 +1618,6 @@ export class OrganizationDashboardComponent implements AfterViewInit {
       responsive: true,
       maintainAspectRatio: false,
       layout: { padding: { top: 25 } },
-      onClick: (_event: any, elements: any[]) => {
-        if (!elements.length) return;
-        const datasetIndex = elements[0].datasetIndex;
-        const dataIndex = elements[0].index;
-        const shiftName = datasets[datasetIndex]?.label;
-        // Build flat list of subLocations in same order as chart labels
-        const subLocations: any[] = [];
-        dataArray.forEach((location: any) => {
-          location.subLocations?.forEach((subLoc: any) => subLocations.push(subLoc));
-        });
-        const subLoc = subLocations[dataIndex];
-        const shift = subLoc?.shifts?.find((s: any) => s.shiftName === shiftName);
-        if (!shift?.employeeCount) return;
-        this.openShiftLocationOffcanvas(subLoc.subLocationName, shiftName, shift.employees || []);
-      },
-      onHover: (_event: any, elements: any[], chart: any) => {
-        chart.canvas.style.cursor = elements.length ? 'pointer' : 'default';
-      },
       plugins: {
         legend: {
           display: false,
@@ -1650,6 +1646,7 @@ export class OrganizationDashboardComponent implements AfterViewInit {
           anchor: 'end',
           align: 'end',
           color: '#000',
+          cursor: 'pointer',
           font: {
             weight: 'bold',
             size: 10
@@ -1660,6 +1657,23 @@ export class OrganizationDashboardComponent implements AfterViewInit {
               total += dataset.data[context.dataIndex] || 0;
             });
             return total;
+          },
+          listeners: {
+            click: (context: any) => {
+              const datasetIndex = context.datasetIndex;
+              const dataIndex = context.dataIndex;
+              const shiftName = datasets[datasetIndex]?.label;
+              const subLocations: any[] = [];
+
+              dataArray.forEach((location: any) => {
+                location.subLocations?.forEach((subLoc: any) => subLocations.push(subLoc));
+              });
+
+              const subLoc = subLocations[dataIndex];
+              const shift = subLoc?.shifts?.find((s: any) => s.shiftName === shiftName);
+              if (!shift?.employeeCount) return;
+              this.openShiftLocationOffcanvas(subLoc.subLocationName, shiftName, shift.employees || []);
+            }
           }
         }
       },
@@ -2088,15 +2102,6 @@ export class OrganizationDashboardComponent implements AfterViewInit {
       responsive: true,
       maintainAspectRatio: false,
       layout: { padding: { top: 25 } },
-      onClick: (_event: any, elements: any[]) => {
-        if (!elements.length) return;
-        const item = this.experienceRawData[elements[0].index];
-        if (!item?.count) return;
-        this.openExperienceOffcanvas(item);
-      },
-      onHover: (_event: any, elements: any[], chart: any) => {
-        chart.canvas.style.cursor = elements.length ? 'pointer' : 'default';
-      },
       plugins: {
         legend: {
           display: false,
@@ -2110,6 +2115,7 @@ export class OrganizationDashboardComponent implements AfterViewInit {
           anchor: 'end',
           align: 'end',
           color: '#000',
+          cursor: 'pointer',
           font: {
             weight: 'bold',
             size: 10
@@ -2120,12 +2126,6 @@ export class OrganizationDashboardComponent implements AfterViewInit {
               const item = this.experienceRawData[context.dataIndex];
               if (!item?.count) return;
               this.openExperienceOffcanvas(item);
-            },
-            enter: (context: any) => {
-              context.chart.canvas.style.cursor = 'pointer';
-            },
-            leave: (context: any) => {
-              context.chart.canvas.style.cursor = 'default';
             }
           }
         }

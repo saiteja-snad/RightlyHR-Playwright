@@ -63,6 +63,7 @@ export class MenuOrderService {
   readonly preferenceV2 = signal<MenuPreferenceV2 | null>(null);
   readonly quickLinksPreference = signal<QuickLinksPreferenceV1 | null>(null);
   private initPromise: Promise<void> | null = null;
+  private loadedEmployeeId: number | null | undefined = undefined;
 
   constructor(private http: HttpService, private menuRegistry: MenuRegistryService) {}
 
@@ -71,7 +72,12 @@ export class MenuOrderService {
   }
 
   async ensureLoaded(): Promise<void> {
-    if (this.preferenceV2() !== null) return;
+    const currentEmployeeId = this.getCurrentEmployeeId();
+    const hasLoadedCurrentEmployee =
+      this.preferenceV2() !== null &&
+      this.loadedEmployeeId === currentEmployeeId;
+
+    if (hasLoadedCurrentEmployee) return;
     if (this.initPromise) return this.initPromise;
     this.initPromise = this.initMenuOrder().finally(() => {
       this.initPromise = null;
@@ -113,6 +119,7 @@ async initMenuOrder(): Promise<void> {
       const empInfo = this.getEmployeeInfoFromStorage();
       const employeeId = empInfo?.employeeId;
       if (!employeeId) {
+        this.loadedEmployeeId = null;
         this.preferenceV2.set({});
         this.menuOrder.set(null);
         this.quickLinksPreference.set(null);
@@ -138,8 +145,10 @@ async initMenuOrder(): Promise<void> {
       this.quickLinksPreference.set(
         quickLinksValue ? this.normalizeQuickLinksPreference(JSON.parse(quickLinksValue)) : null
       );
+      this.loadedEmployeeId = this.getCurrentEmployeeId();
     } catch (error) {
       console.error('Error loading menu order:', error);
+      this.loadedEmployeeId = undefined;
       this.menuOrder.set(null);
       this.preferenceV2.set(null);
       this.quickLinksPreference.set(null);

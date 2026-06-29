@@ -124,7 +124,7 @@ export class ActiveEmployeesComponent implements OnInit, OnDestroy {
         console.log('Processed data - Active:', this.Active.length, 'Total:', this.collectionSize);
         
         // Restore sorting visual state if there's an active sort
-        this.restoreTableSortState();
+        //this.restoreTableSortState();
         
         this.loader = false;
       },
@@ -221,78 +221,124 @@ export class ActiveEmployeesComponent implements OnInit, OnDestroy {
   }
 
   customSort(event: any): void {
-    const field = event.field;
+    // const field = event.field;
     
-    // Track current sort state for the clicked field
-    if (this.currentUIField === field) {
-      // Same field clicked - cycle through: asc (1) -> desc (-1) -> reset (0)
-      if (this.currentSortOrder === 1) {
-        this.currentSortOrder = -1;
-      } else if (this.currentSortOrder === -1) {
-        this.currentSortField = '';
-        this.currentUIField = '';
-        this.currentSortOrder = 0;
-        // Reset table sorting visually
-        if (this.activeEmployeesTable) {
-          this.activeEmployeesTable.sortField = '';
-          this.activeEmployeesTable.sortOrder = 0;
-          this.activeEmployeesTable.reset();
-        }
-        // Reload data without sorting
-        this.getAllActiveEmployees(this.page, this.pageSize);
-        return;
-      } else {
-        this.currentSortOrder = 1;
-      }
-    } else {
-      // New field clicked - start with ascending
-      this.currentUIField = field;
-      this.currentSortOrder = 1;
-    }
+    // // Track current sort state for the clicked field
+    // if (this.currentUIField === field) {
+    //   // Same field clicked - cycle through: asc (1) -> desc (-1) -> reset (0)
+    //   if (this.currentSortOrder === 1) {
+    //     this.currentSortOrder = -1;
+    //   } else if (this.currentSortOrder === -1) {
+    //     this.currentSortField = '';
+    //     this.currentUIField = '';
+    //     this.currentSortOrder = 0;
+    //     // Reset table sorting visually
+    //     if (this.activeEmployeesTable) {
+    //       this.activeEmployeesTable.sortField = '';
+    //       this.activeEmployeesTable.sortOrder = 0;
+    //       this.activeEmployeesTable.reset();
+    //     }
+    //     // Reload data without sorting
+    //     this.getAllActiveEmployees(this.page, this.pageSize);
+    //     return;
+    //   } else {
+    //     this.currentSortOrder = 1;
+    //   }
+    // } else {
+    //   // New field clicked - start with ascending
+    //   this.currentUIField = field;
+    //   this.currentSortOrder = 1;
+    // }
 
-    // Map frontend field names to backend field names if needed
-    const backendFieldMap: { [key: string]: string } = {
-      'employeeName': 'firstName', // or whatever the backend expects
-      'location': 'location',
-      'subLocation': 'subLocation',
-      'shiftName': 'shiftName',
-      'designation': 'jobRole',
-      'jobType': 'jobType',
-      'fusionEmpId': 'fusionEmpId',
-      'dateOfJoining': 'dateOfJoining',
-      'workEmail': 'workEmail',
-      'contactnumber': 'contactnumber'
+    // // Map frontend field names to backend field names if needed
+    // const backendFieldMap: { [key: string]: string } = {
+    //   'employeeName': 'firstName', // or whatever the backend expects
+    //   'location': 'location',
+    //   'subLocation': 'subLocation',
+    //   'shiftName': 'shiftName',
+    //   'designation': 'jobRole',
+    //   'jobType': 'jobType',
+    //   'fusionEmpId': 'fusionEmpId',
+    //   'dateOfJoining': 'dateOfJoining',
+    //   'workEmail': 'workEmail',
+    //   'contactnumber': 'contactnumber'
+    // };
+
+    // // Use mapped field name for backend
+    // this.currentSortField = backendFieldMap[field] || field;
+
+    // // Update table visual state immediately
+    // if (this.activeEmployeesTable) {
+    //   this.activeEmployeesTable.sortField = this.currentUIField;
+    //   this.activeEmployeesTable.sortOrder = this.currentSortOrder;
+    // }
+
+    // // Make API call with new sorting parameters
+    // this.getAllActiveEmployees(this.page, this.pageSize);
+    const field = event.field;
+    const order = event.order;
+
+    // Map UI field to backend field
+    const backendFieldMap: Record<string, string> = {
+      employeeName: 'firstName',
+      location: 'location',
+      subLocation: 'subLocation',
+      shiftName: 'shiftName',
+      designation: 'jobRole',
+      jobType: 'jobType',
+      fusionEmpId: 'fusionEmpId',
+      dateOfJoining: 'dateOfJoining',
+      workEmail: 'workEmail',
+      contactnumber: 'contactnumber'
     };
 
-    // Use mapped field name for backend
-    this.currentSortField = backendFieldMap[field] || field;
+    const nextSortField = backendFieldMap[field] || field;
+    const nextSortOrder = order === 1 ? 'asc' : 'desc';
 
-    // Update table visual state immediately
-    if (this.activeEmployeesTable) {
-      this.activeEmployeesTable.sortField = this.currentUIField;
-      this.activeEmployeesTable.sortOrder = this.currentSortOrder;
+    // Prevent duplicate API calls
+    if (
+      this.currentSortField === nextSortField &&
+      ((this.currentSortOrder === 1 && nextSortOrder === 'asc') ||
+        (this.currentSortOrder === -1 && nextSortOrder === 'desc'))
+    ) {
+      return;
+    }
+    if (this.currentSortOrder === -1) {
+      // Currently descending, reset to original order
+      this.Active = [...this.filteredActive];
+      this.currentSortField = '';
+      this.currentSortOrder = 0;
+      if (this.activeEmployeesTable) {
+        this.activeEmployeesTable.reset();
+      }
+      return;
     }
 
-    // Make API call with new sorting parameters
+
+
+    this.currentUIField = field;
+    this.currentSortField = nextSortField;
+    this.currentSortOrder = order;
+
     this.getAllActiveEmployees(this.page, this.pageSize);
   }
 
   // Method to restore the visual sort state in PrimeNG table
-  private restoreTableSortState(): void {
-    if (this.activeEmployeesTable && this.currentUIField && this.currentSortOrder !== 0) {
-      // Use setTimeout to ensure the table is fully rendered
-      setTimeout(() => {
-        if (this.activeEmployeesTable) {
-          // Set the sort field and order to restore visual arrows
-          this.activeEmployeesTable.sortField = this.currentUIField;
-          this.activeEmployeesTable.sortOrder = this.currentSortOrder;
+  // private restoreTableSortState(): void {
+  //   if (this.activeEmployeesTable && this.currentUIField && this.currentSortOrder !== 0) {
+  //     // Use setTimeout to ensure the table is fully rendered
+  //     setTimeout(() => {
+  //       if (this.activeEmployeesTable) {
+  //         // Set the sort field and order to restore visual arrows
+  //         this.activeEmployeesTable.sortField = this.currentUIField;
+  //         this.activeEmployeesTable.sortOrder = this.currentSortOrder;
           
-          // Trigger change detection to update the UI
-          this.cdr?.detectChanges();
-        }
-      }, 100); // Increased timeout to ensure DOM is ready
-    }
-  }
+  //         // Trigger change detection to update the UI
+  //         this.cdr?.detectChanges();
+  //       }
+  //     }, 100); // Increased timeout to ensure DOM is ready
+  //   }
+  // }
 
   ngOnDestroy(): void { 
     if (this.subscription) {

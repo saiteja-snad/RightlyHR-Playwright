@@ -661,6 +661,16 @@
         min-width: 160px;
         padding: 4px 8px;
     }
+
+    .p-disabled,
+    .p-disabled * {
+        cursor: default !important;
+    }
+}
+
+.disabled-date-filter,
+.disabled-date-filter * {
+    cursor: default !important;
 }
 
 .p-datepicker-day-selected-range {
@@ -1025,7 +1035,7 @@
         justify-content: center;
         align-items: center;
         gap: 0.25rem;
-        cursor: pointer;
+        cursor: default;
         box-sizing: border-box;
         transition: border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
 

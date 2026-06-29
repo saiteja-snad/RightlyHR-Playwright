@@ -941,6 +941,21 @@ quickLinksInfo =
     };
   }
 
+  getPermissionDurationChips(permissionDuration: string | string[] | null | undefined): string[] {
+    if (Array.isArray(permissionDuration)) {
+      return permissionDuration
+        .map((duration) => duration?.trim())
+        .filter((duration): duration is string => !!duration);
+    }
+
+    if (typeof permissionDuration !== 'string') return [];
+
+    return permissionDuration
+      .split(',')
+      .map((duration) => duration.trim())
+      .filter((duration) => duration.length > 0);
+  }
+
   hexToRgba(hex: string, opacity: number): string {
     const r = parseInt(hex.slice(1, 3), 16);
     const g = parseInt(hex.slice(3, 5), 16);

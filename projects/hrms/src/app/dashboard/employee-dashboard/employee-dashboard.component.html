@@ -394,13 +394,19 @@
                     <div class="leave-chip mt-1 me-2 d-inline-block" [ngStyle]="getLeaveChipStyle(emp.categoryColor)">{{ emp.categoryName }}</div>
                     }
                     @if (emp.hasPermission && emp.permissionDuration) {
-                        <span class="attendance-chip chip-permission me-2 d-inline-block mb-1">{{ emp.permissionType }} ({{ emp.permissionDuration }})</span>
+                      @for (duration of getPermissionDurationChips(emp.permissionDuration); track duration + '-' + $index) {
+                        <span class="attendance-chip chip-permission me-2 d-inline-block mb-1">{{ emp.permissionType }} ({{ duration }})</span>
+                      }
                     }
-                     @if (emp.hasWFHRequests) {
-                        <span class="attendance-chip chip-permission me-2 d-inline-block mb-1">{{ emp.wfhRequestDurationType }}</span>
+                    @if (emp.hasWFHRequests) {
+                      @for (duration of getPermissionDurationChips(emp.wfhRequestDurationType); track duration + '-' + $index) {
+                        <span class="attendance-chip chip-permission me-2 d-inline-block mb-1">{{ duration }}</span>
+                      }
                     }
-                     @if (emp.hasRemoteLogin) {
-                        <span class="attendance-chip chip-permission me-2 d-inline-block mb-1">{{ emp.remoteLoginDurationType }}</span>
+                    @if (emp.hasRemoteLogin) {
+                      @for (duration of getPermissionDurationChips(emp.remoteLoginDurationType); track duration + '-' + $index) {
+                        <span class="attendance-chip chip-permission me-2 d-inline-block mb-1">{{ duration }}</span>
+                      }
                     }
                 </div>
             </div>
@@ -536,7 +542,7 @@
         </div>
       </div>
 
-      <div class="custom-date-range-picker">
+      <div class="custom-date-range-picker disabled-date-filter">
         <p-datepicker [(ngModel)]="selectedDate" [iconDisplay]="'input'" [showIcon]="true" inputId="icondisplay"
           [readonlyInput]="true" [maxDate]="todayMaxdate" [disabled]="true" (onSelect)="onDateChange($event)" />
       </div>

@@ -257,6 +257,7 @@ export class ManagerDashboardComponent {
         this.departmentDetails = data as IDepartment[];
         this.departmentDropdownOptions = [
           { departmentName: 'All', sno: null },
+          { departmentName: 'No Department', sno: 0 },
           ...this.departmentDetails
         ];
       }
@@ -468,7 +469,7 @@ export class ManagerDashboardComponent {
     if (selectedId === null || selectedId === undefined) {
       this.getGenderCountChart();
     } else {
-      this.getGenderCountChart(selectedId);
+      this.getGenderCountChart(selectedId); // passes 0 for No Department, actual id otherwise
     }
   }
 
@@ -1252,20 +1253,20 @@ export class ManagerDashboardComponent {
         const employeeInfoCount = this.getCountByModuleId(data, 32);
 
         this.approvalsList = [
-          { name: 'Leaves', count: leaveCount, color: '#8A2BE2', route: '/pending-approvals/time-off/leaves' },
-          { name: 'WFH', count: wfhCount, color: '#FF1493', route: '/pending-approvals/time-off/wfh' },
-          { name: 'Remote Login', count: remoteCount, color: '#1E90FF', route: '/pending-approvals/time-off/remote' },
-          { name: 'Comp-Off', count: compOffCount, color: '#06B6D4', route: '/pending-approvals/time-off/comp-off' },
-          { name: 'Permissions', count: permissionCount, color: '#10B981', route: '/pending-approvals/time-off/permissions' },
-          { name: 'Regularization', count: regularizationCount, color: '#F59E0B', route: '/pending-approvals/time-off/regularization-request' },
-          { name: 'Extra Hours', count: extraHoursCount, color: '#EF4444', route: '/pending-approvals/time-off/extra-hours-request' },
-          { name: 'Probation', count: probationCount, color: '#6366F1', route: '/pending-approvals/on-boarding/probation-request' },
-          { name: 'Separation', count: separationCount, color: '#EC4899', route: '/pending-approvals/off-boarding/separation-request' },
-          { name: 'Expenses', count: expensesCount, color: '#14B8A6', route: '/pending-approvals/claimsandexpenses-request' },
-          { name: 'Timesheets', count: timesheetCount, color: '#F97316', route: '/pending-approvals/time-sheets' },
-          { name: 'Global Permissions', count: globalCount, color: '#A855F7', route: '/on-behalf-of/global/permissions' },
-          { name: 'Employee Info', count: employeeInfoCount, color: '#3B82F6', route: '/pending-approvals/employeeinfo-request' }
-        ];
+          { name: 'Leaves', count: leaveCount, color: '#8A2BE2', route: '/pending-approvals/time-off/leaves', permission: 'Time Off Tab.view' },
+          { name: 'WFH', count: wfhCount, color: '#FF1493', route: '/pending-approvals/time-off/wfh', permission: 'WFH Tab.view' },
+          { name: 'Remote Login', count: remoteCount, color: '#1E90FF', route: '/pending-approvals/time-off/remote', permission: 'Remote Login Tab.view' },
+          { name: 'Comp-Off', count: compOffCount, color: '#06B6D4', route: '/pending-approvals/time-off/comp-off', permission: 'Comp Off Tab.view' },
+          { name: 'Permissions', count: permissionCount, color: '#10B981', route: '/pending-approvals/time-off/permissions', permission: 'Permissions Tab.view' },
+          { name: 'Regularization', count: regularizationCount, color: '#F59E0B', route: '/pending-approvals/time-off/regularization-request', permission: 'Regularization Tab.view' },
+          { name: 'Extra Hours', count: extraHoursCount, color: '#EF4444', route: '/pending-approvals/time-off/extra-hours-request', permission: 'Extra Hours Tab.view' },
+          { name: 'Probation', count: probationCount, color: '#6366F1', route: '/pending-approvals/on-boarding/probation-request', permission: 'Probation Details Tab.view' },
+          { name: 'Separation', count: separationCount, color: '#EC4899', route: '/pending-approvals/off-boarding/separation-request', permission: 'Separation Request Tab.view' },
+          { name: 'Expenses', count: expensesCount, color: '#14B8A6', route: '/pending-approvals/claimsandexpenses-request', permission: 'Claims and Expenses Tab.view' },
+          { name: 'Timesheets', count: timesheetCount, color: '#F97316', route: '/pending-approvals/time-sheets', permission: 'Time Sheet approval Tab.view' },
+          { name: 'Global Permissions', count: globalCount, color: '#A855F7', route: '/on-behalf-of/global/permissions', permission: 'Global Permissions Module.view' },
+          { name: 'Employee Info', count: employeeInfoCount, color: '#3B82F6', route: '/pending-approvals/employeeinfo-request', permission: 'EmployeeInfo Tab.view' }
+        ].filter(item => this.rbac.allowedToAccess(item.permission));
         this.approvalsOverviewLoader = false;
       },
       error: (err) => {

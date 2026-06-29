@@ -386,7 +386,16 @@
                 </div>
             </div>
             }@else{
+            @if(!approvalsEmployeeClaimsLoader) {
             <p-skeleton height="8rem" />
+            } @else {
+            <div class="position-relative">
+                <p-skeleton height="8rem" />
+                <div class="loading-message-overlay">
+                    <p class="loading-text mb-0">Please wait while we fetch the latest employee availability details<span class="loading-dots"></span></p>
+                </div>
+            </div>
+            }
             }
         </div>
         }
@@ -766,6 +775,12 @@
                     }
                     @if (emp.hasPermission && emp.permissionDuration) {
                         <span class="attendance-chip chip-permission">{{ emp.permissionType }} ({{ emp.permissionDuration }})</span>
+                    }
+                     @if (emp.hasWFHRequests) {
+                        <span class="attendance-chip chip-permission">{{ emp.wfhRequestDurationType }}</span>
+                    }
+                     @if (emp.hasRemoteLogin) {
+                        <span class="attendance-chip chip-permission">{{ emp.remoteLoginDurationType }}</span>
                     }
                 </div>
             </div>

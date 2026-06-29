@@ -1418,6 +1418,21 @@ legendList = [
     };
   }
 
+  getPermissionDurationChips(permissionDuration: string | string[] | null | undefined): string[] {
+    if (Array.isArray(permissionDuration)) {
+      return permissionDuration
+        .map((duration) => duration?.trim())
+        .filter((duration): duration is string => !!duration);
+    }
+
+    if (typeof permissionDuration !== 'string') return [];
+
+    return permissionDuration
+      .split(',')
+      .map((duration) => duration.trim())
+      .filter((duration) => duration.length > 0);
+  }
+
   hexToRgba(hex: string, opacity: number): string {
     const r = parseInt(hex.slice(1, 3), 16);
     const g = parseInt(hex.slice(3, 5), 16);
@@ -1974,20 +1989,20 @@ legendList = [
         const employeeInfoCount = this.getCountByModuleId(data, 32);
 
         this.approvalsList = [
-          { name: 'Leaves', count: leaveCount, color: '#8A2BE2', route: '/pending-approvals/time-off/leaves', permission: 'Time Off Tab.view' },
-          { name: 'WFH', count: wfhCount, color: '#FF1493', route: '/pending-approvals/time-off/wfh', permission: 'WFH Tab.view' },
-          { name: 'Remote Login', count: remoteCount, color: '#1E90FF', route: '/pending-approvals/time-off/remote', permission: 'Remote Login Tab.view' },
-          { name: 'Comp-Off', count: compOffCount, color: '#06B6D4', route: '/pending-approvals/time-off/comp-off', permission: 'Comp Off Tab.view' },
-          { name: 'Permissions', count: permissionCount, color: '#10B981', route: '/pending-approvals/time-off/permissions', permission: 'Permissions Tab.view' },
-          { name: 'Regularization', count: regularizationCount, color: '#F59E0B', route: '/pending-approvals/time-off/regularization-request', permission: 'Regularization Tab.view' },
-          { name: 'Extra Hours', count: extraHoursCount, color: '#EF4444', route: '/pending-approvals/time-off/extra-hours-request', permission: 'Extra Hours Tab.view' },
-          { name: 'Probation', count: probationCount, color: '#6366F1', route: '/pending-approvals/on-boarding/probation-request', permission: 'Probation Details Tab.view' },
-          { name: 'Separation', count: separationCount, color: '#EC4899', route: '/pending-approvals/off-boarding/separation-request', permission: 'Separation Request Tab.view' },
+          { name: 'Leaves', count: leaveCount, color: '#8A2BE2', route: '/pending-approvals/time-off/leaves', permission: 'Time Off Tab.view', parentPermission: 'Time Off main Tab.view' },
+          { name: 'WFH', count: wfhCount, color: '#FF1493', route: '/pending-approvals/time-off/wfh', permission: 'WFH Tab.view', parentPermission: 'Time Off main Tab.view' },
+          { name: 'Remote Login', count: remoteCount, color: '#1E90FF', route: '/pending-approvals/time-off/remote', permission: 'Remote Login Tab.view', parentPermission: 'Time Off main Tab.view' },
+          { name: 'Comp-Off', count: compOffCount, color: '#06B6D4', route: '/pending-approvals/time-off/comp-off', permission: 'Comp Off Tab.view', parentPermission: 'Time Off main Tab.view' },
+          { name: 'Permissions', count: permissionCount, color: '#10B981', route: '/pending-approvals/time-off/permissions', permission: 'Permissions Tab.view', parentPermission: 'Time Off main Tab.view' },
+          { name: 'Regularization', count: regularizationCount, color: '#F59E0B', route: '/pending-approvals/time-off/regularization-request', permission: 'Regularization Tab.view', parentPermission: 'Time Off main Tab.view' },
+          { name: 'Extra Hours', count: extraHoursCount, color: '#EF4444', route: '/pending-approvals/time-off/extra-hours-request', permission: 'Extra Hours Tab.view', parentPermission: 'Time Off main Tab.view' },
+          { name: 'Probation', count: probationCount, color: '#6366F1', route: '/pending-approvals/on-boarding/probation-request', permission: 'Probation Details Tab.view', parentPermission: 'Onboarding main Tab.view' },
+          { name: 'Separation', count: separationCount, color: '#EC4899', route: '/pending-approvals/off-boarding/separation-request', permission: 'Separation Request Tab.view', parentPermission: 'Offboarding main Tab.view' },
           { name: 'Expenses', count: expensesCount, color: '#14B8A6', route: '/pending-approvals/claimsandexpenses-request', permission: 'Claims and Expenses Tab.view' },
           { name: 'Timesheets', count: timesheetCount, color: '#F97316', route: '/pending-approvals/time-sheets', permission: 'Time Sheet approval Tab.view' },
           { name: 'Global Permissions', count: globalCount, color: '#A855F7', route: '/on-behalf-of/global/permissions', permission: 'Global Permissions Module.view' },
           { name: 'Employee Info', count: employeeInfoCount, color: '#3B82F6', route: '/pending-approvals/employeeinfo-request', permission: 'EmployeeInfo Tab.view' }
-        ].filter(item => this.hasApprovalPermission(item.permission));
+        ].filter(item => this.hasApprovalPermission(item.permission, item.parentPermission));
         this.approvalsOverviewLoader = false;
       },
       error: (err) => {
@@ -2041,11 +2056,16 @@ legendList = [
     }
   }
 
-  private hasApprovalPermission(permission: string): boolean {
+  private hasApprovalPermission(permission: string, parentPermission?: string): boolean {
     if (this.selectedEmployeeClaims !== null) {
-      return this.selectedEmployeeClaims.map(c => c.toLowerCase()).includes(permission.toLowerCase());
+      const normalizedClaims = this.selectedEmployeeClaims.map(c => c.toLowerCase());
+      if (!normalizedClaims.includes(permission.toLowerCase())) return false;
+      if (parentPermission && !normalizedClaims.includes(parentPermission.toLowerCase())) return false;
+      return true;
     }
-    return this.rbac.allowedToAccess(permission);
+    if (!this.rbac.allowedToAccess(permission)) return false;
+    if (parentPermission && !this.rbac.allowedToAccess(parentPermission)) return false;
+    return true;
   }
 
   getCountByModuleId(data: any[], moduleId: number): number {

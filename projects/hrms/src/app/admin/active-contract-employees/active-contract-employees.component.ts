@@ -34,15 +34,16 @@ export class ActiveContractEmployeesComponent implements OnInit, OnDestroy {
   
   // Pagination properties
   page = 1;
-  pageSize = 50;
-  rows = 50;
+  pageSize = 100;
+  rows = 100;
   totalRecords = 0;
   collectionSize = 0;
   first = 0;
   options = [
     { label: 100, value: 100 },
     { label: 200, value: 200 },
-    { label: 300, value: 300 },
+    { label: 300, value: 300 }
+
   ];
 
   // Search debounce

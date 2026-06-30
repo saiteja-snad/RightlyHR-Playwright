@@ -79,7 +79,12 @@
       </ng-template>
     </p-table>
 
-    @if(filteredContract.length > 0){
+    
+    } @else {
+    <app-data-loader-content />
+    }
+  </div>
+  @if(filteredContract.length > 0){
     <div class="pagination-content">
         <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
             <div class="d-flex align-items-center gap-3 p-2">
@@ -98,8 +103,4 @@
         </div>
     </div>
     }
-    } @else {
-    <app-data-loader-content />
-    }
-  </div>
 </div>

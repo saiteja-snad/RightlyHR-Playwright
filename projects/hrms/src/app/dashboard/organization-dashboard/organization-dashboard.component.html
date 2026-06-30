@@ -479,7 +479,8 @@
             </div>
             <div class="disply-grid-custom" [ngClass]="{'graph-no-data-content': !departmentHeadCountChartData}">
                 <div class="department-graph-content">
-                    <p-chart type="bar" [data]="departmentHeadCountChartData" [options]="departmentHeadCountChartDataOptions" [plugins]="[ChartDataLabels, datalabelUnderlinePlugin]" />
+                    <p-chart type="bar" [data]="departmentHeadCountChartData" [options]="departmentHeadCountChartDataOptions" 
+                    [plugins]="[ChartDataLabels, datalabelUnderlinePlugin]" />
                 </div>
                 <div *ngIf="!departmentHeadCountChartData">
                     <app-no-data-found />
@@ -544,7 +545,7 @@
                 <div class="custom-date-range-picker">
                     <p-datepicker [(ngModel)]="attritionDateRange" placeholder="Select date range"
                         (ngModelChange)="onAttritionDateChange($event)" [showIcon]="true" selectionMode="range"
-                        [readonlyInput]="true" />
+                        [readonlyInput]="true" [maxDate]="maxAttritionDate" />
                 </div>
             </div>
             @if(!attritionRateLoader){
@@ -584,7 +585,7 @@
                     <div class="custom-date-range-picker">
                         <p-datepicker [(ngModel)]="exitByTenureDateRange" placeholder="Select date range"
                             (ngModelChange)="onExitByTenureDateChange($event)" [showIcon]="true" selectionMode="range"
-                            [readonlyInput]="true" />
+                            [readonlyInput]="true" [maxDate]="maxExitByTenureDate" />
                     </div>
                     <div class="total">Total Exits: <span class="count">{{ totalExitedEmployees }}</span></div>
                 </div>

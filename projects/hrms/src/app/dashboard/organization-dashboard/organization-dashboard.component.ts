@@ -2205,6 +2205,7 @@ export class OrganizationDashboardComponent implements AfterViewInit {
     new Date(new Date().getFullYear(), 0, 1),
     new Date()
   ];
+  maxAttritionDate: Date = new Date();
   // Employee Exit by Tenure variables
   exitByTenureLoader = false;
   exitByTenureChartData: any;
@@ -2218,6 +2219,7 @@ export class OrganizationDashboardComponent implements AfterViewInit {
     new Date()
   ];
   totalExitedEmployees: number = 0;
+  maxExitByTenureDate: Date = new Date();
   @ViewChild('exitByTenureEmployeesList') exitByTenureOffcanvasTemplate!: TemplateRef<any>;
 
   getDepartmentwiseAttritionRateDetails() {
@@ -2251,6 +2253,7 @@ export class OrganizationDashboardComponent implements AfterViewInit {
       this.attritionChartData = null;
       return;
     }
+    // Check if there's any data to display (at least one department exists)
     this.hasAttritionData = true;
     this.attritionRawData = data;
     const labels = data.map(item => item.departmentName);
@@ -2267,7 +2270,7 @@ export class OrganizationDashboardComponent implements AfterViewInit {
         }
       ]
     };
-    const maxValue = Math.max(...rates, 0);
+    const maxValue = Math.max(...rates, 10); // Ensure minimum scale of 10
     let stepSize = 5;
     if (maxValue > 50) stepSize = 10;
     if (maxValue > 100) stepSize = 20;
@@ -2295,7 +2298,8 @@ export class OrganizationDashboardComponent implements AfterViewInit {
             weight: 'bold',
             size: 10
           },
-          formatter: (value: any) => value + '%'
+          formatter: (value: any) => value + '%',
+          display: true // Always display labels even for 0 values
         }
       },
       scales: {

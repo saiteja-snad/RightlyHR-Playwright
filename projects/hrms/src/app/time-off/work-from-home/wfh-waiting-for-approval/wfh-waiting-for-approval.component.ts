@@ -94,14 +94,14 @@ export class WfhWaitingForApprovalComponent implements OnInit, OnDestroy {
   ) {
     effect(() => {
       if (this.http.tirggerCountSignal().wfh || this.http.wfhTriggerSignal()) {
-        this.getWFHRequests();
-        // this.http.tirggerCountSignal.update((status) => ({
-        //   ...status,
-        //   wfh: false,
-        // }));
-        // this.http.wfhTriggerSignal.set(false);
-      } else {
-        this.getWFHRequests();
+
+        if (this.selectempid) {
+          this.getWFHEMPRequests();
+        } else {
+          this.getWFHRequests();
+        }
+
+        this.http.wfhTriggerSignal.set(false);
       }
     });
   }
@@ -359,26 +359,44 @@ export class WfhWaitingForApprovalComponent implements OnInit, OnDestroy {
 
           } else {
 
+            if (response.data.failureRecordsCount > 0) {
+              this.conformationPopup.openErrorModal(
+                response.data.failureRecords[0].message
+              );
+              return;
+            }
+
             this.conformationPopup.openSuccessModal(
               'WFH request approved successfully'
             );
-
           }
 
-          const ids = selectedItems.map(x => x.id);
+          if (response.data.successRecordsCount > 0) {
 
-          this.waitingForApprovalWFHs =
-            this.waitingForApprovalWFHs.filter(
-              x => !ids.includes(x.id)
-            );
+            if (response.data.successRecordsCount > 0) {
 
-          this.waitingForApprovalWFHCount =
-            this.waitingForApprovalWFHs.length;
+              const ids = selectedItems.map(x => x.id);
 
-          this.selectedProducts = [];
-          this.multiSelect = false;
+              this.waitingForApprovalWFHs =
+                this.waitingForApprovalWFHs.filter(
+                  x => !ids.includes(x.id)
+                );
 
-          this.http.wfhTriggerSignal.set(true);
+              this.waitingForApprovalWFHCount =
+                this.waitingForApprovalWFHs.length;
+
+              this.selectedProducts = [];
+              this.multiSelect = false;
+
+              if (this.selectempid) {
+                this.getWFHEMPRequests();
+              } else {
+                this.getWFHRequests();
+              }
+
+              this.http.wfhTriggerSignal.set(true);
+            }
+          }
         }
       });
   }
@@ -437,6 +455,11 @@ export class WfhWaitingForApprovalComponent implements OnInit, OnDestroy {
 
           this.selectedProducts = [];
           this.multiSelect = false;
+          if (this.selectempid) {
+            this.getWFHEMPRequests();
+          } else {
+            this.getWFHRequests();
+          }
           this.http.wfhTriggerSignal.set(true);
         }
       });

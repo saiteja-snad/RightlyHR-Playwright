@@ -50,8 +50,18 @@ export class WfhApprovaltabsComponent implements OnInit, OnDestroy {
     void this.menuOrderService.ensureLoaded();
     effect(() => {
       if (this.http.tirggerCountSignal().wfh || this.http.wfhTriggerSignal()) {
-        this.getWFHRequest();
-        this.http.tirggerCountSignal.update((status) => ({ ...status, wfh: false }));
+
+        if (this.selectempid) {
+          this.getCompOffEMPRequest();
+        } else {
+          this.getWFHRequest();
+        }
+
+        this.http.tirggerCountSignal.update((status) => ({
+          ...status,
+          wfh: false
+        }));
+
         this.http.wfhTriggerSignal.set(false);
       }
     });

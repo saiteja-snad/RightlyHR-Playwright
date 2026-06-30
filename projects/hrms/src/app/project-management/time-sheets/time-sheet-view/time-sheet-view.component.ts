@@ -704,21 +704,43 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       );
 
       const usageCount = groupUsage.get(groupKey) ?? 0;
-      let targetRow: RowModel | null = null;
+      //      const matchingTargetRows = targetMatrix.rows.filter((targetRow) =>
+      //   targetRow.projectId === sourceRow.projectId &&
+      //   targetRow.phaseId === sourceRow.phaseId &&
+      //   targetRow.clientId === sourceRow.clientId &&
+      //   targetRow.isNoClientProject === sourceRow.isNoClientProject
+      // );
 
-      if (usageCount < matchingTargetRows.length) {
-        targetRow = matchingTargetRows[usageCount];
-        groupUsage.set(groupKey, usageCount + 1);
-      } else if (matchingTargetRows.length > 0) {
-        targetRow = matchingTargetRows[matchingTargetRows.length - 1];
-        groupUsage.set(groupKey, usageCount + 1);
-      } else if (copyProjects) {
-        targetRow = sourceRow;
-        groupUsage.set(groupKey, usageCount + 1);
-      }
+      // const usageCount = groupUsage.get(groupKey) ?? 0;
+      // let targetRow: RowModel | null = null;
 
-      if (!targetRow) {
-        return;
+      // if (usageCount < matchingTargetRows.length) {
+      //   targetRow = matchingTargetRows[usageCount];
+      //   groupUsage.set(groupKey, usageCount + 1);
+      // } else if (matchingTargetRows.length > 0) {
+      //   targetRow = matchingTargetRows[matchingTargetRows.length - 1];
+      //   groupUsage.set(groupKey, usageCount + 1);
+      // } else if (copyProjects) {
+      //   targetRow = sourceRow;
+      //   groupUsage.set(groupKey, usageCount + 1);
+      // }
+
+      // if (!targetRow) {
+      //   return;
+      // }
+      console.log('Matching Target Rows', matchingTargetRows);
+      console.log('Matching Count', matchingTargetRows.length);
+      let targetRow: RowModel = sourceRow;
+
+      if (cloneMode === 'overwrite') {
+        const matchedTargetRow = matchingTargetRows[usageCount];
+
+        if (matchedTargetRow) {
+          targetRow = matchedTargetRow;
+          groupUsage.set(groupKey, usageCount + 1);
+        }
+      } else {
+        groupUsage.set(groupKey, usageCount + 1);
       }
 
 
@@ -735,6 +757,27 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       selectedSourceDays.forEach((sourceDay, index) => {
         const sourceCell = sourceMatrix.cellMap.get(`${sourceRow.rowId}_${sourceDay.date}`);
         if (!sourceCell) {
+          return;
+        }
+
+        // const shouldCloneSourceCell =
+        //   copyLoggedHours ? !!sourceCell.durationSeconds :
+        //     copyDescription ? !!sourceCell.description :
+        //       copyTask ? !!sourceCell.taskId :
+        //         (copyProjects ? true : false);
+
+        // if (!shouldCloneSourceCell) {
+        //   return;
+        // }
+        const sourceStatus = (sourceCell.approvalStatus || '').toLowerCase();
+
+        // Allow only Draft, Waiting for Approval and Approved as source
+        const isAllowedSource =
+          sourceStatus === 'draft' ||
+          sourceStatus === 'waiting for approval' ||
+          sourceStatus === 'approved';
+
+        if (!isAllowedSource) {
           return;
         }
 
@@ -792,7 +835,12 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
           if (resource.endDate) {
             const releaseDate = moment(resource.endDate).startOf('day');
 
+            console.log(
+              'Release Date:', releaseDate.format('YYYY-MM-DD'),
+              'Target Date:', moment(targetDate).format('YYYY-MM-DD')
+            );
             if (moment(targetDate).isAfter(releaseDate, 'day')) {
+              console.log('Skipped because target date is after release date');
               return;
             }
           }
@@ -808,22 +856,23 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
 
         console.log('Target Cell EntryId:', targetCell?.entryId);
         console.log('Target Cell Status:', targetCell?.approvalStatus);
-        console.log('Source Day:', sourceDay.date);
-        console.log('Target Day:', targetDate);
-        console.log('Target Cell:', targetCell);
+        console.log('================ OVERWRITE DEBUG ================');
         console.log('Clone Mode:', cloneMode);
-        console.log(
-          'Skip Result:',
-          this.shouldSkipCloneForTargetCell(targetCell, cloneMode)
-        );
-
+        console.log('Target Row Id:', targetRow.rowId);
+        console.log('Target Date Key:', targetDateKey);
+        console.log('Target Cell:', targetCell);
+        console.log('Target EntryId:', targetCell?.entryId);
+        console.log('=================================================');
         if (this.shouldSkipCloneForTargetCell(targetCell, cloneMode)) {
           return;
         }
 
         const entryDate = moment(targetWeekDates[index]).format('YYYY-MM-DD');
         const payload: any = {
-          entryId: targetCell?.entryId || 0,
+          // entryId: targetCell?.entryId || 0,
+          entryId: cloneMode === 'overwrite'
+            ? (targetCell?.entryId || 0)
+            : 0,
           employeeId: this.employeeId || 0,
           entryDate,
           approvalStatus: 'draft',
@@ -850,6 +899,9 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
         console.log('Payload:', payload);
 
         payloads.push(payload);
+        console.log('Payload EntryId:', payload.entryId);
+        console.log('Payload IsOverride:', payload.isOverride);
+        console.log('Payload:', payload);
       });
     });
 
@@ -925,6 +977,9 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
 
 
     const cloneMode = this.cloneForm.get('cloneMode')?.value;
+    console.log('Clone Mode =', cloneMode);
+    console.log(this.cloneForm.value);
+
     const copyProjects = this.cloneForm.get('copyProjects')?.value ?? true;
     const copyLoggedHours = this.cloneForm.get('copyLoggedHours')?.value ?? false;
     const copyDescription = this.cloneForm.get('copyDescription')?.value ?? false;
@@ -1198,7 +1253,15 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     );
 
     const isWeekend = dayStatus.blockReason === 'Weekend' || day.blockReason === 'Weekend' || cell.blockReason === 'Weekend';
-    const isLocked = baseLocked && !(isWeekend && weekendAllowed);
+    const withinPhase =
+      matchedAllocation &&
+      (
+        !phaseDateRange?.endDate ||
+        entryDate <= phaseDateRange.endDate
+      );
+    const isLocked =
+      baseLocked &&
+      !(isWeekend && weekendAllowed && withinPhase);
 
     cell.isLocked = isLocked;
     if (allocationBlocked && !dayStatus.blocked) {
@@ -2746,8 +2809,8 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   }
 
   validateCloneDateRanges() {
-  this.cloneErrorMessage = null;
-}
+    this.cloneErrorMessage = null;
+  }
   ngOnDestroy() {
     this.destroy$.next(true);
     this.destroy$.complete();

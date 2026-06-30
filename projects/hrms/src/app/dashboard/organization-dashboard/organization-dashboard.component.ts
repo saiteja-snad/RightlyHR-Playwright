@@ -2191,17 +2191,11 @@ export class OrganizationDashboardComponent implements AfterViewInit {
       this.attritionChartData = null;
       return;
     }
-    // Filter out departments with 0 attrition rate
-    const filteredData = data.filter(item => item.attritionRate > 0);
-    if (filteredData.length === 0) {
-      this.hasAttritionData = false;
-      this.attritionChartData = null;
-      return;
-    }
+    // Check if there's any data to display (at least one department exists)
     this.hasAttritionData = true;
-    this.attritionRawData = filteredData;
-    const labels = filteredData.map(item => item.departmentName);
-    const rates = filteredData.map(item => item.attritionRate);
+    this.attritionRawData = data;
+    const labels = data.map(item => item.departmentName);
+    const rates = data.map(item => item.attritionRate);
     const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim();
     this.attritionChartData = {
       labels,
@@ -2214,7 +2208,7 @@ export class OrganizationDashboardComponent implements AfterViewInit {
         }
       ]
     };
-    const maxValue = Math.max(...rates, 0);
+    const maxValue = Math.max(...rates, 10); // Ensure minimum scale of 10
     let stepSize = 5;
     if (maxValue > 50) stepSize = 10;
     if (maxValue > 100) stepSize = 20;
@@ -2242,7 +2236,8 @@ export class OrganizationDashboardComponent implements AfterViewInit {
             weight: 'bold',
             size: 10
           },
-          formatter: (value: any) => value + '%'
+          formatter: (value: any) => value + '%',
+          display: true // Always display labels even for 0 values
         }
       },
       scales: {

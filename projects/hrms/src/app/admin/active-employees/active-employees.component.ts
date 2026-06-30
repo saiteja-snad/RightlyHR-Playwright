@@ -279,7 +279,7 @@ export class ActiveEmployeesComponent implements OnInit, OnDestroy {
     const order = event.order;
 
     // Map UI field to backend field
-    const backendFieldMap: Record<string, string> = {
+    const backendFieldMap: { [key: string]: string } = {
       employeeName: 'firstName',
       location: 'location',
       subLocation: 'subLocation',
@@ -303,19 +303,25 @@ export class ActiveEmployeesComponent implements OnInit, OnDestroy {
     ) {
       return;
     }
-    if (this.currentSortOrder === -1) {
-      // Currently descending, reset to original order
-      this.Active = [...this.filteredActive];
-      this.currentSortField = '';
-      this.currentSortOrder = 0;
-      if (this.activeEmployeesTable) {
-        this.activeEmployeesTable.reset();
+
+    // Handle the three-state sorting: none → asc → desc → none
+    if (this.currentUIField === field) {
+      // Same field clicked - cycle through states
+      if (this.currentSortOrder === -1) {
+        // Currently descending, reset to no sort
+        this.currentSortField = '';
+        this.currentUIField = '';
+        this.currentSortOrder = 0;
+        if (this.activeEmployeesTable) {
+          this.activeEmployeesTable.sortField = '';
+          this.activeEmployeesTable.sortOrder = 0;
+        }
+        this.getAllActiveEmployees(this.page, this.pageSize);
+        return;
       }
-      return;
     }
 
-
-
+    // Set new sort state
     this.currentUIField = field;
     this.currentSortField = nextSortField;
     this.currentSortOrder = order;

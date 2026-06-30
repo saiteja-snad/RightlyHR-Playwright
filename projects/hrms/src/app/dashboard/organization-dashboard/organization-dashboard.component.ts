@@ -773,6 +773,15 @@ legendList = [
       responsive: true,
       maintainAspectRatio: false,
       layout: { padding: { top: 25 } },
+      onClick: (_event: any, elements: any[]) => {
+        if (!elements.length) return;
+        const dept = this.departmentRawData[elements[0].index];
+        if (!dept?.headCount) return;
+        this.openDepartmentOffcanvas(dept);
+      },
+      onHover: (_event: any, elements: any[], chart: any) => {
+        chart.canvas.style.cursor = elements.length ? 'pointer' : 'default';
+      },
       plugins: {
         legend: {
           display: false,
@@ -786,12 +795,12 @@ legendList = [
           anchor: 'end',
           align: 'end',
           color: '#000',
+          cursor: 'pointer',
           font: {
             weight: 'bold',
             size: 10
           },
           formatter: (value: any) => value,
-          cursor: 'pointer',
           listeners: {
             click: (context: any) => {
               const dept = this.departmentRawData[context.dataIndex];
@@ -1604,6 +1613,26 @@ legendList = [
       shiftColors[shift] = colorPalette[index % colorPalette.length];
     });
 
+    const getShiftSegmentDetails = (datasetIndex: number, dataIndex: number) => {
+      const shiftName = datasets[datasetIndex]?.label;
+      const subLocations: any[] = [];
+
+      dataArray.forEach((location: any) => {
+        location.subLocations?.forEach((subLoc: any) => subLocations.push(subLoc));
+      });
+
+      const subLoc = subLocations[dataIndex];
+      const shift = subLoc?.shifts?.find((s: any) => s.shiftName === shiftName);
+
+      if (!shiftName || !subLoc || !shift?.employeeCount) return null;
+
+      return {
+        subLocationName: subLoc.subLocationName,
+        shiftName,
+        employees: shift.employees || []
+      };
+    };
+
     // Create datasets for each shift
     const datasets = Array.from(allShifts).map(shiftName => {
       const data: number[] = [];
@@ -1638,6 +1667,17 @@ legendList = [
       responsive: true,
       maintainAspectRatio: false,
       layout: { padding: { top: 25 } },
+      onClick: (_event: any, elements: any[]) => {
+        if (!elements.length) return;
+
+        const details = getShiftSegmentDetails(elements[0].datasetIndex, elements[0].index);
+        if (!details) return;
+
+        this.openShiftLocationOffcanvas(details.subLocationName, details.shiftName, details.employees);
+      },
+      onHover: (_event: any, elements: any[], chart: any) => {
+        chart.canvas.style.cursor = elements.length ? 'pointer' : 'default';
+      },
       plugins: {
         legend: {
           display: false,
@@ -1666,7 +1706,6 @@ legendList = [
           anchor: 'end',
           align: 'end',
           color: '#000',
-          cursor: 'pointer',
           font: {
             weight: 'bold',
             size: 10
@@ -1677,23 +1716,6 @@ legendList = [
               total += dataset.data[context.dataIndex] || 0;
             });
             return total;
-          },
-          listeners: {
-            click: (context: any) => {
-              const datasetIndex = context.datasetIndex;
-              const dataIndex = context.dataIndex;
-              const shiftName = datasets[datasetIndex]?.label;
-              const subLocations: any[] = [];
-
-              dataArray.forEach((location: any) => {
-                location.subLocations?.forEach((subLoc: any) => subLocations.push(subLoc));
-              });
-
-              const subLoc = subLocations[dataIndex];
-              const shift = subLoc?.shifts?.find((s: any) => s.shiftName === shiftName);
-              if (!shift?.employeeCount) return;
-              this.openShiftLocationOffcanvas(subLoc.subLocationName, shiftName, shift.employees || []);
-            }
           }
         }
       },
@@ -2127,6 +2149,15 @@ legendList = [
       responsive: true,
       maintainAspectRatio: false,
       layout: { padding: { top: 25 } },
+      onClick: (_event: any, elements: any[]) => {
+        if (!elements.length) return;
+        const item = this.experienceRawData[elements[0].index];
+        if (!item?.count) return;
+        this.openExperienceOffcanvas(item);
+      },
+      onHover: (_event: any, elements: any[], chart: any) => {
+        chart.canvas.style.cursor = elements.length ? 'pointer' : 'default';
+      },
       plugins: {
         legend: {
           display: false,

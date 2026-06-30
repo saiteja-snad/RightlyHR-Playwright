@@ -470,7 +470,8 @@
             </div>
             <div class="disply-grid-custom" [ngClass]="{'graph-no-data-content': !departmentHeadCountChartData}">
                 <div class="department-graph-content">
-                    <p-chart type="bar" [data]="departmentHeadCountChartData" [options]="departmentHeadCountChartDataOptions" [plugins]="[ChartDataLabels, datalabelUnderlinePlugin]" />
+                    <p-chart type="bar" [data]="departmentHeadCountChartData" [options]="departmentHeadCountChartDataOptions" 
+                    [plugins]="[ChartDataLabels, datalabelUnderlinePlugin]" />
                 </div>
                 <div *ngIf="!departmentHeadCountChartData">
                     <app-no-data-found />

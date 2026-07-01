@@ -665,25 +665,25 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       return false;
     }
 
-    const targetApproval = targetCell.approvalStatus;
-    const targetDuration = targetCell.durationSeconds;
-    const hasTargetValue = !!targetDuration || targetApproval !== ApprovalStatus.NotEntered;
-
     if (cloneMode === 'merge') {
       return false;
     }
 
     if (cloneMode === 'overwrite') {
-      const status = targetApproval?.toLowerCase();
+      const status = targetCell.approvalStatus?.toLowerCase();
+
+      if (status === 'waiting for approval') {
+        this.cloneSkipReason = 'waiting-for-approval';
+        return true;
+      }
 
       return status !== 'draft' && status !== 'rejected';
     }
 
-
     return true;
   }
 
-  private cloneSkipReason: 'phase-closed' | 'no-entries' | null = null;
+  private cloneSkipReason: 'phase-closed' | 'waiting-for-approval' | 'no-entries' | null = null;
 
   private buildClonePayloads(sourceMatrix: WeekMatrix, targetMatrix: WeekMatrix, cloneMode: string, targetWeekDates: Date[], targetTimesheetId: number, sourceWeekRange: Date[]): any[] {
     this.cloneSkipReason = null;
@@ -1030,6 +1030,8 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
             this.spinnerLoader = false;
             const errorMsg = this.cloneSkipReason === 'phase-closed'
               ? 'Cannot clone timesheet as the selected project or phase is closed.'
+              : this.cloneSkipReason === 'waiting-for-approval'
+              ? 'Timesheet cannot be overridden as the records have already been submitted for approval.'
               : 'No entries available to clone from the selected source date range.';
             this.conformationPopup.openErrorModal(errorMsg);
             return;

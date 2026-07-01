@@ -683,7 +683,8 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
         return true;
       }
 
-      return status !== 'draft' && status !== 'rejected';
+      // Only override rejected entries; skip draft and all others
+      return status !== 'rejected';
     }
 
     return true;
@@ -780,11 +781,12 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
         // }
         const sourceStatus = (sourceCell.approvalStatus || '').toLowerCase();
 
-        // Allow only Draft, Waiting for Approval and Approved as source
+        // Allow Draft, Waiting for Approval, Approved (Processed) as source
         const isAllowedSource =
           sourceStatus === 'draft' ||
           sourceStatus === 'waiting for approval' ||
-          sourceStatus === 'approved';
+          sourceStatus === 'approved' ||
+          sourceStatus === 'processed';
 
         if (!isAllowedSource) {
           return;
@@ -829,31 +831,25 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
           resource = this.resourcesArrayList?.find((r: any) =>
             r.project?.projectId === sourceRow.projectId &&
             r.client?.clientId === sourceRow.clientId &&
-            r.phase?.phaseId === sourceRow.phaseId
+            r.phase?.phaseId === sourceRow.phaseId &&
+            (!r.endDate || !moment(targetDate).isAfter(moment(r.endDate).startOf('day'), 'day')) &&
+            (!r.startDate || !moment(targetDate).isBefore(moment(r.startDate).startOf('day'), 'day'))
           );
 
-          console.log('Source Phase Id', sourceRow.phaseId);
-          console.log('Matched Phase Id', resource?.phase?.phaseId);
-          console.log('Phase Name', resource?.phase?.phaseName);
-
+          // Fallback: any allocation for this project/phase exists at all
           if (!resource) {
-            console.log('Skipping released phase', sourceRow.phaseId);
-            this.cloneSkipReason = 'phase-closed';
-            return;
-          }
-
-          if (resource.endDate) {
-            const releaseDate = moment(resource.endDate).startOf('day');
-
-            console.log(
-              'Release Date:', releaseDate.format('YYYY-MM-DD'),
-              'Target Date:', moment(targetDate).format('YYYY-MM-DD')
+            resource = this.resourcesArrayList?.find((r: any) =>
+              r.project?.projectId === sourceRow.projectId &&
+              r.client?.clientId === sourceRow.clientId &&
+              r.phase?.phaseId === sourceRow.phaseId
             );
-            if (moment(targetDate).isAfter(releaseDate, 'day')) {
-              console.log('Skipped because target date is after release date');
+            if (!resource) {
               this.cloneSkipReason = 'phase-closed';
               return;
             }
+            // Resource exists but target date is outside all allocation ranges
+            this.cloneSkipReason = 'phase-closed';
+            return;
           }
         }
 

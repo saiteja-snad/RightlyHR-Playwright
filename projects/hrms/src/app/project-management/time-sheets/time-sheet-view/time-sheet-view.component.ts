@@ -2280,7 +2280,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       });
 
       this.dayForm = dayForm;
-      //start//code for the task type 
+      //start//code for the task type
       let taskId = this.dayForm.get('taskId')?.value;
       let taskdata = this.alltaskTypes?.find((ele: any) => ele?.id == taskId && ele?.status?.toLowerCase() == 'inactive');
       if (taskdata) {

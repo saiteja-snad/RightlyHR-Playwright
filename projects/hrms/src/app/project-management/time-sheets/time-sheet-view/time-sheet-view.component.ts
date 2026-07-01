@@ -899,7 +899,8 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
           resourceId: targetRow.resourceId || sourceRow.resourceId || null,
           startTime: copyLoggedHours ? this.toTimeSpan(sourceCell.startTime) : null,
           endTime: copyLoggedHours ? this.toTimeSpan(sourceCell.endTime) : null,
-          taskId: copyTask ? sourceCell.taskId || null : null
+          taskId: copyTask ? sourceCell.taskId || null : null,
+          isClone: true
         };
 
         console.log('Payload EntryId:', payload.entryId);

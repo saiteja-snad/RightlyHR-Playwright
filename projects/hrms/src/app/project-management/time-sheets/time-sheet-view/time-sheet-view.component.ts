@@ -112,6 +112,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   cloneSourceWeekLabel = '';
   cloneTargetWeekLabel = '';
   cloneErrorMessage: string | null = null;
+  targetAllDaysBlockedError = false;
   private readonly baseMenuItems = [
     { key: 'import', label: 'Import', icon: 'file-import-icon', command: () => this.navigateToImport() },
     { key: 'export', label: 'Export', icon: 'file-export-icon', command: () => this.navigateToExport() },
@@ -538,6 +539,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
 
   openCloneModal() {
     this.cloneErrorMessage = null;
+    this.targetAllDaysBlockedError = false;
     this.initializeCloneForm();
     this.offcanvasService.open(this.cloneTimesheetModal, {
       position: 'end',
@@ -549,6 +551,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
 
   closeCloneModal(): void {
     this.cloneErrorMessage = '';
+    this.targetAllDaysBlockedError = false;
     this.cloneForm?.reset();
     this.offcanvasService.dismiss();
   }
@@ -578,7 +581,10 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
 
     this.cloneForm.get('targetWeekDateRange')?.valueChanges
       .pipe(takeUntil(this.destroy$))
-      .subscribe((range: Date[] | null) => this.updateCloneTargetWeekLabel(range));
+      .subscribe((range: Date[] | null) => {
+        this.updateCloneTargetWeekLabel(range);
+        this.validateCloneDateRanges();
+      });
 
     this.cloneSourceWeekLabel = '';
     this.cloneTargetWeekLabel = '';
@@ -672,7 +678,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     if (cloneMode === 'overwrite') {
       const status = targetCell.approvalStatus?.toLowerCase();
 
-      if (status === 'waiting for approval') {
+      if (status === 'waiting for approval' || status === 'processed') {
         this.cloneSkipReason = 'waiting-for-approval';
         return true;
       }
@@ -1025,6 +1031,22 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
 
           console.log('Clone Payloads', payloads);
           console.log('Payload Count', payloads.length);
+
+          if (cloneMode === 'overwrite') {
+            const targetDateKeys = targetWeekDates.map(d => moment(d).format('YYYY-MM-DDT00:00:00'));
+            const hasLockedTargetCell = targetMatrix.rows.some(row =>
+              targetDateKeys.some(dateKey => {
+                const cell = targetMatrix.cellMap.get(`${row.rowId}_${dateKey}`);
+                const status = cell?.approvalStatus?.toLowerCase();
+                return status === 'waiting for approval' || status === 'processed';
+              })
+            );
+            if (hasLockedTargetCell) {
+              this.spinnerLoader = false;
+              this.conformationPopup.openErrorModal('Timesheet cannot be overridden as the records have already been submitted for approval.');
+              return;
+            }
+          }
 
           if (!payloads.length) {
             this.spinnerLoader = false;
@@ -2069,6 +2091,10 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       leaves: this.leavesData
     };
     this.dayValidationService.initialize(context);
+
+    if (this.cloneForm?.get('targetWeekDateRange')?.value) {
+      this.validateCloneDateRanges();
+    }
   }
 
   selectProjectForRow(row: AbstractControl, client: any, project: any, phase: any = null) {
@@ -2820,6 +2846,38 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
 
   validateCloneDateRanges() {
     this.cloneErrorMessage = null;
+    this.targetAllDaysBlockedError = false;
+
+    const targetRange = this.cloneForm?.get('targetWeekDateRange')?.value as Date[] | null;
+    if (!targetRange || targetRange.length < 1 || !targetRange[0]) return;
+
+    const start = moment(targetRange[0]).startOf('day');
+    const end = targetRange[1] ? moment(targetRange[1]).startOf('day') : start.clone();
+
+    const dates: moment.Moment[] = [];
+    for (let d = start.clone(); d.isSameOrBefore(end, 'day'); d.add(1, 'day')) {
+      dates.push(d.clone());
+    }
+
+    if (!dates.length) return;
+
+    const validationContext = {
+      selectedResource: null,
+      holidays: this.holidaysData,
+      weekends: this.weekendsData,
+      leaves: this.leavesData
+    };
+    this.dayValidationService.initialize(validationContext);
+
+    const blockedDatesCount = dates.filter(d => {
+      const result = this.dayValidationService.checkDayStatus(d.toDate(), validationContext);
+      return result.blocked && (result.blockReason === 'Holiday' || result.blockReason === 'Leave');
+    }).length;
+
+    if (blockedDatesCount === dates.length) {
+      this.targetAllDaysBlockedError = true;
+      this.cloneErrorMessage = 'Cannot clone on holidays or leaves';
+    }
   }
   ngOnDestroy() {
     this.destroy$.next(true);

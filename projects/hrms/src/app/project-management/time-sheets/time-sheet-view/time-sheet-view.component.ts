@@ -683,7 +683,10 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     return true;
   }
 
+  private cloneSkipReason: 'phase-closed' | 'no-entries' | null = null;
+
   private buildClonePayloads(sourceMatrix: WeekMatrix, targetMatrix: WeekMatrix, cloneMode: string, targetWeekDates: Date[], targetTimesheetId: number, sourceWeekRange: Date[]): any[] {
+    this.cloneSkipReason = null;
     const payloads: any[] = [];
     const dayKeys = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
     const copyProjects = this.cloneForm.get('copyProjects')?.value ?? true;
@@ -829,6 +832,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
 
           if (!resource) {
             console.log('Skipping released phase', sourceRow.phaseId);
+            this.cloneSkipReason = 'phase-closed';
             return;
           }
 
@@ -841,6 +845,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
             );
             if (moment(targetDate).isAfter(releaseDate, 'day')) {
               console.log('Skipped because target date is after release date');
+              this.cloneSkipReason = 'phase-closed';
               return;
             }
           }
@@ -1023,9 +1028,10 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
 
           if (!payloads.length) {
             this.spinnerLoader = false;
-            this.conformationPopup.openErrorModal(
-              'No entries available to clone from the selected source date range.'
-            );
+            const errorMsg = this.cloneSkipReason === 'phase-closed'
+              ? 'Cannot clone timesheet as the selected project or phase is closed.'
+              : 'No entries available to clone from the selected source date range.';
+            this.conformationPopup.openErrorModal(errorMsg);
             return;
           }
 

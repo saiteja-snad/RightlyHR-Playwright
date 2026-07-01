@@ -712,7 +712,7 @@
                             <p-datepicker formControlName="targetWeekDateRange"
                                 selectionMode="range" [showIcon]="true" [readonlyInput]="true"
                                 [placeholder]="'dd/mm/yyyy - dd/mm/yyyy'" [maxDate]="today"
-                                (onSelect)="validateCloneDateRanges()">
+                                (onSelect)="validateCloneDateRanges()" (onClear)="validateCloneDateRanges()">
                             </p-datepicker>
                         </div>
                         <div *ngIf="cloneErrorMessage" class="clone-validation-error">
@@ -797,7 +797,7 @@
                         Cancel
                     </button>
                     <button type="button" class="custom-btn btn-primary w-100"
-                        [disabled]="cloneForm.invalid || spinnerLoader" (click)="cloneTimesheetEntries()">
+                        [disabled]="cloneForm.invalid || spinnerLoader || targetAllDaysBlockedError" (click)="cloneTimesheetEntries()">
                         <span *ngIf="spinnerLoader" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
                         Clone
                     </button>

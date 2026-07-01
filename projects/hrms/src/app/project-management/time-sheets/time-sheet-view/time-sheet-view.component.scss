@@ -547,21 +547,28 @@
     transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
-.clone-action-btn:hover:not(:disabled) {
-    transform: translateY(-1px);
-    box-shadow: 0px 8px 20px rgba(39, 80, 216, 0.18);
-}
-
-
-
-.clone-action-btn:hover:not(:disabled) {
-    transform: translateY(-1px);
-    box-shadow: 0px 8px 20px rgba(39, 80, 216, 0.18);
-}
 
 .clone-action-btn:disabled {
     opacity: 0.5;
     cursor: not-allowed;
+}
+
+::ng-deep .clone-offcanvas-panel .custom-filter-container .custom-date-range-picker {
+    width: 100% !important;
+
+    .p-datepicker {
+        width: 100% !important;
+        display: flex !important;
+    }
+
+    .p-datepicker-input-container {
+        flex: 1 !important;
+        width: 100% !important;
+    }
+
+    .p-datepicker-input {
+        width: 100% !important;
+    }
 }
 
 .custom-offcanvas-body {
@@ -642,23 +649,16 @@
     overflow: visible;
 }
 
-.offcanvas-filter-content {
-    padding: 0;
-}
+
 
 .clone-offcanvas-panel .offcanvas {
-    width: 400px !important;
+    width: 420px !important;
     max-width: 95% !important;
-    right: calc(50% - 210px) !important;
-    top: 4% !important;
-    bottom: auto !important;
-    transform: none !important;
     background: #ffffff !important;
     border: 1px solid #e4e9f4 !important;
-    border-radius: 2rem !important;
+    border-radius: 0 !important;
     overflow: hidden !important;
     box-shadow: 0 24px 60px rgba(15, 23, 42, 0.12) !important;
-    max-height: 90vh !important;
 }
 
 .clone-offcanvas-panel .offcanvas-body {

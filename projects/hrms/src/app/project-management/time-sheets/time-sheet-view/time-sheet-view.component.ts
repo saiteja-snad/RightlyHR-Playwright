@@ -493,10 +493,10 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     this.date = [this.start, this.end];
     // Update the week range visually / in state
     this.setWeekRange(monday, sunday);
-    this.getResourceData();
     this.checkTimesheetLockByMonth(monday.toDate(), sunday.toDate()); // 🔹 check locks by mont
     // Format start date for API call
     const formattedStart = monday.format('YYYY-MM-DD');
+    this.getResourceData();
     this.loadTimeSheetByResource(formattedStart);
     // Close the datepicker
     setTimeout(() => {
@@ -645,6 +645,67 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   private getWeekDatesFromDate(date: Date): Date[] {
     const { start } = this.getWeekRangeFromDate(date);
     return Array.from({ length: 7 }, (_, index) => moment(start).add(index, 'days').toDate());
+  }
+
+  private getWeekOfMonth(date: Date): number {
+    return Math.ceil(date.getDate() / 7);
+  }
+
+  private isConfiguredWeekendDate(date: Date): boolean {
+    const weekdayName = moment(date).format('dddd');
+    const weekOfMonth = this.getWeekOfMonth(date);
+
+    return this.weekendsData?.some((weekend: any) => {
+      if (weekend?.weekday !== weekdayName) {
+        return false;
+      }
+
+      switch (weekOfMonth) {
+        case 1:
+          return !!weekend.firstweek;
+        case 2:
+          return !!weekend.secondweek;
+        case 3:
+          return !!weekend.thirdweek;
+        case 4:
+          return !!weekend.fourthweek;
+        case 5:
+          return !!weekend.fifthweek;
+        default:
+          return false;
+      }
+    }) ?? false;
+  }
+
+  private isDateWithinInclusiveRange(date: Date, startDate?: string | Date | null, endDate?: string | Date | null): boolean {
+    const targetMoment = moment(date).startOf('day');
+
+    if (startDate && targetMoment.isBefore(moment(startDate).startOf('day'), 'day')) {
+      return false;
+    }
+
+    if (endDate && targetMoment.isAfter(moment(endDate).startOf('day'), 'day')) {
+      return false;
+    }
+
+    return true;
+  }
+
+  private findCloneResourceForTargetDate(sourceRow: RowModel, targetDate: Date): any | null {
+    const matchingResources = this.resourcesArrayList?.filter((resource: any) =>
+      resource.project?.projectId === sourceRow.projectId &&
+      resource.client?.clientId === sourceRow.clientId &&
+      resource.phase?.phaseId === sourceRow.phaseId
+    ) ?? [];
+
+    if (!matchingResources.length) {
+      return null;
+    }
+
+    return matchingResources.find((resource: any) =>
+      this.isDateWithinInclusiveRange(targetDate, resource.startDate, resource.endDate) &&
+      this.isDateWithinInclusiveRange(targetDate, resource.phase?.startDate, resource.phase?.endDate)
+    ) ?? null;
   }
 
   private isCurrentWeekLocked(): boolean {
@@ -812,45 +873,39 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
           return;
         }
 
-        const dayName = moment(targetDate).format('dddd');
-
-        const isWeekend = this.weekendsData?.some(
-          (w: any) => w.weekday === dayName
-        );
-
-        if (isWeekend) {
-          console.log('Skipping weekend:', dayName, targetDate);
-          return;
-        }
-
         let resource: any = null;
 
         // Skip resource validation for No Client - No Project
         if (!sourceRow.isNoClientProject) {
-
-          resource = this.resourcesArrayList?.find((r: any) =>
-            r.project?.projectId === sourceRow.projectId &&
-            r.client?.clientId === sourceRow.clientId &&
-            r.phase?.phaseId === sourceRow.phaseId &&
-            (!r.endDate || !moment(targetDate).isAfter(moment(r.endDate).startOf('day'), 'day')) &&
-            (!r.startDate || !moment(targetDate).isBefore(moment(r.startDate).startOf('day'), 'day'))
-          );
-
-          // Fallback: any allocation for this project/phase exists at all
+          resource = this.findCloneResourceForTargetDate(sourceRow, targetDate);
           if (!resource) {
-            resource = this.resourcesArrayList?.find((r: any) =>
+            const hasAnyMatchingResource = this.resourcesArrayList?.some((r: any) =>
               r.project?.projectId === sourceRow.projectId &&
               r.client?.clientId === sourceRow.clientId &&
               r.phase?.phaseId === sourceRow.phaseId
             );
-            if (!resource) {
+
+            if (!hasAnyMatchingResource) {
               this.cloneSkipReason = 'phase-closed';
               return;
             }
-            // Resource exists but target date is outside all allocation ranges
+
+            // Resource exists, but this target date is outside the allocation or phase window.
             this.cloneSkipReason = 'phase-closed';
             return;
           }
+        }
+
+        const isConfiguredWeekend = this.isConfiguredWeekendDate(targetDate);
+        const weekendAllowed =
+          resource?.weekendWorkAllowed ??
+          resource?.project?.isWeekendAllowed ??
+          resource?.client?.isWeekendAllowed ??
+          false;
+
+        if (isConfiguredWeekend && !weekendAllowed) {
+          console.log('Skipping configured weekend because weekend work is not allowed:', targetDate);
+          return;
         }
 
         const targetDateKey = moment(targetDate).format(
@@ -1213,19 +1268,6 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
         allocations: matchedResources
       }
       : null;
-    console.log(matchedResources);
-
-
-    const resourceDateRange = mergedResource ? {
-      startDate: mergedResource.startDate ? new Date(mergedResource.startDate) : null,
-      endDate: mergedResource.endDate ? new Date(mergedResource.endDate) : null
-    } : undefined;
-    console.log(resourceDateRange);
-
-    const phaseDateRange = mergedResource?.phase ? {
-      startDate: mergedResource.phase.startDate ? new Date(mergedResource.phase.startDate) : null,
-      endDate: mergedResource.phase.endDate ? new Date(mergedResource.phase.endDate) : null
-    } : undefined;
 
     // Normalize date
     const normalizeDate = (date: any) => {
@@ -1247,12 +1289,19 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     const weekendAllowed = matchedAllocation?.weekendWorkAllowed ?? mergedResource?.weekendWorkAllowed ??
       (row.isWeekendAllowedProject || row.isWeekendAllowedClient);
 
-    // ✅ Use day-specific allocation for validation when available
-    const selectedResourceForDay = matchedAllocation || mergedResource;
+    const resourceDateRange = mergedResource ? {
+      startDate: mergedResource.startDate ? new Date(mergedResource.startDate) : null,
+      endDate: mergedResource.endDate ? new Date(mergedResource.endDate) : null
+    } : undefined;
+
+    const phaseDateRange = mergedResource?.phase ? {
+      startDate: mergedResource.phase.startDate ? new Date(mergedResource.phase.startDate) : null,
+      endDate: mergedResource.phase.endDate ? new Date(mergedResource.phase.endDate) : null
+    } : undefined;
 
     // ✅ Validation context
     const validationContext: ValidationContext = {
-      selectedResource: selectedResourceForDay,
+      selectedResource: mergedResource,
       matchedAllocation,
       holidays: this.holidaysData,
       weekends: this.weekendsData,
@@ -1300,7 +1349,6 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
 
     const isNotEntered = cell.approvalStatus === ApprovalStatus.NotEntered;
     const shouldEnable = isProjectSelected && !isLocked;
-
     const billablecheck = !!(mergedResource?.billable || this.selectedProjectResource?.billable);
 
     const durationControl = this.fb.control(
@@ -1502,8 +1550,8 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       this.weakenddate = this.end;
       this.setWeekRange(prevStart, prevEnd);
       this.checkTimesheetLockByMonth(prevStart.toDate(), prevEnd.toDate()); //
-      this.getResourceData();
       const formattedStart = moment(prevStart).format('YYYY-MM-DD');
+      this.getResourceData();
       this.loadTimeSheetByResource(formattedStart);
     }
   }
@@ -1519,8 +1567,8 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       this.weakenddate = this.end;
       this.setWeekRange(nextStart, nextEnd);
       this.checkTimesheetLockByMonth(nextStart.toDate(), nextEnd.toDate());
-      this.getResourceData();
       const formattedStart = moment(nextStart).format('YYYY-MM-DD');
+      this.getResourceData();
       this.loadTimeSheetByResource(formattedStart);
     }
   }
@@ -1584,8 +1632,9 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
 
     console.log('this.start =', this.start);
     console.log('weekStartDate =', weekStartDate);
-    this.http.getDataIncludeParams(`ProjectResource?status=active,released&employeeId=${this.employeeId}&isProjectRequired=true&weekStartDate=${weekStartDate}`).pipe(takeUntil(this.destroy$)).subscribe((res: any) => {
-      if (res.success) {
+    this.http.getDataIncludeParams(`ProjectResource?status=active,released&employeeId=${this.employeeId}&isProjectRequired=true&weekStartDate=${weekStartDate}`).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res: any) => {
+        if (res.success) {
         // this.resourcesArrayList = res.data;
         // const rawData = res.data;
         console.log(
@@ -1678,6 +1727,10 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
             ],
           });
         }
+
+        }
+      },
+      error: () => {
       }
     });
   }

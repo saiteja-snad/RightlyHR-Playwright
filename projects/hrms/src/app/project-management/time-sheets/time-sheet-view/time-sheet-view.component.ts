@@ -1307,6 +1307,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       weekends: this.weekendsData,
       leaves: this.leavesData
     };
+    console.log(validationContext);
 
     // ✅ Call validation
     const dayStatus = this.dayValidationService.checkDayStatus(entryDate, validationContext);
@@ -1553,6 +1554,9 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       const formattedStart = moment(prevStart).format('YYYY-MM-DD');
       this.getResourceData();
       this.loadTimeSheetByResource(formattedStart);
+      this.getTimeSheetEntriesbyEmployeeId(this.employeeId, formattedStart);
+
+
     }
   }
 
@@ -1646,6 +1650,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
         );
         const rawData = res.data.filter((item: any) => !item.isBlocked);
         this.resourcesArrayList = rawData;
+        console.log(rawData);
         this.clients = rawData.reduce((acc: any[], curr: any) => {
           const clientId = curr?.client?.clientId || 0;
           let existingClient = acc.find((c) => c.clientId === curr.client.clientId);

@@ -7,7 +7,7 @@
 
   <div class="custom-table-content">
     @if(!loading){
-    <p-table #allocatedAssetsTable [value]="(assetslist | async) ?? []" [tableStyle]="{'width': '100%'}" [customSort]="true" (sortFunction)="customSort($event)">
+    <p-table #allocatedAssetsTable [value]="getFilteredAndSortedAssets()" [tableStyle]="{'width': '100%'}" [customSort]="true" (sortFunction)="customSort($event)">
       <ng-template pTemplate="header">
         <tr>
           <th pSortableColumn="assetCategory">{{'Asset Category'|translate}} <p-sortIcon field="assetCategory" /></th>
@@ -110,7 +110,7 @@
   </div>
 
 
-  <div class="pagination-content" *ngIf="((assetslist | async) ?? []).length > 0">
+  <div class="pagination-content" *ngIf="getFilteredAndSortedAssets().length > 0">
     <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
       <div class="d-flex align-items-center gap-3 p-2">
         <select title="text" class="form-select custom-pagination-select" [(ngModel)]="rows"

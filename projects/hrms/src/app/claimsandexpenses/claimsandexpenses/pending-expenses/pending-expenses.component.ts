@@ -46,6 +46,8 @@ export class PendingExpensesComponent implements OnInit, OnDestroy {
   draftsCount: number = 0;
   expensesAttachment: any;
   selectedData = {} as any;
+  currentSortField: string = '';
+  currentSortOrder: number = 0; // 0 = no sort, 1 = asc, -1 = desc
   constructor(private http: HttpService, public formValidation: FormValidationService, private modalService: NgbModal, private sanitizer: DomSanitizer, private SelectedyeartimeOffService: TimeoffYearFilterService) { }
 
   selectedYear: any;
@@ -110,42 +112,87 @@ export class PendingExpensesComponent implements OnInit, OnDestroy {
     return this.expenesEmplyeedata;
   }
 
-  customSort(event: any) {
+  customSort(event: any): void {
     const field = event.field;
-    const order = event.order;
-
-    if (order === 0) {
-      // Reset to original order
-      this.expenesEmplyeedata = [...this.originalExpenseData];
-    } else {
-      this.expenesEmplyeedata.sort((a: any, b: any) => {
-        let aVal, bVal;
-
-        if (field === 'expenses_Title') {
-          aVal = a.expenses_Title?.toLowerCase() || '';
-          bVal = b.expenses_Title?.toLowerCase() || '';
-        } else if (field === 'expense_Date') {
-          aVal = new Date(a.expenseitem?.[0]?.expense_Date || 0);
-          bVal = new Date(b.expenseitem?.[0]?.expense_Date || 0);
-        } else if (field === 'applied_date') {
-          aVal = new Date(a.applied_date || 0);
-          bVal = new Date(b.applied_date || 0);
-        } else if (field === 'totalExpenseAmount') {
-          aVal = parseFloat(a.totalExpenseAmount) || 0;
-          bVal = parseFloat(b.totalExpenseAmount) || 0;
-        } else if (field === 'status') {
-          aVal = a.status?.toLowerCase() || '';
-          bVal = b.status?.toLowerCase() || '';
-        } else {
-          aVal = a[field];
-          bVal = b[field];
+    
+    // Track current sort state for the clicked field
+    if (this.currentSortField === field) {
+      // Same field clicked - cycle through: asc (1) -> desc (-1) -> reset (0)
+      if (this.currentSortOrder === 1) {
+        // Currently ascending, change to descending
+        this.currentSortOrder = -1;
+        event.order = -1;
+      } else if (this.currentSortOrder === -1) {
+        // Currently descending, reset to original order
+        this.expenesEmplyeedata = [...this.originalExpenseData];
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        if (this.table) {
+          this.table.reset();
         }
-
-        if (aVal < bVal) return -1 * order;
-        if (aVal > bVal) return 1 * order;
-        return 0;
-      });
+        return;
+      } else {
+        // Currently reset, change to ascending
+        this.currentSortOrder = 1;
+        event.order = 1;
+      }
+    } else {
+      // New field clicked - start with ascending
+      this.currentSortField = field;
+      this.currentSortOrder = 1;
+      event.order = 1;
     }
+
+    event.data.sort((a: any, b: any) => {
+      let val1: any;
+      let val2: any;
+
+      // Handle expense fields
+      switch (field) {
+        case 'expenseTitle':
+          val1 = a.expenses_Title;
+          val2 = b.expenses_Title;
+          break;
+        case 'expenseDate':
+          val1 = a.expenseitem?.[0]?.expense_Date;
+          val2 = b.expenseitem?.[0]?.expense_Date;
+          break;
+        case 'appliedDate':
+          val1 = a.applied_date;
+          val2 = b.applied_date;
+          break;
+        case 'totalAmount':
+          val1 = a.totalExpenseAmount;
+          val2 = b.totalExpenseAmount;
+          break;
+        case 'status':
+          val1 = a.status;
+          val2 = b.status;
+          break;
+        default:
+          val1 = a[field];
+          val2 = b[field];
+      }
+
+      // Handle date sorting
+      if (['expenseDate', 'appliedDate'].includes(field)) {
+        const date1 = val1 ? new Date(val1) : new Date(0);
+        const date2 = val2 ? new Date(val2) : new Date(0);
+        return event.order * (date1.getTime() - date2.getTime());
+      }
+
+      // Handle numeric sorting for amounts
+      if (field === 'totalAmount') {
+        const num1 = parseFloat(val1) || 0;
+        const num2 = parseFloat(val2) || 0;
+        return event.order * (num1 - num2);
+      }
+
+      // Handle string sorting for all other fields
+      val1 = String(val1 ?? '').trim();
+      val2 = String(val2 ?? '').trim();
+      return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+    });
   }
   
   viewItem(expid: number,) {

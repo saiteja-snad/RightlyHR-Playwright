@@ -269,6 +269,9 @@ export class AllocatedAssetsListComponent {
         this.selectedSubcategeoryname = JSON.parse(localStorage.getItem('assetsubcategeory') ?? 'null');
         this.formdate = JSON.parse(localStorage.getItem('formDate') ?? 'null');
         this.todate = JSON.parse(localStorage.getItem('toDate') ?? 'null');
+        // Reset sorting when filters change
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
         if (this.selectedLocationId || this.selectedSubLocationId || this.selectedcatageoryname || this.selectedSubcategeoryname || this.todate || this.formdate) {
           this.getassetsdata(1, this.pageSize, this.selectedLocationId, this.selectedSubLocationId, this.selectedcatageoryname, this.selectedSubcategeoryname, this.formdate, this.todate, this.Status);
         } else {
@@ -576,6 +579,9 @@ export class AllocatedAssetsListComponent {
   onRowsChange() {
     this.page = 1;
     this.first = 0;
+    // Reset sorting when changing page size
+    this.currentSortField = '';
+    this.currentSortOrder = 0;
     this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId, null, null, null, null, this.Status);
   }
 
@@ -583,6 +589,9 @@ export class AllocatedAssetsListComponent {
     this.page = event.page + 1;
     this.pageSize = event.rows;
     this.first = event.first;
+    // Reset sorting when changing pages
+    this.currentSortField = '';
+    this.currentSortOrder = 0;
     this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId, null, null, null, null, this.Status);
   }
 
@@ -592,15 +601,24 @@ export class AllocatedAssetsListComponent {
     this.rows = newPageSize;
     this.page = 1;
     this.first = 0;
+    // Reset sorting when changing page size
+    this.currentSortField = '';
+    this.currentSortOrder = 0;
     this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId, null, null, null, null, this.Status);
   }
   onSearchChange(event: any) {
 
     if (event !== '' && event.length >= 1) {
       // localStorage.setItem('assetsdata', JSON.stringify(this.assets.value))
+      // Reset sorting when searching
+      this.currentSortField = '';
+      this.currentSortOrder = 0;
       this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId, null, null, null, null, this.Status);
     }
     if (event === '') {
+      // Reset sorting when clearing search
+      this.currentSortField = '';
+      this.currentSortOrder = 0;
       this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId, null, null, null, null, this.Status);
     }
   }
@@ -1550,6 +1568,10 @@ export class AllocatedAssetsListComponent {
     this.router.navigate(['/assets-management/view-assets-details'], { queryParams: { id: assetId } });
   }
 
+  getFilteredAndSortedAssets() {
+    return this.assetslist.value;
+  }
+
   customSort(event: any): void {
     const field = event.field;
     
@@ -1586,16 +1608,31 @@ export class AllocatedAssetsListComponent {
       let val1: any;
       let val2: any;
 
-      // Handle nested assignedTo fields
-      if (['assignedEmployeeName'].includes(field)) {
-        const assignedTo1 = a.assignedTo || {};
-        const assignedTo2 = b.assignedTo || {};
-        val1 = `${assignedTo1.firstName || ''} ${assignedTo1.middleName || ''} ${assignedTo1.lastName || ''}`.trim();
-        val2 = `${assignedTo2.firstName || ''} ${assignedTo2.middleName || ''} ${assignedTo2.lastName || ''}`.trim();
-      } else {
-        // Handle direct fields
-        val1 = a[field];
-        val2 = b[field];
+      // Handle specific field mappings
+      switch (field) {
+        case 'assignedEmployeeName':
+          // Handle nested assignedTo fields for employee name
+          const assignedTo1 = a.assignedTo || {};
+          const assignedTo2 = b.assignedTo || {};
+          val1 = `${assignedTo1.firstName || ''} ${assignedTo1.middleName || ''} ${assignedTo1.lastName || ''}`.trim();
+          val2 = `${assignedTo2.firstName || ''} ${assignedTo2.middleName || ''} ${assignedTo2.lastName || ''}`.trim();
+          break;
+        case 'assetIdName':
+          // Handle nested assignedTo.assetIdName field
+          val1 = a.assignedTo?.assetIdName || '';
+          val2 = b.assignedTo?.assetIdName || '';
+          break;
+        case 'purchaseDate':
+        case 'allocatedDate':
+          // Handle date fields
+          val1 = a[field];
+          val2 = b[field];
+          break;
+        default:
+          // Handle direct fields
+          val1 = a[field];
+          val2 = b[field];
+          break;
       }
 
       // Handle date sorting

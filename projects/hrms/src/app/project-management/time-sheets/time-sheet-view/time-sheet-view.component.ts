@@ -37,7 +37,7 @@ import { SignalsService } from '../../../services/signals.service';
   selector: 'app-time-sheet-view',
   imports: [ProjectManagementModuleInfoComponent, NgbDatepickerModule, FormsModule, ReactiveFormsModule,
     NgbPopover, CommonModule, DatePicker, DateformatPipe, AccordionModule, InfoIconComponent, ConfirmationIconComponent,
-    TranslateModule, DataLoaderContentComponent, TimesheetsTabsComponent, MenuModule, MultiSelectModule,Select, ApplicablePoliciesTriggerComponent],
+    TranslateModule, DataLoaderContentComponent, TimesheetsTabsComponent, MenuModule, MultiSelectModule, Select, ApplicablePoliciesTriggerComponent],
   templateUrl: './time-sheet-view.component.html',
   styleUrl: './time-sheet-view.component.scss',
 })
@@ -119,14 +119,14 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   canBulkImport = false;
   canBulkExport = false;
   canViewHistoryLog = false;
-  taskType:any;
-  alltaskTypes=[] as any;
+  taskType: any;
+  alltaskTypes = [] as any;
   constructor(private fb: FormBuilder, private modalService: NgbModal,
     private http: HttpService, public formValidation: FormValidationsService,
     public dayValidationService: DayValidationService, public authService: AuthService,
     public rbac: RbacService, private conformationPopup: OpenModalService,
     private router: Router, private encryptionService: EncriptdecriptService, private bulkStore: BulkUploadStore
-  , private signalService : SignalsService) { }
+    , private signalService: SignalsService) { }
 
   ngOnInit(): void {
     this.loggedinuser = this.authService.getToken();
@@ -150,18 +150,18 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     this.buildBulkOperationMenuItems();
     this.getTaskType();
   }
-getTaskType() {
-  this.loading = true;
-  this.subscription = this.http.getData('TaskType').subscribe({
-    next: (res: any) => {
-      this.loading = false;
-      this.alltaskTypes = res;
-      this.taskType = res?.filter((ele:any)=>ele?.status?.toLowerCase()==='active');
-    },
-    error: () => (this.loading = false),
-    complete: () => (this.loading = false)
-  });
-}
+  getTaskType() {
+    this.loading = true;
+    this.subscription = this.http.getData('TaskType').subscribe({
+      next: (res: any) => {
+        this.loading = false;
+        this.alltaskTypes = res;
+        this.taskType = res?.filter((ele: any) => ele?.status?.toLowerCase() === 'active');
+      },
+      error: () => (this.loading = false),
+      complete: () => (this.loading = false)
+    });
+  }
   get projects(): FormArray {
     return this.timesheetForm.get('projects') as FormArray<FormGroup>;
   }
@@ -472,7 +472,7 @@ getTaskType() {
       rejectReason: [day?.rejectReason || ''],
       blockReason: [blockReason],
       resourceId: [{ value: day?.resourceId || null }],
-      taskId:[{ value: day?.taskId || null, disabled: !shouldEnable }]
+      taskId: [{ value: day?.taskId || null, disabled: !shouldEnable }]
 
     });
   }
@@ -633,7 +633,7 @@ getTaskType() {
     };
   }
 
- private createDayEntryFromCell(row: RowModel, day: DayModel, isProjectSelected: boolean = false): FormGroup {
+  private createDayEntryFromCell(row: RowModel, day: DayModel, isProjectSelected: boolean = false): FormGroup {
     const cellKey = `${row.rowId}_${day.date}`;
     const cell = this.weekMatrix.cellMap.get(cellKey);
 
@@ -663,14 +663,14 @@ getTaskType() {
         allocations: matchedResources
       }
       : null;
-      console.log(matchedResources);
+    console.log(matchedResources);
 
 
     const resourceDateRange = mergedResource ? {
       startDate: mergedResource.startDate ? new Date(mergedResource.startDate) : null,
       endDate: mergedResource.endDate ? new Date(mergedResource.endDate) : null
     } : undefined;
-       console.log(resourceDateRange);
+    console.log(resourceDateRange);
 
     const phaseDateRange = mergedResource?.phase ? {
       startDate: mergedResource.phase.startDate ? new Date(mergedResource.phase.startDate) : null,
@@ -775,7 +775,7 @@ getTaskType() {
       rejectReason: [cell.rejectReason || ''],
       blockReason: [cell.blockReason || ''],
       resourceId: [row.resourceId || null],
-      taskId:[cell.taskId || null,]
+      taskId: [cell.taskId || null,]
     });
   }
 
@@ -1223,7 +1223,6 @@ getTaskType() {
 
   //TIME ENTERIY FOR TABLE
   formatTime(event: any, dayName: string, rowIndex: number, duration: string, dayFormNew: AbstractControl | null) {
-    // project.get('sun')
     let value = event.target.value;
     value = value?.replace(/\D/g, ''); // digits only
     let formatted = this.getFormattedTime(value);
@@ -1236,34 +1235,63 @@ getTaskType() {
     // Show dots only if there's a formatted duration value
     if (formatted) {
       this.showDots[rowIndex][dayName] = true;
+    } else {
+      this.showDots[rowIndex][dayName] = false;
     }
-    // Auto-save only on blur to prevent duplicate calls
-    if (formatted && (event.type === 'blur' || event.type === 'keyup') && !this.isDeleteModalOpen && !this.userClickedNo && !this.isModalOpen) {
-
-
-      const timeoutKey = `${rowIndex}-${dayName}`;
-      // Clear any existing timeout for this specific field
-      if (this.autoSaveTimeouts.has(timeoutKey)) {
-        clearTimeout(this.autoSaveTimeouts.get(timeoutKey));
-      }
-      // Don't auto-save if already processed or waiting for approval
-      if (approvalStatus !== 'Processed' && approvalStatus !== 'Waiting for Approval' &&
-        !((approvalStatus?.toLowerCase() === 'draft' || approvalStatus?.toLowerCase() === 'rejected') && event.type === 'blur')
-      ) {
-
-        // Add small delay to prevent rapid successive calls
-        const timeout = setTimeout(() => {
-          this.openModal(this.addtask, dayFormNew, rowIndex, dayName);
-          // this.autoSaveTableEntry(rowIndex, dayName,dayFormNew);
-          // this.autoSaveTimeouts.delete(timeoutKey);
-        }, 300);
-        this.autoSaveTimeouts.set(timeoutKey, timeout);
+    // On Enter key: open modal to complete and save the entry
+    if (formatted && event.type === 'keyup' || event.type === 'keydown' && event.key === 'Enter' || event.key === 'blur') {
+      if (approvalStatus !== 'Processed' && approvalStatus !== 'Waiting for Approval') {
+        // this.openModal(this.addtask, dayFormNew, rowIndex, dayName);
+        this.autoSaveDayEntry(dayForm, rowIndex, dayName);
       }
     }
-    // Reset userClickedNo flag after processing
-    if (event.type === 'blur') {
-      this.userClickedNo = false;
-    }
+    // // On blur: auto-save the entry directly
+    // if (event.type === 'blur') {
+    //   this.userClickedNo = false;
+    //   if (formatted && !this.isDeleteModalOpen && !this.isModalOpen &&
+    //     approvalStatus !== 'Processed' && approvalStatus !== 'Waiting for Approval') {
+    //     this.autoSaveDayEntry(dayForm, rowIndex, dayName);
+    //   }
+    // }
+  }
+
+
+  autoSaveDayEntry(dayForm: FormGroup, rowIndex: number, dayName: string) {
+    if (!dayForm || !dayForm.get('duration')?.value) return;
+    const formValue = dayForm.getRawValue();
+    const payload = {
+      entryId: formValue.entryId || 0,
+      employeeId: this.employeeId || 0,
+      entryDate: moment(formValue.entryDate).format('YYYY-MM-DD'),
+      startTime: this.toTimeSpan(formValue.startTime) || null,
+      endTime: this.toTimeSpan(formValue.endTime) || null,
+      description: formValue.description || '',
+      approvalStatus: 'draft',
+      clientId: formValue.clientId || null,
+      projectId: formValue.projectId || null,
+      phaseId: formValue.phaseId || null,
+      timesheetId: this.timesheetdata?.timesheetId || null,
+      isOverride: formValue.isBlocked || false,
+      totalDurationSeconds: this.hhmmToSeconds(formValue.duration) || 0,
+      isBillable: formValue.isBillable || false,
+      moduleId: 30,
+      resourceId: formValue.resourceId || null,
+      taskId: formValue.taskId || null
+    };
+    this.http.postdata('v2/Timesheet/save-or-update', payload).subscribe({
+      next: () => {
+        this.formattedweakendStart = moment(this.start).format('YYYY-MM-DD');
+        this.getTimeSheetEntriesbyEmployeeId(this.employeeId, this.formattedweakendStart);
+      },
+      error: (err) => {
+        this.conformationPopup.openErrorModal(err?.error?.message || 'Failed to save time entry');
+        // this.formattedweakendStart = moment(this.start).format('YYYY-MM-DD');
+        // this.getTimeSheetEntriesbyEmployeeId(this.employeeId, this.formattedweakendStart);
+        // setTimeout(() => {
+        // this.openModal(this.addtask, dayForm, rowIndex, dayName);
+        // }, 3000);
+      }
+    });
   }
 
   //AUTO SAVE TABLE ENTRY
@@ -1340,32 +1368,64 @@ getTaskType() {
   //COMMON TIME FORMATTING LOGIC
   getFormattedTime(value: string): string {
     let formatted = '';
-    if (value?.length === 1) {
-      // Single digit = minutes (0-9 minutes)
-      let minutes = parseInt(value, 10);
-      formatted = `00:0${minutes}`;
-    } else if (value?.length === 2) {
-      // Two digits = tens place minutes (10-59 minutes)
-      let minutes = parseInt(value, 10);
-      if (minutes > 59) minutes = 59;
-      formatted = `00:${minutes.toString().padStart(2, '0')}`;
-    } else if (value?.length === 3) {
-      // Three digits = hours (1-24 hours)
+
+    if (!value) {
+      return formatted;
+    }
+
+    if (value.length === 1 || value.length === 2) {
+      // 1 or 2 digits = Hours
+      let hours = parseInt(value, 10);
+
+      if (hours > 24) {
+        hours = 24;
+      }
+
+      formatted = `${hours.toString().padStart(2, '0')}:00`;
+
+    } else if (value.length === 3) {
+      // HMM (e.g. 130 -> 01:30)
       let hours = parseInt(value[0], 10);
       let minutes = parseInt(value.slice(1), 10);
-      if (hours > 24) hours = 24;
-      if (minutes > 59) minutes = 59;
-      if (hours === 24) minutes = 0;
-      formatted = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
-    } else if (value?.length === 4) {
-      // Four digits = hours and minutes
+
+      if (hours > 24) {
+        hours = 24;
+      }
+
+      if (minutes > 59) {
+        minutes = 59;
+      }
+
+      if (hours === 24) {
+        minutes = 0;
+      }
+
+      formatted = `${hours.toString().padStart(2, '0')}:${minutes
+        .toString()
+        .padStart(2, '0')}`;
+
+    } else if (value.length === 4) {
+      // HHMM (e.g. 1234 -> 12:34)
       let hours = parseInt(value.slice(0, 2), 10);
       let minutes = parseInt(value.slice(2), 10);
-      if (hours > 24) hours = 24;
-      if (minutes > 59) minutes = 59;
-      if (hours === 24) minutes = 0;
-      formatted = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+
+      if (hours > 24) {
+        hours = 24;
+      }
+
+      if (minutes > 59) {
+        minutes = 59;
+      }
+
+      if (hours === 24) {
+        minutes = 0;
+      }
+
+      formatted = `${hours.toString().padStart(2, '0')}:${minutes
+        .toString()
+        .padStart(2, '0')}`;
     }
+
     return formatted;
   }
 
@@ -1515,7 +1575,7 @@ getTaskType() {
     this.dayValidationService.initialize(context);
   }
 
-   selectProjectForRow(row: AbstractControl, client: any, project: any, phase: any = null) {
+  selectProjectForRow(row: AbstractControl, client: any, project: any, phase: any = null) {
 
     const form = row as FormGroup;
 
@@ -1710,109 +1770,109 @@ getTaskType() {
   }
 
   //OPEN TIME ENTERIY
-openModal(content: any, dayForm: AbstractControl | null, index: number, dayKey: string) {
+  openModal(content: any, dayForm: AbstractControl | null, index: number, dayKey: string) {
 
-  if (dayForm instanceof FormGroup) {
-    this.currentRowIndex = index;
-    this.currentDay = dayKey;
-    this.isModalOpen = true;
-    const modalRef = this.modalService.open(content, {
-      centered: true,
-      backdrop: 'static'
-    });
-    modalRef.result.finally(() => {
-      this.isModalOpen = false;
-    });
-
-    this.dayForm = dayForm;
-    //start//code for the task type
-    let taskId = this.dayForm.get('taskId')?.value;
-    console.log('Selected Task ID:', taskId);
-    let taskdata = this.alltaskTypes?.find((ele: any) => ele?.id == taskId && ele?.status?.toLowerCase() == 'inactive');
-    if (taskdata) {
-      const alreadyExists = this.taskType?.some((ele: any) => ele.id == taskdata.id);
-      if (!alreadyExists) {
-        this.taskType.push(taskdata);
-      }
-    } else {
-      this.taskType = this.alltaskTypes?.filter((ele: any) => ele?.status?.toLowerCase() == 'active'
-      );
-    }
-   this.getTimesheetMadatorydata(this.dayForm.get('projectId')?.value,this.dayForm.get('phaseId')?.value)
-    //end//code for the task type
-    // ✅ Normalize date (fix timezone issue)
-    const normalizeDate = (date: any) => {
-      const d = new Date(date);
-      d.setHours(0, 0, 0, 0);
-      return d;
-    };
-
-    const entryDate = normalizeDate(this.dayForm.get('entryDate')?.value);
-
-    // ✅ 🔥 Get correct resource based on project/client/phase + DATE RANGE
-    const matchedResource = this.resourcesArrayList
-      .filter((res: any) =>
-        res.project?.projectId === this.dayForm.get('projectId')?.value &&
-        res.client?.clientId === this.dayForm.get('clientId')?.value &&
-        res.phase?.phaseId === this.dayForm.get('phaseId')?.value
-      )
-      .filter((res: any) => {
-        const start = normalizeDate(res.startDate);
-        const end = normalizeDate(res.endDate);
-        return entryDate >= start && entryDate <= end;
-      })
-      // ✅ If multiple matches → pick latest (optional but safe)
-      .sort((a: any, b: any) =>
-        new Date(b.startDate).getTime() - new Date(a.startDate).getTime()
-      )[0];
-
-    console.log('Matched Resource (by date):', matchedResource);
-
-    let isBillableForDay = false;
-
-    if (matchedResource) {
-      isBillableForDay = matchedResource.billable === true;
-    }
-
-    console.log('Final Billable:', isBillableForDay);
-
-    // ✅ Disable form for processed حالات
-    if (
-      this.dayForm.get('approvalStatus')?.value === 'Processed' ||
-      this.dayForm.get('approvalStatus')?.value === 'Waiting for Approval' ||
-      this.employeeSelected
-    ) {
-      this.dayForm.disable();
-    } else {
-
-      this.dayForm.enable();
-
-      // ✅ Enable / Disable billable checkbox
-      if (isBillableForDay) {
-        this.dayForm.get('isBillable')?.enable();
-      } else {
-        this.dayForm.get('isBillable')?.disable();
-      }
-    }
-
-    // ✅ Set default billable only if not entered
-    const approvalStatus = this.dayForm.get('approvalStatus')?.value;
-
-    if (
-      approvalStatus === 'Not Entered' ||
-      approvalStatus === '' ||
-      approvalStatus === null ||
-      approvalStatus === undefined
-    ) {
-      this.dayForm.patchValue({
-        isBillable: isBillableForDay
+    if (dayForm instanceof FormGroup) {
+      this.currentRowIndex = index;
+      this.currentDay = dayKey;
+      this.isModalOpen = true;
+      const modalRef = this.modalService.open(content, {
+        centered: true,
+        backdrop: 'static'
       });
+      modalRef.result.finally(() => {
+        this.isModalOpen = false;
+      });
+
+      this.dayForm = dayForm;
+      //start//code for the task type
+      let taskId = this.dayForm.get('taskId')?.value;
+      console.log('Selected Task ID:', taskId);
+      let taskdata = this.alltaskTypes?.find((ele: any) => ele?.id == taskId && ele?.status?.toLowerCase() == 'inactive');
+      if (taskdata) {
+        const alreadyExists = this.taskType?.some((ele: any) => ele.id == taskdata.id);
+        if (!alreadyExists) {
+          this.taskType.push(taskdata);
+        }
+      } else {
+        this.taskType = this.alltaskTypes?.filter((ele: any) => ele?.status?.toLowerCase() == 'active'
+        );
+      }
+      this.getTimesheetMadatorydata(this.dayForm.get('projectId')?.value, this.dayForm.get('phaseId')?.value)
+      //end//code for the task type
+      // ✅ Normalize date (fix timezone issue)
+      const normalizeDate = (date: any) => {
+        const d = new Date(date);
+        d.setHours(0, 0, 0, 0);
+        return d;
+      };
+
+      const entryDate = normalizeDate(this.dayForm.get('entryDate')?.value);
+
+      // ✅ 🔥 Get correct resource based on project/client/phase + DATE RANGE
+      const matchedResource = this.resourcesArrayList
+        .filter((res: any) =>
+          res.project?.projectId === this.dayForm.get('projectId')?.value &&
+          res.client?.clientId === this.dayForm.get('clientId')?.value &&
+          res.phase?.phaseId === this.dayForm.get('phaseId')?.value
+        )
+        .filter((res: any) => {
+          const start = normalizeDate(res.startDate);
+          const end = normalizeDate(res.endDate);
+          return entryDate >= start && entryDate <= end;
+        })
+        // ✅ If multiple matches → pick latest (optional but safe)
+        .sort((a: any, b: any) =>
+          new Date(b.startDate).getTime() - new Date(a.startDate).getTime()
+        )[0];
+
+      console.log('Matched Resource (by date):', matchedResource);
+
+      let isBillableForDay = false;
+
+      if (matchedResource) {
+        isBillableForDay = matchedResource.billable === true;
+      }
+
+      console.log('Final Billable:', isBillableForDay);
+
+      // ✅ Disable form for processed حالات
+      if (
+        this.dayForm.get('approvalStatus')?.value === 'Processed' ||
+        this.dayForm.get('approvalStatus')?.value === 'Waiting for Approval' ||
+        this.employeeSelected
+      ) {
+        this.dayForm.disable();
+      } else {
+
+        this.dayForm.enable();
+
+        // ✅ Enable / Disable billable checkbox
+        if (isBillableForDay) {
+          this.dayForm.get('isBillable')?.enable();
+        } else {
+          this.dayForm.get('isBillable')?.disable();
+        }
+      }
+
+      // ✅ Set default billable only if not entered
+      const approvalStatus = this.dayForm.get('approvalStatus')?.value;
+
+      if (
+        approvalStatus === 'Not Entered' ||
+        approvalStatus === '' ||
+        approvalStatus === null ||
+        approvalStatus === undefined
+      ) {
+        this.dayForm.patchValue({
+          isBillable: isBillableForDay
+        });
+      }
     }
+
   }
-  
-}
- getTimesheetMadatorydata(projectId: number, phaseId: number) {
-  const url = `TimesheetConfiguration?projectId=${projectId ?? 0}&phaseId=${phaseId ?? 0}`;
+  getTimesheetMadatorydata(projectId: number, phaseId: number) {
+    const url = `TimesheetConfiguration?projectId=${projectId ?? 0}&phaseId=${phaseId ?? 0}`;
     this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         const items = res?.items || [];
@@ -1843,12 +1903,12 @@ openModal(content: any, dayForm: AbstractControl | null, index: number, dayKey: 
     })
   }
   isRequired(controlName: string): boolean {
-  const control = this.dayForm?.get(controlName);
+    const control = this.dayForm?.get(controlName);
 
-  return control
-    ? control.hasValidator(Validators.required)
-    : false;
-}
+    return control
+      ? control.hasValidator(Validators.required)
+      : false;
+  }
   recalculateTimes(dayKey: string, startIndex: number) {
     for (let i = 0; i < this.projects.length; i++) {
       const projectForm = this.projects.at(i).get(dayKey) as FormGroup;
@@ -1933,7 +1993,7 @@ openModal(content: any, dayForm: AbstractControl | null, index: number, dayKey: 
       isBillable: formValue.isBillable || false,
       moduleId: 30,
       resourceId: formValue.resourceId || null,
-      taskId:formValue.taskId
+      taskId: formValue.taskId
     };
     // POST request
     this.http.postdata('v2/Timesheet/save-or-update', payload).subscribe({
@@ -1991,7 +2051,7 @@ openModal(content: any, dayForm: AbstractControl | null, index: number, dayKey: 
         startTime: null,
         endTime: null,
         approvalStatus: 'Not Entered',
-        taskId:null,
+        taskId: null,
       }, { emitEvent: true });
 
       this.timesheetForm.get('duration')?.patchValue(null);
@@ -2015,8 +2075,21 @@ openModal(content: any, dayForm: AbstractControl | null, index: number, dayKey: 
     const approvalStatus = dayControl.get('approvalStatus')?.value;
     const showDot = this.showDots[rowIndex]?.[day];
 
-    return !!(showDot || duration || (approvalStatus && approvalStatus.toLowerCase() !== 'not entered'));
+    // Hide icon if duration is empty/null/zero
+    const hasDuration = !!(duration && duration !== '');
+
+    // If duration was cleared, also clear the showDots flag
+    if (!hasDuration && showDot) {
+      this.showDots[rowIndex][day] = false;
+    }
+
+    const hasApprovalStatus = !!(approvalStatus &&
+      approvalStatus.toLowerCase() !== 'not entered' &&
+      approvalStatus.toLowerCase() !== '');
+
+    return hasDuration || hasApprovalStatus;
   }
+
 
 
   //payload for submit-for-approval
@@ -2042,7 +2115,7 @@ openModal(content: any, dayForm: AbstractControl | null, index: number, dayKey: 
           projectName: project.selectedProject?.projectName || '',
           clientName: project.selectedProject?.clientName || '',
           approvalStatus: day.approvalStatus, // include approvalStatus
-          taskId:day.taskId,
+          taskId: day.taskId,
         };
       })
     )
@@ -2075,7 +2148,7 @@ openModal(content: any, dayForm: AbstractControl | null, index: number, dayKey: 
         this.getTimeSheetEntriesbyEmployeeId(this.employeeId, this.formattedweakendStart);
         this.getApprovalStatusCounts();
         this.signalService.timesheetApprovalsCountSignal.set(true);
-        console.log('SIgnal triggered');   
+        console.log('SIgnal triggered');
       },
       error: (err) => {
         this.modalService.dismissAll();
@@ -2090,12 +2163,12 @@ openModal(content: any, dayForm: AbstractControl | null, index: number, dayKey: 
           modalRef.close();
         }, 3000);
         this.signalService.timesheetApprovalsCountSignal.set(true);
-        console.log('SIgnal triggered');   
+        console.log('SIgnal triggered');
       },
-      complete : () =>{
+      complete: () => {
         this.signalService.timesheetApprovalsCountSignal.set(true);
-        console.log('SIgnal triggered');   
-        
+        console.log('SIgnal triggered');
+
       },
     });
   }
@@ -2165,24 +2238,24 @@ openModal(content: any, dayForm: AbstractControl | null, index: number, dayKey: 
   isDayFormDirtyOrFilled(form: FormGroup): boolean {
     const fieldsToCheck = ['description', 'duration', 'startTime', 'endTime', 'taskId'];
 
-  for (const field of fieldsToCheck) {
-    const control = form.get(field);
+    for (const field of fieldsToCheck) {
+      const control = form.get(field);
 
-    // Check only if the field has Validators.required
-    if (control?.hasValidator(Validators.required)) {
-      const value = control.value;
+      // Check only if the field has Validators.required
+      if (control?.hasValidator(Validators.required)) {
+        const value = control.value;
 
-      if (
-        value === null ||
-        value === undefined ||
-        value === ''
-      ) {
-        return false;
+        if (
+          value === null ||
+          value === undefined ||
+          value === ''
+        ) {
+          return false;
+        }
       }
     }
-  }
 
-  return true;
+    return true;
   }
   //based status colour
   getApprovalClass(control: AbstractControl | null): any {

@@ -1238,27 +1238,59 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     } else {
       this.showDots[rowIndex][dayName] = false;
     }
-    // On Enter key: open modal to complete and save the entry
-    if (formatted && event.type === 'keyup' || event.type === 'keydown' && event.key === 'Enter' || event.key === 'blur') {
-      if (approvalStatus !== 'Processed' && approvalStatus !== 'Waiting for Approval') {
-        // this.openModal(this.addtask, dayFormNew, rowIndex, dayName);
-        this.autoSaveDayEntry(dayForm, rowIndex, dayName);
+    // On Enter key or blur: check mandatory fields then open modal or auto-save
+    if (formatted ) {
+      if (approvalStatus !== 'Processed' && approvalStatus !== 'Waiting for Approval' && !this.isModalOpen && !this.isDeleteModalOpen) {
+        this.checkMandatoryAndSave(dayForm, dayFormNew, rowIndex, dayName);
       }
     }
-    // // On blur: auto-save the entry directly
-    // if (event.type === 'blur') {
-    //   this.userClickedNo = false;
-    //   if (formatted && !this.isDeleteModalOpen && !this.isModalOpen &&
-    //     approvalStatus !== 'Processed' && approvalStatus !== 'Waiting for Approval') {
-    //     this.autoSaveDayEntry(dayForm, rowIndex, dayName);
-    //   }
-    // }
+
   }
 
+  checkMandatoryAndSave(dayForm: FormGroup, dayFormNew: AbstractControl | null, rowIndex: number, dayName: string) {
+    const projectId = dayForm.get('projectId')?.value ?? 0;
+    const phaseId = dayForm.get('phaseId')?.value ?? 0;
+    const selectedDate = moment(dayForm.get('entryDate')?.value).format('YYYY-MM-DD');
+    const approvalStatus = (dayForm.get('approvalStatus')?.value || 'not entered').toLowerCase();
+    const url = `TimesheetConfiguration?projectId=${projectId}&phaseId=${phaseId}`;
+
+    this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res: any) => {
+        const items = res?.items || [];
+        const fieldMap: any = {
+          'Start Time': 'startTime',
+          'End Time': 'endTime',
+          'Task Type': 'taskId',
+          'Description': 'description'
+        };
+        const hasMandatory = items.some((item: any) => {
+          if (!fieldMap[item.fieldName]) return false;
+          const effectiveDate = moment(item.effectiveDate).format('YYYY-MM-DD');
+          const isEffective = moment(selectedDate).isSameOrAfter(moment(effectiveDate), 'day');
+          return isEffective && item.isMandatory &&
+            (approvalStatus === 'draft' || approvalStatus === 'rejected' || approvalStatus === 'not entered');
+        });
+
+        if (hasMandatory) {
+          this.openModal(this.addtask, dayFormNew, rowIndex, dayName);
+        } else {
+          this.autoSaveDayEntry(dayForm, rowIndex, dayName);
+        }
+      },
+      error: () => this.autoSaveDayEntry(dayForm, rowIndex, dayName)
+    });
+  }
+
+  isRequired(controlName: string): boolean {
+    const control = this.dayForm?.get(controlName);
+    return control ? control.hasValidator(Validators.required) : false;
+  }
 
   autoSaveDayEntry(dayForm: FormGroup, rowIndex: number, dayName: string) {
     if (!dayForm || !dayForm.get('duration')?.value) return;
     const formValue = dayForm.getRawValue();
+    const projectForm = this.projects.at(rowIndex);
+    const resourceId = formValue.resourceId || projectForm?.get('resourceId')?.value || null;
     const payload = {
       entryId: formValue.entryId || 0,
       employeeId: this.employeeId || 0,
@@ -1275,7 +1307,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       totalDurationSeconds: this.hhmmToSeconds(formValue.duration) || 0,
       isBillable: formValue.isBillable || false,
       moduleId: 30,
-      resourceId: formValue.resourceId || null,
+      resourceId: formValue.resourceId || resourceId,
       taskId: formValue.taskId || null
     };
     this.http.postdata('v2/Timesheet/save-or-update', payload).subscribe({
@@ -1285,14 +1317,10 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       },
       error: (err) => {
         this.conformationPopup.openErrorModal(err?.error?.message || 'Failed to save time entry');
-        // this.formattedweakendStart = moment(this.start).format('YYYY-MM-DD');
-        // this.getTimeSheetEntriesbyEmployeeId(this.employeeId, this.formattedweakendStart);
-        // setTimeout(() => {
-        // this.openModal(this.addtask, dayForm, rowIndex, dayName);
-        // }, 3000);
       }
     });
   }
+
 
   //AUTO SAVE TABLE ENTRY
   // autoSaveTableEntry(rowIndex: number, dayName: string,dayFormNew: AbstractControl | null) {
@@ -1798,7 +1826,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
         this.taskType = this.alltaskTypes?.filter((ele: any) => ele?.status?.toLowerCase() == 'active'
         );
       }
-      this.getTimesheetMadatorydata(this.dayForm.get('projectId')?.value, this.dayForm.get('phaseId')?.value)
+      // this.getTimesheetMadatorydata(this.dayForm.get('projectId')?.value, this.dayForm.get('phaseId')?.value)
       //end//code for the task type
       // ✅ Normalize date (fix timezone issue)
       const normalizeDate = (date: any) => {
@@ -1871,44 +1899,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     }
 
   }
-  getTimesheetMadatorydata(projectId: number, phaseId: number) {
-    const url = `TimesheetConfiguration?projectId=${projectId ?? 0}&phaseId=${phaseId ?? 0}`;
-    this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
-      next: (res: any) => {
-        const items = res?.items || [];
-        const fieldMap: any = {
-          'Start Time': 'startTime',
-          'End Time': 'endTime',
-          'Task Type': 'taskId',
-          'Description': 'description'
-        };
-        items.forEach((item: any) => {
-          const controlName = fieldMap[item.fieldName];
-          if (!controlName) return;
-          const control = this.dayForm.get(controlName);
-          if (!control) return;
-          // ALWAYS reset validators first
-          control.clearValidators();
-          // Apply validator if mandatory
-          if (item.isMandatory === true) {
-            control.setValidators([Validators.required]);
-          }
-          control.updateValueAndValidity({ emitEvent: false });
-        });
-      },
-      error: () => {
-      },
-      complete: () => {
-      },
-    })
-  }
-  isRequired(controlName: string): boolean {
-    const control = this.dayForm?.get(controlName);
 
-    return control
-      ? control.hasValidator(Validators.required)
-      : false;
-  }
   recalculateTimes(dayKey: string, startIndex: number) {
     for (let i = 0; i < this.projects.length; i++) {
       const projectForm = this.projects.at(i).get(dayKey) as FormGroup;

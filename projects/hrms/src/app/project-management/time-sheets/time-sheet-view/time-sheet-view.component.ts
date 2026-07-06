@@ -816,6 +816,35 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   private overrideAttemptedTargetCellCount = 0;
   private overrideSubmittedOrApprovedTargetCellCount = 0;
 
+  private hasSourceEntriesInRange(sourceMatrix: WeekMatrix, sourceWeekRange: Date[]): boolean {
+    if (!Array.isArray(sourceWeekRange) || sourceWeekRange.length < 2) {
+      return false;
+    }
+
+    const selectedSourceDates = new Set(
+      sourceMatrix.days
+        .filter((day) =>
+          moment(day.date).isBetween(
+            moment(sourceWeekRange[0]),
+            moment(sourceWeekRange[1]),
+            'day',
+            '[]'
+          )
+        )
+        .map((day) => day.date)
+    );
+
+    if (!selectedSourceDates.size) {
+      return false;
+    }
+
+    return sourceMatrix.rows.some((sourceRow) =>
+      Array.from(selectedSourceDates).some((date) =>
+        !!sourceMatrix.cellMap.get(`${sourceRow.rowId}_${date}`)
+      )
+    );
+  }
+
   private buildClonePayloads(sourceMatrix: WeekMatrix, targetMatrix: WeekMatrix, cloneMode: string, targetWeekDates: Date[], targetTimesheetId: number, sourceWeekRange: Date[]): any[] {
     this.cloneSkipReason = null;
     this.overrideAttemptedTargetCellCount = 0;
@@ -1126,6 +1155,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
         next: (chunkResponses: any[]) => {
           const payloads: any[] = [];
           let hasPhaseClosedSkip = false;
+          let allSourceRangesHaveNoEntries = cloneRangeChunks.length > 0;
           let overrideAttemptedTargetCellCount = 0;
           let overrideSubmittedOrApprovedTargetCellCount = 0;
 
@@ -1133,6 +1163,9 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
             const sourceMatrix = transformV2ResponseToWeekMatrix(sourceRes);
             const targetMatrix = transformV2ResponseToWeekMatrix(targetRes);
             const chunk = cloneRangeChunks[index];
+            const sourceRangeHasEntries = this.hasSourceEntriesInRange(sourceMatrix, chunk.sourceRange);
+
+            allSourceRangesHaveNoEntries = allSourceRangesHaveNoEntries && !sourceRangeHasEntries;
 
             console.log(
               'Source Matrix Days',
@@ -1166,11 +1199,13 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
             this.spinnerLoader = false;
             const errorMsg = hasPhaseClosedSkip
               ? 'Cannot clone timesheet as the selected project or phase is closed.'
+              : allSourceRangesHaveNoEntries
+              ? 'No entries available to clone from the selected source date range.'
               : cloneMode === 'overwrite' &&
                 overrideAttemptedTargetCellCount > 0 &&
                 overrideAttemptedTargetCellCount === overrideSubmittedOrApprovedTargetCellCount
               ? 'Timesheet cannot be overridden as the records have already been submitted for approval and approved.'
-              : 'No entries available to clone from the selected source date range.';
+              : 'No cloneable entries found for the selected source date range and clone options.';
             this.conformationPopup.openErrorModal(errorMsg);
             return;
           }

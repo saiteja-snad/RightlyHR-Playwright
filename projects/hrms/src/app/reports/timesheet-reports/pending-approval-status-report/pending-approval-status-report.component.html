@@ -30,54 +30,53 @@
 
   <div class="custom-table-content">
     @if (!isLoading) {
-    <p-table [value]="filteredpendingapprovalRecord" 
-             [tableStyle]="{'width': '100%'}" 
-             [customSort]="true" 
-             (onSort)="customSort($event)" 
-             [sortField]="currentUIField" 
+    <p-table #dt
+             [value]="filteredpendingapprovalRecord" 
+             [tableStyle]="{'width': '100%'}"
+             [sortField]="currentUIField"
              [sortOrder]="currentSortOrder">
       <ng-template pTemplate="header">
         <tr>
-          <th pSortableColumn="entryDate" class="text-center">
+          <th class="sortable-column text-center" (click)="onColumnSort('entryDate')">
             {{'Worked Date' | translate}}
             <p-sortIcon field="entryDate" />
           </th>
-          <th pSortableColumn="fusionEmpId" class="text-center">
+          <th class="sortable-column text-center" (click)="onColumnSort('fusionEmpId')">
             {{'Employee ID' | translate}}
             <p-sortIcon field="fusionEmpId" />
           </th>
-          <th pSortableColumn="employee">
+          <th class="sortable-column" (click)="onColumnSort('employee')">
             {{'Employee Name' | translate}}
             <p-sortIcon field="employee" />
           </th>
-          <th pSortableColumn="client">
+          <th class="sortable-column" (click)="onColumnSort('client')">
             {{'Client Name' | translate}}
             <p-sortIcon field="client" />
           </th>
-          <th pSortableColumn="project">
+          <th class="sortable-column" (click)="onColumnSort('project')">
             {{'Project Name' | translate}}
             <p-sortIcon field="project" />
           </th>
-          <th pSortableColumn="phaseName">
+          <th class="sortable-column" (click)="onColumnSort('phaseName')">
             {{'Phase/Milestone' | translate}}
             <p-sortIcon field="phaseName" />
           </th>
-          <th pSortableColumn="billable" class="text-center">
+          <th class="sortable-column text-center" (click)="onColumnSort('billable')">
             {{'Billable/Non-Billable' | translate}}
             <p-sortIcon field="billable" />
           </th>
-          <th pSortableColumn="taskType" class="text-center">
+          <th class="sortable-column text-center" (click)="onColumnSort('taskType')">
             {{'Task Type' | translate}}
             <p-sortIcon field="taskType" />
           </th>
           <th class="text-center">
             {{'Description' | translate}}
           </th>
-          <th pSortableColumn="status" class="text-center">
+          <th class="sortable-column text-center" (click)="onColumnSort('status')">
             {{'Status' | translate}}
             <p-sortIcon field="status" />
           </th>
-          <th pSortableColumn="timeSheetSubmittedDate" class="text-center">
+          <th class="sortable-column text-center" (click)="onColumnSort('timeSheetSubmittedDate')">
             {{'Submitted Date' | translate}}
             <p-sortIcon field="timeSheetSubmittedDate" />
           </th>

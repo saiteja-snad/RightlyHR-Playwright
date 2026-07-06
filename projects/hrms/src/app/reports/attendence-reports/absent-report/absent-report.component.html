@@ -117,22 +117,56 @@
       </div>
       }@else {
       <div class="custom-table-content">
-        <table class="content w-100">
-          <thead>
-            <th>Employee ID</th>
-            <th>Employee Name</th>
-            <th>Department</th>
-            <th>Team Manager</th>
-            <th>Location</th>
-            <th>Sub Location</th>
-            <th>Shift</th>
-            <th>Leave Type</th>
-            <th>Leave Period</th>
-            <th>Days</th>
-          </thead>
-          <tbody>
-            @if (filteredAbsentRecord && filteredAbsentRecord.length > 0) {
-            @for (record of filteredAbsentRecord; track record) {
+        <p-table #dt 
+                 [value]="filteredAbsentRecord" 
+                 [tableStyle]="{'width': '100%'}"
+                 [sortField]="currentUIField"
+                 [sortOrder]="currentSortOrder">
+          <ng-template pTemplate="header">
+            <tr>
+              <th class="sortable-column" (click)="onColumnSort('fusionEmpId')">
+                Employee ID
+                <p-sortIcon field="fusionEmpId" />
+              </th>
+              <th class="sortable-column" (click)="onColumnSort('employeeName')">
+                Employee Name
+                <p-sortIcon field="employeeName" />
+              </th>
+              <th class="sortable-column" (click)="onColumnSort('department')">
+                Department
+                <p-sortIcon field="department" />
+              </th>
+              <th class="sortable-column" (click)="onColumnSort('teamManagerName')">
+                Team Manager
+                <p-sortIcon field="teamManagerName" />
+              </th>
+              <th class="sortable-column" (click)="onColumnSort('location')">
+                Location
+                <p-sortIcon field="location" />
+              </th>
+              <th class="sortable-column" (click)="onColumnSort('sublocation')">
+                Sub Location
+                <p-sortIcon field="sublocation" />
+              </th>
+              <th class="sortable-column" (click)="onColumnSort('shift')">
+                Shift
+                <p-sortIcon field="shift" />
+              </th>
+              <th class="sortable-column" (click)="onColumnSort('leaveType')">
+                Leave Type
+                <p-sortIcon field="leaveType" />
+              </th>
+              <th class="sortable-column" (click)="onColumnSort('startDate')">
+                Leave Period
+                <p-sortIcon field="startDate" />
+              </th>
+              <th class="sortable-column" (click)="onColumnSort('days')">
+                Days
+                <p-sortIcon field="days" />
+              </th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-record>
             <tr>
               <td>{{ record.fusionEmpId ?? '-' }}</td>
               <td>{{ record.employeeName ?? '-' }}</td>
@@ -147,14 +181,15 @@
               </td>
               <td>{{ record.days ?? '-' }}</td>
             </tr>
-            }
-            } @else {
+          </ng-template>
+          <ng-template pTemplate="emptymessage">
             <tr>
-              <app-no-data-found></app-no-data-found>
+              <td colspan="10">
+                <app-no-data-found></app-no-data-found>
+              </td>
             </tr>
-            }
-          </tbody>
-        </table>
+          </ng-template>
+        </p-table>
       </div>
       }
     </div>

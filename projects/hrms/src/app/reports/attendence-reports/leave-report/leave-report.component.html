@@ -28,30 +28,68 @@
 
   <div class="custom-table-content">
     @if (!isLoading) {
-    <table id="leaveReportTable" class="w-100">
-      <thead>
-        <th>{{ 'Employee ID' | translate }}</th>
-        <th>{{ 'Employee Name' | translate }}</th>
-        <th>{{ 'Department' | translate }}</th>
-        <th>{{ 'Team Manager' | translate }}</th>
-        <th>{{ 'Location' | translate }}</th>
-        <th>{{ 'Sub Location' | translate }}</th>
-        <th>{{ 'Shift' | translate }}</th>
-        <th>{{ 'Leave Category' | translate }}</th>
-        <th>{{ 'Leave Start Date' | translate }}</th>
-        <th>{{ 'Leave End Date' | translate }}</th>
-        <th>{{ 'Availed' | translate }}</th>
-        <th>{{ 'Applied Date' | translate }}</th>
-        <th>{{ 'Days' | translate }}</th>
-      </thead>
-      <tbody>
-        @if (!filteredleaveRecord || filteredleaveRecord.length === 0) {
+    <p-table #dt 
+             [value]="filteredleaveRecord" 
+             [tableStyle]="{'width': '100%'}"
+             [sortField]="currentUIField"
+             [sortOrder]="currentSortOrder">
+      <ng-template pTemplate="header">
         <tr>
-          <app-no-data-found />
+          <th class="sortable-column" (click)="onColumnSort('fusionEmpId')">
+            {{ 'Employee ID' | translate }}
+            <p-sortIcon field="fusionEmpId" />
+          </th>
+          <th class="sortable-column" (click)="onColumnSort('employeeName')">
+            {{ 'Employee Name' | translate }}
+            <p-sortIcon field="employeeName" />
+          </th>
+          <th class="sortable-column" (click)="onColumnSort('department')">
+            {{ 'Department' | translate }}
+            <p-sortIcon field="department" />
+          </th>
+          <th class="sortable-column" (click)="onColumnSort('teamManagerName')">
+            {{ 'Team Manager' | translate }}
+            <p-sortIcon field="teamManagerName" />
+          </th>
+          <th class="sortable-column" (click)="onColumnSort('location')">
+            {{ 'Location' | translate }}
+            <p-sortIcon field="location" />
+          </th>
+          <th class="sortable-column" (click)="onColumnSort('subLocation')">
+            {{ 'Sub Location' | translate }}
+            <p-sortIcon field="subLocation" />
+          </th>
+          <th class="sortable-column" (click)="onColumnSort('shift')">
+            {{ 'Shift' | translate }}
+            <p-sortIcon field="shift" />
+          </th>
+          <th class="sortable-column" (click)="onColumnSort('leaveCategoryName')">
+            {{ 'Leave Category' | translate }}
+            <p-sortIcon field="leaveCategoryName" />
+          </th>
+          <th class="sortable-column" (click)="onColumnSort('startdate')">
+            {{ 'Leave Start Date' | translate }}
+            <p-sortIcon field="startdate" />
+          </th>
+          <th class="sortable-column" (click)="onColumnSort('enddate')">
+            {{ 'Leave End Date' | translate }}
+            <p-sortIcon field="enddate" />
+          </th>
+          <th class="sortable-column" (click)="onColumnSort('availed')">
+            {{ 'Availed' | translate }}
+            <p-sortIcon field="availed" />
+          </th>
+          <th class="sortable-column" (click)="onColumnSort('appliedDate')">
+            {{ 'Applied Date' | translate }}
+            <p-sortIcon field="appliedDate" />
+          </th>
+          <th class="sortable-column" (click)="onColumnSort('days')">
+            {{ 'Days' | translate }}
+            <p-sortIcon field="days" />
+          </th>
         </tr>
-        }
-        @else {
-        @for (record of filteredleaveRecord; track $index) {
+      </ng-template>
+      <ng-template pTemplate="body" let-record>
         <tr>
           <td>{{ record.fusionEmpId ?? '-' }}</td>
           <td>{{ record.employeeName ?? '-' }}</td>
@@ -67,10 +105,15 @@
           <td class="text-nowrap">{{ record.appliedDate ? (record.appliedDate | date) : '-' }}</td>
           <td>{{ record.days ?? '-' }}</td>
         </tr>
-        }
-        }
-      </tbody>
-    </table>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="13">
+            <app-no-data-found />
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
     }
     @else{
     <app-data-loader-content />

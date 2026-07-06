@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, TemplateRef, ViewEncapsulation } from '@angular/core';
+import { Component, OnDestroy, OnInit, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Subject, Subscription, takeUntil } from 'rxjs';
 import { IemployeeDetails } from '../../../Interfaces/letters-model';
@@ -22,17 +22,19 @@ import { ReportsHeaderComponent } from "../../../shared/reports-tabs/reports-hea
 import { DatePicker } from 'primeng/datepicker';
 import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 import { MultiSelectModule } from 'primeng/multiselect';
+import { Table, TableModule } from 'primeng/table';
 
 @Component({
   selector: 'app-leave-report',
   imports: [DatePicker, CommonModule, FormsModule, DropdownModule, SelectModule, MultiSelectModule, TranslateModule, ReactiveFormsModule, 
-    NoDataFoundComponent, DataLoaderContentComponent,TranslateModule, ReportsHeaderComponent],
+    NoDataFoundComponent, DataLoaderContentComponent,TranslateModule, ReportsHeaderComponent, TableModule],
   templateUrl: './leave-report.component.html',
   styleUrl: './leave-report.component.scss',
   encapsulation: ViewEncapsulation.None,
 })
 
 export class LeaveReportComponent implements OnInit, OnDestroy {
+  @ViewChild('dt') table!: Table;
   moduleinfo: string = '';
   subscription!: Subscription;
   private readonly destroy$ = new Subject<void>();
@@ -58,6 +60,29 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
   disableBtn = false;
   getEmployeeInfo = [] as any;
   today: Date = new Date();
+  
+  // Sorting properties
+  currentSortField: string = '';
+  currentSortOrder: number = 0; // 0 = no sort, 1 = asc, -1 = desc
+  currentUIField: string | null = null; // Track the UI field name for visual state
+  originalLeaveRecord: any[] = []; // Store original order for reset
+  
+  // Sort field mapping for client-side sorting
+  readonly sortFieldMap: Record<string, string> = {
+    fusionEmpId: 'fusionEmpId',
+    employeeName: 'employeeName',
+    department: 'department',
+    teamManagerName: 'teamManagerName',
+    location: 'location',
+    subLocation: 'subLocation',
+    shift: 'shift',
+    leaveCategoryName: 'leaveCategoryName',
+    startdate: 'startdate',
+    enddate: 'enddate',
+    availed: 'availed',
+    appliedDate: 'appliedDate',
+    days: 'days'
+  };
   yearMinDate: Date | null = null;
   yearMaxDate: Date | null = null;
   ranges: any = {
@@ -194,6 +219,7 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
       team: []
     });
     this.filteredleaveRecord = [];
+    this.originalLeaveRecord = []; // Clear original order too
     this.isFilterIndicatorActive = false;
     this.disableBtn = false;
     this.uniqueLeaveCategory = [];
@@ -201,6 +227,16 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
     this.getEmployeeId();
     this.getAttendanceReports();
     this.getEmployeeId();
+    
+    // Reset sorting arrows
+    this.currentSortField = '';
+    this.currentUIField = null;
+    this.currentSortOrder = 0;
+    
+    // Reset the table sort state
+    if (this.table) {
+      this.table.reset();
+    }
   }
 
   isFilterApplied(): boolean {
@@ -359,12 +395,16 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
     this.reportsService.getAttendanceReportsV2(request).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: any) => {
         this.filteredleaveRecord = response ?? [];
+        this.originalLeaveRecord = [...this.filteredleaveRecord]; // Store original order
+        // Apply current sorting if any
+        this.applySorting();
       },
       error: (error) => {
         this.spinnerLoader1 = false;
         this.disableBtn = false;
         this.isLoading = false;
         this.filteredleaveRecord = [];
+        this.originalLeaveRecord = [];
         this.closeCanvas();
       },
       complete: () => {
@@ -374,6 +414,95 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
         this.closeCanvas();
       }
     });
+  }
+
+  // Method to handle column header clicks
+  onColumnSort(field: string): void {
+    const backendField = this.sortFieldMap[field] || field;
+
+    // Handle the three-state sorting: none → asc → desc → none
+    if (this.currentUIField === field) {
+      // Same field clicked - cycle through states
+      if (this.currentSortOrder === 0) {
+        // Currently no sort, set to ascending
+        this.currentSortOrder = 1;
+        this.currentSortField = backendField;
+        this.currentUIField = field;
+      } else if (this.currentSortOrder === 1) {
+        // Currently ascending, set to descending
+        this.currentSortOrder = -1;
+        this.currentSortField = backendField;
+      } else if (this.currentSortOrder === -1) {
+        // Currently descending, reset to no sort
+        this.currentSortField = '';
+        this.currentUIField = null as any;
+        this.currentSortOrder = 0;
+        
+        // Manually reset PrimeNG table sort state
+        if (this.table) {
+          this.table.reset();
+        }
+        
+        // Reload data without sorting
+        this.applySorting();
+        return;
+      }
+    } else {
+      // Different field clicked - start with ascending
+      this.currentUIField = field;
+      this.currentSortField = backendField;
+      this.currentSortOrder = 1; // Always start with ascending for new field
+    }
+
+    // Apply sorting
+    this.applySorting();
+  }
+
+  // Apply sorting to the filtered data
+  applySorting(): void {
+    if (!this.currentSortField || this.currentSortOrder === 0) {
+      // No sorting - restore original order
+      if (this.originalLeaveRecord.length > 0) {
+        this.filteredleaveRecord = [...this.originalLeaveRecord];
+      }
+      return;
+    }
+
+    this.filteredleaveRecord = [...this.filteredleaveRecord].sort((a: any, b: any) => {
+      const field = this.currentSortField;
+      let valueA = a[field];
+      let valueB = b[field];
+
+      // Handle null/undefined values
+      if (valueA == null) valueA = '';
+      if (valueB == null) valueB = '';
+
+      // Handle different data types
+      if (field === 'days') {
+        // Numeric comparison
+        valueA = Number(valueA) || 0;
+        valueB = Number(valueB) || 0;
+        return this.currentSortOrder === 1 ? valueA - valueB : valueB - valueA;
+      } else if (field === 'startdate' || field === 'enddate' || field === 'appliedDate') {
+        // Date comparison
+        const dateA = new Date(valueA).getTime();
+        const dateB = new Date(valueB).getTime();
+        return this.currentSortOrder === 1 ? dateA - dateB : dateB - dateA;
+      } else {
+        // String comparison (case-insensitive)
+        const strA = String(valueA).toLowerCase();
+        const strB = String(valueB).toLowerCase();
+        if (strA < strB) return this.currentSortOrder === 1 ? -1 : 1;
+        if (strA > strB) return this.currentSortOrder === 1 ? 1 : -1;
+        return 0;
+      }
+    });
+  }
+
+  customSort(event: any): void {
+    // This method is kept for compatibility but does nothing
+    // We handle sorting through onColumnSort instead
+    return;
   }
 
   private initializeYears(): void {

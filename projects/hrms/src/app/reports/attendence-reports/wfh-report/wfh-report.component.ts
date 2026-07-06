@@ -20,12 +20,13 @@ import { Router } from '@angular/router';
 import { ReportsHeaderComponent } from "../../../shared/reports-tabs/reports-header/reports-header.component";
 import { DatePicker } from 'primeng/datepicker';
 import { NgbOffcanvas, NgbOffcanvasRef } from '@ng-bootstrap/ng-bootstrap';
+import { Table, TableModule } from 'primeng/table';
 
 @Component({
   selector: 'app-wfh-report',
   imports: [
     CommonModule, FormsModule, ReactiveFormsModule, DatePicker, DropdownModule, MultiSelectModule, TranslateModule,
-    NoDataFoundComponent, DataLoaderContentComponent, ReportsHeaderComponent
+    NoDataFoundComponent, DataLoaderContentComponent, ReportsHeaderComponent, TableModule
   ],
   templateUrl: './wfh-report.component.html',
   styleUrl: './wfh-report.component.scss',
@@ -33,6 +34,7 @@ import { NgbOffcanvas, NgbOffcanvasRef } from '@ng-bootstrap/ng-bootstrap';
 })
 
 export class WfhReportComponent implements OnInit, OnDestroy {
+  @ViewChild('dt') table!: Table;
   moduleinfo: string = '';
   subscription!: Subscription;
   loggedInUser = {} as IemployeeDetails;
@@ -60,6 +62,25 @@ export class WfhReportComponent implements OnInit, OnDestroy {
   getEmployeeInfo = [] as any;
   selectLeaveEmployeeIds: number[] = [];
   filteredleaveRecords = true;
+  
+  // Sorting properties
+  currentSortField: string = '';
+  currentSortOrder: number = 0; // 0 = no sort, 1 = asc, -1 = desc
+  currentUIField: string | null = null; // Track the UI field name for visual state
+  originalWfhRecord: any[] = []; // Store original order for reset
+  
+  // Sort field mapping for client-side sorting
+  readonly sortFieldMap: Record<string, string> = {
+    fusionEmpId: 'fusionEmpId',
+    employeeName: 'employeeName',
+    department: 'department',
+    teamManagerName: 'teamManagerName',
+    shift: 'shift',
+    location: 'location',
+    subLocation: 'subLocation',
+    worked_Date: 'worked_Date',
+    duration: 'duration'
+  };
   ranges: any = {
     Today: [dayjs(), dayjs()],
     Yesterday: [dayjs().subtract(1, 'days'), dayjs().subtract(1, 'days')],
@@ -287,12 +308,16 @@ export class WfhReportComponent implements OnInit, OnDestroy {
     this.reportsService.getWfhReports(request).subscribe({
       next: (response: any) => {
         this.filteredWfhRecord = response ?? [];
+        this.originalWfhRecord = [...this.filteredWfhRecord]; // Store original order
+        // Apply current sorting if any
+        this.applySorting();
       },
       error: (error) => {
         this.spinnerLoader1 = false;
         this.disableBtn = true;
         this.isLoading = false;
         this.filteredWfhRecord = [];
+        this.originalWfhRecord = [];
         this.closeCanvas();
       },
       complete: () => {
@@ -302,6 +327,90 @@ export class WfhReportComponent implements OnInit, OnDestroy {
         this.closeCanvas();
       }
     });
+  }
+
+  // Method to handle column header clicks
+  onColumnSort(field: string): void {
+    const backendField = this.sortFieldMap[field] || field;
+
+    // Handle the three-state sorting: none → asc → desc → none
+    if (this.currentUIField === field) {
+      // Same field clicked - cycle through states
+      if (this.currentSortOrder === 0) {
+        // Currently no sort, set to ascending
+        this.currentSortOrder = 1;
+        this.currentSortField = backendField;
+        this.currentUIField = field;
+      } else if (this.currentSortOrder === 1) {
+        // Currently ascending, set to descending
+        this.currentSortOrder = -1;
+        this.currentSortField = backendField;
+      } else if (this.currentSortOrder === -1) {
+        // Currently descending, reset to no sort
+        this.currentSortField = '';
+        this.currentUIField = null as any;
+        this.currentSortOrder = 0;
+        
+        // Manually reset PrimeNG table sort state
+        if (this.table) {
+          this.table.reset();
+        }
+        
+        // Reload data without sorting
+        this.applySorting();
+        return;
+      }
+    } else {
+      // Different field clicked - start with ascending
+      this.currentUIField = field;
+      this.currentSortField = backendField;
+      this.currentSortOrder = 1; // Always start with ascending for new field
+    }
+
+    // Apply sorting
+    this.applySorting();
+  }
+
+  // Apply sorting to the filtered data
+  applySorting(): void {
+    if (!this.currentSortField || this.currentSortOrder === 0) {
+      // No sorting - restore original order
+      if (this.originalWfhRecord.length > 0) {
+        this.filteredWfhRecord = [...this.originalWfhRecord];
+      }
+      return;
+    }
+
+    this.filteredWfhRecord = [...this.filteredWfhRecord].sort((a: any, b: any) => {
+      const field = this.currentSortField;
+      let valueA = a[field];
+      let valueB = b[field];
+
+      // Handle null/undefined values
+      if (valueA == null) valueA = '';
+      if (valueB == null) valueB = '';
+
+      // Handle different data types
+      if (field === 'worked_Date') {
+        // Date comparison
+        const dateA = new Date(valueA).getTime();
+        const dateB = new Date(valueB).getTime();
+        return this.currentSortOrder === 1 ? dateA - dateB : dateB - dateA;
+      } else {
+        // String comparison (case-insensitive)
+        const strA = String(valueA).toLowerCase();
+        const strB = String(valueB).toLowerCase();
+        if (strA < strB) return this.currentSortOrder === 1 ? -1 : 1;
+        if (strA > strB) return this.currentSortOrder === 1 ? 1 : -1;
+        return 0;
+      }
+    });
+  }
+
+  customSort(event: any): void {
+    // This method is kept for compatibility but does nothing
+    // We handle sorting through onColumnSort instead
+    return;
   }
 
   toggleFilters(content: TemplateRef<any>) {
@@ -334,7 +443,18 @@ export class WfhReportComponent implements OnInit, OnDestroy {
   clearAllFilters(): void {
     this.wfhReportForm.reset();
     this.filteredWfhRecord = [];
+    this.originalWfhRecord = []; // Clear original order too
     this.isFilterIndicatorActive = false;
+    
+    // Reset sorting arrows
+    this.currentSortField = '';
+    this.currentUIField = null;
+    this.currentSortOrder = 0;
+    
+    // Reset the table sort state
+    if (this.table) {
+      this.table.reset();
+    }
   }
 
   formatDate(date: Date): string {

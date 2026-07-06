@@ -28,43 +28,42 @@
 
   <div class="custom-table-content">
     @if (!spinnerLoader1) {
-    <p-table [value]="filteredWeeklyTimesheetRecord" 
-             [tableStyle]="{'width': '100%'}" 
-             [customSort]="true" 
-             (onSort)="customSort($event)" 
-             [sortField]="currentUIField" 
+    <p-table #dt
+             [value]="filteredWeeklyTimesheetRecord" 
+             [tableStyle]="{'width': '100%'}"
+             [sortField]="currentUIField"
              [sortOrder]="currentSortOrder">
       <ng-template pTemplate="header">
         <tr>
-          <th pSortableColumn="date">
+          <th class="sortable-column" (click)="onColumnSort('date')">
             Worked Date 
             <p-sortIcon field="date" />
           </th>
-          <th pSortableColumn="fusionEmpId">
+          <th class="sortable-column" (click)="onColumnSort('fusionEmpId')">
             Employee ID 
             <p-sortIcon field="fusionEmpId" />
           </th>
-          <th pSortableColumn="employee">
+          <th class="sortable-column" (click)="onColumnSort('employee')">
             Employee Name 
             <p-sortIcon field="employee" />
           </th>
-          <th pSortableColumn="hoursWorked">
+          <th class="sortable-column" (click)="onColumnSort('hoursWorked')">
             Logged Hours 
             <p-sortIcon field="hoursWorked" />
           </th>
-          <th pSortableColumn="billableStatus">
+          <th class="sortable-column" (click)="onColumnSort('billableStatus')">
             Billable/Non-Billable 
             <p-sortIcon field="billableStatus" />
           </th>
-          <th pSortableColumn="submittedDate">
+          <th class="sortable-column" (click)="onColumnSort('submittedDate')">
             Submitted Date 
             <p-sortIcon field="submittedDate" />
           </th>
-          <th pSortableColumn="approvedBy">
+          <th class="sortable-column" (click)="onColumnSort('approvedBy')">
             Approved By 
             <p-sortIcon field="approvedBy" />
           </th>
-          <th pSortableColumn="processedOn">
+          <th class="sortable-column" (click)="onColumnSort('processedOn')">
             Approved On 
             <p-sortIcon field="processedOn" />
           </th>

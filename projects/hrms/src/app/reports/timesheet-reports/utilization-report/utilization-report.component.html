@@ -30,55 +30,54 @@
 
   <div class="custom-table-content">
     @if (!isLoading) {
-    <p-table [value]="filteredutilizationRecord" 
-             [tableStyle]="{'width': '100%'}" 
-             [customSort]="true" 
-             (onSort)="customSort($event)" 
-             [sortField]="currentUIField" 
+    <p-table #dt
+             [value]="filteredutilizationRecord" 
+             [tableStyle]="{'width': '100%'}"
+             [sortField]="currentUIField"
              [sortOrder]="currentSortOrder">
       <ng-template pTemplate="header">
         <tr>
-          <th pSortableColumn="clientName">
+          <th class="sortable-column" (click)="onColumnSort('clientName')">
             {{'Client Name' | translate}}
             <p-sortIcon field="clientName" />
           </th>
-          <th pSortableColumn="projectName">
+          <th class="sortable-column" (click)="onColumnSort('projectName')">
             {{'Project Name' | translate}}
             <p-sortIcon field="projectName" />
           </th>
-          <th pSortableColumn="fusionEmpId">
+          <th class="sortable-column" (click)="onColumnSort('fusionEmpId')">
             {{'Employee ID' | translate}}
             <p-sortIcon field="fusionEmpId" />
           </th>
-          <th pSortableColumn="employeeName">
+          <th class="sortable-column" (click)="onColumnSort('employeeName')">
             {{'Employee Name' | translate}}
             <p-sortIcon field="employeeName" />
           </th>
-          <th pSortableColumn="department">
+          <th class="sortable-column" (click)="onColumnSort('department')">
             {{'Department' | translate}}
             <p-sortIcon field="department" />
           </th>
-          <th pSortableColumn="phaseName">
+          <th class="sortable-column" (click)="onColumnSort('phaseName')">
             {{'Phase/Milestone' | translate}}
             <p-sortIcon field="phaseName" />
           </th>
-          <th pSortableColumn="allocatedHours" class="text-center">
+          <th class="sortable-column text-center" (click)="onColumnSort('allocatedHours')">
             {{'Total Allocated Hrs' | translate}}
             <p-sortIcon field="allocatedHours" />
           </th>
-          <th pSortableColumn="totalLoggedHours" class="text-center">
+          <th class="sortable-column text-center" (click)="onColumnSort('totalLoggedHours')">
             {{'Total Logged Hrs' | translate}}
             <p-sortIcon field="totalLoggedHours" />
           </th>
-          <th pSortableColumn="billableHours" class="text-center">
+          <th class="sortable-column text-center" (click)="onColumnSort('billableHours')">
             {{'Billable Hrs' | translate}}
             <p-sortIcon field="billableHours" />
           </th>
-          <th pSortableColumn="nonBillableHours" class="text-center">
+          <th class="sortable-column text-center" (click)="onColumnSort('nonBillableHours')">
             {{'Non-Billable Hrs' | translate}}
             <p-sortIcon field="nonBillableHours" />
           </th>
-          <th pSortableColumn="utilizationPercent" class="text-center">
+          <th class="sortable-column text-center" (click)="onColumnSort('utilizationPercent')">
             {{'Utilization' | translate}} <i class="bi bi-percent"></i>
             <p-sortIcon field="utilizationPercent" />
           </th>

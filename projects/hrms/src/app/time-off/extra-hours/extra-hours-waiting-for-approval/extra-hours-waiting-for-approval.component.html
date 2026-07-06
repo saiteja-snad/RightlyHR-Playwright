@@ -7,8 +7,8 @@
           <th pSortableColumn="createdDate">{{'Requested Date' | translate}} <p-sortIcon field="createdDate"></p-sortIcon></th>
           <th pSortableColumn="requestedDate">{{'Worked Date' | translate}} <p-sortIcon field="requestedDate"></p-sortIcon></th>
           <th pSortableColumn="duration">{{'Duration(In Hrs)' | translate}} <p-sortIcon field="duration"></p-sortIcon></th>
-          <th>{{'Description' | translate}}</th>
-          <th class="text-center" pSortableColumn="status">{{'Status' | translate}} <p-sortIcon field="status"></p-sortIcon></th>
+          <th class="text-center">{{'Description' | translate}}</th>
+          <th  class="text-center">{{'Status' | translate}}</th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-permissionRequest>
@@ -16,7 +16,7 @@
           <td>{{permissionRequest.createdDate | dateformat}}</td>
           <td>{{permissionRequest.requestedDate | dateformat}}</td>
           <td>{{(+permissionRequest.duration) * 60 * 60 * 1000 | date:'HH:mm':'UTC'}}</td>
-          <td class="text-center">
+          <td  class="text-center">
             <div>
               <a type="button" [ngbPopover]="reason">
                 <app-info-icon />

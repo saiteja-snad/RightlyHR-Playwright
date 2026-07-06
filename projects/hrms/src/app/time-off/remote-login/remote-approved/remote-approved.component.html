@@ -6,10 +6,10 @@
         <tr>
           <th pSortableColumn="workedDate">{{'Worked Date' | translate}} <p-sortIcon field="workedDate" /></th>
           <th pSortableColumn="availed">{{'Availed' | translate}} <p-sortIcon field="availed" /></th>
-          <th pSortableColumn="reason" class="text-center">{{'Reason' | translate}} <p-sortIcon field="reason" /></th>
-          <th pSortableColumn="approverReason" class="text-center">{{'Approver Reason' | translate}} <p-sortIcon field="approverReason" /></th>
+          <th class="text-center">{{'Reason' | translate}} </th>
+          <th class="text-center">{{'Approver Reason' | translate}}</th>
           <th pSortableColumn="appliedDate">{{'Applied Date '|translate}} <p-sortIcon field="appliedDate" /></th>
-          <th pSortableColumn="status">{{'Status'|translate}} <p-sortIcon field="status" /></th>
+          <th class="text-center">{{'Status'|translate}}</th>
         </tr>
       </ng-template>
 
@@ -45,7 +45,7 @@
             <ng-template #approverRes>-</ng-template>
           </td>
           <td>{{ remoteRequest.requestedDate | dateformat }}</td>
-          <td>{{ remoteRequest.status }}</td>
+          <td class="text-center">{{ remoteRequest.status }}</td>
         </tr>
       </ng-template>
 

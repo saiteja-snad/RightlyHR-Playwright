@@ -1,5 +1,5 @@
 
-import { Component, OnDestroy, OnInit, TemplateRef, ViewEncapsulation } from '@angular/core';
+import { Component, OnDestroy, OnInit, TemplateRef, ViewEncapsulation, ViewChild } from '@angular/core';
 import { ReportsHeaderComponent } from "../../../shared/reports-tabs/reports-header/reports-header.component";
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { AuthService } from '../../../services/auth.service';
@@ -22,7 +22,7 @@ import { PaginatorModule } from 'primeng/paginator';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { HttpResponse } from '@angular/common/http';
 import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
-import { TableModule } from 'primeng/table';
+import { Table, TableModule } from 'primeng/table';
 @Component({
   selector: 'app-project-effort-report',
   imports: [DatePicker, CommonModule, MultiSelectModule, TableModule, FormsModule, DropdownModule, SelectModule, TranslateModule, ReactiveFormsModule,
@@ -32,6 +32,8 @@ import { TableModule } from 'primeng/table';
   encapsulation: ViewEncapsulation.None,
 })
 export class ProjectEffortReportComponent implements OnInit, OnDestroy {
+  @ViewChild('dt') table!: Table;
+  
   subscription!: Subscription;
   loggedInUser = {} as IemployeeDetails;
   isLoading: boolean = false;
@@ -81,7 +83,7 @@ export class ProjectEffortReportComponent implements OnInit, OnDestroy {
   // Sorting properties
   currentSortField: string = '';
   currentSortOrder: number = 0; // 0 = no sort, 1 = asc, -1 = desc
-  currentUIField: string = ''; // Track the UI field name for visual state
+  currentUIField: string | null = null; // Track the UI field name for visual state
   suppressNextPageChange = false;
   
   // Sort field mapping for server-side sorting
@@ -94,6 +96,54 @@ export class ProjectEffortReportComponent implements OnInit, OnDestroy {
     nonBillableHours: 'nonBillableHours',
     totalHours: 'totalHours'
   };
+
+  // Method to handle column header clicks
+  onColumnSort(field: string): void {
+    const backendField = this.sortFieldMap[field] || field;
+
+    // Handle the three-state sorting: none → asc → desc → none
+    if (this.currentUIField === field) {
+      // Same field clicked - cycle through states
+      if (this.currentSortOrder === 0) {
+        // Currently no sort, set to ascending
+        this.currentSortOrder = 1;
+        this.currentSortField = backendField;
+        this.currentUIField = field;
+      } else if (this.currentSortOrder === 1) {
+        // Currently ascending, set to descending
+        this.currentSortOrder = -1;
+        this.currentSortField = backendField;
+      } else if (this.currentSortOrder === -1) {
+        // Currently descending, reset to no sort
+        this.currentSortField = '';
+        this.currentUIField = null;
+        this.currentSortOrder = 0;
+        
+        // Manually reset PrimeNG table sort state
+        if (this.table) {
+          this.table.reset();
+        }
+        
+        // Reset to first page and reload data without sorting
+        this.page = 1;
+        this.first = 0;
+        this.generateProjectEffortReport(this.page, this.pageSize, true, true);
+        return;
+      }
+    } else {
+      // Different field clicked - start with ascending
+      this.currentUIField = field;
+      this.currentSortField = backendField;
+      this.currentSortOrder = 1; // Always start with ascending for new field
+    }
+
+    // Reset to first page when sorting changes
+    this.page = 1;
+    this.first = 0;
+    
+    // Call generate to refresh data with new sorting
+    this.generateProjectEffortReport(this.page, this.pageSize, true, true);
+  }
   constructor(
     public authService: AuthService,
     private reportsService: ReportsService,
@@ -106,59 +156,9 @@ export class ProjectEffortReportComponent implements OnInit, OnDestroy {
   ) { }
 
   customSort(event: any): void {
-    const field = event.field;
-    const order = event.order;
-
-    // Map UI field to backend field
-    const backendFieldMap: { [key: string]: string } = {
-      client: 'client',
-      project: 'project',
-      phase: 'phase',
-      projectAllocatedHours: 'projectAllocatedHours',
-      billableHours: 'billableHours',
-      nonBillableHours: 'nonBillableHours',
-      totalHours: 'totalHours'
-    };
-
-    const nextSortField = backendFieldMap[field] || field;
-    const nextSortOrder = order === 1 ? 'asc' : 'desc';
-
-    // Prevent duplicate API calls
-    if (
-      this.currentSortField === nextSortField &&
-      ((this.currentSortOrder === 1 && nextSortOrder === 'asc') ||
-        (this.currentSortOrder === -1 && nextSortOrder === 'desc'))
-    ) {
-      return;
-    }
-
-    // Handle the three-state sorting: none → asc → desc → none
-    if (this.currentUIField === field) {
-      // Same field clicked - cycle through states
-      if (this.currentSortOrder === -1) {
-        // Currently descending, reset to no sort
-        this.currentSortField = '';
-        this.currentUIField = '';
-        this.currentSortOrder = 0;
-        // Reset to first page and reload data without sorting
-        this.page = 1;
-        this.first = 0;
-        this.generateProjectEffortReport(this.page, this.pageSize, true, true);
-        return;
-      }
-    }
-
-    // Set new sort state
-    this.currentUIField = field;
-    this.currentSortField = nextSortField;
-    this.currentSortOrder = order;
-
-    // Reset to first page when sorting changes
-    this.page = 1;
-    this.first = 0;
-    
-    // Call generate to refresh data with new sorting
-    this.generateProjectEffortReport(this.page, this.pageSize, true, true);
+    // This method is kept for compatibility but does nothing
+    // We handle sorting through onColumnSort instead
+    return;
   }
 
   ngOnInit(): void {
@@ -211,6 +211,26 @@ export class ProjectEffortReportComponent implements OnInit, OnDestroy {
     this.ProjectEffortReportForm.get('phases')?.setValue(null);
     this.collectionSize = 0;
     this.ProjectEffortReportForm.get('phases')?.disable();
+
+    // Reset sorting arrows and pagination - use null and 0 for proper reset
+    this.currentSortField = '';
+    this.currentUIField = null;
+    this.currentSortOrder = 0;
+    
+    // Reset pagination to first page
+    this.page = 1;
+    this.first = 0;
+    
+    // Reset the table sort state
+    if (this.table) {
+      this.table.reset();
+    }
+    
+    // Prevent suppression of next page change to ensure proper reset
+    this.suppressNextPageChange = false;
+    
+    // Close the offcanvas after clearing
+    this.closeCanvas();
   }
   // called for pagination 
   onRowsChange() {

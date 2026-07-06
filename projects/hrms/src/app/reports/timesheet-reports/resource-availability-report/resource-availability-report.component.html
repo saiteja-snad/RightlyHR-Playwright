@@ -29,47 +29,46 @@
 
   <div class="custom-table-content">
     @if (!isLoading) {
-    <p-table [value]="filteredResourceAvailabilityRecord" 
-             [tableStyle]="{'width': '100%'}" 
-             [customSort]="true" 
-             (onSort)="customSort($event)" 
-             [sortField]="currentUIField" 
+    <p-table #dt
+             [value]="filteredResourceAvailabilityRecord" 
+             [tableStyle]="{'width': '100%'}"
+             [sortField]="currentUIField"
              [sortOrder]="currentSortOrder">
       <ng-template pTemplate="header">
         <tr>
-          <th pSortableColumn="fusionEmpId">
+          <th class="sortable-column" (click)="onColumnSort('fusionEmpId')">
             {{'Employee ID' | translate}}
             <p-sortIcon field="fusionEmpId" />
           </th>
-          <th pSortableColumn="employeeName">
+          <th class="sortable-column" (click)="onColumnSort('employeeName')">
             {{'Employee Name' | translate}}
             <p-sortIcon field="employeeName" />
           </th>
-          <th pSortableColumn="department">
+          <th class="sortable-column" (click)="onColumnSort('department')">
             {{'Department' | translate}}
             <p-sortIcon field="department" />
           </th>
-          <th pSortableColumn="designation">
+          <th class="sortable-column" (click)="onColumnSort('designation')">
             {{'Role' | translate}}
             <p-sortIcon field="designation" />
           </th>
-          <th pSortableColumn="projectAssigned">
+          <th class="sortable-column" (click)="onColumnSort('projectAssigned')">
             {{'Project Assigned' | translate}}
             <p-sortIcon field="projectAssigned" />
           </th>
-          <th pSortableColumn="phaseName">
+          <th class="sortable-column" (click)="onColumnSort('phaseName')">
             {{'Phase/Milestone' | translate}}
             <p-sortIcon field="phaseName" />
           </th>
-          <th pSortableColumn="projectStartDate" class="text-center">
+          <th class="sortable-column text-center" (click)="onColumnSort('projectStartDate')">
             {{'Project Start Date' | translate}}
             <p-sortIcon field="projectStartDate" />
           </th>
-          <th pSortableColumn="projectEndDate" class="text-center">
+          <th class="sortable-column text-center" (click)="onColumnSort('projectEndDate')">
             {{'Project End Date' | translate}}
             <p-sortIcon field="projectEndDate" />
           </th>
-          <th pSortableColumn="availableFrom" class="text-center">
+          <th class="sortable-column text-center" (click)="onColumnSort('availableFrom')">
             {{'Available From' | translate}}
             <p-sortIcon field="availableFrom" />
           </th>

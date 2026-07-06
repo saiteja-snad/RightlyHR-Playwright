@@ -29,39 +29,38 @@
 
   <div class="custom-table-content">
     @if (!isLoading) {
-    <p-table [value]="filteredpendingapprovalRecord" 
-             [tableStyle]="{'width': '100%'}" 
-             [customSort]="true" 
-             (onSort)="customSort($event)" 
-             [sortField]="currentUIField" 
+    <p-table #dt
+             [value]="filteredpendingapprovalRecord" 
+             [tableStyle]="{'width': '100%'}"
+             [sortField]="currentUIField"
              [sortOrder]="currentSortOrder">
       <ng-template pTemplate="header">
         <tr>
-          <th pSortableColumn="client">
+          <th class="sortable-column" (click)="onColumnSort('client')">
             {{'Client Name' | translate}} 
             <p-sortIcon field="client" />
           </th>
-          <th pSortableColumn="project">
+          <th class="sortable-column" (click)="onColumnSort('project')">
             {{'Project Name' | translate}} 
             <p-sortIcon field="project" />
           </th>
-          <th pSortableColumn="phase">
+          <th class="sortable-column" (click)="onColumnSort('phase')">
             {{'Phase/Milestone' | translate}} 
             <p-sortIcon field="phase" />
           </th>
-          <th pSortableColumn="projectAllocatedHours" class="text-center">
+          <th class="sortable-column text-center" (click)="onColumnSort('projectAllocatedHours')">
             {{'Allocated Hrs' | translate}} 
             <p-sortIcon field="projectAllocatedHours" />
           </th>
-          <th pSortableColumn="billableHours" class="text-center">
+          <th class="sortable-column text-center" (click)="onColumnSort('billableHours')">
             {{'Billable Hrs' | translate}} 
             <p-sortIcon field="billableHours" />
           </th>
-          <th pSortableColumn="nonBillableHours" class="text-center">
+          <th class="sortable-column text-center" (click)="onColumnSort('nonBillableHours')">
             {{'Non-Billable Hrs' | translate}} 
             <p-sortIcon field="nonBillableHours" />
           </th>
-          <th pSortableColumn="totalHours" class="text-center">
+          <th class="sortable-column text-center" (click)="onColumnSort('totalHours')">
             {{'Total Logged Hrs' | translate}} 
             <p-sortIcon field="totalHours" />
           </th>

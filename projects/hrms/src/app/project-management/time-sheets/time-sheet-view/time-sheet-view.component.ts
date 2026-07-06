@@ -1193,6 +1193,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   private userClickedNo = false;
   private isModalOpen = false;
   private autoSaveTimeouts = new Map<string, any>();
+  private enterKeyTriggered = false;
 
   // Check if user is trying to clear duration for draft entries
   checkClearDuration(event: KeyboardEvent, dayName: string, rowIndex: number) {
@@ -1223,6 +1224,14 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
 
   //TIME ENTERIY FOR TABLE
   formatTime(event: any, dayName: string, rowIndex: number, duration: string, dayFormNew: AbstractControl | null) {
+    const isBlur = event.type === 'blur';
+    if (isBlur && this.enterKeyTriggered) {
+      this.enterKeyTriggered = false;
+      return;
+    }
+    if (!isBlur) {
+      this.enterKeyTriggered = true;
+    }
     let value = event.target.value;
     value = value?.replace(/\D/g, ''); // digits only
     let formatted = this.getFormattedTime(value);
@@ -1232,19 +1241,16 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     if (control) {
       control.setValue(formatted, { emitEvent: false });
     }
-    // Show dots only if there's a formatted duration value
     if (formatted) {
       this.showDots[rowIndex][dayName] = true;
     } else {
       this.showDots[rowIndex][dayName] = false;
     }
-    // On Enter key or blur: check mandatory fields then open modal or auto-save
-    if (formatted ) {
+    if (formatted) {
       if (approvalStatus !== 'Processed' && approvalStatus !== 'Waiting for Approval' && !this.isModalOpen && !this.isDeleteModalOpen) {
         this.checkMandatoryAndSave(dayForm, dayFormNew, rowIndex, dayName);
       }
     }
-
   }
 
   checkMandatoryAndSave(dayForm: FormGroup, dayFormNew: AbstractControl | null, rowIndex: number, dayName: string) {
@@ -1813,9 +1819,8 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       });
 
       this.dayForm = dayForm;
-      //start//code for the task type
+      //start//code for the task type 
       let taskId = this.dayForm.get('taskId')?.value;
-      console.log('Selected Task ID:', taskId);
       let taskdata = this.alltaskTypes?.find((ele: any) => ele?.id == taskId && ele?.status?.toLowerCase() == 'inactive');
       if (taskdata) {
         const alreadyExists = this.taskType?.some((ele: any) => ele.id == taskdata.id);
@@ -1826,7 +1831,6 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
         this.taskType = this.alltaskTypes?.filter((ele: any) => ele?.status?.toLowerCase() == 'active'
         );
       }
-      // this.getTimesheetMadatorydata(this.dayForm.get('projectId')?.value, this.dayForm.get('phaseId')?.value)
       //end//code for the task type
       // ✅ Normalize date (fix timezone issue)
       const normalizeDate = (date: any) => {
@@ -1836,6 +1840,33 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       };
 
       const entryDate = normalizeDate(this.dayForm.get('entryDate')?.value);
+
+      // Set validators based on TimesheetConfiguration
+      const projectId = this.dayForm.get('projectId')?.value ?? 0;
+      const phaseId = this.dayForm.get('phaseId')?.value ?? 0;
+      const selectedDate = moment(entryDate).format('YYYY-MM-DD');
+      const fieldMap: any = { 'Start Time': 'startTime', 'End Time': 'endTime', 'Task Type': 'taskId', 'Description': 'description' };
+      this.http.getData(`TimesheetConfiguration?projectId=${projectId}&phaseId=${phaseId}`)
+        .pipe(takeUntil(this.destroy$)).subscribe({
+          next: (res: any) => {
+            const items = res?.items || [];
+            const approvalstatus = this.dayForm.get('approvalStatus')?.value;
+            items.forEach((item: any) => {
+              const controlName = fieldMap[item.fieldName];
+              if (!controlName) return;
+              const control = this.dayForm.get(controlName);
+              if (!control) return;
+              control.clearValidators();
+              const effectiveDate = moment(item.effectiveDate).format('YYYY-MM-DD');
+              const isEffective = moment(selectedDate).isSameOrAfter(moment(effectiveDate), 'day');
+              if (isEffective && item.isMandatory &&
+                (approvalstatus?.toLowerCase() === 'draft' || approvalstatus?.toLowerCase() === 'rejected' || approvalstatus?.toLowerCase() === 'not entered')) {
+                control.setValidators([Validators.required]);
+              }
+              control.updateValueAndValidity({ emitEvent: false });
+            });
+          }
+        });
 
       // ✅ 🔥 Get correct resource based on project/client/phase + DATE RANGE
       const matchedResource = this.resourcesArrayList
@@ -1897,7 +1928,6 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
         });
       }
     }
-
   }
 
   recalculateTimes(dayKey: string, startIndex: number) {

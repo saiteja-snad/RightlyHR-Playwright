@@ -1225,14 +1225,11 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   //TIME ENTERIY FOR TABLE
   formatTime(event: any, dayName: string, rowIndex: number, duration: string, dayFormNew: AbstractControl | null) {
     const isBlur = event.type === 'blur';
-    if (isBlur && this.enterKeyTriggered) {
-      this.enterKeyTriggered = false;
+    let value = event.target.value;
+    // If already formatted HH:MM, skip re-processing
+    if (isBlur && /^\d{2}:\d{2}$/.test(value)) {
       return;
     }
-    if (!isBlur) {
-      this.enterKeyTriggered = true;
-    }
-    let value = event.target.value;
     value = value?.replace(/\D/g, ''); // digits only
     let formatted = this.getFormattedTime(value);
     const dayForm = this.projects.at(rowIndex).get(dayName) as FormGroup;
@@ -1241,6 +1238,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     if (control) {
       control.setValue(formatted, { emitEvent: false });
     }
+    event.target.value = formatted;
     if (formatted) {
       this.showDots[rowIndex][dayName] = true;
     } else {

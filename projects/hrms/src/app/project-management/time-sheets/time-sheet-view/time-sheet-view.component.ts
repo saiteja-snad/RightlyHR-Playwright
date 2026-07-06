@@ -647,6 +647,66 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     return Array.from({ length: 7 }, (_, index) => moment(start).add(index, 'days').toDate());
   }
 
+  private getDatesInRange(range: Date[]): Date[] {
+    if (!Array.isArray(range) || range.length < 2 || !range[0] || !range[1]) {
+      return [];
+    }
+
+    const dates: Date[] = [];
+    for (
+      let current = moment(range[0]).startOf('day');
+      current.isSameOrBefore(range[1], 'day');
+      current.add(1, 'day')
+    ) {
+      dates.push(current.toDate());
+    }
+
+    return dates;
+  }
+
+  private buildCloneRangeChunks(sourceDates: Date[], targetDates: Date[]): Array<{
+    sourceRange: Date[];
+    targetDates: Date[];
+    sourceWeekStart: string;
+    targetWeekStart: string;
+  }> {
+    const chunks: Array<{
+      sourceRange: Date[];
+      targetDates: Date[];
+      sourceWeekStart: string;
+      targetWeekStart: string;
+    }> = [];
+
+    let index = 0;
+    while (index < sourceDates.length && index < targetDates.length) {
+      const sourceWeekStart = moment(sourceDates[index]).startOf('isoWeek').format('YYYY-MM-DD');
+      const targetWeekStart = moment(targetDates[index]).startOf('isoWeek').format('YYYY-MM-DD');
+      let endIndex = index;
+
+      while (endIndex + 1 < sourceDates.length && endIndex + 1 < targetDates.length) {
+        const nextSourceWeekStart = moment(sourceDates[endIndex + 1]).startOf('isoWeek').format('YYYY-MM-DD');
+        const nextTargetWeekStart = moment(targetDates[endIndex + 1]).startOf('isoWeek').format('YYYY-MM-DD');
+
+        if (nextSourceWeekStart !== sourceWeekStart || nextTargetWeekStart !== targetWeekStart) {
+          break;
+        }
+
+        endIndex += 1;
+      }
+
+      chunks.push({
+        sourceRange: [sourceDates[index], sourceDates[endIndex]],
+        targetDates: targetDates.slice(index, endIndex + 1),
+        sourceWeekStart,
+        targetWeekStart
+      });
+
+      index = endIndex + 1;
+    }
+
+    return chunks;
+  }
+
   private getWeekOfMonth(date: Date): number {
     return Math.ceil(date.getDate() / 7);
   }
@@ -738,23 +798,28 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
 
     if (cloneMode === 'overwrite') {
       const status = targetCell.approvalStatus?.toLowerCase();
+      this.overrideAttemptedTargetCellCount += 1;
 
-      if (status === 'waiting for approval' || status === 'processed') {
-        this.cloneSkipReason = 'waiting-for-approval';
+      if (status === 'waiting for approval' || status === 'processed' || status === 'approved') {
+        this.overrideSubmittedOrApprovedTargetCellCount += 1;
         return true;
       }
 
-      // Only override rejected entries; skip draft and all others
-      return status !== 'rejected';
+      // Allow override for draft and rejected target entries.
+      return false;
     }
 
     return true;
   }
 
-  private cloneSkipReason: 'phase-closed' | 'waiting-for-approval' | 'no-entries' | null = null;
+  private cloneSkipReason: 'phase-closed' | 'no-entries' | null = null;
+  private overrideAttemptedTargetCellCount = 0;
+  private overrideSubmittedOrApprovedTargetCellCount = 0;
 
   private buildClonePayloads(sourceMatrix: WeekMatrix, targetMatrix: WeekMatrix, cloneMode: string, targetWeekDates: Date[], targetTimesheetId: number, sourceWeekRange: Date[]): any[] {
     this.cloneSkipReason = null;
+    this.overrideAttemptedTargetCellCount = 0;
+    this.overrideSubmittedOrApprovedTargetCellCount = 0;
     const payloads: any[] = [];
     const dayKeys = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
     const copyProjects = this.cloneForm.get('copyProjects')?.value ?? true;
@@ -996,12 +1061,6 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const sourceWeekStartDate = this.getRangeStartDate(sourceWeekRange) || new Date();
-    const sourceWeekStart = moment(sourceWeekStartDate).startOf('isoWeek').format('YYYY-MM-DD');
-    const targetWeekStartDate = this.getRangeStartDate(targetWeekRange) || new Date();
-    const targetWeekStart = moment(targetWeekStartDate).startOf('isoWeek').format('YYYY-MM-DD');
-
-
     const sourceStart = moment(sourceWeekRange[0]).format('YYYY-MM-DD');
     const sourceEnd = moment(sourceWeekRange[1]).format('YYYY-MM-DD');
     const targetStart = moment(targetWeekRange[0]).format('YYYY-MM-DD');
@@ -1013,11 +1072,11 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const sourceDays =
-      moment(sourceWeekRange[1]).diff(moment(sourceWeekRange[0]), 'days') + 1;
+    const sourceRangeDates = this.getDatesInRange(sourceWeekRange);
+    const targetRangeDates = this.getDatesInRange(targetWeekRange);
 
-    const targetDays =
-      moment(targetWeekRange[1]).diff(moment(targetWeekRange[0]), 'days') + 1;
+    const sourceDays = sourceRangeDates.length;
+    const targetDays = targetRangeDates.length;
 
     if (sourceDays !== targetDays) {
       this.cloneErrorMessage =
@@ -1026,17 +1085,15 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const targetWeekDates: Date[] = [];
+    const cloneRangeChunks = this.buildCloneRangeChunks(sourceRangeDates, targetRangeDates);
 
-    for (
-      let d = moment(targetWeekRange[0]);
-      d.isSameOrBefore(targetWeekRange[1], 'day');
-      d.add(1, 'day')
-    ) {
-      targetWeekDates.push(d.toDate());
+    if (!cloneRangeChunks.length) {
+      this.cloneErrorMessage = 'Please select both source and target week ranges.';
+      this.spinnerLoader = false;
+      return;
     }
 
-    console.log('Target Week Dates', targetWeekDates);
+    console.log('Clone Range Chunks', cloneRangeChunks);
 
 
     const cloneMode = this.cloneForm.get('cloneMode')?.value;
@@ -1057,55 +1114,62 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       this.cloneErrorMessage = 'Please select at least one clone option.';
       return;
     }
-
-
-
-    forkJoin([
-      this.http.getData(`v2/Timesheet/week/employee/${this.employeeId}?weekStartDate=${sourceWeekStart}`),
-      this.http.getData(`v2/Timesheet/week/employee/${this.employeeId}?weekStartDate=${targetWeekStart}`)
-    ]).pipe(takeUntil(this.destroy$))
+    forkJoin(
+      cloneRangeChunks.map((chunk) =>
+        forkJoin([
+          this.http.getData(`v2/Timesheet/week/employee/${this.employeeId}?weekStartDate=${chunk.sourceWeekStart}`),
+          this.http.getData(`v2/Timesheet/week/employee/${this.employeeId}?weekStartDate=${chunk.targetWeekStart}`)
+        ])
+      )
+    ).pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: ([sourceRes, targetRes]: any) => {
-          const sourceMatrix = transformV2ResponseToWeekMatrix(sourceRes);
-          const targetMatrix = transformV2ResponseToWeekMatrix(targetRes);
+        next: (chunkResponses: any[]) => {
+          const payloads: any[] = [];
+          let hasPhaseClosedSkip = false;
+          let overrideAttemptedTargetCellCount = 0;
+          let overrideSubmittedOrApprovedTargetCellCount = 0;
 
-          console.log(
-            'Source Matrix Days',
-            sourceMatrix.days.map((d: any) => d.date)
-          );
+          chunkResponses.forEach(([sourceRes, targetRes], index) => {
+            const sourceMatrix = transformV2ResponseToWeekMatrix(sourceRes);
+            const targetMatrix = transformV2ResponseToWeekMatrix(targetRes);
+            const chunk = cloneRangeChunks[index];
 
-          console.log(
-            'Target Matrix Days',
-            targetMatrix.days.map((d: any) => d.date)
-          );
+            console.log(
+              'Source Matrix Days',
+              sourceMatrix.days.map((d: any) => d.date)
+            );
 
-          const payloads = this.buildClonePayloads(sourceMatrix, targetMatrix, cloneMode, targetWeekDates, targetMatrix.metadata.timesheetId || 0, sourceWeekRange);
+            console.log(
+              'Target Matrix Days',
+              targetMatrix.days.map((d: any) => d.date)
+            );
+
+            const chunkPayloads = this.buildClonePayloads(
+              sourceMatrix,
+              targetMatrix,
+              cloneMode,
+              chunk.targetDates,
+              targetMatrix.metadata.timesheetId || 0,
+              chunk.sourceRange
+            );
+
+            payloads.push(...chunkPayloads);
+            hasPhaseClosedSkip = hasPhaseClosedSkip || this.cloneSkipReason === 'phase-closed';
+            overrideAttemptedTargetCellCount += this.overrideAttemptedTargetCellCount;
+            overrideSubmittedOrApprovedTargetCellCount += this.overrideSubmittedOrApprovedTargetCellCount;
+          });
 
           console.log('Clone Payloads', payloads);
           console.log('Payload Count', payloads.length);
 
-          if (cloneMode === 'overwrite') {
-            const targetDateKeys = targetWeekDates.map(d => moment(d).format('YYYY-MM-DDT00:00:00'));
-            const hasLockedTargetCell = targetMatrix.rows.some(row =>
-              targetDateKeys.some(dateKey => {
-                const cell = targetMatrix.cellMap.get(`${row.rowId}_${dateKey}`);
-                const status = cell?.approvalStatus?.toLowerCase();
-                return status === 'waiting for approval' || status === 'processed';
-              })
-            );
-            if (hasLockedTargetCell) {
-              this.spinnerLoader = false;
-              this.conformationPopup.openErrorModal('Timesheet cannot be overridden as the records have already been submitted for approval.');
-              return;
-            }
-          }
-
           if (!payloads.length) {
             this.spinnerLoader = false;
-            const errorMsg = this.cloneSkipReason === 'phase-closed'
+            const errorMsg = hasPhaseClosedSkip
               ? 'Cannot clone timesheet as the selected project or phase is closed.'
-              : this.cloneSkipReason === 'waiting-for-approval'
-              ? 'Timesheet cannot be overridden as the records have already been submitted for approval.'
+              : cloneMode === 'overwrite' &&
+                overrideAttemptedTargetCellCount > 0 &&
+                overrideAttemptedTargetCellCount === overrideSubmittedOrApprovedTargetCellCount
+              ? 'Timesheet cannot be overridden as the records have already been submitted for approval and approved.'
               : 'No entries available to clone from the selected source date range.';
             this.conformationPopup.openErrorModal(errorMsg);
             return;

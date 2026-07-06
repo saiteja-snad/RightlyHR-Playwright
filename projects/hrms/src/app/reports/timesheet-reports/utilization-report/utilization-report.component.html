@@ -30,31 +30,61 @@
 
   <div class="custom-table-content">
     @if (!isLoading) {
-    <table id="leaveReportTable" class="w-100">
-      <thead>
-  
-        <th>{{'Client Name' | translate}}</th>
-        <th>{{'Project Name' | translate}}</th>
-        <th>{{'Employee ID' | translate}}</th>
-        <th>{{'Employee Name' | translate}}</th>
-        <th>{{'Department' | translate}}</th>
-        <th>{{'Phase/Milestone' | translate}}</th>
-        <th class="text-center">{{'Total Allocated Hrs' | translate}}</th>
-        <th class="text-center">{{'Total Logged Hrs' | translate}}</th>
-       <th class="text-center">{{'Billable Hrs' | translate}}</th> 
-       <th class="text-center">{{'Non-Billable Hrs' | translate}}</th> 
-        <th class="text-center">{{'Utilization' | translate}} <i class="bi bi-percent"></i></th>
-      </thead>
-      <tbody>
-        @if (!filteredutilizationRecord || filteredutilizationRecord.length === 0) {
+    <p-table [value]="filteredutilizationRecord" 
+             [tableStyle]="{'width': '100%'}" 
+             [customSort]="true" 
+             (onSort)="customSort($event)" 
+             [sortField]="currentUIField" 
+             [sortOrder]="currentSortOrder">
+      <ng-template pTemplate="header">
         <tr>
-          <td colspan="9" class="text-center">
-            <app-no-data-found />
-          </td>
+          <th pSortableColumn="clientName">
+            {{'Client Name' | translate}}
+            <p-sortIcon field="clientName" />
+          </th>
+          <th pSortableColumn="projectName">
+            {{'Project Name' | translate}}
+            <p-sortIcon field="projectName" />
+          </th>
+          <th pSortableColumn="fusionEmpId">
+            {{'Employee ID' | translate}}
+            <p-sortIcon field="fusionEmpId" />
+          </th>
+          <th pSortableColumn="employeeName">
+            {{'Employee Name' | translate}}
+            <p-sortIcon field="employeeName" />
+          </th>
+          <th pSortableColumn="department">
+            {{'Department' | translate}}
+            <p-sortIcon field="department" />
+          </th>
+          <th pSortableColumn="phaseName">
+            {{'Phase/Milestone' | translate}}
+            <p-sortIcon field="phaseName" />
+          </th>
+          <th pSortableColumn="allocatedHours" class="text-center">
+            {{'Total Allocated Hrs' | translate}}
+            <p-sortIcon field="allocatedHours" />
+          </th>
+          <th pSortableColumn="totalLoggedHours" class="text-center">
+            {{'Total Logged Hrs' | translate}}
+            <p-sortIcon field="totalLoggedHours" />
+          </th>
+          <th pSortableColumn="billableHours" class="text-center">
+            {{'Billable Hrs' | translate}}
+            <p-sortIcon field="billableHours" />
+          </th>
+          <th pSortableColumn="nonBillableHours" class="text-center">
+            {{'Non-Billable Hrs' | translate}}
+            <p-sortIcon field="nonBillableHours" />
+          </th>
+          <th pSortableColumn="utilizationPercent" class="text-center">
+            {{'Utilization' | translate}} <i class="bi bi-percent"></i>
+            <p-sortIcon field="utilizationPercent" />
+          </th>
         </tr>
-        }
-        @else {
-        @for (record of filteredutilizationRecord; track $index) {
+      </ng-template>
+      <ng-template pTemplate="body" let-record>
         <tr>
           <td>{{ record.clientName ?? '-' }}</td>
           <td>{{ record.projectName ?? '-' }}</td>
@@ -67,12 +97,16 @@
           <td class="text-center">{{ record.billableHours ?? '-' }}</td>
           <td class="text-center">{{ record.nonBillableHours ?? '-' }}</td>
           <td class="text-center">{{ record.utilizationPercent ?? '-' }}</td>
-
         </tr>
-        }
-        }
-      </tbody>
-    </table>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="11" class="text-center">
+            <app-no-data-found />
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
     }
     @else{
     <app-data-loader-content />

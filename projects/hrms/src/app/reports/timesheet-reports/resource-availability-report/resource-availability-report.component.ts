@@ -21,9 +21,10 @@ import { PaginatorModule } from 'primeng/paginator';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { HttpResponse } from '@angular/common/http';
 import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
+import { TableModule } from 'primeng/table';
 @Component({
   selector: 'app-resource-availability-report',
-  imports: [DatePicker, CommonModule, MultiSelectModule, FormsModule, DropdownModule, SelectModule, TranslateModule, ReactiveFormsModule,
+  imports: [DatePicker, CommonModule, MultiSelectModule, TableModule, FormsModule, DropdownModule, SelectModule, TranslateModule, ReactiveFormsModule,
     NoDataFoundComponent, PaginatorModule, DataLoaderContentComponent, ReportsHeaderComponent],
   templateUrl: './resource-availability-report.component.html',
   styleUrl: './resource-availability-report.component.scss',
@@ -76,6 +77,25 @@ export class ResourceAvailabilityReportComponent implements OnInit, OnDestroy {
   ];
   today: Date = new Date();
   employeeiddetails: any[] = [];
+  
+  // Sorting properties
+  currentSortField: string = '';
+  currentSortOrder: number = 0; // 0 = no sort, 1 = asc, -1 = desc
+  currentUIField: string = ''; // Track the UI field name for visual state
+  suppressNextPageChange = false;
+  
+  // Sort field mapping for server-side sorting
+  readonly sortFieldMap: Record<string, string> = {
+    fusionEmpId: 'fusionEmpId',
+    employeeName: 'employeeName',
+    department: 'department',
+    designation: 'designation',
+    projectAssigned: 'projectAssigned',
+    phaseName: 'phaseName',
+    projectStartDate: 'projectStartDate',
+    projectEndDate: 'projectEndDate',
+    availableFrom: 'availableFrom'
+  };
   constructor(
     public authService: AuthService,
     private reportsService: ReportsService,
@@ -86,6 +106,64 @@ export class ResourceAvailabilityReportComponent implements OnInit, OnDestroy {
     private conformationPopup: OpenModalService,
     private offcanvasService: NgbOffcanvas,
   ) { }
+
+  customSort(event: any): void {
+    const field = event.field;
+    const order = event.order;
+
+    // Map UI field to backend field
+    const backendFieldMap: { [key: string]: string } = {
+      fusionEmpId: 'fusionEmpId',
+      employeeName: 'employeeName',
+      department: 'department',
+      designation: 'designation',
+      projectAssigned: 'projectAssigned',
+      phaseName: 'phaseName',
+      projectStartDate: 'projectStartDate',
+      projectEndDate: 'projectEndDate',
+      availableFrom: 'availableFrom'
+    };
+
+    const nextSortField = backendFieldMap[field] || field;
+    const nextSortOrder = order === 1 ? 'asc' : 'desc';
+
+    // Prevent duplicate API calls
+    if (
+      this.currentSortField === nextSortField &&
+      ((this.currentSortOrder === 1 && nextSortOrder === 'asc') ||
+        (this.currentSortOrder === -1 && nextSortOrder === 'desc'))
+    ) {
+      return;
+    }
+
+    // Handle the three-state sorting: none → asc → desc → none
+    if (this.currentUIField === field) {
+      // Same field clicked - cycle through states
+      if (this.currentSortOrder === -1) {
+        // Currently descending, reset to no sort
+        this.currentSortField = '';
+        this.currentUIField = '';
+        this.currentSortOrder = 0;
+        // Reset to first page and reload data without sorting
+        this.page = 1;
+        this.first = 0;
+        this.generateResourceAvailabilityReport(this.page, this.pageSize, true, true);
+        return;
+      }
+    }
+
+    // Set new sort state
+    this.currentUIField = field;
+    this.currentSortField = nextSortField;
+    this.currentSortOrder = order;
+
+    // Reset to first page when sorting changes
+    this.page = 1;
+    this.first = 0;
+    
+    // Call generate to refresh data with new sorting
+    this.generateResourceAvailabilityReport(this.page, this.pageSize, true, true);
+  }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
@@ -131,6 +209,24 @@ export class ResourceAvailabilityReportComponent implements OnInit, OnDestroy {
     this.collectionSize = 0;
     this.ResourceAvailabilityReportForm.get('phases')?.disable();
     this.getEmployeeData();
+    
+    // Reset sorting arrows and pagination
+    this.currentSortField = '';
+    this.currentUIField = '';
+    this.currentSortOrder = 0;
+    
+    // Reset pagination to first page
+    this.page = 1;
+    this.first = 0;
+    
+    // Prevent suppression of next page change to ensure proper reset
+    this.suppressNextPageChange = false;
+    
+    // Reset disabled button state
+    this.disableBtn = false;
+    
+    // Close the offcanvas after clearing
+    this.closeCanvas();
   }
     
   toggleFilters(content: TemplateRef<any>) {
@@ -157,6 +253,11 @@ export class ResourceAvailabilityReportComponent implements OnInit, OnDestroy {
   }
 
   onPageChange(event: any) {
+    if (this.suppressNextPageChange && event?.page === 0 && event?.first === 0) {
+      this.suppressNextPageChange = false;
+      return;
+    }
+    this.suppressNextPageChange = false;
     this.page = event.page + 1;
     this.pageSize = event.rows;
     this.first = event.first;
@@ -469,9 +570,13 @@ export class ResourceAvailabilityReportComponent implements OnInit, OnDestroy {
     if (showLoader) this.spinnerLoader1 = true;
     const params = this.buildTimesheetReportParams();
     const queryString = new URLSearchParams(params).toString();
-    this.http.getDataIncludeParams(`TimesheetReport/get?${queryString}&page=${this.page}&pageSize=${this.pageSize}`).pipe(takeUntil(this.destroy$)).subscribe({
+    
+    // Add sorting to the query string
+    const sortQuery = this.currentSortField && this.currentSortOrder !== 0 ? `&Sorts=${this.currentSortField}:${this.currentSortOrder === 1 ? 'asc' : 'desc'}` : '';
+    
+    this.http.getDataIncludeParams(`TimesheetReport/get?${queryString}&page=${this.page}&pageSize=${this.pageSize}${sortQuery}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
-        this.spinnerLoader1 = false;   
+        this.spinnerLoader1 = false;
         this.offcanvasService.dismiss();
         if (res.success && res.data?.items) {
           this.filteredResourceAvailabilityRecord = res.data.items;
@@ -503,7 +608,11 @@ export class ResourceAvailabilityReportComponent implements OnInit, OnDestroy {
     this.spinnerLoader2 = true;
     const params = this.buildTimesheetReportParams();
     const queryString = new URLSearchParams(params).toString();
-    this.http.downloadTimesheetReport(`TimesheetReport/export-report?${queryString}&page=${this.page}&pageSize=${this.pageSize}`).subscribe({
+    
+    // Add sorting to export as well
+    const sortQuery = this.currentSortField && this.currentSortOrder !== 0 ? `&Sorts=${this.currentSortField}:${this.currentSortOrder === 1 ? 'asc' : 'desc'}` : '';
+    
+    this.http.downloadTimesheetReport(`TimesheetReport/export-report?${queryString}&page=${this.page}&pageSize=${this.pageSize}${sortQuery}`).subscribe({
       next: (response: HttpResponse<Blob>) => {
         this.spinnerLoader2 = false;
         // Extract filename from Content-Disposition

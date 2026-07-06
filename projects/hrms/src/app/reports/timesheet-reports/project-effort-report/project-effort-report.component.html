@@ -29,26 +29,45 @@
 
   <div class="custom-table-content">
     @if (!isLoading) {
-    <table id="leaveReportTable" class="w-100">
-      <thead>
-        <th>{{'Client Name'|translate}}</th>
-        <th>{{'Project Name'|translate}}</th>
-        <th>{{'Phase/Milestone'|translate}}</th>
-        <th class="text-center">{{'Allocated Hrs'|translate}}</th>
-        <th class="text-center">{{'Billable Hrs'|translate}}</th>
-        <th class="text-center">{{'Non-Billable Hrs'|translate}}</th>
-        <th class="text-center">{{'Total Logged Hrs'|translate}}</th>
-      </thead>
-      <tbody>
-        @if (!filteredpendingapprovalRecord || filteredpendingapprovalRecord.length === 0) {
+    <p-table [value]="filteredpendingapprovalRecord" 
+             [tableStyle]="{'width': '100%'}" 
+             [customSort]="true" 
+             (onSort)="customSort($event)" 
+             [sortField]="currentUIField" 
+             [sortOrder]="currentSortOrder">
+      <ng-template pTemplate="header">
         <tr>
-          <td colspan="6" class="text-center">
-            <app-no-data-found />
-          </td>
+          <th pSortableColumn="client">
+            {{'Client Name' | translate}} 
+            <p-sortIcon field="client" />
+          </th>
+          <th pSortableColumn="project">
+            {{'Project Name' | translate}} 
+            <p-sortIcon field="project" />
+          </th>
+          <th pSortableColumn="phase">
+            {{'Phase/Milestone' | translate}} 
+            <p-sortIcon field="phase" />
+          </th>
+          <th pSortableColumn="projectAllocatedHours" class="text-center">
+            {{'Allocated Hrs' | translate}} 
+            <p-sortIcon field="projectAllocatedHours" />
+          </th>
+          <th pSortableColumn="billableHours" class="text-center">
+            {{'Billable Hrs' | translate}} 
+            <p-sortIcon field="billableHours" />
+          </th>
+          <th pSortableColumn="nonBillableHours" class="text-center">
+            {{'Non-Billable Hrs' | translate}} 
+            <p-sortIcon field="nonBillableHours" />
+          </th>
+          <th pSortableColumn="totalHours" class="text-center">
+            {{'Total Logged Hrs' | translate}} 
+            <p-sortIcon field="totalHours" />
+          </th>
         </tr>
-        }
-        @else {
-        @for (record of filteredpendingapprovalRecord; track $index) {
+      </ng-template>
+      <ng-template pTemplate="body" let-record>
         <tr>
           <td>{{ record.client ?? '-' }}</td>
           <td>{{ record.project ?? '-' }}</td>
@@ -58,10 +77,15 @@
           <td class="text-center">{{ record.nonBillableHours ?? '-' }}</td>
           <td class="text-center">{{ record.totalHours ?? '-' }}</td>
         </tr>
-        }
-        }
-      </tbody>
-    </table>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="7" class="text-center">
+            <app-no-data-found />
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
     }
     @else{
     <app-data-loader-content />

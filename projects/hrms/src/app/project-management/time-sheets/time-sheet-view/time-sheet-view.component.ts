@@ -9,7 +9,7 @@ import { AuthService } from '../../../services/auth.service';
 import { HttpService } from '../../../services/http.service';
 import { AccordionModule } from 'primeng/accordion';
 import { OpenModalService } from '../../../services/open-modal.service';
-import { Subject, Subscription, takeUntil, forkJoin } from 'rxjs';
+import { Subject, Subscription, takeUntil, forkJoin, of, switchMap, from, mergeMap, toArray } from 'rxjs';
 import { IResourceDetail, TimesheetResponse } from '../../../timesheetmodel';
 import { InfoIconComponent } from '../../../icons/info-icon/info-icon.component';
 import { ConfirmationIconComponent } from '../../../icons/confirmation-icon/confirmation-icon.component';
@@ -113,6 +113,11 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   cloneTargetWeekLabel = '';
   cloneErrorMessage: string | null = null;
   targetAllDaysBlockedError = false;
+  isOverwriteDisabled = false;
+  overwriteDisabledMessage: string | null = null;
+  isOverwriteEligibilityLoading = false;
+  private overwriteEligibilityTimeout: any;
+  private overwriteEligibilityRequestToken = 0;
   private readonly baseMenuItems = [
     { key: 'import', label: 'Import', icon: 'file-import-icon', command: () => this.navigateToImport() },
     { key: 'export', label: 'Export', icon: 'file-export-icon', command: () => this.navigateToExport() },
@@ -562,6 +567,14 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     const defaultTargetStart = this.start ? this.start : moment().startOf('isoWeek').toDate();
     const defaultTargetEnd = this.start ? this.end : moment().endOf('isoWeek').toDate();
 
+    this.isOverwriteDisabled = false;
+    this.overwriteDisabledMessage = null;
+    this.isOverwriteEligibilityLoading = false;
+    if (this.overwriteEligibilityTimeout) {
+      clearTimeout(this.overwriteEligibilityTimeout);
+      this.overwriteEligibilityTimeout = null;
+    }
+
     this.cloneForm = this.fb.group({
       sourceWeekDateRange: [null, Validators.required],
       targetWeekDateRange: [null, Validators.required],
@@ -574,6 +587,14 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       copyPhases: [{ value: true, disabled: true }]
 
     });
+
+    this.cloneForm.get('cloneMode')?.valueChanges
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((mode: string) => {
+        if (mode === 'overwrite' && (this.isOverwriteDisabled || this.isOverwriteEligibilityLoading)) {
+          this.cloneForm.patchValue({ cloneMode: 'merge' }, { emitEvent: false });
+        }
+      });
 
     this.cloneForm.get('sourceWeekDateRange')?.valueChanges
       .pipe(takeUntil(this.destroy$))
@@ -934,9 +955,14 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
         // if (!shouldCloneSourceCell) {
         //   return;
         // }
-        const sourceStatus = (sourceCell.approvalStatus || '').toLowerCase();
+        const sourceStatusRaw = (sourceCell.approvalStatus || '').toLowerCase();
+        const hasSourceContent =
+          !!sourceCell.entryId ||
+          !!sourceCell.durationSeconds ||
+          !!sourceCell.description ||
+          !!sourceCell.taskId;
+        const sourceStatus = sourceStatusRaw || (hasSourceContent ? 'draft' : '');
 
-        // Allow Draft, Waiting for Approval, Approved (Processed) as source
         const isAllowedSource =
           sourceStatus === 'draft' ||
           sourceStatus === 'waiting for approval' ||
@@ -1024,6 +1050,14 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
         }
 
         const entryDate = moment(targetWeekDates[index]).format('YYYY-MM-DD');
+        const isNoClientProject = !!sourceRow.isNoClientProject;
+        const clientId = isNoClientProject
+          ? 0
+          : (copyClients ? (sourceRow.clientId ?? null) : (targetRow.clientId ?? null));
+        const projectId = isNoClientProject ? 0 : (targetRow.projectId ?? null);
+        const phaseId = isNoClientProject
+          ? null
+          : (copyPhases ? (sourceRow.phaseId ?? null) : (targetRow.phaseId ?? null));
         const payload: any = {
           // entryId: targetCell?.entryId || 0,
           entryId: cloneMode === 'overwrite'
@@ -1032,23 +1066,20 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
           employeeId: this.employeeId || 0,
           entryDate,
           approvalStatus: 'draft',
-          clientId: copyClients
-            ? sourceRow.clientId || null
-            : targetRow.clientId || null,
-          projectId: targetRow.projectId || null,
-          phaseId: copyPhases
-            ? sourceRow.phaseId || null
-            : targetRow.phaseId || null,
+          clientId,
+          projectId,
+          phaseId,
           timesheetId: targetTimesheetId || 0,
           isOverride: false,
-          totalDurationSeconds: copyLoggedHours ? sourceCell.durationSeconds || 0 : 0,
-          description: copyDescription ? sourceCell.description || '' : '',
-          isBillable: sourceCell.isBillable || false,
+          totalDurationSeconds: copyLoggedHours ? (sourceCell.durationSeconds ?? 0) : 0,
+          description: copyDescription ? (sourceCell.description ?? '') : '',
+          isBillable: sourceCell.isBillable ?? false,
           moduleId: 30,
-          resourceId: targetRow.resourceId || sourceRow.resourceId || null,
+          resourceId: targetRow.resourceId ?? sourceRow.resourceId ?? null,
           startTime: copyLoggedHours ? this.toTimeSpan(sourceCell.startTime) : null,
           endTime: copyLoggedHours ? this.toTimeSpan(sourceCell.endTime) : null,
-          taskId: copyTask ? sourceCell.taskId || null : null,
+          taskId: copyTask ? (sourceCell.taskId ?? null) : null,
+          isNoClientProject,
           isClone: true
         };
 
@@ -1158,6 +1189,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
           let allSourceRangesHaveNoEntries = cloneRangeChunks.length > 0;
           let overrideAttemptedTargetCellCount = 0;
           let overrideSubmittedOrApprovedTargetCellCount = 0;
+          const deleteEntryIdsByTimesheetId = new Map<number, number[]>();
 
           chunkResponses.forEach(([sourceRes, targetRes], index) => {
             const sourceMatrix = transformV2ResponseToWeekMatrix(sourceRes);
@@ -1190,6 +1222,15 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
             hasPhaseClosedSkip = hasPhaseClosedSkip || this.cloneSkipReason === 'phase-closed';
             overrideAttemptedTargetCellCount += this.overrideAttemptedTargetCellCount;
             overrideSubmittedOrApprovedTargetCellCount += this.overrideSubmittedOrApprovedTargetCellCount;
+
+            if (cloneMode === 'overwrite') {
+              const timesheetId = targetMatrix.metadata.timesheetId || 0;
+              const deletableEntryIds = this.collectDeletableTargetEntryIds(targetMatrix, chunk.targetDates);
+              if (timesheetId && deletableEntryIds.length) {
+                const existing = deleteEntryIdsByTimesheetId.get(timesheetId) ?? [];
+                deleteEntryIdsByTimesheetId.set(timesheetId, existing.concat(deletableEntryIds));
+              }
+            }
           });
 
           console.log('Clone Payloads', payloads);
@@ -1210,8 +1251,48 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
             return;
           }
 
-          forkJoin(payloads.map((payload) => this.http.postdata('v2/Timesheet/save-or-update', payload)))
-            .pipe(takeUntil(this.destroy$))
+          const saveRequests$ = from(payloads).pipe(
+            mergeMap((payload) => this.http.postdata('v2/Timesheet/save-or-update', payload), 5),
+            toArray()
+          );
+
+          const entryIdsKeptByTimesheetId = new Map<number, Set<number>>();
+          if (cloneMode === 'overwrite') {
+            for (const payload of payloads) {
+              const timesheetId = payload?.timesheetId || 0;
+              const entryId = payload?.entryId || 0;
+              if (!timesheetId || !entryId) {
+                continue;
+              }
+              const set = entryIdsKeptByTimesheetId.get(timesheetId) ?? new Set<number>();
+              set.add(entryId);
+              entryIdsKeptByTimesheetId.set(timesheetId, set);
+            }
+          }
+
+          const deletePayloads =
+            cloneMode === 'overwrite' && deleteEntryIdsByTimesheetId.size
+              ? Array.from(deleteEntryIdsByTimesheetId.entries())
+                .map(([timesheetId, entryIds]) => {
+                  const keep = entryIdsKeptByTimesheetId.get(timesheetId) ?? new Set<number>();
+                  const toDelete = Array.from(new Set(entryIds)).filter((id) => !keep.has(id));
+                  return { timesheetId, entryIds: toDelete };
+                })
+                .filter((item) => item.timesheetId && item.entryIds.length > 0)
+              : [];
+
+          const deleteRequests$ = deletePayloads.length
+            ? from(deletePayloads).pipe(
+              mergeMap((payload) => this.http.DeleteData('Timesheet/delete-entries', payload), 2),
+              toArray()
+            )
+            : of(null);
+
+          saveRequests$
+            .pipe(
+              takeUntil(this.destroy$),
+              switchMap(() => deleteRequests$)
+            )
             .subscribe({
               next: () => {
                 this.spinnerLoader = false;
@@ -2991,6 +3072,150 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
 
   }
 
+  private scheduleOverwriteEligibilityCheck(targetRange: Date[] | null): void {
+    if (this.overwriteEligibilityTimeout) {
+      clearTimeout(this.overwriteEligibilityTimeout);
+    }
+
+    if (!Array.isArray(targetRange) || targetRange.length < 2 || !targetRange[0] || !targetRange[1]) {
+      this.isOverwriteEligibilityLoading = false;
+      this.isOverwriteDisabled = false;
+      this.overwriteDisabledMessage = null;
+      return;
+    }
+
+    const token = ++this.overwriteEligibilityRequestToken;
+    this.isOverwriteEligibilityLoading = true;
+    this.overwriteEligibilityTimeout = setTimeout(() => {
+      this.evaluateOverwriteEligibility(targetRange, token);
+    }, 250);
+  }
+
+  private evaluateOverwriteEligibility(targetRange: Date[], token: number): void {
+    if (token !== this.overwriteEligibilityRequestToken) {
+      return;
+    }
+
+    const employeeId = this.employeeId;
+    if (!employeeId) {
+      this.isOverwriteEligibilityLoading = false;
+      this.isOverwriteDisabled = false;
+      this.overwriteDisabledMessage = null;
+      return;
+    }
+
+    const rangeStart = moment(targetRange[0]).startOf('day');
+    const rangeEnd = moment(targetRange[1]).startOf('day');
+    if (!rangeStart.isValid() || !rangeEnd.isValid() || rangeStart.isAfter(rangeEnd, 'day')) {
+      this.isOverwriteEligibilityLoading = false;
+      this.isOverwriteDisabled = false;
+      this.overwriteDisabledMessage = null;
+      return;
+    }
+
+    const weekStartDates: string[] = [];
+    for (
+      let cursor = rangeStart.clone().startOf('isoWeek');
+      cursor.isSameOrBefore(rangeEnd, 'day');
+      cursor.add(1, 'week')
+    ) {
+      weekStartDates.push(cursor.clone().startOf('isoWeek').format('YYYY-MM-DD'));
+    }
+
+    const uniqueWeekStartDates = Array.from(new Set(weekStartDates));
+    const targetDateKeys = new Set(
+      this.getDatesInRange(targetRange).map((d) => moment(d).format('YYYY-MM-DDT00:00:00'))
+    );
+
+    forkJoin(
+      uniqueWeekStartDates.map((weekStartDate) =>
+        this.http.getData(`v2/Timesheet/week/employee/${employeeId}?weekStartDate=${weekStartDate}`)
+      )
+    )
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (responses: any[]) => {
+          if (token !== this.overwriteEligibilityRequestToken) {
+            return;
+          }
+
+          const hasLockedTargetEntries = (responses || []).some((res) => {
+            const matrix = transformV2ResponseToWeekMatrix(res);
+            return this.targetRangeHasLockedEntries(matrix, targetDateKeys);
+          });
+
+          this.isOverwriteDisabled = hasLockedTargetEntries;
+          this.overwriteDisabledMessage = hasLockedTargetEntries
+            ? "Approved or Waiting for Approval entries will not be overridden."
+            : null;
+
+          if (hasLockedTargetEntries && this.cloneForm?.get('cloneMode')?.value === 'overwrite') {
+            this.cloneForm.patchValue({ cloneMode: 'merge' });
+          }
+
+          this.isOverwriteEligibilityLoading = false;
+        },
+        error: () => {
+          if (token !== this.overwriteEligibilityRequestToken) {
+            return;
+          }
+          this.isOverwriteEligibilityLoading = false;
+          this.isOverwriteDisabled = false;
+          this.overwriteDisabledMessage = null;
+        },
+      });
+  }
+
+  private targetRangeHasLockedEntries(targetMatrix: WeekMatrix, targetDateKeys: Set<string>): boolean {
+    if (!targetDateKeys.size) {
+      return false;
+    }
+
+    for (const day of targetMatrix.days) {
+      if (!targetDateKeys.has(day.date)) {
+        continue;
+      }
+
+      for (const row of targetMatrix.rows) {
+        const cell = targetMatrix.cellMap.get(`${row.rowId}_${day.date}`);
+        if (!cell?.entryId) {
+          continue;
+        }
+        const status = (cell.approvalStatus || '').toLowerCase();
+        if (status === 'waiting for approval' || status === 'processed' || status === 'approved') {
+          return true;
+        }
+      }
+    }
+
+    return false;
+  }
+
+  private collectDeletableTargetEntryIds(targetMatrix: WeekMatrix, targetDates: Date[]): number[] {
+    const targetDateKeys = new Set(targetDates.map((d) => moment(d).format('YYYY-MM-DDT00:00:00')));
+    if (!targetDateKeys.size) {
+      return [];
+    }
+
+    const entryIds: number[] = [];
+    for (const row of targetMatrix.rows) {
+      for (const dateKey of targetDateKeys) {
+        const cell = targetMatrix.cellMap.get(`${row.rowId}_${dateKey}`);
+        const entryId = cell?.entryId;
+        if (!entryId) {
+          continue;
+        }
+        const status = (cell.approvalStatus || '').toLowerCase();
+        if (status === 'waiting for approval' || status === 'processed' || status === 'approved') {
+          continue;
+        }
+        entryIds.push(entryId);
+      }
+    }
+
+    return Array.from(new Set(entryIds));
+  }
+
   testMenu(event: any, menu: any) {
     console.log('Actions Clicked');
     console.log(this.bulkOperationMenuItems);
@@ -3003,6 +3228,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     this.targetAllDaysBlockedError = false;
 
     const targetRange = this.cloneForm?.get('targetWeekDateRange')?.value as Date[] | null;
+    this.scheduleOverwriteEligibilityCheck(targetRange);
     if (!targetRange || targetRange.length < 1 || !targetRange[0]) return;
 
     const start = moment(targetRange[0]).startOf('day');

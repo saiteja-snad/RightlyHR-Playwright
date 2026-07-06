@@ -773,7 +773,8 @@
                         </label>
                     </div>
                     <div class="strategy-option mt-3">
-                        <input type="radio" formControlName="cloneMode" value="overwrite" class="form-check-input">
+                        <input type="radio" formControlName="cloneMode" value="overwrite" class="form-check-input"
+                            [attr.disabled]="(isOverwriteDisabled || isOverwriteEligibilityLoading) ? true : null">
                         <label class="clone-strategy-card">
                             <div class="d-flex align-items-center gap-2">
                                 <div class="strategy-icon"><i class="bi bi-arrow-repeat"></i></div>
@@ -783,6 +784,10 @@
                                 </div>
                             </div>
                         </label>
+                    </div>
+                    <div class="info-box mt-3" *ngIf="isOverwriteDisabled && overwriteDisabledMessage">
+                        <i class="bi bi-info-circle-fill"></i>
+                        {{ overwriteDisabledMessage }}
                     </div>
                 </div>
 

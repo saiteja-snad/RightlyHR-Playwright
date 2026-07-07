@@ -165,6 +165,10 @@ export class PendingExpensesComponent implements OnInit, OnDestroy {
           val1 = a.totalExpenseAmount;
           val2 = b.totalExpenseAmount;
           break;
+        case 'approver':
+          val1 = a.pendingApprovalHeader?.approver_Name;
+          val2 = b.pendingApprovalHeader?.approver_Name;
+          break;
         case 'status':
           val1 = a.status;
           val2 = b.status;

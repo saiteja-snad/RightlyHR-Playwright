@@ -31,10 +31,13 @@
             {{'Total Amount' | translate}}
             <p-sortIcon field="totalExpenseAmount"></p-sortIcon>
           </th>
-          <th>{{'Approver' | translate}}</th>
-          <th pSortableColumn="status">
+          <th pSortableColumn="approver">
+            {{'Approver' | translate}}
+            <p-sortIcon field="approver"></p-sortIcon>
+          </th>
+          <th>
             {{'Status' | translate}}
-            <p-sortIcon field="status"></p-sortIcon>
+            
           </th>
           <th class="text-center">{{'View Details' | translate}}</th>
         </tr>

@@ -37,27 +37,26 @@
             (ngModelChange)="onSearchTextChange()" aria-label="Username" aria-describedby="basic-addon1">
     </div>
 
-    @if(!dataload){
     <div class="custom-table-content w-100">
-        <table class="w-100">
-            <thead>
+        @if(!dataload){
+        <p-table #reviewCycleTable [value]="filteredDetails" [customSort]="true" (onSort)="customSort($event)" [sortField]="currentUIField" [sortOrder]="currentSortOrder">
+            <ng-template pTemplate="header">
                 <tr>
-                    <th>{{'Review Cycle Name'|translate}}</th>
-                    <th>{{'Department'|translate}}</th>
+                    <th pSortableColumn="reviewCycleName">{{'Review Cycle Name'|translate}} <p-sortIcon field="reviewCycleName" /></th>
+                    <th pSortableColumn="department">{{'Department'|translate}} <p-sortIcon field="department" /></th>
                     <th>{{'Team' |translate}}</th>
                     <th>{{'Location'|translate}}</th>
                     <th>{{'Sub Location'|translate}}</th>
-                    <th>{{'Status'|translate}}</th>
+                    <th pSortableColumn="status">{{'Status'|translate}} <p-sortIcon field="status" /></th>
                     @if(rbac.allowedToAccess('Hold.view') || rbac.allowedToAccess('Resume.view') ||
                     rbac.allowedToAccess('Update.view') ||
                     rbac.allowedToAccess('View.view') || rbac.allowedToAccess('Initiate.view')){
                     <th class="text-center">{{"Action" |translate }}</th>
                     }
                 </tr>
-            </thead>
-            <tbody>
-                @if(filteredDetails.length > 0){
-                <tr *ngFor="let cycle of filteredDetails">
+            </ng-template>
+            <ng-template pTemplate="body" let-cycle>
+                <tr>
                     <td>{{ cycle.reviewCycleName }}</td>
                     <td>{{ getNamesAsString(cycle.departments, 'departments') }}</td>
                     <td>{{ getNamesAsString(cycle.subdepartments, 'subDepartmentNames') }}</td>
@@ -116,11 +115,14 @@
                     </td>
                     }
                 </tr>
-                }@else {
-                <app-no-data-found />
-                }
-            </tbody>
-        </table>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+                <tr><td colspan="7"><app-no-data-found /></td></tr>
+            </ng-template>
+        </p-table>
+        }@else{
+        <app-data-loader-content />
+        }
     </div>
 
     @if(filteredDetails.length > 0){
@@ -140,11 +142,6 @@
             <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"
                 (onPageChange)="onPageChange($event)"></p-paginator>
         </div>
-    </div>
-    }
-    }@else{
-    <div class="custom-compoent-data-loader">
-        <app-data-loader-content />
     </div>
     }
 </div>

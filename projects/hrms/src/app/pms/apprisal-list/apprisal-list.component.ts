@@ -11,6 +11,7 @@ import { NgbModal, NgbModalRef, NgbPopoverModule } from '@ng-bootstrap/ng-bootst
 import { OpenModalService } from '../../services/open-modal.service';
 import { EmployeeQueryParams, IReviewCycleEmployee } from './review-cycle-emp.model';
 import { PaginatorModule } from 'primeng/paginator';
+import { Table, TableModule } from 'primeng/table';
 import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
 import { DataLoaderContentComponent } from '../../shared/data-loader-content/data-loader-content.component';
 import { RbacService } from '../../services/rbac.service';
@@ -22,7 +23,7 @@ import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-inf
 
 @Component({
   selector: 'app-apprisal-list',
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, SelectModule, TranslateModule, MultiSelectModule, PaginatorModule, NoDataFoundComponent, DataLoaderContentComponent, ModuleInformationComponent, NgbPopoverModule, PmsTabsComponent, ModuleInfoIconComponent],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, SelectModule, TranslateModule, MultiSelectModule, PaginatorModule, TableModule, NoDataFoundComponent, DataLoaderContentComponent, ModuleInformationComponent, NgbPopoverModule, PmsTabsComponent, ModuleInfoIconComponent],
   templateUrl: './apprisal-list.component.html',
   styleUrl: './apprisal-list.component.scss',
   encapsulation: ViewEncapsulation.None,
@@ -84,6 +85,9 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
   rows = 50;
   collectionSize = 0;
   first = 0;
+  currentSortField = '';
+  currentSortOrder = 0;
+  currentUIField = '';
   options = [
     { label: 50, value: 50 },
     { label: 100, value: 100 },
@@ -94,6 +98,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
   @ViewChild('loading') loading: any;
   @ViewChild('addEmployee') addEmployee: any;
   @ViewChild('confirmation') confirmation: any;
+  @ViewChild('appraisalTable') appraisalTable!: Table;
   destroy$: Subject<boolean> = new Subject<boolean>();
 
   ngOnInit() {
@@ -463,6 +468,56 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
     } else {
       this.getEmployeesOfTheReviewCycle({ reviewcycleid: this.selectedReviewCycle.id });
     }
+  }
+
+  customSort(event: any): void {
+    const field = event.field;
+    const order = event.order;
+    const nextSortOrder = order === 1 ? 'asc' : 'desc';
+
+    if (
+      this.currentUIField === field &&
+      ((this.currentSortOrder === 1 && nextSortOrder === 'asc') ||
+        (this.currentSortOrder === -1 && nextSortOrder === 'desc'))
+    ) {
+      return;
+    }
+
+    if (this.currentUIField === field && this.currentSortOrder === -1) {
+      this.currentSortField = '';
+      this.currentUIField = '';
+      this.currentSortOrder = 0;
+      if (this.appraisalTable) {
+        this.appraisalTable.sortField = '';
+        this.appraisalTable.sortOrder = 0;
+      }
+      this.page = 1;
+      this.first = 0;
+      this.getEmployeesOfTheReviewCycle(this.buildSortParams());
+      return;
+    }
+
+    this.currentUIField = field;
+    this.currentSortField = field;
+    this.currentSortOrder = order;
+    this.page = 1;
+    this.first = 0;
+    this.getEmployeesOfTheReviewCycle(this.buildSortParams());
+  }
+
+  buildSortParams(): EmployeeQueryParams {
+    const params: EmployeeQueryParams = {
+      page: this.page,
+      pageSize: this.pageSize,
+      reviewcycleid: this.reviewCycleID
+    };
+    if (this.searchText) params.searchQuery = this.searchText;
+    if (this.promoted) params.promotion = this.promoted.value;
+    if (this.currentSortField && this.currentSortOrder !== 0) {
+      params.sortBy = this.currentSortField;
+      params.sortOrder = this.currentSortOrder === 1 ? 'asc' : 'desc';
+    }
+    return params;
   }
 
   getEmployeesOfTheReviewCycle(params: any): void {

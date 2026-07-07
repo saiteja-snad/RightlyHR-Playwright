@@ -58,6 +58,8 @@ export interface IReviewCycleEmployee {
     sublocation?: any;
     department?: any;
     subdepartment?: any;
+    sortBy?: string;
+    sortOrder?: string;
   }
   
   

@@ -27,14 +27,14 @@
               <a type="button" [ngbPopover]="reason">
                 <app-info-icon />
               </a>
-              <ng-template #reason>
+              <ng-template #reason> 
                 <p class="mb-0">{{remoteRequest.requestedComments}}</p>
               </ng-template>
             </div>
             <ng-template #res>-</ng-template>
           </td>
           <td>{{ remoteRequest.requestedDate | dateformat }}</td>
-          <td>{{ remoteRequest.status }}</td>
+          <td class="text-center">{{ remoteRequest.status }}</td>
         </tr>
       </ng-template>
 

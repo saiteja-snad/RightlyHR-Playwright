@@ -783,7 +783,9 @@ setAvaillableSearchCount(count: number) {
     searchparam?: string,
     employeeId?: string,
     name?: string,
-    formStatus?: string
+    formStatus?: string,
+    sortBy?: string,
+    sortOrder?: string
   ): Observable<any> {
     let params = new HttpParams()
       .set('pageNumber', pagenum.toString())
@@ -792,6 +794,8 @@ setAvaillableSearchCount(count: number) {
     if (employeeId) params = params.set('employeeIds', employeeId);
     if (name) params = params.set('name', name);
     if (formStatus) params = params.set('formstatus', formStatus);
+    if (sortBy) params = params.set('sortBy', sortBy);
+    if (sortOrder) params = params.set('sortOrder', sortOrder);
     return this.http.get<any>(`${this.ApiUrl}${url}`, { params });
   }
 
@@ -802,7 +806,9 @@ setAvaillableSearchCount(count: number) {
     searchparam?: string,
     employeeId?: string,
     name?: string,
-    formStatus?: string
+    formStatus?: string,
+    sortBy?: string,
+    sortOrder?: string
   ): Observable<any> {
     let params = new HttpParams()
       .set('pageNumber', pagenum.toString())
@@ -811,6 +817,8 @@ setAvaillableSearchCount(count: number) {
     if (employeeId) params = params.set('assessorempid', employeeId);
     if (name) params = params.set('name', name);
     if (formStatus) params = params.set('formstatus', formStatus);
+    if (sortBy) params = params.set('sortBy', sortBy);
+    if (sortOrder) params = params.set('sortOrder', sortOrder);
     return this.http.get<any>(`${this.ApiUrl}${url}`, { params });
   }
 

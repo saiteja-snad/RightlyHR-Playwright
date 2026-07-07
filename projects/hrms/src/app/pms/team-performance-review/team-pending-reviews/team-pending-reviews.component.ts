@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
@@ -10,11 +10,13 @@ import { PaginatorModule } from 'primeng/paginator';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { RbacService } from '../../../services/rbac.service';
+import { Table, TableModule } from 'primeng/table';
 @Component({
   selector: 'app-team-pending-reviews',
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, NoDataFoundComponent, DataLoaderContentComponent, PaginatorModule, TranslateModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, NoDataFoundComponent, DataLoaderContentComponent, PaginatorModule, TranslateModule, TableModule],
   templateUrl: './team-pending-reviews.component.html',
-  styleUrl: './team-pending-reviews.component.scss'
+  styleUrl: './team-pending-reviews.component.scss',
+  encapsulation: ViewEncapsulation.None
 })
 
 export class TeamPendingReviewsComponent implements OnInit, OnDestroy {
@@ -37,6 +39,10 @@ export class TeamPendingReviewsComponent implements OnInit, OnDestroy {
   rows = 50;
   collectionSize = 0;
   first = 0;
+  currentSortField = '';
+  currentSortOrder = 0;
+  currentUIField = '';
+  @ViewChild('teamPendingReviewsTable') teamPendingReviewsTable!: Table;
   options = [
     { label: 50, value: 50 },
     { label: 100, value: 100 },
@@ -54,8 +60,10 @@ export class TeamPendingReviewsComponent implements OnInit, OnDestroy {
 
   fetchReviewCycles() {
     this.dataload = true
+    const sortBy = this.currentSortField && this.currentSortOrder !== 0 ? this.currentSortField : undefined;
+    const sortOrder = this.currentSortOrder === 1 ? 'asc' : this.currentSortOrder === -1 ? 'desc' : undefined;
     this.http.getReviewCyclesteam('reviewCycleHeader/getallperformances', this.page, this.pageSize, this.searchQuery, 
-      this.employeeId, 'Team Manager,Reporting Manager,HR', 'Pending,Draft').subscribe({
+      this.employeeId, 'Team Manager,Reporting Manager,HR', 'Pending,Draft', sortBy, sortOrder).subscribe({
         next: (data: any) => {
           this.reviewCycles = data.items;
           this.totalRecords = data.totalCount || 0;
@@ -203,6 +211,41 @@ export class TeamPendingReviewsComponent implements OnInit, OnDestroy {
   onPageSizeChange(newPageSize: number) {
     this.pageSize = newPageSize;
     this.rows = newPageSize; 
+    this.page = 1;
+    this.first = 0;
+    this.fetchReviewCycles();
+  }
+
+  customSort(event: any): void {
+    const field = event.field;
+    const order = event.order;
+    const nextSortOrder = order === 1 ? 'asc' : 'desc';
+
+    if (
+      this.currentUIField === field &&
+      ((this.currentSortOrder === 1 && nextSortOrder === 'asc') ||
+        (this.currentSortOrder === -1 && nextSortOrder === 'desc'))
+    ) {
+      return;
+    }
+
+    if (this.currentUIField === field && this.currentSortOrder === -1) {
+      this.currentSortField = '';
+      this.currentUIField = '';
+      this.currentSortOrder = 0;
+      if (this.teamPendingReviewsTable) {
+        this.teamPendingReviewsTable.sortField = '';
+        this.teamPendingReviewsTable.sortOrder = 0;
+      }
+      this.page = 1;
+      this.first = 0;
+      this.fetchReviewCycles();
+      return;
+    }
+
+    this.currentUIField = field;
+    this.currentSortField = field;
+    this.currentSortOrder = order;
     this.page = 1;
     this.first = 0;
     this.fetchReviewCycles();

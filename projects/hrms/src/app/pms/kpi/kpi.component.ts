@@ -30,6 +30,7 @@ import { filter } from 'rxjs/operators';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { TooltipModule } from 'primeng/tooltip';
 import { SelectModule } from 'primeng/select';
+import { Table, TableModule } from 'primeng/table';
 import { InfoIconComponent } from '../../icons/info-icon/info-icon.component';
 import { MODULE_INFOS } from '../../shared/modules-info';
 import { ApplicablePoliciesTriggerComponent } from '../../shared/policies/applicable-policies-trigger/applicable-policies-trigger.component';
@@ -56,6 +57,7 @@ import { APPLICABLE_POLICIES_KEYS } from '../../shared/policies/policy-visibilit
     TooltipModule,
     InfoIconComponent,
     ApplicablePoliciesTriggerComponent,
+    TableModule,
   ],
   templateUrl: './kpi.component.html',
   styleUrl: './kpi.component.scss',
@@ -119,6 +121,10 @@ export class KpiComponent implements OnInit, OnDestroy {
 
   showOnlyInactive = false;
   inactiveButtonLabel = "Inactive KPI's";
+  currentSortField = '';
+  currentSortOrder = 0;
+  currentUIField = '';
+  @ViewChild('kpiTable') kpiTable!: Table;
   @ViewChild('statusConfirmModal') statusConfirmModal!: any;
   @ViewChild('cancelConfirmModal') cancelConfirmModal!: any;
 
@@ -201,10 +207,15 @@ toggleInactiveFilter(): void {
 
 
   loadKpiList() {
+    const sortBy = this.currentSortField && this.currentSortOrder !== 0 ? this.currentSortField : undefined;
+    const sortOrder = this.currentSortOrder === 1 ? 'asc' : this.currentSortOrder === -1 ? 'desc' : undefined;
+
     const params: any = {
-      pageNumber: 1,
-      pageSize: 1000,
+      pageNumber: this.page,
+      pageSize: this.rows,
       ...(this.searchText && { search: this.searchText }),
+      ...(sortBy && { sortBy }),
+      ...(sortOrder && { sortOrder }),
     };
 
     this.dataload = true;
@@ -213,6 +224,9 @@ toggleInactiveFilter(): void {
       .subscribe({
         next: (res: any) => {
           if (res.success) {
+            this.filteredDetails = res.data || [];
+            this.collectionSize = res.totalCount ?? res.data?.length ?? 0;
+            this.kpiList = res.data || [];
             this.allKpiRecords = res.data || [];
 
             let filtered: any[];
@@ -264,6 +278,41 @@ toggleInactiveFilter(): void {
 
   onPageSizeChange(newSize: number) {
     this.rows = Number(newSize);
+    this.page = 1;
+    this.first = 0;
+    this.loadKpiList();
+  }
+
+  customSort(event: any): void {
+    const field = event.field;
+    const order = event.order;
+    const nextSortOrder = order === 1 ? 'asc' : 'desc';
+
+    if (
+      this.currentUIField === field &&
+      ((this.currentSortOrder === 1 && nextSortOrder === 'asc') ||
+        (this.currentSortOrder === -1 && nextSortOrder === 'desc'))
+    ) {
+      return;
+    }
+
+    if (this.currentUIField === field && this.currentSortOrder === -1) {
+      this.currentSortField = '';
+      this.currentUIField = '';
+      this.currentSortOrder = 0;
+      if (this.kpiTable) {
+        this.kpiTable.sortField = '';
+        this.kpiTable.sortOrder = 0;
+      }
+      this.page = 1;
+      this.first = 0;
+      this.loadKpiList();
+      return;
+    }
+
+    this.currentUIField = field;
+    this.currentSortField = field;
+    this.currentSortOrder = order;
     this.page = 1;
     this.first = 0;
     this.loadKpiList();

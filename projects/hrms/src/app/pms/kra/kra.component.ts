@@ -34,6 +34,7 @@ import { MODULE_INFOS } from '../../shared/modules-info';
 import { Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { SelectModule } from 'primeng/select';
+import { Table, TableModule } from 'primeng/table';
 import { InfoIconComponent } from '../../icons/info-icon/info-icon.component';
 import { DomSanitizer, SafeResourceUrl, SafeUrl } from '@angular/platform-browser';
 import { environment } from '../../../environments/environment';
@@ -62,6 +63,7 @@ import { APPLICABLE_POLICIES_KEYS } from '../../shared/policies/policy-visibilit
     InfoIconComponent,
     DocumentViewIconComponent,
     ApplicablePoliciesTriggerComponent,
+    TableModule,
   ],
   templateUrl: './kra.component.html',
   styleUrl: './kra.component.scss',
@@ -99,8 +101,12 @@ export class KraComponent implements OnInit, OnDestroy {
 
   isEditMode = false;
   currentEditingKraId: number | null = null;
-  kraFilterApplied: boolean = false; // button text initially "Inactive KRA"
-  showInactiveFilter: boolean = false; // page load: show all data
+  kraFilterApplied: boolean = false;
+  showInactiveFilter: boolean = false;
+  currentSortField = '';
+  currentSortOrder = 0;
+  currentUIField = '';
+  @ViewChild('kraTable') kraTable!: Table;
 
   kraForm: any;
   get f() {
@@ -239,10 +245,15 @@ existingDocumentUrl: string = '';
   }
 
   loadKraList() {
+    const sortBy = this.currentSortField && this.currentSortOrder !== 0 ? this.currentSortField : undefined;
+    const sortOrder = this.currentSortOrder === 1 ? 'asc' : this.currentSortOrder === -1 ? 'desc' : undefined;
+
     const params: any = {
-      pageNumber: 1,
-      pageSize:1000 ,
+      pageNumber: this.page,
+      pageSize: this.rows,
       ...(this.searchText && { search: this.searchText }),
+      ...(sortBy && { sortBy }),
+      ...(sortOrder && { sortOrder }),
     };
 
     this.dataload = true;
@@ -252,6 +263,9 @@ existingDocumentUrl: string = '';
       .subscribe({
         next: (res: any) => {
           if (res.success) {
+            this.filteredDetails = res.data || [];
+            this.collectionSize = res.totalCount ?? res.data?.length ?? 0;
+            this.kraList = res.data || [];
             this.allKraRecords = res.data || [];
 
             let filtered: any[];
@@ -322,6 +336,41 @@ existingDocumentUrl: string = '';
 
   onPageSizeChange(newSize: number) {
     this.rows = Number(newSize);
+    this.page = 1;
+    this.first = 0;
+    this.loadKraList();
+  }
+
+  customSort(event: any): void {
+    const field = event.field;
+    const order = event.order;
+    const nextSortOrder = order === 1 ? 'asc' : 'desc';
+
+    if (
+      this.currentUIField === field &&
+      ((this.currentSortOrder === 1 && nextSortOrder === 'asc') ||
+        (this.currentSortOrder === -1 && nextSortOrder === 'desc'))
+    ) {
+      return;
+    }
+
+    if (this.currentUIField === field && this.currentSortOrder === -1) {
+      this.currentSortField = '';
+      this.currentUIField = '';
+      this.currentSortOrder = 0;
+      if (this.kraTable) {
+        this.kraTable.sortField = '';
+        this.kraTable.sortOrder = 0;
+      }
+      this.page = 1;
+      this.first = 0;
+      this.loadKraList();
+      return;
+    }
+
+    this.currentUIField = field;
+    this.currentSortField = field;
+    this.currentSortOrder = order;
     this.page = 1;
     this.first = 0;
     this.loadKraList();

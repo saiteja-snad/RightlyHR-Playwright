@@ -24,6 +24,7 @@ import { InfoIconComponent } from '../../../icons/info-icon/info-icon.component'
 import { IProjectAuthority } from '../../../settings/project-management-configurations/models/project-authority.modal';
 import { Project } from '../../../Interfaces/projects.model';
 import { ProjectsSideTabsforPhasesComponent } from '../../../shared/project-management-tabs/projects-side-tabsfor-phases/projects-side-tabsfor-phases.component';
+import { Table, TableModule } from 'primeng/table';
 
 @Component({
   selector: 'app-project-phases',
@@ -39,6 +40,7 @@ import { ProjectsSideTabsforPhasesComponent } from '../../../shared/project-mana
     NgbPopover,
     InfoIconComponent,
     ProjectsSideTabsforPhasesComponent,
+    TableModule,
   ],
   templateUrl: './project-phases.component.html',
   styleUrl: './project-phases.component.scss',
@@ -71,6 +73,12 @@ export class ProjectPhasesComponent implements OnInit, OnDestroy {
   selectedPhaseDateRange: { startDate: string | null; endDate: string | null } =
     { startDate: null, endDate: null };
   selectedAuthorityIds: number[] = [];
+
+  // Sorting properties
+  @ViewChild('phasesTable') phasesTable!: Table;
+  currentSortField: string = '';
+  currentSortOrder: number = 0;
+  originalPhaseData: IPhases[] = [];
 
   @ViewChild('reasonModal') reasonModal!: any;
   @ViewChild('extendModal') extendModal!: any;
@@ -225,10 +233,12 @@ export class ProjectPhasesComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (data: any) => {
           this.phaseData = data.data || [];
+          this.originalPhaseData = [...this.phaseData];
           this.loading = false;
         },
         error: () => {
           this.phaseData = [];
+          this.originalPhaseData = [];
           this.loading = false;
         },
       });
@@ -813,6 +823,67 @@ export class ProjectPhasesComponent implements OnInit, OnDestroy {
 
     // For all other statuses, use default Titlecase behavior
     return normalized.replace(/\b\w/g, (char: any) => char.toUpperCase());
+  }
+
+  customSort(event: any): void {
+    const field = event.field;
+
+    // Track current sort state for the clicked field
+    if (this.currentSortField === field) {
+      // Same field clicked - cycle through: asc (1) -> desc (-1) -> reset (0)
+      if (this.currentSortOrder === 1) {
+        // Currently ascending, change to descending
+        this.currentSortOrder = event.order;
+      } else if (this.currentSortOrder === -1) {
+        // Currently descending, reset to original order
+        this.phaseData = [...this.originalPhaseData];
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        if (this.phasesTable) {
+          this.phasesTable.reset();
+        }
+        return;
+      }
+    } else {
+      // New field clicked - start with ascending
+      this.currentSortField = field;
+      this.currentSortOrder = event.order;
+    }
+
+    event.data.sort((a: any, b: any) => {
+      let val1: any;
+      let val2: any;
+
+      if (field === 'project.projectName') {
+        val1 = a?.project?.projectName || '';
+        val2 = b?.project?.projectName || '';
+        return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+      } else if (field === 'phaseName') {
+        val1 = a?.phaseName || '';
+        val2 = b?.phaseName || '';
+        return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+      } else if (field === 'startDate' || field === 'endDate' || field === 'kickoffDate' || field === 'effectiveDate') {
+        val1 = new Date(a[field] ?? 0).getTime();
+        val2 = new Date(b[field] ?? 0).getTime();
+        return event.order * (val1 - val2);
+      } else if (field === 'allocatedHours') {
+        val1 = parseFloat(a?.allocatedHours) || 0;
+        val2 = parseFloat(b?.allocatedHours) || 0;
+        return event.order * (val1 - val2);
+      } else if (field === 'pendingApprovalAuthority.name') {
+        val1 = a?.pendingApprovalAuthority?.name || '';
+        val2 = b?.pendingApprovalAuthority?.name || '';
+        return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+      } else if (field === 'status') {
+        val1 = this.formatStatus(a?.status) || '';
+        val2 = this.formatStatus(b?.status) || '';
+        return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+      } else {
+        val1 = String(a[field] ?? '').trim();
+        val2 = String(b[field] ?? '').trim();
+        return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+      }
+    });
   }
 
   ngOnDestroy(): void {

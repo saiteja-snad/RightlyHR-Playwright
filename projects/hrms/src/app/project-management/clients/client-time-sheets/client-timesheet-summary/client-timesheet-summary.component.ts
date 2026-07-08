@@ -20,6 +20,7 @@ import { combineLatest } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import dayjs from 'dayjs'
 import { ModuleInfoIconComponent } from '../../../../icons/module-info-icon/module-info-icon.component';
+import { TableModule } from 'primeng/table';
 @Component({
   selector: 'app-client-timesheet-summary',
   imports: [
@@ -32,7 +33,8 @@ import { ModuleInfoIconComponent } from '../../../../icons/module-info-icon/modu
     ChartModule,
     NoDataFoundComponent,
     SkeletonModule,
-    ModuleInfoIconComponent
+    ModuleInfoIconComponent,
+    TableModule
   ],
   templateUrl: './client-timesheet-summary.component.html',
   styleUrl: './client-timesheet-summary.component.scss',

@@ -23,15 +23,18 @@ import { ClientResourceTabComponent } from '../../../shared/project-management-t
 import { ProfileIconComponent } from "../../../icons/profile-icon/profile-icon.component";
 import { environment } from '../../../../environments/environment';
 import { PaginatorModule } from 'primeng/paginator';
+import { TableModule } from 'primeng/table';
+import { Table } from 'primeng/table';
 @Component({
   selector: 'app-client-resource-inactive',
   imports: [CommonModule, ReactiveFormsModule, FormsModule, ClientResourceTabComponent, TranslateModule, NgbPopover, DataLoaderContentComponent, PaginatorModule,
-    Select, DateformatPipe, NoDataFoundComponent, ConfirmationIconComponent, InfoIconComponent, ProfileIconComponent],
+    Select, DateformatPipe, NoDataFoundComponent, ConfirmationIconComponent, InfoIconComponent, ProfileIconComponent, TableModule],
   templateUrl: './client-resource-inactive.component.html',
   styleUrl: './client-resource-inactive.component.scss'
 })
 
 export class ClientResourceInactiveComponent {
+  @ViewChild('clientResourceInactiveTable') clientResourceInactiveTable!: Table;
   searchValue: string = '';
   resourcesData = [] as IResource[];
 
@@ -94,6 +97,12 @@ export class ClientResourceInactiveComponent {
     { label: 150, value: 150 },
     { label: 200, value: 200 }
   ];
+  
+  // Sorting
+  currentSortField: string = '';
+  currentSortOrder: number = 0; // 0 = no sort, 1 = asc, -1 = desc
+  currentUIField: string = ''; // Track the UI field name for visual state
+  
   constructor(private fb: FormBuilder, private modalService: NgbModal, public formValidation: FormValidationsService,
     private http: HttpService, public rbac: RbacService, private router: Router, private route: ActivatedRoute,
     private conformationPopup: OpenModalService) { }
@@ -220,6 +229,13 @@ export class ClientResourceInactiveComponent {
     if (this.selectedAuthorityIds.length > 0) {
       url += `&timesheetApprovalAuthorityIds=${this.selectedAuthorityIds.join(',')}`;
     }
+    
+    // Add sorting parameters
+    if (this.currentSortField && this.currentSortOrder !== 0) {
+      const sortOrder = this.currentSortOrder === 1 ? 'asc' : 'desc';
+      url += `&sortBy=${this.currentSortField}&sortOrder=${sortOrder}`;
+    }
+
     this.subscription = this.http.getDataIncludeParams(url).subscribe({
       next: (data: any) => {
         this.collectionSize = data?.pagination?.totalRecords || 0;
@@ -236,6 +252,7 @@ export class ClientResourceInactiveComponent {
           }));
         } else {
           this.resourcesData = [];
+          this.loading = false;
         }
       },
       error: (reason: any) => {
@@ -877,10 +894,84 @@ export class ClientResourceInactiveComponent {
   }
 
   onSearchChange() {
-    clearTimeout(this.searchTimeout);
+    // Clear previous timeout
+    if (this.searchTimeout) {
+      clearTimeout(this.searchTimeout);
+    }
+
+    // Reset sorting when searching
+    this.currentSortField = '';
+    this.currentUIField = '';
+    this.currentSortOrder = 0;
+    if (this.clientResourceInactiveTable) {
+      this.clientResourceInactiveTable.reset();
+    }
+
+    // Debounce search to avoid too many API calls
     this.searchTimeout = setTimeout(() => {
+      this.page = 1;
+      this.first = 0;
       this.getResourceData(this.clientID, this.searchValue);
-    }, 300);
+    }, 500);
+  }
+
+  customSort(event: any): void {
+    const field = event.field;
+    const order = event.order;
+
+    // Map UI field to backend field
+    const backendFieldMap: { [key: string]: string } = {
+      employeeName: 'employeeName',
+      role: 'role',
+      phaseName: 'phaseName',
+      projectCode: 'projectCode',
+      projectName: 'projectName',
+      startDate: 'startDate',
+      endDate: 'endDate',
+      allocatedHours: 'allocatedHours',
+      timesheetApprovalAuthority: 'timesheetApprovalAuthority',
+      status: 'status',
+      statusEffectiveDate: 'statusEffectiveDate'
+    };
+
+    const nextSortField = backendFieldMap[field] || field;
+    const nextSortOrder = order === 1 ? 'asc' : 'desc';
+
+    // Prevent duplicate API calls
+    if (
+      this.currentSortField === nextSortField &&
+      ((this.currentSortOrder === 1 && nextSortOrder === 'asc') ||
+        (this.currentSortOrder === -1 && nextSortOrder === 'desc'))
+    ) {
+      return;
+    }
+
+    // Handle the three-state sorting: none → asc → desc → none
+    if (this.currentUIField === field) {
+      // Same field clicked - cycle through states
+      if (this.currentSortOrder === -1) {
+        // Currently descending, reset to no sort
+        this.currentSortField = '';
+        this.currentUIField = '';
+        this.currentSortOrder = 0;
+        if (this.clientResourceInactiveTable) {
+          this.clientResourceInactiveTable.sortField = '';
+          this.clientResourceInactiveTable.sortOrder = 0;
+        }
+        this.page = 1;
+        this.first = 0;
+        this.getResourceData(this.clientID, this.searchValue);
+        return;
+      }
+    }
+
+    // Set new sort state
+    this.currentUIField = field;
+    this.currentSortField = nextSortField;
+    this.currentSortOrder = order;
+    this.page = 1;
+    this.first = 0;
+    this.getResourceData(this.clientID, this.searchValue);
   }
 
   private searchTimeout: any;

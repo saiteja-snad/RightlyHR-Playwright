@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
@@ -18,10 +18,11 @@ import { IEAV } from '../../../settings/project-management-configurations/models
 import { DownloadIconComponent } from "../../../icons/download-icon/download-icon.component";
 import { FormValidationsService } from '../../../services/form-validations.service';
 import { ProjectDocumentsSideTabsComponent } from "../../../shared/project-management-tabs/project-documents-side-tabs/project-documents-side-tabs.component";
+import { Table, TableModule } from 'primeng/table';
 @Component({
   selector: 'app-project-documents',
   imports: [TranslateModule, CommonModule, ReactiveFormsModule, DateformatPipe, NoDataFoundComponent, DataLoaderContentComponent,
-    ConfirmationIconComponent, Select, DownloadIconComponent, ProjectDocumentsSideTabsComponent],
+    ConfirmationIconComponent, Select, DownloadIconComponent, ProjectDocumentsSideTabsComponent, TableModule],
   templateUrl: './project-documents.component.html',
   styleUrl: './project-documents.component.scss'
 })
@@ -43,6 +44,12 @@ export class ProjectDocumentsComponent implements OnInit {
   fileErrorMessage: string = '';
   inactiveStatus: any;
   selecteddata: any;
+
+  // Sorting properties
+  @ViewChild('documentsTable') documentsTable!: Table;
+  currentSortField: string = '';
+  currentSortOrder: number = 0;
+  originalDocumentData: any[] = [];
 
   constructor(private fb: FormBuilder, private authService: AuthService, private route: ActivatedRoute, public formValidations: FormValidationsService,
     private http: HttpService, private modalService: NgbModal, private conformationPopup: OpenModalService, public rbac: RbacService) { }
@@ -114,9 +121,12 @@ export class ProjectDocumentsComponent implements OnInit {
       next: (data: any) => {
         this.loading = false;
         this.documentdata = data.data;
+        this.originalDocumentData = [...this.documentdata];
       },
       error: (reason: any) => {
         this.loading = false;
+        this.documentdata = [];
+        this.originalDocumentData = [];
       }
     });
   }
@@ -358,6 +368,56 @@ export class ProjectDocumentsComponent implements OnInit {
 
   close() {
     this.modalService.dismissAll();
+  }
+
+  customSort(event: any): void {
+    const field = event.field;
+
+    // Track current sort state for the clicked field
+    if (this.currentSortField === field) {
+      // Same field clicked - cycle through: asc (1) -> desc (-1) -> reset (0)
+      if (this.currentSortOrder === 1) {
+        // Currently ascending, change to descending
+        this.currentSortOrder = event.order;
+      } else if (this.currentSortOrder === -1) {
+        // Currently descending, reset to original order
+        this.documentdata = [...this.originalDocumentData];
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        if (this.documentsTable) {
+          this.documentsTable.reset();
+        }
+        return;
+      }
+    } else {
+      // New field clicked - start with ascending
+      this.currentSortField = field;
+      this.currentSortOrder = event.order;
+    }
+
+    event.data.sort((a: any, b: any) => {
+      let val1: any;
+      let val2: any;
+
+      if (field === 'documentType') {
+        val1 = a?.documentType || '';
+        val2 = b?.documentType || '';
+        return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+      } else if (field === 'createdAt') {
+        val1 = new Date(a?.createdAt ?? 0).getTime();
+        val2 = new Date(b?.createdAt ?? 0).getTime();
+        return event.order * (val1 - val2);
+      } else if (field === 'attachment') {
+        // Extract filename from URL for sorting
+        val1 = a?.documentUrl ? a.documentUrl.split('/').pop() : '';
+        val2 = b?.documentUrl ? b.documentUrl.split('/').pop() : '';
+        return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+      } else {
+        val1 = String(a[field] ?? '').trim();
+        val2 = String(b[field] ?? '').trim();
+        return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+      }
+    });
   }
 
   ngOnDestroy() {

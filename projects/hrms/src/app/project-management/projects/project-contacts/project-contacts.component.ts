@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { FormValidationsService } from '../../../services/form-validations.service';
@@ -14,10 +14,11 @@ import { NgxCountriesDropdownModule } from 'ngx-countries-dropdown';
 import parsePhoneNumberFromString from 'libphonenumber-js';
 import { RbacService } from '../../../services/rbac.service';
 import { ConfirmationIconComponent } from '../../../icons/confirmation-icon/confirmation-icon.component';
+import { Table, TableModule } from 'primeng/table';
 @Component({
   selector: 'app-project-contacts',
   imports: [CommonModule, ReactiveFormsModule, TranslateModule, NgxCountriesDropdownModule,
-    DataLoaderContentComponent, NoDataFoundComponent, ConfirmationIconComponent],
+    DataLoaderContentComponent, NoDataFoundComponent, ConfirmationIconComponent, TableModule],
   templateUrl: './project-contacts.component.html',
   styleUrl: './project-contacts.component.scss'
 })
@@ -41,6 +42,12 @@ export class ProjectContactsComponent implements OnInit {
   };
   inactiveStatus: any;
   destroy$: Subject<boolean> = new Subject<boolean>();
+
+  // Sorting properties
+  @ViewChild('contactsTable') contactsTable!: Table;
+  currentSortField: string = '';
+  currentSortOrder: number = 0;
+  originalContactData: any[] = [];
 
   constructor(private modalService: NgbModal, private route: ActivatedRoute, private http: HttpService,
     public formValidation: FormValidationsService, private conformationPopup: OpenModalService,
@@ -91,11 +98,13 @@ export class ProjectContactsComponent implements OnInit {
     this.http.getData(`ProjectManagementContact?status=Active&entityType=Project&entityRefId=${projectId}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.contactData = res?.data ?? [];
+        this.originalContactData = [...this.contactData];
         this.loading = false;
       },
       error: (err) => {
         this.loading = false;
         this.contactData = [];
+        this.originalContactData = [];
         console.error('Error fetching projects data:', err);
         this.contactData = [];
       },
@@ -260,6 +269,65 @@ export class ProjectContactsComponent implements OnInit {
 
   close() {
     this.modalService.dismissAll();
+  }
+
+  customSort(event: any): void {
+    const field = event.field;
+
+    // Track current sort state for the clicked field
+    if (this.currentSortField === field) {
+      // Same field clicked - cycle through: asc (1) -> desc (-1) -> reset (0)
+      if (this.currentSortOrder === 1) {
+        // Currently ascending, change to descending
+        this.currentSortOrder = event.order;
+      } else if (this.currentSortOrder === -1) {
+        // Currently descending, reset to original order
+        this.contactData = [...this.originalContactData];
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        if (this.contactsTable) {
+          this.contactsTable.reset();
+        }
+        return;
+      }
+    } else {
+      // New field clicked - start with ascending
+      this.currentSortField = field;
+      this.currentSortOrder = event.order;
+    }
+
+    event.data.sort((a: any, b: any) => {
+      let val1: any;
+      let val2: any;
+
+      if (field === 'name') {
+        val1 = a?.name || '';
+        val2 = b?.name || '';
+        return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+      } else if (field === 'email') {
+        val1 = a?.email || '';
+        val2 = b?.email || '';
+        return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+      } else if (field === 'phoneNumber') {
+        // Combine dial code and phone number for sorting
+        val1 = `${a?.phoneDialCode || ''} ${a?.phoneNumber || ''}`.trim();
+        val2 = `${b?.phoneDialCode || ''} ${b?.phoneNumber || ''}`.trim();
+        return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+      } else if (field === 'role') {
+        val1 = a?.role || '';
+        val2 = b?.role || '';
+        return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+      } else if (field === 'primaryContact') {
+        // Sort boolean values - true comes first when ascending
+        val1 = a?.primaryContact === true || a?.primaryContact === 'true' ? 1 : 0;
+        val2 = b?.primaryContact === true || b?.primaryContact === 'true' ? 1 : 0;
+        return event.order * (val2 - val1); // Reverse order so true comes first
+      } else {
+        val1 = String(a[field] ?? '').trim();
+        val2 = String(b[field] ?? '').trim();
+        return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+      }
+    });
   }
 
   ngOnDestroy(): void {

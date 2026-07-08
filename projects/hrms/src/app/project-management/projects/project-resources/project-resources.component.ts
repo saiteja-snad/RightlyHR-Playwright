@@ -6,7 +6,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { combineLatest, Subject, Subscription, takeUntil, debounceTime, distinctUntilChanged } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
 import { IResource } from '../../../Interfaces/project-management/resources.model';
-import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
+import { DateformatPipe } from '../../../pipes/dateformat.pipe';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Project } from '../../../Interfaces/projects.model';

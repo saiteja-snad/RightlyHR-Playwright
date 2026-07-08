@@ -6,7 +6,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { Table, TableModule } from 'primeng/table';
 import { Subject, takeUntil } from 'rxjs';
 import { IJob } from '../../../Interfaces/letters-model';
-import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
+import { DateformatPipe } from '../../../pipes/dateformat.pipe';
 import { HttpService } from '../../../services/http.service';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { ConfirmationIconComponent } from '../../../icons/confirmation-icon/confirmation-icon.component';

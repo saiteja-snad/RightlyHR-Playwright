@@ -34,6 +34,7 @@ import { Select } from 'primeng/select';
 import { MultiSelectModule } from 'primeng/multiselect';
 @Component({
   selector: 'app-project-view',
+  standalone: true,
   imports: [
     ProjectManagementModuleInfoComponent,
     DatePicker,
@@ -47,6 +48,7 @@ import { MultiSelectModule } from 'primeng/multiselect';
     PhasesCreationComponent,
     MultiSelectModule,
     FormsModule,
+    ResourceCreationComponent,
   ],
   templateUrl: './project-view.component.html',
   styleUrl: './project-view.component.scss',
@@ -89,9 +91,14 @@ export class ProjectViewComponent implements OnInit {
   selectedDepartmentIds: number[] = [];
   selectedRoleIds: number[] = [];
   selectedPhaseIds: number[] = [];
-   currentdata = new Date();
-   defaultSummaryStartDate!: Date;
+  currentdata = new Date();
+  defaultSummaryStartDate!: Date;
   defaultSummaryEndDate!: Date;
+  tempSelectedEmployees: any[] = [];
+  selectedEmployees: any[] = [];
+  projectName: string = 'Admin'; // or dynamic
+  projectType: string = 'Implementation';
+
   constructor(
     private router: Router,
     private fb: FormBuilder,
@@ -100,7 +107,7 @@ export class ProjectViewComponent implements OnInit {
     private route: ActivatedRoute,
     public rbac: RbacService,
     private http: HttpService,
-    private offcanvasService: NgbOffcanvas
+    private offcanvasService: NgbOffcanvas,
   ) {}
 
   ngOnInit() {
@@ -134,19 +141,20 @@ export class ProjectViewComponent implements OnInit {
     this.router.events
       .pipe(
         filter((event) => event instanceof NavigationEnd),
-        takeUntil(this.destroy$)
+        takeUntil(this.destroy$),
       )
       .subscribe(() => {
+        this.showAddResource = false;
         if (
           this.router.url.includes(
-            '/project-management/projects/details/timesheet'
+            '/project-management/projects/details/timesheet',
           )
         ) {
           this.resetForm();
         }
         if (
           this.isActive(
-            '/project-management/projects/details/inactive-phases'
+            '/project-management/projects/details/inactive-phases',
           ) ||
           this.isActive('/project-management/projects/details/active-phases')
         ) {
@@ -157,12 +165,23 @@ export class ProjectViewComponent implements OnInit {
         if (
           this.isActive('/project-management/projects/details/resources') ||
           this.isActive(
-            '/project-management/projects/details/inactive-resources'
+            '/project-management/projects/details/inactive-resources',
           )
         ) {
           this.clearResourceFilters();
         }
       });
+  }
+
+  openAddResource() {
+    this.router.navigate(
+      ['/project-management/projects/add-resources'],
+      { queryParams: { id: this.projectId } },
+      );
+  }
+
+  onAddClick() {
+    this.selectedEmployees = [...this.tempSelectedEmployees];
   }
 
   loadAuthorities() {
@@ -281,7 +300,7 @@ export class ProjectViewComponent implements OnInit {
     if (!this.projectId) return;
     this.http
       .getData(
-        `ProjectResource/timesheet-approval-authorities?entityType=Project&entityRefId=${this.projectId}`
+        `ProjectResource/timesheet-approval-authorities?entityType=Project&entityRefId=${this.projectId}`,
       )
       .subscribe({
         next: (res: any) => {
@@ -289,7 +308,7 @@ export class ProjectViewComponent implements OnInit {
             (item: any) => ({
               label: `${item.fusionEmployeeId} - ${item.name}`,
               value: item.id,
-            })
+            }),
           );
         },
         error: () => {
@@ -371,39 +390,40 @@ export class ProjectViewComponent implements OnInit {
     });
     // detect when user selects date range
   }
-// setDefaultmounth() {
-//   const startOfMonth = dayjs().startOf('month').toDate();
-//   const endOfMonth = dayjs().endOf('month').toDate();
-//   this.datepickerFormData.patchValue({
-//     dateRange: [startOfMonth, endOfMonth],
-//   });
-//   this.currentdata = new Date();
-//   // Convert project start date properly to Date object
-//   const formattedStartDate = dayjs(this.projectstartdate).toDate();
-//   this.datepickerFormDataforsummary?.patchValue({
-//     dateRange: [formattedStartDate,  this.currentdata],
-//   });
-// }
+  // setDefaultmounth() {
+  //   const startOfMonth = dayjs().startOf('month').toDate();
+  //   const endOfMonth = dayjs().endOf('month').toDate();
+  //   this.datepickerFormData.patchValue({
+  //     dateRange: [startOfMonth, endOfMonth],
+  //   });
+  //   this.currentdata = new Date();
+  //   // Convert project start date properly to Date object
+  //   const formattedStartDate = dayjs(this.projectstartdate).toDate();
+  //   this.datepickerFormDataforsummary?.patchValue({
+  //     dateRange: [formattedStartDate,  this.currentdata],
+  //   });
+  // }
 
-setDefaultmounth() {
-  if (!this.projectstartdate) return;
-  //  1. Set current month for Timesheet view
-  const startOfMonth = dayjs().startOf('month').toDate();
-  const endOfMonth = dayjs().endOf('month').toDate();
-  this.datepickerFormData?.patchValue({
-    dateRange: [startOfMonth, endOfMonth],
-  });
-  //  2. Set summary default (projectStartDate → today)
-  this.currentdata = new Date();
-  this.defaultSummaryStartDate = dayjs(this.projectstartdate).startOf('day').toDate();
-  this.defaultSummaryEndDate = dayjs(this.currentdata).startOf('day').toDate();
-  this.datepickerFormDataforsummary?.patchValue({
-    dateRange: [
-      this.defaultSummaryStartDate,
-      this.defaultSummaryEndDate
-    ],
-  });
-}
+  setDefaultmounth() {
+    if (!this.projectstartdate) return;
+    //  1. Set current month for Timesheet view
+    const startOfMonth = dayjs().startOf('month').toDate();
+    const endOfMonth = dayjs().endOf('month').toDate();
+    this.datepickerFormData?.patchValue({
+      dateRange: [startOfMonth, endOfMonth],
+    });
+    //  2. Set summary default (projectStartDate → today)
+    this.currentdata = new Date();
+    this.defaultSummaryStartDate = dayjs(this.projectstartdate)
+      .startOf('day')
+      .toDate();
+    this.defaultSummaryEndDate = dayjs(this.currentdata)
+      .startOf('day')
+      .toDate();
+    this.datepickerFormDataforsummary?.patchValue({
+      dateRange: [this.defaultSummaryStartDate, this.defaultSummaryEndDate],
+    });
+  }
 
   // Create a single contact form group
   createContactGroup(): FormGroup {
@@ -446,18 +466,25 @@ setDefaultmounth() {
     });
   }
 
+  // openResourceModal() {
+  //   this.modalService.open(ResourceCreationComponent, {
+  //     centered: true,
+  //     size: 'xl',
+  //     backdrop: 'static',
+  //     windowClass: 'custom-xl-modal',
+  //   });
+  // }
+
+  showAddResource = false;
+
   openResourceModal() {
-    this.modalService.open(ResourceCreationComponent, {
-      centered: true,
-      size: 'lg',
-      backdrop: 'static',
-    });
+    this.showAddResource = true;
   }
 
   openPhaseModal() {
     this.modalService.open(PhasesCreationComponent, {
       centered: true,
-      size: 'lg',
+      size: 'xl',
       backdrop: 'static',
     });
   }
@@ -494,7 +521,7 @@ setDefaultmounth() {
   getAllresourcesData() {
     this.http
       .getData(
-        `ProjectResource?status=Active&entityType=project&entityRefId=${this.projectId}&isDistinct=true`
+        `ProjectResource?status=Active&entityType=project&entityRefId=${this.projectId}&isDistinct=true`,
       )
       .pipe(takeUntil(this.destroy$))
       .subscribe({
@@ -508,7 +535,7 @@ setDefaultmounth() {
         complete: () => {},
       });
   }
-projectstartdate : any;
+  projectstartdate: any;
   getProjects(projectId: string) {
     this.http
       .getData(`Project?projectId=${projectId}`)
@@ -532,14 +559,14 @@ projectstartdate : any;
             this.inactiveStatus = (res?.data ?? []).some(
               (p: any) =>
                 p.status?.toLowerCase() === 'inactive' ||
-                p.client?.status?.toLowerCase() === 'inactive'
+                p.client?.status?.toLowerCase() === 'inactive',
             )
               ? 'inactive'
               : 'active';
-              this.projectstartdate = project.startDate;
-               this.projectstartdate =   dayjs(this.projectstartdate).toDate();
-                  this.setDefaultmounth();
-              console.log("projectstartdate",this.projectstartdate);
+            this.projectstartdate = project.startDate;
+            this.projectstartdate = dayjs(this.projectstartdate).toDate();
+            this.setDefaultmounth();
+            console.log('projectstartdate', this.projectstartdate);
           } else {
             this.clientsId = null; // No projects returned
           }
@@ -679,14 +706,14 @@ projectstartdate : any;
   navigationtoinactivedocuments() {
     this.router.navigate(
       ['/project-management/projects/details/inactivedocuments'],
-      { queryParams: { id: this.projectId } } // using query params
+      { queryParams: { id: this.projectId } }, // using query params
     );
   }
 
   navigationtoactivedocuments() {
     this.router.navigate(
       ['/project-management/projects/details/documents'],
-      { queryParams: { id: this.projectId } } // using query params
+      { queryParams: { id: this.projectId } }, // using query params
     );
   }
 
@@ -747,19 +774,19 @@ projectstartdate : any;
       new Date(selectedRange[1]).toDateString() === endOfMonth.toDateString()
     );
   }
-isDefaultSummaryprojectDateRange(dateRange: Date[] | null | undefined): boolean {
+  isDefaultSummaryprojectDateRange(
+    dateRange: Date[] | null | undefined,
+  ): boolean {
+    if (!dateRange || dateRange.length !== 2) return true;
 
-  if (!dateRange || dateRange.length !== 2) return true;
+    const selectedStart = dayjs(dateRange[0]).startOf('day');
+    const selectedEnd = dayjs(dateRange[1]).startOf('day');
 
-  const selectedStart = dayjs(dateRange[0]).startOf('day');
-  const selectedEnd = dayjs(dateRange[1]).startOf('day');
+    const defaultStart = dayjs(this.defaultSummaryStartDate).startOf('day');
+    const defaultEnd = dayjs(this.defaultSummaryEndDate).startOf('day');
 
-  const defaultStart = dayjs(this.defaultSummaryStartDate).startOf('day');
-  const defaultEnd = dayjs(this.defaultSummaryEndDate).startOf('day');
-
-  return selectedStart.isSame(defaultStart) &&
-         selectedEnd.isSame(defaultEnd);
-}
+    return selectedStart.isSame(defaultStart) && selectedEnd.isSame(defaultEnd);
+  }
   // 4. Resource Summary (Detailed Timesheet View) — includes date + resource + dept + role + phase
   isFilterAppliedForDetailedSummary(): boolean {
     const formValue = this.datepickerFormData.value;
@@ -781,7 +808,9 @@ isDefaultSummaryprojectDateRange(dateRange: Date[] | null | undefined): boolean 
   isFilterAppliedForResourceSummary(): boolean {
     const formValue = this.datepickerFormDataforsummary?.value;
 
-    const isDefaultDate = this.isDefaultSummaryprojectDateRange(formValue?.dateRange);
+    const isDefaultDate = this.isDefaultSummaryprojectDateRange(
+      formValue?.dateRange,
+    );
     const hasDateRange =
       formValue?.dateRange &&
       formValue.dateRange.length === 2 &&
@@ -793,12 +822,6 @@ isDefaultSummaryprojectDateRange(dateRange: Date[] | null | undefined): boolean 
     return hasDateRange || hasDepartment || hasRole || hasPhase;
   }
 
-    openAddResource() {
-    this.router.navigate(
-      ['/project-management/projects/add-resources'],
-      { queryParams: { id: this.projectId } },
-      );
-  }
   ngOnDestroy() {
     this.destroy$.next(true);
     this.destroy$.complete();

@@ -5,6 +5,7 @@ import { NgbModal, NgbPopover } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { Select } from 'primeng/select';
+import { TableModule } from 'primeng/table';
 import { InfoIconComponent } from '../../../icons/info-icon/info-icon.component';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormValidationsService } from '../../../services/form-validations.service';
@@ -15,7 +16,7 @@ import { Project } from '../../../Interfaces/projects.model';
 import { IEmployeeDetails } from '../../../letters/letters.modal';
 @Component({
   selector: 'app-phases-creation',
-  imports: [ReactiveFormsModule, Select, TranslateModule, MultiSelectModule, CommonModule, NgbPopover, InfoIconComponent],
+  imports: [ReactiveFormsModule, Select, TranslateModule, MultiSelectModule, CommonModule, NgbPopover, InfoIconComponent, TableModule],
   templateUrl: './phases-creation.component.html',
   styleUrl: './phases-creation.component.scss'
 })
@@ -43,9 +44,12 @@ export class PhasesCreationComponent implements OnInit, OnDestroy {
   isPhaseFormValid: boolean = false;
   kickoffDateUserModified = false;
   effectiveDateUserModified = false;
+  resourceStartDateEdited = new Set<number>(); // tracks employeeIds whose startDate was manually edited
   @ViewChild('dateconfirmatonpopup') dateconfirmatonpopup!: any;
   @ViewChild('deleteResourceConfirmModal') deleteResourceConfirmModal!: any;
   pendingDeleteIndex: number = -1;
+  selectedResourceRows: any[] = [];
+  @ViewChild('bulkDeleteConfirmModal') bulkDeleteConfirmModal!: any;
 
   constructor(
     private fb: FormBuilder,
@@ -92,8 +96,8 @@ export class PhasesCreationComponent implements OnInit, OnDestroy {
       this.validateDateRange();
       this.syncResourceDates();
     });
-    this.addPhaseForm.get('kickoffDate')?.valueChanges.subscribe(() => this.validateDateRange());
-    this.addPhaseForm.get('effectiveDate')?.valueChanges.subscribe(() => this.validateDateRange());
+    this.addPhaseForm.get('kickoffDate')?.valueChanges.subscribe(() => { this.validateDateRange(); this.updateToggleState(); });
+    this.addPhaseForm.get('effectiveDate')?.valueChanges.subscribe(() => { this.validateDateRange(); this.updateToggleState(); });
 
     // Watch mandatory phase fields to enable/disable the toggle
     const mandatoryFields = ['phaseName', 'allocatedHours', 'startDate', 'endDate', 'color', 'phaseDescription'];
@@ -121,12 +125,14 @@ export class PhasesCreationComponent implements OnInit, OnDestroy {
 
   private syncKickoffAndEffectiveToStartDate(startVal: string | null): void {
     if (!startVal) return;
-    if (!this.kickoffDateUserModified) {
-      this.addPhaseForm.get('kickoffDate')?.setValue(startVal, { emitEvent: false });
-    }
-    if (!this.effectiveDateUserModified) {
-      this.addPhaseForm.get('effectiveDate')?.setValue(startVal, { emitEvent: false });
-    }
+    // Reset user-modified flags so auto-sync takes effect
+    this.kickoffDateUserModified = false;
+    this.effectiveDateUserModified = false;
+    this.addPhaseForm.get('kickoffDate')?.setValue(startVal, { emitEvent: false });
+    this.addPhaseForm.get('effectiveDate')?.setValue(startVal, { emitEvent: false });
+    // Re-run validation with the newly synced values
+    this.validateDateRange();
+    this.updateToggleState();
   }
 
   private updateToggleState(): void {
@@ -220,6 +226,7 @@ export class PhasesCreationComponent implements OnInit, OnDestroy {
     }
 
     this.addPhaseForm.get('selectedResourcesForAdd')?.setValue([]);
+    this.selectedResourceRows = [];
     this.refreshAvailableEmployees();
     this.refreshAuthorityList();
   }
@@ -235,7 +242,32 @@ export class PhasesCreationComponent implements OnInit, OnDestroy {
   }
 
   removeResourceRow(index: number) {
+    const empId = this.resourceRows.at(index)?.get('employeeId')?.value;
+    if (empId != null) this.resourceStartDateEdited.delete(empId);
     this.resourceRows.removeAt(index);
+    this.afterRowsRemoved();
+  }
+
+  openBulkDeleteConfirm() {
+    if (!this.selectedResourceRows.length) return;
+    this.modalService.open(this.bulkDeleteConfirmModal, { centered: true, backdrop: 'static' });
+  }
+
+  confirmBulkDelete(model: any) {
+    const selectedIds = new Set(this.selectedResourceRows.map(r => r.get('employeeId')?.value));
+    for (let i = this.resourceRows.length - 1; i >= 0; i--) {
+      const empId = this.resourceRows.at(i).get('employeeId')?.value;
+      if (selectedIds.has(empId)) {
+        this.resourceStartDateEdited.delete(empId);
+        this.resourceRows.removeAt(i);
+      }
+    }
+    this.selectedResourceRows = [];
+    this.afterRowsRemoved();
+    model.dismiss();
+  }
+
+  private afterRowsRemoved(): void {
     if (this.resourceRows.length === 0) {
       this.addPhaseForm.get('approvalidAuthority')?.disable();
       this.addPhaseForm.get('approvalidAuthority')?.setValue(null);
@@ -260,11 +292,11 @@ export class PhasesCreationComponent implements OnInit, OnDestroy {
 
   private syncResourceDates(): void {
     const phaseStart = this.addPhaseForm.get('startDate')?.value || null;
-    const phaseEnd = this.addPhaseForm.get('endDate')?.value || null;
-    // Only update rows that still hold the previous phase default (not manually edited)
-    // We update all rows' min/max via template bindings; no forced override needed here.
-    // But we do re-validate existing rows against new phase dates.
     this.resourceRows.controls.forEach(row => {
+      const empId = row.get('employeeId')?.value;
+      if (phaseStart && !this.resourceStartDateEdited.has(empId)) {
+        row.get('startDate')?.setValue(phaseStart, { emitEvent: false });
+      }
       row.get('startDate')?.updateValueAndValidity();
       row.get('endDate')?.updateValueAndValidity();
     });
@@ -516,6 +548,7 @@ export class PhasesCreationComponent implements OnInit, OnDestroy {
     this.loading = false;
     this.addPhaseForm.reset();
     this.resourceRows.clear();
+    this.resourceStartDateEdited.clear();
     this.conformationPopup.openSuccessModal('Phase / Milestone created successfully');
     this.http.setnewPhaseDetails();
     this.http.setnewcountfornewprojectphasecount();

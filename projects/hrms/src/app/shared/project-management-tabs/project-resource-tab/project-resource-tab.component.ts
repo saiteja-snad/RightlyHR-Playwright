@@ -59,7 +59,7 @@ export class ProjectResourceTabComponent {
   }
 
   statusGroups: any = {
-    active: ['assigned', 'active','waiting for approval'],
+    active: ['assigned', 'active'],
     waitingForApproval: ['waiting for approval'],
     inactive: ['released'],
   };

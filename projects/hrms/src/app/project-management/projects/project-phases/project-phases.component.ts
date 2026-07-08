@@ -82,6 +82,7 @@ export class ProjectPhasesComponent implements OnInit, OnDestroy {
   currentPhaseColor = '#000000';
   kickoffDateUserModified = false;
   effectiveDateUserModified = false;
+  resourceStartDateEdited = new Set<number>();
   @ViewChild('reasonModal') reasonModal!: any;
   @ViewChild('extendModal') extendModal!: any;
   @ViewChild('updateResourcemodal') updateResourcemodal!: any;
@@ -161,6 +162,7 @@ export class ProjectPhasesComponent implements OnInit, OnDestroy {
     this.updatePhaseForm.get('startDate')?.valueChanges.subscribe((val) => {
       this.StartndendDateValidation();
       this.validateDateRange();
+      this.syncResourceDates();
       this.syncKickoffAndEffectiveToStartDate(val);
     });
     this.updatePhaseForm.get('endDate')?.valueChanges.subscribe(() => {
@@ -179,6 +181,18 @@ export class ProjectPhasesComponent implements OnInit, OnDestroy {
     if (!this.effectiveDateUserModified) {
       this.updatePhaseForm.get('effectiveDate')?.setValue(startVal, { emitEvent: false });
     }
+  }
+
+  private syncResourceDates(): void {
+    const phaseStart = this.updatePhaseForm.get('startDate')?.value || null;
+    this.resourceRows.controls.forEach(row => {
+      const empId = row.get('employeeId')?.value;
+      if (phaseStart && !this.resourceStartDateEdited.has(empId)) {
+        row.get('startDate')?.setValue(phaseStart, { emitEvent: false });
+      }
+      row.get('startDate')?.updateValueAndValidity();
+      row.get('endDate')?.updateValueAndValidity();
+    });
   }
 
   ExtendDateForm() {
@@ -374,6 +388,7 @@ export class ProjectPhasesComponent implements OnInit, OnDestroy {
     this.existingResourceIds = new Set();
     this.authorityList = [];
     this.deletedResources = [];
+    this.resourceStartDateEdited.clear();
 
     // Patch core form values
     this.updatePhaseForm.patchValue({
@@ -664,6 +679,8 @@ export class ProjectPhasesComponent implements OnInit, OnDestroy {
 
   removeResourceRow(index: number) {
     const row = this.resourceRows.at(index).getRawValue();
+    const empId = this.resourceRows.at(index)?.get('employeeId')?.value;
+    if (empId != null) this.resourceStartDateEdited.delete(empId);
     if (!row.isNew && row.resourceId) {
       this.deletedResources.push(row);
     }
@@ -797,6 +814,7 @@ export class ProjectPhasesComponent implements OnInit, OnDestroy {
 
   private onUpdateSuccess(): void {
     this.deletedResources = [];
+    this.resourceStartDateEdited.clear();
     this.close();
     this.loading = false;
     // Re-enable phase fields in case we were in resource management mode

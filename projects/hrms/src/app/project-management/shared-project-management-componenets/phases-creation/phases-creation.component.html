@@ -172,10 +172,20 @@
 
                     <!-- Resource Table -->
                     <div class="col-md-12 mb-3" *ngIf="resourceRows.length > 0">
+                        <div class="d-flex justify-content-end mb-2">
+                            <button type="button" class="custom-btn btn-danger text-danger"
+                                *ngIf="selectedResourceRows.length > 0" (click)="openBulkDeleteConfirm()">
+                                <i class="bi bi-trash me-1"></i>Delete
+                            </button>
+                        </div>
                         <div class="custom-table-content custom-popup-table">
-                            <table class="w-100">
-                                <thead>
+                            <p-table [value]="resourceRows.controls" [(selection)]="selectedResourceRows"
+                                dataKey="value.employeeId" selectionMode="multiple" [scrollable]="true" scrollHeight="300px">
+                                <ng-template pTemplate="header">
                                     <tr>
+                                        <th style="width:3rem">
+                                            <p-tableHeaderCheckbox />
+                                        </th>
                                         <th>Resource</th>
                                         <th>Role / Designation</th>
                                         <th>Start Date</th>
@@ -183,74 +193,76 @@
                                         <th>Allocated Hours</th>
                                         <th>Actions</th>
                                     </tr>
-                                </thead>
-                                <tbody>
-                                    <ng-container formArrayName="resourceRows">
-                                        <tr *ngFor="let row of resourceRows.controls; let i = index" [formGroupName]="i">
-                                            <!-- Resource Name (readonly) -->
-                                            <td>
-                                                <input type="text" class="form-control custom-input"
-                                                    [value]="row.get('resourceName')?.value" disabled />
-                                            </td>
-                                            <!-- Role / Designation -->
-                                            <td>
-                                                <div class="custom-p-select-content">
-                                                    <p-select [options]="projectRoleDropdown" optionLabel="label" optionValue="value"
-                                                        formControlName="designationId" placeholder="Select role"
-                                                        class="form-select custom-select" [resetFilterOnHide]="true"
-                                                        appendTo="body" [autoZIndex]="true" [baseZIndex]="1100" />
-                                                </div>
-                                                <div class="error-msg" *ngIf="row.get('designationId')?.touched && row.get('designationId')?.invalid">
-                                                    Role / Designation is required
-                                                </div>
-                                            </td>
-                                            <!-- Start Date -->
-                                            <td>
-                                                <input type="date" class="form-control custom-input" formControlName="startDate"
-                                                    [min]="addPhaseForm.get('startDate')?.value || projectMinStartDate"
-                                                    [max]="addPhaseForm.get('endDate')?.value || projectMaxEndDate"
-                                                    onkeypress="return false" />
-                                                <div class="error-msg"
-                                                    *ngIf="row.get('startDate')?.touched && row.get('startDate')?.invalid">
-                                                    Start Date is required</div>
-                                            </td>
-                                            <!-- End Date -->
-                                            <td>
-                                                <input type="date" class="form-control custom-input" formControlName="endDate"
-                                                    [min]="row.get('startDate')?.value || addPhaseForm.get('startDate')?.value"
-                                                    [max]="addPhaseForm.get('endDate')?.value || projectMaxEndDate"
-                                                    onkeypress="return false" />
-                                                <div class="error-msg" *ngIf="row.get('endDate')?.touched && row.get('endDate')?.invalid">
-                                                    End Date is required
-                                                </div>
-                                                <div class="error-msg"
-                                                    *ngIf="row.get('endDate')?.touched && !isResourceRowDateValid($any(row))">
-                                                    End Date cannot be before Start Date
-                                                </div>
-                                            </td>
-                                            <!-- Allocated Hours -->
-                                            <td>
-                                                <input type="number" class="form-control custom-input" formControlName="allocatedHours"
-                                                    placeholder="Hours" min="1" />
-                                                <div class="error-msg"
-                                                    *ngIf="row.get('allocatedHours')?.touched && row.get('allocatedHours')?.errors?.['required']">
-                                                    Allocated hour's are required
-                                                </div>
-                                                <div class="error-msg"
-                                                    *ngIf="row.get('allocatedHours')?.touched && row.get('allocatedHours')?.errors?.['min']">
-                                                    Allocated hour's must be greater than 0
-                                                </div>
-                                            </td>
-                                            <!-- Delete -->
-                                            <td>
-                                                <a (click)="openDeleteConfirm(i)" style="cursor:pointer">
-                                                    <i class="bi bi-trash text-danger"></i>
-                                                </a>
-                                            </td>
-                                        </tr>
-                                    </ng-container>
-                                </tbody>
-                            </table>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-row let-i="rowIndex">
+                                    <tr [formGroup]="$any(row)">
+                                        <td>
+                                            <p-tableCheckbox [value]="row" />
+                                        </td>
+                                        <!-- Resource Name (readonly) -->
+                                        <td>
+                                            <input type="text" class="form-control custom-input"
+                                                [value]="row.get('resourceName')?.value" disabled />
+                                        </td>
+                                        <!-- Role / Designation -->
+                                        <td>
+                                            <div class="custom-p-select-content">
+                                                <p-select [options]="projectRoleDropdown" optionLabel="label" optionValue="value"
+                                                    formControlName="designationId" placeholder="Select role"
+                                                    class="form-select custom-select" [resetFilterOnHide]="true"
+                                                    appendTo="body" [autoZIndex]="true" [baseZIndex]="1100" />
+                                            </div>
+                                            <div class="error-msg" *ngIf="row.get('designationId')?.touched && row.get('designationId')?.invalid">
+                                                Role / Designation is required
+                                            </div>
+                                        </td>
+                                        <!-- Start Date -->
+                                        <td>
+                                            <input type="date" class="form-control custom-input" formControlName="startDate"
+                                                [min]="addPhaseForm.get('startDate')?.value || projectMinStartDate"
+                                                [max]="addPhaseForm.get('endDate')?.value || projectMaxEndDate"
+                                                onkeypress="return false"
+                                                (change)="resourceStartDateEdited.add(row.get('employeeId')?.value)" />
+                                            <div class="error-msg"
+                                                *ngIf="row.get('startDate')?.touched && row.get('startDate')?.invalid">
+                                                Start Date is required</div>
+                                        </td>
+                                        <!-- End Date -->
+                                        <td>
+                                            <input type="date" class="form-control custom-input" formControlName="endDate"
+                                                [min]="row.get('startDate')?.value || addPhaseForm.get('startDate')?.value"
+                                                [max]="addPhaseForm.get('endDate')?.value || projectMaxEndDate"
+                                                onkeypress="return false" />
+                                            <div class="error-msg" *ngIf="row.get('endDate')?.touched && row.get('endDate')?.invalid">
+                                                End Date is required
+                                            </div>
+                                            <div class="error-msg"
+                                                *ngIf="row.get('endDate')?.touched && !isResourceRowDateValid($any(row))">
+                                                End Date cannot be before Start Date
+                                            </div>
+                                        </td>
+                                        <!-- Allocated Hours -->
+                                        <td>
+                                            <input type="number" class="form-control custom-input" formControlName="allocatedHours"
+                                                placeholder="Hours" min="1" />
+                                            <div class="error-msg"
+                                                *ngIf="row.get('allocatedHours')?.touched && row.get('allocatedHours')?.errors?.['required']">
+                                                Allocated hour's are required
+                                            </div>
+                                            <div class="error-msg"
+                                                *ngIf="row.get('allocatedHours')?.touched && row.get('allocatedHours')?.errors?.['min']">
+                                                Allocated hour's must be greater than 0
+                                            </div>
+                                        </td>
+                                        <!-- Delete -->
+                                        <td>
+                                            <a (click)="openDeleteConfirm(i)" style="cursor:pointer">
+                                                <i class="bi bi-trash text-danger"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                            </p-table>
                         </div>
                     </div>
                     
@@ -304,6 +316,19 @@
         <div class="custom-modal-footer">
             <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">No</button>
             <button type="button" class="custom-btn btn-primary" (click)="confirmDeleteResource(model)">Yes</button>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #bulkDeleteConfirmModal let-model>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
+            <p class="confirmation-text">Are you sure you want to remove {{ selectedResourceRows.length }} selected resource(s)?</p>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">No</button>
+            <button type="button" class="custom-btn btn-primary" (click)="confirmBulkDelete(model)">Yes</button>
         </div>
     </div>
 </ng-template>

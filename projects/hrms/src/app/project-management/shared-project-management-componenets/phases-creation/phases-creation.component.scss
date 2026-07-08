@@ -39,8 +39,13 @@
   }
 }
 
-.custom-popup-table {
+::ng-deep .custom-popup-table {
   height: 25dvh !important;
   max-height: 40dvh !important;
   border: 1px solid var(--content-border-color);
+
+  .p-checkbox-checked .p-checkbox-box {
+    border-color: var(--primary-color) !important;
+    background: var(--primary-color) !important;
+  }
 }

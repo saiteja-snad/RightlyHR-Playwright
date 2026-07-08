@@ -339,7 +339,8 @@
                             <input type="date" class="form-control custom-input" formControlName="startDate"
                               [min]="updatePhaseForm.get('startDate')?.value || projectMinStartDate"
                               [max]="updatePhaseForm.get('endDate')?.value || projectMaxEndDate"
-                              onkeypress="return false" />
+                              onkeypress="return false"
+                              (change)="resourceStartDateEdited.add(row.get('employeeId')?.value)" />
                             <div class="error-msg"
                               *ngIf="row.get('startDate')?.touched && row.get('startDate')?.invalid">
                               Start Date is required

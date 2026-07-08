@@ -33,63 +33,52 @@
 
             <div class="custom-table-content w-100" [ngClass]="{'has-data': clients.length > 0}">
                 @if (!loading) {
-                <table class="w-100">
-                    <thead>
-                        <th>Logo</th>
-                        <th>Client Name</th>
-                        <th>Contact name</th>
-                        <th>Email</th>
-                        <th>Phone Number</th>
-                        <th>Role</th>
-                        @if(rbac.allowedToAccess('Client Information.delete')){
-                        <th class="text-center">{{"Action" | translate}}</th>
-                        }
-                    </thead>
-                    <tbody>
-                        <ng-container *ngIf="(clients | activeclients : searchValue) as filteredClients">
-                            <ng-container *ngIf="filteredClients.length > 0; else noDataTemplate">
-                                <tr *ngFor="let client of filteredClients; let i = index">
-                                    <td>
-                                        <img [src]="getImageUrl(client.logoPath)" alt="Logo" class="client-image" />
-                                    </td>
-                                    <td>
-                                        <a class="data-nav-btn"
-                                            (click)="navigateView(client.clientId)">{{client.clientName}}</a>
-                                    </td>
-                                    <td>{{client?.contact?.name || '-'}}</td>
-                                    <td>{{client?.contact?.email || '-'}}</td>
-                                    <td>{{client?.contact?.phoneDialCode || '-'}} {{client?.contact?.phoneNumber ||
-                                        '-'}}</td>
-                                    <td>{{client?.contact?.role || '-'}}</td>
-                                    <td class="text-center">
-                                        <div class="dropdown">
-                                            <a data-bs-toggle="dropdown" aria-expanded="false">
-                                                <i class="bi bi-three-dots-vertical"></i>
+                <p-table #activeClientsTable [value]="clients | activeclients : searchValue"
+                    [customSort]="true" (onSort)="customSort($event)"
+                    [sortField]="currentUIField" [sortOrder]="currentSortOrder">
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th>Logo</th>
+                            <th pSortableColumn="clientName">Client Name <p-sortIcon field="clientName" /></th>
+                            <th pSortableColumn="contactName">Contact name <p-sortIcon field="contactName" /></th>
+                            <th pSortableColumn="contactEmail">Email <p-sortIcon field="contactEmail" /></th>
+                            <th pSortableColumn="phoneNumber">Phone Number <p-sortIcon field="phoneNumber" /></th>
+                            <th pSortableColumn="contactRole">Role <p-sortIcon field="contactRole" /></th>
+                            <th pSortableColumn="status">Status <p-sortIcon field="status" /></th>
+                            @if(rbac.allowedToAccess('Client Information.delete')){
+                            <th class="text-center">{{'Action' | translate}}</th>
+                            }
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-client>
+                        <tr>
+                            <td><img [src]="getImageUrl(client.logoPath)" alt="Logo" class="client-image" /></td>
+                            <td><a class="data-nav-btn" (click)="navigateView(client.clientId)">{{client.clientName}}</a></td>
+                            <td>{{client?.contact?.name || '-'}}</td>
+                            <td>{{client?.contact?.email || '-'}}</td>
+                            <td>{{client?.contact?.phoneDialCode || '-'}} {{client?.contact?.phoneNumber || '-'}}</td>
+                            <td>{{client?.contact?.role || '-'}}</td>
+                            <td>{{client?.status || '-'}}</td>
+                            <td class="text-center">
+                                <div class="dropdown">
+                                    <a data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="bi bi-three-dots-vertical"></i>
+                                    </a>
+                                    <ul class="dropdown-menu custom-dropdown-menu">
+                                        <li (click)="openModalstatus(statuschanges, client)">
+                                            <a class="dropdown-item">
+                                                <i class="bi bi-check-circle me-2"></i>Inactive
                                             </a>
-                                            <ul class="dropdown-menu custom-dropdown-menu">
-                                                <li (click)="openModalstatus(statuschanges, client)">
-                                                    <a class="dropdown-item">
-                                                        <i class="bi bi-check-circle me-2"></i>Inactive
-                                                    </a>
-                                                </li>
-                                                <!-- <li (click)="openModalstatus(statuschangeshold, client)">
-                                                        <a class="dropdown-item">
-                                                            <i class="bi bi-pause-circle me-2"></i>Hold
-                                                        </a>
-                                                    </li> -->
-                                            </ul>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </ng-container>
-                        </ng-container>
-                        <ng-template #noDataTemplate>
-                            <tr>
-                                <app-no-data-found />
-                            </tr>
-                        </ng-template>
-                    </tbody>
-                </table>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="emptymessage">
+                        <tr><td colspan="7"><app-no-data-found /></td></tr>
+                    </ng-template>
+                </p-table>
                 }
                 @else {
                 <app-data-loader-content />

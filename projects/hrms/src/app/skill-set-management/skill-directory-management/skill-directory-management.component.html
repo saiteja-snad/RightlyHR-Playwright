@@ -87,54 +87,48 @@
         </div>
         <div class="custom-table-content">
           @if (!spinnerLoaderforallrecoders) {
-          <table class="w-100">
-            <thead>
+          <p-table #skillDirectoryTable [value]="MySkills" [customSort]="true" (onSort)="customSort($event)"
+              [sortField]="currentUIField" [sortOrder]="currentSortOrder">
+            <ng-template pTemplate="header">
               <tr>
-                <th>{{ 'Employee ID' | translate }}</th>
-                <th>{{ 'Employee Name' | translate }}</th>
-                <th>{{ 'Designation' | translate }}</th>
+                <th pSortableColumn="snadEmployeeId">{{ 'Employee ID' | translate }} <p-sortIcon field="snadEmployeeId" /></th>
+                <th pSortableColumn="name">{{ 'Employee Name' | translate }} <p-sortIcon field="name" /></th>
+                <th pSortableColumn="employeeDesignation">{{ 'Designation' | translate }} <p-sortIcon field="employeeDesignation" /></th>
                 <th>{{ 'Skills' | translate }}</th>
                 <th class="skill-view text-center">{{ 'View' | translate }}</th>
               </tr>
-            </thead>
-            <tbody>
-              <ng-container *ngIf="(MySkills?.length ?? 0) > 0; else noDataTemplate">
-                <tr *ngFor="let emp of MySkills">
-                  <td>{{ emp.employee?.snadEmployeeId || '-' }}</td>
-                  <td>{{ emp.employee?.name || '-' }}</td>
-                  <td>{{ emp.employee?.employeeDesignation || '-' }}</td>
-                  <td>
-                    <div class="d-flex flex-wrap gap-2 custom-table-chips">
-                      <p-chip *ngFor="let skill of getActiveSkills(emp)">
-                        <div class="custom-chip-content">
-                          <span class="skill-name me-1">{{ skill.skillName }}</span>
-                          <span class="skill-level" [ngClass]="skill.proficiencyLevel?.toLowerCase()">
-                            ({{ skill.proficiencyLevel }})
-                          </span>
-                        </div>
-                      </p-chip>
-                      <ng-container *ngIf="getActiveSkills(emp).length === 0">
-                        <span>-</span>
-                      </ng-container>
-                    </div>
-                  </td>
-                  <td class="text-center">
-                    <a type="button" class="view-btn" (click)="openOffcanvas(employeeDetailOffcanvas, emp)">
-                      <i class="bi bi-eye-fill"></i>
-                    </a>
-                  </td>
-                </tr>
-              </ng-container>
-
-              <ng-template #noDataTemplate>
-                <tr>
-                  <td>
-                    <app-no-data-found />
-                  </td>
-                </tr>
-              </ng-template>
-            </tbody>
-          </table>
+            </ng-template>
+            <ng-template pTemplate="body" let-emp>
+              <tr>
+                <td>{{ emp.employee?.snadEmployeeId || '-' }}</td>
+                <td>{{ emp.employee?.name || '-' }}</td>
+                <td>{{ emp.employee?.employeeDesignation || '-' }}</td>
+                <td>
+                  <div class="d-flex flex-wrap gap-2 custom-table-chips">
+                    <p-chip *ngFor="let skill of getActiveSkills(emp)">
+                      <div class="custom-chip-content">
+                        <span class="skill-name me-1">{{ skill.skillName }}</span>
+                        <span class="skill-level" [ngClass]="skill.proficiencyLevel?.toLowerCase()">
+                          ({{ skill.proficiencyLevel }})
+                        </span>
+                      </div>
+                    </p-chip>
+                    <ng-container *ngIf="getActiveSkills(emp).length === 0">
+                      <span>-</span>
+                    </ng-container>
+                  </div>
+                </td>
+                <td class="text-center">
+                  <a type="button" class="view-btn" (click)="openOffcanvas(employeeDetailOffcanvas, emp)">
+                    <i class="bi bi-eye-fill"></i>
+                  </a>
+                </td>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+              <tr><td colspan="5"><app-no-data-found /></td></tr>
+            </ng-template>
+          </p-table>
           } @else {
           <app-data-loader-content />
           }

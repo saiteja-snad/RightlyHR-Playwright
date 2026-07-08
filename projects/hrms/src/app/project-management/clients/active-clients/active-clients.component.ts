@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ProjectManagementModuleInfoComponent } from "../../../shared/project-management-tabs/project-management-module-info/project-management-module-info.component";
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -20,15 +20,17 @@ import { ClientSideTabsComponent } from "../../../shared/project-management-tabs
 import { ApplicablePoliciesTriggerComponent } from "../../../shared/policies/applicable-policies-trigger/applicable-policies-trigger.component";
 import { APPLICABLE_POLICIES_KEYS } from "../../../shared/policies/policy-visibility.catalog";
 import { PaginatorModule } from 'primeng/paginator';
+import { Table, TableModule } from 'primeng/table';
 
 
 
 @Component({
   selector: 'app-active-clients',
-  imports: [CommonModule, FormsModule, ProjectManagementModuleInfoComponent, NoDataFoundComponent,PaginatorModule,
-    DataLoaderContentComponent, TranslateModule, ConfirmationIconComponent, ActiveclientsPipe, ClientSideTabsComponent, ApplicablePoliciesTriggerComponent],
+  imports: [CommonModule, FormsModule, ProjectManagementModuleInfoComponent, NoDataFoundComponent, PaginatorModule,
+    DataLoaderContentComponent, TranslateModule, ConfirmationIconComponent, ActiveclientsPipe, ClientSideTabsComponent, ApplicablePoliciesTriggerComponent, TableModule],
   templateUrl: './active-clients.component.html',
-  styleUrl: './active-clients.component.scss'
+  styleUrl: './active-clients.component.scss',
+  encapsulation: ViewEncapsulation.None,
 })
 
 export class ActiveClientsComponent implements OnInit, OnDestroy {
@@ -40,6 +42,10 @@ export class ActiveClientsComponent implements OnInit, OnDestroy {
   selectedClient: any;
   destroy$: Subject<boolean> = new Subject<boolean>();
   subscription!: Subscription;
+  currentSortField = '';
+  currentSortOrder = 0;
+  currentUIField = '';
+  @ViewChild('activeClientsTable') activeClientsTable!: Table;
   // Pagination
   page = 1;
   pageSize = 25;
@@ -61,7 +67,11 @@ export class ActiveClientsComponent implements OnInit, OnDestroy {
   }
 
   getClientsData(): void {
-    this.http.getData(`Client/GetAll?status=Active&pageNumber=${this.page}&pageSize=${this.pageSize}`).pipe(takeUntil(this.destroy$)).subscribe({
+    let url = `Client/GetAll?status=Active&pageNumber=${this.page}&pageSize=${this.pageSize}`;
+    if (this.currentSortField && this.currentSortOrder !== 0) {
+      url += `&sortBy=${this.currentSortField}&sortOrder=${this.currentSortOrder === 1 ? 'asc' : 'desc'}`;
+    }
+    this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.loading = false;
         this.clients = Array.isArray(res?.data?.items) ? res.data?.items : [];
@@ -166,6 +176,36 @@ export class ActiveClientsComponent implements OnInit, OnDestroy {
         this.conformationPopup.openErrorModal(err.error?.message || 'Failed to update status');
       }
     });
+  }
+
+  customSort(event: any): void {
+    const field = event.field;
+    const order = event.order;
+    const nextSortOrder = order === 1 ? 'asc' : 'desc';
+    if (this.currentUIField === field &&
+      ((this.currentSortOrder === 1 && nextSortOrder === 'asc') ||
+        (this.currentSortOrder === -1 && nextSortOrder === 'desc'))) {
+      return;
+    }
+    if (this.currentUIField === field && this.currentSortOrder === -1) {
+      this.currentSortField = '';
+      this.currentUIField = '';
+      this.currentSortOrder = 0;
+      if (this.activeClientsTable) {
+        this.activeClientsTable.sortField = '';
+        this.activeClientsTable.sortOrder = 0;
+      }
+      this.page = 1;
+      this.first = 0;
+      this.getClientsData();
+      return;
+    }
+    this.currentUIField = field;
+    this.currentSortField = field;
+    this.currentSortOrder = order;
+    this.page = 1;
+    this.first = 0;
+    this.getClientsData();
   }
 
   ngOnDestroy() {

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ProjectManagementModuleInfoComponent } from "../../../shared/project-management-tabs/project-management-module-info/project-management-module-info.component";
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -17,12 +17,14 @@ import { FormsModule } from '@angular/forms';
 import { InactiveclientPipe } from "../../../Pipes/inactiveclient.pipe";
 import { ClientSideTabsComponent } from "../../../shared/project-management-tabs/client-side-tabs/client-side-tabs.component";
 import { PaginatorModule } from 'primeng/paginator';
+import { Table, TableModule } from 'primeng/table';
 @Component({
   selector: 'app-inactive-clients',
   imports: [CommonModule, ProjectManagementModuleInfoComponent, FormsModule, NoDataFoundComponent, PaginatorModule,
-    DataLoaderContentComponent, ConfirmationIconComponent, TranslateModule, InactiveclientPipe, ClientSideTabsComponent],
+    DataLoaderContentComponent, ConfirmationIconComponent, TranslateModule, InactiveclientPipe, ClientSideTabsComponent, TableModule],
   templateUrl: './inactive-clients.component.html',
-  styleUrl: './inactive-clients.component.scss'
+  styleUrl: './inactive-clients.component.scss',
+  encapsulation: ViewEncapsulation.None,
 })
 
 export class InactiveClientsComponent implements OnInit {
@@ -32,6 +34,10 @@ export class InactiveClientsComponent implements OnInit {
   searchValue: any;
   selectedClient: any;
   destroy$: Subject<boolean> = new Subject<boolean>();
+  currentSortField = '';
+  currentSortOrder = 0;
+  currentUIField = '';
+  @ViewChild('inactiveClientsTable') inactiveClientsTable!: Table;
   // Pagination
   page = 1;
   pageSize = 25;
@@ -54,7 +60,11 @@ export class InactiveClientsComponent implements OnInit {
   }
 
   getClientsData(): void {
-    this.http.getData(`Client/GetAll?status=Inactive&pageNumber=${this.page}&pageSize=${this.pageSize}`).pipe(takeUntil(this.destroy$)).subscribe({
+    let url = `Client/GetAll?status=Inactive&pageNumber=${this.page}&pageSize=${this.pageSize}`;
+    if (this.currentSortField && this.currentSortOrder !== 0) {
+      url += `&sortBy=${this.currentSortField}&sortOrder=${this.currentSortOrder === 1 ? 'asc' : 'desc'}`;
+    }
+    this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.loading = false;
         this.clients = Array.isArray(res?.data?.items) ? res.data?.items : [];
@@ -138,6 +148,36 @@ export class InactiveClientsComponent implements OnInit {
         this.conformationPopup.openErrorModal(err.error?.message || 'Failed to update status');
       }
     });
+  }
+
+  customSort(event: any): void {
+    const field = event.field;
+    const order = event.order;
+    const nextSortOrder = order === 1 ? 'asc' : 'desc';
+    if (this.currentUIField === field &&
+      ((this.currentSortOrder === 1 && nextSortOrder === 'asc') ||
+        (this.currentSortOrder === -1 && nextSortOrder === 'desc'))) {
+      return;
+    }
+    if (this.currentUIField === field && this.currentSortOrder === -1) {
+      this.currentSortField = '';
+      this.currentUIField = '';
+      this.currentSortOrder = 0;
+      if (this.inactiveClientsTable) {
+        this.inactiveClientsTable.sortField = '';
+        this.inactiveClientsTable.sortOrder = 0;
+      }
+      this.page = 1;
+      this.first = 0;
+      this.getClientsData();
+      return;
+    }
+    this.currentUIField = field;
+    this.currentSortField = field;
+    this.currentSortOrder = order;
+    this.page = 1;
+    this.first = 0;
+    this.getClientsData();
   }
 
   navigate() {

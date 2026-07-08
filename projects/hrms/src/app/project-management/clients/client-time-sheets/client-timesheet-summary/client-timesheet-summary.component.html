@@ -37,12 +37,18 @@
 
                 <div class="custom-table-content project-summary-table">
                     @if( projectSummeryData.length > 0){
-                    <p-table [value]="projectSummeryData" [tableStyle]="{'width': '100%'}">
+                    <p-table 
+                        #projectSummaryTable
+                        [value]="projectSummeryData" 
+                        [tableStyle]="{'width': '100%'}"
+                        [customSort]="true"
+                        (sortFunction)="customSort($event)"
+                        [sortMode]="'single'">
                         <ng-template pTemplate="header">
                             <tr>
                                 <th pSortableColumn="project.projectName">{{'Project Name'|translate}} <p-sortIcon field="project.projectName" /></th>
                                 <th pSortableColumn="projectColor.graphData.code" class="text-center">{{'Project Code'|translate}} <p-sortIcon field="projectColor.graphData.code" /></th>
-                                <th pSortableColumn="loggedHoursHHMM" class="text-center">{{'Total Hours'|translate}} <p-sortIcon field="loggedHoursHHMM" /></th>
+                                <th class="text-center">{{'Total Hours'|translate}}</th>
                                 <th pSortableColumn="status" class="text-center">{{'Status'|translate}} <p-sortIcon field="status" /></th>
                             </tr>
                         </ng-template>

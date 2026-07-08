@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subject, takeUntil } from 'rxjs';
@@ -14,12 +14,14 @@ import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, Validator
 import { NgxCountriesDropdownModule } from 'ngx-countries-dropdown';
 import parsePhoneNumberFromString from 'libphonenumber-js';
 import { ConfirmationIconComponent } from '../../../icons/confirmation-icon/confirmation-icon.component';
+import { TableModule, Table } from 'primeng/table';
 @Component({
   selector: 'app-client-contact-information',
   imports: [CommonModule, ReactiveFormsModule, NoDataFoundComponent, NgxCountriesDropdownModule,
-    TranslateModule, DataLoaderContentComponent, ConfirmationIconComponent],
+    TranslateModule, DataLoaderContentComponent, ConfirmationIconComponent, TableModule],
   templateUrl: './client-contact-information.component.html',
-  styleUrl: './client-contact-information.component.scss'
+  styleUrl: './client-contact-information.component.scss',
+  encapsulation: ViewEncapsulation.None,
 })
 
 export class ClientContactInformationComponent {
@@ -41,6 +43,11 @@ export class ClientContactInformationComponent {
   };
   destroy$: Subject<boolean> = new Subject<boolean>();
   inactiveClientStatus: any;
+  originalContactData: any[] = [];
+  currentSortField = '';
+  currentSortOrder = 0;
+  currentUIField = '';
+  @ViewChild('contactTable') contactTable!: Table;
 
   constructor(private modalService: NgbModal, private route: ActivatedRoute, private http: HttpService, public formValidation: FormValidationsService,
     private conformationPopup: OpenModalService, private fb: FormBuilder, private router: Router, public rbac: RbacService) { }
@@ -87,6 +94,7 @@ export class ClientContactInformationComponent {
     this.http.getData(`ProjectManagementContact?status=Active&entityType=Client&entityRefId=${clientId}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.contactData = res?.data ?? [];
+        this.originalContactData = [...this.contactData];
         this.loading = false;
       },
       error: (err: any) => {
@@ -253,6 +261,42 @@ export class ClientContactInformationComponent {
           this.getContactData(this.clientId);
         }
       });
+  }
+
+  customSort(event: any): void {
+    const field = event.field;
+    const order = event.order;
+    const nextSortOrder = order === 1 ? 'asc' : 'desc';
+
+    if (
+      this.currentUIField === field &&
+      ((this.currentSortOrder === 1 && nextSortOrder === 'asc') ||
+        (this.currentSortOrder === -1 && nextSortOrder === 'desc'))
+    ) {
+      return;
+    }
+
+    if (this.currentUIField === field && this.currentSortOrder === -1) {
+      this.currentSortField = '';
+      this.currentUIField = '';
+      this.currentSortOrder = 0;
+      if (this.contactTable) {
+        this.contactTable.sortField = '';
+        this.contactTable.sortOrder = 0;
+      }
+      this.contactData = [...this.originalContactData];
+      return;
+    }
+
+    this.currentUIField = field;
+    this.currentSortField = field;
+    this.currentSortOrder = order;
+
+    this.contactData = [...this.contactData].sort((a: any, b: any) => {
+      const val1 = String(a[field] ?? '').trim();
+      const val2 = String(b[field] ?? '').trim();
+      return order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+    });
   }
 
   ngOnDestroy(): void {

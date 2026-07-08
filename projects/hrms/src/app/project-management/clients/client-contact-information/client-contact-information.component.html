@@ -1,73 +1,67 @@
 <div class="custom-main-component-container">
-    <ng-container *ngIf="loading; else maincontent">
-        <ng-template #loadingSpinner>
-            <div>
-                <app-data-loader-content />
-            </div>
-        </ng-template>
-        <ng-container *ngTemplateOutlet="loadingSpinner"></ng-container>
-    </ng-container>
-
-    <ng-template #maincontent>
-        <div class="custom-table-content">
-            <table class="w-100">
-                <thead>
-                    <th>Contact Name</th>
-                    <th>Email</th>
-                    <th>Phone Number</th>
-                    <th>Role</th>
-                    <th class="text-center" style="text-transform: none;" *ngIf="this.inactiveClientStatus !== 'inactive'">Set as Primary Contact</th>
-                    @if((rbac.allowedToAccess('Contact Information.update') || rbac.allowedToAccess('Contact Information.delete'))
-                    && this.inactiveClientStatus !== 'inactive'){
-                    <th class="text-center">{{"Action" | translate}}</th>
-                    }
-                </thead>
-                <tbody>
-                    <ng-container *ngIf="(contactData?.length ?? 0) > 0; else noDataTemplate">
-                        <tr *ngFor="let contact of contactData; let i = index">
-                            <td>{{ contact.name }}</td>
-                            <td>{{ contact.email }}</td>
-                            <td>{{ contact.phoneDialCode }} {{ contact.phoneNumber }}</td>
-                            <td>{{ contact.role }}</td>
-                            <td class="text-center" *ngIf="this.inactiveClientStatus !== 'inactive'">
-                                <span (click)="openispermiarayModal(conformation ,contact)">
-                                    <input type="checkbox" [checked]="contact.primaryContact === true || contact.primaryContact === 'true'"
-                                        [disabled]="contact.primaryContact === true || contact.primaryContact === 'true'" />
-                                </span>
-                            </td>
-                            @if((rbac.allowedToAccess('Contact Information.update') || rbac.allowedToAccess('Contact Information.delete'))
-                            && this.inactiveClientStatus !== 'inactive'){
-                            <td class="text-center">
-                                <div class="dropdown">
-                                    <a data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i class="bi bi-three-dots-vertical"></i>
-                                    </a>
-                                    <ul class="dropdown-menu custom-dropdown-menu">
-                                        @if(rbac.allowedToAccess('Contact Information.update')){
-                                        <li (click)="openupdateModal(updatecontact ,contact)">
-                                            <a class="dropdown-item"><i class="bi bi-pencil me-2"></i>Update</a>
-                                        </li>
-                                        }
-                                        @if(rbac.allowedToAccess('Contact Information.delete')){
-                                        <li (click)="opendeletModal(deleteconformation ,contact)">
-                                            <a class="dropdown-item"><i class="bi bi-trash me-2"></i>Delete</a>
-                                        </li>
-                                        }
-                                    </ul>
-                                </div>
-                            </td>
-                            }
-                        </tr>
-                    </ng-container>
-                    <ng-template #noDataTemplate>
-                        <tr>
-                            <app-no-data-found />
-                        </tr>
-                    </ng-template>
-                </tbody>
-            </table>
-        </div>
-    </ng-template>
+    <div class="custom-table-content">
+        @if (!loading) {
+        <p-table #contactTable [value]="contactData"
+            [customSort]="true" (onSort)="customSort($event)"
+            [sortField]="currentUIField" [sortOrder]="currentSortOrder">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th pSortableColumn="name">Contact Name <p-sortIcon field="name" /></th>
+                        <th pSortableColumn="email">Email <p-sortIcon field="email" /></th>
+                        <th pSortableColumn="phoneNumber">Phone Number <p-sortIcon field="phoneNumber" /></th>
+                        <th pSortableColumn="role">Role <p-sortIcon field="role" /></th>
+                        <th class="text-center" style="text-transform: none;" *ngIf="this.inactiveClientStatus !== 'inactive'">Set as Primary Contact</th>
+                        @if((rbac.allowedToAccess('Contact Information.update') || rbac.allowedToAccess('Contact Information.delete'))
+                        && this.inactiveClientStatus !== 'inactive'){
+                        <th class="text-center">{{'Action' | translate}}</th>
+                        }
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-contact>
+                    <tr>
+                        <td>{{ contact.name }}</td>
+                        <td>{{ contact.email }}</td>
+                        <td>{{ contact.phoneDialCode }} {{ contact.phoneNumber }}</td>
+                        <td>{{ contact.role }}</td>
+                        <td class="text-center" *ngIf="this.inactiveClientStatus !== 'inactive'">
+                            <span (click)="openispermiarayModal(conformation ,contact)">
+                                <input type="checkbox" [checked]="contact.primaryContact === true || contact.primaryContact === 'true'"
+                                    [disabled]="contact.primaryContact === true || contact.primaryContact === 'true'" />
+                            </span>
+                        </td>
+                        @if((rbac.allowedToAccess('Contact Information.update') || rbac.allowedToAccess('Contact Information.delete'))
+                        && this.inactiveClientStatus !== 'inactive'){
+                        <td class="text-center">
+                            <div class="dropdown">
+                                <a data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="bi bi-three-dots-vertical"></i>
+                                </a>
+                                <ul class="dropdown-menu custom-dropdown-menu">
+                                    @if(rbac.allowedToAccess('Contact Information.update')){
+                                    <li (click)="openupdateModal(updatecontact ,contact)">
+                                        <a class="dropdown-item"><i class="bi bi-pencil me-2"></i>Update</a>
+                                    </li>
+                                    }
+                                    @if(rbac.allowedToAccess('Contact Information.delete')){
+                                    <li (click)="opendeletModal(deleteconformation ,contact)">
+                                        <a class="dropdown-item"><i class="bi bi-trash me-2"></i>Delete</a>
+                                    </li>
+                                    }
+                                </ul>
+                            </div>
+                        </td>
+                        }
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr><td colspan="6"><app-no-data-found /></td></tr>
+                </ng-template>
+            </p-table>
+        }
+        @else {
+        <app-data-loader-content />
+        }
+    </div>
 </div>
 
 <!--Delete confirmation-->

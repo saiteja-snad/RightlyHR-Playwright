@@ -5,24 +5,28 @@
       <div class="commpoment-name">
         Project Management<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
       </div>
+
       @if (isShowClientRoute()) {
       <div class="commpoment-name">
         <a (click)="navigationtoclients()"><u> Resources</u></a>
         <span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
       </div>
       }
+
       @if (isShowClientRoute()) {
       <div class="commpoment-name" [style.color]="clientColor">
         <b>{{ this.clientName }}</b>
         <span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
       </div>
       }
+
       @if (isShowProjectRoute()) {
       <div class="commpoment-name">
         <a (click)="navigationtoproject()"><u> Resources</u></a>
         <span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
       </div>
       }
+
       @if (isShowProjectRoute()) {
       <div class="commpoment-name" [style.color]="projectColor">
         <b>{{ this.projectname }}</b>
@@ -60,7 +64,6 @@
       <div class="popover-employee-details p-2" (mouseenter)="onPopoverMouseEnter()"
         (mouseleave)="onPopoverMouseLeave()">
         <div class="employee-name mb-3">{{ emp.fullName }}</div>
-        <!-- <div class="small text-muted mb-3">Assignments: {{ emp.count || 0 }}</div> -->
         <div class="projects-container">
           <div class="project-card" *ngFor="let assignment of emp.assignments; let ai = index">
             <div class="project-name">{{ assignment.phase?.label || assignment.phase || 'Phase' }}</div>
@@ -73,12 +76,9 @@
             <div class="project-name">No assignments found</div>
           </div>
         </div>
-        <!-- <div class="mt-2 small text-muted">Click to edit this resource</div> -->
       </div>
     </ng-template>
   </div>
-
-
 
   <div class="custom-main-popup-content">
     <div class="project-info-card-new">
@@ -96,17 +96,12 @@
                   (onChange)="onProjectChange($event.value, i)" appendTo="body" [autoZIndex]="true" [baseZIndex]="1100"
                   panelStyleClass="custom-phase-multiselect-panel" resetFilterOnHide="true">
                   <ng-template let-emp pTemplate="item">
-                    <div style="white-space: normal;word-break: break-word;max-width: 220px;">{{ emp.projectName }}
-                    </div>
+                    <div style="white-space: normal;word-break: break-word;max-width: 220px;">{{ emp.projectName }}</div>
                   </ng-template>
                 </p-select>
-                <div class="error-msg"
-                  *ngIf="(row.get('projectName')?.touched || isAddAttempted) && row.get('projectName')?.invalid">
-                  Project is required
-                </div>
+                <div class="error-msg" *ngIf="(row.get('projectName')?.touched || isAddAttempted) && row.get('projectName')?.invalid">
+                  Project is required</div>
               </div>
-
-
 
               <!-- Project Type -->
               <div class="custom-p-select-content" *ngIf="isClientFlow">
@@ -117,48 +112,28 @@
 
               <!-- Project Flow -->
               <div class="custom-p-select-content select-custom-width" *ngIf="!isClientFlow">
-                <label class="form-label custom-label mb-2">
-                  Project Name
-                </label>
-
-                <input type="text" class="form-control custom-input" [value]="projectsDataDrown[0]?.projectName || ''"
-                  disabled />
+                <label class="form-label custom-label mb-2">Project Name</label>
+                <input type="text" class="form-control custom-input" [value]="projectsDataDrown[0]?.projectName || ''" disabled />
               </div>
 
               <div class="custom-p-select-content" *ngIf="!isClientFlow">
-                <label class="form-label custom-label mb-2">
-                  Project Type
-                </label>
-
-                <input type="text" class="form-control custom-input" [value]="projectsDataDrown[0]?.projectType || ''"
-                  disabled />
+                <label class="form-label custom-label mb-2">Project Type</label>
+                <input type="text" class="form-control custom-input" [value]="projectsDataDrown[0]?.projectType || ''" disabled />
               </div>
 
               <div class="custom-p-select-content select-custom-width">
                 <label class="form-label custom-label mb-2">Phase / Milestone<span class="text-danger">*</span></label>
-                <p-select [options]="
-                  isClientFlow ? row.get('phaseDropdown')?.value : phaseDropdown
-                " optionLabel="label" formControlName="resourcePhase" placeholder="Please select phase"
-                  class="form-select custom-select" (onChange)="onPhaseChange($event, i)" [filter]="true"
-                  filterBy="label" filterPlaceholder="Search phases" appendTo="body" [autoZIndex]="true"
-                  [baseZIndex]="1100" panelStyleClass="custom-phase-multiselect-panel" resetFilterOnHide="true">
+                <p-select [options]="isClientFlow ? row.get('phaseDropdown')?.value : phaseDropdown" optionLabel="label"
+                  formControlName="resourcePhase" placeholder="Please select phase" class="form-select custom-select"
+                  (onChange)="onPhaseChange($event, i)" [filter]="true" filterBy="label" filterPlaceholder="Search phases"
+                  appendTo="body" [autoZIndex]="true" [baseZIndex]="1100" panelStyleClass="custom-phase-multiselect-panel"
+                  resetFilterOnHide="true">
                   <ng-template let-emp pTemplate="item">
-                    <div style="
-                      white-space: normal;
-                      word-break: break-word;
-                      max-width: 220px;
-                    ">
-                      {{ emp.label }}
-                    </div>
+                    <div style="white-space: normal;word-break: break-word;max-width: 220px;">{{ emp.label }}</div>
                   </ng-template>
                 </p-select>
-
-                <div class="error-msg" *ngIf="
-                  (row.get('resourcePhase')?.touched || isAddAttempted) &&
-                  row.get('resourcePhase')?.invalid
-                ">
-                  Phase is required
-                </div>
+                <div class="error-msg" *ngIf="(row.get('resourcePhase')?.touched || isAddAttempted) && row.get('resourcePhase')?.invalid">
+                  Phase is required</div>
               </div>
 
               <!-- Resource -->
@@ -166,34 +141,23 @@
                 <label class="form-label custom-label mb-2">Resource<span class="text-danger">*</span></label>
                 <!-- Read-only display when editing an existing avatar -->
                 <ng-container *ngIf="editingEmployeeId !== null; else editableMultiSelect">
-                  <input type="text" class="form-control custom-input"
-                    [value]="row.get('resourceName')?.value?.[0]?.fullName || ''" disabled />
+                  <input type="text" class="form-control custom-input" [value]="row.get('resourceName')?.value?.[0]?.fullName || ''" disabled />
                 </ng-container>
                 <ng-template #editableMultiSelect>
-                  <p-multiSelect [options]="employeeDetails" optionLabel="fullName" formControlName="resourceName"
-                    (onChange)="onResourceChange($event)" placeholder="Please select resources"
-                    class="form-select custom-select" scrollHeight="150px" appendTo="body" [resetFilterOnHide]="true"
-                    [autoZIndex]="true" filterPlaceHolder="Search resources" [baseZIndex]="1100" [maxSelectedLabels]="1"
-                    selectedItemsLabel="{0} items selected" panelStyleClass="custom-phase-multiselect-panel"
+                  <p-multiSelect [options]="getFilteredEmployees(i)" optionLabel="fullName" formControlName="resourceName"
+                    (onChange)="onResourceChange($event, i)" placeholder="Please select resources" class="form-select custom-select"
+                    scrollHeight="150px" appendTo="body" [resetFilterOnHide]="true" [autoZIndex]="true" filterPlaceHolder="Search resources" 
+                    [baseZIndex]="1100" [maxSelectedLabels]="1" selectedItemsLabel="{0} items selected" panelStyleClass="custom-phase-multiselect-panel" 
                     resetFilterOnHide="true">
                     <ng-template let-emp pTemplate="item">
-                      <div style="
-                        white-space: normal;
-                        word-break: break-word;
-                        max-width: 220px;
-                      ">
+                      <div style="white-space: normal;word-break: break-word;max-width: 220px;">
                         {{ emp.fullName }}
                       </div>
                     </ng-template>
                   </p-multiSelect>
                 </ng-template>
-                <div class="error-msg" *ngIf="
-                  editingEmployeeId === null &&
-                  (row.get('resourceName')?.touched || isAddAttempted) &&
-                  row.get('resourceName')?.invalid
-                ">
-                  Resource is required
-                </div>
+                <div class="error-msg" *ngIf="editingEmployeeId === null && (row.get('resourceName')?.touched || isAddAttempted) &&
+                  row.get('resourceName')?.invalid">Resource is required</div>
               </div>
 
               <!-- Role -->
@@ -205,93 +169,64 @@
                   filterPlaceholder="Search role" appendTo="body" [autoZIndex]="true" [baseZIndex]="1100"
                   panelStyleClass="custom-phase-multiselect-panel" resetFilterOnHide="true">
                   <ng-template let-emp pTemplate="item">
-                    <div style="
-                      white-space: normal;
-                      word-break: break-word;
-                      max-width: 220px;
-                    ">
+                    <div style="white-space: normal; word-break: break-word; max-width: 220px;">
                       {{ emp.label }}
                     </div>
                   </ng-template>
                 </p-select>
-
-                <div class="error-msg" *ngIf="
-                  (row.get('resourceRole')?.touched || isAddAttempted) &&
-                  row.get('resourceRole')?.invalid
-                ">
-                  Role is required
-                </div>
+                <div class="error-msg" *ngIf="(row.get('resourceRole')?.touched || isAddAttempted) && 
+                row.get('resourceRole')?.invalid">Role is required</div>
               </div>
 
               <!-- START DATE -->
               <div class="custom-p-select-content">
                 <label class="form-label custom-label mb-2">Start Date<span class="text-danger">*</span></label>
-                <input type="date" formControlName="startDate" class="form-control custom-input" [min]="
-                  projectStartDate
-                    ? (projectStartDate | date: 'yyyy-MM-dd')
-                    : null
-                " [max]="
-                  projectEndDate ? (projectEndDate | date: 'yyyy-MM-dd') : null
-                " (change)="oncheckdates(addResourceForm.get('startDate')?.value)" />
-                <!-- Required Error -->
-                <div class="error-msg" *ngIf="addResourceForm.get('startDate')?.touched && 
-                    addResourceForm.get('startDate')?.invalid">Start Date is required</div>
-                <div class="error-msg" *ngIf="addResourceForm.hasError('endBeforeStart')">Start Date cannot be after
-                  End Date</div>
+                <input type="date" formControlName="startDate" class="form-control custom-input" 
+                [min]="projectStartDate ? (projectStartDate | date: 'yyyy-MM-dd') : null" 
+                [max]="projectEndDate ? (projectEndDate | date: 'yyyy-MM-dd') : null" 
+                (change)="oncheckdates(row.get('startDate')?.value)" />
+                <div class="error-msg" *ngIf="row.get('startDate')?.touched && row.get('startDate')?.invalid">
+                  Start Date is required
+                </div>
               </div>
 
               <!-- END DATE -->
               <div class="custom-p-select-content w-100">
                 <label class="form-label custom-label mb-2">End Date<span class="text-danger">*</span></label>
-                <input type="date" formControlName="endDate" class="form-control custom-input"
-                  [min]="row.get('startDate')?.value"
+                <input type="date" formControlName="endDate" class="form-control custom-input" [min]="row.get('startDate')?.value"
                   [max]="projectEndDate ? (projectEndDate | date: 'yyyy-MM-dd') : null" />
                 <!-- Required Error -->
-                <div class="error-msg" *ngIf="
-                  row.get('endDate')?.touched &&
-                  row.get('endDate')?.errors?.['required']
-                ">
-                  End Date is required
-                </div>
-                <div class="error-msg" *ngIf="
-                  row.get('endDate')?.touched &&
-                  !row.get('endDate')?.errors?.['required'] &&
-                  row.get('dateError')?.value
-                ">
-                  End Date must be after Start Date
-                </div>
+                <div class="error-msg" *ngIf="row.get('endDate')?.touched && row.get('endDate')?.errors?.['required']">
+                  End Date is required</div>
+                <div class="error-msg" *ngIf="row.get('endDate')?.touched && !row.get('endDate')?.errors?.['required'] 
+                && row.get('dateError')?.value">End Date must be after Start Date</div>
               </div>
 
               <!-- Authority -->
               <div class="custom-p-select-content select-custom-width">
-                <label class="form-label custom-label mb-2">Approval Authority</label>
-                <p-select [options]="resoucesDropDownData" optionLabel="label" optionValue="value"
+                <label class="form-label custom-label mb-2">Approval Authority<span class="text-danger">*</span></label>
+                <p-select [options]="rowAuthorityOptions.get(i) || []" optionLabel="label" optionValue="value"
                   formControlName="resourceAuthority" placeholder="Please select authority"
                   class="form-select custom-select" (onChange)="onAuthorityChange($event)" [filter]="true"
                   filterBy="label" filterPlaceholder="Search approval authority" appendTo="body" [autoZIndex]="true"
                   [baseZIndex]="1100" panelStyleClass="custom-phase-multiselect-panel" resetFilterOnHide="true">
                   <ng-template let-emp pTemplate="item">
-                    <div style="
-                      white-space: normal;
-                      word-break: break-word;
-                      max-width: 220px;
-                    ">
-                      {{ emp.label }}
-                    </div>
+                    <div style="white-space: normal; word-break: break-word; max-width: 220px;">{{ emp.label }}</div>
                   </ng-template>
                 </p-select>
+                <div class="error-msg" *ngIf="(row.get('resourceAuthority')?.touched || isAddAttempted) 
+                && row.get('resourceAuthority')?.invalid">Approval Authority is required</div>
               </div>
 
               <!-- Hours -->
               <div class="custom-p-select-content w-100">
                 <label class="form-label custom-label mb-2">Hours<span class="text-danger">*</span></label>
                 <input type="number" formControlName="resourceAllocationhrs" placeholder="Please enter hours"
-                  class="form-control custom-input" />
-                <div class="error-msg" *ngIf="
-                  row.get('resourceAllocationhrs')?.touched &&
-                  row.get('resourceAllocationhrs')?.invalid
-                ">
-                  Hours are required
+                  class="form-control custom-input" min="1" />
+                <div class="error-msg" *ngIf="row.get('resourceAllocationhrs')?.touched && 
+                row.get('resourceAllocationhrs')?.errors?.['required']">Hours are required</div>
+                <div class="error-msg" *ngIf="isHoursExceeded(i)">
+                  Exceeds available phase hours. Max allocatable: {{ getRemainingHours(i) }} hrs
                 </div>
               </div>
 
@@ -319,10 +254,9 @@
                   <app-circular-delete *ngIf="editingEmployeeId !== null && !spinnerLoader"
                     (click)="removeResource(i); $event.stopPropagation()"></app-circular-delete>
                   <button type="button" class="custom-btn btn-primary" (click)="onRowSave(i); $event.stopPropagation()"
-                    [disabled]="row.get('saved')?.value || (row.invalid && editingEmployeeId === null)">
+                    [disabled]="row.get('saved')?.value || (row.invalid && editingEmployeeId === null) || isHoursExceeded(i) || spinnerLoader ">
                     {{ editingEmployeeId !== null ? 'Update' : 'Add' }}
                   </button>
-
                 </div>
               </div>
 
@@ -346,23 +280,22 @@
 
                 <div class=" d-flex gap-3 align-items-end justify-content-end">
                   <button type="button" class="custom-btn btn-primary" (click)="onRowSave(i); $event.stopPropagation()"
-                    [disabled]="row.get('saved')?.value || (row.invalid && editingEmployeeId === null) || spinnerLoader">
+                    [disabled]="row.get('saved')?.value || (row.invalid && editingEmployeeId === null) || isHoursExceeded(i) || spinnerLoader">
                     {{ editingEmployeeId !== null ? 'Update' : 'Add' }}
                   </button>
                   <app-circular-delete *ngIf="editingEmployeeId !== null && !spinnerLoader" class="cursor"
-                    type="button" (click)="removeResource(i); $event.stopPropagation()"></app-circular-delete>
+                    (click)="removeResource(i); $event.stopPropagation()"></app-circular-delete>
                 </div>
               </div>
             </div>
           </ng-container>
         </div>
-
-
       </form>
     </div>
+
     <div class="d-flex gap-3 justify-content-end">
-      <button type="button" class="custom-btn btn-secondary px-5"
-        (click)="closepopup(confirmationpopupfornodue)" [disabled]="spinnerLoader">Cancel</button>
+      <button type="button" class="custom-btn btn-secondary px-5" (click)="closepopup(confirmationpopupfornodue)"
+        [disabled]="spinnerLoader">Cancel</button>
       <button type="button" class="custom-btn btn-primary px-5" (click)="addResources()"
         [disabled]="savedPayloadRows.length === 0 || spinnerLoader">
         <ng-container *ngIf="spinnerLoader; else addText">
@@ -373,22 +306,18 @@
     </div>
   </div>
 </div>
+
 <!--Confirmation-->
 <ng-template #confirmationpopupfornodue let-model>
   <div class="result-popup-content" ngbAutofocus>
     <div>
       <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon" />
-      <p class="confirmation-text">
-        {{ "Are you sure you want to cancel?" | translate }}
-      </p>
+      <p class="confirmation-text">{{ "Are you sure you want to cancel?" | translate }}</p>
     </div>
     <div class="custom-modal-footer">
-      <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">
-        {{ "No" }}
-      </button>
+      <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">{{ "No" }}</button>
       <button type="button" class="custom-btn btn-primary" (click)="onCancel($event); model.dismiss()">
-        {{ "Yes" }}
-      </button>
+        {{ "Yes" }}</button>
     </div>
   </div>
 </ng-template>
@@ -444,12 +373,11 @@
         [(ngModel)]="offcanvasSearchQuery" />
     </div>
 
-    <div *ngFor="let emp of filteredOffcanvasEmployees"
-      class="profile-content  mb-3 d-flex align-items-center justify-content-between">
+    <div *ngFor="let emp of filteredOffcanvasEmployees" class="profile-content mb-3 d-flex align-items-center justify-content-between">
       <div class="d-flex align-items-center flex-grow-1">
         <div class="rc-avatar-wrap cursor" (mouseenter)="openEmployeePopover(employeePopoverRef,  $event)"
-          (mouseleave)="closeEmployeePopoverWithDelay(employeePopoverRef)" [placement]="popoverPlacement" container="body"
-          triggers="manual" [ngbPopover]="offcanvasEmployeePopover" #employeePopoverRef="ngbPopover"
+          (mouseleave)="closeEmployeePopoverWithDelay(employeePopoverRef)" [placement]="popoverPlacement"
+          container="body" triggers="manual" [ngbPopover]="offcanvasEmployeePopover" #employeePopoverRef="ngbPopover"
           [popoverContext]="{ employee: emp }">
           <ng-container *ngIf="emp?.profileUrl; else offcanvasDefaultIcon">
             <img [src]="getImageUrl(emp.profileUrl)" alt="Profile" class="profile-image" />
@@ -473,6 +401,7 @@
         </span>
       </div>
     </div>
+
     <ng-template #offcanvasEmployeePopover let-emp="employee">
       <div class="popover-employee-details p-2" (mouseenter)="onPopoverMouseEnter()"
         (mouseleave)="onPopoverMouseLeave()">
@@ -493,6 +422,7 @@
         <!-- <div class="mt-2 small text-muted">Click on edit/delete to manage</div> -->
       </div>
     </ng-template>
+    
     <div *ngIf="filteredOffcanvasEmployees.length === 0" class="text-center custom-no-data-found text-muted py-3">
       <app-no-data-found />
     </div>

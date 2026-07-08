@@ -23,7 +23,6 @@ export const permissionsData = [
   { fields: 'Job Config Update Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Document Config Update Tab', View: false, Update: false, Create: false, Delete: false },
 
-
   //Personal field update config Tabs
   { fields: 'Basic Info', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Contact Info', View: false, Update: false, Create: false, Delete: false },
@@ -459,6 +458,7 @@ export const permissionsData = [
   { fields: 'Onboarding main Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Contractors main Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Offboarding main Tab', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'project management approvals main Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Time Off Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'WFH Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Remote Login Tab', View: false, Update: false, Create: false, Delete: false },
@@ -474,14 +474,12 @@ export const permissionsData = [
   { fields: 'Desk Requests Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Probation Details Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Time Sheet approval Tab', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Resource Approvals', View: false, Update: false, Create: false, Delete: false },
   { fields: 'KRA KPI approval Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Recruitment approval Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Contractor Details Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Contract-Conversion Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'EmployeeInfo Tab', View: false, Update: false, Create: false, Delete: false },
-
-
-
 
   //Pending Approval Time Off Tabs Section
   { fields: 'For You (Time Off)', View: false, Update: false, Create: false, Delete: false },
@@ -491,10 +489,10 @@ export const permissionsData = [
   { fields: 'For You (WFH)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'For Role (WFH)', View: false, Update: false, Create: false, Delete: false },
 
-
   //Pending Approval Remote Login Off Tabs Section
   { fields: 'For You (Remote Login)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'For Role (Remote Login)', View: false, Update: false, Create: false, Delete: false },
+
   //Pending Approval Contactors Tabs Section
   { fields: 'For You (Contractors)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'For Role (Contractors)', View: false, Update: false, Create: false, Delete: false },

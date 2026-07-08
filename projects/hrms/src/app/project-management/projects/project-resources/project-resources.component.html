@@ -391,7 +391,7 @@
               <p-select [options]="resoucesDropDownData" optionLabel="label" optionValue="value" [filter]="true"
                 filterBy="label" optionValue="value" [showClear]="false" placeholder="Please select resource name"
                 formControlName="resourceAuthority" class="custom-select w-100" resetFilterOnHide="true"
-                (onChange)="onClickEmployee($event)"></p-select>
+                appendTo="body"></p-select>
             </div>
 
             <div class="error-msg" *ngIf="
@@ -409,6 +409,12 @@
             <div class="d-flex w-100">
               <input type="text" id="resourceAllocationhrs" formControlName="resourceAllocationhrs"
                 class="form-control custom-input" placeholder="Please enter hours" [maxlength]="5" />
+            </div>
+            <div class="error-msg" *ngIf="updateResourceForm.get('resourceAllocationhrs')?.touched && updateResourceForm.get('resourceAllocationhrs')?.errors?.['required']">
+              Allocation Hours is required
+            </div>
+            <div class="error-msg" *ngIf="updateResourceForm.get('resourceAllocationhrs')?.touched && isUpdateHoursExceeded">
+              Exceeds available hours. Max allocatable: {{ remainingHoursForUpdate }} hrs
             </div>
           </div>
 
@@ -448,7 +454,7 @@
           <button type="button" class="custom-btn btn-secondary" (click)="closepopup(confirmationpopupfornodue)">
             Cancel
           </button>
-          <button type="submit" class="custom-btn btn-primary" [disabled]="updateResourceForm.invalid || loader">
+          <button type="submit" class="custom-btn btn-primary" [disabled]="updateResourceForm.invalid || isUpdateHoursExceeded || loader">
             <ng-container *ngIf="loader; else addText">
               <div class="button-loader-content">
                 <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
@@ -643,4 +649,17 @@
       </div>
     </div>
   </form>
+</ng-template>
+
+<!--Error Modal-->
+<ng-template #confirmationpopupforerror let-model>
+  <div class="result-popup-content" ngbAutofocus>
+    <div>
+      <img src="icons\error-icon.png" alt="failure icon" class="confirmation-icon mb-4">
+        <p class="confirmation-text mb-4">{{errorMessage}}</p>
+    </div>
+    <div class="custom-modal-footer justify-content-center">
+      <button type="button" (click)="model.dismiss()" class="custom-btn btn-primary width-max-content">{{ "Close" }}</button>
+    </div>
+  </div>
 </ng-template>

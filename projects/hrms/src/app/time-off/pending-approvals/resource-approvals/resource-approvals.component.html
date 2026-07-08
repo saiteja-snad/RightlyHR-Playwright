@@ -1,0 +1,158 @@
+<div class="custom-main-component-container">
+
+  <!-- Bulk action bar -->
+  @if (selectedProducts && selectedProducts.length > 0 && multiSelect) {
+  <div class="component-header-content">
+    <div class="component-sub-header">Selected Records: {{ selectedProducts.length }}</div>
+    <div class="d-flex gap-3">
+      <button class="custom-btn btn-primary-approve" (click)="bulkApprove(approvalModal)">Approve</button>
+      <button class="custom-btn btn-primary-reject" (click)="bulkReject(rejectModal)">Reject</button>
+    </div>
+  </div>
+  }
+
+  <!-- Search -->
+  <div class="input-group custom-search mb-3">
+    <span class="input-group-text custom-input-group-search" id="basic-addon1">
+      <i class="bi bi-search"></i>
+    </span>
+    <input type="search" class="form-control custom-search-input"
+      placeholder="Search by employee ID / employee name / project / phase / role" aria-label="Search"
+      aria-describedby="basic-addon1" [(ngModel)]="searchValue" (ngModelChange)="onSearchChange()" autocomplete="off" />
+  </div>
+
+  <div class="custom-p-multi-select-table">
+    @if (!dataLoad) {
+      <p-table #dt [value]="getFilteredList()" [(selection)]="selectedProducts" (selectionChange)="selectCheck($event)"
+        dataKey="resourceId" [tableStyle]="{ 'min-width': '70rem' }" [customSort]="true" (sortFunction)="customSort($event)">
+        <ng-template #header>
+          <tr>
+            <th style="width: 4rem"><p-tableHeaderCheckbox /></th>
+            <th pSortableColumn="fusionEmpId">{{ 'Employee ID' | translate }}<p-sortIcon field="fusionEmpId" /></th>
+            <th pSortableColumn="employeeName">{{ 'Employee Name' | translate }}<p-sortIcon field="employeeName" /></th>
+            <th pSortableColumn="projectName">{{ 'Project Name' | translate }}<p-sortIcon field="projectName" /></th>
+            <th pSortableColumn="phaseMilestone">{{ 'Phase / Milestone' | translate }}<p-sortIcon field="phaseMilestone" /></th>
+            <th pSortableColumn="role">{{ 'Role' | translate }}<p-sortIcon field="role" /></th>
+            <th class="text-center" pSortableColumn="allocationStartDate">{{ 'Allocation Start Date' | translate }}<p-sortIcon field="allocationStartDate" /></th>
+            <th class="text-center" pSortableColumn="allocationEndDate">{{ 'Allocation End Date' | translate }}<p-sortIcon field="allocationEndDate" /></th>
+            <th class="text-center" pSortableColumn="allocatedHours">{{ 'Allocated Hours' | translate }}<p-sortIcon field="allocatedHours" /></th>
+            <th pSortableColumn="requestedBy">{{ 'Requested By' | translate }}<p-sortIcon field="requestedBy" /></th>
+            <th class="text-center" pSortableColumn="requestedDate">{{ 'Requested Date' | translate }}<p-sortIcon field="requestedDate" /></th>
+            <!-- <th pSortableColumn="status">{{ 'Status' | translate }}<p-sortIcon field="status" /></th> -->
+            @if (!multiSelect) {
+            <th class="text-center">{{ 'Actions' | translate }}</th>
+            }
+          </tr>
+        </ng-template>
+
+        <ng-template #body let-item>
+          @if (getFilteredList().length > 0) {
+            <tr>
+              <td><p-tableCheckbox [value]="item" (selectionChange)="selectCheck($event)" /></td>
+              <td>{{ item.fusionEmpId }}</td>
+              <td>{{ item.employeeName }}</td>
+              <td>{{ item.projectName }}</td>
+              <td>{{ item.phaseMilestone }}</td>
+              <td>{{ item.role }}</td>
+              <td class="text-center text-nowrap">{{ item.allocationStartDate | dateformat }}</td>
+              <td class="text-center text-nowrap">{{ item.allocationEndDate | dateformat }}</td>
+              <td class="text-center">{{ item.allocatedHours }}</td>
+              <td>{{ item.requestedBy }}</td>
+              <td class="text-center text-nowrap">{{ item.requestedDate | dateformat }}</td>
+              <!-- <td>
+                <span class="badge custom-status-badge">{{ item.status }}</span>
+              </td> -->
+              @if (!multiSelect) {
+                <td class="text-center">
+                  <div class="dropdown">
+                    <a type="button" data-bs-toggle="dropdown">
+                      <i class="bi bi-three-dots-vertical"></i>
+                    </a>
+                    <ul class="dropdown-menu custom-dropdown-menu">
+                      <li (click)="openApproveModal(approvalModal, item)">
+                        <a class="dropdown-item">
+                          <i class="bi bi-check-circle me-2"></i>{{ 'Approve' | translate }}
+                        </a>
+                      </li>
+                      <li (click)="openRejectModal(rejectModal, item)">
+                        <a class="dropdown-item">
+                          <i class="bi bi-x-circle me-2"></i>{{ 'Reject' | translate }}
+                        </a>
+                      </li>
+                    </ul>
+                  </div>
+                </td>
+              }
+            </tr>
+          } @else {
+            <tr>
+              <app-no-data-found />
+            </tr>
+          }
+        </ng-template>
+
+        <ng-template #emptymessage>
+          <tr>
+            <app-no-data-found />
+          </tr>
+        </ng-template>
+      </p-table>
+    } @else {
+      <app-data-loader-content />
+    }
+  </div>
+</div>
+
+<!-- Approve Modal -->
+<ng-template #approvalModal let-modal>
+  <div class="result-popup-content" ngbAutofocus>
+    <div>
+      <app-confirmation-icon />
+      <p class="confirmation-text pt-3">
+        {{ 'Are you sure you want to allocate' | translate }}
+        {{ selectedProducts.length > 1 ? 'the selected resources?' : 'this resource?' | translate }}
+      </p>
+    </div>
+    <div class="custom-modal-footer">
+      <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()" [disabled]="spinnerLoader">
+        {{ 'Cancel' | translate }}</button>
+      <button type="button" class="custom-btn btn-primary" (click)="handleApprove()" [disabled]="spinnerLoader">
+        @if (spinnerLoader) {
+        <div class="button-loader-content">
+          <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
+          <span>{{ 'Loading...' | translate }}</span>
+        </div>
+        } @else {
+        <span>{{ 'Allocate' | translate }}</span>
+        }
+      </button>
+    </div>
+  </div>
+</ng-template>
+
+<!-- Reject Modal -->
+<ng-template #rejectModal let-modal>
+  <div class="result-popup-content" ngbAutofocus>
+    <div>
+      <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
+      <p class="confirmation-text">
+        {{ 'Do you really want to reject' | translate }}
+        {{ selectedProducts.length > 1 ? 'the selected resource requests?' : 'this resource request?' | translate }}
+      </p>
+    </div>
+    <div class="custom-modal-footer">
+      <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()" [disabled]="spinnerLoader">
+        {{ 'Cancel' | translate }}</button>
+      <button type="button" class="custom-btn btn-primary" (click)="handleReject()" [disabled]="spinnerLoader">
+        @if (spinnerLoader) {
+        <div class="button-loader-content">
+          <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
+          <span>{{ 'Loading...' | translate }}</span>
+        </div>
+        } @else {
+        <span>{{ 'Reject' | translate }}</span>
+        }
+      </button>
+    </div>
+  </div>
+</ng-template>

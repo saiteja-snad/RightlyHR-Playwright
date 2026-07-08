@@ -1,0 +1,38 @@
+.component-right-content {
+  width: calc(100% - 8.5rem) !important;
+}
+
+.custom-p-multi-select-table {
+  .p-datatable-thead>tr>th {
+    background-color: var(--table-header-bg-color) !important;
+    color: var(--table-header-color) !important;
+    text-wrap: nowrap !important;
+    text-transform: capitalize !important;
+    font-weight: 400 !important;
+    font-size: var(--fontsize14) !important;
+    line-height: 100% !important;
+    letter-spacing: 0% !important;
+    vertical-align: middle !important;
+    padding: 1rem !important;
+  }
+
+  .p-datatable-tbody>tr>td {
+    font-weight: 400 !important;
+    font-size: var(--fontsize14) !important;
+    line-height: 100% !important;
+    letter-spacing: 0% !important;
+    vertical-align: middle !important;
+    padding: 1rem !important;
+    border: 0rem !important;
+  }
+}
+
+.custom-status-badge {
+  background-color: var(--badge-warning-bg, #fff3cd);
+  color: var(--badge-warning-color, #856404);
+  font-weight: 400;
+  font-size: var(--fontsize12, 12px);
+  padding: 0.35em 0.65em;
+  border-radius: 0.375rem;
+  text-transform: capitalize;
+}

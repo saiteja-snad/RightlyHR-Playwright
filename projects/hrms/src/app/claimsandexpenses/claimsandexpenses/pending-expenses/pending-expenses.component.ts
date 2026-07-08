@@ -194,22 +194,11 @@ export class PendingExpensesComponent implements OnInit, OnDestroy {
       .getData(`v2/Expenses_Header/gettotalamount?EmployeeId=${empId}&status=Waiting for Approval&month=${this.seletedMouthly}&year=${this.selectedYear}&searchQuery=${cleanSearchQuery}`,).subscribe({
         next: (data: any) => {
           this.loading = false;
-          console.log('Expense API Response:', data);
           const filteredData = data.filter((item: any) => !item.expenseSummary);
           this.originalExpenseData = [...filteredData];
           this.expenesEmplyeedata = [...filteredData];
-
-          console.log('First Expense:', filteredData[0]);
-          console.log('CanApprove:', filteredData[0]?.canApprove);
-
-          if (filteredData.length > 0) {
-            console.log('First Record:', filteredData[0]);
-            console.log('PendingApprovalHeader:', filteredData[0].pendingApprovalHeader);
-          }
-
-          // this.expenesEmplyeedata.next(filteredData);
-        }, error(err) {
-          console.log("expensesheadererror", err)
+        }, error: () => {
+          this.loading = false;
         },
       });
   }
@@ -262,14 +251,11 @@ export class PendingExpensesComponent implements OnInit, OnDestroy {
       .getitembyid(`Expenses_Header/getby_Expense_ID`, expid).subscribe({
         next: (data: any) => {
           this.expenseheaderiteams = data
-        }, error(err) {
-          console.log("expensesheadererror", err)
         },
       });
   }
 
   comments(value: any, commentspopup: any) {
-    console.log(value);
     this.modalService.open(commentspopup, {
       centered: true,
       backdrop: 'static',
@@ -384,14 +370,14 @@ export class PendingExpensesComponent implements OnInit, OnDestroy {
     this.spinnerLoader = true;
 
     const payload = {
-      requestProcessedBy: this.LOGIN.employeeId.toString(),
+      requestProcessedBy: this.LOGIN?.employeeId?.toString(),
       status: 'Approved',
       comments: this.approveForm.value.comments,
-      moduleId: 19, // Replace with actual Expense Module Id
+      moduleId: 19,
       headerRequests: [
         {
-          headerID: this.selectedExpenseData.pendingApprovalHeader.id,
-          currentStage: this.selectedExpenseData.pendingApprovalHeader.currentapprovalStage
+          headerID: this.selectedExpenseData?.pendingApprovalHeader?.id,
+          currentStage: this.selectedExpenseData?.pendingApprovalHeader?.currentapprovalStage
         }
       ]
     };
@@ -438,8 +424,7 @@ export class PendingExpensesComponent implements OnInit, OnDestroy {
           expenses: true,
         }));
       },
-      error: (err) => {
-        console.log(err);
+      error: () => {
         this.modalService.dismissAll();
       },
       complete: () => {
@@ -453,14 +438,14 @@ export class PendingExpensesComponent implements OnInit, OnDestroy {
     this.spinnerLoader = true;
 
     const payload = {
-      requestProcessedBy: this.LOGIN.employeeId.toString(),
+      requestProcessedBy: this.LOGIN?.employeeId?.toString(),
       status: 'Rejected',
       comments: this.rejectForm.value.comments,
-      moduleId: 19, // Replace with actual Expense Module Id
+      moduleId: 19,
       headerRequests: [
         {
-          headerID: this.selectedExpenseData.pendingApprovalHeader.id,
-          currentStage: this.selectedExpenseData.pendingApprovalHeader.currentapprovalStage
+          headerID: this.selectedExpenseData?.pendingApprovalHeader?.id,
+          currentStage: this.selectedExpenseData?.pendingApprovalHeader?.currentapprovalStage
         }
       ]
     };
@@ -508,8 +493,7 @@ export class PendingExpensesComponent implements OnInit, OnDestroy {
           expenses: true,
         }));
       },
-      error: (err) => {
-        console.log(err);
+      error: () => {
         this.modalService.dismissAll();
       },
       complete: () => {
@@ -604,14 +588,6 @@ export class PendingExpensesComponent implements OnInit, OnDestroy {
   // }
 
   isRMStage(exp: any): boolean {
-
-    console.log({
-      stage: exp?.pendingApprovalHeader?.currentapprovalStage,
-      currentApproverId: exp?.pendingApprovalHeader?.currentApproverId,
-      loginId: this.LOGIN?.employeeId,
-      approvedType: exp?.pendingApprovalHeader?.approvedType
-    });
-
     return (
       +exp?.pendingApprovalHeader?.currentapprovalStage === 1 &&
       exp?.pendingApprovalHeader?.currentApproverId?.toString() ===
@@ -621,15 +597,15 @@ export class PendingExpensesComponent implements OnInit, OnDestroy {
 
 isHRStage(exp: any): boolean {
   return (
-    +exp.pendingApprovalHeader.currentapprovalStage === 2 &&
-    this.userRoles.includes(exp.pendingApprovalHeader.approver_Name)
+    +exp?.pendingApprovalHeader?.currentapprovalStage === 2 &&
+    this.userRoles.includes(exp?.pendingApprovalHeader?.approver_Name)
   );
 }
 
 isFinanceStage(exp: any): boolean {
   return (
-    +exp.pendingApprovalHeader.currentapprovalStage === 3 &&
-    this.userRoles.includes(exp.pendingApprovalHeader.approver_Name)
+    +exp?.pendingApprovalHeader?.currentapprovalStage === 3 &&
+    this.userRoles.includes(exp?.pendingApprovalHeader?.approver_Name)
   );
 }
 
@@ -650,17 +626,16 @@ isFinanceStage(exp: any): boolean {
   }
 
   confirmApproval(modal: any) {
-    console.log('storeapprovalRequest', this.storeapprovalRequest);
     this.isloading = true;
     this.sharedModalService.openLoaderModal(
       'Approving Request, Please wait...'
     );
     const payload = this.checklistdata.map((item: any) => ({
-      expenseHeaderId: this.storeapprovalRequest.pendingApprovalHeader.referenceEntityId,
-      employeeId: this.storeapprovalRequest.employeeId,         // current employee id
-      checklistConfigurationId: item.id,          // checklist item id
+      expenseHeaderId: this.storeapprovalRequest?.pendingApprovalHeader?.referenceEntityId,
+      employeeId: this.storeapprovalRequest?.employeeId,
+      checklistConfigurationId: item.id,
       isChecked: item.checked || false,
-      checkedBy: this.empinfo.employeeId,
+      checkedBy: this.empinfo?.employeeId,
       checkedAt: moment().format('YYYY-MM-DD'),
       comments: item.comments || '',
       createdAt: moment().format('YYYY-MM-DD'),
@@ -676,14 +651,14 @@ isFinanceStage(exp: any): boolean {
             modal.close();
 
             const payload = {
-              requestProcessedBy: this.LOGIN.employeeId.toString(),
+              requestProcessedBy: this.LOGIN?.employeeId?.toString(),
               status: 'Approved',
               comments: this.approveForm.value.comments,
               moduleId: 19,
               headerRequests: [
                 {
-                  headerID: this.storeapprovalRequest.pendingApprovalHeader.id,
-                  currentStage: this.storeapprovalRequest.pendingApprovalHeader.currentapprovalStage
+                  headerID: this.storeapprovalRequest?.pendingApprovalHeader?.id,
+                  currentStage: this.storeapprovalRequest?.pendingApprovalHeader?.currentapprovalStage
                 }
               ]
             };
@@ -733,7 +708,7 @@ isFinanceStage(exp: any): boolean {
   handleProcess(request: ExpenseApprovalResponse) {
     let requestBody = {
       status: 'Processed',
-      approvedBy: this.empinfo.employeeId.toString(),
+      approvedBy: this.empinfo?.employeeId?.toString(),
       currentStage: parseInt(
         this.selectedLeaveData?.approvalHeader?.currentapprovalStage ?? '0'
       ),
@@ -775,7 +750,7 @@ isFinanceStage(exp: any): boolean {
   }
 
   getApprovalStatusCounts() {
-    this.http.get(`PendingApproval/getApprovalStatusCounts?moduleId=19&EmployeeId=${this.empinfo.employeeId}`).subscribe((res: any) => {
+    this.http.get(`PendingApproval/getApprovalStatusCounts?moduleId=19&EmployeeId=${this.empinfo?.employeeId}`).subscribe((res: any) => {
       this.totalCount = res.reduce((acc: number, curr: any) => acc + curr.totalCount, 0);
       this.http.updatePendingApprovalCounts(this.totalCount);
     });
@@ -783,7 +758,7 @@ isFinanceStage(exp: any): boolean {
 
   getAllPendingApprovals() {
     this.loading = true;
-    let EmployeeId = parseInt(this.empinfo.employeeId);
+    let EmployeeId = parseInt(this.empinfo?.employeeId);
     this.http
       .getData(
         `PendingApproval/employee/${EmployeeId}?moduleId=19&approvedType=ROLE`
@@ -823,7 +798,6 @@ isFinanceStage(exp: any): boolean {
                 data.expenseitem.every((item: any) => item.isVerified === true);
               if (allDone) {
                 this.allVerifiedMap.set(expId, true);
-                console.log(this.allVerifiedMap);
               }
             }
           });
@@ -862,10 +836,10 @@ isFinanceStage(exp: any): boolean {
 
     const requestBody = {
       isVerified: true,
-      verifiedBy: this.empinfo.employeeId?.toString(),
+      verifiedBy: this.empinfo?.employeeId?.toString(),
       status: 'Verified',
       meta: JSON.stringify({
-        addedBy: this.empinfo.employeeId?.toString(),
+        addedBy: this.empinfo?.employeeId?.toString(),
         addedComments: formData.comments,
         addedOn: moment().format('YYYY-MM-DD')
       })
@@ -969,15 +943,9 @@ isFinanceStage(exp: any): boolean {
     this.selectedLeaveData = request;
     const appliedDate = moment(request.entity.applied_date);
     const today = moment();
-    // Get latest date between applied date and today
     this.minPaymentDate = moment.max(appliedDate, today).format('YYYY-MM-DD');
-    console.log("selectedLeaveDatagvhcvbn", this.selectedLeaveData)
   }
   openRequiredCalrificationModal(content: any, request: ExpenseApprovalResponse) {
-    console.log(request);
-    console.log(request.approvalHeader);
-
-
     this.modalService.open(content, { centered: true, backdrop: 'static' });
     this.intializeApproveForm();
     this.selectedLeaveData = request;
@@ -998,7 +966,6 @@ isFinanceStage(exp: any): boolean {
   }
 
   expensesCheckList(request: ExpenseApprovalResponse, action?: string): void {
-    console.log('request', request);
     this.storeapprovalRequest = request;
     this.storeapprovalRequest.action = action || '';
     this.intializeApproveForm();
@@ -1012,26 +979,25 @@ isFinanceStage(exp: any): boolean {
   markasPaid(modal: any) {
     this.isloading = true;
     if (!this.markAsPaidForm.valid || !this.selectedLeaveData) return;
-    console.log(this.selectedLeaveData);
 
     const formData = this.markAsPaidForm.value;
     const verifiedItem = this.selectedLeaveData;
 
     const requestBody = {
-      expenses_ID: this.selectedLeaveData.entity.expenses_ID,
-      applied_date: this.selectedLeaveData.entity.applied_date || new Date().toISOString(),
-      expenses_Title: this.selectedLeaveData.entity.expenses_Title || '',
+      expenses_ID: this.selectedLeaveData?.entity?.expenses_ID,
+      applied_date: this.selectedLeaveData?.entity?.applied_date || new Date().toISOString(),
+      expenses_Title: this.selectedLeaveData?.entity?.expenses_Title || '',
       additional_details: '',
       status: 'Processed',
-      expenseName: this.selectedLeaveData.entity.expenseType || '',
+      expenseName: this.selectedLeaveData?.entity?.expenseType || '',
       currentRole: '',
-      totalamount: this.selectedLeaveData.entity.totalExpenseAmount || 0,
-      employeeId: this.selectedLeaveData.entity.employeeId,
+      totalamount: this.selectedLeaveData?.entity?.totalExpenseAmount || 0,
+      employeeId: this.selectedLeaveData?.entity?.employeeId,
       submissionDate: new Date().toISOString(),
-      expense_Amount: this.selectedLeaveData.entity.totalExpenseAmount || 0,
+      expense_Amount: this.selectedLeaveData?.entity?.totalExpenseAmount || 0,
       attachment_url: '',
       currentApprover:
-        this.selectedLeaveData.approvalHeader?.currentApproverId?.toString() || '',
+        this.selectedLeaveData?.approvalHeader?.currentApproverId?.toString() || '',
       nextApprover: '',
       approverEmail: '',
       comments: formData.comments || 'Marked as paid',
@@ -1042,7 +1008,7 @@ isFinanceStage(exp: any): boolean {
       expenseitem: []
     };
 
-    this.http.putData(`Expenses_Header/updateexpenses?id=${this.selectedLeaveData.entity.expenses_ID}`, requestBody)
+    this.http.putData(`Expenses_Header/updateexpenses?id=${this.selectedLeaveData?.entity?.expenses_ID}`, requestBody)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res: any) => {
@@ -1058,9 +1024,7 @@ isFinanceStage(exp: any): boolean {
           this.storeapprovalRequest = {} as ExpenseApprovalResponse;
           modal.close();
         },
-        error: (err) => {
-          console.error(err);
-        }
+        error: () => {}
       });
   }
 
@@ -1074,7 +1038,7 @@ isFinanceStage(exp: any): boolean {
       isVerified: true,
       status: 'Rejected',
       meta: JSON.stringify({
-        addedBy: this.empinfo.employeeId?.toString(),
+        addedBy: this.empinfo?.employeeId?.toString(),
         addedComments: formData.comments,
         addedOn: moment().format('YYYY-MM-DD')
       })
@@ -1090,6 +1054,18 @@ isFinanceStage(exp: any): boolean {
           // Show success popup
           this.sharedModalService.openSuccessModal('Expense item rejected successfully');
 
+          // Update local UI immediately
+          if (this.expenseheaderiteams?.expenseitem?.length) {
+            const idx = this.expenseheaderiteams.expenseitem.findIndex(
+              it => it.expenseitem_id === verifiedItem.expenseitem_id
+            );
+            if (idx > -1) {
+              this.expenseheaderiteams.expenseitem[idx].isVerified = true;
+            }
+          }
+
+          this.selectedItem = null;
+          
           // Update local UI immediately
           if (this.expenseheaderiteams?.expenseitem?.length) {
             const idx = this.expenseheaderiteams.expenseitem.findIndex(
@@ -1122,40 +1098,30 @@ isFinanceStage(exp: any): boolean {
   }
 
   approveForPayment(exp: any) {
-    console.log('Approve For Payment', exp);
   }
 
   handleClarification(approveForm: FormGroup): void {
-    console.log('Form Valid:', approveForm.valid);
     this.isloading = true;
     if (approveForm.valid) {
       const formData = approveForm.value;
-      console.log('Selected Leave Data:', this.selectedLeaveData);
-      console.log('Approval Header:', this.selectedLeaveData.approvalHeader);
       const requestBody = {
         status: 'Required Clarification',
         comments: formData.comments,
-        approvedBy: this.empinfo.employeeId.toString(),
+        approvedBy: this.empinfo?.employeeId?.toString(),
         currentStage: parseInt(
-          this.selectedLeaveData.pendingApprovalHeader?.currentapprovalStage ||
-          this.selectedLeaveData.approvalHeader?.currentapprovalStage || '0'
+          this.selectedLeaveData?.pendingApprovalHeader?.currentapprovalStage ||
+          this.selectedLeaveData?.approvalHeader?.currentapprovalStage || '0'
         ),
       };
-
-      console.log('Before Loader');
 
       this.sharedModalService.openLoaderModal(
         'Sending for Clarification, Please wait...'
       );
 
-      console.log('After Loader');
-
-      console.log('Calling API Now');
-
       this.http
         .putData(
-          `PendingApproval/${this.selectedLeaveData.pendingApprovalHeader?.id ??
-          this.selectedLeaveData.approvalHeader?.id
+          `PendingApproval/${this.selectedLeaveData?.pendingApprovalHeader?.id ??
+          this.selectedLeaveData?.approvalHeader?.id
           }`,
           requestBody
         )

@@ -26,11 +26,12 @@ import { combineLatest } from 'rxjs';
 import { Chip } from 'primeng/chip';
 import { PaginatorModule } from 'primeng/paginator';
 import { ApplicablePoliciesTriggerComponent } from '../../../shared/policies/applicable-policies-trigger/applicable-policies-trigger.component';
+import { TableModule } from 'primeng/table';
 @Component({
   selector: 'app-active-projects',
   imports: [NoDataFoundComponent, MultiSelectModule, CommonModule, FormsModule, DataLoaderContentComponent,
     TranslateModule, RouterModule, ConfirmationIconComponent, ReactiveFormsModule, Select, ProjectManagementModuleInfoComponent,
-    ProjcetCreationComponent, ActiveprojectsPipe, ProjectsSideTabsForClientsComponent, ProjectsSideTabsComponent, Chip, PaginatorModule, ApplicablePoliciesTriggerComponent],
+    ProjcetCreationComponent, ActiveprojectsPipe, ProjectsSideTabsForClientsComponent, ProjectsSideTabsComponent, Chip, PaginatorModule, ApplicablePoliciesTriggerComponent, TableModule],
   templateUrl: './active-projects.component.html',
   styleUrl: './active-projects.component.scss',
 })
@@ -82,6 +83,11 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
     { label: 100, value: 100 },
 
   ];
+
+  // Sorting
+  currentSortField = '';
+  currentSortOrder = 0;
+  currentUIField = '';
   constructor(private fb: FormBuilder, private modalService: NgbModal, private router: Router,
     public formValidation: FormValidationsService, private http: HttpService, private conformationPopup: OpenModalService,
     private route: ActivatedRoute, public rbac: RbacService, private offcanvasService: NgbOffcanvas) { }
@@ -349,6 +355,12 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
       url += `&clientId=${clientIds.join(',')}`;
     }
 
+    // Add sorting parameters
+    if (this.currentSortField && this.currentSortOrder !== 0) {
+      const sortOrder = this.currentSortOrder === 1 ? 'asc' : 'desc';
+      url += `&sortBy=${this.currentSortField}&sortOrder=${sortOrder}`;
+    }
+
     this.http
       .getData(url)
       .pipe(takeUntil(this.destroy$))
@@ -390,6 +402,13 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
     if (clientIds.length > 0) {
       url += `&clientId=${clientIds.join(',')}`;
     }
+
+    // Add sorting parameters
+    if (this.currentSortField && this.currentSortOrder !== 0) {
+      const sortOrder = this.currentSortOrder === 1 ? 'asc' : 'desc';
+      url += `&sortBy=${this.currentSortField}&sortOrder=${sortOrder}`;
+    }
+
     this.http
       .getData(url)
       .pipe(takeUntil(this.destroy$))
@@ -818,6 +837,40 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
 
     // Convert back to hex
     return `#${newR.toString(16).padStart(2, '0')}${newG.toString(16).padStart(2, '0')}${newB.toString(16).padStart(2, '0')}`;
+  }
+
+  // Custom sorting for PrimeNG table
+  customSort(event: any): void {
+    const field = event.field;
+    const order = event.order;
+    const nextSortOrder = order === 1 ? 'asc' : 'desc';
+
+    // Prevent duplicate API calls
+    if (
+      this.currentUIField === field &&
+      ((this.currentSortOrder === 1 && nextSortOrder === 'asc') ||
+        (this.currentSortOrder === -1 && nextSortOrder === 'desc'))
+    ) {
+      return;
+    }
+
+    // Cycle: asc → desc → reset
+    if (this.currentUIField === field && this.currentSortOrder === -1) {
+      this.currentSortField = '';
+      this.currentUIField = '';
+      this.currentSortOrder = 0;
+      this.page = 1;
+      this.first = 0;
+      this.getProjectsBasedOnRoute();
+      return;
+    }
+
+    this.currentUIField = field;
+    this.currentSortField = field;
+    this.currentSortOrder = order;
+    this.page = 1;
+    this.first = 0;
+    this.getProjectsBasedOnRoute();
   }
 
   // isFilterApplied(): boolean {

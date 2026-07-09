@@ -4,6 +4,7 @@ import {
   OnDestroy,
   OnInit,
   TemplateRef,
+  ViewChild,
   ViewEncapsulation,
 } from '@angular/core';
 import {
@@ -38,6 +39,8 @@ import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { NgxDaterangepickerBootstrapModule } from 'ngx-daterangepicker-bootstrap';
 import { DatePickerModule } from 'primeng/datepicker';
+import { TableModule } from 'primeng/table';
+import { Table } from 'primeng/table';
 @Component({
   selector: 'app-late-login-report',
   imports: [
@@ -54,6 +57,7 @@ import { DatePickerModule } from 'primeng/datepicker';
     MultiSelectModule,
     NgxDaterangepickerBootstrapModule,
     DatePickerModule,
+    TableModule,
   ],
 
   templateUrl: './late-login-report.component.html',
@@ -61,6 +65,7 @@ import { DatePickerModule } from 'primeng/datepicker';
   encapsulation: ViewEncapsulation.None,
 })
 export class LateLoginReportComponent implements OnInit, OnDestroy {
+  @ViewChild('lateLoginTable') lateLoginTable!: Table;
   moduleinfo: string = '';
   subscription!: Subscription;
   private readonly destroy$ = new Subject<void>();
@@ -108,8 +113,12 @@ export class LateLoginReportComponent implements OnInit, OnDestroy {
   selectLeaveEmployeeIds: number[] = [];
 
   data: any[] = [];
+  originalData: any[] = [];
 
   summary: any;
+
+  currentSortField: string = '';
+  currentSortOrder: number = 0;
 
   ranges: any = {
     Today: [dayjs(), dayjs()],
@@ -335,7 +344,10 @@ export class LateLoginReportComponent implements OnInit, OnDestroy {
     });
 
     this.data = [];
+    this.originalData = [];
     this.summary = null;
+    this.currentSortField = '';
+    this.currentSortOrder = 0;
     this.isFilterIndicatorActive = false;
   }
 
@@ -469,11 +481,15 @@ export class LateLoginReportComponent implements OnInit, OnDestroy {
     this.reportsService.getLateLoginReport(params).subscribe({
       next: (res: any) => {
         this.data = res?.data as [];
+        this.originalData = [...this.data];
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
         this.disableBtn = false; // ✅ Enable export button after successful data load
       },
       error: (err) => {
         console.error(err);
         this.data = [];
+        this.originalData = [];
         this.disableBtn = true; // ✅ Keep disabled on error
       },
       complete: () => {
@@ -493,11 +509,51 @@ export class LateLoginReportComponent implements OnInit, OnDestroy {
     return dayjs(date).format('YYYY-MM-DD');
   }
 
+  customSort(event: any): void {
+    const field = event.field;
+
+    if (this.currentSortField === field) {
+      if (this.currentSortOrder === 1) {
+        this.currentSortOrder = -1;
+        event.order = -1;
+      } else if (this.currentSortOrder === -1) {
+        this.data = [...this.originalData];
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        if (this.lateLoginTable) this.lateLoginTable.reset();
+        return;
+      } else {
+        this.currentSortOrder = 1;
+        event.order = 1;
+      }
+    } else {
+      this.currentSortField = field;
+      this.currentSortOrder = 1;
+      event.order = 1;
+    }
+
+    event.data.sort((a: any, b: any) => {
+      let val1 = a[field];
+      let val2 = b[field];
+
+      if (field === 'fusionEmpId' || field === 'utilizedCount') {
+        const num1 = parseInt(String(val1).replace(/\D/g, ''), 10) || 0;
+        const num2 = parseInt(String(val2).replace(/\D/g, ''), 10) || 0;
+        return event.order * (num1 - num2);
+      }
+
+      val1 = String(val1 ?? '').trim();
+      val2 = String(val2 ?? '').trim();
+      return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+    });
+  }
+
   // 🔹 Export functionality
 
   exportLateLogin() {
     this.spinnerLoader2 = true;
     setTimeout(() => {
+      const dataToExport = this.lateLoginTable?.filteredValue ?? this.lateLoginTable?.value ?? this.data;
       const HEADER_MAPPINGS: { [key: string]: string } = {
         fusionEmpId: 'EMPLOYEE ID',
         employeeName: 'EMPLOYEE NAME',
@@ -534,7 +590,7 @@ export class LateLoginReportComponent implements OnInit, OnDestroy {
       excelData.push(NEW_SEQUENCE);
 
       // Add Data Rows
-      this.data.forEach((record) => {
+      dataToExport.forEach((record: any) => {
         const row: any[] = [];
         NEW_SEQUENCE.forEach((columnName) => {
           const originalKey = Object.keys(HEADER_MAPPINGS).find(

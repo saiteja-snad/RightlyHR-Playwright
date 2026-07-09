@@ -4,6 +4,7 @@ import {
   OnDestroy,
   OnInit,
   TemplateRef,
+  ViewChild,
   ViewEncapsulation,
 } from '@angular/core';
 import {
@@ -31,6 +32,8 @@ import { ReportsHeaderComponent } from '../../../shared/reports-tabs/reports-hea
 import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { DatePickerModule } from 'primeng/datepicker';
+import { TableModule } from 'primeng/table';
+import { Table } from 'primeng/table';
 
 @Component({
   selector: 'app-exceeded-break-hours-report',
@@ -46,12 +49,14 @@ import { DatePickerModule } from 'primeng/datepicker';
     ReportsHeaderComponent,
     MultiSelectModule,
     DatePickerModule,
+    TableModule,
   ],
   templateUrl: './exceeded-break-hours-report.component.html',
   styleUrl: './exceeded-break-hours-report.component.scss',
   encapsulation: ViewEncapsulation.None,
 })
 export class ExceededBreakHoursReportComponent implements OnInit, OnDestroy {
+  @ViewChild('exceededBreakHoursTable') exceededBreakHoursTable!: Table;
   private readonly destroy$ = new Subject<void>();
   subscription!: Subscription;
 
@@ -60,6 +65,7 @@ export class ExceededBreakHoursReportComponent implements OnInit, OnDestroy {
   employeeMultiSelectOptions: any[] = [];
   teamdetails = [] as any[];
   data: any[] = [];
+  originalData: any[] = [];
 
   ExceededBreakHoursReport!: FormGroup;
   spinnerLoader1 = false;
@@ -69,6 +75,8 @@ export class ExceededBreakHoursReportComponent implements OnInit, OnDestroy {
   getEmployeeInfo = [] as any;
   today: Date = new Date();
   localeOptions: any;
+  currentSortField: string = '';
+  currentSortOrder: number = 0;
 
   constructor(
     private authService: AuthService,
@@ -209,6 +217,9 @@ export class ExceededBreakHoursReportComponent implements OnInit, OnDestroy {
       dateRange: null,
     });
     this.data = [];
+    this.originalData = [];
+    this.currentSortField = '';
+    this.currentSortOrder = 0;
     this.isFilterIndicatorActive = false;
   }
 
@@ -252,17 +263,20 @@ export class ExceededBreakHoursReportComponent implements OnInit, OnDestroy {
     this.reportsService.getExceededBreakHoursReport(params).subscribe({
       next: (res: any) => {
         this.data = res?.data as [];
+        this.originalData = [...this.data];
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
         this.disableBtn = false;
         this.isLoading = false;
       },
       error: (err) => {
         console.error(err);
         this.data = [];
+        this.originalData = [];
         this.disableBtn = true;
         this.isLoading = false;
       },
       complete: () => {
-        this.isLoading = false;
         this.isLoading = false;
       },
     });
@@ -273,9 +287,49 @@ export class ExceededBreakHoursReportComponent implements OnInit, OnDestroy {
     return dayjs(date).format('YYYY-MM-DD');
   }
 
+  customSort(event: any): void {
+    const field = event.field;
+
+    if (this.currentSortField === field) {
+      if (this.currentSortOrder === 1) {
+        this.currentSortOrder = -1;
+        event.order = -1;
+      } else if (this.currentSortOrder === -1) {
+        this.data = [...this.originalData];
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        if (this.exceededBreakHoursTable) this.exceededBreakHoursTable.reset();
+        return;
+      } else {
+        this.currentSortOrder = 1;
+        event.order = 1;
+      }
+    } else {
+      this.currentSortField = field;
+      this.currentSortOrder = 1;
+      event.order = 1;
+    }
+
+    event.data.sort((a: any, b: any) => {
+      let val1 = a[field];
+      let val2 = b[field];
+
+      if (field === 'fusionEmpId' || field === 'utilizedCount') {
+        const num1 = parseInt(String(val1).replace(/\D/g, ''), 10) || 0;
+        const num2 = parseInt(String(val2).replace(/\D/g, ''), 10) || 0;
+        return event.order * (num1 - num2);
+      }
+
+      val1 = String(val1 ?? '').trim();
+      val2 = String(val2 ?? '').trim();
+      return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+    });
+  }
+
   exportExceededBreakHours() {
     this.spinnerLoader2 = true;
     setTimeout(() => {
+      const dataToExport = this.exceededBreakHoursTable?.filteredValue ?? this.exceededBreakHoursTable?.value ?? this.data;
       const HEADER_MAPPINGS: { [key: string]: string } = {
         fusionEmpId: 'EMPLOYEE ID',
         employeeName: 'EMPLOYEE NAME',
@@ -306,7 +360,7 @@ export class ExceededBreakHoursReportComponent implements OnInit, OnDestroy {
       excelData.push(['EXCEEDED BREAK HOURS REPORT']);
       excelData.push(NEW_SEQUENCE);
 
-      this.data.forEach((record) => {
+      dataToExport.forEach((record: any) => {
         const row: any[] = [];
         NEW_SEQUENCE.forEach((columnName) => {
           const originalKey = Object.keys(HEADER_MAPPINGS).find(

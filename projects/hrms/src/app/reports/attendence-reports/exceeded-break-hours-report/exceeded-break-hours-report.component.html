@@ -47,47 +47,50 @@
   </div>
 
   <div class="custom-table-content">
-    @if (!isLoading) {
-      <table class="content w-100">
-        <thead>
-          <tr>
-            <th>{{ "Employee ID" | translate }}</th>
-            <th>{{ "Employee Name" | translate }}</th>
-            <th>{{ "Department" | translate }}</th>
-            <th>{{ "Team Manager" | translate }}</th>
-            <th>{{ "Location" | translate }}</th>
-            <th>{{ "Sub Location" | translate }}</th>
-            <th>{{ "Shift" | translate }}</th>
-            <th>{{ "Exceeded Break Count" | translate }}</th>
-            <th>{{ "Total Duration" | translate }}</th>
-            <th>{{ "Average Duration" | translate }}</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          @for (row of data; track $index) {
-            <tr>
-              <td>{{ row.fusionEmpId ?? "-" }}</td>
-              <td>{{ row.employeeName ?? "-" }}</td>
-              <td>{{ row.departmentName ?? "-" }}</td>
-              <td>{{ row.tmEmployeeName ?? "-" }}</td>
-              <td>{{ row.loctaionName ?? "-" }}</td>
-              <td>{{ row.subLocationName ?? "-" }}</td>
-              <td>{{ row.shiftName ?? "-" }}</td>
-              <td>{{ row.utilizedCount ?? "-" }}</td>
-              <td>{{ row.totalDuration ?? "-" }}</td>
-              <td>{{ row.avgDuration ?? "-" }}</td>
-            </tr>
-          }
-        </tbody>
-      </table>
-
-      <!-- NO DATA -->
-      <div *ngIf="data.length === 0">
-        <app-no-data-found></app-no-data-found>
+    @if (isLoading) {
+      <div class="custom-compoent-data-loader">
+        <app-data-loader-content />
       </div>
     } @else {
-      <app-data-loader-content></app-data-loader-content>
+      <p-table #exceededBreakHoursTable [value]="data" [tableStyle]="{'width': '100%'}" [customSort]="true" (sortFunction)="customSort($event)">
+        <ng-template pTemplate="header">
+          <tr>
+            <th pSortableColumn="fusionEmpId">{{ "Employee ID" | translate }} <p-sortIcon field="fusionEmpId" /></th>
+            <th pSortableColumn="employeeName">{{ "Employee Name" | translate }} <p-sortIcon field="employeeName" /></th>
+            <th pSortableColumn="departmentName">{{ "Department" | translate }} <p-sortIcon field="departmentName" /></th>
+            <th pSortableColumn="tmEmployeeName">{{ "Team Manager" | translate }} <p-sortIcon field="tmEmployeeName" /></th>
+            <th pSortableColumn="loctaionName">{{ "Location" | translate }} <p-sortIcon field="loctaionName" /></th>
+            <th pSortableColumn="subLocationName">{{ "Sub Location" | translate }} <p-sortIcon field="subLocationName" /></th>
+            <th pSortableColumn="shiftName">{{ "Shift" | translate }} <p-sortIcon field="shiftName" /></th>
+            <th pSortableColumn="utilizedCount">{{ "Exceeded Break Count" | translate }} <p-sortIcon field="utilizedCount" /></th>
+            <th pSortableColumn="totalDuration">{{ "Total Duration" | translate }} <p-sortIcon field="totalDuration" /></th>
+            <th pSortableColumn="avgDuration">{{ "Average Duration" | translate }} <p-sortIcon field="avgDuration" /></th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-row>
+          <tr>
+            <td>{{ row.fusionEmpId ?? "-" }}</td>
+            <td>{{ row.employeeName ?? "-" }}</td>
+            <td>{{ row.departmentName ?? "-" }}</td>
+            <td>{{ row.tmEmployeeName ?? "-" }}</td>
+            <td>{{ row.loctaionName ?? "-" }}</td>
+            <td>{{ row.subLocationName ?? "-" }}</td>
+            <td>{{ row.shiftName ?? "-" }}</td>
+            <td>{{ row.utilizedCount ?? "-" }}</td>
+            <td>{{ row.totalDuration ?? "-" }}</td>
+            <td>{{ row.avgDuration ?? "-" }}</td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="10">
+              <div class="wrapper">
+                <app-no-data-found />
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
     }
   </div>
 

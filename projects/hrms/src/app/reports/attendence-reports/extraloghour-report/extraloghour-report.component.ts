@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { IemployeeDetails } from '../reports.modal';
 import { FormsModule, ReactiveFormsModule, FormGroup, FormBuilder, Validators } from '@angular/forms';
@@ -22,17 +22,18 @@ import { IWfhReportRequest } from '../../../Interfaces/reports.model';
 import * as XLSX from 'xlsx-js-style';
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 import { NgbPopoverModule, NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
+import { Table, TableModule } from 'primeng/table';
 
 @Component({
   selector: 'app-extraloghour-report',
   imports: [CommonModule, FormsModule, ReactiveFormsModule, DatePicker, DropdownModule, SelectModule, MultiSelectModule, TranslateModule, NgbPopoverModule,
-    NoDataFoundComponent, DataLoaderContentComponent, ReportsHeaderComponent, InfoIconComponent],
+    NoDataFoundComponent, DataLoaderContentComponent, ReportsHeaderComponent, InfoIconComponent, TableModule],
   templateUrl: './extraloghour-report.component.html',
   styleUrl: './extraloghour-report.component.scss',
   encapsulation: ViewEncapsulation.None
 })
 export class ExtraloghourReportComponent implements OnInit, OnDestroy {
-
+  @ViewChild('extraLogTable') extraLogTable!: Table;
   moduleinfo: string = '';
   subscription!: Subscription;
   loggedInUser = {} as IemployeeDetails;
@@ -46,6 +47,7 @@ export class ExtraloghourReportComponent implements OnInit, OnDestroy {
   isDropdownOpen: boolean = false;
   isFilterGivenwfh: boolean = false;
   filteredExtraLogHourRecord: any[] = [];
+  originalFilteredExtraLogHourRecord: any[] = [];
   employeeMasterData: any[] = [];
   employeeiddetails: any[] = [];
   teamdetails = [] as any[];
@@ -60,6 +62,8 @@ export class ExtraloghourReportComponent implements OnInit, OnDestroy {
   getEmployeeInfo = [] as any;
   selectLeaveEmployeeIds: number[] = [];
   filteredleaveRecords = true;
+  currentSortField: string = '';
+  currentSortOrder: number = 0;
   ranges: any = {
     Today: [dayjs(), dayjs()],
     Yesterday: [dayjs().subtract(1, 'days'), dayjs().subtract(1, 'days')],
@@ -298,6 +302,9 @@ export class ExtraloghourReportComponent implements OnInit, OnDestroy {
     this.reportsService.getExtraLogHoursReports(request).subscribe({
       next: (response: any) => {
         this.filteredExtraLogHourRecord = response ?? [];
+        this.originalFilteredExtraLogHourRecord = [...this.filteredExtraLogHourRecord];
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
       },
       error: (error) => {
         this.spinnerLoader1 = false;
@@ -312,6 +319,44 @@ export class ExtraloghourReportComponent implements OnInit, OnDestroy {
         this.isLoading = false;
         this.closeCanvas();
       }
+    });
+  }
+
+  customSort(event: any): void {
+    const field = event.field;
+    if (this.currentSortField === field) {
+      if (this.currentSortOrder === 1) {
+        this.currentSortOrder = -1;
+        event.order = -1;
+      } else if (this.currentSortOrder === -1) {
+        this.filteredExtraLogHourRecord = [...this.originalFilteredExtraLogHourRecord];
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        if (this.extraLogTable) this.extraLogTable.reset();
+        return;
+      } else {
+        this.currentSortOrder = 1;
+        event.order = 1;
+      }
+    } else {
+      this.currentSortField = field;
+      this.currentSortOrder = 1;
+      event.order = 1;
+    }
+    event.data.sort((a: any, b: any) => {
+      let val1 = a[field];
+      let val2 = b[field];
+      if (field === 'empId') {
+        const num1 = parseInt(String(val1).replace(/\D/g, ''), 10) || 0;
+        const num2 = parseInt(String(val2).replace(/\D/g, ''), 10) || 0;
+        return event.order * (num1 - num2);
+      }
+      if (field === 'requestedDate') {
+        return event.order * (new Date(val1 ?? 0).getTime() - new Date(val2 ?? 0).getTime());
+      }
+      val1 = String(val1 ?? '').trim();
+      val2 = String(val2 ?? '').trim();
+      return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
     });
   }
 

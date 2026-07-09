@@ -1,4 +1,5 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Table } from 'primeng/table';
 import { filter, Subscription } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { IemployeeDetails } from '../../../Interfaces/letters-model';
@@ -21,7 +22,7 @@ import { RbacService } from '../../../services/rbac.service';
 import { ModuleInformationComponent } from "../../../shared/module-information/module-information.component";
 import { NavigationEnd, Router } from '@angular/router';
 import { MODULE_INFOS } from '../../../shared/modules-info';
-import { Table, TableModule } from 'primeng/table';
+import { TableModule } from 'primeng/table';
 
 @Component({
   selector: 'app-absent-report',
@@ -44,7 +45,7 @@ import { Table, TableModule } from 'primeng/table';
 })
 
 export class AbsentReportComponent implements OnInit, OnDestroy {
-  @ViewChild('dt') table!: Table;
+  @ViewChild('absentTable') absentTable!: Table;
   moduleinfo: string = '';
   subscription!: Subscription;
   loggedInUser = {} as IemployeeDetails;
@@ -69,27 +70,9 @@ export class AbsentReportComponent implements OnInit, OnDestroy {
   spinnerLoader1 = false;
   spinnerLoader2 = false;
   disableBtn = false;
-
-  // Sorting properties
+  originalFilteredAbsentRecord: any[] = [];
   currentSortField: string = '';
-  currentSortOrder: number = 0; // 0 = no sort, 1 = asc, -1 = desc
-  currentUIField: string | null = null; // Track the UI field name for visual state
-  originalAbsentRecord: any[] = []; // Store original order for reset
-  
-  // Sort field mapping for client-side sorting
-  readonly sortFieldMap: Record<string, string> = {
-    fusionEmpId: 'fusionEmpId',
-    employeeName: 'employeeName',
-    department: 'department',
-    teamManagerName: 'teamManagerName',
-    location: 'location',
-    sublocation: 'sublocation',
-    shift: 'shift',
-    leaveType: 'leaveType',
-    startDate: 'startDate',
-    endDate: 'endDate',
-    days: 'days'
-  };
+  currentSortOrder: number = 0;
 
   ranges: any = {
     Today: [dayjs(), dayjs()],
@@ -140,95 +123,6 @@ export class AbsentReportComponent implements OnInit, OnDestroy {
   getParsedEmployee(event: Event): any {
     const target = event.target as HTMLSelectElement;
     return JSON.parse(target.value);
-  }
-
-  // Method to handle column header clicks
-  onColumnSort(field: string): void {
-    const backendField = this.sortFieldMap[field] || field;
-
-    // Handle the three-state sorting: none → asc → desc → none
-    if (this.currentUIField === field) {
-      // Same field clicked - cycle through states
-      if (this.currentSortOrder === 0) {
-        // Currently no sort, set to ascending
-        this.currentSortOrder = 1;
-        this.currentSortField = backendField;
-        this.currentUIField = field;
-      } else if (this.currentSortOrder === 1) {
-        // Currently ascending, set to descending
-        this.currentSortOrder = -1;
-        this.currentSortField = backendField;
-      } else if (this.currentSortOrder === -1) {
-        // Currently descending, reset to no sort
-        this.currentSortField = '';
-        this.currentUIField = null as any;
-        this.currentSortOrder = 0;
-        
-        // Manually reset PrimeNG table sort state
-        if (this.table) {
-          this.table.reset();
-        }
-        
-        // Reload data without sorting
-        this.applySorting();
-        return;
-      }
-    } else {
-      // Different field clicked - start with ascending
-      this.currentUIField = field;
-      this.currentSortField = backendField;
-      this.currentSortOrder = 1; // Always start with ascending for new field
-    }
-
-    // Apply sorting
-    this.applySorting();
-  }
-
-  // Apply sorting to the filtered data
-  applySorting(): void {
-    if (!this.currentSortField || this.currentSortOrder === 0) {
-      // No sorting - restore original order
-      if (this.originalAbsentRecord.length > 0) {
-        this.filteredAbsentRecord = [...this.originalAbsentRecord];
-      }
-      return;
-    }
-
-    this.filteredAbsentRecord = [...this.filteredAbsentRecord].sort((a: any, b: any) => {
-      const field = this.currentSortField;
-      let valueA = a[field];
-      let valueB = b[field];
-
-      // Handle null/undefined values
-      if (valueA == null) valueA = '';
-      if (valueB == null) valueB = '';
-
-      // Handle different data types
-      if (field === 'days') {
-        // Numeric comparison
-        valueA = Number(valueA) || 0;
-        valueB = Number(valueB) || 0;
-        return this.currentSortOrder === 1 ? valueA - valueB : valueB - valueA;
-      } else if (field === 'startDate' || field === 'endDate') {
-        // Date comparison
-        const dateA = new Date(valueA).getTime();
-        const dateB = new Date(valueB).getTime();
-        return this.currentSortOrder === 1 ? dateA - dateB : dateB - dateA;
-      } else {
-        // String comparison (case-insensitive)
-        const strA = String(valueA).toLowerCase();
-        const strB = String(valueB).toLowerCase();
-        if (strA < strB) return this.currentSortOrder === 1 ? -1 : 1;
-        if (strA > strB) return this.currentSortOrder === 1 ? 1 : -1;
-        return 0;
-      }
-    });
-  }
-
-  customSort(event: any): void {
-    // This method is kept for compatibility but does nothing
-    // We handle sorting through onColumnSort instead
-    return;
   }
 
   ngOnInit(): void {
@@ -402,16 +296,15 @@ getTeam() {
     this.reportsService.getAbsentReports(request).subscribe({
       next: (response: any) => {
         this.filteredAbsentRecord = response ?? [];
-        this.originalAbsentRecord = [...this.filteredAbsentRecord]; // Store original order
-        // Apply current sorting if any
-        this.applySorting();
+        this.originalFilteredAbsentRecord = [...this.filteredAbsentRecord];
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
       },
       error: (error) => {
         this.spinnerLoader1 = false;
         this.disableBtn = true;
         this.isLoading = false;
         this.filteredAbsentRecord = [];
-        this.originalAbsentRecord = [];
       },
       complete: () => {
         this.spinnerLoader1 = false;
@@ -423,18 +316,6 @@ getTeam() {
 
   clearAllFilters(): void {
     this.absentReportForm.reset();
-    this.filteredAbsentRecord = [];
-    this.originalAbsentRecord = []; // Clear original order too
-    
-    // Reset sorting arrows
-    this.currentSortField = '';
-    this.currentUIField = null;
-    this.currentSortOrder = 0;
-    
-    // Reset the table sort state
-    if (this.table) {
-      this.table.reset();
-    }
   }
 
   formatDate(date: Date): string {
@@ -449,23 +330,24 @@ getTeam() {
   }
 
   exportToExcelAbsent(): void {
-    // Define header mappings
     this.spinnerLoader2 = true;
+
+    const dataToExport = this.absentTable?.filteredValue ?? this.absentTable?.value ?? this.filteredAbsentRecord;
+
     const HEADER_MAPPINGS: { [key: string]: string } = {
       fusionEmpId: 'EMPLOYEE ID',
       employeeName: 'EMPLOYEE NAME',
       department: 'DEPARTMENT',
       teamManagerName: 'TEAM MANAGER',
-      shift: 'SHIFT',
       location: 'LOCATION',
       sublocation: 'SUB LOCATION',
+      shift: 'SHIFT',
       leaveType: 'LEAVE TYPE',
       startDate: 'START DATE',
       endDate: 'END DATE',
       days: 'DAYS'
     };
 
-    // Define new sequence
     const NEW_SEQUENCE: string[] = [
       'EMPLOYEE ID',
       'EMPLOYEE NAME',
@@ -480,75 +362,67 @@ getTeam() {
       'DAYS'
     ];
 
-    // Function to format date in dd-MMM-yyyy format
-    const formatDate = (dateString: string): string => {
-      const date = new Date(dateString);
-      const options = { day: '2-digit', month: 'short', year: 'numeric' } as const;
-      return date.toLocaleDateString('en-GB', options).replace(/ /g, '-');
+    const normalizeCell = (key: string, value: any) => {
+      if (key === 'startDate' || key === 'endDate') {
+        if (!value) return '-';
+        const date = new Date(value);
+        return date.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }).replace(/ /g, '-');
+      }
+      if (value === null || value === undefined) return '-';
+      if (typeof value === 'string') return value.trim().length > 0 ? value.trim() : '-';
+      return value;
     };
 
-    // Modify data with renamed headers and new sequence
-    const modifiedData = this.filteredAbsentRecord.map(record => {
-      const modifiedRecord: any = {};
-      NEW_SEQUENCE.forEach(columnName => {
-        const originalColumnName = Object.keys(HEADER_MAPPINGS).find(key => HEADER_MAPPINGS[key] === columnName);
-        if (originalColumnName && record.hasOwnProperty(originalColumnName)) {
-          if (originalColumnName === 'startDate' || originalColumnName === 'endDate') {
-            modifiedRecord[columnName] = formatDate(record[originalColumnName]);
-          } else {
-            modifiedRecord[columnName] = record[originalColumnName];
-          }
-        } else {
-          modifiedRecord[columnName] = '';
+    const modifiedData = dataToExport.map((record: any) => {
+      const row: any = {};
+      NEW_SEQUENCE.forEach(col => {
+        const originalKey = Object.keys(HEADER_MAPPINGS).find(k => HEADER_MAPPINGS[k] === col);
+        row[col] = originalKey && record.hasOwnProperty(originalKey) ? normalizeCell(originalKey, record[originalKey]) : '-';
+      });
+      return row;
+    });
+
+    if (modifiedData.length === 0) {
+      const emptyRow: any = {};
+      NEW_SEQUENCE.forEach(col => { emptyRow[col] = '-'; });
+      modifiedData.push(emptyRow);
+    }
+
+    const ws: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet([]);
+
+    ws['!merges'] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: NEW_SEQUENCE.length - 1 } }];
+    XLSX.utils.sheet_add_aoa(ws, [['ABSENT REPORT']], { origin: 'A1' });
+    ws['A1'].s = { font: { bold: true, sz: 16 }, alignment: { horizontal: 'center', vertical: 'center' } };
+
+    XLSX.utils.sheet_add_aoa(ws, [NEW_SEQUENCE], { origin: 'A2' });
+    NEW_SEQUENCE.forEach((_, index) => {
+      const cellRef = XLSX.utils.encode_cell({ r: 1, c: index });
+      ws[cellRef].s = {
+        font: { bold: true },
+        alignment: { horizontal: 'center', vertical: 'center' },
+        border: { top: { style: 'thin' }, bottom: { style: 'thin' }, left: { style: 'thin' }, right: { style: 'thin' } }
+      };
+    });
+
+    XLSX.utils.sheet_add_json(ws, modifiedData, { origin: 'A3', skipHeader: true });
+    modifiedData.forEach((_: any, rowIndex: number) => {
+      NEW_SEQUENCE.forEach((_, colIndex) => {
+        const cellRef = XLSX.utils.encode_cell({ r: rowIndex + 2, c: colIndex });
+        if (ws[cellRef]) {
+          ws[cellRef].s = { alignment: { horizontal: 'center', vertical: 'center' } };
         }
       });
-      return modifiedRecord;
     });
 
-    // Create a new empty worksheet
-    const ws: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet([[]]);
+    ws['!autofilter'] = { ref: `A2:${XLSX.utils.encode_col(NEW_SEQUENCE.length - 1)}2` };
+    ws['!cols'] = NEW_SEQUENCE.map(col => ({
+      wch: Math.max(col.length, ...modifiedData.map((r: any) => String(r[col] ?? '').length)) + 2
+    }));
 
-    // Merge cells for Absent Report row from A1 to J1
-    ws['!merges'] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: NEW_SEQUENCE.length - 1 } }];
-
-    // Add Absent Report row
-    XLSX.utils.sheet_add_aoa(ws, [['ABSENT REPORT']], { origin: 'A1' });
-
-    // Add header row
-    const headerRow = NEW_SEQUENCE.map(columnName => HEADER_MAPPINGS[columnName]);
-    XLSX.utils.sheet_add_aoa(ws, [headerRow], { origin: 'A2' });
-
-    // Add data rows
-    XLSX.utils.sheet_add_json(ws, modifiedData, { origin: 'A3' });
-
-    // Apply styles to Absent Report row
-    const absentReportCell = ws['A1'] || { t: '', v: '' }; // Get the cell or create a new one if it doesn't exist
-    absentReportCell.s = { font: { bold: true }, alignment: { horizontal: 'center' }, fill: { bgColor: { rgb: 'FFFF00' } } };
-    ws['A1'] = absentReportCell; // Assign the styled cell back to the worksheet
-
-    // Apply styles to column headers
-    NEW_SEQUENCE.forEach((columnName, index) => {
-      const cellAddress = XLSX.utils.encode_cell({ r: 1, c: index });
-      const cell = ws[cellAddress] || { t: '', v: '' }; // Get the cell or create a new one if it doesn't exist
-      cell.s = { font: { bold: true }, alignment: { horizontal: 'center' }, fill: { bgColor: { rgb: '0000FF' } }, fontColor: { rgb: 'FFFFFF' } };
-      ws[cellAddress] = cell; // Assign the styled cell back to the worksheet
-    });
-
-    // Adjust column width to fit data
-    NEW_SEQUENCE.forEach((columnName, index) => {
-      let columnWidth = this.getColumnWidth(modifiedData, columnName);
-      // Increase the width for 'EMPLOYEE ID' and 'DEPARTMENT' columns
-      if (columnName === 'EMPLOYEE ID' || columnName === 'DEPARTMENT') {
-        columnWidth += 5; // Increase width by 5
-      }
-      ws['!cols'] = ws['!cols'] || [];
-      ws['!cols'][index] = { wch: columnWidth };
-    });
-
-    // Generate Excel file and trigger download
     const wb: XLSX.WorkBook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Absent Report');
-    XLSX.writeFile(wb, 'Absent_Report.xlsx');
+    const formattedDate = new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }).replace(',', '');
+    XLSX.writeFile(wb, `Absent Report - ${formattedDate}.xlsx`);
     this.spinnerLoader2 = false;
   }
 
@@ -562,6 +436,45 @@ getTeam() {
     // Set minimum width to 10
     return Math.max(10, maxWidth);
   }
+  customSort(event: any): void {
+    const field = event.field;
+
+    if (this.currentSortField === field) {
+      if (this.currentSortOrder === 1) {
+        this.currentSortOrder = -1;
+        event.order = -1;
+      } else if (this.currentSortOrder === -1) {
+        this.filteredAbsentRecord = [...this.originalFilteredAbsentRecord];
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        if (this.absentTable) this.absentTable.reset();
+        return;
+      } else {
+        this.currentSortOrder = 1;
+        event.order = 1;
+      }
+    } else {
+      this.currentSortField = field;
+      this.currentSortOrder = 1;
+      event.order = 1;
+    }
+
+    event.data.sort((a: any, b: any) => {
+      let val1 = a[field];
+      let val2 = b[field];
+
+      if (field === 'fusionEmpId') {
+        const num1 = parseInt(String(val1).replace(/\D/g, ''), 10) || 0;
+        const num2 = parseInt(String(val2).replace(/\D/g, ''), 10) || 0;
+        return event.order * (num1 - num2);
+      }
+
+      val1 = String(val1 ?? '').trim();
+      val2 = String(val2 ?? '').trim();
+      return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+    });
+  }
+
   navigation() {
     this.router.navigate(['/reports']);
   }

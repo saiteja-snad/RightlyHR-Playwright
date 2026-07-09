@@ -43,25 +43,26 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
     this.intializeGetStartedForm();
     this.empinfo = JSON.parse(localStorage.getItem('currentUser') || '{}');
     this.employeeName = this.empinfo.name;
-    this.getUserPreference();
+     this.getUserPreference(this.empinfo.employeeId);
     await this.predefinedThemesService.initTheme();
     await this.predefinedThemesService.initFont();
     await this.menuOrderService.initMenuOrder();
   }
 
-  async getUserPreference() {
-    const data = await this.userPrefService.getPreferences();
-    if (data) {
-      if (!data.isUserRegistred) {
-        this.openModal(this.getstarted);
-      }
-      else if (this.empinfo?.loginType?.toLowerCase() === 'classic login' && !data.isPasswordChanged) {
-        // Open change password modal
-        this.modalService.open(this.changepasswordModal, { centered: true, backdrop: 'static', keyboard: false, size: 'xl' });
-      }
-    }
-  }
 
+  getUserPreference(employeeId: number) {
+    this.subscription = this.http.getData(`Employeedata/get-user-preference/${employeeId}`).subscribe({
+      next: (res: any) => {
+        if (!res.data.isUserRegistred) {
+          this.openModal(this.getstarted);
+        }
+        else if (this.empinfo?.loginType?.toLowerCase() === 'classic login' && !res.data.isPasswordChanged) {
+          // Open change password modal
+          this.modalService.open(this.changepasswordModal, { centered: true, backdrop: 'static', keyboard: false, size: 'xl' });
+        }
+      }
+    })
+  }
   openModal(modal: any) {
     this.modalService.open(modal, { centered: true, backdrop: 'static', keyboard: false, size: 'xl' });
   }
@@ -76,7 +77,7 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
     this.subscription = this.http.postbyId(`Employeedata/update-registration/${employeeId}`).subscribe({
       next: (res: any) => {
         this.modalService.dismissAll();
-        this.getUserPreference();
+        this.getUserPreference(this.empinfo.employeeId);
       },
       error: (err) => {
         console.error('Error updating registration status:', err);

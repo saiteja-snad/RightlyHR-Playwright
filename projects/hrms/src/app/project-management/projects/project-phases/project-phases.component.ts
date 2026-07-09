@@ -161,7 +161,6 @@ export class ProjectPhasesComponent implements OnInit, OnDestroy {
     });
     this.updatePhaseForm.get('startDate')?.valueChanges.subscribe((val) => {
       this.StartndendDateValidation();
-      this.validateDateRange();
       this.syncResourceDates();
       this.syncKickoffAndEffectiveToStartDate(val);
       this.validateDateRange();

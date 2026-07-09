@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { HttpService } from '../../services/http.service';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SelectModule } from 'primeng/select';
@@ -21,6 +21,7 @@ import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { ReportsHeaderComponent } from "../../shared/reports-tabs/reports-header/reports-header.component";
 import { ReportsPlaceholderIconComponent } from "../../icons/reports-placeholder-icon/reports-placeholder-icon.component";
 import { style } from '@angular/animations';
+import { Table, TableModule } from 'primeng/table';
 interface FieldGroup {
   name: string;
   fields: string[];
@@ -31,7 +32,7 @@ interface FieldGroup {
   selector: 'app-custom-reports',
   imports: [SelectModule, MultiSelectModule, ReactiveFormsModule, CommonModule, FormsModule, CalendarModule,
     DatePicker, AccordionModule, NoDataFoundComponent, DataLoaderContentComponent, NgbPopoverModule,
-    ReportsHeaderComponent, ReportsPlaceholderIconComponent],
+    ReportsHeaderComponent, ReportsPlaceholderIconComponent, TableModule],
   templateUrl: './custom-reports.component.html',
   styleUrl: './custom-reports.component.scss',
   encapsulation: ViewEncapsulation.None
@@ -72,6 +73,10 @@ export class CustomReportsComponent implements OnInit, OnDestroy {
     { label: 'Prospective', value: 'Prospective' }
   ];
   selectedData: any[] = [];
+  originalSelectedData: any[] = [];
+  currentSortField = '';
+  currentSortOrder = 0;
+  @ViewChild('customReportsTable') customReportsTable!: Table;
   selectedFields: string[] = [
     // 'ID',
     'Employee ID',
@@ -375,7 +380,7 @@ export class CustomReportsComponent implements OnInit, OnDestroy {
     },
     offboardingDetails: {
       name: 'Offboarding Details',
-      fields: ['Exit Reason', 'Eligible For Rehire','Relieving Type','Last Working Day','Contractor Last Working Day'],
+      fields: ['Last Working Day', 'Eligible For Rehire', 'Exit Reason','Relieving Type','Contractor Last Working Day'],
       selectedFields: [],
       selectAll: false,
     },
@@ -584,6 +589,10 @@ export class CustomReportsComponent implements OnInit, OnDestroy {
     if (unknowns.length) console.warn('FieldsNotInMasterOrder', unknowns);
     if (this.selectedFields.length == 0) {
       this.selectedData = [];
+      this.originalSelectedData = [];
+      this.currentSortField = '';
+      this.currentSortOrder = 0;
+      this.customReportsTable?.reset();
     }
   }
 
@@ -622,14 +631,14 @@ export class CustomReportsComponent implements OnInit, OnDestroy {
         const rawStatus = formData.status;
         const statusArray = Array.isArray(rawStatus) ? rawStatus : (rawStatus ? [rawStatus] : []);
         const empStatus = statusArray.join(',').toLowerCase();
-        
+
         const startDate = formData.dateOfJoining?.length > 0
           ? new Date(formData.dateOfJoining[0])
           : null;
         const endDate = formData.dateOfJoining?.length > 1
           ? new Date(formData.dateOfJoining[1])
           : null;
-          
+
         const filteredEmployees = this.emp.filter((user: Ipersonal) => {
           if (!empStatus.includes('all employees')) {
             const statusParts = empStatus.split(',').map((s: string) => s.trim());
@@ -651,7 +660,7 @@ export class CustomReportsComponent implements OnInit, OnDestroy {
                 dateToCheck = new Date(user.dateOfJoining);
               }
             }
-            
+
             if (empStatus.includes('inactive')) {
               if (user.lastworkingday) {
                 dateToCheck = new Date(user.lastworkingday);
@@ -849,6 +858,9 @@ export class CustomReportsComponent implements OnInit, OnDestroy {
           });
           this.selectedData.push(data);
         });
+
+        this.originalSelectedData = [...this.selectedData];
+        this.applyCurrentSort();
       } finally {
         this.spinnerLoader1 = false;
         this.disableBtn = false;
@@ -866,7 +878,7 @@ export class CustomReportsComponent implements OnInit, OnDestroy {
 
   options(employeeStatus: string[] | string) {
     console.log(employeeStatus);
-    
+
     if (!employeeStatus || employeeStatus.length === 0) {
       this.selectedFieldsOption = [];
       return;
@@ -899,10 +911,113 @@ export class CustomReportsComponent implements OnInit, OnDestroy {
     this.emp = [...this.copyData];
     this.filteredData = [...this.copyData];
     this.selectedData = [];
+    this.originalSelectedData = [];
 
     this.disableBtn = false;
     this.hasPendingChanges = false;
     this.onSubmit();
+  }
+
+  customSort(event: any): void {
+    const field = String(event.field ?? '');
+
+    if (!field) {
+      return;
+    }
+
+    if (!this.reportFields.includes(field)) {
+      this.currentSortField = '';
+      this.currentSortOrder = 0;
+      this.customReportsTable?.reset();
+      return;
+    }
+
+    if (this.currentSortField === field) {
+      if (this.currentSortOrder === 1) {
+        this.currentSortOrder = -1;
+        event.order = -1;
+      } else if (this.currentSortOrder === -1) {
+        this.selectedData = [...this.originalSelectedData];
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        this.customReportsTable?.reset();
+        return;
+      } else {
+        this.currentSortOrder = 1;
+        event.order = 1;
+      }
+    } else {
+      this.currentSortField = field;
+      this.currentSortOrder = 1;
+      event.order = 1;
+    }
+
+    this.sortSelectedData(event.data, field, event.order);
+  }
+
+  private applyCurrentSort(): void {
+    if (!this.currentSortField || this.currentSortOrder === 0) {
+      this.selectedData = [...this.originalSelectedData];
+      return;
+    }
+
+    if (!this.reportFields.includes(this.currentSortField)) {
+      this.selectedData = [...this.originalSelectedData];
+      this.currentSortField = '';
+      this.currentSortOrder = 0;
+      this.customReportsTable?.reset();
+      return;
+    }
+
+    this.selectedData = [...this.originalSelectedData];
+    this.sortSelectedData(this.selectedData, this.currentSortField, this.currentSortOrder);
+  }
+
+  private sortSelectedData(data: any[], field: string, order: number): void {
+    data.sort((a: any, b: any) => {
+      const value1 = this.getSortValue(a?.[field]);
+      const value2 = this.getSortValue(b?.[field]);
+
+      const bothNumbers = typeof value1 === 'number' && typeof value2 === 'number';
+      if (bothNumbers) {
+        return order * (Number(value1) - Number(value2));
+      }
+
+      return order * String(value1).localeCompare(String(value2), undefined, {
+        numeric: true,
+        sensitivity: 'base',
+      });
+    });
+  }
+
+  private getSortValue(value: any): string | number {
+    if (value === null || value === undefined || value === '' || value === '-') {
+      return '';
+    }
+
+    if (typeof value === 'number') {
+      return value;
+    }
+
+    if (typeof value === 'boolean') {
+      return value ? 1 : 0;
+    }
+
+    const normalized = String(value).trim();
+    if (!normalized) {
+      return '';
+    }
+
+    if (/^\d+(\.\d+)?$/.test(normalized)) {
+      return Number(normalized);
+    }
+
+    if (/^[A-Za-z]{3}\s\d{2},\s\d{4}$/.test(normalized)) {
+      const time = new Date(normalized).getTime();
+      return Number.isFinite(time) ? time : normalized;
+    }
+
+    return normalized;
   }
 
   private getStatusLower(): string[] {
@@ -965,7 +1080,7 @@ getDatePlaceholder(): string {
     };
 
     ws['!merges'] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: headers.length - 1 } }];
-    
+
     // Apply borders to the title row
     for (let C = 0; C < headers.length; ++C) {
       const cell_address = XLSX.utils.encode_cell({ r: 0, c: C });
@@ -983,7 +1098,7 @@ getDatePlaceholder(): string {
     for (let C = 0; C < headers.length; ++C) {
       const cell_address = XLSX.utils.encode_cell({ r: 1, c: C });
       if (ws[cell_address]) {
-        ws[cell_address].s = { 
+        ws[cell_address].s = {
           font: { bold: true },
           border: borderStyle
         };

@@ -1,33 +1,19 @@
 <div class="custom-main-component-container">
   <div class="component-header-content">
     <div class="heading-content">
-      <div class="component-header">{{'Policies'|translate}}</div>
+      <div class="component-header">Policies</div>
        <div>
                 <app-module-info-icon  placement="bottom" [ngbPopover]="popContent" />
             </div>
     </div>
 
-    <div class="d-flex align-items-center gap-3">
-      <!-- Multi-select header - show when any items are selected -->
-      @if (selectedPolicyItems && selectedPolicyItems.length > 0) {
-        <div class="component-sub-header ">{{"Selected Records" | translate}}: {{validSelectedCount}}</div>
-          <button class="btn btn-primary" (click)="bulkAcknowledgePolicies()" [disabled]="validSelectedCount === 0">
-            <span *ngIf="!bulkAcknowledging"> {{'Acknowledge'|translate}}</span>
-            <span *ngIf="bulkAcknowledging">
-              <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
-              {{'Acknowledging...'|translate}}
-            </span>
-          </button>
-      }
-
-      <div class="d-flex align-items-center gap-2">
-        <label class="form-label custom-label m-0">{{'Select Year'|translate}}</label>
-        <form autocomplete="off" [formGroup]="policiesform" class="m-0">
-          <div class="custom-p-select-content m-0">
-            <p-select formControlName="selectedYear" [options]="years" class="custom-select w-100"></p-select>
-          </div>
-        </form>
-      </div>
+    <div class="d-flex align-items-center gap-2">
+      <label class="form-label custom-label m-0">Select Year</label>
+      <form autocomplete="off" [formGroup]="policiesform" class="m-0">
+        <div class="custom-p-select-content m-0">
+          <p-select formControlName="selectedYear" [options]="years" class="custom-select w-100"></p-select>
+        </div>
+      </form>
     </div>
   </div>
 
@@ -36,64 +22,52 @@
     <app-module-information [moduleInfo]="moduleinfo" />
   </ng-template>
 
-  <div class="custom-p-multi-select-table">
+  <div class="custom-table-content">
     @if (!loading) {
-    <p-table #dt [value]="orgPolicyItemsArray" (selectionChange)="onSelectionChange($event)" 
-             [(selection)]="selectedPolicyItems" dataKey="id" [tableStyle]="{'min-width': '50rem'}">
-      <ng-template #header>
+    <p-table #dt [value]="orgPolicyItemsArray" [tableStyle]="{'width': '100%'}" [customSort]="true"
+      (sortFunction)="customSort($event)">
+      <ng-template pTemplate="header">
         <tr>
-          <th style="width: 4rem"><p-tableHeaderCheckbox [disabled]="isHeaderCheckboxDisabled()" /></th>
-          <th>{{'Policy Name'|translate}}</th>
-          <th>{{'Description'|translate}}</th>
+          <th pSortableColumn="policyName">{{'Policy Name'|translate}} <p-sortIcon field="policyName" /></th>
+          <th pSortableColumn="policyDescription">{{'Description'|translate}} <p-sortIcon field="policyDescription" />
+          </th>
           <th class="text-center">{{'Attachment'|translate}}</th>
           <th class="text-center">{{'Acknowledged' | translate}}</th>
-          <!-- <th class="text-center">{{'Action'|translate}}</th> -->
         </tr>
       </ng-template>
-      <ng-template #body let-item>
-        @if (orgPolicyItemsArray && orgPolicyItemsArray.length > 0) {
+      <ng-template pTemplate="body" let-item>
         <tr>
-          <td>
-            <p-tableCheckbox [value]="item" [disabled]="isCheckboxDisabled(item)" />
-          </td>
           <td>{{item.policyName}}</td>
           <td>{{item.policyDescription}}</td>
           <td class="text-center">
             <a type="button" class="view-btn text-nowrap"
               (click)="onViewAttachement(item.policyAttachment,item.policyName,item)">
-              <app-document-view-icon />
+              <img src="/my-info-icons/View-Policy-icon.png" alt="Icon" class="view-icon">
             </a>
           </td>
           <td class="text-center acknowledge-content">
             <ng-container *ngIf="item.requiresAcknowledgment">
               <ng-container *ngIf="item.acknowledged; else showAcknowledge">
-               <span class="success-text">{{'Yes'|translate}}</span>
+               <span class="success-text">Yes</span>
               </ng-container>
               <ng-template #showAcknowledge>
-                <a class="acknowledge-btn" 
-                   [class.disabled]="isIndividualAcknowledgeDisabled()"
-                   [style.pointer-events]="isIndividualAcknowledgeDisabled() ? 'none' : 'auto'"
-                   [style.opacity]="isIndividualAcknowledgeDisabled() ? '0.5' : '1'"
-                   (click)="!isIndividualAcknowledgeDisabled() && onViewAttachement(item.policyAttachment, item.policyName, item)">
-                  <u>{{'Acknowledge'|translate}}</u>
-                </a>
+                <a class="acknowledge-btn" (click)="onViewAttachement(item.policyAttachment, item.policyName, item)">
+                  <u>Acknowledge</u></a>
               </ng-template>
             </ng-container>
             <ng-container *ngIf="!item.requiresAcknowledgment">
-              <span>{{'NA'|translate}}</span>
+              <span>NA</span>
             </ng-container>
           </td>
         </tr>
-        }
-        @else {
-        <tr>
-          <app-no-data-found />
-        </tr>
-        }
       </ng-template>
-      <ng-template #emptymessage>
+      <ng-template pTemplate="emptymessage">
         <tr>
-          <app-no-data-found />
+          <td colspan="4" class="text-center">
+            <div class="wrapper d-flex align-items-center position-relative w-100">
+              <app-no-data-found />
+            </div>
+          </td>
         </tr>
       </ng-template>
     </p-table>
@@ -112,18 +86,13 @@
         <p class="popup-heading mb-0">{{viewPolicyname}}</p>
       </div>
       <div>
-        <a (click)="closeModal()"><img src="icons/close.png"
+        <a (click)="modal.dismiss(); ExpenseViewURL = null; ExpenseImageUrl = null"><img src="icons/close.png"
             alt="Close Icon" class="close-icon"></a>
       </div>
     </div>
 
     <div class="custom-main-popup-content text-center">
-      <div class="Image-content-view position-relative">
-        <div *ngIf="documentLoading" class="d-flex justify-content-center align-items-center position-absolute w-100 h-100" style="z-index: 10;">
-          <div class="spinner-border text-primary" role="status">
-            <span class="visually-hidden">Loading...</span>
-          </div>
-        </div>
+      <div class="Image-content-view">
         <div *ngIf="!ExpenseImageUrl; else imageView">
           <ngx-doc-viewer [url]="ExpenseViewURL" viewer="google" style="width: 100%; height: 100vh"></ngx-doc-viewer>
         </div>
@@ -133,18 +102,18 @@
       </div>
       <!-- Acknowledge Footer -->
       <div class="modal-footer justify-content-between bg-white px-4 py-3 border-top"
-        *ngIf="shouldShowAcknowledgeFooter()">
+        *ngIf="selectedItem?.requiresAcknowledgment && !selectedItem?.acknowledged">
         <form [formGroup]="ackForm" class="d-flex justify-content-between w-100 align-items-center">
           <div class="form-check">
             <input class="form-check-input" type="checkbox" id="ackCheckbox" formControlName="acknowledged" />
             <label class="form-check-label" for="ackCheckbox">
-              {{'I acknowledge that I have read and agree to the policy.'|translate}}
+              I acknowledge that I have read and agree to the policy.
             </label>
           </div>
 
-          <button class="btn btn-primary" [disabled]="isAcknowledgeButtonDisabled()"
+          <button class="btn btn-primary" [disabled]="ackForm.invalid || loading"
             (click)="postacknowledgement(selectedItem)">
-            <span *ngIf="!loading">{{'Acknowledge'|translate}}</span>
+            <span *ngIf="!loading">Acknowledge</span>
             <span *ngIf="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
           </button>
         </form>

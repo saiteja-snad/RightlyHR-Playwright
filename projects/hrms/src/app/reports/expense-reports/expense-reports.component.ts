@@ -22,16 +22,18 @@ import { InfoIconComponent } from "../../icons/info-icon/info-icon.component";
 import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 import { DateformatPipe } from "../../pipes/dateformat.pipe";
+import { TableModule, Table } from 'primeng/table';
+
 @Component({
   selector: 'app-expense-reports',
   imports: [ReportsHeaderComponent, DatePicker, CommonModule, FormsModule, DropdownModule, SelectModule, TranslateModule, ReactiveFormsModule,
-    NoDataFoundComponent, DataLoaderContentComponent, TranslateModule, InfoIconComponent, NgbPopoverModule, DateformatPipe],
+    NoDataFoundComponent, DataLoaderContentComponent, TranslateModule, InfoIconComponent, NgbPopoverModule, DateformatPipe, TableModule],
   templateUrl: './expense-reports.component.html',
   styleUrl: './expense-reports.component.scss',
   encapsulation: ViewEncapsulation.None
 })
-
 export class ExpenseReportsComponent implements OnInit, OnDestroy {
+  @ViewChild('expenseTable') expenseTable!: Table;
   ExpenseReportForm!: FormGroup;
   subscription!: Subscription;
   employeeiddetails: any[] = [];
@@ -45,6 +47,9 @@ export class ExpenseReportsComponent implements OnInit, OnDestroy {
   isFilterIndicatorActive = false;
   isLoading: boolean = false;
   filteredleaveRecord: IExpenseReportsDetails[] = [];
+  originalFilteredleaveRecord: IExpenseReportsDetails[] = [];
+  currentSortField: string = '';
+  currentSortOrder: number = 0;
   expenseSummary: any = null;
   selectExpenseEmployeeIds: number[] = [];
   selectedEmployeeId: any = null;
@@ -189,18 +194,18 @@ export class ExpenseReportsComponent implements OnInit, OnDestroy {
     const params = 'ExpenseReport';
     const param = 'Status';
     this.http.getDatabyentriyvalue(`entityAttributeValues`, params, param).subscribe({
-      next: (data: any) => {
-        if (data && data.length > 0) {
-          this.expenseStatus = data;
-          // this.expenseStatus = statusString.split(',').map((type: any) => ({ value: type }));
-        } else {
-          console.log('No data found.');
+        next: (data: any) => {
+          if (data && data.length > 0) {
+            this.expenseStatus = data;
+            // this.expenseStatus = statusString.split(',').map((type: any) => ({ value: type }));
+          } else {
+            console.log('No data found.');
+          }
+        },
+        error: (err) => {
+          console.error('Error fetching data:', err);
         }
-      },
-      error: (err) => {
-        console.error('Error fetching data:', err);
-      }
-    });
+      });
   }
 
   extractUniqueYearlyFilters(data: any[]): void {
@@ -348,6 +353,9 @@ export class ExpenseReportsComponent implements OnInit, OnDestroy {
           this.filteredleaveRecord = [];
         } else {
           this.filteredleaveRecord = response;
+          this.originalFilteredleaveRecord = [...this.filteredleaveRecord];
+          this.currentSortField = '';
+          this.currentSortOrder = 0;
         }
 
       },
@@ -459,7 +467,8 @@ export class ExpenseReportsComponent implements OnInit, OnDestroy {
     };
 
     // === DATA ROWS ===
-    this.filteredleaveRecord.forEach((record) => {
+    const dataToExport = this.expenseTable?.filteredValue ?? this.expenseTable?.value ?? this.filteredleaveRecord;
+    dataToExport.forEach((record: any) => {
       const items = record.expensesItems && record.expensesItems.length > 0
         ? record.expensesItems
         : [];
@@ -551,7 +560,44 @@ export class ExpenseReportsComponent implements OnInit, OnDestroy {
       this.spinnerLoader2 = false;
     });
   }
+customSort(event: any): void {
+    const field = event.field;
 
+    if (this.currentSortField === field) {
+      if (this.currentSortOrder === 1) {
+        this.currentSortOrder = -1;
+        event.order = -1;
+      } else if (this.currentSortOrder === -1) {
+        this.filteredleaveRecord = [...this.originalFilteredleaveRecord];
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        if (this.expenseTable) this.expenseTable.reset();
+        return;
+      } else {
+        this.currentSortOrder = 1;
+        event.order = 1;
+      }
+    } else {
+      this.currentSortField = field;
+      this.currentSortOrder = 1;
+      event.order = 1;
+    }
+
+    event.data.sort((a: any, b: any) => {
+      let val1 = a[field];
+      let val2 = b[field];
+
+      if (field === 'fusionEmpId') {
+        const num1 = parseInt(String(val1).replace(/\D/g, ''), 10) || 0;
+        const num2 = parseInt(String(val2).replace(/\D/g, ''), 10) || 0;
+        return event.order * (num1 - num2);
+      }
+
+      val1 = String(val1 ?? '').trim();
+      val2 = String(val2 ?? '').trim();
+      return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+    });
+  }
 
   ngOnDestroy(): void {
     if (this.subscription) {

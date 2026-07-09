@@ -1,21 +1,9 @@
 import { Component, OnInit, TemplateRef } from '@angular/core';
 import { ProjectManagementModuleInfoComponent } from '../../../shared/project-management-tabs/project-management-module-info/project-management-module-info.component';
 import { ProjectTabsComponent } from '../../../shared/project-management-tabs/project-tabs/project-tabs.component';
-import {
-  ActivatedRoute,
-  NavigationEnd,
-  Router,
-  RouterModule,
-} from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import {
-  FormArray,
-  FormBuilder,
-  FormGroup,
-  FormsModule,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbModal, NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 import isoWeek from 'dayjs/plugin/isoWeek';
 import { TranslateModule } from '@ngx-translate/core';
@@ -35,24 +23,13 @@ import { MultiSelectModule } from 'primeng/multiselect';
 @Component({
   selector: 'app-project-view',
   standalone: true,
-  imports: [
-    ProjectManagementModuleInfoComponent,
-    DatePicker,
-    ProjectTabsComponent,
-    RouterModule,
-    TranslateModule,
-    CommonModule,
-    ReactiveFormsModule,
-    ProjectContactInfoCreationComponent,
-    Select,
-    PhasesCreationComponent,
-    MultiSelectModule,
-    FormsModule,
-    ResourceCreationComponent,
-  ],
+  imports: [ProjectManagementModuleInfoComponent, DatePicker, ProjectTabsComponent, RouterModule, 
+    TranslateModule, CommonModule, ReactiveFormsModule, ProjectContactInfoCreationComponent, Select, 
+    PhasesCreationComponent, MultiSelectModule, FormsModule, ResourceCreationComponent],
   templateUrl: './project-view.component.html',
   styleUrl: './project-view.component.scss',
 })
+
 export class ProjectViewComponent implements OnInit {
   empdata = {} as any;
   projectId!: number;
@@ -99,16 +76,9 @@ export class ProjectViewComponent implements OnInit {
   projectName: string = 'Admin'; // or dynamic
   projectType: string = 'Implementation';
 
-  constructor(
-    private router: Router,
-    private fb: FormBuilder,
-    private modalService: NgbModal,
-    public formValidation: FormValidationsService,
-    private route: ActivatedRoute,
-    public rbac: RbacService,
-    private http: HttpService,
-    private offcanvasService: NgbOffcanvas,
-  ) {}
+  constructor(private router: Router, private fb: FormBuilder, private modalService: NgbModal, 
+    public formValidation: FormValidationsService, private route: ActivatedRoute, public rbac: RbacService, 
+    private http: HttpService, private offcanvasService: NgbOffcanvas) { }
 
   ngOnInit() {
     this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
@@ -138,46 +108,32 @@ export class ProjectViewComponent implements OnInit {
       }
     });
     this.enableResourceOnDateChange();
-    this.router.events
-      .pipe(
-        filter((event) => event instanceof NavigationEnd),
-        takeUntil(this.destroy$),
-      )
-      .subscribe(() => {
-        this.showAddResource = false;
-        if (
-          this.router.url.includes(
-            '/project-management/projects/details/timesheet',
-          )
-        ) {
-          this.resetForm();
-        }
-        if (
-          this.isActive(
-            '/project-management/projects/details/inactive-phases',
-          ) ||
-          this.isActive('/project-management/projects/details/active-phases')
-        ) {
-          this.selectedActivePhaseStatuses = [];
-          this.selectedInActivePhaseStatuses = [];
-          this.http.setPhaseStatusFilter([]);
-        }
-        if (
-          this.isActive('/project-management/projects/details/resources') ||
-          this.isActive(
-            '/project-management/projects/details/inactive-resources',
-          )
-        ) {
-          this.clearResourceFilters();
-        }
-      });
+    this.router.events.pipe(
+      filter((event) => event instanceof NavigationEnd),
+      takeUntil(this.destroy$),
+    ).subscribe(() => {
+      this.showAddResource = false;
+      if (this.router.url.includes('/project-management/projects/details/timesheet',)) {
+        this.resetForm();
+      }
+      if (this.isActive('/project-management/projects/details/inactive-phases',) ||
+        this.isActive('/project-management/projects/details/active-phases')) {
+        this.selectedActivePhaseStatuses = [];
+        this.selectedInActivePhaseStatuses = [];
+        this.http.setPhaseStatusFilter([]);
+      }
+      if (this.isActive('/project-management/projects/details/resources') ||
+        this.isActive('/project-management/projects/details/inactive-resources',)) {
+        this.clearResourceFilters();
+      }
+    });
   }
 
   openAddResource() {
     this.router.navigate(
       ['/project-management/projects/add-resources'],
       { queryParams: { id: this.projectId } },
-      );
+    );
   }
 
   onAddClick() {
@@ -187,21 +143,19 @@ export class ProjectViewComponent implements OnInit {
   loadAuthorities() {
     const EmployeeId = this.empdata?.employeeId;
     this.authorityLoading = true;
-    this.http
-      .getData(`Timesheet/get-resources?employeeId=${EmployeeId}`)
-      .subscribe({
-        next: (res: any) => {
-          this.authorityOptions = (res?.data || []).map((item: any) => ({
-            label: `${item.fusionEmpId} - ${item.name}`,
-            value: item.id,
-          }));
-          this.authorityLoading = false;
-        },
-        error: () => {
-          this.authorityOptions = [];
-          this.authorityLoading = false;
-        },
-      });
+    this.http.getData(`Timesheet/get-resources?employeeId=${EmployeeId}`).subscribe({
+      next: (res: any) => {
+        this.authorityOptions = (res?.data || []).map((item: any) => ({
+          label: `${item.fusionEmpId} - ${item.name}`,
+          value: item.id,
+        }));
+        this.authorityLoading = false;
+      },
+      error: () => {
+        this.authorityOptions = [];
+        this.authorityLoading = false;
+      },
+    });
   }
 
   onPhaseStatusChange(event: any) {
@@ -298,23 +252,19 @@ export class ProjectViewComponent implements OnInit {
 
   loadResourceAuthorities() {
     if (!this.projectId) return;
-    this.http
-      .getData(
-        `ProjectResource/timesheet-approval-authorities?entityType=Project&entityRefId=${this.projectId}`,
-      )
-      .subscribe({
-        next: (res: any) => {
-          this.resourceAuthorityOptions = (res?.data || []).map(
-            (item: any) => ({
-              label: `${item.fusionEmployeeId} - ${item.name}`,
-              value: item.id,
-            }),
-          );
-        },
-        error: () => {
-          this.resourceAuthorityOptions = [];
-        },
-      });
+    this.http.getData(`ProjectResource/timesheet-approval-authorities?entityType=Project&entityRefId=${this.projectId}`,).subscribe({
+      next: (res: any) => {
+        this.resourceAuthorityOptions = (res?.data || []).map(
+          (item: any) => ({
+            label: `${item.fusionEmployeeId} - ${item.name}`,
+            value: item.id,
+          }),
+        );
+      },
+      error: () => {
+        this.resourceAuthorityOptions = [];
+      },
+    });
   }
 
   onResourceRoleChange() {
@@ -390,6 +340,7 @@ export class ProjectViewComponent implements OnInit {
     });
     // detect when user selects date range
   }
+
   // setDefaultmounth() {
   //   const startOfMonth = dayjs().startOf('month').toDate();
   //   const endOfMonth = dayjs().endOf('month').toDate();
@@ -414,12 +365,8 @@ export class ProjectViewComponent implements OnInit {
     });
     //  2. Set summary default (projectStartDate → today)
     this.currentdata = new Date();
-    this.defaultSummaryStartDate = dayjs(this.projectstartdate)
-      .startOf('day')
-      .toDate();
-    this.defaultSummaryEndDate = dayjs(this.currentdata)
-      .startOf('day')
-      .toDate();
+    this.defaultSummaryStartDate = dayjs(this.projectstartdate).startOf('day').toDate();
+    this.defaultSummaryEndDate = dayjs(this.currentdata).startOf('day').toDate();
     this.datepickerFormDataforsummary?.patchValue({
       dateRange: [this.defaultSummaryStartDate, this.defaultSummaryEndDate],
     });
@@ -451,28 +398,15 @@ export class ProjectViewComponent implements OnInit {
   }
 
   openModal(content: any) {
-    this.modalService.open(content, {
-      centered: true,
-      size: 'xl',
-      backdrop: 'static',
-    });
+    this.modalService.open(content, { centered: true, size: 'xl', backdrop: 'static' });
   }
 
   openDocumentModal() {
-    this.modalService.open(ProjectDocumentCreationComponent, {
-      centered: true,
-      size: 'lg',
-      backdrop: 'static',
-    });
+    this.modalService.open(ProjectDocumentCreationComponent, { centered: true, size: 'lg', backdrop: 'static' });
   }
 
   // openResourceModal() {
-  //   this.modalService.open(ResourceCreationComponent, {
-  //     centered: true,
-  //     size: 'xl',
-  //     backdrop: 'static',
-  //     windowClass: 'custom-xl-modal',
-  //   });
+  //   this.modalService.open(ResourceCreationComponent, { centered: true, size: 'xl', backdrop: 'static', windowClass: 'custom-xl-modal' });
   // }
 
   showAddResource = false;
@@ -482,11 +416,7 @@ export class ProjectViewComponent implements OnInit {
   }
 
   openPhaseModal() {
-    this.modalService.open(PhasesCreationComponent, {
-      centered: true,
-      size: 'xl',
-      backdrop: 'static',
-    });
+    this.modalService.open(PhasesCreationComponent, { centered: true, size: 'xl', backdrop: 'static' });
   }
 
   // isFormCompletelyValid(): boolean {
@@ -506,10 +436,8 @@ export class ProjectViewComponent implements OnInit {
   isFilterApplied(): boolean {
     const formValue = this.datepickerFormData.value;
     // Check if any field has value
-    return (
-      (formValue.dateRange && formValue.dateRange.length > 0) ||
-      (formValue.resourceId && formValue.resourceId.length > 0)
-    );
+    return ((formValue.dateRange && formValue.dateRange.length > 0) ||
+      (formValue.resourceId && formValue.resourceId.length > 0));
   }
 
   isFilterAppliedforsummary(): boolean {
@@ -519,77 +447,58 @@ export class ProjectViewComponent implements OnInit {
   }
 
   getAllresourcesData() {
-    this.http
-      .getData(
-        `ProjectResource?status=Active&entityType=project&entityRefId=${this.projectId}&isDistinct=true`,
-      )
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (res: any) => {
-          this.resourcesData = res?.data?.map((x: any) => x.employee) ?? []; // Extract "data" array
-        },
-        error: (err) => {
-          console.error('Error fetching employee data:', err);
-          this.resourcesData = [];
-        },
-        complete: () => {},
-      });
+    this.http.getData(`ProjectResource?status=Active&entityType=project&entityRefId=${this.projectId}&isDistinct=true`,).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res: any) => {
+        this.resourcesData = res?.data?.map((x: any) => x.employee) ?? []; // Extract "data" array
+      },
+      error: (err) => {
+        console.error('Error fetching employee data:', err);
+        this.resourcesData = [];
+      },
+      complete: () => { },
+    });
   }
+
   projectstartdate: any;
   getProjects(projectId: string) {
-    this.http
-      .getData(`Project?projectId=${projectId}`)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (res: any) => {
-          this.projectsData = Array.isArray(res?.data) ? res.data : [];
-          if (this.projectsData?.length > 0) {
-            const project = this.projectsData[0];
-            this.datepickerFormData
-              .get('projectName')
-              ?.enable({ emitEvent: false });
-            this.datepickerFormData.patchValue({
-              projectName: project?.projectName,
-            });
-            this.datepickerFormData
-              .get('projectName')
-              ?.disable({ emitEvent: false });
-            //  this.datepickerFormData.get('projectName')?.disable();
-            this.clientsId = project?.client?.clientId ?? null;
-            this.inactiveStatus = (res?.data ?? []).some(
-              (p: any) =>
-                p.status?.toLowerCase() === 'inactive' ||
-                p.client?.status?.toLowerCase() === 'inactive',
-            )
-              ? 'inactive'
-              : 'active';
-            this.projectstartdate = project.startDate;
-            this.projectstartdate = dayjs(this.projectstartdate).toDate();
-            this.setDefaultmounth();
-            console.log('projectstartdate', this.projectstartdate);
-          } else {
-            this.clientsId = null; // No projects returned
-          }
-        },
-        error: (err) => {
-          console.error('Error fetching projects data:', err);
-          this.projectsData = [];
-        },
-      });
+    this.http.getData(`Project?projectId=${projectId}`).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res: any) => {
+        this.projectsData = Array.isArray(res?.data) ? res.data : [];
+        if (this.projectsData?.length > 0) {
+          const project = this.projectsData[0];
+          this.datepickerFormData.get('projectName')?.enable({ emitEvent: false });
+          this.datepickerFormData.patchValue({
+            projectName: project?.projectName,
+          });
+          this.datepickerFormData.get('projectName')?.disable({ emitEvent: false });
+          //  this.datepickerFormData.get('projectName')?.disable();
+          this.clientsId = project?.client?.clientId ?? null;
+          this.inactiveStatus = (res?.data ?? []).some((p: any) => p.status?.toLowerCase() === 'inactive' 
+          || p.client?.status?.toLowerCase() === 'inactive',) ? 'inactive' : 'active';
+          this.projectstartdate = project.startDate;
+          this.projectstartdate = dayjs(this.projectstartdate).toDate();
+          this.setDefaultmounth();
+        } else {
+          this.clientsId = null; // No projects returned
+        }
+      },
+      error: (err) => {
+        console.error('Error fetching projects data:', err);
+        this.projectsData = [];
+      },
+    });
   }
 
   // Enable resourceId when dateRange is selected
   enableResourceOnDateChange() {
-    this.datepickerFormData
-      .get('dateRange')
-      ?.valueChanges.subscribe((value) => {
-        if (value && value[0] && value[1]) {
-          this.getAllresourcesData();
-          this.datepickerFormData.get('resourceId')?.enable();
-        } else {
-          this.datepickerFormData.get('resourceId')?.disable();
-        }
-      });
+    this.datepickerFormData.get('dateRange')?.valueChanges.subscribe((value) => {
+      if (value && value[0] && value[1]) {
+        this.getAllresourcesData();
+        this.datepickerFormData.get('resourceId')?.enable();
+      } else {
+        this.datepickerFormData.get('resourceId')?.disable();
+      }
+    });
   }
 
   // Define predefined ranges
@@ -635,12 +544,8 @@ export class ProjectViewComponent implements OnInit {
 
   onSubmit() {
     const dateRangeArray = this.datepickerFormData.value.dateRange || [];
-    const startDate = dateRangeArray[0]
-      ? dayjs(dateRangeArray[0]).format('YYYY-MM-DD')
-      : null;
-    const endDate = dateRangeArray[1]
-      ? dayjs(dateRangeArray[1]).format('YYYY-MM-DD')
-      : null;
+    const startDate = dateRangeArray[0] ? dayjs(dateRangeArray[0]).format('YYYY-MM-DD') : null;
+    const endDate = dateRangeArray[1] ? dayjs(dateRangeArray[1]).format('YYYY-MM-DD') : null;
     const resourceId = this.datepickerFormData.value.resourceId;
     const deptIds = this.selectedDepartmentIds || [];
     const roleIds = this.selectedResourceRoles || [];
@@ -664,40 +569,21 @@ export class ProjectViewComponent implements OnInit {
   }
 
   // onSubmitforsummary() {
-  //   const dateRangeArray =
-  //     this.datepickerFormDataforsummary.value.dateRange || [];
-  //   const startDate = dateRangeArray[0]
-  //     ? dayjs(dateRangeArray[0]).format('YYYY-MM-DDTHH:mm:ss')
-  //     : null;
-  //   const endDate = dateRangeArray[1]
-  //     ? dayjs(dateRangeArray[1]).format('YYYY-MM-DDTHH:mm:ss')
-  //     : null;
+  //   const dateRangeArray = this.datepickerFormDataforsummary.value.dateRange || [];
+  //   const startDate = dateRangeArray[0] ? dayjs(dateRangeArray[0]).format('YYYY-MM-DDTHH:mm:ss') : null;
+  //   const endDate = dateRangeArray[1] ? dayjs(dateRangeArray[1]).format('YYYY-MM-DDTHH:mm:ss') : null;
   //   this.http.setDateRange(startDate, endDate);
   // }
 
   onSubmitforsummary() {
-    const dateRangeArray =
-      this.datepickerFormDataforsummary.value.dateRange || [];
-    const startDate = dateRangeArray[0]
-      ? dayjs(dateRangeArray[0]).format('YYYY-MM-DD')
-      : null;
-    const endDate = dateRangeArray[1]
-      ? dayjs(dateRangeArray[1]).format('YYYY-MM-DD')
-      : null;
+    const dateRangeArray = this.datepickerFormDataforsummary.value.dateRange || [];
+    const startDate = dateRangeArray[0] ? dayjs(dateRangeArray[0]).format('YYYY-MM-DD') : null;
+    const endDate = dateRangeArray[1] ? dayjs(dateRangeArray[1]).format('YYYY-MM-DD') : null;
     const request = {
       dateRange: { startDate, endDate },
-      departmentIds:
-        this.selectedDepartmentIds.length > 0
-          ? this.selectedDepartmentIds
-          : undefined,
-      roleIds:
-        this.selectedResourceRoles.length > 0
-          ? this.selectedResourceRoles
-          : undefined,
-      phaseIds:
-        this.selectedResourcePhases.length > 0
-          ? this.selectedResourcePhases
-          : undefined,
+      departmentIds: this.selectedDepartmentIds.length > 0 ? this.selectedDepartmentIds : undefined,
+      roleIds: this.selectedResourceRoles.length > 0 ? this.selectedResourceRoles : undefined,
+      phaseIds: this.selectedResourcePhases.length > 0 ? this.selectedResourcePhases : undefined,
     };
     // This triggers all charts in Project Timesheet Summary
     this.http.setProjectTimesheetFilterData(request);
@@ -718,11 +604,7 @@ export class ProjectViewComponent implements OnInit {
   }
 
   toggleFilters(content: TemplateRef<any>) {
-    this.offcanvasService.open(content, {
-      position: 'end',
-      backdrop: 'static',
-      keyboard: false,
-    });
+    this.offcanvasService.open(content, { position: 'end', backdrop: 'static', keyboard: false });
   }
 
   closeCanvas() {
@@ -730,13 +612,9 @@ export class ProjectViewComponent implements OnInit {
   }
 
   // 1. Active Phases Filter Indicator
-  // 1. Active Phases Filter Indicator (Fixed & Safe)
   isFilterAppliedForActivePhases(): boolean {
     const hasStatus = this.selectedActivePhaseStatuses.length > 0;
-    const hasDateRange =
-      this.phaseDateRange.length === 2 &&
-      this.phaseDateRange[0] != null &&
-      this.phaseDateRange[1] != null;
+    const hasDateRange = this.phaseDateRange.length === 2 && this.phaseDateRange[0] != null && this.phaseDateRange[1] != null;
 
     return hasStatus || hasDateRange;
   }
@@ -744,10 +622,7 @@ export class ProjectViewComponent implements OnInit {
   // 2. Inactive Phases Filter Indicator (Fixed & Safe)
   isFilterAppliedForInActivePhases(): boolean {
     const hasStatus = this.selectedInActivePhaseStatuses.length > 0;
-    const hasDateRange =
-      this.phaseDateRange.length === 2 &&
-      this.phaseDateRange[0] != null &&
-      this.phaseDateRange[1] != null;
+    const hasDateRange = this.phaseDateRange.length === 2 && this.phaseDateRange[0] != null && this.phaseDateRange[1] != null;
 
     return hasStatus || hasDateRange;
   }
@@ -770,13 +645,12 @@ export class ProjectViewComponent implements OnInit {
 
     return (
       new Date(selectedRange[0]).toDateString() ===
-        startOfMonth.toDateString() &&
+      startOfMonth.toDateString() &&
       new Date(selectedRange[1]).toDateString() === endOfMonth.toDateString()
     );
   }
-  isDefaultSummaryprojectDateRange(
-    dateRange: Date[] | null | undefined,
-  ): boolean {
+
+  isDefaultSummaryprojectDateRange(dateRange: Date[] | null | undefined,): boolean {
     if (!dateRange || dateRange.length !== 2) return true;
 
     const selectedStart = dayjs(dateRange[0]).startOf('day');
@@ -787,15 +661,12 @@ export class ProjectViewComponent implements OnInit {
 
     return selectedStart.isSame(defaultStart) && selectedEnd.isSame(defaultEnd);
   }
+
   // 4. Resource Summary (Detailed Timesheet View) — includes date + resource + dept + role + phase
   isFilterAppliedForDetailedSummary(): boolean {
     const formValue = this.datepickerFormData.value;
-
     const isDefaultDate = this.isDefaultSummaryDateRange(formValue?.dateRange);
-    const hasDateRange =
-      formValue?.dateRange &&
-      formValue.dateRange.length === 2 &&
-      !isDefaultDate;
+    const hasDateRange = formValue?.dateRange && formValue.dateRange.length === 2 && !isDefaultDate;
     const hasResource = !!formValue.resourceId;
     const hasDepartment = this.selectedDepartmentIds.length > 0;
     const hasRole = this.selectedResourceRoles.length > 0;
@@ -808,13 +679,8 @@ export class ProjectViewComponent implements OnInit {
   isFilterAppliedForResourceSummary(): boolean {
     const formValue = this.datepickerFormDataforsummary?.value;
 
-    const isDefaultDate = this.isDefaultSummaryprojectDateRange(
-      formValue?.dateRange,
-    );
-    const hasDateRange =
-      formValue?.dateRange &&
-      formValue.dateRange.length === 2 &&
-      !isDefaultDate;
+    const isDefaultDate = this.isDefaultSummaryprojectDateRange(formValue?.dateRange,);
+    const hasDateRange = formValue?.dateRange && formValue.dateRange.length === 2 && !isDefaultDate;
     const hasDepartment = this.selectedDepartmentIds.length > 0;
     const hasRole = this.selectedResourceRoles.length > 0;
     const hasPhase = this.selectedResourcePhases.length > 0;

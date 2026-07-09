@@ -73,18 +73,16 @@ export class ProjectManagementApprovalTabsComponent {
     // Initial load with current month/year, update all tabs
     this.getAllPendingApprovalsCount(true);
     // Subscribe to changes, update only active tab
-    combineLatest([this.onboardingFilter.selectedMonth$, this.onboardingFilter.selectedYear$])
-      .pipe(
-        skip(1), // Skip initial emit
-        distinctUntilChanged(([prevMonth, prevYear], [currMonth, currYear]) => prevMonth === currMonth && prevYear === currYear),
-        debounceTime(300), // Add debounce to prevent multiple rapid calls
-        takeUntil(this.destroy$)
-      )
-      .subscribe(([month, year]) => {
-        this.selectedMonth = month;
-        this.selectedYear = year;
-        this.getAllPendingApprovalsCount(false);
-      });
+    combineLatest([this.onboardingFilter.selectedMonth$, this.onboardingFilter.selectedYear$]).pipe(
+      skip(1), // Skip initial emit
+      distinctUntilChanged(([prevMonth, prevYear], [currMonth, currYear]) => prevMonth === currMonth && prevYear === currYear),
+      debounceTime(300), // Add debounce to prevent multiple rapid calls
+      takeUntil(this.destroy$)
+    ).subscribe(([month, year]) => {
+      this.selectedMonth = month;
+      this.selectedYear = year;
+      this.getAllPendingApprovalsCount(false);
+    });
     this.navLinks = this.navLinks.filter((tab: NavLink) =>
       !!tab.permission?.feature && !!tab.permission?.action &&
       this.rbac.allowedToAccess(`${tab.permission.feature}.${tab.permission.action}`)

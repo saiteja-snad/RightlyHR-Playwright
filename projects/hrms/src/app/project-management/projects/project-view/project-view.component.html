@@ -22,7 +22,8 @@
     </div>
 
     <!--In Active Phases -->
-    <div class="d-flex align-items-center gap-3" *ngIf="isActive('/project-management/projects/details/inactive-phases')">
+    <div class="d-flex align-items-center gap-3"
+      *ngIf="isActive('/project-management/projects/details/inactive-phases')">
       <button type="button" class="clear-all-btn" (click)="clearPhaseFilters()">Clear All</button>
 
       <div *ngIf="rbac.allowedToAccess('Team Time Sheet Filters Tab.view')">

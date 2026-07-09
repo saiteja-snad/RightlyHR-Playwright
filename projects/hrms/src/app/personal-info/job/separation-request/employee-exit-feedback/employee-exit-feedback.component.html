@@ -9,54 +9,83 @@
     </div>
     <div class="custom-table-content">
         @if (!isDataLoaded) {
-        <table class="w-100">
-            <thead>
+        <p-table 
+            #exitFeedbackTable
+            [value]="(exitfeedbackdata | async) || []" 
+            [customSort]="true"
+            (sortFunction)="customSort($event)"
+            [sortMode]="'single'"
+            styleClass="p-datatable-sm custom-table">
+            <ng-template pTemplate="header">
                 <tr>
-                    <th>{{'Initiated Date'|translate}}</th>
-                    <th>{{'Last Working Day'|translate}}</th>
-                    <th>{{'Form'|translate}}</th>
-                    <th>{{'Status'|translate}}</th>
-                    <th>{{'Action'|translate}}</th>
+                    <th pSortableColumn="initiatedAt">
+                        {{'Initiated Date' | translate}}
+                        <p-sortIcon field="initiatedAt"></p-sortIcon>
+                    </th>
+                    <th pSortableColumn="lastWorkingDate">
+                        {{'Last Working Day' | translate}}
+                        <p-sortIcon field="lastWorkingDate"></p-sortIcon>
+                    </th>
+                    <th pSortableColumn="documentUrl">
+                        {{'Form' | translate}}
+                        <p-sortIcon field="documentUrl"></p-sortIcon>
+                    </th>
+                    <th pSortableColumn="status">
+                        {{'Status' | translate}}
+                        <p-sortIcon field="status"></p-sortIcon>
+                    </th>
+                    <th>{{'Action' | translate}}</th>
                 </tr>
-            </thead>
-            <tbody>
-                @if(((exitfeedbackdata | async) ?? []).length > 0) {
-                @for (item of (exitfeedbackdata | async); track item.id) {
+            </ng-template>
+            
+            <ng-template pTemplate="body" let-item>
                 <tr>
-                    <td>{{ item.initiatedAt ? (item.initiatedAt | date):'-' }}</td>
-                    <td>{{ item.lastWorkingDate ? (item.lastWorkingDate | date):'-' }}</td>
                     <td>
-                        @if(item.documentUrl) {
-                        <span *ngIf="item.documentUrl;else noData" (click)="onSelectBankProofDownload(item)">
+                        <span *ngIf="item.initiatedAt; else noInitiatedDate">
+                            {{ item.initiatedAt | date }}
+                        </span>
+                        <ng-template #noInitiatedDate>-</ng-template>
+                    </td>
+                    <td>
+                        <span *ngIf="item.lastWorkingDate; else noLastWorkingDate">
+                            {{ item.lastWorkingDate | date }}
+                        </span>
+                        <ng-template #noLastWorkingDate>-</ng-template>
+                    </td>
+                    <td>
+                        <span *ngIf="item.documentUrl; else noDocument" 
+                              (click)="onSelectBankProofDownload(item)" 
+                              style="cursor: pointer;">
                             <app-download-icon />
                         </span>
-                        <ng-template #noData>-</ng-template>
-                        } @else {
-                        <div>-</div>
-                        }
+                        <ng-template #noDocument>-</ng-template>
                     </td>
-                    <td>{{ item.status ? (item.status):'-' }}</td>
+                    <td>
+                        <span *ngIf="item.status; else noStatus">{{ item.status }}</span>
+                        <ng-template #noStatus>-</ng-template>
+                    </td>
                     <td>
                         @if(item.status === 'Initiated') {
                         <div>
-                            <button (click)="openForm(item)" type="button" class="custom-btn btn-primary">{{'Form Submit' | translate}}</button>
+                            <button (click)="openForm(item)" type="button" class="custom-btn btn-primary">
+                                {{'Form Submit' | translate}}
+                            </button>
                         </div>
                         } @else {
                         <div class="text-muted">-</div>
                         }
                     </td>
                 </tr>
-                }
-                }
-                @else{
+            </ng-template>
+
+            <ng-template pTemplate="emptymessage">
                 <tr>
-                    <td>
+                    <td colspan="5">
                         <app-no-data-found />
                     </td>
                 </tr>
-                }
-            </tbody>
-        </table>
+            </ng-template>
+        </p-table>
         }
         @else {
         <app-data-loader-content />

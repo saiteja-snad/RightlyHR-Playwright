@@ -28,28 +28,70 @@
 
   <div class="custom-table-content">
     @if(!isLoading){
-    <table id="exitFeedbackReportTable" class="w-100">
-      <thead>
-          <th class="text-center">Employee ID</th>
-          <th>Employee Name</th>
-          <th>Department</th>
-          <th>Team Manager</th>
-          <th>Location</th>
-          <th>Sub Location</th>
-          <th>Exit Type</th>
-          <th>Exit Reason</th>
-          <th>Last Working Day</th>
-          <th class="text-center">Feedback Status</th>
-          <th class="text-center">Rehire Eligible</th>
-      </thead>
-      <tbody>
-        @if (!filteredExitFeedbackData || filteredExitFeedbackData.length === 0) {
+    <p-table #exitTable id="exitFeedbackReportTable" [value]="filteredExitFeedbackData" [customSort]="true"
+      (sortFunction)="customSort($event)" responsiveLayout="scroll">
+    
+      <ng-template pTemplate="header">
         <tr>
-          <app-no-data-found />
+          <th pSortableColumn="fusionEmpId" class="text-center">
+            Employee ID
+            <p-sortIcon field="fusionEmpId"></p-sortIcon>
+          </th>
+    
+          <th pSortableColumn="employeeName">
+            Employee Name
+            <p-sortIcon field="employeeName"></p-sortIcon>
+          </th>
+    
+          <th pSortableColumn="department">
+            Department
+            <p-sortIcon field="department"></p-sortIcon>
+          </th>
+    
+          <th pSortableColumn="teamManager">
+            Team Manager
+            <p-sortIcon field="teamManager"></p-sortIcon>
+          </th>
+    
+          <th pSortableColumn="location">
+            Location
+            <p-sortIcon field="location"></p-sortIcon>
+          </th>
+    
+          <th pSortableColumn="subLocation">
+            Sub Location
+            <p-sortIcon field="subLocation"></p-sortIcon>
+          </th>
+    
+          <th pSortableColumn="exitType">
+            Exit Type
+            <p-sortIcon field="exitType"></p-sortIcon>
+          </th>
+    
+          <th pSortableColumn="exitReason">
+            Exit Reason
+            <p-sortIcon field="exitReason"></p-sortIcon>
+          </th>
+    
+          <th pSortableColumn="lastWorkingDay">
+            Last Working Day
+            <p-sortIcon field="lastWorkingDay"></p-sortIcon>
+          </th>
+    
+          <th pSortableColumn="feedbackSubmitted" class="text-center">
+            Feedback Status
+            <p-sortIcon field="feedbackSubmitted"></p-sortIcon>
+          </th>
+    
+          <th pSortableColumn="rehireEligible" class="text-center">
+            Rehire Eligible
+            <p-sortIcon field="rehireEligible"></p-sortIcon>
+          </th>
         </tr>
-        }
-        @else {
-        @for (record of filteredExitFeedbackData; track $index) {
+      </ng-template>
+    
+    
+      <ng-template pTemplate="body" let-record>
         <tr>
           <td class="text-center">{{ record.fusionEmpId ?? '-' }}</td>
           <td>{{ record.employeeName ?? '-' }}</td>
@@ -59,14 +101,15 @@
           <td>{{ record.subLocation ?? '-' }}</td>
           <td>{{ record.exitType ?? '-' }}</td>
           <td>{{ record.exitReason ?? '-' }}</td>
-          <td>{{ (record.lastWorkingDay | date) ?? '-' }}</td>
-          <td class="text-center">{{ record.feedbackSubmitted === 'Yes' ? 'Submitted' : 'No' }}</td>
+          <td>{{ record.lastWorkingDay | date }}</td>
+          <td class="text-center">
+            {{ record.feedbackSubmitted === 'Yes' ? 'Submitted' : 'No' }}
+          </td>
           <td class="text-center">{{ record.rehireEligible ?? '-' }}</td>
         </tr>
-        }
-        }
-      </tbody>
-    </table>
+      </ng-template>
+    
+    </p-table>
     }
     @else {
     <app-data-loader-content />

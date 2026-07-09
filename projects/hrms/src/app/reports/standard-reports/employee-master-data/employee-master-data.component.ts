@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, TemplateRef, ViewEncapsulation } from '@angular/core';
+import { Component, OnDestroy, OnInit, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
 import { NgxDaterangepickerBootstrapDirective } from "ngx-daterangepicker-bootstrap";
 import dayjs, { Dayjs } from 'dayjs';
 import { environment } from '../../../../environments/environment';
@@ -23,16 +23,20 @@ import { MultiSelectModule } from 'primeng/multiselect';
 import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 import { Select } from 'primeng/select';
 import { TranslateModule } from '@ngx-translate/core';
+import { TableModule, Table } from 'primeng/table';
+import moment from 'moment';
 
 @Component({
   selector: 'app-employee-master-data',
-  imports: [FormsModule, DateformatPipe, ReactiveFormsModule, CommonModule, NoDataFoundComponent, DataLoaderContentComponent, ReportsHeaderComponent, DatePicker, MultiSelectModule, TranslateModule],
+  imports: [FormsModule, DateformatPipe, ReactiveFormsModule, CommonModule, NoDataFoundComponent, DataLoaderContentComponent, ReportsHeaderComponent, DatePicker, MultiSelectModule, TranslateModule, TableModule],
   templateUrl: './employee-master-data.component.html',
   styleUrl: './employee-master-data.component.scss',
   encapsulation: ViewEncapsulation.None
 })
 
 export class EmployeeMasterDataComponent implements OnInit, OnDestroy {
+  @ViewChild('dt') dt!: Table;
+  sortedData: any[] = [];
   moduleinfo: string = '';
   empMasterDataDOJDateRange!: { startDate: Dayjs; endDate: Dayjs } | null;
   subscription!: Subscription
@@ -48,6 +52,9 @@ export class EmployeeMasterDataComponent implements OnInit, OnDestroy {
   spinnerLoader2 = false;
   isFilterIndicatorActive = false;
   disableBtn = false;
+  originalEmployeeMasterData: any[] = [];
+  currentSortField: string = '';
+  currentSortOrder: number = 0;
   ranges: any = {
     Today: [dayjs(), dayjs()],
     Yesterday: [dayjs().subtract(1, 'days'), dayjs().subtract(1, 'days')],
@@ -177,6 +184,10 @@ export class EmployeeMasterDataComponent implements OnInit, OnDestroy {
     this.subscription = this.reportsService.getStandardReports(request).subscribe({
       next: (res: any) => {
         this.employeeMasterData = res?.standardReports || [];
+        this.originalEmployeeMasterData = [...this.employeeMasterData];
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        this.sortedData = [];
       },
       error: () => {
         this.employeeMasterData = [];
@@ -196,44 +207,312 @@ export class EmployeeMasterDataComponent implements OnInit, OnDestroy {
   onClickEmpMasterExport() {
     this.spinnerLoader2 = true;
     setTimeout(() => {
-      let { arrayBuffer, fileName } = this.exportTableToExcel("employeeMasterData", "Employee_Overview_Report")
-      this.uploadReports(arrayBuffer, fileName)
-      this.createReportLog("Employee Overview Report")
+      const dataToExport = this.sortedData.length ? this.sortedData : (this.dt?.filteredValue ?? this.dt?.value ?? this.employeeMasterData);
+      let { arrayBuffer, fileName } = this.exportTableToExcel(dataToExport, 'Employee Overview Report');
+      this.uploadReports(arrayBuffer, fileName);
+      this.createReportLog('Employee Overview Report');
     }, 100);
   }
 
-  exportTableToExcel(tableId: string, name?: string) {
+  onSortChange(event: any): void {
+    this.sortedData = this.dt?.filteredValue ?? this.dt?.value ?? this.employeeMasterData;
+  }
+
+  exportTableToExcel(data: any[], name?: string) {
     let { sheetName, fileName } = this.getFileName(name);
-    let targetTableElm = document.getElementById(tableId);
-    
+
     const reportTitle = name ? name.replace(/_/g, ' ') : 'Report';
-    const ws = XLSX.utils.aoa_to_sheet([
-      [reportTitle.toUpperCase()]
+    const ws = XLSX.utils.aoa_to_sheet([[reportTitle.toUpperCase()]]);
+
+    const headers = [
+      'EMPLOYEE ID',
+      'SALUTATION',
+      'FIRST NAME',
+      'MIDDLE NAME',
+      'LAST NAME',
+      'GENDER',
+      'DATE OF BIRTH',
+      'BLOOD GROUP',
+      'MARITAL STATUS',
+
+      'WORK NUMBER',
+      'PHONE NUMBER',
+      'WORK MAIL',
+      'PERSONAL EMAIL',
+      'LINKEDIN URL',
+
+      'ADDRESS LINE 1 (CURRENT)',
+      'ADDRESS LINE 2 (CURRENT)',
+      'ZIP CODE / POSTAL CODE (CURRENT)',
+      'CITY (CURRENT)',
+      'STATE (CURRENT)',
+      'COUNTRY (CURRENT)',
+
+      'ADDRESS LINE 1 (PERMANENT)',
+      'ADDRESS LINE 2 (PERMANENT)',
+      'ZIP CODE / POSTAL CODE (PERMANENT)',
+      'CITY (PERMANENT)',
+      'STATE (PERMANENT)',
+      'COUNTRY (PERMANENT)',
+
+      'NAME (PRIMARY CONTACT)',
+      'EMAIL ID (PRIMARY CONTACT)',
+      'PHONE NUMBER (PRIMARY CONTACT)',
+      'RELATIONSHIP (PRIMARY CONTACT)',
+
+      'NAME (SECONDARY CONTACT)',
+      'EMAIL ID (SECONDARY CONTACT)',
+      'PHONE NUMBER (SECONDARY CONTACT)',
+      'RELATIONSHIP (SECONDARY CONTACT)',
+
+      'AADHAAR NUMBER',
+      'PAN NUMBER',
+      'ESIC NUMBER',
+      'PF NUMBER',
+      'UAN NUMBER',
+
+      'BANK NAME',
+      "ACCOUNT HOLDER'S NAME",
+      'ACCOUNT NUMBER',
+      'IFSC CODE',
+
+      'QUALIFICATION',
+      'UNIVERSITY',
+      'SPECIALIZATION',
+      'GPA / CGPA',
+
+      'FROM DATE',
+      'TO DATE',
+
+      'OFFER SENT DATE',
+      'OFFER SENT BY',
+      'OFFER SENT STATUS',
+
+      'APPOINTMENT SENT DATE',
+      'APPOINTMENT SENT BY',
+      'APPOINTMENT SENT STATUS',
+
+      'TRAINEE OFFER SENT DATE',
+      'TRAINEE OFFER SENT BY',
+      'TRAINEE OFFER SENT STATUS',
+
+      'CONTRACT OFFER SENT DATE',
+      'CONTRACT OFFER SENT BY',
+      'CONTRACT OFFER SENT STATUS',
+
+      'EMPLOYEE STATUS',
+      'DATE OF JOINING',
+      'BRANCH CODE',
+
+      'PROBATION END DATE',
+      'PROBATION STATUS',
+
+      'NOTICE PERIOD STATUS',
+      'BACKGROUND CHECK STATUS',
+
+      'SALARY HOLD',
+
+      'PF',
+      'ESIC',
+      'PT',
+
+      'TOTAL PREVIOUS YEARS EXPERIENCE',
+      'EMPLOYMENT TYPE STATUS',
+
+      'CONTRACT START DATE',
+      'DURATION OF CONTRACT',
+      'CONTRACT END DATE',
+
+      'COMPENSATION EFFECTIVE DATE',
+
+      'OVERTIME ELIGIBILITY',
+      'REASON',
+      'FREQUENCY',
+      'PAY TYPE',
+      'ANNUAL SALARY (IN CTC)',
+
+      'VARIABLE PAY',
+      'VARIABLE PAY AMOUNT',
+      'NEXT COMPENSATION REVIEW DATE',
+
+      'JOB EFFECTIVE DATE',
+      'JOB ROLE',
+      'JOB GRADE',
+
+      'DEPARTMENT',
+      'TEAM',
+
+      'TEAM MANAGER',
+      'REPORTING MANAGER',
+
+      'LOCATION',
+      'SUB LOCATION',
+
+      'SHIFT',
+      'SHIFT CODE',
+
+      'JOB TYPE',
+
+      'EXIT REASON',
+      'ELIGIBLE FOR REHIRE',
+      'RELIEVING TYPE',
+
+      'LAST WORKING DAY',
+      'CONTRACTOR LAST WORKING DAY'
+    ];
+
+    const rows = data.map(emp => [
+      emp.fusionEmpId || '-',
+      emp.title || '-',
+      emp.firstName || '-',
+      emp.middleName || '-',
+      emp.lastName || '-',
+      emp.gender || '-',
+      emp.dob ? dayjs(emp.dob).format('DD-MMM-YYYY') : '-',
+      emp.bloodGroup || '-',
+      emp.maritalStatus || '-',
+
+      emp.workPhone || '-',
+      emp.contactnumber || '-',
+      emp.workEmail || '-',
+      emp.emailaddress || '-',
+      emp.linkedinurl || '-',
+
+      // Address
+      emp.currentAddressLine1 || '-',
+      emp.currentAddressLine2 || '-',
+      emp.currentZipCode || '-',
+      emp.currentCity || '-',
+      emp.currentState || '-',
+      emp.currentCountry || '-',
+
+      emp.permanentAddressLine1 || '-',
+      emp.permanentAddressLine2 || '-',
+      emp.permanentZipCode || '-',
+      emp.permanentCity || '-',
+      emp.permanentState || '-',
+      emp.permanentCountry || '-',
+
+      // Emergency Contacts
+      emp.emergencyName || '-',
+      emp.emailId || '-',
+      emp.emergencynumber || '-',
+      emp.relationShip || '-',
+
+      emp.emergencyName1 || '-',
+      emp.emergencyEmail1 || '-',
+      emp.emergencyNumber1 || '-',
+      emp.relationship1 || '-',
+
+      // Identity Info
+      emp.aadhaar || '-',
+      emp.pan || '-',
+      emp.esic || '-',
+      emp.pf || '-',
+      emp.uan || '-',
+
+      // Bank Info
+      emp.bankName || '-',
+      emp.accountName || '-',
+      emp.accountNo || '-',
+      emp.ifscCode || '-',
+
+      // Academics
+      emp.degree || '-',
+      emp.university || '-',
+      emp.specialization || '-',
+      emp.gpa || '-',
+      emp.degreeStartDate ? dayjs(emp.degreeStartDate).format('DD-MMM-YYYY') : '-',
+      emp.degreeEndDate ? dayjs(emp.degreeEndDate).format('DD-MMM-YYYY') : '-',
+
+      // Appointment Details
+      emp.offerSentDate ? dayjs(emp.offerSentDate).format('DD-MMM-YYYY') : '-',
+      emp.offerSentBy || '-',
+      emp.offerSentStatus || '-',
+
+      emp.appointmentSentDate ? dayjs(emp.appointmentSentDate).format('DD-MMM-YYYY') : '-',
+      emp.appointmentSentBy || '-',
+      emp.appointmentSentStatus || '-',
+
+      emp.traineeOfferSentDate ? dayjs(emp.traineeOfferSentDate).format('DD-MMM-YYYY') : '-',
+      emp.traineeOfferSentBy || '-',
+      emp.traineeOfferSentStatus || '-',
+
+      emp.contractOfferSentDate ? dayjs(emp.contractOfferSentDate).format('DD-MMM-YYYY') : '-',
+      emp.contractOfferSentBy || '-',
+      emp.contractOfferSentStatus || '-',
+
+      // Employment Details
+      emp.empstatus || '-',
+      emp.dateOfJoining ? dayjs(emp.dateOfJoining).format('DD-MMM-YYYY') : '-',
+      emp.branchCode || '-',
+
+      // Probation
+      emp.probationEndDate ? dayjs(emp.probationEndDate).format('DD-MMM-YYYY') : '-',
+      emp.probationStatus || '-',
+      emp.noticePeriod || '-',
+      emp.backgroundCheckStatus || '-',
+      emp.salaryHold || '-',
+
+      emp.pfApplicable || '-',
+      emp.esicApplicable || '-',
+      emp.pt || '-',
+
+      // Experience & Contract
+      emp.totalYearsOfExperience || '-',
+      emp.contractType || '-',
+      emp.contractStartDate ? dayjs(emp.contractStartDate).format('DD-MMM-YYYY') : '-',
+      emp.contractDuration || '-',
+      emp.contractEndDate ? dayjs(emp.contractEndDate).format('DD-MMM-YYYY') : '-',
+      emp.compeffectivedate ? dayjs(emp.compeffectivedate).format('DD-MMM-YYYY') : '-',
+
+      // Compensation
+      emp.overtimeeligibility || '-',
+      emp.reason || '-',
+      emp.frequency || '-',
+      emp.paytype || '-',
+      emp.compensationamount || '-',
+      emp.isvariablepay === true ? 'Yes' : emp.isvariablepay === false ? 'No' : '-',
+      emp.variablepayamount || '-',
+      emp.nextCompReviewDate ? dayjs(emp.nextCompReviewDate).format('DD-MMM-YYYY') : '-',
+
+      // Job Details
+      emp.jobEffectiveDate ? dayjs(emp.jobEffectiveDate).format('DD-MMM-YYYY') : '-',
+      emp.jobRole || '-',
+      emp.gradeName || '-',
+      emp.departmentName || '-',
+      emp.subdepartment_name || '-',
+      emp.teamManager || '-',
+      emp.reportingManager || '-',
+      emp.jobLocationName || '-',
+      emp.jobSubLocationName || '-',
+      emp.shiftName || '-',
+      emp.shiftCode || '-',
+      emp.jobType || '-',
+
+      // Exit
+      emp.termreasonoffboard || '-',
+      emp.eligibleforrehire || '-',
+      emp.termtypeoffboard || '-',
+      emp.lastworkingday ? dayjs(emp.lastworkingday).format('DD-MMM-YYYY') : '-',
+      emp.contractorLastWorkingDate ? dayjs(emp.contractorLastWorkingDate).format('DD-MMM-YYYY') : '-'
     ]);
-    XLSX.utils.sheet_add_dom(ws, targetTableElm, { origin: 'A2', raw: true });
+
+    XLSX.utils.sheet_add_aoa(ws, [headers, ...rows], { origin: 'A2' });
 
     if (ws['!ref']) {
       const range = XLSX.utils.decode_range(ws['!ref']);
       if (!ws['!merges']) ws['!merges'] = [];
       ws['!merges'].push({ s: { r: 0, c: 0 }, e: { r: 0, c: range.e.c } });
-      
-      if (ws['A1']) {
-        ws['A1'].s = { font: { bold: true, sz: 14 }, alignment: { horizontal: 'left' } };
-      }
+      if (ws['A1']) ws['A1'].s = { font: { bold: true, sz: 14 }, alignment: { horizontal: 'left' } };
     }
 
     this.convertHeadersToUpperCase(ws, 1);
 
-    // Create a new workbook with the formatted worksheet
     let wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, sheetName);
-    // Write the file
     XLSX.writeFile(wb, `${fileName}.xlsx`);
-    // Also return the array buffer for upload
-    let arrayBuffer = XLSX.write(wb, {
-      bookType: 'xlsx',
-      type: 'array',
-    });
+    let arrayBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
     return { arrayBuffer, fileName };
   }
 
@@ -359,7 +638,6 @@ export class EmployeeMasterDataComponent implements OnInit, OnDestroy {
       dateOfJoining: null
     });
     this.disableBtn = false;
-    this.isFilterIndicatorActive = false;
     this.employeeMasterData = [];
   }
 
@@ -377,7 +655,73 @@ export class EmployeeMasterDataComponent implements OnInit, OnDestroy {
 
     return hasDoj || hasEmpStatus;
   }
-  
+  customSort(event: any): void {
+    const field = event.field;
+
+    if (this.currentSortField === field) {
+      if (this.currentSortOrder === 1) {
+        this.currentSortOrder = -1;
+        event.order = -1;
+      } else if (this.currentSortOrder === -1) {
+        this.employeeMasterData = [...this.originalEmployeeMasterData];
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        if (this.dt) this.dt.reset();
+        return;
+      } else {
+        this.currentSortOrder = 1;
+        event.order = 1;
+      }
+    } else {
+      this.currentSortField = field;
+      this.currentSortOrder = 1;
+      event.order = 1;
+    }
+
+    event.data.sort((a: any, b: any) => {
+      let val1 = a[field];
+      let val2 = b[field];
+
+      if (field === 'fusionEmpId') {
+        const num1 = parseInt(String(val1).replace(/\D/g, ''), 10) || 0;
+        const num2 = parseInt(String(val2).replace(/\D/g, ''), 10) || 0;
+        return event.order * (num1 - num2);
+      }
+      // Date Sorting
+      if (
+        field === 'dob' ||
+        field === 'contractOfferSentDate' ||
+        field === 'appointmentSentDate' ||
+        field === 'offerSentDate' ||
+        field === 'traineeOfferSentDate' ||
+        field === 'probationEndDate' ||
+        field === 'dateOfJoining' ||
+        field === 'contractStartDate' ||
+        field === 'contractEndDate' ||
+        field === 'compeffectivedate' ||
+        field === 'nextCompReviewDate' ||
+        field === 'jobEffectiveDate' ||
+        field === 'lastworkingday' ||
+        field === 'contractorLastWorkingDate'
+      ) {
+
+        const date1 = moment(a[field]);
+        const date2 = moment(b[field]);
+
+        return event.order * date1.diff(date2);
+      }
+      if (field === 'compensationamount' || field === 'variablepayamount') {
+
+        val1 = Number(a[field] || 0);
+        val2 = Number(b[field] || 0);
+
+        return event.order * (val1 - val2);
+      }
+      val1 = String(val1 ?? '').trim();
+      val2 = String(val2 ?? '').trim();
+      return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+    });
+  }
   ngOnDestroy(): void {
     if (this.subscription) {
       this.subscription.unsubscribe();

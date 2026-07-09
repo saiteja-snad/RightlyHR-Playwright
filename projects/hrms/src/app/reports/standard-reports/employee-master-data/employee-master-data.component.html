@@ -27,167 +27,154 @@
 
   <div class="custom-table-content">
     @if(!dataload){
-    <table id="employeeMasterData" class="w-100">
-      <thead>
+    <p-table #dt [value]="employeeMasterData" [tableStyle]="{'width': '100%'}" (onSort)="onSortChange($event)"[customSort]="true" (sortFunction)="customSort($event)">
+      <ng-template pTemplate="header">
         <tr>
-          <!-- Basic Info -->
-          <th>Employee ID</th>
-          <th>Salutation</th>
-          <th>First Name</th>
-          <th>Middle Name</th>
-          <th>Last Name</th>
-          <th>Gender</th>
-          <th>Date of Birth</th>
-          <th>Blood Group</th>
-          <th>Marital Status</th>
-
-          <!-- Contact Info -->
+          <th pSortableColumn="fusionEmpId">Employee ID <p-sortIcon field="fusionEmpId" /></th>
+          <th pSortableColumn="title">Salutation <p-sortIcon field="title" /></th>
+          <th pSortableColumn="firstName">First Name <p-sortIcon field="firstName" /></th>
+          <th pSortableColumn="middleName">Middle Name <p-sortIcon field="middleName" /></th>
+          <th pSortableColumn="lastName">Last Name <p-sortIcon field="lastName" /></th>
+          <th pSortableColumn="gender">Gender <p-sortIcon field="gender" /></th>
+          <th pSortableColumn="dob">Date of Birth <p-sortIcon field="dob" /></th>
+          <th pSortableColumn="bloodGroup">Blood Group <p-sortIcon field="bloodGroup" /></th>
+          <th pSortableColumn="maritalStatus">Marital Status <p-sortIcon field="maritalStatus" /></th>
           <th>Work Number</th>
           <th>Phone Number</th>
-          <th>Work Mail</th>
-          <th>Personal Email</th>
+          <th pSortableColumn="workEmail">Work Mail <p-sortIcon field="workEmail" /></th>
+          <th pSortableColumn="emailaddress">Personal Email <p-sortIcon field="emailaddress" /></th>
           <th>LinkedIn Url</th>
-
-          <!-- Address -->
-          <th>Address Line 1(current)</th>
-          <th>Address Line 2(current)</th>
-          <th>Zip Code/Postal Code(current)</th>
-          <th>City(current)</th>
-          <th>State(current)</th>
-          <th>Country(current)</th>
-          <th>Address Line 1(Permanent)</th>
-          <th>Address Line 2(Permanent)</th>
-          <th>Zip Code/Postal Code(Permanent)</th>
-          <th>City(Permanent)</th>
-          <th>State(Permanent)</th>
-          <th>Country(Permanent)</th>
-
-          <!-- Emergency Contacts -->
-          <th>Name (Primary Contact)</th>
-          <th>Email ID (Primary Contact)</th>
+          <th pSortableColumn="currentAddressLine1">{{ "Address Line 1(Current)" }} <p-sortIcon field="currentAddressLine1" /></th>
+          <th pSortableColumn="currentAddressLine2">{{ "Address Line 2(Current)" }} <p-sortIcon field="currentAddressLine2" /> </th>
+          <th pSortableColumn="currentZipCode">{{ "ZipCode(Current)" }} <p-sortIcon field="currentZipCode" /></th>
+          <th pSortableColumn="currentCountry">Country(current) <p-sortIcon field="currentCountry" /></th>
+          <th pSortableColumn="currentState">State(current) <p-sortIcon field="currentState" /></th>
+          <th pSortableColumn="currentCity">City(current) <p-sortIcon field="currentCity" /></th>
+          <th pSortableColumn="permanentAddressLine1">{{ "Address Line 1(Permanent)" }} <p-sortIcon field="permanentAddressLine1" /></th>
+          <th pSortableColumn="permanentAddressLine2">{{ "Address Line 2(Permanent)" }} <p-sortIcon field="permanentAddressLine2" /></th>
+          <th pSortableColumn="permanentZipCode">{{ "ZipCode(Permanent)" }} <p-sortIcon field="permanentZipCode" /></th>
+          <th pSortableColumn="permanentCountry">Country(Permanent) <p-sortIcon field="permanentCountry" /></th>
+          <th pSortableColumn="permanentState">State(Permanent) <p-sortIcon field="permanentState" /></th>
+          <th pSortableColumn="permanentCity">City(Permanent) <p-sortIcon field="permanentCity" /></th>
+          <th pSortableColumn="emergencyName">Name (Primary Contact) <p-sortIcon field="emergencyName" /></th>
+          <th pSortableColumn="emailId">Email ID (Primary Contact) <p-sortIcon field="emailId" /></th>
           <th>Phone Number (Primary Contact)</th>
-          <th>Relationship (Primary Contact)</th>
-          <th>Name (Secondary Contact)</th>
-          <th>Email ID (Secondary Contact)</th>
+          <th pSortableColumn="relationShip">Relationship (Primary Contact) <p-sortIcon field="relationShip" /></th>
+          <th pSortableColumn="emergencyName1">Name (Secondary Contact) <p-sortIcon field="emergencyName1" /></th>
+          <th pSortableColumn="emergencyEmail1">Email ID (Secondary Contact) <p-sortIcon field="emergencyEmail1" /></th>
           <th>Phone Number (Secondary Contact)</th>
-          <th>Relationship (Secondary Contact)</th>
-
-         <!-- Visa Details -->
-          <!-- <th>Visa Type</th>
-          <th>Issued Country</th>
-          <th>Issued Date</th>
-          <th>Expiry Date</th> -->
-
-           <!-- Identity Info -->
-          <th>Aadhaar Number</th>
-          <th>PAN Number</th>
-          <th>ESIC Number</th>
-          <th>PF Number</th>
-          <th>UAN Number</th>
+          <th pSortableColumn="relationship1">Relationship (Secondary Contact) <p-sortIcon field="relationship1" /></th>
           
-          <!-- Bank Info -->
-          <th>Bank Name</th>
-          <th>Account Holder's Name</th>
-          <th>Account Number</th>
-          <th>IFSC Code</th>
-
-          <!-- Academics -->
-          <th>Qualification</th>
-          <th>University</th>
-          <th>Specialization</th>
-          <th>GPA/CGPA</th>
-          <th>From Date</th>
-          <th>To Date</th>
-
-          <!-- Appointment Details -->
-          <th>Offer Sent Date</th>
-          <th>Offer Sent By</th>
-          <th>Offer Sent Status</th>
-          <th>Appointment Sent Date</th>
-          <th>Appointment Sent By</th>
-          <th>Appointment Sent Status</th>
-          <th>Trainee Offer Sent Date</th>
-          <th>Trainee Offer Sent By</th>
-          <th>Trainee Offer Sent Status</th>
-          <th>Contract Offer Sent Date</th>
-          <th>Contract Offer Sent By</th>
-          <th>Contract Offer Sent Status</th>
-
-          <!-- Employment Details -->
-          <th>Employee Status</th>
-          <th>Date Of Joining</th>
-          <th>Branch Code</th>
+          <th pSortableColumn="aadhaar">Aadhaar Number <p-sortIcon field="aadhaar" /></th>
+          <th pSortableColumn="pan">PAN Number <p-sortIcon field="pan" /></th>
+          <th pSortableColumn="esic">ESIC Number <p-sortIcon field="esic" /></th>
+          <th pSortableColumn="pf">PF Number <p-sortIcon field="pf" /></th>
+          <th pSortableColumn="uan">UAN Number <p-sortIcon field="uan" /></th>
           
-          <!-- Probation Details -->
-          <th>Probation End Date</th>
-          <th>Probation Status</th>
-          <th>Notice Period Status</th>
-          <th>Background Check Status</th>
-          <th>Salary Hold</th>
-          <th>PF</th>
-          <th>ESIC</th>
-          <th>PT</th>
-
-          <!-- Employment Details -->
-          <th>Total Previous Years Experience</th>
-          <th>Employment Type Status</th>
-          <th>Contract Start Date</th>
-          <th>Duration of Contract</th>
-          <th>Contract End Date</th>
-          <th>Compensation Effective Date</th>
-
-          <!-- Overtime Details -->
-          <th>Overtime Eligibility</th>
-          <th>Reason</th>
-          <th>Frequency</th>
-          <th>Pay Type</th>
-          <th>Annual Salary (in CTC)</th>
-          <th>Variable Pay</th>
-          <th>Variable Pay Amount</th>
-          <th>Next Compensation Review Date</th>
-
-          <!-- Job Details -->
-          <th>Job Effective Date</th>
-          <th>Job Role</th>
-          <th>Job Grade</th>
-          <th>Department</th>
-          <th>Team</th>
-          <th>Team Manager</th>
-          <th>Reporting Manager</th>
-          <th>Location</th>
-          <th>Sub Location</th>
-          <th>Shift</th>
-          <th>Shift Code</th>
-          <th>Job Type</th>
-          <th>Exit Reason</th>
-          <th>Eligible For Rehire</th>
-          <th>Relieving Type</th>
-          <th>Last Working Day</th>
-          <th>Contractor Last Working Day</th>
-
+          <th pSortableColumn="bankName">Bank Name <p-sortIcon field="bankName" /></th>
+          <th pSortableColumn="accountName">Account Holder's Name <p-sortIcon field="accountName" /></th>
+          <th pSortableColumn="accountNo">Account Number <p-sortIcon field="accountNo" /></th>
+          <th pSortableColumn="ifscCode">IFSC Code <p-sortIcon field="ifscCode" /></th>
           
+          <th pSortableColumn="degree">Qualification <p-sortIcon field="degree" /></th>
+          <th pSortableColumn="university">University <p-sortIcon field="university" /></th>
+          <th pSortableColumn="specialization">Specialization <p-sortIcon field="specialization" /></th>
+          <th pSortableColumn="gpa">GPA/CGPA <p-sortIcon field="gpa" /></th>
           
+          <th pSortableColumn="degreeStartDate">From Date <p-sortIcon field="degreeStartDate" /></th>
+          <th pSortableColumn="degreeEndDate">To Date <p-sortIcon field="degreeEndDate" /></th>
           
-          <!-- <th>Insurance</th> -->
-          <!-- <th>Employment Effective Date</th> -->
-          <!-- <th>Grade Name</th>
-          <th>Compensation Effective Date</th> -->
-         
+          <th pSortableColumn="offerSentDate">Offer Sent Date <p-sortIcon field="offerSentDate" /></th>
+          <th pSortableColumn="offerSentBy">Offer Sent By <p-sortIcon field="offerSentBy" /></th>
+          <th pSortableColumn="offerSentStatus">Offer Sent Status <p-sortIcon field="offerSentStatus" /></th>
           
+          <th pSortableColumn="appointmentSentDate">Appointment Sent Date <p-sortIcon field="appointmentSentDate" /></th>
+          <th pSortableColumn="appointmentSentBy">Appointment Sent By <p-sortIcon field="appointmentSentBy" /></th>
+          <th pSortableColumn="appointmentSentStatus">Appointment Sent Status <p-sortIcon field="appointmentSentStatus" /></th>
+          
+          <th pSortableColumn="traineeOfferSentDate">Trainee Offer Sent Date <p-sortIcon field="traineeOfferSentDate" /></th>
+          <th pSortableColumn="traineeOfferSentBy">Trainee Offer Sent By <p-sortIcon field="traineeOfferSentBy" /></th>
+          <th pSortableColumn="traineeOfferSentStatus">Trainee Offer Sent Status <p-sortIcon field="traineeOfferSentStatus" />
+          </th>
+          
+          <th pSortableColumn="contractOfferSentDate">Contract Offer Sent Date <p-sortIcon field="contractOfferSentDate" /></th>
+          <th pSortableColumn="contractOfferSentBy">Contract Offer Sent By <p-sortIcon field="contractOfferSentBy" /></th>
+          <th pSortableColumn="contractOfferSentStatus">Contract Offer Sent Status <p-sortIcon field="contractOfferSentStatus" />
+          </th>
+          
+          <th pSortableColumn="empstatus">Employee Status <p-sortIcon field="empstatus" /></th>
+          <th pSortableColumn="dateOfJoining">Date Of Joining <p-sortIcon field="dateOfJoining" /></th>
+          
+          <th pSortableColumn="branchCode">Branch Code <p-sortIcon field="branchCode" /></th>
+          
+          <th pSortableColumn="probationEndDate">Probation End Date <p-sortIcon field="probationEndDate" /></th>
+          <th pSortableColumn="probationStatus">Probation Status <p-sortIcon field="probationStatus" /></th>
+          
+          <th pSortableColumn="noticePeriod">Notice Period Status <p-sortIcon field="noticePeriod" /></th>
+          <th pSortableColumn="backgroundCheckStatus">Background Check Status <p-sortIcon field="backgroundCheckStatus" /></th>
+          
+          <th pSortableColumn="salaryHold">Salary Hold <p-sortIcon field="salaryHold" /></th>
+          
+          <th pSortableColumn="pfApplicable">PF <p-sortIcon field="pfApplicable" /></th>
+          <th pSortableColumn="esicApplicable">ESIC <p-sortIcon field="esicApplicable" /></th>
+          <th pSortableColumn="pt">PT <p-sortIcon field="pt" /></th>
+          
+          <th pSortableColumn="totalYearsOfExperience">Total Previous Years Experience <p-sortIcon
+              field="totalYearsOfExperience" /></th>
+          
+          <th pSortableColumn="contractType">Employment Type Status <p-sortIcon field="contractType" /></th>
+          
+          <th pSortableColumn="contractStartDate">Contract Start Date <p-sortIcon field="contractStartDate" /></th>
+          <th pSortableColumn="contractDuration">Duration of Contract <p-sortIcon field="contractDuration" /></th>
+          <th pSortableColumn="contractEndDate">Contract End Date <p-sortIcon field="contractEndDate" /></th>
+          
+          <th pSortableColumn="compeffectivedate">Compensation Effective Date <p-sortIcon field="compeffectivedate" /></th>
+          
+          <th pSortableColumn="overtimeeligibility">Overtime Eligibility <p-sortIcon field="overtimeeligibility" /></th>
+          
+          <th pSortableColumn="reason">Reason <p-sortIcon field="reason" /></th>
+          <th pSortableColumn="frequency">Frequency <p-sortIcon field="frequency" /></th>
+          <th pSortableColumn="paytype">Pay Type <p-sortIcon field="paytype" /></th>
+          
+          <th pSortableColumn="compensationamount">Annual Salary (In CTC) <p-sortIcon field="compensationamount" /></th>
+          
+          <th pSortableColumn="isvariablepay">Variable Pay <p-sortIcon field="isvariablepay" /></th>
+          <th pSortableColumn="variablepayamount">Variable Pay Amount <p-sortIcon field="variablepayamount" /></th>
+          
+          <th pSortableColumn="nextCompReviewDate">Next Compensation Review Date <p-sortIcon field="nextCompReviewDate" /></th>
+          
+          <th pSortableColumn="jobEffectiveDate">Job Effective Date <p-sortIcon field="jobEffectiveDate" /></th>
+          
+          <th pSortableColumn="jobRole">Job Role <p-sortIcon field="jobRole" /></th>
+          <th pSortableColumn="gradeName">Job Grade <p-sortIcon field="gradeName" /></th>
+          
+          <th pSortableColumn="departmentName">Department <p-sortIcon field="departmentName" /></th>
+          <th pSortableColumn="subdepartment_name">Team <p-sortIcon field="subdepartment_name" /></th>
+          
+          <th pSortableColumn="teamManager">Team Manager <p-sortIcon field="teamManager" /></th>
+          <th pSortableColumn="reportingManager">Reporting Manager <p-sortIcon field="reportingManager" /></th>
+          
+          <th pSortableColumn="jobLocationName">Location <p-sortIcon field="jobLocationName" /></th>
+          <th pSortableColumn="jobSubLocationName">Sub Location <p-sortIcon field="jobSubLocationName" /></th>
+          
+          <th pSortableColumn="shiftName">Shift <p-sortIcon field="shiftName" /></th>
+          <th pSortableColumn="shiftCode">Shift Code <p-sortIcon field="shiftCode" /></th>
+          
+          <th pSortableColumn="jobType">Job Type <p-sortIcon field="jobType" /></th>
+          
+          <th pSortableColumn="termreasonoffboard">Exit Reason <p-sortIcon field="termreasonoffboard" /></th>
+          <th pSortableColumn="eligibleforrehire">Eligible For Rehire <p-sortIcon field="eligibleforrehire" /></th>
+          
+          <th pSortableColumn="termtypeoffboard">Relieving Type <p-sortIcon field="termtypeoffboard" /></th>
+          
+          <th pSortableColumn="lastworkingday">Last Working Day <p-sortIcon field="lastworkingday" /></th>
+          <th pSortableColumn="contractorLastWorkingDate">Contractor Last Working Day <p-sortIcon
+              field="contractorLastWorkingDate" /></th>
         </tr>
-      </thead>
-      <tbody>
-        @if(employeeMasterData.length === 0){
+      </ng-template>
+      <ng-template pTemplate="body" let-emp>
         <tr>
-          <app-no-data-found />
-        </tr>
-        }
-        @else {
-        @for (emp of employeeMasterData; track $index) {
-        <tr>
-          <!-- Basic Info -->
-          <!-- <td>{{ emp.employeeId || '-' }}</td> -->
-            <td>{{ emp.fusionEmpId || '-' }}</td>
+          <td>{{ emp.fusionEmpId || '-' }}</td>
           <td>{{ emp.title || '-' }}</td>
           <td>{{ emp.firstName || '-' }}</td>
           <td>{{ emp.middleName || '-' }}</td>
@@ -196,8 +183,6 @@
           <td>{{ emp.dob ? (emp.dob | dateformat) : '-' }}</td>
           <td>{{ emp.bloodGroup || '-' }}</td>
           <td>{{ emp.maritalStatus || '-' }}</td>
-
-          <!-- Contact Info -->
           <td>{{ emp.workPhone || '-' }}</td>
           <td>{{ emp.contactnumber || '-' }}</td>
           <td>{{ emp.workEmail || '-' }}</td>
@@ -323,22 +308,15 @@
           <td>{{ emp.eligibleforrehire || '-' }}</td>
           <td>{{ emp.separationType || '-' }}</td>
           <td>{{ emp.lastworkingday ? (emp.lastworkingday | dateformat) : '-' }}</td>
-          <td>{{ emp.contractorLastWorkingDate ? (emp.contractorLastWorkingDate | dateformat) : '-' }}</td>   
-
-
-
-          
-          
-          
-          <!-- <td>{{ emp.healthInsurance || '-' }}</td> -->
-          <!-- <td>{{ emp.employmentEffectiveDate ? (emp.employmentEffectiveDate | dateformat) : '-' }}</td> -->
-          <!-- <td>{{ emp.gradeName || '-' }}</td> -->
-          <!-- <td>{{ emp.compeffectivedate ? (emp.compeffectivedate | dateformat) : '-' }}</td> -->
+          <td>{{ emp.contractorLastWorkingDate ? (emp.contractorLastWorkingDate | dateformat) : '-' }}</td>
         </tr>
-        }
-        }
-      </tbody>
-    </table>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="97" class="text-center"><div class="wrapper"><app-no-data-found /></div></td>
+        </tr>
+      </ng-template>
+    </p-table>
     }
     @else {
     <app-data-loader-content />

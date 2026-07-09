@@ -1,7 +1,7 @@
 <div class="custom-main-component-container">
    <div class="employee-fields-main-container d-flex gap-3 w-100">
       <div class="folders-container">
-         <p class="component-sub-header">{{'Folders'|translate}}</p>
+         <p class="component-sub-header">Folders</p>
          <ng-container *ngIf="loading; else foldersList">
             <div *ngFor="let skel of [1,2,3]" class="folder-content px-2 mb-2">
                <p-skeleton width="32px" height="32px" shape="circle" class="me-2"></p-skeleton>
@@ -30,7 +30,7 @@
 
             <!-- No Data Found Template -->
             <ng-template #noSubfoldersTemplate>
-               <b class="d-flex justify-content-center">{{'No Subfolders Found'|translate}}</b>
+               <b class="d-flex justify-content-center">No Subfolders Found</b>
             </ng-template>
          </div>
          }
@@ -43,7 +43,7 @@
                <span class="input-group-text custom-input-group-search" id="basic-addon1"><i
                      class="bi bi-search"></i></span>
                <input type="search" [(ngModel)]="searchfolder" (input)="filterFolder()"
-                  class="form-control custom-search-input" [placeholder]="' Search by file name'|translate" aria-label="Username"
+                  class="form-control custom-search-input" placeholder=" Search by file name" aria-label="Username"
                   aria-describedby="basic-addon1">
             </div>
 
@@ -52,7 +52,7 @@
                && empdata?.empstatus?.toLowerCase() !== 'inactive' && empdata?.empstatus?.toLowerCase() !== 'trainee inactive' )){
                @if(canAccess('view','upload')) {
                <button class="custom-btn btn-primary text-nowrap" type="button" (click)="openModal(adddocumentmodal)">
-                  <i class="bi bi-upload me-2"></i>{{'Upload File'|translate}}</button>
+                  <i class="bi bi-upload me-2"></i>Upload File</button>
                }
                }
             </div>
@@ -61,10 +61,10 @@
          <div class="mb-3">
             <span class="component-sub-header">
                <ng-container *ngIf="!selectedMainFolder">
-                  {{'Please select folder'|translate}}
+                  Please select folder
                </ng-container>
                <ng-container *ngIf="selectedMainFolder && !selectedFile">
-                  {{'Please select subfolder'|translate}}
+                  Please select subfolder
                </ng-container>
                <ng-container *ngIf="selectedFile">
                   {{ selectedFile.name | lastValue }}
@@ -74,48 +74,46 @@
 
          <div class="custom-table-content ">
             @if (!loading) {
-            <table class="w-100">
-               <thead>
-                  <th>{{'File name'|translate}}</th>
-                  <th class="text-center">{{'Created Date'|translate}}</th>
-                  <th class="text-center">{{'Size'|translate}}</th>
-                   @if(canAccess('view','dowload')) {
-                  <th class="text-center">{{'Action'|translate}}</th>
-                   }
-               </thead>
-               <tbody>
-                  <ng-container *ngIf="getVisibleFiles().length > 0; else noDataTemplate">
-                     <ng-container *ngFor="let file of getVisibleFiles()">
-                        <tr>
-                           <td>{{ file.name | lastValue }}</td>
-                           <td class="text-center">{{ file.createdOn | dateformat }}</td>
-                           <td class="text-center text-nowrap">{{ file.contentLength | fileSize }}</td>
-                           @if(canAccess('view','dowload')) {
-                           <td class="text-center action-dropdown-cell">
-                              <div class="dropdown">
-                                 <a data-bs-toggle="dropdown" aria-expanded="false" class="cursor-pointer">
-                                    <i class="bi bi-three-dots-vertical"></i>
-                                 </a>
-                                 <ul class="dropdown-menu custom-dropdown-menu">
-                                    <li>
-                                       <a class="dropdown-item" (click)="onSelectDownload(file)">
-                                          <i class="bi bi-download me-2"></i>{{'Download' | translate}}
-                                       </a>
-                                    </li>
-                                 </ul>
-                              </div>
-                           </td>
-                           }
-                        </tr>
-                     </ng-container>
-                  </ng-container>
-                  <ng-template #noDataTemplate>
-                     <tr>
-                        <app-no-data-found />
-                     </tr>
-                  </ng-template>
-               </tbody>
-            </table>
+            <p-table #dt [value]="getVisibleFiles()" [tableStyle]="{'width': '100%'}" [customSort]="true"
+               (sortFunction)="customSort($event)">
+               <ng-template pTemplate="header">
+                  <tr>
+                     <th pSortableColumn="fileName">File name <p-sortIcon field="fileName" /></th>
+                     <th class="text-center" pSortableColumn="createdOn">Created Date <p-sortIcon
+                           field="createdOn" /></th>
+                     <th class="text-center" pSortableColumn="contentLength">Size <p-sortIcon field="contentLength" />
+                     </th>
+                     @if(canAccess('view','dowload')) {
+                     <th class="text-center">Action</th>
+                     }
+                  </tr>
+               </ng-template>
+               <ng-template pTemplate="body" let-file>
+                  <tr>
+                     <td>{{ file.name | lastValue }}</td>
+                     <td class="text-center">{{ file.createdOn | dateformat }}</td>
+                     <td class="text-center text-nowrap">{{ file.contentLength | fileSize }}</td>
+                     @if(canAccess('view','dowload')) {
+                     <td class="text-center">
+                        <div>
+                           <span class="dowload-text cursor" (click)="onSelectDownload(file)">
+                              <app-download-icon />
+                           </span>
+                        </div>
+                     </td>
+                     }
+                  </tr>
+               </ng-template>
+               <ng-template pTemplate="emptymessage">
+                <div class="wrapper">
+                  <tr>
+                     <td [attr.colspan]="canAccess('view','dowload') ? 4 : 3" class="text-center">
+                           <app-no-data-found />
+                     </td>
+                  </tr>
+                  </div>
+               </ng-template>
+            </p-table>
             }
             @else {
             <app-data-loader-content />
@@ -130,7 +128,7 @@
    <div class="custom-main-popup-container" ngbAutofocus>
       <div class="custom-poup-header-content popup-header-border">
          <div>
-            <p class="popup-heading mb-0">{{'Upload File'|translate}}</p>
+            <p class="popup-heading mb-0">Upload File</p>
          </div>
          <div>
             <a (click)="modal.dismiss();uploadfrom.reset()"><img src="icons/close.png" alt="Close Icon"
@@ -142,18 +140,18 @@
          <form autocomplete="off" [formGroup]="uploadfrom" (ngSubmit)="fileUploaded()">
             <div class="row mb-3">
                <div class="col-12">
-                  <label class="form-label custom-label mb-2">{{'Upload File'|translate}}<span class="text-danger">*</span></label>
-                  <input type="file" [placeholder]="'Choose file'|translate" class="form-control custom-input px-0"
+                  <label class="form-label custom-label mb-2">Upload File<span class="text-danger">*</span></label>
+                  <input type="file" placeholder="Choose file" class="form-control custom-input px-0"
                      (change)="filechange($event)" formControlName="filename" accept=".pdf, .jpg, .png">
                   <div class="error-msg"
                      *ngIf="uploadfrom.get('filename')?.invalid && uploadfrom.get('filename')?.touched">
-                     {{'File is required'|translate}}
+                     File is required
                   </div>
                </div>
             </div>
 
             <div class="custom-modal-footer">
-               <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'Close'|translate}}</button>
+               <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">Close</button>
                <button type="submit" class="custom-btn btn-primary" [disabled]="uploadfrom.invalid || spinnerLoader">
                   @if (spinnerLoader) {
                   <div class="button-loader-content">

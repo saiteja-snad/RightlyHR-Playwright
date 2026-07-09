@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { DocumentService } from '../../services/document/document.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { OpenModalService } from '../../services/open-modal.service';
@@ -17,11 +17,13 @@ import { RbacService } from '../../services/rbac.service';
 import { Router } from '@angular/router';
 import { AccessForEmployeeinfoService } from '../../services/access-for-employeeinfo.service';
 import { Skeleton } from 'primeng/skeleton';
+import { DownloadIconComponent } from "../../icons/download-icon/download-icon.component";
+import { Table, TableModule } from 'primeng/table';
 
 @Component({
   selector: 'app-documents',
   imports: [LastValuePipe, DateformatPipe, ReactiveFormsModule, FormsModule, Skeleton, TranslateModule,
-    CommonModule, FileSizePipe, NoDataFoundComponent, DataLoaderContentComponent],
+    CommonModule, FileSizePipe, NoDataFoundComponent, DataLoaderContentComponent, DownloadIconComponent, TableModule],
   templateUrl: './documents.component.html',
   styleUrl: './documents.component.scss'
 })
@@ -43,6 +45,11 @@ export class DocumentsComponent implements OnInit, OnDestroy {
   file: any;
   showUploadIcon: boolean = false;
   subDir = {} as ICreateSubDir;
+  visibleFiles: IFolders[] = [];
+  private originalVisibleFiles: IFolders[] = [];
+  @ViewChild('dt') dt!: Table;
+  currentSortField: 'fileName' | 'createdOn' | 'contentLength' | '' = '';
+  currentSortOrder: number = 0;
   constructor(private documentService: DocumentService, private modalService: NgbModal, private conformationPopup: OpenModalService,
      private fb: FormBuilder, private http: HttpService, public rbac: RbacService, public permissionRouteService: AccessForEmployeeinfoService, private router: Router) { }
 
@@ -128,11 +135,60 @@ export class DocumentsComponent implements OnInit, OnDestroy {
       this.getAllFiles();
     } else {
       this.Files = [] as IFolders[];
+      this.visibleFiles = [];
+      this.originalVisibleFiles = [];
     }
   }
 
   getVisibleFiles() {
-    return this.Files.filter(file => file && !file.isNotVisible);
+    return this.visibleFiles;
+  }
+
+  customSort(event: any): void {
+    const field = event.field;
+    if (this.currentSortField === field) {
+      if (this.currentSortOrder === 1) {
+        this.currentSortOrder = -1;
+        event.order = -1;
+      } else if (this.currentSortOrder === -1) {
+        this.visibleFiles = [...this.originalVisibleFiles];
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        if (this.dt) {
+          this.dt.reset();
+        }
+        return;
+      } else {
+        this.currentSortOrder = 1;
+        event.order = 1;
+      }
+    } else {
+      this.currentSortField = field;
+      this.currentSortOrder = 1;
+      event.order = 1;
+    }
+
+    event.data.sort((a: any, b: any) => {
+      if (field === 'fileName') {
+        const n1 = this.getFileDisplayName(a);
+        const n2 = this.getFileDisplayName(b);
+        return event.order * n1.localeCompare(n2, undefined, { sensitivity: 'base' });
+      }
+      if (field === 'createdOn') {
+        const t1 = Date.parse(a?.createdOn ?? '') || 0;
+        const t2 = Date.parse(b?.createdOn ?? '') || 0;
+        return event.order * (t1 - t2);
+      }
+      const s1 = Number(a?.contentLength ?? 0) || 0;
+      const s2 = Number(b?.contentLength ?? 0) || 0;
+      return event.order * (s1 - s2);
+    });
+  }
+
+  private getFileDisplayName(file: IFolders): string {
+    const raw = (file as any)?.name ?? '';
+    const parts = String(raw).split('/');
+    return (parts[parts.length - 1] ?? '').trim();
   }
 
   getAllFiles() {
@@ -150,10 +206,18 @@ export class DocumentsComponent implements OnInit, OnDestroy {
           next: (data: any) => {
             this.loading = false
             this.Files = data as IFolders[];
+            this.visibleFiles = [...this.Files];
+            this.originalVisibleFiles = [...this.visibleFiles];
+            this.currentSortField = '';
+            this.currentSortOrder = 0;
           },
           error: (err: any) => {
             this.loading = false
             this.Files = [];
+            this.visibleFiles = [];
+            this.originalVisibleFiles = [];
+            this.currentSortField = '';
+            this.currentSortOrder = 0;
           },
         });
     } else {
@@ -166,10 +230,18 @@ export class DocumentsComponent implements OnInit, OnDestroy {
           next: (data: any) => {
             console.log(data);
             this.Files = data as IFolders[];
+            this.visibleFiles = [...this.Files];
+            this.originalVisibleFiles = [...this.visibleFiles];
+            this.currentSortField = '';
+            this.currentSortOrder = 0;
           },
           error: (err: any) => {
             console.error(err);
             this.Files = [];
+            this.visibleFiles = [];
+            this.originalVisibleFiles = [];
+            this.currentSortField = '';
+            this.currentSortOrder = 0;
 
           },
         });
@@ -204,16 +276,13 @@ export class DocumentsComponent implements OnInit, OnDestroy {
         String(entry[1]).toLowerCase().includes(value)
       )
     );
-    // console.log(this.Files);
-    this.Files.forEach((element) => {
-      const found = filteredData.findIndex((item) => item.name == element.name);
-      // console.log(found);
-      if (found >= 0) {
-        element.isNotVisible = false;
-      } else {
-        element.isNotVisible = true;
-      }
-    });
+    this.visibleFiles = filteredData;
+    this.originalVisibleFiles = [...this.visibleFiles];
+    this.currentSortField = '';
+    this.currentSortOrder = 0;
+    if (this.dt) {
+      this.dt.reset();
+    }
   }
 
   fileUploaded() {
@@ -252,10 +321,9 @@ export class DocumentsComponent implements OnInit, OnDestroy {
           let blob: Blob = res.body as Blob;
           let a = document.createElement('a');
           a.href = window.URL.createObjectURL(blob);
-          const filename = this.getDownloadFileName(res?.headers?.get('content-disposition'), file?.name);
+          let filename = file?.name?.split('/')[file?.name?.split('/')?.length - 1];
           a.download = filename;
           a.click();
-          window.URL.revokeObjectURL(a.href);
         },
         error: (reason) => console.log(reason),
       });

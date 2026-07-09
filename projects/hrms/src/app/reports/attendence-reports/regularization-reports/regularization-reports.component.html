@@ -31,27 +31,22 @@
   </div>
 
       <div class="custom-table-content">
-        @if(!isLoading){
-        <table id="leaveReportTable" class="content w-100">
-          <thead>
-              <th class="text-center">{{'Employee ID' | translate}}</th>
-              <th>{{'Employee Name' | translate}}</th>
-              <th>{{'Department' | translate}}</th>
-              <th>{{'Team Manager' | translate}}</th>
-              <th>{{'Location' | translate}}</th>
-              <th>{{'Sub Location' | translate}}</th>
-              <th>{{'Shift' | translate}}</th>
-              <th class="text-center">{{'Utilization Count' | translate}}</th>
-              <th class="text-center">{{'Total Duration' | translate}} (HH:MM)</th>
-          </thead>
-          <tbody>
-            @if (!filteredRegularizationData || filteredRegularizationData.length === 0) {
+        <app-data-loader-content *ngIf="isLoading" />
+        <p-table #regularizationTable [hidden]="isLoading" [value]="filteredRegularizationData" [tableStyle]="{'width': '100%'}" [customSort]="true" (sortFunction)="customSort($event)">
+          <ng-template pTemplate="header">
             <tr>
-              <app-no-data-found></app-no-data-found>
+              <th pSortableColumn="fusionEmpId" class="text-center">{{'Employee ID' | translate}} <p-sortIcon field="fusionEmpId" /></th>
+              <th pSortableColumn="employeeName">{{'Employee Name' | translate}} <p-sortIcon field="employeeName" /></th>
+              <th pSortableColumn="department">{{'Department' | translate}} <p-sortIcon field="department" /></th>
+              <th pSortableColumn="teamManager">{{'Team Manager' | translate}} <p-sortIcon field="teamManager" /></th>
+              <th pSortableColumn="location">{{'Location' | translate}} <p-sortIcon field="location" /></th>
+              <th pSortableColumn="subLocation">{{'Sub Location' | translate}} <p-sortIcon field="subLocation" /></th>
+              <th pSortableColumn="shift">{{'Shift' | translate}} <p-sortIcon field="shift" /></th>
+              <th pSortableColumn="utilizedCount" class="text-center">{{'Utilization Count' | translate}} <p-sortIcon field="utilizedCount" /></th>
+              <th pSortableColumn="totalDuration" class="text-center">{{'Total Duration' | translate}} (HH:MM) <p-sortIcon field="totalDuration" /></th>
             </tr>
-            }
-            @else {
-            @for (record of filteredRegularizationData; track $index) {
+          </ng-template>
+          <ng-template pTemplate="body" let-record>
             <tr>
               <td class="text-center">{{ record.fusionEmpId ?? '-' }}</td>
               <td>{{ record.employeeName ?? '-' }}</td>
@@ -61,16 +56,19 @@
               <td>{{ record.subLocation ?? '-' }}</td>
               <td>{{ record.shift ?? '-' }}</td>
               <td class="text-center">{{ record.utilizedCount ?? '-' }}</td>
-              <td class="text-center">{{record.totalDuration ?? '-' }}</td>
+              <td class="text-center">{{ record.totalDuration ?? '-' }}</td>
             </tr>
-            }
-            }
-          </tbody>
-        </table>
-      }
-      @else {
-  <app-data-loader-content />
-      }
+          </ng-template>
+          <ng-template pTemplate="emptymessage">
+            <tr>
+              <td colspan="9">
+                <div class="wrapper">
+                  <app-no-data-found />
+                </div>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
       </div>
       
     </div>

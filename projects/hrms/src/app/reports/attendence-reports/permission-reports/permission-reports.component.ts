@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit, TemplateRef, ViewEncapsulation } from '@angular/core';
+import { Component, OnDestroy, OnInit, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Table } from 'primeng/table';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from '../../../services/auth.service';
 import { HttpService } from '../../../services/http.service';
@@ -19,15 +20,18 @@ import { ReportsHeaderComponent } from "../../../shared/reports-tabs/reports-hea
 import { DatePicker } from 'primeng/datepicker';
 import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 import { MultiSelectModule } from 'primeng/multiselect';
+import { TranslateModule } from '@ngx-translate/core';
+import { TableModule } from 'primeng/table';
 @Component({
   selector: 'app-permission-reports',
-  imports: [CommonModule, ReactiveFormsModule, Select, DatePicker, DataLoaderContentComponent, MultiSelectModule, NoDataFoundComponent, ReportsHeaderComponent],
+  imports: [CommonModule, ReactiveFormsModule, Select, DatePicker, DataLoaderContentComponent, MultiSelectModule, NoDataFoundComponent, ReportsHeaderComponent, TranslateModule, TableModule],
   templateUrl: './permission-reports.component.html',
   styleUrl: './permission-reports.component.scss',
   encapsulation: ViewEncapsulation.None,
 })
 
 export class PermissionReportsComponent implements OnInit, OnDestroy {
+  @ViewChild('permissionTable') permissionTable!: Table;
   moduleinfo: string = '';
   subscription!: Subscription;
   permissionReportForm!: FormGroup;
@@ -45,6 +49,9 @@ export class PermissionReportsComponent implements OnInit, OnDestroy {
   selectLeaveEmployeeIds: number[] = [];
   filteredleaveRecords = true;
   selectedEmployeeId: any = null;
+  originalFilteredPermissionData: any[] = [];
+  currentSortField: string = '';
+  currentSortOrder: number = 0;
   ranges: any = {
     Today: [dayjs(), dayjs()],
     Yesterday: [dayjs().subtract(1, 'days'), dayjs().subtract(1, 'days')],
@@ -292,6 +299,9 @@ getTeam() {
     this.reportsService.gterPermissionReports(request).subscribe({
       next: (response: any) => {
         this.filteredPermissionData = response ?? [];
+        this.originalFilteredPermissionData = [...this.filteredPermissionData];
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
       },
       error: (error) => {
         this.spinnerLoader1 = false;
@@ -311,7 +321,9 @@ getTeam() {
 
   exportToExcelPemrissionReport(): void {
     this.spinnerLoader2 = true;
-    setTimeout(() => {
+
+    const dataToExport = this.permissionTable?.filteredValue ?? this.permissionTable?.value ?? this.filteredPermissionData;
+
     const HEADER_MAPPINGS: { [key: string]: string } = {
       fusionEmpId: 'EMPLOYEE ID',
       employeeName: 'EMPLOYEE NAME',
@@ -319,108 +331,73 @@ getTeam() {
       teamManager: 'TEAM MANAGER',
       location: 'LOCATION',
       subLocation: 'SUB LOCATION',
-       shift: 'SHIFT',
+      shift: 'SHIFT',
       utilizedCount: 'UTILIZED COUNT',
       totalDuration: 'TOTAL DURATION (HH:MM)',
     };
 
     const NEW_SEQUENCE: string[] = [
-      'EMPLOYEE ID',
-      'EMPLOYEE NAME',
-      'DEPARTMENT',
-      'TEAM MANAGER',
-      'LOCATION',
-      'SUB LOCATION',
-      'SHIFT',
-      'UTILIZED COUNT',
-      'TOTAL DURATION (HH:MM)',
+      'EMPLOYEE ID', 'EMPLOYEE NAME', 'DEPARTMENT', 'TEAM MANAGER',
+      'LOCATION', 'SUB LOCATION', 'SHIFT', 'UTILIZED COUNT', 'TOTAL DURATION (HH:MM)',
     ];
 
-    const modifiedData = this.filteredPermissionData.map(record => {
-      const modifiedRecord: any = {};
-      NEW_SEQUENCE.forEach(columnName => {
-        const originalColumnName = Object.keys(HEADER_MAPPINGS).find(key => HEADER_MAPPINGS[key] === columnName);
-        if (originalColumnName && record.hasOwnProperty(originalColumnName)) {
-          if (originalColumnName === 'permissionDate' && record[originalColumnName]) {
-            // Convert the date to a Date object
-            const date = new Date(record[originalColumnName]);
-
-            // Format the date to 'dd MMM yyyy'
-            const date_formatted = `${date.getDate()} ${date.toLocaleString('default', { month: 'short' })} ${date.getFullYear()}`;
-
-            // Assign the formatted date to the modified record
-            modifiedRecord[columnName] = date_formatted;
-          } else {
-            modifiedRecord[columnName] = record[originalColumnName];
-          }
-        } else {
-          modifiedRecord[columnName] = '';
-        }
-      });
-      return modifiedRecord;
-    });
-
-    // Create a new empty worksheet
-    const ws: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet([[]]);
-
-    // Merge cells for Leave Report row from A1 to J1
-    ws['!merges'] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: NEW_SEQUENCE.length - 1 } }];
-
-    // Add Leave Report row
-    XLSX.utils.sheet_add_aoa(ws, [['PERMISSION REPORT']], { origin: 'A1' });
-
-    // Add header row
-    XLSX.utils.sheet_add_aoa(ws, [NEW_SEQUENCE], { origin: 'A2' });
-
-    // Add data rows
-    XLSX.utils.sheet_add_json(ws, modifiedData, { origin: 'A3', skipHeader: true });
-
-    // Apply styles to Report Title row to match other reports
-    const leaveReportCell = ws['A1'] || { t: '', v: '' };
-    leaveReportCell.s = { 
-      font: { bold: true, sz: 14, color: { rgb: "000000" } }, 
-      alignment: { horizontal: 'center', vertical: 'center' } 
+    const normalizeCell = (value: any) => {
+      if (value === null || value === undefined) return '-';
+      if (typeof value === 'string') return value.trim().length > 0 ? value.trim() : '-';
+      return value;
     };
-    // Explicitly set row height for title
-    if (!ws['!rows']) ws['!rows'] = [];
-    ws['!rows'][0] = { hpt: 25 };
-    ws['A1'] = leaveReportCell;
 
-    // Apply styles to column headers
-    NEW_SEQUENCE.forEach((columnName, index) => {
-      const cellAddress = XLSX.utils.encode_cell({ r: 1, c: index });
-      const cell = ws[cellAddress] || { t: '', v: '' }; // Get the cell or create a new one if it doesn't exist
-      cell.s = { font: { bold: true }, alignment: { horizontal: 'center' } };
-      ws[cellAddress] = cell; // Assign the styled cell back to the worksheet
-    });
-    // Apply styles to data rows
-    for (let rowIndex = 2; rowIndex < modifiedData.length + 2; rowIndex++) {
-      NEW_SEQUENCE.forEach((columnName, index) => {
-        const cellAddress = XLSX.utils.encode_cell({ r: rowIndex, c: index });
-        const cell = ws[cellAddress] || { t: '', v: '' }; // Get the cell or create a new one if it doesn't exist
-        cell.s = { alignment: { horizontal: 'center', vertical: 'middle' } };
-        ws[cellAddress] = cell; // Assign the styled cell back to the worksheet
+    const modifiedData = dataToExport.map((record: any) => {
+      const row: any = {};
+      NEW_SEQUENCE.forEach(col => {
+        const originalKey = Object.keys(HEADER_MAPPINGS).find(k => HEADER_MAPPINGS[k] === col);
+        row[col] = originalKey && record.hasOwnProperty(originalKey) ? normalizeCell(record[originalKey]) : '-';
       });
+      return row;
+    });
+
+    if (modifiedData.length === 0) {
+      const emptyRow: any = {};
+      NEW_SEQUENCE.forEach(col => { emptyRow[col] = '-'; });
+      modifiedData.push(emptyRow);
     }
 
-    // Adjust column width to fit data
-    NEW_SEQUENCE.forEach((columnName, index) => {
-      let columnWidth = this.getColumnWidth(modifiedData, columnName);
-      // Increase the width for 'EMPLOYEE ID' and 'DEPARTMENT' columns
-      if (columnName === 'EMPLOYEE ID' || columnName === 'SUB LOCATION' || columnName === 'DEPARTMENT') {
-        columnWidth += 5; // Increase width by 5
-      }
-      ws['!cols'] = ws['!cols'] || [];
-      ws['!cols'][index] = { wch: columnWidth };
+    const ws: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet([]);
+
+    ws['!merges'] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: NEW_SEQUENCE.length - 1 } }];
+    XLSX.utils.sheet_add_aoa(ws, [['PERMISSION REPORT']], { origin: 'A1' });
+    ws['A1'].s = { font: { bold: true, sz: 16 }, alignment: { horizontal: 'center', vertical: 'center' } };
+
+    XLSX.utils.sheet_add_aoa(ws, [NEW_SEQUENCE], { origin: 'A2' });
+    NEW_SEQUENCE.forEach((_, index) => {
+      const cellRef = XLSX.utils.encode_cell({ r: 1, c: index });
+      ws[cellRef].s = {
+        font: { bold: true },
+        alignment: { horizontal: 'center', vertical: 'center' },
+        border: { top: { style: 'thin' }, bottom: { style: 'thin' }, left: { style: 'thin' }, right: { style: 'thin' } }
+      };
     });
 
-    // Generate Excel file and trigger download
+    XLSX.utils.sheet_add_json(ws, modifiedData, { origin: 'A3', skipHeader: true });
+    modifiedData.forEach((_: any, rowIndex: number) => {
+      NEW_SEQUENCE.forEach((_, colIndex) => {
+        const cellRef = XLSX.utils.encode_cell({ r: rowIndex + 2, c: colIndex });
+        if (ws[cellRef]) {
+          ws[cellRef].s = { alignment: { horizontal: 'center', vertical: 'center' } };
+        }
+      });
+    });
+
+    ws['!autofilter'] = { ref: `A2:${XLSX.utils.encode_col(NEW_SEQUENCE.length - 1)}2` };
+    ws['!cols'] = NEW_SEQUENCE.map(col => ({
+      wch: Math.max(col.length, ...modifiedData.map((r: any) => String(r[col] ?? '').length)) + 2
+    }));
+
     const wb: XLSX.WorkBook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Permission Report');
-    const today = dayjs().format('DD-MMM-YYYY');
-    XLSX.writeFile(wb, `Permission Report - ${dayjs().format('MMM DD YYYY')}.xlsx`);
+    const formattedDate = new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }).replace(',', '');
+    XLSX.writeFile(wb, `Permission Report - ${formattedDate}.xlsx`);
     this.spinnerLoader2 = false;
-  }, 100);
   }
 
   getColumnWidth(data: any[], columnName: string): number {
@@ -497,7 +474,43 @@ getTeam() {
       });
   }
 
+customSort(event: any): void {
+    const field = event.field;
 
+    if (this.currentSortField === field) {
+      if (this.currentSortOrder === 1) {
+        this.currentSortOrder = -1;
+        event.order = -1;
+      } else if (this.currentSortOrder === -1) {
+        this.filteredPermissionData = [...this.originalFilteredPermissionData];
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        if (this.permissionTable) this.permissionTable.reset();
+        return;
+      } else {
+        this.currentSortOrder = 1;
+        event.order = 1;
+      }
+    } else {
+      this.currentSortField = field;
+      this.currentSortOrder = 1;
+      event.order = 1;
+    }
+
+    event.data.sort((a: any, b: any) => {
+      let val1 = a[field];
+      let val2 = b[field];
+
+      if (field === 'fusionEmpId') {
+        const num1 = parseInt(String(val1).replace(/\D/g, ''), 10) || 0;
+        const num2 = parseInt(String(val2).replace(/\D/g, ''), 10) || 0;
+        return event.order * (num1 - num2);
+      }
+      val1 = String(val1 ?? '').trim();
+      val2 = String(val2 ?? '').trim();
+      return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+    });
+  }
 
   navigation() {
     this.router.navigate(['/reports']);

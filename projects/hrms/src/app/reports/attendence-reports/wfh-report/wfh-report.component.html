@@ -116,49 +116,18 @@
 
   <div class="custom-table-content">
     @if(!isLoading){
-    <p-table #dt 
-             [value]="filteredWfhRecord" 
-             [tableStyle]="{'width': '100%'}"
-             [sortField]="currentUIField"
-             [sortOrder]="currentSortOrder">
+    <p-table #wfhTable [value]="filteredWfhRecord" [tableStyle]="{'width': '100%'}" [customSort]="true" (sortFunction)="customSort($event)">
       <ng-template pTemplate="header">
         <tr>
-          <th class="sortable-column text-center" (click)="onColumnSort('fusionEmpId')">
-            Employee ID
-            <p-sortIcon field="fusionEmpId" />
-          </th>
-          <th class="sortable-column" (click)="onColumnSort('employeeName')">
-            Employee Name
-            <p-sortIcon field="employeeName" />
-          </th>
-          <th class="sortable-column" (click)="onColumnSort('department')">
-            Department
-            <p-sortIcon field="department" />
-          </th>
-          <th class="sortable-column" (click)="onColumnSort('teamManagerName')">
-            Team Manager
-            <p-sortIcon field="teamManagerName" />
-          </th>
-          <th class="sortable-column" (click)="onColumnSort('location')">
-            Location
-            <p-sortIcon field="location" />
-          </th>
-          <th class="sortable-column" (click)="onColumnSort('subLocation')">
-            Sub Location
-            <p-sortIcon field="subLocation" />
-          </th>
-          <th class="sortable-column" (click)="onColumnSort('shift')">
-            Shift
-            <p-sortIcon field="shift" />
-          </th>
-          <th class="sortable-column text-center" (click)="onColumnSort('worked_Date')">
-            WFH Date
-            <p-sortIcon field="worked_Date" />
-          </th>
-          <th class="sortable-column" (click)="onColumnSort('duration')">
-            Availed
-            <p-sortIcon field="duration" />
-          </th>
+          <th pSortableColumn="fusionEmpId" class="text-center">{{'Employee ID' | translate}} <p-sortIcon field="fusionEmpId" /></th>
+          <th pSortableColumn="employeeName">{{'Employee Name' | translate}} <p-sortIcon field="employeeName" /></th>
+          <th pSortableColumn="department">{{'Department' | translate}} <p-sortIcon field="department" /></th>
+          <th pSortableColumn="teamManagerName">{{'Team Manager' | translate}} <p-sortIcon field="teamManagerName" /></th>
+          <th pSortableColumn="location">{{'Location' | translate}} <p-sortIcon field="location" /></th>
+          <th pSortableColumn="subLocation">{{'Sub Location' | translate}} <p-sortIcon field="subLocation" /></th>
+          <th pSortableColumn="shift">{{'Shift' | translate}} <p-sortIcon field="shift" /></th>
+          <th pSortableColumn="worked_Date" class="text-center">{{'WFH Date' | translate}} <p-sortIcon field="worked_Date" /></th>
+          <th pSortableColumn="duration">{{'Availed' | translate}} <p-sortIcon field="duration" /></th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-record>
@@ -170,16 +139,16 @@
           <td>{{ record.location ?? '-' }}</td>
           <td>{{ record.subLocation ?? '-' }}</td>
           <td>{{ record.shift ?? '-' }}</td>
-          <td class="text-center">
-            {{ record.worked_Date ? (record.worked_Date | date) : '-' }}
-          </td>
+          <td class="text-center">{{ record.worked_Date ? (record.worked_Date | date) : '-' }}</td>
           <td>{{ record.duration ?? '-' }}</td>
         </tr>
       </ng-template>
       <ng-template pTemplate="emptymessage">
         <tr>
           <td colspan="9">
-            <app-no-data-found />
+            <div class="wrapper">
+              <app-no-data-found />
+            </div>
           </td>
         </tr>
       </ng-template>

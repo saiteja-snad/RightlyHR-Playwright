@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, TemplateRef, ViewEncapsulation } from '@angular/core';
+import { Component, OnDestroy, OnInit, TemplateRef, ViewEncapsulation, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subscription, Subject, takeUntil } from 'rxjs';
@@ -21,16 +21,19 @@ import { ReportsHeaderComponent } from '../../../shared/reports-tabs/reports-hea
 import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 import * as XLSX from 'xlsx-js-style';
 import dayjs, { Dayjs } from 'dayjs';
+import { TableModule } from 'primeng/table';
+import { Table } from 'primeng/table';
 
 @Component({
   selector: 'app-leave-carry-forward-report',
   imports: [CommonModule, FormsModule, DropdownModule, SelectModule, MultiSelectModule, TranslateModule, ReactiveFormsModule,
-    NoDataFoundComponent, DataLoaderContentComponent, ReportsHeaderComponent],
+    NoDataFoundComponent, DataLoaderContentComponent, ReportsHeaderComponent, TableModule],
   templateUrl: './leave-carry-forward-report.component.html',
   styleUrl: './leave-carry-forward-report.component.scss',
   encapsulation: ViewEncapsulation.None,
 })
 export class LeaveCarryForwardReportComponent implements OnInit, OnDestroy {
+  @ViewChild('carryForwardTable') carryForwardTable!: Table;
   moduleinfo: string = '';
   subscription!: Subscription;
   loggedInUser = {} as IemployeeDetails;
@@ -61,6 +64,9 @@ export class LeaveCarryForwardReportComponent implements OnInit, OnDestroy {
   getEmployeeInfo = [] as any;
   localeOptions: any;
   isYearDropdownTouched = false;
+  originalFilteredleaveRecord: any[] = [];
+  currentSortField: string = '';
+  currentSortOrder: number = 0;
   years = [
     { label: (new Date().getFullYear() - 1).toString(), value: new Date().getFullYear() - 1 },
     { label: new Date().getFullYear().toString(), value: new Date().getFullYear() },
@@ -423,6 +429,9 @@ getTeam() {
     this.reportsService.getLeaveCarryForwardReport(request).subscribe({
       next: (response: any) => {
         this.filteredleaveRecord = response.data ?? [];
+        this.originalFilteredleaveRecord = [...this.filteredleaveRecord];
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
       },
       error: (error) => {
         this.spinnerLoader1 = false;
@@ -440,6 +449,9 @@ getTeam() {
 
  exportToExcelYearly(): void {
   this.spinnerLoader2 = true;
+
+  // Get sorted data from PrimeNG table
+  const dataToExport = this.carryForwardTable?.filteredValue || this.carryForwardTable?.value || this.filteredleaveRecord;
 
   const HEADER_MAPPINGS: { [key: string]: string } = {
     fusionEmpId: 'EMPLOYEE ID',
@@ -484,13 +496,24 @@ getTeam() {
   ];
 
   const formatDate = (dateString: string): string => {
+    if (!dateString) return '-';
     const date = new Date(dateString);
+    if (Number.isNaN(date.getTime())) return '-';
     return date
       .toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
       .replace(/ /g, '-');
   };
 
-  const modifiedData = this.filteredleaveRecord.map(record => {
+  const normalizeCell = (value: any) => {
+    if (value === null || value === undefined) return '-';
+    if (typeof value === 'string') {
+      const trimmed = value.trim();
+      return trimmed.length > 0 ? trimmed : '-';
+    }
+    return value;
+  };
+
+  const modifiedData = dataToExport.map(record => {
     const row: any = {};
     NEW_SEQUENCE.forEach(col => {
       const originalKey = Object.keys(HEADER_MAPPINGS)
@@ -500,12 +523,19 @@ getTeam() {
         originalKey && record.hasOwnProperty(originalKey)
           ? ['startdate', 'enddate', 'appliedDate'].includes(originalKey)
             ? formatDate(record[originalKey])
-            : record[originalKey]
-          : '';
+            : normalizeCell(record[originalKey])
+          : '-';
     });
     return row;
   });
 
+  if (modifiedData.length === 0) {
+    const emptyRow: any = {};
+    NEW_SEQUENCE.forEach(col => {
+      emptyRow[col] = '-';
+    });
+    modifiedData.push(emptyRow);
+  }
   const ws: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet([]);
 
   /* =========================
@@ -670,6 +700,45 @@ onYearChange(): void {
   //   const form = this.LeaveReportForm.value;
   //   return !!(form.dateRange || form.employee || form.manager || form.team || form.leaveCategory);
   // }
+
+  customSort(event: any): void {
+    const field = event.field;
+
+    if (this.currentSortField === field) {
+      if (this.currentSortOrder === 1) {
+        this.currentSortOrder = -1;
+        event.order = -1;
+      } else if (this.currentSortOrder === -1) {
+        this.filteredleaveRecord = [...this.originalFilteredleaveRecord];
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        if (this.carryForwardTable) this.carryForwardTable.reset();
+        return;
+      } else {
+        this.currentSortOrder = 1;
+        event.order = 1;
+      }
+    } else {
+      this.currentSortField = field;
+      this.currentSortOrder = 1;
+      event.order = 1;
+    }
+
+    event.data.sort((a: any, b: any) => {
+      let val1 = a[field];
+      let val2 = b[field];
+
+      if (field === 'fusionEmpId') {
+        const num1 = parseInt(String(val1).replace(/\D/g, ''), 10) || 0;
+        const num2 = parseInt(String(val2).replace(/\D/g, ''), 10) || 0;
+        return event.order * (num1 - num2);
+      }
+
+      val1 = String(val1 ?? '').trim();
+      val2 = String(val2 ?? '').trim();
+      return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+    });
+  }
 
   navigation() {
     this.router.navigate(['/reports']);

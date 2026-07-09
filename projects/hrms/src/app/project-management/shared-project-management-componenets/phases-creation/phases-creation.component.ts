@@ -284,7 +284,7 @@ export class PhasesCreationComponent implements OnInit, OnDestroy {
       value: row.get('employeeId')?.value,
     }));
     const currentAuthority = this.addPhaseForm.get('approvalidAuthority')?.value;
-    const stillExists = this.authorityList.some(a => a.value === currentAuthority);
+    const stillExists = this.authorityList.some(a => a.value == currentAuthority);
     if (!stillExists) {
       this.addPhaseForm.get('approvalidAuthority')?.setValue(null);
     }
@@ -523,7 +523,7 @@ export class PhasesCreationComponent implements OnInit, OnDestroy {
         overtimeEligibile: false,
         billable: false,
         weekendWorkAllowed: false,
-        status: r.employeeId === authorityId ? 'active' : 'waiting for approval',
+        status: r.employeeId == authorityId ? 'active' : 'waiting for approval',
         allocatedBy: parseInt(this.empinfo.employeeId),
         phaseId: phaseId,
         pendingApprovalAuthority: formValue.approvalidAuthority ?? null,

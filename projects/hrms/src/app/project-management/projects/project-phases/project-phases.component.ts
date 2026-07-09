@@ -161,16 +161,22 @@ export class ProjectPhasesComponent implements OnInit, OnDestroy {
     });
     this.updatePhaseForm.get('startDate')?.valueChanges.subscribe((val) => {
       this.StartndendDateValidation();
-      this.validateDateRange();
       this.syncResourceDates();
       this.syncKickoffAndEffectiveToStartDate(val);
+      this.validateDateRange();
     });
     this.updatePhaseForm.get('endDate')?.valueChanges.subscribe(() => {
       this.StartndendDateValidation();
       this.validateDateRange();
     });
-    this.updatePhaseForm.get('kickoffDate')?.valueChanges.subscribe(() => this.validateDateRange());
-    this.updatePhaseForm.get('effectiveDate')?.valueChanges.subscribe(() => this.validateDateRange());
+    this.updatePhaseForm.get('kickoffDate')?.valueChanges.subscribe(() => {
+      this.kickoffDateUserModified = true;
+      this.validateDateRange();
+    });
+    this.updatePhaseForm.get('effectiveDate')?.valueChanges.subscribe(() => {
+      this.effectiveDateUserModified = true;
+      this.validateDateRange();
+    });
   }
 
   private syncKickoffAndEffectiveToStartDate(startVal: string | null): void {
@@ -402,9 +408,9 @@ export class ProjectPhasesComponent implements OnInit, OnDestroy {
       updatecolor: phase.meta?.graphData?.color,
       selectedResourcesForAdd: [],
     });
-    // Reset user-modification flags when loading existing phase data
-    this.kickoffDateUserModified = true;
-    this.effectiveDateUserModified = true;
+    // Reset user-modification flags so start date changes sync kickoff/effective
+    this.kickoffDateUserModified = false;
+    this.effectiveDateUserModified = false;
 
     const activeStatuses = ['active', 'assigned', 'waiting for approval'];
     const activeResources = existingResources.filter((r: any) =>

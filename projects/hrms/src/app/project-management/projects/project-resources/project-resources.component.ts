@@ -489,12 +489,22 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
             value: r.employee.id,
           }));
           this.defaultPendingAuthorityId = popupData[0]?.pendingApprovalAuthority?.id ?? null;
-            // Patch authority after dropdown is populated
-            const authorityControl = this.updateResourceForm.get('resourceAuthority');
-            const authorityToPatch = this.pendingAuthorityIdForUpdate ?? this.defaultPendingAuthorityId ?? null;
-            const isInDropdown = this.resoucesDropDownData.some((r: any) => r.value === authorityToPatch);
-            authorityControl?.patchValue(isInDropdown ? authorityToPatch : null);
-            authorityControl?.enable();
+          // Patch authority after dropdown is populated
+          const authorityControl = this.updateResourceForm.get('resourceAuthority');
+          const authorityToPatch = this.pendingAuthorityIdForUpdate ?? this.defaultPendingAuthorityId ?? null;
+          // Add authority to dropdown if not already present so it always displays
+          if (authorityToPatch != null && !this.resoucesDropDownData.some((r: any) => r.value == authorityToPatch)) {
+            const authorityResource = popupData.find((r: any) => r.pendingApprovalAuthority?.id == authorityToPatch);
+            if (authorityResource?.pendingApprovalAuthority) {
+              const auth = authorityResource.pendingApprovalAuthority;
+              this.resoucesDropDownData = [
+                ...this.resoucesDropDownData,
+                { label: `${auth.fusionEmployeeId ?? ''} - ${auth.name ?? ''}`.trim(), value: auth.id },
+              ];
+            }
+          }
+          authorityControl?.patchValue(authorityToPatch);
+          authorityControl?.enable();
           } else {
             // NORMAL CALL - UPDATE TABLE DATA
             this.resourcesData = Array.isArray(data?.data) ? data.data : [];

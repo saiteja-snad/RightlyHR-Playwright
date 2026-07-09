@@ -271,8 +271,18 @@ export class ProjectWaitingForApprovalResourcesComponent implements OnInit, OnDe
           }));
           const authorityControl = this.updateResourceForm.get('resourceAuthority');
           const authorityToPatch = this.pendingAuthorityIdForUpdate ?? null;
-          const isInDropdown = this.resoucesDropDownData.some((r: any) => r.value === authorityToPatch);
-          authorityControl?.patchValue(isInDropdown ? authorityToPatch : null);
+          // Add authority to dropdown if not already present so it always displays
+          if (authorityToPatch != null && !this.resoucesDropDownData.some((r: any) => r.value == authorityToPatch)) {
+            const authorityResource = popupData.find((r: any) => r.pendingApprovalAuthority?.id == authorityToPatch);
+            if (authorityResource?.pendingApprovalAuthority) {
+              const auth = authorityResource.pendingApprovalAuthority;
+              this.resoucesDropDownData = [
+                ...this.resoucesDropDownData,
+                { label: `${auth.fusionEmployeeId ?? ''} - ${auth.name ?? ''}`.trim(), value: auth.id },
+              ];
+            }
+          }
+          authorityControl?.patchValue(authorityToPatch);
           authorityControl?.enable();
         } else {
           this.resourcesData = Array.isArray(data?.data) ? data.data : [];

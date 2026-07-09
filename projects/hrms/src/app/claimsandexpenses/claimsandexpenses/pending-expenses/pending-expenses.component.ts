@@ -197,6 +197,13 @@ export class PendingExpensesComponent implements OnInit, OnDestroy {
           const filteredData = data.filter((item: any) => !item.expenseSummary);
           this.originalExpenseData = [...filteredData];
           this.expenesEmplyeedata = [...filteredData];
+          // Populate allVerifiedMap from already-loaded expense items
+          filteredData.forEach((exp: any) => {
+            const items = exp.expenseitem;
+            if (items?.length > 0 && items.every((item: any) => item.isVerified === true)) {
+              this.allVerifiedMap.set(exp.expenses_ID, true);
+            }
+          });
         }, error: () => {
           this.loading = false;
         },

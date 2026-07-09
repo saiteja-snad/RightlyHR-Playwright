@@ -17,107 +17,70 @@
 
             <div class="custom-table-content"  [ngClass]="{'has-data': resourcesData.length > 0}">
                 @if (!loading) {
-                <table class="w-100">
-                    <thead>
-                        <!-- <th>Employee ID</th> -->
-                         <th class="text-center">Profile</th>
-                        <th>Name</th>
-                        <th>Phases / Milestones</th>
-                        <th class="text-center">Role</th>
-                        <th class="text-center">Start Date</th>
-                        <th class="text-center">End Date</th>
-                        <th class="text-center">Allocated Hours</th>
-                        <th>Timesheet Approval Authority</th>
-                        <th class="text-center">Status</th>
-                        <th class="text-center">Effective Date</th>
-                        <!-- @if((rbac.allowedToAccess('Resources Tab.update') || rbac.allowedToAccess('Resources Tab.delete'))
-                        && inactiveStatus !== 'inactive'){
-                        <th class="text-center">{{"Action" | translate}}</th>
-                        } -->
-                    </thead>
-                    <tbody>
-                        <ng-container *ngIf="(resourcesData?.length ?? 0) > 0; else noDataTemplate">
-                            <tr *ngFor="let data of resourcesData">
-                                <!-- <td>{{ data?.employee?.fusionEmployeeId || '-'}}</td> -->
-                                <td class="text-center">
-                                    <img *ngIf="data.employee?.profileUrl; else defaultProfile"
-                                        [src]="getImageUrl(data.employee.profileUrl)" alt="Profile"
-                                        class="client-image" />
-                                    <ng-template #defaultProfile>
-                                        <app-profile-icon [iconWidth]="'35'" [iconHeight]="'35'"></app-profile-icon>
-                                    </ng-template>
-                                </td>
-                                <td>{{ data?.employee?.name || '-' }}</td>
-                                <td>{{ data?.phase?.phaseName || '-'}}</td>
-                                <td class="text-center">{{ data?.role || '-' }}</td>
-                                <td class="text-center">{{ data?.startDate ? (data.startDate | dateformat) : '-' }}</td>
-                                <td class="text-center">{{ data?.endDate ? (data.endDate | dateformat) : '-' }}</td>
-                                <td class="text-center">{{ data?.allocatedHours || '-' }}</td>
-                                <td>{{ data?.pendingApprovalAuthority?.name || '-' }}</td>
-                                <td class="text-center">
-                                    <div>
-                                        <span>{{ (data?.status | titlecase) || '-' }}</span>
-                                        <ng-container
-                                            *ngIf="data?.reason && data.status?.toLowerCase() !== 'active'; else noStatusReason">
-                                            <span type="button" [ngbPopover]="statusReasonPopover">
-                                                <app-info-icon />
-                                            </span>
-                                        </ng-container>
-                                        <ng-template #noStatusReason></ng-template>
-                                    </div>
-                                    <ng-template #statusReasonPopover>
-                                        <p class="mb-0">{{ data.reason }}</p>
-                                    </ng-template>
-                                </td>
-                                <td class="text-center">{{ data?.statusEffectiveDate ? (data.statusEffectiveDate |
-                                    dateformat) : '-' }}</td>
-                                <!-- @if((rbac.allowedToAccess('Resources Tab.update'))
-                                && inactiveStatus !== 'inactive'){
-                                <td class="text-center"
-                                    *ngIf="data.status.toLowerCase() !== 'released'; else noActions">
-                                    <div class="dropdown">
-                                        <a data-bs-toggle="dropdown" aria-expanded="false">
-                                            <i class="bi bi-three-dots-vertical"></i>
-                                        </a>
-                                        <ul class="dropdown-menu custom-dropdown-menu">
-                                        @if(rbac.allowedToAccess('Resources Tab.update')){
-                                        <li>
-                                            <a class="dropdown-item" (click)="openModal(updateResourcemodal,'lg',data)">
-                                                <i class="bi bi-pencil me-2"></i>Update
-                                            </a>
-                                        </li>
-                                        }
-                                        @if(rbac.allowedToAccess('Resources Tab.delete')){
-                                        <li (click)="openModal(deleteconformation,'m',data)">
-                                            <a class="dropdown-item">
-                                                <i class="bi bi-trash me-2"></i>Delete
-                                            </a>
-                                        </li>
-                                        }
-                                    </ul>
-                                        <ul class="dropdown-menu custom-dropdown-menu">
-                                            <li *ngFor="let action of getActionsByStatus(data.status)">
-                                                <a class="dropdown-item" (click)="handleAction(action, data)">
-                                                    <i class="bi me-2" [ngClass]="getActionIcon(action)"></i> {{ action
-                                                    }}
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </td>
-                                <ng-template #noActions>
-                                    <td class="text-center text-muted">-</td>
-                                </ng-template>
-                                } -->
-                            </tr>
-                        </ng-container>
-                        <ng-template #noDataTemplate>
-                            <tr>
-                                <app-no-data-found />
-                            </tr>
+                <p-table #inactiveResourcesTable
+                  [value]="getFilteredResources()"
+                  [customSort]="true"
+                  (onSort)="customSort($event)"
+                  [sortField]="currentUIField"
+                  [sortOrder]="currentSortOrder">
+                  <ng-template pTemplate="header">
+                    <tr>
+                      <th class="text-center">Profile</th>
+                      <th pSortableColumn="employeeName">Name <p-sortIcon field="employeeName" /></th>
+                      <th class="text-center" pSortableColumn="phaseName">Phases / Milestones <p-sortIcon field="phaseName" /></th>
+                      <th class="text-center" pSortableColumn="role">Role <p-sortIcon field="role" /></th>
+                      <th class="text-center" pSortableColumn="startDate">Start Date <p-sortIcon field="startDate" /></th>
+                      <th class="text-center" pSortableColumn="endDate">End Date <p-sortIcon field="endDate" /></th>
+                      <th class="text-center" pSortableColumn="allocatedHours">Allocated Hours <p-sortIcon field="allocatedHours" /></th>
+                      <th pSortableColumn="authorityName">Timesheet Approval Authority <p-sortIcon field="authorityName" /></th>
+                      <th class="text-center">Status</th>
+                      <th class="text-center" pSortableColumn="statusEffectiveDate">Effective Date <p-sortIcon field="statusEffectiveDate" /></th>
+                    </tr>
+                  </ng-template>
+                  <ng-template pTemplate="body" let-data>
+                    <tr>
+                      <td class="text-center">
+                        <img *ngIf="data.employee?.profileUrl; else defaultProfile"
+                          [src]="getImageUrl(data.employee.profileUrl)" alt="Profile"
+                          class="client-image" />
+                        <ng-template #defaultProfile>
+                          <app-profile-icon [iconWidth]="'35'" [iconHeight]="'35'"></app-profile-icon>
                         </ng-template>
-                    </tbody>
-                </table>
+                      </td>
+                      <td>{{ data?.employee?.name || '-' }}</td>
+                      <td class="text-center">{{ data?.phase?.phaseName || '-'}}</td>
+                      <td class="text-center">{{ data?.role || '-' }}</td>
+                      <td class="text-center">{{ data?.startDate ? (data.startDate | dateformat) : '-' }}</td>
+                      <td class="text-center">{{ data?.endDate ? (data.endDate | dateformat) : '-' }}</td>
+                      <td class="text-center">{{ data?.allocatedHours || '-' }}</td>
+                      <td>{{ data?.pendingApprovalAuthority?.name || '-' }}</td>
+                      <td class="text-center">
+                        <div>
+                          <span>{{ (data?.status | titlecase) || '-' }}</span>
+                          <ng-container
+                            *ngIf="data?.reason && data.status?.toLowerCase() !== 'active'; else noStatusReason">
+                            <span type="button" [ngbPopover]="statusReasonPopover">
+                              <app-info-icon />
+                            </span>
+                          </ng-container>
+                          <ng-template #noStatusReason></ng-template>
+                        </div>
+                        <ng-template #statusReasonPopover>
+                          <p class="mb-0">{{ data.reason }}</p>
+                        </ng-template>
+                      </td>
+                      <td class="text-center">{{ data?.statusEffectiveDate ? (data.statusEffectiveDate |
+                        dateformat) : '-' }}</td>
+                    </tr>
+                  </ng-template>
+                  <ng-template pTemplate="emptymessage">
+                    <tr>
+                      <td [attr.colspan]="10">
+                        <app-no-data-found />
+                      </td>
+                    </tr>
+                  </ng-template>
+                </p-table>
                 }
                 @else {
                 <app-data-loader-content />

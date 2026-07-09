@@ -145,46 +145,51 @@
     </div>
     }@else{
     <div class="custom-table-content">
-        <table class="content w-100">
-            <thead>
-                <th>Employee ID</th>
-                <th>Employee Name</th>
-                <th>Department</th>
-                <th>Team</th>
-                <th>Team Manager</th>
-                <th>Work Email</th>
-                <th>Location</th>
-                <th>Sub Location</th>
-                <th>Shift</th>
-                <th>Source</th>
-                <th>Acknowledged</th>
-                <th>Acknowledged Date</th>
-                <th>Policy Name</th>
-            </thead>
-            <tbody>
-                @if (policyAcknowledgementReports && policyAcknowledgementReports.length > 0) {
-                <tr *ngFor="let record of policyAcknowledgementReports">
-                    <td>{{record?.fusionEmpId ?? '-'}}</td>
-                    <td>{{record?.employeeName ?? '-'}}</td>
-                    <td>{{record?.department ?? '-'}}</td>
-                    <td>{{record?.subdepartment ?? '-'}}</td>
-                    <td>{{record?.teamManagerName ?? '-'}}</td>
-                    <td>{{record?.workEmail ?? '-'}}</td>
-                    <td>{{record?.location ?? '-'}}</td>
-                    <td>{{record?.subLocation ?? '-'}}</td>
-                    <td>{{record?.shift ?? '-'}}</td>
-                    <td>{{record?.source ?? '-'}}</td>
-                    <td>{{ record?.acknowledged === true ? 'Yes' : record?.acknowledged === false ? 'No' : '-' }}</td>
-                    <td>{{record?.acknowledgedDate ? (record.acknowledgedDate | dateformat) : '-' }}</td>
-                    <td>{{record?.policyName ?? '-'}}</td>
-                </tr>
-                }@else {
+        <p-table #policyTable [value]="policyAcknowledgementReports" [tableStyle]="{'width': '100%'}"[customSort]="true" (sortFunction)="customSort($event)">
+            <ng-template pTemplate="header">
                 <tr>
-                    <app-no-data-found />
+                    <th pSortableColumn="fusionEmpId">{{ "Employee ID" | translate }} <p-sortIcon field="fusionEmpId" /></th>
+                    <th pSortableColumn="employeeName">{{ "Employee Name" | translate }} <p-sortIcon field="employeeName" /></th>
+                    <th pSortableColumn="department">{{ "Department" | translate }} <p-sortIcon field="department" /></th>
+                    <th pSortableColumn="subdepartment">{{ "Team" | translate }} <p-sortIcon field="subdepartment" /></th>
+                    <th pSortableColumn="teamManagerName">{{ "Team Manager" | translate }} <p-sortIcon field="teamManagerName" /></th>
+                    <th pSortableColumn="workEmail">{{ "Work Email" | translate }} <p-sortIcon field="workEmail" /></th>
+                    <th >{{ "Location" | translate }} <p-sortIcon  /></th>
+                    <th >{{ "Sub Location" | translate }} <p-sortIcon  /></th>
+                    <th >{{ "Shift" | translate }} <p-sortIcon /></th>
+                    <th pSortableColumn="source">{{ "Source" | translate }} <p-sortIcon field="source" /></th>
+                    <th >{{ "Acknowledged" | translate }} <p-sortIcon  /></th>
+                    <th pSortableColumn="acknowledgedDate">{{ "Acknowledged Date" | translate }} <p-sortIcon field="acknowledgedDate" /></th>
+                    <th >{{ "Policy Name" | translate }} <p-sortIcon  /></th>
                 </tr>
-                }
-            </tbody>
-        </table>
+            </ng-template>
+            <ng-template pTemplate="body" let-record>
+                <tr>
+                    <td>{{ record?.fusionEmpId ?? '-' }}</td>
+                    <td>{{ record?.employeeName ?? '-' }}</td>
+                    <td>{{ record?.department ?? '-' }}</td>
+                    <td>{{ record?.subdepartment ?? '-' }}</td>
+                    <td>{{ record?.teamManagerName ?? '-' }}</td>
+                    <td>{{ record?.workEmail ?? '-' }}</td>
+                    <td>{{ record?.location ?? '-' }}</td>
+                    <td>{{ record?.subLocation ?? '-' }}</td>
+                    <td>{{ record?.shift ?? '-' }}</td>
+                    <td>{{ record?.source ?? '-' }}</td>
+                    <td>{{ record?.acknowledged === true ? 'Yes' : record?.acknowledged === false ? 'No' : '-' }}</td>
+                    <td>{{ record?.acknowledgedDate ? (record.acknowledgedDate | dateformat) : '-' }}</td>
+                    <td>{{ record?.policyName ?? '-' }}</td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+                <tr>
+                    <td colspan="13">
+                        <div class="wrapper">
+                            <app-no-data-found />
+                        </div>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
     </div>
     }
 </div>

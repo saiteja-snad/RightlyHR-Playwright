@@ -1,5 +1,6 @@
-import { Component, OnDestroy, OnInit, TemplateRef } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Table } from 'primeng/table';
+import { Form, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NavigationEnd, Router } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
 import { HttpService } from '../../../services/http.service';
@@ -17,21 +18,37 @@ import * as XLSX from 'xlsx-js-style';
 import { DateformatPipe } from "../../../pipes/dateformat.pipe";
 import { MODULE_INFOS } from '../../../shared/modules-info';
 import { NgbOffcanvas, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { TableModule } from 'primeng/table';
 import dayjs from 'dayjs';
+
 @Component({
   selector: 'app-policy-acknowledgement-report',
-  imports: [CommonModule, FormsModule, DropdownModule, SelectModule, TranslateModule, ReactiveFormsModule, 
-    NoDataFoundComponent, DataLoaderContentComponent, ModuleInformationComponent, DateformatPipe, NgbPopoverModule],
+  imports: [CommonModule,
+    FormsModule,
+    DropdownModule,
+    SelectModule,
+    TranslateModule,
+    ReactiveFormsModule,
+    NoDataFoundComponent,
+    DataLoaderContentComponent,
+    ModuleInformationComponent, 
+    DateformatPipe,
+    NgbPopoverModule,
+    TableModule
+  ],
   templateUrl: './policy-acknowledgement-report.component.html',
   styleUrl: './policy-acknowledgement-report.component.scss'
 })
-
-export class PolicyAcknowledgementReportComponent implements OnInit, OnDestroy {
-  policyAcknowledgementReport!: FormGroup;
+export class PolicyAcknowledgementReportComponent implements OnInit, OnDestroy{
+  @ViewChild('policyTable') policyTable!: Table;
+  policyAcknowledgementReport! : FormGroup;
   subscription!: Subscription;
   selectedPolicyId: any;
   acknowledged: any;
   policyAcknowledgementReports: IPolicyAcknowledgementReports[] = [];
+  originalPolicyAcknowledgementReports: IPolicyAcknowledgementReports[] = [];
+  currentSortField: string = '';
+  currentSortOrder: number = 0;
   exportClicked: any;
   isReportGenerated = false;
   spinnerLoader1 = false;
@@ -39,7 +56,7 @@ export class PolicyAcknowledgementReportComponent implements OnInit, OnDestroy {
   isFilterIndicatorActive = false;
   disableBtn = false;
   isLoading: boolean = false;
-  moduleinfo: string = '';
+  moduleinfo : string = '';
   selectedLocationId: any;
   selectedSubLocationId: any;
   year: any;
@@ -52,31 +69,38 @@ export class PolicyAcknowledgementReportComponent implements OnInit, OnDestroy {
   subLocationsDropdown: any = [];
   shiftDropdown: any[] = [];
   [key: string]: any;
+
   AcknoeledgementOptions = [
     { label: 'Yes', value: true },
-    { label: 'No', value: false }
-  ];
+    { label: 'No', value:  false}
+  ]; 
 
-  constructor(private http: HttpService, private fb: FormBuilder, public rbac: RbacService, 
-    public readonly router: Router, private offcanvasService: NgbOffcanvas) { }
+  constructor(
+    private authService: AuthService,
+    private http: HttpService,
+    private fb: FormBuilder,
+    public rbac: RbacService,
+    public readonly router: Router,
+    private offcanvasService: NgbOffcanvas
+  ) { }
 
-  ngOnInit(): void {
-    this.initializeForm();
-    this.getAllYears();
-    this.updateModuleInfo();
-    this.initiateUpdateModuleInfo();
-    this.getjobLocationList();
-  }
+ ngOnInit(): void {
+  this.initializeForm();
+  this.getAllYears();
+  this.updateModuleInfo();
+  this.initiateUpdateModuleInfo();
+  this.getjobLocationList();
+ }
 
-  initializeForm() {
-    this.policyAcknowledgementReport = this.fb.group({
-      year: [null, Validators.required],
-      location: [null, Validators.required],
-      subLocation: [null, Validators.required],
-      shift: [null, Validators.required],
-      policy: [null, Validators.required],
-      acknowledged: [null, Validators.required]
-    });
+ initializeForm() {
+  this.policyAcknowledgementReport = this.fb.group({
+    year: [null, Validators.required],
+    location: [null, Validators.required],
+    subLocation: [null, Validators.required],
+    shift: [null, Validators.required],
+    policy: [null, Validators.required],
+    acknowledged: [null, Validators.required]
+  });
 
   this.policyAcknowledgementReport.valueChanges.subscribe(() => {
     // Disable export if any field changes
@@ -84,40 +108,40 @@ export class PolicyAcknowledgementReportComponent implements OnInit, OnDestroy {
     this.isFilterIndicatorActive = false;
   });
 
-    this.policyAcknowledgementReport.get('year')?.valueChanges.subscribe(() => {
-      this.policyAcknowledgementReport.get('location')?.reset(null, { emitEvent: false });
-      this.policyAcknowledgementReport.get('subLocation')?.reset(null, { emitEvent: false });
-      this.policyAcknowledgementReport.get('shift')?.reset(null, { emitEvent: false });
-      this.policyAcknowledgementReport.get('policy')?.reset(null, { emitEvent: false });
-      this.policyAcknowledgementReport.get('acknowledged')?.reset(null, { emitEvent: false });
-      this.clearDropdowns(['subLocationsDropdown', 'shiftDropdown', 'policyItemsData']);
-    });
+  this.policyAcknowledgementReport.get('year')?.valueChanges.subscribe(() => {
+    this.policyAcknowledgementReport.get('location')?.reset(null, { emitEvent: false });
+    this.policyAcknowledgementReport.get('subLocation')?.reset(null, { emitEvent: false });
+    this.policyAcknowledgementReport.get('shift')?.reset(null, { emitEvent: false });
+    this.policyAcknowledgementReport.get('policy')?.reset(null, { emitEvent: false });
+    this.policyAcknowledgementReport.get('acknowledged')?.reset(null, { emitEvent: false });
+    this.clearDropdowns(['subLocationsDropdown', 'shiftDropdown', 'policyItemsData']);
+  });
 
-    this.policyAcknowledgementReport.get('location')?.valueChanges.subscribe(() => {
-      this.policyAcknowledgementReport.get('subLocation')?.reset(null, { emitEvent: false });
-      this.policyAcknowledgementReport.get('shift')?.reset(null, { emitEvent: false });
-      this.policyAcknowledgementReport.get('policy')?.reset(null, { emitEvent: false });
-      this.policyAcknowledgementReport.get('acknowledged')?.reset(null, { emitEvent: false });
-      this.clearDropdowns(['subLocationsDropdown', 'shiftDropdown', 'policyItemsData']);
-    });
+  this.policyAcknowledgementReport.get('location')?.valueChanges.subscribe(() => {
+    this.policyAcknowledgementReport.get('subLocation')?.reset(null, { emitEvent: false });
+    this.policyAcknowledgementReport.get('shift')?.reset(null, { emitEvent: false });
+    this.policyAcknowledgementReport.get('policy')?.reset(null, { emitEvent: false });
+    this.policyAcknowledgementReport.get('acknowledged')?.reset(null, { emitEvent: false });
+    this.clearDropdowns(['subLocationsDropdown', 'shiftDropdown', 'policyItemsData']);
+  });
 
-    this.policyAcknowledgementReport.get('subLocation')?.valueChanges.subscribe(() => {
-      this.policyAcknowledgementReport.get('shift')?.reset(null, { emitEvent: false });
-      this.policyAcknowledgementReport.get('policy')?.reset(null, { emitEvent: false });
-      this.policyAcknowledgementReport.get('acknowledged')?.reset(null, { emitEvent: false });
-      this.clearDropdowns(['shiftDropdown', 'policyItemsData']);
-    });
+  this.policyAcknowledgementReport.get('subLocation')?.valueChanges.subscribe(() => {
+    this.policyAcknowledgementReport.get('shift')?.reset(null, { emitEvent: false });
+    this.policyAcknowledgementReport.get('policy')?.reset(null, { emitEvent: false });
+    this.policyAcknowledgementReport.get('acknowledged')?.reset(null, { emitEvent: false });
+    this.clearDropdowns(['shiftDropdown', 'policyItemsData']);
+  });
 
-    this.policyAcknowledgementReport.get('shift')?.valueChanges.subscribe(() => {
-      this.policyAcknowledgementReport.get('policy')?.reset(null, { emitEvent: false });
-      this.policyAcknowledgementReport.get('acknowledged')?.reset(null, { emitEvent: false });
-      this.clearDropdowns(['policyItemsData']);
-    });
+  this.policyAcknowledgementReport.get('shift')?.valueChanges.subscribe(() => {
+    this.policyAcknowledgementReport.get('policy')?.reset(null, { emitEvent: false });
+    this.policyAcknowledgementReport.get('acknowledged')?.reset(null, { emitEvent: false });
+    this.clearDropdowns(['policyItemsData']);
+  });
 
-    this.policyAcknowledgementReport.get('policy')?.valueChanges.subscribe(() => {
-      this.policyAcknowledgementReport.get('acknowledged')?.reset(null, { emitEvent: false });
-    });
-  }
+  this.policyAcknowledgementReport.get('policy')?.valueChanges.subscribe(() => {
+    this.policyAcknowledgementReport.get('acknowledged')?.reset(null, { emitEvent: false });
+  });
+}
 
 getAllYears() {
     for (let i = this.currentYear - 1; i <= this.currentYear + 1; i++) {
@@ -158,7 +182,7 @@ clearDropdowns(keys: string[]) {
   }
 
   getjobLocationList() {
-    this.subscription = this.http.getData(`JobLocation/getAllLocations`).subscribe({
+      this.subscription = this.http.getData(`JobLocation/getAllLocations`).subscribe({
       next: (locations: any) => {
         this.jobLocationDropDownData = locations;
         // Fetch sub-locations for each location
@@ -167,49 +191,49 @@ clearDropdowns(keys: string[]) {
         );
       }
     });
-  }
+    }
 
-  getSubLocationByid(selectedLocation: any): void {
-    if (selectedLocation && selectedLocation.id) {
+   getSubLocationByid(selectedLocation: any): void {
+      if (selectedLocation && selectedLocation.id) {
       this.subscription = this.http.getData(`JobLocation/sub-location-by-joblocation/${selectedLocation.id}`).subscribe({
-        next: (data: any) => {
-          this.subLocationsDropdown = data.jobSubLocations;
-          this.shiftDropdown = [];
-        },
-        error: (error: any) => {
-          console.log(error?.error?.Message);
-        },
-      });
-    } else {
-      this.subLocationsDropdown = [];
-      this.shiftDropdown = [];
+            next: (data: any) => {
+                this.subLocationsDropdown = data.jobSubLocations;
+                 this.shiftDropdown = []; 
+            },
+            error: (error: any) => {
+              console.log(error?.error?.Message);
+            },
+          });
+      } else {
+        this.subLocationsDropdown = [];
+        this.shiftDropdown = [];
+      }
     }
-  }
 
-  getShiftBYid(selectedSubLocation: any): void {
-    const formValue = this.policyAcknowledgementReport.value;
-    if (selectedSubLocation && selectedSubLocation) {
-      const locationId = formValue.location?.id
-      const subLocationId = selectedSubLocation
+      getShiftBYid(selectedSubLocation: any): void {
+      const formValue = this.policyAcknowledgementReport.value;
+      if (selectedSubLocation && selectedSubLocation) {
+        const locationId = formValue.location?.id
+        const subLocationId = selectedSubLocation
       this.subscription = this.http.getData(`orgShifts/getshiftlocation?locationId=${locationId}&subLocationId=${subLocationId}`).subscribe({
-        next: (data: any) => {
-          if (data.length === 0) {
-            this.shiftDropdown = [];
-          } else {
-            this.shiftDropdown = [].concat(
-              ...data.map((element: any) => element.orgShiftsItems)
-            );
-          }
-        },
-        error: (err: any) => {
-          console.error('Error fetching shift data:', err);
-          this.shiftDropdown = []; // Reset on error
-        },
-      });
-    } else {
-      this.shiftDropdown = []; // Reset if no sub-location is selected
+            next: (data: any) => {
+              if (data.length === 0) {
+                this.shiftDropdown = [];
+              } else {
+                this.shiftDropdown = [].concat(
+                  ...data.map((element: any) => element.orgShiftsItems)
+                );
+              }
+            },
+            error: (err: any) => {
+              console.error('Error fetching shift data:', err);
+              this.shiftDropdown = []; // Reset on error
+            },
+          });
+      } else {
+        this.shiftDropdown = []; // Reset if no sub-location is selected
+      }
     }
-  }
 
   getpolicys() {
     const { location, subLocation, shift, year } = this.policyAcknowledgementReport.value;
@@ -249,6 +273,9 @@ clearDropdowns(keys: string[]) {
       .subscribe({
         next: (data: any) => {
           this.policyAcknowledgementReports = data;
+          this.originalPolicyAcknowledgementReports = [...this.policyAcknowledgementReports];
+          this.currentSortField = '';
+          this.currentSortOrder = 0;
           this.isReportGenerated = Array.isArray(data) && data.length > 0;
           this.isLoading = false;
           this.spinnerLoader1 = false;
@@ -313,9 +340,11 @@ clearDropdowns(keys: string[]) {
     this.router.navigate(['/reports']);
   }
 
-    exportToExcelPolicyAck(): void {
+  exportToExcelPolicyAck(): void {
     this.spinnerLoader2 = true;
-    setTimeout(() => {
+
+    const dataToExport = this.policyTable?.filteredValue ?? this.policyTable?.value ?? this.policyAcknowledgementReports;
+
     const HEADER_MAPPINGS: { [key: string]: string } = {
       fusionEmpId: 'EMPLOYEE ID',
       employeeName: 'EMPLOYEE NAME',
@@ -348,105 +377,72 @@ clearDropdowns(keys: string[]) {
       'POLICY NAME',
     ];
 
-    const modifiedData = this.policyAcknowledgementReports.map((record) => {
-      const modifiedRecord: any = {};
-      const recordAny = record as any;
-      NEW_SEQUENCE.forEach((columnName) => {
-        const originalKey = Object.keys(HEADER_MAPPINGS).find(
-          (key) => HEADER_MAPPINGS[key] === columnName
-        );
-        if (originalKey && record.hasOwnProperty(originalKey)) {
-          if (originalKey === 'acknowledgedDate' && recordAny[originalKey]) {
-            const date = new Date(recordAny[originalKey]);
-            const month = date.toLocaleString('default', { month: 'short' });
-            const formattedDate = `${month} ${date.getDate()} ${date.getFullYear()}`;
-            modifiedRecord[columnName] = formattedDate;
-          } else if (originalKey === 'acknowledged') {
-            modifiedRecord[columnName] =
-              recordAny[originalKey] === true ? 'Yes' : 'No';
-          } else {
-            modifiedRecord[columnName] = recordAny[originalKey];
-          }
-        } else {
-          modifiedRecord[columnName] = '-';
-        }
-      });
-      return modifiedRecord;
-    });
-
-    // Create worksheet and merge header
-    const ws: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet([[]]);
-    ws['!merges'] = [
-      { s: { r: 0, c: 0 }, e: { r: 0, c: NEW_SEQUENCE.length - 1 } },
-    ];
-    XLSX.utils.sheet_add_aoa(ws, [['POLICY ACKNOWLEDGEMENT REPORT']], {
-      origin: 'A1',
-    });
-
-    // Add headers
-    XLSX.utils.sheet_add_aoa(ws, [NEW_SEQUENCE], { origin: 'A2' });
-
-    // Add data
-    XLSX.utils.sheet_add_json(ws, modifiedData, {
-      origin: 'A3',
-      skipHeader: true,
-    });
-
-    // Style title row
-    const titleCell = ws['A1'] || {
-      t: 's',
-      v: 'POLICY ACKNOWLEDGEMENT REPORT',
+    const normalizeCell = (key: string, value: any) => {
+      if (key === 'acknowledgedDate') {
+        if (!value) return '-';
+        const date = new Date(value);
+        return `${date.toLocaleString('default', { month: 'short' })} ${date.getDate()} ${date.getFullYear()}`;
+      }
+      if (key === 'acknowledged') return value === true ? 'Yes' : value === false ? 'No' : '-';
+      if (value === null || value === undefined) return '-';
+      if (typeof value === 'string') return value.trim().length > 0 ? value.trim() : '-';
+      return value;
     };
-    titleCell.s = {
-      font: { bold: true, sz: 14 },
-      alignment: { horizontal: 'center' },
-    };
-    ws['A1'] = titleCell;
 
-    // Style headers
-    NEW_SEQUENCE.forEach((_, idx) => {
-      const cellAddress = XLSX.utils.encode_cell({ r: 1, c: idx });
-      const cell = ws[cellAddress] || {};
-      cell.s = {
-        font: { bold: true },
-        alignment: { horizontal: 'center' },
-      };
-      ws[cellAddress] = cell;
+    const modifiedData = dataToExport.map((record: any) => {
+      const row: any = {};
+      NEW_SEQUENCE.forEach(col => {
+        const originalKey = Object.keys(HEADER_MAPPINGS).find(k => HEADER_MAPPINGS[k] === col);
+        row[col] = originalKey && record.hasOwnProperty(originalKey) ? normalizeCell(originalKey, record[originalKey]) : '-';
+      });
+      return row;
     });
 
-    // Style data rows
-    for (let row = 2; row < modifiedData.length + 2; row++) {
-      NEW_SEQUENCE.forEach((_, col) => {
-        const cellAddress = XLSX.utils.encode_cell({ r: row, c: col });
-        const cell = ws[cellAddress] || {};
-        cell.s = { alignment: { horizontal: 'center', vertical: 'middle' } };
-        ws[cellAddress] = cell;
-      });
+    if (modifiedData.length === 0) {
+      const emptyRow: any = {};
+      NEW_SEQUENCE.forEach(col => { emptyRow[col] = '-'; });
+      modifiedData.push(emptyRow);
     }
 
-    // Auto-fit column widths
-    ws['!cols'] = NEW_SEQUENCE.map((column) => {
-      const maxLength = Math.max(
-        ...modifiedData.map((d) => d[column]?.toString().length || 0)
-      );
-      return { wch: Math.max(column.length, maxLength) + 2 };
+    const ws: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet([]);
+
+    ws['!merges'] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: NEW_SEQUENCE.length - 1 } }];
+    XLSX.utils.sheet_add_aoa(ws, [['POLICY ACKNOWLEDGEMENT REPORT']], { origin: 'A1' });
+    ws['A1'].s = { font: { bold: true, sz: 16 }, alignment: { horizontal: 'center', vertical: 'center' } };
+
+    XLSX.utils.sheet_add_aoa(ws, [NEW_SEQUENCE], { origin: 'A2' });
+    NEW_SEQUENCE.forEach((_, index) => {
+      const cellRef = XLSX.utils.encode_cell({ r: 1, c: index });
+      ws[cellRef].s = {
+        font: { bold: true },
+        alignment: { horizontal: 'center', vertical: 'center' },
+        border: { top: { style: 'thin' }, bottom: { style: 'thin' }, left: { style: 'thin' }, right: { style: 'thin' } }
+      };
     });
 
-    // Generate Excel
+    XLSX.utils.sheet_add_json(ws, modifiedData, { origin: 'A3', skipHeader: true });
+    modifiedData.forEach((_: any, rowIndex: number) => {
+      NEW_SEQUENCE.forEach((_, colIndex) => {
+        const cellRef = XLSX.utils.encode_cell({ r: rowIndex + 2, c: colIndex });
+        if (ws[cellRef]) {
+          ws[cellRef].s = { alignment: { horizontal: 'center', vertical: 'center' } };
+        }
+      });
+    });
+
+    ws['!autofilter'] = { ref: `A2:${XLSX.utils.encode_col(NEW_SEQUENCE.length - 1)}2` };
+    ws['!cols'] = NEW_SEQUENCE.map(col => ({
+      wch: Math.max(col.length, ...modifiedData.map((r: any) => String(r[col] ?? '').length)) + 2
+    }));
+
     const wb: XLSX.WorkBook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Policy Acknowledgement');
-
-    const selectedPolicyId = this.policyAcknowledgementReport.get('policy')?.value;
-    const selectedPolicy = this.policyItemsData.find(
+    const selectedPolicy = this.policyItemsData?.find(
       (p: { id: number; policyName: string }) => p.id === Number(this.policyAcknowledgementReport.get('policy')?.value)
     );
-    const policyName =
-      selectedPolicy?.policyName
-        ?.replace(/[^a-zA-Z0-9-_ ]/g, '') || 'Policy Report';
-    const fileName = `Policy Acknowledgement Report ${policyName} ${dayjs().format('MMM DD YYYY')}.xlsx`;
-    XLSX.writeFile(wb, fileName);
+    const policyName = selectedPolicy?.policyName?.replace(/[^a-zA-Z0-9-_ ]/g, '') || 'Policy Report';
+    XLSX.writeFile(wb, `Policy Acknowledgement Report ${policyName} ${dayjs().format('MMM DD YYYY')}.xlsx`);
     this.spinnerLoader2 = false;
-    }, 100);
   }
 
   getColumnWidth(data: any[], columnName: string): number {
@@ -455,13 +451,51 @@ clearDropdowns(keys: string[]) {
       const value = record[columnName]?.toString().length || 0;
       return value > max ? value : max;
     }, 0);
+
     // Set minimum width to 10
     return Math.max(10, maxWidth);
   }
+customSort(event: any): void {
+    const field = event.field;
 
-  ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
+    if (this.currentSortField === field) {
+      if (this.currentSortOrder === 1) {
+        this.currentSortOrder = -1;
+        event.order = -1;
+      } else if (this.currentSortOrder === -1) {
+        this.policyAcknowledgementReports = [...this.originalPolicyAcknowledgementReports];
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        if (this.policyTable) this.policyTable.reset();
+        return;
+      } else {
+        this.currentSortOrder = 1;
+        event.order = 1;
+      }
+    } else {
+      this.currentSortField = field;
+      this.currentSortOrder = 1;
+      event.order = 1;
     }
+
+    event.data.sort((a: any, b: any) => {
+      let val1 = a[field];
+      let val2 = b[field];
+
+      if (field === 'fusionEmpId') {
+        const num1 = parseInt(String(val1).replace(/\D/g, ''), 10) || 0;
+        const num2 = parseInt(String(val2).replace(/\D/g, ''), 10) || 0;
+        return event.order * (num1 - num2);
+      }
+
+      val1 = String(val1 ?? '').trim();
+      val2 = String(val2 ?? '').trim();
+      return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+    });
+  }
+  ngOnDestroy(): void {
+      if(this.subscription){
+        this.subscription.unsubscribe();
+      }
   }
 }

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { AccordionModule } from 'primeng/accordion';
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
@@ -18,12 +18,11 @@ import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-foun
 import { PaginatorModule } from 'primeng/paginator';
 import { Router } from '@angular/router';
 import { Skeleton } from "primeng/skeleton";
-import { DateformatPipe } from '../../../pipes/dateformat.pipe';
-import { SignalsService } from '../../../services/signals.service';
+import { RbacService } from '../../../services/rbac.service';
 @Component({
   selector: 'app-time-sheet-approvals',
   imports: [AccordionModule, CommonModule, PaginatorModule, ReactiveFormsModule, TableModule, TranslateModule, InfoIconComponent, NgbPopover,
-    ConfirmationIconComponent, FormsModule, NoDataFoundComponent, Skeleton, DateformatPipe],
+    ConfirmationIconComponent, FormsModule, NoDataFoundComponent, Skeleton],
   templateUrl: './time-sheet-approvals.component.html',
   styleUrl: './time-sheet-approvals.component.scss',
   // encapsulation: ViewEncapsulation.None,
@@ -52,6 +51,7 @@ export class TimeSheetApprovalsComponent implements OnInit {
   failureRecordsCount: number = 0;
   @ViewChild('leaveSummary') leaveSummary: any;
   @ViewChild('dt') table!: Table;
+  @ViewChildren('dayTable') dayTables!: QueryList<Table>;
   // searchValue: any;
   employeeid: any;
   totalRecordCountitem: any;
@@ -60,19 +60,16 @@ export class TimeSheetApprovalsComponent implements OnInit {
   selectedMap: { [key: number]: any[] } = {};
   //projectsData:any[]=[];
   //employeeData:any[]=[];
-  phaseId!: number|null;
+  phaseId!: any;
   taskId!:any;
   dataload = false;
   //employeeflag:any;
   employeeresource: any;
   timesheetrecord: any;
-
-
-    // Pagination
   page = 1;
   pageSize = 50;
   rows = 50;
-  collectionSize = 0;
+  collectionSize!: number;
   first = 0;
   options = [
     { label: 50, value: 50 },
@@ -81,10 +78,16 @@ export class TimeSheetApprovalsComponent implements OnInit {
     { label: 200, value: 200 }
   ];
 
+  // Sorting properties
+  originalTimesheetData: TimesheetDay[] = []; // Store original unsorted data
+  currentSortField: string = '';
+  currentSortOrder: number = 0; // 0 = no sort, 1 = asc, -1 = desc
+  sortedDayIndex: number = -1; // Track which day table is currently sorted
   startdate: any;
   enddate: any;
   globalSelectedEntries: any[] = [];
   selectedLeaveStatus: any;
+  totalCount: any;
   showBulkSelectionBanner = false;
   allPagesSelected = false;
   currentPageItemCount = 0;
@@ -92,12 +95,13 @@ export class TimeSheetApprovalsComponent implements OnInit {
   selectedSummaryEntries: any[] = [];
   requestType!:string;
   constructor(private http: HttpService, public formsValidation: FormValidationsService, private modalService: NgbModal,
-    private conformationPopup: OpenModalService, public router: Router, private fb: FormBuilder, private signalService : SignalsService) { }
+    private conformationPopup: OpenModalService, public router: Router, private fb: FormBuilder, public rbac: RbacService) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.employeeid = parseInt(this.empinfo.employeeId);
-    this.loadClientsAndProjects(this.page, this.pageSize,  this.startdate, this.enddate );
+    this.loadClientsAndProjects(this.page, this.pageSize, this.startdate, this.enddate);
+
     this.http.selectedEmployeeIdTimesheet$
       .pipe(takeUntil(this.destroy$))
       .subscribe(data => {
@@ -112,6 +116,8 @@ export class TimeSheetApprovalsComponent implements OnInit {
         this.pageSize = 50;
         this.first = 0;
         this.rows = 50;
+        // Reset sorting state when filters change
+        this.resetAllSorting();
         if (data && data.request) {
           this.employeeresource = data.request.resourceId;
           this.phaseId = data.request.phaseId;
@@ -120,6 +126,7 @@ export class TimeSheetApprovalsComponent implements OnInit {
             this.startdate = data.request.dateRange.startDate;
             this.enddate = data.request.dateRange.endDate;
           }
+          
           this.loadClientsAndProjects(this.page, this.pageSize, this.startdate, this.enddate);
         } else {
           this.startdate = null;
@@ -171,6 +178,8 @@ onStatusApproveSelect(status: string) {
   onRowsChange() {
     this.page = 1;
     this.first = 0;
+    // Reset sorting state when changing rows
+    this.resetAllSorting();
     this.loadClientsAndProjects(this.page, this.pageSize, this.startdate, this.enddate);
   }
 
@@ -179,6 +188,8 @@ onStatusApproveSelect(status: string) {
     this.page = event.page + 1;
     this.pageSize = event.rows;
     this.first = event.first;
+    // Reset sorting state when changing pages
+    this.resetAllSorting();
     this.loadClientsAndProjects(this.page, this.pageSize, this.startdate, this.enddate);
   }
 
@@ -189,29 +200,29 @@ onStatusApproveSelect(status: string) {
     this.rows = newPageSize;
     this.page = 1;
     this.first = 0;
+    // Reset sorting state when changing page size
+    this.resetAllSorting();
     this.loadClientsAndProjects(this.page, this.pageSize, this.startdate, this.enddate);
   }
 
   // bulk data approve method
   bulkApprove(popup: any) {
-    this.selectedLeavesItems = this.selectedEntries as TimesheetDay[];
+    this.selectedLeavesItems = this.selectedEntries;
     this.conformationstatus = 'Processed';
     this.openModal(popup, null, this.conformationstatus);
   }
 
   // bulk data reject method
   bulkReject(popup: any) {
-    this.selectedLeavesItems = this.selectedEntries as TimesheetDay[];
+    this.selectedLeavesItems = this.selectedEntries;  // collect selected
     this.conformationstatus = 'Rejected';
     this.openModal(popup, null, this.conformationstatus);
   }
 
   // load timesheet data based on project and employee
-  loadClientsAndProjects(page: number | null, pageSize: number | null, startdate:any,enddate:any): void {
+  loadClientsAndProjects(page: number, pageSize: number, startdate: any, enddate: any): void {
     this.dataload = true;
-    let url = `v2/PendingApproval/employee/${this.empinfo?.employeeId}?moduleId=${environment.timesheetModuleId}`;
-    if (page !== null) url += `&page=${page}`;
-    if (pageSize !== null) url += `&pageSize=${pageSize}`;
+    let url = `v2/PendingApproval/employee/${this.empinfo?.employeeId}?moduleId=${environment.timesheetModuleId}&page=${page}&pageSize=${pageSize}`;
     if (this.employeeresource) url += `&requestedBy=${this.employeeresource}`;
     if (this.phaseId !== undefined && this.phaseId !== null) {
       url += `&phaseId=${this.phaseId}`;
@@ -233,6 +244,8 @@ onStatusApproveSelect(status: string) {
           this.totalRecordCountitem = allEntries.length;
           // assign timesheetData for UI
           this.timesheetData = res.data.items.flatMap((item: any) => item.entity) as TimesheetDay[];
+          // Store original data for sorting reset
+          this.originalTimesheetData = JSON.parse(JSON.stringify(this.timesheetData));
           this.timesheetrecord = res.data.items;
           // Add unique `id` for each entry (important for PrimeNG selection)
           this.timesheetData.forEach(day => {
@@ -240,6 +253,16 @@ onStatusApproveSelect(status: string) {
               day.entries.forEach((entry: any) => {
                 if (entry && typeof entry === 'object') {
                   entry.id = entry.approvalHeader?.id; // or generate a string if null
+                }
+              });
+            }
+          });
+          // Also add IDs to original data
+          this.originalTimesheetData.forEach(day => {
+            if (Array.isArray(day.entries)) {
+              day.entries.forEach((entry: any) => {
+                if (entry && typeof entry === 'object') {
+                  entry.id = entry.approvalHeader?.id;
                 }
               });
             }
@@ -258,7 +281,6 @@ onStatusApproveSelect(status: string) {
             });
           }
           this.syncGlobalSelectedEntries();
-          this.updateBulkSelectionBanner();
         }
       },
       error: (err) => {
@@ -283,6 +305,8 @@ onStatusApproveSelect(status: string) {
       },
       complete: () => {
         this.dataload = false;
+        // Reset sorting state when loading completes with error
+        this.resetAllSorting();
       }
     });
   }
@@ -313,17 +337,6 @@ onStatusApproveSelect(status: string) {
     setTimeout(() => this.updateBulkSelectionBanner(), 0);
   }
 
-  // updateBulkSelectionBanner() {
-  //   this.currentPageItemCount = this.timesheetData.reduce((acc, day) => acc + (day.entries?.length || 0), 0);
-  //   const allCurrentPageSelected = this.selectedEntries.length > 0 && this.selectedEntries.length === this.currentPageItemCount;
-  //   this.showBulkSelectionBanner = allCurrentPageSelected && !this.allPagesSelected;
-  // console.log('Banner Debug:', {
-  //   currentPageItemCount: this.currentPageItemCount,
-  //   selectedCount: this.selectedEntries.length,
-  //   collectionSize: this.collectionSize,
-  //   allCurrentPageSelected,
-  //   showBanner: this.showBulkSelectionBanner
-  // });
   updateBulkSelectionBanner() {
     this.currentPageItemCount = this.timesheetData.reduce((acc, day) => acc + (day.entries?.length || 0), 0);
     const allCurrentPageSelected = this.selectedEntries.length > 0 && this.selectedEntries.length === this.currentPageItemCount;
@@ -333,17 +346,19 @@ onStatusApproveSelect(status: string) {
     //   selectedCount: this.selectedEntries.length,
     //   collectionSize: this.collectionSize,
     //   allCurrentPageSelected,
-    //   showBanner: this.showBulkSelectionBanner,
+    //   showBanner: this.showBulkSelectionBanner
     // });
   }
 
   selectAllPages() {
     this.allPagesSelected = true;
     this.showBulkSelectionBanner = false;
-    this.pageSize = this.totalrequestRecordCount;
+    this.pageSize = this.collectionSize;
     this.rows = this.collectionSize;
     this.page = 1;
     this.first = 0;
+    // Reset sorting when selecting all pages
+    this.resetAllSorting();
     this.loadClientsAndProjects(this.page, this.pageSize, this.startdate, this.enddate);
   }
 
@@ -353,10 +368,12 @@ onStatusApproveSelect(status: string) {
     this.allPagesSelected = false;
     this.showBulkSelectionBanner = false;
     this.showhideaction = true;
-    this.pageSize = 10;
-    this.rows = 10;
+    this.pageSize = 50;
+    this.rows = 50;
     this.page = 1;
     this.first = 0;
+    // Reset sorting when clearing selection
+    this.resetAllSorting();
     this.loadClientsAndProjects(this.page, this.pageSize, this.startdate, this.enddate);
   }
 
@@ -398,8 +415,6 @@ onStatusApproveSelect(status: string) {
     if (request) {
       // single row case
       this.selectedLeaveData = request;
-      console.log('Selected Data for Modal:', this.selectedLeaveData);
-      console.log('selected entries:', this.selectedSummaryEntries);
       this.selectedLeavesItems = [];
     }
     this.conformationstatus = conformationstatus;
@@ -443,7 +458,6 @@ onStatusApproveSelect(status: string) {
           requestProcessedBy: approvedBy,
           status: this.conformationstatus,
           comments: comments,
-          onBehalfOfApproval: true,
           moduleId: environment.timesheetModuleId,
           headerRequests: [
             {
@@ -471,14 +485,12 @@ onStatusApproveSelect(status: string) {
             );
           } else {
             // this.openModal(this.leaveSummary, null, this.conformationstatus);
-            const modalRef = this.modalService.open(this.leaveSummary, {
-              centered: true, size: 'lg',
-              beforeDismiss: () => false // prevents manual close by ESC/backdrop
-            });
-            setTimeout(() => modalRef.close(), 3000);
+            this.openlgModal(this.leaveSummary);
+            setTimeout(() => {
+              this.modalService.dismissAll();
+            }, 5000);
+
           }
-          this.signalService.timesheetApprovalsCountSignal.set(true);
-          console.log('SIgnal triggered');   
         },
         error: (reason: any) => {
           this.spinnerLoader = false;
@@ -486,15 +498,15 @@ onStatusApproveSelect(status: string) {
           this.timeSheetRejectForm.reset();
           this.modalService.dismissAll();
           this.conformationPopup.openErrorModal(reason.error.message);
-          this.signalService.timesheetApprovalsCountSignal.set(true);
-          console.log('SIgnal triggered');   
         },
         complete: () => {
           this.spinnerLoader = false;
           this.allPagesSelected = false;
           this.showBulkSelectionBanner = false;
-          this.rows = 10;
+          this.rows = 50;
           this.first = 0;
+          // Reset sorting after approve operation completes
+          this.resetAllSorting();
           this.loadClientsAndProjects(this.page, this.pageSize, this.startdate, this.enddate);
           this.selectedLeavesItems = [];
           this.selectedEntries = [];
@@ -504,13 +516,15 @@ onStatusApproveSelect(status: string) {
           this.showhideaction = true;
           this.timeSheetApproveForm.reset();
           this.timeSheetRejectForm.reset();
+          this.getApprovalStatusCounts();
           this.http.triggerActionSignal();
-          this.signalService.timesheetApprovalsCountSignal.set(true);
-          console.log('SIgnal triggered');   
-         
+
         },
       });
     }
+  }
+  openlgModal(content: any) {
+    this.modalService.open(content, { centered: true, backdrop: 'static', size: 'lg' });
   }
 
   // reject submit post method
@@ -565,15 +579,11 @@ onStatusApproveSelect(status: string) {
             );
           } else {
             // this.openModal(this.leaveSummary, null, this.conformationstatus);
-            const modalRef = this.modalService.open(this.leaveSummary, {
-              centered: true, size: 'lg',
-              beforeDismiss: () => false // prevents manual close by ESC/backdrop
-            });
-            setTimeout(() => modalRef.close(), 3000);
-            
+              this.openlgModal(this.leaveSummary);
+            setTimeout(() => {
+              this.modalService.dismissAll();
+            }, 5000);
           }
-          this.signalService.timesheetApprovalsCountSignal.set(true);
-          console.log('SIgnal triggered');   
         },
         error: (reason: any) => {
           this.spinnerLoader = false;
@@ -581,15 +591,15 @@ onStatusApproveSelect(status: string) {
           this.timeSheetRejectForm.reset();
           this.modalService.dismissAll();
           this.conformationPopup.openErrorModal(reason.error.message);
-          this.signalService.timesheetApprovalsCountSignal.set(true);
-          console.log('SIgnal triggered');   
         },
         complete: () => {
           this.spinnerLoader = false;
           this.allPagesSelected = false;
           this.showBulkSelectionBanner = false;
-          this.rows = 10;
+          this.rows = 50;
           this.first = 0;
+          // Reset sorting after reject operation completes
+          this.resetAllSorting();
           this.loadClientsAndProjects(this.page, this.pageSize, this.startdate, this.enddate);
           this.selectedLeavesItems = [];
           this.selectedEntries = [];
@@ -597,20 +607,21 @@ onStatusApproveSelect(status: string) {
           this.allPagesSelected = false;
           this.showBulkSelectionBanner = false;
           this.showhideaction = true;
-          
           this.timeSheetApproveForm.reset();
           this.timeSheetRejectForm.reset();
+          this.getApprovalStatusCounts();
           this.http.triggerActionSignal();
-          this.signalService.timesheetApprovalsCountSignal.set(true);
-         console.log('SIgnal triggered');          
-           
         },
       });
     }
   }
-
-
-
+  getApprovalStatusCounts() {
+    this.http.get(`PendingApproval/getApprovalStatusCounts?moduleId=${environment.timesheetModuleId}&EmployeeId=${this.empinfo.employeeId}`).subscribe((res: any) => {
+      this.totalCount = res.reduce((acc: number, curr: any) => acc + curr.totalCount, 0);
+      this.http.updatePendingApprovalCounts(this.totalCount);
+      //Map counts to tabs
+    });
+  }
 
   // select all Check if ALL entries in ALL days are selected
   areAllDaysSelected(): boolean {
@@ -650,8 +661,8 @@ onStatusApproveSelect(status: string) {
       this.selectedMap = {};
       if (this.allPagesSelected) {
         this.allPagesSelected = false;
-        this.pageSize = 10;
-        this.rows = 10;
+        this.pageSize = 50;
+        this.rows = 50;
         this.page = 1;
         this.first = 0;
         this.loadClientsAndProjects(this.page, this.pageSize, this.startdate, this.enddate);
@@ -737,6 +748,113 @@ onStatusApproveSelect(status: string) {
     console.log('All entries excluded:', this.filteresdata);
   }
 }
+
+  // Enhanced sorting functionality similar to ActiveEmployeesComponent
+  customSort(event: any, dayIndex: number): void {
+    const field = event.field;
+    const day = this.timesheetData[dayIndex];
+    if (!day || !day.entries) return;
+
+    // Track current sort state for the clicked field and day
+    if (this.currentSortField === field && this.sortedDayIndex === dayIndex) {
+      // Same field and day clicked - cycle through: asc (1) -> desc (-1) -> reset (0)
+      if (this.currentSortOrder === 1) {
+        // Currently ascending, change to descending
+        this.currentSortOrder = -1;
+        event.order = -1;
+      } else if (this.currentSortOrder === -1) {
+        // Currently descending, reset to original order
+        this.resetSortingForDay(dayIndex);
+        return;
+      } else {
+        // Currently reset, change to ascending
+        this.currentSortOrder = 1;
+        event.order = 1;
+      }
+    } else {
+      // New field or day clicked - start with ascending
+      this.currentSortField = field;
+      this.currentSortOrder = 1;
+      this.sortedDayIndex = dayIndex;
+      event.order = 1;
+    }
+
+    // Sort the entries for this specific day
+    day.entries.sort((a: any, b: any) => {
+      let val1: any;
+      let val2: any;
+
+      // Handle nested properties
+      if (field.includes('.')) {
+        const fieldParts = field.split('.');
+        val1 = fieldParts.reduce((obj: any, key: string) => obj?.[key], a);
+        val2 = fieldParts.reduce((obj: any, key: string) => obj?.[key], b);
+      } else {
+        val1 = a[field];
+        val2 = b[field];
+      }
+
+      // Handle employee name sorting (if it exists as a concatenated field)
+      if (field === 'employeeName' || field === 'resourceName') {
+        val1 = String(val1 ?? '').trim();
+        val2 = String(val2 ?? '').trim();
+        return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+      }
+
+      // Handle employee ID sorting (alphanumeric)
+      if (field === 'employeeId' || field === 'fusionEmpId') {
+        return event.order * String(val1 ?? '').localeCompare(
+          String(val2 ?? ''),
+          undefined,
+          {
+            numeric: true,
+            sensitivity: 'base'
+          }
+        );
+      }
+
+      // Handle date fields
+      if (field.includes('Date') || field.includes('date') || field === 'entryDate') {
+        const date1 = val1 ? new Date(val1).getTime() : 0;
+        const date2 = val2 ? new Date(val2).getTime() : 0;
+        return event.order * (date1 - date2);
+      }
+
+      // Handle numeric fields (hours, etc.)
+      if (field === 'totalHours' || field === 'hours' || typeof val1 === 'number' && typeof val2 === 'number') {
+        const num1 = parseFloat(val1) || 0;
+        const num2 = parseFloat(val2) || 0;
+        return event.order * (num1 - num2);
+      }
+
+      // Handle string sorting for all other fields
+      val1 = String(val1 ?? '').trim();
+      val2 = String(val2 ?? '').trim();
+      return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+    });
+  }
+
+  // Reset sorting for a specific day to original order
+  resetSortingForDay(dayIndex: number): void {
+    if (this.originalTimesheetData && this.originalTimesheetData[dayIndex]) {
+      this.timesheetData[dayIndex].entries = [...this.originalTimesheetData[dayIndex].entries];
+    }
+    this.currentSortField = '';
+    this.currentSortOrder = 0;
+    this.sortedDayIndex = -1;
+    const tableAtIndex = this.dayTables?.toArray()[dayIndex];
+    if (tableAtIndex) tableAtIndex.reset();
+  }
+
+  // Reset all sorting to original state
+  resetAllSorting(): void {
+    if (this.originalTimesheetData) {
+      this.timesheetData = JSON.parse(JSON.stringify(this.originalTimesheetData));
+    }
+    this.currentSortField = '';
+    this.currentSortOrder = 0;
+    this.sortedDayIndex = -1;
+  }
   // destroy the component
   ngOnDestroy(): void {
     this.destroy$.next(true);

@@ -1,4 +1,4 @@
-import { Component, ViewEncapsulation } from '@angular/core';
+import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
 import { TeamMembersTabsComponent } from "../../../../shared/personalinfo-tabs/team-members-tabs/team-members-tabs.component";
 import { NoDataFoundComponent } from "../../../../shared/no-data-found/no-data-found.component";
 import { MyInfoTeamNumbersTabComponent } from "../../../../shared/myinfo-tabs/my-info-team-numbers-tab/my-info-team-numbers-tab.component";
@@ -8,7 +8,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subject, takeUntil } from 'rxjs';
 import { HttpService } from '../../../../services/http.service';
 import { TranslateModule } from '@ngx-translate/core';
-import { TableModule } from 'primeng/table';
+import { Table, TableModule } from 'primeng/table';
 import { ChipModule } from 'primeng/chip';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TreeTableModule } from 'primeng/treetable';
@@ -25,7 +25,6 @@ import { AccessNavigationService } from '../../../../services/access-navigation.
 })
 
 export class MyTeamMembersComponent {
- 
   teamData: any;
   empinfo = {} as any;
   searchValue: any;
@@ -39,6 +38,10 @@ export class MyTeamMembersComponent {
   selectedProject: any;
   teamMemberData: any[] = [];
   emp: any;
+  currentSortField: string = '';
+  currentSortOrder: number = 0;
+  originalData:any;
+  @ViewChild('dt') table!: Table;
   constructor(public modalService: NgbModal, public readonly router: Router, private http: HttpService, private accessNav: AccessNavigationService) { }
 
   ngOnInit(): void {
@@ -62,6 +65,7 @@ export class MyTeamMembersComponent {
       next: (res: any) => {
         this.teamData = res;
         this.teamMemberData = this.mapToTreeNodes(this.teamData);
+         this.originalData = [...this.teamMemberData];
         this.contentLoader = false;
       },
       error: (err) => {
@@ -72,7 +76,7 @@ export class MyTeamMembersComponent {
     });
   }
 
- isActive(route: string): boolean {
+  isActive(route: string): boolean {
     return this.router.url.includes(route);
   }
 
@@ -123,6 +127,39 @@ export class MyTeamMembersComponent {
         this.collapseChildren(child);  // recursively collapse grandchildren
       });
     }
+  }
+
+  customSort(field: string): void {
+    if (this.currentSortField === field) {
+      if (this.currentSortOrder === 1) {
+        this.currentSortOrder = -1;
+      } else if (this.currentSortOrder === -1) {
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+         if (this.table) this.table.reset();
+        this.teamMemberData = this.mapToTreeNodes(this.teamData);
+        return;
+      } else {
+        this.currentSortOrder = 1;
+      }
+    } else {
+      this.currentSortField = field;
+      this.currentSortOrder = 1;
+    }
+    this.teamMemberData = this.sortTreeNodes([...this.teamMemberData], field, this.currentSortOrder);
+  }
+
+  private sortTreeNodes(nodes: any[], field: string, order: number): any[] {
+    return nodes
+      .sort((a, b) => {
+        const val1 = String(a.data[field] ?? '').trim();
+        const val2 = String(b.data[field] ?? '').trim();
+        return order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+      })
+      .map(node => ({
+        ...node,
+        children: node.children?.length ? this.sortTreeNodes([...node.children], field, order) : []
+      }));
   }
 
   ngOnDestroy(): void {

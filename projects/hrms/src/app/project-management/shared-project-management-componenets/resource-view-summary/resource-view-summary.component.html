@@ -3,53 +3,62 @@
         <div class="w-100">
             <div class="custom-table-content w-100">
                 @if (!tableLoader) {
-                <table class="w-100">
-                    <thead>
-                        <th class="text-center">{{'Date' | translate}}</th>
-                        <th class="text-center">{{'Phase/Milestone' | translate }}</th>
-                        <th class="text-center">{{'Logged Hours' | translate }}</th>
-                        <th class="text-center">{{'Approver' | translate }}</th>
-                        <th class="text-center">{{'Task Type' | translate }}</th>
-                        <th class="text-center">{{'Description' | translate}}</th>
-                        <th>{{'Status' | translate }}</th>
-                    </thead>
-                    <tbody>
-                        <ng-container *ngIf="(attendanceSummaryData?.length ?? 0) > 0; else noDataTemplate">
-                            <tr *ngFor="let row of attendanceSummaryData">
-                                <td class="text-center">{{row.date | dateformat }}</td>
-                                <td class="text-center">{{row.entries?.phaseName || "-" }}</td>
-                                <td class="text-center">{{row.dailySummary.totalLoggedHours === "00:00:00" ? '-' :
-                                    row.dailySummary.loggedHHMM + ' ' + 'Hrs'}}</td>
-                                <td class="text-center">
-                                <ng-container *ngIf="row.entries?.finalApproverName || row.entries?.approverDesignation; else noValue">
-                                    {{ row.entries?.finalApproverName || '-' }} ({{ row.entries?.approverDesignation || '-' }})
+                <p-table #resourceSummaryTable
+                  [value]="attendanceSummaryData"
+                  [customSort]="true"
+                  (onSort)="customSort($event)"
+                  [sortField]="currentUIField"
+                  [sortOrder]="currentSortOrder">
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th class="text-center" pSortableColumn="date">{{'Date' | translate}} <p-sortIcon field="date" /></th>
+                            <th class="text-center" pSortableColumn="phaseName">{{'Phase/Milestone' | translate }} <p-sortIcon field="phaseName" /></th>
+                            <th class="text-center" pSortableColumn="loggedHours">{{'Logged Hours' | translate }} <p-sortIcon field="loggedHours" /></th>
+                            <th class="text-center" pSortableColumn="approverName">{{'Approver' | translate }} <p-sortIcon field="approverName" /></th>
+                            <th class="text-center" pSortableColumn="taskName">{{'Task Type' | translate }} <p-sortIcon field="taskName" /></th>
+                            <th class="text-center">{{'Description' | translate}}</th>
+                            <th pSortableColumn="status">{{'Status' | translate }} <p-sortIcon field="status" /></th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-row>
+                        <tr>
+                            <td class="text-center">{{row.date | dateformat }}</td>
+                            <td class="text-center">{{row.entries?.phaseName || "-" }}</td>
+                            <td class="text-center">{{row.dailySummary.totalLoggedHours === "00:00:00" ? '-' :
+                                row.dailySummary.loggedHHMM + ' ' + 'Hrs'}}</td>
+                            <td class="text-center">
+                            <ng-container *ngIf="row.entries?.finalApproverName || row.entries?.approverDesignation; else noValue">
+                                {{ row.entries?.finalApproverName || '-' }} ({{ row.entries?.approverDesignation || '-' }})
+                            </ng-container>
+                            <ng-template #noValue>-</ng-template>
+                            </td>
+                            <td class="text-center">{{row.entries?.taskName||'-'}}</td>
+                            <td class="text-center">
+                                <ng-container *ngIf="row.entries?.summary; else noEntries">
+                                    <a type="button" [ngbPopover]="description">
+                                        <app-info-icon />
+                                    </a>
+                                    <ng-template #description>
+                                        <p class="mb-0">{{ row.entries?.summary }}</p>
+                                    </ng-template>
                                 </ng-container>
-                                <ng-template #noValue>-</ng-template>
-                                </td>
-                                <td class="text-center">{{row.entries?.taskName||'-'}}</td>
-                                <td class="text-center">
-                                    <ng-container *ngIf="row.entries?.summary; else noEntries">
-                                        <a type="button" [ngbPopover]="description">
-                                            <app-info-icon />
-                                        </a>
-                                        <ng-template #description>
-                                            <p class="mb-0">{{ row.entries?.summary }}</p>
-                                        </ng-template>
-                                    </ng-container>
-                                    <ng-template #noEntries>-</ng-template>
-                                </td>
-                                <td [style.color]="row.dailySummary.colour">
-                                    <b><span *ngIf="row.dailySummary.status !=='-'">●</span> {{row.dailySummary.status}}</b>
-                                </td>
-                            </tr>
-                        </ng-container>
-                        <ng-template #noDataTemplate>
-                            <tr>
-                                <app-no-data-found />
-                            </tr>
-                        </ng-template>
-                    </tbody>
-                </table>
+                                <ng-template #noEntries>-</ng-template>
+                            </td>
+                            <td [style.color]="row.dailySummary.colour">
+                                <b><span *ngIf="row.dailySummary.status !=='-'">●</span> {{row.dailySummary.status}}</b>
+                            </td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="emptymessage">
+                        <tr>
+                            <td colspan="7">
+                                <div class="wrapper">
+                                    <app-no-data-found />
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
                 } @else {
                 <app-data-loader-content />
                 }

@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { IcardAllocatedDetails, Icardsdetails } from '../../../cards-management/card-allocated-details/card-allocatedmodel';
@@ -14,15 +14,18 @@ import { TranslateModule } from '@ngx-translate/core';
 import { DateformatPipe } from "../../../pipes/dateformat.pipe";
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { TableModule } from 'primeng/table';
+import { Table } from 'primeng/table';
 
 @Component({
   selector: 'app-card-details',
-  imports: [NoDataFoundComponent, DataLoaderContentComponent, TranslateModule, DateformatPipe,CommonModule],
+  imports: [NoDataFoundComponent, DataLoaderContentComponent, TranslateModule, DateformatPipe,CommonModule, TableModule],
   templateUrl: './card-details.component.html',
   styleUrl: './card-details.component.scss'
 })
 export class CardDetailsComponent implements OnInit,OnDestroy {
-hasPreviousPage!: Boolean;
+  @ViewChild('cardDetailsTable') cardDetailsTable!: Table;
+  hasPreviousPage!: Boolean;
   hasNextPage!: Boolean;
   pageSize = 10;
   pageNum = 1;
@@ -40,6 +43,9 @@ hasPreviousPage!: Boolean;
   searchValue: any;
   loader: boolean = false;
   cardDetails = [] as IcardAllocatedDetails[];
+  originalCardDetails = [] as IcardAllocatedDetails[]; // Store original unsorted data
+  currentSortField: string = '';
+  currentSortOrder: number = 0; // 0 = no sort, 1 = asc, -1 = desc
   selectedcardDetails = {} as Icardsdetails;
   actualCardNumber!: string;
   visible: boolean = false;
@@ -94,6 +100,7 @@ hasPreviousPage!: Boolean;
         next: (res: any) => {
           // Transform data to include `employeeName`
           this.cardDetails = res.data.allocations;
+          this.originalCardDetails = [...res.data.allocations];
           this.collectionSize = res.data.totalCount;
           this.hasNextPage = res.data.hasNextPage;
           this.hasPreviousPage = res.data.hasPreviousPage;
@@ -103,6 +110,63 @@ hasPreviousPage!: Boolean;
           console.log(errormessage);
         },
       });
+  }
+
+  customSort(event: any): void {
+    const field = event.field;
+    
+    // Track current sort state for the clicked field
+    if (this.currentSortField === field) {
+      // Same field clicked - cycle through: asc (1) -> desc (-1) -> reset (0)
+      if (this.currentSortOrder === 1) {
+        // Currently ascending, change to descending
+        this.currentSortOrder = -1;
+        event.order = -1;
+      } else if (this.currentSortOrder === -1) {
+        // Currently descending, reset to original order
+        this.cardDetails = [...this.originalCardDetails];
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        if (this.cardDetailsTable) {
+          this.cardDetailsTable.reset();
+        }
+        return;
+      } else {
+        // Currently reset, change to ascending
+        this.currentSortOrder = 1;
+        event.order = 1;
+      }
+    } else {
+      // New field clicked - start with ascending
+      this.currentSortField = field;
+      this.currentSortOrder = 1;
+      event.order = 1;
+    }
+
+    event.data.sort((a: any, b: any) => {
+      let val1: any;
+      let val2: any;
+
+      // Handle direct fields
+      val1 = a[field];
+      val2 = b[field];
+
+      // Handle date fields
+      if (['issuedDate', 'expiryDate', 'allocationDate'].includes(field)) {
+        if (!val1 && !val2) return 0;
+        if (!val1) return event.order * 1; // null dates go to end
+        if (!val2) return event.order * -1;
+        
+        const date1 = new Date(val1);
+        const date2 = new Date(val2);
+        return event.order * (date1.getTime() - date2.getTime());
+      }
+
+      // Handle string sorting for all other fields
+      val1 = String(val1 ?? '').trim();
+      val2 = String(val2 ?? '').trim();
+      return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+    });
   }
 
   onPageSizeChange(pageSize: any) {

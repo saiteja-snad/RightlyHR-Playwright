@@ -97,6 +97,12 @@ export interface IPendingApprovalHeader {
   id: number;
   moduleId: number;
   referenceEntityId: number;
+  status: string;
+  comment?: string;
+  currentapprovalStage: string;
+  currentApproverId: string;
+  finalapprovalStage?: string;
+  approvedType: string;
   requestedBy: number;
   approver_Name: string;
 }
@@ -301,7 +307,8 @@ export interface IApprovalHeader {
 }
 export interface ExpenseApprovalResponse {
   entity: ExpenseEntity;
-  approvalHeader: ApprovalHeader;
+  approvalHeader?: ApprovalHeader; 
+  pendingApprovalHeader?: IPendingApprovalHeader;
   module: Module;
 
 }

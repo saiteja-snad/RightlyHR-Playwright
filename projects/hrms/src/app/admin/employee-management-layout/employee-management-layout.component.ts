@@ -62,7 +62,7 @@ export const employeeManagementHomeActivate: CanActivateFn = async () => {
 
 @Component({
   selector: 'app-employee-management-layout',
-  imports: [CommonModule, RouterModule, TranslateModule, TabsModule, ChartModule, AllEmployeesHeaderComponent, Skeleton, DragDropModule, TabsDndDirective, ApplicablePoliciesTriggerComponent],
+  imports: [CommonModule, RouterModule, TranslateModule, TabsModule, ChartModule, AllEmployeesHeaderComponent, Skeleton, DragDropModule, TabsDndDirective,ApplicablePoliciesTriggerComponent],
   templateUrl: './employee-management-layout.component.html',
   styleUrl: './employee-management-layout.component.scss',
   encapsulation: ViewEncapsulation.None

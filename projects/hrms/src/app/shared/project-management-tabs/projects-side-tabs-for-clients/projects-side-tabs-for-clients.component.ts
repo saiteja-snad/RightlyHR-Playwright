@@ -16,6 +16,7 @@ export class ProjectsSideTabsForClientsComponent {
   filteredTabs: any[] = [];
   statusCounts: any = {};
   projectId: any
+  empinfo = {} as any;
   destroy$: Subject<boolean> = new Subject<boolean>();
   navTabs: any[] = [
     {
@@ -35,6 +36,7 @@ export class ProjectsSideTabsForClientsComponent {
   constructor(public rbac: RbacService, private router: Router, private http: HttpService, private route: ActivatedRoute,) { }
 
   ngOnInit(): void {
+    this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
     this.route.queryParams.subscribe(params => {
       const projectId = params['id'];
       if (projectId) {
@@ -58,7 +60,12 @@ export class ProjectsSideTabsForClientsComponent {
   }
 
   getcountData(projectid: any): void {
-    this.http.getData(`StatusCount?moduleName=Project&entityId=${projectid}`).pipe(takeUntil(this.destroy$)).subscribe({
+    let url = `StatusCount?moduleName=Project&entityId=${projectid}`;
+
+  if (this.rbac.allowedToAccess('View Assigned Projects.view') && !this.rbac.allowedToAccess('View All Projects.view')) {
+    url += `&employeeId=${this.empinfo.employeeId}`;
+  }
+    this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.statusCounts = {};
         res.data.forEach((item: any) => {

@@ -1,7 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Select } from 'primeng/select';
+import { TableModule } from 'primeng/table';
+import { Table } from 'primeng/table';
 import { Ipersonal, IRelation } from '../../../Interfaces/personal-modal';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
@@ -18,12 +20,13 @@ import { Router } from '@angular/router';
 import { AccessForEmployeeinfoService } from '../../../services/access-for-employeeinfo.service';
 @Component({
   selector: 'app-family-details',
-  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, NoDataFoundComponent, TranslateModule, DataLoaderContentComponent],
+  imports: [CommonModule, Select, ReactiveFormsModule, TableModule, DateformatPipe, NoDataFoundComponent, TranslateModule, DataLoaderContentComponent],
   templateUrl: './family-details.component.html',
   styleUrl: './family-details.component.scss'
 })
 
 export class FamilyDetailsComponent implements OnInit, OnDestroy {
+  @ViewChild('familyDetailsTable') familyDetailsTable!: Table;
   subscription!: Subscription;
   familyRelations: IRelation[] = [];
   selectedFamilyMembername: any
@@ -32,10 +35,13 @@ export class FamilyDetailsComponent implements OnInit, OnDestroy {
   selectedFamilyMember: any
   familyDetailsupdateForm!: FormGroup
   selectedFamilyMemberid: any
-  familyDetailsdisplay = new BehaviorSubject<any[]>([]);
+  familyDetailsTableData: any[] = []; // Data bound to the table
+  originalFamilyDetails: any[] = []; // Store original unsorted data for reset
   loading = false
   employedata = {} as Ipersonal;
   currentdata = new Date();
+  currentSortField: string = '';
+  currentSortOrder: number = 0; // 0 = no sort, 1 = asc, -1 = desc
 
   constructor(private modalService: NgbModal, private conformationPopup: OpenModalService, private http: HttpService, 
     private fb: FormBuilder, public formValidation: FormValidationService, public rbac: RbacService, 
@@ -131,7 +137,12 @@ export class FamilyDetailsComponent implements OnInit, OnDestroy {
     this.subscription = this.http.getData(`FamilyMembers/getByEmpId/${EmpId}`).subscribe({
       next: (data: any) => {
         this.loading = false
-        this.familyDetailsdisplay.next(data);
+        // Store the original data for resetting sorts
+        this.originalFamilyDetails = [...data];
+        this.familyDetailsTableData = [...data];
+        // Reset sorting state when new data is loaded
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
       },
       error: (err: any) => {
         this.loading = false
@@ -244,6 +255,71 @@ export class FamilyDetailsComponent implements OnInit, OnDestroy {
     this.familyDetailsForm.reset();
     this.familyDetailsupdateForm.reset();
     this.modalService.dismissAll()
+  }
+
+  getFamilyDetailsData(): any[] {
+    return this.familyDetailsTableData || [];
+  }
+
+  customSort(event: any): void {
+    const field = event.field;
+    
+    // Track current sort state for the clicked field
+    if (this.currentSortField === field) {
+      // Same field clicked - cycle through: asc (1) -> desc (-1) -> reset (0)
+      if (this.currentSortOrder === 1) {
+        // Currently ascending, change to descending
+        this.currentSortOrder = -1;
+        event.order = -1;
+      } else if (this.currentSortOrder === -1) {
+        // Currently descending, reset to original order
+        this.familyDetailsTableData = [...this.originalFamilyDetails];
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        if (this.familyDetailsTable) {
+          this.familyDetailsTable.reset();
+        }
+        return;
+      } else {
+        // Currently reset, change to ascending
+        this.currentSortOrder = 1;
+        event.order = 1;
+      }
+    } else {
+      // New field clicked - start with ascending
+      this.currentSortField = field;
+      this.currentSortOrder = 1;
+      event.order = 1;
+    }
+
+    event.data.sort((a: any, b: any) => {
+      let val1 = a[field];
+      let val2 = b[field];
+
+      // Handle null/undefined values
+      if (val1 == null && val2 == null) return 0;
+      if (val1 == null) return event.order;
+      if (val2 == null) return -event.order;
+
+      // Handle date sorting
+      if (field === 'dateOfBirth') {
+        const date1 = new Date(val1).getTime();
+        const date2 = new Date(val2).getTime();
+        return event.order * (date1 - date2);
+      }
+
+      // Handle boolean sorting
+      if (field === 'isDependent') {
+        const bool1 = val1 ? 1 : 0;
+        const bool2 = val2 ? 1 : 0;
+        return event.order * (bool1 - bool2);
+      }
+
+      // Handle string sorting for all other fields
+      val1 = String(val1).trim();
+      val2 = String(val2).trim();
+      return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+    });
   }
 
   ngOnDestroy(): void {

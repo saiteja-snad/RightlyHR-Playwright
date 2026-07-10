@@ -311,6 +311,7 @@ export class YearlySummaryReportComponent implements OnInit,OnDestroy {
       leaveCategoryName: 'LEAVE CATEGORY',
       entitled: 'ENTITLED',
       availed: 'AVAILED',
+      frozenCount: 'FROZEN',
       balanced: 'BALANCE',
       // Map V2 lowercase keys if different
       year: 'YEAR',
@@ -330,6 +331,7 @@ export class YearlySummaryReportComponent implements OnInit,OnDestroy {
       'LEAVE CATEGORY',
       'ENTITLED',
       'AVAILED',
+      'FROZEN',
       'BALANCE'
     ];
 

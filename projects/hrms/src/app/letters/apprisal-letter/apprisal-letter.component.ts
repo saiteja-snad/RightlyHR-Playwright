@@ -19,6 +19,10 @@ import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormValidationService } from '../../../../../preonboarding/src/app/common-services/form-validation.service';
 import { LetterFooterComponent } from "../../shared/letters-shared-content/letter-footer/letter-footer.component";
 import { LettersheaderComponent } from "../../shared/letters-shared-content/lettersheader/lettersheader.component";
+import pdfMake from 'pdfmake';
+import { customVfs } from '../../letters-builder-files/custom-fonts-vfs';
+import { buildAppraisalLetterDoc } from '../../letters-builder-files/appraisal-letter.builder';
+import { fetchLetterAssets, setupLetterPdfMake } from '../../letters-builder-files/letter-pdf.utils';
 @Component({
   selector: 'app-apprisal-letter',
   imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, TranslateModule, NgbPopoverModule, LetterFooterComponent, LettersheaderComponent],
@@ -137,7 +141,6 @@ export class ApprisalLetterComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.initializeForm();
-    this.getAppraisalTemplate();
     this.getEmployeeId();
     this.getIssuedEmployeebyId();
     this.getAuthorityDetails();
@@ -204,7 +207,7 @@ export class ApprisalLetterComponent implements OnInit, OnDestroy {
   // }
   selectedEmployeeSalary: number = 0; // Add this at class level
 
-    Onclick(fusionemployeeId: any) {
+  Onclick(fusionemployeeId: any) {
     this.fusionEmpId = fusionemployeeId;
     this.appraisalData = this.employeeiddetails.find(
       (c: any) => c.fusionEmpId == fusionemployeeId.fusionEmpId
@@ -212,7 +215,7 @@ export class ApprisalLetterComponent implements OnInit, OnDestroy {
     this.disablebuttonforemployeeid = true;
     this.getCompensationById(this.appraisalData);
     this.getJobdetails(this.appraisalData);
-     if (this.appraisalData?.salary) {
+    if (this.appraisalData?.salary) {
       this.selectedEmployeeSalary = this.appraisalData.salary;
     }
     if (this.appraisalData.gender == 'Male') {
@@ -220,7 +223,7 @@ export class ApprisalLetterComponent implements OnInit, OnDestroy {
     } else {
       return (this.gender = 'Ms.');
     }
-      
+
   }
   bonusValidator = (salary: number): ValidatorFn => {
     return (control: AbstractControl): ValidationErrors | null => {
@@ -594,85 +597,135 @@ export class ApprisalLetterComponent implements OnInit, OnDestroy {
       },
     });
   }
-
   async postAppraisalLetterFormSubmit(f: FormGroup) {
     this.spinnerLoader = true;
     if (this.employeeForm.invalid) {
-      // Mark all fields as touched so validation messages appear
       this.employeeForm.markAllAsTouched();
+      this.spinnerLoader = false;
       return;
     }
-    const data = await this.appraisalData;
-    data.dateofAppraisal = this.formatDate(data.dateofAppraisal);
-    data.compeffectivedate = this.formatDate(data.compeffectivedate);
-    const pdf = new jsPDF('p', 'mm', 'a4');
-    const imgWidth = pdf.internal.pageSize.getWidth();
-    const imgHeight = pdf.internal.pageSize.getHeight();
-    // const pdfContent = document.getElementById('pdfContent');
-    const pdfContent = ['pdfContent1', 'pdfContent2'];
-    const combinedCanvas = document.createElement('canvas');
-    combinedCanvas.width = imgWidth;
-    combinedCanvas.height = pdfContent.length * imgHeight;
-    const imagesData = [];
-    // this.isLoading = true;
-    for (const contentId of pdfContent) {
-      const pdfContent = document.getElementById(contentId);
-      if (pdfContent) {
-        const canvas = await html2canvas(pdfContent, { scale: 3 });
-        const imgData = canvas.toDataURL('image/png');
-        const imgHeight = (canvas.height * imgWidth) / canvas.width;
-        imagesData.push({ imgData, imgHeight });
-      }
+    const data = this.appraisalData;
+    if (!data.firstName || !data.lastName) {
+      this.spinnerLoader = false;
+      return;
     }
-    // Add all images to the PDF except for the last one
-    for (let i = 0; i < imagesData.length - 1; i++) {
-      const imageData = imagesData[i];
-      pdf.addImage(imageData.imgData, 'PNG', 0, 0, imgWidth, imageData.imgHeight, '', 'FAST');
-      pdf.addPage(); // Add a new page for the next image (except for the last one)
-    }
-    // Add the last image without adding a new page
-    if (imagesData.length > 0) {
-      const lastImageData = imagesData[imagesData.length - 1];
-      pdf.addImage(lastImageData.imgData, 'PNG', 0, 0, imgWidth, lastImageData.imgHeight, '', 'FAST');
-    }
-    const fileName = `${data.firstName}_${data.lastName
-      }_${new Date().getTime()}_AppraisalLetter.pdf`;
-    pdf.save(fileName);
-    const blob = pdf.output('blob');
-    //creating form file to upload into AZure
-    this.AppraisalFile = new File([blob], fileName, {
-      type: 'application/pdf',
+    const fileName = `${data.firstName}_${data.lastName}_${Date.now()}_AppraisalLetter.pdf`;
+    const isSoftCopy = data.Documenttype === true;
+    const [assets, pm] = await Promise.all([
+      fetchLetterAssets(isSoftCopy),
+      setupLetterPdfMake(),
+    ]);
+    const docDef = buildAppraisalLetterDoc({
+      firstName: data.firstName || '',
+      middleName: data.middleName || '',
+      lastName: data.lastName || '',
+      gender: this.gender || '',
+      jobRole: data.jobRole || this.employeeJobDetails?.jobRole || '',
+      letterDate: data.dateofAppraisal || new Date().toISOString(),
+      compEffectiveDate: data.compeffectivedate || '',
+      totalCTC: data.salary || 0,
+      isPromotion: this.employeeForm.get('isPromotion')?.value || false,
+      newJobRole: this.employeeForm.get('JobRole')?.value?.value || '',
+      reviewDate: data.reviewdate || '',
+      variablePayAmount: data.variablePayAmount || 0,
+      note: data.note || '',
+      basicSalary: data.basicSalary,
+      basicPerannum: data.basicPerannum,
+      hraSalary: data.hraSalary,
+      hraPerAnnum: data.hraPerAnnum,
+      otherAllowances: data.otherAllowances,
+      otherAllowancesPerAnnum: data.otherAllowancesPerAnnum,
+      totalGrossSalary: data.totalGrossSalary,
+      totalGrossPerAnnum: data.totalGrossPerAnnum,
+      pfContribution: data.pfContribution,
+      pfPreAnuum: data.pfPreAnuum,
+      employeeEsi: data.employeeEsi,
+      esiPerAnnumemployee: data.esiPerAnnumemployee,
+      professionalTax: data.professionalTax,
+      professionalPerAnnum: data.professionalPerAnnum,
+      educationAllowances: data.educationAllowances,
+      educationallowancesPerAnnum: data.educationallowancesPerAnnum,
+      totalDeduction: data.totalDeduction,
+      totalDeductionsPerAnnum: data.totalDeductionsPerAnnum,
+      netSalary: data.netSalary,
+      netSalaryPerAnnum: data.netSalaryPerAnnum,
+      esicContribution: data.esicContribution,
+      esiPerAnnum: data.esiPerAnnum,
+      grossSalary: data.grossSalary || this.grossSalary,
+      salary: data.salary,
+      authorityFullName: data.authorityName || '',
+      authorityDesignation: this.authorityDesignation || '',
+      backgroundImageBase64: assets.backgroundImageBase64,
+      headerLogoBase64: assets.headerLogoBase64,
+      useVerdanaFont: true,
+      useAutographyFont: true,
     });
-    this.documentGenerated = true; // <-- Add this line
-    this.spinnerLoader = false;
-    // this.conformationPopup.openSuccessModal('Appraisal letter generated successfully');
-    this.uploadAppraisalLetter();
-    this.updateJobDetails();
-    this.updateCompensationDetails();
+
+    try {
+      const blob: Blob = await pm.createPdf(docDef).getBlob();
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = fileName;
+      link.click();
+      URL.revokeObjectURL(link.href);
+      this.AppraisalFile = new File([blob], fileName, { type: 'application/pdf' });
+      this.documentGenerated = true;
+      this.spinnerLoader = false;
+      this.uploadAppraisalLetter();
+      this.updateJobDetails();
+      this.updateCompensationDetails();
+    } catch (err) {
+      console.error('PDF generation failed:', err);
+      this.spinnerLoader = false;
+      this.conformationPopup.openErrorModal('Failed to generate Appraisal Letter');
+    }
+  }
+
+  private fetchImageAsBase64(url: string): Promise<string> {
+    return fetch(url).then(res => res.blob()).then(blob => new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result as string);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    }));
+  }
+
+  private async getFileBase64(url: string): Promise<string | null> {
+    try {
+      const response = await fetch(url);
+      if (!response.ok) return null;
+      const buffer = await response.arrayBuffer();
+      const bytes = new Uint8Array(buffer);
+      let binary = '';
+      for (let i = 0; i < bytes.byteLength; i++) {
+        binary += String.fromCharCode(bytes[i]);
+      }
+      return btoa(binary);
+    } catch {
+      return null;
+    }
   }
 
   updateJobDetails() {
     let data = this.employeeJobDetails;
     this.appraisalData.status = 'Active';
     const jobdata = {
-      employeeId: data?.employeeId,
-      effectiveDate: this.employeeCompensationDetails?.compeffectivedate,
-      locationid: data?.locationid,
-      sublocationid: data?.sublocationid,
+      employeeId: data.employeeId,
+      effectiveDate: this.employeeCompensationDetails.compeffectivedate,
+      locationid: data.locationid,
+      sublocationid: data.sublocationid,
       jobRole: this.employeeForm.get('JobRole')?.value?.value,
       status: 'Active',
-      subdeptId: data?.subdeptId,
-      createddate: data?.createddate,
+      subdeptId: data.subdeptId,
+      createddate: data.createddate,
       gradeId: this.gradeIdValue?.gradeId ? this.gradeIdValue?.gradeId : data?.gradeId,
-      reportsto: data?.reportsto,
-      shiftId: data?.shiftId,
-      jobTypeId: data?.jobTypeId,
-      lopcation: data?.lopcation,
-      bussinessArea: data?.bussinessArea,
-      updateddate: data?.updateddate,
+      reportsto: data.reportsto,
+      shiftId: data.shiftId,
+      jobTypeId: data.jobTypeId,
+      lopcation: data.lopcation,
+      bussinessArea: data.bussinessArea,
+      updateddate: data.updateddate,
     };
-    console.log(jobdata);
-
     this.subscription = this.http.postdata('JobDetails', jobdata).subscribe({
       next: (data: any) => {
       },
@@ -697,7 +750,7 @@ export class ApprisalLetterComponent implements OnInit, OnDestroy {
       isVariablePay: this.appraisalData.isVariablePay,
       status: 'Active',
       compensationcomments: data.compensationcomments,
-      bonusAmountData: this.appraisalData.bonus,
+      // bonusAmountData: this.appraisalData.bonus,
       nextCompReviewDate: this.appraisalData.reviewdate,
     };
     this.subscription = this.http.postdata('Compensationdata/UPDATER', Compensationdataupdate).subscribe({
@@ -720,120 +773,36 @@ export class ApprisalLetterComponent implements OnInit, OnDestroy {
     });
   }
 
-  //to get appraisal letter template
-  async getAppraisalTemplate() {
-    this.appraisalTemplate = await this.httpclient.get('assets/Performance_Appraisal_Letter.docx', {
-      responseType: 'arraybuffer',
-    })
-      .toPromise();
-  }
 
-  //to Upload Appraisal letter
-  // uploadAppraisalLetter() {
-  //   let loggedInUser = this.authService.getToken();
-  //   let filePath = `/FusionDocuments/Employee Documents/Appraisal Letters/${this.appraisalData.employeeId}`;
-  //   this.subscription = this.http.uploadFileWithQuery('FileSystem/uploadfiletodirectory',
-  //     filePath,
-  //     this.AppraisalFile
-  //   ).subscribe({
-  //     next: (data: any) => {
-  //       if (data) {
-  //         this.result.documentUrl = data.path;
-  //         // this.dataSuccessMsg('Appraisal Letter Generated Successfully');
-  //         this.conformationPopup.openSuccessModal('Appraisal letter generated successfully');
-  //         // this.router.navigate(['/admin/active']);
-  //       }
-  //       let emaildetails = {
-  //         personEmail: this.appraisalData.workEmail,
-  //         senderName: `${loggedInUser.firstName} ${loggedInUser.middleName} ${loggedInUser.lastName}`,
-  //         senderEmail: loggedInUser.workEmail,
-  //         firstName: this.appraisalData.firstName,
-  //         lastName: this.appraisalData.lastName,
-  //         middleName: this.appraisalData.middleName,
-  //         personRole: this.appraisalData.jobRole,
-  //         documentUrl: this.result.documentUrl,
-  //         compeffectivedate: this.employeeCompensationData.compeffectivedate,
-  //         employeeId: this.appraisalData.employeeId,
-  //         compensationamount: this.appraisalData.salary,
-  //         effectiveDate : this.employeeCompensationData.compeffectivedate,
-  //         jobRole : this.employeeForm.get('JobRole')?.value?.value,
-  //         generatedBy: this.appraisalData.employeeId,
-  //         generatedDate: new Date().toISOString(),
-
-  //       };
-  //       if (loggedInUser.middleName) {
-  //         emaildetails.senderName = `${loggedInUser.firstName} ${loggedInUser.middleName} ${loggedInUser.lastName}`;
-  //       } else {
-  //         emaildetails.senderName = `${loggedInUser.firstName} ${loggedInUser.lastName}`;
-  //       }
-  //       const ispromotion =this.employeeForm.get('isPromotion')?.value
-  //       this.subscription = this.http.postdata(`CustomEmail/AppraisalPromotionLetter?isPromotion=${ispromotion}`, emaildetails,).subscribe({
-  //         next: (data: any) => {
-  //           this.conformationPopup.openSuccessModal('Email has been sent successfully');
-  //           setTimeout(() => {
-  //             this.navigateDashboard();
-  //           }, 3000)
-  //         },
-  //         error: (err: any) => {
-  //           this.spinnerLoader = false;
-  //           console.log(err);
-  //         },
-  //         complete: () => {
-  //           this.spinnerLoader = false;
-  //         },
-  //       });
-  //       this.postAppraisalLetter();
-  //     },
-  //     error: (reason: any) => {
-  //       this.spinnerLoader = false;
-  //     },
-  //   });
-  // }
 
   uploadAppraisalLetter() {
     const filePath = `/FusionDocuments/Employee Documents/Appraisal Letters/${this.appraisalData.employeeId}`;
-
-    this.subscription = this.http
-      .uploadFileWithQuery(
-        'FileSystem/uploadfiletodirectory',
-        filePath,
-        this.AppraisalFile
-      )
-      .subscribe({
-        next: (data: any) => {
-          if (!data?.path) throw new Error('File upload failed');
-
-          this.result.documentUrl = data.path;
-          this.postAppraisalLetter();
-        },
-        error: (err) => {
-          this.spinnerLoader = false;
-          console.error('Upload or Email Error:', err);
-          this.conformationPopup.openErrorModal(
-            'Something went wrong during upload/email.'
-          );
-        },
-        complete: () => {
-
-        },
-      });
+    this.subscription = this.http.uploadFileWithQuery('FileSystem/uploadfiletodirectory', filePath, this.AppraisalFile).subscribe({
+      next: (data: any) => {
+        if (!data?.path) throw new Error('File upload failed');
+        this.result.documentUrl = data.path;
+        this.postAppraisalLetter();
+      },
+      error: (err) => {
+        this.spinnerLoader = false;
+        console.error('Upload or Email Error:', err);
+        this.conformationPopup.openErrorModal('Something went wrong during upload/email.');
+      },
+      complete: () => {
+      },
+    });
   }
 
   postAppraisalLetter() {
     const loggedInUser = this.authService.getToken();
-    console.log(this.appraisalData.dateofAppraisal);
     // const [day, month, year] = this.appraisalData.dateofAppraisal.split('/');
     // const issuedDate = new Date(`${year}-${month}-${day}`).toISOString();
     const [day, month, year] = this.appraisalData.dateofAppraisal.split('/');
     const originalDate = new Date(`${year}-${month}-${day}`);
-
     // Add one day (in milliseconds)
     originalDate.setDate(originalDate.getDate() + 1);
-
     // Convert to ISO format
     const issuedDate = originalDate.toISOString();
-
-    console.log(issuedDate);
     const payload = {
       employeeId: this.appraisalData.employeeId,
       status: 'Released',
@@ -845,32 +814,26 @@ export class ApprisalLetterComponent implements OnInit, OnDestroy {
       letterType: 'Appraisal Letter',
       note: this.appraisalData.note,
       authoritySignature: this.appraisalData.authorityid,
-      generatedBy: this.appraisalData.employeeId,
+      generatedBy: loggedInUser.employeeId,
       issuedDate: issuedDate,
       docType: this.appraisalData.Documenttype,
       candidateStatus: 'Generated',
       jobId: this.appraisalData.jobId,
       compensationDataId: this.appraisalData.compId,
-      isPromotion: this.employeeForm.get('isPromotion')?.value
+      isPromotion: this.employeeForm.get('isPromotion')?.value,
+      newJobRole: this.employeeForm.get('JobRole')?.value?.value || ''
     };
-
-    this.http
-      .postdata(
-        'AppraisalLetter/postgeneratedappraisalpromotionletter',
-        payload
-      )
-      .subscribe({
-        next: (response) => {
-          this.conformationPopup.openSuccessModal(
-            'Appraisal letter generated successfully'
-          );
-          // this.sendEmail();
-        },
-        error: (error) => {
-          console.error('Error posting letter:', error);
-        },
-      });
+    this.http.postdata('AppraisalLetter/postgeneratedappraisalpromotionletter', payload).subscribe({
+      next: (response) => {
+        this.conformationPopup.openSuccessModal('Appraisal letter generated successfully');
+        // this.sendEmail();
+      },
+      error: (error) => {
+        console.error('Error posting letter:', error);
+      },
+    });
   }
+
   sendEmail() {
     const loggedInUser = this.authService.getToken();
     const emaildetails = {
@@ -888,26 +851,25 @@ export class ApprisalLetterComponent implements OnInit, OnDestroy {
       compensationamount: this.appraisalData.salary,
       effectiveDate: this.formatDates(this.employeeCompensationData?.compeffectivedate),
       jobRole: this.appraisalData.jobRole,
-      generatedBy: this.appraisalData.employeeId,
+      generatedBy: loggedInUser.employeeId,
       generatedDate: new Date().toISOString(),
       compeffectivedate: this.formatDates(this.employeeCompensationData?.compeffectivedate),
     };
-    this.subscription = this.http
-      .postdata(`CustomEmail/Appraisalletter`, emaildetails)
-      .subscribe({
-        next: (data: any) => {
-          this.spinnerLoader = false;
-          this.conformationPopup.openSuccessModal(
-            'Email has been sent successfully'
-          );
-          this.navigateDashboard()
-        },
-        error: (error) => {
-          this.spinnerLoader = false;
-          console.error('Error posting letter:', error);
-        },
-      });
+    this.subscription = this.http.postdata(`CustomEmail/Appraisalletter`, emaildetails).subscribe({
+      next: (data: any) => {
+        this.spinnerLoader = false;
+        this.conformationPopup.openSuccessModal('Email has been sent successfully');
+        this.navigateDashboard()
+      },
+      error: (error) => {
+        this.spinnerLoader = false;
+        console.error('Error posting letter:', error);
+      },
+    });
   }
+
+
+
   //to format Date
   formatDate(date: any) {
     return date?.split('T')[0];
@@ -1107,11 +1069,11 @@ export class ApprisalLetterComponent implements OnInit, OnDestroy {
       dateofAppraisal: ['', Validators.required],
       reviewdate: [{ value: '', disabled: true }, Validators.required],
       JobRole: [''],
-       Documenttype: [null, Validators.required],
+      Documenttype: [null, Validators.required],
       note: [''],
       authorityid: [null, Validators.required],
       isPromotion: [false, Validators.required],
-     isVariablePay: [{ value: '' }, Validators.required],
+      isVariablePay: [{ value: '' }, Validators.required],
       variablePayAmount: [{ value: '' }, Validators.required],
       // bonus: ['']
     })

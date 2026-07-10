@@ -16,83 +16,89 @@
 
   <div class="custom-table-content">
     @if(!loading){
-    <table class="w-100">
-      <thead>
+    <p-table #contractorTable [value]="(dynamicData | async) ?? []" [customSort]="true" (sortFunction)="customSort($event)"
+             styleClass="p-datatable-sm" [tableStyle]="{'min-width': '70rem'}">
+      <ng-template pTemplate="header">
         <tr>
-          <th>{{'Request Date'|translate}}</th>
-          <!-- <th class="text-center">Contract Duration(Days)</th> -->
-          <th class="text-center">{{'Contract Start Date'|translate}}</th>
-          <th class="text-center">{{'Contract End Date'|translate}}</th>
-          <th class="text-center">{{'Contract Extension Date'|translate}}</th>
-          <!-- <th class="text-center">Contract Conversion Requested Date</th> -->
-          <th class="text-center">{{'Contract Conversion Date'|translate}}</th>
-          <th>{{'Contract Type'|translate}}</th>
+          <th pSortableColumn="requestedDate">
+            {{'Request Date'|translate}}
+            <p-sortIcon field="requestedDate"></p-sortIcon>
+          </th>
+          <th class="text-center" pSortableColumn="contractStartDate">
+            {{'Contract Start Date'|translate}}
+            <p-sortIcon field="contractStartDate"></p-sortIcon>
+          </th>
+          <th class="text-center" pSortableColumn="contractEndDate">
+            {{'Contract End Date'|translate}}
+            <p-sortIcon field="contractEndDate"></p-sortIcon>
+          </th>
+          <th class="text-center" pSortableColumn="contractExtendedDate">
+            {{'Contract Extension Date'|translate}}
+            <p-sortIcon field="contractExtendedDate"></p-sortIcon>
+          </th>
+          <th class="text-center" pSortableColumn="conversionProcessedDate">
+            {{'Contract Conversion Date'|translate}}
+            <p-sortIcon field="conversionProcessedDate"></p-sortIcon>
+          </th>
+          <th pSortableColumn="contractType">
+            {{'Contract Type'|translate}}
+            <p-sortIcon field="contractType"></p-sortIcon>
+          </th>
           <th>{{'Approver History'|translate}}</th>
-          <th>{{'Status'|translate}}</th>
-          <!-- <th>Conversion Status</th> -->
+          <th pSortableColumn="status">
+            {{'Status'|translate}}
+            <p-sortIcon field="status"></p-sortIcon>
+          </th>
           <th></th>
         </tr>
-      </thead>
-      <tbody>
-        <ng-container *ngIf="((dynamicData | async) ?? []).length > 0; else noDataTemplate">
-          <tr *ngFor="let item of dynamicData | async; let first = first">
-            <td>{{ item.requestedDate ? (item.requestedDate | dateformat) : ('NA'|translate) }}</td>
-            <td class="text-center text-nowrap">{{ item.contractStartDate ?  (item.contractStartDate| dateformat) : ('NA'|translate) }}</td>
-            <td class="text-center text-nowrap">{{ item.contractEndDate ? (item.contractEndDate| dateformat) : ('NA'|translate) }}</td>
-            <td class="text-center text-nowrap">{{ item.contractExtendedDate ? (item.contractExtendedDate | dateformat) : ('NA'|translate) }}</td>
-            <td class="text-center text-nowrap">{{ item.conversionProcessedDate ? (item.conversionProcessedDate | dateformat) : ('NA'|translate) }}</td>
-            <td class="text-center text-nowrap">{{ item.contractType }}</td> 
-            <td class="text-center">
-              <span *ngIf="item.approvers && item.approvers.length > 0; else feedbackComment">
-                <div (click)="fustiontostorefeedback(item.approvers,EmployeeComments)">
-                  <app-info-icon />
-                </div>
+      </ng-template>
+      <ng-template pTemplate="body" let-item let-first="first">
+        <tr>
+          <td>{{ item.requestedDate ? (item.requestedDate | dateformat) : ('NA'|translate) }}</td>
+          <td class="text-center text-nowrap">{{ item.contractStartDate ?  (item.contractStartDate| dateformat) : ('NA'|translate) }}</td>
+          <td class="text-center text-nowrap">{{ item.contractEndDate ? (item.contractEndDate| dateformat) : ('NA'|translate) }}</td>
+          <td class="text-center text-nowrap">{{ item.contractExtendedDate ? (item.contractExtendedDate | dateformat) : ('NA'|translate) }}</td>
+          <td class="text-center text-nowrap">{{ item.conversionProcessedDate ? (item.conversionProcessedDate | dateformat) : ('NA'|translate) }}</td>
+          <td class="text-center text-nowrap">{{ item.contractType }}</td> 
+          <td class="text-center">
+            <span *ngIf="item.approvers && item.approvers.length > 0; else feedbackComment">
+              <div (click)="fustiontostorefeedback(item.approvers,EmployeeComments)">
+                <app-info-icon />
+              </div>
+            </span>
+            <ng-template #feedbackComment>{{'NA'|translate}}</ng-template>
+          </td>
+          <td>{{ item.status ? item.status : ('NA'|translate) }}</td>
+          <td class="text-center" [ngClass]="{ 'disabled-button': isEditing }">
+            @if(first && (item.status==='Processed' && this.empdata.substatus === 'Contract Converted' &&
+            this.empdata.empstatus === 'Active Contract')){
+            <div class="dropdown">
+              <span type="button" data-bs-toggle="dropdown">
+                <i class="bi bi-three-dots-vertical"></i>
               </span>
-              <ng-template #feedbackComment>{{'NA'|translate}}</ng-template>
-            </td>
-            <td>{{ item.status ? item.status : ('NA'|translate) }}</td>
-            <td class="text-center" [ngClass]="{ 'disabled-button': isEditing }">
-              <!-- @if(first && (( item.status ==='Rejected' || item.status ==='Processed') && (this.empdata.substatus === 'NDA Letter Accepted' || this.empdata.substatus === 'Contract Extended') &&
-              this.empdata.empstatus === 'Active Contract') && disablebuttonforonboard3){
-              <div class="dropdown">
-                <span type="button" data-bs-toggle="dropdown">
-                  <i class="bi bi-three-dots-vertical"></i>
-                </span>
-                <ul class="dropdown-menu custom-dropdown-menu">
-                  <li>
-                    <a class="dropdown-item" (click)="openmodel(reRequest,item)">
-                      Re-Request
-                    </a>
-                  </li>
-                </ul>
-              </div>
-              } -->
-              @if(first && (item.status==='Processed' && this.empdata.substatus === 'Contract Converted' &&
-              this.empdata.empstatus === 'Active Contract')){
-              <div class="dropdown">
-                <span type="button" data-bs-toggle="dropdown">
-                  <i class="bi bi-three-dots-vertical"></i>
-                </span>
-                <ul class="dropdown-menu custom-dropdown-menu">
-                  <li
-                    *ngIf="item.status==='Processed' && this.empdata.substatus === 'Contract Converted' && this.empdata.empstatus === 'Active Contract'">
-                    <a class="dropdown-item" (click)="openmodel(readyforonboardrequest,item)">
-                      {{'Ready For Onboard'|translate}}
-                    </a>
-                  </li>
-                </ul>
-              </div>
-              }
-            </td>
-          </tr>
-        </ng-container>
-        <ng-template #noDataTemplate>
+              <ul class="dropdown-menu custom-dropdown-menu">
+                <li
+                  *ngIf="item.status==='Processed' && this.empdata.substatus === 'Contract Converted' && this.empdata.empstatus === 'Active Contract'">
+                  <a class="dropdown-item" (click)="openmodel(readyforonboardrequest,item)">
+                    {{'Ready For Onboard'|translate}}
+                  </a>
+                </li>
+              </ul>
+            </div>
+            }
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <div class="wrapper">
           <tr>
-            <app-no-data-found />
+            <td colspan="9">
+              <app-no-data-found />
+            </td>
           </tr>
-        </ng-template>
-      </tbody>
-    </table>
+        </div>
+      </ng-template>
+    </p-table>
     }
     @else {
     <app-data-loader-content />

@@ -6,10 +6,10 @@
     <div class="custom-component-right-content">
         <div class="component-tabs-accordian">
             <ul class="accordian-tabs-list-content">
-                <p-accordion value="0">
+                <p-accordion [value]="activeAccordionValue" (valueChange)="onAccordionChange($event)">
                     <!--Employee Fields-->
                     @if(rbac.allowedToAccess('Employee Fields Module.view')){
-                    <li class="accordian-list-item">
+                    <li class="accordian-list-item" id="settings-panel-0">
                         <p-accordion-panel value="0">
                             <p-accordion-header>
                                 <div>
@@ -29,7 +29,7 @@
                     }
                     @if(rbac.allowedToAccess('Roles.view')){
                     <!--Roles & Permissions-->
-                    <li class="accordian-list-item">
+                    <li class="accordian-list-item" id="settings-panel-1">
                         <p-accordion-panel value="1">
                             <p-accordion-header>
                                 <div>
@@ -48,7 +48,7 @@
                     }
                     @if(rbac.allowedToAccess('Settings Timeoff Module.view')){
                     <!--Time Off-->
-                    <li class="accordian-list-item">
+                    <li class="accordian-list-item" id="settings-panel-2">
                         <p-accordion-panel value="2">
                             <p-accordion-header>
                                 <div>
@@ -68,7 +68,7 @@
                     }
                     @if(rbac.allowedToAccess('Assets Management Configuration Module.view')){
                     <!--Asset Configuration-->
-                    <li class="accordian-list-item">
+                    <li class="accordian-list-item" id="settings-panel-3">
                         <p-accordion-panel value="3">
                             <p-accordion-header>
                                 <div>
@@ -88,7 +88,7 @@
                     }
                     @if(rbac.allowedToAccess('PMS Configurations.view')){
                     <!--PMS Configuration-->
-                    <li class="accordian-list-item">
+                    <li class="accordian-list-item" id="settings-panel-4">
                         <p-accordion-panel value="4">
                             <p-accordion-header>
                                 <div>
@@ -108,7 +108,7 @@
                     }
                     @if(rbac.allowedToAccess('Dynamic Forms Module.view')){
                     <!--Dynamic Forms-->
-                    <li class="accordian-list-item">
+                    <li class="accordian-list-item" id="settings-panel-5">
                         <p-accordion-panel value="5">
                             <p-accordion-header>
                                 <div>
@@ -125,11 +125,11 @@
                         </p-accordion-panel>
                     </li>
                     }
-
                     @if(rbac.allowedToAccess('Project Management Configuration Module.view')){
                     <!--Attendance Configuration-->
                     <li class="accordian-list-item"
-                        (click)="navigateToAccessedRoute('/settings/project-management-config')">
+                        (click)="navigateToAccessedRoute('/settings/project-management-config', 'settings-panel-6')"
+                        id="settings-panel-6">
                         <p-accordion-panel value="6">
                             <p-accordion-header>
                                 <div>
@@ -144,29 +144,9 @@
                         </p-accordion-panel>
                     </li>
                     }
-
-
-                    @if(rbac.allowedToAccess('Attendance Configuration Module.view')){
-                    <!--Attendance Configuration-->
-                    <li class="accordian-list-item"
-                        (click)="navigateToAccessedRoute('/settings/attendance-configuration')">
-                        <p-accordion-panel value="6">
-                            <p-accordion-header>
-                                <div>
-                                    <div class="d-flex align-items-center gap-2 mb-2">
-                                        <img src="/main-menu-icons/attendance-locking-icon.png" alt="Icon"
-                                            class="list-icon">
-                                        <div class="list-label-name">{{ 'Attendance Locking' | translate }}</div>
-                                    </div>
-                                    <p class="list-description m-0">{{settingAttendanceConfigurationModule}}</p>
-                                </div>
-                            </p-accordion-header>
-                        </p-accordion-panel>
-                    </li>
-                    }
                     @if(rbac.allowedToAccess('Locking System Configuration Module.view')){
                     <!--Time Off-->
-                    <li class="accordian-list-item">
+                    <li class="accordian-list-item" id="settings-panel-7">
                         <p-accordion-panel value="7">
                             <p-accordion-header>
                                 <div>
@@ -185,7 +165,9 @@
                     </li>
                     }
                     @if(rbac.allowedToAccess('IT Support Configuration.view')){
-                    <li class="accordian-list-item" (click)="navigateToAccessedRoute('/settings/it-configuration')">
+                    <li class="accordian-list-item"
+                        (click)="navigateToAccessedRoute('/settings/it-configuration', 'settings-panel-8')"
+                        id="settings-panel-8">
                         <p-accordion-panel value="8">
                             <p-accordion-header>
                                 <div>
@@ -204,7 +186,7 @@
                     }
 
                     @if(rbac.allowedToAccess('Employee Fields Config Update Module.view')){
-                    <li class="accordian-list-item">
+                    <li class="accordian-list-item" id="settings-panel-9">
                         <p-accordion-panel value="9">
                             <p-accordion-header>
                                 <div>
@@ -223,7 +205,9 @@
                     </li>
                     }
                      @if(rbac.allowedToAccess('Rate Card Configuration Module.view')){
-                    <li class="accordian-list-item" (click)="navigateToAccessedRoute('/settings/employee-rate-card/rate-card')">
+                    <li class="accordian-list-item"
+                        (click)="navigateToAccessedRoute('/settings/employee-rate-card/rate-card', 'settings-panel-10')"
+                        id="settings-panel-10">
                         <p-accordion-panel value="10">
                             <p-accordion-header>
                                 <div>
@@ -241,8 +225,9 @@
                     @if(rbac.allowedToAccess('Helpdesk Configuration Module.view')){
                     <!--Help Desk Configuration-->
                     <li class="accordian-list-item"
-                        (click)="navigateToAccessedRoute('/settings/helpdesk-management-config')">
-                        <p-accordion-panel value="6">
+                        (click)="navigateToAccessedRoute('/settings/helpdesk-management-config', 'settings-panel-11')"
+                        id="settings-panel-11">
+                        <p-accordion-panel value="11">
                             <p-accordion-header>
                                 <div>
                                     <div class="d-flex align-items-center gap-2 mb-2">
@@ -256,7 +241,6 @@
                         </p-accordion-panel>
                     </li>
                     }
-
                 </p-accordion>
             </ul>
         </div>

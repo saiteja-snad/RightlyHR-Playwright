@@ -26,6 +26,8 @@ import { FormValidationsService } from '../../../../services/form-validations.se
 import { ConfirmationIconComponent } from "../../../../icons/confirmation-icon/confirmation-icon.component";
 import moment from 'moment';
 import { SelectModule } from 'primeng/select';
+import { TableModule } from 'primeng/table';
+import { Table } from 'primeng/table';
 @Component({
   selector: 'app-claimsandexpenses-for-you-request',
   imports: [
@@ -43,15 +45,15 @@ import { SelectModule } from 'primeng/select';
     InfoIconComponent,
     DataLoaderContentComponent,
     ConfirmationIconComponent,
-    SelectModule
+    SelectModule,
+    TableModule
 ],
   templateUrl: './claimsandexpenses-for-you-request.component.html',
   styleUrl: './claimsandexpenses-for-you-request.component.scss',
   encapsulation: ViewEncapsulation.None,
 })
 export class ClaimsandexpensesForYouRequestComponent
-  implements OnInit, OnDestroy
-{
+  implements OnInit, OnDestroy {
   totalRecords = 100;
   first: any = 0;
   rows: any = 10;
@@ -62,6 +64,7 @@ export class ClaimsandexpensesForYouRequestComponent
     { label: 20, value: 20 },
     { label: 25, value: 25 },
   ];
+  originalData: any[] = [];
   subscription!: Subscription;
   destroy$: Subject<boolean> = new Subject<boolean>();
   loading: boolean = false;
@@ -79,6 +82,7 @@ export class ClaimsandexpensesForYouRequestComponent
   storeapprovalRequest!: ExpenseApprovalResponse;
   @ViewChild('viewattamchment') private viewattamchment!: NgbModal;
   @ViewChild('verificationViewattamchment') private verificationViewattamchment!: NgbModal;
+  @ViewChild('expenseTable') expenseTable!: Table;
   // approverComments = [] as AttendanceRequestC[];
   @ViewChild('commentspopup') modalContent: any;
   @ViewChild('checklistconfirmationmodal') checklistconfirmationmodal: any;
@@ -92,6 +96,9 @@ export class ClaimsandexpensesForYouRequestComponent
   paymentmodedata= [] as any[];
   allVerifiedMap: Map<number, boolean> = new Map<number, boolean>();
   isloading:boolean=false;
+  originalExpenseData = [] as ExpenseApprovalResponse[]; // Store original unsorted data
+  currentSortField: string = '';
+  currentSortOrder: number = 0; // 0 = no sort, 1 = asc, -1 = desc
   constructor(
     private modalService: NgbModal,
     private fb: FormBuilder,
@@ -101,7 +108,7 @@ export class ClaimsandexpensesForYouRequestComponent
     public rbac: RbacService,
     private signalService: SignalsService,
     public formsValidation: FormValidationsService,
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
@@ -122,6 +129,8 @@ export class ClaimsandexpensesForYouRequestComponent
       },
     })
   }
+ 
+
   getCheckListData() {
     this.http
       .getData(`ExpensesCheckListConfiguration/getall`)
@@ -138,16 +147,16 @@ export class ClaimsandexpensesForYouRequestComponent
         }
       });
   }
- onStatusApproveSelect(status: string) {
-  this.selectedLeaveStatus = status;
 
-  if (status === 'approved') {
-    this.approveForm.get('comments')?.setValue('Approved');
-  }
-  if (status === 'requested clarification') {
-      this.approveForm.get('comments')?.setValue('Requested Clarification');
+  onStatusApproveSelect(status: string) {
+    this.selectedLeaveStatus = status;
+
+    if (status === 'approved') {
+      this.approveForm.get('comments')?.setValue('Approved');
     }
-}
+  }
+ 
+
 
   onStatusRejectSelect(status: string) {
     this.selectedLeaveStatus = status;
@@ -155,7 +164,7 @@ export class ClaimsandexpensesForYouRequestComponent
       this.rejectForm.get('comments')?.setValue('Rejected');
     }
   }
-   onStatusVerifySelect(status: string) {
+  onStatusVerifySelect(status: string) {
     this.selectedLeaveStatus = status;
 
     if (status === 'verified') {
@@ -170,32 +179,34 @@ export class ClaimsandexpensesForYouRequestComponent
     this.approveForm = this.fb.group({
       comments: ['', [Validators.required, Validators.maxLength(250)]],
     });
-     this.approveForm.get('comments')?.valueChanges.subscribe((value: string) => {
-    if (!value || value.trim() === '') {
-      this.selectedLeaveStatus = null; // remove chip highlight if cleared
-    }
-  });
+    this.approveForm.get('comments')?.valueChanges.subscribe((value: string) => {
+      if (!value || value.trim() === '') {
+        this.selectedLeaveStatus = null; // remove chip highlight if cleared
+      }
+    });
   }
 
   intializeRejectForm() {
     this.rejectForm = this.fb.group({
       comments: ['', [Validators.required, Validators.maxLength(250)]],
     });
-     this.rejectForm.get('comments')?.valueChanges.subscribe((value: string) => {
-    if (!value || value.trim() === '') {
-      this.selectedLeaveStatus = null; // remove chip highlight if cleared
-    }
-  });
+    this.rejectForm.get('comments')?.valueChanges.subscribe((value: string) => {
+      if (!value || value.trim() === '') {
+        this.selectedLeaveStatus = null; // remove chip highlight if cleared
+      }
+    });
   }
 
-   intializeMarkAsPaidForm() {
+  intializeMarkAsPaidForm() {
     this.markAsPaidForm = this.fb.group({
       paymentDate: ['', [Validators.required]],
       paymentMode: ['', [Validators.required]],
-      transactionId: ['', [ Validators.maxLength(50), Validators.pattern(/^[^\s].*$/)]],
+      transactionId: ['', [Validators.maxLength(50), Validators.pattern(/^[^\s].*$/)]],
       comments: ['', [Validators.maxLength(500)]]
     });
   }
+
+   
 
   getAllPendingApprovals() {
     this.loading = true;
@@ -215,16 +226,17 @@ export class ClaimsandexpensesForYouRequestComponent
               item.approvalHeader.status != 'Processed' &&
               item.approvalHeader.status != 'Rejected'
           );
+          this.originalExpenseData = [...this.expenseheaderpending];
         },
         error: (reason) => {
           this.loading = false;
         },
       });
   }
- getApprovalStatusCounts() {
+  getApprovalStatusCounts() {
     this.http.get(`PendingApproval/getApprovalStatusCounts?moduleId=19&EmployeeId=${this.empinfo.employeeId}`).subscribe((res: any) => {
       this.totalCount = res.reduce((acc: number, curr: any) => acc + curr.totalCount, 0);
-       this.http.updatePendingApprovalCounts(this.totalCount);
+      this.http.updatePendingApprovalCounts(this.totalCount);
     });
   }
   openModal(content: any) {
@@ -378,7 +390,7 @@ export class ClaimsandexpensesForYouRequestComponent
   }
 
   handleProcess(request: ExpenseApprovalResponse) {
-    this.isloading=true;
+    this.isloading = true;
     let requestBody = {
       status: 'Processed',
       approvedBy: this.empinfo.employeeId.toString(),
@@ -415,7 +427,7 @@ export class ClaimsandexpensesForYouRequestComponent
           this.sharedModalService.openErrorModal(reason.error.Message);
         },
         complete: () => {
-           this.http.triggerActionSignal();
+          this.http.triggerActionSignal();
           this.signalService.claimsandexpensesForRoleTriggerSignal.set(true);
           this.signalService.clamisandexpensesForYouTriggerSignal.set(true);
             this.getAllPendingApprovals();
@@ -546,9 +558,17 @@ export class ClaimsandexpensesForYouRequestComponent
           this.selectedLeaveData.approvalHeader.currentapprovalStage
         ),
       };
+
+      console.log('Before Loader');
+
       this.sharedModalService.openLoaderModal(
         'Sending for Clarification, Please wait...'
       );
+
+      console.log('After Loader');
+
+      console.log('Calling API Now');
+
       this.http
         .putData(
           `PendingApproval/${this.selectedLeaveData.approvalHeader.id}`,
@@ -557,7 +577,7 @@ export class ClaimsandexpensesForYouRequestComponent
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response: any) => {
-            this.isloading=false;
+            this.isloading = false;
             this.modalService.dismissAll();
             this.signalService.claimsandexpensesForRoleTriggerSignal.set(true);
             this.sharedModalService.openSuccessModal(
@@ -572,7 +592,7 @@ export class ClaimsandexpensesForYouRequestComponent
             }));
           },
           error: (reason: any) => {
-            this.isloading=false;
+            this.isloading = false;
             this.modalService.dismissAll();
             this.sharedModalService.openErrorModal(reason.error.Message);
           },
@@ -583,15 +603,15 @@ export class ClaimsandexpensesForYouRequestComponent
         });
     }
   }
-   expensesCheckList(request: ExpenseApprovalResponse, action?: string): void {
-     this.storeapprovalRequest = request;
-     this.storeapprovalRequest.action=action || '';
-     this.intializeApproveForm();
-     this.selectedLeaveData = request;
-     this.modalService.open(this.checklistconfirmationmodal, {
-       centered: true,
-       backdrop: 'static'
-     });
+  expensesCheckList(request: ExpenseApprovalResponse, action?: string): void {
+    this.storeapprovalRequest = request;
+    this.storeapprovalRequest.action = action || '';
+    this.intializeApproveForm();
+    this.selectedLeaveData = request;
+    this.modalService.open(this.checklistconfirmationmodal, {
+      centered: true,
+      backdrop: 'static'
+    });
   }
     isAllChecked(): boolean {
     return this.checklistdata
@@ -635,85 +655,15 @@ export class ClaimsandexpensesForYouRequestComponent
     return this.allVerifiedMap.get(approvalHeaderId) === true;
   }
 
-  openVerifyModal(item: any, content: any) {
-    this.verifyModalRef = this.modalService.open(content, { centered: true, backdrop: 'static' });
-    this.intializeVerifyForm();
-    this.selectedItem = item;
-  }
-    intializeVerifyForm() {
-    this.verifyForm = this.fb.group({
-      comments: [
-        '',
-        [Validators.required, Validators.maxLength(250)],
-      ],
-    });
-  }
-
-  handleVerify(verifyForm: FormGroup): void {
-  if (!verifyForm.valid || !this.selectedItem) return;
-
-  const formData = verifyForm.value;
-  const verifiedItem = this.selectedItem;
-
-  const requestBody = {
-    isVerified: true,
-    verifiedBy: this.empinfo.employeeId?.toString(),
-    verifiedByName: `${this.empinfo.firstName || ''} ${this.empinfo.lastName || ''}`.trim(),
-    comments: formData.comments
-  };
-
-  this.http.putData(`Expenses_Header/ExpensesItemUpdate/${verifiedItem.expenseitem_id}`, requestBody)
-    .pipe(takeUntil(this.destroy$))
-    .subscribe({
-      next: () => {
-        // Close only the Verify modal
-        this.verifyModalRef?.close();
-
-        // Show success popup
-        this.sharedModalService.openSuccessModal('Expense item verified successfully');
-
-        // Update local UI immediately
-        if (this.expenseheaderiteams?.expenseitem?.length) {
-          const idx = this.expenseheaderiteams.expenseitem.findIndex(
-            it => it.expenseitem_id === verifiedItem.expenseitem_id
-          );
-          if (idx > -1) {
-            this.expenseheaderiteams.expenseitem[idx].isVerified = true;
-          }
-        }
-
-        this.selectedItem = null;
-
-        // Update verified IDs for template checks
-        this.verifiedExpenseIds.push(verifiedItem.expenseitem_id);
-
-        // Check if all items for this record's header are now verified
-        if (this.expenseheaderiteams?.expenseitem?.length) {
-          const allDone = this.expenseheaderiteams.expenseitem.every(
-            it => it.isVerified === true || this.verifiedExpenseIds.includes(it.expenseitem_id)
-          );
-          if (allDone) {
-            this.allVerifiedMap.set(this.expenseheaderiteams.expenses_ID, true);
-          }
-        }
-
-        this.getAllPendingApprovals();
-      },
-      error: (err: any) => {
-        this.verifyModalRef?.close();
-        this.sharedModalService.openErrorModal(err?.error?.Message || 'Verification failed');
-      }
-    });
-}
-openMarkAsPaidModal(content: any, request: ExpenseApprovalResponse) {
+  openMarkAsPaidModal(content: any, request: ExpenseApprovalResponse) {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
     this.intializeMarkAsPaidForm();
     this.selectedLeaveData = request;
   }
-    markasPaid(modal: any) {
+  markasPaid(modal: any) {
     if (!this.markAsPaidForm.valid || !this.selectedLeaveData) return;
     console.log(this.selectedLeaveData);
-    
+
     const formData = this.markAsPaidForm.value;
     const verifiedItem = this.selectedLeaveData;
 
@@ -757,62 +707,62 @@ openMarkAsPaidModal(content: any, request: ExpenseApprovalResponse) {
       });
   }
   handleVerifyReject(verifyForm: FormGroup): void {
-  if (!verifyForm.valid || !this.selectedItem) return;
+    if (!verifyForm.valid || !this.selectedItem) return;
 
-  const formData = verifyForm.value;
-  const verifiedItem = this.selectedItem;
+    const formData = verifyForm.value;
+    const verifiedItem = this.selectedItem;
 
-  const requestBody = {
-    isVerified: true,
-    verifiedBy: this.empinfo.employeeId?.toString(),
-    verifiedByName: `${this.empinfo.firstName || ''} ${this.empinfo.lastName || ''}`.trim(),
-    comments: formData.comments,
-    status: 'Rejected'
-  };
+    const requestBody = {
+      isVerified: true,
+      verifiedBy: this.empinfo.employeeId?.toString(),
+      verifiedByName: `${this.empinfo.firstName || ''} ${this.empinfo.lastName || ''}`.trim(),
+      comments: formData.comments,
+      status: 'Rejected'
+    };
 
-  this.http.putData(`Expenses_Header/ExpensesItemUpdate/${verifiedItem.expenseitem_id}`, requestBody)
-    .pipe(takeUntil(this.destroy$))
-    .subscribe({
-      next: () => {
-        // Close only the Verify modal
-        this.verifyModalRef?.close();
+    this.http.putData(`Expenses_Header/ExpensesItemUpdate/${verifiedItem.expenseitem_id}`, requestBody)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          // Close only the Verify modal
+          this.verifyModalRef?.close();
 
-        // Show success popup
-        this.sharedModalService.openSuccessModal('Expense item rejected successfully');
+          // Show success popup
+          this.sharedModalService.openSuccessModal('Expense item rejected successfully');
 
-        // Update local UI immediately
-        if (this.expenseheaderiteams?.expenseitem?.length) {
-          const idx = this.expenseheaderiteams.expenseitem.findIndex(
-            it => it.expenseitem_id === verifiedItem.expenseitem_id
-          );
-          if (idx > -1) {
-            this.expenseheaderiteams.expenseitem[idx].isVerified = true;
+          // Update local UI immediately
+          if (this.expenseheaderiteams?.expenseitem?.length) {
+            const idx = this.expenseheaderiteams.expenseitem.findIndex(
+              it => it.expenseitem_id === verifiedItem.expenseitem_id
+            );
+            if (idx > -1) {
+              this.expenseheaderiteams.expenseitem[idx].isVerified = true;
+            }
           }
+
+          this.selectedItem = null;
+
+          // Update verified IDs for template checks
+          this.verifiedExpenseIds.push(verifiedItem.expenseitem_id);
+
+          // Refresh headers in background, but the modal stays open
+          this.getAllPendingApprovals();
+        },
+        error: (err: any) => {
+          this.verifyModalRef?.close();
+          this.sharedModalService.openErrorModal(err?.error?.Message || 'Verification failed');
         }
-
-        this.selectedItem = null;
-
-        // Update verified IDs for template checks
-        this.verifiedExpenseIds.push(verifiedItem.expenseitem_id);
-
-        // Refresh headers in background, but the modal stays open
-        this.getAllPendingApprovals();
-      },
-      error: (err: any) => {
-        this.verifyModalRef?.close();
-        this.sharedModalService.openErrorModal(err?.error?.Message || 'Verification failed');
-      }
-    });
-}
-onCancel(modal: any) {
-  // 1. Reset form
-  this.approveForm.reset();
-  // 2. Reset checklist selection
-  this.checklistdata.forEach(item => item.checked = false);
-  // 4. Close modal
-  modal.dismiss();
-}
-onViewAttachementverification(url: any) {
+      });
+  }
+  onCancel(modal: any) {
+    // 1. Reset form
+    this.approveForm.reset();
+    // 2. Reset checklist selection
+    this.checklistdata.forEach(item => item.checked = false);
+    // 4. Close modal
+    modal.dismiss();
+  }
+  onViewAttachementverification(url: any) {
     const lowerUrl = url?.toLowerCase();
 
     if (
@@ -844,10 +794,188 @@ onViewAttachementverification(url: any) {
       this.toggleViewModalforverification();
     }
   }
-   toggleViewModalforverification() {
+  toggleViewModalforverification() {
     this.modalService.dismissAll();
     this.openModal(this.verificationViewattamchment);
   }
+
+  customSort(event: any): void {
+    const field = event.field;
+    
+    // Track current sort state for the clicked field
+    if (this.currentSortField === field) {
+      // Same field clicked - cycle through: asc (1) -> desc (-1) -> reset (0)
+      if (this.currentSortOrder === 1) {
+        // Currently ascending, change to descending
+        this.currentSortOrder = -1;
+        event.order = -1;
+      } else if (this.currentSortOrder === -1) {
+        // Currently descending, reset to original order
+        this.expenseheaderpending = [...this.originalExpenseData];
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        if (this.expenseTable) {
+          this.expenseTable.reset();
+        }
+        return;
+      } else {
+        // Currently reset, change to ascending
+        this.currentSortOrder = 1;
+        event.order = 1;
+      }
+    } else {
+      // New field clicked - start with ascending
+      this.currentSortField = field;
+      this.currentSortOrder = 1;
+      event.order = 1;
+    }
+
+    event.data.sort((a: any, b: any) => {
+      let val1: any;
+      let val2: any;
+
+      // Handle nested entity fields for expense data
+      if (['employeeName', 'expenses_Title', 'applied_date', 'totalExpenseAmount', 'status'].includes(field)) {
+        switch (field) {
+          case 'employeeName':
+            val1 = a.entity?.employeeName;
+            val2 = b.entity?.employeeName;
+            break;
+          case 'expenses_Title':
+            val1 = a.entity?.expenses_Title;
+            val2 = b.entity?.expenses_Title;
+            break;
+          case 'applied_date':
+            val1 = a.entity?.applied_date;
+            val2 = b.entity?.applied_date;
+            break;
+          case 'totalExpenseAmount':
+            val1 = a.entity?.totalExpenseAmount;
+            val2 = b.entity?.totalExpenseAmount;
+            break;
+          case 'status':
+            val1 = a.entity?.status;
+            val2 = b.entity?.status;
+            break;
+        }
+      } else {
+        // Handle direct fields
+        val1 = a[field];
+        val2 = b[field];
+      }
+
+      // Handle date sorting
+      if (field === 'applied_date') {
+        const date1 = val1 ? new Date(val1).getTime() : 0;
+        const date2 = val2 ? new Date(val2).getTime() : 0;
+        return event.order * (date1 - date2);
+      }
+
+      // Handle amount sorting (numeric)
+      if (field === 'totalExpenseAmount') {
+        const num1 = parseFloat(String(val1).replace(/[^\d.-]/g, '')) || 0;
+        const num2 = parseFloat(String(val2).replace(/[^\d.-]/g, '')) || 0;
+        return event.order * (num1 - num2);
+      }
+
+      // Handle string sorting for all other fields
+      val1 = String(val1 ?? '').trim();
+      val2 = String(val2 ?? '').trim();
+      return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+        });
+  }
+ handleVerify(verifyForm: FormGroup): void {
+    if (!verifyForm.valid || !this.selectedItem) return;
+
+    const formData = verifyForm.value;
+    const verifiedItem = this.selectedItem;
+
+    const requestBody = {
+      isVerified: true,
+      verifiedBy: this.empinfo.employeeId?.toString(),
+      verifiedByName: `${this.empinfo.firstName || ''} ${this.empinfo.lastName || ''}`.trim(),
+      comments: formData.comments
+    };
+
+    this.http.putData(`Expenses_Header/ExpensesItemUpdate/${verifiedItem.expenseitem_id}`, requestBody)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          // Close only the Verify modal
+          this.verifyModalRef?.close();
+
+          // Show success popup
+          this.sharedModalService.openSuccessModal('Expense item verified successfully');
+
+          // Update local UI immediately
+          if (this.expenseheaderiteams?.expenseitem?.length) {
+            const idx = this.expenseheaderiteams.expenseitem.findIndex(
+              it => it.expenseitem_id === verifiedItem.expenseitem_id
+            );
+            if (idx > -1) {
+              this.expenseheaderiteams.expenseitem[idx].isVerified = true;
+            }
+          }
+
+          this.selectedItem = null;
+
+          // Update verified IDs for template checks
+          this.verifiedExpenseIds.push(verifiedItem.expenseitem_id);
+
+          // Refresh headers in background, but the modal stays open
+          this.getAllPendingApprovals();
+        },
+        error: (err: any) => {
+          this.verifyModalRef?.close();
+          this.sharedModalService.openErrorModal(err?.error?.Message || 'Verification failed');
+        }
+      });
+  }
+
+  handleClarificationDirect(request: ExpenseApprovalResponse): void {
+    const requestBody = {
+      status: 'Required Clarification',
+      comments: 'Required Clarification',
+      approvedBy: this.empinfo.employeeId.toString(),
+      currentStage: parseInt(request.approvalHeader.currentapprovalStage),
+    };
+
+    this.http
+      .putData(`PendingApproval/${request.approvalHeader.id}`, requestBody)
+      .subscribe({
+        next: () => {
+          this.getAllPendingApprovals();
+          this.http.setnewcountDetails();
+          this.signalService.claimsandexpensesForRoleTriggerSignal.set(true);
+        }
+      });
+  }
+
+    onStatusClarificationSelect(status: string) {
+    this.selectedLeaveStatus = status;
+
+    if (status === 'requiredClarification') {
+      this.approveForm.patchValue({
+        comments: 'Required Clarification'
+      });
+    }
+  }
+
+   openVerifyModal(item: any, content: any) {
+    this.verifyModalRef = this.modalService.open(content, { centered: true, backdrop: 'static' });
+    this.intializeVerifyForm();
+    this.selectedItem = item; // store clicked item
+  }
+
+   intializeVerifyForm() {
+    this.verifyForm = this.fb.group({
+      comments: [
+        '',
+        [Validators.required, Validators.maxLength(250)],
+      ],
+    });
+  }
+
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();

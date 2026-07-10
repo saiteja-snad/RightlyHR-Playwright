@@ -71,7 +71,7 @@ export class HttpService {
   reviewCycleTriggerSignal = signal<boolean>(false);
   wfhTriggerSignal = signal<boolean>(false);
   permissionTriggerSignal = signal<boolean>(false);
-  compOffTriggerSignal = signal<boolean>(false);
+  compOffTriggerSignal = signal<number>(0);
   cardsregisterSignal = signal<boolean>(false);
   constructor(private http: HttpClient) {
     this.communicationService = new BehaviorSubject(null);

@@ -41,7 +41,7 @@
                         <th>Email</th>
                         <th>Phone Number</th>
                         <th>Role</th>
-                        @if(rbac.allowedToAccess('Client Information.delete')){
+                        @if(rbac.allowedToAccess('Client Information.update')){
                         <th class="text-center">{{"Action" | translate}}</th>
                         }
                     </thead>
@@ -61,25 +61,31 @@
                                     <td>{{client?.contact?.phoneDialCode || '-'}} {{client?.contact?.phoneNumber ||
                                         '-'}}</td>
                                     <td>{{client?.contact?.role || '-'}}</td>
-                                    <td class="text-center">
-                                        <div class="dropdown">
-                                            <a data-bs-toggle="dropdown" aria-expanded="false">
-                                                <i class="bi bi-three-dots-vertical"></i>
-                                            </a>
-                                            <ul class="dropdown-menu custom-dropdown-menu">
-                                                <li (click)="openModalstatus(statuschanges, client)">
-                                                    <a class="dropdown-item">
-                                                        <i class="bi bi-check-circle me-2"></i>Inactive
-                                                    </a>
-                                                </li>
-                                                <!-- <li (click)="openModalstatus(statuschangeshold, client)">
+                                    @if(rbac.allowedToAccess('Client Information.update')){
+<td class="text-center">
+
+    <div class="dropdown">
+        <a data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-three-dots-vertical"></i>
+        </a>
+        <ul class="dropdown-menu custom-dropdown-menu">
+            <li (click)="openModalstatus(statuschanges, client)">
+                <a class="dropdown-item">
+                    <i class="bi bi-check-circle me-2"></i>Inactive
+                </a>
+            </li>
+            <!-- <li (click)="openModalstatus(statuschangeshold, client)">
                                                         <a class="dropdown-item">
                                                             <i class="bi bi-pause-circle me-2"></i>Hold
                                                         </a>
                                                     </li> -->
-                                            </ul>
-                                        </div>
-                                    </td>
+        </ul>
+    </div>
+
+</td>
+}
+
+
                                 </tr>
                             </ng-container>
                         </ng-container>

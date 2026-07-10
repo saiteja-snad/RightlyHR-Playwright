@@ -28,12 +28,13 @@ import { GlobalActionsTabsComponent } from "../../../shared/time-off-module-tabs
 import { TranslateModule } from '@ngx-translate/core';
 import { ApplicablePoliciesTriggerComponent } from '../../../shared/policies/applicable-policies-trigger/applicable-policies-trigger.component';
 import { APPLICABLE_POLICIES_KEYS } from '../../../shared/policies/policy-visibility.catalog';
+import { TableModule, Table } from 'primeng/table';
 
 @Component({
   selector: 'app-global-permissions',
   imports: [CommonModule, NgbPopoverModule, FormsModule, ReactiveFormsModule, PaginatorModule,
     DropdownModule, DateformatPipe, NoDataFoundComponent, GlobalpermissionsPipe, InfoIconComponent,TranslateModule,
-    ModuleInformationComponent, DataLoaderContentComponent, ModuleInfoIconComponent, Select, GlobalActionsTabsComponent, ApplicablePoliciesTriggerComponent],
+    ModuleInformationComponent, DataLoaderContentComponent, ModuleInfoIconComponent, Select, GlobalActionsTabsComponent, ApplicablePoliciesTriggerComponent, TableModule],
   templateUrl: './global-permissions.component.html',
   styleUrl: './global-permissions.component.scss'
 })
@@ -47,13 +48,17 @@ export class GlobalPermissionsComponent implements OnInit, OnDestroy {
   empinfo = {} as any;
   subscription!: Subscription;
   searchValue: any;
-  globalpermissions = [] as Iglobalpermissions[];
+  globalpermissions: Iglobalpermissions[] = [];
+  originalGlobalPermissions: Iglobalpermissions[] = [];
   jobLocationDropDownData: any[] = [];
   subLocationsDropdown: any[] = [];
   departmentDetails: IDepartment[] = [];
   teamDetails: any[] = [];
   loading: boolean = false;
   @ViewChild('commentspopup') modalContent: any;
+  @ViewChild('dt1') table!: Table;
+  currentSortField: string = '';
+  currentSortOrder: number = 0; // 0 = no sort, 1 = asc, -1 = desc
   options = [
     { label: 10, value: 10 },
     { label: 15, value: 15 },
@@ -226,13 +231,79 @@ export class GlobalPermissionsComponent implements OnInit, OnDestroy {
     this.subscription = this.http.getData(`v2/GlobalPermissions/getGlobalPermissions?${params}`).subscribe({
       next: (response: any) => {
         this.loading = false;
-        this.globalpermissions = response.data.requestedBy as Iglobalpermissions[];
+        this.originalGlobalPermissions = [...(response.data.requestedBy as Iglobalpermissions[])];
+        this.globalpermissions = [...(response.data.requestedBy as Iglobalpermissions[])];
         this.totalRecords = response.totalRecords;
       }, error: (err: any) => {
         this.loading = false;
         console.log("errors", err);
       },
     })
+  }
+
+  getFilteredAndSortedPermissions() {
+    return this.globalpermissions;
+  }
+
+  customSort(event: any) {
+    const field = event.field;
+    
+    // Track current sort state for the clicked field
+    if (this.currentSortField === field) {
+      // Same field clicked - cycle through: asc (1) -> desc (-1) -> reset (0)
+      if (this.currentSortOrder === 1) {
+        // Currently ascending, change to descending
+        this.currentSortOrder = -1;
+        event.order = -1;
+      } else if (this.currentSortOrder === -1) {
+        // Currently descending, reset to original order
+        this.globalpermissions = [...this.originalGlobalPermissions];
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        if (this.table) {
+          this.table.reset();
+        }
+        return;
+      } else {
+        // Currently reset, change to ascending
+        this.currentSortOrder = 1;
+        event.order = 1;
+      }
+    } else {
+      // New field clicked - start with ascending
+      this.currentSortField = field;
+      this.currentSortOrder = 1;
+      event.order = 1;
+    }
+
+    event.data.sort((a: any, b: any) => {
+      let aVal, bVal;
+
+      if (field === 'permissionRequestedDate') {
+        aVal = new Date(a.permissionRequestedDate || 0);
+        bVal = new Date(b.permissionRequestedDate || 0);
+      } else if (field === 'requestedDate') {
+        aVal = new Date(a.requestedDate || 0);
+        bVal = new Date(b.requestedDate || 0);
+      } else if (field === 'duration') {
+        aVal = parseFloat(a.duration) || 0;
+        bVal = parseFloat(b.duration) || 0;
+      } else if (field === 'requestType' || field === 'selectType' || field === 'type' || 
+                 field === 'deptId_locationIdName' || field === 'teamId_sublocIdName') {
+        aVal = (a[field] || '').toLowerCase();
+        bVal = (b[field] || '').toLowerCase();
+      } else if (field === 'requestedBy') {
+        aVal = `${a.firstName || ''} ${a.middleName || ''} ${a.lastName || ''}`.toLowerCase().trim();
+        bVal = `${b.firstName || ''} ${b.middleName || ''} ${b.lastName || ''}`.toLowerCase().trim();
+      } else {
+        aVal = a[field];
+        bVal = b[field];
+      }
+
+      if (aVal < bVal) return -1 * event.order;
+      if (aVal > bVal) return 1 * event.order;
+      return 0;
+    });
   }
 
   //function to get the values

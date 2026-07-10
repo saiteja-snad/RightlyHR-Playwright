@@ -9,74 +9,99 @@
 
   <div class="custom-table-content">
     @if(!loading) {
-    <table class="w-100">
-      <thead>
-        <th>Desk ID</th>
-        <th>Desk Type</th>
-        <th>Allocated To</th>
-        <th>Location</th>
-        <th>Sub Location</th>
-        <th>Desk Status</th>
-        <th>Approver</th>
-        @if(rbac.allowedToAccess('Allocated Reallocate desk.view') || rbac.allowedToAccess('Allocated Release Desk.view') ||
-        rbac.allowedToAccess('Allocated View Desk Details.view')){
-        <th class="text-center">{{"Action" | translate}}</th>
-        }
-      </thead>
-      <tbody>
-        <ng-container *ngIf="((desklist | async) ?? []).length > 0; else noDataTemplate">
-          <tr *ngFor="let desk of desklist | async">
-            <td>{{ desk.deskName }}</td>
-            <td>{{ desk.deskType }}</td>
-            <td>{{ desk.allocatedToDetails?.employeeName || 'N/A' }}</td>
-            <td>{{ desk.location?.jobLocationName }}</td>
-            <td>{{ desk.subLocation?.jobSubLocationName }}</td>
-            <td>{{ desk.deskStatus }}</td>
-            <td>{{desk.allocatedToDetails?.approverIdName || 'N/A' }}</td>
-            @if(rbac.allowedToAccess('Allocated Reallocate desk.view') || rbac.allowedToAccess('Allocated Release Desk.view') ||
-            rbac.allowedToAccess('Allocated View Desk Details.view')){
-            <td class="text-center">
-              <div class="dropdown">
-                <a data-bs-toggle="dropdown" aria-expanded="false">
-                  <i class="bi bi-three-dots-vertical"></i>
-                </a>
-                <ul class="dropdown-menu custom-dropdown-menu">
-                  @if(rbac.allowedToAccess('Allocated Reallocate desk.view')){
-                  <li>
-                    <a class="dropdown-item"
-                      (click)="openModal(reallcatedeskmodal);viewdata(desk);viewasetsdata(desk);selectedAsset=desk">
-                      Reallocate desk
-                    </a>
-                  </li>
-                  }
-                  @if(rbac.allowedToAccess('Allocated Release Desk.view')){
-                  <li>
-                    <a class="dropdown-item" (click)="openModal(relasedesk); viewdata(desk); selectedAsset=desk">
-                      Release Desk
-                    </a>
-                  </li>
-                  }
-                  @if(rbac.allowedToAccess('Allocated View Desk Details.view')){
-                  <li>
-                    <a class="dropdown-item" (click)="viewdata(desk);navigateToAsset(desk.deskId)">
-                      View Desk Details
-                    </a>
-                  </li>
-                  }
-                </ul>
-              </div>
-            </td>
-            }
-          </tr>
-        </ng-container>
-        <!-- No Data Found Template -->
-        <ng-template #noDataTemplate>
-          <tr>
-            <app-no-data-found />
-          </tr>
+    <p-table #allocatedDeskTable [value]="getFilteredAndSortedDeskList()" [customSort]="true" (sortFunction)="customSort($event)"
+             styleClass="custom-table" [tableStyle]="{'min-width': '50rem'}">
+        <ng-template pTemplate="header">
+            <tr>
+                <th pSortableColumn="deskName">
+                    Desk ID
+                    <p-sortIcon field="deskName"></p-sortIcon>
+                </th>
+                <th pSortableColumn="deskType">
+                    Desk Type
+                    <p-sortIcon field="deskType"></p-sortIcon>
+                </th>
+                <th pSortableColumn="allocatedToName">
+                    Allocated To
+                    <p-sortIcon field="allocatedToName"></p-sortIcon>
+                </th>
+                <th pSortableColumn="locationName">
+                    Location
+                    <p-sortIcon field="locationName"></p-sortIcon>
+                </th>
+                <th pSortableColumn="subLocationName">
+                    Sub Location
+                    <p-sortIcon field="subLocationName"></p-sortIcon>
+                </th>
+                <th pSortableColumn="deskStatus">
+                    Desk Status
+                    <p-sortIcon field="deskStatus"></p-sortIcon>
+                </th>
+                <th pSortableColumn="approverName">
+                    Approver
+                    <p-sortIcon field="approverName"></p-sortIcon>
+                </th>
+                @if(rbac.allowedToAccess('Allocated Reallocate desk.view') || rbac.allowedToAccess('Allocated Release Desk.view') ||
+                rbac.allowedToAccess('Allocated View Desk Details.view')){
+                <th class="text-center">{{"Action" | translate}}</th>
+                }
+            </tr>
         </ng-template>
-      </tbody>
-    </table>
+        <ng-template pTemplate="body" let-desk>
+            <tr>
+                <td>{{ desk.deskName }}</td>
+                <td>{{ desk.deskType }}</td>
+                <td>{{ desk.allocatedToDetails?.employeeName || 'N/A' }}</td>
+                <td>{{ desk.location?.jobLocationName }}</td>
+                <td>{{ desk.subLocation?.jobSubLocationName }}</td>
+                <td>{{ desk.deskStatus }}</td>
+                <td>{{desk.allocatedToDetails?.approverIdName || 'N/A' }}</td>
+                @if(rbac.allowedToAccess('Allocated Reallocate desk.view') || rbac.allowedToAccess('Allocated Release Desk.view') ||
+                rbac.allowedToAccess('Allocated View Desk Details.view')){
+                <td class="text-center">
+                  <div class="dropdown">
+                    <a data-bs-toggle="dropdown" aria-expanded="false">
+                      <i class="bi bi-three-dots-vertical"></i>
+                    </a>
+                    <ul class="dropdown-menu custom-dropdown-menu">
+                      @if(rbac.allowedToAccess('Allocated Reallocate desk.view')){
+                      <li>
+                        <a class="dropdown-item"
+                          (click)="openModal(reallcatedeskmodal);viewdata(desk);viewasetsdata(desk);selectedAsset=desk">
+                          Reallocate desk
+                        </a>
+                      </li>
+                      }
+                      @if(rbac.allowedToAccess('Allocated Release Desk.view')){
+                      <li>
+                        <a class="dropdown-item" (click)="openModal(relasedesk); viewdata(desk); selectedAsset=desk">
+                          Release Desk
+                        </a>
+                      </li>
+                      }
+                      @if(rbac.allowedToAccess('Allocated View Desk Details.view')){
+                      <li>
+                        <a class="dropdown-item" (click)="viewdata(desk);navigateToAsset(desk.deskId)">
+                          View Desk Details
+                        </a>
+                      </li>
+                      }
+                    </ul>
+                  </div>
+                </td>
+                }
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+            <div class="wrapper">
+                <tr>
+                    <td [attr.colspan]="(rbac.allowedToAccess('Allocated Reallocate desk.view') || rbac.allowedToAccess('Allocated Release Desk.view') || rbac.allowedToAccess('Allocated View Desk Details.view')) ? 8 : 7">
+                        <app-no-data-found />
+                    </td>
+                </tr>
+            </div>
+        </ng-template>
+    </p-table>
     }
     @else {
     <app-data-loader-content />

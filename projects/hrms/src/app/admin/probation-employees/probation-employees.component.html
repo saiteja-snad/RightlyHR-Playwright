@@ -9,77 +9,89 @@
 
     <div class="custom-table-content">
         @if (!loader) {
-        <table class="w-100">
-            <thead>
-                <th>{{'Employee ID'|translate}}</th>
-                <th>{{'Employee Name'|translate}}</th>
-                <th>{{'Work Email'|translate}}</th>
-                <th>{{'Phone Number'|translate}}</th>
-                <th>
-                    <div class="d-flex align-items-center">
-                        <span>{{'Probation Start Date'|translate}}</span>
-                        <i class="bi bi-arrow-up cursor-pointer" (click)="sortData('dateOfJoining','asc')" 
-                        [ngClass]="{'text-primary': isSorted('dateOfJoining','asc'),'text-muted': !isSorted('dateOfJoining','asc')}"></i>
-                        <i class="bi bi-arrow-down cursor-pointer" (click)="sortData('dateOfJoining','desc')" 
-                        [ngClass]="{'text-primary': isSorted('dateOfJoining','desc'),'text-muted': !isSorted('dateOfJoining','desc')}"></i>
-                    </div>
-                </th>
-                <th>
-                    <div class="d-flex align-items-center">
-                        <span>{{'Probation End Date'|translate}}</span>
-                        <i class="bi bi-arrow-up cursor-pointer" (click)="sortData('probationEndDate','asc')" 
-                        [ngClass]="{'text-primary': isSorted('probationEndDate','asc'),'text-muted': !isSorted('probationEndDate','asc')}"></i>
-                        <i class="bi bi-arrow-down cursor-pointer" (click)="sortData('probationEndDate','desc')" 
-                        [ngClass]="{'text-primary': isSorted('probationEndDate','desc'),'text-muted': !isSorted('probationEndDate','desc')}"></i>
-                    </div>
-                </th>
-                <th>{{'Probation Extended Date'|translate}}</th>
-                <th>{{'Designation'|translate}}</th>
-            </thead>
-            <tbody>
-                <ng-container *ngIf="(probationemp | probationpipe: searchValue) as filteredData">
-                    <tr *ngFor="let item of filteredData">
-                        <td>
-                            <span *ngIf="item.fusionEmpId;else fusionid"> {{item.fusionEmpId}}</span>
-                            <ng-template #fusionid> - </ng-template>
-                        </td>
-                        <td>
-                            <span *ngIf="item.firstName;else fistname">
-                                <a class="data-nav-btn" (click)="select(item)">{{item?.firstName}} {{item?.middleName}} {{item?.lastName}}</a>
-                            </span>
-                            <ng-template #fistname>-</ng-template>
-                        </td>
-                        <td>
-                            <span *ngIf="item.workEmail;else workemail">{{item.workEmail}}</span>
-                            <ng-template #workemail>-</ng-template>
-                        </td>
-                        <td>
-                            <span *ngIf="item?.contactnumber;else contactnumb">{{item.mobilePhoneCountryCode}} {{item.contactnumber}}</span>
-                            <ng-template #contactnumb>-</ng-template>
-                        </td>
-                        <td>
-                            <span *ngIf="item.dateOfJoining;else prostartdate">{{item.dateOfJoining | date }}</span>
-                            <ng-template #prostartdate>-</ng-template>
-                        </td>
-                        <td>
-                            <span *ngIf="item?.probationEndDate;else proenddate">{{item?.probationEndDate | date}}</span>
-                            <ng-template #proenddate>-</ng-template>
-                        </td>
-                        <td>
-                            <span *ngIf="item.probationExtendedDate;else proextenddate">{{item.probationExtendedDate | date}}</span>
-                            <ng-template #proextenddate>-</ng-template>
-                        </td>
-                        <td>
-                            <span *ngIf="item.jobDetails;else designation"> {{item.jobDetails.jobRole}}</span>
-                            <ng-template #designation> - </ng-template>
-                        </td>
-                    </tr>
-                    <tr *ngIf="filteredData.length === 0">
+        <p-table #probationEmployeesTable [value]="getFilteredAndSortedEmployees()" [customSort]="true" (sortFunction)="customSort($event)" styleClass="w-100">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th pSortableColumn="fusionEmpId">
+                        {{'Employee ID'|translate}}
+                        <p-sortIcon field="fusionEmpId"></p-sortIcon>
+                    </th>
+                    <th pSortableColumn="employeeName">
+                        {{'Employee Name'|translate}}
+                        <p-sortIcon field="employeeName"></p-sortIcon>
+                    </th>
+                    <th pSortableColumn="workEmail">
+                        {{'Work Email'|translate}}
+                        <p-sortIcon field="workEmail"></p-sortIcon>
+                    </th>
+                    <th pSortableColumn="contactnumber">
+                        {{'Phone Number'|translate}}
+                        <p-sortIcon field="contactnumber"></p-sortIcon>
+                    </th>
+                    <th pSortableColumn="dateOfJoining">
+                        {{'Probation Start Date'|translate}}
+                        <p-sortIcon field="dateOfJoining"></p-sortIcon>
+                    </th>
+                    <th pSortableColumn="probationEndDate">
+                        {{'Probation End Date'|translate}}
+                        <p-sortIcon field="probationEndDate"></p-sortIcon>
+                    </th>
+                    <th pSortableColumn="probationExtendedDate">
+                        {{'Probation Extended Date'|translate}}
+                        <p-sortIcon field="probationExtendedDate"></p-sortIcon>
+                    </th>
+                    <th pSortableColumn="designation">
+                        {{'Designation'|translate}}
+                        <p-sortIcon field="designation"></p-sortIcon>
+                    </th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-item>
+                <tr>
+                    <td>
+                        <span *ngIf="item.fusionEmpId;else fusionid"> {{item.fusionEmpId}}</span>
+                        <ng-template #fusionid> - </ng-template>
+                    </td>
+                    <td>
+                        <span *ngIf="item.firstName;else fistname">
+                            <a class="data-nav-btn" (click)="select(item)">{{item?.firstName}} {{item?.middleName}} {{item?.lastName}}</a>
+                        </span>
+                        <ng-template #fistname>-</ng-template>
+                    </td>
+                    <td>
+                        <span *ngIf="item.workEmail;else workemail">{{item.workEmail}}</span>
+                        <ng-template #workemail>-</ng-template>
+                    </td>
+                    <td>
+                        <span *ngIf="item?.contactnumber;else contactnumb">{{item.mobilePhoneCountryCode}} {{item.contactnumber}}</span>
+                        <ng-template #contactnumb>-</ng-template>
+                    </td>
+                    <td>
+                        <span *ngIf="item.dateOfJoining;else prostartdate">{{item.dateOfJoining | date }}</span>
+                        <ng-template #prostartdate>-</ng-template>
+                    </td>
+                    <td>
+                        <span *ngIf="item?.probationEndDate;else proenddate">{{item?.probationEndDate | date}}</span>
+                        <ng-template #proenddate>-</ng-template>
+                    </td>
+                    <td>
+                        <span *ngIf="item.probationExtendedDate;else proextenddate">{{item.probationExtendedDate | date}}</span>
+                        <ng-template #proextenddate>-</ng-template>
+                    </td>
+                    <td>
+                        <span *ngIf="item.jobDetails;else designation"> {{item.jobDetails.jobRole}}</span>
+                        <ng-template #designation> - </ng-template>
+                    </td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+                <tr>
+                    <td colspan="8">
                         <app-no-data-found />
-                    </tr>
-                </ng-container>
-            </tbody>
-        </table>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
         } @else {
         <app-data-loader-content />
         }

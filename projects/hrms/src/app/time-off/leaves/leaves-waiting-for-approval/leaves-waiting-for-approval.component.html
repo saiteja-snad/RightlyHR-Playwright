@@ -1,29 +1,64 @@
 <div class="custom-main-component-container">
   <div class="custom-table-content">
     @if(!loading){
-    <table class="w-100">
-      <thead>
-        <th>Date</th>
-        <th>Leave Type</th>
-        <th>Duration</th>
-        <th>Availed</th>
-        <th class="text-center text-nowrap">Start Date</th>
-        <th class="text-center text-nowrap">End Date</th>
-        <th class="text-center">Reason</th>
-        <th>Status</th>
-        <th class="text-center">Action</th>
-      </thead>
-      <tbody>
+    @if(selectedProducts.length > 0 && canApprove(selectedProducts[0])){
+    <div class="component-header-content">
+      <div class="component-sub-header">
+        Selected Records: {{selectedProducts.length}}
+      </div>
+
+      <div class="d-flex gap-3">
+        <button class="custom-btn btn-primary-approve" (click)="approveleave(approverPopup, selectedProducts[0])">
+          Approve
+        </button>
+
+        <button class="custom-btn btn-primary-reject" (click)="rejectleave(rejectPopup, selectedProducts[0])">
+          Reject
+        </button>
+      </div>
+    </div>
+    }
+    <p-table #leavesWaitingTable  styleClass="custom-p-multi-select-table" [value]="lpdata" [(selection)]="selectedProducts"
+      (selectionChange)="selectCheck($event)" dataKey="id" [customSort]="true" (sortFunction)="customSort($event)"
+      [scrollable]="true" scrollHeight="flex">
+      <ng-template pTemplate="header">
+        <tr>
+          @if(lpdata.length > 0 && canApprove(lpdata[0])){
+          <th style="width:4rem">
+            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+          </th>
+          }
+          <th pSortableColumn="date">Date <p-sortIcon field="date"></p-sortIcon></th>
+          <th pSortableColumn="categoryName">Leave Type <p-sortIcon field="categoryName"></p-sortIcon></th>
+          <th pSortableColumn="duration" class="text-center">Duration <p-sortIcon field="duration"></p-sortIcon></th>
+          <th pSortableColumn="durationType">Availed <p-sortIcon field="durationType"></p-sortIcon></th>
+          <th pSortableColumn="startdate" class="text-center text-nowrap">Start Date <p-sortIcon
+              field="startdate"></p-sortIcon></th>
+          <th pSortableColumn="enddate" class="text-center text-nowrap">End Date <p-sortIcon
+              field="enddate"></p-sortIcon></th>
+          <th class="text-center">Reason</th>
+          <th pSortableColumn="status">Status <p-sortIcon field="status"></p-sortIcon></th>
+          @if(selectedProducts.length == 0){
+          <th class="text-center">Action</th>
+          }
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-item>
         @if (rbac.allowedToAccess('Waiting For Approval (Time Off).view')) {
-        @if(lpdata.length > 0){
-        <tr *ngFor="let item of lpdata">
+        <tr>
+          @if(canApprove(item)){
+          <td>
+            <p-tableCheckbox [value]="item"></p-tableCheckbox>
+          </td>
+          }
           <td>{{item.date| dateformat}}</td>
           <td>{{item.categoryName}}</td>
           <td class="text-center">
             @if(item.isSandwichLeave) {
-                <a type="button" class="text-primary text-decoration-underline" (click)="openSandwichBreakdown(item, sandwichBreakdownModal)">{{item?.duration}}</a>
+            <a type="button" class="text-primary text-decoration-underline"
+              (click)="openSandwichBreakdown(item, sandwichBreakdownModal)">{{item?.duration}}</a>
             } @else {
-                {{item?.duration}}
+            {{item?.duration}}
             }
           </td>
           <td>{{ item.durationType == 1 ? 'First Half' : item.durationType == 2 ? 'Full Day' :
@@ -42,9 +77,10 @@
             </div>
           </td>
           <td>{{item.status}}</td>
+          @if(selectedProducts.length == 0){
           <td class="text-center">
             <!-- @if(isBeforeToday(item.startdate)){ -->
-               @if(permissionForLoggedInUser && isBeforeToday(item.startdate)){
+            @if(permissionForLoggedInUser && isBeforeToday(item.startdate)){
             <div class="dropdown">
               <a type="button" data-bs-toggle="dropdown">
                 <i class="bi bi-three-dots-vertical"></i>
@@ -56,26 +92,67 @@
               </ul>
             </div>
             }
-            @else {
-              -
+            @else if(canApprove(item) && selectedProducts.length == 0){
+            <div class="dropdown">
+              <a type="button" data-bs-toggle="dropdown">
+                <i class="bi bi-three-dots-vertical"></i>
+              </a>
+
+              <ul class="dropdown-menu custom-dropdown-menu">
+
+                <li (click)="approveleave(approverPopup,item)">
+                  <a class="dropdown-item">
+                    <i class="bi bi-check-circle me-2"></i>
+                    Approve
+                  </a>
+                </li>
+
+                <li (click)="rejectleave(rejectPopup,item)">
+                  <a class="dropdown-item">
+                    <i class="bi bi-x-circle me-2"></i>
+                    Reject
+                  </a>
+                </li>
+
+                <li (click)="checkLeaveBalance(item,checkbalancepopup)">
+                  <a class="dropdown-item">
+                    <i class="bi bi-wallet2 me-2"></i>
+                    Check Balance
+                  </a>
+                </li>
+
+              </ul>
+            </div>
+            }
+            @else if(selectedProducts.length == 0){
+            -
             }
           </td>
+        }
         </tr>
         }
-        @else {
-        <tr>
-          <app-no-data-found />
-        </tr>
-        }
-        }
-      </tbody>
-    </table>
-  }
-  @else {
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <div class="wrapper">
+          <tr>
+            <td colspan="11">
+              <app-no-data-found />
+            </td>
+          </tr>
+        </div>
+      </ng-template>
+    </p-table>
+    }
+    @else {
     <app-data-loader-content />
-  }
+    }
   </div>
 </div>
+
+
+
+
+
 
 <!-- cancel leave popup -->
 <ng-template #cancelModal let-modal>
@@ -88,16 +165,19 @@
       <div class="custom-main-popup-content">
         <label for="comments" class="form-label custom-label mb-2">{{'Reason for Cancellation' | translate}}<span
             class="text-danger">*</span></label>
-        <textarea class="form-control custom-input" formControlName="cancelReason"  [minlength]="10"
-          [maxlength]="250" placeholder="Please enter cancellation reason" rows="3" (input)="formsValidation.validateInput(cancelForm.get('cancelReason'))"></textarea>
+        <textarea class="form-control custom-input" formControlName="cancelReason" [minlength]="10" [maxlength]="250"
+          placeholder="Please enter cancellation reason" rows="3"
+          (input)="formsValidation.validateInput(cancelForm.get('cancelReason'))"></textarea>
         <!-- Character counter -->
         <div class="textarea-count-text">{{ cancelForm.get('cancelReason')?.value?.length || 0 }} /250</div>
         <div class="error-msg"
           *ngIf="cancelForm.get('cancelReason')?.touched && cancelForm.get('cancelReason')?.invalid">
-          <ng-container *ngIf="cancelForm.get('cancelReason')?.errors?.['required']">Cancellation reason is required</ng-container>
+          <ng-container *ngIf="cancelForm.get('cancelReason')?.errors?.['required']">Cancellation reason is
+            required</ng-container>
           <ng-container *ngIf="cancelForm.get('cancelReason')?.errors?.['maxlength']">Maximum 250 characters
             allowed</ng-container>
-            <ng-container *ngIf="cancelForm.get('cancelReason')?.errors?.['minlength']">Reason must be atleast 10 characters</ng-container>
+          <ng-container *ngIf="cancelForm.get('cancelReason')?.errors?.['minlength']">Reason must be atleast 10
+            characters</ng-container>
           <!-- <ng-container *ngIf="cancelForm.get('cancelReason')?.errors?.['pattern']">Reason for Cancellation cannot start
             with whitespace or be empty</ng-container> -->
         </div>
@@ -120,40 +200,313 @@
 
 <!-- Sandwich Breakdown Modal -->
 <ng-template #sandwichBreakdownModal let-modal>
-    <div class="custom-main-popup-container" ngbAutofocus>
-        <div class="custom-poup-header-content popup-header-border">
-            <div>
-                <p class="popup-heading mb-0">Sandwich Leave Breakdown</p>
-            </div>
-            <div>
-                <a (click)="modal.dismiss('Cross click')">
-                    <img src="icons/close.png" alt="Close Icon" class="close-icon">
-                </a>
-            </div>
-        </div>
-        <div class="custom-main-popup-content">
-            <div class="popup-table-wrapper">
-                <div class="popup-table-scroll-container">
-                    <table class="popup-table">
-                        <thead>
-                            <tr>
-                                <th>Leave Type</th>
-                                <th>Duration</th>
-                                <th>Start Date</th>
-                                <th>End Date</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr *ngFor="let breakdown of selectedSandwichItem?.categoryBreakdown">
-                                <td>{{breakdown.categoryName}}</td>
-                                <td>{{breakdown.duration}}</td>
-                                <td class="text-nowrap">{{breakdown.startDate | dateformat}}</td>
-                                <td class="text-nowrap">{{breakdown.endDate | dateformat}}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
+  <div class="custom-main-popup-container" ngbAutofocus>
+    <div class="custom-poup-header-content popup-header-border">
+      <div>
+        <p class="popup-heading mb-0">Sandwich Leave Breakdown</p>
+      </div>
+      <div>
+        <a (click)="modal.dismiss('Cross click')">
+          <img src="icons/close.png" alt="Close Icon" class="close-icon">
+        </a>
+      </div>
     </div>
+    <div class="custom-main-popup-content">
+      <div class="popup-table-wrapper">
+        <div class="popup-table-scroll-container">
+          <table class="popup-table">
+            <thead>
+              <tr>
+                <th>Leave Type</th>
+                <th>Duration</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let breakdown of selectedSandwichItem?.categoryBreakdown">
+                <td>{{breakdown.categoryName}}</td>
+                <td>{{breakdown.duration}}</td>
+                <td class="text-nowrap">{{breakdown.startDate | dateformat}}</td>
+                <td class="text-nowrap">{{breakdown.endDate | dateformat}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+
+<ng-template #approverPopup let-modal>
+  <div class="result-popup-content" ngbAutofocus>
+    <div>
+      <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
+      <p class="confirmation-text">{{'Are you sure you want to proceed with the approval?' | translate}}</p>
+    </div>
+
+    <form autocomplete="off" name="leaveapprovee" #leaveapprovee="ngForm" (ngSubmit)="leaveapprovee.valid">
+      <div class="custom-main-popup-content">
+        <h6 class="text-center">Is it a planned leave?</h6>
+        <div class="d-flex gap-3 py-3 justify-content-center">
+          <div class="form-check">
+            <input class="form-check-input" type="radio" [value]="true" id="Planned" name="isPlannedLeave"
+              [(ngModel)]="selectedLeaveData.isPlannedLeave" #isPlannedLeave="ngModel" required>
+            <label class="form-check-label me-2" for="Planned">
+              Yes
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input ms-2 me-2" type="radio" [value]="false" id="Unplanned" name="isPlannedLeave"
+              [(ngModel)]="selectedLeaveData.isPlannedLeave" #isPlannedLeave="ngModel" required>
+            <label class="form-check-label" for="Unplanned">
+              No
+            </label>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="exampleFormControlTextarea1" class="form-label custom-label">Reason for approval<span
+              class="error-msg">*</span></label>
+          <textarea class="form-control custom-input" id="Reasons" placeholder="Please provide approve reason"
+            name="Reasons" #Reasons="ngModel" maxlength="250" required [(ngModel)]="selectedLeaveData.comments"
+            (ngModelChange)="ifreasonnull(selectedLeaveData.comments)" rows="3"
+            (keydown)="formsValidation.restrictInitialSpace($event)">
+                            </textarea>
+
+          <div class="textarea-count-text">
+            {{selectedLeaveData.comments?.length? selectedLeaveData.comments?.length : 0}}/250
+          </div>
+          <div class="error-msg"
+            *ngIf="(Reasons.touched && Reasons.invalid) || (leaveapprovee.submitted && Reasons.invalid)">
+            Reason for approval is required
+          </div>
+        </div>
+
+        <div class="d-flex align-items-center justify-content-center gap-2 mb-3">
+          <button type="button" class="custom-btn btn-secondary chip-btn"
+            [class.active]="selectedLeaveStatus === 'approved'" (click)="onStatusApproveSelect('approved')">
+            Approved
+          </button>
+
+          <button type="button" class="custom-btn btn-secondary chip-btn"
+            [class.active]="selectedLeaveStatus === 'planned'" (click)="onStatusApproveSelect('planned')">
+            Planned Leave
+          </button>
+
+          <button type="button" class="custom-btn btn-secondary chip-btn"
+            [class.active]="selectedLeaveStatus === 'unplanned'" (click)="onStatusApproveSelect('unplanned')">
+            Unplanned Leave
+          </button>
+        </div>
+      </div>
+
+      <div class="custom-modal-footer">
+        <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()"
+          [disabled]="spinnerLoader">{{'Cancel'|
+          translate}}</button>
+        <button type="submit" class="custom-btn btn-primary" (click)="handleAccept(leaveapprovee)"
+          [disabled]="leaveapprovee.invalid || !selectedLeaveData.comments || spinnerLoader">
+          @if(spinnerLoader){
+          <div class="button-loader-content">
+            <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
+            <span>{{'Loading...'}}</span>
+          </div>
+          }@else {
+          <span>{{'Approve'| translate}}</span>
+          }
+        </button>
+      </div>
+    </form>
+  </div>
+</ng-template>
+
+<!-- rejectpopup -->
+<ng-template #rejectPopup let-modal>
+  <div class="result-popup-content" ngbAutofocus>
+    <div>
+      <img src="icons\reject.png" alt="failure icon" class="confirmation-delete-icon">
+      <p class="confirmation-text">{{'Do you really want to reject selected request?' | translate}}</p>
+    </div>
+
+    <form autocomplete="off" name="leaveapprovee" #leaveapprovee="ngForm" (ngSubmit)="leaveapprovee.valid">
+      <div class="custom-main-popup-content">
+        <div class="mb-3">
+          <label for="exampleFormControlTextarea1" class="form-label custom-label">Reject reason<span
+              class="text-danger">*</span></label>
+          <textarea class="form-control custom-input" id="Reasons" placeholder="Please provide reject reason"
+            name="Reasons" #Reasons="ngModel" maxlength="250" [(ngModel)]="selectedLeaveData.comments"
+            (ngModelChange)="ifreasonnull(selectedLeaveData.comments)" rows="3"
+            (keydown)="formsValidation.restrictInitialSpace($event)" required></textarea>
+          <div class="textarea-count-text">
+            {{selectedLeaveData.comments?.length?selectedLeaveData.comments?.length:0}}/250</div>
+          <div class="error-msg"
+            *ngIf="(Reasons.touched && Reasons.invalid) || (leaveapprovee.submitted && Reasons.invalid)">
+            Reject reason is required
+          </div>
+        </div>
+      </div>
+      <div class="d-flex align-items-center justify-content-center gap-2 mb-3">
+        <button type="button" class="custom-btn btn-secondary chip-btn"
+          [class.active]="selectedLeaveStatus === 'reject'" (click)="onStatusRejectSelect('reject')">
+          Rejected
+        </button>
+
+        <button type="button" class="custom-btn btn-secondary chip-btn"
+          [class.active]="selectedLeaveStatus === 'planned'" (click)="onStatusRejectSelect('planned')">
+          Planned Leave
+        </button>
+
+        <button type="button" class="custom-btn btn-secondary chip-btn"
+          [class.active]="selectedLeaveStatus === 'unplanned'" (click)="onStatusRejectSelect('unplanned')">
+          Unplanned Leave
+        </button>
+      </div>
+
+      <div class="custom-modal-footer">
+        <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()"
+          [disabled]="spinnerLoader">{{'Cancel'|
+          translate}}</button>
+        <button type="submit" class="custom-btn btn-primary" (click)="handleReject(leaveapprovee)"
+          [disabled]="leaveapprovee.invalid || !selectedLeaveData.comments || spinnerLoader">
+          @if(spinnerLoader){
+          <div class="button-loader-content">
+            <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
+            <span>{{'Loading...'}}</span>
+          </div>
+          }@else {
+          <span>{{'Reject'| translate}}</span>
+          }
+        </button>
+      </div>
+    </form>
+  </div>
+</ng-template>
+
+<!-- Leave Summary -->
+<ng-template #leaveSummary let-modal>
+  <div class="custom-main-popup-container" ngbAutofocus>
+    <div class="custom-poup-header-content popup-header-border">
+      <div>
+        <p class="popup-heading mb-0">{{"Summary" | translate}}</p>
+      </div>
+    </div>
+    <div class="custom-main-popup-content custom-accordians">
+      <div class="popup-table-wrapper">
+        <div class="popup-table-scroll-container">
+          <table class="popup-table">
+            <thead>
+              <tr>
+                <th>{{'Total Records' | translate}}</th>
+                <th>{{'Success Records'|translate}}</th>
+                <th>{{'Failed Records' | translate}}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="log-time">{{ responseSummary?.totalRecordCount }}</td>
+                <td class="log-time">{{ responseSummary?.successRecordsCount }}</td>
+                <td class="log-time">{{ responseSummary?.failureRecordsCount }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #checkbalancepopup let-modal>
+  <div class="custom-main-popup-container" ngbAutofocus>
+    <div class="custom-poup-header-content popup-header-border">
+      <div>
+        <p class="popup-heading mb-0">
+          Leave Balances
+        </p>
+      </div>
+      <div>
+        <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+      </div>
+    </div>
+    <div class="custom-main-popup-content custom-accordians">
+      <div class="popup-table-wrapper">
+        <div class="popup-table-scroll-container custom-popup-table-scroll-container">
+          <table class="popup-table">
+            <thead>
+              <tr>
+                <th class="text-center">Leave Type</th>
+                <th class="text-center">Entitled</th>
+                <th class="text-center">Booked</th>
+                <th class="text-center">Processed</th>
+                <th class="text-center">Available</th>
+                <th class="text-center"
+                  *ngIf="leaveEntitlementsList.category?.isProbationAllowed && leaveEntitlementsList.probationLeaves > 0">
+                  Probation Leaves
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let leaveEntitlementsList of employeeLeaveEntitlementsList">
+                <td class="text-start">{{ leaveEntitlementsList.category.name }}</td>
+                <td class="text-center">{{ leaveEntitlementsList.allowedDays }}</td>
+                <td class="text-center">{{ leaveEntitlementsList.booked }}</td>
+                <td class="text-center">{{ leaveEntitlementsList.utilizedDays }}</td>
+                <td class="text-center">{{
+                  (leaveEntitlementsList.category.isProbationAllowed &&
+                  leaveEntitlementsList.probationLeaves > 0)
+                  ? (leaveEntitlementsList.probationLeaves - leaveEntitlementsList.utilizedDays)
+                  : (leaveEntitlementsList.allowedDays - leaveEntitlementsList.utilizedDays)
+                  }}
+                </td>
+                <td class="text-center"
+                  *ngIf="leaveEntitlementsList.category?.isProbationAllowed && leaveEntitlementsList.probationLeaves > 0">
+                  {{ leaveEntitlementsList.probationLeaves }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #leaveSummary let-modal>
+  <div class="custom-main-popup-container">
+    <div class="custom-poup-header-content popup-header-border">
+      <div>
+        <p class="popup-heading mb-0">Summary</p>
+      </div>
+    </div>
+
+    <div class="custom-main-popup-content">
+      <div class="popup-table-wrapper">
+        <div class="popup-table-scroll-container">
+          <table class="popup-table">
+            <thead>
+              <tr>
+                <th>Total Records</th>
+                <th>Success Records</th>
+                <th>Failed Records</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>{{ responseSummary?.totalRecordCount }}</td>
+                <td>{{ responseSummary?.successRecordsCount }}</td>
+                <td>{{ responseSummary?.failureRecordsCount }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="custom-modal-footer">
+        <button type="button" class="custom-btn btn-primary" (click)="modal.dismiss()">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
 </ng-template>

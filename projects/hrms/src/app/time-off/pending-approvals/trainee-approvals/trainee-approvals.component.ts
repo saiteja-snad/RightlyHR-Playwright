@@ -1,5 +1,5 @@
 import { CommonModule, DatePipe } from '@angular/common';
-import { Component, OnDestroy, OnInit, Signal } from '@angular/core';
+import { Component, OnDestroy, OnInit, Signal, ViewChild } from '@angular/core';
 import { environment } from '../../../../environments/environment';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { Itraineeapproval } from '../../../Interfaces/traineedetails.model';
@@ -21,16 +21,19 @@ import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component"
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { SignalsService } from '../../../services/signals.service';
 import { FormValidationsService } from '../../../services/form-validations.service';
+import { TableModule } from 'primeng/table';
+import { Table } from 'primeng/table';
 
 @Component({
   selector: 'app-trainee-approvals',
   imports: [DateformatPipe, CommonModule, ReactiveFormsModule, NgbPopoverModule, PaginatorModule, FormsModule, TranslateModule,
-    NoDataFoundComponent, TraineesearchfilterPipe, TraineeApprovalsTabsComponent, DataLoaderContentComponent],
+    NoDataFoundComponent, TraineesearchfilterPipe, TraineeApprovalsTabsComponent, DataLoaderContentComponent, TableModule],
   templateUrl: './trainee-approvals.component.html',
   styleUrl: './trainee-approvals.component.scss',
 })
 
 export class TraineeApprovalsComponent implements OnInit, OnDestroy {
+  @ViewChild('traineeTable') traineeTable!: Table;
   isLoading = false;
   private customsetup: any;
   private datePipe: DatePipe;
@@ -45,6 +48,9 @@ export class TraineeApprovalsComponent implements OnInit, OnDestroy {
   requesthandler = {} as any;
   empdata = {} as Ipersonal;
   Trainees = new BehaviorSubject<Itraineeapproval[]>([]);
+  originalTraineesData = [] as Itraineeapproval[]; // Store original unsorted data
+  currentSortField: string = '';
+  currentSortOrder: number = 0; // 0 = no sort, 1 = asc, -1 = desc
   myApproverComments = {} as any;
   discontinue: any;
   extend: any;
@@ -395,13 +401,111 @@ onCommentChange(value: string) {
     this.subscription = this.http.getData(`PendingApproval/employee/${EmployeeId}?moduleId=15&approvedType=EMP`).subscribe({
       next: (data: any) => {
         this.loading = false;
-        this.Trainees.next(data.data as Itraineeapproval[])
+        this.Trainees.next(data.data as Itraineeapproval[]);
+        this.originalTraineesData = [...data.data]; // Store original data
         this.noRecalllength = this.Trainees;
       },
       error: (reason) => {
         console.log(reason)
         this.loading = false;
       },
+    });
+  }
+
+  getFilteredAndSortedTrainees(): Itraineeapproval[] {
+    const search = this.Traineeaprovalsearch?.toLowerCase() ?? '';
+    let trainees = this.Trainees.getValue() ?? [];
+
+    if (search) {
+      trainees = trainees.filter(trainee =>
+        trainee.entity?.empName?.toLowerCase().includes(search)
+      );
+    }
+
+    return trainees;
+  }
+
+  customSort(event: any): void {
+    const field = event.field;
+    
+    // Track current sort state for the clicked field
+    if (this.currentSortField === field) {
+      // Same field clicked - cycle through: asc (1) -> desc (-1) -> reset (0)
+      if (this.currentSortOrder === 1) {
+        // Currently ascending, change to descending
+        this.currentSortOrder = -1;
+        event.order = -1;
+      } else if (this.currentSortOrder === -1) {
+        // Currently descending, reset to original order
+        this.Trainees.next([...this.originalTraineesData]);
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        if (this.traineeTable) {
+          this.traineeTable.reset();
+        }
+        return;
+      } else {
+        // Currently reset, change to ascending
+        this.currentSortOrder = 1;
+        event.order = 1;
+      }
+    } else {
+      // New field clicked - start with ascending
+      this.currentSortField = field;
+      this.currentSortOrder = 1;
+      event.order = 1;
+    }
+
+    event.data.sort((a: any, b: any) => {
+      let val1: any;
+      let val2: any;
+
+      // Handle specific field mappings
+      switch (field) {
+        case 'empId':
+          val1 = a.entity?.empId;
+          val2 = b.entity?.empId;
+          break;
+        case 'empName':
+          val1 = a.entity?.empName;
+          val2 = b.entity?.empName;
+          break;
+        case 'traineeStartDate':
+          val1 = a.entity?.traineeStartDate;
+          val2 = b.entity?.traineeStartDate;
+          break;
+        case 'traineeEndDate':
+          val1 = a.entity?.traineeEndDate;
+          val2 = b.entity?.traineeEndDate;
+          break;
+        default:
+          val1 = a[field];
+          val2 = b[field];
+      }
+
+      // Handle date sorting
+      if (field === 'traineeStartDate' || field === 'traineeEndDate') {
+        const date1 = val1 ? new Date(val1) : new Date(0);
+        const date2 = val2 ? new Date(val2) : new Date(0);
+        return event.order * (date1.getTime() - date2.getTime());
+      }
+
+      // Handle Employee ID sorting (alphanumeric)
+      if (field === 'empId') {
+        return event.order * String(val1 ?? '').localeCompare(
+          String(val2 ?? ''),
+          undefined,
+          {
+            numeric: true,
+            sensitivity: 'base'
+          }
+        );
+      }
+
+      // Handle string sorting for all other fields
+      val1 = String(val1 ?? '').trim();
+      val2 = String(val2 ?? '').trim();
+      return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
     });
   }
 

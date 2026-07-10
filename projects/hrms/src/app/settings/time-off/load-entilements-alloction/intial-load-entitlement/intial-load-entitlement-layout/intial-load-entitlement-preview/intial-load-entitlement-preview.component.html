@@ -123,9 +123,8 @@
                     </td>
                     <!-- Dynamic leave values -->
                     <td *ngFor="let header of leaveHeaders" class="text-center">
-                        <span [ngStyle]="{color: emp.leaveValues?.[header.categoryId]?.isAlreadyEntitled ? emp.leaveValues?.[header.categoryId]?.color :
-                        emp.leaveValues?.[header.categoryId]?.color}">
-                        <b>{{ emp.leaveValues?.[header.categoryId]?.allowedDays !== null ? emp.leaveValues?.[header.categoryId]?.allowedDays : '-' }}</b>
+                        <span [ngStyle]="{color: emp.leaveValues?.[header.categoryId]?.color}">
+                            <b>{{ emp.leaveValues?.[header.categoryId]?.allowedDays ?? '-' }}</b>
                         </span>
                     </td>
                     <td class="text-center" *ngIf="leaveHeaders.length>0">

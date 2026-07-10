@@ -1,0 +1,73 @@
+<div class="custom-main-component-container">
+  <div class="custom-accordian-data-content" [ngClass]="{ 'no-data-bg': (groups.length === 0) }">
+  @if(!loading){
+    @if(groups.length > 0) {
+        <p-accordion [multiple]="true" [value]="['0']">
+          <p-accordion-panel *ngFor="let group of groups; let i = index" [value]="i.toString()">
+            <p-accordion-header>
+              <span class="group-label">{{ group.label }}</span>
+            </p-accordion-header>
+            <p-accordion-content>
+              <div class="employee-data-table">
+                <table class="w-100">
+                  <thead>
+                    <tr>
+                      <th class="text-start">Frequency</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th class="text-start">Leave Type</th>
+                        <th>Allocated ({{ selectedYear }})</th>
+                        <th>Carry Forward ({{ selectedYear - 1 }})</th>
+                        <th>Total Allocated Leaves
+                        <span class="cursor ms-1" popoverClass="employee-label-info" [ngbPopover]="totalAllocatedInfo" triggers="click">
+                          <app-info-icon />
+                        </span>
+                      </th>
+                      <th>Availed</th>
+                      <th>Lapsed</th>
+                      <th>Frozen
+                        <span class="cursor ms-1" popoverClass="employee-label-info" [ngbPopover]="frozenInfo" triggers="click">
+                          <app-info-icon />
+                        </span>
+                      </th>
+                        <!-- <th>Carry Forward</th> -->
+                        <th>Available Leaves</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let row of group.rows">
+                        <td class="text-start">{{ row.cycleLabel? row.cycleLabel : 'NA' }}</td>
+                        <td>{{ row.cycleStart ? (row.cycleStart | date) : 'NA' }}</td>
+                        <td>{{ row.cycleEnd ? (row.cycleEnd | date) : 'NA' }}</td>
+                        <td class="text-start"><span [style.color]="row.categoryColor">{{ row.categoryName? row.categoryName : 'NA' }}</span></td>
+                        <td>{{ row.entitled? row.entitled : '0' }}</td>
+                        <td>{{ row.carryForwardPrevYear? row.carryForwardPrevYear : '0' }}</td>
+                        <td>{{ row.totalEntitlement? row.totalEntitlement : '0' }}</td>
+                        <td class="col-availed">{{ row.availed? row.availed : '0' }}</td>
+                        <td>{{ row.lapsed? row.lapsed : '0' }}</td>
+                        <td>{{ row.frozen? row.frozen : '0' }}</td>
+                        <!-- <td>{{ row.carryForward? row.carryForward : '0' }}</td> -->
+                        <td>{{ row.balance? row.balance : '0' }}</td>
+                      </tr>
+                  </tbody>
+                </table>
+              </div>
+            </p-accordion-content>
+          </p-accordion-panel>
+        </p-accordion>
+    }@else {
+      <app-no-data-found />
+    }
+  }@else{
+    <app-data-loader-content />
+  }
+  </div>
+</div>
+
+<ng-template #totalAllocatedInfo>
+  <div class="module-info-text">Total Allocated Leaves represent the combined leave balance available for a specific cycle, including the current cycle's entitled leaves along with any carry-forward leaves from the previous year.</div>
+</ng-template>
+
+<ng-template #frozenInfo>
+  <div class="module-info-text">Frozen Leaves refer to the leave balance that is reserved for a particular cycle and cannot be utilized by the employee. These leaves will either be carried forward or lapsed based on the configured entitlement policy.</div>
+</ng-template>

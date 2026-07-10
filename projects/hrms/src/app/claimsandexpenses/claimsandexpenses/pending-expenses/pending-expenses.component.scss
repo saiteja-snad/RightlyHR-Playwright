@@ -7,7 +7,124 @@
     color: #222B45;
 }
 
-
 .status-colour {
     color: #EE8B30;
+}
+
+.custom-p-multi-select-table {
+    overflow: visible !important;
+}
+
+.p-datatable-wrapper {
+    overflow: visible !important;
+}
+
+.custom-dropdown-menu {
+    z-index: 9999 !important;
+}
+
+.result-popup-content .chip-btn {
+    width: auto !important;
+    min-width: auto !important;
+    flex: none !important;
+    display: inline-block !important;
+}
+
+.result-popup-content .btn-primary {
+    border-radius: 10px !important;
+    width: 170px !important;
+}
+
+.result-popup-content .btn-secondary {
+    border-radius: 10px !important;
+}
+
+.result-popup-content .chip-btn {
+    border-radius: 10px !important;
+}
+
+.chip-btn,
+.chip-btn.active {
+    font-size: 13px !important;   /* decrease text size */
+    padding: 6px 20px !important; /* increase left & right space */
+    min-width: 115px !important;
+    border-radius: 10px !important;
+}
+
+.chip-btn,
+.chip-btn.active {
+    font-size: 13px !important;
+    padding: 6px 20px !important;
+    min-width: 115px !important;
+    border-radius: 10px !important;
+}
+
+.chip-btn.active {
+    border-width: 2px !important;
+    font-weight: 600 !important;
+}
+
+.checkbox-column {
+  width: 4rem;
+  min-width: 4rem;
+  text-align: center;
+}
+
+.modal-image {
+    width: 100% !important;
+    max-height: 60vh;
+}
+.wrapper {
+  height: 75dvh;
+  justify-content: center;
+}
+.custom-poup-header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .checklist-title {
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--primary-color);
+        letter-spacing: 1px;
+    }
+
+}
+
+.custom-check-list-content {
+    width: 100%;
+    max-height: 30dvh;
+    overflow: auto;
+    background: #E7EDF2;
+    border-radius: 0.5rem;
+    border: 1px solid #DDE6EF;
+
+    .list-card {
+        font-weight: 500;
+        font-size: var(--fontsize14);
+        background-color: #FFFFFF;
+        border: 1px solid #FFFFFF;
+        border-radius: 0.5rem;
+        padding: 0.5rem 0.75rem;
+        color: #3B3B3B;
+    }
+
+    .list-card:not(:last-child) {
+        margin-bottom: 1rem;
+    }
+}
+
+input[type=checkbox] {
+    accent-color: var(--primary-color) !important;
+}
+
+.action-img {
+    width: 1.5rem;
+    height: 1.5rem;
+}
+
+.wrapper {
+    height: 70dvh;
+    justify-content: center;
 }

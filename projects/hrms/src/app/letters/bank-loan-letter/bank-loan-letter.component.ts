@@ -1,23 +1,22 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { DateformatPipe } from '../../pipes/dateformat.pipe';
 import { Select } from 'primeng/select';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HttpService } from '../../services/http.service';
-import { HttpClient } from '@angular/common/http';
 import { Subscription } from 'rxjs';
-import html2canvas from 'html2canvas';
-import jsPDF from 'jspdf';
 import { IEmployeeDetails, IEmployeeJobDetails, IEmployeeSignatures } from './bank-loan.model';
 import { OpenModalService } from '../../services/open-modal.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
-import { LettersheaderComponent } from "../../shared/letters-shared-content/lettersheader/lettersheader.component";
+import { buildBankLoanLetterDoc } from '../../letters-builder-files/bank-loan-letter.builder';
+import { fetchLetterAssets, setupLetterPdfMake } from '../../letters-builder-files/letter-pdf.utils';
+import { DateformatPipe } from '../../pipes/dateformat.pipe';
 import { LetterFooterComponent } from "../../shared/letters-shared-content/letter-footer/letter-footer.component";
+import { LettersheaderComponent } from "../../shared/letters-shared-content/lettersheader/lettersheader.component";
 @Component({
   selector: 'app-bank-loan-letter',
-  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, TranslateModule, NgbPopoverModule, LettersheaderComponent, LetterFooterComponent],
+  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, TranslateModule, NgbPopoverModule, LetterFooterComponent, LettersheaderComponent],
   templateUrl: './bank-loan-letter.component.html',
   styleUrl: './bank-loan-letter.component.scss',
 })
@@ -25,7 +24,6 @@ import { LetterFooterComponent } from "../../shared/letters-shared-content/lette
 export class BankLoanLetterComponent implements OnInit, OnDestroy {
   moduleinfo: string = '';
   subscription!: Subscription;
-  bankLoanTemplate: any | string | ArrayBuffer | null = null;
   bankLoanFile!: File;
   isdateofbankloan: boolean = true;
   employeeForm!: FormGroup;
@@ -47,12 +45,10 @@ export class BankLoanLetterComponent implements OnInit, OnDestroy {
     { name: 'Hard Copy', value: false },
   ];
 
-  constructor(private http: HttpService, private httpclient: HttpClient, private router: Router, 
-    private fb: FormBuilder, private modal: OpenModalService) { }
+  constructor(private http: HttpService, private router: Router, private fb: FormBuilder, private modal: OpenModalService) { }
 
   ngOnInit() {
     this.initializeForm();
-    this.getBankLoanTemplate();
     this.getAllActiveEmployees();
     this.getAuthorityDetails();
   }
@@ -69,15 +65,6 @@ export class BankLoanLetterComponent implements OnInit, OnDestroy {
       authorityid: ['', Validators.required],
       jobValid: [false, Validators.requiredTrue],
     });
-    // this.employeeForm.get('dateofbankloan')?.valueChanges.subscribe((newDate) => {
-    //   this.DateValidation();
-    // });
-  }
-
-  async getBankLoanTemplate() {
-    this.bankLoanTemplate = await this.httpclient
-      .get('assets/Bank_Loan_Letter.docx', { responseType: 'arraybuffer' })
-      .toPromise();
   }
 
   getAllActiveEmployees() {
@@ -86,7 +73,7 @@ export class BankLoanLetterComponent implements OnInit, OnDestroy {
         this.employeeDetails = data.map((employee: any) => {
           return {
             ...employee,
-            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : '' }${employee.firstName} 
+            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : '' }${employee.firstName}
             ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
           };
         }).sort((a: any, b: any) => (a.firstName ?? '').localeCompare(b.firstName ?? ''));
@@ -114,7 +101,7 @@ export class BankLoanLetterComponent implements OnInit, OnDestroy {
 
   onClickEmployee(event: any) {
     this.selectedEmployee = event.value;
-    this.employeeFullname = this.selectedEmployee.firstName + (this.selectedEmployee.middleName ? ' ' + 
+    this.employeeFullname = this.selectedEmployee.firstName + (this.selectedEmployee.middleName ? ' ' +
     this.selectedEmployee.middleName : '') + ' ' + this.selectedEmployee.lastName;
     if (this.selectedEmployee.gender == 'Male') {
       this.hisOrHerdata = 'his';
@@ -167,47 +154,52 @@ export class BankLoanLetterComponent implements OnInit, OnDestroy {
   onclickDesignation(event: any) {
     this.selectedAuthority = event.value;
     if (this.selectedAuthority) {
-      this.authorityFullName = this.selectedAuthority.middleName ? `${this.selectedAuthority.firstName} 
-      ${this.selectedAuthority.middleName} ${this.selectedAuthority.lastName}` : 
-      `${this.selectedAuthority.firstName} ${this.selectedAuthority.lastName}`;
+      this.authorityFullName = this.selectedAuthority.middleName
+        ? `${this.selectedAuthority.firstName} ${this.selectedAuthority.middleName} ${this.selectedAuthority.lastName}`
+        : `${this.selectedAuthority.firstName} ${this.selectedAuthority.lastName}`;
     }
-  }
-
-  private formatDate(dateString: Date): string {
-    const date = new Date(dateString);
-    const day = date.getDate().toString().padStart(2, '0');
-    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-    const year = date.getFullYear().toString();
-    return `${day}/${month}/${year}`;
   }
 
   async postBankLoanLetterFormSubmit(f: FormGroup) {
     this.spinnerLoader = true;
-    const data = f.value;
-    let fileName = '';
-    if (this.selectedEmployee && this.selectedEmployee.firstName && this.selectedEmployee.lastName) {
-      fileName = `${this.selectedEmployee.firstName}_${this.selectedEmployee.lastName}_${new Date().getTime()}_BankLoanLetter.pdf`;
-    } else {
+    if (!this.selectedEmployee?.firstName || !this.selectedEmployee?.lastName) {
       console.error('Employee first name or last name is missing');
+      this.spinnerLoader = false;
       return;
     }
-    data.dateofbankloan = this.formatDate(data.dateofbankloan);
-    data.dateOfJoining = this.formatDate(data.dateOfJoining);
-    const pdfContent = document.getElementById('pdfContent');
-    if (pdfContent) {
-      html2canvas(pdfContent, { scale: 3 }).then((canvas) => {
-        const imgData = canvas.toDataURL('image/png');
-        const pdf = new jsPDF('p', 'mm', 'a4');
-        const imgWidth = pdf.internal.pageSize.getWidth();
-        const imgHeight = (canvas.height * imgWidth) / canvas.width;
-        pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight, '', 'FAST');
-        pdf.save(fileName);
-        const blob = pdf.output('blob');
-        this.bankLoanFile = new File([blob], fileName, {
-          type: 'application/pdf',
-        });
-        this.uploadBankLoanLetter();
-      });
+    const fileName = `${this.selectedEmployee.firstName}_${this.selectedEmployee.lastName}_${Date.now()}_BankLoanLetter.pdf`;
+    const isSoftCopy = f.value.Documenttype?.value === true;
+    const [assets, pm] = await Promise.all([
+      fetchLetterAssets(isSoftCopy),
+      setupLetterPdfMake(),
+    ]);
+    const docDef = buildBankLoanLetterDoc({
+      employeeFullname: this.employeeFullname,
+      jobRole: this.selectedEmployeeJobDetails?.jobRole || '',
+      effectiveDate: this.selectedEmployeeJobDetails?.effectiveDate || '',
+      hisOrHer: this.hisOrHerdata || 'his/her',
+      himOrHer: this.herOrHimdata || 'him/her',
+      letterDate: f.value.dateofbankloan,
+      authorityFullName: this.authorityFullName || '',
+      authorityDesignation: this.selectedAuthority?.designation || '',
+      backgroundImageBase64: assets.backgroundImageBase64,
+      headerLogoBase64: assets.headerLogoBase64,
+      useVerdanaFont: true,
+      useAutographyFont: true,
+    });
+    try {
+      const blob: Blob = await pm.createPdf(docDef).getBlob();
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = fileName;
+      link.click();
+      URL.revokeObjectURL(link.href);
+      this.bankLoanFile = new File([blob], fileName, { type: 'application/pdf' });
+      this.uploadBankLoanLetter();
+    } catch (err) {
+      console.error('PDF generation failed:', err);
+      this.spinnerLoader = false;
+      this.modal.openErrorModal('Failed to generate Bank Loan Letter');
     }
   }
 
@@ -225,11 +217,16 @@ export class BankLoanLetterComponent implements OnInit, OnDestroy {
         this.modal.openErrorModal(err.error.message ? err.error.message : 'Failed to upload Bank Loan Letter');
       },
       complete: () => {
-        setTimeout(() => {
-          this.router.navigate(['/employee-management/all-employees']);
-        }, 2000)
         this.spinnerLoader = false;
         this.employeeForm.reset();
+        this.employeeFullname = '';
+        this.selectedEmployee = null!;
+        this.selectedEmployeeJobDetails = null!;
+        this.selectedAuthority = null!;
+        this.authorityFullName = '';
+        this.hisOrHerdata = '';
+        this.herOrHimdata = '';
+        this.jobErrorMessage = '';
       }
     });
   }

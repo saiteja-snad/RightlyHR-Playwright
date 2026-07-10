@@ -65,7 +65,6 @@ export default [
             { path: 'global-expenses-configuration', loadComponent: () => import('./expenses-configuration/global-expenses-configuration/global-expenses-configuration.component').then((m) => m.GlobalExpensesConfigurationComponent), canActivate: [PermissionsGuard], data: { permission: 'Global Expense Configuration.view' } },
             { path: 'budget-verification', loadComponent: () => import('./expenses-configuration/budget-verification/budget-verification.component').then((m) => m.BudgetVerificationComponent), canActivate: [PermissionsGuard], data: { permission: 'Expense Checklist Configuration.view' } },
             { path: 'payment-modes', loadComponent: () => import('./expenses-configuration/expenses-paymentmode/expenses-paymentmode.component').then((m) => m.ExpensesPaymentmodeComponent), canActivate: [PermissionsGuard], data: { permission: 'Payment Mode Configurations.view' } }
-
         ]
     },
     {

@@ -215,21 +215,43 @@ export class InacitveProjectsComponent implements OnInit, OnDestroy {
   }
 
   getAllInactiveProjects() {
-    this.loading = true;
+    this.loading = true; 
     let url = `Project?status=Inactive&pageNumber=${this.page}&pageSize=${this.pageSize}`;
 
-    if (this.searchValue?.trim()) {
-      url += `&searchTerm=${encodeURIComponent(this.searchValue.trim())}`;
-    }
+    if (this.rbac.allowedToAccess('View Assigned Projects.view') && !this.rbac.allowedToAccess('View All Projects.view')) {
+       url = `Project?status=Inactive&employeeId=${this.empinfo.employeeId}&pageNumber=${this.page}&pageSize=${this.pageSize}`;
 
-    // Apply Department Filter
-    if (this.selectedDepartmentIds && this.selectedDepartmentIds.length > 0) {
-      url += `&departmentIds=${this.selectedDepartmentIds.join(',')}`;
-    }
+      if (this.searchValue?.trim()) {
+        url += `&searchTerm=${encodeURIComponent(this.searchValue.trim())}`;
+      }
 
-    // Apply Project Type Filter (optional)
-    if (this.selectedProjectTypes && this.selectedProjectTypes.length > 0) {
-      url += `&projectTypes=${this.selectedProjectTypes.join(',')}`;
+      // Apply Department Filter
+      if (this.selectedDepartmentIds && this.selectedDepartmentIds.length > 0) {
+        url += `&departmentIds=${this.selectedDepartmentIds.join(',')}`;
+      }
+
+      // Apply Project Type Filter (optional)
+      if (this.selectedProjectTypes && this.selectedProjectTypes.length > 0) {
+        url += `&projectTypes=${this.selectedProjectTypes.join(',')}`;
+      }
+
+    }
+    else {
+       url = `Project?status=Inactive&pageNumber=${this.page}&pageSize=${this.pageSize}`;
+
+      if (this.searchValue?.trim()) {
+        url += `&searchTerm=${encodeURIComponent(this.searchValue.trim())}`;
+      }
+
+      // Apply Department Filter
+      if (this.selectedDepartmentIds && this.selectedDepartmentIds.length > 0) {
+        url += `&departmentIds=${this.selectedDepartmentIds.join(',')}`;
+      }
+
+      // Apply Project Type Filter (optional)
+      if (this.selectedProjectTypes && this.selectedProjectTypes.length > 0) {
+        url += `&projectTypes=${this.selectedProjectTypes.join(',')}`;
+      }
     }
 
     const clientIds = this.selectedClients

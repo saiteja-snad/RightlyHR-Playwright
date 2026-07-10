@@ -1,8 +1,9 @@
-import { Component, effect, OnInit, OnDestroy } from '@angular/core';
+import { Component, effect, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { BehaviorSubject, Subscription } from 'rxjs';
+import { Table, TableModule } from 'primeng/table';
 import { HttpService } from '../../../services/http.service';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { RbacService } from '../../../services/rbac.service';
@@ -20,6 +21,7 @@ import { environment } from '../../../../environments/environment';
   imports: [
     CommonModule,
     FormsModule,
+    TableModule,
     DateformatPipe,
     NoDataFoundComponent,
     DataLoaderContentComponent,
@@ -29,9 +31,15 @@ import { environment } from '../../../../environments/environment';
   styleUrl: './trainee-requests.component.scss',
 })
 export class TraineeRequestsComponent implements OnInit, OnDestroy {
+  @ViewChild('dt') table!: Table;
   loading = false;
   subscription!: Subscription;
   Trainees = new BehaviorSubject<any[]>([]);
+  originalData: any[] = [];
+  searchValue: string = '';
+  currentSortField: string = '';
+  currentSortOrder: number = 0; // 0 = no sort, 1 = asc, -1 = desc
+  previousSearchValue: string = '';
   selectedRequest: any = null;
   selectedLeaveData: any = {
     trcomments: '',
@@ -90,6 +98,7 @@ export class TraineeRequestsComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (res: any) => {
           this.Trainees.next(res.data || []);
+          this.originalData = [...(res.data || [])]; // Store original data for reset functionality
           this.loading = false;
         },
         error: () => {
@@ -297,5 +306,86 @@ setExtendComment(text: string) {
 
   ngOnDestroy() {
     if (this.subscription) this.subscription.unsubscribe();
+  }
+
+  onSearchChange() {
+    // Reset sorting when search changes
+    if (this.searchValue !== this.previousSearchValue) {
+      this.currentSortField = '';
+      this.currentSortOrder = 0;
+      this.previousSearchValue = this.searchValue;
+      if (this.table) {
+        this.table.reset();
+      }
+    }
+  }
+
+  getFilteredAndSortedTrainees(): any[] {
+    const currentData = this.Trainees.getValue();
+    if (!this.searchValue || this.searchValue.trim() === '') {
+      return currentData;
+    }
+    
+    const searchTerm = this.searchValue.toLowerCase().trim();
+    return currentData.filter((trainee: any) => {
+      const traineeId = trainee.entity?.fusionEmpId?.toLowerCase() || '';
+      const traineeName = (trainee.entity?.empName || trainee.entity?.raisedForName || '').toLowerCase();
+      const startDate = trainee.entity?.traineeStartDate?.toLowerCase() || '';
+      const endDate = trainee.entity?.traineeEndDate?.toLowerCase() || '';
+      
+      return traineeId.includes(searchTerm) ||
+             traineeName.includes(searchTerm) ||
+             startDate.includes(searchTerm) ||
+             endDate.includes(searchTerm);
+    });
+  }
+
+  customSort(event: any): void {
+    const field = event.field;
+    
+    // Track current sort state for the clicked field
+    if (this.currentSortField === field) {
+      // Same field clicked - cycle through: asc (1) -> desc (-1) -> reset (0)
+      if (this.currentSortOrder === 1) {
+        // Currently ascending, change to descending
+        this.currentSortOrder = -1;
+        event.order = -1;
+      } else if (this.currentSortOrder === -1) {
+        // Currently descending, reset to original order
+        this.Trainees.next([...this.originalData]);
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        if (this.table) {
+          this.table.reset();
+        }
+        return;
+      } else {
+        // Currently reset, change to ascending
+        this.currentSortOrder = 1;
+        event.order = 1;
+      }
+    } else {
+      // New field clicked - start with ascending
+      this.currentSortField = field;
+      this.currentSortOrder = 1;
+      event.order = 1;
+    }
+
+    event.data.sort((a: any, b: any) => {
+      let val1 = this.getNestedProperty(a, field);
+      let val2 = this.getNestedProperty(b, field);
+
+      // Handle string sorting
+      val1 = String(val1 ?? '').trim();
+      val2 = String(val2 ?? '').trim();
+      return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+    });
+  }
+
+  private getNestedProperty(obj: any, field: string): any {
+    if (field === 'traineeName') {
+      return obj.entity?.empName || obj.entity?.raisedForName || '';
+    }
+    return obj.entity?.[field] ?? '';
   }
 }

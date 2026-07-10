@@ -384,8 +384,8 @@ export class RemoteLoginComponent {
         next: (res: any) => {
           this.cleardata();
           this.sharedModalService.openSuccessModal('Remote Login request submitted successfully');
-          this.signalsService.remoteLoginRequestTriggerSignal.set(true);
-          this.signalsService.remoteLoginSidNavCountTriggerSignal.set(true);
+          this.signalsService.remoteLoginRequestTriggerSignal.update(count => count + 1);
+          this.signalsService.remoteLoginSidNavCountTriggerSignal.update(count => count + 1);
         },
         error: (err: any) => {
           this.spinnerLoader = false;

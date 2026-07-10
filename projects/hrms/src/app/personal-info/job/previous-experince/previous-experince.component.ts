@@ -1,8 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { Select } from 'primeng/select';
+import { TableModule } from 'primeng/table';
+import { Table } from 'primeng/table';
 import { HttpService } from '../../../services/http.service';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { BehaviorSubject, Observable, Subscription, tap } from 'rxjs';
@@ -16,8 +18,6 @@ import { DataLoaderContentComponent } from "../../../shared/data-loader-content/
 import { RbacService } from '../../../services/rbac.service';
 import { AccessForEmployeeinfoService } from '../../../services/access-for-employeeinfo.service';
 import { Router } from '@angular/router';
-import { SettingsDeleteIconComponent } from "../../../icons/settings-delete-icon/settings-delete-icon.component";
-import { SettingsUpdateIconComponent } from "../../../icons/settings-update-icon/settings-update-icon.component";
 import { DownloadIconComponent } from "../../../icons/download-icon/download-icon.component";
 import { environment } from '../../../../environments/environment';
 import { ChartModule } from 'primeng/chart';
@@ -28,17 +28,20 @@ import { DateformatPipe } from '../../../pipes/dateformat.pipe';
 
 @Component({
   selector: 'app-previous-experince',
-  imports: [CommonModule, ReactiveFormsModule, Select, DateformatPipe, TranslateModule, DataLoaderContentComponent, NoDataFoundComponent, SettingsDeleteIconComponent, SettingsUpdateIconComponent, DownloadIconComponent, NgbPopoverModule, ChartModule, InfoIconComponent, AutoCompleteModule],
+  imports: [CommonModule, ReactiveFormsModule, Select, DateformatPipe, TranslateModule, TableModule, DataLoaderContentComponent, NoDataFoundComponent, DownloadIconComponent, NgbPopoverModule, ChartModule, InfoIconComponent, AutoCompleteModule],
   templateUrl: './previous-experince.component.html',
   styleUrl: './previous-experince.component.scss'
 })
 export class PreviousExperinceComponent implements OnInit, OnDestroy {
+  @ViewChild('previousExperienceTable') previousExperienceTable!: Table;
   subscription!: Subscription
   selectedexpId: any
   JobtypeDetails: IJobtype[] = []
   employeeExperienceForm!: FormGroup;
   employeeExperienceupdateForm!: FormGroup
   getempexpdata = new BehaviorSubject<any[]>([])
+  experienceTableData: any[] = []; // Data bound to the table
+  originalExperienceData: any[] = []; // Store original unsorted data for reset
   countryCodes = [];
   selectedid: any
   isCurrentdateDisable = false;
@@ -63,6 +66,8 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
   experienceData: any;
   experienceDataOptions: any;
   companySuggestions: string[] = [];
+  currentSortField: string = '';
+  currentSortOrder: number = 0; // 0 = no sort, 1 = asc, -1 = desc
 
   constructor(private modalService: NgbModal, private http: HttpService, public formValidation: FormValidationService, private fb: FormBuilder, private conformationPopup: OpenModalService, public rbac: RbacService, public permissionRouteService: AccessForEmployeeinfoService, private router: Router) { }
 
@@ -486,13 +491,18 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
       next: (data: any) => {
         this.loading = false
         console.log(data);
-        this.getempexpdata.next(data);
+        // Store the original data for resetting sorts
+        this.originalExperienceData = [...data];
+        this.experienceTableData = [...data];
+        this.getempexpdata.next([...data]);
+        // Reset sorting state when new data is loaded
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
       },
       error: (err) => {
         this.loading = false
       },
     })
-
   }
 
   //download Functionality
@@ -734,23 +744,80 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
     this.isFutureDate = false
   }
 
-searchCompanies(event: any) {
 
-  const query = event.query || '';
+searchCompanies(event: any) {
+  const query = (event.query || '').trim();
 
   this.http
     .getData(`ExperienceDetail/company-suggestions?search=${query}`)
     .subscribe({
-      next: (data: any) => {
-        this.companySuggestions = data;
-      },
-      error: (err) => {
-        console.error(err);
-      }
+      
+next: (data: any) => {
+
+  this.companySuggestions = (data || []).filter(
+    (x: string) => x && x.trim() !== ''
+  );
+
+  if (query && this.companySuggestions.length === 0) {
+    this.companySuggestions = [query];
+  }
+}
     });
 }
 
+  customSort(event: any): void {
+    const field = event.field;
+    
+    // Track current sort state for the clicked field
+    if (this.currentSortField === field) {
+      // Same field clicked - cycle through: asc (1) -> desc (-1) -> reset (0)
+      if (this.currentSortOrder === 1) {
+        // Currently ascending, change to descending
+        this.currentSortOrder = -1;
+        event.order = -1;
+      } else if (this.currentSortOrder === -1) {
+        // Currently descending, reset to original order
+        this.experienceTableData = [...this.originalExperienceData];
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        if (this.previousExperienceTable) {
+          this.previousExperienceTable.reset();
+        }
+        return;
+      } else {
+        // Currently reset, change to ascending
+        this.currentSortOrder = 1;
+        event.order = 1;
+      }
+    } else {
+      // New field clicked - start with ascending
+      this.currentSortField = field;
+      this.currentSortOrder = 1;
+      event.order = 1;
+    }
 
+    event.data.sort((a: any, b: any) => {
+      let val1 = a[field];
+      let val2 = b[field];
+
+      // Handle null/undefined values
+      if (val1 == null && val2 == null) return 0;
+      if (val1 == null) return event.order;
+      if (val2 == null) return -event.order;
+
+      // Handle date sorting
+      if (['fromDate', 'toDate'].includes(field)) {
+        const date1 = new Date(val1).getTime();
+        const date2 = new Date(val2).getTime();
+        return event.order * (date1 - date2);
+      }
+
+      // Handle string sorting for all other fields
+      val1 = String(val1).trim();
+      val2 = String(val2).trim();
+      return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+    });
+  }
 
   ngOnDestroy(): void {
     if (this.subscription) {

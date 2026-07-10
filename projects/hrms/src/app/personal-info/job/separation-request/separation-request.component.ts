@@ -26,6 +26,8 @@ import { RaiseseparationComponent } from '../raiseseparation/raiseseparation.com
 import { AuthService } from '../../../services/auth.service';
 import { SeparationSubTabsComponent } from "../../../shared/personalinfo-tabs/separation-sub-tabs/separation-sub-tabs.component";
 import { MyinfoSeparationSubTabsComponent } from "../../../shared/myinfo-tabs/myinfo-separation-sub-tabs/myinfo-separation-sub-tabs.component";
+import { TableModule } from 'primeng/table';
+import { Table } from 'primeng/table';
 @Component({
   selector: 'app-separation-request',
   imports: [
@@ -43,13 +45,18 @@ import { MyinfoSeparationSubTabsComponent } from "../../../shared/myinfo-tabs/my
     SeparationSubTabsComponent,
     MyinfoSeparationSubTabsComponent,
     Select,
-    DateformatPipe
+    DateformatPipe,
+    TableModule
 ],
   templateUrl: './separation-request.component.html',
   styleUrl: './separation-request.component.scss',
 })
 export class SeparationRequestComponent implements OnInit, OnDestroy {
+  @ViewChild('separationTable') separationTable!: Table;
   getSeparationDetails = new BehaviorSubject<ISeparation[]>([]);
+  originalSeparationData = [] as ISeparation[]; // Store original unsorted data
+  currentSortField: string = '';
+  currentSortOrder: number = 0; // 0 = no sort, 1 = asc, -1 = desc
   subscription!: Subscription;
   empinfo = {} as Ipersonal;
   empdata = {} as Ipersonal;
@@ -462,6 +469,7 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
             this.shouldShowStatusBasedButton();
             console.log(this.separationDetails);
             this.getSeparationDetails.next(data);
+            this.originalSeparationData = [...data];
             this.substatus = this.getSeparationDetails.value.map(
               (application: { status: any }) => application.status.toLowerCase()
             );
@@ -504,6 +512,70 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
           this.getSeparationDetails.next([]);
         },
       });
+  }
+
+  customSort(event: any): void {
+    const field = event.field;
+    
+    // Track current sort state for the clicked field
+    if (this.currentSortField === field) {
+      // Same field clicked - cycle through: asc (1) -> desc (-1) -> reset (0)
+      if (this.currentSortOrder === 1) {
+        // Currently ascending, change to descending
+        this.currentSortOrder = -1;
+        event.order = -1;
+      } else if (this.currentSortOrder === -1) {
+        // Currently descending, reset to original order
+        this.getSeparationDetails.next([...this.originalSeparationData]);
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        if (this.separationTable) {
+          this.separationTable.reset();
+        }
+        return;
+      } else {
+        // Currently reset, change to ascending
+        this.currentSortOrder = 1;
+        event.order = 1;
+      }
+    } else {
+      // New field clicked - start with ascending
+      this.currentSortField = field;
+      this.currentSortOrder = 1;
+      event.order = 1;
+    }
+
+    event.data.sort((a: any, b: any) => {
+      let val1: any;
+      let val2: any;
+
+      // Handle direct fields
+      val1 = a[field];
+      val2 = b[field];
+
+      // Handle date fields
+      if (['appliedDate', 'lastWorkingDate', 'createdAt', 'updatedAt'].includes(field)) {
+        if (!val1 && !val2) return 0;
+        if (!val1) return event.order * 1; // null dates go to end
+        if (!val2) return event.order * -1;
+        
+        const date1 = new Date(val1);
+        const date2 = new Date(val2);
+        return event.order * (date1.getTime() - date2.getTime());
+      }
+
+      // Handle numeric fields
+      if (['noticePeriodDuration'].includes(field)) {
+        const num1 = parseInt(String(val1)) || 0;
+        const num2 = parseInt(String(val2)) || 0;
+        return event.order * (num1 - num2);
+      }
+
+      // Handle string sorting for all other fields
+      val1 = String(val1 ?? '').trim();
+      val2 = String(val2 ?? '').trim();
+      return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+    });
   }
 
   //function to check the status of the request

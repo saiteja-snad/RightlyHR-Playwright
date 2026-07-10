@@ -52,7 +52,7 @@
       <span>{{ jobSummary.shiftName? jobSummary.shiftName : 'N/A' }}</span>
     </div>
 
-    <div class="info-item">
+    <!-- <div class="info-item">
       <label>Frequency</label>
       <span>{{ jobSummary.frequencyType? formatLabel(jobSummary.frequencyType) : 'N/A' }}</span>
     </div>
@@ -65,7 +65,7 @@
     <div class="info-item">
       <label>Cycle Period</label>
       <span>{{ (jobSummary.cycleStart | date) }} - {{ jobSummary.cycleEnd | date }}</span>
-    </div>
+    </div> -->
   </div>
 
   <!-- Stats Cards -->
@@ -89,14 +89,14 @@
         <div class="d-flex align-items-center gap-3 flex-wrap">
         <!-- Employee Name -->
         <div class="custom-p-multiSelect-content">
-          <p-multiSelect [options]="employeeDetails" optionLabel="fullName" [filter]="true" filterBy="fullName"
+          <p-multiSelect [options]="employeeDetails" optionLabel="fullName" dataKey="id" [filter]="true" filterBy="fullName"
             [showClear]="true" class="form-select custom-select" formControlName="employeeName" [resetFilterOnHide]="true"
             (onChange)="onSelectedEmployee($event.value)" (onClear)="onSelectedEmployee([])"
             placeholder="Please select employee" filterPlaceHolder="Search Employee" [maxSelectedLabels]="1"
   selectedItemsLabel="{0} selected">
             <ng-template let-user pTemplate="item">
               {{ user.fusionEmpId }} <span class="me-2 ms-2" *ngIf="user.fusionEmpId">-</span>
-              {{ user.firstName }} {{ user.middleName }} {{ user.lastName }}
+              {{ user.name }}
             </ng-template>
           </p-multiSelect>
         </div>
@@ -247,17 +247,59 @@
       <div class="custom-modal-footer">
         <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">Cancel</button>
         <button type="button" class="custom-btn btn-primary"
-          [disabled]="!selectedNewEmployees.length || submittingLoad"
-          (click)="loadEmployees(modal)">
+          [disabled]="!selectedNewEmployees?.length || submittingLoad"
+          (click)="loadEmployees(modal, validationErrorsModal)">
           @if(submittingLoad) {
             <div class="button-loader-content">
               <div class="spinner-border button-spinner text-light" role="status"></div>
               <span>Loading...</span>
             </div>
           } @else {
-            Load {{ selectedNewEmployees.length || '' }} Employee(s)
+            Load {{ selectedNewEmployees?.length || '' }} Employee(s)
           }
         </button>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<!-- Validation Errors Modal -->
+<ng-template #validationErrorsModal let-modal>
+  <div class="custom-main-popup-container" ngbAutofocus>
+    <div class="custom-poup-header-content popup-header-border">
+      <div>
+        <p class="popup-heading mb-0">Skipped Employees - Validation Errors</p>
+      </div>
+      <div>
+        <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+      </div>
+    </div>
+    <div class="custom-main-popup-content">
+      <!-- <p class="mb-3">{{ validationMessage }}</p> -->
+      <div class="popup-table-wrapper">
+        <div class="popup-table-scroll-container">
+          <table class="popup-table">
+            <thead>
+              <tr>
+                <th>Employee Name</th>
+                <th>Category</th>
+                <th>Error</th>
+              </tr>
+            </thead>
+            <tbody>
+              <ng-container *ngFor="let e of validationErrors">
+                <tr *ngFor="let c of e.categoryErrors; let i = index">
+                  <td *ngIf="i === 0" [attr.rowspan]="e.categoryErrors.length" class="align-middle">{{ e.employeeName }}</td>
+                  <td>{{ c.categoryName }}</td>
+                  <td>{{ c.error }}</td>
+                </tr>
+              </ng-container>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="custom-modal-footer mt-3">
+        <button type="button" class="custom-btn btn-primary" (click)="modal.dismiss()">OK</button>
       </div>
     </div>
   </div>
@@ -297,7 +339,7 @@
       <div class="custom-modal-footer">
         <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">Cancel</button>
         <button type="submit" class="custom-btn btn-primary"
-          [disabled]="!selectedNewCategories.length || submittingLoadCategories"
+          [disabled]="!selectedNewCategories?.length || submittingLoadCategories"
           (click)="loadCategories(modal)"> 
           @if(submittingLoadCategories) {
             <div class="button-loader-content">
@@ -341,7 +383,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let c of selectedCycleEmployee?.cycles">
+              <tr *ngFor="let c of selectedCycleEmployee?.cycles; let isLast = last">
                 <td>Cycle {{ c.cycleNo }}</td>
                 <td>{{ c.cycleStart | date }}</td>
                 <td>{{ c.cycleEnd | date }}</td>
@@ -366,11 +408,11 @@
                 </td>
                 <td>
                   @if(c?.requiresRetry) {
-                  <div class="dropdown">
+                  <div class="dropdown" [ngClass]="{ 'dropup': (selectedCycleEmployee?.cycles?.length === 1) || isLast }">
                     <a data-bs-toggle="dropdown" aria-expanded="false">
                       <i class="bi bi-three-dots-vertical"></i>
                     </a> 
-                    <ul class="dropdown-menu custom-dropdown-menu">
+                    <ul class="dropdown-menu custom-dropdown-menu dropdown-menu-end">
                       <li (click)="retryCyclePlan(jobid, c)">
                         <a class="dropdown-item"><i class="bi bi-arrow-clockwise me-2"></i>Retry</a>
                       </li>

@@ -375,7 +375,22 @@ export class ProjectPhasesComponent implements OnInit, OnDestroy {
     if (this.isResourceFormInvalid) return;
     this.loading = true;
     const approvalAuthorityId = this.updatePhaseForm.get('approvalidAuthority')?.value;
-    this.saveUpdateResources(this.phaseId, approvalAuthorityId, this.currentPhaseColor);
+    const currentPhase = this.phaseData.find((p) => p.phaseId === this.phaseId);
+    // Must call phase update API so timesheetApprovalAuthorityId is persisted on the phase
+    this.updatePhaseStatus({
+      phaseId: this.phaseId,
+      status: currentPhase?.status?.toLowerCase() ?? 'in progress',
+      phaseName: currentPhase?.phaseName,
+      allocatedHours: currentPhase?.allocatedHours,
+      startDate: currentPhase?.startDate?.substring(0, 10),
+      endDate: currentPhase?.endDate?.substring(0, 10),
+      effectiveDate: currentPhase?.effectiveDate?.substring(0, 10),
+      kickoffDate: currentPhase?.kickoffDate?.substring(0, 10),
+      description: currentPhase?.description,
+      timesheetApprovalAuthorityId: approvalAuthorityId,
+      meta: { graphData: { color: this.currentPhaseColor } },
+      actionType: 'update',
+    }, undefined, true);
   }
 
   get isResourceFormInvalid(): boolean {
@@ -761,7 +776,7 @@ export class ProjectPhasesComponent implements OnInit, OnDestroy {
         overtimeEligibile: false,
         billable: false,
         weekendWorkAllowed: false,
-        status: r.status,
+        status: r.employeeId === approvalAuthorityId ? 'active' : r.status,
         allocatedBy: parseInt(this.empinfo.employeeId),
         pendingApprovalAuthority: approvalAuthorityId ?? null,
         phaseId: phaseId,

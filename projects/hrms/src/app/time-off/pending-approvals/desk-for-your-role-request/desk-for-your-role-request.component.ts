@@ -18,6 +18,7 @@ import { DateformatPipe } from '../../../pipes/dateformat.pipe';
 import { CheckboxModule } from 'primeng/checkbox';
 import { TableModule } from 'primeng/table';
 import { SearchfilterPipe } from '../../../Pipes/searchfilter.pipe';
+import moment from 'moment';
 
 @Component({
   selector: 'app-desk-for-your-role-request',
@@ -304,6 +305,43 @@ export class DeskForYourRoleRequestComponent implements OnInit, OnDestroy {
 
   customSort(event: any): void {
     const field = event.field;
+
+    // Check if all values in the column are the same
+        const allValues = event.data.map((item: any) => {
+          if (field.includes('.')) {
+            const fieldParts = field.split('.');
+            return fieldParts.reduce((obj: any, key: string) => obj?.[key], item);
+          } else {
+            return item.entity?.[field];
+          }
+        });
+    
+        // For date fields, normalize to date-only strings for comparison
+        if (field.includes('allocatedDate') || field.includes('allocatedDate')) {
+          const normalizedValues = allValues.map((val: any) => {
+            if (!val) return null;
+            return moment(val).format('YYYY-MM-DD');
+          });
+          
+          const allSame = normalizedValues.every((val: any) => val === normalizedValues[0]);
+          if (allSame) {
+            // Reset sort state and prevent sorting
+            this.currentSortField = '';
+            this.currentSortOrder = 0;
+            if (this.table) this.table.reset();
+            return;
+          }
+        } else {
+          // For non-date fields, check if all values are the same
+          const allSame = allValues.every((val: any) => val === allValues[0]);
+          if (allSame) {
+            // Reset sort state and prevent sorting
+            this.currentSortField = '';
+            this.currentSortOrder = 0;
+            if (this.table) this.table.reset();
+            return;
+          }
+        }
 
     if (this.currentSortField === field) {
       if (this.currentSortOrder === 1) {

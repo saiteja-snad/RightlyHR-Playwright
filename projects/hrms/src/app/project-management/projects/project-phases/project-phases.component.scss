@@ -4,7 +4,7 @@
 
 .custom-table-content {
   height: calc(100vh - 15rem) !important;
-  
+
   &.has-data {
     height: calc(100vh - 19rem) !important;
   }
@@ -25,11 +25,21 @@
 }
 
 .data-nav-btn {
-    font-weight: 700;
-    font-style: Bold;
-    font-size: 14px;
-    text-decoration: none;
-    color: var(--primary-color);
-    text-decoration: underline;
-    cursor: pointer;
+  font-weight: 700;
+  font-style: Bold;
+  font-size: 14px;
+  text-decoration: none;
+  color: var(--primary-color);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+::ng-deep.p-select-option {
+  span {
+    font-size: 12px !important;
+  }
+}
+
+::ng-deep.p-inputtext:enabled:focus {
+  border-color: var(--p-inputtext-border-color) !important;
 }

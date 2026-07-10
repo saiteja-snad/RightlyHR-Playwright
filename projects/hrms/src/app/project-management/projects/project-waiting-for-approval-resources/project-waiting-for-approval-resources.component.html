@@ -239,7 +239,8 @@
             <div class="custom-p-select-content">
               <p-select [options]="resoucesDropDownData" optionLabel="label" optionValue="value" [filter]="true"
                 filterBy="label" [showClear]="false" placeholder="Please select resource name"
-                formControlName="resourceAuthority" class="custom-select w-100" resetFilterOnHide="true">
+                formControlName="resourceAuthority" class="custom-select w-100" resetFilterOnHide="true" 
+                appendTo="body" [autoZIndex]="true" [baseZIndex]="1100">
               </p-select>
             </div>
           </div>

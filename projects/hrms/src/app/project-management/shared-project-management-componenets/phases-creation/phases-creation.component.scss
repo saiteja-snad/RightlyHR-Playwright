@@ -48,10 +48,10 @@
     border-color: var(--primary-color) !important;
     background: var(--primary-color) !important;
   }
+}
 
-  .p-select-option {
-    font-size: 12px !important;
-  }
+::ng-deep.p-select-option {
+  font-size: 12px !important;
 }
 
 .delete-btn {

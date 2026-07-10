@@ -71,3 +71,13 @@ input[type="checkbox"] {
 .width-max-content {
   width: max-content !important;
 }
+
+::ng-deep.p-select-option {
+  span {
+    font-size: 12px !important;
+  }
+}
+
+::ng-deep.p-inputtext:enabled:focus {
+  border-color: var(--p-inputtext-border-color) !important;
+}

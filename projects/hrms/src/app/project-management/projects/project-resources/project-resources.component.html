@@ -390,7 +390,7 @@
               <p-select [options]="resoucesDropDownData" optionLabel="label" optionValue="value" [filter]="true"
                 filterBy="label" optionValue="value" [showClear]="false" placeholder="Please select resource name"
                 formControlName="resourceAuthority" class="custom-select w-100" resetFilterOnHide="true"
-                appendTo="body"></p-select>
+                appendTo="body" [autoZIndex]="true" [baseZIndex]="1100"></p-select>
             </div>
 
             <div class="error-msg" *ngIf="

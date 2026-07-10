@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { HttpService } from '../../services/http.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Ipersonal } from '../../Interfaces/members-model';
@@ -17,10 +17,11 @@ import { DateformatPipe } from "../../pipes/dateformat.pipe";
 import { RbacService } from '../../services/rbac.service';
 import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
 import { SettingsUpdateIconComponent } from "../../icons/settings-update-icon/settings-update-icon.component";
+import { Table, TableModule } from 'primeng/table';
 
 @Component({
   selector: 'app-all-tickets',
-  imports: [CommonModule, Select, RouterModule, NoDataFoundComponent, FormsModule, ReactiveFormsModule, TranslateModule, ItsupportPipe, DateformatPipe, DataLoaderContentComponent, SettingsUpdateIconComponent],
+  imports: [CommonModule, Select, RouterModule, NoDataFoundComponent, FormsModule, ReactiveFormsModule, TranslateModule, ItsupportPipe, DateformatPipe, DataLoaderContentComponent, SettingsUpdateIconComponent, TableModule],
   templateUrl: './all-tickets.component.html',
   styleUrl: './all-tickets.component.scss'
 })
@@ -30,6 +31,10 @@ export class AllTicketsComponent implements OnInit,OnDestroy{
   searchValue!:string;
   empinfo = {} as Ipersonal;
   tickets= [] as Ticket[];
+  originalTickets: Ticket[] = [];
+  currentSortField = '';
+  currentSortOrder = 0;
+  @ViewChild('dt') dt!: Table;
   isLoading: boolean = false;
   itSupportForm!: FormGroup;
   ticketRaisedFor: any[] = [];
@@ -64,7 +69,7 @@ export class AllTicketsComponent implements OnInit,OnDestroy{
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.teamTicketDetails = JSON.parse(localStorage.getItem('ticketDetails') || '{}');
     this.getuserticketsbyempid();
-    
+
     this.itSupportForm = this.fb.group({
       employee: [{ value: 'Self', disabled: true }, Validators.required],
       name: [{ value: '', disabled: true }, Validators.required],
@@ -92,22 +97,84 @@ export class AllTicketsComponent implements OnInit,OnDestroy{
       next: (data: any) => {
         this.dataloading = false;
         this.tickets = data;
+        this.originalTickets = Array.isArray(this.tickets) ? [...this.tickets] : [];
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        if (this.dt) {
+          this.dt.reset();
+        }
       },
       error: (err: any) => {
         this.dataloading = false;
         console.error(err);
+        this.tickets = [];
+        this.originalTickets = [];
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        if (this.dt) {
+          this.dt.reset();
+        }
       },
       complete: () => {
         this.dataloading = false;
-       
+
       }
 
     })
   }
 
+  customSort(event: any): void {
+    const field = String(event.field ?? '');
+    const nextOrder = event.order === 1 ? 1 : -1;
+
+    if (this.currentSortField === field && this.currentSortOrder === -1 && nextOrder === 1) {
+      this.tickets = [...this.originalTickets];
+      this.currentSortField = '';
+      this.currentSortOrder = 0;
+      if (this.dt) {
+        this.dt.reset();
+      }
+      return;
+    }
+
+    this.currentSortField = field;
+    this.currentSortOrder = nextOrder;
+
+    const priorityRank: Record<string, number> = { Urgent: 4, High: 3, Medium: 2, Low: 1 };
+
+    const compare = (a: any, b: any): number => {
+      if (field === 'id') {
+        const n1 = Number(a?.id ?? 0) || 0;
+        const n2 = Number(b?.id ?? 0) || 0;
+        return n1 - n2;
+      }
+      if (field === 'priority') {
+        const p1 = priorityRank[String(a?.priority ?? '')] ?? 0;
+        const p2 = priorityRank[String(b?.priority ?? '')] ?? 0;
+        return p1 - p2;
+      }
+      if (field === 'createdAt' || field === 'updatedAt') {
+        const getDateOnly = (value: any) => {
+          if (!value) return 0;
+          const date = new Date(value);
+          // Ignore time
+          date.setHours(0, 0, 0, 0);
+          return date.getTime();
+        };
+        return getDateOnly(a?.[field]) - getDateOnly(b?.[field]);
+      }
+
+      const s1 = String(a?.[field] ?? '').trim();
+      const s2 = String(b?.[field] ?? '').trim();
+      return s1.localeCompare(s2, undefined, { sensitivity: 'base' });
+    };
+
+    this.tickets = [...this.tickets].sort((a, b) => this.currentSortOrder * compare(a, b));
+  }
+
   getAllAssigneeEmployees(empId: any) {
     console.log(empId);
-    
+
     this.subscription = this.http.getData(`JobDetails/getRMTM?EmployeeId=${empId}`).subscribe({
       next: (data: any) => {
         this.allAssigneeEmployees = data;
@@ -135,8 +202,8 @@ export class AllTicketsComponent implements OnInit,OnDestroy{
     this.getAllAssigneeEmployees(this.selectedTickets.empId);
     console.log(this.selectedTickets);
     console.log(this.allAssigneeEmployees);
-    
-  
+
+
     this.itSupportForm.patchValue({
       employee: this.selectedTickets.employee === 'Self' ? 'Self' : 'Self',
       name: this.selectedTickets.employeeName,
@@ -155,9 +222,9 @@ export class AllTicketsComponent implements OnInit,OnDestroy{
     });
       this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
     console.log(this.itSupportForm);
-    
-   
-   
+
+
+
   }
 
   openConfirmationModal(content: any) {
@@ -181,7 +248,7 @@ export class AllTicketsComponent implements OnInit,OnDestroy{
     this.itTicketDetails.description = this.selectedTickets.description;
     this.itTicketDetails.stepsToReplicate = this.selectedTickets.stepsToReplicate;
     this.itTicketDetails.comments = this.itSupportForm.value.comments;
-    
+
     this.itTicketDetails.attachmentUrl = null;
     this.itTicketDetails.createdAt = this.selectedTickets.createdAt;
     this.itTicketDetails.updatedAt = new Date().toISOString();

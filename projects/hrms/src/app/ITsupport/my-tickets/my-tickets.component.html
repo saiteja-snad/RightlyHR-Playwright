@@ -9,19 +9,11 @@
             </div>
         </div>
 
-        <div class="d-flex align-items-center gap-3">
         @if(rbac.allowedToAccess('My Tickets Tab.create')){
         <div>
             <button type="button" class="custom-btn btn-primary" (click)="openModal(addtickets)">{{'Add New Ticket' | translate}}</button>
         </div>
         }
-        <div>
-            <app-applicable-policies-trigger
-                [moduleKey]="applicablePolicies.moduleKey"
-                [subModuleKey]="applicablePolicies.subModuleKey">
-            </app-applicable-policies-trigger>
-        </div>
-        </div>
     </div>
 
     <!--Module Information-->
@@ -35,19 +27,21 @@
 
     <div class="custom-table-content">
         @if (!dataloader) {
-        <table class="w-100">
-            <thead>
-                <th>{{'Ticket ID' | translate}}</th>
-                <th>{{'Ticket Priority' | translate}}</th>
-                <th>{{'Subject' | translate}}</th>
-                <th>{{'Requested Date' | translate}}</th>
-                <th>{{'Assignee' | translate}}</th>
-                <th>{{'Status' | translate}}</th>
-                <th>{{'Updated Date' | translate}}</th>
-            </thead>
-            <tbody>
-                @if (tickets.length > 0) {
-                <tr *ngFor="let ticket of tickets">
+        <p-table #dt [value]="tickets" [tableStyle]="{'width': '100%'}" [customSort]="true"
+            (sortFunction)="customSort($event)">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th pSortableColumn="id">{{'Ticket ID' | translate}} <p-sortIcon field="id" /></th>
+                    <th pSortableColumn="priority">{{'Ticket Priority' | translate}} <p-sortIcon field="priority" /></th>
+                    <th pSortableColumn="subject">{{'Subject' | translate}} <p-sortIcon field="subject" /></th>
+                    <th pSortableColumn="createdAt">{{'Requested Date' | translate}} <p-sortIcon field="createdAt" /></th>
+                    <th pSortableColumn="assigneeName">{{'Assignee' | translate}} <p-sortIcon field="assigneeName" /></th>
+                    <th pSortableColumn="ticketStatus">{{'Status' | translate}} <p-sortIcon field="ticketStatus" /></th>
+                    <th pSortableColumn="updatedAt">{{'Updated Date' | translate}} <p-sortIcon field="updatedAt" /></th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-ticket>
+                <tr>
                     <td>{{ticket.id}}</td>
                     <td>
                         <ul class="mb-0">
@@ -67,14 +61,17 @@
                     <td>{{ticket.ticketStatus ?? '-'}}</td>
                     <td>{{ticket.updatedAt | dateformat}}</td>
                 </tr>
-                }
-                @else{
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
                 <tr>
-                    <app-no-data-found></app-no-data-found>
+                    <td colspan="7" class="text-center">
+                        <div class="wrapper d-flex align-items-center position-relative w-100">
+                            <app-no-data-found />
+                        </div>
+                    </td>
                 </tr>
-                }
-            </tbody>
-        </table>
+            </ng-template>
+        </p-table>
         }
         @else {
         <app-data-loader-content />

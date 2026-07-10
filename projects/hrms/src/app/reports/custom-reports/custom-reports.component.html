@@ -462,9 +462,11 @@
           [customSort]="true" (sortFunction)="customSort($event)">
           <ng-template pTemplate="header">
             <tr>
-              <th *ngFor="let field of reportFields" [pSortableColumn]="field" scope="col">
+              <th *ngFor="let field of reportFields" 
+                  [pSortableColumn]="!isPhoneNumberField(field) ? field : undefined" 
+                  scope="col">
                 {{ field }}
-                <p-sortIcon [field]="field"></p-sortIcon>
+                <p-sortIcon *ngIf="!isPhoneNumberField(field)" [field]="field"></p-sortIcon>
               </th>
             </tr>
           </ng-template>

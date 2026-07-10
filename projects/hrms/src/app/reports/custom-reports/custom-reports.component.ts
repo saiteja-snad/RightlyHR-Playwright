@@ -955,6 +955,19 @@ export class CustomReportsComponent implements OnInit, OnDestroy {
     this.sortSelectedData(event.data, field, event.order);
   }
 
+  // Check if field is a phone/contact number field (should not be sortable)
+  isPhoneNumberField(field: string): boolean {
+    const phoneFields = [
+      'Phone Number',
+      'Work Number',
+      'Phone Number (Primary Contact)',
+      'Phone Number (Secondary Contact)',
+      'Mobile Number',
+      'Contact Number'
+    ];
+    return phoneFields.includes(field);
+  }
+
   private applyCurrentSort(): void {
     if (!this.currentSortField || this.currentSortOrder === 0) {
       this.selectedData = [...this.originalSelectedData];

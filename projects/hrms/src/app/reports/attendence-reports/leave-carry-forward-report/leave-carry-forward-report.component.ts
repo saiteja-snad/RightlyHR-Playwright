@@ -728,12 +728,23 @@ onYearChange(): void {
       let val1 = a[field];
       let val2 = b[field];
 
+      // Handle fusionEmpId numeric sorting
       if (field === 'fusionEmpId') {
         const num1 = parseInt(String(val1).replace(/\D/g, ''), 10) || 0;
         const num2 = parseInt(String(val2).replace(/\D/g, ''), 10) || 0;
         return event.order * (num1 - num2);
       }
 
+      // Handle numeric fields
+      if (field === 'year' || field === 'entitled' || field === 'availed' || field === 'balance' ||
+          field === 'maxCarryForward' || field === 'actualCarryForward' || 
+          field === 'maxEncashment' || field === 'leaveEncashed' || field === 'leaveLapsed') {
+        const num1 = Number(val1) || 0;
+        const num2 = Number(val2) || 0;
+        return event.order * (num1 - num2);
+      }
+
+      // String sorting (default)
       val1 = String(val1 ?? '').trim();
       val2 = String(val2 ?? '').trim();
       return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });

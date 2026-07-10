@@ -10,106 +10,83 @@
 
   <div class="custom-table-content">
     @if (!dataloader) {
-    <table class="w-100">
-      <thead>
-        <th>{{ "Query ID" | translate }}</th>
-        <th>{{ "Requested By" | translate }}</th>
-        <th class="text-center">{{ "Requested Date" | translate }}</th>
-        <th class="text-center">{{ "Category" | translate }}</th>
-        <th class="text-center">{{ "Subcategory" | translate }}</th>
-        <!-- <th class="text-center">{{ "Department" | translate }}</th> -->
-        <!-- <th class="text-center">{{ "Subject" | translate }}</th> -->
-        <th class="text-center">{{ "Description" | translate }}</th>
-        <th class="text-center">{{ "Requested Date" | translate }}</th>
-        <th class="text-center">{{ "Status" | translate }}</th>
-        <th class="text-center">{{ "Priority" | translate }}</th>
-      </thead>
-      <tbody>
-        <ng-container *ngIf="tickets?.length > 0; else noDataTemplate">
-          <tr *ngFor="let ticket of tickets">
-            <td>
-              <span [class.project-name]="rbac.allowedToAccess('Support Helpdesk Queries Tab.update')" 
-                    [class.cursor]="rbac.allowedToAccess('Support Helpdesk Queries Tab.update')"
-                    (click)="openEnd(ticket)">{{
-                "TKT - " + ticket.id
-                }}</span>
-            </td>
-            <td>{{ ticket.employeeName || "-" }}</td>
-            <td class="text-center">{{ ticket.createdDate | date }}</td>
-            <!-- Category -->
-            <td class="text-center">{{ ticket.category || "-" }}</td>
-
-            <!-- Sub Category -->
-            <td class="text-center">{{ ticket.subcategory || "-" }}</td>
-
-            <!-- Department (Not in API, so show '-') -->
-            <!-- <td class="text-center">{{ ticket.department || "-" }}</td> -->
-
-            <!-- Subject -->
-            <!-- <td class="text-center">
-                <div class="cursor">
-                  <div [ngbPopover]="popContent">
-                    <app-info-icon />
-                  </div>
-                </div>
-                <ng-template #popContent>
-                  <div>
-                    {{ ticket.subject || "-" }}
-                  </div>
-                </ng-template>
-              </td> -->
-
-            <!-- Description -->
-            <td class="text-center">
-              <div class="cursor">
-                <div [ngbPopover]="popContent">
-                  <app-info-icon />
-                </div>
+    <p-table #dt [value]="tickets" [tableStyle]="{'width': '100%', 'min-width': '90rem'}" (onSort)="onSort($event)"
+      [sortField]="tableSortField" [sortOrder]="tableSortOrder">
+      <ng-template pTemplate="header">
+        <tr>
+          <th pSortableColumn="id">{{ "Query ID" | translate }} <p-sortIcon field="id"></p-sortIcon></th>
+          <th pSortableColumn="employeeName">{{ "Requested By" | translate }} <p-sortIcon field="employeeName"></p-sortIcon></th>
+          <th pSortableColumn="createdDate" class="text-center">{{ "Requested Date" | translate }} <p-sortIcon field="createdDate"></p-sortIcon></th>
+          <th pSortableColumn="category" class="text-center">{{ "Category" | translate }} <p-sortIcon field="category"></p-sortIcon></th>
+          <th pSortableColumn="subcategory" class="text-center">{{ "Subcategory" | translate }} <p-sortIcon field="subcategory"></p-sortIcon></th>
+          <th class="text-center">{{ "Description" | translate }}</th>
+          <th pSortableColumn="createdDate" class="text-center">{{ "Requested Date" | translate }} <p-sortIcon field="createdDate"></p-sortIcon></th>
+          <th pSortableColumn="status" class="text-center">{{ "Status" | translate }} <p-sortIcon field="status"></p-sortIcon></th>
+          <th pSortableColumn="priority" class="text-center">{{ "Priority" | translate }} <p-sortIcon field="priority"></p-sortIcon></th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-ticket>
+        <tr>
+          <td>
+            <span [class.project-name]="rbac.allowedToAccess('Support Helpdesk Queries Tab.update')" 
+                  [class.cursor]="rbac.allowedToAccess('Support Helpdesk Queries Tab.update')"
+                  (click)="openEnd(ticket)">{{
+              "TKT - " + ticket.id
+              }}</span>
+          </td>
+          <td>{{ ticket.employeeName || "-" }}</td>
+          <td class="text-center">{{ ticket.createdDate | date }}</td>
+          <td class="text-center">{{ ticket.category || "-" }}</td>
+          <td class="text-center">{{ ticket.subcategory || "-" }}</td>
+          <td class="text-center">
+            <div class="cursor">
+              <div [ngbPopover]="popContent">
+                <app-info-icon />
               </div>
-              <ng-template #popContent>
-                <div>
-                  {{ ticket.description || "-" }}
-                </div>
-              </ng-template>
-            </td>
-
-            <!-- Requested Date -->
-            <td class="text-center">{{ ticket.createdDate | date }}</td>
-            <td class="text-center">
-              <span class="ticket-status" [ngClass]="{
-                    'status-open': ticket.status?.toLowerCase() === 'open',
-                    'status-closed': ticket.status?.toLowerCase() === 'closed',
-                    'status-await-on-user':
-                      ticket.status?.toLowerCase() === 'await on user',
-                    'status-rejected':
-                      ticket.status?.toLowerCase() === 'rejected',
-                  }">
-                {{ (ticket.status | titlecase) || '-' }}
-              </span>
-            </td>
-
-            <!-- Priority -->
-            <td class="text-center">
-              <span class="ticket-priority" [ngClass]="{
-                    'priority-high': ticket.priority?.toLowerCase() === 'high',
-                    'priority-medium':
-                      ticket.priority?.toLowerCase() === 'medium',
-                    'priority-low': ticket.priority?.toLowerCase() === 'low',
-                    'priority-urgent':
-                      ticket.priority?.toLowerCase() === 'urgent',
-                  }">
-                {{ ticket.priority === 'N/A' ? 'N/A' : (ticket.priority | titlecase) || '-' }}
-              </span>
-            </td>
-          </tr>
-        </ng-container>
-        <ng-template #noDataTemplate>
-          <tr>
-            <app-no-data-found />
-          </tr>
-        </ng-template>
-      </tbody>
-    </table>
+            </div>
+            <ng-template #popContent>
+              <div>
+                {{ ticket.description || "-" }}
+              </div>
+            </ng-template>
+          </td>
+          <td class="text-center">{{ ticket.createdDate | date }}</td>
+          <td class="text-center">
+            <span class="ticket-status" [ngClass]="{
+                  'status-open': ticket.status?.toLowerCase() === 'open',
+                  'status-closed': ticket.status?.toLowerCase() === 'closed',
+                  'status-await-on-user':
+                    ticket.status?.toLowerCase() === 'await on user',
+                  'status-rejected':
+                    ticket.status?.toLowerCase() === 'rejected',
+                }">
+              {{ (ticket.status | titlecase) || '-' }}
+            </span>
+          </td>
+          <td class="text-center">
+            <span class="ticket-priority" [ngClass]="{
+                  'priority-high': ticket.priority?.toLowerCase() === 'high',
+                  'priority-medium':
+                    ticket.priority?.toLowerCase() === 'medium',
+                  'priority-low': ticket.priority?.toLowerCase() === 'low',
+                  'priority-urgent':
+                    ticket.priority?.toLowerCase() === 'urgent',
+                }">
+              {{ ticket.priority === 'N/A' ? 'N/A' : (ticket.priority | titlecase) || '-' }}
+            </span>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="9">
+            <div class="wrapper">
+              <app-no-data-found />
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
     } @else {
     <app-data-loader-content />
     }

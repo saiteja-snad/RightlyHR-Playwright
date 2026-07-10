@@ -17,6 +17,7 @@ import { DataLoaderContentComponent } from "../../../shared/data-loader-content/
 import { TranslateModule } from '@ngx-translate/core';
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.service';
+import moment from 'moment';
 @Component({
   selector: 'app-comp-off-process',
   imports: [
@@ -152,11 +153,12 @@ export class CompOffProcessComponent implements OnInit, OnDestroy {
       val2 = b[field];
 
       // Handle date sorting
-      if (field === 'startTime' || field === 'requestedDate') {
-        const date1 = val1 ? new Date(val1) : new Date(0);
-        const date2 = val2 ? new Date(val2) : new Date(0);
-        return event.order * (date1.getTime() - date2.getTime());
-      }
+            if (field === 'startTime' || field === 'requestedDate') {
+              const date1 = val1 ? moment(val1).startOf('day') : moment(0);
+              const date2 = val2 ? moment(val2).startOf('day') : moment(0);
+              return event.order * (date1.valueOf() - date2.valueOf());
+            }
+      
 
       // Handle numeric sorting for durationType
       if (field === 'durationType') {

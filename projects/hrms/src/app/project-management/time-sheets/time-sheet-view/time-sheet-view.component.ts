@@ -1096,6 +1096,73 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     return payloads;
   }
 
+  private mergeCloneSecondsMap(target: Map<string, number>, source: Map<string, number>): void {
+    for (const [date, seconds] of source.entries()) {
+      target.set(date, (target.get(date) ?? 0) + (Number(seconds) || 0));
+    }
+  }
+
+  private getCloneTargetDayTotalsSeconds(targetMatrix: WeekMatrix, targetDates: Date[]): Map<string, number> {
+    const totals = new Map<string, number>();
+    const targetDatePairs = (targetDates || [])
+      .filter((d) => !!d)
+      .map((d) => ({
+        dateKey: moment(d).format('YYYY-MM-DDT00:00:00'),
+        date: moment(d).format('YYYY-MM-DD'),
+      }));
+
+    if (!targetDatePairs.length) {
+      return totals;
+    }
+
+    for (const pair of targetDatePairs) {
+      totals.set(pair.date, 0);
+    }
+
+    for (const row of targetMatrix.rows) {
+      for (const pair of targetDatePairs) {
+        const cell = targetMatrix.cellMap.get(`${row.rowId}_${pair.dateKey}`);
+        const seconds = Number(cell?.durationSeconds ?? 0) || 0;
+        if (!seconds) {
+          continue;
+        }
+        totals.set(pair.date, (totals.get(pair.date) ?? 0) + seconds);
+      }
+    }
+
+    return totals;
+  }
+
+  private getTargetEntryDurationSecondsById(targetMatrix: WeekMatrix): Map<number, number> {
+    const map = new Map<number, number>();
+    for (const cell of targetMatrix.cellMap.values()) {
+      const entryId = Number(cell?.entryId ?? 0) || 0;
+      if (!entryId) {
+        continue;
+      }
+      const seconds = Number(cell?.durationSeconds ?? 0) || 0;
+      map.set(entryId, seconds);
+    }
+    return map;
+  }
+
+  private getCloneBlocked24HourDates(
+    attemptedDates: Set<string>,
+    existingSecondsByDate: Map<string, number>
+  ): Set<string> {
+    const exceeded = new Set<string>();
+    const limitSeconds = 24 * 60 * 60;
+
+    for (const date of attemptedDates) {
+      const existing = existingSecondsByDate.get(date) ?? 0;
+      if ((Number(existing) || 0) >= limitSeconds) {
+        exceeded.add(date);
+      }
+    }
+
+    return exceeded;
+  }
+
   cloneTimesheetEntries(): void {
 
     if (!this.cloneForm || this.cloneForm.invalid) {
@@ -1184,12 +1251,14 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     ).pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (chunkResponses: any[]) => {
-          const payloads: any[] = [];
+          let payloads: any[] = [];
           let hasPhaseClosedSkip = false;
           let allSourceRangesHaveNoEntries = cloneRangeChunks.length > 0;
           let overrideAttemptedTargetCellCount = 0;
           let overrideSubmittedOrApprovedTargetCellCount = 0;
-          const deleteEntryIdsByTimesheetId = new Map<number, number[]>();
+          const existingTargetSecondsByDate = new Map<string, number>();
+          const attemptedTargetDates = new Set<string>();
+          const chunkTargets: Array<{ targetMatrix: WeekMatrix; targetDates: Date[] }> = [];
 
           chunkResponses.forEach(([sourceRes, targetRes], index) => {
             const sourceMatrix = transformV2ResponseToWeekMatrix(sourceRes);
@@ -1198,6 +1267,11 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
             const sourceRangeHasEntries = this.hasSourceEntriesInRange(sourceMatrix, chunk.sourceRange);
 
             allSourceRangesHaveNoEntries = allSourceRangesHaveNoEntries && !sourceRangeHasEntries;
+            chunkTargets.push({ targetMatrix, targetDates: chunk.targetDates });
+            this.mergeCloneSecondsMap(existingTargetSecondsByDate, this.getCloneTargetDayTotalsSeconds(targetMatrix, chunk.targetDates));
+            const targetEntryDurationsById = cloneMode === 'overwrite' && copyLoggedHours
+              ? this.getTargetEntryDurationSecondsById(targetMatrix)
+              : null;
 
             console.log(
               'Source Matrix Days',
@@ -1223,18 +1297,36 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
             overrideAttemptedTargetCellCount += this.overrideAttemptedTargetCellCount;
             overrideSubmittedOrApprovedTargetCellCount += this.overrideSubmittedOrApprovedTargetCellCount;
 
-            if (cloneMode === 'overwrite') {
-              const timesheetId = targetMatrix.metadata.timesheetId || 0;
-              const deletableEntryIds = this.collectDeletableTargetEntryIds(targetMatrix, chunk.targetDates);
-              if (timesheetId && deletableEntryIds.length) {
-                const existing = deleteEntryIdsByTimesheetId.get(timesheetId) ?? [];
-                deleteEntryIdsByTimesheetId.set(timesheetId, existing.concat(deletableEntryIds));
+            if (copyLoggedHours) {
+              for (const payload of chunkPayloads) {
+                const date = String(payload?.entryDate ?? '');
+                if (!date) {
+                  continue;
+                }
+                attemptedTargetDates.add(date);
               }
             }
           });
 
           console.log('Clone Payloads', payloads);
           console.log('Payload Count', payloads.length);
+
+          let skippedDueTo24HoursDates = new Set<string>();
+          if (copyLoggedHours && attemptedTargetDates.size) {
+            skippedDueTo24HoursDates = this.getCloneBlocked24HourDates(attemptedTargetDates, existingTargetSecondsByDate);
+            const attemptedDates = Array.from(attemptedTargetDates);
+            const allAttemptedDatesExceed = attemptedDates.length > 0 && attemptedDates.every((d) => skippedDueTo24HoursDates.has(d));
+
+            if (allAttemptedDatesExceed) {
+              this.spinnerLoader = false;
+              this.conformationPopup.openErrorModal('Selected target dates already have 24 hrs logged. Cannot clone into the selected target dates.');
+              return;
+            }
+
+            if (skippedDueTo24HoursDates.size) {
+              payloads = payloads.filter((p) => !skippedDueTo24HoursDates.has(String(p?.entryDate ?? '')));
+            }
+          }
 
           if (!payloads.length) {
             this.spinnerLoader = false;
@@ -1270,6 +1362,25 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
             }
           }
 
+          const deleteEntryIdsByTimesheetId = new Map<number, number[]>();
+          if (cloneMode === 'overwrite') {
+            for (const { targetMatrix, targetDates } of chunkTargets) {
+              const timesheetId = targetMatrix.metadata.timesheetId || 0;
+              if (!timesheetId) {
+                continue;
+              }
+              const allowedDates = skippedDueTo24HoursDates.size
+                ? targetDates.filter((d) => !skippedDueTo24HoursDates.has(moment(d).format('YYYY-MM-DD')))
+                : targetDates;
+              const deletableEntryIds = this.collectDeletableTargetEntryIds(targetMatrix, allowedDates);
+              if (!deletableEntryIds.length) {
+                continue;
+              }
+              const existing = deleteEntryIdsByTimesheetId.get(timesheetId) ?? [];
+              deleteEntryIdsByTimesheetId.set(timesheetId, existing.concat(deletableEntryIds));
+            }
+          }
+
           const deletePayloads =
             cloneMode === 'overwrite' && deleteEntryIdsByTimesheetId.size
               ? Array.from(deleteEntryIdsByTimesheetId.entries())
@@ -1297,7 +1408,10 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
               next: () => {
                 this.spinnerLoader = false;
                 this.offcanvasService.dismiss();
-                this.conformationPopup.openSuccessModal('Timesheet entries cloned successfully.');
+                const successMessage = skippedDueTo24HoursDates.size
+                  ? 'Timesheet entries cloned successfully. Some target dates were skipped as total hours would exceed 24 hours.'
+                  : 'Timesheet entries cloned successfully.';
+                this.conformationPopup.openSuccessModal(successMessage, skippedDueTo24HoursDates.size ? 3500 : 2000);
                 this.formattedweakendStart = moment(this.start).format('YYYY-MM-DD');
                 this.getTimeSheetEntriesbyEmployeeId(this.employeeId, this.formattedweakendStart);
               },

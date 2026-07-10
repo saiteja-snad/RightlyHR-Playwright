@@ -78,11 +78,6 @@ export class TimeSheetApprovalsComponent implements OnInit {
     { label: 200, value: 200 }
   ];
 
-  // Sorting properties
-  originalTimesheetData: TimesheetDay[] = []; // Store original unsorted data
-  currentSortField: string = '';
-  currentSortOrder: number = 0; // 0 = no sort, 1 = asc, -1 = desc
-  sortedDayIndex: number = -1; // Track which day table is currently sorted
   startdate: any;
   enddate: any;
   globalSelectedEntries: any[] = [];
@@ -116,8 +111,6 @@ export class TimeSheetApprovalsComponent implements OnInit {
         this.pageSize = 50;
         this.first = 0;
         this.rows = 50;
-        // Reset sorting state when filters change
-        this.resetAllSorting();
         if (data && data.request) {
           this.employeeresource = data.request.resourceId;
           this.phaseId = data.request.phaseId;
@@ -178,8 +171,6 @@ onStatusApproveSelect(status: string) {
   onRowsChange() {
     this.page = 1;
     this.first = 0;
-    // Reset sorting state when changing rows
-    this.resetAllSorting();
     this.loadClientsAndProjects(this.page, this.pageSize, this.startdate, this.enddate);
   }
 
@@ -188,8 +179,6 @@ onStatusApproveSelect(status: string) {
     this.page = event.page + 1;
     this.pageSize = event.rows;
     this.first = event.first;
-    // Reset sorting state when changing pages
-    this.resetAllSorting();
     this.loadClientsAndProjects(this.page, this.pageSize, this.startdate, this.enddate);
   }
 
@@ -200,8 +189,6 @@ onStatusApproveSelect(status: string) {
     this.rows = newPageSize;
     this.page = 1;
     this.first = 0;
-    // Reset sorting state when changing page size
-    this.resetAllSorting();
     this.loadClientsAndProjects(this.page, this.pageSize, this.startdate, this.enddate);
   }
 
@@ -244,8 +231,6 @@ onStatusApproveSelect(status: string) {
           this.totalRecordCountitem = allEntries.length;
           // assign timesheetData for UI
           this.timesheetData = res.data.items.flatMap((item: any) => item.entity) as TimesheetDay[];
-          // Store original data for sorting reset
-          this.originalTimesheetData = JSON.parse(JSON.stringify(this.timesheetData));
           this.timesheetrecord = res.data.items;
           // Add unique `id` for each entry (important for PrimeNG selection)
           this.timesheetData.forEach(day => {
@@ -253,16 +238,6 @@ onStatusApproveSelect(status: string) {
               day.entries.forEach((entry: any) => {
                 if (entry && typeof entry === 'object') {
                   entry.id = entry.approvalHeader?.id; // or generate a string if null
-                }
-              });
-            }
-          });
-          // Also add IDs to original data
-          this.originalTimesheetData.forEach(day => {
-            if (Array.isArray(day.entries)) {
-              day.entries.forEach((entry: any) => {
-                if (entry && typeof entry === 'object') {
-                  entry.id = entry.approvalHeader?.id;
                 }
               });
             }
@@ -305,8 +280,6 @@ onStatusApproveSelect(status: string) {
       },
       complete: () => {
         this.dataload = false;
-        // Reset sorting state when loading completes with error
-        this.resetAllSorting();
       }
     });
   }
@@ -357,8 +330,6 @@ onStatusApproveSelect(status: string) {
     this.rows = this.collectionSize;
     this.page = 1;
     this.first = 0;
-    // Reset sorting when selecting all pages
-    this.resetAllSorting();
     this.loadClientsAndProjects(this.page, this.pageSize, this.startdate, this.enddate);
   }
 
@@ -372,8 +343,6 @@ onStatusApproveSelect(status: string) {
     this.rows = 50;
     this.page = 1;
     this.first = 0;
-    // Reset sorting when clearing selection
-    this.resetAllSorting();
     this.loadClientsAndProjects(this.page, this.pageSize, this.startdate, this.enddate);
   }
 
@@ -505,8 +474,6 @@ onStatusApproveSelect(status: string) {
           this.showBulkSelectionBanner = false;
           this.rows = 50;
           this.first = 0;
-          // Reset sorting after approve operation completes
-          this.resetAllSorting();
           this.loadClientsAndProjects(this.page, this.pageSize, this.startdate, this.enddate);
           this.selectedLeavesItems = [];
           this.selectedEntries = [];
@@ -598,8 +565,6 @@ onStatusApproveSelect(status: string) {
           this.showBulkSelectionBanner = false;
           this.rows = 50;
           this.first = 0;
-          // Reset sorting after reject operation completes
-          this.resetAllSorting();
           this.loadClientsAndProjects(this.page, this.pageSize, this.startdate, this.enddate);
           this.selectedLeavesItems = [];
           this.selectedEntries = [];
@@ -749,112 +714,6 @@ onStatusApproveSelect(status: string) {
   }
 }
 
-  // Enhanced sorting functionality similar to ActiveEmployeesComponent
-  customSort(event: any, dayIndex: number): void {
-    const field = event.field;
-    const day = this.timesheetData[dayIndex];
-    if (!day || !day.entries) return;
-
-    // Track current sort state for the clicked field and day
-    if (this.currentSortField === field && this.sortedDayIndex === dayIndex) {
-      // Same field and day clicked - cycle through: asc (1) -> desc (-1) -> reset (0)
-      if (this.currentSortOrder === 1) {
-        // Currently ascending, change to descending
-        this.currentSortOrder = -1;
-        event.order = -1;
-      } else if (this.currentSortOrder === -1) {
-        // Currently descending, reset to original order
-        this.resetSortingForDay(dayIndex);
-        return;
-      } else {
-        // Currently reset, change to ascending
-        this.currentSortOrder = 1;
-        event.order = 1;
-      }
-    } else {
-      // New field or day clicked - start with ascending
-      this.currentSortField = field;
-      this.currentSortOrder = 1;
-      this.sortedDayIndex = dayIndex;
-      event.order = 1;
-    }
-
-    // Sort the entries for this specific day
-    day.entries.sort((a: any, b: any) => {
-      let val1: any;
-      let val2: any;
-
-      // Handle nested properties
-      if (field.includes('.')) {
-        const fieldParts = field.split('.');
-        val1 = fieldParts.reduce((obj: any, key: string) => obj?.[key], a);
-        val2 = fieldParts.reduce((obj: any, key: string) => obj?.[key], b);
-      } else {
-        val1 = a[field];
-        val2 = b[field];
-      }
-
-      // Handle employee name sorting (if it exists as a concatenated field)
-      if (field === 'employeeName' || field === 'resourceName') {
-        val1 = String(val1 ?? '').trim();
-        val2 = String(val2 ?? '').trim();
-        return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
-      }
-
-      // Handle employee ID sorting (alphanumeric)
-      if (field === 'employeeId' || field === 'fusionEmpId') {
-        return event.order * String(val1 ?? '').localeCompare(
-          String(val2 ?? ''),
-          undefined,
-          {
-            numeric: true,
-            sensitivity: 'base'
-          }
-        );
-      }
-
-      // Handle date fields
-      if (field.includes('Date') || field.includes('date') || field === 'entryDate') {
-        const date1 = val1 ? new Date(val1).getTime() : 0;
-        const date2 = val2 ? new Date(val2).getTime() : 0;
-        return event.order * (date1 - date2);
-      }
-
-      // Handle numeric fields (hours, etc.)
-      if (field === 'totalHours' || field === 'hours' || typeof val1 === 'number' && typeof val2 === 'number') {
-        const num1 = parseFloat(val1) || 0;
-        const num2 = parseFloat(val2) || 0;
-        return event.order * (num1 - num2);
-      }
-
-      // Handle string sorting for all other fields
-      val1 = String(val1 ?? '').trim();
-      val2 = String(val2 ?? '').trim();
-      return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
-    });
-  }
-
-  // Reset sorting for a specific day to original order
-  resetSortingForDay(dayIndex: number): void {
-    if (this.originalTimesheetData && this.originalTimesheetData[dayIndex]) {
-      this.timesheetData[dayIndex].entries = [...this.originalTimesheetData[dayIndex].entries];
-    }
-    this.currentSortField = '';
-    this.currentSortOrder = 0;
-    this.sortedDayIndex = -1;
-    const tableAtIndex = this.dayTables?.toArray()[dayIndex];
-    if (tableAtIndex) tableAtIndex.reset();
-  }
-
-  // Reset all sorting to original state
-  resetAllSorting(): void {
-    if (this.originalTimesheetData) {
-      this.timesheetData = JSON.parse(JSON.stringify(this.originalTimesheetData));
-    }
-    this.currentSortField = '';
-    this.currentSortOrder = 0;
-    this.sortedDayIndex = -1;
-  }
   // destroy the component
   ngOnDestroy(): void {
     this.destroy$.next(true);

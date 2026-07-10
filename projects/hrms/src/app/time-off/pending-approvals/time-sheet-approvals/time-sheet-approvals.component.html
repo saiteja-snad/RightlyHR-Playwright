@@ -31,17 +31,17 @@
                     <div class="custom-p-multi-select-table custom-accordian-table">
                         <p-table #dayTable [value]="day.entries" dataKey="id" [(selection)]="selectedMap[i]"
                             (onRowSelect)="onRowSelect(i, $event)" (onRowUnselect)="onRowUnselect(i, $event)"
-                            [tableStyle]="{'min-width': '50rem'}" [customSort]="true" (sortFunction)="customSort($event, i)">
+                            [tableStyle]="{'min-width': '50rem'}">
                             <ng-template pTemplate="header">
                                 <tr>
                                     <th style="width: 4rem"></th>
-                                    <th pSortableColumn="employeeName" class="text-nowrap">{{ 'Resource Name' | translate }} <p-sortIcon field="employeeName" /></th>
-                                    <th pSortableColumn="clientName" class="text-nowrap">{{ 'Client Name' | translate }} <p-sortIcon field="clientName" /></th>
-                                    <th pSortableColumn="projectName" class="text-nowrap">{{ 'Project Name' | translate }} <p-sortIcon field="projectName" /></th>
-                                    <th pSortableColumn="phaseName" class="text-nowrap">{{ 'Phase/Milestone' | translate }} <p-sortIcon field="phaseName" /></th>
-                                    <th pSortableColumn="taskName" class="text-nowrap">{{'Task Type' | translate}} <p-sortIcon field="taskName" /></th> 
+                                    <th class="text-nowrap">{{ 'Resource Name' | translate }}</th>
+                                    <th class="text-nowrap">{{ 'Client Name' | translate }}</th>
+                                    <th class="text-nowrap">{{ 'Project Name' | translate }}</th>
+                                    <th class="text-nowrap">{{ 'Phase/Milestone' | translate }}</th>
+                                    <th class="text-nowrap">{{'Task Type' | translate}}</th> 
                                     <th class="text-center">{{ 'Description' | translate }}</th>
-                                    <th pSortableColumn="totalHours" class="text-nowrap">{{ 'Total Hours' | translate }} <p-sortIcon field="totalHours" /></th>
+                                    <th class="text-nowrap">{{ 'Total Hours' | translate }}</th>
                                      @if(rbac.allowedToAccess('Timesheet Approvals.update') || rbac.allowedToAccess('Timesheet Approvals.delete')) {
                                     @if(showhideaction){
                                     <th class="text-center">{{ 'Actions' | translate }}</th>

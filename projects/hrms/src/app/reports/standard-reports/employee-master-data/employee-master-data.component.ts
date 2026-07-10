@@ -690,19 +690,21 @@ export class EmployeeMasterDataComponent implements OnInit, OnDestroy {
       // Date Sorting
       if (
         field === 'dob' ||
-        field === 'contractOfferSentDate' ||
+        field === 'contractoffersentdate' ||
         field === 'appointmentSentDate' ||
         field === 'offerSentDate' ||
-        field === 'traineeOfferSentDate' ||
+        field === 'traineeoffersentdate' ||
         field === 'probationEndDate' ||
         field === 'dateOfJoining' ||
         field === 'contractStartDate' ||
         field === 'contractEndDate' ||
         field === 'compeffectivedate' ||
         field === 'nextCompReviewDate' ||
-        field === 'jobEffectiveDate' ||
+        field === 'jobeffectivedate' ||
         field === 'lastworkingday' ||
-        field === 'contractorLastWorkingDate'
+        field === 'contractorLastWorkingDate' ||
+        field === 'degreeStartDate' ||
+        field === 'degreeEndDate'
       ) {
 
         const date1 = moment(a[field]);
@@ -710,7 +712,7 @@ export class EmployeeMasterDataComponent implements OnInit, OnDestroy {
 
         return event.order * date1.diff(date2);
       }
-      if (field === 'compensationamount' || field === 'variablepayamount') {
+      if (field === 'compensationamount' || field === 'variablepayamount' || field === 'variablePayAmount' || field === 'gpa') {
 
         val1 = Number(a[field] || 0);
         val2 = Number(b[field] || 0);

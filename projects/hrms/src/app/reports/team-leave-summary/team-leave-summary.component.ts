@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Select } from 'primeng/select';
 import { DataLoaderContentComponent } from '../../shared/data-loader-content/data-loader-content.component';
@@ -11,14 +11,17 @@ import { Subject, takeUntil } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import { Router } from '@angular/router';
 import { ReportsHeaderComponent } from "../../shared/reports-tabs/reports-header/reports-header.component";
+import { TableModule, Table } from 'primeng/table';
 @Component({
   selector: 'app-team-leave-summary',
-  imports: [CommonModule, Select, DataLoaderContentComponent, NoDataFoundComponent, FormsModule, DateformatPipe, NgbPopoverModule, ReportsHeaderComponent],
+  imports: [CommonModule, Select, DataLoaderContentComponent, NoDataFoundComponent, FormsModule, DateformatPipe, NgbPopoverModule, ReportsHeaderComponent, TableModule],
   templateUrl: './team-leave-summary.component.html',
   styleUrl: './team-leave-summary.component.scss'
 })
 
 export class TeamLeaveSummaryComponent {
+  @ViewChild('dt') dt!: Table;
+  sortedData: ITeamLeaveSummary[] = [];
   teamLeaveSummary: ITeamLeaveSummary[] = [];
   loggedInUser: any;
   selectedYear: number | undefined;
@@ -31,6 +34,9 @@ export class TeamLeaveSummaryComponent {
   filteredTeamLeaveSummary: any[] = [];
   selectedEmployee: any;
   destroy$: Subject<boolean> = new Subject<boolean>();
+  originalTeamLeaveSummary: ITeamLeaveSummary[] = [];
+  currentSortField: string = '';
+  currentSortOrder: number = 0;
   // year
   years = [
     { label: (new Date().getFullYear() - 1).toString(), value: new Date().getFullYear() - 1 },
@@ -87,8 +93,12 @@ export class TeamLeaveSummaryComponent {
       next: (res: any) => {
         this.teamLeaveSummary = res;
         this.filteredTeamLeaveSummary = res;
+        this.originalTeamLeaveSummary = [...res];
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        this.sortedData = [];
       },
-      error: (err) => {
+      error: () => {
         this.dataload = false;
         this.teamLeaveSummary = [];
       },
@@ -136,6 +146,65 @@ export class TeamLeaveSummaryComponent {
   calculateDuration(entries: any[]): number {
     if (!entries || !Array.isArray(entries)) return 0;
     return entries.reduce((sum, item) => sum + parseFloat(item.duration || 0), 0);
+  }
+
+  onSortChange(event: any): void {
+    this.sortedData = this.dt?.filteredValue ?? this.dt?.value ?? this.filteredTeamLeaveSummary;
+  }
+
+  customSort(event: any): void {
+    const field = event.field;
+
+    if (this.currentSortField === field) {
+      if (this.currentSortOrder === 1) {
+        this.currentSortOrder = -1;
+        event.order = -1;
+      } else if (this.currentSortOrder === -1) {
+        this.filteredTeamLeaveSummary = [...this.originalTeamLeaveSummary];
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        if (this.dt) this.dt.reset();
+        return;
+      } else {
+        this.currentSortOrder = 1;
+        event.order = 1;
+      }
+    } else {
+      this.currentSortField = field;
+      this.currentSortOrder = 1;
+      event.order = 1;
+    }
+
+    event.data.sort((a: any, b: any) => {
+      let val1 = a[field];
+      let val2 = b[field];
+
+      // Handle fusionEmpId numeric sorting
+      if (field === 'fusionEmpId') {
+        const num1 = parseInt(String(val1).replace(/\D/g, ''), 10) || 0;
+        const num2 = parseInt(String(val2).replace(/\D/g, ''), 10) || 0;
+        return event.order * (num1 - num2);
+      }
+
+      // Handle numeric fields (leaves count, wfh count, etc.)
+      if (field === 'leavesCount' || field === 'wfhCount') {
+        const count1 = val1?.length || 0;
+        const count2 = val2?.length || 0;
+        return event.order * (count1 - count2);
+      }
+
+      // Handle calculated duration fields (permissions, regularization)
+      if (field === 'permissionsDuration' || field === 'regularizationDuration') {
+        const duration1 = this.calculateDuration(a[field === 'permissionsDuration' ? 'permissions' : 'regularization']);
+        const duration2 = this.calculateDuration(b[field === 'permissionsDuration' ? 'permissions' : 'regularization']);
+        return event.order * (duration1 - duration2);
+      }
+
+      // String sorting (default)
+      val1 = String(val1 ?? '').trim();
+      val2 = String(val2 ?? '').trim();
+      return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+    });
   }
 
   navigation() {

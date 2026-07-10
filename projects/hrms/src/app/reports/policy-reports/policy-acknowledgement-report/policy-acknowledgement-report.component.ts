@@ -482,12 +482,29 @@ customSort(event: any): void {
       let val1 = a[field];
       let val2 = b[field];
 
+      // Handle fusionEmpId numeric sorting
       if (field === 'fusionEmpId') {
         const num1 = parseInt(String(val1).replace(/\D/g, ''), 10) || 0;
         const num2 = parseInt(String(val2).replace(/\D/g, ''), 10) || 0;
         return event.order * (num1 - num2);
       }
 
+      // Handle date sorting for acknowledgedDate
+      if (field === 'acknowledgedDate') {
+        const date1 = val1 ? new Date(val1).getTime() : 0;
+        const date2 = val2 ? new Date(val2).getTime() : 0;
+        return event.order * (date1 - date2);
+      }
+
+      // Handle boolean sorting for acknowledged field
+      if (field === 'acknowledged') {
+        // Convert boolean to number: true=1, false=0, null/undefined=-1
+        const bool1 = val1 === true ? 1 : val1 === false ? 0 : -1;
+        const bool2 = val2 === true ? 1 : val2 === false ? 0 : -1;
+        return event.order * (bool1 - bool2);
+      }
+
+      // String sorting (default)
       val1 = String(val1 ?? '').trim();
       val2 = String(val2 ?? '').trim();
       return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });

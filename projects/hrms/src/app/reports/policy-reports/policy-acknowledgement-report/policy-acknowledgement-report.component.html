@@ -154,13 +154,13 @@
                     <th pSortableColumn="subdepartment">{{ "Team" | translate }} <p-sortIcon field="subdepartment" /></th>
                     <th pSortableColumn="teamManagerName">{{ "Team Manager" | translate }} <p-sortIcon field="teamManagerName" /></th>
                     <th pSortableColumn="workEmail">{{ "Work Email" | translate }} <p-sortIcon field="workEmail" /></th>
-                    <th >{{ "Location" | translate }} <p-sortIcon  /></th>
-                    <th >{{ "Sub Location" | translate }} <p-sortIcon  /></th>
-                    <th >{{ "Shift" | translate }} <p-sortIcon /></th>
+                    <th pSortableColumn="location">{{ "Location" | translate }} <p-sortIcon field="location" /></th>
+                    <th pSortableColumn="subLocation">{{ "Sub Location" | translate }} <p-sortIcon field="subLocation" /></th>
+                    <th pSortableColumn="shift">{{ "Shift" | translate }} <p-sortIcon field="shift" /></th>
                     <th pSortableColumn="source">{{ "Source" | translate }} <p-sortIcon field="source" /></th>
-                    <th >{{ "Acknowledged" | translate }} <p-sortIcon  /></th>
+                    <th pSortableColumn="acknowledged">{{ "Acknowledged" | translate }} <p-sortIcon field="acknowledged" /></th>
                     <th pSortableColumn="acknowledgedDate">{{ "Acknowledged Date" | translate }} <p-sortIcon field="acknowledgedDate" /></th>
-                    <th >{{ "Policy Name" | translate }} <p-sortIcon  /></th>
+                    <th pSortableColumn="policyName">{{ "Policy Name" | translate }} <p-sortIcon field="policyName" /></th>
                 </tr>
             </ng-template>
             <ng-template pTemplate="body" let-record>

@@ -16,39 +16,50 @@ import { FormValidationService } from '../../../../../../preonboarding/src/app/c
 import { SignalsService } from '../../../services/signals.service';
 import { SearchfordeskPipe } from "../../../Pipes/searchfordesk.pipe";
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
-import { TableModule } from 'primeng/table';
-import { Table } from 'primeng/table';
+
 import { environment } from '../../../../environments/environment';
 
 import { DocumentViewIconComponent } from "../../../icons/document-view-icon/document-view-icon.component";
+import { TableModule } from 'primeng/table';
+import { CheckboxModule } from 'primeng/checkbox';
 
 
 @Component({
   selector: 'app-desk-for-you-request',
   imports: [CommonModule, NoDataFoundComponent, FormsModule, DateformatPipe, ReactiveFormsModule, TranslateModule,
-    SearchfilterPipe, SearchfordeskPipe, DataLoaderContentComponent, DocumentViewIconComponent, TableModule],
+    SearchfilterPipe, SearchfordeskPipe, DataLoaderContentComponent, DocumentViewIconComponent, TableModule, CheckboxModule],
   templateUrl: './desk-for-you-request.component.html',
   styleUrl: './desk-for-you-request.component.scss'
 })
 
 export class DeskForYouRequestComponent implements OnInit, OnDestroy {
-  @ViewChild('deskTable') deskTable!: Table;
   employdata: any
   deskiteam: any
   updataid: any
   loading: boolean = false;
   assiginemploye: any
   deskheaderpending: Entity[] = [];
-  originalDeskData = [] as Entity[]; // Store original unsorted data
-  currentSortField: string = '';
-  currentSortOrder: number = 0; // 0 = no sort, 1 = asc, -1 = desc
   deskid: any;
   selectedexpenesid: any
   subscription!: Subscription
   rejectForm!: FormGroup;
+  approveForm!: FormGroup;
+  spinnerLoader: boolean = false;
   searchValue: any;
   selectedLeaveStatus: any;
   totalCount: any;
+  selectedDeskItems: any[] = [];
+  multiSelect: boolean = true;
+  requestBody: any = {};
+  requestSummary: any;
+  approveLoader = false;
+  rejectLoader = false;
+  @ViewChild('leaveSummary') leaveSummary: any;
+  responseSummary: any;
+  originalData: any[] = [];
+  currentSortField: string = '';
+  currentSortOrder: number = 0;
+  @ViewChild('dt') table!: any;
 
   constructor(private http: HttpService, private readonly modalService: NgbModal, private signalService: SignalsService,
     public conformationPopup: OpenModalService, private fb: FormBuilder, public rbac: RbacService, public formValidation: FormValidationService) { }
@@ -56,26 +67,52 @@ export class DeskForYouRequestComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.employdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.getexpensespendingforyou();
-    this.intializeRejectForm()
+    this.intializeRejectForm();
+    this.initializeApproveForm();
+  }
+
+  initializeApproveForm() {
+    this.approveForm = this.fb.group({
+      comments: ['', [
+        Validators.required,
+        Validators.maxLength(250),
+        noWhitespaceValidator
+      ]]
+    });
+
+    this.approveForm.get('comments')?.valueChanges.subscribe((value: string) => {
+      if (!value || value.trim() === '') {
+        this.selectedLeaveStatus = null;
+      }
+    });
   }
 
   intializeRejectForm() {
     this.rejectForm = this.fb.group({
       comments: ['', [Validators.required, Validators.maxLength(250), noWhitespaceValidator]],
     });
-     this.rejectForm.get('comments')?.valueChanges.subscribe((value: string) => {
-    if (!value || value.trim() === '') {
-      this.selectedLeaveStatus = null; // remove chip highlight if cleared
-    }
-  });
+    this.rejectForm.get('comments')?.valueChanges.subscribe((value: string) => {
+      if (!value || value.trim() === '') {
+        this.selectedLeaveStatus = null; // remove chip highlight if cleared
+      }
+    });
   }
-// onStatusApproveSelect(status: string) {
-//   this.selectedLeaveStatus = status;
 
-//   if (status === 'approved') {
-//     this.approveForm.get('comments')?.setValue('Approved');
-//   }
-// }
+  onStatusApproveSelect(status: string) {
+    this.selectedLeaveStatus = status;
+
+    if (status === 'approved') {
+      this.approveForm.get('comments')?.setValue('Approved');
+    }
+  }
+
+  // onStatusApproveSelect(status: string) {
+  //   this.selectedLeaveStatus = status;
+
+  //   if (status === 'approved') {
+  //     this.approveForm.get('comments')?.setValue('Approved');
+  //   }
+  // }
 
   onStatusRejectSelect(status: string) {
     this.selectedLeaveStatus = status;
@@ -83,15 +120,89 @@ export class DeskForYouRequestComponent implements OnInit, OnDestroy {
       this.rejectForm.get('comments')?.setValue('Rejected');
     }
   }
+
+  handleAccept(form: FormGroup) {
+
+    if (form.invalid) return;
+
+    this.approveLoader = true;
+
+    const payload = {
+      requestProcessedBy: this.employdata.employeeId.toString(),
+      status: 'Approved',
+      comments: this.approveForm.get('comments')?.value,
+      moduleId: 23,
+      headerRequests: this.selectedDeskItems.map((item: any) => ({
+        headerID: item.approvalHeader.id,
+        currentStage: item.approvalHeader.currentapprovalStage
+      }))
+    };
+
+    this.http.putData(
+      'v2/PendingApproval/multiapprovals',
+      payload
+    )
+      .subscribe({
+        next: (res: any) => {
+
+          this.approveLoader = false;
+
+          this.selectedDeskItems = [];
+          this.approveForm.reset();
+
+          this.modalService.dismissAll();
+
+          this.getexpensespendingforyou();
+          this.getApprovalStatusCounts();
+
+          this.signalService.deskForYouTriggerSignal.set(true);
+
+          this.responseSummary = res.data;
+
+          this.modalService.open(this.leaveSummary, {
+            centered: true,
+            backdrop: 'static',
+            size: 'xl'
+          });
+        },
+        error: (err) => {
+
+          this.approveLoader = false;
+
+          this.conformationPopup.openErrorModal(
+            err.error?.message || 'An error occurred'
+          );
+        }
+      });
+  }
+
   getexpensespendingforyou(): void {
     this.loading = true;
     this.http.getData(`PendingApproval/employee/${this.employdata.employeeId}?moduleId=23&approvedType=EMP`).subscribe({
       next: (data: any) => {
+
+        console.log('FULL API RESPONSE', data);
+        console.log('DATA ARRAY', data?.data);
+
+        if (data?.data) {
+          console.log(
+            'Statuses',
+            data.data.map((x: any) => ({
+              id: x.approvalHeader?.id,
+              status: x.approvalHeader?.status
+            }))
+          );
+        }
+
+
         this.loading = false;
-        this.deskheaderpending = (data.data as Entity[]).filter(item =>
-          item.approvalHeader.status != 'Processed' && item.approvalHeader.status != 'Rejected');
-        this.originalDeskData = [...this.deskheaderpending]; // Store original data
-        // this.filterPendingExpenses()
+        this.deskheaderpending = (data.data as Entity[]).filter(
+          item =>
+            item.approvalHeader.status !== 'Processed' &&
+            item.approvalHeader.status !== 'Rejected' &&
+            item.approvalHeader.status !== 'Approved'
+        );
+        this.originalData = [...this.deskheaderpending];
       }, error: (err) => {
         this.loading = false;
         console.log("expensesheadererror");
@@ -169,85 +280,113 @@ export class DeskForYouRequestComponent implements OnInit, OnDestroy {
   }
 
   Rejected(formdata: FormGroup) {
-    const userStatus: any = {
-      id: this.selectedexpenesid,
+
+    if (!formdata.valid) return;
+    this.rejectLoader = true;
+    this.requestBody = {
+      requestProcessedBy: this.employdata.employeeId.toString(),
       status: 'Rejected',
       comments: this.rejectForm.get('comments')?.value,
-      approvedBy: this.employdata.employeeId.toString(),
-      currentStage: parseInt(this.expapprovalsdata.approvalHeader.currentapprovalStage),
+      moduleId: environment.deskAllocationModuleId,
+      headerRequests: this.selectedDeskItems.map((item: any) => ({
+        headerID: item.approvalHeader.id,
+        currentStage: item.approvalHeader.currentapprovalStage
+      }))
     };
-    this.http.putData(`PendingApproval/${this.selectedexpenesid}`, userStatus).subscribe({
+
+    console.log('Reject Payload', this.requestBody);
+    this.http.putData(
+      `v2/PendingApproval/multiapprovals`,
+      this.requestBody
+    ).subscribe({
       next: (res: any) => {
+        this.rejectLoader = false;
         this.modalService.dismissAll();
+        this.responseSummary = res.data;
+
+        this.modalService.open(this.leaveSummary, {
+          centered: true,
+          backdrop: 'static',
+          size: 'xl'
+        });
+      },
+      error: (err: any) => {
+        this.rejectLoader = false;
+        this.conformationPopup.openErrorModal(err.error.Message);
+      },
+      complete: () => {
+        this.selectedDeskItems = [];
+        this.rejectForm.reset();
         this.getexpensespendingforyou();
         this.getApprovalStatusCounts();
-        this.conformationPopup.openSuccessModal("Desk allocation request rejected successfully");
-        this.rejectForm.reset();
         this.signalService.deskForYouTriggerSignal.set(true);
-      },
-      error: (error: any) => {
-        this.conformationPopup.openErrorModal(error.error.message || 'An error occurred');
-        console.error('Error response from API:', error);
       }
     });
   }
- getApprovalStatusCounts() {
+
+  getApprovalStatusCounts() {
     this.http.get(`PendingApproval/getApprovalStatusCounts?moduleId=${environment.deskAllocationModuleId}&EmployeeId=${this.employdata.employeeId}`).subscribe((res: any) => {
       this.totalCount = res.reduce((acc: number, curr: any) => acc + curr.totalCount, 0);
-       this.http.updatePendingApprovalCounts(this.totalCount);
-   //Map counts to tabs
+      this.http.updatePendingApprovalCounts(this.totalCount);
+      //Map counts to tabs
     });
   }
- 
+
   cleardata() {
     this.rejectForm.reset();
     this.modalService.dismissAll();
   }
 
-  getFilteredAndSortedDesk(): Entity[] {
-    const search = this.searchValue?.toLowerCase() ?? '';
-    let desks = this.deskheaderpending ?? [];
+  bulkapprove(modal: any) {
+    this.modalService.open(modal, {
+      centered: true,
+      backdrop: 'static'
+    });
+  }
 
-    if (search) {
-      desks = desks.filter(item =>
-        item.entity?.deskallocatedtoname?.toLowerCase().includes(search) ||
-        item.entity?.deskname?.toLowerCase().includes(search) ||
-        item.entity?.deskType?.toLowerCase().includes(search) ||
-        item.entity?.locationName?.toLowerCase().includes(search) ||
-        item.entity?.sublocationName?.toLowerCase().includes(search) ||
-        item.entity?.shiftName?.toLowerCase().includes(search)
-      );
-    }
+  bulkReject(modal: any) {
+    this.modalService.open(modal, {
+      centered: true,
+      backdrop: 'static'
+    });
+  }
 
-    return desks;
+  onSelectionChange() {
+
+    const selectedIds = this.selectedDeskItems.map(
+      x => x.approvalHeader.id
+    );
+
+    this.deskheaderpending.sort((a, b) => {
+
+      const aSelected = selectedIds.includes(a.approvalHeader.id);
+      const bSelected = selectedIds.includes(b.approvalHeader.id);
+
+      if (aSelected && !bSelected) return -1;
+      if (!aSelected && bSelected) return 1;
+
+      return 0;
+    });
   }
 
   customSort(event: any): void {
     const field = event.field;
-    
-    // Track current sort state for the clicked field
+
     if (this.currentSortField === field) {
-      // Same field clicked - cycle through: asc (1) -> desc (-1) -> reset (0)
       if (this.currentSortOrder === 1) {
-        // Currently ascending, change to descending
         this.currentSortOrder = -1;
         event.order = -1;
       } else if (this.currentSortOrder === -1) {
-        // Currently descending, reset to original order
-        this.deskheaderpending = [...this.originalDeskData];
+        this.deskheaderpending = [...this.originalData];
         this.currentSortField = '';
         this.currentSortOrder = 0;
-        if (this.deskTable) {
-          this.deskTable.reset();
-        }
+        if (this.table) this.table.reset();
         return;
       } else {
-        // Currently reset, change to ascending
         this.currentSortOrder = 1;
         event.order = 1;
       }
     } else {
-      // New field clicked - start with ascending
       this.currentSortField = field;
       this.currentSortOrder = 1;
       event.order = 1;
@@ -257,56 +396,24 @@ export class DeskForYouRequestComponent implements OnInit, OnDestroy {
       let val1: any;
       let val2: any;
 
-      // Handle specific field mappings
-      switch (field) {
-        case 'deskallocatedtoname':
-          val1 = a.entity?.deskallocatedtoname;
-          val2 = b.entity?.deskallocatedtoname;
-          break;
-        case 'deskname':
-          val1 = a.entity?.deskname;
-          val2 = b.entity?.deskname;
-          break;
-        case 'deskType':
-          val1 = a.entity?.deskType;
-          val2 = b.entity?.deskType;
-          break;
-        case 'locationName':
-          val1 = a.entity?.locationName;
-          val2 = b.entity?.locationName;
-          break;
-        case 'sublocationName':
-          val1 = a.entity?.sublocationName;
-          val2 = b.entity?.sublocationName;
-          break;
-        case 'shiftName':
-          val1 = a.entity?.shiftName;
-          val2 = b.entity?.shiftName;
-          break;
-        case 'allocatedDate':
-          val1 = a.entity?.allocatedDate;
-          val2 = b.entity?.allocatedDate;
-          break;
-        case 'approvalStatus':
-          val1 = a.entity?.approvalStatus;
-          val2 = b.entity?.approvalStatus;
-          break;
-        default:
-          val1 = a[field];
-          val2 = b[field];
+      if (field.includes('.')) {
+        const fieldParts = field.split('.');
+        val1 = fieldParts.reduce((obj: any, key: string) => obj?.[key], a);
+        val2 = fieldParts.reduce((obj: any, key: string) => obj?.[key], b);
+      } else {
+        val1 = a.entity?.[field];
+        val2 = b.entity?.[field];
       }
 
-      // Handle date sorting
-      if (field === 'allocatedDate') {
-        const date1 = val1 ? new Date(val1) : new Date(0);
-        const date2 = val2 ? new Date(val2) : new Date(0);
-        return event.order * (date1.getTime() - date2.getTime());
+      if (field.includes('Date') || field.includes('date')) {
+        return event.order * ((val1 ? new Date(val1).getTime() : 0) - (val2 ? new Date(val2).getTime() : 0));
       }
 
-      // Handle string sorting for all other fields
-      val1 = String(val1 ?? '').trim();
-      val2 = String(val2 ?? '').trim();
-      return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+      if (typeof val1 === 'number' && typeof val2 === 'number') {
+        return event.order * (val1 - val2);
+      }
+
+      return event.order * String(val1 ?? '').trim().localeCompare(String(val2 ?? '').trim(), undefined, { sensitivity: 'base' });
     });
   }
 

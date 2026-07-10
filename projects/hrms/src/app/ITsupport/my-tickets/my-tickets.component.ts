@@ -19,6 +19,7 @@ import { ItsuporrtHeaderTabsComponent } from "../../shared/itsuporrt-header-tabs
 import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
 import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
 import { Table, TableModule } from 'primeng/table';
+import moment from 'moment';
 @Component({
   selector: 'app-my-tickets',
   imports: [CommonModule, Select, RouterModule, ReactiveFormsModule, NoDataFoundComponent, NgbPopoverModule,

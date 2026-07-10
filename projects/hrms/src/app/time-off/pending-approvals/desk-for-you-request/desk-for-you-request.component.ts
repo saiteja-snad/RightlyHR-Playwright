@@ -22,6 +22,7 @@ import { environment } from '../../../../environments/environment';
 import { DocumentViewIconComponent } from "../../../icons/document-view-icon/document-view-icon.component";
 import { TableModule } from 'primeng/table';
 import { CheckboxModule } from 'primeng/checkbox';
+import moment from 'moment';
 
 
 @Component({
@@ -371,6 +372,42 @@ export class DeskForYouRequestComponent implements OnInit, OnDestroy {
 
   customSort(event: any): void {
     const field = event.field;
+    // Check if all values in the column are the same
+    const allValues = event.data.map((item: any) => {
+      if (field.includes('.')) {
+        const fieldParts = field.split('.');
+        return fieldParts.reduce((obj: any, key: string) => obj?.[key], item);
+      } else {
+        return item.entity?.[field];
+      }
+    });
+
+    // For date fields, normalize to date-only strings for comparison
+    if (field.includes('allocatedDate') || field.includes('allocatedDate')) {
+      const normalizedValues = allValues.map((val: any) => {
+        if (!val) return null;
+        return moment(val).format('YYYY-MM-DD');
+      });
+      
+      const allSame = normalizedValues.every((val: any) => val === normalizedValues[0]);
+      if (allSame) {
+        // Reset sort state and prevent sorting
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        if (this.table) this.table.reset();
+        return;
+      }
+    } else {
+      // For non-date fields, check if all values are the same
+      const allSame = allValues.every((val: any) => val === allValues[0]);
+      if (allSame) {
+        // Reset sort state and prevent sorting
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        if (this.table) this.table.reset();
+        return;
+      }
+    }
 
     if (this.currentSortField === field) {
       if (this.currentSortOrder === 1) {
@@ -405,8 +442,12 @@ export class DeskForYouRequestComponent implements OnInit, OnDestroy {
         val2 = b.entity?.[field];
       }
 
+      // Handle date fields using moment (date only, ignoring time)
       if (field.includes('Date') || field.includes('date')) {
-        return event.order * ((val1 ? new Date(val1).getTime() : 0) - (val2 ? new Date(val2).getTime() : 0));
+        const date1 = moment(val1);
+        const date2 = moment(val2);
+        
+        return event.order * date1.diff(date2);
       }
 
       if (typeof val1 === 'number' && typeof val2 === 'number') {

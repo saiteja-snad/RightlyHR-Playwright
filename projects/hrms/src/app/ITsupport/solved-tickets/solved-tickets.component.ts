@@ -16,6 +16,7 @@ import { Select } from 'primeng/select';
 import { RbacService } from '../../services/rbac.service';
 import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
 import { Table, TableModule } from 'primeng/table';
+import moment from 'moment';
 
 @Component({
   selector: 'app-solved-tickets',

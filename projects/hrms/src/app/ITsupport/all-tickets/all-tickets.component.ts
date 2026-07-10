@@ -18,6 +18,7 @@ import { RbacService } from '../../services/rbac.service';
 import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
 import { SettingsUpdateIconComponent } from "../../icons/settings-update-icon/settings-update-icon.component";
 import { Table, TableModule } from 'primeng/table';
+import moment from 'moment';
 
 @Component({
   selector: 'app-all-tickets',
@@ -124,52 +125,56 @@ export class AllTicketsComponent implements OnInit,OnDestroy{
   }
 
   customSort(event: any): void {
-    const field = String(event.field ?? '');
-    const nextOrder = event.order === 1 ? 1 : -1;
+    const field = event.field;
 
-    if (this.currentSortField === field && this.currentSortOrder === -1 && nextOrder === 1) {
-      this.tickets = [...this.originalTickets];
-      this.currentSortField = '';
-      this.currentSortOrder = 0;
-      if (this.dt) {
-        this.dt.reset();
+    if (this.currentSortField === field) {
+      if (this.currentSortOrder === 1) {
+        this.currentSortOrder = -1;
+        event.order = -1;
+      } else if (this.currentSortOrder === -1) {
+        this.tickets = [...this.originalTickets];
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        if (this.dt) this.dt.reset();
+        return;
+      } else {
+        this.currentSortOrder = 1;
+        event.order = 1;
       }
-      return;
+    } else {
+      this.currentSortField = field;
+      this.currentSortOrder = 1;
+      event.order = 1;
     }
 
-    this.currentSortField = field;
-    this.currentSortOrder = nextOrder;
+    event.data.sort((a: any, b: any) => {
+      let val1 = a[field];
+      let val2 = b[field];
 
-    const priorityRank: Record<string, number> = { Urgent: 4, High: 3, Medium: 2, Low: 1 };
-
-    const compare = (a: any, b: any): number => {
       if (field === 'id') {
-        const n1 = Number(a?.id ?? 0) || 0;
-        const n2 = Number(b?.id ?? 0) || 0;
-        return n1 - n2;
+        const n1 = Number(val1 ?? 0) || 0;
+        const n2 = Number(val2 ?? 0) || 0;
+        return event.order * (n1 - n2);
       }
-      if (field === 'priority') {
-        const p1 = priorityRank[String(a?.priority ?? '')] ?? 0;
-        const p2 = priorityRank[String(b?.priority ?? '')] ?? 0;
-        return p1 - p2;
-      }
+      
       if (field === 'createdAt' || field === 'updatedAt') {
-        const getDateOnly = (value: any) => {
-          if (!value) return 0;
-          const date = new Date(value);
-          // Ignore time
-          date.setHours(0, 0, 0, 0);
-          return date.getTime();
-        };
-        return getDateOnly(a?.[field]) - getDateOnly(b?.[field]);
+        const date1 = moment(val1);
+        const date2 = moment(val2);
+        return event.order * date1.diff(date2);
       }
 
-      const s1 = String(a?.[field] ?? '').trim();
-      const s2 = String(b?.[field] ?? '').trim();
-      return s1.localeCompare(s2, undefined, { sensitivity: 'base' });
-    };
+      if (val1 == null && val2 != null) return 1;
+      if (val1 != null && val2 == null) return -1;
+      if (val1 == null && val2 == null) return 0;
 
-    this.tickets = [...this.tickets].sort((a, b) => this.currentSortOrder * compare(a, b));
+      if (typeof val1 === 'string' && typeof val2 === 'string') {
+        return val1.localeCompare(val2) * event.order;
+      }
+
+      if (val1 < val2) return -1 * event.order;
+      if (val1 > val2) return 1 * event.order;
+      return 0;
+    });
   }
 
   getAllAssigneeEmployees(empId: any) {

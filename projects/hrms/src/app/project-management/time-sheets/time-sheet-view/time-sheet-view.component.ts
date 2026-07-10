@@ -1251,38 +1251,63 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     }
   }
 
-  checkMandatoryAndSave(dayForm: FormGroup, dayFormNew: AbstractControl | null, rowIndex: number, dayName: string) {
+
+  checkMandatoryAndSave(
+    dayForm: FormGroup,
+    dayFormNew: AbstractControl | null,
+    rowIndex: number,
+    dayName: string
+  ) {
     const projectId = dayForm.get('projectId')?.value ?? 0;
     const phaseId = dayForm.get('phaseId')?.value ?? 0;
-    const selectedDate = moment(dayForm.get('entryDate')?.value).format('YYYY-MM-DD');
-    const approvalStatus = (dayForm.get('approvalStatus')?.value || 'not entered').toLowerCase();
+    const entryDate = moment(dayForm.get('entryDate')?.value).startOf('day');
+    const approvalStatus = (
+      dayForm.get('approvalStatus')?.value || 'not entered'
+    ).toLowerCase();
+
     const url = `TimesheetConfiguration?projectId=${projectId}&phaseId=${phaseId}`;
 
-    this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
-      next: (res: any) => {
-        const items = res?.items || [];
-        const fieldMap: any = {
-          'Start Time': 'startTime',
-          'End Time': 'endTime',
-          'Task Type': 'taskId',
-          'Description': 'description'
-        };
-        const hasMandatory = items.some((item: any) => {
-          if (!fieldMap[item.fieldName]) return false;
-          const effectiveDate = moment(item.effectiveDate).format('YYYY-MM-DD');
-          const isEffective = moment(selectedDate).isSameOrAfter(moment(effectiveDate), 'day');
-          return isEffective && item.isMandatory &&
-            (approvalStatus === 'draft' || approvalStatus === 'rejected' || approvalStatus === 'not entered');
-        });
+    this.http.getData(url)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res: any) => {
 
-        if (hasMandatory) {
-          this.openModal(this.addtask, dayFormNew, rowIndex, dayName);
-        } else {
+          const items = res?.items || [];
+
+          // Case 1: No configuration
+          if (items.length === 0) {
+            this.openModal(this.addtask, dayFormNew, rowIndex, dayName);
+            return;
+          }
+          // Get applicable configuration (latest effective date <= entry date)
+          const applicableConfigs = items
+            .filter((item: any) =>
+              entryDate.isSameOrAfter(moment(item.effectiveDate).startOf('day'))
+            )
+            .sort((a: any, b: any) =>
+              moment(b.effectiveDate).valueOf() - moment(a.effectiveDate).valueOf()
+            );
+
+          // Case 3: Entry date is before all effective dates
+          if (applicableConfigs.length === 0) {
+            this.openModal(this.addtask, dayFormNew, rowIndex, dayName);
+
+            return;
+          }
+
+          // Latest applicable configuration
+          const config = applicableConfigs[0];
+
+          if (config.isMandatory) {
+            this.openModal(this.addtask, dayFormNew, rowIndex, dayName);
+          } else {
+            this.autoSaveDayEntry(dayForm, rowIndex, dayName);
+          }
+        },
+        error: () => {
           this.autoSaveDayEntry(dayForm, rowIndex, dayName);
         }
-      },
-      error: () => this.autoSaveDayEntry(dayForm, rowIndex, dayName)
-    });
+      });
   }
 
   isRequired(controlName: string): boolean {
@@ -1842,26 +1867,37 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       // Set validators based on TimesheetConfiguration
       const projectId = this.dayForm.get('projectId')?.value ?? 0;
       const phaseId = this.dayForm.get('phaseId')?.value ?? 0;
-      const selectedDate = moment(entryDate).format('YYYY-MM-DD');
-      const fieldMap: any = { 'Start Time': 'startTime', 'End Time': 'endTime', 'Task Type': 'taskId', 'Description': 'description' };
       this.http.getData(`TimesheetConfiguration?projectId=${projectId}&phaseId=${phaseId}`)
         .pipe(takeUntil(this.destroy$)).subscribe({
           next: (res: any) => {
             const items = res?.items || [];
-            const approvalstatus = this.dayForm.get('approvalStatus')?.value;
+            const fieldMap: any = {
+              'Start Time': 'startTime',
+              'End Time': 'endTime',
+              'Task Type': 'taskId',
+              'Description': 'description'
+            };
+            const selectedDate = moment(this.dayForm.get('entryDate')?.value).format('YYYY-MM-DD');
+            console.log('Selected Date for Validation:', selectedDate);
             items.forEach((item: any) => {
               const controlName = fieldMap[item.fieldName];
-              if (!controlName) return;
-              const control = this.dayForm.get(controlName);
-              if (!control) return;
-              control.clearValidators();
               const effectiveDate = moment(item.effectiveDate).format('YYYY-MM-DD');
               const isEffective = moment(selectedDate).isSameOrAfter(moment(effectiveDate), 'day');
-              if (isEffective && item.isMandatory &&
-                (approvalstatus?.toLowerCase() === 'draft' || approvalstatus?.toLowerCase() === 'rejected' || approvalstatus?.toLowerCase() === 'not entered')) {
-                control.setValidators([Validators.required]);
+              if (isEffective) {
+                if (!controlName) return;
+                const control = this.dayForm.get(controlName);
+                if (!control) return;
+                control.clearValidators();
+                const approvalstatus = this.dayForm.get('approvalStatus')?.value;
+                console.log('Approval Status:', approvalstatus);
+                // if (isEffective && item.isMandatory &&(!approvalstatus || approvalstatus?.toLowerCase() === 'draft' || approvalstatus?.toLowerCase() === 'rejected'|| approvalstatus?.toLowerCase() === 'not entered')) {
+                //control.setValidators([Validators.required]);
+                // }
+                if (item.isMandatory) {
+                  control.setValidators([Validators.required]);
+                }
+                control.updateValueAndValidity({ emitEvent: false });
               }
-              control.updateValueAndValidity({ emitEvent: false });
             });
           }
         });

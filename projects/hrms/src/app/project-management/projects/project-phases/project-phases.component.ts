@@ -57,7 +57,7 @@ export class ProjectPhasesComponent implements OnInit, OnDestroy {
   effectiveAfterKickoffValid: boolean = true;
   updatePhaseForm!: FormGroup;
   empinfo: any = {};
-  authorityList: IProjectAuthority[] = [];
+  authorityList: any[] = [];
   phaseId: any;
   isAuthorityRequired = false;
   projectsData: Project[] = [];
@@ -572,14 +572,19 @@ export class ProjectPhasesComponent implements OnInit, OnDestroy {
           this.loading = false;
 
           const resourceList = data?.data ?? [];
+          const uniqueEmployees = Array.from(
+            new Map(
+              resourceList
+                .filter((r: any) => r?.employee?.id)
+                .map((r: any) => [r.employee.id, r.employee])
+            ).values()
+          );
 
-          // Build dropdown list
-          const dropdownList = resourceList
-            .filter((r: any) => r.employee)
-            .map((r: any) => ({
-              label: `${r.employee.fusionEmployeeId} - ${r.employee.name}`,
-              value: r.employee.id,
-            }));
+          // ✅ Build dropdown from unique employees
+          const dropdownList = uniqueEmployees.map((emp: any) => ({
+            label: `${emp.fusionEmployeeId} - ${emp.name}`,
+            value: emp.id,
+          }));
 
           if (isPopupCall) {
             this.authorityList = dropdownList;

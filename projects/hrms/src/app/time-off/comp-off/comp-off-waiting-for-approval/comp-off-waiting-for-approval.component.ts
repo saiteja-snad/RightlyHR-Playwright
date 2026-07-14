@@ -257,7 +257,7 @@ export class CompOffWaitingForApprovalComponent implements OnInit, OnDestroy {
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response: any) => {
-
+            this.spinnerLoader = false;
             this.modalService.dismissAll();
             this.waitingForApprovalCompOff =
               this.waitingForApprovalCompOff.filter(
@@ -348,7 +348,7 @@ export class CompOffWaitingForApprovalComponent implements OnInit, OnDestroy {
         .subscribe({
           next: (response: any) => {
             console.log('SUCCESS', response);
-
+            this.spinnerLoader = false;
             this.modalService.dismissAll();
 
             this.waitingForApprovalCompOff =

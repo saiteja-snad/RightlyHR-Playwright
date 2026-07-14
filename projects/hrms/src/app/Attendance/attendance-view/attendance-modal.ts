@@ -13,9 +13,24 @@ export interface IAttendance {
     permissions: [],
     regularizations: [],
     logExtraHours: [],
-    displayStatus:any,
+    displayStatus: any,
     isRegularizationApplicable: boolean,
     isLeaveApplicable: boolean,
+    shiftDetails?: {
+        id: number;
+        headerId: number;
+        shiftStartTime: string;
+        shiftEndTime: string;
+        allowedGracePeriod: number;
+        latesAllowed: number;
+        allowedBreakTime: number;
+        halfDayMinHrs: number;
+        fullDayMinHrs: number;
+        punchBeginBefore: number;
+        punchEndAfter: number;
+        locationId: number;
+        subLocationId: number;
+    };
 }
 export interface IdayLogs {
     in: any;

@@ -253,7 +253,7 @@ export class ExtraHoursWaitingForApprovalComponent implements OnInit, OnDestroy 
         this.requestBody
       ).subscribe({
         next: (response: any) => {
-
+          this.spinnerLoader = false;
           this.modalService.dismissAll();
 
           const ids = selectedItems.map(x => x.id);
@@ -264,6 +264,11 @@ export class ExtraHoursWaitingForApprovalComponent implements OnInit, OnDestroy 
             );
 
           this.selectedProducts = [];
+
+          this.http.tirggerCountSignal.update(status => ({
+            ...status,
+            compOff: true
+          }));
 
           this.responseSummary = response.data;
           if (Array.isArray(this.selectedExtraHourData)) {
@@ -315,8 +320,9 @@ export class ExtraHoursWaitingForApprovalComponent implements OnInit, OnDestroy 
         this.requestBody
       ).subscribe({
         next: (response: any) => {
-
+          this.spinnerLoader = false;
           this.modalService.dismissAll();
+
 
           // Remove from waiting list immediately
           const ids = selectedItems.map(x => x.id);
@@ -327,6 +333,11 @@ export class ExtraHoursWaitingForApprovalComponent implements OnInit, OnDestroy 
             );
 
           this.selectedProducts = [];
+
+          this.http.tirggerCountSignal.update(status => ({
+            ...status,
+           compOff: true
+          }));
 
           this.responseSummary = response.data;
 

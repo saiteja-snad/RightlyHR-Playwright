@@ -41,7 +41,7 @@
         [scrollable]="true" scrollHeight="flex">
         <ng-template pTemplate="header">
           <tr>
-            @if(!permissionForLoggedInUser){
+            @if(!permissionForLoggedInUser && isWFHManager){
             <th style="width:4rem">
               <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
             </th>
@@ -54,17 +54,18 @@
             <th pSortableColumn="requestedDate">{{'Applied Date' | translate }} <p-sortIcon
                 field="requestedDate"></p-sortIcon></th>
             <th pSortableColumn="status">{{'Status' | translate }} <p-sortIcon field="status"></p-sortIcon></th>
-            @if(selectedProducts.length == 0){
-            <th class="text-center">{{"Action" | translate}}</th>
+            @if(selectedProducts.length == 0 && isWFHManager){
+            <th class="text-center">Action</th>
             }
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-wfhRequest>
           <tr>
-            @if(!permissionForLoggedInUser){
+            @if(!permissionForLoggedInUser && isWFHManager){
             <td>
               <p-tableCheckbox [value]="wfhRequest"></p-tableCheckbox>
             </td>
+           
             }
             <td>{{ wfhRequest.startTime ? (wfhRequest.startTime | dateformat) : ' -' }}</td>
             <td [ngSwitch]="wfhRequest.durationType">
@@ -90,7 +91,7 @@
             <td>{{ wfhRequest.status }}</td>
 
             <!-- @if(isBeforeToday(wfhRequest.startTime)){ -->
-            @if(selectedProducts.length == 0){
+           @if(isWFHManager){
             <td class="text-center">
 
               <!-- Employee -->
@@ -111,7 +112,7 @@
               }
 
               <!-- Current Approver (RM/TM) -->
-              @else if(!permissionForLoggedInUser){
+              @else if(!permissionForLoggedInUser && isWFHManager){
 
               <div class="dropdown">
                 <a type="button" data-bs-toggle="dropdown">

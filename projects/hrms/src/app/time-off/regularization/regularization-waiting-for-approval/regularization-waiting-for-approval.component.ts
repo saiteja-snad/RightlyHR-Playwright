@@ -82,8 +82,14 @@ export class RegularizationWaitingForApprovalComponent implements OnInit, OnDest
     private fb: FormBuilder, private sharedModalService: OpenModalService) {
     effect(() => {
       if (this.http.tirggerCountSignal().permission) {
-        this.getDataPermissions();
-        this.http.tirggerCountSignal.update((status) => ({
+
+        if (this.selectempid) {
+          this.getDataEMPPermissions();
+        } else {
+          this.getDataPermissions();
+        }
+
+        this.http.tirggerCountSignal.update(status => ({
           ...status,
           permission: false,
         }));
@@ -249,7 +255,7 @@ export class RegularizationWaitingForApprovalComponent implements OnInit, OnDest
         this.requestBody
       ).subscribe({
         next: (response: any) => {
-
+          this.spinnerLoader = false;
           this.modalService.dismissAll();
 
           const ids = selectedItems.map(x => x.id);
@@ -280,6 +286,16 @@ export class RegularizationWaitingForApprovalComponent implements OnInit, OnDest
           }
 
           this.approveForm.reset();
+          if (this.selectempid) {
+            this.getDataEMPPermissions();
+          } else {
+            this.getDataPermissions();
+          }
+          this.http.tirggerCountSignal.update(status => ({
+            ...status,
+            permission: true
+          }));
+
         },
         error: (err: any) => {
           console.error(err);
@@ -325,6 +341,7 @@ export class RegularizationWaitingForApprovalComponent implements OnInit, OnDest
       ).subscribe({
         next: (response: any) => {
 
+          this.spinnerLoader = false;
           this.modalService.dismissAll();
 
           const ids = selectedItems.map(x => x.id);
@@ -355,6 +372,15 @@ export class RegularizationWaitingForApprovalComponent implements OnInit, OnDest
 
           }
           this.rejectForm.reset();
+          if (this.selectempid) {
+            this.getDataEMPPermissions();
+          } else {
+            this.getDataPermissions();
+          }
+          this.http.tirggerCountSignal.update(status => ({
+            ...status,
+            permission: true
+          }));
         },
         error: (err: any) => {
           console.error(err);

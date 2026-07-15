@@ -11,13 +11,12 @@ import { MultiSucesspopupComponent } from '../shared/multi-sucesspopup/multi-suc
 export class OpenModalService {
 
   constructor(private modalService: NgbModal) { }
-  
-  openSuccessModal(status: string) {
+ openSuccessModal(status: string, duration: number = 2000) {
     const successModal = this.modalService.open(SuccessContentPopupComponent, { centered:true, backdrop: 'static' });
     successModal.componentInstance.status = status;
     setTimeout(() => {
       successModal.dismiss();
-    }, 2000);
+    }, duration);
   }
 
   openErrorModal(status: string, duration: number = 2500){

@@ -11,7 +11,7 @@
                         <div class="custom-p-select-content">
                             <p-select [options]="employeeDetails" optionLabel="fullName" [filter]="true" filterBy="fullName"
                                 [showClear]="false" placeholder="Please select employee" formControlName="employee"
-                                class="custom-select w-100" (onChange)="onClickEmployee($event)" resetFilterOnHide="true">
+                                class="custom-select w-100" (onChange)="onClickEmployee($event)" resetFilterOnHide="true" filterPlaceholder="Search employee">
                             </p-select>
                         </div>
                         <div *ngIf="employeeForm.get('employee')?.invalid && employeeForm.get('employee')?.touched">
@@ -31,7 +31,7 @@
                             <div class="error-msg">Issued date is required</div>
                         </div>
                     </div>
-    
+
                     <!-- Document Type -->
                     <div class="mb-3">
                         <label class="form-label custom-label mb-2">{{'Document Type' |translate}}<span class="error-msg">*</span></label>
@@ -51,7 +51,7 @@
                         <div class="custom-p-select-content">
                             <p-select [options]="signatureAuthorityDetails" optionLabel="fullName" placeholder="Please select signature authority name"
                                 class="form-select custom-select" formControlName="signatureAuthority" resetFilterOnHide="true" [filter]="true" filterBy="fullName"
-                                (onChange)="onclickDesignation($event)" resetFilterOnHide="true"/>
+                                (onChange)="onclickDesignation($event)" resetFilterOnHide="true" filterPlaceholder="Select signature authority name" />
                         </div>
                         <div *ngIf="employeeForm.get('signatureAuthority')?.invalid && employeeForm.get('signatureAuthority')?.touched">
                             <div class="error-msg">Signature Authority Name is required</div>
@@ -59,7 +59,7 @@
                     </div>
 
                     <div *ngIf="jobErrorMessage" class="error-msg">{{ jobErrorMessage }}</div>
-                    
+
                     <div>
                         <p class="note-text"><span class="note me-2">{{'Note'| translate }}:</span>{{'Please Update Employee Full Name, Designation, Joining Date, Address, in Personal and Job Tabs before Generating the Document' | translate}}.</p>
                     </div>
@@ -78,7 +78,7 @@
                 </div>
             </form>
         </div>
-    
+
         <div class="card letter-data-content">
             <div class="letter-sub-data-content">
                 <div>
@@ -98,21 +98,21 @@
                             </div>
                             <div class="letter-header text-center mb-4">RELIEVING & EXPERIENCE LETTER </div>
                             <p>
-                                We hereby certify that <b>{{ employeeFullname }}</b> was employed with RightlyHR as a 
+                                We hereby certify that <b>{{ employeeFullname }}</b> was employed with RightlyHR as a
                                 <b>{{ selectedEmployeeJobDetails?.jobRole || '' }}</b> from
                                 <b>{{ employeeForm.get('employee')?.value?.dateOfJoining | dateformat }}</b> to
                                 <b>{{ selectedEmployee?.lastworkingday | dateformat }}.</b>
-                              </p>                              
-                            <p>During <span>{{gender}}</span> tenure with our organization, <b>{{employeeFullname}}</b> exhibited commendable dedication, 
+                              </p>
+                            <p>During <span>{{gender}}</span> tenure with our organization, <b>{{employeeFullname}}</b> exhibited commendable dedication,
                                 professionalism, and competence in <span>{{gender}}</span> role.
                             </p>
-        
+
                             <p>We deeply appreciate <b>{{employeeFullname}}</b> contributions during {{gender}}
                                 employment with Rightly HR, and we believe {{gender}} commitment and expertise will be an
                                 asset to any organization they choose to join in the future.
                             </p>
-        
-                            <p>We wish <b>{{employeeFullname}}</b> the very best for {{gender}} future endeavors, and we trust that {{gender2}} 
+
+                            <p>We wish <b>{{employeeFullname}}</b> the very best for {{gender}} future endeavors, and we trust that {{gender2}}
                                 will achieve continued success in {{gender}} professional journey.
                             </p>
                             <p class="pt-4">Sincerely,</p>

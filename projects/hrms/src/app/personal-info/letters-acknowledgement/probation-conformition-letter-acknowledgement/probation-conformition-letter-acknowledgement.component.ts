@@ -205,7 +205,7 @@ export class ProbationConformitionLetterAcknowledgementComponent {
       firstName: this.Employeeinfo.firstName,
       middleName: this.Employeeinfo.middleName,
       lastName: this.Employeeinfo.lastName,
-      fusionEmpId: String(data.employeeId ?? ''),
+      fusionEmpId: this.employeeaddress.fusionEmpId,
       jobRole: this.jobRole,
       department: this.department,
       workLocation: this.workLocation,

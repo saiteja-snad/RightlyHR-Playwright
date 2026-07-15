@@ -35,7 +35,7 @@ export function buildBankLoanLetterDoc(data: BankLoanLetterData): any {
     {
       text: 'TO WHOMSOEVER IT MAY CONCERN',
       font: 'VERDANABOLD',
-      fontSize: PX(14),
+      fontSize: PX(18),
       alignment: 'center',
       decoration: 'underline',
       margin: [0, 0, 0, 30],
@@ -68,7 +68,7 @@ export function buildBankLoanLetterDoc(data: BankLoanLetterData): any {
     pageMargins: [margins.left, margins.top, margins.right, margins.bottom],
     defaultStyle: {
       font: bodyFont,
-      fontSize: PX(13),
+      fontSize: PX(16),
       alignment: 'justify',
       color: '#000',
     },

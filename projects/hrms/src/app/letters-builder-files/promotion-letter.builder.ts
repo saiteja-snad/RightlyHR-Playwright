@@ -132,7 +132,7 @@ export function buildPromotionLetterDoc(data: PromotionLetterData): any {
     p('Once again, congratulations on your success and cheers to more good work in the future.', 10),
     p('We wish you all the best.', 20),
     p('Sincerely,', 4),
-    { text: 'For SNAD Developers India Pvt Ltd', fontSize: PX(14), margin: [0, 0, 0, 36], font: 'VERDANABOLD' },
+    { text: 'For RightlyHR', fontSize: PX(14), margin: [0, 0, 0, 36], font: 'VERDANABOLD' },
     { text: data.authorityFullName, font: data.useAutographyFont ? 'Autography' : bodyFont, fontSize: PX(32), margin: [0, 0, 0, 4], noWrap: true, alignment: 'left' },
     { text: data.authorityFullName, fontSize: PX(13), margin: [0, 0, 0, 4], font: 'VERDANABOLD' },
     { text: data.authorityDesignation, fontSize: PX(13), margin: [0, 0, 0, 16], font: 'VERDANABOLD' },
@@ -166,12 +166,12 @@ export function buildPromotionLetterDoc(data: PromotionLetterData): any {
     },
   ];
 
- 
+
    const isSoftCopy = !!data.backgroundImageBase64;
    const margins = isSoftCopy
      ? LETTER_MARGINS.softCopy
      : LETTER_MARGINS.hardCopy;
- 
+
    const docDef: any = {
      pageSize: 'A4',
      pageMargins: [margins.left, margins.top, margins.right, margins.bottom],
@@ -183,12 +183,12 @@ export function buildPromotionLetterDoc(data: PromotionLetterData): any {
      },
      content: stampFont(content, bodyFont),
    };
- 
+
    applyLetterPageSetup(docDef, {
      backgroundImageBase64: data.backgroundImageBase64,
      headerLogoBase64: data.headerLogoBase64,
      bodyFont,
    });
- 
+
    return docDef;
 }

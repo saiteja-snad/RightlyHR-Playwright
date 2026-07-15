@@ -197,6 +197,7 @@ export class TraineeOfferLetterComponent implements OnInit, OnDestroy {
       authorityid: [null, Validators.required],
       reportingmanagerId: [null, Validators.required],
       internshipperiod: [null, Validators.required],
+      documentType: [null, Validators.required],
     });
     this.employeeForm.get('internshipperiod')?.valueChanges.subscribe((value: string) => {
       this.calculateEndDate(value);
@@ -643,7 +644,6 @@ export class TraineeOfferLetterComponent implements OnInit, OnDestroy {
       endDate: data.endDate || '',
       internshipperiod: data.internshipperiod || 0,
       reportingmanagerName: data.reportingmanagerName || undefined,
-      stipendApplicable: this.employeeForm.get('stipend')?.value?.value ?? false,
       monthlyAmount: this.employeeForm.get('monthlyammount')?.value || undefined,
       annualCTC: data.amount || undefined,
       note: this.employeeForm.get('note')?.value || undefined,

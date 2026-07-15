@@ -1,0 +1,238 @@
+<div class="shell">
+  <!-- LEFT : BRAND -->
+  <aside class="brand">
+    <div class="logo" aria-label="RIGHTLY HR">
+      <img src="logo/RHR-Logo.png" alt="RIGHTLY HR" class="rhr-logo"/>
+    </div>
+
+    <div class="brand-inner">
+      <h1>Experience the future of <span class="hl">workforce</span> management</h1>
+      <p class="sub">
+        Discover how RightlyHR simplifies the entire employee lifecycle, from hiring to retirement, with a modern,
+        AI-powered HR platform. Create your personalized demo environment in just a few minutes and explore the
+        features that matter most to your organization.
+      </p>
+
+      <div class="journey-label">Your demo journey</div>
+      <ul class="steps">
+        <li [class.done]="step1Done">
+          <span class="step-dot">1</span>
+          <div>
+            <b>Create your demo account</b>
+            <span>Provide your business details and verify your email address.</span>
+          </div>
+        </li>
+        <li [class.done]="step2Done">
+          <span class="step-dot">2</span>
+          <div>
+            <b>Personalize your demo</b>
+            <span>Choose your preferred modules and start with sample data or a clean workspace.</span>
+          </div>
+        </li>
+        <li [class.done]="step3Done">
+          <span class="step-dot">3</span>
+          <div>
+            <b>Explore RightlyHR</b>
+            <span>Access your dedicated demo instance with guided onboarding.</span>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <div class="trust">
+      <div><b>⚡ 5 min</b>Average setup time</div>
+      <div><b>📅 14 days</b>Full feature access</div>
+      <div><b>🔒 100% secure</b>Dedicated demo environment</div>
+    </div>
+    <div class="no-card">No credit card required</div>
+  </aside>
+
+  <!-- RIGHT : FORM -->
+  <main class="pane">
+    @if (!submittedSuccessfully) {
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+      <div class="pane-head">
+        <span class="kicker">Request a demo</span>
+        <h2>Create your demo instance</h2>
+        <p>Fields marked <span class="req">*</span> are required.</p>
+      </div>
+
+      <!-- SECTION 1 -->
+      <fieldset>
+        <legend><span class="n">1</span> Contact information</legend>
+
+        <div class="grid2">
+          <div class="field">
+            <label class="lbl" for="fullName">Full name <span class="req">*</span></label>
+            <div class="control">
+              <input type="text" id="fullName" formControlName="fullName" placeholder="e.g. Priya Sharma"
+                autocomplete="name" />
+            </div>
+            @if (submitted && form.controls.fullName.errors?.['required']) {
+            <div class="hint err">Full name is required.</div>
+            } @else if (submitted && form.controls.fullName.errors?.['pattern']) {
+            <div class="hint err">Enter a valid name using letters only.</div>
+            }
+          </div>
+          <div class="field">
+            <label class="lbl" for="companyName">Company name <span class="req">*</span></label>
+            <div class="control">
+              <input type="text" id="companyName" formControlName="companyName" placeholder="e.g. Acme Technologies"
+                autocomplete="organization" />
+            </div>
+            @if (submitted && form.controls.companyName.errors?.['required']) {
+            <div class="hint err">Company name is required.</div>
+            } @else if (submitted && form.controls.companyName.invalid) {
+            <div class="hint err">Company name must be at least 2 characters.</div>
+            }
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="lbl" for="email">Work email <span class="req">*</span></label>
+          <div class="control">
+            <input type="email" id="email" formControlName="email" placeholder="you@company.com" autocomplete="email"
+              [class.good]="emailVerified" style="padding-right:110px" />
+            @if (emailVerified) {
+            <button type="button" class="verify done" disabled>&#10003; Verified</button>
+            } @else {
+            <button type="button" class="verify" [disabled]="form.controls.email.invalid"
+              (click)="openVerify('email')">Verify</button>
+            }
+          </div>
+          @if (submitted && form.controls.email.invalid) {
+          <div class="hint err">A valid work email is required.</div>
+          } @else if (submitted && form.controls.email.valid && !emailVerified) {
+          <div class="hint err">Please verify your email address.</div>
+          } @else {
+          <div class="hint">We'll send your demo link here.</div>
+          }
+        </div>
+
+        <div class="field">
+          <label class="lbl" for="mobile">Mobile number <span class="opt">(optional)</span></label>
+          <div class="control">
+            <input type="tel" id="mobile" formControlName="mobile" placeholder="+91 98765 43210" autocomplete="tel"
+              [class.good]="mobileVerified" style="padding-right:110px" />
+            @if (mobileVerified) {
+            <button type="button" class="verify done" disabled>&#10003; Verified</button>
+            } @else {
+            <button type="button" class="verify" [disabled]="!mobileProvided || form.controls.mobile.invalid"
+              (click)="openVerify('mobile')">Verify</button>
+            }
+          </div>
+          @if (mobileProvided && form.controls.mobile.invalid) {
+          <div class="hint err">Enter a valid mobile number (10-15 digits).</div>
+          } @else if (submitted && mobileProvided && !mobileVerified) {
+          <div class="hint err">Please verify your mobile number.</div>
+          }
+        </div>
+      </fieldset>
+
+      <!-- SECTION 2 -->
+      <fieldset>
+        <legend><span class="n">2</span> Company logo <span class="opt">(optional)</span></legend>
+        <div class="drop" [class.over]="dragOver" [class.has-file]="selectedFile" tabindex="0" role="button"
+          aria-label="Upload company logo" (dragover)="onDragOver($event)" (dragleave)="onDragLeave($event)"
+          (drop)="onDrop($event)" (click)="logoInput.click()">
+          <input #logoInput type="file" hidden accept=".png,.jpg,.jpeg,.svg" (change)="onFileSelected($event)" />
+
+          @if (selectedFile) {
+          <div class="file-chip">
+            @if (logoPreviewUrl) {
+            <img [src]="logoPreviewUrl" alt="Logo preview" />
+            }
+            <span>{{ selectedFile.name }}</span>
+            <button type="button" (click)="$event.stopPropagation(); removeFile()">Remove</button>
+          </div>
+          } @else {
+          <div>
+            <div class="up-ic">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M8 11V2M8 2L4.5 5.5M8 2l3.5 3.5M2 11v2a1 1 0 001 1h10a1 1 0 001-1v-2" stroke="currentColor"
+                  stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </div>
+            <p><b>Upload a file</b> or drag and drop</p>
+            <small>PNG, JPG or SVG &middot; up to 5 MB &middot; we'll brand your demo with it</small>
+          </div>
+          }
+        </div>
+        @if (fileError) {
+        <div class="hint err">{{ fileError }}</div>
+        }
+      </fieldset>
+
+      <!-- SECTION 3 -->
+      <fieldset>
+        <legend><span class="n">3</span> Demo data preference</legend>
+        <div class="cards" role="radiogroup" aria-label="Demo data preference">
+          <label class="card sel">
+            <input type="radio" name="pref" value="prefilled" checked />
+            <span class="tick">&#10003;</span>
+            <b>Pre-filled demo data</b>
+            <span>Sample employees, attendance and payroll &mdash; explore instantly.</span>
+          </label>
+          <label class="card disabled">
+            <input type="radio" name="pref" value="custom" disabled />
+            <span class="tick">&#10003;</span>
+            <b>Custom setup</b>
+            <span>Start clean and configure your own HRMS data your way.</span>
+          </label>
+        </div>
+      </fieldset>
+
+      <label class="agree">
+        <input type="checkbox" formControlName="agreeTerms" />
+        <span>I agree to the <a href="javascript:void(0)">Terms of Service</a> and <a href="javascript:void(0)">Privacy
+            Policy</a>.</span>
+      </label>
+      @if (submitted && form.controls.agreeTerms.invalid) {
+      <div class="hint err" style="margin-top:-14px; margin-bottom: 14px;">You must accept the terms to continue.</div>
+      }
+
+      <button type="submit" class="cta" [disabled]="!canSubmit">
+        Create my demo instance <span class="arr">&rarr;</span>
+      </button>
+      <p class="cta-hint" [class.ready]="canSubmit">
+        {{ canSubmit ? "You're all set — one click away." : 'Complete the required fields and verify your email to
+        continue.' }}
+      </p>
+    </form>
+    } @else {
+    <div class="success show">
+      <div class="big-tick">&#10003;</div>
+      <h2>Your demo is on its way</h2>
+      <p>We're spinning up your RIGHTLY HR instance. Check your inbox in the next couple of minutes for your access
+        link.</p>
+    </div>
+    }
+  </main>
+</div>
+
+<!-- Verify OTP modal template -->
+<ng-template #verifyModal>
+  <div class="modal-header border-0 pb-0">
+    <h5 class="modal-title">Verify {{ activeTarget === 'email' ? 'email' : 'mobile number' }}</h5>
+    <button type="button" class="btn-close" (click)="dismissModal()"></button>
+  </div>
+  <div class="modal-body">
+    <p class="modal-desc">Enter the 6-digit code sent to your {{ activeTarget === 'email' ? 'email address' : 'phone'
+      }}.</p>
+    <div class="otp-row">
+      <p-inputOtp [(ngModel)]="currentOtpValue" [length]="6" [integerOnly]="true" [autofocus]="true" />
+    </div>
+    @if (otpError) {
+    <div class="hint err text-center">{{ otpError }}</div>
+    }
+    <div class="modal-footer-row">
+      <span class="timer">&#128337; {{ formattedTimer() }}</span>
+      <button type="button" class="link-inline" [disabled]="currentTimer > 0" (click)="resendCode()">Resend
+        code</button>
+    </div>
+  </div>
+  <div class="modal-footer border-0">
+    <button type="button" class="btn-secondary" (click)="dismissModal()">Cancel</button>
+    <button type="button" class="btn-primary-dark" (click)="verifyCode()">Verify code</button>
+  </div>
+</ng-template>

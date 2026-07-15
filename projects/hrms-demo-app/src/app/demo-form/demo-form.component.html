@@ -198,7 +198,9 @@
 
       <label class="agree">
         <input type="checkbox" formControlName="agreeTerms" />
-        <span>I agree to the <a href="javascript:void(0)">Terms of Service</a> and <a href="javascript:void(0)">Privacy Policy</a>.</span>
+        <span>I agree to the <a href="https://www.snaddevelopers.com/terms-condition" target="_blank">Terms of Service</a> and 
+          <a href="https://www.snaddevelopers.com/privacy-policy" target="_blank">Privacy Policy</a>.
+        </span>
       </label>
 
       @if (submitted && form.controls.agreeTerms.invalid) {
@@ -232,8 +234,7 @@
     </div>
 
     <div class="custom-main-popup-content">
-      <p class="modal-desc">Enter the 6-digit code sent to your {{ activeTarget === 'email' ? 'email address' : 'phone'
-        }}.</p>
+      <p class="modal-desc">Enter the 6-digit code sent to your {{ activeTarget === 'email' ? 'email address' : 'phone' }}.</p>
       <div class="otp-row">
         <p-inputOtp [(ngModel)]="currentOtpValue" [length]="6" [integerOnly]="true" [autofocus]="true" />
       </div>

@@ -40,17 +40,17 @@
                     <tr *ngFor="let asset of assetCategorys | async">
                         <td>{{asset.name}}</td>
                         <td class="text-center action-dropdown-cell">
-                        <div class="dropdown" *ngIf="rbac.allowedToAccess('Asset Catagory.update') || rbac.allowedToAccess('Asset Catagory.delete')">
+                        <div class="dropdown" *ngIf="rbac.allowedToAccess('Asset Category.update') || rbac.allowedToAccess('Asset Category.delete')">
                             <a data-bs-toggle="dropdown" aria-expanded="false" class="cursor-pointer">
                                 <i class="bi bi-three-dots-vertical"></i>
                             </a>
                             <ul class="dropdown-menu custom-dropdown-menu">
-                                <li *ngIf="rbac.allowedToAccess('Asset Catagory.update')">
+                                <li *ngIf="rbac.allowedToAccess('Asset Category.update')">
                                     <a class="dropdown-item" (click)="openupdate(updateassetcatgey, asset)">
                                         <i class="bi bi-pencil-square me-2"></i>{{ 'Update' | translate }}
                                     </a>
                                 </li>
-                                <li *ngIf="rbac.allowedToAccess('Asset Catagory.delete')">
+                                <li *ngIf="rbac.allowedToAccess('Asset Category.delete')">
                                     <a class="dropdown-item" (click)="opendelete(deleteconformation,asset)">
                                         <i class="bi bi-trash me-2"></i>{{ 'Delete' | translate }}
                                     </a>

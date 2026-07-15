@@ -151,8 +151,8 @@ export const permissionsData = [
 
   // Settings Assest Configuration Section
   { fields: 'Vendor Details', View: false, Update: false, Create: false, Delete: false },
-  { fields: 'Asset Catagory', View: false, Update: false, Create: false, Delete: false },
-  { fields: 'Asset Sub Catagory', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Asset Category', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Asset Sub Category', View: false, Update: false, Create: false, Delete: false },
   //Settings Time Off flexible wfh allocation Tabs Section
 
   // TimeOff Attendece Eligibility Criteria

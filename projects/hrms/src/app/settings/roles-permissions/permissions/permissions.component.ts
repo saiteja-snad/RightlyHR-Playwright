@@ -1326,7 +1326,7 @@ export const SECTION_DEFINITIONS: SectionDef[] = [
       'Extra Hours Configuration Tab',
       'Flexible Work Hours Configuration Tab']
   },
-  { title: 'Settings Asset Configuration', disableFn: 'isSettingsEmployeeJobCheckboxDisabled', fieldNames: ['Vendor Details', 'Asset Catagory', 'Asset Sub Catagory'] },
+  { title: 'Settings Asset Configuration', disableFn: 'isSettingsEmployeeJobCheckboxDisabled', fieldNames: ['Vendor Details', 'Asset Category', 'Asset Sub Category'] },
   { title: 'Settings Dynamic Forms', disableFn: 'isDynamicFormsDisabled', fieldNames: ['Active Forms', 'Inactive Forms', 'Draft Forms', 'Form Settings'] },
   { title: 'Draft Form Mark As Active', disableFn: 'isonlyviewfunction', fieldNames: ['Mark As Active Action'] },
 

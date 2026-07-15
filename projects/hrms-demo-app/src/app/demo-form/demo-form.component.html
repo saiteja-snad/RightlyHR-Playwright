@@ -204,8 +204,8 @@
       @if (submitted && form.controls.agreeTerms.invalid) {
       <div class="hint err" style="margin-top:-14px; margin-bottom: 14px;">You must accept the terms to continue.</div>
       }
-
-      <button type="submit" class="cta" [disabled]="!canSubmit">Create my demo instance <span class="arr">&rarr;</span></button>
+        <p class="mb-2">{{errormsg}}</p>
+      <button type="submit" class="cta" [disabled]="!canSubmit|| errormsg">Create my demo instance <span class="arr">&rarr;</span></button>
       <p class="cta-hint" [class.ready]="canSubmit">
         {{ canSubmit ? "You're all set — one click away." : 'Complete the required fields and verify your email to continue.' }}
       </p>

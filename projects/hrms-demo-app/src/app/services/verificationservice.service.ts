@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment.dev';
 
 
 export interface VerificationResponse {
@@ -14,7 +15,7 @@ export interface VerificationResponse {
 })
 export class VerificationserviceService {
 
-  private readonly ApiUrl = 'https://localhost:44374/api/Employeedata';
+  private readonly ApiUrl = environment.ApiUrl;
 
   constructor(private http: HttpClient) {}
 
@@ -23,10 +24,10 @@ export class VerificationserviceService {
   }
 
   sendVerificationCode(email: string) {
-    return this.postData(`/send-verification-code?email=${encodeURIComponent(email)}`);
+    return this.postData(`Employeedata/send-verification-code?email=${encodeURIComponent(email)}`);
   }
 
   verifyEmailCode(email: string, code: string) {
-    return this.postData('/verify-email-code', { email, code });
+    return this.postData('Employeedata/verify-email-code', { email, code });
   }
 }

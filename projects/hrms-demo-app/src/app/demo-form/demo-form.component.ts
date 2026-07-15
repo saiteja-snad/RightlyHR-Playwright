@@ -58,6 +58,7 @@ export class DemoFormComponent implements OnDestroy {
 
   emailTimer = 0;
   mobileTimer = 0;
+  errormsg:string|null=null;
   private emailInterval?: ReturnType<typeof setInterval>;
   private mobileInterval?: ReturnType<typeof setInterval>;
   private modalRef?: NgbModalRef;
@@ -285,7 +286,6 @@ export class DemoFormComponent implements OnDestroy {
   // --- Submit ---
 
   onSubmit(): void {
-    this.submitted = true;
     this.form.markAllAsTouched();
     if (!this.canSubmit) {
       return;
@@ -305,14 +305,18 @@ export class DemoFormComponent implements OnDestroy {
     this.httpService.createdemoinstance(payload).subscribe({
       next: (response) => {
         console.log('API Response:', response);
+
         //this.confirmationpopup.openSuccessModal('Demo instance created successfully!');
+        if(response.statusCode === 201){
         this.submittedSuccessfully = true;
+      }
       },
       error: (error) => {
+        if(error.statusCode===400){
+          this.errormsg=error.message;
+        }
         console.error('API Error:', error);
       }
     });
- 
-    this.submittedSuccessfully = true;
   }
 }

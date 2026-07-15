@@ -106,6 +106,7 @@ export class PremissionsTabsComponent implements OnInit, OnDestroy {
       },
       error: (error) => {
         this.loadiing = false
+
         console.error('Error fetching data:', error);
         this.wfh = []; // Set to empty array on error
       },
@@ -131,6 +132,7 @@ export class PremissionsTabsComponent implements OnInit, OnDestroy {
         this.cancelPermissionsRequestsCount = this.wfh.filter(
           (element: { status: string }) => element.status === 'Cancelled'
         ).length;
+        this.updateNavTabs();
       },
       error: (error) => {
         console.error('Error fetching data:', error);

@@ -152,8 +152,9 @@ export class DemoFormComponent implements OnDestroy {
       alert('Please enter an email address first!');
       return;
     }
+    const fullName = [this.form.get('firstName')?.value,this.form.get('middleName')?.value,this.form.get('lastName')?.value].filter(name => name?.trim()).join(' ');
 
-    this.verificationService.sendVerificationCode(email).subscribe({
+    this.verificationService.sendVerificationCode(email,fullName).subscribe({
       next: (res) => {
         if (res.statusCode === 200) {
           console.log(res.message);

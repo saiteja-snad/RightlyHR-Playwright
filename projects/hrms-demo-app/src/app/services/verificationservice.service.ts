@@ -23,11 +23,11 @@ export class VerificationserviceService {
     return this.http.post<VerificationResponse>(`${this.ApiUrl}${url}`, body);
   }
 
-  sendVerificationCode(email: string) {
-    return this.postData(`Employeedata/send-verification-code?email=${encodeURIComponent(email)}`);
+  sendVerificationCode(email: string,firstname:any) {
+    return this.postData(`email-verification/send`,{email,firstname});
   }
 
   verifyEmailCode(email: string, code: string) {
-    return this.postData('Employeedata/verify-email-code', { email, code });
+    return this.postData('email-verification/verify', { email, code });
   }
 }

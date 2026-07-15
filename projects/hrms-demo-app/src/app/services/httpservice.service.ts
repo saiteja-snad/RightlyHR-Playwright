@@ -28,7 +28,7 @@ export class HttpserviceService {
   }
   
   createdemoinstance(payload:any) {
-    return this.postData('Employeedata/new-user',payload);
+    return this.postData('demo-instances',payload);
   }
 
 }

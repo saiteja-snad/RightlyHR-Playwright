@@ -456,8 +456,6 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
           const june18 = updatedAttendanceData.find(
             (x: any) => x.date === '2026-06-18'
           );
-          console.log('June 18 Status:', june18.status);
-          console.log('June 18 DisplayStatus:', june18.displayStatus);
 
           console.log('June 18 Record:', june18);
           this.statusCounts$.next(response.data.summary);

@@ -661,6 +661,16 @@
         min-width: 160px;
         padding: 4px 8px;
     }
+
+    .p-disabled,
+    .p-disabled * {
+        cursor: default !important;
+    }
+}
+
+.disabled-date-filter,
+.disabled-date-filter * {
+    cursor: default !important;
 }
 
 .p-datepicker-day-selected-range {
@@ -771,6 +781,19 @@
         border: 1px solid var(--primary-color);
         color: var(--primary-color);
     }
+    .attendance-chip {
+        font-size: var(--fontsize10);
+        font-weight: 600;
+        padding: 0.125rem 0.5rem;
+        border-radius: 0.25rem;
+        width: max-content;
+
+        &.chip-permission {
+            background-color: #FFF;
+            color: #305889 !important;
+            border: 1px solid #305889;
+    }
+    }
 }
 
 @media (max-width: 1600px) {
@@ -869,7 +892,7 @@
   left: 50%;
   transform: translate(-50%, -50%);
   text-align: center;
-  z-index: 10;
+  z-index: 1;
   width: 100%;
   padding: 0 1rem;
 }
@@ -877,6 +900,71 @@
 .quick-links-card {
     overflow: hidden;
     --quick-link-card-width: 7rem;
+
+    .quick-links-scroll-wrap {
+        position: relative;
+        width: 100%;
+        overflow: hidden;
+    }
+
+    .quick-links-scroll-wrap::before,
+    .quick-links-scroll-wrap::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        z-index: 4;
+        pointer-events: none;
+    }
+
+    .quick-links-scroll-wrap::before {
+        width: 0;
+        left: 0;
+    }
+
+    .quick-links-scroll-wrap::after {
+        width: 0;
+        right: 0;
+    }
+
+    .quick-links-scroll-wrap.has-left-arrow::before {
+        width: 3.1rem;
+    }
+
+    .quick-links-scroll-wrap.has-right-arrow::after {
+        width: 3.1rem;
+    }
+
+    .quick-links-scroll-btn {
+        position: absolute;
+        top: 0.1rem;
+        bottom: 0.1rem;
+        transform: none;
+        width: 2.5rem;
+        border-radius: 0.5rem;
+        border: none;
+        background: linear-gradient(90.05deg, #FFFFFF -87.95%, var(--primary-color) 99.96%);
+        box-shadow: 0px 0px 24px rgba(0, 0, 0, 0.12);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        z-index: 5;
+
+        i {
+            font-size: 1rem;
+            line-height: 1;
+            color: #FFFFFF;
+        }
+    }
+
+    .quick-links-scroll-btn.left {
+        left: 0.02rem;
+    }
+
+    .quick-links-scroll-btn.right {
+        right: 0.02rem;
+    }
 
     .quick-links-remove-btn {
         border: none;
@@ -897,36 +985,23 @@
     }
 
     .quick-links-scroll {
-        overflow-x: auto;
+        overflow-x: hidden;
         overflow-y: hidden;
-        scrollbar-gutter: stable;
-        scrollbar-color: var(--table-header-bg-color) transparent;
-        scrollbar-width: thin;
-
-        &:hover,
-        &:active {
-            scrollbar-color: var(--table-header-bg-color) transparent;
-        }
+        scrollbar-width: none;
+        -ms-overflow-style: none;
 
         &::-webkit-scrollbar {
-            height: 0.375rem;
+            width: 0;
+            height: 0;
+            display: none;
         }
 
-        &::-webkit-scrollbar-track {
-            background: transparent;
+        &.pad-left {
+            padding-left: 2.25rem;
         }
 
-        &::-webkit-scrollbar-thumb {
-            background: var(--table-header-bg-color);
-            background-color: var(--table-header-bg-color);
-            border-radius: 999px;
-            border: none;
-        }
-
-        &::-webkit-scrollbar-thumb:hover,
-        &::-webkit-scrollbar-thumb:active {
-            background: var(--table-header-bg-color);
-            background-color: var(--table-header-bg-color);
+        &.pad-right {
+            padding-right: 2.25rem;
         }
     }
 
@@ -960,7 +1035,7 @@
         justify-content: center;
         align-items: center;
         gap: 0.25rem;
-        cursor: pointer;
+        cursor: default;
         box-sizing: border-box;
         transition: border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
 

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, effect, OnDestroy, OnInit } from '@angular/core';
+import { Component, effect, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormsModule, FormBuilder } from '@angular/forms';
 import { NgbPopoverModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DropdownModule } from 'primeng/dropdown';
@@ -16,6 +16,8 @@ import { TranslateModule } from '@ngx-translate/core';
 import { InfoIconComponent } from '../../../icons/info-icon/info-icon.component';
 import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.service';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
+import { TableModule } from 'primeng/table';
+import { Table } from 'primeng/table';
 @Component({
   selector: 'app-remote-approved',
   imports: [CommonModule,
@@ -26,11 +28,13 @@ import { DataLoaderContentComponent } from "../../../shared/data-loader-content/
     DateformatPipe,
     InfoIconComponent,
     TranslateModule,
+    TableModule,
     NoDataFoundComponent, DataLoaderContentComponent],
   templateUrl: './remote-approved.component.html',
   styleUrl: './remote-approved.component.scss'
 })
 export class RemoteApprovedComponent implements OnInit,OnDestroy{
+  @ViewChild('remoteApprovedTable') remoteApprovedTable!: Table;
   totalRecords = 100;
   first: any = 0;
   rows: any = 10;
@@ -39,6 +43,11 @@ export class RemoteApprovedComponent implements OnInit,OnDestroy{
   approvedRemotesCount = 0;
   empinfo = {} as IJob;
   destroy$: Subject<boolean> = new Subject<boolean>();
+
+  // Sorting properties
+  originalApprovedRemotes = [] as ICompOff[];
+  currentSortField: string = '';
+  currentSortOrder: number = 0; // 0 = no sort, 1 = asc, -1 = desc
 
   options = [
     { label: 10, value: 10 },
@@ -113,12 +122,14 @@ export class RemoteApprovedComponent implements OnInit,OnDestroy{
           this.approvedRemotes = this.remoteLogin.filter(
             (element: { status: string }) => element.status === 'Approved'
           );
+          this.originalApprovedRemotes = [...this.approvedRemotes]; // Store original data
           this.approvedRemotesCount = this.approvedRemotes.length;
         },
         error: (error) => {
           this.dataLoad = false;
           console.error('Error fetching data:', error);
           this.approvedRemotes = []; // Set to empty array on error
+          this.originalApprovedRemotes = [];
         },
       });
   }
@@ -137,13 +148,90 @@ export class RemoteApprovedComponent implements OnInit,OnDestroy{
           this.approvedRemotes = this.remoteLogin.filter(
             (element: { status: string }) => element.status === 'Approved'
           );
+          this.originalApprovedRemotes = [...this.approvedRemotes]; // Store original data
           this.approvedRemotesCount = this.approvedRemotes.length;
         },
         error: (error) => {
           console.error('Error fetching data:', error);
           this.approvedRemotes = []; // Set to empty array on error
+          this.originalApprovedRemotes = [];
         },
       });
+  }
+
+  customSort(event: any): void {
+    const field = event.field;
+    
+    // Track current sort state for the clicked field
+    if (this.currentSortField === field) {
+      // Same field clicked - cycle through: asc (1) -> desc (-1) -> reset (0)
+      if (this.currentSortOrder === 1) {
+        // Currently ascending, change to descending
+        this.currentSortOrder = -1;
+        event.order = -1;
+      } else if (this.currentSortOrder === -1) {
+        // Currently descending, reset to original order
+        this.approvedRemotes = [...this.originalApprovedRemotes];
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        if (this.remoteApprovedTable) {
+          this.remoteApprovedTable.reset();
+        }
+        return;
+      } else {
+        // Currently reset, change to ascending
+        this.currentSortOrder = 1;
+        event.order = 1;
+      }
+    } else {
+      // New field clicked - start with ascending
+      this.currentSortField = field;
+      this.currentSortOrder = 1;
+      event.order = 1;
+    }
+
+    event.data.sort((a: any, b: any) => {
+      let val1: any;
+      let val2: any;
+
+      // Handle different field types
+      switch (field) {
+        case 'startTime':
+        case 'requestedDate':
+        case 'processedDate':
+          val1 = new Date(a[field]).getTime();
+          val2 = new Date(b[field]).getTime();
+          return event.order * (val1 - val2);
+        
+        case 'durationType':
+          // Map durationType numbers to sortable values
+          const durationMap: { [key: number]: string } = {
+            1: 'First Half',
+            2: 'Full Day', 
+            3: 'Second Half'
+          };
+          val1 = durationMap[a[field]] || '';
+          val2 = durationMap[b[field]] || '';
+          break;
+        
+        case 'status':
+        case 'requestedComments':
+        case 'approverComments':
+        default:
+          val1 = a[field];
+          val2 = b[field];
+          break;
+      }
+
+      // Handle string sorting for non-date fields
+      if (field !== 'startTime' && field !== 'requestedDate' && field !== 'processedDate') {
+        val1 = String(val1 ?? '').trim();
+        val2 = String(val2 ?? '').trim();
+        return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+      }
+
+      return 0; // Fallback
+    });
   }
 
   ngOnDestroy(): void {

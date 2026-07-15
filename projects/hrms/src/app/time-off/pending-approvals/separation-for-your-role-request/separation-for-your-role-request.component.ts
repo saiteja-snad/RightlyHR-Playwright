@@ -22,6 +22,8 @@ import { SignalsService } from '../../../services/signals.service';
 import { DataLoaderContentComponent } from '../../../shared/data-loader-content/data-loader-content.component';
 import { FormValidationsService } from '../../../services/form-validations.service';
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
+import { TableModule } from 'primeng/table';
+import { Table } from 'primeng/table';
 @Component({
   selector: 'app-separation-for-your-role-request',
   imports: [
@@ -36,7 +38,8 @@ import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component"
     DateformatPipe,
     PendingapprovalsseparationPipe,
     DataLoaderContentComponent,
-    InfoIconComponent
+    InfoIconComponent,
+    TableModule
 ],
   templateUrl: './separation-for-your-role-request.component.html',
   styleUrl: './separation-for-your-role-request.component.scss',
@@ -49,6 +52,7 @@ export class SeparationForYourRoleRequestComponent {
   separation_For_You_Details = new BehaviorSubject<ISeparation[]>([]);
   @ViewChild('acceptForm') acceptForm!: NgForm;
   @ViewChild('acceptFormforprocess') acceptFormforprocess!: NgForm;
+  @ViewChild('separationTable') separationTable!: Table;
   totalRecords = 100;
   first: any = 0;
   rows: any = 10;
@@ -69,7 +73,10 @@ export class SeparationForYourRoleRequestComponent {
     rejectedReason: '',
     early: false,
   };
-  totalCount:any;
+  totalCount: any;
+  originalSeparationData = [] as ISeparation[]; // Store original unsorted data
+  currentSortField: string = '';
+  currentSortOrder: number = 0; // 0 = no sort, 1 = asc, -1 = desc
   salaryHoldOptions = [
   { label: 'Yes', value: true },
   { label: 'No', value: false }
@@ -157,14 +164,14 @@ onCommentChange(value: string) {
     this.subscription = this.http.getData(`PendingApproval/employee/${EmployeeId}?moduleId=${moduleId}&approvedType=ROLE`).subscribe({
       next: (data: any) => {
         console.log(data.data);
-        this.separation_For_You_Details.next(
-          data.data.filter(
-            (item: any) =>
-              item.approvalHeader.status != 'Processed' &&
-              item.approvalHeader.status != 'Rejected' &&
-              item.approvalHeader.status != 'Withdrawn'
-          )
+        const filteredData = data.data.filter(
+          (item: any) =>
+            item.approvalHeader.status != 'Processed' &&
+            item.approvalHeader.status != 'Rejected' &&
+            item.approvalHeader.status != 'Withdrawn'
         );
+        this.separation_For_You_Details.next(filteredData);
+        this.originalSeparationData = [...filteredData]; // Store original data
         this.isDataLoader = false;
       },
       error: (reason) => console.log(reason),
@@ -509,13 +516,134 @@ onCommentChange(value: string) {
         },
       });
   }
- getApprovalStatusCounts() {
-      let loggedInUser = this.authService.getToken();
+  getApprovalStatusCounts() {
+    let loggedInUser = this.authService.getToken();
     let EmployeeId = loggedInUser.employeeId;
     this.http.get(`PendingApproval/getApprovalStatusCounts?EmployeeId=${EmployeeId}`).subscribe((res: any) => {
       this.totalCount = res.reduce((acc: number, curr: any) => acc + curr.totalCount, 0);
        this.http.updatePendingApprovalCounts(this.totalCount);
    //Map counts to tabs
+    });
+  }
+
+  getFilteredAndSortedSeparations(): ISeparation[] {
+    const search = this.searchValue?.toLowerCase() ?? '';
+    let separations = this.separation_For_You_Details.getValue() ?? [];
+
+    if (search) {
+      separations = separations.filter(item =>
+        item.entity?.spRequesterName?.toLowerCase().includes(search) ||
+        item.entity?.spRequestFusionEmployeeId?.toLowerCase().includes(search) ||
+        item.entity?.spDepartment?.toLowerCase().includes(search) ||
+        item.entity?.spTeam?.toLowerCase().includes(search) ||
+        item.entity?.spDesignation?.toLowerCase().includes(search)
+      );
+    }
+
+    return separations;
+  }
+
+  customSort(event: any): void {
+    const field = event.field;
+    
+    // Track current sort state for the clicked field
+    if (this.currentSortField === field) {
+      // Same field clicked - cycle through: asc (1) -> desc (-1) -> reset (0)
+      if (this.currentSortOrder === 1) {
+        // Currently ascending, change to descending
+        this.currentSortOrder = -1;
+        event.order = -1;
+      } else if (this.currentSortOrder === -1) {
+        // Currently descending, reset to original order
+        this.separation_For_You_Details.next([...this.originalSeparationData]);
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        if (this.separationTable) {
+          this.separationTable.reset();
+        }
+        return;
+      } else {
+        // Currently reset, change to ascending
+        this.currentSortOrder = 1;
+        event.order = 1;
+      }
+    } else {
+      // New field clicked - start with ascending
+      this.currentSortField = field;
+      this.currentSortOrder = 1;
+      event.order = 1;
+    }
+
+    event.data.sort((a: any, b: any) => {
+      let val1: any;
+      let val2: any;
+
+      // Handle specific field mappings
+      switch (field) {
+        case 'spRequesterName':
+          val1 = a.entity?.spRequesterName;
+          val2 = b.entity?.spRequesterName;
+          break;
+        case 'spRequestFusionEmployeeId':
+          val1 = a.entity?.spRequestFusionEmployeeId;
+          val2 = b.entity?.spRequestFusionEmployeeId;
+          break;
+        case 'spDepartment':
+          val1 = a.entity?.spDepartment;
+          val2 = b.entity?.spDepartment;
+          break;
+        case 'spTeam':
+          val1 = a.entity?.spTeam;
+          val2 = b.entity?.spTeam;
+          break;
+        case 'spDesignation':
+          val1 = a.entity?.spDesignation;
+          val2 = b.entity?.spDesignation;
+          break;
+        case 'spRequestAppliedDate':
+          val1 = a.entity?.spRequestAppliedDate;
+          val2 = b.entity?.spRequestAppliedDate;
+          break;
+        case 'spRequestLastWorkingDate':
+          val1 = a.entity?.spRequestLastWorkingDate;
+          val2 = b.entity?.spRequestLastWorkingDate;
+          break;
+        case 'spearlyReliveingDate':
+          val1 = a.entity?.spearlyReliveingDate;
+          val2 = b.entity?.spearlyReliveingDate;
+          break;
+        case 'sprecalledStatus':
+          val1 = a.entity?.sprecalledStatus;
+          val2 = b.entity?.sprecalledStatus;
+          break;
+        default:
+          val1 = a[field];
+          val2 = b[field];
+      }
+
+      // Handle date sorting
+      if (field === 'spRequestAppliedDate' || field === 'spRequestLastWorkingDate' || field === 'spearlyReliveingDate') {
+        const date1 = val1 ? new Date(val1) : new Date(0);
+        const date2 = val2 ? new Date(val2) : new Date(0);
+        return event.order * (date1.getTime() - date2.getTime());
+      }
+
+      // Handle Employee ID sorting (alphanumeric)
+      if (field === 'spRequestFusionEmployeeId') {
+        return event.order * String(val1 ?? '').localeCompare(
+          String(val2 ?? ''),
+          undefined,
+          {
+            numeric: true,
+            sensitivity: 'base'
+          }
+        );
+      }
+
+      // Handle string sorting for all other fields
+      val1 = String(val1 ?? '').trim();
+      val2 = String(val2 ?? '').trim();
+      return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
     });
   }
   getBlockedPastDate(date: string): string {

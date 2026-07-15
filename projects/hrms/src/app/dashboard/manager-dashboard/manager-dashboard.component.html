@@ -431,7 +431,9 @@
                         <span class="attendance-chip chip-break">Break Exceeded: {{ emp.breakHrsExceededDuration }}</span>
                         }
                         @if(attendanceOffcanvasType === 'permission' && emp.hasPermission && emp.permissionDuration) {
-                        <span class="attendance-chip chip-permission">Permission: {{ emp.permissionDuration }}</span>
+                          @for (duration of getPermissionDurationChips(emp.permissionDuration); track duration + '-' + $index) {
+                            <span class="attendance-chip chip-permission">Permission: {{ duration }}</span>
+                          }
                         }
                     </div>
                 </div>
@@ -518,7 +520,22 @@
                     <div class="name">{{ emp.employeeName }}</div>
                     <div class="designation">{{ emp.designation }} - {{ emp.departmentName }}</div>
                     @if (emp.categoryName) {
-                    <div class="leave-chip mt-1" [ngStyle]="getLeaveChipStyle(emp.categoryColor)">{{ emp.categoryName }}</div>
+                    <div class="leave-chip mt-1 me-2 d-inline-block" [ngStyle]="getLeaveChipStyle(emp.categoryColor)">{{ emp.categoryName }}</div>
+                    }
+                    @if (emp.hasPermission && emp.permissionDuration) {
+                      @for (duration of getPermissionDurationChips(emp.permissionDuration); track duration + '-' + $index) {
+                        <span class="attendance-chip chip-permission me-2 d-inline-block mb-1">{{ emp.permissionType }} ({{ duration }})</span>
+                      }
+                    }
+                    @if (emp.hasWFHRequests) {
+                      @for (duration of getPermissionDurationChips(emp.wfhRequestDurationType); track duration + '-' + $index) {
+                        <span class="attendance-chip chip-permission me-2 d-inline-block mb-1">{{ duration }}</span>
+                      }
+                    }
+                    @if (emp.hasRemoteLogin) {
+                      @for (duration of getPermissionDurationChips(emp.remoteLoginDurationType); track duration + '-' + $index) {
+                        <span class="attendance-chip chip-permission me-2 d-inline-block mb-1">{{ duration }}</span>
+                      }
                     }
                 </div>
             </div>

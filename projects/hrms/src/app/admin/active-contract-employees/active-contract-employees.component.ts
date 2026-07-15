@@ -1,10 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
-import { ActiveEmployeePipe } from '../../Pipes/active-employee.pipe';
+import { TableModule } from 'primeng/table';
+import { Table } from 'primeng/table';
 import { AccessNavigationService } from '../../services/access-navigation.service';
 import { HttpService } from '../../services/http.service';
 import { RbacService } from '../../services/rbac.service';
@@ -13,17 +14,21 @@ import { NoDataFoundComponent } from '../../shared/no-data-found/no-data-found.c
 import { Iactive } from '../active-employees/active-model';
 @Component({
   selector: 'app-active-contract-employees',
-  imports: [CommonModule, RouterModule, ActiveEmployeePipe, TranslateModule, FormsModule, DataLoaderContentComponent, NoDataFoundComponent,],
+  imports: [CommonModule, RouterModule, TranslateModule, FormsModule, TableModule, DataLoaderContentComponent, NoDataFoundComponent,],
   templateUrl: './active-contract-employees.component.html',
   styleUrl: './active-contract-employees.component.scss'
 })
 
 export class ActiveContractEmployeesComponent implements OnInit, OnDestroy {
+  @ViewChild('activeContractEmployeesTable') activeContractEmployeesTable!: Table;
   subscription!: Subscription;
   Active = [] as Iactive[];
+  originalActive = [] as Iactive[]; // Store original unsorted data
   searchValue: any;
   emp = {} as any;
   loader = false;
+  currentSortField: string = '';
+  currentSortOrder: number = 0; // 0 = no sort, 1 = asc, -1 = desc
 
   constructor(private router: Router, private http: HttpService, public rbac: RbacService, private accessNav: AccessNavigationService) { }
 
@@ -38,9 +43,13 @@ export class ActiveContractEmployeesComponent implements OnInit, OnDestroy {
     this.subscription = this.http.getData(`Employeedata/TraineeActiveEmployees/${status}`).subscribe({
       next: (data: any) => {
         this.Active = data as Iactive[];
+        this.originalActive = [...this.Active];
         this.loader = false;
       },
-      error: (reason: any) => console.log(reason)
+      error: (reason: any) => {
+        console.log(reason);
+        this.loader = false;
+      }
     });
   }
 
@@ -61,6 +70,124 @@ export class ActiveContractEmployeesComponent implements OnInit, OnDestroy {
 
   isActiveRoute(link: string): boolean {
     return this.router.url.includes(link);
+  }
+
+  getFilteredAndSortedEmployees(): Iactive[] {
+    if (!this.searchValue || this.searchValue.trim() === '') {
+      return this.Active;
+    }
+    
+    const searchTerm = this.searchValue.toLowerCase().trim();
+    return this.Active.filter((employee: Iactive) => {
+      const fusionEmpId = employee.fusionEmpId?.toLowerCase() || '';
+      const employeeName = `${employee.firstName || ''} ${employee.middleName || ''} ${employee.lastName || ''}`.toLowerCase().trim();
+      const workEmail = employee.workEmail?.toLowerCase() || '';
+      const contactNumber = employee.contactnumber?.toString() || '';
+      const location = employee.jobDetails?.[0]?.lopcation?.toLowerCase() || '';
+      const subLocation = employee.jobDetails?.[0]?.subLocation?.toLowerCase() || '';
+      const shiftName = employee.jobDetails?.[0]?.shiftName?.toLowerCase() || '';
+      const designation = employee.jobDetails?.[0]?.jobRole?.toLowerCase() || '';
+      
+      return fusionEmpId.includes(searchTerm) ||
+             employeeName.includes(searchTerm) ||
+             workEmail.includes(searchTerm) ||
+             contactNumber.includes(searchTerm) ||
+             location.includes(searchTerm) ||
+             subLocation.includes(searchTerm) ||
+             shiftName.includes(searchTerm) ||
+             designation.includes(searchTerm);
+    });
+  }
+
+  customSort(event: any): void {
+    const field = event.field;
+    
+    // Track current sort state for the clicked field
+    if (this.currentSortField === field) {
+      // Same field clicked - cycle through: asc (1) -> desc (-1) -> reset (0)
+      if (this.currentSortOrder === 1) {
+        // Currently ascending, change to descending
+        this.currentSortOrder = -1;
+        event.order = -1;
+      } else if (this.currentSortOrder === -1) {
+        // Currently descending, reset to original order
+        this.Active = [...this.originalActive];
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        if (this.activeContractEmployeesTable) {
+          this.activeContractEmployeesTable.reset();
+        }
+        return;
+      } else {
+        // Currently reset, change to ascending
+        this.currentSortOrder = 1;
+        event.order = 1;
+      }
+    } else {
+      // New field clicked - start with ascending
+      this.currentSortField = field;
+      this.currentSortOrder = 1;
+      event.order = 1;
+    }
+
+    event.data.sort((a: any, b: any) => {
+      let val1: any;
+      let val2: any;
+
+      // Handle nested job details fields
+      if (['location', 'subLocation', 'shiftName', 'designation'].includes(field)) {
+        switch (field) {
+          case 'location':
+            val1 = a.jobDetails?.[0]?.lopcation;
+            val2 = b.jobDetails?.[0]?.lopcation;
+            break;
+          case 'subLocation':
+            val1 = a.jobDetails?.[0]?.subLocation;
+            val2 = b.jobDetails?.[0]?.subLocation;
+            break;
+          case 'shiftName':
+            val1 = a.jobDetails?.[0]?.shiftName;
+            val2 = b.jobDetails?.[0]?.shiftName;
+            break;
+          case 'designation':
+            val1 = a.jobDetails?.[0]?.jobRole;
+            val2 = b.jobDetails?.[0]?.jobRole;
+            break;
+        }
+      } else if (field === 'employeeName') {
+        // Handle employee name sorting (combine first, middle, last name)
+        val1 = `${a.firstName || ''} ${a.middleName || ''} ${a.lastName || ''}`.trim();
+        val2 = `${b.firstName || ''} ${b.middleName || ''} ${b.lastName || ''}`.trim();
+      } else {
+        // Handle direct fields
+        val1 = a[field];
+        val2 = b[field];
+      }
+
+      // Handle Employee ID sorting (alphanumeric)
+      if (field === 'fusionEmpId') {
+        return event.order * String(val1 ?? '').localeCompare(
+          String(val2 ?? ''),
+          undefined,
+          {
+            numeric: true,
+            sensitivity: 'base'
+          }
+        );
+      }
+
+      // Handle contact number sorting (numeric)
+      if (field === 'contactnumber') {
+        const num1 = parseInt(String(val1).replace(/\D/g, ''), 10) || 0;
+        const num2 = parseInt(String(val2).replace(/\D/g, ''), 10) || 0;
+        return event.order * (num1 - num2);
+      }
+
+      // Handle string sorting for all other fields
+      val1 = String(val1 ?? '').trim();
+      val2 = String(val2 ?? '').trim();
+      return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+    });
   }
 
   ngOnDestroy(): void {

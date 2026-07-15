@@ -116,11 +116,18 @@ export class ManagerDashboardComponent {
     afterDraw: (chart: any) => {
       const ctx = chart.ctx;
       const isHorizontal = chart.config?.options?.indexAxis === 'y';
-      if (!isHorizontal) return;
+      if (!isHorizontal) {
+        chart.$clickableLabelRegions = [];
+        return;
+      }
 
       // Check if user has permission to view employee list
       const hasViewPermission = this.rbac.allowedToAccess('Headcount by Gender View Employee List.view');
-      if (!hasViewPermission) return; // Don't draw underline if no permission
+      if (!hasViewPermission) {
+        chart.$clickableLabelRegions = [];
+        return;
+      }
+      const clickableLabelRegions: Array<{ left: number; right: number; top: number; bottom: number }> = [];
 
       chart.data.datasets.forEach((dataset: any, dsIndex: number) => {
         const meta = chart.getDatasetMeta(dsIndex);
@@ -137,9 +144,34 @@ export class ManagerDashboardComponent {
           ctx.moveTo(element.x + 8, element.y + 7);
           ctx.lineTo(element.x + 8 + textWidth, element.y + 7);
           ctx.stroke();
+          clickableLabelRegions.push({
+            left: element.x + 8,
+            right: element.x + 8 + textWidth,
+            top: element.y - 8,
+            bottom: element.y + 8
+          });
           ctx.restore();
         });
       });
+      chart.$clickableLabelRegions = clickableLabelRegions;
+    },
+    afterEvent: (chart: any, args: any) => {
+      const event = args?.event;
+      if (!event || !chart?.canvas) return;
+      if (event.type === 'mouseout') {
+        chart.canvas.style.cursor = 'default';
+        return;
+      }
+
+      const regions = chart.$clickableLabelRegions || [];
+      const isOverClickableLabel = regions.some((region: any) =>
+        event.x >= region.left &&
+        event.x <= region.right &&
+        event.y >= region.top &&
+        event.y <= region.bottom
+      );
+
+      chart.canvas.style.cursor = isOverClickableLabel ? 'pointer' : 'default';
     }
   };
   selectedDate!: Date;
@@ -257,6 +289,7 @@ export class ManagerDashboardComponent {
         this.departmentDetails = data as IDepartment[];
         this.departmentDropdownOptions = [
           { departmentName: 'All', sno: null },
+          { departmentName: 'No Department', sno: 0 },
           ...this.departmentDetails
         ];
       }
@@ -468,7 +501,7 @@ export class ManagerDashboardComponent {
     if (selectedId === null || selectedId === undefined) {
       this.getGenderCountChart();
     } else {
-      this.getGenderCountChart(selectedId);
+      this.getGenderCountChart(selectedId); // passes 0 for No Department, actual id otherwise
     }
   }
 
@@ -520,26 +553,12 @@ export class ManagerDashboardComponent {
             }
           }]
         };
-        let isOverLabel = false;
         const hasViewPermission = this.rbac.allowedToAccess('Headcount by Gender View Employee List.view');
         this.genderChartOptions = {
           responsive: true,
           maintainAspectRatio: false,
           indexAxis: 'y',
           layout: { padding: { right: 30 } },
-          onClick: (_event: any, elements: any[]) => {
-            if (!hasViewPermission || !elements.length) return;
-            const dataIndex = elements[0].index;
-            const gender = labels[dataIndex];
-            const count = counts[dataIndex];
-            if (!count) return;
-            this.openGenderOffcanvas(gender, count);
-          },
-          onHover: (_event: any, elements: any[], chart: any) => {
-            if (!isOverLabel) {
-              chart.canvas.style.cursor = (hasViewPermission && elements.length) ? 'pointer' : 'default';
-            }
-          },
           plugins: {
             legend: { display: false },
             datalabels: {
@@ -548,6 +567,7 @@ export class ManagerDashboardComponent {
               color: '#000',
               font: { weight: 'bold', size: 12 },
               formatter: (value: number) => value,
+              cursor: hasViewPermission ? 'pointer' : 'default',
               listeners: {
                 click: (context: any) => {
                   if (!hasViewPermission) return;
@@ -555,15 +575,6 @@ export class ManagerDashboardComponent {
                   const count = counts[context.dataIndex];
                   if (!count) return;
                   this.openGenderOffcanvas(gender, count);
-                },
-                enter: (context: any) => {
-                  if (!hasViewPermission) return;
-                  isOverLabel = true;
-                  context.chart.canvas.style.cursor = 'pointer';
-                },
-                leave: (context: any) => {
-                  isOverLabel = false;
-                  context.chart.canvas.style.cursor = 'default';
                 }
               }
             }
@@ -942,6 +953,21 @@ export class ManagerDashboardComponent {
     };
   }
 
+  getPermissionDurationChips(permissionDuration: string | string[] | null | undefined): string[] {
+    if (Array.isArray(permissionDuration)) {
+      return permissionDuration
+        .map((duration) => duration?.trim())
+        .filter((duration): duration is string => !!duration);
+    }
+
+    if (typeof permissionDuration !== 'string') return [];
+
+    return permissionDuration
+      .split(',')
+      .map((duration) => duration.trim())
+      .filter((duration) => duration.length > 0);
+  }
+
   hexToRgba(hex: string, opacity: number): string {
     const r = parseInt(hex.slice(1, 3), 16);
     const g = parseInt(hex.slice(3, 5), 16);
@@ -1252,20 +1278,20 @@ export class ManagerDashboardComponent {
         const employeeInfoCount = this.getCountByModuleId(data, 32);
 
         this.approvalsList = [
-          { name: 'Leaves', count: leaveCount, color: '#8A2BE2', route: '/pending-approvals/time-off/leaves' },
-          { name: 'WFH', count: wfhCount, color: '#FF1493', route: '/pending-approvals/time-off/wfh' },
-          { name: 'Remote Login', count: remoteCount, color: '#1E90FF', route: '/pending-approvals/time-off/remote' },
-          { name: 'Comp-Off', count: compOffCount, color: '#06B6D4', route: '/pending-approvals/time-off/comp-off' },
-          { name: 'Permissions', count: permissionCount, color: '#10B981', route: '/pending-approvals/time-off/permissions' },
-          { name: 'Regularization', count: regularizationCount, color: '#F59E0B', route: '/pending-approvals/time-off/regularization-request' },
-          { name: 'Extra Hours', count: extraHoursCount, color: '#EF4444', route: '/pending-approvals/time-off/extra-hours-request' },
-          { name: 'Probation', count: probationCount, color: '#6366F1', route: '/pending-approvals/on-boarding/probation-request' },
-          { name: 'Separation', count: separationCount, color: '#EC4899', route: '/pending-approvals/off-boarding/separation-request' },
-          { name: 'Expenses', count: expensesCount, color: '#14B8A6', route: '/pending-approvals/claimsandexpenses-request' },
-          { name: 'Timesheets', count: timesheetCount, color: '#F97316', route: '/pending-approvals/time-sheets' },
-          { name: 'Global Permissions', count: globalCount, color: '#A855F7', route: '/on-behalf-of/global/permissions' },
-          { name: 'Employee Info', count: employeeInfoCount, color: '#3B82F6', route: '/pending-approvals/employeeinfo-request' }
-        ];
+          { name: 'Leaves', count: leaveCount, color: '#8A2BE2', route: '/pending-approvals/time-off/leaves', permission: 'Time Off Tab.view', parentPermission: 'Time Off main Tab.view' },
+          { name: 'WFH', count: wfhCount, color: '#FF1493', route: '/pending-approvals/time-off/wfh', permission: 'WFH Tab.view', parentPermission: 'Time Off main Tab.view' },
+          { name: 'Remote Login', count: remoteCount, color: '#1E90FF', route: '/pending-approvals/time-off/remote', permission: 'Remote Login Tab.view', parentPermission: 'Time Off main Tab.view' },
+          { name: 'Comp-Off', count: compOffCount, color: '#06B6D4', route: '/pending-approvals/time-off/comp-off', permission: 'Comp Off Tab.view', parentPermission: 'Time Off main Tab.view' },
+          { name: 'Permissions', count: permissionCount, color: '#10B981', route: '/pending-approvals/time-off/permissions', permission: 'Permissions Tab.view', parentPermission: 'Time Off main Tab.view' },
+          { name: 'Regularization', count: regularizationCount, color: '#F59E0B', route: '/pending-approvals/time-off/regularization-request', permission: 'Regularization Tab.view', parentPermission: 'Time Off main Tab.view' },
+          { name: 'Extra Hours', count: extraHoursCount, color: '#EF4444', route: '/pending-approvals/time-off/extra-hours-request', permission: 'Extra Hours Tab.view', parentPermission: 'Time Off main Tab.view' },
+          { name: 'Probation', count: probationCount, color: '#6366F1', route: '/pending-approvals/on-boarding/probation-request', permission: 'Probation Details Tab.view', parentPermission: 'Onboarding main Tab.view' },
+          { name: 'Separation', count: separationCount, color: '#EC4899', route: '/pending-approvals/off-boarding/separation-request', permission: 'Separation Request Tab.view', parentPermission: 'Offboarding main Tab.view' },
+          { name: 'Expenses', count: expensesCount, color: '#14B8A6', route: '/pending-approvals/claimsandexpenses-request', permission: 'Claims and Expenses Tab.view' },
+          { name: 'Timesheets', count: timesheetCount, color: '#F97316', route: '/pending-approvals/time-sheets', permission: 'Time Sheet approval Tab.view' },
+          { name: 'Global Permissions', count: globalCount, color: '#A855F7', route: '/on-behalf-of/global/permissions', permission: 'Global Permissions Module.view' },
+          { name: 'Employee Info', count: employeeInfoCount, color: '#3B82F6', route: '/pending-approvals/employeeinfo-request', permission: 'EmployeeInfo Tab.view' }
+        ].filter(item => this.hasApprovalPermission(item.permission, item.parentPermission));
         this.approvalsOverviewLoader = false;
       },
       error: (err) => {
@@ -1279,6 +1305,12 @@ export class ManagerDashboardComponent {
   getCountByModuleId(data: any[], moduleId: number): number {
     const item = data.find(d => d.moduleId === moduleId);
     return item?.totalCount || 0;
+  }
+
+  private hasApprovalPermission(permission: string, parentPermission?: string): boolean {
+    if (!this.rbac.allowedToAccess(permission)) return false;
+    if (parentPermission && !this.rbac.allowedToAccess(parentPermission)) return false;
+    return true;
   }
 
   navigateToAccessedRoute(route: string) {

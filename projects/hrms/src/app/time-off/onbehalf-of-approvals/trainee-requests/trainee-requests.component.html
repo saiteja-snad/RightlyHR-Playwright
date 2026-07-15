@@ -1,32 +1,34 @@
 <div class="custom-main-component-container">
+  <!--Input search-->
   <div class="input-group custom-search mb-3">
-    <span class="input-group-text custom-input-group-search"><i class="bi bi-search"></i></span>
-    <input type="search" class="form-control custom-search-input" placeholder="Search by name or ID">
+    <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
+    <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input"
+      placeholder="Search by trainee name or ID" aria-label="Username" aria-describedby="basic-addon1" 
+      autocomplete="off" (ngModelChange)="onSearchChange()">
   </div>
 
-  <div class="custom-table-content">
-    @if(!loading) {
-    <table class="w-100">
-      <thead>
+  <div class="custom-p-multi-select-table">
+    @if(!loading){
+    <p-table #dt [value]="getFilteredAndSortedTrainees()" [tableStyle]="{'min-width': '50rem'}" [customSort]="true" (sortFunction)="customSort($event)" [sortMode]="'single'">
+      <ng-template #header>
         <tr>
-          <th>Trainee ID</th>
-          <th>Name</th>
-          <th>Start Date</th>
-          <th>End Date</th>
+          <th pSortableColumn="fusionEmpId">Trainee ID <p-sortIcon field="fusionEmpId"></p-sortIcon></th>
+          <th pSortableColumn="traineeName">Name <p-sortIcon field="traineeName"></p-sortIcon></th>
+          <th pSortableColumn="traineeStartDate" class="text-center">Start Date <p-sortIcon field="traineeStartDate"></p-sortIcon></th>
+          <th pSortableColumn="traineeEndDate" class="text-center">End Date <p-sortIcon field="traineeEndDate"></p-sortIcon></th>
           <th class="text-center">Comments</th>
           @if(rbac.allowedToAccess('Trainee Requests (On Behalf Of Approvals).update') ||
           rbac.allowedToAccess('Trainee Requests (On Behalf Of Approvals).delete')) {
           <th class="text-center">Action</th>
           }
         </tr>
-      </thead>
-      <tbody>
-        @for (trn of Trainees.getValue(); track trn.approvalHeader.id) {
+      </ng-template>
+      <ng-template #body let-trn>
         <tr>
           <td>{{ trn.entity?.fusionEmpId || '-' }}</td>
           <td>{{ trn.entity?.empName || trn.entity?.raisedForName || '-' }}</td>
-          <td>{{ trn.entity?.traineeStartDate | dateformat }}</td>
-          <td>{{ trn.entity?.traineeEndDate | dateformat }}</td>
+          <td class="text-center">{{ trn.entity?.traineeStartDate | dateformat }}</td>
+          <td class="text-center">{{ trn.entity?.traineeEndDate | dateformat }}</td>
           <td class="text-center">
             @if (trn.entity?.comments?.length) {
             <div (click)="commentsFunction(trn.entity.comments, commentspopup)">
@@ -65,13 +67,17 @@
           </td>
           }
         </tr>
-        } @empty {
-        <tr>
-          <td colspan="6"><app-no-data-found /></td>
-        </tr>
-        }
-      </tbody>
-    </table>
+      </ng-template>
+      <ng-template #emptymessage>
+        <div class="wrapper">
+          <tr>
+            <td [attr.colspan]="rbac.allowedToAccess('Trainee Requests (On Behalf Of Approvals).update') || rbac.allowedToAccess('Trainee Requests (On Behalf Of Approvals).delete') ? 6 : 5">
+              <app-no-data-found />
+            </td>
+          </tr>
+        </div>
+      </ng-template>
+    </p-table>
     } @else {
     <app-data-loader-content />
     }

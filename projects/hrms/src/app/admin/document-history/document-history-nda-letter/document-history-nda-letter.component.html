@@ -17,18 +17,22 @@
 
     <div class="custom-table-content documnet-history-table-height">
         @if(!dataloader){
-        <table class="w-100">
-            <thead>
+        <p-table #ndaLetterTable [value]="getFilteredAndSortedNdaLetters()" [customSort]="true" (sortFunction)="customSort($event)"
+                 styleClass="custom-table" [tableStyle]="{'min-width': '50rem'}">
+            <ng-template pTemplate="header">
                 <tr>
-                    <th class="text-nowrap">{{'Date'|translate}}</th>
-                    <th>{{'Employee Name'|translate}}</th>
+                    <th pSortableColumn="ndaSentDate" class="text-nowrap">
+                        {{'Date'|translate}}
+                        <p-sortIcon field="ndaSentDate"></p-sortIcon>
+                    </th>
+                    <th pSortableColumn="employeeName">
+                        {{'Employee Name'|translate}}
+                        <p-sortIcon field="employeeName"></p-sortIcon>
+                    </th>
                     <th class="text-center">{{'Action'|translate}}</th>
                 </tr>
-            </thead>
-            <tbody>
-                @if(ndaLetters.length > 0){
-                @for (ndaLetter of ndaLetters| ndaletter : searchValue; ; track
-ndaLetter.id){
+            </ng-template>
+            <ng-template pTemplate="body" let-ndaLetter>
                 <tr>
                     <td>{{ndaLetter.ndaSentDate | dateformat }}</td>
                     <td>{{ndaLetter.employeeName ?ndaLetter.employeeName:'-'}}</td>
@@ -51,15 +55,17 @@ ndaLetter.id){
             </div>
           </td>
                 </tr>
-                }
-                }
-                @else {
-                <tr>
-                    <app-no-data-found />
-                </tr>
-                }
-            </tbody>
-        </table>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+                <div class="wrapper">
+                    <tr>
+                        <td colspan="3">
+                            <app-no-data-found />
+                        </td>
+                    </tr>
+                </div>
+            </ng-template>
+        </p-table>
         }
         @else {
         <app-data-loader-content />

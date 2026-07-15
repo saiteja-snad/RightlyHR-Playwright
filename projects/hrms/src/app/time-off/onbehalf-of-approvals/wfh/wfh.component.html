@@ -34,17 +34,17 @@
     <div class="custom-p-multi-select-table">
         @if(!dataload){
         <p-table #dt [value]="getFilteredAndSortedLeaves()" (selectionChange)="selectCheck($event)"
-            [(selection)]="selectedLeavesItems" dataKey="approvalHeader.id" [tableStyle]="{'min-width': '50rem'}">
+            [(selection)]="selectedLeavesItems" dataKey="approvalHeader.id" [tableStyle]="{'min-width': '50rem'}" [customSort]="true" (sortFunction)="customSort($event)" [sortMode]="'single'">
             <ng-template #header>
                 <tr>
                     <th style="width: 4rem"><p-tableHeaderCheckbox /></th>
-                    <th>{{'Employee ID' | translate}} </th>
-                    <th>{{'Employee Name' | translate}}</th>
-                    <th>{{'Worked Date' | translate}}</th>
-                    <th>{{'Availed' | translate}}</th>
+                    <th pSortableColumn="entity.attendanceRequestFusionEmployeeId">{{'Employee ID' | translate}} <p-sortIcon field="entity.attendanceRequestFusionEmployeeId"></p-sortIcon></th>
+                    <th pSortableColumn="entity.attendanceRequesterName">{{'Employee Name' | translate}}<p-sortIcon field="entity.attendanceRequesterName"></p-sortIcon></th>
+                    <th pSortableColumn="entity.attendanceRequestStartTime">{{'Worked Date' | translate}}<p-sortIcon field="entity.attendanceRequestStartTime"></p-sortIcon></th>
+                    <th pSortableColumn="entity.attendanceRequestDurationType">{{'Availed' | translate}}<p-sortIcon field="entity.attendanceRequestDurationType"></p-sortIcon></th>
                     <th class="text-center">{{'Reason' | translate}}</th>
                     <th class="text-center">{{'Approver Comments' | translate}}</th>
-                    <th>{{'Applied Date' | translate}}</th>
+                    <th pSortableColumn="entity.attendanceRequestAppliedDate">{{'Applied Date' | translate}}<p-sortIcon field="entity.attendanceRequestAppliedDate"></p-sortIcon></th>
                     @if(!multiSelect && (rbac.allowedToAccess('WFH (On Behalf Of Approvals).update') ||
                     rbac.allowedToAccess('WFH (On Behalf Of Approvals).delete'))){
                     <th class="text-center">{{'Action' | translate}}</th>
@@ -123,9 +123,13 @@
                 </tr>
             </ng-template>
             <ng-template #emptymessage>
-                <tr>
-                    <app-no-data-found />
-                </tr>
+                <div class="wrapper">
+                  <tr>
+                    <td colspan="11">
+                      <app-no-data-found />
+                    </td>
+                  </tr>
+                </div>
             </ng-template>
         </p-table>
         }@else{

@@ -11,15 +11,33 @@
      <div *ngIf="addedRecords.length>0" class="error-msg float-end">{{ 'Note: Record addition request sent for approval' | translate }}</div>
   <div class="custom-table-content">
     @if (!loading) {
-    <table class="w-100">
-      <thead>
+    <p-table #educationTable [value]="educationTableData" [customSort]="true" (sortFunction)="customSort($event)" styleClass="w-100">
+      <ng-template pTemplate="header">
         <tr>
-          <th>{{ 'Qualification' | translate }}</th>
-          <th>{{ 'University' | translate }}</th>
-          <th class="text-center">{{ 'Specialization' | translate }}</th>
-          <th class="text-center">{{ 'GPA/CGPA' | translate }}</th>
-          <th class="text-center">{{ 'From Date' | translate }}</th>
-          <th class="text-center">{{ 'To Date' | translate }}</th>
+          <th pSortableColumn="degree">
+            {{ 'Qualification' | translate }}
+            <p-sortIcon field="degree"></p-sortIcon>
+          </th>
+          <th pSortableColumn="university">
+            {{ 'University' | translate }}
+            <p-sortIcon field="university"></p-sortIcon>
+          </th>
+          <th class="text-center" pSortableColumn="specialization">
+            {{ 'Specialization' | translate }}
+            <p-sortIcon field="specialization"></p-sortIcon>
+          </th>
+          <th class="text-center" pSortableColumn="gpa">
+            {{ 'GPA/CGPA' | translate }}
+            <p-sortIcon field="gpa"></p-sortIcon>
+          </th>
+          <th class="text-center" pSortableColumn="degreeStartDate">
+            {{ 'From Date' | translate }}
+            <p-sortIcon field="degreeStartDate"></p-sortIcon>
+          </th>
+          <th class="text-center" pSortableColumn="degreeEndDate">
+            {{ 'To Date' | translate }}
+            <p-sortIcon field="degreeEndDate"></p-sortIcon>
+          </th>
           <th class="text-center">{{ 'Document' | translate }}</th>
           @if( canAccess('update','education') || canAccess('delete','education')){
           @if((employedata?.empstatus?.toLowerCase() !== 'prospective' && employedata?.empstatus?.toLowerCase() !==
@@ -28,63 +46,64 @@
           <th class="text-center">{{"Action" | translate}}</th>
           }}
         </tr>
-      </thead>
-      <tbody>
-        <ng-container *ngIf="((educationData | async) ?? []).length > 0; else noDataTemplate">
-          <tr *ngFor="let edacationDetails of educationData | async">
-            <td>{{ edacationDetails.degree }}</td>
-            <td>{{ edacationDetails.university }}</td>
-            <td class="text-center">{{ edacationDetails.specialization }}</td>
-            <td class="text-center text-nowrap">{{ edacationDetails.gpa }}</td>
-            <td class="text-center text-nowrap">{{ edacationDetails.degreeStartDate | dateformat }}</td>
-            <td class="text-center text-nowrap">{{ edacationDetails.degreeEndDate | dateformat }}</td>
-            <td class="text-center">
-              <span *ngIf="edacationDetails.attachment;else noData"
-                (click)="onSelectIdentityAttachmentDownload(edacationDetails)">
-                  <app-download-icon /></span><ng-template #noData>-</ng-template>
-            </td>
-            @if( canAccess('update','education' ) || canAccess('delete','education')){
-            @if((employedata?.empstatus?.toLowerCase() !== 'prospective' && employedata?.empstatus?.toLowerCase() !==
-            'trainee prospective' && employedata?.empstatus?.toLowerCase() !== 'inactive' &&
-            employedata?.empstatus?.toLowerCase() !== 'trainee inactive')){
-            <td class="text-center">
-              @if(disablePendingFields(edacationDetails.id)){
-                <app-info-icon [ngbPopover]="pendingPopover" triggers="click" class="cursor"
-                popoverClass="pending-popover" (click)="setActiveMessage(edacationDetails.id)"/>
-              }@else{
-              <div class="dropdown">
-                <span type="button" data-bs-toggle="dropdown">
-                  <i class="bi bi-three-dots-vertical"></i>
-                </span>
-                <ul class="dropdown-menu custom-dropdown-menu">
-                  @if( canAccess('update','education' )){
-                  <li (click)="openModalupdate(updateEducationmodal, edacationDetails)">
-                    <a class="dropdown-item">
-                       <i class="bi bi-pencil me-2"></i>{{ 'Update' | translate }}
-                    </a>
-                  </li>
-                  }@if( canAccess('delete','education' )){
-                  <li (click)="opendeletModal(deleteconformation,edacationDetails)">
-                    <a class="dropdown-item">
-                         <i class="bi bi-trash3 me-2"></i>{{ 'Delete' | translate }}
-                    </a>
-                  </li>
-                  }
-                </ul>
-              </div>
-              }
-            </td>
-            }}
-          </tr>
-        </ng-container>
-        <!-- No Data Found Template -->
-        <ng-template #noDataTemplate>
-          <tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-edacationDetails>
+        <tr>
+          <td>{{ edacationDetails.degree }}</td>
+          <td>{{ edacationDetails.university }}</td>
+          <td class="text-center">{{ edacationDetails.specialization }}</td>
+          <td class="text-center text-nowrap">{{ edacationDetails.gpa }}</td>
+          <td class="text-center text-nowrap">{{ edacationDetails.degreeStartDate | dateformat }}</td>
+          <td class="text-center text-nowrap">{{ edacationDetails.degreeEndDate | dateformat }}</td>
+          <td class="text-center">
+            <span *ngIf="edacationDetails.attachment;else noData"
+              (click)="onSelectIdentityAttachmentDownload(edacationDetails)">
+                <app-download-icon /></span><ng-template #noData>-</ng-template>
+          </td>
+          @if( canAccess('update','education' ) || canAccess('delete','education')){
+          @if((employedata?.empstatus?.toLowerCase() !== 'prospective' && employedata?.empstatus?.toLowerCase() !==
+          'trainee prospective' && employedata?.empstatus?.toLowerCase() !== 'inactive' &&
+          employedata?.empstatus?.toLowerCase() !== 'trainee inactive')){
+          <td class="text-center">
+            @if(disablePendingFields(edacationDetails.id)){
+              <app-info-icon [ngbPopover]="pendingPopover" triggers="click" class="cursor"
+              popoverClass="pending-popover" (click)="setActiveMessage(edacationDetails.id)"/>
+            }@else{
+            <div class="dropdown">
+              <span type="button" data-bs-toggle="dropdown">
+                <i class="bi bi-three-dots-vertical"></i>
+              </span>
+              <ul class="dropdown-menu custom-dropdown-menu">
+                @if( canAccess('update','education' )){
+                <li (click)="openModalupdate(updateEducationmodal, edacationDetails)">
+                  <a class="dropdown-item">
+                     <i class="bi bi-pencil me-2"></i>{{ 'Update' | translate }}
+                  </a>
+                </li>
+                }@if( canAccess('delete','education' )){
+                <li (click)="opendeletModal(deleteconformation,edacationDetails)">
+                  <a class="dropdown-item">
+                       <i class="bi bi-trash3 me-2"></i>{{ 'Delete' | translate }}
+                  </a>
+                </li>
+                }
+              </ul>
+            </div>
+            }
+          </td>
+          }}
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <div class="wrapper">
+        <tr>
+          <td colspan="8">
             <app-no-data-found />
-          </tr>
-        </ng-template>
-      </tbody>
-    </table>
+          </td>
+        </tr>
+        </div>
+      </ng-template>
+    </p-table>
     }
     @else {
     <app-data-loader-content />

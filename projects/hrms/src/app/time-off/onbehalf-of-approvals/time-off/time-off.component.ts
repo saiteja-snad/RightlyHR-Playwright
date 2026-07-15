@@ -54,6 +54,11 @@ export class TimeOffComponent implements OnInit, OnDestroy {
   @ViewChild('commentspopup') modalContent: any;
   @ViewChild('leaveSummary') leaveSummary: any;
   @ViewChild('dt') table!: Table;
+
+  // Sorting properties
+  originalData: LeaveApproval[] = [];
+  currentSortField: string = '';
+  currentSortOrder: number = 0; // 0 = no sort, 1 = asc, -1 = desc
   destroy$: Subject<boolean> = new Subject<boolean>();
   options = [
     { label: 10, value: 10 },
@@ -127,6 +132,7 @@ export class TimeOffComponent implements OnInit, OnDestroy {
       next: (response: any) => {
         this.leaves.next(response.data);
         this.leavesselect = response.data;
+        this.originalData = [...response.data]; // Store original data
       },
       error: (reason) => {
         this.dataLoad = false;
@@ -462,6 +468,63 @@ onStatusApproveSelect(status: string) {
     const unselected = leaves.filter(item => !selectedIds.has(item.approvalHeader?.id));
     this.leaves.next([...selected, ...unselected]);
     return this.leaves.getValue();
+  }
+
+  customSort(event: any): void {
+    const field = event.field;
+    
+    // Track current sort state for the clicked field
+    if (this.currentSortField === field) {
+      // Same field clicked - cycle through: asc (1) -> desc (-1) -> reset (0)
+      if (this.currentSortOrder === 1) {
+        // Currently ascending, change to descending
+        this.currentSortOrder = -1;
+        event.order = -1;
+      } else if (this.currentSortOrder === -1) {
+        // Currently descending, reset to original order
+        this.leavesselect = [...this.originalData];
+        this.leaves.next(this.leavesselect);
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        if (this.table) {
+          this.table.reset();
+        }
+        return;
+      } else {
+        // Currently reset, change to ascending
+        this.currentSortOrder = 1;
+        event.order = 1;
+      }
+    } else {
+      // New field clicked - start with ascending
+      this.currentSortField = field;
+      this.currentSortOrder = 1;
+      event.order = 1;
+    }
+
+    event.data.sort((a: any, b: any) => {
+      let aValue = this.getNestedProperty(a, field);
+      let bValue = this.getNestedProperty(b, field);
+
+      // Handle date fields
+      if (field.includes('Date')) {
+        aValue = aValue ? new Date(aValue).getTime() : 0;
+        bValue = bValue ? new Date(bValue).getTime() : 0;
+      }
+      // Handle string fields
+      else if (typeof aValue === 'string' && typeof bValue === 'string') {
+        aValue = aValue.toLowerCase();
+        bValue = bValue.toLowerCase();
+      }
+
+      if (aValue < bValue) return -1 * event.order;
+      if (aValue > bValue) return 1 * event.order;
+      return 0;
+    });
+  }
+
+  private getNestedProperty(obj: any, path: string): any {
+    return path.split('.').reduce((current, prop) => current && current[prop], obj);
   }
 
 

@@ -29,6 +29,9 @@ interface StatusTab {
 export class ProjectsSideTabsComponent {
   readonly tabsKey = 'project-management-projects-side-tabs';
   tabs: StatusTab[] = [];
+  // tabs: StatusTab[] = [];
+  empinfo = {} as any;
+  filteredTabs: any[] = [];
   statusCounts: any = {};
   loading: boolean = false;
   destroy$: Subject<boolean> = new Subject<boolean>();
@@ -101,10 +104,33 @@ export class ProjectsSideTabsComponent {
 
   getcountData(): void {
     this.loading = true;
-    this.http.getData(`StatusCount?moduleName=Project`).pipe(takeUntil(this.destroy$)).subscribe({
+    // this.loading = true;
+    // this.http.getData(`StatusCount?moduleName=Project`).pipe(takeUntil(this.destroy$)).subscribe({
+    //   next: (res: any) => {
+    //      this.loading=false
+    //     this.statusCounts = {};
+    //     res.data.forEach((item: any) => {
+    //       this.statusCounts[item.status.toLowerCase()] = item.count || 0;
+    //     })
+    //   },
+    //   error: (err) => { 
+    //     this.loading=false
+    //   }
+    // });
+
+    let url = `StatusCount?moduleName=Project`;
+
+  if (this.rbac.allowedToAccess('View Assigned Projects.view') && !this.rbac.allowedToAccess('View All Projects.view')) {
+    url += `&employeeId=${this.empinfo.employeeId}`;
+  }
+
+  this.http.getData(url)
+    .pipe(takeUntil(this.destroy$))
+    .subscribe({
       next: (res: any) => {
-         this.loading=false
+        this.loading=false
         this.statusCounts = {};
+
         res.data.forEach((item: any) => {
           this.statusCounts[item.status.toLowerCase()] = item.count || 0;
         })
@@ -112,8 +138,7 @@ export class ProjectsSideTabsComponent {
       },
       error: (err) => {
         this.loading=false
-      }
-    });
+      }    });
   }
 
   isActive(route: string): boolean {

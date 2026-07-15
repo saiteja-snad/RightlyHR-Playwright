@@ -40,57 +40,68 @@
 
             <div class="custom-table-content ">
                 @if(!loading){
-                <table class="w-100">
-                    <thead>
+                <p-table #teamMembersTable [value]="getFilteredAndSortedMembers()" [customSort]="true" (sortFunction)="customSort($event)" styleClass="w-100">
+                    <ng-template pTemplate="header">
                         <tr>
-                            <th>{{ 'Employee ID' | translate }}</th>
-                            <th>{{ 'Employee Name' | translate }}</th>
-                            <th>{{ 'Work Email' | translate }}</th>
-                            <th>{{ 'Phone Number' | translate }}</th>
-                            <!-- <th>Employee Job Details</th> -->
+                            <th pSortableColumn="fusionEmpId">
+                                {{ 'Employee ID' | translate }}
+                                <p-sortIcon field="fusionEmpId"></p-sortIcon>
+                            </th>
+                            <th pSortableColumn="employeeName">
+                                {{ 'Employee Name' | translate }}
+                                <p-sortIcon field="employeeName"></p-sortIcon>
+                            </th>
+                            <th pSortableColumn="workEmail">
+                                {{ 'Work Email' | translate }}
+                                <p-sortIcon field="workEmail"></p-sortIcon>
+                            </th>
+                            <th pSortableColumn="contactnumber">
+                                {{ 'Phone Number' | translate }}
+                                <p-sortIcon field="contactnumber"></p-sortIcon>
+                            </th>
                             @if(canAccess('update','team-managers') || canAccess('update','team-members')) {
                             <th class="text-center">{{ 'Action' | translate }}</th>}
                         </tr>
-                    </thead>
-                    <tbody *ngIf="(getTeamMemberArray | searchfilter: searchValue : ['fusionEmpId', 'employeeName', 'workEmail', 'contactnumber']) as filteredMembers">
-                        <ng-container *ngIf="filteredMembers.length > 0; else noData">
-                            <tr *ngFor="let details of filteredMembers">
-                                <td>{{ details.fusionEmpId || '-' }}</td>
-                                <!-- <a [ngClass]="{'select-item cursor': details.isAccess}" (click)="details.isAccess && select(details)">
-                                    {{ details.firstName || 'N/A' }} {{ details.middleName }} {{ details.lastName }}</a> -->
-                                <td>{{ details.firstName || '' }} {{ details.middleName || '' }} {{ details.lastName || ''}}</td>
-                                <td>{{ details.workEmail || '-' }}</td>
-                                <td class="text-nowrap">{{details.mobilePhoneCountryCode || '-'}} {{ details.contactnumber || '-' }}</td>
-                                @if(canAccess('update','team-managers')) {
-                                <td class="text-center">
-                                    <div class="dropdown">
-                                        <a type="button" data-bs-toggle="dropdown">
-                                            <i class="bi bi-three-dots-vertical"></i>
-                                        </a>
-                                        <ul class="dropdown-menu custom-dropdown-menu py-0">
-                                            @if(canAccess('update','team-managers')) {
-                                            <li (click)="assigintm(changetmmodalforsingle, details)">
-                                                <a class="dropdown-item"><i class="bi bi-pencil me-2"></i>{{ 'Change TM' | translate }}</a>
-                                            </li>
-                                            }
-                                            @if(canAccess('update','team-members')) {
-                                            <li (click)="openModal(changermmodal,details)">
-                                                <a class="dropdown-item"><i class="bi bi-pencil me-2"></i>{{ 'Change RM' | translate }}</a>
-                                            </li>
-                                            }
-                                        </ul>
-                                    </div>
-                                </td>
-                                }
-                            </tr>
-                        </ng-container>
-                    </tbody>
-                    <ng-template #noData>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-details>
                         <tr>
-                            <app-no-data-found />
+                            <td>{{ details.fusionEmpId || '-' }}</td>
+                            <td>{{ details.firstName || '' }} {{ details.middleName || '' }} {{ details.lastName || ''}}</td>
+                            <td>{{ details.workEmail || '-' }}</td>
+                            <td class="text-nowrap">{{details.mobilePhoneCountryCode || '-'}} {{ details.contactnumber || '-' }}</td>
+                            @if(canAccess('update','team-managers')) {
+                            <td class="text-center">
+                                <div class="dropdown">
+                                    <a type="button" data-bs-toggle="dropdown">
+                                        <i class="bi bi-three-dots-vertical"></i>
+                                    </a>
+                                    <ul class="dropdown-menu custom-dropdown-menu py-0">
+                                        @if(canAccess('update','team-managers')) {
+                                        <li (click)="assigintm(changetmmodalforsingle, details)">
+                                            <a class="dropdown-item"><i class="bi bi-pencil me-2"></i>{{ 'Change TM' | translate }}</a>
+                                        </li>
+                                        }
+                                        @if(canAccess('update','team-members')) {
+                                        <li (click)="openModal(changermmodal,details)">
+                                            <a class="dropdown-item"><i class="bi bi-pencil me-2"></i>{{ 'Change RM' | translate }}</a>
+                                        </li>
+                                        }
+                                    </ul>
+                                </div>
+                            </td>
+                            }
                         </tr>
                     </ng-template>
-                </table>
+                    <ng-template pTemplate="emptymessage">
+                        <div class="wrapper">
+                        <tr>
+                            <td colspan="5">
+                                <app-no-data-found />
+                            </td>
+                        </tr>
+                        </div>
+                    </ng-template>
+                </p-table>
                 }
                 @else {
                 <app-data-loader-content />

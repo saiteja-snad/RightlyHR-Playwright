@@ -114,6 +114,9 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
       if (projectId) {
         this.projectId = parseInt(projectId);
         this.getProjects(this.projectId);
+        //  this.getResourceData(this.projectId, undefined, false, this.searchValue, this.page, this.pageSize);
+          this.gettimesheetapprovalData(this.projectId, undefined, true);
+
       }
     });
     this.getPhaseData();
@@ -423,6 +426,7 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
     return workingDays;
   }
 
+
   onPageSizeChange(newPageSize: number) {
     this.pageSize = newPageSize;
     this.rows = newPageSize;
@@ -446,6 +450,7 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
       entityType: 'project',
       entityRefId: projectId,
       status: 'active,assigned',
+
       pageNumber: pageNumber || this.page,
       pageSize: pageSize || this.pageSize
     };
@@ -468,6 +473,59 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
 
     if (this.selectedAuthorityIds?.length > 0 && !isPopupCall) {
       params.timesheetApprovalAuthorityIds = this.selectedAuthorityIds.join(',');
+    }
+      this.loader = true;
+    this.subscription = this.http
+      .getDataIncludeParams('ProjectResource', params)
+      .subscribe({
+        next: (data: any) => {
+          this.loader = false;
+          this.collectionSize = data?.pagination?.totalRecords || 0;
+            // NORMAL CALL - UPDATE TABLE DATA
+            this.loading = false;
+            this.resourcesData = Array.isArray(data?.data) ? data.data : [];
+            this.resourcesData = this.resourcesData.map((item: any) => ({
+              ...item,
+              employee: {
+                ...item.employee,
+                profileUrl: this.getImageUrl(item.employee?.profileUrl)
+              }
+            }));
+
+      
+        },
+        error: (reason: any) => {
+          this.loader = false;  
+          console.error(reason);
+        },
+      });
+  }
+
+
+  gettimesheetapprovalData(
+    projectId: number,
+    phaseId?: number,
+    isPopupCall: boolean = false,
+  ) {
+    const params: any = {
+      entityType: 'project',
+      entityRefId: projectId,
+      status: 'active,assigned'
+
+    };
+
+    if (phaseId) {
+      params.phaseId = phaseId;
+    }
+    if (this.selectedRoleIds?.length > 0 && !isPopupCall) {
+      params.roleIds = this.selectedRoleIds.join(',');
+    }
+    if (this.selectedPhaseIds?.length > 0 && !isPopupCall) {
+      params.phaseId = this.selectedPhaseIds.join(',');
+    }
+    if (this.selectedAuthorityIds?.length > 0 && !isPopupCall) {
+      params.timesheetApprovalAuthorityIds =
+        this.selectedAuthorityIds.join(',');
     }
 
     if (!isPopupCall) {
@@ -507,35 +565,34 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
           authorityControl?.enable();
           } else {
             // NORMAL CALL - UPDATE TABLE DATA
-            this.resourcesData = Array.isArray(data?.data) ? data.data : [];
-            this.loading = false;
-            this.resourcesData = this.resourcesData.map((item: any) => ({
-              ...item,
-              employee: {
-                ...item.employee,
-                profileUrl: this.getImageUrl(item.employee?.profileUrl)
-              }
-            }));
+            this.resoucesDropDownData = this.resourcesData
+              .filter((r) => r.employee.id)
+              .map((r) => ({
+                label: `${r.employee.fusionEmployeeId} - ${r.employee.name}`,
+                value: r.employee.id,
+              }));
+            this.defaultPendingAuthorityId =
+              this.resourcesData[0]?.pendingApprovalAuthority?.id ?? null;
+          }
+          const authorityControl =
+            this.updateResourceForm.get('resourceAuthority');
+          if (this.resoucesDropDownData.length === 0) {
+            authorityControl?.disable();
+            authorityControl?.reset();
+          } else {
+            authorityControl?.enable();
 
-          this.resoucesDropDownData = this.resourcesData.filter((r) => r.employee.id).map((r) => ({
-            label: `${r.employee.fusionEmployeeId} - ${r.employee.name}`,
-            value: r.employee.id,
-          }));
-          this.defaultPendingAuthorityId = this.resourcesData[0]?.pendingApprovalAuthority?.id ?? null;
-        }
-        const authorityControl = this.updateResourceForm.get('resourceAuthority');
-        if (this.resoucesDropDownData.length === 0) {
-          authorityControl?.disable();
-          authorityControl?.reset();
-        } else {
-          authorityControl?.enable();
-        }
-      },
-      error: (reason: any) => {
-        this.loading = false;
-        console.error(reason);
-      },
-    });
+            // Auto-patch default only if user has not selected anything before
+            const hasExistingValue = authorityControl?.value;
+            if (!hasExistingValue && this.defaultPendingAuthorityId) {
+              authorityControl?.patchValue(this.defaultPendingAuthorityId);
+            }
+          }
+        },
+        error: (reason: any) => {
+          console.error(reason);
+        },
+      });
   }
 
   getImageUrl(imagePath: string): string | null {
@@ -923,6 +980,7 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
     if (!dateString) return null;
     return new Date(dateString); // Converts ISO string to Date object
   }
+
   private readonly ACTIVE_STATUSES = ['active', 'assigned', 'waiting for approval'];
 
   isApprovalAuthority(employeeId: number): boolean {
@@ -937,6 +995,7 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
     this.modalService.open(this.confirmationpopupforerror, { centered: true, backdrop: 'static' });
   }
 
+
   handleAction(action: string, data: any) {
     const config = this.confirmationMessages[action];
 
@@ -944,6 +1003,7 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
 
     if (action === 'Update') {
       this.openModal(this.updateResourcemodal, 'lg', data);
+    
       const phaseDate = data?.phase;
       if (phaseDate) {
         this.projectStartDate = phaseDate.startDate ?? null;

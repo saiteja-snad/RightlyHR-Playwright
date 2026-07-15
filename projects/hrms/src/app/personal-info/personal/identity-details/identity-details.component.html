@@ -12,72 +12,78 @@
 
     <div class="custom-table-content">
         @if (!loading) {
-        <table class="w-100">
-            <thead>
+        <p-table #identityTable [value]="identityTableData" [customSort]="true" (sortFunction)="customSort($event)" styleClass="w-100">
+            <ng-template pTemplate="header">
                 <tr>
-                    <th>{{ 'Identity Type' | translate }}</th>
-                    <th>{{ 'Identity Number' | translate }}</th>
+                    <th pSortableColumn="identityType">
+                        {{ 'Identity Type' | translate }}
+                        <p-sortIcon field="identityType"></p-sortIcon>
+                    </th>
+                    <th pSortableColumn="identityNumber">
+                        {{ 'Identity Number' | translate }}
+                        <p-sortIcon field="identityNumber"></p-sortIcon>
+                    </th>
                     <th class="text-center">{{ 'Attachment' | translate }}</th>
                     @if(canAccess('update','identity') || canAccess('delete','identity')){
                     @if((employedata?.empstatus?.toLowerCase() !== 'prospective' &&
-                    employedata?.empstatus?.toLowerCase()
-                    !== 'trainee prospective')){
+                    employedata?.empstatus?.toLowerCase() !== 'trainee prospective')){
                     <th class="text-center">{{"Action" | translate}}</th>}}
                 </tr>
-            </thead>
-            <tbody>
-                <ng-container *ngIf="((getIdentitydetails | async) ?? []).length > 0; else noDataTemplate">
-                    <tr *ngFor="let identityDetails of getIdentitydetails | async">
-                        <td>{{ identityDetails.identityType }}</td>
-                        <td>{{ identityDetails.identityNumber }}</td>
-                        <td class="text-center">
-                            <span *ngIf="identityDetails.attachment;else noData" class="download-text"
-                                (click)="onSelectIdentityAttachmentDownload(identityDetails)">
-                                  <app-download-icon /></span><ng-template
-                                #noData>-</ng-template>
-                        </td>
-                        @if(canAccess('update','identity') || canAccess('delete','identity')){
-                        @if((employedata?.empstatus?.toLowerCase() !== 'prospective' &&
-                        employedata?.empstatus?.toLowerCase() !== 'trainee prospective'
-                        && employedata?.empstatus?.toLowerCase() !== 'inactive' && employedata?.empstatus?.toLowerCase()
-                        !== 'trainee inactive')){
-                        <td class="text-center">
-                            @if(disablePendingFields(identityDetails.identityId)){
-                                <app-info-icon [ngbPopover]="pendingPopover" triggers="click" class="cursor"
-                             popoverClass="pending-popover" (click)="setActiveMessage(identityDetails.identityId)"/>
-                            }@else{ 
-                            <div class="dropdown" *ngIf="!identityDetails.referenceId">
-                                <span type="button" data-bs-toggle="dropdown">
-                                    <i class="bi bi-three-dots-vertical"></i>
-                                </span>
-                                <ul class="dropdown-menu custom-dropdown-menu">
-                                    @if(canAccess('update','identity')){
-                                    <li >
-                                        <button type="button" class="dropdown-item"  (click)="openModalupdate(updateidentityModal, identityDetails)">
-                                            <i class="bi bi-pencil me-2"></i>{{ 'Update' | translate }}
-                                        </button>
-                                    </li>}
-                                    @if(canAccess('delete','identity')){
-                                    <li >
-                                        <button type="button" class="dropdown-item"(click)="opendeletModal(deleteconformation,identityDetails)">
-                                            <i class="bi bi-trash3 me-2"></i>{{ 'Delete' | translate }}
-                                        </button>
-                                    </li>}
-                                </ul>
-                            </div>
-                        }
-                        </td>
-                        }}
-                    </tr>
-                </ng-container>
-            </tbody>
-            <!-- No Data Found Template -->
-            <ng-template #noDataTemplate>
+            </ng-template>
+            <ng-template pTemplate="body" let-identityDetails>
                 <tr>
-                    <td colspan="5" class="text-center"><app-no-data-found></app-no-data-found></td>
+                    <td>{{ identityDetails.identityType }}</td>
+                    <td>{{ identityDetails.identityNumber }}</td>
+                    <td class="text-center">
+                        <span *ngIf="identityDetails.attachment;else noData" class="download-text"
+                            (click)="onSelectIdentityAttachmentDownload(identityDetails)">
+                              <app-download-icon /></span><ng-template
+                            #noData>-</ng-template>
+                    </td>
+                    @if(canAccess('update','identity') || canAccess('delete','identity')){
+                    @if((employedata?.empstatus?.toLowerCase() !== 'prospective' &&
+                    employedata?.empstatus?.toLowerCase() !== 'trainee prospective'
+                    && employedata?.empstatus?.toLowerCase() !== 'inactive' && employedata?.empstatus?.toLowerCase()
+                    !== 'trainee inactive')){
+                    <td class="text-center">
+                        @if(disablePendingFields(identityDetails.identityId)){
+                            <app-info-icon [ngbPopover]="pendingPopover" triggers="click" class="cursor"
+                         popoverClass="pending-popover" (click)="setActiveMessage(identityDetails.identityId)"/>
+                        }@else{ 
+                        <div class="dropdown" *ngIf="!identityDetails.referenceId">
+                            <span type="button" data-bs-toggle="dropdown">
+                                <i class="bi bi-three-dots-vertical"></i>
+                            </span>
+                            <ul class="dropdown-menu custom-dropdown-menu">
+                                @if(canAccess('update','identity')){
+                                <li >
+                                    <button type="button" class="dropdown-item"  (click)="openModalupdate(updateidentityModal, identityDetails)">
+                                        <i class="bi bi-pencil me-2"></i>{{ 'Update' | translate }}
+                                    </button>
+                                </li>}
+                                @if(canAccess('delete','identity')){
+                                <li >
+                                    <button type="button" class="dropdown-item"(click)="opendeletModal(deleteconformation,identityDetails)">
+                                        <i class="bi bi-trash3 me-2"></i>{{ 'Delete' | translate }}
+                                    </button>
+                                </li>}
+                            </ul>
+                        </div>
+                    }
+                    </td>
+                    }}
                 </tr>
             </ng-template>
-        </table>
+            <ng-template pTemplate="emptymessage">
+                <div class="wrapper">
+                <tr>
+                    <td colspan="4">
+                        <app-no-data-found />
+                    </td>
+                </tr>
+                </div>
+            </ng-template>
+        </p-table>
         }
         @else {
         <app-data-loader-content />

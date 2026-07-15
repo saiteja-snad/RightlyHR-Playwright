@@ -1,62 +1,65 @@
 <div class="custom-main-component-container">
   <div class="custom-table-content custom-content-height17">
     @if(!dataload){
-    <table class="w-100">
-      <thead>
-        <th>{{'Worked Date' | translate}}</th>
-        <th>{{'Availed'| translate}}</th>
-        <th>{{'Applied Date'| translate}}</th>
-        <th class="text-center">{{'Reason'| translate}}</th>
-        <th class="text-center">{{'Rejected Reason'| translate}}</th>
-        <th>{{'Status'| translate}}</th>
-      </thead>
-      <tbody>
-        <ng-container *ngIf="rejectedCompOffRequests!.length > 0; else noDataTemplate">
-          <tr *ngFor="let compOffRequest of rejectedCompOffRequests; let i = index">
-            <td>{{ compOffRequest.startTime ? (compOffRequest.startTime | dateformat) : ' -' }}</td>
-            <td [ngSwitch]="compOffRequest.durationType">
-              <span *ngSwitchCase="1">First Half</span>
-              <span *ngSwitchCase="3">Second Half</span>
-              <span *ngSwitchCase="2">Full Day</span>
-              <span *ngSwitchDefault>-</span>
-            </td>
-            <td>{{ compOffRequest.requestedDate | dateformat }}</td>
-            <td class="text-center">
-              <div *ngIf="compOffRequest.requestedComments; else noRequestedComments" type="button"
-                [ngbPopover]="requestedComments">
-                <app-info-icon />
+    <p-table #compOffRejectTable [value]="rejectedCompOffRequests" [customSort]="true" (sortFunction)="customSort($event)" [sortMode]="'single'">
+      <ng-template pTemplate="header">
+        <tr>
+          <th pSortableColumn="startTime">{{'Worked Date' | translate}} <p-sortIcon field="startTime"></p-sortIcon></th>
+          <th pSortableColumn="durationType">{{'Availed'| translate}} <p-sortIcon field="durationType"></p-sortIcon></th>
+          <th pSortableColumn="requestedDate">{{'Applied Date'| translate}} <p-sortIcon field="requestedDate"></p-sortIcon></th>
+          <th class="text-center" pSortableColumn="requestedComments">{{'Reason'| translate}} <p-sortIcon field="requestedComments"></p-sortIcon></th>
+          <th class="text-center" pSortableColumn="reason">{{'Rejected Reason'| translate}} <p-sortIcon field="reason"></p-sortIcon></th>
+          <th pSortableColumn="status">{{'Status'| translate}} <p-sortIcon field="status"></p-sortIcon></th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-compOffRequest>
+        <tr>
+          <td>{{ compOffRequest.startTime ? (compOffRequest.startTime | dateformat) : ' -' }}</td>
+          <td [ngSwitch]="compOffRequest.durationType">
+            <span *ngSwitchCase="1">First Half</span>
+            <span *ngSwitchCase="3">Second Half</span>
+            <span *ngSwitchCase="2">Full Day</span>
+            <span *ngSwitchDefault>-</span>
+          </td>
+          <td>{{ compOffRequest.requestedDate | dateformat }}</td>
+          <td class="text-center">
+            <div *ngIf="compOffRequest.requestedComments; else noRequestedComments" type="button"
+              [ngbPopover]="requestedComments">
+              <app-info-icon />
+            </div>
+            <ng-template #requestedComments>
+              <p class="mb-0">{{ compOffRequest.requestedComments }}</p>
+            </ng-template>
+            <ng-template #noRequestedComments>
+              <span>-</span>
+            </ng-template>
+          </td>
+          <td class="text-center">
+            <div>
+              <div *ngIf="compOffRequest.reason; else noReason" type="button" [ngbPopover]="reason">
+                 <app-info-icon />
               </div>
-              <ng-template #requestedComments>
-                <p class="mb-0">{{ compOffRequest.requestedComments }}</p>
+              <ng-template #reason>
+                <p class="mb-0">{{ compOffRequest.reason }}</p>
               </ng-template>
-              <ng-template #noRequestedComments>
+              <ng-template #noReason>
                 <span>-</span>
               </ng-template>
+            </div>
+          </td>
+          <td>{{ compOffRequest.status }}</td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <div class="wrapper">
+          <tr>
+            <td colspan="6">
+              <app-no-data-found />
             </td>
-            <td class="text-center">
-              <div>
-                <div *ngIf="compOffRequest.reason; else noReason" type="button" [ngbPopover]="reason">
-                   <app-info-icon />
-                </div>
-                <ng-template #reason>
-                  <p class="mb-0">{{ compOffRequest.reason }}</p>
-                </ng-template>
-                <ng-template #noReason>
-                  <span>-</span>
-                </ng-template>
-              </div>
-            </td>
-            <td>{{ compOffRequest.status }}</td>
           </tr>
-        </ng-container>
-
-        <ng-template #noDataTemplate>
-          <tr class="table-placeholder">
-            <app-no-data-found></app-no-data-found>
-          </tr>
-        </ng-template>
-      </tbody>
-    </table>
+        </div>
+      </ng-template>
+    </p-table>
     }@else{
     <app-data-loader-content />
     }

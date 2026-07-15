@@ -12,41 +12,79 @@
 
     <div class="custom-table-content">
         @if(!loading){
-        <table class="w-100">
-            <thead>
-                <tr>
-                    <th>{{'Effective date' | translate}}</th>
-                    <th>{{'Job role' | translate}}</th>
-                    <th>{{'Grade' | translate}}</th>
-                    <th>{{'Department' | translate}}</th>
-                    <th>{{'Team' | translate}}</th>
-                    <th>{{'Team manager' | translate}}</th>
-                    <th>{{'Reporting manager' | translate}}</th>
-                    <th>{{'Location' | translate}}</th>
-                    <th>{{'Sub location' | translate}}</th>
-                    <th>{{'Shift' | translate}}</th>
-                    <th>{{'Job type' | translate}}</th>
-                    @if (showSaperationDots ) {
-                    @if(canAccess('update','job') || canAccess('delete','job') || canAccess('view','separation')){
-                    @if((employedata?.empstatus?.toLowerCase() !== 'prospective' && employedata?.empstatus?.toLowerCase() !== 'trainee prospective' && employedata?.empstatus?.toLowerCase() !== 'prospective contract' && employedata?.empstatus?.toLowerCase() !== 'inactive contract'
-                    && employedata?.empstatus?.toLowerCase() !== 'inactive' && employedata?.empstatus?.toLowerCase() !=='trainee inactive' )){
-                    <th  class="text-center">{{"Action" | translate}}</th>
-                    }
-                    }
-                    }
-                    
-                    @else if(canAccess('create','contractconversionrequest') && showContractDetailSeperationDots){
-                    @if((employedata?.empstatus?.toLowerCase() !== 'prospective' && employedata?.empstatus?.toLowerCase() !== 'trainee prospective' && employedata?.empstatus?.toLowerCase() !== 'prospective contract' && employedata?.empstatus?.toLowerCase() !== 'inactive contract'
-                    && employedata?.empstatus?.toLowerCase() !== 'inactive' && employedata?.empstatus?.toLowerCase() !=='trainee inactive' )){
-                    <th  class="text-center">{{"Action" | translate}}</th>
-                    }
-                    }
-                    
-                </tr>
-            </thead>
-            <tbody>
-                <ng-container *ngIf="((jobdetails | async) ?? []).length > 0; else noDataTemplate">
-                    <tr *ngFor="let item of jobdetails | async; let first = first">
+            <p-table 
+                #jobDetailsTable
+                [value]="jobdetails" 
+                [customSort]="true"
+                (sortFunction)="customSort($event)"
+                [sortMode]="'single'"
+                styleClass="p-datatable-sm custom-table">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th pSortableColumn="effectiveDate">
+                            {{'Effective date' | translate}}
+                            <p-sortIcon field="effectiveDate"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="jobRole">
+                            {{'Job role' | translate}}
+                            <p-sortIcon field="jobRole"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="gradeName">
+                            {{'Grade' | translate}}
+                            <p-sortIcon field="gradeName"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="departmentName">
+                            {{'Department' | translate}}
+                            <p-sortIcon field="departmentName"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="subdepartmentName">
+                            {{'Team' | translate}}
+                            <p-sortIcon field="subdepartmentName"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="teamManagerName">
+                            {{'Team manager' | translate}}
+                            <p-sortIcon field="teamManagerName"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="reportingManagerName">
+                            {{'Reporting manager' | translate}}
+                            <p-sortIcon field="reportingManagerName"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="lopcation">
+                            {{'Location' | translate}}
+                            <p-sortIcon field="lopcation"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="subLocation">
+                            {{'Sub location' | translate}}
+                            <p-sortIcon field="subLocation"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="shiftName">
+                            {{'Shift' | translate}}
+                            <p-sortIcon field="shiftName"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="jobTypeName">
+                            {{'Job type' | translate}}
+                            <p-sortIcon field="jobTypeName"></p-sortIcon>
+                        </th>
+                        @if (showSaperationDots ) {
+                        @if(canAccess('update','job') || canAccess('delete','job') || canAccess('view','separation')){
+                        @if((employedata?.empstatus?.toLowerCase() !== 'prospective' && employedata?.empstatus?.toLowerCase() !== 'trainee prospective' && employedata?.empstatus?.toLowerCase() !== 'prospective contract' && employedata?.empstatus?.toLowerCase() !== 'inactive contract'
+                        && employedata?.empstatus?.toLowerCase() !== 'inactive' && employedata?.empstatus?.toLowerCase() !=='trainee inactive' )){
+                        <th  class="text-center">{{"Action" | translate}}</th>
+                        }
+                        }
+                        }
+                        
+                        @else if(canAccess('create','contractconversionrequest') && showContractDetailSeperationDots){
+                        @if((employedata?.empstatus?.toLowerCase() !== 'prospective' && employedata?.empstatus?.toLowerCase() !== 'trainee prospective' && employedata?.empstatus?.toLowerCase() !== 'prospective contract' && employedata?.empstatus?.toLowerCase() !== 'inactive contract'
+                        && employedata?.empstatus?.toLowerCase() !== 'inactive' && employedata?.empstatus?.toLowerCase() !=='trainee inactive' )){
+                        <th  class="text-center">{{"Action" | translate}}</th>
+                        }
+                        }
+                    </tr>
+                </ng-template>
+                
+                <ng-template pTemplate="body" let-item let-rowIndex="rowIndex">
+                    <tr>
                         <td>
                             <span *ngIf="item.effectiveDate;else effectivedate">{{item.effectiveDate | dateformat}}</span>
                             <ng-template #effectivedate>
@@ -112,7 +150,7 @@
                                 <div>-</div>
                             </ng-template>
                         </td>
-                        @if (first && showSaperationDots ) {
+                        @if (rowIndex === 0 && showSaperationDots ) {
                         @if(canAccess('update','job') || canAccess('delete','job') || canAccess('view','separation') || canAccess('create','contractconversionrequest')){
                         @if((employedata?.empstatus?.toLowerCase() !== 'prospective' && employedata?.empstatus?.toLowerCase() !== 'trainee prospective' && employedata?.empstatus?.toLowerCase() !== 'prospective contract' && employedata?.empstatus?.toLowerCase() !== 'inactive contract'
                         && employedata?.empstatus?.toLowerCase() !== 'inactive' && employedata?.empstatus?.toLowerCase() !=='trainee inactive'
@@ -147,7 +185,7 @@
                         }
                         }
                         }
-                        @if (first && !showSaperationDots && showContractDetailSeperationDots) {
+                        @if (rowIndex === 0 && !showSaperationDots && showContractDetailSeperationDots) {
                         @if(canAccess('create','contractconversionrequest')){
                         @if((employedata?.empstatus?.toLowerCase() !== 'prospective' && employedata?.empstatus?.toLowerCase() !== 'trainee prospective' && employedata?.empstatus?.toLowerCase() !== 'inactive contract'
                         && employedata?.empstatus?.toLowerCase() !== 'inactive' && employedata?.empstatus?.toLowerCase() !=='trainee inactive'
@@ -170,14 +208,18 @@
                         }
                         }
                     </tr>
-                </ng-container>
-                <ng-template #noDataTemplate>
-                    <tr>
-                        <app-no-data-found />
-                    </tr>
                 </ng-template>
-            </tbody>
-        </table>
+
+                <ng-template pTemplate="emptymessage">
+                    <div class="wrapper">
+                        <tr>
+                            <td colspan="11">
+                                <app-no-data-found />
+                            </td>
+                        </tr>
+                    </div>
+                </ng-template>
+            </p-table>
         }
         @else {
         <app-data-loader-content />

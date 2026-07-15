@@ -44,6 +44,7 @@ export class LoadEntilementsAlloctionComponent implements OnInit, OnDestroy {
   jobSummary: any = {};
   employees: any[] = [];
   categoryDetails = [] as ICategoryDetails[];
+  allCategoryDetails = [] as ICategoryDetails[];
   employeeDetails = [] as IEmployees[];
   selectedEmployee: any[] = [];
   selectedCategory: any[] = [];
@@ -51,6 +52,7 @@ export class LoadEntilementsAlloctionComponent implements OnInit, OnDestroy {
   statusOptions = [
     { label: 'Executed', value: 'EXECUTED' },
     {label: 'Pending', value:'PENDING'},
+    { label: 'Queued', value: 'QUEUED' },
     { label: 'Failed', value: 'FAILED' },
   ];
   selectedCycleEmployee: any = null;
@@ -62,8 +64,11 @@ export class LoadEntilementsAlloctionComponent implements OnInit, OnDestroy {
   newCategories: any[] = [];
   selectedNewCategories: any[] = [];
   loadingNewEmployees = false;
+  dropdownsInitialized = false;
   submittingLoad = false;
   submittingLoadCategories = false;
+  validationErrors: any[] = [];
+  validationMessage = '';
 
   constructor(private route: ActivatedRoute, private http: HttpService, private fb: FormBuilder,
     private modalService: NgbModal, private conformationPopup: OpenModalService, private router: Router) { }
@@ -74,6 +79,7 @@ export class LoadEntilementsAlloctionComponent implements OnInit, OnDestroy {
       const jobid = params['id'];
       if (jobid) {
         this.jobid = jobid;
+        this.dropdownsInitialized = false;
         this.getdatacarryforword();
       }
     });
@@ -117,7 +123,7 @@ export class LoadEntilementsAlloctionComponent implements OnInit, OnDestroy {
   onSelectedEmployee(values: any[]) {
     this.page = 1;
     this.first = 0;
-    this.selectedEmployee = Array.isArray(values) && values.length ? values.map((e: any) => e.employeeId) : [];
+    this.selectedEmployee = Array.isArray(values) && values.length ? values.map((e: any) => e.id) : [];
     if (!this.selectedEmployee.length) this.leaveAllocationForm.get('employeeName')?.setValue(null, { emitEvent: false });
     this.getdatacarryforword();
   }
@@ -168,8 +174,11 @@ export class LoadEntilementsAlloctionComponent implements OnInit, OnDestroy {
         this.jobSummary = res.data.jobSummary;
         this.employees = res.data.employees;
         this.collectionSize = res.pagination.totalRecords;
-        this.buildEmployeeDropdown();
-        this.getCategoryDetails();
+        if (!this.dropdownsInitialized) {
+          this.buildEmployeeDropdown(res.data.employees);
+          this.buildCategoryDropdown(res.data.employees);
+          this.dropdownsInitialized = true;
+        }
         this.getNewEmployees();
       },
       error: (err) => {
@@ -272,7 +281,28 @@ export class LoadEntilementsAlloctionComponent implements OnInit, OnDestroy {
     });
   }
 
-  getCategoryDetails(): void {
+  buildEmployeeDropdown(employees: any[]): void {
+    const seen = new Set<number>();
+    this.employeeDetails = (employees || []).reduce((acc: any[], e: any) => {
+      const emp = e?.employee;
+      if (emp?.id && !seen.has(emp.id)) {
+        seen.add(emp.id);
+        acc.push({ ...emp, fullName: `${emp.fusionEmpId ?? ''} ${emp.name ?? ''}`.trim() });
+      }
+      return acc;
+    }, []);
+  }
+
+  buildCategoryDropdown(employees: any[]): void {
+    const presentIds = new Set((employees || []).map((e: any) => e?.leaveCategoryId).filter(Boolean));
+    if (this.allCategoryDetails.length) {
+      this.categoryDetails = this.allCategoryDetails.filter((c: any) => presentIds.has(c.id));
+    } else {
+      this.getCategoryDetails(presentIds);
+    }
+  }
+
+  getCategoryDetails(filterIds?: Set<number>): void {
     const payload = {
       year: this.jobSummary?.processingYear,
       locationId: this.jobSummary?.locationId,
@@ -282,49 +312,11 @@ export class LoadEntilementsAlloctionComponent implements OnInit, OnDestroy {
     };
     this.http.getDataWithQueryParams("OrgLeavesCategories", payload).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
-        this.categoryDetails = res;
+        this.allCategoryDetails = res;
+        this.categoryDetails = filterIds ? res.filter((c: any) => filterIds.has(c.id)) : res;
       },
       error: err => {
         console.error('Error fetching categories:', err);
-      }
-    });
-  }
-
-  buildEmployeeDropdown(): void {
-    const seen = new Set<number>();
-    this.employeeDetails = this.employees
-      .filter((e: any) => {
-        const id = e?.employee?.id;
-        if (!id || seen.has(id)) return false;
-        seen.add(id);
-        return true;
-      })
-      .map((e: any) => ({
-        ...e.employee,
-        employeeId: e.employee.id,
-        fusionEmpId: e.employee.fusionEmpId ?? '',
-        firstName: e.employee.name ?? '',
-        middleName: '',
-        lastName: '',
-        fullName: `${e.employee.fusionEmpId ?? ''} ${e.employee.name ?? ''}`.trim()
-      }));
-  }
-
-  getAllEmployees() {
-    const payload = {
-      locationId: this.jobSummary?.locationId,
-      subLocationId: this.jobSummary?.subLocationId,
-      shiftId: this.jobSummary?.shiftId,
-    };
-    this.http.getDataWithQueryParams("Employeedata/getAll", payload).pipe(takeUntil(this.destroy$)).subscribe({
-      next: (res: any) => {
-        this.employeeDetails = res.map((employee: any) => ({
-          ...employee,
-          fullName: ` ${employee.fusionEmpId} ${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`
-        }));
-      },
-      error: err => {
-        console.error('Error fetching employees:', err);
       }
     });
   }
@@ -360,15 +352,22 @@ export class LoadEntilementsAlloctionComponent implements OnInit, OnDestroy {
     this.modalService.open(content, { size: 'lg', centered: true, backdrop: 'static' });
   }
 
-  loadEmployees(modal: any): void {
+  loadEmployees(modal: any, validationModal: any): void {
     if (!this.selectedNewEmployees.length) return;
     this.submittingLoad = true;
     const payload = { employeeIds: this.selectedNewEmployees.map((e: any) => e.employeeId) };
     this.http.postdata(`LeaveEntitlementJobs/${this.jobid}/load-employees`, payload).pipe(takeUntil(this.destroy$)).subscribe({
-      next: () => {
+      next: (res: any) => {
         this.submittingLoad = false;
         modal.dismiss();
-        this.conformationPopup.openSuccessModal('Employees loaded successfully.');
+        const errors = res?.data?.validationErrors;
+        if (Array.isArray(errors) && errors.length > 0) {
+          this.validationErrors = errors;
+          this.validationMessage = res?.data?.message || 'Some employees were skipped due to validation errors.';
+          this.modalService.open(validationModal, { size: 'lg', centered: true, backdrop: 'static' });
+        } else {
+          this.conformationPopup.openSuccessModal('Employees loaded successfully.');
+        }
         this.getdatacarryforword();
       },
       error: (err: any) => {

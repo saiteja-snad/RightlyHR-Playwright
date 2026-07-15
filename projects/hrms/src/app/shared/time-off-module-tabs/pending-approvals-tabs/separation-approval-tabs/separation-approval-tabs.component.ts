@@ -1,4 +1,3 @@
-
 import { CommonModule } from '@angular/common';
 import { Component, effect, signal } from '@angular/core';
 import { RouterModule, Router } from '@angular/router';
@@ -13,6 +12,7 @@ import { HttpService } from '../../../../services/http.service';
 import { RbacService } from '../../../../services/rbac.service';
 import { SignalsService } from '../../../../services/signals.service';
 import { SidetabsloadersComponent } from '../../../sidetabsloaders/sidetabsloaders.component';
+import { MenuOrderService } from '../../../../services/theme-service/menu-order.service';
 
 interface NavLink {
   label: string;
@@ -70,7 +70,8 @@ export class SeparationApprovalTabsComponent {
   ];
 
   constructor(public readonly router: Router, private http: HttpService, public rbac: RbacService,
-    private signalService: SignalsService, private accessNav: AccessNavigationService) {
+    private signalService: SignalsService, private accessNav: AccessNavigationService,
+    private menuOrderService: MenuOrderService) {
     effect(() => {
       if (this.http.tirggerPendingApprovalCountSignal().separation || this.http.tirggerPendingApprovalCountSignal().nodue) {
         this.getAllPendingApprovalsCount();
@@ -105,23 +106,27 @@ export class SeparationApprovalTabsComponent {
       this.rbac.allowedToAccess(`${tab.permission.feature}.${tab.permission.action}`)
     );
     this.filteredNavLinks = this.navLinks;
-    this.redirectIfNeeded();
   }
 
   getAllPendingApprovalsNoDue() {
     const EmployeeId = this.LOGIN.employeeId;
     this.subscription = this.http.getData(`NoDueClearanceForm/getByApproverIdPendingApprovals/${EmployeeId}`).subscribe({
       next: (data: any) => {
-        this.nodue_Request_data = data;
-        // Update the count for No Due Clearances tab based on array length
-        const noDueLink = this.navLinks.find(link => link.label === 'No Due Clearances');
-        if (noDueLink) {
-          noDueLink.count = data?.length || 0;
-        }
-        const filteredNoDueLink = this.filteredNavLinks.find(link => link.label === 'No Due Clearances');
-        if (filteredNoDueLink) {
-          filteredNoDueLink.count = noDueLink?.count || 0;
-        }
+         const count = data?.length || 0;
+      const updateCount = (links: NavLink[]) => {
+        const link = links.find(l => l.label === 'No Due Clearances');
+        if (link) link.count = count;
+      };
+      updateCount(this.navLinks);
+      updateCount(this.filteredNavLinks);
+
+      // Re-sort now that No Due count is accurate
+      const hasSavedPref = (this.menuOrderService.preferenceV2()?.tabs?.modules ?? [])
+        .some(m => m.moduleKey === this.tabsKey);
+      if (!hasSavedPref) {
+        this.navLinks = this.navLinks.sort((a, b) => (b.count ?? 0) - (a.count ?? 0));
+        this.filteredNavLinks = [...this.navLinks];
+      }
       },
     });
   }
@@ -133,10 +138,15 @@ export class SeparationApprovalTabsComponent {
       next: (data: ApprovalStatusCount[]) => {
         const countMap = new Map<number, number>();
         data.forEach((item) => countMap.set(item.moduleId, item.totalCount));
+        const hasSavedPref = (this.menuOrderService.preferenceV2()?.tabs?.modules ?? [])
+          .some(m => m.moduleKey === this.tabsKey);
         this.navLinks = this.navLinks.map((link: NavLink) => ({
           ...link,
           count: countMap.get(link.moduleId) || 0,
         }));
+        if (!hasSavedPref) {
+          this.navLinks = this.navLinks.sort((a, b) => (b.count ?? 0) - (a.count ?? 0));
+        }
         this.filteredNavLinks = [...this.navLinks];
         this.loading = false;
         this.redirectIfNeeded();
@@ -171,13 +181,20 @@ export class SeparationApprovalTabsComponent {
     if (this.userInteracted) return;
     if (!this.filteredNavLinks || this.filteredNavLinks.length === 0) return;
 
+    const hasSavedPref = (this.menuOrderService.preferenceV2()?.tabs?.modules ?? [])
+      .some(m => m.moduleKey === this.tabsKey);
+    if (hasSavedPref) return;
+
     const currentPath = this.router.url.split('?')[0];
-    if (currentPath !== '/pending-approvals/off-boarding') return;
+    if (!currentPath.startsWith('/pending-approvals/off-boarding')) return;
 
     const preferred = this.filteredNavLinks[0]?.route ?? '';
-    if (!preferred || preferred === currentPath) return;
+    if (!preferred) return;
+
     const actual = this.accessNav.navigateToAccessedRoute(preferred);
-    this.router.navigate([actual || preferred], { queryParamsHandling: 'preserve' });
+    const target = actual || preferred;
+    if (currentPath === target || currentPath.startsWith(target + '/')) return;
+    this.router.navigate([target], { queryParamsHandling: 'preserve' });
   }
 
   ngOnDestroy(): void {

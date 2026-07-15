@@ -8,60 +8,75 @@
 
   <div class="custom-table-content">
     @if(!loading){
-    <table class="w-100">
-      <thead>
-        <th>{{'Expense Title' | translate}}</th>
-
-        <th>{{'Expense Date' | translate}}</th>
-        <th>{{"Applied Date"}}</th>
-        <th>{{'Total Amount' | translate}}</th>
-        <th>{{'Status' | translate}}</th>
-        <th class="text-center">{{'Approver Comments' | translate}}</th>
-        <th class="text-center">{{'View Details' | translate}}</th>
-      </thead>
-      <tbody>
-        <ng-container *ngIf="((expenesEmplyeedata | async) ?? []).length > 0; else noDataTemplate">
-          <tr *ngFor="let exp of expenesEmplyeedata | async">
-            <td>{{ exp.expenses_Title }}</td>
-            <td class="text-nowrap">{{ exp?.expenseitem?.[0]?.expense_Date | dateformat }}</td>
-            <td class="text-nowrap">{{ exp?.applied_date | dateformat }}</td>
-            <td class="text-nowrap"><span class="me-1" *ngIf="exp.totalExpenseAmount">₹</span> {{ exp.totalExpenseAmount }}</td>
-            <td> <span class="me-2 status-colour">● {{ exp.status }}</span>
-            </td>
-            <td class="text-center">
-              <app-info-icon *ngIf="exp?.expenseApproverComments?.length>0; else na"
-                (click)="comments_Function(exp.expenseApproverComments);openModal(viewcomments)" class="cursor" />
-              <ng-template #na>N/A</ng-template>
-            </td>
-            <td class="text-center">
-              <div class="dropdown">
-                <a data-bs-toggle="dropdown" aria-expanded="false">
-                  <i class="bi bi-three-dots-vertical"></i>
-                </a>
-                <ul class="dropdown-menu custom-dropdown-menu">
-                  <li><a class="dropdown-item" (click)="openupdateModal(viewDetailsModal);viewItem(exp.expenses_ID)">
-
-
-                      <i class="bi bi-eye-fill me-2"></i>{{'View' | translate}}</a></li>
-                  <li>
-                    <a class="dropdown-item" (click)="openpopupforDownload(openpopupForDownload,exp)">
-                      <i class="bi bi-download me-1"></i>Download
-                    </a>
-                  </li>
-
-                </ul>
-              </div>
-            </td>
-          </tr>
-        </ng-container>
-        <!-- No Data Found Template -->
-        <ng-template #noDataTemplate>
+    <p-table #expensesTable [value]="getFilteredAndSortedExpenses()" [customSort]="true"
+      (sortFunction)="customSort($event)" styleClass="p-datatable-gridlines" responsiveLayout="scroll">
+      <ng-template pTemplate="header">
+        <tr>
+          <th pSortableColumn="expenseTitle">
+            {{'Expense Title' | translate}}
+            <p-sortIcon field="expenseTitle"></p-sortIcon>
+          </th>
+          <th pSortableColumn="expenseDate">
+            {{'Expense Date' | translate}}
+            <p-sortIcon field="expenseDate"></p-sortIcon>
+          </th>
+          <th pSortableColumn="appliedDate">
+            {{"Applied Date"}}
+            <p-sortIcon field="appliedDate"></p-sortIcon>
+          </th>
+          <th pSortableColumn="totalAmount">
+            {{'Total Amount' | translate}}
+            <p-sortIcon field="totalAmount"></p-sortIcon>
+          </th>
+          <th pSortableColumn="status">
+            {{'Status' | translate}}
+            <p-sortIcon field="status"></p-sortIcon>
+          </th>
+          <th class="text-center">{{'Approver Comments' | translate}}</th>
+          <th class="text-center">{{'View Details' | translate}}</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-exp>
+        <tr>
+          <td>{{ exp.expenses_Title }}</td>
+          <td class="text-nowrap">{{ exp?.expenseitem?.[0]?.expense_Date | dateformat }}</td>
+          <td class="text-nowrap">{{ exp?.applied_date | dateformat }}</td>
+          <td class="text-nowrap"><span class="me-1" *ngIf="exp.totalExpenseAmount">₹</span> {{ exp.totalExpenseAmount
+            }}</td>
+          <td><span class="me-2 status-colour">● {{ exp.status }}</span></td>
+          <td class="text-center">
+            <app-info-icon *ngIf="exp?.expenseApproverComments?.length>0; else na"
+              (click)="comments_Function(exp.expenseApproverComments);openModal(viewcomments)" class="cursor" />
+            <ng-template #na>N/A</ng-template>
+          </td>
+          <td class="text-center">
+            <div class="dropdown">
+              <a data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="bi bi-three-dots-vertical"></i>
+              </a>
+              <ul class="dropdown-menu custom-dropdown-menu">
+                <li><a class="dropdown-item" (click)="openupdateModal(viewDetailsModal);viewItem(exp.expenses_ID)">
+                    <i class="bi bi-eye-fill me-2"></i>{{'View' | translate}}</a></li>
+                <li>
+                  <a class="dropdown-item" (click)="openpopupforDownload(openpopupForDownload,exp)">
+                    <i class="bi bi-download me-1"></i>Download
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <div class="wrapper">
           <tr>
-            <app-no-data-found />
+            <td colspan="7">
+              <app-no-data-found />
+            </td>
           </tr>
-        </ng-template>
-      </tbody>
-    </table>
+        </div>
+      </ng-template>
+    </p-table>
     }
     @else{
     <app-data-loader-content />
@@ -103,25 +118,26 @@
               <td>{{ item?.expenseType }}</td>
               <td>{{ item?.item_Name }}</td>
               <td>{{ item?.expense_Date | dateformat }}</td>
-              <td>{{ item?.expense_Amount | number: '1.2-2' }}</td>
+              <td>₹ {{ item?.expense_Amount | number: '1.2-2' }}</td>
               <td>{{ item?.status }}</td>
               <td class="text-center">
-            <div *ngIf="item.meta; else noDescription">
-              <app-info-icon class="cursor" ngbPopover="{{ item?.meta?.addedComments }}" container="body">
-              </app-info-icon>
-            </div>
-            <ng-template #noDescription>NA</ng-template>
-          </td>
+                <div *ngIf="item.meta; else noDescription">
+                  <app-info-icon class="cursor" ngbPopover="{{ item?.meta?.addedComments }}" container="body">
+                  </app-info-icon>
+                </div>
+                <ng-template #noDescription>NA</ng-template>
+              </td>
               <td>{{ item?.receipt_Number }}</td>
               <td class="text-center">
-                <div class="d-flex gap-2">
-                  <a type="button" class="me-2 download-text text-nowrap"
-                    (click)="onSelectDownload(item?.attachment_url)">
-                    <i class="bi bi-download me-2"></i>{{'Download' | translate}}
+                <div class="d-flex align-items-center justify-content-center gap-3 flex-nowrap">
+                  <a type="button" class="download-text text-nowrap" (click)="onSelectDownload(item?.attachment_url)">
+                    <i class="bi bi-download me-2"></i>{{ 'Download' | translate }}
                   </a>
-                  <a type="button" class="download-text text-nowrap" *ngIf="isImageFile(item?.attachment_url)"
-                    (click)="onViewAttachement(item?.attachment_url)">
-                      <app-document-view-icon />View
+
+                  <a type="button" class="download-text text-nowrap d-inline-flex align-items-center gap-2"
+                    *ngIf="isImageFile(item?.attachment_url)" (click)="onViewAttachement(item?.attachment_url)">
+                    <app-document-view-icon></app-document-view-icon>
+                    <span>{{ 'View' | translate }}</span>
                   </a>
                 </div>
               </td>
@@ -129,7 +145,7 @@
           </tbody>
         </table>
         <div class="text-center mt-3">
-          <b>{{"Total Amount" | translate}} : {{expenseheaderiteams?.expense_Amount | number: '1.2-2'}}</b>
+          <b>{{"Total Amount" | translate}} : ₹ {{expenseheaderiteams?.expense_Amount | number: '1.2-2'}}</b>
         </div>
       </div>
     </div>

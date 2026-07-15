@@ -33,12 +33,6 @@
       </div>
       }
 
-      <div>
-        <app-applicable-policies-trigger
-        [moduleKey]="applicablePolicies.moduleKey"
-        [subModuleKey]="applicablePolicies.subModuleKey">
-      </app-applicable-policies-trigger>
-      </div>
        <!-- @if(rbac.allowedToAccess('Employee Master Data - Generate.view')){ -->
         @if(activeTab === 'timesheets' && this.employeedata?.employeeId){
           <button type="button" class="custom-btn btn-secondary position-relative" (click)="toggleFilters(filterContent)">
@@ -48,6 +42,12 @@
         }
 
         <!-- } -->
+      <div>
+        <app-applicable-policies-trigger
+        [moduleKey]="applicablePolicies.moduleKey"
+        [subModuleKey]="applicablePolicies.subModuleKey">
+      </app-applicable-policies-trigger>
+      </div>
       <!-- <label class="form-label component-sub-header m-0" for="teamManager">Select Employee</label>
       <div class="custom-p-select-content">
         <p-select [options]="employeeiddetails" optionValue="employeeId" optionLabel="fullName" [filter]="true"
@@ -64,7 +64,7 @@
   </ng-template>
 
 
-  <div class="d-flex gap-3 w-100" *ngIf="employeedata">
+  <div class="d-flex gap-3 w-100">
       <div class="component-left-tabs-container" cdkScrollable data-tour="subtabs-dropzone" [attr.data-tour-module]="tabsKey">
       <div class="custom-sub-tabs-container">
         <ul

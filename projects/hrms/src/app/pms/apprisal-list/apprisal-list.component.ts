@@ -22,13 +22,13 @@ import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-inf
 
 @Component({
   selector: 'app-apprisal-list',
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, SelectModule, TranslateModule, MultiSelectModule, PaginatorModule, NoDataFoundComponent, DataLoaderContentComponent, ModuleInformationComponent, NgbPopoverModule, PmsTabsComponent, ModuleInfoIconComponent],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, SelectModule, TranslateModule, MultiSelectModule, PaginatorModule, NoDataFoundComponent, DataLoaderContentComponent, ModuleInformationComponent, NgbPopoverModule, PmsTabsComponent,ModuleInfoIconComponent],
   templateUrl: './apprisal-list.component.html',
   styleUrl: './apprisal-list.component.scss',
   encapsulation: ViewEncapsulation.None,
 })
 export class ApprisalListComponent implements OnInit, OnDestroy {
-  moduleinfo: string = '';
+  moduleinfo : string = '';
   dependentdropdowns!: FormGroup;
   reviewtemplatedropdowns!: FormGroup;
   updatereviewtemplatedropdowns!: FormGroup;
@@ -72,24 +72,29 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
   allSubDepartments: any[] = [];
   allSubLocations: any[] = [];
   selectedEmployee: any;
+
+  page = 1;
+  pageSize = 50;
+  rows = 50;
+  searchQuery = '';
+  first = 0;
+  totalRecords = 0;
+
   modalRef!: NgbModalRef;
+
   spinnerLoader = false;
+
   promotedOptions = [
     { label: 'Yes', value: true },
     { label: 'No', value: false }
   ];
-  totalRecords = 0;
-  page = 1;
-  pageSize = 50;
-  rows = 50;
-  collectionSize = 0;
-  first = 0;
   options = [
     { label: 50, value: 50 },
     { label: 100, value: 100 },
     { label: 150, value: 150 },
     { label: 200, value: 200 }
   ];
+
 
   @ViewChild('loading') loading: any;
   @ViewChild('addEmployee') addEmployee: any;
@@ -131,21 +136,21 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
     });
   }
 
-  initiateUpdateModuleInfo() {
+  initiateUpdateModuleInfo(){
     this.router.events
-      .pipe(filter(event => event instanceof NavigationEnd))
-      .subscribe(() => {
-        this.updateModuleInfo();
-      });
+    .pipe(filter(event => event instanceof NavigationEnd))
+    .subscribe(() => {
+      this.updateModuleInfo();
+    });
   }
 
   updateModuleInfo() {
     const url = this.router.url;
-
+  
     const routeToInfoMap: { [key: string]: string } = {
       '/pms/apprisal': MODULE_INFOS.PMS_REVIEW_CYCLE_EMPLOYEE_LIST_MODULE_INFO
     };
-
+  
     const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
     this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
@@ -250,8 +255,8 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
   buildParams(reviewCycleId: any) {
     const promoted = this.dependentdropdowns.get('promoted')?.value;
     return {
-      page: 1,
-      pageSize: 50,
+      page: this.page,
+      pageSize: this.pageSize,
       reviewcycleid: reviewCycleId,
       promotion: (promoted && promoted.value !== undefined && promoted.value !== null) ? promoted.value : ''
     };
@@ -275,6 +280,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
       );
 
       this.dependentdropdowns.get('subDepartmentId')?.setValue(this.subDepartmentsDropdownValues);
+      this.page = 1; this.first = 0; this.rows = 50;
 
       const promoted = this.dependentdropdowns.get('promoted')?.value;
       const params = {
@@ -302,6 +308,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
     if (Array.isArray(event?.value)) {
       const joinedIds = event.value.map((item: any) => item.subDepartmentId).join(",");
       this.subDepartmentIds = joinedIds;
+      this.page = 1; this.first = 0; this.rows = 50;
       const promoted = this.dependentdropdowns.get('promoted')?.value;
       const params = {
         reviewcycleid: this.reviewCycleID,
@@ -331,6 +338,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
     this.subLocationsDropdown = this.allSubLocations?.filter((subLoc: { locationId: any }) => selectedLocIds.includes(subLoc.locationId)) ?? [];
 
     this.dependentdropdowns.get('subLocationId')?.setValue(this.subLocationsDropdown);
+    this.page = 1; this.first = 0; this.rows = 50;
 
     const promoted = this.dependentdropdowns.get('promoted')?.value;
     const params = {
@@ -352,6 +360,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
   onSubLocationChange(event: any) {
     const joinedIds = event.value.map((item: any) => item.subLocationId).join(",");
     this.subLoctionIds = joinedIds;
+    this.page = 1; this.first = 0; this.rows = 50;
     const promoted = this.dependentdropdowns.get('promoted')?.value;
     const params = {
       reviewcycleid: this.reviewCycleID,
@@ -367,7 +376,8 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
   }
 
   onPromotedChange(event: any): void {
-    this.promoted = event.value
+    this.promoted = event.value;
+    this.page = 1; this.first = 0; this.rows = 50;
     const params: EmployeeQueryParams = {
       reviewcycleid: this.reviewCycleID,
       page: this.page,
@@ -681,11 +691,11 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
     }
 
     const id = this.selectedIds.toString();
-    if (id === null || id === "") {
+    if(id === null ||id === ""){
       this.modal.openErrorModal('Please select employee(s) to assign the review cycle');
       this.spinnerLoader = false;
       return;
-
+      
     }
     this.http.putData(`ReviewCycleItem/update/${id}`, payload).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data: any) => {
@@ -896,7 +906,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
       const emp = this.filteredEmployees.find(e => e.id === id);
       return emp?.reviewEmployeeId;
     }).filter(Boolean).join(',');
-
+    
     this.http.postletters(`AppraisalLetter/releaseappraisalletter?reviewcycleitemId=${this.selectedIds || this.allSelected}&employeeId=${employeeIds || this.empinfo.employeeId}&lettertype=performanceappraisal&status=${this.status}`)
       .pipe(takeUntil(this.destroy$)).subscribe({
         next: (data: any) => {
@@ -1059,7 +1069,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
       const emp = this.filteredEmployees.find(e => e.id === id);
       return emp?.reviewEmployeeId;
     }).filter(Boolean).join(',');
-
+    
     this.http.postletters(`AppraisalLetter/releaseappraisalletter?reviewcycleitemId=${this.selectedIds || this.allSelected}&employeeId=${employeeIds || this.empinfo.employeeId}&lettertype=PromotionLetter&status=${this.status}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data: any) => {
         this.modalService.dismissAll();
@@ -1292,7 +1302,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
       const emp = this.filteredEmployees.find(e => e.id === id);
       return emp?.reviewEmployeeId;
     }).filter(Boolean).join(',');
-
+    
     this.http.getData(`AppraisalLetter/generateappraisalletter/?reviewcycleitemId=${this.selectedIds || this.allSelected}&employeeId=${employeeIds || this.empinfo.employeeId}&lettertype=performanceappraisal&effectivedate=${this.Effectivedatefrom.get('effectiveFromDATE')?.value}&signatureempId=${this.Effectivedatefrom.get('signaturename')?.value.employeeId
       }&status=${this.status}`)
       .pipe(takeUntil(this.destroy$)).subscribe({
@@ -1493,24 +1503,24 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
     this.Effectivedatefrom.reset();
   }
 
-  hasAnyEmployeeActionsPermission(): boolean {
-    return (
-      this.rbac.allowedToAccess('Employee List Hold.view') ||
-      this.rbac.allowedToAccess('Assign Review Template(Employee).view') ||
-      this.rbac.allowedToAccess('Update Review Template.view') ||
-      this.rbac.allowedToAccess('Employee List Resume.view') ||
-      this.rbac.allowedToAccess('Promotion Letter Download.view') ||
-      this.rbac.allowedToAccess('Appraisal Letter Download.view') ||
-      this.rbac.allowedToAccess('Generate Appraisal Letter(Status - Completed).view') ||
-      this.rbac.allowedToAccess('Send Appraisal Letter(Appraisal Letter Generated).view') ||
-      this.rbac.allowedToAccess('Re-Generate Appraisal Letter.view') ||
-      this.rbac.allowedToAccess('Re-Send Appraisal Letter.view') ||
-      this.rbac.allowedToAccess('Re-Generate Appraisal Letter(Promotion Letter Generated).view') ||
-      this.rbac.allowedToAccess('Re-Send Appraisal Letter(Promotion Letter Sent).view') ||
-      this.rbac.allowedToAccess('Re-Generate Promotion Letter(Appraisal Letter Generated).view') ||
-      this.rbac.allowedToAccess('Re-Send Promotion Letter(Appraisal Letter Sent).view')
-    );
-  }
+hasAnyEmployeeActionsPermission(): boolean {
+  return (
+    this.rbac.allowedToAccess('Employee List Hold.view') ||
+    this.rbac.allowedToAccess('Assign Review Template(Employee).view') ||
+    this.rbac.allowedToAccess('Update Review Template.view') ||
+    this.rbac.allowedToAccess('Employee List Resume.view') ||
+    this.rbac.allowedToAccess('Promotion Letter Download.view') ||
+    this.rbac.allowedToAccess('Appraisal Letter Download.view') ||
+    this.rbac.allowedToAccess('Generate Appraisal Letter(Status - Completed).view') ||
+    this.rbac.allowedToAccess('Send Appraisal Letter(Appraisal Letter Generated).view') ||
+    this.rbac.allowedToAccess('Re-Generate Appraisal Letter.view') ||
+    this.rbac.allowedToAccess('Re-Send Appraisal Letter.view') ||
+    this.rbac.allowedToAccess('Re-Generate Appraisal Letter(Promotion Letter Generated).view') ||
+    this.rbac.allowedToAccess('Re-Send Appraisal Letter(Promotion Letter Sent).view') ||
+    this.rbac.allowedToAccess('Re-Generate Promotion Letter(Appraisal Letter Generated).view') ||
+    this.rbac.allowedToAccess('Re-Send Promotion Letter(Appraisal Letter Sent).view')
+  );
+}
 
 
   ngOnDestroy() {
@@ -1518,4 +1528,3 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
     this.destroy$.unsubscribe();
   }
 }
-

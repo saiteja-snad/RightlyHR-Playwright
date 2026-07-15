@@ -52,6 +52,8 @@ export interface Iorgcategoryleaves {
   minimumGapBetweenSameLeaveType?: number | null;
   gapCalculationBasis?: string | null;
   leaveType: string;
+  entitlementFrequency: string;
+  entitlementCycleHandling: string;
 }
 export interface ICategoryDetails {
   category: Iorgcategoryleaves;
@@ -64,8 +66,8 @@ export interface ICategoryDetails {
   probationLeaves: number;
   noticePeriodLeaves: number;
   expiryDaysLeaves: number;
-  sourceUtilizedDays : number;
-  availableProbationLeaves : number;
+  sourceUtilizedDays: number;
+  availableProbationLeaves: number;
 }
 export interface Ileavesdatas {
   requestedBy: any;
@@ -116,6 +118,7 @@ export interface Ilpid {
   durationType: any;
   isSandwichLeave: boolean
   categoryBreakdown: IcategoryBreakdown[];
+  pendingApprovalsHeader?: any;
 }
 
 export interface IcategoryBreakdown {
@@ -308,7 +311,7 @@ export interface ExpenseEntity {
   expenseType: string;
   pendingheaderId: number;
   expenseApproverComments: any[]; // Replace `any` with specific type if available
-   expenseitem?: ExpenseItem[];
+  expenseitem?: ExpenseItem[];
 }
 export interface IEligibilityCriteria {
   id: number;
@@ -389,11 +392,12 @@ export interface ApprovalStatusCount {
   forYourRole: number;
   totalCount: number;
 }
-export interface  ILateLoginSetting {
+export interface ILateLoginSetting {
   id: number;
   attribute: string;
   value: string | number | boolean;
-  entity: string;}
+  entity: string;
+}
 export interface TimesheetEntry {
   selected: any;
   employeeName: string;
@@ -422,18 +426,18 @@ export interface TimesheetDay {
   currentApprover: string;
   entries: TimesheetEntry[];
   selectedEntries: TimesheetEntry[];
-  employeeName:string;
+  employeeName: string;
   pendingApprovalHeader: any;
 }
 export interface EMPLOYEEINFO {
-   fields: any;
+  fields: any;
   date: string;
   approvalHeader: ApprovalHeader;
   module: Module;
   currentApprover: string;
   entries: EmployeeinfoEntry[];
   selectedEntries: EmployeeinfoEntry[];
-  employeeName:string;
+  employeeName: string;
   pendingApprovalHeader: any;
 }
 export interface EmployeeinfoEntry {

@@ -54,13 +54,13 @@ export class LeavesApprovaltabsComponent implements OnInit, OnDestroy{
     effect(() => {
       if (this.signalService.timecountTriggerSignal()) {
         // Call the function to fetch the pending approvals count
-        this.getDataByLPID();
+        if (this.id) {
+          this.getDataByLPempID();
+        } else {
+          this.getDataByLPID();
+        }
         this.getAllTeamLeaveBalance();
         this.getAllTeamLeaveSummary();
-        // Conditionally reset the signals based on their current state
-        if (this.signalService.timecountTriggerSignal()) {
-          this.signalService.timecountTriggerSignal.set(false);
-        }
       }
     });
   }
@@ -219,6 +219,12 @@ export class LeavesApprovaltabsComponent implements OnInit, OnDestroy{
         link: '/time-off/leaves/cancelled', count: this.cancelCount,
         permission: { feature: 'Cancelled (Time Off)', action: 'view' },
         icon: '/time-off-icon/cancelled-icon.png'
+      },
+      {
+        label: 'Entitlement Summary',
+        link: '/time-off/leaves/entitlement-frequency',
+        permission: { feature: 'Entitlement Summary (Time Off)', action: 'view' },
+        icon: '/time-off-icon/Entitlement Summary.png'
       },
     ];
     this.statusTabs = this.statusTabs.filter(

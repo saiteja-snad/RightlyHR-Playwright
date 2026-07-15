@@ -13,6 +13,7 @@ import { SidetabsloadersComponent } from "../../../sidetabsloaders/sidetabsloade
 import { OnboardingFilterService } from '../onboarding-filter.service';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { TabsDndDirective } from '../../../tabs-dnd/tabs-dnd.directive';
+import { MenuOrderService } from '../../../../services/theme-service/menu-order.service';
 interface NavLink {
   label: string;
   route: string;
@@ -106,7 +107,8 @@ export class OnboardingApprovalTabsComponent implements OnInit, OnDestroy {
   filteredNavLinks: NavLink[] = [];
 
   constructor(public readonly router: Router, private readonly http: HttpService, public readonly rbac: RbacService,
-    private readonly signalService: SignalsService, private readonly accessNav: AccessNavigationService, private readonly onboardingFilter: OnboardingFilterService) {
+    private readonly signalService: SignalsService, private readonly accessNav: AccessNavigationService,
+    private readonly onboardingFilter: OnboardingFilterService, private readonly menuOrderService: MenuOrderService) {
 
       effect(() => {
       if ((this.http.tirggerPendingApprovalCountSignal().wfh) || (this.http.tirggerPendingApprovalCountSignal().separation)
@@ -167,7 +169,6 @@ export class OnboardingApprovalTabsComponent implements OnInit, OnDestroy {
       this.rbac.allowedToAccess(`${tab.permission.feature}.${tab.permission.action}`)
     );
     this.filteredNavLinks = this.navLinks;
-    this.redirectIfNeeded();
   }
 
  getAllPendingApprovalsCount(updateAll: boolean = false) {
@@ -180,10 +181,13 @@ export class OnboardingApprovalTabsComponent implements OnInit, OnDestroy {
           const moduleMap = new Map(modules.map((m: any) => [m.name, m.count]));
 
           if (updateAll) {
-            this.navLinks = this.navLinks.map((link: NavLink) => ({
+            const mapped = this.navLinks.map((link: NavLink) => ({
               ...link,
               count: Number(moduleMap.get(link.label)) || 0,
             }));
+            const hasSavedPref = (this.menuOrderService.preferenceV2()?.tabs?.modules ?? [])
+              .some(m => m.moduleKey === this.tabsKey);
+            this.navLinks = hasSavedPref ? mapped : mapped.sort((a, b) => (b.count ?? 0) - (a.count ?? 0));
             this.filteredNavLinks = [...this.navLinks];
           } else {
             const activeLink = this.navLinks.find((link: NavLink) => this.isActiveRoute(link.route));
@@ -229,12 +233,20 @@ export class OnboardingApprovalTabsComponent implements OnInit, OnDestroy {
     if (this.userInteracted) return;
     if (!this.filteredNavLinks || this.filteredNavLinks.length === 0) return;
 
+    const hasSavedPref = (this.menuOrderService.preferenceV2()?.tabs?.modules ?? [])
+      .some(m => m.moduleKey === this.tabsKey);
+    if (hasSavedPref) return;
+
     const currentPath = this.router.url.split('?')[0];
-    if (currentPath !== '/pending-approvals/on-boarding') return;
+    if (!currentPath.startsWith('/pending-approvals/on-boarding')) return;
 
     const preferred = this.filteredNavLinks[0]?.route ?? '';
-    if (!preferred || preferred === currentPath) return;
-    this.router.navigate([preferred], { queryParamsHandling: 'preserve' });
+    if (!preferred) return;
+
+    const actual = this.accessNav.navigateToAccessedRoute(preferred);
+    const target = actual || preferred;
+    if (currentPath === target || currentPath.startsWith(target + '/')) return;
+    this.router.navigate([target], { queryParamsHandling: 'preserve' });
   }
 
   ngOnDestroy(): void {

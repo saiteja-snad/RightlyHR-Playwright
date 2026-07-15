@@ -36,7 +36,6 @@ export class AllemployeesComponent {
     this.loader = true;
     this.subscription = this.http.getData(`Employeedata/getallemployeesdetails`).subscribe({
       next: (data: any) => {
-        console.log(data)
         this.Allemployees = data as Iallemployees[];
         this.loader = false;
       },

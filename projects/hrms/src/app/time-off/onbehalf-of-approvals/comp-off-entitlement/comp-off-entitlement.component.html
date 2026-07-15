@@ -37,19 +37,19 @@
     <div class="custom-p-multi-select-table">
         @if(!dataLoad){
         <p-table #dt [value]="getFilteredAndSortedLeaves()" (selectionChange)="selectCheck($event)"
-            [(selection)]="selectedLeavesItems" dataKey="approvalHeader.id" [tableStyle]="{'min-width': '50rem'}">
+            [(selection)]="selectedLeavesItems" dataKey="approvalHeader.id" [tableStyle]="{'min-width': '50rem'}" [customSort]="true" (sortFunction)="customSort($event)" [sortMode]="'single'">
             <ng-template #header>
                 <tr>
                     <th style="width: 4rem">
                         <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
                     </th>
-                    <th>Employee ID </th>
-                    <th>Employee Name</th>
-                    <th>Worked Date</th>
-                    <th>Availed</th>
+                    <th pSortableColumn="entity.attendanceRequestFusionEmployeeId">Employee ID <p-sortIcon field="entity.attendanceRequestFusionEmployeeId"></p-sortIcon></th>
+                    <th pSortableColumn="entity.attendanceRequesterName">Employee Name<p-sortIcon field="entity.attendanceRequesterName"></p-sortIcon></th>
+                    <th pSortableColumn="entity.attendanceRequestStartTime">Worked Date<p-sortIcon field="entity.attendanceRequestStartTime"></p-sortIcon></th>
+                    <th pSortableColumn="entity.attendanceRequestDurationType">Availed<p-sortIcon field="entity.attendanceRequestDurationType"></p-sortIcon></th>
                     <th class="text-center">Reason</th>
                     <th class="text-center">Approver Comments</th>
-                    <th>Applied Date</th>
+                    <th pSortableColumn="entity.attendanceRequestAppliedDate">Applied Date<p-sortIcon field="entity.attendanceRequestAppliedDate"></p-sortIcon></th>
                     @if(!multiSelect && (rbac.allowedToAccess('Comp Off (On Behalf Of Approvals).update') ||
                     rbac.allowedToAccess('Comp Off (On Behalf Of Approvals).delete'))) {
                     <th class="text-center">Action</th>
@@ -131,9 +131,13 @@
                 </tr>
             </ng-template>
             <ng-template #emptymessage>
-                <tr>
-                    <app-no-data-found />
-                </tr>
+                <div class="wrapper">
+                  <tr>
+                    <td colspan="11">
+                      <app-no-data-found />
+                    </td>
+                  </tr>
+                </div>
             </ng-template>
         </p-table>
         }@else {

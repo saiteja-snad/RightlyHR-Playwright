@@ -8,6 +8,7 @@ import moment from 'moment';
 import { DropdownModule } from 'primeng/dropdown';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { Select } from 'primeng/select';
+import { Table, TableModule } from 'primeng/table';
 import { Subscription } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { DocumentViewIconComponent } from '../../../icons/document-view-icon/document-view-icon.component';
@@ -29,7 +30,7 @@ import { ProbationformViewComponent } from '../../../shared/probationform-view/p
   selector: 'app-probation-requests',
     imports: [CommonModule, RouterModule, NgbPopoverModule, FormsModule, NgbPopoverModule,
     PaginatorModule, DropdownModule, NoDataFoundComponent, ProbationdetailsPipe, ProbationformViewComponent,
-    TranslateModule, Select, DateformatPipe, DataLoaderContentComponent, InfoIconComponent, DocumentViewIconComponent],
+    TranslateModule, Select, DateformatPipe, DataLoaderContentComponent, InfoIconComponent, DocumentViewIconComponent, TableModule],
   templateUrl: './probation-requests.component.html',
   styleUrl: './probation-requests.component.scss'
 })
@@ -57,6 +58,14 @@ export class ProbationRequestsComponent implements OnInit, OnDestroy {
   ]
   @ViewChild('assessmentForm') assessmentForm!: NgbModal;
   @ViewChild('commentspopup') commentspopup!: NgbModal;
+  @ViewChild('dt') table!: Table;
+
+  // Sorting properties
+  originalData: Iprobationapproval[] = [];
+  currentSortField: string = '';
+  currentSortOrder: number = 0; // 0 = no sort, 1 = asc, -1 = desc
+  previousSearchValue: string = '';
+  
   selectedLeaveStatus: any;
   totalCount: any;
   myApproverComments = [] as any;
@@ -138,6 +147,7 @@ export class ProbationRequestsComponent implements OnInit, OnDestroy {
         this.probationDetails = data.data.filter(
           (item: any) => item.approvalHeader.status != 'Processed' && item.approvalHeader.status != 'Rejected'
         );
+        this.originalData = [...this.probationDetails]; // Store original data for reset functionality
         // this.filterPendingApprovalsByModule();
       },
       error: (reason) => {
@@ -145,6 +155,83 @@ export class ProbationRequestsComponent implements OnInit, OnDestroy {
         this.loading = false;
       },
     });
+  }
+
+  onSearchChange() {
+    // Reset sorting when search changes
+    if (this.searchValue !== this.previousSearchValue) {
+      this.currentSortField = '';
+      this.currentSortOrder = 0;
+      this.previousSearchValue = this.searchValue;
+      if (this.table) {
+        this.table.reset();
+      }
+    }
+  }
+
+  getFilteredAndSortedProbations(): Iprobationapproval[] {
+    if (!this.searchValue || this.searchValue.trim() === '') {
+      return this.probationDetails;
+    }
+    
+    const searchTerm = this.searchValue.toLowerCase().trim();
+    return this.probationDetails.filter((probation: Iprobationapproval) => {
+      const fusionEmployeeId = probation.entity?.fusionEmployeeId?.toLowerCase() || '';
+      const employeeName = probation.entity?.employeeName?.toLowerCase() || '';
+      const probationStartDate = probation.entity?.probationStartDate?.toLowerCase() || '';
+      const probationEndDate = probation.entity?.probationEndDate?.toLowerCase() || '';
+      
+      return fusionEmployeeId.includes(searchTerm) ||
+             employeeName.includes(searchTerm) ||
+             probationStartDate.includes(searchTerm) ||
+             probationEndDate.includes(searchTerm);
+    });
+  }
+
+  customSort(event: any): void {
+    const field = event.field;
+    
+    // Track current sort state for the clicked field
+    if (this.currentSortField === field) {
+      // Same field clicked - cycle through: asc (1) -> desc (-1) -> reset (0)
+      if (this.currentSortOrder === 1) {
+        // Currently ascending, change to descending
+        this.currentSortOrder = -1;
+        event.order = -1;
+      } else if (this.currentSortOrder === -1) {
+        // Currently descending, reset to original order
+        this.probationDetails = [...this.originalData];
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        if (this.table) {
+          this.table.reset();
+        }
+        return;
+      } else {
+        // Currently reset, change to ascending
+        this.currentSortOrder = 1;
+        event.order = 1;
+      }
+    } else {
+      // New field clicked - start with ascending
+      this.currentSortField = field;
+      this.currentSortOrder = 1;
+      event.order = 1;
+    }
+
+    event.data.sort((a: any, b: any) => {
+      let val1 = this.getNestedProperty(a, field);
+      let val2 = this.getNestedProperty(b, field);
+
+      // Handle string sorting
+      val1 = String(val1 ?? '').trim();
+      val2 = String(val2 ?? '').trim();
+      return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+    });
+  }
+
+  private getNestedProperty(obj: any, field: string): any {
+    return obj.entity?.[field] ?? '';
   }
 
 

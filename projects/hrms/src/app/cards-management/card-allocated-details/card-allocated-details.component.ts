@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
 import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
 import { CommonModule } from '@angular/common';
@@ -9,6 +9,8 @@ import { TranslateModule } from '@ngx-translate/core';
 import moment from 'moment';
 import { ChartModule } from 'primeng/chart';
 import { TabsModule } from 'primeng/tabs';
+import { TableModule } from 'primeng/table';
+import { Table } from 'primeng/table';
 import { Subject, takeUntil } from 'rxjs';
 import { Icardsdetails } from '../../Interfaces/cardsdetails.model';
 import { DateformatPipe } from '../../pipes/dateformat.pipe';
@@ -24,12 +26,13 @@ import { Select } from 'primeng/select';
 @Component({
   selector: 'app-card-allocated-details',
   imports: [CommonModule, TabsModule, FormsModule, Select, TranslateModule, RouterModule, ReactiveFormsModule,
-    NgbPopoverModule, ChartModule, NoDataFoundComponent, DataLoaderContentComponent, DateformatPipe, Paginator, InfoIconComponent],
+    NgbPopoverModule, ChartModule, NoDataFoundComponent, DataLoaderContentComponent, DateformatPipe, Paginator, InfoIconComponent, TableModule],
   templateUrl: './card-allocated-details.component.html',
   styleUrl: './card-allocated-details.component.scss',
 })
 
 export class CardAllocatedDetailsComponent implements OnInit, OnDestroy {
+  @ViewChild('cardAllocatedTable') cardAllocatedTable!: Table;
   hasPreviousPage!: Boolean;
   hasNextPage!: Boolean;
 
@@ -67,6 +70,9 @@ export class CardAllocatedDetailsComponent implements OnInit, OnDestroy {
   destroy$: Subject<boolean> = new Subject<boolean>();
   employeeId: any;
   allocated_history = [] as any;
+  originalCardDetails = [] as Icardsdetails[]; // Store original unsorted data
+  currentSortField: string = '';
+  currentSortOrder: number = 0; // 0 = no sort, 1 = asc, -1 = desc
   constructor(private authService: AuthService, private readonly router: Router, public http: HttpService, private modalService: NgbModal, private fb: FormBuilder,
     private conformationPopup: OpenModalService, public rbac: RbacService, public formValidations: FormValidationsService) { }
 
@@ -157,6 +163,7 @@ export class CardAllocatedDetailsComponent implements OnInit, OnDestroy {
         next: (res: any) => {
           // Transform data to include `employeeName`
           this.cardDetails = res.data.items;
+          this.originalCardDetails = [...this.cardDetails];
           this.collectionSize = res.data.totalCount;
           this.hasNextPage = res.data.hasNextPage;
           this.hasPreviousPage = res.data.hasPreviousPage;
@@ -221,6 +228,99 @@ export class CardAllocatedDetailsComponent implements OnInit, OnDestroy {
       }
     });
   }
+  getFilteredAndSortedCardDetails(): Icardsdetails[] {
+    if (!this.searchValue || this.searchValue.trim() === '') {
+      return this.cardDetails;
+    }
+    
+    const searchTerm = this.searchValue.toLowerCase().trim();
+    return this.cardDetails.filter((card: Icardsdetails) => {
+      const cardNumber = card.cardNumberMasked?.toLowerCase() || '';
+      const cardType = card.cardType?.toLowerCase() || '';
+      const cardHolderName = card.cardHolderName?.toLowerCase() || '';
+      const bankName = card.issuedBankName?.toLowerCase() || '';
+      const status = card.status?.toLowerCase() || '';
+      const allocatedTo = card.allocations?.employee?.name?.toLowerCase() || '';
+      const allocatedBy = card.allocations?.assignedBy?.name?.toLowerCase() || '';
+      
+      return cardNumber.includes(searchTerm) ||
+             cardType.includes(searchTerm) ||
+             cardHolderName.includes(searchTerm) ||
+             bankName.includes(searchTerm) ||
+             status.includes(searchTerm) ||
+             allocatedTo.includes(searchTerm) ||
+             allocatedBy.includes(searchTerm);
+    });
+  }
+
+  customSort(event: any): void {
+    const field = event.field;
+    
+    // Track current sort state for the clicked field
+    if (this.currentSortField === field) {
+      // Same field clicked - cycle through: asc (1) -> desc (-1) -> reset (0)
+      if (this.currentSortOrder === 1) {
+        // Currently ascending, change to descending
+        this.currentSortOrder = -1;
+        event.order = -1;
+      } else if (this.currentSortOrder === -1) {
+        // Currently descending, reset to original order
+        this.cardDetails = [...this.originalCardDetails];
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        if (this.cardAllocatedTable) {
+          this.cardAllocatedTable.reset();
+        }
+        return;
+      } else {
+        // Currently reset, change to ascending
+        this.currentSortOrder = 1;
+        event.order = 1;
+      }
+    } else {
+      // New field clicked - start with ascending
+      this.currentSortField = field;
+      this.currentSortOrder = 1;
+      event.order = 1;
+    }
+
+    event.data.sort((a: any, b: any) => {
+      let val1: any;
+      let val2: any;
+
+      // Handle nested allocation fields
+      if (field === 'allocatedTo') {
+        val1 = a.allocations?.employee?.name;
+        val2 = b.allocations?.employee?.name;
+      } else if (field === 'allocatedBy') {
+        val1 = a.allocations?.assignedBy?.name;
+        val2 = b.allocations?.assignedBy?.name;
+      } else if (field === 'allocatedDate') {
+        val1 = new Date(a.allocations?.allocatedDate);
+        val2 = new Date(b.allocations?.allocatedDate);
+        return event.order * (val1.getTime() - val2.getTime());
+      } else if (field === 'issuedDate') {
+        val1 = new Date(a.issuedDate);
+        val2 = new Date(b.issuedDate);
+        return event.order * (val1.getTime() - val2.getTime());
+      } else if (field === 'expiryDate') {
+        // Handle expiry date as MM/YYYY format
+        val1 = new Date(a.expiryYear, a.expiryMonth - 1);
+        val2 = new Date(b.expiryYear, b.expiryMonth - 1);
+        return event.order * (val1.getTime() - val2.getTime());
+      } else {
+        // Handle direct fields
+        val1 = a[field];
+        val2 = b[field];
+      }
+
+      // Handle string sorting for all other fields
+      val1 = String(val1 ?? '').trim();
+      val2 = String(val2 ?? '').trim();
+      return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+    });
+  }
+
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();

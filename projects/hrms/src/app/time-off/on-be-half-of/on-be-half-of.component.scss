@@ -1,5 +1,4 @@
 .graph-grid {
-
     // total leave summary
     .total-leave-balance-graph-content {
         width: 25rem !important;
@@ -15,7 +14,7 @@
 
         .leave-category-text {
             font-weight: 400;
-            font-size: 10px;
+            font-size: var(--fontsize10);
             color: #747474;
         }
     }
@@ -28,18 +27,17 @@
     .cards-grid-container {
         width: 100%;
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(16.5rem, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr));
 
         .leaves-category-card {
+            position: relative;
             width: 100%;
             height: 100%;
             padding: 0.75rem;
             background: #FFFFFF;
             border-radius: 0.625rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
             color: #222222;
+            overflow: hidden;
 
             .progress-content {
                 width: 70px;
@@ -48,8 +46,8 @@
 
             .circular-progress {
                 position: relative;
-                height: 68px;
-                width: 68px;
+                height: 64px;
+                width: 64px;
                 border-radius: 50%;
                 display: flex;
                 align-items: center;
@@ -58,8 +56,8 @@
                 &::before {
                     content: "";
                     position: absolute;
-                    height: 50px;
-                    width: 50px;
+                    height: 48px;
+                    width: 48px;
                     border-radius: 50%;
                     background: #FFFFFF;
                 }
@@ -71,12 +69,12 @@
 
                 .avaliable-leaves-text {
                     font-weight: 600;
-                    font-size: 12px;
+                    font-size: var(--fontsize10);
                 }
 
                 .total-leaves-text {
                     font-weight: 400;
-                    font-size: 10px;
+                    font-size: var(--fontsize10);
                 }
             }
 
@@ -93,7 +91,7 @@
 
             .leave-category-text {
                 font-weight: 400;
-                font-size: 10px;
+                font-size: var(--fontsize10);
                 text-align: center;
                 color: #848484;
             }
@@ -114,4 +112,28 @@
     background: #fff7ec !important;
     border: 1px solid #ff8000 !important;
     color: #ff8000 !important;
+}
+
+.frequency-chip {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+
+    .p-chip {
+        padding: 0.365rem 1rem 0.125rem 0.75rem !important;
+        border-radius: 0.5rem;
+    }
+
+    .p-chip-label {
+        font-size: var(--fontsize12) !important;
+        font-weight: 500 !important;
+    }
+}
+
+.custom-p-multiSelect-content .p-multiselect-option {
+    width: 150px !important;
+}
+
+.p-inputtext {
+    font-size: 0.8rem !important;
 }

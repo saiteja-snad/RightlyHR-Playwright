@@ -282,7 +282,7 @@ getTeam() {
       const params = {
         locationIds: locationIds,
         subLocationIds: subLocationIds,
-        year: selectedYear
+        // year: selectedYear
       };
 
       this.http.getDataWithQueryParams(`orgShifts/get-shifts`, params).pipe(takeUntil(this.destroy$)).subscribe({
@@ -454,6 +454,7 @@ getTeam() {
     leaveType: 'LEAVE CATEGORY',
     entitled: 'ENTITLED',
     availed: 'AVAILED',
+    frozenCount: 'FROZEN',
     balance: 'BALANCE',
     maxCarryForward: 'MAX CARRY FORWARD',
     actualCarryForward: 'ACTUAL CARRY FORWARD',
@@ -475,6 +476,7 @@ getTeam() {
     'LEAVE CATEGORY',
     'ENTITLED',
     'AVAILED',
+    'FROZEN',
     'BALANCE',
     'MAX CARRY FORWARD',
     'ACTUAL CARRY FORWARD',

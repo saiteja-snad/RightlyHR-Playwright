@@ -1,10 +1,12 @@
 
 import { CommonModule } from '@angular/common';
-import { Component, effect, OnDestroy, OnInit } from '@angular/core';
+import { Component, effect, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { TabsModule } from 'primeng/tabs';
+import { TableModule } from 'primeng/table';
+import { Table } from 'primeng/table';
 import { HttpService } from '../../services/http.service';
 import { Subject, takeUntil } from 'rxjs';
 import { OpenModalService } from '../../services/open-modal.service';
@@ -26,12 +28,13 @@ import { InfoIconComponent } from "../../icons/info-icon/info-icon.component";
 @Component({
   selector: 'app-card-details',
   imports: [CommonModule, TabsModule, FormsModule, TranslateModule, RouterModule, ReactiveFormsModule,
-    Select, NgbPopoverModule, ChartModule, NoDataFoundComponent, DataLoaderContentComponent, DateformatPipe, Paginator, InfoIconComponent],
+    Select, NgbPopoverModule, ChartModule, NoDataFoundComponent, DataLoaderContentComponent, DateformatPipe, Paginator, InfoIconComponent, TableModule],
   templateUrl: './card-details.component.html',
   styleUrl: './card-details.component.scss',
 })
 
 export class CardDetailsComponent implements OnInit, OnDestroy {
+  @ViewChild('cardDetailsTable') cardDetailsTable!: Table;
   hasPreviousPage!: Boolean;
   hasNextPage!: Boolean;
   searchQuery = '';
@@ -70,6 +73,9 @@ export class CardDetailsComponent implements OnInit, OnDestroy {
   holdDetailsForm!: FormGroup;
    reasonDetails=[] as any;
   allocated_history=[] as any;
+  originalCardDetails = [] as Icardsdetails[]; // Store original unsorted data
+  currentSortField: string = '';
+  currentSortOrder: number = 0; // 0 = no sort, 1 = asc, -1 = desc
   constructor(private readonly fb: FormBuilder, private authService: AuthService, public http: HttpService,private readonly router: Router,
     private modalService: NgbModal, private conformationPopup: OpenModalService, public rbac: RbacService,
     public formValidations: FormValidationsService) {
@@ -350,6 +356,7 @@ notPastYearValidator(): ValidatorFn {
       next: (res: any) => {
         // Transform data to include `employeeName`
         this.cardDetails = res.data.items;
+        this.originalCardDetails = [...this.cardDetails];
         this.collectionSize = res.data.totalCount;
         this.hasNextPage = res.data.hasNextPage;
         this.hasPreviousPage = res.data.hasPreviousPage;
@@ -493,6 +500,81 @@ notPastYearValidator(): ValidatorFn {
           err.error?.Message || 'Failed to allocate card.'
         );
       },
+    });
+  }
+
+  getFilteredAndSortedCardDetails(): Icardsdetails[] {
+    if (!this.searchValue || this.searchValue.trim() === '') {
+      return this.cardDetails;
+    }
+    
+    const searchTerm = this.searchValue.toLowerCase().trim();
+    return this.cardDetails.filter((card: Icardsdetails) => {
+      const cardNumber = card.cardNumberMasked?.toLowerCase() || '';
+      const cardType = card.cardType?.toLowerCase() || '';
+      const cardHolderName = card.cardHolderName?.toLowerCase() || '';
+      const bankName = card.issuedBankName?.toLowerCase() || '';
+      const status = card.status?.toLowerCase() || '';
+      
+      return cardNumber.includes(searchTerm) ||
+             cardType.includes(searchTerm) ||
+             cardHolderName.includes(searchTerm) ||
+             bankName.includes(searchTerm) ||
+             status.includes(searchTerm);
+    });
+  }
+
+  customSort(event: any): void {
+    const field = event.field;
+    
+    // Track current sort state for the clicked field
+    if (this.currentSortField === field) {
+      // Same field clicked - cycle through: asc (1) -> desc (-1) -> reset (0)
+      if (this.currentSortOrder === 1) {
+        // Currently ascending, change to descending
+        this.currentSortOrder = -1;
+        event.order = -1;
+      } else if (this.currentSortOrder === -1) {
+        // Currently descending, reset to original order
+        this.cardDetails = [...this.originalCardDetails];
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        if (this.cardDetailsTable) {
+          this.cardDetailsTable.reset();
+        }
+        return;
+      } else {
+        // Currently reset, change to ascending
+        this.currentSortOrder = 1;
+        event.order = 1;
+      }
+    } else {
+      // New field clicked - start with ascending
+      this.currentSortField = field;
+      this.currentSortOrder = 1;
+      event.order = 1;
+    }
+
+    event.data.sort((a: any, b: any) => {
+      let val1: any;
+      let val2: any;
+
+      // Handle different field types
+      if (field === 'issuedDate') {
+        val1 = new Date(a.issuedDate);
+        val2 = new Date(b.issuedDate);
+        return event.order * (val1.getTime() - val2.getTime());
+      } else if (field === 'expiryDate') {
+        // Handle expiry date as MM/YYYY format
+        val1 = new Date(a.expiryYear, a.expiryMonth - 1);
+        val2 = new Date(b.expiryYear, b.expiryMonth - 1);
+        return event.order * (val1.getTime() - val2.getTime());
+      } else {
+        // Handle string sorting for other fields
+        val1 = String(a[field] ?? '').trim();
+        val2 = String(b[field] ?? '').trim();
+        return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+      }
     });
   }
 

@@ -224,71 +224,85 @@ export class ProjectPhasesComponent implements OnInit, OnDestroy {
   }
 
   getPhaseData() {
-    this.loading = true;
+    let url = `ProjectPhases/list`;
     const params: any = {
-      projectId: this.projectId,
-      pageNumber: this.page,
-      pageSize: this.pageSize,
-    };
+        projectId: this.projectId,
+      };
+    if (this.rbac.allowedToAccess('View Assigned Projects.view') && !this.rbac.allowedToAccess('View All Projects.view')) {
+      params.employeeId = this.empinfo.employeeId;
+      const validStatuses = ['yet to start', 'in progress', 'extended'];
+      const filteredStatuses = this.selectedPhaseStatuses.filter(s =>
+        validStatuses.includes(s.toLowerCase())
+      );
 
-    const validStatuses = ['yet to start', 'in progress', 'extended'];
-    const filteredStatuses = this.selectedPhaseStatuses.filter(s =>
-      validStatuses.includes(s.toLowerCase())
-    );
+      if (filteredStatuses.length > 0) {
+        params.status = filteredStatuses.join(',');
+      } else {
+        params.status = 'yet to start,in progress,extended';
+      }
 
-    if (filteredStatuses.length > 0) {
-      params.status = filteredStatuses.join(',');
-    } else {
-      params.status = 'yet to start,in progress,extended';
+      // Date filter
+      if (this.selectedPhaseDateRange?.startDate) {
+        params.startDate = this.selectedPhaseDateRange.startDate;
+      }
+      if (this.selectedPhaseDateRange?.endDate) {
+        params.endDate = this.selectedPhaseDateRange.endDate;
+      }
+
+      if (this.selectedAuthorityIds.length > 0) {
+        params.timesheetApprovalAuthorityIds =
+          this.selectedAuthorityIds.join(',');
+      }
+
+      this.loading = true;
+
     }
 
-    if (this.searchValue?.trim()) {
-      params.searchTerm = this.searchValue.trim();
+    else{
+      const params: any = {
+        projectId: this.projectId,
+      };
+
+      const validStatuses = ['yet to start', 'in progress', 'extended'];
+      const filteredStatuses = this.selectedPhaseStatuses.filter(s =>
+        validStatuses.includes(s.toLowerCase())
+      );
+
+      if (filteredStatuses.length > 0) {
+        params.status = filteredStatuses.join(',');
+      } else {
+        params.status = 'yet to start,in progress,extended';
+      }
+
+      // Date filter
+      if (this.selectedPhaseDateRange?.startDate) {
+        params.startDate = this.selectedPhaseDateRange.startDate;
+      }
+      if (this.selectedPhaseDateRange?.endDate) {
+        params.endDate = this.selectedPhaseDateRange.endDate;
+      }
+
+      if (this.selectedAuthorityIds.length > 0) {
+        params.timesheetApprovalAuthorityIds =
+          this.selectedAuthorityIds.join(',');
+      }
+
+      this.loading = true;
     }
 
-    if (this.selectedPhaseDateRange?.startDate) {
-      params.startDate = this.selectedPhaseDateRange.startDate;
-    }
-    if (this.selectedPhaseDateRange?.endDate) {
-      params.endDate = this.selectedPhaseDateRange.endDate;
-    }
-
-    if (this.selectedAuthorityIds.length > 0) {
-      params.timesheetApprovalAuthorityIds =
-        this.selectedAuthorityIds.join(',');
-    }
-
-    this.subscription = this.http.getDataIncludeParams('ProjectPhases/list', params).subscribe({
-      next: (data: any) => {
-        this.phaseData = data.data || [];
-        this.collectionSize = data?.pagination?.totalRecords || 0;
-        this.loading = false;
-      },
-      error: () => {
-        this.phaseData = [];
-        this.collectionSize = 0;
-        this.loading = false;
-      },
-    });
-  }
-
-  onSearchChange() {
-    this.searchSubject.next(this.searchValue || '');
-  }
-
-  onPageSizeChange(newPageSize: number) {
-    this.pageSize = newPageSize;
-    this.rows = newPageSize;
-    this.page = 1;
-    this.first = 0;
-    this.getPhaseData();
-  }
-
-  onPageChange(event: any) {
-    this.page = event.page + 1;
-    this.pageSize = event.rows;
-    this.first = event.first;
-    this.getPhaseData();
+    
+    this.subscription = this.http
+      .getDataIncludeParams(url, params)
+      .subscribe({
+        next: (data: any) => {
+          this.phaseData = data.data || [];
+          this.loading = false;
+        },
+        error: () => {
+          this.phaseData = [];
+          this.loading = false;
+        },
+      });
   }
 
   StartndendDateValidation() {

@@ -1,60 +1,52 @@
 import { Component, Input } from '@angular/core';
-import html2canvas from 'html2canvas';
-import jsPDF from 'jspdf';
+import * as pdfMake from 'pdfmake/build/pdfmake';
+import { customVfs } from '../../../letters-builder-files/custom-fonts-vfs';
+import { buildProbationConfirmationLetterDoc } from '../../../letters-builder-files/probation-confirmation-letter.builder';
 import moment from 'moment';
 import { IAddress, IaddressemployeeDetails } from '../../../Interfaces/letters-model';
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
-import { Router } from '@angular/router';
 import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { DateformatPipe } from "../../../pipes/dateformat.pipe";
 import { CommonModule } from '@angular/common';
 import { ConfirmationIconComponent } from "../../../icons/confirmation-icon/confirmation-icon.component";
-import { LettersheaderComponent } from "../../../shared/letters-shared-content/lettersheader/lettersheader.component";
+import { AuthService } from '../../../services/auth.service';
 import { LetterFooterComponent } from "../../../shared/letters-shared-content/letter-footer/letter-footer.component";
-
+import { LettersheaderComponent } from "../../../shared/letters-shared-content/lettersheader/lettersheader.component";
+import { fetchLetterAssets, setupLetterPdfMake } from '../../../letters-builder-files/letter-pdf.utils';
 @Component({
   selector: 'app-probation-conformition-letter-acknowledgement',
-  imports: [DateformatPipe, CommonModule, ConfirmationIconComponent, LettersheaderComponent, LetterFooterComponent],
+  imports: [DateformatPipe, CommonModule, ConfirmationIconComponent, LetterFooterComponent, LettersheaderComponent],
   templateUrl: './probation-conformition-letter-acknowledgement.component.html',
   styleUrl: './probation-conformition-letter-acknowledgement.component.scss'
 })
-export class ProbationConformitionLetterAcknowledgementComponent {
-@Input() letterdata: any;
-  subscription!: Subscription;
-prodationeffectivedate:any
-  constructor(
-    private http: HttpService,
-    private router: Router,
-    config: NgbModalConfig,
-    private modalService: NgbModal,
-    private confirmation: OpenModalService
-  ) {
-    config.backdrop = 'static';
-    config.keyboard = false;
-  }
 
+export class ProbationConformitionLetterAcknowledgementComponent {
+  @Input() letterdata: any;
+  subscription!: Subscription;
+  prodationeffectivedate: any;
   Employeeinfo = {} as any;
   employeeName: any
   probationExtensionLetterData = {} as any;
 
+  constructor(private http: HttpService, config: NgbModalConfig, private modalService: NgbModal, private confirmation: OpenModalService) {
+    config.backdrop = 'static';
+    config.keyboard = false;
+  }
+
   ngOnInit(): void {
-    
     this.Employeeinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
-    console.log(this.Employeeinfo);
-    this.employeeName = `${this.Employeeinfo.firstName ?? ''} ${this.Employeeinfo.middleName ?? ''
-      } ${this.Employeeinfo.lastName ?? ''}`;
+    this.employeeName = `${this.Employeeinfo.firstName ?? ''} ${this.Employeeinfo.middleName ?? ''}
+    ${this.Employeeinfo.lastName ?? ''}`;
     this.probationExtensionLetterData = this.Employeeinfo;
     this.Onclick(this.Employeeinfo.employeeId);
     this.getEmployeeId();
   }
 
-  
   fusionEmpId: any;
   Onclick(employeeid: any) {
     this.fusionEmpId = employeeid;
-    console.log(employeeid);
     this.probationExtensionLetterData = {}
     this.probationExtensionLetterData = this.Employeeinfo;
     this.getProbationDetailsbyId();
@@ -66,69 +58,56 @@ prodationeffectivedate:any
   //get employee ids for dropdown
   employeeiddetails = [] as any;
   getEmployeeId() {
-    this.subscription = this.http
-      .getData(`ProbationFlow/getAllProbationEmployees?substatus=${'Probation Confirmed'}`)
-      .subscribe({
-        next: (data: any) => {
-          console.log(data);
-          this.employeeiddetails = data as IaddressemployeeDetails[];
-          console.log(this.employeeiddetails);
-        },
-        error: (reason: any) => {
-
-          console.log(reason);
-        },
-      });
+    this.subscription = this.http.getData(`ProbationFlow/getAllProbationEmployees?substatus=${'Probation Confirmed'}`).subscribe({
+      next: (data: any) => {
+        this.employeeiddetails = data as IaddressemployeeDetails[];
+      },
+      error: (reason: any) => {
+        console.log(reason);
+      },
+    });
   }
-
 
   probationDate: any;
   getProbationDetailsbyId() {
-    this.subscription = this.http.getData(`ProbationFlow/getbyemployeeId/${this.Employeeinfo?.employeeId}`)
-      .subscribe({
-        next: (data: any) => {
-          console.log(data);
-
-          if (data && data.length > 0) {
-            const probationData = data[0]; // Use first record
-
-            this.probationExtensionLetterData = probationData;
-            this.probationExtensionLetterData.probationmonths = this.convertDaysToMonths(
-              probationData.probationEndDate,
-              probationData.probationExtendedDate
-            );
-          }
-          // this.probationDate = data[0].issuedDate;
-          this.probationDate= this.letterdata.issuedDate;
-          this.probationExtensionLetterData.docType = this.letterdata.docType;
-          this.probationExtensionLetterData.effectiveDate=this.letterdata?.effectiveDate
-          console.log('Issued Date:', this.probationDate);
-          this.getAuthorityDetails();
-        },
-        error: (error) => {
-          console.error('Error fetching probation details:', error);
+    this.subscription = this.http.getData(`ProbationFlow/getbyemployeeId/${this.Employeeinfo?.employeeId}`).subscribe({
+      next: (data: any) => {
+        if (data && data.length > 0) {
+          const probationData = data[0]; // Use first record
+          this.probationExtensionLetterData = probationData;
+          this.probationExtensionLetterData.probationmonths = this.convertDaysToMonths(
+            probationData.probationEndDate,
+            probationData.probationExtendedDate
+          );
         }
-      });
+        // this.probationDate = data[0].issuedDate;
+        this.probationDate = this.letterdata.issuedDate;
+        this.probationExtensionLetterData.docType = this.letterdata.docType;
+        this.probationExtensionLetterData.effectiveDate = this.letterdata?.effectiveDate
+        this.getAuthorityDetails();
+      },
+      error: (error) => {
+        console.error('Error fetching probation details:', error);
+      }
+    });
   }
 
-  //get offer letter Authority list 
+  //get offer letter Authority list
   authorityDesignation!: string | null;
   authorityDetails = [] as any;
   getAuthorityDetails() {
     let offertype = 'Probation Confirmation Letter'
     this.subscription = this.http.getData(`SignaturesList?LetterType=${offertype}`).subscribe({
       next: (data: any) => {
-        console.log(data);
         this.authorityDetails = data
         if (this.letterdata.authoritySignature) {
           if (this.authorityDetails?.length > 0) {
             const signatureAuthorityDetails = this.authorityDetails.find(
               (c: any) => (c.employeeId == this.letterdata.authoritySignature)
             );
-            console.log(signatureAuthorityDetails)
             if (signatureAuthorityDetails) {
               this.authorityDesignation = signatureAuthorityDetails.designation;
-              this.probationExtensionLetterData.authorityName = `${signatureAuthorityDetails?.firstName ?? ''} ${signatureAuthorityDetails?.middleName ? signatureAuthorityDetails?.middleName : ''} ${signatureAuthorityDetails?.lastName ?? ''}`;
+              this.probationExtensionLetterData.authorityName = [signatureAuthorityDetails?.firstName, signatureAuthorityDetails?.middleName, signatureAuthorityDetails?.lastName].filter(Boolean).join(' ');
             }
           }
         }
@@ -141,12 +120,9 @@ prodationeffectivedate:any
   getProbationRequest(EmployeeId: any) {
     this.subscription = this.http.getData(`ProbationFlow/getbyemployeeId/${this.Employeeinfo?.employeeId}`).subscribe({
       next: (response: any) => {
-        console.log(response);
-
         this.getProbationDetails = response.find((ele: any) => {
           return (ele.status?.toLowerCase() === 'extended');
         });
-        console.log(this.getProbationDetails);
       }
     })
   }
@@ -157,59 +133,47 @@ prodationeffectivedate:any
   workLocation: any
   department: any
   getJobdetails() {
-    this.subscription = this.http
-      .getData(`JobDetails/Empname/${this.Employeeinfo?.employeeId}`)
-      .subscribe({
-        next: (data: any) => {
-          const today = new Date();
-          const pastEffectiveJobs = data.filter((job: any) =>
-            new Date(job.effectiveDate) <= today
-          );
-          pastEffectiveJobs.sort((a: any, b: any) =>
-            new Date(b.effectiveDate).getTime() - new Date(a.effectiveDate).getTime()
-          );
-          const res = pastEffectiveJobs[0];
-          this.employeeJobDetails = res;
-          this.jobRole = res.jobRole;
-          this.workLocation = `${res.locationName}, ${res.sublocationName}`;
-          this.department = res.department
-
-          console.log(this.jobRole);
-        },
-        error: (reason: any) => {
-          console.log(reason);
-        },
-      });
+    this.subscription = this.http.getData(`JobDetails/Empname/${this.Employeeinfo?.employeeId}`).subscribe({
+      next: (data: any) => {
+        const today = new Date();
+        const pastEffectiveJobs = data.filter((job: any) =>
+          new Date(job.effectiveDate) <= today
+        );
+        pastEffectiveJobs.sort((a: any, b: any) =>
+          new Date(b.effectiveDate).getTime() - new Date(a.effectiveDate).getTime()
+        );
+        const res = pastEffectiveJobs[0];
+        this.employeeJobDetails = res;
+        this.jobRole = res.jobRole;
+        this.workLocation = `${res.locationName}, ${res.sublocationName}`;
+        this.department = res.department
+      },
+      error: (reason: any) => {
+        console.log(reason);
+      },
+    });
   }
 
-  //function to get the address 
+  //function to get the address
   employeeaddress = [] as any;
   getEmployeeAddress(Value: any) {
     let EmployeeId = Value?.employeeId
-    console.log(Value);
-
-    console.log(EmployeeId);
-
     this.subscription = this.http.getData(`Employeedata/getProspectiveEmployeedata/${this.Employeeinfo?.employeeId}`).subscribe({
       next: (data: any) => {
-        console.log(data);
         this.employeeaddress = data as IAddress[];
       }
     })
   }
 
-  //funtion to get the months 
+  //funtion to get the months
   convertDaysToMonths(probationEndDate: string, probationExtendedDate: string): string {
     // Assume an average month length of 30.44 days (which accounts for leap years)
     const endDate = moment(probationEndDate);
     const extendedDate = moment(probationExtendedDate);
-
     // Calculate the difference in days between the two dates
     const daysDifference = extendedDate.diff(endDate, 'days');
-
     // Assume an average month length of 30.44 days (which accounts for leap years)
     const averageDaysPerMonth = 365.25 / 12;
-
     // Convert days to months based on the average days per month
     let months = daysDifference / averageDaysPerMonth;
     if (months < 0) {
@@ -229,98 +193,79 @@ prodationeffectivedate:any
   async onAppointmentLetterSubmit() {
     this.isLoading = true;
     const data = this.probationExtensionLetterData;
-    console.log(data);
-    const pdf = new jsPDF('p', 'mm', 'a4');
-    const imgWidth = pdf.internal.pageSize.getWidth();
-    const imgHeight = pdf.internal.pageSize.getHeight();
 
-    const pdfContents = [
-      'pdfContent',
+       const isSoftCopy = !!data.docType;
 
-    ]; // Add more content IDs if needed
-    // Create a single canvas to combine all content elements
-    const combinedCanvas = document.createElement('canvas');
-    combinedCanvas.width = imgWidth;
-    combinedCanvas.height = pdfContents.length * imgHeight;
-    const imagesData = [];
-    this.isLoading = true;
+    const [assets, pm] = await Promise.all([
+      fetchLetterAssets(isSoftCopy),
+      setupLetterPdfMake(),
+    ]);
 
-    for (const contentId of pdfContents) {
-      const pdfContent = document.getElementById(contentId);
-      if (pdfContent) {
-        const canvas = await html2canvas(pdfContent, { scale: 3 });
-        const imgData = canvas.toDataURL('image/png');
-        const imgHeight = (canvas.height * imgWidth) / canvas.width;
-        imagesData.push({ imgData, imgHeight });
-      }
-    }
-
-    // Add all images to the PDF except for the last one
-    for (let i = 0; i < imagesData.length - 1; i++) {
-      const imageData = imagesData[i];
-      pdf.addImage(
-        imageData.imgData,
-        'PNG',
-        0,
-        0,
-        imgWidth,
-        imageData.imgHeight,
-        '',
-        'FAST'
-      );
-      pdf.addPage(); // Add a new page for the next image (except for the last one)
-    }
-
-    // Add the last image without adding a new page
-    if (imagesData.length > 0) {
-      const lastImageData = imagesData[imagesData.length - 1];
-      pdf.addImage(
-        lastImageData.imgData,
-        'PNG',
-        0,
-        0,
-        imgWidth,
-        lastImageData.imgHeight,
-        '',
-        'FAST'
-      );
-    }
-
-    // const fileName = `${data.firstName}${data.middleName ? `_${data.middleName}` : ''}${data.lastName ? `_${data.lastName}` : ''}_${new Date().getTime()}_ProbationExtensionLetter.pdf`;
-    // pdf.save(fileName);
-    const middleNamePart = data.middleName && data.middleName.trim() !== '' ? `_${data.middleName}` : '';
-    const lastNamePart = data.lastName && data.lastName.trim() !== '' ? `_${data.lastName}` : '';
-    const fileName = `${data.firstName}${middleNamePart}${lastNamePart}_${new Date().getTime()}_ProbationExtensionLetter.pdf`;
-    pdf.save(fileName);
-    const blob = pdf.output('blob');
-    console.log(blob);
-    //creating form file to upload into AZure
-    this.probationletterFile = new File([blob], fileName, {
-      type: 'application/pdf',
+    const docDef = buildProbationConfirmationLetterDoc({
+      firstName: this.Employeeinfo.firstName,
+      middleName: this.Employeeinfo.middleName,
+      lastName: this.Employeeinfo.lastName,
+      fusionEmpId: String(data.employeeId ?? ''),
+      jobRole: this.jobRole,
+      department: this.department,
+      workLocation: this.workLocation,
+      issuedDate: this.probationDate,
+      effectiveDate: data.effectiveDate,
+      authorityName: data.authorityName ?? '',
+      authorityDesignation: this.authorityDesignation ?? '',
+       backgroundImageBase64: assets.backgroundImageBase64,
+      headerLogoBase64: assets.headerLogoBase64,
+      useVerdanaFont: true,
+      useAutographyFont: true,
+      employeeSignatureDate: new Date().toISOString(),
     });
+
+    const blob: Blob = await pm.createPdf(docDef).getBlob();
+    const firstName = this.Employeeinfo.firstName ?? '';
+    const middleNamePart = this.Employeeinfo.middleName?.trim() ? `_${this.Employeeinfo.middleName}` : '';
+    const lastNamePart = this.Employeeinfo.lastName?.trim() ? `_${this.Employeeinfo.lastName}` : '';
+    const fileName = `${firstName}${middleNamePart}${lastNamePart}_${new Date().getTime()}_ProbationConfirmationLetter_Signed.pdf`;
+    this.probationletterFile = new File([blob], fileName, { type: 'application/pdf' });
     this.uploadAppointLetter();
   }
 
+  private fetchImageAsBase64(url: string): Promise<string> {
+    return fetch(url).then(res => res.blob()).then(blob => new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result as string);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    }));
+  }
+
+  private async getFileBase64(url: string): Promise<string | null> {
+    try {
+      const response = await fetch(url);
+      if (!response.ok) return null;
+      const buffer = await response.arrayBuffer();
+      const bytes = new Uint8Array(buffer);
+      let binary = '';
+      for (let i = 0; i < bytes.byteLength; i++) {
+        binary += String.fromCharCode(bytes[i]);
+      }
+      return btoa(binary);
+    } catch {
+      return null;
+    }
+  }
 
   uploadAppointLetter() {
     const filePath = `/FusionDocuments/Employee Documents/Probation Documents/${this.Employeeinfo.employeeId}`;
-    this.subscription = this.http
-      .uploadFileWithQuery(
-        'FileSystem/uploadfiletodirectory',
-        filePath,
-        this.probationletterFile
-      )
-      .subscribe({
-        next: (data: any) => {
-          if (data) {
-            this.postacknowledgement(data.path);
-            console.log(data);
-          }
-        },
-        error: (reason: any) => {
-          console.log(reason);
-        },
-      });
+    this.subscription = this.http.uploadFileWithQuery('FileSystem/uploadfiletodirectory', filePath, this.probationletterFile).subscribe({
+      next: (data: any) => {
+        if (data) {
+          this.postacknowledgement(data.path);
+        }
+      },
+      error: (reason: any) => {
+        console.log(reason);
+      },
+    });
   }
 
   postacknowledgement(filePath: string) {
@@ -333,29 +278,26 @@ prodationeffectivedate:any
       candidateStatus: 'Acknowledged',
       // status: 'Acknowledged',
       generatedDate: this.letterdata.generatedDate,
-      generatedBy:  this.letterdata.generatedBy,
+      generatedBy: this.letterdata.generatedBy,
       issuedDate: this.letterdata.issuedDate,
     };
-    this.subscription = this.http
-      .putData('LetterAcknowledgementDetails/updateAcknowledgement', payload)
-      .subscribe({
-        next: (data: any) => {
-          console.log(data);
-          this.isacknowledged = true;
-          this.isLoading = false;
-          this.confirmation.openSuccessModal('Probation Confirmation Letter Acknowledged Successfully');
-          setTimeout(() => {
-            this.modalService.dismissAll();
-            this.http.triggerRefresh();
-          }, 2000)
-        },
-        error: (error: any) => {
-          console.error('Error:', error);
-          this.isacknowledged = false;
-          this.isLoading = false;
-          this.confirmation.openErrorModal(error.error.error);
-        },
-      });
+    this.subscription = this.http.putData('LetterAcknowledgementDetails/updateAcknowledgement', payload).subscribe({
+      next: (data: any) => {
+        this.isacknowledged = true;
+        this.isLoading = false;
+        this.confirmation.openSuccessModal('Probation Confirmation Letter Acknowledged Successfully');
+        setTimeout(() => {
+          this.modalService.dismissAll();
+          this.http.triggerRefresh();
+        }, 2000)
+      },
+      error: (error: any) => {
+        console.error('Error:', error);
+        this.isacknowledged = false;
+        this.isLoading = false;
+        this.confirmation.openErrorModal(error.error.error);
+      },
+    });
   }
 
   ngOnDestroy(): void {
@@ -363,7 +305,4 @@ prodationeffectivedate:any
       this.subscription.unsubscribe();
     }
   }
-
-
-
 }

@@ -1,20 +1,21 @@
 <div class="custom-main-component-container">
     <div class="custom-table-content">
         @if(!loading){
-        <table class="w-100">
-            <thead>
-                <th>{{ 'Date' | translate }}</th>
-                <th>{{ 'Leave Type' | translate }}</th>
-                <th>{{ 'Duration(In Days)' | translate }}</th>
-                <th>{{ 'Availed' | translate }}</th>
-                <th>{{ 'Start Date' | translate }}</th>
-                <th>{{ 'End Date' | translate }}</th>
-                <th class="text-center">{{ 'Reason' | translate }}</th>
-                <th>{{ 'Status' | translate }}</th>
-            </thead>
-            <tbody>
-                @if(waitingForApprovalLeaves.length > 0){
-                <tr *ngFor="let lev of waitingForApprovalLeaves">
+        <p-table #waitingForApprovalTable [value]="waitingForApprovalLeaves" [tableStyle]="{'width': '100%'}" [customSort]="true" (sortFunction)="customSort($event)">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th pSortableColumn="date">{{ 'Date' | translate }} <p-sortIcon field="date" /></th>
+                    <th pSortableColumn="categoryName">{{ 'Leave Type' | translate }} <p-sortIcon field="categoryName" /></th>
+                    <th pSortableColumn="duration">{{ 'Duration(In Days)' | translate }} <p-sortIcon field="duration" /></th>
+                    <th pSortableColumn="durationType">{{ 'Availed' | translate }} <p-sortIcon field="durationType" /></th>
+                    <th pSortableColumn="startdate">{{ 'Start Date' | translate }} <p-sortIcon field="startdate" /></th>
+                    <th pSortableColumn="enddate">{{ 'End Date' | translate }} <p-sortIcon field="enddate" /></th>
+                    <th class="text-center">{{ 'Reason' | translate }}</th>
+                    <th pSortableColumn="status">{{ 'Status' | translate }} <p-sortIcon field="status" /></th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-lev>
+                <tr>
                     <td>{{lev.date | dateformat}}</td>
                     <td>{{lev.categoryName}}</td>
                     <td class="text-center">
@@ -41,14 +42,17 @@
                     </td>
                     <td>{{lev.status}}</td>
                 </tr>
-                }
-                @else {
-                <tr class="table-placeholder">
-                    <app-no-data-found></app-no-data-found>
-                </tr>
-                }
-            </tbody>
-        </table>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+                <div class="wrapper">
+                    <tr>
+                        <td colspan="8">
+                            <app-no-data-found />
+                        </td>
+                    </tr>
+                </div>
+            </ng-template>
+        </p-table>
     }
     @else {
          <app-data-loader-content />

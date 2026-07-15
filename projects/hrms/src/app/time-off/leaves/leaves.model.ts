@@ -182,3 +182,34 @@ export interface EmployeeLeaveLedger {
   startDate: string; // ISO Date string
   endDate: string; // ISO Date string
 }
+
+export interface CycleRow {
+  categoryId: number;
+  categoryName: string;
+  categoryCode: string;
+  categoryColor: string;
+  entitled: number;
+  carryForwardPrevYear: number;
+  totalEntitlement: number;
+  availed: number;
+  lapsed: number;
+  frozen: number;
+  carryForward: number;
+  balance: number;
+  cycleStart: string;
+  cycleEnd: string;
+  cycleLabel: string;
+}
+export interface FrequencySummary {
+  frequencyType: string;
+  startDate: string;
+  endDate?: string;
+  categories: CycleRow[];
+}
+
+export interface FrequencyGroup {
+  label: string;
+  startDate: string;
+  endDate: string;
+  rows: CycleRow[];
+}

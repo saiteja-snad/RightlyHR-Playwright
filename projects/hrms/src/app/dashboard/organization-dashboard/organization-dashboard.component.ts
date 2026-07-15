@@ -28,7 +28,7 @@ import { AccessNavigationService } from '../../services/access-navigation.servic
 @Component({
   selector: 'app-organization-dashboard',
   imports: [CommonModule, RouterModule, FormsModule, TranslateModule, NgbPopoverModule, ModuleInfoIconComponent,
-    ChartModule, Skeleton, AccordionModule, ProfileIconComponent, NoDataFoundComponent, 
+    ChartModule, Skeleton, AccordionModule, ProfileIconComponent, NoDataFoundComponent,
     DatePicker, TabsModule, Select],
   templateUrl: './organization-dashboard.component.html',
   styleUrl: './organization-dashboard.component.scss',
@@ -121,12 +121,17 @@ legendList = [
       const ctx = chart.ctx;
       const isHorizontal = chart.config?.options?.indexAxis === 'y';
       const isStacked = chart.config?.options?.scales?.y?.stacked || chart.config?.options?.scales?.x?.stacked;
+      const clickableLabelRegions: Array<{ left: number; right: number; top: number; bottom: number }> = [];
+      const hasClickableLabels = chart.config?.options?.plugins?.datalabels?.cursor === 'pointer';
 
       if (isHorizontal) {
         // Check if user has permission to view employee list for gender chart
         const hasViewPermission = this.rbac.allowedToAccess('Headcount by Gender View Employee List.view');
-        if (!hasViewPermission) return; // Don't draw underline if no permission
-        
+        if (!hasViewPermission) {
+          chart.$clickableLabelRegions = [];
+          return;
+        }
+
         chart.data.datasets.forEach((dataset: any, dsIndex: number) => {
           const meta = chart.getDatasetMeta(dsIndex);
           if (meta.hidden) return;
@@ -143,6 +148,14 @@ legendList = [
             ctx.moveTo(element.x + 8, element.y + 7);
             ctx.lineTo(element.x + 8 + textWidth, element.y + 7);
             ctx.stroke();
+            if (hasClickableLabels) {
+              clickableLabelRegions.push({
+                left: element.x + 8,
+                right: element.x + 8 + textWidth,
+                top: element.y - 8,
+                bottom: element.y + 8
+              });
+            }
             ctx.restore();
           });
         });
@@ -170,6 +183,14 @@ legendList = [
           ctx.moveTo(element.x - textWidth / 2, element.y - 8);
           ctx.lineTo(element.x + textWidth / 2, element.y - 8);
           ctx.stroke();
+          if (hasClickableLabels) {
+            clickableLabelRegions.push({
+              left: element.x - textWidth / 2,
+              right: element.x + textWidth / 2,
+              top: element.y - 20,
+              bottom: element.y - 2
+            });
+          }
           ctx.restore();
         }
       } else {
@@ -188,10 +209,37 @@ legendList = [
             ctx.moveTo(element.x - textWidth / 2, element.y - 8);
             ctx.lineTo(element.x + textWidth / 2, element.y - 8);
             ctx.stroke();
+            if (hasClickableLabels) {
+              clickableLabelRegions.push({
+                left: element.x - textWidth / 2,
+                right: element.x + textWidth / 2,
+                top: element.y - 20,
+                bottom: element.y - 2
+              });
+            }
             ctx.restore();
           });
         });
       }
+      chart.$clickableLabelRegions = clickableLabelRegions;
+    },
+    afterEvent: (chart: any, args: any) => {
+      const event = args?.event;
+      if (!event || !chart?.canvas) return;
+      if (event.type === 'mouseout') {
+        chart.canvas.style.cursor = 'default';
+        return;
+      }
+
+      const regions = chart.$clickableLabelRegions || [];
+      const isOverClickableLabel = regions.some((region: any) =>
+        event.x >= region.left &&
+        event.x <= region.right &&
+        event.y >= region.top &&
+        event.y <= region.bottom
+      );
+
+      chart.canvas.style.cursor = isOverClickableLabel ? 'pointer' : 'default';
     }
   };
   selectedDate!: Date;
@@ -278,6 +326,8 @@ legendList = [
   approvalsOverviewLoader = false;
   approvalsList: any[] = [];
   selectedApprovalEmployee: any;
+  selectedEmployeeClaims: string[] | null = null;
+  approvalsEmployeeClaimsLoader = false;
   // employee experience variables
   experienceDetailsLoader = false;
   experienceChartData: any;
@@ -382,6 +432,7 @@ legendList = [
         this.departmentDetails = data as IDepartment[];
         this.departmentDropdownOptions = [
           { departmentName: 'All', sno: null },
+          { departmentName: 'No Department', sno: 0 },
           ...this.departmentDetails
         ];
         this.departDropdownOptions = [...this.departmentDropdownOptions];
@@ -699,14 +750,14 @@ legendList = [
     const labels = departments.map((d: any) => d.departmentName);
     const headCounts = departments.map((d: any) => d.headCount);
     const backgroundColors = departments.map((d: any) => d.meta?.graphData?.color ? d.meta.graphData.color : primaryColor);
-    
+
     const maxValue = Math.max(...headCounts, 0);
     let stepSize = 5;
     if (maxValue > 50) stepSize = 10;
     if (maxValue > 100) stepSize = 20;
     if (maxValue > 200) stepSize = 50;
     const suggestedMax = Math.ceil((maxValue * 1.15) / stepSize) * stepSize;
-    
+
     this.departmentHeadCountChartData = {
       labels,
       datasets: [
@@ -744,23 +795,17 @@ legendList = [
           anchor: 'end',
           align: 'end',
           color: '#000',
+          cursor: 'pointer',
           font: {
             weight: 'bold',
             size: 10
           },
           formatter: (value: any) => value,
-          cursor: 'pointer',
           listeners: {
             click: (context: any) => {
               const dept = this.departmentRawData[context.dataIndex];
               if (!dept?.headCount) return;
               this.openDepartmentOffcanvas(dept);
-            },
-            enter: (context: any) => {
-              context.chart.canvas.style.cursor = 'pointer';
-            },
-            leave: (context: any) => {
-              context.chart.canvas.style.cursor = 'default';
             }
           }
         }
@@ -988,18 +1033,6 @@ legendList = [
           maintainAspectRatio: false,
           indexAxis: 'y',
           layout: { padding: { right: 30 } },
-          onClick: (_event: any, elements: any[]) => {
-            if (!this.rbac.allowedToAccess('Headcount by Gender View Employee List.view') || !elements.length) return;
-            const dataIndex = elements[0].index;
-            const gender = labels[dataIndex];
-            const count = counts[dataIndex];
-            if (!count) return;
-            this.openGenderOffcanvas(gender, count);
-          },
-          onHover: (_event: any, elements: any[], chart: any) => {
-            const hasViewPermission = this.rbac.allowedToAccess('Headcount by Gender View Employee List.view');
-            chart.canvas.style.cursor = (hasViewPermission && elements.length) ? 'pointer' : 'default';
-          },
           plugins: {
             legend: { display: false },
             datalabels: {
@@ -1008,6 +1041,7 @@ legendList = [
               color: '#000',
               font: { weight: 'bold', size: 12 },
               formatter: (value: number) => value,
+              cursor: this.rbac.allowedToAccess('Headcount by Gender View Employee List.view') ? 'pointer' : 'default',
               listeners: {
                 click: (context: any) => {
                   if (!this.rbac.allowedToAccess('Headcount by Gender View Employee List.view')) return;
@@ -1015,14 +1049,6 @@ legendList = [
                   const count = counts[context.dataIndex];
                   if (!count) return;
                   this.openGenderOffcanvas(gender, count);
-                },
-                enter: (context: any) => {
-                  if (!this.rbac.allowedToAccess('Headcount by Gender View Employee List.view')) return;
-                  context.chart.canvas.style.cursor = 'pointer';
-                  
-                },
-                leave: (context: any) => {
-                  context.chart.canvas.style.cursor = 'default';
                 }
               }
             }
@@ -1101,13 +1127,13 @@ legendList = [
     const formattedDate = this.formatDate(date);
     this.availabilityLoading = true;
     this.showAvailabilityMessage = false;
-    
+
     setTimeout(() => {
       if (this.availabilityLoading) {
         this.showAvailabilityMessage = true;
       }
     }, 2000);
-    
+
     let apiUrl = `v2/Employeedata/OrgSummary?date=${formattedDate}`;
     if (this.selectedDepartId !== null && this.selectedDepartId !== undefined) {
       apiUrl += `&deptId=${this.selectedDepartId}`;
@@ -1120,7 +1146,7 @@ legendList = [
         this.OffCanvasemployeeList = res.employees;
         // Total = all except absent
         this.teamTotal = (this.teamSummary.inOffice || 0) + (this.teamSummary.halfDay || 0) + (this.teamSummary.wfh || 0)
-          + (this.teamSummary.leave || 0) + (this.teamSummary.absent || 0) + (this.teamSummary.remote || 0) + 
+          + (this.teamSummary.leave || 0) + (this.teamSummary.absent || 0) + (this.teamSummary.remote || 0) +
           (this.teamSummary.weekend || 0) + (this.teamSummary.holiday || 0) + (this.teamSummary.yetToLogin || 0);
         this.buildTeamChart();
       },
@@ -1401,6 +1427,21 @@ legendList = [
     };
   }
 
+  getPermissionDurationChips(permissionDuration: string | string[] | null | undefined): string[] {
+    if (Array.isArray(permissionDuration)) {
+      return permissionDuration
+        .map((duration) => duration?.trim())
+        .filter((duration): duration is string => !!duration);
+    }
+
+    if (typeof permissionDuration !== 'string') return [];
+
+    return permissionDuration
+      .split(',')
+      .map((duration) => duration.trim())
+      .filter((duration) => duration.length > 0);
+  }
+
   hexToRgba(hex: string, opacity: number): string {
     const r = parseInt(hex.slice(1, 3), 16);
     const g = parseInt(hex.slice(3, 5), 16);
@@ -1545,7 +1586,7 @@ legendList = [
     // Collect all unique shift names across all locations
     const allShifts = new Set<string>();
     const subLocationLabels: string[] = [];
-    
+
     dataArray.forEach((location: any) => {
       location.subLocations?.forEach((subLoc: any) => {
         subLocationLabels.push(subLoc.subLocationName);
@@ -1571,6 +1612,26 @@ legendList = [
     Array.from(allShifts).forEach((shift, index) => {
       shiftColors[shift] = colorPalette[index % colorPalette.length];
     });
+
+    const getShiftSegmentDetails = (datasetIndex: number, dataIndex: number) => {
+      const shiftName = datasets[datasetIndex]?.label;
+      const subLocations: any[] = [];
+
+      dataArray.forEach((location: any) => {
+        location.subLocations?.forEach((subLoc: any) => subLocations.push(subLoc));
+      });
+
+      const subLoc = subLocations[dataIndex];
+      const shift = subLoc?.shifts?.find((s: any) => s.shiftName === shiftName);
+
+      if (!shiftName || !subLoc || !shift?.employeeCount) return null;
+
+      return {
+        subLocationName: subLoc.subLocationName,
+        shiftName,
+        employees: shift.employees || []
+      };
+    };
 
     // Create datasets for each shift
     const datasets = Array.from(allShifts).map(shiftName => {
@@ -1601,25 +1662,18 @@ legendList = [
     if (maxValue > 100) stepSize = 20;
     if (maxValue > 200) stepSize = 50;
     const suggestedMax = Math.ceil((maxValue * 1.15) / stepSize) * stepSize;
-    
+
     this.shiftLocationChartOptions = {
       responsive: true,
       maintainAspectRatio: false,
       layout: { padding: { top: 25 } },
       onClick: (_event: any, elements: any[]) => {
         if (!elements.length) return;
-        const datasetIndex = elements[0].datasetIndex;
-        const dataIndex = elements[0].index;
-        const shiftName = datasets[datasetIndex]?.label;
-        // Build flat list of subLocations in same order as chart labels
-        const subLocations: any[] = [];
-        dataArray.forEach((location: any) => {
-          location.subLocations?.forEach((subLoc: any) => subLocations.push(subLoc));
-        });
-        const subLoc = subLocations[dataIndex];
-        const shift = subLoc?.shifts?.find((s: any) => s.shiftName === shiftName);
-        if (!shift?.employeeCount) return;
-        this.openShiftLocationOffcanvas(subLoc.subLocationName, shiftName, shift.employees || []);
+
+        const details = getShiftSegmentDetails(elements[0].datasetIndex, elements[0].index);
+        if (!details) return;
+
+        this.openShiftLocationOffcanvas(details.subLocationName, details.shiftName, details.employees);
       },
       onHover: (_event: any, elements: any[], chart: any) => {
         chart.canvas.style.cursor = elements.length ? 'pointer' : 'default';
@@ -1712,13 +1766,13 @@ legendList = [
   getAttendanceReportData() {
     this.attendanceReportLoader = true;
     this.showAttendanceMessage = false;
-    
+
     setTimeout(() => {
       if (this.attendanceReportLoader) {
         this.showAttendanceMessage = true;
       }
     }, 2000);
-    
+
     const selectedDate = moment(this.attendanceReportDate || new Date());
     const formattedDate = selectedDate.format('YYYY-MM-DD');
     this.http.getData(`v2/Employeedata/OrgAttendanceStatus?date=${formattedDate}`).pipe(takeUntil(this.destroy$)).subscribe({
@@ -1728,7 +1782,7 @@ legendList = [
         this.attendanceReportData = res?.summary;
         this.attendanceEmployeesList = res?.employees || [];
         const summary = this.attendanceReportData;
-        this.totalAttendanceCount = (summary?.onTime || 0) + (summary?.lateLogin || 0) + (summary?.earlyLogout || 0) 
+        this.totalAttendanceCount = (summary?.onTime || 0) + (summary?.lateLogin || 0) + (summary?.earlyLogout || 0)
         + (summary?.hoursDeficit || 0) + (summary?.breakExceeded || 0) + (summary?.permission || 0);
         const values = [
           summary?.onTime || 0,
@@ -1809,7 +1863,7 @@ legendList = [
     this.attendanceReportDate = value || new Date();
     this.getAttendanceReportData();
   }
-  
+
   // upcoming actions functions
   getUpcomingActions() {
     this.upcomingActionsLoader = true;
@@ -1906,7 +1960,7 @@ legendList = [
     this.upcomingActionsLoader = true;
     this.getUpcomingActions();
   }
-  
+
   teamdetails = [] as any[];
   getTeam() {
     const statuses = 'Active';
@@ -1919,7 +1973,7 @@ legendList = [
           return {
             ...employee,
             firstName, //  trimmed
-            fullName: `${employee.fusionEmployeeId ? employee.fusionEmployeeId + ' - ' : ''}${firstName} 
+            fullName: `${employee.fusionEmployeeId ? employee.fusionEmployeeId + ' - ' : ''}${firstName}
             ${middleName ? middleName + ' ' : ''}${lastName}`.trim(),
           };
         }).sort((a: any, b: any) =>
@@ -1957,20 +2011,20 @@ legendList = [
         const employeeInfoCount = this.getCountByModuleId(data, 32);
 
         this.approvalsList = [
-          { name: 'Leaves', count: leaveCount, color: '#8A2BE2', route: '/pending-approvals/time-off/leaves' },
-          { name: 'WFH', count: wfhCount, color: '#FF1493', route: '/pending-approvals/time-off/wfh' },
-          { name: 'Remote Login', count: remoteCount, color: '#1E90FF', route: '/pending-approvals/time-off/remote' },
-          { name: 'Comp-Off', count: compOffCount, color: '#06B6D4', route: '/pending-approvals/time-off/comp-off' },
-          { name: 'Permissions', count: permissionCount, color: '#10B981', route: '/pending-approvals/time-off/permissions' },
-          { name: 'Regularization', count: regularizationCount, color: '#F59E0B', route: '/pending-approvals/time-off/regularization-request' },
-          { name: 'Extra Hours', count: extraHoursCount, color: '#EF4444', route: '/pending-approvals/time-off/extra-hours-request' },
-          { name: 'Probation', count: probationCount, color: '#6366F1', route: '/pending-approvals/on-boarding/probation-request' },
-          { name: 'Separation', count: separationCount, color: '#EC4899', route: '/pending-approvals/off-boarding/separation-request' },
-          { name: 'Expenses', count: expensesCount, color: '#14B8A6', route: '/pending-approvals/claimsandexpenses-request' },
-          { name: 'Timesheets', count: timesheetCount, color: '#F97316', route: '/pending-approvals/time-sheets' },
-          { name: 'Global Permissions', count: globalCount, color: '#A855F7', route: '/on-behalf-of/global/permissions' },
-          { name: 'Employee Info', count: employeeInfoCount, color: '#3B82F6', route: '/pending-approvals/employeeinfo-request' }
-        ];
+          { name: 'Leaves', count: leaveCount, color: '#8A2BE2', route: '/pending-approvals/time-off/leaves', permission: 'Time Off Tab.view', parentPermission: 'Time Off main Tab.view' },
+          { name: 'WFH', count: wfhCount, color: '#FF1493', route: '/pending-approvals/time-off/wfh', permission: 'WFH Tab.view', parentPermission: 'Time Off main Tab.view' },
+          { name: 'Remote Login', count: remoteCount, color: '#1E90FF', route: '/pending-approvals/time-off/remote', permission: 'Remote Login Tab.view', parentPermission: 'Time Off main Tab.view' },
+          { name: 'Comp-Off', count: compOffCount, color: '#06B6D4', route: '/pending-approvals/time-off/comp-off', permission: 'Comp Off Tab.view', parentPermission: 'Time Off main Tab.view' },
+          { name: 'Permissions', count: permissionCount, color: '#10B981', route: '/pending-approvals/time-off/permissions', permission: 'Permissions Tab.view', parentPermission: 'Time Off main Tab.view' },
+          { name: 'Regularization', count: regularizationCount, color: '#F59E0B', route: '/pending-approvals/time-off/regularization-request', permission: 'Regularization Tab.view', parentPermission: 'Time Off main Tab.view' },
+          { name: 'Extra Hours', count: extraHoursCount, color: '#EF4444', route: '/pending-approvals/time-off/extra-hours-request', permission: 'Extra Hours Tab.view', parentPermission: 'Time Off main Tab.view' },
+          { name: 'Probation', count: probationCount, color: '#6366F1', route: '/pending-approvals/on-boarding/probation-request', permission: 'Probation Details Tab.view', parentPermission: 'Onboarding main Tab.view' },
+          { name: 'Separation', count: separationCount, color: '#EC4899', route: '/pending-approvals/off-boarding/separation-request', permission: 'Separation Request Tab.view', parentPermission: 'Offboarding main Tab.view' },
+          { name: 'Expenses', count: expensesCount, color: '#14B8A6', route: '/pending-approvals/claimsandexpenses-request', permission: 'Claims and Expenses Tab.view' },
+          { name: 'Timesheets', count: timesheetCount, color: '#F97316', route: '/pending-approvals/time-sheets', permission: 'Time Sheet approval Tab.view' },
+          { name: 'Global Permissions', count: globalCount, color: '#A855F7', route: '/on-behalf-of/global/permissions', permission: 'Global Permissions Module.view' },
+          { name: 'Employee Info', count: employeeInfoCount, color: '#3B82F6', route: '/pending-approvals/employeeinfo-request', permission: 'EmployeeInfo Tab.view' }
+        ].filter(item => this.hasApprovalPermission(item.permission, item.parentPermission));
         this.approvalsOverviewLoader = false;
       },
       error: (err) => {
@@ -1982,14 +2036,58 @@ legendList = [
   }
 
   onApprovalEmployeeChange(employee: any) {
-    this.approvalsOverviewLoader = true;
-    if (employee) {
-      this.selectedApprovalEmployee = employee;
-      this.getApprovalsOverview();
+    this.selectedApprovalEmployee = employee || null;
+    if (employee?.employeeId) {
+      this.approvalsEmployeeClaimsLoader = true;
+      this.approvalsOverviewLoader = true;
+      this.http.getData(`Employeedata/${employee.employeeId}`)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (empData: any) => {
+            const workEmail = empData?.workEmail || empData?.email || '';
+            if (!workEmail) {
+              this.selectedEmployeeClaims = [];
+              this.approvalsEmployeeClaimsLoader = false;
+              this.getApprovalsOverview();
+              return;
+            }
+            this.http.getData(`Employeedata/GetemployeebyemailID?emailid=${encodeURIComponent(workEmail)}`)
+              .pipe(takeUntil(this.destroy$))
+              .subscribe({
+                next: (res: any) => {
+                  this.selectedEmployeeClaims = Array.isArray(res?.claims) ? res.claims : [];
+                  this.approvalsEmployeeClaimsLoader = false;
+                  this.getApprovalsOverview();
+                },
+                error: () => {
+                  this.selectedEmployeeClaims = [];
+                  this.approvalsEmployeeClaimsLoader = false;
+                  this.getApprovalsOverview();
+                }
+              });
+          },
+          error: () => {
+            this.selectedEmployeeClaims = [];
+            this.approvalsEmployeeClaimsLoader = false;
+            this.getApprovalsOverview();
+          }
+        });
     } else {
-      this.selectedApprovalEmployee = null;
+      this.selectedEmployeeClaims = null;
       this.getApprovalsOverview();
     }
+  }
+
+  private hasApprovalPermission(permission: string, parentPermission?: string): boolean {
+    if (this.selectedEmployeeClaims !== null) {
+      const normalizedClaims = this.selectedEmployeeClaims.map(c => c.toLowerCase());
+      if (!normalizedClaims.includes(permission.toLowerCase())) return false;
+      if (parentPermission && !normalizedClaims.includes(parentPermission.toLowerCase())) return false;
+      return true;
+    }
+    if (!this.rbac.allowedToAccess(permission)) return false;
+    if (parentPermission && !this.rbac.allowedToAccess(parentPermission)) return false;
+    return true;
   }
 
   getCountByModuleId(data: any[], moduleId: number): number {
@@ -2046,7 +2144,7 @@ legendList = [
     if (maxValue > 100) stepSize = 20;
     if (maxValue > 200) stepSize = 50;
     const suggestedMax = Math.ceil((maxValue * 1.15) / stepSize) * stepSize;
-    
+
     this.experienceChartOptions = {
       responsive: true,
       maintainAspectRatio: false,
@@ -2073,6 +2171,7 @@ legendList = [
           anchor: 'end',
           align: 'end',
           color: '#000',
+          cursor: 'pointer',
           font: {
             weight: 'bold',
             size: 10
@@ -2083,12 +2182,6 @@ legendList = [
               const item = this.experienceRawData[context.dataIndex];
               if (!item?.count) return;
               this.openExperienceOffcanvas(item);
-            },
-            enter: (context: any) => {
-              context.chart.canvas.style.cursor = 'pointer';
-            },
-            leave: (context: any) => {
-              context.chart.canvas.style.cursor = 'default';
             }
           }
         }

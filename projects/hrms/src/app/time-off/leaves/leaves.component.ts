@@ -5,6 +5,7 @@ import { FormBuilder, FormControl, FormGroup, FormsModule, NgForm, ReactiveForms
 import { PaginatorModule } from 'primeng/paginator';
 import { DropdownModule } from 'primeng/dropdown';
 import { Select } from 'primeng/select';
+import { MultiSelect } from 'primeng/multiselect';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { ICategoryDetails, ILeaves, Ileavesdatas, ILeavesTaken, Ilpid } from '../../Interfaces/timoff-model';
 import { AuthService } from '../../services/auth.service';
@@ -28,11 +29,13 @@ import { TimeoffSelectionService } from '../../services/timeoff-selection.servic
 import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
 import { ApplicablePoliciesTriggerComponent } from '../../shared/policies/applicable-policies-trigger/applicable-policies-trigger.component';
 import { APPLICABLE_POLICIES_KEYS, ApplicablePoliciesKeys } from '../../shared/policies/policy-visibility.catalog';
+import { ChipModule } from 'primeng/chip';
+import { FrequencyFilterService } from '../../services/frequency-filter.service';
+import { ConfirmationIconComponent } from '../../icons/confirmation-icon/confirmation-icon.component';
 @Component({
   selector: 'app-leaves',
   imports: [CommonModule, NgbNavModule, ModuleInfoIconComponent,NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, Select, Skeleton,
-    RouterModule, ReactiveFormsModule, TranslateModule, LeavesApprovaltabsComponent, TabsModule, ChartModule, ModuleInformationComponent, 
-    ApplicablePoliciesTriggerComponent],
+    RouterModule, ReactiveFormsModule, TranslateModule, LeavesApprovaltabsComponent, TabsModule, ChartModule, ModuleInformationComponent, ConfirmationIconComponent, ApplicablePoliciesTriggerComponent, ChipModule, MultiSelect],
   templateUrl: './leaves.component.html',
   styleUrl: './leaves.component.scss',
   encapsulation: ViewEncapsulation.None,
@@ -109,6 +112,14 @@ export class LeavesComponent implements OnInit, AfterViewInit, OnDestroy{
   destroy$: Subject<boolean> = new Subject<boolean>();
   sandwichMessage: string = '';
   sandwichData: any = null;
+  frequencyOptions = [
+    { label: 'Monthly', value: 'MONTHLY' },
+    { label: 'Quarterly', value: 'QUARTERLY' },
+    { label: 'Half Yearly', value: 'HALF_YEARLY' },
+    { label: 'Yearly', value: 'YEARLY' }
+  ];
+  selectedFrequencies: string[] = [];
+  isEntitlementFrequencyRoute: boolean = false;
 
   constructor(
     private http: HttpService,
@@ -122,16 +133,17 @@ export class LeavesComponent implements OnInit, AfterViewInit, OnDestroy{
     private signalService: SignalsService,
     private TimeoffYearFilterService: TimeoffYearFilterService,
     private timeoffSelectionService: TimeoffSelectionService,
+    private frequencyFilterService: FrequencyFilterService,
     private elementRef: ElementRef
   ) {
     effect(() => {
       if (this.signalService.timecountTriggerSignal()) {
-        // Call the function to fetch the pending approvals count
-        this.getCategoryDetails();
-        // Conditionally reset the signals based on their current state
-        if (this.signalService.timecountTriggerSignal()) {
-          this.signalService.timecountTriggerSignal.set(false);
+        // Refresh both category details and leave data to update counts
+        const empId = this.http.getCurrentEmployeeIdTimeoff() ?? this.empdata?.employeeId;
+        if (empId) {
+          this.getDataByLPID(empId);
         }
+        this.getCategoryDetails();
       }
     });
   }
@@ -139,6 +151,7 @@ export class LeavesComponent implements OnInit, AfterViewInit, OnDestroy{
   ngOnInit(): void {
     this.loggedinuser = this.authService.getToken();
     this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
+    this.checkRoute();
     this.getCategoryDetails();
     this.initializeForm();
     this.getEmployeeid();
@@ -226,7 +239,6 @@ export class LeavesComponent implements OnInit, AfterViewInit, OnDestroy{
       this.getDataByLPID(employeedId);
       this.getLeavesData(employeedId);
       this.getCategoryempDetails(employeedId);
-      this.getEmployeeidV2(employeedId);
     } else {
       this.http.setEmployeeIdTimeoff(null);
       // Update new service
@@ -236,14 +248,24 @@ export class LeavesComponent implements OnInit, AfterViewInit, OnDestroy{
       this.getLeavesData(this.empdata.employeeId);
       this.getDataByLPID(this.empdata.employeeId);
       this.getCategoryempDetails(this.empdata.employeeId);
-      this.getEmployeeid();
     }
   }
 
   initiateUpdateModuleInfo() {
     this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe(() => {
       this.updateModuleInfo();
+      this.checkRoute();
     });
+  }
+
+  checkRoute() {
+    const url = this.router.url;
+    this.isEntitlementFrequencyRoute = url.includes('/time-off/leaves/entitlement-frequency');
+  }
+
+  onFrequencyChange() {
+    // Handle both selection and clear (when selectedFrequencies becomes empty array)
+    this.frequencyFilterService.setSelectedFrequencies(this.selectedFrequencies || []);
   }
 
   updateModuleInfo() {
@@ -438,7 +460,9 @@ getTeamManagersDetails() {
 
   getCategoryDetails() {
     this.loadingGraph = true;
-    this.subscription = this.http.getData(`LeaveEntitlements/v2/employee/${this.empdata.employeeId}?year=${this.selectedYear}`).pipe(takeUntil(this.destroy$)).subscribe({
+    let apiUrl = `LeaveEntitlements/v2/employee/${this.empdata.employeeId}?year=${this.selectedYear}`;
+
+    this.subscription = this.http.getData(apiUrl).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: any) => {
         if (response.success) {
           this.loadingGraph = false;
@@ -460,7 +484,9 @@ getTeamManagersDetails() {
 
   getCategoryempDetails(employeedId: any) {
     const empdata = employeedId;
-    this.subscription = this.http.getData(`LeaveEntitlements/v2/employee/${empdata}?year=${this.selectedYear}`).pipe(takeUntil(this.destroy$)).subscribe({
+    let apiUrl = `LeaveEntitlements/v2/employee/${empdata}?year=${this.selectedYear}`;
+
+    this.subscription = this.http.getData(apiUrl).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: any) => {
         if (response.success) {
           this.categoryDetails = response.data as ICategoryDetails[];
@@ -535,7 +561,7 @@ getTeamManagersDetails() {
     if (isProbationActive && item.category?.isProbationAllowed && item.probationLeaves > 0) {
       return item.availableProbationLeaves;
     } else {
-      return item.allowedDays - item.utilizedDays - item.booked - expiryDeduction;
+      return item.allowedDays - item.utilizedDays - item.booked - (item.expiryDaysLeaves ? item.expiryDaysLeaves : 0);
     }
   }
 
@@ -571,6 +597,8 @@ getTeamManagersDetails() {
     this.subscription = this.http.getData(`Employeedata/${this.empdata.employeeId}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data: any) => {
         this.employeeiddetails = data;
+        console.log(this.employeeiddetails);
+
         // this.calculateProbationLeavs(this.categoryDetails);
       },
     });
@@ -687,8 +715,8 @@ getTeamManagersDetails() {
     const booked = this.selectedleave?.booked;
     const expired = this.selectedleave.expiryDaysLeaves;
     this.remainingLeaves = maxDays - (leavesTaken ? leavesTaken : 0) - booked - expired;
-    if (this.selectedleave && this.selectedleave.category && this.selectedleave.category.isProbationAllowed && this.employeeiddetails.empType === 'Probation') {
-      const probationLeavesTaken = this.selectedleave.availableProbationLeaves;
+    if (this.selectedleave && this.selectedleave.category && this.selectedleave.category.isProbationAllowed) {
+      const probationLeavesTaken = this.selectedleave.probationLeaves - (leavesTaken !== undefined ? leavesTaken : 0) - booked;
       if (probationLeavesTaken >= 0) {
         this.remainingLeaves = probationLeavesTaken;
       } else {
@@ -1543,6 +1571,10 @@ getTeamManagersDetails() {
 
   formatFrequency(value: string): string {
     if (!value || !value.trim()) return 'Yearly';
+    return value
+      .split('_')
+      .map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+      .join(' ');
     return value.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
   }
 

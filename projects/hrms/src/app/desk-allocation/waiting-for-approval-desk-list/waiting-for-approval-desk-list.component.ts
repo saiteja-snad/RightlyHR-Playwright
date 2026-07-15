@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
 import { BehaviorSubject, Subject, Subscription, takeUntil } from 'rxjs';
 import { HttpService } from '../../services/http.service';
@@ -6,22 +6,28 @@ import { Router } from '@angular/router';
 import { OpenModalService } from '../../services/open-modal.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { PaginatorModule, PaginatorState } from 'primeng/paginator';
+import { PaginatorModule } from 'primeng/paginator';
 import { DropdownModule } from 'primeng/dropdown';
+import { TableModule } from 'primeng/table';
+import { Table } from 'primeng/table';
 import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
 import { RbacService } from '../../services/rbac.service';
 import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-waiting-for-approval-desk-list',
-  imports: [NoDataFoundComponent, CommonModule, FormsModule, PaginatorModule, DropdownModule, DataLoaderContentComponent,TranslateModule],
+  imports: [NoDataFoundComponent, CommonModule, FormsModule, PaginatorModule, DropdownModule, DataLoaderContentComponent,TranslateModule, TableModule],
   templateUrl: './waiting-for-approval-desk-list.component.html',
   styleUrl: './waiting-for-approval-desk-list.component.scss'
 })
-export class WaitingForApprovalDeskListComponent {
+export class WaitingForApprovalDeskListComponent implements OnInit, OnDestroy {
+  @ViewChild('waitingForApprovalTable') waitingForApprovalTable!: Table;
   subscription!: Subscription;
   empinfo = {} as any
   desklist = new BehaviorSubject<any[]>([])
+  originalDeskList = [] as any[]; // Store original unsorted data
+  currentSortField: string = '';
+  currentSortOrder: number = 0; // 0 = no sort, 1 = asc, -1 = desc
   searchTerm: string = '';
   Status = 'Waiting for Approval'
     employeid: any
@@ -95,7 +101,9 @@ export class WaitingForApprovalDeskListComponent {
         next: (data: any) => {
           console.log(data);
           this.loading = false
-          this.desklist.next(data.items)
+          const deskData = data.items;
+          this.desklist.next(deskData);
+          this.originalDeskList = [...deskData];
           //this.getcount(this.selectedLocationId, this.selectedSubLocationId, this.Status)
           // Update the collection size (total records) for pagination
           this.collectionSize = data.totalRecords;
@@ -225,5 +233,78 @@ export class WaitingForApprovalDeskListComponent {
     }
   }
 
+  getFilteredAndSortedDeskList(): any[] {
+    return this.desklist.getValue();
+  }
+
+  customSort(event: any): void {
+    const field = event.field;
+    
+    // Track current sort state for the clicked field
+    if (this.currentSortField === field) {
+      // Same field clicked - cycle through: asc (1) -> desc (-1) -> reset (0)
+      if (this.currentSortOrder === 1) {
+        // Currently ascending, change to descending
+        this.currentSortOrder = -1;
+        event.order = -1;
+      } else if (this.currentSortOrder === -1) {
+        // Currently descending, reset to original order
+        this.desklist.next([...this.originalDeskList]);
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        if (this.waitingForApprovalTable) {
+          this.waitingForApprovalTable.reset();
+        }
+        return;
+      } else {
+        // Currently reset, change to ascending
+        this.currentSortOrder = 1;
+        event.order = 1;
+      }
+    } else {
+      // New field clicked - start with ascending
+      this.currentSortField = field;
+      this.currentSortOrder = 1;
+      event.order = 1;
+    }
+
+    event.data.sort((a: any, b: any) => {
+      let val1: any;
+      let val2: any;
+
+      // Handle nested fields
+      if (field === 'deskName') {
+        val1 = a.deskName;
+        val2 = b.deskName;
+      } else if (field === 'deskType') {
+        val1 = a.deskType;
+        val2 = b.deskType;
+      } else if (field === 'allocatedToName') {
+        val1 = a.allocatedToDetails?.employeeName;
+        val2 = b.allocatedToDetails?.employeeName;
+      } else if (field === 'locationName') {
+        val1 = a.location?.jobLocationName;
+        val2 = b.location?.jobLocationName;
+      } else if (field === 'subLocationName') {
+        val1 = a.subLocation?.jobSubLocationName;
+        val2 = b.subLocation?.jobSubLocationName;
+      } else if (field === 'deskStatus') {
+        val1 = a.deskStatus;
+        val2 = b.deskStatus;
+      } else if (field === 'approverName') {
+        val1 = a.allocatedToDetails?.approverIdName;
+        val2 = b.allocatedToDetails?.approverIdName;
+      } else {
+        // Handle direct fields
+        val1 = a[field];
+        val2 = b[field];
+      }
+
+      // Handle string sorting for all fields
+      val1 = String(val1 ?? '').trim();
+      val2 = String(val2 ?? '').trim();
+      return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+    });
+  }
 
 }

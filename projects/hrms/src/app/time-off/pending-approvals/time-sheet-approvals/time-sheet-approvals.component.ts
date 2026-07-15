@@ -353,8 +353,8 @@ onStatusApproveSelect(status: string) {
     this.allPagesSelected = false;
     this.showBulkSelectionBanner = false;
     this.showhideaction = true;
-    this.pageSize = 10;
-    this.rows = 10;
+    this.pageSize = 50;
+    this.rows = 50;
     this.page = 1;
     this.first = 0;
     this.loadClientsAndProjects(this.page, this.pageSize, this.startdate, this.enddate);
@@ -493,7 +493,7 @@ onStatusApproveSelect(status: string) {
           this.spinnerLoader = false;
           this.allPagesSelected = false;
           this.showBulkSelectionBanner = false;
-          this.rows = 10;
+          this.rows = 50;
           this.first = 0;
           this.loadClientsAndProjects(this.page, this.pageSize, this.startdate, this.enddate);
           this.selectedLeavesItems = [];
@@ -588,7 +588,7 @@ onStatusApproveSelect(status: string) {
           this.spinnerLoader = false;
           this.allPagesSelected = false;
           this.showBulkSelectionBanner = false;
-          this.rows = 10;
+          this.rows = 50;
           this.first = 0;
           this.loadClientsAndProjects(this.page, this.pageSize, this.startdate, this.enddate);
           this.selectedLeavesItems = [];
@@ -650,8 +650,8 @@ onStatusApproveSelect(status: string) {
       this.selectedMap = {};
       if (this.allPagesSelected) {
         this.allPagesSelected = false;
-        this.pageSize = 10;
-        this.rows = 10;
+        this.pageSize = 50;
+        this.rows = 50;
         this.page = 1;
         this.first = 0;
         this.loadClientsAndProjects(this.page, this.pageSize, this.startdate, this.enddate);

@@ -50,6 +50,8 @@
                   <th>Allowed Days</th>
                   <th>Utilized Days</th>
                   <th>Booked Days</th>
+                  <th>Freeze Days</th>
+                  <th>Lapsed Days</th>
                   <th>Available Days</th>
                 </thead>
                 <tbody>
@@ -65,8 +67,10 @@
                     <td>{{ category.allowedDays }}</td>
                     <td>{{ category.utilizedDays }}</td>
                     <td>{{ category.booked }}</td>
+                     <td>{{ category.frozenDays }}</td>
+                     <td>{{ category.lapsedDays }}</td>
                     <td class="available-number">
-                      {{ category.allowedDays - category.utilizedDays - category.booked }}
+                      {{ category.availableDays}}
                     </td>
                   </tr>
                   }

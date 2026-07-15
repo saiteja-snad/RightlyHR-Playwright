@@ -34,6 +34,8 @@ export interface RowModel {
   isBillableClient: boolean;
   isBillableProject: boolean;
   isNoClientProject: boolean;
+  taskName?:string,
+  pendingApprovalDetails?:any
 }
 
 export interface DayModel {
@@ -63,6 +65,8 @@ export interface CellModel {
   resourceId?: number;
   isLocked: boolean;
   taskId?:any;
+  pendingApprovalDetails?: any;
+  taskName?:string
 }
 
 export interface MatrixMetadata {
@@ -152,7 +156,8 @@ export function transformV2ResponseToWeekMatrix(response: any): WeekMatrix {
             blockReason: day.blockReason,
             isBillable: rowData.isBillableProject,
             isOverride: false,
-            isLocked: false
+            isLocked: false,
+            pendingApprovalDetails: null
           });
         });
       } else {
@@ -224,7 +229,9 @@ export function transformV2ResponseToWeekMatrix(response: any): WeekMatrix {
                 rejectReason: entry.rejectReason,
                 resourceId: entry.resourceId || row.resourceId,
                 isLocked: false,
-                taskId:entry.taskId
+                taskId: entry.taskId,
+                taskName: entry.taskName,
+                pendingApprovalDetails: entry.pendingApprovalDetails || null
               });
             } else {
               cellMap.set(cellKey, {
@@ -236,7 +243,8 @@ export function transformV2ResponseToWeekMatrix(response: any): WeekMatrix {
                 blockReason: day.blockReason,
                 isBillable: row.isBillableProject,
                 isOverride: false,
-                isLocked: false
+                isLocked: false,
+                pendingApprovalDetails: null
               });
             }
           });

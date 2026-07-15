@@ -8,36 +8,35 @@
     </div>
 
     <div class="custom-table-content">
-
         @if(!loading){
-        <table class="w-100">
-            <thead>
-                <th>{{'Employee ID'|translate}}</th>
-                <th>{{'Employee Name' | translate}}</th>
-                <th>{{'Requested Date' |translate}}</th>
-                <th>{{'Department' |translate}}</th>
-                <th>{{'Status' |translate}}</th>
-                <th class="text-center">{{'Employee Emails' |translate}}</th>
-                @if(rbac.allowedToAccess('No Due Clearance Request.update') || rbac.allowedToAccess('No Due Clearance Request.delete')) {
-                <th class="text-center">{{'Action' |translate }}</th>
-                }
-            </thead>
-            <tbody>
-                @if (((nodue_Request_data | async) ?? []).length > 0) {
-                @for (item of ((nodue_Request_data | async) ?? []) | nodueDetails : searchValue; track item.id){
+        <p-table #nodueTable [value]="getFilteredAndSortedNodue()" [tableStyle]="{'min-width': '50rem'}" [customSort]="true" (sortFunction)="customSort($event)">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th pSortableColumn="employeeFusionEmpId">{{'Employee ID'|translate}}<p-sortIcon field="employeeFusionEmpId" /></th>
+                    <th pSortableColumn="employeeName">{{'Employee Name' | translate}}<p-sortIcon field="employeeName" /></th>
+                    <th pSortableColumn="requestedDate">{{'Requested Date' |translate}}<p-sortIcon field="requestedDate" /></th>
+                    <th pSortableColumn="departmentName">{{'Department' |translate}}<p-sortIcon field="departmentName" /></th>
+                    <th pSortableColumn="status">{{'Status' |translate}}<p-sortIcon field="status" /></th>
+                    <th class="text-center">{{'Employee Emails' |translate}}</th>
+                    @if(rbac.allowedToAccess('No Due Clearance Request.update') || rbac.allowedToAccess('No Due Clearance Request.delete')) {
+                    <th class="text-center">{{'Action' |translate }}</th>
+                    }
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-item>
                 <tr>
                     <td>{{item?.employeeFusionEmpId ?? '-'}}</td>
                     <td>{{item?.employeeName ?? '-'}}</td>
-                    <td>{{item?.requestedDate | dateformat}}</td>
+                    <td class="text-nowrap">{{item?.requestedDate | dateformat}}</td>
                     <td>{{item?.departmentName ?? '-'}}</td>
                     <td>{{item?.status ?? '-'}}</td>
                     <td class="text-center">
+                        @if(item.requiredEmails){
                         <div>
-                            <div *ngIf="item.requiredEmails; else popupcomments">
-                                <app-info-icon ngbPopover="{{ item.requiredEmails }}" container="body" />
-                            </div>
+                            <app-info-icon ngbPopover="{{ item.requiredEmails }}" container="body" />
                         </div>
-                        <ng-template #popupcomments>NA</ng-template>
+                        }
+                        @else{NA}
                     </td>
                     
                     @if(rbac.allowedToAccess('No Due Clearance Request.update') || rbac.allowedToAccess('No Due Clearance Request.delete')) {
@@ -48,15 +47,11 @@
                             </a>
                             <ul class="dropdown-menu custom-dropdown-menu">
                                 @if( rbac.allowedToAccess('No Due Clearance Request.delete')) {
-                                <li>
-                                    <a class="dropdown-item" (click)="openModal(item,approval)">
-                                        <i class="bi bi-check-circle me-2"></i>{{'Approve' |translate}}</a>
+                                <li (click)="openModal(item,approval)">
+                                    <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{"Approve" | translate}}</a>
                                 </li>
-                                }
-                                @if( rbac.allowedToAccess('No Due Clearance Request.delete')) {
-                                <li>
-                                    <a class="dropdown-item" (click)="openModal(item,rejectmodal)">
-                                        <i class="bi bi-x-circle me-2"></i>{{'Reject' |translate}}</a>
+                                <li (click)="openModal(item,rejectmodal)">
+                                    <a class="dropdown-item"><i class="bi bi-x-circle me-2"></i>{{"Reject" | translate}}</a>
                                 </li>
                                 }
                             </ul>
@@ -64,17 +59,19 @@
                     </td>
                     }
                 </tr>
-                }
-                }
-                @else{
-                <tr>
-                    <app-no-data-found />
-                </tr>
-                }
-            </tbody>
-        </table>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+                <div class="wrapper">
+                    <tr>
+                        <td colspan="7">
+                            <app-no-data-found />
+                        </td>
+                    </tr>
+                </div>
+            </ng-template>
+        </p-table>
         }
-        @else {
+        @else{
         <app-data-loader-content />
         }
     </div>
@@ -117,8 +114,10 @@
             <div class="custom-modal-footer">
                 <button type="button" class="custom-btn btn-secondary"
                     (click)="openModals(confirmationpopup)">{{'Cancel'| translate}}</button>
-                <button type="submit" class="custom-btn btn-primary" [disabled]="AcceptForm.invalid || isLoading"> @if
-                    (!isLoading) { {{ 'Approve' | translate }} } @else {
+                <button type="submit" class="custom-btn btn-primary" [disabled]="AcceptForm.invalid || isLoading">
+                    @if (!isLoading) {
+                    {{ 'Approve' | translate }}
+                    } @else {
                     <div class="button-loader-content">
                         <div *ngIf="isLoading" class="spinner-border button-spinner text-light" role="status"></div>
                         <div>{{'Loading...'|translate}}</div>
@@ -162,8 +161,8 @@
             <div class="custom-modal-footer">
                 <button type="button" class="custom-btn btn-secondary"
                     (click)="openModals(rejectconfirmationpopup)">{{'Cancel' | translate}}</button>
-                <button type="submit" class="custom-btn btn-primary" [disabled]="rejectForm.invalid || isLoading">@if
-                    (!isLoading) {
+                <button type="submit" class="custom-btn btn-primary" [disabled]="rejectForm.invalid || isLoading">
+                    @if (!isLoading) {
                     {{ 'Reject' | translate }}
                     } @else {
                     <div class="button-loader-content">

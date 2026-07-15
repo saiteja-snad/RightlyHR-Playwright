@@ -63,6 +63,7 @@ export class RegularizationWaitingForApprovalComponent implements OnInit, OnDest
   rejectForm!: FormGroup;
   showActions = false;
   selectedProducts: any[] = [];
+  multiSelect = false;
   searchText: string = '';
   spinnerLoader = false;
   selectedLeaveStatus: any;
@@ -81,8 +82,14 @@ export class RegularizationWaitingForApprovalComponent implements OnInit, OnDest
     private fb: FormBuilder, private sharedModalService: OpenModalService) {
     effect(() => {
       if (this.http.tirggerCountSignal().permission) {
-        this.getDataPermissions();
-        this.http.tirggerCountSignal.update((status) => ({
+
+        if (this.selectempid) {
+          this.getDataEMPPermissions();
+        } else {
+          this.getDataPermissions();
+        }
+
+        this.http.tirggerCountSignal.update(status => ({
           ...status,
           permission: false,
         }));
@@ -126,7 +133,10 @@ export class RegularizationWaitingForApprovalComponent implements OnInit, OnDest
   }
 
   approveRegularization(approvalPopup: any, item: any) {
-    this.selectedRegularizationData = item;
+    this.selectedRegularizationData =
+      this.selectedProducts.length > 0
+        ? [...this.selectedProducts]
+        : item;
 
     this.modalService.open(approvalPopup, {
       centered: true,
@@ -135,7 +145,10 @@ export class RegularizationWaitingForApprovalComponent implements OnInit, OnDest
   }
 
   rejectRegularization(rejectPopup: any, item: any) {
-    this.selectedRegularizationData = item;
+    this.selectedRegularizationData =
+      this.selectedProducts.length > 0
+        ? [...this.selectedProducts]
+        : item;
 
     this.modalService.open(rejectPopup, {
       centered: true,
@@ -223,18 +236,18 @@ export class RegularizationWaitingForApprovalComponent implements OnInit, OnDest
     if (form.valid) {
 
       let approvedBy = this.empinfo.employeeId.toString();
-
+      const selectedItems = Array.isArray(this.selectedRegularizationData)
+        ? this.selectedRegularizationData
+        : [this.selectedRegularizationData];
       this.requestBody = {
         requestProcessedBy: approvedBy,
         status: 'Approved',
         comments: form.value.comments,
         moduleId: environment.attendanceRegularizationModuleId,
-        headerRequests: [
-          {
-            headerID: this.selectedRegularizationData.pendingApprovalsHeader.id,
-            currentStage: this.selectedRegularizationData.pendingApprovalsHeader.currentapprovalStage
-          }
-        ]
+        headerRequests: selectedItems.map(item => ({
+          headerID: item.pendingApprovalsHeader.id,
+          currentStage: item.pendingApprovalsHeader.currentapprovalStage
+        }))
       };
 
       this.http.putData(
@@ -242,22 +255,21 @@ export class RegularizationWaitingForApprovalComponent implements OnInit, OnDest
         this.requestBody
       ).subscribe({
         next: (response: any) => {
-
+          this.spinnerLoader = false;
           this.modalService.dismissAll();
+
+          const ids = selectedItems.map(x => x.id);
 
           this.waitingForApprovalPerimisions =
             this.waitingForApprovalPerimisions.filter(
-              x => x.id !== this.selectedRegularizationData.id
+              x => !ids.includes(x.id)
             );
-
-          this.selectedProducts =
-            this.selectedProducts.filter(
-              x => x.id !== this.selectedRegularizationData.id
-            );
+          const isMultiSelection = this.multiSelect;
+          this.selectedProducts = [];
 
           this.responseSummary = response.data;
 
-          if (this.selectedProducts && this.selectedProducts.length > 0) {
+          if (this.multiSelect) {
 
             this.openModal(this.leaveSummary);
 
@@ -274,6 +286,16 @@ export class RegularizationWaitingForApprovalComponent implements OnInit, OnDest
           }
 
           this.approveForm.reset();
+          if (this.selectempid) {
+            this.getDataEMPPermissions();
+          } else {
+            this.getDataPermissions();
+          }
+          this.http.tirggerCountSignal.update(status => ({
+            ...status,
+            permission: true
+          }));
+
         },
         error: (err: any) => {
           console.error(err);
@@ -297,18 +319,18 @@ export class RegularizationWaitingForApprovalComponent implements OnInit, OnDest
 
 
       let approvedBy = this.empinfo.employeeId.toString();
-
+      const selectedItems = Array.isArray(this.selectedRegularizationData)
+        ? this.selectedRegularizationData
+        : [this.selectedRegularizationData];
       this.requestBody = {
         requestProcessedBy: approvedBy,
         status: 'Rejected',
         comments: form.value.comments,
         moduleId: environment.attendanceRegularizationModuleId,
-        headerRequests: [
-          {
-            headerID: this.selectedRegularizationData.pendingApprovalsHeader.id,
-            currentStage: this.selectedRegularizationData.pendingApprovalsHeader.currentapprovalStage
-          }
-        ]
+        headerRequests: selectedItems.map(item => ({
+          headerID: item.pendingApprovalsHeader.id,
+          currentStage: item.pendingApprovalsHeader.currentapprovalStage
+        }))
       };
 
       console.log('Reject Payload:', this.requestBody);
@@ -319,21 +341,22 @@ export class RegularizationWaitingForApprovalComponent implements OnInit, OnDest
       ).subscribe({
         next: (response: any) => {
 
+          this.spinnerLoader = false;
           this.modalService.dismissAll();
+
+          const ids = selectedItems.map(x => x.id);
 
           this.waitingForApprovalPerimisions =
             this.waitingForApprovalPerimisions.filter(
-              x => x.id !== this.selectedRegularizationData.id
+              x => !ids.includes(x.id)
             );
 
-          this.selectedProducts =
-            this.selectedProducts.filter(
-              x => x.id !== this.selectedRegularizationData.id
-            );
+          const isMultiSelection = this.multiSelect;
 
+          this.selectedProducts = [];
           this.responseSummary = response.data;
 
-          if (this.selectedProducts && this.selectedProducts.length > 0) {
+          if (this.multiSelect) {
 
             this.openModal(this.leaveSummary);
 
@@ -344,11 +367,20 @@ export class RegularizationWaitingForApprovalComponent implements OnInit, OnDest
           } else {
 
             this.sharedModalService.openSuccessModal(
-              'Regularization request approved successfully'
+              'Regularization request rejected successfully'
             );
 
           }
           this.rejectForm.reset();
+          if (this.selectempid) {
+            this.getDataEMPPermissions();
+          } else {
+            this.getDataPermissions();
+          }
+          this.http.tirggerCountSignal.update(status => ({
+            ...status,
+            permission: true
+          }));
         },
         error: (err: any) => {
           console.error(err);
@@ -379,7 +411,14 @@ export class RegularizationWaitingForApprovalComponent implements OnInit, OnDest
   }
 
   selectCheck(event: any) {
-    this.selectedProducts = event;
+    this.multiSelect = Array.isArray(event) && event.length > 0;
+
+    if (!event || event.length === 0) {
+      this.selectedProducts = [];
+      return;
+    }
+
+    this.selectedProducts = [...event];
   }
 
   showMultiSelectAndSearch(): boolean {
@@ -389,7 +428,7 @@ export class RegularizationWaitingForApprovalComponent implements OnInit, OnDest
   }
   customSort(event: any): void {
     const field = event.field;
-    
+
     // Track current sort state for the clicked field
     if (this.currentSortField === field) {
       // Same field clicked - cycle through: asc (1) -> desc (-1) -> reset (0)

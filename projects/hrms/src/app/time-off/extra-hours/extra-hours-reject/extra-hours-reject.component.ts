@@ -20,7 +20,7 @@ import { DateformatPipe } from '../../../pipes/dateformat.pipe';
 
 @Component({
   selector: 'app-extra-hours-reject',
-  imports: [ 
+  imports: [
     CommonModule,
     NgbPopoverModule,
     FormsModule,
@@ -51,8 +51,8 @@ export class ExtraHoursRejectComponent implements OnInit, OnDestroy {
   currentSortOrder: number = 0; // 0 = no sort, 1 = asc, -1 = desc
 
   constructor(
-    private http: HttpService, 
-    public rbac: RbacService, 
+    private http: HttpService,
+    public rbac: RbacService,
     private TimeoffYearFilterService: TimeoffYearFilterService
   ) { }
 
@@ -79,9 +79,14 @@ export class ExtraHoursRejectComponent implements OnInit, OnDestroy {
     this.dataLoad = true;
     this.http.getFilterExtraHoursDataByID(empId, this.selectedYear).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: any) => {
+        console.log('API Response:', response);
+
         this.rejectedPerimisions = response.filter(
           (element: { status: string }) => element.status === 'Rejected'
         );
+
+        console.log('Rejected Records:', this.rejectedPerimisions);
+
         this.originalRejectedPerimisions = [...this.rejectedPerimisions];
         this.dataLoad = false;
       },
@@ -116,7 +121,7 @@ export class ExtraHoursRejectComponent implements OnInit, OnDestroy {
 
   customSort(event: any): void {
     const field = event.field;
-    
+
     // Track current sort state for the clicked field
     if (this.currentSortField === field) {
       // Same field clicked - cycle through: asc (1) -> desc (-1) -> reset (0)

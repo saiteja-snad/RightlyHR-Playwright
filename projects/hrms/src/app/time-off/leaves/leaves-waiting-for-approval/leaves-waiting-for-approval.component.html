@@ -1,8 +1,6 @@
 <div class="custom-main-component-container">
-  <div class="custom-table-content">
-    @if(!loading){
     @if(selectedProducts.length > 0 && canApprove(selectedProducts[0])){
-    <div class="component-header-content">
+        <div class="d-flex justify-content-between align-items-center mb-3">
       <div class="component-sub-header">
         Selected Records: {{selectedProducts.length}}
       </div>
@@ -18,6 +16,8 @@
       </div>
     </div>
     }
+    <div class="custom-table-content">
+    @if(!loading){
     <p-table #leavesWaitingTable  styleClass="custom-p-multi-select-table" [value]="lpdata" [(selection)]="selectedProducts"
       (selectionChange)="selectCheck($event)" dataKey="id" [customSort]="true" (sortFunction)="customSort($event)"
       [scrollable]="true" scrollHeight="flex">

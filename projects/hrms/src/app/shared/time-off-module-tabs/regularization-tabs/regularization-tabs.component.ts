@@ -38,17 +38,23 @@ export class RegularizationTabsComponent implements OnInit, OnDestroy {
   }
 
   constructor(public readonly router: Router, private http: HttpService, public rbac: RbacService,
-     private TimeoffYearFilterService: TimeoffYearFilterService, private readonly menuOrderService: MenuOrderService) {
+    private TimeoffYearFilterService: TimeoffYearFilterService, private readonly menuOrderService: MenuOrderService) {
     void this.menuOrderService.ensureLoaded();
     effect(() => {
-      if (this.http.tirggerCountSignal().compOff) {
-        this.getregularizationRequest();
+      if (this.http.tirggerCountSignal().permission) {
+
+        if (this.selectempid) {
+          this.getregularizationEMPRequest();
+        } else {
+          this.getregularizationRequest();
+        }
+
         this.http.tirggerCountSignal.update((status) => ({
           ...status,
-          compOff: false,
+          permission: false,
         }));
       }
-    })
+    });
   }
 
   ngOnInit(): void {
@@ -81,7 +87,7 @@ export class RegularizationTabsComponent implements OnInit, OnDestroy {
       next: (response: any) => {
         this.regularization = response;
         this.waitingForApprovalregularizationCount = this.regularization.filter(
-          (element: { status: string }) =>  element.status === 'Waiting for Approval'
+          (element: { status: string }) => element.status === 'Waiting for Approval'
         ).length;
         // this.approvalregularizationRequestsCount = this.regularization.filter(
         //   (element: { status: string }) => element.status === 'Approved'

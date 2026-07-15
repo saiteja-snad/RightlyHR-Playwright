@@ -493,7 +493,7 @@ export class LeavesWaitingForApprovalComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response: any) => {
-
+          this.spinnerLoader = false;
           const selectedCount = this.selectedProducts.length;
 
           this.selectedProducts = [];
@@ -501,7 +501,7 @@ export class LeavesWaitingForApprovalComponent implements OnInit, OnDestroy {
 
           this.responseSummary = response.data;
 
-          if (selectedCount > 1) {
+          if (this.multiSelect) {
 
             this.modalService.open(this.leaveSummary, {
               centered: true,
@@ -579,7 +579,7 @@ export class LeavesWaitingForApprovalComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response: any) => {
-
+          this.spinnerLoader = false;
           const selectedCount = this.selectedProducts.length;
 
           this.selectedProducts = [];
@@ -587,7 +587,7 @@ export class LeavesWaitingForApprovalComponent implements OnInit, OnDestroy {
 
           this.responseSummary = response.data;
 
-          if (selectedCount > 1) {
+         if (this.multiSelect) {
 
             this.modalService.open(this.leaveSummary, {
               centered: true,

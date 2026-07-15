@@ -30,3 +30,14 @@
     height: 70dvh;
     justify-content: center;
 }
+
+.d-flex.align-items-center.justify-content-center.gap-2.mb-3 .chip-btn {
+    height: 34px !important;
+    min-width: 107px !important;
+    padding: 0 14px !important;
+    font-size: 14px;
+    white-space: nowrap;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+}

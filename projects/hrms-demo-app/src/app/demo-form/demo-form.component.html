@@ -60,13 +60,11 @@
       <!-- SECTION 1 -->
       <fieldset>
         <legend><span class="n">1</span> Contact information</legend>
-
         <div class="grid2">
           <div class="field">
             <label class="lbl" for="firstName">First Name <span class="req">*</span></label>
             <div class="control">
-              <input type="text" id="firstName" formControlName="firstName" placeholder="e.g. Priya"
-                autocomplete="given-name" />
+              <input type="text" id="firstName" formControlName="firstName" placeholder="e.g. Priya" autocomplete="given-name" />
             </div>
             @if (submitted && form.controls.firstName.errors?.['required']) {
             <div class="hint err">First name is required.</div>
@@ -77,15 +75,13 @@
           <div class="field">
             <label class="lbl" for="middleName">Middle Name</label>
             <div class="control">
-              <input type="text" id="middleName" formControlName="middleName" placeholder="e.g. Jane"
-                autocomplete="additional-name" />
+              <input type="text" id="middleName" formControlName="middleName" placeholder="e.g. Jane" autocomplete="additional-name" />
             </div>
           </div>
           <div class="field">
             <label class="lbl" for="lastName">Last Name <span class="req">*</span></label>
             <div class="control">
-              <input type="text" id="lastName" formControlName="lastName" placeholder="e.g. Sharma"
-                autocomplete="family-name" />
+              <input type="text" id="lastName" formControlName="lastName" placeholder="e.g. Sharma" autocomplete="family-name" />
             </div>
             @if (submitted && form.controls.lastName.errors?.['required']) {
             <div class="hint err">Last name is required.</div>
@@ -155,7 +151,6 @@
           aria-label="Upload company logo" (dragover)="onDragOver($event)" (dragleave)="onDragLeave($event)"
           (drop)="onDrop($event)" (click)="logoInput.click()">
           <input #logoInput type="file" hidden accept=".png,.jpg,.jpeg,.svg" (change)="onFileSelected($event)" />
-
           @if (selectedFile) {
           <div class="file-chip">
             @if (logoPreviewUrl) {
@@ -203,30 +198,26 @@
 
       <label class="agree">
         <input type="checkbox" formControlName="agreeTerms" />
-        <span>I agree to the <a href="javascript:void(0)">Terms of Service</a> and <a href="javascript:void(0)">Privacy
-            Policy</a>.</span>
+        <span>I agree to the <a href="javascript:void(0)">Terms of Service</a> and <a href="javascript:void(0)">Privacy Policy</a>.</span>
       </label>
 
       @if (submitted && form.controls.agreeTerms.invalid) {
       <div class="hint err" style="margin-top:-14px; margin-bottom: 14px;">You must accept the terms to continue.</div>
       }
 
-      <button type="submit" class="cta" [disabled]="!canSubmit">Create my demo instance <span
-          class="arr">&rarr;</span></button>
+      <button type="submit" class="cta" [disabled]="!canSubmit">Create my demo instance <span class="arr">&rarr;</span></button>
       <p class="cta-hint" [class.ready]="canSubmit">
-        {{ canSubmit ? "You're all set — one click away." : 'Complete the required fields and verify your email to
-        continue.' }}
+        {{ canSubmit ? "You're all set — one click away." : 'Complete the required fields and verify your email to continue.' }}
       </p>
     </form>
     } @else {
     <div class="success show">
       <div class="big-tick">&#10003;</div>
       <h2>Registration Successful!</h2>
-      <p>
-        Your registration has been completed successfully.
-        Your RightlyHR Demo Instance is currently being set up. This process typically takes up to 5 minutes.
-        We will notify you via email once your demo instance is ready.</p>
-      </div>
+      <p class="mb-2">Your registration has been completed successfully.</p>
+      <p class="mb-2">Your RightlyHR Demo Instance is currently being set up.<br>This process typically takes up to <b>5 minutes</b>.</p>
+      <p>We will notify you via email once your demo instance is ready.</p>
+    </div>
     }
   </main>
 </div>

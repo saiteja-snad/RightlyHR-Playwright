@@ -58,7 +58,7 @@
 .brand-inner {
   margin-top: auto;
   margin-bottom: auto;
-  padding: 56px 0;
+  padding: 16px 0;
 
   @media (max-width: 900px) {
     padding: 28px 0;
@@ -79,17 +79,17 @@
     white-space: nowrap;
     color: var(--paper);
 
-    &::before {
-      content: '';
-      position: absolute;
-      left: -4px;
-      right: -4px;
-      bottom: 0.06em;
-      height: 0.42em;
-      background: var(--mark);
-      z-index: -1;
-      transform: skewX(-6deg);
-    }
+    // &::before {
+    //   content: '';
+    //   position: absolute;
+    //   left: -4px;
+    //   right: -4px;
+    //   bottom: 0.06em;
+    //   height: 0.42em;
+    //   background: var(--mark);
+    //   z-index: -1;
+    //   transform: skewX(-6deg);
+    // }
   }
 }
 
@@ -654,10 +654,13 @@ input[type='tel'] {
 }
 
 /* success */
-
 .success {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 80dvh;
+  flex-direction: column;
   text-align: center;
-  padding: 80px 30px;
 
   .big-tick {
     width: 70px;
@@ -671,17 +674,14 @@ input[type='tel'] {
   }
 
   h2 {
-    font-size: 1.6rem;
+    font-size: 1.5rem;
     font-weight: 800;
     margin-bottom: 10px;
   }
 
   p {
     color: var(--muted);
-    font-size: 0.92rem;
-    max-width: 38ch;
-    margin: 0 auto;
-    line-height: 1.6;
+    font-size: 14px;
   }
 }
 

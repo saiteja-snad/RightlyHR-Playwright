@@ -209,8 +209,10 @@ export class DemoFormComponent implements OnDestroy {
         next: (res) => {
           if (res.statusCode === 200 && res.isVerified) {
             this.emailVerified = true;
-            this.modalRef?.close();
-           this.confirmationpopup.openSuccessModal(res.message || 'Email verified successfully!');
+            // Disable the email field
+          this.form.get('email')?.disable();
+           this.modalRef?.close();
+           //this.confirmationpopup.openSuccessModal(res.message || 'Email verified successfully!');
           } else {
             alert(res.message || 'Invalid or expired verification code.');
           }
@@ -303,7 +305,7 @@ export class DemoFormComponent implements OnDestroy {
     this.httpService.createdemoinstance(payload).subscribe({
       next: (response) => {
         console.log('API Response:', response);
-        this.confirmationpopup.openSuccessModal('Demo instance created successfully!');
+        //this.confirmationpopup.openSuccessModal('Demo instance created successfully!');
         this.submittedSuccessfully = true;
       },
       error: (error) => {

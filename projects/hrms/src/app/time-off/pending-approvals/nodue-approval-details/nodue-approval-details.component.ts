@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { HttpService } from '../../../services/http.service';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
@@ -19,6 +19,8 @@ import { DataLoaderContentComponent } from "../../../shared/data-loader-content/
 import { FormValidationsService } from '../../../services/form-validations.service';
 import { InfoIconComponent } from '../../../icons/info-icon/info-icon.component';
 import { environment } from '../../../../environments/environment';
+import { TableModule } from 'primeng/table';
+import { Table } from 'primeng/table';
 @Component({
   selector: 'app-nodue-approval-details',
   imports: [
@@ -32,12 +34,14 @@ import { environment } from '../../../../environments/environment';
     NodueDetailsPipe,
     DateformatPipe,
     DataLoaderContentComponent,
-    InfoIconComponent
+    InfoIconComponent,
+    TableModule
   ],
   templateUrl: './nodue-approval-details.component.html',
   styleUrl: './nodue-approval-details.component.scss',
 })
 export class NodueApprovalDetailsComponent implements OnInit, OnDestroy {
+  @ViewChild('nodueTable') nodueTable!: Table;
   subscription!: Subscription;
   searchValue: any;
   LOGIN: any;
@@ -45,13 +49,16 @@ export class NodueApprovalDetailsComponent implements OnInit, OnDestroy {
   first: any = 0;
   rows: any = 10;
   loading = false;
+  nodue_Request_data = new BehaviorSubject<InoDuepending[]>([]);
+  originalNodueData = [] as InoDuepending[]; // Store original unsorted data
+  currentSortField: string = '';
+  currentSortOrder: number = 0; // 0 = no sort, 1 = asc, -1 = desc
   options = [
     { label: 10, value: 10 },
     { label: 15, value: 15 },
     { label: 20, value: 20 },
     { label: 25, value: 25 },
   ];
-  nodue_Request_data = new BehaviorSubject<InoDuepending[]>([]);
   AcceptForm!: FormGroup;
   rejectForm!: FormGroup;
   isLoading = false;
@@ -134,8 +141,114 @@ onStatusApproveSelect(status: string) {
         next: (data: any) => {
           this.loading = false;
           this.nodue_Request_data.next(data);
+          this.originalNodueData = [...data]; // Store original data
         },
       });
+  }
+
+  getFilteredAndSortedNodue(): InoDuepending[] {
+    const search = this.searchValue?.toLowerCase() ?? '';
+    let nodueData = this.nodue_Request_data.getValue() ?? [];
+
+    if (search) {
+      nodueData = nodueData.filter(item =>
+        item.employeeName?.toLowerCase().includes(search) ||
+        item.employeeFusionEmpId?.toLowerCase().includes(search) ||
+        item.departmentName?.toLowerCase().includes(search) ||
+        item.status?.toLowerCase().includes(search) ||
+        item.requiredEmails?.toLowerCase().includes(search)
+      );
+    }
+
+    return nodueData;
+  }
+
+  customSort(event: any): void {
+    const field = event.field;
+    
+    // Track current sort state for the clicked field
+    if (this.currentSortField === field) {
+      // Same field clicked - cycle through: asc (1) -> desc (-1) -> reset (0)
+      if (this.currentSortOrder === 1) {
+        // Currently ascending, change to descending
+        this.currentSortOrder = -1;
+        event.order = -1;
+      } else if (this.currentSortOrder === -1) {
+        // Currently descending, reset to original order
+        this.nodue_Request_data.next([...this.originalNodueData]);
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        if (this.nodueTable) {
+          this.nodueTable.reset();
+        }
+        return;
+      } else {
+        // Currently reset, change to ascending
+        this.currentSortOrder = 1;
+        event.order = 1;
+      }
+    } else {
+      // New field clicked - start with ascending
+      this.currentSortField = field;
+      this.currentSortOrder = 1;
+      event.order = 1;
+    }
+
+    event.data.sort((a: any, b: any) => {
+      let val1: any;
+      let val2: any;
+
+      // Handle specific field mappings
+      switch (field) {
+        case 'employeeFusionEmpId':
+          val1 = a.employeeFusionEmpId;
+          val2 = b.employeeFusionEmpId;
+          break;
+        case 'employeeName':
+          val1 = a.employeeName;
+          val2 = b.employeeName;
+          break;
+        case 'requestedDate':
+          val1 = a.requestedDate;
+          val2 = b.requestedDate;
+          break;
+        case 'departmentName':
+          val1 = a.departmentName;
+          val2 = b.departmentName;
+          break;
+        case 'status':
+          val1 = a.status;
+          val2 = b.status;
+          break;
+        default:
+          val1 = a[field];
+          val2 = b[field];
+      }
+
+      // Handle date sorting
+      if (field === 'requestedDate') {
+        const date1 = val1 ? new Date(val1) : new Date(0);
+        const date2 = val2 ? new Date(val2) : new Date(0);
+        return event.order * (date1.getTime() - date2.getTime());
+      }
+
+      // Handle Employee ID sorting (alphanumeric)
+      if (field === 'employeeFusionEmpId') {
+        return event.order * String(val1 ?? '').localeCompare(
+          String(val2 ?? ''),
+          undefined,
+          {
+            numeric: true,
+            sensitivity: 'base'
+          }
+        );
+      }
+
+      // Handle string sorting for all other fields
+      val1 = String(val1 ?? '').trim();
+      val2 = String(val2 ?? '').trim();
+      return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+    });
   }
 
   openModal(Values: any, content: any) {
@@ -204,6 +317,12 @@ onStatusApproveSelect(status: string) {
         error: (reason: any) => {
           this.isLoading = false;
           this.conformationPopup.openErrorModal(reason.error.message);
+          this.signalService.noDueTriggerSignal.set(true);
+          this.signalService.noDueSideNavCountTriggerSignal.set(true);
+          this.http.tirggerPendingApprovalCountSignal.update((status) => ({
+            ...status,
+            nodue: true,
+          }));
         },
       });
   }
@@ -257,6 +376,12 @@ onStatusApproveSelect(status: string) {
         error: (reason: any) => {
           this.isLoading = false;
           this.conformationPopup.openSuccessModal(reason.error.message);
+          this.signalService.noDueTriggerSignal.set(true);
+          this.signalService.noDueSideNavCountTriggerSignal.set(true);
+          this.http.tirggerPendingApprovalCountSignal.update((status) => ({
+            ...status,
+            nodue: true,
+          }));
         },
       });
   }

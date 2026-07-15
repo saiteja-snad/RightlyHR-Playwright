@@ -49,6 +49,7 @@ export class HttpService {
     expenses: boolean;
     nodue: boolean;
     timeoff: boolean;
+    onboarding : boolean
   }>({
     compOff: false,
     wfh: false,
@@ -58,6 +59,7 @@ export class HttpService {
     expenses: false,
     nodue: false,
     timeoff: false,
+    onboarding : false
   });
   desklocationIdSubject = new BehaviorSubject<string | null>(null);
   desksublocationIdSubject = new BehaviorSubject<string | null>(null);
@@ -69,7 +71,7 @@ export class HttpService {
   reviewCycleTriggerSignal = signal<boolean>(false);
   wfhTriggerSignal = signal<boolean>(false);
   permissionTriggerSignal = signal<boolean>(false);
-  compOffTriggerSignal = signal<boolean>(false);
+  compOffTriggerSignal = signal<number>(0);
   cardsregisterSignal = signal<boolean>(false);
   constructor(private http: HttpClient) {
     this.communicationService = new BehaviorSubject(null);

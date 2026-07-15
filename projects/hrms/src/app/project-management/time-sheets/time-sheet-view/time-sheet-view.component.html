@@ -6,22 +6,6 @@
 
         <div class="d-flex align-items-center gap-3">
 
-            <div class="d-flex week-picker-content">
-                <div class="custom-date-range-picker me-2">
-                    <p-datepicker #datePicker [(ngModel)]="date" selectionMode="range" [showIcon]="true"
-                        [readonlyInput]="true" [placeholder]="displayLabel" (onSelect)="onDateSelect($event)"
-                        (mousedown)="$event.preventDefault()">
-                    </p-datepicker>
-                </div>
-                <button class="custom-btn btn-primary week-change-btn-prev" (mousedown)="$event.preventDefault()"
-                    (click)="previousWeek()">
-                    <i class="bi bi-chevron-left"></i>
-                </button>
-                <button class="custom-btn btn-primary week-change-btn-next" (mousedown)="$event.preventDefault()"
-                    (click)="nextWeek()">
-                    <i class="bi bi-chevron-right"></i>
-                </button>
-            </div>
             <!-- @if(rbac.allowedToAccess('All Employees (Timesheet).view') && rbac.allowedToAccess('My Team (Timesheet).view')) {
             <div class="d-flex align-items-center gap-2">
                 <label for="education" class="form-label custom-label text-nowrap filter-labels m-0">{{'Select Employee'
@@ -59,142 +43,161 @@
             </div>
             } -->
             <!-- <button type="button" class="custom-btn btn-primary px-4" (click)="navigation()">My Summary</button> -->
-             @if(rbac.allowedToAccess('Timesheet Bulk Export.view')
-              || rbac.allowedToAccess('Timesheet Bulk Import.view')
-              || rbac.allowedToAccess('Timesheet History Log.view')) {
-            <div class="position-relative menu-dropdown-content">
-                <button class="custom-btn btn-primary" type="button" (click)="bulkMenu.toggle($event)">{{'Actions'}}</button>
-                <p-menu #bulkMenu [popup]="true" [model]="bulkOperationMenuItems" />
+            <div class="d-flex week-picker-content">
+                <div class="custom-date-range-picker me-2">
+                    <p-datepicker #datePicker [(ngModel)]="date" selectionMode="range" [showIcon]="true"
+                        [readonlyInput]="true" [placeholder]="displayLabel" (onSelect)="onDateSelect($event)"
+                        (mousedown)="$event.preventDefault()">
+                    </p-datepicker>
+                </div>
+                <button class="custom-btn btn-primary week-change-btn-prev" (mousedown)="$event.preventDefault()"
+                    (click)="previousWeek()">
+                    <i class="bi bi-chevron-left"></i>
+                </button>
+                <button class="custom-btn btn-primary week-change-btn-next" (mousedown)="$event.preventDefault()"
+                    (click)="nextWeek()">
+                    <i class="bi bi-chevron-right"></i>
+                </button>
+            </div>
+
+            @if (rbac.allowedToAccess('Timesheet Clone.view')) {
+            <div class="d-flex align-items-center clone-btn-wrap">
+                <button type="button" class="custom-btn btn-primary clone-action-btn" (click)="openCloneModal()"
+                    [disabled]="isCloneDisabled()">
+                    <i class="bi bi-copy" aria-hidden="true"></i>
+                    Clone
+                </button>
             </div>
             }
 
-            <div *ngIf="employeeSelected">
-                <button type="button" class="custom-btn btn-primary px-4" (click)="mytimesheet()">My Timesheet</button>
+            @if(rbac.allowedToAccess('Timesheet Bulk Export.view')
+            || rbac.allowedToAccess('Timesheet Bulk Import.view')
+            || rbac.allowedToAccess('Timesheet History Log.view')) {
+            <div class="position-relative menu-dropdown-content ">
+                <button class="custom-btn btn-primary" type="button"
+                    (click)="bulkMenu.toggle($event)">{{'Actions'}}</button>
+                <p-menu #bulkMenu [popup]="true" [model]="bulkOperationMenuItems" />
+            </div>
+            }
+        </div>
+
+        <div class="main-content d-flex w-100 gap-3">
+            <div class="component-left-tabs-container">
+                <app-timesheets-tabs />
             </div>
 
-
-      <app-applicable-policies-trigger
-        [moduleKey]="applicablePolicies.moduleKey"
-        [subModuleKey]="applicablePolicies.subModuleKey">
-      </app-applicable-policies-trigger>
-        </div>
-    </div>
-
-    <div class="main-content d-flex w-100 gap-3">
-        <div class="component-left-tabs-container">
-            <app-timesheets-tabs />
-        </div>
-
-        <div class="custom-table-content">
-            @if (!loading) {
-            <form [formGroup]="timesheetForm">
-                <table class="w-100">
-                    <thead>
-                        <tr>
-                            <th>Project</th>
-                            <th *ngFor="let d of weekDates">{{ d | date:"EEE, MMM dd" }}</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody formArrayName="projects">
-                        <tr *ngFor="let project of projects.controls; let i = index" [formGroupName]="i">
-                            <td>
-                                <div class="dropdown">
-                                    <div class="custom-select-btn cursor text-nowrap" id="dropdownMenuButton"
-                                        data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false"
-                                        [class.disabled]="employeeSelected || hasAnyDuration(project)"
-                                        (click)="onDropdownClick($event)">
-                                        <ng-container *ngIf="project.value.isNoClientProject; else hasProject">
-                                            <u>No Client - No Project</u>
-                                        </ng-container>
-                                        <ng-template #hasProject>
-                                            <ng-container
-                                                *ngIf="project.value.selectedProject?.clientName && project.value.selectedProject?.projectName; else selectProject">
-                                                <div class="mb-2 "
-                                                    [style.color]="getProjectColor(project.value.selectedProject?.projectId)">
-                                                    <u>{{ project.value.selectedProject?.projectName }}</u>
-                                                </div>
-                                                <div class="d-flex flex-wrap align-items-center gap-2">
-                                                    <div class="timesheet-chip"
-                                                        [style.background-color]="getLighterColor(getClientColor(project.value.selectedProject?.clientId))"
-                                                        [style.color]="getClientColor(project.value.selectedProject?.clientId)"
-                                                        [style.border-color]="getClientColor(project.value.selectedProject?.clientId)">
-                                                        {{ project.value.selectedProject?.clientName }}
-                                                    </div>
-                                                    <div *ngIf="project.value.selectedProject?.phaseName"
-                                                        class="timesheet-chip"
-                                                        [style.background-color]="getLighterColor(getPhaseColor(project.value.selectedProject?.phaseId))"
-                                                        [style.color]="getPhaseColor(project.value.selectedProject?.phaseId)"
-                                                        [style.border-color]="getPhaseColor(project.value.selectedProject?.phaseId)">
-                                                        {{ project.value.selectedProject?.phaseName }}
-                                                    </div>
-                                                </div>
+            <div class="custom-table-content">
+                @if (!loading) {
+                <form [formGroup]="timesheetForm">
+                    <table class="w-100">
+                        <thead>
+                            <tr>
+                                <th>Project</th>
+                                <th *ngFor="let d of weekDates">{{ d | date:"EEE, MMM dd" }}</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody formArrayName="projects">
+                            <tr *ngFor="let project of projects.controls; let i = index" [formGroupName]="i">
+                                <td>
+                                    <div class="dropdown">
+                                        <div class="custom-select-btn cursor text-nowrap" id="dropdownMenuButton"
+                                            data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false"
+                                            [class.disabled]="employeeSelected || hasAnyDuration(project)"
+                                            (click)="onDropdownClick($event)">
+                                            <ng-container *ngIf="project.value.isNoClientProject; else hasProject">
+                                                <u>No Client - No Project</u>
                                             </ng-container>
-                                            <ng-template #selectProject><u>Select Project or Client</u></ng-template>
-                                        </ng-template>
-                                    </div>
-                                    <ul class="dropdown-menu custom-dropdown-menu">
-                                        <li>
-                                            <input type="search" class="form-control custom-search-input mb-2"
-                                                placeholder="Search Project or Client" formControlName="searchTerm">
-                                        </li>
-                                        <div class="custom-accordian-data-content">
-                                            <p-accordion>
-                                                <ng-container *ngFor="let client of getFilteredClientsForRow(project)">
-                                                    <p-accordion-panel [value]="client.clientName">
-                                                        <p-accordion-header>
-                                                            {{ client.clientName | titlecase }}
-                                                            <small class="text-muted ms-2">
-                                                                ({{ showProjectsLength(client.projects)
-                                                                }}Projects)
-                                                            </small>
-                                                        </p-accordion-header>
-                                                        <p-accordion-content>
-                                                            <ul class="list-style-none p-2">
-                                                                <ng-container *ngFor="let p of client.projects">
-                                                                    <li class="list-project mb-2">
-                                                                        <!-- Project name -->
-                                                                        <div *ngIf="p.phases && p.phases.length > 0"
-                                                                            class="fw-bold mb-2">{{ p.projectName }}
-                                                                        </div>
-                                                                        <!-- Inside your phase loop -->
-                                                                        <ng-container *ngFor="let ph of p.phases">
-                                                                    <li class="cursor text-secondary">
-                                                                        <label
-                                                                            class="d-flex align-items-center gap-2 mb-2">
+                                            <ng-template #hasProject>
+                                                <ng-container
+                                                    *ngIf="project.value.selectedProject?.clientName && project.value.selectedProject?.projectName; else selectProject">
+                                                    <div class="mb-2 "
+                                                        [style.color]="getProjectColor(project.value.selectedProject?.projectId)">
+                                                        <u>{{ project.value.selectedProject?.projectName }}</u>
+                                                    </div>
+                                                    <div class="d-flex flex-wrap align-items-center gap-2">
+                                                        <div class="timesheet-chip"
+                                                            [style.background-color]="getLighterColor(getClientColor(project.value.selectedProject?.clientId))"
+                                                            [style.color]="getClientColor(project.value.selectedProject?.clientId)"
+                                                            [style.border-color]="getClientColor(project.value.selectedProject?.clientId)">
+                                                            {{ project.value.selectedProject?.clientName }}
+                                                        </div>
+                                                        <div *ngIf="project.value.selectedProject?.phaseName"
+                                                            class="timesheet-chip"
+                                                            [style.background-color]="getLighterColor(getPhaseColor(project.value.selectedProject?.phaseId))"
+                                                            [style.color]="getPhaseColor(project.value.selectedProject?.phaseId)"
+                                                            [style.border-color]="getPhaseColor(project.value.selectedProject?.phaseId)">
+                                                            {{ project.value.selectedProject?.phaseName }}
+                                                        </div>
+                                                    </div>
+                                                </ng-container>
+                                                <ng-template #selectProject><u>Select Project or
+                                                        Client</u></ng-template>
+                                            </ng-template>
+                                        </div>
+                                        <ul class="dropdown-menu custom-dropdown-menu">
+                                            <li>
+                                                <input type="search" class="form-control custom-search-input mb-2"
+                                                    placeholder="Search Project or Client" formControlName="searchTerm">
+                                            </li>
+                                            <div class="custom-accordian-data-content">
+                                                <p-accordion>
+                                                    <ng-container
+                                                        *ngFor="let client of getFilteredClientsForRow(project)">
+                                                        <p-accordion-panel [value]="client.clientName">
+                                                            <p-accordion-header>
+                                                                {{ client.clientName | titlecase }}
+                                                                <small class="text-muted ms-2">
+                                                                    ({{ showProjectsLength(client.projects)
+                                                                    }}Projects)
+                                                                </small>
+                                                            </p-accordion-header>
+                                                            <p-accordion-content>
+                                                                <ul class="list-style-none p-2">
+                                                                    <ng-container *ngFor="let p of client.projects">
+                                                                        <li class="list-project mb-2">
+                                                                            <!-- Project name -->
+                                                                            <div *ngIf="p.phases && p.phases.length > 0"
+                                                                                class="fw-bold mb-2">{{ p.projectName }}
+                                                                            </div>
+                                                                            <!-- Inside your phase loop -->
+                                                                            <ng-container *ngFor="let ph of p.phases">
+                                                                        <li class="cursor text-secondary">
+                                                                            <label
+                                                                                class="d-flex align-items-center gap-2 mb-2">
+                                                                                <input type="radio"
+                                                                                    [name]="'phaseSelection_' + i"
+                                                                                    [value]="ph.phaseId"
+                                                                                    (change)="selectProjectForRow(project, client, p, ph)" />
+                                                                                <span class="phase-name">{{ ph.phaseName
+                                                                                    }}</span>
+                                                                            </label>
+                                                                        </li>
+                                                                    </ng-container>
+                                                                    <!-- For project without phases -->
+                                                                    <div *ngIf="(!p.phases || p.phases.length === 0) "
+                                                                        class="cursor text-secondary fw-bold d-flex align-items-center gap-2">
+                                                                        <label class="d-flex align-items-center gap-2">
                                                                             <input type="radio"
-                                                                             [name]="'phaseSelection_' + i"
-                                                                                [value]="ph.phaseId"
-                                                                                (change)="selectProjectForRow(project, client, p, ph)" />
-                                                                            <span class="phase-name">{{ ph.phaseName
+                                                                                [name]="'phaseSelection_' + i"
+                                                                                [value]="p.projectId"
+                                                                                (change)="selectProjectForRow(project, client, p, null)" />
+                                                                            <span class="phase-name">{{ p.projectName
                                                                                 }}</span>
                                                                         </label>
+                                                                    </div>
                                                                     </li>
-                                                                </ng-container>
-                                                                <!-- For project without phases -->
-                                                                <div *ngIf="(!p.phases || p.phases.length === 0) "
-                                                                    class="cursor text-secondary fw-bold d-flex align-items-center gap-2">
-                                                                    <label class="d-flex align-items-center gap-2">
-                                                                        <input type="radio"
-                                                                              [name]="'phaseSelection_' + i"
-                                                                            [value]="p.projectId"
-                                                                            (change)="selectProjectForRow(project, client, p, null)" />
-                                                                        <span class="phase-name">{{ p.projectName
-                                                                            }}</span>
-                                                                    </label>
-                                                                </div>
-                                                                </li>
-                                                </ng-container>
+                                                    </ng-container>
+                                        </ul>
+                                        </p-accordion-content>
+                                        </p-accordion-panel>
+                                        </ng-container>
+                                        </p-accordion>
+                                    </div>
                                     </ul>
-                                    </p-accordion-content>
-                                    </p-accordion-panel>
-                                    </ng-container>
-                                    </p-accordion>
-                                </div>
-                                </ul>
-        </div>
-        </td>
-        <td [formGroupName]="'mon'">
+            </div>
+            </td>
+             <td [formGroupName]="'mon'">
             <div class="d-flex d-flex align-items-center">
                 <div class="input-group custom-input-group" [ngClass]="getApprovalClass(project.get('mon'))">
                     <input type="text" formControlName="duration" class="form-control custom-input border-none"
@@ -202,9 +205,15 @@
                         (keydown)="checkClearDuration($event, 'mon', i)"
                         (keyup.enter)="formatTime($event, 'mon', i, 'duration',project.get('mon'))"
                         (blur)="formatTime($event, 'mon', i, 'duration',project.get('mon'))">
-                    <span
-                        *ngIf="shouldShowIcon(project, 'mon', i)"
-                        class="input-group-text border-none" (mousedown)="$event.preventDefault()">
+                    <span class="input-group-text border-none" *ngIf="project.get('mon.duration')?.value && (project.get('mon.approvalStatus')?.value === 'Rejected'||project.get('mon.approvalStatus')?.value === 'Waiting for Approval'
+                        ||project.get('mon.approvalStatus')?.value === 'Processed')"
+                        (mousedown)="$event.preventDefault()">
+                        <div class="info-icon" [ngbPopover]="approvalInfo" triggers="click" autoClose="outside"
+                            popoverClass="approval-info-popover" container="body"
+                            (click)="onclickinfo(project.get('mon'))"> <i class="bi bi-info-circle"></i></div>
+                    </span>
+                    <span *ngIf="shouldShowIcon(project, 'mon', i)" class="input-group-text border-none"
+                        (mousedown)="$event.preventDefault()">
                         <i class="bi bi-three-dots-vertical cursor"
                             (click)="openModal(addtask, project.get('mon'),i,'mon')"></i>
                     </span>
@@ -235,9 +244,15 @@
                         (keydown)="checkClearDuration($event, 'tue', i)"
                         (keyup.enter)="formatTime($event, 'tue', i, 'duration',project.get('tue'))"
                         (blur)="formatTime($event, 'tue', i, 'duration',project.get('tue'))">
-                    <span
-                       *ngIf="shouldShowIcon(project, 'tue', i)"
+                    <span *ngIf="project.get('tue.duration')?.value && (project.get('tue.approvalStatus')?.value === 'Rejected'||project.get('tue.approvalStatus')?.value === 'Waiting for Approval'
+                        ||project.get('tue.approvalStatus')?.value === 'Processed')"
                         class="input-group-text border-none" (mousedown)="$event.preventDefault()">
+                        <div class="info-icon" [ngbPopover]="approvalInfo" triggers="click" autoClose="outside"
+                            popoverClass="approval-info-popover" container="body"
+                            (click)="onclickinfo(project.get('tue'))"> <i class="bi bi-info-circle"></i></div>
+                    </span>
+                    <span *ngIf="shouldShowIcon(project, 'tue', i)" class="input-group-text border-none"
+                        (mousedown)="$event.preventDefault()">
                         <i class="bi bi-three-dots-vertical cursor"
                             (click)="openModal(addtask,project.get('tue'),i,'tue')"></i>
                     </span>
@@ -268,9 +283,15 @@
                         (keydown)="checkClearDuration($event, 'wed', i)"
                         (keyup.enter)="formatTime($event, 'wed', i, 'duration',project.get('wed'))"
                         (blur)="formatTime($event, 'wed', i, 'duration',project.get('wed'))">
-                    <span
-                         *ngIf="shouldShowIcon(project, 'wed', i)"
+                    <span *ngIf="project.get('wed.duration')?.value && (project.get('wed.approvalStatus')?.value === 'Rejected'||project.get('wed.approvalStatus')?.value === 'Waiting for Approval'
+                        ||project.get('wed.approvalStatus')?.value === 'Processed')"
                         class="input-group-text border-none" (mousedown)="$event.preventDefault()">
+                        <div class="info-icon" [ngbPopover]="approvalInfo" triggers="click" autoClose="outside"
+                            popoverClass="approval-info-popover" container="body"
+                            (click)="onclickinfo(project.get('wed'))"> <i class="bi bi-info-circle"></i></div>
+                    </span>
+                    <span *ngIf="shouldShowIcon(project, 'wed', i)" class="input-group-text border-none"
+                        (mousedown)="$event.preventDefault()">
                         <i class="bi bi-three-dots-vertical cursor"
                             (click)="openModal(addtask,project.get('wed'),i,'wed')"></i>
                     </span>
@@ -301,9 +322,15 @@
                         (keydown)="checkClearDuration($event, 'thu', i)"
                         (keyup.enter)="formatTime($event, 'thu', i, 'duration',project.get('thu'))"
                         (blur)="formatTime($event, 'thu', i, 'duration',project.get('thu'))">
-                    <span
-                         *ngIf="shouldShowIcon(project, 'thu', i)"
-                        class="input-group-text border-none " (mousedown)="$event.preventDefault()">
+                    <span *ngIf="project.get('thu.duration')?.value && (project.get('thu.approvalStatus')?.value === 'Rejected'||project.get('thu.approvalStatus')?.value === 'Waiting for Approval'
+                        ||project.get('thu.approvalStatus')?.value === 'Processed')"
+                        class="input-group-text border-none" (mousedown)="$event.preventDefault()">
+                        <div class="info-icon" [ngbPopover]="approvalInfo" triggers="click" autoClose="outside"
+                            popoverClass="approval-info-popover" container="body"
+                            (click)="onclickinfo(project.get('thu'))"> <i class="bi bi-info-circle"></i></div>
+                    </span>
+                    <span *ngIf="shouldShowIcon(project, 'thu', i)" class="input-group-text border-none "
+                        (mousedown)="$event.preventDefault()">
                         <i class="bi bi-three-dots-vertical cursor"
                             (click)="openModal(addtask,project.get('thu'),i,'thu')"></i>
                     </span>
@@ -334,8 +361,15 @@
                         (keydown)="checkClearDuration($event, 'fri', i)"
                         (keyup.enter)="formatTime($event, 'fri', i, 'duration',project.get('fri'))"
                         (blur)="formatTime($event, 'fri', i, 'duration',project.get('fri'))">
-                    <span    *ngIf="shouldShowIcon(project, 'fri', i)"
+                    <span *ngIf="project.get('fri.duration')?.value && (project.get('fri.approvalStatus')?.value === 'Rejected'||project.get('fri.approvalStatus')?.value === 'Waiting for Approval'
+                        ||project.get('fri.approvalStatus')?.value === 'Processed')"
                         class="input-group-text border-none" (mousedown)="$event.preventDefault()">
+                        <div class="info-icon" [ngbPopover]="approvalInfo" autoClose="outside" triggers="click"
+                            popoverClass="approval-info-popover" container="body"
+                            (click)="onclickinfo(project.get('fri'))"> <i class="bi bi-info-circle"></i></div>
+                    </span>
+                    <span *ngIf="shouldShowIcon(project, 'fri', i)" class="input-group-text border-none"
+                        (mousedown)="$event.preventDefault()">
                         <i class="bi bi-three-dots-vertical cursor"
                             (click)="openModal(addtask,project.get('fri'),i,'fri')"></i>
                     </span>
@@ -366,8 +400,15 @@
                         (keydown)="checkClearDuration($event, 'sat', i)"
                         (keyup.enter)="formatTime($event, 'sat', i, 'duration',project.get('sat'))"
                         (blur)="formatTime($event, 'sat', i, 'duration',project.get('sat'))">
-                    <span    *ngIf="shouldShowIcon(project, 'sat', i)"
+                    <span *ngIf="project.get('sat.duration')?.value && (project.get('sat.approvalStatus')?.value === 'Rejected'||project.get('sat.approvalStatus')?.value === 'Waiting for Approval'
+                        ||project.get('sat.approvalStatus')?.value === 'Processed')"
                         class="input-group-text border-none" (mousedown)="$event.preventDefault()">
+                        <div class="info-icon" [ngbPopover]="approvalInfo" triggers="click" autoClose="outside"
+                            popoverClass="approval-info-popover" container="body"
+                            (click)="onclickinfo(project.get('sat'))"> <i class="bi bi-info-circle"></i></div>
+                    </span>
+                    <span *ngIf="shouldShowIcon(project, 'sat', i)" class="input-group-text border-none"
+                        (mousedown)="$event.preventDefault()">
                         <i class="bi bi-three-dots-vertical cursor"
                             (click)="openModal(addtask,project.get('sat'),i,'sat')"></i>
                     </span>
@@ -398,8 +439,15 @@
                         (keydown)="checkClearDuration($event, 'sun', i)"
                         (keyup.enter)="formatTime($event, 'sun', i, 'duration',project.get('sun'))"
                         (blur)="formatTime($event, 'sun', i, 'duration',project.get('sun'))">
-                    <span    *ngIf="shouldShowIcon(project, 'sun', i)"
+                    <span *ngIf="project.get('sun.duration')?.value && (project.get('sun.approvalStatus')?.value === 'Rejected'||project.get('sun.approvalStatus')?.value === 'Waiting for Approval'
+                        ||project.get('sun.approvalStatus')?.value === 'Processed')"
                         class="input-group-text border-none" (mousedown)="$event.preventDefault()">
+                        <div class="info-icon" [ngbPopover]="approvalInfo" triggers="click" autoClose="outside"
+                            popoverClass="approval-info-popover" container="body"
+                            (click)="onclickinfo(project.get('sun'))"> <i class="bi bi-info-circle"></i></div>
+                    </span>
+                    <span *ngIf="shouldShowIcon(project, 'sun', i)" class="input-group-text border-none"
+                        (mousedown)="$event.preventDefault()">
                         <i class="bi bi-three-dots-vertical cursor"
                             (click)="openModal(addtask,project.get('sun'),i,'sun')"></i>
                     </span>
@@ -422,90 +470,91 @@
                 </div>
             </div>
         </td>
-        <td *ngIf="!employeeSelected">
-            <span type="button" (click)="openModalfordeletealldata(alldeleteconformation,i)"
-                *ngIf="canDelete(project,i)">
-                <img src="icons/delete-02.png" alt="failure icon" class="delete-icon">
-            </span>
-        </td>
-        </tr>
-        </tbody>
-        <tfoot>
-            <tr>
-                <td>Total Hours :<span class="total-duration ms-1">{{ totalDuration}} Hrs</span></td>
-                <td>{{ getTotalPerDay('mon') }}</td>
-                <td>{{ getTotalPerDay('tue') }}</td>
-                <td>{{ getTotalPerDay('wed') }}</td>
-                <td>{{ getTotalPerDay('thu') }}</td>
-                <td>{{ getTotalPerDay('fri') }}</td>
-                <td>{{ getTotalPerDay('sat') }}</td>
-                <td>{{ getTotalPerDay('sun') }}</td>
-                <td></td>
+            <td *ngIf="!employeeSelected">
+                <span type="button" (click)="openModalfordeletealldata(alldeleteconformation,i)"
+                    *ngIf="canDelete(project,i)">
+                    <img src="icons/delete-02.png" alt="failure icon" class="delete-icon">
+                </span>
+            </td>
             </tr>
-        </tfoot>
-        </table>
-        <div class="d-flex justify-content-between flex-wrap align-items-center gap-2 p-3">
-            <div class="d-flex align-items-center flex-wrap gap-3">
-                <div [style.visibility]="!employeeSelected ? 'visible' : 'hidden'">
-                    <button type="button" class="custom-btn btn-primary px-4" (click)="addProject()">+ Add Row</button>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td>Total Hours :<span class="total-duration ms-1">{{ totalDuration}} Hrs</span></td>
+                    <td>{{ getTotalPerDay('mon') }}</td>
+                    <td>{{ getTotalPerDay('tue') }}</td>
+                    <td>{{ getTotalPerDay('wed') }}</td>
+                    <td>{{ getTotalPerDay('thu') }}</td>
+                    <td>{{ getTotalPerDay('fri') }}</td>
+                    <td>{{ getTotalPerDay('sat') }}</td>
+                    <td>{{ getTotalPerDay('sun') }}</td>
+                    <td></td>
+                </tr>
+            </tfoot>
+            </table>
+            <div class="d-flex justify-content-between flex-wrap align-items-center gap-2 p-3">
+                <div class="d-flex align-items-center flex-wrap gap-3">
+                    <div [style.visibility]="!employeeSelected ? 'visible' : 'hidden'">
+                        <button type="button" class="custom-btn btn-primary px-4" (click)="addProject()">+ Add
+                            Row</button>
+                    </div>
+                    <div *ngIf="!employeeSelected">
+                        <button type="button" class="custom-btn btn-primary px-4"
+                            (click)="openModalforsubmit(sumbitconfirmationpopup)" [disabled]="isSubmitDisabled()">
+                            @if (spinnerLoaderforallrecoders) {
+                            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                            <span>{{'Loading' | translate}}...</span>
+                            } @else {
+                            <span>{{'Submit for Approval'| translate}}</span>
+                            }
+                        </button>
+                    </div>
                 </div>
-                <div *ngIf="!employeeSelected">
-                    <button type="button" class="custom-btn btn-primary px-4"
-                        (click)="openModalforsubmit(sumbitconfirmationpopup)" [disabled]="isSubmitDisabled()">
-                        @if (spinnerLoaderforallrecoders) {
-                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                        <span>{{'Loading' | translate}}...</span>
-                        } @else {
-                        <span>{{'Submit for Approval'| translate}}</span>
-                        }
-                    </button>
-                </div>
-            </div>
 
-            <div class="d-flex align-items-center flex-wrap gap-3">
-                <div class="d-flex align-items-center gap-1">
-                    <div class="circular-dot circle-holiday"></div>
-                    <div class="status-text">Holidays</div>
-                </div>
-                <div class="d-flex align-items-center gap-1">
-                    <div class="circular-dot circle-leave"></div>
-                    <div class="status-text">Leaves</div>
-                </div>
-                <div class="d-flex align-items-center gap-1">
-                    <div class="circular-dot circle-blue"></div>
-                    <div class="status-text">Draft</div>
-                </div>
-                <div class="d-flex align-items-center gap-1">
-                    <div class="circular-dot circle-green"></div>
-                    <div class="status-text">Approved</div>
-                </div>
-                <div class="d-flex align-items-center gap-1">
-                    <div class="circular-dot circle-red"></div>
-                    <div class="status-text">Rejected</div>
-                </div>
-                <div class="d-flex align-items-center gap-1">
-                    <div class="circular-dot circle-yellow"></div>
-                    <div class="status-text">Waiting for Approval</div>
-                </div>
-                <!-- <div class="d-flex align-items-center gap-1">
+                <div class="d-flex align-items-center flex-wrap gap-3">
+                    <div class="d-flex align-items-center gap-1">
+                        <div class="circular-dot circle-holiday"></div>
+                        <div class="status-text">Holidays</div>
+                    </div>
+                    <div class="d-flex align-items-center gap-1">
+                        <div class="circular-dot circle-leave"></div>
+                        <div class="status-text">Leaves</div>
+                    </div>
+                    <div class="d-flex align-items-center gap-1">
+                        <div class="circular-dot circle-blue"></div>
+                        <div class="status-text">Draft</div>
+                    </div>
+                    <div class="d-flex align-items-center gap-1">
+                        <div class="circular-dot circle-green"></div>
+                        <div class="status-text">Approved</div>
+                    </div>
+                    <div class="d-flex align-items-center gap-1">
+                        <div class="circular-dot circle-red"></div>
+                        <div class="status-text">Rejected</div>
+                    </div>
+                    <div class="d-flex align-items-center gap-1">
+                        <div class="circular-dot circle-yellow"></div>
+                        <div class="status-text">Waiting for Approval</div>
+                    </div>
+                    <!-- <div class="d-flex align-items-center gap-1">
                             <div class="circular-dot circle-orange"></div>
                             <div class="status-text">Phase Restricted</div>
                         </div> -->
+                </div>
             </div>
-        </div>
-        <div class="d-flex flex-column p-3">
-            <div *ngFor="let lock of lockMessages" class="custom-error-card mb-2">
-                <img src="/main-menu-icons/typcn_warning-outline.png" alt="Warning" class="clock-icon">
-                <span [innerHTML]="lock.text"></span>
+            <div class="d-flex flex-column p-3">
+                <div *ngFor="let lock of lockMessages" class="custom-error-card mb-2">
+                    <img src="/main-menu-icons/typcn_warning-outline.png" alt="Warning" class="clock-icon">
+                    <span [innerHTML]="lock.text"></span>
+                </div>
             </div>
+            </form>
+            }
+            @else {
+            <app-data-loader-content />
+            }
         </div>
-        </form>
-        }
-        @else {
-        <app-data-loader-content />
-        }
     </div>
-</div>
 </div>
 
 <!--Add task Popup-->
@@ -514,7 +563,7 @@
         <div class="custom-poup-header-content popup-header-border">
             <div class="pt-2">
                 <p class="popup-heading mb-0">{{'Time Entry'}}</p>
-            </div>
+                            </div>
             <div>
                 <a (click)="openModalforconformation(confirmationpopup)" (mousedown)="$event.preventDefault()">
                     <img src="icons/close.png" alt="Close Icon" class="close-icon">
@@ -526,7 +575,7 @@
             <form [formGroup]="dayForm" *ngIf="dayForm" (ngSubmit)="saveDayEntry()">
                 <div class="mb-4">
                     <p class="day mb-2">{{dayForm.get('entryDate')?.value | dateformat}} </p>
-                 <p class="project-name">
+                    <p class="project-name">
                         {{dayForm.get('clientName')?.value || 'No Client'}}
                         @if(dayForm.get('projectName')?.value) {
                         - {{dayForm.get('projectName')?.value}}
@@ -539,23 +588,20 @@
                     </p>
                 </div>
                 <div class="row">
-                      <div class="col-md-12 mb-3">
-                    <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Task Type'|translate}}<span *ngIf="isRequired('taskId')"
-                            class="error-msg">*</span></label>
-                    <div class="custom-p-select-content">
-                        <p-select [options]="taskType" optionLabel="taskTypeName" optionValue="id"
-                            [filter]="true" filterBy="taskTypeName" filterPlaceholder="Search task type"
-                            placeholder="Please select task type" formControlName="taskId" class="custom-select w-100">
-                        </p-select>
-                    </div>
-                    <div class="error-msg"
-                            *ngIf="dayForm.get('taskId')?.touched && dayForm.get('taskId')?.hasError('required')">
-                            Task Type is required
+                    <div class="col-md-12 mb-3">
+                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Task
+                            Type'|translate}}<span class="error-msg"></span></label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="taskType" optionLabel="taskTypeName" optionValue="id" [filter]="true"
+                                filterBy="taskTypeName" filterPlaceholder="Search task type"
+                                placeholder="Please select task type" formControlName="taskId"
+                                class="custom-select w-100">
+                            </p-select>
                         </div>
-                </div>
+                    </div>
                     <div class="col-md-12 mb-3">
                         <label class="form-label custom-label mb-2">Description<span
-                               *ngIf="isRequired('description')" class="error-msg">*</span></label>
+                                class="text-danger">*</span></label>
                         <textarea formControlName="description" [maxlength]="500"
                             (keydown)="formValidation.restrictInitialSpace($event)" class="form-control custom-input"
                             placeholder="Please enter description" rows="5"></textarea>
@@ -569,18 +615,18 @@
 
                     </div>
                     <div class="col-md-6 mb-3">
-                        <label class="form-label custom-label mb-2">Start Time <span  *ngIf="isRequired('startTime')" class="error-msg">*</span></label>
+                        <label class="form-label custom-label mb-2">Start Time</label>
                         <input type="time" formControlName="startTime" class="form-control custom-input"
                             placeholder="HH:MM" (change)="onTimeChange()">
                     </div>
                     <div class="col-md-6 mb-3">
-                        <label class="form-label custom-label mb-2">End Time <span  *ngIf="isRequired('endTime')" class="error-msg">*</span></label>
+                        <label class="form-label custom-label mb-2">End Time</label>
                         <input type="time" formControlName="endTime" class="form-control custom-input"
                             placeholder="HH:MM" (change)="onTimeChange()">
                     </div>
-                </div> 
+                </div>
                 <div class="col-md-12 mb-3">
-                    <label class="form-label custom-label mb-2">Duration<span class="error-msg">*</span></label>
+                    <label class="form-label custom-label mb-2">Duration<span class="text-danger">*</span></label>
                     <div class="input-group custom-input-group">
                         <input type="text" formControlName="duration" class="form-control custom-input border-none"
                             placeholder="HH:MM" maxlength="4" (keypress)="allowNumbersOnly($event)"
@@ -606,7 +652,7 @@
                 </div>
                 <div class="d-flex align-items-center gap-3 pt-4"
                     *ngIf="dayForm.get('approvalStatus')?.value !=='Waiting for Approval' && dayForm.get('approvalStatus')?.value !== 'Processed'">
-                    <span type="button" class="error-msg"
+                    <span type="button" class="text-danger"
                         *ngIf="dayForm.get('approvalStatus')?.value && dayForm.get('approvalStatus')?.value !== 'Not Entered'"
                         (click)="opendeleteModal(deleteconformation,dayForm.get('entryId')?.value)"><u>Delete</u></span>
                     <button type="button" class="custom-btn btn-secondary w-100"
@@ -684,6 +730,137 @@
     </div>
 </ng-template>
 
+<!-- Clone Timesheet Modal -->
+<ng-template #cloneTimesheetModal let-offcanvas>
+    <div class="custom-filter-container">
+        <div class="offcanvas-filter-header-content offcanvas-filter-header-border">
+            <p class="filter-header m-0">Clone Timesheet Entries</p>
+            <a (click)="openCancelClonePopup(cancelClonePopup)"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+        </div>
+
+        <div class="offcanvas-filter-content">
+            <form [formGroup]="cloneForm">
+                <div class="mb-3">
+                    <p class="form-label custom-label text-nowrap filter-labels mb-3">Select Date Range</p>
+                    <div class="mb-3">
+                        <label class="form-label custom-label text-nowrap mb-2">Source Date Range<span class="text-danger">*</span></label>
+                        <div class="custom-date-range-picker">
+                            <p-datepicker formControlName="sourceWeekDateRange"
+                                selectionMode="range" [showIcon]="true" [readonlyInput]="true"
+                                [placeholder]="'dd/mm/yyyy - dd/mm/yyyy'" [maxDate]="today"
+                                (onSelect)="validateCloneDateRanges()">
+                            </p-datepicker>
+                        </div>
+                        @if (cloneForm.get('sourceWeekDateRange')?.invalid && cloneForm.get('sourceWeekDateRange')?.touched) {
+                        <small class="text-danger">Source Date Range is required</small>
+                        }
+                    </div>
+                    <div>
+                        <label class="form-label custom-label text-nowrap mb-2">Target Date Range<span class="text-danger">*</span></label>
+                        <div class="custom-date-range-picker">
+                            <p-datepicker formControlName="targetWeekDateRange"
+                                selectionMode="range" [showIcon]="true" [readonlyInput]="true"
+                                [placeholder]="'dd/mm/yyyy - dd/mm/yyyy'" [maxDate]="today"
+                                (onSelect)="validateCloneDateRanges()" (onClear)="validateCloneDateRanges()">
+                            </p-datepicker>
+                        </div>
+                        <div *ngIf="cloneErrorMessage" class="clone-validation-error">
+                            {{ cloneErrorMessage }}
+                        </div>
+                        @if (cloneForm.get('targetWeekDateRange')?.invalid && cloneForm.get('targetWeekDateRange')?.touched && !cloneErrorMessage) {
+                        <small class="text-danger">Target Date Range is required</small>
+                        }
+                    </div>
+                </div>
+
+                <hr class="mb-3">
+
+                <div class="mb-3">
+                    <p class="form-label custom-label text-nowrap filter-labels mb-3">Select Items to Clone</p>
+                    <div class="d-flex flex-column gap-2">
+                        <label class="custom-checkbox">
+                            <input type="checkbox" formControlName="copyClients" />
+                            <span>Copy Clients<span class="text-danger">*</span></span>
+                        </label>
+                        <label class="custom-checkbox">
+                            <input type="checkbox" formControlName="copyProjects" />
+                            <span>Copy Projects<span class="text-danger">*</span></span>
+                        </label>
+                        <label class="custom-checkbox">
+                            <input type="checkbox" formControlName="copyPhases" />
+                            <span>Copy Phases<span class="text-danger">*</span></span>
+                        </label>
+                        <label class="custom-checkbox">
+                            <input type="checkbox" formControlName="copyLoggedHours" />
+                            <span>Copy Logged Hours<span class="text-danger">*</span></span>
+                        </label>
+                        <label class="custom-checkbox">
+                            <input type="checkbox" formControlName="copyDescription" />
+                            <span>Copy Description / Notes</span>
+                        </label>
+                        <label class="custom-checkbox">
+                            <input type="checkbox" formControlName="copyTask" />
+                            <span>Copy Task Type</span>
+                        </label>
+                    </div>
+                </div>
+
+                <hr class="mb-3">
+
+                <div class="mb-3">
+                    <p class="form-label custom-label text-nowrap filter-labels mb-3">Cloning Strategy</p>
+                    <div class="strategy-option">
+                        <input type="radio" formControlName="cloneMode" value="merge" class="form-check-input">
+                        <label class="clone-strategy-card">
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="strategy-icon"><i class="bi bi-copy"></i></div>
+                                <div>
+                                    <span class="title">Merge</span>
+                                    <span class="radio-description">Adds cloned entries alongside existing entries in the target week.</span>
+                                </div>
+                            </div>
+                        </label>
+                    </div>
+                    <div class="strategy-option mt-3">
+                        <input type="radio" formControlName="cloneMode" value="overwrite" class="form-check-input"
+                            [attr.disabled]="(isOverwriteDisabled || isOverwriteEligibilityLoading) ? true : null">
+                        <label class="clone-strategy-card">
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="strategy-icon"><i class="bi bi-arrow-repeat"></i></div>
+                                <div>
+                                    <span class="title">Overwrite</span>
+                                    <span class="radio-description">Overwrites the entire week with the cloned source.</span>
+                                </div>
+                            </div>
+                        </label>
+                    </div>
+                    <div class="info-box mt-3" *ngIf="isOverwriteDisabled && overwriteDisabledMessage">
+                        <i class="bi bi-info-circle-fill"></i>
+                        {{ overwriteDisabledMessage }}
+                    </div>
+                </div>
+
+                <div class="info-box mb-3" *ngIf="cloneForm.get('cloneMode')?.value === 'overwrite'">
+                    <i class="bi bi-info-circle-fill"></i>
+                    Existing draft and rejected entries in the target week will be replaced when Overwrite is selected.
+                </div>
+
+                <div class="d-flex offcanvas-footer-content gap-4">
+                    <button type="button" class="custom-btn btn-secondary w-100"
+                        (click)="openCancelClonePopup(cancelClonePopup)">
+                        Cancel
+                    </button>
+                    <button type="button" class="custom-btn btn-primary w-100"
+                        [disabled]="cloneForm.invalid || spinnerLoader || targetAllDaysBlockedError" (click)="cloneTimesheetEntries()">
+                        <span *ngIf="spinnerLoader" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                        Clone
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</ng-template>
+
 <!-- error modal -->
 
 <ng-template #errormodal let-model>
@@ -695,5 +872,107 @@
     </div>
 </ng-template>
 
+<ng-template #cancelClonePopup let-modal>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="/icons/reject.png" alt="delete-icon" class="confirmation-delete-icon">
 
+            <p class="confirmation-text">
+                Are you sure you want to cancel this clone?
+            </p>
+        </div>
 
+        <div class="custom-modal-footer">
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">
+                No
+            </button>
+
+            <button type="button" class="custom-btn btn-primary" (click)="confirmCloneCancel(modal)">
+                Yes
+            </button>
+        </div>
+    </div>
+</ng-template>
+<ng-template #releaseSummary let-modal>
+  <div class="custom-main-popup-container">
+    <div class="custom-poup-header-content popup-header-border">
+      <p class="popup-heading mb-0">{{'Summary' | translate}}</p>
+      <img src="icons/close.png" class="close-icon" (click)="modal.dismiss()" />
+    </div>
+
+    <div class="custom-main-popup-content custom-accordians">
+      <div class="popup-table-wrapper">
+        <div class="popup-table-scroll-container">
+          <table class="popup-table">
+            <thead>
+              <tr>
+                <th>{{ "Total Records" | translate }}</th>
+                <th>{{ "Success Records" | translate }}</th>
+                <th>{{ "Failed Records" | translate }}</th>
+                 <th>{{ "Reason" | translate }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>{{ responseSummary?.totalRecordsCount ||0}}</td>
+                <td>{{ responseSummary?.successRecordsCount }}</td>
+                <td>{{ responseSummary?.failureRecordsCount }}</td>
+                <td>{{ responseSummary?.failedreason ||'NA' }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<!-- Approval info popover template -->
+<ng-template #approvalInfo>
+    <div class="approval-popup">
+        <div class="approval-header" [ngClass]="getHeaderClass(approvardetails?.status)">
+            <i class="me-2" [ngClass]="{
+                'bi bi-check-circle-fill': getHeaderClass(approvardetails?.status) === 'header-approved',
+                'bi bi-x-circle-fill':    getHeaderClass(approvardetails?.status) === 'header-rejected',
+                'bi bi-clock-history':    getHeaderClass(approvardetails?.status) !== 'header-approved' && 
+                getHeaderClass(approvardetails?.status) !== 'header-rejected'}"></i>Approval pending request info
+        </div>
+        <div class="approval-body">
+            <div class="approval-row">
+                <span class="ap-label">Approver Name</span>
+                <span class="ap-colon">:</span>
+                <span class="ap-value fw-semibold">{{approvardetails?.approver_Name || '-'}}</span>
+            </div>
+            <div class="approval-row">
+                <span class="ap-label">Approver Role</span>
+                <span class="ap-colon">:</span>
+                <span class="ap-value">{{approvardetails?.designation || '-'}}</span>
+            </div>
+            <div class="approval-row">
+                <span class="ap-label">Status</span>
+                <span class="ap-colon">:</span>
+                <span class="ap-value">
+                    <span class="status-badge" [ngClass]="getStatusBadgeClass(approvardetails?.status)">
+                        <!-- <span class="status-dot"></span> -->
+                        {{approvardetails?.status || '-'}}
+                    </span>
+                </span>
+            </div>
+
+            <div class="approval-row mb-2">
+                <span class="ap-label">Task Type</span>
+                <span class="ap-colon">:</span>
+                <span class="ap-value">{{approvardetails?.taskName}}</span>
+            </div>
+
+            <div class="approval-description" *ngIf="approvardetails?.description">
+                <div class="desc-title">DESCRIPTION:</div>
+                <div class="desc-box"><i>{{approvardetails.description}}</i></div>
+            </div>
+            <div class="approval-description mt-2" *ngIf="approvardetails?.comment">
+                <div class="desc-title">Approver Comments:</div>
+                <div class="desc-box"><i>{{approvardetails.comment}}</i></div>
+            </div>
+        </div>
+    </div>
+</ng-template>

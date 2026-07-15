@@ -335,7 +335,6 @@ export class NdaContractorLetterComponent {
       setupLetterPdfMake(),
     ]);
 
-
     const docDef = buildNdaLetterDoc({
       firstName: this.selectedEmployee.firstName,
       middleName: this.selectedEmployee.middleName,
@@ -435,6 +434,7 @@ export class NdaContractorLetterComponent {
       },
       complete: () => {
         this.spinnerLoader = false;
+        this.spinnerLoader1 = false;
         this.signalService.AppointmentLetterNavCountSignal.set(true);
       }
     });

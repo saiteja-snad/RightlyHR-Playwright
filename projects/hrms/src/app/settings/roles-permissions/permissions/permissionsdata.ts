@@ -321,6 +321,7 @@ export const permissionsData = [
   // { fields: 'All Employees (Recruiter Dashboard)', View: false, Update: false, Create: false, Delete: false },
   // { fields: 'My Team (Recruiter Dashboard)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Help Desk', View: false, Update: false, Create: false, Delete: false },
+
   //dashboard
   { fields: 'Headcount by Department', View: false, Update: false, Create: false, Delete: false },
   { fields: 'All Employees', View: false, Update: false, Create: false, Delete: false },
@@ -336,16 +337,16 @@ export const permissionsData = [
   { fields: 'Sun View', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Quick Links', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Headcount by Gender Select Department', View: false, Update: false, Create: false, Delete: false },
-  // { fields: 'Organization Availability Select Department', View: false, Update: false, Create: false, Delete: false },
-  // { fields: 'Attendance Status', View: false, Update: false, Create: false, Delete: false },
-  // { fields: 'New Hires and Exits', View: false, Update: false, Create: false, Delete: false },
-  // { fields: 'Locations and Shifts', View: false, Update: false, Create: false, Delete: false },
-  // { fields: 'Approvals Overview', View: false, Update: false, Create: false, Delete: false },
-  // { fields: 'Upcoming Actions', View: false, Update: false, Create: false, Delete: false },
-  // { fields: 'Organization Toggle', View: false, Update: false, Create: false, Delete: false },
-  // { fields: 'Manager Toggle', View: false, Update: false, Create: false, Delete: false },
-  // { fields: 'Employee Experience Overview', View: false, Update: false, Create: false, Delete: false },
-  // { fields: 'Headcount by Gender View Employee List', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Organization Availability Select Department', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Attendance Status', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'New Hires and Exits', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Locations and Shifts', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Approvals Overview', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Upcoming Actions', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Organization Toggle', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Manager Toggle', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Employee Experience Overview', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Headcount by Gender View Employee List', View: false, Update: false, Create: false, Delete: false },
 
   { fields: 'Team Time Sheet Detailed Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Team Time Sheet Summary Tab', View: false, Update: false, Create: false, Delete: false },
@@ -360,6 +361,7 @@ export const permissionsData = [
   { fields: 'Comp Off Module', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Permissions Module', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Regularization Module', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Extra Hours Module', View: false, Update: false, Create: false, Delete: false },
   { fields: 'On Behalf Of Module', View: false, Update: false, Create: false, Delete: false },
   { fields: 'On Behalf Of Approvals Module', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Global Permissions Module', View: false, Update: false, Create: false, Delete: false },
@@ -412,7 +414,7 @@ export const permissionsData = [
 
   //Permissions Sub Tabs Section
   { fields: 'Waiting For Approval (Permissions)', View: false, Update: false, Create: false, Delete: false },
-  { fields: 'Approved (Permissions)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Processed (Permissions)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Rejected (Permissions)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Cancel (Permissions)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Request Permission Button', View: false, Update: false, Create: false, Delete: false },
@@ -439,6 +441,7 @@ export const permissionsData = [
   { fields: 'Processed (On Behalf Of)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Rejected (On Behalf Of)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Cancelled (On Behalf Of)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Entitlement Summary (On Behalf Of)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Request On Behalf Button', View: false, Update: false, Create: false, Delete: false },
   { fields: 'My Team On Behalf Of', View: false, Update: false, Create: false, Delete: false },
   { fields: 'On Behalf Of All Employees', View: false, Update: false, Create: false, Delete: false },
@@ -1146,6 +1149,9 @@ export const permissionsData = [
   { fields: 'Project Detailed Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Project Timesheets Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Project Phases Tab', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'View All Projects', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'View Assigned Projects', View: false, Update: false, Create: false, Delete: false },
+
 
   //Documents
   { fields: 'NDA Document', View: false, Update: false, Create: false, Delete: false },
@@ -1159,6 +1165,9 @@ export const permissionsData = [
   { fields: 'Client Resources', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Client Timesheets', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Client Detailed Tab', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'View All Clients', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'View Assigned Clients', View: false, Update: false, Create: false, Delete: false },
+
 
   { fields: 'Project Type', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Industry Type', View: false, Update: false, Create: false, Delete: false },
@@ -1177,6 +1186,7 @@ export const permissionsData = [
   { fields: 'Timesheet Bulk Export', View: false, Update: false, Create: false, Delete: false },
   { fields: 'View History Export Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'View History Import Tab', View: false, Update: false, Create: false, Delete: false },
+   { fields: 'Timesheet Clone', View: false, Update: false, Create: false, Delete: false },
 
   { fields: 'On Behalf Of', View: false, Update: false, Create: false, Delete: false },
   { fields: 'On Behalf Of WFH', View: false, Update: false, Create: false, Delete: false },

@@ -9,63 +9,63 @@
 
   <div class="custom-table-content">
     @if(!loading){
-    <table class="w-100">
-      <thead>
+    <p-table #underMaintenanceTable [value]="getFilteredAndSortedDeskList()" [tableStyle]="{'width': '100%'}" [customSort]="true" (sortFunction)="customSort($event)">
+      <ng-template pTemplate="header">
         <tr>
-          <th>{{ 'Desk ID' | translate }}</th>
-          <th>{{ 'Desk Type' | translate }}</th>
-          <th>{{ 'Location' | translate }}</th>
-          <th>{{ 'Sub Location' | translate }}</th>
-          <th>{{ 'Desk Status' | translate }}</th>
+          <th pSortableColumn="deskName">{{ 'Desk ID' | translate }} <p-sortIcon field="deskName" /></th>
+          <th pSortableColumn="deskType">{{ 'Desk Type' | translate }} <p-sortIcon field="deskType" /></th>
+          <th pSortableColumn="locationName">{{ 'Location' | translate }} <p-sortIcon field="locationName" /></th>
+          <th pSortableColumn="subLocationName">{{ 'Sub Location' | translate }} <p-sortIcon field="subLocationName" /></th>
+          <th pSortableColumn="deskStatus">{{ 'Desk Status' | translate }} <p-sortIcon field="deskStatus" /></th>
           @if(rbac.allowedToAccess('Under Maintenance Mark as Available.view') || rbac.allowedToAccess('Under Maintenance View Desk Details.view')){
             <th class="text-center">{{"Action" | translate}}</th>
           }
         </tr>
-      </thead>
-      <tbody>
-        <ng-container *ngIf="((desklist | async) ?? []).length > 0; else noDataTemplate">
-          <tr *ngFor="let desk of desklist | async">
-            <td>{{ desk.deskName }}</td>
-            <td>{{ desk.deskType }}</td>
-            <td>{{ desk.location?.jobLocationName }}</td>
-            <td>{{ desk.subLocation?.jobSubLocationName }}</td>
-            <td>{{ desk.deskStatus }}</td>
-            @if(rbac.allowedToAccess('Under Maintenance Mark as Available.view') || rbac.allowedToAccess('Under Maintenance View Desk Details.view')){
-            <td class="text-center">
-              <div class="dropdown">
-                <a data-bs-toggle="dropdown" aria-expanded="false">
-                  <i class="bi bi-three-dots-vertical"></i>
-                </a>
-                <ul class="dropdown-menu custom-dropdown-menu">
-                  @if(rbac.allowedToAccess('Under Maintenance Mark as Available.view')){
-                  <li>
-                    <a class="dropdown-item" (click)="openModal(avitivedest);selectedAsset=desk;viewdata(desk) ">
-                      {{ 'Mark as Available' | translate }}
-                    </a>
-                  </li>
-                  }
-                  @if(rbac.allowedToAccess('Under Maintenance View Desk Details.view')){
-                  <li>
-                    <a class="dropdown-item" (click)="viewdata(desk);navigateToAsset(desk.deskId)">
-                      {{ 'View Desk Details' | translate }}
-                    </a>
-                  </li>
-                  }
-
-                </ul>
-              </div>
-            </td>
-            }
-          </tr>
-        </ng-container>
-        <!-- No Data Found Template -->
-        <ng-template #noDataTemplate>
+      </ng-template>
+      <ng-template pTemplate="body" let-desk>
+        <tr>
+          <td>{{ desk.deskName }}</td>
+          <td>{{ desk.deskType }}</td>
+          <td>{{ desk.location?.jobLocationName }}</td>
+          <td>{{ desk.subLocation?.jobSubLocationName }}</td>
+          <td>{{ desk.deskStatus }}</td>
+          @if(rbac.allowedToAccess('Under Maintenance Mark as Available.view') || rbac.allowedToAccess('Under Maintenance View Desk Details.view')){
+          <td class="text-center">
+            <div class="dropdown">
+              <a data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="bi bi-three-dots-vertical"></i>
+              </a>
+              <ul class="dropdown-menu custom-dropdown-menu">
+                @if(rbac.allowedToAccess('Under Maintenance Mark as Available.view')){
+                <li>
+                  <a class="dropdown-item" (click)="openModal(avitivedest);selectedAsset=desk;viewdata(desk) ">
+                    {{ 'Mark as Available' | translate }}
+                  </a>
+                </li>
+                }
+                @if(rbac.allowedToAccess('Under Maintenance View Desk Details.view')){
+                <li>
+                  <a class="dropdown-item" (click)="viewdata(desk);navigateToAsset(desk.deskId)">
+                    {{ 'View Desk Details' | translate }}
+                  </a>
+                </li>
+                }
+              </ul>
+            </div>
+          </td>
+          }
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <div class="wrapper">
           <tr>
-            <app-no-data-found />
+            <td colspan="6">
+              <app-no-data-found />
+            </td>
           </tr>
-        </ng-template>
-      </tbody>
-    </table>
+        </div>
+      </ng-template>
+    </p-table>
     }
     @else {
     <app-data-loader-content />

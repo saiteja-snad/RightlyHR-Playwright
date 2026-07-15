@@ -7,99 +7,128 @@
     <!--table Content-->
     <div class="custom-table-content">
         @if(!loading){
-        <table class="w-100">
-            <thead>
-                <tr>
-                    <th>{{'Applied Date' | translate}}</th>
-                    <th>{{'Probation Period(In days)' | translate}}</th>
-                    <th class="text-center">{{'Probation start date' | translate}}</th>
-                    <th class="text-center">{{'Probation end date' | translate}}</th>
-                    <th class="text-center">{{'Probation extended date' | translate}}</th>
-                    <th class="text-center">{{'Approver History' | translate}}</th>
-                    <th>{{'status' | translate}}</th>
-                    @if(canAccess('view','request') || canAccess('view','re-request')){
-                    <th class="text-center">{{'Action' | translate}}<span class="text-lowercase">{{'(s)' |
-                            translate}}</span></th>
-                    }
-                </tr>
-            </thead>
-            <tbody>
-                @if(getProbationRequestDetails.length > 0) {
-                @for (probation of getProbationRequestDetails; track $index) {
-                <tr>
-                    <td>{{probation.appliedDate ? (probation.appliedDate | dateformat) : '-' }}</td>
-                    <td>{{probation.probationDays ? probation.probationDays : '-'}}</td>
-                    <td class="text-center text-nowrap">{{probation.probationStartDate ? (probation.probationStartDate | dateformat) : '-' }}</td>
-                     <td class="text-center text-nowrap">@if(probation.status == 'Processed'){
-                        {{empdata.probationEndDate ? (empdata.probationEndDate | dateformat) : '-'}}
-                        } @else {
-                        {{probation.probationEndDate ? (probation.probationEndDate | dateformat) : '-'}}
-                    }
-                </td>
-                    <td class="text-center text-nowrap">{{probation.probationExtendedDate ? (probation.probationExtendedDate | dateformat) : '-'}}</td>
-                    <td class="text-center">
-                        @if(probation.approvers && probation.approvers.length > 0;){
-                        <div (click)="probationCommentsFunction(probation.approvers,approverhistory)" class="cursor">
-                            <app-info-icon />
-                        </div>
-                        } @else {
-                        <div>-</div>
+        <div class="wrapper">
+            <p-table 
+                #probationDetailsTable
+                [value]="getProbationRequestDetails" 
+                [customSort]="true"
+                (sortFunction)="customSort($event)"
+                [sortMode]="'single'"
+                styleClass="p-datatable-sm custom-table">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th pSortableColumn="appliedDate">
+                            {{'Applied Date' | translate}}
+                            <p-sortIcon field="appliedDate"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="probationDays">
+                            {{'Probation Period(In days)' | translate}}
+                            <p-sortIcon field="probationDays"></p-sortIcon>
+                        </th>
+                        <th class="text-center" pSortableColumn="probationStartDate">
+                            {{'Probation start date' | translate}}
+                            <p-sortIcon field="probationStartDate"></p-sortIcon>
+                        </th>
+                        <th class="text-center" pSortableColumn="probationEndDate">
+                            {{'Probation end date' | translate}}
+                            <p-sortIcon field="probationEndDate"></p-sortIcon>
+                        </th>
+                        <th class="text-center" pSortableColumn="probationExtendedDate">
+                            {{'Probation extended date' | translate}}
+                            <p-sortIcon field="probationExtendedDate"></p-sortIcon>
+                        </th>
+                        <th class="text-center">
+                            {{'Approver History' | translate}}
+                        </th>
+                        <th pSortableColumn="status">
+                            {{'status' | translate}}
+                            <p-sortIcon field="status"></p-sortIcon>
+                        </th>
+                        @if(canAccess('view','request') || canAccess('view','re-request')){
+                        <th class="text-center">
+                            {{'Action' | translate}}<span class="text-lowercase">{{'(s)' | translate}}</span>
+                        </th>
                         }
-                    </td>
-                    <td>{{probation.status}}</td>
-                    @if(canAccess('view','request') || canAccess('view','request')){
-                    <td class="text-center">
-                        @if (probation.status === 'Pending' || probation.status === 'Rejected' || probation.status ===
-                        'Extended') {
-                        <div class="dropdown">
-                            <a type="button" data-bs-toggle="dropdown"><i class="bi bi-three-dots-vertical"></i></a>
-                            <ul class="dropdown-menu custom-dropdown-menu">
-                                <!--status pending-->
-                                @if(canAccess('view','request')){
-                                @if(probation.status === 'Pending' &&
-                                shouldprobationShowButton(empdata.probationEndDate) && probation.status!='Extended'){
-                                <li>
-                                    <a (click)="requestForProbation(probation)" class="dropdown-item">
-                                        <i class="bi bi-repeat me-2"></i>{{'Request for Probation Confirmation' | translate}}</a>
-                                </li>
-                                }
-                                }
-                                <!--status Rejected-->
-                                @if(canAccess('view','re-request')){
-                                @if(probation.status === 'Rejected' &&
-                                shouldprobationShowButton(empdata.probationEndDate)){
-                                <li>
-                                    <a (click)="requestforconfirmationWhenExtended(probation)" class="dropdown-item">
-                                        <i class="bi bi-repeat me-2"></i>{{'Re-Request for Probation Confirmation' | translate}}</a>
-                                </li>
-                                }}
-                                <!--status extended-->
-                                @if(canAccess('view','request')){
-                                @if(probation.status === 'Extended' &&
-                                shouldprobationShowButton(empdata.probationEndDate)){
-                                <li>
-                                    <a (click)="requestforconfirmationWhenExtended(probation)" class="dropdown-item">
-                                        <i class="bi bi-repeat me-2"></i>{{'Request for Probation Confirmation' | translate}}</a>
-                                </li>
-                                }
-                                }
-                            </ul>
-                        </div>
+                    </tr>
+                </ng-template>
+                
+                <ng-template pTemplate="body" let-probation>
+                    <tr>
+                        <td>{{probation.appliedDate ? (probation.appliedDate | dateformat) : '-' }}</td>
+                        <td>{{probation.probationDays ? probation.probationDays : '-'}}</td>
+                        <td class="text-center text-nowrap">{{probation.probationStartDate ? (probation.probationStartDate | dateformat) : '-' }}</td>
+                        <td class="text-center text-nowrap">
+                            @if(probation.status == 'Processed'){
+                            {{empdata.probationEndDate ? (empdata.probationEndDate | dateformat) : '-'}}
+                            } @else {
+                            {{probation.probationEndDate ? (probation.probationEndDate | dateformat) : '-'}}
+                            }
+                        </td>
+                        <td class="text-center text-nowrap">{{probation.probationExtendedDate ? (probation.probationExtendedDate | dateformat) : '-'}}</td>
+                        <td class="text-center">
+                            @if(probation.approvers && probation.approvers.length > 0;){
+                            <div (click)="probationCommentsFunction(probation.approvers,approverhistory)" class="cursor">
+                                <app-info-icon />
+                            </div>
+                            } @else {
+                            <div>-</div>
+                            }
+                        </td>
+                        <td>{{probation.status}}</td>
+                        @if(canAccess('view','request') || canAccess('view','request')){
+                        <td class="text-center">
+                            @if (probation.status === 'Pending' || probation.status === 'Rejected' || probation.status === 'Extended') {
+                            <div class="dropdown">
+                                <a type="button" data-bs-toggle="dropdown"><i class="bi bi-three-dots-vertical"></i></a>
+                                <ul class="dropdown-menu custom-dropdown-menu">
+                                    <!--status pending-->
+                                    @if(canAccess('view','request')){
+                                    @if(probation.status === 'Pending' && shouldprobationShowButton(empdata.probationEndDate) && probation.status!='Extended'){
+                                    <li>
+                                        <a (click)="requestForProbation(probation)" class="dropdown-item">
+                                            <i class="bi bi-repeat me-2"></i>{{'Request for Probation Confirmation' | translate}}</a>
+                                    </li>
+                                    }
+                                    }
+                                    <!--status Rejected-->
+                                    @if(canAccess('view','re-request')){
+                                    @if(probation.status === 'Rejected' && shouldprobationShowButton(empdata.probationEndDate)){
+                                    <li>
+                                        <a (click)="requestforconfirmationWhenExtended(probation)" class="dropdown-item">
+                                            <i class="bi bi-repeat me-2"></i>{{'Re-Request for Probation Confirmation' | translate}}</a>
+                                    </li>
+                                    }}
+                                    <!--status extended-->
+                                    @if(canAccess('view','request')){
+                                    @if(probation.status === 'Extended' && shouldprobationShowButton(empdata.probationEndDate)){
+                                    <li>
+                                        <a (click)="requestforconfirmationWhenExtended(probation)" class="dropdown-item">
+                                            <i class="bi bi-repeat me-2"></i>{{'Request for Probation Confirmation' | translate}}</a>
+                                    </li>
+                                    }
+                                    }
+                                </ul>
+                            </div>
+                            }
+                            @else {
+                            <div>-</div>
+                            }
+                        </td>
                         }
-                        @else {
-                        <div>-</div>
-                        }
-                    </td>
-                    }
-                </tr>
-                }
-                } @else {
-                <tr>
-                    <app-no-data-found />
-                </tr>
-                }
-            </tbody>
-        </table>
+                    </tr>
+                </ng-template>
+
+                <ng-template pTemplate="emptymessage">
+                    <div class="wrapper">
+                        <tr>
+                            <td colspan="8">
+                                <app-no-data-found />
+                            </td>
+                        </tr>
+                    </div>
+                </ng-template>
+            </p-table>
+        </div>
         }
         @else {
         <app-data-loader-content />

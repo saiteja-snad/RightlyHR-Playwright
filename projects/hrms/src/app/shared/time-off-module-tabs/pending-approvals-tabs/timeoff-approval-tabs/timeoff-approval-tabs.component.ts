@@ -13,6 +13,7 @@ import { HttpService } from '../../../../services/http.service';
 import { RbacService } from '../../../../services/rbac.service';
 import { SignalsService } from '../../../../services/signals.service';
 import { SidetabsloadersComponent } from '../../../sidetabsloaders/sidetabsloaders.component';
+import { MenuOrderService } from '../../../../services/theme-service/menu-order.service';
 interface NavLink {
   label: string;
   route: string;
@@ -95,7 +96,8 @@ export class TimeoffApprovalTabsComponent {
   ];
 
   constructor(public readonly router: Router, private http: HttpService, public rbac: RbacService,
-    private signalService: SignalsService, private accessNav: AccessNavigationService) {
+    private signalService: SignalsService, private accessNav: AccessNavigationService,
+    private menuOrderService: MenuOrderService) {
     effect(() => {
       if (this.http.tirggerPendingApprovalCountSignal().wfh) {
         this.getAllPendingApprovalsCount();
@@ -119,7 +121,6 @@ export class TimeoffApprovalTabsComponent {
       }
       if (this.signalService.compOffSidNavCountTriggerSignal()) {
         this.getAllPendingApprovalsCount();
-        this.signalService.compOffSidNavCountTriggerSignal.set(false);
       }
       if (this.signalService.regularizationSidNavCountTriggerSignal()) {
         this.getAllPendingApprovalsCount();
@@ -131,14 +132,6 @@ export class TimeoffApprovalTabsComponent {
   ngOnInit(): void {
     this.LOGIN = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.getAllPendingApprovalsCount();
-    this.navLinks = this.navLinks.filter(
-      (tab) =>
-        tab.permission &&
-        tab.permission.feature &&
-        tab.permission.action &&
-        this.rbac.allowedToAccess(`${tab.permission.feature}.${tab.permission.action}`)
-    );
-    this.redirectIfNeeded();
   }
 
   getAllPendingApprovalsNoDue() {
@@ -153,14 +146,28 @@ export class TimeoffApprovalTabsComponent {
   getAllPendingApprovalsCount() {
     this.loading = true;
     const employeeId = parseInt(this.LOGIN.employeeId);
+    console.log("lets debug the pending approval count");
     this.http.getAllPendingApprovalsCount(undefined, employeeId).subscribe({
       next: (data: ApprovalStatusCount[]) => {
+        console.log("found the count and proceed to sort");
         const countMap = new Map<number, number>();
         data.forEach((item) => countMap.set(item.moduleId, item.totalCount));
-        this.navLinks = this.navLinks.map((link) => ({
-          ...link,
-          count: countMap.get(link.moduleId) || 0,
-        }));
+        console.log(data);
+        console.log(countMap);
+        const filtered = this.navLinks
+          .filter((tab) =>
+            tab.permission &&
+            tab.permission.feature &&
+            tab.permission.action &&
+            this.rbac.allowedToAccess(`${tab.permission.feature}.${tab.permission.action}`)
+          )
+          .map((link) => ({
+            ...link,
+            count: countMap.get(link.moduleId) || 0,
+          }));
+        const hasSavedPref = (this.menuOrderService.preferenceV2()?.tabs?.modules ?? [])
+          .some(m => m.moduleKey === this.tabsKey);
+        this.navLinks = hasSavedPref ? filtered : filtered.sort((a, b) => (b.count ?? 0) - (a.count ?? 0));
         this.loading = false;
         this.redirectIfNeeded();
       },
@@ -194,13 +201,20 @@ export class TimeoffApprovalTabsComponent {
     if (this.userInteracted) return;
     if (!this.navLinks || this.navLinks.length === 0) return;
 
+    const hasSavedPref = (this.menuOrderService.preferenceV2()?.tabs?.modules ?? [])
+      .some(m => m.moduleKey === this.tabsKey);
+    if (hasSavedPref) return;
+
     const currentPath = this.router.url.split('?')[0];
-    if (currentPath !== '/pending-approvals/time-off') return;
+    if (!currentPath.startsWith('/pending-approvals/time-off')) return;
 
     const preferred = this.navLinks[0]?.route ?? '';
-    if (!preferred || preferred === currentPath) return;
+    if (!preferred) return;
+
     const actual = this.accessNav.navigateToAccessedRoute(preferred);
-    this.router.navigate([actual || preferred], { queryParamsHandling: 'preserve' });
+    const target = actual || preferred;
+    if (currentPath === target || currentPath.startsWith(target + '/')) return;
+    this.router.navigate([target], { queryParamsHandling: 'preserve' });
   }
 
   ngOnDestroy(): void {

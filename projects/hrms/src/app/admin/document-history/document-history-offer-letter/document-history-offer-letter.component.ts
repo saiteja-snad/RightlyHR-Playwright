@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -16,10 +16,12 @@ import { DataLoaderContentComponent } from '../../../shared/data-loader-content/
 import moment from 'moment';
 import { DatePicker } from 'primeng/datepicker';
 import { OnboardingFilterService } from '../../../shared/time-off-module-tabs/pending-approvals-tabs/onboarding-filter.service';
+import { SignalsService } from '../../../services/signals.service';
+import { TableModule, Table } from 'primeng/table';
 @Component({
   selector: 'app-document-history-offer-letter',
   imports: [CommonModule, ReactiveFormsModule, TranslateModule, FormsModule, DateformatPipe,
-    OfferletterdashboardpipePipe, NoDataFoundComponent, DataLoaderContentComponent, DatePicker],
+    OfferletterdashboardpipePipe, NoDataFoundComponent, DataLoaderContentComponent, DatePicker, TableModule],
   templateUrl: './document-history-offer-letter.component.html',
   styleUrl: './document-history-offer-letter.component.scss',
   encapsulation: ViewEncapsulation.None,
@@ -40,9 +42,14 @@ export class DocumentHistoryOfferLetterComponent implements OnInit, OnDestroy {
   maxMonth: Date = new Date();
   allOfferLetters: any[] = []; // full data
   offerLetters: any[] = []; // filtered data shown in table
+  originalOfferLetters: any[] = []; // original data for sorting reset
+  @ViewChild('dt1') table!: Table;
+  currentSortField: string = '';
+  currentSortOrder: number = 0; // 0 = no sort, 1 = asc, -1 = desc
 
   constructor(private router: Router, private modalService: NgbModal, private fb: FormBuilder, private http: HttpService,
-    private authService: AuthService, private conformationPopup: OpenModalService, public rbac: RbacService, private onboardingFilter: OnboardingFilterService) {
+    private authService: AuthService, private conformationPopup: OpenModalService, public rbac: RbacService, private onboardingFilter: OnboardingFilterService,
+    private signalService: SignalsService) {
     this.initializeForm();
   }
 
@@ -103,7 +110,81 @@ export class DocumentHistoryOfferLetterComponent implements OnInit, OnDestroy {
     } else {
       this.offerLetters = this.allOfferLetters; // show all if no filter
     }
+    this.originalOfferLetters = [...this.offerLetters]; // Store original order for reset
     // this.onboardingFilter.setMonthYear(this.selectedMonth || new Date().getMonth() + 1, this.selectedYear || new Date().getFullYear());
+  }
+
+  getFilteredAndSortedOfferLetters() {
+    if (!this.searchValue || this.searchValue.trim() === '') {
+      return this.offerLetters;
+    }
+    
+    const searchTerm = this.searchValue.toLowerCase().trim();
+    return this.offerLetters.filter((item: any) => {
+      const employeeName = item.employeeName?.toLowerCase() || '';
+      const workLocation = item.workLocation?.toLowerCase() || '';
+      const subLocation = item.subLocation?.toLowerCase() || '';
+      const jobRole = item.jobRole?.toLowerCase() || '';
+      const empSubstatus = item.empSubstatus?.toLowerCase() || '';
+      
+      return employeeName.includes(searchTerm) ||
+             workLocation.includes(searchTerm) ||
+             subLocation.includes(searchTerm) ||
+             jobRole.includes(searchTerm) ||
+             empSubstatus.includes(searchTerm);
+    });
+  }
+
+  customSort(event: any) {
+    const field = event.field;
+    
+    // Track current sort state for the clicked field
+    if (this.currentSortField === field) {
+      // Same field clicked - cycle through: asc (1) -> desc (-1) -> reset (0)
+      if (this.currentSortOrder === 1) {
+        // Currently ascending, change to descending
+        this.currentSortOrder = -1;
+        event.order = -1;
+      } else if (this.currentSortOrder === -1) {
+        // Currently descending, reset to original order
+        this.offerLetters = [...this.originalOfferLetters];
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        if (this.table) {
+          this.table.reset();
+        }
+        return;
+      } else {
+        // Currently reset, change to ascending
+        this.currentSortOrder = 1;
+        event.order = 1;
+      }
+    } else {
+      // New field clicked - start with ascending
+      this.currentSortField = field;
+      this.currentSortOrder = 1;
+      event.order = 1;
+    }
+
+    event.data.sort((a: any, b: any) => {
+      let aVal, bVal;
+
+      if (field === 'offerSentDate') {
+        aVal = new Date(a.offerSentDate || 0);
+        bVal = new Date(b.offerSentDate || 0);
+      } else if (field === 'employeeName' || field === 'workLocation' || field === 'subLocation' || 
+                 field === 'jobRole' || field === 'status' || field === 'empSubstatus') {
+        aVal = (a[field] || '').toLowerCase();
+        bVal = (b[field] || '').toLowerCase();
+      } else {
+        aVal = a[field];
+        bVal = b[field];
+      }
+
+      if (aVal < bVal) return -1 * event.order;
+      if (aVal > bVal) return 1 * event.order;
+      return 0;
+    });
   }
 
   onMonthChange(value: any) {
@@ -119,16 +200,52 @@ export class DocumentHistoryOfferLetterComponent implements OnInit, OnDestroy {
   onSelectDownload(file: any) {
     this.subscription = this.http.DownloadDataWithQuery('FileSystem/Downloadfile', file.documentUrl).subscribe({
       next: (res: any) => {
-        let fileName = res.headers.get('content-disposition')?.split(':')[1].split('=')[1];
         let blob: Blob = res.body as Blob;
         let a = document.createElement('a');
         a.href = window.URL.createObjectURL(blob);
-        let filename = file.documentUrl.split('/')[file.documentUrl.split('/').length - 1];
+        const filename = this.getDownloadFileName(res?.headers?.get('content-disposition'), file?.documentUrl);
         a.download = filename;
         a.click();
+        window.URL.revokeObjectURL(a.href);
       },
       error: (reason) => console.log(reason),
     });
+  }
+
+  private getDownloadFileName(contentDisposition: string | null, documentUrl?: string): string {
+    const fileNameFromHeader = this.extractFileNameFromContentDisposition(contentDisposition);
+    if (fileNameFromHeader) {
+      return fileNameFromHeader;
+    }
+
+    if (typeof documentUrl === 'string' && documentUrl.trim()) {
+      const normalizedUrl = documentUrl.split('?')[0];
+      const pathParts = normalizedUrl.split('/').filter(Boolean);
+      const lastPathPart = pathParts[pathParts.length - 1];
+      if (lastPathPart) {
+        return decodeURIComponent(lastPathPart);
+      }
+    }
+
+    return 'document';
+  }
+
+  private extractFileNameFromContentDisposition(contentDisposition: string | null): string | null {
+    if (!contentDisposition) {
+      return null;
+    }
+
+    const utfMatch = contentDisposition.match(/filename\*=UTF-8''([^;]+)/i);
+    if (utfMatch?.[1]) {
+      return decodeURIComponent(utfMatch[1].replace(/["']/g, '').trim());
+    }
+
+    const standardMatch = contentDisposition.match(/filename="?([^";]+)"?/i);
+    if (standardMatch?.[1]) {
+      return standardMatch[1].trim();
+    }
+
+    return null;
   }
 
   //function to release the document
@@ -167,6 +284,10 @@ export class DocumentHistoryOfferLetterComponent implements OnInit, OnDestroy {
       error: (reason: any) => {
         console.log(reason);
       },
+      complete: () => {
+          this.signalService.OfferLetterNavCountSignal.set(true);
+          this.getOfferLetters();
+        },
     });
   }
 
@@ -232,6 +353,10 @@ export class DocumentHistoryOfferLetterComponent implements OnInit, OnDestroy {
       error: (reason: any) => {
         console.log(reason);
       },
+      complete: () => {
+          this.signalService.OfferLetterNavCountSignal.set(true);
+          this.getOfferLetters();
+        },
     });
   }
 
@@ -343,6 +468,10 @@ export class DocumentHistoryOfferLetterComponent implements OnInit, OnDestroy {
       error: (reason: any) => {
         console.log(reason);
       },
+      complete: () => {
+          this.signalService.OfferLetterNavCountSignal.set(true);
+          this.getOfferLetters();
+        },
     });
   }
 

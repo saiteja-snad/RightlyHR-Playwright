@@ -1,0 +1,52 @@
+.approval-status-buttons {
+    display: flex;
+    justify-content: flex-start;
+    margin-bottom: 1rem;
+}
+
+.approval-status-buttons .chip-btn {
+    width: 100px !important;
+    min-width: 100px !important;
+    height: 32px !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    padding: 0 !important;
+    text-align: center !important;
+}
+
+.chip-btn {
+    cursor: pointer !important;
+}
+
+.chip-btn.active {
+    border: 2px solid #2F3E8F !important;
+    background: white !important;
+    color: #2F3E8F !important;
+}
+
+.p-datatable .p-datatable-tbody > tr > td {
+    border: none !important;
+}
+
+:host ::ng-deep .remote-no-data-cell {
+    height: 200px !important;
+    position: relative !important;
+}
+
+.no-data-row td {
+    border: none !important;
+}
+
+.no-data-cell {
+    border: none !important;
+    padding-top: 0 !important;
+}
+
+.wrapper {
+    height: 70dvh;
+    justify-content: center;
+}
+

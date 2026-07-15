@@ -9,7 +9,7 @@
         </div>
         <div class="input-group custom-search mb-3">
             <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
-            <input type="search" class="form-control custom-search-input" placeholder="Search here" aria-label="Username"
+            <input type="search" class="form-control custom-search-input" placeholder="Search by project, phase, field name" aria-label="Username"
                 [(ngModel)]="searchQuery" (ngModelChange)="getTimesheet(this.page, this.pageSize, searchQuery)" aria-describedby="basic-addon1">
         </div>
         <div class="custom-table-content mt-2">
@@ -19,9 +19,10 @@
                     <th>{{'Project' |translate}}</th>
                     <th>{{'Phase' |translate}}</th>
                     <th class="text-center">{{'Field Name' |translate}}</th>
-                    <th class="text-center">{{'isMandatory' |translate}}</th>
+                    <th class="text-center">{{'Is Mandatory' |translate}}</th>
+                    <th>{{'Effective Date' |translate}}</th>
                     <th class="text-center" *ngIf="rbac.allowedToAccess('Timesheet Configurations.update') || 
-                    rbac.allowedToAccess('Timesheet Configurations.delete')">{{'Action' | translate}}</th>
+                    rbac.allowedToAccess('Timesheet Configurations.delete')">{{'Action' | translate}}<span class="text-lowercase">{{'(s)'}}</span></th>
                 </thead>
                 <tbody>
                      @if(timesheetconfigdata.length > 0){
@@ -35,6 +36,7 @@
                                 <input id="ismandatory-value" class="form-check-input" [checked]="exp.isMandatory" type="checkbox" (change)="toggleupdateismandatory($event, exp)"  />
                             </div>
                         </td>
+                         <td>{{exp.effectiveDate|dateformat}}</td>
                           <td class="text-center"
                             *ngIf="rbac.allowedToAccess('Timesheet Configurations.update') || rbac.allowedToAccess('Timesheet Configurations.delete')">
                             <div class="dropdown">
@@ -98,37 +100,39 @@
                         <p class="popup-heading mb-0">{{'Add Timesheet Configurations' | translate}}</p>
                     </div>
                     <div>
-                        <a (click)="modal.dismiss();timesheetconfigForm.reset()"><img src="icons/close.png"
+                        <a (click)="modal.dismiss();resetForm()"><img src="icons/close.png"
                                 alt="Close Icon" class="close-icon"></a>
                     </div>
                 </div>
                 <div class="custom-main-popup-content">
                     <form autocomplete="off" [formGroup]="timesheetconfigForm"
                         (ngSubmit)="posttimesheetconfig(timesheetconfigForm)">
+                        
                         <div class="mb-3">
-                            <label for="policyType" class="form-label custom-label mb-2">
+                            <label for="project" class="form-label custom-label mb-2">
                                 {{'Project' | translate}} <span class="text-danger">*</span>
                             </label>
                             <div class="custom-p-multiSelect-content">
-                                <p-multiSelect [options]="projectsoption" optionLabel="projectName" optionValue="projectId"
+                                <p-multiselect [options]="projectsoption" optionLabel="projectName" optionValue="projectId"
                                     class="form-select custom-select" formControlName="projects" placeholder="Please select project"
-                                    filterBy="projectName" [resetFilterOnHide]="true" [showClear]="false" [filter]="true" display="chip"
+                                    filterBy="projectName" [resetFilterOnHide]="true" [showClear]="false" [filter]="true"
+                                     [maxSelectedLabels]="4" selectedItemsLabel="{0} items selected" display="chip"
                                     (onChange)="getphases()">
-                                </p-multiSelect>
+                                </p-multiselect>
                             </div>
                             <div *ngIf="timesheetconfigForm.get('projects')?.invalid && timesheetconfigForm.get('projects')?.touched" class="error-msg">
                                 {{'Project is required'|translate}}
                             </div>
                         </div>
                         <div class="mb-3">
-                            <label for="policyType" class="form-label custom-label mb-2">
+                            <label for="phase" class="form-label custom-label mb-2">
                                 {{'Phase' | translate}} <span class="text-danger" *ngIf="timesheetconfigForm.get('phases')?.hasValidator(requiredValidator)">*</span>
                             </label>
                             <div class="custom-p-multiSelect-content">
-                                <p-multiSelect [options]="phasesoption" optionLabel="displayName" optionValue="phaseId"
+                                <p-multiselect [options]="phasesoption" optionLabel="displayName" optionValue="phaseId"
                                     class="form-select custom-select" formControlName="phases" placeholder="Please select phase"
-                                    filterBy="displayName" [resetFilterOnHide]="true" [showClear]="false" [filter]="true" display="chip">
-                                </p-multiSelect>
+                                    filterBy="displayName" [resetFilterOnHide]="true" [showClear]="false" [filter]="true" display="chip" [maxSelectedLabels]="4" selectedItemsLabel="{0} items selected">
+                                </p-multiselect>
                             </div>
                             <div *ngIf="timesheetconfigForm.get('phases')?.invalid && timesheetconfigForm.get('phases')?.touched" class="error-msg">
                                 {{'Phase is required'|translate}}
@@ -139,10 +143,10 @@
                                 {{'Field Name' | translate}} <span class="text-danger">*</span>
                             </label>
                             <div class="custom-p-multiSelect-content">
-                                <p-multiSelect [options]="fieldsoptions" optionLabel="label" optionValue="value"
-                                    class="form-select custom-select" formControlName="fields" placeholder="Please select field name"
-                                    filterBy="label" [resetFilterOnHide]="true" [showClear]="false" [filter]="true" display="chip">
-                                </p-multiSelect>
+                                <p-multiselect [options]="fieldsoptions" optionLabel="label" optionValue="value"
+                                    class="form-select custom-select" formControlName="fields" placeholder="Please select field name" (onChange)="onFieldsChange($event.value)"
+                                    filterBy="label" [resetFilterOnHide]="true" [showClear]="false" [filter]="true" display="chip" [maxSelectedLabels]="3" selectedItemsLabel="{0} items selected">
+                                </p-multiselect>
                             </div>
                             <div *ngIf="timesheetconfigForm.get('fields')?.invalid && timesheetconfigForm.get('fields')?.touched" class="error-msg">
                                 {{'Field Name is required'|translate}}
@@ -150,15 +154,36 @@
                         </div>
                         <div class="mb-3">
                             <div class="form-check form-switch py-3">
-                                <input id="ismandatory-value" class="form-check-input" type="checkbox" formControlName="isMandatory"/>
-                                <label for="ismandatory-value" class="form-label custom-toggle-label">{{'isMandatory' | translate}}</label>
+                                <input id="ismandatory-add" class="form-check-input" type="checkbox" formControlName="isMandatory"/>
+                                <label for="ismandatory-add" class="form-label custom-toggle-label">{{'Is Mandatory' | translate}}</label>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label custom-label mb-2">{{'Effective Date'|translate}}
+                                <span class="text-danger">*</span></label>
+                            <div class="custom-p-select-content">
+                                <input type="date" class="form-control custom-input w-100" formControlName="effectivefrom" />
+                                <div class="error-msg"
+                                    *ngIf="timesheetconfigForm.controls['effectivefrom'].invalid &&  (timesheetconfigForm.controls['effectivefrom'].touched || timesheetconfigForm.controls['effectivefrom'].dirty)">
+                                    <div *ngIf="timesheetconfigForm.controls['effectivefrom'].errors?.['required']">
+                                        {{'Effective Date is required'|translate}}
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="custom-modal-footer">
                             <button type="button" class="custom-btn btn-secondary "
-                                (click)="timesheetconfigForm.reset();modal.dismiss()">{{'Cancel' | translate}}</button>
-                            <button type="submit" class="custom-btn btn-primary "
-                                [disabled]="timesheetconfigForm.invalid">{{'Submit' | translate}}</button>
+                                (click)="resetForm();modal.dismiss()">{{'Cancel' | translate}}</button>
+                            <button type="submit" class="custom-btn btn-primary " [disabled]="timesheetconfigForm.invalid||loading">
+                                @if(loading){
+                                <div class="button-loader-content">
+                                    <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
+                                    <span>{{'Loading...' }}</span>
+                                </div>
+                                }@else {
+                                {{'Submit' | translate}}
+                                }
+                            </button>
                         </div>
                     </form>
                 </div>
@@ -177,6 +202,7 @@
                 </div>
                 <div class="custom-main-popup-content">
                     <form autocomplete="off" [formGroup]="timesheetconfigUpdateForm"  (ngSubmit)="onUpdateSubmit()">
+                        
                         <div class="mb-3">
                             <label for="policyType" class="form-label custom-label mb-2">
                                 {{'Project' | translate}} <span class="text-danger">*</span>
@@ -189,7 +215,7 @@
                             </div>
                             <div class="error-msg"
                                 *ngIf="timesheetconfigUpdateForm.get('updateprojects')?.hasError('required') && (timesheetconfigUpdateForm.get('updateprojects')?.touched)">
-                                Project is required
+                                {{'Project is required'|translate}}
                             </div>
                         </div>
                         <div class="mb-3">
@@ -204,7 +230,7 @@
                             </div>
                             <div class="error-msg"
                                 *ngIf="timesheetconfigUpdateForm.get('updatephases')?.hasError('required') && (timesheetconfigUpdateForm.get('updatephases')?.touched)">
-                                Phase is required
+                                {{'Phase is required'|translate}}
                             </div>
                         </div>
                         <div class="mb-3">
@@ -222,16 +248,36 @@
                         </div>
                         <div class="mb-3">
                             <div class="form-check form-switch py-3">
-                                <input id="ismandatory-value" class="form-check-input" type="checkbox" formControlName="isMandatoryupdate" />
-                                <label for="ismandatory-value" class="form-label custom-toggle-label">{{'isMandatory' | translate}}</label>
+                                <input id="ismandatory-update" class="form-check-input" type="checkbox" formControlName="isMandatoryupdate" />
+                                <label for="ismandatory-update" class="form-label custom-toggle-label">{{'Is Mandatory' | translate}}</label>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label custom-label mb-2">{{'Effective Date'|translate}}
+                                <span class="text-danger">*</span></label>
+                            <div class="custom-p-select-content">
+                                <input type="date" class="form-control custom-input w-100" formControlName="updateeffectivefrom" />
+                                <div class="error-msg"
+                                    *ngIf="timesheetconfigUpdateForm.controls['updateeffectivefrom'].invalid &&  (timesheetconfigUpdateForm.controls['updateeffectivefrom'].touched || timesheetconfigUpdateForm.controls['updateeffectivefrom'].dirty)">
+                                    <div *ngIf="timesheetconfigUpdateForm.controls['updateeffectivefrom'].errors?.['required']">
+                                        {{'Effective Date is required'|translate}}
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="custom-modal-footer">
                             <button type="button" class="custom-btn btn-secondary "
                                 (click)="timesheetconfigUpdateForm.reset();modal.dismiss()">{{'Cancel' | translate}}</button>
                             <button type="submit" class="custom-btn btn-primary "
-                                [disabled]="timesheetconfigUpdateForm.invalid">
+                                [disabled]="timesheetconfigUpdateForm.invalid||loading">
+                                 @if(loading){
+                                <div class="button-loader-content">
+                                    <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
+                                    <span>{{'Loading...' }}</span>
+                                </div>
+                                }@else {
                                 {{'Update' | translate}}
+                                }
                             </button>
                         </div>
                     </form>
@@ -257,7 +303,7 @@
         <ng-template #releaseSummary let-modal>
   <div class="custom-main-popup-container">
     <div class="custom-poup-header-content popup-header-border">
-      <p class="popup-heading mb-0">Summary</p>
+      <p class="popup-heading mb-0">{{'Summary' | translate}}</p>
       <img src="icons/close.png" class="close-icon" (click)="modal.dismiss()" />
     </div>
 
@@ -267,6 +313,7 @@
           <table class="popup-table">
             <thead>
               <tr>
+                <th>{{ "Total Records" | translate }}</th>
                 <th>{{ "Success Records" | translate }}</th>
                 <th>{{ "Failed Records" | translate }}</th>
                  <th>{{ "Reason" | translate }}</th>
@@ -274,6 +321,7 @@
             </thead>
             <tbody>
               <tr>
+                <td>{{ responseSummary?.totalRecordsCount ||0}}</td>
                 <td>{{ responseSummary?.successRecordsCount }}</td>
                 <td>{{ responseSummary?.failureRecordsCount }}</td>
                 <td>{{ responseSummary?.failedreason ||'NA' }}</td>

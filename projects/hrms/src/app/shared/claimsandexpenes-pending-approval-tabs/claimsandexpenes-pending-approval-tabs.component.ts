@@ -63,11 +63,11 @@ export class ClaimsandexpenesPendingApprovalTabsComponent
       
         // Conditionally reset the signals based on their current state
         if (this.signalService.claimsandexpensesForRoleTriggerSignal()) {
-          this.signalService.claimsandexpensesForRoleTriggerSignal.set(false);
+          //this.signalService.claimsandexpensesForRoleTriggerSignal.set(false);
         }
         
         if (this.signalService.clamisandexpensesForYouTriggerSignal()) {
-          this.signalService.clamisandexpensesForYouTriggerSignal.set(false);
+          //this.signalService.clamisandexpensesForYouTriggerSignal.set(false);
         }
       }
       
@@ -86,6 +86,10 @@ export class ClaimsandexpenesPendingApprovalTabsComponent
       next: (data: ApprovalStatusCount[]) => {
         console.log(data);
         const filtered = data.filter((item) => item.moduleId === moduleId);
+         console.log('Filtered:', filtered);
+    console.log('For You:', filtered[0]?.forYou);
+    console.log('For Your Role:', filtered[0]?.forYourRole);
+
         this.pendingApprovalCount.set(filtered);
     
         

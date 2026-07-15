@@ -17,20 +17,23 @@
                 @for (skill of SkilltypeDetail; track $index) {
                 <tr>
                     <td class="w-75">{{ skill.value }}</td>
-                    <td class="w-25">
-                        <div class="d-flex gap-4">
-                            <!--Update-->
-                            <div>
-                                <a (click)="openupdate(skill)" *ngIf="rbac.allowedToAccess('SkillSet.update')">
-                                      <app-settings-update-icon />
-                                </a>
-                            </div>
-                            <!--Delete-->
-                            <div>
-                                 <a (click)="opendelete(skill)" *ngIf="rbac.allowedToAccess('SkillSet.delete')">
-                                  <app-settings-delete-icon />
-                                </a> 
-                            </div>
+                    <td class="w-25 text-end action-dropdown-cell">
+                        <div class="dropdown" *ngIf="rbac.allowedToAccess('SkillSet.update') || rbac.allowedToAccess('SkillSet.delete')">
+                            <a data-bs-toggle="dropdown" aria-expanded="false" class="cursor-pointer">
+                                <i class="bi bi-three-dots-vertical"></i>
+                            </a>
+                            <ul class="dropdown-menu custom-dropdown-menu">
+                                <li *ngIf="rbac.allowedToAccess('SkillSet.update')">
+                                    <a class="dropdown-item" (click)="openupdate(skill)">
+                                        <i class="bi bi-pencil-square me-2"></i>{{ 'Update' | translate }}
+                                    </a>
+                                </li>
+                                <li *ngIf="rbac.allowedToAccess('SkillSet.delete')">
+                                    <a class="dropdown-item" (click)="opendelete(skill)">
+                                        <i class="bi bi-trash me-2"></i>{{ 'Delete' | translate }}
+                                    </a>
+                                </li>
+                            </ul>
                         </div>
                     </td>
                 </tr>

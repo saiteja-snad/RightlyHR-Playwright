@@ -37,15 +37,16 @@
     <div class="custom-p-multi-select-table">
         @if(!dataLoad){
         <p-table #dt [value]="getFilteredAndSortedLeaves()" (selectionChange)="selectCheck($event)"
-            [(selection)]="selectedProducts" dataKey="approvalHeader.id" [tableStyle]="{'min-width': '50rem'}">
+            [(selection)]="selectedProducts" dataKey="approvalHeader.id" [tableStyle]="{'min-width': '50rem'}"
+            (sortFunction)="customSort($event)" [customSort]="true">
             <ng-template #header>
                 <tr>
                     <th style="width: 4rem"><p-tableHeaderCheckbox /></th>
-                    <th>{{'Employee ID' | translate}} </th>
-                    <th>{{'Employee Name' | translate}}</th>
-                    <th>{{'Requested Date' | translate}}</th>
-                    <th>{{'Worked Date' | translate}}</th>
-                    <th>{{'Duration(In Hrs)' | translate}}</th>
+                    <th pSortableColumn="employeeId">{{'Employee ID' | translate}} <p-sortIcon field="employeeId" /></th>
+                    <th pSortableColumn="employeeName">{{'Employee Name' | translate}} <p-sortIcon field="employeeName" /></th>
+                    <th pSortableColumn="requestedDate">{{'Requested Date' | translate}} <p-sortIcon field="requestedDate" /></th>
+                    <th pSortableColumn="workedDate">{{'Worked Date' | translate}} <p-sortIcon field="workedDate" /></th>
+                    <th pSortableColumn="duration">{{'Duration(In Hrs)' | translate}} <p-sortIcon field="duration" /></th>
                     <th class="text-center">{{'Description' | translate}}</th>
                     <th class="text-center">{{'Approver Comments' | translate}}</th>
                     @if(!multiSelect &&(rbac.allowedToAccess('For You (Extra Hours).update') ||
@@ -140,9 +141,11 @@
                 }
             </ng-template>
             <ng-template #emptymessage>
-                <tr>
-                    <app-no-data-found />
-                </tr>
+                <div class="wrapper">
+                    <tr>
+                        <td colspan="9"><app-no-data-found /></td>
+                    </tr>
+                </div>
             </ng-template>
         </p-table>
         }@else{

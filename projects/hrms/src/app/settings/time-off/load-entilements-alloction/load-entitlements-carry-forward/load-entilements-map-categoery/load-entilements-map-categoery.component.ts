@@ -113,6 +113,7 @@ export class LoadEntilementsMapCategoeryComponent implements OnInit, OnDestroy {
       });
     });
     stored.categoryTotals = totalsMap;
+    stored.nextYearData = this.nextYearData;
     // clear any previously configured breakdown when re-submitting map
     stored.computedBreakdown = [];
     localStorage.setItem('loadEntitlement', JSON.stringify(stored));

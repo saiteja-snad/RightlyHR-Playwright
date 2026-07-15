@@ -48,8 +48,19 @@
                 <tr *ngFor="let user of authrityList">
                     <td>{{user.authority.name}}</td>
                     @if(rbac.allowedToAccess('Project Management Authority.delete')){
-                    <td class="text-center" (click)="openDeleteModal(confirmationModal, user)">
-                     <app-settings-delete-icon />
+                    <td class="text-center action-dropdown-cell">
+                        <div class="dropdown">
+                            <a data-bs-toggle="dropdown" aria-expanded="false" class="cursor-pointer">
+                                <i class="bi bi-three-dots-vertical"></i>
+                            </a>
+                            <ul class="dropdown-menu custom-dropdown-menu">
+                                <li>
+                                    <a class="dropdown-item" (click)="openDeleteModal(confirmationModal, user)">
+                                        <i class="bi bi-trash me-2"></i>{{ 'Delete' | translate }}
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
                     </td>
                     }
                 </tr>

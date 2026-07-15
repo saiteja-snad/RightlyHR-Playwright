@@ -10,6 +10,17 @@
         </div>
 
         <div class="d-flex align-items-center gap-3">
+            @if(isEntitlementFrequencyRoute) {
+            <div class="d-flex gap-2 align-items-center">
+                <label class="form-label custom-label filter-labels m-0" for="">{{ 'Frequency' | translate }}</label>
+                <div class="custom-p-multiSelect-content">
+                    <p-multiselect [options]="frequencyOptions" [(ngModel)]="selectedFrequencies" optionLabel="label"
+                        optionValue="value" placeholder="Select Frequency" [showClear]="true"
+                        class="form-select custom-select" (onChange)="onFrequencyChange()" (onClear)="onFrequencyChange()" filterPlaceHolder="Search frequency" [resetFilterOnHide]="true">
+                    </p-multiselect>
+                </div>
+            </div>
+            }
             @if (rbac.allowedToAccess('On Behalf Of All Employees.view')) {
            <div class="d-flex align-items-center gap-3" >
              <label class="form-label filter-labels m-0">{{ 'Select Employee' | translate }}</label>
@@ -83,13 +94,11 @@
                 }
             </ul>
         </div> -->
-
-        <div class="cards-grid-container">
+         <div class="cards-grid-container">
             @for (item of categoryDetails; track $index) {
             <div class="leaves-category-card">
-                <div>
-                    <p class="leave-content-text text-wrap m-0 mb-2" [style.color]="item.category.categoryColor">{{
-                        item.category.name }}</p>
+                <p class="leave-content-text text-wrap m-0" [style.color]="item.category.categoryColor">{{ item.category.name }}</p>
+                <div class="d-flex justify-content-between align-items-center">
                     <div class="d-flex gap-2">
                         <div class="leave-category-text">
                             <p class="m-0">{{ 'Booked' | translate }}</p>
@@ -97,7 +106,7 @@
                         </div>
                         <div class="separator"></div>
                         <div class="leave-category-text">
-                        <p class="m-0">{{ 'Processed' | translate }}</p>
+                            <p class="m-0">{{ 'Processed' | translate }}</p>
                             @if (item.category.isProbationAllowed && item.probationLeaves > 0) {
                             <p class="m-0">{{item.utilizedDays ? item.utilizedDays : '0'}}</p>
                             }
@@ -144,20 +153,18 @@
                         </div>
                         }
                     </div>
-                </div>
-                <div class="progress-content">
-                    <div class="circular-progress" [style.background]="'conic-gradient(' + item.category.categoryColor + ' '  +
-                 getProgress(item) + 'deg, ' + getTransparentColor(item.category.categoryColor, 0.3) + ' 0deg)'">
-                        <span class="progress-value">
-                            <span class="avaliable-leaves-text">{{ getAvailableLeaves(item) }}</span>
-                            @if(this.leaveapplication.empType === 'Probation' && (item.category.isProbationAllowed && item.probationLeaves >= 0)){
-                            <span class="total-leaves-text">/{{item.probationLeaves}}</span>
-                            }
-                            @else {
-                            <span class="total-leaves-text">/{{item.allowedDays}}</span>
-                            }
-                        </span>
+                    <div class="progress-content">
+                        <div class="circular-progress" [style.background]="'conic-gradient(' + item.category.categoryColor + ' '  +
+                        getProgress(item) + 'deg, ' + getTransparentColor(item.category.categoryColor, 0.3) + ' 0deg)'">
+                            <span class="progress-value">
+                                <span class="avaliable-leaves-text">{{ getAvailableLeaves(item) }}</span>
+                                <span class="total-leaves-text">/{{item.allowedDays}}</span>
+                            </span>
+                        </div>
                     </div>
+                </div>
+                <div class="frequency-chip">
+                    <p-chip [label]="formatFrequency(item.category.entitlementFrequency)" styleClass="chip-frequency" />
                 </div>
             </div>
             }

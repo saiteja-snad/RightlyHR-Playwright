@@ -17,17 +17,38 @@
 
     <div class="custom-table-content documnet-history-table-height">
         @if(!isloading){
-        <!--search input-->
-        <table class="w-100">
-            <thead>
+        <p-table #contractOfferLetterTable [value]="getFilteredAndSortedOfferLetters()" [customSort]="true" (sortFunction)="customSort($event)"
+                 styleClass="custom-table" [tableStyle]="{'min-width': '50rem'}">
+            <ng-template pTemplate="header">
                 <tr>
-                    <th>{{'Date'|translate}}</th>
-                    <th>{{'Employee name'|translate}}</th>
-                    <th>{{'Location'|translate}}</th>
-                    <th>{{'Sub Location'|translate}}</th>
-                    <th>{{'Designation'|translate}}</th>
-                    <th>{{'Status'|translate}}</th>
-                    <th>{{'Sub Status'|translate}}</th>
+                    <th pSortableColumn="offerSentDate">
+                        {{'Date'|translate}}
+                        <p-sortIcon field="offerSentDate"></p-sortIcon>
+                    </th>
+                    <th pSortableColumn="employeeName">
+                        {{'Employee name'|translate}}
+                        <p-sortIcon field="employeeName"></p-sortIcon>
+                    </th>
+                    <th pSortableColumn="workLocation">
+                        {{'Location'|translate}}
+                        <p-sortIcon field="workLocation"></p-sortIcon>
+                    </th>
+                    <th pSortableColumn="subLocation">
+                        {{'Sub Location'|translate}}
+                        <p-sortIcon field="subLocation"></p-sortIcon>
+                    </th>
+                    <th pSortableColumn="jobRole">
+                        {{'Designation'|translate}}
+                        <p-sortIcon field="jobRole"></p-sortIcon>
+                    </th>
+                    <th pSortableColumn="status">
+                        {{'Status'|translate}}
+                        <p-sortIcon field="status"></p-sortIcon>
+                    </th>
+                    <th pSortableColumn="empSubstatus">
+                        {{'Sub Status'|translate}}
+                        <p-sortIcon field="empSubstatus"></p-sortIcon>
+                    </th>
                     @if(rbac.allowedToAccess('Offer Letter Download.view') ||
                     rbac.allowedToAccess('Offer Letter Release Offer.view') ||
                     rbac.allowedToAccess('Offer Letter Approve.view') ||
@@ -35,10 +56,8 @@
                     <th class="text-center">{{'Action'|translate}}</th>
                     }
                 </tr>
-            </thead>
-            <tbody>
-                @if(offerLetters.length > 0){
-                @for (offerLetter of offerLetters | offerletterdashboardpipe : searchValue; track offerLetter.id){
+            </ng-template>
+            <ng-template pTemplate="body" let-offerLetter>
                 <tr>
                     <td class="text-nowrap">{{offerLetter.offerSentDate | dateformat }}</td>
                     <td>{{offerLetter.employeeName ?offerLetter.employeeName:'-'}}</td>
@@ -88,15 +107,17 @@
                     </td>
                     }
                 </tr>
-                }
-                }
-                @else {
-                <tr>
-                    <app-no-data-found />
-                </tr>
-                }
-            </tbody>
-        </table>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+                <div class="wrapper">
+                    <tr>
+                        <td [attr.colspan]="(rbac.allowedToAccess('Offer Letter Download.view') || rbac.allowedToAccess('Offer Letter Release Offer.view') || rbac.allowedToAccess('Offer Letter Approve.view') || rbac.allowedToAccess('Offer Letter Reject.view')) ? 8 : 7">
+                            <app-no-data-found />
+                        </td>
+                    </tr>
+                </div>
+            </ng-template>
+        </p-table>
         }
         @else {
         <app-data-loader-content />

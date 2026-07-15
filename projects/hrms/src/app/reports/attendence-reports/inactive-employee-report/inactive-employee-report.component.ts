@@ -294,6 +294,7 @@ export class InactiveEmployeeReportComponent implements OnInit, OnDestroy {
       leaveCategoryName: 'LEAVE CATEGORY',
       entitled: 'ENTITLED',
       availed: 'AVAILED',
+      frozenCount: 'FROZEN',
       balance: 'BALANCE'
     };
 
@@ -310,6 +311,7 @@ export class InactiveEmployeeReportComponent implements OnInit, OnDestroy {
       'LEAVE CATEGORY',
       'ENTITLED',
       'AVAILED',
+      'FROZEN',
       'BALANCE'
     ];
 

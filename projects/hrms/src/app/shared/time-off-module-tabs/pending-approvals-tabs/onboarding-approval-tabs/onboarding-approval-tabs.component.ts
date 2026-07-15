@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, effect } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { Subscription, Subject, combineLatest, takeUntil, distinctUntilChanged, skip, debounceTime } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
@@ -13,6 +13,7 @@ import { SidetabsloadersComponent } from "../../../sidetabsloaders/sidetabsloade
 import { OnboardingFilterService } from '../onboarding-filter.service';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { TabsDndDirective } from '../../../tabs-dnd/tabs-dnd.directive';
+import { MenuOrderService } from '../../../../services/theme-service/menu-order.service';
 interface NavLink {
   label: string;
   route: string;
@@ -49,49 +50,56 @@ export class OnboardingApprovalTabsComponent implements OnInit, OnDestroy {
     {
       label: 'Offer Letter',
       route: '/pending-approvals/on-boarding/offer-letter-history',
-      moduleId: environment.ProbationrequestmoduleId,
+      moduleId: 1,
       permission: { feature: 'Documents History Offer Letter', action: 'view' },
       icon: '/letters-icon/offer-letter-icon.png',
     },
     {
       label: 'Contract Offer Letter',
       route: '/pending-approvals/on-boarding/contractor-offer-letter-history',
-      moduleId: environment.traineeoffboardingModuleId,
+      moduleId: 2,
       permission: { feature: 'Documents History Contract Offer Letter', action: 'view' },
       icon: '/letters-icon/appointment-letter-icon.png',
     },
     {
       label: 'Trainee Offer Letter',
       route: '/pending-approvals/on-boarding/intern-offer-letter-history',
-      moduleId: environment.ProbationrequestmoduleId,
+      moduleId: 3,
       permission: { feature: 'Documents History Trainee Offer Letter', action: 'view' },
+      icon: '/letters-icon/trainee-offer-letter-icon.png',
+    },
+    {
+      label: 'Trainee Appointment Letter',
+      route: '/pending-approvals/on-boarding/intern-appointment-letter-history',
+      moduleId: 8,
+      permission: { feature: 'Documents History Trainee Appointment Letter', action: 'view' },
       icon: '/letters-icon/trainee-offer-letter-icon.png',
     },
     {
       label: 'Appointment Letter',
       route: '/pending-approvals/on-boarding/appointment-letter-history',
-      moduleId: environment.traineeoffboardingModuleId,
+      moduleId: 4,
       permission: { feature: 'Documents History Appointment Letter', action: 'view' },
       icon: '/letters-icon/appointment-letter-icon.png',
     },
     {
       label: 'Non-Disclosure Agreement Letter',
       route: '/pending-approvals/on-boarding/nda-letter-history',
-      moduleId: environment.traineeoffboardingModuleId,
+      moduleId: 5,
       permission: { feature: 'Documents History Non-Disclosure Agreement Letter', action: 'view' },
       icon: '/my-info-icons/contractor.png',
     },
     {
       label: 'Probation',
       route: '/pending-approvals/on-boarding/probation-request',
-      moduleId: environment.ProbationrequestmoduleId,
+      moduleId: 6,
       permission: { feature: 'Probation Details Tab', action: 'view' },
       icon: '/time-off-icon/Probation-icon.png',
     },
     {
       label: 'Trainees',
       route: '/pending-approvals/on-boarding/trainee-approvals',
-      moduleId: environment.traineeoffboardingModuleId,
+      moduleId: 7,
       permission: { feature: 'Trainee Details Tab', action: 'view' },
       icon: '/time-off-icon/trainee-icon.png',
     },
@@ -99,8 +107,44 @@ export class OnboardingApprovalTabsComponent implements OnInit, OnDestroy {
   filteredNavLinks: NavLink[] = [];
 
   constructor(public readonly router: Router, private readonly http: HttpService, public readonly rbac: RbacService,
-    private readonly signalService: SignalsService, private readonly accessNav: AccessNavigationService, private readonly onboardingFilter: OnboardingFilterService) {
+    private readonly signalService: SignalsService, private readonly accessNav: AccessNavigationService,
+    private readonly onboardingFilter: OnboardingFilterService, private readonly menuOrderService: MenuOrderService) {
 
+      effect(() => {
+      if ((this.http.tirggerPendingApprovalCountSignal().wfh) || (this.http.tirggerPendingApprovalCountSignal().separation)
+        || (this.http.tirggerPendingApprovalCountSignal().nodue) || (this.http.tirggerPendingApprovalCountSignal().onboarding)) {
+        this.getAllPendingApprovalsCount(true);
+        this.http.tirggerPendingApprovalCountSignal.update(status => ({
+          ...status,
+          wfh: status.wfh ? false : status.wfh,
+          separation: status.separation ? false : status.separation,
+          nodue: status.nodue ? false : status.nodue,
+        }));
+      }
+      if (this.signalService.OfferLetterNavCountSignal()) {
+        this.getAllPendingApprovalsCount(true);
+        //this.signalService.OfferLetterNavCountSignal.set(false);
+      }
+      if (this.signalService.TraineeOfferLetterNavCountSignal()) {
+        this.getAllPendingApprovalsCount(true);
+        //this.signalService.TraineeOfferLetterNavCountSignal.set(false);
+      }
+      if (this.signalService.ContractOfferLetterNavCountSignal()) {
+        this.getAllPendingApprovalsCount(true);
+        //this.signalService.ContractOfferLetterNavCountSignal.set(false);
+      }
+      if (this.signalService.AppointmentLetterNavCountSignal()) {
+        this.getAllPendingApprovalsCount(true);
+        //this.signalService.AppointmentLetterNavCountSignal.set(false);
+      }
+      if (this.signalService.NDALetterNavCountSignal()) {
+        this.getAllPendingApprovalsCount(true);
+        //this.signalService.NDALetterNavCountSignal.set(false);
+      }
+      
+    });
+
+ 
   }
 
   ngOnInit(): void {
@@ -125,23 +169,25 @@ export class OnboardingApprovalTabsComponent implements OnInit, OnDestroy {
       this.rbac.allowedToAccess(`${tab.permission.feature}.${tab.permission.action}`)
     );
     this.filteredNavLinks = this.navLinks;
-    this.redirectIfNeeded();
   }
 
  getAllPendingApprovalsCount(updateAll: boolean = false) {
     this.loading = true;
     const employeeId = Number.parseInt(this.LOGIN.employeeId);
-    this.http.getData(`PendingApproval/onboard-requests-count?month=${this.selectedMonth}&year=${this.selectedYear}&EmployeeId=${employeeId}  `).pipe(takeUntil(this.destroy$)).subscribe({
+    this.http.getData(`PendingApproval/onboard-requests-count?month=${this.selectedMonth}&year=${this.selectedYear}&EmployeeId=${employeeId}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: any) => {
         if (response.success) {
           const modules = response.data.modules;
           const moduleMap = new Map(modules.map((m: any) => [m.name, m.count]));
 
           if (updateAll) {
-            this.navLinks = this.navLinks.map((link: NavLink) => ({
+            const mapped = this.navLinks.map((link: NavLink) => ({
               ...link,
               count: Number(moduleMap.get(link.label)) || 0,
             }));
+            const hasSavedPref = (this.menuOrderService.preferenceV2()?.tabs?.modules ?? [])
+              .some(m => m.moduleKey === this.tabsKey);
+            this.navLinks = hasSavedPref ? mapped : mapped.sort((a, b) => (b.count ?? 0) - (a.count ?? 0));
             this.filteredNavLinks = [...this.navLinks];
           } else {
             const activeLink = this.navLinks.find((link: NavLink) => this.isActiveRoute(link.route));
@@ -187,12 +233,20 @@ export class OnboardingApprovalTabsComponent implements OnInit, OnDestroy {
     if (this.userInteracted) return;
     if (!this.filteredNavLinks || this.filteredNavLinks.length === 0) return;
 
+    const hasSavedPref = (this.menuOrderService.preferenceV2()?.tabs?.modules ?? [])
+      .some(m => m.moduleKey === this.tabsKey);
+    if (hasSavedPref) return;
+
     const currentPath = this.router.url.split('?')[0];
-    if (currentPath !== '/pending-approvals/on-boarding') return;
+    if (!currentPath.startsWith('/pending-approvals/on-boarding')) return;
 
     const preferred = this.filteredNavLinks[0]?.route ?? '';
-    if (!preferred || preferred === currentPath) return;
-    this.router.navigate([preferred], { queryParamsHandling: 'preserve' });
+    if (!preferred) return;
+
+    const actual = this.accessNav.navigateToAccessedRoute(preferred);
+    const target = actual || preferred;
+    if (currentPath === target || currentPath.startsWith(target + '/')) return;
+    this.router.navigate([target], { queryParamsHandling: 'preserve' });
   }
 
   ngOnDestroy(): void {

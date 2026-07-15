@@ -23,12 +23,7 @@
     border-bottom-left-radius: 0px !important;
 }
 
-.custom-select-btn {
-    width: 100%;
-    font-size: var(--fontsize13);
-    font-weight: 700;
-    color: var(--primary-color);
-}
+
 
 .custom-dropdown-menu {
     width: 300px;
@@ -83,7 +78,7 @@
     }
 
     .p-accordioncontent-content {
-        padding: 0.75rem !important;
+        padding: 0 !important;
         border-bottom-left-radius: 0.5rem !important;
         border-bottom-right-radius: 0.5rem !important;
     }
@@ -213,11 +208,17 @@
     width: 1rem;
 }
 
+.timesheet-input-info {
+    background-color: var(--input-bg-color) !important;
+}
+
 .component-left-tabs-container {
     height: calc(100dvh - 8rem) !important;
 }
 
+
 .custom-table-content {
+    z-index: 0;
     border: 1px solid var(--content-border-color) !important;
     height: calc(100dvh - 8rem) !important;
 
@@ -261,7 +262,8 @@
             }
         }
 
-        td:first-child, td:last-child {
+        td:first-child,
+        td:last-child {
             background-color: #FFFF !important;
         }
     }
@@ -274,6 +276,7 @@
     }
 
 }
+
 
 .custom-select-btn.disabled {
     opacity: 0.6;
@@ -290,20 +293,19 @@
     background: #FFF;
 }
 
+
 ::ng-deep .p-menu {
     background: var(--p-menu-background);
     color: var(--p-menu-color);
     border: 1px solid var(--p-menu-border-color);
     border-radius: var(--p-menu-border-radius);
     min-width: 8rem !important;
-    z-index: 0 !important;
+    z-index: 1 !important;
     top: 2.5rem !important;
     left: -90px !important;
     transform-origin: center top;
     margin-top: 2px;
 }
-
-
 
 ::ng-deep .menu-dropdown-content {
     .p-menu-item-link {
@@ -360,10 +362,1040 @@
     }
 }
 
-.alert-icon{
+.alert-icon {
     width: 1.5rem;
     height: 1.5rem;
 }
+
+.clone-body-card .select-weeks-block .field-block {
+    width: 100%;
+}
+
+.clone-body-card .select-weeks-block .field-block ::ng-deep .p-datepicker {
+    width: 100% !important;
+    display: flex !important;
+}
+
+.clone-body-card .select-weeks-block .field-block ::ng-deep .p-inputtext {
+    width: 100% !important;
+}
+
+.clone-body-card .select-weeks-block .field-block ::ng-deep .p-datepicker-input {
+    width: 100% !important;
+}
+
+.strategy-option {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.strategy-option .form-check-input {
+    width: 16px;
+    height: 16px;
+}
+
+.clone-strategy-card {
+    flex: 1 !important;
+    padding: 0.6rem !important;
+    margin: 0;
+}
+
+.strategy-option {
+    display: flex;
+    align-items: center;
+    gap: 10px !important;
+    background: #F5F7FC;
+    border-radius: 8px;
+    padding: 6px !important;
+    min-height: 60px !important;
+}
+
+.clone-strategy-card .title {
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.clone-body-card .select-weeks-block .field-block ::ng-deep .p-datepicker {
+    height: 36px !important;
+}
+
+.clone-body-card .select-weeks-block .field-block ::ng-deep .p-datepicker-input {
+    height: 36px !important;
+    min-height: 36px !important;
+}
+
+.clone-body-card .select-weeks-block .field-block ::ng-deep .p-datepicker-trigger {
+    height: 36px !important;
+    width: 36px !important;
+}
+
+.clone-body-card .select-weeks-block .field-block ::ng-deep .p-datepicker-input {
+    width: 100% !important;
+}
+
+
+
+.p-datepicker-input:focus {
+    border-color: #0B3A83 !important;
+    box-shadow: none !important;
+}
+
+.clone-body-card .select-weeks-block .field-block ::ng-deep .p-datepicker-input:focus,
+.clone-body-card .select-weeks-block .field-block ::ng-deep .p-inputtext:focus {
+    border-color: #DAE2ED !important;
+    box-shadow: none !important;
+}
+
+.clone-body-card .select-weeks-block .field-block ::ng-deep .p-focus {
+    box-shadow: none !important;
+}
+
+::ng-deep .p-datepicker-prev-button,
+::ng-deep .p-datepicker-next-button {
+    color: #0B3A83 !important;
+}
+
+::ng-deep .p-datepicker-prev-button svg,
+::ng-deep .p-datepicker-next-button svg {
+    color: #0B3A83 !important;
+    fill: #0B3A83 !important;
+}
+
+::ng-deep .p-datepicker-prev-button:hover,
+::ng-deep .p-datepicker-next-button:hover {
+    background: transparent !important;
+    color: #0B3A83 !important;
+}
+
+::ng-deep .p-datepicker-prev-button:hover svg,
+::ng-deep .p-datepicker-next-button:hover svg {
+    color: #0B3A83 !important;
+    fill: #0B3A83 !important;
+}
+
+.p-datepicker-day-selected {
+    background: #0B3A83 !important;
+}
+
+::ng-deep .p-datepicker-day-selected-range-start,
+::ng-deep .p-datepicker-day-selected-range-end,
+::ng-deep .p-datepicker-day-selected {
+    background: #0B3A83 !important;
+    color: #fff !important;
+}
+
+.strategy-icon {
+    width: 24px !important;
+    height: 24px !important;
+}
+
+.clone-body-card {
+    height: calc(100vh - 140px);
+    display: flex;
+    flex-direction: column;
+}
+
+.clone-body-card form {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-height: 0;
+}
+
+.custom-checkbox input[type="checkbox"] {
+    accent-color: #0B3A83;
+}
+
+
+.clone-cancel-icon {
+    width: 80px !important;
+    height: 80px !important;
+}
+
+.clone-footer .custom-btn {
+    flex: 1;
+}
+
+::ng-deep .p-datepicker-day-selected-range {
+    background: #EEF1F7 !important;
+    color: #495057 !important;
+}
+
+::ng-deep .p-datepicker-day-selected-range-start,
+::ng-deep .p-datepicker-day-selected-range-end {
+    background: #0B3A83 !important;
+    color: #fff !important;
+}
+
+:host {
+    --p-datepicker-date-range-selected-background: #EEF1F7;
+    --p-datepicker-date-range-selected-color: #495057;
+}
+
+.p-datepicker-day-selected-range {
+    background: #EEF1F7 !important;
+    color: #495057 !important;
+}
+
+
+.clone-action-btn {
+    box-shadow: none;
+    padding: 0.4rem 0.9rem;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    border-radius: 0.5rem;
+    height: 36px;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+
+.clone-action-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+::ng-deep .clone-offcanvas-panel .custom-filter-container .custom-date-range-picker {
+    width: 100% !important;
+
+    .p-datepicker {
+        width: 100% !important;
+        display: flex !important;
+    }
+
+    .p-datepicker-input-container {
+        flex: 1 !important;
+        width: 100% !important;
+    }
+
+    .p-datepicker-input {
+        width: 100% !important;
+    }
+}
+
+.custom-offcanvas-body {
+    min-height: auto;
+    background: transparent;
+    padding: 0;
+}
+
+.clone-card-shell {
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    overflow: visible;
+}
+
+/* removed top overlay; errors shown inline under options */
+
+.clone-header-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    padding: 0 0 0.75rem 0;
+    margin-bottom: 0.25rem;
+}
+
+.clone-header-card .popup-heading {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 0;
+    color: #122c5f;
+}
+
+.clone-header-divider {
+    height: 1px;
+    background: #e4e9f4;
+    width: 100%;
+    margin-top: 0.25rem;
+    margin-bottom: 1rem;
+}
+
+.clone-close-btn {
+    width: 36px;
+    height: 36px;
+    border: 1px solid #dce4f5;
+    border-radius: 50%;
+    background: #e9efff;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #0b3a83;
+    cursor: pointer;
+}
+
+.clone-close-btn:hover {
+    background: #e9efff;
+    transform: none;
+}
+
+.clone-close-btn i {
+    font-size: 1rem;
+    line-height: 1;
+}
+
+.clone-body-card {
+    background: transparent;
+    border: none;
+    padding: 0;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    overflow: visible;
+}
+
+
+
+.clone-offcanvas-panel .offcanvas {
+    width: 420px !important;
+    max-width: 95% !important;
+    background: #ffffff !important;
+    border: 1px solid #e4e9f4 !important;
+    border-radius: 0 !important;
+    overflow: hidden !important;
+    box-shadow: 0 24px 60px rgba(15, 23, 42, 0.12) !important;
+}
+
+.clone-offcanvas-panel .offcanvas-body {
+    padding: 0 !important;
+    overflow-y: scroll !important;
+    padding-bottom: 20px !important;
+    max-height: calc(100vh - 2rem) !important;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Thinner, subtler scrollbar for the clone modal */
+.clone-offcanvas-panel .offcanvas-body::-webkit-scrollbar {
+    width: 6px;
+}
+
+.clone-offcanvas-panel .offcanvas-body::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.clone-offcanvas-panel .offcanvas-body::-webkit-scrollbar-thumb {
+    background: rgba(16, 24, 40, 0.12);
+    border-radius: 8px;
+}
+
+.clone-offcanvas-panel .offcanvas-body::-webkit-scrollbar-thumb:hover {
+    background: rgba(16, 24, 40, 0.18);
+}
+
+.clone-offcanvas-panel .offcanvas-body {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(16, 24, 40, 0.12) transparent;
+}
+
+.clone-body-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    padding-bottom: 1rem;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+}
+
+.clone-body-content.scrollable {
+    overflow-y: auto;
+}
+
+.clone-footer {
+    position: sticky;
+    bottom: 0;
+    background: #ffffff;
+    padding: 0.35rem 0 0 0;
+    border-top: 1px solid #e4e9f4;
+}
+
+.clone-footer .custom-btn {
+    min-height: 36px !important;
+    padding: 0.5rem 1rem !important;
+}
+
+.info-box {
+    margin-bottom: 1rem;
+    font-size: 10px;
+    line-height: 1.2;
+    color: #4b5563;
+}
+
+
+.clone-validation-error {
+    color: #ef4444;
+    font-size: 11px;
+    font-weight: 400;
+    margin-top: 6px;
+}
+
+.clone-footer .custom-btn {
+    min-height: 44px !important;
+}
+
+.clone-offcanvas-panel .offcanvas-backdrop {
+    background: rgba(16, 24, 40, 0.24) !important;
+}
+
+.clone-body-card .section-block {
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    padding: 0;
+    margin-bottom: 1rem;
+}
+
+.clone-body-card .clone-divider.mb-4 {
+    margin-bottom: 0.75rem !important;
+}
+
+.clone-body-card .select-weeks-block {
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    padding: 0;
+    margin-bottom: 0.75rem;
+}
+
+.clone-body-card .select-weeks-block .section-heading {
+    margin-bottom: 0.75rem;
+}
+
+.clone-divider {
+    border: none;
+    border-top: 2px dashed #b8bfd0;
+   margin: 0.25rem 0;
+    background: transparent;
+}
+
+.clone-body-card .select-weeks-block .field-block {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.clone-body-card .select-weeks-block .field-block+.field-block {
+    margin-top: 1rem;
+}
+
+.clone-body-card .select-weeks-block .field-block label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #1c3251;
+    margin-bottom: 0.5rem;
+}
+
+.clone-body-card .select-weeks-block .field-block .text-danger {
+    margin-left: 0.25rem;
+    font-size: 11px;
+    font-weight: 400;
+}
+
+.clone-body-card .select-weeks-block .p-datepicker {
+    width: 100%;
+}
+
+.clone-body-card .select-weeks-block .p-inputtext {
+    width: 100%;
+}
+
+.clone-body-card .select-weeks-block .field-block .p-datepicker {
+    width: 100% !important;
+}
+
+.clone-body-card .select-weeks-block .field-block .p-datepicker .p-inputtext {
+    width: 100% !important;
+}
+
+.clone-body-card .select-weeks-block .field-block ::ng-deep .p-datepicker-input-container {
+    width: 100%;
+}
+
+.clone-body-card .select-weeks-block .field-block ::ng-deep .p-datepicker-input-container input {
+    width: 100%;
+}
+
+.clone-body-card .section-heading {
+    margin-bottom: 0.5rem !important;
+}
+
+.clone-body-card label.form-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #1c3251;
+}
+
+.clone-body-card .p-datepicker {
+    width: 100%;
+}
+
+.clone-body-card .p-inputtext {
+    width: 100%;
+    min-height: 30px !important;
+    height: 30px !important;
+    padding: 0.25rem 0.5rem !important;
+    font-size: 12px !important;
+}
+
+.read-only-input {
+    min-height: 44px;
+    background: #ffffff;
+    border: 1px solid #d8dee7;
+    border-radius: 0.75rem;
+    padding: 0.85rem 1rem;
+    color: #475569;
+    font-weight: 500;
+}
+
+.custom-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 2px 0 !important;
+    margin-bottom: 2px !important;
+}
+
+.custom-checkbox input {
+    width: 14px !important;
+    height: 14px !important;
+}
+
+.custom-checkbox {
+    gap: 0.4rem !important;
+}
+
+.custom-checkbox span,
+.custom-checkbox label {
+    font-size: 13px !important;
+    line-height: 16px !important;
+}
+
+.clone-strategy-card {
+    display: block;
+    width: 100%;
+    padding: 0.75rem;
+    border-radius: 0.75rem;
+    border: 1px solid #e4e9f4;
+    background: #ffffff !important;
+}
+
+.clone-strategy-card:hover {
+    border-color: #d0d7e9;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+}
+
+.clone-strategy-card .radio-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 4px;
+}
+
+.clone-strategy-card .title {
+    font-weight: 700;
+    color: #1d3256;
+}
+
+.radio-description {
+    display: block;
+    font-size: 12px;
+    line-height: 16px;
+    color: #596d9a;
+    margin-top: 0;
+}
+
+.info-box {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    background: #fff7e6;
+    border: 1px solid #f5e5bd;
+    border-radius: 0.75rem;
+    color: #475569;
+    font-size: 0.9rem;
+}
+
+.info-box i {
+    font-size: 1.1rem;
+    color: #e69500;
+    margin-top: 0.15rem;
+}
+
+.clone-body-card .d-flex.align-items-center.gap-3.mt-4 {
+    margin-top: 1.5rem;
+}
+
+.clone-body-card .info-box {
+    background: #fff7e6;
+    border: 1px solid #f5e5bd;
+}
+
+.clone-body-card .info-box i {
+    color: #e69500;
+}
+
+.clone-body-card .custom-btn {
+    min-height: 40px !important;
+    height: 40px !important;
+    font-size: 14px !important;
+}
+
+.custom-radio-card {
+    display: block;
+    width: 100%;
+    padding: 1rem;
+    border: 1px solid #dae2ed;
+    border-radius: 0.75rem;
+    background-color: #ffffff;
+    cursor: pointer;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.custom-radio-card .radio-label {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+}
+
+.custom-radio-card input[type="radio"] {
+    margin: 0;
+}
+
+.custom-radio-card:hover {
+    border-color: #2750d8;
+    box-shadow: 0 4px 10px rgba(39, 80, 216, 0.08);
+}
+
+.radio-description {
+    font-size: 11px !important;
+    line-height: 14px !important;
+}
+
+.read-only-input {
+    min-height: 40px;
+    background: #ffffff;
+    border: 1px solid #dae2ed;
+    border-radius: 0.5rem;
+    padding: 0.85rem 1rem;
+    color: #475569;
+    font-weight: 500;
+}
+
+.section-heading {
+    color: #1B2F6B !important;
+    font-weight: 700;
+}
+
+.section-block {
+    background: #f7f9ff;
+    border: 1px solid #e4e9f4;
+    border-radius: 1rem;
+     padding: 0.5rem;
+}
+
+.info-box {
+    padding: 0.6rem 0.75rem !important;
+    border-radius: 12px;
+}
+
+.info-box i {
+    font-size: 1.1rem;
+    color: #2750d8;
+}
+
+.info-box span,
+.info-box p {
+    font-size: 13px !important;
+    line-height: 18px !important;
+}
+
+.info-box i,
+.info-box .info-icon {
+    font-size: 14px !important;
+}
+
+.custom-select-btn {
+    width: 100%;
+    font-size: var(--fontsize13);
+    font-weight: 700;
+    color: var(--primary-color);
+}
 ::ng-deep .p-select.ng-invalid.ng-dirty .p-select-label.p-placeholder {
     color: #64748b !important;
+}
+
+// ── Approval Info Popover ──────────────────────────────────────────
+::ng-deep .approval-info-popover {
+    --bs-popover-max-width: 400px !important;
+    width: 400px !important;
+    border: none !important;
+    background: transparent !important;
+    border-radius: 0.5rem !important;
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px !important;
+
+    .popover {
+        min-width: 300px;
+        max-width: 340px;
+        border: none;
+        border-radius: 0.75rem;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.14);
+        padding: 0;
+        overflow: hidden;
+    }
+
+    .popover-body {
+        padding: 0;
+    }
+}
+
+.popover-accordian {
+    .p-accordionheader {
+        padding: 0.5rem !important;
+        font-size: var(--fontsize12) !important;
+    }
+
+    .accord-border {
+        border: 2px solid var(--accordian-table-border-color) !important;
+        border-top: 0px !important;
+        border-bottom-left-radius: 0.5rem !important;
+        border-bottom-right-radius: 0.5rem !important;
+    }
+}
+
+.approval-popup {
+    font-size: var(--fontsize12);
+
+    .approval-header {
+        background: linear-gradient(90deg, #F59E0B);
+        color: #fff;
+        font-weight: 600;
+        font-size: var(--fontsize12);
+        padding: 0.6rem 1rem;
+        display: flex;
+        align-items: center;
+        border-radius: 0.75rem 0.75rem 0 0;
+
+        // Dynamic header colors matching input borders
+        &.header-waiting {
+            background: linear-gradient(90deg, #F59E0B);
+        }
+
+        &.header-approved {
+            background: linear-gradient(90deg, var(--btn-success));
+        }
+
+        &.header-rejected {
+            background: linear-gradient(90deg, var(--btn-failure));
+        }
+
+        &.header-draft {
+            background: linear-gradient(90deg, #3397E8);
+        }
+
+        &.header-default {
+            background: linear-gradient(90deg, #F59E0B);
+        }
+    }
+
+    .approval-body {
+        padding: 0.75rem 1rem;
+        background: #fff;
+        display: flex;
+        flex-direction: column;
+        gap: 0.45rem;
+        width: 400px;
+        border-bottom-left-radius: 0.5rem !important;
+        border-bottom-right-radius: 0.5rem !important;
+    }
+
+    .approval-row {
+        display: flex;
+        gap: 0.25rem;
+
+        .ap-label {
+            min-width: 90px;
+            color: #9CA3AF;
+            font-weight: 600;
+            font-size: var(--fontsize12);
+        }
+
+        .ap-colon {
+            color: #9CA3AF;
+            margin-right: 0.25rem;
+        }
+
+        .ap-value {
+            color: #111827;
+            font-size: var(--fontsize12);
+        }
+    }
+
+    // Status badge — color driven by status class
+    .status-badge {
+        display: inline-flex;
+        text-align: center;
+        border-radius: 0.5rem;
+        padding: 0.125rem 0.75rem;
+        font-weight: 600;
+        font-size: var(--fontsize10);
+        border: 1px solid;
+
+        .status-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+
+        &.badge-waiting {
+            color: #D97706;
+            border-color: #D97706;
+            background: #FEF3C7;
+
+            .status-dot {
+                background: #D97706;
+            }
+
+            .p-accordionheader {
+                background-color: #FEF3C7 !important;
+                color: #D97706 !important;
+                border: 2px solid #D97706 !important;
+            }
+
+            .accord-border {
+                border: 2px solid #D97706 !important;
+            }
+        }
+
+        &.badge-approved {
+            color: var(--btn-success);
+            border-color: var(--btn-success);
+            background: #D1FAE5;
+
+            .status-dot {
+                background: var(--btn-success);
+            }
+
+            .p-accordionheader {
+                background-color: #D1FAE5 !important;
+                color: var(--btn-success) !important;
+                border: 2px solid var(--btn-success) !important;
+            }
+
+            .accord-border {
+                border: 2px solid var(--btn-success) !important;
+            }
+        }
+
+        &.badge-rejected {
+            color: var(--btn-failure);
+            border-color: var(--btn-failure);
+            background: #FEE2E2;
+
+            .status-dot {
+                background: var(--btn-failure);
+            }
+        }
+
+        &.badge-draft {
+            color: #2563EB;
+            border-color: #2563EB;
+            background: #DBEAFE;
+
+            .status-dot {
+                background: #2563EB;
+            }
+        }
+
+        &.badge-default {
+            color: #6B7280;
+            border-color: #6B7280;
+            background: #F3F4F6;
+
+            .status-dot {
+                background: #6B7280;
+            }
+        }
+    }
+
+    .approval-description {
+        border: 1px solid #E5E7EB;
+        border-radius: 0.5rem;
+        padding: 0.5rem 0.75rem;
+        background: #F9FAFB;
+
+        .desc-title {
+            font-size: var(--fontsize10);
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            color: #6B7280;
+            text-transform: uppercase;
+            margin-bottom: 0.3rem;
+        }
+
+        .desc-box {
+            color: #374151;
+            font-size: var(--fontsize12);
+            font-style: italic;
+        }
+    }
+
+    .approval-footer {
+        margin-top: 0.5rem;
+        background: #FFFBEB;
+        border: 1px solid #FDE68A;
+        border-radius: 0.5rem;
+        padding: 0.45rem 0.75rem;
+        color: #92400E;
+        font-size: var(--fontsize12);
+        display: flex;
+        align-items: center;
+    }
+}
+
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.4;
+
+    .status-dot {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        flex-shrink: 0;
+    }
+
+    &.badge-waiting {
+        background-color: #fff8e1;
+        color: #f59e0b;
+
+        .status-dot {
+            background-color: #f59e0b;
+        }
+    }
+
+    &.badge-approved {
+        background-color: #e6f4ea;
+        color: var(--btn-success);
+
+        .status-dot {
+            background-color: var(--btn-success);
+        }
+    }
+
+    &.badge-rejected {
+        background-color: #fde8e8;
+        color: var(--btn-failure);
+
+        .status-dot {
+            background-color: var(--btn-failure);
+        }
+    }
+
+    &.badge-draft {
+        background-color: #f1f5f9;
+        color: #64748b;
+
+        .status-dot {
+            background-color: #64748b;
+        }
+    }
+
+    &.badge-default {
+        background-color: #f1f5f9;
+        color: #64748b;
+
+        .status-dot {
+            background-color: #64748b;
+        }
+    }
+}
+
+.badge-waiting {
+    .p-accordionheader {
+        background-color: #FEF3C7 !important;
+        color: #D97706 !important;
+        border: 2px solid #D97706 !important;
+    }
+
+    .p-accordionpanel:not(.p-disabled).p-accordionpanel-active>.p-accordionheader {
+        background-color: #FEF3C7 !important;
+        color: #D97706 !important;
+        border: 2px solid #D97706 !important;
+    }
+
+    .accord-border {
+        border: 2px solid #D97706 !important;
+        border-top: 0px !important;
+    }
+}
+
+.badge-approved {
+    .p-accordionheader {
+        background-color: #eefff4 !important;
+        color: var(--btn-success) !important;
+        border: 0.5px solid var(--btn-success) !important;
+    }
+
+    .p-accordionpanel:not(.p-disabled).p-accordionpanel-active>.p-accordionheader {
+        background-color: #eefff4 !important;
+        color: var(--btn-success) !important;
+        border: 0.5px solid var(--btn-success) !important;
+    }
+
+    .accord-border {
+        border: 0.5px solid var(--btn-success) !important;
+        border-top: 0.5px !important;
+        // background-color: #eefff4;
+    }
+}
+
+.badge-rejected {
+    .p-accordionheader {
+        background-color: #ffefee !important;
+        color: var(--btn-failure) !important;
+        border: 0.5px solid var(--btn-failure) !important;
+    }
+
+    .p-accordionpanel:not(.p-disabled).p-accordionpanel-active>.p-accordionheader {
+        background-color: #ffefee !important;
+        color: var(--btn-failure) !important;
+        border: 0.5px solid var(--btn-failure) !important;
+    }
+
+    .accord-border {
+        border: 0.5px solid var(--btn-failure) !important;
+        border-top: 0.5px !important;
+        // background-color: #ffefee;
+    }
+}
+
+
+.info-icon i {
+    color: var(--primary-color);
+    /* primary color */
+    font-size: 15px;
+    -webkit-text-stroke: 0.5px var(--primary-color);
+    cursor: pointer;
 }

@@ -1,84 +1,349 @@
-<div class="custom-main-component-container">
-    <div class="component-header mb-3">{{ 'Load Entitlements' | translate }}</div>
+<div class="load-entitlements-page">
+    <div class="load-entitlements-content">
+        <div class="component-header mb-3">Load Entitlements</div>
 
-    <div class="row">
-        <div class="col-md-4 mb-3">
-            <label class="form-label custom-label">{{ 'Employee Id' | translate }}</label>
-            <input type="search" class="form-select custom-input w-100" aria-label="Employee" name="Employee"
-                placeholder="{{ 'Search by Employee Id or Name' | translate }}" [(ngModel)]="fusionEmployeeId"
-                (input)="onSearchChange(fusionEmployeeId)" (click)="toggleDropdown('empid')" (search)="onClearSearch()"
-                [class.open]="isDropdownOpen" autocomplete="off" required />
-            <div class="dropdown-menu" #dropdownMenu [class.show]="isDropdownOpen"></div>
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <label class="form-label custom-label">Select Employee <span class="text-danger">*</span></label>
+                <div class="custom-p-select-content employee-select-wrapper">
+                    <p-select [options]="employeeOptions" optionLabel="label" optionValue="value"
+                        [(ngModel)]="selectedEmployeeId" [filter]="true" filterBy="label" [showClear]="false"
+                        filterPlaceholder="Search by Employee Id or Name" placeholder="Please select Employee "
+                        class="form-select custom-select w-100" (onChange)="onOptionClick($event.value)"
+                        (onBlur)="employeeTouched = true">
+                    </p-select>
+                    <button *ngIf="selectedEmployeeId" type="button" class="employee-clear-btn"
+                        aria-label="Clear selected employee"
+                        (click)="clearSelectedEmployee(true); $event.stopPropagation()">
+                        <i class="bi bi-x-circle"></i>
+                    </button>
+                </div>
+                <div class="error-msg" *ngIf="employeeTouched && !selectedEmployeeId">
+                  Employee Selection is required
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <label for="WorkEmail" class="form-label custom-label">Work Email</label>
+                <input type="email" class="form-control custom-input" id="WorkEmail" placeholder="Work Email" disabled>
+            </div>
+
+            <div class="col-md-4 mb-3">
+                <label for="DateOfJoining" class="form-label custom-label">Date of Joining</label>
+                <input type="text" class="form-control custom-input" id="dateOfJoining" name="DateOfJoining" disabled
+                    placeholder="Date of Joining">
+            </div>
+
+            <div class="col-md-4 mb-3">
+                <label for="Location" class="form-label custom-label">Location</label>
+                <input type="text" class="form-control custom-input" id="location" name="Location" disabled
+                    placeholder="Location">
+            </div>
+
+            <div class="col-md-4 mb-3">
+                <label for="Sub Location" class="form-label custom-label">Sub Location</label>
+                <input type="text" class="form-control custom-input" id="sublocation" name="Sub Location" disabled
+                    placeholder="Sub Location">
+            </div>
+
+            <div class="col-md-4 mb-3">
+                <label for="shift" class="form-label custom-label">Shift</label>
+                <input type="text" class="form-control custom-input" id="shift" name="Shift" disabled
+                    placeholder="Shift">
+            </div>
         </div>
 
-        <div class="col-md-4 mb-3">
-            <label for="DateOfJoining" class="form-label custom-label">{{ 'Date Of Joining' | translate }}</label>
-            <input type="text" class="form-control custom-input" id="dateOfJoining" name="DateOfJoining" disabled
-                placeholder="{{ 'Date Of Joining' | translate }}">
-        </div>
+        <!-- Already Entitled View -->
+        <ng-container *ngIf="alreadyEntitled">
+            <!-- <div class="frequency-card p-3 mt-3"> -->
+            <!-- <div class="frequency-card-header d-flex align-items-center mb-3">
+                <span class="frequency-badge me-2">Already Entitled</span>
+                <span class="text-muted small">This employee already has entitlements loaded for the current year.</span>
+            </div> -->
+            <div class="custom-table-content" [ngClass]="'table-height-60'">
+                <table class="w-100">
+                    <thead>
+                        <tr>
+                            <th>Job ID</th>
+                            <th>Category</th>
+                            <th>Frequency</th>
+                            <th>Cycle Handling</th>
+                            <th class="text-center">Total Entitled</th>
+                            <th>Status</th>
+                            <th class="text-center">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let cat of entitledData">
+                            <td>{{ cat.jobSummary?.jobSequenceId ?? '-' }}</td>
+                            <td>{{ cat.categoryName }}</td>
+                            <td>{{ formatLabel(cat.frequencyType) }}</td>
+                            <td>{{ formatLabel(cat.cycleHandling) }}</td>
+                            <td class="text-center">{{ cat.totalEntitled }}</td>
+                            <td>
+                                <span class="status-badge"
+                                    [ngClass]="cat.jobSummary?.status === 'Pending' ? 'status-pending' : 'status-executed'">
+                                    {{ cat.jobSummary?.status ?? '-' }}
+                                </span>
+                            </td>
+                            <td class="text-center">
+                                <div class="dropdown">
+                                    <a data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="bi bi-three-dots-vertical"></i>
+                                    </a>
+                                    <ul class="dropdown-menu custom-dropdown-menu">
+                                        <li (click)="openCyclesModal(cat)">
+                                            <a class="dropdown-item"><i class="bi bi-eye me-2"></i>View Cycles</a>
+                                        </li>
+                                    </ul>
+                                </div>
 
-        <div class="col-md-4 mb-3">
-            <label for="Location" class="form-label custom-label">{{ 'Location' | translate }}</label>
-            <input type="text" class="form-control custom-input" id="location" name="Location" disabled
-                placeholder="{{ 'Location' | translate }}">
-        </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <!-- </div> -->
+        </ng-container>
 
-        <div class="col-md-4 mb-3">
-            <label for="Sub Location" class="form-label custom-label">{{ 'Sub Location' | translate }}</label>
-            <input type="text" class="form-control custom-input" id="sublocation" name="Sub Location" disabled
-                placeholder="{{ 'Sub Location' | translate }}">
-        </div>
+        <!-- Normal Load Flow (not yet entitled) -->
+        <ng-container *ngIf="!alreadyEntitled">
+            <div class="py-4 text-center" *ngIf="selectedEmployeeDetails && breakdownLoader">
+                Loading entitlement breakdown...
+            </div>
 
-        <div class="col-md-4 mb-3">
-            <label for="shift" class="form-label custom-label">{{ 'Shift' | translate }}</label>
-            <input type="text" class="form-control custom-input" id="shift" name="Shift" disabled placeholder="{{ 'Shift' | translate }}">
-        </div>
+            <div *ngIf="selectedEmployeeDetails && !breakdownLoader && frequencyCards.length === 0">
+                <app-no-data-found></app-no-data-found>
+            </div>
 
-        <div class="col-md-4 mb-3">
-            <label for="FirstName" class="form-label custom-label">{{ 'First Name' | translate }}</label>
-            <input type="text" class="form-control custom-input" id="FirstName" placeholder="{{ 'First Name' | translate }}" disabled>
-        </div>
+            <div class="frequency-card p-3 mt-3" *ngIf="combinedBreakdownCard as combinedCard">
+                <div class="d-flex justify-content-end align-items-center mb-3">
+                    <button type="button" class="custom-btn btn-secondary"
+                        [disabled]="!isAnyCategoryModified(combinedCard)"
+                        (click)="resetAllEntries(combinedCard)">
+                        <i class="bi bi-arrow-counterclockwise me-1"></i> Reset All
+                    </button>
+                </div>
+                <div class="breakdown-layout">
+                    <div class="breakdown-left-nav">
+                        <div class="component-side-nav-tabs-container">
+                            <ul class="nav flex-column">
+                                <li class="nav-item" *ngFor="let entry of combinedCard.categories; let catIdx = index">
+                                    <a *ngIf="!entry.deleted"
+                                        class="nav-link"
+                                        [class.active-nav-link]="combinedCard.selectedCategoryIdx === catIdx"
+                                        (click)="combinedCard.selectedCategoryIdx = catIdx">
+                                        {{ entry.categoryName }}
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
 
-        <div class="col-md-4 mb-3">
-            <label for="LastName" class="form-label custom-label">{{ 'Last Name' | translate }}</label>
-            <input type="text" class="form-control custom-input" id="LastName" placeholder="{{ 'Last Name' | translate }}" disabled>
-        </div>
+                    <div class="breakdown-right-content" *ngIf="getSelectedCardEntry(combinedCard) as selectedEntry">
+                        <div class="custom-accordians">
+                            <div class="custom-accordian-data-content">
+                                <div class="d-flex justify-content-between align-items-end gap-3 flex-wrap w-100 pe-3 mb-3">
+                                    <div class="breakdown-badges">
+                                        <div class="info-badge">
+                                            <span style="color: rgb(105, 105, 105);">Frequency Type:</span>
+                                                <span class="fw-bolder ms-1">{{ formatLabel(selectedEntry.frequencyType) }}</span>
+                                        </div>
+                                        <div class="info-badge" *ngIf="selectedEntry.cycleHandling">
+                                            <span style="color: rgb(105, 105, 105);">Leave Balance Handling:</span>
+                                            <span class="fw-bolder ms-1">{{ formatLabel(selectedEntry.cycleHandling) }}</span>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex gap-2">
+                                        <button type="button"
+                                            class="custom-btn btn-secondary btn-sm reset-category-btn"
+                                            [disabled]="!selectedEntry.isModified"
+                                            (click)="resetEntry(selectedEntry)">
+                                            <i class="bi bi-arrow-counterclockwise me-1"></i> Reset
+                                        </button>
+                                        <button type="button"
+                                            class="custom-icon btn p-0"
+                                            (click)="confirmDeleteCategory(0, combinedCard.selectedCategoryIdx)">
+                                            <i class="bi bi-trash text-danger"></i>
+                                        </button>
+                                    </div>
+                                </div>
 
-        <div class="col-md-4 mb-3">
-            <label for="WorkEmail" class="form-label custom-label">{{ 'Work Email' | translate }}</label>
-            <input type="email" class="form-control custom-input" id="WorkEmail" placeholder="{{ 'Work Email' | translate }}" disabled>
+                                <div *ngIf="selectedEntry.isExcluded" class="text-danger small">
+                                    <i class="bi bi-exclamation-circle me-1"></i>{{ selectedEntry.exclusionReason }}
+                                </div>
+                                <div *ngIf="selectedEntry.breakdownLoader">Loading...</div>
+                                <div *ngIf="!selectedEntry.breakdownLoader && selectedEntry.tableData"
+                                    class="custom-table-content"
+                                    [ngClass]="'table-height-30'">
+                                    <ng-container [formGroup]="selectedEntry.formGroup">
+                                        <table class="w-100">
+                                            <thead>
+                                                <tr>
+                                                    <th class="fw-bold">Cycle</th>
+                                                    <th class="text-center"
+                                                        *ngFor="let c of selectedEntry.tableData.columns">
+                                                        <div class="fw-bold">Entitlement Days ({{ c.gradeLabel }})</div>
+                                                        <div class="text-muted small mt-2">Required: {{ c.allowedDays }}</div>
+                                                    </th>
+                                                    <th class="text-center fw-bold"
+                                                        *ngIf="selectedEntry.tableData.isProRata && isDojCurrentYear">Pro Rate</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody formArrayName="cycles">
+                                                <tr *ngFor="let cycle of selectedEntry.tableData.cycles; let cycleIdx = index"
+                                                    [formGroupName]="cycleIdx">
+                                                    <td class="fw-semibold">{{ cycle.label }}</td>
+                                                    <td class="text-center"
+                                                        *ngFor="let col of selectedEntry.tableData.columns; let colIdx = index">
+                                                        <div class="entitlement-cell-wrap">
+                                                            <input type="number"
+                                                                class="form-control custom-input text-center entitlement-input"
+                                                                [min]="0" [max]="col.allowedDays" [step]="0.5"
+                                                                [formControlName]="'col_' + colIdx"
+                                                                (keydown)="blockInvalidEntitlementKeys($event)"
+                                                                (input)="clampEntitlementInput($event, selectedEntry, cycleIdx, colIdx, col.allowedDays)"
+                                                                (blur)="clampEntitlementInput($event, selectedEntry, cycleIdx, colIdx, col.allowedDays)" />
+                                                            <div class="error-msg mt-1"
+                                                                *ngIf="getEntryCellError(selectedEntry, cycleIdx, 'col_' + colIdx) as err">
+                                                                {{ err }}
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td class="text-center pro-rata-cell"
+                                                        *ngIf="selectedEntry.tableData.isProRata && isDojCurrentYear">
+                                                        <div class="input-error-wrap">
+                                                            <input type="number"
+                                                                class="form-control custom-input text-center entitlement-input"
+                                                                [min]="0" [step]="0.5"
+                                                                [formControlName]="'proRata_col_0'"
+                                                                [class.bg-light]="!cycle.isProRataCycle" />
+                                                            <div class="error-msg text-start mt-1"
+                                                                *ngIf="getEntryProRataError(selectedEntry, cycleIdx, 0) as err">
+                                                                {{ err }}
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                            <tfoot>
+                                                <tr class="total-row">
+                                                    <td class="total-label fw-bold">Total</td>
+                                                    <td class="text-center"
+                                                        *ngFor="let col of selectedEntry.tableData.columns; let colIdx = index">
+                                                        <span class="total-badge"
+                                                            [ngClass]="isEntryColumnValid(selectedEntry, colIdx) ? 'total-valid' : 'total-invalid'">
+                                                            {{ getEntryColumnTotal(selectedEntry, colIdx) }} / {{ col.allowedDays }}
+                                                        </span>
+                                                        <div class="error-msg mt-1"
+                                                            *ngIf="!isEntryColumnValid(selectedEntry, colIdx)">
+                                                            Ensure total entitlement equals {{ col.allowedDays }} days.
+                                                            <ng-container *ngIf="getEntryColumnTotal(selectedEntry, colIdx) < col.allowedDays">
+                                                                Remaining: {{ col.allowedDays - getEntryColumnTotal(selectedEntry, colIdx) }}
+                                                            </ng-container>
+                                                        </div>
+                                                    </td>
+                                                    <td *ngIf="selectedEntry.tableData.isProRata && isDojCurrentYear"></td>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                    </ng-container>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ng-container><!-- end !alreadyEntitled -->
+    </div><!-- end load-entitlements-content -->
+
+    <!-- Cycles Modal (NgbModal template) -->
+    <ng-template #cyclesModalTpl let-modal>
+        <div class="custom-main-popup-container" ngbAutofocus>
+            <div class="custom-poup-header-content popup-header-border">
+                <div class="pt-2">
+                    <p class="popup-heading mb-0">Cycle Breakdown — {{ viewCyclesEntry?.categoryName }}</p>
+                </div>
+                <div>
+                    <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+                </div>
+            </div>
+            <div class="custom-main-popup-content">
+                <div class="popup-table-wrapper">
+                    <div class="popup-table-scroll-container">
+                        <table class="popup-table">
+                            <thead>
+                                <tr>
+                                    <th class="text-start">Cycle No</th>
+                                    <th class="text-center">Start Date</th>
+                                    <th class="text-center">End Date</th>
+                                    <th class="text-center">Entitlement</th>
+                                    <th class="text-center">Status</th>
+                                    <th class="text-center">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let cycle of viewCyclesEntry?.cycles">
+                                    <td class="text-start">{{ cycle.cycleNo }}</td>
+                                    <td class="text-center">{{ formatEntitledDate(cycle.cycleStart) }}</td>
+                                    <td class="text-center">{{ formatEntitledDate(cycle.cycleEnd) }}</td>
+                                    <td class="text-center">
+                                        <span [class.text-muted]="!cycle.entitlement"
+                                            [class.fw-bold]="cycle.entitlement >= 2">{{ cycle.entitlement || 0 }}</span>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="status-badge"
+                                            [ngClass]="cycle.status === 'EXECUTED' ? 'status-executed' : 'status-pending'">
+                                            {{ cycle.status | titlecase }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        @if(isCyclePastOrCurrent(cycle)) {
+                                        <div class="dropdown">
+                                            <a data-bs-toggle="dropdown" aria-expanded="false">
+                                                <i class="bi bi-three-dots-vertical"></i>
+                                            </a>
+                                            <ul class="dropdown-menu custom-dropdown-menu">
+                                                <li (click)="retryCycle(viewCyclesEntry?.jobSummary?.jobId, cycle)">
+                                                    <a class="dropdown-item"><i
+                                                            class="bi bi-arrow-clockwise me-2"></i>Retry</a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        } @else {
+                                        NA
+                                        }
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </ng-template>
+
+    <div class="load-btn-bar" *ngIf="!alreadyEntitled">
+        <button class="custom-btn btn-primary" [disabled]="!isLoadButtonEnabled || loading"
+            (click)="sendEntitlementRequest()">
+            {{ loading ? 'Loading...' : 'Load Entitlements' }}
+        </button>
+    </div>
+</div><!-- end load-entitlements-page -->
+
+<!-- Delete Confirmation Modal -->
+<ng-template #deleteConfirmTpl let-modal>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons/reject.png" alt="delete icon" class="confirmation-delete-icon">
+            <p class="confirmation-text">Are you sure you want to delete?</p>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
+            <button type="button" class="custom-btn btn-primary" (click)="executeDeleteCategory()">Yes</button>
         </div>
     </div>
-
-    <div class="custom-table-content">
-        <table class="w-100"> <!-- Table shown only if records exist -->
-            <thead>
-                <th>{{ 'No' | translate }}</th>
-                <th>{{ 'Category' | translate }}</th>
-                <th>{{ 'Policy Leaves' | translate }}</th>
-                <th>{{ 'Entitled Leaves' | translate }}</th>
-                <th>{{ 'Action' | translate }}</th>
-            </thead>
-            <tbody>
-                <tr *ngFor="let record of leavePolicyRecords; let i = index">
-                    <td>{{ i + 1 }}</td>
-                    <td>{{ record.category }}</td>
-                    <td>{{ record.policyLeaves }}</td>
-                    <td contenteditable="false" #entitledLeaves>{{ record.entitledLeaves }}</td>
-                    <td><button class="btn btn-primary" (click)="editRow(entitledLeaves, record)">{{ 'Edit' | translate }}</button></td>
-                </tr>
-            </tbody>
-        </table>
-
-        <div *ngIf="leavePolicyRecords.length === 0" class="no-data-found mt-3 mb-3">
-            <app-no-data-found/>
-        </div>
-    </div>
-
-    <div class="w-100 text-center pt-3">
-        <button class="custom-btn btn-primary" (click)="sendEntitlementRequest()">{{ 'Load Entitlements' | translate }}</button>
-    </div>
-</div>
+</ng-template>
 
 <!-- success message popup -->
 <div class="modal fade bgfade" id="successhide" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
@@ -98,7 +363,7 @@
         <div class="modal-content d-flex flex-column justify-content-cenetr align-items-center pb-5">
             <i class="bi bi-exclamation-circle mt-4 mb-3"></i>
             <h4 class="text-center ps-3 pe-3 mb-3 ">{{StatusMsg}}</h4>
-            <button class="btn btn-primary px-5" (click)="close()">{{ 'OK' | translate }}</button>
+            <button class="btn btn-primary px-5" (click)="close()">OK</button>
         </div>
     </div>
 </div>

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HttpService } from '../../../services/http.service';
@@ -10,6 +10,8 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TooltipModule } from 'primeng/tooltip';
 import { Subscription } from 'rxjs';
 import { TranslateModule } from '@ngx-translate/core';
+import { TableModule } from 'primeng/table';
+import { Table } from 'primeng/table';
 
 
 @Component({
@@ -23,13 +25,18 @@ import { TranslateModule } from '@ngx-translate/core';
     NoDataFoundComponent,
     DataLoaderContentComponent,
     TranslateModule,
+    TableModule,
   ],
   templateUrl: './project-info.component.html',
   styleUrls: ['./project-info.component.scss'],
 })
 export class ProjectInfoComponent implements OnInit, OnDestroy {
+  @ViewChild('projectTable') projectTable!: Table;
   loader = false;
   projectData: any[] = [];
+  originalProjectData: any[] = []; // Store original unsorted data
+  currentSortField: string = '';
+  currentSortOrder: number = 0; // 0 = no sort, 1 = asc, -1 = desc
   showPhasePopup = false;
   selectedProject: any = null;
   employeeId: number | null = null;
@@ -97,17 +104,73 @@ export class ProjectInfoComponent implements OnInit, OnDestroy {
         next: (response: any) => {
           if (response?.success && response.data?.projects) {
             this.projectData = response.data.projects;
+            this.originalProjectData = [...response.data.projects];
           } else {
             this.projectData = [];
+            this.originalProjectData = [];
           }
           this.loader = false;
         },
         error: (err: any) => {
           console.error('Error fetching project summary:', err);
           this.projectData = [];
+          this.originalProjectData = [];
           this.loader = false;
         },
       });
+  }
+
+  customSort(event: any): void {
+    const field = event.field;
+    
+    // Track current sort state for the clicked field
+    if (this.currentSortField === field) {
+      // Same field clicked - cycle through: asc (1) -> desc (-1) -> reset (0)
+      if (this.currentSortOrder === 1) {
+        // Currently ascending, change to descending
+        this.currentSortOrder = -1;
+        event.order = -1;
+      } else if (this.currentSortOrder === -1) {
+        // Currently descending, reset to original order
+        this.projectData = [...this.originalProjectData];
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        if (this.projectTable) {
+          this.projectTable.reset();
+        }
+        return;
+      } else {
+        // Currently reset, change to ascending
+        this.currentSortOrder = 1;
+        event.order = 1;
+      }
+    } else {
+      // New field clicked - start with ascending
+      this.currentSortField = field;
+      this.currentSortOrder = 1;
+      event.order = 1;
+    }
+
+    event.data.sort((a: any, b: any) => {
+      let val1: any;
+      let val2: any;
+
+      // Handle direct fields
+      val1 = a[field];
+      val2 = b[field];
+
+      // Handle numeric fields
+      if (['totalHours', 'loggedHours', 'pendingHours'].includes(field)) {
+        const num1 = parseFloat(val1) || 0;
+        const num2 = parseFloat(val2) || 0;
+        return event.order * (num1 - num2);
+      }
+
+      // Handle string sorting for all other fields
+      val1 = String(val1 ?? '').trim();
+      val2 = String(val2 ?? '').trim();
+      return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+    });
   }
 
   // Triggered when year dropdown changes

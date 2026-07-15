@@ -25,18 +25,24 @@ import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component"
 import { FormValidationsService } from '../../../services/form-validations.service';
 import { DocumentViewIconComponent } from "../../../icons/document-view-icon/document-view-icon.component";
 import { SignalsService } from '../../../services/signals.service';
+import { TableModule } from 'primeng/table';
+import { Table } from 'primeng/table';
 @Component({
   selector: 'app-probation-pending-approvals',
   imports: [CommonModule, RouterModule, NgbPopoverModule, FormsModule, NgbPopoverModule,
     PaginatorModule, DropdownModule, NoDataFoundComponent, ProbationdetailsPipe, ProbationformViewComponent,
-    TranslateModule, Select, DateformatPipe, DataLoaderContentComponent, InfoIconComponent, DocumentViewIconComponent],
+    TranslateModule, Select, DateformatPipe, DataLoaderContentComponent, InfoIconComponent, DocumentViewIconComponent, TableModule],
   templateUrl: './probation-pending-approvals.component.html',
   styleUrl: './probation-pending-approvals.component.scss',
 })
 
 export class ProbationPendingApprovalsComponent {
+  @ViewChild('probationTable') probationTable!: Table;
   subscription!: Subscription;
   probationDetails = [] as any;
+  originalProbationData = [] as any; // Store original unsorted data
+  currentSortField: string = '';
+  currentSortOrder: number = 0; // 0 = no sort, 1 = asc, -1 = desc
   probationExtensionDuration!: number;
   probationExtensionTimes!: number;
   searchValue: any;
@@ -110,12 +116,110 @@ totalCount:any;
             item.approvalHeader.status != 'Processed' &&
             item.approvalHeader.status != 'Rejected'
         );
+        this.originalProbationData = [...this.probationDetails]; // Store original data
         // this.filterPendingApprovalsByModule();
       },
       error: (reason) => {
         console.log(reason)
         this.loading = false;
       },
+    });
+  }
+
+  getFilteredAndSortedProbationDetails(): any[] {
+    const search = this.searchValue?.toLowerCase() ?? '';
+    let probationData = [...this.probationDetails];
+
+    if (search) {
+      probationData = probationData.filter(item =>
+        item.entity?.employeeName?.toLowerCase().includes(search)
+      );
+    }
+
+    return probationData;
+  }
+
+  customSort(event: any): void {
+    const field = event.field;
+    
+    // Track current sort state for the clicked field
+    if (this.currentSortField === field) {
+      // Same field clicked - cycle through: asc (1) -> desc (-1) -> reset (0)
+      if (this.currentSortOrder === 1) {
+        // Currently ascending, change to descending
+        this.currentSortOrder = -1;
+        event.order = -1;
+      } else if (this.currentSortOrder === -1) {
+        // Currently descending, reset to original order
+        this.probationDetails = [...this.originalProbationData];
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        if (this.probationTable) {
+          this.probationTable.reset();
+        }
+        return;
+      } else {
+        // Currently reset, change to ascending
+        this.currentSortOrder = 1;
+        event.order = 1;
+      }
+    } else {
+      // New field clicked - start with ascending
+      this.currentSortField = field;
+      this.currentSortOrder = 1;
+      event.order = 1;
+    }
+
+    event.data.sort((a: any, b: any) => {
+      let val1: any;
+      let val2: any;
+
+      // Handle specific field mappings
+      switch (field) {
+        case 'fusionEmployeeId':
+          val1 = a.entity?.fusionEmployeeId;
+          val2 = b.entity?.fusionEmployeeId;
+          break;
+        case 'employeeName':
+          val1 = a.entity?.employeeName;
+          val2 = b.entity?.employeeName;
+          break;
+        case 'probationStartDate':
+          val1 = a.entity?.probationStartDate;
+          val2 = b.entity?.probationStartDate;
+          break;
+        case 'probationEndDate':
+          val1 = a.entity?.probationEndDate;
+          val2 = b.entity?.probationEndDate;
+          break;
+        default:
+          val1 = a[field];
+          val2 = b[field];
+      }
+
+      // Handle date sorting
+      if (field === 'probationStartDate' || field === 'probationEndDate') {
+        const date1 = val1 ? new Date(val1) : new Date(0);
+        const date2 = val2 ? new Date(val2) : new Date(0);
+        return event.order * (date1.getTime() - date2.getTime());
+      }
+
+      // Handle Employee ID sorting (alphanumeric)
+      if (field === 'fusionEmployeeId') {
+        return event.order * String(val1 ?? '').localeCompare(
+          String(val2 ?? ''),
+          undefined,
+          {
+            numeric: true,
+            sensitivity: 'base'
+          }
+        );
+      }
+
+      // Handle string sorting for all other fields
+      val1 = String(val1 ?? '').trim();
+      val2 = String(val2 ?? '').trim();
+      return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
     });
   }
 

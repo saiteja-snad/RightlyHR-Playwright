@@ -1,0 +1,30 @@
+.custom-accordian-data-content {
+    height: calc(100dvh - 20.5rem);
+    min-height: 50vh !important;
+
+    .group-count {
+        font-size: var(--fontsize12);
+        color: var(--primary-color);
+        font-weight: 500;
+    }
+
+    .employee-data-table {
+        .cycle-freq-cell {
+            opacity: 0.6;
+            font-size: var(--fontsize12);
+        }
+
+        .col-carry-forward { color: #f07408; font-weight: 600; }
+        .col-total         { color: #0892ee; font-weight: 600; }
+        .col-availed       { color: #00A912; font-weight: 600; }
+        .col-lapsed        { color: #eb220c; font-weight: 600; }
+        .col-frozen        { color: #090de4; font-weight: 600; }
+        .col-carryforward  { color: #8e44ad; font-weight: 600; }
+    }
+}
+
+.no-data-bg {
+    background: #FFFFFF;
+    border: 1px solid var(--content-border-color);
+    border-radius: 0.5rem;
+}

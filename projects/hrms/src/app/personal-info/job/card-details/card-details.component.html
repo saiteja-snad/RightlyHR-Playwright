@@ -6,61 +6,76 @@
         </div>
     <div class="custom-table-content">
         @if (!loader) {
-        <table class="w-100">
-            <thead>
-                <th>{{'Issued Date'|translate}}</th>
-                <th>{{'Card Number'|translate}}</th>
-                <th>{{'Card Type'|translate}}</th>
-                <th>{{'Card Holder Name'|translate}}</th>
-                <th>{{'Bank Name'|translate}}</th>
-                <!-- <th>{{'Card Expiry Month'|translate}}</th>
-                <th>{{'Card Expiry Year'|translate}}</th> -->
-                <th>{{'Expiry Date' | translate}}</th>
-                <th>{{'Allocated By'|translate}}</th>
-                <th>{{'Allocated On'|translate}}</th>
-                <th>{{'Released On'|translate}}</th>
-                <th>{{'Status'|translate}}</th>
-                <!-- <th>{{'Allocation Status'|translate}}</th> -->
-               
-            </thead>
-            <tbody>
-                @if( cardDetails.length > 0){
-                <tr *ngFor="let item of cardDetails ">
-                    <!-- issued date -->
-                    <td>{{item?.card?.issuedDate?(item?.card?.issuedDate| dateformat ):'-'}}</td>
-                    <!-- card number -->
-                    <td>{{item?.card?.cardNumberMasked?item?.card?.cardNumberMasked:'-'}}</td>
-                    <!-- card type -->
-                    <td>{{item?.card?.cardType?item?.card?.cardType:'-'}}</td>
-                    <!--Card Holder Name-->
-                    <td>{{item?.card?.cardHolderName ? item?.card?.cardHolderName:'-'}}</td>
-                    <!-- bank name -->
-                    <td>{{item?.card?.issuedBankName ? item?.card?.issuedBankName:'-'}}</td>
-                    <!-- expiry month -->
-                    <!-- <td>{{item?.card?.expiryMonth?item?.card?.expiryMonth:'-'}}</td> -->
-                    <!-- expity year -->
-                    <!-- <td>{{item?.card?.expiryYear?item?.card?.expiryYear:'-'}}</td> -->
-                     <td>{{ `${item?.card?.expiryMonth?item?.card?.expiryMonth:'-'} / ${item?.card?.expiryYear?item?.card?.expiryYear:'-'} `}}</td>
-                    <!-- allocated to -->
-                    <td>{{item?.assignedBy?.name?item?.assignedBy?.name : '-'}}</td>
-                    <!-- allocated on -->
-                    <td>{{item?.allocatedDate?(item.allocatedDate| dateformat ):'-'}}</td>
-                      <!-- released on -->
-                    <td>{{item?.releasedDate?(item.releasedDate| dateformat ):'-'}}</td>
-                    <!-- status -->
-                    <!-- <td>{{item?.card?.status ? item?.card?.status:'-'}}</td> -->
-                    <!-- allocation status -->
-                    <td>{{item?.allocationStatus ? item?.allocationStatus:'-'}}</td>
-                    
-                </tr>
-                }
-                @if (cardDetails.length === 0) {
+        <p-table #cardDetailsTable [value]="cardDetails" [customSort]="true" (sortFunction)="customSort($event)"
+                 styleClass="p-datatable-sm" [tableStyle]="{'min-width': '50rem'}">
+            <ng-template pTemplate="header">
                 <tr>
-                    <app-no-data-found />
+                    <th pSortableColumn="issuedDate">
+                        {{'Issued Date'|translate}}
+                        <p-sortIcon field="issuedDate"></p-sortIcon>
+                    </th>
+                    <th pSortableColumn="cardNumberMasked">
+                        {{'Card Number'|translate}}
+                        <p-sortIcon field="cardNumberMasked"></p-sortIcon>
+                    </th>
+                    <th pSortableColumn="cardType">
+                        {{'Card Type'|translate}}
+                        <p-sortIcon field="cardType"></p-sortIcon>
+                    </th>
+                    <th pSortableColumn="cardHolderName">
+                        {{'Card Holder Name'|translate}}
+                        <p-sortIcon field="cardHolderName"></p-sortIcon>
+                    </th>
+                    <th pSortableColumn="issuedBankName">
+                        {{'Bank Name'|translate}}
+                        <p-sortIcon field="issuedBankName"></p-sortIcon>
+                    </th>
+                    <th pSortableColumn="expiryDate">
+                        {{'Expiry Date' | translate}}
+                        <p-sortIcon field="expiryDate"></p-sortIcon>
+                    </th>
+                    <th pSortableColumn="assignedByName">
+                        {{'Allocated By'|translate}}
+                        <p-sortIcon field="assignedByName"></p-sortIcon>
+                    </th>
+                    <th pSortableColumn="allocatedDate">
+                        {{'Allocated On'|translate}}
+                        <p-sortIcon field="allocatedDate"></p-sortIcon>
+                    </th>
+                    <th pSortableColumn="releasedDate">
+                        {{'Released On'|translate}}
+                        <p-sortIcon field="releasedDate"></p-sortIcon>
+                    </th>
+                    <th pSortableColumn="allocationStatus">
+                        {{'Status'|translate}}
+                        <p-sortIcon field="allocationStatus"></p-sortIcon>
+                    </th>
                 </tr>
-                }
-            </tbody>
-        </table>
+            </ng-template>
+            <ng-template pTemplate="body" let-item>
+                <tr>
+                    <td>{{item?.card?.issuedDate?(item?.card?.issuedDate| dateformat ):'-'}}</td>
+                    <td>{{item?.card?.cardNumberMasked?item?.card?.cardNumberMasked:'-'}}</td>
+                    <td>{{item?.card?.cardType?item?.card?.cardType:'-'}}</td>
+                    <td>{{item?.card?.cardHolderName ? item?.card?.cardHolderName:'-'}}</td>
+                    <td>{{item?.card?.issuedBankName ? item?.card?.issuedBankName:'-'}}</td>
+                    <td>{{ `${item?.card?.expiryMonth?item?.card?.expiryMonth:'-'} / ${item?.card?.expiryYear?item?.card?.expiryYear:'-'} `}}</td>
+                    <td>{{item?.assignedBy?.name?item?.assignedBy?.name : '-'}}</td>
+                    <td>{{item?.allocatedDate?(item.allocatedDate| dateformat ):'-'}}</td>
+                    <td>{{item?.releasedDate?(item.releasedDate| dateformat ):'-'}}</td>
+                    <td>{{item?.allocationStatus ? item?.allocationStatus:'-'}}</td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+                <div class="wrapper">
+                    <tr>
+                        <td colspan="10">
+                            <app-no-data-found />
+                        </td>
+                    </tr>
+                </div>
+            </ng-template>
+        </p-table>
         } @else {
         <app-data-loader-content />
         }

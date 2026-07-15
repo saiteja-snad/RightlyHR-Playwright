@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, 
   ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -17,16 +17,20 @@ import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-foun
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import moment from 'moment';
 import { DatePicker } from 'primeng/datepicker';
+import { TableModule } from 'primeng/table';
+import { Table } from 'primeng/table';
 import { OnboardingFilterService } from '../../../shared/time-off-module-tabs/pending-approvals-tabs/onboarding-filter.service';
+import { SignalsService } from '../../../services/signals.service';
 @Component({
   selector: 'app-document-history-intern-offer-letter',
   imports: [CommonModule, ReactiveFormsModule, TranslateModule, DateformatPipe, FormsModule, OfferletterdashboardpipePipe,
-    NoDataFoundComponent, DataLoaderContentComponent, DatePicker],
+    NoDataFoundComponent, DataLoaderContentComponent, DatePicker, TableModule],
   templateUrl: './document-history-intern-offer-letter.component.html',
   styleUrl: './document-history-intern-offer-letter.component.scss',
 })
 
 export class DocumentHistoryInternOfferLetterComponent {
+  @ViewChild('internOfferLetterTable') internOfferLetterTable!: Table;
   subscription!: Subscription;
   searchValue: any;
   rejectDocument!: FormGroup;
@@ -40,9 +44,13 @@ export class DocumentHistoryInternOfferLetterComponent {
   selectedYear: number | null = null;
   maxMonth: Date = new Date();
   offerLetters: any[] = [];
+  originalOfferLetters = [] as IOfferLetterDetails[]; // Store original unsorted data
+  currentSortField: string = '';
+  currentSortOrder: number = 0; // 0 = no sort, 1 = asc, -1 = desc
 
   constructor(private modalService: NgbModal, private fb: FormBuilder, private http: HttpService,
-    private authService: AuthService, private conformationPopup: OpenModalService, public rbac: RbacService,private onboardingFilter: OnboardingFilterService) {
+    private authService: AuthService, private conformationPopup: OpenModalService, public rbac: RbacService,private onboardingFilter: OnboardingFilterService,
+    private signalService: SignalsService) {
     this.initializeForm();
   }
 
@@ -81,6 +89,7 @@ export class DocumentHistoryInternOfferLetterComponent {
       next: (data: any) => {
         this.loading = false;
         this.traineeofferletters = data;
+        this.originalOfferLetters = [...this.traineeofferletters];
         this.filterByMonth();
       },
       error: (reason: any) => {
@@ -116,16 +125,52 @@ export class DocumentHistoryInternOfferLetterComponent {
   onSelectDownload(file: any) {
     this.subscription = this.http.DownloadDataWithQuery('FileSystem/Downloadfile', file.documentUrl).subscribe({
       next: (res: any) => {
-        let fileName = res.headers.get('content-disposition')?.split(':')[1].split('=')[1];
         let blob: Blob = res.body as Blob;
         let a = document.createElement('a');
         a.href = window.URL.createObjectURL(blob);
-        let filename = file.documentUrl.split('/')[file.documentUrl.split('/').length - 1];
+        const filename = this.getDownloadFileName(res?.headers?.get('content-disposition'), file?.documentUrl);
         a.download = filename;
         a.click();
+        window.URL.revokeObjectURL(a.href);
       },
       error: (reason) => console.log(reason),
     });
+  }
+
+  private getDownloadFileName(contentDisposition: string | null, documentUrl?: string): string {
+    const fileNameFromHeader = this.extractFileNameFromContentDisposition(contentDisposition);
+    if (fileNameFromHeader) {
+      return fileNameFromHeader;
+    }
+
+    if (typeof documentUrl === 'string' && documentUrl.trim()) {
+      const normalizedUrl = documentUrl.split('?')[0];
+      const pathParts = normalizedUrl.split('/').filter(Boolean);
+      const lastPathPart = pathParts[pathParts.length - 1];
+      if (lastPathPart) {
+        return decodeURIComponent(lastPathPart);
+      }
+    }
+
+    return 'document';
+  }
+
+  private extractFileNameFromContentDisposition(contentDisposition: string | null): string | null {
+    if (!contentDisposition) {
+      return null;
+    }
+
+    const utfMatch = contentDisposition.match(/filename\*=UTF-8''([^;]+)/i);
+    if (utfMatch?.[1]) {
+      return decodeURIComponent(utfMatch[1].replace(/["']/g, '').trim());
+    }
+
+    const standardMatch = contentDisposition.match(/filename="?([^";]+)"?/i);
+    if (standardMatch?.[1]) {
+      return standardMatch[1].trim();
+    }
+
+    return null;
   }
 
   releaseTraineeOfferLetter(Values: any) {
@@ -161,6 +206,10 @@ export class DocumentHistoryInternOfferLetterComponent {
         console.log(reason);
         this.conformationPopup.openErrorModal('Released Failed');
       },
+      complete: () => {
+          this.signalService.TraineeOfferLetterNavCountSignal.set(true);
+          this.getTraineeOfferLetters();
+        },
     });
   }
 
@@ -198,6 +247,10 @@ export class DocumentHistoryInternOfferLetterComponent {
         console.log(reason);
         this.conformationPopup.openErrorModal('Update Failed');
       },
+      complete: () => {
+          this.signalService.TraineeOfferLetterNavCountSignal.set(true);
+          this.getTraineeOfferLetters();
+        },
     });
   }
 
@@ -237,7 +290,7 @@ export class DocumentHistoryInternOfferLetterComponent {
       isRead: false,
       isDelete: false,
       notificationDate: currentDate,
-      notificationType: `${loggedInUser?.firstName} ${loggedInUser?.middleName ?? ''} 
+      notificationType: `${loggedInUser?.firstName} ${loggedInUser?.middleName ?? ''}
       ${loggedInUser?.lastName ?? ''} Approved  ${personname.employeeName} Trainee Offer Letter`,
       empId: personname.offerSentByName,
     };
@@ -337,6 +390,10 @@ export class DocumentHistoryInternOfferLetterComponent {
       error: (reason: any) => {
         console.log(reason);
       },
+      complete: () => {
+          this.signalService.TraineeOfferLetterNavCountSignal.set(true);
+          this.getTraineeOfferLetters();
+        },
     });
   }
 
@@ -362,7 +419,7 @@ export class DocumentHistoryInternOfferLetterComponent {
       employeeId: this.selectedValuesOfOffer.offerSentBy,
       documentUrl: this.selectedValuesOfOffer.documentUrl,
       workLocation: this.selectedValuesOfOffer.workLocation,
-      senderName: `${loggedInUser?.firstName ?? ''} ${loggedInUser?.middleName ?? ''} 
+      senderName: `${loggedInUser?.firstName ?? ''} ${loggedInUser?.middleName ?? ''}
       ${loggedInUser?.lastName ?? ''}`,
       senderEmail: loggedInUser.workEmail,
       approvedBy: this.selectedValuesOfOffer.approvedBy,
@@ -397,7 +454,7 @@ export class DocumentHistoryInternOfferLetterComponent {
       isRead: false,
       isDelete: false,
       notificationDate: currentDate,
-      notificationType: `${loggedInUser.firstName}${loggedInUser.middleName ? ' ' + loggedInUser.middleName : ''} 
+      notificationType: `${loggedInUser.firstName}${loggedInUser.middleName ? ' ' + loggedInUser.middleName : ''}
       ${loggedInUser.lastName ?? ''} Rejected ${this.selectedValuesOfOffer.employeeName} Offer Letter`,
       empId: this.selectedValuesOfOffer.offerSentBy,
     };
@@ -408,6 +465,79 @@ export class DocumentHistoryInternOfferLetterComponent {
       error: (err: any) => {
         console.log(err);
       },
+    });
+  }
+
+  getFilteredAndSortedOfferLetters(): IOfferLetterDetails[] {
+    if (!this.searchValue || this.searchValue.trim() === '') {
+      return this.offerLetters;
+    }
+    
+    const searchTerm = this.searchValue.toLowerCase().trim();
+    return this.offerLetters.filter((letter: IOfferLetterDetails) => {
+      const employeeName = letter.employeeName?.toLowerCase() || '';
+      const workLocation = letter.workLocation?.toLowerCase() || '';
+      const subLocation = letter.subLocation?.toLowerCase() || '';
+      const jobRole = letter.jobRole?.toLowerCase() || '';
+      const status = letter.status?.toLowerCase() || '';
+      const empSubstatus = letter.empSubstatus?.toLowerCase() || '';
+      
+      return employeeName.includes(searchTerm) ||
+             workLocation.includes(searchTerm) ||
+             subLocation.includes(searchTerm) ||
+             jobRole.includes(searchTerm) ||
+             status.includes(searchTerm) ||
+             empSubstatus.includes(searchTerm);
+    });
+  }
+
+  customSort(event: any): void {
+    const field = event.field;
+    
+    // Track current sort state for the clicked field
+    if (this.currentSortField === field) {
+      // Same field clicked - cycle through: asc (1) -> desc (-1) -> reset (0)
+      if (this.currentSortOrder === 1) {
+        // Currently ascending, change to descending
+        this.currentSortOrder = -1;
+        event.order = -1;
+      } else if (this.currentSortOrder === -1) {
+        // Currently descending, reset to original order
+        this.offerLetters = [...this.originalOfferLetters];
+        this.filterByMonth();
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        if (this.internOfferLetterTable) {
+          this.internOfferLetterTable.reset();
+        }
+        return;
+      } else {
+        // Currently reset, change to ascending
+        this.currentSortOrder = 1;
+        event.order = 1;
+      }
+    } else {
+      // New field clicked - start with ascending
+      this.currentSortField = field;
+      this.currentSortOrder = 1;
+      event.order = 1;
+    }
+
+    event.data.sort((a: any, b: any) => {
+      let val1: any;
+      let val2: any;
+
+      // Handle different field types
+      if (field === 'offerSentDate') {
+        val1 = new Date(a.offerSentDate);
+        val2 = new Date(b.offerSentDate);
+        return event.order * (val1.getTime() - val2.getTime());
+      } else {
+        // Handle string sorting for other fields
+        val1 = String(a[field] ?? '').trim();
+        val2 = String(b[field] ?? '').trim();
+        return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+      }
     });
   }
 

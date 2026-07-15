@@ -38,20 +38,23 @@
                 @for (e of EligibilityDetail; track $index) {
                 <tr>
                     <td class="w-75">{{ e.eligibleforrehire1}}</td>
-                    <td class="w-25">
-                        <div class="d-flex gap-4">
-                            <!--Update-->
-                            <div>
-                                <a (click)="openupdate(e)" *ngIf="rbac.allowedToAccess('Eligible For Rehire.update')">
-                                     <app-settings-update-icon />
-                                </a>
-                            </div>
-                            <!--Delete-->
-                            <div>
-                                <a (click)="opendelete(e)" *ngIf="rbac.allowedToAccess('Eligible For Rehire.delete')">
-                                       <app-settings-delete-icon />
-                                </a>
-                            </div>
+                    <td class="w-25 text-end action-dropdown-cell">
+                        <div class="dropdown" *ngIf="rbac.allowedToAccess('Eligible For Rehire.update') || rbac.allowedToAccess('Eligible For Rehire.delete')">
+                            <a data-bs-toggle="dropdown" aria-expanded="false" class="cursor-pointer">
+                                <i class="bi bi-three-dots-vertical"></i>
+                            </a>
+                            <ul class="dropdown-menu custom-dropdown-menu">
+                                <li *ngIf="rbac.allowedToAccess('Eligible For Rehire.update')">
+                                    <a class="dropdown-item" (click)="openupdate(e)">
+                                        <i class="bi bi-pencil-square me-2"></i>{{ 'Update' | translate }}
+                                    </a>
+                                </li>
+                                <li *ngIf="rbac.allowedToAccess('Eligible For Rehire.delete')">
+                                    <a class="dropdown-item" (click)="opendelete(e)">
+                                        <i class="bi bi-trash me-2"></i>{{ 'Delete' | translate }}
+                                    </a>
+                                </li>
+                            </ul>
                         </div>
                     </td>
                 </tr>
@@ -97,7 +100,7 @@
                 </div>
                 <div class="custom-modal-footer">
                     <button type="button" class="custom-btn btn-secondary" (click)="close(modal)">{{'Cancel'|translate}}</button>
-                    <button type="button" class="custom-btn btn-primary" (click)="updateEligibility(modal)" 
+                    <button type="button" class="custom-btn btn-primary" (click)="updateEligibility(modal)"
                     [disabled]="updateForm.invalid">{{'Update'|translate}}</button>
                 </div>
             </div>

@@ -1,8 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Select } from 'primeng/select';
+import { TableModule } from 'primeng/table';
+import { Table } from 'primeng/table';
 import { IDepartment, IGrade, IJob, IJobtype, IRole } from '../../../Interfaces/job-model';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { OpenModalService } from '../../../services/open-modal.service';
@@ -22,16 +24,18 @@ import { RbacService } from '../../../services/rbac.service';
 import { SettingsDeleteIconComponent } from "../../../icons/settings-delete-icon/settings-delete-icon.component";
 @Component({
   selector: 'app-job-details',
-  imports: [CommonModule, TranslateModule, Select, ReactiveFormsModule, DateformatPipe, NoDataFoundComponent, DataLoaderContentComponent, SettingsDeleteIconComponent],
+  imports: [CommonModule, TranslateModule, Select, TableModule, ReactiveFormsModule, DateformatPipe, NoDataFoundComponent, DataLoaderContentComponent, SettingsDeleteIconComponent],
   templateUrl: './job-details.component.html',
   styleUrl: './job-details.component.scss'
 })
 
 export class JobDetailsComponent implements OnInit, OnDestroy {
+  @ViewChild('jobDetailsTable') jobDetailsTable!: Table;
   separationRequestForm!: FormGroup;
   contractConversionForm!: FormGroup;
   jobDetailsupdateForm!: FormGroup;
-  jobdetails = new BehaviorSubject<any[]>([]);
+  jobdetails: any[] = [];
+  originalJobDetails: any[] = [];
   teamDropdownValues: any[] = [];
   loading = false
   teamManagerDropdownValues: any[] = [];
@@ -83,6 +87,8 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
   selectedlocationid: any;
   dojDate:any;
   totalCount: any;
+  currentSortField: string = '';
+  currentSortOrder: number = 0; // 0 = no sort, 1 = asc, -1 = desc
 
   constructor(private modalService: NgbModal, private authService: AuthService, private fb: FormBuilder, private conformationPopup: OpenModalService,
     private http: HttpService, public formValidations: FormValidationsService, public rbac: RbacService, public permissionRouteService: AccessForEmployeeinfoService, private router: Router) { }
@@ -636,8 +642,9 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
       next: (data: any) => {
         console.log(data);
         this.loading = false
-        this.jobdetails.next(data);
-        console.log(this.jobdetails.value);
+        this.jobdetails = data;
+        this.originalJobDetails = [...data];
+        console.log(this.jobdetails);
       },
       error: (data: any) => {
         this.loading = false
@@ -1019,6 +1026,63 @@ showContractDetailSeperationDots= true;
         // Show error modal
         this.conformationPopup.openErrorModal('Deletion of data failed');
       },
+    });
+  }
+
+  customSort(event: any): void {
+    const field = event.field;
+    
+    // Track current sort state for the clicked field
+    if (this.currentSortField === field) {
+      // Same field clicked - cycle through: asc (1) -> desc (-1) -> reset (0)
+      if (this.currentSortOrder === 1) {
+        // Currently ascending, change to descending
+        this.currentSortOrder = -1;
+        event.order = -1;
+      } else if (this.currentSortOrder === -1) {
+        // Currently descending, reset to original order
+        this.jobdetails = [...this.originalJobDetails];
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        if (this.jobDetailsTable) {
+          this.jobDetailsTable.reset();
+        }
+        return;
+      } else {
+        // Currently reset, change to ascending
+        this.currentSortOrder = 1;
+        event.order = 1;
+      }
+    } else {
+      // New field clicked - start with ascending
+      this.currentSortField = field;
+      this.currentSortOrder = 1;
+      event.order = 1;
+    }
+
+    event.data.sort((a: any, b: any) => {
+      let val1: any;
+      let val2: any;
+
+      if (field === 'effectiveDate') {
+        val1 = new Date(a[field] ?? 0).getTime();
+        val2 = new Date(b[field] ?? 0).getTime();
+        return event.order * (val1 - val2);
+      } else if (field === 'teamManagerName') {
+        // Handle team manager name (combine first, middle, last name)
+        val1 = `${a.firstName || ''} ${a.middleName || ''} ${a.lastName || ''}`.trim();
+        val2 = `${b.firstName || ''} ${b.middleName || ''} ${b.lastName || ''}`.trim();
+        return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+      } else if (field === 'reportingManagerName') {
+        // Handle reporting manager name (combine fName, mName, lName)
+        val1 = `${a.fName || ''} ${a.mName || ''} ${a.lName || ''}`.trim();
+        val2 = `${b.fName || ''} ${b.mName || ''} ${b.lName || ''}`.trim();
+        return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+      } else {
+        val1 = String(a[field] ?? '').trim();
+        val2 = String(b[field] ?? '').trim();
+        return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+      }
     });
   }
 

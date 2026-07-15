@@ -96,6 +96,15 @@ export class OnBeHalfOfApprovalTabsComponent implements OnInit{
       permission: { feature: 'Cancelled (On Behalf Of)', action: 'view' },
       countKey: 'cancelled',
     },
+    {
+      tabId: '/on-behalf-of/on-behalf-of/entitlement-summary',
+      label: 'Entitlement Summary',
+      link: '/on-behalf-of/on-behalf-of/entitlement-summary',
+      icon: '/time-off-icon/Entitlement Summary.png',
+      permission: { feature: 'Entitlement Summary (On Behalf Of)', action: 'view' },
+      countKey: 'entitlement',
+      },
+
   ];
   tabs: StatusTab[] = [];
 
@@ -109,10 +118,8 @@ export class OnBeHalfOfApprovalTabsComponent implements OnInit{
   ) {
     // Signal reaction for employee switch or year change
     effect(() => {
-      if (this.http.onBehalfOfTriggerSignal() > 0) {
-        this.cadidateEmployeeId = parseInt(
-          localStorage.getItem('onbehalfof') as string,
-        );
+      if (this.http.onBehalfOfTriggerSignal()) {
+        this.cadidateEmployeeId = parseInt(localStorage.getItem('onbehalfof') as string);
         if (!isNaN(this.cadidateEmployeeId)) {
           this.getDataByLPID();
         } else {
@@ -124,6 +131,7 @@ export class OnBeHalfOfApprovalTabsComponent implements OnInit{
             cancelled: 0,
           });
         }
+        this.http.onBehalfOfTriggerSignal.update(v => v - 1);
       }
     });
   }

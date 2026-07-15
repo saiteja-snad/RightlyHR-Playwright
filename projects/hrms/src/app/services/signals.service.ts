@@ -22,13 +22,13 @@ export class SignalsService {
   // CompOff PendingApprovals Signals
   compOffForYouTriggerSignal = signal<boolean>(false);
   compOffForRoleTriggerSignal = signal<boolean>(false);
-  compOffSidNavCountTriggerSignal = signal<boolean>(false);
+  compOffSidNavCountTriggerSignal = signal<number>(0);
 
   // RemoteLoginRequest Signal
-  remoteLoginRequestTriggerSignal = signal<boolean>(false);
+  remoteLoginRequestTriggerSignal = signal<number>(0);
   remoteLoginForYouTriggerSignal = signal<boolean>(false);
   retoteLoginForRoleTriggerSignal = signal<boolean>(false);
-  remoteLoginSidNavCountTriggerSignal = signal<boolean>(false);
+  remoteLoginSidNavCountTriggerSignal = signal<number>(0);
 
 TraineeOfferLetterNavCountSignal = signal<boolean>(false);
   ContractOfferLetterNavCountSignal = signal<boolean>(false);
@@ -52,7 +52,7 @@ TraineeOfferLetterNavCountSignal = signal<boolean>(false);
   noDueTriggerSignal = signal<boolean>(false);
   noDueSideNavCountTriggerSignal = signal<boolean>(false);
   //Time off request
-  timecountTriggerSignal = signal<boolean>(false);
+  timecountTriggerSignal = signal<number>(0);
   timeoffForYouTriggerSignal = signal<boolean>(false);
   timeoffForRoleTriggerSignal = signal<boolean>(false);
   timeOffsidenavCountSignal = signal<boolean>(false);
@@ -75,6 +75,14 @@ TraineeOfferLetterNavCountSignal = signal<boolean>(false);
 
   contractConversionForYouTriggerSignal = signal<boolean>(false);
   contractConversionForYouRoleTriggerSignal = signal<boolean>(false);
+
+  OfferLetterNavCountSignal = signal<boolean>(false);
+  // TraineeOfferLetterNavCountSignal = signal<boolean>(false);
+  // ContractOfferLetterNavCountSignal = signal<boolean>(false);
+  // AppointmentLetterNavCountSignal = signal<boolean>(false);
+  // NDALetterNavCountSignal = signal<boolean>(false);
+
+  timesheetApprovalsCountSignal = signal<boolean>(false);
 
   // Offboarding reload signal
   offboardingReloadTriggerSignal = signal<boolean>(false);

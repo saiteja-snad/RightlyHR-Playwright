@@ -1,3 +1,8 @@
+.wrapper {
+  height: 70dvh;
+  justify-content: center;
+}
+
 .custom-table-content {
     .p-datatable-thead>tr>th {
         background-color: var(--table-header-bg-color) !important;

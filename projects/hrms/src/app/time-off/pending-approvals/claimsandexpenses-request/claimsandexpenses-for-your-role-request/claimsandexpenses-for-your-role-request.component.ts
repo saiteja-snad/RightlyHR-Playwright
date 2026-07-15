@@ -26,6 +26,8 @@ import { ConfirmationIconComponent } from "../../../../icons/confirmation-icon/c
 import { Router, RouterOutlet } from '@angular/router';
 import moment from 'moment';
 import { SelectModule } from 'primeng/select';
+import { TableModule } from 'primeng/table';
+import { Table } from 'primeng/table';
 @Component({
   selector: 'app-claimsandexpenses-for-your-role-request',
   imports: [
@@ -43,7 +45,8 @@ import { SelectModule } from 'primeng/select';
     InfoIconComponent,
     DataLoaderContentComponent,
     ConfirmationIconComponent,
-    SelectModule
+    SelectModule,
+    TableModule
 ],
 
   templateUrl: './claimsandexpenses-for-your-role-request.component.html',
@@ -63,6 +66,7 @@ export class ClaimsandexpensesForYourRoleRequestComponent
     { label: 20, value: 20 },
     { label: 25, value: 25 },
   ];
+  originalData: any[] = [];
   destroy$: Subject<boolean> = new Subject<boolean>();
   expenseheaderpending = [] as ExpenseApprovalResponse[];
   approverComments = [] as any[];
@@ -79,6 +83,7 @@ export class ClaimsandexpensesForYourRoleRequestComponent
   updataid!: number;
   @ViewChild('viewattamchment') private viewattamchment!: NgbModal;
   @ViewChild('verificationViewattamchment') private verificationViewattamchment!: NgbModal;
+  @ViewChild('expenseTable') expenseTable!: Table;
   // approverComments = [] as AttendanceRequestC[];
   @ViewChild('commentspopup') modalContent: any;
   @ViewChild('checklistconfirmationmodal') checklistconfirmationmodal: any;
@@ -92,6 +97,9 @@ export class ClaimsandexpensesForYourRoleRequestComponent
   paymentmodedata= [] as any[];
   currentOpenExpensesId: number | null = null;
   allVerifiedMap: Map<number, boolean> = new Map<number, boolean>();
+  originalExpenseData = [] as ExpenseApprovalResponse[]; // Store original unsorted data
+  currentSortField: string = '';
+  currentSortOrder: number = 0; // 0 = no sort, 1 = asc, -1 = desc
   constructor(
     private modalService: NgbModal,
     private signalService: SignalsService,
@@ -221,6 +229,7 @@ isloading: boolean = false;
               item.approvalHeader.status != 'Processed' &&
               item.approvalHeader.status != 'Rejected'
           );
+          this.originalExpenseData = [...this.expenseheaderpending];
           if (this.currentOpenExpensesId) {
             this.viewItem(this.currentOpenExpensesId);
           }
@@ -454,10 +463,10 @@ isloading: boolean = false;
   getApprovalStatusCounts() {
     this.http.get(`PendingApproval/getApprovalStatusCounts?moduleId=19&EmployeeId=${this.empinfo.employeeId}`).subscribe((res: any) => {
       this.totalCount = res.reduce((acc: number, curr: any) => acc + curr.totalCount, 0);
-       this.http.updatePendingApprovalCounts(this.totalCount);
+      this.http.updatePendingApprovalCounts(this.totalCount);
     });
   }
- 
+
 
   comments(value: any, commentspopup: any) {
     this.modalService.open(commentspopup, {
@@ -612,27 +621,8 @@ isloading: boolean = false;
     );
   }
 
-  selectedItem: any = null;
-  openVerifyModal(item: any, content: any) {
-    this.verifyModalRef = this.modalService.open(content, { centered: true, backdrop: 'static' });
-    this.intializeVerifyForm();
-    this.selectedItem = item; // store clicked item
-  }
-  intializeVerifyForm() {
-    this.verifyForm = this.fb.group({
-      comments: ['', [Validators.required, Validators.maxLength(250)]],
-    });
-
-    // Remove chip highlight if comment is cleared manually
-    this.verifyForm.get('comments')?.valueChanges.subscribe((value: string) => {
-      if (!value || value.trim() === '') {
-        this.selectedLeaveStatus = null;
-      }
-    });
-  }
-
   handleClarification(approveForm: FormGroup): void {
-    this.isloading= true;
+    this.isloading = true;
     if (approveForm.valid) {
       const formData = approveForm.value;
       const requestBody = {
@@ -654,7 +644,7 @@ isloading: boolean = false;
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response: any) => {
-            this.isloading=false;
+            this.isloading = false;
             this.modalService.dismissAll();
             this.signalService.claimsandexpensesForRoleTriggerSignal.set(true);
             this.sharedModalService.openSuccessModal(
@@ -669,7 +659,7 @@ isloading: boolean = false;
             }));
           },
           error: (reason: any) => {
-            this.isloading=false;
+            this.isloading = false;
             this.modalService.dismissAll();
             this.sharedModalService.openErrorModal(reason.error.Message);
           },
@@ -679,6 +669,8 @@ isloading: boolean = false;
         });
     }
   }
+  selectedItem: any = null;
+
   refreshAllVerifiedStates(): void {
     this.expenseheaderpending.forEach(record => {
       const expId = record.entity.expenses_ID;
@@ -691,12 +683,35 @@ isloading: boolean = false;
                 data.expenseitem.every((item: any) => item.isVerified === true);
               if (allDone) {
                 this.allVerifiedMap.set(expId, true);
+                console.log(this.allVerifiedMap);
               }
             }
           });
       }
     });
   }
+
+ 
+  openVerifyModal(item: any, content: any) {
+    this.verifyModalRef = this.modalService.open(content, { centered: true, backdrop: 'static' });
+    this.intializeVerifyForm();
+    this.selectedItem = item; // store clicked item
+  }
+  intializeVerifyForm() {
+    this.verifyForm = this.fb.group({
+      comments: ['', [Validators.required, Validators.maxLength(250)]],
+    });
+
+    // Remove chip highlight if comment is cleared manually
+    this.verifyForm.get('comments')?.valueChanges.subscribe((value: string) => {
+      if (!value || value.trim() === '') {
+        this.selectedLeaveStatus = null;
+      }
+    });
+  }
+
+  
+  
 
   isAllVerifiedForRecord(expensesId: number): boolean {
     return this.allVerifiedMap.get(expensesId) === true;
@@ -719,7 +734,6 @@ isloading: boolean = false;
         addedOn: moment().format('YYYY-MM-DD')
       })
     };
-
     this.http.putData(`Expenses_Header/ExpensesItemUpdate/${verifiedItem.expenseitem_id}`, requestBody)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
@@ -900,6 +914,93 @@ handleVerifyReject(verifyForm: FormGroup): void {
       }
     });
 }
+
+  customSort(event: any): void {
+    const field = event.field;
+    
+    // Track current sort state for the clicked field
+    if (this.currentSortField === field) {
+      // Same field clicked - cycle through: asc (1) -> desc (-1) -> reset (0)
+      if (this.currentSortOrder === 1) {
+        // Currently ascending, change to descending
+        this.currentSortOrder = -1;
+        event.order = -1;
+      } else if (this.currentSortOrder === -1) {
+        // Currently descending, reset to original order
+        this.expenseheaderpending = [...this.originalExpenseData];
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        if (this.expenseTable) {
+          this.expenseTable.reset();
+        }
+        return;
+      } else {
+        // Currently reset, change to ascending
+        this.currentSortOrder = 1;
+        event.order = 1;
+      }
+    } else {
+      // New field clicked - start with ascending
+      this.currentSortField = field;
+      this.currentSortOrder = 1;
+      event.order = 1;
+    }
+
+    event.data.sort((a: any, b: any) => {
+      let val1: any;
+      let val2: any;
+
+      // Handle nested entity fields for expense data
+      if (['employeeName', 'expenses_Title', 'applied_date', 'totalExpenseAmount', 'status'].includes(field)) {
+        switch (field) {
+          case 'employeeName':
+            val1 = a.entity?.employeeName;
+            val2 = b.entity?.employeeName;
+            break;
+          case 'expenses_Title':
+            val1 = a.entity?.expenses_Title;
+            val2 = b.entity?.expenses_Title;
+            break;
+          case 'applied_date':
+            val1 = a.entity?.applied_date;
+            val2 = b.entity?.applied_date;
+            break;
+          case 'totalExpenseAmount':
+            val1 = a.entity?.totalExpenseAmount;
+            val2 = b.entity?.totalExpenseAmount;
+            break;
+          case 'status':
+            val1 = a.entity?.status;
+            val2 = b.entity?.status;
+            break;
+        }
+      } else {
+        // Handle direct fields
+        val1 = a[field];
+        val2 = b[field];
+      }
+
+      // Handle date sorting
+      if (field === 'applied_date') {
+        const date1 = val1 ? new Date(val1).getTime() : 0;
+        const date2 = val2 ? new Date(val2).getTime() : 0;
+        return event.order * (date1 - date2);
+      }
+
+      // Handle amount sorting (numeric)
+      if (field === 'totalExpenseAmount') {
+        const num1 = parseFloat(String(val1).replace(/[^\d.-]/g, '')) || 0;
+        const num2 = parseFloat(String(val2).replace(/[^\d.-]/g, '')) || 0;
+        return event.order * (num1 - num2);
+      }
+
+      // Handle string sorting for all other fields
+      val1 = String(val1 ?? '').trim();
+      val2 = String(val2 ?? '').trim();
+      return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+    });
+  }
+
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();

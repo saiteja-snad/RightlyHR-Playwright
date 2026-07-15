@@ -1,9 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, effect, OnDestroy, OnInit } from '@angular/core';
+import { Component, effect, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { DropdownModule } from 'primeng/dropdown';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
+import { TableModule } from 'primeng/table';
+import { Table } from 'primeng/table';
 import { HttpService } from '../../../services/http.service';
 import { IJob } from '../../../Interfaces/letters-model';
 import { Subject, takeUntil } from 'rxjs';
@@ -31,17 +33,20 @@ import { ConfirmationIconComponent } from "../../../icons/confirmation-icon/conf
     FormsModule,
     PaginatorModule,
     DropdownModule,
+    TableModule,
     NoDataFoundComponent,
     DateformatPipe,
     DataLoaderContentComponent,
     InfoIconComponent,
-    ConfirmationIconComponent
-],
+    ConfirmationIconComponent,
+    TableModule
+  ],
   templateUrl: './premissions-waiting-for-approval.component.html',
   styleUrl: './premissions-waiting-for-approval.component.scss',
 })
 
 export class PremissionsWaitingForApprovalComponent implements OnInit, OnDestroy {
+  @ViewChild('permissionsWaitingTable') permissionsWaitingTable!: Table;
   totalRecords = 100;
   first: any = 0;
   rows: any = 10;
@@ -62,6 +67,24 @@ export class PremissionsWaitingForApprovalComponent implements OnInit, OnDestroy
   isLoading = false;
   permissionForLoggedInUser: boolean = true;
   selectedYear: any;
+  selectedPermissionData: any;
+  approveForm!: FormGroup;
+  rejectForm!: FormGroup;
+  selectedProducts: any[] = [];
+  searchText: string = '';
+  multiSelect = false;
+
+  spinnerLoader = false;
+  selectedLeaveStatus: any;
+  requestSummary: any;
+  requestBody: any = {};
+  approverComments: any[] = [];
+
+  @ViewChild('leaveSummary') leaveSummary: any;
+  LOGIN: any = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
+  originalWaitingForApprovalPerimisions = [] as RegularizationRequest[]; // Store original unsorted data
+  currentSortField: string = '';
+  currentSortOrder: number = 0; // 0 = no sort, 1 = asc, -1 = desc
 
   constructor(
     private http: HttpService,
@@ -74,30 +97,61 @@ export class PremissionsWaitingForApprovalComponent implements OnInit, OnDestroy
     private TimeoffYearFilterService: TimeoffYearFilterService
   ) {
     effect(() => {
+      console.log('permissionTriggerSignal fired');
+      console.log('permissionForLoggedInUser:', this.permissionForLoggedInUser);
+      console.log('selectempid:', this.selectempid);
       if (this.http.permissionTriggerSignal()) {
-        this.getDataPermissions();
+
+        if (this.permissionForLoggedInUser) {
+          this.getDataPermissions();
+        } else {
+          this.getDataEMPPermissions();
+        }
+
         this.http.permissionTriggerSignal.set(false);
       }
     });
   }
 
   ngOnInit(): void {
+    this.initializeApproveForm();
+    this.initializeRejectForm();
     this.TimeoffYearFilterService.selectedYear$.subscribe(year => {
       if (year !== null) {
         this.selectedYear = year;
         this.http.selectedEmployeeIdPermission$.subscribe((id) => {
+
+          console.log('Selected Employee Id:', id);
+          console.log('Current selectempid:', this.selectempid);
+
           if (id) {
-            // Use the new employee ID here
             this.selectempid = id;
             this.getDataEMPPermissions();
           } else {
-            this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
+            console.log('Loading logged in employee');
+
+            this.empinfo = JSON.parse(
+              localStorage.getItem('rightlyHrUser') ?? '{}'
+            );
+
             this.getDataPermissions();
           }
         });
       }
     });
     this.formInializer();
+  }
+
+  initializeApproveForm() {
+    this.approveForm = this.fb.group({
+      comments: ['', [Validators.required, Validators.maxLength(250)]]
+    });
+  }
+
+  initializeRejectForm() {
+    this.rejectForm = this.fb.group({
+      comments: ['', [Validators.required, Validators.maxLength(250)]]
+    });
   }
 
   formInializer() {
@@ -145,11 +199,13 @@ export class PremissionsWaitingForApprovalComponent implements OnInit, OnDestroy
         this.waitingForApprovalPerimisions = this.permissions.filter(
           (element: { status: string }) => element.status === 'Waiting for Approval'
         );
+        this.originalWaitingForApprovalPerimisions = [...this.waitingForApprovalPerimisions];
         this.dataload = false;
       },
       error: (error) => {
         console.error('Error fetching data:', error);
         this.permissions = [];
+        this.originalWaitingForApprovalPerimisions = [];
         this.dataload = false; // Set to empty array on error
       },
     });
@@ -165,7 +221,6 @@ export class PremissionsWaitingForApprovalComponent implements OnInit, OnDestroy
   //function to cancle the leave
   cancelpermissionsSubmit() {
     this.isLoading = true;
-    const currentDate = moment();
     let approvedBy = this.empinfo.employeeId.toString();
     let requestBody = {
       requestProcessedBy: approvedBy,
@@ -187,7 +242,7 @@ export class PremissionsWaitingForApprovalComponent implements OnInit, OnDestroy
           this.http.permissionTriggerSignal.set(true);
           this.getDataPermissions();
         }
-        this.signalService.timecountTriggerSignal.set(true);
+        this.signalService.timecountTriggerSignal.update(count => count + 1);
       },
       error: (err: any) => {
         this.isLoading = false;
@@ -205,6 +260,10 @@ export class PremissionsWaitingForApprovalComponent implements OnInit, OnDestroy
   }
 
   getDataEMPPermissions() {
+    console.log(
+      'permissionForLoggedInUser:',
+      this.permissionForLoggedInUser
+    );
     let empId = this.selectempid;
     this.dataload = true;
     this.permissionForLoggedInUser = false;
@@ -214,15 +273,305 @@ export class PremissionsWaitingForApprovalComponent implements OnInit, OnDestroy
         this.waitingForApprovalPerimisions = this.permissions.filter(
           (element: { status: string }) => element.status === 'Waiting for Approval'
         );
+        this.originalWaitingForApprovalPerimisions = [...this.waitingForApprovalPerimisions];
         this.dataload = false;
       },
       error: (error) => {
         console.error('Error fetching data:', error);
         this.permissions = [];
+        this.originalWaitingForApprovalPerimisions = [];
         this.dataload = false; // Set to empty array on error
       },
     });
   }
+
+  approvePermission(approvalPopup: any, item: any) {
+    this.selectedPermissionData = item;
+
+    this.modalService.open(approvalPopup, {
+      centered: true,
+      backdrop: 'static'
+    });
+  }
+
+  rejectPermission(rejectPopup: any, item: any) {
+    this.selectedPermissionData = item;
+
+    this.modalService.open(rejectPopup, {
+      centered: true,
+      backdrop: 'static'
+    });
+  }
+
+  onStatusApproveSelect(status: string) {
+    this.selectedLeaveStatus = status;
+
+    if (status === 'approved') {
+      this.approveForm.get('comments')?.setValue('Approved');
+    }
+  }
+
+  onStatusRejectSelect(status: string) {
+    this.selectedLeaveStatus = status;
+
+    if (status === 'reject') {
+      this.rejectForm.get('comments')?.setValue('Rejected');
+    }
+  }
+
+
+  handleAccept(form: FormGroup): void {
+
+    this.spinnerLoader = true;
+
+    if (form.valid) {
+
+      let approvedBy = this.empinfo.employeeId.toString();
+
+      this.requestBody = {
+        requestProcessedBy: approvedBy,
+        status: 'Processed',
+        comments: form.value.comments,
+        moduleId: environment.permissionsModuleId,
+        headerRequests: [
+          {
+            headerID: this.selectedPermissionData.pendingApprovalsHeader.id,
+            currentStage: this.selectedPermissionData.pendingApprovalsHeader.currentapprovalStage
+          }
+        ]
+      };
+
+      this.http.putData(
+        `v2/PendingApproval/multiapprovals`,
+        this.requestBody
+      ).subscribe({
+        next: (response: any) => {
+
+          this.modalService.dismissAll();
+
+          this.waitingForApprovalPerimisions =
+            this.waitingForApprovalPerimisions.filter(
+              x => x.id !== this.selectedPermissionData.id
+            );
+
+          this.requestSummary = response.data;
+
+          this.http.permissionTriggerSignal.set(true);
+
+          this.http.tirggerCountSignal.update((status) => ({
+            ...status,
+            permission: true,
+          }));
+
+          this.signalService.timecountTriggerSignal.update(
+            count => count + 1
+          );
+
+          if (this.selectedProducts && this.selectedProducts.length > 0) {
+
+            this.modalService.open(this.leaveSummary, {
+              centered: true,
+              backdrop: 'static',
+              size: 'lg'
+            });
+
+            setTimeout(() => {
+              this.modalService.dismissAll();
+            }, 5000);
+
+          } else {
+
+            this.signalService.handleResponse(
+              this.requestSummary,
+              'Permission request approved successfully'
+            );
+
+          }
+        },
+        error: (err: any) => {
+          console.error(err);
+        }
+      });
+    }
+  }
+
+  handleReject(form: FormGroup): void {
+    console.log('Selected Permission Data:', this.selectedPermissionData);
+    this.spinnerLoader = true;
+
+    if (form.valid) {
+
+      let approvedBy = this.empinfo.employeeId.toString();
+
+      this.requestBody = {
+        requestProcessedBy: approvedBy,
+        status: 'Rejected',
+        comments: form.value.comments,
+        moduleId: environment.permissionsModuleId,
+        headerRequests: [
+          {
+            headerID: this.selectedPermissionData.pendingApprovalsHeader.id,
+            currentStage: this.selectedPermissionData.pendingApprovalsHeader.currentapprovalStage
+          }
+        ]
+      };
+      console.log('Reject Payload:', this.requestBody);
+      this.http.putData(
+        `v2/PendingApproval/multiapprovals`,
+        this.requestBody
+      ).subscribe({
+        next: (response: any) => {
+          console.log('SUCCESS', response);
+
+          this.modalService.dismissAll();
+
+          this.waitingForApprovalPerimisions =
+            this.waitingForApprovalPerimisions.filter(
+              x => x.id !== this.selectedPermissionData.id
+            );
+
+          this.requestSummary = response.data;
+          console.log('Before signal:', this.selectempid);
+
+          this.http.permissionTriggerSignal.set(true);
+
+          this.http.tirggerCountSignal.update((status) => ({
+            ...status,
+            permission: true,
+          }));
+
+          this.signalService.timecountTriggerSignal.update(
+            count => count + 1
+          );
+          if (this.selectedProducts && this.selectedProducts.length > 0) {
+
+            this.modalService.open(this.leaveSummary, {
+              centered: true,
+              backdrop: 'static',
+              size: 'lg'
+            });
+
+            setTimeout(() => {
+              this.modalService.dismissAll();
+            }, 5000);
+
+          } else {
+
+            this.signalService.handleResponse(
+              this.requestSummary,
+              'Permission request rejected successfully'
+            );
+
+          }
+        },
+        error: (err: any) => {
+          this.spinnerLoader = false;
+          console.error(err);
+        }
+      });
+    }
+  }
+
+  canApprove(item: any): boolean {
+    console.log('canApprove called');
+
+    const currentApproverId =
+      item?.pendingApprovalsHeader?.currentApproverId?.toString();
+
+    const loginId =
+      this.LOGIN.employeeId?.toString();
+
+
+
+    return currentApproverId === loginId;
+  }
+
+  selectCheck(value: any) {
+    this.multiSelect = Array.isArray(value) && value.length > 0;
+
+    if (!value || value.length === 0) {
+      this.selectedProducts = [];
+      return;
+    }
+
+    this.selectedProducts = [...value];
+  }
+
+  customSort(event: any): void {
+    const field = event.field;
+    
+    // Track current sort state for the clicked field
+    if (this.currentSortField === field) {
+      // Same field clicked - cycle through: asc (1) -> desc (-1) -> reset (0)
+      if (this.currentSortOrder === 1) {
+        // Currently ascending, change to descending
+        this.currentSortOrder = -1;
+        event.order = -1;
+      } else if (this.currentSortOrder === -1) {
+        // Currently descending, reset to original order
+        this.waitingForApprovalPerimisions = [...this.originalWaitingForApprovalPerimisions];
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        if (this.permissionsWaitingTable) {
+          this.permissionsWaitingTable.reset();
+        }
+        return;
+      } else {
+        // Currently reset, change to ascending
+        this.currentSortOrder = 1;
+        event.order = 1;
+      }
+    } else {
+      // New field clicked - start with ascending
+      this.currentSortField = field;
+      this.currentSortOrder = 1;
+      event.order = 1;
+    }
+
+    event.data.sort((a: any, b: any) => {
+      let val1: any;
+      let val2: any;
+
+      // Handle direct fields
+      val1 = a[field];
+      val2 = b[field];
+
+      // Handle date sorting
+      if (field === 'createdDate' || field === 'requestedDate') {
+        const date1 = val1 ? new Date(val1) : new Date(0);
+        const date2 = val2 ? new Date(val2) : new Date(0);
+        return event.order * (date1.getTime() - date2.getTime());
+      }
+
+      // Handle numeric sorting for duration
+      if (field === 'duration') {
+        const num1 = Number(val1) || 0;
+        const num2 = Number(val2) || 0;
+        return event.order * (num1 - num2);
+      }
+
+      // Handle string sorting for other fields
+      val1 = String(val1 ?? '').trim();
+      val2 = String(val2 ?? '').trim();
+      return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+    });
+  }
+
+  canApproveAny(): boolean {
+  return this.waitingForApprovalPerimisions?.some(x => this.canApprove(x));
+}
+
+hasManagerRecords(): boolean {
+  return this.waitingForApprovalPerimisions.some(x => this.canApprove(x));
+}
+
+managerPermissionRequests = this.waitingForApprovalPerimisions.filter(x =>
+  this.canApprove(x)
+);
+
+showMultiSelectAndSearch(): boolean {
+  return this.waitingForApprovalPerimisions?.some(x => this.canApprove(x));
+}
 
   ngOnDestroy(): void {
     this.destroy$.next(true);

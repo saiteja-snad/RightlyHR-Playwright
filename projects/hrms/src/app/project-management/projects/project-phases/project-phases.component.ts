@@ -57,7 +57,7 @@ export class ProjectPhasesComponent implements OnInit, OnDestroy {
   effectiveAfterKickoffValid: boolean = true;
   updatePhaseForm!: FormGroup;
   empinfo: any = {};
-  authorityList: IProjectAuthority[] = [];
+  authorityList: any[] = [];
   phaseId: any;
   isAuthorityRequired = false;
   projectsData: Project[] = [];
@@ -191,37 +191,75 @@ export class ProjectPhasesComponent implements OnInit, OnDestroy {
   }
 
   getPhaseData() {
+    let url = `ProjectPhases/list`;
     const params: any = {
-      projectId: this.projectId,
-    };
+        projectId: this.projectId,
+      };
+    if (this.rbac.allowedToAccess('View Assigned Projects.view') && !this.rbac.allowedToAccess('View All Projects.view')) {
+      params.employeeId = this.empinfo.employeeId;
+      const validStatuses = ['yet to start', 'in progress', 'extended'];
+      const filteredStatuses = this.selectedPhaseStatuses.filter(s =>
+        validStatuses.includes(s.toLowerCase())
+      );
 
-    const validStatuses = ['yet to start', 'in progress', 'extended'];
-    const filteredStatuses = this.selectedPhaseStatuses.filter(s =>
-      validStatuses.includes(s.toLowerCase())
-    );
+      if (filteredStatuses.length > 0) {
+        params.status = filteredStatuses.join(',');
+      } else {
+        params.status = 'yet to start,in progress,extended';
+      }
 
-    if (filteredStatuses.length > 0) {
-      params.status = filteredStatuses.join(',');
-    } else {
-      params.status = 'yet to start,in progress,extended';
+      // Date filter
+      if (this.selectedPhaseDateRange?.startDate) {
+        params.startDate = this.selectedPhaseDateRange.startDate;
+      }
+      if (this.selectedPhaseDateRange?.endDate) {
+        params.endDate = this.selectedPhaseDateRange.endDate;
+      }
+
+      if (this.selectedAuthorityIds.length > 0) {
+        params.timesheetApprovalAuthorityIds =
+          this.selectedAuthorityIds.join(',');
+      }
+
+      this.loading = true;
+
     }
 
-    // Date filter
-    if (this.selectedPhaseDateRange?.startDate) {
-      params.startDate = this.selectedPhaseDateRange.startDate;
-    }
-    if (this.selectedPhaseDateRange?.endDate) {
-      params.endDate = this.selectedPhaseDateRange.endDate;
+    else{
+      const params: any = {
+        projectId: this.projectId,
+      };
+
+      const validStatuses = ['yet to start', 'in progress', 'extended'];
+      const filteredStatuses = this.selectedPhaseStatuses.filter(s =>
+        validStatuses.includes(s.toLowerCase())
+      );
+
+      if (filteredStatuses.length > 0) {
+        params.status = filteredStatuses.join(',');
+      } else {
+        params.status = 'yet to start,in progress,extended';
+      }
+
+      // Date filter
+      if (this.selectedPhaseDateRange?.startDate) {
+        params.startDate = this.selectedPhaseDateRange.startDate;
+      }
+      if (this.selectedPhaseDateRange?.endDate) {
+        params.endDate = this.selectedPhaseDateRange.endDate;
+      }
+
+      if (this.selectedAuthorityIds.length > 0) {
+        params.timesheetApprovalAuthorityIds =
+          this.selectedAuthorityIds.join(',');
+      }
+
+      this.loading = true;
     }
 
-    if (this.selectedAuthorityIds.length > 0) {
-      params.timesheetApprovalAuthorityIds =
-        this.selectedAuthorityIds.join(',');
-    }
-
-    this.loading = true;
+    
     this.subscription = this.http
-      .getDataIncludeParams('ProjectPhases/list', params)
+      .getDataIncludeParams(url, params)
       .subscribe({
         next: (data: any) => {
           this.phaseData = data.data || [];
@@ -534,14 +572,19 @@ export class ProjectPhasesComponent implements OnInit, OnDestroy {
           this.loading = false;
 
           const resourceList = data?.data ?? [];
+          const uniqueEmployees = Array.from(
+            new Map(
+              resourceList
+                .filter((r: any) => r?.employee?.id)
+                .map((r: any) => [r.employee.id, r.employee])
+            ).values()
+          );
 
-          // Build dropdown list
-          const dropdownList = resourceList
-            .filter((r: any) => r.employee)
-            .map((r: any) => ({
-              label: `${r.employee.fusionEmployeeId} - ${r.employee.name}`,
-              value: r.employee.id,
-            }));
+          // ✅ Build dropdown from unique employees
+          const dropdownList = uniqueEmployees.map((emp: any) => ({
+            label: `${emp.fusionEmployeeId} - ${emp.name}`,
+            value: emp.id,
+          }));
 
           if (isPopupCall) {
             this.authorityList = dropdownList;

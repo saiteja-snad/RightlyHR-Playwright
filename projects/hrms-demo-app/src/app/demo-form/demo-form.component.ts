@@ -2,6 +2,9 @@ import { Component, OnDestroy, TemplateRef, ViewChild } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, FormsModule, Validators } from '@angular/forms';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { InputOtpModule } from 'primeng/inputotp';
+import { VerificationserviceService } from '../services/verificationservice.service';
+import { HttpserviceService } from '../services/httpservice.service';
+import { OpenSuccessModalService } from '../services/opensucess-modal.service';
 
 type VerifyTarget = 'email' | 'mobile';
 
@@ -26,7 +29,9 @@ export class DemoFormComponent implements OnDestroy {
   @ViewChild('verifyModal') verifyModalTpl!: TemplateRef<unknown>;
 
   form = this.fb.group({
-    fullName: ['', [Validators.required, Validators.pattern(NAME_PATTERN)]],
+    firstName: ['', [Validators.required, Validators.pattern(NAME_PATTERN)]],
+    middleName: ['', ],
+    lastName: ['', [Validators.required, Validators.pattern(NAME_PATTERN)]],
     companyName: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(100)]],
     email: ['', [Validators.required, Validators.email, Validators.pattern(EMAIL_PATTERN)]],
     mobile: ['', [Validators.pattern(MOBILE_PATTERN)]],
@@ -56,7 +61,7 @@ export class DemoFormComponent implements OnDestroy {
   private mobileInterval?: ReturnType<typeof setInterval>;
   private modalRef?: NgbModalRef;
 
-  constructor(private readonly modalService: NgbModal) {}
+  constructor(private readonly modalService: NgbModal,private verificationService: VerificationserviceService,private httpService: HttpserviceService,private confirmationpopup:OpenSuccessModalService) {}
 
   ngOnDestroy(): void {
     clearInterval(this.emailInterval);
@@ -77,7 +82,7 @@ export class DemoFormComponent implements OnDestroy {
 
   get step1Done(): boolean {
     return (
-      !!this.form.controls.fullName.value?.trim() &&
+      !!this.form.controls.firstName.value?.trim() && !!this.form.controls.lastName.value?.trim() &&
       !!this.form.controls.companyName.value?.trim() &&
       this.emailVerified
     );
@@ -134,8 +139,32 @@ export class DemoFormComponent implements OnDestroy {
       this.activeTarget = null;
       this.otpError = null;
     });
-  }
 
+    if (target === 'email' && this.form.get('email')?.value) {
+      this.sendEmailVerificationCode();
+    }
+  }
+  sendEmailVerificationCode(): void {
+    const email = this.form.get('email')?.value;
+    if (!email) {
+      alert('Please enter an email address first!');
+      return;
+    }
+
+    this.verificationService.sendVerificationCode(email).subscribe({
+      next: (res) => {
+        if (res.statusCode === 200) {
+          console.log(res.message);
+        } else {
+          alert(res.message || 'Failed to send verification code.');
+        }
+      },
+      error: (err) => {
+        console.error('Error sending verification code:', err);
+        alert('Failed to send verification code. Please try again.');
+      }
+    });
+  }
   private startTimer(target: VerifyTarget): void {
     if (target === 'email') {
       clearInterval(this.emailInterval);
@@ -170,22 +199,27 @@ export class DemoFormComponent implements OnDestroy {
     this.startTimer(target);
   }
 
-  verifyCode(): void {
-    const target = this.activeTarget;
-    if (!target) {
-      return;
-    }
-    if (this.currentOtpValue.length !== OTP_LENGTH) {
-      this.otpError = 'Enter the full 6-digit code.';
-      return;
-    }
+   verifyCode(): void {
+    if (this.currentOtpValue.length === 6 && this.form.get('email')?.value) {
+      const email = this.form.get('email')?.value;
+      if (!email) return;
 
-    if (target === 'email') {
-      this.emailVerified = true;
-    } else {
-      this.mobileVerified = true;
-    }
-    this.modalRef?.close();
+      this.verificationService.verifyEmailCode(email, this.currentOtpValue).subscribe({
+        next: (res) => {
+          if (res.statusCode === 200 && res.isVerified) {
+            this.emailVerified = true;
+            this.modalRef?.close();
+           this.confirmationpopup.openSuccessModal(res.message || 'Email verified successfully!');
+          } else {
+            alert(res.message || 'Invalid or expired verification code.');
+          }
+        },
+        error: (err) => {
+          console.error('Error verifying email:', err);
+          this.confirmationpopup.openSuccessModal('Invalid or expired verification code. Please try again.');
+        }
+      });
+    } 
   }
 
   dismissModal(): void {
@@ -253,14 +287,29 @@ export class DemoFormComponent implements OnDestroy {
     if (!this.canSubmit) {
       return;
     }
-
-    console.log('Demo request submitted:', {
-      ...this.form.value,
+    const formvalue =this.form.getRawValue();
+    let payload = {
+      firstName: formvalue.firstName,
+      middleName: formvalue.middleName,
+      lastName: formvalue.lastName,
+      emailAddress: formvalue.email,
+      contactNumber: formvalue.mobile,
+      isPrefilledData: true,
       companyLogo: this.selectedFile?.name ?? null,
-      emailVerified: this.emailVerified,
-      mobileVerified: this.mobileVerified,
+      companyName: formvalue.companyName
+    }
+    
+    this.httpService.createdemoinstance(payload).subscribe({
+      next: (response) => {
+        console.log('API Response:', response);
+        this.confirmationpopup.openSuccessModal('Demo instance created successfully!');
+        this.submittedSuccessfully = true;
+      },
+      error: (error) => {
+        console.error('API Error:', error);
+      }
     });
-
+ 
     this.submittedSuccessfully = true;
   }
 }

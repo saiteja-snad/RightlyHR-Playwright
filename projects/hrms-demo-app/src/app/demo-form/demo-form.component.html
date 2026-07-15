@@ -63,15 +63,34 @@
 
         <div class="grid2">
           <div class="field">
-            <label class="lbl" for="fullName">Full name <span class="req">*</span></label>
+            <label class="lbl" for="firstName">First Name <span class="req">*</span></label>
             <div class="control">
-              <input type="text" id="fullName" formControlName="fullName" placeholder="e.g. Priya Sharma"
-                autocomplete="name" />
+              <input type="text" id="firstName" formControlName="firstName" placeholder="e.g. Priya"
+                autocomplete="given-name" />
             </div>
-            @if (submitted && form.controls.fullName.errors?.['required']) {
-            <div class="hint err">Full name is required.</div>
-            } @else if (submitted && form.controls.fullName.errors?.['pattern']) {
-            <div class="hint err">Enter a valid name using letters only.</div>
+            @if (submitted && form.controls.firstName.errors?.['required']) {
+            <div class="hint err">First name is required.</div>
+            } @else if (submitted && form.controls.firstName.errors?.['pattern']) {
+            <div class="hint err">Enter a valid first name using letters only.</div>
+            }
+          </div>
+          <div class="field">
+            <label class="lbl" for="middleName">Middle Name</label>
+            <div class="control">
+              <input type="text" id="middleName" formControlName="middleName" placeholder="e.g. Jane"
+                autocomplete="additional-name" />
+            </div>
+          </div>
+          <div class="field">
+            <label class="lbl" for="lastName">Last Name <span class="req">*</span></label>
+            <div class="control">
+              <input type="text" id="lastName" formControlName="lastName" placeholder="e.g. Sharma"
+                autocomplete="family-name" />
+            </div>
+            @if (submitted && form.controls.lastName.errors?.['required']) {
+            <div class="hint err">Last name is required.</div>
+            } @else if (submitted && form.controls.lastName.errors?.['pattern']) {
+            <div class="hint err">Enter a valid last name using letters only.</div>
             }
           </div>
           <div class="field">
@@ -202,10 +221,12 @@
     } @else {
     <div class="success show">
       <div class="big-tick">&#10003;</div>
-      <h2>Your demo is on its way</h2>
-      <p>We're spinning up your RIGHTLY HR instance. Check your inbox in the next couple of minutes for your access
-        link.</p>
-    </div>
+      <h2>Registration Successful!</h2>
+      <p>
+        Your registration has been completed successfully.
+        Your RightlyHR Demo Instance is currently being set up. This process typically takes up to 5 minutes.
+        We will notify you via email once your demo instance is ready.</p>
+      </div>
     }
   </main>
 </div>

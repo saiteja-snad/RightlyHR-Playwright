@@ -12,15 +12,14 @@ export class HttpserviceService {
 
   constructor(private http: HttpClient,) {}
 
-  postData(url: string, body: any = {}): Observable<VerificationResponse> {
-
+  postData(url: string, body: any = {}) {
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
-      'Accept': 'text/plain',
+      'Accept': '*/*',
       'X-API-KEY': environment.ApiKey
     });
 
-    return this.http.post<VerificationResponse>(
+    return this.http.post(
       `${this.ApiUrl}${url}`,
       body,
       { headers }

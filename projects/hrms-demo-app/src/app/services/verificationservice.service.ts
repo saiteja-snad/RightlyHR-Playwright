@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
@@ -7,7 +7,7 @@ import { environment } from '../../environments/environment';
 export interface VerificationResponse {
   statusCode: number;
   message: string;
-  isVerified: boolean;
+  verified: boolean;
 }
 
 @Injectable({
@@ -20,11 +20,19 @@ export class VerificationserviceService {
   constructor(private http: HttpClient) {}
 
   postData(url: string, body: any = {}): Observable<VerificationResponse> {
-    return this.http.post<VerificationResponse>(`${this.ApiUrl}${url}`, body);
+    const headers = new HttpHeaders({
+      'X-API-KEY': environment.ApiKey
+    });
+
+    return this.http.post<VerificationResponse>(
+      `${this.ApiUrl}${url}`,
+      body,
+      { headers }
+    );
   }
 
-  sendVerificationCode(email: string,firstname:any) {
-    return this.postData(`email-verification/send`,{email,firstname});
+  sendVerificationCode(email: string,firstName:any) {
+    return this.postData(`email-verification/send`,{email,firstName});
   }
 
   verifyEmailCode(email: string, code: string) {

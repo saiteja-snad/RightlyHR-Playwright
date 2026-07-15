@@ -209,7 +209,7 @@ export class DemoFormComponent implements OnDestroy {
 
       this.verificationService.verifyEmailCode(email, this.currentOtpValue).subscribe({
         next: (res) => {
-          if (res.statusCode === 200 && res.isVerified) {
+          if (res.statusCode === 200 && res.verified) {
             this.emailVerified = true;
             // Disable the email field
           this.form.get('email')?.disable();
@@ -304,7 +304,7 @@ export class DemoFormComponent implements OnDestroy {
     }
     
     this.httpService.createdemoinstance(payload).subscribe({
-      next: (response) => {
+      next: (response:any) => {
         console.log('API Response:', response);
 
         //this.confirmationpopup.openSuccessModal('Demo instance created successfully!');

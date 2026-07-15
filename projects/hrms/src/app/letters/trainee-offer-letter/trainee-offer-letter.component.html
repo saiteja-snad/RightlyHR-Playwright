@@ -10,7 +10,7 @@
                         <p-select [options]="employeeiddetails" optionValue="employeeId" optionLabel="fullName"
                             [filter]="true" filterBy="fullName" placeholder="Select employee"
                             placeholder="Please select employee" (onChange)="onClickValidation($event)"
-                            formControlName="fusionEmpId" resetFilterOnHide="true" class="custom-select w-100">
+                            formControlName="fusionEmpId" resetFilterOnHide="true" class="custom-select w-100" filterPlaceholder="Search employee">
                         </p-select>
                     </div>
                     <div *ngIf="employeeForm.get('fusionEmpId')?.invalid && employeeForm.get('fusionEmpId')?.touched">
@@ -340,7 +340,7 @@
                         <p-select [options]="authorityDetails" optionLabel="fullName" [filter]="true"
                             filterBy="fullName" placeholder="Please select signature authority"
                             (onChange)="onclickDesignations($event)" class="form-select custom-select"
-                            formControlName="authorityid" resetFilterOnHide="true">
+                            formControlName="authorityid" resetFilterOnHide="true" filterPlaceholder="Select signature authority name">
                             <ng-template let-emp pTemplate="item">{{ emp.firstName }} {{ emp.middleName }} {{
                                 emp.lastName }}</ng-template>
                             <ng-template let-emp pTemplate="selectedItem">{{ emp?.firstName }} {{ emp?.middleName }} {{
@@ -492,25 +492,25 @@
                                         {{traineeEmpData.note}}</p>
                                     <p>Please confirm your acceptance of this offer by signing and returning a scanned
                                         copy of this letter within 1 day to
-                                        <u><b>hr&#64;rightlyhr.com</b></u>
+                                        <a
+                                          href="https://outlook.office.com/mail/AAMkAGYyMmMwMWFkLTNkN2QtNDliZS04ZTU3LWZkN2RlMGZiMjViYgAuAAAAAAC91%2BzN6GlARq3GyPAD%2BMs8AQBvgEHYmw1qR7DZmmvDGPheAABPqtehAAA%3D">
+                                          <u><b>hr&#64;rightlyhr.com</b></u>
+                                        </a>
                                     </p>
                                     <p>We are excited about the possibility of you joining our
                                         team and look forward to a productive and successful internship.</p>
-                                    <p class="mb-2">Sincerely,</p>
-                                    <p class="mb-2"><b>for RightlyHR</b></p>
+                                    <p class="mb-2">Your Sincerely,</p>
+                                    <p class="mb-2"><b>For RightlyHR</b></p>
                                 </div>
                                 <div class="pt-3">
-                                    <p class="letter-signature">{{traineeEmpData.authorityName}}</p>
-                                    <p class="letter-sub-header" *ngIf="!traineeEmpData.authorityName?.trim()">
-                                        Authorized Signatory, </p>
-                                    <p class="letter-sub-header" *ngIf="traineeEmpData.authorityName?.trim()">
+                                   <p class="letter-signature">{{traineeEmpData.authorityName}}</p>
+                                    <p class="authorized-signatory mb-1">Authorized Signatory, </p>
+                                    <p class="authorized-signatory mb-1" *ngIf="traineeEmpData.authorityName?.trim()">
                                         {{traineeEmpData.authorityName}}</p>
-                                    <p class="letter-sub-header">{{authorityDesignation}} </p>
+                                    <p class="authorized-signatory mb-4">{{authorityDesignation}} </p>
                                     <br>
                                     <hr>
-                                    <p class="mb-3">I, <u><b>{{traineeEmpData.firstName}} {{traineeEmpData.middleName}}
-                                                {{traineeEmpData.lastName}}
-                                            </b></u>,acknowledge that I have read and understood the terms of
+                                    <p class="mb-3">I, _________________,acknowledge that I have read and understood the terms of
                                         this Internship Offer, and I accept the offer as outlined above.</p>
                                 </div>
                                 <div class="py-3">

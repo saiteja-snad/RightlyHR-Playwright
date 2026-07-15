@@ -9,7 +9,7 @@
           <div class="custom-p-select-content">
             <p-select [options]="employeeiddetails" optionLabel="fullName" [filter]="true" filterBy="fullName"
               [showClear]="false" placeholder="Please select employee" formControlName="fusionEmployeeId"
-              class="custom-select w-100" (onChange)="onClickEmployee($event)" resetFilterOnHide="true"></p-select>
+              class="custom-select w-100" (onChange)="onClickEmployee($event)" resetFilterOnHide="true" filterPlaceholder="Search employee"></p-select>
           </div>
           <div *ngIf="employeeForm.get('fusionEmployeeId')?.invalid && employeeForm.get('fusionEmployeeId')?.touched">
             <div class="error-msg">Employee is required</div>
@@ -78,7 +78,7 @@
             <div class="error-msg">Branch Location/Code is required</div>
           </div>
         </div>
-
+<!--
         <div class="my-3">
           <label for="laptop" class="form-label custom-label mb-2"><b>{{'Laptop/Desktop Information' | translate}}: </b></label>
         </div>
@@ -111,7 +111,7 @@
           <div *ngIf="employeeForm.get('serial')?.invalid && employeeForm.get('serial')?.touched">
             <div class="error-msg">Serial Number is required</div>
           </div>
-        </div>
+        </div> -->
 
         <!-- Document Type -->
         <div class="mb-3">
@@ -143,7 +143,7 @@
           <div class="custom-p-select-content">
             <p-select [options]="authorityDetails" optionLabel="fullName" [filter]="true" filterBy="fullName"
               placeholder="Please select signature authority name" class="form-select custom-select"
-              formControlName="authorityid" (onChange)="onclickDesignation($event)" />
+              formControlName="authorityid" (onChange)="onclickDesignation($event)" filterPlaceholder="Select signature authority name" />
           </div>
           <div *ngIf="employeeForm.get('authorityid')?.invalid && employeeForm.get('authorityid')?.touched">
             <div class="error-msg">Signature Authority Name is required</div>

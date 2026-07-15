@@ -96,7 +96,7 @@ export function buildWelcomeLetterDoc(data: WelcomeLetterData): any {
     pageMargins: [60, topMargin, 60, bottomMargin],
     defaultStyle: {
       font: bodyFont,
-      fontSize: PX(13),
+      fontSize: PX(16),
       alignment: 'justify',
       color: '#000',
     },

@@ -53,9 +53,9 @@ export async function setupLetterPdfMake(): Promise<any> {
   pm.setFonts({
     VERDANA: {
       normal: 'VerdanaNow.ttf',
-      bold: 'VerdanaNowBold.ttf',
+      bold: verdanaSemiBold ? 'VerdanaSemiBold.ttf' : 'VerdanaNowBold.ttf',
       italics: verdanaItalic ? 'VerdanaItalic.ttf' : 'VerdanaNow.ttf',
-      bolditalics: 'VerdanaNowBold.ttf',
+      bolditalics: verdanaSemiBold ? 'VerdanaSemiBold.ttf' : 'VerdanaNowBold.ttf',
     },
     VERDANABOLD: {
       normal: verdanaSemiBold ? 'VerdanaSemiBold.ttf' : 'VerdanaNowBold.ttf',

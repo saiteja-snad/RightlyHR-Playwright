@@ -11,7 +11,7 @@
                         <p-select [options]="employeeiddetails" optionValue="employeeId" optionLabel="fullName"
                             [filter]="true" filterBy="fullName" placeholder="Please select employee"
                             (onChange)="onClickValidation($event)" formControlName="fusionEmpId"
-                            class="custom-select w-100" resetFilterOnHide="true">
+                            class="custom-select w-100" resetFilterOnHide="true" filterPlaceholder="Search employee">
                         </p-select>
                     </div>
                     <div *ngIf="employeeForm.get('fusionEmpId')?.invalid && employeeForm.get('fusionEmpId')?.touched"
@@ -364,7 +364,7 @@
                         <p-select [options]="authorityDetails" optionValue="employeeId" (click)="onclickDesignation()"
                             optionLabel="fullName" placeholder="Please select signature authority"
                             formControlName="authorityid" class="form-select custom-select" resetFilterOnHide="true"
-                            [filter]="true" filterBy="fullName"></p-select>
+                            [filter]="true" filterBy="fullName" filterPlaceholder="Select signature authority name"></p-select>
                         <div
                             *ngIf="employeeForm.get('authorityid')?.invalid && employeeForm.get('authorityid')?.touched">
                             <div class="error-msg">Signature authority name is required</div>
@@ -413,7 +413,7 @@
                             </ng-template>
                             <div class="letter-div">
                                 <div class="text-center mb-5">
-                                    <p class="letter-header text-center">OFFER LETTER</p>
+                                    <p class="letter-header text-center">Contract Offer Letter</p>
                                 </div>
                                 <div class="row">
                                     <div class="col-md-8">
@@ -455,7 +455,7 @@
                             </div>
 
                             <p class="mb-3">We are pleased to offer you contract employment in RightlyHR
-                                . as a <b>{{prospectiveEmpData?.jobRole}}</b> on a remuneration of
+                                as a <b>{{prospectiveEmpData?.jobRole}}</b> on a remuneration of
                                 <b>{{ selectedSymbol }} {{this.employeeForm.get('currencyType')?.value}} {{prospectiveEmpData.amount ?? 0 }} <span *ngIf="employeeForm.get('currencyType')?.value === 'INR'"> /-</span> per
                                     {{employeeForm.get('frequency')?.value}}</b>.
                                 You will have to submit weekly/monthly Time sheet approved by the reporting

@@ -8,9 +8,9 @@
                     <label class="form-label custom-label mb-2">{{'Select Employee'  | translate}}<span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="employeeiddetails" optionLabel="fullName" [filter]="true"
-                            filterBy="fullName" placeholder="Please select employee" formControlName="fusionEmpId"
+                            filterBy="fullName" placeholder="Please select employee" formControlName="fusionEmpId"    filterPlaceholder="Search employee"
                             class="custom-select w-100" (onChange)="Onclick($event.value)"
-                            resetFilterOnHide="true"></p-select>
+                            resetFilterOnHide="true" filterPlaceholder="Search employee"></p-select>
                     </div>
                     <div *ngIf="employeeForm.get('fusionEmpId')?.invalid && employeeForm.get('fusionEmpId')?.touched">
                         <div class="error-msg">Employee is required</div>
@@ -54,9 +54,9 @@
                     <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Signature Authority Name'  | translate}}<span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="authorityDetails" optionLabel="fullName" [filter]="true"
-                            filterBy="fullName" placeholder="Please select signature authority name"
+                            filterBy="fullName" placeholder="Please select signature authority name" filterPlaceholder="Search signature authority name"
                             class="custom-select w-100" formControlName="authorityid" resetFilterOnHide="true"
-                            (onChange)="onclickDesignation($event.value)" />
+                            (onChange)="onclickDesignation($event.value)" filterPlaceholder="Select signature authority name"/>
                     </div>
                     <div *ngIf="employeeForm.get('authorityid')?.invalid && employeeForm.get('authorityid')?.touched">
                         <div class="error-msg">Signature Authority Name is required</div>
@@ -155,31 +155,32 @@
                         <div class="mb-4">
                             <p>If you have any further questions, you can call us at 8886651309.</p>
                         </div>
-                        <div class="mb-5">
-                            <p class="mb-0">Sincerely,</p>
+                        <div class="mb-3">
+                            <p class="mb-0">Your Sincerely,</p>
                             <p><b>For RightlyHR</b></p>
                         </div>
                         <div>
                             <!-- Show "Authority Signature" only when no authority is selected -->
-                            <div *ngIf="!addressLetterData.authorityName?.trim()">
-                                Authority Signature
-                            </div>
-
-                            <!-- Show Name & Designation only when authorityName is set -->
-                            <div *ngIf="!addressLetterData.authorityName?.trim()">
-                                <p>Authority Name</p>
-                                <p>Designation</p>
-                            </div>
 
                             <!-- Signature in custom font (Only show when valid name exists) -->
                             <div *ngIf="addressLetterData.authorityName?.trim()" class="letter-signature mb-3">
                                 {{ addressLetterData.authorityName }}
                             </div>
 
+                            <div class="letter-sub-header  mb-2">
+                                Authority Signature
+                            </div>
+
+                            <!-- Show Name & Designation only when authorityName is set -->
+                            <div *ngIf="!addressLetterData.authorityName?.trim()">
+                                <p class="letter-sub-header">Authority Name</p>
+                                <p class="letter-sub-header">Designation</p>
+                            </div>
+
                             <!-- Stamp & Designation (Only show when valid name exists) -->
                             <div *ngIf="addressLetterData.authorityName?.trim()">
-                                <p>{{ addressLetterData.authorityName }}</p>
-                                <p>{{ authorityDesignation }}</p>
+                                <p class="letter-sub-header">{{ addressLetterData.authorityName }}</p>
+                                <p class="letter-sub-header">{{ authorityDesignation }}</p>
                             </div>
                         </div>
                     </div>

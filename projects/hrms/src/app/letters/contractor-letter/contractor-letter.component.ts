@@ -314,7 +314,7 @@ export class ContractorLetterComponent implements OnInit, OnDestroy {
       rolesAndResponsibilities: this.employeeForm.get('rolesAndResponsibilitiesId')?.value,
       authorityName: data.authorityName ?? '',
       authorityDesignation: this.authorityDesignation ?? '',
-         backgroundImageBase64: assets.backgroundImageBase64,
+      backgroundImageBase64: assets.backgroundImageBase64,
       headerLogoBase64: assets.headerLogoBase64,
       useVerdanaFont: true,
       useAutographyFont: true,

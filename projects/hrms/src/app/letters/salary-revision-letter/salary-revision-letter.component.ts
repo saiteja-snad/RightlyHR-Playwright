@@ -458,6 +458,8 @@ export class SalaryRevisionLetterComponent implements OnInit, OnDestroy {
       letterDate: this.formatDate(f.value.dateofAppraisal || data.dateofAppraisal),
       compEffectiveDate: this.formatDate(data.compeffectivedate),
       totalCTC: (data.salary || 0) + (data.variablePayAmount || 0),
+      incrementSalary: this.incrementSalary || 0,
+      previousSalary: this.previusSalary?.compensationamount || 0,
       variablePayAmount: data.variablePayAmount || undefined,
       addressLine1: data.addressLine1 || undefined,
       addressLine2: data.addressLine2 || undefined,

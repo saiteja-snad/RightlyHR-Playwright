@@ -1,19 +1,3 @@
-:host {
-  --ink: #0b0b0c;
-  --paper: #ffffff;
-  --fog: #f4f4f1;
-  --line: #e3e3de;
-  --muted: #6f6f68;
-  --mark: #ffd335;
-  --mark-soft: #fff3c2;
-  --ok: #0e8a4d;
-  --err: #c93a2b;
-  --radius: 14px;
-
-  display: block;
-  color: var(--ink);
-}
-
 .rhr-logo {
   width: 160px;
   height: auto;
@@ -727,18 +711,8 @@ input[type='tel'] {
   margin-bottom: 1rem;
 }
 
-.modal-footer-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-size: 0.85rem;
-  color: var(--muted);
-
-  .timer {
-    display: flex;
-    align-items: center;
-    gap: 0.35rem;
-  }
+.send-code {
+  font-size: 13px;
 }
 
 .link-inline {
@@ -757,30 +731,6 @@ input[type='tel'] {
   }
 }
 
-.btn-secondary {
-  background: #fff;
-  color: var(--ink);
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  padding: 0.55rem 1.4rem;
-  font-weight: 700;
-  cursor: pointer;
-
-  &:hover {
-    background: #f5f5f5;
-  }
-}
-
-.btn-primary-dark {
-  background: var(--ink);
-  color: #fff;
-  border: none;
-  border-radius: 999px;
-  padding: 0.55rem 1.4rem;
-  font-weight: 700;
-  cursor: pointer;
-
-  &:hover {
-    background: #000;
-  }
+::ng-deep .p-inputtext:enabled:focus {
+  border-color: #cbd5e1 !important;
 }

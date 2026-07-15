@@ -21,8 +21,9 @@ const MOBILE_PATTERN = /^\+?[0-9\s-]{10,15}$/;
   selector: 'app-demo-form',
   imports: [ReactiveFormsModule, FormsModule, InputOtpModule],
   templateUrl: './demo-form.component.html',
-  styleUrl: './demo-form.component.scss'
+  styleUrl: './demo-form.component.scss',
 })
+
 export class DemoFormComponent implements OnDestroy {
   private readonly fb = new FormBuilder();
 

@@ -2,7 +2,7 @@
   <!-- LEFT : BRAND -->
   <aside class="brand">
     <div class="logo" aria-label="RIGHTLY HR">
-      <img src="logo/RHR-Logo.png" alt="RIGHTLY HR" class="rhr-logo"/>
+      <img src="logo/RHR-Logo.png" alt="RIGHTLY HR" class="rhr-logo" />
     </div>
 
     <div class="brand-inner">
@@ -187,13 +187,13 @@
         <span>I agree to the <a href="javascript:void(0)">Terms of Service</a> and <a href="javascript:void(0)">Privacy
             Policy</a>.</span>
       </label>
+
       @if (submitted && form.controls.agreeTerms.invalid) {
       <div class="hint err" style="margin-top:-14px; margin-bottom: 14px;">You must accept the terms to continue.</div>
       }
 
-      <button type="submit" class="cta" [disabled]="!canSubmit">
-        Create my demo instance <span class="arr">&rarr;</span>
-      </button>
+      <button type="submit" class="cta" [disabled]="!canSubmit">Create my demo instance <span
+          class="arr">&rarr;</span></button>
       <p class="cta-hint" [class.ready]="canSubmit">
         {{ canSubmit ? "You're all set — one click away." : 'Complete the required fields and verify your email to
         continue.' }}
@@ -211,28 +211,31 @@
 </div>
 
 <!-- Verify OTP modal template -->
-<ng-template #verifyModal>
-  <div class="modal-header border-0 pb-0">
-    <h5 class="modal-title">Verify {{ activeTarget === 'email' ? 'email' : 'mobile number' }}</h5>
-    <button type="button" class="btn-close" (click)="dismissModal()"></button>
-  </div>
-  <div class="modal-body">
-    <p class="modal-desc">Enter the 6-digit code sent to your {{ activeTarget === 'email' ? 'email address' : 'phone'
-      }}.</p>
-    <div class="otp-row">
-      <p-inputOtp [(ngModel)]="currentOtpValue" [length]="6" [integerOnly]="true" [autofocus]="true" />
+<ng-template #verifyModal ngbAutofocus>
+  <div class="custom-main-popup-container" ngbAutofocus>
+    <div class="custom-poup-header-content popup-header-border">
+      <div>
+        <p class="popup-heading mb-0">Verify {{ activeTarget === 'email' ? 'email' : 'mobile number' }}</p>
+      </div>
     </div>
-    @if (otpError) {
-    <div class="hint err text-center">{{ otpError }}</div>
-    }
-    <div class="modal-footer-row">
-      <span class="timer">&#128337; {{ formattedTimer() }}</span>
-      <button type="button" class="link-inline" [disabled]="currentTimer > 0" (click)="resendCode()">Resend
-        code</button>
+
+    <div class="custom-main-popup-content">
+      <p class="modal-desc">Enter the 6-digit code sent to your {{ activeTarget === 'email' ? 'email address' : 'phone'
+        }}.</p>
+      <div class="otp-row">
+        <p-inputOtp [(ngModel)]="currentOtpValue" [length]="6" [integerOnly]="true" [autofocus]="true" />
+      </div>
+      @if (otpError) {
+      <div class="error-msg ">{{ otpError }}</div>
+      }
+      <div class="d-flex justify-content-between align-items-center mt-4 send-code">
+        <div class="timer"><i class="bi bi-clock"></i> {{ formattedTimer() }}</div>
+        <button type="button" class="link-inline" [disabled]="currentTimer > 0" (click)="resendCode()">Resend code</button>
+      </div>
+      <div class="custom-modal-footer pt-4">
+        <button type="button" class="custom-btn btn-secondary" (click)="dismissModal()">Close</button>
+        <button type="submit" class="custom-btn btn-primary" [disabled]="currentOtpValue.length !== 6" (click)="verifyCode()">Verify code</button>
+      </div>
     </div>
-  </div>
-  <div class="modal-footer border-0">
-    <button type="button" class="btn-secondary" (click)="dismissModal()">Cancel</button>
-    <button type="button" class="btn-primary-dark" (click)="verifyCode()">Verify code</button>
   </div>
 </ng-template>

@@ -1,5 +1,22 @@
 /* You can add global styles to this file, and also import other style files */
-html, body {
+:root {
+  --ink: #0b0b0c;
+  --paper: #ffffff;
+  --fog: #f4f4f1;
+  --line: #e3e3de;
+  --muted: #6f6f68;
+  --mark: #ffd335;
+  --mark-soft: #fff3c2;
+  --ok: #0e8a4d;
+  --err: #c93a2b;
+  --radius: 14px;
+
+  display: block;
+  color: var(--ink);
+}
+
+html,
+body {
   margin: 0;
   padding: 0;
   height: 100%;
@@ -26,4 +43,77 @@ html, body {
     border-color: #0b0b0c;
     box-shadow: 0 0 0 3px #fff3c2;
   }
+}
+
+.custom-btn {
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-size: 14px;
+  font-weight: 500;
+  border: none !important;
+}
+
+// popup stylings
+.custom-main-popup-container {
+  .custom-poup-header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+  }
+
+  .custom-main-popup-content {
+    padding: 1.5rem;
+  }
+
+  .custom-modal-footer {
+    display: flex;
+    justify-content: end;
+    gap: 1rem;
+    padding-top: 1rem;
+  }
+
+  .popup-header-border {
+    border-bottom: 1.5px solid transparent;
+    border-image-source: linear-gradient(90deg, var(--paper) -6.98%,
+        var(--ink) 50.67%, var(--paper) 108.91%);
+    border-image-slice: 1;
+    vertical-align: middle;
+  }
+
+  .popup-heading {
+    font-weight: 700;
+    font-size: 18px;
+    vertical-align: middle;
+    color: var(--ink);
+  }
+
+  .close-icon {
+    width: 2rem;
+    height: 2rem;
+  }
+
+  .btn-primary {
+    padding: 0.5rem 3rem;
+    color: var(--paper);
+    background: var(--ink);
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+
+  .btn-secondary {
+    padding: 0.5rem 3rem;
+    border: 1px solid var(--ink);
+  }
+}
+
+// ERROR MESSAGE
+.error-msg {
+  font-size: var(--fontsize12);
+  font-weight: 500;
+  color: var(--error-msg-color);
+  margin-top: 0.25rem;
 }

@@ -23,7 +23,8 @@
     "preonboarding-uat-internal-beta": "ng build preonboarding --configuration uat-internal-beta",
     "preonboarding-uat-internal-gama": "ng build preonboarding --configuration uat-internal-gama",
     "preonboarding-uat-internal-delta": "ng build preonboarding --configuration uat-internal-delta",
-    "preonboarding-snad-rightlyhr": "ng build preonboarding --configuration snad-rightlyhr"
+    "preonboarding-snad-rightlyhr": "ng build preonboarding --configuration snad-rightlyhr",
+    "hrms-demo-app-qa": "ng build hrms-demo-app --configuration qa"
   },
   "private": true,
   "dependencies": {

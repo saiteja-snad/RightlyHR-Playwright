@@ -553,9 +553,24 @@
               "outputHashing": "all"
             },
             "development": {
+              "fileReplacements": [
+                {
+                  "replace": "projects/hrms-demo-app/src/environments/environment.ts",
+                  "with": "projects/hrms-demo-app/src/environments/environment.dev.ts"
+                }
+              ],
               "optimization": false,
               "extractLicenses": false,
               "sourceMap": true
+            },
+            "qa": {
+              "fileReplacements": [
+                {
+                  "replace": "projects/hrms-demo-app/src/environments/environment.ts",
+                  "with": "projects/hrms-demo-app/src/environments/environment.qa.ts"
+                }
+              ],
+              "outputHashing": "all"
             }
           },
           "defaultConfiguration": "production"
@@ -568,6 +583,9 @@
             },
             "development": {
               "buildTarget": "hrms-demo-app:build:development"
+            },
+            "qa": {
+              "buildTarget": "hrms-demo-app:build:qa"
             }
           },
           "defaultConfiguration": "development"

@@ -3,90 +3,81 @@
     <div class="main-letter-content">
         <!--Letter Fields & Inputs-->
         <div class="card letter-fields-content">
-            <form autocomplete="off" [formGroup]="employeeForm"
-                (ngSubmit)="onAppointmentLetterSubmit(employeeForm)">
+            <form autocomplete="off" [formGroup]="employeeForm" (ngSubmit)="onAppointmentLetterSubmit(employeeForm)">
                 <div class="mb-3">
                     <label class="form-label custom-label mb-2">Select Employee<span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
-                        <p-select [options]="employeeiddetails" optionLabel="fullName"
-                            [filter]="true" filterBy="fullName" placeholder="Please select employee"
+                        <p-select [options]="employeeiddetails" optionLabel="fullName" [filter]="true"
+                            filterBy="fullName" placeholder="Please select employee"
                             (onChange)="onClickEmployee($event)" formControlName="employeeId"
-                            class="custom-select w-100" resetFilterOnHide="true">
-                        </p-select>
+                            class="custom-select w-100" resetFilterOnHide="true" filterPlaceholder="Search employee" />
                     </div>
                     <div *ngIf="employeeForm.get('employeeId')?.invalid && employeeForm.get('employeeId')?.touched"
-                        class="error-msg">
-                        Employee is required
-                    </div>
+                        class="error-msg">Employee is required</div>
                 </div>
                 <!-- Address -->
                 <div class="mb-3">
                     <label class="form-label custom-label mb-2">Select Address<span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
-                        <p-select [options]="SelectDropDown" optionLabel="name" optionValue="code" placeholder="Please select address"
-                            formControlName="SelectDropDown" (onChange)="onclickSelectAddress($event)" class="form-select custom-select"
-                            resetFilterOnHide="true"></p-select>
+                        <p-select [options]="SelectDropDown" optionLabel="name" optionValue="code"
+                            placeholder="Please select address" formControlName="SelectDropDown"
+                            (onChange)="onclickSelectAddress($event)" class="form-select custom-select"
+                            resetFilterOnHide="true" />
                     </div>
-                    <div *ngIf="employeeForm.get('SelectDropDown')?.invalid && employeeForm.get('SelectDropDown')?.touched">
-                        <div class="error-msg">Address is required</div>
-                    </div>
+                    <div *ngIf="employeeForm.get('SelectDropDown')?.invalid && employeeForm.get('SelectDropDown')?.touched"
+                        class="error-msg">Address is required</div>
                 </div>
-
                 <!-- Non-Disclosure Agreement Sent Date -->
                 <div class="mb-3">
-                    <label class="form-label custom-label mb-2">Non-Disclosure Agreement Sent Date<span class="error-msg">*</span></label>
+                    <label class="form-label custom-label mb-2">Non-Disclosure Agreement Sent Date<span
+                            class="error-msg">*</span></label>
                     <input type="date" class="form-control custom-input" formControlName="ndassentdate"
                         placeholder="Please enter appointment sent date" onkeydown="return false;" />
-                    <div *ngIf="employeeForm.get('ndassentdate')?.invalid && employeeForm.get('ndassentdate')?.touched">
-                        <div class="error-msg">Non-Disclosure Agreement Sent Date is required</div>
-                    </div>
+                    <div *ngIf="employeeForm.get('ndassentdate')?.invalid && employeeForm.get('ndassentdate')?.touched"
+                        class="error-msg">Non-Disclosure Agreement Sent Date is required</div>
                 </div>
-
                 <!-- joining Date -->
                 <div class="mb-3">
                     <label class="form-label custom-label mb-2">Joining Date<span class="error-msg">*</span></label>
                     <input type="date" class="form-control custom-input" formControlName="dateOfJoining"
                         placeholder="Please enter joining date" onkeydown="return false;" />
-                    <div *ngIf="employeeForm.get('dateOfJoining')?.invalid && employeeForm.get('dateOfJoining')?.touched">
-                        <div class="error-msg">Joining Date is required</div>
-                    </div>
-                    <div *ngIf="!JoinDateValid">
-                        <div class="error-msg">Date of Joining must be after the NDA Letter Agreement Sent Date</div>
-                    </div>
+                    <div *ngIf="employeeForm.get('dateOfJoining')?.invalid && employeeForm.get('dateOfJoining')?.touched"
+                        class="error-msg">Joining Date is required</div>
+                    <div *ngIf="!JoinDateValid" class="error-msg">Date of Joining must be after the NDA Letter Agreement
+                        Sent Date</div>
                 </div>
-
                 <!-- Document Type -->
                 <div class="mb-3">
                     <label class="form-label custom-label mb-2">Document Type <span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
-                        <p-select [options]="documentType" optionLabel="name" optionValue="value" placeholder="Please select document type"
-                            formControlName="documentType" class="form-select custom-select">
-                        </p-select>
+                        <p-select [options]="documentType" optionLabel="name" optionValue="value"
+                            placeholder="Please select document type" formControlName="documentType"
+                            class="form-select custom-select" />
                     </div>
-                    <div *ngIf="employeeForm.get('documentType')?.invalid && employeeForm.get('documentType')?.touched">
-                        <div class="error-msg">Document Type is required</div>
-                    </div>
+                    <div *ngIf="employeeForm.get('documentType')?.invalid && employeeForm.get('documentType')?.touched"
+                        class="error-msg">Document Type is required</div>
                 </div>
-                
                 <!-- Siganture Authority -->
                 <div class="mb-3">
                     <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Signature
                         Authority Name<span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
-                        <p-select [options]="authorityDetails" optionLabel="fullName" [filter]="true" filterBy="fullName"
-                            placeholder="Please select signature authority name" class="form-select custom-select"
-                            formControlName="authorityid" (onChange)="onclickDesignation($event)" />
+                        <p-select [options]="authorityDetails" optionLabel="fullName" [filter]="true"
+                            filterBy="fullName" placeholder="Please select signature authority name"
+                            class="form-select custom-select" formControlName="authorityid"
+                            (onChange)="onclickDesignation($event)" filterPlaceholder="Search signature authority" />
                     </div>
-                    <div *ngIf="employeeForm.get('authorityid')?.invalid && employeeForm.get('authorityid')?.touched">
-                        <div class="error-msg">Signature Authority Name is required</div>
-                    </div>
+                    <div *ngIf="employeeForm.get('authorityid')?.invalid && employeeForm.get('authorityid')?.touched"
+                        class="error-msg">Signature Authority Name is required</div>
                 </div>
 
                 <div class="d-flex flex-wrap gap-3 pt-4">
-                    <button type="submit" class="custom-btn btn-primary" [disabled]="employeeForm.invalid || spinnerLoader1">
+                    <button type="submit" class="custom-btn btn-primary"
+                        [disabled]="employeeForm.invalid || spinnerLoader1">
                         <ng-container *ngIf="spinnerLoader; else addText">
                             <div class="button-loader-content">
-                                <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
+                                <span class="spinner-border button-spinner text-light" role="status"
+                                    aria-hidden="true"></span>
                                 <span>{{'Loading...'}}</span>
                             </div>
                         </ng-container>
@@ -95,10 +86,12 @@
                         </ng-template>
                     </button>
 
-                    <button type="button" class="custom-btn btn-primary" (click)="releaseLetter()" [disabled]="employeeForm.invalid || spinnerLoader || releaseLetterButton">
+                    <button type="button" class="custom-btn btn-primary" (click)="releaseLetter()" [disabled]="employeeForm.invalid 
+                    || spinnerLoader || releaseLetterButton">
                         <ng-container *ngIf="spinnerLoader1; else addText1">
                             <div class="button-loader-content">
-                                <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
+                                <span class="spinner-border button-spinner text-light" role="status"
+                                    aria-hidden="true"></span>
                                 <span>{{'Loading...'}}</span>
                             </div>
                         </ng-container>
@@ -115,9 +108,9 @@
             <div class="letter-sub-data-content">
                 <div>
                     <!--page-1-->
-                    <div class="letter-page-content" id="pdfContent1"
-                        [ngClass]="{'soft-copy-letter':employeeForm.get('documentType')?.value}">
+                    <div class="letter-page-content" id="pdfContent1">
                         <div class="letter-page-sub-content">
+
                             <div *ngIf="employeeForm.get('documentType')?.value; else doc" class="soft-copy-letter">
                                 <app-lettersheader />
                             </div>
@@ -126,27 +119,27 @@
                             </ng-template>
                             <div class="letter-div">
                                 <div class="text-center pb-3">
-                                    <p class="letter-header text-center">
-                                        <u>Non-Disclosure Agreement and Invention Assignment Agreement</u>
-                                    </p>
+                                    <p class="letter-header text-center"><u>Non-Disclosure Agreement and Invention
+                                            Assignment Agreement</u></p>
                                 </div>
                             </div>
                             <p class="mb-3">This Non-Disclosure Agreement and Invention Assignment Agreement
-                                (hereinafter “Agreement”) is effective as of by and between </p>
-                            <p class="mb-3"><b>RightlyHR</b>, with its office at [Vijaya
+                                (hereinafter “Agreement”) is effective as of by and between</p>
+                            <p class="mb-3"><b> RightlyHR</b>, with its office at [Vijaya
                                 Krishna Towers, Floor#16, Madhava Reddy Colony, Gachibowli, HYD - 500032] (hereinafter
-                                referred to as the “Company”)
-                            </p>
+                                referred to as the “Company”)</p>
                             <p class="mb-3"><b>And </b></p>
-                            <p class="mb-4">{{employeeFullname}} PAN No:  <span *ngFor="let p of panDetails">{{p.identityNumber }}</span> residing at <span class="mb-3" *ngIf="employeeForm.value.addressLine1">
-                  {{ employeeForm.value.addressLine1 }},
-                  <span *ngIf="employeeForm.value.addressLine2"> {{ employeeForm.value.addressLine2 }},</span>
-                  {{ employeeForm.value.city }},
-                  {{ employeeForm.value.state }},
-                  {{ employeeForm.value.country }} -
-                  {{ employeeForm.value.pinCode }} (Hereinafter referred to as “Receiving Party”).
-                            </span></p>
-
+                            <p class="mb-4">{{employeeFullname}} PAN No: <span
+                                    *ngFor="let p of panDetails">{{p.identityNumber }}</span> residing at
+                                <span class="mb-3" *ngIf="employeeForm.value.addressLine1">
+                                    {{ employeeForm.value.addressLine1 }},
+                                    <span *ngIf="employeeForm.value.addressLine2"> {{ employeeForm.value.addressLine2
+                                        }},</span>
+                                    {{ employeeForm.value.city }}, {{ employeeForm.value.state }}, {{
+                                    employeeForm.value.country }} -
+                                    {{ employeeForm.value.pinCode }} (Hereinafter referred to as “Receiving Party”).
+                                </span>
+                            </p>
                             <p class="mb-4">The Company and the Receiving Party shall collectively be referred to as
                                 “Parties” and individually as a “Party”. </p>
                             <!-- <p class="mb-4">
@@ -155,9 +148,10 @@
                                 specifies the details of the scope, terms, and conditions of your employment.
                             </p> -->
                             <p class="m-0 p-0"><b>RECITALS: </b></p>
-                            <p class="mb-3">A.As per the Appointment Letter dated {{ employeeForm.get('ndassentdate')?.value |
-                dateformat }}, the Receiving Party is
-                                working with the RightlyHR, During the course of Engagement, the
+                            <p class="mb-3">A.As per the Appointment Letter dated {{
+                                employeeForm.get('ndassentdate')?.value | dateformat }},
+                                the Receiving Party is working with the  RightlyHR, During the
+                                course of Engagement, the
                                 Receiving Party may be exposed to the Confidential Information (as defined below) of the
                                 Company and/or the Company’s affiliates, clients, customers, consultants, vendors,
                                 partners, agents or suppliers etc. The Receiving Party may also generate, create or
@@ -187,23 +181,23 @@
                                     the Company and delivered within 30 days of disclosure to the Receiving Party to
                                     qualify it as Confidential Information. Confidential Information shall however
                                     exclude any information which
-                    
+
                                     (a) is in the public domain; (b) was known to the Receiving Party of such disclosure
                                     or becomes known to the Receiving Party without breach of any confidentiality
                                     agreement.
                                 </li>
                             </ol>
                         </div>
-                          <div class="letter-footer">
-                        <app-letter-footer />
+                        <div class="letter-footer">
+                            <app-letter-footer />
                         </div>
                     </div>
 
                     <!--page-2-->
-                    <div class="letter-page-content my-4" id="pdfContent2"
-                        [ngClass]="{'soft-copy-letter':employeeForm.get('documentType')?.value}">
+                    <div class="letter-page-content my-4" id="pdfContent2">
                         <div class="letter-page-sub-content">
-                             <div *ngIf="employeeForm.get('documentType')?.value; else doc" class="soft-copy-letter">
+
+                            <div *ngIf="employeeForm.get('documentType')?.value; else doc" class="soft-copy-letter">
                                 <app-lettersheader />
                             </div>
                             <ng-template #doc>
@@ -229,30 +223,34 @@
                                     </li>
                                     <ol class="mb-3" type="a">
                                         <li class="mb-1">The Receiving Party acknowledges that the Confidential
-                                            Information is the exclusive property of the Company or its client and the Receiving
-                                            Party shall make use of the Confidential Information only for the purpose of
-                                            carrying out obligations of the Engagement and for no other purpose. During the
-                                            Engagement and thereafter, the Receiving Party unconditionally and
-                                            unequivocally agrees and undertakes for self to take onerous responsibility not to
-                                            disclose any of the Confidential Information or any related information obtained from
-                                            discussions or meetings or tale-conference or video-conference or any other
+                                            Information is the exclusive property of the Company or its client and the
+                                            Receiving Party shall make use of the Confidential Information only for the
+                                            purpose of
+                                            carrying out obligations of the Engagement and for no other purpose. During
+                                            the Engagement and thereafter, the Receiving Party unconditionally and
+                                            unequivocally agrees and undertakes for self to take onerous responsibility
+                                            not to disclose any of the Confidential Information or any related
+                                            information
+                                            obtained from discussions or meetings or tale-conference or video-conference
+                                            or any other
                                             source to any third parties and shall restrict disclosure of Confidential
                                             Information only to the Company’s concerned officers, employees, attorneys,
                                             subcontractors or professional advisors who need to have access to the
                                             Confidential Information and each ofwhom shall be informed by Receiving
-                                            Party of the confidential nature of Confidential Information and agree to observe the
-                                            same terms and conditions</li>
+                                            Party of the confidential nature of Confidential Information and agree to
+                                            observe the same terms and conditions</li>
                                         <li class="mb-1">set forth herein as if specifically named a party hereto.</li>
                                         <li class="mb-1">The Receiving Party shall not make copies of Confidential
                                             Information unless the same are reasonably necessary.</li>
                                         <li class="mb-1">The Receiving Party shall immediately notify the Company in the
                                             event of any unauthorized use or disclosure of the Confidential Information
-                                            and reasonably support the Company in taking necessary remedial action. </li>
+                                            and reasonably support the Company in taking necessary remedial action.</li>
                                         <li class="mb-1">The Receiving Party shall protect the Confidential Information
-                                            by using the same degree of care to prevent unauthorized use, dissemination, or
-                                            publication of the Confidential Information as the Receiving Party would use
-                                            to protect his/her own confidential information of a like nature, but no less
-                                            than a reasonable degree of care.</li>
+                                            by using the same degree of care to prevent unauthorized use, dissemination,
+                                            or publication of the Confidential Information as the Receiving Party would
+                                            use
+                                            to protect his/her own confidential information of a like nature, but no
+                                            less than a reasonable degree of care.</li>
                                         <li class="mb-1">The Receiving Party shall not use, modify, reverse engineer,
                                             decompile, create other works from or disassemble anything in the Company’s
                                             Confidential Information unless permitted in writing by the Company.</li>
@@ -266,25 +264,25 @@
                                         <li class="mb-1">
                                             The Receiving Party shall not interact with the press or any third party
                                             with respect to the Company’s business, customers, competitors or anything
-                                            related to the Company without the Company’s prior written approval. The Receiving
-                                            Party shall not publicize or disclose the presence of this Agreement nor use in
-                                            any manner the name or logos of the Company without the prior written permission
-                                            of the Company.
-                                        </li>
+                                            related to the Company without the Company’s prior written approval. The
+                                            Receiving Party shall not publicize or disclose the presence of this
+                                            Agreement nor use
+                                            in any manner the name or logos of the Company without the prior written
+                                            permission of the Company.</li>
                                     </ol>
                                 </ol>
                             </div>
                         </div>
-                          <div class="letter-footer">
-                        <app-letter-footer />
+                        <div class="letter-footer">
+                            <app-letter-footer />
                         </div>
                     </div>
 
                     <!--page-3-->
-                    <div class="letter-page-content my-4" id="pdfContent3"
-                        [ngClass]="{'soft-copy-letter':employeeForm.get('documentType')?.value}">
+                    <div class="letter-page-content my-4" id="pdfContent3">
                         <div class="letter-page-sub-content">
-                             <div *ngIf="employeeForm.get('documentType')?.value; else doc" class="soft-copy-letter">
+
+                            <div *ngIf="employeeForm.get('documentType')?.value; else doc" class="soft-copy-letter">
                                 <app-lettersheader />
                             </div>
                             <ng-template #doc>
@@ -296,29 +294,28 @@
                                         During the tenure of the Engagement, the Receiving Party shall not bring any
                                         media storage devices such as external hard drives, USB drives, external
                                         hard discs, or any other devices that can store data, to the Company office
-                                        premises without prior written permission of the Company.
-                                    </li>
+                                        premises without prior written permission of the Company.</li>
                                     <li class="mb-1">
                                         The Receiving Party shall not, during his/her Engagement with the Company or
                                         otherwise, use or disclose to the Company any confidential, trade secret, or
                                         other proprietary information or material of any previous employer or other
                                         person and will not bring into the Company's premises any unpublished
-                                        document or any other property belonging to any former employer without the written
-                                        consent of that former employer.
-                                    </li>
+                                        document or any other property belonging to any former employer without the
+                                        written consent of that former employer.</li>
                                     <li class="mb-1">
                                         The Receiving Party hereby undertakes not to, under any circumstances
-                                        disclose, destroy, delete, alter, steal, or cause to disclose, destroy, delete, alter,
-                                        steal the Confidential Information.
-                                    </li>
+                                        disclose, destroy, delete, alter, steal, or cause to disclose, destroy, delete,
+                                        alter, steal the Confidential Information.</li>
                                 </ol>
                                 <p class="mb-3"> <b>The Company’s Property</b>: All works, programs, papers, records,
-                                    data, notes, drawings, files, documents, samples, devices, opinions, research material,
-                                    checklists, dockets, processes and other materials, including copies in whatever
+                                    data, notes, drawings, files, documents, samples, devices, opinions, research
+                                    material, checklists, dockets, processes and other materials, including copies in
+                                    whatever
                                     form and translations into any other language and intellectual property,
                                     relating to the business of the Company that the Receiving Party possesses or
                                     creates during the term of the engagement with the Company, whether or not
-                                    confidential, are and shall remain the sole and exclusive property of the Company.</p>
+                                    confidential, are and shall remain the sole and exclusive property of the Company.
+                                </p>
                                 <ol start="4">
                                     <li class="mb-0">
                                         <b class="mb-0">Disclosure and Assignment of Developments : </b>
@@ -340,8 +337,7 @@
                                             applications, copyrights and copyright applications. The Receiving Party
                                             understands and acknowledges that all Developments shall be the property of
                                             the Company and, to the greatest extent permitted by law, shall be ‘works
-                                            made for hire’.
-                                        </li>
+                                            made for hire’.</li>
                                         <li class="mb-1">
                                             The Receiving Party shall give the Company all assistance it reasonably
                                             requires to perfect, protect, and use its rights to the Developments. In
@@ -349,13 +345,11 @@
                                             supply all information that the Company considers necessary or desirable to
                                             transfer or record the transfer of entire rights, title and interest in the
                                             Developments; and to enable the Company to obtain patent, copyright, or
-                                            other legal protection to the Developments.
-                                        </li>
+                                            other legal protection to the Developments.</li>
                                         <li class="mb-1">
                                             Receiving Party acknowledges and agrees that the assignment set forth herein
                                             is worldwide and perpetual, and that he/she will have no rights to reversion
-                                            of the Developments, even if the Company does not exploit them.
-                                        </li>
+                                            of the Developments, even if the Company does not exploit them.</li>
                                         <li class="mb-1">
                                             Receiving Party hereby permanently waives all paternity, integrity, special,
                                             moral or similar rights, if any, that vest or may vest in Receiving Party as
@@ -366,22 +360,20 @@
                                             hereby agrees, at the request and expense of the Company, to provide any
                                             assistance as may be necessary to confirm Receiving Party's waiver of any
                                             paternity, integrity, special, moral or similar rights associated with the
-                                            Developments that may vest in the Receiving Party.
-                                        </li>
+                                            Developments that may vest in the Receiving Party.</li>
                                     </ol>
                                 </ol>
                             </div>
                         </div>
-                          <div class="letter-footer">
-                        <app-letter-footer />
+                        <div class="letter-footer">
+                            <app-letter-footer />
                         </div>
                     </div>
 
                     <!--page-4-->
-                    <div class="letter-page-content my-4" id="pdfContent4"
-                        [ngClass]="{'soft-copy-letter':employeeForm.get('documentType')?.value}">
+                    <div class="letter-page-content my-4" id="pdfContent4">
                         <div class="letter-page-sub-content">
-                             <div *ngIf="employeeForm.get('documentType')?.value; else doc" class="soft-copy-letter">
+                            <div *ngIf="employeeForm.get('documentType')?.value; else doc" class="soft-copy-letter">
                                 <app-lettersheader />
                             </div>
                             <ng-template #doc>
@@ -407,8 +399,7 @@
                                         have made, modify, use and sell such Prior Invention. Notwithstanding the
                                         foregoing, the Receiving Party agrees that the Receiving Party will not
                                         incorporate, or permit to be incorporated, Prior Inventions in any the Company’s
-                                        products without the Company's prior written consent.
-                                    </li>
+                                        products without the Company's prior written consent.</li>
                                     <li class="mb-1">
                                         In the event the Company is unable for any reason, after reasonable effort, to
                                         secure the Receiving Party’s signature on any document needed in connection with
@@ -418,15 +409,13 @@
                                         appointment is coupled with an interest, to act for and in the Receiving Party’s
                                         behalf to execute, verify and file any such documents and to do all other
                                         lawfully permitted acts to further the purposes of the preceding paragraphs with
-                                        the same legal force and effect as if executed by the Receiving Party.
-                                    </li>
+                                        the same legal force and effect as if executed by the Receiving Party.</li>
                                     <li class="mb-1">
                                         The Receiving Party further represents that he/she has no other employment(s),
                                         consultancies or undertakings which would restrict and impair his/her
-                                        performance of this Agreement.
-                                    </li>
+                                        performance of this Agreement.</li>
                                 </ol>
-                    
+
                                 <ol start="5">
                                     <li class="mb-3">
                                         <p class="mb-0"><b>Return : </b></p>
@@ -461,16 +450,15 @@
                                 </ol>
                             </div>
                         </div>
-                          <div class="letter-footer">
-                        <app-letter-footer />
+                        <div class="letter-footer">
+                            <app-letter-footer />
                         </div>
                     </div>
 
                     <!--page-5-->
-                    <div class="letter-page-content my-4" id="pdfContent5"
-                        [ngClass]="{'soft-copy-letter':employeeForm.get('documentType')?.value}">
+                    <div class="letter-page-content my-4" id="pdfContent5">
                         <div class="letter-page-sub-content">
-                             <div *ngIf="employeeForm.get('documentType')?.value; else doc" class="soft-copy-letter">
+                            <div *ngIf="employeeForm.get('documentType')?.value; else doc" class="soft-copy-letter">
                                 <app-lettersheader />
                             </div>
                             <ng-template #doc>
@@ -493,7 +481,6 @@
                                         "This Agreement shall be governed by and construed in accordance with the laws
                                         of India and shall be subject to jurisdiction of courts at Hyderabad, Telangana"
                                     </li>
-
                                     <li class="mb-3">
                                         <p class="mb-0"> <b>Miscellaneous: </b></p>
                                         <ol type="a" class="mb-5">
@@ -505,7 +492,6 @@
                                                 possible. In any event, all other provisions of this Agreement shall be
                                                 deemed valid and enforceable to the full extent possible.
                                             </li>
-
                                             <li class="mb-2">
                                                 <u>Waiver.</u>
                                                 The waiver by the Company of a breach of any provision of this Agreement
@@ -527,42 +513,43 @@
                                                 respecting that subject matter.
                                             </li>
                                         </ol>
+                                    </li>
 
-                                        </li>
+                                    <div class="d-flex justify-content-end">
+                                        <p class="mb-2 me-2"><b>Date</b> {{ employeeForm.get('ndassentdate')?.value |
+                                            dateformat }}</p>
+                                    </div>
 
-                                            <div class="d-flex justify-content-end">
-                                                <p class="mb-2 me-2"><b>Date</b> {{ employeeForm.get('ndassentdate')?.value | dateformat }}</p>
-                                            </div>
-                                       
-                                        <div >
-                                                <p><b><u>ACCEPTANCE</u></b></p>
-                                            </div>
+                                    <div>
+                                        <p><b><u>ACCEPTANCE</u></b></p>
+                                    </div>
 
-                                        <p>I accept this offer letter and will complete all the necessary documents as
-                                            required.
-                                        </p>
+                                    <p>I accept this offer letter and will complete all the necessary documents as
+                                        required.</p>
 
-                                        <div class="d-flex justify-content-between">
-                                            <div>
-                                                <b>RightlyHR</b>
-                                                <p class="mt-4 "><span class="signature">Signature: </span><span class="letter-signature">{{authorityFullName}}</span> </p>
-                                                <p ><span class="signature">Name:</span> {{authorityFullName}}</p>
-                                                <p ><span class="signature">Title:</span> {{designationName}}</p>
-                                                <p ><span class="signature">Date:</span>  {{ employeeForm.get('ndassentdate')?.value | dateformat }}</p>
-                                            </div>
-                                            <div>
-                                                <b>CONSULTANT </b>
-                                                <p class="mt-4"><span class="signature">Signature: </span> </p>
-                                                <p><span class="signature">Name:</span> </p>
-                                                <p><span class="signature">Date:</span> </p>
-                                            </div>
-
+                                    <div class="d-flex justify-content-between">
+                                        <div>
+                                            <b> RightlyHR</b>
+                                            <p class="mt-4 "><span class="signature">Signature: </span>
+                                                <span class="letter-signature">{{authorityFullName}}</span>
+                                            </p>
+                                            <p><span class="signature">Name:</span> {{authorityFullName}}</p>
+                                            <p><span class="signature">Title:</span> {{designationName}}</p>
+                                            <p><span class="signature">Date:</span> {{
+                                                employeeForm.get('ndassentdate')?.value | dateformat }}</p>
                                         </div>
+                                        <div>
+                                            <b>CONSULTANT </b>
+                                            <p class="mt-4"><span class="signature">Signature: </span> </p>
+                                            <p><span class="signature">Name:</span> </p>
+                                            <p><span class="signature">Date:</span> </p>
+                                        </div>
+                                    </div>
                                 </ol>
                             </div>
                         </div>
-                          <div class="letter-footer">
-                        <app-letter-footer />
+                        <div class="letter-footer">
+                            <app-letter-footer />
                         </div>
                     </div>
                 </div>
@@ -570,5 +557,3 @@
         </div>
     </div>
 </div>
-
-    

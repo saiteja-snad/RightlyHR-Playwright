@@ -66,7 +66,7 @@ export function applyLetterPageSetup(docDef: any, options: LetterPageSetupOption
         widths: ['*'],
         body: [[{
           stack: [
-            { text: 'RightlyHR', alignment: 'center', color: '#ffffff', font: 'VERDANABOLD', fontSize: PX(14), margin: [0, 8, 0, 2] },
+            { text: 'RightlyHR', alignment: 'center', color: '#ffffff', font: 'VERDANABOLD', fontSize: PX(12), margin: [0, 8, 0, 6] },
             { text: 'Vijaya Krishna Towers, Floor#16, Madhava Reddy Colony, Gachibowli, HYD - 500032', alignment: 'center', color: '#ffffff', font: bodyFont || 'VERDANA', fontSize: PX(11), margin: [0, 0, 0, 8] },
           ],
         }]],

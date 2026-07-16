@@ -13,16 +13,15 @@ import { NgxCountriesDropdownModule } from 'ngx-countries-dropdown';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { IAddress } from '../../models/personal-details.model';
-import { DateformatPipe } from '../../../../../hrms/src/app/pipes/dateformat.pipe';
 import { HttpService } from '../../http-services/http.service';
 import { DetailedStepProgressbarComponent } from "../../shared/detailed-step-progressbar/detailed-step-progressbar.component";
 import { DateFormatPipe } from '../../pipes/date-format.pipe';
 import { PopupService } from '../../common-services/popup.service';
 import { Iofferletter, IJobDetails } from '../../models/offer-letter.model';
-import { fetchLetterAssets, setupLetterPdfMake } from '../../../../../hrms/src/app/letters-builder-files/letter-pdf.utils';
+import { DateformatPipe } from '../../../../../hrms/src/app/pipes/dateformat.pipe';
 @Component({
   selector: 'app-nda-contractor-letter',
-  imports: [CommonModule, TranslateModule, NgxCountriesDropdownModule, ReactiveFormsModule, DateformatPipe,
+  imports: [CommonModule, TranslateModule, NgxCountriesDropdownModule, ReactiveFormsModule, DateformatPipe, 
     NgbPopoverModule, DetailedStepProgressbarComponent, DateFormatPipe],
   templateUrl: './nda-contractor-letter.component.html',
   styleUrl: './nda-contractor-letter.component.scss'
@@ -55,7 +54,7 @@ export class NdaContractorLetterComponent implements OnInit, OnDestroy{
   currentDate=moment();
   panDetails={} as any;
 
-  constructor(private router: Router, private http: HttpService, private modalService: NgbModal,
+  constructor(private router: Router, private http: HttpService, private modalService: NgbModal, 
     private fb: FormBuilder, private confiramtionpopups: PopupService) { }
 
   ngOnInit(): void {
@@ -525,12 +524,23 @@ export class NdaContractorLetterComponent implements OnInit, OnDestroy{
   async downLoadDocument(offerUpdateDetails: Iofferletter) {
     const data = this.ndaLetterData;
 
-    const isSoftCopy = true;
-
-    const [assets, pm] = await Promise.all([
-      fetchLetterAssets(isSoftCopy),
-      setupLetterPdfMake(),
+    const isSoftCopy = this.getofferdata.docType === true;
+    const [backgroundImageBase64, verdanaItalic, verdanaSemiBold] = await Promise.all([
+      isSoftCopy ? this.fetchImageAsBase64('/images/snad-new-letter-bg.png') : Promise.resolve(undefined as string | undefined),
+      this.getFileBase64('/fonts/Verdana Italic.ttf'),
+      this.getFileBase64('/fonts/verdana-pro-semi-bold.ttf'),
     ]);
+
+    const pm = (pdfMake as any).default ?? pdfMake;
+    const mergedVfs: Record<string, string> = { ...customVfs };
+    if (verdanaItalic)   mergedVfs['VerdanaItalic.ttf']   = verdanaItalic;
+    if (verdanaSemiBold) mergedVfs['VerdanaSemiBold.ttf'] = verdanaSemiBold;
+    pm.addVirtualFileSystem(mergedVfs);
+    pm.setFonts({
+      VERDANA: { normal: 'VerdanaNow.ttf', bold: 'VerdanaNowBold.ttf', italics: verdanaItalic ? 'VerdanaItalic.ttf' : 'VerdanaNow.ttf', bolditalics: 'VerdanaNowBold.ttf' },
+      VERDANABOLD: { normal: verdanaSemiBold ? 'VerdanaSemiBold.ttf' : 'VerdanaNowBold.ttf', bold: verdanaSemiBold ? 'VerdanaSemiBold.ttf' : 'VerdanaNowBold.ttf', italics: verdanaSemiBold ? 'VerdanaSemiBold.ttf' : 'VerdanaNowBold.ttf', bolditalics: verdanaSemiBold ? 'VerdanaSemiBold.ttf' : 'VerdanaNowBold.ttf' },
+      Autography: { normal: 'Autography.otf', bold: 'Autography.otf', italics: 'Autography.otf', bolditalics: 'Autography.otf' },
+    });
 
     const docDef = buildNdaLetterDoc({
       firstName: data.firstName,
@@ -549,8 +559,7 @@ export class NdaContractorLetterComponent implements OnInit, OnDestroy{
       useVerdanaFont: true,
       useAutographyFont: true,
       employeeFullName: this.employeeFullname,
-      backgroundImageBase64: assets.backgroundImageBase64,
-      headerLogoBase64: assets.headerLogoBase64,
+      backgroundImageBase64,
     });
 
     const blob: Blob = await pm.createPdf(docDef).getBlob();

@@ -13,6 +13,8 @@ export interface SalaryRevisionLetterData {
   letterDate: string;
   compEffectiveDate: string;
   totalCTC: number;
+  incrementSalary?: number;
+  previousSalary?: number;
   variablePayAmount?: number;
   addressLine1?: string;
   addressLine2?: string;
@@ -326,11 +328,14 @@ export function buildSalaryRevisionLetterDoc(
     ),
     p(
       [
-        'Keeping in view the above, Management has decided to revise your CTC to ',
-        { text: `Rs.${n(data.totalCTC)}/-`, font: 'VERDANABOLD' },
-        ' w.e.f. This revision will be effective from ',
+        'Keeping in view the above, Management has also decided to give you a revision of Rs. ',
+        { text: `${n(data.incrementSalary)}/-`, font: 'VERDANABOLD' },
+        ' w.e.f. ',
         { text: fmt(data.compEffectiveDate), decoration: 'underline' },
-        '.',
+        '. This will be in addition to your existing CTC, thereby increasing your CTC from Rs ',
+        { text: `${n(data.previousSalary)}/-`, font: 'VERDANABOLD' },
+        ' to current CTC of Rs ',
+        { text: `${n(data.totalCTC)} /-`, font: 'VERDANABOLD' },
       ],
       10,
     ),
@@ -529,7 +534,7 @@ export function buildSalaryRevisionLetterDoc(
     pageMargins: [margins.left, margins.top, margins.right, margins.bottom],
     defaultStyle: {
       font: bodyFont,
-      fontSize: PX(13),
+      fontSize: PX(16),
       alignment: 'justify',
       color: '#000',
     },

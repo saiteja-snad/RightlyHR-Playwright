@@ -15,13 +15,15 @@
         </button>
       </div>
 
-      @if(rbac.allowedToAccess('Project Phases Tab.create')){
-      <button type="button" class="custom-btn btn-primary" (click)="openPhaseModal()">{{ "Add Phase / Milestone" }}</button>
+      @if (rbac.allowedToAccess("Project Phases Tab.create")) {
+      <button type="button" class="custom-btn btn-primary" (click)="openPhaseModal()">
+        {{ "Add Phase / Milestone" }}</button>
       }
     </div>
 
     <!--In Active Phases -->
-    <div class="d-flex align-items-center gap-3" *ngIf="isActive('/project-management/projects/details/inactive-phases')">
+    <div class="d-flex align-items-center gap-3"
+      *ngIf="isActive('/project-management/projects/details/inactive-phases')">
       <button type="button" class="clear-all-btn" (click)="clearPhaseFilters()">Clear All</button>
 
       <div *ngIf="rbac.allowedToAccess('Team Time Sheet Filters Tab.view')">
@@ -53,57 +55,60 @@
       </div> -->
     </div>
 
-    @if(rbac.allowedToAccess('Contact Info Tab.create') && inactiveStatus !=='inactive'){
+    @if (rbac.allowedToAccess("Contact Info Tab.create") && inactiveStatus !== "inactive") {
     <div *ngIf="isActive('/project-management/projects/details/contact-info')">
       <button type="button" class="custom-btn btn-primary" (click)="openModal(addContactmodal)">
-        {{ "Add Contacts" }}
-      </button>
+        {{ "Add Contacts" }}</button>
     </div>
     }
 
     <div *ngIf="isActive('/project-management/projects/details/documents')">
-      @if(rbac.allowedToAccess('Documents Tab.create') && inactiveStatus !== 'inactive'){
-        <button type="button" class="custom-btn btn-primary" (click)="openDocumentModal()">{{ "Add Document" }}</button>
+      @if (rbac.allowedToAccess("Documents Tab.create") && inactiveStatus !== "inactive") {
+      <button type="button" class="custom-btn btn-primary" (click)="openDocumentModal()">
+        {{ "Add Document" }}</button>
       }
     </div>
 
     <!-- Resource Filters -->
-    <div class="d-flex gap-3 align-items-center" *ngIf="isActive('/project-management/projects/details/resources') ||
-      isActive('/project-management/projects/details/inactive-resources')">
+    <div class="d-flex gap-3 align-items-center" *ngIf="
+        isActive('/project-management/projects/details/resources') ||
+        isActive('/project-management/projects/details/inactive-resources')">
       <button type="button" class="clear-all-btn" (click)="clearResourceFilters()" *ngIf="isResourceFilterApplied()">
         Clear All</button>
 
-      <button type="button" class="custom-btn btn-secondary position-relative" (click)="toggleFilters(resourcefilterContent)">
+      <button type="button" class="custom-btn btn-secondary position-relative"
+        (click)="toggleFilters(resourcefilterContent)">
         <i class="bi bi-funnel me-2"></i>Filters
         <span *ngIf="isFilterAppliedForProjectResources()" class="filter-indicator"></span>
       </button>
-   @if ( rbac.allowedToAccess("Resources Tab.create") &&
-      inactiveStatus !== "inactive" &&
+
+      @if (rbac.allowedToAccess("Resources Tab.create") && inactiveStatus !== "inactive" &&
       isActive("/project-management/projects/details/resources")) {
       <button type="button" class="custom-btn btn-primary" (click)="openAddResource()">
-        Add Resources
-      </button>
+        Add Resources</button>
       }
     </div>
 
-    @if(isActive('/project-management/projects/details/timesheet/resource-summary') ){
+    @if (isActive("/project-management/projects/details/timesheet/resource-summary")) {
     <div class="d-flex align-items-center gap-3">
-      @if(isFilterApplied()) {
+      @if (isFilterApplied()) {
       <button type="button" class="clear-all-btn" (click)="resetForm()">{{ "Clear All" | translate }}</button>
       }
-      <button type="button" class="custom-btn btn-secondary position-relative" (click)="toggleFilters(resourceSummaryfilterContent)">
+      <button type="button" class="custom-btn btn-secondary position-relative"
+        (click)="toggleFilters(resourceSummaryfilterContent)">
         <i class="bi bi-funnel me-2"></i>Filters
         <span *ngIf="isFilterAppliedForDetailedSummary()" class="filter-indicator"></span>
       </button>
     </div>
     }
 
-    @if(isActive('/project-management/projects/details/timesheet/summary') ){
+    @if (isActive("/project-management/projects/details/timesheet/summary")) {
     <div class="d-flex align-items-center gap-3">
-      @if(isFilterAppliedforsummary()) {
+      @if (isFilterAppliedforsummary()) {
       <button type="button" class="clear-all-btn" (click)="resetForm()">{{ "Clear All" | translate }}</button>
       }
-      <button type="button" class="custom-btn btn-secondary position-relative" (click)="toggleFilters(summaryFilterContent)">
+      <button type="button" class="custom-btn btn-secondary position-relative"
+        (click)="toggleFilters(summaryFilterContent)">
         <i class="bi bi-funnel me-2"></i>Filters
         <span *ngIf="isFilterAppliedForResourceSummary()" class="filter-indicator"></span>
       </button>
@@ -116,7 +121,16 @@
   </div>
 
   <div>
-    <router-outlet />
+    <!-- NORMAL PAGE (TABLE / LIST) -->
+    <div *ngIf="!showAddResource">
+      <router-outlet></router-outlet>
+    </div>
+
+    <div *ngIf="showAddResource">
+      <!-- 🔥 HEADER (avatars + + icon) -->
+      <!-- 🔥 FORM -->
+      <app-resource-creation (employeesChanged)="selectedEmployees = $event" (close)="showAddResource = false" />
+    </div>
   </div>
 </div>
 
@@ -132,27 +146,27 @@
 <ng-template #activephasefilterContent let-offcanvas>
   <div class="custom-filter-container">
     <div class="offcanvas-filter-header-content offcanvas-filter-header-border">
-      <p class="filter-header m-0">{{'Filters' | translate}}</p>
-      <a (click)="closeCanvas()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+      <p class="filter-header m-0">{{ "Filters" | translate }}</p>
+      <a (click)="closeCanvas()"><img src="icons/close.png" alt="Close Icon" class="close-icon" /></a>
     </div>
 
     <div class="offcanvas-filter-content">
-            <div class="mb-3">
-              <label class="form-label custom-label text-nowrap filter-labels mb-3">Select Date Range</label>
-              <div class="custom-date-range-picker">
-                <p-datepicker [(ngModel)]="phaseDateRange" selectionMode="range" [showIcon]="true" [readonlyInput]="true"
-                  resetFilterOnHide="true" placeholder="Please select date range" (onClose)="onPhaseDateChange()"
-                  (onClearClick)="onPhaseDateClear()" />
-              </div>
-            </div>
+      <div class="mb-3">
+        <label class="form-label custom-label text-nowrap filter-labels mb-3">Select Date Range</label>
+        <div class="custom-date-range-picker">
+          <p-datepicker [(ngModel)]="phaseDateRange" selectionMode="range" [showIcon]="true" [readonlyInput]="true"
+            resetFilterOnHide="true" placeholder="Please select date range" (onClose)="onPhaseDateChange()"
+            (onClearClick)="onPhaseDateClear()" />
+        </div>
+      </div>
 
       <div class="mb-3">
         <label class="form-label custom-label text-nowrap filter-labels mb-3">Select Status</label>
         <div class="custom-p-multiSelect-content">
-          <p-multiSelect [options]="activePhaseStatusOptions" optionLabel="label" optionValue="value" resetFilterOnHide="true"
-            placeholder="Please select status" [filter]="true" (onChange)="onPhaseStatusChange($event)"
-            (onClear)="onPhaseStatusChange($event)" [(ngModel)]="selectedActivePhaseStatuses"
-            class="form-select custom-select" />
+          <p-multiSelect [options]="activePhaseStatusOptions" optionLabel="label" optionValue="value"
+            resetFilterOnHide="true" placeholder="Please select status" [filter]="true"
+            (onChange)="onPhaseStatusChange($event)" (onClear)="onPhaseStatusChange($event)"
+            [(ngModel)]="selectedActivePhaseStatuses" class="form-select custom-select" />
         </div>
       </div>
 
@@ -166,9 +180,11 @@
 
       <div class="d-flex offcanvas-footer-content gap-3">
         <button type="button" class="custom-btn btn-secondary w-100" (click)="clearPhaseFilters()">
-          {{'Clear All' | translate}}</button>
+          {{ "Clear All" | translate }}
+        </button>
         <button type="button" class="custom-btn btn-primary w-100" (click)="closeCanvas()">
-          {{'Close' | translate}}</button>
+          {{ "Close" | translate }}
+        </button>
       </div>
     </div>
   </div>
@@ -178,12 +194,12 @@
 <ng-template #inactivephasefilterContent let-offcanvas>
   <div class="custom-filter-container">
     <div class="offcanvas-filter-header-content offcanvas-filter-header-border">
-      <p class="filter-header m-0">{{'Filters' | translate}}</p>
-      <a (click)="closeCanvas()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+      <p class="filter-header m-0">{{ "Filters" | translate }}</p>
+      <a (click)="closeCanvas()"><img src="icons/close.png" alt="Close Icon" class="close-icon" /></a>
     </div>
 
     <div class="offcanvas-filter-content">
-            <div class="mb-3">
+      <div class="mb-3">
         <label class="form-label custom-label text-nowrap filter-labels mb-3">Select Date Range</label>
         <div class="custom-date-range-picker">
           <p-datepicker [(ngModel)]="phaseDateRange" selectionMode="range" [showIcon]="true" [readonlyInput]="true"
@@ -212,9 +228,11 @@
 
       <div class="d-flex offcanvas-footer-content gap-3">
         <button type="button" class="custom-btn btn-secondary w-100" (click)="clearPhaseFilters()">
-          {{'Clear All' | translate}}</button>
+          {{ "Clear All" | translate }}
+        </button>
         <button type="button" class="custom-btn btn-primary w-100" (click)="closeCanvas()">
-          {{'Close' | translate}}</button>
+          {{ "Close" | translate }}
+        </button>
       </div>
     </div>
   </div>
@@ -224,8 +242,8 @@
 <ng-template #resourcefilterContent let-offcanvas>
   <div class="custom-filter-container">
     <div class="offcanvas-filter-header-content offcanvas-filter-header-border">
-      <p class="filter-header m-0">{{'Filters' | translate}}</p>
-      <a (click)="closeCanvas()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+      <p class="filter-header m-0">{{ "Filters" | translate }}</p>
+      <a (click)="closeCanvas()"><img src="icons/close.png" alt="Close Icon" class="close-icon" /></a>
     </div>
 
     <div class="offcanvas-filter-content">
@@ -258,9 +276,11 @@
 
       <div class="d-flex offcanvas-footer-content gap-3">
         <button type="button" class="custom-btn btn-secondary w-100" (click)="clearResourceFilters()">
-          {{'Clear All' | translate}}</button>
+          {{ "Clear All" | translate }}
+        </button>
         <button type="button" class="custom-btn btn-primary w-100" (click)="closeCanvas()">
-          {{'Close' | translate}}</button>
+          {{ "Close" | translate }}
+        </button>
       </div>
     </div>
   </div>
@@ -270,8 +290,8 @@
 <ng-template #resourceSummaryfilterContent let-offcanvas>
   <div class="custom-filter-container">
     <div class="offcanvas-filter-header-content offcanvas-filter-header-border">
-      <p class="filter-header m-0">{{'Filters' | translate}}</p>
-      <a (click)="closeCanvas()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+      <p class="filter-header m-0">{{ "Filters" | translate }}</p>
+      <a (click)="closeCanvas()"><img src="icons/close.png" alt="Close Icon" class="close-icon" /></a>
     </div>
 
     <div class="offcanvas-filter-content">
@@ -298,9 +318,9 @@
           <label class="form-label custom-label text-nowrap filter-labels mb-3">Select department</label>
           <div class="custom-p-multiSelect-content">
             <p-multiSelect [options]="departmentlist" optionLabel="departmentName" optionValue="sno"
-              [(ngModel)]="selectedDepartmentIds" [ngModelOptions]="{standalone: true}"
-              defaultLabel="Please select department" [filter]="true" [showToggleAll]="true" selectedItemsLabel="{0} depts"
-              class="form-select custom-select" />
+              [(ngModel)]="selectedDepartmentIds" [ngModelOptions]="{ standalone: true }"
+              defaultLabel="Please select department" [filter]="true" [showToggleAll]="true"
+              selectedItemsLabel="{0} depts" class="form-select custom-select" />
           </div>
         </div>
 
@@ -310,7 +330,7 @@
           <div class="custom-p-multiSelect-content">
             <p-multiSelect [options]="resourceRoleOptions" optionLabel="label" optionValue="value"
               defaultLabel="Please select role" (onChange)="onResourceRoleChange()" [(ngModel)]="selectedResourceRoles"
-              class="form-select custom-select" [ngModelOptions]="{standalone: true}" />
+              class="form-select custom-select" [ngModelOptions]="{ standalone: true }" />
           </div>
         </div>
 
@@ -319,13 +339,15 @@
           <label class="form-label custom-label text-nowrap filter-labels mb-3">Select phase</label>
           <div class="custom-p-multiSelect-content">
             <p-multiSelect [options]="resourcePhaseOptions" optionLabel="label" optionValue="value"
-              defaultLabel="Please select phase" (onChange)="onResourcePhaseChange()" [(ngModel)]="selectedResourcePhases"
-              class="form-select custom-select" [ngModelOptions]="{standalone: true}" />
+              defaultLabel="Please select phase" (onChange)="onResourcePhaseChange()"
+              [(ngModel)]="selectedResourcePhases" class="form-select custom-select"
+              [ngModelOptions]="{ standalone: true }" />
           </div>
         </div>
 
         <div class="d-flex offcanvas-footer-content gap-3">
-          <button type="button" class="custom-btn btn-secondary w-100" (click)="closeCanvas()">{{'Close' | translate}}</button>
+          <button type="button" class="custom-btn btn-secondary w-100" (click)="closeCanvas()">
+            {{ "Close" | translate }}</button>
           <button type="submit" class="custom-btn btn-primary w-100">Apply</button>
         </div>
       </form>
@@ -337,8 +359,8 @@
 <ng-template #summaryFilterContent let-offcanvas>
   <div class="custom-filter-container">
     <div class="offcanvas-filter-header-content offcanvas-filter-header-border">
-      <p class="filter-header m-0">{{'Filters' | translate}}</p>
-      <a (click)="closeCanvas()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+      <p class="filter-header m-0">{{ "Filters" | translate }}</p>
+      <a (click)="closeCanvas()"><img src="icons/close.png" alt="Close Icon" class="close-icon" /></a>
     </div>
 
     <div class="offcanvas-filter-content">
@@ -356,7 +378,7 @@
           <label class="form-label custom-label text-nowrap filter-labels mb-3">Select Department</label>
           <div class="custom-p-multiSelect-content">
             <p-multiSelect [options]="departmentlist" optionLabel="departmentName" optionValue="sno"
-              resetFilterOnHide="true" [(ngModel)]="selectedDepartmentIds" [ngModelOptions]="{standalone: true}"
+              resetFilterOnHide="true" [(ngModel)]="selectedDepartmentIds" [ngModelOptions]="{ standalone: true }"
               placeholder="Please select department" [filter]="true" [showToggleAll]="true"
               selectedItemsLabel="{0} depts" class="form-select custom-select" />
           </div>
@@ -369,7 +391,7 @@
             <p-multiSelect [options]="resourceRoleOptions" optionLabel="label" optionValue="value"
               resetFilterOnHide="true" placeholder="Please select role" (onChange)="onResourceRoleChange()"
               [(ngModel)]="selectedResourceRoles" class="form-select custom-select"
-              [ngModelOptions]="{standalone: true}" />
+              [ngModelOptions]="{ standalone: true }" />
           </div>
         </div>
 
@@ -380,14 +402,13 @@
             <p-multiSelect [options]="resourcePhaseOptions" optionLabel="label" optionValue="value"
               resetFilterOnHide="true" placeholder="Please select phase" (onChange)="onResourcePhaseChange()"
               [(ngModel)]="selectedResourcePhases" class="form-select custom-select"
-              [ngModelOptions]="{standalone: true}">
-            </p-multiSelect>
+              [ngModelOptions]="{ standalone: true }" />
           </div>
         </div>
 
         <div class="d-flex offcanvas-footer-content gap-3">
-          <button type="button" class="custom-btn btn-secondary w-100" (click)="closeCanvas();resetForm()">{{'Clear All' |
-            translate}}</button>
+          <button type="button" class="custom-btn btn-secondary w-100" (click)="closeCanvas(); resetForm()">
+            {{ "Clear All" | translate }}</button>
           <button type="submit" class="custom-btn btn-primary w-100">Apply</button>
         </div>
       </form>

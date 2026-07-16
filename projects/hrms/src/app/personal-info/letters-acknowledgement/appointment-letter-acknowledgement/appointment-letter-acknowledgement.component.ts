@@ -84,9 +84,7 @@ export class AppointmentLetterAcknowledgementComponent
     console.log(employeeId);
     this.appointmentletter = {};
     this.appointmentletter = this.empdata;
-    this.appointmentletter.dateOfJoining = this.formatDatewithDate(
-      this.appointmentletter.dateOfJoining,
-    );
+  
     if (this.letterdata) {
       this.appointmentletter.notes = this.letterdata.note;
       this.appointmentletter.addressType = this.letterdata.addressType;
@@ -151,6 +149,7 @@ export class AppointmentLetterAcknowledgementComponent
       .subscribe({
         next: (data: any) => {
           console.log(data);
+          this.appointmentletter.dateOfJoining=data.dateOfJoining
           this.employeeaddress = data as IAddress[];
           if (this.employeeaddress?.employeeAddresses?.length > 0) {
             this.address = this.employeeaddress.employeeAddresses.find(

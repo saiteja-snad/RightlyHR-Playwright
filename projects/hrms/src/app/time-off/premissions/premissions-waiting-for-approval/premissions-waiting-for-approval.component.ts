@@ -97,15 +97,13 @@ export class PremissionsWaitingForApprovalComponent implements OnInit, OnDestroy
     private TimeoffYearFilterService: TimeoffYearFilterService
   ) {
     effect(() => {
-      console.log('permissionTriggerSignal fired');
-      console.log('permissionForLoggedInUser:', this.permissionForLoggedInUser);
-      console.log('selectempid:', this.selectempid);
+
       if (this.http.permissionTriggerSignal()) {
 
-        if (this.permissionForLoggedInUser) {
-          this.getDataPermissions();
-        } else {
+        if (this.selectempid) {
           this.getDataEMPPermissions();
+        } else {
+          this.getDataPermissions();
         }
 
         this.http.permissionTriggerSignal.set(false);
@@ -286,8 +284,10 @@ export class PremissionsWaitingForApprovalComponent implements OnInit, OnDestroy
   }
 
   approvePermission(approvalPopup: any, item: any) {
-    this.selectedPermissionData = item;
-
+    this.selectedPermissionData =
+      this.selectedProducts.length > 0
+        ? [...this.selectedProducts]
+        : item;
     this.modalService.open(approvalPopup, {
       centered: true,
       backdrop: 'static'
@@ -295,8 +295,10 @@ export class PremissionsWaitingForApprovalComponent implements OnInit, OnDestroy
   }
 
   rejectPermission(rejectPopup: any, item: any) {
-    this.selectedPermissionData = item;
-
+    this.selectedPermissionData =
+      this.selectedProducts.length > 0
+        ? [...this.selectedProducts]
+        : item;
     this.modalService.open(rejectPopup, {
       centered: true,
       backdrop: 'static'
@@ -333,12 +335,14 @@ export class PremissionsWaitingForApprovalComponent implements OnInit, OnDestroy
         status: 'Processed',
         comments: form.value.comments,
         moduleId: environment.permissionsModuleId,
-        headerRequests: [
-          {
-            headerID: this.selectedPermissionData.pendingApprovalsHeader.id,
-            currentStage: this.selectedPermissionData.pendingApprovalsHeader.currentapprovalStage
-          }
-        ]
+        headerRequests: (
+          Array.isArray(this.selectedPermissionData)
+            ? this.selectedPermissionData
+            : [this.selectedPermissionData]
+        ).map(item => ({
+          headerID: item.pendingApprovalsHeader.id,
+          currentStage: item.pendingApprovalsHeader.currentapprovalStage
+        }))
       };
 
       this.http.putData(
@@ -346,13 +350,22 @@ export class PremissionsWaitingForApprovalComponent implements OnInit, OnDestroy
         this.requestBody
       ).subscribe({
         next: (response: any) => {
-
+          this.spinnerLoader = false;
           this.modalService.dismissAll();
+
+          const selectedItems = Array.isArray(this.selectedPermissionData)
+            ? this.selectedPermissionData
+            : [this.selectedPermissionData];
+
+          const ids = selectedItems.map(x => x.id);
 
           this.waitingForApprovalPerimisions =
             this.waitingForApprovalPerimisions.filter(
-              x => x.id !== this.selectedPermissionData.id
+              x => !ids.includes(x.id)
             );
+
+          this.selectedProducts = [];
+          this.multiSelect = false;
 
           this.requestSummary = response.data;
 
@@ -367,7 +380,7 @@ export class PremissionsWaitingForApprovalComponent implements OnInit, OnDestroy
             count => count + 1
           );
 
-          if (this.selectedProducts && this.selectedProducts.length > 0) {
+          if (Array.isArray(this.selectedPermissionData)) {
 
             this.modalService.open(this.leaveSummary, {
               centered: true,
@@ -408,12 +421,14 @@ export class PremissionsWaitingForApprovalComponent implements OnInit, OnDestroy
         status: 'Rejected',
         comments: form.value.comments,
         moduleId: environment.permissionsModuleId,
-        headerRequests: [
-          {
-            headerID: this.selectedPermissionData.pendingApprovalsHeader.id,
-            currentStage: this.selectedPermissionData.pendingApprovalsHeader.currentapprovalStage
-          }
-        ]
+        headerRequests: (
+          Array.isArray(this.selectedPermissionData)
+            ? this.selectedPermissionData
+            : [this.selectedPermissionData]
+        ).map(item => ({
+          headerID: item.pendingApprovalsHeader.id,
+          currentStage: item.pendingApprovalsHeader.currentapprovalStage
+        }))
       };
       console.log('Reject Payload:', this.requestBody);
       this.http.putData(
@@ -421,14 +436,24 @@ export class PremissionsWaitingForApprovalComponent implements OnInit, OnDestroy
         this.requestBody
       ).subscribe({
         next: (response: any) => {
+          this.spinnerLoader = false;
           console.log('SUCCESS', response);
 
           this.modalService.dismissAll();
 
+          const selectedItems = Array.isArray(this.selectedPermissionData)
+            ? this.selectedPermissionData
+            : [this.selectedPermissionData];
+
+          const ids = selectedItems.map(x => x.id);
+
           this.waitingForApprovalPerimisions =
             this.waitingForApprovalPerimisions.filter(
-              x => x.id !== this.selectedPermissionData.id
+              x => !ids.includes(x.id)
             );
+
+          this.selectedProducts = [];
+          this.multiSelect = false;
 
           this.requestSummary = response.data;
           console.log('Before signal:', this.selectempid);
@@ -443,7 +468,7 @@ export class PremissionsWaitingForApprovalComponent implements OnInit, OnDestroy
           this.signalService.timecountTriggerSignal.update(
             count => count + 1
           );
-          if (this.selectedProducts && this.selectedProducts.length > 0) {
+          if (Array.isArray(this.selectedPermissionData)) {
 
             this.modalService.open(this.leaveSummary, {
               centered: true,
@@ -499,7 +524,7 @@ export class PremissionsWaitingForApprovalComponent implements OnInit, OnDestroy
 
   customSort(event: any): void {
     const field = event.field;
-    
+
     // Track current sort state for the clicked field
     if (this.currentSortField === field) {
       // Same field clicked - cycle through: asc (1) -> desc (-1) -> reset (0)
@@ -558,20 +583,20 @@ export class PremissionsWaitingForApprovalComponent implements OnInit, OnDestroy
   }
 
   canApproveAny(): boolean {
-  return this.waitingForApprovalPerimisions?.some(x => this.canApprove(x));
-}
+    return this.waitingForApprovalPerimisions?.some(x => this.canApprove(x));
+  }
 
-hasManagerRecords(): boolean {
-  return this.waitingForApprovalPerimisions.some(x => this.canApprove(x));
-}
+  hasManagerRecords(): boolean {
+    return this.waitingForApprovalPerimisions.some(x => this.canApprove(x));
+  }
 
-managerPermissionRequests = this.waitingForApprovalPerimisions.filter(x =>
-  this.canApprove(x)
-);
+  managerPermissionRequests = this.waitingForApprovalPerimisions.filter(x =>
+    this.canApprove(x)
+  );
 
-showMultiSelectAndSearch(): boolean {
-  return this.waitingForApprovalPerimisions?.some(x => this.canApprove(x));
-}
+  showMultiSelectAndSearch(): boolean {
+    return this.waitingForApprovalPerimisions?.some(x => this.canApprove(x));
+  }
 
   ngOnDestroy(): void {
     this.destroy$.next(true);

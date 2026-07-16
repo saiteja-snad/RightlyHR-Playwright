@@ -19,19 +19,19 @@
                                 <!-- <li
                                         *ngIf="!probationExtensionLetterData.firstName && !probationExtensionLetterData.lastName;else fullname">
                                     </li>
-                                    <ng-template #fullname> 
+                                    <ng-template #fullname>
                                     </ng-template> -->
 
                                 <li>To</li>
                                 <li>{{employeeName}}</li>
-                                <li>{{employeeiddetails.fusionEmpId}}</li>
+                                <li>{{employeeaddress.fusionEmpId}}</li>
                                 <li>{{jobRole}}</li>
                                 <li>{{department}}</li>
                                 <li>{{workLocation}}</li>
                             </ul>
                         </div>
                         <div>
-                            <p><span class="letter-sub-header">Issued Date:</span>
+                            <p><span class="letter-sub-header"> Date:</span>
                                 {{probationDate | dateformat}}</p>
                         </div>
                     </div>
@@ -44,9 +44,9 @@
                     <div>
                         <p>We are pleased to inform that following a performance appraisal
                             and subsequent review, your probation period has been extended by
-                            {{probationExtensionLetterData.probationmonths}} months.
-                            This extension will conclude on {{
-                            probationExtensionLetterData.probationExtendedDate | dateformat}}.
+                            <b>{{probationExtensionLetterData.probationmonths}} months</b>.
+                            This extension will conclude on
+                            <b>{{probationExtensionLetterData.probationExtendedDate | dateformat}}</b>.
                             At the conclusion of this extended probation period, we will conduct another
                             performance
                             review to determine the subsequent course of action based on your performance.</p>

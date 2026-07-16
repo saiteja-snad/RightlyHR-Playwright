@@ -1,5 +1,3 @@
-import { LETTER_MARGINS, stampFont, applyLetterPageSetup } from "./letter-builder.utils";
-
 export interface ContractorLetterData {
   title?: string;
   firstName: string;
@@ -26,7 +24,7 @@ export interface ContractorLetterData {
   useAutographyFont?: boolean;
   employeeFullName?: string;
   acceptanceDate?: string;
-  headerLogoBase64?: string;
+  headerLogoBase64?:string;
 }
 
 const PX = (px: number) => Math.round((px * 72) / 96);
@@ -162,7 +160,7 @@ export function buildContractorLetterDoc(data: ContractorLetterData): any {
       { text: data.jobRole ?? '', font: 'VERDANABOLD' },
       ' on a remuneration of ',
       { text: `${amountDisplay} per ${data.frequency ?? ''}`, font: 'VERDANABOLD' },
-      '. You will have to submit weekly/monthly Time sheet approved by the reporting manager. You will be working part time as required by SNAD. Your approximate start date with the company is ',
+      '. You will have to submit weekly/monthly Time sheet approved by the reporting manager. You will be working part time as required by RightlyHR. Your approximate start date with the company is ',
       fmt(data.dateOfJoining), '.',
     ], 8),
     p('Please note the following details regarding your consultancy engagement', 8),
@@ -213,26 +211,37 @@ export function buildContractorLetterDoc(data: ContractorLetterData): any {
 
   const content: any[] = [...page1, ...page2];
 
-     const isSoftCopy = !!data.backgroundImageBase64;
-      const margins = isSoftCopy ? LETTER_MARGINS.softCopy : LETTER_MARGINS.hardCopy;
+  function stampFont(nodes: any[]): any[] {
+    return nodes.map(node => {
+      if (typeof node === 'string') return node;
+      if (Array.isArray(node)) return stampFont(node);
+      const stamped: any = node.font ? node : { font: bodyFont, ...node };
+      if (Array.isArray(stamped.text)) {
+        stamped.text = stamped.text.map((t: any) => typeof t === 'string' ? t : (t.font ? t : { font: bodyFont, ...t }));
+      }
+      if (stamped.stack) stamped.stack = stampFont(stamped.stack);
+      if (stamped.columns) stamped.columns = stampFont(stamped.columns);
+      if (stamped.ol) stamped.ol = stampFont(stamped.ol);
+      if (stamped.ul) stamped.ul = stampFont(stamped.ul);
+      return stamped;
+    });
+  }
 
-      const docDef: any = {
-        pageSize: 'A4',
-        pageMargins: [margins.left, margins.top, margins.right, margins.bottom],
-        defaultStyle: {
-          font: bodyFont,
-          fontSize: PX(13),
-          alignment: 'justify',
-          color: '#000',
-        },
-        content: stampFont(content, bodyFont),
-      };
+  const styledContent = stampFont(content);
+  const topMargin = data.backgroundImageBase64 ? 120 : 50;
+  const bottomMargin = data.backgroundImageBase64 ? 120 : 50;
 
-      applyLetterPageSetup(docDef, {
-        backgroundImageBase64: data.backgroundImageBase64,
-        headerLogoBase64: data.headerLogoBase64,
-        bodyFont,
-      });
+  const docDef: any = {
+    pageSize: 'A4',
+    pageMargins: [60, topMargin, 60, bottomMargin],
+    defaultStyle: { font: bodyFont, fontSize: PX(13), color: '#000' },
+    content: styledContent,
+  };
 
-      return docDef;
+  if (data.backgroundImageBase64) {
+    docDef.images = { letterBg: data.backgroundImageBase64 };
+    docDef.background = () => ({ image: 'letterBg', width: 620, height: 870, absolutePosition: { x: -12, y: -14 } });
+  }
+
+  return docDef;
 }

@@ -10,7 +10,7 @@
                     <div class="custom-p-select-content">
                         <p-select [options]="employeedetails" optionLabel="fullName" [filter]="true" filterBy="fullName"
                             (onChange)="onClickEmployee($event)" placeholder="Please select employee"
-                            formControlName="employeeId" class="custom-select w-100" resetFilterOnHide="true">
+                            formControlName="employeeId" class="custom-select w-100" resetFilterOnHide="true" filterPlaceholder="Search employee">
                         </p-select>
                     </div>
                     <div
@@ -53,7 +53,7 @@
                         <p-select [options]="authorityDetails" optionLabel="fullName" [filter]="true"
                             filterBy="fullName" placeholder="Please select signature authority name"
                             formControlName="authorityid" class="custom-select w-100" (onChange)="pathValuesFuction()"
-                            resetFilterOnHide="true">
+                            resetFilterOnHide="true" filterPlaceholder="Select signature authority name" >
                         </p-select>
                     </div>
                     <div
@@ -112,7 +112,7 @@
                                 <div class="hard-copy-letter"></div>
                             </ng-template>
                             <div class="text-center mt-3 mb-5">
-                                <p class="letter-header text-center"> EXTENSION OF PROBATION PERIOD </p>
+                                <p class="letter-header text-center">Probation Extension Letter </p>
                             </div>
                             <div *ngIf="probationExtensionLetterData" class="d-flex justify-content-between mb-3">
                                 <div>
@@ -149,9 +149,9 @@
                             <div>
                                 <p>We are pleased to inform that following a performance appraisal
                                     and subsequent review, your probation period has been extended by
-                                    {{probationExtensionLetterData.probationmonths}} months.
-                                    This extension will conclude on {{
-                                    probationExtensionLetterData.probationExtendedDate | dateformat}}.
+                                    <b>{{probationExtensionLetterData.probationmonths}} months</b>.
+                                    This extension will conclude on
+                                    <b>{{probationExtensionLetterData.probationExtendedDate | dateformat}}</b>.
                                     At the conclusion of this extended probation period, we will conduct another
                                     performance
                                     review to determine the subsequent course of action based on your performance.</p>

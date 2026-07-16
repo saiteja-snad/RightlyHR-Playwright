@@ -37,7 +37,7 @@ export class SettingsJobTabsComponent implements OnInit {
     { label: 'Signature Authority', route: '/settings/employee-fields/job/signature-authority', permission: { feature: 'Signature Authority', action: 'view' } },
     { label: 'Interview Round', route: '/settings/employee-fields/job/interview-round', permission: { feature: 'Interview Round', action: 'view' } },
     // { label: 'Appointment Details', route: '/settings/employee-fields/job/appointment-details', permission: { feature: 'Signature Authority', action: 'view' }},
-    { label: 'Probation Frequency', route: '/settings/employee-fields/job/probation-frequency', permission: { feature: 'Signature Authority', action: 'view' } },
+    // { label: 'Probation Frequency', route: '/settings/employee-fields/job/probation-frequency', permission: { feature: 'Signature Authority', action: 'view' } },
     { label: 'Roles and Responsibilities', route: '/settings/employee-fields/job/roles-and-responsibilities', permission: { feature: 'Signature Authority', action: 'view' } },
     { label: 'Letter Acknowledgement', route: '/settings/employee-fields/job/letter-acknowledgement', permission: { feature: 'Letter Acknowledgment Configuration', action: 'view' } },
 

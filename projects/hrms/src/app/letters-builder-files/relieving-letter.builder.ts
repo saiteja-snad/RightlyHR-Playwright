@@ -79,24 +79,24 @@ export function buildRelievingLetterDoc(data: RelievingLetterData): any {
 
    const isSoftCopy = !!data.backgroundImageBase64;
      const margins = isSoftCopy ? LETTER_MARGINS.softCopy : LETTER_MARGINS.hardCopy;
-   
+
      const docDef: any = {
        pageSize: 'A4',
        pageMargins: [margins.left, margins.top, margins.right, margins.bottom],
        defaultStyle: {
          font: bodyFont,
-         fontSize: PX(13),
+         fontSize: PX(16),
          alignment: 'justify',
          color: '#000',
        },
        content: stampFont(content, bodyFont),
      };
-   
+
      applyLetterPageSetup(docDef, {
        backgroundImageBase64: data.backgroundImageBase64,
        headerLogoBase64: data.headerLogoBase64,
        bodyFont,
      });
-   
+
      return docDef;
 }

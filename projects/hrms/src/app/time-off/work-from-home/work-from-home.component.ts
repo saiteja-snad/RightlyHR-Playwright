@@ -35,7 +35,7 @@ import { APPLICABLE_POLICIES_KEYS } from '../../shared/policies/policy-visibilit
 
 export class WorkFromHomeComponent implements OnInit, OnDestroy {
   applicablePolicies = APPLICABLE_POLICIES_KEYS.TIME_OFF_WFH;
-   moduleinfo: string = '';
+  moduleinfo: string = '';
   subscription!: Subscription;
   empinfo = {} as IJob;
   halfDayValue = {} as any;
@@ -111,7 +111,7 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
   bookedWFHDays: number = 0;
   constructor(
     private modalService: NgbModal,
-    private authService:AuthService,
+    private authService: AuthService,
     private fb: FormBuilder,
     private http: HttpService,
     private sharedModalService: OpenModalService,
@@ -122,7 +122,7 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
   ) {
     effect(() => {
       if (this.http.tirggerCountSignal().wfh || this.http.wfhTriggerSignal()) {
-       this.getWFHBal();
+        this.getWFHBal();
         // this.http.tirggerCountSignal.update((status) => ({
         //   ...status,
         //   wfh: false,
@@ -171,7 +171,7 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
 
 
   getAllEmployeeDetails() {
-     const status = ['Active', 'Trainee Active', 'Active Contract'];
+    const status = ['Active', 'Trainee Active', 'Active Contract'];
     this.subscription = this.http.getData(`Employeedata/v3/Getallemployees?statuses=${status}`).subscribe({
       next: (res: any) => {
         this.activeEmplist = res.map((employee: any) => ({
@@ -211,7 +211,7 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
   //     });
   //   }
   // }
-   onWFHStartDateChange() {
+  onWFHStartDateChange() {
     this.isWeekOffSelected = false;
     this.isHolidaySelected = false;
     this.isNonOptionalHolidaySelected = false;
@@ -442,11 +442,11 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
     this.subscription = this.http.getData(`WorkFromHomeEligibilityCriteria/getwfhbalance?employeeId=${empId}&workeddate=${currentDate}`).subscribe({
       next: (response: any) => {
         this.wfhBalance = response;
-         this.wfhBalancesdetails=[response];
-          this.loadingGraph = false;
-          this.totalbalance = response.totalBalance;
-          this.availablebalance = response.availableBalance;
-          this.initChart(response);
+        this.wfhBalancesdetails = [response];
+        this.loadingGraph = false;
+        this.totalbalance = response.totalBalance;
+        this.availablebalance = response.availableBalance;
+        this.initChart(response);
       },
       error: (reason: any) => console.log(reason),
     });
@@ -615,38 +615,38 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
   // function to get the data of employees by hierarchy
   getEmployeeInfo = [] as any;
 
-getTeamManagersDetails() {
-  const EmployeeId = this.empinfo.employeeId;
-  this.subscription = this.http
-    .getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`)
-    .subscribe({
-      next: (response: any) => {
-        console.log('getEmployeesByhierarchy', response);
+  getTeamManagersDetails() {
+    const EmployeeId = this.empinfo.employeeId;
+    this.subscription = this.http
+      .getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`)
+      .subscribe({
+        next: (response: any) => {
+          console.log('getEmployeesByhierarchy', response);
 
-        if (Array.isArray(response) && response.length) {
-          const myTeam = response.filter((e: any) => e.isAccess);
+          if (Array.isArray(response) && response.length) {
+            const myTeam = response.filter((e: any) => e.isAccess);
 
-          this.getEmployeeInfo = myTeam
-            .map((employee: any) => ({
-              ...employee,
-              fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName ?? ''} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName ?? ''}`.trim(),
-            }))
-            // Alphabetical sort by firstName (case-insensitive)
-            .sort((a: any, b: any) =>
-              a.firstName.localeCompare(b.firstName, 'en', { sensitivity: 'base' })
-            );
+            this.getEmployeeInfo = myTeam
+              .map((employee: any) => ({
+                ...employee,
+                fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName ?? ''} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName ?? ''}`.trim(),
+              }))
+              // Alphabetical sort by firstName (case-insensitive)
+              .sort((a: any, b: any) =>
+                a.firstName.localeCompare(b.firstName, 'en', { sensitivity: 'base' })
+              );
 
-          console.log('getEmployeeInfo', this.getEmployeeInfo);
-        } else {
+            console.log('getEmployeeInfo', this.getEmployeeInfo);
+          } else {
+            this.getEmployeeInfo = [];
+          }
+        },
+        error: (err) => {
+          console.error(err);
           this.getEmployeeInfo = [];
-        }
-      },
-      error: (err) => {
-        console.error(err);
-        this.getEmployeeInfo = [];
-      },
-    });
-}
+        },
+      });
+  }
 
   getFutureDate(): string {
     const days = Number(this.futureDatesAllowed ?? 0);
@@ -1193,7 +1193,7 @@ getTeamManagersDetails() {
     // }
   }
 
-wfhBalancesdetails=[] as any;
+  wfhBalancesdetails = [] as any;
   getWFHBal(currentDate?: any) {
     this.loadingGraph = true;
     const empId = this.empinfo.employeeId;
@@ -1202,7 +1202,7 @@ wfhBalancesdetails=[] as any;
       next: (response: any) => {
         if (response) {
           console.log(response)
-           this.wfhBalancesdetails=[response];
+          this.wfhBalancesdetails = [response];
           this.loadingGraph = false;
           this.totalbalance = response.totalBalance;
           this.availablebalance = response.availableBalance;
@@ -1218,9 +1218,9 @@ wfhBalancesdetails=[] as any;
     const data: number[] = [];
     const labels: string[] = [];
     const backgroundColors: string[] = [];
-      data.push(item.availableBalance);
-      labels.push('WFH');
-      backgroundColors.push('#FF2E22');
+    data.push(item.availableBalance);
+    labels.push('WFH');
+    backgroundColors.push('#FF2E22');
     this.totalbalance = {
       datasets: [
         {
@@ -1238,7 +1238,7 @@ wfhBalancesdetails=[] as any;
 
   getAvailablewfhs(item: any): number {
     if (item.availableBalance) {
-      return item.availableBalance ;
+      return item.availableBalance;
     } else {
       return item.availableBalance;
     }
@@ -1305,7 +1305,7 @@ wfhBalancesdetails=[] as any;
     const startTimeMinutes = startHours * 60 + startMinutes;
     const endTimeMinutes = endHours * 60 + endMinutes;
     // Check if start time is greater than end time
-    if ( startDate > endDate || (startDate === endDate && startTimeMinutes > endTimeMinutes)) {
+    if (startDate > endDate || (startDate === endDate && startTimeMinutes > endTimeMinutes)) {
       this.timeValudationError = true;
     } else {
       this.timeValudationError = false;
@@ -1361,14 +1361,12 @@ wfhBalancesdetails=[] as any;
         next: (res: any) => {
           this.modalService.dismissAll();
           this.sharedModalService.openSuccessModal('Request submitted successfully');
-          // this.requestSummary = res;
-          // this.openModal(this.wfhSummary);
-          // setTimeout(() => {
-          //   this.modalService.dismissAll();
-          // }, 5000);
+
           this.getWFHBal();
-          this.http.wfhTriggerSignal.set(true);
-          this.getWorkfromhomeRequest(this.empinfo?.employeeId);
+
+          setTimeout(() => {
+            window.location.reload();
+          }, 1000);
         },
         error: (err: any) => {
           this.spinnerLoader = false;
@@ -1382,13 +1380,13 @@ wfhBalancesdetails=[] as any;
       });
     }
   }
-getApprovalStatusCounts() {
+  getApprovalStatusCounts() {
     let loggedInUser = this.authService.getToken();
     let EmployeeId = loggedInUser.employeeId;
     this.http.get(`PendingApproval/getApprovalStatusCounts?moduleId=${environment.wfhModuleId}&EmployeeId=${EmployeeId}`).subscribe((res: any) => {
       this.totalCount = res.reduce((acc: number, curr: any) => acc + curr.totalCount, 0);
-       this.http.updatePendingApprovalCounts(this.totalCount);
-   //Map counts to tabs
+      this.http.updatePendingApprovalCounts(this.totalCount);
+      //Map counts to tabs
     });
   }
 

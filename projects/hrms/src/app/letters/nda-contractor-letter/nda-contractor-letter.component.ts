@@ -12,6 +12,7 @@ import moment from 'moment';
 import { AuthService } from '../../services/auth.service';
 import { HttpService } from '../../services/http.service';
 import { IDepartment, IemployeeDetails, IIssuelocation, } from '../../Interfaces/letters-model';
+import { DateformatPipe } from "../../pipes/dateformat.pipe";
 import { OpenModalService } from '../../services/open-modal.service';
 import { NgxCountriesDropdownModule } from 'ngx-countries-dropdown';
 import { TranslateModule } from '@ngx-translate/core';
@@ -20,7 +21,6 @@ import { IAssertsType } from '../../Interfaces/job-model';
 import { IEmployeeIdentity, IAsset, IEmployeeJobInfo, IEmployeeProfile, IEmployeeAddress } from '../appointment-letter/appointment-letter-model';
 import { IEmployeeSignatures } from '../letters.modal';
 import { SignalsService } from '../../services/signals.service';
-import { DateformatPipe } from '../../pipes/dateformat.pipe';
 import { LettersheaderComponent } from "../../shared/letters-shared-content/lettersheader/lettersheader.component";
 import { LetterFooterComponent } from "../../shared/letters-shared-content/letter-footer/letter-footer.component";
 import { fetchLetterAssets, setupLetterPdfMake } from '../../letters-builder-files/letter-pdf.utils';
@@ -66,13 +66,8 @@ export class NdaContractorLetterComponent {
     { name: 'Hard Copy', value: false },
   ];
 
-  constructor(
-    private http: HttpService,
-    private router: Router,
-    private authService: AuthService,
-    private conformationPopup: OpenModalService,
-    private fb: FormBuilder,
-    private signalService: SignalsService) { }
+  constructor(private http: HttpService, private router: Router, private authService: AuthService,
+    private conformationPopup: OpenModalService, private fb: FormBuilder, private signalService: SignalsService) { }
 
   ngOnInit(): void {
     this.initializeForm();
@@ -335,11 +330,10 @@ export class NdaContractorLetterComponent {
     }
     const fileName = `${this.selectedEmployee.firstName}_${this.selectedEmployee.middleName ?? ''}_${this.selectedEmployee.lastName}_${new Date().getTime()}_Non-DisclosureAgreementLetter_Unsigned.pdf`;
     const isSoftCopy = f.value.documentType === true;
-
-       const [assets, pm] = await Promise.all([
-         fetchLetterAssets(isSoftCopy),
-         setupLetterPdfMake(),
-       ]);
+    const [assets, pm] = await Promise.all([
+      fetchLetterAssets(isSoftCopy),
+      setupLetterPdfMake(),
+    ]);
 
     const docDef = buildNdaLetterDoc({
       firstName: this.selectedEmployee.firstName,
@@ -355,7 +349,7 @@ export class NdaContractorLetterComponent {
       ndaSentDate: f.value.ndassentdate,
       authorityFullName: this.authorityFullName,
       authorityDesignation: this.selectedAuthority?.designation,
-          backgroundImageBase64: assets.backgroundImageBase64,
+      backgroundImageBase64: assets.backgroundImageBase64,
       headerLogoBase64: assets.headerLogoBase64,
       useVerdanaFont: true,
       useAutographyFont: true,
@@ -378,6 +372,30 @@ export class NdaContractorLetterComponent {
     }
   }
 
+  private fetchImageAsBase64(url: string): Promise<string> {
+    return fetch(url).then(res => res.blob()).then(blob => new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result as string);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    }));
+  }
+
+  private async getFileBase64(url: string): Promise<string | null> {
+    try {
+      const response = await fetch(url);
+      if (!response.ok) return null;
+      const buffer = await response.arrayBuffer();
+      const bytes = new Uint8Array(buffer);
+      let binary = '';
+      for (let i = 0; i < bytes.byteLength; i++) {
+        binary += String.fromCharCode(bytes[i]);
+      }
+      return btoa(binary);
+    } catch {
+      return null;
+    }
+  }
 
   //Post NDA Details
   postNDADetails(docUrl: string) {

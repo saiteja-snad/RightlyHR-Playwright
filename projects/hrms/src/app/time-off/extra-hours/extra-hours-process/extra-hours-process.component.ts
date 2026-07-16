@@ -85,26 +85,35 @@ export class ExtraHoursProcessComponent implements OnInit, OnDestroy {
     this.rows = event.rows;
   }
 
-  getDataPermissions() {
-    let empId = this.empinfo.employeeId;
-    this.dataLoad = true;
-    this.http.getFilterExtraHoursDataByID(empId, this.selectedYear).pipe(takeUntil(this.destroy$)).subscribe({
+ getDataPermissions() {
+  console.log('getDataPermissions called');
+
+  let empId = this.empinfo.employeeId;
+  this.dataLoad = true;
+
+  console.log('Calling API for employee:', empId);
+
+  this.http.getFilterExtraHoursDataByID(empId, this.selectedYear)
+    .pipe(takeUntil(this.destroy$))
+    .subscribe({
       next: (response: any) => {
+        console.log('API Response:', response);
+
         this.processPerimisions = response.filter(
           (element: { status: string }) => element.status === 'Processed'
         );
+
+        console.log('Processed Records:', this.processPerimisions);
+
         this.originalProcessPerimisions = [...this.processPerimisions];
         this.dataLoad = false;
       },
       error: (error) => {
-        console.error('Error fetching data:', error);
+        console.error('API Error:', error);
         this.dataLoad = false;
-        this.processPerimisions = []; // Set to empty array on error
-        this.originalProcessPerimisions = [];
-      },
+      }
     });
-  }
-
+}
   getDataEMPPermissions() {
     let empId = this.selectempid;
     this.dataLoad = true;
@@ -127,7 +136,7 @@ export class ExtraHoursProcessComponent implements OnInit, OnDestroy {
 
   customSort(event: any): void {
     const field = event.field;
-    
+
     // Track current sort state for the clicked field
     if (this.currentSortField === field) {
       // Same field clicked - cycle through: asc (1) -> desc (-1) -> reset (0)

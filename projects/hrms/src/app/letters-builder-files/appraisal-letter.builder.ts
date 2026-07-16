@@ -103,15 +103,15 @@ export function buildAppraisalLetterDoc(data: AppraisalLetterData): any {
   const fullName = [data.firstName, data.middleName, data.lastName].filter(Boolean).join(' ');
 
   const commonTableLayout = {
-    paddingLeft: () => 4,
-    paddingRight: () => 4,
-    paddingTop: () => 4,
-    paddingBottom: () => 4,
+    paddingLeft: () => 3,
+    paddingRight: () => 3,
+    paddingTop: () => 3,
+    paddingBottom: () => 3,
   };
 
   const salaryTable = {
     table: {
-      widths: ['*', 85, 85],
+      widths: ['*', 72, 72],
       body: [
         [th('Components In Salary'), th('Per Month'), th('Per Annum')],
         salRow('Basic Salary', e(data.basicSalary), e(data.basicPerannum)),
@@ -130,13 +130,13 @@ export function buildAppraisalLetterDoc(data: AppraisalLetterData): any {
     defaultStyle: {
       alignment: 'center',
     },
-    margin: [0, 0, 0, 8],
+    margin: [0, 0, 0, 6],
     font: bodyFont,
   };
 
   const ctcTable = {
     table: {
-      widths: ['*', 85, 85],
+      widths: ['*', 72, 72],
       body: [
         [
           {
@@ -158,7 +158,11 @@ export function buildAppraisalLetterDoc(data: AppraisalLetterData): any {
           boldCell(e(data.salary), { alignment: 'center', fillColor: '#fce4d6' })
         ],
         ctcSpan('Variable Pay', e(data.variablePayAmount)),
-        ctcSpan('Total CTC (Including Variable Pay & ESOP)', e(data.totalCTC)),
+        [
+          boldCell('Total CTC (Including Variable Pay & ESOP)', { fillColor: '#fff2cc' }),
+          { text: e(data.totalCTC) !== '' ? String(e(data.totalCTC)) : '', font: 'VERDANABOLD', alignment: 'center', colSpan: 2, fillColor: '#fff2cc' },
+          { text: '' },
+        ],
       ],
     },
 
@@ -175,9 +179,9 @@ export function buildAppraisalLetterDoc(data: AppraisalLetterData): any {
   const page1: any[] = [
     { text: 'Appraisal Letter', fontSize: PX(14), alignment: 'center', margin: [0, 0, 0, 6], font: 'VERDANABOLD', },
     { text: `Date: ${fmt(data.letterDate)}`, alignment: 'right', margin: [0, 0, 0, 6], font: 'VERDANABOLD' },
-    p([{ text: `${data.gender ? data.gender + ' ' : ''}${fullName}`, font: 'VERDANABOLD' }, '\n', { text: data.jobRole || '', font: 'VERDANABOLD' }], 10),
-    p([{ text: `Dear ${fullName},`, font: 'VERDANABOLD' }], 10),
-    p('We are pleased to present you with this appraisal letter on behalf of RightlyHR. We want to extend our gratitude for your dedication and substantial contributions to the organization. Your hard work and commitment have made a significant impact on our success.', 10),
+    p([{ text: `${data.gender ? data.gender + ' ' : ''}${fullName}`, font: 'VERDANABOLD' }, '\n', { text: data.jobRole || '', font: 'VERDANABOLD' }], 5),
+    p([{ text: `Dear ${fullName},`, font: 'VERDANABOLD' }], 7),
+    p('We are pleased to present you with this appraisal letter on behalf of RightlyHR. We want to extend our gratitude for your dedication and substantial contributions to the organization. Your hard work and commitment have made a significant impact on our success.', 5),
     ...(data.isPromotion && data.newJobRole ? [
       p([
         'We are happy with your performance and are equally pleased to share that you have been promoted to ',
@@ -192,9 +196,9 @@ export function buildAppraisalLetterDoc(data: AppraisalLetterData): any {
       { text: `Rs.${n(data.totalCTC)}`, font: 'VERDANABOLD' },
       '.',
     ], 8),
-    p('We are confident that you will put in your best efforts in discharging your duties and responsibilities even more efficiently and in the best of interest of the organization and measure up to the confidence and faith reposed in you by the Management repeatedly.', 10),
-    p('All other terms & conditions of your Appointment Letter will remain unchanged.', 10),
-    p('Your new compensation structure is as follows:', 12),
+    p('We are confident that you will put in your best efforts in discharging your duties and responsibilities even more efficiently and in the best of interest of the organization and measure up to the confidence and faith reposed in you by the Management repeatedly.', 5),
+    p('All other terms & conditions of your Appointment Letter will remain unchanged.', 8),
+    p('Your new compensation structure is as follows:', 10),
     salaryTable,
     ctcTable,
   ];
@@ -208,7 +212,10 @@ export function buildAppraisalLetterDoc(data: AppraisalLetterData): any {
   ];
 
   const page2: any[] = [
-    ...(data.note ? [p([{ text: 'Note: ', font: 'VERDANABOLD' }, { text: data.note, font: 'VERDANABOLD' }], 12)] : []),
+    ...(data.note
+      ? [{ text: [{ text: 'Note: ', font: 'VERDANABOLD' }, { text: data.note, font: 'VERDANABOLD' }], font: bodyFont, margin: [0, 0, 0, 12], pageBreak: 'before' }]
+      : [{ text: '', pageBreak: 'before' }]
+    ),
     p({ text: 'Additional Details Related to Salary Structure:', font: 'VERDANABOLD' }, 8),
     {
       ol: additionalDetails.map((item, i) => ({
@@ -231,7 +238,7 @@ export function buildAppraisalLetterDoc(data: AppraisalLetterData): any {
         body: [[{
           text: data.authorityFullName,
           font: 'Autography',
-          fontSize: PX(32),
+          fontSize: PX(33),
           noWrap: true,
           lineHeight: 1,
           alignment: 'left',

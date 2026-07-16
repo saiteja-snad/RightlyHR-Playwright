@@ -17,8 +17,8 @@
 
         <div class="custom-component-right-content p-3">
             @if(cardHistoryResponse.length>0){
-            <p-table #cardsHistoryTable [value]="getFilteredAndSortedCardHistory()" [customSort]="true" (sortFunction)="customSort($event)"
-                     styleClass="custom-table" [tableStyle]="{'min-width': '50rem'}">
+            <p-table #cardsHistoryTable [value]="getFilteredAndSortedCardHistory()" [customSort]="true"
+                (sortFunction)="customSort($event)" [scrollable]="true" scrollHeight="calc(100dvh - 15rem)">
                 <ng-template pTemplate="header">
                     <tr>
                         <th pSortableColumn="cardNumber">

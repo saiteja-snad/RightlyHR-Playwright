@@ -48,7 +48,7 @@ export class RemoteWaitingForApprovalComponent implements OnInit, OnDestroy {
   empinfo = {} as IJob;
   dataLoad = false;
   destroy$: Subject<boolean> = new Subject<boolean>();
-  
+
   // Sorting properties
   originalApprovedRemotes = [] as ICompOff[];
   currentSortField: string = '';
@@ -189,8 +189,12 @@ export class RemoteWaitingForApprovalComponent implements OnInit, OnDestroy {
               element.status === 'Waiting for Approval'
           );
           this.originalApprovedRemotes = [...this.approvedRemotes]; // Store original data
-          console.log('approvedRemotes:', this.approvedRemotes);
-          console.log('approvedRemotes length:', this.approvedRemotes.length);
+          this.selectedProducts = [];
+          this.multiSelect = false;
+
+          if (this.remoteWaitingTable) {
+            this.remoteWaitingTable.selection = [];
+          }
           this.approvedRemotesCount = this.approvedRemotes.length;
         },
         error: (error) => {
@@ -224,6 +228,12 @@ export class RemoteWaitingForApprovalComponent implements OnInit, OnDestroy {
             (element: { status: string }) => element.status === 'Waiting for Approval'
           );
           this.originalApprovedRemotes = [...this.approvedRemotes]; // Store original data
+          this.selectedProducts = [];
+          this.multiSelect = false;
+
+          if (this.remoteWaitingTable) {
+            this.remoteWaitingTable.selection = [];
+          }
           this.approvedRemotesCount = this.approvedRemotes.length;
         },
         error: (error) => {
@@ -235,7 +245,11 @@ export class RemoteWaitingForApprovalComponent implements OnInit, OnDestroy {
   }
 
   approveRemote(approvalPopup: any, item: any) {
-    this.selectedRemoteData = item;
+
+    this.selectedRemoteData =
+      this.selectedProducts.length > 0
+        ? [...this.selectedProducts]
+        : item;
 
     this.selectedLeaveStatus = '';
     this.approveForm.reset();
@@ -247,7 +261,11 @@ export class RemoteWaitingForApprovalComponent implements OnInit, OnDestroy {
   }
 
   rejectRemote(rejectPopup: any, item: any) {
-    this.selectedRemoteData = item;
+
+    this.selectedRemoteData =
+      this.selectedProducts.length > 0
+        ? [...this.selectedProducts]
+        : item;
 
     this.selectedLeaveStatus = '';
     this.rejectForm.reset();
@@ -281,18 +299,20 @@ export class RemoteWaitingForApprovalComponent implements OnInit, OnDestroy {
     if (form.valid) {
 
       let approvedBy = this.empinfo.employeeId.toString();
+      const isMultiSelection = Array.isArray(this.selectedRemoteData);
+      const selectedItems = Array.isArray(this.selectedRemoteData)
+        ? this.selectedRemoteData
+        : [this.selectedRemoteData];
 
       this.requestBody = {
         requestProcessedBy: approvedBy,
         status: 'Approved',
         comments: form.value.comments,
         moduleId: environment.remoteLoginModuleId,
-        headerRequests: [
-          {
-            headerID: this.selectedRemoteData.pendingApprovalsHeader.id,
-            currentStage: this.selectedRemoteData.pendingApprovalsHeader.currentapprovalStage
-          }
-        ]
+        headerRequests: selectedItems.map(item => ({
+          headerID: item.pendingApprovalsHeader.id,
+          currentStage: item.pendingApprovalsHeader.currentapprovalStage
+        }))
       };
 
       this.http.putData(
@@ -300,14 +320,16 @@ export class RemoteWaitingForApprovalComponent implements OnInit, OnDestroy {
         this.requestBody
       ).subscribe({
         next: (response: any) => {
-
+          this.spinnerLoader = false;
           this.modalService.dismissAll();
 
           console.log('Before approve:', this.approvedRemotes.length);
 
           // Remove approved/rejected record immediately
+          const ids = selectedItems.map(x => x.id);
+
           this.approvedRemotes = this.approvedRemotes.filter(
-            x => x.id !== this.selectedRemoteData.id
+            x => !ids.includes(x.id)
           );
 
           console.log('After approve:', this.approvedRemotes.length);
@@ -319,8 +341,7 @@ export class RemoteWaitingForApprovalComponent implements OnInit, OnDestroy {
 
           this.requestSummary = response.data;
 
-          if (this.selectedProducts && this.selectedProducts.length > 0) {
-
+          if (isMultiSelection) {
             this.openModal(this.leaveSummary);
 
             setTimeout(() => {
@@ -333,7 +354,6 @@ export class RemoteWaitingForApprovalComponent implements OnInit, OnDestroy {
               this.requestSummary,
               'Remote Login request approved successfully'
             );
-
           }
 
           // Refresh sidebar counts immediately
@@ -362,33 +382,33 @@ export class RemoteWaitingForApprovalComponent implements OnInit, OnDestroy {
     if (form.valid) {
 
       let approvedBy = this.empinfo.employeeId.toString();
-
+      const selectedItems = Array.isArray(this.selectedRemoteData)
+        ? this.selectedRemoteData
+        : [this.selectedRemoteData];
       this.requestBody = {
         requestProcessedBy: approvedBy,
         status: 'Rejected',
         comments: form.value.comments,
         moduleId: environment.remoteLoginModuleId,
-        headerRequests: [
-          {
-            headerID: this.selectedRemoteData.pendingApprovalsHeader.id,
-            currentStage: this.selectedRemoteData.pendingApprovalsHeader.currentapprovalStage
-          }
-        ]
+        headerRequests: selectedItems.map(item => ({
+          headerID: item.pendingApprovalsHeader.id,
+          currentStage: item.pendingApprovalsHeader.currentapprovalStage
+        }))
       };
-
       this.http.putData(
         `v2/PendingApproval/multiapprovals`,
         this.requestBody
       ).subscribe({
         next: (response: any) => {
-
+          this.spinnerLoader = false;
           this.modalService.dismissAll();
 
           // Remove record immediately
-          this.approvedRemotes =
-            this.approvedRemotes.filter(
-              x => x.id !== this.selectedRemoteData.id
-            );
+          const ids = selectedItems.map(x => x.id);
+
+          this.approvedRemotes = this.approvedRemotes.filter(
+            x => !ids.includes(x.id)
+          );
 
           // Update count immediately
           this.approvedRemotesCount = this.approvedRemotes.length;
@@ -462,7 +482,7 @@ export class RemoteWaitingForApprovalComponent implements OnInit, OnDestroy {
 
   customSort(event: any): void {
     const field = event.field;
-    
+
     // Track current sort state for the clicked field
     if (this.currentSortField === field) {
       // Same field clicked - cycle through: asc (1) -> desc (-1) -> reset (0)
@@ -502,7 +522,7 @@ export class RemoteWaitingForApprovalComponent implements OnInit, OnDestroy {
           val1 = new Date(a[field]).getTime();
           val2 = new Date(b[field]).getTime();
           return event.order * (val1 - val2);
-        
+
         case 'durationType':
           // Map durationType numbers to sortable values for proper sorting
           const durationMap: { [key: number]: number } = {
@@ -513,7 +533,7 @@ export class RemoteWaitingForApprovalComponent implements OnInit, OnDestroy {
           val1 = durationMap[a[field]] || 0;
           val2 = durationMap[b[field]] || 0;
           return event.order * (val1 - val2);
-        
+
         case 'status':
         case 'requestedComments':
         default:

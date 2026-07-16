@@ -52,6 +52,7 @@ import { DocumentHistoryContractOfferLetterComponent } from '../admin/document-h
 import { DocumentHistoryInternAppointmentComponent } from '../admin/document-history/document-history-intern-appointment/document-history-intern-appointment.component';
 import { DocumentHistoryInternOfferLetterComponent } from '../admin/document-history/document-history-intern-offer-letter/document-history-intern-offer-letter.component';
 import { DocumentHistoryNdaLetterComponent } from '../admin/document-history/document-history-nda-letter/document-history-nda-letter.component';
+import { ResourceApprovalsComponent } from './pending-approvals/resource-approvals/resource-approvals.component';
 import { DocumentHistoryOfferLetterComponent } from '../admin/document-history/document-history-offer-letter/document-history-offer-letter.component';
 
 export default [
@@ -198,8 +199,18 @@ export default [
             { path: 'trainee-approvals', component: TraineeApprovalsComponent, data: { permission: 'Trainee Details.view' } },
         ]
     },
-    { path: 'time-sheets', component: TimeSheetApprovalsComponent, data: { permission: 'Time Sheet approval Tab.view' } },
-    { path: 'kra-kpi', component: KraKpiApprovalsComponent, data: { permission: 'KRA KPI approval Tab.view' } },
+    // Project Management
+    {
+        path: 'project-management',
+        children: [
+            // Time Sheet Approvals
+            { path: 'time-sheets', component: TimeSheetApprovalsComponent, data: { permission: 'Time Sheet approval Tab.view', auditModule: 'Pending Approvals >> Time Off >> Time Sheets', auditPage: 'Time Sheet Approvals' } },
+            // Resource Approvals
+            { path: 'resource-approvals', component: ResourceApprovalsComponent, data: { permission: 'Resource approval Tab.view', auditModule: 'Pending Approvals >> Time Off >> Resource Approvals', auditPage: 'Resource Approvals' } },
+        ]
+    },
+    { path: 'kra-kpi', component: KraKpiApprovalsComponent, data: { permission: 'KRA KPI approval Tab.view', auditModule: 'Pending Approvals >> Time Off >> KRA KPI', auditPage: 'KRA KPI Approvals' } },
+    // { path: 'impersonation-users', component: ImpersonateUserApprovalsComponent, data: { permission: 'Impersonation Tab.view', auditModule: 'Pending Approvals >> Time Off >> Impersonation', auditPage: 'Impersonation Approvals' } },
     {
         path: 'employeeinfo-request', component: EmployeeinfoRequestComponent,
         children: [

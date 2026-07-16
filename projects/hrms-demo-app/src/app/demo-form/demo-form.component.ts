@@ -16,6 +16,13 @@ const ALLOWED_LOGO_TYPES = ['image/png', 'image/jpeg', 'image/svg+xml'];
 const NAME_PATTERN = /^[a-zA-Z][a-zA-Z\s.'-]{1,79}$/;
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/;
 const MOBILE_PATTERN = /^\+?[0-9\s-]{10,15}$/;
+const BLOCKED_EMAIL_DOMAINS = ['gmail.com', 'outlook.com', 'hotmail.com', 'live.com', 'yahoo.com', 'yahoo.in', 'zoho.com', 'zohomail.com'];
+
+function workEmailValidator(control: import('@angular/forms').AbstractControl) {
+  const value: string = control.value || '';
+  const domain = value.split('@')[1]?.toLowerCase();
+  return domain && BLOCKED_EMAIL_DOMAINS.includes(domain) ? { workEmail: true } : null;
+}
 
 @Component({
   selector: 'app-demo-form',
@@ -34,7 +41,7 @@ export class DemoFormComponent implements OnDestroy {
     middleName: ['', ],
     lastName: ['', [Validators.required, Validators.pattern(NAME_PATTERN)]],
     companyName: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(100)]],
-    email: ['', [Validators.required, Validators.email, Validators.pattern(EMAIL_PATTERN)]],
+    email: ['', [Validators.required, Validators.email, Validators.pattern(EMAIL_PATTERN), workEmailValidator]],
     mobile: ['', [Validators.pattern(MOBILE_PATTERN)]],
     demoPreference: ['prefilled' as 'prefilled' | 'custom', Validators.required],
     agreeTerms: [false, Validators.requiredTrue],

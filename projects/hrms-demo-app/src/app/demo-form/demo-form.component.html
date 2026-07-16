@@ -115,7 +115,9 @@
               (click)="openVerify('email')">Verify</button>
             }
           </div>
-          @if (submitted && form.controls.email.invalid) {
+          @if (form.controls.email.touched && form.controls.email.errors?.['workEmail']) {
+          <div class="hint err">Personal email addresses are not allowed. Please use your work email.</div>
+          } @else if (form.controls.email.touched && form.controls.email.invalid) {
           <div class="hint err">A valid work email is required.</div>
           } @else if (submitted && form.controls.email.valid && !emailVerified) {
           <div class="hint err">Please verify your email address.</div>

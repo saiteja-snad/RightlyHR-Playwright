@@ -111,8 +111,20 @@
             @if (emailVerified) {
             <button type="button" class="verify done" disabled>&#10003; Verified</button>
             } @else {
-            <button type="button" class="verify" [disabled]="form.controls.email.invalid"
-              (click)="openVerify('email')">Verify</button>
+            <button type="button" class="verify" [disabled]="form.controls.email.invalid || emailVerifyLoader"
+              (click)="openVerify('email')">
+            
+              @if (emailVerifyLoader) {
+              <div class="button-loader-content">
+                <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true">
+                </span>
+                <span>Loading...</span>
+              </div>
+              } @else {
+              <span>Verify</span>
+              }
+            
+            </button>
             }
           </div>
           @if (form.controls.email.touched && form.controls.email.errors?.['workEmail']) {
@@ -131,18 +143,29 @@
           <div class="control">
             <input type="tel" id="mobile" formControlName="mobile" placeholder="Mobile number" autocomplete="tel"
               [class.good]="mobileVerified" style="padding-right:110px" />
-            @if (mobileVerified) {
+            <!-- @if (mobileVerified) {
             <button type="button" class="verify done" disabled>&#10003; Verified</button>
             } @else {
-            <button type="button" class="verify" [disabled]="!mobileProvided || form.controls.mobile.invalid"
-              (click)="openVerify('mobile')">Verify</button>
+          <button type="button" class="verify" [disabled]="!mobileProvided || form.controls.mobile.invalid || mobileVerifyLoader"
+            (click)="openVerify('mobile')">
+            @if (mobileVerifyLoader) {
+            <div class="button-loader-content">
+              <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true">
+              </span>
+              <span>Loading...</span>
+            </div>
+            } @else {
+            <span>Verify</span>
             }
+          </button>
+            } -->
           </div>
-          @if (mobileProvided && form.controls.mobile.invalid) {
-          <div class="hint err">Enter a valid mobile number (10-15 digits).</div>
-          } @else if (form.controls.mobile.touched && mobileProvided && !mobileVerified) {
-          <div class="hint err">Please verify your mobile number.</div>
+          @if (mobileProvided && (form.controls.mobile.hasError('minlength') || form.controls.mobile.hasError('maxlength'))) {
+          <div class="hint err">Mobile number must be 10 digits.</div>
           }
+          <!-- @else if (form.controls.mobile.touched && mobileProvided && !mobileVerified) {
+          <div class="hint err">Please verify your mobile number.</div>
+          } -->
         </div>
       </fieldset>
 
@@ -208,7 +231,20 @@
       @if (submitted && form.controls.agreeTerms.invalid) {
       <div class="hint err" style="margin-top:-14px; margin-bottom: 14px;">You must accept the terms to continue.</div>
       }
-      <button type="submit" class="cta" [disabled]="!canSubmit">Create my demo instance <span class="arr">&rarr;</span></button>
+      <button type="submit" class="cta" [disabled]="!canSubmit || submitLoader">
+      
+        @if (submitLoader) {
+        <div class="button-loader-content">
+          <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true">
+          </span>
+          <span>Creating...</span>
+        </div>
+        } @else {
+        <span>Create my demo instance</span>
+        <span class="arr">&rarr;</span>
+        }
+      
+      </button>
       <p class="cta-hint" [class.ready]="canSubmit">
         {{ canSubmit ? "You're all set — one click away." : 'Complete the required fields and verify your email to continue.' }}
       </p>

@@ -42,7 +42,7 @@ export class DemoFormComponent implements OnDestroy {
     lastName: ['', [Validators.required, Validators.pattern(NAME_PATTERN)]],
     companyName: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(100)]],
     email: ['', [Validators.required, Validators.email, Validators.pattern(EMAIL_PATTERN), workEmailValidator]],
-    mobile: ['', [Validators.pattern(MOBILE_PATTERN)]],
+    mobile: ['', [Validators.minLength(10),Validators.maxLength(10)]],
     demoPreference: ['prefilled' as 'prefilled' | 'custom', Validators.required],
     agreeTerms: [false, Validators.requiredTrue],
   });
@@ -66,6 +66,9 @@ export class DemoFormComponent implements OnDestroy {
   emailTimer = 0;
   mobileTimer = 0;
   errormsg:string|null=null;
+  emailVerifyLoader=false;
+  mobileVerifyLoader=false;
+  submitLoader = false;
   private emailInterval?: ReturnType<typeof setInterval>;
   private mobileInterval?: ReturnType<typeof setInterval>;
   private modalRef?: NgbModalRef;
@@ -82,12 +85,11 @@ export class DemoFormComponent implements OnDestroy {
   }
 
   get canSubmit(): boolean {
-    return (
-      this.form.valid &&
-      this.emailVerified &&
-      (!this.mobileProvided || this.mobileVerified)
-    );
-  }
+  return (
+    this.form.valid &&
+    this.emailVerified
+  );
+}
 
   get step1Done(): boolean {
     return (
@@ -131,6 +133,7 @@ export class DemoFormComponent implements OnDestroy {
   // --- Verification flow ---
 
   openVerify(target: VerifyTarget): void {
+ 
     const control = target === 'email' ? this.form.controls.email : this.form.controls.mobile;
     control.markAsTouched();
     if (control.invalid || !control.value) {
@@ -141,10 +144,12 @@ export class DemoFormComponent implements OnDestroy {
     this.currentOtpValue = '';
     this.startTimer(target);
     if (target === 'email' && this.form.get('email')?.value) {
-      this.sendEmailVerificationCode();
+      this.sendEmailVerificationCode(target);
     }
   }
-  sendEmailVerificationCode(): void {
+  sendEmailVerificationCode(fieldname:any): void {
+    if(fieldname==='email'){this.emailVerifyLoader=true;}
+    if(fieldname==='mobile'){this.mobileVerifyLoader=true;}
     const email = this.form.get('email')?.value;
     if (!email) {
       this.confirmationpopup.openErrorModal('Please enter an email address first!');
@@ -155,7 +160,9 @@ export class DemoFormComponent implements OnDestroy {
     this.verificationService.sendVerificationCode(email,fullName).subscribe({
       next: (res) => {
         if (res.statusCode === 200) {
-          console.log(res.message);
+          //console.log(res.message);
+          this.emailVerifyLoader=false;
+          this.mobileVerifyLoader=false;
           this.modalRef = this.modalService.open(this.verifyModalTpl, { centered: true, backdrop: 'static' });
           this.modalRef.result.finally(() => {
             this.activeTarget = null;
@@ -166,6 +173,8 @@ export class DemoFormComponent implements OnDestroy {
         }
       },
       error: (err: any) => {
+         this.emailVerifyLoader=false;
+         this.mobileVerifyLoader=false;
         const errBody = err?.error;
         const msg = errBody?.errors
           ? Object.values(errBody.errors).join(', ')
@@ -297,6 +306,7 @@ export class DemoFormComponent implements OnDestroy {
     if (!this.canSubmit) {
       return;
     }
+    this.submitLoader = true;
     const formvalue =this.form.getRawValue();
     let payload = {
       firstName: formvalue.firstName,
@@ -312,13 +322,14 @@ export class DemoFormComponent implements OnDestroy {
     this.httpService.createdemoinstance(payload).subscribe({
       next: (response:any) => {
         console.log('API Response:', response);
-
+         this.submitLoader = false;
         //this.confirmationpopup.openSuccessModal('Demo instance created successfully!');
         if(response.statusCode === 201){
         this.submittedSuccessfully = true;
       }
       },
       error: (error: any) => {
+        this.submitLoader = false;
         const errBody = error?.error;
         const msg = errBody?.errors
           ? Object.values(errBody.errors).join(', ')

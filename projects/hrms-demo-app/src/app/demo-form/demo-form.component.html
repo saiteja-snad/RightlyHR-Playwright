@@ -64,40 +64,40 @@
           <div class="field">
             <label class="lbl" for="firstName">First Name <span class="req">*</span></label>
             <div class="control">
-              <input type="text" id="firstName" formControlName="firstName" placeholder="e.g. Priya" autocomplete="given-name" />
+              <input type="text" id="firstName" formControlName="firstName" placeholder="First name" autocomplete="given-name" />
             </div>
-            @if (submitted && form.controls.firstName.errors?.['required']) {
+            @if (form.controls.firstName.touched && form.controls.firstName.errors?.['required']) {
             <div class="hint err">First name is required.</div>
-            } @else if (submitted && form.controls.firstName.errors?.['pattern']) {
+            } @else if (form.controls.firstName.touched && form.controls.firstName.errors?.['pattern']) {
             <div class="hint err">Enter a valid first name using letters only.</div>
             }
           </div>
           <div class="field">
             <label class="lbl" for="middleName">Middle Name</label>
             <div class="control">
-              <input type="text" id="middleName" formControlName="middleName" placeholder="e.g. Jane" autocomplete="additional-name" />
+              <input type="text" id="middleName" formControlName="middleName" placeholder="Middle name" autocomplete="additional-name" />
             </div>
           </div>
           <div class="field">
             <label class="lbl" for="lastName">Last Name <span class="req">*</span></label>
             <div class="control">
-              <input type="text" id="lastName" formControlName="lastName" placeholder="e.g. Sharma" autocomplete="family-name" />
+              <input type="text" id="lastName" formControlName="lastName" placeholder="Last name" autocomplete="family-name" />
             </div>
-            @if (submitted && form.controls.lastName.errors?.['required']) {
+            @if (form.controls.lastName.touched && form.controls.lastName.errors?.['required']) {
             <div class="hint err">Last name is required.</div>
-            } @else if (submitted && form.controls.lastName.errors?.['pattern']) {
+            } @else if (form.controls.lastName.touched && form.controls.lastName.errors?.['pattern']) {
             <div class="hint err">Enter a valid last name using letters only.</div>
             }
           </div>
           <div class="field">
             <label class="lbl" for="companyName">Company name <span class="req">*</span></label>
             <div class="control">
-              <input type="text" id="companyName" formControlName="companyName" placeholder="e.g. Acme Technologies"
+              <input type="text" id="companyName" formControlName="companyName" placeholder="Company name"
                 autocomplete="organization" />
             </div>
-            @if (submitted && form.controls.companyName.errors?.['required']) {
+            @if (form.controls.companyName.touched && form.controls.companyName.errors?.['required']) {
             <div class="hint err">Company name is required.</div>
-            } @else if (submitted && form.controls.companyName.invalid) {
+            } @else if (form.controls.companyName.touched && form.controls.companyName.invalid) {
             <div class="hint err">Company name must be at least 2 characters.</div>
             }
           </div>
@@ -106,7 +106,7 @@
         <div class="field">
           <label class="lbl" for="email">Work email <span class="req">*</span></label>
           <div class="control">
-            <input type="email" id="email" formControlName="email" placeholder="you@company.com" autocomplete="email"
+            <input type="email" id="email" formControlName="email" placeholder="Work email" autocomplete="email"
               [class.good]="emailVerified" style="padding-right:110px" />
             @if (emailVerified) {
             <button type="button" class="verify done" disabled>&#10003; Verified</button>
@@ -119,7 +119,7 @@
           <div class="hint err">Personal email addresses are not allowed. Please use your work email.</div>
           } @else if (form.controls.email.touched && form.controls.email.invalid) {
           <div class="hint err">A valid work email is required.</div>
-          } @else if (submitted && form.controls.email.valid && !emailVerified) {
+          } @else if (form.controls.email.touched && form.controls.email.valid && !emailVerified) {
           <div class="hint err">Please verify your email address.</div>
           } @else {
           <div class="hint">We'll send your demo link here.</div>
@@ -129,7 +129,7 @@
         <div class="field">
           <label class="lbl" for="mobile">Mobile number <span class="opt">(optional)</span></label>
           <div class="control">
-            <input type="tel" id="mobile" formControlName="mobile" placeholder="+91 98765 43210" autocomplete="tel"
+            <input type="tel" id="mobile" formControlName="mobile" placeholder="Mobile number" autocomplete="tel"
               [class.good]="mobileVerified" style="padding-right:110px" />
             @if (mobileVerified) {
             <button type="button" class="verify done" disabled>&#10003; Verified</button>
@@ -140,7 +140,7 @@
           </div>
           @if (mobileProvided && form.controls.mobile.invalid) {
           <div class="hint err">Enter a valid mobile number (10-15 digits).</div>
-          } @else if (submitted && mobileProvided && !mobileVerified) {
+          } @else if (form.controls.mobile.touched && mobileProvided && !mobileVerified) {
           <div class="hint err">Please verify your mobile number.</div>
           }
         </div>

@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { SuccessContentPopupComponent } from '../../../../hrms/src/app/shared/success-content-popup/success-content-popup.component';
-import { ErrorContentPopupComponent } from '../../../../hrms/src/app/shared/error-content-popup/error-content-popup.component';
+import { SuccessContentPopupComponent } from '../shared/error-content-popup/success-content-popup/success-content-popup.component';
+import { ErrorContentPopupComponent } from '../shared/error-content-popup/error-content-popup.component';
 
 @Injectable({
   providedIn: 'root'

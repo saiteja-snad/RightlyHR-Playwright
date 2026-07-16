@@ -136,19 +136,10 @@ export class DemoFormComponent implements OnDestroy {
     if (control.invalid || !control.value) {
       return;
     }
-
     this.activeTarget = target;
     this.otpError = null;
     this.currentOtpValue = '';
     this.startTimer(target);
-
-    this.modalRef = this.modalService.open(this.verifyModalTpl, { centered: true, backdrop: 'static' });
-
-    this.modalRef.result.finally(() => {
-      this.activeTarget = null;
-      this.otpError = null;
-    });
-
     if (target === 'email' && this.form.get('email')?.value) {
       this.sendEmailVerificationCode();
     }
@@ -156,7 +147,7 @@ export class DemoFormComponent implements OnDestroy {
   sendEmailVerificationCode(): void {
     const email = this.form.get('email')?.value;
     if (!email) {
-      alert('Please enter an email address first!');
+      this.confirmationpopup.openErrorModal('Please enter an email address first!');
       return;
     }
     const fullName = [this.form.get('firstName')?.value,this.form.get('middleName')?.value,this.form.get('lastName')?.value].filter(name => name?.trim()).join(' ');
@@ -165,13 +156,21 @@ export class DemoFormComponent implements OnDestroy {
       next: (res) => {
         if (res.statusCode === 200) {
           console.log(res.message);
+          this.modalRef = this.modalService.open(this.verifyModalTpl, { centered: true, backdrop: 'static' });
+          this.modalRef.result.finally(() => {
+            this.activeTarget = null;
+            this.otpError = null;
+          });
         } else {
-          alert(res.message || 'Failed to send verification code.');
+          this.confirmationpopup.openErrorModal(res.message || 'Failed to send verification code.');
         }
       },
-      error: (err) => {
-        console.error('Error sending verification code:', err);
-        alert('Failed to send verification code. Please try again.');
+      error: (err: any) => {
+        const errBody = err?.error;
+        const msg = errBody?.errors
+          ? Object.values(errBody.errors).join(', ')
+          : errBody?.message || 'Failed to send verification code. Please try again.';
+        this.confirmationpopup.openErrorModal(msg);
       }
     });
   }
@@ -223,7 +222,7 @@ export class DemoFormComponent implements OnDestroy {
            this.modalRef?.close();
            //this.confirmationpopup.openSuccessModal(res.message || 'Email verified successfully!');
           } else {
-            alert(res.message || 'Invalid or expired verification code.');
+            this.confirmationpopup.openErrorModal(res.message || 'Invalid or expired verification code.');
           }
         },
         error: (err) => {
@@ -319,10 +318,12 @@ export class DemoFormComponent implements OnDestroy {
         this.submittedSuccessfully = true;
       }
       },
-      error: (error) => {
-        if(error.statusCode===400){
-          this.errormsg=error.message;
-        }
+      error: (error: any) => {
+        const errBody = error?.error;
+        const msg = errBody?.errors
+          ? Object.values(errBody.errors).join(', ')
+          : errBody?.message || 'Something went wrong. Please try again.';
+        this.confirmationpopup.openErrorModal(msg);
         console.error('API Error:', error);
       }
     });

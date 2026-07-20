@@ -532,6 +532,7 @@
               }
             ],
             "styles": [
+              "node_modules/ngx-countries-dropdown/assets/styles.css",
               "projects/hrms-demo-app/src/styles.scss"
             ],
             "scripts": []
@@ -541,13 +542,13 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "500kB",
+                  "maximumWarning": "600kB",
                   "maximumError": "1MB"
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "4kB",
-                  "maximumError": "8kB"
+                  "maximumWarning": "10kB",
+                  "maximumError": "16kB"
                 }
               ],
               "outputHashing": "all"
@@ -609,7 +610,8 @@
               }
             ],
             "styles": [
-              "projects/hrms-demo-app/src/styles.scss"
+              "projects/hrms-demo-app/src/styles.scss",
+              "node_modules/ngx-countries-dropdown/assets/styles.css"
             ],
             "scripts": []
           }

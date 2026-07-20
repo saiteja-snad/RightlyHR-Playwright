@@ -6,8 +6,7 @@
     </div>
 
     <div class="hero">
-      <div class="mock">
-      </div>
+      <div class="mock"></div>
       <h2>Simplify HR. Empower People.</h2>
       <p>RightlyHR brings workforce, process, and data together in one intelligent platform.</p>
       <div class="dots" aria-hidden="true">
@@ -185,15 +184,11 @@
                   [selectedCountryCode]="selectedCountryCode()" [countryListConfig]="countryListConfig"
                   class="country-input" (onCountryChange)="onCountryChange($event)">
                 </lib-country-list>
-                <input type="tel" id="mobile" formControlName="mobile" placeholder="Please enter mobile number"
-                  autocomplete="tel-national" [maxlength]="mobileExpectedLength" />
+                <input type="tel" id="mobile" formControlName="mobile" [placeholder]="mobilePlaceholder"
+                  autocomplete="tel-national" (input)="onMobileNumberInput()" />
               </div>
-              @if (mobileProvided && form.controls.mobile.hasError('pattern')) {
-              <div class="hint err">Mobile number must contain digits only.</div>
-              } @else if (mobileProvided && (form.controls.mobile.hasError('minlength') ||
-              form.controls.mobile.hasError('maxlength'))) {
-              <div class="hint err">Mobile number must be {{ mobileExpectedLength }} digits for the selected country.
-              </div>
+              @if (mobileProvided && form.controls.mobile.hasError('invalidPhoneNumber')) {
+              <div class="hint err">The phone number is not valid for the selected country.</div>
               }
             </div>
           </div>
@@ -255,14 +250,14 @@
             </label>
           </div>
 
-          <label class="agree">
-            <input type="checkbox" formControlName="agreeTerms" />
+          <div class="agree">
+            <input type="checkbox" id="agreeTerms" formControlName="agreeTerms" />
             <span>
               I agree to the <a href="https://www.snaddevelopers.com/terms-condition" target="_blank">Terms of
                 Service</a> and
               <a href="https://www.snaddevelopers.com/privacy-policy" target="_blank">Privacy Policy</a>.
             </span>
-          </label>
+          </div>
           @if (submitted && form.controls.agreeTerms.invalid) {
           <div class="hint err">You must accept the terms to continue.</div>
           }
@@ -270,24 +265,34 @@
 
         <!-- NAV -->
         <div class="nav-row">
-          <button type="button" class="back-btn" [class.show]="currentStep > 0" (click)="backStep()">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-              stroke-linecap="round" stroke-linejoin="round">
-              <path d="M19 12H5M5 12l6 6M5 12l6-6" />
-            </svg>
-            Back
-          </button>
-          <div>
-            <button type="submit" class="next-btn" [disabled]="!currentStepValid || submitLoader" aria-label="Continue">
-              @if (submitLoader && currentStep === 2) {
-              <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
-              } @else {
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+          <div class="nav-left">
+            <button type="button" class="back-btn" [class.show]="currentStep > 0" (click)="backStep()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                 stroke-linecap="round" stroke-linejoin="round">
-                <path d="M5 12h14M13 6l6 6-6 6" />
+                <path d="M19 12H5M5 12l6 6M5 12l6-6" />
               </svg>
-              }
+              Back
             </button>
+            <button type="button" class="cancel-btn" [class.show]="currentStep > 1" (click)="cancelForm()">Cancel</button>
+          </div>
+          <div>
+            @if (currentStep === 2) {
+              <button type="submit" class="submit-btn" [disabled]="!currentStepValid || submitLoader">
+                @if (submitLoader) {
+                  <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
+                  <span>Creating...</span>
+                } @else {
+                  <span>Create Instance<i class="bi bi-arrow-right ms-2"></i></span>
+                }
+              </button>
+            } @else {
+              <button type="submit" class="next-btn" [disabled]="!currentStepValid" aria-label="Continue">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M5 12h14M13 6l6 6-6 6" />
+                </svg>
+              </button>
+            }
             <!-- <div class="nav-hint" [class.ready]="currentStepValid">{{ navHint }}</div> -->
           </div>
         </div>
@@ -305,9 +310,7 @@
       <p class="mb-2 sucess">Your registration has been completed successfully.</p>
       <p class="mb-2">
         Your RightlyHR Demo Instance is currently being set up. This process typically takes up to <b>5 minutes</b>. We
-        will notify
-        you via email once your demo instance is ready.
-      </p>
+        will notify you via email once your demo instance is ready.</p>
     </div>
     }
   </main>

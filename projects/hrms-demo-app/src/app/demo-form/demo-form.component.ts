@@ -1,8 +1,10 @@
 import { Component, OnDestroy, TemplateRef, ViewChild, signal } from '@angular/core';
-import { ReactiveFormsModule, FormBuilder, FormsModule, Validators } from '@angular/forms';
+import { AbstractControl, ReactiveFormsModule, FormBuilder, FormsModule, Validators } from '@angular/forms';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { InputOtpModule } from 'primeng/inputotp';
 import { NgxCountriesDropdownModule } from 'ngx-countries-dropdown';
+import parsePhoneNumberFromString, { getExampleNumber } from 'libphonenumber-js';
+import examples from 'libphonenumber-js/examples.mobile.json';
 import { VerificationserviceService } from '../services/verificationservice.service';
 import { HttpserviceService } from '../services/httpservice.service';
 import { OpenSuccessModalService } from '../services/opensucess-modal.service';
@@ -16,35 +18,24 @@ const ALLOWED_LOGO_TYPES = ['image/png', 'image/jpeg', 'image/svg+xml'];
 
 const NAME_PATTERN = /^[A-Za-z]+(?:\s[A-Za-z]+)*$/;
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/;
-const MOBILE_DIGITS_PATTERN = /^[0-9]+$/;
 const BLOCKED_EMAIL_DOMAINS = ['gmail.com', 'yahoo.com', 'yahoo.in', 'outlook.com', 'hotmail.com', 'rediffmail.com', 'icloud.com', 'live.com'];
 
-// Expected mobile number digit-count per ISO country code (mirrors preonboarding's FormValidationService.getMinPhoneLength)
-const MOBILE_LENGTH_BY_COUNTRY: { [key: string]: number } = {
-  AF: 9, AL: 9, DZ: 9, AD: 6, AO: 9, AG: 7, AR: 10, AM: 8, AU: 9, AT: 10,
-  AZ: 9, BH: 8, BD: 10, BB: 7, BY: 9, BE: 9, BZ: 7, BJ: 8, BT: 8, BO: 8,
-  BA: 8, BW: 7, BR: 10, BN: 7, BG: 9, BF: 8, BI: 8, KH: 8, CM: 9, CA: 10,
-  CV: 7, CF: 8, TD: 9, CL: 9, CN: 11, CO: 10, KM: 7, CG: 9, CR: 8, HR: 9,
-  CU: 8, CY: 8, CZ: 9, DK: 8, DJ: 6, DM: 7, DO: 10, EC: 9, EG: 10, SV: 8,
-  GQ: 9, ER: 7, EE: 7, ET: 9, FJ: 7, FI: 9, FR: 9, GA: 8, GM: 7, GE: 9,
-  DE: 10, GH: 9, GR: 10, GD: 7, GT: 8, GN: 9, GW: 7, GY: 7, HT: 8, HN: 8,
-  HK: 8, HU: 9, IS: 7, IN: 10, ID: 9, IR: 10, IQ: 10, IE: 9, IL: 9, IT: 9,
-  JM: 7, JP: 10, JO: 9, KZ: 10, KE: 9, KI: 8, KP: 9, KR: 9, KW: 8, KG: 9,
-  LA: 10, LV: 8, LB: 7, LS: 8, LR: 7, LY: 9, LI: 7, LT: 8, LU: 9, MG: 9,
-  MW: 7, MY: 9, MV: 7, ML: 8, MT: 8, MR: 8, MU: 7, MX: 10, MD: 8, MC: 8,
-  MN: 8, ME: 8, MA: 9, MZ: 9, MM: 9, NA: 7, NR: 7, NP: 10, NL: 9, NZ: 9,
-  NI: 8, NE: 8, NG: 10, NO: 8, OM: 8, PK: 10, PW: 7, PA: 8, PG: 8, PY: 9,
-  PE: 9, PH: 10, PL: 9, PT: 9, QA: 8, RO: 9, RU: 10, RW: 9, SA: 9, SN: 9,
-  RS: 9, SC: 7, SL: 8, SG: 8, SK: 9, SI: 9, SB: 7, SO: 7, ZA: 9, ES: 9,
-  LK: 9, SD: 9, SR: 7, SZ: 8, SE: 9, CH: 9, SY: 9, TW: 9, TJ: 9, TZ: 9,
-  TH: 9, TG: 8, TO: 7, TT: 7, TN: 8, TR: 10, TM: 8, UG: 9, UA: 9, AE: 9,
-  GB: 9, US: 10, UY: 9, UZ: 9, VU: 7, VE: 10, VN: 9, YE: 9, ZM: 9, ZW: 9,
-};
-
-function workEmailValidator(control: import('@angular/forms').AbstractControl) {
+function workEmailValidator(control: AbstractControl) {
   const value: string = control.value || '';
   const domain = value.split('@')[1]?.toLowerCase();
   return domain && BLOCKED_EMAIL_DOMAINS.includes(domain) ? { workEmail: true } : null;
+}
+
+// Mirrors ContactDetailsComponent.phoneNumberValidator in hrms/personal-info/personal/contact-details
+function mobileNumberValidator(countryCode: string) {
+  return (control: AbstractControl) => {
+    const value = control.value;
+    if (!countryCode || !value) {
+      return null;
+    }
+    const phoneNumber = parsePhoneNumberFromString(String(value), countryCode as any);
+    return phoneNumber && phoneNumber.isValid() ? null : { invalidPhoneNumber: true };
+  };
 }
 
 @Component({
@@ -63,7 +54,7 @@ export class DemoFormComponent implements OnDestroy {
     lastName: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50), Validators.pattern(NAME_PATTERN)]],
     companyName: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(100)]],
     email: ['', [Validators.required, Validators.email, Validators.pattern(EMAIL_PATTERN), workEmailValidator]],
-    mobile: ['', [Validators.pattern(MOBILE_DIGITS_PATTERN), Validators.minLength(10), Validators.maxLength(10)]],
+    mobile: ['', [mobileNumberValidator('IN')]],
     demoPreference: ['prefilled' as 'prefilled' | 'custom', Validators.required],
     agreeTerms: [false, Validators.requiredTrue],
   });
@@ -79,6 +70,7 @@ export class DemoFormComponent implements OnDestroy {
   countryListConfig = { hideCode: true };
   selectedCountryCode = signal<any>('IN');
   mobileDialCode: string | null = null;
+  mobilePlaceholder = 'Please enter mobile number';
   selectedFile: File | null = null;
   logoPreviewUrl: string | null = null;
   fileError: string | null = null;
@@ -114,17 +106,22 @@ export class DemoFormComponent implements OnDestroy {
   onCountryChange(country: any): void {
     this.selectedCountryCode.set(country.code);
     this.mobileDialCode = country.dialling_code;
-    const length = this.mobileExpectedLength;
-    this.form.controls.mobile.setValidators([
-      Validators.pattern(MOBILE_DIGITS_PATTERN),
-      Validators.minLength(length),
-      Validators.maxLength(length),
-    ]);
+    this.form.controls.mobile.setValidators([mobileNumberValidator(country.code)]);
     this.form.controls.mobile.updateValueAndValidity();
+
+    const example = getExampleNumber(country.code, examples as any);
+    this.mobilePlaceholder = example ? `e.g. ${example.formatNational()}` : 'Please enter mobile number';
   }
 
-  get mobileExpectedLength(): number {
-    return MOBILE_LENGTH_BY_COUNTRY[this.selectedCountryCode()] || 10;
+  onMobileNumberInput(): void {
+    const control = this.form.controls.mobile;
+    if (!control.value) {
+      return;
+    }
+    const phoneNumber = parsePhoneNumberFromString(String(control.value), this.selectedCountryCode());
+    if (phoneNumber && phoneNumber.isValid()) {
+      control.setValue(phoneNumber.formatNational(), { emitEvent: false });
+    }
   }
 
   trimNameField(controlName: 'firstName' | 'middleName' | 'lastName' | 'companyName'): void {
@@ -214,6 +211,33 @@ export class DemoFormComponent implements OnDestroy {
     if (this.currentStep > 0) {
       this.currentStep--;
     }
+  }
+
+  cancelForm(): void {
+    this.form.controls.email.enable();
+    this.form.reset({
+      firstName: '',
+      middleName: '',
+      lastName: '',
+      companyName: '',
+      email: '',
+      mobile: '',
+      demoPreference: 'prefilled',
+      agreeTerms: false,
+    });
+    this.currentStep = 0;
+    this.submitted = false;
+    this.emailVerified = false;
+    this.mobileVerified = false;
+    this.otpError = null;
+    this.companyDuplicateMessage = null;
+    this.emailDuplicateMessage = null;
+    this.selectedFile = null;
+    this.logoPreviewUrl = null;
+    this.fileError = null;
+    this.dragOver = false;
+    this.selectedCountryCode.set('IN');
+    this.mobileDialCode = null;
   }
 
   get currentOtpValue(): string {

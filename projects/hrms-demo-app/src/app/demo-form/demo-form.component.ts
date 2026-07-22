@@ -1,4 +1,4 @@
-import { Component, OnDestroy, TemplateRef, ViewChild, signal } from '@angular/core';
+import { Component, OnDestroy, OnInit, TemplateRef, ViewChild, signal } from '@angular/core';
 import { AbstractControl, ReactiveFormsModule, FormBuilder, FormsModule, Validators } from '@angular/forms';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { InputOtpModule } from 'primeng/inputotp';
@@ -10,6 +10,118 @@ import { HttpserviceService } from '../services/httpservice.service';
 import { OpenSuccessModalService } from '../services/opensucess-modal.service';
 
 type VerifyTarget = 'email' | 'mobile';
+
+interface TextSegment {
+  text: string;
+  hl?: boolean;
+}
+
+interface BrandSlide {
+  headingParts: TextSegment[];
+  subContext: string;
+  cardHeadingParts: TextSegment[];
+  cardSubContext: string;
+  listItems: string[];
+  image: string;
+}
+
+// TODO: replace with per-slide illustrations once the UX team delivers them.
+const PLACEHOLDER_SLIDE_IMAGE = '/icons/list-item-image.png';
+
+const BRAND_SLIDES: BrandSlide[] = [
+  {
+    headingParts: [
+      { text: 'Reimagine HR with ' },
+      { text: 'AI, Automation', hl: true },
+      { text: ', and Exceptional Employee Experiences.' },
+    ],
+    subContext: 'Empower your workforce with intelligent HR that automates every stage of the employee lifecycle',
+    cardHeadingParts: [{ text: 'What Sets ' }, { text: 'RightlyHR', hl: true }, { text: ' Apart' }],
+    cardSubContext: 'The capabilities that redefine modern workforce management.',
+    image: '/slider-images/core-HR.png',
+    listItems: [
+      'Unified Employee Lifecycle Management',
+      'AI-Driven Workforce Automation',
+      'Intelligent Workforce Insights',
+      'Configurable HR Workflows',
+      'Built for Modern, Growing Enterprises',
+    ],
+  },
+  {
+    headingParts: [
+      { text: 'Transform ' },
+      { text: 'Absence Management', hl: true },
+      { text: ' into ' },
+      { text: 'Workforce Intelligence', hl: true },
+      { text: '.' },
+    ],
+    subContext: 'One intelligent platform that keeps your workforce productive while giving employees the flexibility they deserve.',
+    cardHeadingParts: [{ text: 'The ' }, { text: 'RightlyHR', hl: true }, { text: ' Advantage' }],
+    cardSubContext: 'Everything your organization needs to work smarter, faster, and better.',
+    image: '/slider-images/absence-management.png',
+    listItems: [
+      'AI Smart Leave Management',
+      'Flexible Work Experience',
+      'Attendance Intelligence',
+      'Automated Multi-Level Approvals',
+      'Real-Time Workforce Availability',
+    ],
+  },
+  {
+    headingParts: [
+      { text: 'Where Great ' },
+      { text: 'Projects', hl: true },
+      { text: ' Meet Exceptional ' },
+      { text: 'Teams.', hl: true },
+    ],
+    subContext: "Successful projects aren't built by chance they're built by connecting the right people with the right opportunities at the right time.",
+    cardHeadingParts: [{ text: 'What ' }, { text: 'RightlyHR', hl: true }, { text: ' Delivers' }],
+    cardSubContext: 'Everything you need to build a smarter, more connected workforce.',
+    image: '/slider-images/team-management.png',
+    listItems: [
+      'Smart Resource Allocation',
+      'Live Project Dashboards',
+      'Automated Timesheets',
+      'AI Workforce Intelligence',
+    ],
+  },
+  {
+    headingParts: [
+      { text: 'Every Goal. Every Review. ' },
+      { text: 'Every Success.', hl: true },
+      { text: ' Connected.' },
+    ],
+    subContext: 'Everything your people need to perform at their best powered by one intelligent performance platform.',
+    cardHeadingParts: [{ text: 'Go Beyond with ' }, { text: 'RightlyHR', hl: true }],
+    cardSubContext: 'Move beyond traditional HR with a platform built for the future of work.',
+    image: '/slider-images/performance-management.png',
+    listItems: [
+      'Intelligent Performance Reviews',
+      'Recognize High Performance',
+      'Meaningful Performance Conversations',
+      'Data-Driven Performance Decisions',
+    ],
+  },
+  {
+    headingParts: [
+      { text: 'Every Request. Every Resolution. ' },
+      { text: 'Every Experience.', hl: true },
+      { text: ' Simplified.' },
+    ],
+    subContext: 'Deliver seamless employee services with integrated asset tracking, IT support, workplace requests, and expense management all from a single platform.',
+    cardHeadingParts: [{ text: 'Go Beyond with ' }, { text: 'RightlyHR', hl: true }],
+    cardSubContext: 'Move beyond traditional HR with a platform built for the future of work.',
+    image: '/slider-images/ade-management-systems.png',
+    listItems: [
+      'One Place for Employee Requests',
+      'Faster IT & Helpdesk Resolution',
+      'Streamlined Asset Allocation',
+      'Transparent Expense Tracking',
+    ],
+  },
+];
+
+const SLIDE_INTERVAL_MS = 6000;
 
 export const OTP_LENGTH = 6;
 const CODE_TIMER_SECONDS = 300;
@@ -45,9 +157,12 @@ function mobileNumberValidator(countryCode: string) {
   styleUrl: './demo-form.component.scss',
 })
 
-export class DemoFormComponent implements OnDestroy {
+export class DemoFormComponent implements OnInit, OnDestroy {
   private readonly fb = new FormBuilder();
   @ViewChild('verifyModal') verifyModalTpl!: TemplateRef<unknown>;
+  readonly slides = BRAND_SLIDES;
+  currentSlideIndex = 0;
+  private slideInterval?: ReturnType<typeof setInterval>;
   form = this.fb.group({
     firstName: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50), Validators.pattern(NAME_PATTERN)]],
     middleName: ['', [Validators.maxLength(50), Validators.pattern(NAME_PATTERN)]],
@@ -94,9 +209,32 @@ export class DemoFormComponent implements OnDestroy {
   constructor(private readonly modalService: NgbModal, private verificationService: VerificationserviceService, 
     private httpService: HttpserviceService, private confirmationpopup: OpenSuccessModalService) { }
 
+  ngOnInit(): void {
+    this.startSlideAutoplay();
+  }
+
   ngOnDestroy(): void {
     clearInterval(this.emailInterval);
     clearInterval(this.mobileInterval);
+    clearInterval(this.slideInterval);
+  }
+
+  get activeSlide(): BrandSlide {
+    return this.slides[this.currentSlideIndex];
+  }
+
+  private startSlideAutoplay(): void {
+    clearInterval(this.slideInterval);
+    this.slideInterval = setInterval(() => this.nextSlide(), SLIDE_INTERVAL_MS);
+  }
+
+  nextSlide(): void {
+    this.currentSlideIndex = (this.currentSlideIndex + 1) % this.slides.length;
+  }
+
+  goToSlide(index: number): void {
+    this.currentSlideIndex = index;
+    this.startSlideAutoplay();
   }
 
   get mobileProvided(): boolean {

@@ -110,13 +110,36 @@
 
       .list-slide-image-container {
         position: absolute;
-        bottom: 24px;
+        bottom: 70px;
         left: 280px;
 
         .list-slide-image {
           width: 360px;
           height: auto;
           object-fit: contain;
+        }
+      }
+    }
+
+    .slider-dots {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      margin-top: 18px;
+
+      .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 999px;
+        border: 0;
+        padding: 0;
+        background: rgba(255, 255, 255, 0.3);
+        cursor: pointer;
+        transition: all 0.3s;
+
+        &.on {
+          width: 22px;
+          background: #fff;
         }
       }
     }

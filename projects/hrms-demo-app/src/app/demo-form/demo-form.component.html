@@ -7,54 +7,48 @@
 
     <!--Labeling content-->
     <div class="hero-copy py-5">
-      <div class="heading">Where Great <span>Projects</span> Meet Exceptional <span>Teams.</span></div>
-      <div class="sub-context py-4">Successful projects aren't built by chance they're built by connecting the right
-        people with the
-        right opportunities at the right time.</div>
+      <div class="heading">
+        @for (seg of activeSlide.headingParts; track $index) {
+        @if (seg.hl) {<span>{{ seg.text }}</span>} @else { {{ seg.text }} }
+        }
+      </div>
+      <div class="sub-context py-4">{{ activeSlide.subContext }}</div>
     </div>
 
     <!--Slider content-->
     <div class="slider-main-container">
       <div class="slider-content">
-        <div class="heading mb-3">The <i>RightlyHR</i> Advantage</div>
-        <div class="sub-context mb-4">Built to help enterprises optimize projects, people, and productivity.</div>
+        <div class="heading mb-3">
+          @for (seg of activeSlide.cardHeadingParts; track $index) {
+          @if (seg.hl) {<i>{{ seg.text }}</i>} @else { {{ seg.text }} }
+          }
+        </div>
+        <div class="sub-context mb-4">{{ activeSlide.cardSubContext }}</div>
         <div class="list-container">
+          @for (item of activeSlide.listItems; track item) {
           <div class="list-item mb-2">
             <div>
-              <img src="/icons/list-icon.png" alt="List Icon" class="list-icon" />
+              <img src="/icons/list-icon.png" alt="" class="list-icon" />
             </div>
-            <div class="context">Smart Resource Allocation</div>
+            <div class="context">{{ item }}</div>
           </div>
-
-          <div class="list-item mb-2">
-            <div>
-              <img src="/icons/list-icon.png" alt="List Icon" class="list-icon" />
-            </div>
-            <div class="context">Smart Resource Allocation</div>
-          </div>
-
-          <div class="list-item mb-2">
-            <div>
-              <img src="/icons/list-icon.png" alt="List Icon" class="list-icon" />
-            </div>
-            <div class="context">Smart Resource Allocation</div>
-          </div>
-
-          <div class="list-item">
-            <div>
-              <img src="/icons/list-icon.png" alt="List Icon" class="list-icon" />
-            </div>
-            <div class="context">Smart Resource Allocation</div>
-          </div>
+          }
 
           <div class="pt-4">
-            <button class="explore-btn">Explore More<i class="bi bi-arrow-right ms-2"></i></button>
+            <button type="button" class="explore-btn">Explore More<i class="bi bi-arrow-right ms-2"></i></button>
           </div>
         </div>
 
         <div class="list-slide-image-container">
-          <img src="/icons/list-item-image.png" alt="List Icon" class="list-slide-image" />
+          <img [src]="activeSlide.image" alt="" class="list-slide-image" />
         </div>
+      </div>
+
+      <div class="slider-dots" aria-label="Slide navigation">
+        @for (s of slides; track $index) {
+        <button type="button" class="dot" [class.on]="$index === currentSlideIndex" (click)="goToSlide($index)"
+          [attr.aria-label]="'Go to slide ' + ($index + 1)"></button>
+        }
       </div>
     </div>
 

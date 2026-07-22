@@ -1,7 +1,13 @@
 .form-main-container {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  min-height: 100dvh;
+  height: 100dvh;
+
+  @media (max-width: 992px) {
+    grid-template-columns: 1fr;
+    height: auto;
+    min-height: 100dvh;
+  }
 }
 
 /* ---------- LEFT PANEL ---------- */
@@ -9,15 +15,18 @@
   background: linear-gradient(90deg, #223D87 0%, #EA362C 248.85%);
   color: #fff;
   display: flex;
-  flex: 1;
   flex-direction: column;
-  padding: 28px 36px 22px;
+  padding: 24px 36px 18px;
   position: relative;
   overflow: hidden;
-  letter-spacing: 1%;
+  letter-spacing: 0.01em;
+
+  @media (max-width: 992px) {
+    display: none;
+  }
 
   .rhr-logo {
-    width: 130px;
+    width: 120px;
     height: auto;
   }
 
@@ -25,9 +34,8 @@
   .hero-copy {
     .heading {
       font-weight: 700;
-      font-style: Bold;
-      font-size: 28px;
-      line-height: 36px;
+      font-size: 26px;
+      line-height: 32px;
     }
 
     span {
@@ -36,9 +44,9 @@
 
     .sub-context {
       font-weight: 400;
-      font-size: 16px;
-      line-height: 24px;
-      letter-spacing: 1%;
+      font-size: 15px;
+      line-height: 22px;
+      letter-spacing: 0.01em;
       color: #CACACA;
     }
   }
@@ -49,20 +57,19 @@
     padding: 20px 0px;
 
     .slider-content {
-      width: 384px;
+      width: 100%;
+      max-width: 384px;
       height: auto;
-      opacity: 1;
-      gap: 34px;
-      padding: 40px;
+      margin: auto 0;
+      position: relative;
+      padding: 28px 32px;
       border-radius: 20px;
       background: linear-gradient(310.33deg, rgba(255, 255, 255, 0.08) 1.06%, rgba(219, 208, 255, 0.08) 98.77%);
 
       .heading {
         font-weight: 600;
-        font-style: SemiBold;
         font-size: 20px;
         line-height: 100%;
-        letter-spacing: 0%;
 
         i {
           color: #FF564D;
@@ -71,10 +78,9 @@
 
       .sub-context {
         font-weight: 400;
-        font-style: Regular;
-        font-size: 16px;
-        line-height: 22px;
-        letter-spacing: 1%;
+        font-size: 15px;
+        line-height: 20px;
+        letter-spacing: 0.01em;
         color: #D4D4D4;
       }
 
@@ -84,17 +90,14 @@
         gap: 8px;
 
         .list-icon {
-          width: 24px;
-          height: 24px;
+          width: 22px;
+          height: 22px;
         }
 
         .context {
           font-weight: 500;
-          font-style: Medium;
           font-size: 13px;
           line-height: 100%;
-          letter-spacing: 0%;
-
         }
       }
 
@@ -110,11 +113,11 @@
 
       .list-slide-image-container {
         position: absolute;
-        bottom: 70px;
+        bottom: 50px;
         left: 280px;
 
         .list-slide-image {
-          width: 360px;
+          width: 320px;
           height: auto;
           object-fit: contain;
         }
@@ -125,7 +128,7 @@
       display: flex;
       gap: 8px;
       justify-content: center;
-      margin-top: 18px;
+      margin-top: 14px;
 
       .dot {
         width: 8px;
@@ -146,15 +149,18 @@
   }
 
   .brand-foot {
-    position: relative;
     margin-top: auto;
-    padding-top: 24px;
+    padding-top: 18px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
 
     .socials {
       display: flex;
       gap: 10px;
-      justify-content: center;
-      margin-bottom: 14px;
+      margin-bottom: 10px;
 
       a {
         width: 28px;
@@ -184,13 +190,10 @@
     }
 
     .foot-bottom {
-      position: absolute;
-      width: max-content;
       display: flex;
-      align-items: center;
+      align-items: flex-end;
       flex-direction: column;
-      right: 0%;
-      top: 40%;
+      gap: 4px;
     }
 
     .foot-links {
@@ -214,7 +217,7 @@
 /* ---------- RIGHT PANEL ---------- */
 
 .pane {
-  padding: 24px 44px;
+  padding: 20px 40px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -226,34 +229,30 @@
     flex-direction: column;
   }
 
-  @media (max-width: 960px) {
-    padding: 20px 18px;
+  @media (max-width: 992px) {
+    padding: 24px 20px;
+    justify-content: flex-start;
   }
 
   .form-heading {
     font-weight: 700;
-    font-style: Bold;
-    font-size: 28px;
-    line-height: 36px;
-    letter-spacing: 2%;
+    font-size: 26px;
+    line-height: 32px;
+    letter-spacing: 0.02em;
     text-align: center;
-    vertical-align: middle;
     color: #000000;
 
     span {
       color: #DF362D;
     }
-
   }
 
   .sub-note {
     font-weight: 500;
-    font-style: Medium;
-    font-size: 16px;
+    font-size: 15px;
     line-height: 100%;
-    letter-spacing: 2%;
+    letter-spacing: 0.02em;
     text-align: center;
-    vertical-align: middle;
     color: #A4A4A4;
   }
 }
@@ -261,12 +260,12 @@
 .grid2 {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 14px 24px;
-  margin-bottom: 14px;
+  gap: 12px 24px;
+  margin-bottom: 10px;
 
-  @media (max-width: 960px) {
+  @media (max-width: 640px) {
     grid-template-columns: 1fr;
-    gap: 14px;
+    gap: 12px;
   }
 }
 
@@ -276,20 +275,21 @@
   font-weight: 500;
   margin-bottom: 6px;
   color: #303030;
+
+  .req {
+    color: #EA362C;
+  }
+
+  .opt {
+    color: #A4A4A4;
+    font-weight: 400;
+  }
 }
 
 .control {
   position: relative;
   display: flex;
   align-items: center;
-
-  .ic {
-    position: absolute;
-    left: 14px;
-    color: #b9c2d0;
-    display: flex;
-    pointer-events: none;
-  }
 }
 
 input[type='text'],
@@ -394,13 +394,13 @@ input[type='tel'] {
 
 /* upload */
 .logo-field {
-  margin-bottom: 16px;
+  margin-bottom: 12px;
 }
 
 .drop {
   border: 1px dashed #B4BBC5;
   border-radius: 0.75rem;
-  padding: 3rem;
+  padding: 1.1rem 1.5rem;
   text-align: center;
   cursor: pointer;
   background: #333D8014;
@@ -412,12 +412,12 @@ input[type='tel'] {
   >div {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 6px;
     flex-direction: column;
   }
 
   .cloud-img {
-    width: 3.5rem;
+    width: 2.25rem;
     height: auto;
   }
 
@@ -468,7 +468,7 @@ input[type='tel'] {
   button {
     border: 0;
     background: none;
-    color: var(--err);
+    color: #EA362C;
     font-weight: 700;
     cursor: pointer;
     font-size: 0.8rem;
@@ -480,12 +480,12 @@ input[type='tel'] {
 .cards {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 14px;
-  margin-bottom: 16px;
+  gap: 12px;
+  margin-bottom: 12px;
 
-  @media (max-width: 960px) {
+  @media (max-width: 640px) {
     grid-template-columns: 1fr;
-    gap: 14px;
+    gap: 12px;
   }
 }
 
@@ -499,6 +499,7 @@ input[type='tel'] {
   box-shadow: 0px 0px 15px 0px #0000001A;
   display: block;
   border: none !important;
+  color: #000000;
 
   input {
     position: absolute;
@@ -540,20 +541,25 @@ input[type='tel'] {
 
   &.disabled {
     cursor: not-allowed;
-    color: #ea362c;
+    color: #A7A7A7;
   }
 
   b {
     display: block;
-    font-size: 0.94rem;
+    font-size: 0.875rem;
     font-weight: 700;
     margin-bottom: 4px;
     padding-right: 26px;
   }
 
   >span {
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     line-height: 1.5;
+  }
+
+  .sub-context{
+    font-size: 0.75rem !important;
+    color: #8F8F8F;
   }
 }
 
@@ -561,15 +567,15 @@ input[type='tel'] {
 .consent {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  margin-bottom: 18px;
+  gap: 8px;
+  margin-bottom: 12px;
 }
 
 .agree {
   display: flex;
   gap: 10px;
   align-items: center;
-  padding: 0.625rem;
+  padding: 0.5rem 0.625rem;
 
   &.soft {
     background: #EFF0F5;
@@ -609,7 +615,7 @@ input[type='tel'] {
   }
 
   a {
-    color: var(--blue);
+    color: #223D87;
     font-weight: 700;
     text-decoration: none;
 
@@ -621,7 +627,7 @@ input[type='tel'] {
 
 /* nav row */
 .nav-row {
-  margin-top: 6px;
+  margin-top: 1rem;
   display: flex;
   justify-content: flex-end;
 }
@@ -663,8 +669,8 @@ input[type='tel'] {
     height: 64px;
     margin: 0 auto 18px;
     border-radius: 50%;
-    background: var(--blue-soft);
-    color: var(--blue);
+    background: #EAF1FF;
+    color: #223D87;
     display: grid;
     place-items: center;
   }
@@ -672,12 +678,12 @@ input[type='tel'] {
   h2 {
     font-size: 1.4rem;
     font-weight: 700;
-    color: var(--blue-dark);
+    color: #223D87;
     margin-bottom: 10px;
   }
 
   p {
-    color: #ea362c;
+    color: #8a94a6;
     font-size: 0.88rem;
     line-height: 1.55;
     max-width: 42ch;
@@ -729,7 +735,7 @@ input[type='tel'] {
   background: none;
   border: none;
   padding: 0;
-  color: var(--blue);
+  color: #223D87;
   font-weight: 700;
   text-decoration: underline;
   cursor: pointer;

@@ -1,12 +1,12 @@
 <div class="form-main-container">
   <!-- LEFT : BRAND -->
   <aside class="brand">
-    <div class="logo" aria-label="RIGHTLY HR">
+    <div class="logo mb-4" aria-label="RIGHTLY HR">
       <img src="logo/RHR-Logo.png" alt="RIGHTLY HR" class="rhr-logo" />
     </div>
 
     <!--Labeling content-->
-    <div class="hero-copy py-5">
+    <div class="hero-copy py-3">
       <div class="heading">
         @for (seg of activeSlide.headingParts; track $index) {
         @if (seg.hl) {<span>{{ seg.text }}</span>} @else { {{ seg.text }} }
@@ -87,12 +87,12 @@
     @if (!submittedSuccessfully) {
     <div class="form-wrap">
       <p class="form-heading mb-2">Personalize Your <span>RightlyHR</span> Experience</p>
-      <p class="sub-note mb-5">Your journey to a smarter HRMS starts with a few simple details</p>
+      <p class="sub-note mb-3">Your journey to a smarter HRMS starts with a few simple details</p>
 
       <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate autocomplete="off">
         <div class="grid2">
           <div class="field">
-            <label for="companyName">Company Name<span class="error-msg">*</span></label>
+            <label for="companyName">Company Name<span class="req">*</span></label>
             <input type="text" id="companyName" formControlName="companyName" placeholder="Please enter company name"
               autocomplete="organization" maxlength="100" (blur)="trimNameField('companyName')"
               (input)="onCompanyNameInput()" />
@@ -106,7 +106,7 @@
           </div>
 
           <div class="field">
-            <label for="email">Work Email<span class="error-msg">*</span></label>
+            <label for="email">Work Email<span class="req">*</span></label>
             <div class="control">
               <input type="email" id="email" formControlName="email" placeholder="Please enter work email"
                 autocomplete="email" [class.good]="emailVerified" (input)="onEmailInput()" />
@@ -142,7 +142,7 @@
           </div>
 
           <div class="field">
-            <label for="firstName">First Name<span class="error-msg">*</span></label>
+            <label for="firstName">First Name<span class="req">*</span></label>
             <input type="text" id="firstName" formControlName="firstName" placeholder="Please enter first name"
               autocomplete="given-name" maxlength="50" (blur)="trimNameField('firstName')" />
             @if (form.controls.firstName.touched && form.controls.firstName.errors?.['required']) {
@@ -162,7 +162,7 @@
           </div>
 
           <div class="field">
-            <label for="lastName">Last Name<span class="error-msg">*</span></label>
+            <label for="lastName">Last Name<span class="req">*</span></label>
             <input type="text" id="lastName" formControlName="lastName" placeholder="Please enter last name"
               autocomplete="family-name" maxlength="50" (blur)="trimNameField('lastName')" />
             @if (form.controls.lastName.touched && form.controls.lastName.errors?.['required']) {
@@ -189,7 +189,7 @@
         </div>
 
         <div class="field full logo-field">
-          <label>Company Logo<span class="st">*</span></label>
+          <label>Company Logo<span class="req">*</span></label>
           <div class="drop" [class.over]="dragOver" [class.has-file]="selectedFile" tabindex="0" role="button"
             aria-label="Upload company logo" (dragover)="onDragOver($event)" (dragleave)="onDragLeave($event)"
             (drop)="onDrop($event)" (click)="logoInput.click()">
@@ -218,14 +218,14 @@
         </div>
 
         <div class="field full">
-          <label>Data Preference<span class="st">*</span></label>
+          <label>Data Preference<span class="req">*</span></label>
           <div class="cards" role="radiogroup" aria-label="Demo data preference">
             <label class="card sel">
               <div>
                 <input type="radio" name="pref" value="prefilled" checked />
                 <span class="tick">&#10003;</span>
                 <b>Pre-filled Demo Data</b>
-                <span>Start with preloaded demo data for a complete product experience.</span>
+                <span class="sub-context">Start with preloaded demo data for a complete product experience.</span>
               </div>
             </label>
             <label class="card disabled">
@@ -233,7 +233,7 @@
                 <input type="radio" name="pref" value="custom" disabled />
                 <span class="tick">&#10003;</span>
                 <b>Custom Demo Setup</b>
-                <span>Configure your demo to match your organization's needs.</span>
+                <span class="sub-context">Configure your demo to match your organization's needs.</span>
               </div>
             </label>
           </div>

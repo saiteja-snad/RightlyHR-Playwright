@@ -1,20 +1,4 @@
 /* You can add global styles to this file, and also import other style files */
-:root {
-  --ink: #0b0b0c;
-  --paper: #ffffff;
-  --fog: #f4f4f1;
-  --line: #e3e3de;
-  --muted: #6f6f68;
-  --mark: #ffd335;
-  --mark-soft: #fff3c2;
-  --ok: #0e8a4d;
-  --err: #c93a2b;
-  --radius: 14px;
-
-  display: block;
-  color: var(--ink);
-}
-
 html,
 body {
   margin: 0;
@@ -94,9 +78,9 @@ body {
   }
 
   .btn-primary {
+    color: #FFF;
     padding: 0.5rem 3rem;
-    color: var(--paper);
-    background: var(--ink);
+    background: linear-gradient(90deg, #223D87 0%, #EA362C 248.85%);
 
     &:disabled {
       opacity: 0.5;
@@ -112,61 +96,62 @@ body {
 
 // ERROR MESSAGE
 .error-msg {
-  font-size: var(--fontsize12);
+  font-size: 12px;
   font-weight: 500;
-  color: var(--error-msg-color);
+  color: #ea362c;
   margin-top: 0.25rem;
 }
+
 .result-popup-content {
-    padding: 3rem;
-    text-align: center;
+  padding: 3rem;
+  text-align: center;
 
-    .custom-main-popup-content {
-        text-align: left !important;
-    }
+  .custom-main-popup-content {
+    text-align: left !important;
+  }
 
-    .confirmation-icon {
-        width: 5.5rem;
-        margin-bottom: 1.5rem;
-    }
+  .confirmation-icon {
+    width: 5.5rem;
+    margin-bottom: 1.5rem;
+  }
 
-    .confirmation-delete-icon {
-        width: 4rem;
-        margin-bottom: 1.5rem;
-    }
+  .confirmation-delete-icon {
+    width: 4rem;
+    margin-bottom: 1.5rem;
+  }
 
-    .confirmation-text {
-        font-weight: 500;
-        font-size: var(--fontsize20);
-        line-height: 30px;
-        color: var(--primary-color);
-    }
+  .confirmation-text {
+    font-weight: 500;
+    font-size: var(--fontsize20);
+    line-height: 30px;
+    color: var(--primary-color);
+  }
 
-    .custom-modal-footer {
-        display: flex;
-        gap: 4rem;
-        padding-top: 0.5rem;
-    }
+  .custom-modal-footer {
+    display: flex;
+    gap: 4rem;
+    padding-top: 0.5rem;
+  }
 
-    .btn-primary {
-        width: 100%;
-        padding: 0.5rem 3rem;
-    }
+  .btn-primary {
+    width: 100%;
+    padding: 0.5rem 3rem;
+  }
 
-    .btn-secondary {
-        width: 100%;
-        padding: 0.5rem 3rem;
-    }
+  .btn-secondary {
+    width: 100%;
+    padding: 0.5rem 3rem;
+  }
 }
 
 // success icon
 .succes-icon {
-    width: 3rem;
+  width: 3rem;
 }
 
 //error icon
 .error-icon {
-    width: 3rem;
+  width: 3rem;
 }
 
 .button-loader-content {

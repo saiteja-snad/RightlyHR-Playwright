@@ -56,13 +56,13 @@ export class DemoFormComponent implements OnDestroy {
     email: ['', [Validators.required, Validators.email, Validators.pattern(EMAIL_PATTERN), workEmailValidator]],
     mobile: ['', [mobileNumberValidator('IN')]],
     demoPreference: ['prefilled' as 'prefilled' | 'custom', Validators.required],
-    agreeTerms: [false, Validators.requiredTrue],
+    agreeTerms: [true, Validators.requiredTrue],
+    newsletterSubscription: [false],
   });
   submitted = false;
   submittedSuccessfully = false;
   companyDuplicateMessage: string | null = null;
   emailDuplicateMessage: string | null = null;
-  currentStep = 0;
   selectedCountryConfig: { hideCode: boolean; hideName: boolean } = {
     hideCode: true,
     hideName: true,
@@ -151,93 +151,7 @@ export class DemoFormComponent implements OnDestroy {
   }
 
   get canSubmit(): boolean {
-    return (this.form.valid && this.emailVerified);
-  }
-
-  get step1Valid(): boolean {
-    return (
-      this.form.controls.firstName.valid &&
-      this.form.controls.lastName.valid &&
-      this.form.controls.middleName.valid &&
-      this.form.controls.companyName.valid &&
-      this.form.controls.mobile.valid &&
-      this.emailVerified
-    );
-  }
-
-  get step2Valid(): boolean {
-    return true;
-  }
-
-  get step3Valid(): boolean {
-    return this.form.controls.agreeTerms.value === true;
-  }
-
-  get currentStepValid(): boolean {
-    if (this.currentStep === 0) {
-      return this.step1Valid;
-    }
-    if (this.currentStep === 1) {
-      return this.step2Valid;
-    }
-    return this.step3Valid;
-  }
-
-  // get navHint(): string {
-  //   // if (this.currentStep === 0) {
-  //   //   return this.step1Valid ? 'Looks good — continue.' : 'Fill the required fields and verify your email.';
-  //   // }
-  //   // if (this.currentStep === 1) {
-  //   //   return 'Logo is optional — continue when ready.';
-  //   // }
-  //   // return this.step3Valid ? 'All set — create your demo instance.' : 'Accept the terms to continue.';
-  // }
-
-  nextStep(): void {
-    if (this.currentStep === 2) {
-      this.submitted = true;
-    }
-    if (!this.currentStepValid) {
-      return;
-    }
-    if (this.currentStep < 2) {
-      this.currentStep++;
-    } else {
-      this.onSubmit();
-    }
-  }
-
-  backStep(): void {
-    if (this.currentStep > 0) {
-      this.currentStep--;
-    }
-  }
-
-  cancelForm(): void {
-    this.form.controls.email.enable();
-    this.form.reset({
-      firstName: '',
-      middleName: '',
-      lastName: '',
-      companyName: '',
-      email: '',
-      mobile: '',
-      demoPreference: 'prefilled',
-      agreeTerms: false,
-    });
-    this.currentStep = 0;
-    this.submitted = false;
-    this.emailVerified = false;
-    this.mobileVerified = false;
-    this.otpError = null;
-    this.companyDuplicateMessage = null;
-    this.emailDuplicateMessage = null;
-    this.selectedFile = null;
-    this.logoPreviewUrl = null;
-    this.fileError = null;
-    this.dragOver = false;
-    this.selectedCountryCode.set('IN');
-    this.mobileDialCode = null;
+    return this.form.valid && this.emailVerified && !!this.selectedFile;
   }
 
   get currentOtpValue(): string {
@@ -452,6 +366,7 @@ export class DemoFormComponent implements OnDestroy {
 
   // --- Submit ---
   onSubmit(): void {
+    this.submitted = true;
     this.form.markAllAsTouched();
     if (!this.canSubmit) {
       return;
@@ -466,7 +381,9 @@ export class DemoFormComponent implements OnDestroy {
       contactNumber: formvalue.mobile,
       isPrefilledData: true,
       companyLogo: this.selectedFile?.name ?? null,
-      companyName: formvalue.companyName
+      companyName: formvalue.companyName,
+      agreeToUpdates: formvalue.agreeTerms,
+      subscribeNewsletter: formvalue.newsletterSubscription,
     }
     this.httpService.createdemoinstance(payload).subscribe({
       next: (response: any) => {
@@ -488,14 +405,12 @@ export class DemoFormComponent implements OnDestroy {
           this.form.controls.email.enable();
           this.form.controls.email.setErrors({ duplicate: true });
           this.form.controls.email.markAsTouched();
-          this.currentStep = 0;
           return;
         }
         if (lowerMsg.includes('already exists')) {
           this.companyDuplicateMessage = msg;
           this.form.controls.companyName.setErrors({ ...this.form.controls.companyName.errors, duplicate: true });
           this.form.controls.companyName.markAsTouched();
-          this.currentStep = 0;
           return;
         }
         this.confirmationpopup.openErrorModal(msg);

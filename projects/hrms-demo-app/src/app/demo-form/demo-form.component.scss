@@ -217,6 +217,7 @@
 /* ---------- RIGHT PANEL ---------- */
 
 .pane {
+  position: relative;
   padding: 20px 40px;
   display: flex;
   flex-direction: column;
@@ -557,7 +558,7 @@ input[type='tel'] {
     line-height: 1.5;
   }
 
-  .sub-context{
+  .sub-context {
     font-size: 0.75rem !important;
     color: #8F8F8F;
   }
@@ -749,4 +750,24 @@ input[type='tel'] {
 
 ::ng-deep .p-inputtext:enabled:focus {
   border-color: #cbd5e1 !important;
+}
+
+.bg-img-1 {
+  position: absolute;
+  top: 0;
+  right: 0;
+
+  .bg-1 {
+    width: 14rem;
+  }
+}
+
+.bg-img-2 {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+
+  .bg-2 {
+    width: 14rem;
+  }
 }

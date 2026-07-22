@@ -1,7 +1,5 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { VerificationResponse } from './verificationservice.service';
-import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 @Injectable({
   providedIn: 'root'
@@ -27,7 +25,6 @@ export class HttpserviceService {
   }
   
   createdemoinstance(payload:any) {
-    return this.postData('demo-instances',payload);
+    return this.postData('clients',payload);
   }
-
 }

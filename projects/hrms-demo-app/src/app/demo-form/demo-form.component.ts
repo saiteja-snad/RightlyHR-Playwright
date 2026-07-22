@@ -177,7 +177,7 @@ export class DemoFormComponent implements OnInit, OnDestroy {
     email: ['', [Validators.required, Validators.email, Validators.pattern(EMAIL_PATTERN), workEmailValidator]],
     mobile: ['', [mobileCharsValidator, mobileNumberValidator('IN')]],
     demoPreference: ['prefilled' as 'prefilled' | 'custom', Validators.required],
-    agreeTerms: [true, Validators.requiredTrue],
+    agreeTerms: [false, Validators.requiredTrue],
     newsletterSubscription: [false],
   });
   submitted = false;
@@ -323,7 +323,11 @@ export class DemoFormComponent implements OnInit, OnDestroy {
   }
 
   get canSubmit(): boolean {
-    return this.form.valid && this.emailVerified && !!this.selectedFile;
+    return this.form.valid && this.emailVerified;
+  }
+
+  get emailVerifyDisabled(): boolean {
+    return this.form.controls.email.invalid || this.form.controls.firstName.invalid || this.emailVerifyLoader;
   }
 
   get currentOtpValue(): string {
@@ -355,6 +359,12 @@ export class DemoFormComponent implements OnInit, OnDestroy {
     control.markAsTouched();
     if (control.invalid || !control.value) {
       return;
+    }
+    if (target === 'email') {
+      this.form.controls.firstName.markAsTouched();
+      if (this.form.controls.firstName.invalid) {
+        return;
+      }
     }
     this.activeTarget = target;
     this.otpError = null;

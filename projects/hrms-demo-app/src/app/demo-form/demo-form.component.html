@@ -117,7 +117,7 @@
               @if (emailVerified) {
               <button type="button" class="verify done" disabled>&#10003; Verified</button>
               } @else {
-              <button type="button" class="verify" [disabled]="form.controls.email.invalid || emailVerifyLoader"
+              <button type="button" class="verify" [disabled]="emailVerifyDisabled"
                 (click)="openVerify('email')">
                 @if (emailVerifyLoader) {
                 <div class="button-loader-content">
@@ -138,6 +138,8 @@
             <div class="error-msg">Please use your official business email address.</div>
             } @else if (form.controls.email.touched && form.controls.email.invalid) {
             <div class="error-msg">Invalid Email format - Please enter a valid email address</div>
+            } @else if (form.controls.email.valid && form.controls.firstName.invalid) {
+            <div class="error-msg">Please enter your First Name before verifying your email.</div>
             } @else if (form.controls.email.touched && form.controls.email.valid && !emailVerified) {
             <div class="error-msg">Please verify your email address.</div>
             } @else {
@@ -200,7 +202,7 @@
         </div>
 
         <div class="field full logo-field">
-          <label>Company Logo<span class="req">*</span></label>
+          <label>Company Logo <span class="opt">(Optional)</span></label>
           <div class="drop" [class.over]="dragOver" [class.has-file]="selectedFile" tabindex="0" role="button"
             aria-label="Upload company logo" (dragover)="onDragOver($event)" (dragleave)="onDragLeave($event)"
             (drop)="onDrop($event)" (click)="logoInput.click()">
@@ -223,8 +225,6 @@
           </div>
           @if (fileError) {
           <div class="error-msg">{{ fileError }}</div>
-          } @else if (submitted && !selectedFile) {
-          <div class="error-msg">Please upload your company logo.</div>
           }
         </div>
 

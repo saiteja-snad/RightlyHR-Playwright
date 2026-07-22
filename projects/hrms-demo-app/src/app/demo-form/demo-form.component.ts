@@ -8,14 +8,11 @@ import examples from 'libphonenumber-js/examples.mobile.json';
 import { VerificationserviceService } from '../services/verificationservice.service';
 import { HttpserviceService } from '../services/httpservice.service';
 import { OpenSuccessModalService } from '../services/opensucess-modal.service';
-
 type VerifyTarget = 'email' | 'mobile';
-
 interface TextSegment {
   text: string;
   hl?: boolean;
 }
-
 interface BrandSlide {
   headingParts: TextSegment[];
   subContext: string;
@@ -127,6 +124,8 @@ export const OTP_LENGTH = 6;
 const CODE_TIMER_SECONDS = 300;
 const MAX_LOGO_SIZE_BYTES = 5 * 1024 * 1024;
 const ALLOWED_LOGO_TYPES = ['image/png', 'image/jpeg', 'image/svg+xml'];
+const MAX_OTP_ATTEMPTS = 5;
+const VERIFIED_EMAIL_STORAGE_KEY = 'demoForm.verifiedEmail';
 
 const NAME_PATTERN = /^[A-Za-z]+(?:\s[A-Za-z]+)*$/;
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/;
@@ -150,6 +149,13 @@ function mobileNumberValidator(countryCode: string) {
   };
 }
 
+const MOBILE_CHARS_PATTERN = /^[0-9+\-\s()]*$/;
+
+function mobileCharsValidator(control: AbstractControl) {
+  const value: string = control.value || '';
+  return value && !MOBILE_CHARS_PATTERN.test(value) ? { invalidChars: true } : null;
+}
+
 @Component({
   selector: 'app-demo-form',
   imports: [ReactiveFormsModule, FormsModule, InputOtpModule, NgxCountriesDropdownModule],
@@ -169,7 +175,7 @@ export class DemoFormComponent implements OnInit, OnDestroy {
     lastName: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50), Validators.pattern(NAME_PATTERN)]],
     companyName: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(100)]],
     email: ['', [Validators.required, Validators.email, Validators.pattern(EMAIL_PATTERN), workEmailValidator]],
-    mobile: ['', [mobileNumberValidator('IN')]],
+    mobile: ['', [mobileCharsValidator, mobileNumberValidator('IN')]],
     demoPreference: ['prefilled' as 'prefilled' | 'custom', Validators.required],
     agreeTerms: [true, Validators.requiredTrue],
     newsletterSubscription: [false],
@@ -192,10 +198,13 @@ export class DemoFormComponent implements OnInit, OnDestroy {
   dragOver = false;
   emailVerified = false;
   mobileVerified = false;
+  verifiedEmailValue: string | null = null;
   activeTarget: VerifyTarget | null = null;
   emailOtpValue = '';
   mobileOtpValue = '';
   otpError: string | null = null;
+  otpAttempts = 0;
+  otpLocked = false;
   emailTimer = 0;
   mobileTimer = 0;
   errormsg: string | null = null;
@@ -211,6 +220,27 @@ export class DemoFormComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.startSlideAutoplay();
+    this.restoreVerifiedEmail();
+  }
+
+  private restoreVerifiedEmail(): void {
+    const saved = sessionStorage.getItem(VERIFIED_EMAIL_STORAGE_KEY);
+    if (!saved) {
+      return;
+    }
+    this.form.controls.email.setValue(saved);
+    this.emailVerified = true;
+    this.verifiedEmailValue = saved;
+  }
+
+  private persistVerifiedEmail(email: string): void {
+    this.verifiedEmailValue = email;
+    sessionStorage.setItem(VERIFIED_EMAIL_STORAGE_KEY, email);
+  }
+
+  private clearVerifiedEmail(): void {
+    this.verifiedEmailValue = null;
+    sessionStorage.removeItem(VERIFIED_EMAIL_STORAGE_KEY);
   }
 
   ngOnDestroy(): void {
@@ -244,7 +274,7 @@ export class DemoFormComponent implements OnInit, OnDestroy {
   onCountryChange(country: any): void {
     this.selectedCountryCode.set(country.code);
     this.mobileDialCode = country.dialling_code;
-    this.form.controls.mobile.setValidators([mobileNumberValidator(country.code)]);
+    this.form.controls.mobile.setValidators([mobileCharsValidator, mobileNumberValidator(country.code)]);
     this.form.controls.mobile.updateValueAndValidity();
 
     const example = getExampleNumber(country.code, examples as any);
@@ -262,7 +292,7 @@ export class DemoFormComponent implements OnInit, OnDestroy {
     }
   }
 
-  trimNameField(controlName: 'firstName' | 'middleName' | 'lastName' | 'companyName'): void {
+  trimNameField(controlName: 'firstName' | 'middleName' | 'lastName' | 'companyName' | 'email'): void {
     const control = this.form.controls[controlName];
     const trimmed = (control.value ?? '').trim();
     if (trimmed !== control.value) {
@@ -285,6 +315,10 @@ export class DemoFormComponent implements OnInit, OnDestroy {
       const errors = { ...this.form.controls.email.errors };
       delete errors['duplicate'];
       this.form.controls.email.setErrors(Object.keys(errors).length ? errors : null);
+    }
+    if (this.emailVerified && this.form.controls.email.value?.trim() !== this.verifiedEmailValue) {
+      this.emailVerified = false;
+      this.clearVerifiedEmail();
     }
   }
 
@@ -324,6 +358,8 @@ export class DemoFormComponent implements OnInit, OnDestroy {
     }
     this.activeTarget = target;
     this.otpError = null;
+    this.otpAttempts = 0;
+    this.otpLocked = false;
     this.currentOtpValue = '';
     this.startTimer(target);
     if (target === 'email' && this.form.get('email')?.value) {
@@ -331,7 +367,7 @@ export class DemoFormComponent implements OnInit, OnDestroy {
     }
   }
 
-  sendEmailVerificationCode(fieldname: any): void {
+  sendEmailVerificationCode(fieldname: any, openModal: boolean = true): void {
     if (fieldname === 'email') { this.emailVerifyLoader = true; }
     if (fieldname === 'mobile') { this.mobileVerifyLoader = true; }
     const email = this.form.get('email')?.value;
@@ -339,7 +375,7 @@ export class DemoFormComponent implements OnInit, OnDestroy {
       this.confirmationpopup.openErrorModal('Please enter an email address first!');
       return;
     }
-    const fullName = [this.form.get('firstName')?.value, this.form.get('middleName')?.value, 
+    const fullName = [this.form.get('firstName')?.value, this.form.get('middleName')?.value,
       this.form.get('lastName')?.value].filter(name => name?.trim()).join(' ');
     this.verificationService.sendVerificationCode(email, fullName).subscribe({
       next: (res) => {
@@ -347,6 +383,9 @@ export class DemoFormComponent implements OnInit, OnDestroy {
           //console.log(res.message);
           this.emailVerifyLoader = false;
           this.mobileVerifyLoader = false;
+          if (!openModal) {
+            return;
+          }
           this.modalRef = this.modalService.open(this.verifyModalTpl, { centered: true, backdrop: 'static' });
           this.modalRef.result.finally(() => {
             this.activeTarget = null;
@@ -398,11 +437,16 @@ export class DemoFormComponent implements OnInit, OnDestroy {
     }
     this.currentOtpValue = '';
     this.otpError = null;
+    this.otpAttempts = 0;
+    this.otpLocked = false;
     this.startTimer(target);
+    if (target === 'email') {
+      this.sendEmailVerificationCode(target, false);
+    }
   }
 
   verifyCode(): void {
-    if (this.currentOtpValue.length !== OTP_LENGTH) {
+    if (this.currentOtpValue.length !== OTP_LENGTH || this.otpLocked) {
       return;
     }
     const email = this.form.get('email')?.value;
@@ -418,28 +462,41 @@ export class DemoFormComponent implements OnInit, OnDestroy {
         if (res.statusCode === 200 && res.verified) {
           this.emailVerified = true;
           this.otpError = null;
-          // Disable the email field
-          this.form.get('email')?.disable();
+          this.otpAttempts = 0;
+          this.persistVerifiedEmail(String(email).trim());
           this.modalRef?.close();
         } else {
           const backendMsg = (res.message || '').toLowerCase();
-          this.otpError = backendMsg.includes('expired')
-            ? "This OTP is no longer valid. Please click 'Resend OTP' to receive a new one."
-            : 'The OTP you entered is invalid. Please try again.';
+          const expired = backendMsg.includes('expired');
+          this.registerFailedOtpAttempt(expired);
         }
       },
       error: (err) => {
         console.error('Error verifying email:', err);
         const backendMsg = (err?.error?.message || '').toLowerCase();
         if (backendMsg.includes('expired')) {
-          this.otpError = "This OTP is no longer valid. Please click 'Resend OTP' to receive a new one.";
+          this.registerFailedOtpAttempt(true);
         } else if (!err?.status || err.status >= 500) {
           this.otpError = 'Unable to verify the OTP at this time. Please try again later.';
         } else {
-          this.otpError = 'The OTP you entered is invalid. Please try again.';
+          this.registerFailedOtpAttempt(false);
         }
       }
     });
+  }
+
+  private registerFailedOtpAttempt(expired: boolean): void {
+    if (expired) {
+      this.otpError = "This OTP is no longer valid. Please click 'Resend OTP' to receive a new one.";
+      return;
+    }
+    this.otpAttempts++;
+    if (this.otpAttempts >= MAX_OTP_ATTEMPTS) {
+      this.otpLocked = true;
+      this.otpError = "Too many incorrect attempts. Please click 'Resend OTP' to get a new code.";
+    } else {
+      this.otpError = 'The OTP you entered is invalid. Please try again.';
+    }
   }
 
   dismissModal(): void {
@@ -517,11 +574,13 @@ export class DemoFormComponent implements OnInit, OnDestroy {
       lastName: formvalue.lastName,
       emailAddress: formvalue.email,
       contactNumber: formvalue.mobile,
+      contactNumberCountryFlag: this.selectedCountryCode(),
+      contactNumberCountryCode: this.mobileDialCode,
       isPrefilledData: true,
       companyLogo: this.selectedFile?.name ?? null,
       companyName: formvalue.companyName,
-      agreeToUpdates: formvalue.agreeTerms,
-      subscribeNewsletter: formvalue.newsletterSubscription,
+      isMarketingConsent: formvalue.agreeTerms,
+      isNewsletterSubscribed: formvalue.newsletterSubscription,
     }
     this.httpService.createdemoinstance(payload).subscribe({
       next: (response: any) => {
@@ -529,6 +588,7 @@ export class DemoFormComponent implements OnInit, OnDestroy {
         //this.confirmationpopup.openSuccessModal('Demo instance created successfully!');
         if (response.statusCode === 201) {
           this.submittedSuccessfully = true;
+          this.clearVerifiedEmail();
         }
       },
       error: (error: any) => {
@@ -540,6 +600,7 @@ export class DemoFormComponent implements OnInit, OnDestroy {
         if (lowerMsg.includes('already been created')) {
           this.emailDuplicateMessage = msg;
           this.emailVerified = false;
+          this.clearVerifiedEmail();
           this.form.controls.email.enable();
           this.form.controls.email.setErrors({ duplicate: true });
           this.form.controls.email.markAsTouched();

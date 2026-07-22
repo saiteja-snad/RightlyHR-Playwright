@@ -97,7 +97,7 @@
           <div class="field">
             <label for="companyName">Company Name<span class="req">*</span></label>
             <input type="text" id="companyName" formControlName="companyName" placeholder="Please enter company name"
-              autocomplete="organization" maxlength="100" (blur)="trimNameField('companyName')"
+              autocomplete="off" maxlength="100" (blur)="trimNameField('companyName')"
               (input)="onCompanyNameInput()" />
             @if (form.controls.companyName.touched && form.controls.companyName.errors?.['duplicate']) {
             <div class="error-msg">{{ companyDuplicateMessage }}</div>
@@ -109,10 +109,11 @@
           </div>
 
           <div class="field">
-            <label for="email">Work Email<span class="req">*</span></label>
+            <label for="workEmailField">Work Email<span class="req">*</span></label>
             <div class="control">
-              <input type="email" id="email" formControlName="email" placeholder="Please enter work email"
-                autocomplete="email" [class.good]="emailVerified" (input)="onEmailInput()" />
+              <input type="text" inputmode="email" id="workEmailField" formControlName="email"
+                placeholder="Please enter work email" autocomplete="off" autocorrect="off" spellcheck="false"
+                [class.good]="emailVerified" (input)="onEmailInput()" (blur)="trimNameField('email')" />
               @if (emailVerified) {
               <button type="button" class="verify done" disabled>&#10003; Verified</button>
               } @else {
@@ -147,9 +148,11 @@
           <div class="field">
             <label for="firstName">First Name<span class="req">*</span></label>
             <input type="text" id="firstName" formControlName="firstName" placeholder="Please enter first name"
-              autocomplete="given-name" maxlength="50" (blur)="trimNameField('firstName')" />
+              autocomplete="off" maxlength="50" (blur)="trimNameField('firstName')" />
             @if (form.controls.firstName.touched && form.controls.firstName.errors?.['required']) {
             <div class="error-msg">Please enter your First Name</div>
+            } @else if (form.controls.firstName.touched && form.controls.firstName.errors?.['minlength']) {
+            <div class="error-msg">First Name must be at least 2 characters.</div>
             } @else if (form.controls.firstName.touched && form.controls.firstName.invalid) {
             <div class="error-msg">Please enter Valid First Name</div>
             }
@@ -158,7 +161,7 @@
           <div class="field">
             <label for="middleName">Middle Name</label>
             <input type="text" id="middleName" formControlName="middleName" placeholder="Please enter middle name"
-              autocomplete="additional-name" maxlength="50" (blur)="trimNameField('middleName')" />
+              autocomplete="off" maxlength="50" (blur)="trimNameField('middleName')" />
             @if (form.controls.middleName.touched && form.controls.middleName.invalid) {
             <div class="error-msg">Please enter Valid Middle Name</div>
             }
@@ -167,9 +170,11 @@
           <div class="field">
             <label for="lastName">Last Name<span class="req">*</span></label>
             <input type="text" id="lastName" formControlName="lastName" placeholder="Please enter last name"
-              autocomplete="family-name" maxlength="50" (blur)="trimNameField('lastName')" />
+              autocomplete="off" maxlength="50" (blur)="trimNameField('lastName')" />
             @if (form.controls.lastName.touched && form.controls.lastName.errors?.['required']) {
             <div class="error-msg">Please enter your Last Name</div>
+            } @else if (form.controls.lastName.touched && form.controls.lastName.errors?.['minlength']) {
+            <div class="error-msg">Last Name must be at least 2 characters.</div>
             } @else if (form.controls.lastName.touched && form.controls.lastName.invalid) {
             <div class="error-msg">Please enter Valid Last Name</div>
             }
@@ -182,10 +187,13 @@
                 [selectedCountryCode]="selectedCountryCode()" [countryListConfig]="countryListConfig"
                 class="country-input" (onCountryChange)="onCountryChange($event)">
               </lib-country-list>
-              <input type="tel" id="mobile" formControlName="mobile" [placeholder]="mobilePlaceholder"
-                autocomplete="tel-national" (input)="onMobileNumberInput()" />
+              <input type="text" inputmode="tel" id="mobile" formControlName="mobile"
+                [placeholder]="mobilePlaceholder" autocomplete="off" autocorrect="off" spellcheck="false"
+                (input)="onMobileNumberInput()" />
             </div>
-            @if (mobileProvided && form.controls.mobile.hasError('invalidPhoneNumber')) {
+            @if (mobileProvided && form.controls.mobile.hasError('invalidChars')) {
+            <div class="error-msg">Mobile number can only contain digits.</div>
+            } @else if (mobileProvided && form.controls.mobile.hasError('invalidPhoneNumber')) {
             <div class="error-msg">The phone number is not valid for the selected country.</div>
             }
           </div>
@@ -312,14 +320,17 @@
       </div>
       @if (otpError) {
       <div class="error-msg ">{{ otpError }}</div>
+      } @else if (currentOtpValue.length > 0 && currentOtpValue.length < 6) {
+      <div class="error-msg ">Please enter all 6 digits.</div>
       }
       <div class="d-flex justify-content-between align-items-center mt-4 send-code">
         <div class="timer"><i class="bi bi-clock"></i> {{ formattedTimer() }}</div>
-        <button type="button" class="link-inline" [disabled]="currentTimer > 0" (click)="resendCode()">Resend code</button>
+        <button type="button" class="link-inline" [disabled]="currentTimer > 0 && !otpLocked"
+          (click)="resendCode()">Resend code</button>
       </div>
       <div class="custom-modal-footer pt-4">
         <button type="button" class="custom-btn btn-secondary" (click)="dismissModal()">Close</button>
-        <button type="submit" class="custom-btn btn-primary" [disabled]="currentOtpValue.length !== 6"
+        <button type="submit" class="custom-btn btn-primary" [disabled]="currentOtpValue.length !== 6 || otpLocked"
           (click)="verifyCode()">Verify code</button>
       </div>
     </div>

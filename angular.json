@@ -539,6 +539,12 @@
           },
           "configurations": {
             "production": {
+              "fileReplacements": [
+                {
+                  "replace": "projects/hrms-demo-app/src/environments/environment.ts",
+                  "with": "projects/hrms-demo-app/src/environments/environment.prod.ts"
+                }
+              ],
               "budgets": [
                 {
                   "type": "initial",

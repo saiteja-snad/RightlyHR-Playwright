@@ -7,37 +7,45 @@
 
     <!--Labeling content-->
     <div class="hero-copy py-3">
-      <div class="heading">
-        @for (seg of activeSlide.headingParts; track $index) {
-        @if (seg.hl) {<span>{{ seg.text }}</span>} @else { {{ seg.text }} }
-        }
+      @for (idx of [currentSlideIndex]; track idx) {
+      <div class="hero-fade">
+        <div class="heading">
+          @for (seg of activeSlide.headingParts; track $index) {
+          @if (seg.hl) {<span>{{ seg.text }}</span>} @else { {{ seg.text }} }
+          }
+        </div>
+        <div class="sub-context py-4">{{ activeSlide.subContext }}</div>
       </div>
-      <div class="sub-context py-4">{{ activeSlide.subContext }}</div>
+      }
     </div>
 
     <!--Slider content-->
     <div class="slider-main-container">
       <div class="slider-content">
-        <div class="heading mb-3">
-          @for (seg of activeSlide.cardHeadingParts; track $index) {
-          @if (seg.hl) {<i>{{ seg.text }}</i>} @else { {{ seg.text }} }
-          }
-        </div>
-        <div class="sub-context mb-4">{{ activeSlide.cardSubContext }}</div>
-        <div class="list-container">
-          @for (item of activeSlide.listItems; track item) {
-          <div class="list-item mb-2">
-            <div>
-              <img src="/icons/list-icon.png" alt="" class="list-icon" />
+        @for (idx of [currentSlideIndex]; track idx) {
+        <div class="slide-fade">
+          <div class="heading mb-3">
+            @for (seg of activeSlide.cardHeadingParts; track $index) {
+            @if (seg.hl) {<i>{{ seg.text }}</i>} @else { {{ seg.text }} }
+            }
+          </div>
+          <div class="sub-context mb-4">{{ activeSlide.cardSubContext }}</div>
+          <div class="list-container">
+            @for (item of activeSlide.listItems; track item) {
+            <div class="list-item mb-2">
+              <div>
+                <img src="/icons/list-icon.png" alt="" class="list-icon" />
+              </div>
+              <div class="context">{{ item }}</div>
             </div>
-            <div class="context">{{ item }}</div>
-          </div>
-          }
+            }
 
-          <div class="pt-4">
-            <button type="button" class="explore-btn">Explore More<i class="bi bi-arrow-right ms-2"></i></button>
+            <div class="pt-4">
+              <button type="button" class="explore-btn">Explore More<i class="bi bi-arrow-right ms-2"></i></button>
+            </div>
           </div>
         </div>
+        }
 
         <div class="list-slide-image-container">
           <img [src]="activeSlide.image" alt="" class="list-slide-image" />

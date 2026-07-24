@@ -583,7 +583,7 @@ export class DemoFormComponent implements OnInit, OnDestroy {
       middleName: formvalue.middleName,
       lastName: formvalue.lastName,
       emailAddress: formvalue.email,
-      contactNumber: formvalue.mobile,
+      contactNumber: (formvalue.mobile ?? '').replace(/\D/g, ''),
       contactNumberCountryFlag: this.selectedCountryCode(),
       contactNumberCountryCode: this.mobileDialCode,
       isPrefilledData: true,

@@ -681,7 +681,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
       'Desk Allocation - Create', 'Team Tickets Tab', 'My Tickets Tab',
       'Late Login Alert Configuration Tab',
       'Extra Hours Configuration Tab',
-      'Flexible Work Hours Configuration Tab'
+      'Flexible Work Hours Configuration Tab','Biometric Configuration Tab'
 
 
     ];
@@ -988,7 +988,8 @@ isProjectManagementClientsTabsCheckboxDisabled = (
         'WFH Entitlement Tab', 'Comp Off Entitlement Tab', 'Attendance Regularization Eligibility Tab',
         'Late Login Alert Configuration Tab',
         'Extra Hours Configuration Tab',
-        'Flexible Work Hours Configuration Tab'
+        'Flexible Work Hours Configuration Tab',
+        'Biometric Configuration Tab'
       ]
         .includes(per.fields) &&
       action === 'Update'
@@ -1324,7 +1325,7 @@ export const SECTION_DEFINITIONS: SectionDef[] = [
   {
     title: 'Settings TimeOff Attendance Eligibility Criteria', disableFn: 'isSettingsExpenseConfigurationCheckboxDisabled', fieldNames: ['Comp Off Entitlement Tab', 'WFH Entitlement Tab', 'Attendance Eligibility Permissions Tab', 'Permission Elgibility Tab', 'Attendance Regularization Tab', 'Attendance Regularization Eligibility Tab', 'Eligibility Global Permissions Tab', 'Late Login Alert Configuration Tab',
       'Extra Hours Configuration Tab',
-      'Flexible Work Hours Configuration Tab']
+      'Flexible Work Hours Configuration Tab' , 'Biometric Configuration Tab']
   },
   { title: 'Settings Asset Configuration', disableFn: 'isSettingsEmployeeJobCheckboxDisabled', fieldNames: ['Vendor Details', 'Asset Catagory', 'Asset Sub Catagory'] },
   { title: 'Settings Dynamic Forms', disableFn: 'isDynamicFormsDisabled', fieldNames: ['Active Forms', 'Inactive Forms', 'Draft Forms', 'Form Settings'] },

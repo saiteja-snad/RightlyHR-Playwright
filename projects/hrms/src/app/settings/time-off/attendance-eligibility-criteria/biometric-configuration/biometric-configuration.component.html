@@ -1,0 +1,53 @@
+<div [formGroup]="form" class="biometric-container">
+
+    @if (rbac.allowedToAccess('Biometric Configuration Tab.view')) {
+        <div class="mb-3">
+            <button
+                *ngIf="showUpdate"
+                type="button"
+                class="custom-btn btn-primary"
+                (click)="onUpdate()"
+                [disabled]="form.invalid">
+                Update
+            </button>
+        </div>
+    }
+
+    <div class="custom-table-content position-relative w-50">
+
+        <table class="w-100">
+
+            <thead>
+                <tr>
+                    <th>Configuration</th>
+                    <th class="text-center">Enabled</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr>
+                    <td class="align-middle">
+                        Biometric Integration
+                    </td>
+
+                    <td class="d-flex justify-content-center">
+
+                        <div class="form-check form-switch">
+
+                            <input
+                                class="form-check-input"
+                                type="checkbox"
+                                role="switch"
+                                formControlName="isProcessing">
+
+                        </div>
+
+                    </td>
+                </tr>
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>

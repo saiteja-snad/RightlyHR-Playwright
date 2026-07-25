@@ -169,6 +169,7 @@
         }
     }
 }
+
 // common card stylings ends
 
 // all employees list view stylings
@@ -253,6 +254,7 @@
         }
     }
 }
+
 // all employees list view stylings ends
 
 .summary-header {
@@ -439,8 +441,8 @@
 
 /* Apply only when there is ONE item */
 .leave-list-content>*:only-child {
-  min-width: 300px;
-  max-width: max-content;
+    min-width: 300px;
+    max-width: max-content;
 }
 
 /* Team Members */
@@ -781,6 +783,7 @@
         border: 1px solid var(--primary-color);
         color: var(--primary-color);
     }
+
     .attendance-chip {
         font-size: var(--fontsize10);
         font-weight: 600;
@@ -792,7 +795,7 @@
             background-color: #FFF;
             color: #305889 !important;
             border: 1px solid #305889;
-    }
+        }
     }
 }
 
@@ -852,49 +855,49 @@
 }
 
 .loading-text {
-  display: inline-block;
-  position: relative;
-  font-size: var(--fontsize16);
-  font-weight: 500;
-  color: var(--primary-color);
+    display: inline-block;
+    position: relative;
+    font-size: var(--fontsize16);
+    font-weight: 500;
+    color: var(--primary-color);
 }
 
 .loading-dots::after {
-  content: '';
-  display: inline-block;
-  animation: loadingDots 1.5s infinite;
+    content: '';
+    display: inline-block;
+    animation: loadingDots 1.5s infinite;
 }
 
 @keyframes loadingDots {
 
-  0%,
-  20% {
-    content: '';
-  }
+    0%,
+    20% {
+        content: '';
+    }
 
-  40% {
-    content: '.';
-  }
+    40% {
+        content: '.';
+    }
 
-  60% {
-    content: '..';
-  }
+    60% {
+        content: '..';
+    }
 
-  80%,
-  100% {
-    content: '...';
-  }
+    80%,
+    100% {
+        content: '...';
+    }
 }
 
 .loading-message-overlay {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  text-align: center;
-  z-index: 1;
-  width: 100%;
-  padding: 0 1rem;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    z-index: 1;
+    width: 100%;
+    padding: 0 1rem;
 }
 
 .quick-links-card {
@@ -1178,7 +1181,30 @@
         color: #424242;
     }
 
-    &.bs-popover-top > .popover-arrow::after {
+    &.bs-popover-top>.popover-arrow::after {
         border-top-color: #ffffff !important;
+    }
+}
+
+.component-overlay-placeholder-content {
+    background: rgba(255, 255, 255, 0.6);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+
+    app-attendance-placeholder {
+        display: flex;
+        justify-content: center;
+
+        svg {
+            width: 100px;
+            height: 100px;
+        }
+    }
+
+    .context {
+        font-size: 12px;
+        line-height: 16px;
+        margin: 4px 0 0;
+        text-align: center;
     }
 }

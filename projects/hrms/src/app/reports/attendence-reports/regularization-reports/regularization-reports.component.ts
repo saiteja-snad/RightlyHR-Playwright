@@ -20,11 +20,12 @@ import { ReportsHeaderComponent } from "../../../shared/reports-tabs/reports-hea
 import { DatePicker } from 'primeng/datepicker';
 import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
+import { AttendancePlaceholderComponent } from '../../../icons/attendance-placeholder/attendance-placeholder.component';
 
 @Component({
   selector: 'app-regularization-reports',
-  imports: [CommonModule, ReactiveFormsModule, Select, MultiSelectModule, DatePicker, DataLoaderContentComponent, 
-    NoDataFoundComponent, ReportsHeaderComponent,TranslateModule],
+  imports: [CommonModule, ReactiveFormsModule, Select, MultiSelectModule, DatePicker, DataLoaderContentComponent, AttendancePlaceholderComponent,
+    NoDataFoundComponent, ReportsHeaderComponent, TranslateModule],
   templateUrl: './regularization-reports.component.html',
   styleUrl: './regularization-reports.component.scss',
   encapsulation: ViewEncapsulation.None
@@ -61,6 +62,8 @@ export class RegularizationReportsComponent implements OnInit, OnDestroy {
   };
   localeOptions: any;
   today: Date = new Date();
+  isAttendanceDataTrue = false;
+  attendanceConfigLoading = true;
 
   constructor(
     private authService: AuthService,
@@ -85,6 +88,7 @@ export class RegularizationReportsComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.getattendancedatabyentry();
     this.localeOptions = {
       applyLabel: 'ok',
       format: this.authService.convertAngularDateFormatToJs(environment.dateformat).toUpperCase(),
@@ -135,89 +139,89 @@ export class RegularizationReportsComponent implements OnInit, OnDestroy {
 
   get isPermissionGenerateDisabled(): boolean {
     const { employee, manager, dateRange, leaveCategory, team } = this.regularizationReportForm.value;
-    return !((employee && employee?.length > 0) || 
-             (manager && manager?.length > 0) || 
-             (dateRange && dateRange?.length === 2 && dateRange[0] && dateRange[1]) || 
-             leaveCategory || 
-             (team && team?.length > 0));
+    return !((employee && employee?.length > 0) ||
+      (manager && manager?.length > 0) ||
+      (dateRange && dateRange?.length === 2 && dateRange[0] && dateRange[1]) ||
+      leaveCategory ||
+      (team && team?.length > 0));
   }
-getAllEmployees(managerIds?: string) {
+  getAllEmployees(managerIds?: string) {
     let url = 'Employeedata/employees/by-managers';
     if (managerIds) {
       url += `?managerIds=${managerIds}`;
     }
     this.http.getData(url).pipe(takeUntil(this.destroy$))
-    .subscribe({
+      .subscribe({
+        next: (data: any) => {
+          const loggedInEmployee = {
+            ...this.loggedInUser,
+            fullName: `${this.loggedInUser.fusionEmpId ? this.loggedInUser.fusionEmpId + ' - ' : ''}${this.loggedInUser.firstName} ${this.loggedInUser.middleName ? this.loggedInUser.middleName + ' ' : ''}${this.loggedInUser.lastName}`.trim(),
+          };
+
+          const mappedData = data.map((employee: any) => {
+            const firstName = employee.firstName ? employee.firstName.trim() : '';
+            const middleName = employee.middleName ? employee.middleName.trim() : '';
+            const lastName = employee.lastName ? employee.lastName.trim() : '';
+
+            return {
+              ...employee,
+              firstName,
+              lastName,
+              fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${firstName} ${middleName ? middleName + ' ' : ''}${lastName}`.trim(),
+            };
+          });
+
+          const combinedData = [loggedInEmployee, ...mappedData];
+
+          // Filter unique by employeeId and sort by firstName
+          this.employeeDetails = combinedData
+            .filter((employee, index, self) =>
+              index === self.findIndex((e) => e.employeeId === employee.employeeId)
+            )
+            .sort((a: any, b: any) => (a.firstName ?? '').toLowerCase().localeCompare((b.firstName ?? '').toLowerCase()));
+        },
+        error: (reason: any) => {
+          console.log(reason);
+        },
+      });
+  }
+
+  getTeam() {
+    const statuses = 'Active';
+    this.http.getData(`PendingApprovalsAuthority/getAll?statuses=${encodeURIComponent(statuses)}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data: any) => {
-        const loggedInEmployee = {
-          ...this.loggedInUser,
-          fullName: `${this.loggedInUser.fusionEmpId ? this.loggedInUser.fusionEmpId + ' - ' : ''}${this.loggedInUser.firstName} ${this.loggedInUser.middleName ? this.loggedInUser.middleName + ' ' : ''}${this.loggedInUser.lastName}`.trim(),
-        };
-
-        const mappedData = data.map((employee: any) => {
-          const firstName = employee.firstName ? employee.firstName.trim() : '';
-          const middleName = employee.middleName ? employee.middleName.trim() : '';
-          const lastName = employee.lastName ? employee.lastName.trim() : '';
-
-          return {
-            ...employee,
-            firstName,
-            lastName,
-            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${firstName} ${middleName ? middleName + ' ' : ''}${lastName}`.trim(),
+        if (data) {
+          const loggedInEmployee = {
+            ...this.loggedInUser,
+            fusionEmployeeId: this.loggedInUser.fusionEmpId,
+            fullName: `${this.loggedInUser.fusionEmpId ? this.loggedInUser.fusionEmpId + ' - ' : ''}${this.loggedInUser.firstName} ${this.loggedInUser.middleName ? this.loggedInUser.middleName + ' ' : ''}${this.loggedInUser.lastName}`.trim(),
           };
-        });
 
-        const combinedData = [loggedInEmployee, ...mappedData];
+          const mappedData = data.map((employee: any) => {
+            const firstName = employee.firstName ? employee.firstName.trim() : '';
+            const middleName = employee.middleName ? employee.middleName.trim() : '';
+            const lastName = employee.lastName ? employee.lastName.trim() : '';
 
-        // Filter unique by employeeId and sort by firstName
-        this.employeeDetails = combinedData
-          .filter((employee, index, self) =>
-            index === self.findIndex((e) => e.employeeId === employee.employeeId)
-          )
-          .sort((a: any, b: any) => (a.firstName ?? '').toLowerCase().localeCompare((b.firstName ?? '').toLowerCase()));
+            return {
+              ...employee,
+              firstName,
+              fullName: `${employee.fusionEmployeeId ? employee.fusionEmployeeId + ' - ' : ''}${firstName} ${middleName ? middleName + ' ' : ''}${lastName}`.trim(),
+            };
+          });
+
+          const combinedData = [loggedInEmployee, ...mappedData];
+
+          // Filter unique by employeeId and sort by firstName
+          this.teamManagerDetails = combinedData
+            .filter((employee, index, self) =>
+              index === self.findIndex((e) => e.employeeId === employee.employeeId)
+            )
+            .sort((a: any, b: any) => (a.firstName ?? '').toLowerCase().localeCompare((b.firstName ?? '').toLowerCase()));
+        }
       },
-      error: (reason: any) => {
-        console.log(reason);
-      },
+      error: (reason: any) => console.log(reason),
     });
-}
-
-getTeam() {
-  const statuses = 'Active';
-  this.http.getData(`PendingApprovalsAuthority/getAll?statuses=${encodeURIComponent(statuses)}`).pipe(takeUntil(this.destroy$)).subscribe({
-    next: (data: any) => {
-      if (data) {
-        const loggedInEmployee = {
-          ...this.loggedInUser,
-          fusionEmployeeId: this.loggedInUser.fusionEmpId,
-          fullName: `${this.loggedInUser.fusionEmpId ? this.loggedInUser.fusionEmpId + ' - ' : ''}${this.loggedInUser.firstName} ${this.loggedInUser.middleName ? this.loggedInUser.middleName + ' ' : ''}${this.loggedInUser.lastName}`.trim(),
-        };
-
-        const mappedData = data.map((employee: any) => {
-          const firstName = employee.firstName ? employee.firstName.trim() : '';
-          const middleName = employee.middleName ? employee.middleName.trim() : '';
-          const lastName = employee.lastName ? employee.lastName.trim() : '';
-
-          return {
-            ...employee,
-            firstName,
-            fullName: `${employee.fusionEmployeeId ? employee.fusionEmployeeId + ' - ' : ''}${firstName} ${middleName ? middleName + ' ' : ''}${lastName}`.trim(),
-          };
-        });
-
-        const combinedData = [loggedInEmployee, ...mappedData];
-
-        // Filter unique by employeeId and sort by firstName
-        this.teamManagerDetails = combinedData
-          .filter((employee, index, self) =>
-            index === self.findIndex((e) => e.employeeId === employee.employeeId)
-          )
-          .sort((a: any, b: any) => (a.firstName ?? '').toLowerCase().localeCompare((b.firstName ?? '').toLowerCase()));
-      }
-    },
-    error: (reason: any) => console.log(reason),
-  });
-}
+  }
 
 
   clearAllFilters() {
@@ -246,17 +250,17 @@ getTeam() {
     this.spinnerLoader1 = true;
     this.isLoading = true;
     const formValue = this.regularizationReportForm.value;
-    
+
     const dateRangeArray = formValue.dateRange || [];
     const startDate: Dayjs | null = dateRangeArray[0] ? dayjs(dateRangeArray[0]) : null;
     const endDate: Dayjs | null = dateRangeArray[1] ? dayjs(dateRangeArray[1]) : (startDate ? startDate : null);
-    
+
     //filter condition
-    const noFilterProvided = (!formValue.employee || formValue.employee.length === 0) && 
-                             (!startDate || !endDate) && 
-                             !formValue.month && 
-                             (!formValue.manager || formValue.manager.length === 0) && 
-                             (!formValue.team || formValue.team.length === 0);
+    const noFilterProvided = (!formValue.employee || formValue.employee.length === 0) &&
+      (!startDate || !endDate) &&
+      !formValue.month &&
+      (!formValue.manager || formValue.manager.length === 0) &&
+      (!formValue.team || formValue.team.length === 0);
 
     if (noFilterProvided) {
       this.filteredRegularizationData = [];
@@ -304,26 +308,26 @@ getTeam() {
     if (formValue.manager && formValue.manager?.length > 0) {
       request.teamManagerId = formValue.manager?.map((item: any) => item?.employeeId).join(',');
     }
-    
+
     //Apply my team
     if (formValue.team && formValue.team?.length > 0) {
-       // logic for team if needed, but usually team selection populates employeeId via onClick or similar?
-       // In PermissionReportsComponent:
-       // if (formValue.team && formValue.team?.length > 0) {
-       //    request.employeeId = formValue.team?.map((item: any) => item.employeeId).join(',');
-       // }
-       // Wait, let's check how 'team' was handled in the original code.
-       // It wasn't explicitly handled in the original generateRegularizationReport I read.
-       // In the original code: 
-       // if (this.selectLeaveEmployeeIds.length >= 0) { ... request.employeeId = ids ... }
-       // And selectLeaveEmployeeIds is populated by onClick event on the select.
-       // If I switch to multi-select, I might not need onClick if I just bind the value.
-       
-       // However, to keep it simple and consistent with PermissionReports:
-       // If 'team' is selected, we map it to employeeId.
-       if (!request.employeeId && formValue.team) { // If employeeId not already set by 'employee' filter
-          request.employeeId = formValue.team?.map((item: any) => item.employeeId).join(',');
-       }
+      // logic for team if needed, but usually team selection populates employeeId via onClick or similar?
+      // In PermissionReportsComponent:
+      // if (formValue.team && formValue.team?.length > 0) {
+      //    request.employeeId = formValue.team?.map((item: any) => item.employeeId).join(',');
+      // }
+      // Wait, let's check how 'team' was handled in the original code.
+      // It wasn't explicitly handled in the original generateRegularizationReport I read.
+      // In the original code: 
+      // if (this.selectLeaveEmployeeIds.length >= 0) { ... request.employeeId = ids ... }
+      // And selectLeaveEmployeeIds is populated by onClick event on the select.
+      // If I switch to multi-select, I might not need onClick if I just bind the value.
+
+      // However, to keep it simple and consistent with PermissionReports:
+      // If 'team' is selected, we map it to employeeId.
+      if (!request.employeeId && formValue.team) { // If employeeId not already set by 'employee' filter
+        request.employeeId = formValue.team?.map((item: any) => item.employeeId).join(',');
+      }
     }
 
     this.reportsService.getRegularizationReports(request).subscribe({
@@ -349,121 +353,121 @@ getTeam() {
   exportToExcelAttendanceRegularization(): void {
     this.spinnerLoader2 = true;
     setTimeout(() => {
-    const HEADER_MAPPINGS: { [key: string]: string } = {
-      fusionEmpId: 'EMPLOYEE ID',
-      employeeName: 'EMPLOYEE NAME',
-      department: 'DEPARTMENT',
-      teamManager: 'TEAM MANAGER',
-      location: 'LOCATION',
-      subLocation: 'SUB LOCATION',
-      shift: 'SHIFT',
-      utilizedCount: 'UTILIZATION COUNT',
-      totalDuration: 'TOTAL DURATION (HH:MM)'
-    };
+      const HEADER_MAPPINGS: { [key: string]: string } = {
+        fusionEmpId: 'EMPLOYEE ID',
+        employeeName: 'EMPLOYEE NAME',
+        department: 'DEPARTMENT',
+        teamManager: 'TEAM MANAGER',
+        location: 'LOCATION',
+        subLocation: 'SUB LOCATION',
+        shift: 'SHIFT',
+        utilizedCount: 'UTILIZATION COUNT',
+        totalDuration: 'TOTAL DURATION (HH:MM)'
+      };
 
-    const NEW_SEQUENCE: string[] = [
-      'EMPLOYEE ID',
-      'EMPLOYEE NAME',
-      'DEPARTMENT',
-      'TEAM MANAGER',
-      'LOCATION',
-      'SUB LOCATION',
-      'SHIFT',
-      'UTILIZATION COUNT',
-      'TOTAL DURATION (HH:MM)'
-    ];
+      const NEW_SEQUENCE: string[] = [
+        'EMPLOYEE ID',
+        'EMPLOYEE NAME',
+        'DEPARTMENT',
+        'TEAM MANAGER',
+        'LOCATION',
+        'SUB LOCATION',
+        'SHIFT',
+        'UTILIZATION COUNT',
+        'TOTAL DURATION (HH:MM)'
+      ];
 
-    const modifiedData = this.filteredRegularizationData.map(record => {
-      const modifiedRecord: any = {};
-      NEW_SEQUENCE.forEach(columnName => {
-        const originalColumnName = Object.keys(HEADER_MAPPINGS).find(key => HEADER_MAPPINGS[key] === columnName);
+      const modifiedData = this.filteredRegularizationData.map(record => {
+        const modifiedRecord: any = {};
+        NEW_SEQUENCE.forEach(columnName => {
+          const originalColumnName = Object.keys(HEADER_MAPPINGS).find(key => HEADER_MAPPINGS[key] === columnName);
 
-        if (originalColumnName && record.hasOwnProperty(originalColumnName)) {
-          if (originalColumnName === 'permissionDate' && record[originalColumnName]) {
-            // Convert the date to a Date object
-            const date = new Date(record[originalColumnName]);
+          if (originalColumnName && record.hasOwnProperty(originalColumnName)) {
+            if (originalColumnName === 'permissionDate' && record[originalColumnName]) {
+              // Convert the date to a Date object
+              const date = new Date(record[originalColumnName]);
 
-            // Format the date to 'dd MMM yyyy'
-            const date_formatted = `${date.getDate()} ${date.toLocaleString('default', { month: 'short' })} ${date.getFullYear()}`;
+              // Format the date to 'dd MMM yyyy'
+              const date_formatted = `${date.getDate()} ${date.toLocaleString('default', { month: 'short' })} ${date.getFullYear()}`;
 
-            // Assign the formatted date to the modified record
-            modifiedRecord[columnName] = date_formatted;
+              // Assign the formatted date to the modified record
+              modifiedRecord[columnName] = date_formatted;
+            } else {
+              modifiedRecord[columnName] = record[originalColumnName];
+            }
           } else {
-            modifiedRecord[columnName] = record[originalColumnName];
+            modifiedRecord[columnName] = '';
           }
-        } else {
-          modifiedRecord[columnName] = '';
-        }
+        });
+        return modifiedRecord;
       });
-      return modifiedRecord;
-    });
 
-    // Create a new empty worksheet
-    const ws: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet([[]]);
+      // Create a new empty worksheet
+      const ws: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet([[]]);
 
-    // Merge cells for Leave Report row from A1 to J1
-    ws['!merges'] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: NEW_SEQUENCE.length - 1 } }];
+      // Merge cells for Leave Report row from A1 to J1
+      ws['!merges'] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: NEW_SEQUENCE.length - 1 } }];
 
-    // Add Leave Report row
-    XLSX.utils.sheet_add_aoa(ws, [['REGULARIZATION REPORT']], { origin: 'A1' });
+      // Add Leave Report row
+      XLSX.utils.sheet_add_aoa(ws, [['REGULARIZATION REPORT']], { origin: 'A1' });
 
-    // Add header row
-    XLSX.utils.sheet_add_aoa(ws, [NEW_SEQUENCE], { origin: 'A2' });
+      // Add header row
+      XLSX.utils.sheet_add_aoa(ws, [NEW_SEQUENCE], { origin: 'A2' });
 
-    // Add data rows
-    XLSX.utils.sheet_add_json(ws, modifiedData, { origin: 'A3', skipHeader: true });
+      // Add data rows
+      XLSX.utils.sheet_add_json(ws, modifiedData, { origin: 'A3', skipHeader: true });
 
-    // Apply styles to Leave Report row
-    const leaveReportCell = ws['A1'] || { t: '', v: '' }; // Get the cell or create a new one if it doesn't exist
-    leaveReportCell.s = { 
-      font: { bold: true, sz: 14, color: { rgb: "000000" } }, 
-      alignment: { horizontal: 'center', vertical: 'center' } 
-    };
-    
-    // Explicitly set row height
-    if (!ws['!rows']) ws['!rows'] = [];
-    ws['!rows'][0] = { hpt: 25 };
-    
-    ws['A1'] = leaveReportCell; // Assign the styled cell back to the worksheet
+      // Apply styles to Leave Report row
+      const leaveReportCell = ws['A1'] || { t: '', v: '' }; // Get the cell or create a new one if it doesn't exist
+      leaveReportCell.s = {
+        font: { bold: true, sz: 14, color: { rgb: "000000" } },
+        alignment: { horizontal: 'center', vertical: 'center' }
+      };
 
-    // Apply styles to column headers
-    NEW_SEQUENCE.forEach((columnName, index) => {
-      const cellAddress = XLSX.utils.encode_cell({ r: 1, c: index });
-      const cell = ws[cellAddress] || { t: '', v: '' }; // Get the cell or create a new one if it doesn't exist
-      cell.s = { font: { bold: true }, alignment: { horizontal: 'center' } };
-      ws[cellAddress] = cell; // Assign the styled cell back to the worksheet
-    });
+      // Explicitly set row height
+      if (!ws['!rows']) ws['!rows'] = [];
+      ws['!rows'][0] = { hpt: 25 };
 
-    // Apply styles to data rows
-    for (let rowIndex = 2; rowIndex < modifiedData.length + 2; rowIndex++) {
+      ws['A1'] = leaveReportCell; // Assign the styled cell back to the worksheet
+
+      // Apply styles to column headers
       NEW_SEQUENCE.forEach((columnName, index) => {
-        const cellAddress = XLSX.utils.encode_cell({ r: rowIndex, c: index });
+        const cellAddress = XLSX.utils.encode_cell({ r: 1, c: index });
         const cell = ws[cellAddress] || { t: '', v: '' }; // Get the cell or create a new one if it doesn't exist
-        cell.s = { alignment: { horizontal: 'center', vertical: 'center' } };
+        cell.s = { font: { bold: true }, alignment: { horizontal: 'center' } };
         ws[cellAddress] = cell; // Assign the styled cell back to the worksheet
       });
-    }
 
-    // Adjust column width to fit data
-    NEW_SEQUENCE.forEach((columnName, index) => {
-      let columnWidth = this.getColumnWidth(modifiedData, columnName);
-      // Increase the width for 'EMPLOYEE ID' and 'DEPARTMENT' columns
-      if (columnName === 'EMPLOYEE ID' || columnName === 'SUB LOCATION' || columnName === 'DEPARTMENT') {
-        columnWidth += 5; // Increase width by 5
+      // Apply styles to data rows
+      for (let rowIndex = 2; rowIndex < modifiedData.length + 2; rowIndex++) {
+        NEW_SEQUENCE.forEach((columnName, index) => {
+          const cellAddress = XLSX.utils.encode_cell({ r: rowIndex, c: index });
+          const cell = ws[cellAddress] || { t: '', v: '' }; // Get the cell or create a new one if it doesn't exist
+          cell.s = { alignment: { horizontal: 'center', vertical: 'center' } };
+          ws[cellAddress] = cell; // Assign the styled cell back to the worksheet
+        });
       }
-      ws['!cols'] = ws['!cols'] || [];
-      ws['!cols'][index] = { wch: columnWidth };
-    });
 
-    // Generate Excel file and trigger download
-    const wb: XLSX.WorkBook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Regularization Report');
-    const date = new Date();
-    // const formattedDate = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-    const fileName = `Regularization Report - ${dayjs().format('MMM DD YYYY')}.xlsx`;
-    XLSX.writeFile(wb, fileName);
-    this.spinnerLoader2 = false;
-  }, 100);
+      // Adjust column width to fit data
+      NEW_SEQUENCE.forEach((columnName, index) => {
+        let columnWidth = this.getColumnWidth(modifiedData, columnName);
+        // Increase the width for 'EMPLOYEE ID' and 'DEPARTMENT' columns
+        if (columnName === 'EMPLOYEE ID' || columnName === 'SUB LOCATION' || columnName === 'DEPARTMENT') {
+          columnWidth += 5; // Increase width by 5
+        }
+        ws['!cols'] = ws['!cols'] || [];
+        ws['!cols'][index] = { wch: columnWidth };
+      });
+
+      // Generate Excel file and trigger download
+      const wb: XLSX.WorkBook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'Regularization Report');
+      const date = new Date();
+      // const formattedDate = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+      const fileName = `Regularization Report - ${dayjs().format('MMM DD YYYY')}.xlsx`;
+      XLSX.writeFile(wb, fileName);
+      this.spinnerLoader2 = false;
+    }, 100);
   }
 
 
@@ -529,6 +533,28 @@ getTeam() {
 
   navigation() {
     this.router.navigate(['/reports']);
+  }
+
+  getattendancedatabyentry(): void {
+    const entity = 'AttendanceConfiguration';
+    const attribute = 'IsProcessing';
+
+    this.attendanceConfigLoading = true;
+
+    this.http
+      .getDatabyentriyvalue('entityAttributeValues', entity, attribute)
+      .subscribe({
+        next: (data: any) => {
+          this.isAttendanceDataTrue =
+            String(data?.[0]?.value).toLowerCase() === 'true';
+
+          this.attendanceConfigLoading = false;
+        },
+        error: (err: any) => {
+          this.attendanceConfigLoading = false;
+          console.error('Error fetching attendance configuration:', err);
+        }
+      });
   }
 
   ngOnDestroy(): void {

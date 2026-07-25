@@ -17,10 +17,11 @@ import { TimeoffYearFilterService } from '../../services/timeoff-year-filter.ser
 import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
 import { ApplicablePoliciesTriggerComponent } from '../../shared/policies/applicable-policies-trigger/applicable-policies-trigger.component';
 import { APPLICABLE_POLICIES_KEYS } from '../../shared/policies/policy-visibility.catalog';
+import { AttendancePlaceholderComponent } from '../../icons/attendance-placeholder/attendance-placeholder.component';
 
 @Component({
   selector: 'app-regularization',
-  imports: [RouterModule, ReactiveFormsModule, RegularizationTabsComponent, TranslateModule, CommonModule, Select, ModuleInformationComponent, NgbPopoverModule,ModuleInfoIconComponent, ApplicablePoliciesTriggerComponent],
+  imports: [RouterModule, ReactiveFormsModule, RegularizationTabsComponent, TranslateModule, CommonModule, Select, ModuleInformationComponent, NgbPopoverModule, ModuleInfoIconComponent, ApplicablePoliciesTriggerComponent, AttendancePlaceholderComponent],
   templateUrl: './regularization.component.html',
   styleUrl: './regularization.component.scss',
   encapsulation: ViewEncapsulation.None,
@@ -42,12 +43,15 @@ export class RegularizationComponent {
   selectedYear: number = this.currentYear;
   years: number[] = [];
   activeEmplist = [] as any;
+  isAttendanceDataTrue = false;
+  attendanceConfigLoading = true;
 
   constructor(private http: HttpService, public rbac: RbacService, public formsValidation: FormValidationsService,
     public readonly router: Router, private TimeoffYearFilterService: TimeoffYearFilterService) { }
 
   ngOnInit(): void {
     this.emp = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
+     this.getattendancedatabyentry();
     this.getTeamManagersDetails();
     this.updateModuleInfo();
     this.initiateUpdateModuleInfo();
@@ -68,7 +72,7 @@ export class RegularizationComponent {
   }
 
   getAllEmployeeDetails() {
-     const status = ['Active', 'Trainee Active', 'Active Contract'];
+    const status = ['Active', 'Trainee Active', 'Active Contract'];
     this.subscription = this.http.getData(`Employeedata/v3/Getallemployees?statuses=${status}`).subscribe({
       next: (res: any) => {
         this.activeEmplist = res.map((employee: any) => ({
@@ -102,33 +106,33 @@ export class RegularizationComponent {
   }
 
   // function to get the data of employees by hierarchy
-getTeamManagersDetails() {
-  const EmployeeId = this.emp.employeeId;
-  this.subscription = this.http
-    .getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`)
-    .subscribe({
-      next: (response: any) => {
-        if (Array.isArray(response) && response.length) {
-          const myTeam = response.filter((e: any) => e.isAccess);
-          this.getEmployeeInfo = myTeam
-            .map((employee: any) => ({
-              ...employee,
-              fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName ?? ''} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName ?? ''}`.trim(),
-            }))
-            //  Alphabetical sorting by firstName
-            .sort((a: any, b: any) =>
-              a.firstName.localeCompare(b.firstName, 'en', { sensitivity: 'base' })
-            );
-        } else {
+  getTeamManagersDetails() {
+    const EmployeeId = this.emp.employeeId;
+    this.subscription = this.http
+      .getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`)
+      .subscribe({
+        next: (response: any) => {
+          if (Array.isArray(response) && response.length) {
+            const myTeam = response.filter((e: any) => e.isAccess);
+            this.getEmployeeInfo = myTeam
+              .map((employee: any) => ({
+                ...employee,
+                fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName ?? ''} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName ?? ''}`.trim(),
+              }))
+              //  Alphabetical sorting by firstName
+              .sort((a: any, b: any) =>
+                a.firstName.localeCompare(b.firstName, 'en', { sensitivity: 'base' })
+              );
+          } else {
+            this.getEmployeeInfo = [];
+          }
+        },
+        error: (err) => {
+          console.error(err);
           this.getEmployeeInfo = [];
-        }
-      },
-      error: (err) => {
-        console.error(err);
-        this.getEmployeeInfo = [];
-      },
-    });
-}
+        },
+      });
+  }
 
   onCheckemployee(employeedId: any) {
     this.http.setEmployeeIdRegularization(employeedId);
@@ -149,7 +153,7 @@ getTeamManagersDetails() {
     // let empId = this.empinfo.employeeId;
     // this.subscription = this.http.getData(`AttendanceRequests/getbyempid/${empId}`).subscribe({
     let empId = employeedId
-    this.subscription =  this.http.getFilterRegularizationDataByID(empId, this.selectedYear).subscribe({
+    this.subscription = this.http.getFilterRegularizationDataByID(empId, this.selectedYear).subscribe({
       next: (response: any) => {
         this.regularize = response;
         this.regularize.forEach((element: { status: string }) => {
@@ -170,4 +174,33 @@ getTeamManagersDetails() {
       error: (reason: any) => console.log(reason)
     })
   }
+
+  getattendancedatabyentry() {
+  const entity = 'AttendanceConfiguration';
+  const attribute = 'IsProcessing';
+
+  this.attendanceConfigLoading = true;
+
+  this.http
+    .getDatabyentriyvalue(
+      'entityAttributeValues',
+      entity,
+      attribute
+    )
+    .subscribe({
+      next: (data: any) => {
+        this.isAttendanceDataTrue =
+          String(data?.[0]?.value).toLowerCase() === 'true';
+
+        this.attendanceConfigLoading = false;
+      },
+      error: (err: any) => {
+        this.attendanceConfigLoading = false;
+        console.error(
+          'Error fetching attendance configuration:',
+          err
+        );
+      }
+    });
+}
 }

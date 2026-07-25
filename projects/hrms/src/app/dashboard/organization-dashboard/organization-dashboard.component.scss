@@ -1019,3 +1019,40 @@
   width: 100%;
   padding: 0 1rem;
 }
+
+.component-overlay-placeholder-content {
+    height: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+
+    background: rgba(255, 255, 255, 0.6);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+
+    > div {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    app-attendance-placeholder {
+        display: flex;
+        justify-content: center;
+
+        svg {
+            width: 100px;
+            height: 100px;
+        }
+    }
+
+    .context {
+        font-size: 12px;
+        line-height: 16px;
+        margin: 4px 0 0;
+        text-align: center;
+    }
+}

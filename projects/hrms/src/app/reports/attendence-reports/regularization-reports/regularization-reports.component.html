@@ -2,7 +2,7 @@
   <div class="component-header-content">
     <!-- Header -->
     <app-reports-header />
-
+      @if(!isAttendanceDataTrue) {
       <div class="d-flex align-items-center gap-3">
         @if(rbac.allowedToAccess('Regularization Report - Generate.view')){
 
@@ -28,8 +28,27 @@
         </div>
         }
       </div>
+    }
   </div>
+      
+      @if(isAttendanceDataTrue) {
 
+    <div class="component-overlay-placeholder-content">
+        <div>
+
+            <app-attendance-placeholder>
+            </app-attendance-placeholder>
+
+            <p class="context">
+                Attendance data is currently unavailable due to pending biometric integration.
+                Please contact the administrator for assistance.
+            </p>
+
+        </div>
+    </div>
+
+}
+@else {
       <div class="custom-table-content">
         @if(!isLoading){
         <table id="leaveReportTable" class="content w-100">
@@ -72,7 +91,7 @@
   <app-data-loader-content />
       }
       </div>
-      
+    }
     </div>
 
 <!-- Filter Offcanvas -->

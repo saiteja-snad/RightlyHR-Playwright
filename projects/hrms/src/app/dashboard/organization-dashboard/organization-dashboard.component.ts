@@ -25,10 +25,11 @@ import { RbacService } from '../../services/rbac.service';
 import { NoDataFoundComponent } from '../../shared/no-data-found/no-data-found.component';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { AccessNavigationService } from '../../services/access-navigation.service';
+import { AttendancePlaceholderComponent } from '../../icons/attendance-placeholder/attendance-placeholder.component';
 @Component({
   selector: 'app-organization-dashboard',
   imports: [CommonModule, RouterModule, FormsModule, TranslateModule, NgbPopoverModule, ModuleInfoIconComponent,
-    ChartModule, Skeleton, AccordionModule, ProfileIconComponent, NoDataFoundComponent,
+    ChartModule, Skeleton, AccordionModule, ProfileIconComponent, NoDataFoundComponent, AttendancePlaceholderComponent,
     DatePicker, TabsModule, Select],
   templateUrl: './organization-dashboard.component.html',
   styleUrl: './organization-dashboard.component.scss',
@@ -71,6 +72,8 @@ export class OrganizationDashboardComponent implements AfterViewInit {
   totalHours: any;
   teamMembers: any[] = [];
   employeesBirthdays: any[] = [];
+  isAttendanceDataTrue = false;
+  attendanceConfigLoading = true;
   teamavailabilityinfo = 'Displays your team’s current availability for the selected date, including In Office, WFH, On Leave, Half Day, Remote, and Absent statuses.';
   myteammemberinfo = 'Displays an overview of all team members in the organization, helping employees stay informed about their colleagues.';
   genderdiversityinfo = 'Displays the gender distribution of employees, giving a quick and clear view of workforce diversity.';
@@ -90,8 +93,8 @@ export class OrganizationDashboardComponent implements AfterViewInit {
   //   { key: 'yetToLogin', label: 'Yet To Login', color: '#94A3B8' },
   // ];
 
-legendList = [
-  { key: 'yetToLogin', label: 'Yet To Login', color: '#94A3B8' },
+  legendList = [
+    { key: 'yetToLogin', label: 'Yet To Login', color: '#94A3B8' },
     { key: 'inOffice', label: 'In Office', color: '#1E90FF' },
     { key: 'absent', label: 'Absent', color: '#FF0000' },
     { key: 'halfDay', label: 'Half Day', color: '#FFD700' },
@@ -390,7 +393,8 @@ legendList = [
     this.getAllTeammembersList();
     this.gettodayloggedtime();
     this.selectedDate = new Date(); // current date by default
-    this.getteamavliabletly(this.selectedDate);
+    // this.getteamavliabletly(this.selectedDate);
+    this.getattendancedatabyentry();
     this.getWeeklyWorkLogHours();
     this.getCategoryempDetails(this.empinfo?.employeeId);
     this.getUpcomingActions();
@@ -403,7 +407,7 @@ legendList = [
     this.todayMaxdate = new Date();
     this.getNewJoineesAndExits();
     this.getAllLocations();
-    this.getAttendanceReportData();
+    // this.getAttendanceReportData();
     this.getApprovalsOverview();
     this.getExperienceDetails();
     this.getTeam();
@@ -1783,7 +1787,7 @@ legendList = [
         this.attendanceEmployeesList = res?.employees || [];
         const summary = this.attendanceReportData;
         this.totalAttendanceCount = (summary?.onTime || 0) + (summary?.lateLogin || 0) + (summary?.earlyLogout || 0)
-        + (summary?.hoursDeficit || 0) + (summary?.breakExceeded || 0) + (summary?.permission || 0);
+          + (summary?.hoursDeficit || 0) + (summary?.breakExceeded || 0) + (summary?.permission || 0);
         const values = [
           summary?.onTime || 0,
           summary?.lateLogin || 0,
@@ -2230,6 +2234,37 @@ legendList = [
       this.router.navigate(['/unauthorized']);
     }
   }
+
+  getattendancedatabyentry() {
+  const entity = 'AttendanceConfiguration';
+  const attribute = 'IsProcessing';
+
+  this.attendanceConfigLoading = true;
+
+  this.http
+    .getDatabyentriyvalue('entityAttributeValues', entity, attribute)
+    .subscribe({
+      next: (data: any) => {
+        this.isAttendanceDataTrue =
+          String(data?.[0]?.value).toLowerCase() === 'true';
+
+        this.attendanceConfigLoading = false;
+
+        if (!this.isAttendanceDataTrue) {
+          this.loadAttendanceDashboardData();
+        }
+      },
+      error: (err: any) => {
+        this.attendanceConfigLoading = false;
+        console.error('Error fetching attendance configuration:', err);
+      }
+    });
+}
+
+private loadAttendanceDashboardData(): void {
+  this.getteamavliabletly(this.selectedDate);
+  this.getAttendanceReportData();
+}
 
   ngOnDestroy(): void {
     if (this.intervalId) {

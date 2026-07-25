@@ -28,11 +28,12 @@ import { RbacService } from '../../services/rbac.service';
 import { NoDataFoundComponent } from '../../shared/no-data-found/no-data-found.component';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { AccessNavigationService } from '../../services/access-navigation.service';
+import { AttendancePlaceholderComponent } from '../../icons/attendance-placeholder/attendance-placeholder.component';
 @Component({
   selector: 'app-manager-dashboard',
   imports: [CommonModule, RouterModule, FormsModule, TranslateModule, NgbPopoverModule, ModuleInfoIconComponent,
     ChartModule, DateformatPipe, Skeleton, AccordionModule, ProfileIconComponent, NoDataFoundComponent,
-    DatePicker, TabList, Calendar, TabsModule, Select, Chip],
+    DatePicker, TabList, Calendar, TabsModule, Select, Chip,AttendancePlaceholderComponent],
   templateUrl: './manager-dashboard.component.html',
   styleUrl: './manager-dashboard.component.scss',
   encapsulation: ViewEncapsulation.None
@@ -90,7 +91,7 @@ export class ManagerDashboardComponent {
   //   { key: 'yetToLogin', label: 'Yet To Login', color: '#94A3B8' },
   // ];
   legendList = [
-  { key: 'yetToLogin', label: 'Yet To Login', color: '#94A3B8' },
+    { key: 'yetToLogin', label: 'Yet To Login', color: '#94A3B8' },
     { key: 'inOffice', label: 'In Office', color: '#1E90FF' },
     { key: 'absent', label: 'Absent', color: '#FF0000' },
     { key: 'halfDay', label: 'Half Day', color: '#FFD700' },
@@ -111,6 +112,8 @@ export class ManagerDashboardComponent {
   offCanvasData: any;
   OffCanvasemployeeList: any;
   ChartDataLabels = ChartDataLabels;
+  isAttendanceDataTrue = false;
+  attendanceConfigLoading = true;
   datalabelUnderlinePlugin = {
     id: 'datalabelUnderline',
     afterDraw: (chart: any) => {
@@ -250,15 +253,16 @@ export class ManagerDashboardComponent {
     this.getAllTeammembersList();
     this.gettodayloggedtime();
     this.selectedDate = new Date(); // current date by default
-    this.getteamavliabletly(this.selectedDate);
-    this.getWeeklyWorkLogHours();
+    this.getattendancedatabyentry();
+    // this.getteamavliabletly(this.selectedDate);
+    // this.getWeeklyWorkLogHours();
     this.getCategoryempDetails(this.empinfo?.employeeId);
     this.buildDisabledFutureWeekDates();
     this.intialLoading = false;
     this.getAttendenceLogsOfLoginedUser(this.employeedata.employeeId, this.currentYear, this.currentMonth, this.currentDay);
     this.getpreviousloggedtime();
     this.todayMaxdate = new Date();
-    this.getAttendanceReportData();
+    // this.getAttendanceReportData();
     this.getApprovalsOverview();
   }
 
@@ -1321,6 +1325,48 @@ export class ManagerDashboardComponent {
       this.router.navigate(['/unauthorized']);
     }
   }
+getattendancedatabyentry() {
+  const entity = 'AttendanceConfiguration';
+  const attribute = 'IsProcessing';
+
+  this.attendanceConfigLoading = true;
+
+  this.http
+    .getDatabyentriyvalue(
+      'entityAttributeValues',
+      entity,
+      attribute
+    )
+    .subscribe({
+      next: (data: any) => {
+
+        this.isAttendanceDataTrue =
+          String(data?.[0]?.value).toLowerCase() === 'true';
+
+        this.attendanceConfigLoading = false;
+
+        if (!this.isAttendanceDataTrue) {
+          this.loadAttendanceDashboardData();
+        }
+      },
+
+      error: (err: any) => {
+        this.attendanceConfigLoading = false;
+        console.error(
+          'Error fetching attendance configuration:',
+          err
+        );
+      }
+    });
+}
+
+private loadAttendanceDashboardData(): void {
+  // My Team Availability
+  this.getteamavliabletly(this.selectedDate);
+
+  // Attendance Status
+  this.getAttendanceReportData();
+}
 
   ngOnDestroy(): void {
     if (this.intervalId) {

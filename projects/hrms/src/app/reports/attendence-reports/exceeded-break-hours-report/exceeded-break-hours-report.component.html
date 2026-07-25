@@ -2,7 +2,8 @@
   <div class="component-header-content gap-3">
     <!-- Header -->
     <app-reports-header />
-
+    
+    @if(!isAttendanceDataTrue) {
     <div class="d-flex align-items-center gap-3">
       <!-- Filters Button -->
       @if (
@@ -44,8 +45,27 @@
         </div>
       }
     </div>
+  }
+  </div>
+  
+
+  @if(isAttendanceDataTrue) {
+
+  <div class="component-overlay-placeholder-content">
+    <div>
+
+      <app-attendance-placeholder></app-attendance-placeholder>
+
+      <p class="context">
+        Attendance data is currently unavailable due to pending biometric integration.
+        Please contact the administrator for assistance.
+      </p>
+
+    </div>
   </div>
 
+}
+@else {
   <div class="custom-table-content">
     @if (!isLoading) {
       <table class="content w-100">
@@ -90,6 +110,7 @@
       <app-data-loader-content></app-data-loader-content>
     }
   </div>
+}
 
   <ng-template #filterContent let-offcanvas>
     <div class="custom-filter-container">

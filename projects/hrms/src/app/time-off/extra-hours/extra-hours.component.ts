@@ -17,10 +17,11 @@ import { ExtraHoursTabsComponent } from "../../shared/time-off-module-tabs/extra
 import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
 import { ApplicablePoliciesTriggerComponent } from '../../shared/policies/applicable-policies-trigger/applicable-policies-trigger.component';
 import { APPLICABLE_POLICIES_KEYS } from '../../shared/policies/policy-visibility.catalog';
+import { AttendancePlaceholderComponent } from '../../icons/attendance-placeholder/attendance-placeholder.component';
 
 @Component({
   selector: 'app-extra-hours',
-  imports: [RouterModule, ReactiveFormsModule, TranslateModule, CommonModule, Select,ModuleInfoIconComponent, ModuleInformationComponent, NgbPopoverModule, ExtraHoursTabsComponent, ApplicablePoliciesTriggerComponent],
+  imports: [RouterModule, ReactiveFormsModule, TranslateModule, CommonModule, Select, ModuleInfoIconComponent, ModuleInformationComponent, NgbPopoverModule, ExtraHoursTabsComponent, ApplicablePoliciesTriggerComponent, AttendancePlaceholderComponent],
   templateUrl: './extra-hours.component.html',
   styleUrl: './extra-hours.component.scss',
   encapsulation: ViewEncapsulation.None,
@@ -41,12 +42,16 @@ export class ExtraHoursComponent implements OnInit {
   selectedYear: number = this.currentYear;
   years: number[] = [];
   activeEmplist = [] as any;
+  isAttendanceDataTrue = false;
+  attendanceConfigLoading = true;
 
   constructor(private http: HttpService, public rbac: RbacService, public formsValidation: FormValidationsService,
     public readonly router: Router, private TimeoffYearFilterService: TimeoffYearFilterService) { }
 
   ngOnInit(): void {
     this.emp = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
+     this.getattendancedatabyentry();
+
     this.getTeamManagersDetails();
     this.updateModuleInfo();
     this.initiateUpdateModuleInfo();
@@ -174,4 +179,33 @@ export class ExtraHoursComponent implements OnInit {
       error: (reason: any) => console.log(reason)
     })
   }
+
+  getattendancedatabyentry(): void {
+  const entity = 'AttendanceConfiguration';
+  const attribute = 'IsProcessing';
+
+  this.attendanceConfigLoading = true;
+
+  this.http
+    .getDatabyentriyvalue(
+      'entityAttributeValues',
+      entity,
+      attribute
+    )
+    .subscribe({
+      next: (data: any) => {
+        this.isAttendanceDataTrue =
+          String(data?.[0]?.value).toLowerCase() === 'true';
+
+        this.attendanceConfigLoading = false;
+      },
+      error: (err: any) => {
+        this.attendanceConfigLoading = false;
+        console.error(
+          'Error fetching attendance configuration:',
+          err
+        );
+      }
+    });
+}
 }

@@ -38,6 +38,7 @@ import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { NgxDaterangepickerBootstrapModule } from 'ngx-daterangepicker-bootstrap';
 import { DatePickerModule } from 'primeng/datepicker';
+import { AttendancePlaceholderComponent } from '../../../icons/attendance-placeholder/attendance-placeholder.component';
 @Component({
   selector: 'app-late-login-report',
   imports: [
@@ -54,6 +55,7 @@ import { DatePickerModule } from 'primeng/datepicker';
     MultiSelectModule,
     NgxDaterangepickerBootstrapModule,
     DatePickerModule,
+     AttendancePlaceholderComponent
   ],
 
   templateUrl: './late-login-report.component.html',
@@ -131,6 +133,7 @@ export class LateLoginReportComponent implements OnInit, OnDestroy {
 
   localeOptions: any;
   today: Date = new Date();
+  isAttendanceDataTrue = false;
 
   constructor(
     private authService: AuthService,
@@ -149,6 +152,7 @@ export class LateLoginReportComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+     this.getattendancedatabyentry();
     this.localeOptions = {
       applyLabel: 'ok',
 
@@ -625,6 +629,23 @@ export class LateLoginReportComponent implements OnInit, OnDestroy {
       this.spinnerLoader2 = false;
     }, 100);
   }
+
+  getattendancedatabyentry(): void {
+  const entity = 'AttendanceConfiguration';
+  const attribute = 'IsProcessing';
+
+  this.http
+    .getDatabyentriyvalue('entityAttributeValues', entity, attribute)
+    .subscribe({
+      next: (data: any) => {
+        this.isAttendanceDataTrue =
+          String(data?.[0]?.value).toLowerCase() === 'true';
+      },
+      error: (err: any) => {
+        console.error('Error fetching attendance configuration:', err);
+      }
+    });
+}
 
   ngOnDestroy(): void {
     this.destroy$.next();

@@ -22,11 +22,12 @@ import { IWfhReportRequest } from '../../../Interfaces/reports.model';
 import * as XLSX from 'xlsx-js-style';
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 import { NgbPopoverModule, NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
+import { AttendancePlaceholderComponent } from '../../../icons/attendance-placeholder/attendance-placeholder.component';
 
 @Component({
   selector: 'app-extraloghour-report',
   imports: [CommonModule, FormsModule, ReactiveFormsModule, DatePicker, DropdownModule, SelectModule, MultiSelectModule, TranslateModule, NgbPopoverModule,
-    NoDataFoundComponent, DataLoaderContentComponent, ReportsHeaderComponent, InfoIconComponent],
+    NoDataFoundComponent, AttendancePlaceholderComponent, DataLoaderContentComponent, ReportsHeaderComponent, InfoIconComponent],
   templateUrl: './extraloghour-report.component.html',
   styleUrl: './extraloghour-report.component.scss',
   encapsulation: ViewEncapsulation.None
@@ -60,6 +61,9 @@ export class ExtraloghourReportComponent implements OnInit, OnDestroy {
   getEmployeeInfo = [] as any;
   selectLeaveEmployeeIds: number[] = [];
   filteredleaveRecords = true;
+  isAttendanceDataTrue = false;
+  attendanceConfigLoading = true;
+
   ranges: any = {
     Today: [dayjs(), dayjs()],
     Yesterday: [dayjs().subtract(1, 'days'), dayjs().subtract(1, 'days')],
@@ -85,7 +89,7 @@ export class ExtraloghourReportComponent implements OnInit, OnDestroy {
   ) { }
 
   toggleFilters(content: any) {
-    this.offcanvasService.open(content, { position: 'end',  backdrop: 'static', });
+    this.offcanvasService.open(content, { position: 'end', backdrop: 'static', });
   }
 
   closeCanvas() {
@@ -98,6 +102,7 @@ export class ExtraloghourReportComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.getattendancedatabyentry();
     this.localeOptions = {
       applyLabel: 'ok',
       format: this.authService.convertAngularDateFormatToJs(environment.dateformat).toUpperCase(),
@@ -405,7 +410,7 @@ export class ExtraloghourReportComponent implements OnInit, OnDestroy {
 
       // Style Title Row (A1)
       if (!ws['A1']) ws['A1'] = { t: 's', v: 'EXTRA LOG HOURS REPORT' };
-      
+
       // Explicitly set type and value to ensure consistency
       ws['A1'].t = 's';
       ws['A1'].v = 'EXTRA LOG HOURS REPORT';
@@ -487,7 +492,7 @@ export class ExtraloghourReportComponent implements OnInit, OnDestroy {
     }
   }
 
-getMyTeam() {
+  getMyTeam() {
     const EmployeeId = this.loggedInUser?.employeeId;
     this.subscription = this.http
       .getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`)
@@ -504,7 +509,7 @@ getMyTeam() {
                   }${employee.lastName}`,
               };
             });
- 
+
             const isUserInList = this.getEmployeeInfo.some((e: any) => e.employeeId === this.loggedInUser.employeeId);
             if (!isUserInList) {
               this.getEmployeeInfo.unshift({
@@ -514,7 +519,7 @@ getMyTeam() {
                 ${this.loggedInUser.lastName}`,
               });
             }
- 
+
             this.getEmployeeInfo.sort((a: any, b: any) =>
               (a.firstName?.toLowerCase() ?? '').localeCompare(b.firstName?.toLowerCase() ?? '')
             );
@@ -526,6 +531,28 @@ getMyTeam() {
   navigation() {
     this.router.navigate(['/reports']);
   }
+
+  getattendancedatabyentry(): void {
+  const entity = 'AttendanceConfiguration';
+  const attribute = 'IsProcessing';
+
+  this.attendanceConfigLoading = true;
+
+  this.http
+    .getDatabyentriyvalue('entityAttributeValues', entity, attribute)
+    .subscribe({
+      next: (data: any) => {
+        this.isAttendanceDataTrue =
+          String(data?.[0]?.value).toLowerCase() === 'true';
+
+        this.attendanceConfigLoading = false;
+      },
+      error: (err: any) => {
+        this.attendanceConfigLoading = false;
+        console.error('Error fetching attendance configuration:', err);
+      }
+    });
+}
 
   ngOnDestroy(): void {
     if (this.subscription) {

@@ -9,7 +9,7 @@ import { AuthService } from '../../../services/auth.service';
 import { HttpService } from '../../../services/http.service';
 import { AccordionModule } from 'primeng/accordion';
 import { OpenModalService } from '../../../services/open-modal.service';
-import { Subject, Subscription, takeUntil, forkJoin } from 'rxjs';
+import { Subject, Subscription, takeUntil, forkJoin, of, switchMap, from, mergeMap, toArray } from 'rxjs';
 import { IResourceDetail, TimesheetResponse } from '../../../timesheetmodel';
 import { InfoIconComponent } from '../../../icons/info-icon/info-icon.component';
 import { ConfirmationIconComponent } from '../../../icons/confirmation-icon/confirmation-icon.component';
@@ -30,11 +30,13 @@ import { MultiSelectModule } from 'primeng/multiselect';
 import { BulkUploadStore } from '../bulk-upload/models/bulk-upload.store';
 import { DateformatPipe } from '../../../pipes/dateformat.pipe';
 import { Select } from 'primeng/select';
+import { ApplicablePoliciesTriggerComponent } from '../../../shared/policies/applicable-policies-trigger/applicable-policies-trigger.component';
+import { SignalsService } from '../../../services/signals.service';
 @Component({
   selector: 'app-time-sheet-view',
   imports: [ProjectManagementModuleInfoComponent, NgbDatepickerModule, FormsModule, ReactiveFormsModule,
     NgbPopover, CommonModule, DatePicker, DateformatPipe, AccordionModule, InfoIconComponent, ConfirmationIconComponent,
-    TranslateModule, DataLoaderContentComponent, TimesheetsTabsComponent, MenuModule, MultiSelectModule, Select],
+    TranslateModule, DataLoaderContentComponent, TimesheetsTabsComponent, MenuModule, MultiSelectModule, Select, ApplicablePoliciesTriggerComponent],
   templateUrl: './time-sheet-view.component.html',
   styleUrl: './time-sheet-view.component.scss',
 
@@ -103,6 +105,13 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   today: Date = new Date();
   approvardetails: any = {};
 
+  responseSummary = {
+    failedreason: '',
+    successRecordsCount: 0,
+    failureRecordsCount: 0,
+    totalRecordsCount: 0
+  };
+  @ViewChild('releaseSummary') releaseSummaryModal!: any;
   @ViewChild('datePicker') datePicker: any;
   @ViewChild('deleteconformation', { static: true }) deleteconformation!: TemplateRef<any>;
   @ViewChild('employeeDropdown') employeeDropdown: any;
@@ -113,6 +122,12 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   cloneSourceWeekLabel = '';
   cloneTargetWeekLabel = '';
   cloneErrorMessage: string | null = null;
+  targetAllDaysBlockedError = false;
+  isOverwriteDisabled = false;
+  overwriteDisabledMessage: string | null = null;
+  isOverwriteEligibilityLoading = false;
+  private overwriteEligibilityTimeout: any;
+  private overwriteEligibilityRequestToken = 0;
   private readonly baseMenuItems = [
     { key: 'import', label: 'Import', icon: 'file-import-icon', command: () => this.navigateToImport() },
     { key: 'export', label: 'Export', icon: 'file-export-icon', command: () => this.navigateToExport() },
@@ -124,18 +139,12 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   canViewHistoryLog = false;
   taskType: any;
   alltaskTypes = [] as any;
-  responseSummary = {
-    failedreason: '',
-    successRecordsCount: 0,
-    failureRecordsCount: 0,
-    totalRecordsCount: 0
-  };
-   @ViewChild('releaseSummary') releaseSummaryModal!: any;
-  constructor(private fb: FormBuilder, private modalService: NgbModal,private offcanvasService: NgbOffcanvas,
+  constructor(private fb: FormBuilder, private modalService: NgbModal,
     private http: HttpService, public formValidation: FormValidationsService,
     public dayValidationService: DayValidationService, public authService: AuthService,
     public rbac: RbacService, private conformationPopup: OpenModalService,
-    private router: Router, private encryptionService: EncriptdecriptService, private bulkStore: BulkUploadStore) { }
+    private router: Router, private encryptionService: EncriptdecriptService, private bulkStore: BulkUploadStore
+    , private signalService: SignalsService,private offcanvasService: NgbOffcanvas) { }
 
   ngOnInit(): void {
     this.loggedinuser = this.authService.getToken();
@@ -502,10 +511,10 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     this.date = [this.start, this.end];
     // Update the week range visually / in state
     this.setWeekRange(monday, sunday);
-    this.getResourceData();
     this.checkTimesheetLockByMonth(monday.toDate(), sunday.toDate()); // 🔹 check locks by mont
     // Format start date for API call
     const formattedStart = monday.format('YYYY-MM-DD');
+    this.getResourceData();
     this.loadTimeSheetByResource(formattedStart);
     // Close the datepicker
     setTimeout(() => {
@@ -548,6 +557,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
 
   openCloneModal() {
     this.cloneErrorMessage = null;
+    this.targetAllDaysBlockedError = false;
     this.initializeCloneForm();
     this.offcanvasService.open(this.cloneTimesheetModal, {
       position: 'end',
@@ -559,6 +569,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
 
   closeCloneModal(): void {
     this.cloneErrorMessage = '';
+    this.targetAllDaysBlockedError = false;
     this.cloneForm?.reset();
     this.offcanvasService.dismiss();
   }
@@ -568,6 +579,14 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     const defaultSourceEnd = this.start ? moment(this.start).subtract(7, 'days').endOf('isoWeek').toDate() : moment().endOf('isoWeek').toDate();
     const defaultTargetStart = this.start ? this.start : moment().startOf('isoWeek').toDate();
     const defaultTargetEnd = this.start ? this.end : moment().endOf('isoWeek').toDate();
+
+    this.isOverwriteDisabled = false;
+    this.overwriteDisabledMessage = null;
+    this.isOverwriteEligibilityLoading = false;
+    if (this.overwriteEligibilityTimeout) {
+      clearTimeout(this.overwriteEligibilityTimeout);
+      this.overwriteEligibilityTimeout = null;
+    }
 
     this.cloneForm = this.fb.group({
       sourceWeekDateRange: [null, Validators.required],
@@ -582,13 +601,24 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
 
     });
 
+    this.cloneForm.get('cloneMode')?.valueChanges
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((mode: string) => {
+        if (mode === 'overwrite' && (this.isOverwriteDisabled || this.isOverwriteEligibilityLoading)) {
+          this.cloneForm.patchValue({ cloneMode: 'merge' }, { emitEvent: false });
+        }
+      });
+
     this.cloneForm.get('sourceWeekDateRange')?.valueChanges
       .pipe(takeUntil(this.destroy$))
       .subscribe((range: Date[] | null) => this.updateCloneSourceWeekLabel(range));
 
     this.cloneForm.get('targetWeekDateRange')?.valueChanges
       .pipe(takeUntil(this.destroy$))
-      .subscribe((range: Date[] | null) => this.updateCloneTargetWeekLabel(range));
+      .subscribe((range: Date[] | null) => {
+        this.updateCloneTargetWeekLabel(range);
+        this.validateCloneDateRanges();
+      });
 
     this.cloneSourceWeekLabel = '';
     this.cloneTargetWeekLabel = '';
@@ -651,6 +681,127 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     return Array.from({ length: 7 }, (_, index) => moment(start).add(index, 'days').toDate());
   }
 
+  private getDatesInRange(range: Date[]): Date[] {
+    if (!Array.isArray(range) || range.length < 2 || !range[0] || !range[1]) {
+      return [];
+    }
+
+    const dates: Date[] = [];
+    for (
+      let current = moment(range[0]).startOf('day');
+      current.isSameOrBefore(range[1], 'day');
+      current.add(1, 'day')
+    ) {
+      dates.push(current.toDate());
+    }
+
+    return dates;
+  }
+
+  private buildCloneRangeChunks(sourceDates: Date[], targetDates: Date[]): Array<{
+    sourceRange: Date[];
+    targetDates: Date[];
+    sourceWeekStart: string;
+    targetWeekStart: string;
+  }> {
+    const chunks: Array<{
+      sourceRange: Date[];
+      targetDates: Date[];
+      sourceWeekStart: string;
+      targetWeekStart: string;
+    }> = [];
+
+    let index = 0;
+    while (index < sourceDates.length && index < targetDates.length) {
+      const sourceWeekStart = moment(sourceDates[index]).startOf('isoWeek').format('YYYY-MM-DD');
+      const targetWeekStart = moment(targetDates[index]).startOf('isoWeek').format('YYYY-MM-DD');
+      let endIndex = index;
+
+      while (endIndex + 1 < sourceDates.length && endIndex + 1 < targetDates.length) {
+        const nextSourceWeekStart = moment(sourceDates[endIndex + 1]).startOf('isoWeek').format('YYYY-MM-DD');
+        const nextTargetWeekStart = moment(targetDates[endIndex + 1]).startOf('isoWeek').format('YYYY-MM-DD');
+
+        if (nextSourceWeekStart !== sourceWeekStart || nextTargetWeekStart !== targetWeekStart) {
+          break;
+        }
+
+        endIndex += 1;
+      }
+
+      chunks.push({
+        sourceRange: [sourceDates[index], sourceDates[endIndex]],
+        targetDates: targetDates.slice(index, endIndex + 1),
+        sourceWeekStart,
+        targetWeekStart
+      });
+
+      index = endIndex + 1;
+    }
+
+    return chunks;
+  }
+
+  private getWeekOfMonth(date: Date): number {
+    return Math.ceil(date.getDate() / 7);
+  }
+
+  private isConfiguredWeekendDate(date: Date): boolean {
+    const weekdayName = moment(date).format('dddd');
+    const weekOfMonth = this.getWeekOfMonth(date);
+
+    return this.weekendsData?.some((weekend: any) => {
+      if (weekend?.weekday !== weekdayName) {
+        return false;
+      }
+
+      switch (weekOfMonth) {
+        case 1:
+          return !!weekend.firstweek;
+        case 2:
+          return !!weekend.secondweek;
+        case 3:
+          return !!weekend.thirdweek;
+        case 4:
+          return !!weekend.fourthweek;
+        case 5:
+          return !!weekend.fifthweek;
+        default:
+          return false;
+      }
+    }) ?? false;
+  }
+
+  private isDateWithinInclusiveRange(date: Date, startDate?: string | Date | null, endDate?: string | Date | null): boolean {
+    const targetMoment = moment(date).startOf('day');
+
+    if (startDate && targetMoment.isBefore(moment(startDate).startOf('day'), 'day')) {
+      return false;
+    }
+
+    if (endDate && targetMoment.isAfter(moment(endDate).startOf('day'), 'day')) {
+      return false;
+    }
+
+    return true;
+  }
+
+  private findCloneResourceForTargetDate(sourceRow: RowModel, targetDate: Date): any | null {
+    const matchingResources = this.resourcesArrayList?.filter((resource: any) =>
+      resource.project?.projectId === sourceRow.projectId &&
+      resource.client?.clientId === sourceRow.clientId &&
+      resource.phase?.phaseId === sourceRow.phaseId
+    ) ?? [];
+
+    if (!matchingResources.length) {
+      return null;
+    }
+
+    return matchingResources.find((resource: any) =>
+      this.isDateWithinInclusiveRange(targetDate, resource.startDate, resource.endDate) &&
+      this.isDateWithinInclusiveRange(targetDate, resource.phase?.startDate, resource.phase?.endDate)
+    ) ?? null;
+  }
+
   private isCurrentWeekLocked(): boolean {
     return this.lockMessages?.some((item: any) => item.type === 'locked' || item.type === 'locked-today') ?? false;
   }
@@ -675,25 +826,63 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       return false;
     }
 
-    const targetApproval = targetCell.approvalStatus;
-    const targetDuration = targetCell.durationSeconds;
-    const hasTargetValue = !!targetDuration || targetApproval !== ApprovalStatus.NotEntered;
-
     if (cloneMode === 'merge') {
       return false;
     }
 
     if (cloneMode === 'overwrite') {
-      const status = targetApproval?.toLowerCase();
+      const status = targetCell.approvalStatus?.toLowerCase();
+      this.overrideAttemptedTargetCellCount += 1;
 
-      return status !== 'draft' && status !== 'rejected';
+      if (status === 'waiting for approval' || status === 'processed' || status === 'approved') {
+        this.overrideSubmittedOrApprovedTargetCellCount += 1;
+        return true;
+      }
+
+      // Allow override for draft and rejected target entries.
+      return false;
     }
-
 
     return true;
   }
 
+  private cloneSkipReason: 'phase-closed' | 'no-entries' | null = null;
+  private overrideAttemptedTargetCellCount = 0;
+  private overrideSubmittedOrApprovedTargetCellCount = 0;
+
+  private hasSourceEntriesInRange(sourceMatrix: WeekMatrix, sourceWeekRange: Date[]): boolean {
+    if (!Array.isArray(sourceWeekRange) || sourceWeekRange.length < 2) {
+      return false;
+    }
+
+    const selectedSourceDates = new Set(
+      sourceMatrix.days
+        .filter((day) =>
+          moment(day.date).isBetween(
+            moment(sourceWeekRange[0]),
+            moment(sourceWeekRange[1]),
+            'day',
+            '[]'
+          )
+        )
+        .map((day) => day.date)
+    );
+
+    if (!selectedSourceDates.size) {
+      return false;
+    }
+
+    return sourceMatrix.rows.some((sourceRow) =>
+      Array.from(selectedSourceDates).some((date) =>
+        !!sourceMatrix.cellMap.get(`${sourceRow.rowId}_${date}`)
+      )
+    );
+  }
+
   private buildClonePayloads(sourceMatrix: WeekMatrix, targetMatrix: WeekMatrix, cloneMode: string, targetWeekDates: Date[], targetTimesheetId: number, sourceWeekRange: Date[]): any[] {
+    this.cloneSkipReason = null;
+    this.overrideAttemptedTargetCellCount = 0;
+    this.overrideSubmittedOrApprovedTargetCellCount = 0;
     const payloads: any[] = [];
     const dayKeys = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
     const copyProjects = this.cloneForm.get('copyProjects')?.value ?? true;
@@ -748,6 +937,33 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
           return;
         }
 
+        // const shouldCloneSourceCell =
+        //   copyLoggedHours ? !!sourceCell.durationSeconds :
+        //     copyDescription ? !!sourceCell.description :
+        //       copyTask ? !!sourceCell.taskId :
+        //         (copyProjects ? true : false);
+
+        // if (!shouldCloneSourceCell) {
+        //   return;
+        // }
+        const sourceStatusRaw = (sourceCell.approvalStatus || '').toLowerCase();
+        const hasSourceContent =
+          !!sourceCell.entryId ||
+          !!sourceCell.durationSeconds ||
+          !!sourceCell.description ||
+          !!sourceCell.taskId;
+        const sourceStatus = sourceStatusRaw || (hasSourceContent ? 'draft' : '');
+
+        const isAllowedSource =
+          sourceStatus === 'draft' ||
+          sourceStatus === 'waiting for approval' ||
+          sourceStatus === 'approved' ||
+          sourceStatus === 'processed';
+
+        if (!isAllowedSource) {
+          return;
+        }
+
         const shouldCloneSourceCell =
           copyLoggedHours ? !!sourceCell.durationSeconds :
             copyDescription ? !!sourceCell.description :
@@ -768,32 +984,11 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
           return;
         }
 
-        const dayName = moment(targetDate).format('dddd');
-
-        const isWeekend = this.weekendsData?.some(
-          (w: any) => w.weekday === dayName
-        );
-
-        if (isWeekend) {
-          console.log('Skipping weekend:', dayName, targetDate);
-          return;
-        }
-
         let resource: any = null;
 
         // Skip resource validation for No Client - No Project
         if (!sourceRow.isNoClientProject) {
-
-          resource = this.resourcesArrayList?.find((r: any) =>
-            r.project?.projectId === sourceRow.projectId &&
-            r.client?.clientId === sourceRow.clientId &&
-            r.phase?.phaseId === sourceRow.phaseId
-          );
-
-          console.log('Source Phase Id', sourceRow.phaseId);
-          console.log('Matched Phase Id', resource?.phase?.phaseId);
-          console.log('Phase Name', resource?.phase?.phaseName);
-
+          resource = this.findCloneResourceForTargetDate(sourceRow, targetDate);
           if (!resource) {
             console.log('Skipping released phase', sourceRow.phaseId);
             return;
@@ -803,9 +998,33 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
             const releaseDate = moment(resource.endDate).startOf('day');
 
             if (moment(targetDate).isAfter(releaseDate, 'day')) {
+            const hasAnyMatchingResource = this.resourcesArrayList?.some((r: any) =>
+              r.project?.projectId === sourceRow.projectId &&
+              r.client?.clientId === sourceRow.clientId &&
+              r.phase?.phaseId === sourceRow.phaseId
+            );
+
+            if (!hasAnyMatchingResource) {
+              this.cloneSkipReason = 'phase-closed';
               return;
             }
+
+            // Resource exists, but this target date is outside the allocation or phase window.
+            this.cloneSkipReason = 'phase-closed';
+            return;
           }
+        }
+
+        const isConfiguredWeekend = this.isConfiguredWeekendDate(targetDate);
+        const weekendAllowed =
+          resource?.weekendWorkAllowed ??
+          resource?.project?.isWeekendAllowed ??
+          resource?.client?.isWeekendAllowed ??
+          false;
+
+        if (isConfiguredWeekend && !weekendAllowed) {
+          console.log('Skipping configured weekend because weekend work is not allowed:', targetDate);
+          return;
         }
 
         const targetDateKey = moment(targetDate).format(
@@ -832,28 +1051,34 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
         }
 
         const entryDate = moment(targetWeekDates[index]).format('YYYY-MM-DD');
+        const isNoClientProject = !!sourceRow.isNoClientProject;
+        const clientId = isNoClientProject
+          ? 0
+          : (copyClients ? (sourceRow.clientId ?? null) : (targetRow.clientId ?? null));
+        const projectId = isNoClientProject ? 0 : (targetRow.projectId ?? null);
+        const phaseId = isNoClientProject
+          ? null
+          : (copyPhases ? (sourceRow.phaseId ?? null) : (targetRow.phaseId ?? null));
         const payload: any = {
           entryId: targetCell?.entryId || 0,
           employeeId: this.employeeId || 0,
           entryDate,
           approvalStatus: 'draft',
-          clientId: copyClients
-            ? sourceRow.clientId || null
-            : targetRow.clientId || null,
-          projectId: targetRow.projectId || null,
-          phaseId: copyPhases
-            ? sourceRow.phaseId || null
-            : targetRow.phaseId || null,
+          clientId,
+          projectId,
+          phaseId,
           timesheetId: targetTimesheetId || 0,
           isOverride: false,
-          totalDurationSeconds: copyLoggedHours ? sourceCell.durationSeconds || 0 : 0,
-          description: copyDescription ? sourceCell.description || '' : '',
-          isBillable: sourceCell.isBillable || false,
+          totalDurationSeconds: copyLoggedHours ? (sourceCell.durationSeconds ?? 0) : 0,
+          description: copyDescription ? (sourceCell.description ?? '') : '',
+          isBillable: sourceCell.isBillable ?? false,
           moduleId: 30,
-          resourceId: targetRow.resourceId || sourceRow.resourceId || null,
+          resourceId: targetRow.resourceId ?? sourceRow.resourceId ?? null,
           startTime: copyLoggedHours ? this.toTimeSpan(sourceCell.startTime) : null,
           endTime: copyLoggedHours ? this.toTimeSpan(sourceCell.endTime) : null,
-          taskId: copyTask ? sourceCell.taskId || null : null
+          taskId: copyTask ? (sourceCell.taskId ?? null) : null,
+          isNoClientProject,
+          isClone: true
         };
 
         console.log('Payload EntryId:', payload.entryId);
@@ -864,6 +1089,73 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     });
 
     return payloads;
+  }
+
+  private mergeCloneSecondsMap(target: Map<string, number>, source: Map<string, number>): void {
+    for (const [date, seconds] of source.entries()) {
+      target.set(date, (target.get(date) ?? 0) + (Number(seconds) || 0));
+    }
+  }
+
+  private getCloneTargetDayTotalsSeconds(targetMatrix: WeekMatrix, targetDates: Date[]): Map<string, number> {
+    const totals = new Map<string, number>();
+    const targetDatePairs = (targetDates || [])
+      .filter((d) => !!d)
+      .map((d) => ({
+        dateKey: moment(d).format('YYYY-MM-DDT00:00:00'),
+        date: moment(d).format('YYYY-MM-DD'),
+      }));
+
+    if (!targetDatePairs.length) {
+      return totals;
+    }
+
+    for (const pair of targetDatePairs) {
+      totals.set(pair.date, 0);
+    }
+
+    for (const row of targetMatrix.rows) {
+      for (const pair of targetDatePairs) {
+        const cell = targetMatrix.cellMap.get(`${row.rowId}_${pair.dateKey}`);
+        const seconds = Number(cell?.durationSeconds ?? 0) || 0;
+        if (!seconds) {
+          continue;
+        }
+        totals.set(pair.date, (totals.get(pair.date) ?? 0) + seconds);
+      }
+    }
+
+    return totals;
+  }
+
+  private getTargetEntryDurationSecondsById(targetMatrix: WeekMatrix): Map<number, number> {
+    const map = new Map<number, number>();
+    for (const cell of targetMatrix.cellMap.values()) {
+      const entryId = Number(cell?.entryId ?? 0) || 0;
+      if (!entryId) {
+        continue;
+      }
+      const seconds = Number(cell?.durationSeconds ?? 0) || 0;
+      map.set(entryId, seconds);
+    }
+    return map;
+  }
+
+  private getCloneBlocked24HourDates(
+    attemptedDates: Set<string>,
+    existingSecondsByDate: Map<string, number>
+  ): Set<string> {
+    const exceeded = new Set<string>();
+    const limitSeconds = 24 * 60 * 60;
+
+    for (const date of attemptedDates) {
+      const existing = existingSecondsByDate.get(date) ?? 0;
+      if ((Number(existing) || 0) >= limitSeconds) {
+        exceeded.add(date);
+      }
+    }
+
+    return exceeded;
   }
 
   cloneTimesheetEntries(): void {
@@ -891,12 +1183,6 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const sourceWeekStartDate = this.getRangeStartDate(sourceWeekRange) || new Date();
-    const sourceWeekStart = moment(sourceWeekStartDate).startOf('isoWeek').format('YYYY-MM-DD');
-    const targetWeekStartDate = this.getRangeStartDate(targetWeekRange) || new Date();
-    const targetWeekStart = moment(targetWeekStartDate).startOf('isoWeek').format('YYYY-MM-DD');
-
-
     const sourceStart = moment(sourceWeekRange[0]).format('YYYY-MM-DD');
     const sourceEnd = moment(sourceWeekRange[1]).format('YYYY-MM-DD');
     const targetStart = moment(targetWeekRange[0]).format('YYYY-MM-DD');
@@ -908,11 +1194,11 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const sourceDays =
-      moment(sourceWeekRange[1]).diff(moment(sourceWeekRange[0]), 'days') + 1;
+    const sourceRangeDates = this.getDatesInRange(sourceWeekRange);
+    const targetRangeDates = this.getDatesInRange(targetWeekRange);
 
-    const targetDays =
-      moment(targetWeekRange[1]).diff(moment(targetWeekRange[0]), 'days') + 1;
+    const sourceDays = sourceRangeDates.length;
+    const targetDays = targetRangeDates.length;
 
     if (sourceDays !== targetDays) {
       this.cloneErrorMessage =
@@ -921,17 +1207,15 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const targetWeekDates: Date[] = [];
+    const cloneRangeChunks = this.buildCloneRangeChunks(sourceRangeDates, targetRangeDates);
 
-    for (
-      let d = moment(targetWeekRange[0]);
-      d.isSameOrBefore(targetWeekRange[1], 'day');
-      d.add(1, 'day')
-    ) {
-      targetWeekDates.push(d.toDate());
+    if (!cloneRangeChunks.length) {
+      this.cloneErrorMessage = 'Please select both source and target week ranges.';
+      this.spinnerLoader = false;
+      return;
     }
 
-    console.log('Target Week Dates', targetWeekDates);
+    console.log('Clone Range Chunks', cloneRangeChunks);
 
 
     const cloneMode = this.cloneForm.get('cloneMode')?.value;
@@ -949,46 +1233,177 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       this.cloneErrorMessage = 'Please select at least one clone option.';
       return;
     }
-
-
-
-    forkJoin([
-      this.http.getData(`v2/Timesheet/week/employee/${this.employeeId}?weekStartDate=${sourceWeekStart}`),
-      this.http.getData(`v2/Timesheet/week/employee/${this.employeeId}?weekStartDate=${targetWeekStart}`)
-    ]).pipe(takeUntil(this.destroy$))
+    forkJoin(
+      cloneRangeChunks.map((chunk) =>
+        forkJoin([
+          this.http.getData(`v2/Timesheet/week/employee/${this.employeeId}?weekStartDate=${chunk.sourceWeekStart}`),
+          this.http.getData(`v2/Timesheet/week/employee/${this.employeeId}?weekStartDate=${chunk.targetWeekStart}`)
+        ])
+      )
+    ).pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: ([sourceRes, targetRes]: any) => {
-          const sourceMatrix = transformV2ResponseToWeekMatrix(sourceRes);
-          const targetMatrix = transformV2ResponseToWeekMatrix(targetRes);
+        next: (chunkResponses: any[]) => {
+          let payloads: any[] = [];
+          let hasPhaseClosedSkip = false;
+          let allSourceRangesHaveNoEntries = cloneRangeChunks.length > 0;
+          let overrideAttemptedTargetCellCount = 0;
+          let overrideSubmittedOrApprovedTargetCellCount = 0;
+          const existingTargetSecondsByDate = new Map<string, number>();
+          const attemptedTargetDates = new Set<string>();
+          const chunkTargets: Array<{ targetMatrix: WeekMatrix; targetDates: Date[] }> = [];
 
-          console.log(
-            'Source Matrix Days',
-            sourceMatrix.days.map((d: any) => d.date)
-          );
+          chunkResponses.forEach(([sourceRes, targetRes], index) => {
+            const sourceMatrix = transformV2ResponseToWeekMatrix(sourceRes);
+            const targetMatrix = transformV2ResponseToWeekMatrix(targetRes);
+            const chunk = cloneRangeChunks[index];
+            const sourceRangeHasEntries = this.hasSourceEntriesInRange(sourceMatrix, chunk.sourceRange);
 
-          console.log(
-            'Target Matrix Days',
-            targetMatrix.days.map((d: any) => d.date)
-          );
+            allSourceRangesHaveNoEntries = allSourceRangesHaveNoEntries && !sourceRangeHasEntries;
+            chunkTargets.push({ targetMatrix, targetDates: chunk.targetDates });
+            this.mergeCloneSecondsMap(existingTargetSecondsByDate, this.getCloneTargetDayTotalsSeconds(targetMatrix, chunk.targetDates));
+            const targetEntryDurationsById = cloneMode === 'overwrite' && copyLoggedHours
+              ? this.getTargetEntryDurationSecondsById(targetMatrix)
+              : null;
 
-          const payloads = this.buildClonePayloads(sourceMatrix, targetMatrix, cloneMode, targetWeekDates, targetMatrix.metadata.timesheetId || 0, sourceWeekRange);
+            console.log(
+              'Source Matrix Days',
+              sourceMatrix.days.map((d: any) => d.date)
+            );
+
+            console.log(
+              'Target Matrix Days',
+              targetMatrix.days.map((d: any) => d.date)
+            );
+
+            const chunkPayloads = this.buildClonePayloads(
+              sourceMatrix,
+              targetMatrix,
+              cloneMode,
+              chunk.targetDates,
+              targetMatrix.metadata.timesheetId || 0,
+              chunk.sourceRange
+            );
+
+            payloads.push(...chunkPayloads);
+            hasPhaseClosedSkip = hasPhaseClosedSkip || this.cloneSkipReason === 'phase-closed';
+            overrideAttemptedTargetCellCount += this.overrideAttemptedTargetCellCount;
+            overrideSubmittedOrApprovedTargetCellCount += this.overrideSubmittedOrApprovedTargetCellCount;
+
+            if (copyLoggedHours) {
+              for (const payload of chunkPayloads) {
+                const date = String(payload?.entryDate ?? '');
+                if (!date) {
+                  continue;
+                }
+                attemptedTargetDates.add(date);
+              }
+            }
+          });
 
           console.log('Clone Payloads', payloads);
           console.log('Payload Count', payloads.length);
 
+          let skippedDueTo24HoursDates = new Set<string>();
+          if (copyLoggedHours && attemptedTargetDates.size) {
+            skippedDueTo24HoursDates = this.getCloneBlocked24HourDates(attemptedTargetDates, existingTargetSecondsByDate);
+            const attemptedDates = Array.from(attemptedTargetDates);
+            const allAttemptedDatesExceed = attemptedDates.length > 0 && attemptedDates.every((d) => skippedDueTo24HoursDates.has(d));
+
+            if (allAttemptedDatesExceed) {
+              this.spinnerLoader = false;
+              this.conformationPopup.openErrorModal('Selected target dates already have 24 hrs logged. Cannot clone into the selected target dates.');
+              return;
+            }
+
+            if (skippedDueTo24HoursDates.size) {
+              payloads = payloads.filter((p) => !skippedDueTo24HoursDates.has(String(p?.entryDate ?? '')));
+            }
+          }
+
           if (!payloads.length) {
             this.spinnerLoader = false;
-            this.conformationPopup.openErrorModal('No entries available to clone from the selected source date range.');
+            const errorMsg = hasPhaseClosedSkip
+              ? 'Cannot clone timesheet as the selected project or phase is closed.'
+              : allSourceRangesHaveNoEntries
+              ? 'No entries available to clone from the selected source date range.'
+              : cloneMode === 'overwrite' &&
+                overrideAttemptedTargetCellCount > 0 &&
+                overrideAttemptedTargetCellCount === overrideSubmittedOrApprovedTargetCellCount
+              ? 'Timesheet cannot be overridden as the records have already been submitted for approval and approved.'
+              : 'No cloneable entries found for the selected source date range and clone options.';
+            this.conformationPopup.openErrorModal(errorMsg);
             return;
           }
 
-          forkJoin(payloads.map((payload) => this.http.postdata('v2/Timesheet/save-or-update', payload)))
-            .pipe(takeUntil(this.destroy$))
+          const saveRequests$ = from(payloads).pipe(
+            mergeMap((payload) => this.http.postdata('v2/Timesheet/save-or-update', payload), 5),
+            toArray()
+          );
+
+          const entryIdsKeptByTimesheetId = new Map<number, Set<number>>();
+          if (cloneMode === 'overwrite') {
+            for (const payload of payloads) {
+              const timesheetId = payload?.timesheetId || 0;
+              const entryId = payload?.entryId || 0;
+              if (!timesheetId || !entryId) {
+                continue;
+              }
+              const set = entryIdsKeptByTimesheetId.get(timesheetId) ?? new Set<number>();
+              set.add(entryId);
+              entryIdsKeptByTimesheetId.set(timesheetId, set);
+            }
+          }
+
+          const deleteEntryIdsByTimesheetId = new Map<number, number[]>();
+          if (cloneMode === 'overwrite') {
+            for (const { targetMatrix, targetDates } of chunkTargets) {
+              const timesheetId = targetMatrix.metadata.timesheetId || 0;
+              if (!timesheetId) {
+                continue;
+              }
+              const allowedDates = skippedDueTo24HoursDates.size
+                ? targetDates.filter((d) => !skippedDueTo24HoursDates.has(moment(d).format('YYYY-MM-DD')))
+                : targetDates;
+              const deletableEntryIds = this.collectDeletableTargetEntryIds(targetMatrix, allowedDates);
+              if (!deletableEntryIds.length) {
+                continue;
+              }
+              const existing = deleteEntryIdsByTimesheetId.get(timesheetId) ?? [];
+              deleteEntryIdsByTimesheetId.set(timesheetId, existing.concat(deletableEntryIds));
+            }
+          }
+
+          const deletePayloads =
+            cloneMode === 'overwrite' && deleteEntryIdsByTimesheetId.size
+              ? Array.from(deleteEntryIdsByTimesheetId.entries())
+                .map(([timesheetId, entryIds]) => {
+                  const keep = entryIdsKeptByTimesheetId.get(timesheetId) ?? new Set<number>();
+                  const toDelete = Array.from(new Set(entryIds)).filter((id) => !keep.has(id));
+                  return { timesheetId, entryIds: toDelete };
+                })
+                .filter((item) => item.timesheetId && item.entryIds.length > 0)
+              : [];
+
+          const deleteRequests$ = deletePayloads.length
+            ? from(deletePayloads).pipe(
+              mergeMap((payload) => this.http.DeleteData('Timesheet/delete-entries', payload), 2),
+              toArray()
+            )
+            : of(null);
+
+          saveRequests$
+            .pipe(
+              takeUntil(this.destroy$),
+              switchMap(() => deleteRequests$)
+            )
             .subscribe({
               next: () => {
                 this.spinnerLoader = false;
                 this.offcanvasService.dismiss();
-                this.conformationPopup.openSuccessModal('Timesheet entries cloned successfully.');
+                const successMessage = skippedDueTo24HoursDates.size
+                  ? 'Timesheet entries cloned successfully. Some target dates were skipped as total hours would exceed 24 hours.'
+                  : 'Timesheet entries cloned successfully.';
+                this.conformationPopup.openSuccessModal(successMessage, skippedDueTo24HoursDates.size ? 3500 : 2000);
                 this.formattedweakendStart = moment(this.start).format('YYYY-MM-DD');
                 this.getTimeSheetEntriesbyEmployeeId(this.employeeId, this.formattedweakendStart);
               },
@@ -1139,19 +1554,6 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
         allocations: matchedResources
       }
       : null;
-    console.log(matchedResources);
-
-
-    const resourceDateRange = mergedResource ? {
-      startDate: mergedResource.startDate ? new Date(mergedResource.startDate) : null,
-      endDate: mergedResource.endDate ? new Date(mergedResource.endDate) : null
-    } : undefined;
-    console.log(resourceDateRange);
-
-    const phaseDateRange = mergedResource?.phase ? {
-      startDate: mergedResource.phase.startDate ? new Date(mergedResource.phase.startDate) : null,
-      endDate: mergedResource.phase.endDate ? new Date(mergedResource.phase.endDate) : null
-    } : undefined;
 
     // Normalize date
     const normalizeDate = (date: any) => {
@@ -1173,17 +1575,25 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     const weekendAllowed = matchedAllocation?.weekendWorkAllowed ?? mergedResource?.weekendWorkAllowed ??
       (row.isWeekendAllowedProject || row.isWeekendAllowedClient);
 
-    // ✅ Use day-specific allocation for validation when available
-    const selectedResourceForDay = matchedAllocation || mergedResource;
+    const resourceDateRange = mergedResource ? {
+      startDate: mergedResource.startDate ? new Date(mergedResource.startDate) : null,
+      endDate: mergedResource.endDate ? new Date(mergedResource.endDate) : null
+    } : undefined;
+
+    const phaseDateRange = mergedResource?.phase ? {
+      startDate: mergedResource.phase.startDate ? new Date(mergedResource.phase.startDate) : null,
+      endDate: mergedResource.phase.endDate ? new Date(mergedResource.phase.endDate) : null
+    } : undefined;
 
     // ✅ Validation context
     const validationContext: ValidationContext = {
-      selectedResource: selectedResourceForDay,
+      selectedResource: mergedResource,
       matchedAllocation,
       holidays: this.holidaysData,
       weekends: this.weekendsData,
       leaves: this.leavesData
     };
+    console.log(validationContext);
 
     // ✅ Call validation
     const dayStatus = this.dayValidationService.checkDayStatus(entryDate, validationContext);
@@ -1218,7 +1628,6 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
 
     const isNotEntered = cell.approvalStatus === ApprovalStatus.NotEntered;
     const shouldEnable = isProjectSelected && !isLocked;
-
     const billablecheck = !!(mergedResource?.billable || this.selectedProjectResource?.billable);
 
     const durationControl = this.fb.control(
@@ -1421,9 +1830,12 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       this.weakenddate = this.end;
       this.setWeekRange(prevStart, prevEnd);
       this.checkTimesheetLockByMonth(prevStart.toDate(), prevEnd.toDate()); //
-      this.getResourceData();
       const formattedStart = moment(prevStart).format('YYYY-MM-DD');
+      this.getResourceData();
       this.loadTimeSheetByResource(formattedStart);
+      this.getTimeSheetEntriesbyEmployeeId(this.employeeId, formattedStart);
+
+
     }
   }
 
@@ -1438,8 +1850,8 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       this.weakenddate = this.end;
       this.setWeekRange(nextStart, nextEnd);
       this.checkTimesheetLockByMonth(nextStart.toDate(), nextEnd.toDate());
-      this.getResourceData();
       const formattedStart = moment(nextStart).format('YYYY-MM-DD');
+      this.getResourceData();
       this.loadTimeSheetByResource(formattedStart);
     }
   }
@@ -1503,8 +1915,9 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
 
     console.log('this.start =', this.start);
     console.log('weekStartDate =', weekStartDate);
-    this.http.getDataIncludeParams(`ProjectResource?status=active,released&employeeId=${this.employeeId}&isProjectRequired=true&weekStartDate=${weekStartDate}`).pipe(takeUntil(this.destroy$)).subscribe((res: any) => {
-      if (res.success) {
+    this.http.getDataIncludeParams(`ProjectResource?status=active,released&employeeId=${this.employeeId}&isProjectRequired=true&weekStartDate=${weekStartDate}`).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res: any) => {
+        if (res.success) {
         // this.resourcesArrayList = res.data;
         // const rawData = res.data;
         console.log(
@@ -1516,6 +1929,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
         );
         const rawData = res.data.filter((item: any) => !item.isBlocked);
         this.resourcesArrayList = rawData;
+        console.log(rawData);
         this.clients = rawData.reduce((acc: any[], curr: any) => {
           const clientId = curr?.client?.clientId || 0;
           let existingClient = acc.find((c) => c.clientId === curr.client.clientId);
@@ -1597,6 +2011,10 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
             ],
           });
         }
+
+        }
+      },
+      error: () => {
       }
     });
   }
@@ -1687,6 +2105,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   private userClickedNo = false;
   private isModalOpen = false;
   private autoSaveTimeouts = new Map<string, any>();
+  private enterKeyTriggered = false;
 
   // Check if user is trying to clear duration for draft entries
   checkClearDuration(event: KeyboardEvent, dayName: string, rowIndex: number) {
@@ -1717,8 +2136,12 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
 
   //TIME ENTERIY FOR TABLE
   formatTime(event: any, dayName: string, rowIndex: number, duration: string, dayFormNew: AbstractControl | null) {
-    // project.get('sun')
+    const isBlur = event.type === 'blur';
     let value = event.target.value;
+    // If already formatted HH:MM, skip re-processing
+    if (isBlur && /^\d{2}:\d{2}$/.test(value)) {
+      return;
+    }
     value = value?.replace(/\D/g, ''); // digits only
     let formatted = this.getFormattedTime(value);
     const dayForm = this.projects.at(rowIndex).get(dayName) as FormGroup;
@@ -1727,38 +2150,118 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     if (control) {
       control.setValue(formatted, { emitEvent: false });
     }
-    // Show dots only if there's a formatted duration value
+    event.target.value = formatted;
     if (formatted) {
       this.showDots[rowIndex][dayName] = true;
+    } else {
+      this.showDots[rowIndex][dayName] = false;
     }
-    // Auto-save only on blur to prevent duplicate calls
-    if (formatted && (event.type === 'blur' || event.type === 'keyup') && !this.isDeleteModalOpen && !this.userClickedNo && !this.isModalOpen) {
-
-
-      const timeoutKey = `${rowIndex}-${dayName}`;
-      // Clear any existing timeout for this specific field
-      if (this.autoSaveTimeouts.has(timeoutKey)) {
-        clearTimeout(this.autoSaveTimeouts.get(timeoutKey));
+    if (formatted) {
+      if (approvalStatus !== 'Processed' && approvalStatus !== 'Waiting for Approval' && !this.isModalOpen && !this.isDeleteModalOpen) {
+        this.checkMandatoryAndSave(dayForm, dayFormNew, rowIndex, dayName);
       }
-      // Don't auto-save if already processed or waiting for approval
-      if (approvalStatus !== 'Processed' && approvalStatus !== 'Waiting for Approval' &&
-        !((approvalStatus?.toLowerCase() === 'draft' || approvalStatus?.toLowerCase() === 'rejected') && event.type === 'blur')
-      ) {
-
-        // Add small delay to prevent rapid successive calls
-        const timeout = setTimeout(() => {
-          this.openModal(this.addtask, dayFormNew, rowIndex, dayName);
-          // this.autoSaveTableEntry(rowIndex, dayName,dayFormNew);
-          // this.autoSaveTimeouts.delete(timeoutKey);
-        }, 300);
-        this.autoSaveTimeouts.set(timeoutKey, timeout);
-      }
-    }
-    // Reset userClickedNo flag after processing
-    if (event.type === 'blur') {
-      this.userClickedNo = false;
     }
   }
+
+
+  checkMandatoryAndSave(
+    dayForm: FormGroup,
+    dayFormNew: AbstractControl | null,
+    rowIndex: number,
+    dayName: string
+  ) {
+    const projectId = dayForm.get('projectId')?.value ?? 0;
+    const phaseId = dayForm.get('phaseId')?.value ?? 0;
+    const entryDate = moment(dayForm.get('entryDate')?.value).startOf('day');
+    const approvalStatus = (
+      dayForm.get('approvalStatus')?.value || 'not entered'
+    ).toLowerCase();
+
+    const url = `TimesheetConfiguration?projectId=${projectId}&phaseId=${phaseId}`;
+
+    this.http.getData(url)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res: any) => {
+
+          const items = res?.items || [];
+
+          // Case 1: No configuration
+          if (items.length === 0) {
+            this.openModal(this.addtask, dayFormNew, rowIndex, dayName);
+            return;
+          }
+          // Get applicable configuration (latest effective date <= entry date)
+          const applicableConfigs = items
+            .filter((item: any) =>
+              entryDate.isSameOrAfter(moment(item.effectiveDate).startOf('day'))
+            )
+            .sort((a: any, b: any) =>
+              moment(b.effectiveDate).valueOf() - moment(a.effectiveDate).valueOf()
+            );
+
+          // Case 3: Entry date is before all effective dates
+          if (applicableConfigs.length === 0) {
+            this.openModal(this.addtask, dayFormNew, rowIndex, dayName);
+
+            return;
+          }
+
+          // Latest applicable configuration
+          const config = applicableConfigs[0];
+
+          if (config.isMandatory) {
+            this.openModal(this.addtask, dayFormNew, rowIndex, dayName);
+          } else {
+            this.autoSaveDayEntry(dayForm, rowIndex, dayName);
+          }
+        },
+        error: () => {
+          this.autoSaveDayEntry(dayForm, rowIndex, dayName);
+        }
+      });
+  }
+
+  isRequired(controlName: string): boolean {
+    const control = this.dayForm?.get(controlName);
+    return control ? control.hasValidator(Validators.required) : false;
+  }
+
+  autoSaveDayEntry(dayForm: FormGroup, rowIndex: number, dayName: string) {
+    if (!dayForm || !dayForm.get('duration')?.value) return;
+    const formValue = dayForm.getRawValue();
+    const projectForm = this.projects.at(rowIndex);
+    const resourceId = formValue.resourceId || projectForm?.get('resourceId')?.value || null;
+    const payload = {
+      entryId: formValue.entryId || 0,
+      employeeId: this.employeeId || 0,
+      entryDate: moment(formValue.entryDate).format('YYYY-MM-DD'),
+      startTime: this.toTimeSpan(formValue.startTime) || null,
+      endTime: this.toTimeSpan(formValue.endTime) || null,
+      description: formValue.description || '',
+      approvalStatus: 'draft',
+      clientId: formValue.clientId || null,
+      projectId: formValue.projectId || null,
+      phaseId: formValue.phaseId || null,
+      timesheetId: this.timesheetdata?.timesheetId || null,
+      isOverride: formValue.isBlocked || false,
+      totalDurationSeconds: this.hhmmToSeconds(formValue.duration) || 0,
+      isBillable: formValue.isBillable || false,
+      moduleId: 30,
+      resourceId: formValue.resourceId || resourceId,
+      taskId: formValue.taskId || null
+    };
+    this.http.postdata('v2/Timesheet/save-or-update', payload).subscribe({
+      next: () => {
+        this.formattedweakendStart = moment(this.start).format('YYYY-MM-DD');
+        this.getTimeSheetEntriesbyEmployeeId(this.employeeId, this.formattedweakendStart);
+      },
+      error: (err) => {
+        this.conformationPopup.openErrorModal(err?.error?.message || 'Failed to save time entry');
+      }
+    });
+  }
+
 
   //AUTO SAVE TABLE ENTRY
   // autoSaveTableEntry(rowIndex: number, dayName: string,dayFormNew: AbstractControl | null) {
@@ -1834,32 +2337,64 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   //COMMON TIME FORMATTING LOGIC
   getFormattedTime(value: string): string {
     let formatted = '';
-    if (value?.length === 1) {
-      // Single digit = minutes (0-9 minutes)
-      let minutes = parseInt(value, 10);
-      formatted = `00:0${minutes}`;
-    } else if (value?.length === 2) {
-      // Two digits = tens place minutes (10-59 minutes)
-      let minutes = parseInt(value, 10);
-      if (minutes > 59) minutes = 59;
-      formatted = `00:${minutes.toString().padStart(2, '0')}`;
-    } else if (value?.length === 3) {
-      // Three digits = hours (1-24 hours)
+
+    if (!value) {
+      return formatted;
+    }
+
+    if (value.length === 1 || value.length === 2) {
+      // 1 or 2 digits = Hours
+      let hours = parseInt(value, 10);
+
+      if (hours > 24) {
+        hours = 24;
+      }
+
+      formatted = `${hours.toString().padStart(2, '0')}:00`;
+
+    } else if (value.length === 3) {
+      // HMM (e.g. 130 -> 01:30)
       let hours = parseInt(value[0], 10);
       let minutes = parseInt(value.slice(1), 10);
-      if (hours > 24) hours = 24;
-      if (minutes > 59) minutes = 59;
-      if (hours === 24) minutes = 0;
-      formatted = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
-    } else if (value?.length === 4) {
-      // Four digits = hours and minutes
+
+      if (hours > 24) {
+        hours = 24;
+      }
+
+      if (minutes > 59) {
+        minutes = 59;
+      }
+
+      if (hours === 24) {
+        minutes = 0;
+      }
+
+      formatted = `${hours.toString().padStart(2, '0')}:${minutes
+        .toString()
+        .padStart(2, '0')}`;
+
+    } else if (value.length === 4) {
+      // HHMM (e.g. 1234 -> 12:34)
       let hours = parseInt(value.slice(0, 2), 10);
       let minutes = parseInt(value.slice(2), 10);
-      if (hours > 24) hours = 24;
-      if (minutes > 59) minutes = 59;
-      if (hours === 24) minutes = 0;
-      formatted = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+
+      if (hours > 24) {
+        hours = 24;
+      }
+
+      if (minutes > 59) {
+        minutes = 59;
+      }
+
+      if (hours === 24) {
+        minutes = 0;
+      }
+
+      formatted = `${hours.toString().padStart(2, '0')}:${minutes
+        .toString()
+        .padStart(2, '0')}`;
     }
+
     return formatted;
   }
 
@@ -2007,6 +2542,10 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       leaves: this.leavesData
     };
     this.dayValidationService.initialize(context);
+
+    if (this.cloneForm?.get('targetWeekDateRange')?.value) {
+      this.validateCloneDateRanges();
+    }
   }
 
   selectProjectForRow(row: AbstractControl, client: any, project: any, phase: any = null) {
@@ -2220,7 +2759,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       });
 
       this.dayForm = dayForm;
-      //start//code for the task type 
+      //start//code for the task type
       let taskId = this.dayForm.get('taskId')?.value;
       console.log('Selected Task ID:', taskId);
       let taskdata = this.alltaskTypes?.find((ele: any) => ele?.id == taskId && ele?.status?.toLowerCase() == 'inactive');
@@ -2243,6 +2782,44 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       };
 
       const entryDate = normalizeDate(this.dayForm.get('entryDate')?.value);
+
+      // Set validators based on TimesheetConfiguration
+      const projectId = this.dayForm.get('projectId')?.value ?? 0;
+      const phaseId = this.dayForm.get('phaseId')?.value ?? 0;
+      this.http.getData(`TimesheetConfiguration?projectId=${projectId}&phaseId=${phaseId}`)
+        .pipe(takeUntil(this.destroy$)).subscribe({
+          next: (res: any) => {
+            const items = res?.items || [];
+            const fieldMap: any = {
+              'Start Time': 'startTime',
+              'End Time': 'endTime',
+              'Task Type': 'taskId',
+              'Description': 'description'
+            };
+            const selectedDate = moment(this.dayForm.get('entryDate')?.value).format('YYYY-MM-DD');
+            console.log('Selected Date for Validation:', selectedDate);
+            items.forEach((item: any) => {
+              const controlName = fieldMap[item.fieldName];
+              const effectiveDate = moment(item.effectiveDate).format('YYYY-MM-DD');
+              const isEffective = moment(selectedDate).isSameOrAfter(moment(effectiveDate), 'day');
+              if (isEffective) {
+                if (!controlName) return;
+                const control = this.dayForm.get(controlName);
+                if (!control) return;
+                control.clearValidators();
+                const approvalstatus = this.dayForm.get('approvalStatus')?.value;
+                console.log('Approval Status:', approvalstatus);
+                // if (isEffective && item.isMandatory &&(!approvalstatus || approvalstatus?.toLowerCase() === 'draft' || approvalstatus?.toLowerCase() === 'rejected'|| approvalstatus?.toLowerCase() === 'not entered')) {
+                //control.setValidators([Validators.required]);
+                // }
+                if (item.isMandatory) {
+                  control.setValidators([Validators.required]);
+                }
+                control.updateValueAndValidity({ emitEvent: false });
+              }
+            });
+          }
+        });
 
       // ✅ 🔥 Get correct resource based on project/client/phase + DATE RANGE
       const matchedResource = this.resourcesArrayList
@@ -2340,13 +2917,6 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
         });
       }
     });
-  }
-  isRequired(controlName: string): boolean {
-    const control = this.dayForm?.get(controlName);
-
-    return control
-      ? control.hasValidator(Validators.required)
-      : false;
   }
   recalculateTimes(dayKey: string, startIndex: number) {
     for (let i = 0; i < this.projects.length; i++) {
@@ -2512,8 +3082,21 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     const approvalStatus = dayControl.get('approvalStatus')?.value;
     const showDot = this.showDots[rowIndex]?.[day];
 
-    return !!(showDot || duration || (approvalStatus && approvalStatus.toLowerCase() !== 'not entered'));
+    // Hide icon if duration is empty/null/zero
+    const hasDuration = !!(duration && duration !== '');
+
+    // If duration was cleared, also clear the showDots flag
+    if (!hasDuration && showDot) {
+      this.showDots[rowIndex][day] = false;
+    }
+
+    const hasApprovalStatus = !!(approvalStatus &&
+      approvalStatus.toLowerCase() !== 'not entered' &&
+      approvalStatus.toLowerCase() !== '');
+
+    return hasDuration || hasApprovalStatus;
   }
+
 
 
   //payload for submit-for-approval
@@ -2588,6 +3171,8 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
         this.formattedweakendStart = moment(this.start).format('YYYY-MM-DD');
         this.getTimeSheetEntriesbyEmployeeId(this.employeeId, this.formattedweakendStart);
         this.getApprovalStatusCounts();
+        this.signalService.timesheetApprovalsCountSignal.set(true);
+        console.log('SIgnal triggered');
       },
       error: (err) => {
         this.modalService.dismissAll();
@@ -2601,6 +3186,13 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
         setTimeout(() => {
           modalRef.close();
         }, 3000);
+        this.signalService.timesheetApprovalsCountSignal.set(true);
+        console.log('SIgnal triggered');
+      },
+      complete: () => {
+        this.signalService.timesheetApprovalsCountSignal.set(true);
+        console.log('SIgnal triggered');
+
       },
     });
   }
@@ -2828,6 +3420,150 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
 
   }
 
+  private scheduleOverwriteEligibilityCheck(targetRange: Date[] | null): void {
+    if (this.overwriteEligibilityTimeout) {
+      clearTimeout(this.overwriteEligibilityTimeout);
+    }
+
+    if (!Array.isArray(targetRange) || targetRange.length < 2 || !targetRange[0] || !targetRange[1]) {
+      this.isOverwriteEligibilityLoading = false;
+      this.isOverwriteDisabled = false;
+      this.overwriteDisabledMessage = null;
+      return;
+    }
+
+    const token = ++this.overwriteEligibilityRequestToken;
+    this.isOverwriteEligibilityLoading = true;
+    this.overwriteEligibilityTimeout = setTimeout(() => {
+      this.evaluateOverwriteEligibility(targetRange, token);
+    }, 250);
+  }
+
+  private evaluateOverwriteEligibility(targetRange: Date[], token: number): void {
+    if (token !== this.overwriteEligibilityRequestToken) {
+      return;
+    }
+
+    const employeeId = this.employeeId;
+    if (!employeeId) {
+      this.isOverwriteEligibilityLoading = false;
+      this.isOverwriteDisabled = false;
+      this.overwriteDisabledMessage = null;
+      return;
+    }
+
+    const rangeStart = moment(targetRange[0]).startOf('day');
+    const rangeEnd = moment(targetRange[1]).startOf('day');
+    if (!rangeStart.isValid() || !rangeEnd.isValid() || rangeStart.isAfter(rangeEnd, 'day')) {
+      this.isOverwriteEligibilityLoading = false;
+      this.isOverwriteDisabled = false;
+      this.overwriteDisabledMessage = null;
+      return;
+    }
+
+    const weekStartDates: string[] = [];
+    for (
+      let cursor = rangeStart.clone().startOf('isoWeek');
+      cursor.isSameOrBefore(rangeEnd, 'day');
+      cursor.add(1, 'week')
+    ) {
+      weekStartDates.push(cursor.clone().startOf('isoWeek').format('YYYY-MM-DD'));
+    }
+
+    const uniqueWeekStartDates = Array.from(new Set(weekStartDates));
+    const targetDateKeys = new Set(
+      this.getDatesInRange(targetRange).map((d) => moment(d).format('YYYY-MM-DDT00:00:00'))
+    );
+
+    forkJoin(
+      uniqueWeekStartDates.map((weekStartDate) =>
+        this.http.getData(`v2/Timesheet/week/employee/${employeeId}?weekStartDate=${weekStartDate}`)
+      )
+    )
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (responses: any[]) => {
+          if (token !== this.overwriteEligibilityRequestToken) {
+            return;
+          }
+
+          const hasLockedTargetEntries = (responses || []).some((res) => {
+            const matrix = transformV2ResponseToWeekMatrix(res);
+            return this.targetRangeHasLockedEntries(matrix, targetDateKeys);
+          });
+
+          this.isOverwriteDisabled = hasLockedTargetEntries;
+          this.overwriteDisabledMessage = hasLockedTargetEntries
+            ? "Approved or Waiting for Approval entries will not be overridden."
+            : null;
+
+          if (hasLockedTargetEntries && this.cloneForm?.get('cloneMode')?.value === 'overwrite') {
+            this.cloneForm.patchValue({ cloneMode: 'merge' });
+          }
+
+          this.isOverwriteEligibilityLoading = false;
+        },
+        error: () => {
+          if (token !== this.overwriteEligibilityRequestToken) {
+            return;
+          }
+          this.isOverwriteEligibilityLoading = false;
+          this.isOverwriteDisabled = false;
+          this.overwriteDisabledMessage = null;
+        },
+      });
+  }
+
+  private targetRangeHasLockedEntries(targetMatrix: WeekMatrix, targetDateKeys: Set<string>): boolean {
+    if (!targetDateKeys.size) {
+      return false;
+    }
+
+    for (const day of targetMatrix.days) {
+      if (!targetDateKeys.has(day.date)) {
+        continue;
+      }
+
+      for (const row of targetMatrix.rows) {
+        const cell = targetMatrix.cellMap.get(`${row.rowId}_${day.date}`);
+        if (!cell?.entryId) {
+          continue;
+        }
+        const status = (cell.approvalStatus || '').toLowerCase();
+        if (status === 'waiting for approval' || status === 'processed' || status === 'approved') {
+          return true;
+        }
+      }
+    }
+
+    return false;
+  }
+
+  private collectDeletableTargetEntryIds(targetMatrix: WeekMatrix, targetDates: Date[]): number[] {
+    const targetDateKeys = new Set(targetDates.map((d) => moment(d).format('YYYY-MM-DDT00:00:00')));
+    if (!targetDateKeys.size) {
+      return [];
+    }
+
+    const entryIds: number[] = [];
+    for (const row of targetMatrix.rows) {
+      for (const dateKey of targetDateKeys) {
+        const cell = targetMatrix.cellMap.get(`${row.rowId}_${dateKey}`);
+        const entryId = cell?.entryId;
+        if (!entryId) {
+          continue;
+        }
+        const status = (cell.approvalStatus || '').toLowerCase();
+        if (status === 'waiting for approval' || status === 'processed' || status === 'approved') {
+          continue;
+        }
+        entryIds.push(entryId);
+      }
+    }
+
+    return Array.from(new Set(entryIds));
+  }
+
   testMenu(event: any, menu: any) {
     console.log('Actions Clicked');
     console.log(this.bulkOperationMenuItems);
@@ -2835,9 +3571,9 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     menu.show(event);
   }
 
-  validateCloneDateRanges() {
-  this.cloneErrorMessage = null;
-}
+//   validateCloneDateRanges() {
+//   this.cloneErrorMessage = null;
+// }
 
   getHeaderClass(status: string): string {
     if (!status) return 'header-default';
@@ -2866,6 +3602,44 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     if (s.includes('rejected')) return 'badge-rejected';
     if (s.includes('draft')) return 'badge-draft';
     return 'badge-default';
+   }
+  
+  
+    validateCloneDateRanges() {
+    this.cloneErrorMessage = null;
+    this.targetAllDaysBlockedError = false;
+
+    const targetRange = this.cloneForm?.get('targetWeekDateRange')?.value as Date[] | null;
+    this.scheduleOverwriteEligibilityCheck(targetRange);
+    if (!targetRange || targetRange.length < 1 || !targetRange[0]) return;
+
+    const start = moment(targetRange[0]).startOf('day');
+    const end = targetRange[1] ? moment(targetRange[1]).startOf('day') : start.clone();
+
+    const dates: moment.Moment[] = [];
+    for (let d = start.clone(); d.isSameOrBefore(end, 'day'); d.add(1, 'day')) {
+      dates.push(d.clone());
+    }
+
+    if (!dates.length) return;
+
+    const validationContext = {
+      selectedResource: null,
+      holidays: this.holidaysData,
+      weekends: this.weekendsData,
+      leaves: this.leavesData
+    };
+    this.dayValidationService.initialize(validationContext);
+
+    const blockedDatesCount = dates.filter(d => {
+      const result = this.dayValidationService.checkDayStatus(d.toDate(), validationContext);
+      return result.blocked && (result.blockReason === 'Holiday' || result.blockReason === 'Leave');
+    }).length;
+
+    if (blockedDatesCount === dates.length) {
+      this.targetAllDaysBlockedError = true;
+      this.cloneErrorMessage = 'Cannot clone on holidays or leaves';
+    }
   }
 
   

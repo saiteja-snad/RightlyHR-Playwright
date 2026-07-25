@@ -1,4 +1,20 @@
 <div class="custom-main-component-container">
+
+  <div
+    class="component-overlay-placeholder-content"
+    *ngIf="isAttendanceDataTrue">
+
+    <div>
+      <app-attendance-placeholder />
+
+      <p class="context">
+        Attendance data is currently unavailable due to pending biometric integration.
+        Please contact the administrator for assistance.
+      </p>
+    </div>
+
+  </div>
+
   <div class="component-header-content">
     <div class="heading-content">
       <p class="component-header cursor mb-0 text-nowrap">{{'Attendance'|translate}} @if(empName){({{empName}})}</p>
@@ -7,349 +23,350 @@
       </div>
     </div>
 
-    <div class="d-flex align-items-center flex-wrap gap-3">
-      <label class="form-label custom-label filter-labels m-0">{{'Select'|translate}}</label>
-      <div class="custom-year-month-picker">
-        <!-- <p-datepicker [(ngModel)]="date" placeholder="Select month and year"
+      <div class="d-flex align-items-center flex-wrap gap-3">
+        <label class="form-label custom-label filter-labels m-0">{{'Select'|translate}}</label>
+        <div class="custom-year-month-picker">
+          <!-- <p-datepicker [(ngModel)]="date" placeholder="Select month and year"
                     (ngModelChange)="checkdates($event)" [showIcon]="true" [selectOtherMonths]="true" view="month"
                     dateFormat="mm/yy" [readonlyInput]="true" /> -->
-        <div class="custom-year-month-picker">
-          <p-datepicker [(ngModel)]="date" placeholder="{{'Select month and year'|translate}}"
-            (ngModelChange)="checkdates($event)" [showIcon]="true" [selectOtherMonths]="true" view="month"
-            dateFormat="mm/yy" [readonlyInput]="true" [maxDate]="maxMonth"></p-datepicker>
+          <div class="custom-year-month-picker">
+            <p-datepicker [(ngModel)]="date" placeholder="{{'Select month and year'|translate}}"
+              (ngModelChange)="checkdates($event)" [showIcon]="true" [selectOtherMonths]="true" view="month"
+              dateFormat="mm/yy" [readonlyInput]="true" [maxDate]="maxMonth"></p-datepicker>
+          </div>
         </div>
-      </div>
-      <!-- select all employees drop down for HR code start -->
-      @if(this.rbac.allowedToAccess('Attendance Select Employee For HR.view')){
-      <label class="form-label custom-label filter-labels m-0">{{'Select Employee'|translate}}</label>
-      <div class="custom-p-select-content">
-        <p-select [options]="getAllEmployeeInfo" [filter]="true" filterBy="fullName" [showClear]="false"
-          [(ngModel)]="selectedEmployee" placeholder="{{'Select Employee'|translate}}"
-          (onChange)="getAttendnaceData(selectedEmployee);this.selectedEmployeeOfHr=null" optionLabel="fullName"
-          class="custom-select">
-        </p-select>
-      </div>
-      }
-      <!-- select all employees drop down for HR code end -->
-      <!-- select all employees drop down for team manager code start -->
-      @else if(this.rbac.allowedToAccess('Attendance Select Employee For Manager.view')){
-      <label class="form-label custom-label m-0">{{'Team Member'|translate}}</label>
-      <div class="custom-p-select-content">
-        <p-select [options]="get_Employeelist_forTM" [filter]="true" filterBy="fullName" [showClear]="false"
-          [(ngModel)]="selectedEmployeeOfHr" placeholder="Select Employee"
-          (onChange)="getAttendnaceData(selectedEmployeeOfHr);this.selectedEmployee=null" optionLabel="fullName"
-          class="custom-select">
-        </p-select>
-      </div>
-      }
+        <!-- select all employees drop down for HR code start -->
+        @if(this.rbac.allowedToAccess('Attendance Select Employee For HR.view')){
+        <label class="form-label custom-label filter-labels m-0">{{'Select Employee'|translate}}</label>
+        <div class="custom-p-select-content">
+          <p-select [options]="getAllEmployeeInfo" [filter]="true" filterBy="fullName" [showClear]="false"
+            [(ngModel)]="selectedEmployee" placeholder="{{'Select Employee'|translate}}"
+            (onChange)="getAttendnaceData(selectedEmployee);this.selectedEmployeeOfHr=null" optionLabel="fullName"
+            class="custom-select">
+          </p-select>
+        </div>
+        }
+        <!-- select all employees drop down for HR code end -->
+        <!-- select all employees drop down for team manager code start -->
+        @else if(this.rbac.allowedToAccess('Attendance Select Employee For Manager.view')){
+        <label class="form-label custom-label m-0">{{'Team Member'|translate}}</label>
+        <div class="custom-p-select-content">
+          <p-select [options]="get_Employeelist_forTM" [filter]="true" filterBy="fullName" [showClear]="false"
+            [(ngModel)]="selectedEmployeeOfHr" placeholder="Select Employee"
+            (onChange)="getAttendnaceData(selectedEmployeeOfHr);this.selectedEmployee=null" optionLabel="fullName"
+            class="custom-select">
+          </p-select>
+        </div>
+        }
 
-      @if(!selectedEmployee && !selectedEmployeeOfHr){
-      <a class="log-extra-hrs" (click)="openModal(extraHoursLodModal)">{{'Log Extra Hours'|translate}}</a>
-      }
+        @if(!selectedEmployee && !selectedEmployeeOfHr){
+        <a class="log-extra-hrs" (click)="openModal(extraHoursLodModal)">{{'Log Extra Hours'|translate}}</a>
+        }
 
-      @if((this.rbac.allowedToAccess('Attendance Select Employee For Manager.view') ||
-      this.rbac.allowedToAccess('Attendance Select Employee For HR.view'))
-      && ((selectedEmployeeOfHr?.employeeId != empdata.employeeId && selectedEmployeeOfHr != null) ||
-      (selectedEmployee?.employeeId != empdata.employeeId &&
-      selectedEmployee != null))){
-      <button type="button" class="custom-btn btn-primary"
-        (click)="getAttendnaceData(empdata);this.selectedEmployee = null;this.selectedEmployeeOfHr = null">
-        <img src="icons/finger-print.png" alt="Icon" class="finger-icon me-1">{{'My Attendance'|translate}}
-      </button>
-      }
-      <app-applicable-policies-trigger [moduleKey]="applicablePolicies.moduleKey"
-        [subModuleKey]="applicablePolicies.subModuleKey">
-      </app-applicable-policies-trigger>
+        @if((this.rbac.allowedToAccess('Attendance Select Employee For Manager.view') ||
+        this.rbac.allowedToAccess('Attendance Select Employee For HR.view'))
+        && ((selectedEmployeeOfHr?.employeeId != empdata.employeeId && selectedEmployeeOfHr != null) ||
+        (selectedEmployee?.employeeId != empdata.employeeId &&
+        selectedEmployee != null))){
+        <button type="button" class="custom-btn btn-primary"
+          (click)="getAttendnaceData(empdata);this.selectedEmployee = null;this.selectedEmployeeOfHr = null">
+          <img src="icons/finger-print.png" alt="Icon" class="finger-icon me-1">{{'My Attendance'|translate}}
+        </button>
+        }
+        <app-applicable-policies-trigger [moduleKey]="applicablePolicies.moduleKey"
+          [subModuleKey]="applicablePolicies.subModuleKey">
+        </app-applicable-policies-trigger>
+      </div>
+      <!-- select all employees drop down for team manager code end -->
     </div>
-    <!-- select all employees drop down for team manager code end -->
-  </div>
 
-  <!--Module Information-->
-  <ng-template #popContent>
-    <app-module-information [moduleInfo]="moduleinfo" />
-  </ng-template>
+    <!--Module Information-->
+    <ng-template #popContent>
+      <app-module-information [moduleInfo]="moduleinfo" />
+    </ng-template>
 
-  <div class="d-flex gap-3">
-    <div class="custom-table-content attendance-log-content">
-      @if(!dataLoader){
-      <table class="w-100">
-        <thead>
-          <th class="max-width">{{'Date'|translate}}</th>
-          <th class="max-width">{{'First In'|translate}}</th>
-          <th class="max-width">{{'Last Out'|translate}}</th>
-          <th class="max-width">{{'Duration'|translate}}</th>
-          <th class="max-width">{{'Logs'|translate}}</th>
-          <th class="text-end pe-5">{{'Status'|translate}}</th>
-        </thead>
-        <tbody>
-          @if(attendanceData.value.length>0){
-          @for (item of attendanceData|async; track $index) {
-          <tr>
-            <td class="max-width">{{(item.date | dateformat)??'-'}}</td>
-            <td class="max-width">{{ item.firstLogin ? (item.firstLogin | date:'HH:mm:ss') : '-' }}</td>
-            <td class="max-width">{{ item.lastLogout ? (item.lastLogout | date:'HH:mm:ss') : '-' }}</td>
-            <td class="max-width">
-              {{item?.duration?.totalDuration === '00:00:00' || !item?.duration?.totalDuration ? '-' :
-              item.duration.totalDuration}}
-            </td>
-            <td class="max-width">
-              @if(((item?.biometricLogs??[]).length>0)||(item.permissions.length>0)||(item.regularizations.length>0) ||
-              (item.logExtraHours.length>0)){
-              <div>
-                <a type="button"
-                  (click)="openModalLarge(punchintimes);
+    <div class="d-flex gap-3">
+      <div class="custom-table-content attendance-log-content">
+        @if(!dataLoader){
+        <table class="w-100">
+          <thead>
+            <th class="max-width">{{'Date'|translate}}</th>
+            <th class="max-width">{{'First In'|translate}}</th>
+            <th class="max-width">{{'Last Out'|translate}}</th>
+            <th class="max-width">{{'Duration'|translate}}</th>
+            <th class="max-width">{{'Logs'|translate}}</th>
+            <th class="text-end pe-5">{{'Status'|translate}}</th>
+          </thead>
+          <tbody>
+            @if(attendanceData.value.length>0){
+            @for (item of attendanceData|async; track $index) {
+            <tr>
+              <td class="max-width">{{(item.date | dateformat)??'-'}}</td>
+              <td class="max-width">{{ item.firstLogin ? (item.firstLogin | date:'HH:mm:ss') : '-' }}</td>
+              <td class="max-width">{{ item.lastLogout ? (item.lastLogout | date:'HH:mm:ss') : '-' }}</td>
+              <td class="max-width">
+                {{item?.duration?.totalDuration === '00:00:00' || !item?.duration?.totalDuration ? '-' :
+                item.duration.totalDuration}}
+              </td>
+              <td class="max-width">
+                @if(((item?.biometricLogs??[]).length>0)||(item.permissions.length>0)||(item.regularizations.length>0)
+                || (item.logExtraHours.length>0)){
+                <div>
+                  <a type="button"
+                    (click)="openModalLarge(punchintimes);
                                 dayLogsData(item.biometricLogs,item.date,item.duration?.biometricDuration,item.permissions,item.logExtraHours,item.regularizations,item.duration?.permissionDuration,item.duration?.regularizationDuration,item.duration?.breakDuration)">
-                  <app-info-icon />
-                </a>
-              </div>
-              }
-            </td>
-            <td class="pe-4">
-              <!--Main status content-->
-              <div class="d-flex justify-content-end">
-                @if(item.status !== '-'){
-                <ul class="ps-0 mb-2">
-                  <li class="main-status-text" [ngStyle]="{ color: item?.displayStatus?.colour }">{{item?.status}}</li>
-                </ul>
-                }
-                @else {
-                <div class="pe-4 mb-2">-</div>
-                }
-              </div>
-
-              <!--Sub status content-->
-              @if((item?.tags ?? []).length > 0 &&item.status){
-              <div class="d-flex gap-2 justify-content-end flex-wrap mb-2">
-                @for(tag of item.tags; track $index){
-                <div class="card substatus-card"
-                  [ngStyle]="{ color: tag?.colour ?? '#305889',borderColor: tag?.colour ?? '#305889'}">
-                  {{tag?.name}}
-                  @if(tag?.additionalInfo && tag?.additionalInfo?.showAdditionalInfo &&
-                  tag?.additionalInfo?.exceededBreakDuration){
-                  ({{tag?.additionalInfo?.exceededBreakDuration}})
-                  }
-                  @if(tag?.additionalInfo && tag?.additionalInfo?.showAdditionalInfo &&
-                  tag?.additionalInfo?.lateLoginDuration){
-                  ({{tag?.additionalInfo?.lateLoginDuration}})
-                  }
-                  <!-- @if(tag?.additionalInfo && tag?.additionalInfo?.showAdditionalInfo && tag?.additionalInfo?.lateLoginDuration){
-                                        ({{tag?.additionalInfo?.lateLoginDuration}})
-                                    } -->
+                    <app-info-icon />
+                  </a>
                 </div>
                 }
-              </div>
-              }
-
-              <!-- action btns content-->
-              <div class="d-flex gap-3 justify-content-end">
-                @if(rbac.allowedToAccess('Request Leave.view')){
-                @if(item.isLeaveApplicable && item.duration.totalDuration >= '00:00:00' &&
-                currentMonth==selectedMonth && item.employeeId == empdata.employeeId){
-                <a class="application-btn" (click)="navigateToLeave(item)"><u>{{'Apply Leave'|translate}}</u> </a>
-                }
-                }
-
-                @if (rbac.allowedToAccess('Request Regularization.view')) {
-                @if (
-                item.isRegularizationApplicable &&
-                item.employeeId == empdata.employeeId &&
-                isPastOrToday(item.date) &&
-                (item.duration.totalDuration | tohours) < (item.shiftDetails?.fullDayMinHrs ?? 0) ) { <a
-                  class="application-btn" (click)="openModal(raiseregularization); onclickRegularization(item.date)">
-                  <u>{{ 'Regularization' | translate }}</u>
-                  </a>
+              </td>
+              <td class="pe-4">
+                <!--Main status content-->
+                <div class="d-flex justify-content-end">
+                  @if(item.status !== '-'){
+                  <ul class="ps-0 mb-2">
+                    <li class="main-status-text" [ngStyle]="{ color: item?.displayStatus?.colour }">{{item?.status}}
+                    </li>
+                  </ul>
                   }
+                  @else {
+                  <div class="pe-4 mb-2">-</div>
                   }
-              </div>
-            </td>
-          </tr>
-          }
-          }
-          @else {
-          <app-no-data-found />
-          }
-        </tbody>
-      </table>
-      }
-      @else {
-      <app-data-loader-content />
-      }
-    </div>
+                </div>
 
-    @if(statusCounts$.value.length>0){
-    <div class="attendance-summary-card">
-      <div>
-        <p class="summary-header mb-2">{{'Attendance Summary'|translate}}</p>
-      </div>
-      <div class="chart-content">
-        <p-chart type="doughnut" [data]="attendanceSummaryData" [options]="attendanceSummaryOptions"
-          class="doughnut-chart" />
-      </div>
-      <ul class="list-style-none ps-0 pt-3">
-        @if(statusCounts$.value){
-        @for (status of statusCounts$ |async ; track $index) {
-        <li>
-          <div class="d-flex justify-content-between summart-text">
-            <div class="summary-name" [ngStyle]="{ color: status.colour }">{{ status.status }}</div>
-            <div>{{ status.value }}</div>
-          </div>
-        </li>
-        }
-        }
-      </ul>
-    </div>
-    }
-  </div>
-</div>
-
-<ng-template #raiseregularization let-modal>
-  <div class="custom-main-popup-container" ngbAutofocus>
-    <div class="custom-poup-header-content popup-header-border">
-      <div class="d-flex justify-content-between align-items-center w-100">
-        <p class="popup-heading mb-0">{{'Request Regularization'|translate}}</p>
-
-        <p class="logged-heading mb-0">
-          {{'Logged Duration'|translate}}:
-          <span>{{ selectedDateTotalDuration === '00:00:00' ? '00:00:00' : selectedDateTotalDuration }}</span>
-        </p>
-      </div>
-    </div>
-
-    <div class="custom-main-popup-content">
-      <form autocomplete="off" [formGroup]="regularizationForm" (focusin)="setActiveForm('regularization')"
-        (ngSubmit)="applyRgularization(regularizationForm)">
-        <div class="row">
-          <div class="col-md-12 mb-3">
-            <label for="Date" class="form-label custom-label">{{'Date'|translate}}<span
-                class="text-danger">*</span></label>
-            <input type="text" class="form-control custom-input"
-              [value]="regularizationForm.get('permissionDate')?.value | date:'MMM d, yyyy'" disabled
-              placeholder="{{'Select Date'|translate}}" style="font-weight: bold;" id="Date" />
-            <input type="hidden" formControlName="permissionDate" />
-            <div
-              *ngIf="regularizationForm.get('permissionDate')?.touched && regularizationForm.get('permissionDate')?.invalid"
-              class="error-msg">
-              {{'Permission Date is required'|translate}}
-            </div>
-          </div>
-
-          <div class="col-md-12 mb-3">
-            <label for="duration" class="form-label custom-label">{{'Duration'|translate}}<span
-                class="text-danger">*</span></label>
-            <div class="custom-p-select-content w-100">
-              <p-select [options]="duration" optionLabel="name" id="duration" formControlName="duration"
-                placeholder="{{'Please select duration'|translate}}" class="form-select custom-select w-100" />
-            </div>
-            <div *ngIf="regularizationForm.get('duration')?.touched && regularizationForm.get('duration')?.invalid"
-              class="error-msg">{{'Duration is required'|translate}}
-            </div>
-          </div>
-
-          <div class="col-md-12 mb-3">
-            <label for="leaveType" class="form-label custom-label">{{'Regularization Category'|translate}}<span
-                class="text-danger">*</span></label>
-            <div class="custom-p-select-content w-100">
-              <p-select [options]="regularizationTypes" optionLabel="name" formControlName="leaveType"
-                placeholder="{{'Please select regularization type'|translate}}" id="leaveType"
-                class="form-select custom-select w-100" />
-            </div>
-            <div *ngIf="regularizationForm.get('leaveType')?.touched && regularizationForm.get('leaveType')?.invalid"
-              class="error-msg">{{'Regularization Type is required'|translate}}
-            </div>
-          </div>
-
-          <div class="col-md-12 mb-3">
-            <label for="reason" class="form-label custom-label">{{'Reason'|translate}}<span
-                class="text-danger">*</span></label>
-            <textarea class="form-control custom-input" formControlName="reason" id="reason" rows="3"
-              placeholder="{{'Type here'|translate}}" maxlength="250"
-              placeholder="{{'Reason for regularization'|translate}}"
-              (input)="formsValidation.validateInput(regularizationForm.get('reason'))"></textarea>
-            <div class="textarea-count-text">
-              {{ regularizationForm.get('reason')?.value?.length || 0 }}/250
-            </div>
-            <div class="error-msg" *ngIf="regularizationForm.get('reason')?.errors?.['minlength']">
-              {{'Reason must be at least 10 characters'|translate}}
-            </div>
-            <div class="error-msg"
-              *ngIf="regularizationForm.get('reason')?.touched && regularizationForm.get('reason')?.invalid">
-              <div *ngIf="regularizationForm.get('reason')?.errors?.['required']">
-                {{'Reason is required'|translate}}
-              </div>
-              <div *ngIf="regularizationForm.get('reason')?.errors?.['maxlength']">
-                {{'Reason cannot exceed 250 characters'|translate}}
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="custom-modal-footer">
-          <button type="button" class="custom-btn btn-secondary"
-            (click)="openModal(confirmationpopup)">{{'Cancel'|translate}}</button>
-          <button type="submit" class="custom-btn btn-primary" [disabled]="regularizationForm.invalid || spinnerLoader">
-            @if(spinnerLoader){
-            <div class="button-loader-content">
-              <div class="spinner-border button-spinner text-light" role="status"></div>
-              <div>{{'Loading...'|translate}}</div>
-            </div>
-            }@else {
-            <span>{{'Request'|translate}}</span>
-            }
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
-</ng-template>
-
-<!--Attendance Logs popup-->
-<ng-template #punchintimes let-modal>
-  <div class="custom-main-popup-container" ngbAutofocus>
-    <div class="custom-poup-header-content popup-header-border">
-      <div class="pt-2">
-        <p class="popup-heading mb-0">{{'Attendance Logs'|translate}} ({{selectedDate|dateformat}})</p>
-      </div>
-      <div>
-        <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
-      </div>
-    </div>
-
-    <div class="custom-main-popup-content custom-accordians">
-      <p-accordion value="0">
-        @if(punchPairs.length>0){
-        <p-accordion-panel value="0">
-          <p-accordion-header>{{'Biometric Logs'|translate}}</p-accordion-header>
-          <p-accordion-content>
-            <div class="popup-table-wrapper">
-              <div class="popup-table-scroll-container">
-                <table class="popup-table">
-                  <thead>
-                    <tr>
-                      <th>{{'In'|translate}}</th>
-                      <th>{{'Out'|translate}}</th>
-                      <th>{{'Duration'|translate}}</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr *ngFor="let log of punchPairs">
-                      <td class="log-time">{{ log.in }}</td>
-                      <td class="log-time">{{ log.out }}</td>
-                      <td class="duration-time">{{ log.duration }}</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-
-              <div class="popup-table-footer">
-                <!-- Total Duration: <b>{{ logsDuration }}</b> -->
-                <div>
-                  <div class="d-flex justify-content-center gap-2">
-                    <div class="custom-text">{{'Working Hours'|translate}}: <b
-                        class="popup-heading">{{logsDuration}}</b></div>
-                    <div class="break-line my-1"></div>
-                    <div class="custom-text">{{'Break Hours'|translate}}: <b class="popup-heading">{{breakDuration}}</b>
-                    </div>
+                <!--Sub status content-->
+                @if((item?.tags ?? []).length > 0 &&item.status){
+                <div class="d-flex gap-2 justify-content-end flex-wrap mb-2">
+                  @for(tag of item.tags; track $index){
+                  <div class="card substatus-card"
+                    [ngStyle]="{ color: tag?.colour ?? '#305889',borderColor: tag?.colour ?? '#305889'}">
+                    {{tag?.name}}
+                    @if(tag?.additionalInfo && tag?.additionalInfo?.showAdditionalInfo &&
+                    tag?.additionalInfo?.exceededBreakDuration){
+                    ({{tag?.additionalInfo?.exceededBreakDuration}})
+                    }
+                    @if(tag?.additionalInfo && tag?.additionalInfo?.showAdditionalInfo &&
+                    tag?.additionalInfo?.lateLoginDuration){
+                    ({{tag?.additionalInfo?.lateLoginDuration}})
+                    }
+                    <!-- @if(tag?.additionalInfo && tag?.additionalInfo?.showAdditionalInfo && tag?.additionalInfo?.lateLoginDuration){
+                                        ({{tag?.additionalInfo?.lateLoginDuration}})
+                                    } -->
                   </div>
-                  <!-- <div>Duration: <span *ngIf="logsDuration;else popupcomments">
+                  }
+                </div>
+                }
+
+                <!-- action btns content-->
+                <div class="d-flex gap-3 justify-content-end">
+                  @if(rbac.allowedToAccess('Request Leave.view')){
+                  @if(item.isLeaveApplicable && item.duration.totalDuration >= '00:00:00' &&
+                  currentMonth==selectedMonth && item.employeeId == empdata.employeeId){
+                  <a class="application-btn" (click)="navigateToLeave(item)"><u>{{'Apply Leave'|translate}}</u> </a>
+                  }
+                  }
+                  @if(rbac.allowedToAccess('Request Regularization.view')){
+                  @if(item.duration.totalDuration >= '00:00:00' &&isPastOrToday(item.date) &&
+                  (item.duration.totalDuration|tohours) < (shiftDetails?.fullDayMinHrs ?? 0) &&
+                    item.isRegularizationApplicable && isWithinPastDaysAllowed(item.date) &&
+                    item.employeeId==empdata.employeeId){ <a class="application-btn"
+                    (click)="openModal(raiseregularization); onclickRegularization(item.date)">
+                    <u>{{'Regularization'|translate}}</u>
+                    </a>
+                    }
+                    }
+                </div>
+              </td>
+            </tr>
+            }
+            }
+            @else {
+            <app-no-data-found />
+            }
+          </tbody>
+        </table>
+        }
+        @else {
+        <app-data-loader-content />
+        }
+      </div>
+
+      @if(statusCounts$.value.length>0){
+      <div class="attendance-summary-card">
+        <div>
+          <p class="summary-header mb-2">{{'Attendance Summary'|translate}}</p>
+        </div>
+        <div class="chart-content">
+          <p-chart type="doughnut" [data]="attendanceSummaryData" [options]="attendanceSummaryOptions"
+            class="doughnut-chart" />
+        </div>
+        <ul class="list-style-none ps-0 pt-3">
+          @if(statusCounts$.value){
+          @for (status of statusCounts$ |async ; track $index) {
+          <li>
+            <div class="d-flex justify-content-between summart-text">
+              <div class="summary-name" [ngStyle]="{ color: status.colour }">{{ status.status }}</div>
+              <div>{{ status.value }}</div>
+            </div>
+          </li>
+          }
+          }
+        </ul>
+      </div>
+      }
+    </div>
+ 
+  
+
+  <ng-template #raiseregularization let-modal>
+    <div class="custom-main-popup-container" ngbAutofocus>
+      <div class="custom-poup-header-content popup-header-border">
+        <div class="d-flex justify-content-between align-items-center w-100">
+          <p class="popup-heading mb-0">{{'Request Regularization'|translate}}</p>
+
+          <p class="logged-heading mb-0">
+            {{'Logged Duration'|translate}}:
+            <span>{{ selectedDateTotalDuration === '00:00:00' ? '00:00:00' : selectedDateTotalDuration }}</span>
+          </p>
+        </div>
+      </div>
+
+      <div class="custom-main-popup-content">
+        <form autocomplete="off" [formGroup]="regularizationForm" (focusin)="setActiveForm('regularization')"
+          (ngSubmit)="applyRgularization(regularizationForm)">
+          <div class="row">
+            <div class="col-md-12 mb-3">
+              <label for="Date" class="form-label custom-label">{{'Date'|translate}}<span
+                  class="text-danger">*</span></label>
+              <input type="text" class="form-control custom-input"
+                [value]="regularizationForm.get('permissionDate')?.value | date:'MMM d, yyyy'" disabled
+                placeholder="{{'Select Date'|translate}}" style="font-weight: bold;" id="Date" />
+              <input type="hidden" formControlName="permissionDate" />
+              <div
+                *ngIf="regularizationForm.get('permissionDate')?.touched && regularizationForm.get('permissionDate')?.invalid"
+                class="error-msg">
+                {{'Permission Date is required'|translate}}
+              </div>
+            </div>
+
+            <div class="col-md-12 mb-3">
+              <label for="duration" class="form-label custom-label">{{'Duration'|translate}}<span
+                  class="text-danger">*</span></label>
+              <div class="custom-p-select-content w-100">
+                <p-select [options]="duration" optionLabel="name" id="duration" formControlName="duration"
+                  placeholder="{{'Please select duration'|translate}}" class="form-select custom-select w-100" />
+              </div>
+              <div *ngIf="regularizationForm.get('duration')?.touched && regularizationForm.get('duration')?.invalid"
+                class="error-msg">{{'Duration is required'|translate}}
+              </div>
+            </div>
+
+            <div class="col-md-12 mb-3">
+              <label for="leaveType" class="form-label custom-label">{{'Regularization Category'|translate}}<span
+                  class="text-danger">*</span></label>
+              <div class="custom-p-select-content w-100">
+                <p-select [options]="regularizationTypes" optionLabel="name" formControlName="leaveType"
+                  placeholder="{{'Please select regularization type'|translate}}" id="leaveType"
+                  class="form-select custom-select w-100" />
+              </div>
+              <div *ngIf="regularizationForm.get('leaveType')?.touched && regularizationForm.get('leaveType')?.invalid"
+                class="error-msg">{{'Regularization Type is required'|translate}}
+              </div>
+            </div>
+
+            <div class="col-md-12 mb-3">
+              <label for="reason" class="form-label custom-label">{{'Reason'|translate}}<span
+                  class="text-danger">*</span></label>
+              <textarea class="form-control custom-input" formControlName="reason" id="reason" rows="3"
+                placeholder="{{'Type here'|translate}}" maxlength="250"
+                placeholder="{{'Reason for regularization'|translate}}"
+                (input)="formsValidation.validateInput(regularizationForm.get('reason'))"></textarea>
+              <div class="textarea-count-text">
+                {{ regularizationForm.get('reason')?.value?.length || 0 }}/250
+              </div>
+              <div class="error-msg" *ngIf="regularizationForm.get('reason')?.errors?.['minlength']">
+                {{'Reason must be at least 10 characters'|translate}}
+              </div>
+              <div class="error-msg"
+                *ngIf="regularizationForm.get('reason')?.touched && regularizationForm.get('reason')?.invalid">
+                <div *ngIf="regularizationForm.get('reason')?.errors?.['required']">
+                  {{'Reason is required'|translate}}
+                </div>
+                <div *ngIf="regularizationForm.get('reason')?.errors?.['maxlength']">
+                  {{'Reason cannot exceed 250 characters'|translate}}
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="custom-modal-footer">
+            <button type="button" class="custom-btn btn-secondary"
+              (click)="openModal(confirmationpopup)">{{'Cancel'|translate}}</button>
+            <button type="submit" class="custom-btn btn-primary"
+              [disabled]="regularizationForm.invalid || spinnerLoader">
+              @if(spinnerLoader){
+              <div class="button-loader-content">
+                <div class="spinner-border button-spinner text-light" role="status"></div>
+                <div>{{'Loading...'|translate}}</div>
+              </div>
+              }@else {
+              <span>{{'Request'|translate}}</span>
+              }
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </ng-template>
+
+  <!--Attendance Logs popup-->
+  <ng-template #punchintimes let-modal>
+    <div class="custom-main-popup-container" ngbAutofocus>
+      <div class="custom-poup-header-content popup-header-border">
+        <div class="pt-2">
+          <p class="popup-heading mb-0">{{'Attendance Logs'|translate}} ({{selectedDate|dateformat}})</p>
+        </div>
+        <div>
+          <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+        </div>
+      </div>
+
+      <div class="custom-main-popup-content custom-accordians">
+        <p-accordion value="0">
+          @if(punchPairs.length>0){
+          <p-accordion-panel value="0">
+            <p-accordion-header>{{'Biometric Logs'|translate}}</p-accordion-header>
+            <p-accordion-content>
+              <div class="popup-table-wrapper">
+                <div class="popup-table-scroll-container">
+                  <table class="popup-table">
+                    <thead>
+                      <tr>
+                        <th>{{'In'|translate}}</th>
+                        <th>{{'Out'|translate}}</th>
+                        <th>{{'Duration'|translate}}</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let log of punchPairs">
+                        <td class="log-time">{{ log.in }}</td>
+                        <td class="log-time">{{ log.out }}</td>
+                        <td class="duration-time">{{ log.duration }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <div class="popup-table-footer">
+                  <!-- Total Duration: <b>{{ logsDuration }}</b> -->
+                  <div>
+                    <div class="d-flex justify-content-center gap-2">
+                      <div class="custom-text">{{'Working Hours'|translate}}: <b
+                          class="popup-heading">{{logsDuration}}</b></div>
+                      <div class="break-line my-1"></div>
+                      <div class="custom-text">{{'Break Hours'|translate}}: <b
+                          class="popup-heading">{{breakDuration}}</b></div>
+                    </div>
+                    <!-- <div>Duration: <span *ngIf="logsDuration;else popupcomments">
                                             <div class="text-truncate" style="width:150px;">{{comment.comments}}</div>
                                             <a [ngbPopover]="popContent">
                                                 <i class="bi bi-info-circle-fill ms-2"></i>
@@ -361,252 +378,253 @@
                                         </span>
                                         <ng-template #popupcomments>-</ng-template>
                                     </div> -->
-                  <!-- <div>Total Duration: <b>{{ logsDuration }}</b></div> -->
+                    <!-- <div>Total Duration: <b>{{ logsDuration }}</b></div> -->
+                  </div>
                 </div>
               </div>
-            </div>
-          </p-accordion-content>
-        </p-accordion-panel>
-        }
+            </p-accordion-content>
+          </p-accordion-panel>
+          }
 
-        @if(permissions_list.length>0){
-        <p-accordion-panel value="1">
-          <p-accordion-header>{{'Permissions'|translate}}</p-accordion-header>
-          <p-accordion-content>
-            <div class="popup-table-wrapper">
-              <div class="popup-table-scroll-container">
-                <table class="popup-table">
-                  <thead>
-                    <tr>
-                      <th>Type</th>
-                      <th>Duration</th>
-                      <th>Status</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr *ngFor="let log of permissions_list">
-                      <td class="log-time">{{ log.type?log.type:'-' }}</td>
-                      <td class="duration-time">{{ log.duration ? log.duration + ' Hrs' : '-' }}
-                        <a type="button" [ngbPopover]="reason">
-                          <app-info-icon />
-                        </a>
-                        <ng-template #reason>
-                          <p class="mb-0">{{log.notes}}</p>
-                        </ng-template>
-                      </td>
-                      <td class="text-capitalize">{{ log.status ? log.status : '-' }}</td>
-                    </tr>
-                  </tbody>
-                </table>
+          @if(permissions_list.length>0){
+          <p-accordion-panel value="1">
+            <p-accordion-header>{{'Permissions'|translate}}</p-accordion-header>
+            <p-accordion-content>
+              <div class="popup-table-wrapper">
+                <div class="popup-table-scroll-container">
+                  <table class="popup-table">
+                    <thead>
+                      <tr>
+                        <th>Type</th>
+                        <th>Duration</th>
+                        <th>Status</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let log of permissions_list">
+                        <td class="log-time">{{ log.type?log.type:'-' }}</td>
+                        <td class="duration-time">{{ log.duration ? log.duration + ' Hrs' : '-' }}
+                          <a type="button" [ngbPopover]="reason">
+                            <app-info-icon />
+                          </a>
+                          <ng-template #reason>
+                            <p class="mb-0">{{log.notes}}</p>
+                          </ng-template>
+                        </td>
+                        <td class="text-capitalize">{{ log.status ? log.status : '-' }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
               </div>
-            </div>
-          </p-accordion-content>
-        </p-accordion-panel>
-        }
+            </p-accordion-content>
+          </p-accordion-panel>
+          }
 
-        @if(regularization_list.length>0){
-        <p-accordion-panel value="2">
-          <p-accordion-header>{{'Regularizations'|translate}}</p-accordion-header>
-          <p-accordion-content>
-            <div class="popup-table-wrapper">
-              <div class="popup-table-scroll-container">
-                <table class="popup-table">
-                  <thead>
-                    <tr>
-                      <th>Type</th>
-                      <th>Duration</th>
-                      <th>Status</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr *ngFor="let log of regularization_list">
-                      <td class="log-time">{{ log.type?log.type:'-' }}</td>
-                      <td class="duration-time">{{ log.duration ? log.duration + ' Hrs' : '-' }}
-                        <a type="button" [ngbPopover]="regularization_reason">
-                          <app-info-icon />
-                        </a>
-                        <ng-template #regularization_reason>
-                          <p class="mb-0">{{log.notes}}</p>
-                        </ng-template>
-                      </td>
-                      <td class="text-capitalize">{{ log.status ? log.status : '-' }}</td>
-                    </tr>
-                  </tbody>
-                </table>
+          @if(regularization_list.length>0){
+          <p-accordion-panel value="2">
+            <p-accordion-header>{{'Regularizations'|translate}}</p-accordion-header>
+            <p-accordion-content>
+              <div class="popup-table-wrapper">
+                <div class="popup-table-scroll-container">
+                  <table class="popup-table">
+                    <thead>
+                      <tr>
+                        <th>Type</th>
+                        <th>Duration</th>
+                        <th>Status</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let log of regularization_list">
+                        <td class="log-time">{{ log.type?log.type:'-' }}</td>
+                        <td class="duration-time">{{ log.duration ? log.duration + ' Hrs' : '-' }}
+                          <a type="button" [ngbPopover]="regularization_reason">
+                            <app-info-icon />
+                          </a>
+                          <ng-template #regularization_reason>
+                            <p class="mb-0">{{log.notes}}</p>
+                          </ng-template>
+                        </td>
+                        <td class="text-capitalize">{{ log.status ? log.status : '-' }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
               </div>
-            </div>
-          </p-accordion-content>
-        </p-accordion-panel>
-        }
+            </p-accordion-content>
+          </p-accordion-panel>
+          }
 
-        @if(extra_logs.length>0){
-        <p-accordion-panel value="3">
-          <p-accordion-header>{{'Extra Hours'|translate}}</p-accordion-header>
-          <p-accordion-content>
-            <div class="popup-table-wrapper">
-              <div class="popup-table-scroll-container">
-                <table class="popup-table">
-                  <thead>
-                    <tr>
-                      <th>{{'Duration'|translate}}</th>
-                      <th>{{'Status'|translate}}</th>
-                      <th>{{'Description'|translate}}</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr *ngFor="let log of extra_logs">
-                      <td class="duration-time">{{ log.duration ? log.duration + ' Hrs' : '-' }}
-                      </td>
-                      <td class="text-capitalize">{{ log.status ? log.status : '-' }}</td>
-                      <td>
-                        <a [ngbPopover]="desprictionContent">
-                          <app-info-icon />
-                        </a>
-                        <!--Module Information-->
-                        <ng-template #desprictionContent>
-                          <div>
-                            {{log.notes}}
-                          </div>
-                        </ng-template>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
+          @if(extra_logs.length>0){
+          <p-accordion-panel value="3">
+            <p-accordion-header>{{'Extra Hours'|translate}}</p-accordion-header>
+            <p-accordion-content>
+              <div class="popup-table-wrapper">
+                <div class="popup-table-scroll-container">
+                  <table class="popup-table">
+                    <thead>
+                      <tr>
+                        <th>{{'Duration'|translate}}</th>
+                        <th>{{'Status'|translate}}</th>
+                        <th>{{'Description'|translate}}</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let log of extra_logs">
+                        <td class="duration-time">{{ log.duration ? log.duration + ' Hrs' : '-' }}
+                        </td>
+                        <td class="text-capitalize">{{ log.status ? log.status : '-' }}</td>
+                        <td>
+                          <a [ngbPopover]="desprictionContent">
+                            <app-info-icon />
+                          </a>
+                          <!--Module Information-->
+                          <ng-template #desprictionContent>
+                            <div>
+                              {{log.notes}}
+                            </div>
+                          </ng-template>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
               </div>
-            </div>
-          </p-accordion-content>
-        </p-accordion-panel>
-        }
-      </p-accordion>
-    </div>
-  </div>
-</ng-template>
-
-<ng-template #durationPopup let-modal>
-  <div class="custom-main-popup-container" ngbAutofocus>
-    <div class="custom-poup-header-content popup-header-border">
-      <div class="pt-2">
-        <p class="popup-heading mb-0">{{'Duration Details'|translate}}</p>
+            </p-accordion-content>
+          </p-accordion-panel>
+          }
+        </p-accordion>
       </div>
+    </div>
+  </ng-template>
+
+  <ng-template #durationPopup let-modal>
+    <div class="custom-main-popup-container" ngbAutofocus>
+      <div class="custom-poup-header-content popup-header-border">
+        <div class="pt-2">
+          <p class="popup-heading mb-0">{{'Duration Details'|translate}}</p>
+        </div>
+        <div>
+          <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+        </div>
+      </div>
+      <div class="custom-main-popup-content">
+        <div class="modal-body">
+          <div class="d-block">
+            <div class="d-flex flex-column">
+              <p class="m-0 p-2 rounded popupcomments">
+                {{'Total Duration'|translate}}:
+                <span *ngIf="totalDurationHours;else durationtotal">
+                  {{totalDurationHours === '00:00:00' || !totalDurationHours ? '-' : totalDurationHours}}
+                </span>
+                <ng-template #durationtotal>{{logsDuration}}</ng-template>
+              </p>
+
+              <p class="m-0 p-2 rounded popupcomments">
+                {{'Logs Duration'|translate}}: {{logsDuration === '00:00:00' || !logsDuration ? '-' : logsDuration}}
+              </p>
+
+              <p class="m-0 p-2 rounded popupcomments">{{'Permissions Duration'|translate}}:
+                <span *ngIf="permissionsDuration;else permisiondur">{{permissionsDuration === '00:00:00'
+                  || !permissionsDuration ? '-' : permissionsDuration}}</span>
+                <ng-template #permisiondur>NA</ng-template>
+              </p>
+
+              <p class="m-0 p-2 rounded popupcomments">{{'Regularization Duration'|translate}}:
+                <span *ngIf="regularizationAttendDuration;else regularization">{{regularizationAttendDuration ===
+                  '00:00:00' ||
+                  !regularizationAttendDuration ? '-' : regularizationAttendDuration}}</span>
+                <ng-template #regularization>NA</ng-template>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+
+
+  <ng-template #extraHoursLodModal let-modal>
+    <div class="custom-main-popup-container" ngbAutofocus>
+      <div class="custom-poup-header-content popup-header-border">
+        <div class="pt-2">
+          <p class="popup-heading mb-0">{{'Log Extra Hours'| translate}}</p>
+        </div>
+      </div>
+
+      <div class="custom-main-popup-content">
+        <form autocomplete="off" [formGroup]="extraHoursForm" (focusin)="setActiveForm('extraHours')"
+          (ngSubmit)="onExtraHrsSubmit(extraHoursForm)">
+          <div class="row">
+            <div class="col-md-12 mb-3">
+              <label class="form-label custom-label mb-2">{{'Date'| translate}}<span
+                  class="text-danger">*</span></label>
+              <input type="date" class="form-control custom-input" formControlName="date" [min]="getMinAllowedDate()"
+                [max]="getCurrentDate()" />
+              <div class="error-msg" *ngIf="extraHoursForm.get('date')?.invalid && extraHoursForm.get('date')?.touched">
+                {{'Date is required'|translate}}</div>
+            </div>
+
+            <div class="col-md-12 mb-3">
+              <label class="form-label custom-label mb-2">{{'Duration'| translate}}
+                <span class="text-danger">*</span></label>
+              <div class="custom-p-select-content">
+                <p-select [options]="extraHoursDuration" optionLabel="name" id="duration" formControlName="duration"
+                  placeholder="{{'Please select duration'|translate}}" class="form-select custom-select w-100">
+                </p-select>
+              </div>
+
+              <div class="error-msg">
+                <div *ngIf="extraHoursForm.get('duration')?.invalid && extraHoursForm.get('duration')?.touched">
+                  {{'Duration is required'|translate}}</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-12 mb-3">
+              <label class="form-label custom-label mb-2">{{'Description'| translate}}<span
+                  class="text-danger">*</span></label>
+              <textarea class="form-control custom-input" style="height: 120px;" [maxlength]="500" [minlength]="10"
+                formControlName="description" placeholder="{{'Please enter description'|translate}}"
+                (keydown)="formsValidation.restrictInitialSpace($event)"></textarea>
+              <div class="textarea-count-text">{{ extraHoursForm.get('description')?.value?.length ?? 0 }}/500</div>
+              <div class="error-msg">
+                <div
+                  *ngIf="(extraHoursForm.get('description')?.touched && extraHoursForm.get('description')?.errors?.['required'])">
+                  {{'Description is required'|translate}}</div>
+                <div
+                  *ngIf="extraHoursForm.get('description')?.invalid && extraHoursForm.get('description')?.errors?.['minlength']">
+                  {{'Description must be atleast 10 characters'|translate}}</div>
+              </div>
+            </div>
+          </div>
+          <div class="custom-modal-footer">
+            <button type="button" class="custom-btn btn-secondary" (click)="openModal(confirmationpopup)">{{'Cancel'|
+              translate}}</button>
+            <button type="submit" class="custom-btn btn-primary" [disabled]="extraHoursForm.invalid || extraHrsLoader">
+              <span *ngIf="!extraHrsLoader">{{'Submit'| translate}}</span>
+              <div class="button-loader-content" *ngIf="extraHrsLoader">
+                <div class="spinner-border button-spinner text-light" role="status"></div>
+                <div>{{'loading'|translate}}...</div>
+              </div>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </ng-template>
+
+  <ng-template #confirmationpopup let-modal>
+    <div class="result-popup-content" ngbAutofocus>
       <div>
-        <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+        <img src="/icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
+        <p class="confirmation-text"> {{'Are you sure you want to cancel?'|translate}}</p>
+      </div>
+      <div class="custom-modal-footer">
+        <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'|translate}}</button>
+        <button type="submit" class="custom-btn btn-primary" (click)="closeModal()">{{'Yes'|translate}}</button>
       </div>
     </div>
-    <div class="custom-main-popup-content">
-      <div class="modal-body">
-        <div class="d-block">
-          <div class="d-flex flex-column">
-            <p class="m-0 p-2 rounded popupcomments">
-              {{'Total Duration'|translate}}:
-              <span *ngIf="totalDurationHours;else durationtotal">
-                {{totalDurationHours === '00:00:00' || !totalDurationHours ? '-' : totalDurationHours}}
-              </span>
-              <ng-template #durationtotal>{{logsDuration}}</ng-template>
-            </p>
-
-            <p class="m-0 p-2 rounded popupcomments">
-              {{'Logs Duration'|translate}}: {{logsDuration === '00:00:00' || !logsDuration ? '-' : logsDuration}}
-            </p>
-
-            <p class="m-0 p-2 rounded popupcomments">{{'Permissions Duration'|translate}}:
-              <span *ngIf="permissionsDuration;else permisiondur">{{permissionsDuration === '00:00:00'
-                || !permissionsDuration ? '-' : permissionsDuration}}</span>
-              <ng-template #permisiondur>NA</ng-template>
-            </p>
-
-            <p class="m-0 p-2 rounded popupcomments">{{'Regularization Duration'|translate}}:
-              <span *ngIf="regularizationAttendDuration;else regularization">{{regularizationAttendDuration ===
-                '00:00:00' ||
-                !regularizationAttendDuration ? '-' : regularizationAttendDuration}}</span>
-              <ng-template #regularization>NA</ng-template>
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</ng-template>
-
-
-<ng-template #extraHoursLodModal let-modal>
-  <div class="custom-main-popup-container" ngbAutofocus>
-    <div class="custom-poup-header-content popup-header-border">
-      <div class="pt-2">
-        <p class="popup-heading mb-0">{{'Log Extra Hours'| translate}}</p>
-      </div>
-    </div>
-
-    <div class="custom-main-popup-content">
-      <form autocomplete="off" [formGroup]="extraHoursForm" (focusin)="setActiveForm('extraHours')"
-        (ngSubmit)="onExtraHrsSubmit(extraHoursForm)">
-        <div class="row">
-          <div class="col-md-12 mb-3">
-            <label class="form-label custom-label mb-2">{{'Date'| translate}}<span class="text-danger">*</span></label>
-            <input type="date" class="form-control custom-input" formControlName="date" [min]="getMinAllowedDate()"
-              [max]="getCurrentDate()" />
-            <div class="error-msg" *ngIf="extraHoursForm.get('date')?.invalid && extraHoursForm.get('date')?.touched">
-              {{'Date is required'|translate}}</div>
-          </div>
-
-          <div class="col-md-12 mb-3">
-            <label class="form-label custom-label mb-2">{{'Duration'| translate}}
-              <span class="text-danger">*</span></label>
-            <div class="custom-p-select-content">
-              <p-select [options]="extraHoursDuration" optionLabel="name" id="duration" formControlName="duration"
-                placeholder="{{'Please select duration'|translate}}" class="form-select custom-select w-100">
-              </p-select>
-            </div>
-
-            <div class="error-msg">
-              <div *ngIf="extraHoursForm.get('duration')?.invalid && extraHoursForm.get('duration')?.touched">
-                {{'Duration is required'|translate}}</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="col-md-12 mb-3">
-            <label class="form-label custom-label mb-2">{{'Description'| translate}}<span
-                class="text-danger">*</span></label>
-            <textarea class="form-control custom-input" style="height: 120px;" [maxlength]="500" [minlength]="10"
-              formControlName="description" placeholder="{{'Please enter description'|translate}}"
-              (keydown)="formsValidation.restrictInitialSpace($event)"></textarea>
-            <div class="textarea-count-text">{{ extraHoursForm.get('description')?.value?.length ?? 0 }}/500</div>
-            <div class="error-msg">
-              <div
-                *ngIf="(extraHoursForm.get('description')?.touched && extraHoursForm.get('description')?.errors?.['required'])">
-                {{'Description is required'|translate}}</div>
-              <div
-                *ngIf="extraHoursForm.get('description')?.invalid && extraHoursForm.get('description')?.errors?.['minlength']">
-                {{'Description must be atleast 10 characters'|translate}}</div>
-            </div>
-          </div>
-        </div>
-        <div class="custom-modal-footer">
-          <button type="button" class="custom-btn btn-secondary" (click)="openModal(confirmationpopup)">{{'Cancel'|
-            translate}}</button>
-          <button type="submit" class="custom-btn btn-primary" [disabled]="extraHoursForm.invalid || extraHrsLoader">
-            <span *ngIf="!extraHrsLoader">{{'Submit'| translate}}</span>
-            <div class="button-loader-content" *ngIf="extraHrsLoader">
-              <div class="spinner-border button-spinner text-light" role="status"></div>
-              <div>{{'loading'|translate}}...</div>
-            </div>
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
-</ng-template>
-
-<ng-template #confirmationpopup let-modal>
-  <div class="result-popup-content" ngbAutofocus>
-    <div>
-      <img src="/icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
-      <p class="confirmation-text"> {{'Are you sure you want to cancel?'|translate}}</p>
-    </div>
-    <div class="custom-modal-footer">
-      <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'|translate}}</button>
-      <button type="submit" class="custom-btn btn-primary" (click)="closeModal()">{{'Yes'|translate}}</button>
-    </div>
-  </div>
-</ng-template>
+  </ng-template>

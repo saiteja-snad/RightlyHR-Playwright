@@ -42,7 +42,19 @@
       <!--Attendance Display-->
       @if(rbac.allowedToAccess('Attendance Overview.view')){
       <div class="content-card attendance-content">
-        @if(!attendanceLoader && attendanceData?.data?.attendanceData?.length){
+        @if(isAttendanceDataTrue){
+        <div class="component-overlay-placeholder-content">
+          <div>
+            <app-attendance-placeholder />
+
+            <p class="context">
+              Attendance data is currently unavailable due to pending biometric integration.
+              Please contact the administrator for assistance.
+            </p>
+          </div>
+        </div>
+        }
+        @else if(!attendanceLoader && attendanceData?.data?.attendanceData?.length){
         <div class="flex-between-content mb-3">
           <div class="summary-header d-inline-flex gap-1">
             <div class="section-title">Attendance Overview</div>
@@ -136,32 +148,20 @@
       }
     </div>
 
-    <div
-      class="quick-links-scroll-wrap"
-      [class.has-left-arrow]="showQuickLinksLeftArrow"
+    <div class="quick-links-scroll-wrap" [class.has-left-arrow]="showQuickLinksLeftArrow"
       [class.has-right-arrow]="showQuickLinksRightArrow">
       @if (showQuickLinksLeftArrow) {
-      <button
-        type="button"
-        class="quick-links-scroll-btn left"
-        (click)="scrollQuickLinks('left', $event)"
+      <button type="button" class="quick-links-scroll-btn left" (click)="scrollQuickLinks('left', $event)"
         aria-label="Scroll quick links left">
         <i class="bi bi-chevron-left"></i>
       </button>
       }
 
-      <div
-        class="quick-links-scroll"
-        [class.pad-left]="showQuickLinksLeftArrow"
-        [class.pad-right]="showQuickLinksRightArrow"
-        #quickLinksScroll
-        cdkScrollable
-        (scroll)="onQuickLinksScroll()">
+      <div class="quick-links-scroll" [class.pad-left]="showQuickLinksLeftArrow"
+        [class.pad-right]="showQuickLinksRightArrow" #quickLinksScroll cdkScrollable (scroll)="onQuickLinksScroll()">
         <div class="quick-links-grid quick-links-drop-list" cdkDropList cdkDropListOrientation="horizontal"
           [cdkDropListData]="quickLinks" [cdkDropListConnectedTo]="quickLinksConnectedDropListIds"
-          [id]="quickLinksDropListId"
-          [cdkDropListAutoScrollStep]="24"
-          (cdkDropListDropped)="onQuickLinksDrop($event)">
+          [id]="quickLinksDropListId" [cdkDropListAutoScrollStep]="24" (cdkDropListDropped)="onQuickLinksDrop($event)">
           @for (item of quickLinks; track item.route) {
           <div class="quick-links-content text-center" [class.quick-links-removable]="isQuickLinkRemovable(item.route)"
             [class.quick-links-selected]="isQuickLinkSelected(item.route)" cdkDrag cdkDragBoundary=".quick-links-card"
@@ -177,11 +177,9 @@
               <u>
                 @if (isPendingApprovalsQuickLink(item)) {
                 <span class="quick-link-pa-label">
-                  <span class="quick-link-pa-prefix"
-                    ngbPopover="Pending Approvals"
-                    triggers="mouseenter:mouseleave"
-                    placement="top"
-                    popoverClass="quick-link-pa-popover">PA</span>-{{ getPendingApprovalsQuickLinkSuffix(item.label) }}
+                  <span class="quick-link-pa-prefix" ngbPopover="Pending Approvals" triggers="mouseenter:mouseleave"
+                    placement="top" popoverClass="quick-link-pa-popover">PA</span>-{{
+                  getPendingApprovalsQuickLinkSuffix(item.label) }}
                 </span>
                 }
                 @else {
@@ -207,10 +205,7 @@
       </div>
 
       @if (showQuickLinksRightArrow) {
-      <button
-        type="button"
-        class="quick-links-scroll-btn right"
-        (click)="scrollQuickLinks('right', $event)"
+      <button type="button" class="quick-links-scroll-btn right" (click)="scrollQuickLinks('right', $event)"
         aria-label="Scroll quick links right">
         <i class="bi bi-chevron-right"></i>
       </button>
@@ -219,7 +214,7 @@
   </div>
   }
 
-    <div class="dashboard-content-grid mt-3" [ngClass]="{'custom-grid-second': isScreenLessThan1600}">
+  <div class="dashboard-content-grid mt-3" [ngClass]="{'custom-grid-second': isScreenLessThan1600}">
     <!-- Team Availability -->
     @if (isScreenLessThan1600) {
     <div>
@@ -317,6 +312,21 @@
     <!-- Weekly Work Logs -->
     @if(rbac.allowedToAccess('Weekly Work Logs.view')){
     <div class="content-card overflow-visible">
+      @if(isAttendanceDataTrue){
+
+      <div class="component-overlay-placeholder-content">
+        <div>
+          <app-attendance-placeholder></app-attendance-placeholder>
+
+          <p class="context">
+            Attendance data is currently unavailable due to pending biometric integration.
+            Please contact the administrator for assistance.
+          </p>
+        </div>
+      </div>
+
+      }
+      @else{
       <div class="flex-between-content mb-3">
         <div class="summary-header d-inline-flex gap-1">
           <div class="section-title">Weekly Work Logs</div>
@@ -335,6 +345,7 @@
           <button class="custom-btn btn-primary view-attendance-btn" (click)="myattendance()">View Attendance</button>
         </div>
       </div>
+      
       @if(!weaklyloghrsloader){
       <div class="total-hrs">{{totalHours}} <sub class="suffix-text">Work done this week</sub></div>
       <div class="disply-grid-custom">
@@ -352,6 +363,7 @@
         <p-skeleton height="8rem" />
       </div>
       }
+    }
     </div>
     }
   </div>
@@ -359,62 +371,64 @@
 
 <!--Resources List-->
 <ng-template #resourceList let-offcanvas>
-    <div class="custom-main-popup-container" ngbAutofocus>
-        <div class="custom-poup-header-content popup-header-border">
-            <div>
-                <p class="popup-heading mb-0">{{ offCanvasData.label }}({{ getFilteredEmployees().length }})</p>
-            </div>
-            <div>
-                <a (click)="close()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
-            </div>
-        </div>
-
-        <div class="custom-offcanvas-body p-3">
-            <!-- Search -->
-            <div class="input-group custom-search mb-3">
-                <span class="input-group-text custom-input-group-search" id="basic-addon1">
-                    <i class="bi bi-search"></i>
-                </span>
-                <input type="search" class="form-control custom-search-input" placeholder="Search"
-                    [(ngModel)]="searchEmployeeText" placeholder="Search by Employee name/designation/department" />
-            </div>
-            <div *ngFor="let emp of getFilteredEmployees()" class="profile-content mb-2">
-                <div>
-                    <ng-container *ngIf="emp.profilePicUrl; else showProfileIcon">
-                        <img [src]="emp.profilePicUrl" [width]="38" [height]="38" alt="Profile Image" class="profile-img" />
-                    </ng-container>
-                    <ng-template #showProfileIcon>
-                        <app-profile-icon [iconWidth]="'38'" [iconHeight]="'38'" />
-                    </ng-template>
-                </div>
-                <div class="profile-info w-100">
-                    <div class="name">{{ emp.employeeName }}</div>
-                    <div class="designation">{{ emp.designation }} - {{ emp.departmentName }}</div>
-                    @if (emp.categoryName) {
-                    <div class="leave-chip mt-1 me-2 d-inline-block" [ngStyle]="getLeaveChipStyle(emp.categoryColor)">{{ emp.categoryName }}</div>
-                    }
-                    @if (emp.hasPermission && emp.permissionDuration) {
-                      @for (duration of getPermissionDurationChips(emp.permissionDuration); track duration + '-' + $index) {
-                        <span class="attendance-chip chip-permission me-2 d-inline-block mb-1">{{ emp.permissionType }} ({{ duration }})</span>
-                      }
-                    }
-                    @if (emp.hasWFHRequests) {
-                      @for (duration of getPermissionDurationChips(emp.wfhRequestDurationType); track duration + '-' + $index) {
-                        <span class="attendance-chip chip-permission me-2 d-inline-block mb-1">{{ duration }}</span>
-                      }
-                    }
-                    @if (emp.hasRemoteLogin) {
-                      @for (duration of getPermissionDurationChips(emp.remoteLoginDurationType); track duration + '-' + $index) {
-                        <span class="attendance-chip chip-permission me-2 d-inline-block mb-1">{{ duration }}</span>
-                      }
-                    }
-                </div>
-            </div>
-            <div *ngIf="getFilteredEmployees().length === 0" class="text-center text-muted py-3">
-                <app-no-data-found />
-            </div>
-        </div>
+  <div class="custom-main-popup-container" ngbAutofocus>
+    <div class="custom-poup-header-content popup-header-border">
+      <div>
+        <p class="popup-heading mb-0">{{ offCanvasData.label }}({{ getFilteredEmployees().length }})</p>
+      </div>
+      <div>
+        <a (click)="close()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+      </div>
     </div>
+
+    <div class="custom-offcanvas-body p-3">
+      <!-- Search -->
+      <div class="input-group custom-search mb-3">
+        <span class="input-group-text custom-input-group-search" id="basic-addon1">
+          <i class="bi bi-search"></i>
+        </span>
+        <input type="search" class="form-control custom-search-input" placeholder="Search"
+          [(ngModel)]="searchEmployeeText" placeholder="Search by Employee name/designation/department" />
+      </div>
+      <div *ngFor="let emp of getFilteredEmployees()" class="profile-content mb-2">
+        <div>
+          <ng-container *ngIf="emp.profilePicUrl; else showProfileIcon">
+            <img [src]="emp.profilePicUrl" [width]="38" [height]="38" alt="Profile Image" class="profile-img" />
+          </ng-container>
+          <ng-template #showProfileIcon>
+            <app-profile-icon [iconWidth]="'38'" [iconHeight]="'38'" />
+          </ng-template>
+        </div>
+        <div class="profile-info w-100">
+          <div class="name">{{ emp.employeeName }}</div>
+          <div class="designation">{{ emp.designation }} - {{ emp.departmentName }}</div>
+          @if (emp.categoryName) {
+          <div class="leave-chip mt-1 me-2 d-inline-block" [ngStyle]="getLeaveChipStyle(emp.categoryColor)">{{
+            emp.categoryName }}</div>
+          }
+          @if (emp.hasPermission && emp.permissionDuration) {
+          @for (duration of getPermissionDurationChips(emp.permissionDuration); track duration + '-' + $index) {
+          <span class="attendance-chip chip-permission me-2 d-inline-block mb-1">{{ emp.permissionType }} ({{ duration
+            }})</span>
+          }
+          }
+          @if (emp.hasWFHRequests) {
+          @for (duration of getPermissionDurationChips(emp.wfhRequestDurationType); track duration + '-' + $index) {
+          <span class="attendance-chip chip-permission me-2 d-inline-block mb-1">{{ duration }}</span>
+          }
+          }
+          @if (emp.hasRemoteLogin) {
+          @for (duration of getPermissionDurationChips(emp.remoteLoginDurationType); track duration + '-' + $index) {
+          <span class="attendance-chip chip-permission me-2 d-inline-block mb-1">{{ duration }}</span>
+          }
+          }
+        </div>
+      </div>
+      <div *ngIf="getFilteredEmployees().length === 0" class="text-center text-muted py-3">
+        <app-no-data-found />
+      </div>
+    </div>
+  </div>
 </ng-template>
 
 <!-- Punch In Times -->
@@ -531,6 +545,21 @@
 <ng-template #teamAvaliabilityContent>
   @if (rbac.allowedToAccess('My Team Availability.view')) {
   <div class="content-card employees-list-content">
+    @if(isAttendanceDataTrue){
+
+    <div class="component-overlay-placeholder-content">
+      <div>
+        <app-attendance-placeholder></app-attendance-placeholder>
+
+        <p class="context">
+          Attendance data is currently unavailable due to pending biometric integration.
+          Please contact the administrator for assistance.
+        </p>
+      </div>
+    </div>
+
+    }
+    @else{
     <div class="flex-between-content mb-3">
       <div class="summary-header d-inline-flex gap-1">
         <div class="section-title">My Team Availability</div>
@@ -547,6 +576,7 @@
           [readonlyInput]="true" [maxDate]="todayMaxdate" [disabled]="true" (onSelect)="onDateChange($event)" />
       </div>
     </div>
+
     @if(!avaliabletlyloading){
     <div class="total-leave-balance-graph-content" [ngClass]="{'graph-no-data-content': teamTotal === 0}">
       @if (teamTotal !== 0) {
@@ -592,6 +622,8 @@
     </div>
     }
     }
+    }
   </div>
   }
+
 </ng-template>

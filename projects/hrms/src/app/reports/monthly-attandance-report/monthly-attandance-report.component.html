@@ -1,16 +1,26 @@
 <div class="custom-main-component-container">
-    <div class="component-overlay-placeholder-content" *ngIf="isAttendanceDataTrue">
-        <div>
-            <app-attendance-placeholder />
-            <p class="context">Attendance data is currently unavailable due to pending biometric integration. Please contact the administrator for assistance.</p>
-        </div>
-    </div>
-  
-    <div class="component-header-content py-2">
+        <div class="component-header-content py-2">
         <!--header-->
         <app-reports-header/>
     </div>
+        @if(isAttendanceDataTrue) {
 
+        <!-- ATTENDANCE UNAVAILABLE -->
+        <div class="component-overlay-placeholder-content">
+            <div>
+
+                <app-attendance-placeholder />
+
+                <p class="context">
+                    Attendance data is currently unavailable due to pending biometric integration.
+                    Please contact the administrator for assistance.
+                </p>
+
+            </div>
+        </div>
+
+    }
+    @else {
     <!--right data-->
     <div class="custom-component-right-content">
         <form autocomplete="off" [formGroup]="monthlyReportForm" (ngSubmit)="generateReport(monthlyReportForm)"
@@ -55,4 +65,5 @@
             }
         </form>
     </div>
+}
 </div>

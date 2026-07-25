@@ -9,9 +9,8 @@
 
     <div class="custom-table-content">
         @if(!loader){
-        <p-table #expensesTable [value]="getFilteredAndSortedExpenses()" 
-                 [customSort]="true" (sortFunction)="customSort($event)"
-                 styleClass="p-datatable-gridlines" responsiveLayout="scroll">
+        <p-table #expensesTable [value]="getFilteredAndSortedExpenses()" [customSort]="true"
+            (sortFunction)="customSort($event)" styleClass="p-datatable-gridlines" responsiveLayout="scroll">
             <ng-template pTemplate="header">
                 <tr>
                     <th pSortableColumn="expenseTitle">
@@ -55,11 +54,10 @@
                             <ul class="dropdown-menu custom-dropdown-menu">
                                 <li *ngIf="!selectemp"><a class="dropdown-item"
                                         (click)="openModal(updateModal);viewItem(exp.expenses_ID)">
-                                           <i class="bi bi-pencil me-2"></i>{{'Update' | translate}}</a>
+                                        <i class="bi bi-pencil me-2"></i>{{'Update' | translate}}</a>
                                 </li>
                                 <li>
-                                    <a class="dropdown-item"
-                                        (click)="openpopupforDownload(openpopupForDownload,exp)">
+                                    <a class="dropdown-item" (click)="openpopupforDownload(openpopupForDownload,exp)">
                                         <i class="bi bi-download me-1"></i>{{'Download' | translate}}
                                     </a>
                                 </li>
@@ -260,7 +258,8 @@
                                         formControlName="item_Description" [maxlength]="250"
                                         (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)"
                                         placeholder="Please enter description " rows="1"></textarea>
-                                    <div class="textarea-count-text">₹ {{ item.get("item_Description")?.value?.length || 0
+                                    <div class="textarea-count-text">₹ {{ item.get("item_Description")?.value?.length ||
+                                        0
                                         }}/250</div>
                                 </div>
                             </div>
@@ -280,23 +279,30 @@
                                     </div>
                                 </div>
                                 <div *ngIf="filehidedonload">
-                                    <div class="d-flex gap-3 mt-3" *ngIf="item.get('attachment_url')?.value">
-                                        <a type="button" class="download-text"
+                                    <div class="d-flex align-items-center gap-2 mt-3"
+                                        *ngIf="item.get('attachment_url')?.value">
+
+                                        <a class="download-text d-inline-flex align-items-center"
                                             (click)="onSelectDownload(item.get('attachment_url'))">
-                                            <i class="bi bi-download me-2"></i>{{'Download' | translate}}
+                                            <i class="bi bi-download me-1"></i>
+                                            <span>Download</span>
                                         </a>
-                                        <a type="button" class="download-text"
-                                            *ngIf="isImageFile(item.get('attachment_url')?.value)"
+
+                                        <a *ngIf="isImageFile(item.get('attachment_url')?.value)"
+                                            class="download-text d-inline-flex align-items-center"
                                             (click)="onViewAttachement(item.get('attachment_url')?.value)">
-                                              <app-document-view-icon />{{'View' | translate}}
+                                            <app-document-view-icon class="me-1"></app-document-view-icon>
+                                            <span>View</span>
                                         </a>
+
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="text-center" *ngIf="totalexpensesamount > 0 ? totalexpensesamount : ''">
-                        <b>Total Amount : </b> {{ totalexpensesamount > 0 ? (totalexpensesamount | currency:'INR':'symbol':'1.2-2') : '' }}
+                        <b>Total Amount : </b> {{ totalexpensesamount > 0 ? (totalexpensesamount |
+                        currency:'INR':'symbol':'1.2-2') : '' }}
                     </div>
                 </div>
                 <div class="custom-modal-footer" *ngIf="expenseItems.length > 0">

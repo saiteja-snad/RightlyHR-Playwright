@@ -32,11 +32,12 @@ import { AccessNavigationService } from '../../services/access-navigation.servic
 import { DragDropModule, CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { MenuOrderService } from '../../services/theme-service/menu-order.service';
 import { QuickLinkRouteDef, QUICK_LINK_DEFAULT_ROUTES, resolveQuickLinkRouteDef, resolveQuickLinksFromSourceRoute, resolveQuickLinksSourceDef } from '../../shared/quick-links/quick-links.registry';
+import { AttendancePlaceholderComponent } from '../../icons/attendance-placeholder/attendance-placeholder.component';
 @Component({
   selector: 'app-employee-dashboard',
   imports: [CommonModule, RouterModule, FormsModule, TranslateModule, NgbPopoverModule, ModuleInfoIconComponent,
     ChartModule, DateformatPipe, Skeleton, AccordionModule, DashAttIconComponent, FingerPrintIconComponent, LeaveIconComponent,
-    WfhIconComponent, ProfileIconComponent, NoDataFoundComponent, DatePicker, TabList, Calendar, TabsModule, DragDropModule, ScrollingModule],
+    WfhIconComponent, ProfileIconComponent, NoDataFoundComponent, DatePicker, TabList, Calendar, TabsModule, DragDropModule, ScrollingModule, AttendancePlaceholderComponent ],
   templateUrl: './employee-dashboard.component.html',
   styleUrl: './employee-dashboard.component.scss',
   encapsulation: ViewEncapsulation.None
@@ -70,6 +71,8 @@ export class EmployeeDashboardComponent implements AfterViewInit {
   endOfWeek: any;
   totalHours: any;
   teamMembers: any[] = [];
+  isAttendanceDataTrue = false;
+  attendanceConfigLoading = true;
   teamavailabilityinfo = 'Displays your team’s current availability for the selected date, including In Office, WFH, On Leave, Half Day, Remote, and Absent statuses.';
   myteammemberinfo = 'Displays an overview of all team members in the organization, helping employees stay informed about their colleagues.';
   Weeklyworklogsinfo = 'Shows a weekly summary of the hours that are logged, making it easy to track their work and productivity.';
@@ -88,7 +91,7 @@ export class EmployeeDashboardComponent implements AfterViewInit {
   //   { key: 'yetToLogin', label: 'Yet To Login', color: '#94A3B8' },
   // ];
   legendList = [
-  { key: 'yetToLogin', label: 'Yet To Login', color: '#94A3B8' },
+    { key: 'yetToLogin', label: 'Yet To Login', color: '#94A3B8' },
     { key: 'inOffice', label: 'In Office', color: '#1E90FF' },
     { key: 'absent', label: 'Absent', color: '#FF0000' },
     { key: 'halfDay', label: 'Half Day', color: '#FFD700' },
@@ -132,61 +135,61 @@ export class EmployeeDashboardComponent implements AfterViewInit {
   isScreenLessThan1600 = window.innerWidth < 1600;
 
   quickMenuItems = [
-  {
-    label: 'My Info',
-    link: '/myinfo/personal/basic-info',
-    icon: '/dashboard-icon/personal-information.png',
-  },
-  {
-    label: 'Holidays',
-    link: '/holidays/public-holidays',
-    icon: '/main-menu-icons/holiday-icon.png',
-  },
-  {
-    label: 'Leaves',
-    link: '/time-off/leaves/waiting-for-approval',
-    icon: '/time-off-icon/leaves-icon.png',
-  },
-  {
-    label: 'Permissions',
-    link: '/time-off/premissions/waiting-for-approval',
-    icon: '/time-off-icon/permissions-icon.png',
-  },
-  {
-    label: 'Policies',
-    link: '/policies/companypolicies',
-    icon: '/main-menu-icons/policies-icon.png',
-  },
-  {
-    label: 'Calendar',
-    link: '/calendar-view',
-    icon: '/dashboard-icon/calendar.png',
-  },
     {
-    label: 'Timesheets',
-    link: '/project-management/timesheet',
-    icon: '/main-menu-icons/project-management-timesheet.png',
-  },
+      label: 'My Info',
+      link: '/myinfo/personal/basic-info',
+      icon: '/dashboard-icon/personal-information.png',
+    },
     {
-    label: 'Expenses',
-    link: '/claimsandexpenses/expenses',
-    icon: '/main-menu-icons/expenses-icon.png',
-  },
+      label: 'Holidays',
+      link: '/holidays/public-holidays',
+      icon: '/main-menu-icons/holiday-icon.png',
+    },
     {
-    label: 'Personalization',
-    link: '/theme/selection',
-    icon: '/main-menu-icons/themes-color-icon.png',
-  },
-];
+      label: 'Leaves',
+      link: '/time-off/leaves/waiting-for-approval',
+      icon: '/time-off-icon/leaves-icon.png',
+    },
+    {
+      label: 'Permissions',
+      link: '/time-off/premissions/waiting-for-approval',
+      icon: '/time-off-icon/permissions-icon.png',
+    },
+    {
+      label: 'Policies',
+      link: '/policies/companypolicies',
+      icon: '/main-menu-icons/policies-icon.png',
+    },
+    {
+      label: 'Calendar',
+      link: '/calendar-view',
+      icon: '/dashboard-icon/calendar.png',
+    },
+    {
+      label: 'Timesheets',
+      link: '/project-management/timesheet',
+      icon: '/main-menu-icons/project-management-timesheet.png',
+    },
+    {
+      label: 'Expenses',
+      link: '/claimsandexpenses/expenses',
+      icon: '/main-menu-icons/expenses-icon.png',
+    },
+    {
+      label: 'Personalization',
+      link: '/theme/selection',
+      icon: '/main-menu-icons/themes-color-icon.png',
+    },
+  ];
 
-quickLinks: QuickLinkRouteDef[] = [];
+  quickLinks: QuickLinkRouteDef[] = [];
   readonly defaultQuickLinkRoutes = new Set(QUICK_LINK_DEFAULT_ROUTES);
   selectedQuickLinkRoutes = new Set<string>();
   readonly quickLinksDropListId = 'dashboard-quick-links';
   readonly quickLinksConnectedDropListIds = ['sidenav-main-drop', 'sidenav-ellipses-drop'];
 
-quickLinksInfo =
-  'Provides quick access to commonly used pages and actions across the portal.';
+  quickLinksInfo =
+    'Provides quick access to commonly used pages and actions across the portal.';
 
   @ViewChild('quickLinksScroll', { static: false })
   private quickLinksScroll?: ElementRef<HTMLElement>;
@@ -236,13 +239,14 @@ quickLinksInfo =
     this.getAllTeammembersList();
     this.gettodayloggedtime();
     this.selectedDate = new Date(); // current date by default
-    this.getteamavliabletly(this.selectedDate);
-    this.getWeeklyWorkLogHours();
+    // this.getteamavliabletly(this.selectedDate);
+    // this.getWeeklyWorkLogHours();
+    this.getattendancedatabyentry();
     this.getCategoryempDetails(this.empinfo?.employeeId);
     this.buildDisabledFutureWeekDates();
     this.intialLoading = false;
-    this.getAttendenceLogsOfLoginedUser(this.employeedata.employeeId, this.currentYear, this.currentMonth, this.currentDay);
-    this.getpreviousloggedtime();
+    // this.getAttendenceLogsOfLoginedUser(this.employeedata.employeeId, this.currentYear, this.currentMonth, this.currentDay);
+    // this.getpreviousloggedtime();
     this.todayMaxdate = new Date();
     this.checkScreenSize();
     window.addEventListener('resize', this.checkScreenSize.bind(this));
@@ -972,6 +976,51 @@ quickLinksInfo =
       this.router.navigate(['/unauthorized']);
     }
   }
+
+getattendancedatabyentry() {
+  const params = 'AttendanceConfiguration';
+  const param = 'IsProcessing';
+
+  this.http
+    .getDatabyentriyvalue(
+      'entityAttributeValues',
+      params,
+      param
+    )
+    .subscribe({
+      next: (data: any) => {
+
+        this.isAttendanceDataTrue =
+          String(data?.[0]?.value).toLowerCase() === 'true';
+
+        if (!this.isAttendanceDataTrue) {
+          this.loadAttendanceDashboardData();
+        }
+      },
+
+      error: (err) => {
+        console.error(
+          'Error fetching attendance configuration:',
+          err
+        );
+      }
+    });
+}
+
+private loadAttendanceDashboardData(): void {
+  // My Team Availability
+  this.getteamavliabletly(this.selectedDate);
+  // Weekly Work Logs
+  this.getWeeklyWorkLogHours();
+  // Attendance Overview
+  this.getAttendenceLogsOfLoginedUser(
+    this.employeedata.employeeId,
+    this.currentYear,
+    this.currentMonth,
+    this.currentDay
+  );
+  this.getpreviousloggedtime();
+}
 
   ngOnDestroy(): void {
     if (this.intervalId) {

@@ -27,6 +27,21 @@
         <!-- Attendance Status -->
         @if(rbac.allowedToAccess('Attendance Status.view')){
         <div class="content-card employees-list-content">
+             @if(isAttendanceDataTrue){
+
+        <div class="component-overlay-placeholder-content">
+            <div>
+                <app-attendance-placeholder></app-attendance-placeholder>
+
+                <p class="context">
+                    Attendance data is currently unavailable due to pending biometric integration.
+                    Please contact the administrator for assistance.
+                </p>
+            </div>
+        </div>
+
+    }
+    @else {
             <div class="flex-between-content mb-3">
                 <div class="summary-header d-inline-flex gap-1">
                     <div class="section-title">Attendance Status</div>
@@ -139,6 +154,7 @@
             } @else {
             <p-skeleton height="8rem" />
             }
+        }
         </div>
         }
         <!-- Consumed Leave Types -->
@@ -655,6 +671,21 @@
 <!--team avaliability content-->
 <ng-template #teamAvaliabilityContent>
     <div class="content-card employees-list-content">
+        @if(isAttendanceDataTrue){
+
+            <div class="component-overlay-placeholder-content">
+                <div>
+                    <app-attendance-placeholder></app-attendance-placeholder>
+
+                    <p class="context">
+                        Attendance data is currently unavailable due to pending biometric integration.
+                        Please contact the administrator for assistance.
+                    </p>
+                </div>
+            </div>
+
+        }
+        @else {
         <div class="flex-between-content mb-3">
             <div class="summary-header d-inline-flex gap-1">
                 <div class="section-title">My Team Availability</div>
@@ -716,6 +747,7 @@
         </div>
         }
         }
+    }
     </div>
 </ng-template>
 

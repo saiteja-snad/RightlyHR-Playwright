@@ -31,6 +31,7 @@ import { ReportsHeaderComponent } from '../../../shared/reports-tabs/reports-hea
 import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { DatePickerModule } from 'primeng/datepicker';
+import { AttendancePlaceholderComponent } from '../../../icons/attendance-placeholder/attendance-placeholder.component';
 
 @Component({
   selector: 'app-exceeded-break-hours-report',
@@ -46,6 +47,7 @@ import { DatePickerModule } from 'primeng/datepicker';
     ReportsHeaderComponent,
     MultiSelectModule,
     DatePickerModule,
+    AttendancePlaceholderComponent
   ],
   templateUrl: './exceeded-break-hours-report.component.html',
   styleUrl: './exceeded-break-hours-report.component.scss',
@@ -69,6 +71,7 @@ export class ExceededBreakHoursReportComponent implements OnInit, OnDestroy {
   getEmployeeInfo = [] as any;
   today: Date = new Date();
   localeOptions: any;
+  isAttendanceDataTrue = false;
 
   constructor(
     private authService: AuthService,
@@ -81,6 +84,7 @@ export class ExceededBreakHoursReportComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+     this.getattendancedatabyentry();
     this.localeOptions = {
       applyLabel: 'ok',
       format: this.authService
@@ -393,6 +397,23 @@ export class ExceededBreakHoursReportComponent implements OnInit, OnDestroy {
       this.spinnerLoader2 = false;
     }, 100);
   }
+
+  getattendancedatabyentry(): void {
+  const entity = 'AttendanceConfiguration';
+  const attribute = 'IsProcessing';
+
+  this.http
+    .getDatabyentriyvalue('entityAttributeValues', entity, attribute)
+    .subscribe({
+      next: (data: any) => {
+        this.isAttendanceDataTrue =
+          String(data?.[0]?.value).toLowerCase() === 'true';
+      },
+      error: (err: any) => {
+        console.error('Error fetching attendance configuration:', err);
+      }
+    });
+}
 
   ngOnDestroy(): void {
     this.destroy$.next();

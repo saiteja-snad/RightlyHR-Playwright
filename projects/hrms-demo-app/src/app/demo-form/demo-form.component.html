@@ -1,0 +1,346 @@
+<div class="form-main-container">
+  <!-- LEFT : BRAND -->
+  <aside class="brand">
+    <div class="logo mb-4" aria-label="RIGHTLY HR">
+      <img src="logo/RHR-Logo.png" alt="RIGHTLY HR" class="rhr-logo" />
+    </div>
+
+    <!--Labeling content-->
+    <div class="hero-copy py-3">
+      @for (idx of [currentSlideIndex]; track idx) {
+      <div class="hero-fade">
+        <div class="heading">
+          @for (seg of activeSlide.headingParts; track $index) {
+          @if (seg.hl) {<span>{{ seg.text }}</span>} @else { {{ seg.text }} }
+          }
+        </div>
+        <div class="sub-context py-4">{{ activeSlide.subContext }}</div>
+      </div>
+      }
+    </div>
+
+    <!--Slider content-->
+    <div class="slider-main-container">
+      <div class="slider-content">
+        @for (idx of [currentSlideIndex]; track idx) {
+        <div class="slide-fade">
+          <div class="heading mb-3">
+            @for (seg of activeSlide.cardHeadingParts; track $index) {
+            @if (seg.hl) {<i>{{ seg.text }}</i>} @else { {{ seg.text }} }
+            }
+          </div>
+          <div class="sub-context mb-4">{{ activeSlide.cardSubContext }}</div>
+          <div class="list-container">
+            @for (item of activeSlide.listItems; track item) {
+            <div class="list-item mb-2">
+              <div>
+                <img src="/icons/list-icon.png" alt="" class="list-icon" />
+              </div>
+              <div class="context">{{ item }}</div>
+            </div>
+            }
+
+            <div class="pt-4">
+              <button type="button" class="explore-btn">Explore More<i class="bi bi-arrow-right ms-2"></i></button>
+            </div>
+          </div>
+        </div>
+        }
+
+        <div class="list-slide-image-container">
+          <img [src]="activeSlide.image" alt="" class="list-slide-image" />
+        </div>
+      </div>
+
+      <div class="slider-dots" aria-label="Slide navigation">
+        @for (s of slides; track $index) {
+        <button type="button" class="dot" [class.on]="$index === currentSlideIndex" (click)="goToSlide($index)"
+          [attr.aria-label]="'Go to slide ' + ($index + 1)"></button>
+        }
+      </div>
+    </div>
+
+    <div class="brand-foot">
+      <div>
+        <div class="socials">
+          <a href="https://www.facebook.com" target="_blank" rel="noopener" aria-label="Facebook"><i
+              class="bi bi-facebook"></i></a>
+          <a href="https://www.linkedin.com" target="_blank" rel="noopener" aria-label="LinkedIn"><i
+              class="bi bi-linkedin"></i></a>
+          <a href="https://www.twitter.com" target="_blank" rel="noopener" aria-label="Twitter"><i
+              class="bi bi-twitter"></i></a>
+          <a href="https://www.instagram.com" target="_blank" rel="noopener" aria-label="Instagram"><i
+              class="bi bi-instagram"></i></a>
+        </div>
+        <div class="text-center">
+          <small>Copy rights reserved by &#64;Snad Developers Inc. 2026</small>
+        </div>
+      </div>
+
+      <div class="foot-bottom">
+        <div>
+          <img src="logo/powered-by-latest-1.png" alt="Powered by SNAD" class="powered-by" />
+        </div>
+        <div class="foot-links">
+          <a href="https://www.snaddevelopers.com/privacy-policy" target="_blank">Privacy Policy</a>
+          <span>|</span>
+          <a href="https://www.snaddevelopers.com/data-security" target="_blank">Data Security</a>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- RIGHT : FORM -->
+  <main class="pane">
+    <div class="bg-img-1">
+      <img src="/images/vector-backgrond-lines-1.png" alt="bg-1" class="bg-1" />
+    </div>
+    @if (!submittedSuccessfully) {
+    <div class="form-wrap">
+      <p class="form-heading mb-2">Personalize Your <span>RightlyHR</span> Experience</p>
+      <p class="sub-note mb-3">Your journey to a smarter HRMS starts with a few simple details</p>
+
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate autocomplete="off">
+        <div class="grid2">
+          <div class="field">
+            <label for="companyName">Company Name<span class="req">*</span></label>
+            <input type="text" id="companyName" formControlName="companyName" placeholder="Please enter company name"
+              autocomplete="off" maxlength="100" (blur)="trimNameField('companyName')"
+              (input)="onCompanyNameInput()" />
+            @if (form.controls.companyName.touched && form.controls.companyName.errors?.['duplicate']) {
+            <div class="error-msg">{{ companyDuplicateMessage }}</div>
+            } @else if (form.controls.companyName.touched && form.controls.companyName.errors?.['required']) {
+            <div class="error-msg">Please enter your Company Name</div>
+            } @else if (form.controls.companyName.touched && form.controls.companyName.invalid) {
+            <div class="error-msg">Company name must be between 2 and 100 characters.</div>
+            }
+          </div>
+
+          <div class="field">
+            <label for="workEmailField">Work Email<span class="req">*</span></label>
+            <div class="control">
+              <input type="text" inputmode="email" id="workEmailField" formControlName="email"
+                placeholder="Please enter work email" autocomplete="off" autocorrect="off" spellcheck="false"
+                [class.good]="emailVerified" (input)="onEmailInput()" (blur)="trimNameField('email')" />
+              @if (emailVerified) {
+              <button type="button" class="verify done" disabled>&#10003; Verified</button>
+              } @else {
+              <button type="button" class="verify" [disabled]="emailVerifyDisabled"
+                (click)="openVerify('email')">
+                @if (emailVerifyLoader) {
+                <div class="button-loader-content">
+                  <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
+                  <span>Loading...</span>
+                </div>
+                } @else {
+                <span>Verify Email</span>
+                }
+              </button>
+              }
+            </div>
+            @if (form.controls.email.touched && form.controls.email.errors?.['duplicate']) {
+            <div class="error-msg">{{ emailDuplicateMessage }}</div>
+            } @else if (form.controls.email.touched && form.controls.email.errors?.['required']) {
+            <div class="error-msg">Please enter your Work Email</div>
+            } @else if (form.controls.email.touched && form.controls.email.errors?.['workEmail']) {
+            <div class="error-msg">Please use your official business email address.</div>
+            } @else if (form.controls.email.touched && form.controls.email.invalid) {
+            <div class="error-msg">Invalid Email format - Please enter a valid email address</div>
+            } @else if (form.controls.email.valid && form.controls.firstName.invalid) {
+            <div class="error-msg">Please enter your First Name before verifying your email.</div>
+            } @else if (form.controls.email.touched && form.controls.email.valid && !emailVerified) {
+            <div class="error-msg">Please verify your email address.</div>
+            } @else {
+            <!-- <div class="error-msg">We'll send your demo access link to this address.</div> -->
+            }
+          </div>
+
+          <div class="field">
+            <label for="firstName">First Name<span class="req">*</span></label>
+            <input type="text" id="firstName" formControlName="firstName" placeholder="Please enter first name"
+              autocomplete="off" maxlength="50" (blur)="trimNameField('firstName')" />
+            @if (form.controls.firstName.touched && form.controls.firstName.errors?.['required']) {
+            <div class="error-msg">Please enter your First Name</div>
+            } @else if (form.controls.firstName.touched && form.controls.firstName.errors?.['minlength']) {
+            <div class="error-msg">First Name must be at least 2 characters.</div>
+            } @else if (form.controls.firstName.touched && form.controls.firstName.invalid) {
+            <div class="error-msg">Please enter Valid First Name</div>
+            }
+          </div>
+
+          <div class="field">
+            <label for="middleName">Middle Name</label>
+            <input type="text" id="middleName" formControlName="middleName" placeholder="Please enter middle name"
+              autocomplete="off" maxlength="50" (blur)="trimNameField('middleName')" />
+            @if (form.controls.middleName.touched && form.controls.middleName.invalid) {
+            <div class="error-msg">Please enter Valid Middle Name</div>
+            }
+          </div>
+
+          <div class="field">
+            <label for="lastName">Last Name<span class="req">*</span></label>
+            <input type="text" id="lastName" formControlName="lastName" placeholder="Please enter last name"
+              autocomplete="off" maxlength="50" (blur)="trimNameField('lastName')" />
+            @if (form.controls.lastName.touched && form.controls.lastName.errors?.['required']) {
+            <div class="error-msg">Please enter your Last Name</div>
+            } @else if (form.controls.lastName.touched && form.controls.lastName.errors?.['minlength']) {
+            <div class="error-msg">Last Name must be at least 2 characters.</div>
+            } @else if (form.controls.lastName.touched && form.controls.lastName.invalid) {
+            <div class="error-msg">Please enter Valid Last Name</div>
+            }
+          </div>
+
+          <div class="field">
+            <label for="mobile">Mobile Number <span class="opt">(Optional)</span></label>
+            <div class="phone d-flex position-relative">
+              <lib-country-list [selectedCountryConfig]="selectedCountryConfig"
+                [selectedCountryCode]="selectedCountryCode()" [countryListConfig]="countryListConfig"
+                class="country-input" (onCountryChange)="onCountryChange($event)">
+              </lib-country-list>
+              <input type="text" inputmode="tel" id="mobile" formControlName="mobile"
+                [placeholder]="mobilePlaceholder" autocomplete="off" autocorrect="off" spellcheck="false"
+                (input)="onMobileNumberInput()" />
+            </div>
+            @if (mobileProvided && form.controls.mobile.hasError('invalidChars')) {
+            <div class="error-msg">Mobile number can only contain digits.</div>
+            } @else if (mobileProvided && form.controls.mobile.hasError('invalidPhoneNumber')) {
+            <div class="error-msg">The phone number is not valid for the selected country.</div>
+            }
+          </div>
+        </div>
+
+        <div class="field full logo-field">
+          <label>Company Logo <span class="opt">(Optional)</span></label>
+          <div class="drop" [class.over]="dragOver" [class.has-file]="selectedFile" tabindex="0" role="button"
+            aria-label="Upload company logo" (dragover)="onDragOver($event)" (dragleave)="onDragLeave($event)"
+            (drop)="onDrop($event)" (click)="logoInput.click()">
+            <input #logoInput type="file" hidden accept=".png,.jpg,.jpeg,.svg" (change)="onFileSelected($event)" />
+            @if (selectedFile) {
+            <div class="file-chip">
+              @if (logoPreviewUrl) {
+              <img [src]="logoPreviewUrl" alt="Logo preview" />
+              }
+              <span>{{ selectedFile.name }}</span>
+              <button type="button" (click)="$event.stopPropagation(); removeFile()">Remove</button>
+            </div>
+            } @else {
+            <div>
+              <img src="/icons/User.png" alt="Logo preview" class="cloud-img mb-3" />
+              <p><b>Click to upload</b> or drag and drop</p>
+              <small>Supported formats: PNG, JPG, JPEG or SVG up to 5 MB</small>
+            </div>
+            }
+          </div>
+          @if (fileError) {
+          <div class="error-msg">{{ fileError }}</div>
+          }
+        </div>
+
+        <div class="field full">
+          <label>Data Preference<span class="req">*</span></label>
+          <div class="cards" role="radiogroup" aria-label="Demo data preference">
+            <label class="card sel">
+              <div>
+                <input type="radio" name="pref" value="prefilled" checked />
+                <span class="tick">&#10003;</span>
+                <b>Pre-filled Demo Data</b>
+                <span class="sub-context">Start with preloaded demo data for a complete product experience.</span>
+              </div>
+            </label>
+            <label class="card disabled">
+              <div>
+                <input type="radio" name="pref" value="custom" disabled />
+                <span class="tick">&#10003;</span>
+                <b>Custom Demo Setup</b>
+                <span class="sub-context">Configure your demo to match your organization's needs.</span>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <div class="consent">
+          <label class="agree">
+            <input type="checkbox" id="agreeTerms" formControlName="agreeTerms" />
+            <span>
+              I agree to receive email updates, promotions, and personalized offers from RightlyHR. I understand
+              that I can unsubscribe at any time.
+              <a href="https://www.snaddevelopers.com/privacy-policy" target="_blank">Privacy Policy</a>
+            </span>
+          </label>
+          @if (submitted && form.controls.agreeTerms.invalid) {
+          <div class="error-msg">You must accept the terms to continue.</div>
+          }
+
+          <label class="agree soft">
+            <input type="checkbox" id="newsletterSubscription" formControlName="newsletterSubscription" />
+            <span>Subscribe to the RightlyHR newsletter for the latest HR innovations and updates</span>
+          </label>
+        </div>
+
+        <!-- NAV -->
+        <div class="nav-row">
+          <button type="submit" class="submit-btn" [disabled]="!canSubmit || submitLoader">
+            @if (submitLoader) {
+            <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
+            <span>Creating...</span>
+            } @else {
+            <span>Launch my Instance</span>
+            <i class="bi bi-rocket-takeoff-fill"></i>
+            }
+          </button>
+        </div>
+      </form>
+    </div>
+    } @else {
+    <div class="success show">
+      <div class="big">
+        <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 6 9 17l-5-5" />
+        </svg>
+      </div>
+      <h2>Registration Successful!</h2>
+      <p class="mb-2 sucess">Your registration has been completed successfully.</p>
+      <p class="mb-2">
+        Your RightlyHR Demo Instance is currently being set up. This process typically takes up to <b>5
+          minutes</b>. We will notify you via email once your demo instance is ready.</p>
+    </div>
+    }
+    <!-- <div class="bg-img-2">
+      <img src="/images/vector-backgrond-lines-2.png" alt="bg-2" class="bg-2" />
+    </div> -->
+  </main>
+</div>
+
+<!-- Verify OTP modal template -->
+<ng-template #verifyModal ngbAutofocus>
+  <div class="custom-main-popup-container" ngbAutofocus>
+    <div class="custom-poup-header-content popup-header-border">
+      <div>
+        <p class="popup-heading mb-0">Verify {{ activeTarget === 'email' ? 'email' : 'mobile number' }}</p>
+      </div>
+    </div>
+
+    <div class="custom-main-popup-content">
+      <p class="modal-desc">Enter the 6-digit code sent to your {{ activeTarget === 'email' ? 'email address' : 'phone' }}.</p>
+      <div class="otp-row">
+        <p-inputOtp [(ngModel)]="currentOtpValue" [length]="6" [integerOnly]="true" [autofocus]="true" />
+      </div>
+      @if (otpError) {
+      <div class="error-msg ">{{ otpError }}</div>
+      } @else if (currentOtpValue.length > 0 && currentOtpValue.length < 6) {
+      <div class="error-msg ">Please enter all 6 digits.</div>
+      }
+      <div class="d-flex justify-content-between align-items-center mt-4 send-code">
+        <div class="timer"><i class="bi bi-clock"></i> {{ formattedTimer() }}</div>
+        <button type="button" class="link-inline" [disabled]="currentTimer > 0 && !otpLocked"
+          (click)="resendCode()">Resend code</button>
+      </div>
+      <div class="custom-modal-footer pt-4">
+        <button type="button" class="custom-btn btn-secondary" (click)="dismissModal()">Close</button>
+        <button type="submit" class="custom-btn btn-primary" [disabled]="currentOtpValue.length !== 6 || otpLocked"
+          (click)="verifyCode()">Verify code</button>
+      </div>
+    </div>
+  </div>
+</ng-template>

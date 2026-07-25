@@ -502,6 +502,127 @@
           }
         }
       }
+    },
+    "hrms-demo-app": {
+      "projectType": "application",
+      "schematics": {
+        "@schematics/angular:component": {
+          "style": "scss"
+        }
+      },
+      "root": "projects/hrms-demo-app",
+      "sourceRoot": "projects/hrms-demo-app/src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:application",
+          "options": {
+            "outputPath": "dist/hrms-demo-app",
+            "index": "projects/hrms-demo-app/src/index.html",
+            "browser": "projects/hrms-demo-app/src/main.ts",
+            "polyfills": [
+              "zone.js"
+            ],
+            "tsConfig": "projects/hrms-demo-app/tsconfig.app.json",
+            "inlineStyleLanguage": "scss",
+            "assets": [
+              {
+                "glob": "**/*",
+                "input": "projects/hrms-demo-app/public"
+              }
+            ],
+            "styles": [
+              "node_modules/ngx-countries-dropdown/assets/styles.css",
+              "projects/hrms-demo-app/src/styles.scss"
+            ],
+            "scripts": []
+          },
+          "configurations": {
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "projects/hrms-demo-app/src/environments/environment.ts",
+                  "with": "projects/hrms-demo-app/src/environments/environment.prod.ts"
+                }
+              ],
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "800kB",
+                  "maximumError": "1MB"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "12kB",
+                  "maximumError": "16kB"
+                }
+              ],
+              "outputHashing": "all"
+            },
+            "development": {
+              "fileReplacements": [
+                {
+                  "replace": "projects/hrms-demo-app/src/environments/environment.ts",
+                  "with": "projects/hrms-demo-app/src/environments/environment.dev.ts"
+                }
+              ],
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true
+            },
+            "qa": {
+              "fileReplacements": [
+                {
+                  "replace": "projects/hrms-demo-app/src/environments/environment.ts",
+                  "with": "projects/hrms-demo-app/src/environments/environment.qa.ts"
+                }
+              ],
+              "outputHashing": "all"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "configurations": {
+            "production": {
+              "buildTarget": "hrms-demo-app:build:production"
+            },
+            "development": {
+              "buildTarget": "hrms-demo-app:build:development"
+            },
+            "qa": {
+              "buildTarget": "hrms-demo-app:build:qa"
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ],
+            "tsConfig": "projects/hrms-demo-app/tsconfig.spec.json",
+            "inlineStyleLanguage": "scss",
+            "assets": [
+              {
+                "glob": "**/*",
+                "input": "projects/hrms-demo-app/public"
+              }
+            ],
+            "styles": [
+              "projects/hrms-demo-app/src/styles.scss",
+              "node_modules/ngx-countries-dropdown/assets/styles.css"
+            ],
+            "scripts": []
+          }
+        }
+      }
     }
   },
   "cli": {

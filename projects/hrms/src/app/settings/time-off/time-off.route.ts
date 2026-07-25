@@ -42,7 +42,7 @@ export default [
             { path: 'intial-load-entitlement-create', loadComponent: () => import('./load-entilements-alloction/intial-load-entitlement/intial-load-entitlement-layout/intial-load-entitlement-create/intial-load-entitlement-create.component').then((m) => m.IntialLoadEntitlementCreateComponent) },
             { path: 'intial-load-entitlement-breakdown', loadComponent: () => import('./load-entilements-alloction/intial-load-entitlement/intial-load-entitlement-layout/intial-load-entitlement-breakdown/intial-load-entitlement-breakdown.component').then((m) => m.IntialLoadEntitlementBreakdownComponent) },
             { path: 'intial-load-entitlement-preview', loadComponent: () => import('./load-entilements-alloction/intial-load-entitlement/intial-load-entitlement-layout/intial-load-entitlement-preview/intial-load-entitlement-preview.component').then((m) => m.IntialLoadEntitlementPreviewComponent) },
-            {path:'intial-load-entitlement-execution',loadComponent:()=>import('./load-entilements-alloction/intial-load-entitlement/intial-load-entitlement-layout/intial-load-entitlement-execution/intial-load-entitlement-execution.component').then((m)=>m.IntialLoadEntitlementExecutionComponent)}
+            { path: 'intial-load-entitlement-execution', loadComponent: () => import('./load-entilements-alloction/intial-load-entitlement/intial-load-entitlement-layout/intial-load-entitlement-execution/intial-load-entitlement-execution.component').then((m) => m.IntialLoadEntitlementExecutionComponent) }
 
         ]
     },
@@ -60,6 +60,13 @@ export default [
             { path: 'late-login-alert-configuration', loadComponent: () => import('./attendance-eligibility-criteria/late-login-alert-configuration/late-login-alert-configuration.component').then((m) => m.LateLoginAlertConfigurationComponent) },
             { path: 'extra-hours-configuration', loadComponent: () => import('./attendance-eligibility-criteria/extra-hours-configuration/extra-hours-configuration.component').then((m) => m.ExtraHoursConfigurationComponent) },
             { path: 'flexible-workhours-configuration', loadComponent: () => import('./attendance-eligibility-criteria/flexible-workhours-configuration/flexible-workhours-configuration.component').then((m) => m.FlexibleWorkhoursConfigurationComponent) },
+            {
+                path: 'biometric-configuration',
+                loadComponent: () =>
+                    import('./attendance-eligibility-criteria/biometric-configuration/biometric-configuration.component')
+                        .then((m) => m.BiometricConfigurationComponent)
+            },
+
         ]
     },
     { path: 'addleavecategory', loadComponent: () => import('./leave-categoery/add-leavecategory/add-leavecategory.component').then((m) => m.AddLeavecategoryComponent) },

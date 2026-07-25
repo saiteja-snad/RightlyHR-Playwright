@@ -1,34 +1,38 @@
 <div class="custom-main-component-container">
     <div class="component-header-content">
         <div class="heading-content">
-            <div class="commpoment-name">{{'Time Off' | translate}}<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span></div>
+            <div class="commpoment-name">{{'Time Off' | translate}}<span class="ms-1"><i
+                        class="bi bi-chevron-double-right"></i></span></div>
             <div class="component-header">{{'Extra Hours' | translate }}</div>
 
 
             <div>
-                 <app-module-info-icon placement="bottom" [ngbPopover]="popContent" />
+                <app-module-info-icon placement="bottom" [ngbPopover]="popContent" />
             </div>
         </div>
 
+        @if(!isAttendanceDataTrue) {
         <div class="d-flex align-items-center gap-3">
-            @if(rbac.allowedToAccess('All Employees (Extra Hours).view') && rbac.allowedToAccess('My Team (Extra Hours).view')) {
+            @if(rbac.allowedToAccess('All Employees (Extra Hours).view') && rbac.allowedToAccess('My Team (Extra
+            Hours).view')) {
             <div class="d-flex align-items-center gap-2">
                 <label for="education" class="form-label custom-label text-nowrap filter-labels m-0">
                     {{'Select Employee' | translate}}</label>
                 <div class="custom-p-select-content">
                     <p-select [options]="activeEmplist" [filter]="true" filterBy="label" resetFilterOnHide="true"
-                     optionLabel="label" optionValue="value" showClear="true" placeholder="Select employee name"
-                     (onChange)="onCheckemployee($event.value)" class="form-select custom-select"></p-select>
+                        optionLabel="label" optionValue="value" showClear="true" placeholder="Select employee name"
+                        (onChange)="onCheckemployee($event.value)" class="form-select custom-select"></p-select>
                 </div>
             </div>
             }
             @else if(rbac.allowedToAccess('All Employees (Extra Hours).view')) {
             <div class="d-flex align-items-center gap-2">
-                <label for="education" class="form-label custom-label text-nowrap filter-labels m-0">{{'Select Employee' | translate}}</label>
+                <label for="education" class="form-label custom-label text-nowrap filter-labels m-0">{{'Select Employee'
+                    | translate}}</label>
                 <div class="custom-p-select-content">
-                    <p-select [options]="activeEmplist" [filter]="true" filterBy="label" resetFilterOnHide="true" optionLabel="label"
-                    optionValue="value" showClear="true" placeholder="Select employee name" (onChange)="onCheckemployee($event.value)"
-                    class="form-select custom-select"></p-select>
+                    <p-select [options]="activeEmplist" [filter]="true" filterBy="label" resetFilterOnHide="true"
+                        optionLabel="label" optionValue="value" showClear="true" placeholder="Select employee name"
+                        (onChange)="onCheckemployee($event.value)" class="form-select custom-select"></p-select>
                 </div>
             </div>
             }
@@ -56,14 +60,16 @@
                 [subModuleKey]="applicablePolicies.subModuleKey">
             </app-applicable-policies-trigger>
         </div>
+        }
     </div>
 
-   <!--Module Information-->
+
+    <!--Module Information-->
     <ng-template #popContent>
-        <app-module-information [moduleInfo]="moduleinfo"  />
+        <app-module-information [moduleInfo]="moduleinfo" />
     </ng-template>
 
-    <div class="d-flex gap-3 w-100">
+    <!-- <div class="d-flex gap-3 w-100">
         <div class="component-left-tabs-container">
             <app-extra-hours-tabs/>
         </div>
@@ -71,5 +77,33 @@
         <div class="component-right-content">
             <router-outlet></router-outlet>
         </div>
+    </div> -->
+
+    @if(isAttendanceDataTrue) {
+
+    <div class="component-overlay-placeholder-content">
+        <div>
+            <app-attendance-placeholder></app-attendance-placeholder>
+
+            <p class="context">
+                Attendance data is currently unavailable due to pending biometric integration.
+                Please contact the administrator for assistance.
+            </p>
+        </div>
     </div>
+
+    }
+    @else {
+
+    <div class="d-flex gap-3 w-100">
+        <div class="component-left-tabs-container">
+            <app-extra-hours-tabs />
+        </div>
+
+        <div class="component-right-content">
+            <router-outlet></router-outlet>
+        </div>
+    </div>
+
+    }
 </div>

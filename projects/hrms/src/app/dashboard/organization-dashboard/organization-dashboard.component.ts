@@ -25,10 +25,11 @@ import { RbacService } from '../../services/rbac.service';
 import { NoDataFoundComponent } from '../../shared/no-data-found/no-data-found.component';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { AccessNavigationService } from '../../services/access-navigation.service';
+import { AttendancePlaceholderComponent } from '../../icons/attendance-placeholder/attendance-placeholder.component';
 @Component({
   selector: 'app-organization-dashboard',
   imports: [CommonModule, RouterModule, FormsModule, TranslateModule, NgbPopoverModule, ModuleInfoIconComponent,
-    ChartModule, Skeleton, AccordionModule, ProfileIconComponent, NoDataFoundComponent,
+    ChartModule, Skeleton, AccordionModule, ProfileIconComponent, NoDataFoundComponent, AttendancePlaceholderComponent,
     DatePicker, TabsModule, Select],
   templateUrl: './organization-dashboard.component.html',
   styleUrl: './organization-dashboard.component.scss',
@@ -71,6 +72,8 @@ export class OrganizationDashboardComponent implements AfterViewInit {
   totalHours: any;
   teamMembers: any[] = [];
   employeesBirthdays: any[] = [];
+  isAttendanceDataTrue = false;
+  attendanceConfigLoading = true;
   teamavailabilityinfo = 'Displays your team’s current availability for the selected date, including In Office, WFH, On Leave, Half Day, Remote, and Absent statuses.';
   myteammemberinfo = 'Displays an overview of all team members in the organization, helping employees stay informed about their colleagues.';
   genderdiversityinfo = 'Displays the gender distribution of employees, giving a quick and clear view of workforce diversity.';
@@ -386,7 +389,8 @@ export class OrganizationDashboardComponent implements AfterViewInit {
     this.getAllTeammembersList();
     this.gettodayloggedtime();
     this.selectedDate = new Date(); // current date by default
-    this.getteamavliabletly(this.selectedDate);
+    // this.getteamavliabletly(this.selectedDate);
+    this.getattendancedatabyentry();
     this.getWeeklyWorkLogHours();
     this.getCategoryempDetails(this.empinfo?.employeeId);
     this.getUpcomingActions();
@@ -399,7 +403,7 @@ export class OrganizationDashboardComponent implements AfterViewInit {
     this.todayMaxdate = new Date();
     this.getNewJoineesAndExits();
     this.getAllLocations();
-    this.getAttendanceReportData();
+    // this.getAttendanceReportData();
     this.getApprovalsOverview();
     this.getExperienceDetails();
     this.getDepartmentwiseAttritionRateDetails();
@@ -768,6 +772,15 @@ export class OrganizationDashboardComponent implements AfterViewInit {
       responsive: true,
       maintainAspectRatio: false,
       layout: { padding: { top: 25 } },
+      onClick: (_event: any, elements: any[]) => {
+        if (!elements.length) return;
+        const dept = this.departmentRawData[elements[0].index];
+        if (!dept?.headCount) return;
+        this.openDepartmentOffcanvas(dept);
+      },
+      onHover: (_event: any, elements: any[], chart: any) => {
+        chart.canvas.style.cursor = elements.length ? 'pointer' : 'default';
+      },
       plugins: {
         legend: {
           display: false,
@@ -781,12 +794,12 @@ export class OrganizationDashboardComponent implements AfterViewInit {
           anchor: 'end',
           align: 'end',
           color: '#000',
+          cursor: 'pointer',
           font: {
             weight: 'bold',
             size: 10
           },
           formatter: (value: any) => value,
-          cursor: 'pointer',
           listeners: {
             click: (context: any) => {
               const dept = this.departmentRawData[context.dataIndex];
@@ -1599,6 +1612,26 @@ export class OrganizationDashboardComponent implements AfterViewInit {
       shiftColors[shift] = colorPalette[index % colorPalette.length];
     });
 
+    const getShiftSegmentDetails = (datasetIndex: number, dataIndex: number) => {
+      const shiftName = datasets[datasetIndex]?.label;
+      const subLocations: any[] = [];
+
+      dataArray.forEach((location: any) => {
+        location.subLocations?.forEach((subLoc: any) => subLocations.push(subLoc));
+      });
+
+      const subLoc = subLocations[dataIndex];
+      const shift = subLoc?.shifts?.find((s: any) => s.shiftName === shiftName);
+
+      if (!shiftName || !subLoc || !shift?.employeeCount) return null;
+
+      return {
+        subLocationName: subLoc.subLocationName,
+        shiftName,
+        employees: shift.employees || []
+      };
+    };
+
     // Create datasets for each shift
     const datasets = Array.from(allShifts).map(shiftName => {
       const data: number[] = [];
@@ -1633,6 +1666,17 @@ export class OrganizationDashboardComponent implements AfterViewInit {
       responsive: true,
       maintainAspectRatio: false,
       layout: { padding: { top: 25 } },
+      onClick: (_event: any, elements: any[]) => {
+        if (!elements.length) return;
+
+        const details = getShiftSegmentDetails(elements[0].datasetIndex, elements[0].index);
+        if (!details) return;
+
+        this.openShiftLocationOffcanvas(details.subLocationName, details.shiftName, details.employees);
+      },
+      onHover: (_event: any, elements: any[], chart: any) => {
+        chart.canvas.style.cursor = elements.length ? 'pointer' : 'default';
+      },
       plugins: {
         legend: {
           display: false,
@@ -1661,7 +1705,6 @@ export class OrganizationDashboardComponent implements AfterViewInit {
           anchor: 'end',
           align: 'end',
           color: '#000',
-          cursor: 'pointer',
           font: {
             weight: 'bold',
             size: 10
@@ -1672,23 +1715,6 @@ export class OrganizationDashboardComponent implements AfterViewInit {
               total += dataset.data[context.dataIndex] || 0;
             });
             return total;
-          },
-          listeners: {
-            click: (context: any) => {
-              const datasetIndex = context.datasetIndex;
-              const dataIndex = context.dataIndex;
-              const shiftName = datasets[datasetIndex]?.label;
-              const subLocations: any[] = [];
-
-              dataArray.forEach((location: any) => {
-                location.subLocations?.forEach((subLoc: any) => subLocations.push(subLoc));
-              });
-
-              const subLoc = subLocations[dataIndex];
-              const shift = subLoc?.shifts?.find((s: any) => s.shiftName === shiftName);
-              if (!shift?.employeeCount) return;
-              this.openShiftLocationOffcanvas(subLoc.subLocationName, shiftName, shift.employees || []);
-            }
           }
         }
       },
@@ -1756,7 +1782,7 @@ export class OrganizationDashboardComponent implements AfterViewInit {
         this.attendanceEmployeesList = res?.employees || [];
         const summary = this.attendanceReportData;
         this.totalAttendanceCount = (summary?.onTime || 0) + (summary?.lateLogin || 0) + (summary?.earlyLogout || 0)
-        + (summary?.hoursDeficit || 0) + (summary?.breakExceeded || 0) + (summary?.permission || 0);
+          + (summary?.hoursDeficit || 0) + (summary?.breakExceeded || 0) + (summary?.permission || 0);
         const values = [
           summary?.onTime || 0,
           summary?.lateLogin || 0,
@@ -2122,6 +2148,15 @@ export class OrganizationDashboardComponent implements AfterViewInit {
       responsive: true,
       maintainAspectRatio: false,
       layout: { padding: { top: 25 } },
+      onClick: (_event: any, elements: any[]) => {
+        if (!elements.length) return;
+        const item = this.experienceRawData[elements[0].index];
+        if (!item?.count) return;
+        this.openExperienceOffcanvas(item);
+      },
+      onHover: (_event: any, elements: any[], chart: any) => {
+        chart.canvas.style.cursor = elements.length ? 'pointer' : 'default';
+      },
       plugins: {
         legend: {
           display: false,
@@ -2456,6 +2491,36 @@ export class OrganizationDashboardComponent implements AfterViewInit {
     this.exitByTenureLoader = true;
     this.getEmployeeExitByTenure();
   }
+  getattendancedatabyentry() {
+  const entity = 'AttendanceConfiguration';
+  const attribute = 'IsProcessing';
+
+  this.attendanceConfigLoading = true;
+
+  this.http
+    .getDatabyentriyvalue('entityAttributeValues', entity, attribute)
+    .subscribe({
+      next: (data: any) => {
+        this.isAttendanceDataTrue =
+          String(data?.[0]?.value).toLowerCase() === 'true';
+
+        this.attendanceConfigLoading = false;
+
+        if (!this.isAttendanceDataTrue) {
+          this.loadAttendanceDashboardData();
+        }
+      },
+      error: (err: any) => {
+        this.attendanceConfigLoading = false;
+        console.error('Error fetching attendance configuration:', err);
+      }
+    });
+}
+
+private loadAttendanceDashboardData(): void {
+  this.getteamavliabletly(this.selectedDate);
+  this.getAttendanceReportData();
+}
 
   ngOnDestroy(): void {
     if (this.intervalId) {

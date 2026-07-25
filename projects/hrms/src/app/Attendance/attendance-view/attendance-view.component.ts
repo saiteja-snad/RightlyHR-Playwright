@@ -38,6 +38,7 @@ import { ChartModule } from 'primeng/chart';
 import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
 import { ApplicablePoliciesTriggerComponent } from '../../shared/policies/applicable-policies-trigger/applicable-policies-trigger.component';
 import { APPLICABLE_POLICIES_KEYS } from '../../shared/policies/policy-visibility.catalog';
+import { AttendancePlaceholderComponent } from '../../icons/attendance-placeholder/attendance-placeholder.component';
 
 @Component({
   selector: 'app-attendance-view',
@@ -62,6 +63,7 @@ import { APPLICABLE_POLICIES_KEYS } from '../../shared/policies/policy-visibilit
     AccordionModule,
     ChartModule,
     ApplicablePoliciesTriggerComponent,
+     AttendancePlaceholderComponent
   ],
   templateUrl: './attendance-view.component.html',
   styleUrl: './attendance-view.component.scss',
@@ -134,6 +136,7 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
   extraHoursForm!: FormGroup;
   totalCount: any;
   selectedDateTotalDuration: string = '00:00:00';
+  isAttendanceDataTrue: boolean = false;
 
   constructor(
     private authService: AuthService,
@@ -146,7 +149,33 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
     public readonly router: Router
   ) { }
 
-  ngOnInit(): void {
+  // ngOnInit(): void {
+  //   this.getattendancedatabyentry();
+  //   // Get current date
+  //   const now = moment().startOf('month');
+  //   this.date = now.toDate();
+  //   this.currentDate = moment().date();
+  //   // Get current month (1-based)
+  //   this.currentMonth = moment().month() + 1;
+  //   this.selectedMonth = this.currentMonth;
+  //   // Get current year
+  //   this.currentYear = moment().year();
+  //   this.selectedYear = this.currentYear;
+  //   this.maxMonth = new Date();
+  //   this.empdata = this.authService.getToken();
+  //   this.getAttendnaceData(this.empdata);
+  //   this.getAttendanceCriteria();
+  //   this.getAllEmployeeDetails();
+  //   this.getEmployeeDetails();
+  //   this.initializeForm();
+  //   this.updateModuleInfo();
+  //   this.initiateUpdateModuleInfo();
+  //   this.initliazeExtraHoursForm();
+  //   this.getdatabyentriy();
+  // }
+
+    ngOnInit(): void {
+    this.getattendancedatabyentry();
     // Get current date
     const now = moment().startOf('month');
     this.date = now.toDate();
@@ -159,15 +188,6 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
     this.selectedYear = this.currentYear;
     this.maxMonth = new Date();
     this.empdata = this.authService.getToken();
-    this.getAttendnaceData(this.empdata);
-    this.getAttendanceCriteria();
-    this.getAllEmployeeDetails();
-    this.getEmployeeDetails();
-    this.initializeForm();
-    this.updateModuleInfo();
-    this.initiateUpdateModuleInfo();
-    this.initliazeExtraHoursForm();
-    this.getdatabyentriy();
   }
 
   initiateUpdateModuleInfo() {
@@ -290,6 +310,30 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
           console.log('errors', err);
         },
       });
+  }
+
+   getattendancedatabyentry() {
+    const params = 'AttendanceConfiguration';
+    const param = 'IsProcessing';
+    this.http.getDatabyentriyvalue(`entityAttributeValues`, params, param).subscribe({
+      next: (data: any) => {
+        this.isAttendanceDataTrue = String(data[0].value).toLowerCase() === 'true';
+        if (!this.isAttendanceDataTrue) {
+          this.getAttendnaceData(this.empdata);
+          this.getAttendanceCriteria();
+          this.getAllEmployeeDetails();
+          this.getEmployeeDetails();
+          this.initializeForm();
+          this.updateModuleInfo();
+          this.initiateUpdateModuleInfo();
+          this.initliazeExtraHoursForm();
+          this.getdatabyentriy();
+        }
+      },
+      error: (err) => {
+        console.error('Error fetching data:', err);
+      }
+    });
   }
 
   isWithinPastDaysAllowed(date: Date | string): boolean {

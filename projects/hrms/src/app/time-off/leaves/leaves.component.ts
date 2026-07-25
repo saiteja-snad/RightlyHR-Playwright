@@ -598,8 +598,10 @@ getTeamManagersDetails() {
       next: (data: any) => {
         this.employeeiddetails = data;
         console.log(this.employeeiddetails);
+      }
 
     });
+  
   }
   getEmployeeidV2(employeeId: string) {
     this.subscription = this.http.getData(`Employeedata/${employeeId}`).pipe(takeUntil(this.destroy$)).subscribe({

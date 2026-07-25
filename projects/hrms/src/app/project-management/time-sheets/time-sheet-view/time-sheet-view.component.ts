@@ -1085,7 +1085,8 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
         console.log('Payload:', payload);
 
         payloads.push(payload);
-      });
+      }
+       });
     });
 
     return payloads;

@@ -1208,3 +1208,111 @@
         text-align: center;
     }
 }
+
+.weekly-work-logs-card {
+    position: relative;
+
+    /* Preserve the existing Weekly Work Logs card height */
+    min-height: 10rem;
+}
+
+.weekly-work-logs-card .component-overlay-placeholder-content {
+    position: absolute;
+    inset: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: rgba(255, 255, 255, 0.45);
+
+    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(8px);
+
+    z-index: 10;
+    text-align: center;
+}
+
+/* Keep heading clear */
+.weekly-work-logs-header {
+    position: relative;
+    z-index: 11;
+}
+
+/* Keep placeholder + message clear */
+.weekly-work-logs-card .component-overlay-placeholder-content > div {
+    position: relative;
+    z-index: 12;
+}
+
+/* Attendance Overview transparent mask */
+.attendance-overview-card {
+    position: relative;
+}
+
+.attendance-overview-card > .component-overlay-placeholder-content {
+    position: absolute;
+    inset: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: rgba(255, 255, 255, 0.45);
+
+    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(6px);
+
+    z-index: 10;
+    text-align: center;
+}
+
+
+/* Keep heading ABOVE blur */
+.attendance-overview-header {
+    position: relative;
+    z-index: 11;
+}
+
+
+/* Placeholder image/text ABOVE blur */
+.attendance-overview-card >
+.component-overlay-placeholder-content > div {
+    position: relative;
+    z-index: 12;
+}
+
+.team-availability-card {
+    position: relative;
+    overflow: hidden;
+}
+
+.team-availability-card > .component-overlay-placeholder-content {
+    position: absolute;
+    inset: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: rgba(255, 255, 255, 0.45);
+
+    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(15px);
+
+    z-index: 10;
+    text-align: center;
+}
+
+/* Keep heading/date picker clear */
+.team-availability-header {
+    position: relative;
+    z-index: 11;
+}
+
+/* Keep placeholder + message clear */
+.team-availability-card >
+.component-overlay-placeholder-content > div {
+    position: relative;
+    z-index: 12;
+}

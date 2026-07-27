@@ -1,0 +1,29 @@
+.wizard-page-wrapper {
+  padding: 1.5rem 2rem;
+  min-height: 100%;
+  background: #f9fafb;
+}
+
+.wizard-page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+
+  .page-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin: 0 0 0.125rem;
+  }
+
+  .page-subtitle {
+    font-size: 0.8125rem;
+    color: #6b7280;
+    margin: 0;
+  }
+}
+
+.wizard-step-content {
+  margin-top: 2rem;
+}

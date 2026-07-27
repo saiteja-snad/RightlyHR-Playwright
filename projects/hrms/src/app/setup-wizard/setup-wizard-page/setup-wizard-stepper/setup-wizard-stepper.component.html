@@ -1,0 +1,22 @@
+<div class="stepper-container">
+  <div class="progress-track-wrapper">
+    <div class="track-bg"></div>
+    <div class="track-fill" [style.width]="getCompletedLineWidth()"></div>
+    <div class="progress-content">
+      <div class="steps-row">
+        @for (module of wizardService.modules(); track module.id; let i = $index) {
+          <div class="step" [ngClass]="getStepState(i)">
+            <div class="progress-number">
+              @if (getStepState(i) === 'completed') {
+                <i class="bi bi-check"></i>
+              } @else {
+                {{ module.id }}
+              }
+            </div>
+            <div class="progress-name">{{ module.title }}</div>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</div>

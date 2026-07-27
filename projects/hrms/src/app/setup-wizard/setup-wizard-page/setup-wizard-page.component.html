@@ -1,0 +1,24 @@
+<div class="wizard-page-wrapper">
+  <!-- Page Header -->
+  <div class="wizard-page-header">
+    <div class="header-info">
+      <h4 class="page-title">Setup Wizard</h4>
+      <p class="page-subtitle">
+        {{ wizardService.completedCount() }} of {{ wizardService.totalCount() }} tasks completed
+      </p>
+    </div>
+    <button type="button" class="custom-btn btn-secondary" (click)="onBackToDashboard()">
+      <i class="bi bi-arrow-left me-1"></i> Back to Dashboard
+    </button>
+  </div>
+
+  <!-- Stepper -->
+  @if (!isCompletePage) {
+    <app-setup-wizard-stepper [activeIndex]="wizardService.currentModuleIndex()" />
+  }
+
+  <!-- Step Content -->
+  <div class="wizard-step-content">
+    <router-outlet />
+  </div>
+</div>

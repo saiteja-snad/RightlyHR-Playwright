@@ -13,14 +13,17 @@ import { Subscription } from 'rxjs';
 import { PredefinedThemesService } from '../../services/theme-service/predefined-themes.service';
 import { MenuOrderService } from '../../services/theme-service/menu-order.service';
 import { UserPreferenceService } from '../../services/user-preference.service';
+import { SetupWizardButtonComponent } from '../../setup-wizard/setup-wizard-button/setup-wizard-button.component';
+import { SetupWizardPopupComponent } from '../../setup-wizard/setup-wizard-popup/setup-wizard-popup.component';
 @Component({
   selector: 'app-main-layout',
-  imports: [SidenavComponent, HeaderComponent, RouterOutlet, CommonModule, ReactiveFormsModule,],
+  imports: [SidenavComponent, HeaderComponent, RouterOutlet, CommonModule, ReactiveFormsModule, SetupWizardButtonComponent, SetupWizardPopupComponent],
   templateUrl: './main-layout.component.html',
   styleUrl: './main-layout.component.scss'
 })
 
 export class MainLayoutComponent implements OnInit, OnDestroy {
+  isWizardPopupOpen = false;
   changePasswordForm!: FormGroup;
   getStartedForm!: FormGroup;
   empinfo = {} as IJob;

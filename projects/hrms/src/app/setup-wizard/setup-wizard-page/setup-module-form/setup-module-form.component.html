@@ -1,0 +1,69 @@
+<div class="module-form-card">
+  <div class="module-form-header">
+    <h5 class="module-title">{{ currentModule?.title }}</h5>
+    <p class="module-subtitle">{{ currentModule?.subtitle }}</p>
+  </div>
+
+  <hr class="divider" />
+
+  <form [formGroup]="moduleForm" class="module-form-body">
+    <div class="form-group mb-3">
+      <label class="custom-label">Configuration Name</label>
+      <input
+        type="text"
+        class="form-control custom-input"
+        formControlName="configName"
+        placeholder="Enter configuration name"
+      />
+    </div>
+
+    <div class="form-group mb-3">
+      <label class="custom-label">Description</label>
+      <textarea
+        class="form-control custom-input"
+        formControlName="description"
+        rows="3"
+        placeholder="Enter description"
+      ></textarea>
+    </div>
+
+    <div class="form-group mb-4">
+      <label class="custom-label d-block mb-2">Toggle</label>
+      <div class="toggle-row">
+        <span class="toggle-label">Enable Module</span>
+        <label class="toggle-switch">
+          <input type="checkbox" formControlName="enableModule" />
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+    </div>
+  </form>
+
+  <hr class="divider" />
+
+  <div class="module-form-footer">
+    <button
+      type="button"
+      class="custom-btn btn-secondary"
+      [disabled]="isFirst"
+      (click)="onBack()"
+    >
+      Back
+    </button>
+    <button
+      type="button"
+      class="custom-btn btn-primary"
+      [disabled]="spinnerLoader"
+      (click)="onNext()"
+    >
+      @if (spinnerLoader) {
+        <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+        Saving...
+      } @else if (isLast) {
+        Finish
+      } @else {
+        Next
+      }
+    </button>
+  </div>
+</div>

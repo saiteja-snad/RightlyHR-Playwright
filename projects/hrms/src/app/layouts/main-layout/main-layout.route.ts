@@ -64,4 +64,5 @@ export default [
     { path: 'card-management', component: CardsManagementLayoutComponent, loadChildren: () => import('../../cards-management/cards-management.route') },
     { path: 'pending-approvals', component: PendingApprovalsComponent, loadChildren: () => import('../../time-off/pending-approvals.route') },
     { path: 'help-desk', component: HelpdeskLayOutComponent, canActivate: [authGuard], loadChildren: () => import('../../Helpdesk/helpdesk.route') },
+    { path: 'setup-wizard', loadChildren: () => import('../../setup-wizard/setup-wizard.route') },
 ] as Route[];

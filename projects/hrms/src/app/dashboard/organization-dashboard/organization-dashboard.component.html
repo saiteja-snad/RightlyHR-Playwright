@@ -225,23 +225,277 @@
         </div>
         }
         <!-- Attendance Status -->
-        @if(rbac.allowedToAccess('Attendance Status.view')){
-        <div class="content-card employees-list-content">
-            <div class="summary-header d-inline-flex gap-1">
-                <div class="section-title">Attendance Status</div>
-                <div>
-                    <app-module-info-icon placement="bottom" [ngbPopover]="attendanceStatusInfo" class="module-icon" />
-                    <ng-template #attendanceStatusInfo>
-                        <div class="module-info-text">Displays the distribution of employee attendance such as On
-                            Time, Late Login, Early Logout, and Hours Deficit. Helps monitor attendance behavior and
-                            identify patterns
-                            across the organization.</div>
-                    </ng-template>
+       <!-- Attendance Status -->
+@if(rbac.allowedToAccess('Attendance Status.view')) {
+
+<div class="content-card employees-list-content">
+
+    <!-- Heading stays outside the mask -->
+    <div class="summary-header d-inline-flex gap-1 mb-3">
+        <div class="section-title">Attendance Status</div>
+
+        <div>
+            <app-module-info-icon
+                placement="bottom"
+                [ngbPopover]="attendanceStatusInfo"
+                class="module-icon"
+            />
+
+            <ng-template #attendanceStatusInfo>
+                <div class="module-info-text">
+                    Displays the distribution of employee attendance such as On Time,
+                    Late Login, Early Logout, and Hours Deficit. Helps monitor attendance
+                    behavior and identify patterns across the organization.
                 </div>
+            </ng-template>
+        </div>
+    </div>
+
+
+    <!-- ONLY THIS AREA WILL BE MASKED -->
+    <div class="attendance-status-mask-area">
+
+        <!-- Date -->
+        <div class="flex-between-content mb-3">
+            <div class="custom-date-range-picker">
+                <p-datepicker
+                    [(ngModel)]="attendanceReportDate"
+                    [iconDisplay]="'input'"
+                    [showIcon]="true"
+                    inputId="attendancedate"
+                    [readonlyInput]="true"
+                    [minDate]="minAttendanceReportDate"
+                    [maxDate]="maxAttendanceReportDate"
+                    (onSelect)="onAttendanceReportDateChange($event)"
+                />
             </div>
-            @if(isAttendanceDataTrue){
+        </div>
+
+
+        @if(!attendanceReportLoader) {
+
+            <div
+                class="total-leave-balance-graph-content"
+                [ngClass]="{'graph-no-data-content': !hasAttendanceReportData}">
+
+                @if(hasAttendanceReportData) {
+
+                    <div class="chart-content flex-center-content">
+
+                        <p-chart
+                            type="doughnut"
+                            [data]="attendanceChartData"
+                            [options]="attendanceChartOptions"
+                            class="doughnut-chart"
+                        />
+
+                        <div class="total-count-content">
+                            <p class="count m-0 p-0">
+                                {{totalAttendanceCount}}
+                            </p>
+                        </div>
+
+                    </div>
+
+
+                    <div class="employees-type-grid team-avaliability-grid">
+
+                        <!-- On Time -->
+                        <div
+                            [ngStyle]="{'border-left': '4px solid #10B981'}"
+                            class="employee-type-text ps-2">
+
+                            <p class="m-0">On Time</p>
+
+                            <div class="count-text">
+                                @if(attendanceReportData?.onTime != 0) {
+                                    <span
+                                        class="cursor"
+                                        (click)="openAttendanceOffcanvas(
+                                            resourceList,
+                                            'onTime',
+                                            'On Time',
+                                            attendanceReportData?.onTime
+                                        )">
+                                        <u>{{attendanceReportData?.onTime || 0}}</u>
+                                    </span>
+                                } @else {
+                                    <span>{{attendanceReportData?.onTime || 0}}</span>
+                                }
+                            </div>
+                        </div>
+
+
+                        <!-- Late Login -->
+                        <div
+                            [ngStyle]="{'border-left': '4px solid #F59E0B'}"
+                            class="employee-type-text ps-2">
+
+                            <p class="m-0">Late Login</p>
+
+                            <div class="count-text">
+                                @if(attendanceReportData?.lateLogin != 0) {
+                                    <span
+                                        class="cursor"
+                                        (click)="openAttendanceOffcanvas(
+                                            resourceList,
+                                            'lateLogin',
+                                            'Late Login',
+                                            attendanceReportData?.lateLogin
+                                        )">
+                                        <u>{{attendanceReportData?.lateLogin || 0}}</u>
+                                    </span>
+                                } @else {
+                                    <span>{{attendanceReportData?.lateLogin || 0}}</span>
+                                }
+                            </div>
+                        </div>
+
+
+                        <!-- Early Logout -->
+                        <div
+                            [ngStyle]="{'border-left': '4px solid #EF4444'}"
+                            class="employee-type-text ps-2">
+
+                            <p class="m-0">Early Logout</p>
+
+                            <div class="count-text">
+                                @if(attendanceReportData?.earlyLogout != 0) {
+                                    <span
+                                        class="cursor"
+                                        (click)="openAttendanceOffcanvas(
+                                            resourceList,
+                                            'earlyLogout',
+                                            'Early Logout',
+                                            attendanceReportData?.earlyLogout
+                                        )">
+                                        <u>{{attendanceReportData?.earlyLogout || 0}}</u>
+                                    </span>
+                                } @else {
+                                    <span>{{attendanceReportData?.earlyLogout || 0}}</span>
+                                }
+                            </div>
+                        </div>
+
+
+                        <!-- Hours Deficit -->
+                        <div
+                            [ngStyle]="{'border-left': '4px solid #6366F1'}"
+                            class="employee-type-text ps-2">
+
+                            <p class="m-0">Hours Deficit</p>
+
+                            <div class="count-text">
+                                @if(attendanceReportData?.hoursDeficit != 0) {
+                                    <span
+                                        class="cursor"
+                                        (click)="openAttendanceOffcanvas(
+                                            resourceList,
+                                            'hoursDeficit',
+                                            'Hours Deficit',
+                                            attendanceReportData?.hoursDeficit
+                                        )">
+                                        <u>{{attendanceReportData?.hoursDeficit || 0}}</u>
+                                    </span>
+                                } @else {
+                                    <span>{{attendanceReportData?.hoursDeficit || 0}}</span>
+                                }
+                            </div>
+                        </div>
+
+
+                        <!-- Break Exceeded -->
+                        <div
+                            [ngStyle]="{'border-left': '4px solid #06B6D4'}"
+                            class="employee-type-text ps-2">
+
+                            <p class="m-0">Break Exceeded Hours</p>
+
+                            <div class="count-text">
+                                @if(attendanceReportData?.breakExceeded != 0) {
+                                    <span
+                                        class="cursor"
+                                        (click)="openAttendanceOffcanvas(
+                                            resourceList,
+                                            'breakExceeded',
+                                            'Break Exceeded Hours',
+                                            attendanceReportData?.breakExceeded
+                                        )">
+                                        <u>{{attendanceReportData?.breakExceeded || 0}}</u>
+                                    </span>
+                                } @else {
+                                    <span>{{attendanceReportData?.breakExceeded || 0}}</span>
+                                }
+                            </div>
+                        </div>
+
+
+                        <!-- Permissions -->
+                        <div
+                            [ngStyle]="{'border-left': '4px solid #305889'}"
+                            class="employee-type-text ps-2">
+
+                            <p class="m-0">Permissions</p>
+
+                            <div class="count-text">
+                                @if(attendanceReportData?.permission != 0) {
+                                    <span
+                                        class="cursor"
+                                        (click)="openAttendanceOffcanvas(
+                                            resourceList,
+                                            'permission',
+                                            'Permissions',
+                                            attendanceReportData?.permission
+                                        )">
+                                        <u>{{attendanceReportData?.permission || 0}}</u>
+                                    </span>
+                                } @else {
+                                    <span>{{attendanceReportData?.permission || 0}}</span>
+                                }
+                            </div>
+                        </div>
+
+                    </div>
+
+                } @else {
+
+                    <app-no-data-found />
+
+                }
+
+            </div>
+
+        } @else {
+
+            @if(!showAttendanceMessage) {
+
+                <p-skeleton height="8rem" />
+
+            } @else {
+
+                <div class="position-relative">
+
+                    <p-skeleton height="8rem" />
+
+                    <div class="loading-message-overlay">
+                        <p class="loading-text mb-0">
+                            Please wait while we fetch the latest attendance status details
+                            <span class="loading-dots"></span>
+                        </p>
+                    </div>
+
+                </div>
+
+            }
+
+        }
+
+
+        <!-- MASK ON TOP -->
+        @if(isAttendanceDataTrue) {
 
             <div class="component-overlay-placeholder-content">
+
                 <div>
                     <app-attendance-placeholder></app-attendance-placeholder>
 
@@ -250,130 +504,16 @@
                         Please contact the administrator for assistance.
                     </p>
                 </div>
+
             </div>
 
-            }
-            @else {
-
-            <div class="flex-between-content mb-3">
-                <div class="custom-date-range-picker">
-                    <p-datepicker [(ngModel)]="attendanceReportDate" [iconDisplay]="'input'" [showIcon]="true"
-                        inputId="attendancedate" [readonlyInput]="true" [minDate]="minAttendanceReportDate"
-                        [maxDate]="maxAttendanceReportDate" (onSelect)="onAttendanceReportDateChange($event)" />
-                </div>
-            </div>
-
-            @if(!attendanceReportLoader){
-            <div class="total-leave-balance-graph-content"
-                [ngClass]="{'graph-no-data-content': !hasAttendanceReportData}">
-                @if (hasAttendanceReportData) {
-                <div class="chart-content flex-center-content">
-                    <p-chart type="doughnut" [data]="attendanceChartData" [options]="attendanceChartOptions"
-                        class="doughnut-chart" />
-                    <div class="total-count-content">
-                        <p class="count m-0 p-0">{{totalAttendanceCount}}</p>
-                    </div>
-                </div>
-                <div class="employees-type-grid team-avaliability-grid">
-                    <div [ngStyle]="{ 'border-left': '4px solid #10B981' }" class="employee-type-text ps-2">
-                        <p class="m-0">On Time</p>
-                        <div class="count-text">
-                            @if(attendanceReportData?.onTime != 0){
-                            <span class="cursor"
-                                (click)="openAttendanceOffcanvas(resourceList, 'onTime', 'On Time', attendanceReportData?.onTime)">
-                                <u>{{ attendanceReportData?.onTime || 0 }}</u>
-                            </span>
-                            }@else{
-                            <span>{{ attendanceReportData?.onTime || 0 }}</span>
-                            }
-                        </div>
-                    </div>
-                    <div [ngStyle]="{ 'border-left': '4px solid #F59E0B' }" class="employee-type-text ps-2">
-                        <p class="m-0">Late Login</p>
-                        <div class="count-text">
-                            @if(attendanceReportData?.lateLogin != 0){
-                            <span class="cursor"
-                                (click)="openAttendanceOffcanvas(resourceList, 'lateLogin', 'Late Login', attendanceReportData?.lateLogin)">
-                                <u>{{ attendanceReportData?.lateLogin || 0 }}</u>
-                            </span>
-                            }@else{
-                            <span>{{ attendanceReportData?.lateLogin || 0 }}</span>
-                            }
-                        </div>
-                    </div>
-                    <div [ngStyle]="{ 'border-left': '4px solid #EF4444' }" class="employee-type-text ps-2">
-                        <p class="m-0">Early Logout</p>
-                        <div class="count-text">
-                            @if(attendanceReportData?.earlyLogout != 0){
-                            <span class="cursor"
-                                (click)="openAttendanceOffcanvas(resourceList, 'earlyLogout', 'Early Logout', attendanceReportData?.earlyLogout)">
-                                <u>{{ attendanceReportData?.earlyLogout || 0 }}</u>
-                            </span>
-                            }@else{
-                            <span>{{ attendanceReportData?.earlyLogout || 0 }}</span>
-                            }
-                        </div>
-                    </div>
-                    <div [ngStyle]="{ 'border-left': '4px solid #6366F1' }" class="employee-type-text ps-2">
-                        <p class="m-0">Hours Deficit</p>
-                        <div class="count-text">
-                            @if(attendanceReportData?.hoursDeficit != 0){
-                            <span class="cursor"
-                                (click)="openAttendanceOffcanvas(resourceList, 'hoursDeficit', 'Hours Deficit', attendanceReportData?.hoursDeficit)">
-                                <u>{{ attendanceReportData?.hoursDeficit || 0 }}</u>
-                            </span>
-                            }@else{
-                            <span>{{ attendanceReportData?.hoursDeficit || 0 }}</span>
-                            }
-                        </div>
-                    </div>
-                    <div [ngStyle]="{ 'border-left': '4px solid #06B6D4' }" class="employee-type-text ps-2">
-                        <p class="m-0">Break Exceeded Hours</p>
-                        <div class="count-text">
-                            @if(attendanceReportData?.breakExceeded != 0){
-                            <span class="cursor"
-                                (click)="openAttendanceOffcanvas(resourceList, 'breakExceeded', 'Break Exceeded Hours', attendanceReportData?.breakExceeded)">
-                                <u>{{ attendanceReportData?.breakExceeded || 0 }}</u>
-                            </span>
-                            }@else{
-                            <span>{{ attendanceReportData?.breakExceeded || 0 }}</span>
-                            }
-                        </div>
-                    </div>
-                    <div [ngStyle]="{ 'border-left': '4px solid #305889' }" class="employee-type-text ps-2">
-                        <p class="m-0">Permissions</p>
-                        <div class="count-text">
-                            @if(attendanceReportData?.permission != 0){
-                            <span class="cursor"
-                                (click)="openAttendanceOffcanvas(resourceList, 'permission', 'Permissions', attendanceReportData?.permission)">
-                                <u>{{ attendanceReportData?.permission || 0 }}</u>
-                            </span>
-                            }@else{
-                            <span>{{ attendanceReportData?.permission || 0 }}</span>
-                            }
-                        </div>
-                    </div>
-                </div>
-                }@else {
-                <app-no-data-found />
-                }
-            </div>
-            } @else {
-            @if(!showAttendanceMessage) {
-            <p-skeleton height="8rem" />
-            }@else {
-            <div class="position-relative">
-                <p-skeleton height="8rem" />
-                <div class="loading-message-overlay">
-                    <p class="loading-text mb-0">Please wait while we fetch the latest attendance status details<span
-                            class="loading-dots"></span></p>
-                </div>
-            </div>
-            }
-            }
-            }
-        </div>
         }
+
+    </div>
+
+</div>
+
+}
         <!-- Approvals Overview -->
         @if(rbac.allowedToAccess('Approvals Overview.view')){
         <div class="content-card">
@@ -825,96 +965,170 @@
 </ng-template>
 
 <!--team avaliability content-->
+<!--team avaliability content-->
 <ng-template #teamAvaliabilityContent>
-    <div class="content-card employees-list-content">
-        <div class="summary-header d-inline-flex gap-1">
+
+    <div class="content-card employees-list-content team-availability-card">
+
+        <!-- Heading -->
+        <div class="summary-header d-inline-flex gap-1 mb-3">
             <div class="section-title">Team Availability</div>
+
             <div>
                 <app-module-info-icon placement="bottom" [ngbPopover]="resourceSummaryContent" class="module-icon" />
+
                 <ng-template #resourceSummaryContent>
-                    <div class="module-info-text">{{teamavailabilityinfo}}</div>
+                    <div class="module-info-text">
+                        {{teamavailabilityinfo}}
+                    </div>
                 </ng-template>
             </div>
         </div>
-        @if(isAttendanceDataTrue){
 
-        <div class="component-overlay-placeholder-content">
-            <div>
-                <app-attendance-placeholder></app-attendance-placeholder>
 
-                <p class="context">
-                    Attendance data is currently unavailable due to pending biometric integration.
-                    Please contact the administrator for assistance.
-                </p>
-            </div>
-        </div>
+        <!-- This is the ONLY area that will get transparent/blur -->
+        <div class="team-availability-mask-area">
 
-        }
-        @else {
-        <div class="flex-between-content mb-3">
-            <div class="d-flex align-items-center gap-2">
-                @if(rbac.allowedToAccess('Organization Availability Select Department.view')){
-                <div class="custom-p-select-content custom-small-select">
-                    <p-select [options]="departDropdownOptions" optionLabel="departmentName" optionValue="sno"
-                        [(ngModel)]="selectedDepartId" (onChange)="onDepartChange($event)" [showClear]="true"
-                        [filter]="true" filterBy="departmentName" filterPlaceholder="Search department"
-                        placeholder="Please select department" class="form-select custom-select" />
-                </div>
-                }
-                <div class="custom-date-range-picker">
-                    <p-datepicker [(ngModel)]="selectedDate" [iconDisplay]="'input'" [showIcon]="true"
-                        inputId="icondisplay" [readonlyInput]="true" [maxDate]="todayMaxdate"
-                        (onSelect)="onDateChange($event)" />
-                </div>
-            </div>
-        </div>
-        @if(!availabilityLoading){
-        <div class="total-leave-balance-graph-content" [ngClass]="{'graph-no-data-content': teamTotal === 0}">
-            @if (teamTotal !== 0) {
-            <div class="chart-content flex-center-content">
-                <p-chart type="doughnut" [data]="teamChartData" [options]="teamChartOptions" class="doughnut-chart" />
-                <div class="total-count-content">
-                    <p class="count m-0 p-0">{{teamTotal}}</p>
-                </div>
-            </div>
-            <div class="employees-type-grid team-avaliability-grid">
-                @for (item of legendList; track $index) {
-                <div [ngStyle]="{ 'border-left': '4px solid ' + item.color }" class="ps-2">
-                    <div class="employee-type-text">
-                        <p class="m-0">{{ item.label }}</p>
-                        <div class="count-text">
-                            @if(teamSummary[item.key] > 0){
-                            <span class="cursor" (click)="openOffcanvas(resourceList,item)">
-                                <u>{{teamSummary[item.key]}}</u>
-                            </span>
-                            }@else{
-                            <span>{{teamSummary[item.key] || 0 }}</span>
-                            }
-                        </div>
+            <div class="flex-between-content mb-3">
+                <div class="d-flex align-items-center gap-2">
+
+                    @if(rbac.allowedToAccess('Organization Availability Select Department.view')){
+                    <div class="custom-p-select-content custom-small-select">
+                        <p-select [options]="departDropdownOptions" optionLabel="departmentName" optionValue="sno"
+                            [(ngModel)]="selectedDepartId" (onChange)="onDepartChange($event)" [showClear]="true"
+                            [filter]="true" filterBy="departmentName" filterPlaceholder="Search department"
+                            placeholder="Please select department" class="form-select custom-select" />
                     </div>
+                    }
+
+                    <div class="custom-date-range-picker">
+                        <p-datepicker [(ngModel)]="selectedDate" [iconDisplay]="'input'" [showIcon]="true"
+                            inputId="icondisplay" [readonlyInput]="true" [maxDate]="todayMaxdate"
+                            (onSelect)="onDateChange($event)" />
+                    </div>
+
                 </div>
+            </div>
+
+
+            @if(!availabilityLoading){
+
+            <div class="total-leave-balance-graph-content" [ngClass]="{'graph-no-data-content': teamTotal === 0}">
+
+                @if(teamTotal !== 0){
+
+                <div class="chart-content flex-center-content">
+
+                    <p-chart type="doughnut" [data]="teamChartData" [options]="teamChartOptions"
+                        class="doughnut-chart" />
+
+                    <div class="total-count-content">
+                        <p class="count m-0 p-0">
+                            {{teamTotal}}
+                        </p>
+                    </div>
+
+                </div>
+
+
+                <div class="employees-type-grid team-avaliability-grid">
+
+                    @for(item of legendList; track $index){
+
+                    <div [ngStyle]="{'border-left': '4px solid ' + item.color}" class="ps-2">
+
+                        <div class="employee-type-text">
+
+                            <p class="m-0">
+                                {{item.label}}
+                            </p>
+
+                            <div class="count-text">
+
+                                @if(teamSummary[item.key] > 0){
+
+                                <span class="cursor" (click)="openOffcanvas(resourceList,item)">
+
+                                    <u>
+                                        {{teamSummary[item.key]}}
+                                    </u>
+
+                                </span>
+
+                                } @else {
+
+                                <span>
+                                    {{teamSummary[item.key] || 0}}
+                                </span>
+
+                                }
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    }
+
+                </div>
+
+                } @else {
+
+                <app-no-data-found />
+
                 }
+
             </div>
-            }@else {
-            <app-no-data-found />
-            }
-        </div>
-        }@else {
-        @if(!showAvailabilityMessage) {
-        <p-skeleton height="8rem" />
-        }@else {
-        <div class="position-relative" style="min-height: 10rem;">
+
+            } @else {
+
+            @if(!showAvailabilityMessage){
+
             <p-skeleton height="8rem" />
-            <div class="loading-message-overlay">
-                <p class="loading-text mb-0">Please wait while we fetch the latest employee availability details
-                    <span class="loading-dots"></span>
-                </p>
+
+            } @else {
+
+            <div class="position-relative" style="min-height: 10rem;">
+
+                <p-skeleton height="8rem" />
+
+                <div class="loading-message-overlay">
+                    <p class="loading-text mb-0">
+                        Please wait while we fetch the latest employee availability details
+                        <span class="loading-dots"></span>
+                    </p>
+                </div>
+
             </div>
+
+            }
+
+            }
+
+
+            <!-- Mask sits ON TOP of the above content -->
+            @if(isAttendanceDataTrue){
+
+            <div class="component-overlay-placeholder-content">
+
+                <div>
+                    <app-attendance-placeholder></app-attendance-placeholder>
+
+                    <p class="context">
+                        Attendance data is currently unavailable due to pending biometric integration.
+                        Please contact the administrator for assistance.
+                    </p>
+                </div>
+
+            </div>
+
+            }
+
         </div>
-        }
-        }
-        }
+
     </div>
+
 </ng-template>
 
 <!--Attendance Employees List-->

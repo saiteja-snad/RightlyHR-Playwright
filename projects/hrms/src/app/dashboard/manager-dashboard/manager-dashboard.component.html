@@ -27,6 +27,18 @@
         <!-- Attendance Status -->
         @if(rbac.allowedToAccess('Attendance Status.view')){
         <div class="content-card employees-list-content">
+              <div class="summary-header d-inline-flex gap-1">
+                    <div class="section-title">Attendance Status</div>
+                    <div>
+                        <app-module-info-icon placement="bottom" [ngbPopover]="attendanceStatusInfo" class="module-icon" />
+                        <ng-template #attendanceStatusInfo>
+                            <div class="module-info-text">Displays the distribution of employee attendance such as On Time, Late
+                                Login, Early Logout, and Hours Deficit. Helps monitor attendance behavior and identify patterns across the
+                                organization.
+                            </div>
+                        </ng-template>
+                    </div>
+                </div>
              @if(isAttendanceDataTrue){
 
         <div class="component-overlay-placeholder-content">
@@ -43,18 +55,6 @@
     }
     @else {
             <div class="flex-between-content mb-3">
-                <div class="summary-header d-inline-flex gap-1">
-                    <div class="section-title">Attendance Status</div>
-                    <div>
-                        <app-module-info-icon placement="bottom" [ngbPopover]="attendanceStatusInfo" class="module-icon" />
-                        <ng-template #attendanceStatusInfo>
-                            <div class="module-info-text">Displays the distribution of employee attendance such as On Time, Late
-                                Login, Early Logout, and Hours Deficit. Helps monitor attendance behavior and identify patterns across the
-                                organization.
-                            </div>
-                        </ng-template>
-                    </div>
-                </div>
                 <div class="custom-date-range-picker">
                     <p-datepicker [(ngModel)]="attendanceReportDate" [iconDisplay]="'input'" [showIcon]="true"
                         inputId="attendancedate" [readonlyInput]="true" [minDate]="minAttendanceReportDate"
@@ -671,6 +671,16 @@
 <!--team avaliability content-->
 <ng-template #teamAvaliabilityContent>
     <div class="content-card employees-list-content">
+        <div class="summary-header d-inline-flex gap-1">
+                <div class="section-title">My Team Availability</div>
+                <div>
+                    <app-module-info-icon placement="bottom" [ngbPopover]="resourceSummaryContent" class="module-icon" />
+                    <ng-template #resourceSummaryContent>
+                        <div class="module-info-text">{{teamavailabilityinfo}}</div>
+                    </ng-template>
+                </div>
+            </div>
+
         @if(isAttendanceDataTrue){
 
             <div class="component-overlay-placeholder-content">
@@ -687,16 +697,6 @@
         }
         @else {
         <div class="flex-between-content mb-3">
-            <div class="summary-header d-inline-flex gap-1">
-                <div class="section-title">My Team Availability</div>
-                <div>
-                    <app-module-info-icon placement="bottom" [ngbPopover]="resourceSummaryContent" class="module-icon" />
-                    <ng-template #resourceSummaryContent>
-                        <div class="module-info-text">{{teamavailabilityinfo}}</div>
-                    </ng-template>
-                </div>
-            </div>
-
             <div class="custom-date-range-picker">
                 <p-datepicker [(ngModel)]="selectedDate" [iconDisplay]="'input'" [showIcon]="true" inputId="icondisplay"
                     [readonlyInput]="true" [maxDate]="todayMaxdate" (onSelect)="onDateChange($event)" />

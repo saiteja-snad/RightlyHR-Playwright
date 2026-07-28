@@ -13,7 +13,6 @@ import { Subscription } from 'rxjs';
 import { PredefinedThemesService } from '../../services/theme-service/predefined-themes.service';
 import { MenuOrderService } from '../../services/theme-service/menu-order.service';
 import { UserPreferenceService } from '../../services/user-preference.service';
-import { UserTourService } from '../../shared/user-tour/user-tour.service';
 @Component({
   selector: 'app-main-layout',
   imports: [SidenavComponent, HeaderComponent, RouterOutlet, CommonModule, ReactiveFormsModule,],
@@ -37,16 +36,14 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
     private modalService: NgbModal, private conformationPopup: OpenModalService, public formsValidation: FormValidationsService,
     private predefinedThemesService: PredefinedThemesService,
     private menuOrderService: MenuOrderService,
-    private userPrefService: UserPreferenceService,
-    private userTourService: UserTourService) { }
+    private userPrefService: UserPreferenceService) { }
 
   async ngOnInit() {
     this.intilaizeChangePasswordForm();
     this.intializeGetStartedForm();
     this.empinfo = JSON.parse(localStorage.getItem('currentUser') || '{}');
     this.employeeName = this.empinfo.name;
-    this.userTourService.setBlockedByModal(true);
-    this.getUserPreference(this.empinfo.employeeId);
+     this.getUserPreference(this.empinfo.employeeId);
     await this.predefinedThemesService.initTheme();
     await this.predefinedThemesService.initFont();
     await this.menuOrderService.initMenuOrder();
@@ -56,29 +53,17 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
   getUserPreference(employeeId: number) {
     this.subscription = this.http.getData(`Employeedata/get-user-preference/${employeeId}`).subscribe({
       next: (res: any) => {
-        const shouldShowGetStarted = !res.data.isUserRegistred;
-        const shouldShowChangePassword =
-          !shouldShowGetStarted &&
-          this.empinfo?.loginType?.toLowerCase() === 'classic login' &&
-          !res.data.isPasswordChanged;
-
-        this.userTourService.setBlockedByModal(shouldShowGetStarted || shouldShowChangePassword);
-
-        if (shouldShowGetStarted) {
+        if (!res.data.isUserRegistred) {
           this.openModal(this.getstarted);
         }
-        else if (shouldShowChangePassword) {
+        else if (this.empinfo?.loginType?.toLowerCase() === 'classic login' && !res.data.isPasswordChanged) {
           // Open change password modal
           this.modalService.open(this.changepasswordModal, { centered: true, backdrop: 'static', keyboard: false, size: 'xl' });
         }
-      },
-      error: () => {
-        this.userTourService.setBlockedByModal(false);
       }
     })
   }
   openModal(modal: any) {
-    this.userTourService.setBlockedByModal(true);
     this.modalService.open(modal, { centered: true, backdrop: 'static', keyboard: false, size: 'xl' });
   }
 

@@ -26,7 +26,6 @@ export class UserTourService implements OnDestroy {
   private subTabsStartInProgress = false;
   private scrollLockCleanup: (() => void) | null = null;
   private pendingSubTabsCheck = false;
-  private isBlockedByModal = false;
 
   constructor(
     private router: Router,
@@ -236,7 +235,6 @@ export class UserTourService implements OnDestroy {
    * Shows the first incomplete tour found.
    */
   public async checkAndStartTours(): Promise<void> {
-    if (this.isBlockedByModal) return;
     if (this.checkAndStartToursInProgress) return;
     this.checkAndStartToursInProgress = true;
     try {
@@ -264,7 +262,6 @@ export class UserTourService implements OnDestroy {
   }
 
   private async handlePostTourFlow(): Promise<void> {
-    if (this.isBlockedByModal) return;
     if (this.tourInProgress) return;
     if (this.checkAndStartToursInProgress) return;
 
@@ -291,9 +288,6 @@ export class UserTourService implements OnDestroy {
   }
 
   private async handleRouteChange(): Promise<void> {
-    if (this.isBlockedByModal) {
-      return;
-    }
     if (this.tourInProgress) {
       if (this.activeTourConfig?.moduleTourKey) {
         this.dismissActiveTourOnRouteChange();
@@ -359,8 +353,7 @@ export class UserTourService implements OnDestroy {
   }
 
   private async checkAndStartSubTabsTourForCurrentRoute(): Promise<void> {
-    if (this.isBlockedByModal) return;
-    if (this.tourInProgress || this.subTabsStartInProgress) return;
+        if (this.tourInProgress || this.subTabsStartInProgress) return;
     if (this.checkAndStartToursInProgress) {
       if (!this.pendingSubTabsCheck) {
         this.pendingSubTabsCheck = true;
@@ -392,16 +385,6 @@ export class UserTourService implements OnDestroy {
         this.tabsDndLocked.set(false);
       }
     }
-  }
-
-  public setBlockedByModal(blocked: boolean): void {
-    this.isBlockedByModal = blocked;
-
-    if (blocked) {
-      return;
-    }
-
-    void this.handlePostTourFlow();
   }
 
   /**

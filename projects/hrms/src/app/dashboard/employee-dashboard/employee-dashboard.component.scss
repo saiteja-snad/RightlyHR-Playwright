@@ -1316,3 +1316,13 @@
     position: relative;
     z-index: 12;
 }
+
+.graph-no-data-content {
+    position: relative;
+    width: 100%;
+    min-height: 16vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}

@@ -426,7 +426,7 @@
         }
 
         @else {
-        <div class="team-members-empty">
+        <div class="graph-no-data-content">
           <app-no-data-found />
         </div>
         }
@@ -706,11 +706,7 @@
         <div class="section-title">My Team Availability</div>
 
         <div>
-          <app-module-info-icon
-            placement="bottom"
-            [ngbPopover]="resourceSummaryContent"
-            class="module-icon"
-          />
+          <app-module-info-icon placement="bottom" [ngbPopover]="resourceSummaryContent" class="module-icon" />
 
           <ng-template #resourceSummaryContent>
             <div class="module-info-text">
@@ -722,16 +718,9 @@
 
       <!-- Keep your existing date picker -->
       <div class="custom-date-range-picker disabled-date-filter">
-        <p-datepicker
-          [(ngModel)]="selectedDate"
-          [iconDisplay]="'input'"
-          [showIcon]="true"
-          inputId="icondisplay"
-          [readonlyInput]="true"
-          [maxDate]="todayMaxdate"
-          [disabled]="isAttendanceDataTrue"
-          (onSelect)="onDateChange($event)"
-        />
+        <p-datepicker [(ngModel)]="selectedDate" [iconDisplay]="'input'" [showIcon]="true" inputId="icondisplay"
+          [readonlyInput]="true" [maxDate]="todayMaxdate" [disabled]="isAttendanceDataTrue"
+          (onSelect)="onDateChange($event)" />
       </div>
 
     </div>
@@ -740,109 +729,95 @@
     <!-- NORMAL CONTENT ALWAYS RENDERED -->
     @if(!avaliabletlyloading) {
 
-      <div
-        class="total-leave-balance-graph-content"
-        [ngClass]="{'graph-no-data-content': teamTotal === 0}"
-      >
+    <div class="total-leave-balance-graph-content" [ngClass]="{'graph-no-data-content': teamTotal === 0}">
 
-        @if (teamTotal !== 0) {
+      @if (teamTotal !== 0) {
 
-          <div class="chart-content flex-center-content">
+      <div class="chart-content flex-center-content">
 
-            <p-chart
-              type="doughnut"
-              [data]="teamChartData"
-              [options]="teamChartOptions"
-              class="doughnut-chart"
-            />
+        <p-chart type="doughnut" [data]="teamChartData" [options]="teamChartOptions" class="doughnut-chart" />
 
-            <div class="total-count-content">
-              <p class="count m-0 p-0">
-                {{ teamTotal }}
-              </p>
-            </div>
-
-          </div>
-
-
-          <div class="employees-type-grid team-avaliability-grid">
-
-            @for (item of legendList; track $index) {
-
-              <div
-                [ngStyle]="{
-                  'border-left': '4px solid ' + item.color
-                }"
-                class="ps-2"
-              >
-
-                <div class="employee-type-text">
-
-                  <p class="m-0">
-                    {{ item.label }}
-                  </p>
-
-                  <div class="count-text">
-
-                    @if(teamSummary[item.key] != '0') {
-
-                      <span
-                        class="cursor"
-                        (click)="openOffcanvas(resourceList, item)"
-                      >
-                        <u>{{ teamSummary[item.key] }}</u>
-                      </span>
-
-                    } @else {
-
-                      <span>
-                        {{ teamSummary[item.key] || 0 }}
-                      </span>
-
-                    }
-
-                  </div>
-
-                </div>
-
-              </div>
-
-            }
-
-          </div>
-
-        } @else {
-
-          <app-no-data-found />
-
-        }
+        <div class="total-count-content">
+          <p class="count m-0 p-0">
+            {{ teamTotal }}
+          </p>
+        </div>
 
       </div>
 
-    } @else {
 
-      @if(!showAvailabilityMessage) {
+      <div class="employees-type-grid team-avaliability-grid">
 
-        <p-skeleton height="8rem" />
+        @for (item of legendList; track $index) {
 
-      } @else {
+        <div [ngStyle]="{
+                  'border-left': '4px solid ' + item.color
+                }" class="ps-2">
 
-        <div class="position-relative" style="min-height: 10rem;">
+          <div class="employee-type-text">
 
-          <p-skeleton height="8rem" />
-
-          <div class="loading-message-overlay">
-
-            <p class="loading-text mb-0">
-              Please wait while we fetch the latest employee availability details
-              <span class="loading-dots"></span>
+            <p class="m-0">
+              {{ item.label }}
             </p>
+
+            <div class="count-text">
+
+              @if(teamSummary[item.key] != '0') {
+
+              <span class="cursor" (click)="openOffcanvas(resourceList, item)">
+                <u>{{ teamSummary[item.key] }}</u>
+              </span>
+
+              } @else {
+
+              <span>
+                {{ teamSummary[item.key] || 0 }}
+              </span>
+
+              }
+
+            </div>
 
           </div>
 
         </div>
 
+        }
+
+      </div>
+
+      } @else {
+
+      <app-no-data-found />
+
       }
+
+    </div>
+
+    } @else {
+
+    @if(!showAvailabilityMessage) {
+
+    <p-skeleton height="8rem" />
+
+    } @else {
+
+    <div class="position-relative" style="min-height: 10rem;">
+
+      <p-skeleton height="8rem" />
+
+      <div class="loading-message-overlay">
+
+        <p class="loading-text mb-0">
+          Please wait while we fetch the latest employee availability details
+          <span class="loading-dots"></span>
+        </p>
+
+      </div>
+
+    </div>
+
+    }
 
     }
 
@@ -850,20 +825,20 @@
     <!-- MASK IS SEPARATE -->
     @if(isAttendanceDataTrue) {
 
-      <div class="component-overlay-placeholder-content">
+    <div class="component-overlay-placeholder-content">
 
-        <div>
+      <div>
 
-          <app-attendance-placeholder></app-attendance-placeholder>
+        <app-attendance-placeholder></app-attendance-placeholder>
 
-          <p class="context">
-            Attendance data is currently unavailable due to pending biometric integration.
-            Please contact the administrator for assistance.
-          </p>
-
-        </div>
+        <p class="context">
+          Attendance data is currently unavailable due to pending biometric integration.
+          Please contact the administrator for assistance.
+        </p>
 
       </div>
+
+    </div>
 
     }
 

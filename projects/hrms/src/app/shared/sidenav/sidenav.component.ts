@@ -114,6 +114,9 @@ export class SidenavComponent implements OnInit, OnDestroy {
     });
 
     setTimeout(() => {
+      if (this.hasActiveFirstTimeUserPopup()) {
+        return;
+      }
       this.userTourService.checkAndStartTours();
     }, 2000); // Give some time for initial load
   }
@@ -126,6 +129,10 @@ export class SidenavComponent implements OnInit, OnDestroy {
   readonly sidenavEnterPredicate = (drag: CdkDrag, _drop: CdkDropList): boolean => {
     return drag.dropContainer.id !== this.quickLinksDropListId;
   };
+
+  private hasActiveFirstTimeUserPopup(): boolean {
+    return !!document.querySelector('#popupgetstarted, #changepasswordModal');
+  }
 
   private applyMenuOrder(order: MenuOrder): void {
     const { main, ellipses } = this.menuRegistry.resolveMenus(

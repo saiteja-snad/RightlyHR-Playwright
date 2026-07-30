@@ -364,23 +364,14 @@ export class LeavesWaitingForApprovalComponent implements OnInit, OnDestroy {
   }
 
   canApprove(item: any): boolean {
-    const currentApproverId = item?.pendingApprovalsHeader?.currentApproverId;
-    const loginId = this.LOGIN.employeeId?.toString();
-    const canApproveResult = currentApproverId?.toString() === loginId;
+  const loginEmployeeId = Number(this.empdata?.employeeId);
+  const currentApproverId = Number(item?.currentApproverId);
 
-    console.log('canApprove Debug:', {
-      itemId: item?.id,
-      currentApproverId: currentApproverId,
-      currentApproverIdType: typeof currentApproverId,
-      loginId: loginId,
-      loginIdType: typeof loginId,
-      canApproveResult: canApproveResult,
-      pendingApprovalsHeader: item?.pendingApprovalsHeader,
-      fullItem: JSON.stringify(item, null, 2)
-    });
-
-    return canApproveResult;
-  }
+  return (
+    loginEmployeeId === currentApproverId &&
+    !this.shouldHideApproval(item)
+  );
+}
 
   calculateProbationLeaves() {
 
@@ -655,5 +646,28 @@ export class LeavesWaitingForApprovalComponent implements OnInit, OnDestroy {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();
   }
+
+  shouldHideApproval(item: any): boolean {
+  const loginEmployeeId = Number(this.empdata?.employeeId);
+  const currentApproverId = Number(item?.currentApproverId);
+  const reportingManagerId = Number(item?.reportingManagerId);
+  const teamManagerId = Number(item?.teamManagerId);
+
+  return (
+    loginEmployeeId > 0 &&
+    currentApproverId > 0 &&
+    reportingManagerId > 0 &&
+    teamManagerId > 0 &&
+    reportingManagerId === teamManagerId &&
+    teamManagerId === loginEmployeeId &&
+    loginEmployeeId === currentApproverId
+  );
+}
+
+hasApprovableItems(): boolean {
+  return this.lpdata.some((item: any) =>
+    this.canApprove(item) && !this.shouldHideApproval(item)
+  );
+}
 
 }

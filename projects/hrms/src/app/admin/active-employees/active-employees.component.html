@@ -9,7 +9,8 @@
 
   <div class="custom-table-content">
     @if (!loader) {
-    <p-table #activeEmployeesTable [value]="getFilteredAndSortedEmployees()" [tableStyle]="{'width': '100%'}" [customSort]="true" (sortFunction)="customSort($event)">
+    <p-table #activeEmployeesTable [value]="getFilteredAndSortedEmployees()" [tableStyle]="{'width': '100%'}"
+      [customSort]="true" (sortFunction)="customSort($event)">
       <ng-template pTemplate="header">
         <tr>
           <th pSortableColumn="fusionEmpId">{{'Employee ID'|translate}} <p-sortIcon field="fusionEmpId" /></th>
@@ -38,12 +39,12 @@
             </span>
             <ng-template #fistname>-</ng-template>
           </td>
-           <!-- DOJ -->
-           <td>
+          <!-- DOJ -->
+          <td>
             <span *ngIf="act.dateOfJoining;else dateOfJoining">{{act.dateOfJoining | date}}</span>
             <ng-template #dateOfJoining>-</ng-template>
           </td>
-           <!-- DOJ -->
+          <!-- DOJ -->
           <!--Work Email-->
           <td>
             <span *ngIf="act.workEmail;else workemail">{{act.workEmail}}</span>
@@ -51,9 +52,11 @@
           </td>
           <!--Contact Number-->
           <td class="text-nowrap">
-            <span *ngIf="act.contactnumber;else contactnumb">
-              {{act.contactnumber ? act.contactnumber : '-'}}
+            <span *ngIf="act.contactnumber; else contactnumb">
+              {{ act.mobilePhoneCountryCode || '' }}
+              {{ act.contactnumber }}
             </span>
+
             <ng-template #contactnumb>-</ng-template>
           </td>
           <!-- Location -->
@@ -63,7 +66,8 @@
           </td>
           <!-- Sub Location -->
           <td>
-            <span *ngIf="act.jobDetails?.[0]?.subLocation; else noSubLocation">{{ act.jobDetails?.[0]?.subLocation }}</span>
+            <span *ngIf="act.jobDetails?.[0]?.subLocation; else noSubLocation">{{ act.jobDetails?.[0]?.subLocation
+              }}</span>
             <ng-template #noSubLocation>-</ng-template>
           </td>
           <!-- Shift Name -->
@@ -86,10 +90,10 @@
         <div class="wrapper">
           <tr>
             <app-no-data-found />
-      
+
           </tr>
         </div>
-      
+
       </ng-template>
     </p-table>
     } @else {

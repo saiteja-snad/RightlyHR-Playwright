@@ -12,6 +12,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AuthService } from '../../services/auth.service';
 import { SignalsService } from '../../services/signals.service';
 import { TranslateModule } from '@ngx-translate/core';
+import { TenantService } from '../../services/tenant.service';
 @Component({
   selector: 'app-user-validation',
   imports: [FormsModule, CommonModule, TranslateModule],
@@ -38,7 +39,8 @@ export class UserValidationComponent implements OnInit, OnDestroy {
     private rbac: RbacService,
     private modalService: NgbModal,
     private auth: AuthService,
-    public signal: SignalsService
+    public signal: SignalsService,
+    private tenantService: TenantService
   ) { }
 
   async ngOnInit() {
@@ -57,6 +59,7 @@ export class UserValidationComponent implements OnInit, OnDestroy {
       const payload = {
         provider: 'Microsoft',
         accessToken: tokens.id_token,
+        domain: this.tenantService.currentDomain,
         deviceName,
         ipAddress,
         userAgent: navigator.userAgent
@@ -81,6 +84,7 @@ export class UserValidationComponent implements OnInit, OnDestroy {
       const payload = {
         provider: 'Google',
         accessToken: googleUser.idToken,
+        domain: this.tenantService.currentDomain,
         deviceName,
         ipAddress,
         userAgent: navigator.userAgent

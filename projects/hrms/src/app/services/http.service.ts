@@ -9,6 +9,7 @@ import { BehaviorSubject, Observable, Subject, catchError } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { ApprovalStatusCount } from '../Interfaces/timoff-model';
 import moment from 'moment';
+import { TenantService } from './tenant.service';
 @Injectable({
   providedIn: 'root',
 })
@@ -73,13 +74,16 @@ export class HttpService {
   permissionTriggerSignal = signal<boolean>(false);
   compOffTriggerSignal = signal<number>(0);
   cardsregisterSignal = signal<boolean>(false);
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private tenantService: TenantService) {
     this.communicationService = new BehaviorSubject(null);
   }
 
   loginErrorSignal = signal<string>('');
 
-  ApiUrl = environment.ApiUrl;
+  get ApiUrl(): string {
+    
+    return this.tenantService.currentApiUrl;
+  }
   activeTabSubject = new BehaviorSubject<boolean>(false);
   activeTabStatus$ = this.activeTabSubject.asObservable();
 

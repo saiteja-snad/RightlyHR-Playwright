@@ -1,7 +1,12 @@
 <div class="custom-main-component-container">
   <div class="custom-table-content">
 
-    @if (selectedProducts.length > 0 && !permissionForLoggedInUser) {
+    @if(
+    selectedProducts.length > 0 &&
+    !permissionForLoggedInUser &&
+    canApprove(selectedProducts[0]) &&
+    !shouldHideApproval(selectedProducts[0])
+    ){
     <div class="component-header-content">
 
       <div class="component-sub-header">
@@ -41,11 +46,14 @@
         [sortMode]="'single'">
         <ng-template pTemplate="header">
           <tr>
+            @if(
+            waitingForApprovalPerimisions.length > 0 &&
+            hasApprovableItems()
+            ){
             <th style="width:4rem">
-              @if(showMultiSelectAndSearch()){
               <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
-              }
             </th>
+            }
 
 
             <th pSortableColumn="createdDate">{{'Requested Date' | translate}} <p-sortIcon
@@ -67,11 +75,17 @@
         </ng-template>
         <ng-template pTemplate="body" let-permissionRequest>
           <tr>
+            @if(
+            canApprove(permissionRequest) &&
+            !shouldHideApproval(permissionRequest)
+            ){
             <td style="width:4rem">
-              @if(canApprove(permissionRequest)){
               <p-tableCheckbox [value]="permissionRequest"></p-tableCheckbox>
-              }
             </td>
+            }
+            @else if(hasApprovableItems()){
+            <td style="width:4rem"></td>
+            }
             <td>{{permissionRequest.createdDate | dateformat}}</td>
             <td>{{permissionRequest.requestedDate | dateformat}}</td>
             <td>{{(+permissionRequest.duration) * 60 * 60 * 1000 | date:'HH:mm':'UTC'}}</td>
@@ -113,8 +127,12 @@
               }
 
               <!-- Current Approver -->
-              @else if(canApprove(permissionRequest)){
 
+              @else if(
+              canApprove(permissionRequest) &&
+              !shouldHideApproval(permissionRequest) &&
+              selectedProducts.length == 0
+              ){
               <div class="dropdown">
                 <a type="button" data-bs-toggle="dropdown">
                   <i class="bi bi-three-dots-vertical"></i>

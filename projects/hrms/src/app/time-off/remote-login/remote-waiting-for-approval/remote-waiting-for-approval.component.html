@@ -1,7 +1,11 @@
 <div class="custom-main-component-container">
   <div class="custom-table-content ">
 
-    @if (selectedProducts.length > 0 && canApprove(selectedProducts[0])) {
+    @if (
+    selectedProducts.length > 0 &&
+    canApprove(selectedProducts[0]) &&
+    !shouldHideApproval(selectedProducts[0])
+    ) {
 
     <div class="component-header-content">
 
@@ -29,11 +33,11 @@
         <ng-template pTemplate="header">
           <tr>
 
+            @if(approvedRemotes.length > 0 && hasApprovableItems()) {
             <th style="width:4rem">
-              @if(showMultiSelectAndSearch()){
               <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
-              }
             </th>
+            }
 
             <th pSortableColumn="startTime">{{'Worked Date' | translate}} <p-sortIcon field="startTime" /></th>
             <th pSortableColumn="durationType">{{'Availed' | translate}} <p-sortIcon field="durationType" /></th>
@@ -50,11 +54,14 @@
 
         <ng-template pTemplate="body" let-remoteRequest>
           <tr>
+            @if(
+            canApprove(remoteRequest) &&
+            !shouldHideApproval(remoteRequest)
+            ){
             <td style="width:4rem">
-              @if(canApprove(remoteRequest)){
               <p-tableCheckbox [value]="remoteRequest"></p-tableCheckbox>
-              }
             </td>
+            }
             <td>{{ remoteRequest.startTime ? (remoteRequest.startTime | dateformat) : ' -' }}</td>
             <td [ngSwitch]="remoteRequest.durationType">
               <span *ngSwitchCase="1">First Half</span>
@@ -82,7 +89,10 @@
             @if(selectedProducts.length == 0){
             <td class="text-center">
 
-              @if(canApprove(remoteRequest)){
+              @if(
+              canApprove(remoteRequest) &&
+              !shouldHideApproval(remoteRequest)
+              ){
               <div class="dropdown">
                 <a type="button" data-bs-toggle="dropdown">
                   <i class="bi bi-three-dots-vertical"></i>

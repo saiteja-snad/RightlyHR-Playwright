@@ -20,7 +20,6 @@ export class TenantService {
   private verificationStatusSubject = new BehaviorSubject<'idle' | 'verifying' | 'verified' | 'invalid'>('idle');
   private verificationResponseSubject = new BehaviorSubject<DomainVerificationResponse | null>(null);
   private logoSubject = new BehaviorSubject<string>('');
-  private apiUrlSubject = new BehaviorSubject<string>(environment.ApiUrl);
 
   domain$ = this.domainSubject.asObservable();
   verificationStatus$ = this.verificationStatusSubject.asObservable();
@@ -57,7 +56,7 @@ export class TenantService {
   }
 
   get currentApiUrl(): string {
-    return this.apiUrlSubject.value;
+    return this.apiUrl;
   }
 
   get verificationStatus(): 'idle' | 'verifying' | 'verified' | 'invalid' {
@@ -104,10 +103,7 @@ export class TenantService {
         if (response?.tenantId) {
           localStorage.setItem('tenantId', response.tenantId);
         }
-        const isLocalhost = ['localhost', '127.0.0.1'].includes(window.location.hostname);
-        if (!isLocalhost) {
-          this.apiUrlSubject.next(`http://api-${domain}.rightlyhr.com/api/`);
-        }
+
         const logo = response?.logo || '';
         const fullLogoUrl = logo
           ? (logo.startsWith('http') ? logo : `${environment.viewUrl}${logo}`)

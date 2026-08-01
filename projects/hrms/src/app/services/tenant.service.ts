@@ -8,7 +8,6 @@ export interface DomainVerificationResponse {
   tenantId?: string;
   tenantName?: string;
   logo?: string;
-  apiUrl?: string;
   [key: string]: any;
 }
 
@@ -21,8 +20,6 @@ export class TenantService {
   private verificationStatusSubject = new BehaviorSubject<'idle' | 'verifying' | 'verified' | 'invalid'>('idle');
   private verificationResponseSubject = new BehaviorSubject<DomainVerificationResponse | null>(null);
   private logoSubject = new BehaviorSubject<string>('');
-
-  private apiUrlSubject = new BehaviorSubject<string>(environment.ApiUrl);
 
   domain$ = this.domainSubject.asObservable();
   verificationStatus$ = this.verificationStatusSubject.asObservable();
@@ -109,7 +106,7 @@ export class TenantService {
   }
 
   get currentApiUrl(): string {
-    return this.apiUrlSubject.value;
+    return this.apiUrl;
   }
 
   /**
@@ -130,10 +127,6 @@ export class TenantService {
       tap((response) => {
         this.verificationResponseSubject.next(response);
         this.verificationStatusSubject.next('verified');
-        const isLocalhost = ['localhost', '127.0.0.1'].includes(window.location.hostname);
-        if (!isLocalhost) {
-          this.apiUrlSubject.next(`http://api-${domain}.rightlyhr.com/api/`);
-        }
         const logo = response?.logo || '';
         const fullLogoUrl = logo
           ? (logo.startsWith('http') ? logo : `${environment.viewUrl}${logo}`)

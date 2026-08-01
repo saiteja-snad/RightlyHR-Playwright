@@ -18,7 +18,7 @@ export const environment = {
   redirectUrl: '/uservalidation',
   baseUrl: "https://localhost:44371/",
   scopeUri: ["api://f9ad74b1-d17f-4175-9097-f543691f6bec/api-access"],
-
+  currencyCode: 'INR',
   auth: {
     google: {
       clientId: 'your-google-client-id.apps.googleusercontent.com',

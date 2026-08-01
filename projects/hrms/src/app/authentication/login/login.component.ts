@@ -174,7 +174,7 @@ export class LoginComponent implements OnInit, OnDestroy {
       const payload = {
         email: loginData.email,
         password: loginData.password,
-        domain: this.domainName,
+        domain: this.domainName || this.tenantService.currentDomain,
         deviceName,
         ipAddress,
         userAgent: navigator.userAgent

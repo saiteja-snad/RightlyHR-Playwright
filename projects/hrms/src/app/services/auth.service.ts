@@ -260,6 +260,7 @@ export class AuthService {
     const tenantDomain = localStorage.getItem('tenantDomain');
     const tenantLogo = localStorage.getItem('tenantLogo');
     const tenantId = localStorage.getItem('tenantId');
+    const accessToken = token?.accessToken || localStorage.getItem('accessToken') || '';
 
     const navigateToLogin = () => {
       localStorage.clear();
@@ -270,12 +271,15 @@ export class AuthService {
       this.router.navigate(['/login'], domain ? { queryParams: { domain } } : {});
     };
 
-    if (!token || !token.refreshToken) {
+    if (!token?.refreshToken && !accessToken) {
       navigateToLogin();
       return;
     }
 
-    const payload = { refreshToken: token.refreshToken };
+    const payload: Record<string, string> = {};
+    if (token?.refreshToken) payload['refreshToken'] = token.refreshToken;
+    if (accessToken) payload['accessToken'] = accessToken;
+    if (domain) payload['domain'] = domain;
 
     this.postData(`v2/Auth/logout`, payload).subscribe({
       next: () => {
@@ -289,20 +293,25 @@ export class AuthService {
   refreshToken() {
     const tokenString = localStorage.getItem("currentUser");
     const token = tokenString ? JSON.parse(tokenString) : null;
+    const tenantService = this.injector.get(TenantService);
+    const domain = tenantService.currentDomain;
 
     if (!token || !token.refreshToken) {
       localStorage.clear();
       sessionStorage.clear();
       this.logout();
-      this.router.navigate(['/login']);
+      this.router.navigate(['/login'], domain ? { queryParams: { domain } } : {});
+      return throwError(() => new Error('No refresh token available'));
     }
 
-    const payload = {
+    const payload: Record<string, string> = {
       accessToken: token.accessToken,
       refreshToken: token.refreshToken,
       deviceName: this.getDeviceName(),
       loginType: token.loginType
     };
+    // Optional fallback when token database_key is unavailable
+    if (domain) payload['domain'] = domain;
 
     return this.http.post<any>(`${this.ApiUrl}v2/Auth/refresh`, payload).pipe(
       map((res) => {
@@ -313,7 +322,7 @@ export class AuthService {
       }),
       catchError((error) => {
         this.logout();
-        this.router.navigate(['/login']);
+        this.router.navigate(['/login'], domain ? { queryParams: { domain } } : {});
         return throwError(() => error);
       })
     );

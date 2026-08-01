@@ -32,8 +32,16 @@ export class TokeninterceptorsInterceptor implements HttpInterceptor {
       request = request.clone({ setHeaders: headers });
     }
 
-    //  Skip token handling for login or refresh endpoints
-    if (request.url.includes('/api/v2/Auth/login') || request.url.includes('/api/v2/Auth/refresh') || request.url.includes('v2/Auth/social') || request.url.includes('Tenant/verify-domain')) {
+    //  Skip token handling for login, refresh, social, or domain verification endpoints
+    const url = request.url.toLowerCase();
+    if (
+      url.includes('/api/v2/auth/login') ||
+      url.includes('/api/v2/auth/refresh') ||
+      url.includes('v2/auth/social') ||
+      url.includes('v2/auth/register') ||
+      url.includes('/api/auth/') ||
+      url.includes('tenant/verify-domain')
+    ) {
       return next.handle(request);
     }
     

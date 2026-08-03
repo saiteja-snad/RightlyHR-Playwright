@@ -142,15 +142,37 @@ export class RemoteWaitingForApprovalComponent implements OnInit,OnDestroy {
   }
 
   canApprove(item: any): boolean {
+  const loginEmployeeId = Number(this.LOGIN?.employeeId);
+  const currentApproverId = Number(item?.currentApproverId);
 
-    const currentApproverId =
-      item?.pendingApprovalsHeader?.currentApproverId?.toString();
+  return (
+    loginEmployeeId === currentApproverId &&
+    !this.shouldHideApproval(item)
+  );
+}
 
-    const loginId =
-      this.LOGIN.employeeId?.toString();
+shouldHideApproval(item: any): boolean {
+  const loginEmployeeId = Number(this.LOGIN?.employeeId);
+  const currentApproverId = Number(item?.currentApproverId);
+  const reportingManagerId = Number(item?.reportingManagerId);
+  const teamManagerId = Number(item?.teamManagerId);
 
-    return currentApproverId === loginId;
-  }
+  return (
+    loginEmployeeId > 0 &&
+    currentApproverId > 0 &&
+    reportingManagerId > 0 &&
+    teamManagerId > 0 &&
+    reportingManagerId === teamManagerId &&
+    teamManagerId === loginEmployeeId &&
+    loginEmployeeId === currentApproverId
+  );
+}
+
+hasApprovableItems(): boolean {
+  return this.approvedRemotes.some((item: any) =>
+    this.canApprove(item) && !this.shouldHideApproval(item)
+  );
+}
 
   onRowsChange() {
     this.first = 0;

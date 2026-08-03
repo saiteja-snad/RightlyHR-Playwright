@@ -123,20 +123,39 @@ export class CompOffWaitingForApprovalComponent implements OnInit, OnDestroy {
     });
   }
 
-  canApprove(item: any): boolean {
-    const currentApproverId =
-      item?.pendingApprovalsHeader?.currentApproverId?.toString();
+ canApprove(item: any): boolean {
+  const loginEmployeeId = Number(this.empinfo?.employeeId);
+  const currentApproverId = Number(item?.currentApproverId);
 
+  return (
+    loginEmployeeId === currentApproverId &&
+    !this.shouldHideApproval(item)
+  );
+}
 
-    const loginId =
-      this.LOGIN.employeeId?.toString();
-    console.log('currentApproverId:', currentApproverId);
-    console.log('loginId:', loginId);
-    console.log('item:', item);
+shouldHideApproval(item: any): boolean {
+  const loginEmployeeId = Number(this.empinfo?.employeeId);
+  const currentApproverId = Number(item?.currentApproverId);
+  const reportingManagerId = Number(item?.reportingManagerId);
+  const teamManagerId = Number(item?.teamManagerId);
 
+  return (
+    loginEmployeeId > 0 &&
+    currentApproverId > 0 &&
+    reportingManagerId > 0 &&
+    teamManagerId > 0 &&
+    reportingManagerId === teamManagerId &&
+    teamManagerId === loginEmployeeId &&
+    loginEmployeeId === currentApproverId
+  );
+}
 
-    return currentApproverId === loginId;
-  }
+hasApprovableItems(): boolean {
+  return this.waitingForApprovalCompOff.some((item: any) =>
+    this.canApprove(item) &&
+    !this.shouldHideApproval(item)
+  );
+}
 
   onRowsChange() {
     this.first = 0;

@@ -1,81 +1,108 @@
 <div class="custom-main-component-container">
-
-
-  @if (selectedProducts.length > 0 && !permissionForLoggedInUser) {
-  <div class="d-flex justify-content-between align-items-center mb-3">
-
-    <div class="component-sub-header">
-      Selected Records: {{ selectedProducts.length }}
-    </div>
-
-    <div class="d-flex gap-3">
-
-      @if(permissionForLoggedInUser){
-
-      <button type="button" class="custom-btn btn-primary-reject" (click)="onClick(selectedProducts[0], cancelModal)">
-        Cancel Permission
-      </button>
-
-      }
-
-      @else {
-
-      <button class="custom-btn btn-primary-approve" (click)="approvePermission(approval, selectedProducts[0])">
-        Approve
-      </button>
-
-      <button class="custom-btn btn-primary-reject" (click)="rejectPermission(rejectmodal, selectedProducts[0])">
-        Reject
-      </button>
-
-      }
-
-    </div>
-  </div>
-  }
   <div class="custom-table-content">
+
+    @if(
+    selectedProducts.length > 0 &&
+    !permissionForLoggedInUser &&
+    canApprove(selectedProducts[0]) &&
+    !shouldHideApproval(selectedProducts[0])
+    ){
+    <div class="component-header-content">
+
+      <div class="component-sub-header">
+        Selected Records: {{ selectedProducts.length }}
+      </div>
+
+      <div class="d-flex gap-3">
+
+        @if(permissionForLoggedInUser){
+
+        <button type="button" class="custom-btn btn-primary-reject" (click)="onClick(selectedProducts[0], cancelModal)">
+          Cancel Permission
+        </button>
+
+        }
+
+        @else {
+
+        <button class="custom-btn btn-primary-approve" (click)="approvePermission(approval, selectedProducts[0])">
+          Approve
+        </button>
+
+        <button class="custom-btn btn-primary-reject" (click)="rejectPermission(rejectmodal, selectedProducts[0])">
+          Reject
+        </button>
+
+        }
+
+      </div>
+    </div>
+    }
+
     @if(!dataload){
-<div class="custom-p-multi-select-table">   
-<p-table #permissionsWaitingTable [value]="waitingForApprovalPerimisions" [(selection)]="selectedProducts" dataKey="id" [customSort]="true" (sortFunction)="customSort($event)" [sortMode]="'single'">
-      <ng-template pTemplate="header">
-        <tr>
-           <th style="width:4rem">
-              @if(showMultiSelectAndSearch()){
+    <div class="custom-p-multi-select-table">
+      <p-table #permissionsWaitingTable [value]="waitingForApprovalPerimisions" [(selection)]="selectedProducts"
+        (selectionChange)="selectCheck($event)" dataKey="id" [customSort]="true" (sortFunction)="customSort($event)"
+        [sortMode]="'single'">
+        <ng-template pTemplate="header">
+          <tr>
+            @if(
+            waitingForApprovalPerimisions.length > 0 &&
+            hasApprovableItems()
+            ){
+            <th style="width:4rem">
               <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
-              }
             </th>
-          <th pSortableColumn="createdDate">{{'Requested Date' | translate}} <p-sortIcon field="createdDate"></p-sortIcon></th>
-          <th pSortableColumn="requestedDate">{{'Permission Date'| translate}} <p-sortIcon field="requestedDate"></p-sortIcon></th>
-          <th pSortableColumn="duration">Duration(In<span class="text-lowercase"> hrs)</span> <p-sortIcon field="duration"></p-sortIcon></th> 
-          <th class="text-center">{{'Reason'| translate}}</th>
-          <th  class="text-center" pSortableColumn="type">{{'Permission Type'| translate}} <p-sortIcon field="type"></p-sortIcon></th>
-          <th  class="text-center">{{'Status' | translate}}</th>
-          <th class="text-center">{{'Action'| translate}}</th>
-        </tr>
-      </ng-template>
-      <ng-template pTemplate="body" let-permissionRequest>
-        <tr>
-           <td style="width:4rem">
-              @if(canApprove(permissionRequest)){
+            }
+
+
+            <th pSortableColumn="createdDate">{{'Requested Date' | translate}} <p-sortIcon
+                field="createdDate"></p-sortIcon></th>
+            <th pSortableColumn="requestedDate">{{'Permission Date'| translate}} <p-sortIcon
+                field="requestedDate"></p-sortIcon></th>
+            <th pSortableColumn="duration">Duration(In<span class="text-lowercase"> hrs)</span> <p-sortIcon
+                field="duration"></p-sortIcon></th>
+            <th class="text-center" pSortableColumn="notes">{{'Reason'| translate}} <p-sortIcon
+                field="notes"></p-sortIcon></th>
+            <th pSortableColumn="type">{{'Permission Type'| translate}} <p-sortIcon field="type"></p-sortIcon></th>
+            <th pSortableColumn="status">{{'Status'| translate}} <p-sortIcon field="status"></p-sortIcon></th>
+            @if(selectedProducts.length == 0){
+            <th class="text-center">
+              {{'Action'| translate}}
+            </th>
+            }
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-permissionRequest>
+          <tr>
+            @if(
+            canApprove(permissionRequest) &&
+            !shouldHideApproval(permissionRequest)
+            ){
+            <td style="width:4rem">
               <p-tableCheckbox [value]="permissionRequest"></p-tableCheckbox>
-              }
             </td>
-          <td>{{permissionRequest.createdDate | dateformat}}</td>
-          <td>{{permissionRequest.requestedDate | dateformat}}</td>
-          <td>{{(+permissionRequest.duration) * 60 * 60 * 1000 | date:'HH:mm':'UTC'}}</td>
-          <td class="text-center">
-            <div>
-              <a type="button" [ngbPopover]="reason">
-                <app-info-icon />
-              </a>
-              <ng-template #reason>
-                <p class="mb-0">{{permissionRequest.notes}}</p>
-              </ng-template>
-            </div>
-          </td>
-          <td class="text-center">{{permissionRequest.type}}</td>
-          <td class="text-center">{{permissionRequest.status}}</td>
-          @if(selectedProducts.length == 0){
+            }
+            @else if(hasApprovableItems()){
+            <td style="width:4rem"></td>
+            }
+            <td>{{permissionRequest.createdDate | dateformat}}</td>
+            <td>{{permissionRequest.requestedDate | dateformat}}</td>
+            <td>{{(+permissionRequest.duration) * 60 * 60 * 1000 | date:'HH:mm':'UTC'}}</td>
+            <td class="text-center">
+              <div>
+                <a type="button" [ngbPopover]="reason">
+                  <app-info-icon />
+                </a>
+                <ng-template #reason>
+                  <p class="mb-0">{{permissionRequest.notes}}</p>
+                </ng-template>
+              </div>
+            </td>
+            <td>{{permissionRequest.type}}</td>
+            <td>{{permissionRequest.status}}</td>
+
+            @if(selectedProducts.length == 0){
             <td class="text-center">
 
               <!-- Employee -->
@@ -100,8 +127,12 @@
               }
 
               <!-- Current Approver -->
-              @else if(canApprove(permissionRequest)){
 
+              @else if(
+              canApprove(permissionRequest) &&
+              !shouldHideApproval(permissionRequest) &&
+              selectedProducts.length == 0
+              ){
               <div class="dropdown">
                 <a type="button" data-bs-toggle="dropdown">
                   <i class="bi bi-three-dots-vertical"></i>
@@ -134,9 +165,10 @@
 
             </td>
             }
-        </tr>
-      </ng-template>
-      <ng-template pTemplate="emptymessage">
+
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
           <div class="wrapper">
             <tr>
               <td colspan="11">

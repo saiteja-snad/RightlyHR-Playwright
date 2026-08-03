@@ -1,6 +1,12 @@
 <div class="custom-main-component-container">
-    @if(selectedProducts.length > 0 && canApprove(selectedProducts[0])){
-        <div class="d-flex justify-content-between align-items-center mb-3">
+  <div class="custom-table-content">
+    @if(!loading){
+    @if(
+    selectedProducts.length > 0 &&
+    canApprove(selectedProducts[0]) &&
+    !shouldHideApproval(selectedProducts[0])
+    ){
+    <div class="component-header-content">
       <div class="component-sub-header">
         Selected Records: {{selectedProducts.length}}
       </div>
@@ -16,14 +22,12 @@
       </div>
     </div>
     }
-    <div class="custom-table-content">
-    @if(!loading){
-    <p-table #leavesWaitingTable  styleClass="custom-p-multi-select-table" [value]="lpdata" [(selection)]="selectedProducts"
-      (selectionChange)="selectCheck($event)" dataKey="id" [customSort]="true" (sortFunction)="customSort($event)"
-      [scrollable]="true" scrollHeight="flex">
+    <p-table #leavesWaitingTable styleClass="custom-p-multi-select-table" [value]="lpdata"
+      [(selection)]="selectedProducts" (selectionChange)="selectCheck($event)" dataKey="id" [customSort]="true"
+      (sortFunction)="customSort($event)" [scrollable]="true" scrollHeight="flex">
       <ng-template pTemplate="header">
         <tr>
-          @if(lpdata.length > 0 && canApprove(lpdata[0])){
+          @if(lpdata.length > 0 && hasApprovableItems()){
           <th style="width:4rem">
             <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
           </th>
@@ -46,10 +50,13 @@
       <ng-template pTemplate="body" let-item>
         @if (rbac.allowedToAccess('Waiting For Approval (Time Off).view')) {
         <tr>
-          @if(canApprove(item)){
+          @if(canApprove(item) && !shouldHideApproval(item)){
           <td>
             <p-tableCheckbox [value]="item"></p-tableCheckbox>
           </td>
+          }
+          @else if(hasApprovableItems()){
+          <td></td>
           }
           <td>{{item.date| dateformat}}</td>
           <td>{{item.categoryName}}</td>
@@ -92,7 +99,11 @@
               </ul>
             </div>
             }
-            @else if(canApprove(item) && selectedProducts.length == 0){
+            @else if(
+            canApprove(item) &&
+            !shouldHideApproval(item) &&
+            selectedProducts.length == 0
+            ){
             <div class="dropdown">
               <a type="button" data-bs-toggle="dropdown">
                 <i class="bi bi-three-dots-vertical"></i>
@@ -128,7 +139,7 @@
             -
             }
           </td>
-        }
+          }
         </tr>
         }
       </ng-template>

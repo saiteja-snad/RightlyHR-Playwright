@@ -197,8 +197,7 @@
 }
 
 .ellipses-nav-item {
-    position: sticky;
-    bottom: 0;
-    z-index: 3;
+    position: relative;
+    margin-top: auto;
     background-color: var(--side-nav-background-color);
 }

@@ -48,6 +48,7 @@ export class EmployeeDashboardComponent implements AfterViewInit {
   employeedata: any;
   currentTime: Date = new Date();
   loading = false;
+  
   avaliabletlyloading = false;
   showAvailabilityMessage = false;
   weaklyloghrsloader = false;
